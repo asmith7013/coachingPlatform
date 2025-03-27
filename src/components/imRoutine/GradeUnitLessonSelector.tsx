@@ -41,7 +41,7 @@ export function GradeUnitLessonSelector({
   });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <select
         value={selectedGrade}
         onChange={(e) => {
@@ -49,9 +49,9 @@ export function GradeUnitLessonSelector({
           setSelectedUnit('');
           setSelectedLesson('');
         }}
-        className="p-2 border rounded bg-white text-black"
+        className="p-2 border-2 border-gray-300 rounded bg-white text-black font-medium"
       >
-        <option value="">Select Grade</option>
+        <option value="">Select Grade/Course</option>
         {sortedGrades.map((grade) => (
           <option key={grade} value={grade}>
             {grade}
@@ -65,7 +65,7 @@ export function GradeUnitLessonSelector({
           setSelectedLesson('');
         }}
         disabled={!selectedGrade}
-        className={`p-2 border rounded ${!selectedGrade ? 'bg-gray-200 text-gray-400' : 'bg-white text-black'}`}
+        className={`p-2 border-2 border-gray-300 rounded ${!selectedGrade ? 'bg-gray-200 text-gray-400' : 'bg-white text-black font-medium'}`}
       >
         <option value="">Select Unit</option>
         {units.map((unit) => (
@@ -78,7 +78,7 @@ export function GradeUnitLessonSelector({
         value={selectedLesson}
         onChange={(e) => setSelectedLesson(e.target.value)}
         disabled={!selectedUnit}
-        className={`p-2 border rounded ${!selectedUnit ? 'bg-gray-200 text-gray-400' : 'bg-white text-black'}`}
+        className={`p-2 border-2 border-gray-300 rounded ${!selectedUnit ? 'bg-gray-200 text-gray-400' : 'bg-white text-black font-medium'}`}
       >
         <option value="">Select Lesson</option>
         {lessons.map((lesson) => (

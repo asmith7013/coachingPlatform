@@ -19,7 +19,7 @@ type LessonCompactViewProps = {
 
 export function LessonCompactView({ lessonsData, selectedRoutines }: LessonCompactViewProps) {
   return (
-    <div className="space-y-4">
+    <div className="">
       {lessonsData
         .sort((a, b) => Number(a.lessonNumber) - Number(b.lessonNumber))
         .map((lesson) => {

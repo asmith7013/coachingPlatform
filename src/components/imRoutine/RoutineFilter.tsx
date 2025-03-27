@@ -47,14 +47,14 @@ export function RoutineFilter({
 
   return (
     <div className="mb-4">
-      <div className="mb-4 flex items-center gap-3">
+      {/* <div className="mb-4 flex items-center gap-3">
         <span className="text-sm font-medium">{detailedView ? 'More Detail' : 'Less Detail'}</span>
         <Switch
           checked={detailedView}
           onChange={setDetailedView}
           color="blue"
         />
-      </div>
+      </div> */}
       <label className="block text-sm font-medium mb-1">
         Filter by Routine:
       </label>
