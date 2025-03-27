@@ -89,10 +89,10 @@ export default function IMRoutinesPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Two-column grid: main content (left) and sidebar filter (right) */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Main Content Area (Left Column) */}
         <div className="md:col-span-3 space-y-4">
-          <div className="bg-white rounded-xl shadow py-4 px-6 border-2 flex justify-between items-center border-black">
+          <div className="bg-white rounded-t-md py-4 pb-2 px-6 mb-0 border-2 border-b-0 flex justify-between items-center border-black">
             <h1 className="text-2xl font-bold">IM Routines Viewer</h1>
             {selectedGrade && selectedUnit && (
               <p className="text-sm font-light">
@@ -101,7 +101,7 @@ export default function IMRoutinesPage() {
               </p>
             )}
           </div>
-          <div className="sticky top-0 z-20 bg-white rounded-xl p-2 px-4 border-2 shadow border-gray-300">
+          <div className="sticky top-0 z-20 bg-white rounded-b-md pb-4 px-4 border-2 border-t-0 border-black">
             <GradeUnitLessonSelector
               selectedGrade={selectedGrade}
               setSelectedGrade={setSelectedGrade}

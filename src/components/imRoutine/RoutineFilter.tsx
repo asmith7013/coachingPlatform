@@ -55,7 +55,7 @@ export function RoutineFilter({
           color="blue"
         />
       </div> */}
-      <label className="block text-sm font-medium mb-1">
+      <label className="block text-sm font-bold mb-1">
         Filter by Routine:
       </label>
       <div className="flex flex-wrap gap-2">
