@@ -70,7 +70,8 @@ export function LessonCompactView({ lessonsData, selectedRoutines }: LessonCompa
                     );
                   })
                 ) : (
-                  <p className="italic text-[11px] text-gray-500">No routines</p>
+                  <></>
+                  // <p className="italic text-[11px] text-gray-500">No routines</p>
                 )}
               </div>
             </div>
