@@ -101,7 +101,7 @@ export default function IMRoutinesPage() {
               </p>
             )}
           </div>
-          <div className="sticky top-0 z-20 bg-gray-600 rounded-xl p-2 px-4 border-2 shadow border-gray-600">
+          <div className="sticky top-0 z-20 bg-white rounded-xl p-2 px-4 border-2 shadow border-gray-300">
             <GradeUnitLessonSelector
               selectedGrade={selectedGrade}
               setSelectedGrade={setSelectedGrade}

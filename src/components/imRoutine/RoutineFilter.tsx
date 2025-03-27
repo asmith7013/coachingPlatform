@@ -1,6 +1,6 @@
 'use client';
 
-import { Switch } from '@components/tailwind/switch';
+// import { Switch } from '@components/tailwind/switch';
 
 type RoutineFilterProps = {
   allRoutines: string[];
@@ -21,8 +21,8 @@ export function RoutineFilter({
   selectedLesson,
   lessonRoutines,
   onLessonSelected,
-  setDetailedView,
-  detailedView
+  // setDetailedView,
+  // detailedView
 }: RoutineFilterProps) {
   // Determine the list of routines to show:
   const routinesToShow = selectedLesson && lessonRoutines ? lessonRoutines : allRoutines;
