@@ -22,7 +22,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@models/*": ["./models/*"],
+      "@models/*": ["./src/models/*"],
       "@services/*": ["./src/services/*"],
       "@actions/*": ["./src/app/actions/*"],
       "@components/*": ["./src/components/*"],

@@ -5,7 +5,7 @@ import { School } from "@/lib/zod-schema"; // ✅ Import from Zod schemas
 // import { SchoolFieldLabels } from "@/lib/ui-schema/fieldLabels"; // ✅ Import field labels
 // import FieldConfig from "@/lib/ui-schema/fieldConfig"; // ✅ Import field config
 import { createSchool } from "@actions/schools/schools";
-import { AllowedGradeEnum } from "@/models/Mongoose.model";
+import { AllowedGradeEnum } from "@/models/shared";
 
 const createEmptySchool = (): School => ({
     schoolNumber: "",

@@ -1,29 +1,56 @@
-import {
+import type {
     School,
+} from "@/lib/zod-schema/core/school";
+
+import type {
     StaffMember,
     TeachingLabStaff,
     NYCPSStaff,
-    Cycle,
+} from "@/lib/zod-schema/core/staff";
+
+import type {
     LookFor,
     LookForItem,
-    CoachingLog,
-    Visit,
-    EventItem,
-    NextStep,
-    Note,
+} from "@/lib/zod-schema/look-fors/look-for";
+
+import type {
     RubricScore,
+} from "@/lib/zod-schema/look-fors/rubric";
+
+import type {
+    NextStep,
+} from "@/lib/zod-schema/look-fors/next-step";
+
+import type {
     TeacherSchedule,
     ScheduleByDay,
     Period,
     BellSchedule,
     AssignedCycleDay,
     ClassScheduleItem,
+} from "@/lib/zod-schema/scheduling/schedule";
+
+import type {
+    Note,
+} from "@/lib/zod-schema/shared/notes";
+
+import type {
+    Visit,
+    EventItem,
     SessionLink,
-  } from "@/models/models";
-  
-  // 🔹 Generate Type-Safe Labels for Every Model
-  
-  export const SchoolFieldLabels: Record<keyof School, string> = {
+} from "@/lib/zod-schema/visits/visit";
+
+import type {
+    CoachingLog,
+} from "@/lib/zod-schema/visits/coaching-log";
+
+import type {
+    Cycle,
+} from "@/lib/zod-schema/core/cycle";
+
+// 🔹 Generate Type-Safe Labels for Every Model
+
+export const SchoolFieldLabels: Record<keyof School, string> = {
     _id: "ID",
     schoolNumber: "School Number",
     district: "District",
@@ -37,39 +64,38 @@ import {
     owners: "Owners",
     createdAt: "Created At",
     updatedAt: "Updated At",
-  };
-  
-  export const StaffMemberFieldLabels: Record<keyof StaffMember, string> = {
+};
+
+export const StaffMemberFieldLabels: Record<keyof StaffMember, string> = {
     _id: "ID",
     id: "Staff ID",
     staffName: "Full Name",
     email: "Email Address",
     schools: "Assigned Schools",
-    experience: "Experience",
-    notes: "Notes",
     owners: "Owners",
     createdAt: "Created At",
     updatedAt: "Updated At",
-  };
-  
-  export const TeachingLabStaffFieldLabels: Record<keyof TeachingLabStaff, string> = {
+};
+
+export const TeachingLabStaffFieldLabels: Record<keyof TeachingLabStaff, string> = {
     ...StaffMemberFieldLabels,
     adminLevel: "Admin Level",
     assignedDistricts: "Assigned Districts",
     rolesTL: "Role",
-  };
-  
-  export const NYCPSStaffFieldLabels: Record<keyof NYCPSStaff, string> = {
+};
+
+export const NYCPSStaffFieldLabels: Record<keyof NYCPSStaff, string> = {
     ...StaffMemberFieldLabels,
     gradeLevelsSupported: "Grade Levels",
     subjects: "Subjects Taught",
     specialGroups: "Special Groups",
     rolesNYCPS: "Role",
-    schedule: "string",
     pronunciation: "Pronunciation",
-  };
-  
-  export const CycleFieldLabels: Record<keyof Cycle, string> = {
+    notes: "Notes",
+    experience: "Experience",
+};
+
+export const CycleFieldLabels: Record<keyof Cycle, string> = {
     _id: "ID",
     cycleNum: "Cycle Number",
     ipgIndicator: "IPG Indicator",
@@ -80,9 +106,9 @@ import {
     owners: "Owners",
     createdAt: "Created At",
     updatedAt: "Updated At",
-  };
-  
-  export const LookForFieldLabels: Record<keyof LookFor, string> = {
+};
+
+export const LookForFieldLabels: Record<keyof LookFor, string> = {
     _id: "ID",
     lookForIndex: "Look For Index",
     schools: "Associated Schools",
@@ -96,9 +122,9 @@ import {
     owners: "Owners",
     createdAt: "Created At",
     updatedAt: "Updated At",
-  };
-  
-  export const LookForItemFieldLabels: Record<keyof LookForItem, string> = {
+};
+
+export const LookForItemFieldLabels: Record<keyof LookForItem, string> = {
     originalLookFor: "Original Look For",
     title: "Title",
     description: "Description",
@@ -107,9 +133,9 @@ import {
     teacherIDs: "Teacher IDs",
     chosenBy: "Chosen By",
     active: "Active Status",
-  };
-  
-  export const CoachingLogFieldLabels: Record<keyof CoachingLog, string> = {
+};
+
+export const CoachingLogFieldLabels: Record<keyof CoachingLog, string> = {
     _id: "ID",
     reasonDone: "Reason Done",
     microPLTopic: "Micro PL Topic",
@@ -127,9 +153,9 @@ import {
     owners: "Owners",
     createdAt: "Created At",
     updatedAt: "Updated At",
-  };
-  
-  export const VisitFieldLabels: Record<keyof Visit, string> = {
+};
+
+export const VisitFieldLabels: Record<keyof Visit, string> = {
     _id: "ID",
     date: "Visit Date",
     school: "School",
@@ -143,15 +169,15 @@ import {
     owners: "Owners",
     createdAt: "Created At",
     updatedAt: "Updated At",
-  };
-  
-  export const EventItemFieldLabels: Record<keyof EventItem, string> = {
+};
+
+export const EventItemFieldLabels: Record<keyof EventItem, string> = {
     eventType: "Event Type",
     staff: "Involved Staff",
     duration: "Duration",
-  };
-  
-  export const NextStepFieldLabels: Record<keyof NextStep, string> = {
+};
+
+export const NextStepFieldLabels: Record<keyof NextStep, string> = {
     _id: "ID",
     description: "Description",
     lookFor: "Associated Look For",
@@ -160,16 +186,16 @@ import {
     owners: "Owners",
     createdAt: "Created At",
     updatedAt: "Updated At",
-  };
-  
-  export const NoteFieldLabels: Record<keyof Note, string> = {
+};
+
+export const NoteFieldLabels: Record<keyof Note, string> = {
     date: "Date",
     type: "Type",
     heading: "Heading",
-    subheading: "Subheading",
-  };
-  
-  export const RubricScoreFieldLabels: Record<keyof RubricScore, string> = {
+    subheading: "Subheadings",
+};
+
+export const RubricScoreFieldLabels: Record<keyof RubricScore, string> = {
     date: "Date",
     score: "Score",
     staffId: "Staff Member",
@@ -177,9 +203,9 @@ import {
     owners: "Owners",
     createdAt: "Created At",
     updatedAt: "Updated At",
-  };
-  
-  export const TeacherScheduleFieldLabels: Record<keyof TeacherSchedule, string> = {
+};
+
+export const TeacherScheduleFieldLabels: Record<keyof TeacherSchedule, string> = {
     _id: "ID",
     teacher: "Teacher",
     school: "School",
@@ -187,21 +213,21 @@ import {
     owners: "Owners",
     createdAt: "Created At",
     updatedAt: "Updated At",
-  };
-  
-  export const ScheduleByDayFieldLabels: Record<keyof ScheduleByDay, string> = {
+};
+
+export const ScheduleByDayFieldLabels: Record<keyof ScheduleByDay, string> = {
     day: "Day",
     periods: "Scheduled Periods",
-  };
-  
-  export const PeriodFieldLabels: Record<keyof Period, string> = {
+};
+
+export const PeriodFieldLabels: Record<keyof Period, string> = {
     periodNum: "Period Number",
     className: "Class Name",
     room: "Room",
     periodType: "Type",
-  };
-  
-  export const BellScheduleFieldLabels: Record<keyof BellSchedule, string> = {
+};
+
+export const BellScheduleFieldLabels: Record<keyof BellSchedule, string> = {
     _id: "ID",
     school: "School",
     bellScheduleType: "Schedule Type",
@@ -210,28 +236,28 @@ import {
     owners: "Owners",
     createdAt: "Created At",
     updatedAt: "Updated At",
-  };
-  
-  export const AssignedCycleDayFieldLabels: Record<keyof AssignedCycleDay, string> = {
+};
+
+export const AssignedCycleDayFieldLabels: Record<keyof AssignedCycleDay, string> = {
     date: "Date",
     blockDayType: "Cycle Type",
-  };
-  
-  export const ClassScheduleItemFieldLabels: Record<keyof ClassScheduleItem, string> = {
+};
+
+export const ClassScheduleItemFieldLabels: Record<keyof ClassScheduleItem, string> = {
     dayType: "Day",
     startTime: "Start Time",
     endTime: "End Time",
-  };
-  
-  export const SessionLinkFieldLabels: Record<keyof SessionLink, string> = {
+};
+
+export const SessionLinkFieldLabels: Record<keyof SessionLink, string> = {
     purpose: "Purpose",
     title: "Title",
     url: "URL",
     staff: "Staff Members",
-  };
-  
-  // ✅ Export All Labels in One Object
-  export const FieldLabels = {
+};
+
+// ✅ Export All Labels in One Object
+export const FieldLabels = {
     School: SchoolFieldLabels,
     StaffMember: StaffMemberFieldLabels,
     TeachingLabStaff: TeachingLabStaffFieldLabels,
@@ -246,10 +272,10 @@ import {
     Note: NoteFieldLabels,
     RubricScore: RubricScoreFieldLabels,
     TeacherSchedule: TeacherScheduleFieldLabels,
-    DailySchedule: ScheduleByDayFieldLabels,
+    ScheduleByDay: ScheduleByDayFieldLabels,
     Period: PeriodFieldLabels,
     BellSchedule: BellScheduleFieldLabels,
     AssignedCycleDay: AssignedCycleDayFieldLabels,
     ClassScheduleItem: ClassScheduleItemFieldLabels,
     SessionLink: SessionLinkFieldLabels,
-  };
+};

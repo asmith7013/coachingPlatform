@@ -1,7 +1,7 @@
 "use server";
 
 import { SchoolZodSchema } from "@/lib/zod-schema/core/school"; // Import the Zod schema for validation.
-import { SchoolModel } from "@/models/Mongoose.model"; // Import the Mongoose model.
+import { SchoolModel } from "@/models/core"; // Import the Mongoose model.
 import { connectToDB } from "@/lib/db"; // Import the database connection function.
 import { handleServerError } from "@/lib/handleServerError"; // Import the error handling function.
 import { revalidatePath } from "next/cache"; // Import revalidatePath for cache invalidation.

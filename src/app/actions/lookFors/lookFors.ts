@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDB } from "@/lib/db";
-import { LookForModel } from "@/models/Mongoose.model";
+import { LookForModel } from "@/models/look-fors";
 import { validate } from "@/lib/zod-schema";
 import { LookFor, LookForZodSchema } from "@/lib/zod-schema/look-fors/look-for";
 // import { RubricZodSchema } from "@/lib/zod-schema/look-fors/rubric";
