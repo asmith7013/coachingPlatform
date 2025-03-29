@@ -1,5 +1,5 @@
 // src/hooks/utils/useOptimisticResource.ts
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { KeyedMutator } from "swr";
 
 interface ResourceResponse<T> {
@@ -8,19 +8,21 @@ interface ResourceResponse<T> {
   empty: boolean;
 }
 
-export function useOptimisticResource<T extends { _id: string }>(mutate: KeyedMutator<ResourceResponse<T>>) {
+export function useOptimisticResource<T extends { _id: string }, I>(
+  mutate: KeyedMutator<ResourceResponse<T>>
+) {
   const [isOptimisticUpdating, setIsOptimisticUpdating] = useState(false);
 
   const optimisticAdd = useCallback(async (
-    newItem: Omit<T, "_id">,
-    createAction: (data: Omit<T, "_id">) => Promise<{ success: boolean; [key: string]: unknown }>
+    data: I,
+    createAction: (data: I) => Promise<{ success: boolean; [key: string]: unknown }>
   ) => {
     setIsOptimisticUpdating(true);
     const tempId = `temp-${Date.now()}`;
     
     mutate(
       (currentData) => ({
-        items: [...(currentData?.items || []), { ...newItem, _id: tempId } as T],
+        items: [...(currentData?.items || []), { ...data, _id: tempId } as unknown as T],
         total: (currentData?.total || 0) + 1,
         empty: false
       }),
@@ -28,7 +30,7 @@ export function useOptimisticResource<T extends { _id: string }>(mutate: KeyedMu
     );
 
     try {
-      const result = await createAction(newItem);
+      const result = await createAction(data);
       if (result.success) {
         mutate(); // Update with the real data
         return result;
@@ -46,23 +48,24 @@ export function useOptimisticResource<T extends { _id: string }>(mutate: KeyedMu
 
   const optimisticModify = useCallback(async (
     id: string,
-    updatedData: Partial<T>,
-    updateAction: (id: string, data: Partial<T>) => Promise<{ success: boolean; [key: string]: unknown }>
+    data: I,
+    updateAction: (id: string, data: I) => Promise<{ success: boolean; [key: string]: unknown }>
   ) => {
     setIsOptimisticUpdating(true);
+    
     mutate(
       (currentData) => ({
-        items: currentData?.items.map((item) =>
-          item._id === id ? { ...item, ...updatedData } : item
+        items: currentData?.items.map(item => 
+          item._id === id ? { ...item, ...data } as unknown as T : item
         ) || [],
         total: currentData?.total || 0,
-        empty: false
+        empty: currentData?.empty || false
       }),
       false
     );
 
     try {
-      const result = await updateAction(id, updatedData);
+      const result = await updateAction(id, data);
       if (result.success) {
         mutate(); // Update with the real data
         return result;
@@ -83,26 +86,25 @@ export function useOptimisticResource<T extends { _id: string }>(mutate: KeyedMu
     deleteAction: (id: string) => Promise<{ success: boolean; error?: string }>
   ) => {
     setIsOptimisticUpdating(true);
+    
     mutate(
-      (currentData) => {
-        const filteredItems = currentData?.items.filter((item) => item._id !== id) || [];
-        return {
-          items: filteredItems,
-          total: Math.max(0, (currentData?.total || 1) - 1),
-          empty: filteredItems.length === 0
-        };
-      },
+      (currentData) => ({
+        items: currentData?.items.filter(item => item._id !== id) || [],
+        total: (currentData?.total || 0) - 1,
+        empty: (currentData?.items || []).length <= 1
+      }),
       false
     );
 
     try {
       const result = await deleteAction(id);
-      if (!result.success) {
+      if (result.success) {
+        mutate(); // Update with the real data
+        return result;
+      } else {
         mutate(); // Revert on error
-        throw new Error("Failed to delete item");
+        throw new Error(result.error || "Failed to delete item");
       }
-      mutate(); // Update with the real data
-      return result;
     } catch (error) {
       mutate(); // Revert on error
       throw error;
@@ -111,11 +113,10 @@ export function useOptimisticResource<T extends { _id: string }>(mutate: KeyedMu
     }
   }, [mutate]);
 
-  // Memoize the return object to maintain referential stability
-  return useMemo(() => ({
+  return {
     optimisticAdd,
     optimisticModify,
     optimisticRemove,
     isOptimisticUpdating
-  }), [optimisticAdd, optimisticModify, optimisticRemove, isOptimisticUpdating]);
+  };
 }

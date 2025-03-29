@@ -4,12 +4,13 @@ import type { ZodSchema } from "zod";
 import { parseOrThrow, parsePartialOrThrow } from "./safeParse";
 import { sanitizeDocument } from "./sanitize";
 import { handleServerError } from "@/lib/error/handleServerError";
+import { connectToDB } from "@/lib/db";
 import type { z } from "zod";
 
-interface TimestampedDocument extends Document {
+export interface TimestampedDocument extends Document {
   _id: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface CrudResult<T> {
@@ -29,6 +30,9 @@ export async function createItem<T extends TimestampedDocument, S extends ZodSch
   pathsToRevalidate: string[] = []
 ): Promise<CrudResult<z.infer<S>>> {
   try {
+    // Ensure database connection
+    await connectToDB();
+
     // Validate data
     const validatedData = parseOrThrow(schema, data);
 
@@ -61,6 +65,9 @@ export async function updateItem<T extends TimestampedDocument, S extends ZodSch
   pathsToRevalidate: string[] = []
 ): Promise<CrudResult<z.infer<S>>> {
   try {
+    // Ensure database connection
+    await connectToDB();
+
     // Validate data
     const validatedData = parsePartialOrThrow(schema, data);
 
@@ -103,6 +110,9 @@ export async function deleteItem<T extends TimestampedDocument, S extends ZodSch
   pathsToRevalidate: string[] = []
 ): Promise<CrudResult<z.infer<S>>> {
   try {
+    // Ensure database connection
+    await connectToDB();
+
     const deleted = await model.findByIdAndDelete(id);
 
     if (!deleted) {

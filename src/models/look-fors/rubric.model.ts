@@ -1,8 +1,11 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
-import mongoose from "mongoose"; // Required for model cache
+import mongoose, { Types } from "mongoose"; // Required for model cache
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-class Rubric {
+export class Rubric {
+  @prop({ type: Types.ObjectId, required: true })
+  _id!: Types.ObjectId;
+
   @prop({ type: Number, required: true })
   score!: number;
 
@@ -23,7 +26,10 @@ class Rubric {
 }
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-class RubricScore {
+export class RubricScore {
+  @prop({ type: Types.ObjectId, required: true })
+  _id!: Types.ObjectId;
+
   @prop({ type: String, required: true })
   date!: string;
 
@@ -38,12 +44,6 @@ class RubricScore {
 
   @prop({ type: () => [String], required: true })
   owners!: string[];
-
-  @prop({ type: Date })
-  createdAt?: Date;
-
-  @prop({ type: Date })
-  updatedAt?: Date;
 }
 
 export const RubricModel =
@@ -51,5 +51,3 @@ export const RubricModel =
 
 export const RubricScoreModel =
   mongoose.models.RubricScore || getModelForClass(RubricScore);
-
-export { Rubric, RubricScore };

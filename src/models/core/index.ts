@@ -1,4 +1,4 @@
-export { Cycle, CycleModel } from "./cycle.model";
+export { CycleModel } from "./cycle.model";
 export { SchoolModel } from "./school.model";
 export {
     StaffMemberModel,

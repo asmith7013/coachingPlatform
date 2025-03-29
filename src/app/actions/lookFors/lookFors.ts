@@ -2,7 +2,12 @@
 
 import { z } from "zod";
 import { LookForModel } from "@/models/look-fors";
-import { LookForZodSchema } from "@/lib/zod-schema/look-fors/look-for";
+import { 
+  LookForZodSchema, 
+  LookForInputZodSchema,
+  type LookFor,
+  type LookForInput
+} from "@/lib/zod-schema/look-fors/look-for";
 import { handleServerError } from "@/lib/error/handleServerError";
 import { handleValidationError } from "@/lib/error/handleValidationError";
 import { 
@@ -12,14 +17,13 @@ import {
   updateItem,
   deleteItem
 } from "@/lib/server-utils";
-import { bulkUpload } from "@/lib/server-utils/bulkUpload";
+import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
+import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
 
 // Types
-export type LookFor = z.infer<typeof LookForZodSchema>;
-export type LookForCreate = Omit<LookFor, "_id" | "createdAt" | "updatedAt">;
-export type LookForUpdate = Partial<LookForCreate>;
+export type { LookFor, LookForInput };
 
-// Fetch look-fors with pagination, filtering, and sorting
+/** Fetch Look-Fors */
 export async function fetchLookFors({
   page = 1,
   limit = 10,
@@ -39,33 +43,33 @@ export async function fetchLookFors({
     // Sanitize filters
     const sanitizedFilters = sanitizeFilters(filters);
 
-    // Execute paginated query
-    const result = await executePaginatedQuery(LookForModel, sanitizedFilters, {
-      page,
-      limit,
-      sortBy,
-      sortOrder
-    });
+    // Execute paginated query with LookForZodSchema for validation
+    const result = await executePaginatedQuery(
+      LookForModel,
+      sanitizedFilters,
+      LookForZodSchema, // Use full schema for returned documents
+      {
+        page,
+        limit,
+        sortBy,
+        sortOrder
+      }
+    );
 
-    return {
-      items: result.items,
-      total: result.total,
-      empty: result.empty
-    };
+    return result;
   } catch (error) {
-    console.error("Error fetching look-fors:", error);
-    throw handleServerError(error);
+    throw new Error(handleServerError(error));
   }
 }
 
 // Create a new look-for
-export async function createLookFor(data: LookForCreate) {
-  return createItem(LookForModel, LookForZodSchema, data, ["/look-fors", "/look-fors/[id]"]);
+export async function createLookFor(data: LookForInput) {
+  return createItem(LookForModel, LookForInputZodSchema, data, ["/look-fors", "/look-fors/[id]"]);
 }
 
 // Update a look-for
-export async function updateLookFor(id: string, data: LookForUpdate) {
-  return updateItem(LookForModel, LookForZodSchema, id, data, ["/look-fors", "/look-fors/[id]"]);
+export async function updateLookFor(id: string, data: Partial<LookForInput>) {
+  return updateItem(LookForModel, LookForInputZodSchema, id, data, ["/look-fors", "/look-fors/[id]"]);
 }
 
 // Delete a look-for
@@ -73,10 +77,20 @@ export async function deleteLookFor(id: string) {
   return deleteItem(LookForModel, LookForZodSchema, id, ["/look-fors", "/look-fors/[id]"]);
 }
 
-// Upload look-fors data
-export async function uploadLookFors(data: LookForCreate[]) {
+// Upload look-fors via file
+export const uploadLookForFile = async (file: File): Promise<string> => {
   try {
-    const result = await bulkUpload(data, LookForModel, LookForZodSchema, ["/look-fors"]);
+    const result = await uploadFileWithProgress(file, "/api/look-fors/bulk-upload");
+    return result.message;
+  } catch (error) {
+    throw handleServerError(error);
+  }
+};
+
+// Upload look-fors data
+export async function uploadLookFors(data: LookForInput[]) {
+  try {
+    const result = await bulkUploadToDB(data, LookForModel, LookForInputZodSchema, ["/look-fors"]);
     
     if (!result.success) {
       return {

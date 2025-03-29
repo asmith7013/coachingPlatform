@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { handleServerError } from "@/lib/error/handleServerError";
 import { handleValidationError } from "@/lib/error/handleValidationError";
 import { safeParseAndLog } from "./safeParse";
+import { connectToDB } from "@/lib/db";
 
 export interface BulkUploadResult<T> {
   success: boolean;
@@ -11,13 +12,16 @@ export interface BulkUploadResult<T> {
   error?: string;
 }
 
-export async function bulkUpload<T extends { _id: string }>(
+export async function bulkUploadToDB<T extends { _id: string }>(
   data: Omit<T, "_id" | "createdAt" | "updatedAt">[],
   model: Model<T>,
   schema: z.ZodType<T>,
   revalidatePaths: string[]
 ): Promise<BulkUploadResult<T>> {
   try {
+    // Ensure database connection
+    await connectToDB();
+
     console.log(`Uploading ${data.length} items`);
 
     // Validate input data

@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { LookForItemZodSchema } from "../look-fors/look-for";
 
-// ✅ Cycle Schema
-export const CycleZodSchema = z.object({
-  _id: z.string().optional(), // MongoDB auto-generates this
+// ✅ Cycle Input Schema
+export const CycleInputZodSchema = z.object({
   cycleNum: z.number(), // Required number
   ipgIndicator: z.string().optional(), // Optional string
   actionPlanURL: z.string().optional(), // Optional URL string
@@ -11,9 +10,15 @@ export const CycleZodSchema = z.object({
   supportCycle: z.string().optional(), // Optional string
   lookFors: z.array(LookForItemZodSchema).nonempty(), // Array of LookForItem objects
   owners: z.array(z.string()), // Array of owner IDs
-  createdAt: z.date().optional(), // Match Mongoose timestamps
-  updatedAt: z.date().optional(), // Match Mongoose timestamps
 });
 
-// ✅ Auto-generate TypeScript type
+// ✅ Cycle Full Schema
+export const CycleZodSchema = CycleInputZodSchema.extend({
+  _id: z.string(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+});
+
+// ✅ Auto-generate TypeScript types
+export type CycleInput = z.infer<typeof CycleInputZodSchema>;
 export type Cycle = z.infer<typeof CycleZodSchema>;

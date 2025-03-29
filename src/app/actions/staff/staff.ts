@@ -2,71 +2,137 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import type { Document, Types } from "mongoose";
 import { 
   executePaginatedQuery,
   sanitizeFilters,
   createItem,
   updateItem,
+  deleteItem
 } from "@/lib/server-utils";
 import { 
   getStaffModelAndSchema, 
   determineStaffType,
-  type StaffType,
-  type StaffUnion
+  type StaffType
 } from "@/lib/server-utils/staff";
-import { bulkUpload } from "@/lib/server-utils/bulkUpload";
-import { StaffMemberZodSchema, NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from "@/lib/zod-schema/core/staff";
+import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
+import { 
+  StaffMemberZodSchema, 
+  StaffMemberInputZodSchema,
+  NYCPSStaffZodSchema, 
+  NYCPSStaffInputZodSchema,
+  TeachingLabStaffZodSchema,
+  TeachingLabStaffInputZodSchema
+} from "@/lib/zod-schema/core/staff";
 import { StaffMemberModel, NYCPSStaffModel, TeachingLabStaffModel } from "@/models/core/staff.model";
+import { connectToDB } from "@/lib/db";
+import { handleServerError } from "@/lib/error/handleServerError";
+import { handleValidationError } from "@/lib/error/handleValidationError";
 
-// Types
+// Types for returned documents
 export type StaffMember = z.infer<typeof StaffMemberZodSchema>;
 export type NYCPSStaff = z.infer<typeof NYCPSStaffZodSchema>;
 export type TeachingLabStaff = z.infer<typeof TeachingLabStaffZodSchema>;
 
-export type StaffMemberCreate = Omit<StaffMember, "_id" | "createdAt" | "updatedAt">;
-export type NYCPSStaffCreate = Omit<NYCPSStaff, "_id" | "createdAt" | "updatedAt">;
-export type TeachingLabStaffCreate = Omit<TeachingLabStaff, "_id" | "createdAt" | "updatedAt">;
+// Types for input data
+export type StaffMemberInput = z.infer<typeof StaffMemberInputZodSchema>;
+export type NYCPSStaffInput = z.infer<typeof NYCPSStaffInputZodSchema>;
+export type TeachingLabStaffInput = z.infer<typeof TeachingLabStaffInputZodSchema>;
 
-export type StaffMemberUpdate = Partial<StaffMemberCreate>;
-export type NYCPSStaffUpdate = Partial<NYCPSStaffCreate>;
-export type TeachingLabStaffUpdate = Partial<TeachingLabStaffCreate>;
+// MongoDB document types
+interface StaffMemberDocument extends Document {
+  _id: Types.ObjectId;
+  staffName: string;
+  email?: string;
+  schools: string[];
+  owners: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-// Fetch staff with pagination, filtering, and sorting
-export async function fetchStaff(
-  page: number = 1,
-  limit: number = 10,
-  filters: Record<string, unknown> = {},
-  sortBy: string = "staffName",
-  sortOrder: "asc" | "desc" = "asc",
-  type: StaffType = "all"
-) {
+interface NYCPSStaffDocument extends StaffMemberDocument {
+  gradeLevelsSupported: string[];
+  subjects: string[];
+  specialGroups: string[];
+  rolesNYCPS?: string[];
+  pronunciation?: string;
+  notes?: Array<{
+    date: string;
+    type: string;
+    heading: string;
+    subheading: string[];
+  }>;
+  experience?: Array<{
+    type: string;
+    years: number;
+  }>;
+}
+
+interface TeachingLabStaffDocument extends StaffMemberDocument {
+  adminLevel: string;
+  assignedDistricts: string[];
+  rolesTL?: string[];
+}
+
+/** Fetch Staff */
+export async function fetchStaff({
+  page = 1,
+  limit = 10,
+  filters = {},
+  sortBy = "staffName",
+  sortOrder = "asc",
+  type = "all",
+}: {
+  page?: number;
+  limit?: number;
+  filters?: Record<string, unknown>;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  type?: StaffType;
+} = {}) {
   try {
-    const { model } = getStaffModelAndSchema(type);
+    await connectToDB();
+    const { model, schema } = getStaffModelAndSchema(type);
+    
+    console.log("Fetching staff with params:", { page, limit, filters, sortBy, sortOrder, type });
+
+    // Sanitize filters
     const sanitizedFilters = sanitizeFilters(filters);
-    const result = await executePaginatedQuery<StaffUnion>(
+
+    // Execute paginated query with appropriate schema for validation
+    const result = await executePaginatedQuery(
       model,
       sanitizedFilters,
-      { page, limit, sortBy, sortOrder }
+      schema,
+      {
+        page,
+        limit,
+        sortBy,
+        sortOrder
+      }
     );
 
-    return {
-      items: result.items,
-      total: result.total,
-      isEmpty: result.empty,
-    };
+    return result;
   } catch (error) {
-    console.error("Error fetching staff:", error);
-    throw error;
+    throw new Error(handleServerError(error));
   }
 }
 
 // Create a new staff member
 export async function createStaff(data: unknown) {
   try {
+    await connectToDB();
     const staffType = determineStaffType(data);
-    const { model, schema } = getStaffModelAndSchema(staffType);
+    const { model } = getStaffModelAndSchema(staffType);
     
-    const validatedData = schema.parse(data);
+    // Use input schema for validation
+    const inputSchema = staffType === "nycps" 
+      ? NYCPSStaffInputZodSchema 
+      : staffType === "tl" 
+        ? TeachingLabStaffInputZodSchema 
+        : StaffMemberInputZodSchema;
+    
+    const validatedData = inputSchema.parse(data);
     const staff = await model.create(validatedData);
     
     revalidatePath("/staff");
@@ -78,27 +144,41 @@ export async function createStaff(data: unknown) {
 }
 
 // Create a new NYCPS staff member
-export async function createNYCPSStaff(data: NYCPSStaffCreate) {
-  return createItem(NYCPSStaffModel, NYCPSStaffZodSchema, data, ["/dashboard/staff"]);
+export async function createNYCPSStaff(data: NYCPSStaffInput) {
+  return createItem<NYCPSStaffDocument, typeof NYCPSStaffInputZodSchema>(
+    NYCPSStaffModel,
+    NYCPSStaffInputZodSchema,
+    data,
+    ["/dashboard/staff"]
+  );
 }
 
-// Create a new Teaching Lab staff member
-export async function createTeachingLabStaff(data: TeachingLabStaffCreate) {
-  return createItem(TeachingLabStaffModel, TeachingLabStaffZodSchema, data, ["/dashboard/staff"]);
+// Create a new TeachingLab staff member
+export async function createTeachingLabStaff(data: TeachingLabStaffInput) {
+  return createItem<TeachingLabStaffDocument, typeof TeachingLabStaffInputZodSchema>(
+    TeachingLabStaffModel,
+    TeachingLabStaffInputZodSchema,
+    data,
+    ["/dashboard/staff"]
+  );
 }
 
-// Update a staff member
+// Update an existing staff member
 export async function updateStaff(id: string, data: unknown) {
   try {
+    await connectToDB();
     const staffType = determineStaffType(data);
-    const { model, schema } = getStaffModelAndSchema(staffType);
+    const { model } = getStaffModelAndSchema(staffType);
     
-    const validatedData = schema.parse(data);
+    // Use input schema for validation
+    const inputSchema = staffType === "nycps" 
+      ? NYCPSStaffInputZodSchema 
+      : staffType === "tl" 
+        ? TeachingLabStaffInputZodSchema 
+        : StaffMemberInputZodSchema;
+    
+    const validatedData = inputSchema.parse(data);
     const staff = await model.findByIdAndUpdate(id, validatedData, { new: true });
-    
-    if (!staff) {
-      throw new Error("Staff not found");
-    }
     
     revalidatePath("/staff");
     return staff;
@@ -108,49 +188,96 @@ export async function updateStaff(id: string, data: unknown) {
   }
 }
 
-// Update an NYCPS staff member
-export async function updateNYCPSStaff(id: string, data: NYCPSStaffUpdate) {
-  return updateItem(NYCPSStaffModel, NYCPSStaffZodSchema, id, data, ["/dashboard/staff"]);
+// Update an existing NYCPS staff member
+export async function updateNYCPSStaff(id: string, data: NYCPSStaffInput) {
+  return updateItem<NYCPSStaffDocument, typeof NYCPSStaffInputZodSchema>(
+    NYCPSStaffModel,
+    NYCPSStaffInputZodSchema,
+    id,
+    data,
+    ["/dashboard/staff"]
+  );
 }
 
-// Update a Teaching Lab staff member
-export async function updateTeachingLabStaff(id: string, data: TeachingLabStaffUpdate) {
-  return updateItem(TeachingLabStaffModel, TeachingLabStaffZodSchema, id, data, ["/dashboard/staff"]);
+// Update an existing TeachingLab staff member
+export async function updateTeachingLabStaff(id: string, data: TeachingLabStaffInput) {
+  return updateItem<TeachingLabStaffDocument, typeof TeachingLabStaffInputZodSchema>(
+    TeachingLabStaffModel,
+    TeachingLabStaffInputZodSchema,
+    id,
+    data,
+    ["/dashboard/staff"]
+  );
 }
 
 // Delete a staff member
 export async function deleteStaff(id: string) {
   try {
-    const staff = await StaffMemberModel.findById(id);
-    if (!staff) {
-      throw new Error("Staff not found");
-    }
+    await connectToDB();
+    const staff = await StaffMemberModel.findByIdAndDelete(id);
     
-    const staffType = determineStaffType(staff);
-    const { model } = getStaffModelAndSchema(staffType);
-    
-    await model.findByIdAndDelete(id);
     revalidatePath("/staff");
+    return staff;
   } catch (error) {
     console.error("Error deleting staff:", error);
     throw error;
   }
 }
 
+// Delete an NYCPS staff member
+export async function deleteNYCPSStaff(id: string) {
+  return deleteItem<NYCPSStaffDocument, typeof NYCPSStaffZodSchema>(
+    NYCPSStaffModel,
+    NYCPSStaffZodSchema,
+    id,
+    ["/dashboard/staff"]
+  );
+}
+
+// Delete a TeachingLab staff member
+export async function deleteTeachingLabStaff(id: string) {
+  return deleteItem<TeachingLabStaffDocument, typeof TeachingLabStaffZodSchema>(
+    TeachingLabStaffModel,
+    TeachingLabStaffZodSchema,
+    id,
+    ["/dashboard/staff"]
+  );
+}
+
 // Upload staff data
-export async function bulkUploadStaff(data: unknown[]) {
+export async function uploadStaff(data: StaffMemberInput[] | NYCPSStaffInput[] | TeachingLabStaffInput[]) {
   try {
-    const staffType = determineStaffType(data[0]);
-    const { model, schema } = getStaffModelAndSchema(staffType);
+    await connectToDB();
     
-    return await bulkUpload<StaffUnion>(
-      data as Omit<StaffUnion, "_id" | "createdAt" | "updatedAt">[],
-      model,
-      schema,
-      ["/staff"]
-    );
+    // Determine staff type from first item
+    const staffType = determineStaffType(data[0]);
+    const { model } = getStaffModelAndSchema(staffType);
+    
+    // Use input schema for validation
+    const inputSchema = staffType === "nycps" 
+      ? NYCPSStaffInputZodSchema 
+      : staffType === "tl" 
+        ? TeachingLabStaffInputZodSchema 
+        : StaffMemberInputZodSchema;
+    
+    const result = await bulkUploadToDB(data, model, inputSchema, ["/dashboard/staff"]);
+    
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error
+      };
+    }
+
+    return {
+      success: true,
+      items: result.items
+    };
   } catch (error) {
-    console.error("Error bulk uploading staff:", error);
-    throw error;
+    console.error("Error uploading staff:", error);
+    if (error instanceof z.ZodError) {
+      throw handleValidationError(error);
+    }
+    throw handleServerError(error);
   }
 } 

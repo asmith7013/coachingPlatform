@@ -29,7 +29,7 @@ interface ResourceManagerOptions {
   debug?: boolean;
 }
 
-interface ResourceManagerResult<T> {
+interface ResourceManagerResult<T extends { _id: string }, I> {
   // Data and loading state
   items: T[];
   total: number;
@@ -49,37 +49,37 @@ interface ResourceManagerResult<T> {
   changeSorting: (field: keyof T, direction: "asc" | "desc") => void;
   
   // CRUD operations
-  add: (newItem: Omit<T, "_id">) => Promise<{ success: boolean; [key: string]: unknown }>;
-  edit: (id: string, updated: Partial<T>) => Promise<{ success: boolean; [key: string]: unknown }>;
+  add: (data: I) => Promise<{ success: boolean; [key: string]: unknown }>;
+  edit: (id: string, data: I) => Promise<{ success: boolean; [key: string]: unknown }>;
   remove: (id: string) => Promise<{ success: boolean; error?: string }>;
-  
-  // Cache management
   mutate: () => Promise<ResourceResponse<T> | undefined>;
 }
 
-export function useResourceManager<T extends { _id: string }>(
-  resourceKey: string,
-  fetchFunction: FetchFunction<T>,
-  createFunction: (data: Omit<T, "_id">) => Promise<{ success: boolean; [key: string]: unknown }>,
-  updateFunction: (id: string, data: Partial<T>) => Promise<{ success: boolean; [key: string]: unknown }>,
-  deleteFunction: (id: string) => Promise<{ success: boolean; error?: string }>,
+export function useResourceManager<T extends { _id: string }, I>(
+  resourceName: string,
+  fetchFn: FetchFunction<T>,
+  createFn: (data: I) => Promise<{ success: boolean; [key: string]: unknown }>,
+  updateFn: (id: string, data: I) => Promise<{ success: boolean; [key: string]: unknown }>,
+  deleteFn: (id: string) => Promise<{ success: boolean; error?: string }>,
   options: ResourceManagerOptions = {}
-): ResourceManagerResult<T> {
+): ResourceManagerResult<T, I> {
   const {
     initialPage = 1,
     initialLimit = 20,
-    defaultSortOrder = "desc",
+    defaultSortOrder = "asc",
     debug = false
   } = options;
 
   // Initialize pagination
-  const { page, setPage, limit, setLimit, total, setTotal } = usePagination(initialPage, initialLimit);
+  const { page, setPage, limit, setLimit } = usePagination(initialPage, initialLimit);
 
   // Initialize filters and sorting
-  const { filters, applyFilters, sortBy, changeSorting } = useFiltersAndSorting<T>();
+  const { filters, applyFilters, sortBy, changeSorting } = useFiltersAndSorting<T>({
+    defaultSortOrder
+  });
 
   // Memoize fetch params
-  const fetchParams = useMemo<FetchParams<T>>(() => ({
+  const fetchParams = useMemo(() => ({
     page,
     limit,
     filters,
@@ -88,136 +88,108 @@ export function useResourceManager<T extends { _id: string }>(
   }), [page, limit, filters, sortBy, defaultSortOrder]);
 
   // Memoize cache key
-  const cacheKey = useMemo(() => [resourceKey, page, limit, filters, sortBy], 
-    [resourceKey, page, limit, filters, sortBy]);
+  const cacheKey = useMemo(() => [resourceName, page, limit, filters, sortBy], 
+    [resourceName, page, limit, filters, sortBy]);
 
   // Memoize fetch function
   const fetchData = useCallback(async () => {
     if (debug) {
-      console.log(`[${resourceKey}] Fetching with params:`, fetchParams);
+      console.log(`[${resourceName}] Fetching with params:`, fetchParams);
     }
 
-    const result = await fetchFunction(fetchParams);
-    setTotal(result.total);
+    const result = await fetchFn(fetchParams);
     return result;
-  }, [fetchFunction, fetchParams, resourceKey, debug, setTotal]);
+  }, [fetchFn, fetchParams, resourceName, debug]);
 
   // Initialize SWR data fetching
   const { data, error, isLoading, mutate } = useSafeSWR<ResourceResponse<T>>(
     cacheKey,
     fetchData,
-    `fetch${resourceKey}`
+    `fetch${resourceName}`
   );
 
   if (debug) {
-    console.log(`[${resourceKey}] SWR Status:`, {
+    console.log(`[${resourceName}] SWR Status:`, {
       isLoading,
       error,
-      hasData: !!data
+      data
     });
   }
 
-  // Initialize optimistic updates after SWR
-  const { optimisticAdd, optimisticModify, optimisticRemove } = useOptimisticResource<T>(mutate);
+  // Initialize optimistic updates
+  const { optimisticAdd, optimisticModify, optimisticRemove } = useOptimisticResource<T, I>(mutate);
 
   // Memoize CRUD operations
-  const add = useCallback(async (newItem: Omit<T, "_id">) => {
+  const add = useCallback(async (data: I) => {
     if (debug) {
-      console.log(`[${resourceKey}] Adding item:`, newItem);
+      console.log(`[${resourceName}] Adding item:`, data);
     }
     return handleErrorHandledMutation<{ success: boolean; [key: string]: unknown }>(
-      () => optimisticAdd(newItem, createFunction),
-      `add${resourceKey}`,
+      () => optimisticAdd(data, createFn),
+      `add${resourceName}`,
       mutate
     );
-  }, [optimisticAdd, createFunction, resourceKey, debug, mutate]);
+  }, [optimisticAdd, createFn, resourceName, debug, mutate]);
 
-  const edit = useCallback(async (id: string, updated: Partial<T>) => {
+  const edit = useCallback(async (id: string, data: I) => {
     if (debug) {
-      console.log(`[${resourceKey}] Editing item ${id}:`, updated);
+      console.log(`[${resourceName}] Editing item ${id}:`, data);
     }
     return handleErrorHandledMutation<{ success: boolean; [key: string]: unknown }>(
-      () => optimisticModify(id, updated, updateFunction),
-      `edit${resourceKey}`,
+      () => optimisticModify(id, data, updateFn),
+      `edit${resourceName}`,
       mutate
     );
-  }, [optimisticModify, updateFunction, resourceKey, debug, mutate]);
+  }, [optimisticModify, updateFn, resourceName, debug, mutate]);
 
   const remove = useCallback(async (id: string) => {
     if (debug) {
-      console.log(`[${resourceKey}] Removing item ${id}`);
+      console.log(`[${resourceName}] Removing item ${id}`);
     }
     return handleErrorHandledMutation<{ success: boolean; error?: string }>(
-      () => optimisticRemove(id, deleteFunction),
-      `remove${resourceKey}`,
+      () => optimisticRemove(id, deleteFn),
+      `remove${resourceName}`,
       mutate
     );
-  }, [optimisticRemove, deleteFunction, resourceKey, debug, mutate]);
+  }, [optimisticRemove, deleteFn, resourceName, debug, mutate]);
 
   // Memoize filter and sort operations
   const applyFiltersWithRevalidation = useCallback((newFilters: Partial<T>) => {
     if (debug) {
-      console.log(`[${resourceKey}] Applying filters:`, newFilters);
+      console.log(`[${resourceName}] Applying filters:`, newFilters);
     }
     applyFilters(newFilters, true);
-  }, [applyFilters, resourceKey, debug]);
+  }, [applyFilters, resourceName, debug]);
 
   const changeSortingWithRevalidation = useCallback((field: keyof T, direction: "asc" | "desc") => {
     if (debug) {
-      console.log(`[${resourceKey}] Changing sort:`, { field, direction });
+      console.log(`[${resourceName}] Changing sort:`, { field, direction });
     }
     changeSorting(direction, true);
-  }, [changeSorting, resourceKey, debug]);
+  }, [changeSorting, resourceName, debug]);
 
   // Memoize normalized error
-  const normalizedError = useMemo(() => 
-    error instanceof Error ? error : error ? new Error(String(error)) : null,
-    [error]
-  );
+  const normalizedError = useMemo(() => {
+    if (!error) return null;
+    return error instanceof Error ? error : new Error(String(error));
+  }, [error]);
 
-  // Memoize return object to prevent unnecessary re-renders
-  return useMemo(() => ({
-    // Data and loading state
+  return {
     items: data?.items || [],
-    total,
+    total: data?.total || 0,
     isLoading,
     error: normalizedError,
-    
-    // Pagination
     page,
     setPage,
     limit,
     setLimit,
-    
-    // Filtering and sorting
     filters,
     applyFilters: applyFiltersWithRevalidation,
     sortBy,
     changeSorting: changeSortingWithRevalidation,
-    
-    // CRUD operations
-    add,
-    edit,
-    remove,
-    
-    // Cache management
-    mutate
-  }), [
-    data?.items,
-    total,
-    isLoading,
-    normalizedError,
-    page,
-    setPage,
-    limit,
-    setLimit,
-    filters,
-    applyFiltersWithRevalidation,
-    sortBy,
-    changeSortingWithRevalidation,
     add,
     edit,
     remove,
     mutate
-  ]);
+  };
 }

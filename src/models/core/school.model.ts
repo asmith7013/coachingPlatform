@@ -4,8 +4,8 @@ import { AllowedGradeEnum } from "../shared/shared-types.model";
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 class School {
-  @prop({ type: String })
-  _id?: string;
+  @prop({ type: mongoose.Types.ObjectId, required: true })
+  _id!: mongoose.Types.ObjectId;
 
   @prop({ type: String, required: true })
   schoolNumber!: string;
@@ -22,8 +22,8 @@ class School {
   @prop({ type: String })
   emoji?: string;
 
-  @prop({ enum: AllowedGradeEnum, type: String, required: true, default: [] })
-  gradeLevelsSupported!: AllowedGradeEnum[];
+  @prop({ type: () => [String], required: true, enum: AllowedGradeEnum })
+  gradeLevelsSupported!: string[];
 
   @prop({ type: () => [String], required: true })
   staffList!: string[];

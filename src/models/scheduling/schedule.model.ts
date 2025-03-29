@@ -1,5 +1,5 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import {
   DayTypeEnum,
   BlockDayTypeEnum,
@@ -8,9 +8,12 @@ import {
 } from "../shared/shared-types.model";
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-class ClassScheduleItem {
+export class ClassScheduleItem {
+  @prop({ type: Types.ObjectId, required: true })
+  _id!: Types.ObjectId;
+
   @prop({ enum: DayTypeEnum, type: String, required: true })
-  day!: DayTypeEnum;
+  dayType!: DayTypeEnum;
 
   @prop({ type: String, required: true })
   startTime!: string;
@@ -20,18 +23,21 @@ class ClassScheduleItem {
 }
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-class AssignedCycleDay {
-  @prop({ type: Date, required: true })
-  date!: Date;
+export class AssignedCycleDay {
+  @prop({ type: Types.ObjectId, required: true })
+  _id!: Types.ObjectId;
+
+  @prop({ type: String, required: true })
+  date!: string;
 
   @prop({ enum: BlockDayTypeEnum, type: String, required: true })
   blockDayType!: BlockDayTypeEnum;
 }
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-class BellSchedule {
-  @prop({ type: String })
-  _id?: string;
+export class BellSchedule {
+  @prop({ type: Types.ObjectId, required: true })
+  _id!: Types.ObjectId;
 
   @prop({ type: String, required: true })
   school!: string;
@@ -47,16 +53,13 @@ class BellSchedule {
 
   @prop({ type: () => [String], required: true })
   owners!: string[];
-
-  @prop({ type: Date })
-  createdAt?: Date;
-
-  @prop({ type: Date })
-  updatedAt?: Date;
 }
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-class Period {
+export class Period {
+  @prop({ type: Types.ObjectId, required: true })
+  _id!: Types.ObjectId;
+
   @prop({ type: Number, required: true })
   periodNum!: number;
 
@@ -71,7 +74,10 @@ class Period {
 }
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-class DailySchedule {
+export class ScheduleByDay {
+  @prop({ type: Types.ObjectId, required: true })
+  _id!: Types.ObjectId;
+
   @prop({ enum: DayTypeEnum, type: String, required: true })
   day!: DayTypeEnum;
 
@@ -80,9 +86,9 @@ class DailySchedule {
 }
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-class TeacherSchedule {
-  @prop({ type: String })
-  _id?: string;
+export class TeacherSchedule {
+  @prop({ type: Types.ObjectId, required: true })
+  _id!: Types.ObjectId;
 
   @prop({ type: String, required: true })
   teacher!: string;
@@ -90,17 +96,11 @@ class TeacherSchedule {
   @prop({ type: String, required: true })
   school!: string;
 
-  @prop({ type: () => [DailySchedule], required: true })
-  scheduleByDay!: DailySchedule[];
+  @prop({ type: () => [ScheduleByDay], required: true })
+  scheduleByDay!: ScheduleByDay[];
 
   @prop({ type: () => [String], required: true })
   owners!: string[];
-
-  @prop({ type: Date })
-  createdAt?: Date;
-
-  @prop({ type: Date })
-  updatedAt?: Date;
 }
 
 export const ClassScheduleItemModel =
@@ -115,17 +115,8 @@ export const BellScheduleModel =
 export const PeriodModel =
   mongoose.models.Period || getModelForClass(Period);
 
-export const DailyScheduleModel =
-  mongoose.models.DailySchedule || getModelForClass(DailySchedule);
+export const ScheduleByDayModel =
+  mongoose.models.ScheduleByDay || getModelForClass(ScheduleByDay);
 
 export const TeacherScheduleModel =
   mongoose.models.TeacherSchedule || getModelForClass(TeacherSchedule);
-
-export {
-  ClassScheduleItem,
-  AssignedCycleDay,
-  BellSchedule,
-  Period,
-  DailySchedule,
-  TeacherSchedule,
-};

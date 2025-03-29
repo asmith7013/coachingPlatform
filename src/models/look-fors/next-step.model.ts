@@ -1,10 +1,10 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
-import mongoose from "mongoose"; // Required for model cache
+import mongoose, { Types } from "mongoose"; // Required for model cache
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-class NextStep {
-  @prop({ type: String })
-  _id?: string;
+export class NextStep {
+  @prop({ type: Types.ObjectId, required: true })
+  _id!: Types.ObjectId;
 
   @prop({ type: String, required: true })
   description!: string;
@@ -20,15 +20,6 @@ class NextStep {
 
   @prop({ type: () => [String], required: true })
   owners!: string[];
-
-  @prop({ type: Date })
-  createdAt?: Date;
-
-  @prop({ type: Date })
-  updatedAt?: Date;
 }
 
-export const NextStepModel =
-  mongoose.models.NextStep || getModelForClass(NextStep);
-
-export { NextStep };
+export const NextStepModel = mongoose.models.NextStep || getModelForClass(NextStep);

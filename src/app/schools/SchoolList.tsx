@@ -3,7 +3,8 @@
 import React from "react";
 import { useSchools } from "@/hooks/useSchools"; // Import the custom hook for managing schools.
 import AddSchoolForm from "@/components/schools/AddSchoolForm"; // Component for adding new schools.
-import BulkUploadSchools from "@/components/schools/BulkUploadSchools"; // Component for bulk uploading schools.
+import BulkUploadForm from "@/components/form/BulkUploadForm";
+import { uploadSchoolFile } from "@actions/schools/schools";
 
 export default function SchoolList() {
   const {
@@ -60,7 +61,11 @@ export default function SchoolList() {
       </div>
 
       <AddSchoolForm /> {/* Form for adding new schools */}
-      <BulkUploadSchools /> {/* Bulk Upload Component for schools */}
+      <BulkUploadForm
+        title="Bulk Upload Schools"
+        description="Upload a CSV file with school data"
+        onUpload={uploadSchoolFile}
+      />
     </div>
   );
 } 

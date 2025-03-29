@@ -1,5 +1,9 @@
-import type { Model } from "mongoose";
+import type { HydratedDocument, Model } from "mongoose";
 import { handleServerError } from "@/lib/error/handleServerError";
+import { connectToDB } from "@/lib/db";
+import { sanitizeDocuments } from "./sanitize";
+import type { ZodSchema } from "zod";
+import { z } from "zod";
 
 export interface PaginationOptions {
   page?: number;
@@ -21,7 +25,7 @@ export interface PaginatedResult<T> {
  * Builds a paginated query for MongoDB
  */
 export function buildPaginatedQuery<T>(
-  model: Model<T>,
+  model: Model<HydratedDocument<T>>,
   filters: Record<string, unknown>,
   { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" }: PaginationOptions = {}
 ) {
@@ -40,13 +44,17 @@ export function buildPaginatedQuery<T>(
 /**
  * Executes a paginated query and returns results with metadata
  */
-export async function executePaginatedQuery<T>(
-  model: Model<T>,
+export async function executePaginatedQuery<T, S extends ZodSchema>(
+  model: Model<HydratedDocument<T>>,
   filters: Record<string, unknown>,
+  schema: S,
   options: PaginationOptions = {}
-): Promise<PaginatedResult<T>> {
+): Promise<PaginatedResult<z.infer<S>>> {
   try {
     const { page = 1, limit = 20 } = options;
+    
+    // Ensure database connection
+    await connectToDB();
     
     // Build and execute query
     const query = buildPaginatedQuery(model, filters, options);
@@ -55,11 +63,14 @@ export async function executePaginatedQuery<T>(
       model.countDocuments(filters)
     ]);
     
+    // Sanitize items for client
+    const sanitizedItems = sanitizeDocuments(items, schema);
+    
     // Calculate metadata
     const totalPages = Math.ceil(total / limit);
     
     return {
-      items,
+      items: sanitizedItems,
       total,
       page,
       limit,

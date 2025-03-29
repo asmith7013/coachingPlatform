@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { NoteZodSchema } from "../shared/notes";
-import { GradeLevelsSupportedZod, SubjectsZod, SpecialGroupsZod, RolesNYCPSZod, RolesTLZod, AdminLevelZod } from "../shared/shared-types";
+import { GradeLevelsSupportedZod, SubjectsZod, SpecialGroupsZod, RolesNYCPSZod, RolesTLZod, AdminLevelZod } from "../shared/enums";
 
 // ✅ Experience Schema
 export const ExperienceZodSchema = z.object({
@@ -8,38 +8,61 @@ export const ExperienceZodSchema = z.object({
   years: z.number().nonnegative(),
 });
 
-// ✅ Base StaffMember Schema
-export const StaffMemberZodSchema = z.object({
-  _id: z.string().optional(), // MongoDB auto-generates this
-  id: z.string(), // Unique ID
+// ✅ Base StaffMember Input Schema
+export const StaffMemberInputZodSchema = z.object({
   staffName: z.string(),
   email: z.string().email().optional(),
   schools: z.array(z.string()), // Array of school IDs
   owners: z.array(z.string()), // Owner IDs
-  createdAt: z.date().optional(), // Match Mongoose timestamps
-  updatedAt: z.date().optional(), // Match Mongoose timestamps
 });
 
-// ✅ NYCPS Staff Schema (Extends StaffMember)
-export const NYCPSStaffZodSchema = StaffMemberZodSchema.extend({
+// ✅ Base StaffMember Full Schema
+export const StaffMemberZodSchema = StaffMemberInputZodSchema.extend({
+  _id: z.string(),
+  id: z.string(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+});
+
+// ✅ NYCPS Staff Input Schema
+export const NYCPSStaffInputZodSchema = StaffMemberInputZodSchema.extend({
   gradeLevelsSupported: z.array(GradeLevelsSupportedZod),
   subjects: z.array(SubjectsZod),
   specialGroups: z.array(SpecialGroupsZod),
   rolesNYCPS: z.array(RolesNYCPSZod).optional(),
   pronunciation: z.string().optional(),
   notes: z.array(NoteZodSchema).optional(),
-  experience: z.array(ExperienceZodSchema).optional(), // Required in this case
+  experience: z.array(ExperienceZodSchema).optional(),
 });
 
-// ✅ Teaching Lab Staff Schema (Extends StaffMember)
-export const TeachingLabStaffZodSchema = StaffMemberZodSchema.extend({
+// ✅ NYCPS Staff Full Schema
+export const NYCPSStaffZodSchema = NYCPSStaffInputZodSchema.extend({
+  _id: z.string(),
+  id: z.string(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+});
+
+// ✅ Teaching Lab Staff Input Schema
+export const TeachingLabStaffInputZodSchema = StaffMemberInputZodSchema.extend({
   adminLevel: AdminLevelZod,
   assignedDistricts: z.array(z.string()),
   rolesTL: z.array(RolesTLZod).optional(),
 });
 
+// ✅ Teaching Lab Staff Full Schema
+export const TeachingLabStaffZodSchema = TeachingLabStaffInputZodSchema.extend({
+  _id: z.string(),
+  id: z.string(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+});
+
 // ✅ Auto-generate TypeScript types
+export type StaffMemberInput = z.infer<typeof StaffMemberInputZodSchema>;
 export type StaffMember = z.infer<typeof StaffMemberZodSchema>;
+export type NYCPSStaffInput = z.infer<typeof NYCPSStaffInputZodSchema>;
 export type NYCPSStaff = z.infer<typeof NYCPSStaffZodSchema>;
+export type TeachingLabStaffInput = z.infer<typeof TeachingLabStaffInputZodSchema>;
 export type TeachingLabStaff = z.infer<typeof TeachingLabStaffZodSchema>;
 export type Experience = z.infer<typeof ExperienceZodSchema>;

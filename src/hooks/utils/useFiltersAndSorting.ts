@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { useSWRConfig } from "swr";
 
+interface FiltersAndSortingOptions {
+  defaultSortOrder?: "asc" | "desc";
+}
+
 /**
  * SWR-Optimized Hook for managing filters and sorting.
  */
-export function useFiltersAndSorting<T extends Record<string, unknown>>() {
+export function useFiltersAndSorting<T extends Record<string, unknown>>(options: FiltersAndSortingOptions = {}) {
     const { mutate } = useSWRConfig(); // ✅ Get SWR's mutate function
     const [filters, setFilters] = useState<Partial<T>>({});
-    const [sortBy, setSortBy] = useState<string>("desc");
+    const [sortBy, setSortBy] = useState<string>(options.defaultSortOrder || "desc");
 
     const applyFilters = (newFilters: Partial<T>, autoMutate = false) => {
         setFilters(newFilters);

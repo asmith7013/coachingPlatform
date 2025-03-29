@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// ✅ Rubric Schema
+// ✅ Rubric Schema (shared schema)
 export const RubricZodSchema = z.object({
   score: z.number(), // Required number
   category: z.array(z.string()), // Array of category strings
@@ -10,17 +10,23 @@ export const RubricZodSchema = z.object({
   hex: z.string().optional(), // Optional hex value
 });
 
-// ✅ RubricScore Schema
-export const RubricScoreZodSchema = z.object({
+// ✅ RubricScore Input Schema
+export const RubricScoreInputZodSchema = z.object({
   date: z.string(), // Required ISO date string
   score: z.number(), // Required score
   staffId: z.string(), // Required staff ID
   school: z.string(), // Required school ID
   owners: z.array(z.string()), // Array of owner IDs
-  createdAt: z.date().optional(), // Use Date type instead of string
-  updatedAt: z.date().optional(), // Use Date type instead of string
+});
+
+// ✅ RubricScore Full Schema
+export const RubricScoreZodSchema = RubricScoreInputZodSchema.extend({
+  _id: z.string(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
 // ✅ Auto-generate TypeScript types
 export type Rubric = z.infer<typeof RubricZodSchema>;
+export type RubricScoreInput = z.infer<typeof RubricScoreInputZodSchema>;
 export type RubricScore = z.infer<typeof RubricScoreZodSchema>;

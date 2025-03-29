@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useResourceManager } from "@hooks/utils/useResourceManager";
 import { fetchSchools, createSchool, updateSchool, deleteSchool } from "@/app/actions/schools/schools";
-import { School } from "@/lib/zod-schema";
+import { School, SchoolInput } from "@/lib/zod-schema";
 
 export function useSchools(initialPage: number = 1, initialLimit: number = 20) {
   const [performanceMode, setPerformanceMode] = useState(true);
@@ -23,7 +23,7 @@ export function useSchools(initialPage: number = 1, initialLimit: number = 20) {
     edit: editSchool,
     remove: removeSchool,
     mutate
-  } = useResourceManager<School>(
+  } = useResourceManager<School, SchoolInput>(
     "schools",
     fetchSchools,
     createSchool,

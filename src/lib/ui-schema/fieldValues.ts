@@ -1,22 +1,28 @@
 import {
-    AllowedGradeEnum,
-    AllowedSubjectsEnum,
-    AllowedSpecialGroupsEnum,
-    AllowedRolesNYCPSEnum,
-    AllowedRolesTLEnum,
-    TLAdminTypeEnum,
-    DayTypeEnum,
-    BlockDayTypeEnum,
-    BellScheduleTypesEnum,
-    PeriodTypesEnum,
-    DurationTypesEnum,
-    EventTypesEnum,
-    SettingTypesEnum,
-    YesNoEnum,
-    LengthTypeEnum,
-    TeacherLeaderTypeEnum,
-    AllowedPurposeEnum,
-} from "@/models/shared";
+    GradeLevelsSupportedZod,
+    SubjectsZod,
+    SpecialGroupsZod,
+    DayTypeZod,
+    BlockDayTypeZod,
+    BellScheduleTypeZod,
+    PeriodTypeZod,
+    DurationValues,
+    EventTypeZod,
+    NoteTypeZod,
+    SessionPurposeZod,
+    RolesNYCPSZod,
+    RolesTLZod,
+    AdminLevelZod,
+    IPGIndicatorZod,
+    ImplementationIndicatorZod,
+    SupportCycleTypeZod,
+    AllowedPurposeZod,
+    ReasonDoneZod,
+    TotalDurationZod,
+    SolvesTouchpointZod,
+} from "@/lib/zod-schema/shared";
+
+import { SettingTypesEnum, YesNoEnum, LengthTypeEnum, TeacherLeaderTypeEnum } from "@/models/shared";
 
 // import type {
 //     AllowedPurpose, GradeLevelsSupported, Subjects, SpecialGroups,
@@ -25,129 +31,88 @@ import {
 //     EventType, Duration, AdminLevel, SolvesTouchpoint
 // } from "@/models/models";
 
-// ✅ Dynamically Extract Enum Values
-export const AllowedPurposeValues: AllowedPurposeEnum[] = [
-    AllowedPurposeEnum.INITIAL_WALKTHROUGH,
-    AllowedPurposeEnum.VISIT,
-    AllowedPurposeEnum.FINAL_WALKTHROUGH
-] as const;
+// ✅ Grade Levels Supported Values
+export const GradeLevelsSupportedValues = GradeLevelsSupportedZod.options;
 
-export const GradeLevelsSupportedValues: AllowedGradeEnum[] = [
-    AllowedGradeEnum.KINDERGARTEN,
-    AllowedGradeEnum.GRADE_1,
-    AllowedGradeEnum.GRADE_2,
-    AllowedGradeEnum.GRADE_3,
-    AllowedGradeEnum.GRADE_4,
-    AllowedGradeEnum.GRADE_5,
-    AllowedGradeEnum.GRADE_6,
-    AllowedGradeEnum.GRADE_7,
-    AllowedGradeEnum.GRADE_8,
-    AllowedGradeEnum.GRADE_9,
-    AllowedGradeEnum.GRADE_10,
-    AllowedGradeEnum.GRADE_11,
-    AllowedGradeEnum.GRADE_12
-] as const;
+// ✅ Subjects Values
+export const SubjectsValues = SubjectsZod.options;
 
-export const SubjectsValues: AllowedSubjectsEnum[] = [
-    AllowedSubjectsEnum.MATH_6,
-    AllowedSubjectsEnum.MATH_7,
-    AllowedSubjectsEnum.MATH_8,
-    AllowedSubjectsEnum.ALGEBRA_I,
-    AllowedSubjectsEnum.GEOMETRY,
-    AllowedSubjectsEnum.ALGEBRA_II
-] as const;
+// ✅ Special Groups Values
+export const SpecialGroupsValues = SpecialGroupsZod.options;
 
-export const SpecialGroupsValues: AllowedSpecialGroupsEnum[] = [
-    AllowedSpecialGroupsEnum.SPED,
-    AllowedSpecialGroupsEnum.ELL
-] as const;
+// ✅ Day Type Values
+export const DayTypeValues = DayTypeZod.options;
 
-export const RolesNYCPSValues: AllowedRolesNYCPSEnum[] = [
-    AllowedRolesNYCPSEnum.TEACHER,
-    AllowedRolesNYCPSEnum.PRINCIPAL,
-    AllowedRolesNYCPSEnum.AP,
-    AllowedRolesNYCPSEnum.COACH,
-    AllowedRolesNYCPSEnum.ADMINISTRATOR
-] as const;
+// ✅ Block Day Type Values
+export const BlockDayTypeValues = BlockDayTypeZod.options;
 
-export const RolesTLValues: AllowedRolesTLEnum[] = [
-    AllowedRolesTLEnum.COACH,
-    AllowedRolesTLEnum.CPM,
-    AllowedRolesTLEnum.DIRECTOR,
-    AllowedRolesTLEnum.SENIOR_DIRECTOR
-] as const;
+// ✅ Bell Schedule Type Values
+export const BellScheduleTypeValues = BellScheduleTypeZod.options;
 
-export const DayTypeValues: DayTypeEnum[] = [
-    DayTypeEnum.UNIFORM,
-    DayTypeEnum.MONDAY,
-    DayTypeEnum.TUESDAY,
-    DayTypeEnum.WEDNESDAY,
-    DayTypeEnum.THURSDAY,
-    DayTypeEnum.FRIDAY,
-    DayTypeEnum.A,
-    DayTypeEnum.B,
-    DayTypeEnum.C
-] as const;
+// ✅ Period Type Values
+export const PeriodTypeValues = PeriodTypeZod.options;
 
-export const BlockDayTypeValues: BlockDayTypeEnum[] = [
-    BlockDayTypeEnum.A,
-    BlockDayTypeEnum.B,
-    BlockDayTypeEnum.C
-] as const;
+// ✅ Duration Values
+export { DurationValues };
 
-export const BellScheduleTypeValues: BellScheduleTypesEnum[] = [
-    BellScheduleTypesEnum.UNIFORM,
-    BellScheduleTypesEnum.WEEKLYCYCLE,
-    BellScheduleTypesEnum.ABCCYCLE
-] as const;
+// ✅ Event Type Values
+export const EventTypeValues = EventTypeZod.options;
 
-export const PeriodTypeValues: PeriodTypesEnum[] = [
-    PeriodTypesEnum.CLASS,
-    PeriodTypesEnum.PREP,
-    PeriodTypesEnum.LUNCH,
-    PeriodTypesEnum.MEETING
-] as const;
+// ✅ Note Type Values
+export const NoteTypeValues = NoteTypeZod.options;
 
+// ✅ Session Purpose Values
+export const SessionPurposeValues = SessionPurposeZod.options;
+
+// ✅ Roles NYCPS Values
+export const RolesNYCPSValues = RolesNYCPSZod.options;
+
+// ✅ Roles TL Values
+export const RolesTLValues = RolesTLZod.options;
+
+// ✅ Admin Level Values
+export const AdminLevelValues = AdminLevelZod.options;
+
+// ✅ IPG Indicator Values
+export const IPGIndicatorValues = IPGIndicatorZod.options;
+
+// ✅ Implementation Indicator Values
+export const ImplementationIndicatorValues = ImplementationIndicatorZod.options;
+
+// ✅ Support Cycle Type Values
+export const SupportCycleTypeValues = SupportCycleTypeZod.options;
+
+// ✅ Allowed Purpose Values
+export const AllowedPurposeValues = AllowedPurposeZod.options;
+
+// ✅ Reason Done Values
+export const ReasonDoneValues = ReasonDoneZod.options;
+
+// ✅ Total Duration Values
+export const TotalDurationValues = TotalDurationZod.options;
+
+// ✅ Solves Touchpoint Values
+export const SolvesTouchpointValues = SolvesTouchpointZod.options;
+
+// Legacy Enum Values
 export const ModeDoneValues: SettingTypesEnum[] = [
     SettingTypesEnum.IN_PERSON,
     SettingTypesEnum.VIRTUAL,
-    SettingTypesEnum.HYBRID
+    SettingTypesEnum.HYBRID,
 ] as const;
 
-export const ReasonDoneValues: YesNoEnum[] = [
+export const YesNoValues: YesNoEnum[] = [
     YesNoEnum.YES,
-    YesNoEnum.NO
+    YesNoEnum.NO,
 ] as const;
 
-export const TotalDurationValues: LengthTypeEnum[] = [
+export const LengthTypeValues: LengthTypeEnum[] = [
     LengthTypeEnum.FULL_DAY___6_HOURS,
-    LengthTypeEnum.HALF_DAY___3_HOURS
+    LengthTypeEnum.HALF_DAY___3_HOURS,
 ] as const;
 
-export const SolvesTouchpointValues: TeacherLeaderTypeEnum[] = [
+export const TeacherLeaderTypeValues: TeacherLeaderTypeEnum[] = [
     TeacherLeaderTypeEnum.TEACHER_SUPPORT,
     TeacherLeaderTypeEnum.LEADER_SUPPORT,
-    TeacherLeaderTypeEnum.TEACHER_OR_TEACHER___LEADER_SUPPORT
-] as const;
-
-export const EventTypeValues: EventTypesEnum[] = [
-    EventTypesEnum.OBSERVATION,
-    EventTypesEnum.DEBRIEF
-] as const;
-
-export const DurationValues: DurationTypesEnum[] = [
-    DurationTypesEnum.MIN_15,
-    DurationTypesEnum.MIN_30,
-    DurationTypesEnum.MIN_45,
-    DurationTypesEnum.MIN_60,
-    DurationTypesEnum.MIN_75,
-    DurationTypesEnum.MIN_90
-] as const;
-
-export const AdminLevelValues: TLAdminTypeEnum[] = [
-    TLAdminTypeEnum.COACH,
-    TLAdminTypeEnum.MANAGER,
-    TLAdminTypeEnum.CPM,
-    TLAdminTypeEnum.DIRECTOR,
-    TLAdminTypeEnum.SENIOR_DIRECTOR
+    TeacherLeaderTypeEnum.TEACHER_OR_TEACHER___LEADER_SUPPORT,
 ] as const;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BellScheduleTypeZod, BlockDayTypeZod, DayTypeZod, PeriodTypeZod } from "../shared/shared-types";
+import { BellScheduleTypeZod, BlockDayTypeZod, DayTypeZod, PeriodTypeZod } from "../shared/enums";
 
 // ✅ Class Schedule Item Schema
 export const ClassScheduleItemZodSchema = z.object({
@@ -14,16 +14,20 @@ export const AssignedCycleDayZodSchema = z.object({
   blockDayType: BlockDayTypeZod, // Enum for block day type
 });
 
-// ✅ Bell Schedule Schema
-export const BellScheduleZodSchema = z.object({
-  _id: z.string().optional(), // MongoDB auto-generates this
+// ✅ Bell Schedule Input Schema
+export const BellScheduleInputZodSchema = z.object({
   school: z.string(), // Required school ID
   bellScheduleType: BellScheduleTypeZod, // Enum for schedule type
   classSchedule: z.array(ClassScheduleItemZodSchema), // Array of class schedules
   assignedCycleDays: z.array(AssignedCycleDayZodSchema), // Array of assigned cycle days
   owners: z.array(z.string()), // Array of owner IDs
-  createdAt: z.date().optional(), // Use Date type instead of string
-  updatedAt: z.date().optional(), // Use Date type instead of string
+});
+
+// ✅ Bell Schedule Full Schema
+export const BellScheduleZodSchema = BellScheduleInputZodSchema.extend({
+  _id: z.string(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
 // ✅ Period Schema
@@ -40,21 +44,27 @@ export const ScheduleByDayZodSchema = z.object({
   periods: z.array(PeriodZodSchema), // Array of periods
 });
 
-// ✅ Teacher Schedule Schema
-export const TeacherScheduleZodSchema = z.object({
-  _id: z.string().optional(), // MongoDB auto-generates this
+// ✅ Teacher Schedule Input Schema
+export const TeacherScheduleInputZodSchema = z.object({
   teacher: z.string(), // Required teacher ID
   school: z.string(), // Required school ID
   scheduleByDay: z.array(ScheduleByDayZodSchema), // Array of daily schedules
   owners: z.array(z.string()), // Array of owner IDs
-  createdAt: z.date().optional(), // Use Date type instead of string
-  updatedAt: z.date().optional(), // Use Date type instead of string
+});
+
+// ✅ Teacher Schedule Full Schema
+export const TeacherScheduleZodSchema = TeacherScheduleInputZodSchema.extend({
+  _id: z.string(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
 // ✅ Auto-generate TypeScript types
 export type ClassScheduleItem = z.infer<typeof ClassScheduleItemZodSchema>;
 export type AssignedCycleDay = z.infer<typeof AssignedCycleDayZodSchema>;
+export type BellScheduleInput = z.infer<typeof BellScheduleInputZodSchema>;
 export type BellSchedule = z.infer<typeof BellScheduleZodSchema>;
 export type Period = z.infer<typeof PeriodZodSchema>;
 export type ScheduleByDay = z.infer<typeof ScheduleByDayZodSchema>;
+export type TeacherScheduleInput = z.infer<typeof TeacherScheduleInputZodSchema>;
 export type TeacherSchedule = z.infer<typeof TeacherScheduleZodSchema>;

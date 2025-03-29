@@ -1,17 +1,5 @@
 import { z } from "zod";
-
-// ✅ ReasonDone Enum
-export const ReasonDoneZod = z.enum(["Yes", "No"]);
-
-// ✅ TotalDuration Enum
-export const TotalDurationZod = z.enum(["Full day - 6 hours", "Half day - 3 hours"]);
-
-// ✅ SolvesTouchpoint Enum
-export const SolvesTouchpointZod = z.enum([
-  "Teacher support",
-  "Leader support",
-  "Teacher OR teacher & leader support",
-]);
+import { ReasonDoneZod, TotalDurationZod, SolvesTouchpointZod } from "../shared/enums";
 
 // ✅ CoachingLog Schema
 export const CoachingLogZodSchema = z.object({
@@ -35,7 +23,4 @@ export const CoachingLogZodSchema = z.object({
 });
 
 // ✅ Auto-generate TypeScript types
-export type ReasonDone = z.infer<typeof ReasonDoneZod>;
-export type TotalDuration = z.infer<typeof TotalDurationZod>;
-export type SolvesTouchpoint = z.infer<typeof SolvesTouchpointZod>;
 export type CoachingLog = z.infer<typeof CoachingLogZodSchema>;

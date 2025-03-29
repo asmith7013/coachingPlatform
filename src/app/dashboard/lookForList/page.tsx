@@ -1,25 +1,39 @@
 "use client";
 
-import React, { } from "react";
-import AddLookForForm from "@/components/lookFors/add";
-import BulkUploadLookFors from "@/components/lookFors/bulkUpload";
+import React from "react";
+import GenericAddForm from "@/components/form/GenericAddForm";
+import BulkUploadForm from "@/components/form/BulkUploadForm";
 import { useLookFors } from "@/hooks/useLookFors";
+import { uploadLookForFile } from "@actions/lookFors/lookFors";
+import { createLookFor } from "@actions/lookFors/lookFors";
+import { LookForInput } from "@/lib/zod-schema/look-fors/look-for";
+import LookForFieldConfig from "@/lib/ui-schema/fieldConfig/look-fors/look-for";
+
+const createEmptyLookFor = (): LookForInput => ({
+  lookForIndex: 0,
+  schools: [],
+  teachers: [],
+  topic: "",
+  description: "",
+  studentFacing: "Yes",
+  rubric: [],
+  owners: [],
+  category: "",
+  status: "draft"
+});
 
 export default function LookForsWrapper() {
   // ✅ Use `useLookFors` hook for data management
   const { 
     lookFors, 
     loading, 
-    error, 
     page, 
     setPage, 
     limit, 
-    // setLimit, 
     total, 
     removeLookFor,
     applyFilters,
     changeSorting,
-    // performanceMode
   } = useLookFors();
 
   // ✅ Confirm and Delete LookFor using Hook
@@ -32,11 +46,9 @@ export default function LookForsWrapper() {
   const handleDeleteLookFor = async (id: string) => {
     await removeLookFor(id);  // ✅ Uses the hook instead of direct API calls
   };
-  console.log("🔍 error terminal", error, 'error', lookFors, 'lookFors', loading, 'loading');
-  if (loading) return <p>Loading LookFors...</p>;
-  // if (error) return <p className="text-red-500">{error}</p>;
 
-  // console.log("🔍 lookFors", lookFors, 'lookFors in page');
+  if (loading) return <p>Loading LookFors...</p>;
+
   return (
     <div className="container mx-auto mt-8 p-6">
       <h2 className="text-2xl font-semibold mb-4">Look Fors</h2>
@@ -109,10 +121,21 @@ export default function LookForsWrapper() {
       </div>
 
       {/* ✅ Add LookFor Form */}
-      <AddLookForForm />
+      <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200 mt-6">
+        <GenericAddForm
+          title="Add Look For"
+          defaultValues={createEmptyLookFor()}
+          onSubmit={createLookFor}
+          fields={LookForFieldConfig}
+        />
+      </div>
 
       {/* ✅ Bulk Upload Component */}
-      <BulkUploadLookFors />
+      <BulkUploadForm
+        title="Bulk Upload Look Fors"
+        description="Upload a CSV file containing Look Fors and embedded rubric rows"
+        onUpload={uploadLookForFile}
+      />
     </div>
   );
 }

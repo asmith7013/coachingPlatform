@@ -117,7 +117,7 @@ export const LookForFieldLabels: Record<keyof LookFor, string> = {
     category: "Category",
     status: "Status",
     description: "Description",
-    studentFacing: "🍎 Student Facing",
+    studentFacing: "Student Facing",
     rubric: "Rubric",
     owners: "Owners",
     createdAt: "Created At",
@@ -189,16 +189,20 @@ export const NextStepFieldLabels: Record<keyof NextStep, string> = {
 };
 
 export const NoteFieldLabels: Record<keyof Note, string> = {
+    _id: "ID",
     date: "Date",
     type: "Type",
     heading: "Heading",
     subheading: "Subheadings",
+    createdAt: "Created At",
+    updatedAt: "Updated At",
 };
 
 export const RubricScoreFieldLabels: Record<keyof RubricScore, string> = {
+    _id: "ID",
     date: "Date",
     score: "Score",
-    staffId: "Staff Member",
+    staffId: "Staff ID",
     school: "School",
     owners: "Owners",
     createdAt: "Created At",

@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { SchoolModel } from "@/models/core";
-import { SchoolZodSchema } from "@/lib/zod-schema/core/school";
+import { SchoolInputZodSchema, SchoolZodSchema } from "@/lib/zod-schema/core/school";
 import { handleServerError } from "@/lib/error/handleServerError";
 import { handleValidationError } from "@/lib/error/handleValidationError";
 import { 
@@ -12,7 +12,7 @@ import {
   updateItem,
   deleteItem
 } from "@/lib/server-utils";
-import { bulkUpload } from "@/lib/server-utils/bulkUpload";
+import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
 import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
 
 // Types
@@ -40,33 +40,33 @@ export async function fetchSchools({
     // Sanitize filters
     const sanitizedFilters = sanitizeFilters(filters);
 
-    // Execute paginated query
-    const result = await executePaginatedQuery(SchoolModel, sanitizedFilters, {
-      page,
-      limit,
-      sortBy,
-      sortOrder
-    });
+    // Execute paginated query with SchoolZodSchema for validation
+    const result = await executePaginatedQuery(
+      SchoolModel,
+      sanitizedFilters,
+      SchoolZodSchema,
+      {
+        page,
+        limit,
+        sortBy,
+        sortOrder
+      }
+    );
 
-    return {
-      items: result.items,
-      total: result.total,
-      empty: result.empty
-    };
+    return result;
   } catch (error) {
-    console.error("Error fetching schools:", error);
-    throw handleServerError(error);
+    throw new Error(handleServerError(error));
   }
 }
 
 /** Create School */
 export async function createSchool(data: SchoolCreate) {
-  return createItem(SchoolModel, SchoolZodSchema, data, ["/schools", "/schools/[id]"]);
+  return createItem(SchoolModel, SchoolInputZodSchema, data, ["/schools", "/schools/[id]"]);
 }
 
 /** Update School */
 export async function updateSchool(id: string, data: SchoolUpdate) {
-  return updateItem(SchoolModel, SchoolZodSchema, id, data, ["/schools", "/schools/[id]"]);
+  return updateItem(SchoolModel, SchoolInputZodSchema, id, data, ["/schools", "/schools/[id]"]);
 }
 
 /** Delete School */
@@ -87,7 +87,7 @@ export const uploadSchoolFile = async (file: File): Promise<string> => {
 /** Upload schools data */
 export async function uploadSchools(data: SchoolCreate[]) {
   try {
-    const result = await bulkUpload(data, SchoolModel, SchoolZodSchema, ["/schools"]);
+    const result = await bulkUploadToDB(data, SchoolModel, SchoolInputZodSchema, ["/schools"]);
     
     if (!result.success) {
       return {

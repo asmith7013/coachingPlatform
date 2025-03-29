@@ -1,14 +1,11 @@
 import { z } from "zod";
-import { GradeLevelsSupportedZod, EventTypeZod, DurationZod } from "../shared/shared-types";
-
-// ✅ AllowedPurpose Enum
-export const AllowedPurposeZod = z.enum(["Initial Walkthrough", "Visit", "Final Walkthrough"]);
-
-// ✅ ModeDone Enum
-export const ModeDoneZod = z.enum(["In-person", "Virtual", "Hybrid"]);
-
-// ✅ EventType Enum
-// export const EventTypeZod = z.enum(["observation", "debrief"]);
+import { 
+  GradeLevelsSupportedZod, 
+  EventTypeZod, 
+  DurationZod,
+  AllowedPurposeZod,
+  ModeDoneZod
+} from "../shared/enums";
 
 // ✅ EventItem Schema
 export const EventItemZodSchema = z.object({
@@ -43,8 +40,6 @@ export const VisitZodSchema = z.object({
 });
 
 // ✅ Auto-generate TypeScript types
-export type AllowedPurpose = z.infer<typeof AllowedPurposeZod>;
-export type ModeDone = z.infer<typeof ModeDoneZod>;
 export type EventItem = z.infer<typeof EventItemZodSchema>;
 export type SessionLink = z.infer<typeof SessionLinkZodSchema>;
 export type Visit = z.infer<typeof VisitZodSchema>;

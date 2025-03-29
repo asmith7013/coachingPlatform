@@ -1,4 +1,4 @@
-import { Model, Document } from "mongoose";
+import { Model, Document, ObjectId } from "mongoose";
 import { z } from "zod";
 import { StaffMemberZodSchema, NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from "@/lib/zod-schema/core/staff";
 import { StaffMemberModel, NYCPSStaffModel, TeachingLabStaffModel } from "@/models/core/staff.model";
@@ -11,7 +11,7 @@ export type TeachingLabStaff = z.infer<typeof TeachingLabStaffZodSchema>;
 
 // Base staff document type
 export type StaffDocument = Document & {
-  _id: string;
+  _id: ObjectId;
   id: string;
   staffName: string;
   email?: string;
@@ -19,6 +19,7 @@ export type StaffDocument = Document & {
   owners: string[];
   createdAt?: Date;
   updatedAt?: Date;
+  __v: number;
 };
 
 // Specific staff document types
@@ -29,11 +30,6 @@ export type TeachingLabStaffDocument = StaffDocument & TeachingLabStaff;
 // Union type for all staff documents
 export type StaffUnion = StaffMemberDocument | NYCPSStaffDocument | TeachingLabStaffDocument;
 
-export interface StaffModelAndSchema<T extends StaffDocument> {
-  model: Model<T>;
-  schema: z.ZodType<T>;
-}
-
 export function getStaffModelAndSchema(type: StaffType): {
   model: Model<StaffUnion>;
   schema: z.ZodType<StaffUnion>;
@@ -41,18 +37,18 @@ export function getStaffModelAndSchema(type: StaffType): {
   switch (type) {
     case "nycps":
       return {
-        model: NYCPSStaffModel as unknown as Model<StaffUnion>,
-        schema: NYCPSStaffZodSchema as unknown as z.ZodType<StaffUnion>
+        model: NYCPSStaffModel as Model<StaffUnion>,
+        schema: NYCPSStaffZodSchema as unknown as z.ZodType<StaffUnion>,
       };
     case "tl":
       return {
-        model: TeachingLabStaffModel as unknown as Model<StaffUnion>,
-        schema: TeachingLabStaffZodSchema as unknown as z.ZodType<StaffUnion>
+        model: TeachingLabStaffModel as Model<StaffUnion>,
+        schema: TeachingLabStaffZodSchema as unknown as z.ZodType<StaffUnion>,
       };
     default:
       return {
-        model: StaffMemberModel as unknown as Model<StaffUnion>,
-        schema: StaffMemberZodSchema as unknown as z.ZodType<StaffUnion>
+        model: StaffMemberModel as Model<StaffUnion>,
+        schema: StaffMemberZodSchema as unknown as z.ZodType<StaffUnion>,
       };
   }
 }
@@ -71,4 +67,4 @@ export function determineStaffType(staff: unknown): StaffType {
   }
 
   return "all";
-} 
+}

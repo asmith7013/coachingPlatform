@@ -1,27 +1,34 @@
 import { handleServerError } from "@/lib/error/handleServerError";
-import type { Document, Types } from "mongoose";
+import type { HydratedDocument, Types } from "mongoose";
 import type { ZodSchema } from "zod";
 import type { z } from "zod";
-
-interface TimestampedDocument extends Document {
-  _id: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 /**
  * Sanitizes a single document by converting timestamps and _id to strings
  * Returns a sanitized object that matches the Zod schema type
  */
-export function sanitizeDocument<T extends TimestampedDocument, S extends ZodSchema>(
-  doc: T,
+export function sanitizeDocument<T, S extends ZodSchema>(
+  doc: HydratedDocument<T>,
   schema: S
 ): z.infer<S> {
   try {
-    const sanitized = doc.toObject();
-    sanitized._id = doc._id.toString();
-    sanitized.createdAt = doc.createdAt.toISOString();
-    sanitized.updatedAt = doc.updatedAt.toISOString();
+    const obj = doc.toObject();
+    const typedObj = obj as unknown as {
+      _id: Types.ObjectId;
+      createdAt: Date;
+      updatedAt: Date;
+      [key: string]: unknown;
+    };
+    
+    const { _id, createdAt, updatedAt, ...rest } = typedObj;
+    
+    // Create sanitized object with proper type handling
+    const sanitized = {
+      ...rest,
+      _id: _id.toString(),
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString()
+    };
     
     // Validate against schema to ensure type safety
     return schema.parse(sanitized);
@@ -34,8 +41,8 @@ export function sanitizeDocument<T extends TimestampedDocument, S extends ZodSch
  * Sanitizes an array of documents by converting timestamps and _id to strings
  * Returns an array of sanitized objects that match the Zod schema type
  */
-export function sanitizeDocuments<T extends TimestampedDocument, S extends ZodSchema>(
-  docs: T[],
+export function sanitizeDocuments<T, S extends ZodSchema>(
+  docs: HydratedDocument<T>[],
   schema: S
 ): z.infer<S>[] {
   return docs.map(doc => sanitizeDocument(doc, schema));
@@ -52,7 +59,7 @@ export function sanitizeFilters<T extends Record<string, unknown>>(filters: T): 
           acc[key as keyof T] = value as T[keyof T];
         }
       } else if (typeof value === "string") {
-        if (value.trim() !== "") {
+        if (value.trim().length > 0) {
           acc[key as keyof T] = value as T[keyof T];
         }
       } else if (value !== null && value !== undefined) {
@@ -66,14 +73,12 @@ export function sanitizeFilters<T extends Record<string, unknown>>(filters: T): 
 }
 
 /**
- * Sanitizes a string by trimming whitespace and converting to lowercase
+ * Sanitizes a string by trimming whitespace and removing empty strings
  */
-export function sanitizeString(str: string): string {
-  try {
-    return str.trim().toLowerCase();
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
+export function sanitizeString(value: string | null | undefined): string | undefined {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
 }
 
 /**
