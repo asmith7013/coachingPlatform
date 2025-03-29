@@ -23,6 +23,7 @@ const createEmptyLookFor = (): LookForInput => ({
   status: "draft"
 });
 
+
 export default function LookForsWrapper() {
   // ✅ Use `useLookFors` hook for data management
   const { 
