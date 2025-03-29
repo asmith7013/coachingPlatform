@@ -5,6 +5,7 @@ export const NextStepFieldConfig: Field<NextStepInput>[] = [
   {
     key: "description",
     label: "Description",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -13,6 +14,7 @@ export const NextStepFieldConfig: Field<NextStepInput>[] = [
   {
     key: "lookFor",
     label: "Look For",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -21,6 +23,7 @@ export const NextStepFieldConfig: Field<NextStepInput>[] = [
   {
     key: "teacher",
     label: "Teacher",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -29,6 +32,7 @@ export const NextStepFieldConfig: Field<NextStepInput>[] = [
   {
     key: "school",
     label: "School",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -37,6 +41,7 @@ export const NextStepFieldConfig: Field<NextStepInput>[] = [
   {
     key: "owners",
     label: "Owners",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,

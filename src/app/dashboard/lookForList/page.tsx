@@ -3,11 +3,12 @@
 import React from "react";
 import GenericAddForm from "@/components/form/GenericAddForm";
 import BulkUploadForm from "@/components/form/BulkUploadForm";
+import { ResourceHeader } from "@/components/ui/ResourceHeader";
 import { useLookFors } from "@/hooks/useLookFors";
 import { uploadLookForFile } from "@actions/lookFors/lookFors";
 import { createLookFor } from "@actions/lookFors/lookFors";
 import { LookForInput } from "@/lib/zod-schema/look-fors/look-for";
-import LookForFieldConfig from "@/lib/ui-schema/fieldConfig/look-fors/look-for";
+import { LookForFieldConfig } from "@/lib/ui-schema/fieldConfig/look-fors/look-for";
 
 const createEmptyLookFor = (): LookForInput => ({
   lookForIndex: 0,
@@ -53,37 +54,21 @@ export default function LookForsWrapper() {
     <div className="container mx-auto mt-8 p-6">
       <h2 className="text-2xl font-semibold mb-4">Look Fors</h2>
 
-      {/* ✅ Pagination Controls */}
-      <div className="flex justify-between items-center mb-4">
-        <button 
-          disabled={page === 1} 
-          onClick={() => setPage(page - 1)}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          ⬅️ Previous
-        </button>
-        <span>Page {page} of {Math.ceil(total / limit)}</span>
-        <button 
-          disabled={lookFors.length < limit} 
-          onClick={() => setPage(page + 1)}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Next ➡️
-        </button>
-        <select
-          onChange={(e) => changeSorting("topic", e.target.value as "asc" | "desc")}
-          className="px-3 py-1 border rounded-md"
-        >
-          <option value="asc">Sort A-Z</option>
-          <option value="desc">Sort Z-A</option>
-        </select>
-        <input
-          type="text"
-          placeholder="Search Look Fors..."
-          onChange={(e) => applyFilters({ topic: e.target.value })}
-          className="border px-3 py-1 rounded-md"
-        />
-      </div>
+      <ResourceHeader<LookForInput>
+        page={page}
+        setPage={setPage}
+        total={total}
+        limit={limit}
+        sortOptions={[
+          { key: "topic", label: "Topic" }
+        ]}
+        onSort={(field, order) => {
+          if (field === "topic") {
+            changeSorting("topic", order);
+          }
+        }}
+        onSearch={(value) => applyFilters({ topic: value })}
+      />
 
       {/* ✅ Display LookFors */}
       <div className="space-y-6">

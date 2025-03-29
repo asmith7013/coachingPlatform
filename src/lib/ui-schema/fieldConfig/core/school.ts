@@ -6,6 +6,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     key: "schoolNumber",
     label: "School Number",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -14,6 +15,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     key: "district",
     label: "District",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -22,6 +24,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     key: "schoolName",
     label: "School Name",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -30,6 +33,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     key: "address",
     label: "Address",
+    type: "text",
     inputType: "text",
     required: false,
     editable: true,
@@ -38,6 +42,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     key: "emoji",
     label: "Emoji",
+    type: "text",
     inputType: "text",
     required: false,
     editable: true,
@@ -46,6 +51,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     key: "gradeLevelsSupported",
     label: "Grade Levels",
+    type: "multi-select",
     inputType: "multi-select",
     options: GradeLevelsSupportedValues,
     required: true,
@@ -55,6 +61,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     key: "staffList",
     label: "Staff Members",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,
@@ -64,6 +71,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     key: "schedules",
     label: "Schedules",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,
@@ -73,6 +81,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     key: "cycles",
     label: "Cycles",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,
@@ -82,6 +91,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     key: "owners",
     label: "Owners",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,

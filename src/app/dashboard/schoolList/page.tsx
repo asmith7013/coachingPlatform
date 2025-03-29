@@ -8,7 +8,7 @@ import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
 import GenericAddForm from "@/components/form/GenericAddForm";
 import BulkUploadForm from "@/components/form/BulkUploadForm";
 import { ResourceHeader } from "@/components/ui/ResourceHeader";
-import SchoolFieldConfig from "@/lib/ui-schema/fieldConfig/core/school";
+import { SchoolFieldConfig } from "@/lib/ui-schema/fieldConfig/core/school";
 
 const createEmptySchool = (): SchoolInput => ({
   schoolNumber: "",

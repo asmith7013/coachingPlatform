@@ -10,6 +10,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "reasonDone",
     label: "Reason Done",
+    type: "select",
     inputType: "select",
     options: ReasonDoneValues,
     required: true,
@@ -19,6 +20,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "microPLTopic",
     label: "Micro PL Topic",
+    type: "text",
     inputType: "text",
     required: false,
     editable: true,
@@ -27,6 +29,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "microPLDuration",
     label: "Micro PL Duration",
+    type: "text",
     inputType: "number",
     required: false,
     editable: true,
@@ -35,6 +38,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "modelTopic",
     label: "Model Topic",
+    type: "text",
     inputType: "text",
     required: false,
     editable: true,
@@ -43,6 +47,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "modelDuration",
     label: "Model Duration",
+    type: "text",
     inputType: "number",
     required: false,
     editable: true,
@@ -51,7 +56,9 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "adminMeet",
     label: "Admin Meeting",
+    type: "select",
     inputType: "checkbox",
+    options: ["Yes", "No"],
     required: false,
     editable: true,
     placeholder: "Check if there was an admin meeting"
@@ -59,6 +66,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "adminMeetDuration",
     label: "Admin Meeting Duration",
+    type: "text",
     inputType: "number",
     required: false,
     editable: true,
@@ -67,7 +75,9 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "NYCDone",
     label: "NYC Work Done",
+    type: "select",
     inputType: "checkbox",
+    options: ["Yes", "No"],
     required: false,
     editable: true,
     placeholder: "Check if NYC work was completed"
@@ -75,6 +85,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "totalDuration",
     label: "Total Duration",
+    type: "select",
     inputType: "select",
     options: TotalDurationValues,
     required: true,
@@ -84,6 +95,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "solvesTouchpoint",
     label: "SOLVES Touchpoint",
+    type: "select",
     inputType: "select",
     options: SolvesTouchpointValues,
     required: true,
@@ -93,6 +105,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "primaryStrategy",
     label: "Primary Strategy",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -101,6 +114,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "solvesSpecificStrategy",
     label: "SOLVES Specific Strategy",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -109,6 +123,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "aiSummary",
     label: "AI Summary",
+    type: "text",
     inputType: "text",
     required: false,
     editable: true,
@@ -117,6 +132,7 @@ export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
     key: "owners",
     label: "Owners",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,

@@ -5,6 +5,7 @@ export const RubricFieldConfig: Field<Rubric>[] = [
   {
     key: "score",
     label: "Score",
+    type: "text",
     inputType: "number",
     required: true,
     editable: true,
@@ -13,6 +14,7 @@ export const RubricFieldConfig: Field<Rubric>[] = [
   {
     key: "category",
     label: "Category",
+    type: "multi-select",
     inputType: "array",
     options: [],
     required: true,
@@ -22,6 +24,7 @@ export const RubricFieldConfig: Field<Rubric>[] = [
   {
     key: "content",
     label: "Content",
+    type: "multi-select",
     inputType: "array",
     options: [],
     required: true,
@@ -31,6 +34,7 @@ export const RubricFieldConfig: Field<Rubric>[] = [
   {
     key: "parentId",
     label: "Parent ID",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -39,6 +43,7 @@ export const RubricFieldConfig: Field<Rubric>[] = [
   {
     key: "collectionId",
     label: "Collection ID",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -47,6 +52,7 @@ export const RubricFieldConfig: Field<Rubric>[] = [
   {
     key: "hex",
     label: "Color",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,

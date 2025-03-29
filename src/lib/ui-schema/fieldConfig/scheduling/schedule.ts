@@ -6,6 +6,7 @@ export const BellScheduleFieldConfig: Field<BellScheduleInput>[] = [
   {
     key: "school",
     label: "School",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -14,6 +15,7 @@ export const BellScheduleFieldConfig: Field<BellScheduleInput>[] = [
   {
     key: "bellScheduleType",
     label: "Bell Schedule Type",
+    type: "select",
     inputType: "select",
     options: BellScheduleTypeValues,
     required: true,
@@ -23,6 +25,7 @@ export const BellScheduleFieldConfig: Field<BellScheduleInput>[] = [
   {
     key: "classSchedule",
     label: "Class Schedule",
+    type: "multi-select",
     inputType: "array",
     options: [],
     required: true,
@@ -32,6 +35,7 @@ export const BellScheduleFieldConfig: Field<BellScheduleInput>[] = [
   {
     key: "assignedCycleDays",
     label: "Assigned Cycle Days",
+    type: "multi-select",
     inputType: "array",
     options: [],
     required: true,
@@ -41,6 +45,7 @@ export const BellScheduleFieldConfig: Field<BellScheduleInput>[] = [
   {
     key: "owners",
     label: "Owners",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,
@@ -53,6 +58,7 @@ export const TeacherScheduleFieldConfig: Field<TeacherScheduleInput>[] = [
   {
     key: "teacher",
     label: "Teacher",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -61,6 +67,7 @@ export const TeacherScheduleFieldConfig: Field<TeacherScheduleInput>[] = [
   {
     key: "school",
     label: "School",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -69,6 +76,7 @@ export const TeacherScheduleFieldConfig: Field<TeacherScheduleInput>[] = [
   {
     key: "scheduleByDay",
     label: "Schedule By Day",
+    type: "multi-select",
     inputType: "array",
     options: [],
     required: true,
@@ -78,6 +86,7 @@ export const TeacherScheduleFieldConfig: Field<TeacherScheduleInput>[] = [
   {
     key: "owners",
     label: "Owners",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,

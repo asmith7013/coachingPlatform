@@ -6,6 +6,7 @@ export const NoteFieldConfig: Field<Note>[] = [
   {
     key: "date",
     label: "Date",
+    type: "text",
     inputType: "date",
     required: true,
     editable: true,
@@ -14,6 +15,7 @@ export const NoteFieldConfig: Field<Note>[] = [
   {
     key: "type",
     label: "Type",
+    type: "select",
     inputType: "select",
     options: NoteTypeValues,
     required: true,
@@ -23,6 +25,7 @@ export const NoteFieldConfig: Field<Note>[] = [
   {
     key: "heading",
     label: "Heading",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -31,6 +34,7 @@ export const NoteFieldConfig: Field<Note>[] = [
   {
     key: "subheading",
     label: "Subheadings",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,

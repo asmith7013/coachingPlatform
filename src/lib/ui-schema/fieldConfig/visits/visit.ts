@@ -13,6 +13,7 @@ export const EventItemFieldConfig: Field<EventItem>[] = [
   {
     key: "eventType",
     label: "Event Type",
+    type: "select",
     inputType: "select",
     options: EventTypeValues,
     required: true,
@@ -22,6 +23,7 @@ export const EventItemFieldConfig: Field<EventItem>[] = [
   {
     key: "staff",
     label: "Staff",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,
@@ -31,6 +33,7 @@ export const EventItemFieldConfig: Field<EventItem>[] = [
   {
     key: "duration",
     label: "Duration",
+    type: "select",
     inputType: "select",
     options: DurationValues,
     required: true,
@@ -43,6 +46,7 @@ export const SessionLinkFieldConfig: Field<SessionLink>[] = [
   {
     key: "purpose",
     label: "Purpose",
+    type: "select",
     inputType: "select",
     options: SessionPurposeValues,
     required: true,
@@ -52,6 +56,7 @@ export const SessionLinkFieldConfig: Field<SessionLink>[] = [
   {
     key: "title",
     label: "Title",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -60,6 +65,7 @@ export const SessionLinkFieldConfig: Field<SessionLink>[] = [
   {
     key: "url",
     label: "URL",
+    type: "text",
     inputType: "url",
     required: true,
     editable: true,
@@ -68,6 +74,7 @@ export const SessionLinkFieldConfig: Field<SessionLink>[] = [
   {
     key: "staff",
     label: "Staff",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,
@@ -80,6 +87,7 @@ export const VisitFieldConfig: Field<Visit>[] = [
   {
     key: "date",
     label: "Date",
+    type: "text",
     inputType: "date",
     required: true,
     editable: true,
@@ -88,6 +96,7 @@ export const VisitFieldConfig: Field<Visit>[] = [
   {
     key: "school",
     label: "School",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -96,6 +105,7 @@ export const VisitFieldConfig: Field<Visit>[] = [
   {
     key: "coach",
     label: "Coach",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -104,6 +114,7 @@ export const VisitFieldConfig: Field<Visit>[] = [
   {
     key: "cycleRef",
     label: "Cycle Reference",
+    type: "text",
     inputType: "text",
     required: true,
     editable: true,
@@ -112,6 +123,7 @@ export const VisitFieldConfig: Field<Visit>[] = [
   {
     key: "allowedPurpose",
     label: "Allowed Purpose",
+    type: "select",
     inputType: "select",
     options: AllowedPurposeValues,
     required: false,
@@ -121,6 +133,7 @@ export const VisitFieldConfig: Field<Visit>[] = [
   {
     key: "modeDone",
     label: "Mode Done",
+    type: "select",
     inputType: "select",
     options: ModeDoneValues,
     required: false,
@@ -130,6 +143,7 @@ export const VisitFieldConfig: Field<Visit>[] = [
   {
     key: "gradeLevelsSupported",
     label: "Grade Levels",
+    type: "multi-select",
     inputType: "multi-select",
     options: GradeLevelsSupportedValues,
     required: true,
@@ -139,6 +153,7 @@ export const VisitFieldConfig: Field<Visit>[] = [
   {
     key: "events",
     label: "Events",
+    type: "multi-select",
     inputType: "array",
     options: [],
     required: false,
@@ -148,6 +163,7 @@ export const VisitFieldConfig: Field<Visit>[] = [
   {
     key: "sessionLinks",
     label: "Session Links",
+    type: "multi-select",
     inputType: "array",
     options: [],
     required: false,
@@ -157,6 +173,7 @@ export const VisitFieldConfig: Field<Visit>[] = [
   {
     key: "owners",
     label: "Owners",
+    type: "multi-select",
     inputType: "multi-select",
     options: [],
     required: true,

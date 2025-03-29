@@ -1,13 +1,13 @@
 import { z } from "zod";
-import { Rubric } from "@/lib/zod-schema";
 
 export interface Field<T> {
   key: keyof T;
   label: string;
+  type: "text" | "email" | "select" | "multi-select";
   inputType: string;
   options?: string[];
   required: boolean;
   editable: boolean;
   placeholder: string;
-  schemaName?: z.ZodType<Rubric>;
+  schemaName?: z.ZodTypeAny;
 } 
