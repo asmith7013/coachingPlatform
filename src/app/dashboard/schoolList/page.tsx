@@ -39,7 +39,7 @@ export default function SchoolList() {
 
   // ✅ 6. Server Actions Error Handling: Display a loading indicator or handle errors.
   if (loading) return <p>Loading Schools...</p>;
-  if (error) return <p>Error: {error}</p>;
+  // if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="container mx-auto mt-8 p-6">

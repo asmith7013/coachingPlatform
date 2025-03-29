@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { RubricZodSchema } from "./rubric"; // Assuming Rubric has its own schema
 
-// ✅ LookFor Schema
-export const LookForZodSchema = z.object({
-  _id: z.string().optional(), // MongoDB auto-generates this
+// Base schema for look-for input (create/update)
+export const LookForInputZodSchema = z.object({
   lookForIndex: z.number(), // Required number
   schools: z.array(z.string()), // Array of school IDs
   teachers: z.array(z.string()), // Array of teacher IDs
@@ -16,6 +15,11 @@ export const LookForZodSchema = z.object({
   owners: z.array(z.string()), // Array of owner IDs
   createdAt: z.date().optional(), // Match Mongoose timestamps
   updatedAt: z.date().optional(), // Match Mongoose timestamps
+});
+
+// ✅ LookFor Schema (includes _id for returned documents)
+export const LookForZodSchema = LookForInputZodSchema.extend({
+  _id: z.string(), // Required for returned documents
 });
 
 // ✅ LookForItem Schema
@@ -31,5 +35,6 @@ export const LookForItemZodSchema = z.object({
 });
 
 // ✅ Auto-generate TypeScript types
+export type LookForInput = z.infer<typeof LookForInputZodSchema>;
 export type LookFor = z.infer<typeof LookForZodSchema>;
 export type LookForItem = z.infer<typeof LookForItemZodSchema>;

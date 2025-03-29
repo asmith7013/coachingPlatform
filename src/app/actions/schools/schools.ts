@@ -1,148 +1,110 @@
 "use server";
 
-import { SchoolZodSchema } from "@/lib/zod-schema/core/school"; // Import the Zod schema for validation.
-import { SchoolModel } from "@/models/core"; // Import the Mongoose model.
-import { connectToDB } from "@/lib/db"; // Import the database connection function.
-import { handleServerError } from "@/lib/handleServerError"; // Import the error handling function.
-import { revalidatePath } from "next/cache"; // Import revalidatePath for cache invalidation.
-import { validate } from "@/lib/zod-schema"; // Import validation function.
-import mongoose from "mongoose"; // Import mongoose for ObjectId.
-import * as Sentry from "@sentry/nextjs"; // Import Sentry for error tracking.
-import { ZodError } from "zod"; // Import ZodError for validation errors.
-import type { SortOrder } from "mongoose"; // Import SortOrder type from mongoose.
-import { School } from "@/lib/zod-schema"; // Import the School type.
+import { z } from "zod";
+import { SchoolModel } from "@/models/core";
+import { SchoolZodSchema } from "@/lib/zod-schema/core/school";
+import { handleServerError } from "@/lib/error/handleServerError";
+import { handleValidationError } from "@/lib/error/handleValidationError";
+import { 
+  executePaginatedQuery,
+  sanitizeFilters,
+  createItem,
+  updateItem,
+  deleteItem
+} from "@/lib/server-utils";
+import { bulkUpload } from "@/lib/server-utils/bulkUpload";
+import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
+
+// Types
+export type School = z.infer<typeof SchoolZodSchema>;
+export type SchoolCreate = Omit<School, "_id" | "createdAt" | "updatedAt">;
+export type SchoolUpdate = Partial<SchoolCreate>;
 
 /** Fetch Schools */
-export async function fetchSchools(
-  page: number = 1,
-  limit: number = 20,
-  filters: Partial<School> = {},
-  sortBy: Record<string, SortOrder> = { createdAt: -1 },
-  performanceMode: boolean = true
-): Promise<{ schools: School[]; total: number }> {
+export async function fetchSchools({
+  page = 1,
+  limit = 10,
+  filters = {},
+  sortBy = "name",
+  sortOrder = "asc",
+}: {
+  page?: number;
+  limit?: number;
+  filters?: Record<string, unknown>;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+} = {}) {
   try {
-    await connectToDB();
+    console.log("Fetching schools with params:", { page, limit, filters, sortBy, sortOrder });
 
-    const query: Record<string, unknown> = {};
-    if (filters.schoolName) query.schoolName = { $regex: filters.schoolName, $options: "i" };
-    if (filters.district) query.district = { $regex: filters.district, $options: "i" };
-    if (filters.gradeLevelsSupported?.length)
-      query.gradeLevelsSupported = { $in: filters.gradeLevelsSupported };
+    // Sanitize filters
+    const sanitizedFilters = sanitizeFilters(filters);
 
-    const schoolsQuery = SchoolModel.find(query)
-      .sort(sortBy)
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .lean();
-
-    const [rawSchools, total] = await Promise.all([
-      schoolsQuery.exec(),
-      performanceMode ? SchoolModel.estimatedDocumentCount() : SchoolModel.countDocuments(query),
-    ]);
-
-    const sanitized = rawSchools.map((school) => ({
-      ...school,
-      _id: String(school._id),
-      createdAt: school.createdAt?.toISOString(),
-      updatedAt: school.updatedAt?.toISOString(),
-    })) as unknown as School[];
-
-    sanitized.forEach((school) => {
-      try {
-        SchoolZodSchema.parse(school);
-      } catch (err) {
-        if (err instanceof ZodError) console.error("Zod Validation Error:", err.errors);
-      }
+    // Execute paginated query
+    const result = await executePaginatedQuery(SchoolModel, sanitizedFilters, {
+      page,
+      limit,
+      sortBy,
+      sortOrder
     });
 
-    return { schools: sanitized, total };
-  } catch (err) {
-    Sentry.captureException(err);
-    throw new Error(handleServerError(err));
+    return {
+      items: result.items,
+      total: result.total,
+      empty: result.empty
+    };
+  } catch (error) {
+    console.error("Error fetching schools:", error);
+    throw handleServerError(error);
   }
 }
 
 /** Create School */
-export async function createSchool(
-  schoolData: Omit<School, "_id">
-): Promise<{ success: boolean; school?: School; error?: string }> {
-  try {
-    const validated = SchoolZodSchema.omit({ _id: true }).parse(schoolData);
-    await connectToDB();
-    const created = await SchoolModel.create({
-      ...validated,
-      _id: new mongoose.Types.ObjectId(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    });
-
-    revalidatePath("/dashboard/schools");
-    return { success: true, school: { ...created.toObject(), _id: created._id.toString() } };
-  } catch (err) {
-    if (err instanceof ZodError) console.log("Zod validation errors:", err.errors);
-    Sentry.captureException(err);
-    return { success: false, error: handleServerError(err) };
-  }
+export async function createSchool(data: SchoolCreate) {
+  return createItem(SchoolModel, SchoolZodSchema, data, ["/schools", "/schools/[id]"]);
 }
 
 /** Update School */
-export async function updateSchool(
-  id: string,
-  schoolData: Partial<School>
-): Promise<{ success: boolean; school?: School; error?: string }> {
-  try {
-    const validated = validate(SchoolZodSchema.partial(), schoolData);
-    if (!validated) throw new Error("Invalid update data");
-
-    await connectToDB();
-    const updated = await SchoolModel.findByIdAndUpdate(
-      id,
-      { ...validated, updatedAt: new Date().toISOString() },
-      { new: true }
-    );
-
-    if (!updated) throw new Error("School not found");
-
-    revalidatePath("/dashboard/schools");
-    return { success: true, school: { ...updated.toObject(), _id: updated._id.toString() } };
-  } catch (err) {
-    Sentry.captureException(err);
-    return { success: false, error: handleServerError(err) };
-  }
+export async function updateSchool(id: string, data: SchoolUpdate) {
+  return updateItem(SchoolModel, SchoolZodSchema, id, data, ["/schools", "/schools/[id]"]);
 }
 
 /** Delete School */
-export async function deleteSchool(id: string): Promise<{ success: boolean; error?: string }> {
-  try {
-    await connectToDB();
-    const deleted = await SchoolModel.findByIdAndDelete(id);
-    if (!deleted) throw new Error("School not found");
-
-    revalidatePath("/dashboard/schools");
-    return { success: true };
-  } catch (err) {
-    Sentry.captureException(err);
-    return { success: false, error: handleServerError(err) };
-  }
+export async function deleteSchool(id: string) {
+  return deleteItem(SchoolModel, SchoolZodSchema, id, ["/schools", "/schools/[id]"]);
 }
 
 /** Upload Schools via file */
 export const uploadSchoolFile = async (file: File): Promise<string> => {
   try {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch(`/api/schools/bulk-upload`, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) throw new Error(`Upload failed: ${response.statusText}`);
-
-    const data = await response.json();
-    return `Upload successful! ${data.uploaded} Schools added.`;
-  } catch (err) {
-    console.error("Error uploading Schools file:", err);
-    throw new Error(`Failed to upload Schools file: ${err instanceof Error ? err.message : "Unknown error"}`);
+    const result = await uploadFileWithProgress(file, "/api/schools/bulk-upload");
+    return result.message;
+  } catch (error) {
+    throw handleServerError(error);
   }
 };
+
+/** Upload schools data */
+export async function uploadSchools(data: SchoolCreate[]) {
+  try {
+    const result = await bulkUpload(data, SchoolModel, SchoolZodSchema, ["/schools"]);
+    
+    if (!result.success) {
+      return {
+        success: false,
+        error: result.error
+      };
+    }
+
+    return {
+      success: true,
+      items: result.items
+    };
+  } catch (error) {
+    console.error("Error uploading schools:", error);
+    if (error instanceof z.ZodError) {
+      throw handleValidationError(error);
+    }
+    throw handleServerError(error);
+  }
+}

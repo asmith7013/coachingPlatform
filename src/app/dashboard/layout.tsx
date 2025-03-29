@@ -21,7 +21,7 @@ export default function ToolsLayout({ children }: { children: React.ReactNode })
               </Link>
             </li>
             <li>
-              <Link href="/dashboard/schoolList" className="block p-2">
+              <Link href="/dashboard/staffList" className="block p-2">
                 People
               </Link>
             </li>

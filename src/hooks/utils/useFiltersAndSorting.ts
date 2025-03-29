@@ -9,14 +9,18 @@ export function useFiltersAndSorting<T extends Record<string, unknown>>() {
     const [filters, setFilters] = useState<Partial<T>>({});
     const [sortBy, setSortBy] = useState<string>("desc");
 
-    const applyFilters = (newFilters: Partial<T>) => {
+    const applyFilters = (newFilters: Partial<T>, autoMutate = false) => {
         setFilters(newFilters);
-        mutate(["lookFors", newFilters, sortBy]); // ✅ Trigger SWR re-fetch
+        if (autoMutate) {
+            mutate(["lookFors", newFilters, sortBy]); // ✅ Trigger SWR re-fetch
+        }
     };
 
-    const changeSorting = (newSortBy: string) => {
+    const changeSorting = (newSortBy: string, autoMutate = false) => {
         setSortBy(newSortBy);
-        mutate(["lookFors", filters, newSortBy]); // ✅ Trigger SWR re-fetch
+        if (autoMutate) {
+            mutate(["lookFors", filters, newSortBy]); // ✅ Trigger SWR re-fetch
+        }
     };
 
     return { filters, applyFilters, sortBy, changeSorting };

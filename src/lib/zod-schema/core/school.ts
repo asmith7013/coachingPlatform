@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { GradeLevelsSupportedZod } from "../shared/shared-types";
 
-// ✅ School Schema
-export const SchoolZodSchema = z.object({
-  _id: z.string().optional(), // MongoDB auto-generates this
+// Base schema for school input (create/update)
+export const SchoolInputZodSchema = z.object({
   schoolNumber: z.string(),
   district: z.string(),
   schoolName: z.string(),
@@ -18,5 +17,11 @@ export const SchoolZodSchema = z.object({
   updatedAt: z.date().optional(), // Match Mongoose timestamps
 });
 
-// ✅ Auto-generate TypeScript type
+// ✅ School Schema (includes _id for returned documents)
+export const SchoolZodSchema = SchoolInputZodSchema.extend({
+  _id: z.string(), // Required for returned documents
+});
+
+// ✅ Auto-generate TypeScript types
+export type SchoolInput = z.infer<typeof SchoolInputZodSchema>;
 export type School = z.infer<typeof SchoolZodSchema>;
