@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { spacing, fontSizes, colorVariants } from '@/lib/ui/tokens'
+import { spacing, fontSizes, colorVariants, textColors } from '@/lib/ui/tokens'
 import { Topbar } from './topbar'
 
 interface NavigationItem {
@@ -40,7 +40,7 @@ export function ShellLayout({
   // Extract token values into constants
   const paddingClass = spacing[padding]
   const titleSize = fontSizes.xl
-  const titleColor = colorVariants.text.primary
+  const titleColor = textColors.primary
   const headerBgColor = colorVariants.primary
   const headerPadding = spacing.lg
   const mainOffset = '-mt-32'

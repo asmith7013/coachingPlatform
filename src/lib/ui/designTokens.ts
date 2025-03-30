@@ -85,4 +85,19 @@ export const designTokens = {
       paddingY: '0.75rem',
     },
   },
+
+  // 📏 Line Height
+  leading: {
+    tight: '1.25',
+    relaxed: '1.75',
+    snug: '1.375',
+  },
+
+  // 📏 Vertical Spacing
+  spacingY: {
+    none: '0',
+    xs: '0.25rem',
+    sm: '0.5rem',
+    md: '1rem',
+  },
 };

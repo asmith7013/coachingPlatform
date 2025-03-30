@@ -88,6 +88,25 @@ export type BorderWidth = keyof typeof borderWidths;
 export type BorderStyle = keyof typeof borderStyles;
 export type BorderColor = keyof typeof borderColors;
 
+// 📏 Line Height
+export const leading = {
+  tight: `leading-[${designTokens.leading.tight}]`,
+  relaxed: `leading-[${designTokens.leading.relaxed}]`,
+  snug: `leading-[${designTokens.leading.snug}]`,
+};
+
+export type Leading = keyof typeof leading;
+
+// 📏 Vertical Spacing
+export const spacingY = {
+  none: `my-[${designTokens.spacingY.none}]`,
+  xs: `my-[${designTokens.spacingY.xs}]`,
+  sm: `my-[${designTokens.spacingY.sm}]`,
+  md: `my-[${designTokens.spacingY.md}]`,
+};
+
+export type SpacingY = keyof typeof spacingY;
+
 // ✳️ Utility function for joining classnames
 export const mergeTokens = (...classes: (string | undefined | false)[]) =>
   classes.filter(Boolean).join(' ');

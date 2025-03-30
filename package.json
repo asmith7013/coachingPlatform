@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run build-theme && npm run generate-tree && next dev",
-    "build": "npm run build-theme && npm run generate-tree && next build",
+    "build": "npm run build-theme && next build",
     "build-theme": "tsx scripts/generate-theme-css.ts",
     "start": "next start",
     "lint": "next lint",

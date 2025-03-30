@@ -2,11 +2,15 @@
 /* Generated from designTokens.ts */
 
 @theme {
+  --text-colors-primary: #ffffff;
+  --text-colors-secondary: #d1d5db;
+  --text-colors-muted: #9ca3af;
   --color-variants-primary: #2563eb;
   --color-variants-primary-hover: #1e40af;
   --color-variants-secondary: #64748b;
   --color-variants-secondary-hover: #475569;
   --color-variants-surface: #f9fafb;
+  --color-variants-surface-hover: #f3f4f6;
   --color-variants-danger: #dc2626;
   --color-variants-danger-hover: #b91c1c;
   --color-variants-success: #16a34a;
@@ -32,6 +36,7 @@
   --borders-color-secondary: #64748b;
   --borders-color-secondary-hover: #475569;
   --borders-color-surface: #f9fafb;
+  --borders-color-surface-hover: #f3f4f6;
   --borders-color-danger: #dc2626;
   --borders-color-danger-hover: #b91c1c;
   --borders-color-success: #16a34a;
@@ -51,4 +56,11 @@
   --size-variants-lg-font-size: 1.125rem;
   --size-variants-lg-padding-x: 1.5rem;
   --size-variants-lg-padding-y: 0.75rem;
+  --leading-tight: 1.25;
+  --leading-relaxed: 1.75;
+  --leading-snug: 1.375;
+  --spacing-y-none: 0;
+  --spacing-y-xs: 0.25rem;
+  --spacing-y-sm: 0.5rem;
+  --spacing-y-md: 1rem;
 }

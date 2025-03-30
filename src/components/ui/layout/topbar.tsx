@@ -11,7 +11,8 @@ import {
 } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
-import { spacing, fontSizes, colorVariants, radii, borderColors } from '@/lib/ui/tokens'
+import { spacing, fontSizes, colorVariants, radii, borderColors, textColors } from '@/lib/ui/tokens'
+import Image from 'next/image'
 
 interface NavigationItem {
   name: string
@@ -66,8 +67,8 @@ export function Topbar({
 }: TopbarProps) {
   // Extract token values into constants
   const navTextSize = fontSizes.base
-  const navTextColor = colorVariants.text.primary
-  const navTextHoverColor = colorVariants.text.secondary
+  const navTextColor = textColors.primary
+  const navTextHoverColor = textColors.secondary
   const navBgColor = variant === 'solid' ? colorVariants.primary : 'bg-transparent'
   const navBorderColor = borderColors.default
   const navItemPadding = spacing.sm
@@ -89,10 +90,12 @@ export function Topbar({
         <div className={cn('flex', spacing.lg, 'items-center justify-between')}>
           {/* Left nav */}
           <div className="flex items-center">
-            <img
+            <Image
               className={cn(logoSize, 'w-auto')}
               src="https://tailwindcss.com/plus-assets/img/logos/mark.svg"
               alt="Your Company"
+              width={32}
+              height={32}
             />
             <div className={cn('hidden md:block', navItemSpacing, spacing.md)}>
               {navigation.map((item) => (
@@ -138,10 +141,12 @@ export function Topbar({
                 navTextSize,
                 'focus:ring-2 focus:ring-white focus:outline-none'
               )}>
-                <img
+                <Image
                   className={cn(avatarSize, navItemRadius)}
                   src={user.imageUrl}
                   alt=""
+                  width={32}
+                  height={32}
                 />
               </MenuButton>
               <MenuItems className={cn(
@@ -163,7 +168,7 @@ export function Topbar({
                         spacing.md,
                         spacing.sm,
                         navTextSize,
-                        colorVariants.text.primary,
+                        textColors.primary,
                         colorVariants.surfaceHover
                       )}
                     >
