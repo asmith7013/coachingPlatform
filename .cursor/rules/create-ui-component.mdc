@@ -1,0 +1,87 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+✨ Atomic UI Component Setup Instructions (Token-Aware, cn-Based)
+
+Use these instructions as the standard for every new atomic component in src/components/ui/.
+
+🧱 1. Component Structure
+	•	✅ Use a functional TypeScript component
+	•	✅ Always include className and children props
+	•	✅ Accept optional semantic props:
+padding, radius, variant, size, border, gap, fontSize, etc.
+	•	✅ Props should be typed using keyof typeof from tokens.ts, e.g.:
+
+padding?: keyof typeof spacing
+radius?: keyof typeof radii
+
+🎨 2. Use Token-Based Utility Classes
+
+✅ Use token classNames only — never raw Tailwind values.
+
+Token Group	Tailwind Equivalents	Source
+spacing	p-md, px-lg, gap-sm	tokens.spacing
+radii	rounded-md, rounded-full	tokens.radii
+fontSizes	text-base, text-xl	tokens.fontSizes
+colorVariants	bg-primary, text-muted	tokens.colorVariants
+borders	border, border-width-md	tokens.borders
+
+⚙️ 3. Apply Token Props with Defaults
+
+const paddingClass = spacing[padding ?? 'md']
+const radiusClass = radii[radius ?? 'md']
+const borderClass = border ? borders.default : undefined
+
+return (
+  <div className={cn('bg-surface', paddingClass, radiusClass, borderClass, className)}>
+    {children}
+  </div>
+)
+
+🚫 Common Gotchas to Avoid
+
+Anti-pattern	Why it’s a problem	Better Alternative
+`px-${spacing.md}`	Outputs px-undefined at runtime	Use spacing.md directly
+text-sm, rounded-lg (raw classes)	Breaks token abstraction	Use fontSizes.sm, radii.md
+clsx()	Use your custom cn() instead	cn() handles token merging
+
+🧠 4. Component-Specific Token Props
+
+Component	Recommended Token Props
+Card	padding, radius, border
+Button	variant, size, radius
+Text	fontSize, color
+FormSection	spacing, border, gap
+ShellLayout	padding, fontSize, bg, title
+Topbar	variant (solid | transparent), padding, radius
+
+✏️ 5. Style Consistency Rules
+
+✅ Always use token-based utility classes
+✅ Props > hardcoded classNames
+❌ Never use things like text-gray-500 or rounded-lg
+✅ Use semantic wrappers and text elements (<section>, <h1>, etc.)
+
+🔁 Example Reference
+
+Use components/ui/card.tsx as a model for:
+	•	✅ Prop structure
+	•	✅ Class merging
+	•	✅ Token application
+	•	✅ Variant support
+
+🪄 6. Best Practice Philosophy
+
+Principle	Description
+✅ Design tokens power all UI	Changes to token values cascade globally
+🤏 Minimal but semantic props	Keep tokens limited to those that matter per component
+🧠 Default props reduce clutter	Use defaults like padding="md" wherever possible
+🔄 mergeTokens() optional	Compose token groups dynamically when needed
+🔒 Token-first = future-safe	Never worry about restyling things manually later
+
+
+
+
+

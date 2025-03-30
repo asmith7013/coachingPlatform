@@ -1,12 +1,25 @@
 // lib/ui/tokens.ts
 import { designTokens } from './designTokens';
 
+// 🎨 Text Colors
+export const textColors = {
+  primary: `text-[${designTokens.textColors.primary}]`,
+  secondary: `text-[${designTokens.textColors.secondary}]`,
+  muted: `text-[${designTokens.textColors.muted}]`,
+};
+
+export type TextColor = keyof typeof textColors;
+
 // 🎨 Color Variants (used in <Button />, <Badge />, etc.)
 export const colorVariants = {
   primary: `bg-[${designTokens.colorVariants.primary}] text-white hover:bg-[${designTokens.colorVariants.primaryHover}]`,
   secondary: `bg-[${designTokens.colorVariants.secondary}] text-white hover:bg-[${designTokens.colorVariants.secondaryHover}]`,
   danger: `bg-[${designTokens.colorVariants.danger}] text-white hover:bg-[${designTokens.colorVariants.dangerHover}]`,
   success: `bg-[${designTokens.colorVariants.success}] text-white hover:bg-[${designTokens.colorVariants.successHover}]`,
+  
+  // Surface colors
+  surface: `bg-[${designTokens.colorVariants.surface}]`,
+  surfaceHover: `bg-[${designTokens.colorVariants.surfaceHover}] hover:bg-[${designTokens.colorVariants.surfaceHover}]`,
 };
 
 export type ColorVariant = keyof typeof colorVariants;

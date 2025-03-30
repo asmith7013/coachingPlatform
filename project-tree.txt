@@ -1,0 +1,202 @@
+.
+├── CLAUDE.md
+├── README.md
+├── eslint.config.mjs
+├── next-env.d.ts
+├── next.config.ts
+├── package.json
+├── postcss.config.mjs
+├── project-tree.txt
+├── public
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+├── scripts
+│   └── generate-theme-css.ts
+├── sentry.client.config.ts
+├── sentry.edge.config.ts
+├── sentry.server.config.ts
+├── src
+│   ├── app
+│   │   ├── actions
+│   │   │   ├── lookFors
+│   │   │   │   └── lookFors.ts
+│   │   │   ├── schools
+│   │   │   │   └── schools.ts
+│   │   │   └── staff
+│   │   │       ├── base.ts
+│   │   │       ├── nycps.ts
+│   │   │       ├── staff.ts
+│   │   │       └── tl.ts
+│   │   ├── api
+│   │   │   ├── auth
+│   │   │   ├── look-fors
+│   │   │   │   └── bulk-upload
+│   │   │   │       └── route.ts
+│   │   │   └── staff
+│   │   │       └── bulk-upload
+│   │   │           └── route.ts
+│   │   ├── dashboard
+│   │   │   ├── layout.tsx
+│   │   │   ├── lookForList
+│   │   │   │   └── page.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── schoolList
+│   │   │   │   ├── [schoolId]
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx
+│   │   │   └── staffList
+│   │   │       └── page.tsx
+│   │   ├── global-error.tsx
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── scheduling
+│   │   │   └── page.tsx
+│   │   └── tools
+│   │       ├── im-routines
+│   │       │   └── page.tsx
+│   │       ├── layout.tsx
+│   │       └── page.tsx
+│   ├── components
+│   │   ├── error-boundaries
+│   │   │   ├── SentryBoundaryWrapper.tsx
+│   │   │   └── SentryErrorBoundary.tsx
+│   │   ├── features
+│   │   │   ├── imRoutine
+│   │   │   │   ├── GradeUnitLessonSelector.tsx
+│   │   │   │   ├── LessonCompactView.tsx
+│   │   │   │   ├── LessonDetailView.tsx
+│   │   │   │   └── RoutineFilter.tsx
+│   │   │   ├── lookFors
+│   │   │   ├── schools
+│   │   │   └── shared
+│   │   │       ├── ResourceHeader.tsx
+│   │   │       └── form
+│   │   │           ├── BulkUploadForm.tsx
+│   │   │           └── GenericAddForm.tsx
+│   │   └── ui
+│   │       ├── card.tsx
+│   │       ├── empty-state.tsx
+│   │       ├── form-section.tsx
+│   │       ├── form.tsx
+│   │       ├── page-header.tsx
+│   │       ├── shell-layout.tsx
+│   │       ├── sidebar.tsx
+│   │       └── table.tsx
+│   ├── context
+│   ├── hooks
+│   │   ├── useLookFors.ts
+│   │   ├── useNYCPSStaff.ts
+│   │   ├── useSchools.ts
+│   │   └── utils
+│   │       ├── useErrorHandledMutation.ts
+│   │       ├── useFiltersAndSorting.ts
+│   │       ├── useOptimisticResource.ts
+│   │       ├── usePagination.ts
+│   │       ├── useResourceManager.ts
+│   │       └── useSafeSWR.ts
+│   ├── instrumentation.ts
+│   ├── lib
+│   │   ├── apiHandler.tsx
+│   │   ├── db.ts
+│   │   ├── dev-utils
+│   │   │   └── checkFieldConfigCoverage.ts
+│   │   ├── error
+│   │   │   ├── handleClientError.ts
+│   │   │   ├── handleServerError.ts
+│   │   │   └── handleValidationError.ts
+│   │   ├── json
+│   │   │   └── IM_Routines.json
+│   │   ├── server-utils
+│   │   │   ├── bulkUpload.ts
+│   │   │   ├── crud.ts
+│   │   │   ├── csv.ts
+│   │   │   ├── fileUpload.ts
+│   │   │   ├── index.ts
+│   │   │   ├── pagination.ts
+│   │   │   ├── safeParse.ts
+│   │   │   ├── sanitize.ts
+│   │   │   ├── sanitizeFilters.ts
+│   │   │   └── staff.ts
+│   │   ├── ui
+│   │   │   ├── designTokens.ts
+│   │   │   └── tokens.ts
+│   │   ├── ui-schema
+│   │   │   ├── constants
+│   │   │   │   ├── coachingLog.ts
+│   │   │   │   └── districtList.ts
+│   │   │   ├── fieldConfig
+│   │   │   │   ├── core
+│   │   │   │   │   ├── school.ts
+│   │   │   │   │   └── staff.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── look-fors
+│   │   │   │   │   ├── look-for.ts
+│   │   │   │   │   ├── next-step.ts
+│   │   │   │   │   └── rubric.ts
+│   │   │   │   ├── scheduling
+│   │   │   │   │   └── schedule.ts
+│   │   │   │   ├── shared
+│   │   │   │   │   └── notes.ts
+│   │   │   │   └── visits
+│   │   │   │       ├── coaching-log.ts
+│   │   │   │       └── visit.ts
+│   │   │   ├── fieldLabels.ts
+│   │   │   ├── fieldValues.ts
+│   │   │   └── types.ts
+│   │   ├── utils
+│   │   │   ├── routineUtils.ts
+│   │   │   └── zodValidation.ts
+│   │   ├── utils.ts
+│   │   └── zod-schema
+│   │       ├── core
+│   │       │   ├── cycle.ts
+│   │       │   ├── school.ts
+│   │       │   └── staff.ts
+│   │       ├── index.ts
+│   │       ├── look-fors
+│   │       │   ├── look-for.ts
+│   │       │   ├── next-step.ts
+│   │       │   ├── rubric-fields.ts
+│   │       │   └── rubric.ts
+│   │       ├── processSchema.ts
+│   │       ├── scheduling
+│   │       │   └── schedule.ts
+│   │       ├── shared
+│   │       │   ├── enums.ts
+│   │       │   ├── index.ts
+│   │       │   └── notes.ts
+│   │       ├── validate.ts
+│   │       └── visits
+│   │           ├── coaching-log.ts
+│   │           └── visit.ts
+│   ├── models
+│   │   ├── core
+│   │   │   ├── cycle.model.ts
+│   │   │   ├── index.ts
+│   │   │   ├── school.model.ts
+│   │   │   └── staff.model.ts
+│   │   ├── look-fors
+│   │   │   ├── index.ts
+│   │   │   ├── look-for.model.ts
+│   │   │   ├── next-step.model.ts
+│   │   │   └── rubric.model.ts
+│   │   ├── scheduling
+│   │   │   ├── index.ts
+│   │   │   └── schedule.model.ts
+│   │   ├── shared
+│   │   │   ├── index.ts
+│   │   │   └── shared-types.model.ts
+│   │   └── visits
+│   │       ├── coaching-log.model.ts
+│   │       ├── index.ts
+│   │       └── visit.model.ts
+│   └── styles
+│       └── theme.css
+├── tests
+└── tsconfig.json
+
+64 directories, 136 files
