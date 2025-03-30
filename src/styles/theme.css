@@ -1,0 +1,54 @@
+/* Auto-generated theme CSS - DO NOT EDIT DIRECTLY */
+/* Generated from designTokens.ts */
+
+@theme {
+  --color-variants-primary: #2563eb;
+  --color-variants-primary-hover: #1e40af;
+  --color-variants-secondary: #64748b;
+  --color-variants-secondary-hover: #475569;
+  --color-variants-surface: #f9fafb;
+  --color-variants-danger: #dc2626;
+  --color-variants-danger-hover: #b91c1c;
+  --color-variants-success: #16a34a;
+  --color-variants-success-hover: #15803d;
+  --color-variants-white: #ffffff;
+  --color-variants-black: #000000;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 4rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --radii-sm: 0.25rem;
+  --radii-md: 0.5rem;
+  --radii-lg: 0.75rem;
+  --radii-full: 9999px;
+  --borders-width-sm: 1px;
+  --borders-width-md: 2px;
+  --borders-width-lg: 4px;
+  --borders-color-primary: #2563eb;
+  --borders-color-primary-hover: #1e40af;
+  --borders-color-secondary: #64748b;
+  --borders-color-secondary-hover: #475569;
+  --borders-color-surface: #f9fafb;
+  --borders-color-danger: #dc2626;
+  --borders-color-danger-hover: #b91c1c;
+  --borders-color-success: #16a34a;
+  --borders-color-success-hover: #15803d;
+  --borders-color-white: #ffffff;
+  --borders-color-black: #000000;
+  --borders-color-default: #e5e7eb;
+  --borders-color-outline: #d1d5db;
+  --borders-style-solid: solid;
+  --borders-style-dashed: dashed;
+  --size-variants-sm-font-size: 0.875rem;
+  --size-variants-sm-padding-x: 0.5rem;
+  --size-variants-sm-padding-y: 0.25rem;
+  --size-variants-md-font-size: 1rem;
+  --size-variants-md-padding-x: 1rem;
+  --size-variants-md-padding-y: 0.5rem;
+  --size-variants-lg-font-size: 1.125rem;
+  --size-variants-lg-padding-x: 1.5rem;
+  --size-variants-lg-padding-y: 0.75rem;
+}

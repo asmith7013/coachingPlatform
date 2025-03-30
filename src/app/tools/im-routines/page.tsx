@@ -2,10 +2,10 @@
 
 import React, { useState, useMemo } from 'react';
 import routinesData from '@lib/json/IM_Routines.json';
-import { GradeUnitLessonSelector } from '@components/imRoutine/GradeUnitLessonSelector';
-import { RoutineFilter } from '@components/imRoutine/RoutineFilter';
-import { LessonDetailView } from '@components/imRoutine/LessonDetailView';
-import { LessonCompactView } from '@components/imRoutine/LessonCompactView';
+import { GradeUnitLessonSelector } from '@/components/features/imRoutine/GradeUnitLessonSelector';
+import { RoutineFilter } from '@/components/features/imRoutine/RoutineFilter';
+import { LessonDetailView } from '@/components/features/imRoutine/LessonDetailView';
+import { LessonCompactView } from '@/components/features/imRoutine/LessonCompactView';
 
 export default function IMRoutinesPage() {
   const [selectedGrade, setSelectedGrade] = useState('');

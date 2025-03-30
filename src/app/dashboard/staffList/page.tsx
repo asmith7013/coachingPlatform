@@ -5,9 +5,9 @@ import { useNYCPSStaff } from "@/hooks/useNYCPSStaff"; // ✅ SWR hook for manag
 import { NYCPSStaff } from "@/lib/zod-schema"; // ✅ Import the NYCPSStaff type from Zod schema.
 import { NYCPSStaffInput } from "@/lib/zod-schema";
 import { createNYCPSStaff, uploadNYCPSStaffFile } from "@actions/staff/nycps";
-import GenericAddForm from "@/components/form/GenericAddForm";
-import BulkUploadForm from "@/components/form/BulkUploadForm";
-import { ResourceHeader } from "@/components/ui/ResourceHeader";
+import GenericAddForm from "@/components/features/shared/form/GenericAddForm";
+import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
+import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
 import { NYCPSStaffFieldConfig } from "@/lib/ui-schema/fieldConfig/core/staff";
 
 const createEmptyNYCPSStaff = (): NYCPSStaffInput => ({
@@ -27,7 +27,7 @@ export default function NYCPSStaffList() {
   const { 
     staff, // ✅ Array of NYCPS Staff retrieved from the database.
     loading, // ✅ Boolean indicating if data is currently loading.
-    error, // ✅ Stores any errors that occur during data fetching.
+    // error, // ✅ Stores any errors that occur during data fetching.
     page, // ✅ Current page for pagination.
     setPage, // ✅ Function to update the current page.
     limit, // ✅ Number of Staff displayed per page.
@@ -49,8 +49,6 @@ export default function NYCPSStaffList() {
   const handleDeleteStaff = async (id: string) => {
     await removeStaff(id);  // ✅ Calls the SWR mutate function to ensure an optimistic UI update.
   };
-
-  console.log("🔍 Debugging: error, staff, loading states:", error, staff, loading);
 
   // ✅ 6. Server Actions Error Handling: Display a loading indicator or handle errors.
   if (loading) return <p>Loading NYCPS Staff...</p>;

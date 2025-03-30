@@ -5,9 +5,9 @@ import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Sc
 import { School } from "@/lib/zod-schema"; // ✅ Import the School type from Zod schema.
 import { SchoolInput } from "@/lib/zod-schema";
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
-import GenericAddForm from "@/components/form/GenericAddForm";
-import BulkUploadForm from "@/components/form/BulkUploadForm";
-import { ResourceHeader } from "@/components/ui/ResourceHeader";
+import GenericAddForm from "@/components/features/shared/form/GenericAddForm";
+import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
+import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
 import { SchoolFieldConfig } from "@/lib/ui-schema/fieldConfig/core/school";
 
 const createEmptySchool = (): SchoolInput => ({
@@ -28,7 +28,7 @@ export default function SchoolList() {
   const { 
     schools, // ✅ Array of Schools retrieved from the database.
     loading, // ✅ Boolean indicating if data is currently loading.
-    error, // ✅ Stores any errors that occur during data fetching.
+    // error, // ✅ Stores any errors that occur during data fetching.
     page, // ✅ Current page for pagination.
     setPage, // ✅ Function to update the current page.
     limit, // ✅ Number of Schools displayed per page.
@@ -50,8 +50,6 @@ export default function SchoolList() {
   const handleDeleteSchool = async (id: string) => {
     await removeSchool(id);  // ✅ Calls the SWR mutate function to ensure an optimistic UI update.
   };
-
-  console.log("🔍 Debugging: error, schools, loading states:", error, schools, loading);
 
   // ✅ 6. Server Actions Error Handling: Display a loading indicator or handle errors.
   if (loading) return <p>Loading Schools...</p>;

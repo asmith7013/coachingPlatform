@@ -20,8 +20,8 @@ export function ResourceHeader<T extends Record<string, unknown>>({
   sortOptions,
   onSort,
   onSearch,
-  performanceMode,
-  togglePerformanceMode,
+  // performanceMode,
+  // togglePerformanceMode,
 }: ResourceHeaderProps<T>) {
   return (
     <div className="flex justify-between items-center mb-4">
@@ -71,14 +71,14 @@ export function ResourceHeader<T extends Record<string, unknown>>({
         />
 
         {/* Performance Mode Toggle */}
-        {togglePerformanceMode && (
+        {/* {togglePerformanceMode && (
           <button
             onClick={togglePerformanceMode}
             className={`px-3 py-1 rounded ${performanceMode ? 'bg-green-500 text-white' : 'bg-gray-300'}`}
           >
             {performanceMode ? '🚀 Performance Mode' : '🔍 Detailed Mode'}
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );

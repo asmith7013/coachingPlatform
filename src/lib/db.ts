@@ -37,7 +37,7 @@ export const connectToDB = async () => {
       socketTimeoutMS: 45000,
     };
 
-    console.log("🌍 Connecting to Mongo with URI:", MONGODB_URI.slice(0, 50) + '...');
+    // console.log("🌍 Connecting to Mongo with URI:", MONGODB_URI.slice(0, 50) + '...');
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       console.log("✅ Mongoose connected successfully");

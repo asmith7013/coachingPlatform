@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import GenericAddForm from "@/components/form/GenericAddForm";
-import BulkUploadForm from "@/components/form/BulkUploadForm";
-import { ResourceHeader } from "@/components/ui/ResourceHeader";
+import GenericAddForm from "@/components/features/shared/form/GenericAddForm";
+import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
+import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
 import { useLookFors } from "@/hooks/useLookFors";
 import { uploadLookForFile } from "@actions/lookFors/lookFors";
 import { createLookFor } from "@actions/lookFors/lookFors";
@@ -107,14 +107,14 @@ export default function LookForsWrapper() {
       </div>
 
       {/* ✅ Add LookFor Form */}
-      <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200 mt-6">
+      {/* <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200 mt-6"> */}
         <GenericAddForm
           title="Add Look For"
           defaultValues={createEmptyLookFor()}
           onSubmit={createLookFor}
           fields={LookForFieldConfig}
         />
-      </div>
+      {/* </div> */}
 
       {/* ✅ Bulk Upload Component */}
       <BulkUploadForm

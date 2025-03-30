@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-// import * as Sentry from "@sentry/nextjs";
-import SentryBoundaryWrapper from "@/components/error/SentryBoundaryWrapper"; // Use the wrapper instead
+import SentryBoundaryWrapper from "@/components/error-boundaries/SentryBoundaryWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +31,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased overscroll-none`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+        // overscroll-none <-- this is a tailwind class that prevents the page from overscrolling
       >
         <SentryBoundaryWrapper>
         {children}

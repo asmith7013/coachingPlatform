@@ -75,6 +75,7 @@ export function useResourceManager<T extends { _id: string }, I>(
 
   // Initialize filters and sorting
   const { filters, applyFilters, sortBy, changeSorting } = useFiltersAndSorting<T>({
+    resourceKey: resourceName,
     defaultSortOrder
   });
 
