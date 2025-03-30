@@ -6,18 +6,21 @@ import { handleValidationError } from "@/lib/error/handleValidationError";
 import { safeParseAndLog } from "./safeParse";
 import { connectToDB } from "@/lib/db";
 
+// Define type alias for inferred schema types
+type InferSchema<T extends z.ZodType> = z.infer<T>;
+
 export interface BulkUploadResult<T> {
   success: boolean;
   items?: T[];
   error?: string;
 }
 
-export async function bulkUploadToDB<T extends { _id: string }>(
-  data: Omit<T, "_id" | "createdAt" | "updatedAt">[],
-  model: Model<T>,
-  schema: z.ZodType<T>,
+export async function bulkUploadToDB<Doc extends { _id: string }, Schema extends z.ZodType<Doc>>(
+  data: Omit<Doc, "_id" | "createdAt" | "updatedAt">[],
+  model: Model<Doc>,
+  schema: Schema,
   revalidatePaths: string[]
-): Promise<BulkUploadResult<T>> {
+): Promise<BulkUploadResult<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();
@@ -30,7 +33,7 @@ export async function bulkUploadToDB<T extends { _id: string }>(
         schema,
         item
       )
-    ).filter((item): item is T => item !== null);
+    ).filter((item): item is Doc => item !== null);
 
     if (validatedData.length === 0) {
       return {

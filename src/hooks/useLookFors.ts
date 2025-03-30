@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useResourceManager } from "@hooks/utils/useResourceManager";
-import { fetchLookFors, createLookFor, updateLookFor, deleteLookFor } from "@actions/lookFors/lookFors";
+import { fetchLookFors, createLookFor, updateLookFor, deleteLookFor, LookForInput } from "@actions/lookFors/lookFors";
 import { LookFor } from "@/lib/zod-schema";
 
 /**
@@ -30,7 +30,7 @@ export function useLookFors(initialPage: number = 1, initialLimit: number = 20) 
     edit: editLookFor,
     remove: removeLookFor,
     mutate
-  } = useResourceManager<LookFor>(
+  } = useResourceManager<LookFor, LookForInput>(
     "lookFors",
     fetchLookFors,
     createLookFor,

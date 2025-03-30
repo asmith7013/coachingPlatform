@@ -1,4 +1,4 @@
-import type { Model, Document, Types } from "mongoose";
+import type { Model, Document, Types, HydratedDocument } from "mongoose";
 import { revalidatePath } from "next/cache";
 import type { ZodSchema } from "zod";
 import { parseOrThrow, parsePartialOrThrow } from "./safeParse";
@@ -7,11 +7,21 @@ import { handleServerError } from "@/lib/error/handleServerError";
 import { connectToDB } from "@/lib/db";
 import type { z } from "zod";
 
+// Define type for document with timestamps
+interface TimestampedDoc {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+  [key: string]: unknown;
+}
+
 export interface TimestampedDocument extends Document {
   _id: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export type SanitizableDoc<T> = HydratedDocument<T & TimestampedDoc>;
 
 export interface CrudResult<T> {
   success: boolean;
@@ -20,15 +30,18 @@ export interface CrudResult<T> {
   [key: string]: unknown;
 }
 
+// Define type alias for inferred schema types
+type InferSchema<T extends ZodSchema> = z.infer<T>;
+
 /**
  * Creates a new item in the database
  */
-export async function createItem<T extends TimestampedDocument, S extends ZodSchema>(
-  model: Model<T>,
-  schema: S,
+export async function createItem<Doc extends TimestampedDocument, Schema extends ZodSchema>(
+  model: Model<Doc>,
+  schema: Schema,
   data: unknown,
   pathsToRevalidate: string[] = []
-): Promise<CrudResult<z.infer<S>>> {
+): Promise<CrudResult<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();
@@ -44,7 +57,7 @@ export async function createItem<T extends TimestampedDocument, S extends ZodSch
 
     return {
       success: true,
-      data: sanitizeDocument(created, schema)
+      data: sanitizeDocument(created as unknown as SanitizableDoc<Doc>, schema)
     };
   } catch (error) {
     return {
@@ -57,13 +70,13 @@ export async function createItem<T extends TimestampedDocument, S extends ZodSch
 /**
  * Updates an existing item in the database
  */
-export async function updateItem<T extends TimestampedDocument, S extends ZodSchema>(
-  model: Model<T>,
-  schema: S,
+export async function updateItem<Doc extends TimestampedDocument, Schema extends ZodSchema>(
+  model: Model<Doc>,
+  schema: Schema,
   id: string,
   data: unknown,
   pathsToRevalidate: string[] = []
-): Promise<CrudResult<z.infer<S>>> {
+): Promise<CrudResult<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();
@@ -90,7 +103,7 @@ export async function updateItem<T extends TimestampedDocument, S extends ZodSch
 
     return {
       success: true,
-      data: sanitizeDocument(updated, schema)
+      data: sanitizeDocument(updated as unknown as SanitizableDoc<Doc>, schema)
     };
   } catch (error) {
     return {
@@ -103,12 +116,12 @@ export async function updateItem<T extends TimestampedDocument, S extends ZodSch
 /**
  * Deletes an item from the database
  */
-export async function deleteItem<T extends TimestampedDocument, S extends ZodSchema>(
-  model: Model<T>,
-  schema: S,
+export async function deleteItem<Doc extends TimestampedDocument, Schema extends ZodSchema>(
+  model: Model<Doc>,
+  schema: Schema,
   id: string,
   pathsToRevalidate: string[] = []
-): Promise<CrudResult<z.infer<S>>> {
+): Promise<CrudResult<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();
@@ -127,7 +140,7 @@ export async function deleteItem<T extends TimestampedDocument, S extends ZodSch
 
     return {
       success: true,
-      data: sanitizeDocument(deleted, schema)
+      data: sanitizeDocument(deleted as unknown as SanitizableDoc<Doc>, schema)
     };
   } catch (error) {
     return {

@@ -20,6 +20,9 @@ import {
 import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
 import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
 
+// Define type alias for inferred input type
+type InferLookForInput = z.infer<typeof LookForInputZodSchema>;
+
 // Types
 export type { LookFor, LookForInput };
 
@@ -63,12 +66,12 @@ export async function fetchLookFors({
 }
 
 // Create a new look-for
-export async function createLookFor(data: LookForInput) {
+export async function createLookFor(data: InferLookForInput) {
   return createItem(LookForModel, LookForInputZodSchema, data, ["/look-fors", "/look-fors/[id]"]);
 }
 
 // Update a look-for
-export async function updateLookFor(id: string, data: Partial<LookForInput>) {
+export async function updateLookFor(id: string, data: Partial<InferLookForInput>) {
   return updateItem(LookForModel, LookForInputZodSchema, id, data, ["/look-fors", "/look-fors/[id]"]);
 }
 
@@ -88,7 +91,7 @@ export const uploadLookForFile = async (file: File): Promise<string> => {
 };
 
 // Upload look-fors data
-export async function uploadLookFors(data: LookForInput[]) {
+export async function uploadLookFors(data: InferLookForInput[]) {
   try {
     const result = await bulkUploadToDB(data, LookForModel, LookForInputZodSchema, ["/look-fors"]);
     

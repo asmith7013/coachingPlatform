@@ -2,10 +2,17 @@ import { ZodSchema, z } from "zod";
 import { handleServerError } from "@/lib/error/handleServerError";
 import { handleValidationError } from "@/lib/error/handleValidationError";
 
+// Define type aliases for inferred types
+type InferSchema<T extends ZodSchema> = z.infer<T>;
+type InferObjectSchema<T extends z.ZodObject<z.ZodRawShape>> = z.infer<T>;
+
 /**
  * Safely parses data against a Zod schema with error logging
  */
-export function safeParseAndLog<T>(schema: ZodSchema<T>, data: unknown): T | null {
+export function safeParseAndLog<Schema extends ZodSchema>(
+  schema: Schema,
+  data: unknown
+): InferSchema<Schema> | null {
   const result = schema.safeParse(data);
   if (!result.success) {
     throw new Error(handleValidationError(result.error));
@@ -16,10 +23,10 @@ export function safeParseAndLog<T>(schema: ZodSchema<T>, data: unknown): T | nul
 /**
  * Safely parses partial data against a Zod schema with error logging
  */
-export function safeParsePartialAndLog<T extends z.ZodObject<z.ZodRawShape>>(
-  schema: T,
+export function safeParsePartialAndLog<Schema extends z.ZodObject<z.ZodRawShape>>(
+  schema: Schema,
   data: unknown
-): Partial<z.infer<T>> | null {
+): Partial<InferObjectSchema<Schema>> | null {
   const result = schema.partial().safeParse(data);
   if (!result.success) {
     throw new Error(handleValidationError(result.error));
@@ -30,7 +37,10 @@ export function safeParsePartialAndLog<T extends z.ZodObject<z.ZodRawShape>>(
 /**
  * Throws a formatted error if validation fails
  */
-export function parseOrThrow<T>(schema: ZodSchema<T>, data: unknown): T {
+export function parseOrThrow<Schema extends ZodSchema>(
+  schema: Schema,
+  data: unknown
+): InferSchema<Schema> {
   try {
     const result = safeParseAndLog(schema, data);
     if (result === null) {
@@ -46,10 +56,10 @@ export function parseOrThrow<T>(schema: ZodSchema<T>, data: unknown): T {
  * Throws a formatted error if partial validation fails
  * Handles both object and non-object schemas
  */
-export function parsePartialOrThrow<T, S extends ZodSchema<T>>(
-  schema: S,
+export function parsePartialOrThrow<Schema extends ZodSchema>(
+  schema: Schema,
   data: unknown
-): Partial<T> {
+): Partial<InferSchema<Schema>> {
   try {
     // If it's a Zod object, use partial validation
     if (schema instanceof z.ZodObject) {
@@ -58,7 +68,7 @@ export function parsePartialOrThrow<T, S extends ZodSchema<T>>(
       if (!result.success) {
         throw new Error(handleValidationError(result.error));
       }
-      return result.data as Partial<T>;
+      return result.data as Partial<InferSchema<Schema>>;
     }
     
     // For non-object schemas, use regular validation

@@ -1,4 +1,4 @@
-import { Model, Document, ObjectId } from "mongoose";
+import { Document, Types } from "mongoose";
 import { z } from "zod";
 import { StaffMemberZodSchema, NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from "@/lib/zod-schema/core/staff";
 import { StaffMemberModel, NYCPSStaffModel, TeachingLabStaffModel } from "@/models/core/staff.model";
@@ -11,14 +11,14 @@ export type TeachingLabStaff = z.infer<typeof TeachingLabStaffZodSchema>;
 
 // Base staff document type
 export type StaffDocument = Document & {
-  _id: ObjectId;
+  _id: Types.ObjectId;
   id: string;
   staffName: string;
   email?: string;
   schools: string[];
   owners: string[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
   __v: number;
 };
 
@@ -27,30 +27,26 @@ export type StaffMemberDocument = StaffDocument & StaffMember;
 export type NYCPSStaffDocument = StaffDocument & NYCPSStaff;
 export type TeachingLabStaffDocument = StaffDocument & TeachingLabStaff;
 
-// Union type for all staff documents
-export type StaffUnion = StaffMemberDocument | NYCPSStaffDocument | TeachingLabStaffDocument;
+// Type-safe helpers for each staff type
+export function getStaffMemberModelAndSchema() {
+  return {
+    model: StaffMemberModel,
+    schema: StaffMemberZodSchema,
+  } as const;
+}
 
-export function getStaffModelAndSchema(type: StaffType): {
-  model: Model<StaffUnion>;
-  schema: z.ZodType<StaffUnion>;
-} {
-  switch (type) {
-    case "nycps":
-      return {
-        model: NYCPSStaffModel as Model<StaffUnion>,
-        schema: NYCPSStaffZodSchema as unknown as z.ZodType<StaffUnion>,
-      };
-    case "tl":
-      return {
-        model: TeachingLabStaffModel as Model<StaffUnion>,
-        schema: TeachingLabStaffZodSchema as unknown as z.ZodType<StaffUnion>,
-      };
-    default:
-      return {
-        model: StaffMemberModel as Model<StaffUnion>,
-        schema: StaffMemberZodSchema as unknown as z.ZodType<StaffUnion>,
-      };
-  }
+export function getNYCPSStaffModelAndSchema() {
+  return {
+    model: NYCPSStaffModel,
+    schema: NYCPSStaffZodSchema,
+  } as const;
+}
+
+export function getTeachingLabStaffModelAndSchema() {
+  return {
+    model: TeachingLabStaffModel,
+    schema: TeachingLabStaffZodSchema,
+  } as const;
 }
 
 export function determineStaffType(staff: unknown): StaffType {

@@ -3,22 +3,25 @@ import type { HydratedDocument, Types } from "mongoose";
 import type { ZodSchema } from "zod";
 import type { z } from "zod";
 
+// Define type for document with timestamps
+interface TimestampedDoc {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+  [key: string]: unknown;
+}
+
 /**
  * Sanitizes a single document by converting timestamps and _id to strings
  * Returns a sanitized object that matches the Zod schema type
  */
-export function sanitizeDocument<T, S extends ZodSchema>(
+export function sanitizeDocument<T extends TimestampedDoc, S extends ZodSchema>(
   doc: HydratedDocument<T>,
   schema: S
 ): z.infer<S> {
   try {
     const obj = doc.toObject();
-    const typedObj = obj as unknown as {
-      _id: Types.ObjectId;
-      createdAt: Date;
-      updatedAt: Date;
-      [key: string]: unknown;
-    };
+    const typedObj = obj as TimestampedDoc;
     
     const { _id, createdAt, updatedAt, ...rest } = typedObj;
     
@@ -41,7 +44,7 @@ export function sanitizeDocument<T, S extends ZodSchema>(
  * Sanitizes an array of documents by converting timestamps and _id to strings
  * Returns an array of sanitized objects that match the Zod schema type
  */
-export function sanitizeDocuments<T, S extends ZodSchema>(
+export function sanitizeDocuments<T extends TimestampedDoc, S extends ZodSchema>(
   docs: HydratedDocument<T>[],
   schema: S
 ): z.infer<S>[] {

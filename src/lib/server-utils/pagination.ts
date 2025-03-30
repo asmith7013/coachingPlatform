@@ -1,9 +1,17 @@
-import type { HydratedDocument, Model } from "mongoose";
+import type { HydratedDocument, Model, Types } from "mongoose";
 import { handleServerError } from "@/lib/error/handleServerError";
 import { connectToDB } from "@/lib/db";
 import { sanitizeDocuments } from "./sanitize";
 import type { ZodSchema } from "zod";
 import { z } from "zod";
+
+// Define type for document with timestamps
+interface TimestampedDoc {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+  [key: string]: unknown;
+}
 
 export interface PaginationOptions {
   page?: number;
@@ -24,7 +32,7 @@ export interface PaginatedResult<T> {
 /**
  * Builds a paginated query for MongoDB
  */
-export function buildPaginatedQuery<T>(
+export function buildPaginatedQuery<T extends TimestampedDoc>(
   model: Model<HydratedDocument<T>>,
   filters: Record<string, unknown>,
   { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" }: PaginationOptions = {}
@@ -44,7 +52,7 @@ export function buildPaginatedQuery<T>(
 /**
  * Executes a paginated query and returns results with metadata
  */
-export async function executePaginatedQuery<T, S extends ZodSchema>(
+export async function executePaginatedQuery<T extends TimestampedDoc, S extends ZodSchema>(
   model: Model<HydratedDocument<T>>,
   filters: Record<string, unknown>,
   schema: S,
@@ -64,7 +72,7 @@ export async function executePaginatedQuery<T, S extends ZodSchema>(
     ]);
     
     // Sanitize items for client
-    const sanitizedItems = sanitizeDocuments(items, schema);
+    const sanitizedItems = sanitizeDocuments(items as unknown as HydratedDocument<TimestampedDoc>[], schema);
     
     // Calculate metadata
     const totalPages = Math.ceil(total / limit);
