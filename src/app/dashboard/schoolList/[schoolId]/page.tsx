@@ -3,6 +3,10 @@
 import { useParams } from "next/navigation";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement } from "chart.js";
+import { Card } from '@/components/ui/card';
+import { Heading } from '@/components/ui/typography/Heading';
+import { Text } from '@/components/ui/typography/Text';
+import { spacing, textColors, colorVariants } from '@/lib/ui/tokens';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
@@ -44,10 +48,9 @@ const staffData: Record<string, StaffMember[]> = {
   };
   
 export default function SchoolPage() {
-
-    const params = useParams();  // ✅ Unwraps params
+    const params = useParams();
     const schoolId = String(params.schoolId);
-    if (!params.schoolId) return <p>Loading...</p>;  // Handles missing params case
+    if (!params.schoolId) return <Text>Loading...</Text>;
 
     const schoolStaff = staffData[schoolId] ?? [];
     const lookFors = lookForsData[schoolId] ?? [];
@@ -58,7 +61,7 @@ export default function SchoolPage() {
         datasets: [
           {
             label: "LookFors Engagement",
-            data: [2, 4, 6, 8], // Placeholder data
+            data: [2, 4, 6, 8],
             borderColor: "blue",
             backgroundColor: "lightblue",
           },
@@ -66,45 +69,73 @@ export default function SchoolPage() {
     };
 
     return (
-      <div>
-        <h1 className="text-2xl font-bold">School {schoolId}</h1>
+      <div className={`container mx-auto ${spacing.lg}`}>
+        <Heading level={1} className={textColors.primary}>
+          School {schoolId}
+        </Heading>
         
-        <h2 className="mt-6 text-xl font-semibold">Staff</h2>
-        <ul className="mt-2 space-y-2">
-          {schoolStaff.map((staff : StaffMember) => (
-            <li key={staff.id} className="p-2 bg-white shadow rounded">
-              {staff.name} - <span className="text-gray-600">{staff.role}</span>
-            </li>
-          ))}
-        </ul>
+        <Card className={spacing.md} padding="md" radius="lg">
+          <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+            Staff
+          </Heading>
+          <div className={spacing.md}>
+            {schoolStaff.map((staff : StaffMember) => (
+              <Card key={staff.id} className={spacing.sm} padding="sm" radius="md">
+                <Text variant="primary">{staff.name}</Text>
+                <Text variant="secondary">{staff.role}</Text>
+              </Card>
+            ))}
+          </div>
+        </Card>
 
-        <h2 className="mt-6 text-xl font-semibold">Look Fors</h2>
-        <ul className="mt-2 space-y-2">
+        <Card className={spacing.md} padding="md" radius="lg">
+          <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+            Look Fors
+          </Heading>
+          <div className="flex flex-wrap gap-2">
             {lookFors.map((lookFor : LookFor, index : number) => (
-                <li key={index} className="p-2 bg-blue-100 text-blue-900 shadow rounded">{lookFor}</li>
+              <span 
+                key={index} 
+                className={`${spacing.sm} ${colorVariants.primary} rounded-full text-sm`}
+              >
+                {lookFor}
+              </span>
             ))}
-        </ul>
-        <h2 className="mt-6 text-xl font-semibold">Schedule</h2>
-        <table className="mt-2 w-full bg-white shadow rounded">
-            <thead>
-            <tr className="border-b">
-                <th className="p-2 text-left">Period</th>
-                <th className="p-2 text-left">Time</th>
-            </tr>
-            </thead>
-            <tbody>
-            {schedule.map((entry : Period, index : number) => (
-                <tr key={index} className="border-b">
-                <td className="p-2">{entry.period}</td>
-                <td className="p-2">{entry.time}</td>
+          </div>
+        </Card>
+
+        <Card className={spacing.md} padding="md" radius="lg">
+          <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+            Schedule
+          </Heading>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className={`${spacing.sm} text-left`}>Period</th>
+                  <th className={`${spacing.sm} text-left`}>Time</th>
                 </tr>
-            ))}
-            </tbody>
-        </table>
-        <h2 className="mt-6 text-xl font-semibold">LookFors Trends</h2>
-        <div className="mt-4 w-full h-64 bg-white shadow rounded p-4">
+              </thead>
+              <tbody>
+                {schedule.map((entry : Period, index : number) => (
+                  <tr key={index} className="border-b">
+                    <td className={spacing.sm}>{entry.period}</td>
+                    <td className={spacing.sm}>{entry.time}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+
+        <Card className={spacing.md} padding="md" radius="lg">
+          <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+            LookFors Trends
+          </Heading>
+          <div className="w-full h-64">
             <Line data={lookForsTrendsData} />
-        </div>
+          </div>
+        </Card>
       </div>
     );
   }

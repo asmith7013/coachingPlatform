@@ -1,5 +1,4 @@
 .
-├── CLAUDE.md
 ├── README.md
 ├── eslint.config.mjs
 ├── next-env.d.ts
@@ -15,7 +14,6 @@
 │   └── window.svg
 ├── scripts
 │   └── generate-theme-css.ts
-├── sentry.client.config.ts
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
 ├── src
@@ -78,14 +76,38 @@
 │   │   │           ├── BulkUploadForm.tsx
 │   │   │           └── GenericAddForm.tsx
 │   │   └── ui
+│   │       ├── button.tsx
 │   │       ├── card.tsx
 │   │       ├── empty-state.tsx
+│   │       ├── fields
+│   │       │   ├── Checkbox.tsx
+│   │       │   ├── FieldWrapper.tsx
+│   │       │   ├── Input.tsx
+│   │       │   ├── Label.tsx
+│   │       │   ├── Select.tsx
+│   │       │   ├── Switch.tsx
+│   │       │   └── Textarea.tsx
 │   │       ├── form-section.tsx
 │   │       ├── form.tsx
+│   │       ├── layout
+│   │       │   ├── shell-layout.tsx
+│   │       │   ├── sidebar.tsx
+│   │       │   └── topbar.tsx
 │   │       ├── page-header.tsx
-│   │       ├── shell-layout.tsx
-│   │       ├── sidebar.tsx
-│   │       └── table.tsx
+│   │       ├── table
+│   │       │   ├── table-actions.tsx
+│   │       │   ├── table-cell.tsx
+│   │       │   ├── table-empty.tsx
+│   │       │   ├── table-header.tsx
+│   │       │   ├── table-row.tsx
+│   │       │   ├── table.tsx
+│   │       │   └── variants
+│   │       │       ├── compact.tsx
+│   │       │       ├── paginated.tsx
+│   │       │       └── sticky-header.tsx
+│   │       └── typography
+│   │           ├── Heading.tsx
+│   │           └── Text.tsx
 │   ├── context
 │   ├── hooks
 │   │   ├── useLookFors.ts
@@ -98,6 +120,7 @@
 │   │       ├── usePagination.ts
 │   │       ├── useResourceManager.ts
 │   │       └── useSafeSWR.ts
+│   ├── instrumentation-client.ts
 │   ├── instrumentation.ts
 │   ├── lib
 │   │   ├── apiHandler.tsx
@@ -123,6 +146,11 @@
 │   │   │   └── staff.ts
 │   │   ├── ui
 │   │   │   ├── designTokens.ts
+│   │   │   ├── forms
+│   │   │   │   └── registry.ts
+│   │   │   ├── table-schema.ts
+│   │   │   ├── table-schemas
+│   │   │   │   └── school.ts
 │   │   │   └── tokens.ts
 │   │   ├── ui-schema
 │   │   │   ├── constants
@@ -197,6 +225,7 @@
 │   └── styles
 │       └── theme.css
 ├── tests
-└── tsconfig.json
+├── tsconfig.json
+└── tsconfig.tsbuildinfo
 
-64 directories, 136 files
+71 directories, 158 files

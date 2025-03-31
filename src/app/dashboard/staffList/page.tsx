@@ -1,6 +1,11 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
 import React from "react";
+import { Card } from '@/components/ui/card';
+import { Heading } from '@/components/ui/typography/Heading';
+import { Text } from '@/components/ui/typography/Text';
+import { Button } from '@/components/ui/button';
+import { spacing, textColors, colorVariants } from '@/lib/ui/tokens';
 import { useNYCPSStaff } from "@/hooks/useNYCPSStaff"; // ✅ SWR hook for managing NYCPS Staff data.
 import { NYCPSStaff } from "@/lib/zod-schema"; // ✅ Import the NYCPSStaff type from Zod schema.
 import { NYCPSStaffInput } from "@/lib/zod-schema";
@@ -51,12 +56,14 @@ export default function NYCPSStaffList() {
   };
 
   // ✅ 6. Server Actions Error Handling: Display a loading indicator or handle errors.
-  if (loading) return <p>Loading NYCPS Staff...</p>;
+  if (loading) return <Text>Loading NYCPS Staff...</Text>;
   // if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="container mx-auto mt-8 p-6">
-      <h2 className="text-2xl font-semibold mb-4">NYCPS Staff</h2>
+    <div className={`container mx-auto ${spacing.lg}`}>
+      <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+        NYCPS Staff
+      </Heading>
 
       <ResourceHeader<NYCPSStaff>
         page={page}
@@ -75,50 +82,70 @@ export default function NYCPSStaffList() {
       />
 
       {/* ✅ 5. Data Flow Integrity: SWR ensures data consistency between UI and database */}
-      <div className="space-y-6">
+      <div className={spacing.lg}>
         {staff.map((member: NYCPSStaff) => (
-          <div key={member._id} className="bg-white shadow-lg rounded-lg p-4">
+          <Card
+            key={member._id}
+            className={spacing.md}
+            padding="md"
+            radius="lg"
+          >
             <div className="flex justify-between items-center">
               <div>
-                <h5 className="text-lg font-bold">{member.staffName}</h5>
-                <p className="text-gray-700">{member.email || 'No email provided'}</p>
+                <Heading level={3} className={textColors.primary}>
+                  {member.staffName}
+                </Heading>
+                <Text variant="secondary" className={spacing.sm}>
+                  {member.email || 'No email provided'}
+                </Text>
               </div>
               {/* ✅ Optimistic UI Update: Delete Button */}
-              <button
+              <Button
                 onClick={() => member._id && confirmDeleteStaff(member._id)}
-                className="text-red-500 hover:bg-red-100 px-3 py-1 rounded"
+                variant="danger"
+                size="sm"
               >
                 🗑️ Delete
-              </button>
+              </Button>
             </div>
 
             {/* ✅ 15. Schema Nesting & Type Inference: Dynamically render roles and subjects */}
-            <div className="mt-4">
-              {/* Roles */}
-              <h5 className="text-lg font-bold mb-2">Roles</h5>
-              <div className="flex flex-wrap gap-2 mb-4">
+            <div className={spacing.md}>
+              <Heading level={3} className={`${textColors.primary} ${spacing.md}`}>
+                Roles
+              </Heading>
+              <div className="flex flex-wrap gap-2">
                 {member.rolesNYCPS && member.rolesNYCPS.map((role, index) => (
-                  <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                  <span 
+                    key={index} 
+                    className={`${spacing.sm} ${colorVariants.primary} rounded-full text-sm`}
+                  >
                     {role}
                   </span>
                 ))}
               </div>
+            </div>
 
-              {/* Subjects */}
-              <h5 className="text-lg font-bold mb-2">Subjects</h5>
+            <div className={spacing.md}>
+              <Heading level={3} className={`${textColors.primary} ${spacing.md}`}>
+                Subjects
+              </Heading>
               <div className="flex flex-wrap gap-2">
                 {member.subjects && member.subjects.map((subject, index) => (
-                  <span key={index} className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                  <span 
+                    key={index} 
+                    className={`${spacing.sm} ${colorVariants.success} rounded-full text-sm`}
+                  >
                     {subject}
                   </span>
                 ))}
               </div>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
-      <div className="mt-8 space-y-8">
+      <div className={spacing.lg}>
         <GenericAddForm
           title="Add NYCPS Staff"
           defaultValues={createEmptyNYCPSStaff()}

@@ -1,23 +1,31 @@
 import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { fontSizes } from '@/lib/ui/tokens'
+import { fontSizes, textColors } from '@/lib/ui/tokens'
 
 interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
   children: ReactNode
-  size?: 'sm' | 'base' | 'lg' | 'xl'
+  size?: keyof typeof fontSizes
+  variant?: keyof typeof textColors
   className?: string
 }
 
-const sizeClasses = {
-  sm: 'text-sm',
-  base: fontSizes.base,
-  lg: fontSizes.lg,
-  xl: fontSizes.xl,
-}
-
-export function Text({ children, size = 'base', className, ...props }: TextProps) {
+export function Text({
+  children,
+  size = 'base',
+  variant = 'primary',
+  className,
+  ...props
+}: TextProps) {
   return (
-    <p className={cn(sizeClasses[size], 'leading-relaxed', className)} {...props}>
+    <p
+      className={cn(
+        fontSizes[size],
+        textColors[variant],
+        'leading-relaxed',
+        className
+      )}
+      {...props}
+    >
       {children}
     </p>
   )

@@ -1,6 +1,26 @@
+/**
+ * ⛳ Missing Atomic Components:
+ * - <Heading /> - Need to create this component
+ * - <Text /> - Need to create this component
+ * - <Card /> - Need to create this component
+ * 
+ * ⛳ Missing Token Mappings:
+ * - shadow-md -> Need to add shadow tokens
+ * - border-b -> Need to add border utility tokens
+ * - space-y-4 -> Need to add spacing utility tokens
+ */
+
 "use client";
 
 import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Heading } from "@/components/ui/typography/Heading";
+import { Text } from "@/components/ui/typography/Text";
+import { Input } from "@/components/ui/fields/Input";
+import { Select } from "@/components/ui/fields/Select";
+import { spacing, colorVariants, borderColors } from "@/lib/ui/tokens";
+import { cn } from "@/lib/utils";
 
 // ✅ Type-safe field configuration
 type FieldType = "text" | "email" | "select" | "multi-select";
@@ -63,100 +83,92 @@ export default function GenericAddForm<T extends Record<string, unknown>>({
   };
 
   return (
-    <div className="mt-8 max-w-2xl mx-auto">
+    <div className={cn("mt-8 max-w-2xl mx-auto")}>
       {!showForm ? (
-        <button
+        <Button
           onClick={() => setShowForm(true)}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+          variant="primary"
+          size="md"
         >
           {title}
-        </button>
+        </Button>
       ) : (
-        <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200 mt-4">
-          <h3 className="text-xl font-semibold mb-4 border-b border-gray-200 pb-2">{title}</h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <Card className={cn(spacing.lg, spacing.md)}>
+          <Heading level={3} className={cn("mb-4 pb-2 border-b", borderColors.default)}>
+            {title}
+          </Heading>
+          <form onSubmit={handleSubmit} className={cn("space-y-4")}>
             {/* ✅ Dynamically render fields based on configuration */}
             {fields.map((field) => (
-              <div key={String(field.key)} className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+              <div key={String(field.key)} className={cn("space-y-2")}>
+                <Text variant="secondary" className="font-medium">
                   {field.label}
-                </label>
+                </Text>
                 
                 {field.type === "multi-select" ? (
-                  <select
+                  <Select
                     multiple
                     value={formData[field.key] as string[]}
-                    onChange={(e) => {
-                      const selectedOptions = Array.from(
-                        e.target.selectedOptions,
-                        (option) => option.value
-                      );
-                      handleChange(field.key, selectedOptions);
-                    }}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  >
-                    {field.options?.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(value) => handleChange(field.key, value)}
+                    options={field.options?.map(option => ({
+                      value: option,
+                      label: option
+                    })) || []}
+                  />
                 ) : field.type === "select" ? (
-                  <select
+                  <Select
                     value={formData[field.key] as string}
-                    onChange={(e) => handleChange(field.key, e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  >
-                    {field.options?.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(value) => handleChange(field.key, value)}
+                    options={field.options?.map(option => ({
+                      value: option,
+                      label: option
+                    })) || []}
+                  />
                 ) : (
-                  <input
+                  <Input
                     type={field.type}
                     value={formData[field.key] as string}
                     onChange={(e) => handleChange(field.key, e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   />
                 )}
               </div>
             ))}
 
-            <div className="flex space-x-4 pt-4">
-              <button
+            <div className={cn("flex space-x-4 pt-4")}>
+              <Button
                 type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                variant="primary"
+                size="md"
               >
                 {title}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => {
                   setShowForm(false);
                   setFormData(defaultValues);
                   setError(null);
                 }}
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
+                variant="secondary"
+                size="md"
               >
                 Cancel
-              </button>
+              </Button>
             </div>
 
             {/* ✅ Success and error messaging */}
             {success && (
-              <div className="text-green-600 mt-2 p-2 bg-green-50 rounded">
+              <Text className={cn(spacing.sm, "p-2 rounded", colorVariants.success)}>
                 Successfully added new {title.toLowerCase()}!
-              </div>
+              </Text>
             )}
             {error && (
-              <div className="text-red-600 mt-2 p-2 bg-red-50 rounded">
+              <Text className={cn(spacing.sm, "p-2 rounded", colorVariants.danger)}>
                 Error: {error}
-              </div>
+              </Text>
             )}
           </form>
-        </div>
+        </Card>
       )}
     </div>
   );

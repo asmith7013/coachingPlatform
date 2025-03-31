@@ -11,19 +11,39 @@ interface SelectOption {
   online?: boolean
 }
 
-interface SelectProps {
+interface BaseSelectProps {
   label?: string
   options: SelectOption[]
-  value: string
-  onChange: (value: string) => void
   error?: string
   className?: string
 }
 
-export function Select({ label, options, value, onChange, error, className }: SelectProps) {
+interface SingleSelectProps extends BaseSelectProps {
+  multiple?: false
+  value: string
+  onChange: (value: string) => void
+}
+
+interface MultiSelectProps extends BaseSelectProps {
+  multiple: true
+  value: string[]
+  onChange: (value: string[]) => void
+}
+
+type SelectProps = SingleSelectProps | MultiSelectProps
+
+export function Select({ 
+  label, 
+  options, 
+  value, 
+  onChange, 
+  error, 
+  className,
+  multiple = false 
+}: SelectProps) {
   return (
     <FieldWrapper id="select" label={label} error={error}>
-      <Listbox value={value} onChange={onChange}>
+      <Listbox value={value} onChange={onChange} multiple={multiple}>
         <div className="relative">
           <Listbox.Button
             className={cn(
@@ -34,7 +54,9 @@ export function Select({ label, options, value, onChange, error, className }: Se
             )}
           >
             <span className="block truncate">
-              {options.find(option => option.value === value)?.label}
+              {multiple 
+                ? `${(value as string[]).length} selected`
+                : options.find(option => option.value === value)?.label}
             </span>
           </Listbox.Button>
           <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">

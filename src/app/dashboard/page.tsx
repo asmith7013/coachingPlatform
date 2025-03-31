@@ -1,9 +1,17 @@
-export default function DashboardHome() {
+import React from 'react';
+import { Heading } from '@/components/ui/typography/Heading';
+import { Text } from '@/components/ui/typography/Text';
+import { spacing, textColors } from '@/lib/ui/tokens';
 
-    return (
-      <div>
-        <h1 className="text-2xl font-bold">Welcome to the Dashboard</h1>
-        <p className="text-gray-600">This is where your schools and data will be displayed.</p>
-      </div>
-    );
-  }
+export default function DashboardHome() {
+  return (
+    <div className={spacing.lg}>
+      <Heading level={1} className={textColors.primary}>
+        Welcome to the Dashboard
+      </Heading>
+      <Text variant="secondary" className={spacing.md}>
+        This is where your schools and data will be displayed.
+      </Text>
+    </div>
+  );
+}

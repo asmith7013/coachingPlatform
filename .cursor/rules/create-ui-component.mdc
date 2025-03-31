@@ -1,7 +1,7 @@
 ---
-description: 
+description: Refactor UI files to use atomic components and token-based classes instead of raw HTML and Tailwind utilities.
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 ✨ Atomic UI Component Setup Instructions (Token-Aware, cn-Based)
 
@@ -56,6 +56,61 @@ Text	fontSize, color
 FormSection	spacing, border, gap
 ShellLayout	padding, fontSize, bg, title
 Topbar	variant (solid | transparent), padding, radius
+
+src
+├── components
+│   ├── error-boundaries
+│   │   ├── SentryBoundaryWrapper.tsx
+│   │   └── SentryErrorBoundary.tsx
+│   ├── features
+│   │   ├── imRoutine
+│   │   │   ├── GradeUnitLessonSelector.tsx
+│   │   │   ├── LessonCompactView.tsx
+│   │   │   ├── LessonDetailView.tsx
+│   │   │   └── RoutineFilter.tsx
+│   │   ├── lookFors
+│   │   │   (empty directory)
+│   │   ├── schools
+│   │   │   (empty directory)
+│   │   └── shared
+│   │       ├── form
+│   │       │   ├── BulkUploadForm.tsx
+│   │       │   └── GenericAddForm.tsx
+│   │       └── ResourceHeader.tsx
+│   └── ui
+│       ├── fields
+│       │   ├── Checkbox.tsx
+│       │   ├── FieldWrapper.tsx
+│       │   ├── Input.tsx
+│       │   ├── Label.tsx
+│       │   ├── Select.tsx
+│       │   ├── Switch.tsx
+│       │   └── Textarea.tsx
+│       ├── layout
+│       │   ├── shell-layout.tsx
+│       │   ├── sidebar.tsx
+│       │   └── topbar.tsx
+│       ├── table
+│       │   ├── variants
+│       │   │   ├── compact.tsx
+│       │   │   ├── paginated.tsx
+│       │   │   └── sticky-header.tsx
+│       │   ├── table-actions.tsx
+│       │   ├── table-cell.tsx
+│       │   ├── table-empty.tsx
+│       │   ├── table-header.tsx
+│       │   ├── table-row.tsx
+│       │   └── table.tsx
+│       ├── typography
+│       │   ├── Heading.tsx
+│       │   └── Text.tsx
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── empty-state.tsx
+│       ├── form-section.tsx
+│       ├── form.tsx
+│       └── page-header.tsx
+
 
 ✏️ 5. Style Consistency Rules
 

@@ -1,6 +1,11 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
 import React from "react";
+import { Card } from '@/components/ui/card';
+import { Heading } from '@/components/ui/typography/Heading';
+import { Text } from '@/components/ui/typography/Text';
+import { Button } from '@/components/ui/button';
+import { spacing, textColors, colorVariants } from '@/lib/ui/tokens';
 import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Schools data.
 import { School } from "@/lib/zod-schema"; // ✅ Import the School type from Zod schema.
 import { SchoolInput } from "@/lib/zod-schema";
@@ -52,12 +57,14 @@ export default function SchoolList() {
   };
 
   // ✅ 6. Server Actions Error Handling: Display a loading indicator or handle errors.
-  if (loading) return <p>Loading Schools...</p>;
+  if (loading) return <Text>Loading Schools...</Text>;
   // if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="container mx-auto mt-8 p-6">
-      <h2 className="text-2xl font-semibold mb-4">Schools</h2>
+    <div className={`container mx-auto ${spacing.lg}`}>
+      <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+        Schools
+      </Heading>
 
       <ResourceHeader<School>
         page={page}
@@ -75,51 +82,70 @@ export default function SchoolList() {
       />
 
       {/* ✅ 5. Data Flow Integrity: SWR ensures data consistency between UI and database */}
-      <div className="space-y-6">
+      <div className={spacing.lg}>
         {schools.map((school: School) => (
-          <div key={school._id} className="bg-white shadow-lg rounded-lg p-4">
+          <Card
+            key={school._id}
+            className={spacing.md}
+            padding="md"
+            radius="lg"
+          >
             <div className="flex justify-between items-center">
               <div>
-                <h5 className="text-lg font-bold">
+                <Heading level={3} className={textColors.primary}>
                   {school.emoji || '🏫'} {school.schoolName}
-                </h5>
-                <p className="text-gray-700">District: {school.district}</p>
-                {school.address && <p className="text-gray-500">{school.address}</p>}
+                </Heading>
+                <Text variant="secondary" className={spacing.sm}>
+                  District: {school.district}
+                </Text>
+                {school.address && (
+                  <Text variant="muted" className={spacing.sm}>
+                    {school.address}
+                  </Text>
+                )}
               </div>
               {/* ✅ Optimistic UI Update: Delete Button */}
-              <button
+              <Button
                 onClick={() => school._id && confirmDeleteSchool(school._id)}
-                className="text-red-500 hover:bg-red-100 px-3 py-1 rounded"
+                variant="danger"
+                size="sm"
               >
                 🗑️ Delete
-              </button>
+              </Button>
             </div>
 
             {/* ✅ 15. Schema Nesting & Type Inference: Dynamically render nested Grade Levels */}
-            <h5 className="text-lg font-bold mt-4">Grade Levels</h5>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <Heading level={3} className={`${textColors.primary} ${spacing.md}`}>
+              Grade Levels
+            </Heading>
+            <div className="flex flex-wrap gap-2">
               {school.gradeLevelsSupported && school.gradeLevelsSupported.map((grade, index) => (
-                <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                <span 
+                  key={index} 
+                  className={`${spacing.sm} ${colorVariants.primary} rounded-full text-sm`}
+                >
                   {grade}
                 </span>
               ))}
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
       {/* ✅ 15. Schema Nesting & Type Inference: Ensure Schools correctly reference nested schemas */}
-      <GenericAddForm
-        title="Add School"
-        defaultValues={createEmptySchool()}
-        onSubmit={createSchool}
-        fields={SchoolFieldConfig}
-      />
-      <BulkUploadForm
-        title="Bulk Upload Schools"
-        description="Upload a CSV file with school data"
-        onUpload={uploadSchoolFile}
-      />
+      <div className={spacing.lg}>
+        <GenericAddForm
+          title="Add School"
+          defaultValues={createEmptySchool()}
+          onSubmit={createSchool}
+          fields={SchoolFieldConfig}
+        />
+        <BulkUploadForm
+          title="Bulk Upload Schools"
+          description="Upload a CSV file with school data"
+          onUpload={uploadSchoolFile}
+        />
+      </div>
     </div>
   );
 }

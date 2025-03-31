@@ -1,6 +1,11 @@
 "use client";
 
 import React from "react";
+import { Card } from '@/components/ui/card';
+import { Heading } from '@/components/ui/typography/Heading';
+import { Text } from '@/components/ui/typography/Text';
+import { Button } from '@/components/ui/button';
+import { spacing, textColors } from '@/lib/ui/tokens';
 import GenericAddForm from "@/components/features/shared/form/GenericAddForm";
 import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
 import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
@@ -23,9 +28,7 @@ const createEmptyLookFor = (): LookForInput => ({
   status: "draft"
 });
 
-
 export default function LookForsWrapper() {
-  // ✅ Use `useLookFors` hook for data management
   const { 
     lookFors, 
     loading, 
@@ -38,7 +41,6 @@ export default function LookForsWrapper() {
     changeSorting,
   } = useLookFors();
 
-  // ✅ Confirm and Delete LookFor using Hook
   const confirmDeleteLookFor = (id: string) => {
     if (window.confirm("Are you sure you want to delete this LookFor?")) {
       handleDeleteLookFor(id);
@@ -46,14 +48,16 @@ export default function LookForsWrapper() {
   };
 
   const handleDeleteLookFor = async (id: string) => {
-    await removeLookFor(id);  // ✅ Uses the hook instead of direct API calls
+    await removeLookFor(id);
   };
 
-  if (loading) return <p>Loading LookFors...</p>;
+  if (loading) return <Text>Loading LookFors...</Text>;
 
   return (
-    <div className="container mx-auto mt-8 p-6">
-      <h2 className="text-2xl font-semibold mb-4">Look Fors</h2>
+    <div className={`container mx-auto ${spacing.lg}`}>
+      <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+        Look Fors
+      </Heading>
 
       <ResourceHeader<LookForInput>
         page={page}
@@ -71,52 +75,63 @@ export default function LookForsWrapper() {
         onSearch={(value) => applyFilters({ topic: value })}
       />
 
-      {/* ✅ Display LookFors */}
-      <div className="space-y-6">
+      <div className={spacing.lg}>
         {lookFors.map((lookFor) => (
-          <div key={lookFor._id} className="bg-white shadow-lg rounded-lg p-4">
+          <Card
+            key={lookFor._id}
+            className={spacing.md}
+            padding="md"
+            radius="lg"
+          >
             <div className="flex justify-between items-center">
               <div>
-                <h5 className="text-lg font-bold">
+                <Heading level={3} className={textColors.primary}>
                   {lookFor.studentFacing ? "✏️" : "🍎"} {lookFor.topic}
-                </h5>
-                <p className="text-gray-700">{lookFor.description}</p>
+                </Heading>
+                <Text variant="secondary" className={spacing.sm}>
+                  {lookFor.description}
+                </Text>
               </div>
-              <button
+              <Button
                 onClick={() => lookFor._id && confirmDeleteLookFor(lookFor._id)}
-                className="text-red-500 hover:bg-red-100 px-3 py-1 rounded"
+                variant="danger"
+                size="sm"
               >
                 🗑️ Delete
-              </button>
+              </Button>
             </div>
 
-            {/* ✅ Display Rubric Dynamically */}
-            <h5 className="text-lg font-bold mt-4">Rubric</h5>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
-                {lookFor.rubric.map((rubricItem, index) => (
-                    <div key={index} className="p-3 rounded-lg shadow-md text-left bg-gray-100">
-                    <h4 className="text-lg font-bold">
-                        {rubricItem.category} ({rubricItem.score})
-                    </h4>
-                    <p className="mt-2">{rubricItem.content || "No description"}</p>
-                    </div>
-                ))}
+            <Heading level={3} className={`${textColors.primary} ${spacing.md}`}>
+              Rubric
+            </Heading>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              {lookFor.rubric.map((rubricItem, index) => (
+                <Card
+                  key={index}
+                  className={spacing.sm}
+                  padding="sm"
+                  radius="md"
+                >
+                  <Heading level={4} className={textColors.primary}>
+                    {rubricItem.category} ({rubricItem.score})
+                  </Heading>
+                  <Text variant="secondary" className={spacing.sm}>
+                    {rubricItem.content || "No description"}
+                  </Text>
+                </Card>
+              ))}
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
-      {/* ✅ Add LookFor Form */}
-      {/* <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200 mt-6"> */}
-        <GenericAddForm
-          title="Add Look For"
-          defaultValues={createEmptyLookFor()}
-          onSubmit={createLookFor}
-          fields={LookForFieldConfig}
-        />
-      {/* </div> */}
+      <GenericAddForm
+        title="Add Look For"
+        defaultValues={createEmptyLookFor()}
+        onSubmit={createLookFor}
+        fields={LookForFieldConfig}
+      />
 
-      {/* ✅ Bulk Upload Component */}
       <BulkUploadForm
         title="Bulk Upload Look Fors"
         description="Upload a CSV file containing Look Fors and embedded rubric rows"

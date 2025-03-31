@@ -1,4 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/fields/Input';
+import { Select } from '@/components/ui/fields/Select';
+import { Text } from '@/components/ui/typography/Text';
+import { spacing } from '@/lib/ui/tokens';
 
 interface ResourceHeaderProps<T> {
   page: number;
@@ -23,61 +28,65 @@ export function ResourceHeader<T extends Record<string, unknown>>({
   // performanceMode,
   // togglePerformanceMode,
 }: ResourceHeaderProps<T>) {
+  const [sortValue, setSortValue] = useState<string>("");
+
   return (
-    <div className="flex justify-between items-center mb-4">
+    <div className={`flex justify-between items-center ${spacing.md}`}>
       {/* Pagination Controls */}
       <div className="flex items-center gap-2">
-        <button 
+        <Button 
           disabled={page === 1} 
           onClick={() => setPage(page - 1)}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          variant="secondary"
+          size="sm"
         >
           ⬅️ Previous
-        </button>
-        <span>Page {page} of {Math.ceil(total / limit)}</span>
-        <button 
+        </Button>
+        <Text variant="secondary">
+          Page {page} of {Math.ceil(total / limit)}
+        </Text>
+        <Button 
           disabled={page * limit >= total} 
           onClick={() => setPage(page + 1)}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          variant="secondary"
+          size="sm"
         >
           Next ➡️
-        </button>
+        </Button>
       </div>
 
       {/* Sort and Search Controls */}
       <div className="flex items-center gap-4">
         {/* Sort Dropdown */}
-        <select
-          onChange={(e) => {
-            const [field, order] = e.target.value.split(":");
+        <Select
+          value={sortValue}
+          onChange={(value) => {
+            setSortValue(value);
+            const [field, order] = value.split(":");
             onSort(field as keyof T | string, order as "asc" | "desc");
           }}
-          className="px-3 py-1 border rounded-md"
-        >
-          {sortOptions.map((option) => (
-            <React.Fragment key={String(option.key)}>
-              <option value={`${String(option.key)}:asc`}>Sort {option.label} A-Z</option>
-              <option value={`${String(option.key)}:desc`}>Sort {option.label} Z-A</option>
-            </React.Fragment>
-          ))}
-        </select>
+          options={sortOptions.flatMap(option => [
+            { value: `${String(option.key)}:asc`, label: `Sort ${option.label} A-Z` },
+            { value: `${String(option.key)}:desc`, label: `Sort ${option.label} Z-A` }
+          ])}
+        />
 
         {/* Search Input */}
-        <input
+        <Input
           type="text"
           placeholder="Search..."
           onChange={(e) => onSearch(e.target.value)}
-          className="border px-3 py-1 rounded-md"
         />
 
         {/* Performance Mode Toggle */}
         {/* {togglePerformanceMode && (
-          <button
+          <Button
             onClick={togglePerformanceMode}
-            className={`px-3 py-1 rounded ${performanceMode ? 'bg-green-500 text-white' : 'bg-gray-300'}`}
+            variant={performanceMode ? "success" : "secondary"}
+            size="sm"
           >
             {performanceMode ? '🚀 Performance Mode' : '🔍 Detailed Mode'}
-          </button>
+          </Button>
         )} */}
       </div>
     </div>

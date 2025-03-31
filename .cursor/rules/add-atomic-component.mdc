@@ -1,0 +1,112 @@
+---
+description: Use this rule to upgrade any file to match the atomic UI component system and token-based design system.
+globs: 
+alwaysApply: true
+---
+
+	Refactor this file to:
+
+	1. Use atomic UI components from components/ui/ wherever possible:
+		•	Examples: <Button />, <Input />, <Card />, <Label />, <Heading />, <Text />, <Divider />, etc.
+	•	These atomic components should replace raw HTML elements (e.g., <button>, <input>, <div> with Tailwind).
+
+	2. Replace raw Tailwind classes like px-4, text-gray-500, rounded-lg with token-based utility classes like px-md, text-secondary, rounded-md, as defined in:
+		•	tailwind.config.js (via @theme)
+	•	lib/ui/designTokens.ts
+[designTokens.ts](mdc:src/lib/ui/designTokens.ts)
+	
+	src
+├── components
+│   ├── error-boundaries
+│   │   ├── SentryBoundaryWrapper.tsx
+│   │   └── SentryErrorBoundary.tsx
+│   ├── features
+│   │   ├── imRoutine
+│   │   │   ├── GradeUnitLessonSelector.tsx
+│   │   │   ├── LessonCompactView.tsx
+│   │   │   ├── LessonDetailView.tsx
+│   │   │   └── RoutineFilter.tsx
+│   │   ├── lookFors
+│   │   │   (empty directory)
+│   │   ├── schools
+│   │   │   (empty directory)
+│   │   └── shared
+│   │       ├── form
+│   │       │   ├── BulkUploadForm.tsx
+│   │       │   └── GenericAddForm.tsx
+│   │       └── ResourceHeader.tsx
+│   └── ui
+│       ├── fields
+│       │   ├── Checkbox.tsx
+│       │   ├── FieldWrapper.tsx
+│       │   ├── Input.tsx
+│       │   ├── Label.tsx
+│       │   ├── Select.tsx
+│       │   ├── Switch.tsx
+│       │   └── Textarea.tsx
+│       ├── layout
+│       │   ├── shell-layout.tsx
+│       │   ├── sidebar.tsx
+│       │   └── topbar.tsx
+│       ├── table
+│       │   ├── variants
+│       │   │   ├── compact.tsx
+│       │   │   ├── paginated.tsx
+│       │   │   └── sticky-header.tsx
+│       │   ├── table-actions.tsx
+│       │   ├── table-cell.tsx
+│       │   ├── table-empty.tsx
+│       │   ├── table-header.tsx
+│       │   ├── table-row.tsx
+│       │   └── table.tsx
+│       ├── typography
+│       │   ├── Heading.tsx
+│       │   └── Text.tsx
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── empty-state.tsx
+│       ├── form-section.tsx
+│       ├── form.tsx
+│       └── page-header.tsx
+
+	3. When customizing atomic components, use props like:
+		•	variant="primary"
+	•	size="md"
+	•	These map to values in lib/ui/tokens.ts and should be used instead of hardcoded Tailwind utility strings.
+
+	4. Ensure spacing, radii, and font sizes are consistent with the design system:
+		•	Use p-sm, rounded-md, text-base instead of p-2, rounded, or text-sm.
+	•	Always prefer token-based classes over Tailwind defaults when equivalents exist.
+
+	5. If anything is missing, flag it clearly:
+		•	If a Tailwind class doesn’t yet map to a design token
+	•	If an atomic component is missing (e.g., <Tooltip /> not yet built)
+	•	⛳ Add this comment block at the top of the file:
+
+✅ Your Goal
+
+	Make this file fully:
+		•	Token-driven
+	•	Atomic and composable
+	•	Consistent with the design system
+	•	Future-proof for global theme changes
+
+🔁 Quick Example Target Output (What You’re Asking Cursor to Do)
+[button.tsx](mdc:src/components/ui/button.tsx)
+// ✅ Before:
+<button className="bg-blue-500 text-white px-4 py-2 rounded-lg">
+  Submit
+</button>
+
+// ✅ After:
+<Button variant="primary" size="md">
+  Submit
+</Button>
+
+// ✅ Before:
+<input className="text-sm px-3 py-2 border-gray-300" />
+
+// ✅ After:
+<Input size="sm" />
+[Input.tsx](mdc:src/components/ui/fields/Input.tsx)
+🧾 File Input to Update:

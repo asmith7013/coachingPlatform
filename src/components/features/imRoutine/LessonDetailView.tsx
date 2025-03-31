@@ -1,6 +1,10 @@
 'use client';
 
 import React from 'react';
+import { Card } from '@/components/ui/card';
+import { Heading } from '@/components/ui/typography/Heading';
+import { Text } from '@/components/ui/typography/Text';
+import { spacing, textColors, colorVariants } from '@/lib/ui/tokens';
 
 type LessonDetailViewProps = {
   lessonsData: {
@@ -19,11 +23,10 @@ type LessonDetailViewProps = {
 
 export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetailViewProps) {
   return (
-    <div className="space-y-4">
+    <div className={spacing.lg}>
       {lessonsData
         .sort((a, b) => Number(a.lessonNumber) - Number(b.lessonNumber))
         .map((lesson) => {
-
           const lessonHasSelectedRoutine = lesson.activities.some((activity) =>
             activity.routines.some((routine) =>
               selectedRoutines.includes(routine.trim())
@@ -43,33 +46,41 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
           );
 
           return (
-            <div
+            <Card
               key={lesson.lessonNumber}
-              className={`rounded-xl shadow p-4 ${lessonHasSelectedRoutine ? 'bg-white' : 'bg-gray-50'} ${
+              className={`${lessonHasSelectedRoutine ? colorVariants.surface : 'bg-gray-50'} ${
                 lessonHasSelectedRoutine ? 'border-2 border-black' : 'border border-gray-200'
               }`}
+              padding="md"
+              radius="xl"
             >
-              <h3 className={`text-md font-bold ${lessonHasSelectedRoutine ? 'text-gray-800 mb-4' : 'text-gray-400'}`}>
-                <span className='mr-2'>Lesson {lesson.lessonNumber}</span>
-                {hasMLR && <span className={`inline-block bg-purple-100 text-purple-800 text-[10px] font-medium px-2 py-0.5 mx-1 rounded`}>
+              <Heading level={3} className={`${lessonHasSelectedRoutine ? `${textColors.primary} mb-4` : textColors.muted}`}>
+                <span className="mr-2">Lesson {lesson.lessonNumber}</span>
+                {hasMLR && (
+                  <span className="inline-block bg-purple-100 text-purple-800 text-[10px] font-medium px-2 py-0.5 mx-1 rounded">
                     MLR
-                </span>}
-                {hasOtherRoutine && <span className={`inline-block bg-blue-100 text-blue-800 text-[10px] font-medium px-2 py-0.5 mx-1 rounded`}>
+                  </span>
+                )}
+                {hasOtherRoutine && (
+                  <span className="inline-block bg-blue-100 text-blue-800 text-[10px] font-medium px-2 py-0.5 mx-1 rounded">
                     Other Routine
-                </span>}
-              </h3>
+                  </span>
+                )}
+              </Heading>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                 {lessonHasSelectedRoutine && lesson.activities.map((activity, idx) => (
-                  <div
+                  <Card
                     key={idx}
-                    className="bg-gray-50 border border-gray-200 rounded-md p-3"
+                    className="bg-gray-50 border border-gray-200"
+                    padding="sm"
+                    radius="md"
                   >
-                    <p className="font-medium text-xs mb-1">
-                       {activity.activityNumber === 'Warm Up' ? 'Warm Up' : `Activity ${activity.activityNumber}`}
-                    </p>
-                    <p className="text-xs text-gray-700 mb-2 truncate">
+                    <Text variant="primary" size="xs" className="font-medium mb-1">
+                      {activity.activityNumber === 'Warm Up' ? 'Warm Up' : `Activity ${activity.activityNumber}`}
+                    </Text>
+                    <Text variant="secondary" size="xs" className="mb-2 truncate">
                       {activity.activityTitle}
-                    </p>
+                    </Text>
                     {activity.routines.length > 0 ? (
                       <div className="flex flex-wrap gap-1">
                         {activity.routines
@@ -93,16 +104,16 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                           })}
                       </div>
                     ) : (
-                      <p className="italic text-[11px] text-gray-500">
-                        {/* No routines */}
-                      </p>
+                      <Text variant="muted" size="xs" className="italic">
+                        No routines
+                      </Text>
                     )}
-                  </div>
+                  </Card>
                 ))}
               </div>
-            </div>
+            </Card>
           );
         })}
     </div>
   );
-} 
+}

@@ -1,6 +1,24 @@
+/**
+ * ⛳ Missing Atomic Components:
+ * - <Heading /> - Need to create this component
+ * - <Text /> - Need to create this component
+ * - <Card /> - Need to create this component
+ * 
+ * ⛳ Missing Token Mappings:
+ * - shadow-md -> Need to add shadow tokens
+ * - border-b -> Need to add border utility tokens
+ */
+
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Heading } from "@/components/ui/typography/Heading";
+import { Text } from "@/components/ui/typography/Text";
+import { Input } from "@/components/ui/fields/Input";
+import { spacing, colorVariants } from "@/lib/ui/tokens";
+import { cn } from "@/lib/utils";
 
 interface BulkUploadFormProps {
   title: string;
@@ -42,30 +60,40 @@ export default function BulkUploadForm({
   };
   
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 mt-8">
-      <h3 className="text-lg font-semibold">{title}</h3>
+    <Card className={cn(spacing.lg, spacing.md)}>
+      <Heading level={3}>{title}</Heading>
       {description && (
-        <p className="text-sm text-gray-600 mb-2">{description}</p>
+        <Text variant="secondary" className={cn(spacing.sm, "mb-2")}>
+          {description}
+        </Text>
       )}
-      <input 
+      <Input 
         type="file" 
         accept={accept}
         onChange={handleFileChange} 
-        className="block my-2"
+        className={cn(spacing.sm, "my-2")}
         disabled={disabled || isUploading}
       />
-      <button
+      <Button
         onClick={handleUpload}
         disabled={!file || isUploading || disabled}
-        className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400"
+        variant="primary"
+        size="md"
       >
         {isUploading ? "Uploading..." : "Upload"}
-      </button>
+      </Button>
       {message && (
-        <div className={`mt-4 ${message.toLowerCase().includes("successful") ? "text-green-600" : "text-red-600"}`}>
+        <Text 
+          className={cn(
+            spacing.md,
+            message.toLowerCase().includes("successful") 
+              ? colorVariants.success 
+              : colorVariants.danger
+          )}
+        >
           {message}
-        </div>
+        </Text>
       )}
-    </div>
+    </Card>
   );
 }
