@@ -58,7 +58,9 @@
 │   │       ├── im-routines
 │   │       │   └── page.tsx
 │   │       ├── layout.tsx
-│   │       └── page.tsx
+│   │       ├── page.tsx
+│   │       └── rubric-viewer
+│   │           └── page.tsx
 │   ├── components
 │   │   ├── error-boundaries
 │   │   │   ├── SentryBoundaryWrapper.tsx
@@ -135,7 +137,8 @@
 │   │   │   ├── handleServerError.ts
 │   │   │   └── handleValidationError.ts
 │   │   ├── json
-│   │   │   └── IM_Routines.json
+│   │   │   ├── IM_Routines.json
+│   │   │   └── IMplementation.json
 │   │   ├── server-utils
 │   │   │   ├── bulkUpload.ts
 │   │   │   ├── crud.ts
@@ -232,4 +235,4 @@
 ├── tsconfig.json
 └── tsconfig.tsbuildinfo
 
-72 directories, 161 files
+73 directories, 163 files
