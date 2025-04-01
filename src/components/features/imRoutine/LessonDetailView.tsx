@@ -4,7 +4,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
-import { spacing, textColors, colorVariants, spacingY } from '@/lib/ui/tokens';
+import { spacing, textColors, colorVariants } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 
 type LessonDetailViewProps = {
