@@ -4,7 +4,7 @@
 const textColors = {
   primary: '#111827',     // dark gray (gray-900)
   secondary: '#374151',   // medium gray (gray-700)
-  muted: '#6b7280',       // light gray (gray-500)
+  muted: 'gray-400',       // light gray (gray-500)
   white: '#ffffff',
   black: '#000000',
   success: '#16a34a',

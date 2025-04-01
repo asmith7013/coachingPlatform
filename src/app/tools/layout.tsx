@@ -20,7 +20,6 @@ export default function ToolsLayout({ children }: { children: React.ReactNode })
                 IMplementation Reflection Tool
               </Link>
             </li>
-            
           </ul>
         </nav>
       </aside>

@@ -4,7 +4,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
-import { spacing, textColors, colorVariants } from '@/lib/ui/tokens';
+import { spacing, textColors, colorVariants, spacingY } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 
 type LessonDetailViewProps = {
@@ -54,13 +54,13 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                   className={cn(
                     'transition-all duration-150', spacing.sm,
                     lessonHasSelectedRoutine ? colorVariants.surface : 'bg-gray-50',
-                    lessonHasSelectedRoutine ? 'border-2 border-black' : 'border border-gray-200'
+                    lessonHasSelectedRoutine ? 'border-2 border-black bg-white' : 'border border-gray-200', 'my-4'
                   )}
                   // padding="md"
                   // radius="xl"
                 >
-                  <Heading level={3} className={cn(lessonHasSelectedRoutine ? 'mb-4' : textColors.muted)}>
-                    <span className="mr-2">Lesson {lesson.lessonNumber}</span>
+                  <Heading level={3} className={cn(lessonHasSelectedRoutine ? 'mb-4' : 'text-gray-400')}>
+                    <span className={cn('mr-2', lessonHasSelectedRoutine ? '' : textColors.muted)}>Lesson {lesson.lessonNumber}</span>
                     {hasMLR && (
                       <span className="inline-block bg-purple-100 text-purple-800 text-[10px] font-medium px-2 py-0.5 mx-1 rounded">
                         MLR
@@ -72,7 +72,7 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                       </span>
                     )}
                   </Heading>
-                  <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                  <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {lessonHasSelectedRoutine && lesson.activities.map((activity, idx) => (
                       <Card
                         key={idx}
@@ -109,7 +109,7 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                               })}
                           </div>
                         ) : (
-                          <Text size="xs" className="italic text-grey-400">
+                          <Text size="xs" className="italic">
                             No routines
                           </Text>
                         )}
