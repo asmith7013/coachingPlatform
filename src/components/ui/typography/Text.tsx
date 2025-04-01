@@ -1,12 +1,13 @@
 import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { typography, textColors, type TextSize, type FontWeight } from '@/lib/ui/tokens'
+import { typography, type TextSize, type FontWeight } from '@/lib/ui/tokens'
+import { designTokens } from '@/lib/ui/designTokens'
 
 interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
   children: ReactNode
   size?: TextSize
   weight?: FontWeight
-  variant?: 'primary' | 'secondary' | 'muted'
+  variant?: keyof typeof designTokens.textColors
   className?: string
 }
 
@@ -23,10 +24,10 @@ export function Text({
       className={cn(
         typography.text[size],
         typography.weight[weight],
-        textColors[variant],
         'leading-relaxed',
         className
       )}
+      style={{ color: designTokens.textColors[variant] }}
       {...props}
     >
       {children}

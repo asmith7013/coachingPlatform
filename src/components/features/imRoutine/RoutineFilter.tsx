@@ -89,7 +89,7 @@ export function RoutineFilter({
         })}
         <Button
           onClick={() => setSelectedRoutines(routinesToShow)}
-          variant="outline"
+          // variant="outline"
           size="sm"
           className="bg-gray-600 text-white border-gray-300 hover:bg-gray-700"
         >
