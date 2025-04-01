@@ -1,101 +1,44 @@
-import { Field } from "@/lib/ui-schema/types";
-import { SchoolInput } from "@/lib/zod-schema";
-import { GradeLevelsSupportedValues } from "../../fieldValues";
+import { Field } from '@/components/features/shared/form/GenericAddForm';
+import { SchoolInput } from '@/lib/zod-schema';
+import { GradeLevelsSupportedZod } from '@/lib/zod-schema/shared/enums';
 
 export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
-    key: "schoolNumber",
-    label: "School Number",
-    type: "text",
-    inputType: "text",
+    name: 'schoolNumber',
+    label: 'School Number',
+    type: 'text',
     required: true,
-    editable: true,
-    placeholder: "Enter school number"
   },
   {
-    key: "district",
-    label: "District",
-    type: "text",
-    inputType: "text",
+    name: 'district',
+    label: 'District',
+    type: 'text',
     required: true,
-    editable: true,
-    placeholder: "Enter district"
   },
   {
-    key: "schoolName",
-    label: "School Name",
-    type: "text",
-    inputType: "text",
+    name: 'schoolName',
+    label: 'School Name',
+    type: 'text',
     required: true,
-    editable: true,
-    placeholder: "Enter school name"
   },
   {
-    key: "address",
-    label: "Address",
-    type: "text",
-    inputType: "text",
-    required: false,
-    editable: true,
-    placeholder: "Enter school address"
+    name: 'address',
+    label: 'Address',
+    type: 'text',
   },
   {
-    key: "emoji",
-    label: "Emoji",
-    type: "text",
-    inputType: "text",
-    required: false,
-    editable: true,
-    placeholder: "Enter representative emoji"
+    name: 'emoji',
+    label: 'Emoji',
+    type: 'text',
   },
   {
-    key: "gradeLevelsSupported",
-    label: "Grade Levels",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: GradeLevelsSupportedValues,
-    required: true,
-    editable: true,
-    placeholder: "Select supported grade levels"
+    name: 'gradeLevelsSupported',
+    label: 'Grade Levels Supported',
+    type: 'select',
+    options: GradeLevelsSupportedZod.options.map((value) => ({
+      value,
+      label: value,
+    })),
+    defaultValue: [],
   },
-  {
-    key: "staffList",
-    label: "Staff Members",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: [],
-    required: true,
-    editable: true,
-    placeholder: "Select staff members"
-  },
-  {
-    key: "schedules",
-    label: "Schedules",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: [],
-    required: true,
-    editable: true,
-    placeholder: "Select schedules"
-  },
-  {
-    key: "cycles",
-    label: "Cycles",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: [],
-    required: true,
-    editable: true,
-    placeholder: "Select cycles"
-  },
-  {
-    key: "owners",
-    label: "Owners",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: [],
-    required: true,
-    editable: true,
-    placeholder: "Select owners"
-  }
 ]; 

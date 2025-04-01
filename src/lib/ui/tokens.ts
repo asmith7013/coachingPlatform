@@ -30,6 +30,105 @@ export const colorVariants = {
 
 export type ColorVariant = keyof typeof colorVariants;
 
+// 🔠 Typography
+export const typography = {
+  heading: {
+    h1: 'text-4xl font-bold tracking-tight',
+    h2: 'text-3xl font-semibold tracking-tight',
+    h3: 'text-2xl font-semibold',
+    h4: 'text-xl font-semibold',
+    h5: 'text-lg font-medium',
+    h6: 'text-base font-medium uppercase',
+  },
+  text: {
+    xs: 'text-xs leading-normal',
+    sm: 'text-sm leading-normal',
+    base: 'text-base leading-normal',
+    lg: 'text-lg leading-normal',
+    xl: 'text-xl leading-normal',
+  },
+  weight: {
+    light: 'font-light',
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold',
+  },
+};
+
+export type HeadingLevel = keyof typeof typography.heading;
+export type TextSize = keyof typeof typography.text;
+export type FontWeight = keyof typeof typography.weight;
+
+// 🎯 Table Styles
+export const table = {
+  wrapper: 'w-full overflow-hidden shadow-sm rounded-lg',
+  base: 'min-w-full divide-y divide-gray-200',
+  header: {
+    cell: 'px-4 py-3 text-gray-500 font-medium text-left',
+    row: 'bg-gray-50',
+  },
+  body: {
+    row: 'border-t border-gray-200',
+    cell: 'px-4 py-3 text-base text-gray-900',
+    link: 'text-gray-900 hover:text-gray-500',
+  },
+  footer: {
+    wrapper: 'px-4 py-3 border-t border-gray-200',
+    text: 'text-sm text-gray-500',
+  },
+};
+
+// 🌗 Shadows
+export const shadows = {
+  sm: `shadow-[${designTokens.shadows.sm}]`,
+  md: `shadow-[${designTokens.shadows.md}]`,
+  lg: `shadow-[${designTokens.shadows.lg}]`,
+  xl: `shadow-[${designTokens.shadows.xl}]`,
+  "2xl": `shadow-[${designTokens.shadows["2xl"]}]`,
+};
+
+export type Shadow = keyof typeof shadows;
+
+// 🧱 Border Utilities
+export const borderWidths = {
+  none: `border-[${designTokens.borders.width.none}]`,
+  sm: `border-[${designTokens.borders.width.sm}]`,
+  md: `border-[${designTokens.borders.width.md}]`,
+  lg: `border-[${designTokens.borders.width.lg}]`,
+};
+
+export const borderStyles = {
+  solid: `border-[${designTokens.borders.style.solid}]`,
+  dashed: `border-[${designTokens.borders.style.dashed}]`,
+  dotted: `border-[${designTokens.borders.style.dotted}]`,
+};
+
+export const borderColors = {
+  primary: `border-[${designTokens.borders.color.primary}]`,
+  secondary: `border-[${designTokens.borders.color.secondary}]`,
+  danger: `border-[${designTokens.borders.color.danger}]`,
+  success: `border-[${designTokens.borders.color.success}]`,
+  surface: `border-[${designTokens.borders.color.surface}]`,
+  default: `border-[${designTokens.borders.color.default}]`,
+  outline: `border-[${designTokens.borders.color.outline}]`,
+  white: `border-[${designTokens.borders.color.white}]`,
+  black: `border-[${designTokens.borders.color.black}]`,
+};
+
+export const borderPositions = {
+  top: 'border-t',
+  right: 'border-r',
+  bottom: 'border-b',
+  left: 'border-l',
+  all: 'border',
+};
+
+export type BorderWidth = keyof typeof borderWidths;
+export type BorderStyle = keyof typeof borderStyles;
+export type BorderColor = keyof typeof borderColors;
+export type BorderPosition = keyof typeof borderPositions;
+
 // 📏 Spacing utility classes
 export const spacing = {
   xs: `p-[${designTokens.spacing.xs}]`,
@@ -79,36 +178,6 @@ export const sizeVariants = {
 
 export type SizeVariant = keyof typeof sizeVariants;
 
-// 🧱 Border Utilities
-export const borderWidths = {
-  none: `border-[${designTokens.borders.width.none}]`,
-  sm: `border-[${designTokens.borders.width.sm}]`,
-  md: `border-[${designTokens.borders.width.md}]`,
-  lg: `border-[${designTokens.borders.width.lg}]`,
-};
-
-export const borderStyles = {
-  solid: `border-[${designTokens.borders.style.solid}]`,
-  dashed: `border-[${designTokens.borders.style.dashed}]`,
-  dotted: `border-[${designTokens.borders.style.dotted}]`,
-};
-
-export const borderColors = {
-  primary: `border-[${designTokens.borders.color.primary}]`,
-  secondary: `border-[${designTokens.borders.color.secondary}]`,
-  danger: `border-[${designTokens.borders.color.danger}]`,
-  success: `border-[${designTokens.borders.color.success}]`,
-  surface: `border-[${designTokens.borders.color.surface}]`,
-  default: `border-[${designTokens.borders.color.default}]`,
-  outline: `border-[${designTokens.borders.color.outline}]`,
-  white: `border-[${designTokens.borders.color.white}]`,
-  black: `border-[${designTokens.borders.color.black}]`,
-};
-
-export type BorderWidth = keyof typeof borderWidths;
-export type BorderStyle = keyof typeof borderStyles;
-export type BorderColor = keyof typeof borderColors;
-
 // 📏 Line Height
 export const leading = {
   none: `leading-[${designTokens.leading.none}]`,
@@ -123,27 +192,45 @@ export type Leading = keyof typeof leading;
 
 // 📏 Vertical Spacing
 export const spacingY = {
-  none: `my-[${designTokens.spacingY.none}]`,
-  xs: `my-[${designTokens.spacingY.xs}]`,
-  sm: `my-[${designTokens.spacingY.sm}]`,
-  md: `my-[${designTokens.spacingY.md}]`,
-  lg: `my-[${designTokens.spacingY.lg}]`,
-  xl: `my-[${designTokens.spacingY.xl}]`,
-  "2xl": `my-[${designTokens.spacingY["2xl"]}]`,
+  none: `space-y-[${designTokens.spacingY.none}]`,
+  xs: `space-y-[${designTokens.spacingY.xs}]`,
+  sm: `space-y-[${designTokens.spacingY.sm}]`,
+  md: `space-y-[${designTokens.spacingY.md}]`,
+  lg: `space-y-[${designTokens.spacingY.lg}]`,
+  xl: `space-y-[${designTokens.spacingY.xl}]`,
+  "2xl": `space-y-[${designTokens.spacingY["2xl"]}]`,
 };
 
 export type SpacingY = keyof typeof spacingY;
 
-// 🌗 Shadows
-export const shadows = {
-  sm: `shadow-[${designTokens.shadows.sm}]`,
-  md: `shadow-[${designTokens.shadows.md}]`,
-  lg: `shadow-[${designTokens.shadows.lg}]`,
-  xl: `shadow-[${designTokens.shadows.xl}]`,
-  "2xl": `shadow-[${designTokens.shadows["2xl"]}]`,
+// 🎯 Layout Utilities
+export const layout = {
+  container: 'container mx-auto',
+  cardStack: `flex flex-col ${spacingY.md}`,
+  grid: {
+    cols: {
+      1: 'grid-cols-1',
+      2: 'grid-cols-2',
+      3: 'grid-cols-3',
+      4: 'grid-cols-4',
+    },
+    gap: {
+      sm: 'gap-2',
+      md: 'gap-4',
+      lg: 'gap-6',
+    },
+  },
+  flex: {
+    row: 'flex flex-row',
+    col: 'flex flex-col',
+    center: 'items-center justify-center',
+    between: 'justify-between',
+    start: 'justify-start',
+    end: 'justify-end',
+  },
 };
 
-export type Shadow = keyof typeof shadows;
+export type Layout = keyof typeof layout;
 
 // ✳️ Utility function for joining classnames
 export const mergeTokens = (...classes: (string | undefined | false)[]) =>

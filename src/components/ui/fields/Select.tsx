@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { radii } from '@/lib/ui/tokens'
+import { spacing, radii, fontSizes, sizeVariants } from '@/lib/ui/tokens'
 import { FieldWrapper } from './FieldWrapper'
 import { Listbox } from '@headlessui/react'
 
@@ -16,6 +16,10 @@ interface BaseSelectProps {
   options: SelectOption[]
   error?: string
   className?: string
+  size?: keyof typeof sizeVariants
+  radius?: keyof typeof radii
+  fontSize?: keyof typeof fontSizes
+  padding?: keyof typeof spacing
 }
 
 interface SingleSelectProps extends BaseSelectProps {
@@ -39,16 +43,22 @@ export function Select({
   onChange, 
   error, 
   className,
-  multiple = false 
+  multiple = false,
+  size = 'md',
+  radius = 'md',
+  fontSize = 'base',
+  padding = 'md'
 }: SelectProps) {
   return (
     <FieldWrapper id="select" label={label} error={error}>
       <Listbox value={value} onChange={onChange} multiple={multiple}>
-        <div className="relative">
+        <div className={cn('relative', spacing[padding])}>
           <Listbox.Button
             className={cn(
-              'relative w-full cursor-default bg-white px-3 py-1.5 text-left text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6',
-              radii.md,
+              'relative w-full cursor-default bg-white text-left outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600',
+              sizeVariants[size],
+              radii[radius],
+              fontSizes[fontSize],
               error && 'outline-red-500 focus:outline-red-500',
               className
             )}
@@ -59,7 +69,11 @@ export function Select({
                 : options.find(option => option.value === value)?.label}
             </span>
           </Listbox.Button>
-          <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+          <Listbox.Options className={cn(
+            'absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none',
+            radii[radius],
+            spacing[padding]
+          )}>
             {options.map((option) => (
               <Listbox.Option
                 key={option.value}

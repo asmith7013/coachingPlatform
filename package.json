@@ -8,7 +8,8 @@
     "build-theme": "tsx scripts/generate-theme-css.ts",
     "start": "next start",
     "lint": "next lint",
-    "generate-tree": "tree -I 'node_modules|dist|build|logs|coverage|.git|.next|.vercel|.vscode|.idea|.DS_Store|pnpm-lock.yaml|package-lock.json|yarn.lock|*.env|*.log|*.cache' -L 6 > project-tree.txt"
+    "generate-tree": "tree -I 'node_modules|dist|build|logs|coverage|.git|.next|.vercel|.vscode|.idea|.DS_Store|pnpm-lock.yaml|package-lock.json|yarn.lock|*.env|*.log|*.cache' -L 6 > project-tree.txt",
+    "generate-safelist": "tsx scripts/generateSafelist.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",

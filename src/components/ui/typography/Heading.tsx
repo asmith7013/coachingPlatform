@@ -1,24 +1,28 @@
-import { ReactNode } from 'react'
-import { cn } from '@/lib/utils'
+import { ElementType } from 'react';
+import { typography } from '@/lib/ui/tokens';
+import { cn } from '@/lib/utils';
 
 interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
-  children: ReactNode
-  level?: 1 | 2 | 3 | 4
-  className?: string
+  level: 1 | 2 | 3 | 4 | 5 | 6;
+  children: React.ReactNode;
 }
 
-const levelClasses = {
-  1: cn('text-4xl font-bold tracking-tight'),
-  2: cn('text-3xl font-semibold tracking-tight'),
-  3: cn('text-2xl font-semibold tracking-tight'),
-  4: cn('text-xl font-semibold tracking-tight'),
-}
+const headingElements = {
+  1: 'h1',
+  2: 'h2',
+  3: 'h3',
+  4: 'h4',
+  5: 'h5',
+  6: 'h6',
+} as const;
 
-export function Heading({ children, level = 1, className, ...props }: HeadingProps) {
-  const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4'
+export function Heading({ level, children, className, ...props }: HeadingProps) {
+  const Component = headingElements[level] as ElementType;
+  const headingClass = typography.heading[`h${level}`];
+
   return (
-    <Tag className={cn(levelClasses[level], className)} {...props}>
+    <Component className={cn(headingClass, className)} {...props}>
       {children}
-    </Tag>
-  )
+    </Component>
+  );
 }

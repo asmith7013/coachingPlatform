@@ -1,15 +1,3 @@
-/**
- * ⛳ Missing Atomic Components:
- * - <Heading /> - Need to create this component
- * - <Text /> - Need to create this component
- * - <Card /> - Need to create this component
- * 
- * ⛳ Missing Token Mappings:
- * - shadow-md -> Need to add shadow tokens
- * - border-b -> Need to add border utility tokens
- * - space-y-4 -> Need to add spacing utility tokens
- */
-
 "use client";
 
 import React, { useState } from "react";
@@ -19,157 +7,172 @@ import { Heading } from "@/components/ui/typography/Heading";
 import { Text } from "@/components/ui/typography/Text";
 import { Input } from "@/components/ui/fields/Input";
 import { Select } from "@/components/ui/fields/Select";
-import { spacing, colorVariants, borderColors } from "@/lib/ui/tokens";
-import { cn } from "@/lib/utils";
+import { Switch } from '@/components/ui/fields/Switch';
+import { Checkbox } from '@/components/ui/fields/Checkbox';
+import { Textarea } from '@/components/ui/fields/Textarea';
+import { colorVariants, shadows, spacingY } from "@/lib/ui/tokens";
 
-// ✅ Type-safe field configuration
-type FieldType = "text" | "email" | "select" | "multi-select";
+export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 'switch' | 'checkbox' | 'textarea';
 
-interface Field<T> {
-  key: keyof T;
+export interface Field<T extends Record<string, unknown>> {
+  name: keyof T;
   label: string;
   type: FieldType;
-  options?: string[];
+  required?: boolean;
+  options?: { value: string; label: string }[];
+  defaultValue?: T[keyof T];
 }
 
-interface GenericAddFormProps<T> {
+interface GenericAddFormProps<T extends Record<string, unknown>> {
   title: string;
-  defaultValues: T;
-  onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
   fields: Field<T>[];
+  onSubmit: (data: T) => void;
+  submitLabel?: string;
+  defaultValues?: T;
 }
 
-export default function GenericAddForm<T extends Record<string, unknown>>({
+export function GenericAddForm<T extends Record<string, unknown>>({
   title,
-  defaultValues,
-  onSubmit,
   fields,
+  onSubmit,
+  submitLabel = 'Add',
+  defaultValues,
 }: GenericAddFormProps<T>) {
-  // ✅ Generic form state
-  const [formData, setFormData] = useState<T>(defaultValues);
-  const [showForm, setShowForm] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<T>(
+    defaultValues || fields.reduce((acc, field) => ({
+      ...acc,
+      [field.name]: field.type === 'select' ? (field.defaultValue ?? []) : (field.defaultValue ?? ''),
+    }), {} as T)
+  );
 
-  // ✅ Generic change handler
-  const handleChange = (
-    key: keyof T,
-    value: string | string[] | number
-  ) => {
-    setFormData((prev) => ({
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  const handleChange = (name: keyof T, value: T[keyof T]) => {
+    setFormData(prev => ({
       ...prev,
-      [key]: value,
+      [name]: value,
     }));
   };
 
-  // ✅ Form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(false);
+  const handleInputChange = (
+    name: keyof T,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const input = e.target;
+    let value: T[keyof T];
 
-    try {
-      const result = await onSubmit(formData);
-      if (result.success) {
-        setSuccess(true);
-        setFormData(defaultValues);
-        setShowForm(false);
+    if (input instanceof HTMLInputElement) {
+      if (input.type === 'number') {
+        value = Number(input.value) as T[keyof T];
+      } else if (input.type === 'checkbox') {
+        value = input.checked as T[keyof T];
       } else {
-        setError(result.error || "Failed to submit form");
+        value = input.value as T[keyof T];
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+    } else {
+      value = input.value as T[keyof T];
+    }
+
+    handleChange(name, value);
+  };
+
+  const renderField = (field: Field<T>) => {
+    switch (field.type) {
+      case 'select': {
+        const value = formData[field.name];
+        const isMultiSelect = Array.isArray(value);
+        
+        if (isMultiSelect) {
+          return (
+            <Select
+              label={field.label}
+              value={value as string[]}
+              onChange={(newValue: string[]) => {
+                handleChange(field.name, newValue as T[keyof T]);
+              }}
+              options={field.options || []}
+              multiple={true}
+            />
+          );
+        } else {
+          return (
+            <Select
+              label={field.label}
+              value={value as string}
+              onChange={(newValue: string) => {
+                handleChange(field.name, newValue as T[keyof T]);
+              }}
+              options={field.options || []}
+              multiple={false}
+            />
+          );
+        }
+      }
+      case 'switch':
+        return (
+          <Switch
+            label={field.label}
+            checked={formData[field.name] as boolean}
+            onChange={(checked: boolean) => {
+              handleChange(field.name, checked as T[keyof T]);
+            }}
+          />
+        );
+      case 'checkbox':
+        return (
+          <Checkbox
+            label={field.label}
+            checked={formData[field.name] as boolean}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              handleChange(field.name, e.target.checked as T[keyof T]);
+            }}
+          />
+        );
+      case 'textarea':
+        return (
+          <Textarea
+            label={field.label}
+            value={formData[field.name] as string}
+            onChange={(e) => handleInputChange(field.name, e)}
+            required={field.required}
+          />
+        );
+      default:
+        return (
+          <Input
+            type={field.type}
+            label={field.label}
+            value={formData[field.name] as string}
+            onChange={(e) => handleInputChange(field.name, e)}
+            required={field.required}
+          />
+        );
     }
   };
 
   return (
-    <div className={cn("mt-8 max-w-2xl mx-auto")}>
-      {!showForm ? (
-        <Button
-          onClick={() => setShowForm(true)}
-          variant="primary"
-          size="md"
-        >
-          {title}
-        </Button>
-      ) : (
-        <Card className={cn(spacing.lg, spacing.md)}>
-          <Heading level={3} className={cn("mb-4 pb-2 border-b", borderColors.default)}>
-            {title}
-          </Heading>
-          <form onSubmit={handleSubmit} className={cn("space-y-4")}>
-            {/* ✅ Dynamically render fields based on configuration */}
-            {fields.map((field) => (
-              <div key={String(field.key)} className={cn("space-y-2")}>
-                <Text variant="secondary" className="font-medium">
-                  {field.label}
-                </Text>
-                
-                {field.type === "multi-select" ? (
-                  <Select
-                    multiple
-                    value={formData[field.key] as string[]}
-                    onChange={(value) => handleChange(field.key, value)}
-                    options={field.options?.map(option => ({
-                      value: option,
-                      label: option
-                    })) || []}
-                  />
-                ) : field.type === "select" ? (
-                  <Select
-                    value={formData[field.key] as string}
-                    onChange={(value) => handleChange(field.key, value)}
-                    options={field.options?.map(option => ({
-                      value: option,
-                      label: option
-                    })) || []}
-                  />
-                ) : (
-                  <Input
-                    type={field.type}
-                    value={formData[field.key] as string}
-                    onChange={(e) => handleChange(field.key, e.target.value)}
-                  />
-                )}
-              </div>
-            ))}
-
-            <div className={cn("flex space-x-4 pt-4")}>
-              <Button
-                type="submit"
-                variant="primary"
-                size="md"
-              >
-                {title}
-              </Button>
-              <Button
-                type="button"
-                onClick={() => {
-                  setShowForm(false);
-                  setFormData(defaultValues);
-                  setError(null);
-                }}
-                variant="secondary"
-                size="md"
-              >
-                Cancel
-              </Button>
+    <Card className={`${shadows.md} ${spacingY.md} ${colorVariants.secondary}`}>
+      <form onSubmit={handleSubmit} className={spacingY.md}>
+        <div className={spacingY.md}>
+          <Heading level={2}>{title}</Heading>
+          <Text variant="secondary">Fill in the details below to add a new item.</Text>
+        </div>
+        <div className={spacingY.md}>
+          {fields.map((field) => (
+            <div key={String(field.name)} className={spacingY.sm}>
+              {renderField(field)}
             </div>
-
-            {/* ✅ Success and error messaging */}
-            {success && (
-              <Text className={cn(spacing.sm, "p-2 rounded", colorVariants.success)}>
-                Successfully added new {title.toLowerCase()}!
-              </Text>
-            )}
-            {error && (
-              <Text className={cn(spacing.sm, "p-2 rounded", colorVariants.danger)}>
-                Error: {error}
-              </Text>
-            )}
-          </form>
-        </Card>
-      )}
-    </div>
+          ))}
+        </div>
+        <div className="w-full">
+          <Button type="submit" variant="primary" className="w-full">
+            {submitLabel}
+          </Button>
+        </div>
+      </form>
+    </Card>
   );
 }

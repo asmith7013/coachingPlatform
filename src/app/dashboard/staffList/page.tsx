@@ -10,7 +10,7 @@ import { useNYCPSStaff } from "@/hooks/useNYCPSStaff"; // ✅ SWR hook for manag
 import { NYCPSStaff } from "@/lib/zod-schema"; // ✅ Import the NYCPSStaff type from Zod schema.
 import { NYCPSStaffInput } from "@/lib/zod-schema";
 import { createNYCPSStaff, uploadNYCPSStaffFile } from "@actions/staff/nycps";
-import GenericAddForm from "@/components/features/shared/form/GenericAddForm";
+import { GenericAddForm } from "@/components/features/shared/form/GenericAddForm";
 import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
 import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
 import { NYCPSStaffFieldConfig } from "@/lib/ui-schema/fieldConfig/core/staff";

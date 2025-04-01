@@ -4,7 +4,10 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { spacing, textColors } from '@/lib/ui/tokens';
+import { spacing, 
+  // textColors 
+} from '@/lib/ui/tokens';
+import { cn } from '@/lib/utils';
 
 type RoutineFilterProps = {
   allRoutines: string[];
@@ -51,21 +54,34 @@ export function RoutineFilter({
           color="blue"
         />
       </div> */}
-      <label className={`block ${textColors.primary} font-bold mb-1`}>
+      <label className={`block font-bold mb-1`}>
         Filter by Routine:
       </label>
       <div className="flex flex-wrap gap-2">
         {routinesToShow.map((routine, index) => {
-          const selected = selectedRoutines.includes(routine);
+          const isSelected = selectedRoutines.includes(routine);
           const isMLR = /^MLR\d+/.test(routine);
-          const variant = selected ? 'primary' : 'outline';
+          
+          const buttonClasses = cn(
+            // Base styles
+            "font-medium transition-colors duration-200",
+            // Selected state
+            isSelected
+              ? isMLR
+                ? "bg-purple-600 text-white hover:bg-purple-700 border-transparent"
+                : "bg-blue-600 text-white hover:bg-blue-700 border-transparent"
+              : isMLR
+                ? "bg-purple-100 text-purple-800 border-purple-300 hover:bg-purple-200"
+                : "bg-blue-100 text-blue-800 border-blue-300 hover:bg-blue-200"
+          );
+
           return (
             <Button
               key={`${routine}-${index}`}
               onClick={() => handleClick(routine)}
-              variant={variant}
+              variant={isSelected ? "primary" : "outline"}
               size="sm"
-              className={`${isMLR ? 'bg-purple-100 text-purple-800 border-purple-300' : 'bg-blue-100 text-blue-800 border-blue-300'}`}
+              className={buttonClasses}
             >
               {routine}
             </Button>
@@ -75,7 +91,7 @@ export function RoutineFilter({
           onClick={() => setSelectedRoutines(routinesToShow)}
           variant="outline"
           size="sm"
-          className="bg-gray-600 text-white border-gray-300"
+          className="bg-gray-600 text-white border-gray-300 hover:bg-gray-700"
         >
           Select All
         </Button>

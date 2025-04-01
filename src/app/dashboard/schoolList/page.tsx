@@ -10,7 +10,7 @@ import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Sc
 import { School } from "@/lib/zod-schema"; // ✅ Import the School type from Zod schema.
 import { SchoolInput } from "@/lib/zod-schema";
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
-import GenericAddForm from "@/components/features/shared/form/GenericAddForm";
+import { GenericAddForm } from "@/components/features/shared/form/GenericAddForm";
 import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
 import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
 import { SchoolFieldConfig } from "@/lib/ui-schema/fieldConfig/core/school";

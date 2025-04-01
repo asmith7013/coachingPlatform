@@ -1,0 +1,412 @@
+[
+    {
+      "title": "C1.1 Cultivating a Positive and Inclusive Classroom Community",
+      "advanced": [
+        "The teacher maintains a caring and encouraging presence to engage all students in the classroom community.",
+        "The teacher demonstrates the belief that all students can and will learn by calling on a variety of students throughout the classroom, and gives appropriate wait time for all students to have an opportunity to share their thinking.",
+        "The classroom environment is conducive to collaborative work."
+      ],
+      "proficient": [
+        "The teacher maintains a caring and encouraging presence to engage all students in the classroom community.",
+        "The teacher provides adequate wait time for individual processing and demonstrates the belief that all students can and will learn by calling on a variety of students (e.g., monitors who has shared, uses an equity-driven approach to ensure all students have an opportunity to share with the class over time).",
+        "The classroom environment is conducive to collaborative work."
+      ],
+      "developing": [
+        "The teacher communicates expectations that all students participate in the classroom community.",
+        "The teacher provides adequate wait time for individual processing and may experiment with strategies to elicit more contributions from students (e.g., use of Turn and Talk, randomizing students called on).",
+        "The classroom environment is conducive to collaborative work (e.g., students desks are arranged in groups, the location of the teacher throughout the lesson positions students as active contributors)."
+      ],
+      "not_yet": [
+        "The teacher provides opportunities for students to participate, but may not have strategies to elicit contributions from all students (e.g., lack of wait time, only selecting eager volunteers).",
+        "The classroom environment is set up for individual work (e.g., student desks are in rows, the teacher spends most of the time located at the front of the room)."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C1.2 Fostering Academic Safety and Belonging",
+      "advanced": [
+        "The classroom community is set up to promote students to ask questions of peers, respond to peers, and make connections to personal experiences and past learning without teacher prompting."
+      ],
+      "proficient": [
+        "The teacher intentionally creates opportunities for students to develop a sense of safety and belonging (e.g., co-creates and revisits classroom agreements for doing math, provides opportunities for students to build relationships with peers).",
+        "The teacher provides opportunities for students to make connections between their lived experiences and the lesson and highlights links to past learning."
+      ],
+      "developing": [
+        "The teacher signals the importance of safety and belonging by co-creating classroom agreements for doing math. Evidence of classroom agreements is visible (e.g., anchor charts, student discussions).",
+        "The teacher may provide an opportunity for students to connect personal experiences to the lesson."
+      ],
+      "not_yet": [
+        "The teacher may use language that promotes belonging, but there is little evidence of established classroom agreements for doing math (e.g., anchor charts, protocols)."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C1.3 Promoting Student Agency",
+      "advanced": [
+        "The teacher provides opportunities for all students to engage with math activities, share their ideas, respond to classmates’ ideas, and revise their thinking.",
+        "The teacher provides opportunities for students to reflect on their understanding throughout the lesson.",
+        "The teacher centers student discourse throughout the lesson.",
+        "Math tools are readily available and students are empowered to select math tools when needed."
+      ],
+      "proficient": [
+        "The teacher provides opportunities for all students to engage with math activities and share their ideas (either with partners, in small groups, or with the whole group).",
+        "The teacher provides opportunities for students to reflect on their understanding throughout the lesson (e.g., students consider how they are progressing towards the learning goal). The teacher centers student discourse throughout the lesson.",
+        "Math tools are readily available and students are empowered to select math tools when needed."
+      ],
+      "developing": [
+        "The teacher provides opportunities for students to engage with math activities and share their ideas, but protocols might not be in place to ensure equal participation (e.g., some students dominate the conversation while others may not share at all).",
+        "The teacher begins to center student thinking, but serves as the primary voice during lesson facilitation.",
+        "Math tools are available to students who ask for them."
+      ],
+      "not_yet": [
+        "The teacher is positioned as the sole source of information.",
+        "Teacher talk accounts for most or all of the speaking time during a lesson.",
+        "Students do not access math tools because they are not readily available."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C1.4 Valuing Student Thinking",
+      "advanced": [
+        "The teacher actively affirms students’ mathematical competence (e.g., celebrates risk taking, elaborates on important ideas in incorrect work, values incomplete ideas or solutions, cites student ideas, prompts students to share what they heard and valued in other students’ work).",
+        "Students listen to, respond to, and value each other’s thinking, including incomplete responses.",
+        "Structures are in place for students to agree or disagree with peers and revise their thinking."
+      ],
+      "proficient": [
+        "The teacher centers discussions around student ideas and emphasizes making thinking visible.",
+        "The teacher invites students to share incomplete, incorrect, and correct solutions and positions these solutions as learning opportunities.",
+        "The teacher remains neutral when responding to student ideas and uses evidence from student thinking or past learning to respond.",
+        "Structures are in place for students to agree or disagree with peers and revise their thinking."
+      ],
+      "developing": [
+        "The teacher experiments with making thinking visible, but feedback is evaluative in nature (e.g., asks students to show their thinking but focuses the conversation on final answers)."
+      ],
+      "not_yet": [
+        "The teacher focuses on final answers over making thinking visible, or may be evaluative (e.g., judges student contributions in a way that inhibits students’ willingness to share thinking, praises only the students with correct answers)."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C1.5 Fostering Equitable Access to Learning",
+      "advanced": [
+        "The teacher maintains the cognitive demand of the activities and ensures access for all students by including recommended and additional structures that support multiple means of engagement, representation, action, and expression.",
+        "The teacher uses structures that support student access to learning by maximizing student work time for all students."
+      ],
+      "proficient": [
+        "The teacher maintains the cognitive demand of the activities and ensures that students have access to learning by using recommendations for English learners (ELs) and students with disabilities (SWD).",
+        "The teacher uses structures that support student access to learning (e.g., gives clear directions to transition students from activity to activity, provides opportunities for movement, ensures adequate levels of student work time, uses structures such as Think-Pair-Share to provide students with opportunity to process and formalize their thinking)."
+      ],
+      "developing": [
+        "The teacher uses scaffolding that reduces the cognitive demand of the activity in a way that no longer meets the learning goal (e.g., recommends a specific approach for problem solving, replaces problems in a manner that detracts from grade-level focus).",
+        "The teacher uses structures that limit student access to learning (e.g., excessive transition time between activities, physical transitions interfere with the flow of the lesson)."
+      ],
+      "not_yet": [
+        "The teacher may modify or replace activities in a manner that detracts from grade-level focus The teacher may inhibit equitable access to learning by spending too much time with individual students, creating excessive downtime for others (e.g., students who have completed the activity, students who are awaiting support)."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C1.6 Engaging Students in Small-Group Discussions",
+      "advanced": [
+        "The teacher encourages the sharing and borrowing of ideas across groups.",
+        "The teacher provides structures for small-group discussions to ensure that all students’ ideas are shared and considered. The teacher invites students to reflect on their participation (e.g., roles, contributions), the quality of their discussions, and the impact on their learning."
+      ],
+      "proficient": [
+        "The teacher clarifies expectations for and monitors discussions to ensure all students contribute.",
+        "The teacher provides structures for small-group discussions to ensure that all students’ ideas are shared and considered (e.g., Think-Pair-Share, Turn and Talk, group-discussion protocols)."
+      ],
+      "developing": [
+        "The teacher provides some opportunities for students to engage in small-group discussions.",
+        "The teacher may experiment with different structures to invite all students to participate and share their mathematical ideas in pairs or small groups."
+      ],
+      "not_yet": [
+        "The teacher may invite students to work with others, but does not provide prompts or guidance to structure discussions."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C1.7 Teacher Questioning",
+      "advanced": [
+        "The teacher uses open-ended questions and peer responses to assess understanding and advance student thinking toward the learning goal throughout the lesson."
+      ],
+      "proficient": [
+        "The teacher uses open-ended questions available in the curriculum to assess mathematical ideas and advance student thinking toward the learning goal throughout the lesson."
+      ],
+      "developing": [
+        "The teacher may experiment with using open-ended questions. The questions may be unrelated to the learning goal, or difficult for students to respond to because they are confusing or there is a lack of wait time.",
+        "The teacher poses some of the suggested questions from the curriculum, but may modify them to reduce their rigor."
+      ],
+      "not_yet": [
+        "The teacher asks mostly closed questions that recall definitions, procedures, or one-word answers, rather than open questions that reveal student ideas or thinking."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C2.1 Use of the Lesson Learning Goal",
+      "advanced": [
+        "The teacher references the student-facing learning goal at appropriate times throughout the lesson, and invites students to share connections and reflect upon their learning.",
+        "The teacher uses unit, section, and lesson learning goals to make decisions that guide instruction.",
+        "The teacher makes planned or in-the-moment accommodations to ensure students meet the lesson learning goal."
+      ],
+      "proficient": [
+        "The teacher shares the student-facing learning goal early in the lesson, and revisits it throughout the lesson to surface connections to prior or future experiences, content, and student thinking.",
+        "The teacher uses unit, section, and lesson learning goals to make decisions that guide instruction (e.g.",
+        "selecting questions to ask, examples to provide, and considering adjustments to tasks).",
+        "The teacher makes planned or in-the-moment accommodations to ensure students meet the lesson learning goal."
+      ],
+      "developing": [
+        "The teacher shares the student-facing learning goal and references it again later in the lesson (e.g., to launch an activity, help students make connections, and synthesize learning).",
+        "The teacher uses lesson learning goals to make decisions that guide instruction.",
+        "The teacher may make accommodations to ensure students meet the learning goal (e.g., providing access to tools and manipulatives, modifying the number of problems with which students engage)."
+      ],
+      "not_yet": [
+        "The teacher shares the student-facing learning goal, but does not revisit it or surface connections to student thinking or activities."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C2.2 Use of IM’s Design Structure",
+      "advanced": [
+        "The teacher uses all key components of IM’s problem-based design structure and approach."
+      ],
+      "proficient": [
+        "The teacher uses all key components of IM’s problem-based design structure and approach."
+      ],
+      "developing": [
+        "The teacher modifies the lesson by skipping key components (e.g., activity launches, activity syntheses, lesson synthesis), and limits access to the lesson learning goal."
+      ],
+      "not_yet": [
+        "The teacher replaces or modifies activities, such as the warm-up, in a way that limits access, reduces rigor, or deviates from the lesson learning goal.",
+        "OR The teacher uses the key components of the lesson with an approach that centers teacher over student thinking (e.g., “I do, we do, you do”)."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C2.3 Use of Instructional Routines",
+      "advanced": [
+        "The teacher facilitates all embedded instructional routines consistent with the goal and design and uses appropriate accommodations to ensure access to grade-level mathematics.",
+        "The teacher leverages familiar elements or structures of the routines throughout the lesson to facilitate access and enhance discourse (e.g., notices when students may benefit from additional opportunities to “Notice and Wonder” about a context, or “Turn and Talk” to a partner)."
+      ],
+      "proficient": [
+        "The teacher facilitates all embedded instructional routines consistent with the goal and design (e.g., structured discussion, built-in think time, honoring all responses) to ensure all students are invited to share their thinking and have opportunities to formalize their understanding.",
+        "The teacher may adapt the routine, based on student dispositions (e.g., providing more time for independent processing, providing sentence frames or visual cues), while maintaining access to grade-level mathematics."
+      ],
+      "developing": [
+        "The teacher uses only select routines within a lesson (e.g., skips a Notice and Wonder, does not provide time to Turn and Talk), limiting opportunities for students to share their thinking or formalize their understanding."
+      ],
+      "not_yet": [
+        "The teacher modifies the suggested instructional routines in a way that limits access to the mathematics or reduces rigor (e.g., pre-teaches or demonstrates strategies using the same questions or task statements)."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C2.4 Use of Math Language Routines (MLRs)",
+      "advanced": [
+        "The teacher facilitates the MLR consistent with the intended goal.",
+        "The teacher adapts the MLR in response to students’ evolving understanding and stage of language development while maintaining access to grade-level mathematics.",
+        "The teacher strategically embeds relevant MLRs into the lesson as needed."
+      ],
+      "proficient": [
+        "The teacher facilitates the MLR consistent with the intended goal.",
+        "The teacher may adapt the MLR in response to students’ evolving understanding and stage of language development while maintaining access to grade-level mathematics."
+      ],
+      "developing": [
+        "The teacher uses the MLR, but makes modifications that impact access, reduce rigor, or are inconsistent with the intended goal."
+      ],
+      "not_yet": [
+        "The teacher attempts the MLR, but deviates from the intended structure (e.g., pre-teaches before allowing students to engage in Three Reads)."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C2.5 Launching Activities",
+      "advanced": [
+        "The teacher integrates additional structures or supports (e.g., Notice and Wonder, MLR, UDL strategies) when it is evident that not all students understand the context or what the problem is asking them to do.",
+        "The teacher groups students in alignment with the intention of the activities."
+      ],
+      "proficient": [
+        "The teacher poses prompts from the activity launches to support student understanding of the context and what the problem is asking them to do.",
+        "The teacher groups students in alignment with the launch guidance."
+      ],
+      "developing": [
+        "The teacher poses some of the prompts from the activity launches to students, but may disregard student grouping guidance in the launch.",
+        "OR The teacher may group students according to the launch, but does not give specific instructions about how to work with peers during the activity."
+      ],
+      "not_yet": [
+        "When launching the activity, the teacher tells the students how to do the problem instead of allowing students to explore how to solve the problem.",
+        "OR The teacher may ask students to immediately start working on an activity without using prompts from the activity launch to set students up for successful work."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C2.6 Monitoring Student Thinking to Structure Discussions",
+      "advanced": [
+        "The teacher demonstrates curiosity about student thinking by checking in with all groups to notice, listen to, and learn about student thinking across the entire class.",
+        "The teacher leverages student thinking or strategies to position students to make connections between the shared work and the learning goal."
+      ],
+      "proficient": [
+        "The teacher demonstrates curiosity about student thinking by checking in with multiple groups to notice, listen to, and learn about student thinking across the entire class.",
+        "The teacher strategically selects ideas or strategies for students to share in a meaningful sequence."
+      ],
+      "developing": [
+        "The teacher monitors students to notice, listen to, and learn about student thinking. The teacher prioritizes responding to only a few individuals or small groups.",
+        "The teacher may select a student to share."
+      ],
+      "not_yet": [
+        "As students work, the teacher monitors to make sure students are on task."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C2.7 Facilitating Synthesis of Mathematical Ideas",
+      "advanced": [
+        "The teacher poses prompts based on student understanding of the lesson learning goal.",
+        "The teacher orchestrates a discussion about student strategies such that students make their learning explicit relative to the lesson learning goal."
+      ],
+      "proficient": [
+        "The teacher poses appropriate prompts from the activity and lesson syntheses for students to reach the lesson learning goal.",
+        "The teacher asks students to share their thinking and provides opportunities for them to respond to each other’s thinking.",
+        "The teacher connects student strategies to the lesson learning goal."
+      ],
+      "developing": [
+        "The teacher poses the prompts from the activity and lesson syntheses to students.",
+        "The teacher asks students to share answers or solutions instead of asking students to share their thinking or strategies.",
+        "OR The teacher asks students to share their thinking, but focuses the discussion on the solution."
+      ],
+      "not_yet": [
+        "The teacher summarizes the content of the lesson for students without incorporating or making connections to students’ mathematical ideas."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C2.8 Use of Centers",
+      "advanced": [
+        "The teacher provides time for students to engage with centers, as needed, to support access to the content of the lesson, section, and unit learning goals.",
+        "The teacher systematically manages centers and actively monitors while students are engaged in centers.",
+        "The teacher uses formative assessment data to inform center selection for each student, based on students' current progress toward concept or fluency goals."
+      ],
+      "proficient": [
+        "The teacher provides opportunities for students to engage with centers when specified in the lesson or the unit.",
+        "The teacher systematically manages centers and actively monitors while students are engaged in centers.",
+        "The teacher uses center observations as opportunities to assess student thinking over time and to support concept or fluency goals."
+      ],
+      "developing": [
+        "The teacher provides some opportunities for students to engage with centers.",
+        "The teacher monitors or assesses the progress of some students (e.g., sits with specific students the entire time) during centers.",
+        "OR The teacher’s monitoring of students focuses on logistics and/or management during centers."
+      ],
+      "not_yet": [
+        "The teacher uses centers as learning stations for groups of students to work at independently while the teacher works with a small group.",
+        "OR The teacher does not interact with, observe, or assess students during centers."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C3.1 Independent Problem Solving",
+      "advanced": [
+        "Most students take initiative to make their thinking visible so that others can clearly understand their work."
+      ],
+      "proficient": [
+        "Most students engage in the activity and require little to no teacher support."
+      ],
+      "developing": [
+        "Most students need teacher reminders or support to engage in the activity."
+      ],
+      "not_yet": [
+        "Most students engage in unrelated activities, or wait for the teacher to share the answers."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C3.2 Collaborative Problem Solving",
+      "advanced": [
+        "Students participate in collaborative problem solving (i.e., students talk about each other’s thinking, not just their own), make connections between their own and others’ strategies, and integrate strategies to create a group solution to a problem.",
+        "Students share their thinking throughout multiple stages of the problem-solving process."
+      ],
+      "proficient": [
+        "Students participate in collaborative problem solving.",
+        "Students share their thinking with their group, and may ask the teacher for help when the group has a question after engaging in discussion."
+      ],
+      "developing": [
+        "Students listen to other students’ solutions or ideas and/or share their own solutions or ideas (e.g., “I got 7, what did you get?”).",
+        "Students may share their thinking with their group when prompted by the teacher."
+      ],
+      "not_yet": [
+        "Students elect to work independently or engage in unrelated activities, or there is a noticeable imbalance in the amount of thinking and working done by students in the same group Students may share their thinking with their group when prompted by the teacher."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C3.3 Communication of Mathematical Ideas",
+      "advanced": [
+        "Students fully explain their reasoning, using evidence and precise mathematical language, without prompting from the teacher.",
+        "Students reflect on the quality and content of their explanations and revise their thinking."
+      ],
+      "proficient": [
+        "Students fully explain their reasoning, using evidence, with minimal prompting from the teacher."
+      ],
+      "developing": [
+        "Students briefly explain their reasoning, verbally or in writing, when prompted by the teacher."
+      ],
+      "not_yet": [
+        "Students respond to verbal or written questions, using short-answer responses with little or no explanation, even when prompted by the teacher."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    },
+    {
+      "title": "C3.4 Agency and Persistence",
+      "advanced": [
+        "Students continue working and persevere during times of difficulty, challenge, or error.",
+        "Students listen to and help each other think through problems, without giving away solutions."
+      ],
+      "proficient": [
+        "Students continue working and persevere during times of difficulty, challenge, or error.",
+        "Students may ask each other for help when they are confused or stuck."
+      ],
+      "developing": [
+        "Students only ask questions of the teacher during times of difficulty, challenge, or error."
+      ],
+      "not_yet": [
+        "Students wait for help, or do not appear to ask for help during times of difficulty, challenge, or error."
+      ],
+      "not_observed": [
+        "Indicator not observed"
+      ]
+    }
+  ]

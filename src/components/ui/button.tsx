@@ -1,8 +1,12 @@
 import { cn } from '@/lib/utils'
 import { spacing, radii, colorVariants } from '@/lib/ui/tokens'
 
+type TokenVariant = keyof typeof colorVariants
+type CustomVariant = 'outline' | 'link'
+type ButtonVariant = TokenVariant | CustomVariant
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'link'
+  variant?: ButtonVariant
   size?: 'sm' | 'md' | 'lg'
   icon?: React.ComponentType<{ className?: string }>
   children: React.ReactNode
@@ -14,6 +18,11 @@ const sizeVariants = {
   lg: 'text-sm px-4 py-2.5',
 }
 
+const customVariants: Record<CustomVariant, string> = {
+  outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
+  link: 'bg-transparent text-blue-600 hover:underline',
+}
+
 export function Button({
   variant = 'primary',
   size = 'md',
@@ -22,41 +31,13 @@ export function Button({
   className,
   ...props
 }: ButtonProps) {
-  const sizeClasses = {
-    sm: sizeVariants.sm,
-    md: sizeVariants.md,
-    lg: sizeVariants.lg,
-  }
+  const sizeClasses = sizeVariants[size]
 
-  const variantClasses = {
-    primary: cn(
-      colorVariants.primary,
-      'text-white',
-      'hover:bg-primary-dark'
-    ),
-    secondary: cn(
-      'bg-white/10',
-      'text-white',
-      'hover:bg-white/20'
-    ),
-    outline: cn(
-      'border border-gray-300',
-      'bg-white',
-      'text-gray-700',
-      'hover:bg-gray-50'
-    ),
-    danger: cn(
-      'bg-red-600',
-      'text-white',
-      'hover:bg-red-700'
-    ),
-    link: cn(
-      'bg-transparent',
-      'text-primary',
-      'hover:text-primary-dark',
-      'hover:underline'
-    ),
-  }
+  const isTokenVariant = variant in colorVariants
+
+  const variantClass = isTokenVariant
+    ? colorVariants[variant as TokenVariant]
+    : customVariants[variant as CustomVariant]
 
   return (
     <button
@@ -65,8 +46,8 @@ export function Button({
         'inline-flex items-center font-semibold',
         radii.md,
         'shadow-xs',
-        sizeClasses[size],
-        variantClasses[variant],
+        sizeClasses,
+        variantClass,
         className
       )}
       {...props}

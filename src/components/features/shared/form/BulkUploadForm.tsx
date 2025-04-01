@@ -17,7 +17,7 @@ import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/typography/Heading";
 import { Text } from "@/components/ui/typography/Text";
 import { Input } from "@/components/ui/fields/Input";
-import { spacing, colorVariants } from "@/lib/ui/tokens";
+import { shadows, spacingY, typography, colorVariants } from "@/lib/ui/tokens";
 import { cn } from "@/lib/utils";
 
 interface BulkUploadFormProps {
@@ -60,40 +60,45 @@ export default function BulkUploadForm({
   };
   
   return (
-    <Card className={cn(spacing.lg, spacing.md)}>
-      <Heading level={3}>{title}</Heading>
-      {description && (
-        <Text variant="secondary" className={cn(spacing.sm, "mb-2")}>
-          {description}
-        </Text>
-      )}
-      <Input 
-        type="file" 
-        accept={accept}
-        onChange={handleFileChange} 
-        className={cn(spacing.sm, "my-2")}
-        disabled={disabled || isUploading}
-      />
-      <Button
-        onClick={handleUpload}
-        disabled={!file || isUploading || disabled}
-        variant="primary"
-        size="md"
-      >
-        {isUploading ? "Uploading..." : "Upload"}
-      </Button>
-      {message && (
-        <Text 
-          className={cn(
-            spacing.md,
-            message.toLowerCase().includes("successful") 
-              ? colorVariants.success 
-              : colorVariants.danger
+    <div className="w-full">
+      <Card className={cn(shadows.md, spacingY.md, colorVariants.primary)}>
+        <div className={spacingY.md}>
+          <Heading level={3}>{title}</Heading>
+          {description && (
+            <Text variant="secondary" className={typography.text.base}>
+              {description}
+            </Text>
           )}
-        >
-          {message}
-        </Text>
-      )}
-    </Card>
+          <Input 
+            type="file" 
+            accept={accept}
+            onChange={handleFileChange} 
+            disabled={disabled || isUploading}
+          />
+          <Button
+            onClick={handleUpload}
+            disabled={!file || isUploading || disabled}
+            variant="primary"
+            size="md"
+            className="w-full"
+          >
+            {isUploading ? "Uploading..." : "Upload"}
+          </Button>
+          {message && (
+            <Text 
+              variant="primary"
+              className={cn(
+                typography.text.base,
+                message.toLowerCase().includes("successful") 
+                  ? colorVariants.success 
+                  : colorVariants.danger
+              )}
+            >
+              {message}
+            </Text>
+          )}
+        </div>
+      </Card>
+    </div>
   );
 }

@@ -1,44 +1,36 @@
-import { Field } from "@/lib/ui-schema/types";
+import { Field } from "@/components/features/shared/form/GenericAddForm";
 import { Note } from "@/lib/zod-schema";
-import { NoteTypeValues } from "../../fieldValues";
+import { NoteTypeZod } from "@/lib/zod-schema/shared/enums";
 
 export const NoteFieldConfig: Field<Note>[] = [
   {
-    key: "date",
+    name: "date",
     label: "Date",
     type: "text",
-    inputType: "date",
     required: true,
-    editable: true,
-    placeholder: "Select note date"
   },
   {
-    key: "type",
+    name: "type",
     label: "Type",
     type: "select",
-    inputType: "select",
-    options: NoteTypeValues,
+    options: NoteTypeZod.options.map((value) => ({
+      value,
+      label: value,
+    })),
     required: true,
-    editable: true,
-    placeholder: "Select note type"
   },
   {
-    key: "heading",
+    name: "heading",
     label: "Heading",
     type: "text",
-    inputType: "text",
     required: true,
-    editable: true,
-    placeholder: "Enter note heading"
   },
   {
-    key: "subheading",
+    name: "subheading",
     label: "Subheadings",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available subheadings
+    defaultValue: [],
     required: true,
-    editable: true,
-    placeholder: "Enter subheadings"
   }
 ]; 

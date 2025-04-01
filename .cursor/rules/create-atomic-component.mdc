@@ -1,7 +1,7 @@
 ---
 description: Use this rule to upgrade any file to match the atomic UI component system and token-based design system.
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 
 	Refactor this file to:

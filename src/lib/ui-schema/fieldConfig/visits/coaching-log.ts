@@ -1,142 +1,108 @@
-import { Field } from "@/lib/ui-schema/types";
+import { Field } from "@/components/features/shared/form/GenericAddForm";
 import { CoachingLog } from "@/lib/zod-schema";
 import { 
-  ReasonDoneValues,
-  TotalDurationValues,
-  SolvesTouchpointValues
-} from "../../fieldValues";
+  ReasonDoneZod,
+  TotalDurationZod,
+  SolvesTouchpointZod
+} from "@/lib/zod-schema/shared/enums";
 
 export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {
-    key: "reasonDone",
+    name: "reasonDone",
     label: "Reason Done",
     type: "select",
-    inputType: "select",
-    options: ReasonDoneValues,
+    options: ReasonDoneZod.options.map((value) => ({
+      value,
+      label: value,
+    })),
     required: true,
-    editable: true,
-    placeholder: "Select reason for completion"
   },
   {
-    key: "microPLTopic",
+    name: "microPLTopic",
     label: "Micro PL Topic",
     type: "text",
-    inputType: "text",
     required: false,
-    editable: true,
-    placeholder: "Enter the micro PL topic"
   },
   {
-    key: "microPLDuration",
+    name: "microPLDuration",
     label: "Micro PL Duration",
-    type: "text",
-    inputType: "number",
+    type: "number",
     required: false,
-    editable: true,
-    placeholder: "Enter duration of micro PL (minutes)"
   },
   {
-    key: "modelTopic",
+    name: "modelTopic",
     label: "Model Topic",
     type: "text",
-    inputType: "text",
     required: false,
-    editable: true,
-    placeholder: "Enter the model lesson topic"
   },
   {
-    key: "modelDuration",
+    name: "modelDuration",
     label: "Model Duration",
-    type: "text",
-    inputType: "number",
+    type: "number",
     required: false,
-    editable: true,
-    placeholder: "Enter duration of the model lesson (minutes)"
   },
   {
-    key: "adminMeet",
+    name: "adminMeet",
     label: "Admin Meeting",
-    type: "select",
-    inputType: "checkbox",
-    options: ["Yes", "No"],
+    type: "checkbox",
     required: false,
-    editable: true,
-    placeholder: "Check if there was an admin meeting"
   },
   {
-    key: "adminMeetDuration",
+    name: "adminMeetDuration",
     label: "Admin Meeting Duration",
-    type: "text",
-    inputType: "number",
+    type: "number",
     required: false,
-    editable: true,
-    placeholder: "Enter duration of the admin meeting (minutes)"
   },
   {
-    key: "NYCDone",
+    name: "NYCDone",
     label: "NYC Work Done",
-    type: "select",
-    inputType: "checkbox",
-    options: ["Yes", "No"],
+    type: "checkbox",
     required: false,
-    editable: true,
-    placeholder: "Check if NYC work was completed"
   },
   {
-    key: "totalDuration",
+    name: "totalDuration",
     label: "Total Duration",
     type: "select",
-    inputType: "select",
-    options: TotalDurationValues,
+    options: TotalDurationZod.options.map((value) => ({
+      value,
+      label: value,
+    })),
     required: true,
-    editable: true,
-    placeholder: "Select the total duration of coaching"
   },
   {
-    key: "solvesTouchpoint",
+    name: "solvesTouchpoint",
     label: "SOLVES Touchpoint",
     type: "select",
-    inputType: "select",
-    options: SolvesTouchpointValues,
+    options: SolvesTouchpointZod.options.map((value) => ({
+      value,
+      label: value,
+    })),
     required: true,
-    editable: true,
-    placeholder: "Select the SOLVES touchpoint"
   },
   {
-    key: "primaryStrategy",
+    name: "primaryStrategy",
     label: "Primary Strategy",
     type: "text",
-    inputType: "text",
     required: true,
-    editable: true,
-    placeholder: "Enter the primary strategy"
   },
   {
-    key: "solvesSpecificStrategy",
+    name: "solvesSpecificStrategy",
     label: "SOLVES Specific Strategy",
     type: "text",
-    inputType: "text",
     required: true,
-    editable: true,
-    placeholder: "Enter the SOLVES specific strategy"
   },
   {
-    key: "aiSummary",
+    name: "aiSummary",
     label: "AI Summary",
     type: "text",
-    inputType: "text",
     required: false,
-    editable: true,
-    placeholder: "Enter the AI-generated summary"
   },
   {
-    key: "owners",
+    name: "owners",
     label: "Owners",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available owners
+    defaultValue: [],
     required: true,
-    editable: true,
-    placeholder: "Select owners"
   }
 ]; 

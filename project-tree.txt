@@ -13,7 +13,8 @@
 │   ├── vercel.svg
 │   └── window.svg
 ├── scripts
-│   └── generate-theme-css.ts
+│   ├── generate-theme-css.ts
+│   └── generateSafelist.ts
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
 ├── src
@@ -75,6 +76,8 @@
 │   │   │       └── form
 │   │   │           ├── BulkUploadForm.tsx
 │   │   │           └── GenericAddForm.tsx
+│   │   ├── layouts
+│   │   │   └── DashboardPage.tsx
 │   │   └── ui
 │   │       ├── button.tsx
 │   │       ├── card.tsx
@@ -224,8 +227,9 @@
 │   │       └── visit.model.ts
 │   └── styles
 │       └── theme.css
+├── tailwind.safelist.json
 ├── tests
 ├── tsconfig.json
 └── tsconfig.tsbuildinfo
 
-71 directories, 158 files
+72 directories, 161 files

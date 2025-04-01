@@ -3,7 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/fields/Input';
 import { Select } from '@/components/ui/fields/Select';
 import { Text } from '@/components/ui/typography/Text';
-import { spacing } from '@/lib/ui/tokens';
+import { spacing, colorVariants } from '@/lib/ui/tokens';
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface ResourceHeaderProps<T> {
   page: number;
@@ -31,14 +33,15 @@ export function ResourceHeader<T extends Record<string, unknown>>({
   const [sortValue, setSortValue] = useState<string>("");
 
   return (
-    <div className={`flex justify-between items-center ${spacing.md}`}>
+    <Card className={cn(colorVariants.white, spacing.md)}>
+    {/* <div className={`flex justify-between items-center ${spacing.md}`}> */}
       {/* Pagination Controls */}
       <div className="flex items-center gap-2">
         <Button 
           disabled={page === 1} 
           onClick={() => setPage(page - 1)}
           variant="secondary"
-          size="sm"
+          size="md"
         >
           ⬅️ Previous
         </Button>
@@ -49,7 +52,7 @@ export function ResourceHeader<T extends Record<string, unknown>>({
           disabled={page * limit >= total} 
           onClick={() => setPage(page + 1)}
           variant="secondary"
-          size="sm"
+          size="md"
         >
           Next ➡️
         </Button>
@@ -61,14 +64,19 @@ export function ResourceHeader<T extends Record<string, unknown>>({
         <Select
           value={sortValue}
           onChange={(value) => {
-            setSortValue(value);
-            const [field, order] = value.split(":");
-            onSort(field as keyof T | string, order as "asc" | "desc");
+            setSortValue(value)
+            const [field, order] = value.split(':')
+            onSort(field as keyof T | string, order as 'asc' | 'desc')
           }}
           options={sortOptions.flatMap(option => [
             { value: `${String(option.key)}:asc`, label: `Sort ${option.label} A-Z` },
             { value: `${String(option.key)}:desc`, label: `Sort ${option.label} Z-A` }
           ])}
+          size="md"
+          fontSize="base"
+          radius="md"
+          padding="sm"
+          className="min-w-[12rem]"
         />
 
         {/* Search Input */}
@@ -89,6 +97,6 @@ export function ResourceHeader<T extends Record<string, unknown>>({
           </Button>
         )} */}
       </div>
-    </div>
+    </Card>
   );
 }

@@ -15,6 +15,11 @@ export default function ToolsLayout({ children }: { children: React.ReactNode })
                 IM Routines
               </Link>
             </li>
+            <li>
+              <Link href="/tools/rubric-viewer" className="block p-2">
+                IMplementation Reflection Tool
+              </Link>
+            </li>
           </ul>
         </nav>
       </aside>

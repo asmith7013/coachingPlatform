@@ -1,96 +1,77 @@
-import { Field } from "@/lib/ui-schema/types";
+import { Field } from "@/components/features/shared/form/GenericAddForm";
 import { BellScheduleInput, TeacherScheduleInput } from "@/lib/zod-schema";
-import { BellScheduleTypeValues } from "../../fieldValues";
+import { BellScheduleTypeZod } from "@/lib/zod-schema/shared/enums";
 
 export const BellScheduleFieldConfig: Field<BellScheduleInput>[] = [
   {
-    key: "school",
+    name: "school",
     label: "School",
     type: "text",
-    inputType: "text",
     required: true,
-    editable: true,
-    placeholder: "Enter the associated school"
   },
   {
-    key: "bellScheduleType",
+    name: "bellScheduleType",
     label: "Bell Schedule Type",
     type: "select",
-    inputType: "select",
-    options: BellScheduleTypeValues,
+    options: BellScheduleTypeZod.options.map((value) => ({
+      value,
+      label: value,
+    })),
     required: true,
-    editable: true,
-    placeholder: "Select the type of bell schedule"
   },
   {
-    key: "classSchedule",
+    name: "classSchedule",
     label: "Class Schedule",
-    type: "multi-select",
-    inputType: "array",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available class schedules
+    defaultValue: [],
     required: true,
-    editable: true,
-    placeholder: "List the class schedule"
   },
   {
-    key: "assignedCycleDays",
+    name: "assignedCycleDays",
     label: "Assigned Cycle Days",
-    type: "multi-select",
-    inputType: "array",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available cycle days
+    defaultValue: [],
     required: true,
-    editable: true,
-    placeholder: "Specify assigned cycle days"
   },
   {
-    key: "owners",
+    name: "owners",
     label: "Owners",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available owners
+    defaultValue: [],
     required: true,
-    editable: true,
-    placeholder: "Select owners"
   }
 ];
 
 export const TeacherScheduleFieldConfig: Field<TeacherScheduleInput>[] = [
   {
-    key: "teacher",
+    name: "teacher",
     label: "Teacher",
     type: "text",
-    inputType: "text",
     required: true,
-    editable: true,
-    placeholder: "Enter the teacher's name"
   },
   {
-    key: "school",
+    name: "school",
     label: "School",
     type: "text",
-    inputType: "text",
     required: true,
-    editable: true,
-    placeholder: "Enter the associated school"
   },
   {
-    key: "scheduleByDay",
+    name: "scheduleByDay",
     label: "Schedule By Day",
-    type: "multi-select",
-    inputType: "array",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available schedules
+    defaultValue: [],
     required: true,
-    editable: true,
-    placeholder: "List the teacher's schedule by day"
   },
   {
-    key: "owners",
+    name: "owners",
     label: "Owners",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available owners
+    defaultValue: [],
     required: true,
-    editable: true,
-    placeholder: "Select owners"
   }
 ]; 

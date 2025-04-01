@@ -1,183 +1,156 @@
-import { Field } from "@/lib/ui-schema/types";
+import { Field } from "@/components/features/shared/form/GenericAddForm";
 import { Visit, EventItem, SessionLink } from "@/lib/zod-schema";
 import { 
-  GradeLevelsSupportedValues,
-  EventTypeValues,
+  GradeLevelsSupportedZod,
+  EventTypeZod,
   DurationValues,
-  AllowedPurposeValues,
-  ModeDoneValues,
-  SessionPurposeValues
-} from "../../fieldValues";
+  AllowedPurposeZod,
+  ModeDoneZod,
+  SessionPurposeZod
+} from "@/lib/zod-schema/shared/enums";
 
 export const EventItemFieldConfig: Field<EventItem>[] = [
   {
-    key: "eventType",
+    name: "eventType",
     label: "Event Type",
     type: "select",
-    inputType: "select",
-    options: EventTypeValues,
+    options: EventTypeZod.options.map((value) => ({
+      value,
+      label: value,
+    })),
     required: true,
-    editable: true,
-    placeholder: "Select event type"
   },
   {
-    key: "staff",
+    name: "staff",
     label: "Staff",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available staff
+    defaultValue: [],
     required: true,
-    editable: true,
-    placeholder: "Select staff members"
   },
   {
-    key: "duration",
+    name: "duration",
     label: "Duration",
     type: "select",
-    inputType: "select",
-    options: DurationValues,
+    options: DurationValues.map((value) => ({
+      value,
+      label: value,
+    })),
     required: true,
-    editable: true,
-    placeholder: "Select duration"
   }
 ];
 
 export const SessionLinkFieldConfig: Field<SessionLink>[] = [
   {
-    key: "purpose",
+    name: "purpose",
     label: "Purpose",
     type: "select",
-    inputType: "select",
-    options: SessionPurposeValues,
+    options: SessionPurposeZod.options.map((value) => ({
+      value,
+      label: value,
+    })),
     required: true,
-    editable: true,
-    placeholder: "Select session purpose"
   },
   {
-    key: "title",
+    name: "title",
     label: "Title",
     type: "text",
-    inputType: "text",
     required: true,
-    editable: true,
-    placeholder: "Enter session title"
   },
   {
-    key: "url",
+    name: "url",
     label: "URL",
     type: "text",
-    inputType: "url",
     required: true,
-    editable: true,
-    placeholder: "Enter session URL"
   },
   {
-    key: "staff",
+    name: "staff",
     label: "Staff",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available staff
+    defaultValue: [],
     required: true,
-    editable: true,
-    placeholder: "Select staff members"
   }
 ];
 
 export const VisitFieldConfig: Field<Visit>[] = [
   {
-    key: "date",
+    name: "date",
     label: "Date",
     type: "text",
-    inputType: "date",
     required: true,
-    editable: true,
-    placeholder: "Select visit date"
   },
   {
-    key: "school",
+    name: "school",
     label: "School",
     type: "text",
-    inputType: "text",
     required: true,
-    editable: true,
-    placeholder: "Enter school ID"
   },
   {
-    key: "coach",
+    name: "coach",
     label: "Coach",
     type: "text",
-    inputType: "text",
     required: true,
-    editable: true,
-    placeholder: "Enter coach ID"
   },
   {
-    key: "cycleRef",
+    name: "cycleRef",
     label: "Cycle Reference",
     type: "text",
-    inputType: "text",
     required: true,
-    editable: true,
-    placeholder: "Enter cycle reference"
   },
   {
-    key: "allowedPurpose",
+    name: "allowedPurpose",
     label: "Allowed Purpose",
     type: "select",
-    inputType: "select",
-    options: AllowedPurposeValues,
+    options: AllowedPurposeZod.options.map((value) => ({
+      value,
+      label: value,
+    })),
     required: false,
-    editable: true,
-    placeholder: "Select allowed purpose"
   },
   {
-    key: "modeDone",
+    name: "modeDone",
     label: "Mode Done",
     type: "select",
-    inputType: "select",
-    options: ModeDoneValues,
+    options: ModeDoneZod.options.map((value) => ({
+      value,
+      label: value,
+    })),
     required: false,
-    editable: true,
-    placeholder: "Select mode done"
   },
   {
-    key: "gradeLevelsSupported",
+    name: "gradeLevelsSupported",
     label: "Grade Levels",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: GradeLevelsSupportedValues,
+    type: "select",
+    options: GradeLevelsSupportedZod.options.map((value) => ({
+      value,
+      label: value,
+    })),
+    defaultValue: [],
     required: true,
-    editable: true,
-    placeholder: "Select grade levels"
   },
   {
-    key: "events",
+    name: "events",
     label: "Events",
-    type: "multi-select",
-    inputType: "array",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available events
+    defaultValue: [],
     required: false,
-    editable: true,
-    placeholder: "Add events"
   },
   {
-    key: "sessionLinks",
+    name: "sessionLinks",
     label: "Session Links",
-    type: "multi-select",
-    inputType: "array",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available session links
+    defaultValue: [],
     required: false,
-    editable: true,
-    placeholder: "Add session links"
   },
   {
-    key: "owners",
+    name: "owners",
     label: "Owners",
-    type: "multi-select",
-    inputType: "multi-select",
-    options: [],
+    type: "select",
+    options: [], // This should be populated with available owners
+    defaultValue: [],
     required: true,
-    editable: true,
-    placeholder: "Select owners"
   }
 ]; 

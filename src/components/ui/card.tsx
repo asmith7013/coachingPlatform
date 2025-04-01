@@ -13,6 +13,7 @@ type CardProps = {
   radius?: keyof typeof radii
   border?: boolean
   variant?: 'default' | 'alt' // controls bg-surface or bg-alt
+  contentClassName?: string // allows overriding inner content wrapper padding
 }
 
 export const Card = ({
@@ -24,6 +25,7 @@ export const Card = ({
   radius = 'md',
   border = false,
   variant = 'default',
+  contentClassName,
 }: CardProps) => {
   const paddingClass = spacing[padding]
   const radiusClass = radii[radius]
@@ -31,9 +33,13 @@ export const Card = ({
   const bgClass = variant === 'alt' ? 'bg-alt' : 'bg-surface'
 
   return (
-    <div className={cn('divide-y divide-border shadow-sm overflow-hidden', bgClass, paddingClass, radiusClass, borderClass, className)}>
+    <div className={cn('divide-y divide-border shadow-sm', bgClass, paddingClass, radiusClass, borderClass, className)}>
       {header && <div className="px-md py-md sm:px-lg">{header}</div>}
-      {children && <div className="px-md py-md sm:p-lg">{children}</div>}
+      {children && (
+        <div className={cn('px-md py-md sm:p-lg', contentClassName)}>
+          {children}
+        </div>
+      )}
       {footer && <div className="px-md py-sm sm:px-lg">{footer}</div>}
     </div>
   )

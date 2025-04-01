@@ -2,9 +2,9 @@
 
 // 🎨 Text Colors
 const textColors = {
-  primary: '#ffffff',
-  secondary: '#d1d5db',
-  muted: '#9ca3af',
+  primary: '#111827',     // dark gray (gray-900)
+  secondary: '#374151',   // medium gray (gray-700)
+  muted: '#6b7280',       // light gray (gray-500)
   white: '#ffffff',
   black: '#000000',
   success: '#16a34a',
@@ -36,10 +36,38 @@ const shadows = {
   "2xl": '0 25px 50px -12px rgb(0 0 0 / 0.25)',
 }
 
+// 🧱 Border Utilities
+const borders = {
+  width: {
+    none: '0',
+    sm: '1px',
+    md: '2px',
+    lg: '4px',
+  },
+  color: {
+    ...colorVariants,
+    default: '#e5e7eb', // gray-200 — neutral border
+    outline: '#d1d5db', // gray-300 — for focus rings or outlines
+  },
+  style: {
+    solid: 'solid',
+    dashed: 'dashed',
+    dotted: 'dotted',
+  },
+  position: {
+    top: 'top',
+    right: 'right',
+    bottom: 'bottom',
+    left: 'left',
+    all: 'all',
+  },
+}
+
 export const designTokens = {
   textColors,
   colorVariants,
   shadows,
+  borders,
   // 📏 Spacing Scale
   spacing: {
     xs: '0.25rem',
@@ -70,26 +98,6 @@ export const designTokens = {
     xl: '1rem',
     "2xl": '1.5rem',
     full: '9999px',
-  },
-
-  // 🧱 Border Utilities
-  borders: {
-    width: {
-      none: '0',
-      sm: '1px',
-      md: '2px',
-      lg: '4px',
-    },
-    color: {
-      ...colorVariants,
-      default: '#e5e7eb', // gray-200 — neutral border
-      outline: '#d1d5db', // gray-300 — for focus rings or outlines
-    },
-    style: {
-      solid: 'solid',
-      dashed: 'dashed',
-      dotted: 'dotted',
-    },
   },
 
   // 🔘 Size Variants (used in tokens.ts for inputs/buttons)
