@@ -6,7 +6,7 @@ import { spacing, textColors } from '@/lib/ui/tokens';
 export default function DashboardHome() {
   return (
     <div className={spacing.lg}>
-      <Heading level={1} className={textColors.primary}>
+      <Heading level="h1" className={textColors.primary}>
         Welcome to the Dashboard
       </Heading>
       <Text variant="secondary" className={spacing.md}>

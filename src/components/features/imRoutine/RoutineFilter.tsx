@@ -58,8 +58,8 @@ export function RoutineFilter({
             // Selected state
             isSelected
               ? isMLR
-                ? cn(backgroundColors.primary, textColors.white, borderColors.primary)
-                : cn(backgroundColors.secondary, textColors.white, borderColors.secondary)
+                ? cn(backgroundColors.primary, textColors.primary, borderColors.primary)
+                : cn(backgroundColors.secondary, textColors.secondary, borderColors.secondary)
               : isMLR
                 ? cn(backgroundColors.white, textColors.primary, borderColors.primary)
                 : cn(backgroundColors.white, textColors.secondary, borderColors.secondary)
