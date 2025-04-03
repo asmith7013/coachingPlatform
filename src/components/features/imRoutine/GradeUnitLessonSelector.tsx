@@ -1,5 +1,8 @@
 'use client';
 
+import { cn } from '@/lib/utils';
+import { spacing, textColors, backgroundColors, borderColors, radii } from '@/lib/ui/tokens';
+
 type SelectorProps = {
   selectedGrade: string;
   setSelectedGrade: (grade: string) => void;
@@ -49,7 +52,14 @@ export function GradeUnitLessonSelector({
           setSelectedUnit('');
           setSelectedLesson('');
         }}
-        className="p-2 border-2 border-gray-300 rounded-md bg-white text-black font-medium"
+        className={cn(
+          spacing.sm,
+          borderColors.default,
+          radii.md,
+          backgroundColors.white,
+          textColors.primary,
+          'font-medium'
+        )}
       >
         <option value="">Select Grade/Course</option>
         {sortedGrades.map((grade) => (
@@ -65,7 +75,14 @@ export function GradeUnitLessonSelector({
           setSelectedLesson('');
         }}
         disabled={!selectedGrade}
-        className={`p-2 border-2 border-gray-300 rounded-md ${!selectedGrade ? 'bg-gray-200 text-gray-400' : 'bg-white text-black font-medium'}`}
+        className={cn(
+          spacing.sm,
+          borderColors.default,
+          radii.md,
+          !selectedGrade ? backgroundColors.surfaceHover : backgroundColors.white,
+          !selectedGrade ? textColors.muted : textColors.primary,
+          'font-medium'
+        )}
       >
         <option value="">Select Unit</option>
         {units.map((unit) => (
@@ -78,7 +95,14 @@ export function GradeUnitLessonSelector({
         value={selectedLesson}
         onChange={(e) => setSelectedLesson(e.target.value)}
         disabled={!selectedUnit}
-        className={`p-2 border-2 border-gray-300 rounded-md ${!selectedUnit ? 'bg-gray-200 text-gray-400' : 'bg-white text-black font-medium'}`}
+        className={cn(
+          spacing.sm,
+          borderColors.default,
+          radii.md,
+          !selectedUnit ? backgroundColors.surfaceHover : backgroundColors.white,
+          !selectedUnit ? textColors.muted : textColors.primary,
+          'font-medium'
+        )}
       >
         <option value="">Select Lesson</option>
         {lessons.map((lesson) => (

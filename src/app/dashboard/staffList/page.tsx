@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { Button } from '@/components/ui/button';
-import { spacing, textColors, colorVariants } from '@/lib/ui/tokens';
+import { spacing, textColors, typography } from '@/lib/ui/tokens';
 import { useNYCPSStaff } from "@/hooks/useNYCPSStaff"; // ✅ SWR hook for managing NYCPS Staff data.
 import { NYCPSStaff } from "@/lib/zod-schema"; // ✅ Import the NYCPSStaff type from Zod schema.
 import { NYCPSStaffInput } from "@/lib/zod-schema";
@@ -14,6 +14,7 @@ import { GenericAddForm } from "@/components/features/shared/form/GenericAddForm
 import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
 import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
 import { NYCPSStaffFieldConfig } from "@/lib/ui-schema/fieldConfig/core/staff";
+import { cn } from "@/lib/utils";
 
 const createEmptyNYCPSStaff = (): NYCPSStaffInput => ({
   staffName: "",
@@ -60,8 +61,8 @@ export default function NYCPSStaffList() {
   // if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className={`container mx-auto ${spacing.lg}`}>
-      <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+    <div className={cn('container mx-auto', spacing.lg)}>
+      <Heading level="h2" className={cn(typography.weight.bold, textColors.primary, spacing.md)}>
         NYCPS Staff
       </Heading>
 
@@ -92,10 +93,10 @@ export default function NYCPSStaffList() {
           >
             <div className="flex justify-between items-center">
               <div>
-                <Heading level={3} className={textColors.primary}>
+                <Heading level="h3" className={cn(typography.weight.medium, textColors.primary)}>
                   {member.staffName}
                 </Heading>
-                <Text variant="secondary" className={spacing.sm}>
+                <Text variant="secondary" className={cn(spacing.sm, textColors.secondary)}>
                   {member.email || 'No email provided'}
                 </Text>
               </div>
@@ -111,14 +112,20 @@ export default function NYCPSStaffList() {
 
             {/* ✅ 15. Schema Nesting & Type Inference: Dynamically render roles and subjects */}
             <div className={spacing.md}>
-              <Heading level={3} className={`${textColors.primary} ${spacing.md}`}>
+              <Heading level="h3" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
                 Roles
               </Heading>
               <div className="flex flex-wrap gap-2">
                 {member.rolesNYCPS && member.rolesNYCPS.map((role, index) => (
                   <span 
                     key={index} 
-                    className={`${spacing.sm} ${colorVariants.primary} rounded-full text-sm`}
+                    className={cn(
+                      spacing.sm,
+                      'rounded-full text-sm',
+                      typography.text.sm,
+                      textColors.primary,
+                      'bg-primary-100'
+                    )}
                   >
                     {role}
                   </span>
@@ -127,14 +134,20 @@ export default function NYCPSStaffList() {
             </div>
 
             <div className={spacing.md}>
-              <Heading level={3} className={`${textColors.primary} ${spacing.md}`}>
+              <Heading level="h3" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
                 Subjects
               </Heading>
               <div className="flex flex-wrap gap-2">
                 {member.subjects && member.subjects.map((subject, index) => (
                   <span 
                     key={index} 
-                    className={`${spacing.sm} ${colorVariants.success} rounded-full text-sm`}
+                    className={cn(
+                      spacing.sm,
+                      'rounded-full text-sm',
+                      typography.text.sm,
+                      textColors.success,
+                      'bg-success-100'
+                    )}
                   >
                     {subject}
                   </span>

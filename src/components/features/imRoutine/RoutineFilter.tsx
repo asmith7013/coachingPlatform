@@ -1,12 +1,8 @@
 'use client';
 
-// import { Switch } from '@components/tailwind/switch';
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { spacing, 
-  // textColors 
-} from '@/lib/ui/tokens';
+import { spacing, textColors, backgroundColors, borderColors, radii, typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 
 type RoutineFilterProps = {
@@ -46,15 +42,7 @@ export function RoutineFilter({
 
   return (
     <div className={spacing.md}>
-      {/* <div className="mb-4 flex items-center gap-3">
-        <span className="text-sm font-medium">{detailedView ? 'More Detail' : 'Less Detail'}</span>
-        <Switch
-          checked={detailedView}
-          onChange={setDetailedView}
-          color="blue"
-        />
-      </div> */}
-      <label className={`block font-bold mb-1`}>
+      <label className={cn(typography.weight.bold, 'mb-1')}>
         Filter by Routine:
       </label>
       <div className="flex flex-wrap gap-2">
@@ -63,23 +51,24 @@ export function RoutineFilter({
           const isMLR = /^MLR\d+/.test(routine);
           
           const buttonClasses = cn(
-            // Base styles
-            "font-medium transition-colors duration-200",
+            typography.text.xs,
+            typography.weight.medium,
+            spacing.sm,
+            radii.sm,
             // Selected state
             isSelected
               ? isMLR
-                ? "bg-purple-600 text-white hover:bg-purple-700 border-transparent"
-                : "bg-blue-600 text-white hover:bg-blue-700 border-transparent"
+                ? cn(backgroundColors.primary, textColors.white, borderColors.primary)
+                : cn(backgroundColors.secondary, textColors.white, borderColors.secondary)
               : isMLR
-                ? "bg-purple-100 text-purple-800 border-purple-300 hover:bg-purple-200"
-                : "bg-blue-100 text-blue-800 border-blue-300 hover:bg-blue-200"
+                ? cn(backgroundColors.white, textColors.primary, borderColors.primary)
+                : cn(backgroundColors.white, textColors.secondary, borderColors.secondary)
           );
 
           return (
             <Button
               key={`${routine}-${index}`}
               onClick={() => handleClick(routine)}
-              variant={isSelected ? "primary" : "outline"}
               size="sm"
               className={buttonClasses}
             >
@@ -87,11 +76,15 @@ export function RoutineFilter({
             </Button>
           );
         })}
+
         <Button
           onClick={() => setSelectedRoutines(routinesToShow)}
-          // variant="outline"
           size="sm"
-          className="bg-gray-600 text-white border-gray-300 hover:bg-gray-700"
+          className={cn(
+            backgroundColors.surface,
+            textColors.white,
+            borderColors.surface
+          )}
         >
           Select All
         </Button>

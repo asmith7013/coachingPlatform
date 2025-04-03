@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { spacing, radii } from '@/lib/ui/tokens'
+import { spacing, radii, textColors, backgroundColors, borderColors } from '@/lib/ui/tokens'
 
 type CardProps = {
   className?: string
@@ -29,18 +29,45 @@ export const Card = ({
 }: CardProps) => {
   const paddingClass = spacing[padding]
   const radiusClass = radii[radius]
-  const borderClass = border ? 'border border-default' : undefined
-  const bgClass = variant === 'alt' ? 'bg-alt' : 'bg-surface'
+  const borderClass = border ? cn('border', borderColors.default) : undefined
+  const bgClass = variant === 'alt' ? backgroundColors.surfaceHover : backgroundColors.surface
 
   return (
-    <div className={cn('divide-y divide-border shadow-sm', bgClass, paddingClass, radiusClass, borderClass, className)}>
-      {header && <div className="px-md py-md sm:px-lg">{header}</div>}
+    <div className={cn(
+      'divide-y',
+      borderColors.default,
+      'shadow-sm',
+      bgClass,
+      paddingClass,
+      radiusClass,
+      borderClass,
+      className
+    )}>
+      {header && (
+        <div className={cn(
+          'px-md py-md sm:px-lg',
+          textColors.primary
+        )}>
+          {header}
+        </div>
+      )}
       {children && (
-        <div className={cn('px-md py-md sm:p-lg', contentClassName)}>
+        <div className={cn(
+          'px-md py-md sm:p-lg',
+          textColors.secondary,
+          contentClassName
+        )}>
           {children}
         </div>
       )}
-      {footer && <div className="px-md py-sm sm:px-lg">{footer}</div>}
+      {footer && (
+        <div className={cn(
+          'px-md py-sm sm:px-lg',
+          textColors.muted
+        )}>
+          {footer}
+        </div>
+      )}
     </div>
   )
 }

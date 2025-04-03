@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
-import { spacing, radii, colorVariants } from '@/lib/ui/tokens'
+import { spacing, radii, textColors, backgroundColors, borderColors } from '@/lib/ui/tokens'
 
-type TokenVariant = keyof typeof colorVariants
+type TokenVariant = 'primary' | 'secondary' | 'success' | 'danger'
 type CustomVariant = 'outline' | 'link'
 type ButtonVariant = TokenVariant | CustomVariant
 
@@ -19,8 +19,41 @@ const sizeVariants = {
 }
 
 const customVariants: Record<CustomVariant, string> = {
-  outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
-  link: 'bg-transparent text-blue-600 hover:underline',
+  outline: cn(
+    'border',
+    borderColors.default,
+    backgroundColors.white,
+    textColors.secondary,
+    'hover:bg-gray-50'
+  ),
+  link: cn(
+    'bg-transparent',
+    textColors.primary,
+    'hover:underline'
+  ),
+}
+
+const tokenVariants: Record<TokenVariant, string> = {
+  primary: cn(
+    backgroundColors.primary,
+    textColors.white,
+    'hover:bg-primary-dark'
+  ),
+  secondary: cn(
+    backgroundColors.secondary,
+    textColors.white,
+    'hover:bg-secondary-dark'
+  ),
+  success: cn(
+    backgroundColors.success,
+    textColors.white,
+    'hover:bg-success-dark'
+  ),
+  danger: cn(
+    backgroundColors.danger,
+    textColors.white,
+    'hover:bg-danger-dark'
+  ),
 }
 
 export function Button({
@@ -33,10 +66,10 @@ export function Button({
 }: ButtonProps) {
   const sizeClasses = sizeVariants[size]
 
-  const isTokenVariant = variant in colorVariants
+  const isTokenVariant = variant in tokenVariants
 
   const variantClass = isTokenVariant
-    ? colorVariants[variant as TokenVariant]
+    ? tokenVariants[variant as TokenVariant]
     : customVariants[variant as CustomVariant]
 
   return (

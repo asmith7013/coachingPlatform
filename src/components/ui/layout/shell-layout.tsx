@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { spacing, fontSizes, colorVariants, textColors } from '@/lib/ui/tokens'
+import { spacing, typography, textColors, backgroundColors } from '@/lib/ui/tokens'
 import { Topbar } from './topbar'
 
 interface NavigationItem {
@@ -39,16 +39,13 @@ export function ShellLayout({
 }: ShellLayoutProps) {
   // Extract token values into constants
   const paddingClass = spacing[padding]
-  const titleSize = fontSizes.xl
-  const titleColor = textColors.primary
-  const headerBgColor = colorVariants.primary
   const headerPadding = spacing.lg
   const mainOffset = '-mt-32'
   const maxWidth = 'max-w-7xl'
 
   return (
-    <div className="min-h-full bg-background text-foreground">
-      <div className={cn(headerBgColor, 'pb-[128px]')}>
+    <div className={cn('min-h-full', backgroundColors.white, textColors.black)}>
+      <div className={cn(backgroundColors.primary, 'pb-[128px]')}>
         <Topbar 
           navigation={navigation} 
           user={user} 
@@ -56,7 +53,12 @@ export function ShellLayout({
         />
         <header className={cn(headerPadding, paddingClass)}>
           {titleComponent || (
-            <h1 className={cn('font-bold tracking-tight', titleSize, titleColor)}>
+            <h1 className={cn(
+              typography.weight.bold,
+              typography.text.xl,
+              textColors.primary,
+              'tracking-tight'
+            )}>
               {title}
             </h1>
           )}

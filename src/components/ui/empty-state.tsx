@@ -1,23 +1,26 @@
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
-import { spacingY } from '@/lib/ui/tokens';
+import { spacingY, textColors } from '@/lib/ui/tokens';
+import { cn } from '@/lib/utils';
 
 interface EmptyStateProps {
   title?: string;
   description?: string;
   icon?: React.ReactNode;
+  className?: string;
 }
 
 export function EmptyState({
   title = 'Nothing here yet',
   description = "Once items are added, they'll show up here.",
   icon,
+  className,
 }: EmptyStateProps) {
   return (
-    <div className={`text-center ${spacingY.lg}`}>
+    <div className={cn('text-center', spacingY.lg, className)}>
       {icon}
-      <Heading level={3}>{title}</Heading>
-      <Text variant="secondary" className={spacingY.sm}>{description}</Text>
+      <Heading level="h3" className={textColors.primary}>{title}</Heading>
+      <Text className={cn(spacingY.sm, textColors.secondary)}>{description}</Text>
     </div>
   );
 }

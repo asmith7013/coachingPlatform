@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { spacing, radii, colorVariants } from '@/lib/ui/tokens'
+import { spacing, radii, textColors, backgroundColors } from '@/lib/ui/tokens'
 import { FormSection } from './form-section'
 import { getFieldComponent } from '@/lib/ui/forms/registry'
 
@@ -7,20 +7,17 @@ import { getFieldComponent } from '@/lib/ui/forms/registry'
 export interface FieldConfig {
   id: string
   type: string
-  label: string
-  required?: boolean
-  placeholder?: string
-  options?: Array<{ label: string; value: string }>
-  validation?: {
-    required?: boolean
-    pattern?: RegExp
-    message?: string
-  }
+  label?: string
+  description?: string
+  error?: string
+  className?: string
+  value?: unknown
+  onChange?: (value: unknown) => void
 }
 
 export interface FormLayoutConfig {
   id: string
-  title: string
+  title?: string
   description?: string
   fieldIds: string[]
 }
@@ -82,7 +79,7 @@ export function Form({
         return (
           <FormSection
             key={section.id}
-            title={section.title}
+            title={section.title || 'Section'}
             description={section.description}
             padding={padding}
             gap={gap}
@@ -114,8 +111,8 @@ export function Form({
         className={cn(
           'mt-md px-md py-sm',
           radii.md,
-          colorVariants.primary,
-          'text-white',
+          backgroundColors.primary,
+          textColors.white,
           'hover:bg-primary-dark transition-colors'
         )}
       >

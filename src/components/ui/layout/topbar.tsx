@@ -11,7 +11,7 @@ import {
 } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
-import { spacing, fontSizes, colorVariants, radii, borderColors, textColors } from '@/lib/ui/tokens'
+import { spacing, typography, textColors, backgroundColors, borderColors, shadows } from '@/lib/ui/tokens'
 import Image from 'next/image'
 
 interface NavigationItem {
@@ -66,13 +66,13 @@ export function Topbar({
   variant = 'solid',
 }: TopbarProps) {
   // Extract token values into constants
-  const navTextSize = fontSizes.base
+  const navTextSize = typography.text.base
   const navTextColor = textColors.primary
   const navTextHoverColor = textColors.secondary
-  const navBgColor = variant === 'solid' ? colorVariants.primary : 'bg-transparent'
-  const navBorderColor = borderColors.default
+  const navBgColor = variant === 'solid' ? backgroundColors.primary : 'bg-transparent'
+  const navBorderColor = borderColors.outline
   const navItemPadding = spacing.sm
-  const navItemRadius = radii.md
+  const navItemRadius = 'rounded-md'
   const navItemSpacing = spacing.md
   const iconSize = 'size-6'
   const logoSize = 'size-8'
@@ -107,7 +107,7 @@ export function Topbar({
                     navItemRadius,
                     navItemPadding,
                     navTextSize,
-                    'font-medium'
+                    typography.weight.medium
                   )}
                   aria-current={item.current ? 'page' : undefined}
                 >
@@ -155,9 +155,10 @@ export function Topbar({
                 menuWidth,
                 'origin-top-right',
                 navItemRadius,
-                colorVariants.surface,
+                backgroundColors.surface,
                 spacing.sm,
-                'shadow-lg ring-1 ring-black/5'
+                shadows.md,
+                'ring-1 ring-black/5'
               )}>
                 {userNavigation.map((item) => (
                   <MenuItem key={item.name}>
@@ -169,7 +170,7 @@ export function Topbar({
                         spacing.sm,
                         navTextSize,
                         textColors.primary,
-                        colorVariants.surfaceHover
+                        backgroundColors.surfaceHover
                       )}
                     >
                       {item.name}
@@ -215,7 +216,7 @@ export function Topbar({
                 navItemRadius,
                 navItemPadding,
                 navTextSize,
-                'font-medium'
+                typography.weight.medium
               )}
             >
               {item.name}

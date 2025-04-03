@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { spacing, fontSizes, colorVariants, textColors, radii } from '@/lib/ui/tokens'
+import { spacing, fontSizes, textColors, backgroundColors, radii } from '@/lib/ui/tokens'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { Button } from '@/components/ui/button'
@@ -44,16 +44,6 @@ export function PageHeader({
   const buttonSize = fontSizes.base
   const radiusClass = radii.md
 
-  // Color tokens
-  const titleColor = textColors.primary
-  const subtitleColor = textColors.secondary
-  const metaColor = textColors.secondary
-  const iconColor = textColors.muted
-  const surfaceColor = colorVariants.surface
-  const surfaceHoverColor = colorVariants.surfaceHover
-  const dropdownTextColor = textColors.primary
-  const dropdownHoverColor = colorVariants.surfaceHover
-
   // Spacing tokens
   const metaGap = spacing.lg
   const metaItemGap = spacing.sm
@@ -65,11 +55,11 @@ export function PageHeader({
   return (
     <div className={cn('flex flex-col lg:flex-row lg:items-center lg:justify-between', gapClass, className)}>
       <div className="min-w-0 flex-1">
-        <h2 className={cn('font-bold sm:truncate', titleSize, titleColor)}>
+        <h2 className={cn('font-bold sm:truncate', titleSize, textColors.primary)}>
           {title}
         </h2>
         {subtitle && (
-          <p className={cn(metaItemGap, subtitleSize, subtitleColor)}>
+          <p className={cn(metaItemGap, subtitleSize, textColors.secondary)}>
             {subtitle}
           </p>
         )}
@@ -80,10 +70,10 @@ export function PageHeader({
             metaGap
           )}>
             {meta.map((item, index) => (
-              <div key={index} className={cn('flex items-center', metaSize, metaColor)}>
+              <div key={index} className={cn('flex items-center', metaSize, textColors.secondary)}>
                 {item.icon && (
                   <item.icon
-                    className={cn(metaItemGap, 'size-5 shrink-0', iconColor)}
+                    className={cn(metaItemGap, 'size-5 shrink-0', textColors.muted)}
                     aria-hidden="true"
                   />
                 )}
@@ -126,9 +116,9 @@ export function PageHeader({
               dropdownPadding,
               buttonSize,
               'font-semibold',
-              titleColor,
-              surfaceColor,
-              surfaceHoverColor,
+              textColors.primary,
+              backgroundColors.surface,
+              'hover:bg-gray-50',
               'shadow-xs'
             )}>
               More
@@ -144,7 +134,7 @@ export function PageHeader({
                 dropdownGap,
                 '-ml-1 w-48 origin-top-left',
                 radiusClass,
-                surfaceColor,
+                backgroundColors.surface,
                 dropdownPadding,
                 'ring-1 ring-black/5',
                 'shadow-lg',
@@ -162,8 +152,8 @@ export function PageHeader({
                       'block w-full',
                       dropdownPadding,
                       buttonSize,
-                      dropdownTextColor,
-                      dropdownHoverColor,
+                      textColors.primary,
+                      'hover:bg-gray-50',
                       'data-focus:outline-hidden'
                     )}
                   >

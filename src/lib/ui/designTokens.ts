@@ -1,31 +1,23 @@
 // lib/ui/designTokens.ts
 
-// 🎨 Text Colors
-const textColors = {
-  primary: '#111827',     // dark gray (gray-900)
-  secondary: '#374151',   // medium gray (gray-700)
-  muted: 'gray-400',       // light gray (gray-500)
-  white: '#ffffff',
-  black: '#000000',
-  success: '#16a34a',
-  danger: '#dc2626',
-}
-
-// 🎨 Color Variants
-const colorVariants = {
+// 🎨 Colors
+const colors = {
   primary: '#2563eb',
   primaryHover: '#1e40af',
   secondary: '#64748b',
   secondaryHover: '#475569',
   surface: '#f9fafb',
   surfaceHover: '#f3f4f6',
-  danger: '#dc2626',
-  dangerHover: '#b91c1c',
-  success: '#16a34a',
-  successHover: '#15803d',
+  mutedText: '#6b7280',
   white: '#ffffff',
   black: '#000000',
-}
+  success: '#16a34a',
+  successHover: '#15803d',
+  danger: '#dc2626',
+  dangerHover: '#b91c1c',
+  hoverText: '#1d4ed8',  // Tailwind blue-700
+  focusRing: '#3b82f6',  // Tailwind ring-blue-500
+};
 
 // 🌗 Shadows
 const shadows = {
@@ -45,7 +37,7 @@ const borders = {
     lg: '4px',
   },
   color: {
-    ...colorVariants,
+    ...colors,
     default: '#e5e7eb', // gray-200 — neutral border
     outline: '#d1d5db', // gray-300 — for focus rings or outlines
   },
@@ -64,8 +56,8 @@ const borders = {
 }
 
 export const designTokens = {
-  textColors,
-  colorVariants,
+  // 🎨 Color & Visual
+  colors,
   shadows,
   borders,
   // 📏 Spacing Scale
@@ -100,7 +92,28 @@ export const designTokens = {
     full: '9999px',
   },
 
-  // 🔘 Size Variants (used in tokens.ts for inputs/buttons)
+  // 📏 Line Height
+  leading: {
+    none: '1',
+    tight: '1.25',
+    snug: '1.375',
+    normal: '1.5',
+    relaxed: '1.75',
+    loose: '2',
+  },
+
+  // 📏 Vertical Spacing
+  spacingY: {
+    none: '0',
+    xs: '0.25rem',
+    sm: '0.5rem',
+    md: '1rem',
+    lg: '2rem',
+    xl: '4rem',
+    "2xl": '8rem',
+  },
+
+  // 🔘 Component Sizing
   sizeVariants: {
     xs: {
       fontSize: '0.75rem',
@@ -127,26 +140,5 @@ export const designTokens = {
       paddingX: '2rem',
       paddingY: '1rem',
     },
-  },
-
-  // 📏 Line Height
-  leading: {
-    none: '1',
-    tight: '1.25',
-    snug: '1.375',
-    normal: '1.5',
-    relaxed: '1.75',
-    loose: '2',
-  },
-
-  // 📏 Vertical Spacing
-  spacingY: {
-    none: '0',
-    xs: '0.25rem',
-    sm: '0.5rem',
-    md: '1rem',
-    lg: '2rem',
-    xl: '4rem',
-    "2xl": '8rem',
   },
 };

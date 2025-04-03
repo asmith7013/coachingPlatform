@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { Button } from '@/components/ui/button';
-import { spacing, textColors, colorVariants } from '@/lib/ui/tokens';
+import { spacing, textColors, typography } from '@/lib/ui/tokens';
 import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Schools data.
 import { School } from "@/lib/zod-schema"; // ✅ Import the School type from Zod schema.
 import { SchoolInput } from "@/lib/zod-schema";
@@ -14,6 +14,7 @@ import { GenericAddForm } from "@/components/features/shared/form/GenericAddForm
 import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
 import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
 import { SchoolFieldConfig } from "@/lib/ui-schema/fieldConfig/core/school";
+import { cn } from "@/lib/utils";
 
 const createEmptySchool = (): SchoolInput => ({
   schoolNumber: "",
@@ -61,8 +62,8 @@ export default function SchoolList() {
   // if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className={`container mx-auto ${spacing.lg}`}>
-      <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+    <div className={cn('container mx-auto', spacing.lg)}>
+      <Heading level="h2" className={cn(typography.weight.bold, textColors.primary, spacing.md)}>
         Schools
       </Heading>
 
@@ -92,14 +93,14 @@ export default function SchoolList() {
           >
             <div className="flex justify-between items-center">
               <div>
-                <Heading level={3} className={textColors.primary}>
+                <Heading level="h3" className={cn(typography.weight.medium, textColors.primary)}>
                   {school.emoji || '🏫'} {school.schoolName}
                 </Heading>
-                <Text variant="secondary" className={spacing.sm}>
+                <Text variant="secondary" className={cn(spacing.sm, textColors.secondary)}>
                   District: {school.district}
                 </Text>
                 {school.address && (
-                  <Text variant="muted" className={spacing.sm}>
+                  <Text variant="muted" className={cn(spacing.sm, textColors.muted)}>
                     {school.address}
                   </Text>
                 )}
@@ -115,14 +116,20 @@ export default function SchoolList() {
             </div>
 
             {/* ✅ 15. Schema Nesting & Type Inference: Dynamically render nested Grade Levels */}
-            <Heading level={3} className={`${textColors.primary} ${spacing.md}`}>
+            <Heading level="h3" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
               Grade Levels
             </Heading>
             <div className="flex flex-wrap gap-2">
               {school.gradeLevelsSupported && school.gradeLevelsSupported.map((grade, index) => (
                 <span 
                   key={index} 
-                  className={`${spacing.sm} ${colorVariants.primary} rounded-full text-sm`}
+                  className={cn(
+                    spacing.sm,
+                    'rounded-full text-sm',
+                    typography.text.sm,
+                    textColors.primary,
+                    'bg-primary-100'
+                  )}
                 >
                   {grade}
                 </span>

@@ -6,7 +6,7 @@ import { Select } from '@/components/ui/fields/Select';
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
-import { spacing, textColors } from '@/lib/ui/tokens';
+import { spacing, textColors, typography, backgroundColors } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 import implementationData from '@/lib/json/IMplementation.json';
 
@@ -85,7 +85,7 @@ export default function RubricViewerPage() {
         <div className="grid grid-cols-1 gap-8">
           {filteredRubrics.map((rubric: RubricIndicator, index: number) => (
             <Card key={index} padding="lg" radius="xl">
-              <Heading level={4} className={cn(textColors.primary, "mb-6")}>
+              <Heading level="h4" className={cn(typography.weight.medium, textColors.primary, "mb-6")}>
                 {rubric.title}
               </Heading>
               <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
@@ -93,10 +93,10 @@ export default function RubricViewerPage() {
                   <div key={level.key} className="flex flex-col">
                     <div className={cn(
                       "p-3 rounded-lg mb-4",
-                      "bg-white",
+                      backgroundColors.white,
                       textColors[level.color]
                     )}>
-                      <Text className="font-semibold text-center">
+                      <Text className={cn(typography.weight.medium, "text-center")}>
                         {level.label}
                       </Text>
                     </div>

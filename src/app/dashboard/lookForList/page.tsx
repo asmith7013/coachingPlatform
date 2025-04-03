@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { Button } from '@/components/ui/button';
-import { spacing, textColors } from '@/lib/ui/tokens';
+import { spacing, textColors, typography } from '@/lib/ui/tokens';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { EmptyState } from '@/components/ui/empty-state';
 import { GenericAddForm, type Field } from "@/components/features/shared/form/GenericAddForm";
@@ -15,6 +15,7 @@ import { useLookFors } from "@/hooks/useLookFors";
 import { uploadLookForFile } from "@actions/lookFors/lookFors";
 import { createLookFor } from "@actions/lookFors/lookFors";
 import { LookForInput } from "@/lib/zod-schema/look-fors/look-for";
+import { cn } from "@/lib/utils";
 
 const lookForFields: Field<LookForInput>[] = [
   {
@@ -136,10 +137,10 @@ export default function LookForsWrapper() {
           >
             <div className="flex justify-between items-center">
               <div>
-                <Heading level={3} className={textColors.primary}>
+                <Heading level="h3" className={cn(typography.weight.medium, textColors.primary)}>
                   {lookFor.studentFacing ? "✏️" : "🍎"} {lookFor.topic}
                 </Heading>
-                <Text variant="secondary" className={spacing.sm}>
+                <Text variant="secondary" className={cn(spacing.sm, textColors.secondary)}>
                   {lookFor.description}
                 </Text>
               </div>
@@ -152,7 +153,7 @@ export default function LookForsWrapper() {
               </Button>
             </div>
 
-            <Heading level={3} className={`${textColors.primary} ${spacing.md}`}>
+            <Heading level="h3" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
               Rubric
             </Heading>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -161,10 +162,10 @@ export default function LookForsWrapper() {
                   key={index}
                   className={spacing.sm}
                 >
-                  <Heading level={4} className={textColors.primary}>
+                  <Heading level="h4" className={cn(typography.weight.medium, textColors.primary)}>
                     {rubricItem.category} ({rubricItem.score})
                   </Heading>
-                  <Text variant="secondary" className={spacing.sm}>
+                  <Text variant="secondary" className={cn(spacing.sm, textColors.secondary)}>
                     {rubricItem.content || "No description"}
                   </Text>
                 </Card>
