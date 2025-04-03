@@ -4,7 +4,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
-import { spacing, textColors, backgroundColors, borderColors } from '@/lib/ui/tokens';
+import { spacing, textColors, backgroundColors, borderColors, typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 
 type LessonDetailViewProps = {
@@ -59,12 +59,13 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
               )}
             >
               <Heading level="h3" className={cn(lessonHasSelectedRoutine ? 'mb-4' : textColors.muted)}>
-                <span className={cn('mr-2', lessonHasSelectedRoutine ? textColors.primary : textColors.muted)}>
+              <div className="flex items-center gap-2">
+                <span className={cn('mr-2', lessonHasSelectedRoutine ? textColors.black : textColors.muted)}>
                   Lesson {lesson.lessonNumber}
                 </span>
                 {hasMLR && (
                   <span className={cn(
-                    'inline-block text-[10px] font-medium px-2 py-0.5 mx-1 rounded',
+                    'inline-block text-[10px] font-medium px-2 py-0.5 rounded',
                     backgroundColors.primary,
                     textColors.white
                   )}>
@@ -73,13 +74,14 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                 )}
                 {hasOtherRoutine && (
                   <span className={cn(
-                    'inline-block text-[10px] font-medium px-2 py-0.5 mx-1 rounded',
+                    'inline-block text-[10px] font-medium px-2 py-0.5 rounded',
                     backgroundColors.secondary,
                     textColors.white
                   )}>
                     Other Routine
                   </span>
                 )}
+              </div>
               </Heading>
               <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {lessonHasSelectedRoutine && lesson.activities.map((activity, idx) => (
@@ -93,10 +95,10 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                     radius="md"
                     contentClassName={cn(spacing.sm, 'sm:px-2 sm:py-2')}
                   >
-                    <Text size="lg" className={cn(textColors.primary, 'font-bold mb-1')}>
+                    <Text size="lg" variant="secondary" className={cn('mb-1', typography.weight.bold)}>
                       {activity.activityNumber === 'Warm Up' ? 'Warm Up' : `Activity ${activity.activityNumber}`}
                     </Text>
-                    <Text size="xs" className={cn(textColors.secondary, 'mb-2 truncate')}>
+                    <Text size="xs" variant="secondary" className={cn(textColors.secondary, 'mb-2 truncate')}>
                       {activity.activityTitle}
                     </Text>
                     {activity.routines.length > 0 ? (
@@ -123,7 +125,7 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                           })}
                       </div>
                     ) : (
-                      <Text size="xs" className={cn(textColors.muted, 'italic')}>
+                      <Text size="xs" variant="secondary" className={cn('italic')}>
                         No routines
                       </Text>
                     )}

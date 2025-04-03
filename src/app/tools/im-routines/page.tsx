@@ -99,11 +99,11 @@ export default function IMRoutinesPage() {
             'flex justify-between items-center',
             borderColors.outline
           )}>
-            <h1 className={cn(typography.text.xl, typography.weight.bold, textColors.primary)}>
+            <h1 className={cn(typography.text.xl, typography.weight.bold, textColors.secondary)}>
               IM Routines Viewer
             </h1>
             {selectedGrade && selectedUnit && (
-              <p className={cn(typography.text.sm, textColors.secondary)}>
+              <p className={cn(typography.text.sm, textColors.secondary, typography.weight.bold)}>
                 Unit {selectedUnit}:
                 <span className={cn(typography.weight.medium, 'ml-1')}>
                   {totalLessons} Lessons

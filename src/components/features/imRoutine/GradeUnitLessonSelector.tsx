@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { spacing, textColors, backgroundColors, borderColors, radii } from '@/lib/ui/tokens';
+import { spacing, textColors, backgroundColors, borderColors, radii, borderWidths } from '@/lib/ui/tokens';
 
 type SelectorProps = {
   selectedGrade: string;
@@ -55,9 +55,10 @@ export function GradeUnitLessonSelector({
         className={cn(
           spacing.sm,
           borderColors.default,
+          borderWidths.md,
           radii.md,
           backgroundColors.white,
-          textColors.primary,
+          textColors.black,
           'font-medium'
         )}
       >
@@ -78,9 +79,10 @@ export function GradeUnitLessonSelector({
         className={cn(
           spacing.sm,
           borderColors.default,
+          borderWidths.md,
           radii.md,
           !selectedGrade ? backgroundColors.surfaceHover : backgroundColors.white,
-          !selectedGrade ? textColors.muted : textColors.primary,
+          !selectedGrade ? textColors.muted : textColors.black,
           'font-medium'
         )}
       >
@@ -98,9 +100,10 @@ export function GradeUnitLessonSelector({
         className={cn(
           spacing.sm,
           borderColors.default,
+          borderWidths.md,
           radii.md,
           !selectedUnit ? backgroundColors.surfaceHover : backgroundColors.white,
-          !selectedUnit ? textColors.muted : textColors.primary,
+          !selectedUnit ? textColors.muted : textColors.black,
           'font-medium'
         )}
       >

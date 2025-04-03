@@ -6,8 +6,8 @@ const { colors } = designTokens;
 // 🎨 Text Colors
 export const textColors = {
   primary: `text-[${colors.primary}]`,
-  secondary: `text-[${colors.secondary}]`,
-  muted: `text-[${colors.mutedText}]`,
+  secondary: `text-[${colors.gray[700]}]`,
+  muted: `text-[${colors.gray[500]}]`,
   white: `text-[${colors.white}]`,
   black: `text-[${colors.black}]`,
   success: `text-[${colors.success}]`,
@@ -29,8 +29,8 @@ export type TextOnColor = keyof typeof textOn;
 
 // 🎨 Background Colors
 export const backgroundColors = {
-  surface: `bg-[${colors.surface}]`,
-  surfaceHover: `bg-[${colors.surfaceHover}] hover:bg-[${colors.surfaceHover}]`,
+  surface: `bg-[${colors.gray[50]}]`,
+  surfaceHover: `bg-[${colors.gray[100]}] hover:bg-[${colors.gray[100]}]`,
   primary: `bg-[${colors.primary}]`,
   primaryHover: `hover:bg-[${colors.primaryHover}]`,
   secondary: `bg-[${colors.secondary}]`,
@@ -49,9 +49,9 @@ export type BackgroundColor = keyof typeof backgroundColors;
 export const borderColors = {
   primary: `border-[${colors.primary}]`,
   secondary: `border-[${colors.secondary}]`,
-  surface: `border-[${colors.surface}]`,
-  default: `border-[${designTokens.borders.color.default}]`,
-  outline: `border-[${designTokens.borders.color.outline}]`,
+  surface: `border-[${colors.gray[200]}]`,
+  default: `border-[${colors.gray[200]}]`,
+  outline: `border-[${colors.gray[300]}]`,
   success: `border-[${colors.success}]`,
   danger: `border-[${colors.danger}]`,
   white: `border-[${colors.white}]`,

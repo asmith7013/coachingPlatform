@@ -42,7 +42,7 @@ export function RoutineFilter({
 
   return (
     <div className={spacing.md}>
-      <label className={cn(typography.weight.bold, 'mb-1')}>
+      <label className={cn(typography.weight.bold, 'mb-2')}>
         Filter by Routine:
       </label>
       <div className="flex flex-wrap gap-2">
@@ -61,8 +61,8 @@ export function RoutineFilter({
                 ? cn(backgroundColors.primary, textColors.primary, borderColors.primary)
                 : cn(backgroundColors.secondary, textColors.secondary, borderColors.secondary)
               : isMLR
-                ? cn(backgroundColors.white, textColors.primary, borderColors.primary)
-                : cn(backgroundColors.white, textColors.secondary, borderColors.secondary)
+                ? cn(backgroundColors.white, 'text-blue-700', borderColors.primary)
+                : cn(backgroundColors.white, 'text-gray-700', borderColors.secondary)
           );
 
           return (
@@ -80,10 +80,9 @@ export function RoutineFilter({
         <Button
           onClick={() => setSelectedRoutines(routinesToShow)}
           size="sm"
+          variant="secondary"
           className={cn(
-            backgroundColors.surface,
-            textColors.white,
-            borderColors.surface
+            // borderColors.surface
           )}
         >
           Select All
