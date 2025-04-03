@@ -9,6 +9,7 @@ interface TableHeaderProps<T> {
   sortColumn?: string
   onSort?: (columnId: string) => void
   className?: string
+  showEdit?: boolean
 }
 
 export function TableHeader<T>({
@@ -16,6 +17,7 @@ export function TableHeader<T>({
   sortColumn,
   onSort,
   className,
+  showEdit,
 }: TableHeaderProps<T>) {
   return (
     <thead className={cn(
@@ -38,6 +40,11 @@ export function TableHeader<T>({
             {column.label}
           </th>
         ))}
+        {showEdit && (
+          <th className="px-4 py-3 text-right text-sm font-medium text-muted">
+            Actions
+          </th>
+        )}
       </tr>
     </thead>
   )

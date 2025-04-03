@@ -9,6 +9,7 @@ interface TableRowProps<T> {
   columns: TableColumnSchema<T>[]
   className?: string
   onClick?: () => void
+  onEdit?: (item: T) => void
 }
 
 export function TableRow<T>({
@@ -16,6 +17,7 @@ export function TableRow<T>({
   columns,
   className,
   onClick,
+  onEdit,
 }: TableRowProps<T>) {
   return (
     <tr
@@ -38,6 +40,19 @@ export function TableRow<T>({
           {column.accessor(item)}
         </td>
       ))}
+      {onEdit && (
+        <td className="px-4 py-3 text-right">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(item);
+            }}
+            className="text-primary hover:text-primary-dark"
+          >
+            Edit
+          </button>
+        </td>
+      )}
     </tr>
   )
 }

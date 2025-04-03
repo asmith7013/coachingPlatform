@@ -6,7 +6,8 @@ import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
-import { spacing, textColors, colorVariants } from '@/lib/ui/tokens';
+import { textColors, backgroundColors, typography, spacing } from '@/lib/ui/tokens';
+import { cn } from '@/lib/utils';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
@@ -70,12 +71,12 @@ export default function SchoolPage() {
 
     return (
       <div className={`container mx-auto ${spacing.lg}`}>
-        <Heading level={1} className={textColors.primary}>
+        <Heading level="h1" className={cn(typography.weight.bold, textColors.primary)}>
           School {schoolId}
         </Heading>
         
         <Card className={spacing.md} padding="md" radius="lg">
-          <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+          <Heading level="h2" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
             Staff
           </Heading>
           <div className={spacing.md}>
@@ -89,14 +90,19 @@ export default function SchoolPage() {
         </Card>
 
         <Card className={spacing.md} padding="md" radius="lg">
-          <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+          <Heading level="h2" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
             Look Fors
           </Heading>
           <div className="flex flex-wrap gap-2">
             {lookFors.map((lookFor : LookFor, index : number) => (
               <span 
                 key={index} 
-                className={`${spacing.sm} ${colorVariants.primary} rounded-full text-sm`}
+                className={cn(
+                  spacing.sm,
+                  backgroundColors.primary,
+                  textColors.white,
+                  'rounded-full text-sm'
+                )}
               >
                 {lookFor}
               </span>
@@ -105,7 +111,7 @@ export default function SchoolPage() {
         </Card>
 
         <Card className={spacing.md} padding="md" radius="lg">
-          <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+          <Heading level="h2" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
             Schedule
           </Heading>
           <div className="overflow-x-auto">
@@ -129,7 +135,7 @@ export default function SchoolPage() {
         </Card>
 
         <Card className={spacing.md} padding="md" radius="lg">
-          <Heading level={2} className={`${textColors.primary} ${spacing.md}`}>
+          <Heading level="h2" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
             LookFors Trends
           </Heading>
           <div className="w-full h-64">

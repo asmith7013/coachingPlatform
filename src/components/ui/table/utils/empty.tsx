@@ -1,16 +1,16 @@
 'use client'
 
-import { ReactNode } from 'react'
+// import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { textColors, backgroundColors } from '@/lib/ui/tokens'
 
 interface TableEmptyProps {
-  children: ReactNode
+  message?: string
   className?: string
 }
 
 export function TableEmpty({
-  children,
+  message = 'No data available',
   className,
 }: TableEmptyProps) {
   return (
@@ -23,7 +23,7 @@ export function TableEmpty({
         'text-sm',
         textColors.muted
       )}>
-        {children}
+        {message}
       </p>
     </div>
   )

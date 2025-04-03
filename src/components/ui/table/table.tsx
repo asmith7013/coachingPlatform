@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { textColors, borderColors, type TextColor } from '@/lib/ui/tokens'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
-import { TableHeader } from './table-header'
-import { TableRow } from './table-row'
-import { TableEmpty } from './table-empty'
+import { TableHeader } from './core/header'
+import { TableRow } from './core/row'
+import { TableEmpty } from './utils/empty'
 
 interface TableProps<T> {
   columns: TableColumnSchema<T>[]
