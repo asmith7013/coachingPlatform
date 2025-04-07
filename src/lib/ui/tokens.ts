@@ -1,17 +1,43 @@
 // lib/ui/tokens.ts
-import { designTokens } from './designTokens';
+// import { tailwindColors } from './tokens/colors';
 
-const { colors } = designTokens;
+// 🎨 Semantic Color Mapping
+const semanticColors = {
+  primary: 'red-violet',
+  primaryHover: 'red-violet-600',
+  primaryDisabled: 'red-violet-300',
+
+  surface: 'seasalt',
+  surfaceHover: 'seasalt',
+
+  sidebarBg: 'gunmetal',
+  sidebarText: 'white',
+
+  cardBg: 'white',
+  textMuted: 'paynes-gray-600',
+
+  focusRing: 'lavender-pink-300',
+  hoverText: 'lavender-pink-400',
+
+  danger: 'raspberry-500',
+  dangerHover: 'raspberry-600',
+
+  success: '#18a058',
+  successHover: '#0f7a45',
+
+  white: 'white',
+  black: '#000000',
+};
 
 // 🎨 Text Colors
 export const textColors = {
-  primary: `text-[${colors.primary}]`,
-  secondary: `text-[${colors.gray[700]}]`,
-  muted: `text-[${colors.gray[500]}]`,
-  white: `text-[${colors.white}]`,
-  black: `text-[${colors.black}]`,
-  success: `text-[${colors.success}]`,
-  danger: `text-[${colors.danger}]`,
+  primary: `text-${semanticColors.primary}`,
+  secondary: `text-${semanticColors.textMuted}`,
+  muted: `text-${semanticColors.textMuted}`,
+  white: `text-${semanticColors.white}`,
+  black: `text-[${semanticColors.black}]`,
+  success: `text-[${semanticColors.success}]`,
+  danger: `text-${semanticColors.danger}`,
 };
 
 export type TextColor = keyof typeof textColors;
@@ -29,33 +55,33 @@ export type TextOnColor = keyof typeof textOn;
 
 // 🎨 Background Colors
 export const backgroundColors = {
-  surface: `bg-[${colors.gray[50]}]`,
-  surfaceHover: `bg-[${colors.gray[100]}] hover:bg-[${colors.gray[100]}]`,
-  primary: `bg-[${colors.primary}]`,
-  primaryHover: `hover:bg-[${colors.primaryHover}]`,
-  secondary: `bg-[${colors.secondary}]`,
-  secondaryHover: `hover:bg-[${colors.secondaryHover}]`,
-  danger: `bg-[${colors.danger}]`,
-  dangerHover: `hover:bg-[${colors.dangerHover}]`,
-  success: `bg-[${colors.success}]`,
-  successHover: `hover:bg-[${colors.successHover}]`,
-  white: `bg-[${colors.white}]`,
-  black: `bg-[${colors.black}]`,
+  surface: `bg-${semanticColors.surface}`,
+  surfaceHover: `bg-${semanticColors.surfaceHover}`,
+  primary: `bg-${semanticColors.primary}`,
+  primaryHover: `hover:bg-${semanticColors.primaryHover}`,
+  secondary: `bg-${semanticColors.sidebarBg}`,
+  secondaryHover: `hover:bg-${semanticColors.sidebarBg}-600`,
+  danger: `bg-${semanticColors.danger}`,
+  dangerHover: `hover:bg-${semanticColors.danger}-600`,
+  success: `bg-[${semanticColors.success}]`,
+  successHover: `hover:bg-[${semanticColors.successHover}]`,
+  white: `bg-${semanticColors.white}`,
+  black: `bg-[${semanticColors.black}]`,
 };
 
 export type BackgroundColor = keyof typeof backgroundColors;
 
 // 🎨 Border Colors
 export const borderColors = {
-  primary: `border-[${colors.primary}]`,
-  secondary: `border-[${colors.secondary}]`,
-  surface: `border-[${colors.gray[200]}]`,
-  default: `border-[${colors.gray[200]}]`,
-  outline: `border-[${colors.gray[300]}]`,
-  success: `border-[${colors.success}]`,
-  danger: `border-[${colors.danger}]`,
-  white: `border-[${colors.white}]`,
-  black: `border-[${colors.black}]`,
+  primary: `border-${semanticColors.primary}`,
+  secondary: `border-${semanticColors.sidebarBg}`,
+  surface: `border-${semanticColors.surface}-200`,
+  default: `border-${semanticColors.surface}-200`,
+  outline: `border-${semanticColors.surface}-300`,
+  success: `border-[${semanticColors.success}]`,
+  danger: `border-${semanticColors.danger}`,
+  white: `border-${semanticColors.white}`,
+  black: `border-[${semanticColors.black}]`,
 };
 
 export type BorderColor = keyof typeof borderColors;
@@ -122,16 +148,16 @@ export type Shadow = keyof typeof shadows;
 
 // 🧱 Border Utilities
 export const borderWidths = {
-  none: `border-[${designTokens.borders.width.none}]`,
-  sm: `border-[${designTokens.borders.width.sm}]`,
-  md: `border-[${designTokens.borders.width.md}]`,
-  lg: `border-[${designTokens.borders.width.lg}]`,
+  none: 'border-0',
+  sm: 'border',
+  md: 'border-2',
+  lg: 'border-4',
 };
 
 export const borderStyles = {
-  solid: `border-[${designTokens.borders.style.solid}]`,
-  dashed: `border-[${designTokens.borders.style.dashed}]`,
-  dotted: `border-[${designTokens.borders.style.dotted}]`,
+  solid: 'border-solid',
+  dashed: 'border-dashed',
+  dotted: 'border-dotted',
 };
 
 export const borderPositions = {
@@ -148,74 +174,74 @@ export type BorderPosition = keyof typeof borderPositions;
 
 // 📏 Spacing utility classes
 export const spacing = {
-  xs: `p-[${designTokens.spacing.xs}]`,
-  sm: `p-[${designTokens.spacing.sm}]`,
-  md: `p-[${designTokens.spacing.md}]`,
-  lg: `p-[${designTokens.spacing.lg}]`,
-  xl: `p-[${designTokens.spacing.xl}]`,
-  "2xl": `p-[${designTokens.spacing["2xl"]}]`,
+  xs: 'p-1',
+  sm: 'p-2',
+  md: 'p-4',
+  lg: 'p-6',
+  xl: 'p-8',
+  "2xl": 'p-12',
 };
 
 export type Spacing = keyof typeof spacing;
 
 // 🔠 Font Size classes
 export const fontSizes = {
-  xs: `text-[${designTokens.fontSize.xs}]`,
-  sm: `text-[${designTokens.fontSize.sm}]`,
-  base: `text-[${designTokens.fontSize.base}]`,
-  lg: `text-[${designTokens.fontSize.lg}]`,
-  xl: `text-[${designTokens.fontSize.xl}]`,
-  "2xl": `text-[${designTokens.fontSize["2xl"]}]`,
+  xs: 'text-xs',
+  sm: 'text-sm',
+  base: 'text-base',
+  lg: 'text-lg',
+  xl: 'text-xl',
+  "2xl": 'text-2xl',
 };
 
 export type FontSize = keyof typeof fontSizes;
 
 // 📐 Radius utility classes
 export const radii = {
-  none: `rounded-[${designTokens.radii.none}]`,
-  xs: `rounded-[${designTokens.radii.xs}]`,
-  sm: `rounded-[${designTokens.radii.sm}]`,
-  md: `rounded-[${designTokens.radii.md}]`,
-  lg: `rounded-[${designTokens.radii.lg}]`,
-  xl: `rounded-[${designTokens.radii.xl}]`,
-  "2xl": `rounded-[${designTokens.radii["2xl"]}]`,
-  full: `rounded-[${designTokens.radii.full}]`,
+  none: 'rounded-none',
+  xs: 'rounded-sm',
+  sm: 'rounded',
+  md: 'rounded-md',
+  lg: 'rounded-lg',
+  xl: 'rounded-xl',
+  "2xl": 'rounded-2xl',
+  full: 'rounded-full',
 };
 
 export type Radius = keyof typeof radii;
 
 // 🔘 Size Variants for buttons/inputs
 export const sizeVariants = {
-  xs: `text-[${designTokens.sizeVariants.xs.fontSize}] px-[${designTokens.sizeVariants.xs.paddingX}] py-[${designTokens.sizeVariants.xs.paddingY}]`,
-  sm: `text-[${designTokens.sizeVariants.sm.fontSize}] px-[${designTokens.sizeVariants.sm.paddingX}] py-[${designTokens.sizeVariants.sm.paddingY}]`,
-  md: `text-[${designTokens.sizeVariants.md.fontSize}] px-[${designTokens.sizeVariants.md.paddingX}] py-[${designTokens.sizeVariants.md.paddingY}]`,
-  lg: `text-[${designTokens.sizeVariants.lg.fontSize}] px-[${designTokens.sizeVariants.lg.paddingX}] py-[${designTokens.sizeVariants.lg.paddingY}]`,
-  xl: `text-[${designTokens.sizeVariants.xl.fontSize}] px-[${designTokens.sizeVariants.xl.paddingX}] py-[${designTokens.sizeVariants.xl.paddingY}]`,
+  xs: 'text-xs px-1 py-0.5',
+  sm: 'text-sm px-2 py-1',
+  md: 'text-base px-4 py-2',
+  lg: 'text-lg px-6 py-3',
+  xl: 'text-xl px-8 py-4',
 };
 
 export type SizeVariant = keyof typeof sizeVariants;
 
 // 📏 Line Height
 export const leading = {
-  none: `leading-[${designTokens.leading.none}]`,
-  tight: `leading-[${designTokens.leading.tight}]`,
-  snug: `leading-[${designTokens.leading.snug}]`,
-  normal: `leading-[${designTokens.leading.normal}]`,
-  relaxed: `leading-[${designTokens.leading.relaxed}]`,
-  loose: `leading-[${designTokens.leading.loose}]`,
+  none: 'leading-none',
+  tight: 'leading-tight',
+  snug: 'leading-snug',
+  normal: 'leading-normal',
+  relaxed: 'leading-relaxed',
+  loose: 'leading-loose',
 };
 
 export type Leading = keyof typeof leading;
 
 // 📏 Vertical Spacing
 export const spacingY = {
-  none: `space-y-[${designTokens.spacingY.none}]`,
-  xs: `space-y-[${designTokens.spacingY.xs}]`,
-  sm: `space-y-[${designTokens.spacingY.sm}]`,
-  md: `space-y-[${designTokens.spacingY.md}]`,
-  lg: `space-y-[${designTokens.spacingY.lg}]`,
-  xl: `space-y-[${designTokens.spacingY.xl}]`,
-  "2xl": `space-y-[${designTokens.spacingY["2xl"]}]`,
+  none: 'space-y-0',
+  xs: 'space-y-1',
+  sm: 'space-y-2',
+  md: 'space-y-4',
+  lg: 'space-y-6',
+  xl: 'space-y-8',
+  "2xl": 'space-y-12',
 };
 
 export type SpacingY = keyof typeof spacingY;
@@ -223,7 +249,7 @@ export type SpacingY = keyof typeof spacingY;
 // 🎯 Layout Utilities
 export const layout = {
   container: 'container mx-auto',
-  cardStack: `flex flex-col ${spacingY.md}`,
+  cardStack: 'flex flex-col space-y-4',
   grid: {
     cols: {
       1: 'grid-cols-1',
@@ -287,19 +313,36 @@ export type VariantStyle = keyof typeof variantStyles;
 // 📏 Padding Helpers
 export const padding = {
   x: {
-    xs: `px-[${designTokens.sizeVariants.xs.paddingX}]`,
-    sm: `px-[${designTokens.sizeVariants.sm.paddingX}]`,
-    md: `px-[${designTokens.sizeVariants.md.paddingX}]`,
-    lg: `px-[${designTokens.sizeVariants.lg.paddingX}]`,
-    xl: `px-[${designTokens.sizeVariants.xl.paddingX}]`,
+    xs: 'px-1',
+    sm: 'px-2',
+    md: 'px-4',
+    lg: 'px-6',
+    xl: 'px-8',
   },
   y: {
-    xs: `py-[${designTokens.sizeVariants.xs.paddingY}]`,
-    sm: `py-[${designTokens.sizeVariants.sm.paddingY}]`,
-    md: `py-[${designTokens.sizeVariants.md.paddingY}]`,
-    lg: `py-[${designTokens.sizeVariants.lg.paddingY}]`,
-    xl: `py-[${designTokens.sizeVariants.xl.paddingY}]`,
+    xs: 'py-0.5',
+    sm: 'py-1',
+    md: 'py-2',
+    lg: 'py-3',
+    xl: 'py-4',
   },
 };
 
 export type PaddingSize = keyof typeof padding.x;
+
+export const tokens = {
+  colors: {
+    // Semantic colors
+    primary: 'red-violet',
+    primaryHover: 'red-violet-600',
+    primaryDisabled: 'red-violet-300',
+    danger: 'raspberry-500',
+    dangerHover: 'raspberry-600',
+    text: 'gunmetal',
+    textMuted: 'paynes-gray-600',
+    background: 'seasalt',
+    focusRing: 'lavender-pink-300',
+    hoverText: 'lavender-pink-400',
+  },
+  // ... existing code ...
+} as const;

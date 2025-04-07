@@ -1,5 +1,4 @@
 .
-├── README.md
 ├── eslint.config.mjs
 ├── next-env.d.ts
 ├── next.config.ts
@@ -14,7 +13,7 @@
 │   └── window.svg
 ├── scripts
 │   ├── generate-theme-css.ts
-│   └── generateSafelist.ts
+│   └── generate-theme-safelist.ts
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
 ├── src
@@ -53,6 +52,8 @@
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
 │   │   ├── scheduling
+│   │   │   └── page.tsx
+│   │   ├── test-colors
 │   │   │   └── page.tsx
 │   │   └── tools
 │   │       ├── im-routines
@@ -100,12 +101,23 @@
 │   │       │   └── topbar.tsx
 │   │       ├── page-header.tsx
 │   │       ├── table
-│   │       │   ├── table-actions.tsx
-│   │       │   ├── table-cell.tsx
-│   │       │   ├── table-empty.tsx
-│   │       │   ├── table-header.tsx
-│   │       │   ├── table-row.tsx
+│   │       │   ├── core
+│   │       │   │   ├── actions.tsx
+│   │       │   │   ├── cell.tsx
+│   │       │   │   ├── footer.tsx
+│   │       │   │   ├── header.tsx
+│   │       │   │   └── row.tsx
+│   │       │   ├── table-checkbox.tsx
 │   │       │   ├── table.tsx
+│   │       │   ├── utils
+│   │       │   │   ├── empty.tsx
+│   │       │   │   ├── error.tsx
+│   │       │   │   ├── filter.tsx
+│   │       │   │   ├── loading.tsx
+│   │       │   │   ├── pagination.tsx
+│   │       │   │   ├── search.tsx
+│   │       │   │   ├── select.tsx
+│   │       │   │   └── sort.tsx
 │   │       │   └── variants
 │   │       │       ├── compact.tsx
 │   │       │       ├── paginated.tsx
@@ -157,6 +169,8 @@
 │   │   │   ├── table-schema.ts
 │   │   │   ├── table-schemas
 │   │   │   │   └── school.ts
+│   │   │   ├── tokens
+│   │   │   │   └── colors.ts
 │   │   │   └── tokens.ts
 │   │   ├── ui-schema
 │   │   │   ├── constants
@@ -229,10 +243,12 @@
 │   │       ├── index.ts
 │   │       └── visit.model.ts
 │   └── styles
+│       ├── theme-safelist.css
 │       └── theme.css
-├── tailwind.safelist.json
+├── tailwind.config.ts
+├── test-output.css
 ├── tests
 ├── tsconfig.json
 └── tsconfig.tsbuildinfo
 
-73 directories, 163 files
+77 directories, 175 files

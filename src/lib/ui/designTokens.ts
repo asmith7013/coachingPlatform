@@ -1,36 +1,105 @@
 // lib/ui/designTokens.ts
 
-// 🎨 Colors
-const gray = {
-  50: '#f9fafb',
-  100: '#f3f4f6',
-  200: '#e5e7eb',
-  300: '#d1d5db',
-  400: '#9ca3af',
-  500: '#6b7280',
-  600: '#4b5563',
-  700: '#374151',
-  800: '#1f2937',
-  900: '#111827',
+// 🎨 Semantic Color Mapping
+const semanticColors = {
+  primary: 'red-violet',
+  primaryHover: 'red-violet-600',
+  primaryDisabled: 'red-violet-300',
+
+  surface: 'seasalt',
+  surfaceHover: 'seasalt',
+
+  sidebarBg: 'gunmetal',
+  sidebarText: 'white',
+
+  cardBg: 'white',
+  textMuted: 'paynes-gray-600',
+
+  focusRing: 'lavender-pink-300',
+  hoverText: 'lavender-pink-400',
+
+  danger: 'raspberry-500',
+  dangerHover: 'raspberry-600',
+
+  success: 'greenSuccess',
+  successHover: 'greenSuccess-600',
+
+  white: 'white',
+  black: '#000000',
 };
 
-const colors = {
-  primary: '#2563eb',
-  primaryHover: '#1e40af',
-  secondary: '#64748b',
-  secondaryHover: '#475569',
-  surface: '#f9fafb',
-  surfaceHover: '#f3f4f6',
-  mutedText: '#6b7280',
-  white: '#ffffff',
-  black: '#000000',
-  success: '#16a34a',
-  successHover: '#15803d',
-  danger: '#dc2626',
-  dangerHover: '#b91c1c',
-  hoverText: '#1d4ed8',  // Tailwind blue-700
-  focusRing: '#3b82f6',  // Tailwind ring-blue-500
-  gray,
+// 🎨 Utility Class Mappings
+export const textColors = {
+  primary: `text-${semanticColors.primary}`,
+  primaryHover: `hover:text-${semanticColors.primaryHover}`,
+  primaryDisabled: `text-${semanticColors.primaryDisabled}`,
+
+  surface: `text-${semanticColors.surface}`,
+  surfaceHover: `hover:text-${semanticColors.surfaceHover}`,
+
+  sidebar: `text-${semanticColors.sidebarText}`,
+  card: `text-${semanticColors.cardBg}`,
+  muted: `text-${semanticColors.textMuted}`,
+
+  focusRing: `text-${semanticColors.focusRing}`,
+  hoverText: `hover:text-${semanticColors.hoverText}`,
+
+  danger: `text-${semanticColors.danger}`,
+  dangerHover: `hover:text-${semanticColors.dangerHover}`,
+
+  success: `text-[${semanticColors.success}]`,
+  successHover: `hover:text-[${semanticColors.successHover}]`,
+
+  white: `text-${semanticColors.white}`,
+  black: `text-[${semanticColors.black}]`,
+};
+
+export const backgroundColors = {
+  primary: `bg-${semanticColors.primary}`,
+  primaryHover: `hover:bg-${semanticColors.primaryHover}`,
+  primaryDisabled: `bg-${semanticColors.primaryDisabled}`,
+
+  surface: `bg-${semanticColors.surface}`,
+  surfaceHover: `hover:bg-${semanticColors.surfaceHover}`,
+
+  sidebar: `bg-${semanticColors.sidebarBg}`,
+  card: `bg-${semanticColors.cardBg}`,
+
+  focusRing: `bg-${semanticColors.focusRing}`,
+  hoverText: `hover:bg-${semanticColors.hoverText}`,
+
+  danger: `bg-${semanticColors.danger}`,
+  dangerHover: `hover:bg-${semanticColors.dangerHover}`,
+
+  success: `bg-[${semanticColors.success}]`,
+  successHover: `hover:bg-[${semanticColors.successHover}]`,
+
+  white: `bg-${semanticColors.white}`,
+  black: `bg-[${semanticColors.black}]`,
+};
+
+export const borderColors = {
+  primary: `border-${semanticColors.primary}`,
+  primaryHover: `hover:border-${semanticColors.primaryHover}`,
+  primaryDisabled: `border-${semanticColors.primaryDisabled}`,
+
+  surface: `border-${semanticColors.surface}`,
+  surfaceHover: `hover:border-${semanticColors.surfaceHover}`,
+
+  sidebar: `border-${semanticColors.sidebarBg}`,
+  card: `border-${semanticColors.cardBg}`,
+
+  focusRing: `border-${semanticColors.focusRing}`,
+  hoverText: `hover:border-${semanticColors.hoverText}`,
+
+  danger: `border-${semanticColors.danger}`,
+  dangerHover: `hover:border-${semanticColors.dangerHover}`,
+
+  success: `border-[${semanticColors.success}]`,
+  successHover: `hover:border-[${semanticColors.successHover}]`,
+
+  white: `border-${semanticColors.white}`,
+  black: `border-[${semanticColors.black}]`,
 };
 
 // 🌗 Shadows
@@ -39,8 +108,8 @@ const shadows = {
   md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
   lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
   xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-  "2xl": '0 25px 50px -12px rgb(0 0 0 / 0.25)',
-}
+  '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
+};
 
 // 🧱 Border Utilities
 const borders = {
@@ -51,9 +120,9 @@ const borders = {
     lg: '4px',
   },
   color: {
-    ...colors,
-    default: '#e5e7eb', // gray-200 — neutral border
-    outline: '#d1d5db', // gray-300 — for focus rings or outlines
+    ...semanticColors,
+    default: '#e5e7eb', // gray-200
+    outline: '#d1d5db', // gray-300
   },
   style: {
     solid: 'solid',
@@ -67,31 +136,45 @@ const borders = {
     left: 'left',
     all: 'all',
   },
-}
+};
 
 export const designTokens = {
-  // 🎨 Color & Visual
-  colors,
+  colors: {
+    // Semantic colors
+    primary: 'red-violet',
+    primaryHover: 'red-violet-600',
+    primaryDisabled: 'red-violet-300',
+    danger: 'raspberry-500',
+    dangerHover: 'raspberry-600',
+    text: 'gunmetal',
+    textMuted: 'paynes-gray-600',
+    background: 'seasalt',
+    focusRing: 'lavender-pink-300',
+    hoverText: 'lavender-pink-400',
+  },
+  semanticColors,
+  textColors,
+  backgroundColors,
+  borderColors,
   shadows,
   borders,
-  // 📏 Spacing Scale
+
   spacing: {
     xs: '0.25rem',
     sm: '0.5rem',
     md: '1rem',
     lg: '2rem',
     xl: '4rem',
-    "2xl": '8rem',
+    '2xl': '8rem',
   },
 
-  // 🔠 Font Sizes
   fontSize: {
     xs: '0.75rem',
     sm: '0.875rem',
     base: '1rem',
     lg: '1.125rem',
     xl: '1.25rem',
-    "2xl": '1.5rem',
+    '2xl': '1.5rem',
   },
 
   // 📐 Border Radius
@@ -102,7 +185,7 @@ export const designTokens = {
     md: '0.5rem',
     lg: '0.75rem',
     xl: '1rem',
-    "2xl": '1.5rem',
+    '2xl': '1.5rem',
     full: '9999px',
   },
 
@@ -124,7 +207,7 @@ export const designTokens = {
     md: '1rem',
     lg: '2rem',
     xl: '4rem',
-    "2xl": '8rem',
+    '2xl': '8rem',
   },
 
   // 🔘 Component Sizing
@@ -155,4 +238,4 @@ export const designTokens = {
       paddingY: '1rem',
     },
   },
-};
+} as const;

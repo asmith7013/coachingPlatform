@@ -83,6 +83,7 @@ export function RoutineFilter({
           variant="secondary"
           className={cn(
             // borderColors.surface
+            backgroundColors.black,
           )}
         >
           Select All

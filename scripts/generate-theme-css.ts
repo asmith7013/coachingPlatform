@@ -1,47 +1,49 @@
-import { writeFileSync } from "fs";
-import { join } from "path";
-import { designTokens } from "../src/lib/ui/designTokens";
+// scripts/generate-theme-css.ts
+import fs from "fs";
+import path from "path";
+import { tailwindColors, semanticColorMap } from "../src/lib/ui/tokens/colors";
 
-type TokenValue = string | number | boolean | null | undefined;
-interface DesignToken {
-  [key: string]: TokenValue | DesignToken;
-}
+const GLOBALS_PATH = path.resolve(__dirname, "../src/app/globals.css");
 
-/**
- * Recursively flattens design tokens into CSS variables
- * Converts camelCase to kebab-case for CSS variable names
- */
-const flattenTokens = (
-  tokens: DesignToken,
-  prefix: string = ""
-): string[] => {
-  return Object.entries(tokens).flatMap(([key, value]) => {
-    // Convert camelCase to kebab-case
-    const kebabKey = key.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-    const variableName = `--${prefix}${kebabKey}`;
+const generateThemeBlock = (): string[] => {
+  const lines = ["@theme {"];
 
-    if (typeof value === "object" && value !== null) {
-      return flattenTokens(value as DesignToken, `${prefix}${kebabKey}-`);
+  for (const [semantic, baseColor] of Object.entries(semanticColorMap)) {
+    const shades = tailwindColors[baseColor as keyof typeof tailwindColors];
+    if (!shades) {
+      console.warn(`⚠️ No color data found for base color: ${baseColor}`);
+      continue;
     }
 
-    return `${variableName}: ${value};`;
-  });
+    for (const [shade, hex] of Object.entries(shades)) {
+      const suffix = shade === "DEFAULT" ? "" : `-${shade}`;
+      lines.push(`  --color-${semantic}${suffix}: ${hex};`);
+    }
+  }
+
+  lines.push("}");
+  return lines;
 };
 
-// Flatten all tokens into CSS variables
-const cssVariables = flattenTokens(designTokens);
+const updateGlobalsCss = () => {
+  const file = fs.readFileSync(GLOBALS_PATH, "utf8");
+  const themeBlockRegex = /@theme\s*{[\s\S]*?}/gm;
+  const newThemeBlock = generateThemeBlock().join("\n");
 
-// Generate CSS content with @theme block
-const cssContent = `/* Auto-generated theme CSS - DO NOT EDIT DIRECTLY */
-/* Generated from designTokens.ts */
+  let newFile: string;
 
-@theme {
-${cssVariables.map((line) => `  ${line}`).join("\n")}
-}
-`;
+  if (themeBlockRegex.test(file)) {
+    newFile = file.replace(themeBlockRegex, newThemeBlock);
+  } else {
+    const importRegex = /@import\s+["']tailwindcss["'];/;
+    if (!importRegex.test(file)) {
+      throw new Error("Could not find @import 'tailwindcss'; in globals.css");
+    }
+    newFile = file.replace(importRegex, match => `${match}\n\n${newThemeBlock}`);
+  }
 
-// Write to theme.css
-const themePath = join(process.cwd(), "src", "styles", "theme.css");
-writeFileSync(themePath, cssContent, "utf-8");
+  fs.writeFileSync(GLOBALS_PATH, newFile, { encoding: "utf8" });
+  console.log("✅ Updated globals.css with new @theme block");
+};
 
-console.log("✅ Tailwind theme.css generated!");
+updateGlobalsCss();

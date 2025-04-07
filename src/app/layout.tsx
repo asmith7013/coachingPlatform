@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import SentryBoundaryWrapper from "@/components/error-boundaries/SentryBoundaryWrapper";
+import "@/app/globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const geist = Geist({
   subsets: ["latin"],
+  variable: "--font-geist",
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
+  variable: "--font-geist-mono",
 });
 
 export const metadata: Metadata = {
@@ -25,18 +25,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
-        // overscroll-none <-- this is a tailwind class that prevents the page from overscrolling
-      >
-        <SentryBoundaryWrapper>
-        {children}
-        </SentryBoundaryWrapper>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
+      <body className={`bg-seasalt text-gunmetal font-sans antialiased`}>
+        <SentryBoundaryWrapper>{children}</SentryBoundaryWrapper>
       </body>
     </html>
   );

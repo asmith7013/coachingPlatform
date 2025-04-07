@@ -66,7 +66,13 @@ export default function SchoolList() {
       <Heading level="h2" className={cn(typography.weight.bold, textColors.primary, spacing.md)}>
         Schools
       </Heading>
-
+      {/* Test with multiple approaches */}
+      <div className="bg-red-violet-300 text-white p-4 rounded-md mb-4">
+        Red Violet 300 test block (should use class)
+      </div>
+      <div className="bg-[#76144f] text-white p-4 rounded-md mb-4">
+        Direct hex color fallback (#76144f)
+      </div>
       <ResourceHeader<School>
         page={page}
         total={total}
@@ -114,7 +120,6 @@ export default function SchoolList() {
                 🗑️ Delete
               </Button>
             </div>
-
             {/* ✅ 15. Schema Nesting & Type Inference: Dynamically render nested Grade Levels */}
             <Heading level="h3" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
               Grade Levels
