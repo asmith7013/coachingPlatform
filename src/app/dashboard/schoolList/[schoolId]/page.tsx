@@ -6,7 +6,7 @@ import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
-import { textColors, backgroundColors, typography, spacing } from '@/lib/ui/tokens';
+import { typography, spacing } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
@@ -71,26 +71,26 @@ export default function SchoolPage() {
 
     return (
       <div className={`container mx-auto ${spacing.lg}`}>
-        <Heading level="h1" className={cn(typography.weight.bold, textColors.primary)}>
+        <Heading level="h1" className={cn(typography.weight.bold, 'text-primary')}>
           School {schoolId}
         </Heading>
         
         <Card className={spacing.md} padding="md" radius="lg">
-          <Heading level="h2" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
+          <Heading level="h2" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
             Staff
           </Heading>
           <div className={spacing.md}>
             {schoolStaff.map((staff : StaffMember) => (
               <Card key={staff.id} className={spacing.sm} padding="sm" radius="md">
-                <Text variant="primary">{staff.name}</Text>
-                <Text variant="secondary">{staff.role}</Text>
+                <Text variant="text">{staff.name}</Text>
+                <Text variant="text" className="text-text-muted">{staff.role}</Text>
               </Card>
             ))}
           </div>
         </Card>
 
         <Card className={spacing.md} padding="md" radius="lg">
-          <Heading level="h2" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
+          <Heading level="h2" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
             Look Fors
           </Heading>
           <div className="flex flex-wrap gap-2">
@@ -99,8 +99,8 @@ export default function SchoolPage() {
                 key={index} 
                 className={cn(
                   spacing.sm,
-                  backgroundColors.primary,
-                  textColors.white,
+                  'bg-primary',
+                  'text-white',
                   'rounded-full text-sm'
                 )}
               >
@@ -111,22 +111,22 @@ export default function SchoolPage() {
         </Card>
 
         <Card className={spacing.md} padding="md" radius="lg">
-          <Heading level="h2" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
+          <Heading level="h2" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
             Schedule
           </Heading>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b">
-                  <th className={`${spacing.sm} text-left`}>Period</th>
-                  <th className={`${spacing.sm} text-left`}>Time</th>
+                <tr className="border-b border-surface">
+                  <th className={`${spacing.sm} text-left text-text`}>Period</th>
+                  <th className={`${spacing.sm} text-left text-text`}>Time</th>
                 </tr>
               </thead>
               <tbody>
                 {schedule.map((entry : Period, index : number) => (
-                  <tr key={index} className="border-b">
-                    <td className={spacing.sm}>{entry.period}</td>
-                    <td className={spacing.sm}>{entry.time}</td>
+                  <tr key={index} className="border-b border-surface">
+                    <td className={cn(spacing.sm, 'text-text')}>{entry.period}</td>
+                    <td className={cn(spacing.sm, 'text-text')}>{entry.time}</td>
                   </tr>
                 ))}
               </tbody>
@@ -135,7 +135,7 @@ export default function SchoolPage() {
         </Card>
 
         <Card className={spacing.md} padding="md" radius="lg">
-          <Heading level="h2" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
+          <Heading level="h2" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
             LookFors Trends
           </Heading>
           <div className="w-full h-64">

@@ -1,11 +1,13 @@
 import { ElementType, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { typography, textColors, type HeadingLevel, type TextColor } from '@/lib/ui/tokens'
+import { typography, type HeadingLevel } from '@/lib/ui/tokens'
+
+type HeadingVariant = 'text' | 'text-muted' | 'primary' | 'secondary' | 'success' | 'danger'
 
 interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
   children: ReactNode
   level?: HeadingLevel
-  variant?: TextColor
+  variant?: HeadingVariant
   className?: string
 }
 
@@ -32,7 +34,7 @@ export function Heading({
     <Component
       className={cn(
         headingClass,
-        textColors[variant],
+        `text-${variant}`,
         className
       )}
       {...props}

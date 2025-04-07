@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import { textColors, backgroundColors, borderColors } from '@/lib/ui/tokens'
 
 interface TableSearchProps {
   value: string
@@ -17,13 +16,13 @@ export function TableSearch({
   return (
     <div className={cn(
       'flex items-center space-x-4 px-4 py-3',
-      backgroundColors.surface,
-      borderColors.default,
+      'bg-surface',
+      'border-surface',
       className
     )}>
       <p className={cn(
         'text-sm font-medium',
-        textColors.muted
+        'text-muted'
       )}>
         Search:
       </p>
@@ -34,9 +33,9 @@ export function TableSearch({
         placeholder={placeholder}
         className={cn(
           'px-3 py-1 text-sm rounded-md border',
-          textColors.secondary,
-          backgroundColors.white,
-          borderColors.default,
+          'text-text',
+          'bg-background',
+          'border-surface',
           'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
         )}
       />

@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { Button } from '@/components/ui/button';
-import { spacing, textColors, typography } from '@/lib/ui/tokens';
+import { spacing, typography } from '@/lib/ui/tokens';
 import { useNYCPSStaff } from "@/hooks/useNYCPSStaff"; // ✅ SWR hook for managing NYCPS Staff data.
 import { NYCPSStaff } from "@/lib/zod-schema"; // ✅ Import the NYCPSStaff type from Zod schema.
 import { NYCPSStaffInput } from "@/lib/zod-schema";
@@ -62,7 +62,7 @@ export default function NYCPSStaffList() {
 
   return (
     <div className={cn('container mx-auto', spacing.lg)}>
-      <Heading level="h2" className={cn(typography.weight.bold, textColors.primary, spacing.md)}>
+      <Heading level="h2" className={cn(typography.weight.bold, 'text-primary', spacing.md)}>
         NYCPS Staff
       </Heading>
 
@@ -93,10 +93,10 @@ export default function NYCPSStaffList() {
           >
             <div className="flex justify-between items-center">
               <div>
-                <Heading level="h3" className={cn(typography.weight.medium, textColors.primary)}>
+                <Heading level="h3" className={cn(typography.weight.medium, 'text-primary')}>
                   {member.staffName}
                 </Heading>
-                <Text variant="secondary" className={cn(spacing.sm, textColors.secondary)}>
+                <Text variant="text" className={cn(spacing.sm, 'text-text-muted')}>
                   {member.email || 'No email provided'}
                 </Text>
               </div>
@@ -112,7 +112,7 @@ export default function NYCPSStaffList() {
 
             {/* ✅ 15. Schema Nesting & Type Inference: Dynamically render roles and subjects */}
             <div className={spacing.md}>
-              <Heading level="h3" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
+              <Heading level="h3" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
                 Roles
               </Heading>
               <div className="flex flex-wrap gap-2">
@@ -123,8 +123,8 @@ export default function NYCPSStaffList() {
                       spacing.sm,
                       'rounded-full text-sm',
                       typography.text.sm,
-                      textColors.primary,
-                      'bg-primary-100'
+                      'text-white',
+                      'bg-primary'
                     )}
                   >
                     {role}
@@ -134,7 +134,7 @@ export default function NYCPSStaffList() {
             </div>
 
             <div className={spacing.md}>
-              <Heading level="h3" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
+              <Heading level="h3" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
                 Subjects
               </Heading>
               <div className="flex flex-wrap gap-2">
@@ -145,8 +145,8 @@ export default function NYCPSStaffList() {
                       spacing.sm,
                       'rounded-full text-sm',
                       typography.text.sm,
-                      textColors.success,
-                      'bg-success-100'
+                      'text-white',
+                      'bg-success'
                     )}
                   >
                     {subject}

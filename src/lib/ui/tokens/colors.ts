@@ -1,5 +1,6 @@
 export const semanticColorMap = {
   primary: 'red-violet',
+  secondary: 'paynes-gray',
   surface: 'seasalt',
   background: 'white',
   text: 'gunmetal',

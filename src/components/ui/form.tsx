@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
-import { spacing, radii, textColors, backgroundColors } from '@/lib/ui/tokens'
+import { sizeVariants } from '@/lib/ui/tokens'
+import type { SizeVariant } from '@/lib/ui/tokens'
 import { FormSection } from './form-section'
 import { getFieldComponent } from '@/lib/ui/forms/registry'
 
@@ -29,9 +30,15 @@ interface FormProps {
   onChange?: (key: string, value: unknown) => void
   onSubmit?: (values: Record<string, unknown>) => void
   className?: string
-  padding?: keyof typeof spacing
-  gap?: keyof typeof spacing
+  padding?: 'sm' | 'md' | 'lg'
+  gap?: 'sm' | 'md' | 'lg'
 }
+
+const spacingMap = {
+  sm: 'p-2 space-y-2',
+  md: 'p-4 space-y-4',
+  lg: 'p-6 space-y-6',
+} as const
 
 export function Form({
   formLayout,
@@ -58,16 +65,12 @@ export function Form({
     onSubmit?.(values)
   }
 
-  const paddingClass = spacing[padding]
-  const gapClass = spacing[gap]
-
   return (
     <form 
       onSubmit={handleSubmit}
       className={cn(
         'flex flex-col w-full',
-        gapClass,
-        paddingClass,
+        spacingMap[gap],
         className
       )}
     >
@@ -84,7 +87,7 @@ export function Form({
             padding={padding}
             gap={gap}
           >
-            <div className={cn('grid', gapClass)}>
+            <div className={cn('grid', spacingMap[gap])}>
               {sectionFields.map((field) => {
                 const FieldComponent = getFieldComponent(field.type)
                 if (!FieldComponent) {
@@ -109,11 +112,11 @@ export function Form({
       <button
         type="submit"
         className={cn(
-          'mt-md px-md py-sm',
-          radii.md,
-          backgroundColors.primary,
-          textColors.white,
-          'hover:bg-primary-dark transition-colors'
+          'mt-4 px-4 py-2 rounded-md',
+          'bg-primary text-white',
+          'hover:bg-primary-hover transition-colors',
+          'focus:ring-2 focus:ring-primary focus:ring-offset-2',
+          'disabled:opacity-50 disabled:cursor-not-allowed'
         )}
       >
         Submit
@@ -121,3 +124,79 @@ export function Form({
     </form>
   )
 }
+
+interface BaseInputProps {
+  label?: string;
+  error?: string;
+  size?: SizeVariant;
+}
+
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>, BaseInputProps {}
+
+export const Input = ({
+  label,
+  error,
+  size = 'md',
+  className,
+  ...props
+}: InputProps) => {
+  return (
+    <div className="space-y-1">
+      {label && (
+        <label className="block text-sm font-medium text-text">
+          {label}
+        </label>
+      )}
+      <input
+        className={cn(
+          'block w-full rounded-md border border-border',
+          'bg-white text-text placeholder-text-muted',
+          'focus:border-primary focus:ring-2 focus:ring-primary focus:ring-offset-2',
+          'disabled:cursor-not-allowed disabled:bg-surface disabled:text-text-muted',
+          error && 'border-danger focus:border-danger focus:ring-danger',
+          sizeVariants[size],
+          className
+        )}
+        {...props}
+      />
+      {error && (
+        <p className="mt-1 text-sm text-danger">{error}</p>
+      )}
+    </div>
+  );
+};
+
+interface TextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'>, BaseInputProps {}
+
+export const Textarea = ({
+  label,
+  error,
+  size = 'md',
+  className,
+  ...props
+}: TextareaProps) => {
+  return (
+    <div className="space-y-1">
+      {label && (
+        <label className="block text-sm font-medium text-text">
+          {label}
+        </label>
+      )}
+      <textarea
+        className={cn(
+          'block w-full rounded-md border border-border',
+          'bg-white text-text placeholder-text-muted',
+          'focus:border-primary focus:ring-2 focus:ring-primary focus:ring-offset-2',
+          'disabled:cursor-not-allowed disabled:bg-surface disabled:text-text-muted',
+          error && 'border-danger focus:border-danger focus:ring-danger',
+          sizeVariants[size],
+          className
+        )}
+        {...props}
+      />
+      {error && (
+        <p className="mt-1 text-sm text-danger">{error}</p>
+      )}
+    </div>
+  );
+};

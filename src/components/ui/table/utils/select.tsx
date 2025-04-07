@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import { textColors, backgroundColors, borderColors } from '@/lib/ui/tokens'
 
 interface TableSelectProps {
   value: string
@@ -20,9 +19,9 @@ export function TableSelect({
       onChange={(e) => onChange(e.target.value)}
       className={cn(
         'px-3 py-1 text-sm rounded-md border',
-        textColors.secondary,
-        backgroundColors.white,
-        borderColors.default,
+        'text-text',
+        'bg-background',
+        'border-surface',
         'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
         className
       )}

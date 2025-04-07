@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { spacing, typography, textColors, backgroundColors } from '@/lib/ui/tokens'
+import { spacing, typography } from '@/lib/ui/tokens'
 import { Topbar } from './topbar'
 
 interface NavigationItem {
@@ -44,8 +44,8 @@ export function ShellLayout({
   const maxWidth = 'max-w-7xl'
 
   return (
-    <div className={cn('min-h-full', backgroundColors.white, textColors.black)}>
-      <div className={cn(backgroundColors.primary, 'pb-[128px]')}>
+    <div className={cn('min-h-full bg-background text-text', className)}>
+      <div className="bg-primary pb-[128px]">
         <Topbar 
           navigation={navigation} 
           user={user} 
@@ -56,8 +56,7 @@ export function ShellLayout({
             <h1 className={cn(
               typography.weight.bold,
               typography.text.xl,
-              textColors.primary,
-              'tracking-tight'
+              'text-primary tracking-tight'
             )}>
               {title}
             </h1>
@@ -65,7 +64,7 @@ export function ShellLayout({
         </header>
       </div>
       <main className={mainOffset}>
-        <div className={cn('mx-auto', maxWidth, paddingClass, className)}>
+        <div className={cn('mx-auto', maxWidth, paddingClass)}>
           {children}
         </div>
       </main>

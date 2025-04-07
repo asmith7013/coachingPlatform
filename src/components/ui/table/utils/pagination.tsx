@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import { textColors, backgroundColors, borderColors } from '@/lib/ui/tokens'
 
 interface TablePaginationProps {
   currentPage: number
@@ -17,14 +16,14 @@ export function TablePagination({
   return (
     <div className={cn(
       'flex items-center justify-between px-4 py-3',
-      backgroundColors.surface,
-      borderColors.default,
+      'bg-surface',
+      'border-surface',
       className
     )}>
       <div className="flex items-center">
         <p className={cn(
           'text-sm',
-          textColors.muted
+          'text-muted'
         )}>
           Showing page {currentPage} of {totalPages}
         </p>
@@ -35,8 +34,8 @@ export function TablePagination({
           disabled={currentPage === 1}
           className={cn(
             'px-3 py-1 text-sm rounded-md',
-            textColors.primary,
-            'hover:bg-gray-100',
+            'text-primary',
+            'hover:bg-surface-hover',
             'disabled:opacity-50 disabled:cursor-not-allowed'
           )}
         >
@@ -47,8 +46,8 @@ export function TablePagination({
           disabled={currentPage === totalPages}
           className={cn(
             'px-3 py-1 text-sm rounded-md',
-            textColors.primary,
-            'hover:bg-gray-100',
+            'text-primary',
+            'hover:bg-surface-hover',
             'disabled:opacity-50 disabled:cursor-not-allowed'
           )}
         >

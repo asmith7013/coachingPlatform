@@ -1,6 +1,5 @@
 import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { textColors, backgroundColors, borderColors } from '@/lib/ui/tokens'
 
 interface TableFilterProps {
   children: ReactNode
@@ -14,13 +13,13 @@ export function TableFilter({
   return (
     <div className={cn(
       'flex items-center space-x-4 px-4 py-3',
-      backgroundColors.surface,
-      borderColors.default,
+      'bg-surface',
+      'border-surface',
       className
     )}>
       <p className={cn(
         'text-sm font-medium',
-        textColors.muted
+        'text-muted'
       )}>
         Filter:
       </p>

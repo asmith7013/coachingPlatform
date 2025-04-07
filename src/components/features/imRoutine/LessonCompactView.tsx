@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { spacing, textColors, backgroundColors, borderColors, radii } from '@/lib/ui/tokens';
+import { spacing, radii } from '@/lib/ui/tokens';
 
 type LessonCompactViewProps = {
   lessons: {
@@ -40,13 +40,13 @@ export function LessonCompactView({ lessons, selectedRoutines }: LessonCompactVi
           key={lesson.id}
           className={cn(
             spacing.md,
-            borderColors.default,
+            'border-surface',
             radii.md,
-            backgroundColors.white,
+            'bg-background',
             'border'
           )}
         >
-          <h3 className={cn(textColors.primary, 'font-medium mb-2')}>
+          <h3 className={cn('text-primary', 'font-medium mb-2')}>
             {lesson.title}
           </h3>
           {lesson.routines.length > 0 ? (
@@ -56,8 +56,8 @@ export function LessonCompactView({ lessons, selectedRoutines }: LessonCompactVi
                   key={routine.id}
                   className={cn(
                     spacing.sm,
-                    backgroundColors.surfaceHover,
-                    textColors.secondary,
+                    'bg-surface-hover',
+                    'text-text',
                     radii.sm,
                     'text-sm'
                   )}
@@ -67,7 +67,7 @@ export function LessonCompactView({ lessons, selectedRoutines }: LessonCompactVi
               ))}
             </div>
           ) : (
-            <p className={cn(textColors.muted, 'text-sm')}>
+            <p className={cn('text-muted', 'text-sm')}>
               No routines selected for this lesson
             </p>
           )}

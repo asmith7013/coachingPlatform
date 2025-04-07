@@ -10,7 +10,7 @@ import { Select } from "@/components/ui/fields/Select";
 import { Switch } from '@/components/ui/fields/Switch';
 import { Checkbox } from '@/components/ui/fields/Checkbox';
 import { Textarea } from '@/components/ui/fields/Textarea';
-import { shadows, spacingY, typography, textColors, backgroundColors } from "@/lib/ui/tokens";
+import { shadows, spacingY, typography } from "@/lib/ui/tokens";
 import { cn } from "@/lib/utils";
 
 export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 'switch' | 'checkbox' | 'textarea';
@@ -155,11 +155,11 @@ export function GenericAddForm<T extends Record<string, unknown>>({
   };
 
   return (
-    <Card className={cn(shadows.md, spacingY.md, backgroundColors.secondary)}>
+    <Card className={cn(shadows.md, spacingY.md, 'bg-secondary')}>
       <form onSubmit={handleSubmit} className={spacingY.md}>
         <div className={spacingY.md}>
           <Heading level="h2">{title}</Heading>
-          <Text variant="secondary" className={cn(typography.text.base, textColors.secondary)}>
+          <Text variant="text" className={cn(typography.text.base, 'text-text')}>
             Fill in the details below to add a new item.
           </Text>
         </div>

@@ -1,6 +1,5 @@
 import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { textColors, backgroundColors, borderColors } from '@/lib/ui/tokens'
 
 interface TableFooterProps {
   children: ReactNode
@@ -13,8 +12,8 @@ export function TableFooter({
 }: TableFooterProps) {
   return (
     <tfoot className={cn(
-      backgroundColors.surface,
-      borderColors.default,
+      'bg-surface',
+      'border-surface',
       className
     )}>
       <tr>
@@ -22,7 +21,7 @@ export function TableFooter({
           colSpan={100}
           className={cn(
             'px-4 py-3 text-sm',
-            textColors.muted
+            'text-muted'
           )}
         >
           {children}

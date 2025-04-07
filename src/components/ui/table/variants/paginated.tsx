@@ -3,7 +3,7 @@
 import { Table } from '../table'
 import { cn } from '@/lib/utils'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
-import { spacing, fontSizes, textColors } from '@/lib/ui/tokens'
+import { spacing, fontSizes } from '@/lib/ui/tokens'
 
 interface PaginatedTableProps<T> {
   data: T[]
@@ -41,7 +41,7 @@ export function PaginatedTable<T extends { id?: string | number }>({
         'mt-4 text-center',
         spacing.md,
         fontSizes.base,
-        textColors.secondary
+        'text-text'
       )}>
         Page {currentPage} of {totalPages}
       </div>

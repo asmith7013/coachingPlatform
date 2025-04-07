@@ -4,7 +4,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
-import { spacing, textColors, backgroundColors, borderColors, typography } from '@/lib/ui/tokens';
+import { spacing, typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 
 type LessonDetailViewProps = {
@@ -53,21 +53,21 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
               className={cn(
                 'transition-all duration-150',
                 spacing.sm,
-                lessonHasSelectedRoutine ? backgroundColors.white : backgroundColors.surfaceHover,
-                lessonHasSelectedRoutine ? 'border-2 border-black' : borderColors.default,
+                lessonHasSelectedRoutine ? 'bg-background' : 'bg-surface-hover',
+                lessonHasSelectedRoutine ? 'border-2 border-text' : 'border-surface',
                 'my-4'
               )}
             >
-              <Heading level="h3" className={cn(lessonHasSelectedRoutine ? 'mb-4' : textColors.muted)}>
+              <Heading level="h3" className={cn(lessonHasSelectedRoutine ? 'mb-4' : 'text-muted')}>
               <div className="flex items-center gap-2">
-                <span className={cn('mr-2', lessonHasSelectedRoutine ? textColors.black : textColors.muted)}>
+                <span className={cn('mr-2', lessonHasSelectedRoutine ? 'text-text' : 'text-muted')}>
                   Lesson {lesson.lessonNumber}
                 </span>
                 {hasMLR && (
                   <span className={cn(
                     'inline-block text-[10px] font-medium px-2 py-0.5 rounded',
-                    backgroundColors.primary,
-                    textColors.white
+                    'bg-primary',
+                    'text-white'
                   )}>
                     MLR
                   </span>
@@ -75,8 +75,8 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                 {hasOtherRoutine && (
                   <span className={cn(
                     'inline-block text-[10px] font-medium px-2 py-0.5 rounded',
-                    backgroundColors.secondary,
-                    textColors.white
+                    'bg-secondary',
+                    'text-white'
                   )}>
                     Other Routine
                   </span>
@@ -88,17 +88,17 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                   <Card
                     key={idx}
                     className={cn(
-                      backgroundColors.surfaceHover,
-                      borderColors.default,
+                      'bg-surface-hover',
+                      'border-surface',
                       'border'
                     )}
                     radius="md"
                     contentClassName={cn(spacing.sm, 'sm:px-2 sm:py-2')}
                   >
-                    <Text size="lg" variant="secondary" className={cn('mb-1', typography.weight.bold)}>
+                    <Text size="lg" variant="text" className={cn('mb-1', typography.weight.bold)}>
                       {activity.activityNumber === 'Warm Up' ? 'Warm Up' : `Activity ${activity.activityNumber}`}
                     </Text>
-                    <Text size="xs" variant="secondary" className={cn(textColors.secondary, 'mb-2 truncate')}>
+                    <Text size="xs" variant="text" className={cn('text-text', 'mb-2 truncate')}>
                       {activity.activityTitle}
                     </Text>
                     {activity.routines.length > 0 ? (
@@ -115,8 +115,8 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                                 className={cn(
                                   'inline-block text-[10px] font-medium px-2 py-0.5 rounded',
                                   isMLR
-                                    ? cn(backgroundColors.primary, textColors.white)
-                                    : cn(backgroundColors.secondary, textColors.white)
+                                    ? cn('bg-primary', 'text-white')
+                                    : cn('bg-secondary', 'text-white')
                                 )}
                               >
                                 {routine}
@@ -125,7 +125,7 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                           })}
                       </div>
                     ) : (
-                      <Text size="xs" variant="secondary" className={cn('italic')}>
+                      <Text size="xs" variant="text" className={cn('italic')}>
                         No routines
                       </Text>
                     )}

@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { Button } from '@/components/ui/button';
-import { spacing, textColors, typography } from '@/lib/ui/tokens';
+import { spacing, typography } from '@/lib/ui/tokens';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { EmptyState } from '@/components/ui/empty-state';
 import { GenericAddForm, type Field } from "@/components/features/shared/form/GenericAddForm";
@@ -125,7 +125,7 @@ export default function LookForsWrapper() {
         <EmptyState
           title="No look fors found"
           description="Create your first look for or upload a batch to get started."
-          icon="🔍"
+          // icon="🔍"
         />
       ) : (
         lookFors.map((lookFor) => (
@@ -137,10 +137,10 @@ export default function LookForsWrapper() {
           >
             <div className="flex justify-between items-center">
               <div>
-                <Heading level="h3" className={cn(typography.weight.medium, textColors.primary)}>
+                <Heading level="h3" className={cn(typography.weight.medium, 'text-primary')}>
                   {lookFor.studentFacing ? "✏️" : "🍎"} {lookFor.topic}
                 </Heading>
-                <Text variant="secondary" className={cn(spacing.sm, textColors.secondary)}>
+                <Text variant="secondary" className={cn(spacing.sm, 'text-secondary')}>
                   {lookFor.description}
                 </Text>
               </div>
@@ -153,7 +153,7 @@ export default function LookForsWrapper() {
               </Button>
             </div>
 
-            <Heading level="h3" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
+            <Heading level="h3" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
               Rubric
             </Heading>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -162,10 +162,10 @@ export default function LookForsWrapper() {
                   key={index}
                   className={spacing.sm}
                 >
-                  <Heading level="h4" className={cn(typography.weight.medium, textColors.primary)}>
+                  <Heading level="h4" className={cn(typography.weight.medium, 'text-primary')}>
                     {rubricItem.category} ({rubricItem.score})
                   </Heading>
-                  <Text variant="secondary" className={cn(spacing.sm, textColors.secondary)}>
+                  <Text variant="secondary" className={cn(spacing.sm, 'text-secondary')}>
                     {rubricItem.content || "No description"}
                   </Text>
                 </Card>

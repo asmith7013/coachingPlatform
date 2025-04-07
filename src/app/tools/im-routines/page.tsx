@@ -6,7 +6,7 @@ import { GradeUnitLessonSelector } from '@/components/features/imRoutine/GradeUn
 import { RoutineFilter } from '@/components/features/imRoutine/RoutineFilter';
 import { LessonDetailView } from '@/components/features/imRoutine/LessonDetailView';
 // import { LessonCompactView } from '@/components/features/imRoutine/LessonCompactView';
-import { textColors, typography, backgroundColors, borderColors } from '@/lib/ui/tokens';
+import { typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 
 export default function IMRoutinesPage() {
@@ -94,16 +94,16 @@ export default function IMRoutinesPage() {
         {/* Main Content Area (Left Column) */}
         <div className="md:col-span-3 space-y-4">
           <div className={cn(
-            backgroundColors.white,
+            'bg-surface',
             'rounded-t-md py-4 pb-0 px-6 mb-0 border-2 border-b-0',
             'flex justify-between items-center',
-            borderColors.outline
+            'border-outline'
           )}>
-            <h1 className={cn(typography.text.xl, typography.weight.bold, textColors.secondary)}>
+            <h1 className={cn(typography.text.xl, typography.weight.bold, 'text-text')}>
               IM Routines Viewer
             </h1>
             {selectedGrade && selectedUnit && (
-              <p className={cn(typography.text.sm, textColors.secondary, typography.weight.bold)}>
+              <p className={cn(typography.text.sm, 'text-text', typography.weight.bold)}>
                 Unit {selectedUnit}:
                 <span className={cn(typography.weight.medium, 'ml-1')}>
                   {totalLessons} Lessons
@@ -113,10 +113,10 @@ export default function IMRoutinesPage() {
           </div>
           <div className={cn(
             'sticky top-0 z-20',
-            backgroundColors.white,
+            'bg-surface',
             'rounded-b-md pb-4 py-2 px-6',
             'border-2 border-t-0',
-            borderColors.outline
+            'border-outline'
           )}>
             <GradeUnitLessonSelector
               selectedGrade={selectedGrade}
@@ -144,7 +144,7 @@ export default function IMRoutinesPage() {
               // />
             )
           ) : (
-            <p className={cn(typography.text.base, textColors.primary, 'italic')}>
+            <p className={cn(typography.text.base, 'text-text', 'italic')}>
               Select <strong>grade</strong> and <strong>unit</strong> to view lesson routines.
             </p>
           )}

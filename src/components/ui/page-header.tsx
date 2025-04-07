@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { spacing, fontSizes, textColors, backgroundColors, radii } from '@/lib/ui/tokens'
+import { spacing, fontSizes } from '@/lib/ui/tokens'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { Button } from '@/components/ui/button'
@@ -42,7 +42,6 @@ export function PageHeader({
   const subtitleSize = fontSizes.base
   const metaSize = fontSizes.base
   const buttonSize = fontSizes.base
-  const radiusClass = radii.md
 
   // Spacing tokens
   const metaGap = spacing.lg
@@ -55,11 +54,11 @@ export function PageHeader({
   return (
     <div className={cn('flex flex-col lg:flex-row lg:items-center lg:justify-between', gapClass, className)}>
       <div className="min-w-0 flex-1">
-        <h2 className={cn('font-bold sm:truncate', titleSize, textColors.primary)}>
+        <h2 className={cn('font-bold sm:truncate text-primary', titleSize)}>
           {title}
         </h2>
         {subtitle && (
-          <p className={cn(metaItemGap, subtitleSize, textColors.secondary)}>
+          <p className={cn(metaItemGap, subtitleSize, 'text-secondary')}>
             {subtitle}
           </p>
         )}
@@ -70,10 +69,10 @@ export function PageHeader({
             metaGap
           )}>
             {meta.map((item, index) => (
-              <div key={index} className={cn('flex items-center', metaSize, textColors.secondary)}>
+              <div key={index} className={cn('flex items-center', metaSize, 'text-secondary')}>
                 {item.icon && (
                   <item.icon
-                    className={cn(metaItemGap, 'size-5 shrink-0', textColors.muted)}
+                    className={cn(metaItemGap, 'size-5 shrink-0 text-muted')}
                     aria-hidden="true"
                   />
                 )}
@@ -111,15 +110,14 @@ export function PageHeader({
           {/* Mobile dropdown menu */}
           <Menu as="div" className={cn('relative', actionItemGap, 'sm:hidden')}>
             <MenuButton className={cn(
-              'inline-flex items-center',
-              radiusClass,
+              'inline-flex items-center rounded-md',
               dropdownPadding,
               buttonSize,
               'font-semibold',
-              textColors.primary,
-              backgroundColors.surface,
-              'hover:bg-gray-50',
-              'shadow-xs'
+              'text-primary',
+              'bg-surface',
+              'hover:bg-surface-hover',
+              'shadow-sm'
             )}>
               More
               <ChevronDownIcon
@@ -132,13 +130,12 @@ export function PageHeader({
               className={cn(
                 'absolute left-0 z-10',
                 dropdownGap,
-                '-ml-1 w-48 origin-top-left',
-                radiusClass,
-                backgroundColors.surface,
+                '-ml-1 w-48 origin-top-left rounded-md',
+                'bg-surface',
                 dropdownPadding,
                 'ring-1 ring-black/5',
                 'shadow-lg',
-                'transition focus:outline-hidden',
+                'transition focus:outline-none',
                 'data-closed:scale-95 data-closed:transform data-closed:opacity-0',
                 'data-enter:duration-200 data-enter:ease-out',
                 'data-leave:duration-75 data-leave:ease-in'
@@ -146,19 +143,18 @@ export function PageHeader({
             >
               {actions.map((action, index) => (
                 <MenuItem key={index}>
-                  <button
-                    onClick={action.onClick}
-                    className={cn(
-                      'block w-full',
-                      dropdownPadding,
-                      buttonSize,
-                      textColors.primary,
-                      'hover:bg-gray-50',
-                      'data-focus:outline-hidden'
-                    )}
-                  >
-                    {action.label}
-                  </button>
+                  {({ active }) => (
+                    <button
+                      onClick={action.onClick}
+                      className={cn(
+                        'block w-full px-4 py-2 text-sm',
+                        active ? 'bg-surface-hover text-primary' : 'text-text',
+                        'focus:outline-none'
+                      )}
+                    >
+                      {action.label}
+                    </button>
+                  )}
                 </MenuItem>
               ))}
             </MenuItems>

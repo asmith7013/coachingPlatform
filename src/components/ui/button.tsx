@@ -1,97 +1,79 @@
 import { cn } from '@/lib/utils'
-import { spacing, radii, textColors, backgroundColors, borderColors } from '@/lib/ui/tokens'
-
-type TokenVariant = 'primary' | 'secondary' | 'success' | 'danger'
-type CustomVariant = 'outline' | 'link'
-type ButtonVariant = TokenVariant | CustomVariant
+import { sizeVariants } from '@/lib/ui/tokens'
+import type { SizeVariant } from '@/lib/ui/tokens'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ButtonVariant
-  size?: 'sm' | 'md' | 'lg'
-  icon?: React.ComponentType<{ className?: string }>
-  children: React.ReactNode
+  variant?: 'primary' | 'secondary' | 'outline' | 'success' | 'danger'
+  size?: SizeVariant
+  isLoading?: boolean
 }
 
-const sizeVariants = {
-  sm: 'text-sm px-2 py-1',
-  md: 'text-sm px-3 py-2',
-  lg: 'text-sm px-4 py-2.5',
-}
-
-const customVariants: Record<CustomVariant, string> = {
-  outline: cn(
-    'border',
-    borderColors.default,
-    backgroundColors.white,
-    textColors.secondary,
-    'hover:bg-gray-50'
-  ),
-  link: cn(
-    'bg-transparent',
-    textColors.primary,
-    'hover:underline'
-  ),
-}
-
-const tokenVariants: Record<TokenVariant, string> = {
-  primary: cn(
-    backgroundColors.primary,
-    textColors.white,
-    'hover:bg-primary-dark'
-  ),
-  secondary: cn(
-    backgroundColors.secondary,
-    textColors.white,
-    'hover:bg-secondary-dark'
-  ),
-  success: cn(
-    backgroundColors.success,
-    textColors.white,
-    'hover:bg-success-dark'
-  ),
-  danger: cn(
-    backgroundColors.danger,
-    textColors.white,
-    'hover:bg-danger-dark'
-  ),
-}
-
-export function Button({
+export const Button = ({
   variant = 'primary',
   size = 'md',
-  icon: Icon,
-  children,
+  isLoading,
   className,
+  children,
   ...props
-}: ButtonProps) {
-  const sizeClasses = sizeVariants[size]
-
-  const isTokenVariant = variant in tokenVariants
-
-  const variantClass = isTokenVariant
-    ? tokenVariants[variant as TokenVariant]
-    : customVariants[variant as CustomVariant]
+}: ButtonProps) => {
+  const variantStyles = {
+    outline: cn(
+      'border',
+      'bg-white',
+      'text-text',
+      'hover:bg-background-alt',
+      'focus:ring-2 focus:ring-primary focus:ring-offset-2',
+      'disabled:opacity-50 disabled:cursor-not-allowed'
+    ),
+    primary: cn(
+      'bg-primary',
+      'text-white',
+      'hover:bg-primary-hover',
+      'focus:ring-2 focus:ring-primary focus:ring-offset-2',
+      'disabled:opacity-50 disabled:cursor-not-allowed'
+    ),
+    secondary: cn(
+      'bg-secondary',
+      'text-white',
+      'hover:bg-surface-hover',
+      'focus:ring-2 focus:ring-primary focus:ring-offset-2',
+      'disabled:opacity-50 disabled:cursor-not-allowed'
+    ),
+    success: cn(
+      'bg-success',
+      'text-white',
+      'hover:bg-success-hover',
+      'focus:ring-2 focus:ring-success focus:ring-offset-2',
+      'disabled:opacity-50 disabled:cursor-not-allowed'
+    ),
+    danger: cn(
+      'bg-danger',
+      'text-white',
+      'hover:bg-danger-hover',
+      'focus:ring-2 focus:ring-danger focus:ring-offset-2',
+      'disabled:opacity-50 disabled:cursor-not-allowed'
+    ),
+  }
 
   return (
     <button
-      type="button"
       className={cn(
-        'inline-flex items-center font-semibold',
-        radii.md,
-        'shadow-xs',
-        sizeClasses,
-        variantClass,
+        'inline-flex items-center justify-center rounded-md transition-colors',
+        sizeVariants[size],
+        variantStyles[variant],
         className
       )}
+      disabled={isLoading}
       {...props}
     >
-      {Icon && (
-        <Icon
-          className={cn(`mr-${spacing.sm} -ml-0.5 size-5`)}
-          aria-hidden="true"
-        />
+      {isLoading ? (
+        <div className="flex items-center space-x-2">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          <span>Loading...</span>
+        </div>
+      ) : (
+        children
       )}
-      {children}
     </button>
   )
 } 

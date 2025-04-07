@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { textColors, backgroundColors, borderColors } from '@/lib/ui/tokens'
+import { ChevronUpIcon } from '@heroicons/react/24/solid'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
 
 interface TableHeaderProps<T> {
@@ -21,8 +21,7 @@ export function TableHeader<T>({
 }: TableHeaderProps<T>) {
   return (
     <thead className={cn(
-      backgroundColors.surface,
-      borderColors.default,
+      'bg-surface border-b border-border',
       className
     )}>
       <tr>
@@ -31,13 +30,21 @@ export function TableHeader<T>({
             key={column.id}
             className={cn(
               'px-4 py-3 text-left text-sm font-medium',
-              textColors.muted,
-              onSort && 'cursor-pointer hover:text-primary',
-              sortColumn === column.id && textColors.primary
+              column.sortable && 'cursor-pointer hover:text-primary',
+              sortColumn === column.id && 'text-primary'
             )}
             onClick={() => onSort?.(column.id)}
           >
-            {column.label}
+            <div className="flex items-center gap-2">
+              <span>{column.label}</span>
+              {column.sortable && (
+                <span className="flex-none">
+                  {sortColumn === column.id && (
+                    <ChevronUpIcon className="h-4 w-4 text-text-muted" aria-hidden="true" />
+                  )}
+                </span>
+              )}
+            </div>
           </th>
         ))}
         {showEdit && (

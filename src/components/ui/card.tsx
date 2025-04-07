@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { spacing, radii, textColors, backgroundColors, borderColors } from '@/lib/ui/tokens'
+import { spacing, radii } from '@/lib/ui/tokens'
 
 type CardProps = {
   className?: string
@@ -29,13 +29,12 @@ export const Card = ({
 }: CardProps) => {
   const paddingClass = spacing[padding]
   const radiusClass = radii[radius]
-  const borderClass = border ? cn('border', borderColors.default) : undefined
-  const bgClass = variant === 'alt' ? backgroundColors.surfaceHover : backgroundColors.surface
+  const borderClass = border ? cn('border border-primary') : undefined
+  const bgClass = variant === 'alt' ? 'bg-surface-hover' : 'bg-surface'
 
   return (
     <div className={cn(
-      'divide-y',
-      borderColors.default,
+      'divide-y divide-border',
       'shadow-sm',
       bgClass,
       paddingClass,
@@ -46,7 +45,7 @@ export const Card = ({
       {header && (
         <div className={cn(
           'px-md py-md sm:px-lg',
-          textColors.primary
+          'text-primary'
         )}>
           {header}
         </div>
@@ -54,7 +53,7 @@ export const Card = ({
       {children && (
         <div className={cn(
           'px-md py-md sm:p-lg',
-          textColors.secondary,
+          'text-secondary',
           contentClassName
         )}>
           {children}
@@ -63,7 +62,7 @@ export const Card = ({
       {footer && (
         <div className={cn(
           'px-md py-sm sm:px-lg',
-          textColors.muted
+          'text-muted'
         )}>
           {footer}
         </div>

@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { spacing, fontSizes, textColors } from '@/lib/ui/tokens'
+import { spacing, fontSizes } from '@/lib/ui/tokens'
 
 interface FormSectionProps {
   title: string
@@ -24,9 +24,9 @@ export function FormSection({
   return (
     <div className={cn('flex flex-col', gapClass, className)}>
       <div className={cn('flex flex-col', spacing.sm)}>
-        <h3 className={cn('font-semibold', fontSizes.lg, textColors.primary)}>{title}</h3>
+        <h3 className={cn('font-semibold', fontSizes.lg, 'text-primary')}>{title}</h3>
         {description && (
-          <p className={cn('text-sm', textColors.secondary)}>
+          <p className={cn('text-sm', 'text-text')}>
             {description}
           </p>
         )}

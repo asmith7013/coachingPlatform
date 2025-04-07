@@ -11,7 +11,7 @@ import {
 } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
-import { spacing, typography, textColors, backgroundColors, borderColors, shadows } from '@/lib/ui/tokens'
+import { spacing, typography } from '@/lib/ui/tokens'
 import Image from 'next/image'
 
 interface NavigationItem {
@@ -67,25 +67,17 @@ export function Topbar({
 }: TopbarProps) {
   // Extract token values into constants
   const navTextSize = typography.text.base
-  const navTextColor = textColors.primary
-  const navTextHoverColor = textColors.secondary
-  const navBgColor = variant === 'solid' ? backgroundColors.primary : 'bg-transparent'
-  const navBorderColor = borderColors.outline
   const navItemPadding = spacing.sm
-  const navItemRadius = 'rounded-md'
   const navItemSpacing = spacing.md
   const iconSize = 'size-6'
   const logoSize = 'size-8'
-  const avatarSize = 'size-8'
-  const menuWidth = 'w-48'
 
   return (
-    <Disclosure as="nav" className={cn(navBgColor, className)}>
+    <Disclosure as="nav" className={cn(variant === 'solid' ? 'bg-primary' : 'bg-transparent', className)}>
       <div className={cn(
         'mx-auto max-w-7xl',
         spacing.md,
-        'border-b',
-        navBorderColor
+        'border-b border-outline'
       )}>
         <div className={cn('flex', spacing.lg, 'items-center justify-between')}>
           {/* Left nav */}
@@ -103,8 +95,8 @@ export function Topbar({
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    item.current ? navTextColor : navTextHoverColor,
-                    navItemRadius,
+                    item.current ? 'text-primary' : 'text-secondary hover:text-primary',
+                    'rounded-md',
                     navItemPadding,
                     navTextSize,
                     typography.weight.medium
@@ -122,11 +114,10 @@ export function Topbar({
             <button
               type="button"
               className={cn(
-                'relative',
-                navItemRadius,
-                navBgColor,
+                'relative rounded-md',
+                variant === 'solid' ? 'bg-primary' : 'bg-transparent',
                 navItemPadding,
-                navTextHoverColor,
+                'text-secondary hover:text-primary',
                 'focus:ring-2 focus:ring-white focus:outline-none'
               )}
             >
@@ -136,13 +127,12 @@ export function Topbar({
 
             <Menu as="div" className="relative">
               <MenuButton className={cn(
-                'flex max-w-xs items-center',
-                navItemRadius,
+                'flex max-w-xs items-center rounded-md',
                 navTextSize,
                 'focus:ring-2 focus:ring-white focus:outline-none'
               )}>
                 <Image
-                  className={cn(avatarSize, navItemRadius)}
+                  className={cn(logoSize, 'rounded-md')}
                   src={user.imageUrl}
                   alt=""
                   width={32}
@@ -152,29 +142,26 @@ export function Topbar({
               <MenuItems className={cn(
                 'absolute right-0',
                 spacing.sm,
-                menuWidth,
-                'origin-top-right',
-                navItemRadius,
-                backgroundColors.surface,
+                'w-48',
+                'origin-top-right rounded-md',
+                'bg-surface',
                 spacing.sm,
-                shadows.md,
+                'shadow-lg',
                 'ring-1 ring-black/5'
               )}>
                 {userNavigation.map((item) => (
                   <MenuItem key={item.name}>
-                    <a
-                      href={item.href}
-                      className={cn(
-                        'block',
-                        spacing.md,
-                        spacing.sm,
-                        navTextSize,
-                        textColors.primary,
-                        backgroundColors.surfaceHover
-                      )}
-                    >
-                      {item.name}
-                    </a>
+                    {({ active }) => (
+                      <a
+                        href={item.href}
+                        className={cn(
+                          'block px-4 py-2 text-sm',
+                          active ? 'bg-surface-hover text-primary' : 'text-text'
+                        )}
+                      >
+                        {item.name}
+                      </a>
+                    )}
                   </MenuItem>
                 ))}
               </MenuItems>
@@ -184,14 +171,14 @@ export function Topbar({
           {/* Mobile menu button */}
           <div className="flex md:hidden">
             <DisclosureButton className={cn(
-              'inline-flex items-center justify-center',
-              navItemRadius,
+              'inline-flex items-center justify-center rounded-md',
               navItemPadding,
-              navTextColor,
+              'text-primary',
               'hover:bg-primary-dark focus:ring-2 focus:ring-white focus:outline-none'
             )}>
-              <Bars3Icon className={cn(iconSize, 'block data-open:hidden')} />
-              <XMarkIcon className={cn(iconSize, 'hidden data-open:block')} />
+              <span className="sr-only">Open main menu</span>
+              <Bars3Icon className={cn(iconSize, 'block')} aria-hidden="true" />
+              <XMarkIcon className={cn(iconSize, 'hidden')} aria-hidden="true" />
             </DisclosureButton>
           </div>
         </div>
@@ -199,8 +186,7 @@ export function Topbar({
 
       <DisclosurePanel className={cn(
         'md:hidden',
-        'border-t',
-        navBorderColor,
+        'border-t border-outline',
         spacing.md,
         spacing.sm
       )}>
@@ -211,9 +197,8 @@ export function Topbar({
               as="a"
               href={item.href}
               className={cn(
-                item.current ? navTextColor : navTextHoverColor,
-                'block',
-                navItemRadius,
+                item.current ? 'text-primary' : 'text-secondary hover:text-primary',
+                'block rounded-md',
                 navItemPadding,
                 navTextSize,
                 typography.weight.medium

@@ -4,7 +4,6 @@ import { Table } from '../table'
 import { TableHeader } from '../core/header'
 import { cn } from '@/lib/utils'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
-import { backgroundColors } from '@/lib/ui/tokens'
 
 interface StickyHeaderTableProps<T> {
   data: T[]
@@ -30,7 +29,7 @@ export function StickyHeaderTable<T extends { id?: string | number }>({
         columns={columns}
         {...props}
       />
-      <div className={cn('sticky top-0 z-10', backgroundColors.surface)}>
+      <div className={cn('sticky top-0 z-10', 'bg-surface')}>
         <TableHeader columns={columns} showEdit={!!props.onEdit} />
       </div>
     </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { spacing, textColors, backgroundColors, borderColors, radii, borderWidths } from '@/lib/ui/tokens';
+import { spacing, radii, borderWidths } from '@/lib/ui/tokens';
 
 type SelectorProps = {
   selectedGrade: string;
@@ -54,11 +54,11 @@ export function GradeUnitLessonSelector({
         }}
         className={cn(
           spacing.sm,
-          borderColors.default,
+          'border-surface',
           borderWidths.md,
           radii.md,
-          backgroundColors.white,
-          textColors.black,
+          'bg-background',
+          'text-text',
           'font-medium'
         )}
       >
@@ -78,11 +78,11 @@ export function GradeUnitLessonSelector({
         disabled={!selectedGrade}
         className={cn(
           spacing.sm,
-          borderColors.default,
+          'border-surface',
           borderWidths.md,
           radii.md,
-          !selectedGrade ? backgroundColors.surfaceHover : backgroundColors.white,
-          !selectedGrade ? textColors.muted : textColors.black,
+          !selectedGrade ? 'bg-surface-hover' : 'bg-background',
+          !selectedGrade ? 'text-muted' : 'text-text',
           'font-medium'
         )}
       >
@@ -99,11 +99,11 @@ export function GradeUnitLessonSelector({
         disabled={!selectedUnit}
         className={cn(
           spacing.sm,
-          borderColors.default,
+          'border-surface',
           borderWidths.md,
           radii.md,
-          !selectedUnit ? backgroundColors.surfaceHover : backgroundColors.white,
-          !selectedUnit ? textColors.muted : textColors.black,
+          !selectedUnit ? 'bg-surface-hover' : 'bg-background',
+          !selectedUnit ? 'text-muted' : 'text-text',
           'font-medium'
         )}
       >

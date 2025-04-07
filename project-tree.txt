@@ -12,8 +12,7 @@
 │   ├── vercel.svg
 │   └── window.svg
 ├── scripts
-│   ├── generate-theme-css.ts
-│   └── generate-theme-safelist.ts
+│   └── generate-theme-css.ts
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
 ├── src
@@ -163,7 +162,6 @@
 │   │   │   ├── sanitizeFilters.ts
 │   │   │   └── staff.ts
 │   │   ├── ui
-│   │   │   ├── designTokens.ts
 │   │   │   ├── forms
 │   │   │   │   └── registry.ts
 │   │   │   ├── table-schema.ts
@@ -243,7 +241,6 @@
 │   │       ├── index.ts
 │   │       └── visit.model.ts
 │   └── styles
-│       ├── theme-safelist.css
 │       └── theme.css
 ├── tailwind.config.ts
 ├── test-output.css
@@ -251,4 +248,4 @@
 ├── tsconfig.json
 └── tsconfig.tsbuildinfo
 
-77 directories, 175 files
+77 directories, 172 files

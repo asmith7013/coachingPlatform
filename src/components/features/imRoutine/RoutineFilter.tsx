@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { spacing, textColors, backgroundColors, borderColors, radii, typography } from '@/lib/ui/tokens';
+import { spacing, radii, typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 
 type RoutineFilterProps = {
@@ -41,11 +41,11 @@ export function RoutineFilter({
   };
 
   return (
-    <div className={spacing.md}>
-      <label className={cn(typography.weight.bold, 'mb-2')}>
+    <div className={`${spacing.md} py-0`}>
+      <label className={cn(typography.weight.bold)}>
         Filter by Routine:
       </label>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 my-2">
         {routinesToShow.map((routine, index) => {
           const isSelected = selectedRoutines.includes(routine);
           const isMLR = /^MLR\d+/.test(routine);
@@ -58,11 +58,11 @@ export function RoutineFilter({
             // Selected state
             isSelected
               ? isMLR
-                ? cn(backgroundColors.primary, textColors.primary, borderColors.primary)
-                : cn(backgroundColors.secondary, textColors.secondary, borderColors.secondary)
+                ? cn('bg-primary', 'border-2 border-primary')
+                : cn('bg-secondary', 'border-2 border-secondary')
               : isMLR
-                ? cn(backgroundColors.white, 'text-blue-700', borderColors.primary)
-                : cn(backgroundColors.white, 'text-gray-700', borderColors.secondary)
+                ? cn('text-gray-900', 'border-2 border-primary')
+                : cn('bg-white', 'text-gray-900', 'border-2 border-secondary')
           );
 
           return (
@@ -71,6 +71,14 @@ export function RoutineFilter({
               onClick={() => handleClick(routine)}
               size="sm"
               className={buttonClasses}
+              variant = {isSelected
+              ? isMLR
+                ? 'primary'
+                : 'secondary'
+              : isMLR
+                ? 'outline'
+                : 'outline'
+              }
             >
               {routine}
             </Button>
@@ -83,7 +91,7 @@ export function RoutineFilter({
           variant="secondary"
           className={cn(
             // borderColors.surface
-            backgroundColors.black,
+            'bg-black',
           )}
         >
           Select All

@@ -1,7 +1,6 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { textColors } from '@/lib/ui/tokens'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
 
 interface TableRowProps<T> {
@@ -22,7 +21,7 @@ export function TableRow<T>({
   return (
     <tr
       className={cn(
-        'hover:bg-gray-50',
+        'hover:bg-surface-hover',
         onClick && 'cursor-pointer',
         className
       )}
@@ -33,7 +32,7 @@ export function TableRow<T>({
           key={column.id}
           className={cn(
             'px-4 py-3 text-sm',
-            textColors.secondary,
+            'text-text',
             column.className
           )}
         >
@@ -47,7 +46,7 @@ export function TableRow<T>({
               e.stopPropagation();
               onEdit(item);
             }}
-            className="text-primary hover:text-primary-dark"
+            className="text-primary hover:text-primary-hover"
           >
             Edit
           </button>

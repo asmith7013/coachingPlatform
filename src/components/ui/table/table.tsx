@@ -2,18 +2,19 @@
 
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { textColors, borderColors, type TextColor } from '@/lib/ui/tokens'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
 import { TableHeader } from './core/header'
 import { TableRow } from './core/row'
 import { TableEmpty } from './utils/empty'
+
+type TableVariant = 'text' | 'text-muted' | 'primary' | 'secondary' | 'success' | 'danger'
 
 interface TableProps<T> {
   columns: TableColumnSchema<T>[]
   data: T[]
   onEdit?: (item: T) => void
   emptyMessage?: string
-  variant?: TextColor
+  variant?: TableVariant
   className?: string
 }
 
@@ -22,7 +23,7 @@ export function Table<T>({
   data,
   onEdit,
   emptyMessage,
-  variant = 'primary',
+  variant = 'text',
   className,
 }: TableProps<T>) {
   const [sortColumn, setSortColumn] = useState<string>()
@@ -34,8 +35,8 @@ export function Table<T>({
       ) : (
         <table className={cn(
           'min-w-full divide-y',
-          borderColors.default,
-          textColors[variant],
+          'border-surface',
+          `text-${variant}`,
           className
         )}>
           <TableHeader 
@@ -43,7 +44,7 @@ export function Table<T>({
             sortColumn={sortColumn}
             onSort={setSortColumn}
           />
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-surface">
             {data.map((item, index) => (
               <TableRow
                 key={index}

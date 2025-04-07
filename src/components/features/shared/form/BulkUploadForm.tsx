@@ -17,7 +17,7 @@ import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/typography/Heading";
 import { Text } from "@/components/ui/typography/Text";
 import { Input } from "@/components/ui/fields/Input";
-import { shadows, spacingY, typography, textColors, backgroundColors } from "@/lib/ui/tokens";
+import { shadows, spacingY, typography } from "@/lib/ui/tokens";
 import { cn } from "@/lib/utils";
 
 interface BulkUploadFormProps {
@@ -61,11 +61,11 @@ export default function BulkUploadForm({
   
   return (
     <div className="w-full">
-      <Card className={cn(shadows.md, spacingY.md, backgroundColors.primary)}>
+      <Card className={cn(shadows.md, spacingY.md, 'bg-primary')}>
         <div className={spacingY.md}>
           <Heading level="h3">{title}</Heading>
           {description && (
-            <Text variant="secondary" className={typography.text.base}>
+            <Text variant="text" className={typography.text.base}>
               {description}
             </Text>
           )}
@@ -86,12 +86,12 @@ export default function BulkUploadForm({
           </Button>
           {message && (
             <Text 
-              variant="primary"
+              variant="text"
               className={cn(
                 typography.text.base,
                 message.toLowerCase().includes("successful") 
-                  ? textColors.success 
-                  : textColors.danger
+                  ? 'text-success' 
+                  : 'text-danger'
               )}
             >
               {message}

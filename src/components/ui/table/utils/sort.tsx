@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import { textColors } from '@/lib/ui/tokens'
 
 interface TableSortProps {
   column: string
@@ -23,9 +22,9 @@ export function TableSort({
       onClick={() => onSort(column)}
       className={cn(
         'flex items-center space-x-1 text-sm font-medium',
-        textColors.muted,
+        'text-muted',
         'hover:text-primary',
-        isActive && textColors.primary,
+        isActive && 'text-primary',
         className
       )}
     >

@@ -1,12 +1,14 @@
 import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { typography, textColors, type TextSize, type FontWeight, type TextColor } from '@/lib/ui/tokens'
+import { typography, type TextSize, type FontWeight } from '@/lib/ui/tokens'
+
+type TextVariant = 'text' | 'text-muted' | 'primary' | 'secondary' | 'success' | 'danger'
 
 interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
   children: ReactNode
   size?: TextSize
   weight?: FontWeight
-  variant?: TextColor
+  variant?: TextVariant
   className?: string
 }
 
@@ -23,7 +25,7 @@ export function Text({
       className={cn(
         typography.text[size],
         typography.weight[weight],
-        textColors[variant],
+        `text-${variant}`,
         'leading-relaxed',
         className
       )}

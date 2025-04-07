@@ -6,17 +6,16 @@ import { Select } from '@/components/ui/fields/Select';
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
-import { spacing, textColors, typography, backgroundColors } from '@/lib/ui/tokens';
+import { spacing, typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 import implementationData from '@/lib/json/IMplementation.json';
 
-type TextColorVariant = keyof typeof textColors;
 type PerformanceLevelKey = 'not_observed' | 'not_yet' | 'developing' | 'proficient' | 'advanced';
 
 interface PerformanceLevel {
   key: PerformanceLevelKey;
   label: string;
-  color: TextColorVariant;
+  colorClass: string;
 }
 
 interface RubricIndicator {
@@ -35,11 +34,11 @@ const domains = [
 ];
 
 const performanceLevels: PerformanceLevel[] = [
-  { key: 'not_observed', label: 'Not Observed', color: 'muted' },
-  { key: 'not_yet', label: 'Not Yet', color: 'danger' },
-  { key: 'developing', label: 'Developing', color: 'secondary' },
-  { key: 'proficient', label: 'Proficient', color: 'success' },
-  { key: 'advanced', label: 'Advanced', color: 'primary' },
+  { key: 'not_observed', label: 'Not Observed', colorClass: 'text-text-muted' },
+  { key: 'not_yet', label: 'Not Yet', colorClass: 'text-danger' },
+  { key: 'developing', label: 'Developing', colorClass: 'text-text' },
+  { key: 'proficient', label: 'Proficient', colorClass: 'text-success' },
+  { key: 'advanced', label: 'Advanced', colorClass: 'text-primary' },
 ];
 
 export default function RubricViewerPage() {
@@ -71,12 +70,12 @@ export default function RubricViewerPage() {
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
-          <Text variant="muted">Loading rubrics...</Text>
+          <Text variant="text" className="text-text-muted">Loading rubrics...</Text>
         </div>
       ) : filteredRubrics.length === 0 ? (
         <Card padding="lg" radius="xl">
           <div className="text-center">
-            <Text variant="muted" size="lg">
+            <Text variant="text" size="lg" className="text-text-muted">
               No rubrics found for the selected domain.
             </Text>
           </div>
@@ -85,7 +84,7 @@ export default function RubricViewerPage() {
         <div className="grid grid-cols-1 gap-8">
           {filteredRubrics.map((rubric: RubricIndicator, index: number) => (
             <Card key={index} padding="lg" radius="xl">
-              <Heading level="h4" className={cn(typography.weight.medium, textColors.primary, "mb-6")}>
+              <Heading level="h4" className={cn(typography.weight.medium, 'text-primary', "mb-6")}>
                 {rubric.title}
               </Heading>
               <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
@@ -93,8 +92,8 @@ export default function RubricViewerPage() {
                   <div key={level.key} className="flex flex-col">
                     <div className={cn(
                       "p-3 rounded-lg mb-4",
-                      backgroundColors.white,
-                      textColors[level.color]
+                      'bg-surface',
+                      level.colorClass
                     )}>
                       <Text className={cn(typography.weight.medium, "text-center")}>
                         {level.label}
@@ -104,9 +103,9 @@ export default function RubricViewerPage() {
                       {rubric[level.key].map((item: string, i: number) => (
                         <li key={i} className="flex items-start">
                           <Text 
-                            variant="muted" 
+                            variant="text" 
                             size="sm" 
-                            className="leading-relaxed"
+                            className="leading-relaxed text-text-muted"
                           >
                             {item}
                           </Text>

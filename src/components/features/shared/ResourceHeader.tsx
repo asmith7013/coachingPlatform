@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/fields/Input';
 import { Select } from '@/components/ui/fields/Select';
 import { Text } from '@/components/ui/typography/Text';
-import { spacing, textColors, backgroundColors, borderColors } from '@/lib/ui/tokens';
+import { spacing } from '@/lib/ui/tokens';
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +33,7 @@ export function ResourceHeader<T extends Record<string, unknown>>({
   const [sortValue, setSortValue] = useState<string>("");
 
   return (
-    <Card className={cn(backgroundColors.surface, borderColors.outline, spacing.md)}>
+    <Card className={cn('bg-surface', 'border-outline', spacing.md)}>
       {/* Pagination Controls */}
       <div className="flex items-center gap-2">
         <Button 
@@ -44,7 +44,7 @@ export function ResourceHeader<T extends Record<string, unknown>>({
         >
           ⬅️ Previous
         </Button>
-        <Text className={textColors.secondary}>
+        <Text className={'text-text'}>
           Page {page} of {Math.ceil(total / limit)}
         </Text>
         <Button 

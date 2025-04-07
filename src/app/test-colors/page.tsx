@@ -8,12 +8,12 @@ export default function TailwindSanityCheck() {
       <h1 className="text-2xl font-bold">Tailwind v4 + Token Debug</h1>
 
       {/* 🔥 Tailwind Native Check */}
-      <div className="bg-red-500 text-white p-4 rounded">
-        If this is red with white text → Tailwind base classes are working
+      <div className="bg-red-500 text-blue-500 p-4 rounded">
+        If this is red with blue text → Tailwind base classes are working
       </div>
 
       {/* 🎨 Theme Token Check (Semantic Colors) */}
-      <div className="bg-seasalt text-gunmetal p-4 rounded">
+      <div className="bg-secondary text-white p-4 rounded">
         If this is soft gray bg and dark gunmetal text → Theme tokens are working
       </div>
 

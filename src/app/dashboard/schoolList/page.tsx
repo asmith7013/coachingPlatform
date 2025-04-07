@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { Button } from '@/components/ui/button';
-import { spacing, textColors, typography } from '@/lib/ui/tokens';
+import { spacing, typography } from '@/lib/ui/tokens';
 import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Schools data.
 import { School } from "@/lib/zod-schema"; // ✅ Import the School type from Zod schema.
 import { SchoolInput } from "@/lib/zod-schema";
@@ -63,16 +63,14 @@ export default function SchoolList() {
 
   return (
     <div className={cn('container mx-auto', spacing.lg)}>
-      <Heading level="h2" className={cn(typography.weight.bold, textColors.primary, spacing.md)}>
+      <Heading level="h2" className={cn(typography.weight.bold, 'text-primary', spacing.md)}>
         Schools
       </Heading>
-      {/* Test with multiple approaches */}
-      <div className="bg-red-violet-300 text-white p-4 rounded-md mb-4">
-        Red Violet 300 test block (should use class)
+      
+      <div className="bg-primary text-white p-4 rounded-md mb-4">
+        Example notification block
       </div>
-      <div className="bg-[#76144f] text-white p-4 rounded-md mb-4">
-        Direct hex color fallback (#76144f)
-      </div>
+      
       <ResourceHeader<School>
         page={page}
         total={total}
@@ -88,7 +86,6 @@ export default function SchoolList() {
         togglePerformanceMode={togglePerformanceMode}
       />
 
-      {/* ✅ 5. Data Flow Integrity: SWR ensures data consistency between UI and database */}
       <div className={spacing.lg}>
         {schools.map((school: School) => (
           <Card
@@ -99,19 +96,18 @@ export default function SchoolList() {
           >
             <div className="flex justify-between items-center">
               <div>
-                <Heading level="h3" className={cn(typography.weight.medium, textColors.primary)}>
+                <Heading level="h3" className={cn(typography.weight.medium, 'text-primary')}>
                   {school.emoji || '🏫'} {school.schoolName}
                 </Heading>
-                <Text variant="secondary" className={cn(spacing.sm, textColors.secondary)}>
+                <Text variant="text" className={cn(spacing.sm, 'text-text-muted')}>
                   District: {school.district}
                 </Text>
                 {school.address && (
-                  <Text variant="muted" className={cn(spacing.sm, textColors.muted)}>
+                  <Text variant="text" className={cn(spacing.sm, 'text-text-muted')}>
                     {school.address}
                   </Text>
                 )}
               </div>
-              {/* ✅ Optimistic UI Update: Delete Button */}
               <Button
                 onClick={() => school._id && confirmDeleteSchool(school._id)}
                 variant="danger"
@@ -120,8 +116,7 @@ export default function SchoolList() {
                 🗑️ Delete
               </Button>
             </div>
-            {/* ✅ 15. Schema Nesting & Type Inference: Dynamically render nested Grade Levels */}
-            <Heading level="h3" className={cn(typography.weight.medium, textColors.primary, spacing.md)}>
+            <Heading level="h3" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
               Grade Levels
             </Heading>
             <div className="flex flex-wrap gap-2">
@@ -132,8 +127,8 @@ export default function SchoolList() {
                     spacing.sm,
                     'rounded-full text-sm',
                     typography.text.sm,
-                    textColors.primary,
-                    'bg-primary-100'
+                    'text-white',
+                    'bg-primary'
                   )}
                 >
                   {grade}
@@ -144,7 +139,6 @@ export default function SchoolList() {
         ))}
       </div>
 
-      {/* ✅ 15. Schema Nesting & Type Inference: Ensure Schools correctly reference nested schemas */}
       <div className={spacing.lg}>
         <GenericAddForm
           title="Add School"
