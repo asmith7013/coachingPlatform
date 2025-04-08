@@ -13,6 +13,7 @@ type RoutineFilterProps = {
   selectedLesson?: string;
   lessonRoutines?: string[];
   onLessonSelected?: () => void;
+  detailedView?: boolean;
   setDetailedView?: (detailedView: boolean) => void; // <-- Add this line
 };
 

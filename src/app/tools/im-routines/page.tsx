@@ -160,8 +160,8 @@ export default function IMRoutinesPage() {
               selectedLesson={selectedLesson}
               lessonRoutines={lessonRoutines}
               onLessonSelected={handleLessonSelected}
-              // setDetailedView={setDetailedView}
-              // detailedView={detailedView}
+              setDetailedView={setDetailedView}
+              detailedView={detailedView}
             />
           </div>
         </div>
