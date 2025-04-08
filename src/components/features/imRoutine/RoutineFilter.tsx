@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Text } from '@/components/ui/typography/Text';
+// import { Text } from '@/components/ui/typography/Text';
 import { typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 
@@ -13,6 +13,7 @@ type RoutineFilterProps = {
   selectedLesson?: string;
   lessonRoutines?: string[];
   onLessonSelected?: () => void;
+  setDetailedView?: (detailedView: boolean) => void; // <-- Add this line
 };
 
 export function RoutineFilter({
