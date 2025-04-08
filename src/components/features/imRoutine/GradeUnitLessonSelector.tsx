@@ -54,7 +54,7 @@ export function GradeUnitLessonSelector({
         }}
         className={cn(
           spacing.sm,
-          'border-surface',
+          'border-secondary',
           borderWidths.md,
           radii.md,
           'bg-background',
@@ -78,7 +78,7 @@ export function GradeUnitLessonSelector({
         disabled={!selectedGrade}
         className={cn(
           spacing.sm,
-          'border-surface',
+          'border-secondary',
           borderWidths.md,
           radii.md,
           !selectedGrade ? 'bg-surface-hover' : 'bg-background',
@@ -99,7 +99,7 @@ export function GradeUnitLessonSelector({
         disabled={!selectedUnit}
         className={cn(
           spacing.sm,
-          'border-surface',
+          'border-secondary',
           borderWidths.md,
           radii.md,
           !selectedUnit ? 'bg-surface-hover' : 'bg-background',

@@ -88,11 +88,12 @@ export function LessonDetailView({ lessonsData, selectedRoutines }: LessonDetail
                   <Card
                     key={idx}
                     className={cn(
-                      'bg-surface-hover',
+                      // 'bg-secondary',
                       'border-surface',
-                      'border'
+                      'border-2'
                     )}
                     radius="md"
+                    variant="bg-muted-900"
                     contentClassName={cn(spacing.sm, 'sm:px-2 sm:py-2')}
                   >
                     <Text size="lg" variant="text" className={cn('mb-1', typography.weight.bold)}>

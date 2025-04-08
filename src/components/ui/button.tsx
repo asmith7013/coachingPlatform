@@ -3,65 +3,40 @@ import { sizeVariants } from '@/lib/ui/tokens'
 import type { SizeVariant } from '@/lib/ui/tokens'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'success' | 'danger'
+  variant?: string // Accept any string as a class for variant
   size?: SizeVariant
   isLoading?: boolean
+  className?: string
+}
+
+const defaultVariants = {
+  primary: 'bg-primary text-white hover:bg-primary-hover focus:ring-2 focus:ring-primary',
+  secondary: 'bg-surface text-text hover:bg-surface-hover border border-outline',
+  danger: 'bg-danger text-white hover:bg-danger-hover focus:ring-2 focus:ring-danger',
+  success: 'bg-success text-white hover:bg-success-hover focus:ring-2 focus:ring-success',
+  outline: 'bg-transparent border border-outline text-text hover:bg-surface-hover',
+  ghost: 'bg-transparent text-text hover:bg-surface-hover',
 }
 
 export const Button = ({
-  variant = 'primary',
+  variant = defaultVariants.primary, // Default variant (you can pass any Tailwind classes or use predefined variants)
   size = 'md',
   isLoading,
   className,
   children,
   ...props
 }: ButtonProps) => {
-  const variantStyles = {
-    outline: cn(
-      'border',
-      'bg-white',
-      'text-text',
-      'hover:bg-background-alt',
-      'focus:ring-2 focus:ring-primary focus:ring-offset-2',
-      'disabled:opacity-50 disabled:cursor-not-allowed'
-    ),
-    primary: cn(
-      'bg-primary',
-      'text-white',
-      'hover:bg-primary-hover',
-      'focus:ring-2 focus:ring-primary focus:ring-offset-2',
-      'disabled:opacity-50 disabled:cursor-not-allowed'
-    ),
-    secondary: cn(
-      'bg-secondary',
-      'text-white',
-      'hover:bg-surface-hover',
-      'focus:ring-2 focus:ring-primary focus:ring-offset-2',
-      'disabled:opacity-50 disabled:cursor-not-allowed'
-    ),
-    success: cn(
-      'bg-success',
-      'text-white',
-      'hover:bg-success-hover',
-      'focus:ring-2 focus:ring-success focus:ring-offset-2',
-      'disabled:opacity-50 disabled:cursor-not-allowed'
-    ),
-    danger: cn(
-      'bg-danger',
-      'text-white',
-      'hover:bg-danger-hover',
-      'focus:ring-2 focus:ring-danger focus:ring-offset-2',
-      'disabled:opacity-50 disabled:cursor-not-allowed'
-    ),
-  }
+  // If variant is a key in defaultVariants, use that variant's classes
+  const variantClasses = defaultVariants[variant as keyof typeof defaultVariants] || variant
 
   return (
     <button
       className={cn(
         'inline-flex items-center justify-center rounded-md transition-colors',
         sizeVariants[size],
-        variantStyles[variant],
-        className
+        variantClasses, // Use either predefined variant or custom classes
+        className,
+        isLoading && 'opacity-50 cursor-not-allowed'
       )}
       disabled={isLoading}
       {...props}
@@ -76,4 +51,4 @@ export const Button = ({
       )}
     </button>
   )
-} 
+}

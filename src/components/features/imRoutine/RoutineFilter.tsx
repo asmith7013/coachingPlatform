@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { spacing, radii, typography } from '@/lib/ui/tokens';
+import { Text } from '@/components/ui/typography/Text';
+import { typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 
 type RoutineFilterProps = {
@@ -12,8 +13,6 @@ type RoutineFilterProps = {
   selectedLesson?: string;
   lessonRoutines?: string[];
   onLessonSelected?: () => void;
-  setDetailedView: (detailedView: boolean) => void;
-  detailedView: boolean;
 };
 
 export function RoutineFilter({
@@ -30,6 +29,14 @@ export function RoutineFilter({
     onLessonSelected();
   }
 
+  // Sort routines to display MLR routines first
+  const sortedRoutines = routinesToShow.sort((a, b) => {
+    const isMLRa = /^MLR\d+/.test(a);
+    const isMLRb = /^MLR\d+/.test(b);
+    if (isMLRa === isMLRb) return 0;
+    return isMLRa ? -1 : 1;
+  });
+
   const handleClick = (routine: string) => {
     if (selectedRoutines.length === routinesToShow.length) {
       setSelectedRoutines([routine]);
@@ -40,62 +47,59 @@ export function RoutineFilter({
     }
   };
 
+  const handleSelectAllMLRs = () => {
+    const mlrRoutines = sortedRoutines.filter((routine) => /^MLR\d+/.test(routine));
+    setSelectedRoutines(mlrRoutines);
+  };
+
   return (
-    <div className={`${spacing.md} py-0`}>
-      <label className={cn(typography.weight.bold)}>
-        Filter by Routine:
+    <div>
+      <label className={cn(typography.weight.bold, 'text-text font-bold')}>
+        Filter Routines:
       </label>
-      <div className="flex flex-wrap gap-2 my-2">
-        {routinesToShow.map((routine, index) => {
+
+      {/* Filter Actions */}
+      <div className="flex flex-wrap gap-2 mt-2 mb-4">
+        <Button
+          onClick={() => setSelectedRoutines(sortedRoutines)}
+          size="sm"
+          variant='text-white bg-secondary-200 focus:ring-3 focus:ring-secondary'
+        >
+          Select All Routines
+        </Button>
+        <Button
+          onClick={handleSelectAllMLRs}
+          size="sm"
+          variant='text-white bg-secondary-200 focus:ring-3 focus:ring-primary'
+        >
+          Select All MLRs
+        </Button>
+      </div>
+
+      {/* Routine Buttons */}
+      <div className="flex flex-wrap gap-2">
+        {sortedRoutines.map((routine, index) => {
           const isSelected = selectedRoutines.includes(routine);
           const isMLR = /^MLR\d+/.test(routine);
           
-          const buttonClasses = cn(
-            typography.text.xs,
-            typography.weight.medium,
-            spacing.sm,
-            radii.sm,
-            // Selected state
-            isSelected
-              ? isMLR
-                ? cn('bg-primary', 'border-2 border-primary')
-                : cn('bg-secondary', 'border-2 border-secondary')
-              : isMLR
-                ? cn('text-gray-900', 'border-2 border-primary')
-                : cn('bg-white', 'text-gray-900', 'border-2 border-secondary')
-          );
-
           return (
             <Button
               key={`${routine}-${index}`}
               onClick={() => handleClick(routine)}
               size="sm"
-              className={buttonClasses}
-              variant = {isSelected
-              ? isMLR
-                ? 'primary'
-                : 'secondary'
-              : isMLR
-                ? 'outline'
-                : 'outline'
-              }
+              variant={`${isSelected 
+                ? isMLR 
+                  ? 'text-white bg-primary focus:ring-primary'
+                  : 'text-white bg-secondary focus:ring-secondary'
+                : isMLR
+                  ? 'text-primary bg-white border-2 border-primary'
+                  : 'text-secondary bg-white border-2 border-secondary'
+              } focus:ring-2 font-medium`}
             >
               {routine}
             </Button>
           );
         })}
-
-        <Button
-          onClick={() => setSelectedRoutines(routinesToShow)}
-          size="sm"
-          variant="secondary"
-          className={cn(
-            // borderColors.surface
-            'bg-black',
-          )}
-        >
-          Select All
-        </Button>
       </div>
     </div>
   );

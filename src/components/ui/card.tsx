@@ -12,7 +12,7 @@ type CardProps = {
   padding?: keyof typeof spacing
   radius?: keyof typeof radii
   border?: boolean
-  variant?: 'default' | 'alt' // controls bg-surface or bg-alt
+  variant?: string // controls bg-surface or bg-alt
   contentClassName?: string // allows overriding inner content wrapper padding
 }
 
@@ -30,7 +30,7 @@ export const Card = ({
   const paddingClass = spacing[padding]
   const radiusClass = radii[radius]
   const borderClass = border ? cn('border border-primary') : undefined
-  const bgClass = variant === 'alt' ? 'bg-surface-hover' : 'bg-surface'
+  const bgClass = variant ? variant : 'bg-surface'
 
   return (
     <div className={cn(
