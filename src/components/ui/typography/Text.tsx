@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { typography, type TextSize, type FontWeight } from '@/lib/ui/tokens'
 
-type TextVariant = 'text' | 'text-muted' | 'primary' | 'secondary' | 'success' | 'danger'
+type TextVariant = 'text' | 'muted' | 'primary' | 'secondary' | 'success' | 'danger'
 
 interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
   children: ReactNode

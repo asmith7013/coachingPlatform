@@ -1,6 +1,6 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
-import React from "react";
+import React, { useState } from "react";
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
@@ -29,23 +29,23 @@ const createEmptyNYCPSStaff = (): NYCPSStaffInput => ({
 });
 
 export default function NYCPSStaffList() {
-  // ✅ 5. Data Flow Integrity: Use `useNYCPSStaff` to fetch, filter, paginate, and sort data.
-  const { 
-    staff, // ✅ Array of NYCPS Staff retrieved from the database.
-    loading, // ✅ Boolean indicating if data is currently loading.
-    // error, // ✅ Stores any errors that occur during data fetching.
-    page, // ✅ Current page for pagination.
-    setPage, // ✅ Function to update the current page.
-    limit, // ✅ Number of Staff displayed per page.
-    total, // ✅ Total number of Staff available.
-    removeStaff, // ✅ Function to delete a Staff member.
-    applyFilters, // ✅ Function to filter Staff dynamically.
-    changeSorting, // ✅ Function to change sorting order.
-    performanceMode, // ✅ Flag indicating whether performance optimizations are enabled.
-    togglePerformanceMode // ✅ Function to toggle performance mode.
+  const {
+    staff,
+    total,
+    loading,
+    error: staffError,
+    page,
+    setPage,
+    limit,
+    applyFilters,
+    changeSorting,
+    removeStaff,
+    performanceMode,
+    togglePerformanceMode
   } = useNYCPSStaff();
 
-  // ✅ 7. Optimistic Updates: Confirm and delete Staff using an SWR-based hook.
+  const [searchInput, setSearchInput] = useState("");
+
   const confirmDeleteStaff = (id: string) => {
     if (window.confirm("Are you sure you want to delete this staff member?")) {
       handleDeleteStaff(id);
@@ -53,12 +53,11 @@ export default function NYCPSStaffList() {
   };
 
   const handleDeleteStaff = async (id: string) => {
-    await removeStaff(id);  // ✅ Calls the SWR mutate function to ensure an optimistic UI update.
+    await removeStaff(id);
   };
 
-  // ✅ 6. Server Actions Error Handling: Display a loading indicator or handle errors.
   if (loading) return <Text>Loading NYCPS Staff...</Text>;
-  // if (error) return <p>Error: {error}</p>;
+  if (staffError) return <Text>Error loading staff</Text>;
 
   return (
     <div className={cn('container mx-auto', spacing.lg)}>
@@ -78,11 +77,12 @@ export default function NYCPSStaffList() {
         ]}
         onSort={(field, order) => changeSorting(field as keyof NYCPSStaff, order)}
         onSearch={(value) => applyFilters({ staffName: value })}
+        searchInput={searchInput}
+        setSearchInput={setSearchInput}
         performanceMode={performanceMode}
         togglePerformanceMode={togglePerformanceMode}
       />
 
-      {/* ✅ 5. Data Flow Integrity: SWR ensures data consistency between UI and database */}
       <div className={spacing.lg}>
         {staff.map((member: NYCPSStaff) => (
           <Card
@@ -100,7 +100,6 @@ export default function NYCPSStaffList() {
                   {member.email || 'No email provided'}
                 </Text>
               </div>
-              {/* ✅ Optimistic UI Update: Delete Button */}
               <Button
                 onClick={() => member._id && confirmDeleteStaff(member._id)}
                 variant="danger"
@@ -110,7 +109,6 @@ export default function NYCPSStaffList() {
               </Button>
             </div>
 
-            {/* ✅ 15. Schema Nesting & Type Inference: Dynamically render roles and subjects */}
             <div className={spacing.md}>
               <Heading level="h3" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
                 Roles

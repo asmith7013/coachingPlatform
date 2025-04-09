@@ -1,6 +1,6 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
-import React from "react";
+import React, { useState } from "react";
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
@@ -30,23 +30,23 @@ const createEmptySchool = (): SchoolInput => ({
 });
 
 export default function SchoolList() {
-  // ✅ 5. Data Flow Integrity: Use `useSchools` to fetch, filter, paginate, and sort data.
-  const { 
-    schools, // ✅ Array of Schools retrieved from the database.
-    loading, // ✅ Boolean indicating if data is currently loading.
-    // error, // ✅ Stores any errors that occur during data fetching.
-    page, // ✅ Current page for pagination.
-    setPage, // ✅ Function to update the current page.
-    limit, // ✅ Number of Schools displayed per page.
-    total, // ✅ Total number of Schools available.
-    removeSchool, // ✅ Function to delete a School.
-    applyFilters, // ✅ Function to filter Schools dynamically.
-    changeSorting, // ✅ Function to change sorting order.
-    performanceMode, // ✅ Flag indicating whether performance optimizations are enabled.
-    togglePerformanceMode // ✅ Function to toggle performance mode.
+  const {
+    schools,
+    total,
+    loading,
+    error: schoolError,
+    page,
+    setPage,
+    limit,
+    removeSchool,
+    applyFilters,
+    changeSorting,
+    performanceMode,
+    togglePerformanceMode
   } = useSchools();
 
-  // ✅ 7. Optimistic Updates: Confirm and delete School using an SWR-based hook.
+  const [searchInput, setSearchInput] = useState("");
+
   const confirmDeleteSchool = (id: string) => {
     if (window.confirm("Are you sure you want to delete this school?")) {
       handleDeleteSchool(id);
@@ -54,12 +54,11 @@ export default function SchoolList() {
   };
 
   const handleDeleteSchool = async (id: string) => {
-    await removeSchool(id);  // ✅ Calls the SWR mutate function to ensure an optimistic UI update.
+    await removeSchool(id);
   };
 
-  // ✅ 6. Server Actions Error Handling: Display a loading indicator or handle errors.
   if (loading) return <Text>Loading Schools...</Text>;
-  // if (error) return <p>Error: {error}</p>;
+  if (schoolError) return <Text>Error loading schools</Text>;
 
   return (
     <div className={cn('container mx-auto', spacing.lg)}>
@@ -82,6 +81,8 @@ export default function SchoolList() {
         ]}
         onSort={(field, order) => changeSorting(field as keyof School, order)}
         onSearch={(value) => applyFilters({ schoolName: value })}
+        searchInput={searchInput}
+        setSearchInput={setSearchInput}
         performanceMode={performanceMode}
         togglePerformanceMode={togglePerformanceMode}
       />

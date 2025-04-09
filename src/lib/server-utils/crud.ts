@@ -48,9 +48,13 @@ export async function createItem<Doc extends TimestampedDocument, Schema extends
 
     // Validate data
     const validatedData = parseOrThrow(schema, data);
+    
+    // Remove _id, createdAt, and updatedAt from data before creation
+    const { _id: _ignoredId, id: _ignoredAlias, createdAt: _ignoredCreatedAt, updatedAt: _ignoredUpdatedAt, ...safeToCreate } = validatedData;
+    // const { _id, id, createdAt, updatedAt, ...safeToCreate } = validatedData;
 
-    // Create item
-    const created = await model.create(validatedData);
+    // Create item with sanitized data
+    const created = await model.create(safeToCreate);
 
     // Revalidate paths
     pathsToRevalidate.forEach(path => revalidatePath(path));

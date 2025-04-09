@@ -26,11 +26,13 @@ export function sanitizeDocument<T extends TimestampedDoc, S extends ZodSchema>(
     const { _id, createdAt, updatedAt, ...rest } = typedObj;
     
     // Create sanitized object with proper type handling
+    // Include both _id and id to satisfy Zod schema requirements
     const sanitized = {
       ...rest,
       _id: _id.toString(),
-      createdAt: createdAt.toISOString(),
-      updatedAt: updatedAt.toISOString()
+      id: _id.toString(), // Add id field with same value as _id
+      createdAt: new Date(createdAt),
+      updatedAt: new Date(updatedAt)
     };
     
     // Validate against schema to ensure type safety

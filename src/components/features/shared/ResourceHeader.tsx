@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/fields/Input';
 import { Select } from '@/components/ui/fields/Select';
@@ -6,6 +6,7 @@ import { Text } from '@/components/ui/typography/Text';
 import { spacing } from '@/lib/ui/tokens';
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import debounce from 'lodash.debounce';
 
 interface ResourceHeaderProps<T> {
   page: number;
@@ -15,6 +16,8 @@ interface ResourceHeaderProps<T> {
   sortOptions: { key: keyof T | string; label: string }[];
   onSort: (field: keyof T | string, order: "asc" | "desc") => void;
   onSearch: (value: string) => void;
+  searchInput: string;
+  setSearchInput: (value: string) => void;
   performanceMode?: boolean;
   togglePerformanceMode?: () => void;
 }
@@ -27,10 +30,26 @@ export function ResourceHeader<T extends Record<string, unknown>>({
   sortOptions,
   onSort,
   onSearch,
-  // performanceMode,
-  // togglePerformanceMode,
+  searchInput,
+  setSearchInput,
 }: ResourceHeaderProps<T>) {
   const [sortValue, setSortValue] = useState<string>("");
+
+  // Create debounced search function
+  const debouncedSearch = useMemo(
+    () => debounce((value: string) => {
+      onSearch(value);
+    }, 300),
+    [onSearch]
+  );
+
+  // Call debounced search when input changes
+  useEffect(() => {
+    debouncedSearch(searchInput);
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [searchInput, debouncedSearch]);
 
   return (
     <Card className={cn('bg-surface', 'border-outline', spacing.md)}>
@@ -63,18 +82,18 @@ export function ResourceHeader<T extends Record<string, unknown>>({
         <Select
           value={sortValue}
           onChange={(value) => {
-            setSortValue(value)
-            const [field, order] = value.split(':')
-            onSort(field as keyof T | string, order as 'asc' | 'desc')
+            setSortValue(value);
+            const [field, order] = value.split(':');
+            onSort(field as keyof T | string, order as 'asc' | 'desc');
           }}
           options={sortOptions.flatMap(option => [
             { value: `${String(option.key)}:asc`, label: `Sort ${option.label} A-Z` },
             { value: `${String(option.key)}:desc`, label: `Sort ${option.label} Z-A` }
           ])}
+          placeholder="Sort by..."
           size="md"
           fontSize="base"
           radius="md"
-          padding="sm"
           className="min-w-[12rem]"
         />
 
@@ -82,7 +101,8 @@ export function ResourceHeader<T extends Record<string, unknown>>({
         <Input
           type="text"
           placeholder="Search..."
-          onChange={(e) => onSearch(e.target.value)}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
         />
 
         {/* Performance Mode Toggle */}

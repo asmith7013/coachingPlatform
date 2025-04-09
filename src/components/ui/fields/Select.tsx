@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { spacing, radii, fontSizes, sizeVariants } from '@/lib/ui/tokens'
+import { radii, fontSizes, sizeVariants } from '@/lib/ui/tokens'
 import { FieldWrapper } from './FieldWrapper'
 import { Listbox } from '@headlessui/react'
 
@@ -14,12 +14,12 @@ interface SelectOption {
 interface BaseSelectProps {
   label?: string
   options: SelectOption[]
+  placeholder?: string
   error?: string
   className?: string
   size?: keyof typeof sizeVariants
   radius?: keyof typeof radii
   fontSize?: keyof typeof fontSizes
-  padding?: keyof typeof spacing
 }
 
 interface SingleSelectProps extends BaseSelectProps {
@@ -41,21 +41,22 @@ export function Select({
   options, 
   value, 
   onChange, 
-  error, 
+  error,
+  placeholder = 'Select an option',
   className,
   multiple = false,
   size = 'md',
   radius = 'md',
-  fontSize = 'base',
-  padding = 'md'
+  fontSize = 'base'
 }: SelectProps) {
   return (
     <FieldWrapper id="select" label={label} error={error}>
       <Listbox value={value} onChange={onChange} multiple={multiple}>
-        <div className={cn('relative', spacing[padding])}>
+        <div className="relative w-full">
           <Listbox.Button
             className={cn(
               'relative w-full cursor-default bg-white text-left outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600',
+              'px-3 py-2',
               sizeVariants[size],
               radii[radius],
               fontSizes[fontSize],
@@ -63,16 +64,21 @@ export function Select({
               className
             )}
           >
-            <span className="block truncate">
+            <span className={cn(
+              'block truncate',
+              (!value || (Array.isArray(value) && value.length === 0)) && 'text-gray-400 italic'
+            )}>
               {multiple 
                 ? `${(value as string[]).length} selected`
-                : options.find(option => option.value === value)?.label}
+                : value
+                  ? options.find(option => option.value === value)?.label
+                  : placeholder}
             </span>
           </Listbox.Button>
           <Listbox.Options className={cn(
             'absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none',
-            radii[radius],
-            spacing[padding]
+            'px-3 py-2',
+            radii[radius]
           )}>
             {options.map((option) => (
               <Listbox.Option

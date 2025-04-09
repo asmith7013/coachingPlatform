@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { SchoolModel } from "@/models/core";
-import { SchoolInputZodSchema, SchoolZodSchema } from "@/lib/zod-schema/core/school";
+import { SchoolInputZodSchema, SchoolZodSchema, SchoolInput } from "@/lib/zod-schema/core/school";
 import { handleServerError } from "@/lib/error/handleServerError";
 import { handleValidationError } from "@/lib/error/handleValidationError";
 import { 
@@ -17,9 +17,9 @@ import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
 
 // Types
 export type School = z.infer<typeof SchoolZodSchema>;
-export type SchoolCreate = Omit<School, "_id" | "createdAt" | "updatedAt">;
+// export type SchoolCreate = Omit<School, "_id" | "createdAt" | "updatedAt">;
+export type SchoolCreate = z.infer<typeof SchoolInputZodSchema>;
 export type SchoolUpdate = Partial<SchoolCreate>;
-
 /** Fetch Schools */
 export async function fetchSchools({
   page = 1,
@@ -60,7 +60,7 @@ export async function fetchSchools({
 }
 
 /** Create School */
-export async function createSchool(data: SchoolCreate) {
+export async function createSchool(data: SchoolInput) {
   return createItem(SchoolModel, SchoolInputZodSchema, data, ["/schools", "/schools/[id]"]);
 }
 

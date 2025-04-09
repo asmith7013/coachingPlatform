@@ -13,8 +13,8 @@ type RoutineFilterProps = {
   selectedLesson?: string;
   lessonRoutines?: string[];
   onLessonSelected?: () => void;
-  detailedView?: boolean;
-  setDetailedView?: (detailedView: boolean) => void; // <-- Add this line
+  version: 'KH' | 'ILC';
+  setVersion: (version: 'KH' | 'ILC') => void;
 };
 
 export function RoutineFilter({
@@ -24,6 +24,8 @@ export function RoutineFilter({
   selectedLesson,
   lessonRoutines,
   onLessonSelected,
+  version,
+  setVersion,
 }: RoutineFilterProps) {
   const routinesToShow = selectedLesson && lessonRoutines ? lessonRoutines : allRoutines;
 
@@ -54,54 +56,101 @@ export function RoutineFilter({
     setSelectedRoutines(mlrRoutines);
   };
 
-  return (
-    <div>
-      <label className={cn(typography.weight.bold, 'text-text font-bold')}>
-        Filter Routines:
-      </label>
+  const handleVersionChange = (newVersion: 'KH' | 'ILC') => {
+    setVersion(newVersion);
+    setSelectedRoutines([]); // Reset selected routines when changing versions
+  };
 
-      {/* Filter Actions */}
-      <div className="flex flex-wrap gap-2 mt-2 mb-4">
-        <Button
-          onClick={() => setSelectedRoutines(sortedRoutines)}
-          size="sm"
-          variant='text-white bg-secondary-200 focus:ring-3 focus:ring-secondary'
-        >
-          Select All Routines
-        </Button>
-        <Button
-          onClick={handleSelectAllMLRs}
-          size="sm"
-          variant='text-white bg-secondary-200 focus:ring-3 focus:ring-primary'
-        >
-          Select All MLRs
-        </Button>
+  return (
+    <div className="space-y-6">
+      {/* Curriculum Version Toggle */}
+      <div>
+        <label className={cn(typography.weight.bold, 'text-text mb-2 block')}>
+          Currently Viewing:
+        </label>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => handleVersionChange('KH')}
+            size="sm"
+            variant={version === 'KH' ? 'text-white bg-secondary' : 'text-secondary border-2 border-secondary'}
+          >
+            Kendall Hunt
+          </Button>
+          <Button
+            onClick={() => handleVersionChange('ILC')}
+            size="sm"
+            variant={version === 'ILC' ? 'text-white bg-primary' : 'text-primary border-2 border-primary'}
+          >
+            ILC
+          </Button>
+        </div>
       </div>
 
-      {/* Routine Buttons */}
-      <div className="flex flex-wrap gap-2">
-        {sortedRoutines.map((routine, index) => {
-          const isSelected = selectedRoutines.includes(routine);
-          const isMLR = /^MLR\d+/.test(routine);
-          
-          return (
+      {/* Routine Filters */}
+      <div>
+        <label className={cn(typography.weight.bold, 'text-text block mb-2')}>
+          Filter Routines:
+        </label>
+
+        {/* Filter Actions */}
+        <div className={`flex flex-wrap gap-2 mb-${selectedRoutines.length !== sortedRoutines.length ? '6' : '2'}`}>
+          {/* Show only if not all routines are selected */}
+          {selectedRoutines.length !== sortedRoutines.length && (
             <Button
-              key={`${routine}-${index}`}
-              onClick={() => handleClick(routine)}
+              onClick={() => setSelectedRoutines(sortedRoutines)}
               size="sm"
-              variant={`${isSelected 
-                ? isMLR 
-                  ? 'text-white bg-primary focus:ring-primary'
-                  : 'text-white bg-secondary focus:ring-secondary'
-                : isMLR
-                  ? 'text-primary bg-white border-2 border-primary'
-                  : 'text-secondary bg-white border-2 border-secondary'
-              } focus:ring-2 font-medium`}
+              variant='text-white bg-secondary border-2 border-secondary focus:ring-3 focus:ring-muted font-bold'
             >
-              {routine}
+              Select All Routines
             </Button>
-          );
-        })}
+          )}
+
+          {/* Show only if not all MLRs are selected */}
+          {(() => {
+            const mlrRoutines = sortedRoutines.filter((routine) => /^MLR\d+/.test(routine));
+            const areAllMLRsSelected =
+              mlrRoutines.length > 0 &&
+              mlrRoutines.every((mlr) => selectedRoutines.includes(mlr));
+            return (
+              selectedRoutines.length !== sortedRoutines.length &&
+              !areAllMLRsSelected && (
+                <Button
+                  onClick={handleSelectAllMLRs}
+                  size="sm"
+                  variant='text-white bg-primary border-2 border-primary focus:ring-3 focus:ring-muted font-bold'
+                >
+                  Select All MLRs
+                </Button>
+              )
+            );
+          })()}
+        </div>
+
+        {/* Routine Buttons */}
+        <div className="flex flex-wrap gap-2">
+          {sortedRoutines.map((routine, index) => {
+            const isSelected = selectedRoutines.includes(routine);
+            const isMLR = /^MLR\d+/.test(routine);
+            
+            return (
+              <Button
+                key={`${routine}-${index}`}
+                onClick={() => handleClick(routine)}
+                size="sm"
+                variant={`${isSelected 
+                  ? isMLR 
+                    ? 'text-white bg-primary focus:ring-primary'
+                    : 'text-white bg-secondary focus:ring-secondary'
+                  : isMLR
+                    ? 'text-white bg-primary-800 border-2 border-primary'
+                    : 'text-white bg-secondary-800 border-2 border-secondary'
+                } focus:ring-2 font-medium`}
+              >
+                {routine}
+              </Button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -37,8 +37,8 @@ export class SessionLink {
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 export class Visit {
-  @prop({ type: mongoose.Types.ObjectId, required: true })
-  _id!: mongoose.Types.ObjectId;
+  // @prop({ type: mongoose.Types.ObjectId, required: true })
+  // _id!: mongoose.Types.ObjectId;
 
   @prop({ required: true })
   date!: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
@@ -58,27 +58,38 @@ const lookForFields: Field<LookForInput>[] = [
   },
 ];
 
+interface LookFor extends LookForInput {
+  _id: string;
+  rubric: Array<{
+    category: string[];
+    score: number;
+    content?: string[];
+    parentId?: string;
+    collectionId?: string;
+    hex?: string;
+  }>;
+}
+
 export default function LookForsWrapper() {
-  const { 
-    lookFors, 
-    loading, 
-    page, 
-    setPage, 
-    limit, 
-    total, 
-    removeLookFor,
+  const {
+    lookFors,
+    total,
+    loading,
+    error: lookForError,
+    page,
+    setPage,
+    limit,
     applyFilters,
     changeSorting,
+    removeLookFor
   } = useLookFors();
 
-  const confirmDeleteLookFor = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this LookFor?")) {
-      handleDeleteLookFor(id);
-    }
-  };
+  const [searchInput, setSearchInput] = useState("");
 
-  const handleDeleteLookFor = async (id: string) => {
-    await removeLookFor(id);
+  const confirmDeleteLookFor = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this look for?')) {
+      await removeLookFor(id);
+    }
   };
 
   const handleSubmit = async (data: LookForInput) => {
@@ -98,7 +109,8 @@ export default function LookForsWrapper() {
     }
   };
 
-  if (loading) return <Text>Loading LookFors...</Text>;
+  if (loading) return <Text>Loading Look Fors...</Text>;
+  if (lookForError) return <Text>Error loading look fors</Text>;
 
   return (
     <DashboardPage 
@@ -119,16 +131,17 @@ export default function LookForsWrapper() {
           }
         }}
         onSearch={(value) => applyFilters({ topic: value })}
+        searchInput={searchInput}
+        setSearchInput={setSearchInput}
       />
 
       {lookFors.length === 0 ? (
         <EmptyState
           title="No look fors found"
           description="Create your first look for or upload a batch to get started."
-          // icon="🔍"
         />
       ) : (
-        lookFors.map((lookFor) => (
+        lookFors.map((lookFor: LookFor) => (
           <Card
             key={lookFor._id}
             className={spacing.md}

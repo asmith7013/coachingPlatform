@@ -67,10 +67,15 @@
 │   │   │   └── SentryErrorBoundary.tsx
 │   │   ├── features
 │   │   │   ├── imRoutine
+│   │   │   │   ├── CurriculumVersionModal.tsx
 │   │   │   │   ├── GradeUnitLessonSelector.tsx
 │   │   │   │   ├── LessonCompactView.tsx
 │   │   │   │   ├── LessonDetailView.tsx
-│   │   │   │   └── RoutineFilter.tsx
+│   │   │   │   ├── NoRoutineCard.tsx
+│   │   │   │   ├── RoutineFilter.tsx
+│   │   │   │   ├── SharedLessonDetailView.tsx
+│   │   │   │   ├── renderILCLesson.tsx
+│   │   │   │   └── renderKHLesson.tsx
 │   │   │   ├── lookFors
 │   │   │   ├── schools
 │   │   │   └── shared
@@ -147,7 +152,13 @@
 │   │   │   ├── handleClientError.ts
 │   │   │   ├── handleServerError.ts
 │   │   │   └── handleValidationError.ts
+│   │   ├── hooks
+│   │   │   └── usePersistedCurriculumVersion.ts
+│   │   ├── imRoutine
+│   │   │   ├── renderILCLesson.tsx
+│   │   │   └── renderKHLesson.tsx
 │   │   ├── json
+│   │   │   ├── ILC_routines.json
 │   │   │   ├── IM_Routines.json
 │   │   │   └── IMplementation.json
 │   │   ├── server-utils
@@ -248,4 +259,4 @@
 ├── tsconfig.json
 └── tsconfig.tsbuildinfo
 
-77 directories, 172 files
+79 directories, 181 files

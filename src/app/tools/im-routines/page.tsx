@@ -1,19 +1,30 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import routinesData from '@lib/json/IM_Routines.json';
+import KHData from '@lib/json/IM_Routines.json';
+import ILCData from '@lib/json/ILC_routines.json';
 import { GradeUnitLessonSelector } from '@/components/features/imRoutine/GradeUnitLessonSelector';
 import { RoutineFilter } from '@/components/features/imRoutine/RoutineFilter';
 import { LessonDetailView } from '@/components/features/imRoutine/LessonDetailView';
-// import { LessonCompactView } from '@/components/features/imRoutine/LessonCompactView';
+import { renderKHLesson } from '@/lib/imRoutine/renderKHLesson';
+import { renderILCLesson } from '@/lib/imRoutine/renderILCLesson';
+import { CurriculumVersionModal } from '@/components/features/imRoutine/CurriculumVersionModal';
+import { usePersistedCurriculumVersion } from '@/lib/hooks/usePersistedCurriculumVersion';
 import { typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
+import { Text } from '@/components/ui/typography/Text';
 
 export default function IMRoutinesPage() {
+  const [version, setVersion] = usePersistedCurriculumVersion();
+  const [selectedRoutines, setSelectedRoutines] = useState<string[]>([]);
   const [selectedGrade, setSelectedGrade] = useState('');
   const [selectedUnit, setSelectedUnit] = useState('');
   const [selectedLesson, setSelectedLesson] = useState('');
-  const [detailedView, setDetailedView] = useState(true);
+
+  // Get the correct data based on version
+  const routinesData = useMemo(() => {
+    return version === 'ILC' ? ILCData : KHData;
+  }, [version]);
 
   const allRoutines = useMemo(() => {
     const set = new Set<string>();
@@ -23,16 +34,15 @@ export default function IMRoutinesPage() {
       )
     );
     return Array.from(set).sort();
-  }, []);
-
-  const [selectedRoutines, setSelectedRoutines] = useState<string[]>(allRoutines);
+  }, [routinesData]);
 
   const grades = useMemo(() => {
     const unique = Array.from(new Set(routinesData.map((r) => r.grade)));
     return unique.sort();
-  }, []);
+  }, [routinesData]);
 
   const units = useMemo(() => {
+    if (!selectedGrade) return [];
     return Array.from(
       new Set(
         routinesData
@@ -40,7 +50,7 @@ export default function IMRoutinesPage() {
           .map((r) => r.unit)
       )
     ).sort();
-  }, [selectedGrade]);
+  }, [routinesData, selectedGrade]);
 
   const lessons = useMemo(() => {
     return Array.from(
@@ -54,24 +64,23 @@ export default function IMRoutinesPage() {
           .map((r) => r.lessonNumber)
       )
     ).sort((a, b) => Number(a) - Number(b));
-  }, [selectedGrade, selectedUnit]);
+  }, [routinesData, selectedGrade, selectedUnit]);
 
   const totalLessons = useMemo(() => {
     return routinesData.filter(
       (r) => r.grade === selectedGrade && r.unit === selectedUnit
     ).length;
-  }, [selectedGrade, selectedUnit]);
+  }, [routinesData, selectedGrade, selectedUnit]);
 
   // Filter lessons – if a lesson is selected, only return that lesson.
   const filteredLessons = useMemo(() => {
     const lessons = routinesData.filter(
       (r) => r.grade === selectedGrade && r.unit === selectedUnit
     );
-    if (selectedLesson) {
-      return lessons.filter((r) => r.lessonNumber === selectedLesson);
-    }
-    return lessons;
-  }, [selectedGrade, selectedUnit, selectedLesson]);
+    return selectedLesson
+      ? lessons.filter((l) => l.lessonNumber === selectedLesson)
+      : lessons;
+  }, [routinesData, selectedGrade, selectedUnit, selectedLesson]);
 
   // When a lesson is selected, aggregate its routines.
   const lessonRoutines = selectedLesson
@@ -80,15 +89,24 @@ export default function IMRoutinesPage() {
           r.grade === selectedGrade &&
           r.unit === selectedUnit &&
           r.lessonNumber === selectedLesson
-      )?.activities.flatMap((activity) => activity.routines) || []
+      )?.activities.flatMap((a) => a.routines)
     : [];
 
   const handleLessonSelected = () => {
-    // if (selectedLesson) setDetailedView(true);
+    // Placeholder for future lesson selection logic
   };
 
   return (
-    <div className={cn('p-6 max-w-7xl mx-auto')}>
+    <div className="container mx-auto px-4 py-8">
+      {version === null && (
+        <CurriculumVersionModal
+          onSelectVersion={(selected) => {
+            setVersion(selected);
+            setSelectedRoutines([]);
+          }}
+        />
+      )}
+      
       {/* Two-column grid: main content (left) and sidebar filter (right) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Main Content Area (Left Column) */}
@@ -131,22 +149,15 @@ export default function IMRoutinesPage() {
             />
           </div>
           {selectedGrade && selectedUnit ? (
-            detailedView ? (
-              <LessonDetailView
-                lessonsData={filteredLessons}
-                selectedRoutines={selectedRoutines}
-              />
-            ) : (
-              <></>
-              // <LessonCompactView
-              //   lessons={filteredLessons}
-              //   selectedRoutines={selectedRoutines}
-              // />
-            )
+            <LessonDetailView
+              lessonsData={filteredLessons}
+              selectedRoutines={selectedRoutines}
+              renderLesson={version === 'ILC' ? renderILCLesson : renderKHLesson}
+            />
           ) : (
-            <p className={cn(typography.text.base, 'text-text', 'italic')}>
+            <Text className={cn(typography.text.base, 'text-text', 'italic')}>
               Select <strong>grade</strong> and <strong>unit</strong> to view lesson routines.
-            </p>
+            </Text>
           )}
         </div>
 
@@ -160,8 +171,8 @@ export default function IMRoutinesPage() {
               selectedLesson={selectedLesson}
               lessonRoutines={lessonRoutines}
               onLessonSelected={handleLessonSelected}
-              setDetailedView={setDetailedView}
-              detailedView={detailedView}
+              version={version!}
+              setVersion={setVersion}
             />
           </div>
         </div>

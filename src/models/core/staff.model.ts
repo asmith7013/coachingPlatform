@@ -33,8 +33,8 @@ class Note {
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 class StaffMember {
-  @prop({ type: mongoose.Types.ObjectId, required: true })
-  _id!: mongoose.Types.ObjectId;
+  // @prop({ type: mongoose.Types.ObjectId, required: true })
+  // _id!: mongoose.Types.ObjectId;
 
   @prop({ type: String, required: true })
   staffName!: string;

@@ -8,8 +8,8 @@ import {
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 export class CoachingLog {
-  @prop({ type: mongoose.Types.ObjectId, required: true })
-  _id!: mongoose.Types.ObjectId;
+  // @prop({ type: mongoose.Types.ObjectId, required: true })
+  // _id!: mongoose.Types.ObjectId;
 
   @prop({ enum: YesNoEnum, type: String, required: true })
   reasonDone!: YesNoEnum;
