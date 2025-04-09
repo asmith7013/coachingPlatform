@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import KHData from '@lib/json/IM_Routines.json';
+import KHData from '@lib/json/KH_Routines.json';
 import ILCData from '@lib/json/ILC_routines.json';
 import { GradeUnitLessonSelector } from '@/components/features/imRoutine/GradeUnitLessonSelector';
 import { RoutineFilter } from '@/components/features/imRoutine/RoutineFilter';
@@ -21,10 +21,16 @@ export default function IMRoutinesPage() {
   const [selectedUnit, setSelectedUnit] = useState('');
   const [selectedLesson, setSelectedLesson] = useState('');
 
-  // Get the correct data based on version
+  const isHighSchool = (grade: string) => 
+    ["Algebra 1", "Geometry", "Algebra 2"].includes(grade);
+
+  // Update routinesData to dynamically switch
   const routinesData = useMemo(() => {
-    return version === 'ILC' ? ILCData : KHData;
-  }, [version]);
+    if (version === "ILC" && isHighSchool(selectedGrade)) {
+      return KHData;
+    }
+    return version === "ILC" ? ILCData : KHData;
+  }, [version, selectedGrade]);
 
   const allRoutines = useMemo(() => {
     const set = new Set<string>();
@@ -37,9 +43,28 @@ export default function IMRoutinesPage() {
   }, [routinesData]);
 
   const grades = useMemo(() => {
-    const unique = Array.from(new Set(routinesData.map((r) => r.grade)));
-    return unique.sort();
-  }, [routinesData]);
+    const middleSchoolGrades = Array.from(
+      new Set(
+        (version === 'ILC' ? ILCData : KHData)
+          .map((r) => r.grade)
+          .filter((g) => ["Grade 6", "Grade 7", "Grade 8"].includes(g))
+      )
+    );
+
+    const highSchoolGrades = Array.from(
+      new Set(
+        KHData.map((r) => r.grade).filter(isHighSchool)
+      )
+    );
+
+    if (version === "ILC") {
+      return [...middleSchoolGrades, ...highSchoolGrades];
+    }
+
+    return [...middleSchoolGrades, ...highSchoolGrades].filter((g) =>
+      (KHData.map((r) => r.grade).includes(g))
+    );
+  }, [version]);
 
   const units = useMemo(() => {
     if (!selectedGrade) return [];
@@ -91,6 +116,14 @@ export default function IMRoutinesPage() {
           r.lessonNumber === selectedLesson
       )?.activities.flatMap((a) => a.routines)
     : [];
+
+  // Update renderLesson logic before rendering
+  const renderLesson = useMemo(() => {
+    if (version === "ILC" && isHighSchool(selectedGrade)) {
+      return renderKHLesson;
+    }
+    return version === "ILC" ? renderILCLesson : renderKHLesson;
+  }, [version, selectedGrade]);
 
   const handleLessonSelected = () => {
     // Placeholder for future lesson selection logic
@@ -152,7 +185,7 @@ export default function IMRoutinesPage() {
             <LessonDetailView
               lessonsData={filteredLessons}
               selectedRoutines={selectedRoutines}
-              renderLesson={version === 'ILC' ? renderILCLesson : renderKHLesson}
+              renderLesson={renderLesson}
             />
           ) : (
             <Text className={cn(typography.text.base, 'text-text', 'italic')}>
