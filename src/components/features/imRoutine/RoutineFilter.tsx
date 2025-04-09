@@ -103,17 +103,17 @@ export function RoutineFilter({
         </label>
 
         {/* Filter Actions */}
-        <div className={`flex flex-wrap gap-2 mb-${selectedRoutines.length !== sortedRoutines.length ? '6' : '2'}`}>
+        <div className={`flex flex-wrap gap-2 mb-6`}>
           {/* Show only if not all routines are selected */}
           <Button
             onClick={() => setSelectedRoutines(sortedRoutines)}
             size="sm"
             disabled={selectedRoutines.length === sortedRoutines.length}
+            variant={selectedRoutines.length === sortedRoutines.length
+              ? 'bg-secondary text-white opacity-50 cursor-not-allowed'
+              : 'bg-muted-700 text-text border-2 border-secondary'}
             className={cn(
               'font-bold border-2',
-              selectedRoutines.length === sortedRoutines.length
-                ? 'bg-secondary text-white opacity-50 cursor-not-allowed'
-                : 'bg-secondary text-white border-secondary'
             )}
           >
             Select All Routines
@@ -138,11 +138,12 @@ export function RoutineFilter({
                     ? 'All MLRs already selected'
                     : 'Select all MLRs'
                 }
+                variant={areAllMLRsSelected || mlrRoutines.length === 0
+                  ? 'bg-primary text-white border-2 opacity-50 border-secondary'
+                  : 'bg-primary-900 text-primary border-2 border-primary'
+                }
                 className={cn(
                   'font-bold border-2',
-                  areAllMLRsSelected || mlrRoutines.length === 0
-                    ? 'bg-primary text-white opacity-50 cursor-not-allowed'
-                    : 'bg-primary text-white border-primary'
                 )}
               >
                 Select All MLRs
