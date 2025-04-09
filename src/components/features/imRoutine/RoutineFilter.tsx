@@ -42,7 +42,15 @@ export function RoutineFilter({
   });
 
   const handleClick = (routine: string) => {
-    if (selectedRoutines.length === routinesToShow.length) {
+    const allSelected = selectedRoutines.length === routinesToShow.length;
+
+    const mlrRoutines = sortedRoutines.filter((r) => /^MLR\d+/.test(r));
+    const allMLRsSelected =
+      mlrRoutines.length > 0 &&
+      mlrRoutines.every((mlr) => selectedRoutines.includes(mlr));
+
+    // ✅ isolate if all routines OR all MLRs are selected
+    if (allSelected || (allMLRsSelected && mlrRoutines.includes(routine))) {
       setSelectedRoutines([routine]);
     } else if (selectedRoutines.includes(routine)) {
       setSelectedRoutines(selectedRoutines.filter((r) => r !== routine));
@@ -60,6 +68,8 @@ export function RoutineFilter({
     setVersion(newVersion);
     setSelectedRoutines([]); // Reset selected routines when changing versions
   };
+
+
 
   return (
     <div className="space-y-6">
@@ -95,15 +105,19 @@ export function RoutineFilter({
         {/* Filter Actions */}
         <div className={`flex flex-wrap gap-2 mb-${selectedRoutines.length !== sortedRoutines.length ? '6' : '2'}`}>
           {/* Show only if not all routines are selected */}
-          {selectedRoutines.length !== sortedRoutines.length && (
-            <Button
-              onClick={() => setSelectedRoutines(sortedRoutines)}
-              size="sm"
-              variant='text-white bg-secondary border-2 border-secondary focus:ring-3 focus:ring-muted font-bold'
-            >
-              Select All Routines
-            </Button>
-          )}
+          <Button
+            onClick={() => setSelectedRoutines(sortedRoutines)}
+            size="sm"
+            disabled={selectedRoutines.length === sortedRoutines.length}
+            className={cn(
+              'font-bold border-2',
+              selectedRoutines.length === sortedRoutines.length
+                ? 'bg-secondary text-white opacity-50 cursor-not-allowed'
+                : 'bg-secondary text-white border-secondary'
+            )}
+          >
+            Select All Routines
+          </Button>
 
           {/* Show only if not all MLRs are selected */}
           {(() => {
@@ -111,17 +125,28 @@ export function RoutineFilter({
             const areAllMLRsSelected =
               mlrRoutines.length > 0 &&
               mlrRoutines.every((mlr) => selectedRoutines.includes(mlr));
+
             return (
-              selectedRoutines.length !== sortedRoutines.length &&
-              !areAllMLRsSelected && (
-                <Button
-                  onClick={handleSelectAllMLRs}
-                  size="sm"
-                  variant='text-white bg-primary border-2 border-primary focus:ring-3 focus:ring-muted font-bold'
-                >
-                  Select All MLRs
-                </Button>
-              )
+              <Button
+                onClick={handleSelectAllMLRs}
+                size="sm"
+                disabled={areAllMLRsSelected || mlrRoutines.length === 0}
+                title={
+                  mlrRoutines.length === 0
+                    ? 'No MLRs available in this view'
+                    : areAllMLRsSelected
+                    ? 'All MLRs already selected'
+                    : 'Select all MLRs'
+                }
+                className={cn(
+                  'font-bold border-2',
+                  areAllMLRsSelected || mlrRoutines.length === 0
+                    ? 'bg-primary text-white opacity-50 cursor-not-allowed'
+                    : 'bg-primary text-white border-primary'
+                )}
+              >
+                Select All MLRs
+              </Button>
             );
           })()}
         </div>

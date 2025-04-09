@@ -159,8 +159,8 @@
 │   │   │   └── renderKHLesson.tsx
 │   │   ├── json
 │   │   │   ├── ILC_routines.json
-│   │   │   ├── IM_Routines.json
-│   │   │   └── IMplementation.json
+│   │   │   ├── IMplementation.json
+│   │   │   └── KH_Routines.json
 │   │   ├── server-utils
 │   │   │   ├── bulkUpload.ts
 │   │   │   ├── crud.ts

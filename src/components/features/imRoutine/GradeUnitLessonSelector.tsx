@@ -59,7 +59,8 @@ export function GradeUnitLessonSelector({
           radii.md,
           'bg-background',
           'text-text',
-          'font-medium'
+          'font-medium',
+          'cursor-pointer'
         )}
       >
         <option value="">Select Grade/Course</option>
@@ -83,7 +84,8 @@ export function GradeUnitLessonSelector({
           radii.md,
           !selectedGrade ? 'bg-surface-hover' : 'bg-background',
           !selectedGrade ? 'text-muted' : 'text-text',
-          'font-medium'
+          'font-medium',
+          'cursor-pointer disabled:cursor-not-allowed'
         )}
       >
         <option value="">Select Unit</option>
@@ -104,7 +106,8 @@ export function GradeUnitLessonSelector({
           radii.md,
           !selectedUnit ? 'bg-surface-hover' : 'bg-background',
           !selectedUnit ? 'text-muted' : 'text-text',
-          'font-medium'
+          'font-medium',
+          'cursor-pointer disabled:cursor-not-allowed'
         )}
       >
         <option value="">Select Lesson</option>

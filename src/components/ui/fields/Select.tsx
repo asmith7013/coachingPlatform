@@ -56,6 +56,7 @@ export function Select({
           <Listbox.Button
             className={cn(
               'relative w-full cursor-default bg-white text-left outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600',
+              'cursor-pointer disabled:cursor-not-allowed',
               'px-3 py-2',
               sizeVariants[size],
               radii[radius],

@@ -18,6 +18,7 @@ export function Checkbox({ label, description, error, className, ...props }: Che
             type="checkbox"
             className={cn(
               'h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600',
+              'cursor-pointer disabled:cursor-not-allowed',
               radii.sm,
               error && 'border-red-500 text-red-500 focus:ring-red-500',
               className

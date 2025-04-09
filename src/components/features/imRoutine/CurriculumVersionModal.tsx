@@ -22,13 +22,13 @@ export function CurriculumVersionModal({ onSelectVersion }: CurriculumVersionMod
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
             onClick={() => onSelectVersion('KH')}
-            className="text-white text-lg font-bold bg-secondary px-6 py-3 rounded-xl hover:scale-105 transition"
+            className="text-white text-lg font-bold bg-secondary px-6 py-3 rounded-xl hover:scale-105 transition cursor-pointer"
           >
             Kendall Hunt
           </button>
           <button
             onClick={() => onSelectVersion('ILC')}
-            className="text-white text-lg font-bold bg-primary px-6 py-3 rounded-xl hover:scale-105 transition"
+            className="text-white text-lg font-bold bg-primary px-6 py-3 rounded-xl hover:scale-105 transition cursor-pointer"
           >
             ILC
           </button>

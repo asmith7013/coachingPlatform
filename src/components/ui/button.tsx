@@ -33,10 +33,11 @@ export const Button = ({
     <button
       className={cn(
         'inline-flex items-center justify-center rounded-md transition-colors',
+        'cursor-pointer disabled:cursor-not-allowed',
         sizeVariants[size],
         variantClasses, // Use either predefined variant or custom classes
         className,
-        isLoading && 'opacity-50 cursor-not-allowed'
+        isLoading && 'opacity-50'
       )}
       disabled={isLoading}
       {...props}

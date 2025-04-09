@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import KHData from '@lib/json/KH_Routines.json';
 import ILCData from '@lib/json/ILC_routines.json';
 import { GradeUnitLessonSelector } from '@/components/features/imRoutine/GradeUnitLessonSelector';
@@ -41,6 +41,12 @@ export default function IMRoutinesPage() {
     );
     return Array.from(set).sort();
   }, [routinesData]);
+
+  useEffect(() => {
+    if (allRoutines.length > 0) {
+      setSelectedRoutines(allRoutines);
+    }
+  }, [allRoutines]);
 
   const grades = useMemo(() => {
     const middleSchoolGrades = Array.from(
