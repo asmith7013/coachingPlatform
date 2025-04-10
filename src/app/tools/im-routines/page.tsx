@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import KHData from '@lib/json/KH_Routines.json';
 import ILCData from '@lib/json/ILC_routines.json';
+import ILCHSData from '@lib/json/ILC_HS.json';
 import { GradeUnitLessonSelector } from '@/components/features/imRoutine/GradeUnitLessonSelector';
 import { RoutineFilter } from '@/components/features/imRoutine/RoutineFilter';
 import { LessonDetailView } from '@/components/features/imRoutine/LessonDetailView';
@@ -27,7 +28,7 @@ export default function IMRoutinesPage() {
   // Update routinesData to dynamically switch
   const routinesData = useMemo(() => {
     if (version === "ILC" && isHighSchool(selectedGrade)) {
-      return KHData;
+      return ILCHSData;
     }
     return version === "ILC" ? ILCData : KHData;
   }, [version, selectedGrade]);

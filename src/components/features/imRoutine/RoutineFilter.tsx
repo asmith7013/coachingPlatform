@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 // import { Text } from '@/components/ui/typography/Text';
 import { typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type RoutineFilterProps = {
   allRoutines: string[];
@@ -42,17 +43,7 @@ export function RoutineFilter({
   });
 
   const handleClick = (routine: string) => {
-    const allSelected = selectedRoutines.length === routinesToShow.length;
-
-    const mlrRoutines = sortedRoutines.filter((r) => /^MLR\d+/.test(r));
-    const allMLRsSelected =
-      mlrRoutines.length > 0 &&
-      mlrRoutines.every((mlr) => selectedRoutines.includes(mlr));
-
-    // ✅ isolate if all routines OR all MLRs are selected
-    if (allSelected || (allMLRsSelected && mlrRoutines.includes(routine))) {
-      setSelectedRoutines([routine]);
-    } else if (selectedRoutines.includes(routine)) {
+    if (selectedRoutines.includes(routine)) {
       setSelectedRoutines(selectedRoutines.filter((r) => r !== routine));
     } else {
       setSelectedRoutines([...selectedRoutines, routine]);
@@ -69,8 +60,6 @@ export function RoutineFilter({
     setSelectedRoutines([]); // Reset selected routines when changing versions
   };
 
-
-
   return (
     <div className="space-y-6">
       {/* Curriculum Version Toggle */}
@@ -82,14 +71,14 @@ export function RoutineFilter({
           <Button
             onClick={() => handleVersionChange('KH')}
             size="sm"
-            variant={version === 'KH' ? 'text-white bg-secondary' : 'text-secondary border-2 border-secondary'}
+            variant={version === 'KH' ? 'text-white bg-secondary font-bold' : 'text-secondary border-2 border-secondary font-bold'}
           >
             Kendall Hunt
           </Button>
           <Button
             onClick={() => handleVersionChange('ILC')}
             size="sm"
-            variant={version === 'ILC' ? 'text-white bg-primary' : 'text-primary border-2 border-primary'}
+            variant={version === 'ILC' ? 'text-white bg-primary font-bold' : 'text-primary border-2 border-primary font-bold'}
           >
             ILC
           </Button>
@@ -97,87 +86,134 @@ export function RoutineFilter({
       </div>
 
       {/* Routine Filters */}
-      <div>
+      <motion.div layout>
         <label className={cn(typography.weight.bold, 'text-text block mb-2')}>
           Filter Routines:
         </label>
 
         {/* Filter Actions */}
-        <div className={`flex flex-wrap gap-2 mb-6`}>
-          {/* Show only if not all routines are selected */}
-          <Button
-            onClick={() => setSelectedRoutines(sortedRoutines)}
-            size="sm"
-            disabled={selectedRoutines.length === sortedRoutines.length}
-            variant={selectedRoutines.length === sortedRoutines.length
-              ? 'bg-secondary text-white opacity-50 cursor-not-allowed'
-              : 'bg-muted-700 text-text border-2 border-secondary'}
-            className={cn(
-              'font-bold border-2',
+        <motion.div layout className="flex flex-wrap gap-2 mb-6">
+          <AnimatePresence mode="popLayout">
+            {version === 'KH' && (
+              <motion.div
+                key="select-all-routines"
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Button
+                  onClick={() => setSelectedRoutines(sortedRoutines)}
+                  size="sm"
+                  disabled={selectedRoutines.length === sortedRoutines.length}
+                  variant={selectedRoutines.length === sortedRoutines.length
+                    ? 'bg-secondary text-white opacity-50 cursor-not-allowed'
+                    : 'bg-muted-700 text-text border-2 border-secondary'}
+                  className="font-bold border-2"
+                >
+                  Select All Routines
+                </Button>
+              </motion.div>
             )}
-          >
-            Select All Routines
-          </Button>
 
-          {/* Show only if not all MLRs are selected */}
-          {(() => {
-            const mlrRoutines = sortedRoutines.filter((routine) => /^MLR\d+/.test(routine));
-            const areAllMLRsSelected =
-              mlrRoutines.length > 0 &&
-              mlrRoutines.every((mlr) => selectedRoutines.includes(mlr));
+            {/* Select All MLRs Button */}
+            {(() => {
+              const mlrRoutines = sortedRoutines.filter((routine) => /^MLR\d+/.test(routine));
+              const areAllMLRsSelected =
+                mlrRoutines.length > 0 &&
+                mlrRoutines.every((mlr) => selectedRoutines.includes(mlr));
 
-            return (
+              return (
+                <motion.div
+                  key="select-all-mlrs"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Button
+                    onClick={handleSelectAllMLRs}
+                    size="sm"
+                    disabled={areAllMLRsSelected || mlrRoutines.length === 0}
+                    title={
+                      mlrRoutines.length === 0
+                        ? 'No MLRs available in this view'
+                        : areAllMLRsSelected
+                          ? 'All MLRs already selected'
+                          : 'Select all MLRs'
+                    }
+                    variant={areAllMLRsSelected || mlrRoutines.length === 0
+                      ? 'bg-primary text-white border-2 opacity-50 border-white'
+                      : 'bg-primary-900 text-primary border-2 border-primary'}
+                    className="font-bold border-2"
+                  >
+                    Select All MLRs
+                  </Button>
+                </motion.div>
+              );
+            })()}
+
+            {/* Deselect All */}
+            <motion.div
+              key="deselect-all"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+            >
               <Button
-                onClick={handleSelectAllMLRs}
+                onClick={() => setSelectedRoutines([])}
                 size="sm"
-                disabled={areAllMLRsSelected || mlrRoutines.length === 0}
-                title={
-                  mlrRoutines.length === 0
-                    ? 'No MLRs available in this view'
-                    : areAllMLRsSelected
-                    ? 'All MLRs already selected'
-                    : 'Select all MLRs'
-                }
-                variant={areAllMLRsSelected || mlrRoutines.length === 0
-                  ? 'bg-primary text-white border-2 opacity-50 border-secondary'
-                  : 'bg-primary-900 text-primary border-2 border-primary'
-                }
-                className={cn(
-                  'font-bold border-2',
-                )}
+                disabled={selectedRoutines.length === 0}
+                variant={selectedRoutines.length === 0
+                  ? 'bg-muted-300 text-white opacity-50 cursor-not-allowed'
+                  : 'bg-muted-800 text-text border-2 border-secondary'}
+                className="font-bold border-2"
               >
-                Select All MLRs
+                Deselect All
               </Button>
-            );
-          })()}
-        </div>
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+        <label className={cn(typography.weight.bold, 'text-text block mb-2')}>
+          Quick Select:
+        </label>
+        {/* Animated Routine Buttons */}
+        <motion.div layout className="flex flex-wrap gap-2">
+          <AnimatePresence initial={false}>
+            {sortedRoutines.map((routine, index) => {
+              const isSelected = selectedRoutines.includes(routine);
+              const isMLR = /^MLR\d+/.test(routine);
 
-        {/* Routine Buttons */}
-        <div className="flex flex-wrap gap-2">
-          {sortedRoutines.map((routine, index) => {
-            const isSelected = selectedRoutines.includes(routine);
-            const isMLR = /^MLR\d+/.test(routine);
-            
-            return (
-              <Button
-                key={`${routine}-${index}`}
-                onClick={() => handleClick(routine)}
-                size="sm"
-                variant={`${isSelected 
-                  ? isMLR 
-                    ? 'text-white bg-primary focus:ring-primary'
-                    : 'text-white bg-secondary focus:ring-secondary'
-                  : isMLR
-                    ? 'text-white bg-primary-800 border-2 border-primary'
-                    : 'text-white bg-secondary-800 border-2 border-secondary'
-                } focus:ring-2 font-medium`}
-              >
-                {routine}
-              </Button>
-            );
-          })}
-        </div>
-      </div>
+              return (
+                <motion.div
+                  key={`${routine}-${index}`}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.2 }}
+                  layout
+                >
+                  <Button
+                    onClick={() => handleClick(routine)}
+                    size="sm"
+                    variant={`${isSelected
+                      ? isMLR
+                        ? 'text-white bg-primary focus:ring-primary'
+                        : 'text-white bg-secondary focus:ring-secondary'
+                      : isMLR
+                        ? 'text-white bg-primary-800 border-2 border-primary'
+                        : 'text-white bg-secondary-800 border-2 border-secondary'
+                    } focus:ring-2 font-medium`}
+                  >
+                    {routine}
+                  </Button>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
