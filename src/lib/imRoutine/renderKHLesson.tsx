@@ -4,8 +4,14 @@ import { Text } from '@/components/ui/typography/Text';
 import { cn } from '@/lib/utils';
 import type { Lesson } from '@/components/features/imRoutine/LessonDetailView';
 import { NoRoutineCard } from '@/components/features/imRoutine/NoRoutineCard';
+import { RoutineBadge } from '@/components/features/imRoutine/RoutineBadge';
 
-export function renderKHLesson(lesson: Lesson, selectedRoutines: string[]) {
+export function renderKHLesson(
+  lesson: Lesson,
+  selectedRoutines: string[],
+  isSelected: boolean,
+  curriculum: 'ILC' | 'Kendall Hunt'
+) {
   const hasSelected = lesson.activities.some((activity) =>
     activity.routines.some((r) => selectedRoutines.includes(r.trim()))
   );
@@ -17,8 +23,9 @@ export function renderKHLesson(lesson: Lesson, selectedRoutines: string[]) {
   return (
     <Card
       className={cn(
-        'transition-all duration-150 border-2',
-        'bg-background border-muted'
+        'transition-all duration-150',
+        isSelected ? 'border-4 border-primary' : 'border-2 border-muted',
+        'bg-background'
       )}
     >
       <Heading
@@ -28,13 +35,13 @@ export function renderKHLesson(lesson: Lesson, selectedRoutines: string[]) {
         Lesson {lesson.lessonNumber}
       </Heading>
 
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
-        {lesson.activities
-          .filter((activity) =>
-            activity.routines.some((r) => selectedRoutines.includes(r.trim()))
-          )
-          .map((activity) => (
-            <div key={activity.activityNumber} className="p-4 rounded-lg bg-surface border-2 border-border">
+      <div className="space-y-4">
+        {lesson.activities.map((activity, i) => {
+          const hasSelectedRoutines = activity.routines.some(r => selectedRoutines.includes(r));
+          if (!hasSelectedRoutines) return null;
+
+          return (
+            <div key={i} className="space-y-2">
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <Text size="lg" className="font-bold text-text">
@@ -42,9 +49,10 @@ export function renderKHLesson(lesson: Lesson, selectedRoutines: string[]) {
                       ? 'Warm Up'
                       : `Activity ${activity.activityNumber}`}
                     {activity.isWarmUp && (
-                      <span className="ml-2 text-[10px] bg-primary text-white px-2 py-0.5 rounded">
-                        Warm Up
-                      </span>
+                      <></>
+                      // <span className="ml-2 text-[10px] bg-primary text-white px-2 py-0.5 rounded">
+                      //   Warm Up
+                      // </span>
                     )}
                   </Text>
                   {activity.activityTitle && (
@@ -56,24 +64,20 @@ export function renderKHLesson(lesson: Lesson, selectedRoutines: string[]) {
               </div>
               <div className="flex flex-wrap gap-2">
                 {activity.routines
-                  .filter((r) => selectedRoutines.includes(r.trim()))
-                  .map((routine, i) => {
-                    const isMLR = /^MLR\d+/.test(routine);
-                    return (
-                      <span
-                        key={i}
-                        className={cn(
-                          'text-[10px] font-medium px-2 py-0.5 rounded',
-                          isMLR ? 'bg-primary text-white' : 'bg-secondary text-white'
-                        )}
-                      >
-                        {routine}
-                      </span>
-                    );
-                  })}
+                  .filter(routine => selectedRoutines.includes(routine))
+                  .map((routine, i) => (
+                    <RoutineBadge
+                      key={i}
+                      routine={routine}
+                      grade={lesson.grade}
+                      unit={lesson.unit}
+                      curriculum={curriculum}
+                    />
+                  ))}
               </div>
             </div>
-          ))}
+          );
+        })}
       </div>
     </Card>
   );

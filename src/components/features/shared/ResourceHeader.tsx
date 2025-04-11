@@ -58,7 +58,7 @@ export function ResourceHeader<T extends Record<string, unknown>>({
         <Button 
           disabled={page === 1} 
           onClick={() => setPage(page - 1)}
-          variant="secondary"
+          // variant="secondary"
           size="md"
         >
           ⬅️ Previous
@@ -69,7 +69,7 @@ export function ResourceHeader<T extends Record<string, unknown>>({
         <Button 
           disabled={page * limit >= total} 
           onClick={() => setPage(page + 1)}
-          variant="secondary"
+          // variant="secondary"
           size="md"
         >
           Next ➡️

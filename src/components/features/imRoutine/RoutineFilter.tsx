@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 // import { Text } from '@/components/ui/typography/Text';
 import { typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CheckIcon } from '@heroicons/react/24/solid';
 
 type RoutineFilterProps = {
   allRoutines: string[];
@@ -22,20 +23,17 @@ export function RoutineFilter({
   allRoutines,
   selectedRoutines,
   setSelectedRoutines,
-  selectedLesson,
-  lessonRoutines,
-  onLessonSelected,
   version,
   setVersion,
+  // Intentionally unused props
+  selectedLesson: _selectedLesson,
+  lessonRoutines: _lessonRoutines,
+  onLessonSelected: _onLessonSelected,
 }: RoutineFilterProps) {
-  const routinesToShow = selectedLesson && lessonRoutines ? lessonRoutines : allRoutines;
-
-  if (selectedLesson && onLessonSelected) {
-    onLessonSelected();
-  }
-
+  const [hasManuallyFiltered, setHasManuallyFiltered] = useState(false);
+  
   // Sort routines to display MLR routines first
-  const sortedRoutines = routinesToShow.sort((a, b) => {
+  const sortedRoutines = allRoutines.sort((a, b) => {
     const isMLRa = /^MLR\d+/.test(a);
     const isMLRb = /^MLR\d+/.test(b);
     if (isMLRa === isMLRb) return 0;
@@ -43,6 +41,12 @@ export function RoutineFilter({
   });
 
   const handleClick = (routine: string) => {
+    if (!hasManuallyFiltered) {
+      setHasManuallyFiltered(true);
+      setSelectedRoutines([routine]);
+      return;
+    }
+
     if (selectedRoutines.includes(routine)) {
       setSelectedRoutines(selectedRoutines.filter((r) => r !== routine));
     } else {
@@ -51,6 +55,7 @@ export function RoutineFilter({
   };
 
   const handleSelectAllMLRs = () => {
+    setHasManuallyFiltered(true);
     const mlrRoutines = sortedRoutines.filter((routine) => /^MLR\d+/.test(routine));
     setSelectedRoutines(mlrRoutines);
   };
@@ -58,27 +63,34 @@ export function RoutineFilter({
   const handleVersionChange = (newVersion: 'KH' | 'ILC') => {
     setVersion(newVersion);
     setSelectedRoutines([]); // Reset selected routines when changing versions
+    setHasManuallyFiltered(false);
   };
 
   return (
     <div className="space-y-6">
       {/* Curriculum Version Toggle */}
       <div>
-        <label className={cn(typography.weight.bold, 'text-text mb-2 block')}>
+        <motion.label
+          layout
+          className={cn(typography.weight.bold, 'text-text block mb-2')}
+        >
           Currently Viewing:
-        </label>
+        </motion.label>
+
         <div className="flex gap-2">
           <Button
             onClick={() => handleVersionChange('KH')}
             size="sm"
-            variant={version === 'KH' ? 'text-white bg-secondary font-bold' : 'text-secondary border-2 border-secondary font-bold'}
+            intent="secondary"
+            appearance={version === 'KH' ? 'solid' : 'alt'}
           >
             Kendall Hunt
           </Button>
           <Button
             onClick={() => handleVersionChange('ILC')}
             size="sm"
-            variant={version === 'ILC' ? 'text-white bg-primary font-bold' : 'text-primary border-2 border-primary font-bold'}
+            intent="primary"
+            appearance={version === 'ILC' ? 'solid' : 'alt'}
           >
             ILC
           </Button>
@@ -87,10 +99,12 @@ export function RoutineFilter({
 
       {/* Routine Filters */}
       <motion.div layout>
-        <label className={cn(typography.weight.bold, 'text-text block mb-2')}>
-          Filter Routines:
-        </label>
-
+        <motion.label
+          layout
+          className={cn(typography.weight.bold, 'text-text block mb-2')}
+        >
+          Filter All:
+        </motion.label>
         {/* Filter Actions */}
         <motion.div layout className="flex flex-wrap gap-2 mb-6">
           <AnimatePresence mode="popLayout">
@@ -103,15 +117,22 @@ export function RoutineFilter({
                 transition={{ duration: 0.2 }}
               >
                 <Button
-                  onClick={() => setSelectedRoutines(sortedRoutines)}
+                  onClick={() => {
+                    setHasManuallyFiltered(true);
+                    setSelectedRoutines(sortedRoutines);
+                  }}
                   size="sm"
-                  disabled={selectedRoutines.length === sortedRoutines.length}
-                  variant={selectedRoutines.length === sortedRoutines.length
-                    ? 'bg-secondary text-white opacity-50 cursor-not-allowed'
-                    : 'bg-muted-700 text-text border-2 border-secondary'}
-                  className="font-bold border-2"
+                  disabled={selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered}
+                  intent="secondary"
+                  appearance={selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered ? 'alt' : 'solid'}
                 >
-                  Select All Routines
+                  <span className="inline-flex items-center gap-2">
+                    {selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered && (
+                      // <CheckIcon className="h-4 w-4 shrink-0 text-white" />
+                      <CheckIcon className="w-4 h-4 min-w-4 min-h-4 text-white align-middle" />
+                    )}
+                    <span>Select All Routines</span>
+                  </span>
                 </Button>
               </motion.div>
             )}
@@ -134,20 +155,23 @@ export function RoutineFilter({
                   <Button
                     onClick={handleSelectAllMLRs}
                     size="sm"
-                    disabled={areAllMLRsSelected || mlrRoutines.length === 0}
+                    disabled={areAllMLRsSelected && hasManuallyFiltered}
                     title={
                       mlrRoutines.length === 0
                         ? 'No MLRs available in this view'
-                        : areAllMLRsSelected
+                        : areAllMLRsSelected && hasManuallyFiltered
                           ? 'All MLRs already selected'
                           : 'Select all MLRs'
                     }
-                    variant={areAllMLRsSelected || mlrRoutines.length === 0
-                      ? 'bg-primary text-white border-2 opacity-50 border-white'
-                      : 'bg-primary-900 text-primary border-2 border-primary'}
-                    className="font-bold border-2"
+                    intent="primary"
+                    appearance={areAllMLRsSelected && hasManuallyFiltered ? 'alt' : 'solid'}
                   >
-                    Select All MLRs
+                    <span className="inline-flex items-center gap-2">
+                      {areAllMLRsSelected && hasManuallyFiltered && (
+                        <CheckIcon className="h-4 w-4 shrink-0 text-white" />
+                      )}
+                      <span>Select All MLRs</span>
+                    </span>
                   </Button>
                 </motion.div>
               );
@@ -162,22 +186,28 @@ export function RoutineFilter({
               transition={{ duration: 0.2 }}
             >
               <Button
-                onClick={() => setSelectedRoutines([])}
+                onClick={() => {
+                  setHasManuallyFiltered(true);
+                  setSelectedRoutines([]);
+                }}
                 size="sm"
                 disabled={selectedRoutines.length === 0}
-                variant={selectedRoutines.length === 0
-                  ? 'bg-muted-300 text-white opacity-50 cursor-not-allowed'
-                  : 'bg-muted-800 text-text border-2 border-secondary'}
-                className="font-bold border-2"
+                intent="secondary"
+                appearance={selectedRoutines.length === 0 ? 'alt' : 'solid'}
               >
-                Deselect All
+                <span className="inline-flex items-center gap-2">
+                  <span>Deselect All</span>
+                </span>
               </Button>
             </motion.div>
           </AnimatePresence>
         </motion.div>
-        <label className={cn(typography.weight.bold, 'text-text block mb-2')}>
-          Quick Select:
-        </label>
+        <motion.label
+          layout
+          className={cn(typography.weight.bold, 'text-text block mb-2')}
+        >
+          Filter Routines:
+        </motion.label>
         {/* Animated Routine Buttons */}
         <motion.div layout className="flex flex-wrap gap-2">
           <AnimatePresence initial={false}>
@@ -197,16 +227,20 @@ export function RoutineFilter({
                   <Button
                     onClick={() => handleClick(routine)}
                     size="sm"
-                    variant={`${isSelected
-                      ? isMLR
-                        ? 'text-white bg-primary focus:ring-primary'
-                        : 'text-white bg-secondary focus:ring-secondary'
-                      : isMLR
-                        ? 'text-white bg-primary-800 border-2 border-primary'
-                        : 'text-white bg-secondary-800 border-2 border-secondary'
-                    } focus:ring-2 font-medium`}
+                    intent={isMLR ? 'primary' : 'secondary'}
+                    appearance={
+                      isSelected && hasManuallyFiltered
+                        ? 'solid'
+                        : 'alt'
+                    }
+                    className="justify-start text-left"
                   >
-                    {routine}
+                    <span className="inline-flex items-center gap-2">
+                      {isSelected && hasManuallyFiltered && (
+                        <CheckIcon className="h-4 w-4 shrink-0 text-white" />
+                      )}
+                      <span>{routine}</span>
+                    </span>
                   </Button>
                 </motion.div>
               );

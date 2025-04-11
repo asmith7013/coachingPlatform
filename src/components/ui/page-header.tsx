@@ -93,7 +93,7 @@ export function PageHeader({
             <span key={index} className={cn(index > 0 && actionItemGap)}>
               <Button
                 onClick={action.onClick}
-                variant={action.variant || 'secondary'}
+                // variant={action.variant || 'secondary'}
                 className={action.className}
               >
                 {action.icon && (

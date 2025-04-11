@@ -159,7 +159,7 @@ export default function LookForsWrapper() {
               </div>
               <Button
                 onClick={() => lookFor._id && confirmDeleteLookFor(lookFor._id)}
-                variant="danger"
+                // variant="danger"
                 size="sm"
               >
                 🗑️ Delete

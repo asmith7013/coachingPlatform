@@ -33,15 +33,25 @@ export default function IMRoutinesPage() {
     return version === "ILC" ? ILCData : KHData;
   }, [version, selectedGrade]);
 
+  // Inject curriculum into each lesson
+  const routinesWithCurriculum = useMemo(() => {
+    if (!version) return [];
+    const curriculumLabel: 'ILC' | 'Kendall Hunt' = version === 'ILC' ? 'ILC' : 'Kendall Hunt';
+    return routinesData.map((lesson) => ({
+      ...lesson,
+      curriculum: curriculumLabel,
+    }));
+  }, [routinesData, version]);
+
   const allRoutines = useMemo(() => {
     const set = new Set<string>();
-    routinesData.forEach((lesson) =>
+    routinesWithCurriculum.forEach((lesson) =>
       lesson.activities.forEach((act) =>
         act.routines.forEach((r) => set.add(r.trim()))
       )
     );
     return Array.from(set).sort();
-  }, [routinesData]);
+  }, [routinesWithCurriculum]);
 
   useEffect(() => {
     if (allRoutines.length > 0) {
@@ -77,17 +87,17 @@ export default function IMRoutinesPage() {
     if (!selectedGrade) return [];
     return Array.from(
       new Set(
-        routinesData
+        routinesWithCurriculum
           .filter((r) => !selectedGrade || r.grade === selectedGrade)
           .map((r) => r.unit)
       )
     ).sort();
-  }, [routinesData, selectedGrade]);
+  }, [routinesWithCurriculum, selectedGrade]);
 
   const lessons = useMemo(() => {
     return Array.from(
       new Set(
-        routinesData
+        routinesWithCurriculum
           .filter(
             (r) =>
               (!selectedGrade || r.grade === selectedGrade) &&
@@ -96,27 +106,24 @@ export default function IMRoutinesPage() {
           .map((r) => r.lessonNumber)
       )
     ).sort((a, b) => Number(a) - Number(b));
-  }, [routinesData, selectedGrade, selectedUnit]);
+  }, [routinesWithCurriculum, selectedGrade, selectedUnit]);
 
   const totalLessons = useMemo(() => {
-    return routinesData.filter(
+    return routinesWithCurriculum.filter(
       (r) => r.grade === selectedGrade && r.unit === selectedUnit
     ).length;
-  }, [routinesData, selectedGrade, selectedUnit]);
+  }, [routinesWithCurriculum, selectedGrade, selectedUnit]);
 
   // Filter lessons – if a lesson is selected, only return that lesson.
   const filteredLessons = useMemo(() => {
-    const lessons = routinesData.filter(
+    return routinesWithCurriculum.filter(
       (r) => r.grade === selectedGrade && r.unit === selectedUnit
     );
-    return selectedLesson
-      ? lessons.filter((l) => l.lessonNumber === selectedLesson)
-      : lessons;
-  }, [routinesData, selectedGrade, selectedUnit, selectedLesson]);
+  }, [routinesWithCurriculum, selectedGrade, selectedUnit]);
 
   // When a lesson is selected, aggregate its routines.
   const lessonRoutines = selectedLesson
-    ? routinesData.find(
+    ? routinesWithCurriculum.find(
         (r) =>
           r.grade === selectedGrade &&
           r.unit === selectedUnit &&
@@ -188,11 +195,16 @@ export default function IMRoutinesPage() {
               lessons={lessons}
             />
           </div>
-          {selectedGrade && selectedUnit ? (
+          {selectedGrade && selectedUnit && version ? (
             <LessonDetailView
               lessonsData={filteredLessons}
               selectedRoutines={selectedRoutines}
-              renderLesson={renderLesson}
+              selectedLesson={selectedLesson}
+              setSelectedLesson={setSelectedLesson}
+              renderLesson={(lesson, selectedRoutines, isSelected) =>
+                renderLesson(lesson, selectedRoutines, isSelected, version === 'ILC' ? 'ILC' : 'Kendall Hunt')
+              }
+              curriculum={version === 'ILC' ? 'ILC' : 'Kendall Hunt'}
             />
           ) : (
             <Text className={cn(typography.text.base, 'text-text', 'italic')}>
@@ -204,16 +216,18 @@ export default function IMRoutinesPage() {
         {/* Sidebar Filter Area (Right Column) */}
         <div className="md:col-span-1">
           <div className="sticky top-4">
-            <RoutineFilter
-              allRoutines={allRoutines}
-              selectedRoutines={selectedRoutines}
-              setSelectedRoutines={setSelectedRoutines}
-              selectedLesson={selectedLesson}
-              lessonRoutines={lessonRoutines}
-              onLessonSelected={handleLessonSelected}
-              version={version!}
-              setVersion={setVersion}
-            />
+            {version && (
+              <RoutineFilter
+                allRoutines={allRoutines}
+                selectedRoutines={selectedRoutines}
+                setSelectedRoutines={setSelectedRoutines}
+                selectedLesson={selectedLesson}
+                lessonRoutines={lessonRoutines}
+                onLessonSelected={handleLessonSelected}
+                version={version}
+                setVersion={setVersion}
+              />
+            )}
           </div>
         </div>
       </div>

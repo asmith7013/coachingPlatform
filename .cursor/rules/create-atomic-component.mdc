@@ -70,7 +70,7 @@ alwaysApply: false
 │       └── page-header.tsx
 
 	3. When customizing atomic components, use props like:
-		•	variant="primary"
+		<!-- •	variant="primary" -->
 	•	size="md"
 	•	These map to values in lib/ui/tokens.ts and should be used instead of hardcoded Tailwind utility strings.
 
@@ -99,7 +99,9 @@ alwaysApply: false
 </button>
 
 // ✅ After:
-<Button variant="primary" size="md">
+<Button 
+<!-- variant="primary"  -->
+size="md">
   Submit
 </Button>
 

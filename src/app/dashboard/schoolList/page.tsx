@@ -111,7 +111,7 @@ export default function SchoolList() {
               </div>
               <Button
                 onClick={() => school._id && confirmDeleteSchool(school._id)}
-                variant="danger"
+                // variant="danger"
                 size="sm"
               >
                 🗑️ Delete

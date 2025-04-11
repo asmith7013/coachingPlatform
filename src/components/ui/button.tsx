@@ -1,55 +1,142 @@
 import { cn } from '@/lib/utils'
-import { sizeVariants } from '@/lib/ui/tokens'
-import type { SizeVariant } from '@/lib/ui/tokens'
+import { tv } from 'tailwind-variants'
+import {
+  sizeVariant,
+  fullWidthVariant,
+  radiusVariant,
+  shadowVariant,
+  disabledVariant,
+  loadingVariant,
+} from '@/lib/ui/sharedVariants'
+// import type { SizeVariant, Shadow } from '@/lib/ui/tokens'
+// import { defaultBooleanVariant } from '@/lib/ui/sharedVariants'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: string // Accept any string as a class for variant
-  size?: SizeVariant
-  isLoading?: boolean
-  className?: string
+  loading?: boolean;
+  disabled?: boolean;
+  fullWidth?: boolean;
+  intent?: 'primary' | 'secondary';
+  appearance?: 'solid' | 'alt' | 'outline';
+  size?: 'md' | 'sm' | 'lg' | 'xl';
+  shadow?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  className?: string;
 }
 
-const defaultVariants = {
-  primary: 'bg-primary text-white hover:bg-primary-hover focus:ring-2 focus:ring-primary',
-  secondary: 'bg-surface text-text hover:bg-surface-hover border border-outline',
-  danger: 'bg-danger text-white hover:bg-danger-hover focus:ring-2 focus:ring-danger',
-  success: 'bg-success text-white hover:bg-success-hover focus:ring-2 focus:ring-success',
-  outline: 'bg-transparent border border-outline text-text hover:bg-surface-hover',
-  ghost: 'bg-transparent text-text hover:bg-surface-hover',
-}
+const button = tv({
+  base: 'inline-flex items-center justify-center font-semibold transition-colors focus:outline-none cursor-pointer',
+  variants: {
+    ...sizeVariant.variants,
+    ...fullWidthVariant.variants,
+    ...radiusVariant.variants,
+    ...shadowVariant.variants,
+    ...disabledVariant.variants,
+    ...loadingVariant.variants,
+    intent: {
+      primary: '',
+      secondary: '',
+    },
+    appearance: {
+      solid: '',
+      alt: '',
+      outline: '',
+    },
+    loading: {
+      true: 'cursor-wait',
+      false: '',
+    },
+    disabled: {
+      true: 'opacity-50 pointer-events-none',
+      false: '',
+    },
+    fullWidth: {
+      true: 'w-full',
+      false: '',
+    },
+  },
+  compoundVariants: [
+    {
+      intent: 'primary',
+      appearance: 'solid',
+      className: 'bg-primary text-white hover:bg-primary-600',
+    },
+    {
+      intent: 'primary',
+      appearance: 'alt',
+      className: 'bg-primary-800 text-white hover:bg-primary-700',
+    },
+    {
+      intent: 'primary',
+      appearance: 'outline',
+      className: 'bg-white text-primary border-2 border-primary hover:bg-primary-600',
+    },
+    {
+      intent: 'secondary',
+      appearance: 'solid',
+      className: 'bg-secondary text-white hover:bg-secondary-600',
+    },
+    {
+      intent: 'secondary',
+      appearance: 'alt',
+      className: 'bg-secondary-800 text-white hover:bg-secondary-700',
+    },
+    {
+      intent: 'secondary',
+      appearance: 'outline',
+      className: 'bg-white text-secondary border-2 border-secondary hover:bg-secondary-600',
+    },
+  ],
+  defaultVariants: {
+    intent: 'primary',
+    appearance: 'solid',
+    size: 'md',
+    fullWidth: false,
+    radius: 'md',
+    shadow: 'sm',
+    disabled: false,
+    loading: false,
+  },
+})
 
-export const Button = ({
-  variant = defaultVariants.primary, // Default variant (you can pass any Tailwind classes or use predefined variants)
+export const Button: React.FC<ButtonProps> = ({
+  intent = 'primary',
+  appearance = 'solid',
   size = 'md',
-  isLoading,
+  shadow = 'sm',
+  loading = false,
+  disabled = false,
+  fullWidth = false,
   className,
   children,
   ...props
-}: ButtonProps) => {
-  // If variant is a key in defaultVariants, use that variant's classes
-  const variantClasses = defaultVariants[variant as keyof typeof defaultVariants] || variant
-
+}) => {
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center rounded-md transition-colors',
-        'cursor-pointer disabled:cursor-not-allowed',
-        sizeVariants[size],
-        variantClasses, // Use either predefined variant or custom classes
-        className,
-        isLoading && 'opacity-50'
+        button({
+          intent,
+          appearance,
+          size,
+          shadow,
+          loading,
+          disabled,
+          fullWidth,
+        }),
+        className
       )}
-      disabled={isLoading}
+      disabled={loading || disabled}
+      aria-busy={loading}
       {...props}
     >
-      {isLoading ? (
-        <div className="flex items-center space-x-2">
+      {loading ? (
+        <div className="flex items-center justify-center space-x-2">
           <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-          <span>Loading...</span>
+          <span className="invisible">{children}</span>
         </div>
       ) : (
         children
       )}
     </button>
-  )
-}
+  );
+};
+
+export default Button;

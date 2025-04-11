@@ -171,7 +171,9 @@ export function GenericAddForm<T extends Record<string, unknown>>({
           ))}
         </div>
         <div className="w-full">
-          <Button type="submit" variant="primary" className="w-full">
+          <Button type="submit" 
+          // variant="primary" 
+          className="w-full">
             {submitLabel}
           </Button>
         </div>

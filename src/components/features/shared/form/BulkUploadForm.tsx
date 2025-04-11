@@ -78,7 +78,7 @@ export default function BulkUploadForm({
           <Button
             onClick={handleUpload}
             disabled={!file || isUploading || disabled}
-            variant="primary"
+            // variant="primary"
             size="md"
             className="w-full"
           >

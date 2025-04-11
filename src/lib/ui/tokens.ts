@@ -210,3 +210,66 @@ export const padding = {
 };
 
 export type PaddingSize = keyof typeof padding.x;
+
+// 🚫 Disabled States
+export const disabledStates = {
+  true: 'opacity-50 pointer-events-none',
+  false: '',
+};
+
+export type DisabledState = keyof typeof disabledStates;
+
+// 🕓 Loading Cursor
+export const loadingStates = {
+  true: 'cursor-wait',
+  false: '',
+};
+
+export type LoadingState = keyof typeof loadingStates;
+
+// 🎨 Text Color (non-intent)
+export const textColors = {
+  default: 'text-gray-900',
+  muted: 'text-muted-foreground',
+  accent: 'text-primary',
+  danger: 'text-red-600',
+};
+
+export type TextColor = keyof typeof textColors;
+
+// 🧭 Alignment for layouts
+export const alignments = {
+  start: 'items-start justify-start',
+  center: 'items-center justify-center',
+  end: 'items-end justify-end',
+  between: 'justify-between',
+};
+
+export type Alignment = keyof typeof alignments;
+
+// 📏 Common gap variants
+export const gaps = {
+  none: 'gap-0',
+  sm: 'gap-2',
+  md: 'gap-4',
+  lg: 'gap-6',
+};
+
+export type Gap = keyof typeof gaps;
+
+// 📦 Padding (flat variant style)
+export const paddings = {
+  none: 'p-0',
+  sm: spacing.sm,
+  md: spacing.md,
+  lg: spacing.lg,
+};
+
+export type Padding = keyof typeof paddings;
+
+export type DefaultSizeVariant = { size: SizeVariant };
+export type DefaultShadowVariant = { shadow: Shadow };
+export type DefaultRadiusVariant = { radius: Radius };
+export type DefaultFullWidthVariant = { fullWidth: boolean };
+export type DefaultDisabledVariant = { disabled: boolean };
+export type DefaultLoadingVariant = { loading: boolean };

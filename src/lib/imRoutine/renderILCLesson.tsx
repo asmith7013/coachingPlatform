@@ -3,8 +3,14 @@ import { Heading } from '@/components/ui/typography/Heading';
 import { cn } from '@/lib/utils';
 import type { Lesson } from '@/components/features/imRoutine/LessonDetailView';
 import { NoRoutineCard } from '@/components/features/imRoutine/NoRoutineCard';
+import { RoutineBadge } from '@/components/features/imRoutine/RoutineBadge';
 
-export function renderILCLesson(lesson: Lesson, selectedRoutines: string[]) {
+export function renderILCLesson(
+  lesson: Lesson,
+  selectedRoutines: string[],
+  isSelected: boolean,
+  curriculum: 'ILC' | 'Kendall Hunt'
+) {
   // Get unique routines across all activities
   const routines = Array.from(
     new Set(lesson.activities.flatMap((act) => act.routines))
@@ -16,13 +22,14 @@ export function renderILCLesson(lesson: Lesson, selectedRoutines: string[]) {
     return <NoRoutineCard lessonNumber={lesson.lessonNumber} />;
   }
 
+  const cardClasses = cn(
+    'transition-all duration-150',
+    isSelected ? 'border-4 border-primary' : 'border-2 border-muted',
+    'bg-background'
+  );
+
   return (
-    <Card
-      className={cn(
-        'transition-all duration-150 border-2',
-        'bg-background border-muted'
-      )}
-    >
+    <Card className={cardClasses}>
       <Heading
         level="h3"
         className="mb-2"
@@ -30,19 +37,27 @@ export function renderILCLesson(lesson: Lesson, selectedRoutines: string[]) {
         Lesson {lesson.lessonNumber}
       </Heading>
 
-      <div className="flex flex-wrap gap-2">
-        {routines.map((routine, i) => {
-          const isMLR = /^MLR\d+/.test(routine);
+      <div className="space-y-4">
+        {lesson.activities.map((activity, i) => {
+          const hasSelectedRoutines = activity.routines.some(r => selectedRoutines.includes(r));
+          if (!hasSelectedRoutines) return null;
+
           return (
-            <span
-              key={i}
-              className={cn(
-                'text-[10px] font-medium px-2 py-0.5 rounded',
-                isMLR ? 'bg-primary text-white' : 'bg-secondary text-white'
-              )}
-            >
-              {routine}
-            </span>
+            <div key={i} className="space-y-2">
+              <div className="flex flex-wrap gap-2">
+                {activity.routines
+                  .filter(routine => selectedRoutines.includes(routine))
+                  .map((routine, i) => (
+                    <RoutineBadge
+                      key={i}
+                      routine={routine}
+                      grade={lesson.grade}
+                      unit={lesson.unit}
+                      curriculum={curriculum}
+                    />
+                  ))}
+              </div>
+            </div>
           );
         })}
       </div>

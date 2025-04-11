@@ -102,7 +102,7 @@ export default function NYCPSStaffList() {
               </div>
               <Button
                 onClick={() => member._id && confirmDeleteStaff(member._id)}
-                variant="danger"
+                // variant="danger"
                 size="sm"
               >
                 🗑️ Delete
