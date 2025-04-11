@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckIcon } from '@heroicons/react/24/solid';
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 type RoutineFilterProps = {
   allRoutines: string[];
@@ -127,7 +127,7 @@ export function RoutineFilter({
                   appearance={selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered ? 'alt' : 'solid'}
                 >
                   <span className="inline-flex items-center gap-2">
-                    {selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered && (
+                    {selectedRoutines.length !== sortedRoutines.length && hasManuallyFiltered && (
                       // <CheckIcon className="h-4 w-4 shrink-0 text-white" />
                       <CheckIcon className="w-4 h-4 min-w-4 min-h-4 text-white align-middle" />
                     )}
@@ -167,7 +167,7 @@ export function RoutineFilter({
                     appearance={areAllMLRsSelected && hasManuallyFiltered ? 'alt' : 'solid'}
                   >
                     <span className="inline-flex items-center gap-2">
-                      {areAllMLRsSelected && hasManuallyFiltered && (
+                      {!areAllMLRsSelected && hasManuallyFiltered && (
                         <CheckIcon className="h-4 w-4 shrink-0 text-white" />
                       )}
                       <span>Select All MLRs</span>
@@ -196,6 +196,9 @@ export function RoutineFilter({
                 appearance={selectedRoutines.length === 0 ? 'alt' : 'solid'}
               >
                 <span className="inline-flex items-center gap-2">
+                  {selectedRoutines.length > 0 && hasManuallyFiltered && (
+                    <XMarkIcon className="h-4 w-4 shrink-0 text-white" />
+                  )}
                   <span>Deselect All</span>
                 </span>
               </Button>

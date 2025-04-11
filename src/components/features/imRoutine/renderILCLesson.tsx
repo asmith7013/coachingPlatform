@@ -36,19 +36,23 @@ export function renderILCLesson(lesson: ILCLesson, selectedRoutines: string[]) {
       </Heading>
 
       {hasRoutines ? (
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {routines.map((routine, i) => {
             const isMLR = /^MLR\d+/.test(routine);
             return (
-              <span
+              <div
                 key={i}
-                className={cn(
-                  'text-[10px] font-medium px-2 py-0.5 rounded',
-                  isMLR ? 'bg-primary text-white' : 'bg-secondary text-white'
-                )}
+                className="p-4 rounded-md bg-surface border-2 border-outline flex items-center"
               >
-                {routine}
-              </span>
+                <span
+                  className={cn(
+                    'text-[10px] font-medium px-2 py-0.5 rounded',
+                    isMLR ? 'bg-primary text-white' : 'bg-secondary text-white'
+                  )}
+                >
+                  {routine}
+                </span>
+              </div>
             );
           })}
         </div>

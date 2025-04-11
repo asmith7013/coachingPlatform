@@ -23,45 +23,41 @@ export function renderKHLesson(lesson: KHLesson, selectedRoutines: string[]) {
   return (
     <Card
       className={cn(
-        'transition-all duration-150 border-2',
+        'p-6 border-2 shadow-sm space-y-4',
         hasSelected ? 'bg-background border-muted' : 'bg-surface border-surface'
       )}
     >
       <Heading
         level="h3"
-        className={cn('mb-4', !hasSelected && 'text-muted')}
+        className={cn('mb-2 text-primary', !hasSelected && 'text-muted')}
       >
         Lesson {lesson.lessonNumber}
       </Heading>
 
       {hasSelected ? (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface">
           {lesson.activities
             .filter((activity) =>
               activity.routines.some((r) => selectedRoutines.includes(r.trim()))
             )
             .map((activity) => (
-              <div key={activity.activityNumber} className="p-4 rounded-lg bg-background border border-outline">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <Text size="sm" className="font-medium">
-                      {activity.activityNumber === 'Warm Up'
-                        ? 'Warm Up'
-                        : `Activity ${activity.activityNumber}`}
-                      {activity.isWarmUp && (
-                        <span className="ml-2 text-[10px] bg-primary text-white px-2 py-0.5 rounded">
-                          Warm Up
-                        </span>
-                      )}
+              <div
+                key={activity.activityNumber}
+                className="p-4 rounded-lg border-2 border-outline bg-surface"
+              >
+                <div className="mb-2 space-y-1">
+                  <Text size="sm" className="font-medium text-text">
+                    {activity.activityNumber === 'Warm Up'
+                      ? 'Warm Up'
+                      : `Activity ${activity.activityNumber}`}
+                  </Text>
+                  {activity.activityTitle && (
+                    <Text size="sm" className="text-muted">
+                      {activity.activityTitle}
                     </Text>
-                    {activity.activityTitle && (
-                      <Text size="sm" className="text-muted">
-                        {activity.activityTitle}
-                      </Text>
-                    )}
-                  </div>
+                  )}
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mt-1">
                   {activity.routines
                     .filter((r) => selectedRoutines.includes(r.trim()))
                     .map((routine, i) => {
@@ -71,7 +67,9 @@ export function renderKHLesson(lesson: KHLesson, selectedRoutines: string[]) {
                           key={i}
                           className={cn(
                             'text-[10px] font-medium px-2 py-0.5 rounded',
-                            isMLR ? 'bg-primary text-white' : 'bg-secondary text-white'
+                            isMLR
+                              ? 'bg-primary text-white'
+                              : 'bg-secondary text-white'
                           )}
                         >
                           {routine}
