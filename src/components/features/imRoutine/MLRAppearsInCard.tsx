@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { RoutineBadge } from './RoutineBadge';
+// import { RoutineBadge } from './RoutineBadge';
 
 export type Lesson = {
   grade: string;
@@ -22,8 +22,14 @@ type Props = {
   curriculum: 'ILC' | 'Kendall Hunt';
 };
 
-export function MLRAppearsInCard({ selectedRoutines, lessonsData, onSelectLesson, curriculum }: Props) {
-  const mlrRoutines = selectedRoutines.filter((r) => /^MLR\d+/.test(r));
+export function MLRAppearsInCard({ selectedRoutines, lessonsData, onSelectLesson, curriculum: _curriculum }: Props) {
+  const mlrRoutines = selectedRoutines
+    .filter((r) => /^MLR\d+/.test(r))
+    .sort((a, b) => {
+      const numA = parseInt(a.match(/\d+/)?.[0] || '0', 10);
+      const numB = parseInt(b.match(/\d+/)?.[0] || '0', 10);
+      return numA - numB;
+    });
 
   if (mlrRoutines.length === 0 || mlrRoutines.length > 4) return null;
 
@@ -50,15 +56,16 @@ export function MLRAppearsInCard({ selectedRoutines, lessonsData, onSelectLesson
               transition={{ duration: 0.2 }}
               className="p-4 border-2 border-white rounded-md bg-primary space-y-2"
             >
-              <RoutineBadge
-                routine={routine}
-                grade={lessonsData[0].grade}
-                unit={lessonsData[0].unit}
-                curriculum={curriculum}
-              />
-
+                <span
+                className={cn(
+                    'text-[12px] font-bold px-2 py-0.5 rounded inline-block',
+                    'bg-white text-primary'
+                )}
+                >
+                    {routine}
+                </span>
               <div className="flex items-center flex-wrap gap-2 mt-1">
-                <span className="text-sm text-white font-bold">Appears in:</span>
+                <span className="text-sm text-white font-medium">Appears in:</span>
                 {matchingLessons.map((lessonNumber) => (
                   <motion.button
                     key={lessonNumber}

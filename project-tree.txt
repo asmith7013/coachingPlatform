@@ -71,7 +71,9 @@
 │   │   │   │   ├── GradeUnitLessonSelector.tsx
 │   │   │   │   ├── LessonCompactView.tsx
 │   │   │   │   ├── LessonDetailView.tsx
+│   │   │   │   ├── MLRAppearsInCard.tsx
 │   │   │   │   ├── NoRoutineCard.tsx
+│   │   │   │   ├── RoutineBadge.tsx
 │   │   │   │   ├── RoutineFilter.tsx
 │   │   │   │   ├── SharedLessonDetailView.tsx
 │   │   │   │   ├── renderILCLesson.tsx
@@ -155,13 +157,16 @@
 │   │   ├── hooks
 │   │   │   └── usePersistedCurriculumVersion.ts
 │   │   ├── imRoutine
+│   │   │   ├── getUnitURL.ts
 │   │   │   ├── renderILCLesson.tsx
 │   │   │   └── renderKHLesson.tsx
 │   │   ├── json
 │   │   │   ├── ILC_HS.json
 │   │   │   ├── ILC_routines.json
 │   │   │   ├── IMplementation.json
-│   │   │   └── KH_Routines.json
+│   │   │   ├── KH_Routines.json
+│   │   │   ├── alg1links.json
+│   │   │   └── page.txt
 │   │   ├── server-utils
 │   │   │   ├── bulkUpload.ts
 │   │   │   ├── crud.ts
@@ -176,12 +181,15 @@
 │   │   ├── ui
 │   │   │   ├── forms
 │   │   │   │   └── registry.ts
+│   │   │   ├── sharedVariants.ts
 │   │   │   ├── table-schema.ts
 │   │   │   ├── table-schemas
 │   │   │   │   └── school.ts
 │   │   │   ├── tokens
 │   │   │   │   └── colors.ts
-│   │   │   └── tokens.ts
+│   │   │   ├── tokens.ts
+│   │   │   └── utils
+│   │   │       └── variantHelpers.ts
 │   │   ├── ui-schema
 │   │   │   ├── constants
 │   │   │   │   ├── coachingLog.ts
@@ -260,4 +268,4 @@
 ├── tsconfig.json
 └── tsconfig.tsbuildinfo
 
-79 directories, 182 files
+80 directories, 189 files
