@@ -1,11 +1,12 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { tv } from 'tailwind-variants'
+import { tv, type VariantProps } from 'tailwind-variants'
 import {
-  sizeVariant,
   radiusVariant,
   disabledVariant,
+  textSizeVariant,
+  paddingVariant,
 } from '@/lib/ui/sharedVariants'
 import { FieldWrapper } from './FieldWrapper'
 import { Listbox } from '@headlessui/react'
@@ -22,8 +23,9 @@ interface BaseSelectProps {
   placeholder?: string;
   error?: string;
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
-  radius?: 'none' | 'sm' | 'md' | 'lg' | 'full';
+  textSize?: SelectVariants['textSize'];
+  padding?: SelectVariants['padding'];
+  radius?: SelectVariants['radius'];
   disabled?: boolean;
 }
 
@@ -42,20 +44,21 @@ interface MultiSelectProps extends BaseSelectProps {
 type SelectProps = SingleSelectProps | MultiSelectProps;
 
 // 🎨 Select style variants
-export const select = tv({
+const select = tv({
   slots: {
     trigger: [
-      'relative w-full cursor-default bg-white text-left outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600',
+      'relative w-full cursor-default bg-white text-left',
+      'outline-1 -outline-offset-1 outline-gray-300',
+      'focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600',
       'cursor-pointer disabled:cursor-not-allowed',
-      'px-3 py-2',
       'transition-all',
     ],
     options: [
-      'absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none',
-      'px-3 py-2',
+      'absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white',
+      'shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none',
     ],
     option: [
-      'relative cursor-default select-none py-2 pl-3 pr-9',
+      'relative cursor-default select-none',
     ],
     placeholder: [
       'block truncate text-gray-400 italic',
@@ -68,9 +71,10 @@ export const select = tv({
     ],
   },
   variants: {
-    ...sizeVariant.variants,
-    ...radiusVariant.variants,
-    ...disabledVariant.variants,
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding,
+    radius: radiusVariant.variants.radius,
+    disabled: disabledVariant.variants.disabled,
     error: {
       true: { trigger: 'outline-red-500 focus:outline-red-500' },
       false: {},
@@ -95,7 +99,8 @@ export const select = tv({
     },
   },
   defaultVariants: {
-    size: 'md',
+    textSize: 'base',
+    padding: 'md',
     radius: 'md',
     error: false,
     active: false,
@@ -104,11 +109,10 @@ export const select = tv({
   },
 });
 
+export type SelectVariants = VariantProps<typeof select>;
+
 // ✅ Export for atomic style use elsewhere
 export const selectStyles = select;
-
-// ✅ Export type for variant props
-export type SelectVariants = Parameters<typeof select>[0];
 
 export function Select({ 
   label, 
@@ -119,75 +123,59 @@ export function Select({
   placeholder = 'Select an option',
   className,
   multiple = false,
-  size = 'md',
-  radius = 'md',
+  textSize,
+  padding,
+  radius,
   disabled = false,
 }: SelectProps) {
-  const styles = select();
+  const styles = select({ textSize, padding, radius });
 
   return (
-    <FieldWrapper id="select" label={label} error={error}>
+    <FieldWrapper 
+      id="select" 
+      label={label} 
+      error={error}
+      textSize={textSize}
+      padding={padding}
+    >
       <Listbox value={value} onChange={onChange} multiple={multiple}>
         <div className="relative w-full">
           <Listbox.Button
             className={cn(
-              styles.trigger({
-                size,
-                radius,
-                error: !!error,
-                disabled,
-              }),
+              styles.trigger(),
               className
             )}
+            disabled={disabled}
           >
-            <span className={cn(
-              (!value || (Array.isArray(value) && value.length === 0))
-                ? styles.placeholder()
-                : styles.value()
-            )}>
-              {multiple 
-                ? `${(value as string[]).length} selected`
-                : value
-                  ? options.find(option => option.value === value)?.label
+            {typeof value === 'string' ? (
+              <span className={styles.value()}>
+                {options.find(option => option.value === value)?.label || placeholder}
+              </span>
+            ) : (
+              <span className={styles.value()}>
+                {value.length > 0
+                  ? value.map(v => options.find(option => option.value === v)?.label).join(', ')
                   : placeholder}
-            </span>
+              </span>
+            )}
           </Listbox.Button>
-          <Listbox.Options className={styles.options({ radius })}>
+          <Listbox.Options className={styles.options()}>
             {options.map((option) => (
               <Listbox.Option
                 key={option.value}
                 value={option.value}
-                className={({ active }) =>
-                  styles.option({ active })
-                }
+                className={({ active }) => cn(
+                  styles.option(),
+                  active ? 'bg-surface-hover' : ''
+                )}
               >
-                {({ selected, active }) => (
-                  <>
-                    <div className="flex items-center">
-                      {option.online !== undefined && (
-                        <span
-                          className={cn(
-                            'mr-2 h-2 w-2 rounded-full',
-                            option.online ? 'bg-green-400' : 'bg-gray-400'
-                          )}
-                        />
-                      )}
-                      <span className={styles.value({ selected })}>
-                        {option.label}
-                      </span>
-                    </div>
-                    {selected && (
-                      <span className={styles.checkIcon({ selected, activeSelected: active })}>
-                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </span>
-                    )}
-                  </>
+                {({ selected }) => (
+                  <span className={cn(
+                    styles.value(),
+                    selected ? 'font-semibold' : 'font-normal'
+                  )}>
+                    {option.label}
+                  </span>
                 )}
               </Listbox.Option>
             ))}

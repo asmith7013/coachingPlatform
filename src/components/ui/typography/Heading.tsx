@@ -1,13 +1,14 @@
 import { ElementType, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { headingVariants, type HeadingVariants } from '@/lib/ui/sharedVariants'
+import { headingVariants } from '@/lib/ui/sharedVariants'
+import type { HeadingVariantType } from '@/lib/ui/sharedVariants'
 
-type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+type HeadingLevel = NonNullable<HeadingVariantType['level']>
 
 interface HeadingProps extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'color'> {
   children: ReactNode;
-  level?: HeadingVariants['level'];
-  color?: HeadingVariants['color'];
+  level?: HeadingVariantType['level'];
+  color?: HeadingVariantType['color'];
   className?: string;
 }
 

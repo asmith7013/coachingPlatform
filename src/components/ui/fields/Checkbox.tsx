@@ -1,45 +1,55 @@
 import { cn } from '@/lib/utils'
-import { tv } from 'tailwind-variants'
+import { tv, type VariantProps } from 'tailwind-variants'
 import {
   radiusVariant,
   disabledVariant,
+  paddingVariant,
+  textSizeVariant,
 } from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 import { FieldWrapper } from './FieldWrapper'
 
 type CheckboxHTMLProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>;
 
-interface CheckboxProps extends CheckboxHTMLProps {
-  label?: string;
-  description?: string;
-  error?: string;
-  className?: string;
-  radius?: 'none' | 'sm' | 'md' | 'lg' | 'full';
-}
-
 // 🎨 Checkbox style variants
-export const checkbox = tv({
+const checkbox = tv({
   slots: {
+    root: [
+      'relative flex items-start',
+    ],
+    control: [
+      'flex h-6 items-center',
+    ],
     input: [
-      'h-4 w-4 border-gray-300 text-indigo-600',
-      'focus:ring-indigo-600',
+      'border border-surface-hover',
+      textColors.accent,
+      'focus:ring-2 focus:ring-primary focus:ring-offset-2',
       'cursor-pointer disabled:cursor-not-allowed',
       'transition-colors',
     ],
     description: [
-      'ml-3 text-sm leading-6 text-gray-600',
+      textColors.muted,
     ],
   },
   variants: {
-    ...radiusVariant.variants,
-    ...disabledVariant.variants,
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding,
+    radius: radiusVariant.variants.radius,
+    disabled: disabledVariant.variants.disabled,
     error: {
       true: {
-        input: 'border-red-500 text-red-500 focus:ring-red-500',
+        input: [
+          'border-danger',
+          'text-danger',
+          'focus:ring-danger',
+        ],
       },
       false: {},
     },
   },
   defaultVariants: {
+    textSize: 'base',
+    padding: 'md',
     radius: 'sm',
     error: false,
   },
@@ -49,27 +59,48 @@ export const checkbox = tv({
 export const checkboxStyles = checkbox;
 
 // ✅ Export type for variant props
-export type CheckboxVariants = Parameters<typeof checkbox>[0];
+export type CheckboxVariants = VariantProps<typeof checkbox>;
+
+interface CheckboxProps extends CheckboxHTMLProps {
+  label?: string;
+  description?: string;
+  error?: string;
+  textSize?: CheckboxVariants['textSize'];
+  padding?: CheckboxVariants['padding'];
+  radius?: CheckboxVariants['radius'];
+  disabled?: boolean;
+  className?: string;
+}
 
 export function Checkbox({
   label,
   description,
   error,
   className,
-  radius = 'sm',
+  textSize,
+  padding,
+  radius,
   disabled,
   ...props
 }: CheckboxProps) {
   const styles = checkbox({
+    textSize,
+    padding,
     radius,
-    error: !!error,
+    error: Boolean(error),
     disabled,
   });
 
   return (
-    <FieldWrapper id={props.id} label={label} error={error}>
-      <div className="relative flex items-start">
-        <div className="flex h-6 items-center">
+    <FieldWrapper 
+      id={props.id} 
+      label={label} 
+      error={error}
+      textSize={textSize}
+      padding={padding}
+    >
+      <div className={styles.root()}>
+        <div className={styles.control()}>
           <input
             type="checkbox"
             className={cn(styles.input(), className)}

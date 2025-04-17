@@ -1,44 +1,35 @@
 import { tv, type VariantProps } from 'tailwind-variants'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
+import { textSizeVariant, paddingVariant } from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 
 const tableSearch = tv({
   slots: {
     root: 'relative',
     input: [
       'w-full rounded-md border pl-10',
-      'text-text bg-background border-surface',
+      'bg-background border-surface',
+      textColors.default,
       'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
-      'placeholder:text-text-muted'
+      'placeholder:' + textColors.muted
     ],
-    icon: 'absolute left-3 top-1/2 -translate-y-1/2 text-text-muted'
+    icon: [
+      'absolute left-3 top-1/2 -translate-y-1/2',
+      textColors.muted
+    ]
   },
   variants: {
     textSize: {
-      sm: {
-        input: 'text-xs',
-        icon: 'size-4'
-      },
-      base: {
-        input: 'text-sm',
-        icon: 'size-5'
-      },
-      lg: {
-        input: 'text-base',
-        icon: 'size-6'
-      }
+      ...textSizeVariant.variants.textSize,
+      xs: { icon: 'size-4' },
+      sm: { icon: 'size-4' },
+      base: { icon: 'size-5' },
+      lg: { icon: 'size-6' },
+      xl: { icon: 'size-6' },
+      '2xl': { icon: 'size-6' }
     },
-    padding: {
-      sm: {
-        input: 'px-3 py-1'
-      },
-      md: {
-        input: 'px-3 py-1.5'
-      },
-      lg: {
-        input: 'px-4 py-2'
-      }
-    }
+    padding: paddingVariant.variants.padding
   },
   defaultVariants: {
     textSize: 'base',

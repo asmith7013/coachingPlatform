@@ -6,21 +6,9 @@ import { tv, type VariantProps } from 'tailwind-variants'
 import {
   radiusVariant,
   shadowVariant,
-  type RadiusVariant,
-  type ShadowVariant,
-} from '@/lib/ui/variants'
-import { gap } from '@/lib/ui/tokens'
-
-interface CardProps extends RadiusVariant, ShadowVariant {
-  className?: string;
-  children?: React.ReactNode;
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
-  padding?: keyof typeof gap;
-  border?: boolean;
-  variant?: 'default' | 'alt' | 'white' | 'transparent';
-  contentClassName?: string;
-}
+  paddingVariant,
+} from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 
 // 🎨 Card style variants
 export const card = tv({
@@ -29,23 +17,17 @@ export const card = tv({
       'divide-y divide-border',
     ],
     header: [
-      'text-primary',
+      textColors.default,
     ],
     content: [
-      'text-secondary',
+      textColors.muted,
     ],
     footer: [
-      'text-muted',
+      textColors.muted,
     ],
   },
   variants: {
-    padding: {
-      none: '',
-      sm: 'p-2',
-      md: 'p-4',
-      lg: 'p-6',
-      xl: 'p-8',
-    },
+    ...paddingVariant.variants,
     ...radiusVariant.variants,
     ...shadowVariant.variants,
     variant: {
@@ -59,19 +41,9 @@ export const card = tv({
       false: {},
     },
   },
-  compoundVariants: [
-    {
-      padding: 'md',
-      class: {
-        header: 'px-4 py-4 sm:px-6',
-        content: 'px-4 py-4 sm:p-6',
-        footer: 'px-4 py-2 sm:px-6',
-      },
-    },
-  ],
   defaultVariants: {
     padding: 'md',
-    rounded: 'md',
+    radius: 'md',
     variant: 'default',
     shadow: 'sm',
     border: false,
@@ -84,19 +56,27 @@ export const cardStyles = card;
 // ✅ Export type for variant props
 export type CardVariants = VariantProps<typeof card>;
 
+interface CardProps extends CardVariants {
+  className?: string;
+  children?: React.ReactNode;
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
+  contentClassName?: string;
+}
+
 export const Card = ({
   className,
   children,
   header,
   footer,
   padding = 'md',
-  rounded = 'md',
+  radius = 'md',
   border = false,
   variant = 'default',
   shadow = 'sm',
   contentClassName,
 }: CardProps) => {
-  const styles = card({ padding, rounded, variant, shadow, border });
+  const styles = card({ padding, radius, variant, shadow, border });
 
   return (
     <div className={cn(styles.root(), className)}>

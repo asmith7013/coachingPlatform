@@ -1,25 +1,23 @@
 import { ReactNode } from 'react'
 import { tv, type VariantProps } from 'tailwind-variants'
+import { textSizeVariant } from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 
 const tableError = tv({
   slots: {
     root: 'flex items-center justify-center p-8 bg-surface',
-    message: 'text-danger'
+    message: ''
   },
   variants: {
-    size: {
-      sm: { message: 'text-xs' },
-      md: { message: 'text-sm' },
-      lg: { message: 'text-base' }
-    },
+    textSize: textSizeVariant.variants.textSize,
     variant: {
-      default: { message: 'text-danger' },
-      warning: { message: 'text-warning' },
-      info: { message: 'text-info' }
+      default: { message: textColors.danger },
+      muted: { message: textColors.muted },
+      accent: { message: textColors.accent }
     }
   },
   defaultVariants: {
-    size: 'md',
+    textSize: 'base',
     variant: 'default'
   }
 })
@@ -27,18 +25,19 @@ const tableError = tv({
 export type TableErrorVariants = VariantProps<typeof tableError>
 export const tableErrorStyles = tableError
 
-interface TableErrorProps extends TableErrorVariants {
+interface TableErrorProps extends Omit<TableErrorVariants, 'textSize'> {
   children: ReactNode
   className?: string
+  textSize?: TableErrorVariants['textSize']
 }
 
 export function TableError({
   children,
   className,
-  size,
-  variant
+  textSize = 'base',
+  variant = 'default'
 }: TableErrorProps) {
-  const styles = tableError({ size, variant })
+  const styles = tableError({ textSize, variant })
 
   return (
     <div className={styles.root({ className })}>

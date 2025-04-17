@@ -11,7 +11,7 @@ import {
 } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
-import { spacing, typography } from '@/lib/ui/tokens'
+import { textSizeVariant, paddingVariant } from '@/lib/ui/sharedVariants'
 import Image from 'next/image'
 
 interface NavigationItem {
@@ -66,9 +66,6 @@ export function Topbar({
   variant = 'solid',
 }: TopbarProps) {
   // Extract token values into constants
-  const navTextSize = typography.text.base
-  const navItemPadding = spacing.sm
-  const navItemSpacing = spacing.md
   const iconSize = 'size-6'
   const logoSize = 'size-8'
 
@@ -76,10 +73,10 @@ export function Topbar({
     <Disclosure as="nav" className={cn(variant === 'solid' ? 'bg-primary' : 'bg-transparent', className)}>
       <div className={cn(
         'mx-auto max-w-7xl',
-        spacing.md,
+        paddingVariant.variants.padding.md,
         'border-b border-outline'
       )}>
-        <div className={cn('flex', spacing.lg, 'items-center justify-between')}>
+        <div className={cn('flex', paddingVariant.variants.padding.lg, 'items-center justify-between')}>
           {/* Left nav */}
           <div className="flex items-center">
             <Image
@@ -89,7 +86,7 @@ export function Topbar({
               width={32}
               height={32}
             />
-            <div className={cn('hidden md:block', navItemSpacing, spacing.md)}>
+            <div className={cn('hidden md:block', paddingVariant.variants.padding.md)}>
               {navigation.map((item) => (
                 <a
                   key={item.name}
@@ -97,9 +94,9 @@ export function Topbar({
                   className={cn(
                     item.current ? 'text-primary' : 'text-secondary hover:text-primary',
                     'rounded-md',
-                    navItemPadding,
-                    navTextSize,
-                    typography.weight.medium
+                    paddingVariant.variants.padding.sm,
+                    textSizeVariant.variants.textSize.base,
+                    'font-medium'
                   )}
                   aria-current={item.current ? 'page' : undefined}
                 >
@@ -110,13 +107,13 @@ export function Topbar({
           </div>
 
           {/* Right side */}
-          <div className={cn('hidden md:flex items-center', spacing.md)}>
+          <div className={cn('hidden md:flex items-center', paddingVariant.variants.padding.md)}>
             <button
               type="button"
               className={cn(
                 'relative rounded-md',
                 variant === 'solid' ? 'bg-primary' : 'bg-transparent',
-                navItemPadding,
+                paddingVariant.variants.padding.sm,
                 'text-secondary hover:text-primary',
                 'focus:ring-2 focus:ring-white focus:outline-none'
               )}
@@ -128,7 +125,7 @@ export function Topbar({
             <Menu as="div" className="relative">
               <MenuButton className={cn(
                 'flex max-w-xs items-center rounded-md',
-                navTextSize,
+                textSizeVariant.variants.textSize.base,
                 'focus:ring-2 focus:ring-white focus:outline-none'
               )}>
                 <Image
@@ -141,11 +138,11 @@ export function Topbar({
               </MenuButton>
               <MenuItems className={cn(
                 'absolute right-0',
-                spacing.sm,
+                paddingVariant.variants.padding.sm,
                 'w-48',
                 'origin-top-right rounded-md',
                 'bg-surface',
-                spacing.sm,
+                paddingVariant.variants.padding.sm,
                 'shadow-lg',
                 'ring-1 ring-black/5'
               )}>
@@ -172,7 +169,7 @@ export function Topbar({
           <div className="flex md:hidden">
             <DisclosureButton className={cn(
               'inline-flex items-center justify-center rounded-md',
-              navItemPadding,
+              paddingVariant.variants.padding.sm,
               'text-primary',
               'hover:bg-primary-dark focus:ring-2 focus:ring-white focus:outline-none'
             )}>
@@ -187,10 +184,10 @@ export function Topbar({
       <DisclosurePanel className={cn(
         'md:hidden',
         'border-t border-outline',
-        spacing.md,
-        spacing.sm
+        paddingVariant.variants.padding.md,
+        paddingVariant.variants.padding.sm
       )}>
-        <div className={cn('space-y-1', spacing.sm)}>
+        <div className={cn('space-y-1', paddingVariant.variants.padding.sm)}>
           {navigation.map((item) => (
             <DisclosureButton
               key={item.name}
@@ -199,9 +196,9 @@ export function Topbar({
               className={cn(
                 item.current ? 'text-primary' : 'text-secondary hover:text-primary',
                 'block rounded-md',
-                navItemPadding,
-                navTextSize,
-                typography.weight.medium
+                paddingVariant.variants.padding.sm,
+                textSizeVariant.variants.textSize.base,
+                'font-medium'
               )}
             >
               {item.name}

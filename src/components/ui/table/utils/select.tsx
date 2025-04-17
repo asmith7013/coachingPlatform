@@ -1,4 +1,6 @@
 import { tv, type VariantProps } from 'tailwind-variants'
+import { textSizeVariant, paddingVariant } from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 
 interface SelectOption {
   label: string
@@ -8,29 +10,29 @@ interface SelectOption {
 const tableSelect = tv({
   base: [
     'rounded-md border',
-    'text-text bg-background border-surface',
+    'bg-background border-surface',
+    textColors.default,
     'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
   ],
   variants: {
-    size: {
-      sm: 'px-2 py-1 text-xs',
-      md: 'px-3 py-1 text-sm',
-      lg: 'px-4 py-2 text-base'
-    }
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding
   },
   defaultVariants: {
-    size: 'md'
+    textSize: 'base',
+    padding: 'md'
   }
 })
 
 export type TableSelectVariants = VariantProps<typeof tableSelect>
 export const tableSelectStyles = tableSelect
 
-interface TableSelectProps extends TableSelectVariants {
+interface TableSelectProps extends Omit<TableSelectVariants, 'textSize'> {
   value: string
   onChange: (value: string) => void
   options: SelectOption[]
   className?: string
+  textSize?: TableSelectVariants['textSize']
 }
 
 export function TableSelect({
@@ -38,13 +40,14 @@ export function TableSelect({
   onChange,
   options,
   className,
-  size
+  textSize = 'base',
+  padding = 'md'
 }: TableSelectProps) {
   return (
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={tableSelect({ size, className })}
+      className={tableSelect({ textSize, padding, className })}
     >
       {options.map((option) => (
         <option

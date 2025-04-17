@@ -1,4 +1,6 @@
 import { tv, type VariantProps } from 'tailwind-variants'
+import { textSizeVariant } from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 
 const tableSort = tv({
   slots: {
@@ -6,18 +8,14 @@ const tableSort = tv({
     icon: 'ml-1'
   },
   variants: {
-    size: {
-      sm: { root: 'text-xs' },
-      md: { root: 'text-sm' },
-      lg: { root: 'text-base' }
-    },
+    textSize: textSizeVariant.variants.textSize,
     active: {
-      true: { root: 'text-primary' },
-      false: { root: 'text-muted hover:text-primary' }
+      true: { root: textColors.accent },
+      false: { root: textColors.muted + ' hover:' + textColors.accent }
     }
   },
   defaultVariants: {
-    size: 'md',
+    textSize: 'base',
     active: false
   }
 })
@@ -25,12 +23,13 @@ const tableSort = tv({
 export type TableSortVariants = VariantProps<typeof tableSort>
 export const tableSortStyles = tableSort
 
-interface TableSortProps extends TableSortVariants {
+interface TableSortProps extends Omit<TableSortVariants, 'textSize'> {
   column: string
   currentSort?: string
   sortDirection?: 'asc' | 'desc'
   onSort: (column: string) => void
   className?: string
+  textSize?: TableSortVariants['textSize']
 }
 
 export function TableSort({
@@ -39,10 +38,10 @@ export function TableSort({
   sortDirection,
   onSort,
   className,
-  size
+  textSize = 'base'
 }: TableSortProps) {
   const isActive = currentSort === column
-  const styles = tableSort({ size, active: isActive })
+  const styles = tableSort({ textSize, active: isActive })
 
   return (
     <button

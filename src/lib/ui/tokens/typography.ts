@@ -42,7 +42,7 @@ export type TextColor = keyof typeof color
 // Export typography object for backward compatibility
 export const typography = {
   heading,
-  text: textSize,
+  textSize,
   weight,
   color,
 } 

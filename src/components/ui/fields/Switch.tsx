@@ -1,9 +1,12 @@
 import { cn } from '@/lib/utils'
-import { tv } from 'tailwind-variants'
+import { tv, type VariantProps } from 'tailwind-variants'
 import {
   radiusVariant,
   disabledVariant,
+  paddingVariant,
+  textSizeVariant,
 } from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 import { FieldWrapper } from './FieldWrapper'
 
 interface SwitchProps {
@@ -14,51 +17,63 @@ interface SwitchProps {
   error?: string
   className?: string
   disabled?: boolean
+  textSize?: "base" | "xs" | "sm" | "lg" | "xl" | "2xl"
+  padding?: "xs" | "sm" | "md" | "lg" | "xl" | "none"
 }
 
 // 🎨 Switch style variants
-export const switchStyles = tv({
+const switchStyles = tv({
   slots: {
+    wrapper: [
+      'relative flex items-start',
+    ],
     root: [
-      'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer',
+      'relative inline-flex flex-shrink-0 cursor-pointer',
       'rounded-full border-2 border-transparent',
       'transition-colors duration-200 ease-in-out',
-      'focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+      'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
       'cursor-pointer disabled:cursor-not-allowed',
     ],
     thumb: [
-      'pointer-events-none inline-block h-5 w-5',
+      'pointer-events-none inline-block',
       'transform rounded-full bg-white shadow ring-0',
       'transition duration-200 ease-in-out',
     ],
     description: [
-      'ml-3 text-sm leading-6 text-gray-600',
+      textColors.muted,
     ],
   },
   variants: {
-    ...radiusVariant.variants,
-    ...disabledVariant.variants,
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding,
+    radius: radiusVariant.variants.radius,
+    disabled: disabledVariant.variants.disabled,
     checked: {
       true: {
-        root: 'bg-indigo-600',
-        thumb: 'translate-x-5',
+        root: 'bg-primary',
+        thumb: 'translate-x-[133%]',
       },
       false: {
-        root: 'bg-gray-200',
+        root: 'bg-surface-hover',
         thumb: 'translate-x-0',
       },
     },
     error: {
       true: {
-        root: 'border-red-500 focus:ring-red-500',
+        root: [
+          'border-danger',
+          'focus:ring-danger',
+        ],
       },
       false: {},
     },
   },
   defaultVariants: {
+    textSize: 'base',
+    padding: 'md',
+    radius: 'full',
     checked: false,
     error: false,
-    radius: 'full',
   },
   compoundVariants: [
     {
@@ -70,8 +85,11 @@ export const switchStyles = tv({
   ],
 });
 
+// ✅ Export for atomic style use elsewhere
+export const switchComponentStyles = switchStyles;
+
 // ✅ Export type for variant props
-export type SwitchVariants = Parameters<typeof switchStyles>[0];
+export type SwitchVariants = VariantProps<typeof switchStyles>;
 
 export function Switch({
   checked,
@@ -81,16 +99,26 @@ export function Switch({
   error,
   className,
   disabled,
+  textSize,
+  padding,
 }: SwitchProps) {
   const styles = switchStyles({ 
     checked: checked as boolean, 
-    error: !!error,
-    disabled 
+    error: Boolean(error),
+    disabled,
+    textSize,
+    padding,
   });
 
   return (
-    <FieldWrapper id="switch" label={label} error={error}>
-      <div className="relative flex items-start">
+    <FieldWrapper 
+      id="switch" 
+      label={label} 
+      error={error}
+      textSize={textSize}
+      padding={padding}
+    >
+      <div className={styles.wrapper()}>
         <button
           type="button"
           role="switch"

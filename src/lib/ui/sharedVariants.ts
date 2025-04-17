@@ -2,10 +2,11 @@
 import { tv, type VariantProps } from 'tailwind-variants';
 import {
   radii,
-  typography,
   shadows,
   layout,
 } from './tokens';
+import { typography } from './tokens/typography'
+import { gap } from './tokens/spacing'
 
 import { booleanVariant } from './utils/variantHelpers';
 
@@ -31,11 +32,11 @@ export const sizeVariant = tv({
 
 export const textSizeVariant = tv({
   variants: {
-    textSize: typography.text,
+    textSize: typography.textSize
   },
   defaultVariants: {
-    textSize: 'base',
-  },
+    textSize: 'base'
+  }
 });
 
 export const paddingVariant = tv({
@@ -104,20 +105,11 @@ export const fullWidthVariant = tv({
 // 📝 Typography & Layout
 export const textColorVariant = tv({
   variants: {
-    color: {
-      default: 'text-gray-900',
-      muted: 'text-gray-600',
-      white: 'text-white',
-      primary: 'text-primary',
-      secondary: 'text-secondary',
-      success: 'text-success',
-      error: 'text-error',
-      warning: 'text-warning',
-    },
+    color: typography.color
   },
   defaultVariants: {
-    color: 'default',
-  },
+    color: 'default'
+  }
 });
 
 export const alignmentVariant = tv({
@@ -162,6 +154,10 @@ export type FullWidthVariantType = VariantProps<typeof fullWidthVariant>;
 export type TextColorVariantType = VariantProps<typeof textColorVariant>;
 export type AlignmentVariantType = VariantProps<typeof alignmentVariant>;
 export type GapVariantType = VariantProps<typeof gapVariant>;
+export type HeadingVariantType = VariantProps<typeof headingVariants>;
+export type TextVariantType = VariantProps<typeof textVariants>;
+export type GridVariantType = VariantProps<typeof gridVariants>;
+export type FlexVariantType = VariantProps<typeof flexVariants>;
 
 // Re-export helper functions
 export { booleanVariant } from './utils/variantHelpers';
@@ -181,12 +177,12 @@ export const headingVariants = tv({
 export const textVariants = tv({
   base: 'font-body leading-normal',
   variants: {
-    size: typography.text,
+    textSize: typography.textSize,
     weight: typography.weight,
     color: typography.color,
   },
   defaultVariants: {
-    size: 'base',
+    textSize: 'base',
     weight: 'normal',
     color: 'default',
   },
@@ -215,7 +211,7 @@ export const flexVariants = tv({
     },
     justify: {
       start: 'justify-start',
-      end: 'justify-end',
+      end: 'justify-end', 
       center: 'justify-center',
       between: 'justify-between',
       around: 'justify-around',
@@ -224,20 +220,16 @@ export const flexVariants = tv({
     align: {
       start: 'items-start',
       end: 'items-end',
-      center: 'items-center',
+      center: 'items-center', 
       baseline: 'items-baseline',
       stretch: 'items-stretch',
     },
+    gap,
   },
   defaultVariants: {
+    gap: 'md',
     direction: 'row',
     justify: 'start',
     align: 'start',
   },
-})
-
-// Export variant types
-export type HeadingVariants = VariantProps<typeof headingVariants>
-export type TextVariants = VariantProps<typeof textVariants>
-export type GridVariants = VariantProps<typeof gridVariants>
-export type FlexVariants = VariantProps<typeof flexVariants> 
+}) 

@@ -6,6 +6,8 @@ import { TableColumnSchema } from '@/lib/ui/table-schema'
 import { TableHeader } from './core/header'
 import { TableRow } from './core/row'
 import { TableEmpty } from './utils/empty'
+import { textSizeVariant, paddingVariant } from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 
 const table = tv({
   slots: {
@@ -14,30 +16,20 @@ const table = tv({
     body: 'divide-y divide-surface'
   },
   variants: {
-    variant: {
-      text: { root: 'text-text' },
-      'text-muted': { root: 'text-text-muted' },
-      primary: { root: 'text-primary' },
-      secondary: { root: 'text-secondary' },
-      success: { root: 'text-success' },
-      danger: { root: 'text-danger' }
+    color: {
+      default: { root: textColors.default },
+      muted: { root: textColors.muted },
+      accent: { root: textColors.accent },
+      danger: { root: textColors.danger }
     },
-    textSize: {
-      sm: { root: 'text-sm' },
-      base: { root: 'text-base' },
-      lg: { root: 'text-lg' }
-    },
-    padding: {
-      sm: { root: 'px-3 py-2' },
-      md: { root: 'px-4 py-3' },
-      lg: { root: 'px-6 py-4' }
-    },
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding,
     compact: {
       true: { root: 'text-sm leading-tight' }
     }
   },
   defaultVariants: {
-    variant: 'text',
+    color: 'default',
     textSize: 'base',
     padding: 'md',
     compact: false
@@ -52,7 +44,7 @@ export interface TableProps<T> extends Omit<TableVariants, 'textSize' | 'padding
   className?: string
   onRowClick?: (item: T) => void
   emptyMessage?: string
-  textSize?: 'sm' | 'base' | 'lg'
+  textSize?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl'
   padding?: 'sm' | 'md' | 'lg'
 }
 
@@ -60,7 +52,7 @@ export function Table<T>({
   data,
   columns,
   className,
-  variant = 'text',
+  color = 'default',
   textSize = 'base',
   padding = 'md',
   compact = false,
@@ -68,7 +60,7 @@ export function Table<T>({
   emptyMessage = 'No data available',
   ...props
 }: TableProps<T>) {
-  const styles = table({ variant, textSize, padding, compact })
+  const styles = table({ color, textSize, padding, compact })
 
   return (
     <div className={cn(styles.wrapper(), className)} {...props}>

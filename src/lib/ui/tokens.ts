@@ -4,6 +4,8 @@ export * from './tokens/layout'
 export * from './tokens/shape'
 export * from './tokens/spacing'
 export * from './tokens/colors'
+export { textColors, alignments } from './tokens/text'
+export type { TextColor, Alignment } from './tokens/text'
 // Border utilities
 export const borderWidths = {
   none: 'border-0',

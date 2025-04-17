@@ -1,43 +1,43 @@
 import { cn } from '@/lib/utils'
-import { tv } from 'tailwind-variants'
+import { tv, type VariantProps } from 'tailwind-variants'
 import {
-  sizeVariant,
   radiusVariant,
   disabledVariant,
+  paddingVariant,
+  textSizeVariant,
 } from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 import { FieldWrapper } from './FieldWrapper'
 
 type TextareaHTMLProps = Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'>;
 
-interface TextareaProps extends TextareaHTMLProps {
-  label?: string;
-  error?: string;
-  size?: 'sm' | 'md' | 'lg';
-  radius?: 'none' | 'sm' | 'md' | 'lg' | 'full';
-  className?: string;
-}
-
 // 🎨 Textarea style variants
-export const textarea = tv({
+const textarea = tv({
   base: [
-    'block w-full bg-white px-3 py-1.5 text-base text-gray-900',
-    'outline-1 -outline-offset-1 outline-gray-300',
-    'placeholder:text-gray-400',
+    'block w-full',
+    'bg-surface',
+    textColors.default,
+    'placeholder:text-muted',
+    'border border-surface-hover',
+    'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
     'transition-all',
   ],
   variants: {
-    ...sizeVariant.variants,
-    ...radiusVariant.variants,
-    ...disabledVariant.variants,
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding,
+    radius: radiusVariant.variants.radius,
+    disabled: disabledVariant.variants.disabled,
     error: {
-      true: 'outline-red-500 focus:outline-red-500',
-      false: 'focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600',
+      true: [
+        'border-danger',
+        'focus:ring-danger',
+      ],
     },
   },
   defaultVariants: {
-    size: 'md',
+    textSize: 'base',
+    padding: 'md',
     radius: 'md',
-    error: false,
   },
 });
 
@@ -45,25 +45,43 @@ export const textarea = tv({
 export const textareaStyles = textarea;
 
 // ✅ Export type for variant props
-export type TextareaVariants = Parameters<typeof textarea>[0];
+export type TextareaVariants = VariantProps<typeof textarea>;
+
+interface TextareaProps extends TextareaHTMLProps {
+  label?: string;
+  error?: string;
+  textSize?: TextareaVariants['textSize'];
+  padding?: TextareaVariants['padding'];
+  radius?: TextareaVariants['radius'];
+  disabled?: boolean;
+  className?: string;
+}
 
 export function Textarea({
   label,
   error,
-  size = 'md',
-  radius = 'md',
+  textSize,
+  padding,
+  radius,
   className,
   disabled,
   ...props
 }: TextareaProps) {
   return (
-    <FieldWrapper id={props.id} label={label} error={error}>
+    <FieldWrapper 
+      id={props.id} 
+      label={label} 
+      error={error}
+      textSize={textSize}
+      padding={padding}
+    >
       <textarea
         className={cn(
           textarea({
-            size,
+            textSize,
+            padding,
             radius,
-            error: !!error,
+            error: Boolean(error),
             disabled,
           }),
           className

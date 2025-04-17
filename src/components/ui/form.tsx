@@ -1,8 +1,9 @@
 import { cn } from '@/lib/utils'
-import { tv } from 'tailwind-variants'
+import { tv, type VariantProps } from 'tailwind-variants'
 import { FormSection } from './form-section'
 import { getFieldComponent } from '@/lib/ui/forms/registry'
-import { VariantProps } from 'tailwind-variants'
+import { textColors } from '@/lib/ui/tokens'
+import { textSizeVariant, paddingVariant } from '@/lib/ui/sharedVariants'
 
 // Types for form configuration
 export interface FieldConfig {
@@ -52,11 +53,7 @@ export const form = tv({
     ],
   },
   variants: {
-    padding: {
-      sm: { root: 'p-2' },
-      md: { root: 'p-4' },
-      lg: { root: 'p-6' },
-    },
+    ...paddingVariant.variants,
     gap: {
       sm: { 
         root: 'space-y-2',
@@ -73,7 +70,7 @@ export const form = tv({
     },
   },
   defaultVariants: {
-    padding: 'lg',
+    padding: 'md',
     gap: 'md',
   },
 })
@@ -85,34 +82,25 @@ export const formField = tv({
       'space-y-1',
     ],
     label: [
-      'block font-medium text-text',
+      'block font-medium',
+      textColors.default,
     ],
     input: [
       'block w-full rounded-md border border-border',
-      'bg-white text-text placeholder-text-muted',
+      'bg-white',
+      textColors.default,
+      'placeholder:' + textColors.muted,
       'focus:border-primary focus:ring-2 focus:ring-primary focus:ring-offset-2',
       'disabled:cursor-not-allowed disabled:bg-surface disabled:text-text-muted',
     ],
     error: [
-      'mt-1 text-danger',
+      'mt-1',
+      textColors.danger,
     ],
   },
   variants: {
-    textSize: {
-      xs: { label: 'text-xs', input: 'text-xs', error: 'text-xs' },
-      sm: { label: 'text-sm', input: 'text-sm', error: 'text-xs' },
-      base: { label: 'text-sm', input: 'text-base', error: 'text-sm' },
-      lg: { label: 'text-base', input: 'text-lg', error: 'text-sm' },
-      xl: { label: 'text-lg', input: 'text-xl', error: 'text-base' },
-    },
-    padding: {
-      none: { input: 'p-0' },
-      xs: { input: 'px-2 py-1' },
-      sm: { input: 'px-3 py-1.5' },
-      md: { input: 'px-4 py-2' },
-      lg: { input: 'px-5 py-2.5' },
-      xl: { input: 'px-6 py-3' },
-    },
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding,
     error: {
       true: {
         input: 'border-danger focus:border-danger focus:ring-danger',
@@ -213,7 +201,8 @@ export function Form({
 interface BaseInputProps {
   label?: string;
   error?: string;
-  size?: 'sm' | 'md' | 'lg';
+  textSize?: FormFieldVariants['textSize'];
+  padding?: FormFieldVariants['padding'];
 }
 
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>, BaseInputProps {}
@@ -221,21 +210,20 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
 export const Input = ({
   label,
   error,
-  size = 'md',
+  textSize = 'base',
+  padding = 'md',
   className,
   ...props
 }: InputProps) => {
-  const styles = formField({ size, error: !!error })
+  const styles = formField({ textSize, padding, error: !!error });
 
   return (
-    <div className={styles.root()}>
+    <div className={cn(styles.root(), className)}>
       {label && (
-        <label className={styles.label()}>
-          {label}
-        </label>
+        <label className={styles.label()}>{label}</label>
       )}
       <input
-        className={cn(styles.input(), className)}
+        className={styles.input()}
         {...props}
       />
       {error && (
@@ -250,21 +238,20 @@ interface TextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaEl
 export const Textarea = ({
   label,
   error,
-  size = 'md',
+  textSize = 'base',
+  padding = 'md',
   className,
   ...props
 }: TextareaProps) => {
-  const styles = formField({ size, error: !!error })
+  const styles = formField({ textSize, padding, error: !!error });
 
   return (
-    <div className={styles.root()}>
+    <div className={cn(styles.root(), className)}>
       {label && (
-        <label className={styles.label()}>
-          {label}
-        </label>
+        <label className={styles.label()}>{label}</label>
       )}
       <textarea
-        className={cn(styles.input(), className)}
+        className={styles.input()}
         {...props}
       />
       {error && (
@@ -275,7 +262,7 @@ export const Textarea = ({
 };
 
 export interface FormFieldProps extends 
-  React.InputHTMLAttributes<HTMLInputElement> {
+  Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
   error?: string | boolean;
   textSize?: FormFieldVariants['textSize'];
@@ -290,29 +277,19 @@ export const FormField = ({
   className,
   ...props
 }: FormFieldProps) => {
-  const styles = formField({ 
-    textSize, 
-    padding,
-    error: error ? true : undefined
-  });
+  const styles = formField({ textSize, padding, error: !!error });
 
   return (
     <div className={cn(styles.root(), className)}>
       {label && (
-        <label className={styles.label()}>
-          {label}
-        </label>
+        <label className={styles.label()}>{label}</label>
       )}
       <input
         className={styles.input()}
-        aria-invalid={!!error}
-        aria-errormessage={typeof error === 'string' ? error : undefined}
         {...props}
       />
-      {typeof error === 'string' && (
-        <p className={styles.error()}>
-          {error}
-        </p>
+      {error && (
+        <p className={styles.error()}>{error}</p>
       )}
     </div>
   );

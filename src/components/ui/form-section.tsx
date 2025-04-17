@@ -1,5 +1,7 @@
 import { cn } from '@/lib/utils'
 import { tv } from 'tailwind-variants'
+import { textColors } from '@/lib/ui/tokens'
+import { paddingVariant } from '@/lib/ui/sharedVariants'
 
 interface FormSectionProps {
   title: string;
@@ -20,21 +22,19 @@ export const formSection = tv({
       'flex flex-col',
     ],
     title: [
-      'font-semibold text-lg text-primary',
+      'font-semibold text-lg',
+      textColors.default,
     ],
     description: [
-      'text-sm text-text',
+      'text-sm',
+      textColors.muted,
     ],
     content: [
       'mt-sm',
     ],
   },
   variants: {
-    padding: {
-      sm: { content: 'p-2' },
-      md: { content: 'p-4' },
-      lg: { content: 'p-6' },
-    },
+    ...paddingVariant.variants,
     gap: {
       sm: { 
         root: 'gap-2',

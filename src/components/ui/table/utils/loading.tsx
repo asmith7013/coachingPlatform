@@ -1,46 +1,47 @@
 import { tv, type VariantProps } from 'tailwind-variants'
+import { textSizeVariant } from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 
 const tableLoading = tv({
   slots: {
     root: 'flex items-center justify-center p-8 bg-surface',
     spinner: 'animate-spin text-primary',
-    text: 'ml-3 text-text-muted'
+    text: [
+      'ml-3',
+      textColors.muted
+    ]
   },
   variants: {
-    size: {
-      sm: {
-        spinner: 'size-4',
-        text: 'text-xs'
-      },
-      md: {
-        spinner: 'size-5',
-        text: 'text-sm'
-      },
-      lg: {
-        spinner: 'size-6',
-        text: 'text-base'
-      }
+    textSize: {
+      ...textSizeVariant.variants.textSize,
+      xs: { spinner: 'size-4' },
+      sm: { spinner: 'size-4' },
+      base: { spinner: 'size-5' },
+      lg: { spinner: 'size-6' },
+      xl: { spinner: 'size-6' },
+      '2xl': { spinner: 'size-6' }
     }
   },
   defaultVariants: {
-    size: 'md'
+    textSize: 'base'
   }
 })
 
 export type TableLoadingVariants = VariantProps<typeof tableLoading>
 export const tableLoadingStyles = tableLoading
 
-interface TableLoadingProps extends TableLoadingVariants {
+interface TableLoadingProps extends Omit<TableLoadingVariants, 'textSize'> {
   message?: string
   className?: string
+  textSize?: TableLoadingVariants['textSize']
 }
 
 export function TableLoading({
   message = 'Loading...',
   className,
-  size
+  textSize = 'base'
 }: TableLoadingProps) {
-  const styles = tableLoading({ size })
+  const styles = tableLoading({ textSize })
 
   return (
     <div className={styles.root({ className })}>

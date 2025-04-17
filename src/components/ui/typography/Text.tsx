@@ -1,26 +1,27 @@
 import { ElementType, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { textVariants, type TextVariants } from '@/lib/ui/sharedVariants'
+import { textVariants } from '@/lib/ui/sharedVariants'
+import type { TextVariantType } from '@/lib/ui/sharedVariants'
 
 interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'> {
   children: ReactNode;
   as?: ElementType;
-  size?: TextVariants['size'];
-  weight?: TextVariants['weight'];
-  color?: TextVariants['color'];
+  textSize?: TextVariantType['textSize'];
+  weight?: TextVariantType['weight'];
+  color?: TextVariantType['color'];
   className?: string;
 }
 
 export function Text({
   children,
   as: Component = 'p',
-  size = 'base',
+  textSize = 'base',
   weight = 'normal',
   color = 'default',
   className,
   ...props
 }: TextProps) {
-  const styles = textVariants({ size, weight, color });
+  const styles = textVariants({ textSize, weight, color });
 
   return (
     <Component

@@ -1,31 +1,20 @@
 import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
 import {
-  sizeVariant,
+  textSizeVariant,
+  paddingVariant,
   radiusVariant,
   shadowVariant,
   disabledVariant,
   loadingVariant,
   fullWidthVariant,
-  type SizeVariant,
-  type RadiusVariant,
-  type ShadowVariant,
-  type DisabledVariant,
-  type LoadingVariant,
-  type FullWidthVariant,
-} from '@/lib/ui/variants'
+} from '@/lib/ui/sharedVariants'
 
-interface ButtonProps extends 
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  SizeVariant,
-  RadiusVariant,
-  ShadowVariant,
-  DisabledVariant,
-  LoadingVariant,
-  FullWidthVariant {
-  intent?: 'primary' | 'secondary';
-  appearance?: 'solid' | 'alt' | 'outline';
+interface ButtonProps extends ButtonVariants {
   className?: string;
+  children?: React.ReactNode;
+  type?: 'button' | 'submit' | 'reset';
+  onClick?: () => void;
 }
 
 // 🎨 Style segment interface for clearer design contract
@@ -92,12 +81,13 @@ const compoundVariants = [
 export const button = tv({
   base: 'inline-flex items-center justify-center font-semibold transition-colors focus:outline-none cursor-pointer',
   variants: {
-    ...sizeVariant.variants,
-    ...radiusVariant.variants,
-    ...shadowVariant.variants,
-    ...disabledVariant.variants,
-    ...loadingVariant.variants,
-    ...fullWidthVariant.variants,
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding,
+    radius: radiusVariant.variants.radius,
+    shadow: shadowVariant.variants.shadow,
+    disabled: disabledVariant.variants.disabled,
+    loading: loadingVariant.variants.loading,
+    fullWidth: fullWidthVariant.variants.fullWidth,
     intent: {
       primary: '',
       secondary: '',
@@ -112,8 +102,9 @@ export const button = tv({
   defaultVariants: {
     intent: 'primary',
     appearance: 'solid',
-    size: 'md',
-    rounded: 'md',
+    textSize: 'base',
+    padding: 'md',
+    radius: 'md',
     shadow: 'sm',
     disabled: false,
     loading: false,
@@ -121,7 +112,7 @@ export const button = tv({
   },
 });
 
-// ✅ Export for atomic style use elsewhere (e.g. <Link>, <div>)
+// ✅ Export for atomic style use elsewhere
 export const buttonStyles = button;
 
 // ✅ Export variant types for reuse
@@ -130,14 +121,17 @@ export type ButtonVariants = VariantProps<typeof button>;
 export const Button = ({
   intent = 'primary',
   appearance = 'solid',
-  size = 'md',
-  rounded = 'md',
+  textSize = 'base',
+  padding = 'md',
+  radius = 'md',
   shadow = 'sm',
   loading = false,
   disabled = false,
   fullWidth = false,
   className,
   children,
+  type,
+  onClick,
   ...props
 }: ButtonProps) => {
   return (
@@ -146,8 +140,9 @@ export const Button = ({
         button({
           intent,
           appearance,
-          size,
-          rounded,
+          textSize,
+          padding,
+          radius,
           shadow,
           loading,
           disabled,
@@ -157,6 +152,8 @@ export const Button = ({
       )}
       disabled={loading || disabled}
       aria-busy={loading}
+      type={type}
+      onClick={onClick}
       {...props}
     >
       {loading ? (

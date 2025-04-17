@@ -1,5 +1,7 @@
 import { cn } from '@/lib/utils';
 import { tv, type VariantProps } from 'tailwind-variants';
+import { textSizeVariant, paddingVariant } from '@/lib/ui/sharedVariants';
+import { textColors } from '@/lib/ui/tokens';
 
 interface EmptyStateProps {
   title: string;
@@ -7,9 +9,9 @@ interface EmptyStateProps {
   icon?: React.ComponentType<{ className?: string }>;
   action?: React.ReactNode;
   className?: string;
-  textSize?: 'sm' | 'base' | 'lg';
+  textSize?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl';
   padding?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'muted' | 'primary';
+  variant?: 'default' | 'muted' | 'accent';
   align?: 'left' | 'center' | 'right';
 }
 
@@ -20,54 +22,36 @@ export const emptyState = tv({
       'flex flex-col items-center justify-center',
     ],
     icon: [
-      'text-text-muted',
+      textColors.muted,
     ],
     title: [
-      'mt-2 font-medium text-text',
+      'mt-2 font-medium',
+      textColors.default,
     ],
     description: [
-      'mt-1 text-text-muted',
+      'mt-1',
+      textColors.muted,
     ],
     action: [
       'mt-6',
     ],
   },
   variants: {
-    textSize: {
-      sm: {
-        icon: 'h-8 w-8',
-        title: 'text-sm',
-        description: 'text-xs',
-      },
-      base: {
-        icon: 'h-12 w-12',
-        title: 'text-base',
-        description: 'text-sm',
-      },
-      lg: {
-        icon: 'h-16 w-16',
-        title: 'text-lg',
-        description: 'text-base',
-      },
-    },
-    padding: {
-      sm: { root: 'p-4' },
-      md: { root: 'p-6' },
-      lg: { root: 'p-8' },
-    },
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding,
     variant: {
       default: {},
       muted: {
         root: 'bg-gray-50',
-        icon: 'text-gray-400',
-        title: 'text-gray-900',
-        description: 'text-gray-500',
+        icon: textColors.muted,
+        title: textColors.default,
+        description: textColors.muted,
       },
-      primary: {
-        root: 'bg-indigo-50',
-        icon: 'text-indigo-400',
-        title: 'text-indigo-900',
-        description: 'text-indigo-500',
+      accent: {
+        root: 'bg-primary-50',
+        icon: textColors.accent,
+        title: textColors.default,
+        description: textColors.accent,
       },
     },
     align: {
@@ -112,7 +96,13 @@ export function EmptyState({
   return (
     <div className={cn(styles.root(), className)}>
       {Icon && (
-        <Icon className={styles.icon()} aria-hidden="true" />
+        <Icon 
+          className={cn(
+            styles.icon(),
+            textSize === 'sm' ? 'h-8 w-8' : textSize === 'base' ? 'h-12 w-12' : 'h-16 w-16'
+          )} 
+          aria-hidden="true" 
+        />
       )}
       <h3 className={styles.title()}>{title}</h3>
       {description && (

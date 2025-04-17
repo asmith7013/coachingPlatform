@@ -2,31 +2,27 @@
 
 import { ReactNode } from 'react'
 import { tv, type VariantProps } from 'tailwind-variants'
+import { textSizeVariant } from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 
 const tableCell = tv({
-  base: 'px-4 py-3 text-text',
+  base: 'px-4 py-3',
   variants: {
-    size: {
-      sm: 'text-xs',
-      md: 'text-sm',
-      lg: 'text-base'
-    },
+    textSize: textSizeVariant.variants.textSize,
     align: {
       left: 'text-left',
       center: 'text-center',
       right: 'text-right'
     },
     variant: {
-      default: 'text-text',
-      muted: 'text-text-muted',
-      primary: 'text-primary',
-      secondary: 'text-secondary',
-      success: 'text-success',
-      danger: 'text-danger'
+      default: textColors.default,
+      muted: textColors.muted,
+      accent: textColors.accent,
+      danger: textColors.danger
     }
   },
   defaultVariants: {
-    size: 'md',
+    textSize: 'base',
     align: 'left',
     variant: 'default'
   }
@@ -44,11 +40,11 @@ export function TableCell({
   children,
   className,
   align,
-  size,
+  textSize,
   variant
 }: TableCellProps) {
   return (
-    <td className={tableCell({ align, size, variant, className })}>
+    <td className={tableCell({ align, textSize, variant, className })}>
       {children}
     </td>
   )

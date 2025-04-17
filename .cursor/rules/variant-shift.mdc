@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 Perfect — here’s your Tailwind Variants Refactor Guide for UI Components, designed as a Cursor-friendly checklist with conditional rules depending on the component type (Button, Input, Text, etc.).
 
@@ -67,14 +67,6 @@ export type ButtonVariants = Parameters<typeof button>[0];
 	•	Export style function (e.g., cardStyles)
 	•	Component-specific slots (e.g., header, footer) respected
 
-
-
-	Absolutely — here’s the updated Tailwind Variants Migration Tracker in a Cursor-friendly format with [  ] for incomplete and [x] for completed components.
-
-✅ Tailwind Variants Migration Tracker
-
-	You can manually mark with [x] as you go.
-Copy this into variant-shift.mdc or use it in any Markdown doc in Cursor.
 
 
 

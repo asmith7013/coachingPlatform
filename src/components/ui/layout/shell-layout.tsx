@@ -2,7 +2,7 @@
 
 import { type ReactNode } from 'react'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { spacing } from '@/lib/ui/tokens'
+import { paddingVariant } from '@/lib/ui/sharedVariants'
 
 const shellLayout = tv({
   slots: {
@@ -11,29 +11,10 @@ const shellLayout = tv({
     content: 'flex-1'
   },
   variants: {
-    spacing: {
-      xs: {
-        content: spacing.xs
-      },
-      sm: {
-        content: spacing.sm
-      },
-      md: {
-        content: spacing.md
-      },
-      lg: {
-        content: spacing.lg
-      },
-      xl: {
-        content: spacing.xl
-      },
-      "2xl": {
-        content: spacing["2xl"]
-      }
-    }
+    padding: paddingVariant.variants.padding,
   },
   defaultVariants: {
-    spacing: 'md'
+    padding: 'md'
   }
 })
 
@@ -43,8 +24,8 @@ interface ShellLayoutProps extends VariantProps<typeof shellLayout> {
   className?: string
 }
 
-export function ShellLayout({ children, header, spacing }: ShellLayoutProps) {
-  const { root, header: headerSlot, content } = shellLayout({ spacing })
+export function ShellLayout({ children, header, padding }: ShellLayoutProps) {
+  const { root, header: headerSlot, content } = shellLayout({ padding })
 
   return (
     <div className={root()}>

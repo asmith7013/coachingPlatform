@@ -3,6 +3,8 @@ import { tv } from 'tailwind-variants'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { Button } from '@/components/ui/button'
+import { textColors } from '@/lib/ui/tokens'
+import { paddingVariant } from '@/lib/ui/sharedVariants'
 
 interface PageHeaderAction {
   label: string
@@ -38,19 +40,23 @@ export const pageHeader = tv({
       'min-w-0 flex-1',
     ],
     title: [
-      'font-bold sm:truncate text-primary text-xl',
+      'font-bold sm:truncate text-xl',
+      textColors.default,
     ],
     subtitle: [
-      'text-base text-secondary',
+      'text-base',
+      textColors.muted,
     ],
     meta: [
       'flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap',
     ],
     metaItem: [
-      'flex items-center text-base text-secondary',
+      'flex items-center text-base',
+      textColors.muted,
     ],
     metaIcon: [
-      'size-5 shrink-0 text-muted',
+      'size-5 shrink-0',
+      textColors.muted,
     ],
     actions: [
       'flex lg:mt-0 lg:ml-4',
@@ -65,8 +71,9 @@ export const pageHeader = tv({
       'relative sm:hidden',
     ],
     menuButton: [
-      'inline-flex items-center rounded-md p-4',
-      'text-base font-semibold text-primary',
+      'inline-flex items-center rounded-md',
+      'text-base font-semibold',
+      textColors.default,
       'bg-surface hover:bg-surface-hover',
       'shadow-sm',
     ],
@@ -75,7 +82,8 @@ export const pageHeader = tv({
     ],
     menuItems: [
       'absolute left-0 z-10 -ml-1 w-48 origin-top-left rounded-md',
-      'bg-surface p-4',
+      'bg-surface',
+      ...paddingVariant.variants.padding?.md?.split(' ') || [],
       'ring-1 ring-black/5 shadow-lg',
       'transition focus:outline-none',
       'data-closed:scale-95 data-closed:transform data-closed:opacity-0',
@@ -87,6 +95,7 @@ export const pageHeader = tv({
     ],
   },
   variants: {
+    ...paddingVariant.variants,
     gap: {
       sm: { 
         root: 'gap-2',
@@ -112,6 +121,7 @@ export const pageHeader = tv({
     },
   },
   defaultVariants: {
+    padding: 'md',
     gap: 'md',
   },
 });
@@ -161,9 +171,10 @@ export function PageHeader({
           {actions.map((action, index) => (
             <span key={index} className={styles.actionItem()}>
               <Button
-                onClick={action.onClick}
+                type="button"
                 intent={action.intent || 'secondary'}
                 className={action.className}
+                onClick={action.onClick}
               >
                 {action.icon && (
                   <action.icon
@@ -193,12 +204,19 @@ export function PageHeader({
                 <MenuItem key={index}>
                   {({ active }) => (
                     <button
+                      type="button"
                       onClick={action.onClick}
                       className={cn(
                         styles.menuItem(),
                         active ? 'bg-surface-hover text-primary' : 'text-text'
                       )}
                     >
+                      {action.icon && (
+                        <action.icon
+                          className={styles.actionIcon()}
+                          aria-hidden="true"
+                        />
+                      )}
                       {action.label}
                     </button>
                   )}

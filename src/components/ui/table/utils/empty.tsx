@@ -2,23 +2,17 @@
 
 // import { ReactNode } from 'react'
 import { tv, type VariantProps } from 'tailwind-variants'
+import { textSizeVariant, paddingVariant } from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
 
 const tableEmpty = tv({
   slots: {
     root: 'flex items-center justify-center bg-surface',
-    message: 'text-muted'
+    message: textColors.muted
   },
   variants: {
-    textSize: {
-      sm: { message: 'text-xs' },
-      base: { message: 'text-sm' },
-      lg: { message: 'text-base' }
-    },
-    padding: {
-      sm: { root: 'p-4' },
-      md: { root: 'p-6' },
-      lg: { root: 'p-8' }
-    }
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding
   },
   defaultVariants: {
     textSize: 'base',

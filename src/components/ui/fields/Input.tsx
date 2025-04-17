@@ -1,71 +1,90 @@
+import { tv, type VariantProps } from 'tailwind-variants'
 import { cn } from '@/lib/utils'
-import { tv } from 'tailwind-variants'
-import {
-  sizeVariant,
-  radiusVariant,
-  disabledVariant,
-} from '@/lib/ui/sharedVariants'
+import { textColors } from '@/lib/ui/tokens'
+import { radiusVariant, disabledVariant } from '@/lib/ui/variants'
+import { textSizeVariant, paddingVariant } from '@/lib/ui/sharedVariants'
 import { FieldWrapper } from './FieldWrapper'
 
-type InputHTMLProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>;
-
-interface InputProps extends InputHTMLProps {
-  label?: string;
-  error?: string;
-  size?: 'sm' | 'md' | 'lg';
-  radius?: 'none' | 'sm' | 'md' | 'lg' | 'full';
-  className?: string;
-}
-
-// 🎨 Input style variants
-export const input = tv({
-  base: 'block w-full bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 transition-all',
+const input = tv({
+  base: [
+    'w-full',
+    'border',
+    'border-surface-hover',
+    'bg-surface',
+    textColors.default,
+    'placeholder:text-muted',
+    'focus:outline-none',
+    'focus:ring-2',
+    'focus:ring-primary',
+    'focus:border-transparent',
+  ],
   variants: {
-    ...sizeVariant.variants,
-    ...radiusVariant.variants,
-    ...disabledVariant.variants,
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding,
+    rounded: radiusVariant.variants.rounded,
+    disabled: disabledVariant.variants.disabled,
     error: {
-      true: 'outline-red-500 focus:outline-red-500',
-      false: 'focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600',
+      true: [
+        'border-danger',
+        'focus:ring-danger',
+      ],
     },
   },
   defaultVariants: {
-    size: 'md',
-    radius: 'md',
-    error: false,
+    textSize: 'base',
+    padding: 'md',
+    rounded: 'md',
   },
-});
+})
 
 // ✅ Export for atomic style use elsewhere
-export const inputStyles = input;
+export const inputStyles = input
 
-// ✅ Export type for variant props
-export type InputVariants = Parameters<typeof input>[0];
+export type InputVariants = VariantProps<typeof input>
+type InputHTMLProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>
+
+interface InputProps extends InputHTMLProps {
+  label?: string
+  error?: string
+  textSize?: InputVariants['textSize']
+  padding?: InputVariants['padding']
+  rounded?: InputVariants['rounded']
+  disabled?: boolean
+}
 
 export function Input({
   label,
   error,
-  size = 'md',
-  radius = 'md',
   className,
+  textSize,
+  padding,
+  rounded,
   disabled,
   ...props
 }: InputProps) {
   return (
-    <FieldWrapper id={props.id} label={label} error={error}>
+    <FieldWrapper
+      label={label}
+      error={error}
+      textSize={textSize}
+      padding={padding}
+    >
       <input
+        {...props}
+        disabled={disabled}
         className={cn(
           input({
-            size,
-            radius,
-            error: !!error,
+            textSize,
+            padding,
+            rounded,
+            error: Boolean(error),
             disabled,
           }),
           className
         )}
-        disabled={disabled}
-        {...props}
       />
     </FieldWrapper>
   )
 }
+
+export type { InputProps }
