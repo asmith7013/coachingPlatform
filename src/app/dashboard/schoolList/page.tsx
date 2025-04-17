@@ -66,10 +66,6 @@ export default function SchoolList() {
         Schools
       </Heading>
       
-      <div className="bg-primary text-white p-4 rounded-md mb-4">
-        Example notification block
-      </div>
-      
       <ResourceHeader<School>
         page={page}
         total={total}

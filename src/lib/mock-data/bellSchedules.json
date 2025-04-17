@@ -1,0 +1,74 @@
+{
+  "data": [
+    {
+      "_id": "bellschedule_001",
+      "school": "school_001",
+      "bellScheduleType": "uniform",
+      "classSchedule": [
+        {
+          "dayType": "uniform",
+          "startTime": "08:00",
+          "endTime": "08:45"
+        },
+        {
+          "dayType": "uniform",
+          "startTime": "08:50",
+          "endTime": "09:35"
+        },
+        {
+          "dayType": "uniform",
+          "startTime": "09:40",
+          "endTime": "10:25"
+        }
+      ],
+      "assignedCycleDays": [
+        {
+          "date": "2024-03-15",
+          "blockDayType": "A"
+        },
+        {
+          "date": "2024-03-16",
+          "blockDayType": "B"
+        }
+      ],
+      "owners": ["staff_001"],
+      "createdAt": "2024-03-15T08:00:00Z",
+      "updatedAt": "2024-03-15T08:00:00Z"
+    },
+    {
+      "_id": "bellschedule_002",
+      "school": "school_002",
+      "bellScheduleType": "weeklyCycle",
+      "classSchedule": [
+        {
+          "dayType": "Monday",
+          "startTime": "09:00",
+          "endTime": "09:50"
+        },
+        {
+          "dayType": "Monday",
+          "startTime": "10:00",
+          "endTime": "10:50"
+        },
+        {
+          "dayType": "Tuesday",
+          "startTime": "09:00",
+          "endTime": "10:00"
+        }
+      ],
+      "assignedCycleDays": [
+        {
+          "date": "2024-03-18",
+          "blockDayType": "A"
+        },
+        {
+          "date": "2024-03-19",
+          "blockDayType": "B"
+        }
+      ],
+      "owners": ["staff_002"],
+      "createdAt": "2024-03-15T09:00:00Z",
+      "updatedAt": "2024-03-15T09:00:00Z"
+    }
+  ]
+} 

@@ -1,0 +1,18 @@
+{
+  "data": [
+    {
+      "_id": "sessionlink_001",
+      "purpose": "Lesson Materials",
+      "title": "ELA Grade 6 - Text Evidence Strategies",
+      "url": "https://docs.google.com/presentation/d/1234",
+      "staff": ["staff_001", "teacher_001"]
+    },
+    {
+      "_id": "sessionlink_002",
+      "purpose": "Planning Document",
+      "title": "Math Grade 8 - Number Talks Protocol",
+      "url": "https://docs.google.com/document/d/5678",
+      "staff": ["staff_002", "teacher_002"]
+    }
+  ]
+} 

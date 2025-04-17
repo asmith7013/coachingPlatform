@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { spacing, fontSizes } from '@/lib/ui/tokens'
+import { tv } from 'tailwind-variants'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { Button } from '@/components/ui/button'
@@ -8,7 +8,7 @@ interface PageHeaderAction {
   label: string
   icon?: React.ComponentType<{ className?: string }>
   onClick?: () => void
-  variant?: 'primary' | 'secondary'
+  intent?: 'primary' | 'secondary'
   className?: string
 }
 
@@ -24,9 +24,103 @@ interface PageHeaderProps {
   meta?: PageHeaderMeta[]
   actions?: PageHeaderAction[]
   className?: string
-  padding?: keyof typeof spacing
-  gap?: keyof typeof spacing
+  padding?: 'sm' | 'md' | 'lg'
+  gap?: 'sm' | 'md' | 'lg'
 }
+
+// 🎨 PageHeader style variants
+export const pageHeader = tv({
+  slots: {
+    root: [
+      'flex flex-col lg:flex-row lg:items-center lg:justify-between',
+    ],
+    content: [
+      'min-w-0 flex-1',
+    ],
+    title: [
+      'font-bold sm:truncate text-primary text-xl',
+    ],
+    subtitle: [
+      'text-base text-secondary',
+    ],
+    meta: [
+      'flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap',
+    ],
+    metaItem: [
+      'flex items-center text-base text-secondary',
+    ],
+    metaIcon: [
+      'size-5 shrink-0 text-muted',
+    ],
+    actions: [
+      'flex lg:mt-0 lg:ml-4',
+    ],
+    actionItem: [
+      'flex',
+    ],
+    actionIcon: [
+      '-ml-0.5 size-5',
+    ],
+    mobileMenu: [
+      'relative sm:hidden',
+    ],
+    menuButton: [
+      'inline-flex items-center rounded-md p-4',
+      'text-base font-semibold text-primary',
+      'bg-surface hover:bg-surface-hover',
+      'shadow-sm',
+    ],
+    menuIcon: [
+      '-mr-1 size-5',
+    ],
+    menuItems: [
+      'absolute left-0 z-10 -ml-1 w-48 origin-top-left rounded-md',
+      'bg-surface p-4',
+      'ring-1 ring-black/5 shadow-lg',
+      'transition focus:outline-none',
+      'data-closed:scale-95 data-closed:transform data-closed:opacity-0',
+      'data-enter:duration-200 data-enter:ease-out',
+      'data-leave:duration-75 data-leave:ease-in',
+    ],
+    menuItem: [
+      'block w-full px-4 py-2 text-sm focus:outline-none',
+    ],
+  },
+  variants: {
+    gap: {
+      sm: { 
+        root: 'gap-2',
+        meta: 'gap-2',
+        metaItem: 'gap-2',
+        actions: 'gap-2',
+        actionItem: 'gap-2',
+      },
+      md: { 
+        root: 'gap-4',
+        meta: 'gap-4',
+        metaItem: 'gap-4',
+        actions: 'gap-4',
+        actionItem: 'gap-4',
+      },
+      lg: { 
+        root: 'gap-6',
+        meta: 'gap-6',
+        metaItem: 'gap-6',
+        actions: 'gap-6',
+        actionItem: 'gap-6',
+      },
+    },
+  },
+  defaultVariants: {
+    gap: 'md',
+  },
+});
+
+// ✅ Export for atomic style use elsewhere
+export const pageHeaderStyles = pageHeader;
+
+// ✅ Export type for variant props
+export type PageHeaderVariants = Parameters<typeof pageHeader>[0];
 
 export function PageHeader({
   title,
@@ -36,43 +130,22 @@ export function PageHeader({
   className,
   gap = 'md',
 }: PageHeaderProps) {
-  // Extract token values into constants
-  const gapClass = spacing[gap]
-  const titleSize = fontSizes.xl
-  const subtitleSize = fontSizes.base
-  const metaSize = fontSizes.base
-  const buttonSize = fontSizes.base
-
-  // Spacing tokens
-  const metaGap = spacing.lg
-  const metaItemGap = spacing.sm
-  const actionGap = spacing.md
-  const actionItemGap = spacing.sm
-  const dropdownGap = spacing.sm
-  const dropdownPadding = spacing.md
+  const styles = pageHeader({ gap });
 
   return (
-    <div className={cn('flex flex-col lg:flex-row lg:items-center lg:justify-between', gapClass, className)}>
-      <div className="min-w-0 flex-1">
-        <h2 className={cn('font-bold sm:truncate text-primary', titleSize)}>
-          {title}
-        </h2>
+    <div className={cn(styles.root(), className)}>
+      <div className={styles.content()}>
+        <h2 className={styles.title()}>{title}</h2>
         {subtitle && (
-          <p className={cn(metaItemGap, subtitleSize, 'text-secondary')}>
-            {subtitle}
-          </p>
+          <p className={styles.subtitle()}>{subtitle}</p>
         )}
         {meta.length > 0 && (
-          <div className={cn(
-            metaItemGap,
-            'flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap',
-            metaGap
-          )}>
+          <div className={styles.meta()}>
             {meta.map((item, index) => (
-              <div key={index} className={cn('flex items-center', metaSize, 'text-secondary')}>
+              <div key={index} className={styles.metaItem()}>
                 {item.icon && (
                   <item.icon
-                    className={cn(metaItemGap, 'size-5 shrink-0 text-muted')}
+                    className={styles.metaIcon()}
                     aria-hidden="true"
                   />
                 )}
@@ -84,21 +157,17 @@ export function PageHeader({
       </div>
 
       {actions.length > 0 && (
-        <div className={cn(
-          actionGap,
-          'flex lg:mt-0 lg:ml-4',
-          actionGap
-        )}>
+        <div className={styles.actions()}>
           {actions.map((action, index) => (
-            <span key={index} className={cn(index > 0 && actionItemGap)}>
+            <span key={index} className={styles.actionItem()}>
               <Button
                 onClick={action.onClick}
-                // variant={action.variant || 'secondary'}
+                intent={action.intent || 'secondary'}
                 className={action.className}
               >
                 {action.icon && (
                   <action.icon
-                    className={cn(metaItemGap, '-ml-0.5 size-5')}
+                    className={styles.actionIcon()}
                     aria-hidden="true"
                   />
                 )}
@@ -108,38 +177,17 @@ export function PageHeader({
           ))}
 
           {/* Mobile dropdown menu */}
-          <Menu as="div" className={cn('relative', actionItemGap, 'sm:hidden')}>
-            <MenuButton className={cn(
-              'inline-flex items-center rounded-md',
-              dropdownPadding,
-              buttonSize,
-              'font-semibold',
-              'text-primary',
-              'bg-surface',
-              'hover:bg-surface-hover',
-              'shadow-sm'
-            )}>
+          <Menu as="div" className={styles.mobileMenu()}>
+            <MenuButton className={styles.menuButton()}>
               More
               <ChevronDownIcon
-                className={cn('-mr-1', metaItemGap, 'size-5')}
+                className={styles.menuIcon()}
                 aria-hidden="true"
               />
             </MenuButton>
             <MenuItems
               transition
-              className={cn(
-                'absolute left-0 z-10',
-                dropdownGap,
-                '-ml-1 w-48 origin-top-left rounded-md',
-                'bg-surface',
-                dropdownPadding,
-                'ring-1 ring-black/5',
-                'shadow-lg',
-                'transition focus:outline-none',
-                'data-closed:scale-95 data-closed:transform data-closed:opacity-0',
-                'data-enter:duration-200 data-enter:ease-out',
-                'data-leave:duration-75 data-leave:ease-in'
-              )}
+              className={styles.menuItems()}
             >
               {actions.map((action, index) => (
                 <MenuItem key={index}>
@@ -147,9 +195,8 @@ export function PageHeader({
                     <button
                       onClick={action.onClick}
                       className={cn(
-                        'block w-full px-4 py-2 text-sm',
-                        active ? 'bg-surface-hover text-primary' : 'text-text',
-                        'focus:outline-none'
+                        styles.menuItem(),
+                        active ? 'bg-surface-hover text-primary' : 'text-text'
                       )}
                     >
                       {action.label}
@@ -162,5 +209,5 @@ export function PageHeader({
         </div>
       )}
     </div>
-  )
+  );
 }

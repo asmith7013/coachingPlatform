@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "_id": "rubricscore_001",
+      "date": "2024-03-15",
+      "score": 3,
+      "staffId": "staff_001",
+      "school": "school_001",
+      "owners": ["staff_001"],
+      "createdAt": "2024-03-15T10:00:00Z",
+      "updatedAt": "2024-03-15T10:00:00Z"
+    },
+    {
+      "_id": "rubricscore_002",
+      "date": "2024-03-15",
+      "score": 4,
+      "staffId": "staff_002",
+      "school": "school_001",
+      "owners": ["staff_002"],
+      "createdAt": "2024-03-15T11:00:00Z",
+      "updatedAt": "2024-03-15T11:00:00Z"
+    }
+  ]
+} 

@@ -1,36 +1,103 @@
 import { cn } from '@/lib/utils'
-import { tv } from 'tailwind-variants'
+import { tv, type VariantProps } from 'tailwind-variants'
 import {
   sizeVariant,
-  fullWidthVariant,
   radiusVariant,
   shadowVariant,
   disabledVariant,
   loadingVariant,
-} from '@/lib/ui/sharedVariants'
-// import type { SizeVariant, Shadow } from '@/lib/ui/tokens'
-// import { defaultBooleanVariant } from '@/lib/ui/sharedVariants'
+  fullWidthVariant,
+  type SizeVariant,
+  type RadiusVariant,
+  type ShadowVariant,
+  type DisabledVariant,
+  type LoadingVariant,
+  type FullWidthVariant,
+} from '@/lib/ui/variants'
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  loading?: boolean;
-  disabled?: boolean;
-  fullWidth?: boolean;
+interface ButtonProps extends 
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  SizeVariant,
+  RadiusVariant,
+  ShadowVariant,
+  DisabledVariant,
+  LoadingVariant,
+  FullWidthVariant {
   intent?: 'primary' | 'secondary';
   appearance?: 'solid' | 'alt' | 'outline';
-  size?: 'md' | 'sm' | 'lg' | 'xl';
-  shadow?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   className?: string;
 }
 
-const button = tv({
+// 🎨 Style segment interface for clearer design contract
+interface StyleSegments {
+  bg: string;
+  text: string;
+  border: string;
+  hover: string;
+}
+
+// 🔁 Helper to DRY up repetitive compound styles with explicit segments
+const combo = (
+  intent: 'primary' | 'secondary',
+  appearance: 'solid' | 'alt' | 'outline',
+  styles: StyleSegments
+) => ({
+  intent,
+  appearance,
+  className: `${styles.bg} ${styles.text} ${styles.border} ${styles.hover}`,
+});
+
+const compoundVariants = [
+  // Primary Intent
+  combo('primary', 'solid', {
+    bg: 'bg-primary',
+    text: 'text-white',
+    border: 'border border-transparent',
+    hover: 'hover:bg-primary-600 hover:border-primary-700',
+  }),
+  combo('primary', 'alt', {
+    bg: 'bg-primary-800',
+    text: 'text-white',
+    border: 'border border-transparent',
+    hover: 'hover:bg-primary-700 hover:border-primary-600',
+  }),
+  combo('primary', 'outline', {
+    bg: 'bg-white',
+    text: 'text-primary',
+    border: 'border-2 border-primary',
+    hover: 'hover:bg-primary-50 hover:border-primary-600',
+  }),
+  
+  // Secondary Intent
+  combo('secondary', 'solid', {
+    bg: 'bg-secondary',
+    text: 'text-white',
+    border: 'border border-transparent',
+    hover: 'hover:bg-secondary-600 hover:border-secondary-700',
+  }),
+  combo('secondary', 'alt', {
+    bg: 'bg-secondary-800',
+    text: 'text-white',
+    border: 'border border-transparent',
+    hover: 'hover:bg-secondary-700 hover:border-secondary-600',
+  }),
+  combo('secondary', 'outline', {
+    bg: 'bg-white',
+    text: 'text-secondary',
+    border: 'border-2 border-secondary',
+    hover: 'hover:bg-secondary-50 hover:border-secondary-600',
+  }),
+];
+
+export const button = tv({
   base: 'inline-flex items-center justify-center font-semibold transition-colors focus:outline-none cursor-pointer',
   variants: {
     ...sizeVariant.variants,
-    ...fullWidthVariant.variants,
     ...radiusVariant.variants,
     ...shadowVariant.variants,
     ...disabledVariant.variants,
     ...loadingVariant.variants,
+    ...fullWidthVariant.variants,
     intent: {
       primary: '',
       secondary: '',
@@ -40,67 +107,31 @@ const button = tv({
       alt: '',
       outline: '',
     },
-    loading: {
-      true: 'cursor-wait',
-      false: '',
-    },
-    disabled: {
-      true: 'opacity-50 pointer-events-none',
-      false: '',
-    },
-    fullWidth: {
-      true: 'w-full',
-      false: '',
-    },
   },
-  compoundVariants: [
-    {
-      intent: 'primary',
-      appearance: 'solid',
-      className: 'bg-primary text-white hover:bg-primary-600',
-    },
-    {
-      intent: 'primary',
-      appearance: 'alt',
-      className: 'bg-primary-800 text-white hover:bg-primary-700',
-    },
-    {
-      intent: 'primary',
-      appearance: 'outline',
-      className: 'bg-white text-primary border-2 border-primary hover:bg-primary-600',
-    },
-    {
-      intent: 'secondary',
-      appearance: 'solid',
-      className: 'bg-secondary text-white hover:bg-secondary-600',
-    },
-    {
-      intent: 'secondary',
-      appearance: 'alt',
-      className: 'bg-secondary-800 text-white hover:bg-secondary-700',
-    },
-    {
-      intent: 'secondary',
-      appearance: 'outline',
-      className: 'bg-white text-secondary border-2 border-secondary hover:bg-secondary-600',
-    },
-  ],
+  compoundVariants,
   defaultVariants: {
     intent: 'primary',
     appearance: 'solid',
     size: 'md',
-    fullWidth: false,
-    radius: 'md',
+    rounded: 'md',
     shadow: 'sm',
     disabled: false,
     loading: false,
+    fullWidth: false,
   },
-})
+});
 
-export const Button: React.FC<ButtonProps> = ({
+// ✅ Export for atomic style use elsewhere (e.g. <Link>, <div>)
+export const buttonStyles = button;
+
+// ✅ Export variant types for reuse
+export type ButtonVariants = VariantProps<typeof button>;
+
+export const Button = ({
   intent = 'primary',
   appearance = 'solid',
   size = 'md',
+  rounded = 'md',
   shadow = 'sm',
   loading = false,
   disabled = false,
@@ -108,7 +139,7 @@ export const Button: React.FC<ButtonProps> = ({
   className,
   children,
   ...props
-}) => {
+}: ButtonProps) => {
   return (
     <button
       className={cn(
@@ -116,6 +147,7 @@ export const Button: React.FC<ButtonProps> = ({
           intent,
           appearance,
           size,
+          rounded,
           shadow,
           loading,
           disabled,

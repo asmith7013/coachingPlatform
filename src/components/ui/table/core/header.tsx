@@ -1,11 +1,48 @@
 'use client'
 
-import { cn } from '@/lib/utils'
+import { tv, type VariantProps } from 'tailwind-variants'
 import { ChevronUpIcon } from '@heroicons/react/24/solid'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
 
-interface TableHeaderProps<T> {
+const tableHeader = tv({
+  slots: {
+    root: 'bg-surface',
+    cell: 'font-medium text-text',
+    actionCell: 'text-right'
+  },
+  variants: {
+    textSize: {
+      sm: { cell: 'text-xs' },
+      base: { cell: 'text-sm' },
+      lg: { cell: 'text-base' }
+    },
+    padding: {
+      sm: { 
+        cell: 'px-3 py-2',
+        actionCell: 'px-3 py-2'
+      },
+      md: { 
+        cell: 'px-4 py-3',
+        actionCell: 'px-4 py-3'
+      },
+      lg: { 
+        cell: 'px-6 py-4',
+        actionCell: 'px-6 py-4'
+      }
+    }
+  },
+  defaultVariants: {
+    textSize: 'base',
+    padding: 'md'
+  }
+})
+
+export type TableHeaderVariants = VariantProps<typeof tableHeader>
+
+export interface TableHeaderProps<T> {
   columns: TableColumnSchema<T>[]
+  textSize?: TableHeaderVariants['textSize']
+  padding?: TableHeaderVariants['padding']
   sortColumn?: string
   onSort?: (columnId: string) => void
   className?: string
@@ -14,25 +51,24 @@ interface TableHeaderProps<T> {
 
 export function TableHeader<T>({
   columns,
+  textSize = 'base',
+  padding = 'md',
   sortColumn,
   onSort,
-  className,
-  showEdit,
+  showEdit
 }: TableHeaderProps<T>) {
+  const styles = tableHeader({ textSize, padding })
+
   return (
-    <thead className={cn(
-      'bg-surface border-b border-border',
-      className
-    )}>
+    <thead className={styles.root()}>
       <tr>
-        {columns.map((column) => (
+        {columns.map((column, index) => (
           <th
-            key={column.id}
-            className={cn(
-              'px-4 py-3 text-left text-sm font-medium',
-              column.sortable && 'cursor-pointer hover:text-primary',
-              sortColumn === column.id && 'text-primary'
-            )}
+            key={index}
+            className={styles.cell({
+              className: column.sortable ? 'cursor-pointer hover:text-primary' : undefined,
+              ...(sortColumn === column.id && { className: 'text-primary' })
+            })}
             onClick={() => onSort?.(column.id)}
           >
             <div className="flex items-center gap-2">
@@ -48,7 +84,7 @@ export function TableHeader<T>({
           </th>
         ))}
         {showEdit && (
-          <th className="px-4 py-3 text-right text-sm font-medium text-muted">
+          <th className={styles.actionCell()}>
             Actions
           </th>
         )}

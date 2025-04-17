@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import type { Document, Types } from "mongoose";
 import { 
-  executePaginatedQuery,
+  executeSmartQuery,
   sanitizeFilters,
   createItem,
   updateItem,
@@ -104,27 +104,45 @@ export async function fetchStaff({
     let result;
     if (type === "nycps") {
       const { model, schema } = getNYCPSStaffModelAndSchema();
-      result = await executePaginatedQuery(
+      result = await executeSmartQuery(
         model,
         sanitizedFilters,
         schema,
-        { page, limit, sortBy, sortOrder }
+        { 
+          page, 
+          limit, 
+          sortBy, 
+          sortOrder,
+          mockFile: 'staff.json'
+        }
       );
     } else if (type === "tl") {
       const { model, schema } = getTeachingLabStaffModelAndSchema();
-      result = await executePaginatedQuery(
+      result = await executeSmartQuery(
         model,
         sanitizedFilters,
         schema,
-        { page, limit, sortBy, sortOrder }
+        { 
+          page, 
+          limit, 
+          sortBy, 
+          sortOrder,
+          mockFile: 'staff.json'
+        }
       );
     } else {
       const { model, schema } = getStaffMemberModelAndSchema();
-      result = await executePaginatedQuery(
+      result = await executeSmartQuery(
         model,
         sanitizedFilters,
         schema,
-        { page, limit, sortBy, sortOrder }
+        { 
+          page, 
+          limit, 
+          sortBy, 
+          sortOrder,
+          mockFile: 'staff.json'
+        }
       );
     }
 

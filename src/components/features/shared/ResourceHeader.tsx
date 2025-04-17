@@ -92,7 +92,7 @@ export function ResourceHeader<T extends Record<string, unknown>>({
           ])}
           placeholder="Sort by..."
           size="md"
-          fontSize="base"
+          // fontSize="base"
           radius="md"
           className="min-w-[12rem]"
         />

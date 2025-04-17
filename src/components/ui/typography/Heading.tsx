@@ -1,14 +1,14 @@
 import { ElementType, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { typography, type HeadingLevel } from '@/lib/ui/tokens'
+import { headingVariants, type HeadingVariants } from '@/lib/ui/sharedVariants'
 
-type HeadingVariant = 'text' | 'text-muted' | 'primary' | 'secondary' | 'success' | 'danger'
+type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 
-interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
-  children: ReactNode
-  level?: HeadingLevel
-  variant?: HeadingVariant
-  className?: string
+interface HeadingProps extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'color'> {
+  children: ReactNode;
+  level?: HeadingVariants['level'];
+  color?: HeadingVariants['color'];
+  className?: string;
 }
 
 const headingElements: Record<HeadingLevel, ElementType> = {
@@ -22,21 +22,17 @@ const headingElements: Record<HeadingLevel, ElementType> = {
 
 export function Heading({
   children,
-  level = 'h1',
-  variant = 'primary',
+  level = 'h3',
+  color = 'default',
   className,
   ...props
 }: HeadingProps) {
   const Component = headingElements[level];
-  const headingClass = typography.heading[level];
+  const styles = headingVariants({ level, color });
 
   return (
     <Component
-      className={cn(
-        headingClass,
-        `text-${variant}`,
-        className
-      )}
+      className={cn(styles, className)}
       {...props}
     >
       {children}

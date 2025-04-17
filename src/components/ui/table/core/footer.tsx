@@ -1,7 +1,27 @@
 import { ReactNode } from 'react'
-import { cn } from '@/lib/utils'
+import { tv, type VariantProps } from 'tailwind-variants'
 
-interface TableFooterProps {
+const tableFooter = tv({
+  slots: {
+    root: 'bg-surface border-surface',
+    cell: 'px-4 py-3 text-muted'
+  },
+  variants: {
+    size: {
+      sm: { cell: 'text-xs' },
+      md: { cell: 'text-sm' },
+      lg: { cell: 'text-base' }
+    }
+  },
+  defaultVariants: {
+    size: 'md'
+  }
+})
+
+export type TableFooterVariants = VariantProps<typeof tableFooter>
+export const tableFooterStyles = tableFooter
+
+interface TableFooterProps extends TableFooterVariants {
   children: ReactNode
   className?: string
 }
@@ -9,21 +29,14 @@ interface TableFooterProps {
 export function TableFooter({
   children,
   className,
+  size
 }: TableFooterProps) {
+  const styles = tableFooter({ size })
+
   return (
-    <tfoot className={cn(
-      'bg-surface',
-      'border-surface',
-      className
-    )}>
+    <tfoot className={styles.root({ className })}>
       <tr>
-        <td
-          colSpan={100}
-          className={cn(
-            'px-4 py-3 text-sm',
-            'text-muted'
-          )}
-        >
+        <td colSpan={100} className={styles.cell()}>
           {children}
         </td>
       </tr>

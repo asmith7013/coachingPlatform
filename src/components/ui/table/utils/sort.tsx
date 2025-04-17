@@ -1,9 +1,34 @@
-import { cn } from '@/lib/utils'
+import { tv, type VariantProps } from 'tailwind-variants'
 
-interface TableSortProps {
+const tableSort = tv({
+  slots: {
+    root: 'flex items-center space-x-1 font-medium',
+    icon: 'ml-1'
+  },
+  variants: {
+    size: {
+      sm: { root: 'text-xs' },
+      md: { root: 'text-sm' },
+      lg: { root: 'text-base' }
+    },
+    active: {
+      true: { root: 'text-primary' },
+      false: { root: 'text-muted hover:text-primary' }
+    }
+  },
+  defaultVariants: {
+    size: 'md',
+    active: false
+  }
+})
+
+export type TableSortVariants = VariantProps<typeof tableSort>
+export const tableSortStyles = tableSort
+
+interface TableSortProps extends TableSortVariants {
   column: string
-  currentSort: string | null
-  sortDirection: 'asc' | 'desc' | null
+  currentSort?: string
+  sortDirection?: 'asc' | 'desc'
   onSort: (column: string) => void
   className?: string
 }
@@ -14,22 +39,18 @@ export function TableSort({
   sortDirection,
   onSort,
   className,
+  size
 }: TableSortProps) {
   const isActive = currentSort === column
+  const styles = tableSort({ size, active: isActive })
 
   return (
     <button
       onClick={() => onSort(column)}
-      className={cn(
-        'flex items-center space-x-1 text-sm font-medium',
-        'text-muted',
-        'hover:text-primary',
-        isActive && 'text-primary',
-        className
-      )}
+      className={styles.root({ className })}
     >
       <span>{column}</span>
-      <span className="ml-1">
+      <span className={styles.icon()}>
         {isActive ? (
           sortDirection === 'asc' ? '↑' : '↓'
         ) : (

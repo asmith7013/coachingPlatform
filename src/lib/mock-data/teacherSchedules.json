@@ -1,0 +1,86 @@
+{
+  "data": [
+    {
+      "_id": "teacherschedule_001",
+      "teacher": "teacher_001",
+      "school": "school_001",
+      "scheduleByDay": [
+        {
+          "day": "Monday",
+          "periods": [
+            {
+              "periodNum": 1,
+              "className": "ELA Grade 6",
+              "room": "204",
+              "periodType": "teaching"
+            },
+            {
+              "periodNum": 2,
+              "className": "ELA Grade 7",
+              "room": "204",
+              "periodType": "teaching"
+            },
+            {
+              "periodNum": 3,
+              "className": "Planning",
+              "periodType": "prep"
+            }
+          ]
+        },
+        {
+          "day": "Tuesday",
+          "periods": [
+            {
+              "periodNum": 1,
+              "className": "ELA Grade 6",
+              "room": "204",
+              "periodType": "teaching"
+            },
+            {
+              "periodNum": 2,
+              "className": "Team Meeting",
+              "room": "Library",
+              "periodType": "meeting"
+            }
+          ]
+        }
+      ],
+      "owners": ["staff_001"],
+      "createdAt": "2024-03-15T08:00:00Z",
+      "updatedAt": "2024-03-15T08:00:00Z"
+    },
+    {
+      "_id": "teacherschedule_002",
+      "teacher": "teacher_002",
+      "school": "school_001",
+      "scheduleByDay": [
+        {
+          "day": "Monday",
+          "periods": [
+            {
+              "periodNum": 1,
+              "className": "Math Grade 8",
+              "room": "301",
+              "periodType": "teaching"
+            },
+            {
+              "periodNum": 2,
+              "className": "Math Grade 7",
+              "room": "301",
+              "periodType": "teaching"
+            },
+            {
+              "periodNum": 3,
+              "className": "Department Meeting",
+              "room": "Conference",
+              "periodType": "meeting"
+            }
+          ]
+        }
+      ],
+      "owners": ["staff_002"],
+      "createdAt": "2024-03-15T09:00:00Z",
+      "updatedAt": "2024-03-15T09:00:00Z"
+    }
+  ]
+} 

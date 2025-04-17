@@ -11,7 +11,7 @@ import {
 import { handleServerError } from "@/lib/error/handleServerError";
 import { handleValidationError } from "@/lib/error/handleValidationError";
 import { 
-  executePaginatedQuery,
+  executeSmartQuery,
   sanitizeFilters,
   createItem,
   updateItem,
@@ -46,8 +46,8 @@ export async function fetchLookFors({
     // Sanitize filters
     const sanitizedFilters = sanitizeFilters(filters);
 
-    // Execute paginated query with LookForZodSchema for validation
-    const result = await executePaginatedQuery(
+    // Execute smart query with LookForZodSchema for validation
+    const result = await executeSmartQuery(
       LookForModel,
       sanitizedFilters,
       LookForZodSchema, // Use full schema for returned documents
@@ -55,7 +55,8 @@ export async function fetchLookFors({
         page,
         limit,
         sortBy,
-        sortOrder
+        sortOrder,
+        mockFile: 'cycles.json'
       }
     );
 

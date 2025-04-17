@@ -6,7 +6,7 @@ import { SchoolInputZodSchema, SchoolZodSchema, SchoolInput } from "@/lib/zod-sc
 import { handleServerError } from "@/lib/error/handleServerError";
 import { handleValidationError } from "@/lib/error/handleValidationError";
 import { 
-  executePaginatedQuery,
+  executeSmartQuery,
   sanitizeFilters,
   createItem,
   updateItem,
@@ -41,7 +41,7 @@ export async function fetchSchools({
     const sanitizedFilters = sanitizeFilters(filters);
 
     // Execute paginated query with SchoolZodSchema for validation
-    const result = await executePaginatedQuery(
+    const result = await executeSmartQuery(
       SchoolModel,
       sanitizedFilters,
       SchoolZodSchema,
@@ -49,7 +49,8 @@ export async function fetchSchools({
         page,
         limit,
         sortBy,
-        sortOrder
+        sortOrder,
+        mockFile: 'schools.json'
       }
     );
 

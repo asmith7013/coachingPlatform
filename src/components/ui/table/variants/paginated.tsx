@@ -1,11 +1,35 @@
 'use client'
 
-import { Table } from '../table'
-import { cn } from '@/lib/utils'
+import { Table, type TableVariants } from '../table'
+import { tv, type VariantProps } from 'tailwind-variants'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
-import { spacing, fontSizes } from '@/lib/ui/tokens'
+import { TablePagination } from '../utils/pagination'
 
-interface PaginatedTableProps<T> {
+const paginatedTable = tv({
+  slots: {
+    root: 'relative',
+    pagination: 'mt-4'
+  },
+  variants: {
+    spacing: {
+      sm: { pagination: 'mt-2' },
+      md: { pagination: 'mt-4' },
+      lg: { pagination: 'mt-6' }
+    },
+    sticky: {
+      true: { pagination: 'sticky bottom-0 bg-background/80 backdrop-blur' }
+    }
+  },
+  defaultVariants: {
+    spacing: 'md',
+    sticky: false
+  }
+})
+
+export type PaginatedTableVariants = VariantProps<typeof paginatedTable>
+export const paginatedTableStyles = paginatedTable
+
+interface PaginatedTableProps<T> extends TableVariants, PaginatedTableVariants {
   data: T[]
   columns: TableColumnSchema<T>[]
   className?: string
@@ -19,32 +43,35 @@ interface PaginatedTableProps<T> {
   onPageChange?: (page: number) => void
 }
 
-export function PaginatedTable<T extends { id?: string | number }>({
+export function PaginatedTable<T>({
   data,
   columns,
   className,
   currentPage = 1,
   totalPages = 1,
-//   onPageChange,
+  onPageChange,
+  spacing,
+  sticky,
   ...props
 }: PaginatedTableProps<T>) {
+  const styles = paginatedTable({ spacing, sticky })
+
   return (
-    <div className={cn('relative', className)}>
+    <div className={styles.root({ className })}>
       <Table
         data={data}
         columns={columns}
         {...props}
       />
-
-      {/* You can replace this with real pagination UI later */}
-      <div className={cn(
-        'mt-4 text-center',
-        spacing.md,
-        fontSizes.base,
-        'text-text'
-      )}>
-        Page {currentPage} of {totalPages}
-      </div>
+      {totalPages > 1 && (
+        <div className={styles.pagination()}>
+          <TablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange!}
+          />
+        </div>
+      )}
     </div>
   )
 }

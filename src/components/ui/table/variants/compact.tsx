@@ -1,10 +1,27 @@
 'use client'
 
-import { Table } from '../table'
-import { cn } from '@/lib/utils'
+import { Table, type TableVariants } from '../table'
+import { tv, type VariantProps } from 'tailwind-variants'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
 
-interface CompactTableProps<T> {
+const compactTable = tv({
+  base: 'text-sm leading-tight',
+  variants: {
+    spacing: {
+      sm: 'space-y-2',
+      md: 'space-y-3',
+      lg: 'space-y-4'
+    }
+  },
+  defaultVariants: {
+    spacing: 'md'
+  }
+})
+
+export type CompactTableVariants = VariantProps<typeof compactTable>
+export const compactTableStyles = compactTable
+
+interface CompactTableProps<T> extends TableVariants, CompactTableVariants {
   data: T[]
   columns: TableColumnSchema<T>[]
   className?: string
@@ -15,17 +32,19 @@ interface CompactTableProps<T> {
   emptyMessage?: string
 }
 
-export function CompactTable<T extends { id?: string | number }>({
+export function CompactTable<T>({
   data,
   columns,
   className,
+  spacing,
   ...props
 }: CompactTableProps<T>) {
   return (
     <Table
-      className={cn('text-sm leading-tight', className)}
+      className={compactTable({ spacing, className })}
       data={data}
       columns={columns}
+      size="sm"
       {...props}
     />
   )

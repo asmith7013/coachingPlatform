@@ -1,0 +1,37 @@
+[
+  {
+    "id": "school_001",
+    "name": "Washington STEM Academy",
+    "district": "Metro District",
+    "staffIds": ["staff_001", "staff_002"],
+    "schedule": {
+      "periods": [
+        { "name": "Period 1", "startTime": "08:00", "endTime": "08:50" },
+        { "name": "Period 2", "startTime": "09:00", "endTime": "09:50" },
+        { "name": "Period 3", "startTime": "10:00", "endTime": "10:50" }
+      ]
+    },
+    "cycleIds": ["cycle_001"],
+    "activeCoachIds": ["coach_001"],
+    "gradeLevel": "6-8",
+    "curriculum": "ILC",
+    "status": "active"
+  },
+  {
+    "id": "school_002",
+    "name": "Lincoln Math & Science Magnet",
+    "district": "Metro District",
+    "staffIds": ["staff_002"],
+    "schedule": {
+      "periods": [
+        { "name": "Block A", "startTime": "08:30", "endTime": "09:45" },
+        { "name": "Block B", "startTime": "10:00", "endTime": "11:15" }
+      ]
+    },
+    "cycleIds": ["cycle_002"],
+    "activeCoachIds": ["coach_001"],
+    "gradeLevel": "9-12",
+    "curriculum": "Kendall Hunt",
+    "status": "active"
+  }
+] 

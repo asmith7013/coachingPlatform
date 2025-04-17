@@ -79,8 +79,13 @@
 │   │   │   │   ├── renderILCLesson.tsx
 │   │   │   │   └── renderKHLesson.tsx
 │   │   │   ├── lookFors
+│   │   │   ├── rubrics
+│   │   │   │   ├── RubricCard.tsx
+│   │   │   │   ├── RubricFilterPanel.tsx
+│   │   │   │   └── RubricViewer.tsx
 │   │   │   ├── schools
 │   │   │   └── shared
+│   │   │       ├── FilterableGridView.tsx
 │   │   │       ├── ResourceHeader.tsx
 │   │   │       └── form
 │   │   │           ├── BulkUploadForm.tsx
@@ -155,6 +160,7 @@
 │   │   │   ├── handleServerError.ts
 │   │   │   └── handleValidationError.ts
 │   │   ├── hooks
+│   │   │   ├── useItemToGroupMap.ts
 │   │   │   └── usePersistedCurriculumVersion.ts
 │   │   ├── imRoutine
 │   │   │   ├── getUnitURL.ts
@@ -167,6 +173,11 @@
 │   │   │   ├── KH_Routines.json
 │   │   │   ├── alg1links.json
 │   │   │   └── page.txt
+│   │   ├── mock-data
+│   │   │   ├── cycles.json
+│   │   │   ├── schools.json
+│   │   │   ├── staff.json
+│   │   │   └── visits.json
 │   │   ├── server-utils
 │   │   │   ├── bulkUpload.ts
 │   │   │   ├── crud.ts
@@ -268,4 +279,4 @@
 ├── tsconfig.json
 └── tsconfig.tsbuildinfo
 
-80 directories, 189 files
+82 directories, 198 files

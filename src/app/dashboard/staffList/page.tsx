@@ -96,7 +96,9 @@ export default function NYCPSStaffList() {
                 <Heading level="h3" className={cn(typography.weight.medium, 'text-primary')}>
                   {member.staffName}
                 </Heading>
-                <Text variant="text" className={cn(spacing.sm, 'text-text-muted')}>
+                <Text 
+                // variant="text" 
+                className={cn(spacing.sm, 'text-text-muted')}>
                   {member.email || 'No email provided'}
                 </Text>
               </div>

@@ -1,14 +1,66 @@
 import { cn } from '@/lib/utils'
-import { spacing, fontSizes } from '@/lib/ui/tokens'
+import { tv } from 'tailwind-variants'
 
 interface FormSectionProps {
-  title: string
-  description?: string
-  children: React.ReactNode
-  className?: string
-  padding?: keyof typeof spacing
-  gap?: keyof typeof spacing
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+  className?: string;
+  padding?: 'sm' | 'md' | 'lg';
+  gap?: 'sm' | 'md' | 'lg';
 }
+
+// 🎨 FormSection style variants
+export const formSection = tv({
+  slots: {
+    root: [
+      'flex flex-col',
+    ],
+    header: [
+      'flex flex-col',
+    ],
+    title: [
+      'font-semibold text-lg text-primary',
+    ],
+    description: [
+      'text-sm text-text',
+    ],
+    content: [
+      'mt-sm',
+    ],
+  },
+  variants: {
+    padding: {
+      sm: { content: 'p-2' },
+      md: { content: 'p-4' },
+      lg: { content: 'p-6' },
+    },
+    gap: {
+      sm: { 
+        root: 'gap-2',
+        header: 'gap-2',
+      },
+      md: { 
+        root: 'gap-4',
+        header: 'gap-4',
+      },
+      lg: { 
+        root: 'gap-6',
+        header: 'gap-6',
+      },
+    },
+  },
+  defaultVariants: {
+    padding: 'md',
+    gap: 'sm',
+  },
+});
+
+// ✅ Export for atomic style use elsewhere
+export const formSectionStyles = formSection;
+
+// ✅ Export type for variant props
+export type FormSectionVariants = Parameters<typeof formSection>[0];
 
 export function FormSection({
   title,
@@ -18,22 +70,21 @@ export function FormSection({
   padding = 'md',
   gap = 'sm',
 }: FormSectionProps) {
-  const paddingClass = spacing[padding]
-  const gapClass = spacing[gap]
+  const styles = formSection({ padding, gap });
 
   return (
-    <div className={cn('flex flex-col', gapClass, className)}>
-      <div className={cn('flex flex-col', spacing.sm)}>
-        <h3 className={cn('font-semibold', fontSizes.lg, 'text-primary')}>{title}</h3>
+    <div className={cn(styles.root(), className)}>
+      <div className={styles.header()}>
+        <h3 className={styles.title()}>{title}</h3>
         {description && (
-          <p className={cn('text-sm', 'text-text')}>
+          <p className={styles.description()}>
             {description}
           </p>
         )}
       </div>
-      <div className={cn('mt-sm', paddingClass)}>
+      <div className={styles.content()}>
         {children}
       </div>
     </div>
-  )
+  );
 }

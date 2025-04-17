@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { 
-  executePaginatedQuery,
+  executeSmartQuery,
   sanitizeFilters,
   createItem,
   updateItem,
@@ -45,8 +45,8 @@ export async function fetchStaff({
     // Sanitize filters
     const sanitizedFilters = sanitizeFilters(filters);
 
-    // Execute paginated query with appropriate schema for validation
-    const result = await executePaginatedQuery(
+    // Execute smart query with appropriate schema for validation
+    const result = await executeSmartQuery(
       StaffMemberModel,
       sanitizedFilters,
       StaffMemberZodSchema,
@@ -54,7 +54,8 @@ export async function fetchStaff({
         page,
         limit,
         sortBy,
-        sortOrder
+        sortOrder,
+        mockFile: 'staff.json'
       }
     );
 

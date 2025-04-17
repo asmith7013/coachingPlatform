@@ -1,37 +1,33 @@
-import { ReactNode } from 'react'
+import { ElementType, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { typography, type TextSize, type FontWeight } from '@/lib/ui/tokens'
+import { textVariants, type TextVariants } from '@/lib/ui/sharedVariants'
 
-type TextVariant = 'text' | 'muted' | 'primary' | 'secondary' | 'success' | 'danger'
-
-interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
-  children: ReactNode
-  size?: TextSize
-  weight?: FontWeight
-  variant?: TextVariant
-  className?: string
+interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'> {
+  children: ReactNode;
+  as?: ElementType;
+  size?: TextVariants['size'];
+  weight?: TextVariants['weight'];
+  color?: TextVariants['color'];
+  className?: string;
 }
 
 export function Text({
   children,
+  as: Component = 'p',
   size = 'base',
   weight = 'normal',
-  variant = 'primary',
+  color = 'default',
   className,
   ...props
 }: TextProps) {
+  const styles = textVariants({ size, weight, color });
+
   return (
-    <p
-      className={cn(
-        typography.text[size],
-        typography.weight[weight],
-        `text-${variant}`,
-        'leading-relaxed',
-        className
-      )}
+    <Component
+      className={cn(styles, className)}
       {...props}
     >
       {children}
-    </p>
+    </Component>
   )
 }

@@ -1,0 +1,80 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Perfect — here’s your Tailwind Variants Refactor Guide for UI Components, designed as a Cursor-friendly checklist with conditional rules depending on the component type (Button, Input, Text, etc.).
+
+✅ Tailwind Variants Refactor Checklist (Cursor Rule Template)
+
+🔧 Shared Setup (For All Components)
+	1.	Use tv() from tailwind-variants
+	•	Create a tv() instance per atomic component (e.g., button, input, heading)
+	•	Export both the component() and componentStyles
+	2.	Add variant support via variants and defaultVariants
+	•	e.g., size, variant, radius, disabled, fullWidth, etc.
+	3.	Use compoundVariants if combining multiple variant values triggers specific styles
+	4.	Expose TypeScript typings
+
+export type ButtonVariants = Parameters<typeof button>[0];
+
+🧷 Component-Specific Prompts and Rules
+
+🔘 Button
+	•	Base file: src/components/ui/button.tsx
+	•	Prompt:
+	Extract intent + appearance logic using a combo() helper that accepts bg, text, border, and hover. Ensure each compound variant defines all four. Export both the Button component and buttonStyles.
+	•	Checklist:
+	•	tv() with intent + appearance + loading + disabled + size + radius
+	•	All compoundVariants use combo() with explicit bg, text, border, hover
+	•	Class coverage for focus, disabled, hover states
+	•	Export atomic styles as buttonStyles
+	•	Type-safe props using React.ButtonHTMLAttributes<HTMLButtonElement>
+
+📝 Input, Textarea, Select
+	•	Shared Traits:
+	•	Form controls with value, validation, focus, placeholder, and label
+	•	Responsive to error, disabled, and size
+	•	Prompt:
+	Refactor this input to extract shared tv() variant logic (e.g., size, radius, focus outline, error border). Export both the component and inputStyles as atomic variant helpers.
+	•	Checklist:
+	•	Extract tv() instance named input
+	•	Include size, radius, error, disabled, fullWidth
+	•	Focus + outline logic included (focus:outline-2, outline-gray-300, etc.)
+	•	error modifies border and ring
+	•	Export inputStyles
+	•	Wrap in FieldWrapper for label + error
+
+✅ Heading, Text
+	•	Pure typography — driven by size, weight, variant
+	•	Prompt:
+	Replace raw typography classnames with a Tailwind Variants instance. Include size, weight, variant (e.g., muted, primary, danger), and optionally align. Export both component and atomic style access (headingStyles, textStyles).
+	•	Checklist:
+	•	Use tv() to extract textStyles or headingStyles
+	•	Include size, weight, variant, align
+	•	Use typography.text[size] or typography.heading[level]
+	•	Expose HeadingVariants, TextVariants types
+
+🧩 Card, FormSection, EmptyState, TableRow, ShellLayout
+	•	Composite layout components (multiple children or slots)
+	•	Often use internal padding, gap, radius, bg, shadow
+	•	Prompt:
+	Refactor this layout component to extract style variants like padding, radius, bg, and shadow into a Tailwind Variants config. If applicable, expose a cardStyles or layoutStyles export for reuse.
+	•	Checklist:
+	•	Variants for padding, radius, gap, shadow, variant (bg style)
+	•	Internally used in .header, .content, .footer sections if split
+	•	Responsive spacing + tokens respected
+	•	Export style function (e.g., cardStyles)
+	•	Component-specific slots (e.g., header, footer) respected
+
+
+
+	Absolutely — here’s the updated Tailwind Variants Migration Tracker in a Cursor-friendly format with [  ] for incomplete and [x] for completed components.
+
+✅ Tailwind Variants Migration Tracker
+
+	You can manually mark with [x] as you go.
+Copy this into variant-shift.mdc or use it in any Markdown doc in Cursor.
+
+
+
