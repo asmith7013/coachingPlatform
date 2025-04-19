@@ -5,22 +5,17 @@ import { useOptimisticResource } from "@hooks/utils/useOptimisticResource";
 import { useSafeSWR } from "@hooks/utils/useSafeSWR";
 import { handleErrorHandledMutation } from "@hooks/utils/useErrorHandledMutation";
 import { useCallback, useMemo } from "react";
+import { ResourceResponse } from '@/lib/server-utils/types';
 
-interface ResourceResponse<T> {
-  items: T[];
-  total: number;
-  empty: boolean;
-}
-
-type FetchParams<T> = {
-  page: number;
-  limit: number;
-  filters: Partial<T>;
-  sortBy: string;
-  sortOrder: "asc" | "desc";
+type FetchParams = {
+  page?: number;
+  limit?: number;
+  filters?: Record<string, unknown>;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 };
 
-type FetchFunction<T> = (params: FetchParams<T>) => Promise<ResourceResponse<T>>;
+type FetchFunction<T> = (params: FetchParams) => Promise<ResourceResponse<T>>;
 
 interface ResourceManagerOptions {
   initialPage?: number;

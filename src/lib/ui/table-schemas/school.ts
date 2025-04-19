@@ -1,6 +1,6 @@
 import { createTableSchema } from '../table-schema'
 import type { TableColumnSchema } from '../table-schema'
-import type { School } from '@zod-schema/core/school'
+import type { School } from '@/lib/zod-schema/core/school'
 
 export const schoolTableSchema: TableColumnSchema<School>[] = createTableSchema<School>([
 //   {

@@ -30,7 +30,8 @@ export function renderILCLesson(lesson: ILCLesson, selectedRoutines: string[]) {
     >
       <Heading
         level="h3"
-        className={cn('mb-2', !hasRoutines && 'text-muted')}
+        color={hasRoutines ? 'default' : 'muted'}
+        className="mb-2"
       >
         Lesson {lesson.lessonNumber}
       </Heading>
@@ -57,7 +58,11 @@ export function renderILCLesson(lesson: ILCLesson, selectedRoutines: string[]) {
           })}
         </div>
       ) : (
-        <Text size="sm" className="italic text-muted">
+        <Text 
+          textSize="sm" 
+          color="muted"
+          className="italic"
+        >
           No routines for this lesson.
         </Text>
       )}

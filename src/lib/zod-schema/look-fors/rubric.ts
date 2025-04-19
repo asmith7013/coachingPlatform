@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
 
 // ✅ Rubric Schema (shared schema)
 export const RubricZodSchema = z.object({
@@ -22,8 +23,8 @@ export const RubricScoreInputZodSchema = z.object({
 // ✅ RubricScore Full Schema
 export const RubricScoreZodSchema = RubricScoreInputZodSchema.extend({
   _id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
 });
 
 // ✅ Auto-generate TypeScript types

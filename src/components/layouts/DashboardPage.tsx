@@ -1,10 +1,10 @@
+import React from 'react';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
-import { layout, spacingY, typography } from '@/lib/ui/tokens';
 import { cn } from '@/lib/utils';
 
 interface DashboardPageProps {
-  title: string;
+  title?: string;
   description?: string;
   children: React.ReactNode;
 }
@@ -12,26 +12,29 @@ interface DashboardPageProps {
 export function DashboardPage({
   title,
   description,
-  children,
+  children
 }: DashboardPageProps) {
   return (
-    <div className={cn(layout.container, spacingY.lg)}>
-      <div className={spacingY.md}>
-        <Heading level="h1" className={cn(typography.weight.bold, 'text-primary')}>
+    <div className="container mx-auto p-8">
+      {title && (
+        <Heading 
+          level="h2" 
+          color="default"
+          className={cn("text-primary font-bold mb-4")}
+        >
           {title}
         </Heading>
-        {description && (
-          <Text 
-            variant="text" 
-            className={cn(typography.text.base, 'text-text')}
-          >
-            {description}
-          </Text>
-        )}
-      </div>
-      <div className="flex flex-col gap-y-8">
-        {children}
-      </div>
+      )}
+      {description && (
+        <Text
+          textSize="base"
+          color="muted"
+          className="mb-8"
+        >
+          {description}
+        </Text>
+      )}
+      {children}
     </div>
   );
 } 

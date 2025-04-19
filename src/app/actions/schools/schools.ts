@@ -49,8 +49,7 @@ export async function fetchSchools({
         page,
         limit,
         sortBy,
-        sortOrder,
-        mockFile: 'schools.json'
+        sortOrder
       }
     );
 

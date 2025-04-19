@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { LookForItemZodSchema } from "../look-fors/look-for";
+import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
 
 // ✅ Cycle Input Schema
 export const CycleInputZodSchema = z.object({
@@ -15,8 +16,8 @@ export const CycleInputZodSchema = z.object({
 // ✅ Cycle Full Schema
 export const CycleZodSchema = CycleInputZodSchema.extend({
   _id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
 });
 
 // ✅ Auto-generate TypeScript types

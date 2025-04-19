@@ -1,7 +1,21 @@
 import { useState } from "react";
 import { useResourceManager } from "@hooks/utils/useResourceManager";
-import { fetchSchools, createSchool, updateSchool, deleteSchool } from "@/app/actions/schools/schools";
-import { School, SchoolInput } from "@/lib/zod-schema";
+import { 
+  fetchSchools, 
+  createSchool, 
+  updateSchool, 
+  deleteSchool 
+} from "@/app/actions/schools/schools";
+import { School, SchoolInput } from "@/lib/types/core";
+import type { ResourceResponse } from "@/lib/server-utils/types";
+
+type FetchParams = {
+  page?: number;
+  limit?: number;
+  filters?: Record<string, unknown>;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+};
 
 export function useSchools(initialPage: number = 1, initialLimit: number = 20) {
   const [performanceMode, setPerformanceMode] = useState(true);
@@ -25,7 +39,7 @@ export function useSchools(initialPage: number = 1, initialLimit: number = 20) {
     mutate
   } = useResourceManager<School, SchoolInput>(
     "schools",
-    fetchSchools,
+    fetchSchools as (params: FetchParams) => Promise<ResourceResponse<School>>,
     createSchool,
     updateSchool,
     deleteSchool,

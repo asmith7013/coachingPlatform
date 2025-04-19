@@ -15,6 +15,7 @@ interface ButtonProps extends ButtonVariants {
   children?: React.ReactNode;
   type?: 'button' | 'submit' | 'reset';
   onClick?: () => void;
+  title?: string;
 }
 
 // 🎨 Style segment interface for clearer design contract
@@ -132,6 +133,7 @@ export const Button = ({
   children,
   type,
   onClick,
+  title,
   ...props
 }: ButtonProps) => {
   return (
@@ -154,6 +156,7 @@ export const Button = ({
       aria-busy={loading}
       type={type}
       onClick={onClick}
+      title={title}
       {...props}
     >
       {loading ? (

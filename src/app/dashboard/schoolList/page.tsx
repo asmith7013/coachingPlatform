@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { Button } from '@/components/ui/button';
-import { spacing, typography } from '@/lib/ui/tokens';
 import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Schools data.
 import { School } from "@/lib/zod-schema"; // ✅ Import the School type from Zod schema.
 import { SchoolInput } from "@/lib/zod-schema";
@@ -57,12 +56,16 @@ export default function SchoolList() {
     await removeSchool(id);
   };
 
-  if (loading) return <Text>Loading Schools...</Text>;
-  if (schoolError) return <Text>Error loading schools</Text>;
+  if (loading) return <Text textSize="base">Loading Schools...</Text>;
+  if (schoolError) return <Text textSize="base" color="danger">Error loading schools</Text>;
 
   return (
-    <div className={cn('container mx-auto', spacing.lg)}>
-      <Heading level="h2" className={cn(typography.weight.bold, 'text-primary', spacing.md)}>
+    <div className="container mx-auto p-8">
+      <Heading 
+        level="h2" 
+        color="default"
+        className={cn("text-primary font-bold mb-4")}
+      >
         Schools
       </Heading>
       
@@ -83,47 +86,62 @@ export default function SchoolList() {
         togglePerformanceMode={togglePerformanceMode}
       />
 
-      <div className={spacing.lg}>
+      <div className="space-y-8">
         {schools.map((school: School) => (
           <Card
             key={school._id}
-            className={spacing.md}
             padding="md"
             radius="lg"
           >
             <div className="flex justify-between items-center">
               <div>
-                <Heading level="h3" className={cn(typography.weight.medium, 'text-primary')}>
+                <Heading 
+                  level="h3" 
+                  color="default"
+                  className={cn("text-primary font-medium")}
+                >
                   {school.emoji || '🏫'} {school.schoolName}
                 </Heading>
-                <Text variant="text" className={cn(spacing.sm, 'text-text-muted')}>
+                <Text 
+                  textSize="base" 
+                  color="muted"
+                  className="mt-2"
+                >
                   District: {school.district}
                 </Text>
                 {school.address && (
-                  <Text variant="text" className={cn(spacing.sm, 'text-text-muted')}>
+                  <Text 
+                    textSize="base" 
+                    color="muted"
+                    className="mt-2"
+                  >
                     {school.address}
                   </Text>
                 )}
               </div>
               <Button
                 onClick={() => school._id && confirmDeleteSchool(school._id)}
-                // variant="danger"
-                size="sm"
+                textSize="sm"
+                padding="sm"
+                className="text-danger"
               >
                 🗑️ Delete
               </Button>
             </div>
-            <Heading level="h3" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
+            <Heading 
+              level="h3" 
+              color="default"
+              className={cn("text-primary font-medium mt-4")}
+            >
               Grade Levels
             </Heading>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 mt-2">
               {school.gradeLevelsSupported && school.gradeLevelsSupported.map((grade, index) => (
                 <span 
                   key={index} 
                   className={cn(
-                    spacing.sm,
-                    'rounded-full text-sm',
-                    typography.text.sm,
+                    'rounded-full px-3 py-1',
+                    'text-sm',
                     'text-white',
                     'bg-primary'
                   )}
@@ -136,7 +154,7 @@ export default function SchoolList() {
         ))}
       </div>
 
-      <div className={spacing.lg}>
+      <div className="mt-8">
         <GenericAddForm
           title="Add School"
           defaultValues={createEmptySchool()}

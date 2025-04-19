@@ -4,9 +4,18 @@ import {
   fetchNYCPSStaff, 
   createNYCPSStaff, 
   updateNYCPSStaff, 
-  deleteNYCPSStaff 
+  deleteNYCPSStaff
 } from "@actions/staff/nycps";
-import { NYCPSStaff, NYCPSStaffInput } from "@/lib/zod-schema";
+import { NYCPSStaff, NYCPSStaffInput } from "@/lib/types/core";
+import type { ResourceResponse } from "@/lib/server-utils/types";
+
+type FetchParams = {
+  page?: number;
+  limit?: number;
+  filters?: Record<string, unknown>;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+};
 
 export function useNYCPSStaff(initialPage: number = 1, initialLimit: number = 20) {
   const [performanceMode, setPerformanceMode] = useState(true);
@@ -30,7 +39,7 @@ export function useNYCPSStaff(initialPage: number = 1, initialLimit: number = 20
     mutate
   } = useResourceManager<NYCPSStaff, NYCPSStaffInput>(
     "nycpsStaff",
-    fetchNYCPSStaff,
+    fetchNYCPSStaff as (params: FetchParams) => Promise<ResourceResponse<NYCPSStaff>>,
     createNYCPSStaff,
     updateNYCPSStaff,
     deleteNYCPSStaff,

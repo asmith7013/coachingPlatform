@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { RubricZodSchema } from "./rubric"; // Assuming Rubric has its own schema
+import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
 
 // ✅ LookFor Input Schema
 export const LookForInputZodSchema = z.object({
@@ -18,8 +19,8 @@ export const LookForInputZodSchema = z.object({
 // ✅ LookFor Full Schema
 export const LookForZodSchema = LookForInputZodSchema.extend({
   _id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
 });
 
 // ✅ LookForItem Schema (shared schema)

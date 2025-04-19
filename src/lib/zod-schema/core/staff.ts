@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { NoteZodSchema } from "../shared/notes";
 import { GradeLevelsSupportedZod, SubjectsZod, SpecialGroupsZod, RolesNYCPSZod, RolesTLZod, AdminLevelZod } from "../shared/enums";
+import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
 
 // ✅ Experience Schema
 export const ExperienceZodSchema = z.object({
@@ -20,8 +21,8 @@ export const StaffMemberInputZodSchema = z.object({
 export const StaffMemberZodSchema = StaffMemberInputZodSchema.extend({
   _id: z.string(),
   id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
 });
 
 // ✅ NYCPS Staff Input Schema
@@ -39,8 +40,8 @@ export const NYCPSStaffInputZodSchema = StaffMemberInputZodSchema.extend({
 export const NYCPSStaffZodSchema = NYCPSStaffInputZodSchema.extend({
   _id: z.string(),
   id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
 });
 
 // ✅ Teaching Lab Staff Input Schema
@@ -54,8 +55,8 @@ export const TeachingLabStaffInputZodSchema = StaffMemberInputZodSchema.extend({
 export const TeachingLabStaffZodSchema = TeachingLabStaffInputZodSchema.extend({
   _id: z.string(),
   id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
 });
 
 // ✅ Auto-generate TypeScript types

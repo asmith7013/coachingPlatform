@@ -11,7 +11,7 @@ import { renderKHLesson } from '@/lib/imRoutine/renderKHLesson';
 import { renderILCLesson } from '@/lib/imRoutine/renderILCLesson';
 import { CurriculumVersionModal } from '@/components/features/imRoutine/CurriculumVersionModal';
 import { usePersistedCurriculumVersion } from '@/lib/hooks/usePersistedCurriculumVersion';
-import { typography } from '@/lib/ui/tokens';
+import { textSize, weight } from '@/lib/ui/tokens/typography';
 import { cn } from '@/lib/utils';
 import { Text } from '@/components/ui/typography/Text';
 
@@ -164,13 +164,13 @@ export default function IMRoutinesPage() {
             'flex justify-between items-center',
             'border-outline'
           )}>
-            <h1 className={cn(typography.text.xl, typography.weight.bold, 'text-text')}>
+            <h1 className={cn(textSize.xl, weight.bold, 'text-text')}>
               IM Routines Viewer
             </h1>
             {selectedGrade && selectedUnit && (
-              <p className={cn(typography.text.sm, 'text-text', typography.weight.bold)}>
+              <p className={cn(textSize.sm, 'text-text', weight.bold)}>
                 Unit {selectedUnit}:
-                <span className={cn(typography.weight.medium, 'ml-1')}>
+                <span className={cn(weight.medium, 'ml-1')}>
                   {totalLessons} Lessons
                 </span>
               </p>
@@ -207,7 +207,7 @@ export default function IMRoutinesPage() {
               curriculum={version === 'ILC' ? 'ILC' : 'Kendall Hunt'}
             />
           ) : (
-            <Text className={cn(typography.text.base, 'text-text', 'italic')}>
+            <Text className={cn(textSize.base, 'text-text', 'italic')}>
               Select <strong>grade</strong> and <strong>unit</strong> to view lesson routines.
             </Text>
           )}

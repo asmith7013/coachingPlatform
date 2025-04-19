@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { BellScheduleTypeZod, BlockDayTypeZod, DayTypeZod, PeriodTypeZod } from "../shared/enums";
+import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
 
 // ✅ Class Schedule Item Schema
 export const ClassScheduleItemZodSchema = z.object({
@@ -26,8 +27,8 @@ export const BellScheduleInputZodSchema = z.object({
 // ✅ Bell Schedule Full Schema
 export const BellScheduleZodSchema = BellScheduleInputZodSchema.extend({
   _id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
 });
 
 // ✅ Period Schema
@@ -55,8 +56,8 @@ export const TeacherScheduleInputZodSchema = z.object({
 // ✅ Teacher Schedule Full Schema
 export const TeacherScheduleZodSchema = TeacherScheduleInputZodSchema.extend({
   _id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
 });
 
 // ✅ Auto-generate TypeScript types

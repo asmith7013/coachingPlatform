@@ -12,10 +12,10 @@ export function CurriculumVersionModal({ onSelectVersion }: CurriculumVersionMod
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-10 max-w-xl w-full shadow-xl text-center space-y-6">
-        <h2 className={cn(typography.text.xl, typography.weight.bold)}>
+        <h2 className={cn(typography.textSize.xl, typography.weight.bold)}>
           Select Your Curriculum Version
         </h2>
-        <p className={cn(typography.text.base, 'text-muted')}>
+        <p className={cn(typography.textSize.base, 'text-muted')}>
           While both use Illustrative Mathematics content, <strong>Kendall Hunt</strong> and <strong>ILC</strong> have different routines embedded in their lessons.  
           Please choose the version your school uses so this tool can reflect the correct routines.
         </p>

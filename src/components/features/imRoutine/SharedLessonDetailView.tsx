@@ -1,6 +1,6 @@
 'use client';
 
-import { spacing } from '@/lib/ui/tokens';
+import { stack } from '@/lib/ui/tokens/spacing';
 import { cn } from '@/lib/utils';
 
 type BaseActivity = {
@@ -31,7 +31,7 @@ export function SharedLessonDetailView<T extends BaseLesson>({
       {lessonsData
         .sort((a, b) => Number(a.lessonNumber) - Number(b.lessonNumber))
         .map((lesson) => (
-          <div key={lesson.lessonNumber} className={cn(spacing.sm)}>
+          <div key={lesson.lessonNumber} className={cn(stack.sm)}>
             {renderLesson(lesson, selectedRoutines)}
           </div>
         ))}

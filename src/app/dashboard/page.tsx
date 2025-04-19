@@ -1,16 +1,22 @@
 import React from 'react';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
-import { spacing } from '@/lib/ui/tokens';
-import { cn } from '@/lib/utils';
 
 export default function DashboardHome() {
   return (
-    <div className={spacing.lg}>
-      <Heading level="h1" className={'text-primary'}>
+    <div className="p-8">
+      <Heading 
+        level="h1" 
+        color="default"
+        className="text-primary"
+      >
         Welcome to the Dashboard
       </Heading>
-      <Text variant="text" className={cn(spacing.md, 'text-text-muted')}>
+      <Text 
+        textSize="base"
+        color="muted"
+        className="mt-4"
+      >
         This is where your schools and data will be displayed.
       </Text>
     </div>

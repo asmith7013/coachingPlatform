@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { spacing } from '@/lib/ui/tokens'
+import { paddingY } from '@/lib/ui/tokens/spacing'
 
 interface TableActionsProps {
   children: React.ReactNode
@@ -10,7 +10,7 @@ interface TableActionsProps {
 
 export function TableActions({ children, className }: TableActionsProps) {
   return (
-    <div className={cn('mt-4 sm:mt-0 sm:ml-16 sm:flex-none', spacing.md, className)}>
+    <div className={cn('mt-4 sm:mt-0 sm:ml-16 sm:flex-none', paddingY.md, className)}>
       {children}
     </div>
   )

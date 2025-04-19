@@ -44,7 +44,7 @@ export function renderKHLesson(
             <div key={i} className="space-y-2">
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <Text size="lg" className="font-bold text-text">
+                  <Text textSize="lg" weight="bold" color="default">
                     {activity.activityNumber === 'Warm Up'
                       ? 'Warm Up'
                       : `Activity ${activity.activityNumber}`}
@@ -56,7 +56,7 @@ export function renderKHLesson(
                     )}
                   </Text>
                   {activity.activityTitle && (
-                    <Text size="sm" className="text-text">
+                    <Text textSize="sm" color="default">
                       {activity.activityTitle}
                     </Text>
                   )}

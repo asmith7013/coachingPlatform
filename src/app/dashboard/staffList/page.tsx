@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { Button } from '@/components/ui/button';
-import { spacing, typography } from '@/lib/ui/tokens';
 import { useNYCPSStaff } from "@/hooks/useNYCPSStaff"; // ✅ SWR hook for managing NYCPS Staff data.
 import { NYCPSStaff } from "@/lib/zod-schema"; // ✅ Import the NYCPSStaff type from Zod schema.
 import { NYCPSStaffInput } from "@/lib/zod-schema";
@@ -56,12 +55,16 @@ export default function NYCPSStaffList() {
     await removeStaff(id);
   };
 
-  if (loading) return <Text>Loading NYCPS Staff...</Text>;
-  if (staffError) return <Text>Error loading staff</Text>;
+  if (loading) return <Text textSize="base">Loading NYCPS Staff...</Text>;
+  if (staffError) return <Text textSize="base" color="danger">Error loading staff</Text>;
 
   return (
-    <div className={cn('container mx-auto', spacing.lg)}>
-      <Heading level="h2" className={cn(typography.weight.bold, 'text-primary', spacing.md)}>
+    <div className="container mx-auto p-8">
+      <Heading 
+        level="h2" 
+        color="default"
+        className={cn("text-primary font-bold mb-4")}
+      >
         NYCPS Staff
       </Heading>
 
@@ -83,36 +86,46 @@ export default function NYCPSStaffList() {
         togglePerformanceMode={togglePerformanceMode}
       />
 
-      <div className={spacing.lg}>
+      <div className="space-y-8">
         {staff.map((member: NYCPSStaff) => (
           <Card
             key={member._id}
-            className={spacing.md}
             padding="md"
             radius="lg"
           >
             <div className="flex justify-between items-center">
               <div>
-                <Heading level="h3" className={cn(typography.weight.medium, 'text-primary')}>
+                <Heading 
+                  level="h3" 
+                  color="default"
+                  className={cn("text-primary font-medium")}
+                >
                   {member.staffName}
                 </Heading>
                 <Text 
-                // variant="text" 
-                className={cn(spacing.sm, 'text-text-muted')}>
+                  textSize="base"
+                  color="muted"
+                  className="mt-2"
+                >
                   {member.email || 'No email provided'}
                 </Text>
               </div>
               <Button
                 onClick={() => member._id && confirmDeleteStaff(member._id)}
-                // variant="danger"
-                size="sm"
+                textSize="sm"
+                padding="sm"
+                className="text-danger"
               >
                 🗑️ Delete
               </Button>
             </div>
 
-            <div className={spacing.md}>
-              <Heading level="h3" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
+            <div className="mt-4">
+              <Heading 
+                level="h3" 
+                color="default"
+                className={cn("text-primary font-medium mb-2")}
+              >
                 Roles
               </Heading>
               <div className="flex flex-wrap gap-2">
@@ -120,9 +133,8 @@ export default function NYCPSStaffList() {
                   <span 
                     key={index} 
                     className={cn(
-                      spacing.sm,
-                      'rounded-full text-sm',
-                      typography.text.sm,
+                      'rounded-full px-3 py-1',
+                      'text-sm',
                       'text-white',
                       'bg-primary'
                     )}
@@ -133,8 +145,12 @@ export default function NYCPSStaffList() {
               </div>
             </div>
 
-            <div className={spacing.md}>
-              <Heading level="h3" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
+            <div className="mt-4">
+              <Heading 
+                level="h3" 
+                color="default"
+                className={cn("text-primary font-medium mb-2")}
+              >
                 Subjects
               </Heading>
               <div className="flex flex-wrap gap-2">
@@ -142,9 +158,8 @@ export default function NYCPSStaffList() {
                   <span 
                     key={index} 
                     className={cn(
-                      spacing.sm,
-                      'rounded-full text-sm',
-                      typography.text.sm,
+                      'rounded-full px-3 py-1',
+                      'text-sm',
                       'text-white',
                       'bg-success'
                     )}
@@ -158,7 +173,7 @@ export default function NYCPSStaffList() {
         ))}
       </div>
 
-      <div className={spacing.lg}>
+      <div className="mt-8">
         <GenericAddForm
           title="Add NYCPS Staff"
           defaultValues={createEmptyNYCPSStaff()}

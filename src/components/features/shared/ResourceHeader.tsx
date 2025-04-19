@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/fields/Input';
 import { Select } from '@/components/ui/fields/Select';
 import { Text } from '@/components/ui/typography/Text';
-import { spacing } from '@/lib/ui/tokens';
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import debounce from 'lodash.debounce';
@@ -52,25 +51,28 @@ export function ResourceHeader<T extends Record<string, unknown>>({
   }, [searchInput, debouncedSearch]);
 
   return (
-    <Card className={cn('bg-surface', 'border-outline', spacing.md)}>
+    <Card 
+      padding="md"
+      className={cn('bg-surface', 'border-outline')}
+    >
       {/* Pagination Controls */}
       <div className="flex items-center gap-2">
         <Button 
           disabled={page === 1} 
           onClick={() => setPage(page - 1)}
-          // variant="secondary"
-          size="md"
+          textSize="base"
+          padding="md"
         >
           ⬅️ Previous
         </Button>
-        <Text className={'text-text'}>
+        <Text color="default">
           Page {page} of {Math.ceil(total / limit)}
         </Text>
         <Button 
           disabled={page * limit >= total} 
           onClick={() => setPage(page + 1)}
-          // variant="secondary"
-          size="md"
+          textSize="base"
+          padding="md"
         >
           Next ➡️
         </Button>
@@ -91,8 +93,8 @@ export function ResourceHeader<T extends Record<string, unknown>>({
             { value: `${String(option.key)}:desc`, label: `Sort ${option.label} Z-A` }
           ])}
           placeholder="Sort by..."
-          size="md"
-          // fontSize="base"
+          textSize="base"
+          padding="md"
           radius="md"
           className="min-w-[12rem]"
         />
@@ -103,6 +105,8 @@ export function ResourceHeader<T extends Record<string, unknown>>({
           placeholder="Search..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
+          textSize="base"
+          padding="md"
         />
 
         {/* Performance Mode Toggle */}
@@ -110,7 +114,8 @@ export function ResourceHeader<T extends Record<string, unknown>>({
           <Button
             onClick={togglePerformanceMode}
             variant={performanceMode ? "success" : "secondary"}
-            size="sm"
+            textSize="sm"
+            padding="sm"
           >
             {performanceMode ? '🚀 Performance Mode' : '🔍 Detailed Mode'}
           </Button>

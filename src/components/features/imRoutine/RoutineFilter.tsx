@@ -80,7 +80,8 @@ export function RoutineFilter({
         <div className="flex gap-2">
           <Button
             onClick={() => handleVersionChange('KH')}
-            size="sm"
+            textSize="sm"
+            padding="sm"
             intent="secondary"
             appearance={version === 'KH' ? 'solid' : 'alt'}
           >
@@ -88,7 +89,8 @@ export function RoutineFilter({
           </Button>
           <Button
             onClick={() => handleVersionChange('ILC')}
-            size="sm"
+            textSize="sm"
+            padding="sm"
             intent="primary"
             appearance={version === 'ILC' ? 'solid' : 'alt'}
           >
@@ -121,7 +123,8 @@ export function RoutineFilter({
                     setHasManuallyFiltered(true);
                     setSelectedRoutines(sortedRoutines);
                   }}
-                  size="sm"
+                  textSize="sm"
+                  padding="sm"
                   disabled={selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered}
                   intent="secondary"
                   appearance={selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered ? 'alt' : 'solid'}
@@ -154,7 +157,8 @@ export function RoutineFilter({
                 >
                   <Button
                     onClick={handleSelectAllMLRs}
-                    size="sm"
+                    textSize="sm"
+                    padding="sm"
                     disabled={areAllMLRsSelected && hasManuallyFiltered}
                     title={
                       mlrRoutines.length === 0
@@ -190,7 +194,8 @@ export function RoutineFilter({
                   setHasManuallyFiltered(true);
                   setSelectedRoutines([]);
                 }}
-                size="sm"
+                textSize="sm"
+                padding="sm"
                 disabled={selectedRoutines.length === 0}
                 intent="secondary"
                 appearance={selectedRoutines.length === 0 ? 'alt' : 'solid'}
@@ -229,7 +234,8 @@ export function RoutineFilter({
                 >
                   <Button
                     onClick={() => handleClick(routine)}
-                    size="sm"
+                    textSize="sm"
+                    padding="sm"
                     intent={isMLR ? 'primary' : 'secondary'}
                     appearance={
                       isSelected && hasManuallyFiltered

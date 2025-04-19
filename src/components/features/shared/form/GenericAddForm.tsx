@@ -10,7 +10,8 @@ import { Select } from "@/components/ui/fields/Select";
 import { Switch } from '@/components/ui/fields/Switch';
 import { Checkbox } from '@/components/ui/fields/Checkbox';
 import { Textarea } from '@/components/ui/fields/Textarea';
-import { shadows, spacingY, typography } from "@/lib/ui/tokens";
+import { shadows, typography } from "@/lib/ui/tokens";
+import { stack } from "@/lib/ui/tokens/spacing";
 import { cn } from "@/lib/utils";
 
 export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 'switch' | 'checkbox' | 'textarea';
@@ -155,25 +156,23 @@ export function GenericAddForm<T extends Record<string, unknown>>({
   };
 
   return (
-    <Card className={cn(shadows.md, spacingY.md, 'bg-secondary')}>
-      <form onSubmit={handleSubmit} className={spacingY.md}>
-        <div className={spacingY.md}>
+    <Card className={cn(shadows.md, stack.md, 'bg-secondary')}>
+      <form onSubmit={handleSubmit} className={stack.md}>
+        <div className={stack.md}>
           <Heading level="h2">{title}</Heading>
-          <Text variant="text" className={cn(typography.text.base, 'text-text')}>
+          <Text className={cn(typography.textSize.base)}>
             Fill in the details below to add a new item.
           </Text>
         </div>
-        <div className={spacingY.md}>
+        <div className={stack.md}>
           {fields.map((field) => (
-            <div key={String(field.name)} className={spacingY.sm}>
+            <div key={String(field.name)} className={stack.sm}>
               {renderField(field)}
             </div>
           ))}
         </div>
         <div className="w-full">
-          <Button type="submit" 
-          // variant="primary" 
-          className="w-full">
+          <Button type="submit" className="w-full">
             {submitLabel}
           </Button>
         </div>

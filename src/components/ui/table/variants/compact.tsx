@@ -44,7 +44,7 @@ export function CompactTable<T>({
       className={compactTable({ spacing, className })}
       data={data}
       columns={columns}
-      size="sm"
+      textSize="sm"
       {...props}
     />
   )

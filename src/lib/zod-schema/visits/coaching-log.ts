@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ReasonDoneZod, TotalDurationZod, SolvesTouchpointZod } from "../shared/enums";
+import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
 
 // ✅ CoachingLog Schema
 export const CoachingLogZodSchema = z.object({
@@ -18,8 +19,8 @@ export const CoachingLogZodSchema = z.object({
   solvesSpecificStrategy: z.string(), // Required detailed strategy description
   aiSummary: z.string().optional(), // Optional AI-generated summary
   owners: z.array(z.string()), // Array of owner IDs
-  createdAt: z.string().optional(), // Optional ISO date string
-  updatedAt: z.string().optional(), // Optional ISO date string
+  createdAt: zDateField.optional(), // Optional timestamp
+  updatedAt: zDateField.optional(), // Optional timestamp
 });
 
 // ✅ Auto-generate TypeScript types

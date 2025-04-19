@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
 
 // ✅ NextStep Input Schema
 export const NextStepInputZodSchema = z.object({
@@ -12,8 +13,8 @@ export const NextStepInputZodSchema = z.object({
 // ✅ NextStep Full Schema
 export const NextStepZodSchema = NextStepInputZodSchema.extend({
   _id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
 });
 
 // ✅ Auto-generate TypeScript types

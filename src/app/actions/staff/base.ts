@@ -54,8 +54,7 @@ export async function fetchStaff({
         page,
         limit,
         sortBy,
-        sortOrder,
-        mockFile: 'staff.json'
+        sortOrder
       }
     );
 

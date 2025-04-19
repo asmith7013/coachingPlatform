@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { useResourceManager } from "@hooks/utils/useResourceManager";
-import { fetchLookFors, createLookFor, updateLookFor, deleteLookFor, LookForInput } from "@actions/lookFors/lookFors";
-import { LookFor } from "@/lib/zod-schema";
+import { fetchLookFors, createLookFor, updateLookFor, deleteLookFor } from "@actions/lookFors/lookFors";
+import { LookFor, LookForInput } from "@/lib/types/core";
+import type { ResourceResponse } from "@/lib/server-utils/types";
+
+type FetchParams = {
+  page?: number;
+  limit?: number;
+  filters?: Record<string, unknown>;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+};
 
 /**
  * Custom Hook for managing LookFors with pagination, filters, sorting, caching, and optimistic updates.
@@ -32,7 +41,7 @@ export function useLookFors(initialPage: number = 1, initialLimit: number = 20) 
     mutate
   } = useResourceManager<LookFor, LookForInput>(
     "lookFors",
-    fetchLookFors,
+    fetchLookFors as (params: FetchParams) => Promise<ResourceResponse<LookFor>>,
     createLookFor,
     updateLookFor,
     deleteLookFor,

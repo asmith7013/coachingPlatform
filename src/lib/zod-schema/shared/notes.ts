@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
 
 // ✅ Note Input Schema
 export const NoteInputZodSchema = z.object({
@@ -11,8 +12,8 @@ export const NoteInputZodSchema = z.object({
 // ✅ Note Full Schema
 export const NoteZodSchema = NoteInputZodSchema.extend({
   _id: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
 });
 
 // ✅ Auto-generate TypeScript types

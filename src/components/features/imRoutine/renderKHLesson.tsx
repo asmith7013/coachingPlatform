@@ -46,13 +46,13 @@ export function renderKHLesson(lesson: KHLesson, selectedRoutines: string[]) {
                 className="p-4 rounded-lg border-2 border-outline bg-surface"
               >
                 <div className="mb-2 space-y-1">
-                  <Text size="sm" className="font-medium text-text">
+                  <Text textSize="sm" className="font-medium text-text">
                     {activity.activityNumber === 'Warm Up'
                       ? 'Warm Up'
                       : `Activity ${activity.activityNumber}`}
                   </Text>
                   {activity.activityTitle && (
-                    <Text size="sm" className="text-muted">
+                    <Text textSize="sm" className="text-muted">
                       {activity.activityTitle}
                     </Text>
                   )}
@@ -81,7 +81,7 @@ export function renderKHLesson(lesson: KHLesson, selectedRoutines: string[]) {
             ))}
         </div>
       ) : (
-        <Text size="sm" className="italic text-muted">
+        <Text textSize="sm" className="italic text-muted">
           No routines for this lesson.
         </Text>
       )}

@@ -25,7 +25,7 @@ function ColorSwatch({ name, group }: { name: string; group: string }) {
           `bg-${group}-${name}`
         )}
       />
-      <div className={textVariants({ size: 'sm' })}>
+      <div className={textVariants({ textSize: 'sm' })}>
         {group}-{name}
       </div>
     </div>
@@ -41,7 +41,7 @@ function RadiusSwatch({ value }: { value: string }) {
           `rounded-${value}`
         )}
       />
-      <div className={textVariants({ size: 'sm' })}>
+      <div className={textVariants({ textSize: 'sm' })}>
         radius-{value}
       </div>
     </div>
@@ -57,7 +57,7 @@ function ShadowSwatch({ value }: { value: string }) {
           `shadow-${value}`
         )}
       />
-      <div className={textVariants({ size: 'sm' })}>
+      <div className={textVariants({ textSize: 'sm' })}>
         shadow-{value}
       </div>
     </div>

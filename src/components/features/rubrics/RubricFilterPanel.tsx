@@ -1,7 +1,7 @@
 'use client';
 
 import { Select } from '@/components/ui/fields/Select';
-import { spacing } from '@/lib/ui/tokens';
+import { stack } from '@/lib/ui/tokens/spacing';
 import { cn } from '@/lib/utils';
 
 export const domainOptions = [
@@ -17,7 +17,7 @@ interface Props {
 
 export function RubricFilterPanel({ selectedDomain, onChange }: Props) {
   return (
-    <div className={cn(spacing.md)}>
+    <div className={cn(stack.md)}>
       <Select
         label="Select Domain"
         value={selectedDomain}

@@ -1,11 +1,6 @@
 import { z } from "zod";
 import { GradeLevelsSupportedZod } from "../shared/enums";
-
-// Helper for date validation that accepts both string and Date
-const dateSchema = z.union([
-  z.date(),
-  z.string().transform((str) => new Date(str))
-]);
+import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
 
 // Base schema for school input (create/update)
 export const SchoolInputZodSchema = z.object({
@@ -24,8 +19,8 @@ export const SchoolInputZodSchema = z.object({
 // ✅ School Full Schema
 export const SchoolZodSchema = SchoolInputZodSchema.extend({
   _id: z.string(), // Required for returned documents
-  createdAt: dateSchema.optional(),
-  updatedAt: dateSchema.optional(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
 });
 
 // Client-side schema that omits timestamps

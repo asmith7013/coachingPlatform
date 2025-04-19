@@ -57,7 +57,7 @@ export function StickyHeaderTable<T>({
       <Table
         data={data}
         columns={columns}
-        headerClassName={styles.header()}
+        // headerClassName={styles.header()}
         {...props}
       />
     </div>

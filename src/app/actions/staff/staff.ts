@@ -112,8 +112,7 @@ export async function fetchStaff({
           page, 
           limit, 
           sortBy, 
-          sortOrder,
-          mockFile: 'staff.json'
+          sortOrder
         }
       );
     } else if (type === "tl") {
@@ -126,8 +125,7 @@ export async function fetchStaff({
           page, 
           limit, 
           sortBy, 
-          sortOrder,
-          mockFile: 'staff.json'
+          sortOrder
         }
       );
     } else {
@@ -140,8 +138,7 @@ export async function fetchStaff({
           page, 
           limit, 
           sortBy, 
-          sortOrder,
-          mockFile: 'staff.json'
+          sortOrder
         }
       );
     }

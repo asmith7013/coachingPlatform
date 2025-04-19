@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { Button } from '@/components/ui/button';
-import { spacing, typography } from '@/lib/ui/tokens';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { EmptyState } from '@/components/ui/empty-state';
 import { GenericAddForm, type Field } from "@/components/features/shared/form/GenericAddForm";
@@ -109,8 +108,8 @@ export default function LookForsWrapper() {
     }
   };
 
-  if (loading) return <Text>Loading Look Fors...</Text>;
-  if (lookForError) return <Text>Error loading look fors</Text>;
+  if (loading) return <Text textSize="base">Loading Look Fors...</Text>;
+  if (lookForError) return <Text textSize="base" color="danger">Error loading look fors</Text>;
 
   return (
     <DashboardPage 
@@ -144,60 +143,82 @@ export default function LookForsWrapper() {
         lookFors.map((lookFor: LookFor) => (
           <Card
             key={lookFor._id}
-            className={spacing.md}
+            className="mb-4"
             padding="md"
             radius="lg"
           >
             <div className="flex justify-between items-center">
               <div>
-                <Heading level="h3" className={cn(typography.weight.medium, 'text-primary')}>
+                <Heading 
+                  level="h3" 
+                  color="default"
+                  className={cn("text-primary font-medium")}
+                >
                   {lookFor.studentFacing ? "✏️" : "🍎"} {lookFor.topic}
                 </Heading>
-                <Text variant="secondary" className={cn(spacing.sm, 'text-secondary')}>
+                <Text 
+                  textSize="base"
+                  color="muted"
+                  className="mt-2"
+                >
                   {lookFor.description}
                 </Text>
               </div>
               <Button
                 onClick={() => lookFor._id && confirmDeleteLookFor(lookFor._id)}
-                // variant="danger"
-                size="sm"
+                textSize="sm"
+                padding="sm"
+                className="text-danger"
               >
                 🗑️ Delete
               </Button>
             </div>
 
-            <Heading level="h3" className={cn(typography.weight.medium, 'text-primary', spacing.md)}>
+            <Heading 
+              level="h3" 
+              color="default"
+              className={cn("text-primary font-medium mt-4 mb-2")}
+            >
               Rubric
             </Heading>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              {lookFor.rubric.map((rubricItem, index) => (
-                <Card
-                  key={index}
-                  className={spacing.sm}
+            {lookFor.rubric.map((rubricItem, index) => (
+              <Card
+                key={index}
+                padding="sm"
+              >
+                <Heading 
+                  level="h4" 
+                  color="default"
+                  className={cn("text-primary font-medium")}
                 >
-                  <Heading level="h4" className={cn(typography.weight.medium, 'text-primary')}>
-                    {rubricItem.category} ({rubricItem.score})
-                  </Heading>
-                  <Text variant="secondary" className={cn(spacing.sm, 'text-secondary')}>
-                    {rubricItem.content || "No description"}
-                  </Text>
-                </Card>
-              ))}
-            </div>
+                  {rubricItem.category} ({rubricItem.score})
+                </Heading>
+                <Text 
+                  textSize="base"
+                  color="muted"
+                  className="mt-2"
+                >
+                  {rubricItem.content || "No description"}
+                </Text>
+              </Card>
+            ))}
           </Card>
         ))
       )}
 
-      <GenericAddForm
-        title="Add Look For"
-        fields={lookForFields}
-        onSubmit={handleSubmit}
-      />
-      <BulkUploadForm
-        title="Bulk Upload Look Fors"
-        description="Upload a CSV file containing Look Fors and embedded rubric rows"
-        onUpload={uploadLookForFile}
-      />
+      <div className="mt-8">
+        <GenericAddForm
+          title="Add Look For"
+          onSubmit={handleSubmit}
+          fields={lookForFields}
+        />
+
+        <BulkUploadForm
+          title="Bulk Upload Look Fors"
+          description="Upload a CSV file containing Look Fors and embedded rubric rows"
+          onUpload={uploadLookForFile}
+        />
+      </div>
     </DashboardPage>
   );
 }

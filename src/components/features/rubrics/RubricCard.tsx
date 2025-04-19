@@ -4,7 +4,6 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { cn } from '@/lib/utils';
-import { spacing, typography } from '@/lib/ui/tokens';
 
 export type PerformanceLevelKey = 'not_observed' | 'not_yet' | 'developing' | 'proficient' | 'advanced';
 
@@ -35,8 +34,9 @@ export function RubricCard({ domain, selectedIndicators: _selectedIndicators }: 
   return (
     <Card padding="lg" radius="xl">
       <Heading 
-        level="h4" 
-        className={cn(typography.weight.medium, 'text-primary', spacing.md)}
+        level="h4"
+        color="default"
+        className={cn("mb-4", "text-primary", "font-medium")}
       >
         {domain.title}
       </Heading>
@@ -48,7 +48,7 @@ export function RubricCard({ domain, selectedIndicators: _selectedIndicators }: 
               'bg-surface',
               colorClass
             )}>
-              <Text className={cn(typography.weight.medium, "text-center")}>
+              <Text weight="medium" className="text-center">
                 {label}
               </Text>
             </div>
@@ -56,9 +56,9 @@ export function RubricCard({ domain, selectedIndicators: _selectedIndicators }: 
               {domain[key].map((text, i) => (
                 <li key={i} className="flex items-start">
                   <Text 
-                    variant="text" 
-                    size="sm" 
-                    className="leading-relaxed text-text-muted"
+                    textSize="sm"
+                    color="muted"
+                    className="leading-relaxed"
                   >
                     {text}
                   </Text>

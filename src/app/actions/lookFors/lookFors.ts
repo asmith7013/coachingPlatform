@@ -55,8 +55,7 @@ export async function fetchLookFors({
         page,
         limit,
         sortBy,
-        sortOrder,
-        mockFile: 'cycles.json'
+        sortOrder
       }
     );
 

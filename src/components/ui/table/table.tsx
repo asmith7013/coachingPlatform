@@ -44,8 +44,8 @@ export interface TableProps<T> extends Omit<TableVariants, 'textSize' | 'padding
   className?: string
   onRowClick?: (item: T) => void
   emptyMessage?: string
-  textSize?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl'
-  padding?: 'sm' | 'md' | 'lg'
+  textSize?: keyof typeof textSizeVariant.variants.textSize
+  padding?: keyof typeof paddingVariant.variants.padding
 }
 
 export function Table<T>({

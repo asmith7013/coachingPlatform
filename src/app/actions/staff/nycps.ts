@@ -52,8 +52,7 @@ export async function fetchNYCPSStaff({
         page,
         limit,
         sortBy,
-        sortOrder,
-        mockFile: 'staff.json'
+        sortOrder
       }
     );
 
