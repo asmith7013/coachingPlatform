@@ -167,16 +167,16 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
     }
   }, [editTarget]);
 
-  const confirmDeleteStaff = useCallback((id: string) => {
-    if (window.confirm("Are you sure you want to delete this staff member?")) {
-      handleDeleteStaff(id);
-    }
-  }, []);
-
   const handleDeleteStaff = useCallback(async (id: string) => {
     await deleteNYCPSStaff(id);
     await removeStaff(id);
   }, [removeStaff]);
+
+  const confirmDeleteStaff = useCallback((id: string) => {
+    if (window.confirm("Are you sure you want to delete this staff member?")) {
+      handleDeleteStaff(id);
+    }
+  }, [handleDeleteStaff]);
   
   const handleSort = useCallback((field: string, order: "asc" | "desc") => {
     if (field === "staffName") {

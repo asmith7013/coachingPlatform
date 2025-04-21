@@ -31,6 +31,8 @@
 ├── src
 │   ├── app
 │   │   ├── actions
+│   │   │   ├── cycles
+│   │   │   │   └── cycles.ts
 │   │   │   ├── lookFors
 │   │   │   │   └── lookFors.ts
 │   │   │   ├── schools
@@ -46,6 +48,13 @@
 │   │   ├── api
 │   │   │   ├── look-fors
 │   │   │   │   └── bulk-upload
+│   │   │   │       └── route.ts
+│   │   │   ├── reference
+│   │   │   │   ├── cycles
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── schools
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── staff
 │   │   │   │       └── route.ts
 │   │   │   ├── schools
 │   │   │   │   └── route.ts
@@ -64,7 +73,23 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── staffList
 │   │   │       └── page.tsx
+│   │   ├── debug
+│   │   │   ├── isolated
+│   │   │   │   └── page.tsx
+│   │   │   ├── no-debug-tools
+│   │   │   │   └── page.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── providers-check
+│   │   │   │   └── page.tsx
+│   │   │   ├── root-cause
+│   │   │   │   └── page.tsx
+│   │   │   ├── staff
+│   │   │   │   └── page.tsx
+│   │   │   └── ultra-minimal
+│   │   │       └── page.tsx
 │   │   ├── examples
+│   │   │   ├── dashboard
+│   │   │   │   └── page.tsx
 │   │   │   └── reference-select-example
 │   │   ├── global-error.tsx
 │   │   ├── globals.css
@@ -75,6 +100,8 @@
 │   │   ├── test-colors
 │   │   │   └── page.tsx
 │   │   └── tools
+│   │       ├── debug-reference-select
+│   │       │   └── page.tsx
 │   │       ├── design-system
 │   │       │   ├── layout.tsx
 │   │       │   ├── text
@@ -150,7 +177,13 @@
 │   │   │       ├── Heading.tsx
 │   │   │       ├── Text.tsx
 │   │   │       └── index.ts
-│   │   ├── dev
+│   │   ├── debug
+│   │   │   ├── IsolateComponent.tsx
+│   │   │   ├── RenderLoopDetector.tsx
+│   │   │   ├── SWRDebugger.tsx
+│   │   │   ├── StaffListBisector.tsx
+│   │   │   ├── StaffListDebugger.tsx
+│   │   │   └── TestComponents.tsx
 │   │   ├── domain
 │   │   │   ├── imRoutine
 │   │   │   │   ├── CurriculumVersionModal.tsx
@@ -176,32 +209,12 @@
 │   │   │   │   ├── StaffCard.tsx
 │   │   │   │   └── index.ts
 │   │   │   └── visits
-│   │   ├── features
-│   │   │   ├── imRoutine
-│   │   │   │   ├── CurriculumVersionModal.tsx
-│   │   │   │   ├── GradeUnitLessonSelector.tsx
-│   │   │   │   ├── LessonCompactView.tsx
-│   │   │   │   ├── LessonDetailView.tsx
-│   │   │   │   ├── MLRAppearsInCard.tsx
-│   │   │   │   ├── NoRoutineCard.tsx
-│   │   │   │   ├── RoutineBadge.tsx
-│   │   │   │   ├── RoutineFilter.tsx
-│   │   │   │   ├── SharedLessonDetailView.tsx
-│   │   │   │   ├── renderILCLesson.tsx
-│   │   │   │   └── renderKHLesson.tsx
-│   │   │   ├── lookFors
-│   │   │   ├── rubrics
-│   │   │   │   ├── RubricCard.tsx
-│   │   │   │   ├── RubricFilterPanel.tsx
-│   │   │   │   └── RubricViewer.tsx
-│   │   │   ├── schools
-│   │   │   └── staff
-│   │   │       └── StaffCard.tsx
 │   │   ├── index.ts
 │   │   ├── layouts
 │   │   │   ├── AppShell.tsx
 │   │   │   ├── DashboardLayout.tsx
 │   │   │   ├── DashboardPage.tsx
+│   │   │   ├── PerformanceMonitorLayout.tsx
 │   │   │   ├── Topbar.tsx
 │   │   │   └── index.ts
 │   │   ├── shared
@@ -215,8 +228,13 @@
 │   │       ├── ErrorBoundary.tsx
 │   │       ├── SentryBoundaryWrapper.tsx
 │   │       └── index.ts
+│   ├── debug
 │   ├── examples
 │   ├── hooks
+│   │   ├── debugging
+│   │   │   ├── checkRenderLoopInTools.tsx
+│   │   │   ├── useComponentTester.tsx
+│   │   │   └── useRenderTracking.ts
 │   │   ├── index.ts
 │   │   ├── useLookFors.ts
 │   │   ├── useNYCPSStaff.ts
@@ -257,6 +275,11 @@
 │   │   │   ├── KH_Routines.json
 │   │   │   ├── alg1links.json
 │   │   │   └── page.txt
+│   │   ├── performance
+│   │   │   ├── README.md
+│   │   │   ├── index.ts
+│   │   │   ├── monitor.ts
+│   │   │   └── usePerformanceMonitoring.tsx
 │   │   ├── server-utils
 │   │   │   ├── bulkUpload.ts
 │   │   │   ├── crud.ts
@@ -397,4 +420,4 @@
 ├── tsconfig.json
 └── tsconfig.tsbuildinfo
 
-113 directories, 285 files
+124 directories, 297 files

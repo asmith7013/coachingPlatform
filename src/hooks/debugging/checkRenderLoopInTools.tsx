@@ -57,7 +57,7 @@ export function useCheckForLoopsInDebugTools() {
     return () => {
       console.log('Render loop check unmounted after', renderCount.current, 'renders');
     };
-  });
+  }, []);
   
   return {
     isLooping,

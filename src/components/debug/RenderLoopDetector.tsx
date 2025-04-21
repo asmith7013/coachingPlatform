@@ -80,7 +80,7 @@ export function RenderLoopDetector({
     return () => {
       console.log(`${componentId} unmounted after ${renderCount.current} renders`);
     };
-  }, []); // Empty dependency array to run only on mount and unmount
+  }, [componentId, renderThreshold, timeThreshold]);
   
   // Render children without stats display when showStats is false
   if (!showStats) {

@@ -12,6 +12,9 @@ interface Activity {
   name?: string;
   description?: string;
   customProperties?: Record<string, unknown>;
+  activityNumber?: string | number;
+  activityTitle?: string;
+  isWarmUp?: boolean;
 }
 
 export function renderKHLesson(
@@ -50,22 +53,26 @@ export function renderKHLesson(
 
           return (
             <div key={i} className="space-y-2">
-              {activity.name && (
-                <Text
-                  className="font-semibold text-primary-dark"
-                >
-                  {activity.name}
-                </Text>
-              )}
-
-              {activity.description && (
-                <Text
-                  className="text-sm text-muted italic"
-                >
-                  {activity.description}
-                </Text>
-              )}
-
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <Text textSize="lg" weight="bold" color="default">
+                    {activity.activityNumber === 'Warm Up'
+                      ? 'Warm Up'
+                      : `Activity ${activity.activityNumber}`}
+                    {activity.isWarmUp && (
+                      <></>
+                      // <span className="ml-2 text-[10px] bg-primary text-white px-2 py-0.5 rounded">
+                      //   Warm Up
+                      // </span>
+                    )}
+                  </Text>
+                  {activity.activityTitle && (
+                    <Text textSize="sm" color="default">
+                      {activity.activityTitle}
+                    </Text>
+                  )}
+                </div>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {activity.routines
                   .filter((routine: string) => selectedRoutines.includes(routine))

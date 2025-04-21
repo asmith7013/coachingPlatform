@@ -34,7 +34,7 @@ export default function IsolatedTest() {
     if (renderCountRef.current > 1 && timeSinceLastRender < 50) {
       console.warn('⚠️ Potential render loop detected');
     }
-  });
+  }, []);
   
   return (
     <div className="p-6 max-w-6xl mx-auto">

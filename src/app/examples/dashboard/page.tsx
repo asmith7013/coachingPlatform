@@ -113,6 +113,7 @@ export default function Example() {
               {/* Sidebar component, swap this element with another sidebar if you like */}
               <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 ring-1 ring-white/10">
                 <div className="flex h-16 shrink-0 items-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     alt="Your Company"
                     src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
@@ -169,6 +170,7 @@ export default function Example() {
                         href="#"
                         className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-text hover:bg-gray-800"
                       >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           alt=""
                           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
@@ -190,6 +192,7 @@ export default function Example() {
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-black/10 px-6 ring-1 ring-white/5">
             <div className="flex h-16 shrink-0 items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 alt="Your Company"
                 src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
@@ -246,6 +249,7 @@ export default function Example() {
                     href="#"
                     className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-text hover:bg-gray-800"
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       alt=""
                       src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
@@ -379,6 +383,7 @@ export default function Example() {
               {activityItems.map((item) => (
                 <li key={item.commit} className="px-4 py-4 sm:px-6 lg:px-8">
                   <div className="flex items-center gap-x-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img alt="" src={item.user.imageUrl} className="size-6 flex-none rounded-full bg-gray-800" />
                     <h3 className="flex-auto truncate text-sm/6 font-semibold text-text">{item.user.name}</h3>
                     <time dateTime={item.dateTime} className="flex-none text-xs text-gray-600">

@@ -25,11 +25,7 @@ export function useSafeSWR<T>(
     }
     // For array keys, create a stable reference if contents haven't changed
     return key;
-  }, [
-    // For arrays, include each item in the dependency array
-    // For strings or null, just include the key itself
-    ...(Array.isArray(key) ? key : [key])
-  ]);
+  }, [key]);
 
   // Enhanced configuration for data stability and performance
   const defaultConfig: SWRConfiguration = {

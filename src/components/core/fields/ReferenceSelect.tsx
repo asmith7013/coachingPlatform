@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import Select from "react-select";
 import { Label } from "./Label";
-import useSWR from "swr";
+import useReferenceOptions from "@/hooks/useReferenceOptions";
 
 type OptionType = {
   value: string;
@@ -18,9 +18,9 @@ type ReferenceSelectProps = {
   url: string;
   disabled?: boolean;
   helpText?: string;
+  placeholder?: string;
 };
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export function ReferenceSelect({
   value,
@@ -30,30 +30,53 @@ export function ReferenceSelect({
   url,
   disabled = false,
   helpText,
+  placeholder = "Select...",
 }: ReferenceSelectProps) {
-  // Use SWR to fetch options with caching
-  const { data, error, isLoading } = useSWR<OptionType[]>(
-    url, 
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 60000, // Longer deduping to reduce API calls
-      revalidateIfStale: false
+  // Add state for retry attempts
+  const [retryCount, setRetryCount] = useState(0);
+  
+  // Debug render count in development
+  
+  // Track URL, value, and multiple changes for debugging
+  const urlRef = useRef(url);
+  const valueRef = useRef(value);
+  const multipleRef = useRef(multiple);
+  
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      if (urlRef.current !== url) {
+        console.log(`[Debug] ReferenceSelect URL changed: ${urlRef.current} -> ${url}`);
+        urlRef.current = url;
+      }
+      
+      if (JSON.stringify(valueRef.current) !== JSON.stringify(value)) {
+        console.log(`[Debug] ReferenceSelect value changed:`, { from: valueRef.current, to: value });
+        valueRef.current = value;
+      }
+      
+      if (multipleRef.current !== multiple) {
+        console.log(`[Debug] ReferenceSelect multiple changed: ${multipleRef.current} -> ${multiple}`);
+        multipleRef.current = multiple;
+      }
     }
-  );
+  }, [url, value, multiple]);
   
-  // Memoize options to prevent unnecessary recalculations
-  const options = useMemo(() => data || [], [data]);
+  // Use SWR to fetch options with caching and retry support
+  const { options, error, isLoading } = useReferenceOptions(url, "", retryCount);
   
-  // Memoize the selectedValue transformation to prevent unnecessary recalculations
+  // Memoize the selectedValue transformation to prevent unnecessary recalculations 
   const selectedValue = useMemo(() => {
+    // Log for debugging
+    // Ensure options is always an array
+    const safeOptions = Array.isArray(options) ? options : [];
+    
     if (!value) return multiple ? [] : null;
     
     if (multiple && Array.isArray(value)) {
-      return options.filter(option => value.includes(option.value));
+      return safeOptions.filter(option => value.includes(option.value));
     }
     
-    return options.find(option => option.value === value) || null;
+    return safeOptions.find(option => option.value === value) || null;
   }, [value, options, multiple]);
 
   // Memoize the change handler to keep it stable
@@ -65,6 +88,14 @@ export function ReferenceSelect({
       onChange(selected ? (selected as OptionType).value : '');
     }
   }, [multiple, onChange]);
+  
+  // Handle retry when errors occur
+  const handleRetry = useCallback(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[Debug] Retrying ReferenceSelect fetch, attempt: ${retryCount + 1}`);
+    }
+    setRetryCount(prev => prev + 1);
+  }, [retryCount]);
 
   return (
     <div className="space-y-1">
@@ -72,7 +103,13 @@ export function ReferenceSelect({
       
       {error ? (
         <div className="text-red-500 text-sm p-2 border border-red-200 bg-red-50 rounded">
-          Error loading options. Please try again.
+          <p>Error loading options. {error.message}</p>
+          <button 
+            onClick={handleRetry}
+            className="mt-2 px-2 py-1 text-xs bg-red-100 hover:bg-red-200 rounded transition-colors"
+          >
+            Try Again
+          </button>
         </div>
       ) : (
         <Select
@@ -82,7 +119,7 @@ export function ReferenceSelect({
           onChange={handleChange}
           isLoading={isLoading}
           isDisabled={disabled || isLoading}
-          placeholder={isLoading ? "Loading options..." : "Select..."}
+          placeholder={isLoading ? "Loading options..." : placeholder}
           noOptionsMessage={() => options.length === 0 ? "No options available" : "No matching options"}
           className="w-full"
           classNamePrefix="reference-select"
