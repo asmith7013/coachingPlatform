@@ -1,67 +1,100 @@
-import useSWR from 'swr';
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
+import { useSafeSWR } from './utils/useSafeSWR';
+import { handleClientError } from '@/lib/error/handleClientError';
 
-type OptionType = {
+type ReferenceOption = {
   value: string;
   label: string;
 };
 
-// Define a generic resource item type with common fields
-interface ResourceItem {
-  _id: string;
-  [key: string]: unknown;
+// Define item shape for API responses
+interface ApiResponseItem {
+  _id?: string;
+  id?: string;
   schoolName?: string;
   staffName?: string;
   name?: string;
+  value?: string | number;
+  [key: string]: unknown;
 }
 
-/**
- * Custom hook to fetch reference options from an API endpoint
- * 
- * @param url The API endpoint URL to fetch options from
- * @param searchQuery Optional search query to filter results
- * @returns Array of option objects with value and label
- */
-export function useReferenceOptions(url: string, searchQuery: string = ""): OptionType[] {
-  const params = new URLSearchParams();
-  
-  // Only add search param if it's not empty
-  if (searchQuery) {
-    params.append("search", searchQuery);
+// Define the API response structure
+interface ApiResponse {
+  items: ApiResponseItem[];
+  [key: string]: unknown;
+}
+
+const fetcher = async (url: string): Promise<ApiResponse> => {
+  // Only log in development to reduce console noise
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`🔍 Fetching reference options from: ${url}`);
   }
   
-  params.append("limit", "20");
+  const response = await fetch(url);
   
-  const fetchUrl = `${url}?${params.toString()}`;
+  if (!response.ok) {
+    const errorText = await response.text();
+    const errorMessage = `API error (${response.status}): ${errorText}`;
+    handleClientError(errorMessage, `ReferenceOptions:${url}`);
+    throw new Error(`Failed to fetch data from ${url}: ${response.statusText}`);
+  }
   
-  const { data, error } = useSWR(fetchUrl, async (url) => {
-    const res = await fetch(url);
-    
-    if (!res.ok) {
-      throw new Error(`Error fetching options: ${res.statusText}`);
-    }
-    
-    return res.json();
-  });
+  const data = await response.json();
+  
+  // Only log in development to reduce console noise
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`✅ Received API response for ${url}`, data);
+  }
+  
+  return data;
+};
 
-  const [options, setOptions] = useState<OptionType[]>([]);
+export function useReferenceOptions(url: string, searchQuery: string = ""): {
+  options: ReferenceOption[];
+  error: Error | null;
+  isLoading: boolean;
+} {
 
-  useEffect(() => {
-    if (data?.items) {
-      // Attempt to intelligently map items to options based on common field names
-      const mappedOptions = data.items.map((item: ResourceItem) => ({
-        value: item._id,
-        label: item.schoolName || item.staffName || item.name || `ID: ${item._id}`,
-      }));
-      
-      setOptions(mappedOptions);
-    }
+  // Memoize the key to prevent unnecessary refetches
+  const fetchKey = useMemo(() => 
+    searchQuery ? `${url}?search=${encodeURIComponent(searchQuery)}` : url, 
+    [url, searchQuery]
+  );
+
+  
+  // Customize SWR options for reference data
+  const swrOptions = {
+    dedupingInterval: 30000, // References change infrequently (30s)
+    revalidateOnMount: true, // Always fetch on first mount
+  };
+  
+  // Use enhanced SWR with better caching
+  const { data, error } = useSafeSWR<ApiResponse>(
+    fetchKey,
+    async () => fetcher(fetchKey),
+    `fetch_reference_${url}`,
+    swrOptions
+  );
+
+  
+  // Memoize the transformed options to prevent unnecessary rerenders
+  const options = useMemo(() => {
+    if (!data?.items) return [];
+    
+    const transformedOptions = data.items.map(item => ({
+      value: (item._id || item.id || '').toString(),
+      label: item.schoolName || item.staffName || item.name || String(item.value || ''),
+    }));
+    
+    return transformedOptions;
   }, [data]);
+  
+  
+  return useMemo(() => ({ 
+    options, 
+    error: error || null, 
+    isLoading: !data && !error 
+  }), [options, error, data]);
+}
 
-  if (error) {
-    console.error("Error in useReferenceOptions:", error);
-    return [];
-  }
-
-  return options;
-} 
+export default useReferenceOptions; 

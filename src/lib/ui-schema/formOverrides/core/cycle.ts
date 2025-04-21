@@ -27,7 +27,7 @@ export const CycleOverrides: FieldOverrideMap<CycleInput> = {
   lookFors: {
     type: 'reference',
     label: 'Look Fors',
-    url: '/api/look-fors',
+    url: '/api/reference/look-fors',
     multiple: true,
     helpText: 'Look For items associated with this cycle',
     required: true,
@@ -35,7 +35,7 @@ export const CycleOverrides: FieldOverrideMap<CycleInput> = {
   owners: {
     type: 'reference',
     label: 'Owners',
-    url: '/api/staff',
+    url: '/api/reference/staff',
     multiple: true,
     helpText: 'Staff members responsible for this cycle',
     required: true,

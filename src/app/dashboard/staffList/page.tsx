@@ -1,6 +1,6 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
-import React, { useState } from "react";
+import React, { useState, useCallback, memo } from "react";
 import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
@@ -8,9 +8,9 @@ import { Button } from '@/components/core/Button';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
 // import { cn } from "@/lib/utils";
 import { EmptyListWrapper } from '@/components/shared/EmptyListWrapper';
-import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
-import { GenericResourceForm, Field, FieldType } from "@/components/features/shared/form/GenericResourceForm";
-import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
+import { ResourceHeader } from "@/components/shared/ResourceHeader";
+import { Field, FieldType, MemoizedGenericResourceForm } from "@/components/composed/forms/ResourceForm";
+import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
 import { useNYCPSStaff } from "@/hooks/useNYCPSStaff";
 import { NYCPSStaff, NYCPSStaffInput } from "@/lib/zod-schema/core/staff";
 import { createNYCPSStaff, updateNYCPSStaff, deleteNYCPSStaff, uploadNYCPSStaffFile } from "@/app/actions/staff/nycps";
@@ -21,7 +21,94 @@ import { Badge } from '@/components/core/feedback/Badge';
 import { NYCPSStaffOverrides } from "@/lib/ui-schema/formOverrides";
 import { getReferenceSelectPropsForField } from "@/lib/ui/forms/helpers";
 
-export default function NYCPSStaffList() {
+
+
+// Create a memoized StaffCard component to prevent unnecessary re-renders
+interface StaffCardProps {
+  member: NYCPSStaff;
+  onEdit: (member: NYCPSStaff) => void;
+  onDelete: (id: string) => void;
+}
+
+const StaffCard = memo(function StaffCard({ member, onEdit, onDelete }: StaffCardProps) {
+  return (
+    <Card
+      key={member._id}
+      className="mb-4 p-4 rounded-lg shadow-md bg-white border border-gray-200"
+    >
+      <div className="flex justify-between items-center">
+        <div>
+          <Heading 
+            level="h3" 
+            color="default"
+            className="flex items-center gap-2 text-primary font-medium"
+          >
+            <span role="img" aria-label="person">🧑‍🏫</span>
+            {member.staffName}
+          </Heading>
+          {member.email && (
+            <Text 
+              textSize="base"
+              color="muted"
+              className="mt-2"
+            >
+              {member.email}
+            </Text>
+          )}
+          {member.subjects && member.subjects.length > 0 && (
+            <Text 
+              textSize="base"
+              color="muted"
+              className="mt-2"
+            >
+              <strong>Subjects:</strong> {member.subjects.join(', ')}
+            </Text>
+          )}
+          {member.rolesNYCPS && member.rolesNYCPS.length > 0 && (
+            <Text 
+              textSize="base"
+              color="muted"
+              className="mt-2"
+            >
+              <strong>Roles:</strong> {member.rolesNYCPS.join(', ')}
+            </Text>
+          )}
+          {member.schools?.length > 0 && (
+            <Text 
+              textSize="base"
+              color="muted"
+              className="mt-2 flex flex-wrap gap-2 items-center"
+            >
+              <strong>Schools:</strong>
+              {member.schools.map((schoolId) => (
+                <Badge key={schoolId}>{schoolId}</Badge>
+              ))}
+            </Text>
+          )}
+        </div>
+        <div className="flex space-x-2">
+          <Button
+            onClick={() => onEdit(member)}
+            padding="sm"
+            textSize="sm"
+          >
+            Edit
+          </Button>
+          <Button
+            onClick={() => member._id && onDelete(member._id)}
+            padding="sm"
+            textSize="sm"
+            className="text-danger"
+          >
+            Delete
+          </Button>
+        </div>
+      </div>
+    </Card>
+  );
+});
+
+const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
   const {
     staff,
     total,
@@ -39,55 +126,72 @@ export default function NYCPSStaffList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<NYCPSStaff | null>(null);
 
-  // Convert the field config to the proper type for GenericResourceForm
-  const formFields = NYCPSStaffFieldConfig.map(field => {
-    const fieldName = field.name as keyof NYCPSStaffInput;
-    
-    // Handle reference fields for schools and owners
-    if (fieldName === 'schools' || fieldName === 'owners') {
-      try {
-        // Get the reference props from the overrides
-        const referenceProps = getReferenceSelectPropsForField(NYCPSStaffOverrides, fieldName);
-        
-        return {
-          ...field,
-          type: 'reference' as FieldType, // Explicitly cast to FieldType
-          url: referenceProps.url,
-          multiple: referenceProps.multiple,
-          label: referenceProps.label
-        } as Field<NYCPSStaffInput>;
-      } catch (error) {
-        console.error(`Error applying override for ${String(fieldName)}:`, error);
-        return field;
+  // Memoize the form fields to prevent recreation on each render
+  const formFields = React.useMemo(() => {
+    return NYCPSStaffFieldConfig.map(field => {
+      const fieldName = field.name as keyof NYCPSStaffInput;
+      
+      // Handle reference fields for schools and owners
+      if (fieldName === 'schools' || fieldName === 'owners') {
+        try {
+          // Get the reference props from the overrides
+          const referenceProps = getReferenceSelectPropsForField(NYCPSStaffOverrides, fieldName);
+          
+          return {
+            ...field,
+            type: 'reference' as FieldType, // Explicitly cast to FieldType
+            url: referenceProps.url,
+            multiple: referenceProps.multiple,
+            label: referenceProps.label
+          } as Field<NYCPSStaffInput>;
+        } catch (error) {
+          console.error(`Error applying override for ${String(fieldName)}:`, error);
+          return field;
+        }
       }
-    }
-    
-    return field;
-  });
+      
+      return field;
+    });
+  }, []);
 
-  const handleEdit = (member: NYCPSStaff) => {
+  const handleEdit = useCallback((member: NYCPSStaff) => {
     setEditTarget(member);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditSubmit = async (data: NYCPSStaffInput) => {
+  const handleEditSubmit = useCallback(async (data: NYCPSStaffInput) => {
     if (editTarget?._id) {
       await updateNYCPSStaff(editTarget._id, data);
       setIsModalOpen(false);
       setEditTarget(null);
     }
-  };
+  }, [editTarget]);
 
-  const confirmDeleteStaff = (id: string) => {
+  const confirmDeleteStaff = useCallback((id: string) => {
     if (window.confirm("Are you sure you want to delete this staff member?")) {
       handleDeleteStaff(id);
     }
-  };
+  }, []);
 
-  const handleDeleteStaff = async (id: string) => {
+  const handleDeleteStaff = useCallback(async (id: string) => {
     await deleteNYCPSStaff(id);
     await removeStaff(id);
-  };
+  }, [removeStaff]);
+  
+  const handleSort = useCallback((field: string, order: "asc" | "desc") => {
+    if (field === "staffName") {
+      changeSorting("staffName", order);
+    }
+  }, [changeSorting]);
+  
+  const handleSearch = useCallback((value: string) => {
+    applyFilters({ staffName: value });
+  }, [applyFilters]);
+  
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditTarget(null);
+  }, []);
 
   if (loading) return <Text textSize="base">Loading staff...</Text>;
   if (staffError) return <Text textSize="base" color="danger">Error loading staff</Text>;
@@ -105,96 +209,33 @@ export default function NYCPSStaffList() {
         sortOptions={[
           { key: "staffName", label: "Name" }
         ]}
-        onSort={(field, order) => {
-          if (field === "staffName") {
-            changeSorting("staffName", order);
-          }
-        }}
-        onSearch={(value) => applyFilters({ staffName: value })}
+        onSort={handleSort}
+        onSearch={handleSearch}
         searchInput={searchInput}
         setSearchInput={setSearchInput}
       />
 
       <EmptyListWrapper items={staff} resourceName="staff members">
+        {/* Use virtualization for large lists when needed */}
+        {staff.length > 100 ? (
+          <div className="virtual-list-warning bg-yellow-50 p-4 rounded mb-4">
+            <Text color="accent" className="text-yellow-700">Large staff list detected. Consider implementing virtualization for better performance.</Text>
+          </div>
+        ) : null}
+        
+        {/* Render staff cards with memoized component */}
         {staff.map((member: NYCPSStaff) => (
-          <Card
+          <StaffCard
             key={member._id}
-            className="mb-4 p-4 rounded-lg shadow-md bg-white border border-gray-200"
-          >
-            <div className="flex justify-between items-center">
-              <div>
-                <Heading 
-                  level="h3" 
-                  color="default"
-                  className="flex items-center gap-2 text-primary font-medium"
-                >
-                  <span role="img" aria-label="person">🧑‍🏫</span>
-                  {member.staffName}
-                </Heading>
-                {member.email && (
-                  <Text 
-                    textSize="base"
-                    color="muted"
-                    className="mt-2"
-                  >
-                    {member.email}
-                  </Text>
-                )}
-                {member.subjects && member.subjects.length > 0 && (
-                  <Text 
-                    textSize="base"
-                    color="muted"
-                    className="mt-2"
-                  >
-                    <strong>Subjects:</strong> {member.subjects.join(', ')}
-                  </Text>
-                )}
-                {member.rolesNYCPS && member.rolesNYCPS.length > 0 && (
-                  <Text 
-                    textSize="base"
-                    color="muted"
-                    className="mt-2"
-                  >
-                    <strong>Roles:</strong> {member.rolesNYCPS.join(', ')}
-                  </Text>
-                )}
-                {member.schools?.length > 0 && (
-                  <Text 
-                    textSize="base"
-                    color="muted"
-                    className="mt-2 flex flex-wrap gap-2 items-center"
-                  >
-                    <strong>Schools:</strong>
-                    {member.schools.map((schoolId) => (
-                      <Badge key={schoolId}>{schoolId}</Badge>
-                    ))}
-                  </Text>
-                )}
-              </div>
-              <div className="flex space-x-2">
-                <Button
-                  onClick={() => handleEdit(member)}
-                  padding="sm"
-                  textSize="sm"
-                >
-                  Edit
-                </Button>
-                <Button
-                  onClick={() => member._id && confirmDeleteStaff(member._id)}
-                  padding="sm"
-                  textSize="sm"
-                  className="text-danger"
-                >
-                  Delete
-                </Button>
-              </div>
-            </div>
-          </Card>
+            member={member}
+            onEdit={handleEdit}
+            onDelete={confirmDeleteStaff}
+          />
         ))}
       </EmptyListWrapper>
 
       <div className="mt-8">
-        <GenericResourceForm<NYCPSStaffInput>
+        <MemoizedGenericResourceForm<NYCPSStaffInput>
           mode="create"
           title="Add NYCPS Staff"
           onSubmit={createNYCPSStaff}
@@ -211,13 +252,10 @@ export default function NYCPSStaffList() {
       {isModalOpen && editTarget && (
         <Dialog
           open={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setEditTarget(null);
-          }}
+          onClose={handleCloseModal}
           title="Edit Staff Information"
         >
-          <GenericResourceForm<NYCPSStaffInput>
+          <MemoizedGenericResourceForm<NYCPSStaffInput>
             mode="edit"
             title="Edit Staff Information"
             fields={formFields}
@@ -237,10 +275,7 @@ export default function NYCPSStaffList() {
           <Button
             appearance="alt"
             className="mt-6 w-full"
-            onClick={() => {
-              setIsModalOpen(false);
-              setEditTarget(null);
-            }}
+            onClick={handleCloseModal}
           >
             Cancel
           </Button>
@@ -248,4 +283,6 @@ export default function NYCPSStaffList() {
       )}
     </DashboardPage>
   );
-}
+});
+
+export default NYCPSStaffList;

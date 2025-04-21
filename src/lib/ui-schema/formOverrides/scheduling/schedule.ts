@@ -13,7 +13,7 @@ export const ScheduleOverrides: FieldOverrideMap<ScheduleInput> = {
   school: {
     type: 'reference',
     label: 'School',
-    url: '/api/schools',
+    url: '/api/reference/schools',
     helpText: 'The school this schedule belongs to',
     required: true,
   },
@@ -40,7 +40,7 @@ export const ScheduleOverrides: FieldOverrideMap<ScheduleInput> = {
   owners: {
     type: 'reference',
     label: 'Owners',
-    url: '/api/staff',
+    url: '/api/reference/staff',
     helpText: 'Staff members responsible for managing this schedule',
     multiple: true,
     required: true,

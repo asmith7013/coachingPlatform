@@ -9,7 +9,7 @@ export const NYCPSStaffOverrides: FieldOverrideMap<NYCPSStaffInput> = {
   schools: {
     type: 'reference',
     label: 'Schools',
-    url: '/api/schools',
+    url: '/api/reference/schools',
     multiple: true,
     helpText: 'Select all schools this staff member is associated with.',
     required: true,
@@ -17,7 +17,7 @@ export const NYCPSStaffOverrides: FieldOverrideMap<NYCPSStaffInput> = {
   owners: {
     type: 'reference',
     label: 'Owners',
-    url: '/api/staff',
+    url: '/api/reference/staff',
     multiple: true,
     helpText: 'Choose at least one coaching owner for this staff member.',
     required: true,

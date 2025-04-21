@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback, memo, useRef, useEffect } from "react";
 import { Button } from "@/components/core/Button";
 import { Card } from "@/components/composed/cards/Card";
 import { Heading } from "@/components/core/typography/Heading";
@@ -14,7 +14,8 @@ import { tv } from 'tailwind-variants';
 import { shadows, textSize, textColors } from "@/lib/ui/tokens";
 import { stack } from "@/lib/ui/tokens/spacing";
 import { cn } from "@/lib/utils";
-import ReferenceSelect, { URLReferenceSelect } from "@/components/core/fields/ReferenceSelect";
+import ReferenceSelect from "@/components/core/fields/ReferenceSelect";
+
 
 export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 'switch' | 'checkbox' | 'textarea' | 'reference';
 export type Mode = "create" | "edit";
@@ -30,6 +31,7 @@ export interface Field<T extends Record<string, unknown>> {
   fetcher?: (input: string) => Promise<{ value: string; label: string }[]>;
   multiple?: boolean;
   url?: string;
+  helpText?: string;
 }
 
 interface GenericResourceFormProps<T extends Record<string, unknown>> {
@@ -80,29 +82,42 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
   mode = "create",
   className,
 }: GenericResourceFormProps<T>) {
+  // Add performance monitoring
+
+  
+  // Store formData in a ref to avoid recreation of renderField on every state change
   const [formData, setFormData] = useState<T>(
     defaultValues || fields.reduce((acc, field) => ({
       ...acc,
       [field.name]: field.type === 'select' ? (field.defaultValue ?? []) : (field.defaultValue ?? ''),
     }), {} as T)
   );
+  
+  // Create a stable ref to formData that renderField can use
+  const formDataRef = useRef(formData);
+  // Update the ref whenever formData changes
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
 
   const label = submitLabel ?? (mode === "edit" ? "Save" : "Add");
   const styles = resourceForm({ mode });
+  
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
-  };
+  }, [formData, onSubmit]);
 
-  const handleChange = (name: keyof T, value: T[keyof T]) => {
+  const handleChange = useCallback((name: keyof T, value: T[keyof T]) => {
     setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
-  };
+  }, []);
 
-  const handleInputChange = (
+  const handleInputChange = useCallback((
     name: keyof T,
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -122,25 +137,35 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
     }
 
     handleChange(name, value);
-  };
+  }, [handleChange]);
 
-  const isFieldEditable = (field: Field<T>): boolean => {
+  const isFieldEditable = useCallback((field: Field<T>): boolean => {
     if (mode === "create") return true;
     return field.editable !== false; // If not specified, default to true
-  };
+  }, [mode]);
+  
 
-  const renderField = (field: Field<T>) => {
+
+  // Optimize renderField to use formDataRef instead of formData directly
+  // This prevents it from being recreated when formData changes
+  const renderField = useCallback((field: Field<T>) => {
+    // Add diagnostic logging
+    // console.log(`🔍 renderField for ${String(field.name)} in ${formId.current}`);
+    
     // Determine if the field should be disabled
     const isDisabled = !isFieldEditable(field);
+    
+    // Always access latest formData via ref
+    const currentFormData = formDataRef.current;
 
     switch (field.type) {
       case 'reference': {
-        const value = formData[field.name];
+        const value = currentFormData[field.name];
         const multiple = field.multiple !== false;
         
         if (field.url) {
           return (
-            <URLReferenceSelect
+            <ReferenceSelect
               label={field.label}
               value={value as string[] | string}
               onChange={(newValue) => {
@@ -149,28 +174,24 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
               url={field.url}
               multiple={multiple}
               disabled={isDisabled}
+              helpText={field.helpText}
             />
           );
         } else if (field.fetcher) {
+          console.warn(`Fetcher-based ReferenceSelect is deprecated. Please use URL-based references.`);
           return (
-            <ReferenceSelect
-              label={field.label}
-              value={value as string[] | string}
-              onChange={(newValue) => {
-                handleChange(field.name, newValue as T[keyof T]);
-              }}
-              fetcher={field.fetcher}
-              multiple={multiple}
-              disabled={isDisabled}
-            />
+            <div className="p-3 text-sm border rounded-md bg-yellow-50 border-yellow-200">
+              <p className="font-medium text-yellow-700">Field needs migration</p>
+              <p className="text-yellow-600">Please update to use URL-based reference field.</p>
+            </div>
           );
         } else {
-          console.error(`Reference field ${String(field.name)} missing url or fetcher function`);
-          return <div>Error: Missing url or fetcher function</div>;
+          console.error(`Reference field ${String(field.name)} missing url`);
+          return <div>Error: Missing url for reference field</div>;
         }
       }
       case 'select': {
-        const value = formData[field.name];
+        const value = currentFormData[field.name];
         const isMultiSelect = Array.isArray(value);
         
         if (isMultiSelect) {
@@ -205,7 +226,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
         return (
           <Switch
             label={field.label}
-            checked={formData[field.name] as boolean}
+            checked={currentFormData[field.name] as boolean}
             onChange={(checked: boolean) => {
               handleChange(field.name, checked as T[keyof T]);
             }}
@@ -216,7 +237,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
         return (
           <Checkbox
             label={field.label}
-            checked={formData[field.name] as boolean}
+            checked={currentFormData[field.name] as boolean}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               handleChange(field.name, e.target.checked as T[keyof T]);
             }}
@@ -227,7 +248,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
         return (
           <Textarea
             label={field.label}
-            value={formData[field.name] as string}
+            value={currentFormData[field.name] as string}
             onChange={(e) => handleInputChange(field.name, e)}
             required={field.required}
             disabled={isDisabled}
@@ -238,20 +259,29 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
           <Input
             type={field.type}
             label={field.label}
-            value={formData[field.name] as string}
+            value={currentFormData[field.name] as string}
             onChange={(e) => handleInputChange(field.name, e)}
             required={field.required}
             disabled={isDisabled}
           />
         );
     }
-  };
+  // Remove formData from dependencies list, use only stable references
+  }, [handleChange, handleInputChange, isFieldEditable]);
 
   return (
-    <Card className={cn(styles.root(), className)}>
+    <Card
+      className={cn(styles.root(), 'p-6 rounded-lg', className)}
+    >
       <form onSubmit={handleSubmit} className={styles.form()}>
         <div className={styles.header()}>
-          <Heading level="h2" className={styles.title()}>{title}</Heading>
+          <Heading 
+            level="h2" 
+            color="default"
+            className={styles.title()}
+          >
+            {title}
+          </Heading>
           <Text className={styles.description()}>
             {mode === "edit" 
               ? "Edit the details below to update this item."
@@ -265,15 +295,17 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
             </div>
           ))}
         </div>
-        <div className="w-full">
-          <Button type="submit" className={styles.submitButton()}>
-            {label}
-          </Button>
-        </div>
+        <Button
+          type="submit"
+          appearance="solid"
+          className={styles.submitButton()}
+        >
+          {label}
+        </Button>
       </form>
     </Card>
   );
 }
 
-// Also export as default
-export default GenericResourceForm; 
+// Create memoized version of the GenericResourceForm for better performance
+export const MemoizedGenericResourceForm = memo(GenericResourceForm) as typeof GenericResourceForm; 

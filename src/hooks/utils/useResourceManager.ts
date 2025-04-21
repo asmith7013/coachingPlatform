@@ -163,7 +163,8 @@ export function useResourceManager<T extends { _id: string }, I>(
     return error instanceof Error ? error : new Error(String(error));
   }, [error]);
 
-  return {
+  // Memoize the return object to prevent reference instability
+  return useMemo(() => ({
     items: data?.items || [],
     total: data?.total || 0,
     isLoading,
@@ -180,5 +181,11 @@ export function useResourceManager<T extends { _id: string }, I>(
     edit,
     remove,
     mutate
-  };
+  }), [
+    data?.items, data?.total, isLoading, normalizedError,
+    page, setPage, limit, setLimit,
+    filters, applyFiltersWithRevalidation,
+    sortBy, changeSortingWithRevalidation,
+    add, edit, remove, mutate
+  ]);
 }

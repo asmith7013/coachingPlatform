@@ -1,4 +1,4 @@
-import { Field } from '@/components/features/shared/form/GenericResourceForm';
+import { Field } from '@/components/composed/forms/ResourceForm';
 import { SchoolInput } from '@/lib/zod-schema';
 import { GradeLevelsSupportedZod } from '@/lib/zod-schema/shared/enums';
 
@@ -45,7 +45,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
     name: 'owners',
     label: 'Owners',
     type: 'reference',
-    url: '/api/staff',
+    url: '/api/reference/staff',
     multiple: true,
     required: true,
   },

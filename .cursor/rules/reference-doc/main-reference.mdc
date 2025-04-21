@@ -1,0 +1,141 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# AI Coaching Platform Documentation System
+
+## Introduction
+
+This documentation system provides comprehensive guidance for developing the AI Coaching Platform. It's organized into modular documents with clear section references to ensure consistency and maintainability across the codebase.
+
+## How to Use This Documentation
+
+### For Developers
+
+Navigate to the appropriate section based on your current task:
+- Starting a new feature? Begin with [Core Architecture Principles](mdc:#core-arch)
+- Building UI components? See [Component System Guide](mdc:#component-system)
+- Handling data? Reference the [Data Flow & Schema System](mdc:#data-flow)
+- Implementing error handling? Check [Error Handling Standards](mdc:#error-handling)
+- Wondering about development practices? See [Development Workflow](mdc:#dev-workflow)
+
+### For AI Tools
+
+When creating prompts for Cursor or other AI coding assistants:
+
+1. **Reference specific sections** with a standardized format:
+   ```
+   Reference: [DOC-ID][SECTION-ID] Error Handling Standards > Client-Side Errors
+   ```
+
+2. **Include targeted excerpts** rather than referencing the entire document:
+   ```
+   Apply these error handling standards from our documentation:
+   """
+   [RULE] All custom hooks must return an error state when applicable
+   """
+   ```
+
+3. **Structure prompts** following this template:
+   ```
+   Implement [feature/fix] for [component/file] following our project standards.
+
+   Reference documentation:
+   - [error-handling][error-client] Client-Side Error Handling
+   - [data-flow][data-reference-hook] Reference Data Hook
+
+   Apply these standards to [specific files] by:
+   1. [specific action]
+   2. [specific action]
+   3. [specific action]
+   ```
+
+## Documentation Modules
+
+| Document ID | Title | Purpose |
+|-------------|-------|---------|
+| core-arch | [Core Architecture Principles](mdc:core-arch) | Fundamental design patterns and organization |
+| component-system | [Component System Guide](mdc:component-system) | Component hierarchy, design tokens, and variants |
+| error-handling | [Error Handling Standards](mdc:error-handling) | Error handling patterns and UI standards |
+| data-flow | [Data Flow & Schema System](mdc:data-flow) | Zod schemas, MongoDB models, form configs |
+| dev-workflow | [Development Workflow](mdc:dev-workflow) | Development practices and AI integration |
+
+## Section Quick References
+
+### Core Architecture
+- [arch-overview] Overview
+- [arch-structure] Project Structure
+- [arch-patterns] Core Design Patterns
+
+### Error Handling
+- [error-overview] Overview
+- [error-utilities] Core Error Utilities
+- [error-server] Server-Side Error Handling
+- [error-client] Client-Side Error Handling
+- [error-hooks] Custom Hook Error Requirements
+- [error-boundaries] Component Error Boundaries
+- [error-ui] Error UI Standards
+
+### Data Flow & Schema System
+- [data-overview] Overview
+- [data-schemas] Zod Schema Architecture
+- [data-form-config] Field Configuration System
+- [data-form-overrides] Form Overrides
+- [data-hooks] Data Fetching Hooks
+- [data-reference-hook] Reference Data Hook
+- [data-server-actions] Server Actions
+- [data-model-integration] MongoDB Model Integration
+
+### Component System
+- [component-overview] Overview
+- [component-organization] Component Organization
+- [component-tokens] Design System Tokens
+- [component-variants] Tailwind Variants
+- [component-fields] Form Fields
+- [component-form] Form Components
+- [component-error-display] Error Display
+
+### Development Workflow
+- [workflow-overview] Overview
+- [workflow-cursor] Working with Cursor
+- [workflow-tasks] Common Development Tasks
+- [workflow-principles] Development Principles
+
+## Example: Using the Documentation
+
+Here's how to create a Cursor prompt to fix the `useReferenceOptions` hook issue:
+
+```
+Implement a fixed version of the useReferenceOptions hook following our project standards.
+
+Reference documentation:
+- [data-flow][data-reference-hook] Reference Data Hook
+- [error-handling][error-hooks] Custom Hook Error Requirements
+- [dev-workflow][workflow-tasks] Common Development Tasks
+
+Create an improved implementation in src/hooks/useReferenceOptions.ts that:
+1. Uses useSWR for data fetching with proper error handling
+2. Correctly transforms API responses into select options format
+3. Follows our standard { options, error, isLoading } return structure
+4. Uses handleClientError for error processing
+5. Includes detailed logging for debugging
+
+The API responses follow this format:
+{
+  "items": [
+    { "_id": "123", "schoolName": "School Name" },
+    { "_id": "456", "staffName": "Staff Name" }
+  ]
+}
+```
+
+## Contributing to Documentation
+
+When updating this documentation:
+1. Maintain the section ID structure for consistent references
+2. Highlight important rules with the `[RULE]` tag
+3. Include code examples for implementation patterns
+4. Update the main reference when adding new sections
+
+This documentation system is designed to evolve with the project while maintaining consistent reference patterns.

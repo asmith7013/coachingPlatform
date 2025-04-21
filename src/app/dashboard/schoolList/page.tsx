@@ -1,6 +1,6 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
@@ -9,12 +9,14 @@ import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Schools data.
 import { School, SchoolInput } from "@/lib/zod-schema"; // ✅ Import the School type from Zod schema.
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
-import { GenericResourceForm } from "@/components/features/shared/form/GenericResourceForm";
-import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
-import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
+import { GenericResourceForm } from "@/components/composed/forms/ResourceForm";
+import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
+import { ResourceHeader } from "@/components/shared/ResourceHeader";
 import { SchoolFieldConfig } from "@/lib/ui-schema/fieldConfig/core/school";
 import { cn } from "@/lib/utils";
 import { EmptyListWrapper } from '@/components/shared/EmptyListWrapper';
+
+
 
 export default function SchoolList() {
   const {
@@ -27,10 +29,14 @@ export default function SchoolList() {
     limit,
     removeSchool,
     applyFilters,
-    changeSorting,
-    performanceMode,
-    togglePerformanceMode
+    changeSorting
   } = useSchools();
+
+  // Use local state for performance mode instead
+  const [performanceMode, setPerformanceMode] = useState(true);
+  const togglePerformanceMode = useCallback(() => {
+    setPerformanceMode(prev => !prev);
+  }, []);
 
   const [searchInput, setSearchInput] = useState("");
 

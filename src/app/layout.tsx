@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import SentryBoundaryWrapper from "@/components/error-boundaries/SentryBoundaryWrapper";
+import SentryBoundaryWrapper from "@/components/utility/SentryBoundaryWrapper";
+import { SWRProvider } from "@/providers/SWRProvider";
+import { PerformanceMonitorProvider } from "@/lib/performance";
 import "@/app/globals.css";
 
 const geist = Geist({
@@ -31,7 +33,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
       <body className={`bg-seasalt text-gunmetal font-sans antialiased`}>
-        <SentryBoundaryWrapper>{children}</SentryBoundaryWrapper>
+        <SentryBoundaryWrapper>
+          <PerformanceMonitorProvider>
+            <SWRProvider>{children}</SWRProvider>
+          </PerformanceMonitorProvider>
+        </SentryBoundaryWrapper>
       </body>
     </html>
   );

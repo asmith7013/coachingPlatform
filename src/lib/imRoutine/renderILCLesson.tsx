@@ -1,9 +1,17 @@
 import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { cn } from '@/lib/utils';
-import type { Lesson } from '@/components/features/imRoutine/LessonDetailView';
-import { NoRoutineCard } from '@/components/features/imRoutine/NoRoutineCard';
-import { RoutineBadge } from '@/components/features/imRoutine/RoutineBadge';
+import type { Lesson } from '@/components/domain/imRoutine/LessonDetailView';
+import { NoRoutineCard } from '@/components/domain/imRoutine/NoRoutineCard';
+import { RoutineBadge } from '@/components/domain/imRoutine/RoutineBadge';
+
+// Define activity type to avoid implicit any
+interface Activity {
+  routines: string[];
+  name?: string;
+  description?: string;
+  customProperties?: Record<string, unknown>;
+}
 
 export function renderILCLesson(
   lesson: Lesson,
@@ -13,8 +21,8 @@ export function renderILCLesson(
 ) {
   // Get unique routines across all activities
   const routines = Array.from(
-    new Set(lesson.activities.flatMap((act) => act.routines))
-  ).filter((r) => selectedRoutines.includes(r.trim()));
+    new Set(lesson.activities.flatMap((act: Activity) => act.routines))
+  ).filter((r: string) => selectedRoutines.includes(r.trim()));
 
   const hasRoutines = routines.length > 0;
 
@@ -38,16 +46,16 @@ export function renderILCLesson(
       </Heading>
 
       <div className="space-y-4">
-        {lesson.activities.map((activity, i) => {
-          const hasSelectedRoutines = activity.routines.some(r => selectedRoutines.includes(r));
+        {lesson.activities.map((activity: Activity, i: number) => {
+          const hasSelectedRoutines = activity.routines.some((r: string) => selectedRoutines.includes(r));
           if (!hasSelectedRoutines) return null;
 
           return (
             <div key={i} className="space-y-2">
               <div className="flex flex-wrap gap-2">
                 {activity.routines
-                  .filter(routine => selectedRoutines.includes(routine))
-                  .map((routine, i) => (
+                  .filter((routine: string) => selectedRoutines.includes(routine))
+                  .map((routine: string, i: number) => (
                     <RoutineBadge
                       key={i}
                       routine={routine}

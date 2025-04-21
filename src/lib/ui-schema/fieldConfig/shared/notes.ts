@@ -1,4 +1,4 @@
-import { Field } from "@/components/features/shared/form/GenericResourceForm";
+import { Field } from "@/components/composed/forms/ResourceForm";
 import { Note } from "@/lib/zod-schema";
 import { NoteTypeZod } from "@/lib/zod-schema/shared/enums";
 

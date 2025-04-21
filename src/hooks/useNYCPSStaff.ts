@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import { useResourceManager } from "@hooks/utils/useResourceManager";
 import { 
   fetchNYCPSStaff, 
@@ -11,8 +11,6 @@ import type { ResourceResponse } from "@/lib/server-utils/types";
 import type { FetchParams } from "@/lib/types/api";
 
 export function useNYCPSStaff(initialPage: number = 1, initialLimit: number = 20) {
-  const [performanceMode, setPerformanceMode] = useState(true);
-
   const {
     items: staff,
     total,
@@ -43,11 +41,8 @@ export function useNYCPSStaff(initialPage: number = 1, initialLimit: number = 20
     }
   );
 
-  const togglePerformanceMode = () => {
-    setPerformanceMode(prev => !prev);
-  };
-
-  return {
+  // Memoize the return object to prevent reference instability
+  return useMemo(() => ({
     staff,
     loading,
     error,
@@ -63,8 +58,11 @@ export function useNYCPSStaff(initialPage: number = 1, initialLimit: number = 20
     addStaff,
     editStaff,
     removeStaff,
-    mutate,
-    performanceMode,
-    togglePerformanceMode,
-  };
+    mutate
+  }), [
+    staff, loading, error,
+    page, setPage, limit, setLimit, total,
+    filters, applyFilters, sortBy, changeSorting,
+    addStaff, editStaff, removeStaff, mutate
+  ]);
 } 

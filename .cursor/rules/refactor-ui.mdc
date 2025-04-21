@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 Here is your updated and finalized Cursor Prompt — now including explicit enforcement of the textSize naming rule and eliminating all remaining ambiguity. Copy this directly into .cursor/rules/variant-refactor.mdc or use as a project-wide task:
 

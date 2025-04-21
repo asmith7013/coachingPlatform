@@ -4,19 +4,22 @@ import React, { useState, useMemo, useEffect } from 'react';
 import KHData from '@lib/json/KH_Routines.json';
 import ILCData from '@lib/json/ILC_routines.json';
 import ILCHSData from '@lib/json/ILC_HS.json';
-import { GradeUnitLessonSelector } from '@/components/features/imRoutine/GradeUnitLessonSelector';
-import { RoutineFilter } from '@/components/features/imRoutine/RoutineFilter';
-import { LessonDetailView } from '@/components/features/imRoutine/LessonDetailView';
+import { GradeUnitLessonSelector } from '@/components/domain/imRoutine/GradeUnitLessonSelector';
+import { RoutineFilter } from '@/components/domain/imRoutine/RoutineFilter';
+import { LessonDetailView } from '@/components/domain/imRoutine/LessonDetailView';
 import { renderKHLesson } from '@/lib/imRoutine/renderKHLesson';
 import { renderILCLesson } from '@/lib/imRoutine/renderILCLesson';
-import { CurriculumVersionModal } from '@/components/features/imRoutine/CurriculumVersionModal';
+import { CurriculumVersionModal } from '@/components/domain/imRoutine/CurriculumVersionModal';
 import { usePersistedCurriculumVersion } from '@/lib/hooks/usePersistedCurriculumVersion';
 import { textSize, weight } from '@/lib/ui/tokens/typography';
 import { cn } from '@/lib/utils';
 import { Text } from '@/components/core/typography/Text';
 
+// Add type definitions at the top of the file
+type Version = "ILC" | "KH" | null;
+
 export default function IMRoutinesPage() {
-  const [version, setVersion] = usePersistedCurriculumVersion();
+  const [version, setVersion] = usePersistedCurriculumVersion() as [Version, (newVersion: Version) => void];
   const [selectedRoutines, setSelectedRoutines] = useState<string[]>([]);
   const [selectedGrade, setSelectedGrade] = useState('');
   const [selectedUnit, setSelectedUnit] = useState('');
@@ -221,9 +224,9 @@ export default function IMRoutinesPage() {
                 allRoutines={allRoutines}
                 selectedRoutines={selectedRoutines}
                 setSelectedRoutines={setSelectedRoutines}
-                _selectedLesson={selectedLesson}
-                _lessonRoutines={lessonRoutines}
-                _onLessonSelected={handleLessonSelected}
+                selectedLesson={selectedLesson}
+                lessonRoutines={lessonRoutines}
+                onLessonSelected={handleLessonSelected}
                 version={version}
                 setVersion={setVersion}
               />
