@@ -19,7 +19,6 @@ import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from 
 import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
 import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
 import { connectToDB } from "@/lib/db";
-import { invalidateStaffOptions } from "@/lib/client-api";
 
 // Types
 export type { NYCPSStaff, NYCPSStaffInput };
@@ -55,7 +54,6 @@ export async function createNYCPSStaff(data: NYCPSStaffInput) {
       data, 
       ["/dashboard/staff", "/dashboard/staff/[id]"]
     );
-    invalidateStaffOptions();
     return doc;
   } catch (error) {
     throw new Error(handleServerError(error));

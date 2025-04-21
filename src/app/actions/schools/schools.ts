@@ -15,7 +15,6 @@ import { sanitizeSortBy } from "@/lib/server-utils/sanitizeSortBy";
 import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
 import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
 import { connectToDB } from "@/lib/db";
-import { invalidateSchoolOptions } from "@/lib/client-api";
 
 // Valid sort fields for schools
 const validSortFields = ['schoolName', 'createdAt', 'updatedAt', 'district'];
@@ -54,7 +53,6 @@ export async function createSchool(data: SchoolInput) {
   try {
     await connectToDB();
     const doc = await createItem(SchoolModel, SchoolInputZodSchema, data, ["/schools", "/schools/[id]"]);
-    invalidateSchoolOptions();
     return doc;
   } catch (error) {
     throw new Error(handleServerError(error));

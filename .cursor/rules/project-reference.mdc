@@ -1,0 +1,432 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# AI Coaching Platform - Comprehensive Guide
+
+## 1. Project Architecture Reference
+
+This section provides a comprehensive overview of the architecture, patterns, and utilities used in our coaching platform, serving as the definitive reference for current and future development.
+
+### 1.1 Data Management
+
+#### 1.1.1 Data Fetching Hooks
+
+Our platform uses custom hooks for data fetching, providing a consistent interface across the application.
+
+**Domain-Specific Hooks**
+
+| Hook | Purpose |
+|------|---------|
+| `useSchools` | Fetches and manages school data |
+| `useLookFors` | Manages look-for criteria data |
+| `useNYCPSStaff` | Handles staff data specific to NYC public schools |
+| `useReferenceOptions` | Retrieves reference data for dropdowns and selectors |
+
+**Utility Hooks (`src/hooks/utils/`)**
+
+| Hook | Purpose | Usage |
+|------|---------|-------|
+| `useResourceManager` | Manages CRUD operations for resources with optimistic updates | Use for any resource that requires creation, reading, updating, and deletion with proper cache handling |
+| `useOptimisticResource` | Provides optimistic UI updates for async operations | Ideal for form submissions where you want immediate UI feedback |
+| `useFiltersAndSorting` | Manages filter and sort state for data collections | Use with data tables and filterable lists |
+| `useErrorHandledMutation` | Wraps mutations with standardized error handling | Simplifies error management in data mutations |
+| `useSafeSWR` | Enhanced SWR hook with error boundaries | Default choice for data fetching to prevent uncaught errors |
+| `usePagination` | Handles pagination state and logic | Use with paginated data displays |
+
+**Example: Using Resource Manager**
+
+```typescript
+const { 
+  data,
+  isLoading,
+  create,
+  update,
+  remove
+} = useResourceManager({
+  resource: 'schools',
+  fetchFn: fetchSchools,
+  createFn: createSchool,
+  updateFn: updateSchool,
+  deleteFn: deleteSchool,
+  keyExtractor: (school) => school.id
+});
+```
+
+#### 1.1.2 Server Actions
+
+Server actions (`src/app/actions/`) provide a way to perform server-side operations directly from client components. They're organized by domain:
+
+- `visits/` - Actions related to coaching visits
+- `staff/` - Actions for staff management
+- `lookFors/` - Actions for look-for criteria
+- `schools/` - School-related operations
+
+**Best Practices:**
+- Always use typed inputs and outputs with Zod validation
+- Handle errors consistently using error utilities
+- Invalidate relevant caches after mutations
+- Return standardized response objects
+
+**Example: Server Action Pattern**
+
+```typescript
+export async function createVisit(data: z.infer<typeof visitSchema>) {
+  try {
+    // Validate input
+    const validated = visitSchema.parse(data);
+    
+    // Perform database operation
+    const result = await Visit.create(validated);
+    
+    // Return success response
+    return { success: true, data: result };
+  } catch (error) {
+    // Handle and return standardized error
+    return handleServerError(error, "Failed to create visit");
+  }
+}
+```
+
+#### 1.1.3 Cache Invalidation Strategy
+
+Our platform uses a tag-based invalidation strategy:
+
+1. Resources are tagged with relevant identifiers (e.g., `['schools', schoolId]`)
+2. Mutations trigger invalidation of affected tags
+3. Related resources are automatically refreshed
+
+**Key Tags:**
+- Collection tags: `['schools']`, `['visits']`, `['staff']`
+- Entity tags: `['schools', id]`, `['visits', id]`
+- Relationship tags: `['schools', schoolId, 'staff']`
+
+### 1.2 UI Component System
+
+Our UI architecture follows a hierarchical structure from primitive to complex components.
+
+#### 1.2.1 Component Organization
+
+| Type | Location | Purpose |
+|------|----------|---------|
+| Core | `src/components/core/` | Primitive UI elements (buttons, inputs, etc.) |
+| Composed | `src/components/composed/` | Combinations of core components (form groups, cards) |
+| Domain | `src/components/domain/` | Business domain specific components |
+| Features | `src/components/features/` | Complete feature implementations |
+| Utility | `src/components/utility/` | Helper components for layouts, formatting |
+| Shared | `src/components/shared/` | Cross-cutting components used across features |
+| Error Boundaries | `src/components/error-boundaries/` | Components for handling and displaying errors |
+
+#### 1.2.2 Design System Tokens
+
+Our design system uses tokens (`src/lib/ui/tokens/`) for consistent styling across the application:
+
+- Typography: Font sizes, weights, and line heights
+- Colors: Brand colors, text colors, and semantic colors
+- Spacing: Padding and margin scales
+- Shadows: Elevation levels
+- Borders: Border radiuses and widths
+
+**Example: Using Design Tokens**
+
+```tsx
+import { textSizeVariant, paddingVariant } from '@/lib/ui/sharedVariants';
+import { textColors } from '@/lib/ui/tokens';
+
+const button = tv({
+  base: "inline-flex items-center justify-center font-medium transition-colors",
+  variants: {
+    textSize: textSizeVariant.variants.textSize,
+    padding: paddingVariant.variants.padding,
+    color: textColors,
+  },
+  defaultVariants: {
+    textSize: 'base',
+    padding: 'md',
+    color: 'primary',
+  }
+});
+```
+
+#### 1.2.3 Shared Variants
+
+We use the `tailwind-variants` (tv) library with shared variant definitions to maintain consistency:
+
+- `textSizeVariant`: Typography scale
+- `paddingVariant`: Spacing scale
+- `radiusVariant`: Border radius options
+- `shadowVariant`: Box shadow levels
+- `disabledVariant`: Disabled state styling
+- `loadingVariant`: Loading state styling
+- `fullWidthVariant`: Width control
+
+**Important Note:** As per our refactoring guidelines in `.cursor/rules/refactor-ui.mdc`, always use separate `textSize` and `padding` variants instead of a combined `size` variant.
+
+### 1.3 Form and Schema System
+
+Our platform uses a robust schema-based form system that connects Zod validation with form rendering and MongoDB models.
+
+**ENFORCING THE SINGLE SOURCE OF TRUTH**: Our architecture strictly enforces that Zod schemas are the single source of truth for all data structures. Field configurations in `/src/lib/ui-schema/fieldConfig/` reference these schemas rather than redefining field properties. MongoDB models derive their types from these same schemas. This ensures complete consistency from database to UI without duplication. When extending functionality, always refer back to the canonical schema definition rather than creating parallel definitions that could drift apart over time.
+
+#### 1.3.1 Zod Schema Architecture
+
+Schemas are organized in `src/lib/zod-schema/` by domain and shared definitions:
+
+- `core/`: Base schemas for common entities
+- `shared/`: Reusable schema parts
+- Domain-specific directories: `visits/`, `look-fors/`, etc.
+
+**Key Utilities:**
+- `processSchema.ts`: Transforms schemas for different contexts
+- `validate.ts`: Centralized validation helpers
+
+#### 1.3.2 Field Configuration System
+
+The `src/lib/ui-schema/fieldConfig/` directory contains configurations that define how form fields should be rendered and validated:
+
+- Field types (text, select, date, etc.)
+- Validation requirements
+- UI appearance and behavior
+- Conditional logic
+
+**Example: Field Configuration**
+
+```typescript
+export const schoolFieldConfig: FieldConfig<SchoolSchema> = {
+  name: {
+    type: 'text',
+    label: 'School Name',
+    placeholder: 'Enter school name',
+    required: true,
+  },
+  district: {
+    type: 'select',
+    label: 'District',
+    options: districtOptions,
+    required: true,
+  }
+};
+```
+
+#### 1.3.3 Form Overrides
+
+Form overrides (`src/lib/ui-schema/formOverrides/`) allow customization of form behavior for specific contexts:
+
+- Field visibility control
+- Context-specific validation rules
+- Custom UI rendering for specific forms
+- Field ordering and grouping
+
+#### 1.3.4 MongoDB Model Integration
+
+Our schemas connect directly to MongoDB models (`src/models/`):
+
+1. Zod schemas define the shape and validation of data
+2. Models use these schemas for type definitions
+3. Server actions validate input using schemas before db operations
+4. UI components use schemas to render appropriate form fields
+
+This creates a single source of truth from database to UI.
+
+### 1.4 Additional Utilities
+
+#### 1.4.1 General Utilities (`src/lib/utils.ts`)
+
+- `cn()`: Class name utility for composing Tailwind classes
+- Other general-purpose utilities for formatting, parsing, etc.
+
+#### 1.4.2 Error Handling
+
+Error utilities in `src/lib/error/` provide consistent error handling:
+
+- `handleValidationError.ts`: Processes Zod validation errors into user-friendly formats
+- `handleClientError.ts`: Client-side error handling with proper logging
+- `handleServerError.ts`: Server-side error processing for actions and API routes
+
+**Usage Pattern:**
+
+```typescript
+try {
+  // Operation that might fail
+} catch (error) {
+  return handleServerError(error, "Failed to process request");
+}
+```
+
+### 1.5 Best Practices and Gotchas
+
+1. **Data Fetching**
+   - Always use appropriate domain hooks rather than direct SWR/fetch calls
+   - Ensure proper cache invalidation after mutations
+   - Handle loading and error states consistently
+
+2. **Component Development**
+   - Follow the atomic design pattern (core → composed → domain → features)
+   - Use tokens and shared variants instead of direct Tailwind classes
+   - Split `size` into `textSize` and `padding` as per refactoring guidelines
+
+3. **Form Implementation**
+   - Use Zod schemas for validation
+   - Connect field configs to schemas
+   - Apply form overrides for context-specific behavior
+
+4. **Error Handling**
+   - Use appropriate error handlers based on context
+   - Provide user-friendly error messages
+   - Log technical details for debugging
+
+5. **Single Source of Truth**
+   - Never duplicate schema definitions - import from canonical source
+   - When adding new fields, always start by updating the Zod schema first
+   - Use schema transformations and utilities like `processSchema` to adapt schemas for different contexts without duplicating them
+   - Field configs should reference schema properties rather than redefining them
+   - When in doubt about a data structure, consult the Zod schema as the definitive reference
+
+## 2. Development Philosophy
+
+### 2.1 Critical Thinking Partnership
+
+Claude's role goes beyond code implementation — it helps with thinking clearly about what's worth building, how to build it, and whether it aligns with best practices. Since this project is grounded in real-world use, advice should be opinionated, grounded, and practical.
+
+#### 2.1.1 Key Decision-Making Questions
+
+The AI partner should help answer questions like:
+
+- "Is this a good design pattern?"
+- "Is this the right way to structure the schema?"
+- "Should this logic live in the component or the server action?"
+- "Is this DRY and scalable or is it overengineering?"
+- "Is this worth automating or better left manual?"
+
+#### 2.1.2 Working Style
+
+- When asked for best practice comparisons, provide concrete examples (e.g., "What would a production team typically do here?")
+- Provide pushback when something seems off or could be cleaner
+- Pause occasionally to say:
+  - "Actually, there's a better pattern for this."
+  - "This might work for now, but here's how it could break."
+  - "Here's a simpler but equally scalable way."
+
+#### 2.1.3 Default Principles
+
+When in doubt, prioritize:
+- Clarity
+- Maintainability
+- Scalability
+
+Reference modern conventions in the tools used:
+- Next.js App Router patterns
+- Zod for validation
+- Tailwind + tailwind-variants
+- MongoDB with schema-based thinking
+
+Feel free to say, "Pause — let's gut-check this before we build."
+
+### 2.2 Development Workflow
+
+This project uses a dual-tool approach: Claude for planning and reasoning, and Cursor (an AI-native code editor) for implementation.
+
+#### 2.2.1 Cursor Integration
+
+- Ideas, prompts, and implementation strategies are first developed in Claude
+- Actual file edits and logic validation happen in Cursor
+- Detailed, structured Cursor prompts are used to implement:
+  - Component creation
+  - Zod schema updates
+  - Tailwind variant refactors
+  - Data fetching logic
+  - Mock data generation
+
+#### 2.2.2 Claude's Role in the Workflow
+
+Claude helps:
+- Design the flow of tasks and ideas
+- Prepare Cursor-ready prompts
+- Break tasks into multi-step Cursor prompts rather than short "edit this file" commands
+- Write prompts that scale (batch refactors, DRY updates, component migrations)
+
+Every output should:
+- Explain where the change should be applied (`/src/components/ui/Button.tsx`, for example)
+- Use accurate and complete logic (aligned with Zod schemas, token systems, etc.)
+- Respect the preferred prompt structure (cursor-first, file-aware, stepwise)
+
+#### 2.2.3 Cursor Prompt Philosophy
+
+- Avoid vague one-liners; prefer explicit, scoped instructions that Cursor can execute cleanly
+- Use structured language like:
+  - "Create a new file at `src/app/internal/seed/page.tsx` that..."
+  - "Apply this Tailwind variant update across all text components using this helper..."
+- When refactoring, specify whether it's local or project-wide, and call out any helpers used (e.g., `sharedVariants.ts`, `tokens.ts`)
+
+## 3. Core Building Blocks Quick Reference
+
+### 3.1 Frameworks & Languages
+- **Next.js (App Router)** – for full-stack rendering and routing
+- **TypeScript** – enforced for all logic, interfaces, and component typing
+- **Tailwind CSS v4** – with a semantic, token-first design system
+- **Zod** – used as the **canonical schema source** across frontend/backend
+
+### 3.2 System-Defining Practices
+
+#### 3.2.1 Schema-Driven Architecture
+- **Zod schemas drive everything**:
+  - Field configs
+  - Form rendering logic
+  - Mock data shape
+  - MongoDB validation
+- Example: `Visit`, `Staff`, `School`, `CoachingLog` schemas
+
+**SINGLE SOURCE OF TRUTH PRINCIPLE**: The Zod schema definitions serve as the canonical single source of truth across the entire application. This means schema definitions are never duplicated - they're defined once in the `/src/lib/zod-schema` directory and imported wherever needed. When changes to data structures are required, they only need to be updated in one place. This approach prevents data model drift between frontend forms, validation logic, and database operations.
+
+#### 3.2.2 Token-First Design System
+- Tokens live in `src/lib/ui/tokens.ts`
+- Used in Tailwind config + `tv()` variant helpers
+- Key token types: `colors`, `textSize`, `padding`, `layout`, `borderRadius`
+
+#### 3.2.3 Tailwind Variants (`tv()`)
+- `tailwind-variants` used to build atomic component variants
+- Shared helpers in `sharedVariants.ts`
+- Boolean variant handling via `toBooleanVariant()`
+- All props prefer `textSize` over `size`
+
+#### 3.2.4 Internal Dev Tools
+- Internal dev page for **POST-based seeding of mock data**
+- Reuses logic from `scripts/seed/*.ts` where possible
+- Validates all seeded data against Zod + Mongoose
+
+### 3.3 Data Interop & Validation
+
+#### 3.3.1 Centralized Field Config System
+- Field configs generated **from Zod schema**
+- Manual overrides layered in for specific use cases (e.g., NYCPS staff form)
+- Goal: DRY, consistent rendering logic across all resource types
+
+#### 3.3.2 MongoDB Integration
+- MongoDB used for long-term persistence
+- Uses schema-consistent models to avoid drift
+
+### 3.4 Component System
+
+#### 3.4.1 Atomic Components
+- All fields live under `src/components/ui/fields/`
+- Typography lives in `src/components/ui/typography/`
+- Every component uses `tv()` and `cn()` utility
+
+#### 3.4.2 Variant-Driven Styling
+- Button, Input, Text, etc. variants defined in a centralized, token-aware structure
+- Variants cascade automatically from shared design tokens
+- Future updates can be rolled out across all components with a single `tv()` refactor
+
+### 3.5 Rules to Enforce
+
+- Always validate data with Zod **before runtime**
+- Always use arrays as SWR keys or caching keys
+- Prefer `const` over `function` unless class/method context requires otherwise
+- Never redeclare or duplicate token definitions
+- Commit messages must follow convention:  
+  `🔧 Refactor UI: added designTokens, token-driven theme.css, ...`
+
+---
+
+This document is meant to be a living reference. As the codebase evolves, please update this documentation to reflect current best practices and patterns.

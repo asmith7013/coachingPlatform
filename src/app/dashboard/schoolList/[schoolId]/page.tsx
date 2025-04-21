@@ -59,7 +59,7 @@ const staffData: Record<string, StaffMember[]> = {
 export default function SchoolDetail() {
   const params = useParams<{ schoolId: string }>();
   const [school, setSchool] = useState<School | null>(null);
-  const [staff, setStaff] = useState<NYCPSStaff[]>([]);
+  const [_staff, setStaff] = useState<NYCPSStaff[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

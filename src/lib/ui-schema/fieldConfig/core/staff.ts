@@ -1,7 +1,6 @@
 import { Field } from '@/components/features/shared/form/GenericResourceForm';
 import { NYCPSStaffInput } from '@/lib/zod-schema';
 import { GradeLevelsSupportedZod, SubjectsZod, SpecialGroupsZod, RolesNYCPSZod } from '@/lib/zod-schema/shared/enums';
-import { fetchSchoolOptions, fetchStaffOptions } from '@/lib/client-api';
 
 export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
   {
@@ -21,7 +20,7 @@ export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
     name: 'schools',
     label: 'Schools',
     type: 'reference',
-    fetcher: fetchSchoolOptions,
+    url: '/api/schools',
     multiple: true,
     required: true,
   },
@@ -29,7 +28,7 @@ export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
     name: 'owners',
     label: 'Owners',
     type: 'reference',
-    fetcher: fetchStaffOptions,
+    url: '/api/staff',
     multiple: true,
     required: true,
   },

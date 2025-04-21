@@ -1,7 +1,6 @@
 import { Field } from '@/components/features/shared/form/GenericResourceForm';
 import { SchoolInput } from '@/lib/zod-schema';
 import { GradeLevelsSupportedZod } from '@/lib/zod-schema/shared/enums';
-import { fetchStaffOptions } from '@/lib/client-api';
 
 export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
@@ -46,7 +45,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
     name: 'owners',
     label: 'Owners',
     type: 'reference',
-    fetcher: fetchStaffOptions,
+    url: '/api/staff',
     multiple: true,
     required: true,
   },
