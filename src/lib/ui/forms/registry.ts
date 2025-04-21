@@ -1,6 +1,6 @@
-import { FieldConfig } from '@/components/ui/form'
+import { FieldWrapperVariants } from '@/components/core/fields/FieldWrapper'
 
-export type FieldComponent = React.ComponentType<FieldConfig & {
+export type FieldComponent = React.ComponentType<FieldWrapperVariants & {
   value?: unknown
   onChange?: (value: unknown) => void
 }>

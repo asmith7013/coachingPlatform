@@ -3,9 +3,9 @@
 import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
-import { TableHeader } from './core/header'
-import { TableRow } from './core/row'
-import { TableEmpty } from './utils/empty'
+import { TableHeader } from './parts/header'
+import { TableRow } from './parts/row'
+import { TableEmpty } from './features/empty'
 import { textColors } from '@/lib/ui/tokens'
 
 const table = tv({

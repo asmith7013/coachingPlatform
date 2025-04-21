@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/fields/Input';
-import { Select } from '@/components/ui/fields/Select';
-import { Text } from '@/components/ui/typography/Text';
-import { Card } from "@/components/ui/card";
+import { Button } from '@/components/core/Button';
+import { Input } from '@/components/core/fields/Input';
+import { Select } from '@/components/core/fields/Select';
+import { Text } from '@/components/core/typography/Text';
+import { Card } from '@/components/composed/cards/Card';
 import { cn } from "@/lib/utils";
 import debounce from 'lodash.debounce';
 

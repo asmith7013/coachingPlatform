@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Text } from '@/components/ui/typography/Text';
+import { Button } from '@/components/core/Button';
+import { Text } from '@/components/core/typography/Text';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
 

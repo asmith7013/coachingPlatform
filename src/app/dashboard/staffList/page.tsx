@@ -1,13 +1,13 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
 import React, { useState } from "react";
-import { Card } from '@/components/ui/card';
-import { Heading } from '@/components/ui/typography/Heading';
-import { Text } from '@/components/ui/typography/Text';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/components/composed/cards/Card';
+import { Heading } from '@/components/core/typography/Heading';
+import { Text } from '@/components/core/typography/Text';
+import { Button } from '@/components/core/Button';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
 // import { cn } from "@/lib/utils";
-import { EmptyListWrapper } from "@/components/ui/empty-list-wrapper";
+import { EmptyListWrapper } from '@/components/shared/EmptyListWrapper';
 import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
 import { GenericResourceForm, Field, FieldType } from "@/components/features/shared/form/GenericResourceForm";
 import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
@@ -15,8 +15,8 @@ import { useNYCPSStaff } from "@/hooks/useNYCPSStaff";
 import { NYCPSStaff, NYCPSStaffInput } from "@/lib/zod-schema/core/staff";
 import { createNYCPSStaff, updateNYCPSStaff, deleteNYCPSStaff, uploadNYCPSStaffFile } from "@/app/actions/staff/nycps";
 import { NYCPSStaffFieldConfig } from "@/lib/ui-schema/fieldConfig/core/staff";
-import { Dialog } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
+import { Dialog } from "@/components/composed/dialogs/Dialog";
+import { Badge } from '@/components/core/feedback/Badge';
 // import { fetchSchoolOptions } from "@/lib/client-api";
 import { NYCPSStaffOverrides } from "@/lib/ui-schema/formOverrides";
 import { getReferenceSelectPropsForField } from "@/lib/ui/forms/helpers";

@@ -1,6 +1,6 @@
-import { Card } from '@/components/ui/card';
-import { Heading } from '@/components/ui/typography/Heading';
-import { Text } from '@/components/ui/typography/Text';
+import { Card } from '@/components/composed/cards/Card';
+import { Heading } from '@/components/core/typography/Heading';
+import { Text } from '@/components/core/typography/Text';
 import { cn } from '@/lib/utils';
 
 type KHLesson = {

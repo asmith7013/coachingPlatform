@@ -1,8 +1,8 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
-import { Heading } from '@/components/ui/typography/Heading';
-import { Text } from '@/components/ui/typography/Text';
+import { Card } from '@/components/composed/cards/Card';
+import { Heading } from '@/components/core/typography/Heading';
+import { Text } from '@/components/core/typography/Text';
 import { cn } from '@/lib/utils';
 
 export type PerformanceLevelKey = 'not_observed' | 'not_yet' | 'developing' | 'proficient' | 'advanced';

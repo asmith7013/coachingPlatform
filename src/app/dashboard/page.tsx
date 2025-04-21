@@ -1,6 +1,6 @@
 import React from 'react';
-import { Heading } from '@/components/ui/typography/Heading';
-import { Text } from '@/components/ui/typography/Text';
+import { Heading } from '@/components/core/typography/Heading';
+import { Text } from '@/components/core/typography/Text';
 
 export default function DashboardHome() {
   return (

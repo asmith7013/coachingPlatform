@@ -13,7 +13,7 @@ import { CurriculumVersionModal } from '@/components/features/imRoutine/Curricul
 import { usePersistedCurriculumVersion } from '@/lib/hooks/usePersistedCurriculumVersion';
 import { textSize, weight } from '@/lib/ui/tokens/typography';
 import { cn } from '@/lib/utils';
-import { Text } from '@/components/ui/typography/Text';
+import { Text } from '@/components/core/typography/Text';
 
 export default function IMRoutinesPage() {
   const [version, setVersion] = usePersistedCurriculumVersion();
@@ -221,9 +221,9 @@ export default function IMRoutinesPage() {
                 allRoutines={allRoutines}
                 selectedRoutines={selectedRoutines}
                 setSelectedRoutines={setSelectedRoutines}
-                selectedLesson={selectedLesson}
-                lessonRoutines={lessonRoutines}
-                onLessonSelected={handleLessonSelected}
+                _selectedLesson={selectedLesson}
+                _lessonRoutines={lessonRoutines}
+                _onLessonSelected={handleLessonSelected}
                 version={version}
                 setVersion={setVersion}
               />

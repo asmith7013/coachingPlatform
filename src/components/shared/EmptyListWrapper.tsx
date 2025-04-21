@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { EmptyState } from './empty-state';
+import { EmptyState } from './EmptyState';
 
 interface EmptyListWrapperProps<T> {
   items: T[];

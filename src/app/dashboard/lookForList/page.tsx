@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card } from '@/components/ui/card';
-import { Heading } from '@/components/ui/typography/Heading';
-import { Text } from '@/components/ui/typography/Text';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/components/composed/cards/Card';
+import { Heading } from '@/components/core/typography/Heading';
+import { Text } from '@/components/core/typography/Text';
+import { Button } from '@/components/core/Button';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
-import { EmptyListWrapper } from "@/components/ui/empty-list-wrapper";
+import { EmptyListWrapper } from "@/components/shared/EmptyListWrapper";
 import { GenericResourceForm, type Field } from "@/components/features/shared/form/GenericResourceForm";
 import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
 import { ResourceHeader } from "@/components/features/shared/ResourceHeader";

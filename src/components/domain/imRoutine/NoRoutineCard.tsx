@@ -1,7 +1,7 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
-import { Text } from '@/components/ui/typography/Text';
+import { Card } from '@/components/composed/cards/Card';
+import { Text } from '@/components/core/typography/Text';
 import { cn } from '@/lib/utils';
 
 type Props = {

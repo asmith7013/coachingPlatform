@@ -12,11 +12,11 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Heading } from "@/components/ui/typography/Heading";
-import { Text } from "@/components/ui/typography/Text";
-import { Input } from "@/components/ui/fields/Input";
+import { Button } from '@/components/core/Button';
+import { Card } from '@/components/composed/cards/Card';
+import { Heading } from '@/components/core/typography/Heading';
+import { Text } from '@/components/core/typography/Text';
+import { Input } from '@/components/core/fields/Input';
 
 interface BulkUploadFormProps {
   title: string;

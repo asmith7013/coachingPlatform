@@ -6,6 +6,5 @@ export * from './CurriculumVersionModal';
 export * from './renderILCLesson';
 export * from './NoRoutineCard';
 export * from './MLRAppearsInCard';
-export * from './LessonDetailView';
-export * from './RoutineBadge';
-export * from './LessonCompactView'; 
+export { LessonDetailView } from './LessonDetailView';
+export * from './RoutineBadge'; 

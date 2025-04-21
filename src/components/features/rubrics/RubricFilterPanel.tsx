@@ -1,6 +1,6 @@
 'use client';
 
-import { Select } from '@/components/ui/fields/Select';
+import { Select } from '@/components/core/fields/Select';
 import { stack } from '@/lib/ui/tokens/spacing';
 import { cn } from '@/lib/utils';
 

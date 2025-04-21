@@ -1,5 +1,5 @@
-import { Card } from '@/components/ui/card';
-import { Heading } from '@/components/ui/typography/Heading';
+import { Card } from '@/components/composed/cards/Card';
+import { Heading } from '@/components/core/typography/Heading';
 import { cn } from '@/lib/utils';
 import type { Lesson } from '@/components/features/imRoutine/LessonDetailView';
 import { NoRoutineCard } from '@/components/features/imRoutine/NoRoutineCard';

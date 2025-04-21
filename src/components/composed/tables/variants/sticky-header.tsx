@@ -1,6 +1,6 @@
 'use client'
 
-import { Table, type TableVariants } from '../table'
+import { Table, type TableVariants } from '../Table'
 import { tv, type VariantProps } from 'tailwind-variants'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
 

@@ -2,7 +2,14 @@
 export * from './core';
 
 // Composed components
-export * from './composed/forms';
+// Export specific components from composed/forms to avoid conflicts with core
+export { 
+  Form, 
+  FormSection,
+  form as formStyles,
+  formField as formFieldStyles,
+  // Add other components that don't conflict with core exports
+} from './composed/forms';
 export * from './composed/tables';
 export * from './composed/cards';
 export * from './composed/dialogs';

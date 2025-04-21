@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Heading } from "@/components/ui/typography/Heading";
-import { Text } from "@/components/ui/typography/Text";
-import { Input } from "@/components/ui/fields/Input";
-import { Select } from "@/components/ui/fields/Select";
-import { Switch } from '@/components/ui/fields/Switch';
-import { Checkbox } from '@/components/ui/fields/Checkbox';
-import { Textarea } from '@/components/ui/fields/Textarea';
+import { Button } from '@/components/core/Button';
+import { Card } from '@/components/composed/cards/Card';
+import { Heading } from '@/components/core/typography/Heading';
+import { Text } from '@/components/core/typography/Text';
+import { Input } from '@/components/core/fields/Input';
+import { Select } from '@/components/core/fields/Select';
+import { Switch } from '@/components/core/fields/Switch';
+import { Checkbox } from '@/components/core/fields/Checkbox';
+import { Textarea } from '@/components/core/fields/Textarea';
 import { shadows, typography } from "@/lib/ui/tokens";
 import { stack } from "@/lib/ui/tokens/spacing";
 import { cn } from "@/lib/utils";
-import ReferenceSelect, { URLReferenceSelect } from "@/components/ui/fields/ReferenceSelect";
+import ReferenceSelect, { URLReferenceSelect } from '@/components/core/fields/ReferenceSelect';
 
 export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 'switch' | 'checkbox' | 'textarea' | 'reference';
 export type Mode = "create" | "edit";

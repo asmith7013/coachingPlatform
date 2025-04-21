@@ -1,6 +1,6 @@
 "use client"; // This wrapper component is a Client Components
 
-import { SentryErrorBoundary } from "./SentryErrorBoundary"; // Import the existing class component
+import { SentryErrorBoundary } from "@/components/error-boundaries/SentryErrorBoundary"; // Import from correct path
 
 export default function SentryBoundaryWrapper({
   children,

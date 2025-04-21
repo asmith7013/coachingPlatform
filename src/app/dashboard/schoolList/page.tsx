@@ -1,10 +1,10 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
 import React, { useState } from "react";
-import { Card } from '@/components/ui/card';
-import { Heading } from '@/components/ui/typography/Heading';
-import { Text } from '@/components/ui/typography/Text';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/components/composed/cards/Card';
+import { Heading } from '@/components/core/typography/Heading';
+import { Text } from '@/components/core/typography/Text';
+import { Button } from '@/components/core/Button';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Schools data.
 import { School, SchoolInput } from "@/lib/zod-schema"; // ✅ Import the School type from Zod schema.
@@ -14,7 +14,7 @@ import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
 import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
 import { SchoolFieldConfig } from "@/lib/ui-schema/fieldConfig/core/school";
 import { cn } from "@/lib/utils";
-import { EmptyListWrapper } from "@/components/ui/empty-list-wrapper";
+import { EmptyListWrapper } from '@/components/shared/EmptyListWrapper';
 
 export default function SchoolList() {
   const {
