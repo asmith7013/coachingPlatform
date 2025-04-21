@@ -11,52 +11,35 @@ import {
 import { handleServerError } from "@/lib/error/handleServerError";
 import { handleValidationError } from "@/lib/error/handleValidationError";
 import { 
-  executeSmartQuery,
-  sanitizeFilters,
   createItem,
   updateItem,
-  deleteItem
+  deleteItem,
 } from "@/lib/server-utils";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
 import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
 import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
+import { connectToDB } from "@/lib/db";
+import { invalidateStaffOptions } from "@/lib/client-api";
 
 // Types
 export type { NYCPSStaff, NYCPSStaffInput };
 
 /** Fetch NYCPS Staff */
-export async function fetchNYCPSStaff({
-  page = 1,
-  limit = 10,
-  filters = {},
-  sortBy = "staffName",
-  sortOrder = "asc",
-}: {
-  page?: number;
-  limit?: number;
-  filters?: Record<string, unknown>;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-} = {}) {
+export async function fetchNYCPSStaff(params: FetchParams = {}) {
   try {
-    console.log("Fetching NYCPS staff with params:", { page, limit, filters, sortBy, sortOrder });
+    const fetchParams = getDefaultFetchParams({
+      ...params,
+      sortBy: params.sortBy ?? "staffName",
+      sortOrder: params.sortOrder ?? "asc"
+    });
 
-    // Sanitize filters
-    const sanitizedFilters = sanitizeFilters(filters);
+    console.log("Fetching NYCPS staff with params:", fetchParams);
 
-    // Execute smart query with NYCPSStaffZodSchema for validation
-    const result = await executeSmartQuery(
+    return fetchPaginatedResource(
       NYCPSStaffModel,
-      sanitizedFilters,
       NYCPSStaffZodSchema,
-      {
-        page,
-        limit,
-        sortBy,
-        sortOrder
-      }
+      fetchParams
     );
-
-    return result;
   } catch (error) {
     throw new Error(handleServerError(error));
   }
@@ -64,33 +47,50 @@ export async function fetchNYCPSStaff({
 
 /** Create NYCPS Staff */
 export async function createNYCPSStaff(data: NYCPSStaffInput) {
-  return createItem(
-    NYCPSStaffModel, 
-    NYCPSStaffInputZodSchema, 
-    data, 
-    ["/dashboard/staff", "/dashboard/staff/[id]"]
-  );
+  try {
+    await connectToDB();
+    const doc = await createItem(
+      NYCPSStaffModel, 
+      NYCPSStaffInputZodSchema, 
+      data, 
+      ["/dashboard/staff", "/dashboard/staff/[id]"]
+    );
+    invalidateStaffOptions();
+    return doc;
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
 }
 
 /** Update NYCPS Staff */
 export async function updateNYCPSStaff(id: string, data: Partial<NYCPSStaffInput>) {
-  return updateItem(
-    NYCPSStaffModel, 
-    NYCPSStaffInputZodSchema, 
-    id, 
-    data, 
-    ["/dashboard/staff", "/dashboard/staff/[id]"]
-  );
+  try {
+    await connectToDB();
+    return updateItem(
+      NYCPSStaffModel, 
+      NYCPSStaffInputZodSchema, 
+      id, 
+      data, 
+      ["/dashboard/staff", "/dashboard/staff/[id]"]
+    );
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
 }
 
 /** Delete NYCPS Staff */
 export async function deleteNYCPSStaff(id: string) {
-  return deleteItem(
-    NYCPSStaffModel, 
-    NYCPSStaffZodSchema, 
-    id, 
-    ["/dashboard/staff", "/dashboard/staff/[id]"]
-  );
+  try {
+    await connectToDB();
+    return deleteItem(
+      NYCPSStaffModel, 
+      NYCPSStaffZodSchema, 
+      id, 
+      ["/dashboard/staff", "/dashboard/staff/[id]"]
+    );
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
 }
 
 /** Upload NYCPS Staff via file */
@@ -106,6 +106,7 @@ export const uploadNYCPSStaffFile = async (file: File): Promise<string> => {
 /** Upload NYCPS Staff data */
 export async function uploadNYCPSStaff(data: NYCPSStaffInput[]) {
   try {
+    await connectToDB();
     const result = await bulkUploadToDB(
       data, 
       NYCPSStaffModel, 

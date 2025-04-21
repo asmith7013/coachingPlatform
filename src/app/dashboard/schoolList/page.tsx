@@ -5,28 +5,16 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { Button } from '@/components/ui/button';
+import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Schools data.
-import { School } from "@/lib/zod-schema"; // ✅ Import the School type from Zod schema.
-import { SchoolInput } from "@/lib/zod-schema";
+import { School, SchoolInput } from "@/lib/zod-schema"; // ✅ Import the School type from Zod schema.
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
-import { GenericAddForm } from "@/components/features/shared/form/GenericAddForm";
+import { GenericResourceForm } from "@/components/features/shared/form/GenericResourceForm";
 import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
 import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
 import { SchoolFieldConfig } from "@/lib/ui-schema/fieldConfig/core/school";
 import { cn } from "@/lib/utils";
-
-const createEmptySchool = (): SchoolInput => ({
-  schoolNumber: "",
-  district: "",
-  schoolName: "",
-  address: "",
-  emoji: "",
-  gradeLevelsSupported: [],
-  staffList: [],
-  schedules: [],
-  cycles: [],
-  owners: []
-});
+import { EmptyListWrapper } from "@/components/ui/empty-list-wrapper";
 
 export default function SchoolList() {
   const {
@@ -60,16 +48,11 @@ export default function SchoolList() {
   if (schoolError) return <Text textSize="base" color="danger">Error loading schools</Text>;
 
   return (
-    <div className="container mx-auto p-8">
-      <Heading 
-        level="h2" 
-        color="default"
-        className={cn("text-primary font-bold mb-4")}
-      >
-        Schools
-      </Heading>
-      
-      <ResourceHeader<School>
+    <DashboardPage
+      title="Schools"
+      description="Manage and track schools across your district."
+    >
+      <ResourceHeader<SchoolInput>
         page={page}
         total={total}
         limit={limit}
@@ -86,7 +69,7 @@ export default function SchoolList() {
         togglePerformanceMode={togglePerformanceMode}
       />
 
-      <div className="space-y-8">
+      <EmptyListWrapper items={schools} resourceName="schools">
         {schools.map((school: School) => (
           <Card
             key={school._id}
@@ -152,12 +135,12 @@ export default function SchoolList() {
             </div>
           </Card>
         ))}
-      </div>
+      </EmptyListWrapper>
 
       <div className="mt-8">
-        <GenericAddForm
+        <GenericResourceForm
+          mode="create"
           title="Add School"
-          defaultValues={createEmptySchool()}
           onSubmit={createSchool}
           fields={SchoolFieldConfig}
         />
@@ -167,6 +150,6 @@ export default function SchoolList() {
           onUpload={uploadSchoolFile}
         />
       </div>
-    </div>
+    </DashboardPage>
   );
 }

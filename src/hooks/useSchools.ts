@@ -8,14 +8,7 @@ import {
 } from "@/app/actions/schools/schools";
 import { School, SchoolInput } from "@/lib/types/core";
 import type { ResourceResponse } from "@/lib/server-utils/types";
-
-type FetchParams = {
-  page?: number;
-  limit?: number;
-  filters?: Record<string, unknown>;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-};
+import type { FetchParams } from "@/lib/types/api";
 
 export function useSchools(initialPage: number = 1, initialLimit: number = 20) {
   const [performanceMode, setPerformanceMode] = useState(true);

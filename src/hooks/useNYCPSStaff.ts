@@ -8,14 +8,7 @@ import {
 } from "@actions/staff/nycps";
 import { NYCPSStaff, NYCPSStaffInput } from "@/lib/types/core";
 import type { ResourceResponse } from "@/lib/server-utils/types";
-
-type FetchParams = {
-  page?: number;
-  limit?: number;
-  filters?: Record<string, unknown>;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-};
+import type { FetchParams } from "@/lib/types/api";
 
 export function useNYCPSStaff(initialPage: number = 1, initialLimit: number = 20) {
   const [performanceMode, setPerformanceMode] = useState(true);

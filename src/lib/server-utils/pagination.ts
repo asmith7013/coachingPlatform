@@ -6,7 +6,7 @@ import type { ZodSchema } from "zod";
 import { z } from "zod";
 
 // Define type for document with timestamps
-interface TimestampedDoc {
+export interface TimestampedDoc {
   _id: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -59,20 +59,49 @@ export async function executePaginatedQuery<T extends TimestampedDoc, S extends 
   options: PaginationOptions = {}
 ): Promise<PaginatedResult<z.infer<S>>> {
   try {
-    const { page = 1, limit = 20 } = options;
+    if (!model) {
+      throw new Error('Model is required');
+    }
+    
+    if (!schema) {
+      throw new Error('Schema is required');
+    }
+    
+    const { page = 1, limit = 20, sortBy = 'createdAt' } = options;
+    
+    // Validate sortBy to prevent errors (use fallback if invalid)
+    const validSortBy = sortBy || 'createdAt';
+    const safeOptions = {
+      ...options,
+      page,
+      limit,
+      sortBy: validSortBy,
+    };
     
     // Ensure database connection
     await connectToDB();
     
     // Build and execute query
-    const query = buildPaginatedQuery(model, filters, options);
+    const query = buildPaginatedQuery(model, filters, safeOptions);
+    
+    // Add additional safety by applying lean() to avoid potential issues with document methods
+    query.lean();
+    
     const [items, total] = await Promise.all([
       query.exec(),
       model.countDocuments(filters)
     ]);
     
+    // Validate items before sanitizing
+    if (!items) {
+      throw new Error('Query returned null or undefined instead of items array');
+    }
+    
+    // Ensure items is an array
+    const itemsArray = Array.isArray(items) ? items : [];
+    
     // Sanitize items for client
-    const sanitizedItems = sanitizeDocuments(items as unknown as HydratedDocument<TimestampedDoc>[], schema);
+    const sanitizedItems = sanitizeDocuments(itemsArray);
     
     // Calculate metadata
     const totalPages = Math.ceil(total / limit);
@@ -83,9 +112,13 @@ export async function executePaginatedQuery<T extends TimestampedDoc, S extends 
       page,
       limit,
       totalPages,
-      empty: items.length === 0
+      empty: itemsArray.length === 0
     };
   } catch (error) {
+    // Add context to the error
+    if (error instanceof Error) {
+      throw new Error(`Error executing paginated query: ${error.message}`);
+    }
     throw new Error(handleServerError(error));
   }
 } 

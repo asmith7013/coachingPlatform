@@ -1,4 +1,4 @@
-import { Field } from "@/components/features/shared/form/GenericAddForm";
+import { Field } from "@/components/features/shared/form/GenericResourceForm";
 import { BellScheduleInput, TeacherScheduleInput } from "@/lib/zod-schema";
 import { BellScheduleTypeZod } from "@/lib/zod-schema/shared/enums";
 

@@ -9,7 +9,11 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "generate-tree": "tree -I 'node_modules|dist|build|logs|coverage|.git|.next|.vercel|.vscode|.idea|.DS_Store|pnpm-lock.yaml|package-lock.json|yarn.lock|*.env|*.log|*.cache' -L 6 > project-tree.txt"
+    "generate-tree": "tree -I 'node_modules|dist|build|logs|coverage|.git|.next|.vercel|.vscode|.idea|.DS_Store|pnpm-lock.yaml|package-lock.json|yarn.lock|*.env|*.log|*.cache' -L 6 > project-tree.txt",
+    "seed:schools-staff": "tsx scripts/seed/seed-schools-staff.ts",
+    "seed:look-fors": "tsx scripts/seed/seed-look-fors.ts",
+    "seed:cycles-coaching": "tsx scripts/seed/seed-cycles-coaching.ts",
+    "seed:all": "tsx scripts/seed/index.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -34,6 +38,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
     "react-icons": "^5.5.0",
+    "react-select": "^5.10.1",
     "swr": "^2.3.3",
     "tailwind-variants": "^1.0.0",
     "uuid": "^11.1.0",

@@ -1,5 +1,11 @@
-export const booleanVariant = (trueClass: string, falseClass = '') =>
-  ({ 'true': trueClass, 'false': falseClass } as Record<'true' | 'false', string>);
+/**
+ * Creates a boolean variant for tailwind-variants that applies
+ * the given classes when the variant is true.
+ */
+export const booleanVariant = (className: string) => ({
+  true: className,
+  false: '',
+});
 
 // ✅ Strongly typed helper for defaultVariants
 export const defaultBooleanVariant = (value: boolean) =>

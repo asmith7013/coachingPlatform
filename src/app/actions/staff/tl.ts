@@ -1,64 +1,42 @@
 "use server";
 
 import { z } from "zod";
+import { TeachingLabStaffModel } from "@/models/core/staff.model";
 import { 
-  executeSmartQuery,
-  sanitizeFilters,
+  TeachingLabStaffZodSchema, 
+  TeachingLabStaffInputZodSchema,
+  type TeachingLabStaff,
+  type TeachingLabStaffInput
+} from "@/lib/zod-schema/core/staff";
+import { handleServerError } from "@/lib/error/handleServerError";
+import { handleValidationError } from "@/lib/error/handleValidationError";
+import { 
   createItem,
   updateItem,
   deleteItem,
 } from "@/lib/server-utils";
-import { 
-  TeachingLabStaffZodSchema,
-  TeachingLabStaffInputZodSchema,
-} from "@/lib/zod-schema/core/staff";
-import { TeachingLabStaffModel } from "@/models/core/staff.model";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
 import { connectToDB } from "@/lib/db";
-import { handleServerError } from "@/lib/error/handleServerError";
-import { handleValidationError } from "@/lib/error/handleValidationError";
 
-// Types for returned documents
-export type TeachingLabStaffDoc = z.infer<typeof TeachingLabStaffZodSchema>;
-
-// Types for input data
-export type TeachingLabStaffInput = z.infer<typeof TeachingLabStaffInputZodSchema>;
+// Types
+export type { TeachingLabStaff, TeachingLabStaffInput };
 
 /** Fetch Teaching Lab Staff */
-export async function fetchTeachingLabStaff({
-  page = 1,
-  limit = 10,
-  filters = {},
-  sortBy = "staffName",
-  sortOrder = "asc",
-}: {
-  page?: number;
-  limit?: number;
-  filters?: Record<string, unknown>;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-} = {}) {
+export async function fetchTeachingLabStaff(params: FetchParams = {}) {
   try {
-    await connectToDB();
-    
-    console.log("Fetching Teaching Lab staff with params:", { page, limit, filters, sortBy, sortOrder });
+    const fetchParams = getDefaultFetchParams({
+      ...params,
+      sortBy: params.sortBy ?? "staffName",
+      sortOrder: params.sortOrder ?? "asc"
+    });
 
-    // Sanitize filters
-    const sanitizedFilters = sanitizeFilters(filters);
+    console.log("Fetching Teaching Lab staff with params:", fetchParams);
 
-    // Execute smart query with appropriate schema for validation
-    const result = await executeSmartQuery(
+    return fetchPaginatedResource(
       TeachingLabStaffModel,
-      sanitizedFilters,
       TeachingLabStaffZodSchema,
-      {
-        page,
-        limit,
-        sortBy,
-        sortOrder
-      }
+      fetchParams
     );
-
-    return result;
   } catch (error) {
     throw new Error(handleServerError(error));
   }

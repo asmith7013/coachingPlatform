@@ -2,9 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-// import { Text } from '@/components/ui/typography/Text';
-import { typography } from '@/lib/ui/tokens';
-import { cn } from '@/lib/utils';
+import { Text } from '@/components/ui/typography/Text';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
@@ -12,9 +10,9 @@ type RoutineFilterProps = {
   allRoutines: string[];
   selectedRoutines: string[];
   setSelectedRoutines: (routines: string[]) => void;
-  selectedLesson?: string;
-  lessonRoutines?: string[];
-  onLessonSelected?: () => void;
+  _selectedLesson?: string;
+  _lessonRoutines?: string[];
+  _onLessonSelected?: () => void;
   version: 'KH' | 'ILC';
   setVersion: (version: 'KH' | 'ILC') => void;
 };
@@ -26,9 +24,9 @@ export function RoutineFilter({
   version,
   setVersion,
   // Intentionally unused props
-  selectedLesson: _selectedLesson,
-  lessonRoutines: _lessonRoutines,
-  onLessonSelected: _onLessonSelected,
+  _selectedLesson,
+  _lessonRoutines,
+  _onLessonSelected,
 }: RoutineFilterProps) {
   const [hasManuallyFiltered, setHasManuallyFiltered] = useState(false);
   
@@ -70,12 +68,11 @@ export function RoutineFilter({
     <div className="space-y-6">
       {/* Curriculum Version Toggle */}
       <div>
-        <motion.label
-          layout
-          className={cn(typography.weight.bold, 'text-text block mb-2')}
-        >
-          Currently Viewing:
-        </motion.label>
+        <motion.div layout>
+          <Text as="label" weight="bold" className="block mb-2">
+            Currently Viewing:
+          </Text>
+        </motion.div>
 
         <div className="flex gap-2">
           <Button
@@ -101,12 +98,12 @@ export function RoutineFilter({
 
       {/* Routine Filters */}
       <motion.div layout>
-        <motion.label
-          layout
-          className={cn(typography.weight.bold, 'text-text block mb-2')}
-        >
-          Filter All:
-        </motion.label>
+        <motion.div layout>
+          <Text as="label" weight="bold" className="block mb-2">
+            Filter All:
+          </Text>
+        </motion.div>
+        
         {/* Filter Actions */}
         <motion.div layout className="flex flex-wrap gap-2 mb-6">
           <AnimatePresence mode="popLayout">
@@ -131,7 +128,6 @@ export function RoutineFilter({
                 >
                   <span className="inline-flex items-center gap-2">
                     {selectedRoutines.length !== sortedRoutines.length && hasManuallyFiltered && (
-                      // <CheckIcon className="h-4 w-4 shrink-0 text-white" />
                       <CheckIcon className="w-4 h-4 min-w-4 min-h-4 text-white align-middle" />
                     )}
                     <span>Select All Routines</span>
@@ -210,12 +206,13 @@ export function RoutineFilter({
             </motion.div>
           </AnimatePresence>
         </motion.div>
-        <motion.label
-          layout
-          className={cn(typography.weight.bold, 'text-text block mb-2')}
-        >
-          Filter Routines:
-        </motion.label>
+        
+        <motion.div layout>
+          <Text as="label" weight="bold" className="block mb-2">
+            Filter Routines:
+          </Text>
+        </motion.div>
+        
         {/* Animated Routine Buttons */}
         <motion.div layout className="flex flex-wrap gap-2">
           <AnimatePresence initial={false}>

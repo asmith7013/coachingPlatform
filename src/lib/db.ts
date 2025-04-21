@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.ATLAS_URI!;
+const MONGO_URI = process.env.DATABASE_URL;
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the ATLAS_URI environment variable inside .env.local');
+if (!MONGO_URI) {
+  throw new Error('Missing DATABASE_URL - please define it in your .env files');
 }
 
 interface MongooseCache {
@@ -31,15 +31,14 @@ export const connectToDB = async () => {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      dbName: 'ai-coaching-platform',
       maxPoolSize: 10,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     };
 
-    // console.log("🌍 Connecting to Mongo with URI:", MONGODB_URI.slice(0, 50) + '...');
+    // console.log(`🌍 Connecting to MongoDB (${process.env.NODE_ENV} environment)`);
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(MONGO_URI, opts).then((mongoose) => {
       console.log("✅ Mongoose connected successfully");
       // Set up connection event handlers
       mongoose.connection.on('error', (err) => {

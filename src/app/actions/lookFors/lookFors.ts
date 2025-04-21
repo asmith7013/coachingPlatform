@@ -11,14 +11,18 @@ import {
 import { handleServerError } from "@/lib/error/handleServerError";
 import { handleValidationError } from "@/lib/error/handleValidationError";
 import { 
-  executeSmartQuery,
-  sanitizeFilters,
   createItem,
   updateItem,
-  deleteItem
+  deleteItem,
 } from "@/lib/server-utils";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
+import { sanitizeSortBy } from "@/lib/server-utils/sanitizeSortBy";
 import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
 import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
+import { connectToDB } from "@/lib/db";
+
+// Valid sort fields for look-fors
+const validSortFields = ['lookForIndex', 'topic', 'description', 'category', 'createdAt', 'updatedAt'];
 
 // Define type alias for inferred input type
 type InferLookForInput = z.infer<typeof LookForInputZodSchema>;
@@ -27,39 +31,24 @@ type InferLookForInput = z.infer<typeof LookForInputZodSchema>;
 export type { LookFor, LookForInput };
 
 /** Fetch Look-Fors */
-export async function fetchLookFors({
-  page = 1,
-  limit = 10,
-  filters = {},
-  sortBy = "name",
-  sortOrder = "asc",
-}: {
-  page?: number;
-  limit?: number;
-  filters?: Record<string, unknown>;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-} = {}) {
+export async function fetchLookFors(params: FetchParams = {}) {
   try {
-    console.log("Fetching look-fors with params:", { page, limit, filters, sortBy, sortOrder });
+    // Sanitize sortBy to ensure it's a valid field name
+    const safeSortBy = sanitizeSortBy(params.sortBy, validSortFields, 'lookForIndex');
+    
+    const fetchParams = getDefaultFetchParams({
+      ...params,
+      sortBy: safeSortBy,
+      sortOrder: params.sortOrder ?? "asc"
+    });
 
-    // Sanitize filters
-    const sanitizedFilters = sanitizeFilters(filters);
+    console.log("Fetching look-fors with params:", fetchParams);
 
-    // Execute smart query with LookForZodSchema for validation
-    const result = await executeSmartQuery(
+    return fetchPaginatedResource(
       LookForModel,
-      sanitizedFilters,
-      LookForZodSchema, // Use full schema for returned documents
-      {
-        page,
-        limit,
-        sortBy,
-        sortOrder
-      }
+      LookForZodSchema,
+      fetchParams
     );
-
-    return result;
   } catch (error) {
     throw new Error(handleServerError(error));
   }
@@ -67,17 +56,32 @@ export async function fetchLookFors({
 
 // Create a new look-for
 export async function createLookFor(data: InferLookForInput) {
-  return createItem(LookForModel, LookForInputZodSchema, data, ["/look-fors", "/look-fors/[id]"]);
+  try {
+    await connectToDB();
+    return createItem(LookForModel, LookForInputZodSchema, data, ["/look-fors", "/look-fors/[id]"]);
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
 }
 
 // Update a look-for
 export async function updateLookFor(id: string, data: Partial<InferLookForInput>) {
-  return updateItem(LookForModel, LookForInputZodSchema, id, data, ["/look-fors", "/look-fors/[id]"]);
+  try {
+    await connectToDB();
+    return updateItem(LookForModel, LookForInputZodSchema, id, data, ["/look-fors", "/look-fors/[id]"]);
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
 }
 
 // Delete a look-for
 export async function deleteLookFor(id: string) {
-  return deleteItem(LookForModel, LookForZodSchema, id, ["/look-fors", "/look-fors/[id]"]);
+  try {
+    await connectToDB();
+    return deleteItem(LookForModel, LookForZodSchema, id, ["/look-fors", "/look-fors/[id]"]);
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
 }
 
 // Upload look-fors via file
@@ -93,6 +97,7 @@ export const uploadLookForFile = async (file: File): Promise<string> => {
 // Upload look-fors data
 export async function uploadLookFors(data: InferLookForInput[]) {
   try {
+    await connectToDB();
     const result = await bulkUploadToDB(data, LookForModel, LookForInputZodSchema, ["/look-fors"]);
     
     if (!result.success) {

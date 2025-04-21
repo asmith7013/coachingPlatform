@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-export default function ToolsLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
@@ -28,6 +28,33 @@ export default function ToolsLayout({ children }: { children: React.ReactNode })
             <li>
               <Link href="/dashboard/lookForList" className="block p-2">
                 Look Fors Bank
+              </Link>
+            </li>
+            {/* --- IM Tools section ---------------------------------- */}
+            <li className="mt-6 mb-1 text-xs uppercase tracking-wider text-gray-300">
+              IM Tools
+            </li>
+            <li>
+              <Link href="/tools/im-routines" className="block p-2">
+                IM Routines
+              </Link>
+            </li>
+            <li>
+              <Link href="/tools/rubric-viewer" className="block p-2">
+                Rubric Viewer
+              </Link>
+            </li>
+
+            {/* --- Developer section ---------------------------------- */}
+            <li className="mt-6 mb-1 text-xs uppercase tracking-wider text-gray-300">
+              Developer
+            </li>
+            <li>
+              <Link
+                href="/tools/dev/seed-data"
+                className="block p-2 text-yellow-300 hover:text-yellow-200"
+              >
+                Seed Mock Data
               </Link>
             </li>
           </ul>

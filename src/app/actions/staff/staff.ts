@@ -4,12 +4,12 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import type { Document, Types } from "mongoose";
 import { 
-  executeSmartQuery,
-  sanitizeFilters,
   createItem,
   updateItem,
-  deleteItem
+  deleteItem,
 } from "@/lib/server-utils";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
+import { sanitizeSortBy } from "@/lib/server-utils/sanitizeSortBy";
 import { 
   getStaffMemberModelAndSchema,
   getNYCPSStaffModelAndSchema,
@@ -30,6 +30,9 @@ import { StaffMemberModel, NYCPSStaffModel, TeachingLabStaffModel } from "@/mode
 import { connectToDB } from "@/lib/db";
 import { handleServerError } from "@/lib/error/handleServerError";
 import { handleValidationError } from "@/lib/error/handleValidationError";
+
+// Valid sort fields for staff resources
+const validSortFields = ['staffName', 'email', 'createdAt', 'updatedAt'];
 
 // Types for returned documents
 export type StaffMember = z.infer<typeof StaffMemberZodSchema>;
@@ -77,73 +80,30 @@ interface TeachingLabStaffDocument extends StaffMemberDocument {
 }
 
 /** Fetch Staff */
-export async function fetchStaff({
-  page = 1,
-  limit = 10,
-  filters = {},
-  sortBy = "staffName",
-  sortOrder = "asc",
-  type = "all",
-}: {
-  page?: number;
-  limit?: number;
-  filters?: Record<string, unknown>;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  type?: StaffType;
-} = {}) {
+export async function fetchStaff(params: FetchParams & { type?: StaffType } = {}) {
   try {
-    await connectToDB();
+    // Sanitize sortBy to ensure it's a valid field name
+    const safeSortBy = sanitizeSortBy(params.sortBy, validSortFields, 'staffName');
     
-    console.log("Fetching staff with params:", { page, limit, filters, sortBy, sortOrder, type });
+    // Get default params with our sanitized sort field
+    const fetchParams = getDefaultFetchParams({
+      ...params,
+      sortBy: safeSortBy
+    });
 
-    // Sanitize filters
-    const sanitizedFilters = sanitizeFilters(filters);
+    console.log("Fetching staff with params:", { ...fetchParams, type: params.type });
 
     // Get appropriate model and schema based on type
-    let result;
-    if (type === "nycps") {
+    if (params.type === "nycps") {
       const { model, schema } = getNYCPSStaffModelAndSchema();
-      result = await executeSmartQuery(
-        model,
-        sanitizedFilters,
-        schema,
-        { 
-          page, 
-          limit, 
-          sortBy, 
-          sortOrder
-        }
-      );
-    } else if (type === "tl") {
+      return fetchPaginatedResource(model, schema, fetchParams);
+    } else if (params.type === "tl") {
       const { model, schema } = getTeachingLabStaffModelAndSchema();
-      result = await executeSmartQuery(
-        model,
-        sanitizedFilters,
-        schema,
-        { 
-          page, 
-          limit, 
-          sortBy, 
-          sortOrder
-        }
-      );
+      return fetchPaginatedResource(model, schema, fetchParams);
     } else {
       const { model, schema } = getStaffMemberModelAndSchema();
-      result = await executeSmartQuery(
-        model,
-        sanitizedFilters,
-        schema,
-        { 
-          page, 
-          limit, 
-          sortBy, 
-          sortOrder
-        }
-      );
+      return fetchPaginatedResource(model, schema, fetchParams);
     }
-
-    return result;
   } catch (error) {
     throw new Error(handleServerError(error));
   }

@@ -12,16 +12,57 @@ interface TimestampedDoc {
 }
 
 /**
+ * Deep‑clone an object while string‑ifying every key named "_id".
+ * Works for arbitrarily nested objects + arrays.
+ */
+function deepSanitize(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(deepSanitize);
+  }
+  if (value && typeof value === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value)) {
+      out[k] = k === '_id'
+        ? (typeof v === 'string' ? v : (v as object)?.toString?.() ?? v)
+        : deepSanitize(v);
+    }
+    return out;
+  }
+  return value;
+}
+
+/**
  * Sanitizes a single document by converting timestamps and _id to strings
  * Returns a sanitized object that matches the Zod schema type
  */
 export function sanitizeDocument<T extends TimestampedDoc, S extends ZodSchema>(
-  doc: HydratedDocument<T>,
+  doc: HydratedDocument<T> | T, // <-- allow lean or full doc
   schema: S
 ): z.infer<S> {
   try {
-    const obj = doc.toObject();
+    if (!doc) {
+      throw new Error('Document is null or undefined');
+    }
+    
+    // Handle plain object vs. Mongoose doc
+    const obj = typeof (doc as HydratedDocument<T> | T & { toObject?: () => T }).toObject === "function"
+      ? (doc as HydratedDocument<T>).toObject()
+      : doc;
+    
     const typedObj = obj as TimestampedDoc;
+    
+    // Validate essential fields exist
+    if (!typedObj._id) {
+      throw new Error('Document missing _id field');
+    }
+    
+    if (!typedObj.createdAt) {
+      throw new Error('Document missing createdAt field');
+    }
+    
+    if (!typedObj.updatedAt) {
+      throw new Error('Document missing updatedAt field');
+    }
     
     const { _id, createdAt, updatedAt, ...rest } = typedObj;
     
@@ -38,6 +79,9 @@ export function sanitizeDocument<T extends TimestampedDoc, S extends ZodSchema>(
     // Validate against schema to ensure type safety
     return schema.parse(sanitized);
   } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error sanitizing document: ${error.message}`);
+    }
     throw new Error(handleServerError(error));
   }
 }
@@ -46,11 +90,8 @@ export function sanitizeDocument<T extends TimestampedDoc, S extends ZodSchema>(
  * Sanitizes an array of documents by converting timestamps and _id to strings
  * Returns an array of sanitized objects that match the Zod schema type
  */
-export function sanitizeDocuments<T extends TimestampedDoc, S extends ZodSchema>(
-  docs: HydratedDocument<T>[],
-  schema: S
-): z.infer<S>[] {
-  return docs.map(doc => sanitizeDocument(doc, schema));
+export function sanitizeDocuments<T extends Record<string, unknown>>(docs: T[]): T[] {
+  return docs.map((d) => deepSanitize(d)) as T[];
 }
 
 /**

@@ -1,6 +1,7 @@
-import { Field } from '@/components/features/shared/form/GenericAddForm';
+import { Field } from '@/components/features/shared/form/GenericResourceForm';
 import { NYCPSStaffInput } from '@/lib/zod-schema';
 import { GradeLevelsSupportedZod, SubjectsZod, SpecialGroupsZod, RolesNYCPSZod } from '@/lib/zod-schema/shared/enums';
+import { fetchSchoolOptions, fetchStaffOptions } from '@/lib/client-api';
 
 export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
   {
@@ -14,20 +15,23 @@ export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
     label: 'Email',
     type: 'email',
     required: true,
+    editable: false,
   },
   {
     name: 'schools',
     label: 'Schools',
-    type: 'select',
-    options: [], // This should be populated with available schools
-    defaultValue: [],
+    type: 'reference',
+    fetcher: fetchSchoolOptions,
+    multiple: true,
+    required: true,
   },
   {
     name: 'owners',
     label: 'Owners',
-    type: 'select',
-    options: [], // This should be populated with available owners
-    defaultValue: [],
+    type: 'reference',
+    fetcher: fetchStaffOptions,
+    multiple: true,
+    required: true,
   },
   {
     name: 'gradeLevelsSupported',

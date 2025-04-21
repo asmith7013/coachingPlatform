@@ -6,8 +6,8 @@ import { Heading } from '@/components/ui/typography/Heading';
 import { Text } from '@/components/ui/typography/Text';
 import { Button } from '@/components/ui/button';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
-import { EmptyState } from '@/components/ui/empty-state';
-import { GenericAddForm, type Field } from "@/components/features/shared/form/GenericAddForm";
+import { EmptyListWrapper } from "@/components/ui/empty-list-wrapper";
+import { GenericResourceForm, type Field } from "@/components/features/shared/form/GenericResourceForm";
 import BulkUploadForm from "@/components/features/shared/form/BulkUploadForm";
 import { ResourceHeader } from "@/components/features/shared/ResourceHeader";
 import { useLookFors } from "@/hooks/useLookFors";
@@ -134,13 +134,8 @@ export default function LookForsWrapper() {
         setSearchInput={setSearchInput}
       />
 
-      {lookFors.length === 0 ? (
-        <EmptyState
-          title="No look fors found"
-          description="Create your first look for or upload a batch to get started."
-        />
-      ) : (
-        lookFors.map((lookFor: LookFor) => (
+      <EmptyListWrapper items={lookFors} resourceName="look fors">
+        {lookFors.map((lookFor: LookFor) => (
           <Card
             key={lookFor._id}
             className="mb-4"
@@ -203,11 +198,12 @@ export default function LookForsWrapper() {
               </Card>
             ))}
           </Card>
-        ))
-      )}
+        ))}
+      </EmptyListWrapper>
 
       <div className="mt-8">
-        <GenericAddForm
+        <GenericResourceForm
+          mode="create"
           title="Add Look For"
           onSubmit={handleSubmit}
           fields={lookForFields}

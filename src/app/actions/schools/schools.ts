@@ -6,14 +6,19 @@ import { SchoolInputZodSchema, SchoolZodSchema, SchoolInput } from "@/lib/zod-sc
 import { handleServerError } from "@/lib/error/handleServerError";
 import { handleValidationError } from "@/lib/error/handleValidationError";
 import { 
-  executeSmartQuery,
-  sanitizeFilters,
   createItem,
   updateItem,
-  deleteItem
+  deleteItem,
 } from "@/lib/server-utils";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
+import { sanitizeSortBy } from "@/lib/server-utils/sanitizeSortBy";
 import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
 import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
+import { connectToDB } from "@/lib/db";
+import { invalidateSchoolOptions } from "@/lib/client-api";
+
+// Valid sort fields for schools
+const validSortFields = ['schoolName', 'createdAt', 'updatedAt', 'district'];
 
 // Types
 export type School = z.infer<typeof SchoolZodSchema>;
@@ -21,39 +26,24 @@ export type School = z.infer<typeof SchoolZodSchema>;
 export type SchoolCreate = z.infer<typeof SchoolInputZodSchema>;
 export type SchoolUpdate = Partial<SchoolCreate>;
 /** Fetch Schools */
-export async function fetchSchools({
-  page = 1,
-  limit = 10,
-  filters = {},
-  sortBy = "name",
-  sortOrder = "asc",
-}: {
-  page?: number;
-  limit?: number;
-  filters?: Record<string, unknown>;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-} = {}) {
+export async function fetchSchools(params: FetchParams = {}) {
   try {
-    console.log("Fetching schools with params:", { page, limit, filters, sortBy, sortOrder });
+    // Sanitize sortBy to ensure it's a valid field name
+    const safeSortBy = sanitizeSortBy(params.sortBy, validSortFields, 'schoolName');
+    
+    const fetchParams = getDefaultFetchParams({
+      ...params,
+      sortBy: safeSortBy,
+      sortOrder: params.sortOrder ?? "asc"
+    });
 
-    // Sanitize filters
-    const sanitizedFilters = sanitizeFilters(filters);
+    console.log("Fetching schools with params:", fetchParams);
 
-    // Execute paginated query with SchoolZodSchema for validation
-    const result = await executeSmartQuery(
+    return fetchPaginatedResource(
       SchoolModel,
-      sanitizedFilters,
       SchoolZodSchema,
-      {
-        page,
-        limit,
-        sortBy,
-        sortOrder
-      }
+      fetchParams
     );
-
-    return result;
   } catch (error) {
     throw new Error(handleServerError(error));
   }
@@ -61,17 +51,34 @@ export async function fetchSchools({
 
 /** Create School */
 export async function createSchool(data: SchoolInput) {
-  return createItem(SchoolModel, SchoolInputZodSchema, data, ["/schools", "/schools/[id]"]);
+  try {
+    await connectToDB();
+    const doc = await createItem(SchoolModel, SchoolInputZodSchema, data, ["/schools", "/schools/[id]"]);
+    invalidateSchoolOptions();
+    return doc;
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
 }
 
 /** Update School */
 export async function updateSchool(id: string, data: SchoolUpdate) {
-  return updateItem(SchoolModel, SchoolInputZodSchema, id, data, ["/schools", "/schools/[id]"]);
+  try {
+    await connectToDB();
+    return updateItem(SchoolModel, SchoolInputZodSchema, id, data, ["/schools", "/schools/[id]"]);
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
 }
 
 /** Delete School */
 export async function deleteSchool(id: string) {
-  return deleteItem(SchoolModel, SchoolZodSchema, id, ["/schools", "/schools/[id]"]);
+  try {
+    await connectToDB();
+    return deleteItem(SchoolModel, SchoolZodSchema, id, ["/schools", "/schools/[id]"]);
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
 }
 
 /** Upload Schools via file */
@@ -87,6 +94,7 @@ export const uploadSchoolFile = async (file: File): Promise<string> => {
 /** Upload schools data */
 export async function uploadSchools(data: SchoolCreate[]) {
   try {
+    await connectToDB();
     const result = await bulkUploadToDB(data, SchoolModel, SchoolInputZodSchema, ["/schools"]);
     
     if (!result.success) {

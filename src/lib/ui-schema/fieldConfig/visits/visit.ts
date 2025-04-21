@@ -1,4 +1,4 @@
-import { Field } from "@/components/features/shared/form/GenericAddForm";
+import { Field } from "@/components/features/shared/form/GenericResourceForm";
 import { Visit, EventItem, SessionLink } from "@/lib/zod-schema";
 import { 
   GradeLevelsSupportedZod,

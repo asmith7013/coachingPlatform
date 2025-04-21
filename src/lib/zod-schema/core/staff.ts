@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { NoteZodSchema } from "../shared/notes";
+import { NoteInputZodSchema } from "../shared/notes";
 import { GradeLevelsSupportedZod, SubjectsZod, SpecialGroupsZod, RolesNYCPSZod, RolesTLZod, AdminLevelZod } from "../shared/enums";
 import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
 
@@ -32,7 +32,7 @@ export const NYCPSStaffInputZodSchema = StaffMemberInputZodSchema.extend({
   specialGroups: z.array(SpecialGroupsZod),
   rolesNYCPS: z.array(RolesNYCPSZod).optional(),
   pronunciation: z.string().optional(),
-  notes: z.array(NoteZodSchema).optional(),
+  notes: z.array(NoteInputZodSchema).optional(),
   experience: z.array(ExperienceZodSchema).optional(),
 });
 

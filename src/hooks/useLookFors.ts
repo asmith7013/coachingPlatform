@@ -3,14 +3,7 @@ import { useResourceManager } from "@hooks/utils/useResourceManager";
 import { fetchLookFors, createLookFor, updateLookFor, deleteLookFor } from "@actions/lookFors/lookFors";
 import { LookFor, LookForInput } from "@/lib/types/core";
 import type { ResourceResponse } from "@/lib/server-utils/types";
-
-type FetchParams = {
-  page?: number;
-  limit?: number;
-  filters?: Record<string, unknown>;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-};
+import type { FetchParams } from "@/lib/types/api";
 
 /**
  * Custom Hook for managing LookFors with pagination, filters, sorting, caching, and optimistic updates.

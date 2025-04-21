@@ -1,129 +1,92 @@
 "use server";
 
-import { z } from "zod";
+import { StaffMemberModel } from "@/models/core/staff.model";
 import { 
-  executeSmartQuery,
-  sanitizeFilters,
   createItem,
   updateItem,
-  deleteItem,
+  deleteItem
 } from "@/lib/server-utils";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
 import { 
-  StaffMemberZodSchema,
+  StaffMemberZodSchema, 
   StaffMemberInputZodSchema,
+  type StaffMember,
+  type StaffMemberInput
 } from "@/lib/zod-schema/core/staff";
-import { StaffMemberModel } from "@/models/core/staff.model";
-import { connectToDB } from "@/lib/db";
 import { handleServerError } from "@/lib/error/handleServerError";
-import { handleValidationError } from "@/lib/error/handleValidationError";
+import { connectToDB } from "@/lib/db";
 
-// Types for returned documents
-export type StaffMemberDoc = z.infer<typeof StaffMemberZodSchema>;
-
-// Types for input data
-export type StaffMemberInput = z.infer<typeof StaffMemberInputZodSchema>;
+// Types
+export type { StaffMember, StaffMemberInput };
 
 /** Fetch Staff Members */
-export async function fetchStaff({
-  page = 1,
-  limit = 10,
-  filters = {},
-  sortBy = "staffName",
-  sortOrder = "asc",
-}: {
-  page?: number;
-  limit?: number;
-  filters?: Record<string, unknown>;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-} = {}) {
+export async function fetchStaffMembers(params: FetchParams = {}) {
   try {
-    await connectToDB();
-    
-    console.log("Fetching staff with params:", { page, limit, filters, sortBy, sortOrder });
+    const fetchParams = getDefaultFetchParams({
+      ...params,
+      sortBy: params.sortBy ?? "staffName",
+      sortOrder: params.sortOrder ?? "asc"
+    });
 
-    // Sanitize filters
-    const sanitizedFilters = sanitizeFilters(filters);
+    console.log("Fetching staff members with params:", fetchParams);
 
-    // Execute smart query with appropriate schema for validation
-    const result = await executeSmartQuery(
+    return fetchPaginatedResource(
       StaffMemberModel,
-      sanitizedFilters,
       StaffMemberZodSchema,
-      {
-        page,
-        limit,
-        sortBy,
-        sortOrder
-      }
+      fetchParams
     );
-
-    return result;
   } catch (error) {
     throw new Error(handleServerError(error));
   }
 }
 
-// Create a new staff member
-export async function createStaff(data: StaffMemberInput) {
+/** Create Staff Member */
+export async function createStaffMember(data: StaffMemberInput) {
   try {
     await connectToDB();
-    
-    const staff = await createItem(
-      StaffMemberModel,
-      StaffMemberInputZodSchema,
-      data,
-      ["/dashboard/staff"]
-    );
-    
-    return staff;
+    return createItem(StaffMemberModel, StaffMemberInputZodSchema, data, ["/dashboard/staff"]);
   } catch (error) {
-    console.error("Error creating staff:", error);
-    if (error instanceof z.ZodError) {
-      throw handleValidationError(error);
-    }
-    throw handleServerError(error);
+    throw new Error(handleServerError(error));
   }
 }
 
-// Update an existing staff member
-export async function updateStaff(id: string, data: Partial<StaffMemberInput>) {
+/** Update Staff Member */
+export async function updateStaffMember(id: string, data: Partial<StaffMemberInput>) {
   try {
     await connectToDB();
-    
-    const staff = await updateItem(
-      StaffMemberModel,
-      StaffMemberInputZodSchema,
-      id,
-      data,
-      ["/dashboard/staff"]
-    );
-    
-    return staff;
+    return updateItem(StaffMemberModel, StaffMemberInputZodSchema, id, data, ["/dashboard/staff"]);
   } catch (error) {
-    console.error("Error updating staff:", error);
-    if (error instanceof z.ZodError) {
-      throw handleValidationError(error);
-    }
-    throw handleServerError(error);
+    throw new Error(handleServerError(error));
   }
 }
 
-// Delete a staff member
-export async function deleteStaff(id: string) {
+/** Delete Staff Member */
+export async function deleteStaffMember(id: string) {
   try {
     await connectToDB();
-    
-    const staff = await deleteItem(
+    return deleteItem(StaffMemberModel, StaffMemberZodSchema, id, ["/dashboard/staff"]);
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
+}
+
+/** Fetch Base Staff */
+export async function fetchBaseStaff(params: FetchParams = {}) {
+  try {
+    const fetchParams = getDefaultFetchParams({
+      ...params,
+      sortBy: params.sortBy ?? "staffName",
+      sortOrder: params.sortOrder ?? "asc"
+    });
+
+    console.log("Fetching base staff with params:", fetchParams);
+
+    return fetchPaginatedResource(
       StaffMemberModel,
       StaffMemberZodSchema,
-      id,
-      ["/dashboard/staff"]
+      fetchParams
     );
-    
-    return staff;
   } catch (error) {
-    console.error("Error deleting staff:", error);
-    throw handleServerError(error);
+    throw new Error(handleServerError(error));
   }
 } 
