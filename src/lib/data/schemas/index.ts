@@ -2,8 +2,8 @@
 import { validate } from './validate';
 
 // Core schemas
-export * from './core/staff';
 export * from './core/school';
+export * from './core/staff';
 export * from './core/cycle';
 
 // Look Fors schemas
