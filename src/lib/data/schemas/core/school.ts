@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { GradeLevelsSupportedZod } from "../shared/enums";
-import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
+import { zDateField } from '@/lib/data/schemas/shared/dateHelpers';
 
 // Base schema for school input (create/update)
 export const SchoolInputZodSchema = z.object({

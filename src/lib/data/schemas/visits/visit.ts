@@ -6,7 +6,7 @@ import {
   AllowedPurposeZod,
   ModeDoneZod
 } from "../shared/enums";
-import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
+import { zDateField } from '@/lib/data/schemas/shared/dateHelpers';
 
 // ✅ EventItem Schema
 export const EventItemZodSchema = z.object({

@@ -1,7 +1,7 @@
 import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/general';
 
 type KHLesson = {
   grade: string;

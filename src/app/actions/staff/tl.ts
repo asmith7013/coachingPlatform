@@ -7,16 +7,16 @@ import {
   TeachingLabStaffInputZodSchema,
   type TeachingLabStaff,
   type TeachingLabStaffInput
-} from "@/lib/zod-schema/core/staff";
-import { handleServerError } from "@/lib/error/handleServerError";
-import { handleValidationError } from "@/lib/error/handleValidationError";
+} from "@/lib/data/schemas/core/staff";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+import { handleValidationError } from "@/lib/core/error/handleValidationError";
 import { 
   createItem,
   updateItem,
   deleteItem,
-} from "@/lib/server-utils";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
-import { connectToDB } from "@/lib/db";
+} from "@/lib/utils/general/server";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
+import { connectToDB } from "@/lib/core/db";
 
 // Types
 export type { TeachingLabStaff, TeachingLabStaffInput };

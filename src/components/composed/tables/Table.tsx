@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils/general'
 import { tv, type VariantProps } from 'tailwind-variants'
 import { TableColumnSchema } from '@/lib/ui/table-schema'
 import { TableHeader } from './parts/header'

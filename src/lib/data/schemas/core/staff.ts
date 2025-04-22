@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { NoteInputZodSchema } from "../shared/notes";
 import { GradeLevelsSupportedZod, SubjectsZod, SpecialGroupsZod, RolesNYCPSZod, RolesTLZod, AdminLevelZod } from "../shared/enums";
-import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
+import { zDateField } from '@/lib/data/schemas/shared/dateHelpers';
 
 // ✅ Experience Schema
 export const ExperienceZodSchema = z.object({

@@ -1,6 +1,6 @@
 import { Field } from '@/components/composed/forms/ResourceForm';
-import { SchoolInput } from '@/lib/zod-schema';
-import { GradeLevelsSupportedZod } from '@/lib/zod-schema/shared/enums';
+import { SchoolInput } from '@/lib/data/schemas';
+import { GradeLevelsSupportedZod } from '@/lib/data/schemas/shared/enums';
 
 export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {

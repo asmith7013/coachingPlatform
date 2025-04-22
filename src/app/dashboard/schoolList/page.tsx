@@ -7,13 +7,13 @@ import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Schools data.
-import { School, SchoolInput } from "@/lib/zod-schema"; // ✅ Import the School type from Zod schema.
+import { School, SchoolInput } from "@/lib/data/schemas"; // ✅ Import the School type from Zod schema.
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
 import { GenericResourceForm } from "@/components/composed/forms/ResourceForm";
 import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
 import { ResourceHeader } from "@/components/shared/ResourceHeader";
-import { SchoolFieldConfig } from "@/lib/ui-schema/fieldConfig/core/school";
-import { cn } from "@/lib/utils";
+import { SchoolFieldConfig } from "@/lib/data/forms/fieldConfig/core/school";
+import { cn } from "@/lib/utils/general";
 import { EmptyListWrapper } from '@/components/shared/EmptyListWrapper';
 
 

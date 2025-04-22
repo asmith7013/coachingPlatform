@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils/general'
 import { tv, type VariantProps } from 'tailwind-variants'
 import { textColors, textSize, weight, radii, paddingX, paddingY } from '@/lib/ui/tokens'
 

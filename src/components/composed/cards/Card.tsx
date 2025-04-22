@@ -1,7 +1,7 @@
 // src/components/ui/card.tsx
 
 import React from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils/general'
 import { tv, type VariantProps } from 'tailwind-variants'
 import {
   radiusVariant,

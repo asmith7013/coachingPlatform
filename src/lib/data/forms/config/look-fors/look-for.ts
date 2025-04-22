@@ -1,5 +1,5 @@
-import { Field } from "@/lib/ui-schema/types";
-import { LookForInput } from "@/lib/zod-schema";
+import { Field } from "@/lib/data/forms/types";
+import { LookForInput } from "@/lib/data/schemas";
 import { RubricZodSchema } from "../../../zod-schema";
 
 export const LookForFieldConfig: Field<LookForInput>[] = [

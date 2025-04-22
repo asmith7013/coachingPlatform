@@ -6,17 +6,17 @@ import {
   StaffMemberInputZodSchema,
   TeachingLabStaffZodSchema,
   TeachingLabStaffInputZodSchema
-} from "@/lib/zod-schema/core/staff";
+} from "@/lib/data/schemas/core/staff";
 
 import {
   SchoolZodSchema,
   SchoolInputZodSchema
-} from "@/lib/zod-schema/core/school";
+} from "@/lib/data/schemas/core/school";
 
 import {
   LookForZodSchema,
   LookForInputZodSchema
-} from "@/lib/zod-schema/look-fors/look-for";
+} from "@/lib/data/schemas/look-fors/look-for";
 
 // Staff Types
 export type NYCPSStaff = z.infer<typeof NYCPSStaffZodSchema>;

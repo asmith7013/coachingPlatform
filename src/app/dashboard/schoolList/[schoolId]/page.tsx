@@ -9,12 +9,12 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { typography } from '@/lib/ui/tokens';
 import { paddingY, stack } from '@/lib/ui/tokens/spacing';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/general';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { Badge } from '@/components/core/feedback/Badge';
 import { fetchNYCPSStaff } from "@/app/actions/staff/nycps";
-import { NYCPSStaff } from "@/lib/zod-schema/core/staff";
-import { School } from "@/lib/zod-schema/core/school";
+import { NYCPSStaff } from "@/lib/data/schemas/core/staff";
+import { School } from "@/lib/data/schemas/core/school";
 import { fetchSchools } from "@/app/actions/schools/schools";
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);

@@ -13,7 +13,7 @@ import { Textarea } from '@/components/core/fields/Textarea';
 import { tv } from 'tailwind-variants';
 import { shadows, textSize, textColors } from "@/lib/ui/tokens";
 import { stack } from "@/lib/ui/tokens/spacing";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/general";
 import ReferenceSelect from "@/components/core/fields/ReferenceSelect";
 
 

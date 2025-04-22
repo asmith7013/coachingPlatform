@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { handleServerError } from "@/lib/error/handleServerError";
-import { standardizeResponse } from "@/lib/server-utils/standardizeResponse";
-import { FetchParams } from "@/lib/server-utils/fetchPaginatedResource";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+import { standardizeResponse } from "@/lib/utils/general/server/standardizeResponse";
+import { FetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
 
 /**
  * Generic type for any fetch function that returns items and total

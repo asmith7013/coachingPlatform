@@ -1,11 +1,11 @@
 'use server';
 
-import { connectToDB } from "@/lib/db";
+import { connectToDB } from "@/lib/core/db";
 import { CycleModel } from "@/models/core/cycle.model";
-import { fetchPaginatedResource } from "@/lib/server-utils/fetchPaginatedResource";
-import { handleServerError } from "@/lib/error/handleServerError";
-import type { FetchParams } from "@/lib/server-utils/fetchPaginatedResource";
-import { CycleZodSchema } from "@/lib/zod-schema/core/cycle";
+import { fetchPaginatedResource } from "@/lib/utils/general/server/fetchPaginatedResource";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+import type { FetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
+import { CycleZodSchema } from "@/lib/data/schemas/core/cycle";
 
 /**
  * Fetches a paginated list of cycles

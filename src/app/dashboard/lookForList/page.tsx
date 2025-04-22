@@ -13,8 +13,8 @@ import { ResourceHeader } from "@/components/shared/ResourceHeader";
 import { useLookFors } from "@/hooks/useLookFors";
 import { uploadLookForFile } from "@actions/lookFors/lookFors";
 import { createLookFor } from "@actions/lookFors/lookFors";
-import { LookForInput } from "@/lib/zod-schema/look-fors/look-for";
-import { cn } from "@/lib/utils";
+import { LookForInput } from "@/lib/data/schemas/look-fors/look-for";
+import { cn } from "@/lib/utils/general";
 
 const lookForFields: Field<LookForInput>[] = [
   {

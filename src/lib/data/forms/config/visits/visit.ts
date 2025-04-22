@@ -1,5 +1,5 @@
 import { Field } from "@/components/composed/forms/ResourceForm";
-import { Visit, EventItem, SessionLink } from "@/lib/zod-schema";
+import { Visit, EventItem, SessionLink } from "@/lib/data/schemas";
 import { 
   GradeLevelsSupportedZod,
   EventTypeZod,
@@ -7,7 +7,7 @@ import {
   AllowedPurposeZod,
   ModeDoneZod,
   SessionPurposeZod
-} from "@/lib/zod-schema/shared/enums";
+} from "@/lib/data/schemas/shared/enums";
 
 export const EventItemFieldConfig: Field<EventItem>[] = [
   {

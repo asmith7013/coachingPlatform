@@ -1,5 +1,5 @@
 import useSWR, { SWRConfiguration } from "swr";
-import { handleClientError } from "@/lib/error/handleClientError";
+import { handleClientError } from "@/lib/core/error/handleClientError";
 import { useMemo } from "react";
 
 type Fetcher<T> = () => Promise<T>;

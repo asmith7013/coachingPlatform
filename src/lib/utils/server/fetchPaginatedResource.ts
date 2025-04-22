@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { Document, Model } from "mongoose";
-import { connectToDB } from "@/lib/db";
+import { connectToDB } from "@/lib/core/db";
 import { sanitizeFilters } from "./sanitize";
 import { executePaginatedQuery } from "./pagination";
 

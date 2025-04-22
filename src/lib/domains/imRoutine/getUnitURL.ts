@@ -1,4 +1,4 @@
-import links from '@/lib/json/alg1links.json';
+import links from '@/lib/data/json/alg1links.json';
 
 export function getUnitURL(
   grade: string,

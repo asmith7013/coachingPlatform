@@ -11,10 +11,10 @@ import { Card } from '@/components/composed/cards/Card'
 import { ScheduleTable } from '@/components/composed/tables/ScheduleTable'
 import { Table } from '@/components/composed/tables/Table'
 import { useSafeSWR } from '@/hooks/utils/useSafeSWR'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils/general'
 import { weight, paddingY } from '@/lib/ui/tokens'
-import type { NYCPSStaff, TeachingLabStaff } from '@/lib/zod-schema/core/staff'
-import type { TeacherSchedule } from '@/lib/zod-schema/scheduling/schedule'
+import type { NYCPSStaff, TeachingLabStaff } from '@/lib/data/schemas/core/staff'
+import type { TeacherSchedule } from '@/lib/data/schemas/scheduling/schedule'
 import type { TableColumnSchema } from '@/lib/ui/table-schema'
 
 type StaffMember = NYCPSStaff | TeachingLabStaff

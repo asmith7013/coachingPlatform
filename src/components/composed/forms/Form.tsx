@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils/general'
 import { tv, type VariantProps } from 'tailwind-variants'
 import { FormSection } from './FormSection'
 import { getFieldComponent } from '@/lib/ui/forms/registry'

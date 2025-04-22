@@ -9,19 +9,19 @@ import {
   mockTLStaff,
   mockCycles,
   mockCoachingLogs,
-} from '@/lib/dev-utils/mockData';
+} from '@/lib/utils/general/dev/mockData';
 import { createSchool } from '@/app/actions/schools/schools';
 import { createNYCPSStaff } from '@/app/actions/staff/nycps';
 import { createTeachingLabStaff } from '@/app/actions/staff/tl';
 import { createCycle } from '@/app/actions/visits/cycles';
 import { createCoachingLog } from '@/app/actions/visits/coachingLogs';
-import { SchoolInputZodSchema } from '@/lib/zod-schema/core/school';
-import { NYCPSStaffInputZodSchema, TeachingLabStaffInputZodSchema } from '@/lib/zod-schema/core/staff';
-import { CycleInputZodSchema } from '@/lib/zod-schema/core/cycle';
-import { CoachingLogZodSchema } from '@/lib/zod-schema/visits/coaching-log';
-import type { SchoolInput } from '@/lib/zod-schema/core/school';
-import type { NYCPSStaffInput, TeachingLabStaffInput } from '@/lib/zod-schema/core/staff';
-import type { CycleInput } from '@/lib/zod-schema/core/cycle';
+import { SchoolInputZodSchema } from '@/lib/data/schemas/core/school';
+import { NYCPSStaffInputZodSchema, TeachingLabStaffInputZodSchema } from '@/lib/data/schemas/core/staff';
+import { CycleInputZodSchema } from '@/lib/data/schemas/core/cycle';
+import { CoachingLogZodSchema } from '@/lib/data/schemas/visits/coaching-log';
+import type { SchoolInput } from '@/lib/data/schemas/core/school';
+import type { NYCPSStaffInput, TeachingLabStaffInput } from '@/lib/data/schemas/core/staff';
+import type { CycleInput } from '@/lib/data/schemas/core/cycle';
 
 // Component to show expandable JSON data
 function JsonPreview<T extends Record<string, unknown>>({

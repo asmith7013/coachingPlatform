@@ -1,6 +1,6 @@
 import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/general';
 import type { Lesson } from '@/components/domain/imRoutine/LessonDetailView';
 import { NoRoutineCard } from '@/components/domain/imRoutine/NoRoutineCard';
 import { RoutineBadge } from '@/components/domain/imRoutine/RoutineBadge';

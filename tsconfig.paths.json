@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@lib/core/*": ["./src/lib/core/*"],
+      "@lib/data/*": ["./src/lib/data/*"],
+      "@lib/ui/*": ["./src/lib/ui/*"],
+      "@lib/utils/*": ["./src/lib/utils/*"],
+      "@lib/domains/*": ["./src/lib/domains/*"],
+      "@models/*": ["./src/models/*"],
+      "@services/*": ["./src/services/*"],
+      "@actions/*": ["./src/app/actions/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@types/*": ["./src/types/*"],
+      "@styles/*": ["./src/styles/*"]
+    }
+  }
+} 

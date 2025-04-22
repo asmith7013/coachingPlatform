@@ -3,8 +3,8 @@ import { revalidatePath } from "next/cache";
 import type { ZodSchema } from "zod";
 import { parseOrThrow, parsePartialOrThrow } from "./safeParse";
 import { sanitizeDocument } from "./sanitize";
-import { handleServerError } from "@/lib/error/handleServerError";
-import { connectToDB } from "@/lib/db";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+import { connectToDB } from "@/lib/core/db";
 import type { z } from "zod";
 
 // Define type for document with timestamps

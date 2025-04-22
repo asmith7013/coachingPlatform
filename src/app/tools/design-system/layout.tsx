@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils/general'
 import Link from 'next/link'
 
 const navItems = [

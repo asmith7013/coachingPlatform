@@ -2,19 +2,19 @@
 
 import { z } from "zod";
 import { SchoolModel } from "@/models/core";
-import { SchoolInputZodSchema, SchoolZodSchema, SchoolInput } from "@/lib/zod-schema/core/school";
-import { handleServerError } from "@/lib/error/handleServerError";
-import { handleValidationError } from "@/lib/error/handleValidationError";
+import { SchoolInputZodSchema, SchoolZodSchema, SchoolInput } from "@/lib/data/schemas/core/school";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+import { handleValidationError } from "@/lib/core/error/handleValidationError";
 import { 
   createItem,
   updateItem,
   deleteItem,
-} from "@/lib/server-utils";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
-import { sanitizeSortBy } from "@/lib/server-utils/sanitizeSortBy";
-import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
-import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
-import { connectToDB } from "@/lib/db";
+} from "@/lib/utils/general/server";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
+import { sanitizeSortBy } from "@/lib/utils/general/server/sanitizeSortBy";
+import { bulkUploadToDB } from "@/lib/utils/general/server/bulkUpload";
+import { uploadFileWithProgress } from "@/lib/utils/general/server/fileUpload";
+import { connectToDB } from "@/lib/core/db";
 
 // Valid sort fields for schools
 const validSortFields = ['schoolName', 'createdAt', 'updatedAt', 'district'];

@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { connectToDB } from "@/lib/db";
+import { connectToDB } from "@/lib/core/db";
 import { NYCPSStaffModel, StaffMemberModel } from "@/models/core/staff.model";
-import { handleServerError } from "@/lib/error/handleServerError";
+import { handleServerError } from "@/lib/core/error/handleServerError";
 import { z } from "zod";
-import { NYCPSStaffZodSchema, StaffMemberZodSchema } from "@/lib/zod-schema/core/staff";
-import { standardizeResponse } from "@/lib/server-utils/standardizeResponse";
+import { NYCPSStaffZodSchema, StaffMemberZodSchema } from "@/lib/data/schemas/core/staff";
+import { standardizeResponse } from "@/lib/utils/general/server/standardizeResponse";
 
 // Define param schema to validate request parameters
 const ParamSchema = z.object({

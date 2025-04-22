@@ -1,6 +1,6 @@
 import { Document, Types } from "mongoose";
 import { z } from "zod";
-import { StaffMemberZodSchema, NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from "@/lib/zod-schema/core/staff";
+import { StaffMemberZodSchema, NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from "@/lib/data/schemas/core/staff";
 import { StaffMemberModel, NYCPSStaffModel, TeachingLabStaffModel } from "@/models/core/staff.model";
 
 export type StaffType = "all" | "nycps" | "tl";

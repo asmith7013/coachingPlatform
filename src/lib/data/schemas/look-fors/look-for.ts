@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { RubricZodSchema } from "./rubric"; // Assuming Rubric has its own schema
-import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
+import { zDateField } from '@/lib/data/schemas/shared/dateHelpers';
 
 // ✅ LookFor Input Schema
 export const LookForInputZodSchema = z.object({

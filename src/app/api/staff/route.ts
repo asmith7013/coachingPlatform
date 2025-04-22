@@ -1,6 +1,6 @@
 import { fetchNYCPSStaff } from "@/app/actions/staff/nycps";
-import { createReferenceEndpoint } from "@/lib/apiHandler";
-import type { NYCPSStaff } from "@/lib/zod-schema/core/staff";
+import { createReferenceEndpoint } from "@/lib/core/api";
+import type { NYCPSStaff } from "@/lib/data/schemas/core/staff";
 
 // Define the minimal staff reference type for selects
 type StaffReference = {

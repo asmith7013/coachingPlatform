@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { StaffListDebugger } from './StaffListDebugger';
-import type { NYCPSStaff } from '@/lib/zod-schema/core/staff';
+import type { NYCPSStaff } from '@/lib/data/schemas/core/staff';
 
 // Use Partial type for mock data to avoid having to provide all required fields
 const MOCK_STAFF: Partial<NYCPSStaff>[] = [

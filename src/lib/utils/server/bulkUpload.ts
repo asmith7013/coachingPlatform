@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { Model } from "mongoose";
 import { revalidatePath } from "next/cache";
-import { handleServerError } from "@/lib/error/handleServerError";
-import { handleValidationError } from "@/lib/error/handleValidationError";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+import { handleValidationError } from "@/lib/core/error/handleValidationError";
 import { safeParseAndLog } from "./safeParse";
-import { connectToDB } from "@/lib/db";
+import { connectToDB } from "@/lib/core/db";
 
 // Define type alias for inferred schema types
 type InferSchema<T extends z.ZodType> = z.infer<T>;

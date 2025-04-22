@@ -1,6 +1,6 @@
 import type { HydratedDocument, Model, Types } from "mongoose";
-import { handleServerError } from "@/lib/error/handleServerError";
-import { connectToDB } from "@/lib/db";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+import { connectToDB } from "@/lib/core/db";
 import { sanitizeDocuments } from "./sanitize";
 import type { ZodSchema } from "zod";
 import { z } from "zod";

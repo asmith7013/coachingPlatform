@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BellScheduleTypeZod, BlockDayTypeZod, DayTypeZod, PeriodTypeZod } from "../shared/enums";
-import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
+import { zDateField } from '@/lib/data/schemas/shared/dateHelpers';
 
 // ✅ Class Schedule Item Schema
 export const ClassScheduleItemZodSchema = z.object({

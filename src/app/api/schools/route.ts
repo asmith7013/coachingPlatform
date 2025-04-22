@@ -1,6 +1,6 @@
 import { fetchSchools } from "@/app/actions/schools/schools";
-import { createReferenceEndpoint } from "@/lib/apiHandler";
-import type { School } from "@/lib/zod-schema/core/school";
+import { createReferenceEndpoint } from "@/lib/core/api";
+import type { School } from "@/lib/data/schemas/core/school";
 
 // Define the minimal school reference type for selects
 type SchoolReference = {

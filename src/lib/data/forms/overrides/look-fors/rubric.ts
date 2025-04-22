@@ -1,4 +1,4 @@
-import { FieldOverrideMap } from '@/lib/ui-schema/types';
+import { FieldOverrideMap } from '@/lib/data/forms/types';
 
 // Placeholder for RubricInput type - to be properly imported once created
 type RubricInput = {

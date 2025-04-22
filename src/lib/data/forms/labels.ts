@@ -1,25 +1,25 @@
 import type {
     School,
-} from "@/lib/zod-schema/core/school";
+} from "@/lib/data/schemas/core/school";
 
 import type {
     StaffMember,
     TeachingLabStaff,
     NYCPSStaff,
-} from "@/lib/zod-schema/core/staff";
+} from "@/lib/data/schemas/core/staff";
 
 import type {
     LookFor,
     LookForItem,
-} from "@/lib/zod-schema/look-fors/look-for";
+} from "@/lib/data/schemas/look-fors/look-for";
 
 import type {
     RubricScore,
-} from "@/lib/zod-schema/look-fors/rubric";
+} from "@/lib/data/schemas/look-fors/rubric";
 
 import type {
     NextStep,
-} from "@/lib/zod-schema/look-fors/next-step";
+} from "@/lib/data/schemas/look-fors/next-step";
 
 import type {
     TeacherSchedule,
@@ -28,25 +28,25 @@ import type {
     BellSchedule,
     AssignedCycleDay,
     ClassScheduleItem,
-} from "@/lib/zod-schema/scheduling/schedule";
+} from "@/lib/data/schemas/scheduling/schedule";
 
 import type {
     Note,
-} from "@/lib/zod-schema/shared/notes";
+} from "@/lib/data/schemas/shared/notes";
 
 import type {
     Visit,
     EventItem,
     SessionLink,
-} from "@/lib/zod-schema/visits/visit";
+} from "@/lib/data/schemas/visits/visit";
 
 import type {
     CoachingLog,
-} from "@/lib/zod-schema/visits/coaching-log";
+} from "@/lib/data/schemas/visits/coaching-log";
 
 import type {
     Cycle,
-} from "@/lib/zod-schema/core/cycle";
+} from "@/lib/data/schemas/core/cycle";
 
 // 🔹 Generate Type-Safe Labels for Every Model
 

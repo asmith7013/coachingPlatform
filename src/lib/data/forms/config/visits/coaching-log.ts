@@ -1,10 +1,10 @@
 import { Field } from "@/components/composed/forms/ResourceForm";
-import { CoachingLog } from "@/lib/zod-schema";
+import { CoachingLog } from "@/lib/data/schemas";
 import { 
   ReasonDoneZod,
   TotalDurationZod,
   SolvesTouchpointZod
-} from "@/lib/zod-schema/shared/enums";
+} from "@/lib/data/schemas/shared/enums";
 
 export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {

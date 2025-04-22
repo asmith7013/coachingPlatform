@@ -2,7 +2,7 @@
 
 import { Select } from '@/components/core/fields/Select';
 import { stack } from '@/lib/ui/tokens/spacing';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/general';
 
 export const domainOptions = [
   { value: 'C1', label: 'C1: Creating a Culture of Learning' },

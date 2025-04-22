@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ReasonDoneZod, TotalDurationZod, SolvesTouchpointZod } from "../shared/enums";
-import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
+import { zDateField } from '@/lib/data/schemas/shared/dateHelpers';
 
 // ✅ CoachingLog Schema
 export const CoachingLogZodSchema = z.object({

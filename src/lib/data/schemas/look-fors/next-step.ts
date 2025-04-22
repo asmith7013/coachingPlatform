@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
+import { zDateField } from '@/lib/data/schemas/shared/dateHelpers';
 
 // ✅ NextStep Input Schema
 export const NextStepInputZodSchema = z.object({

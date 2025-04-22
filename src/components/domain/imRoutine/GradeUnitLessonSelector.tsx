@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/general';
 import { radii, borderWidths } from '@/lib/ui/tokens';
 import { paddingY } from '@/lib/ui/tokens/spacing';
 

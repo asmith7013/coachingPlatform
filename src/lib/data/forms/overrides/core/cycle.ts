@@ -1,5 +1,5 @@
-import { CycleInput } from '@/lib/zod-schema/core/cycle';
-import { FieldOverrideMap } from '@/lib/ui-schema/types';
+import { CycleInput } from '@/lib/data/schemas/core/cycle';
+import { FieldOverrideMap } from '@/lib/data/forms/types';
 
 export const CycleOverrides: FieldOverrideMap<CycleInput> = {
   cycleNum: {

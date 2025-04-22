@@ -7,17 +7,17 @@ import {
   createItem,
   updateItem,
   deleteItem,
-} from "@/lib/server-utils";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
-import { sanitizeSortBy } from "@/lib/server-utils/sanitizeSortBy";
+} from "@/lib/utils/general/server";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
+import { sanitizeSortBy } from "@/lib/utils/general/server/sanitizeSortBy";
 import { 
   getStaffMemberModelAndSchema,
   getNYCPSStaffModelAndSchema,
   getTeachingLabStaffModelAndSchema,
   determineStaffType,
   type StaffType
-} from "@/lib/server-utils/staff";
-import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
+} from "@/lib/utils/general/server/staff";
+import { bulkUploadToDB } from "@/lib/utils/general/server/bulkUpload";
 import { 
   StaffMemberZodSchema, 
   StaffMemberInputZodSchema,
@@ -25,11 +25,11 @@ import {
   NYCPSStaffInputZodSchema,
   TeachingLabStaffZodSchema,
   TeachingLabStaffInputZodSchema
-} from "@/lib/zod-schema/core/staff";
+} from "@/lib/data/schemas/core/staff";
 import { StaffMemberModel, NYCPSStaffModel, TeachingLabStaffModel } from "@/models/core/staff.model";
-import { connectToDB } from "@/lib/db";
-import { handleServerError } from "@/lib/error/handleServerError";
-import { handleValidationError } from "@/lib/error/handleValidationError";
+import { connectToDB } from "@/lib/core/db";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+import { handleValidationError } from "@/lib/core/error/handleValidationError";
 
 // Valid sort fields for staff resources
 const validSortFields = ['staffName', 'email', 'createdAt', 'updatedAt'];

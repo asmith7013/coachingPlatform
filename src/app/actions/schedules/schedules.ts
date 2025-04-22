@@ -2,11 +2,11 @@
 
 import { z } from "zod";
 import { TeacherScheduleModel } from "@/models/scheduling/schedule.model";
-import { TeacherScheduleZodSchema } from "@/lib/zod-schema/scheduling/schedule";
-import { handleServerError } from "@/lib/error/handleServerError";
-import { connectToDB } from "@/lib/db";
-import { FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
-import { sanitizeSortBy } from "@/lib/server-utils/sanitizeSortBy";
+import { TeacherScheduleZodSchema } from "@/lib/data/schemas/scheduling/schedule";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+import { connectToDB } from "@/lib/core/db";
+import { FetchParams, getDefaultFetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
+import { sanitizeSortBy } from "@/lib/utils/general/server/sanitizeSortBy";
 
 // Valid sort fields for schedules
 const validSortFields = ['createdAt', 'updatedAt', 'teacher', 'school'];

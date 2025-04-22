@@ -1,6 +1,6 @@
 import { Field } from '@/components/composed/forms/ResourceForm';
-import { NYCPSStaffInput } from '@/lib/zod-schema';
-import { GradeLevelsSupportedZod, SubjectsZod, SpecialGroupsZod, RolesNYCPSZod } from '@/lib/zod-schema/shared/enums';
+import { NYCPSStaffInput } from '@/lib/data/schemas';
+import { GradeLevelsSupportedZod, SubjectsZod, SpecialGroupsZod, RolesNYCPSZod } from '@/lib/data/schemas/shared/enums';
 
 export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
   {

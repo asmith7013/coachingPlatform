@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { zDateField } from '@/lib/zod-schema/shared/dateHelpers';
+import { zDateField } from '@/lib/data/schemas/shared/dateHelpers';
 
 // ✅ Rubric Schema (shared schema)
 export const RubricZodSchema = z.object({

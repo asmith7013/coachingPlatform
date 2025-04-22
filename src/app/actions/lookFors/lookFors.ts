@@ -7,19 +7,19 @@ import {
   LookForInputZodSchema,
   type LookFor,
   type LookForInput
-} from "@/lib/zod-schema/look-fors/look-for";
-import { handleServerError } from "@/lib/error/handleServerError";
-import { handleValidationError } from "@/lib/error/handleValidationError";
+} from "@/lib/data/schemas/look-fors/look-for";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+import { handleValidationError } from "@/lib/core/error/handleValidationError";
 import { 
   createItem,
   updateItem,
   deleteItem,
-} from "@/lib/server-utils";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
-import { sanitizeSortBy } from "@/lib/server-utils/sanitizeSortBy";
-import { bulkUploadToDB } from "@/lib/server-utils/bulkUpload";
-import { uploadFileWithProgress } from "@/lib/server-utils/fileUpload";
-import { connectToDB } from "@/lib/db";
+} from "@/lib/utils/general/server";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
+import { sanitizeSortBy } from "@/lib/utils/general/server/sanitizeSortBy";
+import { bulkUploadToDB } from "@/lib/utils/general/server/bulkUpload";
+import { uploadFileWithProgress } from "@/lib/utils/general/server/fileUpload";
+import { connectToDB } from "@/lib/core/db";
 
 // Valid sort fields for look-fors
 const validSortFields = ['lookForIndex', 'topic', 'description', 'category', 'createdAt', 'updatedAt'];

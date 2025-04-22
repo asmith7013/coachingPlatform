@@ -5,16 +5,16 @@ import {
   createItem,
   updateItem,
   deleteItem
-} from "@/lib/server-utils";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/server-utils/fetchPaginatedResource";
+} from "@/lib/utils/general/server";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
 import { 
   StaffMemberZodSchema, 
   StaffMemberInputZodSchema,
   type StaffMember,
   type StaffMemberInput
-} from "@/lib/zod-schema/core/staff";
-import { handleServerError } from "@/lib/error/handleServerError";
-import { connectToDB } from "@/lib/db";
+} from "@/lib/data/schemas/core/staff";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+import { connectToDB } from "@/lib/core/db";
 
 // Types
 export type { StaffMember, StaffMemberInput };
