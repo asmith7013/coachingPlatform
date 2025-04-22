@@ -134,38 +134,28 @@ The `useReferenceOptions` hook handles fetching options for select components:
 
 ```typescript
 function useReferenceOptions(url: string, searchQuery: string = "") {
-  const [options, setOptions] = useState<ReferenceOption[]>([]);
-  const [error, setError] = useState<Error | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Fetch data from API
-  const { data, error: fetchError } = useSWR(
+  // Using SWR with proper error handling
+  const { data, error, isLoading } = useSWR(
     searchQuery ? `${url}?search=${searchQuery}` : url,
     fetcher
   );
   
-  // Process data into options format
-  useEffect(() => {
-    if (data?.items) {
-      const formattedOptions = data.items.map(item => ({
-        value: item._id,
-        label: item.name || item.title || item.label,
-      }));
-      setOptions(formattedOptions);
-      setIsLoading(false);
-    }
+  // Safely transform data to options format using memoization
+  const options = useMemo(() => {
+    if (!data?.items) return [];
     
-    if (fetchError) {
-      setError(fetchError);
-      setIsLoading(false);
-    }
-  }, [data, fetchError]);
+    return data.items.map(item => ({
+      value: item._id,
+      label: item.name || item.title || item.label || item.staffName || item.schoolName || String(item._id)
+    }));
+  }, [data]);
   
   return { options, error, isLoading };
 }
 ```
 
 [RULE] Use `useReferenceOptions` for all dropdown and multi-select inputs that fetch data.
+[RULE] All API endpoints that serve reference data must return a standardized format with `{ items: [], total, success }`.
 
 </section>
 

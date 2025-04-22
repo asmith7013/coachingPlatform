@@ -52,6 +52,8 @@
 │   │   │   ├── reference
 │   │   │   │   ├── cycles
 │   │   │   │   │   └── route.ts
+│   │   │   │   ├── example
+│   │   │   │   │   └── route.ts
 │   │   │   │   ├── schools
 │   │   │   │   │   └── route.ts
 │   │   │   │   └── staff
@@ -256,6 +258,7 @@
 │   │   │   ├── checkFieldConfigCoverage.ts
 │   │   │   └── mockData.ts
 │   │   ├── error
+│   │   │   ├── errorMonitor.ts
 │   │   │   ├── handleClientError.ts
 │   │   │   ├── handleServerError.ts
 │   │   │   └── handleValidationError.ts
@@ -281,6 +284,7 @@
 │   │   │   ├── monitor.ts
 │   │   │   └── usePerformanceMonitoring.tsx
 │   │   ├── server-utils
+│   │   │   ├── README.md
 │   │   │   ├── bulkUpload.ts
 │   │   │   ├── crud.ts
 │   │   │   ├── csv.ts
@@ -293,6 +297,7 @@
 │   │   │   ├── sanitizeFilters.ts
 │   │   │   ├── sanitizeSortBy.ts
 │   │   │   ├── staff.ts
+│   │   │   ├── standardizeResponse.ts
 │   │   │   └── types.ts
 │   │   ├── types
 │   │   │   ├── api.ts
@@ -420,4 +425,4 @@
 ├── tsconfig.json
 └── tsconfig.tsbuildinfo
 
-124 directories, 297 files
+125 directories, 301 files

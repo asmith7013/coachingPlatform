@@ -137,7 +137,7 @@ export default function IMRoutinesPage() {
   // Update renderLesson logic before rendering
   const renderLesson = useMemo(() => {
     if (version === "ILC" && isHighSchool(selectedGrade)) {
-      return renderKHLesson;
+      return renderILCLesson;
     }
     return version === "ILC" ? renderILCLesson : renderKHLesson;
   }, [version, selectedGrade]);

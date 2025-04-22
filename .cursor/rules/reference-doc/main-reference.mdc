@@ -14,11 +14,11 @@ This documentation system provides comprehensive guidance for developing the AI 
 ### For Developers
 
 Navigate to the appropriate section based on your current task:
-- Starting a new feature? Begin with [Core Architecture Principles](mdc:#core-arch)
-- Building UI components? See [Component System Guide](mdc:#component-system)
-- Handling data? Reference the [Data Flow & Schema System](mdc:#data-flow)
-- Implementing error handling? Check [Error Handling Standards](mdc:#error-handling)
-- Wondering about development practices? See [Development Workflow](mdc:#dev-workflow)
+- Starting a new feature? Begin with @Core Architecture Principles
+- Building UI components? See @Component System Guide
+- Handling data? Reference the @Data Flow & Schema System
+- Implementing error handling? Check @Error Handling Standards
+- Wondering about development practices? See @Development Workflow
 
 ### For AI Tools
 
@@ -55,11 +55,11 @@ When creating prompts for Cursor or other AI coding assistants:
 
 | Document ID | Title | Purpose |
 |-------------|-------|---------|
-| core-arch | [Core Architecture Principles](mdc:core-arch) | Fundamental design patterns and organization |
-| component-system | [Component System Guide](mdc:component-system) | Component hierarchy, design tokens, and variants |
-| error-handling | [Error Handling Standards](mdc:error-handling) | Error handling patterns and UI standards |
-| data-flow | [Data Flow & Schema System](mdc:data-flow) | Zod schemas, MongoDB models, form configs |
-| dev-workflow | [Development Workflow](mdc:dev-workflow) | Development practices and AI integration |
+| core-arch | @Core Architecture Principles | Fundamental design patterns and organization |
+| component-system | @Component System Guide | Component hierarchy, design tokens, and variants |
+| error-handling | @Error Handling Standards | Error handling patterns and UI standards |
+| data-flow | @Data Flow & Schema System | Zod schemas, MongoDB models, form configs |
+| dev-workflow | @Development Workflow | Development practices and AI integration |
 
 ## Section Quick References
 
@@ -118,15 +118,17 @@ Create an improved implementation in src/hooks/useReferenceOptions.ts that:
 1. Uses useSWR for data fetching with proper error handling
 2. Correctly transforms API responses into select options format
 3. Follows our standard { options, error, isLoading } return structure
-4. Uses handleClientError for error processing
-5. Includes detailed logging for debugging
+4. Uses memoization to prevent unnecessary re-renders
+5. Handles all possible entity label fields (name, title, label, staffName, schoolName)
 
-The API responses follow this format:
+The API responses follow this standardized format:
 {
   "items": [
     { "_id": "123", "schoolName": "School Name" },
     { "_id": "456", "staffName": "Staff Name" }
-  ]
+  ],
+  "total": 2,
+  "success": true
 }
 ```
 
