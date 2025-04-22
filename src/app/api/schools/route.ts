@@ -1,36 +1,19 @@
-import { NextResponse } from "next/server";
 import { fetchSchools } from "@/app/actions/schools/schools";
-import { handleServerError } from "@/lib/error/handleServerError";
+import { createReferenceEndpoint } from "@/lib/apiHandler";
+import type { School } from "@/lib/zod-schema/core/school";
 
-export async function GET(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url);
+// Define the minimal school reference type for selects
+type SchoolReference = {
+  _id: string;
+  schoolName: string;
+};
 
-    const search = searchParams.get("search") ?? undefined;
-    const limit = Number(searchParams.get("limit") ?? 20);
-
-    console.log(`📥 API /schools request received with search: "${search}", limit: ${limit}`);
-
-    const data = await fetchSchools({ 
-      limit, 
-      filters: { 
-        schoolName: search 
-      } 
-    });
-
-    console.log(`📤 API /schools response: ${data.items.length} items found`, 
-      data.items.map(s => ({ _id: s._id, schoolName: s.schoolName }))
-    );
-
-    // Only send what the select needs
-    return NextResponse.json({
-      items: data.items.map(s => ({ _id: s._id, schoolName: s.schoolName }))
-    });
-  } catch (error) {
-    const errorMessage = handleServerError(error);
-    return NextResponse.json(
-      { error: errorMessage }, 
-      { status: 500 }
-    );
-  }
-} 
+export const GET = createReferenceEndpoint<School, SchoolReference>({
+  fetchFunction: fetchSchools,
+  defaultSearchField: "schoolName",
+  defaultLimit: 20,
+  mapItem: (school) => ({ 
+    _id: school._id, 
+    schoolName: school.schoolName 
+  })
+}); 

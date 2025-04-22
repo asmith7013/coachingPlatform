@@ -256,7 +256,7 @@ export default function Example() {
                       className="size-8 rounded-full bg-gray-800"
                     />
                     <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">Tom Cook</span>
+                    <span aria-hidden="true">Tom Cookie</span>
                   </a>
                 </li>
               </ul>

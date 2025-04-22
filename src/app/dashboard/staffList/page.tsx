@@ -20,6 +20,7 @@ import { Badge } from '@/components/core/feedback/Badge';
 // import { fetchSchoolOptions } from "@/lib/client-api";
 import { NYCPSStaffOverrides } from "@/lib/ui-schema/formOverrides";
 import { getReferenceSelectPropsForField } from "@/lib/ui/forms/helpers";
+import Link from "next/link";
 
 
 
@@ -34,14 +35,17 @@ const StaffCard = memo(function StaffCard({ member, onEdit, onDelete }: StaffCar
   return (
     <Card
       key={member._id}
-      className="mb-4 p-4 rounded-lg shadow-md bg-white border border-gray-200"
+      radius="lg"
+      shadow="md"
+      padding="md"
+      className="mb-4"
     >
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
           <Heading 
             level="h3" 
-            color="default"
-            className="flex items-center gap-2 text-primary font-medium"
+            color="accent"
+            className="flex items-center gap-2 font-medium"
           >
             <span role="img" aria-label="person">🧑‍🏫</span>
             {member.staffName}
@@ -81,24 +85,43 @@ const StaffCard = memo(function StaffCard({ member, onEdit, onDelete }: StaffCar
             >
               <strong>Schools:</strong>
               {member.schools.map((schoolId) => (
-                <Badge key={schoolId}>{schoolId}</Badge>
+                <Badge key={schoolId} variant="secondary" textSize="xs">
+                  {schoolId}
+                </Badge>
               ))}
             </Text>
           )}
         </div>
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2">
+          <Link href={`/staff/${member._id}`} passHref>
+            <Button
+              intent="secondary"
+              appearance="outline"
+              padding="sm"
+              textSize="sm"
+              radius="md"
+            >
+              View Details
+            </Button>
+          </Link>
           <Button
             onClick={() => onEdit(member)}
+            intent="primary"
+            appearance="solid"
             padding="sm"
             textSize="sm"
+            radius="md"
           >
             Edit
           </Button>
           <Button
             onClick={() => member._id && onDelete(member._id)}
+            intent="primary"
+            appearance="outline"
             padding="sm"
             textSize="sm"
-            className="text-danger"
+            radius="md"
+            className="text-danger hover:bg-danger-50 border-danger"
           >
             Delete
           </Button>
