@@ -1,0 +1,24 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ # Component System Guidelines
+
+The component system follows a layered approach with atomic, domain, and composed components. These guidelines ensure consistent, reusable, and maintainable UI elements.
+
+## Component System Principles
+
+- **Atomic Design** - Building complex UIs from simple, reusable components
+- **Composition over Inheritance** - Preferring component composition for flexibility
+- **Single Responsibility** - Each component has a clear, focused purpose
+- **Accessibility First** - Components are designed for universal access
+- **Performance Optimization** - Components are optimized for minimal re-renders
+
+## Documentation References
+
+@file:docs/components/component-system.md
+@file:docs/components/core-components.md
+@file:docs/components/domain-components.md
+@file:docs/components/composed-components.md
+@file:docs/atomic-component-migration.md

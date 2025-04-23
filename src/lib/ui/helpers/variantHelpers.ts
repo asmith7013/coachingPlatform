@@ -20,7 +20,7 @@ export function booleanVariant(name: string) {
  * Type for extracting variant props with proper boolean handling
  * Converts string 'true'|'false' variants to actual boolean types
  */
-export type BooleanVariantProps<C extends (...args: any) => any> = {
+export type BooleanVariantProps<C extends (...args: unknown[]) => unknown> = {
   [K in keyof VariantProps<C>]: VariantProps<C>[K] extends 'true' | 'false' 
     ? boolean 
     : VariantProps<C>[K];

@@ -1,0 +1,13 @@
+[
+  {
+    "grade": "HS Algebra 1",
+    "unit": "Unit 1",
+    "lessonNumber": "Lesson 1",
+    "activities": [
+      {
+        "name": "Activity 1",
+        "routines": ["Opening Routine", "Discussion"]
+      }
+    ]
+  }
+] 

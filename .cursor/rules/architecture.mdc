@@ -1,0 +1,24 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ # Architecture Guidelines
+
+The platform architecture follows a modular, layer-based approach with clear separation of concerns. These guidelines help maintain consistent architecture patterns across the codebase.
+
+## Key Architecture Principles
+
+- **Modular Design** - Code is organized into focused, reusable modules
+- **Clear Boundaries** - Well-defined interfaces between system components
+- **Dependency Management** - Careful control of dependencies to prevent coupling
+- **Consistent Patterns** - Standard approaches to common architectural challenges
+- **Progressive Enhancement** - Core functionality works first, with enhanced features added gracefully
+
+## Documentation References
+
+@file:docs/architecture-overview.md
+@file:docs/architecture/core-principles.md
+@file:docs/architecture/design-patterns.md
+@file:docs/architecture/project-structure.md
+@file:docs/architecture/import-patterns.md

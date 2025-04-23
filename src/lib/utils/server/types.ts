@@ -14,7 +14,10 @@ export interface BasePaginationOptions {
 export interface ResourceResponse<T> {
   items: T[];
   total: number;
-  empty: boolean;
+  page: number;
+  limit: number;
+  success: boolean;
+  message?: string;
 }
 
 /**
@@ -23,4 +26,26 @@ export interface ResourceResponse<T> {
 export interface PaginatedResult<T> extends ResourceResponse<T> {
   page: number;
   limit: number;
-} 
+}
+
+export interface FetchParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  filters?: Record<string, unknown>;
+  sort?: {
+    field: string;
+    direction: 'asc' | 'desc';
+  };
+}
+
+export const getDefaultFetchParams = (): FetchParams => ({
+  page: 1,
+  limit: 10,
+  search: '',
+  filters: {},
+  sort: {
+    field: 'createdAt',
+    direction: 'desc'
+  }
+}); 

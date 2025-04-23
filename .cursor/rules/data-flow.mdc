@@ -1,0 +1,25 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ # Data Flow Guidelines
+
+Data management follows strict patterns for consistency, security, and maintainability. These guidelines ensure proper data handling throughout the application lifecycle.
+
+## Data Flow Principles
+
+- **Schema Validation** - All data is validated against defined schemas
+- **Centralized Error Handling** - Consistent approach to error management
+- **Separation of Concerns** - Clear separation between data fetching, transformation, and rendering
+- **Sanitization Layer** - Data is sanitized at system boundaries
+- **Predictable State Management** - Well-defined patterns for managing application state
+
+## Documentation References
+
+@file:docs/data-flow/api-patterns.md
+@file:docs/data-flow/error-handling.md
+@file:docs/data-flow/mongodb-integration.md
+@file:docs/data-flow/sanitization-system.md
+@file:docs/data-flow/schema-system.md
+@file:docs/data-flow/server-actions.md

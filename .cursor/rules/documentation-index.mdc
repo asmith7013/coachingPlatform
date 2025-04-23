@@ -1,0 +1,66 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ # AI Coaching Platform Documentation Index# AI Coaching Platform Documentation Index
+
+This rule provides comprehensive access to the platform's documentation for both high-level understanding and specific implementation details.
+
+## Documentation Organization
+
+The documentation is organized into several key areas:
+
+- **Architecture** - Core architecture principles, design patterns, and project structure
+- **Components** - Component system guidelines, core components, and composition patterns
+- **Data Flow** - Data management, API patterns, schema system, and error handling
+- **Workflows** - Development processes, common tasks, and utilities
+- **Examples** - Practical examples of implementations
+- **General Guidelines** - Platform-wide guidelines and standards
+
+## File Path Mapping
+
+| Code Path | Related Documentation |
+|-----------|------------------------|
+| `src/lib/**/*.ts` | Architecture docs (`docs/architecture/`) |
+| `src/components/**/*.{ts,tsx}` | Component docs (`docs/components/`) |
+| `src/{lib/data,hooks,app/api,app/actions,models}/**/*.{ts,tsx}` | Data Flow docs (`docs/data-flow/`) |
+| `**/*.{ts,tsx}` | Workflow docs (`docs/workflows/`) |
+
+## Documentation References
+
+### Architecture Documentation
+@file:docs/architecture-overview.md
+@file:docs/architecture/core-principles.md
+@file:docs/architecture/design-patterns.md
+@file:docs/architecture/project-structure.md
+@file:docs/architecture/import-patterns.md
+
+### Component Documentation
+@file:docs/components/component-system.md
+@file:docs/components/core-components.md
+@file:docs/components/domain-components.md
+@file:docs/components/composed-components.md
+@file:docs/atomic-component-migration.md
+
+### Data Flow Documentation
+@file:docs/data-flow/api-patterns.md
+@file:docs/data-flow/error-handling.md
+@file:docs/data-flow/mongodb-integration.md
+@file:docs/data-flow/sanitization-system.md
+@file:docs/data-flow/schema-system.md
+@file:docs/data-flow/server-actions.md
+
+### Workflow Documentation
+@file:docs/workflows/common-tasks.md
+@file:docs/workflows/cursor-integration.md
+@file:docs/workflows/dev-utilities.md
+@file:docs/workflows/development-workflow.md
+
+### Example Documentation
+@file:docs/examples/component-examples.md
+@file:docs/examples/prompt-examples.md
+@file:docs/examples/schema-examples.md
+
+### General Guidelines
+@file:docs/token-system-guidelines.md 

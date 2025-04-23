@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ # Workflow Guidelines
+
+Development workflows are standardized to ensure consistency and productivity. These guidelines help maintain efficient development processes across the team.
+
+## Workflow Principles
+
+- **Consistent Development Environment** - Standardized tools and configurations
+- **Automation First** - Repetitive tasks are automated where possible
+- **Progressive Development** - Incremental building and testing of features
+- **Collaborative Process** - Clear guidelines for team collaboration
+- **Continuous Integration** - Regular integration of code changes and testing
+
+## Documentation References
+
+@file:docs/workflows/common-tasks.md
+@file:docs/workflows/cursor-integration.md
+@file:docs/workflows/dev-utilities.md
+@file:docs/workflows/development-workflow.md
