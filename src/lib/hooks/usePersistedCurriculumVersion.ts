@@ -1,23 +1,39 @@
-'use client';
+import { useEffect, useState } from 'react';
 
-import { useState, useEffect } from 'react';
+type Version = 'KH' | 'ILC';
+const STORAGE_KEY = 'curriculumVersion';
 
-type CurriculumVersion = 'KH' | 'ILC' | 'ILC_HS';
+export function usePersistedCurriculumVersion() {
+  const [version, setVersionState] = useState<Version | null>(null);
+  const [hasMounted, setHasMounted] = useState(false);
 
-export function usePersistedCurriculumVersion(defaultVersion: CurriculumVersion = 'KH') {
-  const [version, setVersion] = useState<CurriculumVersion>(defaultVersion);
-  
   useEffect(() => {
-    const storedVersion = localStorage.getItem('curriculumVersion');
-    if (storedVersion && (storedVersion === 'KH' || storedVersion === 'ILC' || storedVersion === 'ILC_HS')) {
-      setVersion(storedVersion as CurriculumVersion);
+    setHasMounted(true);
+
+    if (typeof window === 'undefined') return;
+
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === 'KH' || saved === 'ILC') {
+        setVersionState(saved);
+      }
+    } catch (error) {
+      console.warn('🚨 Failed to load curriculumVersion from localStorage:', error);
     }
   }, []);
-  
-  const setCurriculumVersion = (newVersion: CurriculumVersion) => {
-    setVersion(newVersion);
-    localStorage.setItem('curriculumVersion', newVersion);
+
+  const setVersion = (newVersion: Version) => {
+    try {
+      setVersionState(newVersion);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, newVersion);
+      }
+    } catch (error) {
+      console.warn('🚨 Failed to save curriculumVersion to localStorage:', error);
+    }
   };
-  
-  return [version, setCurriculumVersion] as const;
+
+  if (!hasMounted) return [null, setVersion] as const;
+
+  return [version, setVersion] as const;
 } 

@@ -1,4 +1,4 @@
-import { FieldOverride, FieldOverrideMap } from '@/lib/data/forms/types';
+import { FieldOverride, FieldOverrideMap } from '@/lib/ui-schema/types';
 
 /**
  * Extracts and validates the props needed for a ReferenceSelect component from a field override

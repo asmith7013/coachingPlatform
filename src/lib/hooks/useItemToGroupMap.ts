@@ -1,47 +1,32 @@
+'use client';
+
 import { useMemo } from 'react';
 
-export interface ItemWithId {
-  _id: string;
-  [key: string]: unknown;
-}
+export type ItemWithId = {
+  id: string;
+};
 
-export interface GroupWithId {
-  _id: string;
-  [key: string]: unknown;
-}
+export type GroupWithId = {
+  id: string;
+};
 
-export function useItemToGroupMap<T extends ItemWithId, G extends GroupWithId>(
-  items: T[],
-  groupIdField: keyof T,
-  groups: G[]
-) {
-  const groupMap = useMemo(() => {
-    const map = new Map<string, T[]>();
-    
-    // Initialize map with empty arrays for all groups
+export function useItemToGroupMap<TGroup extends GroupWithId, TItem extends ItemWithId>(
+  groups: TGroup[],
+  extractItems: (group: TGroup) => TItem[]
+): Map<string, string[]> {
+  return useMemo(() => {
+    const itemToGroupMap = new Map<string, string[]>();
+
     groups.forEach(group => {
-      map.set(group._id, []);
+      const items = extractItems(group);
+      items.forEach(item => {
+        const groupIds = itemToGroupMap.get(item.id) || [];
+        if (!groupIds.includes(group.id)) {
+          itemToGroupMap.set(item.id, [...groupIds, group.id]);
+        }
+      });
     });
-    
-    // Add items to their respective groups
-    items.forEach(item => {
-      const groupId = item[groupIdField];
-      
-      if (Array.isArray(groupId)) {
-        // Handle arrays of group IDs
-        groupId.forEach((id: string) => {
-          const currentItems = map.get(id) || [];
-          map.set(id, [...currentItems, item]);
-        });
-      } else if (typeof groupId === 'string') {
-        // Handle single group ID
-        const currentItems = map.get(groupId) || [];
-        map.set(groupId, [...currentItems, item]);
-      }
-    });
-    
-    return map;
-  }, [items, groupIdField, groups]);
-  
-  return groupMap;
+
+    return itemToGroupMap;
+  }, [groups, extractItems]);
 } 

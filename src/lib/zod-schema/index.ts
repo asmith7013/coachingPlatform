@@ -1,98 +1,26 @@
-import { z } from 'zod';
+// Central export file for all zod schemas
+import { validate } from './validate';
 
-// School Schema
-export const SchoolZodSchema = z.object({
-  _id: z.string().optional(),
-  schoolNumber: z.string(),
-  district: z.string(),
-  schoolName: z.string(),
-  address: z.string().optional(),
-  emoji: z.string().optional(),
-  gradeLevelsSupported: z.array(z.string()),
-  staffList: z.array(z.string()).optional(),
-  schedules: z.array(z.string()).optional(),
-  cycles: z.array(z.string()).optional(),
-  owners: z.array(z.string()),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-});
+// Core schemas
+export * from './core/staff';
+export * from './core/school';
+export * from './core/cycle';
 
-export type School = z.infer<typeof SchoolZodSchema>;
-export type SchoolInput = Omit<School, '_id' | 'createdAt' | 'updatedAt'>;
+// Look Fors schemas
+export * from './look-fors/look-for';
+export * from './look-fors/rubric';
+export * from './look-fors/next-step';
 
-// NYCPS Staff Schema
-export const NYCPSStaffZodSchema = z.object({
-  _id: z.string().optional(),
-  staffName: z.string(),
-  email: z.string().email().optional(),
-  schools: z.array(z.string()),
-  gradeLevelsSupported: z.array(z.string()),
-  subjects: z.array(z.string()),
-  specialGroups: z.array(z.string()),
-  rolesNYCPS: z.array(z.string()).optional(),
-  pronunciation: z.string().optional(),
-  notes: z.array(z.string()).optional(),
-  experience: z.array(z.string()).optional(),
-  owners: z.array(z.string()),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-});
+// Visits schemas
+export * from './visits/visit';
+export * from './visits/coaching-log';
 
-export type NYCPSStaff = z.infer<typeof NYCPSStaffZodSchema>;
-export type NYCPSStaffInput = Omit<NYCPSStaff, '_id' | 'createdAt' | 'updatedAt'>;
+// Scheduling schemas
+export * from './scheduling/schedule';
 
-// Teaching Lab Staff Schema
-export const TeachingLabStaffZodSchema = z.object({
-  _id: z.string().optional(),
-  staffName: z.string(),
-  email: z.string().email(),
-  schools: z.array(z.string()),
-  adminLevel: z.string(),
-  assignedDistricts: z.array(z.string()),
-  rolesTL: z.array(z.string()),
-  owners: z.array(z.string()),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-});
+// Shared types
+export * from './shared/notes';
+export * from './shared/enums';
 
-export type TeachingLabStaff = z.infer<typeof TeachingLabStaffZodSchema>;
-export type TeachingLabStaffInput = Omit<TeachingLabStaff, '_id' | 'createdAt' | 'updatedAt'>;
-
-// Look For Schema
-export const LookForZodSchema = z.object({
-  _id: z.string().optional(),
-  title: z.string(),
-  description: z.string().optional(),
-  rubric: z.string().optional(),
-  nextSteps: z.array(z.string()).optional(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-});
-
-export type LookFor = z.infer<typeof LookForZodSchema>;
-export type LookForInput = Omit<LookFor, '_id' | 'createdAt' | 'updatedAt'>;
-export type LookForItem = LookFor;
-
-// Rubric Schema
-export const RubricZodSchema = z.object({
-  _id: z.string().optional(),
-  title: z.string(),
-  description: z.string().optional(),
-  lookFors: z.array(z.string()).optional(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-});
-
-export type Rubric = z.infer<typeof RubricZodSchema>;
-
-// Next Step Schema
-export const NextStepZodSchema = z.object({
-  _id: z.string().optional(),
-  title: z.string(),
-  description: z.string().optional(),
-  lookFors: z.array(z.string()).optional(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-});
-
-export type NextStep = z.infer<typeof NextStepZodSchema>; 
+// Export validate utility
+export { validate };

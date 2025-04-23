@@ -1,9 +1,10 @@
-export interface FetchParams {
+/**
+ * Common type for fetch parameters used across resource hooks
+ */
+export type FetchParams = {
   page?: number;
   limit?: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
   filters?: Record<string, unknown>;
-  search?: string;
-  searchFields?: string[];
-} 
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}; 
