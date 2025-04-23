@@ -2,9 +2,7 @@
 
 ## Purpose of This Document
 
-This document provides a comprehensive overview of the AI Coaching Platform architecture and serves as a guide to the documentation structure. It's designed to help both developers and AI tools (Cursor, Claude) understand the system architecture, documentation organization, and implementation patterns.
-
-The documentation in these folders contains detailed information about specific aspects of the system, while this document provides the high-level context necessary to navigate and understand those details.
+This document provides a comprehensive overview of the AI Coaching Platform architecture. It's designed to help both developers and AI tools understand the system architecture, documentation organization, and implementation patterns.
 
 ## Core Architecture
 
@@ -12,26 +10,62 @@ Our application follows these key architectural principles:
 
 1. **Schema-Driven Design**: Zod schemas serve as the canonical source of truth for all data structures
 2. **Atomic Component Hierarchy**: Components follow core → composed → domain → features pattern
-3. **Token-First Design System**: All styling uses design tokens for consistency
+3. **Token-First Design System**: All styling uses design tokens for consistency (built on Tailwind CSS v4)
 4. **Standardized Patterns**: Common patterns for data fetching, forms, error handling, and API responses
 
-## Tech Stack
+## Design Token System
 
-- **Frontend**: Next.js with Tailwind CSS (token-first design system)
-- **Backend**: Node.js, MongoDB
-- **Validation**: Zod schemas (canonical source of truth)
-- **Forms**: Generated dynamically from Zod schemas
-- **Styling**: Tailwind Variants (tv()) for component styling
-- **State Management**: React hooks with SWR for data fetching
-- **Error Handling**: Specialized handlers for client, server, and validation errors
+Our design system is built on tokens that act as a bridge between Tailwind classes and component styling:
+
+### 1. Primitive Tokens
+Located in `src/lib/ui/tokens/`, these define semantic values:
+
+```typescript
+// Example token usage
+export const textColors = {
+  primary: "text-blue-600 dark:text-blue-400",
+  secondary: "text-gray-600 dark:text-gray-300",
+  // More color tokens...
+};
+```
+
+### 2. Component-Specific Variants
+Using Tailwind Variants (tv()) to create type-safe component styling:
+
+```typescript
+// Example component variant
+const button = tv({
+  base: "inline-flex items-center justify-center",
+  variants: {
+    variant: {
+      primary: `bg-blue-600 text-white hover:bg-blue-700`,
+      secondary: `bg-gray-200 text-gray-800 hover:bg-gray-300`,
+    },
+    // More variants...
+  }
+});
+```
+
+### 3. Shared Behavior Variants
+Reusable UI behavior patterns like disabled states, loading indicators, etc.
+
+## Data Layer Architecture
+
+### Schema, Model, UI Connection
+
+Our system follows a specific flow from schema definition to UI:
+
+1. **Zod Schema Definition**: The canonical source of truth
+2. **MongoDB Model Creation**: Derived from the schema
+3. **Field Configuration**: Defines UI representation
+4. **Form Component Integration**: Auto-generates forms
+5. **Server Action Implementation**: Handles data operations
 
 ## Main System Components
 
-The system consists of these primary components:
-
 ### 1. Data Layer
-- **Zod Schemas**: Define all data structures (`src/lib/data/schemas/`)
-- **MongoDB Models**: Database models derived from schemas (`src/models/`)
+- **Zod Schemas**: Define all data structures (`src/lib/data-schema/zod-schema/`)
+- **MongoDB Models**: Database models derived from schemas (`src/lib/data-schema/mongoose-schema/`)
 - **API Routes**: Endpoints for data access (`src/app/api/`)
 - **Server Actions**: Direct server operations (`src/app/actions/`)
 
@@ -43,134 +77,54 @@ The system consists of these primary components:
 
 ### 3. Data Flow
 - **Custom Hooks**: Data fetching and state management (`src/hooks/`)
-- **Field Configurations**: Form field definitions (`src/lib/ui-schema/fieldConfig/`)
-- **Form Overrides**: Context-specific form modifications (`src/lib/ui-schema/formOverrides/`)
+- **Field Configurations**: Form field definitions (`src/lib/ui/forms/fieldConfig/`)
+- **Form Overrides**: Context-specific form modifications (`src/lib/ui/forms/formOverrides/`)
 
 ### 4. Utilities
 - **Error Handling**: Standardized error processing (`src/lib/core/error/`)
-- **Sanitization**: Data cleaning and validation (`src/lib/utils/server/`)
-- **Development Tools**: Developer experience enhancements (`src/lib/utils/dev/`)
-
-## How It All Fits Together
-
-1. Data flows from Zod schemas → MongoDB models → API/Server Actions → React hooks → UI components
-2. UI components use a hierarchy from simple to complex (core → composed → domain → features)
-3. Forms are generated from field configurations that refer to Zod schemas
-4. Error handling is standardized across all layers
+- **Sanitization**: Data cleaning and validation (`src/lib/data-utilities/transformers/`)
+- **Development Tools**: Developer experience enhancements (`src/lib/dev/`)
 
 ## Documentation Structure
 
-The remainder of the documentation is organized into these sections:
+The documentation is organized into these sections:
 
 ### Architecture (`/docs/architecture/`)
-- **Core Principles**: Foundational architectural principles
-- **Design Patterns**: Common patterns used throughout the application
-- **Import Patterns**: Conventions for organizing imports
-- **Project Structure**: Organization of the codebase
+- Core Principles, Design Patterns, Import Patterns, Project Structure
 
 ### Components (`/docs/components/`)
-- **Component System**: Overview of the component architecture
-- **Composed Components**: Patterns for building composite components
-- **Core Components**: Basic building blocks
-- **Domain Components**: Business-specific implementations
+- Component System, Design Token System, Styling Patterns, Core Components, Domain Components
 
 ### Data Flow (`/docs/data-flow/`)
-- **API Patterns**: Standardized API response formats and error handling
-- **Error Handling**: Comprehensive error handling system
-- **MongoDB Integration**: Patterns for database interaction
-- **Sanitization System**: Data cleaning and validation
-- **Schema System**: Zod schema architecture
-- **Server Actions**: Next.js server action implementation
+- API Patterns, Error Handling, MongoDB Integration, Schema System, Server Actions
 
 ### Workflows (`/docs/workflows/`)
-- **Common Tasks**: Step-by-step guides for frequent development tasks
-- **Cursor Integration**: Best practices for using the Cursor AI code editor
-- **Dev Utilities**: Developer experience enhancement tools
-- **Development Workflow**: Overall development process
+- Common Tasks, Cursor Integration, Dev Utilities, Development Workflow
 
 ### Examples (`/docs/examples/`)
-- **Component Examples**: Real-world component implementations
-- **Prompt Examples**: Effective prompts for Cursor AI
-- **Schema Examples**: Example Zod schema implementations
-
-## Development Workflow
-
-### Adding a New Entity
-
-1. Create the Zod schema in the appropriate domain directory
-2. Create the MongoDB model derived from the schema
-3. Create field configuration for form generation
-4. Implement server actions or API routes for CRUD operations
-5. Build UI components for entity display and manipulation
-
-### Creating Components
-
-Components follow the atomic design pattern:
-
-1. Core components (Button, Input, Text)
-2. Composed components (Card, Form, Table)
-3. Domain components (StaffCard, RubricViewer)
-4. Feature components (SchoolDirectory, CoachingLog)
-
-All components use the Tailwind Variants library for styling with design tokens.
-
-### Data Fetching
-
-Data is fetched using custom hooks built around SWR:
-
-```typescript
-function useResources() {
-  const { data, error, isLoading } = useSafeSWR('/api/resources');
-  
-  return {
-    resources: data?.items || [],
-    error,
-    isLoading,
-    // CRUD operations...
-  };
-}
-```
+- Component Examples, Prompt Examples, Schema Examples
 
 ## Project Structure
 
 ```
 src/
 ├── app/                # Next.js app router pages and API routes
-│   ├── actions/        # Server actions for form submissions
-│   ├── api/            # API routes for data access
-│   └── [routes]/       # Page components
-├── components/         # React components
-│   ├── core/           # Primitive UI elements
-│   ├── composed/       # Combinations of core components
-│   ├── domain/         # Business domain specific components
-│   ├── features/       # Complete feature implementations
-│   ├── layouts/        # Page layout components
-│   ├── shared/         # Cross-cutting components
-│   └── utility/        # Helper components
+├── components/         # React components (core, composed, domain, features)
 ├── hooks/              # Custom React hooks
-│   ├── debugging/      # Hooks for development and debugging
-│   ├── utils/          # Utility hooks for common operations
-│   └── [domain hooks]  # Resource-specific hooks
 ├── lib/                # Core utilities and modules
-│   ├── core/           # Essential core functionality
-│   ├── data/           # Data handling utilities
-│   ├── domains/        # Domain-specific functionality
-│   ├── ui/             # UI utilities
-│   └── utils/          # General utilities
-├── models/             # MongoDB models
-│   ├── core/           # Core entity models
-│   ├── look-fors/      # Look For related models
-│   ├── scheduling/     # Scheduling related models
-│   └── visits/         # Visit related models
-└── providers/          # React context providers
+│   ├── data-schema/    # Zod and Mongoose schemas
+│   ├── ui/             # UI utilities and tokens
+│   └── [other utils]   # Various utilities
+├── providers/          # React context providers
+└── styles/             # Global styles
 ```
 
 ## Design Philosophy
 
-- **Structured, DRY, and scalable**: The codebase is designed to avoid manual duplication
-- **Mock data for development**: Full-featured development is possible without a database connection
+- **Structured, DRY, and scalable**: Avoids manual duplication
+- **Mock data for development**: Full-featured development without a database
 - **Schema-driven**: All data structures flow from Zod schemas
-- **Token-first styling**: All UI components use design tokens for consistent styling
+- **Token-first styling**: All UI components use design tokens
 
 ## Current Build Priorities
 
@@ -182,22 +136,10 @@ src/
 
 ## Using This Documentation
 
-When working with this codebase or documentation:
-
-1. Start with understanding the schema architecture for your target domain
-2. Follow the established patterns for implementation
-3. Reference the appropriate documentation sections based on your task
-4. Use the section IDs to locate specific guidance (e.g., `[component-system][component-variants]`)
-
-For AI tools like Cursor, this documentation is organized with section IDs that can be directly referenced:
+For AI tools like Cursor, this documentation is organized with section IDs:
 
 ```
 [document-id][section-id] Section Title
 ```
 
-For example:
-- `[component-system][component-variants]` - References the variants section of the component system
-- `[error-handling][error-hooks]` - References the hooks section of error handling
-- `[data-flow][data-schemas]` - References the schemas section of data flow
-
-This structure enables precise contextual guidance when developing with AI assistance.
+Example: `[component-system][component-variants]` references the variants section of the component system documentation.

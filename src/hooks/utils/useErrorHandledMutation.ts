@@ -1,4 +1,4 @@
-import { handleClientError } from "@/lib/core/error/handleClientError";
+import { handleClientError } from "@/lib/core/error/handle-client-error";
 
 export async function handleErrorHandledMutation<T>(
   mutationFn: () => Promise<T>,

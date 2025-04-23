@@ -39,12 +39,42 @@ typescript// tsconfig.json
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@components/*": ["src/components/*"],
-      "@lib/*": ["src/lib/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@models/*": ["src/models/*"]
-    }
+        // Base path
+        "@/*": ["./src/*"],
+
+        // Core component and hook paths
+        "@components/*": ["./src/components/*"],
+        "@hooks/*": ["./src/hooks/*"],
+
+        // Server-side and data paths
+        "@actions/*": ["./src/app/actions/*"],
+        "@models/*": ["./src/lib/data-schema/mongoose-schema/*"],
+        "@zod-schema/*": ["./src/lib/data-schema/zod-schema/*"],
+        "@data-schema/*": ["./src/lib/data-schema/*"],
+        "@data-server/*": ["./src/lib/data-server/*"],
+        "@data-utilities/*": ["./src/lib/data-utilities/*"],
+
+        // Library and utility paths
+        "@lib/*": ["./src/lib/*"],
+        "@utils/*": ["./src/lib/utils/*"],
+        "@styles/*": ["./src/styles/*"],
+        "@core/*": ["./src/lib/core/*"],
+        "@api/*": ["./src/lib/api/*"],
+        "@types/*": ["./src/lib/types/*"],
+
+        // UI-specific paths
+        "@ui/*": ["./src/lib/ui/*"],
+        "@ui-tokens/*": ["./src/lib/ui/tokens/*"],
+        "@ui-variants/*": ["./src/lib/ui/variants/*"],
+        "@ui-forms/*": ["./src/lib/ui/forms/*"],
+        
+        // Domain-specific paths
+        "@domain/*": ["./src/lib/domain/*"],
+        
+        // Testing utilities
+        "@testing/*": ["./src/lib/testing/*"],
+        "@mocks/*": ["./src/lib/dev/mocks/*"]
+    },
   }
 }
 Example usage:

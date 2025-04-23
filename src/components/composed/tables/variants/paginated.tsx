@@ -2,7 +2,7 @@
 
 import { Table, type TableVariants } from '../Table'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { TableColumnSchema } from '@/lib/ui/table-schema'
+import { TableColumnSchema } from '@ui/table-schema'
 import { TablePagination } from '../features/pagination'
 
 const paginatedTable = tv({

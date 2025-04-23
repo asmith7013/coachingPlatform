@@ -2,7 +2,7 @@
 
 import { tv, type VariantProps } from 'tailwind-variants'
 import { ChevronUpIcon } from '@heroicons/react/24/solid'
-import { TableColumnSchema } from '@/lib/ui/table-schema'
+import { TableColumnSchema } from '@ui/table-schema'
 
 const tableHeader = tv({
   slots: {

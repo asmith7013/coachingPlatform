@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textColors, textSize, weight, radii, paddingX, paddingY } from '@/lib/ui/tokens'
+import { textColors, textSize, weight, radii, paddingX, paddingY } from '@ui-tokens/tokens'
 
 const tabs = tv({
   slots: {

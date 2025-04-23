@@ -1,8 +1,8 @@
 import { ElementType, ReactNode } from 'react'
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { heading as headingLevels, textColors } from '@/lib/ui/tokens'
-import type { HeadingLevel, TextColor } from '@/lib/ui/tokens'
+import { heading as headingLevels, textColors } from '@ui-tokens/tokens'
+import type { HeadingLevel, TextColor } from '@ui-tokens/tokens'
 
 const heading = tv({
   slots: {

@@ -7,13 +7,13 @@ import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Schools data.
-import { School, SchoolInput } from "@/lib/data/schemas"; // ✅ Import the School type from Zod schema.
+import { School, SchoolInput } from "@zod-schema/core/school"; // ✅ Import the School type from Zod schema.
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
-import { GenericResourceForm } from "@/components/composed/forms/ResourceForm";
+import { Field, GenericResourceForm } from "@/components/composed/forms/ResourceForm";
 import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
 import { ResourceHeader } from "@/components/shared/ResourceHeader";
-import { SchoolFieldConfig } from "@/lib/data/forms/fieldConfig/core/school";
-import { cn } from "@/lib/utils/general";
+import { SchoolFieldConfig } from "@ui-forms/fieldConfig/core/school";
+import { cn } from "@/lib/utils";
 import { EmptyListWrapper } from '@/components/shared/EmptyListWrapper';
 
 
@@ -148,7 +148,7 @@ export default function SchoolList() {
           mode="create"
           title="Add School"
           onSubmit={createSchool}
-          fields={SchoolFieldConfig}
+          fields={SchoolFieldConfig as Field<SchoolInput>[]}
         />
         <BulkUploadForm
           title="Bulk Upload Schools"

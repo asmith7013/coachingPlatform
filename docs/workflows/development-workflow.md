@@ -56,9 +56,11 @@ Includes appropriate TypeScript types
 
 1. Start with core/primitive components
 2. Compose them into more complex components
-3. Use tokens and variants for styling
+3. Use tokens directly for basic visual styling and shared variants for common behaviors:
+   - Direct token usage for colors, spacing, typography in atomic components
+   - Shared variants for interactive states, loading states, etc.
+   - Combine both approaches when appropriate
 4. Include proper error handling
-
 ### Implementing a New Feature
 
 1. Define the data schema

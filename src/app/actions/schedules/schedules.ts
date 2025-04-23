@@ -1,12 +1,12 @@
 "use server";
 
 import { z } from "zod";
-import { TeacherScheduleModel } from "@/models/scheduling/schedule.model";
-import { TeacherScheduleZodSchema } from "@/lib/data/schemas/scheduling/schedule";
-import { handleServerError } from "@/lib/core/error/handleServerError";
-import { connectToDB } from "@/lib/core/db";
-import { FetchParams, getDefaultFetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
-import { sanitizeSortBy } from "@/lib/utils/general/server/sanitizeSortBy";
+import { TeacherScheduleModel } from "@/lib/data-schema/mongoose-schema/scheduling/schedule.model";
+import { TeacherScheduleZodSchema } from "@zod-schema/scheduling/schedule";
+import { handleServerError } from "@/lib/core/error/handle-server-error";
+import { connectToDB } from "@/lib/data-server/db/connection";
+import { FetchParams, getDefaultFetchParams } from "@/lib/data-utilities/pagination/paginated-query";
+import { sanitizeSortBy } from "@/lib/data-utilities/pagination/sort-utils";
 
 // Valid sort fields for schedules
 const validSortFields = ['createdAt', 'updatedAt', 'teacher', 'school'];

@@ -1,9 +1,9 @@
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { tv } from 'tailwind-variants'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { Button } from '@/components/core/Button'
-import { textColors } from '@/lib/ui/tokens'
+import { textColors } from '@ui-tokens/tokens'
 
 interface PageHeaderAction {
   label: string

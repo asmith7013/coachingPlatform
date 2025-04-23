@@ -11,9 +11,9 @@ import { Switch } from '@/components/core/fields/Switch';
 import { Checkbox } from '@/components/core/fields/Checkbox';
 import { Textarea } from '@/components/core/fields/Textarea';
 import { tv } from 'tailwind-variants';
-import { shadows, textSize, textColors } from "@/lib/ui/tokens";
-import { stack } from "@/lib/ui/tokens/spacing";
-import { cn } from "@/lib/utils/general";
+import { shadows, textSize, textColors } from "@ui-tokens/tokens";
+import { stack } from "@ui-tokens/tokens";
+import { cn } from "@/lib/utils";
 import ReferenceSelect from "@/components/core/fields/ReferenceSelect";
 
 
@@ -21,7 +21,7 @@ export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 's
 export type Mode = "create" | "edit";
 
 export interface Field<T extends Record<string, unknown>> {
-  name: keyof T;
+  key: keyof T;
   label: string;
   type: FieldType;
   required?: boolean;
@@ -89,7 +89,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
   const [formData, setFormData] = useState<T>(
     defaultValues || fields.reduce((acc, field) => ({
       ...acc,
-      [field.name]: field.type === 'select' ? (field.defaultValue ?? []) : (field.defaultValue ?? ''),
+      [field.key]: field.type === 'select' ? (field.defaultValue ?? []) : (field.defaultValue ?? ''),
     }), {} as T)
   );
   
@@ -110,15 +110,15 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
     onSubmit(formData);
   }, [formData, onSubmit]);
 
-  const handleChange = useCallback((name: keyof T, value: T[keyof T]) => {
+  const handleChange = useCallback((key: keyof T, value: T[keyof T]) => {
     setFormData(prev => ({
       ...prev,
-      [name]: value,
+      [key]: value,
     }));
   }, []);
 
   const handleInputChange = useCallback((
-    name: keyof T,
+    key: keyof T,
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const input = e.target;
@@ -136,7 +136,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
       value = input.value as T[keyof T];
     }
 
-    handleChange(name, value);
+    handleChange(key, value);
   }, [handleChange]);
 
   const isFieldEditable = useCallback((field: Field<T>): boolean => {
@@ -150,7 +150,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
   // This prevents it from being recreated when formData changes
   const renderField = useCallback((field: Field<T>) => {
     // Add diagnostic logging
-    // console.log(`🔍 renderField for ${String(field.name)} in ${formId.current}`);
+    // console.log(`🔍 renderField for ${String(field.key)} in ${formId.current}`);
     
     // Determine if the field should be disabled
     const isDisabled = !isFieldEditable(field);
@@ -160,7 +160,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
 
     switch (field.type) {
       case 'reference': {
-        const value = currentFormData[field.name];
+        const value = currentFormData[field.key];
         const multiple = field.multiple !== false;
         
         if (field.url) {
@@ -169,7 +169,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
               label={field.label}
               value={value as string[] | string}
               onChange={(newValue) => {
-                handleChange(field.name, newValue as T[keyof T]);
+                handleChange(field.key, newValue as T[keyof T]);
               }}
               url={field.url}
               multiple={multiple}
@@ -186,12 +186,12 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
             </div>
           );
         } else {
-          console.error(`Reference field ${String(field.name)} missing url`);
+          console.error(`Reference field ${String(field.key)} missing url`);
           return <div>Error: Missing url for reference field</div>;
         }
       }
       case 'select': {
-        const value = currentFormData[field.name];
+        const value = currentFormData[field.key];
         const isMultiSelect = Array.isArray(value);
         
         if (isMultiSelect) {
@@ -200,7 +200,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
               label={field.label}
               value={value as string[]}
               onChange={(newValue: string[]) => {
-                handleChange(field.name, newValue as T[keyof T]);
+                handleChange(field.key, newValue as T[keyof T]);
               }}
               options={field.options || []}
               multiple={true}
@@ -213,7 +213,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
               label={field.label}
               value={value as string}
               onChange={(newValue: string) => {
-                handleChange(field.name, newValue as T[keyof T]);
+                handleChange(field.key, newValue as T[keyof T]);
               }}
               options={field.options || []}
               multiple={false}
@@ -226,9 +226,9 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
         return (
           <Switch
             label={field.label}
-            checked={currentFormData[field.name] as boolean}
+            checked={currentFormData[field.key] as boolean}
             onChange={(checked: boolean) => {
-              handleChange(field.name, checked as T[keyof T]);
+              handleChange(field.key, checked as T[keyof T]);
             }}
             disabled={isDisabled}
           />
@@ -237,9 +237,9 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
         return (
           <Checkbox
             label={field.label}
-            checked={currentFormData[field.name] as boolean}
+            checked={currentFormData[field.key] as boolean}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(field.name, e.target.checked as T[keyof T]);
+              handleChange(field.key, e.target.checked as T[keyof T]);
             }}
             disabled={isDisabled}
           />
@@ -248,8 +248,8 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
         return (
           <Textarea
             label={field.label}
-            value={currentFormData[field.name] as string}
-            onChange={(e) => handleInputChange(field.name, e)}
+            value={currentFormData[field.key] as string}
+            onChange={(e) => handleInputChange(field.key, e)}
             required={field.required}
             disabled={isDisabled}
           />
@@ -259,8 +259,8 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
           <Input
             type={field.type}
             label={field.label}
-            value={currentFormData[field.name] as string}
-            onChange={(e) => handleInputChange(field.name, e)}
+            value={currentFormData[field.key] as string}
+            onChange={(e) => handleInputChange(field.key, e)}
             required={field.required}
             disabled={isDisabled}
           />
@@ -290,7 +290,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
         </div>
         <div className={styles.fieldsContainer()}>
           {fields.map((field) => (
-            <div key={String(field.name)} className={styles.fieldWrapper()}>
+            <div key={String(field.key)} className={styles.fieldWrapper()}>
               {renderField(field)}
             </div>
           ))}

@@ -1,6 +1,6 @@
 // 'use client';
 
-// import { cn } from '@/lib/utils/general';
+// import { cn } from '@/lib/utils';
 // import { spacing, radii } from '@/lib/ui/tokens';
 
 // type LessonCompactViewProps = {

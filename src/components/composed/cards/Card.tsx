@@ -1,13 +1,13 @@
 // src/components/ui/card.tsx
 
 import React from 'react'
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
 import {
   radiusVariant,
   shadowVariant,
-} from '@/lib/ui/sharedVariants'
-import { textColors } from '@/lib/ui/tokens'
+} from '@ui-variants/shared-variants'
+import { textColors } from '@ui-tokens/tokens'
 
 // 🎨 Card style variants
 export const card = tv({

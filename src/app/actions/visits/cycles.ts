@@ -1,10 +1,10 @@
 'use server';
 
-import { connectToDB } from "@/lib/core/db";
-import { CycleModel } from "@/models/core/cycle.model";
-import { CycleInputZodSchema } from "@/lib/data/schemas/core/cycle";
-import { createItem } from "@/lib/utils/general/server/crud";
-import type { CycleInput } from "@/lib/data/schemas/core/cycle";
+import { connectToDB } from "@/lib/data-server/db/connection";
+import { CycleModel } from "@/lib/data-schema/mongoose-schema/core/cycle.model";
+import { CycleInputZodSchema } from "@zod-schema/core/cycle";
+import { createItem } from "@data-server/crud/crud-operations";
+import type { CycleInput } from "@zod-schema/core/cycle";
 
 /**
  * Creates a new cycle

@@ -3,25 +3,19 @@
 import { useState } from 'react';
 import { Card } from '@/components/composed/cards/Card';
 import { Button } from '@/components/core/Button';
-import {
-  mockSchools,
-  mockNYCPSStaff,
-  mockTLStaff,
-  mockCycles,
-  mockCoachingLogs,
-} from '@/lib/utils/general/dev/mockData';
+import { mockSchools, mockNYCPSStaff, mockTLStaff, mockCycles, mockCoachingLogs } from '@/lib/dev/mocks/mockData';
 import { createSchool } from '@/app/actions/schools/schools';
 import { createNYCPSStaff } from '@/app/actions/staff/nycps';
 import { createTeachingLabStaff } from '@/app/actions/staff/tl';
 import { createCycle } from '@/app/actions/visits/cycles';
 import { createCoachingLog } from '@/app/actions/visits/coachingLogs';
-import { SchoolInputZodSchema } from '@/lib/data/schemas/core/school';
-import { NYCPSStaffInputZodSchema, TeachingLabStaffInputZodSchema } from '@/lib/data/schemas/core/staff';
-import { CycleInputZodSchema } from '@/lib/data/schemas/core/cycle';
-import { CoachingLogZodSchema } from '@/lib/data/schemas/visits/coaching-log';
-import type { SchoolInput } from '@/lib/data/schemas/core/school';
-import type { NYCPSStaffInput, TeachingLabStaffInput } from '@/lib/data/schemas/core/staff';
-import type { CycleInput } from '@/lib/data/schemas/core/cycle';
+import { SchoolInputZodSchema } from '@zod-schema/core/school';
+import { NYCPSStaffInputZodSchema, TeachingLabStaffInputZodSchema } from '@zod-schema/core/staff';
+import { CycleInputZodSchema } from '@zod-schema/core/cycle';
+import { CoachingLogZodSchema } from '@zod-schema/visits/coaching-log';
+import type { SchoolInput } from '@zod-schema/core/school';
+import type { NYCPSStaffInput, TeachingLabStaffInput } from '@zod-schema/core/staff';
+import type { CycleInput } from '@zod-schema/core/cycle';
 
 // Component to show expandable JSON data
 function JsonPreview<T extends Record<string, unknown>>({

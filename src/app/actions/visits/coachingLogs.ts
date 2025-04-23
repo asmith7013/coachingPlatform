@@ -1,10 +1,10 @@
 'use server';
 
-import { connectToDB } from "@/lib/core/db";
-import { CoachingLogModel } from "@/models/visits/coaching-log.model";
-import { CoachingLogZodSchema } from "@/lib/data/schemas/visits/coaching-log";
-import { createItem } from "@/lib/utils/general/server/crud";
-import type { CoachingLog } from "@/lib/data/schemas/visits/coaching-log";
+import { connectToDB } from "@/lib/data-server/db/connection";
+import { CoachingLogModel } from "@/lib/data-schema/mongoose-schema/visits/coaching-log.model";
+import { CoachingLogZodSchema } from "@zod-schema/visits/coaching-log";
+import { createItem } from "@data-server/crud/crud-operations";
+import type { CoachingLog } from "@zod-schema/visits/coaching-log";
 
 /**
  * Creates a new coaching log

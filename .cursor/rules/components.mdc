@@ -22,3 +22,4 @@ The component system follows a layered approach with atomic, domain, and compose
 @file:docs/components/domain-components.md
 @file:docs/components/composed-components.md
 @file:docs/atomic-component-migration.md
+@file:docs/design-token-system.md

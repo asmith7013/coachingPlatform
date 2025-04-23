@@ -6,20 +6,20 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
-// import { cn } from "@/lib/utils/general";
+// import { cn } from "@/lib/utils";
 import { EmptyListWrapper } from '@/components/shared/EmptyListWrapper';
 import { ResourceHeader } from "@/components/shared/ResourceHeader";
 import { Field, FieldType, MemoizedGenericResourceForm } from "@/components/composed/forms/ResourceForm";
 import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
 import { useNYCPSStaff } from "@/hooks/useNYCPSStaff";
-import { NYCPSStaff, NYCPSStaffInput } from "@/lib/data/schemas/core/staff";
+import { NYCPSStaff, NYCPSStaffInput } from "@zod-schema/core/staff";
 import { createNYCPSStaff, updateNYCPSStaff, deleteNYCPSStaff, uploadNYCPSStaffFile } from "@/app/actions/staff/nycps";
-import { NYCPSStaffFieldConfig } from "@/lib/data/forms/fieldConfig/core/staff";
+import { NYCPSStaffFieldConfig } from "@ui-forms/fieldConfig/core/staff";
 import { Dialog } from "@/components/composed/dialogs/Dialog";
 import { Badge } from '@/components/core/feedback/Badge';
 // import { fetchSchoolOptions } from "@/lib/client-api";
-import { NYCPSStaffOverrides } from "@/lib/data/forms/formOverrides";
-import { getReferenceSelectPropsForField } from "@/lib/ui/forms/helpers";
+import { NYCPSStaffOverrides } from "@ui-forms/formOverrides";
+import { getReferenceSelectPropsForField } from "@ui-forms/helpers";
 import Link from "next/link";
 
 
@@ -152,7 +152,7 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
   // Memoize the form fields to prevent recreation on each render
   const formFields = React.useMemo(() => {
     return NYCPSStaffFieldConfig.map(field => {
-      const fieldName = field.name as keyof NYCPSStaffInput;
+      const fieldName = field.key as keyof NYCPSStaffInput;
       
       // Handle reference fields for schools and owners
       if (fieldName === 'schools' || fieldName === 'owners') {

@@ -1,4 +1,4 @@
-<doc id="data-flow">
+<doc id="schema-system">
 
 # Data Flow & Schema System
 
@@ -16,7 +16,7 @@ Our platform uses a schema-driven architecture where Zod schemas serve as the de
 
 ## Zod Schema Architecture
 
-Schemas are organized in `src/lib/zod-schema/` by domain:
+Schemas are organized in `src/lib/data-schema/zod-schema/` by domain:
 
 - `core/`: Base schemas for common entities (School, Staff, Cycle)
 - `shared/`: Reusable schema parts (notes, enums, date helpers)
@@ -38,9 +38,28 @@ export const SchoolZodSchema = z.object({
 });
 [RULE] When adding new fields, always start by updating the Zod schema first.
 </section>
+<section id="data-model-integration">
+MongoDB Model Integration
+MongoDB models are defined using the Zod schemas and stored in src/lib/data-schema/mongoose-schema/:
+typescriptimport { SchoolZodSchema } from "@/lib/data-schema/zod-schema/core/school";
+import mongoose from "mongoose";
+
+const schemaFields = {
+  schoolNumber: { type: String, required: true },
+  district: { type: String, required: true },
+  schoolName: { type: String, required: true },
+  // Additional fields...
+};
+
+const SchoolSchema = new mongoose.Schema(schemaFields, { timestamps: true });
+
+export const SchoolModel = mongoose.models.School || 
+  mongoose.model("School", SchoolSchema);
+[RULE] MongoDB models should reflect the structure defined in Zod schemas.
+</section>
 <section id="data-form-config">
 Field Configuration System
-Field configurations in src/lib/ui-schema/fieldConfig/ define how form fields should be rendered and validated:
+Field configurations in src/lib/ui/forms/fieldConfig/ define how form fields should be rendered and validated:
 typescriptexport const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     name: 'schoolNumber',
@@ -60,7 +79,7 @@ typescriptexport const SchoolFieldConfig: Field<SchoolInput>[] = [
 </section>
 <section id="data-form-overrides">
 Form Overrides
-Form overrides (src/lib/ui-schema/formOverrides/) allow customization of form behavior for specific contexts:
+Form overrides (src/lib/ui/forms/formOverrides/) allow customization of form behavior for specific contexts:
 typescriptexport const SchoolOverrides: FieldOverrideMap<SchoolInput> = {
   district: {
     type: 'reference',
@@ -76,14 +95,12 @@ typescriptexport const SchoolOverrides: FieldOverrideMap<SchoolInput> = {
 Data Fetching Hooks
 Custom hooks for data fetching provide a consistent interface across the application:
 typescriptfunction useSchools() {
-  const [schools, setSchools] = useState<School[]>([]);
-  const [error, setError] = useState<Error | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, error, isLoading } = useSafeSWR<School[]>('/api/schools');
   
-  // Implementation...
+  // Additional CRUD functions...
   
   return {
-    schools,
+    schools: data?.items || [],
     error,
     isLoading,
     createSchool,
@@ -120,7 +137,7 @@ typescriptfunction useReferenceOptions(url: string, searchQuery: string = "") {
 </section>
 <section id="data-server-actions">
 Server Actions
-Server actions provide a way to perform server-side operations directly from client components:
+Server actions in src/app/actions/ provide a way to perform server-side operations directly from client components:
 typescriptexport async function createSchool(data: SchoolInput) {
   try {
     // Validate against schema
@@ -140,23 +157,43 @@ typescriptexport async function createSchool(data: SchoolInput) {
 }
 [RULE] Always validate data with Zod schemas before database operations.
 </section>
-<section id="data-model-integration">
-MongoDB Model Integration
-MongoDB models are defined using the Zod schemas:
-typescriptimport { SchoolZodSchema } from "@/lib/zod-schema/core/school";
-import mongoose from "mongoose";
+<section id="data-flow-diagram">
+Data Flow Diagram
+The data flows through our system in this sequence:
 
-const schemaFields = {
-  schoolNumber: { type: String, required: true },
-  district: { type: String, required: true },
-  schoolName: { type: String, required: true },
-  // Additional fields...
-};
+Zod Schema Definition: Define data structure and validation (/lib/data-schema/zod-schema/)
+MongoDB Model Creation: Create database models based on schema (/lib/data-schema/mongoose-schema/)
+Field Configuration: Define UI representation of data (/lib/ui/forms/fieldConfig/)
+Server Actions/API Routes: Implement data operations (/app/actions/ or /app/api/)
+React Hooks: Create data fetching and management hooks (/hooks/)
+UI Components: Render data and handle user interactions (/components/)
 
-const SchoolSchema = new mongoose.Schema(schemaFields, { timestamps: true });
+[RULE] Follow this data flow sequence when implementing new features.
+</section>
+<section id="data-transformers">
+Data Transformers
+Data transformation utilities in src/lib/data-utilities/transformers/ help sanitize and validate data:
+typescript// Sanitize a MongoDB document for client-side use
+const safeDoc = sanitizeDocument(mongooseDoc, MyZodSchema);
 
-export const SchoolModel = mongoose.models.School || 
-  mongoose.model("School", SchoolSchema);
-[RULE] MongoDB models should reflect the structure defined in Zod schemas.
+// Validate against a schema and return null on error
+const result = safeParseAndLog(MyZodSchema, data);
+
+// Parse data and throw a formatted error if validation fails
+const result = parseOrThrow(MyZodSchema, data);
+[RULE] Use appropriate transformers when moving data between server and client.
+</section>
+<section id="data-consistency">
+Maintaining Data Consistency
+To ensure data consistency across the application:
+
+Start with the Zod schema as the single source of truth
+Generate TypeScript types from schemas using z.infer<typeof SchemaName>
+Define MongoDB models that mirror the schema structure
+Create field configurations and overrides based on the schema
+Use transformers to sanitize data when crossing boundaries
+Validate inputs against schemas at every entry point
+
+[RULE] Apply these consistency practices at every layer of the application.
 </section>
 </doc>

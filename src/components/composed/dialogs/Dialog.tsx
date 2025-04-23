@@ -3,8 +3,8 @@
 import { Fragment, ReactNode } from 'react';
 import { Dialog as HDialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { cn } from '@/lib/utils/general';
-import { shadows, textSize, textColors } from '@/lib/ui/tokens';
+import { cn } from '@/lib/utils';
+import { shadows, textSize, textColors } from '@ui-tokens/tokens';
 
 // Size variants with predefined max-width values
 const sizeClasses = {

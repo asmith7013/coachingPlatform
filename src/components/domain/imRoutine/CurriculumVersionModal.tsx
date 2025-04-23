@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { typography } from '@/lib/ui/tokens';
-import { cn } from '@/lib/utils/general';
+import { typography } from '@ui-tokens/typography';
+import { cn } from '@/lib/utils';
 
 type CurriculumVersionModalProps = {
   onSelectVersion: (version: 'KH' | 'ILC') => void;

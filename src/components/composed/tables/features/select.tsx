@@ -1,5 +1,5 @@
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textColors } from '@/lib/ui/tokens'
+import { textColors } from '@ui-tokens/tokens'
 
 interface SelectOption {
   label: string

@@ -1,6 +1,6 @@
 import { fetchSchedules } from "@/app/actions/schedules/schedules";
-import { createReferenceEndpoint } from "@/lib/core/api";
-import type { TeacherSchedule } from "@/lib/data/schemas/scheduling/schedule";
+import { createReferenceEndpoint } from "@api/handlers/reference-endpoint";
+import type { TeacherSchedule } from "@zod-schema/scheduling/schedule";
 
 // Define the minimal schedule reference type
 type ScheduleReference = {

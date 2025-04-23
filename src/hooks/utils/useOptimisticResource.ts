@@ -1,7 +1,7 @@
 // src/hooks/utils/useOptimisticResource.ts
 import { useState, useCallback } from "react";
 import { KeyedMutator } from "swr";
-import { ResourceResponse } from '@/lib/utils/general/server/types';
+import { ResourceResponse } from '@/lib/data-utilities/pagination/types';
 
 export function useOptimisticResource<T extends { _id: string }, I>(
   mutate: KeyedMutator<ResourceResponse<T>>

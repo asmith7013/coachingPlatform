@@ -1,22 +1,22 @@
 "use server";
 
 import { z } from "zod";
-import { TeachingLabStaffModel } from "@/models/core/staff.model";
+import { TeachingLabStaffModel } from "@/lib/data-schema/mongoose-schema/core/staff.model";
 import { 
   TeachingLabStaffZodSchema, 
   TeachingLabStaffInputZodSchema,
   type TeachingLabStaff,
   type TeachingLabStaffInput
-} from "@/lib/data/schemas/core/staff";
-import { handleServerError } from "@/lib/core/error/handleServerError";
-import { handleValidationError } from "@/lib/core/error/handleValidationError";
+} from "@zod-schema/core/staff";
+import { handleServerError } from "@/lib/core/error/handle-server-error";
+import { handleValidationError } from "@/lib/core/error/handle-validation-error";
 import { 
   createItem,
   updateItem,
   deleteItem,
-} from "@/lib/utils/general/server";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
-import { connectToDB } from "@/lib/core/db";
+} from "@data-server/crud/crud-operations";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/data-utilities/pagination/paginated-query";
+import { connectToDB } from "@/lib/data-server/db/connection";
 
 // Types
 export type { TeachingLabStaff, TeachingLabStaffInput };

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useResourceManager } from "@hooks/utils/useResourceManager";
 import { fetchLookFors, createLookFor, updateLookFor, deleteLookFor } from "@actions/lookFors/lookFors";
 import { LookFor, LookForInput } from "@/lib/types/core";
-import type { ResourceResponse } from "@/lib/utils/general/server/types";
+import type { ResourceResponse } from "@/lib/data-utilities/pagination/types";
 import type { FetchParams } from "@/lib/types/api";
 
 /**

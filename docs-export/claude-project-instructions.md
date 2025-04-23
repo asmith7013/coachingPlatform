@@ -12,7 +12,9 @@
   - [component system](#component-system)
   - [composed components](#composed-components)
   - [core components](#core-components)
+  - [design token system](#design-token-system)
   - [domain components](#domain-components)
+  - [styling patterns](#styling-patterns)
 - [Data-flow](#data-flow)
   - [api patterns](#api-patterns)
   - [error handling](#error-handling)
@@ -25,6 +27,7 @@
   - [cursor integration](#cursor-integration)
   - [dev utilities](#dev-utilities)
   - [development workflow](#development-workflow)
+  - [implementation workflow](#implementation-workflow)
 - [Examples](#examples)
   - [component examples](#component-examples)
   - [prompt examples](#prompt-examples)
@@ -39,9 +42,7 @@
 
 ## Purpose of This Document
 
-This document provides a comprehensive overview of the AI Coaching Platform architecture and serves as a guide to the documentation structure. It's designed to help both developers and AI tools (Cursor, Claude) understand the system architecture, documentation organization, and implementation patterns.
-
-The documentation in these folders contains detailed information about specific aspects of the system, while this document provides the high-level context necessary to navigate and understand those details.
+This document provides a comprehensive overview of the AI Coaching Platform architecture. It's designed to help both developers and AI tools understand the system architecture, documentation organization, and implementation patterns.
 
 ## Core Architecture
 
@@ -49,26 +50,62 @@ Our application follows these key architectural principles:
 
 1. **Schema-Driven Design**: Zod schemas serve as the canonical source of truth for all data structures
 2. **Atomic Component Hierarchy**: Components follow core → composed → domain → features pattern
-3. **Token-First Design System**: All styling uses design tokens for consistency
+3. **Token-First Design System**: All styling uses design tokens for consistency (built on Tailwind CSS v4)
 4. **Standardized Patterns**: Common patterns for data fetching, forms, error handling, and API responses
 
-## Tech Stack
+## Design Token System
 
-- **Frontend**: Next.js with Tailwind CSS (token-first design system)
-- **Backend**: Node.js, MongoDB
-- **Validation**: Zod schemas (canonical source of truth)
-- **Forms**: Generated dynamically from Zod schemas
-- **Styling**: Tailwind Variants (tv()) for component styling
-- **State Management**: React hooks with SWR for data fetching
-- **Error Handling**: Specialized handlers for client, server, and validation errors
+Our design system is built on tokens that act as a bridge between Tailwind classes and component styling:
+
+### 1. Primitive Tokens
+Located in `src/lib/ui/tokens/`, these define semantic values:
+
+```typescript
+// Example token usage
+export const textColors = {
+  primary: "text-blue-600 dark:text-blue-400",
+  secondary: "text-gray-600 dark:text-gray-300",
+  // More color tokens...
+};
+```
+
+### 2. Component-Specific Variants
+Using Tailwind Variants (tv()) to create type-safe component styling:
+
+```typescript
+// Example component variant
+const button = tv({
+  base: "inline-flex items-center justify-center",
+  variants: {
+    variant: {
+      primary: `bg-blue-600 text-white hover:bg-blue-700`,
+      secondary: `bg-gray-200 text-gray-800 hover:bg-gray-300`,
+    },
+    // More variants...
+  }
+});
+```
+
+### 3. Shared Behavior Variants
+Reusable UI behavior patterns like disabled states, loading indicators, etc.
+
+## Data Layer Architecture
+
+### Schema, Model, UI Connection
+
+Our system follows a specific flow from schema definition to UI:
+
+1. **Zod Schema Definition**: The canonical source of truth
+2. **MongoDB Model Creation**: Derived from the schema
+3. **Field Configuration**: Defines UI representation
+4. **Form Component Integration**: Auto-generates forms
+5. **Server Action Implementation**: Handles data operations
 
 ## Main System Components
 
-The system consists of these primary components:
-
 ### 1. Data Layer
-- **Zod Schemas**: Define all data structures (`src/lib/data/schemas/`)
-- **MongoDB Models**: Database models derived from schemas (`src/models/`)
+- **Zod Schemas**: Define all data structures (`src/lib/data-schema/zod-schema/`)
+- **MongoDB Models**: Database models derived from schemas (`src/lib/data-schema/mongoose-schema/`)
 - **API Routes**: Endpoints for data access (`src/app/api/`)
 - **Server Actions**: Direct server operations (`src/app/actions/`)
 
@@ -80,134 +117,54 @@ The system consists of these primary components:
 
 ### 3. Data Flow
 - **Custom Hooks**: Data fetching and state management (`src/hooks/`)
-- **Field Configurations**: Form field definitions (`src/lib/ui-schema/fieldConfig/`)
-- **Form Overrides**: Context-specific form modifications (`src/lib/ui-schema/formOverrides/`)
+- **Field Configurations**: Form field definitions (`src/lib/ui/forms/fieldConfig/`)
+- **Form Overrides**: Context-specific form modifications (`src/lib/ui/forms/formOverrides/`)
 
 ### 4. Utilities
 - **Error Handling**: Standardized error processing (`src/lib/core/error/`)
-- **Sanitization**: Data cleaning and validation (`src/lib/utils/server/`)
-- **Development Tools**: Developer experience enhancements (`src/lib/utils/dev/`)
-
-## How It All Fits Together
-
-1. Data flows from Zod schemas → MongoDB models → API/Server Actions → React hooks → UI components
-2. UI components use a hierarchy from simple to complex (core → composed → domain → features)
-3. Forms are generated from field configurations that refer to Zod schemas
-4. Error handling is standardized across all layers
+- **Sanitization**: Data cleaning and validation (`src/lib/data-utilities/transformers/`)
+- **Development Tools**: Developer experience enhancements (`src/lib/dev/`)
 
 ## Documentation Structure
 
-The remainder of the documentation is organized into these sections:
+The documentation is organized into these sections:
 
 ### Architecture (`/docs/architecture/`)
-- **Core Principles**: Foundational architectural principles
-- **Design Patterns**: Common patterns used throughout the application
-- **Import Patterns**: Conventions for organizing imports
-- **Project Structure**: Organization of the codebase
+- Core Principles, Design Patterns, Import Patterns, Project Structure
 
 ### Components (`/docs/components/`)
-- **Component System**: Overview of the component architecture
-- **Composed Components**: Patterns for building composite components
-- **Core Components**: Basic building blocks
-- **Domain Components**: Business-specific implementations
+- Component System, Design Token System, Styling Patterns, Core Components, Domain Components
 
 ### Data Flow (`/docs/data-flow/`)
-- **API Patterns**: Standardized API response formats and error handling
-- **Error Handling**: Comprehensive error handling system
-- **MongoDB Integration**: Patterns for database interaction
-- **Sanitization System**: Data cleaning and validation
-- **Schema System**: Zod schema architecture
-- **Server Actions**: Next.js server action implementation
+- API Patterns, Error Handling, MongoDB Integration, Schema System, Server Actions
 
 ### Workflows (`/docs/workflows/`)
-- **Common Tasks**: Step-by-step guides for frequent development tasks
-- **Cursor Integration**: Best practices for using the Cursor AI code editor
-- **Dev Utilities**: Developer experience enhancement tools
-- **Development Workflow**: Overall development process
+- Common Tasks, Cursor Integration, Dev Utilities, Development Workflow
 
 ### Examples (`/docs/examples/`)
-- **Component Examples**: Real-world component implementations
-- **Prompt Examples**: Effective prompts for Cursor AI
-- **Schema Examples**: Example Zod schema implementations
-
-## Development Workflow
-
-### Adding a New Entity
-
-1. Create the Zod schema in the appropriate domain directory
-2. Create the MongoDB model derived from the schema
-3. Create field configuration for form generation
-4. Implement server actions or API routes for CRUD operations
-5. Build UI components for entity display and manipulation
-
-### Creating Components
-
-Components follow the atomic design pattern:
-
-1. Core components (Button, Input, Text)
-2. Composed components (Card, Form, Table)
-3. Domain components (StaffCard, RubricViewer)
-4. Feature components (SchoolDirectory, CoachingLog)
-
-All components use the Tailwind Variants library for styling with design tokens.
-
-### Data Fetching
-
-Data is fetched using custom hooks built around SWR:
-
-```typescript
-function useResources() {
-  const { data, error, isLoading } = useSafeSWR('/api/resources');
-  
-  return {
-    resources: data?.items || [],
-    error,
-    isLoading,
-    // CRUD operations...
-  };
-}
-```
+- Component Examples, Prompt Examples, Schema Examples
 
 ## Project Structure
 
 ```
 src/
 ├── app/                # Next.js app router pages and API routes
-│   ├── actions/        # Server actions for form submissions
-│   ├── api/            # API routes for data access
-│   └── [routes]/       # Page components
-├── components/         # React components
-│   ├── core/           # Primitive UI elements
-│   ├── composed/       # Combinations of core components
-│   ├── domain/         # Business domain specific components
-│   ├── features/       # Complete feature implementations
-│   ├── layouts/        # Page layout components
-│   ├── shared/         # Cross-cutting components
-│   └── utility/        # Helper components
+├── components/         # React components (core, composed, domain, features)
 ├── hooks/              # Custom React hooks
-│   ├── debugging/      # Hooks for development and debugging
-│   ├── utils/          # Utility hooks for common operations
-│   └── [domain hooks]  # Resource-specific hooks
 ├── lib/                # Core utilities and modules
-│   ├── core/           # Essential core functionality
-│   ├── data/           # Data handling utilities
-│   ├── domains/        # Domain-specific functionality
-│   ├── ui/             # UI utilities
-│   └── utils/          # General utilities
-├── models/             # MongoDB models
-│   ├── core/           # Core entity models
-│   ├── look-fors/      # Look For related models
-│   ├── scheduling/     # Scheduling related models
-│   └── visits/         # Visit related models
-└── providers/          # React context providers
+│   ├── data-schema/    # Zod and Mongoose schemas
+│   ├── ui/             # UI utilities and tokens
+│   └── [other utils]   # Various utilities
+├── providers/          # React context providers
+└── styles/             # Global styles
 ```
 
 ## Design Philosophy
 
-- **Structured, DRY, and scalable**: The codebase is designed to avoid manual duplication
-- **Mock data for development**: Full-featured development is possible without a database connection
+- **Structured, DRY, and scalable**: Avoids manual duplication
+- **Mock data for development**: Full-featured development without a database
 - **Schema-driven**: All data structures flow from Zod schemas
-- **Token-first styling**: All UI components use design tokens for consistent styling
+- **Token-first styling**: All UI components use design tokens
 
 ## Current Build Priorities
 
@@ -219,25 +176,13 @@ src/
 
 ## Using This Documentation
 
-When working with this codebase or documentation:
-
-1. Start with understanding the schema architecture for your target domain
-2. Follow the established patterns for implementation
-3. Reference the appropriate documentation sections based on your task
-4. Use the section IDs to locate specific guidance (e.g., `[component-system][component-variants]`)
-
-For AI tools like Cursor, this documentation is organized with section IDs that can be directly referenced:
+For AI tools like Cursor, this documentation is organized with section IDs:
 
 ```
 [document-id][section-id] Section Title
 ```
 
-For example:
-- `[component-system][component-variants]` - References the variants section of the component system
-- `[error-handling][error-hooks]` - References the hooks section of error handling
-- `[data-flow][data-schemas]` - References the schemas section of data flow
-
-This structure enables precise contextual guidance when developing with AI assistance.
+Example: `[component-system][component-variants]` references the variants section of the component system documentation.
 
 ---
 
@@ -257,127 +202,97 @@ This structure enables precise contextual guidance when developing with AI assis
 
 ## Overview
 
-Our AI Coaching Platform is built on a set of core architectural principles that guide all development decisions. These principles ensure the application remains maintainable, scalable, and aligned with our goal of modernizing coaching and implementation tracking.
+Our AI Coaching Platform is built on a set of foundational architectural principles that guide all development decisions. These high-level principles establish the "why" behind our technical choices and ensure the application remains maintainable, scalable, and aligned with our goals.
 
 [RULE] All development decisions should align with these core principles.
 
 </section>
 
-<section id="schema-driven">
+<section id="schema-driven-philosophy">
 
-## Schema-Driven Design
+## Schema-Driven Philosophy
 
-We follow a schema-driven architecture where Zod schemas serve as the canonical source of truth for all data structures:
+We adopt a schema-first approach where data definitions precede implementation. This philosophy:
 
-```typescript
-// Define schema first
-const SchoolZodSchema = z.object({
-  schoolNumber: z.string(),
-  district: z.string(),
-  schoolName: z.string(),
-  // Additional fields...
-});
+- Establishes a **single source of truth** for all data structures
+- Ensures **consistency** across frontend, backend, and database
+- Drives **automated code generation** and validation
+- Provides a **clear contract** between system components
 
-// Types are derived from schema
-type School = z.infer<typeof SchoolZodSchema>;
+See `data-flow/schema-system.md` for detailed implementation guidelines.
 
-// MongoDB model aligns with schema
-const SchoolSchema = new mongoose.Schema({
-  schoolNumber: { type: String, required: true },
-  district: { type: String, required: true },
-  // Fields mirror schema definition...
-});
-This approach ensures:
+[RULE] Data structures should be defined abstractly before specific implementations.
 
-Type safety across the entire application
-Consistent validation between client and server
-Single source of truth for data structures
-Automatic TypeScript type generation
-
-[RULE] Always define Zod schemas first, then derive types and models from them.
 </section>
-<section id="component-hierarchy">
-Atomic Component Hierarchy
-Our component system follows an atomic design pattern:
 
-Core Components: Primitive UI elements (Button, Input, Text)
-Composed Components: Combinations of core components (Card, Form, Table)
-Domain Components: Business-specific components (StaffCard, RubricViewer)
-Feature Components: Complete features (SchoolDirectory, CoachingLog)
+<section id="atomic-composition">
 
-This structure promotes:
+## Atomic Composition
 
-Reusability through composition
-Consistent UI patterns
-Clear separation of concerns
-Testability at each level
+We build complex interfaces from simple, composable parts following progressive levels of complexity. This principle:
 
-[RULE] Follow the atomic design pattern for all component development.
+- Promotes **reusability** through composition over inheritance
+- Establishes **clear boundaries** between layers of abstraction
+- Enables **independent testing** of isolated components
+- Creates a **shared vocabulary** for UI elements
+
+See `components/component-system.md` for the component hierarchy implementation.
+
+[RULE] Build complex systems from simple, composable parts with clear boundaries.
+
 </section>
-<section id="token-first">
-Token-First Design System
-Our design system uses tokens as the foundation for all styling:
-typescript// Define tokens in a central location
-export const colors = {
-  primary: "text-blue-600",
-  secondary: "text-gray-600",
-  // More color tokens...
-};
 
-// Use tokens instead of hardcoded values
-function Button({ variant = "primary", children }) {
-  return (
-    <button className={cn(colors[variant])}>
-      {children}
-    </button>
-  );
-}
-Benefits include:
+<section id="design-token-centralization">
 
-Consistent visual language
-Easy theme customization
-Reduced duplication
-Enforced design constraints
+## Design Token Centralization
 
-[RULE] Always use design tokens instead of hardcoded values.
+We centralize design decisions in tokens rather than distributing them throughout the codebase. This principle:
+
+- Creates a **unified design language** across the application
+- Simplifies **theme customization** and brand adjustments
+- Enforces **consistency** in the user experience
+- Reduces **design drift** over time
+
+See `components/styling-patterns.md` for token implementation details.
+
+[RULE] Centralize design decisions in a single source of truth.
+
 </section>
-<section id="standardized-patterns">
-Standardized Patterns
-We employ consistent patterns across the application:
 
-Data Fetching: All data fetching uses custom hooks with error handling
-Form Handling: Forms are generated from schemas and field configurations
-Error Handling: Specialized handlers for client, server, and validation errors
-API Responses: Standardized response formats with consistent structure
+<section id="standardized-interfaces">
 
-These patterns:
+## Standardized Interfaces
 
-Reduce cognitive load for developers
-Ensure consistent user experience
-Minimize duplication
-Make the codebase more predictable
+We establish consistent patterns for communication between system components. This principle:
 
-[RULE] Follow established patterns rather than creating one-off solutions.
+- Creates **predictable contracts** between modules
+- Enables **interchangeable implementations**
+- Simplifies **testing and debugging**
+- Reduces **cognitive load** for developers
+
+See `data-flow/api-patterns.md` for API standardization guidelines.
+
+[RULE] Define clear, consistent interfaces between system components.
+
 </section>
-<section id="development-efficiency">
-Development Efficiency
-We prioritize developer experience through:
 
-Path Aliases: Short, readable import paths
-Barrel Files: Centralized exports to simplify imports
-Generated Code: Automatic generation of repetitive code
-Utility Functions: Common operations abstracted into reusable utilities
-Development Tooling: Custom ESLint rules, debugging hooks, and more
+<section id="developer-efficiency">
 
-These practices:
+## Developer Efficiency
 
-Speed up development
-Reduce boilerplate
-Improve code quality
-Enable rapid iteration
+We optimize for developer productivity and code maintainability. This principle:
 
-[RULE] Value developer efficiency as a key architectural concern.
+- Reduces **repetitive tasks** through automation
+- Improves **code comprehension** through consistent patterns
+- Accelerates **onboarding** of new developers
+- Enables **rapid iteration** on features
+
+See `workflows/development-workflow.md` for developer experience best practices.
+
+[RULE] Value developer efficiency as a foundation for product quality.
+
 </section>
+
 </doc>
 
 ---
@@ -386,233 +301,317 @@ Enable rapid iteration
 
 ## design patterns
 
-<doc id="design-patterns">
+<doc id="core-principles">
 
-# Core Design Patterns
+# Core Architecture Principles
+
+<section id="architecture-overview">
+
+## Overview
+
+Our AI Coaching Platform is built on a set of foundational architectural principles that guide all development decisions. These high-level principles establish the "why" behind our technical choices and ensure the application remains maintainable, scalable, and aligned with our goals.
+
+[RULE] All development decisions should align with these core principles.
+
+</section>
+
+<section id="schema-driven-philosophy">
+
+## Schema-Driven Philosophy
+
+We adopt a schema-first approach where data definitions precede implementation. This philosophy:
+
+- Establishes a **single source of truth** for all data structures
+- Ensures **consistency** across frontend, backend, and database
+- Drives **automated code generation** and validation
+- Provides a **clear contract** between system components
+
+See `data-flow/schema-system.md` for detailed implementation guidelines.
+
+[RULE] Data structures should be defined abstractly before specific implementations.
+
+</section>
+
+<section id="atomic-composition">
+
+## Atomic Composition
+
+We build complex interfaces from simple, composable parts following progressive levels of complexity. This principle:
+
+- Promotes **reusability** through composition over inheritance
+- Establishes **clear boundaries** between layers of abstraction
+- Enables **independent testing** of isolated components
+- Creates a **shared vocabulary** for UI elements
+
+See `components/component-system.md` for the component hierarchy implementation.
+
+[RULE] Build complex systems from simple, composable parts with clear boundaries.
+
+</section>
+
+<section id="design-token-centralization">
+
+## Design Token Centralization
+
+We centralize design decisions in tokens rather than distributing them throughout the codebase. This principle:
+
+- Creates a **unified design language** across the application
+- Simplifies **theme customization** and brand adjustments
+- Enforces **consistency** in the user experience
+- Reduces **design drift** over time
+
+See `components/styling-patterns.md` for token implementation details.
+
+[RULE] Centralize design decisions in a single source of truth.
+
+</section>
+
+<section id="standardized-interfaces">
+
+## Standardized Interfaces
+
+We establish consistent patterns for communication between system components. This principle:
+
+- Creates **predictable contracts** between modules
+- Enables **interchangeable implementations**
+- Simplifies **testing and debugging**
+- Reduces **cognitive load** for developers
+
+See `data-flow/api-patterns.md` for API standardization guidelines.
+
+[RULE] Define clear, consistent interfaces between system components.
+
+</section>
+
+<section id="developer-efficiency">
+
+## Developer Efficiency
+
+We optimize for developer productivity and code maintainability. This principle:
+
+- Reduces **repetitive tasks** through automation
+- Improves **code comprehension** through consistent patterns
+- Accelerates **onboarding** of new developers
+- Enables **rapid iteration** on features
+
+See `workflows/development-workflow.md` for developer experience best practices.
+
+[RULE] Value developer efficiency as a foundation for product quality.
+
+</section>
+
+</doc>
+design-patterns.md (Revised)
+markdown<doc id="design-patterns">
+
+# Cross-Cutting Design Patterns
 
 <section id="patterns-overview">
 
 ## Overview
 
-Our application employs a set of consistent design patterns that solve common problems and promote code quality. These patterns provide a shared vocabulary and approach for the development team.
+This document describes cross-cutting patterns that apply across multiple domains in our application. It focuses on general approaches rather than specific implementation details, which are covered in domain-specific documentation.
 
-[RULE] Use these established patterns to solve common problems rather than creating one-off solutions.
+[RULE] Apply these patterns consistently across different application domains.
 
 </section>
 
-<section id="hook-patterns">
+<section id="boundary-patterns">
 
-## React Hook Patterns
+## Component Boundary Patterns
 
-### Resource Hooks
+### Single Responsibility
 
-For data fetching and management, we use a consistent resource hook pattern:
+Components should have a single responsibility and minimal dependencies:
 
 ```typescript
-function useSchools() {
-  const [schools, setSchools] = useState<School[]>([]);
-  const [error, setError] = useState<Error | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Fetch implementation...
-  
-  return {
-    schools,
-    error,
-    isLoading,
-    createSchool,
-    updateSchool,
-    deleteSchool,
-  };
-}
-These hooks:
-
-Provide CRUD operations for a resource
-Handle loading and error states
-Maintain consistent return shapes
-Support optimistic updates
-
-Safe Data Fetching
-For safer data fetching with SWR, we use the useSafeSWR hook:
-typescriptfunction useSafeSWR<T>(key: string, fetcher?: Fetcher<T>) {
-  // Implementation with error handling...
+// Good: Single responsibility
+function UserAvatar({ src, alt }) {
+  return <img src={src} alt={alt} className="rounded-full" />;
 }
 
-// Usage
-const { data, error, isLoading } = useSafeSWR('/api/schools');
-[RULE] Use appropriate hook patterns for data fetching and management.
-</section>
-<section id="component-patterns">
-Component Patterns
-Variant Pattern
-Components use the variant pattern with Tailwind Variants:
-typescriptconst button = tv({
-  base: "inline-flex items-center justify-center font-medium",
-  variants: {
-    color: {
-      primary: "bg-blue-600 text-white",
-      secondary: "bg-gray-200 text-gray-800",
-    },
-    size: {
-      sm: "text-sm px-3 py-1",
-      md: "text-base px-4 py-2",
-    },
-  },
-  defaultVariants: {
-    color: "primary",
-    size: "md",
-  }
-});
-
-export function Button({ color, size, ...props }) {
+// Bad: Mixed concerns
+function UserCard({ user, onEdit, onDelete }) {
+  // Combines display, editing, and data fetching
+}
+Prop Forwarding
+Use destructuring and prop forwarding for component flexibility:
+typescriptfunction Button({ variant, size, className, ...props }) {
   return (
-    <button className={button({ color, size })} {...props} />
-  );
-}
-Compound Components
-For complex components, we use the compound component pattern:
-typescriptfunction Table({ children, ...props }) {
-  // Implementation...
-}
-
-Table.Header = function TableHeader({ children, ...props }) {
-  // Implementation...
-};
-
-Table.Row = function TableRow({ children, ...props }) {
-  // Implementation...
-};
-
-Table.Cell = function TableCell({ children, ...props }) {
-  // Implementation...
-};
-
-// Usage
-<Table>
-  <Table.Header>...</Table.Header>
-  <Table.Row>
-    <Table.Cell>...</Table.Cell>
-  </Table.Row>
-</Table>
-[RULE] Use variant and compound component patterns for flexible, reusable components.
-</section>
-<section id="form-patterns">
-Form Patterns
-Schema-Driven Forms
-Forms are generated from Zod schemas and field configurations:
-typescript// Field configuration derived from schema
-const SchoolFieldConfig: Field<SchoolInput>[] = [
-  {
-    name: 'schoolNumber',
-    label: 'School Number',
-    type: 'text',
-    required: true,
-  },
-  // Additional fields...
-];
-
-// Form component uses configuration
-function SchoolForm() {
-  return (
-    <ResourceForm
-      title="Add School"
-      fields={SchoolFieldConfig}
-      onSubmit={handleSubmit}
+    <button 
+      className={getButtonClasses(variant, size, className)}
+      {...props} 
     />
   );
 }
-Field Overrides
-Field configurations can be overridden for specific use cases:
-typescriptconst SchoolOverrides: FieldOverrideMap<SchoolInput> = {
-  district: {
-    type: 'reference',
-    label: 'District',
-    url: '/api/districts',
-    multiple: false,
-  },
-};
-
-function SchoolFormWithOverrides() {
+See components/component-system.md for detailed component implementation guidelines.
+[RULE] Establish clear boundaries between components with minimal coupling.
+</section>
+<section id="composition-patterns">
+Component Composition Patterns
+Feature Component Structure
+Feature components should compose domain components rather than implementing business logic directly:
+typescriptfunction CoachingDashboard() {
   return (
-    <ResourceForm
-      title="Add School"
-      fields={SchoolFieldConfig}
-      overrides={SchoolOverrides}
-      onSubmit={handleSubmit}
+    <DashboardLayout>
+      <SchoolSummaryCard />
+      <CoachingMetricsDisplay />
+      <UpcomingVisitsList />
+    </DashboardLayout>
+  );
+}
+Content vs. Container Separation
+Separate data-fetching containers from presentational components:
+typescript// Container with data concerns
+function SchoolListContainer() {
+  const { schools, loading, error } = useSchools();
+  
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorDisplay error={error} />;
+  
+  return <SchoolList schools={schools} />;
+}
+
+// Presentation with no data concerns
+function SchoolList({ schools }) {
+  return (
+    <div>
+      {schools.map(school => (
+        <SchoolCard key={school.id} school={school} />
+      ))}
+    </div>
+  );
+}
+See components/composed-components.md for detailed composition patterns.
+[RULE] Compose feature components from domain-specific building blocks.
+</section>
+<section id="data-flow-patterns">
+Data Flow Patterns
+Unidirectional Data Flow
+Data should flow down through props, with changes flowing up through callbacks:
+typescriptfunction ParentComponent() {
+  const [value, setValue] = useState('');
+  
+  return (
+    <ChildComponent 
+      value={value}
+      onChange={(newValue) => setValue(newValue)}
     />
   );
 }
-[RULE] Use schema-driven forms with field configurations and overrides.
+Prop Drilling Avoidance
+Use composition to avoid excessive prop drilling:
+typescript// Instead of drilling props through multiple levels
+function Toolbar({ onSave, onDelete, onPublish }) {
+  return (
+    <div>
+      <SaveButton onClick={onSave} />
+      <DeleteButton onClick={onDelete} />
+      <PublishButton onClick={onPublish} />
+    </div>
+  );
+}
+
+// Compose the buttons directly in the parent
+function Editor() {
+  const { save, delete, publish } = useActions();
+  
+  return (
+    <Toolbar>
+      <SaveButton onClick={save} />
+      <DeleteButton onClick={delete} />
+      <PublishButton onClick={publish} />
+    </Toolbar>
+  );
+}
+See data-flow/schema-system.md for detailed data flow guidelines.
+[RULE] Maintain clear, unidirectional data flow throughout the application.
 </section>
-<section id="error-patterns">
-Error Handling Patterns
-Error Handler Functions
-Error handling is standardized with specialized handlers:
-typescript// Client-side error handling
-try {
-  // Client-side operation
-} catch (error) {
-  const errorMessage = handleClientError(error);
-  // Display to user
+<section id="state-management-patterns">
+State Management Patterns
+Local vs. Global State
+Keep state as local as possible, lifting it only when necessary:
+typescript// Local state for component-specific concerns
+function Accordion() {
+  const [isOpen, setIsOpen] = useState(false);
+  // ...
 }
 
-// Server-side error handling
-try {
-  // Server-side operation
-} catch (error) {
-  if (error instanceof z.ZodError) {
-    return handleValidationError(error);
-  }
-  return handleServerError(error);
+// Lifted state for shared concerns
+function Form() {
+  const [values, setValues] = useState({});
+  
+  return (
+    <>
+      <FormInput 
+        value={values.name}
+        onChange={(name) => setValues({...values, name})}
+      />
+      <FormInput 
+        value={values.email}
+        onChange={(email) => setValues({...values, email})}
+      />
+    </>
+  );
 }
-Error Boundaries
-For component-level error handling, we use error boundaries:
-tsx<ErrorBoundary
-  fallback={<ErrorFallback />}
-  onError={handleError}
->
-  <ComponentThatMightError />
-</ErrorBoundary>
-[RULE] Use the appropriate error handling pattern based on the context.
+State Derivation
+Derive state from props when possible instead of duplicating:
+typescript// Deriving state from props
+function FilteredList({ items, filter }) {
+  // Derive filtered items instead of storing in state
+  const filteredItems = useMemo(() => {
+    return items.filter(item => item.matches(filter));
+  }, [items, filter]);
+  
+  return <List items={filteredItems} />;
+}
+See data-flow/schema-system.md for state management guidelines.
+[RULE] Keep state as local as possible and derive computed values.
 </section>
-<section id="api-patterns">
-API Patterns
-Standard Response
-API responses follow a consistent structure:
-typescriptinterface StandardResponse<T = Record<string, unknown>> {
-  items: T[];
-  total?: number;
-  page?: number;
-  limit?: number;
-  message?: string;
-  success: boolean;
-}
-
-// Example success response
-{
-  "items": [{ id: "1", name: "Item 1" }],
-  "total": 1,
-  "success": true
-}
-
-// Example error response
-{
-  "items": [],
-  "success": false,
-  "message": "Error message"
-}
-API Route Handler
-API routes use the withStandardResponse wrapper:
-typescriptexport const GET = withStandardResponse(async (request) => {
-  // Implementation...
-  return {
-    items: await fetchItems(),
-    total: items.length
-  };
+<section id="optimization-patterns">
+Optimization Patterns
+Memoization Boundaries
+Use memoization strategically at component boundaries:
+typescript// Memoize expensive component
+const ExpensiveList = memo(function ExpensiveList({ items }) {
+  return (
+    <div>
+      {items.map(item => (
+        <ExpensiveItem key={item.id} item={item} />
+      ))}
+    </div>
+  );
 });
-[RULE] Use the standard response format and API patterns for all server endpoints.
+
+// Memoize callback to prevent unnecessary rerenders
+function Parent() {
+  const handleClick = useCallback(() => {
+    // Handler implementation
+  }, [/* dependencies */]);
+  
+  return <Child onClick={handleClick} />;
+}
+Code-Splitting
+Split code at feature boundaries for optimized loading:
+typescript// Lazy-load feature components
+const Settings = lazy(() => import('./pages/Settings'));
+const Analytics = lazy(() => import('./pages/Analytics'));
+
+function App() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <Routes>
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/analytics" element={<Analytics />} />
+      </Routes>
+    </Suspense>
+  );
+}
+See workflows/performance-optimization.md for detailed optimization strategies.
+[RULE] Apply optimization techniques thoughtfully at appropriate boundaries.
 </section>
 </doc>
+
 
 ---
 
@@ -661,12 +660,42 @@ typescript// tsconfig.json
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@components/*": ["src/components/*"],
-      "@lib/*": ["src/lib/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@models/*": ["src/models/*"]
-    }
+        // Base path
+        "@/*": ["./src/*"],
+
+        // Core component and hook paths
+        "@components/*": ["./src/components/*"],
+        "@hooks/*": ["./src/hooks/*"],
+
+        // Server-side and data paths
+        "@actions/*": ["./src/app/actions/*"],
+        "@models/*": ["./src/lib/data-schema/mongoose-schema/*"],
+        "@zod-schema/*": ["./src/lib/data-schema/zod-schema/*"],
+        "@data-schema/*": ["./src/lib/data-schema/*"],
+        "@data-server/*": ["./src/lib/data-server/*"],
+        "@data-utilities/*": ["./src/lib/data-utilities/*"],
+
+        // Library and utility paths
+        "@lib/*": ["./src/lib/*"],
+        "@utils/*": ["./src/lib/utils/*"],
+        "@styles/*": ["./src/styles/*"],
+        "@core/*": ["./src/lib/core/*"],
+        "@api/*": ["./src/lib/api/*"],
+        "@types/*": ["./src/lib/types/*"],
+
+        // UI-specific paths
+        "@ui/*": ["./src/lib/ui/*"],
+        "@ui-tokens/*": ["./src/lib/ui/tokens/*"],
+        "@ui-variants/*": ["./src/lib/ui/variants/*"],
+        "@ui-forms/*": ["./src/lib/ui/forms/*"],
+        
+        // Domain-specific paths
+        "@domain/*": ["./src/lib/domain/*"],
+        
+        // Testing utilities
+        "@testing/*": ["./src/lib/testing/*"],
+        "@mocks/*": ["./src/lib/dev/mocks/*"]
+    },
   }
 }
 Example usage:
@@ -862,34 +891,52 @@ hooks/
 
 The `lib` directory contains core utilities and modules:
 lib/
+├── api/                # API utilities and helpers
+│   ├── handlers/       # API route handlers
+│   ├── responses/      # Response formatting utilities
+│   └── validation/     # API input validation
 ├── core/               # Essential core functionality
 │   ├── error/          # Error handling utilities
-│   ├── performance/    # Performance monitoring
-│   └── types/          # Core type definitions
-├── data/               # Data handling utilities
-│   ├── forms/          # Form configurations and utilities
-│   ├── hooks/          # Data-specific hooks
-│   ├── schemas/        # Zod schemas
-│   └── server-actions/ # Server action implementations
-├── domains/            # Domain-specific functionality
-├── ui/                 # UI utilities
-│   ├── tokens/         # Design system tokens
-│   ├── variants/       # Component variants
-│   └── helpers/        # UI helper functions
-└── utils/              # General utilities
-├── dev/            # Development utilities
-├── general/        # General-purpose utilities
-└── server/         # Server-side utilities
+│   ├── types/          # Core type definitions
+│   └── utils/          # Core utility functions
+├── data-schema/        # Data schema definitions
+│   ├── mongoose-schema/ # MongoDB models
+│   └── zod-schema/     # Zod schema definitions
+├── data-server/        # Server-side data operations
+│   ├── crud/           # CRUD operation utilities
+│   ├── db/             # Database connection
+│   └── file-handling/  # File upload and processing
+├── data-utilities/     # Data processing utilities
+│   ├── pagination/     # Pagination utilities
+│   └── transformers/   # Data transformation helpers
+├── dev/                # Development utilities
+│   ├── debugging/      # Debug tools and monitors
+│   ├── mocks/          # Mock data for development
+│   └── testing/        # Testing utilities
+├── domain/             # Domain-specific functionality
+├── hooks/              # Custom React hooks
+├── json/               # Static JSON data files
+├── types/              # Global type definitions
+└── ui/                 # UI utilities
+├── constants/      # UI-related constants
+├── forms/          # Form configuration and helpers
+│   ├── fieldConfig/  # Field configurations by domain
+│   └── formOverrides/ # Field overrides by context
+├── tokens/         # Design system tokens
+└── variants/       # Component variants
+
 
 This structure:
-- Groups related functionality
-- Creates clear boundaries between concerns
-- Provides intuitive import paths
-- Scales with application growth
+- Separates concerns clearly between data, UI, and core functionality
+- Organizes schemas and models together in data-schema
+- Keeps server operations in data-server
+- Centralizes UI-related code in the ui directory
+- Provides dedicated spaces for development and testing utilities
 
-[RULE] Place utilities in the appropriate subdirectory within lib.
+[RULE] Place utilities in the appropriate subdirectory within lib based on their purpose and domain.
 
 </section>
+
 
 <section id="models-structure">
 
@@ -958,7 +1005,7 @@ import styles from './styles.module.css';
 
 ## Overview
 
-Our component system follows an atomic design pattern, starting with primitive core components and building up to complex feature implementations. All components use the Tailwind Variants (`tv()`) library for styling.
+Our component system follows an atomic design pattern, starting with primitive core components and building up to complex feature implementations. All components use design tokens for styling consistency, with Tailwind Variants (`tv()`) for component-specific variants.
 
 [RULE] Follow the atomic design pattern: core → composed → domain → features.
 
@@ -969,116 +1016,173 @@ Our component system follows an atomic design pattern, starting with primitive c
 ## Component Organization
 
 Components are organized by their level of complexity:
-src/components/
-├── core/         # Primitive UI elements (Button, Input, Text)
-├── composed/     # Combinations of core components (Card, Form)
-├── domain/       # Business domain specific components
-├── features/     # Complete feature implementations
-├── shared/       # Cross-cutting components
-└── utility/      # Helper components
+components/
+├── core/               # Primitive UI elements
+│   ├── feedback/       # Feedback indicators (Badge, etc.)
+│   ├── fields/         # Form input components
+│   ├── layout/         # Layout primitives
+│   └── typography/     # Text elements (Heading, Text)
+├── composed/           # Combinations of core components
+│   ├── cards/          # Card components
+│   ├── dialogs/        # Dialog components
+│   ├── forms/          # Form components
+│   ├── tables/         # Table components
+│   └── tabs/           # Tab components
+├── domain/             # Business domain specific components
+│   ├── imRoutine/      # Implementation routine components
+│   ├── lookFors/       # Look-for components
+│   ├── rubrics/        # Rubric components
+│   ├── schools/        # School components
+│   ├── staff/          # Staff components
+│   └── visits/         # Visit components
+├── features/           # Complete feature implementations
+├── layouts/            # Page layout components
+├── shared/             # Cross-cutting components
+└── utility/            # Helper components
+
+Each component type serves a specific purpose:
+
+1. **Core Components**: Building blocks with minimal dependencies
+2. **Composed Components**: Combinations of core components for common patterns
+3. **Domain Components**: Business-specific implementations
+4. **Feature Components**: Complete features combining multiple domain components
 
 [RULE] Place new components in the appropriate directory based on their complexity and purpose.
 
 </section>
 
-<section id="component-tokens">
+<section id="styling-approach">
 
-## Design System Tokens
+## Styling Approach
 
-Our design system uses tokens for consistent styling:
+Our project uses a clear approach to styling that separates concerns:
+
+### Design Tokens
+
+Tokens are primitive style values defined in `@/lib/ui/tokens/*`:
 
 ```typescript
-// src/lib/ui/tokens.ts
-export const colors = {
-  primary: "text-blue-600",
-  secondary: "text-gray-600",
-  accent: "text-purple-600",
-  danger: "text-red-600",
-  // Additional colors...
-};
+// Example token usage in components
+import { textColors, radii } from '@/lib/ui/tokens';
 
-export const typography = {
-  textSize: {
-    xs: "text-xs",
-    sm: "text-sm",
-    base: "text-base",
-    lg: "text-lg",
-    // Additional sizes...
-  },
-  // Additional typography tokens...
-};
-[RULE] Always use tokens instead of hardcoded values for styling.
-</section>
-<section id="component-variants">
-Tailwind Variants
-Components use the tv() utility for creating variants:
-typescript// Button.tsx
-import { tv } from 'tailwind-variants';
-import { textSizeVariant, paddingVariant } from '@/lib/ui/sharedVariants';
-import { colors } from '@/lib/ui/tokens';
-
-const button = tv({
-  base: "inline-flex items-center justify-center font-medium transition-colors",
+function Alert() {
+  return (
+    <div className={cn(
+      "p-4 border",
+      textColors.danger,
+      radii.md
+    )}>
+      {children}
+    </div>
+  );
+}
+Component-Specific Variants
+For component-level styling variations, use Tailwind Variants:
+typescriptconst button = tv({
+  base: "inline-flex items-center justify-center",
   variants: {
-    textSize: textSizeVariant.variants.textSize,
-    padding: paddingVariant.variants.padding,
-    color: colors,
+    variant: {
+      primary: textColors.primary,
+      secondary: textColors.secondary,
+    },
+    size: {
+      sm: "text-sm p-2",
+      md: "text-base p-4",
+    }
   },
   defaultVariants: {
-    textSize: 'base',
-    padding: 'md',
-    color: 'primary',
+    variant: "primary",
+    size: "md"
   }
 });
+Shared Behavior Variants
+For common UI behaviors that appear across many components, use shared variants:
+typescriptimport { disabledVariant, loadingVariant } from '@/lib/ui/variants';
 
-export function Button({ 
+const myComponent = tv({
+  // ...
+  variants: {
+    // Use shared behavior variants
+    disabled: disabledVariant.variants.disabled,
+    loading: loadingVariant.variants.loading,
+    
+    // Component-specific variants
+    // ...
+  }
+});
+[RULE] Use tokens directly in atomic components, component-specific variants for styling variations, and shared variants for common behaviors.
+</section>
+<section id="component-tokens">
+Design System Tokens
+Our design system provides tokens for:
+
+Typography: Text sizes, weights, and colors
+Spacing: Padding, margins, and gaps
+Colors: Semantic color mapping
+Shapes: Border radius and shadows
+Layout: Grid and flex utilities
+
+typescript// Token imports
+import { 
   textSize, 
-  padding, 
-  color, 
-  className, 
-  ...props 
-}: ButtonProps) {
+  textColors, 
+  weight,
+  paddingX,
+  paddingY,
+  radii
+} from '@/lib/ui/tokens';
+[RULE] Always import tokens directly from their respective files, not through intermediate helpers.
+</section>
+<section id="atomic-vs-shared">
+Atomic Components vs Shared Variants
+Our system uses a hybrid approach:
+Atomic Components
+
+Self-contained with explicit styling
+Use tokens directly for predictable rendering
+Define component-specific variants
+Handle internal state and interactions
+
+typescript// Example atomic component
+function Button({ variant, size, disabled, ...props }) {
   return (
-    <button
-      className={button({ textSize, padding, color, className })}
+    <button 
+      className={buttonStyles({ variant, size, disabled })}
+      disabled={disabled}
       {...props}
     />
   );
 }
-[RULE] Split size into separate textSize and padding variants.
-</section>
-<section id="component-fields">
-Form Fields
-Form fields (src/components/core/fields/) include standard inputs as well as specialized components:
-Standard Fields
 
-Input: Text, email, password inputs
-Select: Dropdown selection
-Checkbox: Boolean selection
-Textarea: Multi-line text input
+// Component-specific variants
+const buttonStyles = tv({
+  base: "inline-flex...",
+  variants: {
+    variant: { /* ... */ },
+    size: { /* ... */ },
+    disabled: disabledVariant.variants.disabled
+  }
+});
+Shared Variants
 
-Specialized Fields
+Used for one-off styling needs
+Provide common UI behaviors (disabled, loading, error states)
+Used directly in JSX for quick styling
 
-ReferenceSelect: Asynchronous dropdown using useReferenceOptions
+tsx// Example one-off styling
+import { flexVariant, disabledVariant } from '@/lib/ui/variants';
 
-typescript// ReferenceSelect.tsx
-export function ReferenceSelect({
-  url,
-  label,
-  value,
-  onChange,
-  multiple = true,
-  disabled = false,
-}: ReferenceSelectProps) {
-  const { options, error, isLoading } = useReferenceOptions(url);
-  
-  // Component implementation...
-}
-[RULE] Use appropriate field components based on the data type and input requirements.
+<div className={cn(
+  flexVariant({ direction: 'col', align: 'center' }),
+  isDisabled && 'opacity-50 pointer-events-none'
+)}>
+  Content
+</div>
+[RULE] Use atomic components for reused UI elements and shared variants for one-off styling and common behaviors.
 </section>
 <section id="component-form">
 Form Components
-Form components (src/components/composed/forms/) provide consistent form rendering:
+Form components use the schema-driven approach:
 typescript// ResourceForm.tsx
 export function ResourceForm<T extends Record<string, unknown>>({
   title,
@@ -1102,7 +1206,7 @@ Error Display
 Components should display errors in a consistent manner:
 tsx// Form field error
 {error && (
-  <div className="text-sm text-red-500 mt-1">
+  <div className={cn(textColors.danger, "text-sm mt-1")}>
     {error}
   </div>
 )}
@@ -1136,11 +1240,333 @@ tsx// Form field error
 
 ---
 
+<a id="design-token-system"></a>
+
+## design token system
+
+<doc id="design-token-system">
+Design Token System
+<section id="token-overview">
+Overview
+Our design token system creates a clear separation between raw Tailwind CSS classes and semantic styling values. This approach ensures consistent visual design while maintaining flexibility for developers.
+[RULE] Always use the token system rather than hardcoded Tailwind classes.
+</section>
+<section id="token-architecture">
+Token Architecture
+Primitive Tokens
+Located in src/lib/ui/tokens/, these define the foundational design values:
+typescript// src/lib/ui/tokens/colors.ts
+export const textColors = {
+  primary: "text-blue-600 dark:text-blue-400",
+  secondary: "text-gray-600 dark:text-gray-300",
+  danger: "text-red-600 dark:text-red-400",
+  white: "text-white",
+  dark: "text-gray-900 dark:text-white",
+};
+
+// src/lib/ui/tokens/spacing.ts
+export const padding = {
+  xs: "p-1",
+  sm: "p-2",
+  md: "p-4",
+  lg: "p-6",
+  xl: "p-8",
+};
+
+export const paddingX = {
+  xs: "px-1",
+  sm: "px-2",
+  md: "px-4",
+  lg: "px-6",
+  xl: "px-8",
+};
+[RULE] Define all primitive design values as tokens in the appropriate token files.
+</section>
+<section id="component-variants">
+Component-Specific Variants
+These use Tailwind Variants (tv()) to create type-safe component styling:
+typescript// Example: Button component variants
+import { tv } from "tailwind-variants";
+import { textColors, paddingX, paddingY, radii } from '@/lib/ui/tokens';
+
+const button = tv({
+  base: "inline-flex items-center justify-center transition-colors",
+  variants: {
+    variant: {
+      primary: `bg-blue-600 ${textColors.white} hover:bg-blue-700`,
+      secondary: `bg-gray-200 ${textColors.dark} hover:bg-gray-300`,
+      outline: `border border-gray-300 ${textColors.dark} hover:bg-gray-50`,
+    },
+    size: {
+      sm: `${paddingX.sm} ${paddingY.xs} text-sm`,
+      md: `${paddingX.md} ${paddingY.sm} text-base`,
+      lg: `${paddingX.lg} ${paddingY.md} text-lg`,
+    },
+    rounded: {
+      none: "",
+      sm: radii.sm,
+      md: radii.md,
+      lg: radii.lg,
+      full: radii.full,
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+    size: "md",
+    rounded: "md",
+  },
+});
+[RULE] Define component-specific styling using Tailwind Variants and primitive tokens.
+</section>
+<section id="shared-variants">
+Shared Behavior Variants
+Reusable UI behavior patterns located in src/lib/ui/variants/:
+typescript// src/lib/ui/variants/shared-variants.ts
+import { tv } from "tailwind-variants";
+
+export const disabledVariant = tv({
+  variants: {
+    disabled: {
+      true: "opacity-50 pointer-events-none cursor-not-allowed",
+      false: "",
+    }
+  },
+  defaultVariants: {
+    disabled: false
+  }
+});
+
+export const loadingVariant = tv({
+  variants: {
+    loading: {
+      true: "relative text-transparent pointer-events-none",
+      false: "",
+    }
+  },
+  defaultVariants: {
+    loading: false
+  }
+});
+
+export const flexVariant = tv({
+  variants: {
+    direction: {
+      row: "flex-row",
+      col: "flex-col",
+    },
+    align: {
+      start: "items-start",
+      center: "items-center",
+      end: "items-end",
+    },
+    justify: {
+      start: "justify-start",
+      center: "justify-center",
+      end: "justify-end",
+      between: "justify-between",
+    },
+    wrap: {
+      true: "flex-wrap",
+      false: "flex-nowrap",
+    },
+  },
+  defaultVariants: {
+    direction: "row",
+    align: "start",
+    justify: "start",
+    wrap: false,
+  },
+  compoundVariants: [
+    {
+      direction: "row",
+      class: "flex"
+    },
+    {
+      direction: "col",
+      class: "flex"
+    }
+  ]
+});
+[RULE] Use shared variants for common UI behaviors across multiple components.
+</section>
+<section id="usage-guidelines">
+Usage Guidelines
+When to Use Tokens Directly
+Use tokens directly in these scenarios:
+
+Building atomic components (basic UI elements)
+Defining explicit styling that shouldn't change
+Creating component-specific variants
+
+typescriptimport { textColors, radii } from '@/lib/ui/tokens';
+
+function Alert({ children }) {
+  return (
+    <div className={cn(
+      "p-4 border",
+      textColors.danger,
+      radii.md
+    )}>
+      {children}
+    </div>
+  );
+}
+When to Use Component Variants
+Use component variants when:
+
+Defining styling options for a component
+Creating a component with multiple visual presentations
+Building complex compositions of styles
+
+typescriptfunction Button({ variant, size, disabled, children, ...props }) {
+  return (
+    <button
+      className={button({ variant, size, disabled })}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+When to Use Shared Variants
+Use shared variants when:
+
+Adding common behaviors (disabled, loading, error states)
+Quickly styling one-off elements without creating a component
+Applying consistent patterns across unrelated components
+
+tsximport { flexVariant, disabledVariant } from '@/lib/ui/variants';
+
+// In a component
+<div className={cn(
+  flexVariant({ direction: 'col', align: 'center' }),
+  disabledVariant({ disabled: isDisabled })
+)}>
+  {children}
+</div>
+[RULE] Choose the appropriate token approach based on the specific use case.
+</section>
+<section id="tailwind-integration">
+Tailwind Integration
+Our token system sits on top of Tailwind CSS v4, providing a semantic layer between raw utility classes and component styling. This allows us to:
+
+Maintain consistent design values across the application
+Change the underlying styling without modifying component code
+Support dark mode and other themes with minimal effort
+Ensure type safety with TypeScript integration
+
+[RULE] Leverage the token system to abstract away direct Tailwind class dependencies.
+</section>
+</doc>
+
+---
+
 <a id="domain-components"></a>
 
 ## domain components
 
 
+
+---
+
+<a id="styling-patterns"></a>
+
+## styling patterns
+
+<doc id="styling-patterns">
+Component Styling Patterns
+<section id="styling-overview">
+Overview
+This guide explains our approach to styling components using the token system. For detailed information about our token architecture, refer to the Design Token System documentation.
+[RULE] Always use the appropriate styling approach based on the component type and usage context.
+</section>
+<section id="core-principles">
+Core Principles
+Our styling system is based on three key concepts:
+
+Design Tokens: Primitive values (colors, spacing, typography) defined in @/lib/ui/tokens/*
+Component-Specific Variants: Style variations for a specific component using Tailwind Variants
+Shared Behavior Variants: Common UI behaviors (disabled, loading, etc.) reused across components
+
+This separation ensures consistency while maintaining flexibility across the application.
+[RULE] Understand the difference between tokens (primitive values) and variants (reusable patterns).
+</section>
+<section id="when-to-use-tokens">
+Using Design Tokens
+For detailed token usage guidelines, refer to the Design Token System documentation.
+[RULE] Always import tokens directly from their respective modules, not through intermediate helpers.
+</section>
+<section id="best-practices">
+Best Practices
+
+Atomic Components: Define complete, self-contained styling using tokens
+Composed Components: Compose from atomic components instead of duplicating styles
+Page Components: Use shared variants for one-off styling needs
+Documentation: Document component variants in component files
+
+This hybrid approach balances consistency with flexibility while avoiding duplication.
+[RULE] Follow these best practices to maintain a clean, maintainable styling system.
+</section>
+<section id="example-implementation">
+Example Implementation
+tsx// Button.tsx - An atomic component
+import { cn } from '@/lib/utils';
+import { tv } from 'tailwind-variants';
+import { textColors, radii } from '@/lib/ui/tokens';
+import { disabledVariant, loadingVariant } from '@/lib/ui/variants';
+
+// Component-specific variants using tokens
+const button = tv({
+  base: [
+    "inline-flex items-center justify-center transition-colors",
+    "focus:outline-none focus:ring-2 focus:ring-offset-2",
+  ],
+  variants: {
+    // Import shared behavior variants
+    disabled: disabledVariant.variants.disabled,
+    loading: loadingVariant.variants.loading,
+    
+    // Component-specific variants
+    variant: {
+      primary: `bg-primary ${textColors.white} hover:bg-primary-600`,
+      secondary: `bg-gray-200 ${textColors.dark} hover:bg-gray-300`,
+      outline: `border border-gray-300 ${textColors.dark} hover:bg-gray-50`,
+    },
+    size: {
+      sm: "text-sm px-2 py-1",
+      md: "text-base px-4 py-2",
+      lg: "text-lg px-6 py-3",
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+    size: "md",
+  },
+});
+
+export function Button({
+  variant,
+  size,
+  disabled,
+  loading,
+  className,
+  children,
+  ...props
+}) {
+  return (
+    <button
+      className={cn(button({ variant, size, disabled, loading }), className)}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {loading ? <LoadingSpinner /> : children}
+    </button>
+  );
+}
+[RULE] Use this pattern as a reference for implementing components in the system.
+</section>
+</doc>
 
 ---
 
@@ -1480,7 +1906,8 @@ export const SchoolModel = mongoose.models.School ||
 <section id="crud-operations">
 CRUD Operations
 Our system provides standardized CRUD operations through the crud.ts utility:
-typescriptimport { createItem, updateItem, deleteItem } from "@/lib/utils/server/crud";
+typescript 
+import { createItem, updateItem, deleteItem } from "@/lib/utils/server/crud";
 
 // Create a new item
 const result = await createItem(
@@ -1566,10 +1993,12 @@ const combinedQuery = {
 };
 [RULE] Always sanitize user-provided queries before using them in database operations.
 </section>
+
 <section id="pagination-queries">
 Pagination Queries
 For paginated database queries, use the pagination utilities:
-typescriptimport { buildPaginatedQuery, executePaginatedQuery } from "@/lib/utils/server/pagination";
+typescript
+import { buildPaginatedQuery, executePaginatedQuery } from "@/lib/utils/server/pagination";
 
 // Build a paginated query
 const query = buildPaginatedQuery(
@@ -1717,7 +2146,7 @@ const result = parsePartialOrThrow(MyZodSchema, partialData);
 
 ## schema system
 
-<doc id="data-flow">
+<doc id="schema-system">
 
 # Data Flow & Schema System
 
@@ -1735,7 +2164,7 @@ Our platform uses a schema-driven architecture where Zod schemas serve as the de
 
 ## Zod Schema Architecture
 
-Schemas are organized in `src/lib/zod-schema/` by domain:
+Schemas are organized in `src/lib/data-schema/zod-schema/` by domain:
 
 - `core/`: Base schemas for common entities (School, Staff, Cycle)
 - `shared/`: Reusable schema parts (notes, enums, date helpers)
@@ -1757,9 +2186,28 @@ export const SchoolZodSchema = z.object({
 });
 [RULE] When adding new fields, always start by updating the Zod schema first.
 </section>
+<section id="data-model-integration">
+MongoDB Model Integration
+MongoDB models are defined using the Zod schemas and stored in src/lib/data-schema/mongoose-schema/:
+typescriptimport { SchoolZodSchema } from "@/lib/data-schema/zod-schema/core/school";
+import mongoose from "mongoose";
+
+const schemaFields = {
+  schoolNumber: { type: String, required: true },
+  district: { type: String, required: true },
+  schoolName: { type: String, required: true },
+  // Additional fields...
+};
+
+const SchoolSchema = new mongoose.Schema(schemaFields, { timestamps: true });
+
+export const SchoolModel = mongoose.models.School || 
+  mongoose.model("School", SchoolSchema);
+[RULE] MongoDB models should reflect the structure defined in Zod schemas.
+</section>
 <section id="data-form-config">
 Field Configuration System
-Field configurations in src/lib/ui-schema/fieldConfig/ define how form fields should be rendered and validated:
+Field configurations in src/lib/ui/forms/fieldConfig/ define how form fields should be rendered and validated:
 typescriptexport const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     name: 'schoolNumber',
@@ -1779,7 +2227,7 @@ typescriptexport const SchoolFieldConfig: Field<SchoolInput>[] = [
 </section>
 <section id="data-form-overrides">
 Form Overrides
-Form overrides (src/lib/ui-schema/formOverrides/) allow customization of form behavior for specific contexts:
+Form overrides (src/lib/ui/forms/formOverrides/) allow customization of form behavior for specific contexts:
 typescriptexport const SchoolOverrides: FieldOverrideMap<SchoolInput> = {
   district: {
     type: 'reference',
@@ -1795,14 +2243,12 @@ typescriptexport const SchoolOverrides: FieldOverrideMap<SchoolInput> = {
 Data Fetching Hooks
 Custom hooks for data fetching provide a consistent interface across the application:
 typescriptfunction useSchools() {
-  const [schools, setSchools] = useState<School[]>([]);
-  const [error, setError] = useState<Error | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, error, isLoading } = useSafeSWR<School[]>('/api/schools');
   
-  // Implementation...
+  // Additional CRUD functions...
   
   return {
-    schools,
+    schools: data?.items || [],
     error,
     isLoading,
     createSchool,
@@ -1839,7 +2285,7 @@ typescriptfunction useReferenceOptions(url: string, searchQuery: string = "") {
 </section>
 <section id="data-server-actions">
 Server Actions
-Server actions provide a way to perform server-side operations directly from client components:
+Server actions in src/app/actions/ provide a way to perform server-side operations directly from client components:
 typescriptexport async function createSchool(data: SchoolInput) {
   try {
     // Validate against schema
@@ -1859,24 +2305,44 @@ typescriptexport async function createSchool(data: SchoolInput) {
 }
 [RULE] Always validate data with Zod schemas before database operations.
 </section>
-<section id="data-model-integration">
-MongoDB Model Integration
-MongoDB models are defined using the Zod schemas:
-typescriptimport { SchoolZodSchema } from "@/lib/zod-schema/core/school";
-import mongoose from "mongoose";
+<section id="data-flow-diagram">
+Data Flow Diagram
+The data flows through our system in this sequence:
 
-const schemaFields = {
-  schoolNumber: { type: String, required: true },
-  district: { type: String, required: true },
-  schoolName: { type: String, required: true },
-  // Additional fields...
-};
+Zod Schema Definition: Define data structure and validation (/lib/data-schema/zod-schema/)
+MongoDB Model Creation: Create database models based on schema (/lib/data-schema/mongoose-schema/)
+Field Configuration: Define UI representation of data (/lib/ui/forms/fieldConfig/)
+Server Actions/API Routes: Implement data operations (/app/actions/ or /app/api/)
+React Hooks: Create data fetching and management hooks (/hooks/)
+UI Components: Render data and handle user interactions (/components/)
 
-const SchoolSchema = new mongoose.Schema(schemaFields, { timestamps: true });
+[RULE] Follow this data flow sequence when implementing new features.
+</section>
+<section id="data-transformers">
+Data Transformers
+Data transformation utilities in src/lib/data-utilities/transformers/ help sanitize and validate data:
+typescript// Sanitize a MongoDB document for client-side use
+const safeDoc = sanitizeDocument(mongooseDoc, MyZodSchema);
 
-export const SchoolModel = mongoose.models.School || 
-  mongoose.model("School", SchoolSchema);
-[RULE] MongoDB models should reflect the structure defined in Zod schemas.
+// Validate against a schema and return null on error
+const result = safeParseAndLog(MyZodSchema, data);
+
+// Parse data and throw a formatted error if validation fails
+const result = parseOrThrow(MyZodSchema, data);
+[RULE] Use appropriate transformers when moving data between server and client.
+</section>
+<section id="data-consistency">
+Maintaining Data Consistency
+To ensure data consistency across the application:
+
+Start with the Zod schema as the single source of truth
+Generate TypeScript types from schemas using z.infer<typeof SchemaName>
+Define MongoDB models that mirror the schema structure
+Create field configurations and overrides based on the schema
+Use transformers to sanitize data when crossing boundaries
+Validate inputs against schemas at every entry point
+
+[RULE] Apply these consistency practices at every layer of the application.
 </section>
 </doc>
 
@@ -1912,8 +2378,8 @@ Server Actions follow a consistent pattern:
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { SchoolInputZodSchema } from "@/lib/data/schemas/core/school";
-import { SchoolModel } from "@/models/core/school.model";
+import { SchoolInputZodSchema } from "@/lib/data-schema/zod-schema/core/school";
+import { SchoolModel } from "@/lib/data-schema/mongoose-schema/core/school.model";
 import { handleValidationError } from "@/lib/core/error/handleValidationError";
 import { handleServerError } from "@/lib/core/error/handleServerError";
 
@@ -2263,19 +2729,19 @@ Feature: Complete feature implementations
 
 Create Component File
 typescript// src/components/[type]/ComponentName.tsx
-import { useState } from "react";
 import { tv } from "tailwind-variants";
 import { colors, spacing } from "@/lib/ui/tokens";
-
-interface ComponentNameProps {
-  // Props definition
-}
+// For shared behavior, import specific variants
+import { interactive } from "@/lib/ui/variants";
 
 const componentName = tv({
   base: "base-styles-here",
   variants: {
+    // Primitive UI tokens for direct styling
     color: colors,
     padding: spacing,
+    // Optional shared behaviors when needed
+    interactive: interactive.variants.interactive,
   },
   defaultVariants: {
     color: "primary",
@@ -2743,11 +3209,18 @@ module.exports = {
   }
 }
 This rule detects hardcoded Tailwind classes that should use design tokens:
-jsx// ❌ Bad
+jsx
+// ❌ Bad
 <div className="text-blue-500 p-4 rounded-md">Content</div>
 
-// ✅ Good
+// ✅ Good for atomic components
 <div className={cn(colors.primary, spacing.md, shape.rounded)}>Content</div>
+
+// ✅ Good for components with shared behaviors
+<div className={cn(colors.primary, spacing.md, shape.rounded, interactive({ hover: true }))}>
+  Interactive Content
+</div>
+
 The rule:
 
 Identifies patterns like color classes, spacing units, and shape properties
@@ -2892,9 +3365,11 @@ Includes appropriate TypeScript types
 
 1. Start with core/primitive components
 2. Compose them into more complex components
-3. Use tokens and variants for styling
+3. Use tokens directly for basic visual styling and shared variants for common behaviors:
+   - Direct token usage for colors, spacing, typography in atomic components
+   - Shared variants for interactive states, loading states, etc.
+   - Combine both approaches when appropriate
 4. Include proper error handling
-
 ### Implementing a New Feature
 
 1. Define the data schema
@@ -2922,6 +3397,199 @@ When developing new features or components, prioritize:
 
 </section>
 
+</doc>
+
+---
+
+<a id="implementation-workflow"></a>
+
+## implementation workflow
+
+<doc id="implementation-workflow">
+
+# Implementation Workflow
+
+<section id="workflow-overview">
+
+## Overview
+
+This guide outlines the specific steps to implement new features in our application, following our schema-driven architecture.
+
+[RULE] Follow this implementation sequence for all new features.
+
+</section>
+
+<section id="schema-implementation">
+
+## 1. Implement Zod Schemas
+
+Start by defining the Zod schemas in `src/lib/data-schema/zod-schema/`:
+
+```typescript
+// src/lib/data-schema/zod-schema/domain/entity.ts
+import { z } from "zod";
+import { zDateField } from "../shared/dateHelpers";
+
+export const EntityInputZodSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  // Additional fields...
+});
+
+export const EntityZodSchema = EntityInputZodSchema.extend({
+  _id: z.string(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
+});
+
+export type EntityInput = z.infer<typeof EntityInputZodSchema>;
+export type Entity = z.infer<typeof EntityZodSchema>;
+[RULE] Define all required fields with appropriate validations.
+</section>
+<section id="model-implementation">
+2. Create MongoDB Models
+Create MongoDB models in src/lib/data-schema/mongoose-schema/:
+typescript// src/lib/data-schema/mongoose-schema/domain/entity.model.ts
+import mongoose from "mongoose";
+import { EntityZodSchema } from "@/lib/data-schema/zod-schema/domain/entity";
+
+const schemaFields = {
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  // Additional fields...
+};
+
+const EntitySchema = new mongoose.Schema(schemaFields, { timestamps: true });
+
+export const EntityModel = mongoose.models.Entity || 
+  mongoose.model("Entity", EntitySchema);
+[RULE] Ensure model fields match the Zod schema structure.
+</section>
+<section id="field-config-implementation">
+3. Define Field Configurations
+Create field configurations in src/lib/ui/forms/fieldConfig/:
+typescript// src/lib/ui/forms/fieldConfig/domain/entity.ts
+import { Field } from "@/lib/ui/forms/types";
+import { EntityInput } from "@/lib/data-schema/zod-schema/domain/entity";
+
+export const EntityFieldConfig: Field<EntityInput>[] = [
+  {
+    name: "name",
+    label: "Name",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "description",
+    label: "Description",
+    type: "text",
+    required: true,
+  },
+  // Additional fields...
+];
+[RULE] Define configurations for all fields in the schema.
+</section>
+<section id="server-action-implementation">
+4. Implement Server Actions
+Create server actions in src/app/actions/:
+typescript// src/app/actions/domain/entity.ts
+"use server";
+
+import { z } from "zod";
+import { revalidatePath } from "next/cache";
+import { EntityInputZodSchema } from "@/lib/data-schema/zod-schema/domain/entity";
+import { EntityModel } from "@/lib/data-schema/mongoose-schema/domain/entity.model";
+import { handleValidationError } from "@/lib/core/error/handleValidationError";
+import { handleServerError } from "@/lib/core/error/handleServerError";
+
+export async function createEntity(data: unknown) {
+  try {
+    const validated = EntityInputZodSchema.parse(data);
+    const entity = await EntityModel.create(validated);
+    revalidatePath("/dashboard/entityList");
+    return { success: true, data: entity };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { success: false, error: handleValidationError(error) };
+    }
+    return { success: false, error: handleServerError(error) };
+  }
+}
+
+// Additional CRUD functions...
+[RULE] Implement validation and error handling for all operations.
+</section>
+<section id="hook-implementation">
+5. Create Data Hooks
+Create custom hooks in src/hooks/:
+typescript// src/hooks/useEntityData.ts
+import { useState } from "react";
+import { Entity } from "@/lib/data-schema/zod-schema/domain/entity";
+import { useSafeSWR } from "@/hooks/utils/useSafeSWR";
+import { handleClientError } from "@/lib/core/error/handleClientError";
+
+export function useEntityData() {
+  const { data, error, isLoading } = useSafeSWR<Entity[]>('/api/entities');
+  
+  // Additional CRUD functions...
+  
+  return {
+    entities: data?.items || [],
+    error,
+    isLoading,
+    // CRUD operations...
+  };
+}
+[RULE] Include proper error handling and loading states.
+</section>
+<section id="component-implementation">
+6. Develop UI Components
+Create domain components in src/components/domain/:
+typescript// src/components/domain/entity/EntityCard.tsx
+import { Card } from "@/components/composed/cards";
+import { Entity } from "@/lib/data-schema/zod-schema/domain/entity";
+
+interface EntityCardProps {
+  entity: Entity;
+}
+
+export function EntityCard({ entity }: EntityCardProps) {
+  return (
+    <Card>
+      <Card.Header>{entity.name}</Card.Header>
+      <Card.Body>{entity.description}</Card.Body>
+    </Card>
+  );
+}
+[RULE] Create components based on the component hierarchy pattern.
+</section>
+<section id="page-implementation">
+7. Create Pages
+Finally, implement pages in src/app/:
+typescript// src/app/dashboard/entityList/page.tsx
+import { useEntityData } from "@/hooks/useEntityData";
+import { EntityCard } from "@/components/domain/entity/EntityCard";
+import { PageHeader } from "@/components/shared";
+
+export default function EntityListPage() {
+  const { entities, error, isLoading } = useEntityData();
+  
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  
+  return (
+    <div>
+      <PageHeader title="Entities" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {entities.map(entity => (
+          <EntityCard key={entity._id} entity={entity} />
+        ))}
+      </div>
+    </div>
+  );
+}
+[RULE] Follow this complete implementation workflow for all new features.
+</section>
 </doc>
 
 ---

@@ -1,12 +1,12 @@
 'use client'
 
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { TableColumnSchema } from '@/lib/ui/table-schema'
+import { TableColumnSchema } from '@ui/table-schema'
 import { TableHeader } from './parts/header'
 import { TableRow } from './parts/row'
 import { TableEmpty } from './features/empty'
-import { textColors } from '@/lib/ui/tokens'
+import { textColors } from '@ui-tokens/tokens'
 
 const table = tv({
   slots: {

@@ -1,7 +1,7 @@
 // scripts/generate-theme-css.ts
 import fs from "fs";
 import path from "path";
-import { tailwindColors, semanticColorMap } from "../src/lib/ui/tokens/colors";
+import { tailwindColors, semanticColorMap } from "@ui-tokens/colors";
 
 const GLOBALS_PATH = path.resolve(__dirname, "../src/app/globals.css");
 

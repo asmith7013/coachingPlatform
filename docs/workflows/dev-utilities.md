@@ -49,11 +49,18 @@ module.exports = {
   }
 }
 This rule detects hardcoded Tailwind classes that should use design tokens:
-jsx// ❌ Bad
+jsx
+// ❌ Bad
 <div className="text-blue-500 p-4 rounded-md">Content</div>
 
-// ✅ Good
+// ✅ Good for atomic components
 <div className={cn(colors.primary, spacing.md, shape.rounded)}>Content</div>
+
+// ✅ Good for components with shared behaviors
+<div className={cn(colors.primary, spacing.md, shape.rounded, interactive({ hover: true }))}>
+  Interactive Content
+</div>
+
 The rule:
 
 Identifies patterns like color classes, spacing units, and shape properties

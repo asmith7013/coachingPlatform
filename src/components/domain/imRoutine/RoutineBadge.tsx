@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils/general';
-import { getUnitURL } from '@/lib/domains/imRoutine/getUnitURL';
+import { cn } from '@/lib/utils';
+import { getUnitURL } from '@/lib/domain/imRoutine/get-unit-URL';
 
 type Props = {
   routine: string;

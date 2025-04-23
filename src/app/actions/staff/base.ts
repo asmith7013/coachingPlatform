@@ -1,20 +1,20 @@
 "use server";
 
-import { StaffMemberModel } from "@/models/core/staff.model";
+import { StaffMemberModel } from "@data-schema/mongoose-schema/core/staff.model";
 import { 
   createItem,
   updateItem,
   deleteItem
-} from "@/lib/utils/general/server";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
+} from "@data-server/crud/crud-operations";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@data-utilities/pagination/paginated-query";
 import { 
   StaffMemberZodSchema, 
   StaffMemberInputZodSchema,
   type StaffMember,
   type StaffMemberInput
-} from "@/lib/data/schemas/core/staff";
-import { handleServerError } from "@/lib/core/error/handleServerError";
-import { connectToDB } from "@/lib/core/db";
+} from "@zod-schema/core/staff";
+import { handleServerError } from "@core/error/handle-server-error";
+import { connectToDB } from "@data-server/db/connection";
 
 // Types
 export type { StaffMember, StaffMemberInput };

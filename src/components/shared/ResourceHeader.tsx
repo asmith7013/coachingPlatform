@@ -4,7 +4,7 @@ import { Input } from '@/components/core/fields/Input';
 import { Select } from '@/components/core/fields/Select';
 import { Text } from '@/components/core/typography/Text';
 import { Card } from '@/components/composed/cards/Card';
-import { cn } from "@/lib/utils/general";
+import { cn } from "@/lib/utils";
 import debounce from 'lodash.debounce';
 
 interface ResourceHeaderProps<T> {

@@ -1,28 +1,27 @@
-import { NextResponse } from "next/server";
-import { connectToDB } from "@/lib/core/db";
-import { NYCPSStaffModel, StaffMemberModel } from "@/models/core/staff.model";
-import { handleServerError } from "@/lib/core/error/handleServerError";
+import { NextRequest, NextResponse } from "next/server";
+import { connectToDB } from "@/lib/data-server/db/connection";
+import { NYCPSStaffModel, StaffMemberModel } from "@/lib/data-schema/mongoose-schema/core/staff.model";
+import { handleServerError } from "@/lib/core/error/handle-server-error";
 import { z } from "zod";
-import { NYCPSStaffZodSchema, StaffMemberZodSchema } from "@/lib/data/schemas/core/staff";
-import { standardizeResponse } from "@/lib/utils/general/server/standardizeResponse";
+import { NYCPSStaffZodSchema, StaffMemberZodSchema } from "@zod-schema/core/staff";
+import { standardizeResponse } from "@api/responses/standardize";
 
-// Define param schema to validate request parameters
 const ParamSchema = z.object({
   id: z.string().min(1, { message: "Staff ID is required" }),
 });
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     await connectToDB();
     
     // Validate the params
-    const validatedParams = ParamSchema.parse(params);
+    const validatedParams = ParamSchema.parse({ id });
     
-    // Get the staff type from query parameters (default to 'nycps')
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(request.url);
     const staffType = searchParams.get("staffType") || "nycps";
     
     console.log(`📥 API /staff/[id] request received, ID: ${validatedParams.id}, type: ${staffType}`);
@@ -85,4 +84,4 @@ export async function GET(
       { status: statusCode }
     );
   }
-} 
+}

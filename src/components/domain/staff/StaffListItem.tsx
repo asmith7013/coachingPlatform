@@ -1,11 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { Text } from '@/components/core/typography/Text'
 import { Card } from '@/components/composed/cards/Card'
 import { Button } from '@/components/core/Button'
-import type { NYCPSStaff, TeachingLabStaff } from '@/lib/data/schemas/core/staff'
+import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'
 
 type StaffMember = NYCPSStaff | TeachingLabStaff
 type StaffType = 'nycps' | 'tl'

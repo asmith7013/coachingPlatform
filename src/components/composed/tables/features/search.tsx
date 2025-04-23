@@ -1,7 +1,7 @@
 import { tv, type VariantProps } from 'tailwind-variants'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import { cn } from '@/lib/utils/general'
-import { textColors } from '@/lib/ui/tokens'
+import { cn } from '@/lib/utils'
+import { textColors } from '@ui-tokens/tokens'
 
 const tableSearch = tv({
   slots: {

@@ -44,7 +44,8 @@ export const SchoolModel = mongoose.models.School ||
 <section id="crud-operations">
 CRUD Operations
 Our system provides standardized CRUD operations through the crud.ts utility:
-typescriptimport { createItem, updateItem, deleteItem } from "@/lib/utils/server/crud";
+typescript 
+import { createItem, updateItem, deleteItem } from "@/lib/utils/server/crud";
 
 // Create a new item
 const result = await createItem(
@@ -130,10 +131,12 @@ const combinedQuery = {
 };
 [RULE] Always sanitize user-provided queries before using them in database operations.
 </section>
+
 <section id="pagination-queries">
 Pagination Queries
 For paginated database queries, use the pagination utilities:
-typescriptimport { buildPaginatedQuery, executePaginatedQuery } from "@/lib/utils/server/pagination";
+typescript
+import { buildPaginatedQuery, executePaginatedQuery } from "@/lib/utils/server/pagination";
 
 // Build a paginated query
 const query = buildPaginatedQuery(

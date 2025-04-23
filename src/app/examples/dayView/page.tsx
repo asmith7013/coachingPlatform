@@ -3,7 +3,7 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, EllipsisHorizontalIcon } from '@heroicons/react/20/solid'
 import { useEffect, useRef } from 'react'
-import { cn } from '@/lib/ui/helpers/cn'
+import { cn } from '@/lib/utils'
 
 const days = [
   { date: '2021-12-27' },
@@ -49,10 +49,6 @@ const days = [
   { date: '2022-02-05' },
   { date: '2022-02-06' },
 ]
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
-}
 
 export default function Example() {
   const container = useRef<HTMLDivElement>(null)
@@ -469,7 +465,7 @@ export default function Example() {
               <button
                 key={day.date}
                 type="button"
-                className={classNames(
+                className={cn(
                   'py-1.5 hover:bg-gray-100 focus:z-10',
                   day.isCurrentMonth ? 'bg-white' : 'bg-gray-50',
                   (day.isSelected || day.isToday) && 'font-semibold',
@@ -485,7 +481,7 @@ export default function Example() {
               >
                 <time
                   dateTime={day.date}
-                  className={classNames(
+                  className={cn(
                     'mx-auto flex size-7 items-center justify-center rounded-full',
                     day.isSelected && day.isToday && 'bg-indigo-600',
                     day.isSelected && !day.isToday && 'bg-gray-900',

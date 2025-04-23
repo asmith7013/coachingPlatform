@@ -1,7 +1,7 @@
 'use client'
 
-import { cn } from '@/lib/utils/general'
-import { paddingY } from '@/lib/ui/tokens/spacing'
+import { cn } from '@/lib/utils'
+import { paddingY } from '@ui-tokens/tokens'
 
 interface TableActionsProps {
   children: React.ReactNode

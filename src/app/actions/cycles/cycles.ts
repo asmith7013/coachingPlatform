@@ -1,11 +1,11 @@
 'use server';
 
-import { connectToDB } from "@/lib/core/db";
-import { CycleModel } from "@/models/core/cycle.model";
-import { fetchPaginatedResource } from "@/lib/utils/general/server/fetchPaginatedResource";
-import { handleServerError } from "@/lib/core/error/handleServerError";
-import type { FetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
-import { CycleZodSchema } from "@/lib/data/schemas/core/cycle";
+import { connectToDB } from "@/lib/data-server/db/connection";
+import { CycleModel } from "@/lib/data-schema/mongoose-schema/core/cycle.model";
+import { fetchPaginatedResource } from "@/lib/data-utilities/pagination/paginated-query";
+import { handleServerError } from "@/lib/core/error/handle-server-error";
+import type { FetchParams } from "@/lib/data-utilities/pagination/paginated-query";
+import { CycleZodSchema } from "@zod-schema/core/cycle";
 
 /**
  * Fetches a paginated list of cycles

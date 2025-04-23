@@ -1,6 +1,6 @@
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textSize, paddingX, paddingY, radii, shadows } from '@/lib/ui/tokens'
+import { textSize, paddingX, paddingY, radii, shadows } from '@ui-tokens/tokens'
 
 // Define specific types for Button component
 type ButtonIntent = 'primary' | 'secondary';

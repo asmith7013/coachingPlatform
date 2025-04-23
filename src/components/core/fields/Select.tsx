@@ -1,8 +1,8 @@
 'use client'
 
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textSize, paddingX, paddingY, radii } from '@/lib/ui/tokens'
+import { textSize, paddingX, paddingY, radii } from '@ui-tokens/tokens'
 import { FieldWrapper } from './FieldWrapper'
 import { Listbox } from '@headlessui/react'
 

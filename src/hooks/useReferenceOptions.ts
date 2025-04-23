@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useSafeSWR } from './utils/useSafeSWR';
-import { handleClientError } from '@/lib/core/error/handleClientError';
-import { standardizeResponse } from '@/lib/utils/general/server/standardizeResponse';
+import { handleClientError } from '@/lib/core/error/handle-client-error';
+import { standardizeResponse } from '@/lib/api/responses/standardize';
 
 export type ReferenceOption = {
   value: string;

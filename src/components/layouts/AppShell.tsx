@@ -2,8 +2,8 @@
 
 import { type ReactNode } from 'react'
 import { tv } from 'tailwind-variants'
-import { paddingX, paddingY } from '@/lib/ui/tokens'
-import type { PaddingSize } from '@/lib/ui/tokens'
+import { paddingX, paddingY } from '@ui-tokens/tokens'
+import type { PaddingSize } from '@ui-tokens/tokens'
 
 const shellLayout = tv({
   slots: {

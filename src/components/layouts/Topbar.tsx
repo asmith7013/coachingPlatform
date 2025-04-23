@@ -10,9 +10,9 @@ import {
   MenuItems,
 } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import Image from 'next/image'
-import { textSize, paddingX, paddingY } from '@/lib/ui/tokens'
+import { textSize, paddingX, paddingY } from '@ui-tokens/tokens'
 
 interface NavigationItem {
   name: string

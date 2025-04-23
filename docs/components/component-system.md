@@ -6,7 +6,7 @@
 
 ## Overview
 
-Our component system follows an atomic design pattern, starting with primitive core components and building up to complex feature implementations. All components use the Tailwind Variants (`tv()`) library for styling.
+Our component system follows an atomic design pattern, starting with primitive core components and building up to complex feature implementations. All components use design tokens for styling consistency, with Tailwind Variants (`tv()`) for component-specific variants.
 
 [RULE] Follow the atomic design pattern: core → composed → domain → features.
 
@@ -17,116 +17,173 @@ Our component system follows an atomic design pattern, starting with primitive c
 ## Component Organization
 
 Components are organized by their level of complexity:
-src/components/
-├── core/         # Primitive UI elements (Button, Input, Text)
-├── composed/     # Combinations of core components (Card, Form)
-├── domain/       # Business domain specific components
-├── features/     # Complete feature implementations
-├── shared/       # Cross-cutting components
-└── utility/      # Helper components
+components/
+├── core/               # Primitive UI elements
+│   ├── feedback/       # Feedback indicators (Badge, etc.)
+│   ├── fields/         # Form input components
+│   ├── layout/         # Layout primitives
+│   └── typography/     # Text elements (Heading, Text)
+├── composed/           # Combinations of core components
+│   ├── cards/          # Card components
+│   ├── dialogs/        # Dialog components
+│   ├── forms/          # Form components
+│   ├── tables/         # Table components
+│   └── tabs/           # Tab components
+├── domain/             # Business domain specific components
+│   ├── imRoutine/      # Implementation routine components
+│   ├── lookFors/       # Look-for components
+│   ├── rubrics/        # Rubric components
+│   ├── schools/        # School components
+│   ├── staff/          # Staff components
+│   └── visits/         # Visit components
+├── features/           # Complete feature implementations
+├── layouts/            # Page layout components
+├── shared/             # Cross-cutting components
+└── utility/            # Helper components
+
+Each component type serves a specific purpose:
+
+1. **Core Components**: Building blocks with minimal dependencies
+2. **Composed Components**: Combinations of core components for common patterns
+3. **Domain Components**: Business-specific implementations
+4. **Feature Components**: Complete features combining multiple domain components
 
 [RULE] Place new components in the appropriate directory based on their complexity and purpose.
 
 </section>
 
-<section id="component-tokens">
+<section id="styling-approach">
 
-## Design System Tokens
+## Styling Approach
 
-Our design system uses tokens for consistent styling:
+Our project uses a clear approach to styling that separates concerns:
+
+### Design Tokens
+
+Tokens are primitive style values defined in `@/lib/ui/tokens/*`:
 
 ```typescript
-// src/lib/ui/tokens.ts
-export const colors = {
-  primary: "text-blue-600",
-  secondary: "text-gray-600",
-  accent: "text-purple-600",
-  danger: "text-red-600",
-  // Additional colors...
-};
+// Example token usage in components
+import { textColors, radii } from '@/lib/ui/tokens';
 
-export const typography = {
-  textSize: {
-    xs: "text-xs",
-    sm: "text-sm",
-    base: "text-base",
-    lg: "text-lg",
-    // Additional sizes...
-  },
-  // Additional typography tokens...
-};
-[RULE] Always use tokens instead of hardcoded values for styling.
-</section>
-<section id="component-variants">
-Tailwind Variants
-Components use the tv() utility for creating variants:
-typescript// Button.tsx
-import { tv } from 'tailwind-variants';
-import { textSizeVariant, paddingVariant } from '@/lib/ui/sharedVariants';
-import { colors } from '@/lib/ui/tokens';
-
-const button = tv({
-  base: "inline-flex items-center justify-center font-medium transition-colors",
+function Alert() {
+  return (
+    <div className={cn(
+      "p-4 border",
+      textColors.danger,
+      radii.md
+    )}>
+      {children}
+    </div>
+  );
+}
+Component-Specific Variants
+For component-level styling variations, use Tailwind Variants:
+typescriptconst button = tv({
+  base: "inline-flex items-center justify-center",
   variants: {
-    textSize: textSizeVariant.variants.textSize,
-    padding: paddingVariant.variants.padding,
-    color: colors,
+    variant: {
+      primary: textColors.primary,
+      secondary: textColors.secondary,
+    },
+    size: {
+      sm: "text-sm p-2",
+      md: "text-base p-4",
+    }
   },
   defaultVariants: {
-    textSize: 'base',
-    padding: 'md',
-    color: 'primary',
+    variant: "primary",
+    size: "md"
   }
 });
+Shared Behavior Variants
+For common UI behaviors that appear across many components, use shared variants:
+typescriptimport { disabledVariant, loadingVariant } from '@/lib/ui/variants';
 
-export function Button({ 
+const myComponent = tv({
+  // ...
+  variants: {
+    // Use shared behavior variants
+    disabled: disabledVariant.variants.disabled,
+    loading: loadingVariant.variants.loading,
+    
+    // Component-specific variants
+    // ...
+  }
+});
+[RULE] Use tokens directly in atomic components, component-specific variants for styling variations, and shared variants for common behaviors.
+</section>
+<section id="component-tokens">
+Design System Tokens
+Our design system provides tokens for:
+
+Typography: Text sizes, weights, and colors
+Spacing: Padding, margins, and gaps
+Colors: Semantic color mapping
+Shapes: Border radius and shadows
+Layout: Grid and flex utilities
+
+typescript// Token imports
+import { 
   textSize, 
-  padding, 
-  color, 
-  className, 
-  ...props 
-}: ButtonProps) {
+  textColors, 
+  weight,
+  paddingX,
+  paddingY,
+  radii
+} from '@/lib/ui/tokens';
+[RULE] Always import tokens directly from their respective files, not through intermediate helpers.
+</section>
+<section id="atomic-vs-shared">
+Atomic Components vs Shared Variants
+Our system uses a hybrid approach:
+Atomic Components
+
+Self-contained with explicit styling
+Use tokens directly for predictable rendering
+Define component-specific variants
+Handle internal state and interactions
+
+typescript// Example atomic component
+function Button({ variant, size, disabled, ...props }) {
   return (
-    <button
-      className={button({ textSize, padding, color, className })}
+    <button 
+      className={buttonStyles({ variant, size, disabled })}
+      disabled={disabled}
       {...props}
     />
   );
 }
-[RULE] Split size into separate textSize and padding variants.
-</section>
-<section id="component-fields">
-Form Fields
-Form fields (src/components/core/fields/) include standard inputs as well as specialized components:
-Standard Fields
 
-Input: Text, email, password inputs
-Select: Dropdown selection
-Checkbox: Boolean selection
-Textarea: Multi-line text input
+// Component-specific variants
+const buttonStyles = tv({
+  base: "inline-flex...",
+  variants: {
+    variant: { /* ... */ },
+    size: { /* ... */ },
+    disabled: disabledVariant.variants.disabled
+  }
+});
+Shared Variants
 
-Specialized Fields
+Used for one-off styling needs
+Provide common UI behaviors (disabled, loading, error states)
+Used directly in JSX for quick styling
 
-ReferenceSelect: Asynchronous dropdown using useReferenceOptions
+tsx// Example one-off styling
+import { flexVariant, disabledVariant } from '@/lib/ui/variants';
 
-typescript// ReferenceSelect.tsx
-export function ReferenceSelect({
-  url,
-  label,
-  value,
-  onChange,
-  multiple = true,
-  disabled = false,
-}: ReferenceSelectProps) {
-  const { options, error, isLoading } = useReferenceOptions(url);
-  
-  // Component implementation...
-}
-[RULE] Use appropriate field components based on the data type and input requirements.
+<div className={cn(
+  flexVariant({ direction: 'col', align: 'center' }),
+  isDisabled && 'opacity-50 pointer-events-none'
+)}>
+  Content
+</div>
+[RULE] Use atomic components for reused UI elements and shared variants for one-off styling and common behaviors.
 </section>
 <section id="component-form">
 Form Components
-Form components (src/components/composed/forms/) provide consistent form rendering:
+Form components use the schema-driven approach:
 typescript// ResourceForm.tsx
 export function ResourceForm<T extends Record<string, unknown>>({
   title,
@@ -150,7 +207,7 @@ Error Display
 Components should display errors in a consistent manner:
 tsx// Form field error
 {error && (
-  <div className="text-sm text-red-500 mt-1">
+  <div className={cn(textColors.danger, "text-sm mt-1")}>
     {error}
   </div>
 )}

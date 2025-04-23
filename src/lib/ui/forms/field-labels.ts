@@ -1,0 +1,185 @@
+import type {
+    School,
+} from "@zod-schema/core/school";
+
+import type {
+    StaffMember,
+    TeachingLabStaff,
+    NYCPSStaff,
+} from "@zod-schema/core/staff";
+
+import type {
+    LookFor,
+    LookForItem,
+} from "@zod-schema/look-fors/look-for";
+
+import type {
+    NextStep,
+} from "@zod-schema/look-fors/next-step";
+
+import type {
+    Note,
+} from "@zod-schema/shared/notes";
+
+import type {
+    Visit,
+    EventItem,
+} from "@zod-schema/visits/visit";
+
+import type {
+    CoachingLog,
+} from "@zod-schema/visits/coaching-log";
+
+import type {
+    Cycle,
+} from "@zod-schema/core/cycle";
+
+// 🔹 Generate Type-Safe Labels for Every Model
+
+export const SchoolFieldLabels: Record<keyof School, string> = {
+    _id: "ID",
+    schoolNumber: "School Number",
+    district: "District",
+    schoolName: "School Name",
+    address: "Address",
+    emoji: "Emoji",
+    gradeLevelsSupported: "Grades Offered",
+    staffList: "Staff Members",
+    schedules: "Schedules",
+    cycles: "Cycles",
+    owners: "Owners",
+    createdAt: "Created At",
+    updatedAt: "Updated At",
+};
+
+export const StaffMemberFieldLabels: Record<keyof StaffMember, string> = {
+    _id: "ID",
+    id: "Staff ID",
+    staffName: "Full Name",
+    email: "Email Address",
+    schools: "Assigned Schools",
+    owners: "Owners",
+    createdAt: "Created At",
+    updatedAt: "Updated At",
+};
+
+export const TeachingLabStaffFieldLabels: Record<keyof TeachingLabStaff, string> = {
+    ...StaffMemberFieldLabels,
+    adminLevel: "Admin Level",
+    assignedDistricts: "Assigned Districts",
+    rolesTL: "Role",
+};
+
+export const NYCPSStaffFieldLabels: Record<keyof NYCPSStaff, string> = {
+    ...StaffMemberFieldLabels,
+    gradeLevelsSupported: "Grade Levels",
+    subjects: "Subjects Taught",
+    specialGroups: "Special Groups",
+    rolesNYCPS: "Role",
+    pronunciation: "Pronunciation",
+    notes: "Notes",
+    experience: "Experience",
+};
+
+export const CycleFieldLabels: Record<keyof Cycle, string> = {
+    _id: "ID",
+    cycleNum: "Cycle Number",
+    ipgIndicator: "IPG Indicator",
+    actionPlanURL: "Action Plan URL",
+    implementationIndicator: "Implementation Indicator",
+    supportCycle: "Support Cycle",
+    lookFors: "Look Fors",
+    owners: "Owners",
+    createdAt: "Created At",
+    updatedAt: "Updated At",
+};
+
+export const LookForFieldLabels: Record<keyof LookFor, string> = {
+    _id: "ID",
+    lookForIndex: "Look For Index",
+    schools: "Associated Schools",
+    teachers: "Teachers",
+    topic: "Topic",
+    category: "Category",
+    status: "Status",
+    description: "Description",
+    studentFacing: "Student Facing",
+    rubric: "Rubric",
+    owners: "Owners",
+    createdAt: "Created At",
+    updatedAt: "Updated At",
+};
+
+export const LookForItemFieldLabels: Record<keyof LookForItem, string> = {
+    originalLookFor: "Original Look For",
+    title: "Title",
+    description: "Description",
+    tags: "Tags",
+    lookForIndex: "Look For Index",
+    teacherIDs: "Teacher IDs",
+    chosenBy: "Chosen By",
+    active: "Active Status",
+};
+
+export const CoachingLogFieldLabels: Record<keyof CoachingLog, string> = {
+    _id: "ID",
+    reasonDone: "Reason Done",
+    microPLTopic: "Micro PL Topic",
+    microPLDuration: "Micro PL Duration",
+    modelTopic: "Model Topic",
+    modelDuration: "Model Duration",
+    adminMeet: "Admin Meeting",
+    adminMeetDuration: "Admin Meeting Duration",
+    NYCDone: "NYC Done",
+    totalDuration: "Total Duration",
+    solvesTouchpoint: "Solves Touchpoint",
+    primaryStrategy: "Primary Strategy",
+    solvesSpecificStrategy: "Solves-Specific Strategy",
+    aiSummary: "AI Summary",
+    owners: "Owners",
+    createdAt: "Created At",
+    updatedAt: "Updated At",
+};
+
+export const VisitFieldLabels: Record<keyof Visit, string> = {
+    _id: "ID",
+    date: "Visit Date",
+    school: "School",
+    coach: "Coach",
+    cycleRef: "Cycle Reference",
+    allowedPurpose: "Purpose",
+    modeDone: "Mode of Visit",
+    gradeLevelsSupported: "Supported Grade Levels",
+    events: "Events",
+    sessionLinks: "Session Links",
+    owners: "Owners",
+    createdAt: "Created At",
+    updatedAt: "Updated At",
+};
+
+export const EventItemFieldLabels: Record<keyof EventItem, string> = {
+    eventType: "Event Type",
+    staff: "Involved Staff",
+    duration: "Duration",
+};
+
+export const NextStepFieldLabels: Record<keyof NextStep, string> = {
+    _id: "ID",
+    description: "Description",
+    lookFor: "Associated Look For",
+    teacher: "Teacher",
+    school: "School",
+    owners: "Owners",
+    createdAt: "Created At",
+    updatedAt: "Updated At",
+};
+
+export const NoteFieldLabels: Record<keyof Note, string> = {
+    _id: "ID",
+    date: "Date",
+    type: "Type",
+    heading: "Heading",
+    subheading: "Subheadings",
+    createdAt: "Created At",
+    updatedAt: "Updated At",
+}; 

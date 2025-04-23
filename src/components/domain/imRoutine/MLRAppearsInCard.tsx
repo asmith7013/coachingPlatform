@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils/general';
+import { cn } from '@/lib/utils';
 // import { RoutineBadge } from './RoutineBadge';
 
 export type Lesson = {

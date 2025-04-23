@@ -1,7 +1,7 @@
 "use client";
-import { cn } from "@/lib/utils/general";
+import { cn } from "@/lib/utils";
 import { tv, type VariantProps } from "tailwind-variants";
-import { textSize, paddingX, paddingY } from '@/lib/ui/tokens'
+import { textSize, paddingX, paddingY } from '@ui-tokens/tokens'
 
 // Define component-specific types
 type BadgeTextSize = 'xs' | 'sm' | 'base';

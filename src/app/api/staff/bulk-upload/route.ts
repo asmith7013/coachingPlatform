@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { NYCPSStaffModel } from "@/models/core/staff.model";
-import { NYCPSStaffInputZodSchema } from "@/lib/data/schemas/core/staff";
-import { bulkUploadToDB } from "@/lib/utils/general/server/bulkUpload";
-import { parseCSV } from "@/lib/utils/general/server/csv";
+import { NYCPSStaffModel } from "@/lib/data-schema/mongoose-schema/core/staff.model";
+import { NYCPSStaffInputZodSchema } from "@zod-schema/core/staff";
+import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
+import { parseCSV } from "@/lib/data-server/file-handling/csv-parser";
 
 export async function POST(request: NextRequest) {
   try {

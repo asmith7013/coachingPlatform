@@ -1,6 +1,6 @@
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textColors } from '@/lib/ui/tokens'
+import { textColors } from '@ui-tokens/tokens'
 
 const label = tv({
   base: [

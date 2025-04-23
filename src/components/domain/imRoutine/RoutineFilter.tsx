@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/core/Button';
 // import { Text } from '@/components/core/typography/Text';
-import { typography } from '@/lib/ui/tokens';
-import { cn } from '@/lib/utils/general';
+import { typography } from '@ui-tokens/typography';
+import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
 

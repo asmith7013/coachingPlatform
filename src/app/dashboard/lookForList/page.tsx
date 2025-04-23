@@ -13,24 +13,24 @@ import { ResourceHeader } from "@/components/shared/ResourceHeader";
 import { useLookFors } from "@/hooks/useLookFors";
 import { uploadLookForFile } from "@actions/lookFors/lookFors";
 import { createLookFor } from "@actions/lookFors/lookFors";
-import { LookForInput } from "@/lib/data/schemas/look-fors/look-for";
-import { cn } from "@/lib/utils/general";
+import { LookForInput } from "@zod-schema/look-fors/look-for";
+import { cn } from "@/lib/utils";
 
 const lookForFields: Field<LookForInput>[] = [
   {
-    name: 'topic',
+    key: 'topic',
     label: 'Topic',
     type: 'text',
     required: true,
   },
   {
-    name: 'description',
+    key: 'description',
     label: 'Description',
     type: 'textarea',
     required: true,
   },
   {
-    name: 'studentFacing',
+    key: 'studentFacing',
     label: 'Student Facing',
     type: 'select',
     options: [
@@ -40,13 +40,13 @@ const lookForFields: Field<LookForInput>[] = [
     required: true,
   },
   {
-    name: 'category',
+    key: 'category',
     label: 'Category',
     type: 'text',
     required: true,
   },
   {
-    name: 'status',
+    key: 'status',
     label: 'Status',
     type: 'select',
     options: [

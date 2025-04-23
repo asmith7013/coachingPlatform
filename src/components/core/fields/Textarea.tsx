@@ -1,10 +1,10 @@
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
 import {
   radiusVariant,
   disabledVariant,
-} from '@/lib/ui/sharedVariants'
-import { textColors } from '@/lib/ui/tokens'
+} from '@ui-variants/shared-variants'
+import { textColors } from '@ui-tokens/tokens'
 import { FieldWrapper } from './FieldWrapper'
 
 type TextareaHTMLProps = Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'>;

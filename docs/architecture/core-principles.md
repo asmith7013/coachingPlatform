@@ -6,125 +6,95 @@
 
 ## Overview
 
-Our AI Coaching Platform is built on a set of core architectural principles that guide all development decisions. These principles ensure the application remains maintainable, scalable, and aligned with our goal of modernizing coaching and implementation tracking.
+Our AI Coaching Platform is built on a set of foundational architectural principles that guide all development decisions. These high-level principles establish the "why" behind our technical choices and ensure the application remains maintainable, scalable, and aligned with our goals.
 
 [RULE] All development decisions should align with these core principles.
 
 </section>
 
-<section id="schema-driven">
+<section id="schema-driven-philosophy">
 
-## Schema-Driven Design
+## Schema-Driven Philosophy
 
-We follow a schema-driven architecture where Zod schemas serve as the canonical source of truth for all data structures:
+We adopt a schema-first approach where data definitions precede implementation. This philosophy:
 
-```typescript
-// Define schema first
-const SchoolZodSchema = z.object({
-  schoolNumber: z.string(),
-  district: z.string(),
-  schoolName: z.string(),
-  // Additional fields...
-});
+- Establishes a **single source of truth** for all data structures
+- Ensures **consistency** across frontend, backend, and database
+- Drives **automated code generation** and validation
+- Provides a **clear contract** between system components
 
-// Types are derived from schema
-type School = z.infer<typeof SchoolZodSchema>;
+See `data-flow/schema-system.md` for detailed implementation guidelines.
 
-// MongoDB model aligns with schema
-const SchoolSchema = new mongoose.Schema({
-  schoolNumber: { type: String, required: true },
-  district: { type: String, required: true },
-  // Fields mirror schema definition...
-});
-This approach ensures:
+[RULE] Data structures should be defined abstractly before specific implementations.
 
-Type safety across the entire application
-Consistent validation between client and server
-Single source of truth for data structures
-Automatic TypeScript type generation
-
-[RULE] Always define Zod schemas first, then derive types and models from them.
 </section>
-<section id="component-hierarchy">
-Atomic Component Hierarchy
-Our component system follows an atomic design pattern:
 
-Core Components: Primitive UI elements (Button, Input, Text)
-Composed Components: Combinations of core components (Card, Form, Table)
-Domain Components: Business-specific components (StaffCard, RubricViewer)
-Feature Components: Complete features (SchoolDirectory, CoachingLog)
+<section id="atomic-composition">
 
-This structure promotes:
+## Atomic Composition
 
-Reusability through composition
-Consistent UI patterns
-Clear separation of concerns
-Testability at each level
+We build complex interfaces from simple, composable parts following progressive levels of complexity. This principle:
 
-[RULE] Follow the atomic design pattern for all component development.
+- Promotes **reusability** through composition over inheritance
+- Establishes **clear boundaries** between layers of abstraction
+- Enables **independent testing** of isolated components
+- Creates a **shared vocabulary** for UI elements
+
+See `components/component-system.md` for the component hierarchy implementation.
+
+[RULE] Build complex systems from simple, composable parts with clear boundaries.
+
 </section>
-<section id="token-first">
-Token-First Design System
-Our design system uses tokens as the foundation for all styling:
-typescript// Define tokens in a central location
-export const colors = {
-  primary: "text-blue-600",
-  secondary: "text-gray-600",
-  // More color tokens...
-};
 
-// Use tokens instead of hardcoded values
-function Button({ variant = "primary", children }) {
-  return (
-    <button className={cn(colors[variant])}>
-      {children}
-    </button>
-  );
-}
-Benefits include:
+<section id="design-token-centralization">
 
-Consistent visual language
-Easy theme customization
-Reduced duplication
-Enforced design constraints
+## Design Token Centralization
 
-[RULE] Always use design tokens instead of hardcoded values.
+We centralize design decisions in tokens rather than distributing them throughout the codebase. This principle:
+
+- Creates a **unified design language** across the application
+- Simplifies **theme customization** and brand adjustments
+- Enforces **consistency** in the user experience
+- Reduces **design drift** over time
+
+See `components/styling-patterns.md` for token implementation details.
+
+[RULE] Centralize design decisions in a single source of truth.
+
 </section>
-<section id="standardized-patterns">
-Standardized Patterns
-We employ consistent patterns across the application:
 
-Data Fetching: All data fetching uses custom hooks with error handling
-Form Handling: Forms are generated from schemas and field configurations
-Error Handling: Specialized handlers for client, server, and validation errors
-API Responses: Standardized response formats with consistent structure
+<section id="standardized-interfaces">
 
-These patterns:
+## Standardized Interfaces
 
-Reduce cognitive load for developers
-Ensure consistent user experience
-Minimize duplication
-Make the codebase more predictable
+We establish consistent patterns for communication between system components. This principle:
 
-[RULE] Follow established patterns rather than creating one-off solutions.
+- Creates **predictable contracts** between modules
+- Enables **interchangeable implementations**
+- Simplifies **testing and debugging**
+- Reduces **cognitive load** for developers
+
+See `data-flow/api-patterns.md` for API standardization guidelines.
+
+[RULE] Define clear, consistent interfaces between system components.
+
 </section>
-<section id="development-efficiency">
-Development Efficiency
-We prioritize developer experience through:
 
-Path Aliases: Short, readable import paths
-Barrel Files: Centralized exports to simplify imports
-Generated Code: Automatic generation of repetitive code
-Utility Functions: Common operations abstracted into reusable utilities
-Development Tooling: Custom ESLint rules, debugging hooks, and more
+<section id="developer-efficiency">
 
-These practices:
+## Developer Efficiency
 
-Speed up development
-Reduce boilerplate
-Improve code quality
-Enable rapid iteration
+We optimize for developer productivity and code maintainability. This principle:
 
-[RULE] Value developer efficiency as a key architectural concern.
+- Reduces **repetitive tasks** through automation
+- Improves **code comprehension** through consistent patterns
+- Accelerates **onboarding** of new developers
+- Enables **rapid iteration** on features
+
+See `workflows/development-workflow.md` for developer experience best practices.
+
+[RULE] Value developer efficiency as a foundation for product quality.
+
 </section>
+
 </doc>

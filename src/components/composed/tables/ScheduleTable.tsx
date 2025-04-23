@@ -1,10 +1,10 @@
 'use client'
 
 import { useMemo } from 'react'
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textColors, textSize, weight, paddingX, paddingY } from '@/lib/ui/tokens'
-import type { ScheduleByDay, Period } from '@/lib/data/schemas/scheduling/schedule'
+import { textColors, textSize, weight, paddingX, paddingY } from '@ui-tokens/tokens'
+import type { ScheduleByDay, Period } from '@zod-schema/scheduling/schedule'
 
 const scheduleTable = tv({
   slots: {

@@ -186,19 +186,19 @@ Feature: Complete feature implementations
 
 Create Component File
 typescript// src/components/[type]/ComponentName.tsx
-import { useState } from "react";
 import { tv } from "tailwind-variants";
 import { colors, spacing } from "@/lib/ui/tokens";
-
-interface ComponentNameProps {
-  // Props definition
-}
+// For shared behavior, import specific variants
+import { interactive } from "@/lib/ui/variants";
 
 const componentName = tv({
   base: "base-styles-here",
   variants: {
+    // Primitive UI tokens for direct styling
     color: colors,
     padding: spacing,
+    // Optional shared behaviors when needed
+    interactive: interactive.variants.interactive,
   },
   defaultVariants: {
     color: "primary",

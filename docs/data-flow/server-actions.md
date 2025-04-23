@@ -24,8 +24,8 @@ Server Actions follow a consistent pattern:
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { SchoolInputZodSchema } from "@/lib/data/schemas/core/school";
-import { SchoolModel } from "@/models/core/school.model";
+import { SchoolInputZodSchema } from "@/lib/data-schema/zod-schema/core/school";
+import { SchoolModel } from "@/lib/data-schema/mongoose-schema/core/school.model";
 import { handleValidationError } from "@/lib/core/error/handleValidationError";
 import { handleServerError } from "@/lib/core/error/handleServerError";
 

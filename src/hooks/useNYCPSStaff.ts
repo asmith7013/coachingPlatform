@@ -7,7 +7,7 @@ import {
   deleteNYCPSStaff
 } from "@actions/staff/nycps";
 import { NYCPSStaff, NYCPSStaffInput } from "@/lib/types/core";
-import type { ResourceResponse } from "@/lib/utils/general/server/types";
+import type { ResourceResponse } from "@/lib/data-utilities/pagination/types";
 import type { FetchParams } from "@/lib/types/api";
 
 export function useNYCPSStaff(initialPage: number = 1, initialLimit: number = 20) {

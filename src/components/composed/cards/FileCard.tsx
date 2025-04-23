@@ -1,24 +1,19 @@
 import React from 'react';
-import { cn } from '@/lib/utils/general/cn';
-import { humanFileSize } from '@/lib/utils/general/format';
+import { cn } from '@/lib/utils';
+import { humanFileSize } from '@core/utils/formatters';
 import { tv } from 'tailwind-variants';
 import {
-  paddingVariant,
   radiusVariant,
   shadowVariant
-} from '@/lib/ui/helpers/sharedVariants';
-import type { 
-  RadiusVariantProps, 
-  ShadowVariantProps, 
-  PaddingVariantProps 
-} from '@/lib/ui/helpers/sharedVariants';
+} from '@ui-variants/shared-variants';
+import type { RadiusVariant, ShadowVariant } from '@ui-variants/shared-variants';
 import { FiFile, FiX, FiDownload } from 'react-icons/fi';
-
+import { paddingX, paddingY } from '@ui-tokens/tokens';
 // File card styling with variants
 const fileCard = tv({
   base: 'bg-white flex items-center rounded overflow-hidden',
   variants: {
-    padding: paddingVariant.variants.padding,
+
     radius: radiusVariant.variants.radius,
     shadow: shadowVariant.variants.shadow,
     border: {
@@ -33,6 +28,11 @@ const fileCard = tv({
     hoverable: {
       true: 'transition-colors duration-200 hover:bg-gray-50',
       false: '',
+    },
+    padding: {
+      sm: `${paddingX.sm} ${paddingY.xs}`,
+      md: `${paddingX.md} ${paddingY.sm}`,
+      lg: `${paddingX.lg} ${paddingY.md}`,
     },
   },
   defaultVariants: {
@@ -54,12 +54,12 @@ export type FileCardProps = {
   onDownload?: () => void;
   className?: string;
   fileIcon?: React.ReactNode;
-  padding?: PaddingVariantProps['padding'];
-  radius?: RadiusVariantProps['radius'];
-  shadow?: ShadowVariantProps['shadow'];
+  radius?: RadiusVariant['radius'];
+  shadow?: ShadowVariant['shadow'];
   border?: boolean;
   variant?: 'default' | 'outlined' | 'filled';
   hoverable?: boolean;
+  padding?: 'sm' | 'md' | 'lg';
 };
 
 export function FileCard({

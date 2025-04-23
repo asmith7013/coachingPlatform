@@ -1,8 +1,8 @@
-import { cn } from '@/lib/utils/general'
+import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
 import { FormSection } from './FormSection'
-import { getFieldComponent } from '@/lib/ui/forms/registry'
-import { textColors } from '@/lib/ui/tokens'
+import { getFieldComponent } from '@ui-forms/registry'
+import { textColors } from '@ui-tokens/tokens'
 
 // Types for form configuration
 export interface FieldConfig {

@@ -1,8 +1,8 @@
 import { connect, disconnect } from 'mongoose';
 import mongoose from 'mongoose';
-import { LookForModel, LookForItemModel } from '../../src/models/look-fors/look-for.model';
+import { LookForModel, LookForItemModel } from '../../src/lib/data-schema/mongoose-schema/look-fors/look-for.model';
 import { exampleRubrics } from './mockRubrics';
-import { LookForZodSchema, LookForItemZodSchema } from '../../src/lib/zod-schema/look-fors/look-for';
+import { LookForZodSchema, LookForItemZodSchema } from '@zod-schema/look-fors/look-for';
 import { ZodError } from 'zod';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });

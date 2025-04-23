@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import SentryBoundaryWrapper from "@/components/utility/SentryBoundaryWrapper";
 import { SWRProvider } from "@/providers/SWRProvider";
-import { PerformanceMonitorProvider } from "@/lib/performance";
 import "@/app/globals.css";
+import { PerformanceMonitorProvider } from "@/lib/dev/debugging/usePerformanceMonitoring";
 
 const geist = Geist({
   subsets: ["latin"],

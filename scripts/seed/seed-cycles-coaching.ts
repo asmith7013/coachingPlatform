@@ -1,8 +1,8 @@
 import { connect, disconnect } from 'mongoose';
 import mongoose from 'mongoose';
-import { CycleModel } from '../../src/models/core/cycle.model';
-import { CoachingLogModel } from '../../src/models/visits/coaching-log.model';
-import { YesNoEnum, LengthTypeEnum, TeacherLeaderTypeEnum } from '../../src/models/shared';
+import { CycleModel } from '../../src/lib/data-schema/mongoose-schema/core/cycle.model';
+import { CoachingLogModel } from '../../src/lib/data-schema/mongoose-schema/visits/coaching-log.model';
+import { YesNoEnum, LengthTypeEnum, TeacherLeaderTypeEnum } from '../../src/lib/data-schema/mongoose-schema/shared';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 

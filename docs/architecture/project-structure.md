@@ -92,34 +92,52 @@ hooks/
 
 The `lib` directory contains core utilities and modules:
 lib/
+├── api/                # API utilities and helpers
+│   ├── handlers/       # API route handlers
+│   ├── responses/      # Response formatting utilities
+│   └── validation/     # API input validation
 ├── core/               # Essential core functionality
 │   ├── error/          # Error handling utilities
-│   ├── performance/    # Performance monitoring
-│   └── types/          # Core type definitions
-├── data/               # Data handling utilities
-│   ├── forms/          # Form configurations and utilities
-│   ├── hooks/          # Data-specific hooks
-│   ├── schemas/        # Zod schemas
-│   └── server-actions/ # Server action implementations
-├── domains/            # Domain-specific functionality
-├── ui/                 # UI utilities
-│   ├── tokens/         # Design system tokens
-│   ├── variants/       # Component variants
-│   └── helpers/        # UI helper functions
-└── utils/              # General utilities
-├── dev/            # Development utilities
-├── general/        # General-purpose utilities
-└── server/         # Server-side utilities
+│   ├── types/          # Core type definitions
+│   └── utils/          # Core utility functions
+├── data-schema/        # Data schema definitions
+│   ├── mongoose-schema/ # MongoDB models
+│   └── zod-schema/     # Zod schema definitions
+├── data-server/        # Server-side data operations
+│   ├── crud/           # CRUD operation utilities
+│   ├── db/             # Database connection
+│   └── file-handling/  # File upload and processing
+├── data-utilities/     # Data processing utilities
+│   ├── pagination/     # Pagination utilities
+│   └── transformers/   # Data transformation helpers
+├── dev/                # Development utilities
+│   ├── debugging/      # Debug tools and monitors
+│   ├── mocks/          # Mock data for development
+│   └── testing/        # Testing utilities
+├── domain/             # Domain-specific functionality
+├── hooks/              # Custom React hooks
+├── json/               # Static JSON data files
+├── types/              # Global type definitions
+└── ui/                 # UI utilities
+├── constants/      # UI-related constants
+├── forms/          # Form configuration and helpers
+│   ├── fieldConfig/  # Field configurations by domain
+│   └── formOverrides/ # Field overrides by context
+├── tokens/         # Design system tokens
+└── variants/       # Component variants
+
 
 This structure:
-- Groups related functionality
-- Creates clear boundaries between concerns
-- Provides intuitive import paths
-- Scales with application growth
+- Separates concerns clearly between data, UI, and core functionality
+- Organizes schemas and models together in data-schema
+- Keeps server operations in data-server
+- Centralizes UI-related code in the ui directory
+- Provides dedicated spaces for development and testing utilities
 
-[RULE] Place utilities in the appropriate subdirectory within lib.
+[RULE] Place utilities in the appropriate subdirectory within lib based on their purpose and domain.
 
 </section>
+
 
 <section id="models-structure">
 

@@ -7,7 +7,7 @@ import {
   deleteSchool 
 } from "@/app/actions/schools/schools";
 import { School, SchoolInput } from "@/lib/types/core";
-import type { ResourceResponse } from "@/lib/utils/general/server/types";
+import type { ResourceResponse } from "@/lib/data-utilities/pagination/types";
 import type { FetchParams } from "@/lib/types/api";
 
 export function useSchools(initialPage: number = 1, initialLimit: number = 20) {

@@ -5,11 +5,11 @@
  * consistent typing across the application.
  */
 
-import { textSize, weight, heading } from '@/lib/ui/tokens/typography';
-import { textColors, alignments } from '@/lib/ui/tokens/text';
-import { radii, shadows } from '@/lib/ui/tokens/shape';
-import { paddingX, paddingY, gap, stack, componentSize } from '@/lib/ui/tokens/spacing';
-import { semanticColorMap, tailwindColors } from '@/lib/ui/tokens/colors';
+import { textSize, weight, heading } from '@ui-tokens/typography';
+import { textColors, alignments } from '@ui-tokens/text';
+import { radii, shadows } from '@ui-tokens/shape';
+import { paddingX, paddingY, gap, stack, componentSize } from '@ui-tokens/spacing';
+import { semanticColorMap, tailwindColors } from '@ui-tokens/colors';
 
 // Typography types
 export type TextSize = keyof typeof textSize;

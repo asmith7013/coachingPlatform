@@ -1,8 +1,7 @@
 'use client';
 
-import { cn } from '@/lib/utils/general';
-import { radii, borderWidths } from '@/lib/ui/tokens';
-import { paddingY } from '@/lib/ui/tokens/spacing';
+import { cn } from '@/lib/utils';
+import { paddingY } from '@ui-tokens/spacing';
 
 type SelectorProps = {
   selectedGrade: string;
@@ -56,8 +55,6 @@ export function GradeUnitLessonSelector({
         className={cn(
           paddingY.sm,
           'border-secondary',
-          borderWidths.md,
-          radii.md,
           'bg-background',
           'text-text',
           'font-medium',
@@ -81,8 +78,6 @@ export function GradeUnitLessonSelector({
         className={cn(
           paddingY.sm,
           'border-secondary',
-          borderWidths.md,
-          radii.md,
           !selectedGrade ? 'bg-surface-hover' : 'bg-background',
           !selectedGrade ? 'text-muted' : 'text-text',
           'font-medium',
@@ -103,8 +98,6 @@ export function GradeUnitLessonSelector({
         className={cn(
           paddingY.sm,
           'border-secondary',
-          borderWidths.md,
-          radii.md,
           !selectedUnit ? 'bg-surface-hover' : 'bg-background',
           !selectedUnit ? 'text-muted' : 'text-text',
           'font-medium',

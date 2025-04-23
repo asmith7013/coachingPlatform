@@ -7,14 +7,14 @@ import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement
 import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
-import { typography } from '@/lib/ui/tokens';
-import { paddingY, stack } from '@/lib/ui/tokens/spacing';
-import { cn } from '@/lib/utils/general';
+import { typography } from '@ui-tokens/tokens';
+import { paddingY, stack } from '@ui-tokens/tokens';
+import { cn } from '@/lib/utils';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { Badge } from '@/components/core/feedback/Badge';
 import { fetchNYCPSStaff } from "@/app/actions/staff/nycps";
-import { NYCPSStaff } from "@/lib/data/schemas/core/staff";
-import { School } from "@/lib/data/schemas/core/school";
+import { NYCPSStaff } from "@zod-schema/core/staff";
+import { School } from "@zod-schema/core/school";
 import { fetchSchools } from "@/app/actions/schools/schools";
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);

@@ -1,7 +1,7 @@
 'use client'
 
 import { tv, type VariantProps } from 'tailwind-variants'
-import { TableColumnSchema } from '@/lib/ui/table-schema'
+import { TableColumnSchema } from '@ui/table-schema'
 
 const tableRow = tv({
   slots: {

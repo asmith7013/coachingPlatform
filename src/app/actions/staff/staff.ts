@@ -7,17 +7,17 @@ import {
   createItem,
   updateItem,
   deleteItem,
-} from "@/lib/utils/general/server";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
-import { sanitizeSortBy } from "@/lib/utils/general/server/sanitizeSortBy";
+} from"@data-server/crud/crud-operations";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/data-utilities/pagination/paginated-query";
+import { sanitizeSortBy } from "@/lib/data-utilities/pagination/sort-utils";
 import { 
   getStaffMemberModelAndSchema,
   getNYCPSStaffModelAndSchema,
   getTeachingLabStaffModelAndSchema,
-  determineStaffType,
   type StaffType
-} from "@/lib/utils/general/server/staff";
-import { bulkUploadToDB } from "@/lib/utils/general/server/bulkUpload";
+} from "@core/types/staff-types";
+import { determineStaffType } from "@data-utilities/transformers/staff-utils";
+import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
 import { 
   StaffMemberZodSchema, 
   StaffMemberInputZodSchema,
@@ -25,11 +25,11 @@ import {
   NYCPSStaffInputZodSchema,
   TeachingLabStaffZodSchema,
   TeachingLabStaffInputZodSchema
-} from "@/lib/data/schemas/core/staff";
-import { StaffMemberModel, NYCPSStaffModel, TeachingLabStaffModel } from "@/models/core/staff.model";
-import { connectToDB } from "@/lib/core/db";
-import { handleServerError } from "@/lib/core/error/handleServerError";
-import { handleValidationError } from "@/lib/core/error/handleValidationError";
+} from "@zod-schema/core/staff";
+import { StaffMemberModel, NYCPSStaffModel, TeachingLabStaffModel } from "@/lib/data-schema/mongoose-schema/core/staff.model";
+import { connectToDB } from "@/lib/data-server/db/connection";
+import { handleServerError } from "@/lib/core/error/handle-server-error";
+import { handleValidationError } from "@/lib/core/error/handle-validation-error";
 
 // Valid sort fields for staff resources
 const validSortFields = ['staffName', 'email', 'createdAt', 'updatedAt'];

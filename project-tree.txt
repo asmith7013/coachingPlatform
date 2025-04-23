@@ -1,10 +1,38 @@
 .
 ├── docs
-│   ├── atomic-component-migration.md
-│   └── token-system-guidelines.md
+│   ├── architecture
+│   │   ├── core-principles.md
+│   │   ├── design-patterns.md
+│   │   ├── import-patterns.md
+│   │   └── project-structure.md
+│   ├── architecture-overview.md
+│   ├── components
+│   │   ├── component-system.md
+│   │   ├── composed-components.md
+│   │   ├── core-components.md
+│   │   ├── design-token-system.md
+│   │   ├── domain-components.md
+│   │   └── styling-patterns.md
+│   ├── data-flow
+│   │   ├── api-patterns.md
+│   │   ├── error-handling.md
+│   │   ├── mongodb-integration.md
+│   │   ├── sanitization-system.md
+│   │   ├── schema-system.md
+│   │   └── server-actions.md
+│   ├── examples
+│   │   ├── component-examples.md
+│   │   ├── prompt-examples.md
+│   │   └── schema-examples.md
+│   └── workflows
+│       ├── common-tasks.md
+│       ├── cursor-integration.md
+│       ├── dev-utilities.md
+│       ├── development-workflow.md
+│       └── implementation-workflow.md
+├── docs-export
+│   └── claude-project-instructions.md
 ├── eslint.config.mjs
-├── import-update-summary.md
-├── import-updates-follow-up.md
 ├── next-env.d.ts
 ├── next.config.ts
 ├── package.json
@@ -18,14 +46,22 @@
 │   └── window.svg
 ├── scripts
 │   ├── README.md
+│   ├── combine-docs.js
+│   ├── fix-field-config-paths.sh
+│   ├── fix-misc-paths.sh
+│   ├── fix-mock-data.sh
+│   ├── fix-server-paths.sh
+│   ├── fix-type-paths.sh
+│   ├── fix-ui-helper-paths.sh
 │   ├── generate-theme-css.ts
-│   └── seed
-│       ├── README.md
-│       ├── index.ts
-│       ├── mockRubrics.ts
-│       ├── seed-cycles-coaching.ts
-│       ├── seed-look-fors.ts
-│       └── seed-schools-staff.ts
+│   ├── seed
+│   │   ├── README.md
+│   │   ├── index.ts
+│   │   ├── mockRubrics.ts
+│   │   ├── seed-cycles-coaching.ts
+│   │   ├── seed-look-fors.ts
+│   │   └── seed-schools-staff.ts
+│   └── update-imports.sh
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
 ├── src
@@ -35,6 +71,8 @@
 │   │   │   │   └── cycles.ts
 │   │   │   ├── lookFors
 │   │   │   │   └── lookFors.ts
+│   │   │   ├── schedules
+│   │   │   │   └── schedules.ts
 │   │   │   ├── schools
 │   │   │   │   └── schools.ts
 │   │   │   ├── staff
@@ -49,18 +87,13 @@
 │   │   │   ├── look-fors
 │   │   │   │   └── bulk-upload
 │   │   │   │       └── route.ts
-│   │   │   ├── reference
-│   │   │   │   ├── cycles
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── example
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── schools
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── staff
-│   │   │   │       └── route.ts
+│   │   │   ├── schedules
+│   │   │   │   └── route.ts
 │   │   │   ├── schools
 │   │   │   │   └── route.ts
 │   │   │   └── staff
+│   │   │       ├── [id]
+│   │   │       │   └── route.ts
 │   │   │       ├── bulk-upload
 │   │   │       │   └── route.ts
 │   │   │       └── route.ts
@@ -76,6 +109,12 @@
 │   │   │   └── staffList
 │   │   │       └── page.tsx
 │   │   ├── debug
+│   │   │   ├── debug-reference-select
+│   │   │   │   └── page.tsx
+│   │   │   ├── design-system
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── tokens
+│   │   │   │       └── page.tsx
 │   │   │   ├── isolated
 │   │   │   │   └── page.tsx
 │   │   │   ├── no-debug-tools
@@ -87,31 +126,29 @@
 │   │   │   │   └── page.tsx
 │   │   │   ├── staff
 │   │   │   │   └── page.tsx
+│   │   │   ├── test-colors
+│   │   │   │   └── page.tsx
 │   │   │   └── ultra-minimal
 │   │   │       └── page.tsx
 │   │   ├── examples
 │   │   │   ├── dashboard
 │   │   │   │   └── page.tsx
+│   │   │   ├── dayView
+│   │   │   │   └── page.tsx
 │   │   │   ├── reference-select-example
-│   │   │   └── schedule
-│   │   │       └── page.tsx
+│   │   │   ├── schedule
+│   │   │   │   └── page.tsx
+│   │   │   ├── scheduling
+│   │   │   │   └── page.tsx
+│   │   │   └── staff
+│   │   │       ├── [id]
+│   │   │       │   └── page.tsx
+│   │   │       └── layout.tsx
 │   │   ├── global-error.tsx
 │   │   ├── globals.css
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
-│   │   ├── scheduling
-│   │   │   └── page.tsx
-│   │   ├── test-colors
-│   │   │   └── page.tsx
 │   │   └── tools
-│   │       ├── debug-reference-select
-│   │       │   └── page.tsx
-│   │       ├── design-system
-│   │       │   ├── layout.tsx
-│   │       │   ├── text
-│   │       │   │   └── page.tsx
-│   │       │   └── tokens
-│   │       │       └── page.tsx
 │   │       ├── dev
 │   │       │   └── seed-data
 │   │       │       └── page.tsx
@@ -125,6 +162,7 @@
 │   │   ├── composed
 │   │   │   ├── cards
 │   │   │   │   ├── Card.tsx
+│   │   │   │   ├── FileCard.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── dialogs
 │   │   │   │   ├── Dialog.tsx
@@ -135,31 +173,35 @@
 │   │   │   │   ├── FormSection.tsx
 │   │   │   │   ├── ResourceForm.tsx
 │   │   │   │   └── index.ts
-│   │   │   └── tables
-│   │   │       ├── Table.tsx
-│   │   │       ├── features
-│   │   │       │   ├── empty.tsx
-│   │   │       │   ├── error.tsx
-│   │   │       │   ├── filter.tsx
-│   │   │       │   ├── index.ts
-│   │   │       │   ├── loading.tsx
-│   │   │       │   ├── pagination.tsx
-│   │   │       │   ├── search.tsx
-│   │   │       │   ├── select.tsx
-│   │   │       │   └── sort.tsx
-│   │   │       ├── index.ts
-│   │   │       ├── parts
-│   │   │       │   ├── actions.tsx
-│   │   │       │   ├── cell.tsx
-│   │   │       │   ├── footer.tsx
-│   │   │       │   ├── header.tsx
-│   │   │       │   ├── index.ts
-│   │   │       │   └── row.tsx
-│   │   │       └── variants
-│   │   │           ├── compact.tsx
-│   │   │           ├── index.ts
-│   │   │           ├── paginated.tsx
-│   │   │           └── sticky-header.tsx
+│   │   │   ├── tables
+│   │   │   │   ├── ScheduleTable.tsx
+│   │   │   │   ├── Table.tsx
+│   │   │   │   ├── features
+│   │   │   │   │   ├── empty.tsx
+│   │   │   │   │   ├── error.tsx
+│   │   │   │   │   ├── filter.tsx
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── loading.tsx
+│   │   │   │   │   ├── pagination.tsx
+│   │   │   │   │   ├── search.tsx
+│   │   │   │   │   ├── select.tsx
+│   │   │   │   │   └── sort.tsx
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── parts
+│   │   │   │   │   ├── actions.tsx
+│   │   │   │   │   ├── cell.tsx
+│   │   │   │   │   ├── footer.tsx
+│   │   │   │   │   ├── header.tsx
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── row.tsx
+│   │   │   │   └── variants
+│   │   │   │       ├── compact.tsx
+│   │   │   │       ├── index.ts
+│   │   │   │       ├── paginated.tsx
+│   │   │   │       └── sticky-header.tsx
+│   │   │   └── tabs
+│   │   │       ├── Tabs.tsx
+│   │   │       └── index.ts
 │   │   ├── core
 │   │   │   ├── Button.tsx
 │   │   │   ├── feedback
@@ -211,8 +253,11 @@
 │   │   │   ├── schools
 │   │   │   ├── staff
 │   │   │   │   ├── StaffCard.tsx
+│   │   │   │   ├── StaffDetailPage.tsx
+│   │   │   │   ├── StaffListItem.tsx
 │   │   │   │   └── index.ts
 │   │   │   └── visits
+│   │   ├── features
 │   │   ├── index.ts
 │   │   ├── layouts
 │   │   │   ├── AppShell.tsx
@@ -254,170 +299,180 @@
 │   ├── instrumentation-client.ts
 │   ├── instrumentation.ts
 │   ├── lib
-│   │   ├── apiHandler.tsx
-│   │   ├── db.ts
-│   │   ├── dev-utils
-│   │   │   ├── checkFieldConfigCoverage.ts
-│   │   │   └── mockData.ts
-│   │   ├── error
-│   │   │   ├── errorMonitor.ts
-│   │   │   ├── handleClientError.ts
-│   │   │   ├── handleServerError.ts
-│   │   │   └── handleValidationError.ts
-│   │   ├── eslint
-│   │   │   └── no-hardcoded-tailwind-classes.js
+│   │   ├── api
+│   │   │   ├── handlers
+│   │   │   │   ├── index.ts
+│   │   │   │   └── reference-endpoint.ts
+│   │   │   ├── index.ts
+│   │   │   ├── responses
+│   │   │   │   ├── index.ts
+│   │   │   │   └── standardize.ts
+│   │   │   └── validation
+│   │   │       └── index.ts
+│   │   ├── core
+│   │   │   ├── error
+│   │   │   │   ├── error-monitor.ts
+│   │   │   │   ├── handle-client-error.ts
+│   │   │   │   ├── handle-server-error.ts
+│   │   │   │   ├── handle-validation-error.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── index.ts
+│   │   │   ├── types
+│   │   │   │   ├── index.ts
+│   │   │   │   └── staff-types.ts
+│   │   │   └── utils
+│   │   │       ├── formatters.ts
+│   │   │       └── index.ts
+│   │   ├── data-schema
+│   │   │   ├── index.ts
+│   │   │   ├── mongoose-schema
+│   │   │   │   ├── core
+│   │   │   │   │   ├── cycle.model.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── school.model.ts
+│   │   │   │   │   └── staff.model.ts
+│   │   │   │   ├── look-fors
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── look-for.model.ts
+│   │   │   │   │   ├── next-step.model.ts
+│   │   │   │   │   └── rubric.model.ts
+│   │   │   │   ├── scheduling
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── schedule.model.ts
+│   │   │   │   ├── shared
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── shared-types.model.ts
+│   │   │   │   └── visits
+│   │   │   │       ├── coaching-log.model.ts
+│   │   │   │       ├── index.ts
+│   │   │   │       └── visit.model.ts
+│   │   │   └── zod-schema
+│   │   │       ├── core
+│   │   │       │   ├── cycle.ts
+│   │   │       │   ├── school.ts
+│   │   │       │   └── staff.ts
+│   │   │       ├── index.ts
+│   │   │       ├── look-fors
+│   │   │       │   ├── look-for.ts
+│   │   │       │   ├── next-step.ts
+│   │   │       │   ├── rubric-fields.ts
+│   │   │       │   └── rubric.ts
+│   │   │       ├── processSchema.ts
+│   │   │       ├── scheduling
+│   │   │       │   └── schedule.ts
+│   │   │       ├── shared
+│   │   │       │   ├── dateHelpers.ts
+│   │   │       │   ├── enums.ts
+│   │   │       │   ├── index.ts
+│   │   │       │   └── notes.ts
+│   │   │       ├── validate.ts
+│   │   │       └── visits
+│   │   │           ├── coaching-log.ts
+│   │   │           └── visit.ts
+│   │   ├── data-server
+│   │   │   ├── crud
+│   │   │   │   ├── bulk-operations.ts
+│   │   │   │   ├── crud-operations.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── db
+│   │   │   │   ├── connection.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── file-handling
+│   │   │   │   ├── csv-parser.ts
+│   │   │   │   ├── file-upload.ts
+│   │   │   │   └── index.ts
+│   │   │   └── index.ts
+│   │   ├── data-utilities
+│   │   │   ├── pagination
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── paginated-query.ts
+│   │   │   │   ├── pagination.ts
+│   │   │   │   ├── sort-utils.ts
+│   │   │   │   └── types.ts
+│   │   │   └── transformers
+│   │   │       ├── index.ts
+│   │   │       ├── parse.ts
+│   │   │       ├── sanitize.ts
+│   │   │       ├── staff-utils.ts
+│   │   │       └── zod-validation.ts
+│   │   ├── dev
+│   │   │   ├── debugging
+│   │   │   │   ├── README.md
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── monitor.ts
+│   │   │   │   └── usePerformanceMonitoring.tsx
+│   │   │   ├── index.ts
+│   │   │   ├── mocks
+│   │   │   │   ├── index.ts
+│   │   │   │   └── mockData.ts
+│   │   │   └── testing
+│   │   │       ├── index.ts
+│   │   │       └── schema-config-check.ts
+│   │   ├── domain
+│   │   │   └── imRoutine
+│   │   │       ├── get-unit-URL.ts
+│   │   │       ├── getUnitURL.ts
+│   │   │       ├── render-ILC-esson.tsx
+│   │   │       ├── render-KH-lesson.tsx
+│   │   │       └── routine-utils.ts
 │   │   ├── hooks
-│   │   │   ├── useItemToGroupMap.ts
-│   │   │   └── usePersistedCurriculumVersion.ts
-│   │   ├── imRoutine
-│   │   │   ├── getUnitURL.ts
-│   │   │   ├── renderILCLesson.tsx
-│   │   │   └── renderKHLesson.tsx
+│   │   │   ├── use-item-to-group-map.ts
+│   │   │   └── use-persisted-curriculum-version.ts
 │   │   ├── json
 │   │   │   ├── ILC_HS.json
 │   │   │   ├── ILC_routines.json
 │   │   │   ├── IMplementation.json
 │   │   │   ├── KH_Routines.json
-│   │   │   ├── alg1links.json
-│   │   │   └── page.txt
-│   │   ├── performance
-│   │   │   ├── README.md
-│   │   │   ├── index.ts
-│   │   │   ├── monitor.ts
-│   │   │   └── usePerformanceMonitoring.tsx
-│   │   ├── server-utils
-│   │   │   ├── README.md
-│   │   │   ├── bulkUpload.ts
-│   │   │   ├── crud.ts
-│   │   │   ├── csv.ts
-│   │   │   ├── fetchPaginatedResource.ts
-│   │   │   ├── fileUpload.ts
-│   │   │   ├── index.ts
-│   │   │   ├── pagination.ts
-│   │   │   ├── safeParse.ts
-│   │   │   ├── sanitize.ts
-│   │   │   ├── sanitizeFilters.ts
-│   │   │   ├── sanitizeSortBy.ts
-│   │   │   ├── staff.ts
-│   │   │   ├── standardizeResponse.ts
-│   │   │   └── types.ts
+│   │   │   └── alg1-links.json
 │   │   ├── types
 │   │   │   ├── api.ts
 │   │   │   └── core.ts
 │   │   ├── ui
+│   │   │   ├── cn.ts
+│   │   │   ├── constants
+│   │   │   │   ├── coaching-log.ts
+│   │   │   │   └── district-list.ts
 │   │   │   ├── forms
+│   │   │   │   ├── field-labels.ts
+│   │   │   │   ├── field-values.ts
+│   │   │   │   ├── fieldConfig
+│   │   │   │   │   ├── core
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── look-fors
+│   │   │   │   │   ├── scheduling
+│   │   │   │   │   ├── shared
+│   │   │   │   │   └── visits
+│   │   │   │   ├── formOverrides
+│   │   │   │   │   ├── core
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── look-fors
+│   │   │   │   │   ├── scheduling
+│   │   │   │   │   ├── shared
+│   │   │   │   │   └── staff.ts
 │   │   │   │   ├── helpers.ts
-│   │   │   │   └── registry.ts
-│   │   │   ├── sharedVariants.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── registry.ts
+│   │   │   │   └── types.ts
 │   │   │   ├── table-schema.ts
-│   │   │   ├── table-schemas
-│   │   │   │   └── school.ts
-│   │   │   ├── tokenHelpers.ts
 │   │   │   ├── tokens
 │   │   │   │   ├── colors.ts
+│   │   │   │   ├── helpers
+│   │   │   │   │   └── token-helpers.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── layout.ts
 │   │   │   │   ├── shape.ts
 │   │   │   │   ├── spacing.ts
 │   │   │   │   ├── text.ts
+│   │   │   │   ├── tokens.ts
 │   │   │   │   └── typography.ts
-│   │   │   ├── tokens.ts
-│   │   │   ├── typography.ts
-│   │   │   ├── utils
-│   │   │   │   └── variantHelpers.ts
 │   │   │   └── variants
-│   │   │       ├── common.ts
 │   │   │       ├── index.ts
 │   │   │       ├── layout.ts
+│   │   │       ├── shared-variants.ts
 │   │   │       ├── types.ts
-│   │   │       └── typography.ts
-│   │   ├── ui-schema
-│   │   │   ├── constants
-│   │   │   │   ├── coachingLog.ts
-│   │   │   │   └── districtList.ts
-│   │   │   ├── fieldConfig
-│   │   │   │   ├── core
-│   │   │   │   │   ├── school.ts
-│   │   │   │   │   └── staff.ts
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── look-fors
-│   │   │   │   │   ├── look-for.ts
-│   │   │   │   │   ├── next-step.ts
-│   │   │   │   │   └── rubric.ts
-│   │   │   │   ├── scheduling
-│   │   │   │   │   └── schedule.ts
-│   │   │   │   ├── shared
-│   │   │   │   │   └── notes.ts
-│   │   │   │   └── visits
-│   │   │   │       ├── coaching-log.ts
-│   │   │   │       └── visit.ts
-│   │   │   ├── fieldLabels.ts
-│   │   │   ├── fieldValues.ts
-│   │   │   ├── formOverrides
-│   │   │   │   ├── core
-│   │   │   │   │   ├── cycle.ts
-│   │   │   │   │   ├── school.ts
-│   │   │   │   │   └── staff.ts
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── look-fors
-│   │   │   │   │   ├── look-for.ts
-│   │   │   │   │   ├── next-step.ts
-│   │   │   │   │   └── rubric.ts
-│   │   │   │   ├── scheduling
-│   │   │   │   │   └── schedule.ts
-│   │   │   │   ├── shared
-│   │   │   │   │   └── notes.ts
-│   │   │   │   ├── staff.ts
-│   │   │   │   └── visits
-│   │   │   └── types.ts
-│   │   ├── utils
-│   │   │   ├── routineUtils.ts
-│   │   │   └── zodValidation.ts
-│   │   ├── utils.ts
-│   │   └── zod-schema
-│   │       ├── core
-│   │       │   ├── cycle.ts
-│   │       │   ├── school.ts
-│   │       │   └── staff.ts
-│   │       ├── index.ts
-│   │       ├── look-fors
-│   │       │   ├── look-for.ts
-│   │       │   ├── next-step.ts
-│   │       │   ├── rubric-fields.ts
-│   │       │   └── rubric.ts
-│   │       ├── processSchema.ts
-│   │       ├── scheduling
-│   │       │   └── schedule.ts
-│   │       ├── shared
-│   │       │   ├── dateHelpers.ts
-│   │       │   ├── enums.ts
-│   │       │   ├── index.ts
-│   │       │   └── notes.ts
-│   │       ├── validate.ts
-│   │       └── visits
-│   │           ├── coaching-log.ts
-│   │           └── visit.ts
-│   ├── models
-│   │   ├── core
-│   │   │   ├── cycle.model.ts
-│   │   │   ├── index.ts
-│   │   │   ├── school.model.ts
-│   │   │   └── staff.model.ts
-│   │   ├── look-fors
-│   │   │   ├── index.ts
-│   │   │   ├── look-for.model.ts
-│   │   │   ├── next-step.model.ts
-│   │   │   └── rubric.model.ts
-│   │   ├── scheduling
-│   │   │   ├── index.ts
-│   │   │   └── schedule.model.ts
-│   │   ├── shared
-│   │   │   ├── index.ts
-│   │   │   └── shared-types.model.ts
-│   │   └── visits
-│   │       ├── coaching-log.model.ts
-│   │       ├── index.ts
-│   │       └── visit.model.ts
+│   │   │       ├── typography.ts
+│   │   │       └── variant-helpers.ts
+│   │   └── utils.ts
 │   ├── providers
 │   │   └── SWRProvider.tsx
 │   └── styles
@@ -425,6 +480,7 @@
 ├── tailwind.config.ts
 ├── test-output.css
 ├── tsconfig.json
+├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-126 directories, 302 files
+146 directories, 338 files

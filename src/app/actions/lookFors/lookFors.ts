@@ -1,25 +1,25 @@
 "use server";
 
 import { z } from "zod";
-import { LookForModel } from "@/models/look-fors";
+import { LookForModel } from "@/lib/data-schema/mongoose-schema/look-fors";
 import { 
   LookForZodSchema, 
   LookForInputZodSchema,
   type LookFor,
   type LookForInput
-} from "@/lib/data/schemas/look-fors/look-for";
-import { handleServerError } from "@/lib/core/error/handleServerError";
-import { handleValidationError } from "@/lib/core/error/handleValidationError";
+} from "@zod-schema/look-fors/look-for";
+import { handleServerError } from "@/lib/core/error/handle-server-error";
+import { handleValidationError } from "@/lib/core/error/handle-validation-error";
 import { 
   createItem,
   updateItem,
   deleteItem,
-} from "@/lib/utils/general/server";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/utils/general/server/fetchPaginatedResource";
-import { sanitizeSortBy } from "@/lib/utils/general/server/sanitizeSortBy";
-import { bulkUploadToDB } from "@/lib/utils/general/server/bulkUpload";
-import { uploadFileWithProgress } from "@/lib/utils/general/server/fileUpload";
-import { connectToDB } from "@/lib/core/db";
+} from "@data-server/crud/crud-operations";
+import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/data-utilities/pagination/paginated-query";
+import { sanitizeSortBy } from "@/lib/data-utilities/pagination/sort-utils";
+import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
+import { uploadFileWithProgress } from "@/lib/data-server/file-handling/file-upload";
+import { connectToDB } from "@/lib/data-server/db/connection";
 
 // Valid sort fields for look-fors
 const validSortFields = ['lookForIndex', 'topic', 'description', 'category', 'createdAt', 'updatedAt'];
