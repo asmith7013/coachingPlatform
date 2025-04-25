@@ -4,8 +4,6 @@ import { GradeLevels } from "@data-schema/enum";
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 class School {
-  // @prop({ type: mongoose.Types.ObjectId, required: true })
-  // _id!: mongoose.Types.ObjectId;
 
   @prop({ type: String, required: true })
   schoolNumber!: string;

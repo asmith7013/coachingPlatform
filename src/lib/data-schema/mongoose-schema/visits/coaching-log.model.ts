@@ -8,8 +8,6 @@ import {
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 export class CoachingLog {
-  // @prop({ type: mongoose.Types.ObjectId, required: true })
-  // _id!: mongoose.Types.ObjectId;
 
   @prop({ enum: Object.values(YesNoEnum), type: String, required: true })
   reasonDone!: string;
@@ -39,10 +37,10 @@ export class CoachingLog {
   totalDuration!: string;
 
   @prop({ enum: Object.values(TeacherLeaderTypeEnum), type: String, required: true })
-  Solvestouchpoint!: string;
+  solvesTouchpoint!: string;
 
   @prop({ type: String, required: true })
-  PrimaryStrategy!: string;
+  primaryStrategy!: string;
 
   @prop({ type: String, required: true })
   solvesSpecificStrategy!: string;

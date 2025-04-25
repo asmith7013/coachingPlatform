@@ -33,8 +33,6 @@ class LookForItem {
   } 
 })
 class Cycle {
-  // @prop({ type: mongoose.Types.ObjectId, required: true })
-  // _id!: mongoose.Types.ObjectId;
 
   @prop({ type: Number, required: true })
   cycleNum!: number;

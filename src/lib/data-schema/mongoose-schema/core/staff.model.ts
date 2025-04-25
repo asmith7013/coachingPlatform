@@ -9,7 +9,7 @@ import {
   GradeLevels
 } from "@data-schema/enum";
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, _id: false } })
 class Experience {
   @prop({ type: String, required: true })
   type!: string;
@@ -31,8 +31,6 @@ class Note {
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 class StaffMember {
-  // @prop({ type: mongoose.Types.ObjectId, required: true })
-  // _id!: mongoose.Types.ObjectId;
 
   @prop({ type: String, required: true })
   staffName!: string;

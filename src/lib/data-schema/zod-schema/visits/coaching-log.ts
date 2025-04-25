@@ -6,9 +6,7 @@ import {
 } from "@data-schema/enum"; // Updated centralized import
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 
-// ✅ CoachingLog Schema
-export const CoachingLogZodSchema = z.object({
-  _id: z.string().optional(), // MongoDB auto-generates this
+export const CoachingLogInputZodSchema = z.object({
   reasonDone: ReasonDoneZod, // Enum for completion status
   microPLTopic: z.string().optional(), // Optional MicroPL topic
   microPLDuration: z.number().optional(), // Optional duration in minutes
@@ -23,9 +21,14 @@ export const CoachingLogZodSchema = z.object({
   solvesSpecificStrategy: z.string(), // Required detailed strategy description
   aiSummary: z.string().optional(), // Optional AI-generated summary
   owners: z.array(z.string()), // Array of owner IDs
-  createdAt: zDateField.optional(), // Optional timestamp
-  updatedAt: zDateField.optional(), // Optional timestamp
 });
 
-// ✅ Auto-generate TypeScript types
+export const CoachingLogZodSchema = CoachingLogInputZodSchema.extend({
+  _id: z.string(), // Required in full schema
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
+});
+
+// Add type definition
+export type CoachingLogInput = z.infer<typeof CoachingLogInputZodSchema>;
 export type CoachingLog = z.infer<typeof CoachingLogZodSchema>;

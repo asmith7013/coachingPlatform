@@ -3,27 +3,19 @@
 # Data Flow & Schema System
 
 <section id="data-overview">
-
-## Overview
-
+Overview
 Our platform uses a schema-driven architecture where Zod schemas serve as the definitive source of truth for all data structures. This approach ensures consistency across the frontend, backend, and database layers.
-
 [RULE] Always use Zod schemas as the canonical source of truth for data structures.
-
 </section>
-
 <section id="data-schemas">
+Zod Schema Architecture
+Schemas are organized in src/lib/data-schema/zod-schema/ by domain:
 
-## Zod Schema Architecture
+core/: Base schemas for common entities (School, Staff, Cycle)
+shared/: Reusable schema parts (notes, enums, date helpers)
+Domain-specific directories: visits/, look-fors/, etc.
 
-Schemas are organized in `src/lib/data-schema/zod-schema/` by domain:
-
-- `core/`: Base schemas for common entities (School, Staff, Cycle)
-- `shared/`: Reusable schema parts (notes, enums, date helpers)
-- Domain-specific directories: `visits/`, `look-fors/`, etc.
-
-```typescript
-// Example: School schema
+typescript// Example: School schema
 export const SchoolZodSchema = z.object({
   _id: z.string(),
   schoolNumber: z.string(),
@@ -37,6 +29,49 @@ export const SchoolZodSchema = z.object({
   updatedAt: zDateField.optional(),
 });
 [RULE] When adding new fields, always start by updating the Zod schema first.
+</section>
+<section id="schema-patterns">
+Zod Schema Patterns
+Input vs. Full Schema Pattern
+All data structures in our system follow a consistent pattern:
+
+Input schemas define fields for user-provided data without system fields
+Full schemas extend input schemas with system fields (_id, createdAt, updatedAt)
+
+Example:
+typescript// Input schema (for validation of user-provided data)
+export const EntityInputZodSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  // No system fields
+});
+
+// Full schema (for validation of retrieved database documents)
+export const EntityZodSchema = EntityInputZodSchema.extend({
+  _id: z.string(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
+});
+Nested Document Schemas
+Nested documents do not include system fields like _id:
+typescript// Nested document schema
+export const NestedItemZodSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  // No _id or timestamps
+});
+Type Generation
+Always generate TypeScript types from your schemas:
+typescript// Auto-generate TypeScript types
+export type EntityInput = z.infer<typeof EntityInputZodSchema>;
+export type Entity = z.infer<typeof EntityZodSchema>;
+MongoDB Schema Alignment
+MongoDB schemas must align with Zod schemas:
+
+Set timestamps: true in schema options
+Set _id: false for nested document schemas
+
+[RULE] Follow these patterns consistently across all schemas.
 </section>
 <section id="data-model-integration">
 MongoDB Model Integration

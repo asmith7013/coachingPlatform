@@ -20,6 +20,7 @@ export const RubricScoreInputZodSchema = z.object({
   owners: z.array(z.string()), // Array of owner IDs
 });
 
+
 // ✅ RubricScore Full Schema
 export const RubricScoreZodSchema = RubricScoreInputZodSchema.extend({
   _id: z.string(),

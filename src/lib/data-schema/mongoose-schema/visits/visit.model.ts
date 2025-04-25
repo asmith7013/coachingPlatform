@@ -8,7 +8,7 @@ import {
   DurationValues,
 } from "@data-schema/enum";
 
-@modelOptions({ schemaOptions: { _id: false } })
+@modelOptions({ schemaOptions: { timestamps: true, _id: false } })
 export class EventItem {
   @prop({ 
     type: String, 
@@ -28,7 +28,7 @@ export class EventItem {
   duration!: string;
 }
 
-@modelOptions({ schemaOptions: { _id: false } })
+@modelOptions({ schemaOptions: { timestamps: true, _id: false } })
 export class SessionLink {
   @prop({ required: true })
   purpose!: string;

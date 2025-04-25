@@ -8,14 +8,12 @@ import {
 } from "@data-schema/enum";
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 
-// ✅ EventItem Schema
 export const EventItemZodSchema = z.object({
   eventType: EventTypeZod, // Enum for event type
   staff: z.array(z.string()), // Array of staff IDs
   duration: DurationZod, // Enum for duration with string->number transform
 });
 
-// ✅ SessionLink Schema
 export const SessionLinkZodSchema = z.object({
   purpose: z.string(), // Required purpose
   title: z.string(), // Required title
@@ -23,9 +21,8 @@ export const SessionLinkZodSchema = z.object({
   staff: z.array(z.string()), // Array of staff IDs
 });
 
-// ✅ Visit Schema
-export const VisitZodSchema = z.object({
-  _id: z.string().optional(), // MongoDB auto-generates this
+// New Input Schema
+export const VisitInputZodSchema = z.object({
   date: z.string(), // Required date string
   school: z.string(), // Required school ID
   coach: z.string(), // Required coach ID
@@ -36,11 +33,15 @@ export const VisitZodSchema = z.object({
   events: z.array(EventItemZodSchema).optional(), // Optional array of events
   sessionLinks: z.array(SessionLinkZodSchema).optional(), // Optional array of session links
   owners: z.array(z.string()), // Array of owner IDs
-  createdAt: zDateField.optional(), // Optional timestamp
-  updatedAt: zDateField.optional(), // Optional timestamp
 });
 
-// ✅ Auto-generate TypeScript types
-export type EventItem = z.infer<typeof EventItemZodSchema>;
-export type SessionLink = z.infer<typeof SessionLinkZodSchema>;
+// Full Schema extends Input Schema
+export const VisitZodSchema = VisitInputZodSchema.extend({
+  _id: z.string(), // Required in full schema
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
+});
+
+// Update type definition
+export type VisitInput = z.infer<typeof VisitInputZodSchema>;
 export type Visit = z.infer<typeof VisitZodSchema>;
