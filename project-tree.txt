@@ -33,6 +33,7 @@
 ├── docs-export
 │   └── claude-project-instructions.md
 ├── eslint.config.mjs
+├── examples
 ├── next-env.d.ts
 ├── next.config.ts
 ├── package.json
@@ -54,6 +55,11 @@
 │   ├── fix-type-paths.sh
 │   ├── fix-ui-helper-paths.sh
 │   ├── generate-theme-css.ts
+│   ├── im-curriculum
+│   │   ├── README.md
+│   │   ├── course-config.js
+│   │   ├── pdf-downloader.js
+│   │   └── scraper.ts
 │   ├── seed
 │   │   ├── README.md
 │   │   ├── index.ts
@@ -73,6 +79,8 @@
 │   │   │   │   └── lookFors.ts
 │   │   │   ├── schedules
 │   │   │   │   └── schedules.ts
+│   │   │   ├── scheduling
+│   │   │   │   └── teacherSchedules.ts
 │   │   │   ├── schools
 │   │   │   │   └── schools.ts
 │   │   │   ├── staff
@@ -82,7 +90,8 @@
 │   │   │   │   └── tl.ts
 │   │   │   └── visits
 │   │   │       ├── coachingLogs.ts
-│   │   │       └── cycles.ts
+│   │   │       ├── cycles.ts
+│   │   │       └── visits.ts
 │   │   ├── api
 │   │   │   ├── look-fors
 │   │   │   │   └── bulk-upload
@@ -99,6 +108,18 @@
 │   │   │       └── route.ts
 │   │   ├── dashboard
 │   │   │   ├── classroomNotes
+│   │   │   │   ├── components
+│   │   │   │   │   ├── BasicInfo
+│   │   │   │   │   ├── CurriculumSelector
+│   │   │   │   │   ├── FeedbackSection
+│   │   │   │   │   ├── Header
+│   │   │   │   │   ├── LearningSection
+│   │   │   │   │   ├── LessonFlow
+│   │   │   │   │   ├── PreExitChecklist
+│   │   │   │   │   ├── ProgressMonitoring
+│   │   │   │   │   ├── TimeTracking
+│   │   │   │   │   └── Transcripts
+│   │   │   │   ├── data.ts
 │   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
 │   │   │   ├── lookForList
@@ -135,6 +156,30 @@
 │   │   │   └── ultra-minimal
 │   │   │       └── page.tsx
 │   │   ├── examples
+│   │   │   ├── calendar
+│   │   │   │   ├── CalendarGridView.tsx
+│   │   │   │   ├── Legend.tsx
+│   │   │   │   ├── ListView.tsx
+│   │   │   │   ├── Navigation.tsx
+│   │   │   │   ├── TableView.tsx
+│   │   │   │   ├── ViewToggle.tsx
+│   │   │   │   ├── constants.ts
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── types.ts
+│   │   │   │   └── utils.ts
+│   │   │   ├── classroomNotes
+│   │   │   │   ├── layout.tsx
+│   │   │   │   ├── lookForList
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── page copy.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── schedule
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── schoolList
+│   │   │   │   │   ├── [schoolId]
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── staffList
+│   │   │   │       └── page.tsx
 │   │   │   ├── dashboard
 │   │   │   │   └── page.tsx
 │   │   │   ├── dayView
@@ -154,7 +199,11 @@
 │   │   ├── page.tsx
 │   │   └── tools
 │   │       ├── dev
-│   │       │   └── seed-data
+│   │       │   ├── seed-data
+│   │       │   │   └── page.tsx
+│   │       │   ├── test-enum-migration
+│   │       │   │   └── page.tsx
+│   │       │   └── test-enum-mongoose
 │   │       │       └── page.tsx
 │   │       ├── im-routines
 │   │       │   └── page.tsx
@@ -313,6 +362,7 @@
 │   │   ├── useNYCPSStaff.ts
 │   │   ├── useReferenceOptions.ts
 │   │   ├── useSchools.ts
+│   │   ├── useTeacherSchedules.ts
 │   │   └── utils
 │   │       ├── useErrorHandledMutation.ts
 │   │       ├── useFiltersAndSorting.ts
@@ -348,6 +398,9 @@
 │   │   │       ├── formatters.ts
 │   │   │       └── index.ts
 │   │   ├── data-schema
+│   │   │   ├── enum
+│   │   │   │   ├── index.ts
+│   │   │   │   └── shared-enums.ts
 │   │   │   ├── index.ts
 │   │   │   ├── mongoose-schema
 │   │   │   │   ├── core
@@ -366,6 +419,7 @@
 │   │   │   │   ├── shared
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── shared-types.model.ts
+│   │   │   │   ├── types.ts
 │   │   │   │   └── visits
 │   │   │   │       ├── coaching-log.model.ts
 │   │   │   │       ├── index.ts
@@ -429,6 +483,7 @@
 │   │   │   ├── mocks
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── mockData.ts
+│   │   │   │   ├── mockVisitData.ts
 │   │   │   │   └── scheduleMockGenerator.ts
 │   │   │   └── testing
 │   │   │       ├── index.ts
@@ -508,4 +563,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-152 directories, 357 files
+176 directories, 388 files

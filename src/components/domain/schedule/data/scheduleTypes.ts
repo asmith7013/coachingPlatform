@@ -35,6 +35,7 @@ export interface TeacherPeriodData {
   room?: string;
 }
 
+
 // Washington teacher data
 export interface WashingtonTeacher {
   id: string;
