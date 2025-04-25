@@ -20,16 +20,10 @@ import {
     ReasonDoneZod,
     TotalDurationZod,
     SolvesTouchpointZod,
+    SettingTypesEnum,
+    YesNoEnum
 } from "@data-schema/enum";
 
-import { SettingTypesEnum, YesNoEnum, LengthTypeEnum, TeacherLeaderTypeEnum } from "@models/shared";
-
-// import type {
-//     AllowedPurpose, GradeLevelsSupported, Subjects, SpecialGroups,
-//     RolesNYCPS, RolesTL, DayType, BlockDayType,
-//     BellScheduleType, PeriodType, ModeDone, ReasonDone, TotalDuration,
-//     EventType, Duration, AdminLevel, SolvesTouchpoint
-// } from "@models/models";
 
 // ✅ Grade Levels Supported Values
 export const GradeLevelsSupportedValues = GradeLevelsSupportedZod.options;
@@ -106,13 +100,8 @@ export const YesNoValues: YesNoEnum[] = [
     YesNoEnum.NO,
 ] as const;
 
-export const LengthTypeValues: LengthTypeEnum[] = [
-    LengthTypeEnum.FULL_DAY___6_HOURS,
-    LengthTypeEnum.HALF_DAY___3_HOURS,
-] as const;
+// Use Zod values instead of enum values for consistency
+export const LengthTypeValues = TotalDurationValues;
 
-export const TeacherLeaderTypeValues: TeacherLeaderTypeEnum[] = [
-    TeacherLeaderTypeEnum.TEACHER_SUPPORT,
-    TeacherLeaderTypeEnum.LEADER_SUPPORT,
-    TeacherLeaderTypeEnum.TEACHER_OR_TEACHER___LEADER_SUPPORT,
-] as const; 
+// Use Zod values instead of enum values for consistency
+export const TeacherLeaderTypeValues = SolvesTouchpointValues; 

@@ -2,26 +2,24 @@ import { connect, disconnect } from 'mongoose';
 import mongoose from 'mongoose';
 import { CycleModel } from '../../src/lib/data-schema/mongoose-schema/core/cycle.model';
 import { CoachingLogModel } from '../../src/lib/data-schema/mongoose-schema/visits/coaching-log.model';
-import { YesNoEnum, LengthTypeEnum, TeacherLeaderTypeEnum } from '../../src/lib/data-schema/mongoose-schema/shared';
+import { YesNoEnum } from '@data-schema/enum';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
-const MONGO_URI = process.env.DATABASE_URL
-
+// Main seeding function
 async function seedCyclesAndCoachingLogs() {
   console.log('Connecting to MongoDB...');
-  if (!MONGO_URI) {
-    throw new Error("Missing DATABASE_URL in environment variables");
-  }
-  await connect(MONGO_URI);
-  console.log('Connected to MongoDB');
-
   try {
-    // Clear existing data
-    await CycleModel.deleteMany({});
-    await CoachingLogModel.deleteMany({});
-    console.log('Cleared existing Cycles and Coaching Logs data');
+    await connect(process.env.DATABASE_URL!);
+    console.log('Connected to MongoDB');
 
+    // Clean up existing data
+    await CycleModel.deleteMany({});
+    console.log('Cleared existing Cycles');
+    
+    await CoachingLogModel.deleteMany({});
+    console.log('Cleared existing Coaching Logs');
+    
     // Create sample Cycles
     const cycles = [
       {
@@ -29,27 +27,27 @@ async function seedCyclesAndCoachingLogs() {
         cycleNum: 1,
         ipgIndicator: 'Standard 1.2',
         actionPlanURL: 'https://example.com/actionplan/cycle1',
-        implementationIndicator: 'Strong lesson planning with clear objective',
-        supportCycle: 'Spring 2023',
+        implementationIndicator: 'Student engagement',
+        supportCycle: 'Fall 2023',
         lookFors: [
           {
             originalLookFor: 'lookfor1',
-            title: 'Clear Learning Objectives',
-            description: 'Lesson objectives are clearly communicated to students',
-            tags: ['Planning', 'Objectives', 'Communication'],
+            title: 'Student Discussion',
+            description: 'Students engage in meaningful academic discussions',
+            tags: ['Discussion', 'Engagement', 'Participation'],
             lookForIndex: 1,
-            teacherIDs: ['john.smith@nycdoe.edu'],
+            teacherIDs: ['john.doe@nycdoe.edu'],
             chosenBy: ['emily.davis@teachinglab.org'],
             active: true
           },
           {
             originalLookFor: 'lookfor2',
-            title: 'Student Engagement',
-            description: 'Students are actively engaged in the learning process',
-            tags: ['Engagement', 'Participation', 'Active Learning'],
+            title: 'Multiple Representations',
+            description: 'Students use multiple representations to solve problems',
+            tags: ['Representations', 'Problem Solving', 'Critical Thinking'],
             lookForIndex: 2,
-            teacherIDs: ['john.smith@nycdoe.edu'],
-            chosenBy: ['emily.davis@teachinglab.org'],
+            teacherIDs: ['jane.smith@nycdoe.edu'],
+            chosenBy: ['robert.anderson@teachinglab.org'],
             active: true
           }
         ],
@@ -124,9 +122,9 @@ async function seedCyclesAndCoachingLogs() {
         adminMeet: true,
         adminMeetDuration: 20,
         NYCDone: true,
-        totalDuration: LengthTypeEnum.HALF_DAY___3_HOURS,
-        Solvestouchpoint: TeacherLeaderTypeEnum.TEACHER_SUPPORT,
-        PrimaryStrategy: 'Modeling effective instructional practices',
+        totalDuration: "Half day - 3 hours",
+        solvesTouchpoint: "Teacher support",
+        primaryStrategy: 'Modeling effective instructional practices',
         solvesSpecificStrategy: 'Demonstration of think-pair-share technique',
         aiSummary: 'Teacher showed improved implementation of questioning strategies. Next steps include varying question complexity and wait time.',
         owners: ['emily.davis@teachinglab.org'],
@@ -142,9 +140,9 @@ async function seedCyclesAndCoachingLogs() {
         modelDuration: 30,
         adminMeet: false,
         NYCDone: true,
-        totalDuration: LengthTypeEnum.HALF_DAY___3_HOURS,
-        Solvestouchpoint: TeacherLeaderTypeEnum.TEACHER_OR_TEACHER___LEADER_SUPPORT,
-        PrimaryStrategy: 'Analysis of student work',
+        totalDuration: "Half day - 3 hours",
+        solvesTouchpoint: "Teacher OR teacher & leader support",
+        primaryStrategy: 'Analysis of student work',
         solvesSpecificStrategy: 'Using exit tickets to guide instruction planning',
         aiSummary: 'Collaborative analysis of exit tickets revealed gaps in student understanding of fractions. Teacher will implement targeted small group instruction next week.',
         owners: ['robert.anderson@teachinglab.org'],
@@ -154,9 +152,9 @@ async function seedCyclesAndCoachingLogs() {
       {
         _id: new mongoose.Types.ObjectId(),
         reasonDone: YesNoEnum.NO,
-        totalDuration: LengthTypeEnum.FULL_DAY___6_HOURS,
-        Solvestouchpoint: TeacherLeaderTypeEnum.LEADER_SUPPORT,
-        PrimaryStrategy: 'Curriculum alignment',
+        totalDuration: "Full day - 6 hours",
+        solvesTouchpoint: "Leader support",
+        primaryStrategy: 'Curriculum alignment',
         solvesSpecificStrategy: 'Mapping curriculum to standards',
         aiSummary: 'Session canceled due to school-wide professional development day. Rescheduled for next week.',
         owners: ['emily.davis@teachinglab.org'],
@@ -177,4 +175,13 @@ async function seedCyclesAndCoachingLogs() {
   }
 }
 
-seedCyclesAndCoachingLogs().catch(console.error); 
+// Run the seeding function
+seedCyclesAndCoachingLogs()
+  .then(() => {
+    console.log('Seeding completed');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('Seeding failed:', error);
+    process.exit(1);
+  }); 

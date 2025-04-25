@@ -1,5 +1,5 @@
 import { Field } from "@/components/composed/forms/ResourceForm";
-import { Visit, EventItem, SessionLink } from "@zod-schema/visits/visit";
+import { Visit, EventItemZodSchema, SessionLinkZodSchema } from "@data-schema/zod-schema/visits/visit";
 import { 
   GradeLevelsSupportedZod,
   EventTypeZod,
@@ -8,6 +8,11 @@ import {
   ModeDoneZod,
   SessionPurposeZod
 } from "@data-schema/enum";
+import { z } from "zod";
+
+// Use inferred types from the Zod schemas
+type EventItem = z.infer<typeof EventItemZodSchema>;
+type SessionLink = z.infer<typeof SessionLinkZodSchema>;
 
 export const EventItemFieldConfig: Field<EventItem>[] = [
   {

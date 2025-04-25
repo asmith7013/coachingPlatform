@@ -2,15 +2,12 @@ import {
   AllowedGradeEnum, 
   AllowedSubjectsEnum, 
   AllowedSpecialGroupsEnum, 
-  TLAdminTypeEnum 
-} from '@models/shared/shared-types.model';
-import { 
+  TLAdminTypeEnum,
   AllowedRolesNYCPSEnum, 
   AllowedRolesTLEnum, 
-  YesNoEnum, 
-  LengthTypeEnum, 
-  TeacherLeaderTypeEnum 
-} from '@models/shared';
+  YesNoEnum
+} from '@data-schema/enum';
+
 // import { Types } from 'mongoose';
 // import { DayType, PeriodType } from "@zod-schema/shared/enums";
 
@@ -399,8 +396,8 @@ export const mockCoachingLogs = [
     adminMeet: true,
     adminMeetDuration: 20,
     NYCDone: true,
-    totalDuration: LengthTypeEnum.HALF_DAY___3_HOURS,
-    solvesTouchpoint: TeacherLeaderTypeEnum.TEACHER_SUPPORT,
+    totalDuration: "Half day - 3 hours",
+    solvesTouchpoint: "Teacher support",
     primaryStrategy: 'Modeling effective instructional practices',
     solvesSpecificStrategy: 'Demonstration of think-pair-share technique',
     aiSummary: 'Teacher showed improved implementation of questioning strategies. Next steps include varying question complexity and wait time.',
@@ -414,8 +411,8 @@ export const mockCoachingLogs = [
     modelDuration: 30,
     adminMeet: false,
     NYCDone: true,
-    totalDuration: LengthTypeEnum.HALF_DAY___3_HOURS,
-    solvesTouchpoint: TeacherLeaderTypeEnum.TEACHER_OR_TEACHER___LEADER_SUPPORT,
+    totalDuration: "Half day - 3 hours",
+    solvesTouchpoint: "Teacher OR teacher & leader support",
     primaryStrategy: 'Analysis of student work',
     solvesSpecificStrategy: 'Using exit tickets to guide instruction planning',
     aiSummary: 'Collaborative analysis of exit tickets revealed gaps in student understanding of fractions. Teacher will implement targeted small group instruction next week.',
@@ -423,8 +420,8 @@ export const mockCoachingLogs = [
   },
   {
     reasonDone: YesNoEnum.NO,
-    totalDuration: LengthTypeEnum.FULL_DAY___6_HOURS,
-    solvesTouchpoint: TeacherLeaderTypeEnum.LEADER_SUPPORT,
+    totalDuration: "Full day - 6 hours",
+    solvesTouchpoint: "Leader support",
     primaryStrategy: 'Curriculum alignment',
     solvesSpecificStrategy: 'Mapping curriculum to standards',
     aiSummary: 'Session canceled due to school-wide professional development day. Rescheduled for next week.',

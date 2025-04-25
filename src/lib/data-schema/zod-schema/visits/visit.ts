@@ -43,5 +43,7 @@ export const VisitZodSchema = VisitInputZodSchema.extend({
 });
 
 // Update type definition
+export type EventItem = z.infer<typeof EventItemZodSchema>;
+export type SessionLink = z.infer<typeof SessionLinkZodSchema>;
 export type VisitInput = z.infer<typeof VisitInputZodSchema>;
 export type Visit = z.infer<typeof VisitZodSchema>;

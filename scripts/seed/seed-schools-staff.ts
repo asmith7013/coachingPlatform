@@ -1,8 +1,8 @@
 import { connect, disconnect } from 'mongoose';
 import { SchoolModel } from '../../src/lib/data-schema/mongoose-schema/core/school.model';
 import { NYCPSStaffModel, TeachingLabStaffModel } from '../../src/lib/data-schema/mongoose-schema/core/staff.model';
-import { AllowedGradeEnum, AllowedSubjectsEnum, AllowedSpecialGroupsEnum, TLAdminTypeEnum } from '../../src/lib/data-schema/mongoose-schema/shared/shared-types.model';
-import { AllowedRolesNYCPSEnum, AllowedRolesTLEnum } from '../../src/lib/data-schema/mongoose-schema/shared';
+import { AllowedGradeEnum, AllowedSubjectsEnum, AllowedSpecialGroupsEnum, TLAdminTypeEnum } from '../../src/lib/data-schema/enum';
+import { AllowedRolesNYCPSEnum, AllowedRolesTLEnum } from '@data-schema/enum';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
