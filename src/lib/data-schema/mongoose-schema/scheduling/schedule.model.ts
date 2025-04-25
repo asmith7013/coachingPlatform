@@ -1,19 +1,22 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
-import mongoose, { Types } from "mongoose";
+import mongoose, {  } from "mongoose";
 import {
-  DayTypeEnum,
-  BlockDayTypeEnum,
-  BellScheduleTypesEnum,
-  PeriodTypesEnum,
-} from "../shared/shared-types.model";
+  DayTypes,
+  BlockDayTypes,
+  BellScheduleTypes,
+  PeriodTypes,
+} from "@data-schema/enum";
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { 
+  // _id: true, 
+  timestamps: true 
+} })
 export class ClassScheduleItem {
-  @prop({ type: Types.ObjectId, required: true })
-  _id!: Types.ObjectId;
+  // @prop({ type: Types.ObjectId, required: true })
+  // _id!: Types.ObjectId;
 
-  @prop({ enum: DayTypeEnum, type: String, required: true })
-  dayType!: DayTypeEnum;
+  @prop({ enum: Object.values(DayTypes), type: String, required: true })
+  dayType!: string;
 
   @prop({ type: String, required: true })
   startTime!: string;
@@ -22,28 +25,34 @@ export class ClassScheduleItem {
   endTime!: string;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { 
+  // _id: true, 
+  timestamps: true 
+} })
 export class AssignedCycleDay {
-  @prop({ type: Types.ObjectId, required: true })
-  _id!: Types.ObjectId;
+  // @prop({ type: Types.ObjectId, required: true })
+  // _id!: Types.ObjectId;
 
   @prop({ type: String, required: true })
   date!: string;
 
-  @prop({ enum: BlockDayTypeEnum, type: String, required: true })
-  blockDayType!: BlockDayTypeEnum;
+  @prop({ enum: Object.values(BlockDayTypes), type: String, required: true })
+  blockDayType!: string;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { 
+  // _id: true, 
+  timestamps: true 
+} })
 export class BellSchedule {
-  @prop({ type: Types.ObjectId, required: true })
-  _id!: Types.ObjectId;
+  // @prop({ type: Types.ObjectId, required: true })
+  // _id!: Types.ObjectId;
 
   @prop({ type: String, required: true })
   school!: string;
 
-  @prop({ enum: BellScheduleTypesEnum, type: String, required: true })
-  bellScheduleType!: BellScheduleTypesEnum;
+  @prop({ enum: Object.values(BellScheduleTypes), type: String, required: true })
+  bellScheduleType!: string;
 
   @prop({ type: () => [ClassScheduleItem], required: true })
   classSchedule!: ClassScheduleItem[];
@@ -55,10 +64,13 @@ export class BellSchedule {
   owners!: string[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { 
+  // _id: true, 
+  timestamps: true 
+} })
 export class Period {
-  @prop({ type: Types.ObjectId, required: true })
-  _id!: Types.ObjectId;
+  // @prop({ type: Types.ObjectId, required: true })
+  // _id!: Types.ObjectId;
 
   @prop({ type: Number, required: true })
   periodNum!: number;
@@ -69,26 +81,32 @@ export class Period {
   @prop({ type: String })
   room?: string;
 
-  @prop({ enum: PeriodTypesEnum, type: String, required: true })
-  periodType!: PeriodTypesEnum;
+  @prop({ enum: Object.values(PeriodTypes), type: String, required: true })
+  periodType!: string;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { 
+  // _id: true, 
+  timestamps: true 
+} })
 export class ScheduleByDay {
-  @prop({ type: Types.ObjectId, required: true })
-  _id!: Types.ObjectId;
+  // @prop({ type: Types.ObjectId, required: true })
+  // _id!: Types.ObjectId;
 
-  @prop({ enum: DayTypeEnum, type: String, required: true })
-  day!: DayTypeEnum;
+  @prop({ enum: Object.values(DayTypes), type: String, required: true })
+  day!: string;
 
   @prop({ type: () => [Period], required: true })
   periods!: Period[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { 
+  // _id: true, 
+  timestamps: true 
+} })
 export class TeacherSchedule {
-  @prop({ type: Types.ObjectId, required: true })
-  _id!: Types.ObjectId;
+  // @prop({ type: Types.ObjectId, required: true })
+  // _id!: Types.ObjectId;
 
   @prop({ type: String, required: true })
   teacher!: string;

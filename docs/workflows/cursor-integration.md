@@ -12,6 +12,42 @@ Our project leverages Cursor, an AI-native code editor, to accelerate developmen
 
 </section>
 
+<section id="cursor-code-advice">
+## Code Advice Format
+
+When providing code advice or implementation guidance, almost always format the response as a Cursor prompt that follows our established Cursor prompt patterns. This should include:
+
+1. A clear task description at the top
+2. Reference to relevant documentation sections using our standard format: [document-id][section-id]
+3. Scope boundaries (what's in/out of scope)
+4. Implementation requirements
+5. Code examples following our code example formatting guidelines 
+
+Unless explicitly directed otherwise, assume that code advice is intended to be copy-pasted into Cursor as a prompt. Format your response accordingly, even for seemingly simple implementations.
+
+Example:
+Instead of directly providing code like this:
+```typescript
+function example() {
+  // Code here
+}
+```
+Format it as a Cursor prompt like this:
+markdown# Implement Example Function
+
+## SCOPE
+- IN SCOPE: Create a basic example function
+- OUT OF SCOPE: Complex error handling, advanced features
+
+## COMPLETE CODE EXAMPLE
+```typescript
+// src/utils/example.ts
+export function example() {
+  // Code implementation
+}
+```
+</section>
+
 <section id="cursor-setup">
 
 ## Setting Up Cursor

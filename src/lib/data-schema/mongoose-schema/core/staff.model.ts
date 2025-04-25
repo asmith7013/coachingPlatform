@@ -1,15 +1,13 @@
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import mongoose from "mongoose";
 import {
-  AllowedRolesNYCPSEnum,
-  AllowedRolesTLEnum,
-} from "../shared";
-import {
-  AllowedSubjectsEnum,
-  AllowedSpecialGroupsEnum,
-  TLAdminTypeEnum,
-  AllowedGradeEnum,
-} from "../shared/shared-types.model";
+  RolesNYCPS,
+  RolesTL,
+  Subjects,
+  SpecialGroups,
+  AdminLevels,
+  GradeLevels
+} from "@data-schema/enum";
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 class Experience {
@@ -48,14 +46,14 @@ class StaffMember {
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 class NYCPSStaff extends StaffMember {
-  @prop({ type: () => [String], required: true, enum: AllowedGradeEnum })
+  @prop({ type: () => [String], required: true, enum: Object.values(GradeLevels) })
   gradeLevelsSupported!: string[];
-  @prop({ type: () => [String], required: true, enum: AllowedSubjectsEnum })
+  @prop({ type: () => [String], required: true, enum: Object.values(Subjects) })
   subjects!: string[];
-  @prop({ type: () => [String], required: true, enum: AllowedSpecialGroupsEnum })
+  @prop({ type: () => [String], required: true, enum: Object.values(SpecialGroups) })
   specialGroups!: string[];
-  @prop({ type: () => [String], enum: AllowedRolesNYCPSEnum })
-  rolesNYCPS?: AllowedRolesNYCPSEnum[];
+  @prop({ type: () => [String], enum: Object.values(RolesNYCPS) })
+  rolesNYCPS?: string[];
   @prop({ type: String })
   pronunciation?: string;
   @prop({ type: () => [Note], default: [] })
@@ -66,12 +64,12 @@ class NYCPSStaff extends StaffMember {
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 class TeachingLabStaff extends StaffMember {
-  @prop({ type: String, required: true, enum: TLAdminTypeEnum })
+  @prop({ type: String, required: true, enum: Object.values(AdminLevels) })
   adminLevel!: string;
   @prop({ type: () => [String], required: true })
   assignedDistricts!: string[];
-  @prop({ type: () => [String], enum: AllowedRolesTLEnum })
-  rolesTL?: AllowedRolesTLEnum[];
+  @prop({ type: () => [String], enum: Object.values(RolesTL) })
+  rolesTL?: string[];
 }
 
 export const StaffMemberModel =

@@ -1,8 +1,18 @@
-import { AllowedGradeEnum, AllowedSubjectsEnum, AllowedSpecialGroupsEnum, TLAdminTypeEnum } from '@models/shared/shared-types.model';
-import { AllowedRolesNYCPSEnum, AllowedRolesTLEnum, YesNoEnum, LengthTypeEnum, TeacherLeaderTypeEnum } from '@models/shared';
-
-// Example rubrics - comment out since the external path is not available
-// import { exampleRubrics } from '@/scripts/seed/mockRubrics';
+import { 
+  AllowedGradeEnum, 
+  AllowedSubjectsEnum, 
+  AllowedSpecialGroupsEnum, 
+  TLAdminTypeEnum 
+} from '@models/shared/shared-types.model';
+import { 
+  AllowedRolesNYCPSEnum, 
+  AllowedRolesTLEnum, 
+  YesNoEnum, 
+  LengthTypeEnum, 
+  TeacherLeaderTypeEnum 
+} from '@models/shared';
+// import { Types } from 'mongoose';
+// import { DayType, PeriodType } from "@zod-schema/shared/enums";
 
 // Simplified version of seed data for UI display and API calls
 
@@ -65,19 +75,19 @@ export const mockSchools = [
 ];
 
 /**
- * Mock NYCPS Staff Data
+ * Mock NYCPS Staff Data - Updated with teachers from the Bell Schedule CSV
  */
 export const mockNYCPSStaff = [
   {
-    staffName: 'John Smith',
-    email: 'john.smith@nycdoe.edu',
-    schools: ['S001'], // Will be converted to IDs after schools are created
+    staffName: 'Ms. Garcia',
+    email: 'garcia.m@nycdoe.edu',
+    schools: ['6804406f6b85489a74013483'], // Washington High School
     owners: ['admin@example.com'],
-    gradeLevelsSupported: [AllowedGradeEnum.GRADE_3, AllowedGradeEnum.GRADE_4, AllowedGradeEnum.GRADE_5],
-    subjects: [AllowedSubjectsEnum.MATH_6, AllowedSubjectsEnum.MATH_7],
-    specialGroups: [AllowedSpecialGroupsEnum.SPED],
+    gradeLevelsSupported: [AllowedGradeEnum.GRADE_9, AllowedGradeEnum.GRADE_10],
+    subjects: [AllowedSubjectsEnum.ALGEBRA_I, AllowedSubjectsEnum.GEOMETRY],
+    specialGroups: [],
     rolesNYCPS: [AllowedRolesNYCPSEnum.TEACHER],
-    pronunciation: 'John Smith',
+    pronunciation: 'Ms. Garcia',
     notes: [
       {
         date: new Date().toISOString(),
@@ -89,20 +99,28 @@ export const mockNYCPSStaff = [
     experience: [
       {
         type: 'Teaching',
-        years: 5
+        years: 6
       }
     ]
   },
   {
-    staffName: 'Sarah Johnson',
-    email: 'sarah.johnson@nycdoe.edu',
-    schools: ['S002'],
+    staffName: 'Mr. Thompson',
+    email: 'thompson.j@nycdoe.edu',
+    schools: ['6804406f6b85489a74013483'], // Washington High School
     owners: ['admin@example.com'],
-    gradeLevelsSupported: [AllowedGradeEnum.GRADE_6, AllowedGradeEnum.GRADE_7],
-    subjects: [AllowedSubjectsEnum.MATH_6, AllowedSubjectsEnum.MATH_7],
-    specialGroups: [AllowedSpecialGroupsEnum.ELL],
+    gradeLevelsSupported: [AllowedGradeEnum.GRADE_9, AllowedGradeEnum.GRADE_10],
+    subjects: [AllowedSubjectsEnum.ALGEBRA_I, AllowedSubjectsEnum.GEOMETRY],
+    specialGroups: [],
     rolesNYCPS: [AllowedRolesNYCPSEnum.TEACHER],
-    pronunciation: 'Sarah Johnson',
+    pronunciation: 'Mr. Thompson',
+    notes: [
+      {
+        date: new Date().toISOString(),
+        type: 'Observation',
+        heading: 'Initial Meeting',
+        subheading: ['Discussed curriculum implementation']
+      }
+    ],
     experience: [
       {
         type: 'Teaching',
@@ -111,9 +129,134 @@ export const mockNYCPSStaff = [
     ]
   },
   {
+    staffName: 'Ms. Rodriguez',
+    email: 'rodriguez.a@nycdoe.edu',
+    schools: ['6804406f6b85489a74013483'], // Washington High School
+    owners: ['admin@example.com'],
+    gradeLevelsSupported: [AllowedGradeEnum.GRADE_9, AllowedGradeEnum.GRADE_10],
+    subjects: [AllowedSubjectsEnum.ALGEBRA_I, AllowedSubjectsEnum.GEOMETRY],
+    specialGroups: [AllowedSpecialGroupsEnum.ELL],
+    rolesNYCPS: [AllowedRolesNYCPSEnum.TEACHER],
+    pronunciation: 'Ms. Rodriguez',
+    notes: [
+      {
+        date: new Date().toISOString(),
+        type: 'Observation',
+        heading: 'Initial Meeting',
+        subheading: ['Discussed instructional strategies']
+      }
+    ],
+    experience: [
+      {
+        type: 'Teaching',
+        years: 5
+      }
+    ]
+  },
+  {
+    staffName: 'Mr. Chen',
+    email: 'chen.l@nycdoe.edu',
+    schools: ['6804406f6b85489a74013483'], // Washington High School
+    owners: ['admin@example.com'],
+    gradeLevelsSupported: [AllowedGradeEnum.GRADE_9, AllowedGradeEnum.GRADE_10],
+    subjects: [AllowedSubjectsEnum.ALGEBRA_I, AllowedSubjectsEnum.ALGEBRA_II],
+    specialGroups: [],
+    rolesNYCPS: [AllowedRolesNYCPSEnum.TEACHER],
+    pronunciation: 'Mr. Chen',
+    notes: [
+      {
+        date: new Date().toISOString(),
+        type: 'Observation',
+        heading: 'Initial Meeting',
+        subheading: ['Discussed assessment strategies']
+      }
+    ],
+    experience: [
+      {
+        type: 'Teaching',
+        years: 4
+      }
+    ]
+  },
+  {
+    staffName: 'Ms. Johnson',
+    email: 'johnson.t@nycdoe.edu',
+    schools: ['6804406f6b85489a74013483'], // Washington High School
+    owners: ['admin@example.com'],
+    gradeLevelsSupported: [AllowedGradeEnum.GRADE_9, AllowedGradeEnum.GRADE_10],
+    subjects: [AllowedSubjectsEnum.ALGEBRA_I, AllowedSubjectsEnum.GEOMETRY],
+    specialGroups: [AllowedSpecialGroupsEnum.SPED],
+    rolesNYCPS: [AllowedRolesNYCPSEnum.TEACHER],
+    pronunciation: 'Ms. Johnson',
+    notes: [
+      {
+        date: new Date().toISOString(),
+        type: 'Observation',
+        heading: 'Initial Meeting',
+        subheading: ['Discussed differentiation strategies']
+      }
+    ],
+    experience: [
+      {
+        type: 'Teaching',
+        years: 7
+      }
+    ]
+  },
+  {
+    staffName: 'Mr. Williams',
+    email: 'williams.s@nycdoe.edu',
+    schools: ['6804406f6b85489a74013483'], // Washington High School
+    owners: ['admin@example.com'],
+    gradeLevelsSupported: [AllowedGradeEnum.GRADE_9, AllowedGradeEnum.GRADE_10],
+    subjects: [AllowedSubjectsEnum.ALGEBRA_I, AllowedSubjectsEnum.ALGEBRA_II],
+    specialGroups: [],
+    rolesNYCPS: [AllowedRolesNYCPSEnum.TEACHER],
+    pronunciation: 'Mr. Williams',
+    notes: [
+      {
+        date: new Date().toISOString(),
+        type: 'Observation',
+        heading: 'Initial Meeting',
+        subheading: ['Discussed technology integration']
+      }
+    ],
+    experience: [
+      {
+        type: 'Teaching',
+        years: 9
+      }
+    ]
+  },
+  {
+    staffName: 'Ms. Patel',
+    email: 'patel.r@nycdoe.edu',
+    schools: ['6804406f6b85489a74013483'], // Washington High School
+    owners: ['admin@example.com'],
+    gradeLevelsSupported: [AllowedGradeEnum.GRADE_9, AllowedGradeEnum.GRADE_10],
+    subjects: [AllowedSubjectsEnum.GEOMETRY, AllowedSubjectsEnum.ALGEBRA_II],
+    specialGroups: [],
+    rolesNYCPS: [AllowedRolesNYCPSEnum.TEACHER],
+    pronunciation: 'Ms. Patel',
+    notes: [
+      {
+        date: new Date().toISOString(),
+        type: 'Observation',
+        heading: 'Initial Meeting',
+        subheading: ['Discussed project-based learning']
+      }
+    ],
+    experience: [
+      {
+        type: 'Teaching',
+        years: 3
+      }
+    ]
+  },
+  {
     staffName: 'Michael Williams',
     email: 'michael.williams@nycdoe.edu',
-    schools: ['S003'],
+    schools: ['6804406f6b85489a74013483'],
     owners: ['admin@example.com'],
     gradeLevelsSupported: [AllowedGradeEnum.GRADE_9, AllowedGradeEnum.GRADE_10],
     subjects: [AllowedSubjectsEnum.ALGEBRA_I, AllowedSubjectsEnum.GEOMETRY],
@@ -174,7 +317,7 @@ export const mockCycles = [
         description: 'Lesson objectives are clearly communicated to students',
         tags: ['Planning', 'Objectives', 'Communication'],
         lookForIndex: 1,
-        teacherIDs: ['john.smith@nycdoe.edu'],
+        teacherIDs: ['garcia.m@nycdoe.edu'],
         chosenBy: ['emily.davis@teachinglab.org'],
         active: true
       },
@@ -184,7 +327,7 @@ export const mockCycles = [
         description: 'Students are actively engaged in the learning process',
         tags: ['Engagement', 'Participation', 'Active Learning'],
         lookForIndex: 2,
-        teacherIDs: ['john.smith@nycdoe.edu'],
+        teacherIDs: ['thompson.j@nycdoe.edu'],
         chosenBy: ['emily.davis@teachinglab.org'],
         active: true
       }
@@ -204,7 +347,7 @@ export const mockCycles = [
         description: 'Teacher uses higher-order questions to promote critical thinking',
         tags: ['Questioning', 'Critical Thinking', 'Discussion'],
         lookForIndex: 1,
-        teacherIDs: ['sarah.johnson@nycdoe.edu'],
+        teacherIDs: ['rodriguez.a@nycdoe.edu'],
         chosenBy: ['robert.anderson@teachinglab.org'],
         active: true
       }
@@ -224,7 +367,7 @@ export const mockCycles = [
         description: 'Regular use of formative assessment to guide instruction',
         tags: ['Assessment', 'Feedback', 'Instruction'],
         lookForIndex: 1,
-        teacherIDs: ['michael.williams@nycdoe.edu'],
+        teacherIDs: ['chen.l@nycdoe.edu'],
         chosenBy: ['emily.davis@teachinglab.org'],
         active: true
       },
@@ -234,7 +377,7 @@ export const mockCycles = [
         description: 'Students engage in self-assessment of their learning',
         tags: ['Assessment', 'Self-Reflection', 'Metacognition'],
         lookForIndex: 2,
-        teacherIDs: ['michael.williams@nycdoe.edu'],
+        teacherIDs: ['johnson.t@nycdoe.edu'],
         chosenBy: ['emily.davis@teachinglab.org'],
         active: true
       }
@@ -287,4 +430,192 @@ export const mockCoachingLogs = [
     aiSummary: 'Session canceled due to school-wide professional development day. Rescheduled for next week.',
     owners: ['emily.davis@teachinglab.org']
   }
-]; 
+];
+
+/**
+ * Mock Schedule Data
+ */
+
+// Generate teacher IDs
+const teacherIds = {
+  'Ms. Garcia': '68098bdfd98a1511884723ab',
+  'Mr. Thompson': '68098bdfd98a1511884723af',
+  'Ms. Rodriguez': '68098bdfd98a1511884723b3',
+  'Mr. Chen': '68098bdfd98a1511884723b7',
+  'Ms. Johnson': '68098bdfd98a1511884723bb',
+  'Mr. Williams': '68098bdfd98a1511884723bf',
+  'Ms. Patel': '68098bdfd98a1511884723c3'
+};
+
+// School ID for Washington High School
+const washingtonHighSchoolId = '6804406f6b85489a74013483';
+
+// Owners - typically administrators or system users with access
+const scheduleOwners = ['admin@example.com'];
+
+// Create periods based on CSV columns
+const periods = [
+  { startTime: "8:15", endTime: "8:59" },
+  { startTime: "9:02", endTime: "9:46" },
+  { startTime: "9:49", endTime: "10:33" },
+  { startTime: "10:36", endTime: "11:21" },
+  { startTime: "11:24", endTime: "12:09" },
+  { startTime: "12:12", endTime: "12:57" },
+  { startTime: "1:00", endTime: "1:44" },
+  { startTime: "1:47", endTime: "2:32" }
+];
+
+// // Subject names for classes
+// const mathSubjects = [
+//   "Algebra I", "Geometry", "Algebra II", 
+//   "Pre-Calculus", "Calculus", "Statistics"
+// ];
+
+// // Room numbers
+// const rooms = ["201", "202", "203", "204", "205", "206", "301", "302"];
+
+// Generate Bell Schedule
+const mockBellSchedule = {
+  // _id: new Types.ObjectId(), // Use this instead of string
+  // _id: `bs_${washingtonHighSchoolId}`,
+  school: 'S003',
+  bellScheduleType: "uniform",
+  classSchedule: periods.map(period => ({
+    dayType: "uniform",
+    startTime: period.startTime,
+    endTime: period.endTime
+  })),
+  assignedCycleDays: [
+    {
+      date: new Date().toISOString().split('T')[0],
+      blockDayType: "A"
+    },
+    {
+      date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+      blockDayType: "B"
+    }
+  ],
+  owners: scheduleOwners,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
+};
+
+// Mock data from the CSV - to represent what was in each cell
+const csvScheduleData = {
+  'Ms. Garcia': [
+    { class: "Algebra I", room: "201" },
+    { class: "Algebra I", room: "201" },
+    { class: "Prep", room: null },
+    { class: "Algebra I", room: "201" },
+    { class: "Lunch", room: null },
+    { class: "Geometry", room: "201" },
+    { class: "Geometry", room: "201" },
+    { class: "Meeting", room: "Office" }
+  ],
+  'Mr. Thompson': [
+    { class: "Prep", room: null },
+    { class: "Geometry", room: "202" },
+    { class: "Geometry", room: "202" },
+    { class: "Algebra II", room: "202" },
+    { class: "Lunch", room: null },
+    { class: "Algebra II", room: "202" },
+    { class: "Meeting", room: "Office" },
+    { class: "Prep", room: null }
+  ],
+  'Ms. Rodriguez': [
+    { class: "Algebra I", room: "203" },
+    { class: "Algebra I", room: "203" },
+    { class: "Algebra I", room: "203" },
+    { class: "Prep", room: null },
+    { class: "Lunch", room: null },
+    { class: "Geometry", room: "203" },
+    { class: "Geometry", room: "203" },
+    { class: "Meeting", room: "Office" }
+  ],
+  'Mr. Chen': [
+    { class: "Algebra II", room: "204" },
+    { class: "Prep", room: null },
+    { class: "Algebra II", room: "204" },
+    { class: "Algebra II", room: "204" },
+    { class: "Lunch", room: null },
+    { class: "Pre-Calculus", room: "204" },
+    { class: "Pre-Calculus", room: "204" },
+    { class: "Pre-Calculus", room: "204" }
+  ],
+  'Ms. Johnson': [
+    { class: "Geometry", room: "205" },
+    { class: "Geometry", room: "205" },
+    { class: "Geometry", room: "205" },
+    { class: "Algebra I", room: "205" },
+    { class: "Lunch", room: null },
+    { class: "Prep", room: null },
+    { class: "Algebra I", room: "205" },
+    { class: "Meeting", room: "Office" }
+  ],
+  'Mr. Williams': [
+    { class: "Pre-Calculus", room: "206" },
+    { class: "Pre-Calculus", room: "206" },
+    { class: "Calculus", room: "206" },
+    { class: "Calculus", room: "206" },
+    { class: "Lunch", room: null },
+    { class: "Meeting", room: "Office" },
+    { class: "Prep", room: null },
+    { class: "Statistics", room: "206" }
+  ],
+  'Ms. Patel': [
+    { class: "Statistics", room: "301" },
+    { class: "Statistics", room: "301" },
+    { class: "Prep", room: null },
+    { class: "Meeting", room: "Office" },
+    { class: "Lunch", room: null },
+    { class: "Algebra II", room: "301" },
+    { class: "Algebra II", room: "301" },
+    { class: "Algebra II", room: "301" }
+  ]
+};
+
+// Generate Teacher Schedules based on CSV data
+const mockTeacherSchedules = Object.entries(csvScheduleData).map(([teacherName, classes]) => {
+  const teacherId = teacherIds[teacherName as keyof typeof teacherIds];
+  
+  return {
+    _id: `ts_${teacherId}`,
+    teacher: teacherId,
+    school: washingtonHighSchoolId,
+    scheduleByDay: [
+      {
+        day: 'uniform',
+        periods: classes.map((classInfo, index) => {
+          // Determine period type
+          let periodType;
+          if (classInfo.class === "Prep") {
+            periodType = 'prep';
+          } else if (classInfo.class === "Lunch") {
+            periodType = 'lunch';
+          } else if (classInfo.class === "Meeting") {
+            periodType = 'meeting';
+          } else {
+            periodType = 'class';
+          }
+          
+          return {
+            periodNum: index + 1,
+            className: classInfo.class,
+            room: classInfo.room || undefined,
+            periodType: periodType
+          };
+        })
+      }
+    ],
+    owners: scheduleOwners,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+});
+
+export const mockSchedules = {
+  bellSchedule: mockBellSchedule,
+  teacherSchedules: mockTeacherSchedules
+};
+
+export { mockVisitsFromCSV } from './mockVisitData';

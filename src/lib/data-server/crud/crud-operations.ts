@@ -1,27 +1,16 @@
-import type { Model, Document, Types, HydratedDocument } from "mongoose";
+import type { Model, Document } from "mongoose";
 import { revalidatePath } from "next/cache";
 import type { ZodSchema } from "zod";
 import { parseOrThrow, parsePartialOrThrow } from "@data-utilities/transformers/parse";
-import { sanitizeDocument } from "@data-utilities/transformers/sanitize";
+import { sanitizeDocument, removeTimestampFields } from "@data-utilities/transformers/sanitize";
 import { handleServerError } from "@core/error/handle-server-error";
 import { connectToDB } from "@data-server/db/connection";
 import type { z } from "zod";
 
-// Define type for document with timestamps
-interface TimestampedDoc {
-  _id: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
+// Simple base document interface
+export interface BaseDocument extends Document {
   [key: string]: unknown;
 }
-
-export interface TimestampedDocument extends Document {
-  _id: Types.ObjectId;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export type SanitizableDoc<T> = HydratedDocument<T & TimestampedDoc>;
 
 export interface CrudResult<T> {
   success: boolean;
@@ -36,7 +25,7 @@ type InferSchema<T extends ZodSchema> = z.infer<T>;
 /**
  * Creates a new item in the database
  */
-export async function createItem<Doc extends TimestampedDocument, Schema extends ZodSchema>(
+export async function createItem<Doc extends BaseDocument, Schema extends ZodSchema>(
   model: Model<Doc>,
   schema: Schema,
   data: unknown,
@@ -49,9 +38,8 @@ export async function createItem<Doc extends TimestampedDocument, Schema extends
     // Validate data
     const validatedData = parseOrThrow(schema, data);
     
-    // Remove _id, createdAt, and updatedAt from data before creation
-    const { _id: _ignoredId, id: _ignoredAlias, createdAt: _ignoredCreatedAt, updatedAt: _ignoredUpdatedAt, ...safeToCreate } = validatedData;
-    // const { _id, id, createdAt, updatedAt, ...safeToCreate } = validatedData;
+    // Remove timestamp and ID fields at all levels using the utility function
+    const safeToCreate = removeTimestampFields(validatedData);
 
     // Create item with sanitized data
     const created = await model.create(safeToCreate);
@@ -61,7 +49,7 @@ export async function createItem<Doc extends TimestampedDocument, Schema extends
 
     return {
       success: true,
-      data: sanitizeDocument(created as unknown as SanitizableDoc<Doc>, schema)
+      data: sanitizeDocument(created, schema)
     };
   } catch (error) {
     return {
@@ -74,7 +62,7 @@ export async function createItem<Doc extends TimestampedDocument, Schema extends
 /**
  * Updates an existing item in the database
  */
-export async function updateItem<Doc extends TimestampedDocument, Schema extends ZodSchema>(
+export async function updateItem<Doc extends BaseDocument, Schema extends ZodSchema>(
   model: Model<Doc>,
   schema: Schema,
   id: string,
@@ -87,11 +75,14 @@ export async function updateItem<Doc extends TimestampedDocument, Schema extends
 
     // Validate data
     const validatedData = parsePartialOrThrow(schema, data);
+    
+    // Remove timestamp and ID fields at all levels using the utility function
+    const safeToUpdate = removeTimestampFields(validatedData);
 
     // Update item
     const updated = await model.findByIdAndUpdate(
       id,
-      { $set: validatedData },
+      { $set: safeToUpdate },
       { new: true, runValidators: true }
     );
 
@@ -107,7 +98,7 @@ export async function updateItem<Doc extends TimestampedDocument, Schema extends
 
     return {
       success: true,
-      data: sanitizeDocument(updated as unknown as SanitizableDoc<Doc>, schema)
+      data: sanitizeDocument(updated, schema)
     };
   } catch (error) {
     return {
@@ -120,7 +111,7 @@ export async function updateItem<Doc extends TimestampedDocument, Schema extends
 /**
  * Deletes an item from the database
  */
-export async function deleteItem<Doc extends TimestampedDocument, Schema extends ZodSchema>(
+export async function deleteItem<Doc extends BaseDocument, Schema extends ZodSchema>(
   model: Model<Doc>,
   schema: Schema,
   id: string,
@@ -144,7 +135,7 @@ export async function deleteItem<Doc extends TimestampedDocument, Schema extends
 
     return {
       success: true,
-      data: sanitizeDocument(deleted as unknown as SanitizableDoc<Doc>, schema)
+      data: sanitizeDocument(deleted, schema)
     };
   } catch (error) {
     return {

@@ -4,11 +4,10 @@ export interface Field<T> {
   key: keyof T;
   label: string;
   type: "text" | "email" | "select" | "multi-select";
-  inputType: string;
-  options?: string[];
+  options?: { value: string; label: string }[];
   required: boolean;
   editable: boolean;
-  placeholder: string;
+  placeholder?: string;
   schemaName?: z.ZodTypeAny;
 }
 

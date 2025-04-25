@@ -5,14 +5,14 @@ import {
   DurationZod,
   AllowedPurposeZod,
   ModeDoneZod
-} from "../shared/enums";
+} from "@data-schema/enum";
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 
 // ✅ EventItem Schema
 export const EventItemZodSchema = z.object({
   eventType: EventTypeZod, // Enum for event type
   staff: z.array(z.string()), // Array of staff IDs
-  duration: DurationZod, // Enum for duration
+  duration: DurationZod, // Enum for duration with string->number transform
 });
 
 // ✅ SessionLink Schema

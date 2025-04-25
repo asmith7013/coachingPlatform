@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import ReferenceSelect from "@/components/core/fields/ReferenceSelect";
 
 
-export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 'switch' | 'checkbox' | 'textarea' | 'reference';
+export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 'switch' | 'checkbox' | 'textarea' | 'reference' | 'multi-select';
 export type Mode = "create" | "edit";
 
 export interface Field<T extends Record<string, unknown>> {

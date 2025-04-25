@@ -4,15 +4,15 @@ import {
   YesNoEnum,
   LengthTypeEnum,
   TeacherLeaderTypeEnum,
-} from "../shared";
+} from "@data-schema/enum";
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 export class CoachingLog {
   // @prop({ type: mongoose.Types.ObjectId, required: true })
   // _id!: mongoose.Types.ObjectId;
 
-  @prop({ enum: YesNoEnum, type: String, required: true })
-  reasonDone!: YesNoEnum;
+  @prop({ enum: Object.values(YesNoEnum), type: String, required: true })
+  reasonDone!: string;
 
   @prop({ type: String })
   microPLTopic?: string;
@@ -35,11 +35,11 @@ export class CoachingLog {
   @prop({ type: Boolean })
   NYCDone?: boolean;
 
-  @prop({ enum: LengthTypeEnum, type: String, required: true })
-  totalDuration!: LengthTypeEnum;
+  @prop({ enum: Object.values(LengthTypeEnum), type: String, required: true })
+  totalDuration!: string;
 
-  @prop({ enum: TeacherLeaderTypeEnum, type: String, required: true })
-  Solvestouchpoint!: TeacherLeaderTypeEnum;
+  @prop({ enum: Object.values(TeacherLeaderTypeEnum), type: String, required: true })
+  Solvestouchpoint!: string;
 
   @prop({ type: String, required: true })
   PrimaryStrategy!: string;

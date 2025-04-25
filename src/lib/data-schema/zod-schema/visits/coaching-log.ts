@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { ReasonDoneZod, TotalDurationZod, SolvesTouchpointZod } from "@zod-schema/shared/enums";
+import { 
+  ReasonDoneZod, 
+  TotalDurationZod, 
+  SolvesTouchpointZod 
+} from "@data-schema/enum"; // Updated centralized import
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 
 // ✅ CoachingLog Schema

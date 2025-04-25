@@ -4,7 +4,7 @@ import {
   ReasonDoneZod,
   TotalDurationZod,
   SolvesTouchpointZod
-} from "@zod-schema/shared/enums";
+} from "@data-schema/enum";
 
 export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {

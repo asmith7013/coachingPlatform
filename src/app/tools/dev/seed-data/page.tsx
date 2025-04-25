@@ -3,19 +3,27 @@
 import { useState } from 'react';
 import { Card } from '@/components/composed/cards/Card';
 import { Button } from '@/components/core/Button';
-import { mockSchools, mockNYCPSStaff, mockTLStaff, mockCycles, mockCoachingLogs } from '@/lib/dev/mocks/mockData';
+import { mockSchools, mockNYCPSStaff, mockTLStaff, mockCycles, mockCoachingLogs, mockVisitsFromCSV } from '@/lib/dev/mocks/mockData';
+import { generateScheduleWithIds } from '@/lib/dev/mocks/scheduleMockGenerator';
 import { createSchool } from '@/app/actions/schools/schools';
 import { createNYCPSStaff } from '@/app/actions/staff/nycps';
 import { createTeachingLabStaff } from '@/app/actions/staff/tl';
 import { createCycle } from '@/app/actions/visits/cycles';
 import { createCoachingLog } from '@/app/actions/visits/coachingLogs';
+import { createVisit } from '@/app/actions/visits/visits';
+import { createTeacherSchedule, createBellSchedule } from '@/app/actions/schedules/schedules';
 import { SchoolInputZodSchema } from '@zod-schema/core/school';
 import { NYCPSStaffInputZodSchema, TeachingLabStaffInputZodSchema } from '@zod-schema/core/staff';
 import { CycleInputZodSchema } from '@zod-schema/core/cycle';
 import { CoachingLogZodSchema } from '@zod-schema/visits/coaching-log';
+import { VisitZodSchema } from '@/lib/data-schema/zod-schema/visits/visit';
+import { TeacherScheduleZodSchema, BellScheduleZodSchema } from '@zod-schema/scheduling/schedule';
 import type { SchoolInput } from '@zod-schema/core/school';
 import type { NYCPSStaffInput, TeachingLabStaffInput } from '@zod-schema/core/staff';
 import type { CycleInput } from '@zod-schema/core/cycle';
+
+// Get the schedule data with proper IDs
+const scheduleData = generateScheduleWithIds();
 
 // Component to show expandable JSON data
 function JsonPreview<T extends Record<string, unknown>>({
@@ -187,6 +195,27 @@ export default function SeedDataPage() {
         data={mockCoachingLogs as Record<string, unknown>[]}
         schema={CoachingLogZodSchema}
         createFn={createCoachingLog as (d: Record<string, unknown>) => Promise<unknown>}
+      />
+      
+      <SeedSection<Record<string, unknown>>
+        title="Bell Schedule"
+        data={[scheduleData.bellSchedule] as Record<string, unknown>[]}
+        schema={BellScheduleZodSchema}
+        createFn={createBellSchedule as (d: Record<string, unknown>) => Promise<unknown>}
+      />
+
+      <SeedSection<Record<string, unknown>>
+        title="Teacher Schedules"
+        data={scheduleData.teacherSchedules as Record<string, unknown>[]}
+        schema={TeacherScheduleZodSchema}
+        createFn={createTeacherSchedule as (d: Record<string, unknown>) => Promise<unknown>}
+      />
+      
+      <SeedSection<Record<string, unknown>>
+        title="Visits"
+        data={mockVisitsFromCSV() as Record<string, unknown>[]}
+        schema={VisitZodSchema}
+        createFn={createVisit as (d: Record<string, unknown>) => Promise<unknown>}
       />
     </div>
   );

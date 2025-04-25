@@ -1,26 +1,34 @@
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import mongoose from "mongoose";
 import {
-  AllowedPurposeEnum,
-  DurationTypesEnum,
-  EventTypesEnum,
-  SettingTypesEnum,
-  AllowedGradeEnum,
-} from "../shared/shared-types.model";
+  AllowedPurposes,
+  EventTypes,
+  ModeDone,
+  GradeLevels,
+  DurationValues,
+} from "@data-schema/enum";
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { _id: false } })
 export class EventItem {
-  @prop({ enum: EventTypesEnum, required: true })
-  type!: EventTypesEnum;
+  @prop({ 
+    type: String, 
+    enum: Object.values(EventTypes), 
+    required: true 
+  })
+  eventType!: string;
 
   @prop({ type: () => [String], required: true })
   staff!: string[];
 
-  @prop({ enum: DurationTypesEnum, required: true })
-  duration!: DurationTypesEnum;
+  @prop({ 
+    type: String,
+    enum: DurationValues,
+    required: true 
+  })
+  duration!: string;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { _id: false } })
 export class SessionLink {
   @prop({ required: true })
   purpose!: string;
@@ -37,9 +45,6 @@ export class SessionLink {
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 export class Visit {
-  // @prop({ type: mongoose.Types.ObjectId, required: true })
-  // _id!: mongoose.Types.ObjectId;
-
   @prop({ required: true })
   date!: string;
 
@@ -52,14 +57,24 @@ export class Visit {
   @prop({ required: true })
   cycleRef!: string;
 
-  @prop({ enum: AllowedPurposeEnum })
-  purpose?: AllowedPurposeEnum;
+  @prop({ 
+    type: String,
+    enum: Object.values(AllowedPurposes) 
+  })
+  allowedPurpose?: string;
 
-  @prop({ enum: SettingTypesEnum })
-  modeDone?: SettingTypesEnum;
+  @prop({ 
+    type: String,
+    enum: Object.values(ModeDone) 
+  })
+  modeDone?: string;
 
-  @prop({ type: () => [String], enum: AllowedGradeEnum, default: [] })
-  gradeLevelsSupported!: AllowedGradeEnum[];
+  @prop({ 
+    type: [String], 
+    enum: Object.values(GradeLevels), 
+    default: [] 
+  })
+  gradeLevelsSupported!: string[];
 
   @prop({ type: () => [EventItem] })
   events?: EventItem[];
@@ -69,12 +84,6 @@ export class Visit {
 
   @prop({ type: () => [String], required: true })
   owners!: string[];
-
-  @prop()
-  createdAt?: Date;
-
-  @prop()
-  updatedAt?: Date;
 }
 
 export const EventItemModel = mongoose.models.EventItem || getModelForClass(EventItem);

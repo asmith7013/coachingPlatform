@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import type { Document, Types } from "mongoose";
+// Document and Types are needed for type definitions
+// import type { Document, Types } from "mongoose";
 import { 
   createItem,
   updateItem,
@@ -30,6 +31,7 @@ import { StaffMemberModel, NYCPSStaffModel, TeachingLabStaffModel } from "@/lib/
 import { connectToDB } from "@/lib/data-server/db/connection";
 import { handleServerError } from "@/lib/core/error/handle-server-error";
 import { handleValidationError } from "@/lib/core/error/handle-validation-error";
+import { BaseDocument } from "@/lib/data-schema/mongoose-schema/types";
 
 // Valid sort fields for staff resources
 const validSortFields = ['staffName', 'email', 'createdAt', 'updatedAt'];
@@ -45,8 +47,7 @@ export type NYCPSStaffInput = z.infer<typeof NYCPSStaffInputZodSchema>;
 export type TeachingLabStaffInput = z.infer<typeof TeachingLabStaffInputZodSchema>;
 
 // MongoDB document types
-interface StaffMemberDocument extends Document {
-  _id: Types.ObjectId;
+interface StaffMemberDocument extends BaseDocument {
   staffName: string;
   email?: string;
   schools: string[];

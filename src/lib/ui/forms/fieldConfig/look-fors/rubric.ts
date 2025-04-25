@@ -1,61 +1,45 @@
-import { Field } from "@ui-forms/types";
-import { Rubric } from "@zod-schema/look-fors/rubric";
+import { Field } from "@/lib/ui/forms/types";
+import { Rubric } from "@/lib/data-schema/zod-schema/look-fors/rubric";
 
 export const RubricFieldConfig: Field<Rubric>[] = [
-  {
-    key: "score",
-    label: "Score",
-    type: "text",
-    inputType: "number",
-    required: true,
-    editable: true,
-    placeholder: "Enter the rubric score"
-  },
   {
     key: "category",
     label: "Category",
     type: "multi-select",
-    inputType: "array",
     options: [],
     required: true,
     editable: true,
-    placeholder: "Enter rubric categories (comma-separated)"
+    placeholder: "Select category"
+  },
+  {
+    key: "score",
+    label: "Score",
+    type: "select",
+    options: [
+      { value: "1", label: "1" },
+      { value: "2", label: "2" },
+      { value: "3", label: "3" },
+      { value: "4", label: "4" }
+    ],
+    required: true,
+    editable: true,
+    placeholder: "Select score"
   },
   {
     key: "content",
     label: "Content",
     type: "multi-select",
-    inputType: "array",
     options: [],
-    required: true,
+    required: false,
     editable: true,
-    placeholder: "Add rubric content"
-  },
-  {
-    key: "parentId",
-    label: "Parent ID",
-    type: "text",
-    inputType: "text",
-    required: true,
-    editable: true,
-    placeholder: "Enter the parent rubric ID"
-  },
-  {
-    key: "collectionId",
-    label: "Collection ID",
-    type: "text",
-    inputType: "text",
-    required: true,
-    editable: true,
-    placeholder: "Enter the rubric collection ID"
+    placeholder: "Select content"
   },
   {
     key: "hex",
-    label: "Color",
+    label: "Hex Color",
     type: "text",
-    inputType: "text",
-    required: true,
+    required: false,
     editable: true,
-    placeholder: "Enter the hexadecimal color code"
+    placeholder: "Enter hex color (e.g. #FF5733)"
   }
 ]; 

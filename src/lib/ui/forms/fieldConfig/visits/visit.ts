@@ -7,7 +7,7 @@ import {
   AllowedPurposeZod,
   ModeDoneZod,
   SessionPurposeZod
-} from "@zod-schema/shared/enums";
+} from "@data-schema/enum";
 
 export const EventItemFieldConfig: Field<EventItem>[] = [
   {

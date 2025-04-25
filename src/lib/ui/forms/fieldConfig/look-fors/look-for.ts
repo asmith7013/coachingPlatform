@@ -6,7 +6,6 @@ export const LookForFieldConfig: Field<LookForInput>[] = [
     key: "lookForIndex",
     label: "Look For Index",
     type: "text",
-    inputType: "number",
     required: true,
     editable: true,
     placeholder: "Enter look for index"
@@ -15,7 +14,6 @@ export const LookForFieldConfig: Field<LookForInput>[] = [
     key: "schools",
     label: "Schools",
     type: "multi-select",
-    inputType: "multi-select",
     options: [],
     required: true,
     editable: true,
@@ -25,7 +23,6 @@ export const LookForFieldConfig: Field<LookForInput>[] = [
     key: "teachers",
     label: "Teachers",
     type: "multi-select",
-    inputType: "multi-select",
     options: [],
     required: true,
     editable: true,
@@ -35,7 +32,6 @@ export const LookForFieldConfig: Field<LookForInput>[] = [
     key: "topic",
     label: "Topic",
     type: "text",
-    inputType: "text",
     required: true,
     editable: true,
     placeholder: "Enter the main topic"
@@ -44,7 +40,6 @@ export const LookForFieldConfig: Field<LookForInput>[] = [
     key: "description",
     label: "Description",
     type: "text",
-    inputType: "text",
     required: true,
     editable: true,
     placeholder: "Enter a detailed description"
@@ -53,7 +48,6 @@ export const LookForFieldConfig: Field<LookForInput>[] = [
     key: "category",
     label: "Category",
     type: "text",
-    inputType: "text",
     required: false,
     editable: true,
     placeholder: "Enter category"
@@ -62,7 +56,6 @@ export const LookForFieldConfig: Field<LookForInput>[] = [
     key: "status",
     label: "Status",
     type: "text",
-    inputType: "text",
     required: false,
     editable: true,
     placeholder: "Enter status"
@@ -71,8 +64,10 @@ export const LookForFieldConfig: Field<LookForInput>[] = [
     key: "studentFacing",
     label: "Student Facing",
     type: "select",
-    inputType: "radio",
-    options: ["Yes", "No"],
+    options: [
+      { value: "Yes", label: "Yes" },
+      { value: "No", label: "No" }
+    ],
     required: true,
     editable: true,
     placeholder: "Select if student facing"
@@ -81,7 +76,6 @@ export const LookForFieldConfig: Field<LookForInput>[] = [
     key: "rubric",
     label: "Rubric",
     type: "multi-select",
-    inputType: "array",
     options: [],
     required: true,
     editable: true,
@@ -91,7 +85,6 @@ export const LookForFieldConfig: Field<LookForInput>[] = [
     key: "owners",
     label: "Owners",
     type: "multi-select",
-    inputType: "multi-select",
     options: [],
     required: true,
     editable: true,

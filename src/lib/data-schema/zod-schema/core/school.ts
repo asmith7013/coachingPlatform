@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GradeLevelsSupportedZod } from "@zod-schema/shared/enums";
+import { GradeLevelsSupportedZod } from "@data-schema/enum";
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 
 // Base schema for school input (create/update)

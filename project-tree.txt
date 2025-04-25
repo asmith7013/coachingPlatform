@@ -98,10 +98,14 @@
 │   │   │       │   └── route.ts
 │   │   │       └── route.ts
 │   │   ├── dashboard
+│   │   │   ├── classroomNotes
+│   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
 │   │   │   ├── lookForList
 │   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
+│   │   │   ├── schedule
+│   │   │   │   └── page.tsx
 │   │   │   ├── schoolList
 │   │   │   │   ├── [schoolId]
 │   │   │   │   │   └── page.tsx
@@ -250,6 +254,26 @@
 │   │   │   │   ├── RubricFilterPanel.tsx
 │   │   │   │   ├── RubricViewer.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── schedule
+│   │   │   │   ├── SchoolSchedulePage.tsx
+│   │   │   │   ├── components
+│   │   │   │   │   ├── ActivitySelector.tsx
+│   │   │   │   │   ├── ScheduleModeToggle.tsx
+│   │   │   │   │   ├── ScheduleRow.tsx
+│   │   │   │   │   ├── ScheduleSummary.tsx
+│   │   │   │   │   ├── ScheduleTable.tsx
+│   │   │   │   │   ├── SchoolSelector.tsx
+│   │   │   │   │   ├── StaffSelector.tsx
+│   │   │   │   │   ├── TeacherActivityColumns.tsx
+│   │   │   │   │   ├── TeacherBadge.tsx
+│   │   │   │   │   └── TimeCell.tsx
+│   │   │   │   ├── data
+│   │   │   │   │   ├── mockData.ts
+│   │   │   │   │   └── scheduleTypes.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   └── utils
+│   │   │   │       ├── TimeValidator.ts
+│   │   │   │       └── scheduleHelpers.ts
 │   │   │   ├── schools
 │   │   │   ├── staff
 │   │   │   │   ├── StaffCard.tsx
@@ -404,7 +428,8 @@
 │   │   │   ├── index.ts
 │   │   │   ├── mocks
 │   │   │   │   ├── index.ts
-│   │   │   │   └── mockData.ts
+│   │   │   │   ├── mockData.ts
+│   │   │   │   └── scheduleMockGenerator.ts
 │   │   │   └── testing
 │   │   │       ├── index.ts
 │   │   │       └── schema-config-check.ts
@@ -483,4 +508,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-146 directories, 338 files
+152 directories, 357 files

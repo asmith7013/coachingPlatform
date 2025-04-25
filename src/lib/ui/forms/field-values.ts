@@ -20,7 +20,7 @@ import {
     ReasonDoneZod,
     TotalDurationZod,
     SolvesTouchpointZod,
-} from "@zod-schema/shared";
+} from "@data-schema/enum";
 
 import { SettingTypesEnum, YesNoEnum, LengthTypeEnum, TeacherLeaderTypeEnum } from "@models/shared";
 

@@ -1,17 +1,23 @@
 "use server";
 
 import { z } from "zod";
-import { TeacherScheduleModel } from "@/lib/data-schema/mongoose-schema/scheduling/schedule.model";
-import { TeacherScheduleZodSchema } from "@zod-schema/scheduling/schedule";
+import { TeacherScheduleModel, BellScheduleModel } from "@/lib/data-schema/mongoose-schema/scheduling/schedule.model";
+import { 
+  TeacherScheduleZodSchema, 
+  BellScheduleZodSchema 
+} from "@zod-schema/scheduling/schedule";
 import { handleServerError } from "@/lib/core/error/handle-server-error";
 import { connectToDB } from "@/lib/data-server/db/connection";
-import { FetchParams, getDefaultFetchParams } from "@/lib/data-utilities/pagination/paginated-query";
+import { createItem } from "@data-server/crud/crud-operations";
+import { FetchParams, getDefaultFetchParams, fetchPaginatedResource } from "@/lib/data-utilities/pagination/paginated-query";
 import { sanitizeSortBy } from "@/lib/data-utilities/pagination/sort-utils";
 
 // Valid sort fields for schedules
 const validSortFields = ['createdAt', 'updatedAt', 'teacher', 'school'];
 
+// Types
 export type TeacherSchedule = z.infer<typeof TeacherScheduleZodSchema>;
+export type BellSchedule = z.infer<typeof BellScheduleZodSchema>;
 
 /** Fetch Teacher Schedules */
 export async function fetchSchedules(params: FetchParams = {}) {
@@ -29,30 +35,41 @@ export async function fetchSchedules(params: FetchParams = {}) {
 
     console.log("Fetching schedules with params:", fetchParams);
     
-    // Build mongoose query
-    const { page, limit, filters } = fetchParams;
-    const skip = (page - 1) * limit;
-    
-    // Execute the query with pagination
-    const [items, total] = await Promise.all([
-      TeacherScheduleModel.find(filters)
-        .sort({ [fetchParams.sortBy]: fetchParams.sortOrder === 'asc' ? 1 : -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      TeacherScheduleModel.countDocuments(filters)
-    ]);
-    
-    // Validate items against schema
-    const validatedItems = items.map(item => 
-      TeacherScheduleZodSchema.parse(item)
+    return fetchPaginatedResource(
+      TeacherScheduleModel,
+      TeacherScheduleZodSchema,
+      fetchParams
     );
-    
-    return {
-      items: validatedItems,
-      total,
-      empty: items.length === 0
-    };
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
+}
+
+/** Create Teacher Schedule */
+export async function createTeacherSchedule(data: TeacherSchedule) {
+  try {
+    await connectToDB();
+    return createItem(
+      TeacherScheduleModel, 
+      TeacherScheduleZodSchema, 
+      data, 
+      ["/dashboard/schedule"]
+    );
+  } catch (error) {
+    throw new Error(handleServerError(error));
+  }
+}
+
+/** Create Bell Schedule */
+export async function createBellSchedule(data: BellSchedule) {
+  try {
+    await connectToDB();
+    return createItem(
+      BellScheduleModel, 
+      BellScheduleZodSchema, 
+      data, 
+      ["/dashboard/schedule"]
+    );
   } catch (error) {
     throw new Error(handleServerError(error));
   }

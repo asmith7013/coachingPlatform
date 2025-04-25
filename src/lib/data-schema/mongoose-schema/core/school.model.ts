@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
-import { AllowedGradeEnum } from "@models/shared/shared-types.model";
+import { GradeLevels } from "@data-schema/enum";
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 class School {
@@ -22,7 +22,7 @@ class School {
   @prop({ type: String })
   emoji?: string;
 
-  @prop({ type: () => [String], required: true, enum: AllowedGradeEnum })
+  @prop({ type: () => [String], required: true, enum: Object.values(GradeLevels) })
   gradeLevelsSupported!: string[];
 
   @prop({ type: () => [String], required: true })

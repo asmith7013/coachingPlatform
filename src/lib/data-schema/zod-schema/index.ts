@@ -20,7 +20,10 @@ export * from './scheduling/schedule';
 
 // Shared types
 export * from './shared/notes';
-export * from './shared/enums';
+
+// Export enums from the centralized location instead
+// export * from './shared/enums';
+export * from '@data-schema/enum';
 
 // Export validate utility
 export { validate };
