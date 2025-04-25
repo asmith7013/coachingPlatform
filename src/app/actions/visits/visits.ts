@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { connectToDB } from "@/lib/data-server/db/connection";
 import { VisitModel } from "@/lib/data-schema/mongoose-schema/visits/visit.model";
-import { VisitZodSchema } from "@/lib/data-schema/zod-schema/visits/visit";
+import { VisitInputZodSchema, VisitZodSchema } from "@/lib/data-schema/zod-schema/visits/visit";
 import { handleServerError } from "@/lib/core/error/handle-server-error";
 import { handleValidationError } from "@/lib/core/error/handle-validation-error";
 import { createItem } from "@/lib/data-server/crud/crud-operations";
@@ -40,7 +40,7 @@ export async function createVisit(data: Visit) {
     await connectToDB();
     return createItem(
       VisitModel, 
-      VisitZodSchema, 
+      VisitInputZodSchema, 
       data, 
       ["/dashboard/visits"]
     );

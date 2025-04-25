@@ -93,6 +93,7 @@
 │   │   │       ├── cycles.ts
 │   │   │       └── visits.ts
 │   │   ├── api
+│   │   │   ├── debug-mongo
 │   │   │   ├── look-fors
 │   │   │   │   └── bulk-upload
 │   │   │   │       └── route.ts
@@ -416,9 +417,6 @@
 │   │   │   │   ├── scheduling
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── schedule.model.ts
-│   │   │   │   ├── shared
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   └── shared-types.model.ts
 │   │   │   │   ├── types.ts
 │   │   │   │   └── visits
 │   │   │   │       ├── coaching-log.model.ts
@@ -440,7 +438,6 @@
 │   │   │       │   └── schedule.ts
 │   │   │       ├── shared
 │   │   │       │   ├── dateHelpers.ts
-│   │   │       │   ├── enums.ts
 │   │   │       │   ├── index.ts
 │   │   │       │   └── notes.ts
 │   │   │       ├── validate.ts
@@ -563,4 +560,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-176 directories, 388 files
+176 directories, 385 files

@@ -16,7 +16,7 @@ import { SchoolInputZodSchema } from '@zod-schema/core/school';
 import { NYCPSStaffInputZodSchema, TeachingLabStaffInputZodSchema } from '@zod-schema/core/staff';
 import { CycleInputZodSchema } from '@zod-schema/core/cycle';
 import { CoachingLogZodSchema } from '@zod-schema/visits/coaching-log';
-import { VisitZodSchema } from '@/lib/data-schema/zod-schema/visits/visit';
+import { VisitInputZodSchema } from '@/lib/data-schema/zod-schema/visits/visit';
 import { TeacherScheduleZodSchema, BellScheduleZodSchema } from '@zod-schema/scheduling/schedule';
 import type { SchoolInput } from '@zod-schema/core/school';
 import type { NYCPSStaffInput, TeachingLabStaffInput } from '@zod-schema/core/staff';
@@ -214,7 +214,7 @@ export default function SeedDataPage() {
       <SeedSection<Record<string, unknown>>
         title="Visits"
         data={mockVisitsFromCSV() as Record<string, unknown>[]}
-        schema={VisitZodSchema}
+        schema={VisitInputZodSchema}
         createFn={createVisit as (d: Record<string, unknown>) => Promise<unknown>}
       />
     </div>
