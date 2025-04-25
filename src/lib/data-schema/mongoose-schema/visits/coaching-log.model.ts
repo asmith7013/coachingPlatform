@@ -6,7 +6,7 @@ import {
   TeacherLeaderTypeEnum,
 } from "@data-schema/enum";
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, collection: 'coachinglogs' } })
 export class CoachingLog {
 
   @prop({ enum: Object.values(YesNoEnum), type: String, required: true })

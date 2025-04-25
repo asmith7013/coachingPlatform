@@ -2,7 +2,7 @@ import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose, { Types } from "mongoose";
 import { Rubric } from "./rubric.model";
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, collection: 'lookfors' } })
 export class LookFor {
   @prop({ type: Types.ObjectId, required: true })
   _id!: Types.ObjectId;
@@ -38,7 +38,7 @@ export class LookFor {
   owners!: string[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, collection: 'lookforitems' } })
 export class LookForItem {
   @prop({ type: Types.ObjectId, required: true })
   _id!: Types.ObjectId;

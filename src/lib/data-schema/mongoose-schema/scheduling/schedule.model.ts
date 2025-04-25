@@ -7,7 +7,7 @@ import {
   PeriodTypes,
 } from "@data-schema/enum";
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false } })
+@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'classscheduleitems' } })
 export class ClassScheduleItem {
 
   @prop({ enum: Object.values(DayTypes), type: String, required: true })
@@ -20,7 +20,7 @@ export class ClassScheduleItem {
   endTime!: string;
 }
 
-@modelOptions({ schemaOptions: {timestamps: true, _id: false } })
+@modelOptions({ schemaOptions: {timestamps: true, _id: false, collection: 'assignedcycledays' } })
 export class AssignedCycleDay {
 
   @prop({ type: String, required: true })
@@ -30,7 +30,7 @@ export class AssignedCycleDay {
   blockDayType!: string;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, collection: 'bellschedules' } })
 export class BellSchedule {
 
   @prop({ type: String, required: true })
@@ -49,7 +49,7 @@ export class BellSchedule {
   owners!: string[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false } })
+@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'periods' } })
 export class Period {
 
   @prop({ type: Number, required: true })
@@ -65,7 +65,7 @@ export class Period {
   periodType!: string;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false } })
+@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'schedulebydays' } })
 export class ScheduleByDay {
 
   @prop({ enum: Object.values(DayTypes), type: String, required: true })
@@ -75,7 +75,7 @@ export class ScheduleByDay {
   periods!: Period[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, collection: 'teacherschedules' } })
 export class TeacherSchedule {
 
   @prop({ type: String, required: true })

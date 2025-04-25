@@ -56,7 +56,4 @@ class Cycle {
   owners!: string[];
 }
 
-// export const CycleModel = mongoose.models.Cycle || getModelForClass(Cycle);
-// Ensure we don't create duplicate models
-const existingModel = mongoose.models.Cycle;
-export const CycleModel = existingModel || getModelForClass(Cycle);
+export const CycleModel = mongoose.models.Cycle || getModelForClass(Cycle);

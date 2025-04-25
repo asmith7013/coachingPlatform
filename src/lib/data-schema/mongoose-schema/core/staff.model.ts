@@ -1,5 +1,6 @@
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import mongoose from "mongoose";
+import { connectToDB } from "@/lib/data-server/db/connection";
 import {
   RolesNYCPS,
   RolesTL,
@@ -9,7 +10,7 @@ import {
   GradeLevels
 } from "@data-schema/enum";
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false } })
+@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'experiences' } })
 class Experience {
   @prop({ type: String, required: true })
   type!: string;
@@ -17,7 +18,7 @@ class Experience {
   years!: number;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, collection: 'notes' } })
 class Note {
   @prop({ type: String, required: true })
   date!: string;
@@ -29,7 +30,7 @@ class Note {
   subheading!: string[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, collection: 'staffmembers' } })
 class StaffMember {
 
   @prop({ type: String, required: true })
@@ -42,7 +43,7 @@ class StaffMember {
   owners!: string[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, collection: 'nycpsstaffs' } })
 class NYCPSStaff extends StaffMember {
   @prop({ type: () => [String], required: true, enum: Object.values(GradeLevels) })
   gradeLevelsSupported!: string[];
@@ -60,7 +61,7 @@ class NYCPSStaff extends StaffMember {
   experience?: Experience[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, collection: 'teachinglabstaffs' } })
 class TeachingLabStaff extends StaffMember {
   @prop({ type: String, required: true, enum: Object.values(AdminLevels) })
   adminLevel!: string;
@@ -70,6 +71,33 @@ class TeachingLabStaff extends StaffMember {
   rolesTL?: string[];
 }
 
+// Add async model getters
+export async function getStaffMemberModel() {
+  await connectToDB();
+  return mongoose.models.StaffMember || getModelForClass(StaffMember);
+}
+
+export async function getNYCPSStaffModel() {
+  await connectToDB();
+  return mongoose.models.NYCPSStaff || getModelForClass(NYCPSStaff);
+}
+
+export async function getTeachingLabStaffModel() {
+  await connectToDB();
+  return mongoose.models.TeachingLabStaff || getModelForClass(TeachingLabStaff);
+}
+
+export async function getExperienceModel() {
+  await connectToDB();
+  return mongoose.models.Experience || getModelForClass(Experience);
+}
+
+export async function getNoteModel() {
+  await connectToDB();
+  return mongoose.models.Note || getModelForClass(Note);
+}
+
+// Keep for backward compatibility
 export const StaffMemberModel =
   mongoose.models.StaffMember || getModelForClass(StaffMember);
 
@@ -81,3 +109,6 @@ export const TeachingLabStaffModel =
 
 export const ExperienceModel =
   mongoose.models.Experience || getModelForClass(Experience);
+  
+export const NoteModel =
+  mongoose.models.Note || getModelForClass(Note);

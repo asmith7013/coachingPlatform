@@ -1,7 +1,7 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose, { Types } from "mongoose"; // Required for model cache
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, collection: 'nextsteps' } })
 export class NextStep {
   @prop({ type: Types.ObjectId, required: true })
   _id!: Types.ObjectId;

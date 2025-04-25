@@ -8,7 +8,7 @@ import {
   DurationValues,
 } from "@data-schema/enum";
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false } })
+@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'eventitems' } })
 export class EventItem {
   @prop({ 
     type: String, 
@@ -28,7 +28,7 @@ export class EventItem {
   duration!: string;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false } })
+@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'sessionlinks' } })
 export class SessionLink {
   @prop({ required: true })
   purpose!: string;
@@ -43,7 +43,7 @@ export class SessionLink {
   staff!: string[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, collection: 'visits' } })
 export class Visit {
   @prop({ required: true })
   date!: string;
