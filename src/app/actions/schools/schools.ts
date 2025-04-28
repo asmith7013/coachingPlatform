@@ -55,16 +55,28 @@ export async function fetchSchoolsByDistrict(district: string) {
         .lean()
         .exec();
       
+      const items = schools.map(school => SchoolZodSchema.parse(school));
+      
       return {
         success: true,
-        items: schools.map(school => SchoolZodSchema.parse(school)),
-        total: schools.length
+        items,
+        total: items.length,
+        page: 1,
+        limit: items.length,
+        totalPages: 1,
+        hasMore: false,
+        empty: items.length === 0
       };
     } catch (error) {
       return {
         success: false,
         items: [],
         total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 0,
+        hasMore: false,
+        empty: true,
         error: handleServerError(error)
       };
     }

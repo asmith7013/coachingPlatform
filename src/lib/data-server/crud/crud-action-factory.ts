@@ -10,7 +10,7 @@ import type { CrudResultType } from "@core-types/crud";
 import { BaseDocument } from "@core-types/document";  
 import { connectToDB } from "@data-server/db/connection";
 import { handleCrudError } from "@error/crud-error-handling";
-import { LegacyPaginatedResult } from "@core-types/response";
+import { PaginatedResponse } from "@core-types/response";
 import { FetchParams, getDefaultFetchParams as getDefaultParams } from "@core-types/api";
 
 // Utility to sanitize sort fields
@@ -60,7 +60,7 @@ export async function fetchPaginatedResource<
     validSortFields: string[];
     defaultSortField?: string;
   }
-): Promise<LegacyPaginatedResult<z.infer<Schema>>> {
+): Promise<PaginatedResponse<z.infer<Schema>>> {
   try {
     await connectToDB();
     
@@ -181,7 +181,7 @@ export function createCrudActions<
     /**
      * Fetches a paginated list of items
      */
-    fetch: async (params: FetchParams = {}): Promise<PaginatedResult<FullType>> => {
+    fetch: async (params: FetchParams = {}): Promise<PaginatedResponse<FullType>> => {
       try {
         await connectToDB();
         

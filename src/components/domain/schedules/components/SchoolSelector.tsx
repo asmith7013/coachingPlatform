@@ -1,6 +1,6 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { radii } from '@/lib/ui/tokens';
+import { cn } from '@ui/utils/formatters';
+import { radii } from '@ui/tokens/shape';
 import { SchoolSelectorProps } from '../data/scheduleTypes';
 
 /**

@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@ui/utils/formatters';
 import { tv } from 'tailwind-variants'
 import { textColors, textSize, gap as gapTokens } from '@ui-tokens/tokens'
 

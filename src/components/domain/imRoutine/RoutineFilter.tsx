@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/core/Button';
 // import { Text } from '@/components/core/typography/Text';
 import { typography } from '@ui-tokens/typography';
-import { cn } from '@/lib/utils';
+import { cn } from '@ui/utils/formatters';;
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
 

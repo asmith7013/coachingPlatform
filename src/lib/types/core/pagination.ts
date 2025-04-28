@@ -1,21 +1,14 @@
+// src/lib/types/core/pagination.ts
+import { FetchParams, DEFAULT_FETCH_PARAMS, getDefaultFetchParams } from './api';
+
+// Re-export the core fetch types
+export { DEFAULT_FETCH_PARAMS, getDefaultFetchParams };
+export { type FetchParams };
+
 /**
  * Base pagination options for DB queries
  */
 export interface PaginationOptions {
-  /** Page number (1-based) */
-  page: number;
-  /** Number of items per page */
-  limit: number;
-  /** Field to sort by */
-  sortBy?: string;
-  /** Sort direction */
-  sortOrder?: "asc" | "desc";
-}
-
-/**
- * Query parameters for fetching data
- */
-export interface FetchParams {
   /** Page number (1-based) */
   page?: number;
   /** Number of items per page */
@@ -24,32 +17,34 @@ export interface FetchParams {
   sortBy?: string;
   /** Sort direction */
   sortOrder?: "asc" | "desc";
-  /** Filter criteria */
-  filters?: Record<string, unknown>;
-  /** Fields to search in */
-  searchFields?: string[];
-  /** Search term */
-  search?: string;
 }
 
 /**
- * Default pagination and filter parameters
+ * Standard pagination result type that includes success flag
  */
-export const DEFAULT_FETCH_PARAMS: Required<Pick<FetchParams, 'page' | 'limit'>> = {
-  page: 1,
-  limit: 20
+export interface PaginatedResult<T> {
+  /** Array of resources */
+  items: T[];
+  /** Total count of items */
+  total: number;
+  /** Whether the collection is empty */
+  empty: boolean;
+  /** Indicates if the operation was successful */
+  success: boolean;
+  /** Current page number */
+  page?: number;
+  /** Items per page */
+  limit?: number;
+  /** Total number of pages */
+  totalPages?: number;
+}
+
+/**
+ * Default pagination options
+ */
+export const DEFAULT_PAGINATION_OPTIONS: Required<PaginationOptions> = {
+  page: DEFAULT_FETCH_PARAMS.page,
+  limit: DEFAULT_FETCH_PARAMS.limit,
+  sortBy: DEFAULT_FETCH_PARAMS.sortBy,
+  sortOrder: DEFAULT_FETCH_PARAMS.sortOrder,
 };
-
-/**
- * Get default fetch params with optional overrides
- */
-export function getDefaultFetchParams(
-  params: Partial<FetchParams> = {}
-): Required<Pick<FetchParams, 'page' | 'limit'>> & Omit<FetchParams, 'page' | 'limit'> {
-  return {
-    ...DEFAULT_FETCH_PARAMS,
-    ...params,
-    page: Math.max(1, params.page ?? DEFAULT_FETCH_PARAMS.page),
-    limit: Math.max(1, params.limit ?? DEFAULT_FETCH_PARAMS.limit)
-  };
-}

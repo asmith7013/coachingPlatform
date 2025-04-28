@@ -1,5 +1,5 @@
 import { tv, type VariantProps } from 'tailwind-variants'
-import { cn } from '@/lib/utils'
+import { cn } from '@ui/utils/formatters';
 import { textSize, paddingX, paddingY, radii, textColors } from '@ui-tokens/tokens'
 
 // Define component-specific types

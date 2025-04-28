@@ -14,7 +14,7 @@ import { useLookFors } from "@/hooks/useLookFors";
 import { uploadLookForFile } from "@actions/lookFors/lookFors";
 import { createLookFor } from "@actions/lookFors/lookFors";
 import { LookForInput } from "@zod-schema/look-fors/look-for";
-import { cn } from "@/lib/utils";
+import { cn } from "@ui/utils/formatters";
 
 const lookForFields: Field<LookForInput>[] = [
   {

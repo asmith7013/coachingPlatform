@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@ui/utils/formatters';;
 import { GroupWithId, ItemWithId, useItemToGroupMap } from '@lib/hooks/use-item-to-group-map';
 
 export interface FilterableGridViewProps<TGroup extends GroupWithId, TItem extends ItemWithId> {

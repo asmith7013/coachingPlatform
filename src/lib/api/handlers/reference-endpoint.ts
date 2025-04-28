@@ -7,8 +7,12 @@ import { BaseReference } from "@/lib/types/core/reference";
 /**
  * Generic type for any fetch function that returns items and total
  */
+// Modified type that's more flexible with dates:
 export type FetchFunction<T> = (params: FetchParams) => Promise<{
-  items: T[];
+  items: (T | Omit<T, 'createdAt' | 'updatedAt'> & {
+    createdAt?: string | Date;
+    updatedAt?: string | Date;
+  })[];
   total: number;
   success: boolean;
   error?: string;
@@ -122,7 +126,7 @@ export function createReferenceEndpoint<T, R extends BaseReference>(options: Ref
       }
 
       // Map items to reference format
-      const references = data.items.map(mapItem);
+      const references = data.items.map((item) => mapItem(item as T));
       
       console.log(`📤 ${logPrefix} /${endpoint} response: ${references.length} items found`);
 

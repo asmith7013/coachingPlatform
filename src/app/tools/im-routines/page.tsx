@@ -12,7 +12,7 @@ import { renderILCLesson } from '@/lib/domain/imRoutine/render-ILC-esson';
 import { CurriculumVersionModal } from '@/components/domain/imRoutine/CurriculumVersionModal';
 import { usePersistedCurriculumVersion } from '@/lib/hooks/use-persisted-curriculum-version';
 import { textSize, weight } from '@ui-tokens/typography';
-import { cn } from '@/lib/utils';
+import { cn } from '@ui/utils/formatters';;
 import { Text } from '@/components/core/typography/Text';
 
 // Add type definitions at the top of the file

@@ -1,117 +1,210 @@
 // src/hooks/utils/useOptimisticResource.ts
-import { useState, useCallback } from "react";
-import { KeyedMutator } from "swr";
-import { ResourceResponse } from '@core-types/response';
+import { useCallback, useState } from 'react';
+import { useSWRConfig } from 'swr';
 
-export function useOptimisticResource<T extends { _id: string }, I>(
-  mutate: KeyedMutator<ResourceResponse<T>>
-) {
-  const [isOptimisticUpdating, setIsOptimisticUpdating] = useState(false);
+// Type helper to work with both MongoDB style _id and normalized id
+type WithId = { id: string } | { _id: string };
 
-  const optimisticAdd = useCallback(async (
-    data: I,
-    createAction: (data: I) => Promise<{ success: boolean; [key: string]: unknown }>
-  ) => {
-    setIsOptimisticUpdating(true);
-    const tempId = `temp-${Date.now()}`;
-    
-    mutate(
-      (currentData) => ({
-        items: [...(currentData?.items || []), { ...data, _id: tempId } as unknown as T],
-        total: (currentData?.total || 0) + 1,
-        empty: false
-      }),
-      false
-    );
+// Helper to get ID value regardless of property name
+function getId(item: WithId): string {
+  return 'id' in item ? item.id : item._id;
+}
 
-    try {
-      const result = await createAction(data);
-      if (result.success) {
-        mutate(); // Update with the real data
-        return result;
-      } else {
-        mutate(); // Revert on error
-        throw new Error("Failed to create item");
+/**
+ * Hook for optimistic updates of resources
+ * 
+ * @param resourceKey - Key for SWR cache
+ * @returns Object with optimistic update methods
+ */
+export function useOptimisticResource<T extends WithId>(resourceKey: string) {
+  const { mutate } = useSWRConfig();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  // Optimistically add a new item
+  const optimisticAdd = useCallback(
+    async (
+      newItem: T,
+      adder: (item: T) => Promise<{ success: boolean; data?: T; error?: string }>,
+      options?: { 
+        /** When true, will refresh data from server after operation completes */
+        revalidate?: boolean 
       }
-    } catch (error) {
-      mutate(); // Revert on error
-      throw error;
-    } finally {
-      setIsOptimisticUpdating(false);
-    }
-  }, [mutate]);
+    ) => {
+      setIsProcessing(true);
+      setError(null);
 
-  const optimisticModify = useCallback(async (
-    id: string,
-    data: I,
-    updateAction: (id: string, data: I) => Promise<{ success: boolean; [key: string]: unknown }>
-  ) => {
-    setIsOptimisticUpdating(true);
-    
-    mutate(
-      (currentData) => ({
-        items: currentData?.items.map(item => 
-          item._id === id ? { ...item, ...data } as unknown as T : item
-        ) || [],
-        total: currentData?.total || 0,
-        empty: currentData?.empty || false
-      }),
-      false
-    );
+      try {
+        // Optimistically update the local data immediately
+        await mutate(
+          resourceKey,
+          async (currentData: { items: T[]; total: number } | undefined) => {
+            if (!currentData) return { items: [newItem], total: 1, success: true };
+            
+            return {
+              items: [...currentData.items, newItem],
+              total: currentData.total + 1,
+              success: true
+            };
+          },
+          {
+            revalidate: false,
+          }
+        );
 
-    try {
-      const result = await updateAction(id, data);
-      if (result.success) {
-        mutate(); // Update with the real data
-        return result;
-      } else {
-        mutate(); // Revert on error
-        throw new Error("Failed to update item");
+        // Perform actual API call
+        const result = await adder(newItem);
+
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to add item');
+        }
+
+        // Revalidate data from server if requested
+        if (options?.revalidate) {
+          await mutate(resourceKey);
+        }
+
+        return { success: true, data: result.data || newItem };
+      } catch (err) {
+        // If the API call fails, roll back optimistic update
+        await mutate(resourceKey);
+        
+        const error = err instanceof Error ? err : new Error('Unknown error occurred');
+        setError(error);
+        
+        return { success: false, error: error.message };
+      } finally {
+        setIsProcessing(false);
       }
-    } catch (error) {
-      mutate(); // Revert on error
-      throw error;
-    } finally {
-      setIsOptimisticUpdating(false);
-    }
-  }, [mutate]);
+    },
+    [mutate, resourceKey]
+  );
 
-  const optimisticRemove = useCallback(async (
-    id: string,
-    deleteAction: (id: string) => Promise<{ success: boolean; error?: string }>
-  ) => {
-    setIsOptimisticUpdating(true);
-    
-    mutate(
-      (currentData) => ({
-        items: currentData?.items.filter(item => item._id !== id) || [],
-        total: (currentData?.total || 0) - 1,
-        empty: (currentData?.items || []).length <= 1
-      }),
-      false
-    );
-
-    try {
-      const result = await deleteAction(id);
-      if (result.success) {
-        mutate(); // Update with the real data
-        return result;
-      } else {
-        mutate(); // Revert on error
-        throw new Error(result.error || "Failed to delete item");
+  // Optimistically modify an existing item
+  const optimisticModify = useCallback(
+    async (
+      updatedItem: T,
+      modifier: (item: T) => Promise<{ success: boolean; data?: T; error?: string }>,
+      options?: { 
+        /** When true, will refresh data from server after operation completes */
+        revalidate?: boolean 
       }
-    } catch (error) {
-      mutate(); // Revert on error
-      throw error;
-    } finally {
-      setIsOptimisticUpdating(false);
-    }
-  }, [mutate]);
+    ) => {
+      setIsProcessing(true);
+      setError(null);
+
+      try {
+        // Optimistically update the local data immediately
+        await mutate(
+          resourceKey,
+          async (currentData: { items: T[]; total: number } | undefined) => {
+            if (!currentData) return { items: [updatedItem], total: 1, success: true };
+            
+            return {
+              items: currentData.items.map((item) =>
+                getId(item) === getId(updatedItem) ? updatedItem : item
+              ),
+              total: currentData.total,
+              success: true
+            };
+          },
+          {
+            revalidate: false,
+          }
+        );
+
+        // Perform actual API call
+        const result = await modifier(updatedItem);
+
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to modify item');
+        }
+
+        // Revalidate data from server if requested
+        if (options?.revalidate) {
+          await mutate(resourceKey);
+        }
+
+        return { success: true, data: result.data || updatedItem };
+      } catch (err) {
+        // If the API call fails, roll back optimistic update
+        await mutate(resourceKey);
+        
+        const error = err instanceof Error ? err : new Error('Unknown error occurred');
+        setError(error);
+        
+        return { success: false, error: error.message };
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [mutate, resourceKey]
+  );
+
+  // Optimistically remove an item
+  const optimisticRemove = useCallback(
+    async (
+      itemToRemove: T,
+      remover: (item: T) => Promise<{ success: boolean; error?: string }>,
+      options?: { 
+        /** When true, will refresh data from server after operation completes */
+        revalidate?: boolean 
+      }
+    ) => {
+      setIsProcessing(true);
+      setError(null);
+
+      try {
+        // Optimistically update the local data immediately
+        await mutate(
+          resourceKey,
+          async (currentData: { items: T[]; total: number } | undefined) => {
+            if (!currentData) return { items: [], total: 0, success: true };
+            
+            return {
+              items: currentData.items.filter((item) => getId(item) !== getId(itemToRemove)),
+              total: currentData.total - 1,
+              success: true
+            };
+          },
+          {
+            revalidate: false,
+          }
+        );
+
+        // Perform actual API call
+        const result = await remover(itemToRemove);
+
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to remove item');
+        }
+
+        // Revalidate data from server if requested
+        if (options?.revalidate) {
+          await mutate(resourceKey);
+        }
+
+        return { success: true };
+      } catch (err) {
+        // If the API call fails, roll back optimistic update
+        await mutate(resourceKey);
+        
+        const error = err instanceof Error ? err : new Error('Unknown error occurred');
+        setError(error);
+        
+        return { success: false, error: error.message };
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [mutate, resourceKey]
+  );
 
   return {
+    isProcessing,
+    error,
     optimisticAdd,
     optimisticModify,
     optimisticRemove,
-    isOptimisticUpdating
   };
 }

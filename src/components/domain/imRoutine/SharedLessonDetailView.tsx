@@ -1,7 +1,7 @@
 'use client';
 
 import { stack } from '@ui-tokens/tokens';
-import { cn } from '@/lib/utils';
+import { cn } from '@ui/utils/formatters';;
 
 type BaseActivity = {
   activityNumber: string;

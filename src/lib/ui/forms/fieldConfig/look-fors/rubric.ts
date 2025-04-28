@@ -1,5 +1,5 @@
-import { Field } from "@/lib/ui/forms/types";
-import { Rubric } from "@/lib/data-schema/zod-schema/look-fors/rubric";
+import { Field } from "@ui-types/forms";
+import { Rubric } from "@zod-schema/look-fors/rubric";
 
 export const RubricFieldConfig: Field<Rubric>[] = [
   {

@@ -1,12 +1,11 @@
-import type { HydratedDocument, Model } from "mongoose";
+import type { HydratedDocument, Model, FilterQuery } from "mongoose";
 import { handleServerError } from "@error/handle-server-error";
 import { connectToDB } from "@data-server/db/connection";
 import { sanitizeDocuments } from "@data-utilities/transformers/sanitize";
 import type { ZodSchema } from "zod";
 import { z } from "zod";
 import { BaseDocument } from "@core-types/document";
-import { PaginationOptions } from "@core-types/pagination";
-import { LegacyPaginatedResult } from "@core-types/response";
+import { PaginationOptions, DEFAULT_PAGINATION_OPTIONS, PaginatedResult } from "@core-types/pagination";
 
 // Use TimestampedDoc from the centralized location
 // Other pagination-specific interfaces stay here
@@ -15,8 +14,8 @@ import { LegacyPaginatedResult } from "@core-types/response";
  */
 export function buildPaginatedQuery<T extends BaseDocument>(
   model: Model<HydratedDocument<T>>,
-  filters: Record<string, unknown>,
-  { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" }: PaginationOptions = {}
+  filters: FilterQuery<T>,
+  { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" }: PaginationOptions = DEFAULT_PAGINATION_OPTIONS
 ) {
   const query = model.find(filters);
   
@@ -35,10 +34,10 @@ export function buildPaginatedQuery<T extends BaseDocument>(
  */
 export async function executePaginatedQuery<T extends BaseDocument, S extends ZodSchema>(
   model: Model<HydratedDocument<T>>,
-  filters: Record<string, unknown>,
+  filters: FilterQuery<T>,
   schema: S,
-  options: PaginationOptions = {}
-): Promise<LegacyPaginatedResult<z.infer<S>>> {
+  options: PaginationOptions = DEFAULT_PAGINATION_OPTIONS
+): Promise<PaginatedResult<z.infer<S>>> {
   try {
     if (!model) {
       throw new Error('Model is required');
@@ -68,7 +67,7 @@ export async function executePaginatedQuery<T extends BaseDocument, S extends Zo
     // Add additional safety by applying lean() to avoid potential issues with document methods
     query.lean();
     
-    const [items, total] = await Promise.all([
+    const [items, totalItems] = await Promise.all([
       query.exec(),
       model.countDocuments(filters)
     ]);
@@ -82,18 +81,19 @@ export async function executePaginatedQuery<T extends BaseDocument, S extends Zo
     const itemsArray = Array.isArray(items) ? items : [];
     
     // Sanitize items for client
-    const sanitizedItems = sanitizeDocuments(itemsArray);
+    const sanitizedItems = sanitizeDocuments(itemsArray as unknown as Record<string, unknown>[]);
     
     // Calculate metadata
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.ceil(totalItems / limit);
     
     return {
-      items: sanitizedItems,
-      total,
+      success: true,
+      items: sanitizedItems as z.infer<S>[],
+      total: totalItems,
+      empty: itemsArray.length === 0,
       page,
       limit,
-      totalPages,
-      empty: itemsArray.length === 0
+      totalPages
     };
   } catch (error) {
     // Add context to the error

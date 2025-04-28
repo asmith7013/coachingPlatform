@@ -1544,7 +1544,7 @@ This hybrid approach balances consistency with flexibility while avoiding duplic
 <section id="example-implementation">
 Example Implementation
 tsx// Button.tsx - An atomic component
-import { cn } from '@/lib/utils';
+import { cn } from '@ui/utils/formatters';;
 import { tv } from 'tailwind-variants';
 import { textColors, radii } from '@/lib/ui/tokens';
 import { disabledVariant, loadingVariant } from '@/lib/ui/variants';

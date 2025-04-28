@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@ui/utils/formatters';;
 import { textColors, radii } from '@/lib/ui/tokens';
 import { StaffSelectorProps } from '../data/scheduleTypes';
 

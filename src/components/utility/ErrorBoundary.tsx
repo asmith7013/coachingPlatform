@@ -3,7 +3,7 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { captureError } from '@/lib/error';
-import { cn } from '@/lib/utils';
+import { cn } from '@ui/utils/formatters';;
 
 interface ErrorBoundaryProps {
   children: ReactNode;

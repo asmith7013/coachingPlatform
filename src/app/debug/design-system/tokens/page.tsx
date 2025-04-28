@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@ui/utils/formatters';
 import { Heading } from '@/components/core/typography/Heading'
 import { Text } from '@/components/core/typography/Text'
 

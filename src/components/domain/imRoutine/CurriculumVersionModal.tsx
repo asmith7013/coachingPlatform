@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { typography } from '@ui-tokens/typography';
-import { cn } from '@/lib/utils';
+import { cn } from '@ui/utils/formatters';;
 
 type CurriculumVersionModalProps = {
   onSelectVersion: (version: 'KH' | 'ILC') => void;

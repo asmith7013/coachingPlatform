@@ -11,3 +11,4 @@ export const GET = createReferenceEndpoint<School, SchoolReference>({
   defaultLimit: 20,
   logPrefix: "Schools API"
 }); 
+

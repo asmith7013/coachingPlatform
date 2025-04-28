@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/composed/cards/Card';
 import { Text } from '@/components/core/typography/Text';
-import { cn } from '@/lib/utils';
+import { cn } from '@ui/utils/formatters';;
 
 type Props = {
   lessonNumber: string;

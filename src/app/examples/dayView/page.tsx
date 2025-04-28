@@ -3,7 +3,7 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, EllipsisHorizontalIcon } from '@heroicons/react/20/solid'
 import { useEffect, useRef } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@ui/utils/formatters';
 
 const days = [
   { date: '2021-12-27' },

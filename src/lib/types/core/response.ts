@@ -18,6 +18,9 @@ export interface BaseResponse {
   }>;
 }
 
+/**
+ * Standard response type with items array for collection data
+ */
 export type StandardResponse<T = Record<string, unknown>> = {
   items: T[];
   total?: number;
@@ -61,25 +64,11 @@ export interface SingleResourceResponse<T = unknown> extends BaseResponse {
   data: T;
 }
 
-
+/**
+ * Response interface for file upload operations
+ */
 export interface UploadResponse {
   success: boolean;
   message: string;
   uploaded?: number;
 }
-
-
-/**
- * @deprecated Use ResourceResponse with items property
- */
-export type LegacyResourceResponse<T = unknown> = Omit<ResourceResponse<T>, 'items'> & {
-  data: T[];
-};
-
-/**
- * @deprecated Use PaginatedResponse
- */
-export type LegacyPaginatedResult<T = unknown> = ResourceResponse<T> & {
-  page: number;
-  limit: number;
-};

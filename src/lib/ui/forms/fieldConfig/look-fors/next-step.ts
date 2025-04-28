@@ -1,4 +1,4 @@
-import { Field } from "@/lib/ui/forms/types";
+import { Field } from "@ui-types/forms";
 import { NextStepInput } from "@zod-schema/look-fors/next-step";
 
 export const NextStepFieldConfig: Field<NextStepInput>[] = [

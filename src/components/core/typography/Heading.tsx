@@ -1,5 +1,5 @@
 import { ElementType, ReactNode } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
 import { heading as headingLevels, textColors } from '@ui-tokens/tokens'
 import type { HeadingLevel, TextColor } from '@ui-tokens/tokens'

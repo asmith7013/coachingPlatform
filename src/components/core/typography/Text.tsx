@@ -1,5 +1,5 @@
 import { ElementType, ReactNode } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
 import { textSize, weight, textColors } from '@ui-tokens/tokens'
 import type { TextSize, FontWeight, TextColor } from '@ui-tokens/tokens'

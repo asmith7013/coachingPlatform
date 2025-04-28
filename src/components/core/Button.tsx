@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
 import { textSize, paddingX, paddingY, radii, shadows } from '@ui-tokens/tokens'
 

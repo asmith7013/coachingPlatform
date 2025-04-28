@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/core/Button';
-import { cn } from '@/lib/utils';
+import { cn } from '@ui/utils/formatters';;
 import { ScheduleModeToggleProps } from '../data/scheduleTypes';
 
 /**

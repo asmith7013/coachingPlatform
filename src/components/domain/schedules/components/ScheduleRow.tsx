@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@ui/utils/formatters';;
 import { radii } from '@/lib/ui/tokens';
 import { TimeCell } from './TimeCell';
 import { ActivitySelector } from './ActivitySelector';

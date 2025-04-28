@@ -10,7 +10,7 @@ import {
   MenuItems,
 } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { cn } from '@/lib/utils'
+import { cn } from '@ui/utils/formatters';
 import Image from 'next/image'
 import { textSize, paddingX, paddingY } from '@ui-tokens/tokens'
 

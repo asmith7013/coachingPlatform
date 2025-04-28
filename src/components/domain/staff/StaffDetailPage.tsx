@@ -11,7 +11,7 @@ import { Card } from '@/components/composed/cards/Card'
 import { ScheduleTable } from '@/components/composed/tables/ScheduleTable'
 import { Table } from '@/components/composed/tables/Table'
 import { useSafeSWR } from '@/hooks/utils/useSafeSWR'
-import { cn } from '@/lib/utils'
+import { cn } from '@ui/utils/formatters';
 import { weight, paddingY } from '@ui-tokens/tokens'
 import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'
 import type { TeacherSchedule } from '@/lib/data-schema/zod-schema/schedule/schedule'

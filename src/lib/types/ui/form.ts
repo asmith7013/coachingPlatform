@@ -25,9 +25,9 @@ export interface FieldBase {
 /**
  * Generic field configuration with type safety
  */
-export interface Field<T> extends FieldBase {
+export interface Field<T = unknown> extends FieldBase {
   /** Field name - typed to match object keys */
-  name: keyof T;
+  name: keyof T & string;
   /** Field type */
   type: "text" | "email" | "number" | "password" | "select" | "multi-select" | "checkbox" | "date" | "datetime" | "reference";
   /** Available options for select fields */
@@ -81,14 +81,14 @@ export interface FieldOverride {
 /**
  * Map of field overrides by field name
  */
-export type FieldOverrideMap<T> = {
+export type FieldOverrideMap<T = unknown> = {
   [K in keyof T]?: FieldOverride;
 };
 
 /**
  * Form-level override configuration
  */
-export interface FormOverride<T> {
+export interface FormOverride<T = unknown> {
   /** Form title */
   title?: string;
   /** Form description */
@@ -109,9 +109,13 @@ export interface FormOverride<T> {
   defaultValues?: Partial<T>;
 }
 
-// Type aliases for backward compatibility
-export type TextField = Field<any> & { type: "text" | "email" | "number" | "password" };
-export type SelectField = Field<any> & { type: "select" | "multi-select" };
-export type CheckboxField = Field<any> & { type: "checkbox" };
-export type ReferenceField = Field<any> & { type: "reference", url: string };
-export type DateField = Field<any> & { type: "date" | "datetime" };
+// Type aliases for backward compatibility with typed generics
+export type TextField<T = unknown> = Field<T> & { type: "text" | "email" | "number" | "password" };
+export type SelectField<T = unknown> = Field<T> & { type: "select" | "multi-select" };
+export type CheckboxField<T = unknown> = Field<T> & { type: "checkbox" };
+export type ReferenceField<T = unknown> = Field<T> & { type: "reference", url: string };
+export type DateField<T = unknown> = Field<T> & { type: "date" | "datetime" };
+
+// Import types from the new location but don't re-export
+// to avoid conflicts with types defined in this file
+import './forms';

@@ -10,6 +10,7 @@ export const GET = createReferenceEndpoint<TeacherSchedule, ScheduleReference>({
   logPrefix: "API",
   mapItem: (schedule) => ({
     _id: schedule._id,
+    label: `Schedule for ${schedule.teacher} at ${schedule.school}`,
     teacher: schedule.teacher,
     school: schedule.school
   })

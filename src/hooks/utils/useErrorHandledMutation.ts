@@ -80,7 +80,7 @@ export interface MutationResult<T = unknown, A extends unknown[] = unknown[]> {
  * @param options Configuration options
  * @returns MutationResult object with state and execute function
  */
-export function useErrorHandledErrorMutation<T = unknown, A extends unknown[] = unknown[]>(
+export function useErrorHandledMutation<T = unknown, A extends unknown[] = unknown[]>(
   mutationFn: (...args: A) => Promise<ServerResponse<T>>,
   options: MutationOptions = {}
 ): MutationResult<T, A> {
@@ -183,13 +183,18 @@ export function useErrorHandledErrorMutation<T = unknown, A extends unknown[] = 
  * A convenience wrapper for mutations that don't return data
  */
 export function useVoidMutation(
-  mutationFn: (...args: any[]) => Promise<ServerResponse<void>>,
+  mutationFn: (...args: unknown[]) => Promise<ServerResponse<void>>,
   options: MutationOptions = {}
 ): Omit<MutationResult<void>, 'data'> {
   const result = useErrorHandledMutation(mutationFn, options);
   // Omit data from the result since it's always null
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, ...rest } = result;
   return rest;
 }
 
+// Maintain backward compatibility with useErrorHandledErrorMutation
+export const useErrorHandledErrorMutation = useErrorHandledMutation;
+
+// Export as default
 export default useErrorHandledMutation;

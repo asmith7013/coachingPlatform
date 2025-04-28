@@ -1,4 +1,4 @@
-import { Field } from "@ui-types/form";
+import { Field } from "@ui-types/forms";
 import { LookForInput } from "@domain-types/look-fors";
 
 export const LookForFieldConfig: Field<LookForInput>[] = [

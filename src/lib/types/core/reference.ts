@@ -11,6 +11,7 @@
 export interface BaseReference {
     _id: string;
     label: string; // The display text for UI components
+    value?: string; // Optional value for compatibility with select components
   }
   
   /**
@@ -83,11 +84,11 @@ export interface BaseReference {
    * Map type that defines mapper functions for converting full entities to references
    */
   export type ReferenceMappers = {
-    school: (item: any) => SchoolReference;
-    staff: (item: any) => StaffReference;
-    schedule: (item: any) => ScheduleReference;
-    bellSchedule: (item: any) => BellScheduleReference;
-    lookFor: (item: any) => LookForReference;
-    coachingLog: (item: any) => CoachingLogReference;
-    visit: (item: any) => VisitReference;
+    school: (item: unknown) => SchoolReference;
+    staff: (item: unknown) => StaffReference;
+    schedule: (item: unknown) => ScheduleReference;
+    bellSchedule: (item: unknown) => BellScheduleReference;
+    lookFor: (item: unknown) => LookForReference;
+    coachingLog: (item: unknown) => CoachingLogReference;
+    visit: (item: unknown) => VisitReference;
   };

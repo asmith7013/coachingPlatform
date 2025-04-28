@@ -7,7 +7,7 @@ import {
   deleteSchool 
 } from "@actions/schools/schools";
 import { School, SchoolInput } from "@data-schema/zod-schema/core/school";
-import type { ResourceResponse } from "@core-types/response";
+import type { PaginatedResponse } from "@core-types/response";
 import type { FetchParams } from "@core-types/api";
 
 export function useSchools(initialPage: number = 1, initialLimit: number = 20) {
@@ -30,7 +30,7 @@ export function useSchools(initialPage: number = 1, initialLimit: number = 20) {
     mutate
   } = useResourceManager<School, SchoolInput>(
     "schools",
-    fetchSchools as (params: FetchParams) => Promise<ResourceResponse<School>>,
+    fetchSchools as (params: FetchParams) => Promise<PaginatedResponse<School>>,
     createSchool as (data: SchoolInput) => Promise<{ success: boolean; [key: string]: unknown }>,
     updateSchool as (id: string, data: SchoolInput) => Promise<{ success: boolean; [key: string]: unknown }>,
     deleteSchool as (id: string) => Promise<{ success: boolean; [key: string]: unknown }>,

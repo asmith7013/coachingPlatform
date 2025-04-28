@@ -13,7 +13,7 @@ import { Field, GenericResourceForm } from "@components/composed/forms/ResourceF
 import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
 import { ResourceHeader } from "@components/shared/ResourceHeader";
 import { SchoolFieldConfig } from "@ui-forms/fieldConfig/core/school";
-import { cn } from "@lib/utils";
+import { cn } from "@ui/utils/formatters";
 import { EmptyListWrapper } from '@components/shared/EmptyListWrapper';
 
 

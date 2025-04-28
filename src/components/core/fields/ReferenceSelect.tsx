@@ -4,6 +4,7 @@ import React, { useMemo, useCallback, useState, useEffect, useRef } from "react"
 import Select from "react-select";
 import { Label } from "./Label";
 import { useReferenceData } from "@hooks/useReferenceData";
+import { BaseReference } from "@core-types/reference";
 
 type OptionType = {
   value: string;
@@ -62,11 +63,18 @@ export function ReferenceSelect({
   }, [url, value, multiple]);
   
   // Use SWR to fetch options with caching and retry support
-  const { options, error, isLoading } = useReferenceData(url, "", retryCount);
+  const { options: rawOptions, error, isLoading } = useReferenceData<BaseReference>(url, "");
+  
+  // Transform BaseReference options to the format required by react-select
+  const options = useMemo(() => {
+    return rawOptions.map(option => ({
+      value: option._id,
+      label: option.label
+    }));
+  }, [rawOptions]);
   
   // Memoize the selectedValue transformation to prevent unnecessary recalculations 
   const selectedValue = useMemo(() => {
-    // Log for debugging
     // Ensure options is always an array
     const safeOptions = Array.isArray(options) ? options : [];
     
