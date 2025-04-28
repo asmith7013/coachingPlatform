@@ -5,17 +5,16 @@ import { handleServerError } from "@error/handle-server-error";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     
     const { searchParams } = new URL(request.url);
     const staffType = searchParams.get("staffType") || "nycps";
     
     console.log(`📥 API /staff/[id] request received, ID: ${id}, type: ${staffType}`);
 
-    // Use API-safe fetcher
     const result = await fetchStaffByIdForApi(id, staffType as string);
 
     if (!result.success) {

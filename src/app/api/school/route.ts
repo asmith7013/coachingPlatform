@@ -1,16 +1,13 @@
 // src/app/api/schools/route.ts
-import { fetchSchools } from "@actions/schools/schools";
-import { createReferenceEndpoint } from "@api/handlers/reference-endpoint";
-import { createTypeSafeFetch } from "@data-utilities/transformers/type-helper";
-import type { School } from "@zod-schema/core/school";
-import type { SchoolReference } from "@core-types/reference";
-import { mapSchoolToReference } from "@data-utilities/transformers/reference-mappers";
+import { fetchSchoolsForApi } from "@/lib/api/fetchers/school";
+import { createReferenceEndpoint } from "@/lib/api/handlers/reference-endpoint";
+import type { School } from "@/lib/data-schema/zod-schema/core/school";
+import type { SchoolReference } from "@/lib/types/core/reference";
+import { mapSchoolToReference } from "@/lib/data-utilities/transformers/reference-mappers";
 
-// Create a type-safe wrapper for fetchSchools
-const typeSafeSchoolFetch = createTypeSafeFetch<School>(fetchSchools);
-
+// Export GET handler directly - follows API-safe fetcher pattern
 export const GET = createReferenceEndpoint<School, SchoolReference>({
-  fetchFunction: typeSafeSchoolFetch,
+  fetchFunction: fetchSchoolsForApi,
   mapItem: mapSchoolToReference,
   defaultSearchField: "schoolName",
   defaultLimit: 20,
