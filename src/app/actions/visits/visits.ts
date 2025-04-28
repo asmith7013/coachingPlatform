@@ -1,15 +1,16 @@
 'use server';
 
 import { z } from "zod";
-import { connectToDB } from "@/lib/data-server/db/connection";
-import { VisitModel } from "@/lib/data-schema/mongoose-schema/visits/visit.model";
-import { VisitInputZodSchema, VisitZodSchema } from "@/lib/data-schema/zod-schema/visits/visit";
-import { handleServerError } from "@/lib/core/error/handle-server-error";
-import { handleValidationError } from "@/lib/core/error/handle-validation-error";
-import { createItem } from "@/lib/data-server/crud/crud-operations";
-import { fetchPaginatedResource, type FetchParams } from "@/lib/data-utilities/pagination/paginated-query";
-import { sanitizeSortBy } from "@/lib/data-utilities/pagination/sort-utils";
-import type { Visit } from "@/lib/data-schema/zod-schema/visits/visit";
+import { connectToDB } from "@data-server/db/connection";
+import { VisitModel } from "@data-schema/mongoose-schema/visits/visit.model";
+import { VisitInputZodSchema, VisitZodSchema } from "@data-schema/zod-schema/visits/visit";
+import { handleServerError } from "@error/handle-server-error";
+import { handleValidationError } from "@error/handle-validation-error";
+import { createItem } from "@data-server/crud/crud-operations";
+import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
+import { sanitizeSortBy } from "@data-utilities/pagination/sort-utils";
+import type { Visit } from "@data-schema/zod-schema/visits/visit";
+import { FetchParams } from "@core-types/api";
 
 // Valid sort fields for visits
 const validSortFields = ['date', 'createdAt', 'updatedAt', 'school', 'coach'];

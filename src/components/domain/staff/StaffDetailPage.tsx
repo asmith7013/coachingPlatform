@@ -14,7 +14,7 @@ import { useSafeSWR } from '@/hooks/utils/useSafeSWR'
 import { cn } from '@/lib/utils'
 import { weight, paddingY } from '@ui-tokens/tokens'
 import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'
-import type { TeacherSchedule } from '@zod-schema/scheduling/schedule'
+import type { TeacherSchedule } from '@/lib/data-schema/zod-schema/schedule/schedule'
 import type { TableColumnSchema } from '@ui/table-schema'
 
 type StaffMember = NYCPSStaff | TeachingLabStaff

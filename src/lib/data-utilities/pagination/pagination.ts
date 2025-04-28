@@ -1,38 +1,19 @@
-import type { HydratedDocument, Model, Types } from "mongoose";
-import { handleServerError } from "@core/error/handle-server-error";
+import type { HydratedDocument, Model } from "mongoose";
+import { handleServerError } from "@error/handle-server-error";
 import { connectToDB } from "@data-server/db/connection";
 import { sanitizeDocuments } from "@data-utilities/transformers/sanitize";
 import type { ZodSchema } from "zod";
 import { z } from "zod";
+import { BaseDocument } from "@core-types/document";
+import { PaginationOptions } from "@core-types/pagination";
+import { LegacyPaginatedResult } from "@core-types/response";
 
-// Define type for document with timestamps
-export interface TimestampedDoc {
-  _id: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-  [key: string]: unknown;
-}
-
-export interface PaginationOptions {
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
-
-export interface PaginatedResult<T> {
-  items: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-  empty: boolean;
-}
-
+// Use TimestampedDoc from the centralized location
+// Other pagination-specific interfaces stay here
 /**
  * Builds a paginated query for MongoDB
  */
-export function buildPaginatedQuery<T extends TimestampedDoc>(
+export function buildPaginatedQuery<T extends BaseDocument>(
   model: Model<HydratedDocument<T>>,
   filters: Record<string, unknown>,
   { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" }: PaginationOptions = {}
@@ -52,12 +33,12 @@ export function buildPaginatedQuery<T extends TimestampedDoc>(
 /**
  * Executes a paginated query and returns results with metadata
  */
-export async function executePaginatedQuery<T extends TimestampedDoc, S extends ZodSchema>(
+export async function executePaginatedQuery<T extends BaseDocument, S extends ZodSchema>(
   model: Model<HydratedDocument<T>>,
   filters: Record<string, unknown>,
   schema: S,
   options: PaginationOptions = {}
-): Promise<PaginatedResult<z.infer<S>>> {
+): Promise<LegacyPaginatedResult<z.infer<S>>> {
   try {
     if (!model) {
       throw new Error('Model is required');

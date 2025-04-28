@@ -6,9 +6,9 @@ import {
   updateNYCPSStaff, 
   deleteNYCPSStaff
 } from "@actions/staff/nycps";
-import { NYCPSStaff, NYCPSStaffInput } from "@/lib/types/core";
-import type { ResourceResponse } from "@/lib/data-utilities/pagination/types";
-import type { FetchParams } from "@/lib/types/api";
+import { NYCPSStaff, NYCPSStaffInput } from "@domain-types/staff";
+import type { ResourceResponse } from "@core-types/response";
+import type { FetchParams } from "@core-types/api";
 
 export function useNYCPSStaff(initialPage: number = 1, initialLimit: number = 20) {
   const {
@@ -31,9 +31,9 @@ export function useNYCPSStaff(initialPage: number = 1, initialLimit: number = 20
   } = useResourceManager<NYCPSStaff, NYCPSStaffInput>(
     "nycpsStaff",
     fetchNYCPSStaff as (params: FetchParams) => Promise<ResourceResponse<NYCPSStaff>>,
-    createNYCPSStaff,
-    updateNYCPSStaff,
-    deleteNYCPSStaff,
+    createNYCPSStaff as (data: NYCPSStaffInput) => Promise<{ success: boolean; [key: string]: unknown }>,
+    updateNYCPSStaff as (id: string, data: NYCPSStaffInput) => Promise<{ success: boolean; [key: string]: unknown }>,
+    deleteNYCPSStaff as (id: string) => Promise<{ success: boolean; [key: string]: unknown }>,
     {
       initialPage,
       initialLimit,

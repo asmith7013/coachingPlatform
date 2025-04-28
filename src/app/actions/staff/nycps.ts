@@ -1,27 +1,24 @@
 "use server";
 
 import { z } from "zod";
-import { NYCPSStaffModel } from "@/lib/data-schema/mongoose-schema/core/staff.model";
+import { NYCPSStaffModel } from "@data-schema/mongoose-schema/core/staff.model";
 import { 
   NYCPSStaffZodSchema, 
   NYCPSStaffInputZodSchema,
-  type NYCPSStaff,
   type NYCPSStaffInput
-} from "@zod-schema/core/staff";
-import { handleServerError } from "@/lib/core/error/handle-server-error";
-import { handleValidationError } from "@/lib/core/error/handle-validation-error";
+} from "@data-schema/zod-schema/core/staff";
+import { handleServerError } from "@error/handle-server-error";
+import { handleValidationError } from "@error/handle-validation-error";
 import { 
   createItem,
   updateItem,
   deleteItem,
 } from "@data-server/crud/crud-operations";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/data-utilities/pagination/paginated-query";
+import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
+import { type FetchParams, getDefaultFetchParams } from "@core-types/api";
 import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
-import { uploadFileWithProgress } from "@/lib/data-server/file-handling/file-upload";
-import { connectToDB } from "@/lib/data-server/db/connection";
-
-// Types
-export type { NYCPSStaff, NYCPSStaffInput };
+import { uploadFileWithProgress } from "@data-server/file-handling/file-upload";
+import { connectToDB } from "@data-server/db/connection";
 
 /** Fetch NYCPS Staff */
 export async function fetchNYCPSStaff(params: FetchParams = {}) {

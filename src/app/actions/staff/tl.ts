@@ -1,25 +1,18 @@
 "use server";
 
 import { z } from "zod";
-import { TeachingLabStaffModel } from "@/lib/data-schema/mongoose-schema/core/staff.model";
+import { TeachingLabStaffModel } from "@data-schema/mongoose-schema/core/staff.model";
 import { 
   TeachingLabStaffZodSchema, 
   TeachingLabStaffInputZodSchema,
-  type TeachingLabStaff,
   type TeachingLabStaffInput
-} from "@zod-schema/core/staff";
-import { handleServerError } from "@/lib/core/error/handle-server-error";
-import { handleValidationError } from "@/lib/core/error/handle-validation-error";
-import { 
-  createItem,
-  updateItem,
-  deleteItem,
-} from "@data-server/crud/crud-operations";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/data-utilities/pagination/paginated-query";
-import { connectToDB } from "@/lib/data-server/db/connection";
-
-// Types
-export type { TeachingLabStaff, TeachingLabStaffInput };
+} from "@data-schema/zod-schema/core/staff";
+import { handleServerError } from "@error/handle-server-error";
+import { handleValidationError } from "@error/handle-validation-error";
+import { createItem, updateItem, deleteItem } from "@data-server/crud/crud-operations";
+import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
+import { type FetchParams, getDefaultFetchParams } from "@core-types/api";
+import { connectToDB } from "@data-server/db/connection";
 
 /** Fetch Teaching Lab Staff */
 export async function fetchTeachingLabStaff(params: FetchParams = {}) {

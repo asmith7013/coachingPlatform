@@ -1,5 +1,5 @@
 import { NYCPSStaffInput } from '@zod-schema/core/staff';
-import { FieldOverrideMap } from '@ui-forms/types';
+import { FieldOverrideMap } from '@ui-types/form';
 
 export const NYCPSStaffOverrides: FieldOverrideMap<NYCPSStaffInput> = {
   email: {

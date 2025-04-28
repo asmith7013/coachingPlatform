@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useResourceManager } from "@hooks/utils/useResourceManager";
 import { fetchLookFors, createLookFor, updateLookFor, deleteLookFor } from "@actions/lookFors/lookFors";
-import { LookFor, LookForInput } from "@/lib/types/core";
-import type { ResourceResponse } from "@/lib/data-utilities/pagination/types";
-import type { FetchParams } from "@/lib/types/api";
+import { LookFor, LookForInput } from "@domain-types/look-fors";
+import type { ResourceResponse } from "@core-types/response";
+import type { FetchParams } from "@core-types/api";
 
 /**
  * Custom Hook for managing LookFors with pagination, filters, sorting, caching, and optimistic updates.
@@ -35,9 +35,9 @@ export function useLookFors(initialPage: number = 1, initialLimit: number = 20) 
   } = useResourceManager<LookFor, LookForInput>(
     "lookFors",
     fetchLookFors as (params: FetchParams) => Promise<ResourceResponse<LookFor>>,
-    createLookFor,
-    updateLookFor,
-    deleteLookFor,
+    createLookFor as (data: LookForInput) => Promise<{ success: boolean; [key: string]: unknown }>,
+    updateLookFor as (id: string, data: LookForInput) => Promise<{ success: boolean; [key: string]: unknown }>,
+    deleteLookFor as (id: string) => Promise<{ success: boolean; [key: string]: unknown }>,
     {
       initialPage,
       initialLimit,

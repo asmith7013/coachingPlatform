@@ -1,19 +1,13 @@
-import { fetchSchools } from "@/app/actions/schools/schools";
+import { fetchSchools } from "@actions/schools/schools";
 import { createReferenceEndpoint } from "@api/handlers/reference-endpoint";
 import type { School } from "@zod-schema/core/school";
-
-// Define the minimal school reference type for selects
-type SchoolReference = {
-  _id: string;
-  schoolName: string;
-};
+import type { SchoolReference } from "@core-types/reference";
+import { mapSchoolToReference } from "@data-utilities/transformers/reference-mappers";
 
 export const GET = createReferenceEndpoint<School, SchoolReference>({
   fetchFunction: fetchSchools,
+  mapItem: mapSchoolToReference,
   defaultSearchField: "schoolName",
   defaultLimit: 20,
-  mapItem: (school) => ({ 
-    _id: school._id, 
-    schoolName: school.schoolName 
-  })
+  logPrefix: "Schools API"
 }); 

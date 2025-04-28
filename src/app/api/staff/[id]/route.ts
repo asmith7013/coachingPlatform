@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDB } from "@/lib/data-server/db/connection";
 import { NYCPSStaffModel, StaffMemberModel } from "@/lib/data-schema/mongoose-schema/core/staff.model";
-import { handleServerError } from "@/lib/core/error/handle-server-error";
+import { handleServerError } from "@/lib/error/handle-server-error";
 import { z } from "zod";
 import { NYCPSStaffZodSchema, StaffMemberZodSchema } from "@zod-schema/core/staff";
 import { standardizeResponse } from "@api/responses/standardize";

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { handleServerError } from "@/lib/core/error/handle-server-error";
+import { handleServerError } from "@/lib/error/handle-server-error";
 import { standardizeResponse } from "@api/responses/standardize";
-import { FetchParams } from "@/lib/data-utilities/pagination/paginated-query";
+import { FetchParams } from "@/lib/types/core/api";
+import { BaseReference } from "@/lib/types/core/reference";
 
 /**
  * Generic type for any fetch function that returns items and total
@@ -9,27 +10,30 @@ import { FetchParams } from "@/lib/data-utilities/pagination/paginated-query";
 export type FetchFunction<T> = (params: FetchParams) => Promise<{
   items: T[];
   total: number;
-  empty: boolean;
+  success: boolean;
+  error?: string;
+  page?: number;
+  limit?: number;
 }>;
 
 /**
  * Type for mapping functions to transform data items
  */
-export type ItemMapFunction<T, R> = (item: T) => R;
+export type ItemMapFunction<T, R extends BaseReference> = (item: T) => R;
 
 /**
  * Options for the reference endpoint factory
  */
-export interface ReferenceEndpointOptions<T, R = T> {
+export interface ReferenceEndpointOptions<T, R extends BaseReference> {
   /**
    * The fetch function that retrieves the data
    */
   fetchFunction: FetchFunction<T>;
   
   /**
-   * Optional function to map each item before returning
+   * Function to map each item to a reference format
    */
-  mapItem?: ItemMapFunction<T, R>;
+  mapItem: ItemMapFunction<T, R>;
   
   /**
    * Log prefix for consistent logging (defaults to "API")
@@ -45,18 +49,25 @@ export interface ReferenceEndpointOptions<T, R = T> {
    * Default limit for pagination (defaults to 20)
    */
   defaultLimit?: number;
+
+  /**
+   * Function to transform search terms before querying
+   * Useful for case insensitivity, partial matching, etc.
+   */
+  transformSearchTerm?: (term: string) => string;
 }
 
 /**
  * Creates a standardized GET handler for reference data endpoints
  */
-export function createReferenceEndpoint<T, R = T>(options: ReferenceEndpointOptions<T, R>) {
+export function createReferenceEndpoint<T, R extends BaseReference>(options: ReferenceEndpointOptions<T, R>) {
   const {
     fetchFunction,
     mapItem,
     logPrefix = "API",
     defaultSearchField,
-    defaultLimit = 20
+    defaultLimit = 20,
+    transformSearchTerm = (term) => term
   } = options;
 
   return async function GET(req: Request) {
@@ -76,7 +87,7 @@ export function createReferenceEndpoint<T, R = T>(options: ReferenceEndpointOpti
       
       // Add search filter if provided and defaultSearchField is set
       if (search && defaultSearchField) {
-        filters[defaultSearchField] = search;
+        filters[defaultSearchField] = transformSearchTerm(search);
       }
       
       // Add any additional filters from query params
@@ -90,27 +101,37 @@ export function createReferenceEndpoint<T, R = T>(options: ReferenceEndpointOpti
       console.log(`📥 ${logPrefix} /${endpoint} request received with search: "${search}", limit: ${limit}, filters:`, filters);
 
       // Fetch data using the provided function
-      const data = await fetchFunction({ 
-        limit, 
+      const data = await fetchFunction({
+        limit,
         page,
         filters,
         sortBy,
         sortOrder
       });
 
-      // Map items if mapping function is provided
-      const items = mapItem 
-        ? data.items.map(mapItem)
-        : data.items;
+      // Check for fetch errors
+      if (!data.success) {
+        return NextResponse.json(
+          standardizeResponse({
+            items: [],
+            success: false,
+            message: data.error || `Failed to fetch ${endpoint} data`
+          }),
+          { status: 400 }
+        );
+      }
+
+      // Map items to reference format
+      const references = data.items.map(mapItem);
       
-      console.log(`📤 ${logPrefix} /${endpoint} response: ${items.length} items found`);
+      console.log(`📤 ${logPrefix} /${endpoint} response: ${references.length} items found`);
 
       // Return standardized response
       return NextResponse.json(standardizeResponse({
-        items,
+        items: references,
         total: data.total,
-        page,
-        limit,
+        page: data.page || page,
+        limit: data.limit || limit,
         success: true
       }));
     } catch (error) {
@@ -127,4 +148,4 @@ export function createReferenceEndpoint<T, R = T>(options: ReferenceEndpointOpti
       );
     }
   };
-} 
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { SchoolSchedulePage } from '@/components/domain/schedule';
+import { SchoolSchedulePage } from '@/components/domain/schedules';
 
 export default function SchedulePage() {
   return <SchoolSchedulePage />;

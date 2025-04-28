@@ -1,23 +1,13 @@
-import type { Model, Document } from "mongoose";
+import type { Model } from "mongoose";
 import { revalidatePath } from "next/cache";
 import type { ZodSchema } from "zod";
 import { parseOrThrow, parsePartialOrThrow } from "@data-utilities/transformers/parse";
 import { sanitizeDocument, removeTimestampFields } from "@data-utilities/transformers/sanitize";
-import { handleServerError } from "@core/error/handle-server-error";
+import { handleServerError } from "@error/handle-server-error";
 import { connectToDB } from "@data-server/db/connection";
 import type { z } from "zod";
-
-// Simple base document interface
-export interface BaseDocument extends Document {
-  [key: string]: unknown;
-}
-
-export interface CrudResult<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  [key: string]: unknown;
-}
+import type { CrudResultType } from "@core-types/crud";
+import type { BaseDocument } from "@core-types/document";
 
 // Define type alias for inferred schema types
 type InferSchema<T extends ZodSchema> = z.infer<T>;
@@ -30,7 +20,7 @@ export async function createItem<Doc extends BaseDocument, Schema extends ZodSch
   schema: Schema,
   data: unknown,
   pathsToRevalidate: string[] = []
-): Promise<CrudResult<InferSchema<Schema>>> {
+): Promise<CrudResultType<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();
@@ -68,7 +58,7 @@ export async function updateItem<Doc extends BaseDocument, Schema extends ZodSch
   id: string,
   data: unknown,
   pathsToRevalidate: string[] = []
-): Promise<CrudResult<InferSchema<Schema>>> {
+): Promise<CrudResultType<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();
@@ -116,7 +106,7 @@ export async function deleteItem<Doc extends BaseDocument, Schema extends ZodSch
   schema: Schema,
   id: string,
   pathsToRevalidate: string[] = []
-): Promise<CrudResult<InferSchema<Schema>>> {
+): Promise<CrudResultType<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();

@@ -1,5 +1,5 @@
 import { LookForInput } from '@zod-schema/look-fors/look-for';
-import { FieldOverrideMap } from '@ui-forms/types';
+import { FieldOverrideMap } from '@ui-types/form';
 
 export const LookForOverrides: FieldOverrideMap<LookForInput> = {
   lookForIndex: {

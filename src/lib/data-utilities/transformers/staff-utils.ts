@@ -1,4 +1,4 @@
-export type StaffType = "all" | "nycps" | "tl";
+import { StaffType } from "@domain-types/staff";
 
 export function determineStaffType(staff: unknown): StaffType {
   if (typeof staff !== "object" || staff === null) {

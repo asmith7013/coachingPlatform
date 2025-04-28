@@ -5,8 +5,8 @@ import { useOptimisticResource } from "@hooks/utils/useOptimisticResource";
 import { useSafeSWR } from "@hooks/utils/useSafeSWR";
 import { handleErrorHandledMutation } from "@hooks/utils/useErrorHandledMutation";
 import { useCallback, useMemo } from "react";
-import { ResourceResponse } from '@/lib/data-utilities/pagination/types';
-import type { FetchParams } from "@/lib/types/api";
+import { ResourceResponse } from '@core-types/response';
+import type { FetchParams } from "@core-types/api";
 
 type FetchFunction<T> = (params: FetchParams) => Promise<ResourceResponse<T>>;
 

@@ -1,19 +1,13 @@
-import { fetchNYCPSStaff } from "@/app/actions/staff/nycps";
+import { fetchNYCPSStaff } from "@actions/staff/staff";
 import { createReferenceEndpoint } from "@api/handlers/reference-endpoint";
-import type { NYCPSStaff } from "@zod-schema/core/staff";
-
-// Define the minimal staff reference type for selects
-type StaffReference = {
-  _id: string;
-  staffName: string;
-};
+import type { NYCPSStaff } from "@domain-types/staff";
+import type { StaffReference } from "@core-types/reference";
+import { mapStaffToReference } from "@data-utilities/transformers/reference-mappers";
 
 export const GET = createReferenceEndpoint<NYCPSStaff, StaffReference>({
   fetchFunction: fetchNYCPSStaff,
-  defaultSearchField: "staffName",
+  mapItem: mapStaffToReference,
+  defaultSearchField: "fullName",
   defaultLimit: 20,
-  mapItem: (staff) => ({ 
-    _id: staff._id, 
-    staffName: staff.staffName 
-  })
+  logPrefix: "Staff API"
 }); 

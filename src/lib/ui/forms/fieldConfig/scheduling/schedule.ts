@@ -1,5 +1,5 @@
 import { Field } from "@/components/composed/forms/ResourceForm";
-import { BellScheduleInput, TeacherScheduleInput } from "@zod-schema/scheduling/schedule";
+import { BellScheduleInput, TeacherScheduleInput } from "@/lib/data-schema/zod-schema/schedule/schedule";
 import { BellScheduleTypeZod } from "@data-schema/enum";
 
 export const BellScheduleFieldConfig: Field<BellScheduleInput>[] = [

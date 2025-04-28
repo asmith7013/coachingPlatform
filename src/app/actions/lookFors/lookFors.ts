@@ -1,25 +1,26 @@
 "use server";
 
 import { z } from "zod";
-import { LookForModel } from "@/lib/data-schema/mongoose-schema/look-fors";
+import { LookForModel } from "@mongoose-schema/look-fors";
 import { 
   LookForZodSchema, 
   LookForInputZodSchema,
   type LookFor,
   type LookForInput
 } from "@zod-schema/look-fors/look-for";
-import { handleServerError } from "@/lib/core/error/handle-server-error";
-import { handleValidationError } from "@/lib/core/error/handle-validation-error";
+import { handleServerError } from "@error/handle-server-error";
+import { handleValidationError } from "@error/handle-validation-error";
 import { 
   createItem,
   updateItem,
   deleteItem,
 } from "@data-server/crud/crud-operations";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/data-utilities/pagination/paginated-query";
-import { sanitizeSortBy } from "@/lib/data-utilities/pagination/sort-utils";
+import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
+import { type FetchParams, getDefaultFetchParams } from "@core-types/api";
+import { sanitizeSortBy } from "@data-utilities/pagination/sort-utils";
 import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
-import { uploadFileWithProgress } from "@/lib/data-server/file-handling/file-upload";
-import { connectToDB } from "@/lib/data-server/db/connection";
+import { uploadFileWithProgress } from "@data-server/file-handling/file-upload";
+import { connectToDB } from "@data-server/db/connection";
 
 // Valid sort fields for look-fors
 const validSortFields = ['lookForIndex', 'topic', 'description', 'category', 'createdAt', 'updatedAt'];

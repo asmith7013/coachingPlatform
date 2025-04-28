@@ -1,13 +1,5 @@
-import { FieldOverrideMap } from '@ui-forms/types';
-
-// Placeholder for RubricInput type - to be properly imported once created
-type RubricInput = {
-  title: string;
-  description: string;
-  criteria: unknown;
-  scorePoints: unknown;
-  owners: string[];
-};
+import { FieldOverrideMap } from '@ui-types/form';
+import { RubricInput } from '@zod-schema/look-fors/rubric';
 
 export const RubricOverrides: FieldOverrideMap<RubricInput> = {
   title: {

@@ -1,4 +1,4 @@
-import { Field } from '@/components/composed/forms/ResourceForm';
+import { Field } from '@components/composed/forms/ResourceForm';
 import { NYCPSStaffInput } from '@zod-schema/core/staff';
 import { GradeLevelsSupportedZod, SubjectsZod, SpecialGroupsZod, RolesNYCPSZod } from '@data-schema/enum';
 

@@ -1,49 +1,26 @@
+// src/lib/data-utilities/pagination/paginated-query.ts
 import { z } from "zod";
 import type { HydratedDocument, Model } from "mongoose";
 import { connectToDB } from "@data-server/db/connection";
 import { sanitizeFilters } from "@data-utilities/transformers/sanitize";
-import { executePaginatedQuery, TimestampedDoc } from "./pagination";
+import { executePaginatedQuery } from "./pagination";
+import { BaseDocument } from "@core-types/document";
+import { 
+  FetchParams, 
+  DEFAULT_FETCH_PARAMS as DEFAULT_PARAMS,
+  getDefaultFetchParams as getDefaultParams 
+} from "@core-types/api";
 
-export interface FetchParams {
-  page?: number;
-  limit?: number;
-  filters?: Record<string, unknown>;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
-
-/** Default pagination + filter params */
-export const DEFAULT_FETCH_PARAMS: Required<FetchParams> = {
-  page: 1,
-  limit: 10,
-  filters: {},
-  sortBy: "createdAt",
-  sortOrder: "desc",
-};
+/** Default pagination + filter params - re-export for compatibility */
+export const DEFAULT_FETCH_PARAMS = DEFAULT_PARAMS;
 
 /**
- * Get default fetch params with optional overrides
+ * Get default fetch params with optional overrides - adapter for compatibility
  */
-export function getDefaultFetchParams({
-  page,
-  limit,
-  filters,
-  sortBy,
-  sortOrder,
-}: Partial<FetchParams> = {}): Required<FetchParams> {
-  // Prevent using sort directions as sortBy values
-  const invalidSortByValues = ['asc', 'desc', 'ascending', 'descending'];
-  const safeSortBy = invalidSortByValues.includes(sortBy?.toLowerCase() || '')
-    ? 'createdAt' // Safe default if someone mistakenly uses a sort direction
-    : sortBy;
-
-  return {
-    page: page ?? 1,
-    limit: limit ?? 10,
-    filters: filters ?? {},
-    sortBy: safeSortBy ?? "createdAt",
-    sortOrder: sortOrder ?? "desc",
-  };
+export function getDefaultFetchParams(
+  params: Partial<FetchParams> = {}
+): ReturnType<typeof getDefaultParams> {
+  return getDefaultParams(params);
 }
 
 /**
@@ -62,12 +39,10 @@ export async function fetchPaginatedResource<
   empty: boolean;
 }> {
   await connectToDB();
-
   const { page, limit, filters, sortBy, sortOrder } = getDefaultFetchParams(params);
   const sanitized = sanitizeFilters(filters ?? {});
-
   return executePaginatedQuery(
-    model as unknown as Model<HydratedDocument<TimestampedDoc>>,
+    model as unknown as Model<HydratedDocument<BaseDocument>>,
     sanitized,
     schema,
     {
@@ -77,4 +52,4 @@ export async function fetchPaginatedResource<
       sortOrder,
     }
   );
-} 
+}

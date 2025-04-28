@@ -41,6 +41,35 @@ Includes appropriate TypeScript types
 
 </section>
 
+<section id="typescript-for-scripts">
+
+## TypeScript for External Scripts
+
+All utility scripts, data processing tools, and code generators must be written in TypeScript rather than JavaScript or .mjs files. This ensures consistency with the rest of the codebase and leverages the benefits of type safety.
+
+When creating or modifying scripts:
+
+- Place scripts in the `/scripts` directory with a `.ts` extension
+- Add appropriate TypeScript type annotations for all parameters and return values
+- Use `tsx` to run TypeScript scripts directly without transpilation
+- Add script entries to package.json using the `tsx` command:
+
+```json
+"scripts": {
+  "script-name": "tsx scripts/path-to-script.ts"
+}
+```
+Example script header:
+typescript#!/usr/bin/env tsx
+import * as fs from 'fs';
+import * as path from 'path';
+import { z } from 'zod';
+
+// Script implementation with proper type annotations
+[RULE] Always use TypeScript for utility scripts and run them with tsx.
+</section>
+
+
 <section id="workflow-tasks">
 
 ## Common Development Tasks
@@ -86,6 +115,45 @@ When developing new features or components, prioritize:
 
 [RULE] Prioritize clarity, maintainability, scalability, and consistency.
 
+</section>
+
+<section id="updating-documentation">
+
+## Updating Documentation
+
+When adding new features, patterns, or guidelines to the project, update the documentation to reflect these changes. Follow these guidelines for consistent documentation:
+
+### Documentation Structure
+
+- Place documentation in the appropriate domain directory under `/docs/`:
+  - `/docs/architecture/` - Core principles and patterns
+  - `/docs/components/` - UI component guidelines
+  - `/docs/data-flow/` - Data schemas and operations
+  - `/docs/workflows/` - Development processes
+  - `/docs/examples/` - Code examples
+
+### Section Formatting
+
+All documentation follows a consistent structure:
+
+```markdown
+<doc id="document-id">
+
+# Document Title
+
+<section id="section-id">
+
+## Section Title
+
+Section content with guidance, explanations, and examples.
+
+```typescript
+// Code examples
+function example() {
+  // Implementation
+}
+Additional paragraphs and explanations.
+[RULE] Final rule statement that summarizes key guidelines.
 </section>
 
 </doc>

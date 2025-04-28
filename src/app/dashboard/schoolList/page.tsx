@@ -1,20 +1,20 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
 import React, { useState, useCallback, useEffect } from "react";
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { Button } from '@/components/core/Button';
-import { DashboardPage } from '@/components/layouts/DashboardPage';
-import { useSchools } from "@/hooks/useSchools"; // ✅ SWR hook for managing Schools data.
-import { School, SchoolInput } from "@zod-schema/core/school"; // ✅ Import the School type from Zod schema.
+import { Card } from '@components/composed/cards/Card';
+import { Heading } from '@components/core/typography/Heading';
+import { Text } from '@components/core/typography/Text';
+import { Button } from '@components/core/Button';
+import { DashboardPage } from '@components/layouts/DashboardPage';
+import { useSchools } from "@hooks/useSchools"; // ✅ SWR hook for managing Schools data.
+import { School, SchoolInput } from "@domain-types/school"; // ✅ Import the School type from Zod schema.
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
-import { Field, GenericResourceForm } from "@/components/composed/forms/ResourceForm";
-import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
-import { ResourceHeader } from "@/components/shared/ResourceHeader";
+import { Field, GenericResourceForm } from "@components/composed/forms/ResourceForm";
+import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
+import { ResourceHeader } from "@components/shared/ResourceHeader";
 import { SchoolFieldConfig } from "@ui-forms/fieldConfig/core/school";
-import { cn } from "@/lib/utils";
-import { EmptyListWrapper } from '@/components/shared/EmptyListWrapper';
+import { cn } from "@lib/utils";
+import { EmptyListWrapper } from '@components/shared/EmptyListWrapper';
 
 
 

@@ -1,9 +1,9 @@
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { Button } from '@/components/core/Button';
-import { cn } from "@/lib/utils";
-import type { NYCPSStaff } from "@/lib/types/core";
+import { Card } from '@components/composed/cards/Card';
+import { Heading } from '@components/core/typography/Heading';
+import { Text } from '@components/core/typography/Text';
+import { Button } from '@components/core/Button';
+import { cn } from "@ui/utils/formatters";
+import type { NYCPSStaff } from "@domain-types/staff";
 
 interface StaffCardProps {
   staff: NYCPSStaff;

@@ -14,7 +14,7 @@
     "seed:look-fors": "tsx scripts/seed/seed-look-fors.ts",
     "seed:cycles-coaching": "tsx scripts/seed/seed-cycles-coaching.ts",
     "seed:all": "tsx scripts/seed/index.ts",
-    "docs": "node scripts/combine-docs.js",
+    "docs": "tsx scripts/combine-docs.ts",
     "scrapeILC": "tsx scripts/im-curriculum/scraper.ts"
   },
   "dependencies": {

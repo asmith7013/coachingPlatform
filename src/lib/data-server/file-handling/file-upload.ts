@@ -1,11 +1,5 @@
-import { handleServerError } from "@/lib/core/error/handle-server-error";
-
-export interface UploadResponse {
-  success: boolean;
-  message: string;
-  uploaded?: number;
-}
-
+import { handleServerError } from "@error/handle-server-error";
+import { UploadResponse } from "@core-types/response";
 export async function uploadFileWithProgress(
   file: File,
   endpoint: string,

@@ -1,38 +1,23 @@
 import type {
     School,
-} from "@zod-schema/core/school";
+} from "@domain-types/school";
 
 import type {
     StaffMember,
     TeachingLabStaff,
     NYCPSStaff,
-} from "@zod-schema/core/staff";
+} from "@domain-types/staff";
 
 import type {
     LookFor,
     LookForItem,
-} from "@zod-schema/look-fors/look-for";
+} from "@domain-types/look-fors";
 
-import type {
-    NextStep,
-} from "@zod-schema/look-fors/next-step";
-
-import type {
-    Note,
-} from "@zod-schema/shared/notes";
-
-import type {
-    Visit,
-    EventItem,
-} from "@zod-schema/visits/visit";
-
-import type {
-    CoachingLog,
-} from "@zod-schema/visits/coaching-log";
-
-import type {
-    Cycle,
-} from "@zod-schema/core/cycle";
+import type { NextStep } from "@domain-types/look-fors";
+import type { Note } from "@domain-types/shared";
+import type { Visit, EventItem } from "@domain-types/visit";
+import type { CoachingLog } from "@domain-types/visit";
+import type { Cycle } from "@domain-types/cycle";
 
 // 🔹 Generate Type-Safe Labels for Every Model
 

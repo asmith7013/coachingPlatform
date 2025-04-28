@@ -1,10 +1,12 @@
-import { Document, Types } from "mongoose";
+// In src/lib/data-schema/mongoose-schema/types.ts
+// import { Document } from 'mongoose';
+// import { BaseDocument } from '@core-types/document';
 
 /**
- * Basic document interface that all document types should extend.
- * This ensures consistent properties across document types.
+ * Mongoose document interface that extends the base document
+ * Adds Mongoose-specific functionality while maintaining property compatibility
  */
-export interface BaseDocument extends Document {
-  _id: Types.ObjectId;
-  [key: string]: unknown;
-} 
+// export interface MongooseDocument extends Document, Omit<BaseDocument, '_id'> {
+//   // Mongoose already has _id, so we omit it to avoid conflicts
+//   // But we ensure all other BaseDocument properties are included
+// }

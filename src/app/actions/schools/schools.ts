@@ -2,84 +2,76 @@
 
 import { z } from "zod";
 import { SchoolModel } from "@/lib/data-schema/mongoose-schema/core";
-import { SchoolInputZodSchema, SchoolZodSchema, SchoolInput } from "@zod-schema/core/school";
-import { handleServerError } from "@/lib/core/error/handle-server-error";
-import { handleValidationError } from "@/lib/core/error/handle-validation-error";
-import { 
-  createItem,
-  updateItem,
-  deleteItem,
-} from "@data-server/crud/crud-operations";
-import { fetchPaginatedResource, type FetchParams, getDefaultFetchParams } from "@/lib/data-utilities/pagination/paginated-query";
-import { sanitizeSortBy } from "@/lib/data-utilities/pagination/sort-utils";
-import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
+import { SchoolInputZodSchema, SchoolZodSchema } from "@zod-schema/core/school";
+import { handleServerError } from "@/lib/error/handle-server-error";
+import { handleValidationError } from "@/lib/error/handle-validation-error";
+import { createCrudActions } from "@/lib/data-server/crud/crud-action-factory";
+import { withDbConnection } from "@/lib/data-server/db/ensure-connection";
 import { uploadFileWithProgress } from "@/lib/data-server/file-handling/file-upload";
-import { connectToDB } from "@/lib/data-server/db/connection";
+import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
+import { SchoolInput } from "@domain-types/school";
 
-// Valid sort fields for schools
-const validSortFields = ['schoolName', 'createdAt', 'updatedAt', 'district'];
-
-// Types
-export type School = z.infer<typeof SchoolZodSchema>;
-// export type SchoolCreate = Omit<School, "_id" | "createdAt" | "updatedAt">;
-export type SchoolCreate = z.infer<typeof SchoolInputZodSchema>;
-export type SchoolUpdate = Partial<SchoolCreate>;
-/** Fetch Schools */
-export async function fetchSchools(params: FetchParams = {}) {
-  try {
-    // Sanitize sortBy to ensure it's a valid field name
-    const safeSortBy = sanitizeSortBy(params.sortBy, validSortFields, 'schoolName');
-    
-    const fetchParams = getDefaultFetchParams({
-      ...params,
-      sortBy: safeSortBy,
-      sortOrder: params.sortOrder ?? "asc"
-    });
-
-    console.log("Fetching schools with params:", fetchParams);
-
-    return fetchPaginatedResource(
-      SchoolModel,
-      SchoolZodSchema,
-      fetchParams
-    );
-  } catch (error) {
-    throw new Error(handleServerError(error));
+// Create standard CRUD actions for Schools
+export const schoolActions = createCrudActions({
+  model: SchoolModel,
+  fullSchema: SchoolZodSchema,
+  inputSchema: SchoolInputZodSchema,
+  revalidationPaths: ["/dashboard/schools"],
+  options: {
+    validSortFields: ['schoolName', 'district', 'createdAt', 'updatedAt'],
+    defaultSortField: 'schoolName',
+    defaultSortOrder: 'asc',
+    entityName: 'School'
   }
+});
+
+// Export the generated actions with connection handling
+export async function fetchSchools(params = {}) {
+  return withDbConnection(() => schoolActions.fetch(params));
 }
 
-/** Create School */
 export async function createSchool(data: SchoolInput) {
-  try {
-    await connectToDB();
-    const doc = await createItem(SchoolModel, SchoolInputZodSchema, data, ["/schools", "/schools/[id]"]);
-    return doc;
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
+  return withDbConnection(() => schoolActions.create(data));
 }
 
-/** Update School */
-export async function updateSchool(id: string, data: SchoolUpdate) {
-  try {
-    await connectToDB();
-    return updateItem(SchoolModel, SchoolInputZodSchema, id, data, ["/schools", "/schools/[id]"]);
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
+export async function updateSchool(id: string, data: Partial<SchoolInput>) {
+  return withDbConnection(() => schoolActions.update(id, data));
 }
 
-/** Delete School */
 export async function deleteSchool(id: string) {
-  try {
-    await connectToDB();
-    return deleteItem(SchoolModel, SchoolZodSchema, id, ["/schools", "/schools/[id]"]);
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
+  return withDbConnection(() => schoolActions.delete(id));
 }
 
-/** Upload Schools via file */
+export async function fetchSchoolById(id: string) {
+  return withDbConnection(() => schoolActions.fetchById(id));
+}
+
+// Specialized actions
+export async function fetchSchoolsByDistrict(district: string) {
+  return withDbConnection(async () => {
+    try {
+      const schools = await SchoolModel.find({ district })
+        .sort({ schoolName: 1 })
+        .lean()
+        .exec();
+      
+      return {
+        success: true,
+        items: schools.map(school => SchoolZodSchema.parse(school)),
+        total: schools.length
+      };
+    } catch (error) {
+      return {
+        success: false,
+        items: [],
+        total: 0,
+        error: handleServerError(error)
+      };
+    }
+  });
+}
+
+// File upload actions
 export const uploadSchoolFile = async (file: File): Promise<string> => {
   try {
     const result = await uploadFileWithProgress(file, "/api/schools/bulk-upload");
@@ -89,28 +81,38 @@ export const uploadSchoolFile = async (file: File): Promise<string> => {
   }
 };
 
-/** Upload schools data */
-export async function uploadSchools(data: SchoolCreate[]) {
-  try {
-    await connectToDB();
-    const result = await bulkUploadToDB(data, SchoolModel, SchoolInputZodSchema, ["/schools"]);
-    
-    if (!result.success) {
+export async function uploadSchools(data: SchoolInput[]) {
+  return withDbConnection(async () => {
+    try {
+      const result = await bulkUploadToDB(
+        data, 
+        SchoolModel, 
+        SchoolInputZodSchema, 
+        ["/dashboard/schools"]
+      );
+      
+      if (!result.success) {
+        return {
+          success: false,
+          error: result.error
+        };
+      }
+
+      return {
+        success: true,
+        items: result.items
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return {
+          success: false,
+          error: handleValidationError(error)
+        };
+      }
       return {
         success: false,
-        error: result.error
+        error: handleServerError(error)
       };
     }
-
-    return {
-      success: true,
-      items: result.items
-    };
-  } catch (error) {
-    console.error("Error uploading schools:", error);
-    if (error instanceof z.ZodError) {
-      throw handleValidationError(error);
-    }
-    throw handleServerError(error);
-  }
+  });
 }

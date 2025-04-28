@@ -1,23 +1,5 @@
-import { z } from 'zod';
-
-// Define standard response schema
-export const StandardResponseSchema = z.object({
-  items: z.array(z.record(z.unknown())).default([]),
-  total: z.number().optional(),
-  page: z.number().optional(),
-  limit: z.number().optional(),
-  message: z.string().optional(),
-  success: z.boolean().default(true),
-});
-
-export type StandardResponse<T = Record<string, unknown>> = {
-  items: T[];
-  total?: number;
-  page?: number;
-  limit?: number;
-  message?: string;
-  success: boolean;
-};
+import { StandardResponse } from '@core-types/response';
+import { StandardResponseSchema } from '@data-schema/zod-schema/validation/response';
 
 /**
  * Standardizes API responses to ensure consistent format

@@ -3,7 +3,7 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import Select from "react-select";
 import { Label } from "./Label";
-import useReferenceOptions from "@/hooks/useReferenceOptions";
+import { useReferenceData } from "@hooks/useReferenceData";
 
 type OptionType = {
   value: string;
@@ -62,7 +62,7 @@ export function ReferenceSelect({
   }, [url, value, multiple]);
   
   // Use SWR to fetch options with caching and retry support
-  const { options, error, isLoading } = useReferenceOptions(url, "", retryCount);
+  const { options, error, isLoading } = useReferenceData(url, "", retryCount);
   
   // Memoize the selectedValue transformation to prevent unnecessary recalculations 
   const selectedValue = useMemo(() => {

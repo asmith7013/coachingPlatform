@@ -1,16 +1,5 @@
-import { FieldOverrideMap } from '@ui-forms/types';
-
-// Placeholder for NextStepInput type - to be properly imported once created
-type NextStepInput = {
-  title: string;
-  description: string;
-  category: string;
-  priority: string;
-  status: string;
-  dueDate: string;
-  assignedTo: string[];
-  owners: string[];
-};
+import { FieldOverrideMap } from '@ui-types/form';
+import { NextStepInput } from '@zod-schema/look-fors/next-step';
 
 export const NextStepOverrides: FieldOverrideMap<NextStepInput> = {
   title: {

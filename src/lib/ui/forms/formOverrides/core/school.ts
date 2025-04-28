@@ -1,5 +1,5 @@
 import { SchoolInput } from '@zod-schema/core/school';
-import { FieldOverrideMap } from '@ui-forms/types';
+import { FieldOverrideMap } from '@ui-types/form';
 
 export const SchoolOverrides: FieldOverrideMap<SchoolInput> = {
   schoolNumber: {

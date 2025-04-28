@@ -2,10 +2,23 @@
 
 import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
+import { captureError } from "@/lib/error";
 
 export default function GlobalError({ error, reset }: { error: Error; reset: () => void }) {
     useEffect(() => {
-        Sentry.captureException(error); // ✅ Send UI errors to Sentry
+        // Send to Sentry (existing functionality)
+        Sentry.captureException(error);
+        
+        // Use your enhanced error monitoring system
+        captureError(error, {
+            component: "GlobalError",
+            operation: "render",
+            severity: "fatal",
+            category: "system",
+            metadata: {
+                isGlobalError: true
+            }
+        });
     }, [error]);
 
     return (
@@ -18,28 +31,3 @@ export default function GlobalError({ error, reset }: { error: Error; reset: () 
         </div>
     );
 }
-
-
-// "use client";
-
-// import * as Sentry from "@sentry/nextjs";
-// import NextError from "next/error";
-// import { useEffect } from "react";
-
-// export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
-//   useEffect(() => {
-//     Sentry.captureException(error);
-//   }, [error]);
-
-//   return (
-//     <html>
-//       <body>
-//         {/* `NextError` is the default Next.js error page component. Its type
-//         definition requires a `statusCode` prop. However, since the App Router
-//         does not expose status codes for errors, we simply pass 0 to render a
-//         generic error message. */}
-//         <NextError statusCode={0} />
-//       </body>
-//     </html>
-//   );
-// }

@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { cn } from '@/lib/utils'
 import { tv, type VariantProps } from 'tailwind-variants'
 import { textColors, textSize, weight, paddingX, paddingY } from '@ui-tokens/tokens'
-import type { ScheduleByDay, Period } from '@zod-schema/scheduling/schedule'
+import type { ScheduleByDay, Period } from '@/lib/data-schema/zod-schema/schedule/schedule'
 
 const scheduleTable = tv({
   slots: {

@@ -1,5 +1,5 @@
-import { Field } from "@/lib/ui/forms/types";
-import { LookForInput } from "@zod-schema/look-fors/look-for";
+import { Field } from "@ui-types/form";
+import { LookForInput } from "@domain-types/look-fors";
 
 export const LookForFieldConfig: Field<LookForInput>[] = [
   {

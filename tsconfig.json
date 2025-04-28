@@ -32,6 +32,7 @@
         "@actions/*": ["./src/app/actions/*"],
         "@models/*": ["./src/lib/data-schema/mongoose-schema/*"],
         "@zod-schema/*": ["./src/lib/data-schema/zod-schema/*"],
+        "@mongoose-schema/*": ["./src/lib/data-schema/mongoose-schema/*"],
         "@data-schema/*": ["./src/lib/data-schema/*"],
         "@data-server/*": ["./src/lib/data-server/*"],
         "@data-utilities/*": ["./src/lib/data-utilities/*"],
@@ -42,7 +43,7 @@
         "@styles/*": ["./src/styles/*"],
         "@core/*": ["./src/lib/core/*"],
         "@api/*": ["./src/lib/api/*"],
-        "@types/*": ["./src/lib/types/*"],
+        "@error/*": ["./src/lib/error/*"],
 
         // UI-specific paths
         "@ui/*": ["./src/lib/ui/*"],
@@ -50,6 +51,10 @@
         "@ui-variants/*": ["./src/lib/ui/variants/*"],
         "@ui-forms/*": ["./src/lib/ui/forms/*"],
         
+        // Type paths
+        "@core-types/*": ["./src/lib/types/core/*"],
+        "@domain-types/*": ["./src/lib/types/domain/*"],
+        "@ui-types/*": ["./src/lib/types/ui/*"],
         // Domain-specific paths
         "@domain/*": ["./src/lib/domain/*"],
         

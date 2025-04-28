@@ -4,8 +4,8 @@ import {
   createTeacherSchedule, 
   updateTeacherSchedule, 
   deleteTeacherSchedule,
-  type TeacherScheduleInput
-} from "@/app/actions/scheduling/teacherSchedules";
+} from "@/app/actions/schedule/schedule";
+import type { TeacherScheduleInput } from "@/lib/data-schema/zod-schema/schedule/schedule";
 import useSWR from "swr";
 
 // Interface for UI-specific period data

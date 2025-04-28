@@ -16,7 +16,7 @@ export * from './visits/visit';
 export * from './visits/coaching-log';
 
 // Scheduling schemas
-export * from './scheduling/schedule';
+export * from './schedule/schedule';
 
 // Shared types
 export * from './shared/notes';

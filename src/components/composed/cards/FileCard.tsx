@@ -1,6 +1,6 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { humanFileSize } from '@core/utils/formatters';
+import { cn } from '@ui/utils/formatters';
+import { humanFileSize } from '@ui/utils/formatters';
 import { tv } from 'tailwind-variants';
 import {
   radiusVariant,

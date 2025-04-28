@@ -1,19 +1,14 @@
 import { z } from "zod";
 import { Model } from "mongoose";
 import { revalidatePath } from "next/cache";
-import { handleServerError } from "@/lib/core/error/handle-server-error";
-import { handleValidationError } from "@/lib/core/error/handle-validation-error";
-import { safeParseAndLog } from "@/lib/data-utilities/transformers/parse";
-import { connectToDB } from "@/lib/data-server/db/connection";
+import { safeParseAndLog } from "@data-utilities/transformers/parse";
+import { connectToDB } from "@data-server/db/connection";
+import { handleCrudError } from "@error/crud-error-handling";
+import { createErrorResponse } from "@core-types/error";
+import { BulkUploadResult } from "@core-types/crud";
 
 // Define type alias for inferred schema types
 type InferSchema<T extends z.ZodType> = z.infer<T>;
-
-export interface BulkUploadResult<T> {
-  success: boolean;
-  items?: T[];
-  error?: string;
-}
 
 export async function bulkUploadToDB<Doc extends { _id: string }, Schema extends z.ZodType<Doc>>(
   data: Omit<Doc, "_id" | "createdAt" | "updatedAt">[],
@@ -36,17 +31,15 @@ export async function bulkUploadToDB<Doc extends { _id: string }, Schema extends
     ).filter((item): item is Doc => item !== null);
 
     if (validatedData.length === 0) {
-      return {
-        success: false,
-        error: "No valid items to upload"
-      };
+      return createErrorResponse("No valid items to upload", data) as BulkUploadResult<InferSchema<Schema>>;
     }
 
     // Insert items
     const items = await model.insertMany(validatedData);
 
     // Log success
-    console.log(`Successfully uploaded ${items.length} items`);
+    const successMessage = `Successfully uploaded ${items.length} items`;
+    console.log(successMessage);
 
     // Revalidate paths
     revalidatePaths.forEach(path => revalidatePath(path));
@@ -54,13 +47,11 @@ export async function bulkUploadToDB<Doc extends { _id: string }, Schema extends
     // Return sanitized data
     return {
       success: true,
-      items: items.map(item => schema.parse(item.toObject()))
+      message: successMessage,
+      items: items.map(item => schema.parse(item.toObject())),
+      total: items.length
     };
   } catch (error) {
-    console.error("Error uploading items:", error);
-    if (error instanceof z.ZodError) {
-      throw handleValidationError(error);
-    }
-    throw handleServerError(error);
+    return handleCrudError(error, "BulkUpload") as BulkUploadResult<InferSchema<Schema>>;
   }
 } 

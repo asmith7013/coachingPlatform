@@ -1,4 +1,4 @@
-import { handleServerError } from "@core/error/handle-server-error";
+import { handleServerError } from "@/lib/error/handle-server-error";
 import type { HydratedDocument, Document } from "mongoose";
 import type { ZodSchema } from "zod";
 import type { z } from "zod";

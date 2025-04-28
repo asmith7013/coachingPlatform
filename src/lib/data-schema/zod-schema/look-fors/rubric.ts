@@ -12,7 +12,7 @@ export const RubricZodSchema = z.object({
 });
 
 // ✅ RubricScore Input Schema
-export const RubricScoreInputZodSchema = z.object({
+export const RubricScoreZodSchema = z.object({
   date: z.string(), // Required ISO date string
   score: z.number(), // Required score
   staffId: z.string(), // Required staff ID
@@ -22,13 +22,14 @@ export const RubricScoreInputZodSchema = z.object({
 
 
 // ✅ RubricScore Full Schema
-export const RubricScoreZodSchema = RubricScoreInputZodSchema.extend({
+export const RubricInputZodSchema = RubricZodSchema.extend({
   _id: z.string(),
   createdAt: zDateField.optional(),
   updatedAt: zDateField.optional(),
 });
 
+
 // ✅ Auto-generate TypeScript types
 export type Rubric = z.infer<typeof RubricZodSchema>;
-export type RubricScoreInput = z.infer<typeof RubricScoreInputZodSchema>;
+export type RubricInput = z.infer<typeof RubricInputZodSchema>;
 export type RubricScore = z.infer<typeof RubricScoreZodSchema>;

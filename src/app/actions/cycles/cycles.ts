@@ -1,10 +1,10 @@
 'use server';
 
-import { connectToDB } from "@/lib/data-server/db/connection";
-import { CycleModel } from "@/lib/data-schema/mongoose-schema/core/cycle.model";
-import { fetchPaginatedResource } from "@/lib/data-utilities/pagination/paginated-query";
-import { handleServerError } from "@/lib/core/error/handle-server-error";
-import type { FetchParams } from "@/lib/data-utilities/pagination/paginated-query";
+import { connectToDB } from "@data-server/db/connection";
+import { CycleModel } from "@mongoose-schema/core/cycle.model";
+import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
+import { handleServerError } from "@error/handle-server-error";
+import type { FetchParams } from "@core-types/api";
 import { CycleZodSchema } from "@zod-schema/core/cycle";
 
 /**

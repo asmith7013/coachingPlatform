@@ -4,18 +4,18 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement } from "chart.js";
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
+import { Card } from '@components/composed/cards/Card';
+import { Heading } from '@components/core/typography/Heading';
+import { Text } from '@components/core/typography/Text';
 import { typography } from '@ui-tokens/tokens';
 import { paddingY, stack } from '@ui-tokens/tokens';
-import { cn } from '@/lib/utils';
-import { DashboardPage } from '@/components/layouts/DashboardPage';
-import { Badge } from '@/components/core/feedback/Badge';
-import { fetchNYCPSStaff } from "@/app/actions/staff/nycps";
-import { NYCPSStaff } from "@zod-schema/core/staff";
-import { School } from "@zod-schema/core/school";
-import { fetchSchools } from "@/app/actions/schools/schools";
+import { cn } from '@lib/utils';
+import { DashboardPage } from '@components/layouts/DashboardPage';
+import { Badge } from '@components/core/feedback/Badge';
+import { fetchNYCPSStaff } from "@actions/staff/nycps";
+import { NYCPSStaff } from "@domain-types/staff";
+import { School } from "@domain-types/school";
+import { fetchSchools } from "@actions/schools/schools";
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
@@ -85,7 +85,7 @@ export default function SchoolDetail() {
         }
         
         const schoolData = schoolsResponse.items[0];
-        setSchool(schoolData);
+        setSchool(schoolData as School);
         
         // Fetch staff associated with this school
         const staffResponse = await fetchNYCPSStaff({ 

@@ -1,6 +1,6 @@
 import { ZodSchema, z } from "zod";
-import { handleServerError } from "@core/error/handle-server-error";
-import { handleValidationError } from "@core/error/handle-validation-error";
+import { handleServerError } from "@/lib/error/handle-server-error";
+import { handleValidationError } from "@/lib/error/handle-validation-error";
 
 // Define type aliases for inferred types
 type InferSchema<T extends ZodSchema> = z.infer<T>;
