@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { LookForModel } from "@data-schema/mongoose-schema/look-fors";
+import { LookForModel } from "@mongoose-schema/look-fors";
 import { LookForZodSchema } from "@zod-schema/look-fors/look-for";
 import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
 import { parseCSV } from "@/lib/data-server/file-handling/csv-parser";

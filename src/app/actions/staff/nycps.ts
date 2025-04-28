@@ -1,12 +1,12 @@
 "use server";
 
 import { z } from "zod";
-import { NYCPSStaffModel } from "@data-schema/mongoose-schema/core/staff.model";
+import { NYCPSStaffModel } from "@mongoose-schema/core/staff.model";
 import { 
   NYCPSStaffZodSchema, 
   NYCPSStaffInputZodSchema,
   type NYCPSStaffInput
-} from "@data-schema/zod-schema/core/staff";
+} from "@zod-schema/core/staff";
 import { handleServerError } from "@error/handle-server-error";
 import { handleValidationError } from "@error/handle-validation-error";
 import { 

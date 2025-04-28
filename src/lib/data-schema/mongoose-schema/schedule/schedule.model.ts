@@ -5,7 +5,7 @@ import {
   BlockDayTypes,
   BellScheduleTypes,
   PeriodTypes,
-} from "@data-schema/enum";
+} from "@enums";
 
 @modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'classscheduleitems' } })
 export class ClassScheduleItem {

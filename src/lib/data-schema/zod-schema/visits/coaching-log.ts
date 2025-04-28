@@ -3,7 +3,7 @@ import {
   ReasonDoneZod, 
   TotalDurationZod, 
   SolvesTouchpointZod 
-} from "@data-schema/enum"; // Updated centralized import
+} from "@enums"; // Updated centralized import
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 
 export const CoachingLogInputZodSchema = z.object({

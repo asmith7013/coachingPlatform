@@ -11,7 +11,7 @@ import { EmptyListWrapper } from '@/components/shared/EmptyListWrapper';
 import { ResourceHeader } from "@/components/shared/ResourceHeader";
 import { Field, FieldType, MemoizedGenericResourceForm } from "@/components/composed/forms/ResourceForm";
 import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
-import { useNYCPSStaff } from "@/hooks/useNYCPSStaff";
+import { useNYCPSStaff } from "@/hooks/domain/useNYCPSStaff";
 import { NYCPSStaff, NYCPSStaffInput } from "@zod-schema/core/staff";
 import { createNYCPSStaff, updateNYCPSStaff, deleteNYCPSStaff, uploadNYCPSStaffFile } from "@/app/actions/staff/nycps";
 import { NYCPSStaffFieldConfig } from "@ui-forms/fieldConfig/core/staff";

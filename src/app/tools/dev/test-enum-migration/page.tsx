@@ -5,7 +5,7 @@ import { EventItemZodSchema } from '@/lib/data-schema/zod-schema/visits/visit';
 import { 
   EventTypes, 
   DurationValues,
-} from '@data-schema/enum';
+} from '@enums';
 import { Button } from '@/components/core/Button';
 
 // Type for the validation result

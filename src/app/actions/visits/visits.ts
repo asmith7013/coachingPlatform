@@ -2,14 +2,14 @@
 
 import { z } from "zod";
 import { connectToDB } from "@data-server/db/connection";
-import { VisitModel } from "@data-schema/mongoose-schema/visits/visit.model";
-import { VisitInputZodSchema, VisitZodSchema } from "@data-schema/zod-schema/visits/visit";
+import { VisitModel } from "@mongoose-schema/visits/visit.model";
+import { VisitInputZodSchema, VisitZodSchema } from "@zod-schema/visits/visit";
 import { handleServerError } from "@error/handle-server-error";
 import { handleValidationError } from "@error/handle-validation-error";
 import { createItem } from "@data-server/crud/crud-operations";
 import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
 import { sanitizeSortBy } from "@data-utilities/pagination/sort-utils";
-import type { Visit } from "@data-schema/zod-schema/visits/visit";
+import type { Visit } from "@zod-schema/visits/visit";
 import { FetchParams } from "@core-types/api";
 
 // Valid sort fields for visits

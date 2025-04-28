@@ -10,7 +10,7 @@ import { Text } from '@/components/core/typography/Text'
 import { Card } from '@/components/composed/cards/Card'
 import { ScheduleTable } from '@/components/composed/tables/ScheduleTable'
 import { Table } from '@/components/composed/tables/Table'
-import { useSafeSWR } from '@/hooks/utils/useSafeSWR'
+import { useSafeSWR } from '@/hooks/data/useSafeSWR'
 import { cn } from '@ui/utils/formatters';
 import { weight, paddingY } from '@ui-tokens/tokens'
 import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'

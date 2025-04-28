@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
-import { GradeLevels } from "@data-schema/enum";
-import { connectToDB } from "@/lib/data-server/db/connection";
+import { GradeLevels } from "@enums";
+import { connectToDB } from "@data-server/db/connection";
 
 @modelOptions({ 
   schemaOptions: { 

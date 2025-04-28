@@ -1,5 +1,5 @@
 import { StandardResponse } from '@core-types/response';
-import { StandardResponseSchema } from '@data-schema/zod-schema/validation/response';
+import { StandardResponseSchema } from '@zod-schema/validation/response';
 
 /**
  * Standardizes API responses to ensure consistent format

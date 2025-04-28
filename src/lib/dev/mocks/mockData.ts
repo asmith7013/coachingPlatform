@@ -6,7 +6,7 @@ import {
   AllowedRolesNYCPSEnum, 
   AllowedRolesTLEnum, 
   YesNoEnum
-} from '@data-schema/enum';
+} from '@enums';
 
 // import { Types } from 'mongoose';
 // import { DayType, PeriodType } from "@zod-schema/shared/enums";

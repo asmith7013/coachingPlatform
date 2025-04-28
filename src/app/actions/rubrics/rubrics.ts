@@ -7,7 +7,7 @@ import {
   RubricScoreZodSchema,   
   RubricInputZodSchema,
   RubricInput,
-} from "@data-schema/zod-schema/look-fors/rubric";
+} from "@zod-schema/look-fors/rubric";
 import { createCrudActions } from "@data-server/crud/crud-action-factory";
 import { withDbConnection } from "@data-server/db/ensure-connection";
 import { handleServerError } from "@error/handle-server-error";

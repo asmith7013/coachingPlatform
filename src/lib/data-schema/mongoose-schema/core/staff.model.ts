@@ -8,7 +8,7 @@ import {
   SpecialGroups,
   AdminLevels,
   GradeLevels
-} from "@data-schema/enum";
+} from "@enums";
 
 @modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'experiences' } })
 class Experience {

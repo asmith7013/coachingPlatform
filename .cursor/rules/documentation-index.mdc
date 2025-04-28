@@ -56,6 +56,7 @@ The documentation is organized into several key areas:
 @file:docs/workflows/cursor-integration.md
 @file:docs/workflows/dev-utilities.md
 @file:docs/workflows/development-workflow.md
+@file:docs/workflows/hook-development.md
 
 ### Example Documentation
 @file:docs/examples/component-examples.md

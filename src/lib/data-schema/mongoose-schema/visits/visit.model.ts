@@ -6,7 +6,7 @@ import {
   ModeDone,
   GradeLevels,
   DurationValues,
-} from "@data-schema/enum";
+} from "@enums";
 
 @modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'eventitems' } })
 export class EventItem {

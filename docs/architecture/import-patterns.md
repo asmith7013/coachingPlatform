@@ -48,9 +48,9 @@ typescript// tsconfig.json
 
         // Server-side and data paths
         "@actions/*": ["./src/app/actions/*"],
-        "@models/*": ["./src/lib/data-schema/mongoose-schema/*"],
+        "@enums": ["./src/lib/data-schema/enum"],
         "@zod-schema/*": ["./src/lib/data-schema/zod-schema/*"],
-        "@data-schema/*": ["./src/lib/data-schema/*"],
+        "@mongoose-schema/*": ["./src/lib/data-schema/mongoose-schema/*"],
         "@data-server/*": ["./src/lib/data-server/*"],
         "@data-utilities/*": ["./src/lib/data-utilities/*"],
 
@@ -59,8 +59,9 @@ typescript// tsconfig.json
         "@utils/*": ["./src/lib/utils/*"],
         "@styles/*": ["./src/styles/*"],
         "@core/*": ["./src/lib/core/*"],
+        "@domain/*": ["./src/lib/domain/*"],
         "@api/*": ["./src/lib/api/*"],
-        "@types/*": ["./src/lib/types/*"],
+        "@error/*": ["./src/lib/error/*"],
 
         // UI-specific paths
         "@ui/*": ["./src/lib/ui/*"],
@@ -68,8 +69,11 @@ typescript// tsconfig.json
         "@ui-variants/*": ["./src/lib/ui/variants/*"],
         "@ui-forms/*": ["./src/lib/ui/forms/*"],
         
-        // Domain-specific paths
-        "@domain/*": ["./src/lib/domain/*"],
+        // Type paths
+        "@core-types/*": ["./src/lib/types/core/*"],
+        "@domain-types/*": ["./src/lib/types/domain/*"],
+        "@ui-types/*": ["./src/lib/types/ui/*"],
+
         
         // Testing utilities
         "@testing/*": ["./src/lib/testing/*"],

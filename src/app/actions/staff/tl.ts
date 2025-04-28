@@ -1,12 +1,12 @@
 "use server";
 
 import { z } from "zod";
-import { TeachingLabStaffModel } from "@data-schema/mongoose-schema/core/staff.model";
+import { TeachingLabStaffModel } from "@mongoose-schema/core/staff.model";
 import { 
   TeachingLabStaffZodSchema, 
   TeachingLabStaffInputZodSchema,
   type TeachingLabStaffInput
-} from "@data-schema/zod-schema/core/staff";
+} from "@zod-schema/core/staff";
 import { handleServerError } from "@error/handle-server-error";
 import { handleValidationError } from "@error/handle-validation-error";
 import { createItem, updateItem, deleteItem } from "@data-server/crud/crud-operations";

@@ -22,7 +22,7 @@ import {
     SolvesTouchpointZod,
     SettingTypesEnum,
     YesNoEnum
-} from "@data-schema/enum";
+} from "@enums";
 
 
 // ✅ Grade Levels Supported Values

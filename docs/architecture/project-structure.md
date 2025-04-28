@@ -86,53 +86,88 @@ hooks/
 
 </section>
 
+<section id="hooks-structure">
+## Hooks Organization
+
+Our custom React hooks are organized by their functional purpose:
+
+src/hooks/
+├── data/                  # Data fetching and management hooks
+│   ├── useCrudOperations.ts     # CRUD operations with standardized error handling
+│   ├── useOptimisticResource.ts # Optimistic UI updates
+│   ├── useReferenceData.ts      # Reference data for select components
+│   ├── useResourceManager.ts    # Resource management abstraction
+│   └── useSafeSWR.ts            # Error-managed SWR wrapper
+│
+├── ui/                    # UI interaction and state hooks
+│   ├── useFiltersAndSorting.ts  # Filter and sort state management
+│   └── usePagination.ts         # Pagination state and logic
+│
+├── error/                 # Error handling hooks
+│   ├── useErrorBoundary.ts      # React error boundary hook
+│   └── useErrorHandledMutation.ts # Error-wrapped mutation hook
+│
+├── domain/                # Domain-specific data hooks
+│   ├── useLookFors.ts           # LookFor entity management
+│   ├── useNYCPSStaff.ts         # NYCPS Staff entity management
+│   ├── useSchools.ts            # School entity management
+│   └── useTeacherSchedules.ts   # Teacher schedule management
+│
+├── debugging/             # Development and debugging hooks
+│   ├── checkRenderLoopInTools.tsx # Tool for detecting render loops
+│   ├── useComponentTester.tsx   # Isolated component testing
+│   └── useRenderTracking.ts     # Component render tracking
+│
+└── index.ts               # Barrel file that re-exports all hooks
+</section>
 <section id="lib-structure">
 
 ## Library Structure
-
-The `lib` directory contains core utilities and modules:
-lib/
-├── api/                # API utilities and helpers
-│   ├── handlers/       # API route handlers
-│   ├── responses/      # Response formatting utilities
-│   └── validation/     # API input validation
-├── core/               # Essential core functionality
-│   ├── error/          # Error handling utilities
-│   ├── types/          # Core type definitions
-│   └── utils/          # Core utility functions
-├── data-schema/        # Data schema definitions
-│   ├── mongoose-schema/ # MongoDB models
-│   └── zod-schema/     # Zod schema definitions
-├── data-server/        # Server-side data operations
-│   ├── crud/           # CRUD operation utilities
-│   ├── db/             # Database connection
-│   └── file-handling/  # File upload and processing
-├── data-utilities/     # Data processing utilities
-│   ├── pagination/     # Pagination utilities
-│   └── transformers/   # Data transformation helpers
-├── dev/                # Development utilities
-│   ├── debugging/      # Debug tools and monitors
-│   ├── mocks/          # Mock data for development
-│   └── testing/        # Testing utilities
-├── domain/             # Domain-specific functionality
+src/
+├── app/                # Next.js app router pages and API routes
+├── components/         # React components (core, composed, domain, features)
 ├── hooks/              # Custom React hooks
-├── json/               # Static JSON data files
-├── types/              # Global type definitions
-└── ui/                 # UI utilities
-├── constants/      # UI-related constants
-├── forms/          # Form configuration and helpers
-│   ├── fieldConfig/  # Field configurations by domain
-│   └── formOverrides/ # Field overrides by context
-├── tokens/         # Design system tokens
-└── variants/       # Component variants
-
+├── lib/                # Core utilities and modules
+│   ├── api/            # API utilities for fetchers, handlers, and responses
+│   ├── data-schema/    # Schema definitions (Zod and Mongoose)
+│   │   ├── mongoose-schema/ # MongoDB models derived from Zod schemas
+│   │   ├── zod-schema/      # Source of truth for data structures
+│   │   └── enum/            # Shared enumerations
+│   ├── data-server/    # Server-side data operations
+│   │   ├── crud/       # Generic CRUD operations
+│   │   ├── db/         # Database connection management
+│   │   └── file-handling/ # File upload and processing
+│   ├── data-utilities/ # Data processing utilities
+│   │   ├── pagination/ # Pagination utilities
+│   │   └── transformers/ # Data sanitization and transformation
+│   ├── dev/            # Development and testing utilities
+│   ├── domain/         # Domain-specific library functions
+│   ├── error/          # Centralized error handling
+│   ├── hooks/          # Shared hooks for data management
+│   ├── json/           # Static JSON data files
+│   ├── types/          # Type definitions
+│   │   ├── core/       # Core system types (API, CRUD, responses)
+│   │   ├── domain/     # Business domain types
+│   │   └── ui/         # UI-specific types
+│   └── ui/             # UI utilities
+│       ├── constants/  # UI-related constants
+│       ├── forms/      # Form configuration and helpers
+│       │   ├── fieldConfig/  # Field configurations by domain
+│       │   └── formOverrides/ # Field overrides by context
+│       ├── tokens/     # Design system tokens
+│       └── variants/   # Component variants
+├── providers/          # React context providers
+└── styles/             # Global styles
 
 This structure:
-- Separates concerns clearly between data, UI, and core functionality
-- Organizes schemas and models together in data-schema
-- Keeps server operations in data-server
-- Centralizes UI-related code in the ui directory
-- Provides dedicated spaces for development and testing utilities
+- Organizes schemas and models together in `data-schema`, with Zod schemas as the source of truth
+- Centralizes server operations in `data-server` for consistent data access
+- Provides dedicated utilities in `data-utilities` for transformations and pagination
+- Maintains a comprehensive type system in `types` organized by domain
+- Centralizes error handling in the `error` directory
+- Structures UI utilities in a hierarchical system with tokens, variants, and form configurations
+
+This folder organization supports our schema-driven approach where data definitions flow from Zod schemas to MongoDB models to UI components.
 
 [RULE] Place utilities in the appropriate subdirectory within lib based on their purpose and domain.
 

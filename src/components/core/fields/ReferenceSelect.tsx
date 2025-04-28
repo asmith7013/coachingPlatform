@@ -3,7 +3,7 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import Select from "react-select";
 import { Label } from "./Label";
-import { useReferenceData } from "@hooks/useReferenceData";
+import { useReferenceData } from "@/hooks/data/useReferenceData";
 import { BaseReference } from "@core-types/reference";
 
 type OptionType = {

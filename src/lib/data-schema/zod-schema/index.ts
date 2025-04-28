@@ -23,7 +23,7 @@ export * from './shared/notes';
 
 // Export enums from the centralized location instead
 // export * from './shared/enums';
-export * from '@data-schema/enum';
+export * from '@enums';
 
 // Export validate utility
 export { validate };

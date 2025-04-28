@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useResourceManager } from "@hooks/utils/useResourceManager";
+import { useResourceManager } from "@/hooks/data/useResourceManager";
 import { 
   fetchNYCPSStaff, 
   createNYCPSStaff, 

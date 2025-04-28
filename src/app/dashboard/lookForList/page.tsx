@@ -10,7 +10,7 @@ import { EmptyListWrapper } from "@/components/shared/EmptyListWrapper";
 import { GenericResourceForm, type Field } from "@/components/composed/forms/ResourceForm";
 import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
 import { ResourceHeader } from "@/components/shared/ResourceHeader";
-import { useLookFors } from "@/hooks/useLookFors";
+import { useLookFors } from "@/hooks/domain/useLookFors";
 import { uploadLookForFile } from "@actions/lookFors/lookFors";
 import { createLookFor } from "@actions/lookFors/lookFors";
 import { LookForInput } from "@zod-schema/look-fors/look-for";

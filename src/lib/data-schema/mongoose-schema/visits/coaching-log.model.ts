@@ -4,7 +4,7 @@ import {
   YesNoEnum,
   LengthTypeEnum,
   TeacherLeaderTypeEnum,
-} from "@data-schema/enum";
+} from "@enums";
 
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'coachinglogs' } })
 export class CoachingLog {

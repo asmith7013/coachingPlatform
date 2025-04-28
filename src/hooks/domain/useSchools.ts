@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { useResourceManager } from "@hooks/utils/useResourceManager";
+import { useResourceManager } from "@/hooks/data/useResourceManager";
 import { 
   fetchSchools, 
   createSchool, 
   updateSchool, 
   deleteSchool 
 } from "@actions/schools/schools";
-import { School, SchoolInput } from "@data-schema/zod-schema/core/school";
+import { School, SchoolInput } from "@zod-schema/core/school";
 import type { PaginatedResponse } from "@core-types/response";
 import type { FetchParams } from "@core-types/api";
 

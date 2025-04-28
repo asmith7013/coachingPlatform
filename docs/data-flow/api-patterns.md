@@ -125,6 +125,54 @@ Returns detailed success/error information
 
 [RULE] Use bulkUploadToDB for all bulk upload operations.
 </section>
+<section id="crud-factory-pattern">
+
+## CRUD Factory Pattern
+
+Our application implements a standardized CRUD factory pattern to reduce duplication and ensure consistency across data operations:
+
+```typescript
+import { createCrudActions } from "@data-server/crud/crud-action-factory";
+
+// Create standard CRUD actions for Schools
+export const schoolActions = createCrudActions({
+  model: SchoolModel,
+  fullSchema: SchoolZodSchema,
+  inputSchema: SchoolInputZodSchema,
+  revalidationPaths: ["/dashboard/schools"],
+  options: {
+    validSortFields: ['schoolName', 'district', 'createdAt', 'updatedAt'],
+    defaultSortField: 'schoolName',
+    defaultSortOrder: 'asc',
+    entityName: 'School'
+  }
+});
+
+// Export the generated actions with connection handling
+export async function fetchSchools(params = {}) {
+  return withDbConnection(() => schoolActions.fetch(params));
+}
+```
+The factory automatically provides:
+
+Paginated fetch operations with filtering and sorting
+Create operations with validation
+Update operations with partial validation
+Delete operations with proper cleanup
+Fetch-by-ID operations
+Standard error handling
+Path revalidation
+Database connection management
+
+This pattern:
+
+Reduces code duplication across server actions
+Ensures consistent error handling
+Maintains type safety through schemas
+Standardizes response formats
+
+[RULE] Use the CRUD factory pattern for all standard data operations to reduce duplication and ensure consistency.
+</section>
 <section id="api-vs-server-actions">
 API Routes vs Server Actions
 Our application uses both API routes and server actions, each with specific use cases:

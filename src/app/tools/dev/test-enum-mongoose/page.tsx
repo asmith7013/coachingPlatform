@@ -7,7 +7,7 @@ import {
   DurationTypesEnum,
   DurationConverter,
   EnumMetadata 
-} from '@data-schema/enum';
+} from '@enums';
 import { Button } from '@/components/core/Button';
 
 interface TestResult {

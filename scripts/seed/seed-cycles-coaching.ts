@@ -2,7 +2,7 @@ import { connect, disconnect } from 'mongoose';
 import mongoose from 'mongoose';
 import { CycleModel } from '../../src/lib/data-schema/mongoose-schema/core/cycle.model';
 import { CoachingLogModel } from '../../src/lib/data-schema/mongoose-schema/visits/coaching-log.model';
-import { YesNoEnum } from '@data-schema/enum';
+import { YesNoEnum } from '@enums';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 

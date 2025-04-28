@@ -63,6 +63,65 @@ Consistent response format
 
 [RULE] Follow the standard pattern for all Server Actions.
 </section>
+<section id="standardized-action-patterns">
+
+## Standardized Action Patterns
+
+Our server actions follow a standardized pattern using the CRUD factory to reduce duplication:
+
+```typescript
+"use server";
+
+import { z } from "zod";
+import { RubricModel } from "@mongoose-schema/look-fors/rubric.model";
+import { RubricZodSchema, RubricInputZodSchema } from "@data-schema/zod-schema/look-fors/rubric";
+import { createCrudActions } from "@data-server/crud/crud-action-factory";
+import { withDbConnection } from "@data-server/db/ensure-connection";
+
+// Create standard CRUD actions
+export const rubricActions = createCrudActions({
+  model: RubricModel,
+  fullSchema: RubricZodSchema,
+  inputSchema: RubricInputZodSchema,
+  revalidationPaths: ["/dashboard/rubrics"],
+  options: {
+    validSortFields: ['score', 'createdAt'],
+    defaultSortField: 'score',
+    defaultSortOrder: 'asc',
+    entityName: 'Rubric'
+  }
+});
+
+// Export the generated actions with connection handling
+export async function fetchRubrics(params = {}) {
+  return withDbConnection(() => rubricActions.fetch(params));
+}
+
+export async function createRubric(data: RubricInput) {
+  return withDbConnection(() => rubricActions.create(data));
+}
+
+// Add any specialized actions beyond basic CRUD
+export async function fetchRubricScoresByStaff(staffId: string) {
+  return withDbConnection(async () => {
+    try {
+      // Custom implementation...
+    } catch (error) {
+      // Error handling...
+    }
+  });
+}```
+
+This pattern:
+
+Leverages the CRUD factory for standard operations
+Adds specialized actions as needed
+Maintains consistent error handling
+Ensures proper database connection management
+Provides consistent response formats
+
+[RULE] Use the standardized action pattern for all server actions to ensure consistency and maintainability.
+</section>
 <section id="server-actions-organization">
 Organization
 Server Actions are organized by domain in the src/app/actions/ directory:

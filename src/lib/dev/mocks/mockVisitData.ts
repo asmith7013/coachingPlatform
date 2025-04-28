@@ -4,7 +4,7 @@ import {
   DurationValues,
   GradeLevelsSupportedZod,
   type GradeLevelsSupported
-} from '@data-schema/enum';
+} from '@enums';
 
 /**
  * Mock Visit Data Generator

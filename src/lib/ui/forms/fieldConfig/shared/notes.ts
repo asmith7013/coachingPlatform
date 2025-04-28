@@ -1,6 +1,6 @@
 import { Field } from "@/components/composed/forms/ResourceForm";
 import { Note } from "@zod-schema/shared/notes";
-import { NoteTypeZod } from "@data-schema/enum";
+import { NoteTypeZod } from "@enums";
 
 export const NoteFieldConfig: Field<Note>[] = [
   {

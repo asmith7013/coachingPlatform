@@ -4,7 +4,7 @@ import {
   BlockDayTypeZod, 
   DayTypeZod, 
   PeriodTypeZod 
-} from "@data-schema/enum"; // Updated centralized import
+} from "@enums"; // Updated centralized import
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 
 // ✅ Class Schedule Item Schema - without _id field

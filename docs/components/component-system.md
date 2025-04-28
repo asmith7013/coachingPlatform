@@ -16,7 +16,7 @@ Our component system follows an atomic design pattern, starting with primitive c
 
 ## Component Organization
 
-Components are organized by their level of complexity:
+Components are organized by their level of complexity and purpose:
 components/
 ├── core/               # Primitive UI elements
 │   ├── feedback/       # Feedback indicators (Badge, etc.)
@@ -33,20 +33,26 @@ components/
 │   ├── imRoutine/      # Implementation routine components
 │   ├── lookFors/       # Look-for components
 │   ├── rubrics/        # Rubric components
+│   ├── schedules/      # Schedule components
 │   ├── schools/        # School components
 │   ├── staff/          # Staff components
 │   └── visits/         # Visit components
+├── error/              # Error handling components
 ├── features/           # Complete feature implementations
 ├── layouts/            # Page layout components
 ├── shared/             # Cross-cutting components
-└── utility/            # Helper components
+└── debug/              # Development and debugging components
 
 Each component type serves a specific purpose:
 
 1. **Core Components**: Building blocks with minimal dependencies
 2. **Composed Components**: Combinations of core components for common patterns
 3. **Domain Components**: Business-specific implementations
-4. **Feature Components**: Complete features combining multiple domain components
+4. **Error Components**: Error boundary and monitoring components
+5. **Feature Components**: Complete features combining multiple domain components
+6. **Layout Components**: Page and application structure components
+7. **Shared Components**: Cross-cutting utility components
+8. **Debug Components**: Used during development and debugging
 
 [RULE] Place new components in the appropriate directory based on their complexity and purpose.
 

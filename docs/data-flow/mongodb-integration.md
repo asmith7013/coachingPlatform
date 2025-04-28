@@ -81,6 +81,28 @@ Provide consistent error handling
 
 [RULE] Use the CRUD utilities for all standard database operations.
 </section>
+<section id="connection-management">
+
+## Connection Management
+
+Our system provides a consistent pattern for managing MongoDB connections through the `withDbConnection` utility:
+
+```typescript
+import { withDbConnection } from "@data-server/db/ensure-connection";
+
+export async function fetchSchools(params = {}) {
+  return withDbConnection(() => schoolActions.fetch(params));
+}```
+
+This utility:
+
+Ensures database connection is established before running the operation
+Handles connection errors consistently
+Reduces boilerplate code in server actions
+Works with both standard CRUD operations and custom queries
+
+[RULE] Always wrap database operations with the withDbConnection utility to ensure consistent connection management.
+</section>
 <section id="object-id-handling">
 ObjectId Handling
 MongoDB uses ObjectId for document IDs, but our client-side code works with string IDs. Our system handles this conversion automatically:

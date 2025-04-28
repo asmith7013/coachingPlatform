@@ -4,11 +4,11 @@ import type { School } from "@zod-schema/core/school";
 import type { SchoolReference } from "@core-types/reference";
 import { mapSchoolToReference } from "@data-utilities/transformers/reference-mappers";
 
+// Make sure createReferenceEndpoint returns a function, not an object
 export const GET = createReferenceEndpoint<School, SchoolReference>({
   fetchFunction: fetchSchools,
   mapItem: mapSchoolToReference,
   defaultSearchField: "schoolName",
   defaultLimit: 20,
   logPrefix: "Schools API"
-}); 
-
+});

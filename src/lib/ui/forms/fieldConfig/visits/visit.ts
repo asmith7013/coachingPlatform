@@ -1,5 +1,5 @@
 import { Field } from "@/components/composed/forms/ResourceForm";
-import { Visit, EventItemZodSchema, SessionLinkZodSchema } from "@data-schema/zod-schema/visits/visit";
+import { Visit, EventItemZodSchema, SessionLinkZodSchema } from "@zod-schema/visits/visit";
 import { 
   GradeLevelsSupportedZod,
   EventTypeZod,
@@ -7,7 +7,7 @@ import {
   AllowedPurposeZod,
   ModeDoneZod,
   SessionPurposeZod
-} from "@data-schema/enum";
+} from "@enums"; 
 import { z } from "zod";
 
 // Use inferred types from the Zod schemas

@@ -6,7 +6,7 @@ import { Heading } from '@components/core/typography/Heading';
 import { Text } from '@components/core/typography/Text';
 import { Button } from '@components/core/Button';
 import { DashboardPage } from '@components/layouts/DashboardPage';
-import { useSchools } from "@hooks/useSchools"; // ✅ SWR hook for managing Schools data.
+import { useSchools } from "@/hooks/domain/useSchools"; // ✅ SWR hook for managing Schools data.
 import { School, SchoolInput } from "@domain-types/school"; // ✅ Import the School type from Zod schema.
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
 import { Field, GenericResourceForm } from "@components/composed/forms/ResourceForm";

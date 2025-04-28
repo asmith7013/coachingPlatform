@@ -193,23 +193,27 @@ typescriptexport const SchoolOverrides: FieldOverrideMap<SchoolInput> = {
 [RULE] Use form overrides to customize field behavior without modifying the base schema.
 </section>
 <section id="data-hooks">
-Data Fetching Hooks
-Custom hooks for data fetching provide a consistent interface across the application:
-typescriptfunction useSchools() {
-  const { data, error, isLoading } = useSafeSWR<School[]>('/api/schools');
-  
-  // Additional CRUD functions...
-  
-  return {
-    schools: data?.items || [],
-    error,
-    isLoading,
-    createSchool,
-    updateSchool,
-    deleteSchool,
-  };
-}
-[RULE] Always return error and loading states from data hooks.
+
+## Data Flow: Custom Hooks
+
+Our application uses a structured approach to hooks that follows our separation of concerns:
+
+1. **Data Hooks**: Located in `src/hooks/data/`, these hooks manage data fetching, CRUD operations, and resource state. They serve as the primary interface between React components and server data.
+
+2. **Domain Hooks**: Located in `src/hooks/domain/`, these hooks implement domain-specific logic and provide a centralized API for interacting with specific entity types.
+
+3. **UI Hooks**: Located in `src/hooks/ui/`, these manage UI-specific state like pagination, filtering, and sorting.
+
+4. **Error Hooks**: Located in `src/hooks/error/`, these provide standardized error handling for various operations.
+
+5. **Debugging Hooks**: Located in `src/hooks/debugging/`, these provide development-time utilities for debugging and testing.
+
+When using hooks:
+- Prefer domain hooks in feature components
+- Use data hooks when building new domain hooks
+- Use UI hooks for managing UI-specific state
+- Use error hooks to handle network and operation errors consistently
+
 </section>
 <section id="data-reference-hook">
 Reference Data Hook

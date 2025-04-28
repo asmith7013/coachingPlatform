@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useResourceManager } from "@hooks/utils/useResourceManager";
+import { useResourceManager } from "@/hooks/data/useResourceManager";
 import { fetchLookFors, createLookFor, updateLookFor, deleteLookFor } from "@actions/lookFors/lookFors";
 import { LookFor, LookForInput } from "@domain-types/look-fors";
 import type { ResourceResponse } from "@core-types/response";

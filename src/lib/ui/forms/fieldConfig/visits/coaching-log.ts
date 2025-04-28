@@ -4,7 +4,7 @@ import {
   ReasonDoneZod,
   TotalDurationZod,
   SolvesTouchpointZod
-} from "@data-schema/enum";
+} from "@enums";
 
 export const CoachingLogFieldConfig: Field<CoachingLog>[] = [
   {

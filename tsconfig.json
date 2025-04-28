@@ -30,10 +30,10 @@
 
         // Server-side and data paths
         "@actions/*": ["./src/app/actions/*"],
-        "@models/*": ["./src/lib/data-schema/mongoose-schema/*"],
+        // "@data-schema/*": ["./src/lib/data-schema/*"],
+        "@enums": ["./src/lib/data-schema/enum"],
         "@zod-schema/*": ["./src/lib/data-schema/zod-schema/*"],
         "@mongoose-schema/*": ["./src/lib/data-schema/mongoose-schema/*"],
-        "@data-schema/*": ["./src/lib/data-schema/*"],
         "@data-server/*": ["./src/lib/data-server/*"],
         "@data-utilities/*": ["./src/lib/data-utilities/*"],
 
@@ -42,6 +42,7 @@
         "@utils/*": ["./src/lib/utils/*"],
         "@styles/*": ["./src/styles/*"],
         "@core/*": ["./src/lib/core/*"],
+        "@domain/*": ["./src/lib/domain/*"],
         "@api/*": ["./src/lib/api/*"],
         "@error/*": ["./src/lib/error/*"],
 
@@ -55,8 +56,7 @@
         "@core-types/*": ["./src/lib/types/core/*"],
         "@domain-types/*": ["./src/lib/types/domain/*"],
         "@ui-types/*": ["./src/lib/types/ui/*"],
-        // Domain-specific paths
-        "@domain/*": ["./src/lib/domain/*"],
+
         
         // Testing utilities
         "@testing/*": ["./src/lib/testing/*"],

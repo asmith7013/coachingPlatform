@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import SentryBoundaryWrapper from "@/components/utility/SentryBoundaryWrapper";
+import SentryBoundaryWrapper from "@components/error/SentryBoundaryWrapper";
 import { SWRProvider } from "@/providers/SWRProvider";
 import "@/app/globals.css";
 import { PerformanceMonitorProvider } from "@/lib/dev/debugging/usePerformanceMonitoring";

@@ -1,4 +1,4 @@
-import { EventTypeZod } from '@data-schema/enum';
+import { EventTypeZod } from '@enums';
 import { SchedulePeriodUI, WashingtonTeacher } from './scheduleTypes';
 
 // Activity types for "What" dropdown based on EventTypeZod

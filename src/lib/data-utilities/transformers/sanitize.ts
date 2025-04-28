@@ -7,7 +7,7 @@ import type { z } from "zod";
  * Deep‑clone an object while string‑ifying every key named "_id".
  * Works for arbitrarily nested objects + arrays.
  */
-function deepSanitize(value: unknown): unknown {
+export function deepSanitize(value: unknown): unknown {
   // Handle arrays recursively
   if (Array.isArray(value)) {
     return value.map(deepSanitize);
