@@ -80,6 +80,14 @@ See `data-flow/api-patterns.md` for API standardization guidelines.
 
 </section>
 
+<section id="server-client-separation">
+Server/Client Separation Patterns
+API-Safe Fetchers Pattern
+To maintain a clean separation between server actions and API routes, we use the API-Safe Fetchers pattern. This pattern prevents "use server" directive conflicts and creates a clear architectural boundary between these components.
+See data-flow/api-patterns.md#api-safe-fetchers for detailed implementation guidelines.
+[RULE] Maintain clear separation between server actions and API routes through the API-Safe Fetchers pattern.
+</section>
+
 <section id="developer-efficiency">
 
 ## Developer Efficiency

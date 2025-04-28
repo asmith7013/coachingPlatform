@@ -173,6 +173,87 @@ Standardizes response formats
 
 [RULE] Use the CRUD factory pattern for all standard data operations to reduce duplication and ensure consistency.
 </section>
+<section id="api-safe-fetchers">
+API-Safe Fetchers Pattern
+Our application maintains a clear separation between Server Actions and API Routes through an "API-Safe Fetchers" pattern. This architecture ensures that API routes don't import server actions directly (which would cause "use server" directive conflicts).
+Pattern Overview
+
+Server Actions: Direct database operations with "use server" directive
+API-Safe Fetchers: Wrappers that can be safely imported into API routes
+API Routes: HTTP endpoints that use API-safe fetchers instead of server actions
+
+Implementation Structure
+src/
+├── app/
+│   ├── actions/        # Server Actions (with "use server" directive)
+│   └── api/            # API Routes (using API-safe fetchers)
+└── lib/
+    ├── api/
+    │   ├── fetchers/   # API-safe fetchers
+    │   └── handlers/   # API route handlers and utilities
+    └── data-server/    # Database operations
+Creating API-Safe Fetchers
+API-safe fetchers use the createApiSafeFetcher utility to generate MongoDB query functions that can be safely imported into API routes:
+typescript// src/lib/api/handlers/api-adapter.ts
+export function createApiSafeFetcher<T, M>(
+  model: Model<M>,
+  schema: ZodSchema<T>,
+  defaultSearchField?: string
+) {
+  return async function(params: FetchParams) {
+    // Implementation that connects to DB and performs query
+    // without using "use server" directive
+  };
+}
+Example usage:
+typescript// src/lib/api/fetchers/school.ts
+import { SchoolModel } from '@/lib/data-schema/mongoose-schema/core/school.model';
+import { SchoolZodSchema } from '@/lib/data-schema/zod-schema/core/school';
+import { createApiSafeFetcher } from '@/lib/api/handlers/api-adapter';
+
+export const fetchSchoolsForApi = createApiSafeFetcher(
+  SchoolModel,
+  SchoolZodSchema,
+  "schoolName" // Default search field
+);
+Building API Routes
+API routes should always use API-safe fetchers rather than importing server actions directly:
+typescript// src/app/api/schools/route.ts
+import { fetchSchoolsForApi } from "@/lib/api/fetchers/school";
+import { createReferenceEndpoint } from "@/lib/api/handlers/reference-endpoint";
+
+export const GET = createReferenceEndpoint({
+  fetchFunction: fetchSchoolsForApi, // Use API-safe fetcher
+  // Other options...
+});
+[RULE] Never import server actions (from app/actions/) directly into API routes. Always use API-safe fetchers.
+[RULE] All API routes must export functions named after HTTP methods (GET, POST, etc.).
+[RULE] Never include "use server" directive in API route files.
+</section>
+<section id="reference-endpoint-pattern">
+Reference Endpoint Pattern
+Our application provides a standardized pattern for creating reference data endpoints using the createReferenceEndpoint factory function. This approach ensures consistency across all API endpoints that serve reference data.
+typescript// src/app/api/entity/route.ts
+import { fetchEntityForApi } from "@/lib/api/fetchers/entity";
+import { createReferenceEndpoint } from "@/lib/api/handlers/reference-endpoint";
+
+export const GET = createReferenceEndpoint({
+  fetchFunction: fetchEntityForApi,
+  mapItem: mapEntityToReference,
+  defaultSearchField: "name",
+  defaultLimit: 20,
+  logPrefix: "Entity API"
+});
+The factory automatically provides:
+
+Standardized parameter handling
+Consistent error formatting
+Default pagination
+Search capability
+Proper response structure
+
+[RULE] Use the reference endpoint pattern for all API endpoints that return lists of entities.
+</section>
 <section id="api-vs-server-actions">
 API Routes vs Server Actions
 Our application uses both API routes and server actions, each with specific use cases:

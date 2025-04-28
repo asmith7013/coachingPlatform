@@ -1,12 +1,11 @@
-import { fetchSchools } from "@actions/schools/schools";
+// src/app/api/school/route.ts
+import { fetchSchoolsForApi } from "@api/fetchers/school"; // Use your API-safe fetcher
 import { createReferenceEndpoint } from "@api/handlers/reference-endpoint";
-import type { School } from "@zod-schema/core/school";
-import type { SchoolReference } from "@core-types/reference";
 import { mapSchoolToReference } from "@data-utilities/transformers/reference-mappers";
 
-// Make sure createReferenceEndpoint returns a function, not an object
-export const GET = createReferenceEndpoint<School, SchoolReference>({
-  fetchFunction: fetchSchools,
+// Export the result of createReferenceEndpoint directly as GET
+export const GET = createReferenceEndpoint({
+  fetchFunction: fetchSchoolsForApi, // Important: use API-safe fetcher, not server action
   mapItem: mapSchoolToReference,
   defaultSearchField: "schoolName",
   defaultLimit: 20,

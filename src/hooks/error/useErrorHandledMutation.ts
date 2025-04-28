@@ -1,16 +1,14 @@
 import { useState, useCallback } from 'react';
 import { handleClientError } from '@error/handle-client-error';
+import { BaseResponse } from '@core-types/response';
+
 // import { ErrorResponse } from '@core-types/error';
 
 /**
  * Response from a server action or API call
  */
-export interface ServerResponse<T = unknown> {
-  success: boolean;
+export interface ServerResponse<T = unknown> extends BaseResponse {
   data?: T;
-  message?: string;
-  error?: string;
-  errors?: Array<{ error: string; item?: unknown }>;
 }
 
 /**
@@ -81,7 +79,7 @@ export interface MutationResult<T = unknown, A extends unknown[] = unknown[]> {
  * @returns MutationResult object with state and execute function
  */
 export function useErrorHandledMutation<T = unknown, A extends unknown[] = unknown[]>(
-  mutationFn: (...args: A) => Promise<ServerResponse<T>>,
+  mutationFn: (...args: A) => Promise<BaseResponse & { data?: T }>,
   options: MutationOptions = {}
 ): MutationResult<T, A> {
   const {
@@ -104,32 +102,31 @@ export function useErrorHandledMutation<T = unknown, A extends unknown[] = unkno
     setIsSuccess(false);
   }, []);
 
-  // Extract error message from response using your existing error handling pattern
-  const getErrorMessage = (response: ServerResponse<T>): string => {
-    // First try to get from message property
-    if (response.message) {
-      return response.message;
-    }
-    
-    // Then try to get from errors array
-    if (response.errors && response.errors.length > 0) {
-      return response.errors.map(e => e.error).join(', ');
-    }
-    
-    // Fall back to error property
-    return response.error || defaultErrorMessage;
-  };
-
-  // Execute the mutation with error handling
   const mutate = useCallback(async (...args: A): Promise<ServerResponse<T>> => {
     setIsLoading(true);
     setError(null);
+    
+    // Extract error message from response using your existing error handling pattern
+    const extractErrorMessage = (response: BaseResponse & { data?: T }): string => {
+      // First try to get from message property
+      if (response.message) {
+        return response.message;
+      }
+      
+      // Then try to get from errors array
+      if (response.errors && response.errors.length > 0) {
+        return response.errors.map(e => e.error).join(', ');
+      }
+      
+      // Fall back to error property
+      return response.error || defaultErrorMessage;
+    };
     
     try {
       const response = await mutationFn(...args);
       
       if (!response.success) {
-        const errorMsg = getErrorMessage(response);
+        const errorMsg = extractErrorMessage(response);
         setError(errorMsg);
         setIsSuccess(false);
         
@@ -141,12 +138,12 @@ export function useErrorHandledMutation<T = unknown, A extends unknown[] = unkno
           throw new Error(errorMsg);
         }
         
-        return response;
+        return response as ServerResponse<T>;
       }
       
       setData(response.data || null);
       setIsSuccess(true);
-      return response;
+      return response as ServerResponse<T>;
     } catch (e) {
       const errorMsg = handleClientError(e, errorContext);
       setError(errorMsg);
@@ -163,11 +160,11 @@ export function useErrorHandledMutation<T = unknown, A extends unknown[] = unkno
       return {
         success: false,
         error: errorMsg
-      };
+      } as ServerResponse<T>;
     } finally {
       setIsLoading(false);
     }
-  }, [mutationFn, errorContext, defaultErrorMessage, errorResetTime, throwErrors]);
+  }, [mutationFn, errorContext, errorResetTime, throwErrors, defaultErrorMessage]);
 
   return {
     mutate,
