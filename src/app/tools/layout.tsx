@@ -20,6 +20,16 @@ export default function ToolsLayout({ children }: { children: React.ReactNode })
                 IMplementation Reflection Tool
               </Link>
             </li>
+            <li>
+              <Link href="/tools/things3" className="block p-2">
+                Things 3 Import
+              </Link>
+            </li>
+            <li>
+              <Link href="/tools/monday-import" className="block p-2">
+                Monday.com Import
+              </Link>
+            </li>
           </ul>
         </nav>
       </aside>

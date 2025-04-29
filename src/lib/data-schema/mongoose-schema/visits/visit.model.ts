@@ -84,6 +84,26 @@ export class Visit {
 
   @prop({ type: () => [String], required: true })
   owners!: string[];
+
+  // Monday.com integration fields
+  @prop()
+  mondayItemId?: string;
+
+  @prop()
+  mondayBoardId?: string;
+  
+  @prop()
+  mondayItemName?: string;
+
+  @prop()
+  mondayLastSyncedAt?: Date;
+
+  // Additional fields from Monday data
+  @prop()
+  siteAddress?: string;
+
+  @prop()
+  endDate?: string;
 }
 
 export const EventItemModel = mongoose.models.EventItem || getModelForClass(EventItem);

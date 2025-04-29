@@ -1,4 +1,4 @@
-// src/components/ui/card.tsx
+// src/components/composed/cards/Card.tsx
 
 import React from 'react'
 import { cn } from '@ui/utils/formatters';
@@ -9,7 +9,7 @@ import {
 } from '@ui-variants/shared-variants'
 import { textColors } from '@ui-tokens/tokens'
 
-// 🎨 Card style variants
+// 🎨 Card style variants - maintains the same tv() structure
 export const card = tv({
   slots: {
     root: [
@@ -62,15 +62,90 @@ export const cardStyles = card;
 // ✅ Export type for variant props
 export type CardVariants = VariantProps<typeof card>;
 
-interface CardProps extends CardVariants {
+// Create a React Context to pass styles to subcomponents
+type CardContextType = {
+  styles: ReturnType<typeof card>;
+};
+
+const CardContext = React.createContext<CardContextType | undefined>(undefined);
+
+// Hook to use card context in subcomponents
+const useCardContext = () => {
+  const context = React.useContext(CardContext);
+  if (!context) {
+    throw new Error("Card subcomponents must be used within a Card component");
+  }
+  return context;
+};
+
+// Main Card component
+interface CardRootProps extends CardVariants {
   className?: string;
   children?: React.ReactNode;
+}
+
+const CardRoot = ({
+  className,
+  children,
+  padding = 'md',
+  radius = 'md',
+  border = false,
+  variant = 'default',
+  shadow = 'sm',
+}: CardRootProps) => {
+  // Generate styles using Tailwind Variants
+  const styles = card({ padding, radius, variant, shadow, border });
+  
+  return (
+    <CardContext.Provider value={{ styles }}>
+      <div className={cn(styles.root(), className)}>
+        {children}
+      </div>
+    </CardContext.Provider>
+  );
+};
+
+// Card subcomponents
+interface CardSubComponentProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+const Header = ({ className, children }: CardSubComponentProps) => {
+  const { styles } = useCardContext();
+  return (
+    <div className={cn(styles.header(), className)}>
+      {children}
+    </div>
+  );
+};
+
+const Body = ({ className, children }: CardSubComponentProps) => {
+  const { styles } = useCardContext();
+  return (
+    <div className={cn(styles.content(), className)}>
+      {children}
+    </div>
+  );
+};
+
+const Footer = ({ className, children }: CardSubComponentProps) => {
+  const { styles } = useCardContext();
+  return (
+    <div className={cn(styles.footer(), className)}>
+      {children}
+    </div>
+  );
+};
+
+// For backward compatibility
+interface LegacyCardProps extends CardRootProps {
   header?: React.ReactNode;
   footer?: React.ReactNode;
   contentClassName?: string;
 }
 
-export const Card = ({
+const LegacyCard = ({
   className,
   children,
   header,
@@ -81,7 +156,7 @@ export const Card = ({
   variant = 'default',
   shadow = 'sm',
   contentClassName,
-}: CardProps) => {
+}: LegacyCardProps) => {
   const styles = card({ padding, radius, variant, shadow, border });
 
   return (
@@ -102,5 +177,13 @@ export const Card = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};
+
+// Export main component with subcomponents attached
+export const Card = Object.assign(CardRoot, {
+  Header,
+  Body,
+  Footer,
+  Legacy: LegacyCard
+});

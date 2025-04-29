@@ -27,6 +27,7 @@
         // Core component and hook paths
         "@components/*": ["./src/components/*"],
         "@hooks/*": ["./src/hooks/*"],
+        "@api-routes/*": ["./src/app/api/*"],
 
         // Server-side and data paths
         "@actions/*": ["./src/app/actions/*"],
@@ -45,6 +46,12 @@
         "@domain/*": ["./src/lib/domain/*"],
         "@api/*": ["./src/lib/api/*"],
         "@error/*": ["./src/lib/error/*"],
+        // API utilities (in lib)
+        "@api-utils/*": ["./src/lib/api/*"],
+        "@api-client/*": ["./src/lib/api/client/*"],
+        "@api-fetchers/*": ["./src/lib/api/fetchers/*"],
+        "@api-handlers/*": ["./src/lib/api/handlers/*"],
+        "@api-integrations/*": ["./src/lib/api/integrations/*"],
 
         // UI-specific paths
         "@ui/*": ["./src/lib/ui/*"],

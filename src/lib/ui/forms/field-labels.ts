@@ -138,9 +138,22 @@ export const VisitFieldLabels: Record<keyof Visit, string> = {
     events: "Events",
     sessionLinks: "Session Links",
     owners: "Owners",
+    
+    // Monday.com integration fields
+    mondayItemId: "Monday Item ID",
+    mondayBoardId: "Monday Board ID",
+    mondayItemName: "Monday Item Name",
+    mondayLastSyncedAt: "Last Synced with Monday",
+    
+    // Additional Monday.com related fields
+    siteAddress: "Site Address",
+    endDate: "End Date",
+    
+    // System fields
     createdAt: "Created At",
     updatedAt: "Updated At",
-};
+  };
+  
 
 export const EventItemFieldLabels: Record<keyof EventItem, string> = {
     eventType: "Event Type",

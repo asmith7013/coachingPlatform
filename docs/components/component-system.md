@@ -208,6 +208,102 @@ export function ResourceForm<T extends Record<string, unknown>>({
 }
 [RULE] Use the ResourceForm component for all resource creation and editing.
 </section>
+<section id="component-compound">
+
+## Compound Component Pattern
+
+Our system uses the compound component pattern for complex interactive components that have multiple related parts. This pattern offers a more intuitive API while maintaining the flexibility of our design token system.
+
+### Implementation Approach
+
+Components should follow this pattern when they represent a logical grouping of sub-components that:
+- Share state or behavior
+- Have clearly defined semantic relationships
+- Need to be flexibly arranged in the DOM
+
+```typescript
+// Implementation using Context API
+// Parent component with subcomponents attached
+const CardRoot = ({
+  className,
+  children,
+  padding = 'md',
+  radius = 'md',
+  variant = 'default',
+  ...props
+}) => {
+  // Generate styles using Tailwind Variants
+  const styles = card({ padding, radius, variant });
+  
+  return (
+    <CardContext.Provider value={{ styles }}>
+      <div className={cn(styles.root(), className)} {...props}>
+        {children}
+      </div>
+    </CardContext.Provider>
+  );
+};
+
+// Subcomponents use context to access styles
+const Header = ({ className, children }) => {
+  const { styles } = useCardContext();
+  return (
+    <div className={cn(styles.header(), className)}>
+      {children}
+    </div>
+  );
+};
+
+// Export component with subcomponents attached
+export const Card = Object.assign(CardRoot, {
+  Header,
+  Body,
+  Footer
+});
+```
+Usage Pattern
+This pattern creates a more natural composition in JSX:
+tsx<Card padding="lg" variant="white">
+  <Card.Header>Card Title</Card.Header>
+  <Card.Body>
+    <p>Main content goes here</p>
+  </Card.Body>
+  <Card.Footer>
+    <Button>Action</Button>
+  </Card.Footer>
+</Card>
+Backwards Compatibility
+For backwards compatibility, include a Legacy property that implements the previous props-based approach:
+typescript// For backwards compatibility
+const LegacyCard = ({
+  header,
+  footer,
+  children,
+  ...props
+}) => {
+  const styles = card(props);
+  
+  return (
+    <div className={styles.root()}>
+      {header && <div className={styles.header()}>{header}</div>}
+      {children && <div className={styles.content()}>{children}</div>}
+      {footer && <div className={styles.footer()}>{footer}</div>}
+    </div>
+  );
+};
+```
+Card.Legacy = LegacyCard;
+
+When To Use
+Use the compound component pattern for:
+
+Complex interactive components (dialogs, tabs, accordions)
+Components with multiple related parts that share state
+Components where DOM structure flexibility is important
+Components that benefit from a more declarative API
+
+[RULE] All complex interactive components should implement the compound component pattern with Context API for state sharing.
+</section>
 <section id="component-error-display">
 Error Display
 Components should display errors in a consistent manner:

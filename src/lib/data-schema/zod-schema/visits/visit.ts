@@ -33,6 +33,17 @@ export const VisitInputZodSchema = z.object({
   events: z.array(EventItemZodSchema).optional(), // Optional array of events
   sessionLinks: z.array(SessionLinkZodSchema).optional(), // Optional array of session links
   owners: z.array(z.string()), // Array of owner IDs
+
+  // Monday.com integration fields
+  mondayItemId: z.string().optional(),
+  mondayBoardId: z.string().optional(),
+  mondayItemName: z.string().optional(),
+  mondayLastSyncedAt: zDateField.optional(),
+  
+  // Optional fields for data that might be imported from Monday
+  // but doesn't map directly to core schema fields
+  siteAddress: z.string().optional(),
+  endDate: z.string().optional(),
 });
 
 // Full Schema extends Input Schema
