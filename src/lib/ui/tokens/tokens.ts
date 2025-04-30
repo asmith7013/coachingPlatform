@@ -3,9 +3,11 @@ export * from './typography'
 export * from './layout'
 export * from './shape'
 export * from './spacing'
-export * from './colors'
-export { textColors, alignments } from './text'
-export type { TextColor, Alignment } from './text'
+export * from './semantic-colors'
+export { alignments } from './text'
+export type { Alignment } from './text'
+export { textColors } from './colors'
+
 // Border utilities
 export const borderWidths = {
   none: 'border-0',

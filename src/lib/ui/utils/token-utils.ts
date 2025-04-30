@@ -6,10 +6,10 @@
  */
 
 import { color, textSize, weight, heading } from '@ui-tokens/typography';
-import { textColors } from '@ui-tokens/text';
+import { textColors } from '@ui-tokens/colors';
 import { radii, shadows } from '@ui-tokens/shape';
 import { paddingX, paddingY, gap, stack } from '@ui-tokens/spacing';
-import { semanticColorMap, tailwindColors } from '@ui-tokens/colors';
+import { semanticColorMap, tailwindColors } from '@/lib/ui/tokens/semantic-colors';
 
 // Common text style helpers
 export const textStyles = {

@@ -1,117 +1,140 @@
-<doc id="typescript-patterns">
+<doc id="type-system">
 
-# TypeScript Patterns
+# Type System Organization
 
 <section id="type-system-overview">
 
 ## Overview
 
-Our application uses TypeScript to provide strong type safety across all layers. This document outlines the standardized patterns for working with types in our codebase.
+Our application uses a structured approach to TypeScript types that ensures consistency and maintainability. This document outlines exactly where types should be defined and imported from.
 
-[RULE] Follow these patterns consistently to maintain type safety and code clarity.
-
-</section>
-
-<section id="type-organization">
-
-## Type Organization
-
-Types are organized in a central location under `src/lib/types/`:
-src/lib/types/
-├── core/           # Core type definitions
-├── response/       # API response types
-└── utilities/      # Type utilities
-
-[RULE] Always import types from this central location rather than creating duplicate definitions.
+[RULE] Follow these type organization patterns for all new development.
 
 </section>
 
+<section id="type-categories">
+
+## Type Categories and Locations
+
+Types in our system fall into specific categories, each with a designated location:
+
+1. **Schema-Derived Types**: Types generated from Zod schemas
+   - **Location**: Same file as the Zod schema definition
+   - **Pattern**: Export using `type EntityName = z.infer<typeof EntityNameZodSchema>`
+   - **Example**: `export type School = z.infer<typeof SchoolZodSchema>`
+
+2. **Core System Types**: Non-domain specific types (API responses, utils, etc.)
+   - **Location**: `/src/lib/types/core/{category}.ts`
+   - **Example**: `/src/lib/types/core/response.ts`
+
+3. **Domain Types**: Business domain types not directly from schemas
+   - **Location**: `/src/lib/types/domain/{domain-name}.ts`
+   - **Example**: `/src/lib/types/domain/coaching.ts`
+
+4. **UI Component Props**: Types for component props
+   - **Location**: Same file as the component or in a dedicated types file in the component directory
+   - **Example**: `export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> { variant?: 'primary' | 'secondary' }`
+
+5. **Utility Types**: Generic type utilities
+   - **Location**: `/src/lib/types/utilities.ts`
+   - **Example**: `export type Nullable<T> = T | null`
+
+[RULE] Always place types in their designated locations to maintain organization.
+
+</section>
+
+<section id="schema-derived-types">
+
+## Schema-Derived Types
+
+The primary source of data types should be Zod schemas. When defining a new entity:
+
+1. Create the Zod schema first in the appropriate `/src/lib/zod-schema/{domain}/` directory
+2. Export types derived from the schema in the same file:
+
+```typescript
+// src/lib/zod-schema/domain/entity.ts
+import { z } from "zod";
+import { zDateField } from "../shared/dateHelpers";
+
+// Input schema (for creation/updates)
+export const EntityInputZodSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  // Additional fields...
+});
+
+// Full schema (including system fields)
+export const EntityZodSchema = EntityInputZodSchema.extend({
+  _id: z.string(),
+  createdAt: zDateField.optional(),
+  updatedAt: zDateField.optional(),
+});
+
+// Types derived directly from schemas
+export type EntityInput = z.infer<typeof EntityInputZodSchema>;
+export type Entity = z.infer<typeof EntityZodSchema>;
+[RULE] Always define schema-derived types in the same file as their Zod schema.
+</section>
 <section id="type-imports">
+```
+Type Imports
+When importing types, follow these patterns:
 
-## Type Import Patterns
-
-Import types from the central location using consistent patterns:
+For schema-derived types: Import directly from the schema file
 
 ```typescript
-// Recommended import pattern
-import { PaginatedResponse, ResourceResponse } from "@/lib/types/core/response";
-
-// Or using barrel files
-import { PaginatedResponse } from "@/lib/types";
+import { School, SchoolInput } from "@/lib/zod-schema/core/school";
 ```
-[RULE] Use the path alias @/lib/types for all type imports to maintain consistency.
-</section>
-
-<section id="type-extension">
-Type Extension
-Use interface extension instead of duplicating properties:
+For core system types: Import from the appropriate core types file
 
 ```typescript
-// Good: Using extension
-interface MyCustomResponse extends BaseResponse {
-  // Only add the new properties
-  customField: string;
-}
-
-// Bad: Duplicating properties
-interface MyCustomResponse {
-  success: boolean;  // Duplicated from BaseResponse
-  message?: string;  // Duplicated from BaseResponse
-  customField: string;
-}
+import { ApiResponse, PaginatedResult } from "@/lib/types/core/response";
 ```
-[RULE] Extend existing interfaces instead of duplicating their properties.
-</section>
-
-<section id="zod-inference">
-Zod Inference
-Use Zod inference consistently for all schema-derived types:
+For domain types: Import from the domain types file
 
 ```typescript
-// Create a utility for this
-import { ZodInfer } from "@/lib/types/utilities";
-
-// Use the utility consistently
-type School = ZodInfer<typeof SchoolZodSchema>;
-type Visit = ZodInfer<typeof VisitZodSchema>;
+import { CoachingSessionType } from "@/lib/types/domain/coaching";
 ```
-[RULE] Use the ZodInfer utility for all schema-derived types to maintain consistency.
-</section>
+For utility types: Import from the utilities file
 
-<section id="type-documentation">
-Type Documentation
-Document relationships between types with JSDoc comments:
+```typescript
+import { Nullable, Optional } from "@/lib/types/utilities";
+```
+
+[RULE] Always import types from their canonical source file.
+</section>
+<section id="complex-type-relationships">
+Complex Type Relationships
+For types with complex relationships (extending other types, unions, etc.), use JSDoc comments to document these relationships:
 
 ```typescript
 /**
- * Visit represents a coaching visit to a school
- * @see School - The school where this visit occurred
- * @see Staff - The staff members involved in this visit
- * @see CoachingLog - Associated coaching log entries
+ * Represents a teaching event within a visit
+ * @extends {BaseEvent} Base event properties
+ * @see Visit - The parent visit entity that contains this event
+ * @see Staff - Staff members who participated in this event
  */
-export type Visit = ZodInfer<typeof VisitZodSchema>;
-```
-[RULE] Add JSDoc comments to document relationships between complex types.
-</section>
-
-<section id="utility-types">
-Utility Types
-Create reusable utility types for common patterns:
-
-```typescript
-// Example utility types
-export type Nullable<T> = T | null;
-export type Optional<T> = T | undefined;
-export type AsyncResult<T> = Promise<Result<T>>;
-
-// Result type for operations
-export type Result<T> = {
-  success: boolean;
-  data?: T;
-  error?: string;
+export type TeachingEvent = BaseEvent & {
+  teachingStrategy: string;
+  observationNotes: string;
+  studentEngagement: "high" | "medium" | "low";
 };
 ```
-[RULE] Use utility types to avoid repetitive type patterns.
+[RULE] Document complex type relationships with JSDoc comments.
+</section>
+
+<section id="type-naming">
+Type Naming Conventions
+Follow these naming conventions for types:
+
+Schema-derived entity types: PascalCase noun (e.g., School, Visit)
+Input types: PascalCase noun + "Input" (e.g., SchoolInput, VisitInput)
+Props: PascalCase component name + "Props" (e.g., ButtonProps, SchoolCardProps)
+Enums: PascalCase noun (e.g., GradeLevels, VisitStatus)
+Utility types: Descriptive PascalCase (e.g., Nullable<T>, ApiResponse<T>)
+
+[RULE] Follow consistent naming conventions for all types.
 </section>
 
 </doc>

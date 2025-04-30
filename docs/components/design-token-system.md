@@ -8,6 +8,88 @@ Our design token system creates a clear separation between raw Tailwind CSS clas
 [RULE] Always use the token system rather than hardcoded Tailwind classes.
 </section>
 
+<section id="token-implementation-standards">
+
+## Token Implementation Standards
+
+Our project follows a consistent token-first implementation approach based on our semantic color system. This ensures design consistency, type safety, and maintainability across the entire application.
+
+### Semantic Color System
+
+We use a two-level semantic color system:
+1. **Semantic Color Map**: Maps design concepts to color names
+2. **Tailwind Color Definitions**: Defines the actual color values with variants
+
+```typescript
+// Semantic mapping of concepts to color names
+export const semanticColorMap = {
+  primary: 'red-violet',
+  secondary: 'paynes-gray',
+  text: 'gunmetal',
+  danger: 'raspberry',
+  // Other semantic mappings...
+};
+
+// Tailwind color definitions with variants
+export const tailwindColors = {
+  'red-violet': {
+    DEFAULT: '#c52184',
+    100: '#27071a',
+    // Color variants...
+  },
+  // Other color definitions...
+};
+```
+Token Definitions
+Tokens reference the semantic color system rather than hardcoding specific colors:
+
+```typescript
+// Text color tokens
+export const textColors = {
+  default: `text-${textColors.text} dark:text-${textColors.surface}`,
+  muted: `text-${textColors.subtleText} dark:text-${textColors.muted}`,
+  accent: `text-${textColors.primary} dark:text-${textColors.primary}-300`,
+  // Additional semantic text colors...
+};
+```
+// Similar patterns for backgroundColors, borderColors, etc.
+Using Tokens in Components
+Always use token references instead of direct Tailwind classes for design properties:
+
+```typescript
+// Component implementation example
+const componentVariants = tv({
+  slots: {
+    root: `flex items-center p-4 ${radii.md}`,
+    title: `${textSize.base} ${textColors.default} font-medium`,
+  },
+  variants: {
+    variant: {
+      default: { 
+        root: `${backgroundColors.default} ${borderColors.default}` 
+      },
+      primary: { 
+        root: `${backgroundColors.primary} ${borderColors.primary}` 
+      },
+      // Other variants...
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
+```
+Benefits of This Approach
+
+Semantic Layering: Changes to the semantic color map automatically propagate to all components
+Design Language Consistency: Unified color system across the entire application
+Theme Adaptability: Easier to implement dark mode and alternative themes
+Visual Cohesion: Ensuring color relationships remain consistent
+Single Source of Truth: Color decisions are centralized in semantic mappings
+
+[RULE] Always use semantic token references instead of direct Tailwind classes to maintain design system consistency.
+</section>
+
 <section id="token-architecture">
 Token Architecture
 Primitive Tokens
@@ -56,9 +138,9 @@ const button = tv({
   base: "inline-flex items-center justify-center transition-colors",
   variants: {
     variant: {
-      primary: `bg-blue-600 ${textColors.white} hover:bg-blue-700`,
-      secondary: `bg-gray-200 ${textColors.dark} hover:bg-gray-300`,
-      outline: `border border-gray-300 ${textColors.dark} hover:bg-gray-50`,
+      primary: `${backgroundColor.primary} ${textColors.white} hover:bg-blue-700`,
+      secondary: `${backgroundColor.secondary} ${textColors.dark} hover:bg-gray-300`,
+      outline: `${backgroundColor.outline} ${textColors.dark} hover:bg-gray-50`,
     },
     size: {
       sm: `${paddingX.sm} ${paddingY.xs} text-sm`,

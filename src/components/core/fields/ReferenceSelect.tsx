@@ -6,12 +6,12 @@ import { Label } from "./Label";
 import { useReferenceData } from "@/hooks/data/useReferenceData";
 import { BaseReference } from "@core-types/reference";
 
-type OptionType = {
+export type OptionType = {
   value: string;
   label: string;
 };
 
-type ReferenceSelectProps = {
+export type ReferenceSelectProps = {
   value: string[] | string;
   onChange: (value: string[] | string) => void;
   multiple?: boolean;

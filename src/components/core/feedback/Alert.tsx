@@ -2,35 +2,82 @@
 import React, { createContext, useContext } from 'react';
 import { tv } from 'tailwind-variants';
 import { cn } from '@ui/utils/formatters';
+import { radii, textSize, borderWidths } from '@ui-tokens/tokens';
+import { backgroundColors, borderColors, textColors } from '@ui-tokens/colors';
+import { responsiveLayoutVariant } from '@ui-variants/layout';
 
-// Define alert variants using the token-first approach
-const alertVariants = tv({
-  slots: {
-    // root: "relative flex w-full rounded-lg border p-4",
-    root: "relative w-full flex flex-col sm:flex-row items-start sm:items-center rounded-lg border p-4 gap-1 sm:gap-2",
-    title: "mb-1 font-medium leading-none tracking-tight",
-    description: "text-sm [&_p]:leading-relaxed",
-  },
-  variants: {
-    variant: {
-      default: { root: "bg-background text-foreground" },
-      primary: { root: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300" },
-      success: { root: "border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-300" },
-      warning: { root: "border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-300" },
-      error: { root: "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300" },
-      info: { root: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300" },
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-  },
-});
-
-// Create context to share styles between components
+// Define types for the context
 type AlertContextType = {
   styles: ReturnType<typeof alertVariants>;
 };
 
+/**
+ * Alert component variants using the centralized responsive layout system.
+ * Leverages responsiveLayoutVariant for consistent responsive behavior.
+ */
+const alertVariants = tv({
+  slots: {
+    // Use the responsive layout slot for the root, with additional styling
+    root: `relative w-full ${radii.lg} ${borderWidths.sm} p-4`,
+    // Use the responsive title styling
+    title: `${textSize.base} font-medium leading-none tracking-tight`,
+    // Use the responsive content styling
+    description: `${textSize.sm} [&_p]:leading-relaxed`,
+  },
+  variants: {
+    variant: {
+      default: { 
+        root: `${backgroundColors.default} ${textColors.default} ${borderColors.default}`,
+        title: textColors.default,
+        description: textColors.muted
+      },
+      primary: { 
+        root: `${borderColors.primary} ${backgroundColors.primary} ${textColors.default}`,
+        title: textColors.default,
+        description: textColors.muted
+      },
+      success: { 
+        root: `${borderColors.success} ${backgroundColors.success} ${textColors.default}`,
+        title: textColors.default,
+        description: textColors.muted 
+      },
+      warning: { 
+        root: `${borderColors.danger} ${backgroundColors.danger} ${textColors.default}`,
+        title: textColors.default,
+        description: textColors.muted
+      },
+      error: { 
+        root: `${borderColors.danger} ${backgroundColors.danger} ${textColors.default}`,
+        title: textColors.default,
+        description: textColors.muted
+      },
+      info: { 
+        root: `${borderColors.primary} ${backgroundColors.primary} ${textColors.default}`,
+        title: textColors.default,
+        description: textColors.muted
+      },
+    },
+    // Import the responsive layout variants
+    layout: {
+      stacked: {
+        root: responsiveLayoutVariant({ stack: 'always' }).container(),
+        title: responsiveLayoutVariant({ stack: 'always', titleSpacing: 'normal' }).title(),
+        description: responsiveLayoutVariant({ stack: 'always', contentWidth: 'full' }).content(),
+      },
+      responsive: {
+        root: responsiveLayoutVariant({ stack: 'responsive' }).container(),
+        title: responsiveLayoutVariant({ stack: 'responsive', titleSpacing: 'responsive' }).title(),
+        description: responsiveLayoutVariant({ stack: 'responsive', contentWidth: 'responsive' }).content(),
+      },
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+    layout: "responsive",
+  },
+});
+
+// Create context to share styles between components
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
 // Hook to use alert context in subcomponents
@@ -44,6 +91,13 @@ const useAlertContext = () => {
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "primary" | "success" | "warning" | "error" | "info";
+  /**
+   * Layout variant for responsive behavior
+   * - stacked: Always displays in a column layout
+   * - responsive: Uses column layout on mobile, row layout on desktop
+   * @default "responsive"
+   */
+  layout?: "stacked" | "responsive";
 }
 
 /**
@@ -86,16 +140,23 @@ AlertDescription.displayName = "AlertDescription";
 
 /**
  * Alert component for displaying feedback messages.
+ * Uses the responsive layout variant system for consistent responsive behavior.
  * 
  * @example
  * <Alert variant="success">
  *   <Alert.Title>Success</Alert.Title>
  *   <Alert.Description>Your data has been saved successfully!</Alert.Description>
  * </Alert>
+ * 
+ * @example
+ * <Alert variant="error" layout="stacked">
+ *   <Alert.Title>Error</Alert.Title>
+ *   <Alert.Description>There was a problem saving your data.</Alert.Description>
+ * </Alert>
  */
 const AlertRoot = React.forwardRef<HTMLDivElement, AlertProps>(
-  ({ className, variant, children, ...props }, ref) => {
-    const styles = alertVariants({ variant });
+  ({ className, variant, layout, children, ...props }, ref) => {
+    const styles = alertVariants({ variant, layout });
     
     return (
       <AlertContext.Provider value={{ styles }}>
@@ -115,7 +176,7 @@ const AlertRoot = React.forwardRef<HTMLDivElement, AlertProps>(
 AlertRoot.displayName = "Alert";
 
 // Define the component interface with its subcomponents
-interface AlertComponent extends React.ForwardRefExoticComponent<AlertProps & React.RefAttributes<HTMLDivElement>> {
+export interface AlertComponent extends React.ForwardRefExoticComponent<AlertProps & React.RefAttributes<HTMLDivElement>> {
   Title: typeof AlertTitle;
   Description: typeof AlertDescription;
 }

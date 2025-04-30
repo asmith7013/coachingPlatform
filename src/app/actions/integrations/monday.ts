@@ -17,13 +17,17 @@ import {
   ApiResponse, 
   MondayColumnValue,
   MondayResponse,
-  MondayBoard
+  MondayBoard,
+  ImportPreview,
+  ImportResult,
+  MondayConnectionTestResult,
+  MondayColumnMap
 } from "@/lib/types/domain/monday";
 import { transformMondayItemToVisit } from "@/lib/domain/monday/transform-service";
 import { shouldImportItemWithStatus } from "@/lib/domain/monday/monday-utils";
 
 // Map Monday.com column IDs to their meanings
-const COLUMN_IDS = {
+const COLUMN_IDS: MondayColumnMap = {
   COACH: "person",
   SESSION_DATE: "date4",
   SCHOOL_NAME: "text0",
@@ -31,15 +35,7 @@ const COLUMN_IDS = {
   MODE_DONE: "status"
 };
 
-export type ImportPreview = {
-  original: Record<string, unknown>;
-  transformed: Record<string, unknown>;
-  valid: boolean;
-  existingItem?: Record<string, unknown>;
-  isDuplicate: boolean;
-  missingRequired: string[];
-  errors: Record<string, string>;
-};
+export type { ImportPreview }; // Re-export for component usage
 
 export async function importVisitsFromMonday(boardId: string) {
   return withDbConnection(async () => {
@@ -220,7 +216,7 @@ export async function getBoard(boardId: string, itemLimit: number = 20): Promise
 /**
  * Test Monday.com API connection
  */
-export async function testConnection(): Promise<ApiResponse<{ name: string; email: string }>> {
+export async function testConnection(): Promise<MondayConnectionTestResult> {
   try {
     const response = await mondayClient.query<{ me: { name: string; email: string } }>(
       `query { me { name email } }`
@@ -283,11 +279,7 @@ export async function findPotentialVisitsToImport(boardId: string): Promise<Impo
 /**
  * Import selected visits from Monday.com
  */
-export async function importSelectedVisits(selectedItemIds: string[]): Promise<{
-  success: boolean;
-  imported: number;
-  errors: Record<string, string>;
-}> {
+export async function importSelectedVisits(selectedItemIds: string[]): Promise<ImportResult> {
   const errors: Record<string, string> = {};
   let imported = 0;
   
@@ -321,9 +313,14 @@ export async function importSelectedVisits(selectedItemIds: string[]): Promise<{
   // Revalidate paths
   revalidatePath("/dashboard/visits");
   
+  const hasErrors = Object.keys(errors).length > 0;
+  
   return {
     success: imported > 0,
     imported,
-    errors
+    errors,
+    message: hasErrors 
+      ? `Imported ${imported} visits with ${Object.keys(errors).length} errors` 
+      : `Successfully imported ${imported} visits`
   };
 }

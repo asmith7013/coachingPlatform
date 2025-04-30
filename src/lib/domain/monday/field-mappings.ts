@@ -1,7 +1,8 @@
 import { findSchoolIdByName, findCoachIdByName } from "@data-utilities/transformers/reference-mappers";
 import { formatDateFromMonday } from "@lib/domain/monday/monday-utils";
+import { MondayFieldMapping } from "@/lib/types/domain/monday";
 
-export const visitFieldMappings = {
+export const visitFieldMappings: Record<string, MondayFieldMapping> = {
   // Core required fields
   "date_column": {
     field: "date",

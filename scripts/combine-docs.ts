@@ -33,28 +33,15 @@ function getAllMarkdownFiles(dir: string, rootDir: string): string[] {
 }
 
 /**
- * Combines all markdown files into a single large document
+ * Generates the table of contents based on the files structure
  * @param docsDir - The root docs directory
- * @returns Combined markdown content
+ * @param files - List of markdown files
+ * @param overviewFile - Reference to the overview file if it exists
+ * @returns The table of contents as a string
  */
-function combineDocumentation(docsDir: string): string {
-  // Get all markdown files within the docs directory
-  const files = getAllMarkdownFiles(docsDir, docsDir);
-  
-  // Create the combined content starting with overview if exists
-  let combinedContent = '# AI Coaching Platform Documentation\n\n';
-  
-  // Add table of contents section
-  combinedContent += '## Table of Contents\n\n';
-  
-  // Find architecture-overview.md and place it first if it exists
-  const overviewIndex = files.findIndex(file => path.basename(file) === 'architecture-overview.md');
-  let overviewFile: string | null = null;
-  
-  if (overviewIndex !== -1) {
-    overviewFile = files[overviewIndex];
-    files.splice(overviewIndex, 1); // Remove from the array
-  }
+function generateTableOfContents(docsDir: string, files: string[], overviewFile: string | null): string {
+  let tableOfContents = '# AI Coaching Platform Documentation\n\n';
+  tableOfContents += '## Table of Contents\n\n';
   
   // Group files by directory
   const filesByDir: Record<string, string[]> = {};
@@ -83,12 +70,12 @@ function combineDocumentation(docsDir: string): string {
   // Generate table of contents
   dirOrder.forEach(dir => {
     if (dir === '.' && overviewFile) {
-      combinedContent += `- [Architecture Overview](#architecture-overview)\n`;
+      tableOfContents += `- [Architecture Overview](#architecture-overview)\n`;
     }
     
     if (filesByDir[dir]) {
       const dirName = dir === '.' ? 'Root' : dir.charAt(0).toUpperCase() + dir.slice(1);
-      combinedContent += `- [${dirName}](#${dir.replace(/\//g, '-')})\n`;
+      tableOfContents += `- [${dirName}](#${dir.replace(/\//g, '-')})\n`;
       
       // Sort files within each directory
       filesByDir[dir].sort();
@@ -96,12 +83,64 @@ function combineDocumentation(docsDir: string): string {
       filesByDir[dir].forEach(file => {
         const fileName = path.basename(file, '.md');
         const anchor = fileName.replace(/\s+/g, '-').toLowerCase();
-        combinedContent += `  - [${fileName.replace(/-/g, ' ')}](#${anchor})\n`;
+        tableOfContents += `  - [${fileName.replace(/-/g, ' ')}](#${anchor})\n`;
       });
     }
   });
   
-  combinedContent += '\n\n';
+  return tableOfContents;
+}
+
+/**
+ * Combines all markdown files into a single large document
+ * @param docsDir - The root docs directory
+ * @returns Combined markdown content
+ */
+function combineDocumentation(docsDir: string): { combinedContent: string, tableOfContents: string } {
+  // Get all markdown files within the docs directory
+  const files = getAllMarkdownFiles(docsDir, docsDir);
+  
+  // Create the combined content starting with overview if exists
+  let combinedContent = '';
+  
+  // Find architecture-overview.md and place it first if it exists
+  const overviewIndex = files.findIndex(file => path.basename(file) === 'architecture-overview.md');
+  let overviewFile: string | null = null;
+  
+  if (overviewIndex !== -1) {
+    overviewFile = files[overviewIndex];
+    files.splice(overviewIndex, 1); // Remove from the array
+  }
+  
+  // Generate table of contents
+  const tableOfContents = generateTableOfContents(docsDir, files, overviewFile);
+  
+  // Add table of contents to combined content
+  combinedContent = tableOfContents + '\n\n';
+  
+  // Group files by directory
+  const filesByDir: Record<string, string[]> = {};
+  
+  files.forEach(file => {
+    const dir = path.dirname(file);
+    const relativeDirPath = path.relative(docsDir, dir);
+    
+    if (!filesByDir[relativeDirPath]) {
+      filesByDir[relativeDirPath] = [];
+    }
+    
+    filesByDir[relativeDirPath].push(file);
+  });
+  
+  // Define the order of directories
+  const dirOrder = [
+    '.', // Root docs directory
+    'architecture',
+    'components',
+    'data-flow',
+    'workflows',
+    'examples'
+  ];
   
   // Add overview first if it exists
   if (overviewFile) {
@@ -135,7 +174,7 @@ function combineDocumentation(docsDir: string): string {
     }
   });
   
-  return combinedContent;
+  return { combinedContent, tableOfContents };
 }
 
 /**
@@ -158,6 +197,7 @@ async function main(): Promise<void> {
   // Get user's desktop path
   const desktopDir = path.join(os.homedir(), 'Desktop');
   const outputFile = path.join(desktopDir, 'claude-project-instructions.md');
+  const tocOutputFile = path.join(docsDir, 'table-of-contents.md');
   
   console.log('Generating combined documentation file...');
   console.log(`Looking for docs in: ${docsDir}`);
@@ -170,8 +210,12 @@ async function main(): Promise<void> {
   }
   
   // Combine documentation and write to file
-  const combinedContent = combineDocumentation(docsDir);
+  const { combinedContent, tableOfContents } = combineDocumentation(docsDir);
   fs.writeFileSync(outputFile, combinedContent);
+  
+  // Also save the table of contents as a separate file in the docs directory
+  fs.writeFileSync(tocOutputFile, tableOfContents);
+  console.log(`Table of contents written to: ${tocOutputFile}`);
   
   const sizeInKB = (combinedContent.length / 1024).toFixed(2);
   console.log(`Combined documentation written to desktop: ${outputFile}`);

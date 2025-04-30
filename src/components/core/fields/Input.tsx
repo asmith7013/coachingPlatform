@@ -1,6 +1,7 @@
 import { tv, type VariantProps } from 'tailwind-variants'
 import { cn } from '@ui/utils/formatters';
-import { textSize, paddingX, paddingY, radii, textColors } from '@ui-tokens/tokens'
+import { textSize, paddingX, paddingY, radii, borderWidths } from '@ui-tokens/tokens'
+import { backgroundColors, borderColors, ringColors, textColors } from '@ui-tokens/colors';
 
 // Define component-specific types
 type InputTextSize = 'xs' | 'sm' | 'base' | 'lg' | 'xl';
@@ -9,7 +10,7 @@ type InputRadius = 'none' | 'sm' | 'md' | 'lg' | 'full';
 
 const input = tv({
   slots: {
-    base: 'w-full border bg-surface text-default placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+    base: `w-full ${borderWidths.sm} ${backgroundColors.surface} ${textColors.default} placeholder:${textColors.muted} focus:outline-none focus:ring-2 ${ringColors.primary} focus:border-transparent`,
     wrapper: '',
   },
   variants: {
@@ -39,8 +40,8 @@ const input = tv({
       false: '',
     },
     error: {
-      true: 'border-danger focus:ring-danger',
-      false: 'border-surface-hover',
+      true: `${borderColors.danger} focus:${ringColors.danger}`,
+      false: `${borderColors.default}`,
     },
   },
   defaultVariants: {

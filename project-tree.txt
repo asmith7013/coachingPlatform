@@ -21,10 +21,7 @@
 │   │   ├── schema-system.md
 │   │   ├── server-actions.md
 │   │   └── type-system.md
-│   ├── examples
-│   │   ├── component-examples.md
-│   │   ├── prompt-examples.md
-│   │   └── schema-examples.md
+│   ├── table-of-contents.md
 │   └── workflows
 │       ├── common-tasks.md
 │       ├── cursor-integration.md
@@ -538,7 +535,6 @@
 │   │   │   │   └── routine-utils.ts
 │   │   │   └── monday
 │   │   │       ├── field-mappings.ts
-│   │   │       ├── import-service.ts
 │   │   │       ├── monday-utils.ts
 │   │   │       └── transform-service.ts
 │   │   ├── error
@@ -617,6 +613,7 @@
 │   │       │   ├── colors.ts
 │   │       │   ├── index.ts
 │   │       │   ├── layout.ts
+│   │       │   ├── semantic-colors.ts
 │   │       │   ├── shape.ts
 │   │       │   ├── spacing.ts
 │   │       │   ├── text.ts
@@ -643,4 +640,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-195 directories, 449 files
+194 directories, 447 files

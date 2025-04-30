@@ -7,7 +7,7 @@ import {
 import { textColors } from '@ui-tokens/tokens'
 import { FieldWrapper } from './FieldWrapper'
 
-interface SwitchProps {
+export interface SwitchProps {
   checked: boolean
   onChange: (checked: boolean) => void
   label?: string

@@ -7,7 +7,11 @@ import { Input } from '@/components/core/fields/Input';
 import { Alert } from '@/components/core/feedback/Alert';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { getBoard, testConnection } from '@/app/actions/integrations/monday';
-import { MondayBoard, MondayItem } from '@/lib/types/domain/monday';
+import { 
+  MondayBoard, 
+  MondayItem,
+  MondayConnectionTestResult
+} from '@/lib/types/domain/monday';
 
 interface BoardFinderProps {
   onBoardSelect?: (board: { id: string; name: string }) => void;
@@ -64,7 +68,7 @@ export function BoardFinder({ onBoardSelect }: BoardFinderProps) {
     setConnectionTestStatus({ status: 'loading' });
     
     try {
-      const result = await testConnection();
+      const result = await testConnection() as MondayConnectionTestResult;
       
       if (result.success && result.data) {
         setConnectionTestStatus({ 

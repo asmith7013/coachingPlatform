@@ -6,10 +6,11 @@
  */
 
 import { textSize, weight, heading } from '@ui-tokens/typography';
-import { textColors, alignments } from '@ui-tokens/text';
+import { alignments } from '@ui-tokens/text';
+import { textColors } from '@ui-tokens/colors';
 import { radii, shadows } from '@ui-tokens/shape';
 import { paddingX, paddingY, gap, stack, componentSize } from '@ui-tokens/spacing';
-import { semanticColorMap, tailwindColors } from '@ui-tokens/colors';
+import { semanticColorMap, tailwindColors } from '@/lib/ui/tokens/semantic-colors';
 
 // Typography types
 export type TextSize = keyof typeof textSize;

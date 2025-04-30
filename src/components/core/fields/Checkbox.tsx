@@ -72,7 +72,8 @@ export const checkboxStyles = checkbox;
 // ✅ Export type for variant props
 export type CheckboxVariants = VariantProps<typeof checkbox>;
 
-interface CheckboxProps extends CheckboxHTMLProps {
+// Export the interface
+export interface CheckboxProps extends CheckboxHTMLProps {
   label?: string;
   description?: string;
   error?: string;

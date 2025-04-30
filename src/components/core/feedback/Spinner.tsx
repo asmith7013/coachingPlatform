@@ -1,25 +1,27 @@
-// src/components/core/Spinner/Spinner.tsx
+// src/components/core/feedback/Spinner.tsx
 import React from 'react';
 import { tv } from 'tailwind-variants';
 import { cn } from '@ui/utils/formatters';
+import { borderWidths } from '@ui-tokens/tokens';
+import { borderColors } from '@ui-tokens/colors';
 
 // Define spinner variants using the token-first approach
 const spinnerVariants = tv({
   base: "animate-spin rounded-full border-solid border-t-transparent",
   variants: {
     size: {
-      xs: "h-3 w-3 border-2",
-      sm: "h-4 w-4 border-2",
-      md: "h-6 w-6 border-2",
-      lg: "h-8 w-8 border-3",
-      xl: "h-12 w-12 border-4",
+      xs: `h-3 w-3 ${borderWidths.sm}`,
+      sm: `h-4 w-4 ${borderWidths.sm}`,
+      md: `h-6 w-6 ${borderWidths.sm}`,
+      lg: `h-8 w-8 ${borderWidths.md}`,
+      xl: `h-12 w-12 ${borderWidths.lg}`,
     },
     variant: {
-      default: "border-gray-300 dark:border-gray-600",
-      primary: "border-blue-600 dark:border-blue-400",
-      success: "border-green-600 dark:border-green-400",
-      warning: "border-yellow-600 dark:border-yellow-400",
-      error: "border-red-600 dark:border-red-400",
+      default: `${borderColors.muted}`,
+      primary: `${borderColors.primary}`,
+      success: `${borderColors.success}`,
+      warning: `${borderColors.danger}`,
+      error: `${borderColors.danger}`,
     },
   },
   defaultVariants: {

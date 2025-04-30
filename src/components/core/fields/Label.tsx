@@ -24,7 +24,7 @@ const label = tv({
 
 export type LabelVariants = VariantProps<typeof label>
 
-interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement>, LabelVariants {
+export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement>, LabelVariants {
   children: React.ReactNode
   className?: string
 }

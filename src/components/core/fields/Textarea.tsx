@@ -58,7 +58,7 @@ export const textareaStyles = textarea;
 // ✅ Export type for variant props
 export type TextareaVariants = VariantProps<typeof textarea>;
 
-interface TextareaProps extends TextareaHTMLProps {
+export interface TextareaProps extends TextareaHTMLProps {
   label?: string;
   error?: string;
   textSize?: TextareaVariants['textSize'];

@@ -33,7 +33,7 @@ const heading = tv({
 
 export type HeadingVariants = VariantProps<typeof heading>;
 
-interface HeadingProps extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'color'> {
+export interface HeadingProps extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'color'> {
   children: ReactNode;
   level?: HeadingLevel;
   color?: TextColor;

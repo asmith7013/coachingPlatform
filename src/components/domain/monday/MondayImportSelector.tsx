@@ -5,13 +5,13 @@ import { Button } from '@/components/core/Button';
 import { MondayItemPreviewCard } from './MondayItemPreviewCard';
 import { 
   findPotentialVisitsToImport, 
-  importSelectedVisits,
-  ImportPreview
+  importSelectedVisits
 } from '@/app/actions/integrations/monday';
 import { Alert } from '@/components/core/feedback/Alert';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
+import { ImportPreview, ImportResult } from '@/lib/types/domain/monday';
 
 interface MondayImportSelectorProps {
   boardId: string;
@@ -27,11 +27,7 @@ export function MondayImportSelector({
   const [isLoading, setIsLoading] = useState(false);
   const [importing, setImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [importResult, setImportResult] = useState<{
-    success: boolean;
-    imported: number;
-    errors: Record<string, string>;
-  } | null>(null);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
   
   // Load potential visits
   useEffect(() => {

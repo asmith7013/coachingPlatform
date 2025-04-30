@@ -7,17 +7,17 @@ import { FieldWrapper } from './FieldWrapper'
 import { Listbox } from '@headlessui/react'
 
 // Define component-specific types
-type SelectTextSize = 'xs' | 'sm' | 'base' | 'lg' | 'xl';
-type SelectPadding = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-type SelectRadius = 'none' | 'sm' | 'md' | 'lg' | 'full';
+export type SelectTextSize = 'xs' | 'sm' | 'base' | 'lg' | 'xl';
+export type SelectPadding = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type SelectRadius = 'none' | 'sm' | 'md' | 'lg' | 'full';
 
-interface SelectOption {
+export interface SelectOption {
   value: string;
   label: string;
   online?: boolean;
 }
 
-interface BaseSelectProps {
+export interface BaseSelectProps {
   label?: string;
   options: SelectOption[];
   placeholder?: string;
@@ -29,19 +29,19 @@ interface BaseSelectProps {
   disabled?: boolean;
 }
 
-interface SingleSelectProps extends BaseSelectProps {
+export interface SingleSelectProps extends BaseSelectProps {
   multiple?: false;
   value: string;
   onChange: (value: string) => void;
 }
 
-interface MultiSelectProps extends BaseSelectProps {
+export interface MultiSelectProps extends BaseSelectProps {
   multiple: true;
   value: string[];
   onChange: (value: string[]) => void;
 }
 
-type SelectProps = SingleSelectProps | MultiSelectProps;
+export type SelectProps = SingleSelectProps | MultiSelectProps;
 
 // 🎨 Select style variants
 const select = tv({

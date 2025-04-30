@@ -39,7 +39,7 @@ const fieldWrapper = tv({
 
 export type FieldWrapperVariants = VariantProps<typeof fieldWrapper>
 
-interface FieldWrapperProps extends FieldWrapperVariants {
+export interface FieldWrapperProps extends FieldWrapperVariants {
   id?: string
   label?: string
   error?: string

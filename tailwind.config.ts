@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-import { tailwindColors } from '@ui-tokens/colors';
+import { tailwindColors } from '@ui-tokens/semantic-colors';
 
 const config: Config = {
   content: {

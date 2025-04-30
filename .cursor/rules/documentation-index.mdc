@@ -15,7 +15,6 @@ The documentation is organized into several key areas:
 - **Components** - Component system guidelines, core components, and composition patterns
 - **Data Flow** - Data management, API patterns, schema system, and error handling
 - **Workflows** - Development processes, common tasks, and utilities
-- **Examples** - Practical examples of implementations
 - **General Guidelines** - Platform-wide guidelines and standards
 
 ## File Path Mapping

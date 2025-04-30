@@ -3,27 +3,11 @@ import { VisitInput } from "@/lib/data-schema/zod-schema/visits/visit";
 import { parseOrThrow } from "@/lib/data-utilities/transformers/parse";
 import { VisitInputZodSchema } from "@/lib/data-schema/zod-schema/visits/visit";
 import { extractTextFromMondayValue } from "./monday-utils";
-
-export type TransformResult = {
-  transformed: Partial<VisitInput>;
-  valid: boolean;
-  missingRequired: string[];
-  errors: Record<string, string>;
-};
-
-interface MondayColumnValue {
-  id: string;
-  title: string;
-  value: string | null;
-  text: string | null;
-}
-
-interface MondayItem {
-  id: string;
-  name: string;
-  board_id?: string;
-  column_values: MondayColumnValue[];
-}
+import { 
+  MondayItem, 
+  MondayColumnValue, 
+  TransformResult 
+} from "@/lib/types/domain/monday";
 
 export async function transformMondayItemToVisit(mondayItem: MondayItem): Promise<TransformResult> {
   const transformed: Partial<VisitInput> = {
@@ -88,6 +72,7 @@ export async function transformMondayItemToVisit(mondayItem: MondayItem): Promis
     transformed,
     valid,
     missingRequired,
-    errors
+    errors,
+    success: valid && Object.keys(errors).length === 0
   };
 } 

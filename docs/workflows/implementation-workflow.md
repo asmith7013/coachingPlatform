@@ -173,6 +173,30 @@ export function EntityCard({ entity }: EntityCardProps) {
 ```
 [RULE] Create components based on the component hierarchy pattern.
 </section>
+
+<section id="component-layout-patterns">
+
+## Component Layout Patterns
+
+When implementing compound components with multiple elements (like titles and descriptions):
+
+1. Use the `responsiveLayoutVariant` for the container element
+2. Apply appropriate title spacing using the `responsiveLayoutVariant.variants.titleSpacing`
+3. Nest the elements in a responsive container that handles the layout changes automatically
+
+Example implementation:
+
+```tsx
+<div className={styles.container}>
+  <ComponentTitle className={styles.title}>{title}</ComponentTitle>
+  <ComponentDescription>{description}</ComponentDescription>
+</div>
+```
+This ensures consistent responsive behavior across all component types.
+[RULE] Use responsive layout patterns for all compound components with title/description pairs.
+</section>
+
+
 <section id="page-implementation">
 7. Create Pages
 Finally, implement pages in src/app/:

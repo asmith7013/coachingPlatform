@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { MondayItem } from '@/lib/types/domain/monday';
 
 /**
  * Format a date from Monday's format to our application format
@@ -25,7 +26,20 @@ export function extractTextFromMondayValue(value: string): string {
   try {
     // For text columns, Monday often returns a JSON object
     const parsed = JSON.parse(value);
-    return parsed.text || parsed.value || '';
+    
+    // Handle different Monday.com column types
+    if (parsed.text) return parsed.text;
+    if (parsed.name) return parsed.name;
+    if (parsed.value) return parsed.value;
+    if (parsed.date) return parsed.date;
+    if (parsed.email) return parsed.email;
+    
+    // For arrays (like multiple people in a person column)
+    if (Array.isArray(parsed.personsAndTeams)) {
+      return parsed.personsAndTeams.map((p: { name: string }) => p.name).join(", ");
+    }
+    
+    return String(parsed);
   } catch {
     // If it's not JSON, return as is
     return value;
@@ -35,8 +49,30 @@ export function extractTextFromMondayValue(value: string): string {
 /**
  * Determine if we should import an item based on its status
  */
-export function shouldImportItemWithStatus(status: string): boolean {
-  // Define which statuses should be imported
-  const importableStatuses = ['To Do', 'In Progress', 'Working on it'];
-  return importableStatuses.includes(status);
+export function shouldImportItemWithStatus(status?: string): boolean {
+  if (!status) return true; // Default to true if no status
+  
+  const importableStatuses = [
+    "Active", 
+    "Done", 
+    "Complete", 
+    "Completed", 
+    "In Progress",
+    "Scheduled",
+    "Ready",
+    "To Do", 
+    "Working on it"
+  ];
+  
+  return importableStatuses.some(s => 
+    status.toLowerCase().includes(s.toLowerCase())
+  );
+}
+
+/**
+ * Get column value by ID from a Monday item
+ */
+export function getColumnValueById(item: MondayItem, columnId: string): string {
+  const column = item.column_values.find(col => col.id === columnId);
+  return column?.text || "";
 } 

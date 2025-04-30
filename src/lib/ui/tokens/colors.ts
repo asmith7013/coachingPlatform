@@ -1,135 +1,204 @@
-export const semanticColorMap = {
-  primary: 'red-violet',
-  secondary: 'paynes-gray',
-  surface: 'seasalt',
-  background: 'white',
-  text: 'gunmetal',
-  subtleText: 'paynes-gray',
-  muted: 'silver',
-  border: 'silver',
-  success: 'green-success',
-  danger: 'raspberry',
+// src/lib/ui/tokens/colors.ts
+
+// Text color tokens
+export const textColors = {
+  default: 'text-default',
+  muted: 'text-muted',
+  accent: 'text-accent',
+  primary: 'text-primary',
+  secondary: 'text-secondary',
+  danger: 'text-danger',
+  success: 'text-success',
+  surface: 'text-surface',
+  background: 'text-background',
+  border: 'text-border',
+
+  // Explicit white and black for high contrast needs
+  white: 'text-white',
+  black: 'text-black',
+
+  // Dark mode variants
+  dark: {
+    default: 'dark:text-default',
+    muted: 'dark:text-muted',
+    accent: 'dark:text-accent-300',
+    primary: 'dark:text-primary-300',
+    secondary: 'dark:text-secondary-300',
+    danger: 'dark:text-danger-300',
+    success: 'dark:text-success-300',
+    surface: 'dark:text-surface-200',
+    background: 'dark:text-background',
+    border: 'dark:text-border-300'
+  },
+
+  // Combined tokens
+  combined: {
+    default: 'text-default dark:text-surface',
+    muted: 'text-muted dark:text-muted',
+    accent: 'text-accent dark:text-accent-300',
+    primary: 'text-primary dark:text-primary-300',
+    secondary: 'text-secondary dark:text-secondary-300',
+    danger: 'text-danger dark:text-danger-300',
+    success: 'text-success dark:text-success-300'
+  }
 };
 
-export const tailwindColors = {
-  gunmetal: {
-    DEFAULT: '#2d3142',
-    100: '#090a0d',
-    200: '#12141b',
-    300: '#1b1e28',
-    400: '#242735',
-    500: '#2d3142',
-    600: '#4e5472',
-    700: '#71799e',
-    800: '#a0a6bf',
-    900: '#d0d2df',
+// Background color tokens
+export const backgroundColors = {
+  default: 'bg-default',
+  muted: 'bg-muted-100',
+  primary: 'bg-primary',
+  secondary: 'bg-secondary-400',
+  danger: 'bg-danger-400',
+  success: 'bg-success-400',
+  surface: 'bg-surface',
+  subtle: 'bg-subtle-50',
+
+  // Dark mode variants
+  dark: {
+    default: 'dark:bg-default-900',
+    muted: 'dark:bg-muted-800',
+    primary: 'dark:bg-primary-700',
+    secondary: 'dark:bg-secondary-700',
+    danger: 'dark:bg-danger-700',
+    success: 'dark:bg-success-700',
+    surface: 'dark:bg-surface-800',
+    subtle: 'dark:bg-subtle-900'
   },
-  'paynes-gray': {
-    DEFAULT: '#4f5d75',
-    100: '#101217',
-    200: '#1f252e',
-    300: '#2f3745',
-    400: '#3f4a5c',
-    500: '#4f5d75',
-    600: '#687a99',
-    700: '#8e9bb2',
-    800: '#b4bdcc',
-    900: '#d9dee5',
+
+  // Combined tokens
+  combined: {
+    default: 'bg-default dark:bg-default-900',
+    muted: 'bg-muted-100 dark:bg-muted-800',
+    primary: 'bg-primary-400 dark:bg-primary-700',
+    secondary: 'bg-secondary-400 dark:bg-secondary-700',
+    danger: 'bg-danger-400 dark:bg-danger-700',
+    success: 'bg-success-400 dark:bg-success-700',
+    surface: 'bg-surface dark:bg-surface-800',
+    subtle: 'bg-subtle-50 dark:bg-subtle-900'
+  }
+};
+
+// Border color tokens
+export const borderColors = {
+  default: 'border-default',
+  muted: 'border-muted-200',
+  primary: 'border-primary-200',
+  secondary: 'border-secondary-200',
+  danger: 'border-danger-200',
+  success: 'border-success-200',
+  surface: 'border-surface-300',
+
+  // Dark mode variants
+  dark: {
+    default: 'dark:border-default-700',
+    muted: 'dark:border-muted-700',
+    primary: 'dark:border-primary-700',
+    secondary: 'dark:border-secondary-700',
+    danger: 'dark:border-danger-700',
+    success: 'dark:border-success-700',
+    surface: 'dark:border-surface-600'
   },
-  silver: {
-    DEFAULT: '#bfc0c0',
-    100: '#262727',
-    200: '#4c4d4d',
-    300: '#727474',
-    400: '#989a9a',
-    500: '#bfc0c0',
-    600: '#cbcdcd',
-    700: '#d8d9d9',
-    800: '#e5e6e6',
-    900: '#f2f2f2',
+
+  // Combined tokens
+  combined: {
+    default: 'border-default dark:border-default-700',
+    muted: 'border-muted-200 dark:border-muted-700',
+    primary: 'border-primary-200 dark:border-primary-700',
+    secondary: 'border-secondary-200 dark:border-secondary-700',
+    danger: 'border-danger-200 dark:border-danger-700',
+    success: 'border-success-200 dark:border-success-700',
+    surface: 'border-surface-300 dark:border-surface-600'
+  }
+};
+
+// Ring/Focus color tokens
+export const ringColors = {
+  default: 'ring-default',
+  primary: 'ring-primary-400',
+  secondary: 'ring-secondary-400',
+  danger: 'ring-danger-400',
+  success: 'ring-success-400',
+
+  // Dark mode variants
+  dark: {
+    default: 'dark:ring-default-700',
+    primary: 'dark:ring-primary-500',
+    secondary: 'dark:ring-secondary-500',
+    danger: 'dark:ring-danger-500',
+    success: 'dark:ring-success-500'
   },
-  white: {
-    DEFAULT: '#ffffff',
-    100: '#333333',
-    200: '#666666',
-    300: '#999999',
-    400: '#cccccc',
-    500: '#ffffff',
-    600: '#ffffff',
-    700: '#ffffff',
-    800: '#ffffff',
-    900: '#ffffff',
+
+  // Combined tokens
+  combined: {
+    default: 'ring-default dark:ring-default-700',
+    primary: 'ring-primary-400 dark:ring-primary-500',
+    secondary: 'ring-secondary-400 dark:ring-secondary-500',
+    danger: 'ring-danger-400 dark:ring-danger-500',
+    success: 'ring-success-400 dark:ring-success-500'
+  }
+};
+
+// Text hover color tokens
+export const hoverTextColors = {
+  default: 'hover:text-default-700',
+  primary: 'hover:text-primary-700',
+  secondary: 'hover:text-secondary-700',
+  danger: 'hover:text-danger-700',
+  success: 'hover:text-success-700',
+
+  // Dark mode variants
+  dark: {
+    default: 'dark:hover:text-default',
+    primary: 'dark:hover:text-primary-200',
+    secondary: 'dark:hover:text-secondary-200',
+    danger: 'dark:hover:text-danger-200',
+    success: 'dark:hover:text-success-200'
   },
-  'red-violet': {
-    DEFAULT: '#c52184',
-    100: '#27071a',
-    200: '#4e0d34',
-    300: '#76144f',
-    400: '#9d1b69',
-    500: '#c52184',
-    600: '#de3f9f',
-    700: '#e76fb7',
-    800: '#ef9fcf',
-    900: '#f7cfe7',
+
+  // Combined tokens
+  combined: {
+    default: 'hover:text-default-700 dark:hover:text-default',
+    primary: 'hover:text-primary-700 dark:hover:text-primary-200',
+    secondary: 'hover:text-secondary-700 dark:hover:text-secondary-200',
+    danger: 'hover:text-danger-700 dark:hover:text-danger-200',
+    success: 'hover:text-success-700 dark:hover:text-success-200'
+  }
+};
+
+// Background hover color tokens
+export const hoverBackgroundColors = {
+  default: 'hover:bg-default-50',
+  primary: 'hover:bg-primary-200',
+  secondary: 'hover:bg-secondary-200',
+  danger: 'hover:bg-danger-100',
+  success: 'hover:bg-success-100',
+
+  // Dark mode variants
+  dark: {
+    default: 'dark:hover:bg-default-800',
+    primary: 'dark:hover:bg-primary-800',
+    secondary: 'dark:hover:bg-secondary-800',
+    danger: 'dark:hover:bg-danger-800',
+    success: 'dark:hover:bg-success-800'
   },
-  'lavender-blush': {
-    DEFAULT: '#fbeaf4',
-    100: '#511036',
-    200: '#a31f6c',
-    300: '#dc479e',
-    400: '#eb98c9',
-    500: '#fbeaf4',
-    600: '#fceef6',
-    700: '#fdf2f8',
-    800: '#fdf6fa',
-    900: '#fefbfd',
-  },
-  'lavender-pink': {
-    DEFAULT: '#eba8d1',
-    100: '#420f2e',
-    200: '#831e5c',
-    300: '#c52d8b',
-    400: '#dc66af',
-    500: '#eba8d1',
-    600: '#efb9da',
-    700: '#f3cbe4',
-    800: '#f7dced',
-    900: '#fbeef6',
-  },
-  seasalt: {
-    DEFAULT: '#fafafa',
-    100: '#323232',
-    200: '#646464',
-    300: '#969696',
-    400: '#c8c8c8',
-    500: '#fafafa',
-    600: '#fbfbfb',
-    700: '#fcfcfc',
-    800: '#fdfdfd',
-    900: '#fefefe',
-  },
-  raspberry: {
-    DEFAULT: '#d81159',
-    100: '#2b0412',
-    200: '#570724',
-    300: '#820b36',
-    400: '#ae0e49',
-    500: '#d81159',
-    600: '#ee3378',
-    700: '#f3669a',
-    800: '#f799bb',
-    900: '#fbccdd',
-  },
-  'green-success': {
-    DEFAULT: '#18a058',
-    100: '#052e1a',
-    200: '#0a5c34',
-    300: '#0f7a45',
-    400: '#139856',
-    500: '#18a058',
-    600: '#2fc275',
-    700: '#64d39a',
-    800: '#98e4bf',
-    900: '#cdf6e5',
-  },
-}; 
+
+  // Combined tokens
+  combined: {
+    default: 'hover:bg-default-50 dark:hover:bg-default-800',
+    primary: 'hover:bg-primary-200 dark:hover:bg-primary-800',
+    secondary: 'hover:bg-secondary-200 dark:hover:bg-secondary-800',
+    danger: 'hover:bg-danger-100 dark:hover:bg-danger-800',
+    success: 'hover:bg-success-100 dark:hover:bg-success-800'
+  }
+};
+
+// Fully combined semantic colors
+export const semanticColors = {
+  text: textColors.combined,
+  bg: backgroundColors.combined,
+  border: borderColors.combined,
+  ring: ringColors.combined,
+  hoverText: hoverTextColors.combined,
+  hoverBg: hoverBackgroundColors.combined
+};

@@ -3,7 +3,7 @@
 import { Card } from '@/components/composed/cards/Card';
 import { Checkbox } from '@/components/core/fields/Checkbox';
 import { Text } from '@/components/core/typography/Text';
-import { ImportPreview } from '@/app/actions/integrations/monday';
+import { ImportPreview } from '@/lib/types/domain/monday';
 
 interface MondayItemPreviewCardProps {
   preview: ImportPreview;
