@@ -1,57 +1,74 @@
 // src/lib/api/fetchers/monday.ts
-import { MondayItemsResponse } from "@domain-types/monday";
 import { createApiSafeFetcher } from '@api/handlers/api-adapter';
 import { VisitZodSchema } from "@zod-schema/visits/visit";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
+import { mondayClient } from "@/app/api/integrations/monday/client";
+import { BOARD_WITH_ITEMS_QUERY } from "@/lib/api/integrations/monday-queries";
+import { 
+  MondayBoardResponse, 
+  // MondayItemsResponse
+} from "@/lib/types/domain/monday";
 
-// For the standard resource fetching pattern (data from your MongoDB)
+// For the standard resource fetching pattern (visits in your MongoDB)
 export const fetchMondayVisitsForApi = createApiSafeFetcher(
-  VisitModel, // You'd need to import this
-  VisitZodSchema, // You'd need to import this
-  "mondayItemName" // Default search field
+  VisitModel,
+  VisitZodSchema,
+  "mondayItemName"
 );
 
-// Custom function for external Monday.com API (doesn't use createApiSafeFetcher)
-export async function fetchExternalMondayItems(
-  boardId: string,
-  apiKey: string
-): Promise<MondayItemsResponse> {
-  const response = await fetch('https://api.monday.com/v2', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': apiKey,
-    },
-    body: JSON.stringify({
-      query: `
-        query getItems($boardId: ID!) {
-          boards(ids: [$boardId]) {
-            items {
-              id
-              name
-              column_values {
-                id
-                title
-                text
-                value
-              }
-            }
-          }
-        }
-      `,
-      variables: { boardId }
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Monday API error: ${response.status}`);
+// API-safe version of the board fetcher (without "use server" directive)
+export async function fetchMondayBoard(boardId: string, itemLimit: number = 20) {
+  try {
+    // Make API request
+    const response = await mondayClient.query<MondayBoardResponse>(
+      BOARD_WITH_ITEMS_QUERY, 
+      { 
+        boardId,
+        itemLimit
+      }
+    );
+    
+    // Check if board exists
+    if (!response.boards || response.boards.length === 0) {
+      return { 
+        success: false, 
+        error: `Board with ID ${boardId} not found or not accessible`,
+        items: []
+      };
+    }
+    
+    return { 
+      success: true, 
+      items: [response.boards[0]],
+      total: 1
+    };
+  } catch (error) {
+    console.error("Error fetching Monday board:", error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Unknown error",
+      items: []
+    };
   }
+}
 
-  const data = await response.json();
-  
-  if (data.errors) {
-    throw new Error(`GraphQL error: ${data.errors[0].message}`);
+// Test connection function (API-safe version)
+export async function testMondayConnection() {
+  try {
+    const response = await mondayClient.query<{ me: { name: string; email: string } }>(
+      `query { me { name email } }`
+    );
+    
+    return {
+      success: true,
+      items: [response.me],
+      total: 1
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      items: []
+    };
   }
-  
-  return data.data;
 }

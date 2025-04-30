@@ -195,6 +195,145 @@ Each domain directory contains:
 
 </section>
 
+<section id="file-organization-patterns">
+
+## File Organization Patterns
+
+Follow these precise guidelines when creating new files to maintain a consistent project structure.
+
+### Domain Types and Interfaces
+
+**Location**: `src/lib/types/domain/{domain-name}.ts`
+
+Domain-specific type definitions belong in the domain subdirectory of the types folder, organized by domain area.
+
+Examples:
+- `src/lib/types/domain/monday.ts` - Monday.com related types
+- `src/lib/types/domain/school.ts` - School entity types
+- `src/lib/types/domain/staff.ts` - Staff entity types
+
+### Core Types and Interfaces
+
+**Location**: `src/lib/types/core/{type-category}.ts`
+
+System-wide, core types that aren't specific to a business domain belong here.
+
+Examples:
+- `src/lib/types/core/response.ts` - API response types
+- `src/lib/types/core/pagination.ts` - Pagination types
+
+### API Integration Queries
+
+**Location**: `src/lib/api/integrations/{service-name}-queries.ts`
+
+GraphQL queries or other external API query definitions belong here.
+
+Examples:
+- `src/lib/api/integrations/monday-queries.ts` - Monday.com GraphQL queries
+
+### API Clients
+
+**Location**: `src/app/api/integrations/{service-name}/client.ts`
+
+API client implementations for external services belong here.
+
+Examples:
+- `src/app/api/integrations/monday/client.ts` - Monday.com API client
+
+### API Route Handlers
+
+**Location**: `src/app/api/{resource-name}/route.ts`
+
+API routes defined using Next.js App Router conventions go here.
+
+Examples:
+- `src/app/api/schools/route.ts` - Schools API endpoints
+- `src/app/api/staff/route.ts` - Staff API endpoints
+
+### Server Actions
+
+**Location**: `src/app/actions/{domain-name}/{resource-name}.ts`
+
+Server actions implementing business logic with "use server" directives go here.
+
+Examples:
+- `src/app/actions/schools/schools.ts` - School-related server actions
+- `src/app/actions/integrations/monday.ts` - Monday.com integration actions
+
+### React Components
+
+**Location**: Based on component type:
+
+1. **Core Components**: `src/components/core/{component-name}.tsx`
+   - Basic UI elements with minimal dependencies
+
+2. **Composed Components**: `src/components/composed/{component-category}/{component-name}.tsx`
+   - Components composed from core components
+
+3. **Domain Components**: `src/components/domain/{domain-name}/{component-name}.tsx`
+   - Domain-specific components
+
+4. **Feature Components**: `src/components/features/{feature-name}/{component-name}.tsx`
+   - Complete feature implementations
+
+Examples:
+- `src/components/core/Button.tsx` - Core button component
+- `src/components/composed/cards/Card.tsx` - Composed card component
+- `src/components/domain/monday/BoardFinder.tsx` - Domain-specific Monday board finder
+- `src/components/features/schoolManagement/SchoolCreator.tsx` - Feature component
+
+### React Hooks
+
+**Location**: Based on hook type:
+
+1. **Data Hooks**: `src/hooks/data/{hook-name}.ts`
+   - Hooks for data fetching and management
+
+2. **Domain Hooks**: `src/hooks/domain/{hook-name}.ts`
+   - Domain-specific business logic hooks
+
+3. **UI Hooks**: `src/hooks/ui/{hook-name}.ts`
+   - UI-related state management hooks
+
+Examples:
+- `src/hooks/data/useSafeSWR.ts` - Generic data fetching hook
+- `src/hooks/domain/useMondayBoard.ts` - Monday.com board hook
+- `src/hooks/ui/usePagination.ts` - UI pagination hook
+
+### Pages
+
+**Location**: `src/app/{path}/page.tsx`
+
+Page components for the Next.js App Router go here, organized by route structure.
+
+Examples:
+- `src/app/dashboard/page.tsx` - Dashboard page
+- `src/app/tools/monday/page.tsx` - Monday.com tools page
+
+### Schema Definitions
+
+**Location**: `src/lib/data-schema/zod-schema/{domain}/{resource-name}.ts`
+
+Zod schema definitions, which serve as the source of truth for data structures.
+
+Examples:
+- `src/lib/data-schema/zod-schema/core/school.ts` - School schema
+- `src/lib/data-schema/zod-schema/visits/visit.ts` - Visit schema
+
+### MongoDB Models
+
+**Location**: `src/lib/data-schema/mongoose-schema/{domain}/{resource-name}.model.ts`
+
+Mongoose models derived from Zod schemas.
+
+Examples:
+- `src/lib/data-schema/mongoose-schema/core/school.model.ts` - School model
+- `src/lib/data-schema/mongoose-schema/visits/visit.model.ts` - Visit model
+
+[RULE] Always follow these file organization patterns to maintain a consistent, scalable codebase.
+
+</section>
+
 <section id="import-conventions">
 
 ## Import Conventions

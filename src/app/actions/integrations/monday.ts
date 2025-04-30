@@ -3,8 +3,8 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { mondayClient } from "@api-routes/integrations/monday/client";
-import { ITEMS_QUERY } from "@/lib/api/integrations/monday-queries";
+import { mondayClient } from "@/app/api/integrations/monday/client";
+import { ITEMS_QUERY, BOARD_WITH_ITEMS_QUERY } from "@/lib/api/integrations/monday-queries";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
 import { SchoolModel } from "@mongoose-schema/core/school.model";
 import { TeachingLabStaffModel } from "@mongoose-schema/core/staff.model";
@@ -12,30 +12,13 @@ import { VisitInputZodSchema } from "@zod-schema/visits/visit";
 import { withDbConnection } from "@data-server/db/ensure-connection";
 import { handleValidationError } from "@error/handle-validation-error";
 import { handleServerError } from "@error/handle-server-error";
-
-// Define types for Monday.com API response
-interface MondayColumnValue {
-  id: string;
-  title: string;
-  text: string | null;
-  value: string | null;
-}
-
-interface MondayItem {
-  id: string;
-  name: string;
-  column_values: MondayColumnValue[];
-}
-
-interface MondayBoard {
-  items_page: {
-    items: MondayItem[];
-  };
-}
-
-interface MondayResponse {
-  boards: MondayBoard[];
-}
+import { 
+  MondayBoardResponse, 
+  ApiResponse, 
+  MondayColumnValue,
+  MondayResponse,
+  MondayBoard
+} from "@/lib/types/domain/monday";
 
 // Map Monday.com column IDs to their meanings
 const COLUMN_IDS = {
@@ -70,7 +53,7 @@ export async function importVisitsFromMonday(boardId: string) {
       for (const item of items) {
         try {
           // Find column values
-          const columnValues = item.column_values.reduce<Record<string, MondayColumnValue>>((acc, cv) => {
+          const columnValues = item.column_values.reduce<Record<string, MondayColumnValue>>((acc: Record<string, MondayColumnValue>, cv: MondayColumnValue) => {
             acc[cv.id] = cv;
             return acc;
           }, {});
@@ -179,4 +162,66 @@ export async function importVisitsFromMonday(boardId: string) {
       return { success: false, error: handleServerError(error) };
     }
   });
+}
+
+/**
+ * Fetch a Monday.com board by ID
+ */
+export async function getBoard(boardId: string, itemLimit: number = 20): Promise<ApiResponse<MondayBoard>> {
+  try {
+    // Input validation
+    const parsedInput = z.object({
+      boardId: z.string().min(1, "Board ID is required"),
+      itemLimit: z.number().int().positive().default(20)
+    }).parse({ boardId, itemLimit });
+    
+    // Make API request
+    const response = await mondayClient.query<MondayBoardResponse>(
+      BOARD_WITH_ITEMS_QUERY, 
+      { 
+        boardId: parsedInput.boardId, 
+        itemLimit: parsedInput.itemLimit 
+      }
+    );
+    
+    // Check if board exists
+    if (!response.boards || response.boards.length === 0) {
+      return { 
+        success: false, 
+        error: `Board with ID ${boardId} not found or not accessible`
+      };
+    }
+    
+    return { 
+      success: true, 
+      data: response.boards[0]
+    };
+  } catch (error) {
+    console.error("Error fetching Monday board:", error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    };
+  }
+}
+
+/**
+ * Test Monday.com API connection
+ */
+export async function testConnection(): Promise<ApiResponse<{ name: string; email: string }>> {
+  try {
+    const response = await mondayClient.query<{ me: { name: string; email: string } }>(
+      `query { me { name email } }`
+    );
+    
+    return {
+      success: true,
+      data: response.me
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error"
+    };
+  }
 }
