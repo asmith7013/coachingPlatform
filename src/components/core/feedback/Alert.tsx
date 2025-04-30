@@ -37,7 +37,7 @@ const alertVariants = tv({
         description: textColors.muted
       },
       success: { 
-        root: `${borderColors.success} ${backgroundColors.success} ${textColors.default}`,
+        root: `${borderColors.success} ${backgroundColors.light.success} ${textColors.default}`,
         title: textColors.default,
         description: textColors.muted 
       },

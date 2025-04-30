@@ -2,7 +2,7 @@
 
 // Text color tokens
 export const textColors = {
-  default: 'text-default',
+  default: 'text-secondary',
   muted: 'text-muted',
   accent: 'text-accent',
   primary: 'text-primary',
@@ -47,12 +47,22 @@ export const textColors = {
 export const backgroundColors = {
   default: 'bg-default',
   muted: 'bg-muted-100',
-  primary: 'bg-primary',
+  primary: 'bg-primary-400',
   secondary: 'bg-secondary-400',
   danger: 'bg-danger-400',
   success: 'bg-success-400',
   surface: 'bg-surface',
-  subtle: 'bg-subtle-50',
+  subtle: 'bg-subtle-100',
+
+  // Light variants for backgrounds (higher numbers = lighter)
+  light: {
+    primary: 'bg-primary-200',
+    secondary: 'bg-secondary-200',
+    danger: 'bg-danger-200',
+    success: 'bg-success-200',
+    muted: 'bg-muted-200',
+    surface: 'bg-surface-200'
+  },
 
   // Dark mode variants
   dark: {
@@ -75,7 +85,7 @@ export const backgroundColors = {
     danger: 'bg-danger-400 dark:bg-danger-700',
     success: 'bg-success-400 dark:bg-success-700',
     surface: 'bg-surface dark:bg-surface-800',
-    subtle: 'bg-subtle-50 dark:bg-subtle-900'
+    subtle: 'bg-subtle-100 dark:bg-subtle-900'
   }
 };
 
@@ -88,6 +98,16 @@ export const borderColors = {
   danger: 'border-danger-200',
   success: 'border-success-200',
   surface: 'border-surface-300',
+
+  // Light variants for borders (higher numbers = lighter)
+  light: {
+    primary: 'border-primary-300',
+    secondary: 'border-secondary-300',
+    danger: 'border-danger-300',
+    success: 'border-success-300',
+    muted: 'border-muted-300',
+    surface: 'border-surface-300'
+  },
 
   // Dark mode variants
   dark: {
@@ -119,6 +139,15 @@ export const ringColors = {
   secondary: 'ring-secondary-400',
   danger: 'ring-danger-400',
   success: 'ring-success-400',
+
+  // Light variants for rings (higher numbers = lighter)
+  light: {
+    primary: 'ring-primary-300',
+    secondary: 'ring-secondary-300',
+    danger: 'ring-danger-300',
+    success: 'ring-success-300',
+    muted: 'ring-muted-300'
+  },
 
   // Dark mode variants
   dark: {
@@ -168,11 +197,20 @@ export const hoverTextColors = {
 
 // Background hover color tokens
 export const hoverBackgroundColors = {
-  default: 'hover:bg-default-50',
+  default: 'hover:bg-default-100',
   primary: 'hover:bg-primary-200',
   secondary: 'hover:bg-secondary-200',
   danger: 'hover:bg-danger-100',
   success: 'hover:bg-success-100',
+
+  // Light variants for hover backgrounds (higher numbers = lighter)
+  light: {
+    primary: 'hover:bg-primary-300',
+    secondary: 'hover:bg-secondary-300',
+    danger: 'hover:bg-danger-300',
+    success: 'hover:bg-success-300',
+    muted: 'hover:bg-muted-300'
+  },
 
   // Dark mode variants
   dark: {
@@ -185,7 +223,7 @@ export const hoverBackgroundColors = {
 
   // Combined tokens
   combined: {
-    default: 'hover:bg-default-50 dark:hover:bg-default-800',
+    default: 'hover:bg-default-100 dark:hover:bg-default-800',
     primary: 'hover:bg-primary-200 dark:hover:bg-primary-800',
     secondary: 'hover:bg-secondary-200 dark:hover:bg-secondary-800',
     danger: 'hover:bg-danger-100 dark:hover:bg-danger-800',

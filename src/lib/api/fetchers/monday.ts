@@ -3,7 +3,7 @@ import { createApiSafeFetcher } from '@api/handlers/api-adapter';
 import { VisitZodSchema } from "@zod-schema/visits/visit";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
 import { mondayClient } from "@/app/api/integrations/monday/client";
-import { BOARD_WITH_ITEMS_QUERY } from "@/lib/api/integrations/monday-queries";
+import { BOARD_WITH_ITEMS_QUERY } from "@/lib/domain/monday/monday-queries";
 import { 
   MondayBoardResponse, 
   // MondayItemsResponse

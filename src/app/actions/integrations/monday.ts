@@ -4,7 +4,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { mondayClient, fetchMondayItems, fetchMondayItemById } from "@/app/api/integrations/monday/client";
-import { ITEMS_QUERY, BOARD_WITH_ITEMS_QUERY } from "@/lib/api/integrations/monday-queries";
+import { ITEMS_QUERY, BOARD_WITH_ITEMS_QUERY } from "@/lib/domain/monday/monday-queries";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
 import { SchoolModel } from "@mongoose-schema/core/school.model";
 import { TeachingLabStaffModel } from "@mongoose-schema/core/staff.model";

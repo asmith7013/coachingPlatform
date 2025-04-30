@@ -150,6 +150,111 @@ const myComponent = tv({
 [RULE] Use tokens directly in atomic components, component-specific variants for styling variations, and shared variants for common behaviors.
 </section>
 
+<section id="component-usage">
+
+## Component Usage Examples
+
+This section provides concrete examples of how to correctly use our core components together, following our token-first design system principles.
+
+### Basic Component Composition
+
+When combining multiple core components, always respect their token-based APIs rather than applying direct Tailwind classes:
+
+```tsx
+import { Alert } from '@/components/core/feedback';
+import { Button } from '@/components/core';
+import { Text } from '@/components/core/typography';
+import { InfoIcon } from 'lucide-react';
+
+function SuccessConfirmation() {
+  return (
+    <div className="space-y-4">
+      <Alert variant="success">
+        <Alert.Title>Operation Successful</Alert.Title>
+        <Alert.Description>
+          Your changes have been saved successfully.
+        </Alert.Description>
+      </Alert>
+      
+      <Text textSize="sm" color="muted">
+        You can now proceed to the next step.
+      </Text>
+      
+      <Button 
+        intent="primary" 
+        appearance="solid" 
+        icon={<InfoIcon size={16} />} 
+        iconPosition="right"
+      >
+        Continue
+      </Button>
+    </div>
+  );
+}
+```
+Variant Usage
+Core components expose variants through explicit prop interfaces rather than className combinations:
+
+```tsx
+// ❌ Incorrect: Using direct Tailwind classes
+<div className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md">
+  Submit
+</div>
+
+// ✅ Correct: Using component API with design tokens
+<Button 
+  intent="primary" 
+  appearance="solid" 
+  padding="md" 
+  radius="md"
+>
+  Submit
+</Button>
+Component Patterns
+Compound Component Pattern
+Some components like Alert use the compound component pattern:
+tsx// ✅ Correct usage of compound components
+<Alert variant="warning" layout="stacked">
+  <Alert.Title>Please Review</Alert.Title>
+  <Alert.Description>
+    Some information requires your attention.
+  </Alert.Description>
+</Alert>
+
+// ❌ Incorrect: Not using the subcomponents
+<Alert variant="warning">
+  <h3>Please Review</h3>
+  <p>Some information requires your attention.</p>
+</Alert>
+Typography System
+Typography should use our Text and Heading components rather than raw HTML elements:
+tsx// ✅ Correct: Using the Text component with tokens
+<Text textSize="lg" weight="semibold" color="accent">
+  Important message
+</Text>
+
+// ❌ Incorrect: Using raw HTML with direct classes
+<p className="text-lg font-semibold text-blue-600">
+  Important message
+</p>
+Responsive Layout Patterns
+Components with responsive variants should use the appropriate layout props:
+tsx// Button with responsive icon placement
+<Button icon={<InfoIcon />} iconPosition="responsive">
+  More Information
+</Button>
+
+// Alert with responsive layout
+<Alert variant="info" layout="responsive">
+  <Alert.Title>Tip</Alert.Title>
+  <Alert.Description>
+    Use responsive layouts for better mobile experiences.
+  </Alert.Description>
+</Alert>
+```
+[RULE] Always use component APIs rather than direct Tailwind classes, and follow the established patterns for each component type.
+</section>
+
 <section id="component-tokens">
 Design System Tokens
 Our design system provides tokens for:

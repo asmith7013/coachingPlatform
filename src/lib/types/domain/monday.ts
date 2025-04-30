@@ -4,6 +4,7 @@ import {
   ResourceResponse
 } from '@/lib/types/core/response';
 import { ClientDocument } from '@/lib/types/core/document';
+import { z } from 'zod';
 
 /**
  * Core Monday.com Types
@@ -133,7 +134,20 @@ export interface ImportPreview {
 export interface MondayFieldMapping {
   field: string;
   required: boolean;
+  columnTypes?: string[];
+  validator?: z.ZodType<unknown>;
   transform?: (value: string) => Promise<unknown> | unknown;
+  errorMessage?: string;
+}
+
+/**
+ * Validation result for Monday.com data
+ */
+export interface ValidationResult {
+  isValid: boolean;
+  errors: Record<string, string>;
+  warnings: Record<string, string>;
+  missingRequired: string[];
 }
 
 /**
@@ -146,6 +160,7 @@ export interface TransformResult extends Pick<BaseResponse, 'success'> {
   success: boolean;
   missingRequired: string[];
   errors: Record<string, string>;
+  warnings?: Record<string, string>;
 }
 
 /**

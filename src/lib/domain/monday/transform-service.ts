@@ -1,4 +1,4 @@
-import { visitFieldMappings } from "./field-mappings";
+import { FIELD_MAPPINGS } from "./field-mappings";
 import { VisitInput } from "@/lib/data-schema/zod-schema/visits/visit";
 import { parseOrThrow } from "@/lib/data-utilities/transformers/parse";
 import { VisitInputZodSchema } from "@/lib/data-schema/zod-schema/visits/visit";
@@ -22,7 +22,7 @@ export async function transformMondayItemToVisit(mondayItem: MondayItem): Promis
   const errors: Record<string, string> = {};
   
   // Process each field mapping
-  for (const [mondayField, mapping] of Object.entries(visitFieldMappings)) {
+  for (const [mondayField, mapping] of Object.entries(FIELD_MAPPINGS)) {
     try {
       const columnValue = mondayItem.column_values.find(
         (col: MondayColumnValue) => col.id === mondayField || col.title === mondayField

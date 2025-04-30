@@ -164,6 +164,9 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── ultra-minimal
 │   │   │       └── page.tsx
+│   │   ├── demo
+│   │   │   └── monday-import
+│   │   │       └── page.tsx
 │   │   ├── examples
 │   │   │   ├── calendar
 │   │   │   │   ├── CalendarGridView.tsx
@@ -315,6 +318,7 @@
 │   │   │   ├── lookFors
 │   │   │   ├── monday
 │   │   │   │   ├── BoardFinder.tsx
+│   │   │   │   ├── EnhancedMondayImportSelector.tsx
 │   │   │   │   ├── MondayImportSelector.tsx
 │   │   │   │   ├── MondayItemPreviewCard.tsx
 │   │   │   │   └── index.ts
@@ -421,8 +425,6 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   └── reference-endpoint.ts
 │   │   │   ├── index.ts
-│   │   │   ├── integrations
-│   │   │   │   └── monday-queries.ts
 │   │   │   ├── responses
 │   │   │   │   ├── index.ts
 │   │   │   │   └── standardize.ts
@@ -534,9 +536,12 @@
 │   │   │   │   ├── render-KH-lesson.tsx
 │   │   │   │   └── routine-utils.ts
 │   │   │   └── monday
+│   │   │       ├── duplicate-checker.ts
 │   │   │       ├── field-mappings.ts
+│   │   │       ├── monday-queries.ts
 │   │   │       ├── monday-utils.ts
-│   │   │       └── transform-service.ts
+│   │   │       ├── transform-service.ts
+│   │   │       └── validation-service.ts
 │   │   ├── error
 │   │   │   ├── crud-error-handling.ts
 │   │   │   ├── error-monitor.ts
@@ -640,4 +645,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-194 directories, 447 files
+195 directories, 451 files

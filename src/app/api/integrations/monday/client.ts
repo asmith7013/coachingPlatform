@@ -68,7 +68,6 @@ export async function fetchMondayItems(boardId: string) {
             state
             column_values {
               id
-              title
               value
               text
             }

@@ -1,15 +1,23 @@
 // src/components/composed/cards/Card.tsx
+/**
+ * Card component for displaying content in a contained, styled box.
+ * Uses the compound component pattern for flexible layout.
+ */
 
 import React from 'react'
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
-import {
-  radiusVariant,
-  shadowVariant,
-} from '@ui-variants/shared-variants'
+// import {
+//   radiusVariant,
+//   shadowVariant,
+// } from '@ui-variants/shared-variants'
 import { textColors } from '@ui-tokens/tokens'
 
-// 🎨 Card style variants - maintains the same tv() structure
+/**
+ * Card component styles using the Tailwind Variants pattern.
+ * Provides consistent styling options for card layouts with configurable
+ * sections (header, body, footer) following the compound component pattern.
+ */
 export const card = tv({
   slots: {
     root: [
@@ -18,7 +26,7 @@ export const card = tv({
     header: [
       textColors.default,
     ],
-    content: [
+    body: [ // Changed from 'content' to 'body' for naming consistency
       textColors.muted,
     ],
     footer: [
@@ -27,15 +35,27 @@ export const card = tv({
   },
   variants: {
     padding: {
-      none: { root: 'p-0', header: 'p-0', content: 'p-0', footer: 'p-0' },
-      xs: { root: 'p-2', header: 'px-2 py-1', content: 'p-2', footer: 'px-2 py-1' },
-      sm: { root: 'p-3', header: 'px-3 py-2', content: 'p-3', footer: 'px-3 py-2' },
-      md: { root: 'p-4', header: 'px-4 py-3', content: 'p-4', footer: 'px-4 py-3' },
-      lg: { root: 'p-6', header: 'px-6 py-4', content: 'p-6', footer: 'px-6 py-4' },
-      xl: { root: 'p-8', header: 'px-8 py-6', content: 'p-8', footer: 'px-8 py-6' },
+      none: { root: 'p-0', header: 'p-0', body: 'p-0', footer: 'p-0' },
+      xs: { root: 'p-2', header: 'px-2 py-1', body: 'p-2', footer: 'px-2 py-1' },
+      sm: { root: 'p-3', header: 'px-3 py-2', body: 'p-3', footer: 'px-3 py-2' },
+      md: { root: 'p-4', header: 'px-4 py-3', body: 'p-4', footer: 'px-4 py-3' },
+      lg: { root: 'p-6', header: 'px-6 py-4', body: 'p-6', footer: 'px-6 py-4' },
+      xl: { root: 'p-8', header: 'px-8 py-6', body: 'p-8', footer: 'px-8 py-6' },
     },
-    ...radiusVariant.variants,
-    ...shadowVariant.variants,
+    radius: {
+      none: { root: 'rounded-none', header: 'rounded-none', body: 'rounded-none', footer: 'rounded-none' },
+      sm: { root: 'rounded-sm', header: 'rounded-sm', body: 'rounded-sm', footer: 'rounded-sm' },
+      md: { root: 'rounded-md', header: 'rounded-md', body: 'rounded-md', footer: 'rounded-md' },
+      lg: { root: 'rounded-lg', header: 'rounded-lg', body: 'rounded-lg', footer: 'rounded-lg' },
+      xl: { root: 'rounded-xl', header: 'rounded-xl', body: 'rounded-xl', footer: 'rounded-xl' },
+      full: { root: 'rounded-full', header: 'rounded-full', body: 'rounded-full', footer: 'rounded-full' },
+    },
+    shadow: {
+      none: { root: 'shadow-none', header: 'shadow-none', body: 'shadow-none', footer: 'shadow-none' },
+      sm: { root: 'shadow-sm', header: 'shadow-sm', body: 'shadow-sm', footer: 'shadow-sm' },
+      md: { root: 'shadow-md', header: 'shadow-md', body: 'shadow-md', footer: 'shadow-md' },
+      lg: { root: 'shadow-lg', header: 'shadow-lg', body: 'shadow-lg', footer: 'shadow-lg' },
+    },
     variant: {
       default: { root: 'bg-surface' },
       alt: { root: 'bg-alt' },
@@ -69,21 +89,32 @@ type CardContextType = {
 
 const CardContext = React.createContext<CardContextType | undefined>(undefined);
 
-// Hook to use card context in subcomponents
+/**
+ * Hook to use card context in subcomponents.
+ * Ensures subcomponents are used within a Card parent component.
+ * @returns The card context containing styles
+ * @throws Error if used outside of a Card component
+ */
 const useCardContext = () => {
   const context = React.useContext(CardContext);
   if (!context) {
-    throw new Error("Card subcomponents must be used within a Card component");
+    throw new Error("Card subcomponents must be used within a Card component. See documentation at [component-system][compound-component-pattern]");
   }
   return context;
 };
 
-// Main Card component
+/**
+ * Main Card component props extending all available variant options
+ */
 interface CardRootProps extends CardVariants {
   className?: string;
   children?: React.ReactNode;
 }
 
+/**
+ * Card root component that provides the base container for card content.
+ * Uses the compound component pattern with Header, Body, and Footer subcomponents.
+ */
 const CardRoot = ({
   className,
   children,
@@ -91,7 +122,7 @@ const CardRoot = ({
   radius = 'md',
   border = false,
   variant = 'default',
-  shadow = 'sm',
+  shadow = 'none',
 }: CardRootProps) => {
   // Generate styles using Tailwind Variants
   const styles = card({ padding, radius, variant, shadow, border });
@@ -111,6 +142,9 @@ interface CardSubComponentProps {
   children?: React.ReactNode;
 }
 
+/**
+ * Card Header component for displaying title or heading content
+ */
 const Header = ({ className, children }: CardSubComponentProps) => {
   const { styles } = useCardContext();
   return (
@@ -120,15 +154,21 @@ const Header = ({ className, children }: CardSubComponentProps) => {
   );
 };
 
+/**
+ * Card Body component for displaying the main content
+ */
 const Body = ({ className, children }: CardSubComponentProps) => {
   const { styles } = useCardContext();
   return (
-    <div className={cn(styles.content(), className)}>
+    <div className={cn(styles.body(), className)}>
       {children}
     </div>
   );
 };
 
+/**
+ * Card Footer component for displaying actions or supplementary content
+ */
 const Footer = ({ className, children }: CardSubComponentProps) => {
   const { styles } = useCardContext();
   return (
@@ -138,13 +178,19 @@ const Footer = ({ className, children }: CardSubComponentProps) => {
   );
 };
 
-// For backward compatibility
+/**
+ * Legacy Card component interface for backward compatibility
+ */
 interface LegacyCardProps extends CardRootProps {
   header?: React.ReactNode;
   footer?: React.ReactNode;
   contentClassName?: string;
 }
 
+/**
+ * Legacy Card implementation for backward compatibility
+ * @deprecated Use the compound component pattern with Card.Header, Card.Body, and Card.Footer instead
+ */
 const LegacyCard = ({
   className,
   children,
@@ -167,7 +213,7 @@ const LegacyCard = ({
         </div>
       )}
       {children && (
-        <div className={cn(styles.content(), contentClassName)}>
+        <div className={cn(styles.body(), contentClassName)}>
           {children}
         </div>
       )}
@@ -180,10 +226,28 @@ const LegacyCard = ({
   );
 };
 
-// Export main component with subcomponents attached
+/**
+ * Card component for displaying content in a contained, styled box.
+ * Uses the compound component pattern for flexible layout.
+ * 
+ * @example
+ * ```tsx
+ * <Card variant="white" shadow="md">
+ *   <Card.Header>Card Title</Card.Header>
+ *   <Card.Body>Main content goes here</Card.Body>
+ *   <Card.Footer>Footer actions</Card.Footer>
+ * </Card>
+ * ```
+ */
 export const Card = Object.assign(CardRoot, {
   Header,
   Body,
   Footer,
   Legacy: LegacyCard
 });
+
+/**
+ * Export the full Card component type for better TypeScript integration
+ */
+export type CardComponent = typeof Card;
+

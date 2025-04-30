@@ -2,67 +2,59 @@
 import { cn } from "@ui/utils/formatters";
 import { tv, type VariantProps } from "tailwind-variants";
 import { textSize, paddingX, paddingY, radii } from '@ui-tokens/tokens';
-import { backgroundColors, textColors } from '@ui-tokens/colors';
+import { textColors, backgroundColors, ringColors } from '@ui-tokens/colors';
 
-// Define component-specific types
-type BadgeTextSize = 'xs' | 'sm' | 'base';
-type BadgePadding = 'xs' | 'sm' | 'md';
-type BadgeVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
-
+// Define badge variants using your semantic color system
 const badge = tv({
-  base: `inline-block font-semibold ${radii.full}`,
+  base: "inline-flex items-center font-medium ring-1 ring-inset",
   variants: {
-    textSize: {
-      xs: textSize.xs,
-      sm: textSize.sm,
-      base: textSize.base,
+    intent: {
+      neutral: `${backgroundColors.light.muted} ${textColors.default} ring-1 ring-inset border-border`,
+      primary: `${backgroundColors.light.primary} ${textColors.primary} ring-1 ring-inset ${ringColors.light.primary}`,
+      secondary: `${backgroundColors.light.secondary} ${textColors.secondary} ring-1 ring-inset ${ringColors.light.secondary}`,
+      danger: `${backgroundColors.light.danger} ${textColors.danger} ring-1 ring-inset ${ringColors.light.danger}`,
+      success: `${backgroundColors.light.success} ${textColors.success} ring-1 ring-inset ${ringColors.light.success}`,
+      info: `${backgroundColors.light.primary} ${textColors.primary} ring-1 ring-inset ${ringColors.light.primary} opacity-80`,
+      warning: `${backgroundColors.light.danger} ${textColors.danger} ring-1 ring-inset ${ringColors.light.danger} opacity-80`,
     },
-    padding: {
-      xs: `${paddingX.xs} ${paddingY.xs}`,
-      sm: `${paddingX.sm} ${paddingY.xs}`,
-      md: `${paddingX.md} ${paddingY.sm}`,
+    size: {
+      xs: `${textSize.xs} ${paddingX.xs} ${paddingY.xs}`,
+      sm: `${textSize.sm} ${paddingX.sm} ${paddingY.xs}`,
+      md: `${textSize.base} ${paddingX.md} ${paddingY.sm}`,
     },
-    variant: {
-      primary: `${backgroundColors.primary} ${textColors.default}`,
-      secondary: `${backgroundColors.secondary} ${textColors.default}`,
-      success: `${backgroundColors.success} ${textColors.default}`,
-      danger: `${backgroundColors.danger} ${textColors.default}`,
-      warning: `${backgroundColors.danger} ${textColors.default}`,
-      info: `${backgroundColors.primary} ${textColors.default}`,
-    },
+    rounded: {
+      default: radii.md,
+      full: radii.full,
+      none: radii.none
+    }
   },
   defaultVariants: {
-    textSize: "xs",
-    padding: "sm",
-    variant: "primary",
-  },
+    intent: "neutral",
+    size: "xs",
+    rounded: "default"
+  }
 });
 
-export type BadgeVariants = VariantProps<typeof badge>;
-
-export interface BadgeProps {
+export type BadgeProps = {
   children: React.ReactNode;
   className?: string;
-  textSize?: BadgeTextSize;
-  padding?: BadgePadding;
-  variant?: BadgeVariant;
-}
+} & VariantProps<typeof badge>;
 
 export function Badge({ 
   children, 
   className,
-  textSize,
-  padding,
-  variant,
+  intent,
+  size,
+  rounded,
 }: BadgeProps) {
   return (
     <span
       className={cn(
-        badge({ textSize, padding, variant }),
+        badge({ intent, size, rounded }),
         className
       )}
     >
       {children}
     </span>
   );
-} 
+}

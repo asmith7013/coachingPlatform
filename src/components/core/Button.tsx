@@ -14,14 +14,6 @@ type ButtonRadius = 'none' | 'sm' | 'md' | 'full';
 type ButtonShadow = 'none' | 'sm' | 'md';
 type ButtonIconPosition = 'left' | 'right' | 'responsive';
 
-console.log('Button tokens:', {
-  bg: backgroundColors.primary,
-  text: textColors.default,
-  border: borderWidths.sm,
-  borderColor: borderColors.muted,
-  hover: hoverBackgroundColors.primary
-});
-
 /**
  * Button component variants.
  * Uses iconContentLayoutVariant for handling icon positioning.
@@ -97,7 +89,7 @@ const button = tv({
       intent: 'primary',
       appearance: 'solid',
       className: {
-        base: `${backgroundColors.primary} ${textColors.default} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.primary}`,
+        base: `${backgroundColors.primary} ${textColors.white} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.primary}`,
       }
     },
     {
