@@ -79,12 +79,16 @@ export function useSchools() {
     createSchool
   };
 }
+```
 [RULE] Maintain proper separation of concerns in hook implementations.
 </section>
+
 <section id="hook-exports">
 Hook Exports
 All hooks should be exported through the barrel file (index.ts) for convenient imports:
-typescript// src/hooks/index.ts
+
+```typescript
+// src/hooks/index.ts
 // Data hooks
 export * from './data/useCrudOperations';
 export * from './data/useSafeSWR';
@@ -104,14 +108,21 @@ export * from './ui/useFiltersAndSorting';
 export * from './error/useErrorHandledMutation';
 export * from './error/useErrorBoundary';
 // ...
+```
 This enables clean imports in components:
-typescriptimport { useSchools, usePagination } from '@/hooks';
+
+```typescript
+import { useSchools, usePagination } from '@/hooks';
+```
 [RULE] Export all hooks through the barrel file for consistent imports.
 </section>
+
 <section id="hook-documentation">
 Hook Documentation
 Document all hooks with JSDoc comments:
-typescript/**
+
+```typescript
+/**
  * Hook for managing school data and operations
  * 
  * @returns {Object} School data and operations
@@ -125,6 +136,8 @@ typescript/**
 export function useSchools() {
   // Implementation...
 }
+```
 [RULE] Document all hooks with clear JSDoc comments.
 </section>
+
 </doc>

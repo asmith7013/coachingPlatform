@@ -15,6 +15,10 @@ import type {
   CoachingLogReference
 } from "@core-types/reference";
 
+import { SchoolModel } from "@/lib/data-schema/mongoose-schema/core/school.model";
+import { TeachingLabStaffModel } from "@/lib/data-schema/mongoose-schema/core/staff.model";
+import { withDbConnection } from "@/lib/data-server/db/ensure-connection";
+
 /**
  * Maps a School entity to a SchoolReference for UI components
  */
@@ -107,3 +111,35 @@ export const referenceMappers = {
   visit: mapVisitToReference,
   coachingLog: mapCoachingLogToReference
 };
+
+/**
+ * Find a school ID by name, using fuzzy matching
+ */
+export async function findSchoolIdByName(schoolName: string): Promise<string> {
+  if (!schoolName || schoolName.trim() === '') return '';
+  
+  return withDbConnection(async () => {
+    const school = await SchoolModel.findOne({
+      schoolName: { $regex: new RegExp(schoolName, "i") }
+    });
+    
+    if (!school) return '';
+    return school._id.toString();
+  });
+}
+
+/**
+ * Find a coach ID by name, using fuzzy matching
+ */
+export async function findCoachIdByName(coachName: string): Promise<string> {
+  if (!coachName || coachName.trim() === '') return '';
+  
+  return withDbConnection(async () => {
+    const coach = await TeachingLabStaffModel.findOne({
+      staffName: { $regex: new RegExp(coachName, "i") }
+    });
+    
+    if (!coach) return '';
+    return coach._id.toString();
+  });
+}

@@ -21,6 +21,7 @@ import { Input } from '@/components/core/Input';
 
 // With barrel files
 import { Button, Input } from '@/components/core';
+```
 Benefits of barrel files:
 
 Simplified imports
@@ -34,7 +35,9 @@ Logical grouping of exports
 Path Aliases
 Path aliases provide shorthand references to commonly used directories, avoiding lengthy relative paths.
 Our project uses the following path aliases:
-typescript// tsconfig.json
+
+```typescript
+// tsconfig.json
 {
   "compilerOptions": {
     "baseUrl": ".",
@@ -81,14 +84,19 @@ typescript// tsconfig.json
     },
   }
 }
+```
 Example usage:
-typescript// Avoid relative paths
+
+```typescript
+// Avoid relative paths
 import { Button } from '../../../components/core/Button';
 
 // Use path aliases instead
 import { Button } from '@components/core/Button';
 // or 
 import { Button } from '@/components/core/Button';
+```
+
 Benefits of path aliases:
 
 Shorter, more readable imports
@@ -106,7 +114,8 @@ External libraries
 Path aliases
 Relative imports
 
-typescript// Example of organized imports
+```typescript
+// Example of organized imports
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
 
@@ -116,6 +125,7 @@ import { SchoolZodSchema } from '@/lib/zod-schema';
 
 import { renderField } from './utils';
 import styles from './styles.module.css';
+```
 Additionally:
 
 Group imports logically
@@ -125,34 +135,48 @@ Use destructuring when appropriate
 
 [RULE] Group and order imports consistently in every file.
 </section>
+
 <section id="import-best-practices">
 Import Best Practices
 Import Only What You Need
-typescript// ❌ Bad - imports entire library
+
+```typescript
+// ❌ Bad - imports entire library
 import * as React from 'react';
 
 // ✅ Good - imports only what's needed
 import { useState, useEffect } from 'react';
+```
+
 Use Consistent Import Style
 Choose either named imports or default imports consistently:
-typescript// Named imports (preferred for most libraries)
+
+```typescript
+// Named imports (preferred for most libraries)
 import { Button, Input } from '@/components/core';
 
 // Default imports (when appropriate)
 import Button from '@/components/core/Button';
+```
 Handle Dynamic Imports
 For code splitting and lazy loading:
-typescript// Lazy load component
+
+```typescript
+// Lazy load component
 const DynamicComponent = React.lazy(() => import('@/components/heavy-component'));
 
 // Dynamic import in server action
 const csv = await import('csv-parser');
+```
+
 [RULE] Follow import best practices for cleaner, more maintainable code.
 </section>
 <section id="avoiding-circular-dependencies">
 Avoiding Circular Dependencies
 Circular dependencies occur when two or more modules depend on each other:
-typescript// fileA.ts
+
+```typescript
+// fileA.ts
 import { functionB } from './fileB';
 export function functionA() {
   return functionB();
@@ -163,6 +187,7 @@ import { functionA } from './fileA';
 export function functionB() {
   return functionA(); // Circular dependency!
 }
+```
 To avoid circular dependencies:
 
 Refactor Common Logic: Extract shared functionality to a separate module

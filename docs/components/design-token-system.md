@@ -1,15 +1,20 @@
 <doc id="design-token-system">
+
 Design Token System
+
 <section id="token-overview">
 Overview
 Our design token system creates a clear separation between raw Tailwind CSS classes and semantic styling values. This approach ensures consistent visual design while maintaining flexibility for developers.
 [RULE] Always use the token system rather than hardcoded Tailwind classes.
 </section>
+
 <section id="token-architecture">
 Token Architecture
 Primitive Tokens
 Located in src/lib/ui/tokens/, these define the foundational design values:
-typescript// src/lib/ui/tokens/colors.ts
+
+```typescript
+// src/lib/ui/tokens/colors.ts
 export const textColors = {
   primary: "text-blue-600 dark:text-blue-400",
   secondary: "text-gray-600 dark:text-gray-300",
@@ -34,12 +39,16 @@ export const paddingX = {
   lg: "px-6",
   xl: "px-8",
 };
+```
 [RULE] Define all primitive design values as tokens in the appropriate token files.
 </section>
+
 <section id="component-variants">
 Component-Specific Variants
 These use Tailwind Variants (tv()) to create type-safe component styling:
-typescript// Example: Button component variants
+
+```typescript
+// Example: Button component variants
 import { tv } from "tailwind-variants";
 import { textColors, paddingX, paddingY, radii } from '@/lib/ui/tokens';
 
@@ -70,12 +79,16 @@ const button = tv({
     rounded: "md",
   },
 });
+```
 [RULE] Define component-specific styling using Tailwind Variants and primitive tokens.
 </section>
+
 <section id="shared-variants">
 Shared Behavior Variants
 Reusable UI behavior patterns located in src/lib/ui/variants/:
-typescript// src/lib/ui/variants/shared-variants.ts
+
+```typescript
+// src/lib/ui/variants/shared-variants.ts
 import { tv } from "tailwind-variants";
 
 export const disabledVariant = tv({
@@ -141,8 +154,10 @@ export const flexVariant = tv({
     }
   ]
 });
+```
 [RULE] Use shared variants for common UI behaviors across multiple components.
 </section>
+
 <section id="usage-guidelines">
 Usage Guidelines
 When to Use Tokens Directly
@@ -152,7 +167,8 @@ Building atomic components (basic UI elements)
 Defining explicit styling that shouldn't change
 Creating component-specific variants
 
-typescriptimport { textColors, radii } from '@/lib/ui/tokens';
+```typescript
+import { textColors, radii } from '@/lib/ui/tokens';
 
 function Alert({ children }) {
   return (
@@ -165,6 +181,7 @@ function Alert({ children }) {
     </div>
   );
 }
+```
 When to Use Component Variants
 Use component variants when:
 
@@ -172,7 +189,8 @@ Defining styling options for a component
 Creating a component with multiple visual presentations
 Building complex compositions of styles
 
-typescriptfunction Button({ variant, size, disabled, children, ...props }) {
+```typescript
+function Button({ variant, size, disabled, children, ...props }) {
   return (
     <button
       className={button({ variant, size, disabled })}
@@ -183,6 +201,7 @@ typescriptfunction Button({ variant, size, disabled, children, ...props }) {
     </button>
   );
 }
+```
 When to Use Shared Variants
 Use shared variants when:
 
@@ -190,7 +209,8 @@ Adding common behaviors (disabled, loading, error states)
 Quickly styling one-off elements without creating a component
 Applying consistent patterns across unrelated components
 
-tsximport { flexVariant, disabledVariant } from '@/lib/ui/variants';
+```tsx
+import { flexVariant, disabledVariant } from '@/lib/ui/variants';
 
 // In a component
 <div className={cn(
@@ -199,8 +219,10 @@ tsximport { flexVariant, disabledVariant } from '@/lib/ui/variants';
 )}>
   {children}
 </div>
+```
 [RULE] Choose the appropriate token approach based on the specific use case.
 </section>
+
 <section id="tailwind-integration">
 Tailwind Integration
 Our token system sits on top of Tailwind CSS v4, providing a semantic layer between raw utility classes and component styling. This allows us to:

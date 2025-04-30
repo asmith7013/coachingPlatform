@@ -144,6 +144,7 @@ All documentation follows a consistent structure:
 <section id="section-id">
 
 ## Section Title
+```
 
 Section content with guidance, explanations, and examples.
 
@@ -152,6 +153,7 @@ Section content with guidance, explanations, and examples.
 function example() {
   // Implementation
 }
+```
 Additional paragraphs and explanations.
 [RULE] Final rule statement that summarizes key guidelines.
 </section>

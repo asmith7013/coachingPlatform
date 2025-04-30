@@ -1,3 +1,6 @@
+Here's the updated version of the Architecture Overview & Documentation Guide, removing the Examples folder reference and updating the Documentation Structure section to reflect that examples are now embedded within relevant documentation:
+
+```markdown
 # Architecture Overview & Documentation Guide
 
 ## Purpose of This Document
@@ -101,8 +104,11 @@ The documentation is organized into these sections:
 ### Workflows (`/docs/workflows/`)
 - Common Tasks, Cursor Integration, Dev Utilities, Development Workflow
 
-### Examples (`/docs/examples/`)
-- Component Examples, Prompt Examples, Schema Examples
+Each documentation file contains embedded examples where relevant, providing immediate context for the concepts being described. This approach ensures examples are:
+- Directly connected to the concepts they demonstrate
+- More discoverable for developers
+- Maintained alongside the documentation they support
+- Presented in the most contextually appropriate format
 
 ## Project Structure
 
@@ -140,6 +146,7 @@ Unless explicitly directed otherwise, assume that code advice is intended to be 
 
 Example:
 Instead of directly providing code like this:
+
 ```typescript
 function example() {
   // Code here
@@ -153,6 +160,7 @@ markdown# Implement Example Function
 - OUT OF SCOPE: Complex error handling, advanced features
 
 ## COMPLETE CODE EXAMPLE
+
 ```typescript
 // src/utils/example.ts
 export function example() {
@@ -175,3 +183,4 @@ For AI tools like Cursor, this documentation is organized with section IDs:
 ```
 
 Example: `[component-system][component-variants]` references the variants section of the component system documentation.
+```

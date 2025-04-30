@@ -7,6 +7,7 @@ Overview
 Our platform uses a schema-driven architecture where Zod schemas serve as the definitive source of truth for all data structures. This approach ensures consistency across the frontend, backend, and database layers.
 [RULE] Always use Zod schemas as the canonical source of truth for data structures.
 </section>
+
 <section id="data-schemas">
 Zod Schema Architecture
 Schemas are organized in src/lib/data-schema/zod-schema/ by domain:
@@ -15,7 +16,8 @@ core/: Base schemas for common entities (School, Staff, Cycle)
 shared/: Reusable schema parts (notes, enums, date helpers)
 Domain-specific directories: visits/, look-fors/, etc.
 
-typescript// Example: School schema
+```typescript
+// Example: School schema
 export const SchoolZodSchema = z.object({
   _id: z.string(),
   schoolNumber: z.string(),
@@ -28,8 +30,10 @@ export const SchoolZodSchema = z.object({
   createdAt: zDateField.optional(),
   updatedAt: zDateField.optional(),
 });
+```
 [RULE] When adding new fields, always start by updating the Zod schema first.
 </section>
+
 <section id="schema-patterns">
 Zod Schema Patterns
 Input vs. Full Schema Pattern
@@ -39,7 +43,9 @@ Input schemas define fields for user-provided data without system fields
 Full schemas extend input schemas with system fields (_id, createdAt, updatedAt)
 
 Example:
-typescript// Input schema (for validation of user-provided data)
+
+```typescript
+// Input schema (for validation of user-provided data)
 export const EntityInputZodSchema = z.object({
   name: z.string(),
   description: z.string(),
@@ -52,27 +58,35 @@ export const EntityZodSchema = EntityInputZodSchema.extend({
   createdAt: zDateField.optional(),
   updatedAt: zDateField.optional(),
 });
+```
 Nested Document Schemas
 Nested documents do not include system fields like _id:
-typescript// Nested document schema
+
+```typescript
+// Nested document schema
 export const NestedItemZodSchema = z.object({
   title: z.string(),
   description: z.string(),
   // No _id or timestamps
 });
+```
 Type Generation
 Always generate TypeScript types from your schemas:
-typescript// Auto-generate TypeScript types
+
+```typescript
+// Auto-generate TypeScript types
 export type EntityInput = z.infer<typeof EntityInputZodSchema>;
 export type Entity = z.infer<typeof EntityZodSchema>;
+```
+
 MongoDB Schema Alignment
 MongoDB schemas must align with Zod schemas:
 
 Set timestamps: true in schema options
 Set _id: false for nested document schemas
 
-[RULE] Follow these patterns consistently across all schemas.
-</section>
+[RULE] Follow thes
+
 <section id="input-vs-full-schema-pattern">
 
 ## Input vs. Full Schema Pattern
@@ -96,6 +110,7 @@ export const EntityInputZodSchema = z.object({
   description: z.string(),
   // No system fields
 });
+```
 When to Use Full Schemas
 
 Fetching Records: When validating data fetched from the database
@@ -105,15 +120,20 @@ Data Transformation: When processing complete database documents
 Server-Side Validation: When validating complete model instances
 
 Full schemas extend input schemas with system fields:
-typescript// Full schema for validating complete database documents
+
+```typescript
+// Full schema for validating complete database documents
 export const EntityZodSchema = EntityInputZodSchema.extend({
   _id: z.string(),
   createdAt: zDateField.optional(),
   updatedAt: zDateField.optional(),
 });
+```
 Implementation in CRUD Operations
 In our CRUD utilities, the pattern should be consistently applied:
-typescript// In server actions:
+
+```typescript
+// In server actions:
 export async function createEntity(data: unknown) {
   return createItem(
     EntityModel,
@@ -127,6 +147,7 @@ export async function fetchEntity(id: string) {
   const entity = await EntityModel.findById(id);
   return EntityZodSchema.parse(entity); // Use FULL schema for validation
 }
+```
 
 Common Pitfalls
 
@@ -142,7 +163,9 @@ By following this pattern consistently, we maintain clear boundaries between cli
 <section id="data-model-integration">
 MongoDB Model Integration
 MongoDB models are defined using the Zod schemas and stored in src/lib/data-schema/mongoose-schema/:
-typescriptimport { SchoolZodSchema } from "@/lib/data-schema/zod-schema/core/school";
+
+```typescript
+import { SchoolZodSchema } from "@/lib/data-schema/zod-schema/core/school";
 import mongoose from "mongoose";
 
 const schemaFields = {
@@ -176,12 +199,16 @@ typescriptexport const SchoolFieldConfig: Field<SchoolInput>[] = [
   },
   // Additional fields...
 ];
+```
 [RULE] Field configs should reference schema properties rather than redefining them.
 </section>
+
 <section id="data-form-overrides">
 Form Overrides
 Form overrides (src/lib/ui/forms/formOverrides/) allow customization of form behavior for specific contexts:
-typescriptexport const SchoolOverrides: FieldOverrideMap<SchoolInput> = {
+
+```typescript
+export const SchoolOverrides: FieldOverrideMap<SchoolInput> = {
   district: {
     type: 'reference',
     label: 'District',
@@ -190,6 +217,7 @@ typescriptexport const SchoolOverrides: FieldOverrideMap<SchoolInput> = {
   },
   // Additional overrides...
 };
+```
 [RULE] Use form overrides to customize field behavior without modifying the base schema.
 </section>
 <section id="data-hooks">
@@ -215,10 +243,13 @@ When using hooks:
 - Use error hooks to handle network and operation errors consistently
 
 </section>
+
 <section id="data-reference-hook">
 Reference Data Hook
 The useReferenceOptions hook handles fetching options for select components:
-typescriptfunction useReferenceOptions(url: string, searchQuery: string = "") {
+
+```typescript
+function useReferenceOptions(url: string, searchQuery: string = "") {
   // Using SWR with proper error handling
   const { data, error, isLoading } = useSWR(
     searchQuery ? `${url}?search=${searchQuery}` : url,
@@ -237,13 +268,17 @@ typescriptfunction useReferenceOptions(url: string, searchQuery: string = "") {
   
   return { options, error, isLoading };
 }
+```
 [RULE] Use useReferenceOptions for all dropdown and multi-select inputs that fetch data.
 [RULE] All API endpoints that serve reference data must return a standardized format with { items: [], total, success }.
 </section>
+
 <section id="data-server-actions">
 Server Actions
 Server actions in src/app/actions/ provide a way to perform server-side operations directly from client components:
-typescriptexport async function createSchool(data: SchoolInput) {
+
+```typescript
+export async function createSchool(data: SchoolInput) {
   try {
     // Validate against schema
     const validated = SchoolInputZodSchema.parse(data);
@@ -260,8 +295,10 @@ typescriptexport async function createSchool(data: SchoolInput) {
     return handleServerError(error, "Failed to create school");
   }
 }
+```
 [RULE] Always validate data with Zod schemas before database operations.
 </section>
+
 <section id="data-flow-diagram">
 Data Flow Diagram
 The data flows through our system in this sequence:
@@ -275,10 +312,13 @@ UI Components: Render data and handle user interactions (/components/)
 
 [RULE] Follow this data flow sequence when implementing new features.
 </section>
+
 <section id="data-transformers">
 Data Transformers
 Data transformation utilities in src/lib/data-utilities/transformers/ help sanitize and validate data:
-typescript// Sanitize a MongoDB document for client-side use
+
+```typescript
+// Sanitize a MongoDB document for client-side use
 const safeDoc = sanitizeDocument(mongooseDoc, MyZodSchema);
 
 // Validate against a schema and return null on error
@@ -286,8 +326,10 @@ const result = safeParseAndLog(MyZodSchema, data);
 
 // Parse data and throw a formatted error if validation fails
 const result = parseOrThrow(MyZodSchema, data);
+```
 [RULE] Use appropriate transformers when moving data between server and client.
 </section>
+
 <section id="data-consistency">
 Maintaining Data Consistency
 To ensure data consistency across the application:
@@ -301,4 +343,5 @@ Validate inputs against schemas at every entry point
 
 [RULE] Apply these consistency practices at every layer of the application.
 </section>
+
 </doc>

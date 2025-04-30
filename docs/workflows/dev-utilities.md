@@ -30,6 +30,7 @@ checkFieldConfigCoverage(
   "SchoolZodSchema",
   "SchoolFieldConfig"
 );
+```
 This utility:
 
 Identifies missing fields in the configuration
@@ -39,17 +40,21 @@ Helps prevent divergence between schemas and UI
 
 [RULE] Run schema-config alignment checks when implementing new features or modifying existing ones.
 </section>
+
 <section id="tailwind-enforcement">
 Tailwind Design System Enforcement
 Our ESLint configuration includes a custom rule for enforcing Tailwind design tokens:
-javascript// In .eslintrc.js
+
+```javascript
+// In .eslintrc.js
 module.exports = {
   rules: {
     '@local/no-hardcoded-tailwind-classes': 'warn'
   }
 }
+```
 This rule detects hardcoded Tailwind classes that should use design tokens:
-jsx
+```jsx
 // ❌ Bad
 <div className="text-blue-500 p-4 rounded-md">Content</div>
 
@@ -60,7 +65,7 @@ jsx
 <div className={cn(colors.primary, spacing.md, shape.rounded, interactive({ hover: true }))}>
   Interactive Content
 </div>
-
+```
 The rule:
 
 Identifies patterns like color classes, spacing units, and shape properties
@@ -70,15 +75,19 @@ Supports both JSX className attributes and utility functions like cn()
 
 [RULE] Always use design tokens instead of hardcoded Tailwind classes.
 </section>
+
 <section id="mock-data">
 Mock Data System
 Our development environment includes a mock data system for rapid prototyping:
-typescriptimport { mockSchools, mockNYCPSStaff, mockTLStaff } from "@/lib/utils/dev/mockData";
+
+```typescript
+import { mockSchools, mockNYCPSStaff, mockTLStaff } from "@/lib/utils/dev/mockData";
 
 // Use mock data in development
 const schools = process.env.NODE_ENV === 'development' 
   ? mockSchools 
   : await fetchSchools();
+  ```
 The mock data:
 
 Mirrors the structure of real database documents
@@ -88,10 +97,13 @@ Provides consistent test data across all features
 
 [RULE] Use the mock data system for rapid UI development and testing.
 </section>
+
 <section id="debugging-hooks">
 Debugging Hooks
 For complex component debugging, use the specialized debugging hooks:
-typescript// Detect render loops
+
+```typescript
+// Detect render loops
 import { useRenderTracking } from "@/hooks/debugging/useRenderTracking";
 
 function MyComponent() {
@@ -119,17 +131,22 @@ function TestPage() {
     </div>
   );
 }
+```
 [RULE] Use debugging hooks to identify and fix performance issues and bugs.
 </section>
+
 <section id="performance-monitoring">
 Performance Monitoring
 Our application includes a performance monitoring system for optimizing user experience:
-typescriptimport { usePerformanceMonitoring } from "@/lib/core/performance/usePerformanceMonitoring";
+
+```typescript
+import { usePerformanceMonitoring } from "@/lib/core/performance/usePerformanceMonitoring";
 
 function MyComponent() {
   usePerformanceMonitoring("MyComponent");
   // Component implementation
 }
+```
 The monitoring system:
 
 Tracks component render times

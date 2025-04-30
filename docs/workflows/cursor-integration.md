@@ -173,7 +173,7 @@ To prevent Cursor from going on tangents and keep it focused on the primary task
 
 When referencing our documentation in prompts, use the standardized format:
 
-```
+```markdown
 [document-id][section-id] Section Title
 ```
 

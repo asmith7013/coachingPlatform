@@ -358,6 +358,7 @@ import { SchoolZodSchema } from '@/lib/data/schemas';
 // Relative imports for closely related files
 import { renderField } from './utils';
 import styles from './styles.module.css';
+```
 [RULE] Follow established import conventions for all files.
 </section>
 </doc>

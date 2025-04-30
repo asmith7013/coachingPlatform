@@ -139,9 +139,12 @@ function UserAvatar({ src, alt }) {
 function UserCard({ user, onEdit, onDelete }) {
   // Combines display, editing, and data fetching
 }
+```
 Prop Forwarding
 Use destructuring and prop forwarding for component flexibility:
-typescriptfunction Button({ variant, size, className, ...props }) {
+
+```typescript
+function Button({ variant, size, className, ...props }) {
   return (
     <button 
       className={getButtonClasses(variant, size, className)}
@@ -149,6 +152,7 @@ typescriptfunction Button({ variant, size, className, ...props }) {
     />
   );
 }
+```
 See components/component-system.md for detailed component implementation guidelines.
 [RULE] Establish clear boundaries between components with minimal coupling.
 </section>
@@ -156,7 +160,9 @@ See components/component-system.md for detailed component implementation guideli
 Component Composition Patterns
 Feature Component Structure
 Feature components should compose domain components rather than implementing business logic directly:
-typescriptfunction CoachingDashboard() {
+
+```typescript
+function CoachingDashboard() {
   return (
     <DashboardLayout>
       <SchoolSummaryCard />
@@ -165,9 +171,12 @@ typescriptfunction CoachingDashboard() {
     </DashboardLayout>
   );
 }
+```
 Content vs. Container Separation
 Separate data-fetching containers from presentational components:
-typescript// Container with data concerns
+
+```typescript
+// Container with data concerns
 function SchoolListContainer() {
   const { schools, loading, error } = useSchools();
   
@@ -187,14 +196,18 @@ function SchoolList({ schools }) {
     </div>
   );
 }
+```
 See components/composed-components.md for detailed composition patterns.
 [RULE] Compose feature components from domain-specific building blocks.
 </section>
+
 <section id="data-flow-patterns">
 Data Flow Patterns
 Unidirectional Data Flow
 Data should flow down through props, with changes flowing up through callbacks:
-typescriptfunction ParentComponent() {
+
+```typescript
+function ParentComponent() {
   const [value, setValue] = useState('');
   
   return (
@@ -204,9 +217,12 @@ typescriptfunction ParentComponent() {
     />
   );
 }
+```
 Prop Drilling Avoidance
 Use composition to avoid excessive prop drilling:
-typescript// Instead of drilling props through multiple levels
+
+```typescript
+// Instead of drilling props through multiple levels
 function Toolbar({ onSave, onDelete, onPublish }) {
   return (
     <div>
@@ -229,6 +245,7 @@ function Editor() {
     </Toolbar>
   );
 }
+```
 See data-flow/schema-system.md for detailed data flow guidelines.
 [RULE] Maintain clear, unidirectional data flow throughout the application.
 </section>
@@ -236,7 +253,9 @@ See data-flow/schema-system.md for detailed data flow guidelines.
 State Management Patterns
 Local vs. Global State
 Keep state as local as possible, lifting it only when necessary:
-typescript// Local state for component-specific concerns
+
+```typescript
+// Local state for component-specific concerns
 function Accordion() {
   const [isOpen, setIsOpen] = useState(false);
   // ...
@@ -259,9 +278,12 @@ function Form() {
     </>
   );
 }
+```
 State Derivation
 Derive state from props when possible instead of duplicating:
-typescript// Deriving state from props
+
+```typescript
+// Deriving state from props
 function FilteredList({ items, filter }) {
   // Derive filtered items instead of storing in state
   const filteredItems = useMemo(() => {
@@ -270,6 +292,7 @@ function FilteredList({ items, filter }) {
   
   return <List items={filteredItems} />;
 }
+```
 See data-flow/schema-system.md for state management guidelines.
 [RULE] Keep state as local as possible and derive computed values.
 </section>
@@ -277,7 +300,9 @@ See data-flow/schema-system.md for state management guidelines.
 Optimization Patterns
 Memoization Boundaries
 Use memoization strategically at component boundaries:
-typescript// Memoize expensive component
+
+```typescript
+// Memoize expensive component
 const ExpensiveList = memo(function ExpensiveList({ items }) {
   return (
     <div>
@@ -296,9 +321,13 @@ function Parent() {
   
   return <Child onClick={handleClick} />;
 }
+```
+
 Code-Splitting
 Split code at feature boundaries for optimized loading:
-typescript// Lazy-load feature components
+
+```typescript
+// Lazy-load feature components
 const Settings = lazy(() => import('./pages/Settings'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 
@@ -312,6 +341,7 @@ function App() {
     </Suspense>
   );
 }
+```
 See workflows/performance-optimization.md for detailed optimization strategies.
 [RULE] Apply optimization techniques thoughtfully at appropriate boundaries.
 </section>

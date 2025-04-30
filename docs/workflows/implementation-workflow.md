@@ -37,12 +37,15 @@ export const EntityZodSchema = EntityInputZodSchema.extend({
 
 export type EntityInput = z.infer<typeof EntityInputZodSchema>;
 export type Entity = z.infer<typeof EntityZodSchema>;
+```
 [RULE] Define all required fields with appropriate validations.
 </section>
 <section id="model-implementation">
 2. Create MongoDB Models
 Create MongoDB models in src/lib/data-schema/mongoose-schema/:
-typescript// src/lib/data-schema/mongoose-schema/domain/entity.model.ts
+
+```typescript
+// src/lib/data-schema/mongoose-schema/domain/entity.model.ts
 import mongoose from "mongoose";
 import { EntityZodSchema } from "@/lib/data-schema/zod-schema/domain/entity";
 
@@ -56,12 +59,16 @@ const EntitySchema = new mongoose.Schema(schemaFields, { timestamps: true });
 
 export const EntityModel = mongoose.models.Entity || 
   mongoose.model("Entity", EntitySchema);
+  ```
 [RULE] Ensure model fields match the Zod schema structure.
 </section>
+
 <section id="field-config-implementation">
 3. Define Field Configurations
 Create field configurations in src/lib/ui/forms/fieldConfig/:
-typescript// src/lib/ui/forms/fieldConfig/domain/entity.ts
+
+```typescript
+// src/lib/ui/forms/fieldConfig/domain/entity.ts
 import { Field } from "@/lib/ui/forms/types";
 import { EntityInput } from "@/lib/data-schema/zod-schema/domain/entity";
 
@@ -80,12 +87,16 @@ export const EntityFieldConfig: Field<EntityInput>[] = [
   },
   // Additional fields...
 ];
+```
 [RULE] Define configurations for all fields in the schema.
 </section>
+
 <section id="server-action-implementation">
 4. Implement Server Actions
 Create server actions in src/app/actions/:
-typescript// src/app/actions/domain/entity.ts
+
+```typescript
+// src/app/actions/domain/entity.ts
 "use server";
 
 import { z } from "zod";
@@ -108,14 +119,16 @@ export async function createEntity(data: unknown) {
     return { success: false, error: handleServerError(error) };
   }
 }
-
+```
 // Additional CRUD functions...
 [RULE] Implement validation and error handling for all operations.
 </section>
 <section id="hook-implementation">
 5. Create Data Hooks
 Create custom hooks in src/hooks/:
-typescript// src/hooks/useEntityData.ts
+
+```typescript
+// src/hooks/useEntityData.ts
 import { useState } from "react";
 import { Entity } from "@/lib/data-schema/zod-schema/domain/entity";
 import { useSafeSWR } from "@/hooks/utils/useSafeSWR";
@@ -133,12 +146,15 @@ export function useEntityData() {
     // CRUD operations...
   };
 }
+```
 [RULE] Include proper error handling and loading states.
 </section>
 <section id="component-implementation">
 6. Develop UI Components
 Create domain components in src/components/domain/:
-typescript// src/components/domain/entity/EntityCard.tsx
+
+```typescript
+// src/components/domain/entity/EntityCard.tsx
 import { Card } from "@/components/composed/cards";
 import { Entity } from "@/lib/data-schema/zod-schema/domain/entity";
 
@@ -154,12 +170,15 @@ export function EntityCard({ entity }: EntityCardProps) {
     </Card>
   );
 }
+```
 [RULE] Create components based on the component hierarchy pattern.
 </section>
 <section id="page-implementation">
 7. Create Pages
 Finally, implement pages in src/app/:
-typescript// src/app/dashboard/entityList/page.tsx
+
+```typescript
+// src/app/dashboard/entityList/page.tsx
 import { useEntityData } from "@/hooks/useEntityData";
 import { EntityCard } from "@/components/domain/entity/EntityCard";
 import { PageHeader } from "@/components/shared";
@@ -181,6 +200,8 @@ export default function EntityListPage() {
     </div>
   );
 }
+```
 [RULE] Follow this complete implementation workflow for all new features.
 </section>
+
 </doc>

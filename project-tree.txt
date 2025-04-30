@@ -69,6 +69,8 @@
 │   │   ├── actions
 │   │   │   ├── cycles
 │   │   │   │   └── cycles.ts
+│   │   │   ├── integrations
+│   │   │   │   └── monday.ts
 │   │   │   ├── lookFors
 │   │   │   │   └── lookFors.ts
 │   │   │   ├── nextSteps
@@ -96,6 +98,9 @@
 │   │   │       ├── cycles.ts
 │   │   │       └── visits.ts
 │   │   ├── api
+│   │   │   ├── integrations
+│   │   │   │   └── monday
+│   │   │   │       └── client.ts
 │   │   │   ├── look-fors
 │   │   │   │   └── bulk-upload
 │   │   │   │       └── route.ts
@@ -215,6 +220,8 @@
 │   │       ├── im-routines
 │   │       │   └── page.tsx
 │   │       ├── layout.tsx
+│   │       ├── monday
+│   │       │   └── page.tsx
 │   │       ├── page.tsx
 │   │       ├── rubric-viewer
 │   │       │   └── page.tsx
@@ -267,7 +274,9 @@
 │   │   ├── core
 │   │   │   ├── Button.tsx
 │   │   │   ├── feedback
+│   │   │   │   ├── Alert.tsx
 │   │   │   │   ├── Badge.tsx
+│   │   │   │   ├── Spinner.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── fields
 │   │   │   │   ├── Checkbox.tsx
@@ -307,6 +316,11 @@
 │   │   │   │   ├── renderILCLesson.tsx
 │   │   │   │   └── renderKHLesson.tsx
 │   │   │   ├── lookFors
+│   │   │   ├── monday
+│   │   │   │   ├── BoardFinder.tsx
+│   │   │   │   ├── MondayImportSelector.tsx
+│   │   │   │   ├── MondayItemPreviewCard.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── rubrics
 │   │   │   │   ├── RubricCard.tsx
 │   │   │   │   ├── RubricFilterPanel.tsx
@@ -338,6 +352,15 @@
 │   │   │   │   ├── StaffDetailPage.tsx
 │   │   │   │   ├── StaffListItem.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── things3
+│   │   │   │   ├── ChecklistInput.tsx
+│   │   │   │   ├── GeneratedUrlDisplay.tsx
+│   │   │   │   ├── Notification.tsx
+│   │   │   │   ├── ProjectDetailsForm.tsx
+│   │   │   │   ├── ThingsImporter.tsx
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── thingsDebug.ts
+│   │   │   │   └── thingsUtils.ts
 │   │   │   └── visits
 │   │   ├── error
 │   │   │   ├── ErrorBoundary.tsx
@@ -374,6 +397,7 @@
 │   │   │   └── useRenderTracking.ts
 │   │   ├── domain
 │   │   │   ├── useLookFors.ts
+│   │   │   ├── useMondayImport.ts
 │   │   │   ├── useNYCPSStaff.ts
 │   │   │   ├── useSchools.ts
 │   │   │   └── useTeacherSchedules.ts
@@ -391,6 +415,7 @@
 │   │   │   ├── fetchers
 │   │   │   │   ├── coaching-log.ts
 │   │   │   │   ├── lookFors.ts
+│   │   │   │   ├── monday.ts
 │   │   │   │   ├── schedule.ts
 │   │   │   │   ├── school.ts
 │   │   │   │   └── staff.ts
@@ -399,6 +424,8 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   └── reference-endpoint.ts
 │   │   │   ├── index.ts
+│   │   │   ├── integrations
+│   │   │   │   └── monday-queries.ts
 │   │   │   ├── responses
 │   │   │   │   ├── index.ts
 │   │   │   │   └── standardize.ts
@@ -436,6 +463,8 @@
 │   │   │       │   ├── school.ts
 │   │   │       │   └── staff.ts
 │   │   │       ├── index.ts
+│   │   │       ├── integrations
+│   │   │       │   └── monday.ts
 │   │   │       ├── look-fors
 │   │   │       │   ├── look-for.ts
 │   │   │       │   ├── next-step.ts
@@ -501,12 +530,17 @@
 │   │   │       ├── index.ts
 │   │   │       └── schema-config-check.ts
 │   │   ├── domain
-│   │   │   └── imRoutine
-│   │   │       ├── get-unit-URL.ts
-│   │   │       ├── getUnitURL.ts
-│   │   │       ├── render-ILC-esson.tsx
-│   │   │       ├── render-KH-lesson.tsx
-│   │   │       └── routine-utils.ts
+│   │   │   ├── imRoutine
+│   │   │   │   ├── get-unit-URL.ts
+│   │   │   │   ├── getUnitURL.ts
+│   │   │   │   ├── render-ILC-esson.tsx
+│   │   │   │   ├── render-KH-lesson.tsx
+│   │   │   │   └── routine-utils.ts
+│   │   │   └── monday
+│   │   │       ├── field-mappings.ts
+│   │   │       ├── import-service.ts
+│   │   │       ├── monday-utils.ts
+│   │   │       └── transform-service.ts
 │   │   ├── error
 │   │   │   ├── crud-error-handling.ts
 │   │   │   ├── error-monitor.ts
@@ -540,10 +574,12 @@
 │   │   │   │   ├── cycle.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── look-fors.ts
+│   │   │   │   ├── monday.ts
 │   │   │   │   ├── schedule.ts
 │   │   │   │   ├── school.ts
 │   │   │   │   ├── shared.ts
 │   │   │   │   ├── staff.ts
+│   │   │   │   ├── things3-types.ts
 │   │   │   │   └── visit.ts
 │   │   │   ├── index.ts
 │   │   │   ├── ui
@@ -607,4 +643,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-186 directories, 422 files
+195 directories, 449 files

@@ -19,6 +19,7 @@ This guide provides step-by-step instructions for common development tasks in ou
 To add a new entity to the system (e.g., a new resource type):
 
 1. **Create the Zod Schema**
+
    ```typescript
    // src/lib/data/schemas/domain/entity.ts
    import { z } from "zod";
@@ -38,9 +39,12 @@ To add a new entity to the system (e.g., a new resource type):
    
    export type EntityInput = z.infer<typeof EntityInputZodSchema>;
    export type Entity = z.infer<typeof EntityZodSchema>;
+   ```
 
 Create the MongoDB Model
-typescript// src/models/domain/entity.model.ts
+
+```typescript
+// src/models/domain/entity.model.ts
 import mongoose from "mongoose";
 import { EntityZodSchema } from "@/lib/data/schemas/domain/entity";
 
@@ -54,9 +58,11 @@ const EntitySchema = new mongoose.Schema(schemaFields, { timestamps: true });
 
 export const EntityModel = mongoose.models.Entity || 
   mongoose.model("Entity", EntitySchema);
-
+```
 Create Field Configuration
-typescript// src/lib/data/forms/config/domain/entity.ts
+
+```typescript
+// src/lib/data/forms/config/domain/entity.ts
 import { Field } from "@/lib/data/forms/types";
 import { EntityInput } from "@/lib/data/schemas/domain/entity";
 
@@ -75,9 +81,11 @@ export const EntityFieldConfig: Field<EntityInput>[] = [
   },
   // Additional fields...
 ];
-
+```
 Create API Routes or Server Actions
-typescript// src/app/actions/domain/entity.ts
+
+```typescript
+// src/app/actions/domain/entity.ts
 "use server";
 
 import { z } from "zod";
@@ -100,11 +108,13 @@ export async function createEntity(data: unknown) {
     return { success: false, error: handleServerError(error) };
   }
 }
-
+```
 // Additional CRUD functions...
 
 Implement UI Components
-typescript// src/components/domain/entity/EntityCard.tsx
+
+```typescript
+// src/components/domain/entity/EntityCard.tsx
 import { Card } from "@/components/composed/cards";
 import { Entity } from "@/lib/data/schemas/domain/entity";
 
@@ -120,31 +130,38 @@ export function EntityCard({ entity }: EntityCardProps) {
     </Card>
   );
 }
-
+```
 
 [RULE] Always follow this sequence when adding a new entity.
 </section>
+
 <section id="adding-field">
 Adding a Field to an Existing Entity
 To add a new field to an existing entity:
 
 Update the Zod Schema
-typescript// Update schema with new field
+
+```typescript
+// Update schema with new field
 export const EntityInputZodSchema = z.object({
   name: z.string(),
   description: z.string(),
   newField: z.string().optional(), // Add new field
 });
-
+```
 Update the MongoDB Model
-typescriptconst schemaFields = {
+
+```typescript
+const schemaFields = {
   name: { type: String, required: true },
   description: { type: String, required: true },
   newField: { type: String, required: false }, // Add new field
 };
-
+```
 Update Field Configuration
-typescriptexport const EntityFieldConfig: Field<EntityInput>[] = [
+
+```typescript
+export const EntityFieldConfig: Field<EntityInput>[] = [
   // Existing fields...
   {
     name: "newField",
@@ -153,9 +170,11 @@ typescriptexport const EntityFieldConfig: Field<EntityInput>[] = [
     required: false,
   },
 ];
-
+```
 Update Components (if necessary)
-typescriptexport function EntityCard({ entity }: EntityCardProps) {
+
+```typescript
+export function EntityCard({ entity }: EntityCardProps) {
   return (
     <Card>
       <Card.Header>{entity.name}</Card.Header>
@@ -168,10 +187,11 @@ typescriptexport function EntityCard({ entity }: EntityCardProps) {
     </Card>
   );
 }
-
+```
 
 [RULE] When adding fields, always update the schema first, then flow through to models, configurations, and UI.
 </section>
+
 <section id="creating-component">
 Creating a New Component
 To create a new UI component:
@@ -185,7 +205,9 @@ Feature: Complete feature implementations
 
 
 Create Component File
-typescript// src/components/[type]/ComponentName.tsx
+
+```typescript
+// src/components/[type]/ComponentName.tsx
 import { tv } from "tailwind-variants";
 import { colors, spacing } from "@/lib/ui/tokens";
 // For shared behavior, import specific variants
@@ -218,13 +240,17 @@ export function ComponentName({
     </div>
   );
 }
-
+```
 Create Index Export
-typescript// src/components/[type]/index.ts
-export * from './ComponentName';
 
+```typescript
+// src/components/[type]/index.ts
+export * from './ComponentName';
+```
 Add Component Tests (if applicable)
-typescript// tests/components/[type]/ComponentName.test.tsx
+
+```typescript
+// tests/components/[type]/ComponentName.test.tsx
 import { render, screen } from '@testing-library/react';
 import { ComponentName } from '@/components/[type]/ComponentName';
 
@@ -234,16 +260,19 @@ describe('ComponentName', () => {
     // Assertions
   });
 });
-
+```
 
 [RULE] Follow the component hierarchy and use variants for styling.
 </section>
+
 <section id="data-fetching">
 Implementing Data Fetching
 To create a new data fetching hook:
 
 Create the Hook File
-typescript// src/hooks/useEntityData.ts
+
+```typescript
+// src/hooks/useEntityData.ts
 import { useState } from "react";
 import { Entity } from "@/lib/data/schemas/domain/entity";
 import { useSafeSWR } from "@/hooks/utils/useSafeSWR";
@@ -292,13 +321,16 @@ export function useEntityData() {
     // Other functions...
   };
 }
-
+```
 Export from Index
-typescript// src/hooks/index.ts
-export * from './useEntityData';
 
+```typescript
+// src/hooks/index.ts
+export * from './useEntityData';
+```
 Use in Components
-typescript// src/components/features/EntityList.tsx
+```typescript
+// src/components/features/EntityList.tsx
 import { useEntityData } from "@/hooks";
 
 export function EntityList() {
@@ -315,8 +347,9 @@ export function EntityList() {
     </div>
   );
 }
-
+```
 
 [RULE] All data fetching hooks should handle loading and error states consistently.
 </section>
+
 </doc>

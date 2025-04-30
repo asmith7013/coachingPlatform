@@ -58,6 +58,307 @@ Each component type serves a specific purpose:
 
 </section>
 
+<section id="implementation-standards">
+
+## Implementation Standards
+
+All core components follow these implementation standards to ensure consistency across the codebase.
+
+### Standard Imports
+
+Use consistent import patterns for all components:
+
+```typescript
+// Standard import pattern
+import { cn } from '@ui/utils/formatters';
+import { tv, type VariantProps } from 'tailwind-variants';
+
+// Token imports
+import { textColors, spacing, radii } from '@ui-tokens/tokens';
+
+// Shared variant imports (when needed)
+import { disabledVariant, interactiveVariant } from '@ui-variants/shared-variants';
+Component Structure
+Core components should:
+
+Define variants with Tailwind Variants (tv())
+Export styles for reuse in other components
+Export variant types for TypeScript support
+Use the slot API for components with multiple parts
+Set displayName for React DevTools when:
+
+Using React.forwardRef
+Creating compound components with subcomponents
+Using higher-order components
+(Not strictly necessary for simple named function components)
+
+
+
+typescript// Component structure example
+const component = tv({
+  // Component definition
+});
+
+export const componentStyles = component; // Export for reuse
+export type ComponentVariants = VariantProps<typeof component>; // Export types
+
+export function Component({ /* props */ }) {
+  // Implementation
+}
+
+// Set displayName for forwardRef components or compound components
+Component.displayName = "Component"; // Recommended for complex components
+Variant Naming
+Use consistent naming for component variants:
+
+variant - Primary style variation (primary, secondary, etc.)
+Descriptive names for other properties (size, color, etc.)
+Boolean flags for state variations (disabled, error, etc.)
+
+typescript// Variant naming example
+const component = tv({
+  variants: {
+    variant: { // Primary style variation
+      primary: "...",
+      secondary: "...",
+    },
+    size: { // Secondary property
+      sm: "...",
+      md: "...",
+      lg: "...",
+    },
+    disabled: { // Boolean state
+      true: "...",
+      false: "",
+    },
+  },
+});
+Compound Variants
+For components that need styling based on combinations of variant values:
+typescript// Compound variants example
+const button = tv({
+  // Base and variants...
+  compoundVariants: [
+    {
+      intent: 'primary',
+      appearance: 'solid',
+      className: 'bg-primary text-white border border-transparent',
+    },
+    {
+      intent: 'secondary',
+      appearance: 'outline',
+      className: 'bg-white text-secondary border-2 border-secondary',
+    },
+    // Additional compound variants...
+  ],
+});
+Field Component Pattern
+Field components should:
+
+Use the FieldWrapper component for layout consistency
+Follow a consistent props interface
+Handle errors through the wrapper
+Support consistent size and padding variants
+
+typescriptexport function Field({ 
+  label, 
+  error, 
+  textSize, 
+  padding, 
+  ...props 
+}: FieldProps) {
+  return (
+    <FieldWrapper 
+      id={props.id} 
+      label={label} 
+      error={error}
+      textSize={textSize}
+      padding={padding}
+    >
+      {/* Field-specific implementation */}
+    </FieldWrapper>
+  );
+}
+Compound Component Pattern
+For complex interactive components with multiple parts, use the compound component pattern:
+
+Create a shared context for the component
+Implement sub-components that use this context
+Export the root component with attached sub-components
+
+typescript// Context creation
+const ComponentContext = createContext<ContextType | undefined>(undefined);
+
+// Root component
+const ComponentRoot = ({ children, ...props }) => (
+  <ComponentContext.Provider value={/* context */}>
+    <div>{children}</div>
+  </ComponentContext.Provider>
+);
+
+// Sub-components
+const SubComponent = () => {
+  const context = useContext(ComponentContext);
+  return <div />;
+};
+
+// Export with sub-components attached
+export const Component = Object.assign(ComponentRoot, {
+  SubComponent
+});
+[RULE] Follow these implementation standards for all core components to ensure consistency and maintainability.
+</section>
+
+<section id="example-implementation">
+
+## Example Implementations
+
+These components exemplify our implementation standards in different ways.
+
+### Alert: Compound Component Pattern
+
+The Alert component demonstrates the compound component pattern:
+
+1. **Context Sharing**: Uses Context API to share styles between components
+2. **Subcomponent Structure**: Exports as a unified component with subcomponents
+3. **Proper Slot Usage**: Defines slots for different parts
+
+```typescript
+// Variant definition with slots for different parts
+const alertVariants = tv({
+  slots: {
+    root: "relative w-full flex flex-col...",
+    title: "mb-1 font-medium leading-none...",
+    description: "text-sm [&_p]:leading-relaxed",
+  },
+  variants: {
+    variant: {
+      default: { root: "bg-background text-foreground" },
+      primary: { root: "border-blue-200 bg-blue-50..." },
+      // Other variants...
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
+
+// Context for sharing styles between components
+const AlertContext = createContext<AlertContextType | undefined>(undefined);
+
+// Root component that provides context
+const AlertRoot = React.forwardRef<HTMLDivElement, AlertProps>(
+  ({ className, variant, children, ...props }, ref) => {
+    const styles = alertVariants({ variant });
+    
+    return (
+      <AlertContext.Provider value={{ styles }}>
+        <div
+          ref={ref}
+          role="alert"
+          className={cn(styles.root(), className)}
+          {...props}
+        >
+          {children}
+        </div>
+      </AlertContext.Provider>
+    );
+  }
+);
+
+// Export pattern using Object.assign
+export const Alert = Object.assign(AlertRoot, {
+  Title: AlertTitle,
+  Description: AlertDescription,
+}) as AlertComponent;
+```
+
+Button: Compound Variants Pattern
+The Button component showcases the compound variants approach:
+
+Slots for Component Parts: Defines separate slots for the button, spinner, and content
+Type-Safe Variants: Uses specific types for button properties
+Comprehensive Compound Variants: Combines multiple properties for complex styling
+
+```typescript
+// Define specific types for Button properties
+type ButtonIntent = 'primary' | 'secondary';
+type ButtonAppearance = 'solid' | 'alt' | 'outline';
+// Other type definitions...
+
+const button = tv({
+  slots: {
+    base: 'inline-flex items-center justify-center font-semibold transition-colors focus:outline-none cursor-pointer',
+    spinner: 'h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent',
+    content: '',
+  },
+  variants: {
+    intent: {
+      primary: '',
+      secondary: '',
+    },
+    appearance: {
+      solid: '',
+      alt: '',
+      outline: '',
+    },
+    // Other variant properties...
+  },
+  compoundVariants: [
+    // Primary Intents
+    {
+      intent: 'primary',
+      appearance: 'solid',
+      className: 'bg-primary text-white border border-transparent hover:bg-primary-600',
+    },
+    {
+      intent: 'primary',
+      appearance: 'alt',
+      className: 'bg-primary-800 text-white border border-transparent hover:bg-primary-700',
+    },
+    // Additional compound variants...
+  ],
+  defaultVariants: {
+    intent: 'primary',
+    appearance: 'solid',
+    // Other defaults...
+  },
+});
+
+// Component implementation using the slots
+export const Button = ({
+  intent,
+  appearance,
+  // Other props...
+}: ButtonProps) => {
+  const { base, spinner, content } = button({
+    intent,
+    appearance,
+    // Other properties...
+  });
+
+  return (
+    <button
+      className={cn(base(), className)}
+      disabled={disabled || loading}
+      aria-busy={loading}
+      {...props}
+    >
+      {loading ? (
+        <div className="flex items-center justify-center space-x-2">
+          <div className={spinner()} />
+          <span className="invisible">{children}</span>
+        </div>
+      ) : (
+        <span className={content()}>{children}</span>
+      )}
+    </button>
+  );
+};
+```
+[RULE] Use these patterns for implementing complex components with multiple parts or styling combinations.
+</section>
+
 <section id="styling-approach">
 
 ## Styling Approach
@@ -83,9 +384,12 @@ function Alert() {
     </div>
   );
 }
+```
 Component-Specific Variants
 For component-level styling variations, use Tailwind Variants:
-typescriptconst button = tv({
+
+```typescript
+const button = tv({
   base: "inline-flex items-center justify-center",
   variants: {
     variant: {
@@ -102,9 +406,13 @@ typescriptconst button = tv({
     size: "md"
   }
 });
+```
+
 Shared Behavior Variants
 For common UI behaviors that appear across many components, use shared variants:
-typescriptimport { disabledVariant, loadingVariant } from '@/lib/ui/variants';
+
+```typescript
+import { disabledVariant, loadingVariant } from '@/lib/ui/variants';
 
 const myComponent = tv({
   // ...
@@ -117,8 +425,10 @@ const myComponent = tv({
     // ...
   }
 });
+```
 [RULE] Use tokens directly in atomic components, component-specific variants for styling variations, and shared variants for common behaviors.
 </section>
+
 <section id="component-tokens">
 Design System Tokens
 Our design system provides tokens for:
@@ -129,7 +439,8 @@ Colors: Semantic color mapping
 Shapes: Border radius and shadows
 Layout: Grid and flex utilities
 
-typescript// Token imports
+```typescript
+// Token imports
 import { 
   textSize, 
   textColors, 
@@ -138,8 +449,10 @@ import {
   paddingY,
   radii
 } from '@/lib/ui/tokens';
+```
 [RULE] Always import tokens directly from their respective files, not through intermediate helpers.
 </section>
+
 <section id="atomic-vs-shared">
 Atomic Components vs Shared Variants
 Our system uses a hybrid approach:
@@ -150,7 +463,8 @@ Use tokens directly for predictable rendering
 Define component-specific variants
 Handle internal state and interactions
 
-typescript// Example atomic component
+```typescript
+// Example atomic component
 function Button({ variant, size, disabled, ...props }) {
   return (
     <button 
@@ -170,13 +484,15 @@ const buttonStyles = tv({
     disabled: disabledVariant.variants.disabled
   }
 });
+```
 Shared Variants
 
 Used for one-off styling needs
 Provide common UI behaviors (disabled, loading, error states)
 Used directly in JSX for quick styling
 
-tsx// Example one-off styling
+```tsx
+// Example one-off styling
 import { flexVariant, disabledVariant } from '@/lib/ui/variants';
 
 <div className={cn(
@@ -190,7 +506,8 @@ import { flexVariant, disabledVariant } from '@/lib/ui/variants';
 <section id="component-form">
 Form Components
 Form components use the schema-driven approach:
-typescript// ResourceForm.tsx
+typescript
+// ResourceForm.tsx
 export function ResourceForm<T extends Record<string, unknown>>({
   title,
   fields,
@@ -206,8 +523,11 @@ export function ResourceForm<T extends Record<string, unknown>>({
     </form>
   );
 }
+```
+
 [RULE] Use the ResourceForm component for all resource creation and editing.
 </section>
+
 <section id="component-compound">
 
 ## Compound Component Pattern
@@ -263,7 +583,9 @@ export const Card = Object.assign(CardRoot, {
 ```
 Usage Pattern
 This pattern creates a more natural composition in JSX:
-tsx<Card padding="lg" variant="white">
+
+```typescript
+<Card padding="lg" variant="white">
   <Card.Header>Card Title</Card.Header>
   <Card.Body>
     <p>Main content goes here</p>
@@ -272,9 +594,12 @@ tsx<Card padding="lg" variant="white">
     <Button>Action</Button>
   </Card.Footer>
 </Card>
+```
 Backwards Compatibility
 For backwards compatibility, include a Legacy property that implements the previous props-based approach:
-typescript// For backwards compatibility
+
+```typescript
+// For backwards compatibility
 const LegacyCard = ({
   header,
   footer,
@@ -291,9 +616,9 @@ const LegacyCard = ({
     </div>
   );
 };
-```
-Card.Legacy = LegacyCard;
 
+Card.Legacy = LegacyCard;
+```
 When To Use
 Use the compound component pattern for:
 
@@ -304,10 +629,13 @@ Components that benefit from a more declarative API
 
 [RULE] All complex interactive components should implement the compound component pattern with Context API for state sharing.
 </section>
+
 <section id="component-error-display">
 Error Display
 Components should display errors in a consistent manner:
-tsx// Form field error
+
+```tsx
+// Form field error
 {error && (
   <div className={cn(textColors.danger, "text-sm mt-1")}>
     {error}
@@ -321,6 +649,8 @@ tsx// Form field error
     <AlertDescription>{error}</AlertDescription>
   </Alert>
 )}
+```
 [RULE] Always display errors using the appropriate error component.
 </section>
+
 </doc>

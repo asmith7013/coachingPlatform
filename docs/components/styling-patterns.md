@@ -1,10 +1,13 @@
 <doc id="styling-patterns">
+
 Component Styling Patterns
+
 <section id="styling-overview">
 Overview
 This guide explains our approach to styling components using the token system. For detailed information about our token architecture, refer to the Design Token System documentation.
 [RULE] Always use the appropriate styling approach based on the component type and usage context.
 </section>
+
 <section id="core-principles">
 Core Principles
 Our styling system is based on three key concepts:
@@ -16,11 +19,13 @@ Shared Behavior Variants: Common UI behaviors (disabled, loading, etc.) reused a
 This separation ensures consistency while maintaining flexibility across the application.
 [RULE] Understand the difference between tokens (primitive values) and variants (reusable patterns).
 </section>
+
 <section id="when-to-use-tokens">
 Using Design Tokens
 For detailed token usage guidelines, refer to the Design Token System documentation.
 [RULE] Always import tokens directly from their respective modules, not through intermediate helpers.
 </section>
+
 <section id="best-practices">
 Best Practices
 
@@ -32,9 +37,12 @@ Documentation: Document component variants in component files
 This hybrid approach balances consistency with flexibility while avoiding duplication.
 [RULE] Follow these best practices to maintain a clean, maintainable styling system.
 </section>
+
 <section id="example-implementation">
 Example Implementation
-tsx// Button.tsx - An atomic component
+
+```tsx
+// Button.tsx - An atomic component
 import { cn } from '@ui/utils/formatters';;
 import { tv } from 'tailwind-variants';
 import { textColors, radii } from '@/lib/ui/tokens';
@@ -88,6 +96,8 @@ export function Button({
     </button>
   );
 }
+```
 [RULE] Use this pattern as a reference for implementing components in the system.
 </section>
+
 </doc>

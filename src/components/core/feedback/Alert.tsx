@@ -6,7 +6,8 @@ import { cn } from '@ui/utils/formatters';
 // Define alert variants using the token-first approach
 const alertVariants = tv({
   slots: {
-    root: "relative flex w-full rounded-lg border p-4",
+    // root: "relative flex w-full rounded-lg border p-4",
+    root: "relative w-full flex flex-col sm:flex-row items-start sm:items-center rounded-lg border p-4 gap-1 sm:gap-2",
     title: "mb-1 font-medium leading-none tracking-tight",
     description: "text-sm [&_p]:leading-relaxed",
   },

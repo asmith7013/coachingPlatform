@@ -9,7 +9,11 @@ import { Spinner } from '@/components/core/feedback/Spinner';
 import { getBoard, testConnection } from '@/app/actions/integrations/monday';
 import { MondayBoard, MondayItem } from '@/lib/types/domain/monday';
 
-export function BoardFinder() {
+interface BoardFinderProps {
+  onBoardSelect?: (board: { id: string; name: string }) => void;
+}
+
+export function BoardFinder({ onBoardSelect }: BoardFinderProps) {
   const [boardId, setBoardId] = useState<string>('');
   const [board, setBoard] = useState<MondayBoard | null>(null);
   const [items, setItems] = useState<MondayItem[]>([]);
@@ -33,6 +37,14 @@ export function BoardFinder() {
       if (result.success && result.data) {
         setBoard(result.data);
         setItems(result.data.items_page?.items || []);
+        
+        // Notify parent about selected board
+        if (onBoardSelect) {
+          onBoardSelect({
+            id: result.data.id,
+            name: result.data.name
+          });
+        }
       } else {
         setError(result.error || "Failed to fetch board");
         setBoard(null);
@@ -151,91 +163,93 @@ export function BoardFinder() {
             <div className="space-y-4">
               <Alert variant="success">
                 <Alert.Title>Board Found!</Alert.Title>
-                <Alert.Description>Successfully retrieved board details.</Alert.Description>
+                <Alert.Description>
+                  Successfully retrieved board details.
+                  {onBoardSelect && (
+                    <span className="block mt-2 text-sm">
+                      This board has been selected for import.
+                    </span>
+                  )}
+                </Alert.Description>
               </Alert>
               
-              <div className="bg-gray-50 p-4 rounded-md">
-                <h3 className="text-lg font-medium mb-1">{board.name}</h3>
-                
-                {board.workspace && (
-                  <div className="text-sm text-gray-500 mb-2">
-                    Workspace: {board.workspace.name}
-                  </div>
-                )}
-                
-                <div className="text-xs text-gray-400 mb-4">
-                  ID: {board.id}
-                </div>
-                
-                {board.description && (
-                  <div className="mb-4">
-                    <h4 className="font-medium mb-1">Description:</h4>
-                    <p className="text-sm">{board.description}</p>
-                  </div>
-                )}
-                
-                {/* Columns */}
-                <div className="mb-4">
-                  <h4 className="font-medium mb-2">Columns ({board.columns.length}):</h4>
+              {!onBoardSelect && (
+                <div className="bg-gray-50 p-4 rounded-md">
+                  <h3 className="text-lg font-medium mb-1">{board.name}</h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                    {board.columns.map(column => (
-                      <div key={column.id} className="bg-white p-2 rounded border">
-                        <div className="font-medium truncate">{column.title}</div>
-                        <div className="text-xs text-gray-500">ID: {column.id}</div>
-                        <div className="text-xs text-gray-500">Type: {column.type}</div>
-                      </div>
-                    ))}
+                  {board.workspace && (
+                    <div className="text-sm text-gray-500 mb-2">
+                      Workspace: {board.workspace.name}
+                    </div>
+                  )}
+                  
+                  <div className="text-xs text-gray-400 mb-4">
+                    ID: {board.id}
                   </div>
-                </div>
-                
-                {/* Items */}
-                {items.length > 0 ? (
-                  <div>
-                    <h4 className="font-medium mb-2">Items ({items.length}):</h4>
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full border-collapse">
-                        <thead>
-                          <tr className="bg-gray-100">
-                            <th className="p-2 border text-left">Name</th>
-                            {board.columns.slice(0, 5).map(column => (
-                              <th key={column.id} className="p-2 border text-left">
-                                {column.title}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {items.map(item => (
-                            <tr key={item.id} className="hover:bg-gray-50">
-                              <td className="p-2 border">{item.name}</td>
-                              {board.columns.slice(0, 5).map(column => {
-                                const columnValue = item.column_values.find(cv => cv.id === column.id);
-                                return (
-                                  <td key={column.id} className="p-2 border">
-                                    {columnValue?.text || '—'}
-                                  </td>
-                                );
-                              })}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                  
+                  {board.description && (
+                    <div className="mb-4">
+                      <h4 className="font-medium mb-1">Description:</h4>
+                      <p className="text-sm">{board.description}</p>
+                    </div>
+                  )}
+                  
+                  {/* Columns */}
+                  <div className="mb-4">
+                    <h4 className="font-medium mb-2">Columns ({board.columns.length}):</h4>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                      {board.columns.map(column => (
+                        <div key={column.id} className="bg-white p-2 rounded border">
+                          <div className="font-medium truncate">{column.title}</div>
+                          <div className="text-xs text-gray-500">ID: {column.id}</div>
+                          <div className="text-xs text-gray-500">Type: {column.type}</div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ) : (
-                  <div className="text-center p-4 bg-gray-100 rounded">
-                    No items found on this board.
-                  </div>
-                )}
-                
-                {/* Display cursor if available (for debugging) */}
-                {board.items_page?.cursor && (
-                  <div className="mt-4 text-xs text-gray-500">
-                    <p>Pagination cursor available. In a full implementation, this could be used to load more items.</p>
-                  </div>
-                )}
-              </div>
+                  
+                  {/* Items */}
+                  {items.length > 0 ? (
+                    <div>
+                      <h4 className="font-medium mb-2">Items ({items.length}):</h4>
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full border-collapse">
+                          <thead>
+                            <tr className="bg-gray-100">
+                              <th className="p-2 border text-left">Name</th>
+                              {board.columns.slice(0, 5).map(column => (
+                                <th key={column.id} className="p-2 border text-left">
+                                  {column.title}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {items.map(item => (
+                              <tr key={item.id} className="hover:bg-gray-50">
+                                <td className="p-2 border">{item.name}</td>
+                                {board.columns.slice(0, 5).map(column => {
+                                  const columnValue = item.column_values.find(cv => cv.id === column.id);
+                                  return (
+                                    <td key={column.id} className="p-2 border">
+                                      {columnValue?.text || '—'}
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center p-4 bg-gray-100 rounded">
+                      No items found on this board.
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

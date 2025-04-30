@@ -76,9 +76,13 @@ try {
   const errorMessage = handleClientError(error, "ComponentName");
   // Display error to user
 }
+```
+
 handleServerError
 Used in API routes, server actions, and other server-side code:
-typescriptimport { handleServerError } from "@/lib/error";
+
+```typescript
+import { handleServerError } from "@/lib/error";
 
 try {
   // Server-side operation
@@ -89,9 +93,13 @@ try {
     error: handleServerError(error)
   });
 }
+```
+
 handleValidationError
 Specifically for Zod validation errors:
-typescriptimport { handleValidationError } from "@/lib/error";
+
+```tsx
+import { handleValidationError } from "@/lib/error";
 import { z } from "zod";
 
 try {
@@ -105,9 +113,13 @@ try {
     });
   }
 }
+```
+
 handleCrudError
 For standardized error handling in CRUD operations:
-typescriptimport { handleCrudError } from "@/lib/error";
+
+```typescript
+import { handleCrudError } from "@/lib/error";
 
 try {
   // CRUD operation
@@ -115,12 +127,16 @@ try {
   // Returns standardized error response
   return handleCrudError(error, "createEntity");
 }
+```
 [RULE] Validation errors should always be handled separately from general server errors.
 </section>
+
 <section id="error-boundaries">
 Error Boundaries
 For React component error handling, use the ErrorBoundary component:
-tsximport { ErrorBoundary } from "@/components/error";
+
+```tsx
+import { ErrorBoundary } from "@/components/error";
 
 function MyComponent() {
   return (
@@ -129,8 +145,11 @@ function MyComponent() {
     </ErrorBoundary>
   );
 }
+```
 The SentryBoundaryWrapper provides integration with Sentry error monitoring:
-tsximport SentryBoundaryWrapper from "@/components/error/SentryBoundaryWrapper";
+
+```tsx
+import SentryBoundaryWrapper from "@/components/error/SentryBoundaryWrapper";
 
 function MyPage() {
   return (
@@ -139,12 +158,16 @@ function MyPage() {
     </SentryBoundaryWrapper>
   );
 }
+```
 [RULE] Use ErrorBoundary components to catch and handle errors in React component trees.
 </section>
+
 <section id="error-monitoring">
 Error Monitoring
 The system includes comprehensive error monitoring through the error-monitor.ts module:
-typescriptimport { captureError, createErrorContext } from "@/lib/error";
+
+```typescript
+import { captureError, createErrorContext } from "@/lib/error";
 
 // Capture an error with context
 captureError(error, {
@@ -159,6 +182,8 @@ const context = createErrorContext("UserProfile", "updateUser", {
   metadata: { userId: "123" }
 });
 captureError(error, context);
+```
+
 Additional monitoring utilities include:
 
 withErrorMonitoring - Higher-order function for automatic error capturing
@@ -168,6 +193,7 @@ createMonitoredErrorResponse - Create error responses with monitoring
 
 [RULE] Use error monitoring utilities to capture detailed error information for debugging.
 </section>
+
 <section id="error-data-integration">
 
 ## Error Integration with Data Flow
@@ -224,7 +250,9 @@ This layered approach ensures that errors are handled appropriately at each leve
 <section id="error-display">
 Error Display
 Errors should be displayed to users in a consistent manner:
-tsx// Form field error
+
+```tsx
+// Form field error
 {error && (
   <div className="text-sm text-red-500 mt-1">
     {error}
@@ -238,12 +266,15 @@ tsx// Form field error
     <AlertDescription>{error}</AlertDescription>
   </Alert>
 )}
+```
 [RULE] Always provide users with clear error messages that suggest next steps when possible.
 </section>
 <section id="error-hooks">
 Error Handling Hooks
 Our system provides specialized hooks to streamline error handling:
-typescriptimport { useErrorHandledMutation } from "@/hooks/utils/useErrorHandledMutation";
+
+```typescript
+import { useErrorHandledMutation } from "@/hooks/utils/useErrorHandledMutation";
 
 const { mutate, isLoading, error } = useErrorHandledMutation(
   async (data) => {
@@ -256,6 +287,7 @@ const { mutate, isLoading, error } = useErrorHandledMutation(
   },
   { errorContext: "ResourceCreation" }
 );
+```
 [RULE] Always use the error-handling hooks instead of raw fetch or SWR when fetching data.
 </section>
 

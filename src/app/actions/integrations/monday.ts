@@ -3,7 +3,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { mondayClient } from "@/app/api/integrations/monday/client";
+import { mondayClient, fetchMondayItems, fetchMondayItemById } from "@/app/api/integrations/monday/client";
 import { ITEMS_QUERY, BOARD_WITH_ITEMS_QUERY } from "@/lib/api/integrations/monday-queries";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
 import { SchoolModel } from "@mongoose-schema/core/school.model";
@@ -19,6 +19,8 @@ import {
   MondayResponse,
   MondayBoard
 } from "@/lib/types/domain/monday";
+import { transformMondayItemToVisit } from "@/lib/domain/monday/transform-service";
+import { shouldImportItemWithStatus } from "@/lib/domain/monday/monday-utils";
 
 // Map Monday.com column IDs to their meanings
 const COLUMN_IDS = {
@@ -27,6 +29,16 @@ const COLUMN_IDS = {
   SCHOOL_NAME: "text0",
   SITE_ADDRESS: "text",
   MODE_DONE: "status"
+};
+
+export type ImportPreview = {
+  original: Record<string, unknown>;
+  transformed: Record<string, unknown>;
+  valid: boolean;
+  existingItem?: Record<string, unknown>;
+  isDuplicate: boolean;
+  missingRequired: string[];
+  errors: Record<string, string>;
 };
 
 export async function importVisitsFromMonday(boardId: string) {
@@ -224,4 +236,94 @@ export async function testConnection(): Promise<ApiResponse<{ name: string; emai
       error: error instanceof Error ? error.message : "Unknown error"
     };
   }
+}
+
+/**
+ * Find potential visits to import from a Monday.com board
+ */
+export async function findPotentialVisitsToImport(boardId: string): Promise<ImportPreview[]> {
+  try {
+    const mondayItems = await fetchMondayItems(boardId);
+    const previews: ImportPreview[] = [];
+    
+    await withDbConnection(async () => {
+      for (const item of mondayItems) {
+        // Skip items that don't have statuses we want to import
+        if (!shouldImportItemWithStatus(item.state)) {
+          continue;
+        }
+        
+        // Check if already imported by mondayItemId
+        const existingVisit = await VisitModel.findOne({ mondayItemId: item.id });
+        
+        // Transform the item
+        const { transformed, valid, missingRequired, errors } = 
+          await transformMondayItemToVisit(item);
+        
+        // Add to preview list
+        previews.push({
+          original: item,
+          transformed,
+          valid,
+          existingItem: existingVisit?.toObject() || undefined,
+          isDuplicate: !!existingVisit,
+          missingRequired,
+          errors
+        });
+      }
+    });
+    
+    return previews;
+  } catch (error) {
+    console.error("Error finding potential visits to import:", error);
+    throw handleServerError(error);
+  }
+}
+
+/**
+ * Import selected visits from Monday.com
+ */
+export async function importSelectedVisits(selectedItemIds: string[]): Promise<{
+  success: boolean;
+  imported: number;
+  errors: Record<string, string>;
+}> {
+  const errors: Record<string, string> = {};
+  let imported = 0;
+  
+  await withDbConnection(async () => {
+    for (const itemId of selectedItemIds) {
+      try {
+        // Get the Monday item
+        const item = await fetchMondayItemById(itemId);
+        
+        // Transform to Visit
+        const { transformed, valid } = await transformMondayItemToVisit(item);
+        
+        if (!valid) {
+          errors[itemId] = "Invalid item data";
+          continue;
+        }
+        
+        // Create the Visit in MongoDB
+        await VisitModel.create(transformed);
+        imported++;
+      } catch (error) {
+        if (error instanceof Error) {
+          errors[itemId] = error.message;
+        } else {
+          errors[itemId] = 'Unknown error occurred';
+        }
+      }
+    }
+  });
+  
+  // Revalidate paths
+  revalidatePath("/dashboard/visits");
+  
+  return {
+    success: imported > 0,
+    imported,
+    errors
+  };
 }

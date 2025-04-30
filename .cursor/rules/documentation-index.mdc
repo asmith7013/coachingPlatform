@@ -58,10 +58,5 @@ The documentation is organized into several key areas:
 @file:docs/workflows/development-workflow.md
 @file:docs/workflows/hook-development.md
 
-### Example Documentation
-@file:docs/examples/component-examples.md
-@file:docs/examples/prompt-examples.md
-@file:docs/examples/schema-examples.md
-
 ### General Guidelines
 @file:docs/token-system-guidelines.md 

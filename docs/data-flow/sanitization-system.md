@@ -26,6 +26,8 @@ const safeDoc = sanitizeDocument(mongooseDoc, MyZodSchema);
 
 // Sanitize an array of documents
 const safeDocs = sanitizeDocuments(mongooseDocs);
+```
+
 The sanitization process:
 
 Converts MongoDB ObjectIds to strings
@@ -34,7 +36,9 @@ Adds an id field that mirrors the _id field
 Validates the output against the provided Zod schema
 
 Filter Sanitization
-typescriptimport { sanitizeFilters } from "@/lib/utils/server/sanitizeFilters";
+
+```typescript
+import { sanitizeFilters } from "@/lib/utils/server/sanitizeFilters";
 
 // Clean up user-provided filter values before using in MongoDB queries
 const safeFilters = sanitizeFilters({
@@ -43,6 +47,8 @@ const safeFilters = sanitizeFilters({
   // Empty strings and arrays will be removed
   emptyValue: ""
 });
+```
+
 The filter sanitization removes:
 
 Empty strings
@@ -58,10 +64,13 @@ sanitizeSortBy: Ensures sort field is valid and not a direction term
 
 [RULE] Always validate and sanitize user-provided query parameters before using them in database operations.
 </section>
+
 <section id="deep-sanitize">
 Deep Sanitization
 For complex nested objects, the deepSanitize function recursively processes the entire object tree:
-typescriptfunction deepSanitize(value: unknown): unknown {
+
+```typescript
+function deepSanitize(value: unknown): unknown {
   if (Array.isArray(value)) {
     return value.map(deepSanitize);
   }
@@ -76,6 +85,7 @@ typescriptfunction deepSanitize(value: unknown): unknown {
   }
   return value;
 }
+```
 This function handles:
 
 Arrays of objects
@@ -85,10 +95,13 @@ Mixed data types
 
 [RULE] Use deep sanitization for complex data structures with unpredictable nesting.
 </section>
+
 <section id="safe-parsing">
 Safe Parsing
 In addition to sanitization, our system includes safe parsing utilities that combine validation and error handling:
-typescriptimport { 
+
+```typescript
+import { 
   safeParseAndLog,
   parseOrThrow,
   parsePartialOrThrow
@@ -102,6 +115,9 @@ const result = parseOrThrow(MyZodSchema, data);
 
 // Parse partial data (for updates) and throw if validation fails
 const result = parsePartialOrThrow(MyZodSchema, partialData);
+```
+
 [RULE] Use the appropriate parsing function based on the error handling requirements of your context.
 </section>
+
 </doc>

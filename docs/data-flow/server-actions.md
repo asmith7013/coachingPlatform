@@ -52,6 +52,7 @@ export async function createSchool(data: unknown) {
     return { success: false, error: handleServerError(error, "Failed to create school") };
   }
 }
+```
 Key components:
 
 'use server' directive at the top of the file
@@ -63,6 +64,7 @@ Consistent response format
 
 [RULE] Follow the standard pattern for all Server Actions.
 </section>
+
 <section id="standardized-action-patterns">
 
 ## Standardized Action Patterns
@@ -110,7 +112,8 @@ export async function fetchRubricScoresByStaff(staffId: string) {
       // Error handling...
     }
   });
-}```
+}
+```
 
 This pattern:
 
@@ -122,6 +125,7 @@ Provides consistent response formats
 
 [RULE] Use the standardized action pattern for all server actions to ensure consistency and maintainability.
 </section>
+
 <section id="server-actions-organization">
 Organization
 Server Actions are organized by domain in the src/app/actions/ directory:
@@ -139,10 +143,13 @@ export async function updateSchool(id: string, data: unknown) { /* ... */ }
 export async function deleteSchool(id: string) { /* ... */ }
 [RULE] Organize Server Actions by domain and group related actions together.
 </section>
+
 <section id="server-actions-usage">
 Client-Side Usage
 Server Actions can be used directly in client components:
-tsx'use client'
+
+```tsx
+'use client'
 
 import { createSchool } from "@/app/actions/schools/schools";
 
@@ -163,8 +170,11 @@ export function SchoolForm() {
     </form>
   );
 }
+```
 For more complex interactions, use the useErrorHandledMutation hook:
-tsx'use client'
+
+```tsx
+'use client'
 
 import { createSchool } from "@/app/actions/schools/schools";
 import { useErrorHandledMutation } from "@/hooks/utils/useErrorHandledMutation";
@@ -188,8 +198,10 @@ export function SchoolForm() {
     </form>
   );
 }
+```
 [RULE] Use the form action attribute for simple cases and useErrorHandledMutation for complex interactions.
 </section>
+
 <section id="server-actions-vs-api">
 Server Actions vs. API Routes
 When to use Server Actions:
@@ -208,6 +220,7 @@ Endpoints that need to be called from multiple places
 
 [RULE] Choose the appropriate approach based on the operation's requirements.
 </section>
+
 <section id="server-actions-security">
 Security Considerations
 Server Actions automatically handle CSRF protection, but additional security measures should be implemented:
@@ -217,7 +230,8 @@ Authentication: Verify user credentials and permissions
 Rate Limiting: Implement rate limiting for public-facing actions
 Error Handling: Don't expose sensitive information in error messages
 
-typescriptexport async function updateSchool(id: string, data: unknown) {
+```typescript
+export async function updateSchool(id: string, data: unknown) {
   // Get the current user
   const session = await getSession();
   
@@ -232,6 +246,7 @@ typescriptexport async function updateSchool(id: string, data: unknown) {
   // Proceed with operation
   // ...
 }
+```
 [RULE] Implement appropriate security measures for all Server Actions.
 </section>
 </doc>
