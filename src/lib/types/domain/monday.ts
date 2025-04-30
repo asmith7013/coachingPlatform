@@ -19,7 +19,6 @@ export interface MondayBoard {
   
   export interface MondayColumnValue {
     id: string;
-    title: string;
     text: string | null;
     value: string | null; // JSON string for complex values
   }

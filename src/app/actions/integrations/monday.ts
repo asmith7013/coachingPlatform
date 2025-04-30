@@ -28,7 +28,9 @@ interface MondayItem {
 }
 
 interface MondayBoard {
-  items: MondayItem[];
+  items_page: {
+    items: MondayItem[];
+  };
 }
 
 interface MondayResponse {
@@ -54,7 +56,7 @@ export async function importVisitsFromMonday(boardId: string) {
         return { success: false, error: "Board not found" };
       }
       
-      const items = response.boards[0].items;
+      const items = response.boards[0].items_page.items;
       
       const results = {
         total: items.length,
