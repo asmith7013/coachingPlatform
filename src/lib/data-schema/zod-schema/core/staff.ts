@@ -10,6 +10,19 @@ import {
 } from "@enums";
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 
+// Create Monday.com User Schema
+export const MondayUserZodSchema = z.object({
+  mondayId: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+  title: z.string().optional(),
+  isVerified: z.boolean().optional(),
+  isConnected: z.boolean().default(true),
+  lastSynced: z.union([z.string(), z.date()]).optional()
+  // z.string().optional()
+  
+});
+
 // ✅ Experience Schema
 export const ExperienceZodSchema = z.object({
   type: z.string(),
@@ -19,9 +32,10 @@ export const ExperienceZodSchema = z.object({
 // ✅ Base StaffMember Input Schema
 export const StaffMemberInputZodSchema = z.object({
   staffName: z.string(),
-  email: z.string().email().optional(),
-  schools: z.array(z.string()), // Array of school IDs
-  owners: z.array(z.string()), // Owner IDs
+  email: z.string().email(),
+  schools: z.array(z.string()).optional(), // Array of school IDs
+  owners: z.array(z.string()).optional(), // Owner IDs
+  mondayUser: MondayUserZodSchema.optional(), // Add Monday.com user info
 });
 
 // ✅ Base StaffMember Full Schema
@@ -53,8 +67,8 @@ export const NYCPSStaffZodSchema = NYCPSStaffInputZodSchema.extend({
 
 // ✅ Teaching Lab Staff Input Schema
 export const TeachingLabStaffInputZodSchema = StaffMemberInputZodSchema.extend({
-  adminLevel: AdminLevelZod,
-  assignedDistricts: z.array(z.string()),
+  adminLevel: AdminLevelZod.optional(),
+  assignedDistricts: z.array(z.string()).optional(),
   rolesTL: z.array(RolesTLZod).optional(),
 });
 
@@ -74,3 +88,4 @@ export type NYCPSStaff = z.infer<typeof NYCPSStaffZodSchema>;
 export type TeachingLabStaffInput = z.infer<typeof TeachingLabStaffInputZodSchema>;
 export type TeachingLabStaff = z.infer<typeof TeachingLabStaffZodSchema>;
 export type Experience = z.infer<typeof ExperienceZodSchema>;
+export type MondayUser = z.infer<typeof MondayUserZodSchema>;

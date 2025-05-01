@@ -54,8 +54,8 @@ export class Visit {
   @prop({ required: true })
   coach!: string;
 
-  @prop({ required: true })
-  cycleRef!: string;
+  @prop({ type: String })
+  cycleRef?: string;
 
   @prop({ 
     type: String,
@@ -96,7 +96,7 @@ export class Visit {
   mondayItemName?: string;
 
   @prop()
-  mondayLastSyncedAt?: Date;
+  mondayLastSyncedAt?: string;
 
   // Additional fields from Monday data
   @prop()

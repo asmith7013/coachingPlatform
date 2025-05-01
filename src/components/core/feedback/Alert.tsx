@@ -16,65 +16,66 @@ type AlertContextType = {
  * Leverages responsiveLayoutVariant for consistent responsive behavior.
  */
 const alertVariants = tv({
-  slots: {
-    // Use the responsive layout slot for the root, with additional styling
-    root: `relative w-full ${radii.lg} ${borderWidths.sm} p-4`,
-    // Use the responsive title styling
-    title: `${textSize.base} font-medium leading-none tracking-tight`,
-    // Use the responsive content styling
-    description: `${textSize.sm} [&_p]:leading-relaxed`,
-  },
-  variants: {
-    variant: {
-      default: { 
-        root: `${backgroundColors.default} ${textColors.default} ${borderColors.default}`,
-        title: textColors.default,
-        description: textColors.muted
+    slots: {
+      // Use the responsive layout slot for the root, with additional styling
+      root: `relative w-full ${radii.lg} ${borderWidths.sm} p-4`,
+      // Use the responsive title styling
+      title: `${textSize.base} font-bold leading-none tracking-tight`,
+      // Use the responsive content styling
+      description: `${textSize.sm} [&_p]:leading-relaxed`,
+    },
+    variants: {
+      intent: {
+        primary: { 
+          root: `${borderColors.primary} ${backgroundColors.primary} ${textColors.default}`,
+          title: textColors.default,
+          description: textColors.muted
+        },
+        success: { 
+          root: `border-2 ${borderColors.success} ${backgroundColors.light.success} ${textColors.default}`,
+          title: textColors.success,
+          description: textColors.success 
+        },
+        warning: { 
+          root: `${borderColors.danger} ${backgroundColors.danger} ${textColors.default}`,
+          title: textColors.default,
+          description: textColors.muted
+        },
+        error: { 
+          root: `${borderColors.danger} ${backgroundColors.danger} ${textColors.default}`,
+          title: textColors.default,
+          description: textColors.muted
+        },
+        info: { 
+          root: `${borderColors.primary} ${backgroundColors.primary} ${textColors.default}`,
+          title: textColors.default,
+          description: textColors.muted
+        },
       },
-      primary: { 
-        root: `${borderColors.primary} ${backgroundColors.primary} ${textColors.default}`,
-        title: textColors.default,
-        description: textColors.muted
+      appearance: {
+        solid: '',
+        alt: '',
+        outline: '',
       },
-      success: { 
-        root: `${borderColors.success} ${backgroundColors.light.success} ${textColors.default}`,
-        title: textColors.default,
-        description: textColors.muted 
-      },
-      warning: { 
-        root: `${borderColors.danger} ${backgroundColors.danger} ${textColors.default}`,
-        title: textColors.default,
-        description: textColors.muted
-      },
-      error: { 
-        root: `${borderColors.danger} ${backgroundColors.danger} ${textColors.default}`,
-        title: textColors.default,
-        description: textColors.muted
-      },
-      info: { 
-        root: `${borderColors.primary} ${backgroundColors.primary} ${textColors.default}`,
-        title: textColors.default,
-        description: textColors.muted
+      layout: {
+        stacked: {
+          root: responsiveLayoutVariant({ stack: 'always' }).container(),
+          title: responsiveLayoutVariant({ stack: 'always', titleSpacing: 'normal' }).title(),
+          description: responsiveLayoutVariant({ stack: 'always', contentWidth: 'full' }).content(),
+        },
+        responsive: {
+          root: responsiveLayoutVariant({ stack: 'responsive' }).container(),
+          title: responsiveLayoutVariant({ stack: 'responsive', titleSpacing: 'responsive' }).title(),
+          description: responsiveLayoutVariant({ stack: 'responsive', contentWidth: 'responsive' }).content(),
+        },
       },
     },
     // Import the responsive layout variants
-    layout: {
-      stacked: {
-        root: responsiveLayoutVariant({ stack: 'always' }).container(),
-        title: responsiveLayoutVariant({ stack: 'always', titleSpacing: 'normal' }).title(),
-        description: responsiveLayoutVariant({ stack: 'always', contentWidth: 'full' }).content(),
-      },
-      responsive: {
-        root: responsiveLayoutVariant({ stack: 'responsive' }).container(),
-        title: responsiveLayoutVariant({ stack: 'responsive', titleSpacing: 'responsive' }).title(),
-        description: responsiveLayoutVariant({ stack: 'responsive', contentWidth: 'responsive' }).content(),
-      },
+    defaultVariants: {
+      intent: "primary",
+      appearance: "solid",
+      layout: "responsive",
     },
-  },
-  defaultVariants: {
-    variant: "default",
-    layout: "responsive",
-  },
 });
 
 // Create context to share styles between components
@@ -90,7 +91,8 @@ const useAlertContext = () => {
 };
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "primary" | "success" | "warning" | "error" | "info";
+  intent?: "primary" | "success" | "warning" | "error" | "info";
+  appearance?: "solid" | "alt" | "outline";
   /**
    * Layout variant for responsive behavior
    * - stacked: Always displays in a column layout
@@ -155,8 +157,8 @@ AlertDescription.displayName = "AlertDescription";
  * </Alert>
  */
 const AlertRoot = React.forwardRef<HTMLDivElement, AlertProps>(
-  ({ className, variant, layout, children, ...props }, ref) => {
-    const styles = alertVariants({ variant, layout });
+  ({ className, intent, appearance, layout, children, ...props }, ref) => {
+    const styles = alertVariants({ intent, appearance, layout });
     
     return (
       <AlertContext.Provider value={{ styles }}>

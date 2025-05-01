@@ -54,14 +54,14 @@ export const backgroundColors = {
   surface: 'bg-surface',
   subtle: 'bg-subtle-100',
 
-  // Light variants for backgrounds (higher numbers = lighter)
+  // Light variants for backgrounds (higher numbers = darker)
   light: {
-    primary: 'bg-primary-200',
-    secondary: 'bg-secondary-200',
-    danger: 'bg-danger-200',
-    success: 'bg-success-200',
-    muted: 'bg-muted-200',
-    surface: 'bg-surface-200'
+    primary: 'bg-primary-50/40',
+    secondary: 'bg-secondary-50/40',
+    danger: 'bg-danger-50/40',
+    success: 'bg-success-50/40',
+    muted: 'bg-muted-50/40',
+    surface: 'bg-surface-50/40'
   },
 
   // Dark mode variants
@@ -99,7 +99,7 @@ export const borderColors = {
   success: 'border-success-200',
   surface: 'border-surface-300',
 
-  // Light variants for borders (higher numbers = lighter)
+  // Light variants for borders (higher numbers = darker)
   light: {
     primary: 'border-primary-300',
     secondary: 'border-secondary-300',
@@ -140,7 +140,7 @@ export const ringColors = {
   danger: 'ring-danger-400',
   success: 'ring-success-400',
 
-  // Light variants for rings (higher numbers = lighter)
+  // Light variants for rings (higher numbers = darker)
   light: {
     primary: 'ring-primary-300',
     secondary: 'ring-secondary-300',
@@ -203,7 +203,7 @@ export const hoverBackgroundColors = {
   danger: 'hover:bg-danger-100',
   success: 'hover:bg-success-100',
 
-  // Light variants for hover backgrounds (higher numbers = lighter)
+  // Light variants for hover backgrounds (higher numbers = darker)
   light: {
     primary: 'hover:bg-primary-300',
     secondary: 'hover:bg-secondary-300',

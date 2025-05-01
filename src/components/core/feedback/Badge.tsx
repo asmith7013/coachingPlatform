@@ -6,16 +6,21 @@ import { textColors, backgroundColors, ringColors } from '@ui-tokens/colors';
 
 // Define badge variants using your semantic color system
 const badge = tv({
-  base: "inline-flex items-center font-medium ring-1 ring-inset",
+  base: "inline-flex items-center font-medium border-1 border-inset",
   variants: {
     intent: {
-      neutral: `${backgroundColors.light.muted} ${textColors.default} ring-1 ring-inset border-border`,
-      primary: `${backgroundColors.light.primary} ${textColors.primary} ring-1 ring-inset ${ringColors.light.primary}`,
-      secondary: `${backgroundColors.light.secondary} ${textColors.secondary} ring-1 ring-inset ${ringColors.light.secondary}`,
-      danger: `${backgroundColors.light.danger} ${textColors.danger} ring-1 ring-inset ${ringColors.light.danger}`,
-      success: `${backgroundColors.light.success} ${textColors.success} ring-1 ring-inset ${ringColors.light.success}`,
-      info: `${backgroundColors.light.primary} ${textColors.primary} ring-1 ring-inset ${ringColors.light.primary} opacity-80`,
-      warning: `${backgroundColors.light.danger} ${textColors.danger} ring-1 ring-inset ${ringColors.light.danger} opacity-80`,
+      neutral: ``,
+      primary: ``,
+      secondary: ``,
+      danger: ``,
+      success: ``,
+      info: ``,
+      warning: ``,
+    },
+    appearance: {
+      solid: '',
+      alt: '',
+      outline: 'bg-transparent',
     },
     size: {
       xs: `${textSize.xs} ${paddingX.xs} ${paddingY.xs}`,
@@ -28,8 +33,59 @@ const badge = tv({
       none: radii.none
     }
   },
+  compoundVariants: [
+    // Solid appearance
+    {
+      appearance: 'solid',
+      intent: 'neutral',
+      className: `${backgroundColors.light.muted} border-border`,
+    },
+    {
+      appearance: 'solid',
+      intent: 'primary',
+      className: `${backgroundColors.light.primary} ${ringColors.light.primary}`,
+    },
+    {
+      appearance: 'solid',
+      intent: 'secondary',
+      className: `${backgroundColors.light.secondary} ${ringColors.light.secondary}`,
+    },
+    {
+      appearance: 'solid',
+      intent: 'danger',
+      className: `${backgroundColors.light.danger} ${ringColors.light.danger}`,
+    },
+    {
+      appearance: 'solid',
+      intent: 'success',
+      className: `${backgroundColors.light.success} ${ringColors.light.success}`,
+    },
+    // Alt appearance - add more as needed
+    {
+      appearance: 'alt',
+      intent: 'primary',
+      className: `${backgroundColors.light.primary} border-primary-300`,
+    },
+    // Outline appearance - add more as needed
+    {
+      appearance: 'outline',
+      intent: 'primary',
+      className: `${ringColors.light.primary}`,
+    },
+    {
+      appearance: 'outline',
+      intent: 'secondary',
+      className: `${backgroundColors.light.secondary} ${textColors.secondary} ${ringColors.secondary}`,
+    },
+    {
+      appearance: 'outline',
+      intent: 'success',
+      className: `${backgroundColors.light.success} ${textColors.success} ${ringColors.success}`,
+    },
+  ],
   defaultVariants: {
     intent: "neutral",
+    appearance: "solid",
     size: "xs",
     rounded: "default"
   }
@@ -46,11 +102,12 @@ export function Badge({
   intent,
   size,
   rounded,
+  appearance,
 }: BadgeProps) {
   return (
     <span
       className={cn(
-        badge({ intent, size, rounded }),
+        badge({ intent, size, rounded, appearance }),
         className
       )}
     >

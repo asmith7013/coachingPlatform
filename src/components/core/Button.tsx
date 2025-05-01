@@ -112,7 +112,7 @@ const button = tv({
       intent: 'secondary',
       appearance: 'solid',
       className: {
-        base: `${backgroundColors.secondary} ${textColors.default} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.secondary}`,
+        base: `${backgroundColors.secondary} ${textColors.white} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.secondary}`,
       }
     },
     {

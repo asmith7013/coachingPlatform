@@ -1,4 +1,4 @@
-import { Field } from "@/components/composed/forms/ResourceForm";
+import { Field } from "@/components/composed/forms/RigidResourceForm";
 import { BellScheduleInput, TeacherScheduleInput } from "@/lib/data-schema/zod-schema/schedule/schedule";
 import { BellScheduleTypeZod } from "@enums";
 

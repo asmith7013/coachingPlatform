@@ -5,7 +5,7 @@ import {
   createNYCPSStaff, 
   updateNYCPSStaff, 
   deleteNYCPSStaff
-} from "@actions/staff/nycps";
+} from "@actions/staff";
 import { NYCPSStaff, NYCPSStaffInput } from "@domain-types/staff";
 import type { ResourceResponse } from "@core-types/response";
 import type { FetchParams } from "@core-types/api";

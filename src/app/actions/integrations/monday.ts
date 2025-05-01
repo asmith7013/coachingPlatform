@@ -3,7 +3,14 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { mondayClient, fetchMondayItems, fetchMondayItemById } from "@/app/api/integrations/monday/client";
+import { 
+  mondayClient, 
+  fetchMondayItems, 
+  fetchMondayItemById, 
+  fetchMondayUserById,
+  fetchMondayUserByEmail,
+  MondayUser 
+} from "@api-integrations/monday/client";
 import { ITEMS_QUERY, BOARD_WITH_ITEMS_QUERY } from "@/lib/domain/monday/monday-queries";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
 import { SchoolModel } from "@mongoose-schema/core/school.model";
@@ -22,9 +29,10 @@ import {
   ImportResult,
   MondayConnectionTestResult,
   MondayColumnMap
-} from "@/lib/types/domain/monday";
+} from "@api-integrations/monday/types";
 import { transformMondayItemToVisit } from "@/lib/domain/monday/transform-service";
 import { shouldImportItemWithStatus } from "@/lib/domain/monday/monday-utils";
+import { VisitImportZodSchema } from "@/lib/data-schema/zod-schema/visits/visit";
 
 // Map Monday.com column IDs to their meanings
 const COLUMN_IDS: MondayColumnMap = {
@@ -120,7 +128,7 @@ export async function importVisitsFromMonday(boardId: string) {
             mondayItemId: item.id,
             mondayBoardId: boardId,
             mondayItemName: item.name,
-            mondayLastSyncedAt: new Date(),
+            mondayLastSyncedAt: new Date().toISOString(),
             
             // Additional fields from Monday
             siteAddress: siteAddressValue,
@@ -252,8 +260,8 @@ export async function findPotentialVisitsToImport(boardId: string): Promise<Impo
         // Check if already imported by mondayItemId
         const existingVisit = await VisitModel.findOne({ mondayItemId: item.id });
         
-        // Transform the item
-        const { transformed, valid, missingRequired, errors } = 
+        // Transform the item with two-stage validation
+        const { transformed, valid, missingRequired, errors, requiredForFinalValidation } = 
           await transformMondayItemToVisit(item);
         
         // Add to preview list
@@ -264,7 +272,8 @@ export async function findPotentialVisitsToImport(boardId: string): Promise<Impo
           existingItem: existingVisit?.toObject() || undefined,
           isDuplicate: !!existingVisit,
           missingRequired,
-          errors
+          errors,
+          requiredForFinalValidation
         });
       }
     });
@@ -278,33 +287,64 @@ export async function findPotentialVisitsToImport(boardId: string): Promise<Impo
 
 /**
  * Import selected visits from Monday.com
+ * Updated to support providing owner IDs for visits and completing missing fields
  */
-export async function importSelectedVisits(selectedItemIds: string[]): Promise<ImportResult> {
+interface ImportItem {
+  id: string;
+  ownerId?: string;
+  completeData?: Record<string, unknown>;
+}
+
+export async function importSelectedVisits(selectedItems: ImportItem[] | string[]): Promise<ImportResult> {
   const errors: Record<string, string> = {};
   let imported = 0;
   
   await withDbConnection(async () => {
-    for (const itemId of selectedItemIds) {
+    // Handle both string[] and ImportItem[] formats
+    const itemsToProcess = Array.isArray(selectedItems) && selectedItems.length > 0 && typeof selectedItems[0] === 'string'
+      ? (selectedItems as string[]).map(id => ({ id }))
+      : (selectedItems as ImportItem[]);
+    
+    for (const item of itemsToProcess) {
       try {
         // Get the Monday item
-        const item = await fetchMondayItemById(itemId);
+        const mondayItem = await fetchMondayItemById(item.id);
         
-        // Transform to Visit
-        const { transformed, valid } = await transformMondayItemToVisit(item);
+        // Transform to Visit - this now includes auto-assigned owners from coach
+        const { transformed } = await transformMondayItemToVisit(mondayItem);
         
-        if (!valid) {
-          errors[itemId] = "Invalid item data";
-          continue;
+        // Apply owner from selection if provided - this overrides any auto-assigned owners
+        if ('ownerId' in item && item.ownerId) {
+          transformed.owners = [item.ownerId];
+        }
+        
+        // Apply completed data if provided - this adds any fields filled in via form
+        if ('completeData' in item && item.completeData) {
+          Object.assign(transformed, item.completeData);
+        }
+        
+        // Try to validate with the full schema first for complete data
+        let validatedData;
+        const fullValidation = VisitInputZodSchema.safeParse(transformed);
+        if (fullValidation.success) {
+          validatedData = fullValidation.data;
+        } else {
+          // Fall back to import schema for partial imports
+          if (!VisitImportZodSchema.safeParse(transformed).success) {
+            errors[item.id] = "Invalid item data after transformation";
+            continue;
+          }
+          validatedData = transformed;
         }
         
         // Create the Visit in MongoDB
-        await VisitModel.create(transformed);
+        await VisitModel.create(validatedData);
         imported++;
       } catch (error) {
         if (error instanceof Error) {
-          errors[itemId] = error.message;
+          errors[item.id] = error.message;
         } else {
-          errors[itemId] = 'Unknown error occurred';
+          errors[item.id] = 'Unknown error occurred';
         }
       }
     }
@@ -323,4 +363,70 @@ export async function importSelectedVisits(selectedItemIds: string[]): Promise<I
       ? `Imported ${imported} visits with ${Object.keys(errors).length} errors` 
       : `Successfully imported ${imported} visits`
   };
+}
+
+/**
+ * Fetch a Monday.com user by ID
+ */
+export async function getMondayUserById(userId: string): Promise<ApiResponse<MondayUser>> {
+  try {
+    // Input validation
+    const parsedInput = z.object({
+      userId: z.string().min(1, "User ID is required")
+    }).parse({ userId });
+    
+    // Fetch the user
+    const user = await fetchMondayUserById(parsedInput.userId);
+    
+    if (!user) {
+      return {
+        success: false,
+        error: `User with ID ${userId} not found or not accessible`
+      };
+    }
+    
+    return {
+      success: true,
+      data: user
+    };
+  } catch (error) {
+    console.error("Error fetching Monday user:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error"
+    };
+  }
+}
+
+/**
+ * Fetch a Monday.com user by email
+ */
+export async function getMondayUserByEmail(email: string): Promise<ApiResponse<MondayUser>> {
+  try {
+    // Input validation
+    const parsedInput = z.object({
+      email: z.string().email("Valid email is required")
+    }).parse({ email });
+    
+    // Fetch the user
+    const user = await fetchMondayUserByEmail(parsedInput.email);
+    
+    if (!user) {
+      return {
+        success: false,
+        error: `User with email ${email} not found or not accessible`
+      };
+    }
+    
+    return {
+      success: true,
+      data: user
+    };
+  } catch (error) {
+    console.error("Error fetching Monday user by email:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error"
+    };
+  }
 }

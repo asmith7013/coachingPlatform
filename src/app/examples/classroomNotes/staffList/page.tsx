@@ -9,11 +9,11 @@ import { DashboardPage } from '@/components/layouts/DashboardPage';
 // import { cn } from "@/lib/utils";
 import { EmptyListWrapper } from '@/components/shared/EmptyListWrapper';
 import { ResourceHeader } from "@/components/shared/ResourceHeader";
-import { Field, FieldType, MemoizedGenericResourceForm } from "@/components/composed/forms/ResourceForm";
+import { Field, FieldType, MemoizedRigidResourceForm as MemoizedGenericResourceForm } from "@/components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
 import { useNYCPSStaff } from "@/hooks/domain/useNYCPSStaff";
 import { NYCPSStaff, NYCPSStaffInput } from "@zod-schema/core/staff";
-import { createNYCPSStaff, updateNYCPSStaff, deleteNYCPSStaff, uploadNYCPSStaffFile } from "@/app/actions/staff/nycps";
+import { createNYCPSStaff, updateNYCPSStaff, deleteNYCPSStaff, uploadNYCPSStaffFile } from "@/app/actions/staff";
 import { NYCPSStaffFieldConfig } from "@ui-forms/fieldConfig/core/staff";
 import { Dialog } from "@/components/composed/dialogs/Dialog";
 import { Badge } from '@/components/core/feedback/Badge';
@@ -77,7 +77,7 @@ const StaffCard = memo(function StaffCard({ member, onEdit, onDelete }: StaffCar
               <strong>Roles:</strong> {member.rolesNYCPS.join(', ')}
             </Text>
           )}
-          {member.schools?.length > 0 && (
+          {member.schools && member.schools.length > 0 && (
             <Text 
               textSize="base"
               color="muted"
@@ -85,7 +85,7 @@ const StaffCard = memo(function StaffCard({ member, onEdit, onDelete }: StaffCar
             >
               <strong>Schools:</strong>
               {member.schools.map((schoolId) => (
-                <Badge key={schoolId} variant="secondary" textSize="xs">
+                <Badge key={schoolId} intent="secondary">
                   {schoolId}
                 </Badge>
               ))}

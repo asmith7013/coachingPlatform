@@ -1,4 +1,4 @@
-import { Field } from "@/components/composed/forms/ResourceForm";
+import { Field } from "@/components/composed/forms/RigidResourceForm";
 import { CoachingLog } from "@zod-schema/visits/coaching-log";
 import { 
   ReasonDoneZod,

@@ -46,6 +46,7 @@ export const StaffMemberFieldLabels: Record<keyof StaffMember, string> = {
     owners: "Owners",
     createdAt: "Created At",
     updatedAt: "Updated At",
+    mondayUser: "Monday User",
 };
 
 export const TeachingLabStaffFieldLabels: Record<keyof TeachingLabStaff, string> = {

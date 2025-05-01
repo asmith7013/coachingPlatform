@@ -12,6 +12,48 @@ Our application uses Next.js Server Actions for server-side operations that need
 
 </section>
 
+<section id="server-actions-separation">
+
+## Server-Side Logic Separation
+
+Our application maintains a strict separation between server-side logic implementations:
+
+1. **Server Actions**: All operations tied to specific UI components, form submissions, and simple CRUD operations **must** be implemented in the `src/app/actions/` directory following the domain-based organization pattern.
+
+2. **API Routes**: All externally accessible endpoints, complex operations, and shared functionality **must** be implemented in the `src/app/api/` directory following the resource-based organization pattern.
+
+Server-side logic should never be implemented directly within components, pages, or utility functions. This separation ensures:
+
+- Clear boundaries between client and server code
+- Consistent error handling and validation
+- Proper security practices
+- Maintainable codebase organization
+
+```typescript
+// ❌ Incorrect: Server logic in component or page
+export function MyComponent() {
+  async function handleSubmit() {
+    // Direct database operations or complex server logic
+    const result = await db.collection.findOne(...);
+  }
+}
+
+// ✅ Correct: Server logic in appropriate location
+// src/app/actions/domain/resource.ts
+'use server'
+export async function handleResourceOperation() {
+  // Implementation with proper validation and error handling
+}
+
+// src/app/api/resource/route.ts
+export async function GET() {
+  // Implementation with proper request/response handling
+}
+```
+[RULE] All server-side logic must be implemented exclusively in designated Server Actions or API Routes based on their specific purpose.
+</section>
+
+
 <section id="server-actions-structure">
 
 ## Server Action Structure

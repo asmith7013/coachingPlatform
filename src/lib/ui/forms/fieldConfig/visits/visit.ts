@@ -1,4 +1,4 @@
-import { Field } from "@/components/composed/forms/ResourceForm";
+import { Field } from "@/components/composed/forms/RigidResourceForm";
 import { Visit, EventItemZodSchema, SessionLinkZodSchema } from "@zod-schema/visits/visit";
 import { 
   GradeLevelsSupportedZod,

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { handleServerError } from "@/lib/error/handle-server-error";
-import { standardizeResponse } from "@api/responses/standardize";
+import { standardizeResponse } from "@api-responses/standardize";
 import { FetchParams } from "@/lib/types/core/api";
 import { BaseReference } from "@/lib/types/core/reference";
 

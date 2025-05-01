@@ -1,6 +1,7 @@
 // Core
 export { SchoolFieldConfig } from "./core/school";
 export { NYCPSStaffFieldConfig } from "./core/staff";
+export { TeachingLabStaffFieldConfig } from "./core/teaching-lab-staff";
 
 // Look Fors
 export { LookForFieldConfig } from "./look-fors/look-for";

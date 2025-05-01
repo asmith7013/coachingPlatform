@@ -9,7 +9,7 @@ import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { useSchools } from "@/hooks/domain/useSchools"; // ✅ SWR hook for managing Schools data.
 import { School, SchoolInput } from "@zod-schema/core/school"; // ✅ Import the School type from Zod schema.
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
-import { Field, GenericResourceForm } from "@/components/composed/forms/ResourceForm";
+import { RigidResourceForm as GenericResourceForm, type Field } from "@/components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
 import { ResourceHeader } from "@/components/shared/ResourceHeader";
 import { SchoolFieldConfig } from "@ui-forms/fieldConfig/core/school";

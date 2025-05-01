@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { MondayItem } from '@/lib/types/domain/monday';
+import { MondayItem } from '@api-integrations/monday/types';
 
 /**
  * Format a date from Monday's format to our application format

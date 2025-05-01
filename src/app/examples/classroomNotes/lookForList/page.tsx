@@ -7,7 +7,7 @@ import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DashboardPage } from '@/components/layouts/DashboardPage';
 import { EmptyListWrapper } from "@/components/shared/EmptyListWrapper";
-import { GenericResourceForm, type Field } from "@/components/composed/forms/ResourceForm";
+import { RigidResourceForm as GenericResourceForm, type Field } from "@/components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
 import { ResourceHeader } from "@/components/shared/ResourceHeader";
 import { useLookFors } from "@/hooks/domain/useLookFors";

@@ -1,6 +1,6 @@
 import { NYCPSStaffModel, TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
 import { NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from '@zod-schema/core/staff';
-import { createApiSafeFetcher } from '@api/handlers/api-adapter';
+import { createApiSafeFetcher } from '@api-handlers/api-adapter';
 import { sanitizeDocument } from '@data-utilities/transformers/sanitize';
 
 /**
@@ -51,6 +51,42 @@ export async function fetchStaffByIdForApi(id: string, staffType = 'nycps') {
     return {
       success: false,
       items: [],
+      error: error instanceof Error ? error.message : "Unknown error"
+    };
+  }
+}
+
+/**
+ * Checks if a staff member exists by email
+ */
+export async function checkStaffExistenceByEmailForApi(email: string) {
+  try {
+    if (!email) {
+      return {
+        success: false,
+        items: [],
+        exists: false,
+        error: "Email is required"
+      };
+    }
+    
+    const nycpsStaff = await NYCPSStaffModel.findOne({ email });
+    const tlStaff = await TeachingLabStaffModel.findOne({ email });
+    
+    const exists = !!nycpsStaff || !!tlStaff;
+    
+    return {
+      success: true,
+      items: [],
+      exists,
+      total: exists ? 1 : 0
+    };
+  } catch (error) {
+    console.error(`Error checking staff existence:`, error);
+    return {
+      success: false,
+      items: [],
+      exists: false,
       error: error instanceof Error ? error.message : "Unknown error"
     };
   }

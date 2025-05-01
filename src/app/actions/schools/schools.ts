@@ -12,7 +12,7 @@ import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
 import { SchoolInput } from "@domain-types/school";
 
 // Create standard CRUD actions for Schools
-export const schoolActions = createCrudActions({
+const schoolActions = createCrudActions({
   model: SchoolModel,
   fullSchema: SchoolZodSchema,
   inputSchema: SchoolInputZodSchema,

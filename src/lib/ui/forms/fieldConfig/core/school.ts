@@ -1,4 +1,4 @@
-import { Field } from "@/components/composed/forms/ResourceForm";
+import { Field } from "@/components/composed/forms/RigidResourceForm";
 import { SchoolInput } from "@zod-schema/core/school";
 import { GradeLevelsSupportedZod } from "@enums";
 

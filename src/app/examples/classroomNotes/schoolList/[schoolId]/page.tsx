@@ -12,7 +12,7 @@ import { paddingY, stack } from '@ui-tokens/tokens';
 import { cn } from '@ui/utils/formatters';
 import { DashboardPage } from '@components/layouts/DashboardPage';
 import { Badge } from '@components/core/feedback/Badge';
-import { fetchNYCPSStaff } from "@actions/staff/nycps";
+import { fetchNYCPSStaff } from "@actions/staff";
 import { NYCPSStaff } from "@zod-schema/core/staff";
 import { School } from "@zod-schema/core/school";
 import { fetchSchools } from "@actions/schools/schools";
@@ -92,7 +92,7 @@ export default function SchoolDetail() {
           filters: { schools: [schoolId] } 
         });
         
-        setStaff(staffResponse.items);
+        setStaff(staffResponse.items as NYCPSStaff[]);
         setLoading(false);
       } catch (err) {
         console.error("Error loading school data:", err);

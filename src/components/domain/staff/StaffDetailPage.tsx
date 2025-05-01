@@ -185,7 +185,7 @@ function StaffInfoTab({
           <dl className="grid grid-cols-1 gap-x-4 gap-y-2">
             <InfoItem 
               label="Admin Level" 
-              value={staffMember.adminLevel} 
+              value={staffMember.adminLevel || 'None'} 
             />
             <InfoItem 
               label="Teaching Lab Roles" 
@@ -193,7 +193,7 @@ function StaffInfoTab({
             />
             <InfoItem 
               label="Assigned Districts" 
-              value={staffMember.assignedDistricts.length > 0 ? `${staffMember.assignedDistricts.length} districts` : 'None'} 
+              value={staffMember.assignedDistricts && staffMember.assignedDistricts.length > 0 ? `${staffMember.assignedDistricts.length} districts` : 'None'} 
             />
           </dl>
         </Card>

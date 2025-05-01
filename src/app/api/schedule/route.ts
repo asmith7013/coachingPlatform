@@ -1,5 +1,5 @@
-import { fetchTeacherSchedulesForApi } from "@api/fetchers/schedule";
-import { createReferenceEndpoint } from "@api/handlers/reference-endpoint";
+import { fetchTeacherSchedulesForApi } from "@api-fetchers/schedule";
+import { createReferenceEndpoint } from "@api-handlers/reference-endpoint";
 import type { TeacherSchedule } from "@zod-schema/schedule/schedule";
 import type { ScheduleReference } from "@core-types/reference";
 

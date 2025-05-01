@@ -12,6 +12,8 @@ import { connectToDB } from "@data-server/db/connection";
 import { handleCrudError } from "@error/crud-error-handling";
 import { PaginatedResponse } from "@core-types/response";
 import { FetchParams, getDefaultFetchParams as getDefaultParams } from "@core-types/api";
+// Import the sanitization utilities
+import { deepSanitize } from "@/lib/data-utilities/transformers/sanitize";
 
 // Utility to sanitize sort fields
 export function sanitizeSortBy(
@@ -42,7 +44,6 @@ export function sanitizeSortBy(
     return sortOptions;
   }
   
-  // Apply default pagination parameters - adapter for compatibility
 // Apply default pagination parameters - adapter for compatibility
 export function getDefaultFetchParams(params: FetchParams): ReturnType<typeof getDefaultParams> {
     return getDefaultParams(params);
@@ -109,15 +110,20 @@ export async function fetchPaginatedResource<
     const hasMore = page < totalPages;
     const empty = items.length === 0;
     
-    // Validate items against schema
+    // UPDATED: Validate items against schema with sanitization
     const validatedItems = items.map(item => {
       try {
-        return schema.parse(item);
+        // First sanitize the document (convert ObjectIds to strings, etc.)
+        // Use deepSanitize directly for lean objects
+        const sanitized = deepSanitize(item);
+        return schema.parse(sanitized) as z.infer<Schema>;
       } catch (error) {
         console.error(`Validation error for item ${String(item._id)}:`, error);
-        return item; // Return original if validation fails
+        // If validation fails, still return a sanitized version
+        const sanitized = deepSanitize(item);
+        return sanitized as z.infer<Schema>;
       }
-    }) as z.infer<Schema>[];
+    });
     
     return {
       success: true,
@@ -293,7 +299,9 @@ export function createCrudActions<
         }
         
         try {
-          const validatedItem = fullSchema.parse(item);
+          // UPDATED: Use deepSanitize and then parse with schema for lean objects
+          const sanitized = deepSanitize(item);
+          const validatedItem = fullSchema.parse(sanitized);
           return { 
             success: true, 
             data: validatedItem as FullType

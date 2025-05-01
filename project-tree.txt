@@ -85,11 +85,9 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   └── schools.ts
 │   │   │   ├── staff
-│   │   │   │   ├── base.ts
+│   │   │   │   ├── factories.ts
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── nycps.ts
-│   │   │   │   ├── staff.ts
-│   │   │   │   └── tl.ts
+│   │   │   │   └── operations.ts
 │   │   │   └── visits
 │   │   │       ├── coachingLogs.ts
 │   │   │       ├── cycles.ts
@@ -97,7 +95,8 @@
 │   │   ├── api
 │   │   │   ├── integrations
 │   │   │   │   └── monday
-│   │   │   │       └── client.ts
+│   │   │   │       ├── route.ts
+│   │   │   │       └── user
 │   │   │   ├── look-fors
 │   │   │   │   └── bulk-upload
 │   │   │   │       └── route.ts
@@ -112,7 +111,8 @@
 │   │   │   │   │   └── route.ts
 │   │   │   │   ├── bulk-upload
 │   │   │   │   │   └── route.ts
-│   │   │   │   └── route.ts
+│   │   │   │   └── exists
+│   │   │   │       └── route.ts
 │   │   │   └── teacher
 │   │   │       └── route.ts
 │   │   ├── dashboard
@@ -140,8 +140,11 @@
 │   │   │   │   ├── [schoolId]
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
-│   │   │   └── staffList
-│   │   │       └── page.tsx
+│   │   │   └── staff
+│   │   │       ├── nycps
+│   │   │       │   └── page.tsx
+│   │   │       └── teachingLab
+│   │   │           └── page.tsx
 │   │   ├── debug
 │   │   │   ├── debug-reference-select
 │   │   │   │   └── page.tsx
@@ -165,8 +168,6 @@
 │   │   │   └── ultra-minimal
 │   │   │       └── page.tsx
 │   │   ├── demo
-│   │   │   └── monday-import
-│   │   │       └── page.tsx
 │   │   ├── examples
 │   │   │   ├── calendar
 │   │   │   │   ├── CalendarGridView.tsx
@@ -207,6 +208,13 @@
 │   │   │       └── layout.tsx
 │   │   ├── global-error.tsx
 │   │   ├── globals.css
+│   │   ├── integrations
+│   │   │   └── monday
+│   │   │       ├── page.tsx
+│   │   │       ├── staff
+│   │   │       │   └── page.tsx
+│   │   │       └── visits
+│   │   │           └── page.tsx
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
 │   │   └── tools
@@ -220,8 +228,6 @@
 │   │       ├── im-routines
 │   │       │   └── page.tsx
 │   │       ├── layout.tsx
-│   │       ├── monday
-│   │       │   └── page.tsx
 │   │       ├── page.tsx
 │   │       ├── rubric-viewer
 │   │       │   └── page.tsx
@@ -316,12 +322,6 @@
 │   │   │   │   ├── renderILCLesson.tsx
 │   │   │   │   └── renderKHLesson.tsx
 │   │   │   ├── lookFors
-│   │   │   ├── monday
-│   │   │   │   ├── BoardFinder.tsx
-│   │   │   │   ├── EnhancedMondayImportSelector.tsx
-│   │   │   │   ├── MondayImportSelector.tsx
-│   │   │   │   ├── MondayItemPreviewCard.tsx
-│   │   │   │   └── index.ts
 │   │   │   ├── rubrics
 │   │   │   │   ├── RubricCard.tsx
 │   │   │   │   ├── RubricFilterPanel.tsx
@@ -351,7 +351,9 @@
 │   │   │   ├── staff
 │   │   │   │   ├── StaffCard.tsx
 │   │   │   │   ├── StaffDetailPage.tsx
+│   │   │   │   ├── StaffListComponent.tsx
 │   │   │   │   ├── StaffListItem.tsx
+│   │   │   │   ├── StaffSearch.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── things3
 │   │   │   │   ├── ChecklistInput.tsx
@@ -367,8 +369,23 @@
 │   │   │   ├── ErrorBoundary.tsx
 │   │   │   ├── SentryBoundaryWrapper.tsx
 │   │   │   └── index.ts
-│   │   ├── features
 │   │   ├── index.ts
+│   │   ├── integrations
+│   │   │   └── monday
+│   │   │       ├── README.md
+│   │   │       ├── boards
+│   │   │       │   └── index.ts
+│   │   │       ├── common
+│   │   │       │   ├── ConnectionTest.tsx
+│   │   │       │   └── index.ts
+│   │   │       ├── domain
+│   │   │       │   ├── users
+│   │   │       │   └── visits
+│   │   │       ├── imports
+│   │   │       │   └── index.ts
+│   │   │       ├── index.ts
+│   │   │       └── utils
+│   │   │           └── index.ts
 │   │   ├── layouts
 │   │   │   ├── AppShell.tsx
 │   │   │   ├── DashboardLayout.tsx
@@ -397,15 +414,20 @@
 │   │   │   ├── useComponentTester.tsx
 │   │   │   └── useRenderTracking.ts
 │   │   ├── domain
+│   │   │   ├── index.ts
 │   │   │   ├── useLookFors.ts
 │   │   │   ├── useMondayImport.ts
 │   │   │   ├── useNYCPSStaff.ts
 │   │   │   ├── useSchools.ts
-│   │   │   └── useTeacherSchedules.ts
+│   │   │   ├── useTeacherSchedules.ts
+│   │   │   └── useTeachingLabStaff.ts
 │   │   ├── error
 │   │   │   ├── useErrorBoundary.ts
 │   │   │   └── useErrorHandledMutation.ts
 │   │   ├── index.ts
+│   │   ├── integrations
+│   │   │   └── monday
+│   │   │       └── useStaffExistence.ts
 │   │   └── ui
 │   │       ├── useFiltersAndSorting.ts
 │   │       └── usePagination.ts
@@ -413,6 +435,8 @@
 │   ├── instrumentation.ts
 │   ├── lib
 │   │   ├── api
+│   │   │   ├── client
+│   │   │   │   └── staff.ts
 │   │   │   ├── fetchers
 │   │   │   │   ├── coaching-log.ts
 │   │   │   │   ├── lookFors.ts
@@ -425,6 +449,12 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   └── reference-endpoint.ts
 │   │   │   ├── index.ts
+│   │   │   ├── integrations
+│   │   │   │   └── monday
+│   │   │   │       ├── client.ts
+│   │   │   │       ├── items.ts
+│   │   │   │       ├── types.ts
+│   │   │   │       └── users.ts
 │   │   │   ├── responses
 │   │   │   │   ├── index.ts
 │   │   │   │   └── standardize.ts
@@ -540,8 +570,7 @@
 │   │   │       ├── field-mappings.ts
 │   │   │       ├── monday-queries.ts
 │   │   │       ├── monday-utils.ts
-│   │   │       ├── transform-service.ts
-│   │   │       └── validation-service.ts
+│   │   │       └── transform-service.ts
 │   │   ├── error
 │   │   │   ├── crud-error-handling.ts
 │   │   │   ├── error-monitor.ts
@@ -557,7 +586,10 @@
 │   │   │   ├── ILC_routines.json
 │   │   │   ├── IMplementation.json
 │   │   │   ├── KH_Routines.json
-│   │   │   └── alg1-links.json
+│   │   │   ├── alg1-links.json
+│   │   │   ├── indicator.tsx
+│   │   │   ├── primaryStrategy.tsx
+│   │   │   └── school.tsx
 │   │   ├── types
 │   │   │   ├── README.md
 │   │   │   ├── core
@@ -575,7 +607,6 @@
 │   │   │   │   ├── cycle.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── look-fors.ts
-│   │   │   │   ├── monday.ts
 │   │   │   │   ├── schedule.ts
 │   │   │   │   ├── school.ts
 │   │   │   │   ├── shared.ts
@@ -645,4 +676,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-195 directories, 451 files
+213 directories, 464 files

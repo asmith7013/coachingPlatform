@@ -151,6 +151,11 @@ export function Select({
 }: SelectProps) {
   const styles = select({ textSize, padding, radius });
 
+  // Add defensive handling for value
+  const safeValue = multiple 
+    ? (Array.isArray(value) ? value : []) 
+    : value;
+
   return (
     <FieldWrapper 
       id="select" 
@@ -159,7 +164,7 @@ export function Select({
       textSize={textSize}
       padding={padding}
     >
-      <Listbox value={value} onChange={onChange} multiple={multiple}>
+      <Listbox value={safeValue} onChange={onChange} multiple={multiple}>
         <div className="relative w-full">
           <Listbox.Button
             className={cn(
@@ -168,15 +173,15 @@ export function Select({
             )}
             disabled={disabled}
           >
-            {typeof value === 'string' ? (
+            {multiple ? (
               <span className={styles.value()}>
-                {options.find(option => option.value === value)?.label || placeholder}
+                {Array.isArray(safeValue) && safeValue.length > 0
+                  ? safeValue.map(v => options.find(option => option.value === v)?.label).join(', ')
+                  : placeholder}
               </span>
             ) : (
               <span className={styles.value()}>
-                {value.length > 0
-                  ? value.map(v => options.find(option => option.value === v)?.label).join(', ')
-                  : placeholder}
+                {options.find(option => option.value === safeValue)?.label || placeholder}
               </span>
             )}
           </Listbox.Button>

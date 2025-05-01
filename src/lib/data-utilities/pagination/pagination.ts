@@ -1,5 +1,5 @@
 import type { HydratedDocument, Model, FilterQuery } from "mongoose";
-import { handleServerError } from "@error/handle-server-error";
+import { handleServerError } from "@lib/error/handle-server-error";
 import { connectToDB } from "@data-server/db/connection";
 import { sanitizeDocuments } from "@data-utilities/transformers/sanitize";
 import type { ZodSchema } from "zod";

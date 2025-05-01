@@ -44,13 +44,14 @@
         "@styles/*": ["./src/styles/*"],
         "@core/*": ["./src/lib/core/*"],
         "@domain/*": ["./src/lib/domain/*"],
-        "@api/*": ["./src/lib/api/*"],
         "@error/*": ["./src/lib/error/*"],
+        
         // API utilities (in lib)
         "@api-utils/*": ["./src/lib/api/*"],
         "@api-client/*": ["./src/lib/api/client/*"],
         "@api-fetchers/*": ["./src/lib/api/fetchers/*"],
         "@api-handlers/*": ["./src/lib/api/handlers/*"],
+        "@api-responses/*": ["./src/lib/api/responses/*"],
         "@api-integrations/*": ["./src/lib/api/integrations/*"],
 
         // UI-specific paths

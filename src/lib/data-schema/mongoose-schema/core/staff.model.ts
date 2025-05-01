@@ -10,6 +10,34 @@ import {
   GradeLevels
 } from "@enums";
 
+// Add Monday.com User Class
+@modelOptions({ schemaOptions: { timestamps: false, _id: false } })
+class MondayUser {
+  @prop({ type: String, required: true })
+  mondayId!: string;
+  
+  @prop({ type: String, required: true })
+  name!: string;
+  
+  @prop({ type: String, required: true })
+  email!: string;
+  
+  @prop({ type: String })
+  title?: string;
+  
+  // @prop({ type: () => [{ id: String, name: String }] })
+  // teams?: { id: string; name: string }[];
+  
+  @prop({ type: Boolean })
+  isVerified?: boolean;
+  
+  @prop({ type: Boolean, default: true })
+  isConnected!: boolean;
+  
+  @prop({ type: String, default: new Date() })
+  lastSynced?: string | Date;
+}
+
 @modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'experiences' } })
 class Experience {
   @prop({ type: String, required: true })
@@ -32,15 +60,16 @@ class Note {
 
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'staffmembers' } })
 class StaffMember {
-
   @prop({ type: String, required: true })
   staffName!: string;
   @prop({ type: String })
-  email?: string;
-  @prop({ type: () => [String], required: true })
-  schools!: string[];
-  @prop({ type: () => [String], required: true })
-  owners!: string[];
+  email!: string;
+  @prop({ type: () => [String] })
+  schools?: string[];
+  @prop({ type: () => [String] })
+  owners?: string[];
+  @prop({ type: () => MondayUser })
+  mondayUser?: MondayUser;
 }
 
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'nycpsstaffs' } })
@@ -63,10 +92,10 @@ class NYCPSStaff extends StaffMember {
 
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'teachinglabstaffs' } })
 class TeachingLabStaff extends StaffMember {
-  @prop({ type: String, required: true, enum: Object.values(AdminLevels) })
-  adminLevel!: string;
-  @prop({ type: () => [String], required: true })
-  assignedDistricts!: string[];
+  @prop({ type: String, enum: Object.values(AdminLevels) })
+  adminLevel?: string;
+  @prop({ type: () => [String]})
+  assignedDistricts?: string[];
   @prop({ type: () => [String], enum: Object.values(RolesTL) })
   rolesTL?: string[];
 }

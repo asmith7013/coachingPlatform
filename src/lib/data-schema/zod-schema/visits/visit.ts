@@ -21,12 +21,12 @@ export const SessionLinkZodSchema = z.object({
   staff: z.array(z.string()), // Array of staff IDs
 });
 
-// New Input Schema
+// Standard Input Schema with normal requirements
 export const VisitInputZodSchema = z.object({
   date: z.string(), // Required date string
   school: z.string(), // Required school ID
   coach: z.string(), // Required coach ID
-  cycleRef: z.string(), // Required cycle reference
+  cycleRef: z.string().optional(), // Made optional as requested
   allowedPurpose: AllowedPurposeZod.optional(), // Optional enum
   modeDone: ModeDoneZod.optional(), // Optional enum
   gradeLevelsSupported: z.array(GradeLevelsSupportedZod), // Array of grade levels
@@ -38,12 +38,22 @@ export const VisitInputZodSchema = z.object({
   mondayItemId: z.string().optional(),
   mondayBoardId: z.string().optional(),
   mondayItemName: z.string().optional(),
-  mondayLastSyncedAt: zDateField.optional(),
+  mondayLastSyncedAt: z.string().optional(),
   
   // Optional fields for data that might be imported from Monday
   // but doesn't map directly to core schema fields
   siteAddress: z.string().optional(),
   endDate: z.string().optional(),
+});
+
+// Import Schema with relaxed validation for initial import
+export const VisitImportZodSchema = VisitInputZodSchema.extend({
+  // Make multiple fields optional for flexible import
+  owners: z.array(z.string()).optional(),
+  date: z.string().optional(),
+  school: z.string().optional(),
+  coach: z.string().optional(),
+  gradeLevelsSupported: z.array(GradeLevelsSupportedZod).optional(),
 });
 
 // Full Schema extends Input Schema
