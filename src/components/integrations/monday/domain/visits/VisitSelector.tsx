@@ -150,15 +150,6 @@ export function MondayVisitsSelector({
     };
   }, [filteredPreviews, selectedIds]);
   
-  // Toggle item selection
-  const handleToggleSelect = (id: string, selected: boolean) => {
-    if (selected) {
-      setSelectedIds(prev => [...prev, id]);
-    } else {
-      setSelectedIds(prev => prev.filter(itemId => itemId !== id));
-    }
-  };
-  
   // Handle owner selection
   const handleOwnerSelected = (itemId: string, ownerId: string) => {
     // Store the selected owner
