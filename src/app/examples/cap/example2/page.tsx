@@ -3,6 +3,9 @@
 import React from 'react';
 import { ActionPlanStage } from '../components/ActionPlanStage';
 import { exampleData } from './data';
+import { GoalSection } from '../components/GoalSection';
+// import { Input } from '@/components/core/fields/Input';
+import { Textarea } from '@/components/core/fields/Textarea';
 // import Image from 'next/image';
 export default function Example2Page() {
   return (
@@ -68,15 +71,11 @@ export default function Example2Page() {
           className="bg-teal-100"
         >
           <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold text-lg mb-2">
-                <span className="inline-block mr-2">🎯</span>
-                Goal Set:
-              </h3>
-              <div className="p-3 bg-white rounded-md border border-gray-200">
-                {exampleData.goalSet}
-              </div>
-            </div>
+            {/* Use the GoalSection component */}
+            <GoalSection 
+              goalText={exampleData.goalSet} 
+              className="mb-4"
+            />
             
             <div>
               <h3 className="font-semibold text-lg mb-2">
@@ -120,19 +119,75 @@ export default function Example2Page() {
               
               {/* Session Planning Section */}
               {exampleData.sessions.map((session, index) => (
-                <div key={index} className="bg-purple-200 p-4 rounded-md mb-4">
+                <div key={index} className="bg-primary-50/50 p-4 rounded-md mb-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="font-bold text-purple-800">
+                    <div className="font-bold text-primary">
                       {session.checkmarks} Session {session.number}
                     </div>
                   </div>
                   
                   <div className="space-y-3">
-                    <p><span className="font-medium">📆 Weekly Focus:</span> {session.weeklyFocus}</p>
-                    <p><span className="font-medium">🔎 Weekly Look Fors:</span> {session.weeklyLookFors}</p>
-                    <p><span className="font-medium">📝 Coach Action:</span> {session.coachAction}</p>
-                    <p><span className="font-medium">🍎 Teacher Action:</span> {session.teacherAction}</p>
-                    <p><span className="font-medium">📊 Progress Monitoring:</span> {session.progressMonitoring}</p>
+                  <div className="space-y-3">
+  <div className="w-full">
+    <Textarea
+      label="📆 Weekly Focus:"
+      defaultValue={session.weeklyFocus}
+      placeholder="Enter weekly focus"
+      rows={4}
+      width="full"
+      resize="vertical"
+      className="min-h-[100px]"
+    />
+  </div>
+  
+  <div className="w-full">
+    <Textarea
+      label="🔎 Weekly Look Fors:"
+      defaultValue={session.weeklyLookFors}
+      placeholder="Enter weekly look fors"
+      rows={4}
+      width="full"
+      resize="vertical"
+      className="min-h-[100px]"
+    />
+  </div>
+  
+  <div className="w-full">
+    <Textarea
+      label="📝 Coach Action:"
+      defaultValue={session.coachAction}
+      placeholder="Enter coach action"
+      rows={4}
+      width="full"
+      resize="vertical"
+      className="min-h-[100px]"
+    />
+  </div>
+  
+  <div className="w-full">
+    <Textarea
+      label="🍎 Teacher Action:"
+      defaultValue={session.teacherAction}
+      placeholder="Enter teacher action"
+      rows={4}
+      width="full"
+      resize="vertical"
+      className="min-h-[100px]"
+    />
+  </div>
+  
+  <div className="w-full">
+    <Textarea 
+      label="📊 Progress Monitoring:"
+      defaultValue={session.progressMonitoring}
+      placeholder="Enter progress monitoring"
+      rows={4}
+      width="full"
+      resize="vertical"
+      className="min-h-[100px]"
+    />
+  </div>
+</div>
                   </div>
                 </div>
               ))}
@@ -158,35 +213,76 @@ export default function Example2Page() {
                 <div className="col-span-1 bg-gray-200 p-3 flex items-center">
                   <span className="font-medium">🔎 Look For</span>
                 </div>
-                <div className="col-span-4 p-3">{record.lookFor || "-"}</div>
+                <div className="col-span-4 p-3">
+                <Textarea
+                  // label="Look For"
+                  defaultValue={record.lookFor}
+                  placeholder="Enter look for"
+                  rows={2}
+                  width="full"
+                />
+                </div>
               </div>
               
               <div className="grid grid-cols-5">
                 <div className="col-span-1 bg-gray-200 p-3 flex items-center">
                   <span className="font-medium">🌟 Glows</span>
                 </div>
-                <div className="col-span-4 p-3">{record.glows || "-"}</div>
+                <div className="col-span-4 p-3">
+                <Textarea
+                  // label="Glows"
+                  defaultValue={record.glows}
+                  placeholder="Enter glows"
+                  rows={2}
+                  width="full"
+                />
+                </div>
               </div>
               
               <div className="grid grid-cols-5">
                 <div className="col-span-1 bg-gray-200 p-3 flex items-center">
                   <span className="font-medium">📈 Areas to strengthen</span>
                 </div>
-                <div className="col-span-4 p-3">{record.areasToStrengthen || "-"}</div>
+                <div className="col-span-4 p-3">
+                <Textarea
+                  // label="Areas to Strengthen"
+                  defaultValue={record.areasToStrengthen}
+                  placeholder="Enter areas to strengthen"
+                  rows={2}
+                  width="full"
+                />
+                </div>
               </div>
               
               <div className="grid grid-cols-5">
                 <div className="col-span-1 bg-gray-200 p-3 flex items-center">
                   <span className="font-medium">💡 Metrics of Success</span>
                 </div>
-                <div className="col-span-4 p-3">{record.metricsOfSuccess || "-"}</div>
+                <div className="col-span-4 p-3">
+                <Textarea
+                  // label="Metrics of Success"
+                  defaultValue={record.metricsOfSuccess}
+                  placeholder="Enter metrics of success"
+                  rows={2}
+                  width="full"
+                />
+                </div>
               </div>
               
               <div className="grid grid-cols-5">
                 <div className="col-span-1 bg-blue-500 text-white p-3 flex items-center">
                   <span className="font-medium">Next Steps</span>
                 </div>
-                <div className="col-span-4 p-3">{record.nextSteps || "-"}</div>
+                <div className="col-span-4">
+                <Textarea
+                  // label="Next Steps"
+                  defaultValue={record.nextSteps}
+                  placeholder="Enter next steps"
+                  rows={4}
+                  width="full"
+                />
+                </div>
+                {/* <div className="col-span-4 p-3">{record.nextSteps || "-"}</div> */}
               </div>
             </div>
           </div>

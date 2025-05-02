@@ -41,9 +41,9 @@ export default function CAPLandingPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                 </svg>
               </div>
-              <h2 className="text-xl font-semibold mb-2 group-hover:text-teal-600">Teaching Lab Format</h2>
+              <h2 className="text-xl font-semibold mb-2 group-hover:text-teal-600">NYC Solves Math Format</h2>
               <p className="text-gray-600 mb-4">
-                Explore the Teaching Lab branded coaching action plan format with session planning and implementation records.
+              Mockup of Spring 2025 Version              
               </p>
               <div className="text-teal-600 font-medium flex items-center">
                 View Example

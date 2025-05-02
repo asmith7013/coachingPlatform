@@ -44,11 +44,23 @@ const textarea = tv({
         'focus:ring-danger',
       ],
     },
+    width: {
+      auto: 'w-auto',
+      full: 'w-full',
+    },
+    resize: {
+      none: 'resize-none',
+      vertical: 'resize-y',
+      horizontal: 'resize-x',
+      both: 'resize',
+    },
   },
   defaultVariants: {
     textSize: 'base',
     padding: 'md',
     radius: 'md',
+    width: 'full',
+    resize: 'vertical',
   },
 });
 
@@ -64,8 +76,11 @@ export interface TextareaProps extends TextareaHTMLProps {
   textSize?: TextareaVariants['textSize'];
   padding?: TextareaVariants['padding'];
   radius?: TextareaVariants['radius'];
+  width?: TextareaVariants['width'];
+  resize?: TextareaVariants['resize'];
   disabled?: boolean;
   className?: string;
+  rows?: number;
 }
 
 export function Textarea({
@@ -74,8 +89,11 @@ export function Textarea({
   textSize,
   padding,
   radius,
+  width,
+  resize,
   className,
   disabled,
+  rows = 4, // Set default to 4 rows
   ...props
 }: TextareaProps) {
   return (
@@ -92,12 +110,15 @@ export function Textarea({
             textSize,
             padding,
             radius,
+            width,
+            resize,
             error: Boolean(error),
             disabled,
           }),
           className
         )}
         disabled={disabled}
+        rows={rows}
         {...props}
       />
     </FieldWrapper>
