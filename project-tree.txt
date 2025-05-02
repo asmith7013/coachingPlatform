@@ -187,6 +187,7 @@
 │   │   │   │   │   ├── ActionPlan.tsx
 │   │   │   │   │   ├── ActionPlanStage.tsx
 │   │   │   │   │   ├── CoachingMovesTable.tsx
+│   │   │   │   │   ├── GoalSection.tsx
 │   │   │   │   │   ├── ImplementationRecord.tsx
 │   │   │   │   │   ├── MetricsTable.tsx
 │   │   │   │   │   ├── MonitoringProgress.tsx
@@ -718,4 +719,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-231 directories, 488 files
+231 directories, 489 files

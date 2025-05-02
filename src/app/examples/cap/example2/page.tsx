@@ -28,7 +28,7 @@ export default function Example2Page() {
         
         {/* Header with coach information */}
         <div className="bg-gray-100 p-6 rounded-md mb-6">
-          <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          <h1 className="text-3xl font-bold font-primary text-center text-gray-800 mb-6">
             Coaching Action Plan Template
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -198,13 +198,13 @@ export default function Example2Page() {
 
       {/* Implementation Record */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4 text-center bg-blue-700 text-white py-2">
+        <h2 className="text-xl font-bold mb-4 text-center bg-lavender-500 text-white py-2">
           Coaching Implementation Record
         </h2>
         
         {exampleData.implementationRecords.map((record, index) => (
           <div key={index} className="mb-6 border border-gray-200 rounded-md overflow-hidden">
-            <div className={`flex items-center gap-2 p-3 font-bold text-white ${index % 2 === 0 ? 'bg-blue-600' : 'bg-blue-800'}`}>
+            <div className={`flex items-center gap-2 p-3 font-bold text-white ${index % 2 === 0 ? 'bg-lavender-700' : 'bg-lavender-800'}`}>
               {record.checkmarks} Session {record.number}
             </div>
             
@@ -270,7 +270,7 @@ export default function Example2Page() {
               </div>
               
               <div className="grid grid-cols-5">
-                <div className="col-span-1 bg-blue-500 text-white p-3 flex items-center">
+                <div className="col-span-1 bg-lavender-600 text-white p-3 flex items-center">
                   <span className="font-medium">Next Steps</span>
                 </div>
                 <div className="col-span-4">
