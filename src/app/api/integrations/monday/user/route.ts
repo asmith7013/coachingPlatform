@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchMondayUserById, fetchMondayUserByEmail } from '@/lib/api/integrations/monday/client';
+import { fetchMondayUserById, fetchMondayUserByEmail } from '@/lib/api/integrations/monday/client/client';
 import { handleServerError } from "@/lib/error";
 
 /**

@@ -390,6 +390,24 @@ export function ResourceForm<T extends Record<string, unknown>>({
   // Initialize form data with initialValues
   const [formData, setFormData] = useState<Partial<T>>(initialValues);
   
+  // Add debugging useEffect to track initialValues and formData
+  useEffect(() => {
+    console.log('ResourceForm received initialValues:', initialValues);
+    
+    // Log field keys vs value keys to diagnose mismatches
+    const fieldKeys = fields.map(field => String(field.key));
+    const valueKeys = Object.keys(initialValues || {});
+    console.log('Form field keys:', fieldKeys);
+    console.log('Initial value keys:', valueKeys);
+    console.log('Missing in values:', fieldKeys.filter(k => !valueKeys.includes(k)));
+    
+    // Update formData if initialValues changes after component mount
+    setFormData(current => ({
+      ...current,
+      ...initialValues
+    }));
+  }, [initialValues, fields]);
+  
   const label = submitLabel ?? (mode === "edit" ? "Save" : "Add");
   const styles = resourceForm({ mode });
   

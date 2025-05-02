@@ -1,20 +1,27 @@
+// src/app/integrations/monday/visits/page.tsx
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { MondayVisitsSelector } from '@/components/integrations/monday/domain/visits/VisitSelector';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
-import { Button } from '@/components/core/Button';
 import { Card } from '@/components/composed/cards/Card';
-
+import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
 export default function MondayVisits() {
+  const router = useRouter();
   const [boardId, setBoardId] = useState<string>('7259948291');
-  const [importCompleted, setImportCompleted] = useState(false);
   
-  const handleImportComplete = () => {
-    setImportCompleted(true);
-    // In a real application, we might navigate to a list of visits or show a different view
-    setTimeout(() => setImportCompleted(false), 5000);
+  // Handle the import initiation - redirects to the completion form
+  const handleImportInitiate = (visit: Partial<VisitInput>, missingFields: string[]) => {
+    // Encode the visit data and missing fields as URL parameters
+    const visitData = encodeURIComponent(JSON.stringify(visit));
+    const missingFieldsParam = encodeURIComponent(JSON.stringify(missingFields));
+    
+    // Redirect to the import completion form with the data
+    router.push(
+      `/integrations/monday/visits/import?boardId=${boardId}&visitData=${visitData}&missingFields=${missingFieldsParam}`
+    );
   };
   
   return (
@@ -44,33 +51,14 @@ export default function MondayVisits() {
         </Card.Body>
       </Card>
       
-      {importCompleted ? (
-        <Card variant="white" className="border border-green-200 bg-green-50 text-center">
-          <Card.Body>
-            <Heading level="h3" className="text-green-800">Import Completed!</Heading>
-            <Text className="text-green-700 mt-2">
-              The imports have been processed successfully. In a real application, you would be 
-              redirected to a list of visits or shown a detailed status report.
-            </Text>
-            <Button 
-              intent="secondary"
-              className="mt-4"
-              onClick={() => setImportCompleted(false)}
-            >
-              Import More Items
-            </Button>
-          </Card.Body>
-        </Card>
-      ) : (
-        <Card variant="white" radius="md" className="border shadow">
-          <Card.Body>
-            <MondayVisitsSelector 
-              boardId={boardId}
-              onImportComplete={handleImportComplete}
-            />
-          </Card.Body>
-        </Card>
-      )}
+      <Card variant="white" radius="md" className="border shadow">
+        <Card.Body>
+          <MondayVisitsSelector 
+            boardId={boardId}
+            onImportComplete={handleImportInitiate}
+          />
+        </Card.Body>
+      </Card>
     </div>
   );
-} 
+}

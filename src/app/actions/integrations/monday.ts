@@ -10,8 +10,8 @@ import {
   fetchMondayUserById,
   fetchMondayUserByEmail,
   MondayUser 
-} from "@api-integrations/monday/client";
-import { ITEMS_QUERY, BOARD_WITH_ITEMS_QUERY } from "@/lib/domain/monday/monday-queries";
+} from "@/lib/api/integrations/monday/client/client";
+import { ITEMS_QUERY, BOARD_WITH_ITEMS_QUERY } from "@/lib/api/integrations/monday/client/queries";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
 import { SchoolModel } from "@mongoose-schema/core/school.model";
 import { TeachingLabStaffModel } from "@mongoose-schema/core/staff.model";
@@ -30,8 +30,8 @@ import {
   MondayConnectionTestResult,
   MondayColumnMap
 } from "@api-integrations/monday/types";
-import { transformMondayItemToVisit } from "@/lib/domain/monday/transform-service";
-import { shouldImportItemWithStatus } from "@/lib/domain/monday/monday-utils";
+import { transformMondayItemToVisit } from "@/lib/api/integrations/monday/services/transform-service";
+import { shouldImportItemWithStatus } from "@/lib/api/integrations/monday/utils/monday-utils";
 import { VisitImportZodSchema } from "@/lib/data-schema/zod-schema/visits/visit";
 
 // Map Monday.com column IDs to their meanings

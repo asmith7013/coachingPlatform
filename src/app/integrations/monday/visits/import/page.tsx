@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { MondayVisitsSelector } from '@/components/integrations/monday/domain/visits/VisitSelector';
 import { ImportCompletionForm } from '@/components/integrations/monday/domain/visits/ImportCompletionForm';
 import { Alert } from '@/components/core/feedback/Alert';
 import { Card } from '@/components/composed/cards/Card';
@@ -16,18 +15,23 @@ import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
 
 // Import stages
 enum ImportStage {
-  SELECT = 'select',
+  LOADING = 'loading',
   COMPLETE = 'complete',
-  CONFIRM = 'confirm'
+  CONFIRM = 'confirm',
+  ERROR = 'error'
 }
 
 export default function MondayVisitImportPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  
+  // Extract URL parameters
   const boardId = searchParams.get('boardId') || '';
+  const visitDataParam = searchParams.get('visitData') || '';
+  const missingFieldsParam = searchParams.get('missingFields') || '';
   
   // State
-  const [stage, setStage] = useState<ImportStage>(ImportStage.SELECT);
+  const [stage, setStage] = useState<ImportStage>(ImportStage.LOADING);
   const [visitToComplete, setVisitToComplete] = useState<Partial<VisitInput> | null>(null);
   const [missingFields, setMissingFields] = useState<string[]>([]);
   const [importResults, setImportResults] = useState<{
@@ -37,20 +41,29 @@ export default function MondayVisitImportPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Handle import initiation from VisitSelector
-  const handleInitiateImport = (visit: Partial<VisitInput>, missing: string[]) => {
-    // Store the visit data and missing fields
-    setVisitToComplete(visit);
-    setMissingFields(missing);
-    
-    // If no missing fields, import directly
-    if (missing.length === 0) {
-      handleImportVisit(visit as VisitInput);
-    } else {
-      // Otherwise, move to completion stage
-      setStage(ImportStage.COMPLETE);
+  // Parse URL parameters when page loads
+  useEffect(() => {
+    try {
+      if (visitDataParam) {
+        const visitData = JSON.parse(decodeURIComponent(visitDataParam));
+        setVisitToComplete(visitData);
+      }
+      
+      if (missingFieldsParam) {
+        const missingFields = JSON.parse(decodeURIComponent(missingFieldsParam));
+        setMissingFields(missingFields);
+      }
+      
+      // If we have visit data, move to completion stage
+      if (visitDataParam) {
+        setStage(ImportStage.COMPLETE);
+      }
+    } catch (err) {
+      console.error('Error parsing URL parameters:', err);
+      setError('Invalid data provided in URL');
+      setStage(ImportStage.ERROR);
     }
-  };
+  }, [visitDataParam, missingFieldsParam]);
   
   // Handle import of a completed visit
   const handleImportVisit = async (visitData: VisitInput) => {
@@ -92,16 +105,13 @@ export default function MondayVisitImportPage() {
   
   // Handle cancellation of import
   const handleCancelImport = () => {
-    // Go back to selection stage
-    setStage(ImportStage.SELECT);
-    setVisitToComplete(null);
-    setMissingFields([]);
+    // Go back to the selection page
+    router.push(`/integrations/monday/visits?boardId=${boardId}`);
   };
   
   // Handle import completion
   const handleImportComplete = () => {
     // For now, redirect to dashboard
-    // Eventually, this could be updated to handle multiple imports
     router.push('/dashboard/visits');
   };
   
@@ -111,20 +121,33 @@ export default function MondayVisitImportPage() {
   };
   
   // Render based on current stage
-  if (stage === ImportStage.SELECT) {
+  if (stage === ImportStage.LOADING) {
+    return (
+      <div className="container mx-auto px-4 py-6 text-center">
+        <Spinner size="lg" />
+        <Text className="mt-4">Loading import data...</Text>
+      </div>
+    );
+  }
+  
+  if (stage === ImportStage.ERROR) {
     return (
       <div className="container mx-auto px-4 py-6">
         <PageHeader
-          title="Import Visits from Monday.com"
-          subtitle="Select items from Monday.com to import as Visits"
+          title="Error Loading Import Data"
+          subtitle="There was a problem processing your import"
         />
         
-        <Card className="p-6">
-          <MondayVisitsSelector 
-            boardId={boardId}
-            onImportComplete={(visit, missing) => handleInitiateImport(visit, missing)}
-          />
-        </Card>
+        <Alert intent="error" className="mb-4">
+          <Alert.Title>Import Error</Alert.Title>
+          <Alert.Description>{error || 'Unknown error occurred'}</Alert.Description>
+        </Alert>
+        
+        <div className="flex justify-end mt-4">
+          <Button onClick={handleCancelImport}>
+            Return to Selection
+          </Button>
+        </div>
       </div>
     );
   }
@@ -218,8 +241,15 @@ export default function MondayVisitImportPage() {
   // Fallback for invalid state
   return (
     <div className="container mx-auto px-4 py-6 text-center">
-      <Spinner size="lg" />
-      <Text className="mt-4">Loading import interface...</Text>
+      <Alert intent="error">
+        <Alert.Title>Invalid State</Alert.Title>
+        <Alert.Description>The application is in an invalid state. Please return to the selection page.</Alert.Description>
+      </Alert>
+      <div className="mt-4">
+        <Button onClick={handleCancelImport}>
+          Return to Selection
+        </Button>
+      </div>
     </div>
   );
 } 

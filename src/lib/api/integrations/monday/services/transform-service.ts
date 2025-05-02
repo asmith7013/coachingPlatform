@@ -1,6 +1,6 @@
-import { FIELD_MAPPERS } from "./field-mappings";
+import { FIELD_MAPPERS } from "../config/field-mappings";
 import { VisitInput, VisitImportZodSchema, VisitInputZodSchema } from "@/lib/data-schema/zod-schema/visits/visit";
-import { extractTextFromMondayValue } from "./monday-utils";
+import { extractTextFromMondayValue } from "../utils/monday-utils";
 import { 
   MondayItem, 
   MondayColumnValue, 
@@ -40,12 +40,19 @@ export async function transformMondayItemToVisit(mondayItem: MondayItem): Promis
       // Extract the text value from Monday's format
       const textValue = extractTextFromMondayValue(columnValue.value);
       
-      // Apply transformation
-      const value = typedMapping.transform 
-        ? await typedMapping.transform(textValue)
-        : textValue;
-        
-      transformed[typedMapping.field as keyof VisitInput] = value as any;
+      // Apply transformation - separate transformation from assignment
+      const fieldName = typedMapping.field;
+      let transformedValue;
+      
+      if (typedMapping.transform) {
+        transformedValue = await typedMapping.transform(textValue);
+      } else {
+        transformedValue = textValue;
+      }
+      
+      // Type-safe assignment using indexed accessor pattern
+      // This isolates the type assertion to just this line
+      (transformed as Record<string, unknown>)[fieldName] = transformedValue;
         
     } catch (error) {
       errors[(mapping as MondayFieldMapping).field] = (error as Error).message;

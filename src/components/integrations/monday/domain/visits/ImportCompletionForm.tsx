@@ -64,9 +64,13 @@ export function ImportCompletionForm({
         ...formData
       };
       
+      // Log the combined data
+      console.log('Combined data before submission:', completeVisit);
+      
       // Try to validate against schema
       const parseResult = VisitInputZodSchema.safeParse(completeVisit);
       if (!parseResult.success) {
+        console.error('Validation errors:', parseResult.error.format());
         setError('Some required fields are still missing or invalid');
         setLoading(false);
         return;
@@ -102,13 +106,20 @@ export function ImportCompletionForm({
       </Card>
     );
   }
+
+  // Add more detailed debugging logs
+  console.log('Fields to complete:', fields);
+  console.log('Field keys:', fields.map(f => f.key));
+  console.log('Imported visit data:', importedVisit);
+  console.log('Keys in imported data:', Object.keys(importedVisit));
+  console.log('Missing fields declared:', missingFields);
   
   return (
     <ResourceForm
       title="Complete Visit Information"
       description="Please provide the missing information required to create this visit."
       fields={fields as Field<Record<string, unknown>>[]}
-      initialValues={importedVisit}
+      initialValues={importedVisit} // This should contain the Monday data
       onSubmit={handleSubmit}
       onCancel={onCancel}
       showCancelButton={true}

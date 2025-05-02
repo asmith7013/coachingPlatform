@@ -101,7 +101,7 @@ export const VisitFieldConfig: Field<Visit>[] = [
     key: "cycleRef",
     label: "Cycle Reference",
     type: "text",
-    required: true,
+    required: false, // Changed from true to false to match schema
   },
   {
     key: "allowedPurpose",
