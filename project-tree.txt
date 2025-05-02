@@ -16,6 +16,7 @@
 │   ├── data-flow
 │   │   ├── api-patterns.md
 │   │   ├── error-handling.md
+│   │   ├── monday-integration.md
 │   │   ├── mongodb-integration.md
 │   │   ├── sanitization-system.md
 │   │   ├── schema-system.md
@@ -67,6 +68,7 @@
 │   │   │   ├── cycles
 │   │   │   │   └── cycles.ts
 │   │   │   ├── integrations
+│   │   │   │   ├── example-monday-usage.ts
 │   │   │   │   └── monday.ts
 │   │   │   ├── lookFors
 │   │   │   │   └── lookFors.ts
@@ -180,6 +182,22 @@
 │   │   │   │   ├── page.tsx
 │   │   │   │   ├── types.ts
 │   │   │   │   └── utils.ts
+│   │   │   ├── cap
+│   │   │   │   ├── components
+│   │   │   │   │   ├── ActionPlan.tsx
+│   │   │   │   │   ├── ActionPlanStage.tsx
+│   │   │   │   │   ├── CoachingMovesTable.tsx
+│   │   │   │   │   ├── ImplementationRecord.tsx
+│   │   │   │   │   ├── MetricsTable.tsx
+│   │   │   │   │   ├── MonitoringProgress.tsx
+│   │   │   │   │   └── ReflectionSection.tsx
+│   │   │   │   ├── example1
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── example2
+│   │   │   │   │   ├── data.ts
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── example3
+│   │   │   │   └── page.tsx
 │   │   │   ├── classroomNotes
 │   │   │   │   ├── layout.tsx
 │   │   │   │   ├── lookForList
@@ -210,10 +228,13 @@
 │   │   ├── globals.css
 │   │   ├── integrations
 │   │   │   └── monday
+│   │   │       ├── examples
+│   │   │       │   └── page.tsx
 │   │   │       ├── page.tsx
 │   │   │       ├── staff
 │   │   │       │   └── page.tsx
 │   │   │       └── visits
+│   │   │           ├── import
 │   │   │           └── page.tsx
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
@@ -246,7 +267,8 @@
 │   │   │   │   ├── BulkUploadForm.tsx
 │   │   │   │   ├── Form.tsx
 │   │   │   │   ├── FormSection.tsx
-│   │   │   │   ├── ResourceForm.tsx
+│   │   │   │   ├── RigidResourceForm.tsx
+│   │   │   │   ├── UpdatedResourceForm.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── tables
 │   │   │   │   ├── ScheduleTable.tsx
@@ -351,10 +373,12 @@
 │   │   │   ├── staff
 │   │   │   │   ├── StaffCard.tsx
 │   │   │   │   ├── StaffDetailPage.tsx
-│   │   │   │   ├── StaffListComponent.tsx
-│   │   │   │   ├── StaffListItem.tsx
-│   │   │   │   ├── StaffSearch.tsx
-│   │   │   │   └── index.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── nycps
+│   │   │   │   └── teachingLab
+│   │   │   │       ├── StaffListComponent.tsx
+│   │   │   │       ├── StaffListItem.tsx
+│   │   │   │       └── StaffSearch.tsx
 │   │   │   ├── things3
 │   │   │   │   ├── ChecklistInput.tsx
 │   │   │   │   ├── GeneratedUrlDisplay.tsx
@@ -427,6 +451,7 @@
 │   │   ├── index.ts
 │   │   ├── integrations
 │   │   │   └── monday
+│   │   │       ├── useMondayIntegration.ts
 │   │   │       └── useStaffExistence.ts
 │   │   └── ui
 │   │       ├── useFiltersAndSorting.ts
@@ -440,7 +465,6 @@
 │   │   │   ├── fetchers
 │   │   │   │   ├── coaching-log.ts
 │   │   │   │   ├── lookFors.ts
-│   │   │   │   ├── monday.ts
 │   │   │   │   ├── schedule.ts
 │   │   │   │   ├── school.ts
 │   │   │   │   └── staff.ts
@@ -449,12 +473,6 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   └── reference-endpoint.ts
 │   │   │   ├── index.ts
-│   │   │   ├── integrations
-│   │   │   │   └── monday
-│   │   │   │       ├── client.ts
-│   │   │   │       ├── items.ts
-│   │   │   │       ├── types.ts
-│   │   │   │       └── users.ts
 │   │   │   ├── responses
 │   │   │   │   ├── index.ts
 │   │   │   │   └── standardize.ts
@@ -559,18 +577,12 @@
 │   │   │       ├── index.ts
 │   │   │       └── schema-config-check.ts
 │   │   ├── domain
-│   │   │   ├── imRoutine
-│   │   │   │   ├── get-unit-URL.ts
-│   │   │   │   ├── getUnitURL.ts
-│   │   │   │   ├── render-ILC-esson.tsx
-│   │   │   │   ├── render-KH-lesson.tsx
-│   │   │   │   └── routine-utils.ts
-│   │   │   └── monday
-│   │   │       ├── duplicate-checker.ts
-│   │   │       ├── field-mappings.ts
-│   │   │       ├── monday-queries.ts
-│   │   │       ├── monday-utils.ts
-│   │   │       └── transform-service.ts
+│   │   │   └── imRoutine
+│   │   │       ├── get-unit-URL.ts
+│   │   │       ├── getUnitURL.ts
+│   │   │       ├── render-ILC-esson.tsx
+│   │   │       ├── render-KH-lesson.tsx
+│   │   │       └── routine-utils.ts
 │   │   ├── error
 │   │   │   ├── crud-error-handling.ts
 │   │   │   ├── error-monitor.ts
@@ -581,6 +593,33 @@
 │   │   ├── hooks
 │   │   │   ├── use-item-to-group-map.ts
 │   │   │   └── use-persisted-curriculum-version.ts
+│   │   ├── integrations
+│   │   │   └── monday
+│   │   │       ├── client
+│   │   │       │   ├── client.ts
+│   │   │       │   ├── index.ts
+│   │   │       │   └── queries.ts
+│   │   │       ├── config
+│   │   │       │   ├── field-mappings.ts
+│   │   │       │   └── index.ts
+│   │   │       ├── examples
+│   │   │       │   └── mapper-usage-examples.ts
+│   │   │       ├── index.ts
+│   │   │       ├── mappers
+│   │   │       │   ├── adapters
+│   │   │       │   ├── index.ts
+│   │   │       │   ├── schemas
+│   │   │       │   └── utils
+│   │   │       ├── services
+│   │   │       │   ├── dynamic-mapping.ts
+│   │   │       │   ├── import-service.ts
+│   │   │       │   ├── index.ts
+│   │   │       │   ├── monday-service.ts
+│   │   │       │   └── transform-service.ts
+│   │   │       ├── types.ts
+│   │   │       └── utils
+│   │   │           ├── index.ts
+│   │   │           └── monday-utils.ts
 │   │   ├── json
 │   │   │   ├── ILC_HS.json
 │   │   │   ├── ILC_routines.json
@@ -626,6 +665,7 @@
 │   │       │   └── district-list.ts
 │   │       ├── forms
 │   │       │   ├── field-labels.ts
+│   │       │   ├── field-renderer.tsx
 │   │       │   ├── field-values.ts
 │   │       │   ├── fieldConfig
 │   │       │   │   ├── core
@@ -676,4 +716,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-213 directories, 464 files
+230 directories, 487 files

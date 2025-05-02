@@ -1,7 +1,7 @@
 import { SchemaTransformer } from "../../utils/transformer";
 import { baseVisitMappingConfig } from "./config";
 import { EntityMappingConfig } from "../../utils/config-types";
-import { MondayItem, MondayColumn, MondayColumnValue, TransformResult } from "@/lib/integrations/monday/types";
+import { MondayItem, MondayColumn, TransformResult } from "@/lib/integrations/monday/types";
 import { VisitInput } from "@/lib/data-schema/zod-schema/visits/visit";
 
 /**
@@ -29,12 +29,12 @@ export class VisitMapper extends SchemaTransformer<VisitInput> {
   /**
    * Post-process entity data for Visit-specific requirements
    */
-  protected postProcessEntityData(data: Partial<VisitInput>): void {
-    // Ensure coach is included in owners array if present
-    if (data.coach && data.owners && !data.owners.includes(data.coach)) {
-      data.owners.push(data.coach);
-    }
-  }
+  // protected postProcessEntityData(data: Partial<VisitInput>): void {
+  //   // Ensure coach is included in owners array if present
+  //   if (data.coach && data.owners && !data.owners.includes(data.coach)) {
+  //     data.owners.push(data.coach);
+  //   }
+  // }
 
   /**
    * Transform a Monday item to a Visit entity

@@ -1,12 +1,14 @@
 // src/lib/integrations/monday/mappers/utils/transformer.ts
 
 import { MondayItem, MondayColumn, MondayColumnValue, TransformResult } from "@/lib/integrations/monday/types";
-import { EntityMappingConfig, ValueTransformer } from "./config-types";
+import { EntityMappingConfig, 
+  // ValueTransformer 
+} from "./config-types";
 
 /**
  * Base mapper class with shared functionality for all entity mappers
  */
-export class SchemaTransformer<T extends Record<string, any>> {
+export class SchemaTransformer<T extends Record<string, unknown>> {
   protected config: EntityMappingConfig<T>;
   
   constructor(config: EntityMappingConfig<T>) {
@@ -78,7 +80,7 @@ export class SchemaTransformer<T extends Record<string, any>> {
     });
     
     // Run post-processing hooks
-    this.postProcessEntityData(entityData);
+    this.postProcessEntityData();
     
     // Check for missing required fields
     this.config.requiredFields.forEach(field => {
@@ -140,7 +142,9 @@ export class SchemaTransformer<T extends Record<string, any>> {
    * Post-process entity data after initial mapping
    * Can be overridden by subclasses to provide entity-specific post-processing
    */
-  protected postProcessEntityData(entityData: Partial<T>): void {
+  protected postProcessEntityData(
+    // entityData: Partial<T>
+  ): void {
     // Default implementation does nothing
   }
   
@@ -162,7 +166,7 @@ export class SchemaTransformer<T extends Record<string, any>> {
       
       if (Array.isArray(transformedValue) && Array.isArray(data[field])) {
         // For array fields, append items
-        const existingArray = data[field] as unknown as any[];
+        const existingArray = data[field] as unknown as unknown[];
         transformedValue.forEach(item => {
           if (!existingArray.includes(item)) {
             existingArray.push(item);
@@ -170,7 +174,7 @@ export class SchemaTransformer<T extends Record<string, any>> {
         });
       } else {
         // Standard field assignment
-        data[field] = transformedValue as any;
+        data[field] = transformedValue as unknown as T[keyof T];
       }
     } else {
       // Default to text for fields without a specific transformer
@@ -191,7 +195,7 @@ export class SchemaTransformer<T extends Record<string, any>> {
     
     // Check if it's undefined or empty array
     return data[field] === undefined || 
-      (Array.isArray(data[field]) && (data[field] as any[]).length === 0);
+      (Array.isArray(data[field]) && (data[field] as unknown[]).length === 0);
   }
   
   /**

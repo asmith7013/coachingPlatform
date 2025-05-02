@@ -10,7 +10,7 @@ export * from "./schemas";
 export * from "./adapters";
 
 // Factory function to get the appropriate mapper based on board ID
-import { MondayItem, MondayColumn, TransformResult, MondayColumnValue } from "@/lib/integrations/monday/types";
+import { MondayItem, TransformResult, MondayColumnValue } from "@/lib/integrations/monday/types";
 import { transformMondayItemToVisit } from "./schemas/visit";
 import { transformStandardBoardItemToVisit } from "./adapters/standard";
 

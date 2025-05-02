@@ -1,6 +1,6 @@
 // src/lib/integrations/monday/mappers/utils/value-transformers.ts
 
-import { MondayColumnValue, MondayColumn } from "@/lib/integrations/monday/types";
+import { MondayColumnValue } from "@/lib/integrations/monday/types";
 import { ValueTransformer } from "./config-types";
 
 /**
@@ -71,7 +71,7 @@ export const peopleTransformer: ValueTransformer<string[]> =
       if (value.value) {
         const parsed = JSON.parse(value.value);
         if (parsed.personsAndTeams && parsed.personsAndTeams.length > 0) {
-          return parsed.personsAndTeams.map((person: any) => person.id.toString());
+          return parsed.personsAndTeams.map((person: unknown) => (person as { id: string }).id.toString());
         }
       }
     } catch (e) {

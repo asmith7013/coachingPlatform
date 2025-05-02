@@ -4,13 +4,13 @@ import {
   MondayColumnValue,
   TransformResult 
 } from "@/lib/integrations/monday/types";
-import { VisitInput, VisitImportZodSchema } from "@/lib/data-schema/zod-schema/visits/visit";
+import { VisitInput } from "@/lib/data-schema/zod-schema/visits/visit";
 import { 
   ModeDone, 
   AllowedPurpose,
   GradeLevelsSupportedZod 
 } from "@/lib/data-schema/enum/shared-enums";
-import { extractTextFromMondayValue } from "@/lib/integrations/monday/utils/monday-utils";
+// import { extractTextFromMondayValue } from "@/lib/integrations/monday/utils/monday-utils";
 
 /**
  * Map Monday.com columns to Visit fields by using both title and type information
@@ -134,7 +134,7 @@ export function mapMondayColumnsToVisitFields(
   
   requiredFields.forEach(field => {
     if (visitData[field] === undefined || 
-        (Array.isArray(visitData[field]) && (visitData[field] as any[]).length === 0)) {
+        (Array.isArray(visitData[field]) && (visitData[field] as unknown[]).length === 0)) {
       // Only add if not already in the list
       if (!missingFields.includes(field as string)) {
         missingFields.push(field as string);
@@ -209,7 +209,7 @@ function extractMultiplePersonIds(value: MondayColumnValue): string[] {
     if (value.value) {
       const parsed = JSON.parse(value.value);
       if (parsed.personsAndTeams && parsed.personsAndTeams.length > 0) {
-        return parsed.personsAndTeams.map((person: any) => person.id.toString());
+        return parsed.personsAndTeams.map((person: unknown) => (person as { id: string }).id.toString());
       }
     }
   } catch (e) {
@@ -438,7 +438,7 @@ function isFieldMissing(
   
   // Check if it's undefined or empty array
   return data[field] === undefined || 
-    (Array.isArray(data[field]) && (data[field] as any[]).length === 0);
+    (Array.isArray(data[field]) && (data[field] as unknown[]).length === 0);
 }
 
 /**

@@ -3,14 +3,14 @@
 import React from 'react';
 import { ActionPlanStage } from '../components/ActionPlanStage';
 import { exampleData } from './data';
-
+import Image from 'next/image';
 export default function Example2Page() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
         {/* Teaching Lab Logo */}
         <div className="mb-6">
-          <img 
+          <Image 
             src="/images/teaching-lab-logo.svg" 
             alt="Teaching Lab Logo" 
             className="h-16"

@@ -1,6 +1,6 @@
 // src/lib/integrations/monday/mappers/schemas/visit/config.ts
 
-import { EntityMappingConfig } from "../../utils/config-types";
+import { EntityMappingConfig, ValueTransformer } from "../../utils/config-types";
 import { VisitInput } from "@/lib/data-schema/zod-schema/visits/visit";
 import { 
   dateTransformer,
@@ -128,15 +128,15 @@ export const baseVisitMappingConfig: EntityMappingConfig<VisitInput> = {
   
   // Value transformers for specific fields
   valueTransformers: {
-    date: dateTransformer,
-    school: textTransformer,
-    coach: personTransformer,
-    cycleRef: textTransformer,
-    modeDone: modeDoneTransformer,
-    allowedPurpose: allowedPurposeTransformer,
-    gradeLevelsSupported: gradeLevelsTransformer,
-    siteAddress: textTransformer,
-    owners: peopleTransformer
+    date: dateTransformer as unknown as ValueTransformer<VisitInput>,
+    school: textTransformer as unknown as ValueTransformer<VisitInput>,
+    coach: personTransformer as unknown as ValueTransformer<VisitInput>,
+    cycleRef: textTransformer as unknown as ValueTransformer<VisitInput>,
+    modeDone: modeDoneTransformer as unknown as ValueTransformer<VisitInput>,
+    allowedPurpose: allowedPurposeTransformer as unknown as ValueTransformer<VisitInput>,
+    gradeLevelsSupported: gradeLevelsTransformer as unknown as ValueTransformer<VisitInput>,
+    siteAddress: textTransformer as unknown as ValueTransformer<VisitInput>,
+    owners: peopleTransformer as unknown as ValueTransformer<VisitInput>
   },
   
   // Required fields for validation

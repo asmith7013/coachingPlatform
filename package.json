@@ -16,7 +16,8 @@
     "seed:all": "tsx scripts/seed/index.ts",
     "docs": "tsx scripts/combine-docs.ts",
     "scrapeILC": "tsx scripts/im-curriculum/scraper.ts",
-    "knip": "knip"
+    "knip": "knip",
+    "prebuild": "npm run generate-css && tsc --noEmit --strict --skipLibCheck false && next lint"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -52,6 +53,7 @@
     "@types/react-dom": "^19.0.4",
     "@types/yargs": "^17.0.33",
     "eslint": "^9.25.1",
+    "eslint-config-next": "^15.3.1",
     "knip": "^5.52.0",
     "next": "^15.2.4",
     "tailwindcss": "^4.1.3",

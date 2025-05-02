@@ -16,7 +16,7 @@ export interface EntityMappingConfig<T> {
   idPatternMappings: Record<string, keyof T>;
   
   // Field-specific value transformers
-  valueTransformers: Partial<Record<keyof T, ValueTransformer<any>>>;
+  valueTransformers: Partial<Record<keyof T, ValueTransformer<T>>>;
   
   // Required fields for validation
   requiredFields: Array<keyof T>;

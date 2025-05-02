@@ -22,7 +22,7 @@ import type { VisitInput } from "@/lib/data-schema/zod-schema/visits/visit";
  * Function to get board with items - this is just a placeholder
  * You need to replace this with your actual implementation
  */
-async function getBoardWithItems(boardId: string) {
+async function getBoardWithItems() {
   // This is a PLACEHOLDER - replace with your actual implementation
   // using your actual Monday.com client
   /*
@@ -43,10 +43,10 @@ async function getBoardWithItems(boardId: string) {
  * Dynamic preview function that shows how to integrate the dynamic mapping
  * system with the existing Monday.com preview functionality.
  */
-export async function findPotentialVisitsToImportWithDynamicMapping(boardId: string) {
+export async function findPotentialVisitsToImportWithDynamicMapping() {
   try {
     // Fetch board and columns
-    const { board, items } = await getBoardWithItems(boardId);
+    const { board, items } = await getBoardWithItems();
     const columns = board.columns || [];
     
     // Map each item to a visit using the dynamic mapper
