@@ -7,7 +7,6 @@ import {
   shadowVariant
 } from '@ui-variants/shared-variants';
 import type { RadiusVariant, ShadowVariant } from '@ui-variants/shared-variants';
-// import { FiFile, FiX, FiDownload } from 'react-icons/fi';
 import { paddingX, paddingY } from '@ui-tokens/tokens';
 // File card styling with variants
 const fileCard = tv({
