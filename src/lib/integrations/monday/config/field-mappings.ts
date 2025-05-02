@@ -1,3 +1,5 @@
+// src/lib/integrations/monday/config/field-mappings.ts
+
 import { z } from "zod";
 import { VisitInput } from "@zod-schema/visits/visit";
 import { 
@@ -7,7 +9,7 @@ import {
   EventTypeZod,
   DurationZod
 } from "@enums";
-import { MondayColumn } from "@api-integrations/monday/types";
+import { MondayColumn } from "@/lib/integrations/monday/types";
 import { 
   // GradeLevels, 
   AllowedPurposes,

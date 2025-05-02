@@ -5,7 +5,7 @@ import { Button } from '@/components/core/Button';
 import { Alert } from '@/components/core/feedback/Alert';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { testConnection } from '@/app/actions/integrations/monday';
-import { MondayConnectionTestResult } from '@api-integrations/monday/types';
+import { MondayConnectionTestResult } from '@/lib/integrations/monday/types';
 
 export interface ConnectionTestProps {
   className?: string;

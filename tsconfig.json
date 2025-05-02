@@ -52,7 +52,7 @@
         "@api-fetchers/*": ["./src/lib/api/fetchers/*"],
         "@api-handlers/*": ["./src/lib/api/handlers/*"],
         "@api-responses/*": ["./src/lib/api/responses/*"],
-        "@api-integrations/*": ["./src/lib/api/integrations/*"],
+        "@api-integrations/*": ["./src/lib/integrations/*"],
 
         // UI-specific paths
         "@ui/*": ["./src/lib/ui/*"],

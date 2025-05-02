@@ -1,4 +1,4 @@
-// src/lib/api/integrations/monday/queries.ts
+// src/lib/integrations/monday/client/queries.ts
 
 /**
  * Centralized GraphQL queries for Monday.com API
@@ -27,7 +27,6 @@ export const BOARD_QUERY = `
 `;
 
 // Items query with pagination for getting board items
-// Note: Using items_page instead of items for paginated results
 export const ITEMS_QUERY = `
   query getItems($boardId: ID!) {
     boards(ids: [$boardId]) {
@@ -36,12 +35,43 @@ export const ITEMS_QUERY = `
         items {
           id
           name
+          state
+          board {
+            id
+          }
           column_values {
             id
             text
             value
+            type
           }
         }
+      }
+    }
+  }
+`;
+
+// Get a single item by ID - useful for fetch one selected item
+export const ITEM_BY_ID_QUERY = `
+  query getItemById($itemId: ID!) {
+    items(ids: [$itemId]) {
+      id
+      name
+      state
+      board {
+        id
+        name
+        columns {
+          id
+          title
+          type
+        }
+      }
+      column_values {
+        id
+        text
+        value
+        type
       }
     }
   }
@@ -81,10 +111,12 @@ export const BOARD_ITEMS_QUERY = `
         items {
           id
           name
+          state
           column_values {
             id
             text
             value
+            type
           }
         }
       }
@@ -100,10 +132,12 @@ export const NEXT_ITEMS_PAGE_QUERY = `
       items {
         id
         name
+        state
         column_values {
           id
           text
           value
+          type
         }
       }
     }
@@ -132,13 +166,39 @@ export const BOARD_WITH_ITEMS_QUERY = `
         items {
           id
           name
+          state
           column_values {
             id
             text
             value
+            type
           }
         }
       }
+    }
+  }
+`;
+
+// Get user information by ID
+export const USER_BY_ID_QUERY = `
+  query getUserById($userId: ID!) {
+    users(ids: [$userId]) {
+      id
+      name
+      email
+      photo_thumb_small
+    }
+  }
+`;
+
+// Get user information by email
+export const USER_BY_EMAIL_QUERY = `
+  query getUserByEmail($email: String!) {
+    users(emails: [$email]) {
+      id
+      name
+      email
+      photo_thumb_small
     }
   }
 `;

@@ -2,12 +2,12 @@
 import { createApiSafeFetcher } from '@api-handlers/api-adapter';
 import { VisitZodSchema } from "@zod-schema/visits/visit";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
-import { mondayClient } from "@/lib/api/integrations/monday/client/client";
-import { BOARD_WITH_ITEMS_QUERY } from "@/lib/api/integrations/monday/client/queries";
+import { mondayClient } from "@/lib/integrations/monday/client/client";
+import { BOARD_WITH_ITEMS_QUERY } from "@/lib/integrations/monday/client/queries";
 import { 
   MondayBoardResponse, 
   // MondayItemsResponse
-} from "@api-integrations/monday/types";
+} from "@/lib/integrations/monday/types";
 
 // For the standard resource fetching pattern (visits in your MongoDB)
 export const fetchMondayVisitsForApi = createApiSafeFetcher(

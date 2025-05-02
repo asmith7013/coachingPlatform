@@ -18,6 +18,7 @@
 - [Data-flow](#data-flow)
   - [api patterns](#api-patterns)
   - [error handling](#error-handling)
+  - [monday integration](#monday-integration)
   - [mongodb integration](#mongodb-integration)
   - [sanitization system](#sanitization-system)
   - [schema system](#schema-system)

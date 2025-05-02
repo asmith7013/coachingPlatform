@@ -10,7 +10,7 @@ import { Alert } from '@/components/core/feedback/Alert';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
-import { ImportPreview } from '@api-integrations/monday/types';
+import { ImportPreview } from '@/lib/integrations/monday/types';
 import { findPotentialVisitsToImport } from '@/app/actions/integrations/monday';
 import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
 

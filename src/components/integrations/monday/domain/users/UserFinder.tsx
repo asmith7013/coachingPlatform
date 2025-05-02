@@ -5,7 +5,7 @@ import { Alert } from '@/components/core/feedback/Alert';
 import { Card } from '@/components/composed/cards/Card';
 import { UserForm } from './UserForm';
 import { UserDetails } from './UserDetails';
-import { MondayUser } from '@api-integrations/monday/types';
+import { MondayUser } from '@/lib/integrations/monday/types';
 import { ConnectionTest } from '../../common';
 
 // Extended MondayUser interface for additional properties

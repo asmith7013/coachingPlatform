@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchMondayUserById, fetchMondayUserByEmail } from '@/lib/api/integrations/monday/client/client';
-import { handleServerError } from "@/lib/error";
+import { fetchMondayUserById, fetchMondayUserByEmail } from '@/lib/integrations/monday/client/client';
+// import { handleServerError } from "@/lib/error";
 
 /**
  * GET handler for Monday.com user fetching
@@ -17,47 +17,65 @@ export async function GET(req: NextRequest) {
     
     if (!userId && !email) {
       return NextResponse.json(
-        { success: false, error: 'Either userId or email parameter is required' }, 
+        { success: false, items: [], error: 'Either userId or email parameter is required' }, 
         { status: 400 }
       );
     }
     
     let user;
-    if (userId) {
-      // Clean user ID (ensure it's just numbers)
-      const cleanUserId = userId.replace(/\D/g, "");
-      user = await fetchMondayUserById(cleanUserId);
-    } else if (email) {
-      user = await fetchMondayUserByEmail(email);
+    try {
+      if (userId) {
+        // Clean user ID (ensure it's just numbers)
+        const cleanUserId = userId.replace(/\D/g, "");
+        user = await fetchMondayUserById(cleanUserId);
+      } else if (email) {
+        user = await fetchMondayUserByEmail(email);
+      }
+    } catch (apiError) {
+      console.error('Monday API error:', apiError);
+      return NextResponse.json({ 
+        success: false, 
+        items: [],
+        error: 'Error communicating with Monday.com API' 
+      }, { status: 502 });
     }
     
     if (!user) {
       return NextResponse.json(
-        { success: false, error: 'User not found' }, 
+        { success: false, items: [], error: 'User not found' }, 
         { status: 404 }
       );
     }
     
-    // Return simplified user object to avoid type issues
+    // Return simplified user object in standard response format
     return NextResponse.json({
       success: true,
-      data: {
+      items: [{
         id: user.id,
         name: user.name,
         email: user.email,
         title: user.title || null,
         photo_thumb: user.photo_thumb || null,
         // Only include teams if they exist and are properly formatted
-        ...(user.teams && Array.isArray(user.teams) && user.teams.every(t => t && typeof t === 'object' && 'id' in t && 'name' in t) 
-          ? { teams: user.teams.map(t => ({ id: t.id, name: t.name })) } 
-          : {})
-      }
+        teams: Array.isArray(user.teams) ? 
+          user.teams
+            .filter(t => t && typeof t === 'object' && 'id' in t && 'name' in t)
+            .map(t => ({ id: t.id, name: t.name })) 
+          : []
+      }]
     });
   } catch (error) {
     console.error('Error in Monday.com user API:', error);
+    // Ensure we return a properly formatted error response
     return NextResponse.json(
-      { success: false, error: handleServerError(error) }, 
+      { 
+        success: false, 
+        items: [],
+        error: typeof error === 'object' && error !== null ? 
+          (error as { message?: string }).message || 'Unknown error' : 
+          String(error) 
+      }, 
       { status: 500 }
     );
   }
-} 
+}

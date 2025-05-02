@@ -1,4 +1,4 @@
-// src/app/api/integrations/monday/client.ts
+// src/lib/integrations/monday/client/client.ts
 import { handleServerError } from "@/lib/error";
 
 const MONDAY_API_URL = "https://api.monday.com/v2";

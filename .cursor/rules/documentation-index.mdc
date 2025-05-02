@@ -49,6 +49,7 @@ The documentation is organized into several key areas:
 @file:docs/data-flow/sanitization-system.md
 @file:docs/data-flow/schema-system.md
 @file:docs/data-flow/server-actions.md
+@file:docs/data-flow/monday-integration.md
 
 ### Workflow Documentation
 @file:docs/workflows/common-tasks.md

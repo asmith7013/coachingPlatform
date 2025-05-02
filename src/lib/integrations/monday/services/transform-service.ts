@@ -6,7 +6,7 @@ import {
   MondayColumnValue, 
   TransformResult,
   MondayFieldMapping 
-} from "@api-integrations/monday/types";
+} from "@/lib/integrations/monday/types";
 import { z } from "zod";
 
 export async function transformMondayItemToVisit(mondayItem: MondayItem): Promise<TransformResult> {

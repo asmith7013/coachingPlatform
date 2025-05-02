@@ -10,8 +10,17 @@ import {
   fetchMondayUserById,
   fetchMondayUserByEmail,
   MondayUser 
-} from "@/lib/api/integrations/monday/client/client";
-import { ITEMS_QUERY, BOARD_WITH_ITEMS_QUERY } from "@/lib/api/integrations/monday/client/queries";
+} from "@/lib/integrations/monday/client/client";
+import { 
+  ITEMS_QUERY, 
+  BOARD_WITH_ITEMS_QUERY,
+  WORKSPACES_QUERY, 
+  BOARDS_BY_WORKSPACE_QUERY,
+  BOARD_QUERY,
+  // ITEM_BY_ID_QUERY,
+  // USER_BY_ID_QUERY,
+  // USER_BY_EMAIL_QUERY
+} from "@/lib/integrations/monday/client/queries";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
 import { SchoolModel } from "@mongoose-schema/core/school.model";
 import { TeachingLabStaffModel } from "@mongoose-schema/core/staff.model";
@@ -28,10 +37,12 @@ import {
   ImportPreview,
   ImportResult,
   MondayConnectionTestResult,
-  MondayColumnMap
-} from "@api-integrations/monday/types";
-import { transformMondayItemToVisit } from "@/lib/api/integrations/monday/services/transform-service";
-import { shouldImportItemWithStatus } from "@/lib/api/integrations/monday/utils/monday-utils";
+  MondayColumnMap,
+  MondayColumn,
+  MondayItem
+} from "@/lib/integrations/monday/types";
+import { transformMondayItemToVisit } from "@/lib/integrations/monday/services/transform-service";
+import { shouldImportItemWithStatus } from "@/lib/integrations/monday/utils/monday-utils";
 import { VisitImportZodSchema } from "@/lib/data-schema/zod-schema/visits/visit";
 
 // Map Monday.com column IDs to their meanings
@@ -44,6 +55,15 @@ const COLUMN_IDS: MondayColumnMap = {
 };
 
 export type { ImportPreview }; // Re-export for component usage
+
+/**
+ * Import Item interface for providing additional data when importing
+ */
+export interface ImportItem {
+  id: string;
+  ownerId?: string;
+  completeData?: Record<string, unknown>;
+}
 
 export async function importVisitsFromMonday(boardId: string) {
   return withDbConnection(async () => {
@@ -226,18 +246,32 @@ export async function getBoard(boardId: string, itemLimit: number = 20): Promise
  */
 export async function testConnection(): Promise<MondayConnectionTestResult> {
   try {
-    const response = await mondayClient.query<{ me: { name: string; email: string } }>(
-      `query { me { name email } }`
+    // Get current user info from Monday - using direct query string for simple query
+    const response = await mondayClient.query<{ users: { id: string; name: string; email: string }[] }>(
+      `query { users { id name email } }`
     );
+    
+    if (!response.users || response.users.length === 0) {
+      return { 
+        success: false, 
+        error: "No users found. Check API token permissions."
+      };
+    }
+    
+    // Just return the first user (token owner)
+    const currentUser = response.users[0];
     
     return {
       success: true,
-      data: response.me
+      data: {
+        name: currentUser.name,
+        email: currentUser.email
+      }
     };
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: handleServerError(error)
     };
   }
 }
@@ -287,14 +321,8 @@ export async function findPotentialVisitsToImport(boardId: string): Promise<Impo
 
 /**
  * Import selected visits from Monday.com
- * Updated to support providing owner IDs for visits and completing missing fields
+ * Supports providing owner IDs for visits and completing missing fields
  */
-interface ImportItem {
-  id: string;
-  ownerId?: string;
-  completeData?: Record<string, unknown>;
-}
-
 export async function importSelectedVisits(selectedItems: ImportItem[] | string[]): Promise<ImportResult> {
   const errors: Record<string, string> = {};
   let imported = 0;
@@ -427,6 +455,134 @@ export async function getMondayUserByEmail(email: string): Promise<ApiResponse<M
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error"
+    };
+  }
+}
+
+/**
+ * Get all boards from Monday.com
+ */
+export async function getBoards(): Promise<{ success: boolean; data?: MondayBoard[]; error?: string }> {
+  try {
+    // Get all workspaces first
+    const workspacesResponse = await mondayClient.query<{ workspaces: { id: string; name: string }[] }>(
+      WORKSPACES_QUERY
+    );
+    
+    if (!workspacesResponse.workspaces || workspacesResponse.workspaces.length === 0) {
+      return { 
+        success: false, 
+        error: "No workspaces found. Check API token permissions."
+      };
+    }
+    
+    // Get boards from all workspaces
+    const boards: MondayBoard[] = [];
+    
+    for (const workspace of workspacesResponse.workspaces) {
+      const boardsResponse = await mondayClient.query<{ boards: MondayBoard[] }>(
+        BOARDS_BY_WORKSPACE_QUERY,
+        { workspaceId: workspace.id }
+      );
+      
+      if (boardsResponse.boards) {
+        boards.push(...boardsResponse.boards);
+      }
+    }
+    
+    return {
+      success: true,
+      data: boards
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: handleServerError(error)
+    };
+  }
+}
+
+/**
+ * Get columns for a specific board
+ */
+export async function getBoardColumns(boardId: string): Promise<{ success: boolean; data?: MondayColumn[]; error?: string }> {
+  try {
+    if (!boardId) {
+      return { 
+        success: false, 
+        error: "Board ID is required"
+      };
+    }
+    
+    // Get board columns
+    const response = await mondayClient.query<{ boards: { id: string; name: string; columns: MondayColumn[] }[] }>(
+      BOARD_QUERY,
+      { boardId }
+    );
+    
+    if (!response.boards || response.boards.length === 0) {
+      return { 
+        success: false, 
+        error: "Board not found"
+      };
+    }
+    
+    const board = response.boards[0];
+    
+    return {
+      success: true,
+      data: board.columns
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: handleServerError(error)
+    };
+  }
+}
+
+/**
+ * Get items for a specific board
+ */
+export async function getBoardItems(boardId: string): Promise<{ success: boolean; data?: MondayItem[]; error?: string }> {
+  try {
+    if (!boardId) {
+      return { 
+        success: false, 
+        error: "Board ID is required"
+      };
+    }
+    
+    // Get board items
+    const response = await mondayClient.query<MondayResponse>(
+      ITEMS_QUERY,
+      { boardId }
+    );
+    
+    if (!response.boards || response.boards.length === 0) {
+      return { 
+        success: false, 
+        error: "Board not found"
+      };
+    }
+    
+    const board = response.boards[0];
+    
+    if (!board.items_page || !board.items_page.items) {
+      return {
+        success: true,
+        data: []
+      };
+    }
+    
+    return {
+      success: true,
+      data: board.items_page.items
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: handleServerError(error)
     };
   }
 }

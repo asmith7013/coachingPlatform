@@ -8,7 +8,7 @@ import { RigidResourceForm as GenericResourceForm } from '@/components/composed/
 import { createTeachingLabStaff } from '@/app/actions/staff';
 import { TeachingLabStaffInput } from '@domain-types/staff';
 import { TeachingLabStaffFieldConfig } from '@/lib/ui/forms/fieldConfig/core/teaching-lab-staff';
-import { MondayUser } from '@api-integrations/monday/types';
+import { MondayUser } from '@/lib/integrations/monday/types';
 
 // Extended MondayUser interface for additional properties
 interface ExtendedMondayUser extends MondayUser {
