@@ -7,7 +7,7 @@ import {
   shadowVariant
 } from '@ui-variants/shared-variants';
 import type { RadiusVariant, ShadowVariant } from '@ui-variants/shared-variants';
-import { FiFile, FiX, FiDownload } from 'react-icons/fi';
+// import { FiFile, FiX, FiDownload } from 'react-icons/fi';
 import { paddingX, paddingY } from '@ui-tokens/tokens';
 // File card styling with variants
 const fileCard = tv({
@@ -70,7 +70,7 @@ export function FileCard({
   onRemove,
   onDownload,
   className,
-  fileIcon,
+  // fileIcon,
   padding,
   radius,
   shadow,
@@ -93,7 +93,7 @@ export function FileCard({
       )}
     >
       <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 text-blue-500">
-        {fileIcon || <FiFile size={20} />}
+        {/* {fileIcon || <FiFile size={20} />} */}
       </div>
       <div className="flex-grow min-w-0 px-2">
         <div className="truncate font-medium text-sm">{name}</div>
@@ -112,7 +112,7 @@ export function FileCard({
             className="p-1.5 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100"
             aria-label="Download file"
           >
-            <FiDownload size={16} />
+            {/* <FiDownload size={16} /> */}
           </button>
         )}
         {onRemove && (
@@ -121,7 +121,7 @@ export function FileCard({
             className="p-1.5 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100"
             aria-label="Remove file"
           >
-            <FiX size={16} />
+            {/* <FiX size={16} /> */}
           </button>
         )}
       </div>
