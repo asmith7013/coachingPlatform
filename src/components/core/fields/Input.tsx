@@ -10,7 +10,7 @@ type InputRadius = 'none' | 'sm' | 'md' | 'lg' | 'full';
 
 const input = tv({
   slots: {
-    base: `w-full ${borderWidths.sm} ${backgroundColors.surface} ${textColors.default} placeholder:${textColors.muted} focus:outline-none focus:ring-2 ${ringColors.primary} focus:border-transparent`,
+    base: `w-full ${borderWidths.sm} ${backgroundColors.white} ${textColors.default} placeholder:${textColors.muted} focus:outline-none focus:ring-2 ${ringColors.primary} focus:border-transparent`,
     wrapper: '',
   },
   variants: {

@@ -1,3 +1,4 @@
+```markdown
 <doc id="dev-utilities">
 
 # Development Utilities
@@ -157,3 +158,4 @@ Can be integrated with Sentry or other monitoring tools
 [RULE] Use performance monitoring for critical user-facing components.
 </section>
 </doc>
+```

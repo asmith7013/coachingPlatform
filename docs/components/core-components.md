@@ -1,3 +1,4 @@
+```markdown
 <doc id="core-components">
 Core Components
 <section id="core-components-overview">
@@ -180,3 +181,4 @@ function SaveButton({ saving, ...props }) {
 </section>
 
 </doc>
+```

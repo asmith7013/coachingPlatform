@@ -1,3 +1,4 @@
+```markdown
 <doc id="api-patterns">
 
 # API Patterns
@@ -309,3 +310,4 @@ Operations that benefit from React Server Components optimizations
 </section>
 
 </doc>
+```

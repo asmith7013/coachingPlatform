@@ -25,14 +25,29 @@ export function mapMondayColumnsToVisitFields(
   visitData: Partial<VisitInput>;
   missingFields: string[];
 } {
-  // Initialize with basic Monday metadata
+  
   const visitData: Partial<VisitInput> = {
+    // Monday metadata
     mondayItemId: mondayItem.id,
     mondayBoardId: mondayItem.board_id,
     mondayItemName: mondayItem.name,
     mondayLastSyncedAt: new Date().toISOString(),
-    owners: [] as string[], // Initialize empty array
-    gradeLevelsSupported: [] as string[], // Initialize empty array
+    
+    // Initialize critical fields with empty values
+    // These will flag as missing if not populated during mapping
+    date: "",
+    school: "",
+    coach: "",
+    cycleRef: "",
+    
+    // Initialize list fields as empty arrays
+    owners: [] as string[],
+    gradeLevelsSupported: [] as string[],
+    
+    // Optional fields with empty values
+    modeDone: undefined,
+    allowedPurpose: undefined,
+    siteAddress: "",
   };
   
   const missingFields: string[] = [];

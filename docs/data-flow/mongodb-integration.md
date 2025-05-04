@@ -1,3 +1,4 @@
+```markdown
 <doc id="mongodb-integration">
 
 # MongoDB Integration Patterns
@@ -199,3 +200,4 @@ Include metadata in the response
 </section>
 
 </doc>
+```

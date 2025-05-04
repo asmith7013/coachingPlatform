@@ -1,13 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/core/Button';
 import { Alert } from '@/components/core/feedback/Alert';
 import { Card } from '@/components/composed/cards/Card';
-import { importSelectedVisits } from '@/app/actions/integrations/monday';
-import { PageHeader } from '@/components/shared/PageHeader';
+import { ImportCompletionForm } from '@/components/integrations/monday/domain/visits/ImportCompletionForm';
+import { useMondayIntegration } from '@/hooks/integrations/monday/useMondayIntegration';
+import { PageHeader } from '@/components/composed/layouts/PageHeader';
+import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
 
 enum ImportStage {
   LOADING = 'loading',
@@ -16,68 +17,88 @@ enum ImportStage {
   ERROR = 'error',
 }
 
-export interface VisitImportResult {
-  created: number;
-  updated: number;
-  failed: number;
-  total: number;
-}
-
 export default function MondayVisitsImportClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const {
+    connectionData,
+    importItems,
+    importError
+  } = useMondayIntegration();
+  
+  // State
   const [stage, setStage] = useState<ImportStage>(ImportStage.LOADING);
-  const [importResults, setImportResults] = useState<VisitImportResult | null>(null);
+  const [visitData, setVisitData] = useState<Partial<VisitInput> | null>(null);
+  const [missingFields, setMissingFields] = useState<string[]>([]);
+  const [boardId, setBoardId] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-
+  
+  // Parse URL parameters on component mount
   useEffect(() => {
-    const items = searchParams.get('items');
-    const boardId = searchParams.get('boardId');
-
-    if (!items || !boardId) {
-      setStage(ImportStage.ERROR);
-      setError('Missing required parameters: items and boardId');
-      return;
-    }
-
-    const handleImport = async () => {
-      try {
-        const parsedItems = JSON.parse(items);
-        if (!Array.isArray(parsedItems) || parsedItems.length === 0) {
-          throw new Error('Invalid items format');
-        }
-
-        const result = await importSelectedVisits(parsedItems);
-
-        if (!result.success) {
-          throw new Error(result.message || 'Failed to import visits');
-        }
-
-        setImportResults({
-          created: result.imported || 0,
-          updated: 0,
-          failed: Object.keys(result.errors || {}).length,
-          total: parsedItems.length
-        });
-        setStage(ImportStage.COMPLETE);
-      } catch (err) {
-        console.error('Import error:', err);
-        setStage(ImportStage.ERROR);
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+    try {
+      const boardIdParam = searchParams.get('boardId');
+      const visitDataParam = searchParams.get('visitData');
+      const missingFieldsParam = searchParams.get('missingFields');
+      
+      if (!visitDataParam || !missingFieldsParam) {
+        throw new Error('Missing required parameters');
       }
-    };
-
-    handleImport();
+      
+      // Parse the visitData and missingFields
+      const parsedVisitData = JSON.parse(decodeURIComponent(visitDataParam));
+      const parsedMissingFields = JSON.parse(decodeURIComponent(missingFieldsParam));
+      
+      setVisitData(parsedVisitData);
+      setMissingFields(parsedMissingFields);
+      
+      if (boardIdParam) {
+        setBoardId(boardIdParam);
+      }
+      
+      // Update stage
+      setStage(ImportStage.CONFIRM);
+    } catch (err) {
+      console.error('Error parsing parameters:', err);
+      setStage(ImportStage.ERROR);
+      setError('Invalid import data provided. Please go back and try again.');
+    }
   }, [searchParams]);
-
+  
+  // Handle form submission
+  const handleSubmit = useCallback(async (completeVisit: VisitInput) => {
+    try {
+      setStage(ImportStage.LOADING);
+      
+      // Import the completed visit using the hook
+      const result = await importItems([{
+        id: completeVisit.mondayItemId as string,
+        completeData: completeVisit
+      }]);
+      
+      if (result?.success) {
+        setStage(ImportStage.COMPLETE);
+      } else {
+        setStage(ImportStage.ERROR);
+        setError(result?.error || 'Failed to import visit');
+      }
+    } catch (err) {
+      console.error('Error importing visit:', err);
+      setStage(ImportStage.ERROR);
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+    }
+  }, [importItems]);
+  
+  // Handle cancellation
   const handleCancel = useCallback(() => {
     router.push('/integrations/monday/visits');
   }, [router]);
-
+  
+  // Handle completion - navigate to visits dashboard
   const handleComplete = useCallback(() => {
-    router.push('/visits');
+    router.push('/dashboard/visits');
   }, [router]);
-
+  
+  // Render page title based on stage
   const renderPageTitle = () => {
     switch (stage) {
       case ImportStage.LOADING:
@@ -88,12 +109,17 @@ export default function MondayVisitsImportClient() {
       case ImportStage.COMPLETE:
         return {
           title: "Import Complete",
-          subtitle: `Successfully imported ${importResults?.created} visits`
+          subtitle: "Your visit has been successfully imported"
         };
       case ImportStage.ERROR:
         return {
           title: "Import Error",
           subtitle: "There was a problem importing your visits"
+        };
+      case ImportStage.CONFIRM:
+        return {
+          title: "Complete Monday.com Import",
+          subtitle: "Provide any missing information to complete the import"
         };
       default:
         return {
@@ -102,9 +128,9 @@ export default function MondayVisitsImportClient() {
         };
     }
   };
-
+  
   const { title, subtitle } = renderPageTitle();
-
+  
   return (
     <div className="py-6">
       <PageHeader title={title} subtitle={subtitle} />
@@ -122,7 +148,7 @@ export default function MondayVisitsImportClient() {
         <div className="py-4">
           <Alert intent="error">
             <Alert.Title>Import Error</Alert.Title>
-            <Alert.Description>{error || 'An unknown error occurred during import'}</Alert.Description>
+            <Alert.Description>{error || importError || 'An unknown error occurred during import'}</Alert.Description>
           </Alert>
           <div className="mt-4 flex justify-end">
             <Button onClick={handleCancel}>Return to Monday.com Integration</Button>
@@ -130,17 +156,17 @@ export default function MondayVisitsImportClient() {
         </div>
       )}
 
-      {stage === ImportStage.COMPLETE && importResults && (
+      {stage === ImportStage.COMPLETE && (
         <Card className="mt-4">
-          <div className="p-4">
-            <h3 className="text-lg font-medium mb-2">Import Results</h3>
-            <ul className="space-y-2">
-              <li><span className="font-medium">Created:</span> {importResults.created} visits</li>
-              <li><span className="font-medium">Updated:</span> {importResults.updated} visits</li>
-              <li><span className="font-medium">Failed:</span> {importResults.failed} visits</li>
-              <li><span className="font-medium">Total:</span> {importResults.total} visits</li>
-            </ul>
-
+          <Card.Header className="p-4 font-semibold">Import Results</Card.Header>
+          <Card.Body className="p-4">
+            <Alert intent="success" className="mb-4">
+              <Alert.Title>Success</Alert.Title>
+              <Alert.Description>
+                Your visit has been successfully imported from Monday.com
+              </Alert.Description>
+            </Alert>
+            
             <div className="mt-6 flex justify-end space-x-4">
               <Button intent="secondary" appearance="outline" onClick={handleCancel}>
                 Return to Monday.com
@@ -149,7 +175,23 @@ export default function MondayVisitsImportClient() {
                 View All Visits
               </Button>
             </div>
-          </div>
+          </Card.Body>
+        </Card>
+      )}
+      
+      {stage === ImportStage.CONFIRM && visitData && (
+        <Card className="mt-4">
+          <Card.Body className="p-4">
+            <ImportCompletionForm
+              importedVisit={visitData}
+              missingFields={missingFields}
+              onSubmit={handleSubmit}
+              onCancel={handleCancel}
+              boardId={boardId}
+              mondayItemName={visitData.mondayItemName as string}
+              mondayUserName={connectionData?.name}
+            />
+          </Card.Body>
         </Card>
       )}
     </div>

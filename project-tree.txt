@@ -229,7 +229,9 @@
 │   │   ├── globals.css
 │   │   ├── integrations
 │   │   │   └── monday
-│   │   │       ├── examples
+│   │   │       ├── example1
+│   │   │       │   └── page.tsx
+│   │   │       ├── example2
 │   │   │       │   └── page.tsx
 │   │   │       ├── page.tsx
 │   │   │       ├── staff
@@ -719,4 +721,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-231 directories, 489 files
+232 directories, 490 files

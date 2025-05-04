@@ -1,3 +1,4 @@
+```markdown
 <doc id="schema-system">
 
 # Data Flow & Schema System
@@ -345,3 +346,4 @@ Validate inputs against schemas at every entry point
 </section>
 
 </doc>
+```

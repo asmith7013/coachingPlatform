@@ -1,3 +1,4 @@
+```markdown
 <doc id="cursor-integration">
 
 # Cursor Integration Guide
@@ -315,3 +316,4 @@ Fix all the TypeScript errors in the project. Also, can you improve the performa
 
 </section>
 </doc>
+```

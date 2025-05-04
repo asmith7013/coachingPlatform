@@ -1,3 +1,4 @@
+```markdown
 <doc id="error-handling">
 
 # Error Handling System
@@ -292,3 +293,4 @@ const { mutate, isLoading, error } = useErrorHandledMutation(
 </section>
 
 </doc>
+```

@@ -1,22 +1,22 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
 import React, { useState, useCallback, memo } from "react";
-import { Card } from '@components/composed/cards/Card';
-import { Heading } from '@components/core/typography/Heading';
-import { Text } from '@components/core/typography/Text';
+import { Card } from '@/components/composed/cards/Card';
+import { Heading } from '@/components/core/typography/Heading';
+import { Text } from '@/components/core/typography/Text';
 import { Button } from '@components/core/Button';
-import { DashboardPage } from '@components/layouts/DashboardPage';
+import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
 // import { cn } from "@/lib/utils";
-import { EmptyListWrapper } from '@components/shared/EmptyListWrapper';
-import { ResourceHeader } from "@components/shared/ResourceHeader";
+import { EmptyListWrapper } from '@/components/core/empty/EmptyListWrapper';
+import { ResourceHeader } from "@/components/composed/layouts/ResourceHeader";
 import { Field, FieldType, MemoizedRigidResourceForm } from "@/components/composed/forms/RigidResourceForm";
-import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
+import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
 import { useNYCPSStaff } from "@/hooks/domain/useNYCPSStaff";
 import { NYCPSStaff, NYCPSStaffInput } from "@domain-types/staff";
 import { createNYCPSStaff, updateNYCPSStaff, deleteNYCPSStaff, uploadNYCPSStaffFile } from "@actions/staff";
 import { NYCPSStaffFieldConfig } from "@ui-forms/fieldConfig/core/staff";
-import { Dialog } from "@components/composed/dialogs/Dialog";
-import { Badge } from '@components/core/feedback/Badge';
+import { Dialog } from "@/components/composed/dialogs/Dialog";
+import { Badge } from '@/components/core/feedback/Badge';
 // import { fetchSchoolOptions } from "@/lib/client-api";
 import { NYCPSStaffOverrides } from "@ui-forms/formOverrides";
 import { getReferenceSelectPropsForField } from "@ui-forms/helpers";

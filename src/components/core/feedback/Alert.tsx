@@ -27,8 +27,8 @@ const alertVariants = tv({
     variants: {
       intent: {
         primary: { 
-          root: `${borderColors.primary} ${backgroundColors.primary} ${textColors.default}`,
-          title: textColors.default,
+          root: `border-2 ${borderColors.primary} ${backgroundColors.light.primary} ${textColors.primary}`,
+          title: textColors.primary,
           description: textColors.muted
         },
         success: { 
@@ -37,18 +37,23 @@ const alertVariants = tv({
           description: textColors.success 
         },
         warning: { 
-          root: `${borderColors.danger} ${backgroundColors.danger} ${textColors.default}`,
+          root: `border-2 ${borderColors.danger} ${backgroundColors.light.danger} ${textColors.default}`,
           title: textColors.default,
           description: textColors.muted
         },
         error: { 
-          root: `${borderColors.danger} ${backgroundColors.danger} ${textColors.default}`,
-          title: textColors.default,
+          root: `border-2 ${borderColors.danger} ${backgroundColors.light.danger} ${textColors.default}`,
+          title: textColors.danger,
           description: textColors.muted
         },
         info: { 
-          root: `${borderColors.primary} ${backgroundColors.primary} ${textColors.default}`,
+          root: `border-2 ${borderColors.primary} ${backgroundColors.light.primary} ${textColors.primary}`,
           title: textColors.default,
+          description: textColors.default
+        },
+        danger: {
+          root: `border-2 ${borderColors.danger} ${backgroundColors.light.danger} ${textColors.danger}`,
+          title: textColors.danger,
           description: textColors.muted
         },
       },
@@ -70,6 +75,22 @@ const alertVariants = tv({
         },
       },
     },
+    compoundVariants: [
+      {
+        intent: "danger",
+        appearance: "outline",
+        root: "border-2 border-danger bg-light-danger text-danger",
+        title: textColors.danger,
+        description: textColors.muted
+      },
+      {
+        intent: "success",
+        appearance: "outline",
+        root: "border-2 border-success bg-light-success text-success",
+        title: textColors.success,
+        description: textColors.muted
+      },
+    ],
     // Import the responsive layout variants
     defaultVariants: {
       intent: "primary",

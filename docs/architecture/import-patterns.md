@@ -1,3 +1,4 @@
+```markdown
 <doc id="import-patterns">
 
 # Import Patterns
@@ -198,3 +199,4 @@ Create Hub Modules: Use intermediate modules that import from both modules
 [RULE] Actively refactor to avoid circular dependencies in your import structure.
 </section>
 </doc>
+```

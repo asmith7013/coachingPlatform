@@ -1,3 +1,4 @@
+```markdown
 <doc id="design-token-system">
 
 Design Token System
@@ -317,3 +318,4 @@ Ensure type safety with TypeScript integration
 [RULE] Leverage the token system to abstract away direct Tailwind class dependencies.
 </section>
 </doc>
+```

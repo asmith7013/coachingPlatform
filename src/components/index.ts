@@ -19,10 +19,6 @@ export * from './composed/dialogs';
 // e.g.: import { StaffCard } from '@/components/domain/staff';
 
 // Layout components
-export * from './layouts';
+export * from './composed/layouts';
 
 // Shared components
-export * from './shared';
-
-// Utility components
-// export * from './utility'; 

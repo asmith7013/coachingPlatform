@@ -53,6 +53,7 @@ export const backgroundColors = {
   success: 'bg-success-400',
   surface: 'bg-surface',
   subtle: 'bg-subtle-100',
+  white: 'bg-white',
 
   // Light variants for backgrounds (higher numbers = darker)
   light: {

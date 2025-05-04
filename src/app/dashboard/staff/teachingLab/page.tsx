@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { DashboardPage } from "@components/layouts";
-import { PageHeader } from "@components/shared";
+import { DashboardPage } from "@/components/composed/layouts";
+import { PageHeader } from "@/components/composed/layouts";
 import { useTeachingLabStaff } from "@/hooks";
 import { PlusIcon } from "lucide-react";
 import { StaffListComponent, StaffSearch } from "@components/domain/staff";
-import { TablePagination } from "@components/composed/tables/features/pagination";
+import { TablePagination } from "@/components/composed/tables/features/pagination";
 import { TeachingLabStaff } from "@zod-schema/core/staff";
 
 export default function TeachingLabStaffPage() {

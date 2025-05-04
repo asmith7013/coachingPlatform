@@ -14,6 +14,7 @@
   - [core components](#core-components)
   - [design token system](#design-token-system)
   - [domain components](#domain-components)
+  - [layout system](#layout-system)
   - [styling patterns](#styling-patterns)
 - [Data-flow](#data-flow)
   - [api patterns](#api-patterns)

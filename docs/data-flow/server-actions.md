@@ -1,3 +1,4 @@
+```markdown
 <doc id="server-actions">
 
 # Server Actions
@@ -292,3 +293,4 @@ export async function updateSchool(id: string, data: unknown) {
 [RULE] Implement appropriate security measures for all Server Actions.
 </section>
 </doc>
+```markdown

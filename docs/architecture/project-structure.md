@@ -1,3 +1,4 @@
+```markdown
 <doc id="project-structure">
 
 # Project Structure
@@ -362,3 +363,4 @@ import styles from './styles.module.css';
 [RULE] Follow established import conventions for all files.
 </section>
 </doc>
+```

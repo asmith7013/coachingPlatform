@@ -1,3 +1,4 @@
+```markdown
 <doc id="component-system">
 
 Component System Guide
@@ -397,6 +398,55 @@ responsiveSpacingVariant: For consistent spacing across breakpoints
 [RULE] Use the responsive layout pattern for all components with primary/secondary element pairs.
 </section>
 
+<section id="icon-usage">
+Icon Implementation
+Our application uses Heroicons React for consistent, high-quality SVG icons across the interface. Following Heroicons' official best practices:
+
+```typescript
+// Standard icon import pattern
+import { 
+  HomeIcon,
+  UsersIcon,
+  FolderIcon,
+  CalendarIcon,
+  DocumentDuplicateIcon,
+  ChartPieIcon 
+} from '@heroicons/react/24/outline';
+
+// For solid variants
+import { BellIcon } from '@heroicons/react/24/solid';
+```
+
+Icon Usage Guidelines
+Icons should be implemented according to Heroicons' recommended patterns:
+
+```tsx
+// In components with consistent sizing
+<NavItem>
+  <HomeIcon className="size-6 text-gray-500" />
+  Dashboard
+</NavItem>
+
+// In buttons with icons
+<Button 
+  variant="primary"
+  icon={<CalendarIcon className="size-6" />}
+  iconPosition="left"
+>
+  Schedule
+</Button>
+```
+When using Heroicons:
+
+Use the proper import path based on icon style and size (24/outline, 24/solid, 20/solid, or 16/solid) GitHub
+Follow the upper camel case naming convention with "Icon" suffix GitHub
+Apply sizing through the "size-x" class names GitHub (size-6 for 24px, etc.)
+Use text color utilities like "text-gray-500" for styling GitHub
+Include proper accessibility attributes when icons convey meaning
+
+[RULE] Use @heroicons/react consistently for all interface icons, following official implementation patterns.
+</section>
+
 <section id="component-error-display">
 Error Display
 Components should display errors in a consistent manner:
@@ -421,3 +471,4 @@ Components should display errors in a consistent manner:
 [RULE] Always display errors using the appropriate error component.
 </section>
 </doc>
+```

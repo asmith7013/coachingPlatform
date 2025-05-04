@@ -1,68 +1,43 @@
-'use client';
+// src/app/dashboard/layout.tsx
+'use client'
 
-import Link from 'next/link';
+import { AppShell } from '@/components/composed/layouts'
+import { 
+  HomeIcon,
+  BuildingLibraryIcon,
+  UserGroupIcon,
+  DocumentMagnifyingGlassIcon,
+  CalendarDaysIcon,
+  ChartPieIcon,
+} from '@heroicons/react/24/outline'
+
+const navigationItems = [
+  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
+  { name: 'Schools', href: '/dashboard/schoolList', icon: BuildingLibraryIcon, current: false },
+  { name: 'Staff', href: '/dashboard/staff/nycps', icon: UserGroupIcon, current: false },
+  { name: 'Look Fors', href: '/dashboard/lookForList', icon: DocumentMagnifyingGlassIcon, current: false },
+  { name: 'Schedules', href: '/dashboard/schedule', icon: CalendarDaysIcon, current: false },
+  { name: 'Reports', href: '/reports', icon: ChartPieIcon, current: false },
+]
+
+const teamItems = [
+  { id: 'math-coaches', name: 'Math Coaches', href: '#', initial: 'M', current: false },
+  { id: 'ela-coaches', name: 'ELA Coaches', href: '#', initial: 'E', current: false },
+  { id: 'admin-team', name: 'Admin Team', href: '#', initial: 'A', current: false },
+]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 bg-secondary text-white p-4">
-        <h2 className="text-lg font-semibold">Dashboard</h2>
-        <nav className="mt-4">
-          <ul>
-            <li>
-              <Link href="/dashboard" className="block p-2">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link href="/dashboard/schoolList" className="block p-2">
-                Schools
-              </Link>
-            </li>
-            <li>
-              <Link href="/dashboard/staffList" className="block p-2">
-                People
-              </Link>
-            </li>
-            <li>
-              <Link href="/dashboard/lookForList" className="block p-2">
-                Look Fors Bank
-              </Link>
-            </li>
-            {/* --- IM Tools section ---------------------------------- */}
-            <li className="mt-6 mb-1 text-xs uppercase tracking-wider text-gray-300">
-              IM Tools
-            </li>
-            <li>
-              <Link href="/tools/im-routines" className="block p-2">
-                IM Routines
-              </Link>
-            </li>
-            <li>
-              <Link href="/tools/rubric-viewer" className="block p-2">
-                Rubric Viewer
-              </Link>
-            </li>
-
-            {/* --- Developer section ---------------------------------- */}
-            <li className="mt-6 mb-1 text-xs uppercase tracking-wider text-gray-300">
-              Developer
-            </li>
-            <li>
-              <Link
-                href="/tools/dev/seed-data"
-                className="block p-2 text-yellow-300 hover:text-yellow-200"
-              >
-                Seed Mock Data
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-6 bg-gray-100">{children}</main>
-    </div>
-  );
+    <AppShell
+      navigation={navigationItems}
+      teams={teamItems}
+      // logo={
+      //   <div className="flex items-center">
+      //     <span className="text-xl font-bold text-blue-600">Coaching Platform</span>
+      //   </div>
+      // }
+    >
+      {children}
+    </AppShell>
+  )
 }

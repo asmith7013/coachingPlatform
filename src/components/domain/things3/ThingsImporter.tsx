@@ -5,7 +5,7 @@ import { Card } from '@/components/composed/cards/Card';
 import { Button } from '@/components/core/Button';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
-import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHeader } from '@/components/composed/layouts/PageHeader';
 
 import { ThingsChecklist, Notification as NotificationType } from '@domain-types/things3-types';
 import { parseTextToJSON, generateThingsURL, getSampleData } from './thingsUtils';

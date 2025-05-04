@@ -1,3 +1,4 @@
+```markdown
 <doc id="type-system">
 
 # Type System Organization
@@ -138,3 +139,4 @@ Utility types: Descriptive PascalCase (e.g., Nullable<T>, ApiResponse<T>)
 </section>
 
 </doc>
+```

@@ -1,3 +1,4 @@
+```markdown
 <doc id="dev-workflow">
 
 # Development Workflow
@@ -159,3 +160,4 @@ Additional paragraphs and explanations.
 </section>
 
 </doc>
+```

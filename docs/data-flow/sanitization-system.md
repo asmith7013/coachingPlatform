@@ -1,3 +1,4 @@
+```markdown
 <doc id="sanitization-system">
 
 # Data Sanitization System
@@ -121,3 +122,4 @@ const result = parsePartialOrThrow(MyZodSchema, partialData);
 </section>
 
 </doc>
+```

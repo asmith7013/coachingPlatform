@@ -1,3 +1,4 @@
+```markdown
 <doc id="hook-development">
 
 # Hook Development Guidelines
@@ -141,3 +142,4 @@ export function useSchools() {
 </section>
 
 </doc>
+```

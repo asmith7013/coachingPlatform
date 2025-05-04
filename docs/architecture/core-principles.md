@@ -1,3 +1,4 @@
+```markdown
 <doc id="core-principles">
 
 # Core Architecture Principles
@@ -98,3 +99,4 @@ See `workflows/development-workflow.md` for developer experience best practices.
 </section>
 
 </doc>
+```

@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import MondayVisitsImportClient from './MondayVisitsImportClient';
-import { PageHeader } from '@/components/shared/PageHeader';
+import { PageHeader } from '@/components/composed/layouts/PageHeader';
 
 export default function MondayVisitImportPage() {
   return (

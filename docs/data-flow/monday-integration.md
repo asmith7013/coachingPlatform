@@ -1,5 +1,4 @@
-I'll update the Monday.com integration documentation to reference the proposed `useMondayIntegration` hook. Here's how the updated section should look:
-
+```markdown
 <doc id="monday-integration">
 
 # Monday.com Integration
@@ -315,3 +314,4 @@ Each error includes:
 </section>
 
 </doc>
+```

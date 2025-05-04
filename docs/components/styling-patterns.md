@@ -1,3 +1,4 @@
+```markdown
 <doc id="styling-patterns">
 
 Component Styling Patterns
@@ -101,3 +102,4 @@ export function Button({
 </section>
 
 </doc>
+```

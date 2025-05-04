@@ -3,6 +3,7 @@ import { tv } from 'tailwind-variants'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { Button } from '@/components/core/Button'
+import { Heading, Text } from '@/components/core/typography'
 import { textColors } from '@ui-tokens/tokens'
 
 interface PageHeaderAction {
@@ -160,10 +161,22 @@ export function PageHeader({
   return (
     <div className={cn(styles.root(), className)}>
       <div className={styles.content()}>
-        <h2 className={styles.title()}>{title}</h2>
+        <Heading 
+          level="h2" 
+          className={styles.title()}
+        >
+          {title}
+        </Heading>
+        
         {subtitle && (
-          <p className={styles.subtitle()}>{subtitle}</p>
+          <Text 
+            color="muted"
+            className={styles.subtitle()}
+          >
+            {subtitle}
+          </Text>
         )}
+        
         {meta.length > 0 && (
           <div className={styles.meta()}>
             {meta.map((item, index) => (

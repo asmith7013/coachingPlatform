@@ -1,7 +1,7 @@
 'use client';
 
 import { RubricViewer } from '@/components/domain/rubrics/RubricViewer';
-import { DashboardPage } from '@/components/layouts/DashboardPage';
+import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
 
 export default function RubricViewerPage() {
   return (

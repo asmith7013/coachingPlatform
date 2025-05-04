@@ -451,7 +451,7 @@ export function ResourceForm<T extends Record<string, unknown>>({
       <form onSubmit={handleSubmit} className={styles.form()}>
         <div className={styles.header()}>
           <Heading 
-            level="h2" 
+            level="h3" 
             color="default"
             className={styles.title()}
           >

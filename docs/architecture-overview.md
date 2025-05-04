@@ -1,5 +1,3 @@
-Here's the updated version of the Architecture Overview & Documentation Guide, removing the Examples folder reference and updating the Documentation Structure section to reflect that examples are now embedded within relevant documentation:
-
 ```markdown
 # Architecture Overview & Documentation Guide
 

@@ -1,3 +1,4 @@
+```markdown
 <doc id="core-principles">
 
 # Core Architecture Principles
@@ -346,3 +347,5 @@ See workflows/performance-optimization.md for detailed optimization strategies.
 [RULE] Apply optimization techniques thoughtfully at appropriate boundaries.
 </section>
 </doc>
+```
+

@@ -1,6 +1,6 @@
 import { TeachingLabStaff } from "@zod-schema/core/staff";
 import { StaffListItem } from "@/components/domain/staff/teachingLab/StaffListItem";
-import { Spinner } from "@components/core/feedback/Spinner";
+import { Spinner } from "@/components/core/feedback/Spinner";
 
 interface StaffListComponentProps {
   staffMembers: TeachingLabStaff[];

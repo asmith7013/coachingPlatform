@@ -211,6 +211,7 @@ export async function getBoard(boardId: string, itemLimit: number = 20): Promise
       itemLimit: z.number().int().positive().default(20)
     }).parse({ boardId, itemLimit });
     
+    // console.log(boardId, 'boardId monday actions')
     // Make API request
     const response = await mondayClient.query<MondayBoardResponse>(
       BOARD_WITH_ITEMS_QUERY, 
@@ -586,3 +587,4 @@ export async function getBoardItems(boardId: string): Promise<{ success: boolean
     };
   }
 }
+

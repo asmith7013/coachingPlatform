@@ -1,3 +1,4 @@
+```markdown
 <doc id="common-tasks">
 
 # Common Development Tasks
@@ -353,3 +354,4 @@ export function EntityList() {
 </section>
 
 </doc>
+```
