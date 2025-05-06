@@ -11,7 +11,10 @@ import {
 } from "@enums";
 
 // Add Monday.com User Class
-@modelOptions({ schemaOptions: { timestamps: false, _id: false } })
+@modelOptions({ 
+  schemaOptions: { timestamps: false, _id: false }, 
+  options: { customName: 'MondayUser', automaticName: false } 
+})
 class MondayUser {
   @prop({ type: String, required: true })
   mondayId!: string;
