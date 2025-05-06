@@ -1,6 +1,6 @@
 'use client';
 
-import { stack } from '@ui-tokens/tokens';
+import { stack } from '@/lib/tokens/tokens';
 import { cn } from '@ui/utils/formatters';;
 
 type BaseActivity = {

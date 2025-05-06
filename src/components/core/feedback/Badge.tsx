@@ -1,8 +1,8 @@
 "use client";
 import { cn } from "@ui/utils/formatters";
 import { tv, type VariantProps } from "tailwind-variants";
-import { textSize, paddingX, paddingY, radii } from '@ui-tokens/tokens';
-import { textColors, backgroundColors, ringColors } from '@ui-tokens/colors';
+import { textSize, paddingX, paddingY, radii } from '@/lib/tokens/tokens';
+import { textColors, backgroundColors, ringColors } from '@/lib/tokens/colors';
 
 // Define badge variants using your semantic color system
 const badge = tv({

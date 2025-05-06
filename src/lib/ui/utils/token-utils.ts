@@ -5,11 +5,11 @@
  * It centralizes token access and provides utility functions for common use cases.
  */
 
-import { color, textSize, weight, heading } from '@ui-tokens/typography';
-import { textColors } from '@ui-tokens/colors';
-import { radii, shadows } from '@ui-tokens/shape';
-import { paddingX, paddingY, gap, stack } from '@ui-tokens/spacing';
-import { semanticColorMap, tailwindColors } from '@/lib/ui/tokens/semantic-colors';
+import { color, textSize, weight, heading } from '@/lib/tokens/typography';
+import { textColors } from '@/lib/tokens';
+import { radii, shadows } from '@/lib/tokens';
+import { paddingX, paddingY, gap, stack } from '@/lib/tokens/spacing';
+import { semanticColorMap, tailwindColors } from '@/lib/tokens/semantic-colors';
 
 // Common text style helpers
 export const textStyles = {

@@ -1,5 +1,5 @@
 import { tv, type VariantProps } from 'tailwind-variants'
-import { layout } from '../tokens'
+import { layout } from '../../tokens'
 
 export const gridVariants = tv({
   base: 'grid',

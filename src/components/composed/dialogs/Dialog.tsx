@@ -5,7 +5,7 @@ import { Dialog as HDialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants';
-import { shadows, textSize, textColors } from '@ui-tokens/tokens';
+import { shadows, textSize, textColors } from '@/lib/tokens/tokens';
 
 // Create dialog variants using tv()
 const dialog = tv({

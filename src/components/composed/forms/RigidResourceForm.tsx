@@ -11,8 +11,8 @@ import { Switch } from '@/components/core/fields/Switch';
 import { Checkbox } from '@/components/core/fields/Checkbox';
 import { Textarea } from '@/components/core/fields/Textarea';
 import { tv } from 'tailwind-variants';
-import { shadows, textSize, textColors } from "@ui-tokens/tokens";
-import { stack } from "@ui-tokens/tokens";
+import { shadows, textSize, textColors } from "@/lib/tokens/tokens";
+import { stack } from "@/lib/tokens/tokens";
 import { cn } from "@ui/utils/formatters";
 import ReferenceSelect from "@/components/core/fields/ReferenceSelect";
 

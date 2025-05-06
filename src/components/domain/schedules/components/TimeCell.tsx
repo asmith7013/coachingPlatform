@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '@ui/utils/formatters';;
-import { radii } from '@/lib/ui/tokens';
+import { radii } from '@/lib/tokens';
 import { TimeCellProps } from '../data/scheduleTypes';
 
 /**

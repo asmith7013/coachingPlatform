@@ -2,7 +2,7 @@ import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
 import { FormSection } from './FormSection'
 import { getFieldComponent } from '@ui-forms/registry'
-import { textColors } from '@ui-tokens/tokens'
+import { textColors } from '@/lib/tokens/tokens'
 
 // Types for form configuration
 export interface FieldConfig {

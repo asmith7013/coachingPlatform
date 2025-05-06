@@ -1,5 +1,7 @@
-// export * from './import-service';
+// Active services that are currently used in the application
 export * from './transform-service';
+export * from './import-service';
+export * from './sync-service';
 
-// Export dynamic mapping functions
-export * from './dynamic-mapping';
+// Note: Legacy code is available in the legacy/ directory
+// but not exported to avoid confusion

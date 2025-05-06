@@ -1,6 +1,14 @@
 import { cn } from '@ui/utils/formatters';;
 import { tv, type VariantProps } from 'tailwind-variants';
-import { textColors } from '@ui-tokens/tokens';
+import { textColors } from '@/lib/tokens/tokens';
+import { 
+  TextSizeToken,
+  PaddingToken
+} from '@/lib/tokens/types';
+
+// Define component-specific types
+export type EmptyStateVariant = 'default' | 'muted' | 'accent';
+export type EmptyStateAlign = 'left' | 'center' | 'right';
 
 interface EmptyStateProps {
   title: string;
@@ -8,10 +16,10 @@ interface EmptyStateProps {
   icon?: React.ComponentType<{ className?: string }>;
   action?: React.ReactNode;
   className?: string;
-  textSize?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl';
-  padding?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'muted' | 'accent';
-  align?: 'left' | 'center' | 'right';
+  textSize?: TextSizeToken;
+  padding?: PaddingToken;
+  variant?: EmptyStateVariant;
+  align?: EmptyStateAlign;
 }
 
 // 🎨 EmptyState style variants
@@ -45,9 +53,13 @@ export const emptyState = tv({
       '2xl': { title: 'text-2xl', description: 'text-xl' },
     },
     padding: {
+      none: { root: 'p-0' },
+      xs: { root: 'p-2' },
       sm: { root: 'p-4' },
       md: { root: 'p-6' },
       lg: { root: 'p-8' },
+      xl: { root: 'p-10' },
+      '2xl': { root: 'p-12' },
     },
     variant: {
       default: {},

@@ -4,7 +4,14 @@ import {
   radiusVariant,
   disabledVariant,
 } from '@ui-variants/shared-variants'
-import { textColors } from '@ui-tokens/tokens'
+import { 
+  textColors
+} from '@/lib/tokens/tokens'
+import { 
+  TextSizeToken,
+  PaddingToken,
+  RadiusToken
+} from '@/lib/tokens/types'
 import { FieldWrapper } from './FieldWrapper'
 
 type CheckboxHTMLProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>;
@@ -36,6 +43,7 @@ const checkbox = tv({
       base: { description: 'text-base', root: 'gap-x-3' },
       lg: { description: 'text-lg', root: 'gap-x-3.5' },
       xl: { description: 'text-xl', root: 'gap-x-4' },
+      '2xl': { description: 'text-2xl', root: 'gap-x-5' },
     },
     padding: {
       none: { root: 'p-0' },
@@ -44,6 +52,7 @@ const checkbox = tv({
       md: { root: 'p-2' },
       lg: { root: 'p-3' },
       xl: { root: 'p-4' },
+      '2xl': { root: 'p-6' },
     },
     radius: radiusVariant.variants.radius,
     disabled: disabledVariant.variants.disabled,
@@ -77,9 +86,9 @@ export interface CheckboxProps extends CheckboxHTMLProps {
   label?: string;
   description?: string;
   error?: string;
-  textSize?: CheckboxVariants['textSize'];
-  padding?: CheckboxVariants['padding'];
-  radius?: CheckboxVariants['radius'];
+  textSize?: TextSizeToken;
+  padding?: PaddingToken;
+  radius?: RadiusToken;
   disabled?: boolean;
   className?: string;
 }
@@ -98,7 +107,7 @@ export function Checkbox({
   const styles = checkbox({
     textSize,
     padding,
-    radius,
+    radius: radius as CheckboxVariants['radius'],
     error: Boolean(error),
     disabled,
   });

@@ -1,8 +1,7 @@
 'use client';
 
+import { Card } from '@/components/composed/cards/Card';
 import { Select } from '@/components/core/fields/Select';
-import { stack } from '@ui-tokens/tokens';
-import { cn } from '@ui/utils/formatters';;
 
 export const domainOptions = [
   { value: 'C1', label: 'C1: Creating a Culture of Learning' },
@@ -17,13 +16,14 @@ interface Props {
 
 export function RubricFilterPanel({ selectedDomain, onChange }: Props) {
   return (
-    <div className={cn(stack.md)}>
+    <Card padding="lg" radius="xl" variant="secondary">
       <Select
         label="Select Domain"
         value={selectedDomain}
         onChange={onChange}
+        labelColor="white"
         options={domainOptions}
       />
-    </div>
+    </Card>
   );
 } 

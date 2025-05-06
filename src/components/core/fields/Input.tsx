@@ -1,12 +1,17 @@
 import { tv, type VariantProps } from 'tailwind-variants'
 import { cn } from '@ui/utils/formatters';
-import { textSize, paddingX, paddingY, radii, borderWidths } from '@ui-tokens/tokens'
-import { backgroundColors, borderColors, ringColors, textColors } from '@ui-tokens/colors';
+import { 
+  textSize, 
+  paddingX, 
+  paddingY, 
+  radii, 
+  borderWidths,
+} from '@/lib/tokens/tokens'
 
-// Define component-specific types
-type InputTextSize = 'xs' | 'sm' | 'base' | 'lg' | 'xl';
-type InputPadding = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-type InputRadius = 'none' | 'sm' | 'md' | 'lg' | 'full';
+
+import { backgroundColors, borderColors, ringColors, textColors } from '@/lib/tokens/colors';
+import { FieldWrapper } from './FieldWrapper';
+import type { FieldComponentProps } from '@/lib/types/core/token';
 
 const input = tv({
   slots: {
@@ -20,19 +25,24 @@ const input = tv({
       base: textSize.base,
       lg: textSize.lg,
       xl: textSize.xl,
+      '2xl': textSize['2xl'],
     },
     padding: {
+      none: `${paddingX.none} ${paddingY.none}`,
       xs: `${paddingX.xs} ${paddingY.xs}`,
       sm: `${paddingX.sm} ${paddingY.xs}`,
       md: `${paddingX.md} ${paddingY.sm}`,
       lg: `${paddingX.lg} ${paddingY.md}`,
       xl: `${paddingX.xl} ${paddingY.lg}`,
+      '2xl': `${paddingX['2xl']} ${paddingY['2xl']}`,
     },
     radius: {
       none: radii.none,
       sm: radii.sm,
       md: radii.md,
       lg: radii.lg,
+      xl: radii.xl,
+      '2xl': radii['2xl'],
       full: radii.full,
     },
     disabled: {
@@ -56,26 +66,24 @@ const input = tv({
 export type InputVariants = VariantProps<typeof input>
 type InputHTMLProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>
 
-export interface InputProps extends InputHTMLProps {
-  label?: string
-  error?: string
-  textSize?: InputTextSize
-  padding?: InputPadding
-  radius?: InputRadius
-  disabled?: boolean
+export interface InputProps extends InputHTMLProps, Omit<FieldComponentProps, 'children'> {
+  disabled?: boolean;
 }
 
 export function Input({
   label,
   error,
+  helpText,
   className,
   textSize,
   padding,
   radius,
   disabled,
+  required,
+  readOnly,
   ...props
 }: InputProps) {
-  const { base, wrapper } = input({
+  const { base } = input({
     textSize,
     padding,
     radius,
@@ -84,23 +92,22 @@ export function Input({
   })
   
   return (
-    <div className={wrapper()}>
-      {label && (
-        <label className={cn("block font-medium mb-1", "text-sm", textColors.default)}>
-          {label}
-        </label>
-      )}
+    <FieldWrapper
+      id={props.id}
+      label={label}
+      error={typeof error === 'boolean' ? undefined : error}
+      helpText={helpText}
+      textSize={textSize}
+      padding={padding}
+      required={required}
+    >
       <input
         {...props}
         disabled={disabled}
+        readOnly={readOnly}
         className={cn(base(), className)}
       />
-      {error && (
-        <p className={cn("mt-1", "text-sm", textColors.danger)}>
-          {error}
-        </p>
-      )}
-    </div>
+    </FieldWrapper>
   )
 }
 

@@ -59,7 +59,7 @@ export function FilterableGridView<TGroup extends GroupWithId, TItem extends Ite
         {hasGroups ? (
           <div className="space-y-6">
             {filteredGroups.map(group => (
-              <div key={group.id}>
+              <div key={group.id} className="">
                 {renderItemGroup(group, selectedItems)}
               </div>
             ))}

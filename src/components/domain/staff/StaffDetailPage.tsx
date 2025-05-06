@@ -12,7 +12,7 @@ import { ScheduleTable } from '@/components/composed/tables/ScheduleTable'
 import { Table } from '@/components/composed/tables/Table'
 import { useSafeSWR } from '@/hooks/data/useSafeSWR'
 import { cn } from '@ui/utils/formatters';
-import { weight, paddingY } from '@ui-tokens/tokens'
+import { weight, paddingY } from '@/lib/tokens/tokens'
 import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'
 import type { TeacherSchedule } from '@/lib/data-schema/zod-schema/schedule/schedule'
 import type { TableColumnSchema } from '@ui/table-schema'

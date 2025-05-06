@@ -8,11 +8,11 @@ import { cn } from '@ui/utils/formatters';;
 export type PerformanceLevelKey = 'not_observed' | 'not_yet' | 'developing' | 'proficient' | 'advanced';
 
 export const performanceLevels = [
-  { key: 'not_observed' as const, label: 'Not Observed', colorClass: 'text-text-muted' },
-  { key: 'not_yet' as const, label: 'Not Yet', colorClass: 'text-danger' },
-  { key: 'developing' as const, label: 'Developing', colorClass: 'text-text' },
-  { key: 'proficient' as const, label: 'Proficient', colorClass: 'text-success' },
-  { key: 'advanced' as const, label: 'Advanced', colorClass: 'text-primary' },
+  { key: 'not_observed' as const, label: 'Not Observed', colorClass: 'bg-secondary-200' },
+  { key: 'not_yet' as const, label: 'Not Yet', colorClass: 'bg-orange-400' },
+  { key: 'developing' as const, label: 'Developing', colorClass: 'bg-yellow-500' },
+  { key: 'proficient' as const, label: 'Proficient', colorClass: 'bg-green-500' },
+  { key: 'advanced' as const, label: 'Advanced', colorClass: 'bg-green-600' },
 ];
 
 export interface RubricIndicator {
@@ -32,7 +32,7 @@ interface Props {
 
 export function RubricCard({ domain, selectedIndicators: _selectedIndicators }: Props) {
   return (
-    <Card padding="lg" radius="xl">
+    <Card padding="lg" radius="xl" className="">
       <Heading 
         level="h4"
         color="default"
@@ -40,15 +40,14 @@ export function RubricCard({ domain, selectedIndicators: _selectedIndicators }: 
       >
         {domain.title}
       </Heading>
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mt-3">
         {performanceLevels.map(({ key, label, colorClass }) => (
           <div key={key} className="flex flex-col">
             <div className={cn(
               "p-3 rounded-lg mb-4",
-              'bg-surface',
               colorClass
             )}>
-              <Text weight="medium" className="text-center">
+              <Text weight="medium" className="text-center" color="white">
                 {label}
               </Text>
             </div>
@@ -57,7 +56,7 @@ export function RubricCard({ domain, selectedIndicators: _selectedIndicators }: 
                 <li key={i} className="flex items-start">
                   <Text 
                     textSize="sm"
-                    color="muted"
+                    color="default"
                     className="leading-relaxed"
                   >
                     {text}

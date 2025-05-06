@@ -8,7 +8,7 @@ import { Spinner } from "@/components/core/feedback";
 import { Select } from "@/components/core/fields";
 import { useMondayIntegration } from "@/hooks/integrations/monday/useMondayIntegration";
 // import { ImportItem } from "@/app/actions/integrations/monday";
-import { ImportPreview } from "@/lib/integrations/monday/types";
+import { ImportPreview } from "@api-monday/types";
 
 export default function MondayLiveExamplePage() {
   // Use the consolidated Monday integration hook
@@ -292,7 +292,7 @@ export default function MondayLiveExamplePage() {
                   <h4 className="font-medium text-red-600">Errors:</h4>
                   <ul className="list-disc pl-5">
                     {Object.entries(importResult.errors).map(([id, message]) => (
-                      <li key={id}>{message}</li>
+                      <li key={id}>{message as string}</li>
                     ))}
                   </ul>
                 </div>

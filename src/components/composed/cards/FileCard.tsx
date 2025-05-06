@@ -3,18 +3,33 @@ import { cn } from '@ui/utils/formatters';
 import { humanFileSize } from '@ui/utils/formatters';
 import { tv } from 'tailwind-variants';
 import {
-  radiusVariant,
-  shadowVariant
-} from '@ui-variants/shared-variants';
-import type { RadiusVariant, ShadowVariant } from '@ui-variants/shared-variants';
-import { paddingX, paddingY } from '@ui-tokens/tokens';
+  RadiusToken,
+  ShadowToken
+} from '@/lib/tokens/types';
+import { paddingX, paddingY } from '@/lib/tokens/tokens';
+import type { BaseComponentProps } from '@/lib/types/core/token';
+
 // File card styling with variants
 const fileCard = tv({
   base: 'bg-white flex items-center rounded overflow-hidden',
   variants: {
-
-    radius: radiusVariant.variants.radius,
-    shadow: shadowVariant.variants.shadow,
+    radius: {
+      none: 'rounded-none',
+      sm: 'rounded-sm',
+      md: 'rounded-md',
+      lg: 'rounded-lg',
+      xl: 'rounded-xl',
+      '2xl': 'rounded-2xl',
+      full: 'rounded-full',
+    },
+    shadow: {
+      none: 'shadow-none',
+      sm: 'shadow-sm',
+      md: 'shadow-md',
+      lg: 'shadow-lg',
+      xl: 'shadow-xl',
+      '2xl': 'shadow-2xl',
+    },
     border: {
       true: 'border border-gray-200',
       false: '',
@@ -44,22 +59,21 @@ const fileCard = tv({
   },
 });
 
-export type FileCardProps = {
+export interface FileCardProps extends BaseComponentProps {
   name: string;
   size?: number;
   type?: string;
   url?: string;
   onRemove?: () => void;
   onDownload?: () => void;
-  className?: string;
   fileIcon?: React.ReactNode;
-  radius?: RadiusVariant['radius'];
-  shadow?: ShadowVariant['shadow'];
+  radius?: RadiusToken;
+  shadow?: ShadowToken;
   border?: boolean;
   variant?: 'default' | 'outlined' | 'filled';
   hoverable?: boolean;
   padding?: 'sm' | 'md' | 'lg';
-};
+}
 
 export function FileCard({
   name,
@@ -87,8 +101,8 @@ export function FileCard({
           border,
           variant,
           hoverable,
-          className,
-        })
+        }),
+        className
       )}
     >
       <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 text-blue-500">

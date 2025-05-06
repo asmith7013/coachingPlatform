@@ -1,8 +1,12 @@
 import { ElementType, ReactNode } from 'react'
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textSize, weight, textColors } from '@ui-tokens/tokens'
-import type { TextSize, FontWeight, TextColor } from '@ui-tokens/tokens'
+import { textSize, weight, textColors } from '@/lib/tokens/tokens'
+import { 
+  TextSizeToken,
+  FontWeightToken,
+  TextColorToken
+} from '@/lib/tokens/types'
 
 const text = tv({
   base: 'font-body leading-normal',
@@ -25,7 +29,15 @@ const text = tv({
       default: textColors.default,
       muted: textColors.muted,
       accent: textColors.accent,
+      primary: textColors.primary,
+      secondary: textColors.secondary,
       danger: textColors.danger,
+      success: textColors.success,
+      surface: textColors.surface,
+      background: textColors.background,
+      border: textColors.border,
+      white: textColors.white,
+      black: textColors.black,
     },
   },
   defaultVariants: {
@@ -40,9 +52,9 @@ export type TextVariants = VariantProps<typeof text>;
 interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'> {
   children: ReactNode;
   as?: ElementType;
-  textSize?: TextSize;
-  weight?: FontWeight;
-  color?: TextColor;
+  textSize?: TextSizeToken;
+  weight?: FontWeightToken;
+  color?: TextColorToken;
   className?: string;
 }
 

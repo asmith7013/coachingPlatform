@@ -1,8 +1,11 @@
 import { ElementType, ReactNode } from 'react'
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
-import { heading as headingLevels, textColors } from '@ui-tokens/tokens'
-import type { HeadingLevel, TextColor } from '@ui-tokens/tokens'
+import { heading as headingLevels, textColors } from '@/lib/tokens/tokens'
+import { 
+  HeadingLevelToken,
+  TextColorToken
+} from '@/lib/tokens/types'
 
 const heading = tv({
   slots: {
@@ -22,7 +25,15 @@ const heading = tv({
       default: { heading: textColors.default, subheading: textColors.muted },
       muted: { heading: textColors.muted, subheading: textColors.muted },
       accent: { heading: textColors.accent, subheading: textColors.muted },
+      primary: { heading: textColors.primary, subheading: textColors.muted },
+      secondary: { heading: textColors.secondary, subheading: textColors.muted },
       danger: { heading: textColors.danger, subheading: textColors.muted },
+      success: { heading: textColors.success, subheading: textColors.muted },
+      surface: { heading: textColors.surface, subheading: textColors.muted },
+      background: { heading: textColors.background, subheading: textColors.muted },
+      border: { heading: textColors.border, subheading: textColors.muted },
+      white: { heading: textColors.white, subheading: textColors.white },
+      black: { heading: textColors.black, subheading: textColors.muted },
     },
   },
   defaultVariants: {
@@ -35,14 +46,14 @@ export type HeadingVariants = VariantProps<typeof heading>;
 
 export interface HeadingProps extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'color'> {
   children: ReactNode;
-  level?: HeadingLevel;
-  color?: TextColor;
+  level?: HeadingLevelToken;
+  color?: TextColorToken;
   subheading?: ReactNode;
   className?: string;
   subheadingClassName?: string;
 }
 
-const headingElements: Record<HeadingLevel, ElementType> = {
+const headingElements: Record<HeadingLevelToken, ElementType> = {
   h1: 'h1',
   h2: 'h2',
   h3: 'h3',
@@ -60,7 +71,7 @@ export function Heading({
   subheadingClassName,
   ...props
 }: HeadingProps) {
-  const Component = headingElements[level as HeadingLevel];
+  const Component = headingElements[level];
   const styles = heading({ level, color });
 
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { typography } from '@ui-tokens/typography';
+import { typography } from '@/lib/tokens/typography';
 import { cn } from '@ui/utils/formatters';;
 
 type CurriculumVersionModalProps = {

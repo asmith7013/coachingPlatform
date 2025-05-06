@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@ui/utils/formatters';
 import { Card } from '@/components/composed/cards/Card';
-import { textColors } from '@ui-tokens/colors';
+import { textColors } from '@/lib/tokens';
 
 interface GoalSectionProps {
   goalText: string;

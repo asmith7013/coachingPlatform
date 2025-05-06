@@ -2,8 +2,8 @@
 import React, { createContext, useContext } from 'react';
 import { tv } from 'tailwind-variants';
 import { cn } from '@ui/utils/formatters';
-import { radii, textSize, borderWidths } from '@ui-tokens/tokens';
-import { backgroundColors, borderColors, textColors } from '@ui-tokens/colors';
+import { radii, textSize, borderWidths } from '@/lib/tokens/tokens';
+import { backgroundColors, borderColors, textColors } from '@/lib/tokens/colors';
 import { responsiveLayoutVariant } from '@ui-variants/layout';
 
 // Define types for the context

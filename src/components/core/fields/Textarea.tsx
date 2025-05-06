@@ -4,7 +4,14 @@ import {
   radiusVariant,
   disabledVariant,
 } from '@ui-variants/shared-variants'
-import { textColors } from '@ui-tokens/tokens'
+import { 
+  textColors,
+} from '@/lib/tokens/tokens'
+import { 
+  TextSizeToken,
+  PaddingToken,
+  RadiusToken
+} from '@/lib/tokens/types'
 import { FieldWrapper } from './FieldWrapper'
 
 type TextareaHTMLProps = Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'>;
@@ -27,6 +34,7 @@ const textarea = tv({
       base: 'text-base',
       lg: 'text-lg',
       xl: 'text-xl',
+      '2xl': 'text-2xl',
     },
     padding: {
       none: 'p-0',
@@ -35,6 +43,7 @@ const textarea = tv({
       md: 'px-4 py-2',
       lg: 'px-5 py-2.5',
       xl: 'px-6 py-3',
+      '2xl': 'px-8 py-4',
     },
     radius: radiusVariant.variants.radius,
     disabled: disabledVariant.variants.disabled,
@@ -73,11 +82,11 @@ export type TextareaVariants = VariantProps<typeof textarea>;
 export interface TextareaProps extends TextareaHTMLProps {
   label?: string;
   error?: string;
-  textSize?: TextareaVariants['textSize'];
-  padding?: TextareaVariants['padding'];
-  radius?: TextareaVariants['radius'];
-  width?: TextareaVariants['width'];
-  resize?: TextareaVariants['resize'];
+  textSize?: TextSizeToken;
+  padding?: PaddingToken;
+  radius?: RadiusToken;
+  width?: 'auto' | 'full';
+  resize?: 'none' | 'vertical' | 'horizontal' | 'both';
   disabled?: boolean;
   className?: string;
   rows?: number;
@@ -109,7 +118,7 @@ export function Textarea({
           textarea({
             textSize,
             padding,
-            radius,
+            radius: radius as TextareaVariants['radius'],
             width,
             resize,
             error: Boolean(error),

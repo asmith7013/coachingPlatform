@@ -5,7 +5,16 @@ import { Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { cn } from '@ui/utils/formatters'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { shadows, textColors, textSize } from '@ui-tokens/tokens'
+import { shadows, textColors, textSize } from '@/lib/tokens/tokens'
+import { 
+  TextSizeToken, 
+  TextColorToken,
+  ShadowToken
+} from '@/lib/tokens/types'
+
+// Define component-specific types
+export type ToastVariant = 'success' | 'error' | 'warning' | 'info';
+export type ToastPosition = 'bottomRight' | 'topRight' | 'bottomLeft' | 'topLeft' | 'bottom' | 'top';
 
 // Define Toast variants using tv()
 const toast = tv({
@@ -92,6 +101,11 @@ export interface ToastProps extends Partial<ToastVariants> {
   title: string
   description?: string
   icon?: React.ComponentType<{ className?: string }>
+  textSize?: TextSizeToken
+  textColor?: TextColorToken
+  shadow?: ShadowToken
+  variant?: ToastVariant
+  position?: ToastPosition
   className?: string
 }
 

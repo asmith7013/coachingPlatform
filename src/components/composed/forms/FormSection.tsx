@@ -1,6 +1,6 @@
 import { cn } from '@ui/utils/formatters';
 import { tv } from 'tailwind-variants'
-import { textColors, textSize, gap as gapTokens } from '@ui-tokens/tokens'
+import { textColors, textSize, gap as gapTokens } from '@/lib/tokens/tokens'
 
 type FormSectionPadding = 'sm' | 'md' | 'lg';
 type FormSectionGap = 'sm' | 'md' | 'lg';

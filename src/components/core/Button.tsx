@@ -1,18 +1,29 @@
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textSize, paddingX, paddingY, radii, shadows, borderWidths } from '@ui-tokens/tokens'
-import { backgroundColors, borderColors, hoverBackgroundColors, textColors } from '@ui-tokens/colors';
+import { 
+  textSize, 
+  paddingX, 
+  paddingY, 
+  radii, 
+  shadows, 
+  borderWidths,
+} from '@/lib/tokens/tokens'
+import { 
+  TextSizeToken,
+  PaddingToken,
+  RadiusToken,
+  ShadowToken
+} from '@/lib/tokens/types'
+import { backgroundColors, borderColors, hoverBackgroundColors, textColors } from '@/lib/tokens/colors';
 import { iconContentLayoutVariant } from '@ui-variants/layout';
 // import { disabledVariant, loadingVariant } from '@ui-variants/shared-variants'
 
-// Define specific types for Button component
-type ButtonIntent = 'primary' | 'secondary';
-type ButtonAppearance = 'solid' | 'alt' | 'outline';
-type ButtonTextSize = 'sm' | 'base' | 'lg';
-type ButtonPadding = 'sm' | 'md' | 'lg';
-type ButtonRadius = 'none' | 'sm' | 'md' | 'full';
-type ButtonShadow = 'none' | 'sm' | 'md';
-type ButtonIconPosition = 'left' | 'right' | 'responsive';
+// Define specific component intent and appearance types
+export type ButtonIntent = 'primary' | 'secondary' | 'danger' | 'success';
+export type ButtonAppearance = 'solid' | 'alt' | 'outline';
+
+// Use centralized token types for common properties
+export type ButtonIconPosition = 'left' | 'right' | 'responsive';
 
 /**
  * Button component variants.
@@ -29,6 +40,8 @@ const button = tv({
     intent: {
       primary: '',
       secondary: '',
+      danger: '',
+      success: '',
     },
     appearance: {
       solid: '',
@@ -36,25 +49,38 @@ const button = tv({
       outline: '',
     },
     textSize: {
+      xs: textSize.xs,
       sm: textSize.sm,
       base: textSize.base,
       lg: textSize.lg,
+      xl: textSize.xl,
+      '2xl': textSize['2xl'],
     },
     padding: {
+      none: `${paddingX.none} ${paddingY.none}`,
+      xs: `${paddingX.xs} ${paddingY.xs}`,
       sm: `${paddingX.sm} ${paddingY.xs}`,
       md: `${paddingX.md} ${paddingY.sm}`,
       lg: `${paddingX.lg} ${paddingY.md}`,
+      xl: `${paddingX.xl} ${paddingY.lg}`,
+      '2xl': `${paddingX['2xl']} ${paddingY['2xl']}`,
     },
     radius: {
       none: radii.none,
       sm: radii.sm,
       md: radii.md,
+      lg: radii.lg,
+      xl: radii.xl,
+      '2xl': radii['2xl'],
       full: radii.full,
     },
     shadow: {
       none: shadows.none,
       sm: shadows.sm,
       md: shadows.md,
+      lg: shadows.lg,
+      xl: shadows.xl,
+      '2xl': shadows['2xl'],
     },
     fullWidth: {
       true: 'w-full',
@@ -94,18 +120,19 @@ const button = tv({
     },
     {
       intent: 'primary',
-      appearance: 'alt',
-      className: {
-        base: `${backgroundColors.primary} ${textColors.default} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.primary}`,
-      }
-    },
-    {
-      intent: 'primary',
       appearance: 'outline',
       className: {
         base: `${backgroundColors.surface} ${textColors.primary} ${borderWidths.md} ${borderColors.primary} ${hoverBackgroundColors.primary}`,
       }
     },
+    {
+      intent: 'primary',
+      appearance: 'alt',
+      className: {
+        base: `${backgroundColors.primary} ${textColors.default} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.primary}`,
+      }
+    },
+
 
     // Secondary Intents
     {
@@ -117,16 +144,62 @@ const button = tv({
     },
     {
       intent: 'secondary',
+      appearance: 'outline',
+      className: {
+        base: `${backgroundColors.surface} ${textColors.secondary} ${borderWidths.md} ${borderColors.secondary} ${hoverBackgroundColors.secondary}`,
+      }
+    },
+    {
+      intent: 'secondary',
       appearance: 'alt',
       className: {
         base: `${backgroundColors.secondary} ${textColors.default} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.secondary}`,
       }
     },
+
+    // Danger Intents
     {
-      intent: 'secondary',
+      intent: 'danger',
+      appearance: 'solid',
+      className: {
+        base: `${backgroundColors.danger} ${textColors.white} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.danger}`,
+      }
+    },
+    {
+      intent: 'danger',
       appearance: 'outline',
       className: {
-        base: `${backgroundColors.surface} ${textColors.secondary} ${borderWidths.md} ${borderColors.secondary} ${hoverBackgroundColors.secondary}`,
+        base: `${backgroundColors.surface} ${textColors.danger} ${borderWidths.md} ${borderColors.danger} ${hoverBackgroundColors.danger}`,
+      }
+    },
+    {
+      intent: 'danger',
+      appearance: 'alt',
+      className: {
+        base: `${backgroundColors.danger} ${textColors.default} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.danger}`,
+      }
+    },
+
+    // Success Intents
+    {
+      intent: 'success',
+      appearance: 'solid',
+      className: {
+        base: `${backgroundColors.success} ${textColors.white} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.success}`,
+      }
+    },
+    {
+      intent: 'success',
+      appearance: 'outline',
+      className: {
+        base: `${backgroundColors.surface} ${textColors.success} ${borderWidths.md} ${borderColors.success} ${hoverBackgroundColors.success}`,
+      }
+    },
+    {
+      intent: 'success',
+      appearance: 'alt',
+      className: {
+        base: `${backgroundColors.success} ${textColors.default} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.success}`,
       }
     },
   ],
@@ -150,10 +223,10 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     intent?: ButtonIntent;
     appearance?: ButtonAppearance;
-    textSize?: ButtonTextSize;
-    padding?: ButtonPadding;
-    radius?: ButtonRadius;
-    shadow?: ButtonShadow;
+    textSize?: TextSizeToken;
+    padding?: PaddingToken;
+    radius?: RadiusToken;
+    shadow?: ShadowToken;
     fullWidth?: boolean;
     loading?: boolean;
     disabled?: boolean;

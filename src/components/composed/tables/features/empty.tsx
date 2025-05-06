@@ -2,7 +2,7 @@
 
 // import { ReactNode } from 'react'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textColors } from '@ui-tokens/tokens'
+import { textColors } from '@/lib/tokens/tokens'
 
 const tableEmpty = tv({
   slots: {

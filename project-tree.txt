@@ -12,12 +12,14 @@
 │   │   ├── core-components.md
 │   │   ├── design-token-system.md
 │   │   ├── domain-components.md
+│   │   ├── layout-system.md
 │   │   └── styling-patterns.md
 │   ├── data-flow
 │   │   ├── api-patterns.md
 │   │   ├── error-handling.md
 │   │   ├── monday-integration.md
 │   │   ├── mongodb-integration.md
+│   │   ├── react-query-patterns.md
 │   │   ├── sanitization-system.md
 │   │   ├── schema-system.md
 │   │   ├── server-actions.md
@@ -53,13 +55,14 @@
 │   │   ├── course-config.js
 │   │   ├── pdf-downloader.js
 │   │   └── scraper.ts
-│   └── seed
-│       ├── README.md
-│       ├── index.ts
-│       ├── mockRubrics.ts
-│       ├── seed-cycles-coaching.ts
-│       ├── seed-look-fors.ts
-│       └── seed-schools-staff.ts
+│   ├── seed
+│   │   ├── README.md
+│   │   ├── index.ts
+│   │   ├── mockRubrics.ts
+│   │   ├── seed-cycles-coaching.ts
+│   │   ├── seed-look-fors.ts
+│   │   └── seed-schools-staff.ts
+│   └── test-monday-token.mjs
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
 ├── src
@@ -68,7 +71,6 @@
 │   │   │   ├── cycles
 │   │   │   │   └── cycles.ts
 │   │   │   ├── integrations
-│   │   │   │   ├── example-monday-usage.ts
 │   │   │   │   └── monday.ts
 │   │   │   ├── lookFors
 │   │   │   │   └── lookFors.ts
@@ -98,7 +100,8 @@
 │   │   │   ├── integrations
 │   │   │   │   └── monday
 │   │   │   │       ├── route.ts
-│   │   │   │       └── user
+│   │   │   │       ├── user
+│   │   │   │       └── visits
 │   │   │   ├── look-fors
 │   │   │   │   └── bulk-upload
 │   │   │   │       └── route.ts
@@ -132,6 +135,7 @@
 │   │   │   │   │   └── Transcripts
 │   │   │   │   ├── data.ts
 │   │   │   │   └── page.tsx
+│   │   │   ├── config.ts
 │   │   │   ├── layout.tsx
 │   │   │   ├── lookForList
 │   │   │   │   └── page.tsx
@@ -233,11 +237,14 @@
 │   │   │       │   └── page.tsx
 │   │   │       ├── example2
 │   │   │       │   └── page.tsx
+│   │   │       ├── layout.tsx
 │   │   │       ├── page.tsx
 │   │   │       ├── staff
 │   │   │       │   └── page.tsx
 │   │   │       └── visits
+│   │   │           ├── MondayVisitSelectionPage.tsx
 │   │   │           ├── import
+│   │   │           ├── layout.tsx
 │   │   │           └── page.tsx
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
@@ -273,6 +280,17 @@
 │   │   │   │   ├── RigidResourceForm.tsx
 │   │   │   │   ├── UpdatedResourceForm.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── layouts
+│   │   │   │   ├── AppShell.tsx
+│   │   │   │   ├── AppShellLegacy.tsx
+│   │   │   │   ├── DashboardLayout.tsx
+│   │   │   │   ├── DashboardPage.tsx
+│   │   │   │   ├── NavigationSidebar.tsx
+│   │   │   │   ├── PageHeader.tsx
+│   │   │   │   ├── PerformanceMonitorLayout.tsx
+│   │   │   │   ├── ResourceHeader.tsx
+│   │   │   │   ├── Topbar.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── tables
 │   │   │   │   ├── ScheduleTable.tsx
 │   │   │   │   ├── Table.tsx
@@ -304,10 +322,15 @@
 │   │   │       └── index.ts
 │   │   ├── core
 │   │   │   ├── Button.tsx
+│   │   │   ├── empty
+│   │   │   │   ├── EmptyListWrapper.tsx
+│   │   │   │   ├── EmptyState.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── feedback
 │   │   │   │   ├── Alert.tsx
 │   │   │   │   ├── Badge.tsx
 │   │   │   │   ├── Spinner.tsx
+│   │   │   │   ├── Toast.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── fields
 │   │   │   │   ├── Checkbox.tsx
@@ -320,7 +343,6 @@
 │   │   │   │   ├── Textarea.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── index.ts
-│   │   │   ├── layout
 │   │   │   └── typography
 │   │   │       ├── Heading.tsx
 │   │   │       ├── Text.tsx
@@ -348,7 +370,9 @@
 │   │   │   │   └── renderKHLesson.tsx
 │   │   │   ├── lookFors
 │   │   │   ├── rubrics
+│   │   │   │   ├── FilterableGridView.tsx
 │   │   │   │   ├── RubricCard.tsx
+│   │   │   │   ├── RubricDomainCards.tsx
 │   │   │   │   ├── RubricFilterPanel.tsx
 │   │   │   │   ├── RubricViewer.tsx
 │   │   │   │   └── index.ts
@@ -397,36 +421,22 @@
 │   │   │   ├── SentryBoundaryWrapper.tsx
 │   │   │   └── index.ts
 │   │   ├── index.ts
-│   │   ├── integrations
-│   │   │   └── monday
-│   │   │       ├── README.md
-│   │   │       ├── boards
-│   │   │       │   └── index.ts
-│   │   │       ├── common
-│   │   │       │   ├── ConnectionTest.tsx
-│   │   │       │   └── index.ts
-│   │   │       ├── domain
-│   │   │       │   ├── users
-│   │   │       │   └── visits
-│   │   │       ├── imports
-│   │   │       │   └── index.ts
-│   │   │       ├── index.ts
-│   │   │       └── utils
-│   │   │           └── index.ts
-│   │   ├── layouts
-│   │   │   ├── AppShell.tsx
-│   │   │   ├── DashboardLayout.tsx
-│   │   │   ├── DashboardPage.tsx
-│   │   │   ├── PerformanceMonitorLayout.tsx
-│   │   │   ├── Topbar.tsx
-│   │   │   └── index.ts
-│   │   └── shared
-│   │       ├── EmptyListWrapper.tsx
-│   │       ├── EmptyState.tsx
-│   │       ├── FilterableGridView.tsx
-│   │       ├── PageHeader.tsx
-│   │       ├── ResourceHeader.tsx
-│   │       └── index.ts
+│   │   └── integrations
+│   │       └── monday
+│   │           ├── README.md
+│   │           ├── boards
+│   │           │   └── index.ts
+│   │           ├── common
+│   │           │   ├── ConnectionTest.tsx
+│   │           │   └── index.ts
+│   │           ├── domain
+│   │           │   ├── users
+│   │           │   └── visits
+│   │           ├── imports
+│   │           │   └── index.ts
+│   │           ├── index.ts
+│   │           └── utils
+│   │               └── index.ts
 │   ├── debug
 │   ├── examples
 │   ├── hooks
@@ -443,7 +453,6 @@
 │   │   ├── domain
 │   │   │   ├── index.ts
 │   │   │   ├── useLookFors.ts
-│   │   │   ├── useMondayImport.ts
 │   │   │   ├── useNYCPSStaff.ts
 │   │   │   ├── useSchools.ts
 │   │   │   ├── useTeacherSchedules.ts
@@ -454,13 +463,24 @@
 │   │   ├── index.ts
 │   │   ├── integrations
 │   │   │   └── monday
+│   │   │       ├── MondayImportContext.tsx
+│   │   │       ├── MondayIntegrationContext.tsx
+│   │   │       ├── useMondayImportState.ts
 │   │   │       ├── useMondayIntegration.ts
+│   │   │       ├── useMondayMutations.ts 21-18-15-623.ts
+│   │   │       ├── useMondayQueries.ts
 │   │   │       └── useStaffExistence.ts
-│   │   └── ui
-│   │       ├── useFiltersAndSorting.ts
-│   │       └── usePagination.ts
+│   │   ├── ui
+│   │   │   ├── useFiltersAndSorting.ts
+│   │   │   └── usePagination.ts
+│   │   └── visits
+│   │       ├── useVisitManager.ts
+│   │       ├── useVisitMutation.ts
+│   │       └── useVisitQuery.ts
 │   ├── instrumentation-client.ts
 │   ├── instrumentation.ts
+│   ├── layouts
+│   │   └── MondayLayout.tsx
 │   ├── lib
 │   │   ├── api
 │   │   │   ├── client
@@ -481,6 +501,8 @@
 │   │   │   │   └── standardize.ts
 │   │   │   └── validation
 │   │   │       └── index.ts
+│   │   ├── context
+│   │   │   └── QueryProvider.tsx
 │   │   ├── data-schema
 │   │   │   ├── enum
 │   │   │   │   ├── index.ts
@@ -603,23 +625,28 @@
 │   │   │       │   ├── index.ts
 │   │   │       │   └── queries.ts
 │   │   │       ├── config
-│   │   │       │   ├── field-mappings.ts
+│   │   │       │   ├── field-mapping.ts
+│   │   │       │   ├── field-mappings-legacy.ts
 │   │   │       │   └── index.ts
-│   │   │       ├── examples
-│   │   │       │   └── mapper-usage-examples.ts
 │   │   │       ├── index.ts
 │   │   │       ├── mappers
-│   │   │       │   ├── adapters
+│   │   │       │   ├── board-types
+│   │   │       │   ├── entities
 │   │   │       │   ├── index.ts
-│   │   │       │   ├── schemas
-│   │   │       │   └── utils
+│   │   │       │   └── transformers
 │   │   │       ├── services
-│   │   │       │   ├── dynamic-mapping.ts
 │   │   │       │   ├── import-service.ts
 │   │   │       │   ├── index.ts
-│   │   │       │   ├── monday-service.ts
+│   │   │       │   ├── legacy
+│   │   │       │   ├── sync-service.ts
 │   │   │       │   └── transform-service.ts
-│   │   │       ├── types.ts
+│   │   │       ├── types
+│   │   │       │   ├── api.ts
+│   │   │       │   ├── board.ts
+│   │   │       │   ├── import.ts
+│   │   │       │   ├── index.ts
+│   │   │       │   ├── mapping.ts
+│   │   │       │   └── transform.ts
 │   │   │       └── utils
 │   │   │           ├── index.ts
 │   │   │           └── monday-utils.ts
@@ -632,6 +659,17 @@
 │   │   │   ├── indicator.tsx
 │   │   │   ├── primaryStrategy.tsx
 │   │   │   └── school.tsx
+│   │   ├── query
+│   │   │   ├── hooks
+│   │   │   │   ├── useEntityQuery.ts
+│   │   │   │   ├── useOptimisticMutation.ts
+│   │   │   │   └── usePaginatedQuery.ts
+│   │   │   ├── provider.tsx
+│   │   │   ├── queryClient.ts
+│   │   │   ├── queryKeys.ts
+│   │   │   └── utilities
+│   │   │       ├── errorHandling.ts
+│   │   │       └── optimisticUpdates.ts
 │   │   ├── types
 │   │   │   ├── README.md
 │   │   │   ├── core
@@ -697,6 +735,7 @@
 │   │       │   ├── spacing.ts
 │   │       │   ├── text.ts
 │   │       │   ├── tokens.ts
+│   │       │   ├── types.ts
 │   │       │   └── typography.ts
 │   │       ├── utils
 │   │       │   ├── form-utils.ts
@@ -721,4 +760,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-232 directories, 490 files
+239 directories, 522 files

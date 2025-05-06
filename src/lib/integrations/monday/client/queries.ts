@@ -1,14 +1,25 @@
-// src/lib/integrations/monday/client/queries.ts
-
 /**
- * Centralized GraphQL queries for Monday.com API
- * All Monday.com GraphQL queries should be defined here to avoid duplication
+ * Monday.com GraphQL Queries
+ * 
+ * This file contains all GraphQL queries and mutations used for
+ * the Monday.com integration. Centralizing these helps maintain consistency
+ * and makes updates easier.
  */
 
-// Basic board query to get board details and columns
-export const BOARD_QUERY = `
-  query getBoard($boardId: ID!) {
-    boards(ids: [$boardId]) {
+// Get all workspaces
+export const WORKSPACES_QUERY = `
+  query {
+    workspaces {
+      id
+      name
+    }
+  }
+`;
+
+// Get boards by workspace
+export const BOARDS_BY_WORKSPACE_QUERY = `
+  query GetBoardsByWorkspace($workspaceId: ID!) {
+    boards(workspace_ids: [$workspaceId], limit: 100) {
       id
       name
       description
@@ -26,127 +37,9 @@ export const BOARD_QUERY = `
   }
 `;
 
-// Items query with pagination for getting board items
-export const ITEMS_QUERY = `
-  query getItems($boardId: ID!) {
-    boards(ids: [$boardId]) {
-      items_page {
-        cursor
-        items {
-          id
-          name
-          state
-          board {
-            id
-          }
-          column_values {
-            id
-            text
-            value
-            type
-          }
-        }
-      }
-    }
-  }
-`;
-
-// Get a single item by ID - useful for fetch one selected item
-export const ITEM_BY_ID_QUERY = `
-  query getItemById($itemId: ID!) {
-    items(ids: [$itemId]) {
-      id
-      name
-      state
-      board {
-        id
-        name
-        columns {
-          id
-          title
-          type
-        }
-      }
-      column_values {
-        id
-        text
-        value
-        type
-      }
-    }
-  }
-`;
-
-// Get all workspaces the user has access to
-export const WORKSPACES_QUERY = `
-  query {
-    workspaces {
-      id
-      name
-    }
-  }
-`;
-
-// Get boards in a workspace
-export const BOARDS_BY_WORKSPACE_QUERY = `
-  query boardsByWorkspace($workspaceId: ID!) {
-    boards(workspace_ids: [$workspaceId]) {
-      id
-      name
-      columns {
-        id
-        title
-        type
-      }
-    }
-  }
-`;
-
-// Get board items with pagination control
-export const BOARD_ITEMS_QUERY = `
-  query getBoardItems($boardId: ID!, $limit: Int) {
-    boards(ids: [$boardId]) {
-      items_page(limit: $limit) {
-        cursor
-        items {
-          id
-          name
-          state
-          column_values {
-            id
-            text
-            value
-            type
-          }
-        }
-      }
-    }
-  }
-`;
-
-// Get next page of items using a cursor
-export const NEXT_ITEMS_PAGE_QUERY = `
-  query getNextItemsPage($cursor: String!, $limit: Int) {
-    next_items_page(cursor: $cursor, limit: $limit) {
-      cursor
-      items {
-        id
-        name
-        state
-        column_values {
-          id
-          text
-          value
-          type
-        }
-      }
-    }
-  }
-`;
-
-// Get full board details with items in a single query
+// Get a board with items
 export const BOARD_WITH_ITEMS_QUERY = `
-  query getBoardWithItems($boardId: ID!, $itemLimit: Int) {
+  query GetBoard($boardId: ID!, $itemLimit: Int!) {
     boards(ids: [$boardId]) {
       id
       name
@@ -166,12 +59,13 @@ export const BOARD_WITH_ITEMS_QUERY = `
         items {
           id
           name
+          board_id
           state
           column_values {
             id
+            title
             text
             value
-            type
           }
         }
       }
@@ -179,26 +73,115 @@ export const BOARD_WITH_ITEMS_QUERY = `
   }
 `;
 
-// Get user information by ID
-export const USER_BY_ID_QUERY = `
-  query getUserById($userId: ID!) {
-    users(ids: [$userId]) {
+// Get a board without items (for columns)
+export const BOARD_QUERY = `
+  query GetBoardColumns($boardId: ID!) {
+    boards(ids: [$boardId]) {
       id
       name
-      email
-      photo_thumb_small
+      columns {
+        id
+        title
+        type
+        settings_str
+      }
     }
   }
 `;
 
-// Get user information by email
-export const USER_BY_EMAIL_QUERY = `
-  query getUserByEmail($email: String!) {
-    users(emails: [$email]) {
+// Get items from a board
+export const ITEMS_QUERY = `
+  query GetItems($boardId: ID!) {
+    boards(ids: [$boardId]) {
+      items_page(limit: 100) {
+        items {
+          id
+          name
+          board_id
+          state
+          column_values {
+            id
+            title
+            text
+            value
+          }
+        }
+      }
+    }
+  }
+`;
+
+// Get an item by ID
+export const ITEM_BY_ID_QUERY = `
+  query GetItemById($itemId: ID!) {
+    items(ids: [$itemId]) {
+      id
+      name
+      board_id
+      state
+      column_values {
+        id
+        title
+        text
+        value
+      }
+    }
+  }
+`;
+
+// Get a user by ID
+export const USER_BY_ID_QUERY = `
+  query GetUserById($userId: ID!) {
+    users(ids: [$userId]) {
       id
       name
       email
-      photo_thumb_small
+    }
+  }
+`;
+
+// Get a user by email
+export const USER_BY_EMAIL_QUERY = `
+  query GetUserByEmail($email: String!) {
+    users(email: $email) {
+      id
+      name
+      email
+    }
+  }
+`;
+
+// Update an item's column values
+export const UPDATE_ITEM_MUTATION = `
+  mutation UpdateItem($boardId: ID!, $itemId: ID!, $columnValues: JSON!) {
+    change_multiple_column_values(
+      board_id: $boardId,
+      item_id: $itemId,
+      column_values: $columnValues
+    ) {
+      id
+    }
+  }
+`;
+
+// Create a new item
+export const CREATE_ITEM_MUTATION = `
+  mutation CreateItem($boardId: ID!, $itemName: String!, $columnValues: JSON) {
+    create_item(
+      board_id: $boardId,
+      item_name: $itemName,
+      column_values: $columnValues
+    ) {
+      id
+    }
+  }
+`;
+
+// Archive an item
+export const ARCHIVE_ITEM_MUTATION = `
+  mutation ArchiveItem($itemId: ID!) {
+    archive_item(item_id: $itemId) {
+      id
     }
   }
 `;

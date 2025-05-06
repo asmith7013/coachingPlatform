@@ -7,6 +7,7 @@ import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { Input } from "@/components/core/fields/Input";
 import { useMondayIntegration } from "@/hooks/integrations/monday/useMondayIntegration";
+import { MondayColumn, MondayItem } from "@api-monday/types";
 
 export default function MondayBoardFinderPage() {
   // Use the consolidated Monday integration hook
@@ -22,7 +23,7 @@ export default function MondayBoardFinderPage() {
   } = useMondayIntegration();
   
   // Board ID input state
-  const [boardId, setBoardId] = useState<string>("");
+  const [boardId, setBoardId] = useState<string>("7259948291");
   
   // Handle board search
   const handleFetchBoard = async () => {
@@ -166,7 +167,7 @@ export default function MondayBoardFinderPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {board.columns.map((column) => (
+                        {board.columns.map((column: MondayColumn) => (
                           <tr key={column.id} className="border-b last:border-0">
                             <td className="py-2">{column.title}</td>
                             <td className="py-2">{formatColumnType(column.type)}</td>
@@ -199,7 +200,7 @@ export default function MondayBoardFinderPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {board.items_page.items.map((item) => (
+                        {board.items_page.items.map((item: MondayItem) => (
                           <tr key={item.id} className="border-b last:border-0">
                             <td className="py-2">{item.name}</td>
                             <td className="py-2 text-gray-500">{item.id}</td>

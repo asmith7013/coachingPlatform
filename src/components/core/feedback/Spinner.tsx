@@ -2,8 +2,8 @@
 import React from 'react';
 import { tv } from 'tailwind-variants';
 import { cn } from '@ui/utils/formatters';
-import { borderWidths } from '@ui-tokens/tokens';
-import { borderColors } from '@ui-tokens/colors';
+import { borderWidths } from '@/lib/tokens/tokens';
+import { borderColors } from '@/lib/tokens/colors';
 
 // Define spinner variants using the token-first approach
 const spinnerVariants = tv({

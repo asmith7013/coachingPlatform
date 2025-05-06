@@ -7,11 +7,13 @@
 import React from 'react'
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
-// import {
-//   radiusVariant,
-//   shadowVariant,
-// } from '@ui-variants/shared-variants'
-import { textColors } from '@ui-tokens/tokens'
+import { textColors } from '@/lib/tokens/tokens'
+import {
+  PaddingToken,
+  RadiusToken,
+  ShadowToken
+} from '@/lib/tokens/types'
+import type { CardStyleProps } from '@/lib/types/core/token'
 
 /**
  * Card component styles using the Tailwind Variants pattern.
@@ -41,6 +43,7 @@ export const card = tv({
       md: { root: 'p-4', header: 'px-4 py-3', body: 'p-4', footer: 'px-4 py-3' },
       lg: { root: 'p-6', header: 'px-6 py-4', body: 'p-6', footer: 'px-6 py-4' },
       xl: { root: 'p-8', header: 'px-8 py-6', body: 'p-8', footer: 'px-8 py-6' },
+      '2xl': { root: 'p-10', header: 'px-10 py-8', body: 'p-10', footer: 'px-10 py-8' },
     },
     radius: {
       none: { root: 'rounded-none', header: 'rounded-none', body: 'rounded-none', footer: 'rounded-none' },
@@ -48,6 +51,7 @@ export const card = tv({
       md: { root: 'rounded-md', header: 'rounded-md', body: 'rounded-md', footer: 'rounded-md' },
       lg: { root: 'rounded-lg', header: 'rounded-lg', body: 'rounded-lg', footer: 'rounded-lg' },
       xl: { root: 'rounded-xl', header: 'rounded-xl', body: 'rounded-xl', footer: 'rounded-xl' },
+      '2xl': { root: 'rounded-2xl', header: 'rounded-2xl', body: 'rounded-2xl', footer: 'rounded-2xl' },
       full: { root: 'rounded-full', header: 'rounded-full', body: 'rounded-full', footer: 'rounded-full' },
     },
     shadow: {
@@ -55,12 +59,16 @@ export const card = tv({
       sm: { root: 'shadow-sm', header: 'shadow-sm', body: 'shadow-sm', footer: 'shadow-sm' },
       md: { root: 'shadow-md', header: 'shadow-md', body: 'shadow-md', footer: 'shadow-md' },
       lg: { root: 'shadow-lg', header: 'shadow-lg', body: 'shadow-lg', footer: 'shadow-lg' },
+      xl: { root: 'shadow-xl', header: 'shadow-xl', body: 'shadow-xl', footer: 'shadow-xl' },
+      '2xl': { root: 'shadow-2xl', header: 'shadow-2xl', body: 'shadow-2xl', footer: 'shadow-2xl' },
     },
     variant: {
       default: { root: 'bg-surface' },
       alt: { root: 'bg-alt' },
       white: { root: 'bg-white' },
       transparent: { root: 'bg-transparent' },
+      muted: { root: 'bg-muted' },
+      secondary: { root: 'bg-secondary-100' },
     },
     border: {
       true: { root: 'border border-primary' },
@@ -106,9 +114,14 @@ const useCardContext = () => {
 /**
  * Main Card component props extending all available variant options
  */
-interface CardRootProps extends CardVariants {
+interface CardRootProps extends Omit<CardStyleProps, 'variant'> {
   className?: string;
   children?: React.ReactNode;
+  padding?: PaddingToken;
+  radius?: RadiusToken;
+  shadow?: ShadowToken;
+  variant?: 'default' | 'alt' | 'white' | 'transparent' | 'muted' | 'secondary';
+  border?: boolean;
 }
 
 /**
@@ -181,10 +194,11 @@ const Footer = ({ className, children }: CardSubComponentProps) => {
 /**
  * Legacy Card component interface for backward compatibility
  */
-interface LegacyCardProps extends CardRootProps {
+interface LegacyCardProps extends Omit<CardRootProps, 'children'> {
   header?: React.ReactNode;
   footer?: React.ReactNode;
   contentClassName?: string;
+  children?: React.ReactNode;
 }
 
 /**

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { MondayUser } from '@/lib/integrations/monday/types';
+import { MondayUser } from '@api-monday/types';
 import { Badge } from '@/components/core/feedback/Badge';
 import { Button } from '@/components/core/Button';
 import { Spinner } from '@/components/core/feedback/Spinner';

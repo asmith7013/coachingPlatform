@@ -7,8 +7,8 @@ import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement
 import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
-import { typography } from '@ui-tokens/tokens';
-import { paddingY, stack } from '@ui-tokens/tokens';
+import { typography } from '@/lib/tokens/tokens';
+import { paddingY, stack } from '@/lib/tokens/tokens';
 import { cn } from '@ui/utils/formatters';
 import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
 import { Badge } from '@/components/core/feedback/Badge';

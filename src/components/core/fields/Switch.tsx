@@ -4,7 +4,14 @@ import {
   radiusVariant,
   disabledVariant,
 } from '@ui-variants/shared-variants'
-import { textColors } from '@ui-tokens/tokens'
+import { 
+  textColors 
+} from '@/lib/tokens/tokens'
+import { 
+  TextSizeToken,
+  PaddingToken,
+  RadiusToken
+} from '@/lib/tokens/types'
 import { FieldWrapper } from './FieldWrapper'
 
 export interface SwitchProps {
@@ -15,8 +22,9 @@ export interface SwitchProps {
   error?: string
   className?: string
   disabled?: boolean
-  textSize?: "xs" | "sm" | "base" | "lg" | "xl"
-  padding?: "none" | "xs" | "sm" | "md" | "lg" | "xl"
+  textSize?: TextSizeToken
+  padding?: PaddingToken
+  radius?: RadiusToken
 }
 
 // 🎨 Switch style variants
@@ -73,6 +81,12 @@ const switchStyles = tv({
         track: 'h-7 w-12',
         thumb: 'h-6 w-6',
       },
+      '2xl': { 
+        wrapper: 'gap-x-5',
+        description: 'text-2xl',
+        track: 'h-8 w-14',
+        thumb: 'h-7 w-7',
+      },
     },
     padding: {
       none: { wrapper: 'p-0' },
@@ -81,6 +95,7 @@ const switchStyles = tv({
       md: { wrapper: 'p-2' },
       lg: { wrapper: 'p-3' },
       xl: { wrapper: 'p-4' },
+      '2xl': { wrapper: 'p-6' },
     },
     radius: radiusVariant.variants.radius,
     disabled: disabledVariant.variants.disabled,
@@ -137,6 +152,7 @@ export function Switch({
   disabled,
   textSize,
   padding,
+  radius,
 }: SwitchProps) {
   const styles = switchStyles({ 
     checked: checked as boolean, 
@@ -144,6 +160,7 @@ export function Switch({
     disabled,
     textSize,
     padding,
+    radius: radius as SwitchVariants['radius'],
   });
 
   return (

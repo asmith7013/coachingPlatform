@@ -4,7 +4,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { Button } from '@/components/core/Button'
 import { Heading, Text } from '@/components/core/typography'
-import { textColors } from '@ui-tokens/tokens'
+import { textColors } from '@/lib/tokens/tokens'
 
 interface PageHeaderAction {
   label: string

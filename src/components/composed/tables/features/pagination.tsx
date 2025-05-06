@@ -1,6 +1,6 @@
 import { tv, type VariantProps } from 'tailwind-variants'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'
-import { textColors } from '@ui-tokens/tokens'
+import { textColors } from '@/lib/tokens/tokens'
 
 const tablePagination = tv({
   slots: {

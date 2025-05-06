@@ -1,5 +1,5 @@
 import { tv, type VariantProps } from 'tailwind-variants'
-import { heading, textSize, weight, color } from '../tokens/typography'
+import { heading, textSize, weight, color } from '../../tokens/typography'
 
 export const headingVariants = tv({
   base: 'font-heading tracking-tight',

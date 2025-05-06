@@ -1,30 +1,83 @@
 'use client';
 
+/**
+ * Monday Integration Hook
+ * Provides a comprehensive API for Monday.com integration
+ */
 import { useCallback, useState } from 'react';
-import { useErrorHandledMutation, ServerResponse } from '@/hooks/error/useErrorHandledMutation';
-import { 
-  testConnection, 
-  getBoard, 
-  findPotentialVisitsToImport, 
-  importSelectedVisits,
-  ImportItem,
-} from '@/app/actions/integrations/monday';
-import type { 
-  MondayBoard,
-  MondayConnectionTestResult,
-  ImportPreview,
-  ImportResult,
-} from '@/lib/integrations/monday/types';
+import {
+  useMondayConnection,
+  useMondayBoards,
+  useMondayBoard,
+  useMondayPreviews,
+  useMondayImport,
+  useImportVisit,
+  useImportVisits
+} from './useMondayQueries';
+
+import { testConnection } from '@/lib/integrations/monday/client/client';
+import { findPotentialVisitsToImport, importSelectedVisits } from '@/lib/integrations/monday/services/import-service';
+
+// Type imports
+import type { ImportItem, ImportPreview, ImportResult } from '@/lib/integrations/monday/types/import';
+import type { MondayBoard } from '@/lib/integrations/monday/types/board';
+import type { ServerResponse } from '@/hooks/error/useErrorHandledMutation';
+
+// Selected item type needed for the import page
+export interface SelectedItem {
+  id: string;
+  name: string;
+  date?: string;
+  school?: string;
+  coach?: string;
+  [key: string]: unknown;
+}
 
 /**
- * Interface for the return value of the hook
+ * Hook for tracking the state of a Monday.com visit import process
  */
-interface UseMondayIntegrationResult {
+export function useMondayImportState() {
+  // State to track the current visit import process
+  const [currentStage, setCurrentStage] = useState<'selection' | 'completion' | 'success' | 'error'>('selection');
+  const [currentVisitData, setCurrentVisitData] = useState<SelectedItem | null>(null);
+  const [missingFields, setMissingFields] = useState<string[]>([]);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+
+  // Reset state
+  const resetState = useCallback(() => {
+    setCurrentStage('selection');
+    setCurrentVisitData(null);
+    setMissingFields([]);
+    setSelectedItemId(null);
+  }, []);
+
+  return {
+    currentStage,
+    setCurrentStage,
+    currentVisitData,
+    setCurrentVisitData,
+    missingFields,
+    setMissingFields,
+    selectedItemId,
+    setSelectedItemId,
+    resetState
+  };
+}
+
+// Export our import hooks with consistent naming
+export { useMondayConnection, useMondayBoards, useMondayBoard, useMondayPreviews };
+export { useMondayImport, useImportVisit, useImportVisits };
+
+/**
+ * Interface for the older version of useMondayIntegration hook
+ * This maintains backward compatibility with existing components
+ */
+export interface ClassicMondayIntegrationResult {
   // Connection
   connectionStatus: 'unknown' | 'connected' | 'error';
   connectionData: { name?: string; email?: string } | null;
   connectionError: string | null;
-  testConnection: () => Promise<ServerResponse<MondayConnectionTestResult['data']>>;
+  testConnection: () => Promise<ServerResponse<unknown>>;
   
   // Board operations
   board: MondayBoard | null;
@@ -46,184 +99,160 @@ interface UseMondayIntegrationResult {
 }
 
 /**
- * A hook for interacting with the Monday.com integration
- * Provides methods for testing connections, fetching boards, and importing items
+ * Comprehensive hook for Monday.com integration
+ * 
+ * This hook provides backward compatibility with existing code
+ * while also exposing the new interface.
+ * 
+ * @returns Complete Monday.com integration interface
  */
-export function useMondayIntegration(): UseMondayIntegrationResult {
-  // Connection state
-  const [connectionStatus, setConnectionStatus] = useState<'unknown' | 'connected' | 'error'>('unknown');
+export function useMondayIntegration(): ClassicMondayIntegrationResult {
+  // State for board and connection
+  const [connectionState, setConnectionState] = useState<'unknown' | 'connected' | 'error'>('unknown');
   const [connectionData, setConnectionData] = useState<{ name?: string; email?: string } | null>(null);
-  
-  // Board state
   const [board, setBoard] = useState<MondayBoard | null>(null);
-  
-  // Preview state
   const [previewItems, setPreviewItems] = useState<ImportPreview[] | null>(null);
-  
-  // Import state
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   
-  // Connection mutation
-  const { 
-    mutate: mutateTestConnection, 
-    isLoading: _connectionLoading, 
-    error: connectionError 
-  } = useErrorHandledMutation<MondayConnectionTestResult['data'], []>(
-    testConnection,
-    { 
-      errorContext: "MondayConnection",
-      defaultErrorMessage: "Failed to connect to Monday.com"
-    }
-  );
-  
-  // Board mutation
-  const { 
-    mutate: mutateGetBoard, 
-    isLoading: boardLoading, 
-    error: boardError 
-  } = useErrorHandledMutation<MondayBoard, [string, number?]>(
-    getBoard,
-    { 
-      errorContext: "MondayBoard",
-      defaultErrorMessage: "Failed to fetch Monday.com board"
-    }
-  );
-  
-  // Find items mutation
-  // We need to wrap findPotentialVisitsToImport to ensure it returns the expected ServerResponse format
-  const findItemsWrapper = useCallback(async (boardId: string): Promise<ServerResponse<ImportPreview[]>> => {
-    try {
-      const items = await findPotentialVisitsToImport(boardId);
-      return { success: true, data: items };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : "Unknown error" 
-      };
-    }
-  }, []);
-  
-  const { 
-    mutate: mutateFindItems, 
-    isLoading: previewLoading, 
-    error: previewError 
-  } = useErrorHandledMutation<ImportPreview[], [string]>(
-    findItemsWrapper,
-    { 
-      errorContext: "MondayPreview",
-      defaultErrorMessage: "Failed to find items to import"
-    }
-  );
-  
-  // Import mutation
-  // Wrap importSelectedVisits to ensure it returns the expected ServerResponse format
-  const importItemsWrapper = useCallback(async (selectedItems: string[] | ImportItem[]): Promise<ServerResponse<ImportResult>> => {
-    try {
-      const result = await importSelectedVisits(selectedItems);
-      return { 
-        success: result.success, 
-        message: result.message,
-        data: result 
-      };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : "Unknown error" 
-      };
-    }
-  }, []);
-  
-  const { 
-    mutate: mutateImportItems, 
-    isLoading: importing, 
-    error: importError 
-  } = useErrorHandledMutation<ImportResult, [string[] | ImportItem[]]>(
-    importItemsWrapper,
-    { 
-      errorContext: "MondayImport",
-      defaultErrorMessage: "Failed to import items from Monday.com"
-    }
-  );
+  // Use the primitive hooks
+  const connectionQuery = useMondayConnection();
+  const _boardsQuery = useMondayBoards(); // Prefixed with underscore to indicate it's used indirectly
+  const boardMutation = useMondayBoard();
+  const importMutation = useMondayImport();
+  const importSingleMutation = useImportVisit();
+  const importMultipleMutation = useImportVisits();
   
   // Test connection
-  const handleTestConnection = useCallback(async () => {
-    const result = await mutateTestConnection();
-    
-    if (result?.success) {
-      setConnectionStatus('connected');
-      if (result.data) {
-        setConnectionData(result.data);
+  const testConnectionHandler = useCallback(async () => {
+    try {
+      const result = await testConnection();
+      
+      if (result.success) {
+        setConnectionState('connected');
+        setConnectionData({
+          name: result.data?.name,
+          email: result.data?.email
+        });
+        return { 
+          success: true, 
+          data: result.data
+        };
+      } else {
+        setConnectionState('error');
+        setConnectionData(null);
+        return { 
+          success: false, 
+          error: result.error || 'Failed to connect to Monday.com'
+        };
       }
-    } else {
-      setConnectionStatus('error');
+    } catch (error) {
+      setConnectionState('error');
       setConnectionData(null);
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error 
+        ? String(error.message) 
+        : 'Unknown error occurred';
+      return { 
+        success: false, 
+        error: errorMessage
+      };
     }
-    
-    return result;
-  }, [mutateTestConnection]);
+  }, []);
   
-  // Fetch board
-  const handleGetBoard = useCallback(async (boardId: string, itemLimit?: number) => {
-    const result = await mutateGetBoard(boardId, itemLimit);
-    
-    if (result?.success && result?.data) {
-      setBoard(result.data);
-    } else {
+  // Get board
+  const getBoardHandler = useCallback(async (boardId: string, _itemLimit?: number) => {
+    try {
+      // Instead of using the useErrorHandledMutation result directly, make a direct API call
+      const response = await fetch(`/api/integrations/monday/boards/${boardId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch board: ${response.statusText}`);
+      }
+      
+      const boardData = await response.json();
+      setBoard(boardData);
+      return { success: true, data: boardData };
+    } catch (error) {
       setBoard(null);
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error 
+        ? String(error.message) 
+        : 'Unknown error occurred';
+      return { 
+        success: false, 
+        error: errorMessage
+      };
     }
-    
-    return result;
-  }, [mutateGetBoard]);
+  }, []);
   
   // Find items to import
-  const handleFindItems = useCallback(async (boardId: string) => {
-    const result = await mutateFindItems(boardId);
-    
-    if (result?.success && result?.data) {
-      setPreviewItems(result.data);
-    } else {
+  const findItemsHandler = useCallback(async (boardId: string) => {
+    try {
+      const items = await findPotentialVisitsToImport(boardId);
+      setPreviewItems(items);
+      return { success: true, data: items };
+    } catch (error) {
       setPreviewItems(null);
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error 
+        ? String(error.message) 
+        : 'Unknown error occurred';
+      return { 
+        success: false, 
+        error: errorMessage
+      };
     }
-    
-    return result;
-  }, [mutateFindItems]);
+  }, []);
   
   // Import items
-  const handleImportItems = useCallback(async (selectedItems: string[] | ImportItem[]) => {
-    const result = await mutateImportItems(selectedItems);
-    
-    if (result?.success && result?.data) {
-      setImportResult(result.data);
-    } else {
+  const importItemsHandler = useCallback(async (items: string[] | ImportItem[]) => {
+    try {
+      const result = await importSelectedVisits(items);
+      setImportResult(result);
+      return { 
+        success: result.success, 
+        data: result,
+        error: result.success ? undefined : 'Import failed'
+      };
+    } catch (error) {
       setImportResult(null);
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error 
+        ? String(error.message) 
+        : 'Unknown error occurred';
+      return { 
+        success: false, 
+        error: errorMessage
+      };
     }
-    
-    return result;
-  }, [mutateImportItems]);
+  }, []);
   
+  // Return the classic interface for backward compatibility
   return {
     // Connection
-    connectionStatus,
+    connectionStatus: connectionState,
     connectionData,
-    connectionError,
-    testConnection: handleTestConnection,
+    connectionError: connectionQuery.error ? 
+      (typeof connectionQuery.error === 'object' && 'message' in connectionQuery.error ? 
+        String(connectionQuery.error.message) : 'Connection error') : null,
+    testConnection: testConnectionHandler,
     
     // Board operations
     board,
-    boardLoading,
-    boardError,
-    getBoard: handleGetBoard,
+    boardLoading: boardMutation.isLoading,
+    boardError: boardMutation.error ? 'Error fetching board data' : null,
+    getBoard: getBoardHandler,
     
     // Import operations
     previewItems,
-    previewLoading,
-    previewError,
-    findItemsToImport: handleFindItems,
+    previewLoading: false,
+    previewError: null,
+    findItemsToImport: findItemsHandler,
     
     // Import execution
     importResult,
-    importing,
-    importError,
-    importItems: handleImportItems
+    importing: importMutation.isPending || importSingleMutation.isPending || importMultipleMutation.isPending,
+    importError: importMutation.error ? 
+      (typeof importMutation.error === 'object' && 'message' in importMutation.error ? 
+        String(importMutation.error.message) : 'Import error') : null,
+    importItems: importItemsHandler
   };
 }
+
+// Export as default
+export default useMondayIntegration;

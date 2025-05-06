@@ -1,15 +1,22 @@
+// Improved Select component with better default styling
 'use client'
 
 import { cn } from '@ui/utils/formatters';
-import { tv, type VariantProps } from 'tailwind-variants'
-import { textSize, paddingX, paddingY, radii } from '@ui-tokens/tokens'
+import { tv } from 'tailwind-variants'
+import { 
+  textSize, 
+  paddingX, 
+  paddingY, 
+  radii, 
+  textColors,
+  TextSizeToken,
+  PaddingToken,
+  RadiusToken,
+  TextColorToken
+} from '@/lib/tokens/index'
 import { FieldWrapper } from './FieldWrapper'
 import { Listbox } from '@headlessui/react'
-
-// Define component-specific types
-export type SelectTextSize = 'xs' | 'sm' | 'base' | 'lg' | 'xl';
-export type SelectPadding = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-export type SelectRadius = 'none' | 'sm' | 'md' | 'lg' | 'full';
+import { ChevronDownIcon, CheckIcon } from '@heroicons/react/24/solid'
 
 export interface SelectOption {
   value: string;
@@ -23,10 +30,11 @@ export interface BaseSelectProps {
   placeholder?: string;
   error?: string;
   className?: string;
-  textSize?: SelectTextSize;
-  padding?: SelectPadding;
-  radius?: SelectRadius;
+  textSize?: TextSizeToken;
+  padding?: PaddingToken;
+  radius?: RadiusToken;
   disabled?: boolean;
+  labelColor?: TextColorToken;
 }
 
 export interface SingleSelectProps extends BaseSelectProps {
@@ -43,28 +51,31 @@ export interface MultiSelectProps extends BaseSelectProps {
 
 export type SelectProps = SingleSelectProps | MultiSelectProps;
 
-// 🎨 Select style variants
+// 🎨 Enhanced Select style variants
 const select = tv({
   slots: {
     trigger: [
       'relative w-full cursor-default bg-white text-left',
-      'outline-1 -outline-offset-1 outline-gray-300',
-      'focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600',
+      'border border-gray-300 shadow-sm',
+      'focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-25',
       'cursor-pointer disabled:cursor-not-allowed',
-      'transition-all',
+      'transition-all flex items-center justify-between',
     ],
     options: [
-      'absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white',
-      'shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none',
+      'absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white',
+      'py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none',
     ],
     option: [
-      'relative cursor-default select-none',
+      'relative cursor-default select-none py-2 pl-3 pr-9',
     ],
     placeholder: [
       'block truncate text-gray-400 italic',
     ],
     value: [
       'block truncate',
+    ],
+    icon: [
+      'absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none text-gray-400',
     ],
     checkIcon: [
       'absolute inset-y-0 right-0 flex items-center pr-4',
@@ -77,36 +88,55 @@ const select = tv({
       base: textSize.base,
       lg: textSize.lg,
       xl: textSize.xl,
+      '2xl': textSize['2xl'],
+    },
+    labelColor: {
+      default: textColors.default,
+      muted: textColors.muted,
+      accent: textColors.accent,
+      primary: textColors.primary,
+      secondary: textColors.secondary,
+      danger: textColors.danger,
+      success: textColors.success,
+      surface: textColors.surface,
+      background: textColors.background,
+      border: textColors.border,
+      white: textColors.white,
+      black: textColors.black,
     },
     padding: {
+      none: '',
       xs: `${paddingX.xs} ${paddingY.xs}`,
       sm: `${paddingX.sm} ${paddingY.xs}`,
       md: `${paddingX.md} ${paddingY.sm}`,
       lg: `${paddingX.lg} ${paddingY.md}`,
       xl: `${paddingX.xl} ${paddingY.lg}`,
+      '2xl': `${paddingX['2xl']} ${paddingY['2xl']}`,
     },
     radius: {
       none: radii.none,
       sm: radii.sm,
       md: radii.md,
       lg: radii.lg,
+      xl: radii.xl,
+      '2xl': radii['2xl'],
       full: radii.full,
     },
     disabled: {
-      true: 'opacity-60 pointer-events-none',
+      true: 'opacity-60 pointer-events-none bg-gray-50',
       false: '',
     },
     error: {
-      true: { trigger: 'outline-red-500 focus:outline-red-500' },
+      true: { trigger: 'border-red-500 focus:ring-red-500 focus:border-red-500' },
       false: {},
-    },
+    },              
     active: {
       true: { option: 'bg-indigo-600 text-white' },
-      false: { option: 'text-gray-900' },
+      false: { option: 'text-gray-900 hover:bg-indigo-50' },
     },
     selected: {
       true: { 
-        value: 'font-semibold',
+        value: 'font-semibold text-indigo-900',
         checkIcon: 'text-indigo-600',
       },
       false: { 
@@ -130,8 +160,6 @@ const select = tv({
   },
 });
 
-export type SelectVariants = VariantProps<typeof select>;
-
 // ✅ Export for atomic style use elsewhere
 export const selectStyles = select;
 
@@ -148,6 +176,7 @@ export function Select({
   padding,
   radius,
   disabled = false,
+  labelColor,
 }: SelectProps) {
   const styles = select({ textSize, padding, radius });
 
@@ -163,9 +192,10 @@ export function Select({
       error={error}
       textSize={textSize}
       padding={padding}
+      labelColor={labelColor}
     >
-      <Listbox value={safeValue} onChange={onChange} multiple={multiple}>
-        <div className="relative w-full">
+      <div className="relative w-full">
+        <Listbox value={safeValue} onChange={onChange} multiple={multiple}>
           <Listbox.Button
             className={cn(
               styles.trigger(),
@@ -181,9 +211,13 @@ export function Select({
               </span>
             ) : (
               <span className={styles.value()}>
-                {options.find(option => option.value === safeValue)?.label || placeholder}
+                {options.find(option => option.value === safeValue)?.label || 
+                 <span className="text-gray-400 italic">{placeholder}</span>}
               </span>
             )}
+            <span className={styles.icon()}>
+              <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+            </span>
           </Listbox.Button>
           <Listbox.Options className={styles.options()}>
             {options.map((option) => (
@@ -192,22 +226,32 @@ export function Select({
                 value={option.value}
                 className={({ active }) => cn(
                   styles.option(),
-                  active ? 'bg-surface-hover' : ''
+                  active ? 'bg-indigo-50' : ''
                 )}
               >
-                {({ selected }) => (
-                  <span className={cn(
-                    styles.value(),
-                    selected ? 'font-semibold' : 'font-normal'
-                  )}>
-                    {option.label}
-                  </span>
+                {({ selected, active }) => (
+                  <>
+                    <span className={cn(
+                      styles.value(),
+                      selected ? 'font-semibold text-indigo-900' : 'font-normal',
+                    )}>
+                      {option.label}
+                    </span>
+                    {selected && (
+                      <span className={cn(
+                        styles.checkIcon(),
+                        active ? 'text-indigo-600' : 'text-indigo-600'
+                      )}>
+                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                      </span>
+                    )}
+                  </>
                 )}
               </Listbox.Option>
             ))}
           </Listbox.Options>
-        </div>
-      </Listbox>
+        </Listbox>
+      </div>
     </FieldWrapper>
   )
 }

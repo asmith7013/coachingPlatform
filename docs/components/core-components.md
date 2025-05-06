@@ -180,5 +180,32 @@ function SaveButton({ saving, ...props }) {
 [RULE] Use these patterns for consistent UI development.
 </section>
 
+<section id="feedback-components">
+
+## Feedback Components
+
+Our system provides several feedback components for user notifications:
+
+### Alert
+
+### Badge
+
+### Toast
+Non-intrusive notifications with variant support:
+```tsx
+<Toast show={show} onClose={close} title="Saved!" variant="success" />
+```
+
+### Dialog
+Modal interface with configurable sizes:
+```tsx
+<Dialog open={open} onClose={close} title="Confirm" size="md">
+  <p>Content here</p>
+</Dialog>
+```
+
+[RULE] Use these feedback components consistently for all user notifications.
+</section>
+
 </doc>
 ```

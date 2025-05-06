@@ -49,6 +49,7 @@
         "@core/*": ["./src/lib/core/*"],
         "@domain/*": ["./src/lib/domain/*"],
         "@error/*": ["./src/lib/error/*"],
+        "@query/*": ["./src/lib/query/*"],
         
         // API utilities (in lib)
         "@api-utils/*": ["./src/lib/api/*"],
@@ -57,10 +58,12 @@
         "@api-handlers/*": ["./src/lib/api/handlers/*"],
         "@api-responses/*": ["./src/lib/api/responses/*"],
         "@api-integrations/*": ["./src/lib/integrations/*"],
+        "@api-monday/*": ["./src/lib/integrations/monday/*"],
 
         // UI-specific paths
         "@ui/*": ["./src/lib/ui/*"],
-        "@ui-tokens/*": ["./src/lib/ui/tokens/*"],
+        "@ui-tokens/*": ["./src/lib/tokens/*"],
+        "@ui-tokens": ["./src/lib/tokens"],
         "@ui-variants/*": ["./src/lib/ui/variants/*"],
         "@ui-forms/*": ["./src/lib/ui/forms/*"],
         

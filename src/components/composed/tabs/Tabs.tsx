@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textColors, textSize, weight, radii, paddingX, paddingY } from '@ui-tokens/tokens'
+import { textColors, textSize, weight, radii, paddingX, paddingY } from '@/lib/tokens/tokens'
 
 const tabs = tv({
   slots: {

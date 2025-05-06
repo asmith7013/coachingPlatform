@@ -11,7 +11,7 @@ import { renderKHLesson } from '@/lib/domain/imRoutine/render-KH-lesson';
 import { renderILCLesson } from '@/lib/domain/imRoutine/render-ILC-esson';
 import { CurriculumVersionModal } from '@/components/domain/imRoutine/CurriculumVersionModal';
 import { usePersistedCurriculumVersion } from '@/lib/hooks/use-persisted-curriculum-version';
-import { textSize, weight } from '@ui-tokens/typography';
+import { textSize, weight } from '@/lib/tokens/typography';
 import { cn } from '@ui/utils/formatters';;
 import { Text } from '@/components/core/typography/Text';
 

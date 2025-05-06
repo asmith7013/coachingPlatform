@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@ui/utils/formatters';
-import { paddingY } from '@ui-tokens/tokens'
+import { paddingY } from '@/lib/tokens/tokens'
 
 interface TableActionsProps {
   children: React.ReactNode

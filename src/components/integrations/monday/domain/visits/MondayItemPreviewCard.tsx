@@ -8,7 +8,7 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import ReferenceSelect from '@/components/core/fields/ReferenceSelect';
-import { ImportPreview } from '@/lib/integrations/monday/types';
+import { ImportPreview } from '@api-monday/types';
 import { cn } from '@ui/utils/formatters';
 import { useState } from 'react';
 

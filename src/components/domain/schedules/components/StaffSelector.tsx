@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { cn } from '@ui/utils/formatters';;
-import { textColors, radii } from '@/lib/ui/tokens';
+import { textColors, radii } from '@/lib/tokens';
 import { StaffSelectorProps } from '../data/scheduleTypes';
 
 /**

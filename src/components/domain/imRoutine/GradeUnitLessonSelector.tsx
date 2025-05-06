@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@ui/utils/formatters';;
-import { paddingY } from '@ui-tokens/spacing';
+import { paddingY } from '@/lib/tokens/spacing';
 
 type SelectorProps = {
   selectedGrade: string;

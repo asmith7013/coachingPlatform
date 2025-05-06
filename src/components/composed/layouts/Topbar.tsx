@@ -8,7 +8,7 @@ import {
   MenuItems,
 //   TransitionChild
 } from '@headlessui/react'
-import { BellIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+// import { BellIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { cn } from '@ui/utils/formatters'
 import { tv } from 'tailwind-variants'
@@ -56,7 +56,7 @@ const topbar = tv({
     header: 'flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-xs sm:gap-x-6 sm:px-6 lg:px-0 lg:shadow-none',
     mobileButton: '-m-2.5 p-2.5 text-gray-700 lg:hidden',
     divider: 'h-6 w-px bg-gray-200 lg:hidden',
-    searchContainer: 'flex flex-1 gap-x-4 self-stretch lg:gap-x-6',
+    searchContainer: 'flex items-center flex-1 gap-x-4 self-stretch lg:gap-x-6',
     searchForm: 'relative flex flex-1',
     searchInput: 'border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm',
     searchIcon: 'pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2 text-gray-400',
@@ -113,16 +113,17 @@ export function Topbar({
         {/* Separator */}
         <div className={styles.divider()} aria-hidden="true" />
 
+
         <div className={styles.searchContainer()}>
           <form className={styles.searchForm()}>
             <label htmlFor="search-field" className="sr-only">
               Search
             </label>
             <div className="relative w-full">
-              <MagnifyingGlassIcon
+              {/* <MagnifyingGlassIcon
                 className={styles.searchIcon()}
                 aria-hidden="true"
-              />
+              /> */}
               <Input
                 id="search-field"
                 type="search"
@@ -138,7 +139,7 @@ export function Topbar({
 
           <div className={styles.actionContainer()}>
             {/* Notification button */}
-            <Button
+            {/* <Button
               intent="secondary"
               appearance="outline"
               padding="sm"
@@ -146,7 +147,7 @@ export function Topbar({
               aria-label="View notifications"
             >
               <BellIcon className={styles.notificationIcon()} aria-hidden="true" />
-            </Button>
+            </Button> */}
 
             {/* Separator */}
             <div className={styles.userDivider()} aria-hidden="true" />

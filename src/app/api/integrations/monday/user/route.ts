@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchMondayUserById, fetchMondayUserByEmail } from '@/lib/integrations/monday/client/client';
+import { fetchMondayUserByEmail } from '@api-monday/client/client';
 // import { handleServerError } from "@/lib/error";
 
 /**
@@ -26,8 +26,8 @@ export async function GET(req: NextRequest) {
     try {
       if (userId) {
         // Clean user ID (ensure it's just numbers)
-        const cleanUserId = userId.replace(/\D/g, "");
-        user = await fetchMondayUserById(cleanUserId);
+        // const cleanUserId = userId.replace(/\D/g, "");
+        // user = await fetchMondayUserById(cleanUserId);
       } else if (email) {
         user = await fetchMondayUserByEmail(email);
       }
@@ -51,17 +51,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       items: [{
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        title: user.title || null,
-        photo_thumb: user.photo_thumb || null,
-        // Only include teams if they exist and are properly formatted
-        teams: Array.isArray(user.teams) ? 
-          user.teams
-            .filter(t => t && typeof t === 'object' && 'id' in t && 'name' in t)
-            .map(t => ({ id: t.id, name: t.name })) 
-          : []
+        id: user.data?.id,
+        name: user.data?.name,
+        email: user.data?.email,
+        // title: user.title || null,
+        // photo_thumb: user.photo_thumb || null,
+        // // Only include teams if they exist and are properly formatted
+        // teams: Array.isArray(user.teams) ? 
+        //   user.teams
+        //     .filter(t => t && typeof t === 'object' && 'id' in t && 'name' in t)
+        //     .map(t => ({ id: t.id, name: t.name })) 
+        //   : []
       }]
     });
   } catch (error) {

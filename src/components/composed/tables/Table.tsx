@@ -6,7 +6,7 @@ import { TableColumnSchema } from '@ui/table-schema'
 import { TableHeader } from './parts/header'
 import { TableRow } from './parts/row'
 import { TableEmpty } from './features/empty'
-import { textColors } from '@ui-tokens/tokens'
+import { textColors } from '@/lib/tokens/tokens'
 
 const table = tv({
   slots: {

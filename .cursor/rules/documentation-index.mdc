@@ -3,6 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
+ ```markdown
  # AI Coaching Platform Documentation Index# AI Coaching Platform Documentation Index
 
 This rule provides comprehensive access to the platform's documentation for both high-level understanding and specific implementation details.
@@ -50,6 +51,8 @@ The documentation is organized into several key areas:
 @file:docs/data-flow/schema-system.md
 @file:docs/data-flow/server-actions.md
 @file:docs/data-flow/monday-integration.md
+@file:docs/data-flow/react-query-patterns.md
+@file:docs/data-flow/monday-integration.md
 
 ### Workflow Documentation
 @file:docs/workflows/common-tasks.md
@@ -60,3 +63,8 @@ The documentation is organized into several key areas:
 
 ### General Guidelines
 @file:docs/token-system-guidelines.md 
+```
+
+
+
+

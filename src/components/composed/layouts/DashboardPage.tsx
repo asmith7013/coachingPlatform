@@ -28,7 +28,7 @@ export function DashboardPage({
       {description && (
         <Text
           textSize="base"
-          color="muted"
+          color="default"
           className="mb-8"
         >
           {description}

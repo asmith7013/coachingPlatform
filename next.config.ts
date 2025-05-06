@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false // Enable this to see if it builds with errors ignored
   },
+  images: {
+    domains: ['images.unsplash.com', 'tailwindcss.com'],
+  },
 };
 
 export default withSentryConfig(
