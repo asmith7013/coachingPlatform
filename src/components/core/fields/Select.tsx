@@ -60,6 +60,7 @@ const select = tv({
       'focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-25',
       'cursor-pointer disabled:cursor-not-allowed',
       'transition-all flex items-center justify-between',
+      radii.lg, paddingX.md, paddingY.sm
     ],
     options: [
       'absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white',
@@ -114,13 +115,13 @@ const select = tv({
       '2xl': `${paddingX['2xl']} ${paddingY['2xl']}`,
     },
     radius: {
-      none: radii.none,
-      sm: radii.sm,
-      md: radii.md,
-      lg: radii.lg,
-      xl: radii.xl,
-      '2xl': radii['2xl'],
-      full: radii.full,
+      none: { trigger: radii.none },
+      sm: { trigger: radii.sm },
+      md: { trigger: radii.md },
+      lg: { trigger: radii.lg },
+      xl: { trigger: radii.xl },
+      '2xl': { trigger: radii['2xl'] },
+      full: { trigger: radii.full },
     },
     disabled: {
       true: 'opacity-60 pointer-events-none bg-gray-50',

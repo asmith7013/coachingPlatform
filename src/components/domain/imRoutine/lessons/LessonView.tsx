@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { MLRAppearsInCard } from './MLRAppearsInCard';
+import { MLRAppearsInCard } from '../routines/MLRAppearsInCard';
 
 export type Lesson = {
   grade: string;

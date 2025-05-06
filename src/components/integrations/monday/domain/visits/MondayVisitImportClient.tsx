@@ -38,16 +38,16 @@ export function ImportCompletionForm({
     
     // Filter fields to only include missing ones
     return VisitFieldConfig
-      .filter(field => missingFields.includes(field.name))
+      .filter(field => missingFields.includes(field.key))
       .map(field => {
         // Setup logic for reference fields
         if (field.type === 'select' || field.type === 'reference') {
           let url = '/api/';
           
           // Set proper URL based on field type
-          if (field.name === 'school') {
+          if (field.key === 'school') {
             url += 'schools';
-          } else if (field.name === 'coach' || field.name === 'owners') {
+          } else if (field.key === 'coach' || field.key === 'owners') {
             url += 'staff';
           }
           

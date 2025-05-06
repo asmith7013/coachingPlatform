@@ -83,7 +83,7 @@ export function RoutineFilter({
             textSize="sm"
             padding="sm"
             intent="secondary"
-            appearance={version === 'KH' ? 'solid' : 'alt'}
+            appearance={version === 'KH' ? 'solid' : 'outline'}
           >
             Kendall Hunt
           </Button>
@@ -92,7 +92,7 @@ export function RoutineFilter({
             textSize="sm"
             padding="sm"
             intent="primary"
-            appearance={version === 'ILC' ? 'solid' : 'alt'}
+            appearance={version === 'ILC' ? 'solid' : 'outline'}
           >
             ILC
           </Button>
@@ -127,7 +127,7 @@ export function RoutineFilter({
                   padding="sm"
                   disabled={selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered}
                   intent="secondary"
-                  appearance={selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered ? 'alt' : 'solid'}
+                  appearance={selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered ? 'outline' : 'solid'}
                 >
                   <span className="inline-flex items-center gap-2">
                     {selectedRoutines.length !== sortedRoutines.length && hasManuallyFiltered && (
@@ -168,7 +168,7 @@ export function RoutineFilter({
                           : 'Select all MLRs'
                     }
                     intent="primary"
-                    appearance={areAllMLRsSelected && hasManuallyFiltered ? 'alt' : 'solid'}
+                    appearance={areAllMLRsSelected && hasManuallyFiltered ? 'outline' : 'solid'}
                   >
                     <span className="inline-flex items-center gap-2">
                       {!areAllMLRsSelected && hasManuallyFiltered && (
@@ -198,7 +198,7 @@ export function RoutineFilter({
                 padding="sm"
                 disabled={selectedRoutines.length === 0}
                 intent="secondary"
-                appearance={selectedRoutines.length === 0 ? 'alt' : 'solid'}
+                appearance={selectedRoutines.length === 0 ? 'outline' : 'solid'}
               >
                 <span className="inline-flex items-center gap-2">
                   {selectedRoutines.length > 0 && hasManuallyFiltered && (

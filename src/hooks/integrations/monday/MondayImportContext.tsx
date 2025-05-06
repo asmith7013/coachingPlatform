@@ -405,7 +405,6 @@ function MondayQueryProvider({ children }: { children: ReactNode }) {
     importMutation.isPending,
     importMutation.error,
     importMutation.data,
-    filteredPreviewsRef.current
   ]);
   
   return (

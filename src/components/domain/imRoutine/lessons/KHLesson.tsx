@@ -15,7 +15,7 @@ type KHLesson = {
   }[];
 };
 
-export function renderKHLesson(lesson: KHLesson, selectedRoutines: string[]) {
+export function KHLesson({ lesson, selectedRoutines }: { lesson: KHLesson, selectedRoutines: string[] }) {
   const hasSelected = lesson.activities.some((activity) =>
     activity.routines.some((r) => selectedRoutines.includes(r.trim()))
   );

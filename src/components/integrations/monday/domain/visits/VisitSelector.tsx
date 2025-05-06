@@ -90,17 +90,22 @@ export function MondayVisitsSelector({ boardId }: VisitSelectorProps) {
       
       const result = await importSelectedItems();
       
-      if (result.success) {
-        // Navigate to the completion form with the imported data
-        const visitData = result.data?.visitData;
-        const missingFields = result.data?.missingFields;
+      if (result.success && result.data) {
+        // Cast the result.data to the expected type
+        const importData = result.data as {
+          visitData?: Record<string, unknown>;
+          missingFields?: string[];
+        };
+        
+        const visitData = importData.visitData || {};
+        const missingFields = importData.missingFields || [];
         
         // Ensure critical fields are included with empty string fallbacks
         const processedVisitData = {
           ...visitData,
-          date: visitData?.date || '',
-          school: visitData?.school || '',
-          coach: visitData?.coach || '',
+          date: visitData.date || '',
+          school: visitData.school || '',
+          coach: visitData.coach || '',
         };
         
         // Log the data that will be passed to the URL

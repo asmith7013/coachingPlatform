@@ -2,9 +2,9 @@ import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { cn } from '@ui/utils/formatters';
-import type { Lesson } from '@/components/domain/imRoutine/LessonDetailView';
-import { NoRoutineCard } from '@/components/domain/imRoutine/NoRoutineCard';
-import { RoutineBadge } from '@/components/domain/imRoutine/RoutineBadge';
+import type { Lesson } from '@/components/domain/imRoutine/lessons/LessonView';
+import { NoRoutineCard } from '@/components/domain/imRoutine/lessons/NoRoutineCard';
+import { RoutineBadge } from '@/components/domain/imRoutine/routines/RoutineBadge';
 
 // Define activity type to avoid implicit any
 interface Activity {

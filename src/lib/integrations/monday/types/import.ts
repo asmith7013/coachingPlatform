@@ -31,6 +31,10 @@ export interface ImportResult extends Pick<BaseResponse, 'success' | 'message'> 
   imported: number;
   errors: Record<string, string>;
   message?: string;
+  data?: {
+    visitData?: Record<string, unknown>;
+    missingFields?: string[];
+  };
 }
 
 /**

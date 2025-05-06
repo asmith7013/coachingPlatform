@@ -13,7 +13,7 @@ type ILCLesson = {
   }[];
 };
 
-export function renderILCLesson(lesson: ILCLesson, selectedRoutines: string[]) {
+export function ILCLesson({ lesson, selectedRoutines }: { lesson: ILCLesson, selectedRoutines: string[] }) {
   // Get unique routines across all activities
   const routines = Array.from(
     new Set(lesson.activities.flatMap((act) => act.routines))

@@ -122,7 +122,7 @@ const button = tv({
       intent: 'primary',
       appearance: 'outline',
       className: {
-        base: `${backgroundColors.surface} ${textColors.primary} ${borderWidths.md} ${borderColors.primary} ${hoverBackgroundColors.primary}`,
+        base: `${backgroundColors.light.primary} ${textColors.primary} ${borderWidths.md} ${borderColors.primary} ${hoverBackgroundColors.primary}`,
       }
     },
     {
@@ -146,7 +146,7 @@ const button = tv({
       intent: 'secondary',
       appearance: 'outline',
       className: {
-        base: `${backgroundColors.surface} ${textColors.secondary} ${borderWidths.md} ${borderColors.secondary} ${hoverBackgroundColors.secondary}`,
+        base: `${backgroundColors.light.secondary} ${textColors.secondary} ${borderWidths.md} ${borderColors.secondary} ${hoverBackgroundColors.secondary}`,
       }
     },
     {
