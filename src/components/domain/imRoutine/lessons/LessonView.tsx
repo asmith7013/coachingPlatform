@@ -26,8 +26,7 @@ type Props = {
   renderLessonContent: (
     lesson: Lesson,
     selectedRoutines: string[],
-    isSelected: boolean,
-    curriculum: 'ILC' | 'Kendall Hunt'
+    isSelected: boolean
   ) => React.ReactNode;
 };
 
@@ -78,7 +77,7 @@ export function LessonDetailView({
                 transition: { duration: 0.5 }
               } : {}}
             >
-              {renderLessonContent(lesson, selectedRoutines, isSelected, curriculum)}
+              {renderLessonContent(lesson, selectedRoutines, isSelected)}
             </motion.div>
           );
         })}
