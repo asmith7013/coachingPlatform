@@ -6,52 +6,70 @@ import { Card } from "@/components/composed/cards";
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback";
 import { Select } from "@/components/core/fields";
-import { useMondayIntegration } from "@/hooks/integrations/monday/useMondayIntegration";
-// import { ImportItem } from "@/app/actions/integrations/monday";
-import { ImportPreview } from "@api-monday/types";
+import { useMondayMutations } from "@/hooks/integrations/monday/useMondayMutations";
+import type { ImportPreview } from "@/lib/integrations/monday/types/import";
+import type { MondayBoard } from "@/lib/integrations/monday/types/board";
 
 export default function MondayLiveExamplePage() {
-  // Use the consolidated Monday integration hook
+  // Use the API-based hook
   const {
-    // Connection
-    connectionStatus,
-    connectionData,
-    connectionError,
     testConnection,
-    
-    // Board operations
-    board,
-    boardLoading,
-    boardError,
     getBoard,
-    
-    // Import operations
-    previewItems,
-    previewLoading,
-    previewError,
-    findItemsToImport,
-    
-    // Import execution
-    importResult,
-    importing,
-    importError,
-    importItems
-  } = useMondayIntegration();
+    findPotentialVisits,
+    importVisits,
+    loading,
+    error: apiError
+  } = useMondayMutations();
   
-  
-  // Local UI state
+  // State management
+  const [connectionState, setConnectionState] = useState<'unknown' | 'connected' | 'error'>('unknown');
+  const [connectionData, setConnectionData] = useState<{ name?: string; email?: string } | null>(null);
+  const [board, setBoard] = useState<MondayBoard | null>(null);
+  const [previewItems, setPreviewItems] = useState<ImportPreview[] | null>(null);
+  const [importResult, setImportResult] = useState<{ success: boolean; message?: string; errors?: Record<string, string> } | null>(null);
   const [selectedBoardId, setSelectedBoardId] = useState<string>("");
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [transformPreview, setTransformPreview] = useState<ImportPreview | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Handle connection test
+  const handleTestConnection = async () => {
+    try {
+      const result = await testConnection();
+      
+      if (result.success) {
+        setConnectionState('connected');
+        setConnectionData({
+          name: result.message?.split(' ')[0] || 'Unknown',
+          email: result.message?.split(' ')[1]?.replace(/[()]/g, '') || 'unknown@example.com'
+        });
+      } else {
+        setConnectionState('error');
+        setConnectionData(null);
+        setError(result.message || 'Connection failed');
+      }
+    } catch (err) {
+      setConnectionState('error');
+      setConnectionData(null);
+      setError(err instanceof Error ? err.message : 'Unknown error occurred');
+    }
+  };
   
   // Handle board selection
-  const handleBoardChange = (boardId: string) => {
+  const handleBoardChange = async (boardId: string) => {
     setSelectedBoardId(boardId);
     if (boardId) {
-      // Load board data
-      getBoard(boardId);
-      // Find potential items to import
-      findItemsToImport(boardId);
+      try {
+        // Load board data
+        const boardData = await getBoard(boardId);
+        setBoard(boardData);
+        
+        // Find potential items to import
+        const potentialItems = await findPotentialVisits(boardId);
+        setPreviewItems(potentialItems);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load board data');
+      }
     }
   };
 
@@ -65,13 +83,18 @@ export default function MondayLiveExamplePage() {
 
   // Handle import of selected item
   const handleImport = async () => {
-    if (!selectedItemId || !transformPreview?.valid) return;
+    if (!selectedItemId || !transformPreview?.valid || !selectedBoardId) return;
     
-    await importItems([selectedItemId]);
+    try {
+      const result = await importVisits([selectedItemId], selectedBoardId);
+      setImportResult(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Import failed');
+    }
   };
   
   // Combine errors for display
-  const error = connectionError || boardError || previewError || importError;
+  const displayError = error || apiError;
 
   return (
     <div className="container mx-auto p-6">
@@ -81,11 +104,11 @@ export default function MondayLiveExamplePage() {
       <Card className="mb-6">
         <Card.Header>Connection Status</Card.Header>
         <Card.Body>
-          {connectionStatus === 'unknown' ? (
-            <Button onClick={() => testConnection()}>
-              Test Connection
+          {connectionState === 'unknown' ? (
+            <Button onClick={handleTestConnection} disabled={loading}>
+              {loading ? <><Spinner size="sm" className="mr-2" /> Testing...</> : "Test Connection"}
             </Button>
-          ) : connectionStatus === 'connected' ? (
+          ) : connectionState === 'connected' ? (
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
@@ -103,13 +126,13 @@ export default function MondayLiveExamplePage() {
                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
                 <span>Failed to connect</span>
               </div>
-              {connectionError && (
+              {displayError && (
                 <Alert intent="error">
-                  <Alert.Description>{connectionError}</Alert.Description>
+                  <Alert.Description>{displayError}</Alert.Description>
                 </Alert>
               )}
-              <Button onClick={() => testConnection()} className="mt-2">
-                Retry Connection
+              <Button onClick={handleTestConnection} className="mt-2" disabled={loading}>
+                {loading ? <><Spinner size="sm" className="mr-2" /> Retrying...</> : "Retry Connection"}
               </Button>
             </div>
           )}
@@ -117,11 +140,11 @@ export default function MondayLiveExamplePage() {
       </Card>
       
       {/* Board Selection */}
-      {connectionStatus === 'connected' && (
+      {connectionState === 'connected' && (
         <Card className="mb-6">
           <Card.Header>Select a Monday.com Board</Card.Header>
           <Card.Body>
-            {boardLoading ? (
+            {loading ? (
               <div className="flex items-center gap-2">
                 <Spinner size="sm" />
                 <span>Loading boards...</span>
@@ -143,11 +166,11 @@ export default function MondayLiveExamplePage() {
       )}
       
       {/* Potential Import Items */}
-      {connectionStatus === 'connected' && selectedBoardId && (
+      {connectionState === 'connected' && selectedBoardId && (
         <Card className="mb-6">
           <Card.Header>Potential Import Items</Card.Header>
           <Card.Body>
-            {previewLoading ? (
+            {loading ? (
               <div className="flex items-center gap-2">
                 <Spinner size="sm" />
                 <span>Finding items to import...</span>
@@ -258,9 +281,9 @@ export default function MondayLiveExamplePage() {
                     <div className="mt-4">
                       <Button 
                         onClick={handleImport}
-                        disabled={importing}
+                        disabled={loading}
                       >
-                        {importing ? "Importing..." : "Import to Database"}
+                        {loading ? <><Spinner size="sm" className="mr-2" /> Importing...</> : "Import to Database"}
                       </Button>
                     </div>
                   )}
@@ -283,15 +306,15 @@ export default function MondayLiveExamplePage() {
               
               {importResult.success && (
                 <p className="mt-2">
-                  Successfully imported {importResult.imported} items.
+                  Successfully imported items.
                 </p>
               )}
               
-              {Object.keys(importResult.errors).length > 0 && (
+              {Object.keys(importResult.errors || {}).length > 0 && (
                 <div className="mt-3">
                   <h4 className="font-medium text-red-600">Errors:</h4>
                   <ul className="list-disc pl-5">
-                    {Object.entries(importResult.errors).map(([id, message]) => (
+                    {Object.entries(importResult.errors || {}).map(([id, message]) => (
                       <li key={id}>{message as string}</li>
                     ))}
                   </ul>
@@ -303,10 +326,10 @@ export default function MondayLiveExamplePage() {
       )}
       
       {/* Generic Error Display */}
-      {error && (
+      {displayError && !connectionData && (
         <Alert intent="error" className="mt-4">
           <Alert.Title>Error</Alert.Title>
-          <Alert.Description>{error}</Alert.Description>
+          <Alert.Description>{displayError}</Alert.Description>
         </Alert>
       )}
     </div>
