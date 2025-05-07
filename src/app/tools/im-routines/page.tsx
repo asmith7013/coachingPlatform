@@ -199,16 +199,23 @@ export default function IMRoutinesPage() {
             />
           </div>
           {selectedGrade && selectedUnit && version ? (
-            <LessonDetailView
-              lessonsData={filteredLessons}
-              selectedRoutines={selectedRoutines}
-              selectedLesson={selectedLesson}
-              setSelectedLesson={setSelectedLesson}
-              renderLessonContent={(lesson, selectedRoutines, isSelected) =>
-                renderLesson(lesson, selectedRoutines, isSelected, version === 'ILC' ? 'ILC' : 'Kendall Hunt')
-              }
-              curriculum={version === 'ILC' ? 'ILC' : 'Kendall Hunt'}
-            />
+            (() => {
+              // Extract curriculum value to a variable for clarity and to avoid repetition
+              const curriculumValue = version === 'ILC' ? 'ILC' : 'Kendall Hunt';
+              
+              return (
+                <LessonDetailView
+                  lessonsData={filteredLessons}
+                  selectedRoutines={selectedRoutines}
+                  selectedLesson={selectedLesson}
+                  setSelectedLesson={setSelectedLesson}
+                  curriculum={curriculumValue}
+                  renderLessonContent={(lesson, routines, isSelected) => 
+                    renderLesson(lesson, routines, isSelected, curriculumValue)
+                  }
+                />
+              );
+            })()
           ) : (
             <Text className={cn(textSize.base, 'text-text', 'italic')}>
               Select <strong>grade</strong> and <strong>unit</strong> to view lesson routines.
