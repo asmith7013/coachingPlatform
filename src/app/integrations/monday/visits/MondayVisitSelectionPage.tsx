@@ -12,6 +12,7 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
 import type { ImportPreview } from '@/lib/integrations/monday/types';
+import { useMondayMutations } from '@/hooks/integrations/monday/useMondayMutations';
 
 /**
  * Monday Visit Selection Page
@@ -20,6 +21,14 @@ import type { ImportPreview } from '@/lib/integrations/monday/types';
 export default function MondayVisitSelectionPage() {
   const router = useRouter();
   
+  // Use the Monday mutations hook for API operations
+  const { 
+    findPotentialVisits, 
+    importVisits, 
+    loading, 
+    error: mondayError 
+  } = useMondayMutations();
+  
   // State
   const [boardId, setBoardId] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -27,49 +36,40 @@ export default function MondayVisitSelectionPage() {
   const [previews, setPreviews] = useState<ImportPreview[]>([]);
   const [filteredPreviews, setFilteredPreviews] = useState<ImportPreview[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [importLoading, setImportLoading] = useState(false);
   
   // Filter state
   const [searchTerm, setSearchTerm] = useState('');
   const [showDuplicates, setShowDuplicates] = useState(true);
   const [showInvalid, setShowInvalid] = useState(true);
   
-  // Fetch visit previews when board ID changes
+  // Update local error state when hook error changes
   useEffect(() => {
-    const fetchPreviews = async () => {
-      if (!boardId) return;
-      
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        // Use the API endpoint to fetch previews
-        const response = await fetch(`/api/integrations/monday/visits?boardId=${boardId}`);
-        const data = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch previews');
-        }
-        
-        if (!data.success) {
-          throw new Error(data.error || 'Failed to fetch previews');
-        }
-        
-        // Set the previews
-        setPreviews(data.items || []);
-      } catch (err) {
-        console.error('Error fetching previews:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    // Only fetch if board ID is provided
-    if (boardId) {
-      fetchPreviews();
+    if (mondayError) {
+      setError(mondayError);
     }
-  }, [boardId]);
+  }, [mondayError]);
+  
+  // Fetch visit previews when board ID changes
+  const fetchPreviews = useCallback(async () => {
+    if (!boardId) {
+      setError('Please enter a board ID');
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const result = await findPotentialVisits(boardId);
+      // The result is already an array of ImportPreview
+      setPreviews(result);
+    } catch (err) {
+      // Error is already handled by the hook and set to mondayError
+      console.error('Error fetching previews:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [boardId, findPotentialVisits]);
   
   // Apply filters when filter state or previews change
   useEffect(() => {
@@ -102,56 +102,41 @@ export default function MondayVisitSelectionPage() {
     });
   }, []);
   
-  // Handle import initiation - UPDATED to use API endpoint
+  // Handle import initiation - Using the hook
   const handleImport = useCallback(async () => {
     if (selectedItems.length === 0) {
       setError('Please select at least one visit to import');
       return;
     }
     
-    setImportLoading(true);
     setError(null);
     
     try {
-      // Use the API endpoint instead of direct server action
-      const response = await fetch('/api/integrations/monday/visits/import', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          selectedItems,
-          boardId 
-        }),
-      });
-      
-      const result = await response.json();
-      
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Import failed');
-      }
+      // Use the importVisits method from the hook
+      const result = await importVisits(selectedItems, boardId);
       
       // If we need to complete data for a single item
-      if (result.data && result.data.visitData && result.data.missingFields) {
+      if (result.completionRequired && result.completionData) {
         // Format URL parameters
         const params = new URLSearchParams();
-        params.set('visitData', JSON.stringify(result.data.visitData));
-        params.set('missingFields', JSON.stringify(result.data.missingFields));
+        params.set('visitData', JSON.stringify(result.completionData));
+        params.set('missingFields', JSON.stringify(result.completionData.missingFields || []));
         params.set('boardId', boardId);
         
         // Navigate to the completion page
         router.push(`/integrations/monday/visits/import?${params.toString()}`);
+      } else if (result.redirectUrl) {
+        // Navigate to the specified redirect URL
+        router.push(result.redirectUrl);
       } else {
-        // Navigate to success page with summary
+        // Navigate to visits dashboard by default
         router.push('/dashboard/visits');
       }
     } catch (err) {
+      // Error is already handled by the hook and set to mondayError
       console.error('Error importing visits:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setImportLoading(false);
     }
-  }, [selectedItems, boardId, router]);
+  }, [selectedItems, boardId, router, importVisits]);
   
   // Toggle select all
   const toggleSelectAll = useCallback(() => {
@@ -200,17 +185,10 @@ export default function MondayVisitSelectionPage() {
             </div>
             <div>
               <Button 
-                onClick={() => {
-                  if (boardId) {
-                    setIsLoading(true);
-                    // Will trigger the useEffect
-                  } else {
-                    setError('Please enter a board ID');
-                  }
-                }}
-                disabled={isLoading || !boardId}
+                onClick={fetchPreviews}
+                disabled={loading || !boardId}
               >
-                {isLoading ? <Spinner size="sm" className="mr-2" /> : null}
+                {isLoading || loading ? <Spinner size="sm" className="mr-2" /> : null}
                 Load Visits
               </Button>
             </div>
@@ -227,7 +205,7 @@ export default function MondayVisitSelectionPage() {
       )}
       
       {/* Loading state */}
-      {isLoading && (
+      {(isLoading || loading) && (
         <div className="flex justify-center items-center py-12">
           <Spinner size="lg" />
           <div className="ml-4">Loading visits from Monday.com...</div>
@@ -235,7 +213,7 @@ export default function MondayVisitSelectionPage() {
       )}
       
       {/* No visits found */}
-      {!isLoading && previews.length === 0 && boardId && (
+      {!isLoading && !loading && previews.length === 0 && boardId && (
         <Alert intent="info" className="mb-4">
           <Alert.Title>No Visits Found</Alert.Title>
           <Alert.Description>
@@ -245,7 +223,7 @@ export default function MondayVisitSelectionPage() {
       )}
       
       {/* Visit selection */}
-      {!isLoading && previews.length > 0 && (
+      {!isLoading && !loading && previews.length > 0 && (
         <div className="space-y-6">
           {/* Filters */}
           <Card>
@@ -301,10 +279,10 @@ export default function MondayVisitSelectionPage() {
             </div>
             <Button 
               intent="primary"
-              disabled={selectedItems.length === 0 || importLoading}
+              disabled={selectedItems.length === 0 || loading}
               onClick={handleImport}
             >
-              {importLoading ? <Spinner size="sm" className="mr-2" /> : null}
+              {loading ? <Spinner size="sm" className="mr-2" /> : null}
               Import Selected ({selectedItems.length})
             </Button>
           </div>

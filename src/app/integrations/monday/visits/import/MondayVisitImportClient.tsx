@@ -10,6 +10,7 @@ import { PageHeader } from '@/components/composed/layouts/PageHeader';
 import { ImportCompletionForm } from '@/components/integrations/monday/domain/visits/ImportCompletionForm';
 import { useMondayMutations } from '@/hooks/integrations/monday/useMondayMutations';
 import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
+import type { MondayImportResponse } from '@/lib/integrations/monday/types/import';
 
 // Import stages enum
 enum ImportStage {
@@ -85,8 +86,15 @@ export default function MondayVisitImportClient() {
       
       console.log('Submitting completed data:', completeData);
       
+      // Create the MondayImportResponse object
+      const importRequest: MondayImportResponse = {
+        success: true,
+        completionData: completeData,
+        completionRequired: true
+      };
+      
       // Use the completeVisitImport method from the hook
-      const result = await completeVisitImport(completeData);
+      const result = await completeVisitImport(importRequest);
       
       // Handle the result
       if (result.redirectUrl) {
