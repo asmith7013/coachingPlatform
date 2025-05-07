@@ -1,5 +1,7 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose from "mongoose"; // Import Mongoose
+import { getModel } from "@data-server/db/model-registry";
+
 
 @modelOptions({ 
   schemaOptions: { 
@@ -57,3 +59,7 @@ class Cycle {
 }
 
 export const CycleModel = mongoose.models.Cycle || getModelForClass(Cycle);
+
+export async function getCycleModel() {
+  return getModel<Cycle>('Cycle', () => getModelForClass(Cycle));
+}

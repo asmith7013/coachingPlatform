@@ -5,7 +5,8 @@ import { Button } from '@/components/core/Button';
 import { Input } from '@/components/core/fields/Input';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { Alert } from '@/components/core/feedback/Alert';
-import { MondayUser } from '@api-monday/types';
+import { useMondayUserByEmail } from '@/hooks/integrations/monday/useMondayQueries';
+import type { MondayUser } from '@/lib/integrations/monday/types/api';
 
 export interface UserFormProps {
   onUserFound?: (user: MondayUser) => void;
@@ -19,26 +20,22 @@ export function UserForm({ onUserFound, className }: UserFormProps) {
     message?: string;
   }>({ status: 'idle' });
 
+  // Use the hook with the current email
+  const { data: user, isLoading, error } = useMondayUserByEmail(email);
+
   const handleSearch = async () => {
     if (!email) return;
     
     setSearchStatus({ status: 'loading' });
     
     try {
-      // Use the API endpoint instead of the server action
-      const response = await fetch(`/api/integrations/monday/user?email=${encodeURIComponent(email)}`, {
-        method: 'GET',
-      });
-      
-      const result = await response.json();
-      
-      if (response.ok && result.success && result.data) {
+      if (user) {
         setSearchStatus({ status: 'idle' });
-        onUserFound?.(result.data);
+        onUserFound?.(user);
       } else {
         setSearchStatus({ 
           status: 'not-found', 
-          message: result.error || `No user found with email ${email}` 
+          message: `No user found with email ${email}` 
         });
       }
     } catch (err) {
@@ -64,9 +61,9 @@ export function UserForm({ onUserFound, className }: UserFormProps) {
           <Button 
             intent="primary"
             onClick={handleSearch}
-            disabled={!email || searchStatus.status === 'loading'}
+            disabled={!email || isLoading || searchStatus.status === 'loading'}
           >
-            {searchStatus.status === 'loading' ? (
+            {(isLoading || searchStatus.status === 'loading') ? (
               <>
                 <Spinner size="sm" className="mr-2" />
                 Searching...
@@ -75,10 +72,10 @@ export function UserForm({ onUserFound, className }: UserFormProps) {
           </Button>
         </div>
 
-        {searchStatus.status === 'error' && (
+        {error && (
           <Alert intent="error">
             <Alert.Title>Error</Alert.Title>
-            <Alert.Description>{searchStatus.message}</Alert.Description>
+            <Alert.Description>{error.message}</Alert.Description>
           </Alert>
         )}
         
@@ -91,4 +88,4 @@ export function UserForm({ onUserFound, className }: UserFormProps) {
       </div>
     </div>
   );
-}
+} 

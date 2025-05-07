@@ -1,3 +1,4 @@
+import { getModel } from "@/lib/data-server/db/model-registry";
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose, { Types } from "mongoose"; // Required for model cache
 
@@ -23,3 +24,8 @@ export class NextStep {
 }
 
 export const NextStepModel = mongoose.models.NextStep || getModelForClass(NextStep);
+
+export async function getNextStepModel() {
+  return getModel<NextStep>('NextStep', () => getModelForClass(NextStep));
+}
+  

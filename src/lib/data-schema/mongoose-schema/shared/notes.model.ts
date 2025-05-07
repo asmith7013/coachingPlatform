@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
+import { getModel } from "@data-server/db/model-registry";
 
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'notes' } })
 export class Note {
@@ -17,3 +18,7 @@ export class Note {
 }
 
 export const NoteModel = mongoose.models.Note || getModelForClass(Note); 
+
+export async function getNoteModel() {
+  return getModel<Note>('Note', () => getModelForClass(Note));
+}

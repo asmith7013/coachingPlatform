@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import { GradeLevels } from "@enums";
-import { connectToDB } from "@data-server/db/connection";
+// import { connectToDB } from "@data-server/db/connection";
+import { getModel } from "@data-server/db/model-registry";
 
 @modelOptions({ 
   schemaOptions: { 
@@ -48,12 +49,11 @@ class School {
   updatedAt?: Date;
 }
 
-// Add async model getter
-export async function getSchoolModel() {
-  await connectToDB();
-  return mongoose.models.School || getModelForClass(School);
-}
 
 // Keep for backward compatibility
 export const SchoolModel =
   mongoose.models.School || getModelForClass(School);
+
+export async function getSchoolModel() {
+  return getModel<School>('School', () => getModelForClass(School));
+}

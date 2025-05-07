@@ -1,6 +1,5 @@
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import mongoose from "mongoose";
-import { connectToDB } from "@/lib/data-server/db/connection";
 import {
   RolesNYCPS,
   RolesTL,
@@ -9,6 +8,7 @@ import {
   AdminLevels,
   GradeLevels
 } from "@enums";
+import { getModel } from "@/lib/data-server/db/model-registry";
 
 // Add Monday.com User Class
 @modelOptions({ 
@@ -103,30 +103,29 @@ class TeachingLabStaff extends StaffMember {
   rolesTL?: string[];
 }
 
-// Add async model getters
+// Add async model getters using the registry
 export async function getStaffMemberModel() {
-  await connectToDB();
-  return mongoose.models.StaffMember || getModelForClass(StaffMember);
+  return getModel<StaffMember>('StaffMember', () => getModelForClass(StaffMember));
 }
 
 export async function getNYCPSStaffModel() {
-  await connectToDB();
-  return mongoose.models.NYCPSStaff || getModelForClass(NYCPSStaff);
+  return getModel<NYCPSStaff>('NYCPSStaff', () => getModelForClass(NYCPSStaff));
 }
 
 export async function getTeachingLabStaffModel() {
-  await connectToDB();
-  return mongoose.models.TeachingLabStaff || getModelForClass(TeachingLabStaff);
+  return getModel<TeachingLabStaff>('TeachingLabStaff', () => getModelForClass(TeachingLabStaff));
 }
 
 export async function getExperienceModel() {
-  await connectToDB();
-  return mongoose.models.Experience || getModelForClass(Experience);
+  return getModel<Experience>('Experience', () => getModelForClass(Experience));
 }
 
 export async function getNoteModel() {
-  await connectToDB();
-  return mongoose.models.Note || getModelForClass(Note);
+  return getModel<Note>('Note', () => getModelForClass(Note));
+}
+
+export async function getMondayUserModel() {
+  return getModel<MondayUser>('MondayUser', () => getModelForClass(MondayUser));
 }
 
 // Keep for backward compatibility

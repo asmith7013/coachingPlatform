@@ -8,7 +8,7 @@ import { Alert } from '@/components/core/feedback/Alert';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { PageHeader } from '@/components/composed/layouts/PageHeader';
 import { ImportCompletionForm } from '@/components/integrations/monday/domain/visits/ImportCompletionForm';
-import { completeAndImportVisit } from '@/app/actions/integrations/monday';
+import { useMondayMutations } from '@/hooks/integrations/monday/useMondayMutations';
 import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
 
 // Import stages enum
@@ -28,12 +28,22 @@ export default function MondayVisitImportClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
+  // Use the Monday mutations hook for API operations
+  const { completeVisitImport, loading, error: hookError } = useMondayMutations();
+  
   // State for the import process
   const [stage, setStage] = useState<ImportStage>(ImportStage.LOADING);
   const [visitData, setVisitData] = useState<Partial<VisitInput> | null>(null);
   const [missingFields, setMissingFields] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  
+  // Update local error state when hook error changes
+  useEffect(() => {
+    if (hookError) {
+      setError(hookError);
+      setStage(ImportStage.ERROR);
+    }
+  }, [hookError]);
   
   // Parse URL parameters on component mount
   useEffect(() => {
@@ -68,26 +78,25 @@ export default function MondayVisitImportClient() {
     }
   }, [searchParams]);
   
-  // Handle form submission
+  // Handle form submission - Using the hook
   const handleSubmit = async (completeData: VisitInput) => {
     try {
       setStage(ImportStage.LOADING);
-      setSubmitError(null);
       
       console.log('Submitting completed data:', completeData);
       
-      // Call the server action to complete the import
-      const result = await completeAndImportVisit(completeData);
+      // Use the completeVisitImport method from the hook
+      const result = await completeVisitImport(completeData);
       
-      if (result.success) {
-        setStage(ImportStage.SUCCESS);
+      // Handle the result
+      if (result.redirectUrl) {
+        router.push(result.redirectUrl);
       } else {
-        setSubmitError(result.error || 'Unknown error occurred');
-        setStage(ImportStage.ERROR);
+        setStage(ImportStage.SUCCESS);
       }
     } catch (err) {
+      // Error is already handled by the hook and set to hookError
       console.error('Error submitting form:', err);
-      setSubmitError(err instanceof Error ? err.message : 'Unknown error');
       setStage(ImportStage.ERROR);
     }
   };
@@ -136,7 +145,7 @@ export default function MondayVisitImportClient() {
       <PageHeader title={title} subtitle={subtitle} />
       
       {/* Loading state */}
-      {stage === ImportStage.LOADING && (
+      {(stage === ImportStage.LOADING || loading) && (
         <div className="flex justify-center items-center py-12">
           <Spinner size="lg" />
           <div className="ml-4">Processing your request...</div>
@@ -153,7 +162,7 @@ export default function MondayVisitImportClient() {
             <Alert intent="error">
               <Alert.Title>An error occurred</Alert.Title>
               <Alert.Description>
-                {error || submitError || 'An unknown error occurred during the import process.'}
+                {error || 'An unknown error occurred during the import process.'}
               </Alert.Description>
             </Alert>
             
@@ -201,7 +210,7 @@ export default function MondayVisitImportClient() {
               missingFields={missingFields}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
-            //   disabled={stage === ImportStage.LOADING}
+              disabled={loading}
             />
           </Card.Body>
         </Card>

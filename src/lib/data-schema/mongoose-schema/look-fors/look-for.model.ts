@@ -1,6 +1,7 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose, { Types } from "mongoose";
 import { Rubric } from "./rubric.model";
+import { getModel } from "@/lib/data-server/db/model-registry";
 
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'lookfors' } })
 export class LookFor {
@@ -70,3 +71,11 @@ export class LookForItem {
 
 export const LookForModel = mongoose.models.LookFor || getModelForClass(LookFor);
 export const LookForItemModel = mongoose.models.LookForItem || getModelForClass(LookForItem);
+
+export async function getLookForModel() {
+  return getModel<LookFor>('LookFor', () => getModelForClass(LookFor));
+}
+
+export async function getLookForItemModel() {
+  return getModel<LookForItem>('LookForItem', () => getModelForClass(LookForItem));
+}

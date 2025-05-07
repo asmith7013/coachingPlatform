@@ -10,7 +10,6 @@ import { Alert } from '@/components/core/feedback/Alert';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
-import { importSelectedVisitsFromMonday } from '@/app/actions/integrations/monday';
 import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
 import type { ImportPreview } from '@/lib/integrations/monday/types';
 
@@ -103,7 +102,7 @@ export default function MondayVisitSelectionPage() {
     });
   }, []);
   
-  // Handle import initiation
+  // Handle import initiation - UPDATED to use API endpoint
   const handleImport = useCallback(async () => {
     if (selectedItems.length === 0) {
       setError('Please select at least one visit to import');
@@ -114,11 +113,22 @@ export default function MondayVisitSelectionPage() {
     setError(null);
     
     try {
-      // Use the server action to import
-      const result = await importSelectedVisitsFromMonday(selectedItems);
+      // Use the API endpoint instead of direct server action
+      const response = await fetch('/api/integrations/monday/visits/import', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          selectedItems,
+          boardId 
+        }),
+      });
       
-      if (!result.success) {
-        throw new Error(result.message || 'Import failed');
+      const result = await response.json();
+      
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Import failed');
       }
       
       // If we need to complete data for a single item

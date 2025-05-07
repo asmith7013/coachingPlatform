@@ -1,6 +1,6 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose, { Types } from "mongoose"; // Required for model cache
-
+import { getModel } from "@data-server/db/model-registry";
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'rubrics' } })
 export class Rubric {
   @prop({ type: Types.ObjectId, required: true })
@@ -51,3 +51,11 @@ export const RubricModel =
 
 export const RubricScoreModel =
   mongoose.models.RubricScore || getModelForClass(RubricScore);
+
+export async function getRubricModel() {
+  return getModel<Rubric>('Rubric', () => getModelForClass(Rubric));
+}
+
+export async function getRubricScoreModel() {
+  return getModel<RubricScore>('RubricScore', () => getModelForClass(RubricScore));
+}

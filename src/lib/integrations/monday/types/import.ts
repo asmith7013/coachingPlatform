@@ -37,6 +37,18 @@ export interface ImportResult extends Pick<BaseResponse, 'success' | 'message'> 
   };
 }
 
+export interface MondayImportResponse {
+  success: boolean;
+  items?: Record<string, unknown>[];
+  importedCount?: number;
+  failedCount?: number;
+  redirectUrl?: string;
+  completionRequired?: boolean;
+  completionData?: Record<string, unknown>;
+  message?: string;
+  error?: string;
+}
+
 /**
  * Define the preview item type
  */

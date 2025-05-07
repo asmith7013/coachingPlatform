@@ -48,3 +48,14 @@ export interface MondayUser {
   name: string;
   email: string;
 }
+
+/**
+
+/**
+ * Monday.com user API response
+ */
+export interface MondayUserResponse {
+  success: boolean;
+  items: MondayUser[];
+  error?: string;
+} 

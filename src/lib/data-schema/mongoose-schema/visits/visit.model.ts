@@ -7,6 +7,7 @@ import {
   GradeLevels,
   DurationValues,
 } from "@enums";
+import { getModel } from "@data-server/db/model-registry";
 
 @modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'eventitems' } })
 export class EventItem {
@@ -106,6 +107,20 @@ export class Visit {
   endDate?: string;
 }
 
+
 export const EventItemModel = mongoose.models.EventItem || getModelForClass(EventItem);
 export const SessionLinkModel = mongoose.models.SessionLink || getModelForClass(SessionLink);
 export const VisitModel = mongoose.models.Visit || getModelForClass(Visit);
+
+export async function getVisitModel() {
+  return getModel<Visit>('Visit', () => getModelForClass(Visit));
+}
+
+export async function getEventItemModel() {
+  return getModel<EventItem>('EventItem', () => getModelForClass(EventItem));
+}
+
+export async function getSessionLinkModel() {
+  return getModel<SessionLink>('SessionLink', () => getModelForClass(SessionLink));
+}
+

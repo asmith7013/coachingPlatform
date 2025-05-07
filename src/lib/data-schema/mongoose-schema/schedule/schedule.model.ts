@@ -6,6 +6,7 @@ import {
   BellScheduleTypes,
   PeriodTypes,
 } from "@enums";
+import { getModel } from "@data-server/db/model-registry";
 
 @modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'classscheduleitems' } })
 export class ClassScheduleItem {
@@ -108,3 +109,28 @@ export const ScheduleByDayModel =
 
 export const TeacherScheduleModel =
   mongoose.models.TeacherSchedule || getModelForClass(TeacherSchedule);
+
+
+export async function getClassScheduleItemModel() {
+  return getModel<ClassScheduleItem>('ClassScheduleItem', () => getModelForClass(ClassScheduleItem));
+}
+
+export async function getAssignedCycleDayModel() {
+  return getModel<AssignedCycleDay>('AssignedCycleDay', () => getModelForClass(AssignedCycleDay));
+}
+
+export async function getBellScheduleModel() {
+  return getModel<BellSchedule>('BellSchedule', () => getModelForClass(BellSchedule));
+}
+
+export async function getPeriodModel() {
+  return getModel<Period>('Period', () => getModelForClass(Period));
+}
+
+export async function getScheduleByDayModel() {
+  return getModel<ScheduleByDay>('ScheduleByDay', () => getModelForClass(ScheduleByDay));
+}
+
+export async function getTeacherScheduleModel() {
+  return getModel<TeacherSchedule>('TeacherSchedule', () => getModelForClass(TeacherSchedule));
+}

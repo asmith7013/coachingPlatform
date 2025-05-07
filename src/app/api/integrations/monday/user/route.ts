@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchMondayUserByEmail } from '@api-monday/client/client';
-// import { handleServerError } from "@/lib/error";
+import { fetchMondayUserByEmail } from '@/lib/integrations/monday/client/client';
+import { handleServerError } from '@/lib/error/handle-server-error';
+import { z } from 'zod';
+import { handleValidationError } from '@/lib/error/handle-validation-error';
 
 /**
  * GET handler for Monday.com user fetching
@@ -9,73 +11,55 @@ import { fetchMondayUserByEmail } from '@api-monday/client/client';
  * @param req The Next.js request object
  * @returns JSON response with user data or error
  */
-export async function GET(req: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const searchParams = new URL(req.url).searchParams;
-    const userId = searchParams.get('userId');
+    const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
     
-    if (!userId && !email) {
-      return NextResponse.json(
-        { success: false, items: [], error: 'Either userId or email parameter is required' }, 
-        { status: 400 }
-      );
+    // Validate input
+    if (!email) {
+      return NextResponse.json({
+        success: false,
+        error: 'Email is required'
+      }, { status: 400 });
     }
     
-    let user;
-    try {
-      if (userId) {
-        // Clean user ID (ensure it's just numbers)
-        // const cleanUserId = userId.replace(/\D/g, "");
-        // user = await fetchMondayUserById(cleanUserId);
-      } else if (email) {
-        user = await fetchMondayUserByEmail(email);
-      }
-    } catch (apiError) {
-      console.error('Monday API error:', apiError);
-      return NextResponse.json({ 
-        success: false, 
-        items: [],
-        error: 'Error communicating with Monday.com API' 
-      }, { status: 502 });
+    // Validate email format
+    const { email: validEmail } = z.object({
+      email: z.string().email("Valid email is required")
+    }).parse({ email });
+    
+    // Fetch user from Monday.com
+    const result = await fetchMondayUserByEmail(validEmail);
+    
+    // If successful, return the user data
+    if (result && result.success && result.data) {
+      return NextResponse.json({
+        success: true,
+        data: result.data
+      });
     }
     
-    if (!user) {
-      return NextResponse.json(
-        { success: false, items: [], error: 'User not found' }, 
-        { status: 404 }
-      );
-    }
-    
-    // Return simplified user object in standard response format
+    // If not found or error, return appropriate response
     return NextResponse.json({
-      success: true,
-      items: [{
-        id: user.data?.id,
-        name: user.data?.name,
-        email: user.data?.email,
-        // title: user.title || null,
-        // photo_thumb: user.photo_thumb || null,
-        // // Only include teams if they exist and are properly formatted
-        // teams: Array.isArray(user.teams) ? 
-        //   user.teams
-        //     .filter(t => t && typeof t === 'object' && 'id' in t && 'name' in t)
-        //     .map(t => ({ id: t.id, name: t.name })) 
-        //   : []
-      }]
-    });
+      success: false,
+      error: result?.error || `No user found with email ${email}`
+    }, { status: 404 });
+    
   } catch (error) {
-    console.error('Error in Monday.com user API:', error);
-    // Ensure we return a properly formatted error response
-    return NextResponse.json(
-      { 
-        success: false, 
-        items: [],
-        error: typeof error === 'object' && error !== null ? 
-          (error as { message?: string }).message || 'Unknown error' : 
-          String(error) 
-      }, 
-      { status: 500 }
-    );
+    // Handle validation errors
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({
+        success: false,
+        error: handleValidationError(error)
+      }, { status: 400 });
+    }
+    
+    // Handle other errors
+    console.error('Error fetching Monday user:', error);
+    return NextResponse.json({
+      success: false,
+      error: handleServerError(error)
+    }, { status: 500 });
   }
 }

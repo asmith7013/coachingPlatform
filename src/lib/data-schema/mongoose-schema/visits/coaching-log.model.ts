@@ -5,6 +5,7 @@ import {
   LengthTypeEnum,
   TeacherLeaderTypeEnum,
 } from "@enums";
+import { getModel } from "@data-server/db/model-registry";
 
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'coachinglogs' } })
 export class CoachingLog {
@@ -60,3 +61,7 @@ export class CoachingLog {
 
 export const CoachingLogModel =
   mongoose.models.CoachingLog || getModelForClass(CoachingLog);
+
+export async function getCoachingLogModel() {
+  return getModel<CoachingLog>('CoachingLog', () => getModelForClass(CoachingLog));
+}
