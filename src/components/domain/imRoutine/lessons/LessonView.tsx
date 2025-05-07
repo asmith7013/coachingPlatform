@@ -23,7 +23,7 @@ type Props = {
   selectedLesson?: string;
   setSelectedLesson: (lesson: string) => void;
   curriculum: 'ILC' | 'Kendall Hunt';
-  renderLesson: (
+  renderLessonContent: (
     lesson: Lesson,
     selectedRoutines: string[],
     isSelected: boolean,
@@ -37,7 +37,7 @@ export function LessonDetailView({
   selectedLesson,
   setSelectedLesson,
   curriculum,
-  renderLesson
+  renderLessonContent
 }: Props) {
   const lessonRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [justSelectedLesson, setJustSelectedLesson] = React.useState<string | null>(null);
@@ -78,7 +78,7 @@ export function LessonDetailView({
                 transition: { duration: 0.5 }
               } : {}}
             >
-              {renderLesson(lesson, selectedRoutines, isSelected, curriculum)}
+              {renderLessonContent(lesson, selectedRoutines, isSelected, curriculum)}
             </motion.div>
           );
         })}

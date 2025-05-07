@@ -17,7 +17,7 @@
     "docs": "tsx scripts/combine-docs.ts",
     "scrapeILC": "tsx scripts/im-curriculum/scraper.ts",
     "knip": "knip",
-    "prebuild": "npm run generate-css && tsc --noEmit --strict && next lint"
+    "prebuild": "npm run generate-css && tsc --noEmit --strict && next lint --max-warnings=0"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",

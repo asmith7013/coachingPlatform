@@ -204,7 +204,7 @@ export default function IMRoutinesPage() {
               selectedRoutines={selectedRoutines}
               selectedLesson={selectedLesson}
               setSelectedLesson={setSelectedLesson}
-              renderLesson={(lesson, selectedRoutines, isSelected) =>
+              renderLessonContent={(lesson, selectedRoutines, isSelected) =>
                 renderLesson(lesson, selectedRoutines, isSelected, version === 'ILC' ? 'ILC' : 'Kendall Hunt')
               }
               curriculum={version === 'ILC' ? 'ILC' : 'Kendall Hunt'}
