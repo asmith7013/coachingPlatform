@@ -196,7 +196,7 @@ export function Select({
       labelColor={labelColor}
     >
       <div className="relative w-full">
-        <Listbox value={safeValue} onChange={onChange} multiple={multiple}>
+        <Listbox as="div" value={safeValue} onChange={onChange} multiple={multiple}>
           <Listbox.Button
             className={cn(
               styles.trigger(),
