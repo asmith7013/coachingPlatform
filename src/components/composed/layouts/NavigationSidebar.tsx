@@ -19,6 +19,9 @@ export interface NavigationItem {
   href: string
   icon: React.ComponentType<{ className?: string }>
   current?: boolean
+  children?: NavigationItem[] // Add nested navigation support
+  requiredRoles?: string[] // Add role-based access
+  requiredPermissions?: string[] // Add permission-based access
 }
 
 // Define the team type
@@ -101,26 +104,50 @@ export function Sidebar({
   const styles = sidebar();
 
   // Function to render navigation items
-  const renderNavItems = () => (
-    <ul role="list" className={styles.navGroup()}>
-      {navigation.map((item) => (
+  const renderNavItems = (items: NavigationItem[], depth = 0) => (
+    <ul role="list" className={cn(styles.navGroup(), depth > 0 && "ml-6")}>
+      {items.map((item) => (
         <li key={item.name}>
-          <Link
-            href={item.href}
-            className={cn(
-              item.current ? styles.navItemCurrent() : styles.navItemDefault(),
-              styles.navItem()
-            )}
-          >
-            <item.icon
-              aria-hidden="true"
+          {!item.children ? (
+            // Regular navigation item
+            <Link
+              href={item.href}
               className={cn(
-                item.current ? styles.navIconCurrent() : styles.navIconDefault(),
-                styles.navIcon()
+                item.current ? styles.navItemCurrent() : styles.navItemDefault(),
+                styles.navItem()
               )}
-            />
-            {item.name}
-          </Link>
+            >
+              <item.icon
+                aria-hidden="true"
+                className={cn(
+                  item.current ? styles.navIconCurrent() : styles.navIconDefault(),
+                  styles.navIcon()
+                )}
+              />
+              {item.name}
+            </Link>
+          ) : (
+            // Parent item with children
+            <>
+              <div
+                className={cn(
+                  item.current ? styles.navItemCurrent() : styles.navItemDefault(),
+                  styles.navItem(),
+                  "cursor-default"
+                )}
+              >
+                <item.icon
+                  aria-hidden="true"
+                  className={cn(
+                    item.current ? styles.navIconCurrent() : styles.navIconDefault(),
+                    styles.navIcon()
+                  )}
+                />
+                {item.name}
+              </div>
+              {renderNavItems(item.children, depth + 1)}
+            </>
+          )}
         </li>
       ))}
     </ul>
@@ -171,7 +198,7 @@ export function Sidebar({
       <nav className={styles.nav()}>
         <ul role="list" className={styles.navList()}>
           <li>
-            {renderNavItems()}
+            {renderNavItems(navigation)}
           </li>
           {showTeams && teams.length > 0 && (
             <li>

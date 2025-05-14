@@ -6,7 +6,6 @@ import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-que
 import { handleServerError } from "@error/handle-server-error";
 import type { FetchParams } from "@core-types/api";
 import { CycleZodSchema } from "@zod-schema/core/cycle";
-
 /**
  * Fetches a paginated list of cycles
  */

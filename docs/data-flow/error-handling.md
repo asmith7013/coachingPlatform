@@ -205,8 +205,9 @@ Our application implements a layered approach to error handling that integrates 
 
 The error handling system connects with our data management hooks following a clean, layered architecture:
 
-1. **Foundation Layer** (`useSafeSWR`): 
-   - Wraps SWR to provide standardized error catching
+1. **Foundation Layer** (`useQuery` with error handling): 
+   - Uses React Query with standardized error catching
+   - Integrates with QueryCache for global error handling
    - Converts all error types to a consistent format
    - Adds context to errors for better debugging
    - Prevents error cascades in data fetching
@@ -289,7 +290,149 @@ const { mutate, isLoading, error } = useErrorHandledMutation(
   { errorContext: "ResourceCreation" }
 );
 ```
-[RULE] Always use the error-handling hooks instead of raw fetch or SWR when fetching data.
+[RULE] Always use the error-handling hooks instead of raw fetch or React Query's removed onError callbacks when fetching data.
+</section>
+
+<section id="error-query-handling">
+
+## Query Error Handling (React Query v5)
+
+Our application integrates error handling with React Query v5, which introduced significant changes to how errors are handled in queries.
+
+### QueryClient Configuration
+
+Error handling for React Query must be configured when creating the QueryClient:
+
+```typescript
+import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query';
+import { captureError, createErrorContext } from '@/lib/error';
+
+// Create QueryClient with integrated error handling
+export function createQueryClientWithErrorHandling(): QueryClient {
+  return new QueryClient({
+    queryCache: new QueryCache({
+      onError: (error) => {
+        captureError(error, createErrorContext('ReactQuery', 'query'));
+      },
+    }),
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        captureError(error, createErrorContext('ReactQuery', 'mutation'));
+      },
+    }),
+  });
+}
+Component-Level Query Error Handling
+Since React Query v5 removed onError callbacks from queries, use the useQueryErrorHandler hook:
+typescriptimport { useQuery } from '@tanstack/react-query';
+import { useQueryErrorHandler } from '@/lib/query/utilities/errorHandling';
+
+function MyComponent() {
+  const { data, error, isError } = useQuery({
+    queryKey: ['myData'],
+    queryFn: fetchMyData,
+  });
+  
+  // Handle query errors
+  useQueryErrorHandler(error, isError, 'MyDataQuery');
+  
+  return (
+    // Component JSX
+  );
+}
+Query Error Utilities
+The system provides utilities for handling query-specific errors:
+typescript// Wrap promises with error handling
+const result = await handleQueryError(
+  fetchData(),
+  'DataFetchOperation'
+);
+
+// Create a default query error handler
+const error = defaultQueryErrorHandler(
+  rawError,
+  'QueryContext'
+);
+These utilities integrate with our centralized error monitoring and provide consistent error formatting across all React Query operations.
+[RULE] Configure query error handling at the QueryClient level and use hooks for component-specific error handling.
+</section>
+
+<section id="error-query-handling">
+
+## Query Error Handling (React Query v5)
+
+Our application integrates error handling with React Query v5, which introduced significant changes to how errors are handled in queries.
+
+### QueryClient Configuration
+
+Error handling for React Query must be configured when creating the QueryClient:
+
+```typescript
+import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query';
+import { captureError, createErrorContext } from '@/lib/error';
+
+// Create QueryClient with integrated error handling
+export function createQueryClientWithErrorHandling(): QueryClient {
+  return new QueryClient({
+    queryCache: new QueryCache({
+      onError: (error) => {
+        captureError(error, createErrorContext('ReactQuery', 'query'));
+      },
+    }),
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        captureError(error, createErrorContext('ReactQuery', 'mutation'));
+      },
+    }),
+  });
+}
+```
+
+### Component-Level Query Error Handling
+
+Since React Query v5 removed `onError` callbacks from queries, use the `useQueryErrorHandler` hook:
+
+```typescript
+import { useQuery } from '@tanstack/react-query';
+import { useQueryErrorHandler } from '@/lib/query/utilities/errorHandling';
+
+function MyComponent() {
+  const { data, error, isError } = useQuery({
+    queryKey: ['myData'],
+    queryFn: fetchMyData,
+  });
+  
+  // Handle query errors
+  useQueryErrorHandler(error, isError, 'MyDataQuery');
+  
+  return (
+    // Component JSX
+  );
+}
+```
+
+### Query Error Utilities
+
+The system provides utilities for handling query-specific errors:
+
+```typescript
+// Wrap promises with error handling
+const result = await handleQueryError(
+  fetchData(),
+  'DataFetchOperation'
+);
+
+// Create a default query error handler
+const error = defaultQueryErrorHandler(
+  rawError,
+  'QueryContext'
+);
+```
+
+These utilities integrate with our centralized error monitoring and provide consistent error formatting across all React Query operations.
+
+[RULE] Configure query error handling at the QueryClient level and use hooks for component-specific error handling.
+
 </section>
 
 </doc>

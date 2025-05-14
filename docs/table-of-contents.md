@@ -25,6 +25,9 @@
   - [schema system](#schema-system)
   - [server actions](#server-actions)
   - [type system](#type-system)
+  - [authentication](#authentication)
+
+
 - [Workflows](#workflows)
   - [common tasks](#common-tasks)
   - [cursor integration](#cursor-integration)

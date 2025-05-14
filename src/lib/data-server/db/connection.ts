@@ -16,6 +16,7 @@ declare global {
   var mongoose: MongooseCache | undefined;
 }
 
+
 // Global cache to support hot reloads in dev and serverless environments
 let cached = global.mongoose;
 

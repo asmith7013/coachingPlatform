@@ -53,6 +53,7 @@ The documentation is organized into several key areas:
 @file:docs/data-flow/monday-integration.md
 @file:docs/data-flow/react-query-patterns.md
 @file:docs/data-flow/monday-integration.md
+@file:docs/data-flow/authentication.md
 
 ### Workflow Documentation
 @file:docs/workflows/common-tasks.md

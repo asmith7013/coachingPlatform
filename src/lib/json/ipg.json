@@ -1,0 +1,237 @@
+[
+    {
+      "coreAction": 1,
+      "title": "Ensure the work of the enacted lesson reflects the Focus, Coherence, and Rigor required by college- and career-ready standards in mathematics",
+      "sections": [
+        {
+          "section": "A",
+          "description": "The enacted lesson focuses on the grade-level cluster(s), grade-level content standard(s), or part(s) thereof",
+          "fields": [
+            "Mathematical learning goal",
+            "Standard(s) addressed in this lesson"
+          ],
+          "ratings": [
+            {
+              "rating": "Yes",
+              "description": "The enacted lesson focuses only on mathematics within the grade-level standards"
+            },
+            {
+              "rating": "No",
+              "description": "The enacted lesson focuses on mathematics outside the grade-level standards"
+            }
+          ]
+        },
+        {
+          "section": "B",
+          "description": "The enacted lesson appropriately relates new content to math content within or across grades",
+          "ratings": [
+            {
+              "rating": "Yes",
+              "description": "The enacted lesson builds on students' prior skills and understandings"
+            },
+            {
+              "rating": "No",
+              "description": "The enacted lesson does not connect or has weak connections to students' prior skills and understandings"
+            }
+          ]
+        },
+        {
+          "section": "C",
+          "description": "The enacted lesson intentionally targets the aspect(s) of Rigor (conceptual understanding, procedural skill and fluency, application) called for by the standard(s) being addressed",
+          "options": {
+            "standardRigor": [
+              "Conceptual understanding",
+              "Procedural skill and fluency",
+              "Application"
+            ],
+            "lessonRigor": [
+              "Conceptual understanding",
+              "Procedural skill and fluency",
+              "Application"
+            ]
+          },
+          "ratings": [
+            {
+              "rating": "Yes",
+              "description": "The enacted lesson explicitly targets the aspect(s) of Rigor called for by the standard(s) being addressed"
+            },
+            {
+              "rating": "No",
+              "description": "The enacted lesson targets aspects of Rigor that are not appropriate for the standard(s) being addressed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "coreAction": 2,
+      "title": "Employ instructional practices that allow all students to learn the content of the lesson",
+      "sections": [
+        {
+          "section": "A",
+          "description": "The teacher makes the mathematics of the lesson explicit through the use of explanations, representations, tasks, and/or examples",
+          "ratings": [
+            {
+              "rating": "4",
+              "description": "A variety of instructional techniques and examples are used to make the mathematics of the lesson clear"
+            },
+            {
+              "rating": "3",
+              "description": "Examples are used to make the mathematics of the lesson clear"
+            },
+            {
+              "rating": "2",
+              "description": "Instruction is limited to showing students how to get the answer"
+            },
+            {
+              "rating": "1",
+              "description": "Instruction is not focused on the mathematics of the lesson"
+            }
+          ]
+        },
+        {
+          "section": "B",
+          "description": "The teacher strengthens all students' understanding of the content by strategically sharing students' representations and/or solution methods",
+          "ratings": [
+            {
+              "rating": "4",
+              "description": "Student solution methods are shared, and connections to the mathematics are explicit and purposeful. If applicable, connections between the methods are examined"
+            },
+            {
+              "rating": "3",
+              "description": "Student solution methods are shared, and some mathematical connections are made between them"
+            },
+            {
+              "rating": "2",
+              "description": "Student solution methods are shared, but few connections are made to strengthen student understanding"
+            },
+            {
+              "rating": "1",
+              "description": "Student solution methods are not shared"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "coreAction": 3,
+      "title": "Provide all students with opportunities to exhibit mathematical practices while engaging with the content of the lesson",
+      "sections": [
+        {
+          "section": "A",
+          "description": "The teacher provides opportunities for all students to work with and practice grade-level problems and exercises",
+          "studentBehavior": "Students work with and practice grade-level problems and exercises",
+          "ratings": [
+            {
+              "rating": "4",
+              "description": "Teacher provides many opportunities, and most students take them"
+            },
+            {
+              "rating": "3",
+              "description": "Teacher provides many opportunities, and some students take them; or teacher provides some opportunities and most students take them"
+            },
+            {
+              "rating": "2",
+              "description": "Teacher provides some opportunities, and some students take them"
+            },
+            {
+              "rating": "1",
+              "description": "Teacher provides few or no opportunities, or few or very few students take the opportunities provided"
+            }
+          ]
+        },
+        {
+          "section": "B",
+          "description": "The teacher cultivates reasoning and problem solving by allowing students to productively struggle",
+          "studentBehavior": "Students persevere in solving problems in the face of difficulty",
+          "ratings": [
+            {
+              "rating": "4",
+              "description": "Teacher provides many opportunities, and most students take them"
+            },
+            {
+              "rating": "3",
+              "description": "Teacher provides many opportunities, and some students take them; or teacher provides some opportunities and most students take them"
+            },
+            {
+              "rating": "2",
+              "description": "Teacher provides some opportunities, and some students take them"
+            },
+            {
+              "rating": "1",
+              "description": "Teacher provides few or no opportunities, or few or very few students take the opportunities provided"
+            }
+          ]
+        },
+        {
+          "section": "C",
+          "description": "The teacher poses questions and problems that prompt students to explain their thinking about the content of the lesson",
+          "studentBehavior": "Students share their thinking about the content of the lesson beyond just stating answers",
+          "ratings": [
+            {
+              "rating": "4",
+              "description": "Teacher provides many opportunities, and most students take them"
+            },
+            {
+              "rating": "3",
+              "description": "Teacher provides many opportunities, and some students take them; or teacher provides some opportunities and most students take them"
+            },
+            {
+              "rating": "2",
+              "description": "Teacher provides some opportunities, and some students take them"
+            },
+            {
+              "rating": "1",
+              "description": "Teacher provides few or no opportunities, or few or very few students take the opportunities provided"
+            }
+          ]
+        },
+        {
+          "section": "D",
+          "description": "The teacher creates the conditions for student conversations where students are encouraged to talk about each other's thinking",
+          "studentBehavior": "Students talk and ask questions about each other's thinking, in order to clarify or improve their own mathematical understanding",
+          "ratings": [
+            {
+              "rating": "4",
+              "description": "Teacher provides many opportunities, and most students take them"
+            },
+            {
+              "rating": "3",
+              "description": "Teacher provides many opportunities, and some students take them; or teacher provides some opportunities and most students take them"
+            },
+            {
+              "rating": "2",
+              "description": "Teacher provides some opportunities, and some students take them"
+            },
+            {
+              "rating": "1",
+              "description": "Teacher provides few or no opportunities, or few or very few students take the opportunities provided"
+            }
+          ]
+        },
+        {
+          "section": "E",
+          "description": "The teacher connects and develops students' informal language and mathematical ideas to precise mathematical language and ideas",
+          "studentBehavior": "Students use increasingly precise mathematical language and ideas",
+          "ratings": [
+            {
+              "rating": "4",
+              "description": "Teacher provides many opportunities, and most students take them"
+            },
+            {
+              "rating": "3",
+              "description": "Teacher provides many opportunities, and some students take them; or teacher provides some opportunities and most students take them"
+            },
+            {
+              "rating": "2",
+              "description": "Teacher provides some opportunities, and some students take them"
+            },
+            {
+              "rating": "1",
+              "description": "Teacher provides few or no opportunities, or few or very few students take the opportunities provided"
+            }
+          ]
+        }
+      ]
+    }
+  ]

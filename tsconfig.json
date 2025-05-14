@@ -49,8 +49,11 @@
         "@core/*": ["./src/lib/core/*"],
         "@domain/*": ["./src/lib/domain/*"],
         "@error/*": ["./src/lib/error/*"],
+        "@error": ["./src/lib/error"],
         "@query/*": ["./src/lib/query/*"],
-        
+        "@query-hooks/*": ["./src/lib/query/hooks/*"],
+        "@config/*": ["./src/lib/config/*"],
+        "@config": ["./src/lib/config"],
         // API utilities (in lib)
         "@api-utils/*": ["./src/lib/api/*"],
         "@api-client/*": ["./src/lib/api/client/*"],

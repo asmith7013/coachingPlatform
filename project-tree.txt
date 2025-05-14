@@ -34,6 +34,7 @@
 │       └── implementation-workflow.md
 ├── docs-export
 │   └── claude-project-instructions.md
+├── docs-lib
 ├── eslint.config.mjs
 ├── examples
 ├── next-env.d.ts
@@ -146,6 +147,8 @@
 │   │   │   │   ├── [schoolId]
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
+│   │   │   ├── scoring
+│   │   │   │   └── page.tsx
 │   │   │   └── staff
 │   │   │       ├── nycps
 │   │   │       │   └── page.tsx
@@ -190,18 +193,24 @@
 │   │   │   │   ├── components
 │   │   │   │   │   ├── ActionPlan.tsx
 │   │   │   │   │   ├── ActionPlanStage.tsx
+│   │   │   │   │   ├── CoachingMovesBuilder.tsx
 │   │   │   │   │   ├── CoachingMovesTable.tsx
 │   │   │   │   │   ├── GoalSection.tsx
 │   │   │   │   │   ├── ImplementationRecord.tsx
+│   │   │   │   │   ├── ImplementationRecordCard.tsx
+│   │   │   │   │   ├── MetricsBuilder.tsx
 │   │   │   │   │   ├── MetricsTable.tsx
 │   │   │   │   │   ├── MonitoringProgress.tsx
-│   │   │   │   │   └── ReflectionSection.tsx
+│   │   │   │   │   ├── ReflectionSection.tsx
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── types.ts
 │   │   │   │   ├── example1
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── example2
 │   │   │   │   │   ├── data.ts
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── example3
+│   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── classroomNotes
 │   │   │   │   ├── layout.tsx
@@ -356,18 +365,23 @@
 │   │   │   └── TestComponents.tsx
 │   │   ├── domain
 │   │   │   ├── imRoutine
-│   │   │   │   ├── CurriculumVersionModal.tsx
-│   │   │   │   ├── GradeUnitLessonSelector.tsx
-│   │   │   │   ├── LessonCompactView.tsx
-│   │   │   │   ├── LessonDetailView.tsx
-│   │   │   │   ├── MLRAppearsInCard.tsx
-│   │   │   │   ├── NoRoutineCard.tsx
-│   │   │   │   ├── RoutineBadge.tsx
-│   │   │   │   ├── RoutineFilter.tsx
-│   │   │   │   ├── SharedLessonDetailView.tsx
+│   │   │   │   ├── curriculum
+│   │   │   │   │   ├── CurriculumVersionSelector.tsx
+│   │   │   │   │   └── LessonSelector.tsx
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── renderILCLesson.tsx
-│   │   │   │   └── renderKHLesson.tsx
+│   │   │   │   ├── lessons
+│   │   │   │   │   ├── ILCLesson.tsx
+│   │   │   │   │   ├── KHLesson.tsx
+│   │   │   │   │   ├── LessonView.tsx
+│   │   │   │   │   └── NoRoutineCard.tsx
+│   │   │   │   ├── routines
+│   │   │   │   │   ├── MLRAppearsInCard.tsx
+│   │   │   │   │   ├── RoutineBadge.tsx
+│   │   │   │   │   └── RoutineFilter.tsx
+│   │   │   │   ├── types
+│   │   │   │   │   ├── lesson.ts
+│   │   │   │   │   └── routine.ts
+│   │   │   │   └── utils
 │   │   │   ├── lookFors
 │   │   │   ├── rubrics
 │   │   │   │   ├── FilterableGridView.tsx
@@ -420,10 +434,16 @@
 │   │   │   ├── ErrorBoundary.tsx
 │   │   │   ├── SentryBoundaryWrapper.tsx
 │   │   │   └── index.ts
+│   │   ├── features
+│   │   │   └── scoring
+│   │   │       ├── ScoreEntry.tsx
+│   │   │       ├── ScoresPage.tsx
+│   │   │       └── index.ts
 │   │   ├── index.ts
 │   │   └── integrations
 │   │       └── monday
 │   │           ├── README.md
+│   │           ├── UserForm.tsx
 │   │           ├── boards
 │   │           │   └── index.ts
 │   │           ├── common
@@ -438,7 +458,6 @@
 │   │           └── utils
 │   │               └── index.ts
 │   ├── debug
-│   ├── examples
 │   ├── hooks
 │   │   ├── data
 │   │   │   ├── useCrudOperations.ts
@@ -466,8 +485,7 @@
 │   │   │       ├── MondayImportContext.tsx
 │   │   │       ├── MondayIntegrationContext.tsx
 │   │   │       ├── useMondayImportState.ts
-│   │   │       ├── useMondayIntegration.ts
-│   │   │       ├── useMondayMutations.ts 21-18-15-623.ts
+│   │   │       ├── useMondayMutations.ts
 │   │   │       ├── useMondayQueries.ts
 │   │   │       └── useStaffExistence.ts
 │   │   ├── ui
@@ -565,7 +583,8 @@
 │   │   │   ├── db
 │   │   │   │   ├── connection.ts
 │   │   │   │   ├── ensure-connection.ts
-│   │   │   │   └── index.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   └── model-registry.ts
 │   │   │   ├── file-handling
 │   │   │   │   ├── csv-parser.ts
 │   │   │   │   ├── file-upload.ts
@@ -651,12 +670,13 @@
 │   │   │           ├── index.ts
 │   │   │           └── monday-utils.ts
 │   │   ├── json
-│   │   │   ├── ILC_HS.json
-│   │   │   ├── ILC_routines.json
-│   │   │   ├── IMplementation.json
-│   │   │   ├── KH_Routines.json
 │   │   │   ├── alg1-links.json
+│   │   │   ├── ilc-hs.json
+│   │   │   ├── ilc-routines.json
+│   │   │   ├── im-implementation.json
 │   │   │   ├── indicator.tsx
+│   │   │   ├── ipg.json
+│   │   │   ├── kh-routines.json
 │   │   │   ├── primaryStrategy.tsx
 │   │   │   └── school.tsx
 │   │   ├── query
@@ -670,6 +690,17 @@
 │   │   │   └── utilities
 │   │   │       ├── errorHandling.ts
 │   │   │       └── optimisticUpdates.ts
+│   │   ├── tokens
+│   │   │   ├── colors.ts
+│   │   │   ├── index.ts
+│   │   │   ├── layout.ts
+│   │   │   ├── semantic-colors.ts
+│   │   │   ├── shape.ts
+│   │   │   ├── spacing.ts
+│   │   │   ├── text.ts
+│   │   │   ├── tokens.ts
+│   │   │   ├── types.ts
+│   │   │   └── typography.ts
 │   │   ├── types
 │   │   │   ├── README.md
 │   │   │   ├── core
@@ -682,6 +713,7 @@
 │   │   │   │   ├── reference.ts
 │   │   │   │   ├── resource-manager.ts
 │   │   │   │   ├── response.ts
+│   │   │   │   ├── token.ts
 │   │   │   │   └── utils.ts
 │   │   │   ├── domain
 │   │   │   │   ├── cycle.ts
@@ -726,17 +758,6 @@
 │   │       │   ├── index.ts
 │   │       │   └── registry.ts
 │   │       ├── table-schema.ts
-│   │       ├── tokens
-│   │       │   ├── colors.ts
-│   │       │   ├── index.ts
-│   │       │   ├── layout.ts
-│   │       │   ├── semantic-colors.ts
-│   │       │   ├── shape.ts
-│   │       │   ├── spacing.ts
-│   │       │   ├── text.ts
-│   │       │   ├── tokens.ts
-│   │       │   ├── types.ts
-│   │       │   └── typography.ts
 │   │       ├── utils
 │   │       │   ├── form-utils.ts
 │   │       │   ├── formatters.ts
@@ -760,4 +781,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-239 directories, 522 files
+247 directories, 535 files

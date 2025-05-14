@@ -180,12 +180,15 @@ const SchoolSchema = new mongoose.Schema(schemaFields, { timestamps: true });
 
 export const SchoolModel = mongoose.models.School || 
   mongoose.model("School", SchoolSchema);
+```
 [RULE] MongoDB models should reflect the structure defined in Zod schemas.
 </section>
 <section id="data-form-config">
 Field Configuration System
 Field configurations in src/lib/ui/forms/fieldConfig/ define how form fields should be rendered and validated:
-typescriptexport const SchoolFieldConfig: Field<SchoolInput>[] = [
+
+```typescript
+export const SchoolFieldConfig: Field<SchoolInput>[] = [
   {
     name: 'schoolNumber',
     label: 'School Number',
@@ -243,6 +246,49 @@ When using hooks:
 - Use UI hooks for managing UI-specific state
 - Use error hooks to handle network and operation errors consistently
 
+</section>
+
+<section id="navigation-hooks">
+
+## Navigation and Authorization Hooks
+
+Our application provides specialized hooks for navigation and authorization management:
+
+### useNavigation
+
+Manages navigation state based on current route:
+
+```typescript
+import { useNavigation } from '@/hooks/ui/useNavigation'
+
+export function NavigationComponent() {
+  const { navigation, currentPage, pageInfo, breadcrumbs } = useNavigation()
+  
+  // Navigation items with current state
+  // Page title and description
+  // Breadcrumb trail
+}
+```
+useAuthorizedNavigation
+Extends navigation with permission-based filtering:
+
+```typescript
+import { useAuthorizedNavigation } from '@/hooks/ui/useAuthorizedNavigation'
+
+export function SecureNavigation() {
+  const { navigation, pageInfo } = useAuthorizedNavigation()
+  
+  // Only shows navigation items user has permission to access
+}
+```
+These hooks integrate with:
+
+Clerk authentication for user permissions
+Dynamic route matching for current states
+Centralized navigation configuration
+Automatic breadcrumb generation
+
+[RULE] Use authorization hooks in layouts to ensure navigation respects user permissions.
 </section>
 
 <section id="data-reference-hook">

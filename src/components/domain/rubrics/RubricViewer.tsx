@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { RubricCard, type RubricIndicator, type PerformanceLevelKey } from './RubricCard';
 // import { RubricFilterPanel } from './RubricFilterPanel';
 import { FilterableGridView } from '@/components/domain/rubrics/FilterableGridView';
-import implementationData from '@/lib/json/IMplementation.json';
+import implementationData from '@/lib/json/im-implementation.json';
 import RubricDomainCards from './RubricDomainCards';
 
 interface RubricItem {

@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import SentryBoundaryWrapper from "@components/error/SentryBoundaryWrapper";
 import { SWRProvider } from "@/providers/SWRProvider";
+import { QueryProvider } from "@/lib/query/provider";
 import "@/app/globals.css";
 import { PerformanceMonitorProvider } from "@/lib/dev/debugging/usePerformanceMonitoring";
+import { ClerkProvider } from '@clerk/nextjs'
+import { Inter } from 'next/font/google'
 
 const geist = Geist({
   subsets: ["latin"],
@@ -15,9 +18,11 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
+const inter = Inter({ subsets: ['latin'] })
+
 export const metadata: Metadata = {
-  title: "Solves Coaching",
-  description: "",
+  title: "AI Coaching Platform",
+  description: "Your personal AI coaching platform",
   // icons: {
   //   icon: "/favicon.ico",
   //   shortcut: "/favicon.ico",
@@ -31,13 +36,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} ${inter.className}`}>
       <body className={`bg-seasalt text-gunmetal font-sans antialiased`}>
-        <SentryBoundaryWrapper>
-          <PerformanceMonitorProvider>
-            <SWRProvider>{children}</SWRProvider>
-          </PerformanceMonitorProvider>
-        </SentryBoundaryWrapper>
+        <ClerkProvider>
+          <QueryProvider>
+            <SentryBoundaryWrapper>
+              <PerformanceMonitorProvider>
+                <SWRProvider>{children}</SWRProvider>
+              </PerformanceMonitorProvider>
+            </SentryBoundaryWrapper>
+          </QueryProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

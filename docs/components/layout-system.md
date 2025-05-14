@@ -17,91 +17,140 @@ Our application implements a layout system that provides a consistent UI structu
 
 ## IntegratedAppShell
 
-The `IntegratedAppShell` is our primary application layout component, combining a responsive navigation sidebar, topbar, and content area.
+The `IntegratedAppShell` is our primary application layout component, combining a responsive navigation sidebar, topbar, and content area with dynamic navigation based on the current route.
 
 ```typescript
-import { IntegratedAppShell } from '@/components/core/layouts'
-import { navigationItems, teamItems } from './config'
+import { AppShell } from '@/components/composed/layouts/AppShell'
+import { teamItems } from './config'
+import { useAuthorizedNavigation } from '@/hooks/ui/useAuthorizedNavigation'
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout({ 
+  children 
+}: { 
+  children: React.ReactNode 
+}) {
+  const { navigation, pageInfo } = useAuthorizedNavigation()
+  
   return (
-    <IntegratedAppShell
-      navigation={navigationItems}
+    <AppShell
+      navigation={navigation}
       teams={teamItems}
-      pageTitle="Dashboard"
-      pageDescription="View and manage your coaching data"
+      pageTitle={pageInfo.title}
+      pageDescription={pageInfo.description}
+      showTeams={true}
+      logo={{
+        src: '/logo.svg',
+        alt: 'Coaching Platform'
+      }}
     >
       {children}
-    </IntegratedAppShell>
+    </AppShell>
   )
 }
 ```
 
 Key features:
-- Responsive design with mobile drawer and desktop fixed sidebar
-- Configuration-based navigation
-- Uses our design token system for consistent styling
 
-[RULE] Provide navigation and team configurations from a central configuration file.
+Dynamic navigation that updates based on current route
+Authorization-based filtering using Clerk
+Automatic page titles and descriptions
+Support for nested navigation items
+Responsive design with mobile drawer and desktop fixed sidebar
 
+[RULE] Use the authorized navigation hook to ensure navigation items respect user permissions.
 </section>
 
 <section id="layout-configuration">
 
 ## Configuration and Implementation
 
-Create a central configuration file for navigation and team items:
+Create a central configuration file for navigation, teams, and page metadata:
 
 ```typescript
 // src/app/dashboard/config.ts
 import { 
   HomeIcon, 
-  BuildingLibraryIcon 
+  BuildingLibraryIcon,
+  UserGroupIcon,
   // other icons 
 } from '@heroicons/react/24/outline'
 
 export const navigationItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
-  { name: 'Schools', href: '/dashboard/schoolList', icon: BuildingLibraryIcon, current: false },
-  // other navigation items
+  { 
+    name: 'Dashboard', 
+    href: '/dashboard', 
+    icon: HomeIcon,
+    requiredPermissions: ['dashboard.view']
+  },
+  { 
+    name: 'Schools', 
+    href: '/dashboard/schoolList', 
+    icon: BuildingLibraryIcon,
+    requiredPermissions: ['schools.view']
+  },
+  { 
+    name: 'Staff', 
+    href: '/dashboard/staff', 
+    icon: UserGroupIcon,
+    requiredPermissions: ['staff.view'],
+    children: [
+      { 
+        name: 'Teaching Lab', 
+        href: '/dashboard/staff/teachingLab', 
+        icon: UserGroupIcon,
+        requiredPermissions: ['staff.teachinglab.view']
+      },
+      { 
+        name: 'NYCPS Staff', 
+        href: '/dashboard/staff/nycps', 
+        icon: UserGroupIcon,
+        requiredPermissions: ['staff.nycps.view']
+      }
+    ]
+  }
 ]
 
-export const teamItems = [
-  { id: 'math-coaches', name: 'Math Coaches', href: '#', initial: 'M', current: false },
-  // other team items
-]
-```
-
-### Implementation Strategy
-
-1. Start with a single route (e.g., `/dashboard`)
-2. Check for duplicate page titles or headers 
-3. Adjust any fixed margins or padding that might conflict with the layout
-4. For dynamic "current" state, use `usePathname()` from Next.js
-
-```typescript
-'use client'
-
-import { usePathname } from 'next/navigation'
-
-export default function DashboardLayout({ children }) {
-  const pathname = usePathname()
-  
-  const navigationItems = baseNavigationItems.map(item => ({
-    ...item,
-    current: pathname === item.href || pathname.startsWith(`${item.href}/`)
-  }))
-  
-  return (
-    <IntegratedAppShell navigation={navigationItems}>
-      {children}
-    </IntegratedAppShell>
-  )
+export const pageMetadata: Record<string, { title: string; description: string }> = {
+  '/dashboard': {
+    title: 'Dashboard',
+    description: 'Overview of your coaching activities'
+  },
+  '/dashboard/schoolList': {
+    title: 'Schools',
+    description: 'Manage and view all schools in your district'
+  },
+  // Additional page metadata...
 }
 ```
 
-[RULE] Update the "current" state of navigation items based on the active route.
+Navigation State Management
+Navigation state is automatically managed using hooks:
 
+```typescript
+// src/hooks/ui/useNavigation.ts
+export function useNavigation() {
+  const pathname = usePathname()
+  
+  const navigation = useMemo(() => {
+    return updateNavigationState(navigationItems, pathname)
+  }, [pathname])
+  
+  const pageInfo = useMemo(() => {
+    return getPageInfo(pathname)
+  }, [pathname])
+  
+  return { navigation, pageInfo }
+}
+```
+
+Implementation Strategy
+
+Define navigation structure in config.ts with required permissions
+Use useAuthorizedNavigation() to filter based on user permissions
+Navigation current states update automatically based on pathname
+Dynamic page titles and descriptions from metadata
+
+[RULE] Navigation configuration serves as the single source of truth for application structure.
 </section>
 
 <section id="layout-components">
