@@ -8,12 +8,26 @@ export interface BaseDocument {
   /** MongoDB ObjectId (as string or ObjectId) */
   _id: string | Types.ObjectId;
   /** String version of _id for client-side use */
-  id: string;
+  id?: string;
   /** Document creation timestamp */
-  createdAt: Date;
+  createdAt?: Date;
   /** Document last update timestamp */
-  updatedAt: Date;
+  updatedAt?: Date;
 }
+
+/**
+ * Generic type for converting string date fields to Date objects
+ * Use this type when you need to work with actual Date objects for createdAt/updatedAt
+ * 
+ * @example
+ * // Define a type with Date objects instead of strings
+ * export type SchoolWithDates = WithDateObjects<School>;
+ */
+export type WithDateObjects<T extends { createdAt?: string | Date; updatedAt?: string | Date }> = 
+  Omit<T, 'createdAt' | 'updatedAt'> & {
+    createdAt?: Date;
+    updatedAt?: Date;
+  };
 
 /**
  * MongoDB document with system fields only represented as strings

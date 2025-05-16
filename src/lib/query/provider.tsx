@@ -6,38 +6,33 @@
  * This sets up the QueryClient with default options and provides
  * it to the application through a React Context.
  */
-import { 
-  QueryClient, 
-  QueryClientProvider,
-  QueryErrorResetBoundary
-} from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { useState, type ReactNode } from 'react';
-import { StandardResponse } from '@core-types/response';
-import { createQueryClientWithErrorHandling } from './utilities/error-handling';
-import { standardResponseSelector, isStandardResponse } from './utilities/response-types';
+import { initializeQuerySystem } from './initialization';
+import { captureError, createErrorContext } from '@/lib/error';
 
 interface QueryProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 /**
- * Default query client configuration options
- * Aligned with previous SWR configuration for consistency
+ * Creates a QueryClient with error handling
  */
-const defaultOptions = {
-  queries: {
-    refetchOnWindowFocus: false, // Match SWR's revalidateOnFocus: false
-    retry: 2, // Match SWR's errorRetryCount: 2
-    staleTime: 10000, // Match SWR's dedupingInterval: 10000
-    refetchOnReconnect: true, // Match SWR's revalidateOnReconnect: true
-    refetchOnMount: false, // Equivalent to SWR's revalidateIfStale: false
-    keepPreviousData: true, // Match SWR's keepPreviousData: true
-  },
-  mutations: {
-    retry: false, // Match SWR's shouldRetryOnError: false
-  },
-};
+function createQueryClientWithErrorHandling() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 1,
+        refetchOnWindowFocus: false,
+        staleTime: 5 * 60 * 1000, // 5 minutes
+      },
+      mutations: {
+        retry: 1,
+      },
+    },
+  });
+}
 
 /**
  * Provides React Query context to the application
@@ -46,35 +41,25 @@ const defaultOptions = {
  */
 export function QueryProvider({ children }: QueryProviderProps) {
   // Create a memoized QueryClient instance
-  const [queryClient] = useState(() => {
-    const client = createQueryClientWithErrorHandling();
-    
-    // Add global response transformer to handle StandardResponse format
-    client.setDefaultOptions({
-      queries: {
-        ...defaultOptions.queries,
-        select: (data: unknown) => {
-          // Use our selector utility if data is a StandardResponse
-          if (isStandardResponse(data)) {
-            return standardResponseSelector(data as StandardResponse<unknown>);
-          }
-          // Otherwise return the data as is
-          return data;
-        },
-      },
-    });
-    
-    return client;
-  });
+  const [queryClient] = useState(() => createQueryClientWithErrorHandling());
+  
+  // Initialize query system once when provider mounts
+  useEffect(() => {
+    try {
+      const success = initializeQuerySystem();
+      if (!success) {
+        console.warn('Query system initialization encountered issues. Some features may not work correctly.');
+      }
+    } catch (error) {
+      captureError(error, createErrorContext('QueryProvider', 'initialization'));
+      console.error('Failed to initialize query system:', error);
+    }
+  }, []);
 
   return (
-    <QueryErrorResetBoundary>
-      <QueryClientProvider client={queryClient}>
-        {children}
-        {process.env.NODE_ENV !== 'production' && 
-          <ReactQueryDevtools initialIsOpen={false} />
-        }
-      </QueryClientProvider>
-    </QueryErrorResetBoundary>
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 } 

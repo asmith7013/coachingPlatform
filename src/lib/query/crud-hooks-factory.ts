@@ -2,13 +2,13 @@ import { useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { ZodSchema } from 'zod';
 import { queryKeys } from './query-keys';
-import { usePaginatedQuery, PaginationQueryParams } from '@/hooks/query/usePaginatedQueryRQ';
-import { useEntityQuery } from '@/hooks/query/useEntityQueryRQ';
-import { useFiltersAndSorting } from '@/hooks/ui/useFiltersAndSorting';
+import { usePaginatedQuery, PaginationQueryParams } from '@query-hooks/usePaginatedQueryRQ';
+import { useEntityQuery } from '@query-hooks/useEntityQueryRQ';
+import { useFiltersAndSorting } from '@ui-hooks/useFiltersAndSorting';
 import { isPaginatedResponse } from './utilities/response-types';
 import { StandardResponse, PaginatedResponse } from '@core-types/response';
-import { handleClientError } from '@/lib/error';
-import { useOptimisticMutation } from '@/hooks/query/useOptimisticMutationRQ';
+// import { handleClientError } from '@/lib/error';
+import { useOptimisticMutation } from '@query-hooks/useOptimisticMutationRQ';
 import { BaseDocument } from '@core-types/document';
 import { PaginatedResult } from '@core-types/pagination';
 
@@ -51,6 +51,7 @@ export interface CrudHooksConfig<T, TInput> {
  * Factory function that creates a set of React Query hooks for a specific entity type.
  * This mirrors the server-side createCrudActions pattern but for client-side React Query.
  */
+
 export function createCrudHooks<
   T extends BaseDocument,
   TInput = Omit<T, '_id' | 'id' | 'createdAt' | 'updatedAt'>

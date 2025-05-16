@@ -28,9 +28,16 @@
         // Base path
         "@/*": ["./src/*"],
 
-        // Core component and hook paths
+        // Core component
         "@components/*": ["./src/components/*"],
+
+        // Hook paths
         "@hooks/*": ["./src/hooks/*"],
+        "@domain-hooks/*": ["./src/hooks/domain/*"],
+        "@ui-hooks/*": ["./src/hooks/ui/*"],
+        "@pattern-hooks/*": ["./src/hooks/pattern/*"],
+
+        // API paths
         "@api-routes/*": ["./src/app/api/*"],
 
         // Server-side and data paths
@@ -51,7 +58,7 @@
         "@error/*": ["./src/lib/error/*"],
         "@error": ["./src/lib/error"],
         "@query/*": ["./src/lib/query/*"],
-        "@query-hooks/*": ["./src/lib/query/hooks/*"],
+        "@query-hooks/*": ["./src/hooks/query/*"],
         "@config/*": ["./src/lib/config/*"],
         "@config": ["./src/lib/config"],
         // API utilities (in lib)

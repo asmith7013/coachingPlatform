@@ -1,8 +1,7 @@
 import { 
   StandardResponse, 
   PaginatedResponse,
-  SingleResourceResponse,
-  BaseResponse 
+  SingleResourceResponse, 
 } from '@core-types/response';
 
 /**
