@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import SentryBoundaryWrapper from "@components/error/SentryBoundaryWrapper";
-import { SWRProvider } from "@/providers/SWRProvider";
 import { QueryProvider } from "@/lib/query/provider";
 import "@/app/globals.css";
 import { PerformanceMonitorProvider } from "@/lib/dev/debugging/usePerformanceMonitoring";
 import { ClerkProvider } from '@clerk/nextjs'
-import { Inter } from 'next/font/google'
+import { AuthProvider } from '@/providers/AuthProvider'
 
 const geist = Geist({
   subsets: ["latin"],
@@ -39,13 +38,15 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable} ${geistMono.variable} ${inter.className}`}>
       <body className={`bg-seasalt text-gunmetal font-sans antialiased`}>
         <ClerkProvider>
-          <QueryProvider>
-            <SentryBoundaryWrapper>
-              <PerformanceMonitorProvider>
-                <SWRProvider>{children}</SWRProvider>
-              </PerformanceMonitorProvider>
-            </SentryBoundaryWrapper>
-          </QueryProvider>
+          <AuthProvider>
+            <QueryProvider>
+              <SentryBoundaryWrapper>
+                <PerformanceMonitorProvider>
+                  {children}
+                </PerformanceMonitorProvider>
+              </SentryBoundaryWrapper>
+            </QueryProvider>
+          </AuthProvider>
         </ClerkProvider>
       </body>
     </html>

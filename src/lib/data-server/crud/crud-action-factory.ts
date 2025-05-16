@@ -6,11 +6,10 @@ import {
   updateItem,
   deleteItem,
 } from "./crud-operations";
-import type { CrudResultType } from "@core-types/crud";
 import { BaseDocument } from "@core-types/document";  
 import { connectToDB } from "@data-server/db/connection";
 import { handleCrudError } from "@error/crud-error-handling";
-import { PaginatedResponse } from "@core-types/response";
+import { PaginatedResponse, StandardResponse } from "@core-types/response";
 import { FetchParams, getDefaultFetchParams as getDefaultParams } from "@core-types/api";
 // Import the sanitization utilities
 import { deepSanitize } from "@/lib/data-utilities/transformers/sanitize";
@@ -224,7 +223,7 @@ export function createCrudActions<
     /**
      * Creates a new item
      */
-    create: async (data: InputType): Promise<CrudResultType<FullType>> => {
+    create: async (data: InputType): Promise<StandardResponse<FullType>> => {
       try {
         await connectToDB();
         
@@ -235,17 +234,26 @@ export function createCrudActions<
           revalidationPaths
         );
         
-        // Cast the result to match the expected return type
-        return result as unknown as CrudResultType<FullType>;
+        // Convert CrudResultType to StandardResponse
+        return {
+          success: result.success,
+          items: result.data ? [result.data] : [],
+          message: result.message
+        };
       } catch (error) {
-        return handleCrudError(error, `${entityName}Create`) as unknown as CrudResultType<FullType>;
+        const errorResult = handleCrudError(error, `${entityName}Create`);
+        return {
+          success: false,
+          items: [],
+          message: errorResult.message
+        };
       }
     },
 
     /**
      * Updates an existing item
      */
-    update: async (id: string, data: Partial<InputType>): Promise<CrudResultType<FullType>> => {
+    update: async (id: string, data: Partial<InputType>): Promise<StandardResponse<FullType>> => {
       try {
         await connectToDB();
         
@@ -257,35 +265,56 @@ export function createCrudActions<
           revalidationPaths
         );
         
-        // Cast the result to match the expected return type
-        return result as unknown as CrudResultType<FullType>;
+        // Convert CrudResultType to StandardResponse
+        return {
+          success: result.success,
+          items: result.data ? [result.data] : [],
+          message: result.message
+        };
       } catch (error) {
-        return handleCrudError(error, `${entityName}Update`) as unknown as CrudResultType<FullType>;
+        const errorResult = handleCrudError(error, `${entityName}Update`);
+        return {
+          success: false,
+          items: [],
+          message: errorResult.message
+        };
       }
     },
 
     /**
      * Deletes an item
      */
-    delete: async (id: string): Promise<CrudResultType<FullType>> => {
+    delete: async (id: string): Promise<StandardResponse<FullType>> => {
       try {
         await connectToDB();
         
-        return await deleteItem(
+        const result = await deleteItem(
           model,
           fullSchema,
           id,
           revalidationPaths
         );
+        
+        // Convert CrudResultType to StandardResponse
+        return {
+          success: result.success,
+          items: result.data ? [result.data] : [],
+          message: result.message
+        };
       } catch (error) {
-        return handleCrudError(error, `${entityName}Delete`) as unknown as CrudResultType<FullType>;
+        const errorResult = handleCrudError(error, `${entityName}Delete`);
+        return {
+          success: false,
+          items: [],
+          message: errorResult.message
+        };
       }
     },
 
     /**
      * Fetches a single item by ID
      */
-    fetchById: async (id: string): Promise<CrudResultType<FullType>> => {
+    fetchById: async (id: string): Promise<StandardResponse<FullType>> => {
       try {
         await connectToDB();
         const item = await model.findById(id).lean().exec();
@@ -293,7 +322,7 @@ export function createCrudActions<
         if (!item) {
           return { 
             success: false, 
-            error: `${entityName} not found`,
+            items: [],
             message: `${entityName} not found`
           };
         }
@@ -304,13 +333,23 @@ export function createCrudActions<
           const validatedItem = fullSchema.parse(sanitized);
           return { 
             success: true, 
-            data: validatedItem as FullType
+            items: [validatedItem as FullType]
           };
         } catch (error) {
-          return handleCrudError(error, `${entityName}FetchById`) as unknown as CrudResultType<FullType>;
+          const errorResult = handleCrudError(error, `${entityName}FetchById`);
+          return {
+            success: false,
+            items: [],
+            message: errorResult.message
+          };
         }
       } catch (error) {
-        return handleCrudError(error, `${entityName}FetchById`) as unknown as CrudResultType<FullType>;
+        const errorResult = handleCrudError(error, `${entityName}FetchById`);
+        return {
+          success: false,
+          items: [],
+          message: errorResult.message
+        };
       }
     }
   };

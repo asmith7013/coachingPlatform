@@ -4,7 +4,7 @@ import { deepSanitize, removeTimestampFields } from '@/lib/data-utilities/transf
 import { parseOrThrow, parsePartialOrThrow } from '@/lib/data-utilities/transformers/parse';
 import { ZodSchema } from 'zod';
 import { handleClientError } from '@/lib/error/handle-client-error';
-import { queryKeys } from '@/lib/query/queryKeys';
+import { queryKeys } from '@/lib/query/query-keys';
 import { BaseDocument } from '@/lib/types/core/document';
 import { PaginatedResult } from '@/lib/types/core/pagination';
 import { CrudResultType } from '@/lib/types/core/crud';

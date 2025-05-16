@@ -1,7 +1,7 @@
 import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 import { useRouter } from 'next/navigation';
 import { useEffect, ReactNode } from 'react';
-import { Spinner } from '@/components/core/feedback';
+import { AuthLoading } from './AuthLoading';
 import { Permission } from '@core-types/auth';
 import { cn } from '@/lib/ui/utils/formatters';
 import { stack } from '@/lib/tokens/spacing';
@@ -113,12 +113,7 @@ export function AuthGuard({
   ]);
   
   if (isLoading) {
-    return loadingComponent || (
-      <div className={cn('flex items-center justify-center h-screen', stack.lg)}>
-        <Spinner size="lg" />
-        <p className="text-gray-600">Loading...</p>
-      </div>
-    );
+    return loadingComponent || <AuthLoading />;
   }
   
   if (!isSignedIn) {

@@ -1,4 +1,3 @@
-
 ```markdown
 <doc id="react-query-patterns">
 
@@ -14,6 +13,74 @@ Our application uses React Query for server state management with a consistent p
 
 </section>
 
+<section id="query-foundation">
+
+## Foundation Components
+
+The React Query foundation consists of several key utilities that provide a consistent approach:
+
+### Query Key Factory
+
+The query key factory provides type-safe query keys for consistent cache management:
+
+```typescript
+// Core query keys structure
+export const queryKeys = {
+  entities: {
+    all: ['entities'] as const,
+    list: (entity: string, filters?: Record<string, unknown>) => 
+      [...queryKeys.entities.all, 'list', entity, { ...(filters || {}) }] as const,
+    detail: (entity: string, id: string) => 
+      [...queryKeys.entities.all, 'detail', entity, id] as const,
+    // Type-safe factory method
+    forEntity: <TFilters = Record<string, unknown>>(entity: string) => ({
+      all: [entity] as const,
+      list: (filters?: TFilters) => [...queryKeys.entities.all, 'list', entity, { ...(filters || {}) }] as const,
+      detail: (id: string) => [...queryKeys.entities.all, 'detail', entity, id] as const,
+    }),
+  },
+  // Domain-specific keys
+  schools: queryKeys.entities.forEntity<{ district?: string }>('schools'),
+  staff: queryKeys.entities.forEntity<{ role?: string }>('staff'),
+};
+
+// Usage examples
+const schoolList = queryKeys.schools.list({ district: 'D9' });
+const staffDetail = queryKeys.staff.detail('staff-123');
+```
+
+### Cache Invalidation
+
+For consistent cache management, use the invalidation utilities:
+
+```typescript
+import { useInvalidation } from '@/lib/query/utilities/invalidation';
+
+// In a component or hook
+const { invalidateEntity, invalidateList } = useInvalidation();
+
+// After a mutation
+await invalidateEntity('schools', schoolId);
+```
+
+### Error Handling
+
+Error handling utilities ensure consistent error management:
+
+```typescript
+import { handleQueryError, useQueryErrorHandler } from '@/lib/query/utilities/errorHandling';
+
+// In query functions
+const data = await handleQueryError(fetchData(), 'SchoolQuery');
+
+// In components
+useQueryErrorHandler(error, isError, 'SchoolComponent');
+```
+
+[RULE] Always use the foundation components to ensure consistent patterns across the application.
+
+</section>
+
 <section id="primitive-hooks-pattern">
 
 ## Primitive Hooks Pattern
@@ -23,7 +90,7 @@ The primitive hooks pattern creates focused hooks for single API operations:
 ```typescript
 export function useSchools() {
   return useQuery({
-    queryKey: queryKeys.entities.list('schools'),
+    queryKey: queryKeys.schools.list(),
     queryFn: async () => {
       const response = await fetch('/api/schools');
       if (!response.ok) throw new Error('Failed to fetch schools');
@@ -41,39 +108,6 @@ Primitive hooks:
 - Include appropriate cache settings
 
 [RULE] Create primitive hooks for each API operation.
-
-</section>
-
-<section id="query-key-factory">
-
-## Query Key Factory
-
-All hooks use the centralized query key factory for consistent cache invalidation:
-
-```typescript
-export const queryKeys = {
-  entities: {
-    all: ['entities'] as const,
-    lists: () => [...queryKeys.entities.all, 'list'] as const,
-    list: (entity: string, filters?: Record<string, unknown>) => 
-      [...queryKeys.entities.lists(), entity, { ...(filters || {}) }] as const,
-    details: () => [...queryKeys.entities.all, 'detail'] as const,
-    detail: (entity: string, id: string) => 
-      [...queryKeys.entities.details(), entity, id] as const,
-  },
-  
-  // Domain-specific keys
-  monday: {
-    all: ['monday'] as const,
-    connection: () => [...queryKeys.monday.all, 'connection'] as const,
-    // Additional keys...
-  },
-};
-```
-
-This factory ensures consistent cache keys across the application.
-
-[RULE] Always use the query key factory.
 
 </section>
 
@@ -101,17 +135,7 @@ export function useDashboardData() {
     };
   }, [schoolsQuery.data, visitsQuery.data]);
   
-  return {
-    data: dashboardData,
-    isLoading,
-    error,
-    refetch: async () => {
-      await Promise.all([
-        schoolsQuery.refetch(),
-        visitsQuery.refetch(),
-      ]);
-    }
-  };
+  return { data: dashboardData, isLoading, error, refetch: /* ... */ };
 }
 ```
 
@@ -141,13 +165,62 @@ export function useCreateSchool() {
       return await response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.entities.list('schools') });
+      queryClient.invalidateQueries({ queryKey: queryKeys.schools.list() });
     },
   });
 }
 ```
 
+For optimistic updates, use the optimistic mutation utility:
+
+```typescript
+import { useOptimisticMutation } from '@/hooks/query/useOptimisticMutationRQ';
+
+const { mutate } = useOptimisticMutation(
+  updateSchool,
+  {
+    invalidateQueries: [queryKeys.schools.list()],
+    onMutate: async (newData) => {
+      // Optimistic update logic
+    }
+  }
+);
+```
+
 [RULE] Include proper cache invalidation in mutations.
+
+</section>
+
+<section id="pagination-pattern">
+
+## Pagination Pattern
+
+For paginated resources, use the `usePaginatedQuery` hook:
+
+```typescript
+function SchoolList() {
+  const [params, setParams] = useState({
+    page: 1,
+    limit: 10,
+    sortBy: 'schoolName',
+    sortOrder: 'asc' as const
+  });
+  
+  const { 
+    items: schools, 
+    isLoading,
+    pagination
+  } = usePaginatedQuery({
+    entityType: 'schools',
+    params,
+    fetcher: fetchSchools
+  });
+  
+  // Component implementation...
+}
+```
+
+[RULE] Use the pagination hook for all paginated API resources.
 
 </section>
 
@@ -210,6 +283,33 @@ staleTime: 24 * 60 * 60 * 1000, // 24 hours
 ```
 
 [RULE] Configure cache settings based on data volatility.
+
+</section>
+
+<section id="feature-flag-integration">
+
+## Feature Flag Integration
+
+To facilitate gradual migration from SWR to React Query, use the feature flag system:
+
+```typescript
+import { useReactQuery } from '@/lib/query/utilities/feature-flags';
+
+function useSchoolData() {
+  // Check if React Query should be used for schools
+  if (useReactQuery('schools')) {
+    // Use React Query implementation
+    return useSchoolsRQ();
+  }
+  
+  // Fall back to SWR implementation
+  return useSchoolsSWR();
+}
+```
+
+This approach allows for progressive migration, A/B testing, quick rollback if issues are discovered, and a smooth transition for users.
+
+[RULE] Use feature flags to safely migrate from SWR to React Query.
 
 </section>
 

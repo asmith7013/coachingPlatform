@@ -8,7 +8,7 @@
  */
 import React, { createContext, useContext, useState, useCallback, ReactNode, useRef, useEffect, useMemo } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useMondayConnection, useMondayBoards, useMondayPreviews, useMondayImport } from './useMondayQueries';
+import { useMondayConnection, useMondayBoards, useMondayPreviews, useMondayImport } from './useMondayQueriesRQ';
 
 // Type imports
 import type { ImportPreview } from '@/lib/integrations/monday/types/import';

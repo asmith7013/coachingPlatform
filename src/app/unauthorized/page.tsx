@@ -1,3 +1,5 @@
+'use client';
+
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/core';
 import { textSize, color as textColors } from '@/lib/tokens/typography';

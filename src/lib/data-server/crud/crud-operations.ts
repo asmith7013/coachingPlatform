@@ -6,8 +6,8 @@ import { sanitizeDocument, removeTimestampFields } from "@data-utilities/transfo
 import { handleServerError } from "@error/handle-server-error";
 import { connectToDB } from "@data-server/db/connection";
 import type { z } from "zod";
-import type { CrudResultType } from "@core-types/crud";
-import type { BaseDocument } from "@core-types/document";
+import { BaseDocument } from "@core-types/document";
+import { StandardResponse } from "@core-types/response";
 
 // Define type alias for inferred schema types
 type InferSchema<T extends ZodSchema> = z.infer<T>;
@@ -20,7 +20,7 @@ export async function createItem<Doc extends BaseDocument, Schema extends ZodSch
   schema: Schema,
   data: unknown,
   pathsToRevalidate: string[] = []
-): Promise<CrudResultType<InferSchema<Schema>>> {
+): Promise<StandardResponse<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();
@@ -39,12 +39,13 @@ export async function createItem<Doc extends BaseDocument, Schema extends ZodSch
 
     return {
       success: true,
-      data: sanitizeDocument(created, schema)
+      items: [sanitizeDocument(created, schema)]
     };
   } catch (error) {
     return {
       success: false,
-      error: handleServerError(error)
+      items: [],
+      message: handleServerError(error)
     };
   }
 }
@@ -58,7 +59,7 @@ export async function updateItem<Doc extends BaseDocument, Schema extends ZodSch
   id: string,
   data: unknown,
   pathsToRevalidate: string[] = []
-): Promise<CrudResultType<InferSchema<Schema>>> {
+): Promise<StandardResponse<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();
@@ -79,7 +80,8 @@ export async function updateItem<Doc extends BaseDocument, Schema extends ZodSch
     if (!updated) {
       return {
         success: false,
-        error: handleServerError(new Error(`Item with ID ${id} not found`))
+        items: [],
+        message: handleServerError(new Error(`Item with ID ${id} not found`))
       };
     }
 
@@ -88,12 +90,13 @@ export async function updateItem<Doc extends BaseDocument, Schema extends ZodSch
 
     return {
       success: true,
-      data: sanitizeDocument(updated, schema)
+      items: [sanitizeDocument(updated, schema)]
     };
   } catch (error) {
     return {
       success: false,
-      error: handleServerError(error)
+      items: [],
+      message: handleServerError(error)
     };
   }
 }
@@ -106,7 +109,7 @@ export async function deleteItem<Doc extends BaseDocument, Schema extends ZodSch
   schema: Schema,
   id: string,
   pathsToRevalidate: string[] = []
-): Promise<CrudResultType<InferSchema<Schema>>> {
+): Promise<StandardResponse<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();
@@ -116,7 +119,8 @@ export async function deleteItem<Doc extends BaseDocument, Schema extends ZodSch
     if (!deleted) {
       return {
         success: false,
-        error: handleServerError(new Error(`Item with ID ${id} not found`))
+        items: [],
+        message: handleServerError(new Error(`Item with ID ${id} not found`))
       };
     }
 
@@ -125,12 +129,13 @@ export async function deleteItem<Doc extends BaseDocument, Schema extends ZodSch
 
     return {
       success: true,
-      data: sanitizeDocument(deleted, schema)
+      items: [sanitizeDocument(deleted, schema)]
     };
   } catch (error) {
     return {
       success: false,
-      error: handleServerError(error)
+      items: [],
+      message: handleServerError(error)
     };
   }
 } 

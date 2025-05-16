@@ -2,8 +2,8 @@
 import React from 'react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { PaginatedResponse } from '@core-types/response';
-import { queryKeys } from '@query/queryKeys';
-import { handleQueryError } from '@query/utilities/errorHandling';
+import { queryKeys } from '@/lib/query/query-keys';
+import { handleQueryError } from '@/lib/query/utilities/error-handling';
 
 export interface PaginationQueryParams {
   page?: number;

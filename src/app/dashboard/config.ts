@@ -7,11 +7,14 @@ import {
     ClipboardDocumentListIcon,
     CalendarDaysIcon,
     StarIcon,
+    AcademicCapIcon,
+    BookOpenIcon
 } from '@heroicons/react/24/outline'
 
 import type { NavigationItem, TeamItem } from '@/components/composed/layouts/NavigationSidebar'
+import { PERMISSIONS } from '@core-types/auth'
 
-// Navigation configuration with nested items and authorization
+// Navigation configuration with proper permission constants
 export const navigationItems: NavigationItem[] = [
   { 
     name: 'Dashboard', 
@@ -24,57 +27,57 @@ export const navigationItems: NavigationItem[] = [
     href: '/dashboard/schoolList', 
     icon: BuildingLibraryIcon, 
     current: false,
-    requiredPermissions: ['schools.view']
+    requiredPermissions: [PERMISSIONS.SCHOOLS_VIEW]
   },
   { 
     name: 'Classroom Notes',
     href: '/dashboard/classroomNotes',
     icon: DocumentTextIcon,
     current: false,
-    requiredPermissions: ['notes.view']
+    requiredPermissions: [PERMISSIONS.NOTES_VIEW]
   },
   { 
     name: 'Look Fors', 
     href: '/dashboard/lookForList', 
     icon: ClipboardDocumentListIcon, 
     current: false,
-    requiredPermissions: ['lookfors.view']
+    requiredPermissions: [PERMISSIONS.LOOKFORS_VIEW]
   },
   { 
     name: 'Schedule', 
     href: '/dashboard/schedule', 
     icon: CalendarDaysIcon, 
     current: false,
-    requiredPermissions: ['schedule.view']
+    requiredPermissions: [PERMISSIONS.SCHEDULE_VIEW]
   },
   { 
     name: 'Scoring', 
     href: '/dashboard/scoring', 
     icon: StarIcon, 
     current: false,
-    requiredPermissions: ['scoring.view'],
-    requiredRoles: ['coach', 'admin']
+    requiredPermissions: [PERMISSIONS.SCORING_VIEW],
+    requiredRoles: ['Coach', 'Administrator']
   },
   { 
     name: 'Staff', 
     href: '/dashboard/staff', 
     icon: UserGroupIcon, 
     current: false,
-    requiredPermissions: ['staff.view'],
+    requiredPermissions: [PERMISSIONS.STAFF_VIEW],
     children: [
       { 
         name: 'Teaching Lab', 
         href: '/dashboard/staff/teachingLab', 
-        icon: UserGroupIcon, 
+        icon: BookOpenIcon, 
         current: false,
-        requiredPermissions: ['staff.teachinglab.view']
+        requiredPermissions: [PERMISSIONS.STAFF_TEACHINGLAB_VIEW]
       },
       { 
         name: 'NYCPS Staff', 
         href: '/dashboard/staff/nycps', 
-        icon: UserGroupIcon, 
+        icon: AcademicCapIcon, 
         current: false,
-        requiredPermissions: ['staff.nycps.view']
+        requiredPermissions: [PERMISSIONS.STAFF_NYCPS_VIEW]
       }
     ]
   }

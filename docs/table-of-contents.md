@@ -18,16 +18,15 @@
   - [styling patterns](#styling-patterns)
 - [Data-flow](#data-flow)
   - [api patterns](#api-patterns)
+  - [authentication](#authentication)
   - [error handling](#error-handling)
   - [monday integration](#monday-integration)
   - [mongodb integration](#mongodb-integration)
+  - [react query patterns](#react-query-patterns)
   - [sanitization system](#sanitization-system)
   - [schema system](#schema-system)
   - [server actions](#server-actions)
   - [type system](#type-system)
-  - [authentication](#authentication)
-
-
 - [Workflows](#workflows)
   - [common tasks](#common-tasks)
   - [cursor integration](#cursor-integration)
