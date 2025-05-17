@@ -1,24 +1,18 @@
 import { NextResponse } from "next/server";
 import { handleServerError } from "@/lib/error/handle-server-error";
-import { standardizeResponse } from "@api-responses/standardize";
+import { collectionizeResponse } from "@api-responses/standardize";
 import { FetchParams } from "@/lib/types/core/api";
 import { BaseReference } from "@/lib/types/core/reference";
+import { PaginatedResponse } from "@core-types/response";
 
 /**
  * Generic type for any fetch function that returns items and total
  */
-// Modified type that's more flexible with dates:
-export type FetchFunction<T> = (params: FetchParams) => Promise<{
-  items: (T | Omit<T, 'createdAt' | 'updatedAt'> & {
-    createdAt?: string | Date;
-    updatedAt?: string | Date;
-  })[];
-  total: number;
-  success: boolean;
-  error?: string;
-  page?: number;
-  limit?: number;
-}>;
+// Modified to use PaginatedResponse which includes page and limit
+export type FetchFunction<T> = (params: FetchParams) => Promise<PaginatedResponse<T | Omit<T, 'createdAt' | 'updatedAt'> & {
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}>>;
 
 /**
  * Type for mapping functions to transform data items
@@ -116,7 +110,7 @@ export function createReferenceEndpoint<T, R extends BaseReference>(options: Ref
       // Check for fetch errors
       if (!data.success) {
         return NextResponse.json(
-          standardizeResponse({
+          collectionizeResponse({
             items: [],
             success: false,
             message: data.error || `Failed to fetch ${endpoint} data`
@@ -130,20 +124,22 @@ export function createReferenceEndpoint<T, R extends BaseReference>(options: Ref
       
       console.log(`📤 ${logPrefix} /${endpoint} response: ${references.length} items found`);
 
-      // Return standardized response
-      return NextResponse.json(standardizeResponse({
+      // Return response with pagination details
+      return NextResponse.json({
         items: references,
         total: data.total,
-        page: data.page || page,
-        limit: data.limit || limit,
+        page: data.page,
+        limit: data.limit,
+        totalPages: data.totalPages,
+        hasMore: data.hasMore,
         success: true
-      }));
+      });
     } catch (error) {
       const errorMessage = handleServerError(error);
       console.error(`❌ Error in /${req.url.split("/api/")[1]}: ${errorMessage}`);
       
       return NextResponse.json(
-        standardizeResponse({
+        collectionizeResponse({
           items: [],
           success: false,
           message: errorMessage

@@ -1,4 +1,4 @@
-import { createEntityHooks } from '@pattern-hooks/useEntityHooks';
+import { createEntityHooks } from '@/lib/query/factories/entity-hooks';
 import { 
   SchoolZodSchema, 
   SchoolInputZodSchema, 

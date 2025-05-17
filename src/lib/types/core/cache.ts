@@ -1,5 +1,6 @@
 import { QueryKey } from '@tanstack/react-query';
 import { BaseResponse } from '@core-types/response';
+import { BaseDocument } from '@/lib/types/core/document';
 
 /**
  * Cache operation types for entity mutations
@@ -51,9 +52,9 @@ export interface EntityCacheOperations {
   /** Invalidate a single entity by ID */
   invalidateDetail: (id: string) => Promise<void>;
   /** Update entity data directly in cache */
-  updateEntity: <T>(id: string, updater: (old: T) => T) => Promise<void>;
+  updateEntity: <T extends BaseDocument>(id: string, updater: (old: T) => T) => Promise<void>;
   /** Add a new entity to list cache */
-  addEntity: <T>(entity: T) => Promise<void>;
+  addEntity: <T extends BaseDocument>(entity: T) => Promise<void>;
   /** Remove an entity from list cache */
   removeEntity: (id: string) => Promise<void>;
 } 

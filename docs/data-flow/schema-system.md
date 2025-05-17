@@ -86,7 +86,82 @@ MongoDB schemas must align with Zod schemas:
 Set timestamps: true in schema options
 Set _id: false for nested document schemas
 
-[RULE] Follow thes
+</section>
+
+<section id="type-modification-strategies">
+
+## Type Modification Strategies
+
+When encountering type compatibility issues between different parts of the application, prefer direct modification of base types over creating transformation utilities or adapters.
+
+### Prioritize Type Definitions
+
+Our system follows this precedence for resolving type conflicts:
+
+1. **Modify Base Types**: Always update the core type definitions first (`/src/lib/types/core/` and `/src/lib/types/domain/`)
+2. **Align Zod Schemas**: Update Zod schema definitions to match the core types
+3. **Adjust API Interfaces**: Ensure server action and API response types align with core types
+4. **Update Consuming Code**: Only after core types are finalized, update components and hooks
+
+### Avoid Transformation Layers
+
+While it may seem expedient to create transformation utilities that convert between incompatible types, this approach leads to:
+
+- Additional complexity and maintenance burden
+- Hidden type inconsistencies
+- Potential runtime errors
+- Difficulty tracing data flow
+
+```typescript
+// ❌ Avoid transformation utilities like this:
+const transformedResponse = transformResponseTypes(originalResponse);
+
+// ✅ Instead, fix the base type definitions:
+// In /src/lib/types/core/response.ts
+export interface BaseResponse {
+  success: boolean;
+  // Updated properties...
+}
+```
+
+### When to Use Transformers
+
+Use transformers only for legitimate data transformations, not type coercion:
+
+- **Valid Use**: Converting string dates to Date objects
+- **Valid Use**: Formatting display values from raw data
+- **Invalid Use**: Converting between incompatible API response formats
+- **Invalid Use**: Working around TypeScript errors with type assertions
+
+```typescript
+// ✅ Valid transformation
+const dateTransformer = (item: ItemWithStringDates): ItemWithDateObjects => ({
+  ...item,
+  createdAt: new Date(item.createdAt),
+  updatedAt: new Date(item.updatedAt)
+});
+
+// ❌ Invalid type coercion
+const responseTransformer = (response: EntityResponse): CollectionResponse => ({
+  items: [response.data],
+  total: 1,
+  success: response.success
+});
+```
+
+### Implementation Strategy
+
+When refactoring to fix type issues:
+
+1. Identify the root cause of the type incompatibility
+2. Update the source type definitions
+3. Make necessary changes to Zod schemas
+4. Update any dependent code
+5. Use TypeScript to verify that all parts of the system are type-compatible
+
+[RULE] Always update core type definitions rather than creating transformation layers to work around type issues.
+
+</section>
 
 <section id="input-vs-full-schema-pattern">
 

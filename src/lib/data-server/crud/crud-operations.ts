@@ -7,7 +7,7 @@ import { handleServerError } from "@error/handle-server-error";
 import { connectToDB } from "@data-server/db/connection";
 import type { z } from "zod";
 import { BaseDocument } from "@core-types/document";
-import { StandardResponse } from "@core-types/response";
+import { CollectionResponse } from "@core-types/response";
 
 // Define type alias for inferred schema types
 type InferSchema<T extends ZodSchema> = z.infer<T>;
@@ -20,7 +20,7 @@ export async function createItem<Doc extends BaseDocument, Schema extends ZodSch
   schema: Schema,
   data: unknown,
   pathsToRevalidate: string[] = []
-): Promise<StandardResponse<InferSchema<Schema>>> {
+): Promise<CollectionResponse<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();
@@ -59,7 +59,7 @@ export async function updateItem<Doc extends BaseDocument, Schema extends ZodSch
   id: string,
   data: unknown,
   pathsToRevalidate: string[] = []
-): Promise<StandardResponse<InferSchema<Schema>>> {
+): Promise<CollectionResponse<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();
@@ -109,7 +109,7 @@ export async function deleteItem<Doc extends BaseDocument, Schema extends ZodSch
   schema: Schema,
   id: string,
   pathsToRevalidate: string[] = []
-): Promise<StandardResponse<InferSchema<Schema>>> {
+): Promise<CollectionResponse<InferSchema<Schema>>> {
   try {
     // Ensure database connection
     await connectToDB();

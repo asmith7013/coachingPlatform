@@ -6,7 +6,7 @@
  */
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { handleClientError } from '@error/handle-client-error';
-import { queryKeys } from '@/lib/query/query-keys';
+import { queryKeys } from '@/lib/query/core/keys';
 
 /**
  * Hook for querying a single entity by ID

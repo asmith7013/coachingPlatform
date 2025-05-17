@@ -1,9 +1,9 @@
 import { registerEntitySelector } from './registry';
 import { transformDateFieldsArray } from '@data-utilities/transformers/date-transformer';
-import { SchoolWithDates } from '@domain-hooks/useSchoolsRQ';
-import { StaffWithDates } from '@domain-hooks/useStaffRQ';
-import { VisitWithDates } from '@domain-hooks/useVisitsRQ';
-import { StandardResponse } from '@core-types/response';
+import { SchoolWithDates } from '@/hooks/domain/useSchools';
+import { StaffWithDates } from '@/hooks/domain/useUserStaff';
+import { VisitWithDates } from '@/hooks/domain/useVisits';
+import { CollectionResponse } from '@core-types/response';
 import { BaseDocument } from '@core-types/document';
 
 /**
@@ -12,17 +12,17 @@ import { BaseDocument } from '@core-types/document';
  */
 export function registerStandardSelectors(): void {
   // Register Schools selector
-  registerEntitySelector<BaseDocument, SchoolWithDates[]>('schools', (data: StandardResponse<BaseDocument>) => {
+  registerEntitySelector<BaseDocument, SchoolWithDates[]>('schools', (data: CollectionResponse<BaseDocument>) => {
     return transformDateFieldsArray(data?.items || []) as SchoolWithDates[];
   });
 
   // Register Staff selector
-  registerEntitySelector<unknown, StaffWithDates[]>('staff', (data: StandardResponse<unknown>) => {
+  registerEntitySelector<BaseDocument, StaffWithDates[]>('staff', (data: CollectionResponse<BaseDocument>) => {
     return transformDateFieldsArray(data?.items || []) as StaffWithDates[];
   });
 
   // Register Visits selector
-  registerEntitySelector<unknown, VisitWithDates[]>('visits', (data: StandardResponse<unknown>) => {
+  registerEntitySelector<BaseDocument, VisitWithDates[]>('visits', (data: CollectionResponse<BaseDocument>) => {
     return transformDateFieldsArray(data?.items || []) as VisitWithDates[];
   });
 

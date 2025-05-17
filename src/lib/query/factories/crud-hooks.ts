@@ -1,14 +1,13 @@
 import { useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { ZodSchema } from 'zod';
-import { queryKeys } from './query-keys';
-import { usePaginatedQuery, PaginationQueryParams } from '@query-hooks/usePaginatedQueryRQ';
-import { useEntityQuery } from '@query-hooks/useEntityQueryRQ';
+import { queryKeys } from '../core/keys';
+import { usePaginatedQuery, PaginationQueryParams } from '@/hooks/query/usePaginatedQuery';
+import { useEntityQuery } from '@/hooks/query/useEntityQuery';
 import { useFiltersAndSorting } from '@ui-hooks/useFiltersAndSorting';
-import { isPaginatedResponse } from './utilities/response-types';
-import { StandardResponse, PaginatedResponse } from '@core-types/response';
-// import { handleClientError } from '@/lib/error';
-import { useOptimisticMutation } from '@query-hooks/useOptimisticMutationRQ';
+import { isPaginatedResponse } from '@query/utilities/response-types';
+import { PaginatedResponse, CollectionResponse } from '@core-types/response';
+import { useOptimisticMutation } from '@/hooks/query/useOptimisticMutation';
 import { BaseDocument } from '@core-types/document';
 import { PaginatedResult } from '@core-types/pagination';
 
@@ -25,10 +24,10 @@ export interface CrudHooksConfig<T, TInput> {
   /** Server actions for CRUD operations */
   serverActions: {
     fetch: (params: PaginationQueryParams) => Promise<PaginatedResponse<T>>;
-    fetchById?: (id: string) => Promise<StandardResponse<T>>;
-    create?: (data: TInput) => Promise<StandardResponse<T>>;
-    update?: (id: string, data: Partial<TInput>) => Promise<StandardResponse<T>>;
-    delete?: (id: string) => Promise<StandardResponse<T>>;
+    fetchById?: (id: string) => Promise<CollectionResponse<T>>;
+    create?: (data: TInput) => Promise<CollectionResponse<T>>;
+    update?: (id: string, data: Partial<TInput>) => Promise<CollectionResponse<T>>;
+    delete?: (id: string) => Promise<CollectionResponse<T>>;
   };
   
   /** Default parameters for queries */
@@ -159,7 +158,7 @@ export function createCrudHooks<
     
     // Create mutation
     const createMutation = serverActions.create
-      ? useOptimisticMutation<TInput, StandardResponse<T>, Error, { previousData?: PaginatedResult<T> }>(
+      ? useOptimisticMutation<TInput, CollectionResponse<T>, Error, { previousData?: PaginatedResult<T> }>(
           serverActions.create,
           {
             invalidateQueries: [queryKeys.entities.list(entityType)],
@@ -215,7 +214,7 @@ export function createCrudHooks<
     const updateMutation = serverActions.update
       ? useOptimisticMutation<
           { id: string; data: Partial<TInput> },
-          StandardResponse<T>,
+          CollectionResponse<T>,
           Error,
           { previousData?: PaginatedResult<T> }
         >(
@@ -292,7 +291,7 @@ export function createCrudHooks<
     
     // Delete mutation
     const deleteMutation = serverActions.delete
-      ? useOptimisticMutation<string, StandardResponse<T>, Error, { previousData?: PaginatedResult<T> }>(
+      ? useOptimisticMutation<string, CollectionResponse<T>, Error, { previousData?: PaginatedResult<T> }>(
           serverActions.delete,
           {
             invalidateQueries: [queryKeys.entities.list(entityType)],

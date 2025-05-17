@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { handleClientError } from '@error/handle-client-error';
+import { handleClientError, logError, createErrorContext } from '@/lib/error';
+import { ErrorContext } from '@core-types/error';
 import { BaseResponse } from '@core-types/response';
 
 // import { ErrorResponse } from '@core-types/error';
@@ -13,6 +14,7 @@ export interface ServerResponse<T = unknown> extends BaseResponse {
 
 /**
  * Options for useErrorHandledMutation
+ * @deprecated Use ErrorHandlingOptions from @core-types/error instead
  */
 export interface MutationOptions {
   /**
@@ -22,6 +24,7 @@ export interface MutationOptions {
   
   /**
    * Context to include in error logs
+   * @deprecated Use ErrorContext type for more structured context
    */
   errorContext?: string;
   
@@ -34,6 +37,16 @@ export interface MutationOptions {
    * Whether to throw errors (false by default - errors are returned in state)
    */
   throwErrors?: boolean;
+}
+
+/**
+ * Enhanced options for error-handled mutations
+ */
+export interface ErrorHandlingOptions extends MutationOptions {
+  /**
+   * Structured error context object
+   */
+  context?: ErrorContext;
 }
 
 /**
@@ -72,6 +85,27 @@ export interface MutationResult<T = unknown, A extends unknown[] = unknown[]> {
 }
 
 /**
+ * Extract error message from response
+ */
+function extractErrorMessage(
+  response: BaseResponse & { data?: unknown },
+  defaultMessage: string
+): string {
+  // First try to get from message property
+  if (response.message) {
+    return response.message;
+  }
+  
+  // Then try to get from errors array
+  if (response.errors && response.errors.length > 0) {
+    return response.errors.map(e => e.error).join(', ');
+  }
+  
+  // Fall back to error property
+  return response.error || defaultMessage;
+}
+
+/**
  * A hook for handling server mutations with proper error handling
  * 
  * @param mutationFn The async function to execute
@@ -80,11 +114,12 @@ export interface MutationResult<T = unknown, A extends unknown[] = unknown[]> {
  */
 export function useErrorHandledMutation<T = unknown, A extends unknown[] = unknown[]>(
   mutationFn: (...args: A) => Promise<BaseResponse & { data?: T }>,
-  options: MutationOptions = {}
+  options: ErrorHandlingOptions = {}
 ): MutationResult<T, A> {
   const {
     errorResetTime,
-    errorContext = 'mutation',
+    errorContext,
+    context,
     defaultErrorMessage = 'Operation failed',
     throwErrors = false
   } = options;
@@ -106,27 +141,31 @@ export function useErrorHandledMutation<T = unknown, A extends unknown[] = unkno
     setIsLoading(true);
     setError(null);
     
-    // Extract error message from response using your existing error handling pattern
-    const extractErrorMessage = (response: BaseResponse & { data?: T }): string => {
-      // First try to get from message property
-      if (response.message) {
-        return response.message;
-      }
-      
-      // Then try to get from errors array
-      if (response.errors && response.errors.length > 0) {
-        return response.errors.map(e => e.error).join(', ');
-      }
-      
-      // Fall back to error property
-      return response.error || defaultErrorMessage;
-    };
-    
     try {
       const response = await mutationFn(...args);
       
       if (!response.success) {
-        const errorMsg = extractErrorMessage(response);
+        const errorMsg = extractErrorMessage(response, defaultErrorMessage);
+        
+        // Create error context - prefer structured context if available
+        const errorCtx: ErrorContext = context || (
+          typeof errorContext === 'string' 
+            ? createErrorContext('Mutation', errorContext)
+            : createErrorContext('Mutation', 'execute')
+        );
+        
+        // Log error through unified error system
+        logError(new Error(errorMsg), {
+          ...errorCtx,
+          metadata: {
+            ...errorCtx.metadata,
+            responseData: response,
+            args: args.map(arg => 
+              typeof arg === 'object' ? '[Object]' : String(arg)
+            ),
+          }
+        });
+        
         setError(errorMsg);
         setIsSuccess(false);
         
@@ -145,7 +184,16 @@ export function useErrorHandledMutation<T = unknown, A extends unknown[] = unkno
       setIsSuccess(true);
       return response as ServerResponse<T>;
     } catch (e) {
-      const errorMsg = handleClientError(e, errorContext);
+      // Create error context - prefer structured context if available
+      const errorCtx: ErrorContext = context || (
+        typeof errorContext === 'string' 
+          ? { component: 'Mutation', operation: errorContext }
+          : { component: 'Mutation', operation: 'execute' }
+      );
+      
+      // Use handleClientError which now integrates with the core error system
+      const errorMsg = handleClientError(e, errorCtx.component || 'Mutation');
+      
       setError(errorMsg);
       setIsSuccess(false);
       
@@ -164,7 +212,7 @@ export function useErrorHandledMutation<T = unknown, A extends unknown[] = unkno
     } finally {
       setIsLoading(false);
     }
-  }, [mutationFn, errorContext, errorResetTime, throwErrors, defaultErrorMessage]);
+  }, [mutationFn, errorContext, context, errorResetTime, throwErrors, defaultErrorMessage]);
 
   return {
     mutate,
@@ -181,7 +229,7 @@ export function useErrorHandledMutation<T = unknown, A extends unknown[] = unkno
  */
 export function useVoidMutation(
   mutationFn: (...args: unknown[]) => Promise<ServerResponse<void>>,
-  options: MutationOptions = {}
+  options: ErrorHandlingOptions = {}
 ): Omit<MutationResult<void>, 'data'> {
   const result = useErrorHandledMutation(mutationFn, options);
   // Omit data from the result since it's always null

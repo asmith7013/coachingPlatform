@@ -5,7 +5,7 @@ import { Button } from '@/components/core/Button';
 import { Input } from '@/components/core/fields/Input';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { Alert } from '@/components/core/feedback/Alert';
-import { useMondayUserByEmail } from '@/hooks/integrations/monday/useMondayQueriesRQ';
+import { useMondayUserByEmail } from '@/hooks/integrations/monday/useMondayQueries';
 import type { MondayUser } from '@/lib/integrations/monday/types/api';
 
 export interface UserFormProps {

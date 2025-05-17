@@ -1,13 +1,21 @@
-import { StandardResponse } from '@core-types/response';
-import { StandardResponseSchema } from '@zod-schema/validation/response';
+import { CollectionResponse } from '@core-types/response';
+import { CollectionResponseSchema } from '@zod-schema/validation/response';
+
+
+// Updated - Option 1: Add new function with deprecation notice
+/**
+ * @deprecated Use collectionizeResponse instead
+ */
+export function standardizeResponse<T = Record<string, unknown>>(data: unknown): CollectionResponse<T> {
+  return collectionizeResponse(data);
+}
 
 /**
  * Standardizes API responses to ensure consistent format
  * @param data - The data to standardize
  */
-export function standardizeResponse<T = Record<string, unknown>>(
-  data: unknown
-): StandardResponse<T> {
+
+export function collectionizeResponse<T = Record<string, unknown>>(data: unknown): CollectionResponse<T> {
   // Handle undefined or null
   if (data === undefined || data === null) {
     return {
@@ -35,7 +43,7 @@ export function standardizeResponse<T = Record<string, unknown>>(
       'items' in objectData && 
       Array.isArray(objectData.items)
     ) {
-      return StandardResponseSchema.parse(objectData) as StandardResponse<T>;
+      return CollectionResponseSchema.parse(objectData) as CollectionResponse<T>;
     }
     
     // Check if there's any array property that could be items
@@ -72,7 +80,7 @@ export function standardizeResponse<T = Record<string, unknown>>(
 /**
  * Use this wrapper for API route handlers to ensure standardized responses
  */
-export function withStandardResponse<T, Args extends unknown[]>(
+export function withCollectionResponse<T, Args extends unknown[]>(
   handler: (...args: Args) => Promise<T | Response> | T | Response
 ) {
   return async (...args: Args) => {

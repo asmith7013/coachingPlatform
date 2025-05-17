@@ -1,0 +1,83 @@
+// src/lib/api/responses/response-helpers.ts
+import { 
+    BaseResponse, 
+    CollectionResponse,
+    EntityResponse 
+  } from '@core-types/response';
+  import { createErrorResponse as createCoreErrorResponse } from '@core-types/error';
+  import { captureError, createErrorContext } from '@/lib/error/error-monitor';
+  import { handleServerError } from '@/lib/error/handle-server-error';
+  
+  /**
+   * Creates a success response for a collection
+   */
+  export function createCollectionResponse<T>(
+    items: T[], 
+    message?: string
+  ): CollectionResponse<T> {
+    return {
+      success: true,
+      items,
+      total: items.length,
+      empty: items.length === 0,
+      message
+    };
+  }
+  
+  /**
+   * Creates a success response for a single entity
+   */
+  export function createEntityResponse<T>(
+    data: T, 
+    message?: string
+  ): EntityResponse<T> {
+    return {
+      success: true,
+      data,
+      message
+    };
+  }
+  
+  /**
+   * Creates an error response with error monitoring integration
+   * 
+   * @param error - The error to format
+   * @param context - Optional context information (component/operation)
+   * @param status - HTTP status code (defaults to 500)
+   */
+  export function createMonitoredErrorResponse(
+    error: unknown,
+    context?: string | { component?: string; operation?: string },
+  ): BaseResponse {
+    // Format the context properly
+    const errorContext = typeof context === 'string' 
+      ? createErrorContext(context, 'api-response') 
+      : createErrorContext(
+          context?.component || 'api-response',
+          context?.operation || 'create-response'
+        );
+    
+    // Capture the error with monitoring
+    captureError(error, errorContext);
+    
+    // Process the error message with standardized handler
+    const errorMessage = handleServerError(error);
+    
+    // Create the standardized error response
+    return createCoreErrorResponse(errorMessage);
+  }
+  
+  /**
+   * Creates a simple error response without monitoring
+   * For non-critical errors that don't need monitoring
+   */
+  export function createErrorResponse(
+    error: string | Error,
+  ): BaseResponse {
+    const errorMessage = error instanceof Error ? error.message : error;
+    
+    return {
+      success: false,
+      error: errorMessage
+    };
+  }

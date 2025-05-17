@@ -1,52 +1,102 @@
-// Code for SentryErrorBoundary component
-// This component is a class component that uses Sentry to catch errors and report them to Sentry
-
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { captureError } from '@/lib/error';
-import { cn } from '@ui/utils/formatters';;
+import { logError, classifyError, createErrorContext, formatErrorMessage } from '@/lib/error';
+import { cn } from '@/lib/ui/utils/formatters';
+import { Alert } from '@/components/core/feedback/Alert';
+import { Button } from '@/components/core/Button';
+import { ErrorCategory, ErrorSeverity, ErrorContext } from '@core-types/error';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode | ((error: Error, resetError: () => void) => ReactNode);
   className?: string;
+  context?: ErrorContext | string;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  showErrorId?: boolean;
+  variant?: 'default' | 'minimal' | 'detailed';
 }
 
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
+  errorCategory: ErrorCategory;
+  errorSeverity: ErrorSeverity;
+  errorId: string | null;
 }
 
 /**
- * ErrorBoundary component that catches JavaScript errors in its child component tree
- * and integrates with the application's error monitoring system
+ * Unified error boundary that combines advanced error classification with
+ * flexible context handling and configurable UI presentation
  */
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+  ErrorBoundaryProps, 
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { 
+      hasError: false, 
+      error: null,
+      errorCategory: 'system',
+      errorSeverity: 'error',
+      errorId: null
+    };
   }
 
   static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
+    const { category, severity } = classifyError(error);
+    return { 
+      hasError: true, 
+      error,
+      errorCategory: category,
+      errorSeverity: severity,
+      errorId: `err_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+    };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Get component name from errorInfo
+    // Get component name from errorInfo for better context
     const componentMatch = errorInfo.componentStack?.match(/\n\s+in\s+([^\s]+)/);
     const component = componentMatch ? componentMatch[1] : 'Unknown';
     
-    // Capture error with our monitoring system
-    captureError(error, {
-      component,
-      operation: 'render',
-      category: 'system',
-      severity: 'error',
-      metadata: {
-        componentStack: errorInfo.componentStack,
-        reactError: true
-      }
-    });
+    // Create error context based on props
+    const errorContext: ErrorContext = typeof this.props.context === 'object'
+      ? {
+          ...this.props.context,
+          component: this.props.context.component || component,
+          operation: this.props.context.operation || 'render',
+          category: this.state.errorCategory,
+          severity: this.state.errorSeverity,
+          metadata: {
+            ...this.props.context.metadata,
+            componentStack: errorInfo.componentStack,
+            reactError: true,
+            errorId: this.state.errorId
+          }
+        }
+      : typeof this.props.context === 'string'
+        ? createErrorContext(component, this.props.context, {
+            category: this.state.errorCategory,
+            severity: this.state.errorSeverity,
+            metadata: { 
+              componentStack: errorInfo.componentStack,
+              reactError: true,
+              errorId: this.state.errorId
+            }
+          })
+        : {
+            component,
+            operation: 'render',
+            category: this.state.errorCategory,
+            severity: this.state.errorSeverity,
+            metadata: { 
+              componentStack: errorInfo.componentStack,
+              reactError: true,
+              errorId: this.state.errorId
+            }
+          };
+    
+    // Log error through unified system
+    logError(error, errorContext);
     
     // Call custom onError handler if provided
     if (this.props.onError) {
@@ -55,34 +105,143 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   resetError = () => {
-    this.setState({ hasError: false, error: null });
+    this.setState({ 
+      hasError: false, 
+      error: null,
+      errorCategory: 'system',
+      errorSeverity: 'error',
+      errorId: null
+    });
   };
 
   render() {
-    const { hasError, error } = this.state;
-    const { children, fallback, className } = this.props;
+    const { hasError, error, errorCategory, errorSeverity, errorId } = this.state;
+    const { 
+      children, 
+      fallback, 
+      className, 
+      showErrorId = false,
+      variant = 'default' 
+    } = this.props;
 
     if (hasError && error) {
+      // Use custom fallback if provided as a function
       if (typeof fallback === 'function') {
         return fallback(error, this.resetError);
       }
 
+      // Use custom fallback component if provided
       if (fallback) {
         return fallback;
       }
 
-      // Default error UI
+      // Get alert intent based on error severity
+      const getAlertIntent = () => {
+        switch (errorSeverity) {
+          case 'fatal':
+          case 'error':
+            return 'error';
+          case 'warning':
+            return 'warning';
+          case 'info':
+            return 'info';
+          default:
+            return 'error';
+        }
+      };
+
+      // Get category-specific message
+      const getCategoryMessage = () => {
+        switch (errorCategory) {
+          case 'validation':
+            return 'There was a validation error.';
+          case 'permission':
+            return 'You don\'t have permission to perform this action.';
+          case 'network':
+            return 'There was a network error. Please check your connection.';
+          case 'business':
+            return 'A business rule prevented this operation.';
+          case 'system':
+            return 'There was a system error. Our team has been notified.';
+          case 'unknown':
+          default:
+            return 'An unexpected error occurred.';
+        }
+      };
+
+      // Return UI based on the selected variant
+      if (variant === 'minimal') {
+        return (
+          <div className={cn('p-4 bg-red-50 border border-red-200 rounded-md', className)}>
+            <h2 className="text-lg font-medium text-red-800">Something went wrong</h2>
+            <p className="mt-1 text-sm text-red-700">{error.message || 'An unexpected error occurred'}</p>
+            <button
+              onClick={this.resetError}
+              className="mt-3 px-3 py-1 text-sm bg-red-100 text-red-800 rounded-md hover:bg-red-200"
+            >
+              Try again
+            </button>
+          </div>
+        );
+      }
+
+      if (variant === 'detailed') {
+        return (
+          <Alert intent={getAlertIntent()} className={cn("w-full", className)}>
+            <Alert.Title>
+              {getCategoryMessage()}
+            </Alert.Title>
+            <Alert.Description>
+              {formatErrorMessage(error)}
+              {showErrorId && errorId && (
+                <div className="mt-2 text-xs text-gray-500">
+                  Error ID: {errorId}
+                </div>
+              )}
+              <details className="mt-2">
+                <summary className="text-xs cursor-pointer">Error Details</summary>
+                <pre className="text-xs mt-1 whitespace-pre-wrap">
+                  {error.stack}
+                </pre>
+              </details>
+            </Alert.Description>
+            <div className="mt-4">
+              <Button 
+                intent="primary" 
+                appearance="solid"
+                onClick={this.resetError}
+              >
+                Try Again
+              </Button>
+            </div>
+          </Alert>
+        );
+      }
+
+      // Default variant
       return (
-        <div className={cn('p-4 bg-red-50 border border-red-200 rounded-md', className)}>
-          <h2 className="text-lg font-medium text-red-800">Something went wrong</h2>
-          <p className="mt-1 text-sm text-red-700">{error.message || 'An unexpected error occurred'}</p>
-          <button
-            onClick={this.resetError}
-            className="mt-3 px-3 py-1 text-sm bg-red-100 text-red-800 rounded-md hover:bg-red-200"
-          >
-            Try again
-          </button>
-        </div>
+        <Alert intent={getAlertIntent()} className={cn("w-full", className)}>
+          <Alert.Title>
+            {getCategoryMessage()}
+          </Alert.Title>
+          <Alert.Description>
+            {formatErrorMessage(error)}
+            {showErrorId && errorId && (
+              <div className="mt-2 text-xs text-gray-500">
+                Error ID: {errorId}
+              </div>
+            )}
+          </Alert.Description>
+          <div className="mt-4">
+            <Button 
+              intent="primary" 
+              appearance="solid"
+              onClick={this.resetError}
+            >
+              Try Again
+            </Button>
+          </div>
+        </Alert>
       );
     }
 

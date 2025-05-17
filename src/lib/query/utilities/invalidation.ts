@@ -1,6 +1,6 @@
 // src/lib/query/utilities/invalidation.ts
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query/query-keys';
+import { queryKeys } from '@/lib/query/core/keys';
 
 /**
  * Type-safe interface for cache invalidation operations

@@ -1,20 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query/query-keys';
+import { queryKeys } from '@/lib/query/core/keys';
 import { handleClientError } from '@/lib/error';
-import { StandardResponse } from '@core-types/response';
+import { CollectionResponse } from '@core-types/response';
 
 export interface BulkOperationOptions<T> {
   /** Entity type name (e.g., 'schools', 'staff') */
   entityType: string;
   
   /** Function to perform bulk upload */
-  bulkUpload?: (data: T[]) => Promise<StandardResponse<T>>;
+  bulkUpload?: (data: T[]) => Promise<CollectionResponse<T>>;
   
   /** Function to perform bulk delete */
-  bulkDelete?: (ids: string[]) => Promise<StandardResponse<unknown>>;
+  bulkDelete?: (ids: string[]) => Promise<CollectionResponse<unknown>>;
   
   /** Function to perform bulk update */
-  bulkUpdate?: (updates: Array<{ id: string; data: Partial<T> }>) => Promise<StandardResponse<T>>;
+  bulkUpdate?: (updates: Array<{ id: string; data: Partial<T> }>) => Promise<CollectionResponse<T>>;
   
   /** Error context for error reporting */
   errorContext?: string;
@@ -23,7 +23,7 @@ export interface BulkOperationOptions<T> {
 /**
  * Hook for performing bulk operations with React Query
  */
-export function useBulkOperationsRQ<T>({
+export function useBulkOperations<T>({
   entityType,
   bulkUpload,
   bulkDelete,

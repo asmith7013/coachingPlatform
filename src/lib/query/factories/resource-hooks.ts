@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import { useFiltersAndSortingRQ } from '@/hooks/ui/useFiltersAndSortingRQ';
-import { useReferenceDataRQ } from '@/hooks/query/useReferenceDataRQ';
-import { useBulkOperationsRQ } from '@/hooks/query/useBulkOperationsRQ';
-import { useQueriesManagerRQ } from '@/hooks/query/useQueriesManagerRQ';
-import { queryKeys } from '@/lib/query/query-keys';
-import { StandardResponse } from '@core-types/response';
+import { useFiltersAndSorting } from '@ui-hooks/useFiltersAndSorting';
+import { useReferenceData } from '@query-hooks/useReferenceData';
+import { useBulkOperations } from '@query-hooks/useBulkOperations';
+import { useQueriesManager } from '@query-hooks/useQueriesManager';
+import { queryKeys } from '@query/core/keys';
+import { CollectionResponse } from '@core-types/response';
 
 export interface ResourceManagerConfig<T, F extends Record<string, unknown> = Record<string, unknown>> {
   /** Entity type name (e.g., 'schools', 'staff') */
@@ -18,31 +18,31 @@ export interface ResourceManagerConfig<T, F extends Record<string, unknown> = Re
     sortOrder?: 'asc' | 'desc';
     filters?: F;
     search?: string;
-  }) => Promise<StandardResponse<T>>;
+  }) => Promise<CollectionResponse<T>>;
   
   /** Function to fetch single entity */
-  fetchById?: (id: string) => Promise<StandardResponse<T>>;
+  fetchById?: (id: string) => Promise<CollectionResponse<T>>;
   
   /** Function to create entity */
-  create?: (data: Partial<T>) => Promise<StandardResponse<T>>;
+  create?: (data: Partial<T>) => Promise<CollectionResponse<T>>;
   
   /** Function to update entity */
-  update?: (id: string, data: Partial<T>) => Promise<StandardResponse<T>>;
+  update?: (id: string, data: Partial<T>) => Promise<CollectionResponse<T>>;
   
   /** Function to delete entity */
-  delete?: (id: string) => Promise<StandardResponse<unknown>>;
+  delete?: (id: string) => Promise<CollectionResponse<unknown>>;
   
   /** Function to perform bulk upload */
-  bulkUpload?: (data: T[]) => Promise<StandardResponse<T>>;
+  bulkUpload?: (data: T[]) => Promise<CollectionResponse<T>>;
   
   /** Function to perform bulk delete */
-  bulkDelete?: (ids: string[]) => Promise<StandardResponse<unknown>>;
+  bulkDelete?: (ids: string[]) => Promise<CollectionResponse<unknown>>;
   
   /** Function to perform bulk update */
-  bulkUpdate?: (updates: Array<{ id: string; data: Partial<T> }>) => Promise<StandardResponse<T>>;
+  bulkUpdate?: (updates: Array<{ id: string; data: Partial<T> }>) => Promise<CollectionResponse<T>>;
   
   /** Function to fetch reference data */
-  fetchReferenceData?: (search?: string) => Promise<StandardResponse<unknown>>;
+  fetchReferenceData?: (search?: string) => Promise<CollectionResponse<unknown>>;
   
   /** Valid sort fields */
   validSortFields?: string[];
@@ -72,13 +72,13 @@ export interface ResourceManagerConfig<T, F extends Record<string, unknown> = Re
 /**
  * Hook for managing entity resources with React Query
  */
-export function useResourceManagerRQ<T, F extends Record<string, unknown> = Record<string, unknown>>({
+export function createResourceManager<T, F extends Record<string, unknown> = Record<string, unknown>>({
   entityType,
-  fetchList,
+  // fetchList,
   fetchById,
-  create,
-  update,
-  delete: deleteEntity,
+  // create,
+  // update,
+  // delete: deleteEntity,
   bulkUpload,
   bulkDelete,
   bulkUpdate,
@@ -108,7 +108,7 @@ export function useResourceManagerRQ<T, F extends Record<string, unknown> = Reco
     setPageSize,
     resetFilters,
     queryParams
-  } = useFiltersAndSortingRQ({
+  } = useFiltersAndSorting({
     storageKey: persistFilters ? `${entityType}-filters` : undefined,
     defaultFilters,
     defaultSortBy,
@@ -125,7 +125,7 @@ export function useResourceManagerRQ<T, F extends Record<string, unknown> = Reco
     isLoading: isLoadingReference,
     error: referenceError,
     refetch: refetchReference
-  } = useReferenceDataRQ({
+  } = useReferenceData({
     url: fetchReferenceData ? `/api/${entityType}/reference` : '',
     enabled: !!fetchReferenceData,
     fetcher: fetchReferenceData
@@ -145,7 +145,7 @@ export function useResourceManagerRQ<T, F extends Record<string, unknown> = Reco
     bulkUpdateAsync: updateBulkAsync,
     isUpdating,
     updateError
-  } = useBulkOperationsRQ({
+  } = useBulkOperations({
     entityType,
     bulkUpload,
     bulkDelete,
@@ -161,7 +161,7 @@ export function useResourceManagerRQ<T, F extends Record<string, unknown> = Reco
     error: entityError,
     invalidateQueries,
     queries
-  } = useQueriesManagerRQ({
+  } = useQueriesManager({
     queryKey: fetchById ? [...queryKeys.entities.detail(entityType, 'id')] : [],
     queryFn: fetchById ? () => fetchById('id') : async () => ({ success: true, items: [] }),
     errorContext

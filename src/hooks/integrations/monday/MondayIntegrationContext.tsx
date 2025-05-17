@@ -7,7 +7,7 @@
  * while leveraging React Query for data fetching.
  */
 import React, { createContext, useContext, useCallback, ReactNode } from 'react';
-import { useMondayConnection } from './useMondayQueriesRQ';
+import { useMondayConnection } from './useMondayQueries';
 import { handleClientError } from '@/lib/error/handle-client-error';
 
 // Define the connection action result type

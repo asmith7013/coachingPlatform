@@ -12,7 +12,11 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
 import type { ImportPreview } from '@/lib/integrations/monday/types';
-import { useMondayMutations } from '@/hooks/integrations/monday/useMondayMutations';
+import { 
+  useMondayBoard, 
+  useMondayPreviews, 
+  useMondayImport 
+} from '@/hooks/integrations/monday/useMondayQueries';
 
 /**
  * Monday Visit Selection Page
@@ -21,33 +25,37 @@ import { useMondayMutations } from '@/hooks/integrations/monday/useMondayMutatio
 export default function MondayVisitSelectionPage() {
   const router = useRouter();
   
-  // Use the Monday mutations hook for API operations
-  const { 
-    findPotentialVisits, 
-    importVisits, 
-    loading, 
-    error: mondayError 
-  } = useMondayMutations();
-  
   // State
   const [boardId, setBoardId] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previews, setPreviews] = useState<ImportPreview[]>([]);
   const [filteredPreviews, setFilteredPreviews] = useState<ImportPreview[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  
+  // React Query hooks
+  const boardMutation = useMondayBoard();
+  const importMutation = useMondayImport();
+  const previewsQuery = useMondayPreviews(boardId || null);
   
   // Filter state
   const [searchTerm, setSearchTerm] = useState('');
   const [showDuplicates, setShowDuplicates] = useState(true);
   const [showInvalid, setShowInvalid] = useState(true);
   
-  // Update local error state when hook error changes
+  // Update local error state when hook errors change
   useEffect(() => {
-    if (mondayError) {
-      setError(mondayError);
+    const queryError = previewsQuery.error || boardMutation.error || importMutation.error;
+    if (queryError) {
+      setError(queryError instanceof Error ? queryError.message : String(queryError));
     }
-  }, [mondayError]);
+  }, [previewsQuery.error, boardMutation.error, importMutation.error]);
+  
+  // Update previews when data changes
+  useEffect(() => {
+    if (previewsQuery.data) {
+      setPreviews(previewsQuery.data);
+    }
+  }, [previewsQuery.data]);
   
   // Fetch visit previews when board ID changes
   const fetchPreviews = useCallback(async () => {
@@ -56,20 +64,16 @@ export default function MondayVisitSelectionPage() {
       return;
     }
     
-    setIsLoading(true);
     setError(null);
     
     try {
-      const result = await findPotentialVisits(boardId);
-      // The result is already an array of ImportPreview
-      setPreviews(result);
+      // This will trigger the previewsQuery by setting the boardId state
+      await boardMutation.mutateAsync([boardId]);
     } catch (err) {
-      // Error is already handled by the hook and set to mondayError
       console.error('Error fetching previews:', err);
-    } finally {
-      setIsLoading(false);
+      setError(err instanceof Error ? err.message : String(err));
     }
-  }, [boardId, findPotentialVisits]);
+  }, [boardId, boardMutation]);
   
   // Apply filters when filter state or previews change
   useEffect(() => {
@@ -102,7 +106,7 @@ export default function MondayVisitSelectionPage() {
     });
   }, []);
   
-  // Handle import initiation - Using the hook
+  // Handle import initiation - Using React Query mutation
   const handleImport = useCallback(async () => {
     if (selectedItems.length === 0) {
       setError('Please select at least one visit to import');
@@ -112,8 +116,11 @@ export default function MondayVisitSelectionPage() {
     setError(null);
     
     try {
-      // Use the importVisits method from the hook
-      const result = await importVisits(selectedItems, boardId);
+      // Use the import mutation from React Query
+      const result = await importMutation.mutateAsync({ 
+        ids: selectedItems, 
+        boardId 
+      });
       
       // If we need to complete data for a single item
       if (result.completionRequired && result.completionData) {
@@ -133,10 +140,10 @@ export default function MondayVisitSelectionPage() {
         router.push('/dashboard/visits');
       }
     } catch (err) {
-      // Error is already handled by the hook and set to mondayError
       console.error('Error importing visits:', err);
+      setError(err instanceof Error ? err.message : String(err));
     }
-  }, [selectedItems, boardId, router, importVisits]);
+  }, [selectedItems, boardId, router, importMutation]);
   
   // Toggle select all
   const toggleSelectAll = useCallback(() => {
@@ -159,6 +166,9 @@ export default function MondayVisitSelectionPage() {
     setShowDuplicates(true);
     setShowInvalid(true);
   }, []);
+  
+  // Determine loading state from React Query hooks
+  const isLoading = boardMutation.isPending || previewsQuery.isLoading || importMutation.isPending;
   
   return (
     <div className="container mx-auto py-6">
@@ -186,9 +196,9 @@ export default function MondayVisitSelectionPage() {
             <div>
               <Button 
                 onClick={fetchPreviews}
-                disabled={loading || !boardId}
+                disabled={isLoading || !boardId}
               >
-                {isLoading || loading ? <Spinner size="sm" className="mr-2" /> : null}
+                {isLoading ? <Spinner size="sm" className="mr-2" /> : null}
                 Load Visits
               </Button>
             </div>
@@ -205,7 +215,7 @@ export default function MondayVisitSelectionPage() {
       )}
       
       {/* Loading state */}
-      {(isLoading || loading) && (
+      {isLoading && (
         <div className="flex justify-center items-center py-12">
           <Spinner size="lg" />
           <div className="ml-4">Loading visits from Monday.com...</div>
@@ -213,7 +223,7 @@ export default function MondayVisitSelectionPage() {
       )}
       
       {/* No visits found */}
-      {!isLoading && !loading && previews.length === 0 && boardId && (
+      {!isLoading && previews.length === 0 && boardId && (
         <Alert intent="info" className="mb-4">
           <Alert.Title>No Visits Found</Alert.Title>
           <Alert.Description>
@@ -223,7 +233,7 @@ export default function MondayVisitSelectionPage() {
       )}
       
       {/* Visit selection */}
-      {!isLoading && !loading && previews.length > 0 && (
+      {!isLoading && previews.length > 0 && (
         <div className="space-y-6">
           {/* Filters */}
           <Card>
@@ -279,10 +289,10 @@ export default function MondayVisitSelectionPage() {
             </div>
             <Button 
               intent="primary"
-              disabled={selectedItems.length === 0 || loading}
+              disabled={selectedItems.length === 0 || isLoading}
               onClick={handleImport}
             >
-              {loading ? <Spinner size="sm" className="mr-2" /> : null}
+              {isLoading ? <Spinner size="sm" className="mr-2" /> : null}
               Import Selected ({selectedItems.length})
             </Button>
           </div>

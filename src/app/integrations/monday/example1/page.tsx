@@ -6,9 +6,13 @@ import { Card } from "@/components/composed/cards";
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback";
 import { Select } from "@/components/core/fields";
-import { useMondayMutations } from "@/hooks/integrations/monday/useMondayMutations";
 import type { ImportPreview } from "@/lib/integrations/monday/types/import";
 import type { MondayBoard } from "@/lib/integrations/monday/types/board";
+import { 
+  useMondayConnection,
+  useMondayBoard,
+  useMondayUserByEmail
+} from '@/hooks/integrations/monday/useMondayQueries';
 
 export default function MondayLiveExamplePage() {
   // Use the API-based hook
@@ -31,6 +35,11 @@ export default function MondayLiveExamplePage() {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [transformPreview, setTransformPreview] = useState<ImportPreview | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  // React Query hooks
+  const connectionQuery = useMondayConnection();
+  const boardMutation = useMondayBoard();
+  const userQuery = useMondayUserByEmail(connectionData?.email || '');
   
   // Handle connection test
   const handleTestConnection = async () => {
@@ -95,6 +104,26 @@ export default function MondayLiveExamplePage() {
   
   // Combine errors for display
   const displayError = error || apiError;
+
+  // Handle board fetch
+  const handleFetchBoard = async () => {
+    if (!selectedBoardId) {
+      setError('Please enter a board ID');
+      return;
+    }
+    
+    setError(null);
+    
+    try {
+      await boardMutation.mutateAsync([selectedBoardId]);
+    } catch (err) {
+      console.error('Error fetching board:', err);
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  };
+  
+  // Determine loading state
+  const isLoading = connectionQuery.isLoading || boardMutation.isPending || userQuery.isLoading;
 
   return (
     <div className="container mx-auto p-6">
@@ -331,6 +360,75 @@ export default function MondayLiveExamplePage() {
           <Alert.Title>Error</Alert.Title>
           <Alert.Description>{displayError}</Alert.Description>
         </Alert>
+      )}
+      
+      {/* Board fetch */}
+      <Card className="mb-6">
+        <Card.Body>
+          <div className="flex flex-col md:flex-row gap-4 items-end">
+            <div className="flex-grow">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Board ID
+              </label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                value={selectedBoardId}
+                onChange={e => setSelectedBoardId(e.target.value)}
+                placeholder="Enter Monday.com board ID"
+              />
+            </div>
+            <div>
+              <Button 
+                onClick={handleFetchBoard}
+                disabled={isLoading || !selectedBoardId}
+              >
+                {isLoading ? <Spinner size="sm" className="mr-2" /> : null}
+                Fetch Board
+              </Button>
+            </div>
+          </div>
+        </Card.Body>
+      </Card>
+      
+      {/* User lookup */}
+      <Card className="mb-6">
+        <Card.Body>
+          <div className="flex flex-col md:flex-row gap-4 items-end">
+            <div className="flex-grow">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                User Email
+              </label>
+              <input
+                type="email"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                value={connectionData?.email || ''}
+                onChange={e => setConnectionData(prev => ({ ...prev, email: e.target.value }))}
+                placeholder="Enter user email"
+              />
+            </div>
+          </div>
+          
+          {userQuery.data && (
+            <div className="mt-4 p-4 bg-gray-50 rounded-md">
+              <Text className="font-medium">User Found</Text>
+              <Text className="text-gray-600">
+                Name: {userQuery.data.name}
+              </Text>
+              <Text className="text-gray-600">
+                Email: {userQuery.data.email}
+              </Text>
+            </div>
+          )}
+        </Card.Body>
+      </Card>
+      
+      {/* Loading state */}
+      {isLoading && (
+        <div className="flex justify-center items-center py-12">
+          <Spinner size="lg" />
+          <div className="ml-4">Loading...</div>
+        </div>
       )}
     </div>
   );

@@ -10,7 +10,7 @@ import { ZodSchema } from 'zod';
  * @param model Mongoose model to query
  * @param id Document ID to fetch
  * @param schema Zod schema to validate the document against
- * @returns Standardized response with the document or error
+ * @returns Collection response with the document or error
  */
 export async function fetchById<T>(
   model: Model<T>,

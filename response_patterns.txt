@@ -1,0 +1,565 @@
+src//app/tools/im-routines/page.tsx:    return routinesData.map((lesson) => ({
+src//app/tools/im-routines/page.tsx:          .map((r) => r.grade)
+src//app/tools/im-routines/page.tsx:        KHData.map((r) => r.grade).filter(isHighSchool)
+src//app/tools/im-routines/page.tsx:      (KHData.map((r) => r.grade).includes(g))
+src//app/tools/im-routines/page.tsx:          .map((r) => r.unit)
+src//app/tools/im-routines/page.tsx:          .map((r) => r.lessonNumber)
+src//app/tools/dev/seed-data/page.tsx:        await createFn(validationResult.data!);
+src//app/tools/dev/seed-data/page.tsx:              {errors.map((error, index) => (
+src//app/tools/dev/test-enum-mongoose/page.tsx:                    .map(([key, value]) => ({ key, value })),
+src//app/tools/dev/test-enum-mongoose/page.tsx:            {results.map((result, index) => (
+src//app/dashboard/classroomNotes/components/CurriculumSelector/index.tsx:            {Object.keys(curriculumData).map(course => (
+src//app/dashboard/classroomNotes/components/CurriculumSelector/index.tsx:            {availableUnits.map(unit => (
+src//app/dashboard/classroomNotes/components/CurriculumSelector/index.tsx:            {availableLessons.map(lesson => (
+src//app/dashboard/classroomNotes/page.tsx:    learningTargets: exampleLessonData.learningGoals.map(goal => `• ${goal}`).join('\n'),
+src//app/dashboard/classroomNotes/page.tsx:      learningTargets = exampleLessonData.learningGoals.map(goal => `• ${goal}`).join('\n');
+src//app/dashboard/layout.tsx:  const { isSignedIn, metadata, isLoading } = useAuthenticatedUser()
+src//app/dashboard/lookForList/page.tsx:        ...data,
+src//app/dashboard/lookForList/page.tsx:        {lookFors.map((lookFor: LookFor) => (
+src//app/dashboard/lookForList/page.tsx:            {lookFor.rubric.map((rubricItem, index) => (
+src//app/dashboard/staff/nycps/page.tsx:              {member.schools.map((schoolId) => (
+src//app/dashboard/staff/nycps/page.tsx:    return NYCPSStaffFieldConfig.map(field => {
+src//app/dashboard/staff/nycps/page.tsx:        {staff.map((member: NYCPSStaff) => (
+src//app/dashboard/schoolList/[schoolId]/page.tsx:        if (schoolsResponse.items.length === 0) {
+src//app/dashboard/schoolList/[schoolId]/page.tsx:        const schoolData = schoolsResponse.items[0];
+src//app/dashboard/schoolList/[schoolId]/page.tsx:        setStaff(staffResponse.items as NYCPSStaff[]);
+src//app/dashboard/schoolList/[schoolId]/page.tsx:          {school.gradeLevelsSupported?.map((grade, index) => (
+src//app/dashboard/schoolList/[schoolId]/page.tsx:          {schoolStaff.map((person) => (
+src//app/dashboard/schoolList/[schoolId]/page.tsx:          {lookFors.map((lookFor : LookFor, index : number) => (
+src//app/dashboard/schoolList/[schoolId]/page.tsx:              {schedule.map((entry : Period, index : number) => (
+src//app/dashboard/schoolList/page.tsx:        {schools.map((school: School) => (
+src//app/dashboard/schoolList/page.tsx:              {school.gradeLevelsSupported && school.gradeLevelsSupported.map((grade, index) => (
+src//app/dashboard/migration-test/page.tsx:            {Object.entries(flags).map(([key, value]) => (
+src//app/integrations/monday/example2/page.tsx:                  connectionQuery.data?.success ? 'Connected' : 'Not connected'}
+src//app/integrations/monday/visits/MondayVisitSelectionPage.tsx:    if (previewsQuery.data) {
+src//app/integrations/monday/visits/MondayVisitSelectionPage.tsx:      setPreviews(previewsQuery.data);
+src//app/integrations/monday/visits/MondayVisitSelectionPage.tsx:  }, [previewsQuery.data]);
+src//app/integrations/monday/visits/MondayVisitSelectionPage.tsx:          .map(preview => preview.original.id as string)
+src//app/integrations/monday/visits/MondayVisitSelectionPage.tsx:            {filteredPreviews.map(preview => (
+src//app/integrations/monday/visits/import/MondayVisitImportClient.tsx:import type { MondayImportResponse } from '@/lib/integrations/monday/types/import';
+src//app/integrations/monday/visits/import/MondayVisitImportClient.tsx:      const importRequest: MondayImportResponse = {
+src//app/integrations/monday/example1/page.tsx:                  {previewItems.map(item => (
+src//app/integrations/monday/example1/page.tsx:                        {transformPreview.missingRequired.map(field => (
+src//app/integrations/monday/example1/page.tsx:                        {Object.entries(transformPreview.errors).map(([field, error]) => (
+src//app/integrations/monday/example1/page.tsx:                    {Object.entries(importResult.errors || {}).map(([id, message]) => (
+src//app/integrations/monday/example1/page.tsx:          {userQuery.data && (
+src//app/integrations/monday/example1/page.tsx:                Name: {userQuery.data.name}
+src//app/integrations/monday/example1/page.tsx:                Email: {userQuery.data.email}
+src//app/examples/schedule/page.tsx:                {locations.map((location) => (
+src//app/examples/schedule/page.tsx:                    {location.people.map((person, personIdx) => (
+src//app/examples/calendar/Legend.tsx:            {Object.entries(statusColors).map(([status, color]) => (
+src//app/examples/calendar/Legend.tsx:            {Object.entries(deliveryColors).map(([delivery, color]) => (
+src//app/examples/calendar/TableView.tsx:            .map((visit) => (
+src//app/examples/calendar/CalendarGridView.tsx:        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+src//app/examples/calendar/CalendarGridView.tsx:        {monthDays.map((day, i) => {
+src//app/examples/calendar/CalendarGridView.tsx:                {dayVisits.map((visit) => (
+src//app/examples/calendar/ListView.tsx:          {sortedVisits.map((visit) => {
+src//app/examples/classroomNotes/staffList/page.tsx:              {member.schools.map((schoolId) => (
+src//app/examples/classroomNotes/staffList/page.tsx:    return NYCPSStaffFieldConfig.map(field => {
+src//app/examples/classroomNotes/staffList/page.tsx:        {staff.map((member: NYCPSStaff) => (
+src//app/examples/classroomNotes/lookForList/page.tsx:        ...data,
+src//app/examples/classroomNotes/lookForList/page.tsx:        {lookFors.map((lookFor: LookFor) => (
+src//app/examples/classroomNotes/lookForList/page.tsx:            {lookFor.rubric.map((rubricItem, index) => (
+src//app/examples/classroomNotes/schoolList/[schoolId]/page.tsx:        if (schoolsResponse.items.length === 0) {
+src//app/examples/classroomNotes/schoolList/[schoolId]/page.tsx:        const schoolData = schoolsResponse.items[0];
+src//app/examples/classroomNotes/schoolList/[schoolId]/page.tsx:        setStaff(staffResponse.items as NYCPSStaff[]);
+src//app/examples/classroomNotes/schoolList/[schoolId]/page.tsx:          {school.gradeLevelsSupported?.map((grade, index) => (
+src//app/examples/classroomNotes/schoolList/[schoolId]/page.tsx:          {schoolStaff.map((person) => (
+src//app/examples/classroomNotes/schoolList/[schoolId]/page.tsx:          {lookFors.map((lookFor : LookFor, index : number) => (
+src//app/examples/classroomNotes/schoolList/[schoolId]/page.tsx:              {schedule.map((entry : Period, index : number) => (
+src//app/examples/classroomNotes/schoolList/page.tsx:        {schools.map((school: School) => (
+src//app/examples/classroomNotes/schoolList/page.tsx:              {school.gradeLevelsSupported && school.gradeLevelsSupported.map((grade, index) => (
+src//app/examples/dashboard/page.tsx:                        {navigation.map((item) => (
+src//app/examples/dashboard/page.tsx:                        {teams.map((team) => (
+src//app/examples/dashboard/page.tsx:                    {navigation.map((item) => (
+src//app/examples/dashboard/page.tsx:                    {teams.map((team) => (
+src//app/examples/dashboard/page.tsx:              {deployments.map((deployment) => (
+src//app/examples/dashboard/page.tsx:              {activityItems.map((item) => (
+src//app/examples/cap/example2/page.tsx:              {exampleData.sessions.map((session, index) => (
+src//app/examples/cap/example2/page.tsx:        {exampleData.implementationRecords.map((record, index) => (
+src//app/examples/cap/example3/page.tsx:            {implementationRecords.map((record, index) => (
+src//app/examples/cap/components/IPGSubsectionCards.tsx:      {subsections.map((subsection) => (
+src//app/examples/cap/components/MonitoringProgress.tsx:              {dates.map((date, idx) => (
+src//app/examples/cap/components/MonitoringProgress.tsx:            {metrics.map((metric, idx) => (
+src//app/examples/cap/components/MonitoringProgress.tsx:                {metric.scores.map((score, scoreIdx) => (
+src//app/examples/cap/components/MonitoringProgress.tsx:              {dates.map((_, dateIdx) => (
+src//app/examples/cap/components/MetricsBuilder.tsx:        {metrics.map((metric, index) => {
+src//app/examples/cap/components/MetricsBuilder.tsx:                {metric.ratings.map((rating, ratingIndex) => (
+src//app/examples/cap/components/MetricsTable.tsx:            {dates.map((date, idx) => (
+src//app/examples/cap/components/MetricsTable.tsx:          {metrics.map((metric, idx) => (
+src//app/examples/cap/components/MetricsTable.tsx:              {metric.scores.map((score, scoreIdx) => (
+src//app/examples/cap/components/ImplementationRecord.tsx:            {records.map((record, idx) => (
+src//app/examples/cap/components/ImplementationRecord.tsx:              dates.slice(records.length).map((_, idx) => (
+src//app/examples/cap/components/CoachingMovesTable.tsx:          {moves.map((move, idx) => (
+src//app/examples/cap/components/CoachingMovesTable.tsx:                  {move.moves.map((item, itemIdx) => (
+src//app/examples/cap/components/CoachingMovesTable.tsx:                  {move.tools.map((tool, toolIdx) => (
+src//app/examples/cap/components/CoachingMovesBuilder.tsx:        {moves.map((move, index) => (
+src//app/examples/cap/components/IPGFocusCards.tsx:      {options.map((option) => (
+src//app/examples/cap/components/ImplementationRecordCard.tsx:          options={coachingMoves.map(move => ({
+src//app/examples/cap/components/ImplementationRecordCard.tsx:          {metrics.map(metric => (
+src//app/examples/cap/components/ImplementationRecordCard.tsx:              options={metric.ratings.map(rating => ({
+src//app/examples/cap/components/ReflectionSection.tsx:        {reflections.map((reflection, idx) => (
+src//app/examples/dayView/page.tsx:            {days.map((day, dayIdx) => (
+src//app/actions/schedule/schedule.ts:        items: results.map(item => BellScheduleZodSchema.parse(item)),
+src//app/actions/schedule/schedule.ts:        items: results.map(item => BellScheduleZodSchema.parse(item)),
+src//app/actions/nextSteps/nextSteps.ts:        items: results.map(item => NextStepZodSchema.parse(item)),
+src//app/actions/nextSteps/nextSteps.ts:        items: results.map(item => NextStepZodSchema.parse(item)),
+src//app/actions/nextSteps/nextSteps.ts:        items: results.map(item => NextStepZodSchema.parse(item)),
+src//app/actions/rubrics/rubrics.ts:        items: results.map(item => RubricScoreZodSchema.parse(item)) as z.infer<typeof RubricScoreZodSchema>[],
+src//app/actions/notes/notes.ts:        items: results.map(item => NoteZodSchema.parse(item)),
+src//app/actions/notes/notes.ts:        items: results.map(item => NoteZodSchema.parse(item)),
+src//app/actions/staff/operations.ts:      const validatedNYCPSStaff = nycpsStaff.map(staff => NYCPSStaffZodSchema.parse(staff));
+src//app/actions/staff/operations.ts:      const validatedTLStaff = tlStaff.map(staff => TeachingLabStaffZodSchema.parse(staff));
+src//app/actions/staff/operations.ts:          items: result.items || [],
+src//app/actions/staff/operations.ts:          total: result.items?.length || 0,
+src//app/actions/staff/operations.ts:          items: result.items || [],
+src//app/actions/staff/operations.ts:          total: result.items?.length || 0,
+src//app/actions/staff/operations.ts:          items: result.items || [],
+src//app/actions/staff/operations.ts:          total: result.items?.length || 0,
+src//app/actions/staff/operations.ts:        ...(results.standard.items || []),
+src//app/actions/staff/operations.ts:        ...(results.nycps.items || []),
+src//app/actions/staff/operations.ts:        ...(results.tl.items || [])
+src//app/actions/schools/schools.ts:      const items = schools.map(school => SchoolZodSchema.parse(school));
+src//app/actions/schools/schools.ts:        items: result.items
+src//app/actions/lookFors/lookFors.ts:      items: result.items
+src//app/api/integrations/monday/visits/route.ts:import { NextResponse } from 'next/server';
+src//app/api/integrations/monday/visits/import/complete/route.ts:import { NextResponse } from 'next/server';
+src//app/api/integrations/monday/visits/import/complete/route.ts:    const validatedData = validation.data;
+src//app/api/integrations/monday/visits/import/route.ts:import { NextResponse } from 'next/server';
+src//app/api/integrations/monday/visits/import/route.ts:    const { selectedItems } = validation.data;
+src//app/api/integrations/monday/user/route.ts:import { NextRequest, NextResponse } from 'next/server';
+src//app/api/integrations/monday/user/route.ts:    if (result && result.success && result.data) {
+src//app/api/integrations/monday/user/route.ts:        data: result.data
+src//app/api/staff/exists/route.ts:import { NextRequest, NextResponse } from 'next/server';
+src//app/api/staff/bulk-upload/route.ts:import { NextRequest, NextResponse } from "next/server";
+src//app/api/staff/bulk-upload/route.ts:      message: `Successfully uploaded ${result.items?.length || 0} staff members`,
+src//app/api/staff/bulk-upload/route.ts:      uploaded: result.items?.length
+src//app/api/staff/[id]/route.ts:import { NextRequest, NextResponse } from "next/server";
+src//app/api/staff/[id]/route.ts:import { standardizeResponse } from "@api-responses/standardize";
+src//app/api/staff/[id]/route.ts:        items: result.items,
+src//app/api/webhooks/clerk/route.ts:import { NextResponse } from 'next/server';
+src//app/api/webhooks/clerk/route.ts:    const { type, data } = validation.payload;
+src//app/api/look-fors/bulk-upload/route.ts:import { NextRequest, NextResponse } from "next/server";
+src//app/api/look-fors/bulk-upload/route.ts:      message: `Successfully uploaded ${result.items?.length || 0} look-fors`,
+src//app/api/look-fors/bulk-upload/route.ts:      uploaded: result.items?.length
+src//app/debug/design-system/layout.tsx:            {navItems.map((item) => (
+src//app/debug/design-system/tokens/page.tsx:          {Object.entries(colorTokens).map(([group, values]) => (
+src//app/debug/design-system/tokens/page.tsx:                {values.map((name) => (
+src//app/debug/design-system/tokens/page.tsx:          {radiusTokens.map((value) => (
+src//app/debug/design-system/tokens/page.tsx:          {shadowTokens.map((value) => (
+src//components/core/fields/ReferenceSelect.tsx:    return rawOptions.map(option => ({
+src//components/core/fields/ReferenceSelect.tsx:      const values = selected ? (selected as readonly OptionType[]).map((item: OptionType) => item.value) : [];
+src//components/core/fields/Select.tsx:                  ? safeValue.map(v => options.find(option => option.value === v)?.label).join(', ')
+src//components/core/fields/Select.tsx:            {options.map((option) => (
+src//components/features/scoring/ScoresPage.tsx:    .map(school => ({ value: school.id, label: school.name }));
+src//components/features/scoring/ScoresPage.tsx:    .map(teacher => ({ value: teacher.id, label: teacher.name }));
+src//components/features/scoring/ScoresPage.tsx:          options={districts.map(d => ({ value: d.id, label: d.name }))}
+src//components/features/scoring/ScoresPage.tsx:          options={cycles.map(c => ({ value: c.id, label: c.name }))}
+src//components/features/scoring/ScoresPage.tsx:          {selectedTeachers.map(teacherId => {
+src//components/features/scoring/ScoresPage.tsx:                  {rubricLookFors.map(lookFor => (
+src//components/features/scoring/ScoreEntry.tsx:  const rubricLabels = lookFor.levels.map((level) => ({
+src//components/features/scoring/ScoreEntry.tsx:          {rubricLabels.map((label) => {
+src//components/features/scoring/ScoreEntry.tsx:          {['1', '2', '3', '4'].map((num) => (
+src//components/integrations/monday/UserForm.tsx:  const { data: user, isLoading, error } = useMondayUserByEmail(email);
+src//components/integrations/monday/common/ConnectionTest.tsx:      if (result.success && result.data) {
+src//components/integrations/monday/common/ConnectionTest.tsx:          message: `Connected as ${result.data.name} (${result.data.email})` 
+src//components/integrations/monday/domain/visits/ImportCompletionForm.tsx:      .map(field => {
+src//components/integrations/monday/domain/visits/ImportCompletionForm.tsx:            {missingFields.map(field => (
+src//components/integrations/monday/domain/visits/MondayVisitImportClient.tsx:      .map(field => {
+src//components/integrations/monday/domain/visits/MondayVisitImportClient.tsx:            {missingFields.map(field => (
+src//components/integrations/monday/domain/visits/VisitSelector.tsx:      if (result.success && result.data) {
+src//components/integrations/monday/domain/visits/VisitSelector.tsx:        // Cast the result.data to the expected type
+src//components/integrations/monday/domain/visits/VisitSelector.tsx:        const importData = result.data as {
+src//components/integrations/monday/domain/visits/VisitSelector.tsx:        {filteredPreviews.map((preview) => (
+src//components/integrations/monday/domain/visits/MondayItemPreviewCard.tsx:              {Object.entries(errors).map(([field, message]) => (
+src//components/integrations/monday/domain/visits/MondayItemPreviewCard.tsx:          {Object.entries(transformed).map(([field, value]) => {
+src//components/integrations/monday/domain/users/CreateTeachingLabStaffForm.tsx:        ...data,
+src//components/integrations/monday/domain/users/CreateTeachingLabStaffForm.tsx:          ...data.mondayUser,
+src//components/integrations/monday/domain/users/UserForm.tsx:      if (response.ok && result.success && result.data) {
+src//components/integrations/monday/domain/users/UserForm.tsx:        onUserFound?.(result.data);
+src//components/composed/tabs/Tabs.tsx:          {tabItems.map((tab) => {
+src//components/composed/tabs/Tabs.tsx:        {tabItems.map((tab) => (
+src//components/composed/tables/ScheduleTable.tsx:            {scheduleByDay.map(day => (
+src//components/composed/tables/ScheduleTable.tsx:          {allPeriodNumbers.map(periodNum => (
+src//components/composed/tables/ScheduleTable.tsx:              {scheduleByDay.map(day => {
+src//components/composed/tables/features/select.tsx:      {options.map((option) => (
+src//components/composed/tables/parts/row.tsx:      {columns.map((column, index) => (
+src//components/composed/tables/parts/header.tsx:        {columns.map((column, index) => (
+src//components/composed/tables/Table.tsx:            data.map((item, index) => (
+src//components/composed/forms/RigidResourceForm.tsx:          {fields.map((field) => (
+src//components/composed/forms/UpdatedResourceForm.tsx:          {fields.map((field) => (
+src//components/composed/forms/UpdatedResourceForm.tsx:    const fieldKeys = fields.map(field => String(field.key));
+src//components/composed/forms/UpdatedResourceForm.tsx:  const fieldsWithOverrides = fields.map(field => {
+src//components/composed/forms/UpdatedResourceForm.tsx:          {fieldsWithOverrides.map((field) => (
+src//components/composed/forms/Form.tsx:      {formLayout.map((section) => {
+src//components/composed/forms/Form.tsx:          .map(id => fieldMap[id])
+src//components/composed/forms/Form.tsx:              {sectionFields.map((field) => {
+src//components/composed/navigation/Breadcrumbs.tsx:        {items.map((item) => (
+src//components/composed/layouts/PageHeader.tsx:            {meta.map((item, index) => (
+src//components/composed/layouts/PageHeader.tsx:          {actions.map((action, index) => (
+src//components/composed/layouts/PageHeader.tsx:              {actions.map((action, index) => (
+src//components/composed/layouts/NavigationSidebar.tsx:      {items.map((item) => (
+src//components/composed/layouts/NavigationSidebar.tsx:        {teams.map((team) => (
+src//components/domain/imRoutine/curriculum/LessonSelector.tsx:  const gradeOptions = sortedGrades.map(grade => ({
+src//components/domain/imRoutine/curriculum/LessonSelector.tsx:  const unitOptions = units.map(unit => ({
+src//components/domain/imRoutine/curriculum/LessonSelector.tsx:  const lessonOptions = lessons.map(lesson => ({
+src//components/domain/imRoutine/routines/RoutineFilter.tsx:            {sortedRoutines.map((routine, index) => {
+src//components/domain/imRoutine/routines/MLRAppearsInCard.tsx:        {mlrRoutines.map((routine) => {
+src//components/domain/imRoutine/routines/MLRAppearsInCard.tsx:            .map((lesson) => lesson.lessonNumber);
+src//components/domain/imRoutine/routines/MLRAppearsInCard.tsx:                {matchingLessons.map((lessonNumber) => (
+src//components/domain/imRoutine/lessons/KHLesson.tsx:            .map((activity) => (
+src//components/domain/imRoutine/lessons/KHLesson.tsx:                    .map((routine, i) => {
+src//components/domain/imRoutine/lessons/LessonView.tsx:        .map((lesson) => {
+src//components/domain/imRoutine/lessons/ILCLesson.tsx:          {routines.map((routine, i) => {
+src//components/domain/schedules/utils/scheduleHelpers.ts:      .map((p) => ({
+src//components/domain/schedules/components/SchoolSelector.tsx:        {schools.map((school) => (
+src//components/domain/schedules/components/ActivitySelector.tsx:      {options.map((activity) => (
+src//components/domain/schedules/components/ScheduleTable.tsx:          {periods.map(period => (
+src//components/domain/schedules/components/ScheduleRow.tsx:        washingtonTeachers.map(t => t.name)
+src//components/domain/schedules/components/ScheduleSummary.tsx:          {periods.map((period) => {
+src//components/domain/schedules/components/ScheduleSummary.tsx:                        <span className="font-medium text-green-800">Teaching:</span> {teachingTeachers.map(t => t.name).join(', ')}
+src//components/domain/schedules/components/ScheduleSummary.tsx:                        <span className="font-medium text-purple-800">Prep:</span> {prepTeachers.map(t => t.name).join(', ')}
+src//components/domain/schedules/components/ScheduleSummary.tsx:                        <span className="font-medium text-orange-800">Lunch:</span> {lunchTeachers.map(t => t.name).join(', ')}
+src//components/domain/schedules/components/ScheduleSummary.tsx:      {activePeriods.map((period) => (
+src//components/domain/schedules/components/StaffSelector.tsx:    const selectedStaff = value.map(id => 
+src//components/domain/schedules/components/StaffSelector.tsx:            options.map(option => (
+src//components/domain/schedules/components/TeacherActivityColumns.tsx:          teachingTeachers.map(teacher => {
+src//components/domain/schedules/components/TeacherActivityColumns.tsx:          prepTeachers.map(teacher => (
+src//components/domain/schedules/components/TeacherActivityColumns.tsx:          lunchTeachers.map(teacher => (
+src//components/domain/schedules/SchoolSchedulePage.tsx:    return schedules.map(schedule => {
+src//components/domain/schedules/SchoolSchedulePage.tsx:      const uniquePeriodIds = [...new Set(allPeriods.map(p => p.id))];
+src//components/domain/schedules/SchoolSchedulePage.tsx:      const uniquePeriods = uniquePeriodIds.map(id => {
+src//components/domain/schedules/SchoolSchedulePage.tsx:    setPeriods(periods.map(period => 
+src//components/domain/schedules/SchoolSchedulePage.tsx:    setPeriods(periods.map(period => 
+src//components/domain/schedules/SchoolSchedulePage.tsx:    setPeriods(periods.map(period => 
+src//components/domain/schedules/SchoolSchedulePage.tsx:    setPeriods(periods.map(period => {
+src//components/domain/schedules/SchoolSchedulePage.tsx:    setPeriods(periods.map(period => 
+src//components/domain/schedules/SchoolSchedulePage.tsx:    setPeriods(periods.map(period => 
+src//components/domain/schedules/SchoolSchedulePage.tsx:      .map(id => staff.find(s => s._id === id)?.staffName || id)
+src//components/domain/schedules/SchoolSchedulePage.tsx:            periods: teacherPeriods.map(p => ({
+src//components/domain/schedules/data/mockData.ts:export const ACTIVITY_TYPES = EventTypeZod.options.map(value => ({
+src//components/domain/rubrics/FilterableGridView.tsx:            {filteredGroups.map(group => (
+src//components/domain/rubrics/FilterableGridView.tsx:            {allItems.map(item => {
+src//components/domain/rubrics/RubricDomainCards.tsx:        {domainOptions.map((domain) => (
+src//components/domain/rubrics/RubricViewer.tsx:      .map((r, i) => ({
+src//components/domain/rubrics/RubricViewer.tsx:      domain[level].map((text: string, i: number) => ({
+src//components/domain/rubrics/RubricCard.tsx:        {performanceLevels.map(({ key, label, colorClass }) => (
+src//components/domain/rubrics/RubricCard.tsx:              {domain[key].map((text, i) => (
+src//components/domain/users/UserProfile.tsx:  const { fullName, email, metadata } = useAuthenticatedUser();
+src//components/domain/users/UserProfile.tsx:              {metadata.roles.map(role => (
+src//components/domain/things3/thingsUtils.ts:    if (indentLevel === 0 && checklist.items.length === 0 && !projectTitle) {
+src//components/domain/things3/thingsUtils.ts:      checklist.items.push(currentSection);
+src//components/domain/things3/thingsUtils.ts:      checklist.items.push({
+src//components/domain/things3/thingsUtils.ts:  if (json.items && Array.isArray(json.items)) {
+src//components/domain/things3/thingsUtils.ts:    json.items.forEach(item => {
+src//components/domain/things3/thingsUtils.ts:        project.data.push({
+src//components/domain/things3/thingsUtils.ts:            project.data.push({
+src//components/domain/things3/thingsUtils.ts:        project.data.push({
+src//components/domain/things3/thingsUtils.ts:  if (!json.items || !Array.isArray(json.items) || json.items.length === 0) {
+src//components/domain/things3/thingsUtils.ts:  const firstItem = json.items[0] as Record<string, unknown>;
+src//components/domain/things3/thingsUtils.ts:    !!firstItem.data &&
+src//components/domain/things3/thingsUtils.ts:    Array.isArray(firstItem.data)
+src//components/domain/things3/thingsUtils.ts:  if (!data.items || !Array.isArray(data.items) || data.items.length === 0) {
+src//components/domain/things3/thingsUtils.ts:  data.items.forEach(project => {
+src//components/domain/things3/thingsUtils.ts:    if (project.data && Array.isArray(project.data)) {
+src//components/domain/things3/thingsUtils.ts:      project.data.forEach(item => {
+src//components/domain/things3/thingsDebug.ts:    if (!Array.isArray(thingsJson.items)) {
+src//components/domain/things3/thingsDebug.ts:    thingsJson.items.forEach((item: unknown, index: number) => {
+src//components/domain/things3/thingsDebug.ts:      if (!Array.isArray(projectItem.data)) {
+src//components/domain/things3/thingsDebug.ts:        (projectItem.data as unknown[]).forEach((dataItem: unknown, dataIndex: number) => {
+src//components/domain/things3/thingsDebug.ts:  if (!Array.isArray(result.items)) {
+src//components/domain/things3/thingsDebug.ts:      result.items = [{ ...result, items: undefined }];
+src//components/domain/things3/thingsDebug.ts:      result.items = [{
+src//components/domain/things3/thingsDebug.ts:  if (Array.isArray(result.items)) {
+src//components/domain/things3/thingsDebug.ts:    result.items.forEach((projectItem) => {
+src//components/domain/things3/thingsDebug.ts:      if (!Array.isArray(project.data)) {
+src//components/domain/things3/thingsDebug.ts:        if (Array.isArray(project.items)) {
+src//components/domain/things3/thingsDebug.ts:          project.data = project.items;
+src//components/domain/things3/thingsDebug.ts:          delete project.items; // Remove the incorrect property
+src//components/domain/things3/thingsDebug.ts:          project.data = project.children;
+src//components/domain/things3/thingsDebug.ts:          project.data = [];
+src//components/domain/things3/thingsDebug.ts:      if (Array.isArray(project.data)) {
+src//components/domain/things3/thingsDebug.ts:        project.data.forEach((todoItem) => {
+src//components/domain/things3/thingsDebug.ts:  checklist.items.forEach(item => {
+src//components/domain/things3/thingsDebug.ts:      thingsData.items[0].data.push(heading);
+src//components/domain/things3/thingsDebug.ts:          thingsData.items[0].data.push(todo);
+src//components/domain/things3/thingsDebug.ts:      thingsData.items[0].data.push(todo);
+src//components/domain/things3/thingsDebug.ts:  if (Array.isArray(dataRecord.items) && 
+src//components/domain/things3/thingsDebug.ts:      dataRecord.items.length > 0) {
+src//components/domain/things3/thingsDebug.ts:    const firstItem = dataRecord.items[0] as Record<string, unknown>;
+src//components/domain/staff/teachingLab/StaffListComponent.tsx:      {staffMembers.map((staff) => (
+src//components/domain/staff/teachingLab/StaffListItem.tsx:                {staff.subjects.slice(0, 3).map((subject, index) => (
+src//components/domain/staff/teachingLab/StaffListItem.tsx:                {staff.rolesTL.slice(0, 3).map((role, index) => (
+src//components/domain/staff/teachingLab/StaffListItem.tsx:              {fieldConfig.map(field => (
+src//components/domain/staff/StaffCard.tsx:          {staff.rolesNYCPS && staff.rolesNYCPS.map((role, index) => (
+src//components/domain/staff/StaffCard.tsx:          {staff.subjects && staff.subjects.map((subject, index) => (
+src//components/domain/staff/StaffDetailPage.tsx:  const { data: staffMember, error: staffError, isLoading: isLoadingStaff } = useStaffMember(staffId, staffType)
+src//components/domain/staff/StaffDetailPage.tsx:  const { data: schedule, error: scheduleError, isLoading: isLoadingSchedule } = useStaffSchedule(staffId)
+src//components/domain/staff/StaffDetailPage.tsx:            {staffMember.experience.map((exp, index) => (
+src//components/domain/staff/StaffDetailPage.tsx:  const { data, error } = useSafeSWR<StaffMember>(
+src//components/domain/staff/StaffDetailPage.tsx:      if (!data.success || !data.items || data.items.length === 0) {
+src//components/domain/staff/StaffDetailPage.tsx:      return data.items[0];
+src//components/domain/staff/StaffDetailPage.tsx:  const { data, error } = useSafeSWR<TeacherSchedule>(
+src//components/domain/staff/StaffDetailPage.tsx:      if (!data.success || !data.items || data.items.length === 0) {
+src//components/domain/staff/StaffDetailPage.tsx:      return data.items[0];
+src//components/debug/TestComponents.tsx:  const { data, error } = useSWR('test-key', fetcher);
+src//components/debug/StaffListBisector.tsx:    {MOCK_STAFF.map(staff => (
+src//components/debug/RenderLoopDetector.tsx:        console.table(intervals.map((interval, i) => ({ 
+src//hooks/ui/useAuthorizedNavigation.ts:    .map(item => ({
+src//hooks/ui/useAuthorizedNavigation.ts:  return items.map(item => {
+src//hooks/ui/useNavigation.ts:  return items.map(item => {
+src//hooks/integrations/monday/MondayIntegrationContext.tsx:  const isConnected = connectionQuery.data?.success === true;
+src//hooks/integrations/monday/MondayIntegrationContext.tsx:  const accountName = connectionQuery.data?.data?.name || '';
+src//hooks/integrations/monday/MondayIntegrationContext.tsx:    connectionData: connectionQuery.data || null,
+src//hooks/integrations/monday/useStaffExistence.ts:import { useErrorHandledMutation, ServerResponse } from '@/hooks/error/useErrorHandledMutation';
+src//hooks/integrations/monday/useStaffExistence.ts:      // Access the exists property from the result.data
+src//hooks/integrations/monday/useStaffExistence.ts:      if (result && result.data) {
+src//hooks/integrations/monday/useStaffExistence.ts:        return result.data.exists;
+src//hooks/integrations/monday/useMondayQueriesRQ.ts:import type { MondayImportResponse, ImportPreview } from '@/lib/integrations/monday/types/import';
+src//hooks/integrations/monday/useMondayQueriesRQ.ts:        return data.items || [];
+src//hooks/integrations/monday/useMondayQueriesRQ.ts:        return data.items || [];
+src//hooks/integrations/monday/useMondayQueriesRQ.ts:        return data.data as MondayUser;
+src//hooks/integrations/monday/MondayImportContext.tsx:      const currentIds = new Set(prev.map(item => item.id));
+src//hooks/integrations/monday/MondayImportContext.tsx:    if (!previewsQuery.data) {
+src//hooks/integrations/monday/MondayImportContext.tsx:    filteredPreviewsRef.current = previewsQuery.data
+src//hooks/integrations/monday/MondayImportContext.tsx:      .map((preview: ImportPreview) => {
+src//hooks/integrations/monday/MondayImportContext.tsx:    previewsQuery.data, 
+src//hooks/integrations/monday/MondayImportContext.tsx:      stateRef.current.setImportingItemIds(selectedItems.map(item => item.id));
+src//hooks/integrations/monday/MondayImportContext.tsx:      const ids = selectedItems.map(item => item.id);
+src//hooks/integrations/monday/MondayImportContext.tsx:    const mappedPreviews: SelectedItem[] = previewsQuery.data 
+src//hooks/integrations/monday/MondayImportContext.tsx:      ? previewsQuery.data.map((preview: ImportPreview) => {
+src//hooks/integrations/monday/MondayImportContext.tsx:      connectionData: connectionQuery.data,
+src//hooks/integrations/monday/MondayImportContext.tsx:      boards: boardsQuery.data || [],
+src//hooks/integrations/monday/MondayImportContext.tsx:      importResult: importMutation.data
+src//hooks/integrations/monday/MondayImportContext.tsx:    connectionQuery.data,
+src//hooks/integrations/monday/MondayImportContext.tsx:    boardsQuery.data,
+src//hooks/integrations/monday/MondayImportContext.tsx:    previewsQuery.data,
+src//hooks/integrations/monday/MondayImportContext.tsx:    importMutation.data,
+src//hooks/pattern/useEntityHooks.ts:import { CollectionResponse, PaginatedResponse } from '@/lib/types/core/response';
+src//hooks/pattern/useEntityHooks.ts:  const additionalInvalidateKeys = relatedEntityTypes.map(type => 
+src//hooks/pattern/useEntityHooks.ts:      data: query.data?.items || [],
+src//hooks/pattern/useEntityHooks.ts:      items: query.data?.items || [],
+src//hooks/pattern/useEntityHooks.ts:      total: query.data?.total || 0,
+src//hooks/pattern/useEntityHooks.ts:      totalPages: query.data?.totalPages || 0,
+src//hooks/pattern/useEntityHooks.ts:      data: query.data?.items?.[0],
+src//hooks/pattern/useEntityHooks.ts:      items: list.items,
+src//hooks/pattern/useEntityHooks.ts:      list.items,
+src//hooks/query/useResourceManagerRQ.ts:import { CollectionResponse } from '@core-types/response';
+src//hooks/query/usePaginatedQueryRQ.ts:import { PaginatedResponse } from '@core-types/response';
+src//hooks/query/usePaginatedQueryRQ.ts:  const { data, isLoading, isFetching, error, refetch } = query;
+src//hooks/query/usePaginatedQueryRQ.ts:  const items = data?.items ?? [];
+src//hooks/query/useQueriesManagerRQ.ts:import { CollectionResponse } from '@core-types/response';
+src//hooks/query/useQueriesManagerRQ.ts:      ...relatedQueries.map(query => ({
+src//hooks/query/useQueriesManagerRQ.ts:    data: mainQuery.data?.items?.[0] as T | undefined,
+src//hooks/query/useQueriesManagerRQ.ts:    relatedData: relatedResults.map(result => result.data?.items),
+src//hooks/query/useBulkOperationsRQ.ts:import { CollectionResponse } from '@core-types/response';
+src//hooks/query/useReferenceDataRQ.ts:import { CollectionResponse } from '@core-types/response';
+src//hooks/query/useReferenceDataRQ.ts:  if (!data?.items) return [];
+src//hooks/query/useReferenceDataRQ.ts:  return data.items.map((item: any) => ({
+src//hooks/query/useReferenceDataRQ.ts:    options: query.data || [],
+src//hooks/query/useOptimisticMutationRQ.ts:            invalidateQueries.map(queryKey => 
+src//hooks/data/useReferenceData.ts:  const { data, error, isLoading } = useSWR<{ 
+src//hooks/data/useReferenceData.ts:  const options = useMemo(() => data?.items || [], [data]);
+src//hooks/data/useReferenceData.ts:  const { data, error, isLoading } = useSWR<{ 
+src//hooks/data/useReferenceData.ts:  const options = useMemo(() => data?.items || [], [data]);
+src//hooks/data/useCrudOperations.ts:import { ResourceResponse } from '@core-types/response';
+src//hooks/data/useCrudOperations.ts:      ...data as unknown as Partial<T>,
+src//hooks/data/useCrudOperations.ts:    const existingItems = data?.items || [];
+src//hooks/data/useCrudOperations.ts:    const existingItems = data?.items || [];
+src//hooks/data/useOptimisticResource.ts:              items: [...currentData.items, newItem],
+src//hooks/data/useOptimisticResource.ts:        return { success: true, data: result.data || newItem };
+src//hooks/data/useOptimisticResource.ts:              items: currentData.items.map((item) =>
+src//hooks/data/useOptimisticResource.ts:        return { success: true, data: result.data || updatedItem };
+src//hooks/data/useOptimisticResource.ts:              items: currentData.items.filter((item) => getId(item) !== getId(itemToRemove)),
+src//hooks/data/useResourceManager.ts:  const { data, error, isLoading, mutate } = useSafeSWR(
+src//hooks/data/useResourceManager.ts:    items: data?.items || [],
+src//hooks/error/useErrorHandledMutation.ts:import { BaseResponse } from '@core-types/response';
+src//hooks/error/useErrorHandledMutation.ts:// import { ErrorResponse } from '@core-types/error';
+src//hooks/error/useErrorHandledMutation.ts:export interface ServerResponse<T = unknown> extends BaseResponse {
+src//hooks/error/useErrorHandledMutation.ts:        return response.errors.map(e => e.error).join(', ');
+src//hooks/error/useErrorHandledMutation.ts:      setData(response.data || null);
+src//hooks/error/useErrorHandledMutation.ts:  const { data, ...rest } = result;
+src//hooks/domain/useVisitsRQ.ts:import { PaginatedResponse, CollectionResponse } from '@/lib/types/core/response';
+src//hooks/domain/useVisitsRQ.ts:      items: transformDateFieldsArray(response.items) as VisitWithDates[],
+src//hooks/domain/useVisitsRQ.ts:      items: transformDateFieldsArray(response.items as unknown[]) as VisitWithDates[]
+src//hooks/domain/useUserStaff.ts:  const { metadata, isSignedIn } = useAuthenticatedUser();
+src//hooks/domain/useUserStaff.ts:  const { data, error, isLoading } = useSafeSWR<StaffType>(
+src//hooks/domain/useUserStaffRQ.ts:  const { metadata, isSignedIn } = useAuthenticatedUser();
+src//hooks/domain/useUserStaffRQ.ts:  const { data, error, isLoading, isError, refetch } = useQuery({
+src//hooks/domain/useUserStaffRQ.ts:          ...data,
+src//hooks/domain/useUserStaffRQ.ts:          data: transformDateFields(data.data) as StaffWithDates
+src//hooks/domain/useUserStaffRQ.ts:    staff: data?.data,
+src//lib/ui/forms/fieldConfig/core/teaching-lab-staff.ts:    options: AdminLevelZod.options.map((value: string) => ({
+src//lib/ui/forms/fieldConfig/core/teaching-lab-staff.ts:    options: RolesTLZod.options.map((value: string) => ({
+src//lib/ui/forms/fieldConfig/core/staff.ts:    options: GradeLevelsSupportedZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/core/staff.ts:    options: SubjectsZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/core/staff.ts:    options: SpecialGroupsZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/core/staff.ts:    options: RolesNYCPSZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/core/school.ts:    options: GradeLevelsSupportedZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/scheduling/schedule.ts:    options: BellScheduleTypeZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/visits/coaching-log.ts:    options: ReasonDoneZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/visits/coaching-log.ts:    options: TotalDurationZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/visits/coaching-log.ts:    options: SolvesTouchpointZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/visits/visit.ts:    options: EventTypeZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/visits/visit.ts:    options: DurationValues.map((value) => ({
+src//lib/ui/forms/fieldConfig/visits/visit.ts:    options: SessionPurposeZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/visits/visit.ts:    options: AllowedPurposeZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/visits/visit.ts:    options: ModeDoneZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/visits/visit.ts:    options: GradeLevelsSupportedZod.options.map((value) => ({
+src//lib/ui/forms/fieldConfig/shared/notes.ts:    options: NoteTypeZod.options.map((value) => ({
+src//lib/ui/table-schema.ts:  return columns.map((col) => ({
+src//lib/types/core/resource-manager.ts:import { ResourceResponse } from '@core-types/response';
+src//lib/types/core/resource-manager.ts:export type FetchFunction<T> = (params: FetchParams) => Promise<ResourceResponse<T>>;
+src//lib/types/core/response.ts:export interface BaseResponse {
+src//lib/types/core/response.ts:export type CollectionResponse<T = Record<string, unknown>> = {
+src//lib/types/core/response.ts:export interface ResourceResponse<T = unknown> extends BaseResponse {
+src//lib/types/core/response.ts:export interface PaginatedResponse<T = unknown> extends ResourceResponse<T> {
+src//lib/types/core/response.ts:export interface SingleResourceResponse<T = unknown> extends BaseResponse {
+src//lib/types/core/response.ts:export interface UploadResponse {
+src//lib/types/core/error.ts:export interface ErrorResponse {
+src//lib/types/core/error.ts:export interface ServerResponse<T = unknown> {
+src//lib/types/core/error.ts:    return result.errors.map(e => e.error).join(', ');
+src//lib/types/utilities.ts:import { BaseResponse, SingleResourceResponse, ResourceResponse } from '@core-types/response';
+src//lib/types/utilities.ts:    Array.isArray((response as { data: unknown[] }).data)
+src//lib/data-schema/zod-schema/validate.ts:  return validation.success ? validation.data : null;
+src//lib/data-utilities/transformers/sanitize.ts:  return docs.map((d) => deepSanitize(d)) as T[];
+src//lib/data-utilities/transformers/sanitize.ts:    return arr.map(str => str.trim().toLowerCase());
+src//lib/data-utilities/transformers/sanitize.ts:    $or: fields.map(field => ({
+src//lib/data-utilities/transformers/sanitize.ts:    return data.map(item => removeTimestampFields(item)) as unknown as T;
+src//lib/data-utilities/transformers/parse.ts:  return result.data;
+src//lib/data-utilities/transformers/parse.ts:  return result.data;
+src//lib/data-utilities/transformers/parse.ts:      return result.data as Partial<InferSchema<Schema>>;
+src//lib/data-utilities/transformers/parse.ts:    return result.data;
+src//lib/data-utilities/transformers/response-transformer.ts:import { CollectionResponse, PaginatedResponse } from '@core-types/response';
+src//lib/data-utilities/transformers/response-transformer.ts:      items: transformer(response.items || []) as U[]
+src//lib/data-utilities/transformers/response-transformer.ts:      items: transformer(response.items || []) as U[]
+src//lib/data-utilities/transformers/type-helper.ts:        items: result.items as T[]
+src//lib/integrations/monday/types/transform.ts:import { BaseResponse } from '@core-types/response';
+src//lib/integrations/monday/types/transform.ts:export interface TransformResult extends Pick<BaseResponse, 'success'> {
+src//lib/integrations/monday/types/api.ts:import { BaseResponse, ResourceResponse } from '@/lib/types/core/response';
+src//lib/integrations/monday/types/api.ts:export interface ApiResponse<T> extends Pick<BaseResponse, 'success'> {
+src//lib/integrations/monday/types/api.ts:export interface MondayBoardResponse extends Pick<ResourceResponse<MondayBoard>, 'success'> {
+src//lib/integrations/monday/types/api.ts:export interface MondayItemsResponse {
+src//lib/integrations/monday/types/api.ts:export interface MondayConnectionTestResult extends Pick<BaseResponse, 'success' | 'message'> {
+src//lib/integrations/monday/types/api.ts:export interface MondayUserResponse {
+src//lib/integrations/monday/types/board.ts:export interface MondayResponse {
+src//lib/integrations/monday/types/import.ts:import { BaseResponse } from '@core-types/response';
+src//lib/integrations/monday/types/import.ts:export interface ImportResult extends Pick<BaseResponse, 'success' | 'message'> {
+src//lib/integrations/monday/types/import.ts:export interface MondayImportResponse {
+src//lib/integrations/monday/config/field-mappings-legacy.ts:      const grades = String(value).split(",").map(g => g.trim());
+src//lib/integrations/monday/config/field-mappings-legacy.ts:        const events = parsed.map(item => ({
+src//lib/integrations/monday/config/field-mappings-legacy.ts:        return parsed.map(item => ({
+src//lib/integrations/monday/utils/monday-utils.ts:      return parsed.personsAndTeams.map((p: { name: string }) => p.name).join(", ");
+src//lib/integrations/monday/mappers/board-types/visits-board/config.ts:// src/lib/integrations/monday/mappers/schemas/visit/config.ts
+src//lib/integrations/monday/mappers/board-types/visits-board/config.ts:} from "@/lib/integrations/monday/mappers/transformers/value-transformers";
+src//lib/integrations/monday/mappers/board-types/visits-board/config.ts:} from "@/lib/integrations/monday/mappers/transformers/base-transformers";
+src//lib/integrations/monday/mappers/transformers/field-transformers.ts:// src/lib/integrations/monday/mappers/utils/transformer.ts
+src//lib/integrations/monday/mappers/transformers/value-transformers.ts:// src/lib/integrations/monday/mappers/utils/value-transformers.ts
+src//lib/integrations/monday/mappers/transformers/value-transformers.ts:          return parsed.personsAndTeams.map((person: unknown) => (person as { id: string }).id.toString());
+src//lib/integrations/monday/mappers/transformers/base-transformers.ts:// src/lib/integrations/monday/mappers/schemas/visit/transformers.ts
+src//lib/integrations/monday/mappers/entities/visit/base-config.ts:// src/lib/integrations/monday/mappers/adapters/standard/visit-config.ts
+src//lib/integrations/monday/mappers/entities/visit/base-config.ts:import { baseVisitMappingConfig } from "@api-monday/mappers/board-types/visits-board/config";
+src//lib/integrations/monday/client/client.ts:          `Monday.com API Error: ${result.errors.map((e: { message: string }) => e.message).join(', ')}`
+src//lib/integrations/monday/client/client.ts:      return result.data as T;
+src//lib/integrations/monday/client/client.ts:    if (!response.boards || response.boards.length === 0) {
+src//lib/integrations/monday/client/client.ts:      data: response.boards[0]
+src//lib/integrations/monday/client/client.ts:      if (boardsResponse.boards) {
+src//lib/integrations/monday/client/client.ts:        boards.push(...boardsResponse.boards);
+src//lib/integrations/monday/client/client.ts:    if (!response.boards || response.boards.length === 0 || !response.boards[0].items_page) {
+src//lib/integrations/monday/client/client.ts:    return response.boards[0].items_page.items;
+src//lib/integrations/monday/client/client.ts:    if (!response.items || response.items.length === 0) {
+src//lib/integrations/monday/client/client.ts:    return response.items[0];
+src//lib/integrations/monday/services/import-service.ts:          const transformResult = await transformMondayItemToVisit(item);
+src//lib/integrations/monday/services/import-service.ts:        ? (selectedItems as string[]).map(id => ({ id }))
+src//lib/integrations/monday/services/import-service.ts:          const transformResult = await transformMondayItemToVisit(mondayItem);
+src//lib/integrations/monday/services/import-service.ts:            validatedData = fullValidation.data;
+src//lib/integrations/monday/services/sync-service.ts:import { ApiResponse } from '@api-monday/types';
+src//lib/integrations/monday/services/sync-service.ts:      const mondayValues = transformVisitToMondayItem(visit.toObject());
+src//lib/integrations/monday/services/legacy/monday-service.ts:    if (!response.boards || response.boards.length === 0) {
+src//lib/integrations/monday/services/legacy/monday-service.ts:      items: [response.boards[0]],
+src//lib/integrations/monday/services/legacy/dynamic-mapping.ts:        return parsed.personsAndTeams.map((person: unknown) => (person as { id: string }).id.toString());
+src//lib/integrations/monday/services/legacy/dynamic-mapping.ts: * Main function to transform a Monday.com item to a Visit
+src//lib/integrations/monday/services/transform-service.ts:export async function transformMondayItemToVisit(mondayItem: MondayItem): Promise<TransformResult> {
+src//lib/integrations/monday/services/transform-service.ts:export function transformVisitToMondayItem(visit: Visit): Record<string, unknown> {
+src//lib/integrations/monday/services/transform-service.ts:          personsAndTeams: fieldValue.map(id => ({ id: String(id) }))
+src//lib/data-server/file-handling/file-upload.ts:import { UploadResponse } from "@core-types/response";
+src//lib/data-server/file-handling/csv-parser.ts:    const headers = lines[0].split(',').map(header => 
+src//lib/data-server/file-handling/csv-parser.ts:    return lines.slice(1).map(line => {
+src//lib/data-server/file-handling/csv-parser.ts:      const values = line.split(',').map(value => value.trim());
+src//lib/data-server/crud/crud-action-factory.ts:import { PaginatedResponse, CollectionResponse } from "@core-types/response";
+src//lib/data-server/crud/crud-action-factory.ts:    const validatedItems = items.map(item => {
+src//lib/data-server/crud/crud-action-factory.ts:          items: result.data ? [result.data] : [],
+src//lib/data-server/crud/crud-action-factory.ts:          items: result.data ? [result.data] : [],
+src//lib/data-server/crud/crud-action-factory.ts:          items: result.data ? [result.data] : [],
+src//lib/data-server/crud/bulk-operations.ts:import { createErrorResponse } from "@core-types/error";
+src//lib/data-server/crud/bulk-operations.ts:    const validatedData = data.map(item => 
+src//lib/data-server/crud/bulk-operations.ts:      items: items.map(item => schema.parse(item.toObject())),
+src//lib/data-server/crud/crud-operations.ts:import { CollectionResponse } from "@core-types/response";
+src//lib/data-server/db/connection.ts:        const dbName = mongoose.connection.db.databaseName;
+src//lib/data-server/db/connection.ts:          console.log("📋 Available collections:", collections.map(c => c.name).join(", "));
+src//lib/api/responses/standardize.ts:import { CollectionResponse } from '@core-types/response';
+src//lib/api/responses/standardize.ts:import { CollectionResponseSchema } from '@zod-schema/validation/response';
+src//lib/api/responses/standardize.ts:      Array.isArray(objectData.items)
+src//lib/api/client/base.ts:import { CollectionResponse } from '@core-types/response';
+src//lib/api/client/base.ts:import { PaginatedResponse } from '@core-types/response';
+src//lib/api/client/school.ts:import { PaginatedResponse } from '@/lib/types/core/response';
+src//lib/api/client/school.ts:import { CollectionResponse } from '@/lib/types/core/response';
+src//lib/api/handlers/reference-endpoint.ts:import { NextResponse } from "next/server";
+src//lib/api/handlers/reference-endpoint.ts:import { standardizeResponse } from "@api-responses/standardize";
+src//lib/api/handlers/reference-endpoint.ts:      const references = data.items.map((item) => mapItem(item as T));
+src//lib/api/validation/clerk-webhook.ts:        headers: headerValidation.data
+src//lib/dev/mocks/scheduleMockGenerator.ts:    classSchedule: periods.map(period => ({
+src//lib/dev/mocks/scheduleMockGenerator.ts:  const teacherSchedules = Object.entries(csvScheduleData).map(([teacherName, classes]) => {
+src//lib/dev/mocks/scheduleMockGenerator.ts:          periods: classes.map((classInfo, index) => {
+src//lib/dev/mocks/mockVisitData.ts:  return mockVisitRows.map((row) => {
+src//lib/dev/mocks/mockVisitData.ts:    const events = row.eventTypes.map((type, index) => {
+src//lib/dev/mocks/mockVisitData.ts:      const eventStaff = row.observedTeachers.map(teacherName => {
+src//lib/dev/mocks/mockVisitData.ts:        staff: row.observedTeachers.map(teacherName => {
+src//lib/dev/mocks/mockVisitData.ts:      .map(grade => grade as GradeLevelsSupported);
+src//lib/dev/mocks/mockData.ts:  classSchedule: periods.map(period => ({
+src//lib/dev/mocks/mockData.ts:const mockTeacherSchedules = Object.entries(csvScheduleData).map(([teacherName, classes]) => {
+src//lib/dev/mocks/mockData.ts:        periods: classes.map((classInfo, index) => {
+src//lib/dev/testing/setup-test-user.ts:    const users = response.data;
+src//lib/query/hydration.ts:    preloadedQueries.map(({ queryKey, queryFn }) =>
+src//lib/query/crud-hooks-factory.ts:import { isPaginatedResponse } from './utilities/response-types';
+src//lib/query/crud-hooks-factory.ts:import { CollectionResponse, PaginatedResponse } from '@core-types/response';
+src//lib/query/crud-hooks-factory.ts:                    items: [...old.items, tempItem],
+src//lib/query/crud-hooks-factory.ts:                    items: old.items.map((item: T) => 
+src//lib/query/crud-hooks-factory.ts:                        ? { ...item, ...data, updatedAt: new Date().toISOString() }
+src//lib/query/crud-hooks-factory.ts:                    if (!old || !old.data) return old;
+src//lib/query/crud-hooks-factory.ts:                        ...old.data, 
+src//lib/query/crud-hooks-factory.ts:                        ...data, 
+src//lib/query/crud-hooks-factory.ts:                    items: old.items.filter((item: T) => item._id !== id && item.id !== id),
+src//lib/query/utilities/response-types.ts:  const items = data?.items || [];
+src//lib/query/utilities/response-types.ts:    items: data?.items || [],
+src//lib/query/utilities/response-types.ts:  return response?.data as T;
+src//lib/query/utilities/response-types.ts:    Array.isArray((response as CollectionResponse<T>).items)
+src//lib/query/utilities/optimistic-updates.ts:              items: [...oldData.items, processedItem],
+src//lib/query/utilities/optimistic-updates.ts:            const updatedItems = oldData.items.map(item => {
+src//lib/query/utilities/optimistic-updates.ts:            const filteredItems = oldData.items.filter(item => {
+src//lib/query/utilities/optimistic-updates.ts:        serverActions.update(params.id, params.data),
+src//lib/query/query-keys.ts:    board: (id: string) => [...queryKeys.monday.boards(), id] as const,
+src//lib/query/cache-sync/types.ts:import { BaseResponse } from '@core-types/response';
+src//lib/query/cache-sync/types.ts:export type ServerActionResult<T> = Promise<BaseResponse & { data?: T }>;
+src//lib/query/cache-sync/cache-operations.ts:import { CollectionResponse } from '@core-types/response';
+src//lib/query/cache-sync/cache-operations.ts:        if (!old || !old.items || old.items.length === 0) return old;
+src//lib/query/cache-sync/cache-operations.ts:          items: [updater(old.items[0] as T)] as any
+src//lib/query/cache-sync/cache-operations.ts:        if (!old || !old.items) return old;
+src//lib/query/cache-sync/cache-operations.ts:          items: old.items.map((item: any) => {
+src//lib/query/cache-sync/cache-operations.ts:        const exists = old.items?.some((item: any) => 
+src//lib/query/cache-sync/cache-operations.ts:          items: [...(old.items || []), entity] as any,
+src//lib/query/cache-sync/cache-operations.ts:        if (!old || !old.items) return old;
+src//lib/query/cache-sync/cache-operations.ts:        const filteredItems = old.items.filter((item: any) => 
+src//lib/query/selectors/common-selectors.ts:import { CollectionResponse } from '@core-types/response';
+src//lib/query/selectors/common-selectors.ts:    return transformDateFieldsArray(data?.items || []) as SchoolWithDates[];
+src//lib/query/selectors/common-selectors.ts:    return transformDateFieldsArray(data?.items || []) as StaffWithDates[];
+src//lib/query/selectors/common-selectors.ts:    return transformDateFieldsArray(data?.items || []) as VisitWithDates[];
+src//lib/query/selectors/registry.ts:import { CollectionResponse } from '@core-types/response';
+src//lib/query/selectors/registry.ts:export type SelectorFunction<T extends BaseDocument, R = T[]> = (data: CollectionResponse<T>) => R;
+src//lib/query/selectors/registry.ts:    return data?.items || [];
+src//lib/error/error-monitor.ts:): ReturnType<typeof createErrorResponse> {
+src//lib/error/handle-validation-error.ts:  const errorMessages = error.errors.map(err => {
+src//lib/domain/imRoutine/render-KH-lesson.tsx:        {lesson.activities.map((activity: Activity, i: number) => {
+src//lib/domain/imRoutine/render-KH-lesson.tsx:                  .map((routine: string, i: number) => (
+src//lib/domain/imRoutine/render-ILC-esson.tsx:        {lesson.activities.map((activity: Activity, i: number) => {
+src//lib/domain/imRoutine/render-ILC-esson.tsx:                  .map((routine: string, i: number) => (

@@ -1,12 +1,14 @@
 import { useMemo } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { z } from 'zod';
-import { queryKeys } from '@/lib/query/query-keys';
-import { syncClientCache } from '@/lib/query/cache-sync/client-sync';
-import { handleClientError } from '@/lib/error/handle-client-error';
-import { useFiltersAndSorting } from '@/hooks/ui/useFiltersAndSorting';
-import { BaseDocument } from '@/lib/types/core/document';
-import { StandardResponse, PaginatedResponse } from '@/lib/types/core/response';
+import { queryKeys } from '@query/core/keys';
+import { syncClientCache } from '@query/utilities/cache-sync/client-sync';
+import { handleClientError } from '@error/handle-client-error';
+import { captureError, createErrorContext } from '@error/error-monitor';
+import { useFiltersAndSorting } from '@ui-hooks/useFiltersAndSorting';
+import { BaseDocument } from '@core-types/document';
+import { CollectionResponse, EntityResponse, PaginatedResponse } from '@core-types/response';
+import { ErrorCategory } from '@core-types/error';
 
 /**
  * Query parameters for paginated requests
@@ -36,12 +38,12 @@ export interface EntityHookConfig<T extends BaseDocument, TInput> {
   
   /** Server actions for CRUD operations */
   serverActions: {
-    fetch: (params: PaginationQueryParams) => Promise<PaginatedResponse<T>>;
-    fetchById?: (id: string) => Promise<StandardResponse<T>>;
-    create?: (data: TInput) => Promise<StandardResponse<T>>;
-    update?: (id: string, data: Partial<TInput>) => Promise<StandardResponse<T>>;
-    delete?: (id: string) => Promise<StandardResponse<T>>;
-  };
+    fetch: (params: PaginationQueryParams) => Promise<CollectionResponse<T> | PaginatedResponse<T>>;
+    fetchById?: (id: string) => Promise<CollectionResponse<T> | EntityResponse<T>>;
+    create?: (data: TInput) => Promise<CollectionResponse<T> | EntityResponse<T>>;
+    update?: (id: string, data: Partial<TInput>) => Promise<CollectionResponse<T> | EntityResponse<T>>;
+    delete?: (id: string) => Promise<CollectionResponse<T> | EntityResponse<T>>;
+  };  
   
   /** Default parameters for queries */
   defaultParams?: Partial<PaginationQueryParams>;
@@ -60,6 +62,73 @@ export interface EntityHookConfig<T extends BaseDocument, TInput> {
   
   /** Related entity types to invalidate on mutations */
   relatedEntityTypes?: string[];
+}
+
+/**
+ * Type guard to check if a response is a CollectionResponse
+ */
+function isCollectionResponse<T>(response: unknown): response is CollectionResponse<T> {
+  return (
+    typeof response === 'object' &&
+    response !== null &&
+    'items' in response &&
+    Array.isArray((response as CollectionResponse<T>).items)
+  );
+}
+
+/**
+ * Type guard to check if a response is an EntityResponse
+ */
+function isEntityResponse<T>(response: unknown): response is EntityResponse<T> {
+  return (
+    typeof response === 'object' &&
+    response !== null &&
+    'data' in response &&
+    !('items' in response)
+  );
+}
+
+/**
+ * Type guard to check if a response is a PaginatedResponse
+ */
+function isPaginatedResponse<T>(response: unknown): response is PaginatedResponse<T> {
+  return (
+    typeof response === 'object' &&
+    response !== null &&
+    'items' in response &&
+    'totalPages' in response &&
+    'hasMore' in response
+  );
+}
+
+/**
+ * Extract entity data from a response regardless of format
+ */
+function extractEntityData<T>(response: unknown): T | undefined {
+  if (!response) return undefined;
+  
+  if (isEntityResponse<T>(response)) {
+    return response.data;
+  } else if (isCollectionResponse<T>(response)) {
+    return response.items[0];
+  }
+  
+  return undefined;
+}
+
+/**
+ * Extract collection data from a response regardless of format
+ */
+function extractCollectionData<T>(response: unknown): T[] {
+  if (!response) return [];
+  
+  if (isCollectionResponse<T>(response)) {
+    return response.items;
+  } else if (isEntityResponse<T>(response)) {
+    return [response.data];
+  }
+  
+  return [];
 }
 
 /**
@@ -130,6 +199,18 @@ export function createEntityHooks<
           const response = await serverActions.fetch(queryParams);
           return response;
         } catch (error) {
+          // Enhanced error handling with context
+          const errorContext = createErrorContext(
+            entityType, 
+            'fetch',
+            { 
+              metadata: { queryParams },
+              category: 'system' as ErrorCategory,
+              tags: { entityType }
+            }
+          );
+          captureError(error, errorContext);
+          
           throw error instanceof Error 
             ? error 
             : new Error(handleClientError(error, `Fetch ${entityType} list`));
@@ -143,8 +224,8 @@ export function createEntityHooks<
     // Return combined API
     return {
       // Data and loading state
-      data: query.data?.items || [],
-      items: query.data?.items || [],
+      data: extractCollectionData<T>(query.data),
+      items: extractCollectionData<T>(query.data),
       isLoading: query.isLoading,
       isError: query.isError,
       error: query.error,
@@ -154,7 +235,10 @@ export function createEntityHooks<
       page: filtersAndSorting.page,
       pageSize: filtersAndSorting.pageSize,
       total: query.data?.total || 0,
-      totalPages: query.data?.totalPages || 0,
+      // Handle totalPages safely for both response types
+      totalPages: isPaginatedResponse<T>(query.data) 
+        ? query.data.totalPages 
+        : Math.ceil((query.data?.total || 0) / filtersAndSorting.pageSize),
       
       // Filtering and sorting
       filters: filtersAndSorting.filters,
@@ -181,7 +265,14 @@ export function createEntityHooks<
   function useById(id: string | null | undefined, options = {}) {
     // Check if the server action exists
     if (!serverActions.fetchById) {
-      throw new Error(`fetchById action is not defined for ${entityType}`);
+      const error = new Error(`fetchById action is not defined for ${entityType}`);
+      captureError(error, { 
+        component: entityType, 
+        operation: 'fetchById',
+        category: 'system' as ErrorCategory,
+        severity: 'error'
+      });
+      throw error;
     }
     
     // Use React Query for data fetching
@@ -189,13 +280,33 @@ export function createEntityHooks<
       queryKey: queryKeys.entities.detail(entityType, id as string),
       queryFn: async () => {
         if (!id) {
-          throw new Error(`Cannot fetch ${entityType} without an ID`);
+          const error = new Error(`Cannot fetch ${entityType} without an ID`);
+          captureError(error, { 
+            component: entityType, 
+            operation: 'fetchById',
+            category: 'validation' as ErrorCategory,
+            severity: 'warning'
+          });
+          throw error;
         }
         
         try {
-          const response = await serverActions.fetchById(id);
+          // We know fetchById exists because we checked above
+          const response = await serverActions.fetchById!(id);
           return response;
         } catch (error) {
+          // Enhanced error handling with context
+          const errorContext = createErrorContext(
+            entityType, 
+            'fetchById',
+            { 
+              metadata: { id },
+              category: 'system' as ErrorCategory,
+              tags: { entityType }
+            }
+          );
+          captureError(error, errorContext);
+          
           throw error instanceof Error 
             ? error 
             : new Error(handleClientError(error, `Fetch ${entityType} by ID`));
@@ -207,7 +318,8 @@ export function createEntityHooks<
     });
     
     return {
-      data: query.data?.items?.[0],
+      // Handle both CollectionResponse and EntityResponse safely
+      data: extractEntityData<T>(query.data),
       isLoading: query.isLoading,
       isError: query.isError,
       error: query.error,
@@ -220,17 +332,35 @@ export function createEntityHooks<
    * Hook for entity mutations (create, update, delete)
    */
   function useMutations() {
-    // const queryClient = useQueryClient();
-    
     // Create mutation
     const createMutation = useMutation({
       mutationFn: async (data: TInput) => {
         if (!serverActions.create) {
-          throw new Error(`Create action is not defined for ${entityType}`);
+          const error = new Error(`Create action is not defined for ${entityType}`);
+          captureError(error, { 
+            component: entityType, 
+            operation: 'create',
+            category: 'system' as ErrorCategory,
+            severity: 'error'
+          });
+          throw error;
         }
+        
         try {
           return await serverActions.create(data);
         } catch (error) {
+          // Enhanced error handling with context
+          const errorContext = createErrorContext(
+            entityType, 
+            'create',
+            { 
+              metadata: { /* Exclude potentially sensitive data */ },
+              category: 'system' as ErrorCategory,
+              tags: { entityType, operation: 'create' }
+            }
+          );
+          captureError(error, errorContext);
+          
           throw error instanceof Error 
             ? error 
             : new Error(handleClientError(error, `Create ${entityType}`));
@@ -250,11 +380,31 @@ export function createEntityHooks<
     const updateMutation = useMutation({
       mutationFn: async ({ id, data }: { id: string; data: Partial<TInput> }) => {
         if (!serverActions.update) {
-          throw new Error(`Update action is not defined for ${entityType}`);
+          const error = new Error(`Update action is not defined for ${entityType}`);
+          captureError(error, { 
+            component: entityType, 
+            operation: 'update',
+            category: 'system' as ErrorCategory,
+            severity: 'error'
+          });
+          throw error;
         }
+        
         try {
           return await serverActions.update(id, data);
         } catch (error) {
+          // Enhanced error handling with context
+          const errorContext = createErrorContext(
+            entityType, 
+            'update',
+            { 
+              metadata: { id },
+              category: 'system' as ErrorCategory,
+              tags: { entityType, operation: 'update' }
+            }
+          );
+          captureError(error, errorContext);
+          
           throw error instanceof Error 
             ? error 
             : new Error(handleClientError(error, `Update ${entityType}`));
@@ -274,11 +424,31 @@ export function createEntityHooks<
     const deleteMutation = useMutation({
       mutationFn: async (id: string) => {
         if (!serverActions.delete) {
-          throw new Error(`Delete action is not defined for ${entityType}`);
+          const error = new Error(`Delete action is not defined for ${entityType}`);
+          captureError(error, { 
+            component: entityType, 
+            operation: 'delete',
+            category: 'system' as ErrorCategory,
+            severity: 'error'
+          });
+          throw error;
         }
+        
         try {
           return await serverActions.delete(id);
         } catch (error) {
+          // Enhanced error handling with context
+          const errorContext = createErrorContext(
+            entityType, 
+            'delete',
+            { 
+              metadata: { id },
+              category: 'system' as ErrorCategory,
+              tags: { entityType, operation: 'delete' }
+            }
+          );
+          captureError(error, errorContext);
+          
           throw error instanceof Error 
             ? error 
             : new Error(handleClientError(error, `Delete ${entityType}`));
@@ -415,5 +585,3 @@ export function createEntityHooks<
   };
 }
 
-// Export types for convenience
-export type { EntityHookConfig, PaginationQueryParams }; 

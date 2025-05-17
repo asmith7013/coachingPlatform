@@ -9,7 +9,7 @@ import {
 import { BaseDocument } from "@core-types/document";  
 import { connectToDB } from "@data-server/db/connection";
 import { handleCrudError } from "@error/crud-error-handling";
-import { PaginatedResponse, StandardResponse } from "@core-types/response";
+import { PaginatedResponse, CollectionResponse } from "@core-types/response";
 import { FetchParams, getDefaultFetchParams as getDefaultParams } from "@core-types/api";
 // Import the sanitization utilities
 import { deepSanitize } from "@/lib/data-utilities/transformers/sanitize";
@@ -223,7 +223,7 @@ export function createCrudActions<
     /**
      * Creates a new item
      */
-    create: async (data: InputType): Promise<StandardResponse<FullType>> => {
+    create: async (data: InputType): Promise<CollectionResponse<FullType>> => {
       try {
         await connectToDB();
         
@@ -234,7 +234,7 @@ export function createCrudActions<
           revalidationPaths
         );
         
-        // Convert CrudResultType to StandardResponse
+        // Convert CrudResultType to CollectionResponse
         return {
           success: result.success,
           items: result.data ? [result.data] : [],
@@ -253,7 +253,7 @@ export function createCrudActions<
     /**
      * Updates an existing item
      */
-    update: async (id: string, data: Partial<InputType>): Promise<StandardResponse<FullType>> => {
+    update: async (id: string, data: Partial<InputType>): Promise<CollectionResponse<FullType>> => {
       try {
         await connectToDB();
         
@@ -265,7 +265,7 @@ export function createCrudActions<
           revalidationPaths
         );
         
-        // Convert CrudResultType to StandardResponse
+        // Convert CrudResultType to CollectionResponse
         return {
           success: result.success,
           items: result.data ? [result.data] : [],
@@ -284,7 +284,7 @@ export function createCrudActions<
     /**
      * Deletes an item
      */
-    delete: async (id: string): Promise<StandardResponse<FullType>> => {
+    delete: async (id: string): Promise<CollectionResponse<FullType>> => {
       try {
         await connectToDB();
         
@@ -295,7 +295,7 @@ export function createCrudActions<
           revalidationPaths
         );
         
-        // Convert CrudResultType to StandardResponse
+        // Convert CrudResultType to CollectionResponse
         return {
           success: result.success,
           items: result.data ? [result.data] : [],
@@ -314,7 +314,7 @@ export function createCrudActions<
     /**
      * Fetches a single item by ID
      */
-    fetchById: async (id: string): Promise<StandardResponse<FullType>> => {
+    fetchById: async (id: string): Promise<CollectionResponse<FullType>> => {
       try {
         await connectToDB();
         const item = await model.findById(id).lean().exec();

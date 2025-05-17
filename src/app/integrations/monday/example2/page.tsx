@@ -5,146 +5,151 @@ import { Button } from "@/components/core";
 import { Card } from "@/components/composed/cards";
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback";
-import { Input } from "@/components/core/fields";
-import { useMondayMutations } from "@/hooks/integrations/monday/useMondayMutations";
-import type { MondayBoard } from "@/lib/integrations/monday/types/board";
+import { useMondayConnection, useMondayBoard, useMondayImport } from "@/hooks/integrations/monday/useMondayQueries";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
 
-export default function MondaySimpleExamplePage() {
-  // Use the API-based hook
-  const {
-    testConnection,
-    getBoard,
-    loading,
-    error: apiError
-  } = useMondayMutations();
-  
-  // State management
-  const [connectionState, setConnectionState] = useState<'unknown' | 'connected' | 'error'>('unknown');
-  const [connectionData, setConnectionData] = useState<{ name?: string; email?: string } | null>(null);
-  const [boardId, setBoardId] = useState<string>("");
-  const [board, setBoard] = useState<MondayBoard | null>(null);
+export default function MondayExample2() {
+  const [boardId, setBoardId] = useState('');
   const [error, setError] = useState<string | null>(null);
   
-  // Handle connection test
-  const handleTestConnection = async () => {
-    try {
-      const result = await testConnection();
-      
-      if (result.success) {
-        setConnectionState('connected');
-        setConnectionData({
-          name: result.message?.split(' ')[0] || 'Unknown',
-          email: result.message?.split(' ')[1]?.replace(/[()]/g, '') || 'unknown@example.com'
-        });
-      } else {
-        setConnectionState('error');
-        setConnectionData(null);
-        setError(result.message || 'Connection failed');
-      }
-    } catch (err) {
-      setConnectionState('error');
-      setConnectionData(null);
-      setError(err instanceof Error ? err.message : 'Unknown error occurred');
-    }
-  };
+  // React Query hooks
+  const connectionQuery = useMondayConnection();
+  const boardMutation = useMondayBoard();
+  const importMutation = useMondayImport();
   
   // Handle board fetch
   const handleFetchBoard = async () => {
-    if (!boardId) return;
+    if (!boardId) {
+      setError('Please enter a board ID');
+      return;
+    }
+    
+    setError(null);
     
     try {
-      const boardData = await getBoard(boardId);
-      setBoard(boardData);
+      await boardMutation.mutateAsync([boardId]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch board');
+      console.error('Error fetching board:', err);
+      setError(err instanceof Error ? err.message : String(err));
     }
   };
   
-  // Combine errors for display
-  const displayError = error || apiError;
+  // Handle import
+  const handleImport = async () => {
+    if (!boardId) {
+      setError('Please enter a board ID');
+      return;
+    }
+    
+    setError(null);
+    
+    try {
+      await importMutation.mutateAsync({
+        ids: ['123', '456'], // Example item IDs
+        boardId
+      });
+    } catch (err) {
+      console.error('Error importing items:', err);
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  };
+  
+  // Determine loading state
+  const isLoading = connectionQuery.isLoading || boardMutation.isPending || importMutation.isPending;
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Monday.com Simple Integration Example</h1>
+    <div className="container mx-auto py-6">
+      <div className="mb-8">
+        <Heading level="h1">Monday.com Integration Example 2</Heading>
+        <Text className="text-gray-600 mt-2">
+          Example of using Monday.com integration hooks for imports
+        </Text>
+      </div>
       
-      {/* Connection Status */}
+      {/* Connection status */}
       <Card className="mb-6">
-        <Card.Header>Connection Status</Card.Header>
         <Card.Body>
-          {connectionState === 'unknown' ? (
-            <Button onClick={handleTestConnection} disabled={loading}>
-              {loading ? <><Spinner size="sm" className="mr-2" /> Testing...</> : "Test Connection"}
+          <div className="flex items-center justify-between">
+            <div>
+              <Text className="font-medium">Connection Status</Text>
+              <Text className="text-gray-600">
+                {connectionQuery.isLoading ? 'Checking...' : 
+                  connectionQuery.data?.success ? 'Connected' : 'Not connected'}
+              </Text>
+            </div>
+            <Button 
+              onClick={() => connectionQuery.refetch()}
+              disabled={isLoading}
+            >
+              {isLoading ? <Spinner size="sm" className="mr-2" /> : null}
+              Refresh
             </Button>
-          ) : connectionState === 'connected' ? (
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span>Connected to Monday.com</span>
-              </div>
-              {connectionData && (
-                <p className="text-sm text-gray-600">
-                  Logged in as: {connectionData.name} ({connectionData.email})
-                </p>
-              )}
-            </div>
-          ) : (
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <span>Failed to connect</span>
-              </div>
-              {displayError && (
-                <Alert intent="error">
-                  <Alert.Description>{displayError}</Alert.Description>
-                </Alert>
-              )}
-              <Button onClick={handleTestConnection} className="mt-2" disabled={loading}>
-                {loading ? <><Spinner size="sm" className="mr-2" /> Retrying...</> : "Retry Connection"}
-              </Button>
-            </div>
-          )}
+          </div>
         </Card.Body>
       </Card>
       
-      {/* Board Fetch */}
-      {connectionState === 'connected' && (
-        <Card className="mb-6">
-          <Card.Header>Fetch Monday.com Board</Card.Header>
-          <Card.Body>
-            <div className="flex gap-4">
-              <Input
+      {/* Board fetch */}
+      <Card className="mb-6">
+        <Card.Body>
+          <div className="flex flex-col md:flex-row gap-4 items-end">
+            <div className="flex-grow">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Board ID
+              </label>
+              <input
                 type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 value={boardId}
-                onChange={(e) => setBoardId(e.target.value)}
-                placeholder="Enter board ID"
-                className="flex-1"
+                onChange={e => setBoardId(e.target.value)}
+                placeholder="Enter Monday.com board ID"
               />
+            </div>
+            <div className="flex gap-2">
               <Button 
                 onClick={handleFetchBoard}
-                disabled={!boardId || loading}
+                disabled={isLoading || !boardId}
               >
-                {loading ? <><Spinner size="sm" className="mr-2" /> Fetching...</> : "Fetch Board"}
+                {isLoading ? <Spinner size="sm" className="mr-2" /> : null}
+                Fetch Board
+              </Button>
+              <Button 
+                onClick={handleImport}
+                disabled={isLoading || !boardId}
+                intent="primary"
+              >
+                {isLoading ? <Spinner size="sm" className="mr-2" /> : null}
+                Import Items
               </Button>
             </div>
-            
-            {board && (
+
+            {boardId && (
               <div className="mt-4 p-4 bg-gray-50 rounded">
                 <h3 className="font-medium mb-2">Board Details</h3>
                 <pre className="text-sm overflow-auto max-h-96">
-                  {JSON.stringify(board, null, 2)}
+                  {JSON.stringify(boardId, null, 2)}
                 </pre>
               </div>
             )}
+            </div>
           </Card.Body>
         </Card>
+      
+      
+      {/* Error display */}
+      {error && (
+        <Alert intent="error" className="mb-4">
+          <Alert.Title>Error</Alert.Title>
+          <Alert.Description>{error}</Alert.Description>
+        </Alert>
       )}
       
-      {/* Generic Error Display */}
-      {displayError && !connectionData && (
-        <Alert intent="error" className="mt-4">
-          <Alert.Title>Error</Alert.Title>
-          <Alert.Description>{displayError}</Alert.Description>
-        </Alert>
+      {/* Loading state */}
+      {isLoading && (
+        <div className="flex justify-center items-center py-12">
+          <Spinner size="lg" />
+          <div className="ml-4">Loading...</div>
+        </div>
       )}
     </div>
   );

@@ -13,7 +13,7 @@ export {
   extractPagination,
   extractData,
   extractPaginatedData,
-  isStandardResponse,
+  isCollectionResponse,
   isPaginatedResponse,
   isSingleResourceResponse,
 } from '@/lib/query/utilities/response-types';

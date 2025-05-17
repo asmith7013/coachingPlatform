@@ -1,6 +1,6 @@
 // Export all query hooks
-export * from './useEntityQueryRQ';
+export * from './useEntityQuery';
 export * from './useErrorHandledQuery';
-export * from './usePaginatedQueryRQ';
+export * from './usePaginatedQuery';
 export * from '../error/useErrorHandledMutation';
-export * from './useOptimisticMutationRQ'; 
+export * from './useOptimisticMutation'; 

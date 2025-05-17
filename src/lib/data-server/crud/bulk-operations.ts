@@ -3,8 +3,8 @@ import { Model } from "mongoose";
 import { revalidatePath } from "next/cache";
 import { safeParseAndLog } from "@data-utilities/transformers/parse";
 import { connectToDB } from "@data-server/db/connection";
-import { handleCrudError } from "@error/crud-error-handling";
-import { createErrorResponse } from "@core-types/error";
+import { handleCollectionError } from "@error/crud-error-handling";
+import { createCollectionErrorResponse } from "@core-types/error";
 import { BulkUploadResult } from "@core-types/crud";
 
 // Define type alias for inferred schema types
@@ -31,7 +31,10 @@ export async function bulkUploadToDB<Doc extends { _id: string }, Schema extends
     ).filter((item): item is Doc => item !== null);
 
     if (validatedData.length === 0) {
-      return createErrorResponse("No valid items to upload", data) as BulkUploadResult<InferSchema<Schema>>;
+      return createCollectionErrorResponse<InferSchema<Schema>>(
+        "No valid items to upload", 
+        [{item: data, error: "No valid items to upload"}]
+      ) as BulkUploadResult<InferSchema<Schema>>;
     }
 
     // Insert items
@@ -52,6 +55,6 @@ export async function bulkUploadToDB<Doc extends { _id: string }, Schema extends
       total: items.length
     };
   } catch (error) {
-    return handleCrudError(error, "BulkUpload") as BulkUploadResult<InferSchema<Schema>>;
+    return handleCollectionError<InferSchema<Schema>>(error, "BulkUpload") as BulkUploadResult<InferSchema<Schema>>;
   }
 } 

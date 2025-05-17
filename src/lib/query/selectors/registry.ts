@@ -1,11 +1,11 @@
-import { StandardResponse } from '@core-types/response';
-import { handleClientError } from '@/lib/error/handle-client-error';
-import { BaseDocument } from '@/lib/types/core/document';
+import { CollectionResponse } from '@core-types/response';
+import { handleClientError } from '@error/handle-client-error';
+import { BaseDocument } from '@core-types/document';
 
 /**
  * Type for selector functions that transform API responses
  */
-export type SelectorFunction<T extends BaseDocument, R = T[]> = (data: StandardResponse<T>) => R;
+export type SelectorFunction<T extends BaseDocument, R = T[]> = (data: CollectionResponse<T>) => R;
 
 /**
  * Registry to store entity-specific selectors
@@ -44,7 +44,7 @@ export function getEntitySelector<T extends BaseDocument, R = T[]>(
  * @param data The standard response data
  * @returns The items array from the response
  */
-export function defaultSelector<T extends BaseDocument>(data: StandardResponse<T>): T[] {
+export function defaultSelector<T extends BaseDocument>(data: CollectionResponse<T>): T[] {
   try {
     return data?.items || [];
   } catch (error) {
@@ -63,7 +63,7 @@ export function defaultSelector<T extends BaseDocument>(data: StandardResponse<T
  * @returns The transformed data or empty array on error
  */
 export function safelyApplySelector<T extends BaseDocument, R = T[]>(
-  data: StandardResponse<T>,
+  data: CollectionResponse<T>,
   selector: SelectorFunction<T, R>,
   entityType: string
 ): R {

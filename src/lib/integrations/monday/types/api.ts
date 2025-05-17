@@ -16,6 +16,7 @@ export interface ApiResponse<T> extends Pick<BaseResponse, 'success'> {
  */
 export interface MondayBoardResponse extends Pick<ResourceResponse<MondayBoard>, 'success'> {
   boards: MondayBoard[];
+  error?: string;
 }
 
 /**

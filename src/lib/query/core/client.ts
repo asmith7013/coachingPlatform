@@ -1,5 +1,5 @@
 // import { QueryClient } from '@tanstack/react-query';
-import { createQueryClientWithErrorHandling } from './utilities/error-handling';
+import { createQueryClientWithErrorHandling } from '../utilities/error-handling';
 
 /**
  * Global QueryClient instance with proper error handling

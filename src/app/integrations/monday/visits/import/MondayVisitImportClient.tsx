@@ -8,7 +8,7 @@ import { Alert } from '@/components/core/feedback/Alert';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { PageHeader } from '@/components/composed/layouts/PageHeader';
 import { ImportCompletionForm } from '@/components/integrations/monday/domain/visits/ImportCompletionForm';
-import { useMondayMutations } from '@/hooks/integrations/monday/useMondayMutations';
+import { useImportVisit } from '@/hooks/integrations/monday/useMondayQueries';
 import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
 import type { MondayImportResponse } from '@/lib/integrations/monday/types/import';
 
@@ -29,8 +29,8 @@ export default function MondayVisitImportClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // Use the Monday mutations hook for API operations
-  const { completeVisitImport, loading, error: hookError } = useMondayMutations();
+  // React Query hooks
+  const importVisitMutation = useImportVisit();
   
   // State for the import process
   const [stage, setStage] = useState<ImportStage>(ImportStage.LOADING);
@@ -40,11 +40,15 @@ export default function MondayVisitImportClient() {
   
   // Update local error state when hook error changes
   useEffect(() => {
-    if (hookError) {
-      setError(hookError);
+    if (importVisitMutation.error) {
+      setError(
+        importVisitMutation.error instanceof Error 
+          ? importVisitMutation.error.message 
+          : String(importVisitMutation.error)
+      );
       setStage(ImportStage.ERROR);
     }
-  }, [hookError]);
+  }, [importVisitMutation.error]);
   
   // Parse URL parameters on component mount
   useEffect(() => {
@@ -79,7 +83,7 @@ export default function MondayVisitImportClient() {
     }
   }, [searchParams]);
   
-  // Handle form submission - Using the hook
+  // Handle form submission - Using React Query mutation
   const handleSubmit = async (completeData: VisitInput) => {
     try {
       setStage(ImportStage.LOADING);
@@ -93,8 +97,8 @@ export default function MondayVisitImportClient() {
         completionRequired: true
       };
       
-      // Use the completeVisitImport method from the hook
-      const result = await completeVisitImport(importRequest);
+      // Use the useImportVisit hook's mutateAsync method
+      const result = await importVisitMutation.mutateAsync(importRequest);
       
       // Handle the result
       if (result.redirectUrl) {
@@ -103,8 +107,8 @@ export default function MondayVisitImportClient() {
         setStage(ImportStage.SUCCESS);
       }
     } catch (err) {
-      // Error is already handled by the hook and set to hookError
       console.error('Error submitting form:', err);
+      setError(err instanceof Error ? err.message : String(err));
       setStage(ImportStage.ERROR);
     }
   };
@@ -148,12 +152,15 @@ export default function MondayVisitImportClient() {
   // Get page title and subtitle
   const { title, subtitle } = renderPageTitle();
   
+  // Check if we're in a loading state
+  const isLoading = importVisitMutation.isPending || stage === ImportStage.LOADING;
+  
   return (
     <div className="container mx-auto py-6">
       <PageHeader title={title} subtitle={subtitle} />
       
       {/* Loading state */}
-      {(stage === ImportStage.LOADING || loading) && (
+      {isLoading && (
         <div className="flex justify-center items-center py-12">
           <Spinner size="lg" />
           <div className="ml-4">Processing your request...</div>
@@ -218,7 +225,7 @@ export default function MondayVisitImportClient() {
               missingFields={missingFields}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
-              disabled={loading}
+              disabled={isLoading}
             />
           </Card.Body>
         </Card>

@@ -1,9 +1,10 @@
 // src/lib/query/utilities/errorHandling.ts
 import { useEffect } from 'react';
 import { 
-    handleClientError, 
-    captureError, 
-    createErrorContext, 
+    logError, 
+    createErrorContext,
+    formatErrorMessage,
+    classifyError
 } from '@error';
 import { ErrorContext } from '@core-types/error';
 import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query';
@@ -20,15 +21,23 @@ export function defaultQueryErrorHandler(
   error: unknown, 
   context: string | ErrorContext = 'QueryError'
 ): Error {
-  // Format the error message using the application's error handling
-  const errorMessage = handleClientError(
+  // Create proper error context
+  const errorContext: ErrorContext = typeof context === 'string'
+    ? createErrorContext('ReactQuery', context)
+    : { component: 'ReactQuery', ...(context || {}) };
+  
+  // Log through the central system
+  logError(error, errorContext);
+  
+  // Format the error message
+  const errorMessage = formatErrorMessage(
     error, 
-    typeof context === 'string' ? context : context.operation || 'QueryError'
+    typeof context === 'string' ? context : context.operation
   );
   
   // Return a new error with the formatted message
   return error instanceof Error 
-    ? error 
+    ? Object.assign(error, { message: errorMessage })
     : new Error(errorMessage);
 }
 
@@ -41,30 +50,44 @@ export function createQueryClientWithErrorHandling(): QueryClient {
   return new QueryClient({
     queryCache: new QueryCache({
       onError: (error, query) => {
-        captureError(error, createErrorContext('ReactQuery', 'query', {
+        logError(error, {
+          component: 'ReactQuery',
+          operation: 'query',
+          category: classifyError(error).category,
           metadata: { 
             queryKey: JSON.stringify(query.queryKey)
           }
-        }));
+        });
       },
     }),
     mutationCache: new MutationCache({
       onError: (error, variables, context, mutation) => {
-        captureError(error, createErrorContext('ReactQuery', 'mutation', {
+        logError(error, {
+          component: 'ReactQuery',
+          operation: 'mutation',
+          category: classifyError(error).category,
           metadata: { 
             mutationKey: mutation.options.mutationKey 
               ? JSON.stringify(mutation.options.mutationKey)
-              : undefined
+              : undefined,
+            variables: typeof variables === 'object' ? '[Object]' : String(variables)
           }
-        }));
+        });
       },
     }),
     defaultOptions: {
       queries: {
         retry: (failureCount, error) => {
-          captureError(error, createErrorContext('ReactQuery', 'query-retry', { 
-            metadata: { failureCount } 
-          }));
+          if (failureCount === 0) {
+            // Log only the first failure to avoid excessive logging
+            logError(error, {
+              component: 'ReactQuery',
+              operation: 'query-retry',
+              category: 'network',
+              severity: 'warning',
+              metadata: { failureCount }
+            });
+          }
           return failureCount < 2;
         },
         staleTime: 5 * 60 * 1000, // 5 minutes (match existing config)
@@ -90,11 +113,15 @@ export async function handleQueryError<T>(
   try {
     return await promise;
   } catch (error) {
-    const errorContext = typeof context === 'string' 
+    // Create proper error context
+    const errorContext: ErrorContext = typeof context === 'string'
       ? createErrorContext('ReactQuery', context)
-      : { ...createErrorContext('ReactQuery', context.operation || 'query'), ...context };
+      : { component: 'ReactQuery', ...(context || {}) };
     
-    captureError(error, errorContext);
+    // Log through the central system
+    logError(error, errorContext);
+    
+    // Throw standardized error
     throw defaultQueryErrorHandler(error, context);
   }
 }
@@ -113,11 +140,13 @@ export function useQueryErrorHandler(
 ): void {
   useEffect(() => {
     if (isError && error) {
-      const errorContext = typeof context === 'string' 
+      // Create proper error context
+      const errorContext: ErrorContext = typeof context === 'string'
         ? createErrorContext('ReactQuery', context)
-        : { ...createErrorContext('ReactQuery', context.operation || 'query'), ...context };
+        : { component: 'ReactQuery', ...(context || {}) };
       
-      captureError(error, errorContext);
+      // Log through the central system
+      logError(error, errorContext);
     }
   }, [isError, error, context]);
 }
@@ -137,11 +166,21 @@ export function withQueryErrorHandling<TArgs extends unknown[], TResult>(
     try {
       return await queryFn(...args);
     } catch (error) {
-      const errorContext = typeof context === 'string' 
+      // Create proper error context
+      const errorContext: ErrorContext = typeof context === 'string'
         ? createErrorContext('ReactQuery', context)
-        : { ...createErrorContext('ReactQuery', context.operation || 'query'), ...context };
+        : { component: 'ReactQuery', ...(context || {}) };
       
-      captureError(error, errorContext);
+      // Add call parameters metadata for better debugging
+      errorContext.metadata = {
+        ...errorContext.metadata,
+        callArgs: args.map(arg => typeof arg === 'object' ? '[Object]' : String(arg))
+      };
+      
+      // Log through the central system
+      logError(error, errorContext);
+      
+      // Throw standardized error
       throw defaultQueryErrorHandler(error, context);
     }
   };

@@ -1,14 +1,17 @@
 import { useQueries, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query/query-keys';
 import { handleClientError } from '@/lib/error';
-import { StandardResponse } from '@core-types/response';
+import { CollectionResponse, EntityResponse } from '@core-types/response';
+import { isEntityResponse, isCollectionResponse } from '@/lib/query/utilities/response-types';
+
+// Response can be either collection or entity
+type ResponseType<T> = CollectionResponse<T> | EntityResponse<T>;
 
 export interface QueryConfig<T> {
   /** Query key for the main entity */
   queryKey: unknown[];
   
   /** Function to fetch the main entity */
-  queryFn: () => Promise<StandardResponse<T>>;
+  queryFn: () => Promise<ResponseType<T>>;
   
   /** Related queries to fetch */
   relatedQueries?: Array<{
@@ -16,7 +19,7 @@ export interface QueryConfig<T> {
     queryKey: unknown[];
     
     /** Function to fetch the related entity */
-    queryFn: () => Promise<StandardResponse<unknown>>;
+    queryFn: () => Promise<ResponseType<unknown>>;
     
     /** Whether this query is enabled */
     enabled?: boolean;
@@ -27,9 +30,39 @@ export interface QueryConfig<T> {
 }
 
 /**
+ * Extract entity data from a response regardless of format
+ */
+function extractEntityData<T>(response: ResponseType<T> | undefined): T | undefined {
+  if (!response) return undefined;
+  
+  if (isEntityResponse<T>(response)) {
+    return response.data;
+  } else if (isCollectionResponse<T>(response)) {
+    return response.items[0];
+  }
+  
+  return undefined;
+}
+
+/**
+ * Extract collection data from a response regardless of format
+ */
+function extractCollectionData<T>(response: ResponseType<T> | undefined): T[] {
+  if (!response) return [];
+  
+  if (isEntityResponse<T>(response)) {
+    return [response.data];
+  } else if (isCollectionResponse<T>(response)) {
+    return response.items;
+  }
+  
+  return [];
+}
+
+/**
  * Hook for managing multiple related queries with React Query
  */
-export function useQueriesManagerRQ<T>({
+export function useQueriesManager<T>({
   queryKey,
   queryFn,
   relatedQueries = [],
@@ -86,11 +119,15 @@ export function useQueriesManagerRQ<T>({
   };
   
   return {
-    // Main query data
-    data: mainQuery.data?.items?.[0] as T | undefined,
+    // Main query data - works with both EntityResponse and CollectionResponse
+    data: extractEntityData<T>(mainQuery.data as ResponseType<T>),
+    
+    // Also provide raw items for backward compatibility
+    items: isCollectionResponse<T>(mainQuery.data as ResponseType<T>) ? (mainQuery.data as CollectionResponse<T>).items : 
+           isEntityResponse<T>(mainQuery.data as ResponseType<T>) ? [(mainQuery.data as EntityResponse<T>).data] : [],
     
     // Related query data
-    relatedData: relatedResults.map(result => result.data?.items),
+    relatedData: relatedResults.map(result => extractCollectionData(result.data)),
     
     // Loading and error states
     isLoading,
@@ -100,6 +137,9 @@ export function useQueriesManagerRQ<T>({
     invalidateQueries,
     
     // Individual query results
-    queries
+    queries,
+    
+    // Full response object for direct access
+    response: mainQuery.data
   };
-} 
+}

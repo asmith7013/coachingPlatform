@@ -36,6 +36,7 @@
         "@domain-hooks/*": ["./src/hooks/domain/*"],
         "@ui-hooks/*": ["./src/hooks/ui/*"],
         "@pattern-hooks/*": ["./src/hooks/pattern/*"],
+        "@monday-hooks/*": ["./src/hooks/integrations/monday/*"],
 
         // API paths
         "@api-routes/*": ["./src/app/api/*"],

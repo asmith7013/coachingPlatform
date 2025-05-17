@@ -2,8 +2,7 @@ import {
   MondayItem, 
   MondayUser,
   MondayBoard, 
-  MondayConnectionTestResult,
-  ApiResponse
+  MondayConnectionTestResult
 } from '@api-monday/types';
 import { 
   ITEMS_QUERY, 
@@ -14,6 +13,16 @@ import {
   USER_BY_EMAIL_QUERY,
   UPDATE_ITEM_MUTATION
 } from '@api-monday/client/queries';
+import {
+  // adaptMondayBoardResponse,
+  adaptMondayItemsResponse,
+  adaptMondayUserResponse,
+  adaptMondayConnectionTestResponse
+} from '@/lib/integrations/monday/adapters/response-adapters';
+import {
+  CollectionResponse,
+  EntityResponse
+} from '@/lib/types/core/response';
 
 /**
  * Monday.com GraphQL API Client
@@ -104,32 +113,24 @@ export const mondayClient = new MondayClient();
  * 
  * Data access function that verifies API connection by retrieving the current user
  * 
- * @returns Connection test result
+ * @returns Connection test result using standardized response format
  */
-export async function testConnection(): Promise<MondayConnectionTestResult> {
+export async function testConnection(): Promise<EntityResponse<MondayConnectionTestResult>> {
   try {
     // Use a simple query to get the current user
     const response = await mondayClient.query<{ me: { name: string; email: string } }>(
       `query { me { name email } }`
     );
     
-    if (!response.me) {
-      return {
-        success: false,
-        error: "API returned no user data. Check token permissions."
-      };
-    }
-    
-    return {
-      success: true,
-      data: {
-        name: response.me.name,
-        email: response.me.email
-      }
-    };
+    // Use adapter to convert to standardized format
+    return adaptMondayConnectionTestResponse(response);
   } catch (error) {
     return {
       success: false,
+      data: {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error"
+      },
       error: error instanceof Error ? error.message : "Unknown error"
     };
   }
@@ -142,12 +143,12 @@ export async function testConnection(): Promise<MondayConnectionTestResult> {
  * 
  * @param boardId Board ID to fetch
  * @param itemLimit Maximum items to fetch
- * @returns API response with board data
+ * @returns Collection response with board data
  */
 export async function fetchMondayBoard(
   boardId: string, 
   itemLimit: number = 20
-): Promise<ApiResponse<MondayBoard>> {
+): Promise<EntityResponse<MondayBoard>> {
   try {
     // Make API request
     const response = await mondayClient.query<{ boards: MondayBoard[] }>(
@@ -162,7 +163,8 @@ export async function fetchMondayBoard(
     if (!response.boards || response.boards.length === 0) {
       return { 
         success: false, 
-        error: `Board with ID ${boardId} not found or not accessible`
+        error: `Board with ID ${boardId} not found or not accessible`,
+        data: {} as MondayBoard
       };
     }
     
@@ -174,7 +176,8 @@ export async function fetchMondayBoard(
     console.error("Error fetching Monday board:", error);
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : "Unknown error" 
+      error: error instanceof Error ? error.message : "Unknown error",
+      data: {} as MondayBoard
     };
   }
 }
@@ -184,9 +187,9 @@ export async function fetchMondayBoard(
  * 
  * Data access function that retrieves all boards from all workspaces
  * 
- * @returns API response with boards data
+ * @returns Collection response with boards data
  */
-export async function fetchMondayBoards(): Promise<ApiResponse<MondayBoard[]>> {
+export async function fetchMondayBoards(): Promise<CollectionResponse<MondayBoard>> {
   try {
     // Get all workspaces first
     const workspacesResponse = await mondayClient.query<{ workspaces: { id: string; name: string }[] }>(
@@ -196,7 +199,9 @@ export async function fetchMondayBoards(): Promise<ApiResponse<MondayBoard[]>> {
     if (!workspacesResponse.workspaces || workspacesResponse.workspaces.length === 0) {
       return { 
         success: false, 
-        error: "No workspaces found. Check API token permissions."
+        error: "No workspaces found. Check API token permissions.",
+        items: [],
+        total: 0
       };
     }
     
@@ -216,12 +221,15 @@ export async function fetchMondayBoards(): Promise<ApiResponse<MondayBoard[]>> {
     
     return {
       success: true,
-      data: boards
+      items: boards,
+      total: boards.length
     };
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error",
+      items: [],
+      total: 0
     };
   }
 }
@@ -232,23 +240,25 @@ export async function fetchMondayBoards(): Promise<ApiResponse<MondayBoard[]>> {
  * Data access function that retrieves all items from a board
  * 
  * @param boardId Board ID to fetch items from
- * @returns Array of Monday.com items
+ * @returns Collection response with Monday.com items
  */
-export async function fetchMondayItems(boardId: string): Promise<MondayItem[]> {
+export async function fetchMondayItems(boardId: string): Promise<CollectionResponse<MondayItem>> {
   try {
     const response = await mondayClient.query<{ boards: { items_page: { items: MondayItem[] } }[] }>(
       ITEMS_QUERY, 
       { boardId }
     );
     
-    if (!response.boards || response.boards.length === 0 || !response.boards[0].items_page) {
-      return [];
-    }
-    
-    return response.boards[0].items_page.items;
+    // Use adapter to convert to standardized format
+    return adaptMondayItemsResponse(response);
   } catch (error) {
     console.error("Error fetching Monday items:", error);
-    throw new Error(`Failed to fetch Monday items: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      items: [],
+      total: 0
+    };
   }
 }
 
@@ -258,9 +268,9 @@ export async function fetchMondayItems(boardId: string): Promise<MondayItem[]> {
  * Data access function that retrieves a single item by ID
  * 
  * @param itemId Item ID to fetch
- * @returns Monday.com item
+ * @returns Collection entity response with Monday.com item
  */
-export async function fetchMondayItemById(itemId: string): Promise<MondayItem> {
+export async function fetchMondayItemById(itemId: string): Promise<EntityResponse<MondayItem>> {
   try {
     const response = await mondayClient.query<{ items: MondayItem[] }>(
       ITEM_BY_ID_QUERY, 
@@ -268,13 +278,24 @@ export async function fetchMondayItemById(itemId: string): Promise<MondayItem> {
     );
     
     if (!response.items || response.items.length === 0) {
-      throw new Error(`Item with ID ${itemId} not found or not accessible`);
+      return {
+        success: false,
+        error: `Item with ID ${itemId} not found or not accessible`,
+        data: {} as MondayItem
+      };
     }
     
-    return response.items[0];
+    return {
+      success: true,
+      data: response.items[0]
+    };
   } catch (error) {
     console.error("Error fetching Monday item:", error);
-    throw new Error(`Failed to fetch Monday item: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      data: {} as MondayItem
+    };
   }
 }
 
@@ -284,30 +305,22 @@ export async function fetchMondayItemById(itemId: string): Promise<MondayItem> {
  * Data access function that retrieves a user by email address
  * 
  * @param email Email address to search for
- * @returns API response with user data
+ * @returns Collection entity response with user data
  */
-export async function fetchMondayUserByEmail(email: string): Promise<ApiResponse<MondayUser>> {
+export async function fetchMondayUserByEmail(email: string): Promise<EntityResponse<MondayUser>> {
   try {
     const response = await mondayClient.query<{ users: MondayUser[] }>(
       USER_BY_EMAIL_QUERY, 
       { email }
     );
     
-    if (!response.users || response.users.length === 0) {
-      return {
-        success: false,
-        error: `User with email ${email} not found or not accessible`
-      };
-    }
-    
-    return {
-      success: true,
-      data: response.users[0]
-    };
+    // Use adapter to convert to standardized format
+    return adaptMondayUserResponse(response, email);
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error",
+      data: {} as MondayUser
     };
   }
 }
@@ -320,13 +333,13 @@ export async function fetchMondayUserByEmail(email: string): Promise<ApiResponse
  * @param boardId Board ID containing the item
  * @param itemId Item ID to update
  * @param columnValues Column values to update
- * @returns API response with updated item data
+ * @returns Standardized entity response with updated item data
  */
 export async function updateMondayItem(
   boardId: string,
   itemId: string,
   columnValues: Record<string, unknown>
-): Promise<ApiResponse<MondayItem>> {
+): Promise<EntityResponse<MondayItem>> {
   try {
     // Convert columnValues to the format expected by Monday.com
     const columnValuesJson = JSON.stringify(columnValues);
@@ -344,21 +357,18 @@ export async function updateMondayItem(
     if (!response.change_multiple_column_values) {
       return {
         success: false,
-        error: "Failed to update item. Check API token permissions."
+        error: "Failed to update item. Check API token permissions.",
+        data: {} as MondayItem
       };
     }
     
     // Fetch the updated item
-    const updatedItem = await fetchMondayItemById(itemId);
-    
-    return {
-      success: true,
-      data: updatedItem
-    };
+    return await fetchMondayItemById(itemId);
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error",
+      data: {} as MondayItem
     };
   }
 }

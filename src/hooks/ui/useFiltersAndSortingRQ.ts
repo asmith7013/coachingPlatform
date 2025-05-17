@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query/query-keys';
+import { queryKeys } from '@/lib/query/core/keys';
 
 export interface FiltersAndSortingOptions {
   /** Key for storing filter state in localStorage */

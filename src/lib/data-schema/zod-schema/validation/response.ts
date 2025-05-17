@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Define standard response schema
-export const StandardResponseSchema = z.object({
+export const CollectionResponseSchema = z.object({
     items: z.array(z.record(z.unknown())).default([]),
     total: z.number().optional(),
     page: z.number().optional(),

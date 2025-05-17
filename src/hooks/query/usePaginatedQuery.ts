@@ -1,9 +1,9 @@
 // src/lib/query/hooks/usePaginatedQuery.ts
-import React from 'react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { PaginatedResponse } from '@core-types/response';
-import { queryKeys } from '@/lib/query/query-keys';
+import { queryKeys } from '@/lib/query/core/keys';
 import { handleQueryError } from '@/lib/query/utilities/error-handling';
+import { isPaginatedResponse } from '@/lib/query/utilities/response-types';
 
 export interface PaginationQueryParams {
   page?: number;
@@ -11,7 +11,7 @@ export interface PaginationQueryParams {
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
   search?: string;
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
 }
 
 export interface UsePaginatedQueryOptions<T> {
@@ -36,6 +36,8 @@ export interface PaginatedQueryResult<T> {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
   };
+  // Original response for advanced usage
+  response: PaginatedResponse<T> | undefined;
 }
 
 export function usePaginatedQuery<T>({
@@ -66,10 +68,37 @@ export function usePaginatedQuery<T>({
 
   const query = useQuery({
     queryKey: fullQueryKey,
-    queryFn: () => handleQueryError(
-      fetcher({ page, limit, sortBy, sortOrder, search, filters }),
-      `Fetch ${entityType} list`
-    ),
+    queryFn: async () => {
+      const response = await handleQueryError(
+        fetcher({ page, limit, sortBy, sortOrder, search, filters }),
+        `Fetch ${entityType} list`
+      );
+      
+      // Ensure we have a valid PaginatedResponse
+      if (!isPaginatedResponse<T>(response)) {
+        // Convert to paginated response format if needed
+        const convertedResponse: PaginatedResponse<T> = {
+          items: Array.isArray(response) ? response : 
+                 (response && typeof response === 'object' && 'items' in response) ? 
+                 (response as PaginatedResponse<T>).items || [] : [],
+          total: (response && typeof response === 'object' && 'total' in response) ? 
+                 (response as PaginatedResponse<T>).total : 0,
+          page,
+          limit,
+          totalPages: 0,
+          hasMore: false,
+          success: true,
+        };
+        
+        // Calculate totalPages if not provided
+        convertedResponse.totalPages = Math.ceil(convertedResponse.total / limit);
+        convertedResponse.hasMore = page < convertedResponse.totalPages;
+        
+        return convertedResponse;
+      }
+      
+      return response;
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes
     ...options,
   });
@@ -79,14 +108,14 @@ export function usePaginatedQuery<T>({
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
   const totalPages = data?.totalPages ?? Math.ceil(total / limit);
-  const hasNextPage = page < totalPages;
-  const hasPreviousPage = page > 1;
+  const hasNextPage = (data?.page ?? page) < totalPages;
+  const hasPreviousPage = (data?.page ?? page) > 1;
 
   return {
     items,
     isLoading,
     isFetching,
-    error,
+    error: error as Error | null,
     refetch,
     total,
     pagination: {
@@ -97,5 +126,6 @@ export function usePaginatedQuery<T>({
       hasNextPage,
       hasPreviousPage,
     },
+    response: data,
   };
 }

@@ -1,5 +1,5 @@
-import { getGlobalQueryClient } from '@/lib/query/query-client';
-import { CacheSyncConfig } from './types';
+import { getGlobalQueryClient } from '@/lib/query/core/client';
+import { CacheSyncConfig } from '../../../types/core/cache';
 import { createEntityCacheOperations } from './cache-operations';
 
 /**

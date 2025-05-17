@@ -1,9 +1,9 @@
 // src/hooks/utils/useResourceManager.ts
 import { usePagination } from "@hooks/ui/usePagination";
 import { useFiltersAndSorting } from "@hooks/ui/useFiltersAndSorting";
-import { useOptimisticResource } from "@hooks/data/useOptimisticResource";
-import { useSafeSWR } from "@hooks/data/useSafeSWR";
-import { useCrudOperations } from "@hooks/data/useCrudOperations";
+import { useOptimisticResource } from "@/hooks/swr/useOptimisticResource";
+import { useSafeSWR } from "@/hooks/swr/useSafeSWR";
+import { useCrudOperations } from "@/hooks/swr/useCrudOperations";
 import { useCallback, useMemo } from "react";
 import { 
   WithId, 

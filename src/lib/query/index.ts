@@ -1,10 +1,10 @@
 // src/lib/query/index.ts
 // Export query client and provider
 export { QueryProvider } from './provider';
-export { queryClient, resetQueryCache, setInitialQueryData } from './query-client';
+export { queryClient, resetQueryCache, setInitialQueryData } from './core/client';
 
 // Export query keys
-export { queryKeys, createEntityKeys } from './query-keys';
+export { queryKeys, createEntityKeys } from './core/keys';
 
 // Export utility functions
 export * from './utilities/error-handling';
