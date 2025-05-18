@@ -1,5 +1,5 @@
 // src/hooks/utils/useOptimisticResource.ts
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useSWRConfig } from 'swr';
 
 // Type helper to work with both MongoDB style _id and normalized id
@@ -11,6 +11,9 @@ function getId(item: WithId): string {
 }
 
 /**
+ * @deprecated Use useOptimisticMutation from '@hooks/query/useOptimisticMutation' instead.
+ * This hook will be removed in a future version. See migration guide at docs/data-flow/react-query-patterns.md
+ * 
  * Hook for optimistic updates of resources
  * 
  * @param resourceKey - Key for SWR cache
@@ -20,6 +23,16 @@ export function useOptimisticResource<T extends WithId>(resourceKey: string) {
   const { mutate } = useSWRConfig();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+
+  // Add deprecation warning in development
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(
+        'useOptimisticResource is deprecated and will be removed in a future version. ' +
+        'Please migrate to useOptimisticMutation from @hooks/query/useOptimisticMutation.'
+      );
+    }
+  }, []);
 
   // Optimistically add a new item
   const optimisticAdd = useCallback(

@@ -5,7 +5,7 @@
  * with proper error handling and cache invalidation.
  */
 import { useMutation, useQueryClient, QueryKey } from '@tanstack/react-query';
-import { handleClientError } from '@error/handle-client-error';
+import { handleClientError } from '@error/handlers/client';
 
 /**
  * Options for optimistic mutation behavior

@@ -1,6 +1,6 @@
 // src/lib/data-server/api-adapters.ts
 import { connectToDB } from "@data-server/db/connection";
-import { FetchParams } from "@core-types/api";
+import { QueryParams } from "@core-types/api";
 import { sanitizeDocuments } from "@data-utilities/transformers/sanitize";
 import { ZodSchema } from "zod";
 import { Model, FilterQuery } from "mongoose";
@@ -19,7 +19,7 @@ export function createApiSafeFetcher<T, M>(
   _schema: ZodSchema<T>,
   defaultSearchField?: string
 ) {
-  return async function(params: FetchParams) {
+  return async function(params: QueryParams) {
     try {
       await connectToDB();
       

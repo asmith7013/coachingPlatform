@@ -3,10 +3,10 @@
 import { z } from "zod";
 import { SchoolModel } from "@/lib/data-schema/mongoose-schema/core";
 import { SchoolInputZodSchema, SchoolZodSchema } from "@zod-schema/core/school";
-import { handleServerError } from "@/lib/error/handle-server-error";
-import { handleValidationError } from "@/lib/error/handle-validation-error";
-import { createCrudActions } from "@/lib/data-server/crud/crud-action-factory";
-import { withDbConnection } from "@/lib/data-server/db/ensure-connection";
+import { handleServerError } from "@error/handlers/server";
+import { handleValidationError } from "@error/handlers/validation";
+import { createCrudActions } from "@data-server/crud/crud-action-factory";
+import { withDbConnection } from "@data-server/db/ensure-connection";
 import { uploadFileWithProgress } from "@/lib/data-server/file-handling/file-upload";
 import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
 import { SchoolInput } from "@domain-types/school";

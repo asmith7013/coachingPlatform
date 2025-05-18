@@ -2,8 +2,8 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { handleValidationError } from "@/lib/error/handle-validation-error";
-import { handleServerError } from "@/lib/error/handle-server-error";
+import { handleValidationError } from "@error/handlers/validation";
+import { handleServerError } from "@error/handlers/server";
 import { withDbConnection } from "@/lib/data-server/db/ensure-connection";
 
 // Import services

@@ -1,5 +1,6 @@
-import { getGlobalQueryClient } from '@/lib/query/core/client';
-import { CacheSyncConfig } from '../../../types/core/cache';
+// src/lib/query/cache-sync/client-sync.ts
+import { queryClient } from '@/lib/query/core/client';
+import { CacheSyncConfig } from '@/lib/types/core/cache';
 import { createEntityCacheOperations } from './cache-operations';
 
 /**
@@ -17,9 +18,8 @@ export async function syncClientCache(
   if (typeof window === 'undefined') {
     return;
   }
-
+  
   const { entityType, operationType, additionalInvalidateKeys = [] } = config;
-  const queryClient = getGlobalQueryClient();
   const cacheOps = createEntityCacheOperations(queryClient, entityType);
 
   // Handle each operation type differently
@@ -63,4 +63,4 @@ export async function syncClientCache(
       await queryClient.invalidateQueries({ queryKey: key });
     }
   }
-} 
+}

@@ -22,7 +22,7 @@ export function ConnectionTest({ className }: ConnectionTestProps) {
     setConnectionTestStatus({ status: 'loading' });
     
     try {
-      const result = await testConnection() as MondayConnectionTestResult;
+      const result = await testConnection() as unknown as MondayConnectionTestResult;
       
       if (result.success && result.data) {
         setConnectionTestStatus({ 

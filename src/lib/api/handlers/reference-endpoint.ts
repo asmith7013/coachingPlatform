@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { handleServerError } from "@/lib/error/handle-server-error";
 import { collectionizeResponse } from "@api-responses/standardize";
-import { FetchParams } from "@/lib/types/core/api";
+import { QueryParams } from "@/lib/types/core/api";
 import { BaseReference } from "@/lib/types/core/reference";
 import { PaginatedResponse } from "@core-types/response";
 
@@ -9,7 +9,7 @@ import { PaginatedResponse } from "@core-types/response";
  * Generic type for any fetch function that returns items and total
  */
 // Modified to use PaginatedResponse which includes page and limit
-export type FetchFunction<T> = (params: FetchParams) => Promise<PaginatedResponse<T | Omit<T, 'createdAt' | 'updatedAt'> & {
+export type FetchFunction<T> = (params: QueryParams) => Promise<PaginatedResponse<T | Omit<T, 'createdAt' | 'updatedAt'> & {
   createdAt?: string | Date;
   updatedAt?: string | Date;
 }>>;

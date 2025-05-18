@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import type { ZodSchema } from "zod";
 import { parseOrThrow, parsePartialOrThrow } from "@data-utilities/transformers/parse";
 import { sanitizeDocument, removeTimestampFields } from "@data-utilities/transformers/sanitize";
-import { handleServerError } from "@error/handle-server-error";
+import { handleServerError } from "@error/handlers/server";
 import { connectToDB } from "@data-server/db/connection";
 import type { z } from "zod";
 import { BaseDocument } from "@core-types/document";

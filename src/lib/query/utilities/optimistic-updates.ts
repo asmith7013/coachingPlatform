@@ -3,18 +3,18 @@ import { useQueryClient, useMutation, QueryClient } from '@tanstack/react-query'
 import { deepSanitize, removeTimestampFields } from '@/lib/data-utilities/transformers/sanitize';
 import { parseOrThrow, parsePartialOrThrow } from '@/lib/data-utilities/transformers/parse';
 import { ZodSchema } from 'zod';
-import { handleClientError } from '@/lib/error/handle-client-error';
-import { queryKeys } from '@/lib/query/core/keys';
-import { BaseDocument } from '@/lib/types/core/document';
-import { PaginatedResult } from '@/lib/types/core/pagination';
-import { CrudResultType } from '@/lib/types/core/crud';
+import { handleClientError } from '@error';
+import { queryKeys } from '@query/core/keys';
+import { BaseDocument } from '@core-types/document';
+import { PaginatedResponse } from '@core-types/response';
+import { CrudResultType } from '@core-types/crud';
 
 /**
  * Creates optimistic CRUD operations for a specific entity type
  * that mirror the server-side CRUD factory pattern
  */
 export function createOptimisticCrudActions<
-  Doc extends BaseDocument,
+  // Doc extends BaseDocument,
   InputType,
   FullType
 >(
@@ -31,7 +31,7 @@ export function createOptimisticCrudActions<
     optimisticCreate(
       queryClient: QueryClient,
       data: InputType
-    ): { previousData: PaginatedResult<FullType> | undefined } {
+    ): { previousData: PaginatedResponse<FullType> | undefined } {
       try {
         // Validate and sanitize data using the same pattern as server-side
         const validatedData = parseOrThrow(inputSchema, data);
@@ -50,12 +50,12 @@ export function createOptimisticCrudActions<
         const processedItem = parseOrThrow(fullSchema, optimisticItem) as FullType;
         
         // Save previous data for potential rollback
-        const previousData = queryClient.getQueryData<PaginatedResult<FullType>>(entityListKey);
+        const previousData = queryClient.getQueryData<PaginatedResponse<FullType>>(entityListKey);
         
         // Update the query data optimistically
-        queryClient.setQueryData<PaginatedResult<FullType>>(
+        queryClient.setQueryData<PaginatedResponse<FullType>>(
           entityListKey,
-          (oldData): PaginatedResult<FullType> => {
+          (oldData): PaginatedResponse<FullType> => {
             // If no previous data exists, create a new response
             if (!oldData) {
               return {
@@ -94,19 +94,19 @@ export function createOptimisticCrudActions<
       queryClient: QueryClient,
       id: string,
       data: Partial<InputType>
-    ): { previousData: PaginatedResult<FullType> | undefined } {
+    ): { previousData: PaginatedResponse<FullType> | undefined } {
       try {
         // Validate and sanitize partial data
         const validatedData = parsePartialOrThrow(inputSchema, data);
         const safeData = removeTimestampFields(validatedData);
         
         // Save previous data for potential rollback
-        const previousData = queryClient.getQueryData<PaginatedResult<FullType>>(entityListKey);
+        const previousData = queryClient.getQueryData<PaginatedResponse<FullType>>(entityListKey);
         
         // Update the query data optimistically
-        queryClient.setQueryData<PaginatedResult<FullType>>(
+        queryClient.setQueryData<PaginatedResponse<FullType>>(
           entityListKey,
-          (oldData): PaginatedResult<FullType> | undefined => {
+          (oldData): PaginatedResponse<FullType> | undefined => {
             if (!oldData) return undefined;
             
             // Update the matching item
@@ -154,15 +154,15 @@ export function createOptimisticCrudActions<
     optimisticDelete(
       queryClient: QueryClient,
       id: string
-    ): { previousData: PaginatedResult<FullType> | undefined } {
+    ): { previousData: PaginatedResponse<FullType> | undefined } {
       try {
         // Save previous data for potential rollback
-        const previousData = queryClient.getQueryData<PaginatedResult<FullType>>(entityListKey);
+        const previousData = queryClient.getQueryData<PaginatedResponse<FullType>>(entityListKey);
         
         // Update the query data optimistically
-        queryClient.setQueryData<PaginatedResult<FullType>>(
+        queryClient.setQueryData<PaginatedResponse<FullType>>(
           entityListKey,
-          (oldData): PaginatedResult<FullType> | undefined => {
+          (oldData): PaginatedResponse<FullType> | undefined => {
             if (!oldData) return undefined;
             
             // Filter out the deleted item

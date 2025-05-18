@@ -1,10 +1,13 @@
 import useSWR, { SWRConfiguration } from "swr";
-import { handleClientError } from "@/lib/error/handle-client-error";
-import { useMemo } from "react";
+import { handleClientError } from "@error/handlers/client";
+import { useMemo, useEffect } from "react";
 
 type Fetcher<T> = () => Promise<T>;
 
 /**
+ * @deprecated Use useSafeQuery from '@hooks/query/useSafeQuery' instead.
+ * This hook will be removed in a future version. See migration guide at docs/data-flow/react-query-patterns.md
+ * 
  * Enhanced SWR hook with optimized caching, error handling, and key stability
  * @param key - The SWR cache key (string, array, or null)
  * @param fetcher - The data fetching function
@@ -17,6 +20,16 @@ export function useSafeSWR<T>(
   context: string,
   options: SWRConfiguration = {}
 ) {
+  // Add deprecation warning in development
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(
+        'useSafeSWR is deprecated and will be removed in a future version. ' +
+        'Please migrate to useSafeQuery from @hooks/query/useSafeQuery.'
+      );
+    }
+  }, []);
+
   // Create stable key reference for array keys
   // This prevents unnecessary revalidations when array references change but contents don't
   const stableKey = useMemo(() => {

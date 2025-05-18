@@ -2,8 +2,10 @@ import {
     ErrorSeverity, 
     ErrorCategory, 
     AppError,
+    ValidationError,
+    NetworkError,
+    PermissionError,
     BusinessError,
-    HttpError,
     ErrorContext
   } from "@core-types/error";
   
@@ -18,26 +20,10 @@ import {
   } {
     // Handle AppError class hierarchy directly
     if (error instanceof AppError) {
-      // Use context properties if provided
-      let severity = error.context?.severity || 'error';
-      let category = error.context?.category || 'unknown';
-      let statusCode: string | undefined;
-      
-      // Handle specific error types
-      if (error instanceof BusinessError) {
-        category = 'business';
-        statusCode = error.code;
-        severity = severity || 'warning';
-      } else if (error instanceof HttpError) {
-        category = 'network';
-        statusCode = String(error.statusCode);
-        severity = severity || (error.statusCode >= 500 ? 'error' : 'warning');
-      }
-      
       return { 
-        severity, 
-        category, 
-        statusCode, 
+        severity: error.severity, 
+        category: error.category, 
+        statusCode: error.meta.statusCode as string,
         message: error.message 
       };
     }
@@ -113,14 +99,13 @@ import {
   }
   
   /**
-   * Create an appropriate error instance from an unknown error
-   * Useful for converting arbitrary errors to our error hierarchy
+   * Create the appropriate error instance from any error type
    */
   export function createAppError(
     error: unknown, 
     context?: ErrorContext
   ): AppError {
-    // If it's already an AppError, merge contexts if provided
+    // If it's already an AppError, update context if provided
     if (error instanceof AppError) {
       if (context) {
         error.context = { ...error.context, ...context };
@@ -128,34 +113,76 @@ import {
       return error;
     }
     
-    // Handle Error instances
-    if (error instanceof Error) {
-      // Extract potential status code from error message
-      const statusMatch = error.message.match(/\[(\d+)\]/);
-      const statusCode = statusMatch ? parseInt(statusMatch[1], 10) : undefined;
-      
-      // Create appropriate error instance
-      if (statusCode) {
-        return new HttpError(error.message, statusCode, context);
-      }
-      
-      // Check for business error patterns
-      if (error.name.includes('Business') || error.message.includes('business rule')) {
-        return new BusinessError(error.message, 'BUSINESS_ERROR', context);
-      }
-      
-      // Create generic AppError
-      return new AppError(error.message, { context });
-    }
+    // Extract error information
+    const { severity, category, statusCode, message } = classifyError(error);
     
-    // Handle string errors
-    if (typeof error === 'string') {
-      return new AppError(error, { context });
+    // Create appropriate error based on category
+    switch (category) {
+      case 'validation':
+        return new ValidationError(message, undefined, context);
+      
+      case 'network':
+        return new NetworkError(
+          message, 
+          statusCode ? parseInt(statusCode, 10) : undefined, 
+          context
+        );
+      
+      case 'permission':
+        return new PermissionError(message, context);
+      
+      case 'business':
+        return new BusinessError(message, undefined, context);
+      
+      default:
+        return new AppError(message, {
+          severity,
+          category,
+          context,
+          code: statusCode
+        });
     }
-    
-    // Handle unknown error types
-    return new AppError(
-      typeof error === 'object' ? JSON.stringify(error) : 'Unknown error', 
-      { context }
-    );
+  }
+  
+  /**
+   * Creates a validation error with appropriate category and context
+   */
+  export function createValidationError(
+    message: string,
+    fields?: Record<string, string>,
+    context?: ErrorContext
+  ): ValidationError {
+    return new ValidationError(message, fields, context);
+  }
+  
+  /**
+   * Creates a network error with appropriate category and context
+   */
+  export function createNetworkError(
+    message: string,
+    status?: number,
+    context?: ErrorContext
+  ): NetworkError {
+    return new NetworkError(message, status, context);
+  }
+  
+  /**
+   * Creates a permission error with appropriate category and context
+   */
+  export function createPermissionError(
+    message: string,
+    context?: ErrorContext
+  ): PermissionError {
+    return new PermissionError(message, context);
+  }
+  
+  /**
+   * Creates a business error with appropriate category and context
+   */
+  export function createBusinessError(
+    message: string,
+    code?: string,
+    context?: ErrorContext
+  ): BusinessError {
+    return new BusinessError(message, code, context);
   }

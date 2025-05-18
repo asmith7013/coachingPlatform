@@ -2,7 +2,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@query/core/keys';
 import { CollectionResponse } from '@core-types/response';
-import { EntityCacheOperations } from '../../../types/core/cache';
+import { EntityCacheOperations } from '@core-types/cache';
 import { BaseDocument } from '@core-types/document';
 import { getEntityId, matchesId } from '@data-utilities/transformers/entity-utils';
 

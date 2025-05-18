@@ -1,19 +1,19 @@
 "use server";
 
 import { z } from "zod";
-import { withDbConnection } from "@/lib/data-server/db/ensure-connection";
-import { handleServerError } from "@/lib/error/handle-server-error";
-import { handleValidationError } from "@/lib/error/handle-validation-error";
+import { withDbConnection } from "@data-server/db/ensure-connection";
+import { handleServerError } from "@error/handlers/server";
+import { handleValidationError } from "@error/handlers/validation";
 import { 
   staffActions, 
   nycpsStaffActions, 
   tlStaffActions 
 } from "./factories";
-import { determineStaffType } from "@/lib/data-utilities/transformers/staff-utils";
-import { bulkUploadToDB } from "@/lib/data-server/crud/bulk-operations";
-import { uploadFileWithProgress } from "@/lib/data-server/file-handling/file-upload";
-import type { FetchParams } from "@/lib/types/core/api";
-import { NYCPSStaffModel, TeachingLabStaffModel, StaffMemberModel } from "@/lib/data-schema/mongoose-schema/core";
+import { determineStaffType } from "@data-utilities/transformers/staff-utils";
+import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
+import { uploadFileWithProgress } from "@data-server/file-handling/file-upload";
+import type { QueryParams } from "@core-types/api";
+import { NYCPSStaffModel, TeachingLabStaffModel, StaffMemberModel } from "@mongoose-schema/core";
 
 // Type imports - reuse the existing Zod schemas
 import {
@@ -28,7 +28,7 @@ type NYCPSStaffInput = z.infer<typeof NYCPSStaffInputZodSchema>;
 type TeachingLabStaffInput = z.infer<typeof TeachingLabStaffInputZodSchema>;
 
 // Base Staff operations
-export async function fetchStaffMembers(params: FetchParams = {}) {
+export async function fetchStaffMembers(params: QueryParams = {}) {
   return withDbConnection(() => staffActions.fetch(params));
 }
 
@@ -49,7 +49,7 @@ export async function fetchStaffMemberById(id: string) {
 }
 
 // NYCPS Staff operations
-export async function fetchNYCPSStaff(params: FetchParams = {}) {
+export async function fetchNYCPSStaff(params: QueryParams = {}) {
   return withDbConnection(() => nycpsStaffActions.fetch(params));
 }
 
@@ -70,7 +70,7 @@ export async function fetchNYCPSStaffById(id: string) {
 }
 
 // Teaching Lab Staff operations
-export async function fetchTeachingLabStaff(params: FetchParams = {}) {
+export async function fetchTeachingLabStaff(params: QueryParams = {}) {
   return withDbConnection(() => tlStaffActions.fetch(params));
 }
 

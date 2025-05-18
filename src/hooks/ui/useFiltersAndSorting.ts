@@ -77,7 +77,6 @@ export function useFiltersAndSorting(options: FiltersAndSortingOptions = {}): Fi
     defaultPage = 1,
     defaultPageSize = 10,
     validSortFields = ['createdAt'],
-    persist = true
   } = options;
 
   // Initialize state

@@ -5,7 +5,7 @@ import { NextStepModel } from "@mongoose-schema/look-fors/next-step.model";
 import { NextStepZodSchema, NextStepInputZodSchema } from "@zod-schema/look-fors/next-step";
 import { createCrudActions } from "@data-server/crud/crud-action-factory";
 import { withDbConnection } from "@data-server/db/ensure-connection";
-import { handleServerError } from "@error/handle-server-error";
+import { handleServerError } from "@error/handlers/server";
 
 type NextStepInput = z.infer<typeof NextStepInputZodSchema>;
 

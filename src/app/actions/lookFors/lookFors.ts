@@ -8,15 +8,15 @@ import {
   type LookFor,
   type LookForInput
 } from "@zod-schema/look-fors/look-for";
-import { handleServerError } from "@error/handle-server-error";
-import { handleValidationError } from "@error/handle-validation-error";
+import { handleServerError } from "@error/handlers/server";
+import { handleValidationError } from "@error/handlers/validation";
 import { 
   createItem,
   updateItem,
   deleteItem,
 } from "@data-server/crud/crud-operations";
 import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
-import { type FetchParams, getDefaultFetchParams } from "@core-types/api";
+import { type QueryParams, buildQueryParams } from "@core-types/pagination";
 import { sanitizeSortBy } from "@data-utilities/pagination/sort-utils";
 import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
 import { uploadFileWithProgress } from "@data-server/file-handling/file-upload";
@@ -32,12 +32,12 @@ type InferLookForInput = z.infer<typeof LookForInputZodSchema>;
 export type { LookFor, LookForInput };
 
 /** Fetch Look-Fors */
-export async function fetchLookFors(params: FetchParams = {}) {
+export async function fetchLookFors(params: QueryParams = {}) {
   try {
     // Sanitize sortBy to ensure it's a valid field name
     const safeSortBy = sanitizeSortBy(params.sortBy, validSortFields, 'lookForIndex');
     
-    const fetchParams = getDefaultFetchParams({
+    const fetchParams = buildQueryParams({
       ...params,
       sortBy: safeSortBy,
       sortOrder: params.sortOrder ?? "asc"

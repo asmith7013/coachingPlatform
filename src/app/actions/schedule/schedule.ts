@@ -11,12 +11,12 @@ import {
 import { createCrudActions } from "@data-server/crud/crud-action-factory";
 import { withDbConnection } from "@data-server/db/ensure-connection";
 import { connectToDB } from "@data-server/db/connection";
-import { handleServerError } from "@error/handle-server-error";
-import { handleValidationError } from "@error/handle-validation-error";
+import { handleServerError } from "@error/handlers/server";
+import { handleValidationError } from "@error/handlers/validation";
 import { createItem, updateItem, deleteItem } from "@data-server/crud/crud-operations";
 import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
 import { sanitizeSortBy } from "@data-utilities/pagination/sort-utils";
-import { type FetchParams, getDefaultFetchParams } from "@core-types/api";
+import { type QueryParams, buildQueryParams } from "@core-types/pagination";
 
 // Types
 export type TeacherSchedule = z.infer<typeof TeacherScheduleZodSchema>;
@@ -162,14 +162,14 @@ export async function getActiveCycleDayForDate(schoolId: string, date: string) {
 // ===== TEACHER SCHEDULE ACTIONS =====
 
 /** Fetch all Teacher Schedules */
-export async function fetchSchedules(params: FetchParams = {}) {
+export async function fetchSchedules(params: QueryParams = {}) {
   try {
     await connectToDB();
     
     // Sanitize sortBy to ensure it's a valid field name
     const safeSortBy = sanitizeSortBy(params.sortBy, validSortFields, 'createdAt');
     
-    const fetchParams = getDefaultFetchParams({
+    const fetchParams = buildQueryParams({
       ...params,
       sortBy: safeSortBy,
       sortOrder: params.sortOrder ?? "desc"
@@ -186,7 +186,7 @@ export async function fetchSchedules(params: FetchParams = {}) {
 }
 
 /** Fetch Teacher Schedules with pagination */
-export async function fetchTeacherSchedules(params: FetchParams = {}) {
+export async function fetchTeacherSchedules(params: QueryParams = {}) {
   try {
     await connectToDB();
     

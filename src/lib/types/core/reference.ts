@@ -1,94 +1,56 @@
-/**
- * Reference Types
- * 
- * This file defines standardized reference types used across the application
- * for select components, dropdowns, and other UI elements that reference entities.
- */
+// src/lib/types/core/reference.ts
+import { z } from "zod";
 
 /**
- * Base reference interface that all reference types extend
+ * Base reference schema and type
  */
-export interface BaseReference {
-    _id: string;
-    label: string; // The display text for UI components
-    value?: string; // Optional value for compatibility with select components
-  }
-  
-  /**
-   * School reference for dropdowns and selects
-   */
-  export interface SchoolReference extends BaseReference {
-    _id: string;
-    label: string; // Will be populated with schoolName
-    schoolNumber?: string; // Optional additional info
-  }
-  
-  /**
-   * Staff reference for dropdowns and selects
-   */
-  export interface StaffReference extends BaseReference {
-    _id: string;
-    label: string; // Will be populated with staffName
-    email?: string; // Optional additional info
-  }
-  
-  /**
-   * Teacher Schedule reference
-   */
-  export interface ScheduleReference extends BaseReference {
-    _id: string;
-    label: string; // Computed from teacher and school
-    teacher: string; // Teacher ID
-    school: string; // School ID
-  }
-  
-  /**
-   * Bell Schedule reference
-   */
-  export interface BellScheduleReference extends BaseReference {
-    _id: string;
-    label: string; // Computed from school and type
-    school: string; // School ID
-    bellScheduleType: string;
-  }
-  
-  /**
-   * Look For reference
-   */
-  export interface LookForReference extends BaseReference {
-    _id: string;
-    label: string; // Will contain topic
-    lookForIndex: number;
-  }
-  
-  /**
-   * Coaching Log reference
-   */
-  export interface CoachingLogReference extends BaseReference {
-    _id: string;
-    label: string; // Will contain primaryStrategy
-    solvesTouchpoint: string;
-  }
-  
-  /**
-   * Visit reference
-   */
-  export interface VisitReference extends BaseReference {
-    _id: string;
-    label: string; // Will contain date and school
-    date: string;
-    school: string;
-  }
-  
-  /**
-   * Map type that defines mapper functions for converting full entities to references
-   */
-  export type ReferenceMappers = {
-    school: (item: unknown) => SchoolReference;
-    staff: (item: unknown) => StaffReference;
-    schedule: (item: unknown) => ScheduleReference;
-    bellSchedule: (item: unknown) => BellScheduleReference;
-    lookFor: (item: unknown) => LookForReference;
-    coachingLog: (item: unknown) => CoachingLogReference;
-    visit: (item: unknown) => VisitReference;
+export const BaseReferenceZodSchema = z.object({
+  _id: z.string(),
+  label: z.string(),
+  value: z.string().optional(),
+});
+
+export type BaseReference = z.infer<typeof BaseReferenceZodSchema>;
+
+/**
+ * School reference schema and type
+ */
+export const SchoolReferenceZodSchema = BaseReferenceZodSchema.extend({
+  schoolNumber: z.string().optional(),
+  district: z.string().optional(),
+});
+
+export type SchoolReference = z.infer<typeof SchoolReferenceZodSchema>;
+
+/**
+ * Staff reference schema and type
+ */
+export const StaffReferenceZodSchema = BaseReferenceZodSchema.extend({
+  email: z.string().email().optional(),
+  role: z.string().optional(),
+});
+
+export type StaffReference = z.infer<typeof StaffReferenceZodSchema>;
+
+// Additional reference schemas and types for other entities...
+
+/**
+ * Generic utility to create a reference mapper
+ */
+export function createReferenceMapper<T, R extends BaseReference>(
+  getLabelFn: (entity: T) => string,
+  getAdditionalFields?: (entity: T) => Partial<Omit<R, '_id' | 'label' | 'value'>>
+) {
+  return (entity: T & { _id: string }): R => {
+    const reference: BaseReference = {
+      _id: entity._id,
+      label: getLabelFn(entity),
+      value: entity._id, // Default to using _id as value
+    };
+    
+    return {
+      ...reference,
+      ...(getAdditionalFields ? getAdditionalFields(entity) : {}),
+    } as R;
   };
+}

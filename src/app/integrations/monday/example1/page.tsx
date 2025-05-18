@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/core";
-import { Card } from "@/components/composed/cards";
-import { Alert } from "@/components/core/feedback/Alert";
-import { Spinner } from "@/components/core/feedback";
-import { Select } from "@/components/core/fields";
-import type { ImportPreview } from "@/lib/integrations/monday/types/import";
-import type { MondayBoard } from "@/lib/integrations/monday/types/board";
+import { Button } from "@components/core";
+import { Card } from "@components/composed/cards";
+import { Alert } from "@components/core/feedback/Alert";
+import { Spinner } from "@components/core/feedback";
+import { Select } from "@components/core/fields";
+import type { ImportPreview } from "@lib/integrations/monday/types/import";
+import type { MondayBoard } from "@lib/integrations/monday/types/board";
 import { 
   useMondayConnection,
   useMondayBoard,
   useMondayUserByEmail
-} from '@/hooks/integrations/monday/useMondayQueries';
+} from '@hooks/integrations/monday/useMondayQueries';
 
 export default function MondayLiveExamplePage() {
   // Use the API-based hook

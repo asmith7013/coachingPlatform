@@ -20,6 +20,7 @@ export function collectionizeResponse<T = Record<string, unknown>>(data: unknown
   if (data === undefined || data === null) {
     return {
       items: [],
+      total: 0,
       success: false,
       message: 'No data returned',
     };
@@ -72,6 +73,7 @@ export function collectionizeResponse<T = Record<string, unknown>>(data: unknown
   // Handle primitive responses
   return {
     items: [],
+    total: 0,
     success: false,
     message: `Unsupported response type: ${typeof data}`,
   };

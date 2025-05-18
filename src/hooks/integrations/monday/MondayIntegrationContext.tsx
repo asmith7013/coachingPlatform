@@ -8,7 +8,7 @@
  */
 import React, { createContext, useContext, useCallback, ReactNode } from 'react';
 import { useMondayConnection } from './useMondayQueries';
-import { handleClientError } from '@/lib/error/handle-client-error';
+import { handleClientError } from '@error';
 
 // Define the connection action result type
 interface ConnectionActionResult {

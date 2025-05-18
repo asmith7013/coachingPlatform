@@ -1,9 +1,9 @@
 // src/app/api/integrations/monday/visits/import/route.ts
 import { NextResponse } from 'next/server';
 import { importSelectedVisits } from '@/lib/integrations/monday/services/import-service';
-import { handleServerError } from '@/lib/error/handle-server-error';
+import { handleServerError } from '@error/handlers/server';
 import { z } from 'zod';
-import { handleValidationError } from '@/lib/error/handle-validation-error';
+import { handleValidationError } from '@error/handlers/validation';
 
 const ImportRequestSchema = z.object({
   selectedItems: z.array(z.string()),

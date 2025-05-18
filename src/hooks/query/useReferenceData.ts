@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query/core/keys';
-import { handleClientError } from '@/lib/error';
+import { queryKeys } from '@query/core/keys';
+import { handleClientError } from '@error';
 import { CollectionResponse } from '@core-types/response';
-import { isEntityResponse, isCollectionResponse } from '@/lib/query/utilities/response-types';
-import { BaseReference } from '@/lib/types/core/reference';
+import { isEntityResponse, isCollectionResponse } from '@query/utilities/response-types';
+import { BaseReference } from '@core-types/reference';
 
 export interface ReferenceOption {
   value: string;

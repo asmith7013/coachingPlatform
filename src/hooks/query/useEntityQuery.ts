@@ -5,8 +5,8 @@
  * with proper loading, error handling, and caching.
  */
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { handleClientError } from '@error/handle-client-error';
-import { queryKeys } from '@/lib/query/core/keys';
+import { handleClientError } from '@error/handlers/client';
+import { queryKeys } from '@query/core/keys';
 
 /**
  * Hook for querying a single entity by ID

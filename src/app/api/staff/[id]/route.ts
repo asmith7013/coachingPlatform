@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchStaffByIdForApi } from "@api-fetchers/staff";
-import { standardizeResponse } from "@api-responses/standardize";
-import { handleServerError } from "@error/handle-server-error";
+import { collectionizeResponse } from "@api-responses/standardize";
+import { handleServerError } from "@error/handlers/server";
 
 export async function GET(
   request: NextRequest,
@@ -19,7 +19,7 @@ export async function GET(
 
     if (!result.success) {
       return NextResponse.json(
-        standardizeResponse({
+        collectionizeResponse({
           items: [],
           success: false,
           message: result.error
@@ -29,7 +29,7 @@ export async function GET(
     }
 
     return NextResponse.json(
-      standardizeResponse({
+      collectionizeResponse({
         items: result.items,
         success: true
       })
@@ -40,7 +40,7 @@ export async function GET(
                        errorMessage.startsWith("[400]") ? 400 : 500;
     
     return NextResponse.json(
-      standardizeResponse({
+      collectionizeResponse({
         items: [],
         success: false,
         message: errorMessage

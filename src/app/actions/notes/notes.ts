@@ -4,7 +4,7 @@ import { NoteModel } from "@mongoose-schema/shared/notes.model";
 import { NoteZodSchema, NoteInputZodSchema } from "@zod-schema/shared/notes";
 import { createCrudActions } from "@data-server/crud/crud-action-factory";
 import { withDbConnection } from "@data-server/db/ensure-connection";
-import { handleServerError } from "@error/handle-server-error";
+import { handleServerError } from "@error/handlers/server";
 import { NoteInput } from "@zod-schema/shared/notes";
 
 // Create standard CRUD actions for Notes

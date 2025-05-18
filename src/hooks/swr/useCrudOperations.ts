@@ -1,8 +1,8 @@
 // src/hooks/utils/useCrudOperations.ts
-import { useCallback } from "react";
-import { handleClientError } from "@error/handle-client-error";
+import { useCallback, useEffect } from "react";
+import { handleClientError } from "@error/handlers/client";
 import { WithId, getId } from "@core-types/resource-manager";
-import { ResourceResponse } from '@core-types/response';
+import { CollectionResponse } from '@core-types/response';
 
 // Define proper types for optimistic update functions
 type OptimisticUpdateOptions = {
@@ -11,23 +11,37 @@ type OptimisticUpdateOptions = {
 };
 
 type OptimisticOperation<T, R> = (
-  item: T,
+  item: T,  
   operation: () => Promise<R>,
   options?: OptimisticUpdateOptions
 ) => Promise<R>;
 
+/**
+ * @deprecated Use useMutations from '@hooks/query/useEntityQuery' instead.
+ * This hook will be removed in a future version. See migration guide at docs/data-flow/react-query-patterns.md
+ */
 export function useCrudOperations<T extends WithId<Record<string, unknown>>, I>(
   resourceName: string,
-  createFn: (data: I) => Promise<{ success: boolean; [key: string]: unknown }>,
-  updateFn: (id: string, data: I) => Promise<{ success: boolean; [key: string]: unknown }>,
+  createFn: (data: I) => Promise<{ success: boolean; data?: T; [key: string]: unknown }>,
+  updateFn: (id: string, data: I) => Promise<{ success: boolean; data?: T; [key: string]: unknown }>,
   deleteFn: (id: string) => Promise<{ success: boolean; error?: string }>,
-  data: ResourceResponse<T> | undefined,
-  optimisticAdd: OptimisticOperation<T, { success: boolean; [key: string]: unknown }>,
-  optimisticModify: OptimisticOperation<T, { success: boolean; [key: string]: unknown }>,
+  data: CollectionResponse<T> | undefined,
+  optimisticAdd: OptimisticOperation<T, { success: boolean; data?: T; [key: string]: unknown }>,
+  optimisticModify: OptimisticOperation<T, { success: boolean; data?: T; [key: string]: unknown }>,
   optimisticRemove: OptimisticOperation<T, { success: boolean; error?: string }>,
-  mutate: () => Promise<ResourceResponse<T> | undefined>,
+  mutate: () => Promise<CollectionResponse<T> | undefined>,
   debug: boolean = false
 ) {
+  // Add deprecation warning in development
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(
+        'useCrudOperations is deprecated and will be removed in a future version. ' +
+        'Please migrate to useMutations from @hooks/query/useEntityQuery.'
+      );
+    }
+  }, []);
+
   // Add operation
   const add = useCallback(async (data: I) => {
     if (debug) {
@@ -63,7 +77,7 @@ export function useCrudOperations<T extends WithId<Record<string, unknown>>, I>(
     
     // Find the existing item
     const existingItems = data?.items || [];
-    const existingItem = existingItems.find((item) => getId(item) === id);
+    const existingItem = existingItems.find((item: T) => getId(item) === id);
     
     if (!existingItem) {
       if (debug) {
@@ -101,7 +115,7 @@ export function useCrudOperations<T extends WithId<Record<string, unknown>>, I>(
     
     // Find the item to remove
     const existingItems = data?.items || [];
-    const itemToRemove = existingItems.find((item) => getId(item) === id);
+    const itemToRemove = existingItems.find((item: T) => getId(item) === id);
     
     if (!itemToRemove) {
       if (debug) {

@@ -1,6 +1,6 @@
 // src/lib/query/utilities/invalidation.ts
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query/core/keys';
+import { queryKeys } from '@query/core/keys';
 
 /**
  * Type-safe interface for cache invalidation operations
@@ -67,7 +67,7 @@ export function createInvalidationHelper(queryClient: QueryClient): Invalidation
      * 
      * @param entityType The entity type to invalidate
      */
-    invalidateList: async (entityType: string) => {
+    invalidateList: async (_entityType: string) => {
       await queryClient.invalidateQueries({
         queryKey: queryKeys.entities.lists(),
         refetchType: 'active'

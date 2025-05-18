@@ -2,8 +2,8 @@
 
 import { NextResponse } from 'next/server';
 import { findPotentialVisitsToImport } from '@api-monday/services/import-service';
-import { handleValidationError } from '@error/handle-validation-error';
-import { handleServerError } from '@error/handle-server-error';
+import { handleValidationError } from '@error/handlers/validation';
+import { handleServerError } from '@error/handlers/server';
 import { z } from 'zod';
 
 export async function GET(request: Request) {

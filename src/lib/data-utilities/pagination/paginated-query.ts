@@ -3,15 +3,15 @@ import { z } from "zod";
 import type { HydratedDocument, Model } from "mongoose";
 import { connectToDB } from "@data-server/db/connection";
 import { sanitizeFilters } from "@data-utilities/transformers/sanitize";
-import { executePaginatedQuery } from "./pagination";
+import { executePaginatedQuery } from "@data-utilities/pagination/pagination";
 import { BaseDocument } from "@core-types/document";
 import { 
-  PaginatedResult
+  PaginatedResponse
 } from "@core-types/pagination";
 import { 
-  FetchParams, 
-  getDefaultFetchParams
-} from "@core-types/api";
+  QueryParams, 
+  buildQueryParams
+} from "@core-types/pagination";
 
 /**
  * DRY, type-safe helper for paginated resource fetching
@@ -22,13 +22,13 @@ export async function fetchPaginatedResource<
 >(
   model: Model<TDoc>,
   schema: TSchema,
-  params: FetchParams = {}
-): Promise<PaginatedResult<z.infer<TSchema>>> {
+  params: QueryParams = {}
+): Promise<PaginatedResponse<z.infer<TSchema>>> {
   await connectToDB();
-  const { page, limit, filters, sortBy, sortOrder } = getDefaultFetchParams(params);
+  const { page, limit, filters, sortBy, sortOrder } = buildQueryParams(params);
   const sanitized = sanitizeFilters(filters ?? {});
   
-  // Use executePaginatedQuery which now returns PaginatedResult with success: true
+  // Use executePaginatedQuery which now returns PaginatedResponse with success: true
   return executePaginatedQuery(
     model as unknown as Model<HydratedDocument<BaseDocument>>,
     sanitized,

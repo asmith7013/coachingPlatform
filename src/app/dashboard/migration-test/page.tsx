@@ -2,11 +2,9 @@
 
 import { useState } from 'react';
 import { getFeatureFlags, setFeatureFlag } from '@/lib/config/feature-flags';
-import { useSchools } from '@/hooks/domain/useSchools';
-import { useSchoolsRQ } from '@/hooks/domain/useSchools';
-import { Alert } from '@/components/core/feedback/Alert';
-import { Button } from '@/components/core/Button';
-import { Card } from '@/components/composed/cards/Card';
+import { useSchools } from '@hooks/domain/useSchools';
+import { Button } from '@components/core/Button';
+import { Card } from '@components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Table } from '@/components/composed/tables/Table';

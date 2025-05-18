@@ -2201,12 +2201,12 @@ src//lib/ui/table-schema.ts-    ...col,
 src//lib/ui/table-schema.ts-    className: col.className ?? '', // fallback
 --
 src//lib/types/core/resource-manager.ts:import { ResourceResponse } from '@core-types/response';
-src//lib/types/core/resource-manager.ts-import type { FetchParams } from "@core-types/api";
+src//lib/types/core/resource-manager.ts-import type { QueryParams } from "@core-types/api";
 src//lib/types/core/resource-manager.ts-// import { BaseDocument } from "@core-types/document";
 --
 src//lib/types/core/resource-manager.ts-export type WithId<T> = T & { id: string } | T & { _id: string };
 src//lib/types/core/resource-manager.ts-
-src//lib/types/core/resource-manager.ts:export type FetchFunction<T> = (params: FetchParams) => Promise<ResourceResponse<T>>;
+src//lib/types/core/resource-manager.ts:export type FetchFunction<T> = (params: QueryParams) => Promise<ResourceResponse<T>>;
 src//lib/types/core/resource-manager.ts-
 src//lib/types/core/resource-manager.ts-export interface ResourceManagerOptions {
 --
@@ -2626,7 +2626,7 @@ src//lib/data-server/file-handling/csv-parser.ts-      if (values.length !== hea
 src//lib/data-server/crud/crud-action-factory.ts-import { connectToDB } from "@data-server/db/connection";
 src//lib/data-server/crud/crud-action-factory.ts-import { handleCrudError } from "@error/crud-error-handling";
 src//lib/data-server/crud/crud-action-factory.ts:import { PaginatedResponse, CollectionResponse } from "@core-types/response";
-src//lib/data-server/crud/crud-action-factory.ts-import { FetchParams, getDefaultFetchParams as getDefaultParams } from "@core-types/api";
+src//lib/data-server/crud/crud-action-factory.ts-import { QueryParams, buildQueryParams as getDefaultParams } from "@core-types/api";
 src//lib/data-server/crud/crud-action-factory.ts-// Import the sanitization utilities
 --
 src//lib/data-server/crud/crud-action-factory.ts-    
@@ -2716,7 +2716,7 @@ src//lib/api/client/school.ts-export const schoolApiClient = {
 src//lib/api/handlers/reference-endpoint.ts:import { NextResponse } from "next/server";
 src//lib/api/handlers/reference-endpoint.ts-import { handleServerError } from "@/lib/error/handle-server-error";
 src//lib/api/handlers/reference-endpoint.ts:import { standardizeResponse } from "@api-responses/standardize";
-src//lib/api/handlers/reference-endpoint.ts-import { FetchParams } from "@/lib/types/core/api";
+src//lib/api/handlers/reference-endpoint.ts-import { QueryParams } from "@/lib/types/core/api";
 src//lib/api/handlers/reference-endpoint.ts-import { BaseReference } from "@/lib/types/core/reference";
 --
 src//lib/api/handlers/reference-endpoint.ts-

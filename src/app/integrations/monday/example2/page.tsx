@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/core";
-import { Card } from "@/components/composed/cards";
-import { Alert } from "@/components/core/feedback/Alert";
-import { Spinner } from "@/components/core/feedback";
-import { useMondayConnection, useMondayBoard, useMondayImport } from "@/hooks/integrations/monday/useMondayQueries";
-import { Heading } from "@/components/core/typography/Heading";
-import { Text } from "@/components/core/typography/Text";
+import { Button } from "@components/core";
+import { Card } from "@components/composed/cards";
+import { Alert } from "@components/core/feedback/Alert";
+import { Spinner } from "@components/core/feedback";
+import { useMondayConnection, useMondayBoard, useMondayImport } from "@monday-hooks/useMondayQueries";
+import { Heading } from "@components/core/typography/Heading";
+import { Text } from "@components/core/typography/Text";
 
 export default function MondayExample2() {
   const [boardId, setBoardId] = useState('');

@@ -1,9 +1,9 @@
 // src/lib/query/hooks/usePaginatedQuery.ts
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { PaginatedResponse } from '@core-types/response';
-import { queryKeys } from '@/lib/query/core/keys';
-import { handleQueryError } from '@/lib/query/utilities/error-handling';
-import { isPaginatedResponse } from '@/lib/query/utilities/response-types';
+import { queryKeys } from '@query/core/keys';
+import { handleClientError } from '@error/handlers/client';
+import { isPaginatedResponse } from '@query/utilities/response-types';
 
 export interface PaginationQueryParams {
   page?: number;
@@ -69,7 +69,7 @@ export function usePaginatedQuery<T>({
   const query = useQuery({
     queryKey: fullQueryKey,
     queryFn: async () => {
-      const response = await handleQueryError(
+      const response = handleClientError(
         fetcher({ page, limit, sortBy, sortOrder, search, filters }),
         `Fetch ${entityType} list`
       );

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchMondayUserByEmail } from '@/lib/integrations/monday/client/client';
-import { handleServerError } from '@/lib/error/handle-server-error';
+import { handleServerError } from '@error/handlers/server';
 import { z } from 'zod';
-import { handleValidationError } from '@/lib/error/handle-validation-error';
+import { handleValidationError } from '@error/handlers/validation';
 
 /**
  * GET handler for Monday.com user fetching

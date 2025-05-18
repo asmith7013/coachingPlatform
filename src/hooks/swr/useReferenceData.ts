@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import useSWR from 'swr';
 import { BaseReference } from '@core-types/reference';
 // import { useErrorHandledErrorMutation } from '@hooks/utils/useErrorHandledMutation';
@@ -29,6 +29,9 @@ interface UseReferenceDataReturn<T extends BaseReference> {
 }
 
 /**
+ * @deprecated Use useReferenceData from '@hooks/query/useReferenceData' instead.
+ * This hook will be removed in a future version. See migration guide at docs/data-flow/react-query-patterns.md
+ * 
  * Simplified version of useReferenceData for backward compatibility
  * 
  * @param url The API endpoint URL to fetch reference data from
@@ -43,6 +46,16 @@ export function useReferenceData<T extends BaseReference>(
   isLoading: boolean;
   error: Error | null;
 } {
+  // Add deprecation warning in development
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(
+        'useReferenceData (SWR version) is deprecated and will be removed in a future version. ' +
+        'Please migrate to useReferenceData from @hooks/query/useReferenceData.'
+      );
+    }
+  }, []);
+
   // Build the final URL with search parameters
   const fullUrl = useMemo(() => {
     if (!url) return null;
@@ -77,6 +90,9 @@ export function useReferenceData<T extends BaseReference>(
 }
 
 /**
+ * @deprecated Use useReferenceDataFull from '@hooks/query/useReferenceData' instead.
+ * This hook will be removed in a future version. See migration guide at docs/data-flow/react-query-patterns.md
+ * 
  * Hook for working with reference data in forms, selects, and other UI components
  * 
  * @param options Configuration options
@@ -90,6 +106,16 @@ export function useReferenceDataFull<T extends BaseReference>({
   refreshInterval = 0,
   dedupingInterval = 60000 // 1 minute
 }: UseReferenceDataOptions): UseReferenceDataReturn<T> {
+  // Add deprecation warning in development
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(
+        'useReferenceDataFull is deprecated and will be removed in a future version. ' +
+        'Please migrate to useReferenceDataFull from @hooks/query/useReferenceData.'
+      );
+    }
+  }, []);
+
   const [searchText, setSearchText] = useState(searchQuery);
   const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(page);
@@ -169,6 +195,9 @@ export function useReferenceDataFull<T extends BaseReference>({
 }
 
 /**
+ * @deprecated Use individual useReferenceDataFull calls instead.
+ * This hook will be removed in a future version. See migration guide at docs/data-flow/react-query-patterns.md
+ * 
  * Hook for working with multiple reference types at once
  * Useful for forms that need multiple related references
  * 
@@ -179,6 +208,16 @@ export function useMultipleReferences<
   T extends Record<string, UseReferenceDataOptions>,
   R extends Record<keyof T, BaseReference>
 >(configs: T): { [K in keyof T]: UseReferenceDataReturn<R[K]> } {
+  // Add deprecation warning in development
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(
+        'useMultipleReferences is deprecated and will be removed in a future version. ' +
+        'Consider refactoring to use individual useReferenceDataFull calls from @hooks/query/useReferenceData.'
+      );
+    }
+  }, []);
+
   // This is a simplified implementation that doesn't fully support dynamic keys
   // A more complete implementation would need to use a factory approach
   // or memoize the hook calls based on dependency arrays
@@ -208,14 +247,6 @@ export function useMultipleReferences<
       setPage: () => {}
     } as UseReferenceDataReturn<R[keyof T]>;
   });
-  
-  // Display a warning in development
-  if (process.env.NODE_ENV === 'development') {
-    console.warn(
-      'useMultipleReferences is deprecated and does not fully work with React Hook rules. ' +
-      'Consider refactoring to use individual useReferenceDataFull calls.'
-    );
-  }
   
   return result;
 }

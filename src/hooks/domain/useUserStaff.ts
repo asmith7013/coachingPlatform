@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
-import { handleClientError } from '@/lib/error/handle-client-error';
-import { WithDateObjects } from '@/lib/types/core/document';
-import { transformDateFields } from '@/lib/data-utilities/transformers/date-transformer';
+import { useAuthenticatedUser } from '@hooks/auth/useAuthenticatedUser';
+import { handleClientError } from '@error';
+import { WithDateObjects } from '@core-types/document';
+import { transformDateFields } from '@data-utilities/transformers/date-transformer';
 import {
   NYCPSStaff,
   TeachingLabStaff,

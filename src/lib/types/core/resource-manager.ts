@@ -1,11 +1,11 @@
-import { ResourceResponse } from '@core-types/response';
-import type { FetchParams } from "@core-types/api";
+import { CollectionResponse } from '@core-types/response';
+import type { QueryParams } from "@core-types/query";
 // import { BaseDocument } from "@core-types/document";
 
 // Type helper to work with both MongoDB style _id and normalized id
 export type WithId<T> = T & { id: string } | T & { _id: string };
 
-export type FetchFunction<T> = (params: FetchParams) => Promise<ResourceResponse<T>>;
+export type FetchFunction<T> = (params: QueryParams) => Promise<CollectionResponse<T>>;
 
 export interface ResourceManagerOptions {
   initialPage?: number;
@@ -15,7 +15,7 @@ export interface ResourceManagerOptions {
 }
 
 export interface ResourceManagerResult<T extends WithId<Record<string, unknown>>, I> {
-  // Data and loading state
+  // Data state
   items: T[];
   total: number;
   isLoading: boolean;
@@ -28,16 +28,16 @@ export interface ResourceManagerResult<T extends WithId<Record<string, unknown>>
   setLimit: (limit: number) => void;
   
   // Filtering and sorting
-  filters: Partial<T>;
-  applyFilters: (filters: Partial<T>) => void;
+  filters: Record<string, unknown>; // Changed from Partial<T> to match useFiltersAndSorting
+  applyFilters: (filters: Record<string, unknown>) => void; // Changed parameter type
   sortBy: string;
   changeSorting: (field: keyof T, direction: "asc" | "desc") => void;
   
   // CRUD operations
-  add: (data: I) => Promise<{ success: boolean; [key: string]: unknown }>;
-  edit: (id: string, data: I) => Promise<{ success: boolean; [key: string]: unknown }>;
-  remove: (id: string) => Promise<{ success: boolean; error?: string }>;
-  mutate: () => Promise<ResourceResponse<T> | undefined>;
+  add: (data: I) => Promise<T | undefined>;
+  edit: (id: string, data: I) => Promise<T | undefined>;
+  remove: (id: string) => Promise<boolean>;
+  mutate: () => Promise<unknown>;
 }
 
 // Helper to get ID value regardless of property name

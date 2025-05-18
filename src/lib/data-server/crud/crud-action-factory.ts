@@ -8,11 +8,11 @@ import {
 } from "./crud-operations";
 import { BaseDocument } from "@core-types/document";  
 import { connectToDB } from "@data-server/db/connection";
-import { handleCrudError } from "@error/crud-error-handling";
+import { handleCrudError } from "@error/handlers/crud";
 import { PaginatedResponse, CollectionResponse } from "@core-types/response";
-import { FetchParams, getDefaultFetchParams as getDefaultParams } from "@core-types/api";
+import { QueryParams, buildQueryParams as getDefaultParams } from "@core-types/query";
 // Import the sanitization utilities
-import { deepSanitize } from "@/lib/data-utilities/transformers/sanitize";
+import { deepSanitize } from "@data-utilities/transformers/sanitize";
 
 // Utility to sanitize sort fields
 export function sanitizeSortBy(
@@ -44,7 +44,7 @@ export function sanitizeSortBy(
   }
   
 // Apply default pagination parameters - adapter for compatibility
-export function getDefaultFetchParams(params: FetchParams): ReturnType<typeof getDefaultParams> {
+export function buildQueryParams(params: QueryParams): ReturnType<typeof getDefaultParams> {
     return getDefaultParams(params);
 }
 
@@ -55,7 +55,7 @@ export async function fetchPaginatedResource<
 >(
   model: Model<Doc>,
   schema: Schema,
-  params: ReturnType<typeof getDefaultFetchParams>,
+  params: ReturnType<typeof buildQueryParams>,
   options: {
     validSortFields: string[];
     defaultSortField?: string;
@@ -186,12 +186,12 @@ export function createCrudActions<
     /**
      * Fetches a paginated list of items
      */
-    fetch: async (params: FetchParams = {}): Promise<PaginatedResponse<FullType>> => {
+    fetch: async (params: QueryParams = {}): Promise<PaginatedResponse<FullType>> => {
       try {
         await connectToDB();
         
         // Prepare parameters
-        const fetchParams = getDefaultFetchParams({
+        const fetchParams = buildQueryParams({
           ...params,
           sortBy: params.sortBy ?? defaultSortField,
           sortOrder: params.sortOrder ?? defaultSortOrder

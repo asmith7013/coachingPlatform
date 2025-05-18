@@ -1,37 +1,37 @@
 import { useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { ZodSchema } from 'zod';
-import { queryKeys } from '../core/keys';
-import { usePaginatedQuery, PaginationQueryParams } from '@/hooks/query/usePaginatedQuery';
-import { useEntityQuery } from '@/hooks/query/useEntityQuery';
 import { useFiltersAndSorting } from '@ui-hooks/useFiltersAndSorting';
-import { isPaginatedResponse } from '@query/utilities/response-types';
-import { PaginatedResponse, CollectionResponse } from '@core-types/response';
-import { useOptimisticMutation } from '@/hooks/query/useOptimisticMutation';
+import { 
+  isPaginatedResponse, 
+  extractItems, 
+  extractPagination 
+} from '@query/utilities/response-types';
+import { 
+  syncClientCache 
+} from '@/lib/query/cache-sync/client-sync';
+import { 
+  createQueryErrorContext, 
+  QueryParams, 
+  ServerActions 
+} from '@core-types/query-factory';
+import { logError } from '@error';
+import { useQuery } from '@tanstack/react-query';
+import { useOptimisticMutation } from '@query-hooks/useOptimisticMutation';
 import { BaseDocument } from '@core-types/document';
-import { PaginatedResult } from '@core-types/pagination';
+import { PaginatedResponse, CollectionResponse } from '@core-types/response';
 
-export interface CrudHooksConfig<T, TInput> {
+/**
+ * Configuration for CRUD hooks
+ */
+export interface CrudHooksConfig<T extends BaseDocument, TInput> {
   /** Entity type/name (e.g., 'schools', 'staff') */
   entityType: string;
   
-  /** Full schema for validation (including system fields) */
-  fullSchema: ZodSchema<T>;
-  
-  /** Input schema for validation (excluding system fields) */
-  inputSchema: ZodSchema<TInput>;
-  
   /** Server actions for CRUD operations */
-  serverActions: {
-    fetch: (params: PaginationQueryParams) => Promise<PaginatedResponse<T>>;
-    fetchById?: (id: string) => Promise<CollectionResponse<T>>;
-    create?: (data: TInput) => Promise<CollectionResponse<T>>;
-    update?: (id: string, data: Partial<TInput>) => Promise<CollectionResponse<T>>;
-    delete?: (id: string) => Promise<CollectionResponse<T>>;
-  };
+  serverActions: ServerActions<T, TInput>;
   
   /** Default parameters for queries */
-  defaultParams?: Partial<PaginationQueryParams>;
+  defaultParams?: Partial<QueryParams>;
   
   /** Valid sort fields */
   validSortFields?: string[];
@@ -44,33 +44,39 @@ export interface CrudHooksConfig<T, TInput> {
   
   /** Stale time for queries in ms */
   staleTime?: number;
+  
+  /** Related entity types to invalidate on mutations */
+  relatedEntityTypes?: string[];
 }
 
 /**
  * Factory function that creates a set of React Query hooks for a specific entity type.
  * This mirrors the server-side createCrudActions pattern but for client-side React Query.
  */
-
 export function createCrudHooks<
   T extends BaseDocument,
   TInput = Omit<T, '_id' | 'id' | 'createdAt' | 'updatedAt'>
 >(config: CrudHooksConfig<T, TInput>) {
   const {
     entityType,
-    fullSchema,
-    inputSchema,
     serverActions,
     defaultParams = {},
     validSortFields = ['createdAt'],
     persistFilters = true,
     storageKey = `${entityType}_filters`,
-    staleTime = 60 * 1000 // 1 minute default
+    staleTime = 60 * 1000, // 1 minute default
+    relatedEntityTypes = []
   } = config;
+  
+  // Create additional invalidation keys from related entity types
+  const additionalInvalidateKeys = relatedEntityTypes.map(type => 
+    [type, 'list'] as string[]
+  );
   
   /**
    * Hook for managing a paginated list of entities with filtering and sorting
    */
-  function useList(customParams?: Partial<PaginationQueryParams>) {
+  function useList(customParams?: Partial<QueryParams>) {
     // Set up filters and sorting
     const filtersAndSorting = useFiltersAndSorting({
       storageKey: storageKey,
@@ -104,28 +110,69 @@ export function createCrudHooks<
       customParams?.filters
     ]);
     
-    // Use the paginated query hook
-    const paginatedQuery = usePaginatedQuery<T>({
-      entityType,
-      params: queryParams,
-      fetcher: serverActions.fetch,
-      options: {
-        staleTime,
-        // Merge overridden options
-        ...(customParams?.options || {})
-      }
+    // Use the query
+    const query = useQuery({
+      queryKey: [entityType, 'list', queryParams] as string[],
+      queryFn: async () => {
+        try {
+          return await serverActions.fetch(queryParams);
+        } catch (error) {
+          // Create error context for better error reporting
+          const errorContext = createQueryErrorContext(
+            entityType,
+            'fetchList',
+            { 
+              metadata: { queryParams },
+              tags: { entityType }
+            }
+          );
+          logError(error as Error, errorContext);
+          throw error;
+        }
+      },
+      staleTime,
+      // Merge overridden options
+      ...(customParams?.options || {})
     });
+    
+    // Extract items and pagination
+    const items = extractItems<T>(query.data as CollectionResponse<T>);
+    const pagination = extractPagination(query.data as PaginatedResponse<T>);
     
     // Return combined API
     return {
-      // Data and loading state
-      ...paginatedQuery,
+      // Data
+      items,
+      
+      // Pagination
+      total: pagination.total,
+      page: filtersAndSorting.page,
+      pageSize: filtersAndSorting.pageSize,
+      totalPages: pagination.totalPages,
+      hasMore: pagination.hasMore,
       
       // Filtering and sorting
-      ...filtersAndSorting,
+      filters: filtersAndSorting.filters,
+      search: filtersAndSorting.search,
+      sortBy: filtersAndSorting.sortBy,
+      sortOrder: filtersAndSorting.sortOrder,
       
-      // Additional utilities
-      queryParams
+      // Query state
+      isLoading: query.isLoading,
+      isError: query.isError,
+      error: query.error,
+      refetch: query.refetch,
+      
+      // Actions
+      setPage: filtersAndSorting.setPage,
+      setPageSize: filtersAndSorting.setPageSize,
+      setSearch: filtersAndSorting.setSearch,
+      applyFilters: filtersAndSorting.applyFilters,
+      changeSorting: filtersAndSorting.changeSorting,
+      
+      // Raw data
+      queryParams,
+      query
     };
   }
   
@@ -138,16 +185,43 @@ export function createCrudHooks<
       throw new Error(`fetchById action is not defined for ${entityType}`);
     }
     
-    // Use the entity query hook
-    return useEntityQuery<T>(
-      entityType,
-      id,
-      serverActions.fetchById,
-      {
-        staleTime,
-        ...options
-      }
-    );
+    // Use the query
+    const query = useQuery({
+      queryKey: [entityType, 'detail', id] as string[],
+      queryFn: async () => {
+        if (!id) {
+          throw new Error(`Cannot fetch ${entityType} without an ID`);
+        }
+        
+        try {
+          return await serverActions.fetchById!(id) as CollectionResponse<T>;
+        } catch (error) {
+          // Enhanced error handling with context
+          const errorContext = createQueryErrorContext(
+            entityType, 
+            'fetchById',
+            { 
+              metadata: { id },
+              tags: { entityType }
+            }
+          );
+          logError(error as Error, errorContext);
+          throw error;
+        }
+      },
+      enabled: !!id,
+      staleTime,
+      ...options
+    });
+    
+    return {
+      data: extractItems<T>(query.data as CollectionResponse<T>)[0],
+      isLoading: query.isLoading,
+      isError: query.isError,
+      error: query.error,
+      refetch: query.refetch,
+      query
+    };
   }
   
   /**
@@ -157,217 +231,246 @@ export function createCrudHooks<
     const queryClient = useQueryClient();
     
     // Create mutation
-    const createMutation = serverActions.create
-      ? useOptimisticMutation<TInput, CollectionResponse<T>, Error, { previousData?: PaginatedResult<T> }>(
-          serverActions.create,
-          {
-            invalidateQueries: [queryKeys.entities.list(entityType)],
-            onMutate: async (newData) => {
-              // Cancel related queries
-              await queryClient.cancelQueries({ queryKey: queryKeys.entities.list(entityType) });
+    const createMutation = useOptimisticMutation<TInput, CollectionResponse<T>, Error, { previousData?: PaginatedResponse<T> }>(
+      serverActions.create as (data: TInput) => Promise<CollectionResponse<T>>,
+      {
+        invalidateQueries: [[entityType, 'list']] as string[][],
+        onMutate: async (newData) => {
+          // Cancel related queries
+          await queryClient.cancelQueries({ queryKey: [entityType, 'list'] });
+          
+          // Store previous data for potential rollback
+          const previousData = queryClient.getQueryData<PaginatedResponse<T>>(
+            [entityType, 'list']
+          );
+          
+          // Optimistically update the cache
+          queryClient.setQueryData(
+            [entityType, 'list'],
+            (old: unknown) => {
+              if (!old || !isPaginatedResponse<T>(old)) return old;
               
-              // Store previous data for potential rollback
-              const previousData = queryClient.getQueryData<PaginatedResult<T>>(
-                queryKeys.entities.list(entityType)
-              );
+              // Create a temporary item with a generated ID
+              const tempItem = {
+                ...(newData as unknown as Record<string, unknown>),
+                _id: `temp_${Date.now()}`,
+                id: `temp_${Date.now()}`,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+              } as unknown as T;
               
-              // Optimistically update the cache
-              queryClient.setQueryData(
-                queryKeys.entities.list(entityType),
-                (old: unknown) => {
-                  if (!old || !isPaginatedResponse<T>(old)) return old;
-                  
-                  // Create a temporary item with a generated ID
-                  const tempItem = {
-                    ...(newData as unknown as Record<string, unknown>),
-                    _id: `temp_${Date.now()}`,
-                    id: `temp_${Date.now()}`,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                  } as unknown as T;
-                  
-                  return {
-                    ...old,
-                    items: [...old.items, tempItem],
-                    total: old.total + 1
-                  };
-                }
-              );
-              
-              return { previousData };
-            },
-            onError: (_, __, context) => {
-              // Roll back on error
-              if (context?.previousData) {
-                queryClient.setQueryData(
-                  queryKeys.entities.list(entityType),
-                  context.previousData
-                );
-              }
-            },
-            errorContext: `Create${entityType}`
+              return {
+                ...old,
+                items: [...old.items, tempItem],
+                total: old.total + 1
+              };
+            }
+          );
+          
+          return { previousData };
+        },
+        onSuccess: async () => {
+          // Sync cache
+          await syncClientCache(
+            { 
+              entityType, 
+              additionalInvalidateKeys,
+              operationType: 'create'
+            }
+          );
+        },
+        onError: (_, __, context) => {
+          // Roll back on error
+          if (context?.previousData) {
+            queryClient.setQueryData(
+              [entityType, 'list'],
+              context.previousData
+            );
           }
-        )
-      : { mutate: null, mutateAsync: null, isPending: false, error: null };
+        },
+        errorContext: `Create${entityType}`
+      }
+    );
     
     // Update mutation
-    const updateMutation = serverActions.update
-      ? useOptimisticMutation<
-          { id: string; data: Partial<TInput> },
-          CollectionResponse<T>,
-          Error,
-          { previousData?: PaginatedResult<T> }
-        >(
-          async ({ id, data }) => serverActions.update!(id, data),
-          {
-            invalidateQueries: [queryKeys.entities.list(entityType)],
-            onMutate: async ({ id, data }) => {
-              // Cancel related queries
-              await queryClient.cancelQueries({ queryKey: queryKeys.entities.list(entityType) });
-              
-              // Also cancel the specific item query if it exists
-              if (serverActions.fetchById) {
-                await queryClient.cancelQueries({ 
-                  queryKey: queryKeys.entities.detail(entityType, id)
-                });
-              }
-              
-              // Store previous data for potential rollback
-              const previousData = queryClient.getQueryData<PaginatedResult<T>>(
-                queryKeys.entities.list(entityType)
-              );
-              
-              // Optimistically update the list cache
-              queryClient.setQueryData(
-                queryKeys.entities.list(entityType),
-                (old: unknown) => {
-                  if (!old || !isPaginatedResponse<T>(old)) return old;
-                  
-                  return {
-                    ...old,
-                    items: old.items.map((item: T) => 
-                      (item._id === id || item.id === id)
-                        ? { ...item, ...data, updatedAt: new Date().toISOString() }
-                        : item
-                    )
-                  };
-                }
-              );
-              
-              // Also update the individual item cache if it exists
-              if (serverActions.fetchById) {
-                queryClient.setQueryData(
-                  queryKeys.entities.detail(entityType, id),
-                  (old: unknown) => {
-                    if (!old || !old.data) return old;
-                    
-                    return {
-                      ...old,
-                      data: { 
-                        ...old.data, 
-                        ...data, 
-                        updatedAt: new Date().toISOString() 
-                      }
-                    };
-                  }
-                );
-              }
-              
-              return { previousData };
-            },
-            onError: (_, __, context) => {
-              // Roll back on error
-              if (context?.previousData) {
-                queryClient.setQueryData(
-                  queryKeys.entities.list(entityType),
-                  context.previousData
-                );
-              }
-            },
-            errorContext: `Update${entityType}`
+    const updateMutation = useOptimisticMutation<
+      { id: string; data: Partial<TInput> },
+      CollectionResponse<T>,
+      Error,
+      { previousData?: PaginatedResponse<T> }
+    >(
+      async ({ id, data }) => (serverActions.update!(id, data) as Promise<CollectionResponse<T>>),
+      {
+        invalidateQueries: [[entityType, 'list']] as string[][],
+        onMutate: async ({ id, data }) => {
+          // Cancel related queries
+          await queryClient.cancelQueries({ queryKey: [entityType, 'list'] });
+          
+          // Also cancel the specific item query if it exists
+          if (serverActions.fetchById) {
+            await queryClient.cancelQueries({ 
+              queryKey: [entityType, 'detail', id]
+            });
           }
-        )
-      : { mutate: null, mutateAsync: null, isPending: false, error: null };
+          
+          // Store previous data for potential rollback
+          const previousData = queryClient.getQueryData<PaginatedResponse<T>>(
+            [entityType, 'list']
+          );
+          
+          // Optimistically update the list cache
+          queryClient.setQueryData(
+            [entityType, 'list'],
+            (old: unknown) => {
+              if (!old || !isPaginatedResponse<T>(old)) return old;
+              
+              return {
+                ...old,
+                items: old.items.map((item: T) => 
+                  (item._id === id || item.id === id)
+                    ? { ...item, ...data, updatedAt: new Date().toISOString() }
+                    : item
+                )
+              };
+            }
+          );
+          
+          // Also update the individual item cache if it exists
+          if (serverActions.fetchById) {
+            queryClient.setQueryData(
+              [entityType, 'detail', id],
+              (old: unknown) => {
+                if (!old) return old;
+                
+                const items = extractItems<T>(old as CollectionResponse<T>);
+                if (items.length === 0) return old;
+                
+                return {
+                  ...old,
+                  items: [{ 
+                    ...items[0], 
+                    ...data, 
+                    updatedAt: new Date().toISOString() 
+                  }]
+                };
+              }
+            );
+          }
+          
+          return { previousData };
+        },
+        onSuccess: async (_, { id }) => {
+          // Sync cache
+          await syncClientCache(
+            { 
+              entityType, 
+              additionalInvalidateKeys,
+              operationType: 'update'
+            },
+            id
+          );
+        },
+        onError: (_, __, context) => {
+          // Roll back on error
+          if (context?.previousData) {
+            queryClient.setQueryData(
+              [entityType, 'list'],
+              context.previousData
+            );
+          }
+        },
+        errorContext: `Update${entityType}`
+      }
+    );
     
     // Delete mutation
-    const deleteMutation = serverActions.delete
-      ? useOptimisticMutation<string, CollectionResponse<T>, Error, { previousData?: PaginatedResult<T> }>(
-          serverActions.delete,
-          {
-            invalidateQueries: [queryKeys.entities.list(entityType)],
-            onMutate: async (id) => {
-              // Cancel related queries
-              await queryClient.cancelQueries({ queryKey: queryKeys.entities.list(entityType) });
+    const deleteMutation = useOptimisticMutation<string, CollectionResponse<T>, Error, { previousData?: PaginatedResponse<T> }>(
+      serverActions.delete as (id: string) => Promise<CollectionResponse<T>>,
+      {
+        invalidateQueries: [[entityType, 'list']] as string[][],
+        onMutate: async (id) => {
+          // Cancel related queries
+          await queryClient.cancelQueries({ queryKey: [entityType, 'list'] });
+          
+          // Store previous data for potential rollback
+          const previousData = queryClient.getQueryData<PaginatedResponse<T>>(
+            [entityType, 'list']
+          );
+          
+          // Optimistically update the cache
+          queryClient.setQueryData(
+            [entityType, 'list'],
+            (old: unknown) => {
+              if (!old || !isPaginatedResponse<T>(old)) return old;
               
-              // Store previous data for potential rollback
-              const previousData = queryClient.getQueryData<PaginatedResult<T>>(
-                queryKeys.entities.list(entityType)
-              );
-              
-              // Optimistically update the cache
-              queryClient.setQueryData(
-                queryKeys.entities.list(entityType),
-                (old: unknown) => {
-                  if (!old || !isPaginatedResponse<T>(old)) return old;
-                  
-                  return {
-                    ...old,
-                    items: old.items.filter((item: T) => item._id !== id && item.id !== id),
-                    total: Math.max(0, old.total - 1)
-                  };
-                }
-              );
-              
-              // Also remove from the individual item cache if it exists
-              if (serverActions.fetchById) {
-                queryClient.removeQueries({ 
-                  queryKey: queryKeys.entities.detail(entityType, id)
-                });
-              }
-              
-              return { previousData };
-            },
-            onError: (_, __, context) => {
-              // Roll back on error
-              if (context?.previousData) {
-                queryClient.setQueryData(
-                  queryKeys.entities.list(entityType),
-                  context.previousData
-                );
-              }
-            },
-            errorContext: `Delete${entityType}`
+              return {
+                ...old,
+                items: old.items.filter((item: T) => item._id !== id && item.id !== id),
+                total: Math.max(0, old.total - 1)
+              };
+            }
+          );
+          
+          // Also remove from the individual item cache if it exists
+          if (serverActions.fetchById) {
+            queryClient.removeQueries({ 
+              queryKey: [entityType, 'detail', id]
+            });
           }
-        )
-      : { mutate: null, mutateAsync: null, isPending: false, error: null };
+          
+          return { previousData };
+        },
+        onSuccess: async (_, id) => {
+          // Sync cache
+          await syncClientCache(
+            { 
+              entityType, 
+              additionalInvalidateKeys,
+              operationType: 'delete'
+            },
+            id
+          );
+        },
+        onError: (_, __, context) => {
+          // Roll back on error
+          if (context?.previousData) {
+            queryClient.setQueryData(
+              [entityType, 'list'],
+              context.previousData
+            );
+          }
+        },
+        errorContext: `Delete${entityType}`
+      }
+    );
     
     // Return combined API
     return {
-      create: createMutation.mutate,
-      createAsync: createMutation.mutateAsync,
-      update: (id: string, data: Partial<TInput>) => 
-        updateMutation.mutate?.({ id, data }),
-      updateAsync: (id: string, data: Partial<TInput>) => 
-        updateMutation.mutateAsync?.({ id, data }),
-      remove: deleteMutation.mutate,
-      removeAsync: deleteMutation.mutateAsync,
+      create: serverActions.create ? createMutation.mutate : null,
+      createAsync: serverActions.create ? createMutation.mutateAsync : null,
+      update: serverActions.update ? (id: string, data: Partial<TInput>) => 
+        updateMutation.mutate({ id, data }) : null,
+      updateAsync: serverActions.update ? (id: string, data: Partial<TInput>) => 
+        updateMutation.mutateAsync({ id, data }) : null,
+      delete: serverActions.delete ? deleteMutation.mutate : null,
+      deleteAsync: serverActions.delete ? deleteMutation.mutateAsync : null,
       
       // Loading states
       isCreating: createMutation.isPending,
       isUpdating: updateMutation.isPending,
-      isRemoving: deleteMutation.isPending,
+      isDeleting: deleteMutation.isPending,
       
       // Error states
       createError: createMutation.error,
       updateError: updateMutation.error,
-      removeError: deleteMutation.error
+      deleteError: deleteMutation.error
     };
   }
   
   /**
    * Hook that combines list and mutations functionality
    */
-  function useManager(customParams?: Partial<PaginationQueryParams>) {
+  function useManager(customParams?: Partial<QueryParams>) {
     const list = useList(customParams);
     const mutations = useMutations();
     

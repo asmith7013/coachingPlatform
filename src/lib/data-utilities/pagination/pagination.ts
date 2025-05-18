@@ -1,11 +1,11 @@
 import type { HydratedDocument, Model, FilterQuery } from "mongoose";
-import { handleServerError } from "@lib/error/handle-server-error";
+import { handleServerError } from "@error/handlers/server";
 import { connectToDB } from "@data-server/db/connection";
 import { sanitizeDocuments } from "@data-utilities/transformers/sanitize";
 import type { ZodSchema } from "zod";
 import { z } from "zod";
 import { BaseDocument } from "@core-types/document";
-import { PaginationOptions, DEFAULT_PAGINATION_OPTIONS, PaginatedResult } from "@core-types/pagination";
+import { PaginationParams, DEFAULT_QUERY_PARAMS, PaginatedResponse } from "@core-types/pagination";
 
 // Use TimestampedDoc from the centralized location
 // Other pagination-specific interfaces stay here
@@ -15,7 +15,7 @@ import { PaginationOptions, DEFAULT_PAGINATION_OPTIONS, PaginatedResult } from "
 export function buildPaginatedQuery<T extends BaseDocument>(
   model: Model<HydratedDocument<T>>,
   filters: FilterQuery<T>,
-  { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" }: PaginationOptions = DEFAULT_PAGINATION_OPTIONS
+  { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" }: PaginationParams = DEFAULT_QUERY_PARAMS
 ) {
   const query = model.find(filters);
   
@@ -36,8 +36,8 @@ export async function executePaginatedQuery<T extends BaseDocument, S extends Zo
   model: Model<HydratedDocument<T>>,
   filters: FilterQuery<T>,
   schema: S,
-  options: PaginationOptions = DEFAULT_PAGINATION_OPTIONS
-): Promise<PaginatedResult<z.infer<S>>> {
+  options: PaginationParams = DEFAULT_QUERY_PARAMS
+): Promise<PaginatedResponse<z.infer<S>>> {
   try {
     if (!model) {
       throw new Error('Model is required');

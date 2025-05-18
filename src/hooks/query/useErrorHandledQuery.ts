@@ -1,7 +1,7 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { handleClientError } from '@/lib/error/handle-client-error';
-import { captureError, createErrorContext } from '@/lib/error';
-import { useQueryErrorHandler } from '@/lib/query/utilities/error-handling';
+import { handleClientError } from '@error';
+import { captureError, createErrorContext } from '@error';
+import { useQueryErrorHandler } from '@query/utilities/error-handling';
 
 /**
  * Hook for queries with standardized error handling

@@ -168,7 +168,7 @@ export default function MondayVisitSelectionPage() {
   }, []);
   
   // Determine loading state from React Query hooks
-  const isLoading = boardMutation.isPending || previewsQuery.isLoading || importMutation.isPending;
+  const isLoading = previewsQuery.isLoading || importMutation.isPending;
   
   return (
     <div className="container mx-auto py-6">

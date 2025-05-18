@@ -1,50 +1,103 @@
-// src/lib/types/core/pagination.ts
-import { FetchParams, DEFAULT_FETCH_PARAMS, getDefaultFetchParams } from './api';
-
-// Re-export the core fetch types
-export { DEFAULT_FETCH_PARAMS, getDefaultFetchParams };
-export { type FetchParams };
+import type { PaginationBase } from './base-types';
+import type { CollectionResponse } from './response';
 
 /**
- * Base pagination options for DB queries
+ * Basic pagination parameters
+ * Extends PaginationBase to maintain type hierarchy while allowing for future extensions
  */
-export interface PaginationOptions {
-  /** Page number (1-based) */
+export interface PaginationParams extends PaginationBase {
+  /** Current page number (1-based) */
   page?: number;
   /** Number of items per page */
   limit?: number;
-  /** Field to sort by */
-  sortBy?: string;
-  /** Sort direction */
-  sortOrder?: "asc" | "desc";
 }
 
 /**
- * Standard pagination result type that includes success flag
+ * Default values for pagination parameters
  */
-export interface PaginatedResult<T> {
-  /** Array of resources */
-  items: T[];
+export const DEFAULT_PAGINATION_PARAMS: Required<PaginationParams> = {
+  page: 1,
+  limit: 10,
+};
+
+/**
+ * Paginated response extending the collection response
+ */
+export interface PaginatedResponse<T = unknown> extends CollectionResponse<T> {
+  /** Current page number */
+  page: number;
+  /** Items per page */
+  limit: number;
+  /** Total number of pages */
+  totalPages: number;
+  /** Whether there are more pages */
+  hasMore: boolean;
+}
+
+/**
+ * Pagination metadata
+ */
+export interface PaginationMeta {
+  /** Current page number */
+  page: number;
+  /** Items per page */
+  limit: number;
   /** Total count of items */
   total: number;
-  /** Whether the collection is empty */
-  empty: boolean;
-  /** Indicates if the operation was successful */
-  success: boolean;
-  /** Current page number */
-  page?: number;
-  /** Items per page */
-  limit?: number;
   /** Total number of pages */
-  totalPages?: number;
+  totalPages: number;
+  /** Whether there are more pages */
+  hasMore: boolean;
+  /** Whether the collection is empty */
+  isEmpty: boolean;
 }
 
 /**
- * Default pagination options
+ * Creates pagination parameters with defaults
  */
-export const DEFAULT_PAGINATION_OPTIONS: Required<PaginationOptions> = {
-  page: DEFAULT_FETCH_PARAMS.page,
-  limit: DEFAULT_FETCH_PARAMS.limit,
-  sortBy: DEFAULT_FETCH_PARAMS.sortBy,
-  sortOrder: DEFAULT_FETCH_PARAMS.sortOrder,
-};
+export function buildPaginationParams(
+  params: Partial<PaginationParams> = {}
+): Required<PaginationParams> {
+  const {
+    page = DEFAULT_PAGINATION_PARAMS.page,
+    limit = DEFAULT_PAGINATION_PARAMS.limit,
+  } = params;
+
+  return {
+    page,
+    limit,
+  };
+}
+
+/**
+ * Calculate pagination metadata from results
+ */
+export function calculatePaginationMeta(
+  total: number,
+  params: Required<PaginationParams>
+): PaginationMeta {
+  const { page, limit } = params;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  
+  return {
+    page,
+    limit,
+    total,
+    totalPages,
+    hasMore: page < totalPages,
+    isEmpty: total === 0
+  };
+}
+
+/**
+ * Calculate MongoDB skip value from pagination parameters
+ */
+export function calculateSkip(page: number, limit: number): number {
+  return (Math.max(1, page) - 1) * limit;
+}
+
+// Backwards compatibility
+/** @deprecated Use PaginationParams instead */
+export type PaginationOptions = PaginationParams;
+/** @deprecated Use DEFAULT_PAGINATION_PARAMS instead */
+export const DEFAULT_PAGINATION_OPTIONS = DEFAULT_PAGINATION_PARAMS;

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query/core/keys';
+import { queryKeys } from '@query/core/keys';
 import { handleClientError } from '@/lib/error';
 import { CollectionResponse } from '@core-types/response';
 

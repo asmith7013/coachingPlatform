@@ -409,7 +409,7 @@ src//lib/ui/forms/fieldConfig/visits/visit.ts:    options: GradeLevelsSupportedZ
 src//lib/ui/forms/fieldConfig/shared/notes.ts:    options: NoteTypeZod.options.map((value) => ({
 src//lib/ui/table-schema.ts:  return columns.map((col) => ({
 src//lib/types/core/resource-manager.ts:import { ResourceResponse } from '@core-types/response';
-src//lib/types/core/resource-manager.ts:export type FetchFunction<T> = (params: FetchParams) => Promise<ResourceResponse<T>>;
+src//lib/types/core/resource-manager.ts:export type FetchFunction<T> = (params: QueryParams) => Promise<ResourceResponse<T>>;
 src//lib/types/core/response.ts:export interface BaseResponse {
 src//lib/types/core/response.ts:export type CollectionResponse<T = Record<string, unknown>> = {
 src//lib/types/core/response.ts:export interface ResourceResponse<T = unknown> extends BaseResponse {
