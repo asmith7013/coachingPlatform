@@ -1,6 +1,6 @@
 import { logError } from "@error/core/logging";
 import { formatErrorMessage } from "@error/core/transformation";
-import { ErrorContext } from "@core-types/error";
+import { ErrorContext } from "@error-types";
 
 /**
  * Centralized error handler for Server Actions leveraging the core error system

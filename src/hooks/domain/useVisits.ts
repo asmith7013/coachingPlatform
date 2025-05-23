@@ -10,11 +10,11 @@ import {
   createVisit
 } from '@/app/actions/visits/visits';
 import { WithDateObjects } from '@/lib/types/core/document';
-import { wrapServerActions } from '@/lib/data-utilities/transformers/response-transformer';
-import { transformDateFieldsArray } from '@/lib/data-utilities/transformers/date-transformer';
-import { PaginationQueryParams } from '@/lib/query/factories/entity-hooks';
+import { wrapServerActions } from '@/lib/data-utilities/transformers/mappers/response-transformer';
+import { QueryParams } from '@core-types/query';
 import { ZodType } from 'zod';
-import { CollectionResponse } from '@/lib/types/core/response';
+import { CollectionResponse } from '@core-types/response';
+import { transformDocument } from '@/lib/data-utilities/transformers/core/db-transformers';
 
 /**
  * Visit entity with Date objects instead of string dates
@@ -24,7 +24,7 @@ export type VisitWithDates = WithDateObjects<Visit>;
 /**
  * Adapter to ensure fetchVisits returns PaginatedResponse (adds hasMore and required fields)
  */
-const fetchVisitsWithHasMore = async (params: PaginationQueryParams) => {
+const fetchVisitsWithHasMore = async (params: QueryParams) => {
   const result = await fetchVisits(params);
   // Ensure required fields for PaginatedResponse
   const page = typeof result.page === 'number' ? result.page : 1;
@@ -49,7 +49,7 @@ const wrappedActions = wrapServerActions<Visit, VisitWithDates, VisitInput>(
     fetch: fetchVisitsWithHasMore,
     create: createVisit as (data: VisitInput) => Promise<CollectionResponse<Visit>>,
   },
-  (items: Visit[]) => transformDateFieldsArray(items) as VisitWithDates[]
+  (items: Visit[]) => transformDocument(items) as VisitWithDates[]
 );
 
 /**

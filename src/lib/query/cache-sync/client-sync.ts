@@ -1,11 +1,11 @@
 // src/lib/query/cache-sync/client-sync.ts
-import { queryClient } from '@/lib/query/core/client';
-import { CacheSyncConfig } from '@/lib/types/core/cache';
-import { createEntityCacheOperations } from './cache-operations';
+import { queryClient } from '@query/core/client';
+import { CacheSyncConfig } from '@core-types/cache';
+import { createEntityCacheOperations } from '@query/cache-sync/cache-operations';
 
 /**
  * Synchronize client-side cache after server mutations
- * This function should be called from components after server action completion
+ * This function should be called from server actions after operations
  * 
  * @param config - Configuration for cache synchronization
  * @param entityId - ID of the entity that was modified (for update/delete operations)

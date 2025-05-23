@@ -12,9 +12,9 @@ import {
   updateSchool, 
   deleteSchool 
 } from '@/app/actions/schools/schools';
-import { WithDateObjects } from '@/lib/types/core/document';
-import { wrapServerActions } from '@/lib/data-utilities/transformers/response-transformer';
-import { transformDateFieldsArray } from '@/lib/data-utilities/transformers/date-transformer';
+import { WithDateObjects } from '@core-types/document';
+import { wrapServerActions } from '@/lib/data-utilities/transformers/mappers/response-transformer';
+import { transformDocument } from '@/lib/data-utilities/transformers/core/db-transformers';
 
 /**
  * School entity with Date objects instead of string dates
@@ -32,7 +32,7 @@ const wrappedActions = wrapServerActions(
     update: updateSchool,
     delete: deleteSchool
   },
-  items => transformDateFieldsArray(items) as SchoolWithDates[]
+  items => transformDocument(items) as SchoolWithDates[]
 );
 
 /**

@@ -1,4 +1,10 @@
-import { z } from "zod";
+import type {
+  FieldType,
+  SelectOption,
+  FieldConfig as ZodFieldConfig,
+  FieldOverride as ZodFieldOverride,
+  FormConfig as ZodFormConfig,
+} from '@zod-schema/core-types/form';
 
 /**
  * Base form field configuration
@@ -22,99 +28,84 @@ export interface FieldBase {
   hidden?: boolean;
 }
 
+// === ENHANCED GENERIC INTERFACES ===
+
 /**
  * Generic field configuration with type safety
+ * Extends Zod schema with generic typing
  */
-export interface Field<T = unknown> extends FieldBase {
+export interface Field<T = unknown> extends Omit<ZodFieldConfig, 'name'> {
   /** Field name - typed to match object keys */
   name: keyof T & string;
-  /** Field type */
-  type: "text" | "email" | "number" | "password" | "select" | "multi-select" | "checkbox" | "date" | "datetime" | "reference";
-  /** Available options for select fields */
-  options?: Array<{ value: string; label: string }>;
-  /** Default value */
-  defaultValue?: unknown;
-  /** Whether the field can be edited */
-  editable?: boolean;
-  /** Reference to a schema for validation */
-  schemaName?: z.ZodTypeAny;
-  /** Input HTML type when applicable */
-  inputType?: string;
+  
+  /** Legacy support during transition */
+  key?: keyof T & string;
+  
+  /** Schema reference for advanced validation */
+  schemaName?: unknown;
 }
 
 /**
- * Field override configuration
- */
-export interface FieldOverride {
-  /** Override field label */
-  label?: string;
-  /** Override help text */
-  helpText?: string;
-  /** Override placeholder */
-  placeholder?: string;
-  /** Override disabled state */
-  disabled?: boolean;
-  /** Override hidden state */
-  hidden?: boolean;
-  /** Override required state */
-  required?: boolean;
-  /** Override default value */
-  defaultValue?: unknown;
-  /** Override options for select fields */
-  options?: Array<{ label: string; value: string }>;
-  /** Function to fetch options dynamically */
-  fetcher?: () => Promise<Array<{ label: string; value: string }>>;
-  /** Override multiple selection */
-  multiple?: boolean;
-  /** Show field only in modal */
-  modalOnly?: boolean;
-  /** Show field only on desktop */
-  desktopOnly?: boolean;
-  /** Show field only on mobile */
-  mobileOnly?: boolean;
-  /** Override field type */
-  type?: 'text' | 'select' | 'reference' | 'checkbox' | 'email' | 'number' | 'multi-select' | 'date' | 'datetime' | 'password';
-  /** Override reference URL */
-  url?: string;
-}
-
-/**
- * Map of field overrides by field name
+ * Field override map with proper typing
  */
 export type FieldOverrideMap<T = unknown> = {
-  [K in keyof T]?: FieldOverride;
+  [K in keyof T]?: ZodFieldOverride;
+} & {
+  /** Special form-level overrides */
+  title?: ZodFieldOverride;
+  [key: string]: ZodFieldOverride | undefined;
 };
 
 /**
- * Form-level override configuration
+ * Form configuration with generic typing
  */
-export interface FormOverride<T = unknown> {
-  /** Form title */
-  title?: string;
-  /** Form description */
-  description?: string;
-  /** Submit button label */
-  submitLabel?: string;
-  /** Cancel button label */
-  cancelLabel?: string;
-  /** Fields to include (in order) */
-  fields?: Array<keyof T>;
-  /** Fields to hide */
-  hiddenFields?: Array<keyof T>;
-  /** Fields to make required */
-  requiredFields?: Array<keyof T>;
-  /** Fields to make optional */
-  optionalFields?: Array<keyof T>;
-  /** Default values */
+export interface FormConfiguration<T = unknown> extends Omit<ZodFormConfig, 'fields' | 'hiddenFields' | 'requiredFields' | 'optionalFields' | 'defaultValues'> {
+  /** Fields to include (typed to entity) */
+  fields?: Array<keyof T & string>;
+  /** Fields to hide (typed to entity) */
+  hiddenFields?: Array<keyof T & string>;
+  /** Fields to make required (typed to entity) */
+  requiredFields?: Array<keyof T & string>;
+  /** Fields to make optional (typed to entity) */
+  optionalFields?: Array<keyof T & string>;
+  /** Default values (typed to entity) */
   defaultValues?: Partial<T>;
 }
 
-// Type aliases for backward compatibility with typed generics
+// === TYPE RE-EXPORTS ===
+export type { FieldType, SelectOption };
+export type { ZodFieldConfig as FieldConfig };
+export type { ZodFieldOverride as FieldOverride };
+export type { ZodFormConfig as FormConfig };
+
+// === LEGACY SUPPORT ===
+/** @deprecated Use Field<T> instead */
 export type TextField<T = unknown> = Field<T> & { type: "text" | "email" | "number" | "password" };
+/** @deprecated Use Field<T> instead */
 export type SelectField<T = unknown> = Field<T> & { type: "select" | "multi-select" };
+/** @deprecated Use Field<T> instead */
 export type CheckboxField<T = unknown> = Field<T> & { type: "checkbox" };
-export type ReferenceField<T = unknown> = Field<T> & { type: "reference", url: string };
+/** @deprecated Use Field<T> instead */
+export type ReferenceField<T = unknown> = Field<T> & { type: "reference"; url: string };
+/** @deprecated Use Field<T> instead */
 export type DateField<T = unknown> = Field<T> & { type: "date" | "datetime" };
+
+// === UTILITY TYPES ===
+
+/**
+ * Extract field names from a form configuration
+ */
+export type FormFieldNames<T> = Array<keyof T & string>;
+
+/**
+ * Create a field configuration type for a specific entity
+ */
+export type EntityFieldConfig<T> = Field<T>[];
+
+/**
+ * Create a field override map type for a specific entity
+ */
+export type EntityFieldOverrides<T> = FieldOverrideMap<T>;
 
 // Import types from the new location but don't re-export
 // to avoid conflicts with types defined in this file

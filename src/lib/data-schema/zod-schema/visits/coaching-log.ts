@@ -4,9 +4,10 @@ import {
   TotalDurationZod, 
   SolvesTouchpointZod 
 } from "@enums"; // Updated centralized import
-import { zDateField } from '@zod-schema/shared/dateHelpers';
+import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 
-export const CoachingLogInputZodSchema = z.object({
+// Coaching Log Fields Schema
+export const CoachingLogFieldsSchema = z.object({
   reasonDone: ReasonDoneZod, // Enum for completion status
   microPLTopic: z.string().optional(), // Optional MicroPL topic
   microPLDuration: z.number().optional(), // Optional duration in minutes
@@ -20,15 +21,14 @@ export const CoachingLogInputZodSchema = z.object({
   primaryStrategy: z.string(), // Required strategy description
   solvesSpecificStrategy: z.string(), // Required detailed strategy description
   aiSummary: z.string().optional(), // Optional AI-generated summary
-  owners: z.array(z.string()), // Array of owner IDs
 });
 
-export const CoachingLogZodSchema = CoachingLogInputZodSchema.extend({
-  _id: z.string(), // Required in full schema
-  createdAt: zDateField.optional(),
-  updatedAt: zDateField.optional(),
-});
+// Coaching Log Full Schema
+export const CoachingLogZodSchema = BaseDocumentSchema.merge(CoachingLogFieldsSchema);
 
-// Add type definition
+// Coaching Log Input Schema
+export const CoachingLogInputZodSchema = toInputSchema(CoachingLogZodSchema);
+
+// Auto-generate TypeScript types
 export type CoachingLogInput = z.infer<typeof CoachingLogInputZodSchema>;
 export type CoachingLog = z.infer<typeof CoachingLogZodSchema>;

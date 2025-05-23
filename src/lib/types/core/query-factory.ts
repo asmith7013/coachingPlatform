@@ -1,10 +1,11 @@
 // src/lib/types/data-access/react-query.ts
-import { z } from 'zod';
 import { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import { BaseDocument } from '@core-types/document';
-import { CollectionResponse, EntityResponse, PaginatedResponse } from '@core-types/response';
-import { ErrorContext } from '@core-types/error';
-import { QueryParams } from '@core-types/pagination';
+import { CollectionResponse, EntityResponse } from '@core-types/response';
+import { PaginatedResponse } from '@core-types/pagination';
+import { ErrorContext } from '@error-types';
+import { QueryParams } from '@core-types/query';
+import { ZodSchema } from 'zod';
 
 /**
  * Base configuration for React Query hooks
@@ -66,79 +67,59 @@ export interface ServerActions<T, TInput> {
  */
 export interface SchemaHookConfig<T extends BaseDocument, TInput> extends ReactQueryHookConfig {
   /** Zod schema for full entity */
-  fullSchema: z.ZodType<T>;
+  fullSchema: ZodSchema<T>;
   
   /** Zod schema for input entity */
-  inputSchema: z.ZodType<TInput>;
+  inputSchema: ZodSchema<TInput>;
   
   /** Server actions for CRUD operations */
   serverActions: ServerActions<T, TInput>;
 }
 
 /**
- * Result of list query hook
- * Standardizes naming with React Query's useQuery result
+ * Enhanced ListQueryResult with proper typing
  */
 export interface ListQueryResult<T> {
-  /** Array of entities */
+  // Data
   items: T[];
   
-  /** Total number of entities */
+  // Pagination
   total: number;
-  
-  /** Current page number */
   page: number;
-  
-  /** Items per page */
   pageSize: number;
-  
-  /** Total number of pages */
   totalPages: number;
-  
-  /** Whether there are more pages */
   hasMore: boolean;
   
-  /** Loading state */
-  isLoading: boolean;
-  
-  /** Error state */
-  isError: boolean;
-  
-  /** Error object if any */
-  error: Error | null;
-  
-  /** Function to refetch data */
-  refetch: () => Promise<unknown>;
-  
-  /** Current filters */
+  // Filtering and sorting
   filters: Record<string, unknown>;
-  
-  /** Current search term */
   search: string;
-  
-  /** Current sort field */
   sortBy: string;
-  
-  /** Current sort order */
   sortOrder: 'asc' | 'desc';
   
-  /** Function to set page */
+  // Query state
+  isLoading: boolean;
+  isError: boolean;
+  error: Error | null;
+  refetch: () => void;
+  
+  // Actions
   setPage: (page: number) => void;
-  
-  /** Function to set page size */
   setPageSize: (pageSize: number) => void;
-  
-  /** Function to set search term */
   setSearch: (search: string) => void;
-  
-  /** Function to apply filters */
   applyFilters: (filters: Record<string, unknown>) => void;
-  
-  /** Function to change sorting */
   changeSorting: (sortBy: string, sortOrder?: 'asc' | 'desc') => void;
   
-  /** Raw query parameters */
-  queryParams: QueryParams;
+  // Query parameters for debugging/advanced usage
+  queryParams: Record<string, unknown>;
+  
+  // Raw query for advanced use cases
+  query: {
+    data: unknown;
+    isLoading: boolean;
+    isError: boolean;
+    error: Error | null;
+    refetch: () => void;
+  };
 }
 
 /**
@@ -213,22 +194,21 @@ export interface EntityResult<T extends BaseDocument, TInput> extends
 }
 
 /**
- * Creates an error context object for query operations
- * 
- * @param entityType The entity type (e.g., 'schools')
- * @param operation The operation being performed
- * @param additionalContext Additional context information
- * @returns An error context object
+ * Creates an error context for query operations
  */
 export function createQueryErrorContext(
-  entityType: string,
+  component: string,
   operation: string,
-  additionalContext: Partial<ErrorContext> = {}
+  context: {
+    metadata?: Record<string, unknown>;
+    tags?: Record<string, string>;
+  } = {}
 ): ErrorContext {
   return {
-    component: `${entityType}Query`,
+    component,
     operation,
-    ...additionalContext
+    metadata: context.metadata,
+    tags: context.tags
   };
 }
 

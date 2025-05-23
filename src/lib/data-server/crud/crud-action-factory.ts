@@ -9,11 +9,11 @@ import {
 import { BaseDocument } from "@core-types/document";  
 import { connectToDB } from "@data-server/db/connection";
 import { handleCrudError } from "@error/handlers/crud";
-import { PaginatedResponse, CollectionResponse } from "@core-types/response";
+import { CollectionResponse } from "@core-types/response";
+import { PaginatedResponse } from "@core-types/pagination";
 import { QueryParams, buildQueryParams as getDefaultParams } from "@core-types/query";
 // Import the sanitization utilities
-import { deepSanitize } from "@data-utilities/transformers/sanitize";
-
+import { transformDocument } from "@/lib/data-utilities/transformers/core/db-transformers";
 // Utility to sanitize sort fields
 export function sanitizeSortBy(
     allowedSortFields: string[],
@@ -113,13 +113,12 @@ export async function fetchPaginatedResource<
     const validatedItems = items.map(item => {
       try {
         // First sanitize the document (convert ObjectIds to strings, etc.)
-        // Use deepSanitize directly for lean objects
-        const sanitized = deepSanitize(item);
+        const sanitized = transformDocument(item);
         return schema.parse(sanitized) as z.infer<Schema>;
       } catch (error) {
         console.error(`Validation error for item ${String(item._id)}:`, error);
         // If validation fails, still return a sanitized version
-        const sanitized = deepSanitize(item);
+        const sanitized = transformDocument(item);
         return sanitized as z.infer<Schema>;
       }
     });
@@ -329,7 +328,7 @@ export function createCrudActions<
         
         try {
           // UPDATED: Use deepSanitize and then parse with schema for lean objects
-          const sanitized = deepSanitize(item);
+          const sanitized = transformDocument(item);
           const validatedItem = fullSchema.parse(sanitized);
           return { 
             success: true, 

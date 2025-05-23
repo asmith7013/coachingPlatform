@@ -1,11 +1,10 @@
 import { UserJSON, OrganizationJSON, DeletedObjectJSON } from '@clerk/nextjs/server';
 import { UserMetadataSchema } from '@core-types/auth';
-import { NYCPSStaffModel } from '@/lib/data-schema/mongoose-schema/core/staff.model';
-import { TeachingLabStaffModel } from '@/lib/data-schema/mongoose-schema/core/staff.model';
-import { withDbConnection } from '@/lib/data-server/db/ensure-connection';
-import { safeParseAndLog } from '@/lib/data-utilities/transformers/parse';
-import { handleServerError } from '@/lib/error';
-import { captureError, createErrorContext } from '@/lib/error/error-monitor';
+import { NYCPSStaffModel } from '@mongoose-schema/core/staff.model';
+import { TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
+import { withDbConnection } from '@data-server/db/ensure-connection';
+import { validateSafe } from '@/lib/data-utilities/transformers/core/schema-validators';
+import { captureError, createErrorContext, handleServerError } from '@error';
 
 // Type definitions
 export type ClerkWebhookEvent = {
@@ -41,7 +40,7 @@ export async function handleUserSync(data: UserWebhookData): Promise<WebhookResu
   return withDbConnection(async () => {
     try {
       // Parse and validate metadata
-      const metadata = safeParseAndLog(UserMetadataSchema, data.public_metadata || {});
+      const metadata = validateSafe(UserMetadataSchema, data.public_metadata || {});
       
       if (!metadata) {
         const errorMessage = 'Invalid user metadata structure';

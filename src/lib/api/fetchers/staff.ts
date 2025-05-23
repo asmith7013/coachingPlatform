@@ -1,7 +1,7 @@
 import { NYCPSStaffModel, TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
 import { NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from '@zod-schema/core/staff';
 import { createApiSafeFetcher } from '@api-handlers/api-adapter';
-import { sanitizeDocument } from '@data-utilities/transformers/sanitize';
+import { transformDocument } from '@/lib/data-utilities/transformers/core/db-transformers';
 
 /**
  * API-safe fetcher for NYCPS staff
@@ -39,7 +39,7 @@ export async function fetchStaffByIdForApi(id: string, staffType = 'nycps') {
       };
     }
     
-    const sanitized = sanitizeDocument(staff, Schema);
+    const sanitized = transformDocument(staff);
     
     return {
       success: true,

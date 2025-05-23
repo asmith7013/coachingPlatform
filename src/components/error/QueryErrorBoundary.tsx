@@ -3,8 +3,8 @@
 import React, { ReactNode } from 'react';
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from './ErrorBoundary';
-import { createErrorContext } from '@/lib/error';
-import { ErrorContext, ErrorVariant } from '@core-types/error';
+import { createErrorContext } from '@error';
+import { ErrorContext, ErrorVariant } from '@error-types';
 
 interface QueryErrorBoundaryProps {
   children: ReactNode;

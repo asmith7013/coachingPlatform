@@ -1,28 +1,21 @@
 // src/lib/types/core/api-integration.ts
+import { z } from 'zod';
+import { 
+  ApiRequestConfigZodSchema,
+  IntegrationEndpointConfigZodSchema,
+  IntegrationResponseMetaZodSchema,
+  IntegrationResponseZodSchema
+} from '@/lib/data-schema/zod-schema/core-types/api-integration';
 import { BaseResponse, CollectionResponse, EntityResponse } from './response';
 
-/**
- * Common API request configuration
- */
-export interface ApiRequestConfig {
-  /** API endpoint URL */
-  url: string;
-  /** HTTP method */
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-  /** Request headers */
-  headers?: Record<string, string>;
-  /** Request body (for POST/PUT/PATCH) */
-  body?: unknown;
-  /** URL parameters */
-  params?: Record<string, string | number | boolean | undefined>;
-  /** Timeout in milliseconds */
-  timeout?: number;
-  /** Retry configuration */
-  retry?: {
-    attempts: number;
-    delay: number;
+// Derive types from schemas instead of defining interfaces
+export type ApiRequestConfig = z.infer<typeof ApiRequestConfigZodSchema>;
+export type IntegrationEndpointConfig<TParams = Record<string, unknown>> = 
+  z.infer<typeof IntegrationEndpointConfigZodSchema> & {
+    defaultParams?: Partial<TParams>;
   };
-}
+export type IntegrationResponseMeta = z.infer<typeof IntegrationResponseMetaZodSchema>;
+export type IntegrationResponse = z.infer<typeof IntegrationResponseZodSchema>;
 
 /**
  * Integration adapter interface for converting between external and internal data formats
@@ -63,46 +56,3 @@ export interface ErrorAdapter<TExternal> extends ApiAdapter<TExternal, BaseRespo
   errorCodeMap?: Record<string, string>;
 }
 
-/**
- * Configuration for an integration endpoint
- */
-export interface IntegrationEndpointConfig<TParams = Record<string, unknown>> {
-  /** Base URL for the endpoint */
-  baseUrl: string;
-  /** Request headers to include with all requests */
-  headers?: Record<string, string>;
-  /** Default parameters to include with all requests */
-  defaultParams?: Partial<TParams>;
-  /** Authentication method */
-  auth?: {
-    type: 'bearer' | 'basic' | 'api-key';
-    tokenKey?: string;
-    headerName?: string;
-  };
-  /** Timeout settings */
-  timeout?: number;
-}
-
-/**
- * Integration response metadata
- */
-export interface IntegrationResponseMeta {
-  /** HTTP status code */
-  statusCode?: number;
-  /** Response headers */
-  headers?: Record<string, string>;
-  /** Request duration in milliseconds */
-  duration?: number;
-  /** Integration source identifier */
-  source?: string;
-  /** Raw response size in bytes */
-  responseSize?: number;
-}
-
-/**
- * Extended base response with integration metadata
- */
-export interface IntegrationResponse extends BaseResponse {
-  /** Integration metadata */
-  meta?: IntegrationResponseMeta;
-}

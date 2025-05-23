@@ -18,20 +18,26 @@ Our application implements a comprehensive error handling architecture that ensu
 ## Error System Organization
 
 The error handling system is centralized in the `src/lib/error` directory with the following structure:
+```
 lib/
 ├── error/
-│   ├── index.ts             # Central export point for all error utilities
-│   ├── handle-client-error.ts   # Client-side error handling
-│   ├── handle-server-error.ts   # Server-side error handling
-│   ├── handle-validation-error.ts # Zod validation error handling
-│   ├── crud-error-handling.ts   # CRUD operation error handling
-│   └── error-monitor.ts     # Error monitoring and reporting
+│   ├── core/                # Core error functionality
+│   │   ├── classification.ts    # Error type classification
+│   │   ├── context.ts           # Error context creation
+│   │   ├── logging.ts           # Error logging and monitoring
+│   │   ├── responses.ts         # Standard response creators
+│   │   └── transformation.ts    # Error message formatting
+│   ├── handlers/             # Context-specific handlers
+│   │   ├── client.ts            # Client-side error handling
+│   │   ├── crud.ts              # CRUD operation error handling
+│   │   ├── server.ts            # Server-side error handling
+│   │   └── validation.ts        # Zod validation error handling
+│   └── index.ts              # Central export point
+```
 
-Error type definitions are centrally located in `src/lib/types/core/error.ts`, providing consistent error interfaces across the application.
+Error type definitions are located in `src/lib/types/error/`, while React component error boundaries are in `src/components/error/`.
 
-Error boundaries are implemented in `src/components/error/` for React component error handling.
-
-[RULE] Import error utilities from `@/lib/error` and error types from `@core-types/error`.
+[RULE] Import error utilities from `@/lib/error` and error types from `@error-types`.
 
 </section>
 
@@ -39,21 +45,21 @@ Error boundaries are implemented in `src/components/error/` for React component 
 
 ## Error Types
 
-The system handles three primary types of errors:
+The system handles four primary types of errors:
 
-1. **Client Errors** - Errors that occur in browser context, often related to network requests, SWR, or UI interactions
-2. **Server Errors** - Errors that occur in server components, API routes, or server actions
+1. **Client Errors** - Errors in browser context (network requests, SWR, UI interactions)
+2. **Server Errors** - Errors in server components, API routes, or server actions
 3. **Validation Errors** - Errors from Zod schema validation failures
 4. **Business Errors** - Domain-specific errors related to business rules
 
-Each error type has a dedicated handler function to standardize error formatting. The core error types are defined in `src/lib/types/core/error.ts` and include:
+Error types are now centrally managed in a structured directory (`src/lib/types/error/`) with specialized files:
+- `core.ts` - Defines fundamental types like `ErrorSeverity` and `ErrorCategory`
+- `context.ts` - Contains the `ErrorContext` interface for detailed error context information
+- `api.ts` - API-specific error types like `ApiError` and `GraphQLError`
+- `response.ts` - Response-related error types like `ErrorResponse` and `ValidationErrorResponse`
+- `classes.ts` - Error class hierarchy with `AppError`, `ValidationError`, `NetworkError`, etc.
 
-- `ErrorResponse` - Standardized error response structure
-- `ApiError` - Detailed API error information
-- `ErrorSeverity` - Error severity levels (fatal, error, warning, info, debug)
-- `ErrorCategory` - Error categorization (validation, network, permission, business, system, unknown)
-- `ErrorContext` - Contextual information about where/when an error occurred
-- `BusinessError` - Class for domain-specific errors
+This structured organization ensures type consistency across the entire error handling system.
 
 [RULE] Use the appropriate error type for each error context to ensure consistent error handling.
 
@@ -73,13 +79,13 @@ import { handleClientError } from "@/lib/error";
 try {
   // Client-side operation
 } catch (error) {
-  // Returns standardized error message
   const errorMessage = handleClientError(error, "ComponentName");
   // Display error to user
 }
 ```
 
-handleServerError
+### handleServerError
+
 Used in API routes, server actions, and other server-side code:
 
 ```typescript
@@ -88,7 +94,6 @@ import { handleServerError } from "@/lib/error";
 try {
   // Server-side operation
 } catch (error) {
-  // Format and return error response
   return Response.json({
     success: false,
     error: handleServerError(error)
@@ -96,10 +101,11 @@ try {
 }
 ```
 
-handleValidationError
+### handleValidationError
+
 Specifically for Zod validation errors:
 
-```tsx
+```typescript
 import { handleValidationError } from "@/lib/error";
 import { z } from "zod";
 
@@ -107,7 +113,6 @@ try {
   const result = schema.parse(data);
 } catch (error) {
   if (error instanceof z.ZodError) {
-    // Format validation errors
     return Response.json({
       success: false,
       error: handleValidationError(error)
@@ -116,7 +121,8 @@ try {
 }
 ```
 
-handleCrudError
+### handleCrudError
+
 For standardized error handling in CRUD operations:
 
 ```typescript
@@ -125,15 +131,17 @@ import { handleCrudError } from "@/lib/error";
 try {
   // CRUD operation
 } catch (error) {
-  // Returns standardized error response
   return handleCrudError(error, "createEntity");
 }
 ```
+
 [RULE] Validation errors should always be handled separately from general server errors.
 </section>
 
 <section id="error-boundaries">
-Error Boundaries
+
+## Error Boundaries
+
 For React component error handling, use the ErrorBoundary component:
 
 ```tsx
@@ -141,37 +149,45 @@ import { ErrorBoundary } from "@/components/error";
 
 function MyComponent() {
   return (
-    <ErrorBoundary fallback={<ErrorFallback />}>
+    <ErrorBoundary 
+      fallback={<ErrorFallback />}
+      context="MyComponentRender"
+      variant="default"
+    >
       {/* Component content */}
     </ErrorBoundary>
   );
 }
 ```
-The SentryBoundaryWrapper provides integration with Sentry error monitoring:
+
+For React Query integration, use the QueryErrorBoundary component:
 
 ```tsx
-import SentryBoundaryWrapper from "@/components/error/SentryBoundaryWrapper";
+import { QueryErrorBoundary } from "@/components/error";
 
-function MyPage() {
+function MyDataComponent() {
   return (
-    <SentryBoundaryWrapper>
-      {/* Page content */}
-    </SentryBoundaryWrapper>
+    <QueryErrorBoundary context="DataFetching">
+      {/* Components using React Query */}
+    </QueryErrorBoundary>
   );
 }
 ```
+
 [RULE] Use ErrorBoundary components to catch and handle errors in React component trees.
 </section>
 
 <section id="error-monitoring">
-Error Monitoring
-The system includes comprehensive error monitoring through the error-monitor.ts module:
+
+## Error Monitoring
+
+The system includes error monitoring through the core error system:
 
 ```typescript
-import { captureError, createErrorContext } from "@/lib/error";
+import { logError, createErrorContext } from "@/lib/error";
 
 // Capture an error with context
-captureError(error, {
+logError(error, {
   component: "UserProfile",
   operation: "fetchUserData",
   severity: "error",
@@ -179,18 +195,9 @@ captureError(error, {
 });
 
 // Create detailed error context
-const context = createErrorContext("UserProfile", "updateUser", {
-  metadata: { userId: "123" }
-});
-captureError(error, context);
+const context = createErrorContext("UserProfile", "updateUser");
+logError(error, context);
 ```
-
-Additional monitoring utilities include:
-
-withErrorMonitoring - Higher-order function for automatic error capturing
-withAsyncErrorMonitoring - Higher-order function for async functions
-reportBusinessError - For reporting domain-specific business errors
-createMonitoredErrorResponse - Create error responses with monitoring
 
 [RULE] Use error monitoring utilities to capture detailed error information for debugging.
 </section>
@@ -199,85 +206,31 @@ createMonitoredErrorResponse - Create error responses with monitoring
 
 ## Error Integration with Data Flow
 
-Our application implements a layered approach to error handling that integrates seamlessly with the data management system. Each layer has specific responsibilities while maintaining a cohesive flow:
+Our application implements a layered approach to error handling that integrates with the data management system:
 
-### Error Handling and Data Flow Architecture
-
-The error handling system connects with our data management hooks following a clean, layered architecture:
-
-1. **Foundation Layer** (`useQuery` with error handling): 
-   - Uses React Query with standardized error catching
-   - Integrates with QueryCache for global error handling
-   - Converts all error types to a consistent format
-   - Adds context to errors for better debugging
-   - Prevents error cascades in data fetching
-
-2. **Operation Layer** (`useErrorHandledMutation`):
-   - Manages state lifecycle for mutation operations
-   - Standardizes error messages across all server actions
-   - Provides loading/error/success states for UI feedback
-   - Supports automatic error timeouts and retry logic
-
-3. **Optimistic Layer** (`useOptimisticResource` + Error Handling):
-   - Handles rollback of optimistic updates when errors occur
-   - Ensures data consistency if server operations fail
-   - Maintains clean error states during optimistic operations
-
-4. **Resource Layer** (`useResourceManager` + `useCrudOperations`):
-   - Integrates error handling at the resource management level
-   - Preserves correct pagination and filter states during errors
-   - Provides consistent error interfaces across all resource types
-
-5. **Component Layer** (`ErrorBoundary` + `useErrorBoundary`):
-   - Catches unexpected rendering errors outside the data flow
-   - Prevents cascading failures in the UI
-   - Forwards errors to monitoring systems with proper context
-
-### Data Flow with Error Handling
+1. **Foundation Layer** (`useQuery`) - Standard error catching in data fetching
+2. **Operation Layer** (`useErrorHandledMutation`) - Error handling for mutations
+3. **Component Layer** (`ErrorBoundary`) - Catches rendering errors
 
 When a component requests data or performs a mutation:
-
-1. The component uses `useResourceManager` for the resource
-2. Data fetching is handled by `useSafeSWR` with error standardization
-3. Mutations are processed through `useErrorHandledMutation`
-4. Optimistic updates are managed by `useOptimisticResource` with rollback on error
-5. All errors are displayed consistently in the UI
-6. Unexpected rendering errors are caught by `ErrorBoundary` components
-
-This layered approach ensures that errors are handled appropriately at each level of the data flow, providing both developer-friendly debugging and user-friendly error messages.
+1. Data fetching is handled by `useSafeSWR` with error standardization
+2. Mutations are processed through `useErrorHandledMutation`
+3. Unexpected rendering errors are caught by `ErrorBoundary` components
 
 [RULE] Maintain a consistent error flow through all layers of the data management system.
-
 </section>
-<section id="error-display">
-Error Display
-Errors should be displayed to users in a consistent manner:
 
-```tsx
-// Form field error
-{error && (
-  <div className="text-sm text-red-500 mt-1">
-    {error}
-  </div>
-)}
-
-// API operation error
-{error && (
-  <Alert variant="error">
-    <AlertTitle>Operation Failed</AlertTitle>
-    <AlertDescription>{error}</AlertDescription>
-  </Alert>
-)}
-```
-[RULE] Always provide users with clear error messages that suggest next steps when possible.
-</section>
 <section id="error-hooks">
-Error Handling Hooks
-Our system provides specialized hooks to streamline error handling:
+
+## Error Handling Hooks
+
+Our system provides specialized hooks for error handling:
+
+### useErrorHandledMutation
+
+For handling API mutations with standardized error processing:
 
 ```typescript
-import { useErrorHandledMutation } from "@/hooks/utils/useErrorHandledMutation";
-
 const { mutate, isLoading, error } = useErrorHandledMutation(
   async (data) => {
     const response = await fetch('/api/resource', {
@@ -290,149 +243,18 @@ const { mutate, isLoading, error } = useErrorHandledMutation(
   { errorContext: "ResourceCreation" }
 );
 ```
-[RULE] Always use the error-handling hooks instead of raw fetch or React Query's removed onError callbacks when fetching data.
-</section>
 
-<section id="error-query-handling">
+### useErrorBoundary
 
-## Query Error Handling (React Query v5)
-
-Our application integrates error handling with React Query v5, which introduced significant changes to how errors are handled in queries.
-
-### QueryClient Configuration
-
-Error handling for React Query must be configured when creating the QueryClient:
+For component-level error boundary functionality:
 
 ```typescript
-import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query';
-import { captureError, createErrorContext } from '@/lib/error';
-
-// Create QueryClient with integrated error handling
-export function createQueryClientWithErrorHandling(): QueryClient {
-  return new QueryClient({
-    queryCache: new QueryCache({
-      onError: (error) => {
-        captureError(error, createErrorContext('ReactQuery', 'query'));
-      },
-    }),
-    mutationCache: new MutationCache({
-      onError: (error) => {
-        captureError(error, createErrorContext('ReactQuery', 'mutation'));
-      },
-    }),
-  });
-}
-Component-Level Query Error Handling
-Since React Query v5 removed onError callbacks from queries, use the useQueryErrorHandler hook:
-typescriptimport { useQuery } from '@tanstack/react-query';
-import { useQueryErrorHandler } from '@/lib/query/utilities/errorHandling';
-
-function MyComponent() {
-  const { data, error, isError } = useQuery({
-    queryKey: ['myData'],
-    queryFn: fetchMyData,
-  });
-  
-  // Handle query errors
-  useQueryErrorHandler(error, isError, 'MyDataQuery');
-  
-  return (
-    // Component JSX
-  );
-}
-Query Error Utilities
-The system provides utilities for handling query-specific errors:
-typescript// Wrap promises with error handling
-const result = await handleQueryError(
-  fetchData(),
-  'DataFetchOperation'
-);
-
-// Create a default query error handler
-const error = defaultQueryErrorHandler(
-  rawError,
-  'QueryContext'
-);
-These utilities integrate with our centralized error monitoring and provide consistent error formatting across all React Query operations.
-[RULE] Configure query error handling at the QueryClient level and use hooks for component-specific error handling.
-</section>
-
-<section id="error-query-handling">
-
-## Query Error Handling (React Query v5)
-
-Our application integrates error handling with React Query v5, which introduced significant changes to how errors are handled in queries.
-
-### QueryClient Configuration
-
-Error handling for React Query must be configured when creating the QueryClient:
-
-```typescript
-import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query';
-import { captureError, createErrorContext } from '@/lib/error';
-
-// Create QueryClient with integrated error handling
-export function createQueryClientWithErrorHandling(): QueryClient {
-  return new QueryClient({
-    queryCache: new QueryCache({
-      onError: (error) => {
-        captureError(error, createErrorContext('ReactQuery', 'query'));
-      },
-    }),
-    mutationCache: new MutationCache({
-      onError: (error) => {
-        captureError(error, createErrorContext('ReactQuery', 'mutation'));
-      },
-    }),
-  });
-}
+const { error, handleError, resetError } = useErrorBoundary({
+  context: "ComponentName"
+});
 ```
 
-### Component-Level Query Error Handling
-
-Since React Query v5 removed `onError` callbacks from queries, use the `useQueryErrorHandler` hook:
-
-```typescript
-import { useQuery } from '@tanstack/react-query';
-import { useQueryErrorHandler } from '@/lib/query/utilities/errorHandling';
-
-function MyComponent() {
-  const { data, error, isError } = useQuery({
-    queryKey: ['myData'],
-    queryFn: fetchMyData,
-  });
-  
-  // Handle query errors
-  useQueryErrorHandler(error, isError, 'MyDataQuery');
-  
-  return (
-    // Component JSX
-  );
-}
-```
-
-### Query Error Utilities
-
-The system provides utilities for handling query-specific errors:
-
-```typescript
-// Wrap promises with error handling
-const result = await handleQueryError(
-  fetchData(),
-  'DataFetchOperation'
-);
-
-// Create a default query error handler
-const error = defaultQueryErrorHandler(
-  rawError,
-  'QueryContext'
-);
-```
-
-These utilities integrate with our centralized error monitoring and provide consistent error formatting across all React Query operations.
-
-[RULE] Configure query error handling at the QueryClient level and use hooks for component-specific error handling.
-
+[RULE] Use the error-handling hooks for consistent error management across components.
 </section>
 
 </doc>

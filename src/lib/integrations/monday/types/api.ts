@@ -1,4 +1,4 @@
-import { BaseResponse, ResourceResponse } from '@/lib/types/core/response';
+import { BaseResponse, EntityResponse } from '@core-types/response';
 import { MondayBoard, MondayItem } from '@api-monday/types';
 
 /**
@@ -14,7 +14,7 @@ export interface ApiResponse<T> extends Pick<BaseResponse, 'success'> {
 /**
  * API response format for board queries
  */
-export interface MondayBoardResponse extends Pick<ResourceResponse<MondayBoard>, 'success'> {
+export interface MondayBoardResponse extends Pick<EntityResponse<MondayBoard>, 'success'> {
   boards: MondayBoard[];
   error?: string;
 }

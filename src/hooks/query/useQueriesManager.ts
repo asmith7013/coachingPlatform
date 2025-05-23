@@ -1,145 +1,146 @@
-import { useQueries, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '@query/core/keys';
 import { handleClientError } from '@/lib/error';
 import { CollectionResponse, EntityResponse } from '@core-types/response';
-import { isEntityResponse, isCollectionResponse } from '@/lib/query/utilities/response-types';
-
-// Response can be either collection or entity
-type ResponseType<T> = CollectionResponse<T> | EntityResponse<T>;
+import { ZodSchema } from 'zod';
+import { transformItemWithSchema, transformItemsWithSchema } from '@data-utilities/transformers/core/transform-helpers';
 
 export interface QueryConfig<T> {
-  /** Query key for the main entity */
-  queryKey: unknown[];
+  /** Entity type name (e.g., 'schools', 'staff') */
+  entityType: string;
   
-  /** Function to fetch the main entity */
-  queryFn: () => Promise<ResponseType<T>>;
+  /** ✅ NOW REQUIRED: Zod schema for data validation */
+  schema: ZodSchema<T>;
   
-  /** Related queries to fetch */
-  relatedQueries?: Array<{
-    /** Query key for the related entity */
-    queryKey: unknown[];
-    
-    /** Function to fetch the related entity */
-    queryFn: () => Promise<ResponseType<unknown>>;
-    
-    /** Whether this query is enabled */
-    enabled?: boolean;
-  }>;
+  /** Function to fetch a single entity */
+  getEntity?: (id: string) => Promise<EntityResponse<T>>;
+  
+  /** Function to fetch a list of entities */
+  getList?: () => Promise<CollectionResponse<T>>;
   
   /** Error context for error reporting */
   errorContext?: string;
 }
 
 /**
- * Extract entity data from a response regardless of format
+ * Transform response using 3-layer system
  */
-function extractEntityData<T>(response: ResponseType<T> | undefined): T | undefined {
-  if (!response) return undefined;
-  
-  if (isEntityResponse<T>(response)) {
-    return response.data;
-  } else if (isCollectionResponse<T>(response)) {
-    return response.items[0];
+function transformEntityResponse<T>(
+  response: EntityResponse<T> | null | undefined,
+  schema: ZodSchema<T>
+): EntityResponse<T> {
+  if (!response?.data) {
+    return { success: false, data: undefined as unknown as T };
   }
   
-  return undefined;
+  try {
+    // Use the shared helper function for consistency
+    const validated = transformItemWithSchema(response.data, schema);
+    
+    return {
+      ...response,
+      data: validated as T
+    };
+  } catch (error) {
+    console.error('Error transforming entity response:', error);
+    return response; // Fallback to original
+  }
 }
 
 /**
- * Extract collection data from a response regardless of format
+ * Transform collection response using 3-layer system
  */
-function extractCollectionData<T>(response: ResponseType<T> | undefined): T[] {
-  if (!response) return [];
-  
-  if (isEntityResponse<T>(response)) {
-    return [response.data];
-  } else if (isCollectionResponse<T>(response)) {
-    return response.items;
+function transformCollectionResponse<T>(
+  response: CollectionResponse<T> | null | undefined,
+  schema: ZodSchema<T>
+): CollectionResponse<T> {
+  if (!response?.items) {
+    return { success: false, items: [], total: 0 };
   }
   
-  return [];
+  try {
+    // Use the shared helper function for consistency
+    const transformedItems = transformItemsWithSchema(response.items, schema);
+    
+    return {
+      ...response,
+      items: transformedItems,
+      total: transformedItems.length
+    };
+  } catch (error) {
+    console.error('Error transforming collection response:', error);
+    return response; // Fallback to original
+  }
 }
 
 /**
- * Hook for managing multiple related queries with React Query
+ * Hook for managing multiple queries with React Query and REQUIRED schema validation
  */
 export function useQueriesManager<T>({
-  queryKey,
-  queryFn,
-  relatedQueries = [],
-  errorContext = 'entity'
+  entityType,
+  schema, // ✅ NOW REQUIRED
+  getEntity,
+  getList,
+  errorContext = entityType
 }: QueryConfig<T>) {
-  const queryClient = useQueryClient();
-  
-  // Combine main query with related queries
-  const queries = useQueries({
-    queries: [
-      {
-        queryKey,
-        queryFn: async () => {
-          try {
-            return await queryFn();
-          } catch (error) {
-            throw error instanceof Error
-              ? error
-              : new Error(handleClientError(error, `Fetch ${errorContext}`));
-          }
-        }
-      },
-      ...relatedQueries.map(query => ({
-        queryKey: query.queryKey,
-        queryFn: async () => {
-          try {
-            return await query.queryFn();
-          } catch (error) {
-            throw error instanceof Error
-              ? error
-              : new Error(handleClientError(error, `Fetch related ${errorContext}`));
-          }
-        },
-        enabled: query.enabled
-      }))
-    ]
+  // Always create queries, but only use them if the corresponding function is provided
+  const entityQuery = useQuery({
+    queryKey: queryKeys.entities.detail(entityType, entityType), // Use entityType as ID for now
+    queryFn: async () => {
+      if (!getEntity) {
+        throw new Error('Get entity function not provided');
+      }
+      try {
+        return await getEntity(entityType);
+      } catch (error) {
+        throw error instanceof Error
+          ? error
+          : new Error(handleClientError(error, `Get entity ${errorContext}`));
+      }
+    },
+    select: (response) => transformEntityResponse(response, schema),
+    enabled: !!getEntity
   });
   
-  // Extract main query result
-  const [mainQuery, ...relatedResults] = queries;
-  
-  // Check if any query is loading
-  const isLoading = queries.some(query => query.isLoading);
-  
-  // Check if any query has an error
-  const error = queries.find(query => query.error)?.error;
-  
-  // Function to invalidate all queries
-  const invalidateQueries = () => {
-    queryClient.invalidateQueries({ queryKey });
-    relatedQueries.forEach(query => {
-      queryClient.invalidateQueries({ queryKey: query.queryKey });
-    });
-  };
+  const listQuery = useQuery({
+    queryKey: queryKeys.entities.list(entityType),
+    queryFn: async () => {
+      if (!getList) {
+        throw new Error('Get list function not provided');
+      }
+      try {
+        return await getList();
+      } catch (error) {
+        throw error instanceof Error
+          ? error
+          : new Error(handleClientError(error, `Get list ${errorContext}`));
+      }
+    },
+    select: (response) => transformCollectionResponse(response, schema),
+    enabled: !!getList
+  });
   
   return {
-    // Main query data - works with both EntityResponse and CollectionResponse
-    data: extractEntityData<T>(mainQuery.data as ResponseType<T>),
+    // Entity query operations
+    entity: entityQuery.data?.data,
+    isEntityLoading: entityQuery.isLoading,
+    entityError: entityQuery.error,
     
-    // Also provide raw items for backward compatibility
-    items: isCollectionResponse<T>(mainQuery.data as ResponseType<T>) ? (mainQuery.data as CollectionResponse<T>).items : 
-           isEntityResponse<T>(mainQuery.data as ResponseType<T>) ? [(mainQuery.data as EntityResponse<T>).data] : [],
+    // List query operations
+    list: listQuery.data?.items ?? [],
+    total: listQuery.data?.total ?? 0,
+    isListLoading: listQuery.isLoading,
+    listError: listQuery.error,
     
-    // Related query data
-    relatedData: relatedResults.map(result => extractCollectionData(result.data)),
+    // Combined loading state
+    isLoading: entityQuery.isLoading || listQuery.isLoading,
     
-    // Loading and error states
-    isLoading,
-    error,
-    
-    // Query invalidation
-    invalidateQueries,
-    
-    // Individual query results
-    queries,
-    
-    // Full response object for direct access
-    response: mainQuery.data
+    // Refetch functions
+    refetchEntity: getEntity ? () => entityQuery.refetch() : null,
+    refetchList: getList ? () => listQuery.refetch() : null,
+    refetchAll: () => {
+      if (getEntity) entityQuery.refetch();
+      if (getList) listQuery.refetch();
+    }
   };
 }

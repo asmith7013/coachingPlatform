@@ -1,9 +1,9 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { logError, classifyError, createErrorContext, formatErrorMessage } from '@/lib/error';
-import { cn } from '@/lib/ui/utils/formatters';
-import { Alert } from '@/components/core/feedback/Alert';
-import { Button } from '@/components/core/Button';
-import { ErrorCategory, ErrorSeverity, ErrorContext } from '@core-types/error';
+import { logError, classifyError, createErrorContext, formatErrorMessage } from '@error';
+import { cn } from '@ui/utils/formatters';
+import { Alert } from '@components/core/feedback/Alert';
+import { Button } from '@components/core/Button';
+import { ErrorCategory, ErrorSeverity, ErrorContext } from '@error-types';
 
 interface ErrorBoundaryProps {
   children: ReactNode;

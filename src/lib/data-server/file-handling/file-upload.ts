@@ -1,10 +1,10 @@
-import { handleServerError } from "@error/handle-server-error";
-import { UploadResponse } from "@core-types/response";
+import { handleServerError } from "@error/handlers/server";
+import { EntityResponse } from "@core-types/response";
 export async function uploadFileWithProgress(
   file: File,
   endpoint: string,
   onProgress?: (progress: number) => void
-): Promise<UploadResponse> {
+): Promise<EntityResponse> {
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -26,7 +26,9 @@ export async function uploadFileWithProgress(
             resolve({
               success: true,
               message: `Upload successful! ${data.uploaded} items added.`,
-              uploaded: data.uploaded
+              data: {
+                uploaded: data.uploaded
+              }
             });
           } catch {
             reject(new Error("Failed to parse upload response"));

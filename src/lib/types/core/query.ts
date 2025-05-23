@@ -1,21 +1,11 @@
-import type { QueryBase } from './base-types';
+import { z } from 'zod';
+import { QueryParamsZodSchema } from '@/lib/data-schema/zod-schema/core-types/query';
 import { DEFAULT_PAGINATION_PARAMS } from './pagination';
 
 /**
  * Extended query parameters including filtering and search
  */
-export interface QueryParams extends QueryBase {
-  /** Record of filters to apply to the query */
-  filters?: Record<string, unknown>;
-  /** Legacy filter property (deprecated) */
-  filter?: Record<string, unknown>;
-  /** Search query string */
-  search?: string;
-  /** Fields to search within */
-  searchFields?: string[];
-  /** Additional implementation-specific options */
-  options?: Record<string, unknown>;
-}
+export type QueryParams = z.infer<typeof QueryParamsZodSchema>;
 
 /**
  * Default values for query parameters

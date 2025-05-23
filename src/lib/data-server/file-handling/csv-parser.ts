@@ -1,4 +1,4 @@
-import { handleServerError } from "@/lib/error/handle-server-error";
+import { handleServerError } from "@error/handlers/server";
 
 interface CSVRow {
   [key: string]: string;

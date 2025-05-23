@@ -3,8 +3,8 @@
 import { connectToDB } from "@data-server/db/connection";
 import { CycleModel } from "@mongoose-schema/core/cycle.model";
 import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
-import { handleServerError } from "@error/handle-server-error";
-import type { QueryParams } from "@core-types/api";
+import { handleServerError } from "@error/handlers/server";
+import type { QueryParams } from "@core-types/query";
 import { CycleZodSchema } from "@zod-schema/core/cycle";
 /**
  * Fetches a paginated list of cycles

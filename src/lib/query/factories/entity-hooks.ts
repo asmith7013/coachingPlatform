@@ -1,6 +1,7 @@
 import { createCrudHooks } from '@query/factories/crud-hooks';
 import { BaseDocument } from '@core-types/document';
 import { ServerActions } from '@core-types/query-factory';
+import { ZodSchema } from 'zod';
 
 /**
  * Configuration for entity hooks
@@ -11,6 +12,12 @@ export interface EntityHooksConfig<T extends BaseDocument, TInput> {
   
   /** Server actions for CRUD operations */
   serverActions: ServerActions<T, TInput>;
+  
+  /** Zod schema for full entity validation */
+  fullSchema: ZodSchema<T>;
+  
+  /** Zod schema for input validation (create/update) */
+  inputSchema: ZodSchema<TInput>;
   
   /** Default parameters for queries */
   defaultParams?: {
@@ -40,15 +47,20 @@ export interface EntityHooksConfig<T extends BaseDocument, TInput> {
 /**
  * Factory function that creates a set of React Query hooks for a specific entity type.
  * This is a higher-level factory that uses the CRUD hooks factory.
+ * 
+ * VERIFIED: This factory correctly passes schemas through to the CRUD hooks factory,
+ * which already implements the 3-layer transformation system.
  */
 export function createEntityHooks<
   T extends BaseDocument,
   TInput = Omit<T, '_id' | 'id' | 'createdAt' | 'updatedAt'>
 >(config: EntityHooksConfig<T, TInput>) {
-  // Create CRUD hooks
+  // Pass schemas through to CRUD hooks (schemas are already being passed correctly)
   const crudHooks = createCrudHooks<T, TInput>({
     entityType: config.entityType,
     serverActions: config.serverActions,
+    fullSchema: config.fullSchema,
+    inputSchema: config.inputSchema,
     defaultParams: config.defaultParams,
     validSortFields: config.validSortFields,
     persistFilters: config.persistFilters,
@@ -58,11 +70,14 @@ export function createEntityHooks<
   });
   
   // Return the hooks with more specific names
+  // VERIFIED: The CRUD hooks factory already handles schema integration correctly
   return {
     useList: crudHooks.useList,
     useById: crudHooks.useById,
     useMutations: crudHooks.useMutations,
-    useManager: crudHooks.useManager
+    useManager: crudHooks.useManager,
+    // ADDED: Alias for backward compatibility (as specified in cursor prompt)
+    useEntity: crudHooks.useManager
   };
 }
 

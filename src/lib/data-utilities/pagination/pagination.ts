@@ -1,21 +1,30 @@
+/**
+ * @deprecated This file is deprecated. Use selector-based pagination from @/lib/query/utilities/pagination.ts instead.
+ * 
+ * Migration Guide:
+ * 1. Replace executePaginatedQuery with executePaginatedQueryWithSelector
+ * 2. Replace buildPaginatedQuery with the query building logic in executePaginatedQueryWithSelector
+ * 3. Use the selector system for consistent data transformation
+ */
+
 import type { HydratedDocument, Model, FilterQuery } from "mongoose";
 import { handleServerError } from "@error/handlers/server";
 import { connectToDB } from "@data-server/db/connection";
-import { sanitizeDocuments } from "@data-utilities/transformers/sanitize";
 import type { ZodSchema } from "zod";
 import { z } from "zod";
 import { BaseDocument } from "@core-types/document";
-import { PaginationParams, DEFAULT_QUERY_PARAMS, PaginatedResponse } from "@core-types/pagination";
+import { DEFAULT_QUERY_PARAMS, QueryParams } from "@core-types/query";
+import { PaginatedResponse } from "@core-types/pagination";
+import { transformDocument } from "@data-utilities/transformers/core/db-transformers";
 
-// Use TimestampedDoc from the centralized location
-// Other pagination-specific interfaces stay here
 /**
+ * @deprecated Use selector-based pagination from @/lib/query/utilities/pagination.ts instead.
  * Builds a paginated query for MongoDB
  */
 export function buildPaginatedQuery<T extends BaseDocument>(
   model: Model<HydratedDocument<T>>,
   filters: FilterQuery<T>,
-  { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" }: PaginationParams = DEFAULT_QUERY_PARAMS
+  { page = 1, limit = 20, sortBy = "createdAt", sortOrder = "desc" }: QueryParams = DEFAULT_QUERY_PARAMS
 ) {
   const query = model.find(filters);
   
@@ -30,13 +39,14 @@ export function buildPaginatedQuery<T extends BaseDocument>(
 }
 
 /**
+ * @deprecated Use selector-based pagination from @/lib/query/utilities/pagination.ts instead.
  * Executes a paginated query and returns results with metadata
  */
 export async function executePaginatedQuery<T extends BaseDocument, S extends ZodSchema>(
   model: Model<HydratedDocument<T>>,
   filters: FilterQuery<T>,
   schema: S,
-  options: PaginationParams = DEFAULT_QUERY_PARAMS
+  options: QueryParams = DEFAULT_QUERY_PARAMS
 ): Promise<PaginatedResponse<z.infer<S>>> {
   try {
     if (!model) {
@@ -81,7 +91,7 @@ export async function executePaginatedQuery<T extends BaseDocument, S extends Zo
     const itemsArray = Array.isArray(items) ? items : [];
     
     // Sanitize items for client
-    const sanitizedItems = sanitizeDocuments(itemsArray as unknown as Record<string, unknown>[]);
+    const sanitizedItems = transformDocument(itemsArray as unknown as Record<string, unknown>[]);
     
     // Calculate metadata
     const totalPages = Math.ceil(totalItems / limit);
@@ -93,7 +103,8 @@ export async function executePaginatedQuery<T extends BaseDocument, S extends Zo
       empty: itemsArray.length === 0,
       page,
       limit,
-      totalPages
+      totalPages,
+      hasMore: page < totalPages
     };
   } catch (error) {
     // Add context to the error

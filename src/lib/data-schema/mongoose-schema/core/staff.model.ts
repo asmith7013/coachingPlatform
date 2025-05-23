@@ -8,11 +8,12 @@ import {
   AdminLevels,
   GradeLevels
 } from "@enums";
-import { getModel } from "@/lib/data-server/db/model-registry";
+import { getModel } from "@data-server/db/model-registry";
+import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 
 // Add Monday.com User Class
 @modelOptions({ 
-  schemaOptions: { timestamps: false, _id: false }, 
+  schemaOptions: { _id: false }, 
   options: { customName: 'MondayUser', automaticName: false } 
 })
 class MondayUser {
@@ -37,11 +38,11 @@ class MondayUser {
   @prop({ type: Boolean, default: true })
   isConnected!: boolean;
   
-  @prop({ type: String, default: new Date() })
-  lastSynced?: string | Date;
+  @prop({ type: Date, default: new Date() })
+  lastSynced?: Date;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'experiences' } })
+@modelOptions({ schemaOptions: { _id: false, collection: 'experiences' } })
 class Experience {
   @prop({ type: String, required: true })
   type!: string;
@@ -49,10 +50,10 @@ class Experience {
   years!: number;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'notes' } })
-class Note {
-  @prop({ type: String, required: true })
-  date!: string;
+@modelOptions({ schemaOptions: { collection: 'notes' } })
+class Note extends BaseMongooseDocument {
+  @prop({ type: Date, required: true })
+  date!: Date;
   @prop({ type: String, required: true })
   type!: string;
   @prop({ type: String, required: true })
@@ -61,8 +62,8 @@ class Note {
   subheading!: string[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'staffmembers' } })
-class StaffMember {
+@modelOptions({ schemaOptions: { collection: 'staffmembers' } })
+class StaffMember extends BaseMongooseDocument {
   @prop({ type: String, required: true })
   staffName!: string;
   @prop({ type: String })
@@ -75,7 +76,7 @@ class StaffMember {
   mondayUser?: MondayUser;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'nycpsstaffs' } })
+@modelOptions({ schemaOptions: { collection: 'nycpsstaffs' } })
 class NYCPSStaff extends StaffMember {
   @prop({ type: () => [String], required: true, enum: Object.values(GradeLevels) })
   gradeLevelsSupported!: string[];
@@ -93,7 +94,7 @@ class NYCPSStaff extends StaffMember {
   experience?: Experience[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'teachinglabstaffs' } })
+@modelOptions({ schemaOptions: { collection: 'teachinglabstaffs' } })
 class TeachingLabStaff extends StaffMember {
   @prop({ type: String, enum: Object.values(AdminLevels) })
   adminLevel?: string;

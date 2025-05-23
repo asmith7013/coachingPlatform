@@ -2,11 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuthenticatedUser } from '@hooks/auth/useAuthenticatedUser';
 import { handleClientError } from '@error';
 import { WithDateObjects } from '@core-types/document';
-import { transformDateFields } from '@data-utilities/transformers/date-transformer';
 import {
   NYCPSStaff,
   TeachingLabStaff,
 } from '@/lib/data-schema/zod-schema/core/staff';
+import { transformDocument } from '@/lib/data-utilities/transformers/core/db-transformers';
 
 // Define types with date objects
 export type NYCPSStaffWithDates = WithDateObjects<NYCPSStaff>;
@@ -51,7 +51,7 @@ export function useUserStaff() {
         // Transform dates from strings to Date objects
         return {
           ...data,
-          data: transformDateFields(data.data) as StaffWithDates
+          data: transformDocument(data.data) as StaffWithDates
         };
       } catch (error) {
         throw error instanceof Error

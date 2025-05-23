@@ -1,5 +1,5 @@
 import { CollectionResponse } from '@core-types/response';
-import { CollectionResponseSchema } from '@zod-schema/validation/response';
+import { CollectionResponseZodSchema } from '@zod-schema/core-types/response';
 
 
 // Updated - Option 1: Add new function with deprecation notice
@@ -44,7 +44,7 @@ export function collectionizeResponse<T = Record<string, unknown>>(data: unknown
       'items' in objectData && 
       Array.isArray(objectData.items)
     ) {
-      return CollectionResponseSchema.parse(objectData) as CollectionResponse<T>;
+      return CollectionResponseZodSchema.parse(objectData) as CollectionResponse<T>;
     }
     
     // Check if there's any array property that could be items

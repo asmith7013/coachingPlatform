@@ -1,11 +1,10 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
-import mongoose, { Types } from "mongoose"; // Required for model cache
+import mongoose from "mongoose";
 import { getModel } from "@data-server/db/model-registry";
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'rubrics' } })
-export class Rubric {
-  @prop({ type: Types.ObjectId, required: true })
-  _id!: Types.ObjectId;
+import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 
+@modelOptions({ schemaOptions: { collection: 'rubrics' } })
+export class Rubric extends BaseMongooseDocument {
   @prop({ type: Number, required: true })
   score!: number;
 
@@ -25,13 +24,10 @@ export class Rubric {
   hex?: string;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'rubricscores' } })
-export class RubricScore {
-  @prop({ type: Types.ObjectId, required: true })
-  _id!: Types.ObjectId;
-
-  @prop({ type: String, required: true })
-  date!: string;
+@modelOptions({ schemaOptions: { collection: 'rubricscores' } })
+export class RubricScore extends BaseMongooseDocument {
+  @prop({ type: Date, required: true })
+  date!: Date;
 
   @prop({ type: Number, required: true })
   score!: number;

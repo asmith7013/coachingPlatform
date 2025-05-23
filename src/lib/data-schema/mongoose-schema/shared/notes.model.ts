@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import { getModel } from "@data-server/db/model-registry";
+import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'notes' } })
-export class Note {
-  @prop({ type: String, required: true })
-  date!: string;
+@modelOptions({ schemaOptions: { collection: 'notes' } })
+export class Note extends BaseMongooseDocument {
+  @prop({ type: Date, required: true })
+  date!: Date;
   
   @prop({ type: String, required: true })
   type!: string;

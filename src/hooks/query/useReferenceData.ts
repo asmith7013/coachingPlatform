@@ -4,14 +4,15 @@ import { queryKeys } from '@query/core/keys';
 import { handleClientError } from '@error';
 import { CollectionResponse } from '@core-types/response';
 import { isEntityResponse, isCollectionResponse } from '@query/utilities/response-types';
-import { BaseReference } from '@core-types/reference';
+import { transformItemWithSchema } from '@/lib/data-utilities/transformers/core/transform-helpers';
+import { ZodSchema } from 'zod';
 
 export interface ReferenceOption {
   value: string;
   label: string;
 }
 
-export interface UseReferenceDataOptions {
+export interface UseReferenceDataOptions<T = unknown> {
   /** The URL to fetch reference data from */
   url: string;
   
@@ -20,6 +21,9 @@ export interface UseReferenceDataOptions {
   
   /** Whether to enable the query */
   enabled?: boolean;
+  
+  /** ✅ NOW REQUIRED: Zod schema for validation */
+  schema: ZodSchema<T>;
   
   /** Custom selector to transform API response to options */
   selector?: (data: unknown) => ReferenceOption[];
@@ -32,65 +36,42 @@ export interface UseReferenceDataOptions {
 }
 
 /**
- * Default fetcher for reference data
+ * Convert any item to a ReferenceOption format with 3-layer transformation
  */
-async function defaultFetcher(url: string): Promise<unknown> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch reference data: ${response.statusText}`);
-  }
-  return response.json();
-}
-
-/**
- * Check if an item conforms to the BaseReference interface
- */
-function isBaseReference(item: unknown): item is BaseReference {
-  return Boolean(
-    item && 
-    typeof item === 'object' && 
-    item !== null &&
-    '_id' in item && 
-    'label' in item
-  );
-}
-
-/**
- * Convert any item to a ReferenceOption format
- */
-function itemToReferenceOption(item: unknown): ReferenceOption {
-  // If it's already a BaseReference, use its properties
-  if (isBaseReference(item)) {
+function itemToReferenceOption<T>(item: unknown, schema: ZodSchema<T>): ReferenceOption | null {
+  try {
+    // Use the shared helper function for consistency
+    const validated = transformItemWithSchema(item, schema);
+    if (!validated) return null;
+    
+    // Layer 3: Convert to ReferenceOption (domain transformation)
+    const obj = validated as Record<string, unknown>;
+    
+    // Find the best ID field
+    const id = obj._id || obj.id || '';
+    
+    // Find the best label
+    const label = obj.name || 
+                  obj.title || 
+                  obj.label || 
+                  obj.staffName || 
+                  obj.schoolName || 
+                  String(id);
+    
     return {
-      value: item._id,
-      label: item.label
+      value: String(id),
+      label: String(label)
     };
+  } catch (error) {
+    console.error('Error transforming reference item:', error);
+    return null;
   }
-  
-  // Otherwise, try to extract the necessary fields
-  const obj = item as Record<string, unknown>;
-  
-  // Find the best ID field
-  const id = obj._id || obj.id || '';
-  
-  // Find the best label
-  const label = obj.name || 
-                obj.title || 
-                obj.label || 
-                obj.staffName || 
-                obj.schoolName || 
-                String(id);
-  
-  return {
-    value: String(id),
-    label: String(label)
-  };
 }
 
 /**
- * Default selector to transform API response to select options
+ * Default selector with schema validation
  */
-function defaultSelector(data: unknown): ReferenceOption[] {
+function defaultSelector<T>(data: unknown, schema: ZodSchema<T>): ReferenceOption[] {
   // Extract items array based on response format
   let items: unknown[] = [];
   
@@ -106,21 +87,24 @@ function defaultSelector(data: unknown): ReferenceOption[] {
     return [];
   }
   
-  // Transform items to reference options
-  return items.map(itemToReferenceOption);
+  // Transform items to reference options with schema validation
+  return items
+    .map(item => itemToReferenceOption(item, schema))
+    .filter((option): option is ReferenceOption => option !== null);
 }
 
 /**
- * Hook for fetching reference data for select components with React Query
+ * Hook for fetching reference data for select components with REQUIRED schema validation
  */
-export function useReferenceData({
+export function useReferenceData<T = unknown>({
   url,
   search = '',
   enabled = true,
-  selector = defaultSelector,
+  schema, // ✅ NOW REQUIRED
+  selector,
   fetcher = defaultFetcher,
   queryOptions = {}
-}: UseReferenceDataOptions) {
+}: UseReferenceDataOptions<T>) {
   // Build the URL with search parameter if provided
   const fetchUrl = useMemo(() => {
     if (!search) return url;
@@ -143,7 +127,10 @@ export function useReferenceData({
           : new Error(handleClientError(error, `Fetch reference data from ${url}`));
       }
     },
-    select: selector,
+    select: (data) => {
+      // Use custom selector if provided, otherwise use default with schema validation
+      return selector ? selector(data) : defaultSelector(data, schema);
+    },
     enabled: enabled && !!url,
     staleTime: 5 * 60 * 1000, // 5 minutes
     ...queryOptions
@@ -155,7 +142,15 @@ export function useReferenceData({
     isFetching: query.isFetching,
     error: query.error,
     refetch: query.refetch,
-    // Include the raw response
     rawData: query.data
   };
+}
+
+// Default fetcher implementation
+async function defaultFetcher(url: string): Promise<unknown> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch reference data: ${response.statusText}`);
+  }
+  return response.json();
 }

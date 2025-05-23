@@ -5,73 +5,59 @@
  * with proper loading, error handling, and caching.
  */
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { handleClientError } from '@error/handlers/client';
-import { queryKeys } from '@query/core/keys';
+import { ZodSchema } from 'zod';
+import { transformItemWithSchema, transformItemsWithSchema } from '@data-utilities/transformers/core/transform-helpers';
 
 /**
- * Hook for querying a single entity by ID
- * 
- * @param entityType - The type of entity being queried (e.g., 'visit', 'coach')
- * @param id - The entity ID to fetch
- * @param fetcher - The function to fetch the entity data
- * @param options - Additional React Query options
+ * Hook for querying a single entity by ID with REQUIRED schema validation
  */
-export function useEntityQuery<TData>(
-  entityType: string,
-  id: string | null | undefined,
-  fetcher: (id: string) => Promise<TData>,
-  options?: Omit<UseQueryOptions<TData, Error, TData>, 'queryKey' | 'queryFn' | 'enabled'>
-) {
+export function useEntityQuery<TData = unknown, TError = unknown>({
+  queryKey,
+  queryFn,
+  schema,
+  ...options
+}: Omit<UseQueryOptions<TData, TError>, 'queryFn'> & {
+  queryFn: () => Promise<TData>;
+  schema: ZodSchema<TData>;
+}) {
   return useQuery({
-    queryKey: queryKeys.entities.detail(entityType, id as string),
-    queryFn: async () => {
-      if (!id) {
-        throw new Error(`Cannot fetch ${entityType} without an ID`);
-      }
-      
+    queryKey,
+    queryFn,
+    ...options,
+    select: (data) => {
       try {
-        return await fetcher(id);
+        return transformItemWithSchema(data, schema);
       } catch (error) {
-        throw error instanceof Error 
-          ? error 
-          : new Error(handleClientError(error, `Fetch ${entityType}`));
+        console.error('Error transforming data:', error);
+        return data; // Fallback to original data
       }
-    },
-    enabled: !!id,
-    ...options
+    }
   });
 }
 
 /**
- * Hook for querying a list of entities
- * 
- * @param entityType - The type of entity being queried (e.g., 'visits', 'coaches')
- * @param params - Parameters for filtering the entity list
- * @param fetcher - The function to fetch the entity list
- * @param options - Additional React Query options
+ * Hook for querying a list of entities with REQUIRED schema validation
  */
-export function useEntityListQuery<TData, TParams extends Record<string, unknown>>(
-  entityType: string,
-  params: TParams | undefined,
-  fetcher: (params: TParams) => Promise<TData>,
-  options?: Omit<UseQueryOptions<TData, Error, TData>, 'queryKey' | 'queryFn' | 'enabled'>
-) {
+export function useEntityListQuery<TData = unknown, TError = unknown>({
+  queryKey,
+  queryFn,
+  schema,
+  ...options
+}: Omit<UseQueryOptions<TData[], TError>, 'queryFn'> & {
+  queryFn: () => Promise<TData[]>;
+  schema: ZodSchema<TData>;
+}) {
   return useQuery({
-    queryKey: queryKeys.entities.list(entityType, params as Record<string, unknown>),
-    queryFn: async () => {
-      if (!params) {
-        throw new Error(`Cannot fetch ${entityType} list without parameters`);
-      }
-      
+    queryKey,
+    queryFn,
+    ...options,
+    select: (data) => {
       try {
-        return await fetcher(params);
+        return transformItemsWithSchema(data, schema);
       } catch (error) {
-        throw error instanceof Error 
-          ? error 
-          : new Error(handleClientError(error, `Fetch ${entityType} list`));
+        console.error('Error transforming data:', error);
+        return data; // Fallback to original data
       }
-    },
-    enabled: !!params,
-    ...options
+    }
   });
 } 

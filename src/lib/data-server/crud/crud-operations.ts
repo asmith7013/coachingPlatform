@@ -1,8 +1,9 @@
 import type { Model } from "mongoose";
 import { revalidatePath } from "next/cache";
 import type { ZodSchema } from "zod";
-import { parseOrThrow, parsePartialOrThrow } from "@data-utilities/transformers/parse";
-import { sanitizeDocument, removeTimestampFields } from "@data-utilities/transformers/sanitize";
+import { validateStrict, validatePartialStrict } from '@/lib/data-utilities/transformers/core/schema-validators';
+
+import { prepareForCreate, transformDocument } from "@/lib/data-utilities/transformers/core/db-transformers";
 import { handleServerError } from "@error/handlers/server";
 import { connectToDB } from "@data-server/db/connection";
 import type { z } from "zod";
@@ -26,10 +27,10 @@ export async function createItem<Doc extends BaseDocument, Schema extends ZodSch
     await connectToDB();
 
     // Validate data
-    const validatedData = parseOrThrow(schema, data);
+    const validatedData = validateStrict(schema, data);
     
     // Remove timestamp and ID fields at all levels using the utility function
-    const safeToCreate = removeTimestampFields(validatedData);
+    const safeToCreate = prepareForCreate(validatedData);
 
     // Create item with sanitized data
     const created = await model.create(safeToCreate);
@@ -39,7 +40,7 @@ export async function createItem<Doc extends BaseDocument, Schema extends ZodSch
 
     return {
       success: true,
-      items: [sanitizeDocument(created, schema)]
+      items: [transformDocument(created)]
     };
   } catch (error) {
     return {
@@ -65,10 +66,10 @@ export async function updateItem<Doc extends BaseDocument, Schema extends ZodSch
     await connectToDB();
 
     // Validate data
-    const validatedData = parsePartialOrThrow(schema, data);
+    const validatedData = validatePartialStrict(schema, data);
     
     // Remove timestamp and ID fields at all levels using the utility function
-    const safeToUpdate = removeTimestampFields(validatedData);
+    const safeToUpdate = prepareForCreate(validatedData);
 
     // Update item
     const updated = await model.findByIdAndUpdate(
@@ -90,7 +91,7 @@ export async function updateItem<Doc extends BaseDocument, Schema extends ZodSch
 
     return {
       success: true,
-      items: [sanitizeDocument(updated, schema)]
+      items: [transformDocument(updated)]
     };
   } catch (error) {
     return {
@@ -129,7 +130,7 @@ export async function deleteItem<Doc extends BaseDocument, Schema extends ZodSch
 
     return {
       success: true,
-      items: [sanitizeDocument(deleted, schema)]
+      items: [transformDocument(deleted)]
     };
   } catch (error) {
     return {

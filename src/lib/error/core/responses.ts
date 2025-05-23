@@ -6,7 +6,7 @@ import {
     CollectionErrorResponse, 
     EntityErrorResponse, 
     ApiError
-  } from "@core-types/error";
+  } from "@error-types";
   import { 
     CollectionResponse, 
     EntityResponse 

@@ -1,57 +1,30 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { handleClientError } from '@error';
-import { captureError, createErrorContext } from '@error';
-import { useQueryErrorHandler } from '@query/utilities/error-handling';
+import { useQuery, UseQueryOptions, QueryFunction } from '@tanstack/react-query';
+import { ZodSchema } from 'zod';
+import { transformItemWithSchema } from '@/lib/data-utilities/transformers/core/transform-helpers';
 
 /**
- * Hook for queries with standardized error handling
- * For use when more detailed error handling than useEntityQuery is needed
- * 
- * @param queryKey - The React Query cache key
- * @param queryFn - The data fetching function
- * @param errorContext - Context string for error reporting
- * @param options - Additional React Query options
+ * Hook for querying data with error handling and REQUIRED schema validation
  */
-export function useErrorHandledQuery<
-  TData,
-  TError extends Error = Error,
-  TQueryKey extends unknown[] = unknown[]
->(
-  queryKey: TQueryKey,
-  queryFn: () => Promise<TData>,
-  errorContext: string,
-  options?: Omit<UseQueryOptions<TData, TError, TData, TQueryKey>, 'queryKey' | 'queryFn'>
-) {
-  const query = useQuery({
+export function useErrorHandledQuery<TData = unknown, TError = unknown>({
+  queryKey,
+  queryFn,
+  schema,
+  ...options
+}: Omit<UseQueryOptions<TData, TError>, 'queryFn'> & {
+  queryFn: QueryFunction<TData>;
+  schema: ZodSchema<TData>;
+}) {
+  return useQuery({
     queryKey,
-    queryFn: async () => {
+    queryFn,
+    ...options,
+    select: (data) => {
       try {
-        return await queryFn();
-      } catch (err) {
-        // Format error message using our standard handler
-        const errorMessage = handleClientError(err, errorContext);
-        
-        // Capture error for monitoring
-        captureError(err, createErrorContext('Query', errorContext));
-        
-        // Log error in development
-        console.error(`❌ ${errorContext} failed:`, errorMessage);
-        
-        // Rethrow formatted error
-        throw new Error(errorMessage);
+        return transformItemWithSchema(data, schema);
+      } catch (error) {
+        console.error('Error transforming data:', error);
+        return data; // Fallback to original data
       }
-    },
-    // Default options based on your current SWR configuration
-    staleTime: 10000,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: true,
-    retry: 2,
-    ...options
+    }
   });
-
-  // Use our error handler hook to capture errors
-  useQueryErrorHandler(query.error, query.isError, errorContext);
-
-  return query;
 } 

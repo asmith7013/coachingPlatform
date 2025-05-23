@@ -1,58 +1,31 @@
 // src/lib/types/core/response.ts
 
-import type { ResponseBase } from './base-types';
+import { z } from 'zod';
+import { 
+  BaseResponseZodSchema, 
+  CollectionResponseZodSchema, 
+  EntityResponseZodSchema 
+} from '@/lib/data-schema/zod-schema/core-types/response';
 
 /**
  * Base response interface for all API responses
  */
-export interface BaseResponse extends ResponseBase {
-  /** Indicates if the operation was successful */
-  success: boolean;
-  /** Optional message for additional information */
-  message?: string;
-  /** Optional error message if success is false */
-  error?: string;
-  /** Optional array of detailed errors */
-  errors?: Array<{
-    item?: unknown;
-    error: string;
-    field?: string;
-  }>;
-}
+export type BaseResponse = z.infer<typeof BaseResponseZodSchema>;
 
 /**
  * Response interface for collections of resources
  */
-export interface CollectionResponse<T = unknown> extends BaseResponse {
-  /** Array of resources */
+export type CollectionResponse<T = unknown> = Omit<z.infer<typeof CollectionResponseZodSchema>, 'items'> & {
   items: T[];
-  /** Total count of items (useful for pagination) */
   total: number;
-  /** Whether the collection is empty */
-  empty?: boolean;
-}
-
-/**
- * Response interface for paginated resources
- */
-export interface PaginatedResponse<T = unknown> extends CollectionResponse<T> {
-  /** Current page number */
-  page: number;
-  /** Items per page */
-  limit: number;
-  /** Total number of pages */
-  totalPages: number;
-  /** Whether there are more pages */
-  hasMore: boolean;
-}
+};
 
 /**
  * Response interface for single resource operations
  */
-export interface EntityResponse<T = unknown> extends BaseResponse {
-  /** The resource data */
+export type EntityResponse<T = unknown> = Omit<z.infer<typeof EntityResponseZodSchema>, 'data'> & {
   data: T;
-}
+};
 
 /**
  * @deprecated Use CollectionResponse instead

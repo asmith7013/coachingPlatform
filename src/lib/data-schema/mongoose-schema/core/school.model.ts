@@ -3,6 +3,7 @@ import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import { GradeLevels } from "@enums";
 // import { connectToDB } from "@data-server/db/connection";
 import { getModel } from "@data-server/db/model-registry";
+import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 
 @modelOptions({ 
   schemaOptions: { 
@@ -10,7 +11,7 @@ import { getModel } from "@data-server/db/model-registry";
     collection: 'schools' // Explicit collection name
   } 
 })
-class School {
+class School extends BaseMongooseDocument {
 
   @prop({ type: String, required: true })
   schoolNumber!: string;

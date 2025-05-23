@@ -6,10 +6,10 @@ import {
   TeacherLeaderTypeEnum,
 } from "@enums";
 import { getModel } from "@data-server/db/model-registry";
+import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'coachinglogs' } })
-export class CoachingLog {
-
+@modelOptions({ schemaOptions: { collection: 'coachinglogs' } })
+export class CoachingLog extends BaseMongooseDocument {
   @prop({ enum: Object.values(YesNoEnum), type: String, required: true })
   reasonDone!: string;
 
@@ -51,12 +51,6 @@ export class CoachingLog {
 
   @prop({ type: () => [String], required: true })
   owners!: string[];
-
-  @prop({ type: Date })
-  createdAt?: Date;
-
-  @prop({ type: Date })
-  updatedAt?: Date;
 }
 
 export const CoachingLogModel =

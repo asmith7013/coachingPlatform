@@ -5,38 +5,37 @@ import {
   DayTypeZod, 
   PeriodTypeZod 
 } from "@enums"; // Updated centralized import
+import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 
-// ✅ Class Schedule Item Schema - without _id field
+// Class Schedule Item Schema - without _id field
 export const ClassScheduleItemZodSchema = z.object({
   dayType: DayTypeZod, // Enum for day type
   startTime: z.string(), // Required time string
   endTime: z.string(), // Required time string
 });
 
-// ✅ Assigned Cycle Day Schema - without _id field
+// Assigned Cycle Day Schema - without _id field
 export const AssignedCycleDayZodSchema = z.object({
-  date: z.string(), // Required date string
+  date: zDateField, // Required date with proper handling
   blockDayType: BlockDayTypeZod, // Enum for block day type
 });
 
-// ✅ Bell Schedule Input Schema - without _id field
-export const BellScheduleInputZodSchema = z.object({
+// Bell Schedule Fields Schema
+export const BellScheduleFieldsSchema = z.object({
   school: z.string(), // Required school ID
   bellScheduleType: BellScheduleTypeZod, // Enum for schedule type
   classSchedule: z.array(ClassScheduleItemZodSchema), // Array of class schedules
   assignedCycleDays: z.array(AssignedCycleDayZodSchema), // Array of assigned cycle days
-  owners: z.array(z.string()), // Array of owner IDs
 });
 
-// ✅ Bell Schedule Full Schema
-export const BellScheduleZodSchema = BellScheduleInputZodSchema.extend({
-  _id: z.string(),
-  createdAt: zDateField.optional(),
-  updatedAt: zDateField.optional(),
-});
+// Bell Schedule Full Schema
+export const BellScheduleZodSchema = BaseDocumentSchema.merge(BellScheduleFieldsSchema);
 
-// ✅ Period Schema - without _id field
+// Bell Schedule Input Schema
+export const BellScheduleInputZodSchema = toInputSchema(BellScheduleZodSchema);
+
+// Period Schema - without _id field
 export const PeriodZodSchema = z.object({
   periodNum: z.number(), // Required period number
   className: z.string(), // Required class name
@@ -44,28 +43,26 @@ export const PeriodZodSchema = z.object({
   periodType: PeriodTypeZod, // Enum for period type
 });
 
-// ✅ ScheduleByDay Schema - without _id field
+// ScheduleByDay Schema - without _id field
 export const ScheduleByDayZodSchema = z.object({
   day: DayTypeZod, // Enum for day
   periods: z.array(PeriodZodSchema), // Array of periods
 });
 
-// ✅ Teacher Schedule Input Schema - without _id field
-export const TeacherScheduleInputZodSchema = z.object({
+// Teacher Schedule Fields Schema
+export const TeacherScheduleFieldsSchema = z.object({
   teacher: z.string(), // Required teacher ID
   school: z.string(), // Required school ID
   scheduleByDay: z.array(ScheduleByDayZodSchema), // Array of daily schedules
-  owners: z.array(z.string()), // Array of owner IDs
 });
 
-// ✅ Teacher Schedule Full Schema
-export const TeacherScheduleZodSchema = TeacherScheduleInputZodSchema.extend({
-  _id: z.string(),
-  createdAt: zDateField.optional(),
-  updatedAt: zDateField.optional(),
-});
+// Teacher Schedule Full Schema
+export const TeacherScheduleZodSchema = BaseDocumentSchema.merge(TeacherScheduleFieldsSchema);
 
-// ✅ Auto-generate TypeScript types
+// Teacher Schedule Input Schema
+export const TeacherScheduleInputZodSchema = toInputSchema(TeacherScheduleZodSchema);
+
+// Auto-generate TypeScript types
 export type ClassScheduleItem = z.infer<typeof ClassScheduleItemZodSchema>;
 export type AssignedCycleDay = z.infer<typeof AssignedCycleDayZodSchema>;
 export type BellScheduleInput = z.infer<typeof BellScheduleInputZodSchema>;

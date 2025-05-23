@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { handleClientError, logError, createErrorContext } from '@/lib/error';
-import { ErrorContext } from '@core-types/error';
+import { handleClientError, logError, createErrorContext } from '@error';
+import { ErrorContext } from '@error-types';
 import { BaseResponse } from '@core-types/response';
 
 // import { ErrorResponse } from '@core-types/error';

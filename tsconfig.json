@@ -49,6 +49,7 @@
         "@mongoose-schema/*": ["./src/lib/data-schema/mongoose-schema/*"],
         "@data-server/*": ["./src/lib/data-server/*"],
         "@data-utilities/*": ["./src/lib/data-utilities/*"],
+        "@transformers/*": ["./src/lib/data-utilities/transformers/*"],
 
         // Library and utility paths
         "@lib/*": ["./src/lib/*"],
@@ -82,7 +83,9 @@
         "@core-types/*": ["./src/lib/types/core/*"],
         "@domain-types/*": ["./src/lib/types/domain/*"],
         "@ui-types/*": ["./src/lib/types/ui/*"],
-
+        "@error-types/*": ["./src/lib/types/error/*"],
+        "@error-types": ["./src/lib/types/error"],
+        "@query-types/*": ["./src/lib/types/query/*"],
         
         // Testing utilities
         "@testing/*": ["./src/lib/testing/*"],

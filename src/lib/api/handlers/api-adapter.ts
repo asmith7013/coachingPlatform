@@ -1,9 +1,9 @@
 // src/lib/data-server/api-adapters.ts
 import { connectToDB } from "@data-server/db/connection";
-import { QueryParams } from "@core-types/api";
-import { sanitizeDocuments } from "@data-utilities/transformers/sanitize";
+import { QueryParams } from "@core-types/query";
 import { ZodSchema } from "zod";
 import { Model, FilterQuery } from "mongoose";
+import { transformDocument } from "@/lib/data-utilities/transformers/core/db-transformers";
 
 /**
  * Creates an API-safe version of a data fetching function
@@ -51,7 +51,7 @@ export function createApiSafeFetcher<T, M>(
       
       // Sanitize and return
       return {
-        items: sanitizeDocuments(items),
+        items: transformDocument(items),
         total,
         success: true,
         page,

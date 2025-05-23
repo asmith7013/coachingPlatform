@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { GradeLevelsSupportedZod } from "@enums";
-import { zDateField } from '@zod-schema/shared/dateHelpers';
+import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 
-// Base schema for school input (create/update)
-export const SchoolInputZodSchema = z.object({
+// School Fields Schema
+export const SchoolFieldsSchema = z.object({
   schoolNumber: z.string(),
   district: z.string(),
   schoolName: z.string(),
@@ -16,12 +16,11 @@ export const SchoolInputZodSchema = z.object({
   owners: z.array(z.string()), // Owner IDs
 });
 
-// ✅ School Full Schema
-export const SchoolZodSchema = SchoolInputZodSchema.extend({
-  _id: z.string(), // Required for returned documents
-  createdAt: zDateField.optional(),
-  updatedAt: zDateField.optional(),
-});
+// School Full Schema
+export const SchoolZodSchema = BaseDocumentSchema.merge(SchoolFieldsSchema);
+
+// School Input Schema
+export const SchoolInputZodSchema = toInputSchema(SchoolZodSchema);
 
 // Client-side schema that omits timestamps
 export const SchoolClientZodSchema = SchoolZodSchema.omit({
@@ -29,7 +28,7 @@ export const SchoolClientZodSchema = SchoolZodSchema.omit({
   updatedAt: true
 });
 
-// ✅ Auto-generate TypeScript types
+// Auto-generate TypeScript types
 export type SchoolInput = z.infer<typeof SchoolInputZodSchema>;
 export type School = z.infer<typeof SchoolZodSchema>;
 export type SchoolClient = z.infer<typeof SchoolClientZodSchema>;

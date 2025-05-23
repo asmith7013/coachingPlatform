@@ -10,7 +10,7 @@ import { createItem } from "@data-server/crud/crud-operations";
 import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
 import { sanitizeSortBy } from "@data-utilities/pagination/sort-utils";
 import type { Visit } from "@zod-schema/visits/visit";
-import { QueryParams } from "@core-types/api";
+import { QueryParams } from "@core-types/query";
 
 // Valid sort fields for visits
 const validSortFields = ['date', 'createdAt', 'updatedAt', 'school', 'coach'];

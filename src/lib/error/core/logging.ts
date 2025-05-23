@@ -1,4 +1,4 @@
-import { AppError, ErrorContext } from "@core-types/error";
+import { AppError, ErrorContext } from "@error-types";
 import * as Sentry from "@sentry/nextjs";
 import { classifyError } from "@error/core/classification";
 

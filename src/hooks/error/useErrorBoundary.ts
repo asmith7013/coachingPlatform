@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { ErrorContext } from '@core-types/error';
-import { logError, createErrorContext } from '@/lib/error';
+import { ErrorContext } from '@error-types';
+import { logError, createErrorContext } from '@error';
 
 interface ErrorBoundaryState {
   error: Error | null;

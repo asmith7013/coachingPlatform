@@ -3,26 +3,33 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { queryKeys } from '@query/core/keys';
 import { 
   ReactQueryHookConfig, 
-  PaginationQueryParams,
   ListQueryResult,
   createQueryErrorContext
 } from '@core-types/query-factory';
-import { 
-  extractItems, 
-  extractPagination,
-  isCollectionResponse,
-  isPaginatedResponse 
-} from '@query/utilities/response-types';
+import { isCollectionResponse, isPaginatedResponse } from '@data-utilities/transformers/utilities/response-utils';
 import { useFiltersAndSorting } from '@hooks/ui/useFiltersAndSorting';
 import { logError } from '@/lib/error';
-import { CollectionResponse, PaginatedResponse } from '@core-types/response';
+import { CollectionResponse } from '@core-types/response';
+import { PaginatedResponse } from '@core-types/pagination';
+import { QueryParams } from '@core-types/query';
+import { ZodSchema } from 'zod';
+import { transformItemsWithSchema } from '@/lib/data-utilities/transformers/core/transform-helpers';
+import { getSelector } from '@/lib/query/selectors/selector-registry';
+import { BaseDocument } from '@core-types/document';
+import { extractItems, extractPagination } from '@/lib/data-utilities/transformers/utilities/response-utils';
 
 /**
- * Configuration for useList hook
+ * Enhanced configuration for useList hook
  */
-export interface UseListConfig<T> extends Omit<ReactQueryHookConfig, 'queryOptions'> {
+export interface UseListConfig<T extends BaseDocument> extends Omit<ReactQueryHookConfig, 'queryOptions'> {
   /** Function to fetch entities */
-  fetcher: (params: PaginationQueryParams) => Promise<CollectionResponse<T> | PaginatedResponse<T>>;
+  fetcher: (params: QueryParams) => Promise<CollectionResponse<T> | PaginatedResponse<T>>;
+  
+  /** Zod schema for validation and transformation */
+  schema: ZodSchema<T>;
+  
+  /** Whether to use the selector system instead of direct schema validation */
+  useSelector?: boolean;
   
   /** Custom query options */
   queryOptions?: Omit<UseQueryOptions<
@@ -35,11 +42,15 @@ export interface UseListConfig<T> extends Omit<ReactQueryHookConfig, 'queryOptio
 
 /**
  * Hook for fetching and managing a list of entities with filtering and pagination
+ * This is the unified implementation that supports both direct schema validation
+ * and the selector system for data transformation.
  */
-export function useList<T>(config: UseListConfig<T>): ListQueryResult<T> {
+export function useList<T extends BaseDocument>(config: UseListConfig<T>): ListQueryResult<T> {
   const {
     entityType,
     fetcher,
+    schema,
+    useSelector = false,
     defaultParams = {},
     validSortFields = ['createdAt'],
     persistFilters = true,
@@ -95,7 +106,7 @@ export function useList<T>(config: UseListConfig<T>): ListQueryResult<T> {
       try {
         const response = await fetcher(queryParams);
         // Validate response
-        if (!isCollectionResponse<T>(response)) {
+        if (!isCollectionResponse(response)) {
           throw new Error(`Invalid response format from ${entityType} fetcher`);
         }
         return response;
@@ -111,6 +122,31 @@ export function useList<T>(config: UseListConfig<T>): ListQueryResult<T> {
         );
         logError(error as Error, errorContext);
         throw error;
+      }
+    },
+    select: (data) => {
+      if (!data?.items) return data;
+      
+      try {
+        // Choose transformation strategy based on useSelector flag
+        if (useSelector) {
+          // Use selector system for transformation
+          const selector = getSelector<T>(entityType, schema);
+          return {
+            ...data,
+            items: selector.basic(data)
+          };
+        } else {
+          // Use direct schema transformation
+          const transformedItems = transformItemsWithSchema(data.items, schema);
+          return {
+            ...data,
+            items: transformedItems
+          };
+        }
+      } catch (error) {
+        console.error('Error transforming list data:', error);
+        return data; // Fallback to original data
       }
     },
     ...queryOptions,
@@ -143,7 +179,7 @@ export function useList<T>(config: UseListConfig<T>): ListQueryResult<T> {
       };
     }
     
-    if (isPaginatedResponse<T>(query.data)) {
+    if (isPaginatedResponse(query.data)) {
       try {
         return extractPagination(query.data);
       } catch (e) {
@@ -193,6 +229,9 @@ export function useList<T>(config: UseListConfig<T>): ListQueryResult<T> {
     changeSorting: filtersAndSorting.changeSorting,
     
     // Query parameters for debugging/advanced usage
-    queryParams
+    queryParams,
+    
+    // Include the raw query for advanced use cases
+    query
   };
 }

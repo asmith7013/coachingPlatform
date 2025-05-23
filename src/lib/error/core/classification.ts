@@ -7,7 +7,7 @@ import {
     PermissionError,
     BusinessError,
     ErrorContext
-  } from "@core-types/error";
+  } from "@error-types";
   
   /**
    * Core error classification system

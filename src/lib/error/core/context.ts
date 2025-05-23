@@ -1,4 +1,4 @@
-import { ErrorContext } from "@core-types/error";
+import { ErrorContext } from "@error-types";
 
 /**
  * Create a context object for error reporting

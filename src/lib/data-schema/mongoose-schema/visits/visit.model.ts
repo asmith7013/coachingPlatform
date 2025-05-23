@@ -8,8 +8,9 @@ import {
   DurationValues,
 } from "@enums";
 import { getModel } from "@data-server/db/model-registry";
+import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'eventitems' } })
+@modelOptions({ schemaOptions: { _id: false, collection: 'eventitems' } })
 export class EventItem {
   @prop({ 
     type: String, 
@@ -29,7 +30,7 @@ export class EventItem {
   duration!: string;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'sessionlinks' } })
+@modelOptions({ schemaOptions: { _id: false, collection: 'sessionlinks' } })
 export class SessionLink {
   @prop({ required: true })
   purpose!: string;
@@ -44,10 +45,10 @@ export class SessionLink {
   staff!: string[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'visits' } })
-export class Visit {
-  @prop({ required: true })
-  date!: string;
+@modelOptions({ schemaOptions: { collection: 'visits' } })
+export class Visit extends BaseMongooseDocument {
+  @prop({ type: Date, required: true })
+  date!: Date;
 
   @prop({ required: true })
   school!: string;
@@ -96,17 +97,16 @@ export class Visit {
   @prop()
   mondayItemName?: string;
 
-  @prop()
-  mondayLastSyncedAt?: string;
+  @prop({ type: Date })
+  mondayLastSyncedAt?: Date;
 
   // Additional fields from Monday data
   @prop()
   siteAddress?: string;
 
-  @prop()
-  endDate?: string;
+  @prop({ type: Date })
+  endDate?: Date;
 }
-
 
 export const EventItemModel = mongoose.models.EventItem || getModelForClass(EventItem);
 export const SessionLinkModel = mongoose.models.SessionLink || getModelForClass(SessionLink);

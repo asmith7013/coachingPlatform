@@ -1,4 +1,13 @@
 /**
+ * @deprecated This file is deprecated. Use selector-based pagination from @/lib/query/utilities/pagination.ts instead.
+ * 
+ * Migration Guide:
+ * 1. The sort utilities are now integrated into the selector-based pagination system
+ * 2. Use the sanitizeSortBy function from @/lib/query/utilities/pagination.ts instead
+ */
+
+/**
+ * @deprecated Use equivalent utility from @/lib/query/utilities/pagination.ts instead.
  * Sanitizes a sortBy input value to ensure it's a valid field name for sorting
  * @param input The user-provided sortBy value
  * @param validFields Array of valid field names for the resource

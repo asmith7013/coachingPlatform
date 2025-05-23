@@ -4,9 +4,8 @@ import {
     CollectionResponse,
     EntityResponse 
   } from '@core-types/response';
-  import { createErrorResponse as createCoreErrorResponse } from '@core-types/error';
-  import { captureError, createErrorContext } from '@/lib/error/error-monitor';
-  import { handleServerError } from '@/lib/error/handle-server-error';
+  import { createErrorResponse as createCoreErrorResponse } from '@error/core/responses';
+  import { captureError, createErrorContext, handleServerError } from '@error';
   
   /**
    * Creates a success response for a collection

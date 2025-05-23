@@ -1,24 +1,19 @@
-import { useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useFiltersAndSorting } from '@ui-hooks/useFiltersAndSorting';
-import { 
-  isPaginatedResponse, 
-  extractItems, 
-  extractPagination 
-} from '@query/utilities/response-types';
-import { 
-  syncClientCache 
-} from '@/lib/query/cache-sync/client-sync';
-import { 
-  createQueryErrorContext, 
-  QueryParams, 
-  ServerActions 
-} from '@core-types/query-factory';
-import { logError } from '@error';
 import { useQuery } from '@tanstack/react-query';
 import { useOptimisticMutation } from '@query-hooks/useOptimisticMutation';
+import { syncClientCache } from '@/lib/query/cache-sync/client-sync';
+import { createQueryErrorContext, ServerActions } from '@core-types/query-factory';
+import { QueryParams } from '@core-types/query';
+import { logError } from '@error';
 import { BaseDocument } from '@core-types/document';
-import { PaginatedResponse, CollectionResponse } from '@core-types/response';
+import { CollectionResponse } from '@core-types/response';
+import { PaginatedResponse } from '@core-types/pagination';
+import { ZodSchema } from 'zod';
+import { transformItemWithSchema } from '@/lib/data-utilities/transformers/core/transform-helpers';
+import { extractItems, isPaginatedResponse } from '@data-utilities/transformers/utilities/response-utils';
+
+// Import the unified useList hook
+import { useList as useBaseList } from '@/lib/query/hooks/use-list';
 
 /**
  * Configuration for CRUD hooks
@@ -29,6 +24,12 @@ export interface CrudHooksConfig<T extends BaseDocument, TInput> {
   
   /** Server actions for CRUD operations */
   serverActions: ServerActions<T, TInput>;
+  
+  /** Zod schema for full entity validation */
+  fullSchema: ZodSchema<T>;
+  
+  /** Zod schema for input validation (create/update) */
+  _inputSchema: ZodSchema<TInput>;
   
   /** Default parameters for queries */
   defaultParams?: Partial<QueryParams>;
@@ -60,6 +61,8 @@ export function createCrudHooks<
   const {
     entityType,
     serverActions,
+    fullSchema,
+    _inputSchema,
     defaultParams = {},
     validSortFields = ['createdAt'],
     persistFilters = true,
@@ -72,108 +75,27 @@ export function createCrudHooks<
   const additionalInvalidateKeys = relatedEntityTypes.map(type => 
     [type, 'list'] as string[]
   );
-  
+
   /**
    * Hook for managing a paginated list of entities with filtering and sorting
+   * Now using the unified useList hook
    */
   function useList(customParams?: Partial<QueryParams>) {
-    // Set up filters and sorting
-    const filtersAndSorting = useFiltersAndSorting({
-      storageKey: storageKey,
-      defaultFilters: defaultParams.filters || {},
-      defaultSortBy: defaultParams.sortBy || 'createdAt',
-      defaultSortOrder: (defaultParams.sortOrder as 'asc' | 'desc') || 'desc',
-      defaultPage: defaultParams.page || 1,
-      defaultPageSize: defaultParams.limit || 10,
-      validSortFields,
-      persist: persistFilters
-    });
-    
-    // Prepare query parameters
-    const queryParams = useMemo(() => ({
-      page: filtersAndSorting.page,
-      limit: filtersAndSorting.pageSize,
-      sortBy: filtersAndSorting.sortBy,
-      sortOrder: filtersAndSorting.sortOrder,
-      search: filtersAndSorting.search || undefined,
-      filters: {
-        ...filtersAndSorting.filters,
-        ...(customParams?.filters || {})
-      }
-    }), [
-      filtersAndSorting.page,
-      filtersAndSorting.pageSize,
-      filtersAndSorting.sortBy,
-      filtersAndSorting.sortOrder,
-      filtersAndSorting.search,
-      filtersAndSorting.filters,
-      customParams?.filters
-    ]);
-    
-    // Use the query
-    const query = useQuery({
-      queryKey: [entityType, 'list', queryParams] as string[],
-      queryFn: async () => {
-        try {
-          return await serverActions.fetch(queryParams);
-        } catch (error) {
-          // Create error context for better error reporting
-          const errorContext = createQueryErrorContext(
-            entityType,
-            'fetchList',
-            { 
-              metadata: { queryParams },
-              tags: { entityType }
-            }
-          );
-          logError(error as Error, errorContext);
-          throw error;
-        }
+    return useBaseList<T>({
+      entityType,
+      fetcher: serverActions.fetch,
+      schema: fullSchema,
+      useSelector: true, // Use the selector system
+      defaultParams: {
+        ...defaultParams,
+        ...(customParams || {})
       },
+      validSortFields,
+      persistFilters,
+      storageKey,
       staleTime,
-      // Merge overridden options
-      ...(customParams?.options || {})
+      errorContextPrefix: entityType
     });
-    
-    // Extract items and pagination
-    const items = extractItems<T>(query.data as CollectionResponse<T>);
-    const pagination = extractPagination(query.data as PaginatedResponse<T>);
-    
-    // Return combined API
-    return {
-      // Data
-      items,
-      
-      // Pagination
-      total: pagination.total,
-      page: filtersAndSorting.page,
-      pageSize: filtersAndSorting.pageSize,
-      totalPages: pagination.totalPages,
-      hasMore: pagination.hasMore,
-      
-      // Filtering and sorting
-      filters: filtersAndSorting.filters,
-      search: filtersAndSorting.search,
-      sortBy: filtersAndSorting.sortBy,
-      sortOrder: filtersAndSorting.sortOrder,
-      
-      // Query state
-      isLoading: query.isLoading,
-      isError: query.isError,
-      error: query.error,
-      refetch: query.refetch,
-      
-      // Actions
-      setPage: filtersAndSorting.setPage,
-      setPageSize: filtersAndSorting.setPageSize,
-      setSearch: filtersAndSorting.setSearch,
-      applyFilters: filtersAndSorting.applyFilters,
-      changeSorting: filtersAndSorting.changeSorting,
-      
-      // Raw data
-      queryParams,
-      query
-    };
   }
   
   /**
@@ -194,9 +116,8 @@ export function createCrudHooks<
         }
         
         try {
-          return await serverActions.fetchById!(id) as CollectionResponse<T>;
+          return await serverActions.fetchById!(id) as CollectionResponse<unknown>;
         } catch (error) {
-          // Enhanced error handling with context
           const errorContext = createQueryErrorContext(
             entityType, 
             'fetchById',
@@ -209,13 +130,32 @@ export function createCrudHooks<
           throw error;
         }
       },
+      select: (data) => {
+        if (!data?.items || data.items.length === 0) {
+          return null;
+        }
+        
+        try {
+          const item = data.items[0];
+          // Use the shared helper function for consistency
+          return transformItemWithSchema(item, fullSchema);
+        } catch (error) {
+          const errorContext = createQueryErrorContext(
+            entityType,
+            'transformSingleResponse',
+            { tags: { entityType } }
+          );
+          logError(error as Error, errorContext);
+          return null;
+        }
+      },
       enabled: !!id,
       staleTime,
       ...options
     });
     
     return {
-      data: extractItems<T>(query.data as CollectionResponse<T>)[0],
+      data: query.data, // This is now the transformed single entity
       isLoading: query.isLoading,
       isError: query.isError,
       error: query.error,

@@ -1,5 +1,5 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
-import mongoose, {  } from "mongoose";
+import mongoose from "mongoose";
 import {
   DayTypes,
   BlockDayTypes,
@@ -7,10 +7,10 @@ import {
   PeriodTypes,
 } from "@enums";
 import { getModel } from "@data-server/db/model-registry";
+import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'classscheduleitems' } })
+@modelOptions({ schemaOptions: { _id: false, collection: 'classscheduleitems' } })
 export class ClassScheduleItem {
-
   @prop({ enum: Object.values(DayTypes), type: String, required: true })
   dayType!: string;
 
@@ -21,19 +21,17 @@ export class ClassScheduleItem {
   endTime!: string;
 }
 
-@modelOptions({ schemaOptions: {timestamps: true, _id: false, collection: 'assignedcycledays' } })
+@modelOptions({ schemaOptions: { _id: false, collection: 'assignedcycledays' } })
 export class AssignedCycleDay {
-
-  @prop({ type: String, required: true })
-  date!: string;
+  @prop({ type: Date, required: true })
+  date!: Date;
 
   @prop({ enum: Object.values(BlockDayTypes), type: String, required: true })
   blockDayType!: string;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'bellschedules' } })
-export class BellSchedule {
-
+@modelOptions({ schemaOptions: { collection: 'bellschedules' } })
+export class BellSchedule extends BaseMongooseDocument {
   @prop({ type: String, required: true })
   school!: string;
 
@@ -50,9 +48,8 @@ export class BellSchedule {
   owners!: string[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'periods' } })
+@modelOptions({ schemaOptions: { _id: false, collection: 'periods' } })
 export class Period {
-
   @prop({ type: Number, required: true })
   periodNum!: number;
 
@@ -66,9 +63,8 @@ export class Period {
   periodType!: string;
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, _id: false, collection: 'schedulebydays' } })
+@modelOptions({ schemaOptions: { _id: false, collection: 'schedulebydays' } })
 export class ScheduleByDay {
-
   @prop({ enum: Object.values(DayTypes), type: String, required: true })
   day!: string;
 
@@ -76,9 +72,8 @@ export class ScheduleByDay {
   periods!: Period[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'teacherschedules' } })
-export class TeacherSchedule {
-
+@modelOptions({ schemaOptions: { collection: 'teacherschedules' } })
+export class TeacherSchedule extends BaseMongooseDocument {
   @prop({ type: String, required: true })
   teacher!: string;
 
@@ -109,7 +104,6 @@ export const ScheduleByDayModel =
 
 export const TeacherScheduleModel =
   mongoose.models.TeacherSchedule || getModelForClass(TeacherSchedule);
-
 
 export async function getClassScheduleItemModel() {
   return getModel<ClassScheduleItem>('ClassScheduleItem', () => getModelForClass(ClassScheduleItem));

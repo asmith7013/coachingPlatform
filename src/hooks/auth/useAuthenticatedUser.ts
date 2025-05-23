@@ -8,7 +8,7 @@ import {
   Permission,
   Role
 } from '@core-types/auth';
-import { safeParseAndLog } from '@/lib/data-utilities/transformers/parse';
+import { validateSafe } from '@/lib/data-utilities/transformers/core/schema-validators';
 
 export function useAuthenticatedUser(): AuthenticatedUser {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -21,7 +21,7 @@ export function useAuthenticatedUser(): AuthenticatedUser {
     }
     
     // Use existing safe parse utility
-    const parsed = safeParseAndLog(UserMetadataSchema, user.publicMetadata);
+    const parsed = validateSafe(UserMetadataSchema, user.publicMetadata);
     return parsed || UserMetadataSchema.parse({});
   }, [user]);
   

@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { handleServerError } from "@/lib/error/handle-server-error";
+import { handleServerError } from "@error/handlers/server";
 import { collectionizeResponse } from "@api-responses/standardize";
-import { QueryParams } from "@/lib/types/core/api";
-import { BaseReference } from "@/lib/types/core/reference";
-import { PaginatedResponse } from "@core-types/response";
+import { QueryParams } from "@core-types/query";
+import { BaseReference } from "@core-types/reference";
+import { PaginatedResponse } from "@core-types/pagination";
 
 /**
  * Generic type for any fetch function that returns items and total

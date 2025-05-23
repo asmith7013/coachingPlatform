@@ -1,157 +1,51 @@
-// src/lib/query/utilities/response-types.ts
+
 import { 
-  CollectionResponse, 
-  PaginatedResponse,
-  EntityResponse
-} from '@core-types/response';
+  extractItems,
+  extractPagination,
+  extractData,
+  isCollectionResponse,
+  isPaginatedResponse,
+  isEntityResponse
+} from '@data-utilities/transformers/utilities/response-utils';
+
+export {
+  createSchemaCollectionSelector as collectionSelector,
+  createSchemaPaginatedSelector as paginatedSelector,
+  createSchemaEntitySelector as entitySelector
+} from '@data-utilities/transformers/utilities/selector-factories';
 
 /**
- * Type-safe transformers for working with different response types in React Query
+ * Type guard to check if a response is a collection response
+ * @deprecated Use isCollectionResponse from @/lib/data-utilities/transformers/utilities/response-utils instead
  */
+export const isCollectionResponseType = isCollectionResponse;
 
 /**
- * Default selector for CollectionResponse
- * Use in query options to automatically extract items
+ * Type guard to check if a response is a paginated response
+ * @deprecated Use isPaginatedResponse from @/lib/data-utilities/transformers/utilities/response-utils instead
  */
-export function collectionResponseSelector<T, R = T[]>(
-  data: CollectionResponse<T>,
-  selector?: (items: T[]) => R
-): R {
-  const items = data?.items || [];
-  return selector ? selector(items) : items as unknown as R;
-}
-
-// Keep old function with deprecation notice
-/**
- * @deprecated Use collectionResponseSelector instead
- */
-export function standardResponseSelector<T, R = T[]>(
-  data: CollectionResponse<T>,
-  selector?: (items: T[]) => R
-): R {
-  return collectionResponseSelector(data, selector);
-}
+export const isPaginatedResponseType = isPaginatedResponse;
 
 /**
- * Extracts items from a CollectionResponse
- * @param response The standard response object
- * @returns The items array from the response
+ * Type guard to check if a response is an entity response
+ * @deprecated Use isEntityResponse from @/lib/data-utilities/transformers/utilities/response-utils instead
  */
-export function extractItems<T>(response: CollectionResponse<T>): T[] {
-  return response?.items || [];
-}
+export const isEntityResponseType = isEntityResponse;
 
 /**
- * Default selector for PaginatedResponse
- * Use in query options to automatically extract items and pagination info
+ * Extracts items from a collection response
+ * @deprecated Use extractItems from @/lib/data-utilities/transformers/utilities/response-utils instead
  */
-export function paginatedResponseSelector<T>(
-  data: PaginatedResponse<T>
-): { items: T[], pagination: Omit<PaginatedResponse<T>, 'items' | 'success' | 'message' | 'error' | 'errors'> } {
-  return {
-    items: data?.items || [],
-    pagination: {
-      page: data?.page || 1,
-      limit: data?.limit || 10,
-      total: data?.total || 0,
-      totalPages: data?.totalPages || 1,
-      hasMore: data?.hasMore || false,
-      empty: data?.empty || false,
-    },
-  };
-}
+export const extractItemsFromResponse = extractItems;
 
 /**
- * Extracts pagination metadata from a PaginatedResponse
- * @param response The paginated response object
- * @returns Object with pagination metadata
+ * Extracts pagination metadata from a paginated response
+ * @deprecated Use extractPagination from @/lib/data-utilities/transformers/utilities/response-utils instead
  */
-export function extractPagination<T>(response: PaginatedResponse<T>): 
-  Omit<PaginatedResponse<T>, 'items' | 'success' | 'message' | 'error' | 'errors'> {
-  return paginatedResponseSelector(response).pagination;
-}
+export const extractPaginationFromResponse = extractPagination;
 
 /**
- * Extracts a single item from an EntityResponse
- * @param response The entity response object
- * @returns The data from the response
+ * Extracts data from an entity response
+ * @deprecated Use extractData from @/lib/data-utilities/transformers/utilities/response-utils instead
  */
-export function extractData<T>(response: EntityResponse<T>): T {
-  return response?.data as T;
-}
-
-/**
- * @deprecated Use extractData instead
- * Extracts a single item from a SingleResourceResponse
- */
-export function extractSingleResourceData<T>(response: EntityResponse<T>): T {
-  return extractData(response);
-}
-
-/**
- * Convenience function to extract both items and pagination info
- * @param response The paginated response object
- * @returns Object with items array and pagination metadata
- */
-export function extractPaginatedData<T>(response: PaginatedResponse<T>) {
-  return paginatedResponseSelector(response);
-}
-
-/**
- * Type guard to check if a response is a CollectionResponse
- * @param response The response to check
- * @returns True if the response is a CollectionResponse
- */
-export function isCollectionResponse<T>(response: unknown): response is CollectionResponse<T> {
-  return Boolean(
-    typeof response === 'object' &&
-    response !== null &&
-    'items' in response &&
-    'success' in response &&
-    Array.isArray((response as CollectionResponse<T>).items)
-  );
-}
-
-// Keep old function with deprecation notice
-/**
- * @deprecated Use isCollectionResponse instead
- */
-export function isStandardResponse<T>(response: unknown): response is CollectionResponse<T> {
-  return isCollectionResponse(response);
-}
-
-/**
- * Type guard to check if a response is a PaginatedResponse
- * @param response The response to check
- * @returns True if the response is a PaginatedResponse
- */
-export function isPaginatedResponse<T>(response: unknown): response is PaginatedResponse<T> {
-  return Boolean(
-    isCollectionResponse<T>(response) &&
-    'page' in response &&
-    'limit' in response &&
-    'totalPages' in response
-  );
-}
-
-/**
- * Type guard to check if a response is an EntityResponse
- * @param response The response to check
- * @returns True if the response is an EntityResponse
- */
-export function isEntityResponse<T>(response: unknown): response is EntityResponse<T> {
-  return Boolean(
-    typeof response === 'object' &&
-    response !== null &&
-    'data' in response &&
-    'success' in response
-  );
-}
-
-/**
- * @deprecated Use isEntityResponse instead
- * Type guard to check if a response is a SingleResourceResponse
- */
-export function isSingleResourceResponse<T>(response: unknown): response is EntityResponse<T> {
-  return isEntityResponse<T>(response);
-}
+export const extractDataFromResponse = extractData;

@@ -7,9 +7,9 @@
  * including connection management and import functionality.
  */
 import { ReactNode } from 'react';
-import { QueryProvider } from '@/lib/query/provider';
-import { MondayIntegrationProvider } from '@/hooks/integrations/monday/MondayIntegrationContext';
-import { MondayImportProvider } from '@/hooks/integrations/monday/MondayImportContext';
+import { QueryProvider } from '@query/core/provider';
+import { MondayIntegrationProvider } from '@hooks/integrations/monday/MondayIntegrationContext';
+import { MondayImportProvider } from '@hooks/integrations/monday/MondayImportContext';
 
 interface MondayLayoutProps {
   children: ReactNode;

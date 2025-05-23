@@ -1,7 +1,12 @@
 import { z } from 'zod';
+import { 
+  UserMetadataZodSchema,
+  ErrorContextBaseZodSchema,
+  AuthenticatedUserBaseZodSchema
+} from '@/lib/data-schema/zod-schema/core-types/auth';
 import { RolesNYCPSZod, RolesTLZod } from '@enums';
 
-// Define permission constants based on existing navigation requirements
+// Keep permission constants as TypeScript (they're static constants)
 export const PERMISSIONS = {
   // Dashboard
   DASHBOARD_VIEW: 'dashboard.view',
@@ -62,14 +67,14 @@ export const PERMISSIONS = {
 
 export type Permission = typeof PERMISSIONS[keyof typeof PERMISSIONS];
 
-// Map existing role enums to our auth system
+// Map existing role enums to our auth system (keep as TypeScript)
 export const NYCPS_ROLES = RolesNYCPSZod.enum;
 export const TL_ROLES = RolesTLZod.enum;
 
 // Combined roles type
 export type Role = z.infer<typeof RolesNYCPSZod> | z.infer<typeof RolesTLZod> | 'super_admin';
 
-// Role-permission mappings using existing enums
+// Role-permission mappings using existing enums (keep as TypeScript)
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   // NYCPS Roles
   [NYCPS_ROLES.Teacher]: [
@@ -210,53 +215,13 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   ],
 };
 
-// Enhanced User metadata schema
-export const UserMetadataSchema = z.object({
-  // Identity
-  staffId: z.string().optional(),
-  staffType: z.enum(['nycps', 'teachinglab']).optional(),
-  
-  // Roles and permissions
-  roles: z.array(z.string()).default([]),
-  permissions: z.array(z.string()).default([]), // Direct permissions override
-  
-  // Organization
-  schoolId: z.string().optional(),
-  schoolIds: z.array(z.string()).default([]), // For multiple schools
-  districtId: z.string().optional(),
-  organizationId: z.string().optional(),
-  
-  // Additional metadata
-  title: z.string().optional(),
-  department: z.string().optional(),
-  managedSchools: z.array(z.string()).default([]),
-  onboardingCompleted: z.boolean().default(false),
-  lastLoginAt: z.string().optional(),
-});
+// Derive types from Zod schemas
+export type UserMetadata = z.infer<typeof UserMetadataZodSchema>;
+export type ErrorContextBase = z.infer<typeof ErrorContextBaseZodSchema>;
 
-export type UserMetadata = z.infer<typeof UserMetadataSchema>;
-
-// Enhanced authenticated user interface (extending existing)
-export interface AuthenticatedUser {
-  // Identity (existing fields)
-  id: string | null;
-  email: string | null;
-  fullName: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  imageUrl: string | null;
-  
-  // Auth state
-  isLoading: boolean;
-  isSignedIn: boolean;
-  
-  // Metadata
-  metadata: UserMetadata;
-  
-  // NEW: Computed permissions
-  permissions: Permission[];
-  
-  // NEW: Permission helpers
+// Enhanced authenticated user interface (extends schema-derived base with methods)
+export interface AuthenticatedUser extends z.infer<typeof AuthenticatedUserBaseZodSchema> {
+  // Permission helper methods (can't be expressed in Zod)
   hasPermission: (permission: Permission) => boolean;
   hasAnyPermission: (permissions: Permission[]) => boolean;
   hasAllPermissions: (permissions: Permission[]) => boolean;

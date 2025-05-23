@@ -1,12 +1,10 @@
-import { getModel } from "@/lib/data-server/db/model-registry";
+import { getModel } from "@data-server/db/model-registry";
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
-import mongoose, { Types } from "mongoose"; // Required for model cache
+import mongoose from "mongoose";
+import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'nextsteps' } })
-export class NextStep {
-  @prop({ type: Types.ObjectId, required: true })
-  _id!: Types.ObjectId;
-
+@modelOptions({ schemaOptions: { collection: 'nextsteps' } })
+export class NextStep extends BaseMongooseDocument {
   @prop({ type: String, required: true })
   description!: string;
 

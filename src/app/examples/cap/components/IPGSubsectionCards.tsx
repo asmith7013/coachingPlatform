@@ -21,7 +21,7 @@ export const IPGSubsectionCards: React.FC<IPGSubsectionCardsProps> = ({
   onSelect,
   parentColor,
 }) => {
-  const getColorScheme = (value: string) => {
+  const getColorScheme = (_value: string) => {
     const colorMap: Record<string, { bg: string; border: string; hoverBg: string }> = {
       primary: {
         bg: backgroundColors.primary,

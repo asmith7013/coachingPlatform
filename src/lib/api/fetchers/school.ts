@@ -2,7 +2,7 @@
 import { SchoolModel } from '@mongoose-schema/core/school.model';
 import { SchoolZodSchema } from '@zod-schema/core/school';
 import { createApiSafeFetcher } from '@lib/api/handlers/api-adapter';
-import { fetchById } from '@data-utilities/transformers/fetch-by-id';
+import { fetchById } from '@/lib/data-utilities/transformers/utilities/fetch-by-id';
 
 /**
  * API-safe fetcher for schools 

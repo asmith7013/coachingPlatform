@@ -1,21 +1,31 @@
-import type { DocumentBase } from './base-types';
-import type { Types } from 'mongoose';
+import { Types } from 'mongoose';
+import { z } from 'zod';
+import { BaseDocumentSchema } from '@zod-schema/base-schemas';
 
 /**
  * Base document interface for all MongoDB documents
  */
-export interface BaseDocument extends DocumentBase {
-  /** MongoDB ObjectId (as string or ObjectId) */
+export type BaseDocument = z.infer<typeof BaseDocumentSchema>;
+
+/**
+ * Create a MongoDB-specific type that supports ObjectId
+ */
+export type MongoBaseDocument = Omit<BaseDocument, '_id'> & {
   _id: string | Types.ObjectId;
-  /** String version of _id for client-side use */
+};
+
+/**
+ * Type specifically for Mongoose transform functions
+ * Focuses on fields that need special handling during transformation
+ */
+export type MongooseTransformDocument = {
+  _id?: Types.ObjectId | string;
   id?: string;
-  /** Document creation timestamp */
-  createdAt?: Date;
-  /** Document last update timestamp */
-  updatedAt?: Date;
-  /** Array of owner IDs */
-  owners?: string[];
-}
+  __v?: unknown;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  [key: string]: unknown;
+};
 
 /**
  * Base interface for document inputs (for creation/updates)
@@ -32,7 +42,7 @@ export const DocumentUtils = {
    * Ensures _id is a string and adds id field
    */
   toClient<T extends BaseDocument>(doc: T): T & { id: string } {
-    const idStr = typeof doc._id === 'string' ? doc._id : doc._id.toString();
+    const idStr = typeof doc._id === 'string' ? doc._id : (doc._id as Types.ObjectId).toString();
     return {
       ...doc,
       _id: idStr,
@@ -69,18 +79,9 @@ export const DocumentUtils = {
   }
 };
 
-// Maintain backward compatibility
-export type BaseDocumentInput<T extends BaseDocument> = DocumentInput<T>;
-export const toClientDocument = DocumentUtils.toClient;
-export const isBaseDocument = DocumentUtils.isDocument;
-
 // For the rare cases where these are needed
 export type WithDateObjects<T extends { createdAt?: string | Date; updatedAt?: string | Date }> = 
   Omit<T, 'createdAt' | 'updatedAt'> & {
     createdAt?: Date;
     updatedAt?: Date;
-  };
-
-export interface OwnedDocument extends BaseDocument {
-  owners: string[];
-}
+};

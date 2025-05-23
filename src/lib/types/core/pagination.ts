@@ -1,60 +1,32 @@
-import type { PaginationBase } from './base-types';
-import type { CollectionResponse } from './response';
+import { z } from 'zod';
+import { 
+  PaginationParamsZodSchema,
+  PaginatedResponseZodSchema 
+} from '@/lib/data-schema/zod-schema/core-types/query';
 
-/**
- * Basic pagination parameters
- * Extends PaginationBase to maintain type hierarchy while allowing for future extensions
- */
-export interface PaginationParams extends PaginationBase {
-  /** Current page number (1-based) */
-  page?: number;
-  /** Number of items per page */
-  limit?: number;
-}
+// Derive pagination params type from Zod schema
+export type PaginationParams = z.infer<typeof PaginationParamsZodSchema>;
 
-/**
- * Default values for pagination parameters
- */
+// Derive paginated response type with generic support
+export type PaginatedResponse<T = unknown> = Omit<z.infer<typeof PaginatedResponseZodSchema>, 'items'> & {
+  items: T[];
+};
+
+// Constants and utility functions
 export const DEFAULT_PAGINATION_PARAMS: Required<PaginationParams> = {
   page: 1,
   limit: 10,
 };
 
-/**
- * Paginated response extending the collection response
- */
-export interface PaginatedResponse<T = unknown> extends CollectionResponse<T> {
-  /** Current page number */
-  page: number;
-  /** Items per page */
-  limit: number;
-  /** Total number of pages */
-  totalPages: number;
-  /** Whether there are more pages */
-  hasMore: boolean;
-}
-
-/**
- * Pagination metadata
- */
 export interface PaginationMeta {
-  /** Current page number */
   page: number;
-  /** Items per page */
   limit: number;
-  /** Total count of items */
   total: number;
-  /** Total number of pages */
   totalPages: number;
-  /** Whether there are more pages */
   hasMore: boolean;
-  /** Whether the collection is empty */
   isEmpty: boolean;
 }
 
-/**
- * Creates pagination parameters with defaults
- */
 export function buildPaginationParams(
   params: Partial<PaginationParams> = {}
 ): Required<PaginationParams> {
@@ -69,9 +41,6 @@ export function buildPaginationParams(
   };
 }
 
-/**
- * Calculate pagination metadata from results
- */
 export function calculatePaginationMeta(
   total: number,
   params: Required<PaginationParams>
@@ -89,15 +58,10 @@ export function calculatePaginationMeta(
   };
 }
 
-/**
- * Calculate MongoDB skip value from pagination parameters
- */
 export function calculateSkip(page: number, limit: number): number {
   return (Math.max(1, page) - 1) * limit;
 }
 
-// Backwards compatibility
-/** @deprecated Use PaginationParams instead */
+// For backward compatibility
 export type PaginationOptions = PaginationParams;
-/** @deprecated Use DEFAULT_PAGINATION_PARAMS instead */
 export const DEFAULT_PAGINATION_OPTIONS = DEFAULT_PAGINATION_PARAMS;

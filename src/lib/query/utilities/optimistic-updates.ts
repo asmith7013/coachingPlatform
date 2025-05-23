@@ -1,12 +1,18 @@
-// src/lib/query/utilities/optimisticUpdates.ts
+// src/lib/query/utilities/optimistic-updates.ts
 import { useQueryClient, useMutation, QueryClient } from '@tanstack/react-query';
-import { deepSanitize, removeTimestampFields } from '@/lib/data-utilities/transformers/sanitize';
-import { parseOrThrow, parsePartialOrThrow } from '@/lib/data-utilities/transformers/parse';
-import { ZodSchema } from 'zod';
+import { 
+  transformDocument, 
+  prepareForCreate 
+} from '@/lib/data-utilities/transformers/core/db-transformers';
+import { 
+  validateStrict, 
+  validatePartialStrict 
+} from '@/lib/data-utilities/transformers/core/schema-validators';
+import { ZodSchema, ZodObject, ZodRawShape, ZodTypeAny } from 'zod';
 import { handleClientError } from '@error';
 import { queryKeys } from '@query/core/keys';
 import { BaseDocument } from '@core-types/document';
-import { PaginatedResponse } from '@core-types/response';
+import { PaginatedResponse } from '@core-types/pagination';
 import { CrudResultType } from '@core-types/crud';
 
 /**
@@ -14,13 +20,12 @@ import { CrudResultType } from '@core-types/crud';
  * that mirror the server-side CRUD factory pattern
  */
 export function createOptimisticCrudActions<
-  // Doc extends BaseDocument,
-  InputType,
-  FullType
+  InputType extends Partial<BaseDocument>,
+  FullType extends BaseDocument
 >(
   entityType: string,
   fullSchema: ZodSchema<FullType>,
-  inputSchema: ZodSchema<InputType>
+  inputSchema: ZodObject<ZodRawShape, "strip", ZodTypeAny, InputType>
 ) {
   const entityListKey = queryKeys.entities.list(entityType);
   
@@ -34,12 +39,12 @@ export function createOptimisticCrudActions<
     ): { previousData: PaginatedResponse<FullType> | undefined } {
       try {
         // Validate and sanitize data using the same pattern as server-side
-        const validatedData = parseOrThrow(inputSchema, data);
-        const safeData = removeTimestampFields(validatedData);
+        const validatedData = validateStrict(inputSchema, data);
+        const preparedData = prepareForCreate(validatedData);
         
         // Generate temporary ID and timestamps for optimistic rendering
         const optimisticItem = {
-          ...safeData,
+          ...preparedData,
           _id: `temp_${Date.now()}`,
           id: `temp_${Date.now()}`,
           createdAt: new Date().toISOString(),
@@ -47,7 +52,7 @@ export function createOptimisticCrudActions<
         };
         
         // Parse with full schema to ensure it matches server response format
-        const processedItem = parseOrThrow(fullSchema, optimisticItem) as FullType;
+        const processedItem = validateStrict(fullSchema, optimisticItem) as FullType;
         
         // Save previous data for potential rollback
         const previousData = queryClient.getQueryData<PaginatedResponse<FullType>>(entityListKey);
@@ -65,17 +70,24 @@ export function createOptimisticCrudActions<
                 page: 1,
                 limit: 10,
                 totalPages: 1,
-                empty: false
+                empty: false,
+                hasMore: false
               };
             }
             
             // Otherwise add to existing collection
+            const newTotal = oldData.total + 1;
+            const limit = oldData.limit || 10;
+            const page = oldData.page || 1;
+            const newTotalPages = Math.ceil(newTotal / limit);
+            
             return {
               ...oldData,
               items: [...oldData.items, processedItem],
-              total: oldData.total + 1,
+              total: newTotal,
               empty: false,
-              totalPages: Math.ceil((oldData.total + 1) / (oldData.limit || 10))
+              totalPages: newTotalPages,
+              hasMore: newTotalPages > page
             };
           }
         );
@@ -97,8 +109,8 @@ export function createOptimisticCrudActions<
     ): { previousData: PaginatedResponse<FullType> | undefined } {
       try {
         // Validate and sanitize partial data
-        const validatedData = parsePartialOrThrow(inputSchema, data);
-        const safeData = removeTimestampFields(validatedData);
+        const validatedPartial = validatePartialStrict(inputSchema, data);
+        const preparedData = prepareForCreate(validatedPartial);
         
         // Save previous data for potential rollback
         const previousData = queryClient.getQueryData<PaginatedResponse<FullType>>(entityListKey);
@@ -111,20 +123,21 @@ export function createOptimisticCrudActions<
             
             // Update the matching item
             const updatedItems = oldData.items.map(item => {
-              const itemId = (item as any)._id;
+              const itemId = (item as FullType)._id;
               
               if (itemId === id) {
                 // Merge existing item with updates
                 const merged = {
                   ...item,
-                  ...safeData,
+                  ...preparedData,
                   updatedAt: new Date().toISOString()
                 };
                 
                 // Validate merged item
                 try {
                   // Sanitize and parse to ensure format matches server response
-                  return parseOrThrow(fullSchema, deepSanitize(merged));
+                  const transformedData = transformDocument(merged);
+                  return validateStrict(fullSchema, transformedData);
                 } catch (error) {
                   console.error('Validation error in optimistic update:', error);
                   return item; // Fall back to original on validation error
@@ -167,20 +180,23 @@ export function createOptimisticCrudActions<
             
             // Filter out the deleted item
             const filteredItems = oldData.items.filter(item => {
-              const itemId = (item as any)._id;
+              const itemId = (item as FullType)._id;
               return itemId !== id;
             });
             
             // Update pagination info
             const newTotal = Math.max(0, oldData.total - 1);
-            const newTotalPages = Math.ceil(newTotal / (oldData.limit || 10));
+            const limit = oldData.limit || 10;
+            const page = oldData.page || 1;
+            const newTotalPages = Math.ceil(newTotal / limit);
             
             return {
               ...oldData,
               items: filteredItems,
               total: newTotal,
               totalPages: newTotalPages,
-              empty: filteredItems.length === 0
+              empty: filteredItems.length === 0,
+              hasMore: newTotalPages > page
             };
           }
         );
@@ -196,7 +212,7 @@ export function createOptimisticCrudActions<
      * Prepare data for server submission by removing system fields
      */
     prepareForSubmission(data: InputType): InputType {
-      return removeTimestampFields(data) as InputType;
+      return prepareForCreate(data) as InputType;
     }
   };
 }
@@ -205,13 +221,12 @@ export function createOptimisticCrudActions<
  * Creates a custom hook for a specific entity type that mirrors your server-side CRUD factory
  */
 export function createMutationHook<
-  Doc extends BaseDocument,
-  InputType,
-  FullType
+  InputType extends Partial<BaseDocument>,
+  FullType extends BaseDocument
 >(
   entityType: string,
   fullSchema: ZodSchema<FullType>,
-  inputSchema: ZodSchema<InputType>,
+  inputSchema: ZodObject<ZodRawShape, "strip", ZodTypeAny, InputType>,
   serverActions: {
     create: (data: InputType) => Promise<CrudResultType<FullType>>;
     update: (id: string, data: Partial<InputType>) => Promise<CrudResultType<FullType>>;
@@ -223,7 +238,7 @@ export function createMutationHook<
     const entityListKey = queryKeys.entities.list(entityType);
     
     // Create optimistic actions for this entity type
-    const optimistic = createOptimisticCrudActions<Doc, InputType, FullType>(
+    const optimistic = createOptimisticCrudActions<InputType, FullType>(
       entityType, 
       fullSchema, 
       inputSchema

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BaseResponse, SingleResourceResponse, ResourceResponse } from '@core-types/response';
+import { BaseResponse, CollectionResponse, EntityResponse } from '@core-types/response';
 
 /**
  * Helper type for Zod schema inference
@@ -12,7 +12,7 @@ export type ZodInfer<T extends z.ZodTypeAny> = z.infer<T>;
  */
 export function isSuccessResponse<T>(
   response: unknown
-): response is SingleResourceResponse<T> & { success: true } {
+): response is EntityResponse<T> & { success: true } {
   return (
     typeof response === 'object' &&
     response !== null &&
@@ -40,7 +40,7 @@ export function isErrorResponse(
  */
 export function isCollectionResponse<T>(
   response: unknown
-): response is ResourceResponse<T> & { success: true } {
+): response is CollectionResponse<T> & { success: true } {
   return (
     isSuccessResponse(response) &&
     'data' in response &&

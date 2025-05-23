@@ -1,10 +1,9 @@
 import { z } from "zod";
 import { Model } from "mongoose";
 import { revalidatePath } from "next/cache";
-import { safeParseAndLog } from "@data-utilities/transformers/parse";
+import { validateSafe } from "@/lib/data-utilities/transformers/core/schema-validators";
 import { connectToDB } from "@data-server/db/connection";
-import { handleCollectionError } from "@error/crud-error-handling";
-import { createCollectionErrorResponse } from "@core-types/error";
+import { handleCollectionError, createCollectionErrorResponse } from "@error";
 import { BulkUploadResult } from "@core-types/crud";
 
 // Define type alias for inferred schema types
@@ -24,7 +23,7 @@ export async function bulkUploadToDB<Doc extends { _id: string }, Schema extends
 
     // Validate input data
     const validatedData = data.map(item => 
-      safeParseAndLog(
+      validateSafe(
         schema,
         item
       )

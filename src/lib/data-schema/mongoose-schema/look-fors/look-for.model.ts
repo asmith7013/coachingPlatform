@@ -1,13 +1,11 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
-import mongoose, { Types } from "mongoose";
+import mongoose from "mongoose";
 import { Rubric } from "./rubric.model";
-import { getModel } from "@/lib/data-server/db/model-registry";
+import { getModel } from "@data-server/db/model-registry";
+import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'lookfors' } })
-export class LookFor {
-  @prop({ type: Types.ObjectId, required: true })
-  _id!: Types.ObjectId;
-
+@modelOptions({ schemaOptions: { collection: 'lookfors' } })
+export class LookFor extends BaseMongooseDocument {
   @prop({ type: Number, required: true })
   lookForIndex!: number;
 
@@ -39,11 +37,8 @@ export class LookFor {
   owners!: string[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true, collection: 'lookforitems' } })
-export class LookForItem {
-  @prop({ type: Types.ObjectId, required: true })
-  _id!: Types.ObjectId;
-
+@modelOptions({ schemaOptions: { collection: 'lookforitems' } })
+export class LookForItem extends BaseMongooseDocument {
   @prop({ type: String, required: true })
   originalLookFor!: string;
 

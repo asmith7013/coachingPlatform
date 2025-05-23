@@ -1,6 +1,6 @@
 import { ZodError } from "zod";
 import { logError } from "@error/core/logging";
-import { ErrorContext } from "@core-types/error";
+import { ErrorContext } from "@error-types";
 
 /**
  * Handles Zod validation errors with proper logging and formatting

@@ -6,14 +6,17 @@ import {
   AllowedPurposeZod,
   ModeDoneZod
 } from "@enums";
+import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 
+// Event Item Schema (shared schema)
 export const EventItemZodSchema = z.object({
   eventType: EventTypeZod, // Enum for event type
   staff: z.array(z.string()), // Array of staff IDs
   duration: DurationZod, // Enum for duration with string->number transform
 });
 
+// Session Link Schema (shared schema)
 export const SessionLinkZodSchema = z.object({
   purpose: z.string(), // Required purpose
   title: z.string(), // Required title
@@ -21,9 +24,9 @@ export const SessionLinkZodSchema = z.object({
   staff: z.array(z.string()), // Array of staff IDs
 });
 
-// Standard Input Schema with normal requirements
-export const VisitInputZodSchema = z.object({
-  date: z.string(), // Required date string
+// Visit Fields Schema
+export const VisitFieldsSchema = z.object({
+  date: zDateField, // Required date with proper handling
   school: z.string(), // Required school ID
   coach: z.string(), // Required coach ID
   cycleRef: z.string().optional(), // Made optional as requested
@@ -32,39 +35,37 @@ export const VisitInputZodSchema = z.object({
   gradeLevelsSupported: z.array(GradeLevelsSupportedZod), // Array of grade levels
   events: z.array(EventItemZodSchema).optional(), // Optional array of events
   sessionLinks: z.array(SessionLinkZodSchema).optional(), // Optional array of session links
-  owners: z.array(z.string()), // Array of owner IDs
 
   // Monday.com integration fields
   mondayItemId: z.string().optional(),
   mondayBoardId: z.string().optional(),
   mondayItemName: z.string().optional(),
-  mondayLastSyncedAt: z.string().optional(),
+  mondayLastSyncedAt: zDateField.optional(),
   
   // Optional fields for data that might be imported from Monday
   // but doesn't map directly to core schema fields
   siteAddress: z.string().optional(),
-  endDate: z.string().optional(),
+  endDate: zDateField.optional(),
 });
 
-// Import Schema with relaxed validation for initial import
-export const VisitImportZodSchema = VisitInputZodSchema.extend({
+// Visit Full Schema
+export const VisitZodSchema = BaseDocumentSchema.merge(VisitFieldsSchema);
+
+// Visit Input Schema
+export const VisitInputZodSchema = toInputSchema(VisitZodSchema);
+
+// Visit Import Schema with relaxed validation for initial import
+export const VisitImportZodSchema = VisitFieldsSchema.extend({
   // Make multiple fields optional for flexible import
-  owners: z.array(z.string()).optional(),
-  date: z.string().optional(),
+  date: zDateField.optional(),
   school: z.string().optional(),
   coach: z.string().optional(),
   gradeLevelsSupported: z.array(GradeLevelsSupportedZod).optional(),
 });
 
-// Full Schema extends Input Schema
-export const VisitZodSchema = VisitInputZodSchema.extend({
-  _id: z.string(), // Required in full schema
-  createdAt: zDateField.optional(),
-  updatedAt: zDateField.optional(),
-});
-
-// Update type definition
+// Auto-generate TypeScript types
 export type EventItem = z.infer<typeof EventItemZodSchema>;
 export type SessionLink = z.infer<typeof SessionLinkZodSchema>;
 export type VisitInput = z.infer<typeof VisitInputZodSchema>;
 export type Visit = z.infer<typeof VisitZodSchema>;
+export type VisitImport = z.infer<typeof VisitImportZodSchema>;

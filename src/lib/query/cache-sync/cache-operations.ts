@@ -2,9 +2,10 @@
 import { QueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@query/core/keys';
 import { CollectionResponse } from '@core-types/response';
-import { EntityCacheOperations } from '@core-types/cache';
 import { BaseDocument } from '@core-types/document';
-import { getEntityId, matchesId } from '@data-utilities/transformers/entity-utils';
+import { EntityCacheOperations } from '@core-types/cache';
+import { handleClientError } from '@error/handlers/client';
+import { getSelectors } from '@query/selectors/selector-registry';
 
 /**
  * Create entity-specific cache operations
@@ -17,6 +18,9 @@ export function createEntityCacheOperations(
   queryClient: QueryClient,
   entityType: string
 ): EntityCacheOperations {
+  // Get selectors for this entity type
+  const selectors = getSelectors(entityType);
+  
   /**
    * Invalidate all list queries for the entity
    */
@@ -37,19 +41,34 @@ export function createEntityCacheOperations(
   };
 
   /**
-   * Update entity in cache
+   * Update entity in cache with consistent transformation
    */
-  const updateEntity = async <T extends BaseDocument>(id: string, updater: (old: T) => T) => {
+  const updateEntity = async <T extends BaseDocument>(
+    id: string, 
+    updater: (old: T) => T
+  ) => {
     // Update in detail query
     queryClient.setQueryData(
       queryKeys.entities.detail(entityType, id),
       (old: CollectionResponse<T> | undefined) => {
         if (!old || !old.items || old.items.length === 0) return old;
         
-        return {
-          ...old,
-          items: [updater(old.items[0] as T)] as unknown[]
-        };
+        try {
+          // Use the detail selector to transform the entity consistently
+          const entity = selectors.detail(old);
+          if (!entity) return old;
+          
+          // Apply the update
+          const updated = updater(entity as T);
+          
+          return {
+            ...old,
+            items: [updated]
+          };
+        } catch (error) {
+          handleClientError(error, `${entityType}CacheUpdate`);
+          return old; // Return original data on error
+        }
       }
     );
 
@@ -59,50 +78,62 @@ export function createEntityCacheOperations(
       (old: CollectionResponse<T> | undefined) => {
         if (!old || !old.items) return old;
         
-        return {
-          ...old,
-          items: old.items.map((item) => {
-            const entityItem = item as T;
-            // Check if this is the item we want to update
-            if (matchesId(entityItem._id, id) || entityItem.id === id) {
-              return updater(entityItem);
+        try {
+          // Use the basic selector to transform the list consistently
+          const items = selectors.basic(old) as T[];
+          
+          // Apply the update to the matching item
+          const updatedItems = items.map(item => {
+            if (item._id === id || item.id === id) {
+              return updater(item);
             }
             return item;
-          })
-        };
+          });
+          
+          return {
+            ...old,
+            items: updatedItems
+          };
+        } catch (error) {
+          handleClientError(error, `${entityType}CacheListUpdate`);
+          return old; // Return original data on error
+        }
       }
     );
   };
 
   /**
-   * Add entity to list cache
+   * Add entity to list cache with consistent transformation
    */
   const addEntity = async <T extends BaseDocument>(entity: T) => {
     queryClient.setQueriesData(
       { queryKey: queryKeys.entities.list(entityType) },
       (old: CollectionResponse<T> | undefined) => {
-        if (!old) return { 
-          items: [entity] as unknown[], 
-          success: true,
-          total: 1
-        };
-        
-        // Get entity ID as string
-        const entityId = getEntityId(entity);
-        
-        // Check if entity already exists to avoid duplicates
-        const exists = entityId && old.items?.some((item) => {
-          const itemId = getEntityId(item as T);
-          return itemId === entityId;
-        });
-        
-        if (exists) return old;
-        
-        return {
-          ...old,
-          items: [...(old.items || []), entity] as unknown[],
-          total: (old.total || 0) + 1
-        };
+        try {
+          // If no existing data, create a new response
+          if (!old) return { 
+            items: [entity], 
+            success: true,
+            total: 1
+          };
+          
+          // Use the selector to transform existing items
+          const items = selectors.basic(old) as T[];
+          
+          // Check if entity already exists to avoid duplicates
+          const exists = items.some(item => item._id === entity._id);
+          if (exists) return old;
+          
+          // Add the new entity to the list
+          return {
+            ...old,
+            items: [...old.items, entity],
+            total: (old.total || 0) + 1
+          };
+        } catch (error) {
+          handleClientError(error, `${entityType}CacheAdd`);
+          return old; // Return original data on error
+        }
       }
     );
   };
@@ -123,17 +154,24 @@ export function createEntityCacheOperations(
       (old: CollectionResponse<unknown> | undefined) => {
         if (!old || !old.items) return old;
         
-        const filteredItems = old.items.filter((item) => {
-          const entityItem = item as BaseDocument;
-          // Remove if neither _id nor id matches
-          return !matchesId(entityItem._id, id) && entityItem.id !== id;
-        });
-        
-        return {
-          ...old,
-          items: filteredItems,
-          total: filteredItems.length
-        };
+        try {
+          // Use the selector to transform the items
+          const items = selectors.basic(old);
+          
+          // Filter out the item to remove
+          const filteredItems = items.filter(item => 
+            item._id !== id && item.id !== id
+          );
+          
+          return {
+            ...old,
+            items: filteredItems,
+            total: filteredItems.length
+          };
+        } catch (error) {
+          handleClientError(error, `${entityType}CacheRemove`);
+          return old; // Return original data on error
+        }
       }
     );
   };

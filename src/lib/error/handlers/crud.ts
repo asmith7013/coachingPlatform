@@ -4,7 +4,7 @@ import {
   ErrorContext,
   CollectionErrorResponse, 
   EntityErrorResponse 
-} from "@core-types/error";
+} from "@error-types";
 import { handleValidationError } from "@error/handlers/validation";
 import { createMonitoredResponse } from "@error/core/responses";
 

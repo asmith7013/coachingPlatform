@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { validateClerkWebhook } from '@/lib/api/validation/clerk-webhook';
-import { handleUserSync, handleOrganizationSync, handleUserDeletion } from '@/lib/api/handlers/clerk-webhook';
+import { validateClerkWebhook } from '@api/validation/clerk-webhook';
+import { handleUserSync, handleOrganizationSync, handleUserDeletion } from '@api/webhooks/clerk/handlers/clerk-webhook';
 import { UserJSON, OrganizationJSON, DeletedObjectJSON } from '@clerk/nextjs/server';
 
 export async function POST(request: Request) {
