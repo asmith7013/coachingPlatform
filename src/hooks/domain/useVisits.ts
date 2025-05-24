@@ -1,4 +1,4 @@
-import { createEntityHooks } from '@/lib/query/factories/entity-hooks';
+import { createEntityHooks } from '@/query/client/factories/entity-hooks';
 import { 
   VisitZodSchema, 
   VisitInputZodSchema, 

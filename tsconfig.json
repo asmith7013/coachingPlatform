@@ -59,7 +59,7 @@
         "@domain/*": ["./src/lib/domain/*"],
         "@error/*": ["./src/lib/error/*"],
         "@error": ["./src/lib/error"],
-        "@query/*": ["./src/lib/query/*"],
+        "@query/*": ["src/query/*"],
         "@query-hooks/*": ["./src/hooks/query/*"],
         "@config/*": ["./src/lib/config/*"],
         "@config": ["./src/lib/config"],

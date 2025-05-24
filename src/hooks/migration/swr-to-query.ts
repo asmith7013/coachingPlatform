@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@query/core/keys';
+import { queryKeys } from '@/query/core/keys';
 
 /**
  * Utility to help migrate from SWR to React Query

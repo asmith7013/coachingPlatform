@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import SentryBoundaryWrapper from "@components/error/SentryBoundaryWrapper";
-import { QueryProvider } from "@query/core/provider";
+import { QueryProvider } from "@/query/core/provider";
 import "@app/globals.css";
 import { PerformanceMonitorProvider } from "@lib/dev/debugging/usePerformanceMonitoring";
 import { ClerkProvider } from '@clerk/nextjs'

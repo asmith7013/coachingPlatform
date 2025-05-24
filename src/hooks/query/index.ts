@@ -1,6 +1,6 @@
 // Export all query hooks
-export * from './useEntityQuery';
-export * from './useErrorHandledQuery';
-export * from './usePaginatedQuery';
+export * from '../../query/client/hooks/core/useEntityQuery';
+export * from '../../query/client/hooks/core/useErrorHandledQuery';
+export * from '../../query/client/hooks/pagination/usePaginatedQuery';
 export * from '../error/useErrorHandledMutation';
-export * from './useOptimisticMutation'; 
+export * from '../../query/client/hooks/mutations/useOptimisticMutation'; 

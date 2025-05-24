@@ -14,7 +14,7 @@ export interface ServerResponse<T = unknown> extends BaseResponse {
 
 /**
  * Options for useErrorHandledMutation
- * @deprecated Use ErrorHandlingOptions from @core-types/error instead
+ * @deprecated Use React Query's useMutation with the new useErrorHandledMutation from '@query/client/hooks/mutations'
  */
 export interface MutationOptions {
   /**
@@ -41,6 +41,7 @@ export interface MutationOptions {
 
 /**
  * Enhanced options for error-handled mutations
+ * @deprecated Use React Query's useMutation with the new useErrorHandledMutation from '@query/client/hooks/mutations'
  */
 export interface ErrorHandlingOptions extends MutationOptions {
   /**
@@ -51,6 +52,7 @@ export interface ErrorHandlingOptions extends MutationOptions {
 
 /**
  * Result returned by useErrorHandledMutation
+ * @deprecated Use React Query's UseMutationResult type instead
  */
 export interface MutationResult<T = unknown, A extends unknown[] = unknown[]> {
   /**
@@ -86,6 +88,7 @@ export interface MutationResult<T = unknown, A extends unknown[] = unknown[]> {
 
 /**
  * Extract error message from response
+ * @private
  */
 function extractErrorMessage(
   response: BaseResponse & { data?: unknown },
@@ -108,6 +111,24 @@ function extractErrorMessage(
 /**
  * A hook for handling server mutations with proper error handling
  * 
+ * @deprecated This hook is deprecated in favor of React Query's useMutation.
+ * Please migrate to the new useErrorHandledMutation from '@query/client/hooks/mutations'
+ * which provides the same error handling capabilities with React Query integration.
+ * 
+ * Migration example:
+ * ```
+ * // Old approach
+ * const { mutate, isLoading, error } = useErrorHandledMutation(submitData);
+ * 
+ * // New approach
+ * import { useErrorHandledMutation } from '@query/client/hooks/mutations';
+ * 
+ * const { mutate, isPending, error } = useErrorHandledMutation(
+ *   (data) => submitData(data),
+ *   { mutationKey: ['submitData'] }
+ * );
+ * ```
+ * 
  * @param mutationFn The async function to execute
  * @param options Configuration options
  * @returns MutationResult object with state and execute function
@@ -116,6 +137,13 @@ export function useErrorHandledMutation<T = unknown, A extends unknown[] = unkno
   mutationFn: (...args: A) => Promise<BaseResponse & { data?: T }>,
   options: ErrorHandlingOptions = {}
 ): MutationResult<T, A> {
+  // Output deprecation warning in development
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      'useErrorHandledMutation is deprecated. Please migrate to the new React Query version from @query/client/hooks/mutations'
+    );
+  }
+
   const {
     errorResetTime,
     errorContext,
@@ -226,6 +254,8 @@ export function useErrorHandledMutation<T = unknown, A extends unknown[] = unkno
 
 /**
  * A convenience wrapper for mutations that don't return data
+ * 
+ * @deprecated Use React Query's useMutation from '@query/client/hooks/mutations' instead
  */
 export function useVoidMutation(
   mutationFn: (...args: unknown[]) => Promise<ServerResponse<void>>,
