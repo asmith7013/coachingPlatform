@@ -3,8 +3,8 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { queryKeys } from '@query/core/keys';
 import { handleClientError } from '@error/handlers/client';
 import { CollectionResponse } from '@core-types/response';
-import { isEntityResponse, isCollectionResponse } from '@transformers/utilities/response-utils';
-import { transformItemWithSchema } from '@transformers/core/transform-helpers';
+import { isEntityResponse, isCollectionResponse } from '@/lib/data-utilities/transformers/utils/response-utils';
+import { transformItemWithSchema } from '@/lib/data-utilities/transformers/utils/transform-helpers';
 import { ZodSchema } from 'zod';
 
 export interface ReferenceOption {

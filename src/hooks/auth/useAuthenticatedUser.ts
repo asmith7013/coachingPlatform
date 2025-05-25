@@ -8,7 +8,7 @@ import {
   Permission,
   Role
 } from '@core-types/auth';
-import { validateSafe } from '@/lib/data-utilities/transformers/core/schema-validators';
+import { validateSafe } from '@/lib/data-utilities/transformers/core/validation';
 
 export function useAuthenticatedUser(): AuthenticatedUser {
   const { user, isLoaded, isSignedIn } = useUser();

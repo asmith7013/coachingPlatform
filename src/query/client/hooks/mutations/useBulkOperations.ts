@@ -3,7 +3,7 @@ import { queryKeys } from '@query/core/keys';
 import { handleClientError } from '@error/handlers/client';
 import { CollectionResponse } from '@core-types/response';
 import { ZodSchema } from 'zod';
-import { transformItemsWithSchema } from '@transformers/core/transform-helpers';
+import { transformItemsWithSchema } from '@/lib/data-utilities/transformers/utils/transform-helpers';
 
 export interface BulkOperationOptions<T> {
   /** Entity type name (e.g., 'schools', 'staff') */

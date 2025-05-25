@@ -1,9 +1,6 @@
 import { ZodSchema } from 'zod';
 import { BaseDocument, WithDateObjects } from '@core-types/document';
-import { 
-  createTransformer, 
-  TransformOptions 
-} from '@transformers/unified-transformer';
+import { createTransformer, TransformOptions } from '@transformers/unified-transformer';
 import { EntitySelector, SelectorFunction } from '@query/client/selectors/selector-types';
 import { handleClientError } from '@error/handlers/client';
 import { CollectionResponse, EntityResponse } from '@core-types/response';

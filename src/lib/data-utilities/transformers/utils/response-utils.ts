@@ -1,8 +1,60 @@
-// src/lib/data-utilities/transformers/utilities/response-utils.ts
-
+import { ZodSchema } from 'zod';
+import { transformDocument } from '@transformers/core/document';
+import { validateSafe } from '@transformers/core/validation';
 import { PaginatedResponse } from "@core-types/pagination";
-import { CollectionResponse } from "@core-types/response";
-import { EntityResponse } from "@core-types/response";
+import { CollectionResponse, EntityResponse } from "@core-types/response";
+
+/**
+ * Helper function for transforming items with schema validation
+ * This ensures consistent transformation across all hooks
+ * 
+ * @param items - The items to transform
+ * @param schema - The Zod schema to validate against
+ * @returns Array of validated items (invalid items are filtered out)
+ */
+export function transformItemsWithSchema<T>(
+  items: unknown[], 
+  schema: ZodSchema<T>
+): T[] {
+  if (!items || !Array.isArray(items)) {
+    return [];
+  }
+  
+  return items
+    .map(item => {
+      // Layer 1: DB transformation (MongoDB → clean JS object)
+      const dbTransformed = transformDocument(item);
+      // Layer 2: Schema validation
+      return validateSafe(schema, dbTransformed);
+    })
+    .filter((item): item is T => item !== null);
+}
+
+/**
+ * Helper function for transforming a single item with schema validation
+ * 
+ * @param item - The item to transform
+ * @param schema - The Zod schema to validate against
+ * @returns Validated item or null if validation fails
+ */
+export function transformItemWithSchema<T>(
+  item: unknown,
+  schema: ZodSchema<T>
+): T | null {
+  if (!item) {
+    return null;
+  }
+  
+  try {
+    // Layer 1: DB transformation
+    const dbTransformed = transformDocument(item);
+    // Layer 2: Schema validation
+    return validateSafe(schema, dbTransformed);
+  } catch (error) {
+    console.error('Error transforming item:', error);
+    return null;
+  }
+}
 
 /**
  * Extracts items from a response
@@ -74,4 +126,4 @@ export function isEntityResponse<T>(response: unknown): response is EntityRespon
     'data' in response &&
     'success' in response
   );
-} 
+}

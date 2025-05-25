@@ -1,6 +1,7 @@
 // src/lib/api/client/base.ts
-import { CollectionResponse, EntityResponse, PaginatedResponse, BaseResponse } from '@/lib/types/core/response';
-import { handleClientError } from '@/lib/error/handle-client-error';
+import { PaginatedResponse } from '@core-types/pagination';
+import { CollectionResponse, EntityResponse, BaseResponse } from '@core-types/response';
+import { handleClientError } from '@error/handlers/client';
 
 export interface ApiClientOptions {
   baseUrl?: string;

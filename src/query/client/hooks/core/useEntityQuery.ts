@@ -6,7 +6,7 @@
  */
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { ZodSchema } from 'zod';
-import { transformItemWithSchema, transformItemsWithSchema } from '@transformers/core/transform-helpers';
+import { transformItemWithSchema, transformItemsWithSchema } from '@/lib/data-utilities/transformers/utils/transform-helpers';
 
 /**
  * Hook for querying a single entity by ID with REQUIRED schema validation

@@ -5,8 +5,8 @@ import {
   IntegrationEndpointConfigZodSchema,
   IntegrationResponseMetaZodSchema,
   IntegrationResponseZodSchema
-} from '@/lib/data-schema/zod-schema/core-types/api-integration';
-import { BaseResponse, CollectionResponse, EntityResponse } from './response';
+} from '@zod-schema/core-types/api-integration';
+import { BaseResponse, CollectionResponse, EntityResponse } from '@core-types/response';
 
 // Derive types from schemas instead of defining interfaces
 export type ApiRequestConfig = z.infer<typeof ApiRequestConfigZodSchema>;

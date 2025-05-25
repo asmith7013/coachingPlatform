@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Model } from "mongoose";
 import { revalidatePath } from "next/cache";
-import { validateSafe } from "@/lib/data-utilities/transformers/core/schema-validators";
+import { validateSafe } from "@/lib/data-utilities/transformers/core/validation";
 import { connectToDB } from "@data-server/db/connection";
 import { handleCollectionError, createCollectionErrorResponse } from "@error";
 import { BulkUploadResult } from "@core-types/crud";

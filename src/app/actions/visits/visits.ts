@@ -8,7 +8,7 @@ import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
 import { createItem } from "@data-server/crud/crud-operations";
 import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
-import { sanitizeSortBy } from "@data-utilities/pagination/sort-utils";
+import { sanitizeSortBy } from "@/lib/data-utilities/pagination/pagination-utils";
 import type { Visit } from "@zod-schema/visits/visit";
 import { QueryParams } from "@core-types/query";
 

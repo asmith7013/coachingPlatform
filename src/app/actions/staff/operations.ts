@@ -9,7 +9,7 @@ import {
   nycpsStaffActions, 
   tlStaffActions 
 } from "./factories";
-import { determineStaffType } from "@/lib/data-utilities/transformers/domain/staff-utils";
+import { determineStaffType } from "@domain-types/staff";
 import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
 import { uploadFileWithProgress } from "@data-server/file-handling/file-upload";
 import type { QueryParams } from "@core-types/query";

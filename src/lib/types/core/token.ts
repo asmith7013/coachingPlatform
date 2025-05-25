@@ -9,7 +9,7 @@ import type {
   FontWeightToken,
   GapToken,
   ComponentSizeToken
-} from '@/lib/tokens/types';
+} from '@lib/tokens/types';
 
 // Common base props shared by many components
 export interface BaseComponentProps {

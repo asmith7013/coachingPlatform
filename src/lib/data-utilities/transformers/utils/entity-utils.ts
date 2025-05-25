@@ -1,6 +1,6 @@
 // src/lib/data-utilities/transformers/entity-utils.ts
 import { BaseDocument } from '@core-types/document';
-import { transformDocument, isMongoDocument } from '@/lib/data-utilities/transformers/core/db-transformers';
+import { transformDocument, isMongoDocument } from '@/lib/data-utilities/transformers/core/document';
 
 /**
  * Gets the ID from an entity, using the new transformer system for consistency

@@ -11,8 +11,8 @@ import { PaginatedResponse } from '@core-types/pagination';
 import { QueryParams } from '@core-types/query';
 import { BaseDocument } from '@core-types/document';
 
-import { isCollectionResponse, isPaginatedResponse, extractItems, extractPagination } from '@transformers/utilities/response-utils';
-import { transformItemsWithSchema } from '@transformers/core/transform-helpers';
+import { isCollectionResponse, isPaginatedResponse, extractItems, extractPagination } from '@/lib/data-utilities/transformers/utils/response-utils';
+import { transformItemsWithSchema } from '@/lib/data-utilities/transformers/utils/transform-helpers';
 import { useFiltersAndSorting } from '@hooks/ui/useFiltersAndSorting';
 import { logError } from "@error/core/logging"; 
 

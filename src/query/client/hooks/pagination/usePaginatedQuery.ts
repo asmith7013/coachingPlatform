@@ -3,10 +3,12 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { PaginatedResponse } from '@core-types/pagination';
 import { queryKeys } from '@query/core/keys';
 import { handleClientError } from '@error/handlers/client';
-import { isPaginatedResponse } from '@transformers/utilities/response-utils';
-import { QueryParams, buildQueryParams, DEFAULT_QUERY_PARAMS } from '@core-types/query';
+import { isPaginatedResponse } from '@/lib/data-utilities/transformers/utils/response-utils';
+import { QueryParams } from '@core-types/query';
 import { ZodSchema } from 'zod';
-import { transformItemsWithSchema } from '@transformers/core/transform-helpers';
+import { transformItemsWithSchema } from '@/lib/data-utilities/transformers/utils/transform-helpers';
+import { ListQueryResult } from '@core-types/query-factory';
+import { useQueryState } from '@query/client/hooks/core/useQueryState';
 
 export interface UsePaginatedQueryOptions<T> {
   entityType: string;
@@ -16,46 +18,42 @@ export interface UsePaginatedQueryOptions<T> {
   options?: Omit<UseQueryOptions<PaginatedResponse<T>, Error>, 'queryKey' | 'queryFn'>;
 }
 
-export interface PaginatedQueryResult<T> {
-  items: T[];
-  isLoading: boolean;
-  isFetching: boolean;
-  error: Error | null;
-  refetch: () => Promise<unknown>;
-  total: number;
-  pagination: {
-    page: number;
-    pageSize: number;
-    totalPages: number;
-    total: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  };
-  response: PaginatedResponse<T> | undefined;
-}
-
+/**
+ * Hook for fetching paginated data with filtering, sorting, and full type safety
+ * Returns a standardized ListQueryResult interface compatible with other entity hooks
+ */
 export function usePaginatedQuery<T>({
   entityType,
-  params = DEFAULT_QUERY_PARAMS,
+  params,
   fetcher,
   schema,
   options = {},
-}: UsePaginatedQueryOptions<T>): PaginatedQueryResult<T> {
-  // Build query params with defaults
-  const queryParams = buildQueryParams(params);
+}: UsePaginatedQueryOptions<T>): ListQueryResult<T> {
+  // Use our shared query state management hook
+  const { 
+    queryParams,
+    setPage,
+    setPageSize,
+    setSearch,
+    applyFilters,
+    changeSorting
+  } = useQueryState(params);
+  
   const { page, limit, sortBy, sortOrder, filters, search } = queryParams;
 
+  // Generate query key based on all parameters
   const fullQueryKey = queryKeys.entities.list(entityType, {
     page,
     limit,
     sortBy,
     sortOrder,
     search,
-    filters: Object.keys(filters)
+    filters: Object.keys(filters || {})
       .sort()
-      .reduce((acc, key) => ({ ...acc, [key]: filters[key] }), {}),
+      .reduce((acc, key) => ({ ...acc, [key]: (filters || {})[key] }), {}),
   });
 
+  // Execute the query
   const query = useQuery({
     queryKey: fullQueryKey,
     queryFn: async () => {
@@ -114,29 +112,56 @@ export function usePaginatedQuery<T>({
     ...options,
   });
 
-  const { data, isLoading, isFetching, error, refetch } = query;
+  const { data, isLoading, error, refetch } = query;
 
+  // Extract data or provide defaults
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
   const totalPages = data?.totalPages ?? Math.ceil(total / limit);
   const hasNextPage = (data?.page ?? page) < totalPages;
-  const hasPreviousPage = (data?.page ?? page) > 1;
 
+  // Return result that conforms to ListQueryResult interface
   return {
+    // Data
     items,
+    
+    // Pagination
+    total,
+    page: data?.page ?? page,
+    pageSize: data?.limit ?? limit,
+    totalPages,
+    hasMore: hasNextPage,
+    
+    // Filtering and sorting
+    filters: filters || {},
+    search: search || '',
+    sortBy: sortBy || 'createdAt',
+    sortOrder: sortOrder || 'desc',
+    
+    // Query state
     isLoading,
-    isFetching,
+    isError: !!error,
     error: error as Error | null,
     refetch,
-    total,
-    pagination: {
-      page: data?.page ?? page,
-      pageSize: data?.limit ?? limit,
-      totalPages,
-      total,
-      hasNextPage,
-      hasPreviousPage,
-    },
-    response: data,
+    
+    // Actions
+    setPage,
+    setPageSize,
+    setSearch,
+    applyFilters,
+    changeSorting,
+    
+    // Query parameters for debugging
+    queryParams: queryParams as Record<string, unknown>,
+    
+    // Raw query for advanced use cases
+    query: {
+      data,
+      isLoading,
+      isError: !!error,
+      error: error as Error | null,
+      refetch
+    }
   };
 }
+

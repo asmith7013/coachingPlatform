@@ -2,8 +2,14 @@
 import { connectToDB } from "@data-server/db/connection";
 import { QueryParams } from "@core-types/query";
 import { ZodSchema } from "zod";
-import { Model, FilterQuery } from "mongoose";
-import { transformDocument } from "@/lib/data-utilities/transformers/core/db-transformers";
+import { Model, FilterQuery, Document } from "mongoose";
+import { transformDocument } from "@/lib/data-utilities/transformers/core/document";
+import { validateSafe } from "@/lib/data-utilities/transformers/core/validation";
+
+interface ValidationError {
+  id: string;
+  item: Record<string, unknown>;
+}
 
 /**
  * Creates an API-safe version of a data fetching function
@@ -14,9 +20,9 @@ import { transformDocument } from "@/lib/data-utilities/transformers/core/db-tra
  * @param defaultSearchField The field to search by default (e.g., "name", "title")
  * @returns A function that can be used in API routes
  */
-export function createApiSafeFetcher<T, M>(
+export function createApiSafeFetcher<T, M extends Document>(
   model: Model<M>,
-  _schema: ZodSchema<T>,
+  schema: ZodSchema<T>,
   defaultSearchField?: string
 ) {
   return async function(params: QueryParams) {
@@ -49,13 +55,45 @@ export function createApiSafeFetcher<T, M>(
         
       const total = await model.countDocuments(query as FilterQuery<M>);
       
-      // Sanitize and return
+      // Transform MongoDB documents
+      const transformedItems = transformDocument(items);
+      
+      // Validate the transformed items against the schema
+      const validItems: T[] = [];
+      const validationErrors: ValidationError[] = [];
+      
+      // Ensure transformedItems is an array
+      const itemsArray = Array.isArray(transformedItems) ? transformedItems : [transformedItems];
+      
+      itemsArray.forEach((item: Record<string, unknown>) => {
+        const validItem = validateSafe(schema, item);
+        if (validItem) {
+          validItems.push(validItem);
+        } else {
+          validationErrors.push({
+            id: item._id as string,
+            item
+          });
+        }
+      });
+      
+      // Log validation errors in development
+      if (process.env.NODE_ENV === 'development' && validationErrors.length > 0) {
+        console.warn(`Validation errors in ${model.modelName} fetcher:`, 
+          validationErrors.length
+        );
+      }
+      
+      // Return the response with validated items
       return {
-        items: transformDocument(items),
-        total,
+        items: validItems,
+        total, // Keep the total count including invalid items
         success: true,
         page,
-        limit
+        limit,
+        totalPages: Math.ceil(total / limit),
+        hasMore: (page * limit) < total,
+        validationErrors: validationErrors.length > 0 ? validationErrors : undefined
       };
     } catch (error) {
       console.error(`API fetch error:`, error);

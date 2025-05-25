@@ -5,7 +5,7 @@ import {
   BaseResponseZodSchema, 
   CollectionResponseZodSchema, 
   EntityResponseZodSchema 
-} from '@/lib/data-schema/zod-schema/core-types/response';
+} from '@zod-schema/core-types/response';
 
 /**
  * Base response interface for all API responses

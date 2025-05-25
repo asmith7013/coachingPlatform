@@ -1,9 +1,8 @@
 import type { Model } from "mongoose";
 import { revalidatePath } from "next/cache";
 import type { ZodSchema } from "zod";
-import { validateStrict, validatePartialStrict } from '@/lib/data-utilities/transformers/core/schema-validators';
-
-import { prepareForCreate, transformDocument } from "@/lib/data-utilities/transformers/core/db-transformers";
+import { validateStrict, validatePartialStrict } from '@/lib/data-utilities/transformers/core/validation';
+import { prepareForCreate, transformDocument } from "@/lib/data-utilities/transformers/core/document";
 import { handleServerError } from "@error/handlers/server";
 import { connectToDB } from "@data-server/db/connection";
 import type { z } from "zod";

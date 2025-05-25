@@ -205,6 +205,88 @@ const transformedData = schoolSelector(apiResponse);
 
 </section>
 
+<section id="selector-transformer-relationship">
+
+## Relationship Between Selectors and Transformers
+
+Our query system leverages two interconnected patterns to ensure consistent data handling: **selectors** (for consistent data extraction) and **transformers** (for data validation and normalization).
+
+### Selector-Transformer Interaction
+
+Selectors act as a high-level interface for components, while transformers handle the underlying data processing:
+
+```typescript
+// Selectors use transformers internally
+const selector = createEntitySelector<School>(
+  'schools',
+  SchoolZodSchema // Schema passed to transformer
+);
+
+// When a component uses a selector
+const schools = useQuery(['schools'], fetchSchools, {
+  select: selector.basic // Uses transformer under the hood
+});
+```
+
+#### How They Work Together
+
+1. **Data Flow**: Raw API data → Transformer → Selector → Component
+2. **Responsibility Division**:
+   - **Transformers**: Low-level data validation, sanitization, and normalization
+   - **Selectors**: High-level data extraction, formatting, and presentation
+
+### Core Implementation
+
+The selector factory creates transformers internally and exposes a consistent API:
+
+```typescript
+export function createEntitySelector<T>(entityType: string, schema: ZodSchema<T>) {
+  // Create a transformer using the schema
+  const baseTransformer = createTransformer<T>({
+    schema,
+    errorContext: `${entityType}Selector`
+  });
+  
+  // Expose selector methods that use the transformer
+  return {
+    basic: (data) => baseTransformer.transformResponse(data).items,
+    detail: (data) => baseTransformer.transformSingle(data),
+    // Additional selector methods...
+  };
+}
+```
+
+### Key Benefits
+
+1. **Schema Enforcement**: All data passes through schema validation via transformers
+2. **Consistent Error Handling**: Centralized error processing at the transformation layer
+3. **Type Safety**: Full type safety from raw data to component props
+4. **Abstraction Layers**: Clean separation between API data format and component data needs
+
+### Common Usage Patterns
+
+```typescript
+// 1. Basic data transformation
+const schools = schoolSelector.basic(apiResponse);
+
+// 2. Single entity transformation
+const school = schoolSelector.detail(entityResponse);
+
+// 3. Custom transformation with schema validation
+const enhancedSchools = schoolSelector.transform(school => ({
+  ...school,
+  fullName: `${school.district} - ${school.schoolName}`
+}));
+
+// 4. Direct schema validation
+const isValid = schoolSelector.validate(data);
+```
+
+[RULE] Always use selectors instead of direct transformer calls in components to ensure consistent data handling.
+
+</section>
+
+
 <section id="response-types">
 
 ## Response Type Processing

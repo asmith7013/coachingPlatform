@@ -1,6 +1,6 @@
 import { TeacherScheduleModel, BellScheduleModel } from '@mongoose-schema/schedule/schedule.model';
 import { TeacherScheduleZodSchema, BellScheduleZodSchema } from '@zod-schema/schedule/schedule';
-import { createApiSafeFetcher } from '@api-handlers/api-adapter';
+import { createApiSafeFetcher } from '@api-fetchers/factory';
 
 /**
  * API-safe fetcher for teacher schedules

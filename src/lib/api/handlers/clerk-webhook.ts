@@ -1,9 +1,9 @@
 import { UserJSON, OrganizationJSON, DeletedObjectJSON } from '@clerk/nextjs/server';
-import { UserMetadataSchema } from '@core-types/auth';
+import { UserMetadataZodSchema } from '@zod-schema/core-types/auth';
 import { NYCPSStaffModel } from '@mongoose-schema/core/staff.model';
 import { TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
 import { withDbConnection } from '@data-server/db/ensure-connection';
-import { validateSafe } from '@/lib/data-utilities/transformers/core/schema-validators';
+import { validateSafe } from '@/lib/data-utilities/transformers/core/validation';
 import { captureError, createErrorContext, handleServerError } from '@error';
 
 // Type definitions
@@ -40,7 +40,7 @@ export async function handleUserSync(data: UserWebhookData): Promise<WebhookResu
   return withDbConnection(async () => {
     try {
       // Parse and validate metadata
-      const metadata = validateSafe(UserMetadataSchema, data.public_metadata || {});
+      const metadata = validateSafe(UserMetadataZodSchema, data.public_metadata || {});
       
       if (!metadata) {
         const errorMessage = 'Invalid user metadata structure';
@@ -70,12 +70,12 @@ export async function handleUserSync(data: UserWebhookData): Promise<WebhookResu
       const updateData = {
         email: data.email_addresses?.[0]?.email_address,
         // Map Clerk roles to staff roles
-        ...(metadata.staffType === 'nycps' && metadata.roles.length > 0 && {
+        ...(metadata.staffType === 'nycps' && metadata.roles && metadata.roles.length > 0 && {
           rolesNYCPS: metadata.roles.filter((role: string) => 
             ['Teacher', 'Principal', 'AP', 'Coach', 'Administrator'].includes(role)
           )
         }),
-        ...(metadata.staffType === 'teachinglab' && metadata.roles.length > 0 && {
+        ...(metadata.staffType === 'teachinglab' && metadata.roles && metadata.roles.length > 0 && {
           rolesTL: metadata.roles.filter((role: string) => 
             ['Coach', 'CPM', 'Director', 'Senior Director'].includes(role)
           )
@@ -102,7 +102,7 @@ export async function handleUserSync(data: UserWebhookData): Promise<WebhookResu
       console.log(`Successfully updated staff ${metadata.staffId} for user ${data.id}`);
       
       // Handle school associations if present
-      if (metadata.schoolIds.length > 0) {
+      if (metadata.schoolIds && metadata.schoolIds.length > 0) {
         console.log(`User ${data.id} associated with schools:`, metadata.schoolIds);
         // TODO: Implement school association updates when needed
       }

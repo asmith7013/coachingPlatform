@@ -1,7 +1,8 @@
-import { validateSafe, validateStrict } from '@/lib/data-utilities/transformers/core/schema-validators';
-import { transformDocument } from '@/lib/data-utilities/transformers/core/db-transformers';
 import { ZodSchema } from 'zod';
 
+import { validateSafe, validateStrict } from '@transformers/core/validation';
+import { transformDocument } from '@transformers/core/document';
+import { BaseDocument } from '@core-types/document';
 /**
  * Type for domain transformation functions
  */
@@ -83,6 +84,25 @@ export function createDomainPipeline<T, R>(
   transform: DomainTransformer<T, R>
 ): DomainTransformPipeline<T, R> {
   return { schema, transform };
+}
+
+/**
+ * Creates a transformer function that applies the 3-layer transformation system
+ */
+export function createTransformer<T extends BaseDocument, U extends BaseDocument>(
+  domainTransformer: (item: T) => U
+): (items: T[]) => U[] {
+  return (items: T[]) => {
+    return items
+      .map(item => {
+        // Layer 1: Ensure MongoDB document transformation
+        const transformedItem = transformDocument(item) as T;
+        
+        // Layer 3: Apply domain-specific transformation
+        return domainTransformer(transformedItem);
+      })
+      .filter(Boolean);
+  };
 }
 
 // Export compatibility aliases

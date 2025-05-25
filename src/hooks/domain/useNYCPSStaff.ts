@@ -14,8 +14,8 @@ import {
   deleteNYCPSStaff 
 } from '@actions/staff/operations';
 import { WithDateObjects } from '@core-types/document';
-import { wrapServerActions } from '@/lib/data-utilities/transformers/mappers/response-transformer';
-import { transformDocument } from '@/lib/data-utilities/transformers/core/db-transformers';
+import { wrapServerActions } from '@/lib/data-utilities/transformers/factories/server-action-factory';
+import { transformDocument } from '@/lib/data-utilities/transformers/core/document';
 import { ZodType } from 'zod';
 
 /**

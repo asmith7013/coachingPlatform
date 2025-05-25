@@ -3,7 +3,7 @@ import {
   UserMetadataZodSchema,
   ErrorContextBaseZodSchema,
   AuthenticatedUserBaseZodSchema
-} from '@/lib/data-schema/zod-schema/core-types/auth';
+} from '@zod-schema/core-types/auth';
 import { RolesNYCPSZod, RolesTLZod } from '@enums';
 
 // Keep permission constants as TypeScript (they're static constants)

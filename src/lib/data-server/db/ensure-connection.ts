@@ -1,4 +1,4 @@
-import { connectToDB } from "@/lib/data-server/db/connection";
+import { connectToDB } from "@data-server/db/connection";
 
 /**
  * Ensures database connection is established before executing an operation

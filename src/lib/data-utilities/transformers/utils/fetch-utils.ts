@@ -1,6 +1,6 @@
 // src/lib/data-utilities/transformers/fetch-by-id.ts
 import { connectToDB } from '@data-server/db/connection';
-import { transformDocument } from '@/lib/data-utilities/transformers/core/db-transformers';
+import { transformDocument } from '@/lib/data-utilities/transformers/core/document';
 import { Model } from 'mongoose';
 import { ZodSchema } from 'zod';
 

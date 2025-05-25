@@ -2,7 +2,7 @@
 import { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import { BaseDocument } from '@core-types/document';
 import { CollectionResponse, EntityResponse } from '@core-types/response';
-import { PaginatedResponse } from '@core-types/pagination';
+import { PaginatedResponse } from '@core-types/query';
 import { ErrorContext } from '@error-types';
 import { QueryParams } from '@core-types/query';
 import { ZodSchema } from 'zod';

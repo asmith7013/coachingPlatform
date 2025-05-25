@@ -1,15 +1,6 @@
 import { CollectionResponse } from '@core-types/response';
 import { CollectionResponseZodSchema } from '@zod-schema/core-types/response';
 
-
-// Updated - Option 1: Add new function with deprecation notice
-/**
- * @deprecated Use collectionizeResponse instead
- */
-export function standardizeResponse<T = Record<string, unknown>>(data: unknown): CollectionResponse<T> {
-  return collectionizeResponse(data);
-}
-
 /**
  * Standardizes API responses to ensure consistent format
  * @param data - The data to standardize
@@ -95,7 +86,7 @@ export function withCollectionResponse<T, Args extends unknown[]>(
       }
       
       // Standardize the result
-      const standardized = standardizeResponse(result);
+      const standardized = collectionizeResponse(result);
       
       // Return as Response
       return Response.json(standardized);

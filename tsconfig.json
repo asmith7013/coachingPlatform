@@ -59,7 +59,7 @@
         "@domain/*": ["./src/lib/domain/*"],
         "@error/*": ["./src/lib/error/*"],
         "@error": ["./src/lib/error"],
-        "@query/*": ["src/query/*"],
+        "@query/*": ["./src/query/*"],  
         "@query-hooks/*": ["./src/hooks/query/*"],
         "@config/*": ["./src/lib/config/*"],
         "@config": ["./src/lib/config"],
@@ -69,6 +69,7 @@
         "@api-fetchers/*": ["./src/lib/api/fetchers/*"],
         "@api-handlers/*": ["./src/lib/api/handlers/*"],
         "@api-responses/*": ["./src/lib/api/responses/*"],
+        "@api-validation/*": ["./src/lib/api/validation/*"],
         "@api-integrations/*": ["./src/lib/integrations/*"],
         "@api-monday/*": ["./src/lib/integrations/monday/*"],
 

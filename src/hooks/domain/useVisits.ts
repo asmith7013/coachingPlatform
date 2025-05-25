@@ -10,11 +10,11 @@ import {
   createVisit
 } from '@/app/actions/visits/visits';
 import { WithDateObjects } from '@/lib/types/core/document';
-import { wrapServerActions } from '@/lib/data-utilities/transformers/mappers/response-transformer';
+import { wrapServerActions } from '@/lib/data-utilities/transformers/factories/server-action-factory';
 import { QueryParams } from '@core-types/query';
 import { ZodType } from 'zod';
 import { CollectionResponse } from '@core-types/response';
-import { transformDocument } from '@/lib/data-utilities/transformers/core/db-transformers';
+import { transformDocument } from '@/lib/data-utilities/transformers/core/document';
 
 /**
  * Visit entity with Date objects instead of string dates

@@ -6,7 +6,7 @@ import {
   NYCPSStaff,
   TeachingLabStaff,
 } from '@/lib/data-schema/zod-schema/core/staff';
-import { transformDocument } from '@/lib/data-utilities/transformers/core/db-transformers';
+import { transformDocument } from '@/lib/data-utilities/transformers/core/document';
 
 // Define types with date objects
 export type NYCPSStaffWithDates = WithDateObjects<NYCPSStaff>;

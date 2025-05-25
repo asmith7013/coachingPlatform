@@ -17,7 +17,7 @@ import {
 } from "@data-server/crud/crud-operations";
 import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
 import { type QueryParams, buildQueryParams } from "@core-types/query";
-import { sanitizeSortBy } from "@data-utilities/pagination/sort-utils";
+import { sanitizeSortBy } from "@data-utilities/pagination/pagination-utils";
 import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
 import { uploadFileWithProgress } from "@data-server/file-handling/file-upload";
 import { connectToDB } from "@data-server/db/connection";

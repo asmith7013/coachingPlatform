@@ -1,6 +1,6 @@
-import type { BaseDocument } from './document';
+import type { BaseDocument } from '@core-types/document';
 import type { QueryKey } from '@tanstack/react-query';
-import type { BaseResponse } from './response';
+import type { BaseResponse } from '@core-types/response';
 
 /**
  * Cache operation types for entity mutations

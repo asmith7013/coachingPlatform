@@ -1,18 +1,10 @@
 // src/lib/error/core/responses.ts
 
-import { 
-    ErrorResponse, 
-    ErrorContext,
-    CollectionErrorResponse, 
-    EntityErrorResponse, 
-    ApiError
-  } from "@error-types";
-  import { 
-    CollectionResponse, 
-    EntityResponse 
-  } from "@core-types/response";
-  import { logError } from "@error/core/logging";
-  import { formatErrorMessage } from "@error/core/transformation";
+import { ErrorResponse, ErrorContext,CollectionErrorResponse, 
+  EntityErrorResponse, ApiError } from "@error-types";
+import { CollectionResponse, EntityResponse } from "@core-types/response";
+import { logError } from "@error/core/logging";
+import { formatErrorMessage } from "@error/core/transformation";
   
   /**
    * Creates a basic error response

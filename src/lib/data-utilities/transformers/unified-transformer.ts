@@ -1,15 +1,15 @@
 import { ZodSchema } from 'zod';
 import { BaseDocument, WithDateObjects } from '@core-types/document';
 import { CollectionResponse, EntityResponse } from '@core-types/response';
-import { transformDocument } from './core/db-transformers';
+import { transformDocument } from '@transformers/core/document';
 import { 
   validateSafe, 
   validateStrict 
-} from './core/schema-validators';
+} from '@transformers/core/validation';
 import { 
   applyDomainTransform, 
   createDomainPipeline 
-} from './core/domain-transformers';
+} from '@transformers/factories/domain-factory';
 import { handleClientError } from '@error/handlers/client';
 
 /**
@@ -119,7 +119,10 @@ function transformItem<T extends BaseDocument, R = T>(
 /**
  * Unified transformation utility that handles all transformation cases
  */
-export function transformData<T extends BaseDocument, R = T>(
+export function transformData<
+  T extends BaseDocument, 
+  R extends Record<string, unknown> = T
+>(
   data: unknown[] | undefined | null,
   options: TransformOptions<T, R>
 ): R[] {
@@ -161,7 +164,10 @@ export function transformData<T extends BaseDocument, R = T>(
 /**
  * Transform a collection response using the unified transformer
  */
-export function transformResponseData<T extends BaseDocument, R = T>(
+export function transformResponseData<
+  T extends BaseDocument, 
+  R extends Record<string, unknown> = T
+>(
   response: CollectionResponse<unknown> | undefined | null,
   options: TransformOptions<T, R>
 ): CollectionResponse<R> {
@@ -193,10 +199,13 @@ export function transformResponseData<T extends BaseDocument, R = T>(
 /**
  * Transform an entity response using the unified transformer
  */
-export function transformEntityData<T extends BaseDocument, R = T>(
-  response: EntityResponse<unknown> | undefined | null,
-  options: TransformOptions<T, R>
-): EntityResponse<R | null> {
+  export function transformEntityData<
+    T extends BaseDocument, 
+    R extends Record<string, unknown> = T
+  >(
+    response: EntityResponse<unknown> | undefined | null,
+    options: TransformOptions<T, R>
+  ): EntityResponse<R | null> {
   if (!response) {
     return { success: false, data: null as unknown as R };
   }
@@ -225,7 +234,10 @@ export function transformEntityData<T extends BaseDocument, R = T>(
 /**
  * Transform a single item using the unified transformer
  */
-export function transformSingleItem<T extends BaseDocument, R = T>(
+export function transformSingleItem<
+  T extends BaseDocument, 
+  R extends Record<string, unknown> = T
+>(
   item: unknown,
   options: TransformOptions<T, R>
 ): R | null {
@@ -247,7 +259,10 @@ export function withDates<T extends BaseDocument>(item: T): WithDateObjects<T> {
 /**
  * Create a transformer with fixed options
  */
-export function createTransformer<T extends BaseDocument, R = T>(
+export function createTransformer<
+  T extends BaseDocument, 
+  R extends Record<string, unknown> = T
+>(
   baseOptions: TransformOptions<T, R>
 ): {
   transform: (data: unknown[] | undefined | null, additionalOptions?: Partial<TransformOptions<T, R>>) => R[];

@@ -1,18 +1,20 @@
-import { NextResponse } from "next/server";
-import { handleServerError } from "@error/handlers/server";
-import { collectionizeResponse } from "@api-responses/standardize";
-import { QueryParams } from "@core-types/query";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { QueryParamsZodSchema } from "@zod-schema/core-types/query";
 import { BaseReference } from "@core-types/reference";
 import { PaginatedResponse } from "@core-types/pagination";
+import { withQueryValidation } from "@api-validation/integrated-validation";
+import { 
+  createCollectionResponse, 
+  createMonitoredErrorResponse 
+} from "@api-responses/action-response-helper";
+import { collectionizeResponse } from "@api-responses/formatters";
 
 /**
  * Generic type for any fetch function that returns items and total
  */
-// Modified to use PaginatedResponse which includes page and limit
-export type FetchFunction<T> = (params: QueryParams) => Promise<PaginatedResponse<T | Omit<T, 'createdAt' | 'updatedAt'> & {
-  createdAt?: string | Date;
-  updatedAt?: string | Date;
-}>>;
+export type FetchFunction<T> = (params: z.infer<typeof QueryParamsZodSchema>) => 
+  Promise<PaginatedResponse<T>>;
 
 /**
  * Type for mapping functions to transform data items
@@ -49,14 +51,20 @@ export interface ReferenceEndpointOptions<T, R extends BaseReference> {
   defaultLimit?: number;
 
   /**
-   * Function to transform search terms before querying
-   * Useful for case insensitivity, partial matching, etc.
+   * Custom schema for query parameters validation and transformation
+   * Extends the base QueryParamsZodSchema
    */
-  transformSearchTerm?: (term: string) => string;
+  querySchema?: z.ZodType<z.infer<typeof QueryParamsZodSchema>>;
+  
+  /**
+   * Custom schema for response validation
+   * Defaults to a schema based on BaseReferenceZodSchema
+   */
+  responseSchema?: z.ZodType<PaginatedResponse<R>>;
 }
 
 /**
- * Creates a standardized GET handler for reference data endpoints
+ * Creates a standardized GET handler for reference data endpoints with Zod schema validation
  */
 export function createReferenceEndpoint<T, R extends BaseReference>(options: ReferenceEndpointOptions<T, R>) {
   const {
@@ -65,46 +73,75 @@ export function createReferenceEndpoint<T, R extends BaseReference>(options: Ref
     logPrefix = "API",
     defaultSearchField,
     defaultLimit = 20,
-    transformSearchTerm = (term) => term
+    // Use provided schemas or create default ones
+    querySchema = QueryParamsZodSchema.transform((data) => {
+      // Handle type conversion for numeric values from URL parameters
+      return {
+        ...data,
+        page: typeof data.page === 'string' ? parseInt(data.page, 10) || 1 : (data.page || 1),
+        limit: typeof data.limit === 'string' ? parseInt(data.limit, 10) || defaultLimit : (data.limit || defaultLimit),
+        // Handle boolean conversions
+        ...Object.fromEntries(
+          Object.entries(data)
+            .filter(([key]) => !['page', 'limit', 'sortBy', 'sortOrder'].includes(key))
+            .map(([key, value]) => {
+              if (value === 'true') return [key, true];
+              if (value === 'false') return [key, false];
+              return [key, value];
+            })
+        )
+      };
+    })
   } = options;
 
-  return async function GET(req: Request) {
+  // Define the base handler that processes validated parameters
+  const baseHandler = async function(validatedParams: z.infer<typeof querySchema>, req: NextRequest) {
+    const endpoint = req.url.split("?")[0].split("/api/")[1];
+    const component = `${logPrefix}/${endpoint}`;
+    
     try {
-      const { searchParams } = new URL(req.url);
-      const endpoint = req.url.split("?")[0].split("/api/")[1];
-
-      // Extract common query parameters
-      const search = searchParams.get("search") ?? undefined;
-      const limit = Number(searchParams.get("limit") ?? defaultLimit);
-      const page = Number(searchParams.get("page") ?? 1);
-      const sortBy = searchParams.get("sortBy") ?? undefined;
-      const sortOrder = searchParams.get("sortOrder") as "asc" | "desc" | undefined;
-
-      // Build filters object
-      const filters: Record<string, unknown> = {};
+      // Extract parameters from validated object
+      const { 
+        page = 1, 
+        limit = defaultLimit, 
+        sortBy, 
+        sortOrder = 'desc', 
+        search, 
+        filter,
+        filters = {},
+        ...rest
+      } = validatedParams;
       
-      // Add search filter if provided and defaultSearchField is set
-      if (search && defaultSearchField) {
-        filters[defaultSearchField] = transformSearchTerm(search);
+      // Combine explicit filters and additional query parameters
+      const combinedFilters = {
+        ...filters,
+        ...(filter || {}),
+        // Include other params that aren't standard pagination/sorting
+        ...Object.fromEntries(
+          Object.entries(rest)
+            .filter(([key]) => !['search', 'searchFields', 'options'].includes(key))
+        )
+      };
+      
+      // Special handling for search parameter with defaultSearchField
+      if (search && defaultSearchField && !combinedFilters[defaultSearchField]) {
+        combinedFilters[defaultSearchField] = { $regex: search, $options: 'i' };
       }
-      
-      // Add any additional filters from query params
-      searchParams.forEach((value, key) => {
-        // Skip standard pagination/sorting params
-        if (!["search", "limit", "page", "sortBy", "sortOrder"].includes(key)) {
-          filters[key] = value;
-        }
-      });
 
-      console.log(`📥 ${logPrefix} /${endpoint} request received with search: "${search}", limit: ${limit}, filters:`, filters);
+      console.log(`📥 ${logPrefix} /${endpoint} request:`, {
+        page, limit, sortBy, sortOrder, search, filters: combinedFilters
+      });
 
       // Fetch data using the provided function
       const data = await fetchFunction({
-        limit,
-        page,
-        filters,
+        page: Number(page),
+        limit: Number(limit),
         sortBy,
-        sortOrder
+        sortOrder: sortOrder as 'asc' | 'desc',
+        search,
+        filters: combinedFilters,
+        // Include all params for maximum flexibility
+        ...rest
       });
 
       // Check for fetch errors
@@ -124,28 +161,105 @@ export function createReferenceEndpoint<T, R extends BaseReference>(options: Ref
       
       console.log(`📤 ${logPrefix} /${endpoint} response: ${references.length} items found`);
 
-      // Return response with pagination details
-      return NextResponse.json({
-        items: references,
-        total: data.total,
-        page: data.page,
-        limit: data.limit,
-        totalPages: data.totalPages,
-        hasMore: data.hasMore,
-        success: true
-      });
+      // Use the response helper to create a consistent collection response
+      // Add pagination metadata
+      const response = {
+        ...createCollectionResponse(references),
+        page: data.page || page,
+        limit: data.limit || limit,
+        totalPages: data.totalPages || Math.ceil(data.total / (data.limit || limit)),
+        hasMore: data.hasMore || ((data.page || page) * (data.limit || limit)) < data.total,
+      };
+
+      return NextResponse.json(response);
     } catch (error) {
-      const errorMessage = handleServerError(error);
-      console.error(`❌ Error in /${req.url.split("/api/")[1]}: ${errorMessage}`);
+      // Use the monitored error response helper
+      const errorResponse = createMonitoredErrorResponse(
+        error,
+        { component, operation: 'getReferenceData' }
+      );
+      
+      console.error(`❌ Error in /${endpoint}: ${errorResponse.error}`);
       
       return NextResponse.json(
-        collectionizeResponse({
-          items: [],
-          success: false,
-          message: errorMessage
-        }),
+        errorResponse,
         { status: 500 }
       );
     }
   };
+
+  // Apply query validation to the handler
+  return withQueryValidation(
+    querySchema,
+    baseHandler
+  );
+}
+
+/**
+ * Helper function to create a custom query schema for reference endpoints
+ * @param additionalFields Additional fields to add to the base query schema
+ * @returns A new Zod schema that includes standard query params and custom fields
+ */
+export function createReferenceQuerySchema<T extends z.ZodRawShape>(
+  additionalFields: T
+): z.ZodType<z.infer<typeof QueryParamsZodSchema> & { [k in keyof T]: z.infer<T[k]> }> {
+  const baseSchema = QueryParamsZodSchema.extend(additionalFields);
+  return baseSchema.transform((data) => {
+    type TransformedType = {
+      page: number;
+      limit: number;
+      sortBy: string;
+      sortOrder: 'asc' | 'desc';
+      search?: string;
+      filter?: Record<string, unknown>;
+      filters: Record<string, unknown>;
+      searchFields?: string[];
+      options?: Record<string, unknown>;
+      [key: string]: unknown;
+    };
+
+    const transformed: TransformedType = {
+      page: Number(data.page) || 1,
+      limit: Number(data.limit) || 20,
+      sortBy: data.sortBy || '',
+      sortOrder: (data.sortOrder || 'desc') as 'asc' | 'desc',
+      search: data.search || undefined,
+      filter: data.filter || undefined,
+      filters: data.filters || {},
+      searchFields: data.searchFields || undefined,
+      options: data.options || undefined,
+    };
+
+    // Add any additional fields from the extended schema
+    Object.entries(data)
+      .filter(([key]) => !Object.keys(transformed).includes(key))
+      .forEach(([key, value]) => {
+        if (value === 'true') transformed[key] = true;
+        else if (value === 'false') transformed[key] = false;
+        else transformed[key] = value;
+      });
+
+    return transformed as z.infer<typeof QueryParamsZodSchema> & { [k in keyof T]: z.infer<T[k]> };
+  });
+}
+
+/**
+ * Helper function to create a custom reference response schema
+ * @param referenceSchema The schema for reference items
+ * @returns A paginated response schema with the specified reference items
+ */
+export function createReferenceResponseSchema<T extends z.ZodRawShape>(
+  referenceSchema: z.ZodObject<T>
+) {
+  return z.object({
+    success: z.boolean(),
+    items: z.array(referenceSchema),
+    total: z.number(),
+    page: z.number(),
+    limit: z.number(),
+    totalPages: z.number(),
+    hasMore: z.boolean(),
+    message: z.string().optional(),
+    empty: z.boolean().optional()
+  });
 }
