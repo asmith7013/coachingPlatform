@@ -5,25 +5,33 @@ import { prefetchQueries } from '@query/server/prefetch';
 import { DashboardPage } from '@components/composed/layouts/DashboardPage';
 import SchoolDetailClient from './client';
 
-export default async function SchoolDetailPage({ params }: { params: { schoolId: string } }) {
+// ✅ Updated interface for Next.js 15 - params is now a Promise
+interface PageProps {
+  params: Promise<{ schoolId: string }>;
+}
+
+export default async function SchoolDetailPage({ params }: PageProps) {
+  // ✅ Await the params Promise
+  const { schoolId } = await params;
+  
   // Use the prefetchQueries utility to create a dehydrated state
   const dehydratedState = await prefetchQueries([
     {
       // Prefetch the school details
-      queryKey: [...queryKeys.entities.detail('schools', params.schoolId)],
-      queryFn: () => fetchSchoolById(params.schoolId)
+      queryKey: [...queryKeys.entities.detail('schools', schoolId)],
+      queryFn: () => fetchSchoolById(schoolId)
     },
     {
       // Prefetch related staff data
       queryKey: [...queryKeys.entities.list('nycps-staff', { 
-        filters: { schools: [params.schoolId] } 
+        filters: { schools: [schoolId] } 
       })],
       queryFn: () => fetchNYCPSStaff({ 
         page: 1,
         limit: 50,
         sortBy: 'staffName',
         sortOrder: 'asc',
-        filters: { schools: [params.schoolId] }
+        filters: { schools: [schoolId] }
       })
     }
   ]);
@@ -31,7 +39,7 @@ export default async function SchoolDetailPage({ params }: { params: { schoolId:
   // Get the school name for the page title (optional)
   let title = "School Details";
   try {
-    const schoolData = await fetchSchoolById(params.schoolId);
+    const schoolData = await fetchSchoolById(schoolId);
     if (schoolData.success && schoolData.items && schoolData.items.length > 0) {
       title = schoolData.items[0].schoolName || "School Details";
     }
@@ -46,7 +54,7 @@ export default async function SchoolDetailPage({ params }: { params: { schoolId:
       description="View and manage school details"
       dehydratedState={dehydratedState}
     >
-      <SchoolDetailClient schoolId={params.schoolId} />
+      <SchoolDetailClient schoolId={schoolId} />
     </DashboardPage>
   );
 }
