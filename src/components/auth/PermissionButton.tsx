@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, ButtonProps } from '@/components/core';
 import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
 import { Permission } from '@core-types/auth';

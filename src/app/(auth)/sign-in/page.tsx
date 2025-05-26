@@ -1,5 +1,7 @@
+'use client';
+
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
-import { Card } from '@components/composed/cards/Card'
+import { Card } from '@/components/composed/cards/Card'
 
 export default function SignInPage() {
   return (

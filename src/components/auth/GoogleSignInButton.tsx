@@ -1,3 +1,5 @@
+'use client';
+
 import { useSignIn } from '@clerk/nextjs'
 import { Button } from '@/components/core/Button'
 

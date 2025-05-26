@@ -37,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable} ${inter.className}`}>
       <body className={`bg-seasalt text-gunmetal font-sans antialiased`}>
-        <ClerkProvider>
+        <ClerkProvider dynamic>
           <AuthProvider>
             <QueryProvider>
               <SentryBoundaryWrapper>
