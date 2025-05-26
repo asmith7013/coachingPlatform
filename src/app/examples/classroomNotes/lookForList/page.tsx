@@ -1,34 +1,26 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { Button } from '@/components/core/Button';
-import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
-import { EmptyListWrapper } from "@/components/core/empty/EmptyListWrapper";
-import { RigidResourceForm as GenericResourceForm, type Field } from "@/components/composed/forms/RigidResourceForm";
-import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
-import { ResourceHeader } from "@/components/composed/layouts/ResourceHeader";
+import { Card } from '@components/composed/cards/Card';
+import { Heading } from '@components/core/typography/Heading';
+import { Text } from '@components/core/typography/Text';
+import { Button } from '@components/core/Button';
+import { DashboardPage } from '@components/composed/layouts/DashboardPage';
+import { EmptyListWrapper } from "@components/core/empty/EmptyListWrapper";
+import { RigidResourceForm as GenericResourceForm, type Field } from "@components/composed/forms/RigidResourceForm";
+import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
+import { ResourceHeader } from "@components/composed/layouts/ResourceHeader";
 import { LookForWithDates, useLookFors } from "@hooks/domain/useLookFors";
 import { uploadLookForFile } from "@actions/lookFors/lookFors";
 import { createLookFor } from "@actions/lookFors/lookFors";
 import { LookForInput } from "@zod-schema/look-fors/look-for";
 import { cn } from "@ui/utils/formatters";
 
-// Define a type for the rubric item that matches the expected structure
+// Add proper typing for rubric items
 interface RubricItem {
   category: string | string[];
   score: number;
-  content?: string[];
-  parentId?: string;
-  collectionId?: string;
-  hex?: string;
-}
-
-// Extend LookForWithDates to ensure it has the correct rubric type
-interface ExtendedLookFor extends Omit<LookForWithDates, 'rubric'> {
-  rubric: RubricItem[];
+  content?: string | string[];
 }
 
 const lookForFields: Field<LookForInput>[] = [
@@ -71,6 +63,14 @@ const lookForFields: Field<LookForInput>[] = [
     required: true,
   },
 ];
+
+// Helper function to safely get string value from string or array
+function getStringValue(value: string | string[] | undefined): string {
+  if (Array.isArray(value)) {
+    return value.join(', ');
+  }
+  return value || '';
+}
 
 export default function LookForsWrapper() {
   const {
@@ -138,79 +138,76 @@ export default function LookForsWrapper() {
       />
 
       <EmptyListWrapper items={lookFors} resourceName="look fors">
-        {lookFors.map((lookFor) => {
-          // Cast to extended type to ensure we have the correct rubric structure
-          const extendedLookFor = lookFor as unknown as ExtendedLookFor;
-          
-          return (
-            <Card
-              key={lookFor._id}
-              className="mb-4"
-              padding="md"
-              radius="lg"
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <Heading 
-                    level="h3" 
-                    color="default"
-                    className={cn("text-primary font-medium")}
-                  >
-                    {lookFor.studentFacing ? "✏️" : "🍎"} {lookFor.topic}
-                  </Heading>
-                  <Text 
-                    textSize="base"
-                    color="muted"
-                    className="mt-2"
-                  >
-                    {lookFor.description}
-                  </Text>
-                </div>
-                <Button
-                  onClick={() => lookFor._id && confirmDeleteLookFor(lookFor._id)}
-                  textSize="sm"
-                  padding="sm"
-                  className="text-danger"
+        {lookFors.map((lookFor: LookForWithDates) => (
+          <Card
+            key={lookFor._id}
+            className="mb-4"
+            padding="md"
+            radius="lg"
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <Heading 
+                  level="h3" 
+                  color="default"
+                  className={cn("text-primary font-medium")}
                 >
-                  🗑️ Delete
-                </Button>
+                  {lookFor.studentFacing ? "✏️" : "🍎"} {lookFor.topic}
+                </Heading>
+                <Text 
+                  textSize="base"
+                  color="muted"
+                  className="mt-2"
+                >
+                  {lookFor.description}
+                </Text>
               </div>
-
-              <Heading 
-                level="h3" 
-                color="default"
-                className={cn("text-primary font-medium mt-4 mb-2")}
+              <Button
+                onClick={() => lookFor._id && confirmDeleteLookFor(lookFor._id)}
+                textSize="sm"
+                padding="sm"
+                className="text-danger"
               >
-                Rubric
-              </Heading>
-              {extendedLookFor.rubric?.map((rubricItem, index) => (
+                🗑️ Delete
+              </Button>
+            </div>
+
+            <Heading 
+              level="h3" 
+              color="default"
+              className={cn("text-primary font-medium mt-4 mb-2")}
+            >
+              Rubric
+            </Heading>
+            {lookFor.rubric?.map((rubricItem: unknown, index: number) => {
+              // Type guard and safe casting
+              const typedRubricItem = rubricItem as RubricItem;
+              
+              return (
                 <Card
                   key={index}
                   padding="sm"
+                  className="mb-2"
                 >
                   <Heading 
                     level="h4" 
                     color="default"
                     className={cn("text-primary font-medium")}
                   >
-                    {Array.isArray(rubricItem.category) 
-                      ? rubricItem.category.join(', ') 
-                      : rubricItem.category} ({rubricItem.score})
+                    {getStringValue(typedRubricItem.category)} ({typedRubricItem.score || 'No score'})
                   </Heading>
                   <Text 
                     textSize="base"
                     color="muted"
                     className="mt-2"
                   >
-                    {rubricItem.content && Array.isArray(rubricItem.content) 
-                      ? rubricItem.content[0] 
-                      : "No description"}
+                    {getStringValue(typedRubricItem.content) || "No description"}
                   </Text>
                 </Card>
-              ))}
-            </Card>
-          );
-        })}
+              );
+            })}
+          </Card>
+        ))}
       </EmptyListWrapper>
 
       <div className="mt-8">

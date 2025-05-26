@@ -7,6 +7,7 @@ import { FilterableGridView } from '@/components/domain/rubrics/FilterableGridVi
 import implementationData from '@/lib/json/im-implementation.json';
 import RubricDomainCards from './RubricDomainCards';
 
+
 interface RubricItem {
   id: string;
   level: PerformanceLevelKey;
