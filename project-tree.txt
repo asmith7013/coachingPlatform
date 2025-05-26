@@ -31,9 +31,12 @@
 │   │   ├── transformation-system.md
 │   │   └── type-system.md
 │   ├── examples
-│   │   ├── enhanced-school-hooks-usage.md
-│   │   ├── enhanced-school-hooks-with-bulk-operations.md
-│   │   └── school-detail-prefetch-usage.md
+│   │   ├── consolidated-reference-selectors-summary.md
+│   │   ├── consolidated-reference-selectors.md
+│   │   ├── unified-transformer-hook-helpers-summary.md
+│   │   ├── unified-transformer-hook-helpers.md
+│   │   ├── unified-transformer-selector-factory-summary.md
+│   │   └── unified-transformer-selector-factory.md
 │   ├── table-of-contents.md
 │   └── workflows
 │       ├── common-tasks.md
@@ -170,7 +173,6 @@
 │   │   │   ├── lookForList
 │   │   │   │   └── page.tsx
 │   │   │   ├── migration-test
-│   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── schedule
 │   │   │   │   └── page.tsx
@@ -250,7 +252,6 @@
 │   │   │   │   ├── layout.tsx
 │   │   │   │   ├── lookForList
 │   │   │   │   │   └── page.tsx
-│   │   │   │   ├── page copy.tsx
 │   │   │   │   ├── page.tsx
 │   │   │   │   ├── schedule
 │   │   │   │   │   └── page.tsx
@@ -520,8 +521,10 @@
 │   │   │   └── useRenderTracking.ts
 │   │   ├── domain
 │   │   │   ├── index.ts
+│   │   │   ├── useLookFors.ts
 │   │   │   ├── useNYCPSStaff.ts
 │   │   │   ├── useSchools.ts
+│   │   │   ├── useTeacherSchedules.ts
 │   │   │   ├── useTeachingLabStaff.ts
 │   │   │   ├── useUserStaff.ts
 │   │   │   └── useVisits.ts
@@ -534,6 +537,7 @@
 │   │   │       ├── MondayImportContext.tsx
 │   │   │       ├── MondayIntegrationContext.tsx
 │   │   │       ├── useMondayImportState.ts
+│   │   │       ├── useMondayMutations.ts
 │   │   │       ├── useMondayQueries.ts
 │   │   │       └── useStaffExistence.ts
 │   │   ├── migration
@@ -797,10 +801,10 @@
 │   │   │   ├── core
 │   │   │   │   ├── document.ts
 │   │   │   │   ├── index.ts
+│   │   │   │   ├── transformation-service.ts
 │   │   │   │   ├── unified-transformer.ts
 │   │   │   │   └── validation.ts
 │   │   │   ├── factories
-│   │   │   │   ├── domain-factory.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── reference-factory.ts
 │   │   │   │   ├── response-factory.ts
@@ -933,17 +937,16 @@
 │   │   │   │       └── usePaginatedQuery.ts
 │   │   │   ├── index.ts
 │   │   │   ├── selectors
-│   │   │   │   ├── domain-selectors.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── reference-selectors.ts
 │   │   │   │   ├── selector-factory.ts
-│   │   │   │   ├── selector-registry.ts
 │   │   │   │   ├── selector-types.ts
 │   │   │   │   └── standard-selectors.ts
 │   │   │   └── utilities
 │   │   │       ├── hook-helpers.ts
 │   │   │       ├── mutation-helpers.ts
-│   │   │       └── optimistic-update-helpers.ts
+│   │   │       ├── optimistic-update-helpers.ts
+│   │   │       └── selector-helpers.ts
 │   │   ├── core
 │   │   │   ├── client.ts
 │   │   │   ├── index.ts
@@ -973,4 +976,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-290 directories, 684 files
+290 directories, 687 files
