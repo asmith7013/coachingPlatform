@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { withDbConnection } from "@data-server/db/ensure-connection";
+import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
 import { 
@@ -10,8 +10,8 @@ import {
   tlStaffActions 
 } from "./factories";
 import { determineStaffType } from "@domain-types/staff";
-import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
-import { uploadFileWithProgress } from "@data-server/file-handling/file-upload";
+import { bulkUploadToDB } from "@server/crud/bulk-operations";
+import { uploadFileWithProgress } from "@server/file-handling/file-upload";
 import type { QueryParams } from "@core-types/query";
 import { NYCPSStaffModel, TeachingLabStaffModel, StaffMemberModel } from "@mongoose-schema/core";
 
@@ -22,13 +22,13 @@ import {
   TeachingLabStaffInputZodSchema,
   NYCPSStaffZodSchema,
   TeachingLabStaffZodSchema
-} from "@/lib/data-schema/zod-schema/core/staff";
+} from "@zod-schema/core/staff";
 type StaffMemberInput = z.infer<typeof StaffMemberInputZodSchema>;
 type NYCPSStaffInput = z.infer<typeof NYCPSStaffInputZodSchema>;
 type TeachingLabStaffInput = z.infer<typeof TeachingLabStaffInputZodSchema>;
 
 // Base Staff operations
-export async function fetchStaffMembers(params: QueryParams = {}) {
+export async function fetchStaffMembers(params: QueryParams) {
   return withDbConnection(() => staffActions.fetch(params));
 }
 
@@ -49,7 +49,7 @@ export async function fetchStaffMemberById(id: string) {
 }
 
 // NYCPS Staff operations
-export async function fetchNYCPSStaff(params: QueryParams = {}) {
+export async function fetchNYCPSStaff(params: QueryParams) {
   return withDbConnection(() => nycpsStaffActions.fetch(params));
 }
 
@@ -70,7 +70,7 @@ export async function fetchNYCPSStaffById(id: string) {
 }
 
 // Teaching Lab Staff operations
-export async function fetchTeachingLabStaff(params: QueryParams = {}) {
+export async function fetchTeachingLabStaff(params: QueryParams) {
   return withDbConnection(() => tlStaffActions.fetch(params));
 }
 
@@ -94,7 +94,7 @@ export async function fetchTeachingLabStaffById(id: string) {
 export const uploadNYCPSStaffFile = async (file: File): Promise<string> => {
   try {
     const result = await uploadFileWithProgress(file, "/api/staff/bulk-upload");
-    return result.message;
+    return result.message || "No message";
   } catch (error) {
     throw handleServerError(error);
   }

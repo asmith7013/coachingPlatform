@@ -1,6 +1,9 @@
 // src/lib/integrations/monday/mappers/utils/transformer.ts
 
-import { MondayItem, MondayColumn, MondayColumnValue, TransformResult, EntityMappingConfig } from "@api-monday/types";
+import { EntityMappingConfig } from "@lib/integrations/monday/types/mapping";
+import { TransformResult } from "@lib/integrations/monday/types/transform";
+import { MondayColumn, MondayColumnValue } from "@lib/integrations/monday/types/board";
+import { MondayItem } from "@lib/integrations/monday/types/board";
 
 /**
  * Base mapper class with shared functionality for all entity mappers

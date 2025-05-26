@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { useErrorHandledMutation, ServerResponse } from '@/hooks/error/useErrorHandledMutation';
 // Import client-safe function instead of server-only fetcher
-import { checkStaffExistenceByEmail } from '@/lib/api/client/staff';
+import { checkStaffExistenceByEmail } from '@server/api/client/staff';
 
 // Define the exact type that will be returned in the data property
 interface StaffExistenceData {

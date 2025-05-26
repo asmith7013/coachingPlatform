@@ -4,7 +4,8 @@ import React, { ReactNode } from 'react';
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from './ErrorBoundary';
 import { createErrorContext } from '@error';
-import { ErrorContext, ErrorVariant } from '@error-types';
+import { ErrorContext } from '@error-types';
+import { ErrorVariant } from '@ui-variants/shared-variants';
 
 interface QueryErrorBoundaryProps {
   children: ReactNode;
@@ -25,7 +26,7 @@ export function QueryErrorBoundary({
   context,
   errorComponent: ErrorComponent,
   className,
-  variant = 'default'
+  variant
 }: QueryErrorBoundaryProps) {
   // Get React Query's reset function
   const { reset } = useQueryErrorResetBoundary();

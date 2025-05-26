@@ -1,6 +1,6 @@
 "use server";
 
-import { z } from "zod";
+import { z, ZodType } from "zod";
 import { LookForModel } from "@mongoose-schema/look-fors";
 import { 
   LookForZodSchema, 
@@ -14,13 +14,13 @@ import {
   createItem,
   updateItem,
   deleteItem,
-} from "@data-server/crud/crud-operations";
-import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
-import { type QueryParams, buildQueryParams } from "@core-types/query";
-import { sanitizeSortBy } from "@data-utilities/pagination/pagination-utils";
-import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
-import { uploadFileWithProgress } from "@data-server/file-handling/file-upload";
-import { connectToDB } from "@data-server/db/connection";
+} from "@server/crud/crud-operations";
+import { fetchPaginatedResource } from "@transformers/pagination/unified-pagination";
+import { type QueryParams } from "@core-types/query";
+import { sanitizeSortBy, buildQueryParams } from "@transformers/pagination/pagination-utils";
+import { bulkUploadToDB } from "@/lib/server/crud/bulk-operations";
+import { uploadFileWithProgress } from "@server/file-handling/file-upload";
+import { connectToDB } from "@server/db/connection";
 
 // Valid sort fields for look-fors
 const validSortFields = ['lookForIndex', 'topic', 'description', 'category', 'createdAt', 'updatedAt'];
@@ -32,7 +32,7 @@ type InferLookForInput = z.infer<typeof LookForInputZodSchema>;
 export type { LookFor, LookForInput };
 
 /** Fetch Look-Fors */
-export async function fetchLookFors(params: QueryParams = {}) {
+export async function fetchLookFors(params: QueryParams) {
   try {
     // Sanitize sortBy to ensure it's a valid field name
     const safeSortBy = sanitizeSortBy(params.sortBy, validSortFields, 'lookForIndex');
@@ -47,7 +47,7 @@ export async function fetchLookFors(params: QueryParams = {}) {
 
     return fetchPaginatedResource(
       LookForModel,
-      LookForZodSchema,
+      LookForZodSchema as ZodType<LookFor>,
       fetchParams
     );
   } catch (error) {
@@ -89,7 +89,7 @@ export async function deleteLookFor(id: string) {
 export const uploadLookForFile = async (file: File): Promise<string> => {
   try {
     const result = await uploadFileWithProgress(file, "/api/look-fors/bulk-upload");
-    return result.message;
+    return result.message || "No message";
   } catch (error) {
     throw handleServerError(error);
   }

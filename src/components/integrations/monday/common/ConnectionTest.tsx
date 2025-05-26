@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { Button } from '@components/core/Button';
 import { Alert } from '@components/core/feedback/Alert';
 import { Spinner } from '@components/core/feedback/Spinner';
-import { MondayConnectionTestResult } from '@api-monday/types';
-import { testConnection } from '@api-monday/client';
+import { MondayConnectionTestResult } from '@lib/integrations/monday/types/api';
+import { testConnection } from '@lib/integrations/monday/client/client';
 
 export interface ConnectionTestProps {
   className?: string;

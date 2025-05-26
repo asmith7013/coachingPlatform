@@ -2,9 +2,9 @@ import { NextRequest } from 'next/server';
 import { clerkClient } from '@clerk/nextjs/server';
 import { TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
 import { TeachingLabStaffInputZodSchema } from '@zod-schema/core/staff';
-import { withDbConnection } from '@data-server/db/ensure-connection';
-import { handleServerError } from '@/lib/error';
-import { handleValidationError } from '@/lib/error';
+import { withDbConnection } from '@server/db/ensure-connection';
+import { handleServerError } from '@error/handlers/server';
+import { handleValidationError } from '@error/handlers/validation';
 import { z } from 'zod';
 import { PERMISSIONS, ROLE_PERMISSIONS, TL_ROLES } from '@core-types/auth';
 
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       const { email, clerkUserId, fullName } = validatedData;
       
       // Check if this is a Teaching Lab email
-      const isTeachingLab = email.endsWith('@teachinglab.org');
+      // const isTeachingLab = email.endsWith('@teachinglab.org');
       
       // Determine initial role based on email
       let initialRole = TL_ROLES.Coach;

@@ -1,17 +1,7 @@
-import type {
-    School,
-} from "@domain-types/school";
+import type { School } from "@domain-types/school";
 
-import type {
-    StaffMember,
-    TeachingLabStaff,
-    NYCPSStaff,
-} from "@domain-types/staff";
-
-import type {
-    LookFor,
-    LookForItem,
-} from "@domain-types/look-fors";
+import type { StaffMember, TeachingLabStaff, NYCPSStaff } from "@domain-types/staff";
+import type { LookFor, LookForItem } from "@domain-types/look-fors";
 
 import type { NextStep } from "@domain-types/look-fors";
 import type { Note } from "@domain-types/shared";

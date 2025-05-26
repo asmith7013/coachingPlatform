@@ -1,7 +1,7 @@
-import { fetchTeacherSchedulesForApi } from "@api-fetchers/schedule";
+import { fetchTeacherSchedulesForApi } from "@server/fetchers/schedule";
 import { createReferenceEndpoint } from "@api-handlers/reference-endpoint";
 import type { TeacherSchedule } from "@zod-schema/schedule/schedule";
-import type { ScheduleReference } from "@core-types/reference";
+import type { ScheduleReference } from "@zod-schema/schedule/schedule";
 
 // Export GET handler directly - follows same pattern as school API
 export const GET = createReferenceEndpoint<TeacherSchedule, ScheduleReference>({

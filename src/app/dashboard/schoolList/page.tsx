@@ -6,9 +6,10 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@components/core/Button';
 import { DashboardPage } from '@components/composed/layouts/DashboardPage';
-import { useSchools } from "@hooks/domain/useSchools"; // ✅ SWR hook for managing Schools data.
-import { School, SchoolInput } from "@domain-types/school"; // ✅ Import the School type from Zod schema.
-import { createSchool, uploadSchoolFile } from "@actions/schools";
+import { useSchoolsList, useSchoolsMutations } from "@hooks/domain/useSchools"; // ✅ Updated import for React Query hooks
+import { School } from "@domain-types/school";
+import { SchoolInput } from "@zod-schema/core/school";
+import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
 import { Field, RigidResourceForm as GenericResourceForm } from "@components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
 import { ResourceHeader } from "@components/composed/layouts/ResourceHeader";
@@ -16,21 +17,25 @@ import { SchoolFieldConfig } from "@ui-forms/fieldConfig/core/school";
 import { cn } from "@ui/utils/formatters";
 import { EmptyListWrapper } from '@components/core/empty/EmptyListWrapper';
 
-
-
 export default function SchoolList() {
+  // Use the React Query-based hooks
   const {
-    schools,
-    total,
-    loading,
+    items: schools = [],
+    total = 0,
+    isLoading: loading,
     error: schoolError,
     page,
     setPage,
-    limit,
-    removeSchool,
     applyFilters,
     changeSorting
-  } = useSchools();
+  } = useSchoolsList();
+
+  // Get mutation functions from the mutations hook
+  const { 
+    delete: removeSchool,
+    isDeleting,
+    // isCreating
+  } = useSchoolsMutations();
 
   // Use local state for performance mode instead
   const [performanceMode, setPerformanceMode] = useState(true);
@@ -39,6 +44,30 @@ export default function SchoolList() {
   }, []);
 
   const [searchInput, setSearchInput] = useState("");
+  const [limit] = useState(10); // Could use pagination.limit and pagination.setLimit from the hook if needed
+
+  const handleSearch = useCallback((value: string) => {
+    applyFilters({ schoolName: value });
+    setSearchInput(value);
+  }, [applyFilters]);
+  
+  const confirmDeleteSchool = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this school?")) {
+      handleDeleteSchool(id);
+    }
+  };
+
+  const handleDeleteSchool = async (id: string) => {
+    try {
+      if (removeSchool) {
+        removeSchool(id);
+      }
+    } catch (error) {
+      console.error("Failed to delete school:", error);
+    }
+  };
+
+
 
   useEffect(() => {
     if (schools && schools.length > 0) {
@@ -49,19 +78,9 @@ export default function SchoolList() {
       console.log("============================");
     }
   }, [schools]);
-  
-  const confirmDeleteSchool = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this school?")) {
-      handleDeleteSchool(id);
-    }
-  };
-
-  const handleDeleteSchool = async (id: string) => {
-    await removeSchool(id);
-  };
 
   if (loading) return <Text textSize="base">Loading Schools...</Text>;
-  if (schoolError) return <Text textSize="base" color="danger">Error loading schools</Text>;
+  if (schoolError) return <Text textSize="base" color="danger">Error loading schools: {schoolError.message}</Text>;
 
   return (
     <DashboardPage
@@ -78,7 +97,7 @@ export default function SchoolList() {
           { key: "district", label: "District" }
         ]}
         onSort={(field, order) => changeSorting(field as keyof School, order)}
-        onSearch={(value) => applyFilters({ schoolName: value })}
+        onSearch={handleSearch}
         searchInput={searchInput}
         setSearchInput={setSearchInput}
         performanceMode={performanceMode}
@@ -117,14 +136,20 @@ export default function SchoolList() {
                     {school.address}
                   </Text>
                 )}
+                {school.createdAt && (
+                  <Text textSize="sm" color="muted" className="mt-1">
+                    Created: {school.createdAt.toLocaleDateString()}
+                  </Text>
+                )}
               </div>
               <Button
                 onClick={() => school._id && confirmDeleteSchool(school._id)}
                 textSize="sm"
                 padding="sm"
                 className="text-danger"
+                disabled={isDeleting}
               >
-                🗑️ Delete
+                {isDeleting ? 'Deleting...' : '🗑️ Delete'}
               </Button>
             </div>
             <Heading 

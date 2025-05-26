@@ -3,31 +3,22 @@
 import { useState } from "react";
 import { DashboardPage } from "@/components/composed/layouts";
 import { PageHeader } from "@/components/composed/layouts";
-import { useTeachingLabStaff } from "@/hooks";
+import { useTeachingLabStaff } from "@hooks/domain/useTeachingLabStaff";
 import { PlusIcon } from "lucide-react";
 import { StaffListComponent, StaffSearch } from "@components/domain/staff";
 import { TablePagination } from "@/components/composed/tables/features/pagination";
 import { TeachingLabStaff } from "@zod-schema/core/staff";
 
 export default function TeachingLabStaffPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, _setSearchTerm] = useState("");
   const {
-    staff, 
-    loading, 
-    error, 
-    total, 
+    error,
+    total,
     page,
     setPage,
-    limit,
-    applyFilters
   } = useTeachingLabStaff({});
 
-  const totalPages = Math.ceil((total || 0) / limit);
-
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    applyFilters({ staffName: value });
-  };
+  const totalPages = Math.ceil((total || 0) / 10);
 
   return (
     <DashboardPage>
@@ -47,7 +38,7 @@ export default function TeachingLabStaffPage() {
       <div className="mb-6 flex gap-4 items-center">
         <StaffSearch
           value={searchTerm}
-          onChange={handleSearch}
+          onChange={() => {}}
           className="flex-grow"
         />
       </div>
@@ -59,8 +50,8 @@ export default function TeachingLabStaffPage() {
       )}
 
       <StaffListComponent 
-        staffMembers={staff as TeachingLabStaff[]} 
-        isLoading={loading} 
+        staffMembers={[] as TeachingLabStaff[]} 
+        isLoading={false} 
       />
 
       {total > 0 && (

@@ -1,7 +1,6 @@
 import { BaseDocument } from '@core-types/document';
-import { PaginatedResponse } from '@core-types/pagination';
-import { CollectionResponse } from '@core-types/response';
-import { extractItems, isPaginatedResponse } from '@/lib/data-utilities/transformers/utils/response-utils';
+import { PaginatedResponse, CollectionResponse } from '@core-types/response';
+import { extractItems, isPaginatedResponse } from '@transformers/utils/response-utils';
 import { QueryClient } from '@tanstack/react-query';
 
 /**

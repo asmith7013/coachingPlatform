@@ -1,4 +1,4 @@
-import { MondayColumn, MondayColumnValue } from '@api-monday/types';
+import { MondayColumn, MondayColumnValue } from '@lib/integrations/monday/types/board';
 import { z } from 'zod';
 
 /**

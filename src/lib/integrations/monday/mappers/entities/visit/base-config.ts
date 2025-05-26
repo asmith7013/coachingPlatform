@@ -1,8 +1,8 @@
 // src/lib/integrations/monday/mappers/adapters/standard/visit-config.ts
 
-import { EntityMappingConfig } from "@api-monday/types";
+import { EntityMappingConfig } from "@lib/integrations/monday/types/mapping";
 import { VisitInput } from "@zod-schema/visits/visit";
-import { baseVisitMappingConfig } from "@api-monday/mappers/board-types/visits-board/config";
+import { baseVisitMappingConfig } from "@lib/integrations/monday/mappers/board-types/visits-board/config";
 
 /**
  * Standard Board Visit Mapping Configuration

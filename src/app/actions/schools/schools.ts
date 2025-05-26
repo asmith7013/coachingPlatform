@@ -1,20 +1,21 @@
 "use server";
 
-import { z } from "zod";
-import { SchoolModel } from "@/lib/data-schema/mongoose-schema/core";
-import { SchoolInputZodSchema, SchoolZodSchema } from "@zod-schema/core/school";
+import { z, ZodType } from "zod";
+import { SchoolModel } from "@mongoose-schema/core/school.model";
+import { School, SchoolInputZodSchema, SchoolZodSchema } from "@zod-schema/core/school";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
-import { createCrudActions } from "@data-server/crud/crud-action-factory";
-import { withDbConnection } from "@data-server/db/ensure-connection";
-import { uploadFileWithProgress } from "@/lib/data-server/file-handling/file-upload";
-import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
+import { createCrudActions } from "@server/crud/crud-action-factory";
+import { withDbConnection } from "@server/db/ensure-connection";
+import { uploadFileWithProgress } from "@server/file-handling/file-upload";
+import { bulkUploadToDB } from "@server/crud/bulk-operations";
 import { SchoolInput } from "@domain-types/school";
+import { QueryParams } from "@/lib/types/core/query";
 
 // Create standard CRUD actions for Schools
 const schoolActions = createCrudActions({
   model: SchoolModel,
-  fullSchema: SchoolZodSchema,
+  fullSchema: SchoolZodSchema as ZodType<School>,
   inputSchema: SchoolInputZodSchema,
   revalidationPaths: ["/dashboard/schools"],
   options: {
@@ -26,7 +27,7 @@ const schoolActions = createCrudActions({
 });
 
 // Export the generated actions with connection handling
-export async function fetchSchools(params = {}) {
+export async function fetchSchools(params: QueryParams) {
   return withDbConnection(() => schoolActions.fetch(params));
 }
 
@@ -87,7 +88,7 @@ export async function fetchSchoolsByDistrict(district: string) {
 export const uploadSchoolFile = async (file: File): Promise<string> => {
   try {
     const result = await uploadFileWithProgress(file, "/api/schools/bulk-upload");
-    return result.message;
+    return result.message || "No message";
   } catch (error) {
     throw handleServerError(error);
   }

@@ -1,11 +1,10 @@
-import { createEntityHooks } from '@/query/client/factories/entity-hooks';
+import { createEntityHooks } from '@/query/client/factories/entity-factory';
 import { 
-  TeachingLabStaffZodSchema, 
-  TeachingLabStaffInputZodSchema, 
   TeachingLabStaff, 
   TeachingLabStaffInput,
-  MondayUser
-} from '@/lib/data-schema/zod-schema/core/staff';
+  MondayUser,
+  TeachingLabStaffZodSchema
+} from '@zod-schema/core/staff';
 import { 
   fetchTeachingLabStaff, 
   fetchTeachingLabStaffById, 
@@ -14,13 +13,32 @@ import {
   deleteTeachingLabStaff 
 } from '@/app/actions/staff/operations';
 import { WithDateObjects } from '@core-types/document';
-import { wrapServerActions } from '@/lib/data-utilities/transformers/factories/server-action-factory';
-import { transformDocument } from '@/lib/data-utilities/transformers/core/document';
+import { wrapServerActions } from '@transformers/factories/server-action-factory';
+import { createTransformer, ensureBaseDocumentCompatibility } from '@transformers/core/unified-transformer';
 
 /**
  * TeachingLabStaff entity with Date objects instead of string dates
  */
 export type TeachingLabStaffWithDates = WithDateObjects<TeachingLabStaff>;
+
+/**
+ * Create a domain transformer for TeachingLabStaff
+ */
+const staffTransformer = createTransformer<TeachingLabStaff, TeachingLabStaffWithDates>({
+  schema: ensureBaseDocumentCompatibility<TeachingLabStaff>(TeachingLabStaffZodSchema),
+  handleDates: true,
+  domainTransform: (item) => ({
+    ...item,
+    mondayUser: item.mondayUser ? {
+      ...item.mondayUser,
+      isConnected: true, // Always set to true as per schema default
+      isVerified: item.mondayUser.isVerified ?? false,
+      title: item.mondayUser.title ?? undefined,
+      lastSynced: item.mondayUser.lastSynced ? new Date(item.mondayUser.lastSynced) : undefined
+    } as MondayUser : undefined
+  }),
+  errorContext: 'TeachingLabStaffTransformer'
+});
 
 /**
  * Wraps all server actions to transform dates in responses
@@ -33,16 +51,7 @@ const wrappedActions = wrapServerActions<TeachingLabStaff, TeachingLabStaffWithD
     update: updateTeachingLabStaff,
     delete: deleteTeachingLabStaff
   },
-  items => transformDocument(items).map(item => ({
-    ...item,
-    mondayUser: item.mondayUser ? {
-      ...item.mondayUser,
-      isConnected: true, // Always set to true as per schema default
-      isVerified: item.mondayUser.isVerified ?? false,
-      title: item.mondayUser.title ?? undefined,
-      lastSynced: item.mondayUser.lastSynced ? new Date(item.mondayUser.lastSynced) : undefined
-    } as MondayUser : undefined
-  })) as TeachingLabStaffWithDates[]
+  items => staffTransformer.transform(items)
 );
 
 /**
@@ -52,8 +61,8 @@ const wrappedActions = wrapServerActions<TeachingLabStaff, TeachingLabStaffWithD
  * with proper date transformation (string dates to Date objects)
  */
 const {
-  useList: useTeachingLabStaffList,
-  useById: useTeachingLabStaffById,
+  useEntityList: useTeachingLabStaffList,
+  useEntityById: useTeachingLabStaffById,
   useMutations: useTeachingLabStaffMutations,
   useManager: useTeachingLabStaff
 } = createEntityHooks<TeachingLabStaffWithDates, TeachingLabStaffInput>({

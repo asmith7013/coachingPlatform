@@ -1,5 +1,5 @@
 import { BaseResponse, EntityResponse } from '@core-types/response';
-import { MondayBoard, MondayItem } from '@api-monday/types';
+import { MondayBoard, MondayItem } from '@lib/integrations/monday/types/board';
 
 /**
  * Standard API response wrapper compatible with core response patterns

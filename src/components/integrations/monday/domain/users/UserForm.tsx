@@ -5,7 +5,7 @@ import { Button } from '@/components/core/Button';
 import { Input } from '@/components/core/fields/Input';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { Alert } from '@/components/core/feedback/Alert';
-import { MondayUser } from '@api-monday/types';
+import { MondayUser } from '@lib/integrations/monday/types/api';
 
 export interface UserFormProps {
   onUserFound?: (user: MondayUser) => void;

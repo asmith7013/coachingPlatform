@@ -2,7 +2,7 @@
  * Server-side prefetching utilities for React Query
  */
 import { QueryClient } from '@tanstack/react-query';
-import { dehydrateState } from '@query/shared/serialize';
+import { dehydrateState } from '@/query/shared-utils/hydration-utils';
 import { 
   prefetchEntityData,
   prefetchQueriesForSSR

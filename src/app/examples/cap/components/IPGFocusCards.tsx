@@ -1,6 +1,6 @@
 import React from 'react';
-import { ClickableCards } from '@/components/composed/cards/ClickableCards';
-import { backgroundColors, borderColors, semanticColors } from '@/lib/tokens/colors';
+import { ClickableCards } from '@components/composed/cards/ClickableCards';
+import { backgroundColors, borderColors, semanticColors } from  '@/lib/tokens/colors';
 
 interface IPGOption {
   value: string;

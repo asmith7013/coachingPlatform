@@ -1,7 +1,7 @@
 // src/lib/integrations/monday/mappers/schemas/visit/transformers.ts
 
-import { MondayColumnValue } from "@api-monday/types";
-import { ValueTransformer } from "@api-monday/types";
+import { MondayColumnValue } from "@lib/integrations/monday/types/board";
+import { ValueTransformer } from "@lib/integrations/monday/types/mapping";
 import { 
   ModeDone, 
   AllowedPurpose,

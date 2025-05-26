@@ -3,13 +3,13 @@ import {
     ImportPreview, 
     ImportResult, 
     // TransformResult 
-  } from '@api-monday/types';
-  import { withDbConnection } from '@data-server/db/ensure-connection';
+  } from '@lib/integrations/monday/types/import';
+  import { withDbConnection } from '@server/db/ensure-connection';
   import { VisitModel } from '@mongoose-schema/visits/visit.model';
   import { VisitInputZodSchema, VisitImportZodSchema } from '@zod-schema/visits/visit';
-  import { fetchMondayItems, fetchMondayItemById } from '@api-monday/client';
-  import { transformMondayItemToVisit } from '@api-monday/services/transform-service';
-  import { shouldImportItemWithStatus } from '@api-monday/utils/monday-utils';
+  import { fetchMondayItems, fetchMondayItemById } from '@lib/integrations/monday/client/client';
+  import { transformMondayItemToVisit } from '@lib/integrations/monday/services/transform-service';
+  import { shouldImportItemWithStatus } from '@lib/integrations/monday/utils/monday-utils';
 //   import { revalidatePath } from 'next/cache';
   
   /**
@@ -28,7 +28,7 @@ import {
       const previews: ImportPreview[] = [];
       
       await withDbConnection(async () => {
-        for (const item of mondayItems) {
+        for (const item of mondayItems.items) {
           // Skip items that don't have statuses we want to import
           if (!shouldImportItemWithStatus(item.state)) {
             continue;
@@ -88,7 +88,7 @@ import {
           const mondayItem = await fetchMondayItemById(item.id);
           
           // Transform to Visit - this includes auto-assigned owners from coach
-          const transformResult = await transformMondayItemToVisit(mondayItem);
+          const transformResult = await transformMondayItemToVisit(mondayItem.data);
           
           if (!transformResult.valid) {
             errors[item.id] = "Invalid item data after transformation";

@@ -17,7 +17,7 @@ import { Spinner } from '@components/core/feedback';
 import { Heading, Text } from '@components/core/typography';
 import { useMondayImportContext, useMondayFilters } from '@hooks/integrations/monday/MondayImportContext';
 import type { VisitInput } from '@zod-schema/visits/visit';
-import { VisitImportItem } from '@api-monday/types';
+import { VisitImportItem } from '@lib/integrations/monday/types/import';
 
 interface VisitSelectorProps {
   boardId: string;

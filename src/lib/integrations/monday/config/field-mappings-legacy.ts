@@ -9,7 +9,7 @@ import {
   EventTypeZod,
   DurationZod
 } from "@enums";
-import { MondayColumn } from "@api-monday/types";
+import { MondayColumn } from "@lib/integrations/monday/types/board";
 import { 
   // GradeLevels, 
   AllowedPurposes,

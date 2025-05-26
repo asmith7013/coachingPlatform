@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Button } from '@/components/core/Button';
-import { Alert } from '@/components/core/feedback/Alert';
-import { Spinner } from '@/components/core/feedback/Spinner';
-import { ResourceForm, type Field } from '@/components/composed/forms';
-import { VisitFieldConfig } from '@/lib/ui/forms/fieldConfig/visits/visit';
-import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
+import { Button } from '@components/core/Button';
+import { Alert } from '@components/core/feedback/Alert';
+import { Spinner } from '@components/core/feedback/Spinner';
+import { ResourceForm, type Field } from '@components/composed/forms';
+import { VisitFieldConfig } from '@ui-forms/fieldConfig/visits/visit';
+import type { VisitInput } from '@zod-schema/visits/visit';
 
 /**
  * Form for completing missing information for a Monday.com visit import

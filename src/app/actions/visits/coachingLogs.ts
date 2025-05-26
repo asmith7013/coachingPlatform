@@ -1,9 +1,9 @@
 'use server';
 
-import { connectToDB } from "@/lib/data-server/db/connection";
-import { CoachingLogModel } from "@/lib/data-schema/mongoose-schema/visits/coaching-log.model";
+import { connectToDB } from "@server/db/connection";
+import { CoachingLogModel } from "@mongoose-schema/visits/coaching-log.model";
 import { CoachingLogZodSchema } from "@zod-schema/visits/coaching-log";
-import { createItem } from "@data-server/crud/crud-operations";
+import { createItem } from "@server/crud/crud-operations";
 import type { CoachingLog } from "@zod-schema/visits/coaching-log";
 
 /**

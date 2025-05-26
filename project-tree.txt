@@ -1,4 +1,8 @@
 .
+├── amplify
+│   ├── docs.md
+│   ├── scope.md
+│   └── template.md
 ├── docs
 │   ├── architecture
 │   │   ├── core-principles.md
@@ -16,6 +20,7 @@
 │   │   └── styling-patterns.md
 │   ├── data-flow
 │   │   ├── api-patterns.md
+│   │   ├── authentication.md
 │   │   ├── error-handling.md
 │   │   ├── monday-integration.md
 │   │   ├── mongodb-integration.md
@@ -23,7 +28,12 @@
 │   │   ├── sanitization-system.md
 │   │   ├── schema-system.md
 │   │   ├── server-actions.md
+│   │   ├── transformation-system.md
 │   │   └── type-system.md
+│   ├── examples
+│   │   ├── enhanced-school-hooks-usage.md
+│   │   ├── enhanced-school-hooks-with-bulk-operations.md
+│   │   └── school-detail-prefetch-usage.md
 │   ├── table-of-contents.md
 │   └── workflows
 │       ├── common-tasks.md
@@ -35,6 +45,11 @@
 ├── docs-export
 │   └── claude-project-instructions.md
 ├── docs-lib
+│   ├── boiler.md
+│   ├── file-rework.md
+│   ├── lib-catalog.md
+│   ├── lib-changes.md
+│   └── reference-system.md
 ├── eslint.config.mjs
 ├── examples
 ├── next-env.d.ts
@@ -48,6 +63,8 @@
 │   ├── next.svg
 │   ├── vercel.svg
 │   └── window.svg
+├── response_patterns.txt
+├── response_patterns_with_context.txt
 ├── scripts
 │   ├── combine-docs.ts
 │   ├── generate-theme-css.ts
@@ -68,6 +85,12 @@
 ├── sentry.server.config.ts
 ├── src
 │   ├── app
+│   │   ├── (auth)
+│   │   │   ├── layout.tsx
+│   │   │   ├── sign-in
+│   │   │   │   └── page.tsx
+│   │   │   └── sign-up
+│   │   │       └── page.tsx
 │   │   ├── actions
 │   │   │   ├── cycles
 │   │   │   │   └── cycles.ts
@@ -112,6 +135,9 @@
 │   │   │   │   └── route.ts
 │   │   │   ├── schools
 │   │   │   │   └── route.ts
+│   │   │   ├── setup
+│   │   │   │   └── initial-user
+│   │   │   │       └── route.ts
 │   │   │   ├── staff
 │   │   │   │   ├── [id]
 │   │   │   │   │   └── route.ts
@@ -119,8 +145,11 @@
 │   │   │   │   │   └── route.ts
 │   │   │   │   └── exists
 │   │   │   │       └── route.ts
-│   │   │   └── teacher
-│   │   │       └── route.ts
+│   │   │   ├── teacher
+│   │   │   │   └── route.ts
+│   │   │   └── webhooks
+│   │   │       └── clerk
+│   │   │           └── route.ts
 │   │   ├── dashboard
 │   │   │   ├── classroomNotes
 │   │   │   │   ├── components
@@ -140,11 +169,14 @@
 │   │   │   ├── layout.tsx
 │   │   │   ├── lookForList
 │   │   │   │   └── page.tsx
+│   │   │   ├── migration-test
+│   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── schedule
 │   │   │   │   └── page.tsx
 │   │   │   ├── schoolList
 │   │   │   │   ├── [schoolId]
+│   │   │   │   │   ├── client.tsx
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── scoring
@@ -196,6 +228,8 @@
 │   │   │   │   │   ├── CoachingMovesBuilder.tsx
 │   │   │   │   │   ├── CoachingMovesTable.tsx
 │   │   │   │   │   ├── GoalSection.tsx
+│   │   │   │   │   ├── IPGFocusCards.tsx
+│   │   │   │   │   ├── IPGSubsectionCards.tsx
 │   │   │   │   │   ├── ImplementationRecord.tsx
 │   │   │   │   │   ├── ImplementationRecordCard.tsx
 │   │   │   │   │   ├── MetricsBuilder.tsx
@@ -257,26 +291,37 @@
 │   │   │           └── page.tsx
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
-│   │   └── tools
-│   │       ├── dev
-│   │       │   ├── seed-data
-│   │       │   │   └── page.tsx
-│   │       │   ├── test-enum-migration
-│   │       │   │   └── page.tsx
-│   │       │   └── test-enum-mongoose
-│   │       │       └── page.tsx
-│   │       ├── im-routines
-│   │       │   └── page.tsx
-│   │       ├── layout.tsx
-│   │       ├── page.tsx
-│   │       ├── rubric-viewer
-│   │       │   └── page.tsx
-│   │       └── things3
-│   │           └── page.tsx
+│   │   ├── setup
+│   │   │   └── page.tsx
+│   │   ├── tools
+│   │   │   ├── dev
+│   │   │   │   ├── seed-data
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── test-enum-migration
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── test-enum-mongoose
+│   │   │   │       └── page.tsx
+│   │   │   ├── im-routines
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── rubric-viewer
+│   │   │   │   └── page.tsx
+│   │   │   └── things3
+│   │   │       └── page.tsx
+│   │   └── unauthorized
+│   │       └── page.tsx
 │   ├── components
+│   │   ├── auth
+│   │   │   ├── AuthGuard.tsx
+│   │   │   ├── AuthLoading.tsx
+│   │   │   ├── GoogleSignInButton.tsx
+│   │   │   ├── PermissionButton.tsx
+│   │   │   └── SignOutButton.tsx
 │   │   ├── composed
 │   │   │   ├── cards
 │   │   │   │   ├── Card.tsx
+│   │   │   │   ├── ClickableCards.tsx
 │   │   │   │   ├── FileCard.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── dialogs
@@ -300,6 +345,8 @@
 │   │   │   │   ├── ResourceHeader.tsx
 │   │   │   │   ├── Topbar.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── navigation
+│   │   │   │   └── Breadcrumbs.tsx
 │   │   │   ├── tables
 │   │   │   │   ├── ScheduleTable.tsx
 │   │   │   │   ├── Table.tsx
@@ -352,12 +399,15 @@
 │   │   │   │   ├── Textarea.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── index.ts
+│   │   │   ├── query
+│   │   │   │   └── HydrationBoundary.tsx
 │   │   │   └── typography
 │   │   │       ├── Heading.tsx
 │   │   │       ├── Text.tsx
 │   │   │       └── index.ts
 │   │   ├── debug
 │   │   │   ├── IsolateComponent.tsx
+│   │   │   ├── ReferenceDebugger.tsx
 │   │   │   ├── RenderLoopDetector.tsx
 │   │   │   ├── SWRDebugger.tsx
 │   │   │   ├── StaffListBisector.tsx
@@ -429,9 +479,12 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── thingsDebug.ts
 │   │   │   │   └── thingsUtils.ts
+│   │   │   ├── users
+│   │   │   │   └── UserProfile.tsx
 │   │   │   └── visits
 │   │   ├── error
 │   │   │   ├── ErrorBoundary.tsx
+│   │   │   ├── QueryErrorBoundary.tsx
 │   │   │   ├── SentryBoundaryWrapper.tsx
 │   │   │   └── index.ts
 │   │   ├── features
@@ -459,23 +512,19 @@
 │   │               └── index.ts
 │   ├── debug
 │   ├── hooks
-│   │   ├── data
-│   │   │   ├── useCrudOperations.ts
-│   │   │   ├── useOptimisticResource.ts
-│   │   │   ├── useReferenceData.ts
-│   │   │   ├── useResourceManager.ts
-│   │   │   └── useSafeSWR.ts
+│   │   ├── auth
+│   │   │   └── useAuthenticatedUser.ts
 │   │   ├── debugging
 │   │   │   ├── checkRenderLoopInTools.tsx
 │   │   │   ├── useComponentTester.tsx
 │   │   │   └── useRenderTracking.ts
 │   │   ├── domain
 │   │   │   ├── index.ts
-│   │   │   ├── useLookFors.ts
 │   │   │   ├── useNYCPSStaff.ts
 │   │   │   ├── useSchools.ts
-│   │   │   ├── useTeacherSchedules.ts
-│   │   │   └── useTeachingLabStaff.ts
+│   │   │   ├── useTeachingLabStaff.ts
+│   │   │   ├── useUserStaff.ts
+│   │   │   └── useVisits.ts
 │   │   ├── error
 │   │   │   ├── useErrorBoundary.ts
 │   │   │   └── useErrorHandledMutation.ts
@@ -485,126 +534,26 @@
 │   │   │       ├── MondayImportContext.tsx
 │   │   │       ├── MondayIntegrationContext.tsx
 │   │   │       ├── useMondayImportState.ts
-│   │   │       ├── useMondayMutations.ts
 │   │   │       ├── useMondayQueries.ts
 │   │   │       └── useStaffExistence.ts
+│   │   ├── migration
+│   │   │   └── swr-to-query.ts
 │   │   ├── ui
+│   │   │   ├── useAuthorizedNavigation.ts
 │   │   │   ├── useFiltersAndSorting.ts
-│   │   │   └── usePagination.ts
+│   │   │   ├── useFiltersAndSortingRQ.ts
+│   │   │   ├── useNavigation.ts
+│   │   │   ├── usePagination.ts
+│   │   │   └── useSchoolAuthorization.ts
 │   │   └── visits
-│   │       ├── useVisitManager.ts
-│   │       ├── useVisitMutation.ts
-│   │       └── useVisitQuery.ts
+│   │       ├── useVisitManagerRQ.ts
+│   │       ├── useVisitMutationRQ.ts
+│   │       └── useVisitQueryRQ.ts
 │   ├── instrumentation-client.ts
 │   ├── instrumentation.ts
 │   ├── layouts
 │   │   └── MondayLayout.tsx
 │   ├── lib
-│   │   ├── api
-│   │   │   ├── client
-│   │   │   │   └── staff.ts
-│   │   │   ├── fetchers
-│   │   │   │   ├── coaching-log.ts
-│   │   │   │   ├── lookFors.ts
-│   │   │   │   ├── schedule.ts
-│   │   │   │   ├── school.ts
-│   │   │   │   └── staff.ts
-│   │   │   ├── handlers
-│   │   │   │   ├── api-adapter.ts
-│   │   │   │   ├── index.ts
-│   │   │   │   └── reference-endpoint.ts
-│   │   │   ├── index.ts
-│   │   │   ├── responses
-│   │   │   │   ├── index.ts
-│   │   │   │   └── standardize.ts
-│   │   │   └── validation
-│   │   │       └── index.ts
-│   │   ├── context
-│   │   │   └── QueryProvider.tsx
-│   │   ├── data-schema
-│   │   │   ├── enum
-│   │   │   │   ├── index.ts
-│   │   │   │   └── shared-enums.ts
-│   │   │   ├── index.ts
-│   │   │   ├── mongoose-schema
-│   │   │   │   ├── core
-│   │   │   │   │   ├── cycle.model.ts
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   ├── school.model.ts
-│   │   │   │   │   └── staff.model.ts
-│   │   │   │   ├── look-fors
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   ├── look-for.model.ts
-│   │   │   │   │   ├── next-step.model.ts
-│   │   │   │   │   └── rubric.model.ts
-│   │   │   │   ├── schedule
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   └── schedule.model.ts
-│   │   │   │   ├── shared
-│   │   │   │   │   └── notes.model.ts
-│   │   │   │   ├── types.ts
-│   │   │   │   └── visits
-│   │   │   │       ├── coaching-log.model.ts
-│   │   │   │       ├── index.ts
-│   │   │   │       └── visit.model.ts
-│   │   │   └── zod-schema
-│   │   │       ├── core
-│   │   │       │   ├── cycle.ts
-│   │   │       │   ├── school.ts
-│   │   │       │   └── staff.ts
-│   │   │       ├── index.ts
-│   │   │       ├── integrations
-│   │   │       │   └── monday.ts
-│   │   │       ├── look-fors
-│   │   │       │   ├── look-for.ts
-│   │   │       │   ├── next-step.ts
-│   │   │       │   ├── rubric-fields.ts
-│   │   │       │   └── rubric.ts
-│   │   │       ├── processSchema.ts
-│   │   │       ├── schedule
-│   │   │       │   └── schedule.ts
-│   │   │       ├── shared
-│   │   │       │   ├── dateHelpers.ts
-│   │   │       │   ├── index.ts
-│   │   │       │   └── notes.ts
-│   │   │       ├── validate.ts
-│   │   │       ├── validation
-│   │   │       │   └── response.ts
-│   │   │       └── visits
-│   │   │           ├── coaching-log.ts
-│   │   │           └── visit.ts
-│   │   ├── data-server
-│   │   │   ├── crud
-│   │   │   │   ├── README.md
-│   │   │   │   ├── bulk-operations.ts
-│   │   │   │   ├── crud-action-factory.ts
-│   │   │   │   ├── crud-operations.ts
-│   │   │   │   └── index.ts
-│   │   │   ├── db
-│   │   │   │   ├── connection.ts
-│   │   │   │   ├── ensure-connection.ts
-│   │   │   │   ├── index.ts
-│   │   │   │   └── model-registry.ts
-│   │   │   ├── file-handling
-│   │   │   │   ├── csv-parser.ts
-│   │   │   │   ├── file-upload.ts
-│   │   │   │   └── index.ts
-│   │   │   └── index.ts
-│   │   ├── data-utilities
-│   │   │   ├── pagination
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── paginated-query.ts
-│   │   │   │   ├── pagination.ts
-│   │   │   │   └── sort-utils.ts
-│   │   │   └── transformers
-│   │   │       ├── fetch-by-id.ts
-│   │   │       ├── index.ts
-│   │   │       ├── parse.ts
-│   │   │       ├── reference-mappers.ts
-│   │   │       ├── sanitize.ts
-│   │   │       ├── staff-utils.ts
-│   │   │       ├── type-helper.ts
-│   │   │       └── zod-validation.ts
 │   │   ├── dev
 │   │   │   ├── debugging
 │   │   │   │   ├── README.md
@@ -619,7 +568,8 @@
 │   │   │   │   └── scheduleMockGenerator.ts
 │   │   │   └── testing
 │   │   │       ├── index.ts
-│   │   │       └── schema-config-check.ts
+│   │   │       ├── schema-config-check.ts
+│   │   │       └── setup-test-user.ts
 │   │   ├── domain
 │   │   │   └── imRoutine
 │   │   │       ├── get-unit-URL.ts
@@ -628,17 +578,28 @@
 │   │   │       ├── render-KH-lesson.tsx
 │   │   │       └── routine-utils.ts
 │   │   ├── error
-│   │   │   ├── crud-error-handling.ts
-│   │   │   ├── error-monitor.ts
-│   │   │   ├── handle-client-error.ts
-│   │   │   ├── handle-server-error.ts
-│   │   │   ├── handle-validation-error.ts
+│   │   │   ├── core
+│   │   │   │   ├── classification.ts
+│   │   │   │   ├── context.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── logging.ts
+│   │   │   │   ├── responses.ts
+│   │   │   │   └── transformation.ts
+│   │   │   ├── handlers
+│   │   │   │   ├── client.ts
+│   │   │   │   ├── crud.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── query.ts
+│   │   │   │   ├── server.ts
+│   │   │   │   └── validation.ts
 │   │   │   └── index.ts
 │   │   ├── hooks
 │   │   │   ├── use-item-to-group-map.ts
 │   │   │   └── use-persisted-curriculum-version.ts
 │   │   ├── integrations
 │   │   │   └── monday
+│   │   │       ├── adapters
+│   │   │       │   └── response-adapters.ts
 │   │   │       ├── client
 │   │   │       │   ├── client.ts
 │   │   │       │   ├── index.ts
@@ -679,17 +640,148 @@
 │   │   │   ├── kh-routines.json
 │   │   │   ├── primaryStrategy.tsx
 │   │   │   └── school.tsx
-│   │   ├── query
-│   │   │   ├── hooks
-│   │   │   │   ├── useEntityQuery.ts
-│   │   │   │   ├── useOptimisticMutation.ts
-│   │   │   │   └── usePaginatedQuery.ts
-│   │   │   ├── provider.tsx
-│   │   │   ├── queryClient.ts
-│   │   │   ├── queryKeys.ts
-│   │   │   └── utilities
-│   │   │       ├── errorHandling.ts
-│   │   │       └── optimisticUpdates.ts
+│   │   ├── schema
+│   │   │   ├── enum
+│   │   │   │   ├── index.ts
+│   │   │   │   └── shared-enums.ts
+│   │   │   ├── index.ts
+│   │   │   ├── mongoose-schema
+│   │   │   │   ├── base-document.ts
+│   │   │   │   ├── config.ts
+│   │   │   │   ├── core
+│   │   │   │   │   ├── cycle.model.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── school.model.ts
+│   │   │   │   │   └── staff.model.ts
+│   │   │   │   ├── look-fors
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── look-for.model.ts
+│   │   │   │   │   ├── next-step.model.ts
+│   │   │   │   │   └── rubric.model.ts
+│   │   │   │   ├── schedule
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── schedule.model.ts
+│   │   │   │   ├── shared
+│   │   │   │   │   └── notes.model.ts
+│   │   │   │   └── visits
+│   │   │   │       ├── coaching-log.model.ts
+│   │   │   │       ├── index.ts
+│   │   │   │       └── visit.model.ts
+│   │   │   ├── reference
+│   │   │   │   ├── core
+│   │   │   │   │   ├── cycle-helpers.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── school-helpers.ts
+│   │   │   │   │   └── staff-helpers.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── look-fors
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── look-for-helpers.ts
+│   │   │   │   │   ├── next-step-helpers.ts
+│   │   │   │   │   ├── rubric-fields-helpers.ts
+│   │   │   │   │   └── rubric-helpers.ts
+│   │   │   │   ├── schedule
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── schedule-helpers.ts
+│   │   │   │   ├── shared
+│   │   │   │   │   ├── date-helpers.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── notes-helpers.ts
+│   │   │   │   └── visits
+│   │   │   │       ├── coaching-log-helpers.ts
+│   │   │   │       ├── index.ts
+│   │   │   │       └── visit-helpers.ts
+│   │   │   └── zod-schema
+│   │   │       ├── base-schemas.ts
+│   │   │       ├── core
+│   │   │       │   ├── cycle.ts
+│   │   │       │   ├── index.ts
+│   │   │       │   ├── school.ts
+│   │   │       │   └── staff.ts
+│   │   │       ├── core-types
+│   │   │       │   ├── api-integration.ts
+│   │   │       │   ├── auth.ts
+│   │   │       │   ├── cache.ts
+│   │   │       │   ├── document.ts
+│   │   │       │   ├── form.ts
+│   │   │       │   ├── index.ts
+│   │   │       │   ├── query.ts
+│   │   │       │   ├── reference.ts
+│   │   │       │   └── response.ts
+│   │   │       ├── error
+│   │   │       │   ├── api.ts
+│   │   │       │   ├── context.ts
+│   │   │       │   ├── index.ts
+│   │   │       │   ├── operations.ts
+│   │   │       │   └── response.ts
+│   │   │       ├── index.ts
+│   │   │       ├── integrations
+│   │   │       │   ├── index.ts
+│   │   │       │   └── monday.ts
+│   │   │       ├── look-fors
+│   │   │       │   ├── index.ts
+│   │   │       │   ├── look-for.ts
+│   │   │       │   ├── next-step.ts
+│   │   │       │   ├── rubric-fields.ts
+│   │   │       │   └── rubric.ts
+│   │   │       ├── schedule
+│   │   │       │   ├── index.ts
+│   │   │       │   └── schedule.ts
+│   │   │       ├── shared
+│   │   │       │   ├── dateHelpers.ts
+│   │   │       │   ├── index.ts
+│   │   │       │   └── notes.ts
+│   │   │       └── visits
+│   │   │           ├── coaching-log.ts
+│   │   │           ├── index.ts
+│   │   │           └── visit.ts
+│   │   ├── server
+│   │   │   ├── api
+│   │   │   │   ├── client
+│   │   │   │   │   ├── base.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── school.ts
+│   │   │   │   │   └── staff.ts
+│   │   │   │   ├── handlers
+│   │   │   │   │   ├── clerk-webhook.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── reference
+│   │   │   │   │   └── reference-endpoint.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── responses
+│   │   │   │   │   ├── action-response-helper.ts
+│   │   │   │   │   ├── formatters.ts
+│   │   │   │   │   └── index.ts
+│   │   │   │   └── validation
+│   │   │   │       ├── clerk-validation.ts
+│   │   │   │       ├── index.ts
+│   │   │   │       ├── integrated-validation.ts
+│   │   │   │       └── parse-query.ts
+│   │   │   ├── crud
+│   │   │   │   ├── README.md
+│   │   │   │   ├── bulk-operations.ts
+│   │   │   │   ├── crud-action-factory.ts
+│   │   │   │   ├── crud-operations.ts
+│   │   │   │   ├── crud-utils.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── db
+│   │   │   │   ├── connection.ts
+│   │   │   │   ├── ensure-connection.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── model-registry.ts
+│   │   │   │   └── mongodb-query-utils.ts
+│   │   │   ├── fetchers
+│   │   │   │   ├── coachingLog.ts
+│   │   │   │   ├── factory.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── lookFors.ts
+│   │   │   │   ├── schedule.ts
+│   │   │   │   ├── school.ts
+│   │   │   │   └── staff.ts
+│   │   │   └── file-handling
+│   │   │       ├── csv-parser.ts
+│   │   │       ├── file-upload.ts
+│   │   │       └── index.ts
 │   │   ├── tokens
 │   │   │   ├── colors.ts
 │   │   │   ├── index.ts
@@ -701,15 +793,40 @@
 │   │   │   ├── tokens.ts
 │   │   │   ├── types.ts
 │   │   │   └── typography.ts
+│   │   ├── transformers
+│   │   │   ├── core
+│   │   │   │   ├── document.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── unified-transformer.ts
+│   │   │   │   └── validation.ts
+│   │   │   ├── factories
+│   │   │   │   ├── domain-factory.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── reference-factory.ts
+│   │   │   │   ├── response-factory.ts
+│   │   │   │   └── server-action-factory.ts
+│   │   │   ├── index.ts
+│   │   │   ├── pagination
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── pagination-utils.ts
+│   │   │   │   └── unified-pagination.ts
+│   │   │   └── utils
+│   │   │       ├── entity-utils.ts
+│   │   │       ├── fetch-utils.ts
+│   │   │       ├── index.ts
+│   │   │       └── response-utils.ts
 │   │   ├── types
 │   │   │   ├── README.md
 │   │   │   ├── core
-│   │   │   │   ├── api.ts
+│   │   │   │   ├── api-integration.ts
+│   │   │   │   ├── auth.ts
+│   │   │   │   ├── base-types.ts
+│   │   │   │   ├── cache.ts
 │   │   │   │   ├── crud.ts
 │   │   │   │   ├── document.ts
-│   │   │   │   ├── error.ts
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── pagination.ts
+│   │   │   │   ├── query-factory.ts
+│   │   │   │   ├── query.ts
 │   │   │   │   ├── reference.ts
 │   │   │   │   ├── resource-manager.ts
 │   │   │   │   ├── response.ts
@@ -725,6 +842,13 @@
 │   │   │   │   ├── staff.ts
 │   │   │   │   ├── things3-types.ts
 │   │   │   │   └── visit.ts
+│   │   │   ├── error
+│   │   │   │   ├── api.ts
+│   │   │   │   ├── classes.ts
+│   │   │   │   ├── context.ts
+│   │   │   │   ├── core.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   └── response.ts
 │   │   │   ├── index.ts
 │   │   │   ├── ui
 │   │   │   │   ├── form.ts
@@ -756,7 +880,8 @@
 │   │       │   │   └── staff.ts
 │   │       │   ├── helpers.ts
 │   │       │   ├── index.ts
-│   │       │   └── registry.ts
+│   │       │   ├── registry.ts
+│   │       │   └── validation.ts
 │   │       ├── table-schema.ts
 │   │       ├── utils
 │   │       │   ├── form-utils.ts
@@ -769,11 +894,78 @@
 │   │           ├── shared-variants.ts
 │   │           ├── types.ts
 │   │           └── typography.ts
+│   ├── middleware.ts
 │   ├── providers
+│   │   ├── AuthProvider.tsx
 │   │   └── SWRProvider.tsx
+│   ├── query
+│   │   ├── cache
+│   │   │   ├── index.ts
+│   │   │   ├── invalidation.ts
+│   │   │   ├── operations.ts
+│   │   │   └── sync.ts
+│   │   ├── client
+│   │   │   ├── factories
+│   │   │   │   ├── crud-factory.ts
+│   │   │   │   ├── entity-factory.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── hooks
+│   │   │   │   ├── core
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── useBaseQuery.ts
+│   │   │   │   │   ├── useErrorHandledQuery.ts
+│   │   │   │   │   ├── useQueryPagination.ts
+│   │   │   │   │   └── useQueryState.ts
+│   │   │   │   ├── data
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── useEntityById.ts
+│   │   │   │   │   ├── useEntityList.ts
+│   │   │   │   │   ├── useReferenceData.ts
+│   │   │   │   │   └── useResourceQueries.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── mutations
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── useBulkOperations.ts
+│   │   │   │   │   ├── useErrorHandledMutation.ts
+│   │   │   │   │   └── useOptimisticMutation.ts
+│   │   │   │   └── pagination
+│   │   │   │       ├── index.ts
+│   │   │   │       └── usePaginatedQuery.ts
+│   │   │   ├── index.ts
+│   │   │   ├── selectors
+│   │   │   │   ├── domain-selectors.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── reference-selectors.ts
+│   │   │   │   ├── selector-factory.ts
+│   │   │   │   ├── selector-registry.ts
+│   │   │   │   ├── selector-types.ts
+│   │   │   │   └── standard-selectors.ts
+│   │   │   └── utilities
+│   │   │       ├── hook-helpers.ts
+│   │   │       ├── mutation-helpers.ts
+│   │   │       └── optimistic-update-helpers.ts
+│   │   ├── core
+│   │   │   ├── client.ts
+│   │   │   ├── index.ts
+│   │   │   ├── initialization.ts
+│   │   │   ├── keys.ts
+│   │   │   └── provider.tsx
+│   │   ├── hydration
+│   │   │   ├── client.ts
+│   │   │   ├── core.ts
+│   │   │   └── index.ts
+│   │   ├── index.ts
+│   │   ├── server
+│   │   │   ├── index.ts
+│   │   │   └── prefetch.ts
+│   │   ├── shared-utils
+│   │   │   └── hydration-utils.ts
+│   │   └── utilities
+│   │       └── index.ts
 │   ├── styles
 │   │   └── theme.css
 │   └── types
+│       ├── clerk.d.ts
 │       └── dependency-overrides.d.ts
 ├── tailwind.config.ts
 ├── test-output.css
@@ -781,4 +973,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-247 directories, 535 files
+290 directories, 684 files

@@ -1,12 +1,9 @@
-import { 
-  MondayItem, 
-  MondayColumnValue, 
-  TransformResult,
-  MondayFieldMapping,
-} from '@api-monday/types';
-import { FIELD_MAPPERS } from '@api-monday/config';
+import { MondayItem, MondayColumnValue } from '@lib/integrations/monday/types/board';
+import { TransformResult } from '@lib/integrations/monday/types/transform';
+import { MondayFieldMapping } from '@lib/integrations/monday/types/mapping';
+import { FIELD_MAPPERS } from '@lib/integrations/monday/config';
 import { Visit, VisitInput, VisitImportZodSchema, VisitInputZodSchema } from '@zod-schema/visits/visit';
-import { extractTextFromMondayValue } from '@api-monday/utils/monday-utils';
+import { extractTextFromMondayValue } from '@lib/integrations/monday/utils/monday-utils';
 import { z } from 'zod';
 
 /**

@@ -1,11 +1,14 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@query/core/keys';
+// src/query/client/hooks/mutations/useBulkOperations.ts
+
+import { useMutation } from '@tanstack/react-query';
 import { handleClientError } from '@error/handlers/client';
 import { CollectionResponse } from '@core-types/response';
 import { ZodSchema } from 'zod';
-import { transformItemsWithSchema } from '@/lib/data-utilities/transformers/utils/transform-helpers';
+import { BaseDocument } from '@core-types/document';
+import { transformCollectionResponse } from '@query/client/utilities/hook-helpers';
+import { useInvalidation } from '@query/cache/invalidation';
 
-export interface BulkOperationOptions<T> {
+export interface BulkOperationOptions<T extends BaseDocument> {
   /** Entity type name (e.g., 'schools', 'staff') */
   entityType: string;
   
@@ -23,47 +26,62 @@ export interface BulkOperationOptions<T> {
   
   /** Error context for error reporting */
   errorContext?: string;
-}
-
-/**
- * Transform response using shared helper
- */
-function transformBulkResponse<T>(
-  response: CollectionResponse<T> | null | undefined,
-  schema: ZodSchema<T>
-): CollectionResponse<T> {
-  if (!response?.items) {
-    return { success: false, items: [], total: 0 };
-  }
   
-  try {
-    const transformedItems = transformItemsWithSchema(response.items, schema);
-    
-    return {
-      ...response,
-      items: transformedItems,
-      total: transformedItems.length
-    };
-  } catch (error) {
-    console.error('Error transforming bulk response:', error);
-    return response; // Fallback to original
-  }
+  /** Whether to use selector system */
+  useSelector?: boolean;
+  
+  /** Optional related entity types to invalidate on mutations */
+  relatedEntityTypes?: string[];
 }
 
 /**
- * Hook for performing bulk operations with React Query and REQUIRED schema validation
+ * Hook for performing bulk operations with React Query and schema validation
+ * 
+ * @example
+ * ```typescript
+ * const bulkOps = useBulkOperations({
+ *   entityType: 'schools',
+ *   schema: SchoolZodSchema,
+ *   bulkUpload: uploadSchools,
+ *   bulkDelete: deleteSchools,
+ *   relatedEntityTypes: ['staff', 'visits'] // Will invalidate staff and visits when schools are modified
+ * });
+ * 
+ * // Use the operations
+ * bulkOps.bulkUpload(schoolsData);
+ * ```
  */
-export function useBulkOperations<T>({
+export function useBulkOperations<
+  T extends BaseDocument, 
+  R extends Record<string, unknown> = T
+>({
   entityType,
   schema, // ✅ NOW REQUIRED
   bulkUpload,
   bulkDelete,
   bulkUpdate,
-  errorContext = entityType
+  errorContext = entityType,
+  useSelector = false,
+  relatedEntityTypes = []
 }: BulkOperationOptions<T>) {
-  const queryClient = useQueryClient();
+  const { invalidateList } = useInvalidation();
   
-  // Always create mutations, but only use them if the corresponding function is provided
+  /**
+   * Invalidates the entity and any related entities
+   */
+  const invalidateData = async () => {
+    // Invalidate the main entity type
+    await invalidateList(entityType);
+    
+    // Invalidate any related entity types
+    if (relatedEntityTypes.length > 0) {
+      await Promise.all(
+        relatedEntityTypes.map(type => invalidateList(type))
+      );
+    }
+  };
+  
+  // Upload mutation with improved transformation
   const uploadMutation = useMutation({
     mutationFn: async (data: T[]) => {
       if (!bulkUpload) {
@@ -77,14 +95,20 @@ export function useBulkOperations<T>({
           : new Error(handleClientError(error, `Bulk upload ${errorContext}`));
       }
     },
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       // Transform response with schema validation
-      const transformed = transformBulkResponse(response, schema);
+      transformCollectionResponse<T, R>(
+        response, 
+        schema,
+        {
+          entityType,
+          useSelector,
+          errorContext: `${errorContext}.bulkUpload`
+        }
+      );
       
-      // Invalidate entity list queries
-      queryClient.invalidateQueries({ queryKey: queryKeys.entities.list(entityType) });
-      
-      return transformed;
+      // Use invalidation hook instead of direct queryClient call
+      await invalidateData();
     }
   });
   
@@ -101,11 +125,13 @@ export function useBulkOperations<T>({
           : new Error(handleClientError(error, `Bulk delete ${errorContext}`));
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.entities.list(entityType) });
+    onSuccess: async () => {
+      // Use invalidation hook instead of direct queryClient call
+      await invalidateData();
     }
   });
   
+  // Update mutation
   const updateMutation = useMutation({
     mutationFn: async (updates: Array<{ id: string; data: Partial<T> }>) => {
       if (!bulkUpdate) {
@@ -119,13 +145,20 @@ export function useBulkOperations<T>({
           : new Error(handleClientError(error, `Bulk update ${errorContext}`));
       }
     },
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       // Transform response with schema validation
-      const transformed = transformBulkResponse(response, schema);
+      transformCollectionResponse<T, R>(
+        response, 
+        schema,
+        {
+          entityType,
+          useSelector,
+          errorContext: `${errorContext}.bulkUpdate`
+        }
+      );
       
-      queryClient.invalidateQueries({ queryKey: queryKeys.entities.list(entityType) });
-      
-      return transformed;
+      // Use invalidation hook instead of direct queryClient call
+      await invalidateData();
     }
   });
   
@@ -148,4 +181,4 @@ export function useBulkOperations<T>({
     isUpdating: updateMutation.isPending,
     updateError: updateMutation.error
   };
-} 
+}

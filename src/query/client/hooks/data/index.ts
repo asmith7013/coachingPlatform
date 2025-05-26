@@ -1,3 +1,3 @@
 export * from './useReferenceData';
-export * from './useQueriesManager';
+export * from './useResourceQueries';
 // export * from './useSelectorQuery';

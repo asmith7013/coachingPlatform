@@ -5,7 +5,7 @@ import { CollectionResponse } from '@core-types/response';
 import { BaseDocument } from '@core-types/document';
 import { EntityCacheOperations } from '@core-types/cache';
 import { handleClientError } from '@error/handlers/client';
-import { getSelectors } from '@/query/client/selectors/selector-registry';
+import { getSelectors } from '@/query/client/selectors/selector-factory';
 
 /**
  * Create entity-specific cache operations

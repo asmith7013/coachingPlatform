@@ -22,7 +22,6 @@ export function getReferenceSelectProps(override: FieldOverride) {
   return {
     label: override.label || 'Select...',
     url: override.url,
-    multiple: override.multiple !== false, // Default to true if not specified
     disabled: override.disabled === true,
   };
 }

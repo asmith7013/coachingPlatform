@@ -4,9 +4,7 @@
   export * from './response';
   export * from './utils';
   export * from './query-factory';
-  export * from './pagination';
   export * from './auth';
-  export * from './base-types';
   export * from './cache';
   export * from './token';
   export * from './resource-manager';

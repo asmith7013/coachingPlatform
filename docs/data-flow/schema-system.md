@@ -323,6 +323,98 @@ When using hooks:
 
 </section>
 
+<section id="selector-system">
+
+## Selector System
+
+Our application uses a structured selector system to transform and validate data across the application:
+
+### Selector Architecture
+
+The selector system follows a layered approach:
+
+```
+┌─────────────────────┐     ┌─────────────────────┐     ┌─────────────────────┐
+│  Base Selectors     │     │  Standard Selectors │     │  Domain Selectors   │
+├─────────────────────┤     ├─────────────────────┤     ├─────────────────────┤
+│ - Basic operations  │ ──> │ - Entity-specific   │ ──> │ - Business logic    │
+│ - Generic transforms│     │ - Pre-configured    │     │ - Complex transforms│
+│ - Response handling │     │ - Extended variants │     │ - Computed fields   │
+└─────────────────────┘     └─────────────────────┘     └─────────────────────┘
+```
+
+### Core Components
+
+The selector system includes these key components:
+
+1. **Selector Factory**: Creates base selectors with standard operations
+2. **Selector Registry**: Maintains a catalog of available selectors
+3. **Reference Selectors**: Specialized transformers for dropdown references
+4. **Standard Selectors**: Pre-configured selectors for common entity types
+5. **Domain Selectors**: Business-specific transformations with computed fields
+
+### Using Selectors
+
+Selectors provide a type-safe way to transform data:
+
+```typescript
+// Using a standard selector
+import { standardSelectors } from '@query/client/selectors';
+
+// Basic selection (returns array of School objects)
+const schools = standardSelectors.schools.base.basic(response);
+
+// Reference selection (returns {value, label} pairs for dropdowns)
+const schoolOptions = standardSelectors.schools.reference(response);
+
+// Detail with formatted dates
+const schoolDetails = standardSelectors.schools.detail(singleSchoolResponse);
+
+// Using a domain selector
+import { domainSelectors } from '@query/client/selectors';
+
+// Get schools with computed fields
+const enhancedSchools = domainSelectors.enhancedSchool(response);
+
+// Get schools with their related visits
+const schoolsWithVisits = domainSelectors.schoolsWithVisits(schoolData, visitData);
+```
+
+### Reference Selector Pattern
+
+A specialized pattern for transforming entities to reference format:
+
+```typescript
+// Get reference options for any entity type
+import { getReferenceOptions } from '@query/client/selectors';
+
+// For dropdowns/selects (returns {value, label} pairs)
+const options = getReferenceOptions('schools', schoolsData);
+
+// For more complex references with additional fields
+import { referenceSelectors } from '@query/client/selectors';
+
+// Get enhanced references with additional fields
+const schoolReferences = referenceSelectors.school(schoolsData);
+```
+
+### Custom Transformations
+
+Create custom transformations when needed:
+
+```typescript
+// Using transform to create a custom projection
+const transformedData = standardSelectors.schools.base.transform(school => ({
+  id: school._id,
+  name: school.schoolName,
+  staffCount: school.staffList.length,
+  hasStaff: school.staffList.length > 0
+}))(schoolsData);
+```
+
+[RULE] Always use selectors rather than manual transformations when processing data from API responses.
+</section>
+
 <section id="navigation-hooks">
 
 ## Navigation and Authorization Hooks

@@ -1,4 +1,5 @@
-import { createEntityHooks } from '@/query/client/factories/entity-hooks';
+import { z } from 'zod';
+import { createEntityHooks } from '@/query/client/factories/entity-factory';
 import { 
   NYCPSStaffZodSchema, 
   NYCPSStaffInputZodSchema, 
@@ -14,9 +15,10 @@ import {
   deleteNYCPSStaff 
 } from '@actions/staff/operations';
 import { WithDateObjects } from '@core-types/document';
-import { wrapServerActions } from '@/lib/data-utilities/transformers/factories/server-action-factory';
-import { transformDocument } from '@/lib/data-utilities/transformers/core/document';
+import { wrapServerActions } from '@transformers/factories/server-action-factory';
+import { transformData } from '@transformers/core/unified-transformer';
 import { ZodType } from 'zod';
+import { SchoolWithDates } from './useSchools';
 
 /**
  * NYCPSStaff entity with Date objects instead of string dates
@@ -47,7 +49,12 @@ const wrappedActions = wrapServerActions<NYCPSStaff, NYCPSStaffWithDates, NYCPSS
     update: updateNYCPSStaff,
     delete: deleteNYCPSStaff
   },
-  items => ensureMondayUserIsConnected(transformDocument(items))
+  items => transformData<NYCPSStaff, NYCPSStaffWithDates>(items, {
+    schema: NYCPSStaffZodSchema as unknown as ZodType<NYCPSStaffWithDates>,
+    handleDates: true,
+    errorContext: 'useNYCPSStaff',
+    domainTransform: (item) => ensureMondayUserIsConnected([item])[0]
+  })
 );
 
 /**
@@ -57,14 +64,14 @@ const wrappedActions = wrapServerActions<NYCPSStaff, NYCPSStaffWithDates, NYCPSS
  * with proper date transformation (string dates to Date objects)
  */
 const {
-  useList: useNYCPSStaffList,
-  useById: useNYCPSStaffById,
+  useEntityList: useNYCPSStaffList,
+  useEntityById: useNYCPSStaffById,
   useMutations: useNYCPSStaffMutations,
   useManager: useNYCPSStaff
 } = createEntityHooks<NYCPSStaffWithDates, NYCPSStaffInput>({
   entityType: 'nycps-staff',
-  schema: NYCPSStaffZodSchema as ZodType<NYCPSStaffWithDates>,
-  inputSchema: NYCPSStaffInputZodSchema,
+  fullSchema: NYCPSStaffZodSchema as z.ZodType<NYCPSStaffWithDates>,
+  inputSchema: NYCPSStaffZodSchema as unknown as z.ZodType<NYCPSStaffInput>,
   serverActions: wrappedActions,
   validSortFields: ['staffName', 'email', 'createdAt', 'updatedAt'],
   defaultParams: {

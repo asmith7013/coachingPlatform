@@ -6,13 +6,11 @@ export const NYCPSStaffOverrides: FieldOverrideMap<NYCPSStaffInput> = {
     type: 'reference',
     label: 'Schools',
     url: '/api/schools',
-    multiple: true,
   },
   owners: {
     type: 'reference',
     label: 'Owners',
     url: '/api/staff',
-    multiple: true,
   },
   // Add other overrides as needed
 }; 

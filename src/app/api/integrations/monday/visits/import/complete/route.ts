@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { importSelectedVisits } from '@/lib/integrations/monday/services/import-service';
 import { handleServerError } from '@error/handlers/server';
 import { handleValidationError } from '@error/handlers/validation';
-import { VisitInputZodSchema } from '@/lib/data-schema/zod-schema/visits/visit';
+import { VisitInputZodSchema } from '@zod-schema/visits/visit';
 import { revalidatePath } from 'next/cache';
 
 export async function POST(request: Request) {

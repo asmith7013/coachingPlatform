@@ -1,7 +1,7 @@
 // src/app/api/integrations/monday/visits/route.ts
 
 import { NextResponse } from 'next/server';
-import { findPotentialVisitsToImport } from '@api-monday/services/import-service';
+import { findPotentialVisitsToImport } from '@lib/integrations/monday/services/import-service';
 import { handleValidationError } from '@error/handlers/validation';
 import { handleServerError } from '@error/handlers/server';
 import { z } from 'zod';

@@ -1,9 +1,6 @@
-import { 
-  MondayItem, 
-  MondayUser,
-  MondayBoard, 
-  MondayConnectionTestResult
-} from '@api-monday/types';
+import { MondayConnectionTestResult } from '@lib/integrations/monday/types/api';
+import { MondayItem, MondayBoard } from '@lib/integrations/monday/types/board';
+import { MondayUser } from '@lib/integrations/monday/types/api';
 import { 
   ITEMS_QUERY, 
   BOARD_WITH_ITEMS_QUERY,
@@ -12,7 +9,7 @@ import {
   ITEM_BY_ID_QUERY,
   USER_BY_EMAIL_QUERY,
   UPDATE_ITEM_MUTATION
-} from '@api-monday/client/queries';
+} from '@lib/integrations/monday/client/queries';
 import {
   // adaptMondayBoardResponse,
   adaptMondayItemsResponse,

@@ -6,6 +6,7 @@ import {
   CollectionResponseZodSchema, 
   EntityResponseZodSchema 
 } from '@zod-schema/core-types/response';
+import { PaginatedResponseZodSchema } from '@zod-schema/core-types/query';
 
 /**
  * Base response interface for all API responses
@@ -28,6 +29,13 @@ export type EntityResponse<T = unknown> = Omit<z.infer<typeof EntityResponseZodS
 };
 
 /**
+ * Response type for paginated data
+ */
+export type PaginatedResponse<T = unknown> = Omit<z.infer<typeof PaginatedResponseZodSchema>, 'items'> & {
+  items: T[];
+};
+
+/**
  * @deprecated Use CollectionResponse instead
  * Maintained for backward compatibility
  */
@@ -38,3 +46,4 @@ export type StandardResponse<T = unknown> = CollectionResponse<T>;
  * Maintained for backward compatibility
  */
 export type SingleResourceResponse<T = unknown> = EntityResponse<T>;
+

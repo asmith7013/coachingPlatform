@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { LookForModel } from "@mongoose-schema/look-fors";
 import { LookForZodSchema } from "@zod-schema/look-fors/look-for";
-import { bulkUploadToDB } from "@data-server/crud/bulk-operations";
-import { parseCSV } from "@data-server/file-handling/csv-parser";
+import { bulkUploadToDB } from "@/lib/server/crud/bulk-operations";
+import { parseCSV } from "@/lib/server/file-handling/csv-parser";
 
 export async function POST(request: NextRequest) {
   try {

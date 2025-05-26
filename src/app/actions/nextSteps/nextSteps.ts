@@ -1,18 +1,19 @@
 "use server";
 
-import { z } from "zod";
+import { z, ZodType } from "zod";
 import { NextStepModel } from "@mongoose-schema/look-fors/next-step.model";
-import { NextStepZodSchema, NextStepInputZodSchema } from "@zod-schema/look-fors/next-step";
-import { createCrudActions } from "@data-server/crud/crud-action-factory";
-import { withDbConnection } from "@data-server/db/ensure-connection";
+import { NextStep, NextStepZodSchema, NextStepInputZodSchema } from "@zod-schema/look-fors/next-step";
+import { createCrudActions } from "@server/crud/crud-action-factory";
+import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
+import { QueryParams } from "@/lib/types/core/query";
 
 type NextStepInput = z.infer<typeof NextStepInputZodSchema>;
 
 // Create standard CRUD actions for Next Steps
 export const nextStepActions = createCrudActions({
   model: NextStepModel,
-  fullSchema: NextStepZodSchema,
+  fullSchema: NextStepZodSchema as ZodType<NextStep>,
   inputSchema: NextStepInputZodSchema,
   revalidationPaths: ["/dashboard/look-fors", "/dashboard/nextSteps"],
   options: {
@@ -24,7 +25,7 @@ export const nextStepActions = createCrudActions({
 });
 
 // Export the generated actions with connection handling
-export async function fetchNextSteps(params = {}) {
+export async function fetchNextSteps(params: QueryParams) {
   return withDbConnection(() => nextStepActions.fetch(params));
 }
 

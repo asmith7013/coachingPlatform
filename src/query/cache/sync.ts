@@ -1,7 +1,7 @@
 // src/lib/query/cache-sync/client-sync.ts
 import { queryClient } from '@/query/core/client';
 import { CacheSyncConfig } from '@core-types/cache';
-import { createEntityCacheOperations } from '@/query/cache-sync/cache-operations';
+import { createEntityCacheOperations } from '@query/cache/operations';
 
 /**
  * Synchronize client-side cache after server mutations

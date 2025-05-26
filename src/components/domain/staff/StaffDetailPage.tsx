@@ -10,11 +10,11 @@ import { Text } from '@/components/core/typography/Text'
 import { Card } from '@/components/composed/cards/Card'
 import { ScheduleTable } from '@/components/composed/tables/ScheduleTable'
 import { Table } from '@/components/composed/tables/Table'
-import { useSafeSWR } from '@/hooks/swr/useSafeSWR'
+import { useSafeSWR } from '@query-hooks/swr/useSafeSWR'
 import { cn } from '@ui/utils/formatters';
 import { weight, paddingY } from '@/lib/tokens/tokens'
 import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'
-import type { TeacherSchedule } from '@/lib/data-schema/zod-schema/schedule/schedule'
+import type { TeacherSchedule } from '@zod-schema/schedule/schedule'
 import type { TableColumnSchema } from '@ui/table-schema'
 
 type StaffMember = NYCPSStaff | TeachingLabStaff

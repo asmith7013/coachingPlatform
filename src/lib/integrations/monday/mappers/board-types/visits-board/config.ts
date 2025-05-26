@@ -1,7 +1,8 @@
 // src/lib/integrations/monday/mappers/schemas/visit/config.ts
 
-import { EntityMappingConfig, ValueTransformer } from "@api-monday/types";
-import { VisitInput } from "@/lib/data-schema/zod-schema/visits/visit";
+import { EntityMappingConfig } from "@lib/integrations/monday/types/mapping";
+import { VisitInput } from "@zod-schema/visits/visit";
+import { ValueTransformer } from "@lib/integrations/monday/types/mapping";
 import { 
   dateTransformer,
   textTransformer,

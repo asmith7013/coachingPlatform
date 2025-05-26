@@ -1,17 +1,7 @@
 // src/lib/query/initialization.ts
 
 import { captureError, createErrorContext } from '@error';
-import { registerEntitySelector } from './selectors/registry';
-import { 
-  schoolSelectors,
-  staffSelectors,
-  nycpsStaffSelectors,
-  teachingLabStaffSelectors,
-  visitSelectors,
-  lookForSelectors,
-  rubricSelectors,
-  cycleSelectors
-} from './selectors/standard-selectors';
+import { standardSelectors } from '@query/client/selectors/standard-selectors';
 
 /**
  * Initialization state tracking
@@ -20,39 +10,42 @@ let isInitialized = false;
 
 /**
  * Register standard selectors for common entity types
+ * 
+ * Note: The selectors are already registered during their creation in standard-selectors.ts
+ * This function validates that all expected selectors are available and logs any issues
  */
 export function registerStandardSelectors(): void {
   try {
-    // Core entity types
-    registerEntitySelector('schools', schoolSelectors.basic);
-    registerEntitySelector('staff', staffSelectors.basic);
-    registerEntitySelector('nycps-staff', nycpsStaffSelectors.basic);
-    registerEntitySelector('teaching-lab-staff', teachingLabStaffSelectors.basic);
-    registerEntitySelector('cycles', cycleSelectors.basic);
-
-    // Visit management
-    registerEntitySelector('visits', visitSelectors.basic);
-
-    // Look-fors system
-    registerEntitySelector('lookFors', lookForSelectors.basic);
-    registerEntitySelector('rubrics', rubricSelectors.basic);
-
-    // Reference selectors (for dropdowns)
-    registerEntitySelector('schools-reference', schoolSelectors.reference);
-    registerEntitySelector('staff-reference', staffSelectors.reference);
-    registerEntitySelector('visits-reference', visitSelectors.reference);
-
-    // Searchable selectors
-    registerEntitySelector('schools-searchable', schoolSelectors.searchable);
-    registerEntitySelector('staff-searchable', staffSelectors.searchable);
+    // Validate that all standard selectors are properly initialized
+    const expectedSelectors = [
+      'schools', 'staff', 'nycps-staff', 'teaching-lab-staff', 'cycles',
+      'visits', 'coaching-logs', 'look-fors', 'rubrics'
+    ];
     
-    // Detail selectors
-    registerEntitySelector('school-detail', schoolSelectors.detail);
-    registerEntitySelector('staff-detail', staffSelectors.detail);
-    registerEntitySelector('visit-detail', visitSelectors.detail);
+    const selectorVariants = [
+      'reference', 'searchable', 'detail'
+    ];
+    
+    // Check base selectors
+    for (const selectorName of expectedSelectors) {
+      const selector = standardSelectors[selectorName as keyof typeof standardSelectors];
+      if (!selector?.base) {
+        throw new Error(`Missing base selector for ${selectorName}`);
+      }
+      
+      // Check specialized variants
+      for (const variant of selectorVariants) {
+        if (!selector[variant as keyof typeof selector]) {
+          console.warn(`Missing ${variant} variant for ${selectorName}`);
+        }
+      }
+    }
+    
+    console.log('✅ All standard selectors validated successfully');
+    
   } catch (error) {
     captureError(error, createErrorContext('QuerySystem', 'selectorRegistration'));
-    console.error('Failed to register standard selectors:', error);
+    console.error('Failed to validate standard selectors:', error);
   }
 }
 

@@ -1,17 +1,19 @@
 "use server";
 
 import { NoteModel } from "@mongoose-schema/shared/notes.model";
-import { NoteZodSchema, NoteInputZodSchema } from "@zod-schema/shared/notes";
-import { createCrudActions } from "@data-server/crud/crud-action-factory";
-import { withDbConnection } from "@data-server/db/ensure-connection";
+import { Note, NoteZodSchema, NoteInputZodSchema } from "@zod-schema/shared/notes";
+import { createCrudActions } from "@/lib/server/crud/crud-action-factory";
+import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import { NoteInput } from "@zod-schema/shared/notes";
+import { ZodType } from "zod";
+import { QueryParams } from "@/lib/types/core/query";
 
 // Create standard CRUD actions for Notes
 export const noteActions = createCrudActions({
   model: NoteModel,
-  fullSchema: NoteZodSchema,
-  inputSchema: NoteInputZodSchema,
+  fullSchema: NoteZodSchema as ZodType<Note>,
+  inputSchema: NoteInputZodSchema as ZodType<NoteInput>,
   revalidationPaths: ["/dashboard/notes"],
   options: {
     validSortFields: ['date', 'type', 'createdAt', 'updatedAt'],
@@ -22,7 +24,7 @@ export const noteActions = createCrudActions({
 });
 
 // Export the generated actions with connection handling
-export async function fetchNotes(params = {}) {
+export async function fetchNotes(params: QueryParams) {
   return withDbConnection(() => noteActions.fetch(params));
 }
 

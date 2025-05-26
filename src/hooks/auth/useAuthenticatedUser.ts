@@ -2,13 +2,11 @@ import { useUser, useOrganization, useClerk } from '@clerk/nextjs';
 import { useMemo, useCallback } from 'react';
 import { 
   AuthenticatedUser, 
-  UserMetadata, 
   UserMetadataSchema, 
   ROLE_PERMISSIONS, 
   Permission,
-  Role
 } from '@core-types/auth';
-import { validateSafe } from '@/lib/data-utilities/transformers/core/validation';
+import { validateSafe } from '@transformers/core/validation';
 
 export function useAuthenticatedUser(): AuthenticatedUser {
   const { user, isLoaded, isSignedIn } = useUser();

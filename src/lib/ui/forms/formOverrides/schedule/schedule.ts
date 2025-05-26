@@ -19,14 +19,12 @@ export const BellScheduleOverrides: FieldOverrideMap<BellScheduleInput> = {
     type: 'multi-select',
     label: 'Class Schedule',
     helpText: 'The classes scheduled for this schedule',
-    multiple: true,
     required: true,
   },
   assignedCycleDays: {
     type: 'multi-select',
     label: 'Assigned Cycle Days',
     helpText: 'The cycle days assigned to this schedule',
-    multiple: true,
     required: true,
   },
   owners: {
@@ -34,7 +32,6 @@ export const BellScheduleOverrides: FieldOverrideMap<BellScheduleInput> = {
     label: 'Owners',
     url: '/api/reference/staff',
     helpText: 'Staff members responsible for managing this schedule',
-    multiple: true,
     required: true,
   },
 }; 

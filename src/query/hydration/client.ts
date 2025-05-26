@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { CollectionResponse } from '@core-types/response';
 import { captureError, createErrorContext } from '@error';
 import { queryClient } from '@query/core/client';
-import { hydrateState } from '@query/shared/serialize';
+import { hydrateState } from '@/query/shared-utils/hydration-utils';
 import { prefetchEntityData } from './core';
 
 /**

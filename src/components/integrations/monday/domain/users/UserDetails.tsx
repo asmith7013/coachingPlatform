@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { MondayUser } from '@api-monday/types';
-import { Badge } from '@/components/core/feedback/Badge';
-import { Button } from '@/components/core/Button';
-import { Spinner } from '@/components/core/feedback/Spinner';
-import { Dialog } from '@/components/composed/dialogs/Dialog';
-import { useStaffExistence } from '@/hooks/integrations/monday/useStaffExistence';
+import { MondayUser } from '@lib/integrations/monday/types/api';
+import { Badge } from '@components/core/feedback/Badge';
+import { Button } from '@components/core/Button';
+import { Spinner } from '@components/core/feedback/Spinner';
+import { Dialog } from '@components/composed/dialogs/Dialog';
+import { useStaffExistence } from '@hooks/integrations/monday/useStaffExistence';
 import { CreateTeachingLabStaffForm } from './CreateTeachingLabStaffForm';
 import Image from 'next/image';
 

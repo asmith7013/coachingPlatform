@@ -1,6 +1,7 @@
 // src/lib/integrations/monday/mappers/utils/value-transformers.ts
 
-import { MondayColumnValue, ValueTransformer } from "@api-monday/types";
+import { MondayColumnValue } from "@lib/integrations/monday/types/board";
+import { ValueTransformer } from "@lib/integrations/monday/types/mapping";
 
 /**
  * Extract text value from a Monday column value

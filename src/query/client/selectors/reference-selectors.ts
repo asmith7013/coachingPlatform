@@ -1,29 +1,107 @@
 // src/query/client/selectors/reference-selectors.ts
 
-import { z } from "zod";
 import { BaseDocument } from "@core-types/document";
-import { EntitySelector } from "./selector-types";
-import { getSelector } from "./selector-registry";
+import { EntitySelector, SelectorFunction } from "@query/client/selectors/selector-types";
+import { getSelector } from "@query/client/selectors/selector-factory";
 import { handleClientError } from "@error/handlers/client";
+import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
+import { getEntityLabel } from "@query/client/utilities/selector-helpers";
+
+// Import entity types
 import { School } from "@zod-schema/core/school";
-import { NYCPSStaff } from "@zod-schema/core/staff";
-import { TeachingLabStaff } from "@zod-schema/core/staff";
+import { NYCPSStaff, TeachingLabStaff } from "@zod-schema/core/staff"; 
 import { Visit } from "@zod-schema/visits/visit";
 import { CoachingLog } from "@zod-schema/visits/coaching-log";
 import { LookFor } from "@zod-schema/look-fors/look-for";
 
-// Base reference schema and type
-export const BaseReferenceZodSchema = z.object({
-  _id: z.string(),
-  label: z.string(),
-  value: z.string().optional(),
-});
+// Import base reference type
+import { BaseReference } from "@core-types/reference";
 
-export type BaseReference = z.infer<typeof BaseReferenceZodSchema>;
+// Import entity-specific reference types from their domain files
+import { SchoolReference } from "@zod-schema/core/school";
+import { StaffReference } from "@zod-schema/core/staff";
+import { VisitReference } from "@zod-schema/visits/visit";
+import { CoachingLogReference } from "@zod-schema/visits/coaching-log";
+import { LookForReference } from "@zod-schema/look-fors/look-for";
+
+/**
+ * Creates a standard reference selector function for any entity type
+ * Centralizes reference transformation logic in one place
+ * 
+ * @param entityType The type of entity to create a reference selector for
+ * @param getLabelFn Optional custom function to extract entity label
+ * @returns A selector function that transforms data into reference format
+ */
+export function createReferenceSelector<T extends BaseDocument>(
+  entityType: string,
+  getLabelFn: (entity: T) => string = getEntityLabel
+): SelectorFunction<T, Array<{ value: string; label: string }>> {
+  return (data: unknown) => {
+    try {
+      // Get the base selector
+      const selector = getSelector<T>(entityType);
+      
+      // Extract and transform items
+      const items = selector.basic(data);
+      
+      // Create reference objects
+      return items.map(item => ({
+        value: item._id,
+        label: getLabelFn(item)
+      }));
+    } catch (error) {
+      handleClientError(error, `referenceSelector:${entityType}`);
+      return [];
+    }
+  };
+}
+
+/**
+ * Creates a reference object transformation function
+ * Used for more complex reference objects beyond value/label
+ * 
+ * @param getLabelFn Function to extract entity label
+ * @param getAdditionalFields Function to extract additional reference fields
+ * @returns A function that transforms an entity into a reference object
+ */
+export function createReferenceObjectTransformer<
+  T extends BaseDocument,
+  R extends BaseReference = BaseReference
+>(
+  getLabelFn: (entity: T) => string = getEntityLabel,
+  getAdditionalFields?: (entity: T) => Partial<Omit<R, '_id' | 'label' | 'value'>>
+) {
+  return (entity: T): R => {
+    try {
+      // Create base reference
+      const reference: Record<string, unknown> = {
+        _id: entity._id,
+        value: entity._id,
+        label: getLabelFn(entity),
+      };
+      
+      // Add additional fields if provided
+      if (getAdditionalFields) {
+        Object.assign(reference, getAdditionalFields(entity));
+      }
+      
+      return reference as R;
+    } catch (error) {
+      handleClientError(error, 'createReferenceObject');
+      // Return minimal valid reference to avoid breaking consumers
+      return {
+        _id: entity._id,
+        value: entity._id,
+        label: String(entity._id)
+      } as unknown as R;
+    }
+  };
+}
 
 /**
  * Enhanced selector factory extension for references
- * Extends an existing selector with reference capabilities
+ * Extends an existing selector with reference capabilities by integrating
+ * with the reference transformer utility
  */
 export function enhanceWithReferenceSelector<
   T extends BaseDocument,
@@ -35,29 +113,22 @@ export function enhanceWithReferenceSelector<
 ): EntitySelector<T> & { 
   enhancedReference: (data: unknown) => R[] 
 } {
-  // Create reference transformation function
-  const referenceTransformer = (items: T[]): R[] => {
-    return items.map(item => {
-      const reference: BaseReference = {
-        _id: item._id,
-        label: getLabelFn(item),
-        value: item._id,
-      };
-      
-      return {
-        ...reference,
-        ...(getAdditionalFields ? getAdditionalFields(item) : {}),
-      } as R;
-    });
-  };
+  // Create reference transformer using the utility
+  const transformer = createReferenceTransformer<T, R>(
+    getLabelFn,
+    getAdditionalFields
+  );
+  
+  // Create array transformer for processing collections
+  const arrayTransformer = createArrayTransformer<T, R>(transformer);
   
   // Create enhanced reference selector function
   const enhancedReference = (data: unknown): R[] => {
     try {
-      // Use the existing basic selector to get the transformed items
+      // Use selector.basic to get items (which now uses normalizeToArray internally)
       const items = selector.basic(data);
       // Apply the reference transformation
-      return referenceTransformer(items);
+      return arrayTransformer(items);
     } catch (error) {
       handleClientError(error, 'enhancedReference');
       return [];
@@ -72,7 +143,7 @@ export function enhanceWithReferenceSelector<
 }
 
 /**
- * Registers a reference selector for an entity type
+ * Registers a reference selector for an entity type using the reference transformer
  */
 export function registerReferenceSelector<
   T extends BaseDocument,
@@ -96,38 +167,19 @@ export function registerReferenceSelector<
   return enhanced.enhancedReference;
 }
 
-// Define entity-specific reference interfaces
-export interface SchoolReference extends BaseReference {
-  schoolNumber?: string;
-  district?: string;
-}
-
-export interface StaffReference extends BaseReference {
-  email?: string;
-  role?: string;
-}
-
-export interface ScheduleReference extends BaseReference {
-  teacher?: string;
-  school?: string;
-}
-
-export interface BellScheduleReference extends BaseReference {
-  school?: string;
-  bellScheduleType?: string;
-}
-
-export interface LookForReference extends BaseReference {
-  lookForIndex?: number;
-}
-
-export interface VisitReference extends BaseReference {
-  date?: string;
-  school?: string;
-}
-
-export interface CoachingLogReference extends BaseReference {
-  solvesTouchpoint?: string;
+/**
+ * Export a simple function to get reference options for any entity type
+ * This is the primary function that should be used for basic reference selectors
+ * 
+ * @param entityType The entity type to get references for
+ * @param data The data to transform
+ * @returns Array of value/label reference objects
+ */
+export function getReferenceOptions<T extends BaseDocument>(
+  entityType: string,
+  data: unknown
+): Array<{ value: string; label: string }> {
+  return createReferenceSelector<T>(entityType)(data);
 }
 
 // Pre-configure common reference transformers
@@ -185,36 +237,43 @@ export const referenceSelectors = {
   )
 };
 
-// Legacy compatibility functions to bridge with existing code
-// These maintain backward compatibility with your existing reference-mappers.ts
+/**
+ * Legacy mapping functions for API compatibility
+ * These functions provide backward compatibility for existing API routes
+ */
+
+/**
+ * Maps a school entity to a school reference object
+ * Used by API routes for backward compatibility
+ */
 export function mapSchoolToReference(school: School): SchoolReference {
-  return {
-    _id: school._id,
-    label: school.schoolName,
-    value: school._id,
-    schoolNumber: school.schoolNumber,
-    district: school.district
-  };
+  const transformer = createReferenceObjectTransformer<School, SchoolReference>(
+    (school) => school.schoolName,
+    (school) => ({
+      schoolNumber: school.schoolNumber,
+      district: school.district,
+      gradeLevels: school.gradeLevelsSupported,
+      staffCount: school.staffList?.length || 0,
+    })
+  );
+  
+  return transformer(school);
 }
 
+/**
+ * Maps a staff entity to a staff reference object
+ * Used by API routes for backward compatibility
+ */
 export function mapStaffToReference(staff: NYCPSStaff | TeachingLabStaff): StaffReference {
-  return {
-    _id: staff._id,
-    label: staff.staffName,
-    value: staff._id,
-    email: staff.email,
-    role: staff.rolesNYCPS?.[0] || staff.rolesTL?.[0]
-  };
+  const transformer = createReferenceObjectTransformer<NYCPSStaff | TeachingLabStaff, StaffReference>(
+    (staff) => staff.staffName,
+    (staff) => ({
+      email: staff.email,
+      role: 'rolesNYCPS' in staff ? staff.rolesNYCPS?.[0] : 
+            'rolesTL' in staff ? staff.rolesTL?.[0] : undefined
+    })
+  );
+  
+  return transformer(staff);
 }
 
-// Export legacy reference mappers for backward compatibility
-export const referenceMappers = {
-  school: mapSchoolToReference,
-  staff: mapStaffToReference,
-  // Map the rest directly to the new selectors
-  schedule: (data: any) => referenceSelectors.school([data])[0],
-  bellSchedule: (data: any) => referenceSelectors.school([data])[0],
-  lookFor: (data: any) => referenceSelectors.lookFor([data])[0],
-  visit: (data: any) => referenceSelectors.visit([data])[0],
-  coachingLog: (data: any) => referenceSelectors.coachingLog([data])[0]
-};

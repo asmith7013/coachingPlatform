@@ -1,15 +1,16 @@
 'use server';
 
-import { connectToDB } from "@data-server/db/connection";
+import { connectToDB } from "@server/db/connection";
 import { CycleModel } from "@mongoose-schema/core/cycle.model";
-import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
+import { fetchPaginatedResource } from "@transformers/pagination/unified-pagination";
 import { handleServerError } from "@error/handlers/server";
 import type { QueryParams } from "@core-types/query";
-import { CycleZodSchema } from "@zod-schema/core/cycle";
+import { Cycle, CycleZodSchema } from "@zod-schema/core/cycle";
+import { ZodType } from "zod";
 /**
  * Fetches a paginated list of cycles
  */
-export async function fetchCycles(params: QueryParams = {}) {
+export async function fetchCycles(params: QueryParams) {
   try {
     await connectToDB();
     
@@ -18,7 +19,7 @@ export async function fetchCycles(params: QueryParams = {}) {
     
     return await fetchPaginatedResource(
       CycleModel,
-      CycleZodSchema,
+      CycleZodSchema as ZodType<Cycle>,
       {
         ...otherParams,
         sortBy,

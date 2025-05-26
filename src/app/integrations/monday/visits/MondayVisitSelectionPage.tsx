@@ -2,21 +2,21 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card } from '@/components/composed/cards/Card';
-import { Input } from '@/components/core/fields/Input';
-import { Button } from '@/components/core/Button';
-import { Checkbox } from '@/components/core/fields/Checkbox';
-import { Alert } from '@/components/core/feedback/Alert';
-import { Spinner } from '@/components/core/feedback/Spinner';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
-import type { ImportPreview } from '@/lib/integrations/monday/types';
+import { Card } from '@components/composed/cards/Card';
+import { Input } from '@components/core/fields/Input';
+import { Button } from '@components/core/Button';
+import { Checkbox } from '@components/core/fields/Checkbox';
+import { Alert } from '@components/core/feedback/Alert';
+import { Spinner } from '@components/core/feedback/Spinner';
+import { Heading } from '@components/core/typography/Heading';
+import { Text } from '@components/core/typography/Text';
+import type { VisitInput } from '@zod-schema/visits/visit';
+import type { ImportPreview } from '@lib/integrations/monday/types/import';
 import { 
   useMondayBoard, 
   useMondayPreviews, 
   useMondayImport 
-} from '@/hooks/integrations/monday/useMondayQueries';
+} from '@hooks/integrations/monday/useMondayQueries';
 
 /**
  * Monday Visit Selection Page

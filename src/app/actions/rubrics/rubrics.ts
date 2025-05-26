@@ -1,22 +1,24 @@
 "use server";
 
-import { z } from "zod";
+import { z, ZodType } from "zod";
 import { RubricModel, RubricScoreModel } from "@mongoose-schema/look-fors/rubric.model";
 import { 
   RubricZodSchema,
   RubricScoreZodSchema,   
   RubricInputZodSchema,
   RubricInput,
+  Rubric
 } from "@zod-schema/look-fors/rubric";
-import { createCrudActions } from "@data-server/crud/crud-action-factory";
-import { withDbConnection } from "@data-server/db/ensure-connection";
+import { createCrudActions } from "@server/crud/crud-action-factory";
+import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
+import { QueryParams } from "@/lib/types/core/query";
 
 // Create standard CRUD actions for Rubrics
 export const rubricActions = createCrudActions({
   model: RubricModel,
-  fullSchema: RubricZodSchema,
-  inputSchema: RubricInputZodSchema,
+  fullSchema: RubricZodSchema as ZodType<Rubric>,
+  inputSchema: RubricInputZodSchema as ZodType<RubricInput>,
   revalidationPaths: ["/dashboard/rubrics"],
   options: {
     validSortFields: ['score', 'createdAt'],
@@ -27,7 +29,7 @@ export const rubricActions = createCrudActions({
 });
 
 // Export the generated actions with connection handling
-export async function fetchRubrics(params = {}) {
+export async function fetchRubrics(params: QueryParams) {
   return withDbConnection(() => rubricActions.fetch(params));
 }
 

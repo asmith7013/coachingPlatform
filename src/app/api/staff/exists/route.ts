@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { NYCPSStaffModel, TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
-import { handleServerError } from "@/lib/error";
-import { withDbConnection } from "@/lib/data-server/db/ensure-connection";
+import { handleServerError } from "@error/handlers/server";
+import { withDbConnection } from "@server/db/ensure-connection";
 
 /**
  * API endpoint to check if a staff member exists by email

@@ -12,8 +12,7 @@ import { useOptimisticMutation } from '@/query/client/hooks/mutations/useOptimis
 import { optimisticUpdateHelpers } from '@query/client/utilities/optimistic-update-helpers';
 import { syncClientCache } from '@query/cache/sync';
 import { BaseDocument } from '@core-types/document';
-import { CollectionResponse } from '@core-types/response';
-import { PaginatedResponse } from '@core-types/pagination';
+import { CollectionResponse, PaginatedResponse } from '@core-types/response';
 import { CacheOperationType, CacheSyncConfig } from '@core-types/cache';
 import { QueryClient, QueryKey } from '@tanstack/react-query';
 import { handleQueryError } from '@error/handlers/query';

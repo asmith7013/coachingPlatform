@@ -1,14 +1,14 @@
 'use server';
 
-import { z } from "zod";
-import { connectToDB } from "@data-server/db/connection";
+import { z, ZodType } from "zod";
+import { connectToDB } from "@server/db/connection";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
 import { VisitInputZodSchema, VisitZodSchema } from "@zod-schema/visits/visit";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
-import { createItem } from "@data-server/crud/crud-operations";
-import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
-import { sanitizeSortBy } from "@/lib/data-utilities/pagination/pagination-utils";
+import { createItem } from "@server/crud/crud-operations";
+import { fetchPaginatedResource } from "@transformers/pagination/unified-pagination";
+import { sanitizeSortBy } from "@transformers/pagination/pagination-utils";
 import type { Visit } from "@zod-schema/visits/visit";
 import { QueryParams } from "@core-types/query";
 
@@ -16,14 +16,14 @@ import { QueryParams } from "@core-types/query";
 const validSortFields = ['date', 'createdAt', 'updatedAt', 'school', 'coach'];
 
 /** Fetch Visits */
-export async function fetchVisits(params: QueryParams = {}) {
+export async function fetchVisits(params: QueryParams) {
   try {
     // Sanitize sortBy to ensure it's a valid field name
     const safeSortBy = sanitizeSortBy(params.sortBy, validSortFields, 'date');
     
     return fetchPaginatedResource(
       VisitModel,
-      VisitZodSchema,
+      VisitZodSchema as ZodType<Visit>,
       {
         ...params,
         sortBy: safeSortBy,

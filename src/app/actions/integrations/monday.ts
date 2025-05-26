@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { handleValidationError } from "@error/handlers/validation";
 import { handleServerError } from "@error/handlers/server";
-import { withDbConnection } from "@/lib/data-server/db/ensure-connection";
+import { withDbConnection } from "@server/db/ensure-connection";
 
 // Import services
 import { 
@@ -29,7 +29,8 @@ import type {
   ImportResult,
   MondayConnectionTestResult
 } from "@/lib/integrations/monday/types";
-import { VisitInputZodSchema } from "@/lib/data-schema/zod-schema/visits/visit";
+import { VisitInputZodSchema } from "@zod-schema/visits/visit";
+import { EntityResponse } from "@/lib/types/core/response";
 
 // Re-export types for components
 export type { ImportItem, ImportPreview };
@@ -37,13 +38,14 @@ export type { ImportItem, ImportPreview };
 /**
  * Test Monday.com API connection
  */
-export async function testMondayConnection(): Promise<MondayConnectionTestResult> {
+export async function testMondayConnection(): Promise<EntityResponse<MondayConnectionTestResult>> {
   try {
     return await testConnection();
   } catch (error) {
     return {
       success: false,
-      error: handleServerError(error)
+      error: handleServerError(error),
+      data: null as unknown as MondayConnectionTestResult
     };
   }
 }

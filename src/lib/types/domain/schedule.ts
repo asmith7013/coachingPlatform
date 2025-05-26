@@ -3,7 +3,7 @@
  * Re-exports types from Zod schemas for centralized imports
  */
 
-import { Period } from '@/lib/data-schema/zod-schema/schedule/schedule';
+import { Period } from '@zod-schema/schedule/schedule';
 
 // Re-export types directly from the schema
 export type {
@@ -15,7 +15,7 @@ export type {
     ScheduleByDay,
     TeacherScheduleInput,
     TeacherSchedule
-} from '@/lib/data-schema/zod-schema/schedule/schedule';
+} from '@zod-schema/schedule/schedule';
 
 // Additional schedule-related types
 export interface ScheduleFilters {

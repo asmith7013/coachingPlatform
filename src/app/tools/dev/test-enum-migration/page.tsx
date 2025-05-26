@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { EventItemZodSchema } from '@/lib/data-schema/zod-schema/visits/visit';
+import { EventItemZodSchema } from '@zod-schema/visits/visit';
 import { 
   EventTypes, 
   DurationValues,

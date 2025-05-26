@@ -1,22 +1,24 @@
 "use server";
 
-import { z } from "zod";
-import { TeacherScheduleModel, BellScheduleModel } from "@/lib/data-schema/mongoose-schema/schedule/schedule.model";
+import { z, ZodType } from "zod";
+import { TeacherScheduleModel, BellScheduleModel } from "@mongoose-schema/schedule/schedule.model";
 import { 
   TeacherScheduleZodSchema, 
   TeacherScheduleInputZodSchema,
   BellScheduleZodSchema, 
   BellScheduleInputZodSchema 
-} from "@/lib/data-schema/zod-schema/schedule/schedule";
-import { createCrudActions } from "@data-server/crud/crud-action-factory";
-import { withDbConnection } from "@data-server/db/ensure-connection";
-import { connectToDB } from "@data-server/db/connection";
+} from "@zod-schema/schedule/schedule";
+import { createCrudActions } from "@server/crud/crud-action-factory";
+import { withDbConnection } from "@server/db/ensure-connection";
+import { connectToDB } from "@server/db/connection";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
-import { createItem, updateItem, deleteItem } from "@data-server/crud/crud-operations";
-import { fetchPaginatedResource } from "@data-utilities/pagination/paginated-query";
-import { sanitizeSortBy } from "@/lib/data-utilities/pagination/pagination-utils";
-import { type QueryParams, buildQueryParams } from "@core-types/pagination";
+import { createItem, updateItem, deleteItem } from "@/lib/server/crud/crud-operations";
+import { fetchPaginatedResource } from "@transformers/pagination/unified-pagination";
+import { sanitizeSortBy } from "@/lib/transformers/pagination/pagination-utils";
+import { type QueryParams } from "@core-types/query";
+import { buildQueryParams } from "@transformers/pagination/pagination-utils";
+
 
 // Types
 export type TeacherSchedule = z.infer<typeof TeacherScheduleZodSchema>;
@@ -32,7 +34,7 @@ const validSortFields = ['createdAt', 'updatedAt', 'teacher', 'school'];
 // Create standard CRUD actions for Bell Schedules
 export const bellScheduleActions = createCrudActions({
   model: BellScheduleModel,
-  fullSchema: BellScheduleZodSchema,
+  fullSchema: BellScheduleZodSchema as ZodType<BellSchedule>,
   inputSchema: BellScheduleInputZodSchema,
   revalidationPaths: ["/dashboard/schedule"],
   options: {
@@ -44,7 +46,7 @@ export const bellScheduleActions = createCrudActions({
 });
 
 // Export the generated bell schedule actions with connection handling
-export async function fetchBellSchedules(params = {}) {
+export async function fetchBellSchedules(params: QueryParams) {
   return withDbConnection(() => bellScheduleActions.fetch(params));
 }
 
@@ -162,7 +164,7 @@ export async function getActiveCycleDayForDate(schoolId: string, date: string) {
 // ===== TEACHER SCHEDULE ACTIONS =====
 
 /** Fetch all Teacher Schedules */
-export async function fetchSchedules(params: QueryParams = {}) {
+export async function fetchSchedules(params: QueryParams) {
   try {
     await connectToDB();
     
@@ -177,7 +179,7 @@ export async function fetchSchedules(params: QueryParams = {}) {
     
     return fetchPaginatedResource(
       TeacherScheduleModel,
-      TeacherScheduleZodSchema,
+      TeacherScheduleZodSchema as ZodType<TeacherSchedule>,
       fetchParams
     );
   } catch (error) {
@@ -186,13 +188,13 @@ export async function fetchSchedules(params: QueryParams = {}) {
 }
 
 /** Fetch Teacher Schedules with pagination */
-export async function fetchTeacherSchedules(params: QueryParams = {}) {
+export async function fetchTeacherSchedules(params: QueryParams) {
   try {
     await connectToDB();
     
     return fetchPaginatedResource(
       TeacherScheduleModel,
-      TeacherScheduleZodSchema,
+      TeacherScheduleZodSchema as ZodType<TeacherSchedule>,
       {
         ...params,
         sortBy: params.sortBy ?? "createdAt",

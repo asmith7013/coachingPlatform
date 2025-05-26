@@ -1,13 +1,15 @@
 import { BaseDocument, WithDateObjects } from '@core-types/document';
-import { TransformOptions } from '@transformers/unified-transformer';
+import { TransformOptions } from '@/lib/transformers/core/unified-transformer';
 
 /**
- * Basic selector function type
+ * Function type for entity selectors
+ * @template _T The input entity type
+ * @template R The return type of the selector
  */
-export type SelectorFunction<T, R = T[]> = (data: unknown) => R;
+export type SelectorFunction<_T, R> = (data: unknown) => R;
 
 /**
- * Interface for entity selectors
+ * Interface for entity selectors that provide various transformation methods
  */
 export interface EntitySelector<T extends BaseDocument> {
   // Basic selectors
@@ -30,7 +32,7 @@ export interface EntitySelector<T extends BaseDocument> {
   }>;
   
   // Advanced usage
-  transform: <R>(transformFn: (item: T) => R) => SelectorFunction<T, R[]>;
+  transform: <R extends Record<string, unknown>>(transformFn: (item: T) => R) => SelectorFunction<T, R[]>;
   withOptions: (options: Partial<TransformOptions<T>>) => SelectorFunction<T, T[]>;
   
   // Schema validation

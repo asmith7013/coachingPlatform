@@ -1,8 +1,8 @@
-import { ApiResponse } from '@api-monday/types';
-import { withDbConnection } from '@data-server/db/ensure-connection';
+import { ApiResponse } from '@lib/integrations/monday/types/api';
+import { withDbConnection } from '@server/db/ensure-connection';
 import { VisitModel } from '@mongoose-schema/visits/visit.model';
-import { updateMondayItem } from '@api-monday/client';
-import { transformVisitToMondayItem } from '@api-monday/services/transform-service';
+import { updateMondayItem } from '@lib/integrations/monday/client/client';
+import { transformVisitToMondayItem } from '@lib/integrations/monday/services/transform-service';
 
 /**
  * Sync a visit from the local database to Monday.com

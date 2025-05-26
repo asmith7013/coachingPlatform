@@ -2,8 +2,8 @@ import {
   MondayItem, 
   MondayColumn, 
   MondayColumnValue,
-  TransformResult 
-} from "@api-monday/types";
+} from "@lib/integrations/monday/types/board";
+import { TransformResult } from "@lib/integrations/monday/types/transform";
 import { VisitInput } from "@zod-schema/visits/visit";
 import { 
   ModeDone, 

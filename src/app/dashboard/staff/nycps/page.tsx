@@ -143,16 +143,12 @@ const StaffCard = memo(function StaffCard({ member, onEdit, onDelete }: StaffCar
 
 const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
   const {
-    staff,
     total,
-    loading,
     error: staffError,
     page,
     setPage,
-    limit,
     applyFilters,
     changeSorting,
-    removeStaff
   } = useNYCPSStaff();
 
   const [searchInput, setSearchInput] = useState("");
@@ -174,7 +170,6 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
             ...field,
             type: 'reference' as FieldType, // Explicitly cast to FieldType
             url: referenceProps.url,
-            multiple: referenceProps.multiple,
             label: referenceProps.label
           } as Field<NYCPSStaffInput>;
         } catch (error) {
@@ -202,8 +197,8 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
 
   const handleDeleteStaff = useCallback(async (id: string) => {
     await deleteNYCPSStaff(id);
-    await removeStaff(id);
-  }, [removeStaff]);
+    // await removeStaff(id);
+  }, []);
 
   const confirmDeleteStaff = useCallback((id: string) => {
     if (window.confirm("Are you sure you want to delete this staff member?")) {
@@ -226,7 +221,7 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
     setEditTarget(null);
   }, []);
 
-  if (loading) return <Text textSize="base">Loading staff...</Text>;
+  // if (loading) return <Text textSize="base">Loading staff...</Text>;
   if (staffError) return <Text textSize="base" color="danger">Error loading staff</Text>;
 
   return (

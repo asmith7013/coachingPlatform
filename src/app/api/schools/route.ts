@@ -1,7 +1,7 @@
 // src/app/api/school/route.ts
-import { fetchSchoolsForApi } from "@api-fetchers/school"; // Use your API-safe fetcher
+import { fetchSchoolsForApi } from "@server/fetchers/school"; // Use your API-safe fetcher
 import { createReferenceEndpoint } from "@api-handlers/reference-endpoint";
-import { mapSchoolToReference } from "@/lib/data-utilities/transformers/mappers/reference-mappers";
+import { mapSchoolToReference } from "@query/client/selectors/reference-selectors";
 
 // Export the result of createReferenceEndpoint directly as GET
 export const GET = createReferenceEndpoint({

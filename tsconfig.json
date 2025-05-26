@@ -43,13 +43,12 @@
 
         // Server-side and data paths
         "@actions/*": ["./src/app/actions/*"],
-        // "@data-schema/*": ["./src/lib/data-schema/*"],
-        "@enums": ["./src/lib/data-schema/enum"],
-        "@zod-schema/*": ["./src/lib/data-schema/zod-schema/*"],
-        "@mongoose-schema/*": ["./src/lib/data-schema/mongoose-schema/*"],
-        "@data-server/*": ["./src/lib/data-server/*"],
-        "@data-utilities/*": ["./src/lib/data-utilities/*"],
-        "@transformers/*": ["./src/lib/data-utilities/transformers/*"],
+        "@enums": ["./src/lib/schema/enum"],
+        "@zod-schema/*": ["./src/lib/schema/zod-schema/*"],
+        "@mongoose-schema/*": ["./src/lib/schema/mongoose-schema/*"],
+        "@schema/*": ["./src/lib/schema/*"],
+        "@transformers/*": ["./src/lib/transformers/*"],
+        "@server/*": ["./src/lib/server/*"],
 
         // Library and utility paths
         "@lib/*": ["./src/lib/*"],
@@ -64,14 +63,14 @@
         "@config/*": ["./src/lib/config/*"],
         "@config": ["./src/lib/config"],
         // API utilities (in lib)
-        "@api-utils/*": ["./src/lib/api/*"],
-        "@api-client/*": ["./src/lib/api/client/*"],
-        "@api-fetchers/*": ["./src/lib/api/fetchers/*"],
-        "@api-handlers/*": ["./src/lib/api/handlers/*"],
-        "@api-responses/*": ["./src/lib/api/responses/*"],
-        "@api-validation/*": ["./src/lib/api/validation/*"],
-        "@api-integrations/*": ["./src/lib/integrations/*"],
-        "@api-monday/*": ["./src/lib/integrations/monday/*"],
+        "@api-utils/*": ["./src/lib/server/api/*"],
+        "@api-client/*": ["./src/lib/server/api/client/*"],
+        "@api-fetchers/*": ["./src/lib/server/api/fetchers/*"],
+        "@api-handlers/*": ["./src/lib/server/api/handlers/*"],
+        "@api-responses/*": ["./src/lib/server/api/responses/*"],
+        "@api-validation/*": ["./src/lib/server/api/validation/*"],
+        "@api-integrations/*": ["./src/lib/server/integrations/*"],
+        "@api-monday/*": ["./src/lib/server/integrations/monday/*"],
 
         // UI-specific paths
         "@ui/*": ["./src/lib/ui/*"],

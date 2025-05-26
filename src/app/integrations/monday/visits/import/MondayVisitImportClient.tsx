@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card } from '@/components/composed/cards/Card';
-import { Button } from '@/components/core/Button';
-import { Alert } from '@/components/core/feedback/Alert';
-import { Spinner } from '@/components/core/feedback/Spinner';
-import { PageHeader } from '@/components/composed/layouts/PageHeader';
-import { ImportCompletionForm } from '@/components/integrations/monday/domain/visits/ImportCompletionForm';
-import { useImportVisit } from '@/hooks/integrations/monday/useMondayQueries';
-import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
-import type { MondayImportResponse } from '@/lib/integrations/monday/types/import';
+import { Card } from '@components/composed/cards/Card';
+import { Button } from '@components/core/Button';
+import { Alert } from '@components/core/feedback/Alert';
+import { Spinner } from '@components/core/feedback/Spinner';
+import { PageHeader } from '@components/composed/layouts/PageHeader';
+import { ImportCompletionForm } from '@components/integrations/monday/domain/visits/ImportCompletionForm';
+import { useImportVisit } from '@hooks/integrations/monday/useMondayQueries';
+import type { VisitInput } from '@zod-schema/visits/visit';
+import type { MondayImportResponse } from '@lib/integrations/monday/types/import';
 
 // Import stages enum
 enum ImportStage {

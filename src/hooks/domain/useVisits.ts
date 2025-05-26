@@ -1,20 +1,21 @@
-import { createEntityHooks } from '@/query/client/factories/entity-hooks';
+import { createEntityHooks } from '@query/client/factories/entity-factory';
 import { 
   VisitZodSchema, 
   VisitInputZodSchema, 
   Visit, 
   VisitInput 
-} from '@/lib/data-schema/zod-schema/visits/visit';
+} from '@zod-schema/visits/visit';
 import { 
   fetchVisits, 
   createVisit
 } from '@/app/actions/visits/visits';
-import { WithDateObjects } from '@/lib/types/core/document';
-import { wrapServerActions } from '@/lib/data-utilities/transformers/factories/server-action-factory';
+import { WithDateObjects } from '@core-types/document';
+import { wrapServerActions } from '@transformers/factories/server-action-factory';
 import { QueryParams } from '@core-types/query';
 import { ZodType } from 'zod';
 import { CollectionResponse } from '@core-types/response';
-import { transformDocument } from '@/lib/data-utilities/transformers/core/document';
+import { transformData } from '@transformers/core/unified-transformer';
+import { asDateObjectSchema } from '@/lib/schema/zod-schema/base-schemas';
 
 /**
  * Visit entity with Date objects instead of string dates
@@ -49,7 +50,11 @@ const wrappedActions = wrapServerActions<Visit, VisitWithDates, VisitInput>(
     fetch: fetchVisitsWithHasMore,
     create: createVisit as (data: VisitInput) => Promise<CollectionResponse<Visit>>,
   },
-  (items: Visit[]) => transformDocument(items) as VisitWithDates[]
+  (items: Visit[]) => transformData<Visit, VisitWithDates>(items, {
+    schema: VisitZodSchema as ZodType<VisitWithDates>,
+    handleDates: true,
+    errorContext: 'useVisits'
+  })
 );
 
 /**
@@ -59,15 +64,13 @@ const wrappedActions = wrapServerActions<Visit, VisitWithDates, VisitInput>(
  * with proper date transformation (string dates to Date objects)
  */
 const {
-  useList: useVisitsList,
-  useById: useVisitById,
+  useEntityList: useVisitsList,
+  useEntityById: useVisitById,
   useMutations: useVisitsMutations,
-  useEntity: useVisits
+  useManager: useVisits
 } = createEntityHooks<VisitWithDates, VisitInput>({
   entityType: 'visits',
-  // The Zod schema uses string for dates, but VisitWithDates uses Date objects after transformation.
-  // This cast is safe because we transform the data after fetching.
-  fullSchema: VisitZodSchema as ZodType<VisitWithDates>,
+  fullSchema: asDateObjectSchema(VisitZodSchema) as ZodType<VisitWithDates>,
   inputSchema: VisitInputZodSchema,
   serverActions: wrappedActions,
   validSortFields: ['date', 'school', 'coach', 'createdAt', 'updatedAt'],

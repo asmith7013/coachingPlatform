@@ -1,8 +1,7 @@
 import { z } from 'zod';
 import { 
   PaginationParamsZodSchema, 
-  QueryParamsZodSchema, 
-  PaginatedResponseZodSchema 
+  QueryParamsZodSchema,  
 } from '@zod-schema/core-types/query';
 
 /**
@@ -17,12 +16,7 @@ export type QueryParams = z.infer<typeof QueryParamsZodSchema>;
 
 export const DEFAULT_QUERY_PARAMS: QueryParams = QueryParamsZodSchema.parse({});
 
-/**
- * Response type for paginated data
- */
-export type PaginatedResponse<T = unknown> = Omit<z.infer<typeof PaginatedResponseZodSchema>, 'items'> & {
-  items: T[];
-};
+
 
 /**
  * Metadata for pagination

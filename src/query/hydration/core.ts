@@ -3,7 +3,7 @@ import {
   dehydrateState, 
   hydrateState, 
   prefetchMultipleQueries 
-} from '@query/shared/serialize';
+} from '@/query/shared-utils/hydration-utils';
 import { captureError, createErrorContext } from '@error';
 import { CollectionResponse } from '@core-types/response';
 

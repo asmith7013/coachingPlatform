@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { MondayItem } from '@api-monday/types';
+import { MondayItem } from '@lib/integrations/monday/types/board';
 
 /**
  * Format a date from Monday's format to our application format
@@ -73,6 +73,6 @@ export function shouldImportItemWithStatus(status?: string): boolean {
  * Get column value by ID from a Monday item
  */
 export function getColumnValueById(item: MondayItem, columnId: string): string {
-  const column = item.column_values.find(col => col.id === columnId);
+  const column = item.column_values.find((col: { id: string }) => col.id === columnId);
   return column?.text || "";
 } 

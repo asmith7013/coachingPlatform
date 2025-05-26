@@ -1,13 +1,7 @@
-import { 
-    CollectionResponse, 
-    EntityResponse
-  } from '@/lib/types/core/response';
-  import { 
-    MondayBoard,
-    MondayItem,
-    MondayUser,
-    MondayConnectionTestResult
-  } from '@api-monday/types';
+import { CollectionResponse, EntityResponse } from '@core-types/response';
+import { MondayBoard, MondayItem } from '@lib/integrations/monday/types/board';
+import { MondayConnectionTestResult, MondayUser } from '@lib/integrations/monday/types/api';
+
   
   /**
    * Adapts a Monday board response to the standardized entity format

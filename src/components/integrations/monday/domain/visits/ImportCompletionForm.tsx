@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Card } from '@/components/composed/cards/Card';
-import { Alert } from '@/components/core/feedback/Alert';
-import { Button } from '@/components/core/Button';
-import { ResourceForm, type Field } from '@/components/composed/forms';
-import { VisitFieldConfig } from '@/lib/ui/forms/fieldConfig/visits/visit';
-import type { VisitInput } from '@/lib/data-schema/zod-schema/visits/visit';
+import { Card } from '@components/composed/cards/Card';
+import { Alert } from '@components/core/feedback/Alert';
+import { Button } from '@components/core/Button';
+import { ResourceForm, type Field } from '@components/composed/forms';
+import { VisitFieldConfig } from '@ui-forms/fieldConfig/visits/visit';
+import type { VisitInput } from '@zod-schema/visits/visit';
 
 /**
  * Props for the ImportCompletionForm component

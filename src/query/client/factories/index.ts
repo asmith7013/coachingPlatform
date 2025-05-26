@@ -1,2 +1,2 @@
-export * from './crud-hooks';
-export * from './entity-hooks';
+export * from './crud-factory';
+export * from './entity-factory';

@@ -1,9 +1,9 @@
 'use server';
 
-import { connectToDB } from "@/lib/data-server/db/connection";
-import { CycleModel } from "@/lib/data-schema/mongoose-schema/core/cycle.model";
+import { connectToDB } from "@server/db/connection";
+import { CycleModel } from "@mongoose-schema/core/cycle.model";
 import { CycleInputZodSchema } from "@zod-schema/core/cycle";
-import { createItem } from "@data-server/crud/crud-operations";
+import { createItem } from "@/lib/server/crud/crud-operations";
 import type { CycleInput } from "@zod-schema/core/cycle";
 
 /**

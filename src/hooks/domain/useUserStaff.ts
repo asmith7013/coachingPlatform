@@ -2,16 +2,31 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuthenticatedUser } from '@hooks/auth/useAuthenticatedUser';
 import { handleClientError } from '@error';
 import { WithDateObjects } from '@core-types/document';
-import {
-  NYCPSStaff,
-  TeachingLabStaff,
-} from '@/lib/data-schema/zod-schema/core/staff';
-import { transformDocument } from '@/lib/data-utilities/transformers/core/document';
+import { 
+  NYCPSStaff, 
+  TeachingLabStaff, 
+  NYCPSStaffZodSchema,
+  TeachingLabStaffZodSchema 
+} from '@zod-schema/core/staff';
+import { createTransformer, ensureBaseDocumentCompatibility } from '@transformers/core/unified-transformer';
 
 // Define types with date objects
 export type NYCPSStaffWithDates = WithDateObjects<NYCPSStaff>;
 export type TeachingLabStaffWithDates = WithDateObjects<TeachingLabStaff>;
 export type StaffWithDates = NYCPSStaffWithDates | TeachingLabStaffWithDates;
+
+// Create transformers for each staff type
+const nycpsStaffTransformer = createTransformer<NYCPSStaff, NYCPSStaffWithDates>({
+  schema: ensureBaseDocumentCompatibility<NYCPSStaff>(NYCPSStaffZodSchema),
+  handleDates: true,
+  errorContext: 'NYCPSStaffTransformer'
+});
+
+const teachingLabStaffTransformer = createTransformer<TeachingLabStaff, TeachingLabStaffWithDates>({
+  schema: ensureBaseDocumentCompatibility<TeachingLabStaff>(TeachingLabStaffZodSchema),
+  handleDates: true,
+  errorContext: 'TeachingLabStaffTransformer'
+});
 
 /**
  * Hook to fetch the authenticated user's staff profile
@@ -48,11 +63,18 @@ export function useUserStaff() {
         }
         const data = await response.json();
         
-        // Transform dates from strings to Date objects
-        return {
-          ...data,
-          data: transformDocument(data.data) as StaffWithDates
-        };
+        // Transform data based on staff type
+        if (metadata.staffType === 'nycps') {
+          return {
+            ...data,
+            data: nycpsStaffTransformer.transformSingle(data.data)
+          };
+        } else {
+          return {
+            ...data,
+            data: teachingLabStaffTransformer.transformSingle(data.data)
+          };
+        }
       } catch (error) {
         throw error instanceof Error
           ? error

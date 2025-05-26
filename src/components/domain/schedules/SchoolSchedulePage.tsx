@@ -6,7 +6,7 @@ import { Card } from '@components/composed/cards';
 import { PageHeader } from '@components/composed/layouts/PageHeader';
 import { useSchools } from '@hooks/domain/useSchools';
 import { useNYCPSStaff } from '@hooks/domain/useNYCPSStaff';
-import { useTeacherSchedules } from '@/hooks/domain/useTeacherSchedules';
+import { useTeacherSchedules } from '@hooks/domain/useTeacherSchedules';
 import { NYCPSStaff } from '@zod-schema/core/staff';
 
 // Import components

@@ -1,8 +1,10 @@
-import { MondayFieldMapping } from '@api-monday/types';
+// src/lib/integrations/monday/config/field-mapping.ts
+
+import { MondayFieldMapping } from '@lib/integrations/monday/types/mapping';
 import { Visit } from '@mongoose-schema/visits/visit.model';
 import { SchoolModel } from '@mongoose-schema/core/school.model';
 import { TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
-import { formatDateFromMonday } from '@api-monday/utils/monday-utils';
+import { formatDateFromMonday } from '@lib/integrations/monday/utils/monday-utils';
 // import { formatDateFromMonday } from '@api-monday/utils/monday-utils';
 
 /**

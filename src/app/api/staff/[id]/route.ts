@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchStaffByIdForApi } from "@api-fetchers/staff";
-import { collectionizeResponse } from "@/lib/api/responses/formatters";
+import { fetchStaffByIdForApi } from "@server/fetchers/staff";
+import { collectionizeResponse } from "@server/api/responses/formatters";
 import { handleServerError } from "@error/handlers/server";
 
 export async function GET(
