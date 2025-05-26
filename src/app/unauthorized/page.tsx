@@ -16,7 +16,7 @@ export default function UnauthorizedPage() {
           Access Denied
         </h1>
         <p className={cn(textColors.muted, textSize.base, 'mb-8')}>
-          You don't have permission to access this page.
+          You don&apos;t have permission to access this page.
         </p>
         <Button 
           onClick={() => router.push('/dashboard')}

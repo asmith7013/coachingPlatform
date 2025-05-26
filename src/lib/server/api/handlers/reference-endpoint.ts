@@ -10,7 +10,7 @@ import { collectionizeResponse } from "@api-responses/formatters";
 /**
  * Generic type for any fetch function that returns items and total
  */
-export type FetchFunction<T> = (params: z.infer<typeof QueryParamsZodSchema>) => 
+export type FetchFunction<T extends Record<string, unknown>> = (params: z.infer<typeof QueryParamsZodSchema>) => 
   Promise<PaginatedResponse<T>>;
 
 /**
@@ -21,7 +21,7 @@ export type ItemMapFunction<T, R extends BaseReference> = (item: T) => R;
 /**
  * Options for the reference endpoint factory
  */
-export interface ReferenceEndpointOptions<T, R extends BaseReference> {
+export interface ReferenceEndpointOptions<T extends Record<string, unknown>, R extends BaseReference> {
   /**
    * The fetch function that retrieves the data
    */
@@ -63,7 +63,7 @@ export interface ReferenceEndpointOptions<T, R extends BaseReference> {
 /**
  * Creates a standardized GET handler for reference data endpoints with Zod schema validation
  */
-export function createReferenceEndpoint<T, R extends BaseReference>(options: ReferenceEndpointOptions<T, R>) {
+export function createReferenceEndpoint<T extends Record<string, unknown>, R extends BaseReference>(options: ReferenceEndpointOptions<T, R>) {
   const {
     fetchFunction,
     mapItem,
@@ -92,27 +92,29 @@ export function createReferenceEndpoint<T, R extends BaseReference>(options: Ref
   } = options;
 
   // Define the base handler that processes validated parameters
-  const baseHandler = async function(validatedParams: z.infer<typeof querySchema>, req: NextRequest) {
+  const baseHandler = async function(validatedParams: z.input<typeof querySchema>, req: NextRequest) {
     const endpoint = req.url.split("?")[0].split("/api/")[1];
     const component = `${logPrefix}/${endpoint}`;
     
     try {
-      // Extract parameters from validated object
+      // Extract parameters from validated object and convert types
       const { 
-        page = 1, 
-        limit = defaultLimit, 
+        page: rawPage = 1, 
+        limit: rawLimit = defaultLimit, 
         sortBy, 
         sortOrder = 'desc', 
         search, 
-        filter,
         filters = {},
         ...rest
       } = validatedParams;
       
+      // Convert string values to numbers
+      const page = typeof rawPage === 'string' ? parseInt(rawPage, 10) || 1 : rawPage;
+      const limit = typeof rawLimit === 'string' ? parseInt(rawLimit, 10) || defaultLimit : rawLimit;
+      
       // Combine explicit filters and additional query parameters
       const combinedFilters = {
         ...filters,
-        ...(filter || {}),
         // Include other params that aren't standard pagination/sorting
         ...Object.fromEntries(
           Object.entries(rest)
@@ -133,7 +135,7 @@ export function createReferenceEndpoint<T, R extends BaseReference>(options: Ref
       const data = await fetchFunction({
         page: Number(page),
         limit: Number(limit),
-        sortBy,
+        sortBy: sortBy || 'createdAt',
         sortOrder: sortOrder as 'asc' | 'desc',
         search,
         filters: combinedFilters,
@@ -186,10 +188,7 @@ export function createReferenceEndpoint<T, R extends BaseReference>(options: Ref
   };
 
   // Apply query validation to the handler
-  return withQueryValidation(
-    querySchema,
-    baseHandler
-  );
+  return withQueryValidation(querySchema)(baseHandler);
 }
 
 // /**

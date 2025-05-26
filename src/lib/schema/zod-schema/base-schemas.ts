@@ -1,5 +1,5 @@
 // src/lib/data-schema/zod-schema/shared/base-schemas.ts
-import { z } from 'zod';
+import { z, ZodSchema } from 'zod';
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 
 // === SIMPLE BASE BUILDING BLOCKS ===
@@ -64,6 +64,16 @@ export function asDateObjectSchema<T>(
   return schema as unknown as z.ZodType<WithDateObjects<T>>;
 }
 
+/**
+ * Type helper that ensures compatibility between Zod schemas and BaseDocument
+ * This acts as a bridge without changing the core BaseDocument constraint
+ */
+export function ensureBaseDocumentCompatibility<T extends BaseDocument>(
+  schema: ZodSchema<unknown>
+): ZodSchema<T> {
+  // This is just a type assertion function - no runtime changes
+  return schema as ZodSchema<T>;
+}
 
 // === EXAMPLE USAGE PATTERNS ===
 /**

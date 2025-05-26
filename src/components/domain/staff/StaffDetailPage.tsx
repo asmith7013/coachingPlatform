@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { ZodSchema } from 'zod'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
@@ -10,12 +11,14 @@ import { Text } from '@/components/core/typography/Text'
 import { Card } from '@/components/composed/cards/Card'
 import { ScheduleTable } from '@/components/composed/tables/ScheduleTable'
 import { Table } from '@/components/composed/tables/Table'
-import { useSafeSWR } from '@query-hooks/swr/useSafeSWR'
+import { useEntityById } from '@query/client/hooks/data/useEntityById'
 import { cn } from '@ui/utils/formatters';
 import { weight, paddingY } from '@/lib/tokens/tokens'
 import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'
 import type { TeacherSchedule } from '@zod-schema/schedule/schedule'
 import type { TableColumnSchema } from '@ui/table-schema'
+import { NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from '@zod-schema/core/staff'
+import { TeacherScheduleZodSchema } from '@zod-schema/schedule/schedule'
 
 type StaffMember = NYCPSStaff | TeachingLabStaff
 type StaffType = 'nycps' | 'tl'
@@ -36,11 +39,53 @@ export function StaffDetailPage({ staffType = 'nycps' }: StaffDetailPageProps) {
   const params = useParams()
   const staffId = params?.id as string
 
-  // Fetch staff member data
-  const { data: staffMember, error: staffError, isLoading: isLoadingStaff } = useStaffMember(staffId, staffType)
+  // Fetch staff member data using React Query
+  const { 
+    data: staffMemberData, 
+    isLoading: isLoadingStaff, 
+    error: staffError 
+  } = useEntityById({
+    entityType: staffType === 'nycps' ? 'nycps-staff' : 'teaching-lab-staff',
+    id: staffId,
+    fetcher: async (id) => {
+      const res = await fetch(`/api/staff/${id}?staffType=${staffType}`);
+      if (!res.ok) throw new Error('Failed to fetch staff member');
+      const data = await res.json();
+      if (!data.success || !data.items || data.items.length === 0) {
+        throw new Error(data.message || 'Failed to fetch staff member');
+      }
+      return { success: true, items: [data.items[0]], total: 1 };
+    },
+    schema: (staffType === 'nycps' ? NYCPSStaffZodSchema : TeachingLabStaffZodSchema) as ZodSchema<StaffMember>,
+    errorContext: `fetch_staff_${staffId}`
+  });
   
-  // Fetch staff schedule data
-  const { data: schedule, error: scheduleError, isLoading: isLoadingSchedule } = useStaffSchedule(staffId)
+  // Cast the data to the correct type
+  const staffMember = staffMemberData as StaffMember | undefined;
+  
+  // Fetch staff schedule data using React Query
+  const { 
+    data: scheduleData, 
+    isLoading: isLoadingSchedule, 
+    error: scheduleError 
+  } = useEntityById({
+    entityType: 'teacher-schedules',
+    id: staffId,
+    fetcher: async (id) => {
+      const res = await fetch(`/api/teacher-schedules?teacher=${id}`);
+      if (!res.ok) throw new Error('Failed to fetch staff schedule');
+      const data = await res.json();
+      if (!data.success || !data.items || data.items.length === 0) {
+        throw new Error(data.message || 'Failed to fetch staff schedule');
+      }
+      return { success: true, items: [data.items[0]], total: 1 };
+    },
+    schema: TeacherScheduleZodSchema as unknown as ZodSchema<TeacherSchedule>,
+    errorContext: `fetch_schedule_${staffId}`
+  });
+  
+  // Cast the data to the correct type
+  const schedule = scheduleData as TeacherSchedule | undefined;
   
   // Define tabs based on available data
   const tabs = useMemo(() => {
@@ -276,8 +321,7 @@ function StaffScheduleTab({
 
 // History tab content
 function StaffHistoryTab({ 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  staffMember, 
+  // staffMember, 
   isLoading 
 }: { 
   staffMember?: StaffMember; 
@@ -337,51 +381,4 @@ function StaffHistoryTab({
   )
 }
 
-// Custom hooks for data fetching
-function useStaffMember(staffId: string, staffType: StaffType) {
-  const endpoint = `/api/staff/${staffId}?staffType=${staffType}`
-
-  const { data, error } = useSafeSWR<StaffMember>(
-    staffId ? endpoint : null,
-    async () => {
-      const res = await fetch(endpoint);
-      if (!res.ok) throw new Error('Failed to fetch staff member');
-      const data = await res.json();
-      if (!data.success || !data.items || data.items.length === 0) {
-        throw new Error(data.message || 'Failed to fetch staff member');
-      }
-      return data.items[0];
-    },
-    `fetch_staff_${staffId}`
-  )
-
-  return {
-    data,
-    error,
-    isLoading: !data && !error && !!staffId
-  }
-}
-
-function useStaffSchedule(staffId: string) {
-  const endpoint = `/api/teacher-schedules?teacher=${staffId}`
-
-  const { data, error } = useSafeSWR<TeacherSchedule>(
-    staffId ? endpoint : null,
-    async () => {
-      const res = await fetch(endpoint);
-      if (!res.ok) throw new Error('Failed to fetch staff schedule');
-      const data = await res.json();
-      if (!data.success || !data.items || data.items.length === 0) {
-        throw new Error(data.message || 'Failed to fetch staff schedule');
-      }
-      return data.items[0];
-    },
-    `fetch_schedule_${staffId}`
-  )
-
-  return {
-    data,
-    error,
-    isLoading: !data && !error && !!staffId
-  }
-} 
+ 

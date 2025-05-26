@@ -5,8 +5,9 @@ import { Model, FilterQuery, Document } from "mongoose";
 import { connectToDB } from "@server/db/connection";
 
 import { transformData } from "@transformers/core/unified-transformer";
-
+import { BaseDocument } from "@core-types/document";
 import { QueryParams } from "@core-types/query";
+import { ensureBaseDocumentCompatibility } from '@transformers/utils/response-utils';
 
 
 interface ValidationError {
@@ -19,13 +20,16 @@ interface ValidationError {
  * This avoids the "use server" directive issues when importing into API routes
  * 
  * @param model The Mongoose model to query
- * @param schema The Zod schema for validation
+ * @param schema The Zod schema for validation (automatically made BaseDocument compatible)
  * @param defaultSearchField The field to search by default (e.g., "name", "title")
  * @returns A function that can be used in API routes
  */
-export function createApiSafeFetcher<T, M extends Document>(
+export function createApiSafeFetcher<
+  T extends BaseDocument, // Keep BaseDocument constraint for return type
+  M extends Document
+>(
   model: Model<M>,
-  schema: ZodSchema<T>,
+  schema: ZodSchema<unknown>, // Accept any ZodSchema, handle compatibility internally
   defaultSearchField?: string
 ) {
   return async function(params: QueryParams) {
@@ -59,11 +63,12 @@ export function createApiSafeFetcher<T, M extends Document>(
       const total = await model.countDocuments(query as FilterQuery<M>);
       
       // Transform and validate MongoDB documents using unified transformer
+      // Use ensureBaseDocumentCompatibility to handle merge-based schemas
       const validItems = transformData(items, {
-        schema: schema as any,
+        schema: ensureBaseDocumentCompatibility<T>(schema),
         handleDates: true,
         errorContext: 'fetcherFactory'
-      }) as T[];
+      });
       
       // For backward compatibility, we'll assume no validation errors
       // since the unified transformer handles validation internally

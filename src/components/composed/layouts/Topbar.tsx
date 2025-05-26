@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image';
 import {
   Menu,
   MenuButton,
@@ -9,7 +10,7 @@ import {
 } from '@headlessui/react'
 import {
   MagnifyingGlassIcon,
-  BellIcon,
+  // BellIcon,
   Cog6ToothIcon,
   UserCircleIcon,
   ArrowRightOnRectangleIcon,
@@ -17,14 +18,14 @@ import {
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { cn } from '@ui/utils/formatters'
 import { tv } from 'tailwind-variants'
-import { Text } from '@/components/core/typography/Text'
-import { Input } from '@/components/core/fields/Input'
-import { Button } from '@/components/core/Button'
-import Image from 'next/image'
-import Link from 'next/link'
+// import { Text } from '@/components/core/typography/Text'
+// import { Input } from '@/components/core/fields/Input'
+// import { Button } from '@/components/core/Button'
+// import Image from 'next/image'
+// import Link from 'next/link'
 import { useAuthenticatedUser, useSignOut } from '@/hooks/auth/useAuthenticatedUser'
-import { backgroundColors, borderColors, semanticColors } from '@/lib/tokens/colors'
-import { textColors } from '@/lib/tokens/tokens'
+import { borderColors, semanticColors } from '@/lib/tokens/colors'
+// import { textColors } from '@/lib/tokens/tokens'
 
 interface UserNavigationItem {
   name: string
@@ -44,17 +45,17 @@ interface TopbarProps {
 }
 
 // Default user data for development
-const defaultUser = {
-  name: 'Tom Cook',
-  email: 'tom@example.com',
-  imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-}
+// const defaultUser = {
+//   name: 'Tom Cook',
+//   email: 'tom@example.com',
+//   imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+// }
 
 // Default user navigation
-const defaultUserNavigation = [
-  { name: 'Your profile', href: '#' },
-  { name: 'Sign out', href: '#' },
-]
+// const defaultUserNavigation = [
+//   { name: 'Your profile', href: '#' },
+//   { name: 'Sign out', href: '#' },
+// ]
 
 // Create topbar styles using tv from tailwind-variants
 const topbarStyles = tv({
@@ -96,7 +97,7 @@ const topbarStyles = tv({
 export function Topbar({ className }: TopbarProps) {
   const { fullName, email, imageUrl, isSignedIn } = useAuthenticatedUser();
   const signOut = useSignOut();
-  const [isSearching, setIsSearching] = useState(false);
+  const [_isSearching, setIsSearching] = useState(false);
   const styles = topbarStyles();
   
   if (!isSignedIn) {
@@ -132,7 +133,7 @@ export function Topbar({ className }: TopbarProps) {
           <Menu as="div" className="relative">
             <MenuButton className={styles.userMenuBtn()}>
               <span className="sr-only">Open user menu</span>
-              <img
+              <Image
                 className={styles.userAvatar()}
                 src={imageUrl || '/default-avatar.png'}
                 alt={fullName || 'User'}

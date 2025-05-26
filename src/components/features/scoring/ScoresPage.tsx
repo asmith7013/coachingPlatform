@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Select } from '@/components/core/fields/Select';
-import { Text } from '@/components/core/typography/Text';
+// import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
 import { ScoreEntry } from './ScoreEntry';
-import type { TextSizeToken, PaddingToken } from '@/lib/tokens/types';
+// import type { TextSizeToken, PaddingToken } from '@/lib/tokens/types';
 
 interface District {
   id: string;

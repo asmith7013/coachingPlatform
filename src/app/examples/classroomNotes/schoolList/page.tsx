@@ -6,8 +6,11 @@ import { Heading } from '@components/core/typography/Heading';
 import { Text } from '@components/core/typography/Text';
 import { Button } from '@components/core/Button';
 import { DashboardPage } from '@components/composed/layouts/DashboardPage';
-import { useSchools } from "@hooks/domain/useSchools"; // ✅ SWR hook for managing Schools data.
-import { School, SchoolInput } from "@zod-schema/core/school"; // ✅ Import the School type from Zod schema.
+import { useSchoolsList, useSchoolsMutations } from "@hooks/domain/useSchools"; // ✅ React Query hooks for managing Schools data.
+import { SchoolInput } from "@zod-schema/core/school";
+import { SchoolWithDates } from "@hooks/domain/useSchools";
+
+type School = SchoolWithDates;
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
 import { RigidResourceForm as GenericResourceForm, type Field } from "@components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
@@ -19,18 +22,24 @@ import { EmptyListWrapper } from '@components/core/empty/EmptyListWrapper';
 
 
 export default function SchoolList() {
+  // Use the React Query-based hooks
   const {
-    schools,
-    total,
-    loading,
+    items: schools = [],
+    total = 0,
+    isLoading: loading,
     error: schoolError,
     page,
     setPage,
-    limit,
-    removeSchool,
+    pageSize: limit = 10,
     applyFilters,
     changeSorting
-  } = useSchools();
+  } = useSchoolsList();
+
+  // Get mutation functions from the mutations hook
+  const { 
+    delete: removeSchool,
+    isDeleting
+  } = useSchoolsMutations();
 
   // Use local state for performance mode instead
   const [performanceMode, setPerformanceMode] = useState(true);
@@ -43,7 +52,7 @@ export default function SchoolList() {
   useEffect(() => {
     if (schools && schools.length > 0) {
       console.log("=== SCHOOL ID INFORMATION ===");
-      schools.forEach(school => {
+      schools.forEach((school: School) => {
         console.log(`School: ${school.schoolName} | Number: ${school.schoolNumber} | ID: ${school._id}`);
       });
       console.log("============================");
@@ -57,7 +66,13 @@ export default function SchoolList() {
   };
 
   const handleDeleteSchool = async (id: string) => {
-    await removeSchool(id);
+    try {
+      if (removeSchool) {
+        removeSchool(id);
+      }
+    } catch (error) {
+      console.error("Failed to delete school:", error);
+    }
   };
 
   if (loading) return <Text textSize="base">Loading Schools...</Text>;
@@ -77,7 +92,7 @@ export default function SchoolList() {
           { key: "schoolName", label: "School Name" },
           { key: "district", label: "District" }
         ]}
-        onSort={(field, order) => changeSorting(field as keyof School, order)}
+        onSort={(field, order) => changeSorting(field as string, order)}
         onSearch={(value) => applyFilters({ schoolName: value })}
         searchInput={searchInput}
         setSearchInput={setSearchInput}
@@ -123,8 +138,9 @@ export default function SchoolList() {
                 textSize="sm"
                 padding="sm"
                 className="text-danger"
+                disabled={isDeleting}
               >
-                🗑️ Delete
+                {isDeleting ? 'Deleting...' : '🗑️ Delete'}
               </Button>
             </div>
             <Heading 

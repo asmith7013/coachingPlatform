@@ -10,6 +10,6 @@ export interface OrganizationPublicMetadata {
 }
 
 declare global {
-  interface UserPublicMetadata extends UserPublicMetadata {}
-  interface OrganizationPublicMetadata extends OrganizationPublicMetadata {}
+  // interface UserPublicMetadata extends UserPublicMetadata {}
+  // interface OrganizationPublicMetadata extends OrganizationPublicMetadata {}
 } 

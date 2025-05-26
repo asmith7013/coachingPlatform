@@ -5,7 +5,6 @@ import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from './ErrorBoundary';
 import { createErrorContext } from '@error';
 import { ErrorContext } from '@error-types';
-import { ErrorVariant } from '@ui-variants/shared-variants';
 
 interface QueryErrorBoundaryProps {
   children: ReactNode;
@@ -13,7 +12,7 @@ interface QueryErrorBoundaryProps {
   context?: ErrorContext | string;
   errorComponent?: React.ComponentType<{ error: Error; reset: () => void }>;
   className?: string;
-  variant?: ErrorVariant;
+  variant?: 'default' | 'minimal' | 'detailed';
 }
 
 /**

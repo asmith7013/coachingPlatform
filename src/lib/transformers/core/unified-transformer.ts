@@ -5,17 +5,7 @@ import { transformDocument } from '@transformers/core/document';
 import { validateSafe, validateStrict } from '@transformers/core/validation';
 import { handleClientError } from '@error/handlers/client';
 import { processDateFields } from '@transformers/utils/response-utils';
-
-/**
- * Type helper that ensures compatibility between Zod schemas and BaseDocument
- * This acts as a bridge without changing the core BaseDocument constraint
- */
-export function ensureBaseDocumentCompatibility<T extends BaseDocument>(
-  schema: ZodSchema<unknown>
-): ZodSchema<T> {
-  // This is just a type assertion function - no runtime changes
-  return schema as ZodSchema<T>;
-}
+import { ensureBaseDocumentCompatibility } from '@transformers/utils/response-utils';
 
 /**
  * Options for the unified transformation utility
@@ -262,7 +252,7 @@ export function transformItemWithSchema<T extends BaseDocument>(
   }
   
   return transformSingleItem<T, T>(item, {
-    schema: ensureBaseDocumentCompatibility<T>(schema),
+    schema: ensureBaseDocumentCompatibility<T>(schema) as ZodSchema<T>,
     handleDates: true,
     errorContext: 'transformItemWithSchema'
   });

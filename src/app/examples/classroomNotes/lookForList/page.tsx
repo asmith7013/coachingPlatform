@@ -10,11 +10,26 @@ import { EmptyListWrapper } from "@/components/core/empty/EmptyListWrapper";
 import { RigidResourceForm as GenericResourceForm, type Field } from "@/components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@/components/composed/forms/BulkUploadForm";
 import { ResourceHeader } from "@/components/composed/layouts/ResourceHeader";
-import { useLookFors } from "@hooks/domain/useLookFors";
+import { LookForWithDates, useLookFors } from "@hooks/domain/useLookFors";
 import { uploadLookForFile } from "@actions/lookFors/lookFors";
 import { createLookFor } from "@actions/lookFors/lookFors";
 import { LookForInput } from "@zod-schema/look-fors/look-for";
 import { cn } from "@ui/utils/formatters";
+
+// Define a type for the rubric item that matches the expected structure
+interface RubricItem {
+  category: string | string[];
+  score: number;
+  content?: string[];
+  parentId?: string;
+  collectionId?: string;
+  hex?: string;
+}
+
+// Extend LookForWithDates to ensure it has the correct rubric type
+interface ExtendedLookFor extends Omit<LookForWithDates, 'rubric'> {
+  rubric: RubricItem[];
+}
 
 const lookForFields: Field<LookForInput>[] = [
   {
@@ -56,18 +71,6 @@ const lookForFields: Field<LookForInput>[] = [
     required: true,
   },
 ];
-
-interface LookFor extends LookForInput {
-  _id: string;
-  rubric: Array<{
-    category: string[];
-    score: number;
-    content?: string[];
-    parentId?: string;
-    collectionId?: string;
-    hex?: string;
-  }>;
-}
 
 export default function LookForsWrapper() {
   const {
@@ -135,70 +138,79 @@ export default function LookForsWrapper() {
       />
 
       <EmptyListWrapper items={lookFors} resourceName="look fors">
-        {lookFors.map((lookFor: LookFor) => (
-          <Card
-            key={lookFor._id}
-            className="mb-4"
-            padding="md"
-            radius="lg"
-          >
-            <div className="flex justify-between items-center">
-              <div>
-                <Heading 
-                  level="h3" 
-                  color="default"
-                  className={cn("text-primary font-medium")}
-                >
-                  {lookFor.studentFacing ? "✏️" : "🍎"} {lookFor.topic}
-                </Heading>
-                <Text 
-                  textSize="base"
-                  color="muted"
-                  className="mt-2"
-                >
-                  {lookFor.description}
-                </Text>
-              </div>
-              <Button
-                onClick={() => lookFor._id && confirmDeleteLookFor(lookFor._id)}
-                textSize="sm"
-                padding="sm"
-                className="text-danger"
-              >
-                🗑️ Delete
-              </Button>
-            </div>
-
-            <Heading 
-              level="h3" 
-              color="default"
-              className={cn("text-primary font-medium mt-4 mb-2")}
+        {lookFors.map((lookFor) => {
+          // Cast to extended type to ensure we have the correct rubric structure
+          const extendedLookFor = lookFor as unknown as ExtendedLookFor;
+          
+          return (
+            <Card
+              key={lookFor._id}
+              className="mb-4"
+              padding="md"
+              radius="lg"
             >
-              Rubric
-            </Heading>
-            {lookFor.rubric.map((rubricItem, index) => (
-              <Card
-                key={index}
-                padding="sm"
+              <div className="flex justify-between items-center">
+                <div>
+                  <Heading 
+                    level="h3" 
+                    color="default"
+                    className={cn("text-primary font-medium")}
+                  >
+                    {lookFor.studentFacing ? "✏️" : "🍎"} {lookFor.topic}
+                  </Heading>
+                  <Text 
+                    textSize="base"
+                    color="muted"
+                    className="mt-2"
+                  >
+                    {lookFor.description}
+                  </Text>
+                </div>
+                <Button
+                  onClick={() => lookFor._id && confirmDeleteLookFor(lookFor._id)}
+                  textSize="sm"
+                  padding="sm"
+                  className="text-danger"
+                >
+                  🗑️ Delete
+                </Button>
+              </div>
+
+              <Heading 
+                level="h3" 
+                color="default"
+                className={cn("text-primary font-medium mt-4 mb-2")}
               >
-                <Heading 
-                  level="h4" 
-                  color="default"
-                  className={cn("text-primary font-medium")}
+                Rubric
+              </Heading>
+              {extendedLookFor.rubric?.map((rubricItem, index) => (
+                <Card
+                  key={index}
+                  padding="sm"
                 >
-                  {rubricItem.category} ({rubricItem.score})
-                </Heading>
-                <Text 
-                  textSize="base"
-                  color="muted"
-                  className="mt-2"
-                >
-                  {rubricItem.content || "No description"}
-                </Text>
-              </Card>
-            ))}
-          </Card>
-        ))}
+                  <Heading 
+                    level="h4" 
+                    color="default"
+                    className={cn("text-primary font-medium")}
+                  >
+                    {Array.isArray(rubricItem.category) 
+                      ? rubricItem.category.join(', ') 
+                      : rubricItem.category} ({rubricItem.score})
+                  </Heading>
+                  <Text 
+                    textSize="base"
+                    color="muted"
+                    className="mt-2"
+                  >
+                    {rubricItem.content && Array.isArray(rubricItem.content) 
+                      ? rubricItem.content[0] 
+                      : "No description"}
+                  </Text>
+                </Card>
+              ))}
+            </Card>
+          );
+        })}
       </EmptyListWrapper>
 
       <div className="mt-8">

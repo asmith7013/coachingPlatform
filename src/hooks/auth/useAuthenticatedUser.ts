@@ -2,26 +2,27 @@ import { useUser, useOrganization, useClerk } from '@clerk/nextjs';
 import { useMemo, useCallback } from 'react';
 import { 
   AuthenticatedUser, 
-  UserMetadataSchema, 
   ROLE_PERMISSIONS, 
   Permission,
+  UserMetadata
 } from '@core-types/auth';
+import { UserMetadataZodSchema } from '@zod-schema/core-types/auth';
 import { validateSafe } from '@transformers/core/validation';
 
 export function useAuthenticatedUser(): AuthenticatedUser {
   const { user, isLoaded, isSignedIn } = useUser();
   const { organization } = useOrganization();
   
-  // Parse and validate metadata
+  // Parse and validate metadata with defaults
   const metadata = useMemo(() => {
     if (!user?.publicMetadata) {
-      return UserMetadataSchema.parse({});
+      return UserMetadataZodSchema.parse({});
     }
     
     // Use existing safe parse utility
-    const parsed = validateSafe(UserMetadataSchema, user.publicMetadata);
-    return parsed || UserMetadataSchema.parse({});
-  }, [user]);
+    const parsed = validateSafe(UserMetadataZodSchema, user.publicMetadata);
+    return parsed || UserMetadataZodSchema.parse({});
+  }, [user]) as UserMetadata;
   
   // Calculate effective permissions
   const permissions = useMemo(() => {
@@ -33,8 +34,8 @@ export function useAuthenticatedUser(): AuthenticatedUser {
     // Merge organization permissions
     const orgPermissions = organization?.publicMetadata?.permissions as string[] || [];
     
-    // Combine all permissions
-    const allPermissions = [...new Set([...rolePermissions, ...metadata.permissions, ...orgPermissions])];
+    // Combine all permissions and remove duplicates
+    const allPermissions = Array.from(new Set([...rolePermissions, ...metadata.permissions, ...orgPermissions]));
     return allPermissions as Permission[];
   }, [metadata, organization]);
   
@@ -69,8 +70,7 @@ export function useAuthenticatedUser(): AuthenticatedUser {
     
     // Check if user is assigned to this school
     return metadata.schoolIds.includes(schoolId) || 
-           metadata.managedSchools.includes(schoolId) ||
-           metadata.schoolId === schoolId;
+           metadata.managedSchools.includes(schoolId)
   }, [metadata, hasRole]);
   
   // Staff management checking

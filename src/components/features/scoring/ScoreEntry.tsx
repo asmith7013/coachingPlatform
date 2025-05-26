@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Slider from 'rc-slider';
 import { cn } from '@/lib/ui/utils/formatters';
 import { Text } from '@/components/core/typography/Text';
-import { Heading } from '@/components/core/typography/Heading';
+// import { Heading } from '@/components/core/typography/Heading';
 import { backgroundColors, textColors } from '@/lib/tokens/colors';
 import { paddingX, paddingY } from '@/lib/tokens/spacing';
 import 'rc-slider/assets/index.css';
@@ -39,7 +39,7 @@ interface ScoreEntryProps {
   lookFor: RubricLookFor;
 }
 
-export function ScoreEntry({ teacherId, cycleId, lookFor }: ScoreEntryProps) {
+export function ScoreEntry({ teacherId: _teacherId, cycleId: _cycleId, lookFor }: ScoreEntryProps) {
   const [score, setScore] = useState<number>(2.5);
 
   const rubricLabels = lookFor.levels.map((level) => ({

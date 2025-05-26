@@ -251,25 +251,3 @@ export function useErrorHandledMutation<T = unknown, A extends unknown[] = unkno
     reset
   };
 }
-
-/**
- * A convenience wrapper for mutations that don't return data
- * 
- * @deprecated Use React Query's useMutation from '@query/client/hooks/mutations' instead
- */
-export function useVoidMutation(
-  mutationFn: (...args: unknown[]) => Promise<ServerResponse<void>>,
-  options: ErrorHandlingOptions = {}
-): Omit<MutationResult<void>, 'data'> {
-  const result = useErrorHandledMutation(mutationFn, options);
-  // Omit data from the result since it's always null
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data, ...rest } = result;
-  return rest;
-}
-
-// Maintain backward compatibility with useErrorHandledErrorMutation
-export const useErrorHandledErrorMutation = useErrorHandledMutation;
-
-// Export as default
-export default useErrorHandledMutation;

@@ -35,7 +35,7 @@ export function useAuthorizedNavigation() {
       ...baseNavigation,
       navigation: updateNavigationState(authorizedNavigationItems, baseNavigation.pathname)
     }
-  }, [authorizedNavigationItems, baseNavigation.pathname])
+  }, [authorizedNavigationItems, baseNavigation])
   
   return authorizedNavigation
 }

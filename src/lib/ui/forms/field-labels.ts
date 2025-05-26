@@ -13,6 +13,7 @@ import type { Cycle } from "@domain-types/cycle";
 
 export const SchoolFieldLabels: Record<keyof School, string> = {
     _id: "ID",
+    id: "School ID",
     schoolNumber: "School Number",
     district: "District",
     schoolName: "School Name",
@@ -59,6 +60,7 @@ export const NYCPSStaffFieldLabels: Record<keyof NYCPSStaff, string> = {
 
 export const CycleFieldLabels: Record<keyof Cycle, string> = {
     _id: "ID",
+    id: "Cycle ID",
     cycleNum: "Cycle Number",
     ipgIndicator: "IPG Indicator",
     actionPlanURL: "Action Plan URL",
@@ -72,6 +74,7 @@ export const CycleFieldLabels: Record<keyof Cycle, string> = {
 
 export const LookForFieldLabels: Record<keyof LookFor, string> = {
     _id: "ID",
+    id: "Look For ID",
     lookForIndex: "Look For Index",
     schools: "Associated Schools",
     teachers: "Teachers",
@@ -99,6 +102,8 @@ export const LookForItemFieldLabels: Record<keyof LookForItem, string> = {
 
 export const CoachingLogFieldLabels: Record<keyof CoachingLog, string> = {
     _id: "ID",
+    id: "Coaching Log ID",
+    visitId: "Visit ID",
     reasonDone: "Reason Done",
     microPLTopic: "Micro PL Topic",
     microPLDuration: "Micro PL Duration",
@@ -119,6 +124,7 @@ export const CoachingLogFieldLabels: Record<keyof CoachingLog, string> = {
 
 export const VisitFieldLabels: Record<keyof Visit, string> = {
     _id: "ID",
+    id: "Visit ID",
     date: "Visit Date",
     school: "School",
     coach: "Coach",
@@ -154,6 +160,7 @@ export const EventItemFieldLabels: Record<keyof EventItem, string> = {
 
 export const NextStepFieldLabels: Record<keyof NextStep, string> = {
     _id: "ID",
+    id: "Next Step ID",
     description: "Description",
     lookFor: "Associated Look For",
     teacher: "Teacher",
@@ -165,6 +172,8 @@ export const NextStepFieldLabels: Record<keyof NextStep, string> = {
 
 export const NoteFieldLabels: Record<keyof Note, string> = {
     _id: "ID",
+    id: "Note ID",
+    owners: "Owners",
     date: "Date",
     type: "Type",
     heading: "Heading",

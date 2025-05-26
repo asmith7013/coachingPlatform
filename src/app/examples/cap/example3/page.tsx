@@ -12,7 +12,7 @@ import { Input } from '@/components/core/fields/Input';
 import { Button } from '@/components/core/Button';
 import { Plus, Edit2 } from 'lucide-react';
 import ipgData from '@/lib/json/ipg.json';
-import { semanticColors } from '@/lib/tokens/colors';
+// import { semanticColors } from '@/lib/tokens/colors';
 
 interface MetricType {
   name: string;
@@ -287,7 +287,7 @@ export default function Example3Page() {
 
             {implementationRecords.length === 0 && (
               <div className="text-center py-8 text-gray-500 border rounded-lg">
-                No implementation records yet. Click "Add Session" to begin tracking progress.
+                No implementation records yet. Click &quot;Add Session&quot; to begin tracking progress.
               </div>
             )}
           </div>

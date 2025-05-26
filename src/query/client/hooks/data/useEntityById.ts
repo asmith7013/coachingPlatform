@@ -4,7 +4,7 @@ import { ZodSchema } from 'zod';
 import { BaseDocument } from '@core-types/document';
 import { CollectionResponse } from '@core-types/response';
 import { transformSingleItem } from '@query/client/utilities/hook-helpers';
-import { ensureBaseDocumentCompatibility } from '@/lib/transformers/core/unified-transformer';
+import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
 
 /**
  * Configuration for useEntityById hook
@@ -35,7 +35,7 @@ export interface UseEntityByIdConfig<T extends BaseDocument> {
 /**
  * Hook for fetching a single entity by ID with schema validation
  */
-export function useEntityById<T extends BaseDocument, R = T>({
+export function useEntityById<T extends BaseDocument>({
   entityType,
   id,
   fetcher,
@@ -53,11 +53,14 @@ export function useEntityById<T extends BaseDocument, R = T>({
     },
     
     select: (data) => {
-      return transformSingleItem<T, T>(data, {
-        schema: ensureBaseDocumentCompatibility<T>(schema),
-        handleDates: true,
-        errorContext: errorContext || `${entityType}.fetchById`
-      });
+      return transformSingleItem<T>(
+        data,
+        ensureBaseDocumentCompatibility<T>(schema),
+        {
+          entityType,
+          errorContext: errorContext || `${entityType}.fetchById`
+        }
+      );
     },
     enabled: !!id,
     ...queryOptions

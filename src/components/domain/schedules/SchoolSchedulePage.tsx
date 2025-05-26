@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@components/core/Button';
 import { Card } from '@components/composed/cards';
 import { PageHeader } from '@components/composed/layouts/PageHeader';
-import { useSchools } from '@hooks/domain/useSchools';
-import { useNYCPSStaff } from '@hooks/domain/useNYCPSStaff';
+import { useSchoolsList } from '@hooks/domain/useSchools';
+import { useNYCPSStaffList } from '@hooks/domain/useNYCPSStaff';
 import { useTeacherSchedules } from '@hooks/domain/useTeacherSchedules';
-import { NYCPSStaff } from '@zod-schema/core/staff';
+
+import { TeacherSchedule } from '@zod-schema/schedule/schedule';
 
 // Import components
 import { ScheduleModeToggle } from './components/ScheduleModeToggle';
@@ -29,34 +30,56 @@ interface DatabasePeriod {
   className: string;
   periodType: string;
   room?: string;
+  startTime?: string;
+  endTime?: string;
 }
 
 /**
  * Main School Schedule Page Component
  */
 const SchoolSchedulePage: React.FC = () => {
-  // Fetch schools, staff, and schedules data
-  const { schools, loading: _schoolsLoading } = useSchools();
-  const { staff, loading: staffLoading } = useNYCPSStaff();
+  // Fetch schools, staff, and schedules data with React Query hooks
+  const { items: _schools = [] } = useSchoolsList();
+  const { items: staff = [], isLoading: staffLoading } = useNYCPSStaffList();
   const { 
-    schedulesForUI, 
-    schedules,
+    schedulesForUI = [], 
+    schedules = [],
     isLoading: schedulesLoading, 
     createSchedule 
   } = useTeacherSchedules(WASHINGTON_HIGH_SCHOOL_ID);
   
   // Local state
-  const [periods, setPeriods] = useState<SchedulePeriodUI[]>(DEFAULT_PERIODS);
-  const [schoolStaff, setSchoolStaff] = useState<NYCPSStaff[]>([]);
+  const [periods, setPeriods] = useState<SchedulePeriodUI[]>(
+    // Initialize with scheduleForUI data if available, otherwise use defaults
+    schedulesForUI.length > 0 
+      ? schedulesForUI.flatMap(s => s.scheduleData)
+          .filter((p, i, arr) => arr.findIndex(item => item.id === p.id) === i)
+          .sort((a, b) => a.id - b.id)
+          .map(p => ({
+            ...p,
+            name: p.classInfo || '',
+            grade: ''
+          })) as SchedulePeriodUI[]
+      : DEFAULT_PERIODS
+  );
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  
+  // Filtered staff for Washington High School
+  const schoolStaff = useMemo(() => {
+    if (staffLoading || staff.length === 0) return [];
+    
+    const washingtonStaff = staff.filter(member => 
+      member.schools?.includes(WASHINGTON_HIGH_SCHOOL_ID)
+    );
+    
+    return washingtonStaff.length > 0 ? washingtonStaff : staff.slice(0, 6);
+  }, [staff, staffLoading]);
   
   // Transform schedules into WashingtonTeacher format
   const washingtonTeachers = useMemo(() => {
-    console.log("Creating washingtonTeachers from schedules:", schedules);
-    
     if (!schedules || !staff) return [];
     
-    return schedules.map(schedule => {
+    return (schedules as unknown as TeacherSchedule[]).map((schedule: TeacherSchedule) => {
       // Find staff member for this schedule
       const teacher = staff.find(s => s._id === schedule.teacher);
       
@@ -90,46 +113,6 @@ const SchoolSchedulePage: React.FC = () => {
       };
     });
   }, [schedules, staff]);
-  
-  // Log real data for debugging
-  useEffect(() => {
-    console.log("Schools data:", schools);
-    console.log("Staff data:", staff);
-    console.log("Schedule data:", schedulesForUI);
-    console.log("Washington teachers created:", washingtonTeachers);
-  }, [schools, staff, schedulesForUI, washingtonTeachers]);
-  
-  // Once schedule data loads, use it instead of mock data
-  useEffect(() => {
-    if (schedulesForUI && schedulesForUI.length > 0) {
-      // Get all unique periods across all teacher schedules
-      const allPeriods = schedulesForUI.flatMap(s => s.scheduleData);
-      
-      // Group by period ID and take the first occurrence for each period
-      const uniquePeriodIds = [...new Set(allPeriods.map(p => p.id))];
-      const uniquePeriods = uniquePeriodIds.map(id => {
-        return allPeriods.find(p => p.id === id) || DEFAULT_PERIODS.find(p => p.id === id) || allPeriods[0];
-      });
-      
-      // Sort by period ID
-      const sortedPeriods = uniquePeriods.sort((a, b) => a.id - b.id);
-      
-      // Update periods state
-      setPeriods(sortedPeriods);
-    }
-  }, [schedulesForUI]);
-  
-  // Filter staff members for Washington High School
-  useEffect(() => {
-    if (staffLoading) return;
-    
-    // Filter staff for Washington High School
-    const washingtonStaff = staff.filter(member => 
-      member.schools?.includes(WASHINGTON_HIGH_SCHOOL_ID)
-    );
-    
-    setSchoolStaff(washingtonStaff.length > 0 ? washingtonStaff : staff.slice(0, 6));
-  }, [staff, staffLoading]);
 
   // Handle changing the start time
   const handleStartTimeChange = (periodId: number, value: string): void => {
@@ -202,6 +185,12 @@ const SchoolSchedulePage: React.FC = () => {
       return;
     }
     
+    // Check if createSchedule is available
+    if (!createSchedule) {
+      alert("Schedule creation is not available");
+      return;
+    }
+    
     try {
       // Create a schedule entry for each teacher
       const teacherIds = [...new Set(periods.flatMap(p => p.who))];
@@ -229,7 +218,7 @@ const SchoolSchedulePage: React.FC = () => {
         };
         
         // Save the schedule
-        await createSchedule(scheduleData);
+        await createSchedule(scheduleData as unknown as TeacherSchedule);
       }
       
       alert("Schedules saved successfully!");

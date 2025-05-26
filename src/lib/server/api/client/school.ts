@@ -4,7 +4,7 @@ import { School, SchoolInput } from '@zod-schema/core/school';
 import { CollectionResponse } from '@core-types/response';
 
 export const schoolApiClient = {
-  list: (params?: Record<string, any>) => 
+  list: (params?: Record<string, unknown>) => 
     apiClient.getPaginated<School>('/schools', params),
   
   getById: (id: string) => 

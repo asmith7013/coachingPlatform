@@ -9,8 +9,8 @@ import { isEntityResponse, isCollectionResponse, extractItems } from '@transform
 import { 
   transformSingleItem, 
   transformData,
-  ensureBaseDocumentCompatibility
 } from '@transformers/core/unified-transformer';
+import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
 import { BaseDocument } from '@core-types/document';
 import { getEntityLabel } from '@query/client/utilities/selector-helpers';
 

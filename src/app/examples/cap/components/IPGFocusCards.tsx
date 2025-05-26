@@ -1,6 +1,5 @@
 import React from 'react';
-import { ClickableCards } from '@components/composed/cards/ClickableCards';
-import { backgroundColors, borderColors, semanticColors } from  '@/lib/tokens/colors';
+import { ClickableCards, ClickableCardColor } from '@components/composed/cards/ClickableCards';
 
 interface IPGOption {
   value: string;
@@ -19,30 +18,15 @@ export const IPGFocusCards: React.FC<IPGFocusCardsProps> = ({
   onSelect,
   options,
 }) => {
-  const getColorScheme = (value: string) => {
-    const colorMap: Record<string, { bg: string; border: string; hoverBg: string }> = {
-      '1': {
-        bg: backgroundColors.primary,
-        border: borderColors.primary,
-        hoverBg: semanticColors.hoverBg.primary,
-      },
-      '2': {
-        bg: backgroundColors.secondary,
-        border: borderColors.secondary,
-        hoverBg: semanticColors.hoverBg.secondary,
-      },
-      '3': {
-        bg: backgroundColors.success,
-        border: borderColors.success,
-        hoverBg: semanticColors.hoverBg.success,
-      },
+  const getColor = (value: string): ClickableCardColor => {
+    // Map the value to a valid ClickableCardColor
+    const colorMap: Record<string, ClickableCardColor> = {
+      '1': 'primary',
+      '2': 'secondary', 
+      '3': 'success',
     };
 
-    return colorMap[value] || {
-      bg: backgroundColors.surface,
-      border: borderColors.muted,
-      hoverBg: semanticColors.hoverBg.default,
-    };
+    return colorMap[value] || 'muted';
   };
 
   return (
@@ -50,7 +34,7 @@ export const IPGFocusCards: React.FC<IPGFocusCardsProps> = ({
       selectedValue={selectedValue}
       onSelect={onSelect}
       layout="horizontal"
-      getColorScheme={getColorScheme}
+      getColor={getColor}
     >
       {options.map((option) => (
         <ClickableCards.Card

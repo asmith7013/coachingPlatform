@@ -13,6 +13,7 @@ import {
   useMondayBoard,
   useMondayUserByEmail
 } from '@hooks/integrations/monday/useMondayQueries';
+import { useMondayMutations } from "@/hooks/integrations/monday/useMondayMutations";
 
 export default function MondayLiveExamplePage() {
   // Use the API-based hook
@@ -71,7 +72,7 @@ export default function MondayLiveExamplePage() {
       try {
         // Load board data
         const boardData = await getBoard(boardId);
-        setBoard(boardData);
+        setBoard(boardData as unknown as MondayBoard);
         
         // Find potential items to import
         const potentialItems = await findPotentialVisits(boardId);
@@ -92,10 +93,10 @@ export default function MondayLiveExamplePage() {
 
   // Handle import of selected item
   const handleImport = async () => {
-    if (!selectedItemId || !transformPreview?.valid || !selectedBoardId) return;
+    if (!selectedItemId || !transformPreview?.valid) return;
     
     try {
-      const result = await importVisits([selectedItemId], selectedBoardId);
+      const result = await importVisits([selectedItemId]);
       setImportResult(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Import failed');
@@ -103,7 +104,7 @@ export default function MondayLiveExamplePage() {
   };
   
   // Combine errors for display
-  const displayError = error || apiError;
+  const displayError = error || (apiError ? (apiError instanceof Error ? apiError.message : String(apiError)) : null);
 
   // Handle board fetch
   const handleFetchBoard = async () => {
@@ -115,7 +116,7 @@ export default function MondayLiveExamplePage() {
     setError(null);
     
     try {
-      await boardMutation.mutateAsync([selectedBoardId]);
+      await boardMutation.mutate(selectedBoardId);
     } catch (err) {
       console.error('Error fetching board:', err);
       setError(err instanceof Error ? err.message : String(err));
@@ -123,7 +124,7 @@ export default function MondayLiveExamplePage() {
   };
   
   // Determine loading state
-  const isLoading = connectionQuery.isLoading || boardMutation.isPending || userQuery.isLoading;
+  const isLoading = connectionQuery.isLoading || boardMutation.isLoading || userQuery.isLoading;
 
   return (
     <div className="container mx-auto p-6">
@@ -411,13 +412,13 @@ export default function MondayLiveExamplePage() {
           
           {userQuery.data && (
             <div className="mt-4 p-4 bg-gray-50 rounded-md">
-              <Text className="font-medium">User Found</Text>
+              {/* <Text className="font-medium">User Found</Text>
               <Text className="text-gray-600">
                 Name: {userQuery.data.name}
               </Text>
               <Text className="text-gray-600">
                 Email: {userQuery.data.email}
-              </Text>
+              </Text> */}
             </div>
           )}
         </Card.Body>

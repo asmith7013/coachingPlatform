@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { validateClerkWebhook } from '@server/api/validation/clerk-validation';
-import { handleUserSync, handleOrganizationSync, handleUserDeletion } from '@server/api/handlers/clerk-webhook';
-import { UserJSON, OrganizationJSON, DeletedObjectJSON } from '@clerk/nextjs/server';
+import { handleUserSync, handleOrganizationSync, handleUserDeletion, OrganizationWebhookData, UserWebhookData } from '@server/api/handlers/clerk-webhook';
+import { UserJSON } from '@clerk/nextjs/server';
 
 export async function POST(request: Request) {
   try {
@@ -29,11 +29,11 @@ export async function POST(request: Request) {
 
       case 'organization.created':
       case 'organization.updated':
-        const orgResult = await handleOrganizationSync(data as OrganizationJSON);
+        const orgResult = await handleOrganizationSync(data as OrganizationWebhookData);
         return NextResponse.json(orgResult);
 
       case 'user.deleted':
-        const deleteResult = await handleUserDeletion(data as DeletedObjectJSON);
+        const deleteResult = await handleUserDeletion(data as unknown as UserWebhookData);
         return NextResponse.json(deleteResult);
 
       default:

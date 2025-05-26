@@ -1,9 +1,9 @@
 import { createEntityHooks } from '@/query/client/factories/entity-factory';
 import { 
   TeachingLabStaff, 
-  TeachingLabStaffInput,
   MondayUser,
-  TeachingLabStaffZodSchema
+  TeachingLabStaffZodSchema,
+  TeachingLabStaffInputZodSchema
 } from '@zod-schema/core/staff';
 import { 
   fetchTeachingLabStaff, 
@@ -12,9 +12,10 @@ import {
   updateTeachingLabStaff, 
   deleteTeachingLabStaff 
 } from '@/app/actions/staff/operations';
-import { WithDateObjects } from '@core-types/document';
+import { WithDateObjects, DocumentInput } from '@core-types/document';
 import { wrapServerActions } from '@transformers/factories/server-action-factory';
-import { createTransformer, ensureBaseDocumentCompatibility } from '@transformers/core/unified-transformer';
+import { createTransformer } from '@transformers/core/unified-transformer';
+import { ZodType } from 'zod';
 
 /**
  * TeachingLabStaff entity with Date objects instead of string dates
@@ -22,10 +23,16 @@ import { createTransformer, ensureBaseDocumentCompatibility } from '@transformer
 export type TeachingLabStaffWithDates = WithDateObjects<TeachingLabStaff>;
 
 /**
+ * Input type that satisfies DocumentInput constraint for TeachingLabStaff
+ */
+export type TeachingLabStaffInput = DocumentInput<TeachingLabStaff>;
+
+/**
  * Create a domain transformer for TeachingLabStaff
  */
 const staffTransformer = createTransformer<TeachingLabStaff, TeachingLabStaffWithDates>({
-  schema: ensureBaseDocumentCompatibility<TeachingLabStaff>(TeachingLabStaffZodSchema),
+  schema: TeachingLabStaffZodSchema as unknown as ZodType<TeachingLabStaff>,
+  strictValidation: true,
   handleDates: true,
   domainTransform: (item) => ({
     ...item,
@@ -68,6 +75,8 @@ const {
 } = createEntityHooks<TeachingLabStaffWithDates, TeachingLabStaffInput>({
   entityType: 'teaching-lab-staff',
   serverActions: wrappedActions,
+  fullSchema: TeachingLabStaffZodSchema as ZodType<TeachingLabStaffWithDates>,
+  inputSchema: TeachingLabStaffInputZodSchema as unknown as ZodType<TeachingLabStaffInput>,
   validSortFields: ['staffName', 'email', 'adminLevel', 'createdAt', 'updatedAt'],
   defaultParams: {
     sortBy: 'staffName',

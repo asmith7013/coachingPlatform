@@ -58,7 +58,7 @@ export const MetricsBuilder: React.FC<MetricsBuilderProps> = ({
       ];
       onMetricsChange(defaultMetrics);
     }
-  }, []);
+  }, [metrics, onMetricsChange]);
 
   const addMetric = () => {
     const newMetric: MetricType = {

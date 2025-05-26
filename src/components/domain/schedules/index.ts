@@ -1,5 +1,4 @@
 // Main component
-export { default as SchoolSchedulePage } from './SchoolSchedulePage';
 
 // Component exports
 export { SchoolSelector } from './components/SchoolSelector';

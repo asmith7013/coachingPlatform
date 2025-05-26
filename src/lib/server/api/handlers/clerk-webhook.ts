@@ -13,13 +13,13 @@ export type ClerkWebhookEvent = {
 };
 
 export type UserWebhookData = UserJSON & {
-  public_metadata?: Record<string, any>;
-  private_metadata?: Record<string, any>;
+  public_metadata?: Record<string, unknown>;
+  private_metadata?: Record<string, unknown>;
 };
 
 export type OrganizationWebhookData = OrganizationJSON & {
-  public_metadata?: Record<string, any>;
-  private_metadata?: Record<string, any>;
+  public_metadata?: Record<string, unknown>;
+  private_metadata?: Record<string, unknown>;
 };
 
 export type DeletedUserData = DeletedObjectJSON;
@@ -27,8 +27,20 @@ export type DeletedUserData = DeletedObjectJSON;
 export type WebhookResult = {
   success: boolean;
   error?: string;
-  data?: any;
+  data?: {
+    staffId?: string;
+    userId?: string;
+    organizationId?: string;
+  };
   action?: string;
+};
+
+// Define session data type for better type safety
+export type SessionCreatedData = {
+  user_id: string;
+  session_id?: string;
+  created_at?: number;
+  [key: string]: unknown; // For any additional properties
 };
 
 // Business logic for syncing user metadata
@@ -205,8 +217,8 @@ export async function handleUserDeletion(data: UserWebhookData): Promise<Webhook
   }
 }
 
-// Session creation handler (optional)
-export async function handleSessionCreated(data: any): Promise<WebhookResult> {
+// Fix: Replace `any` with proper type (line 209)
+export async function handleSessionCreated(data: SessionCreatedData): Promise<WebhookResult> {
   try {
     console.log(`Session created for user: ${data.user_id}`);
     

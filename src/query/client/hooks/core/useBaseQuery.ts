@@ -8,7 +8,7 @@ import { transformSingleItem, transformItems } from '@query/client/utilities/hoo
 /**
  * Hook for querying a single entity by ID with schema validation
  */
-export function useBaseQuery<T extends BaseDocument, R = T>({
+export function useBaseQuery<T extends BaseDocument>({
   queryKey,
   queryFn,
   schema,
@@ -26,7 +26,7 @@ export function useBaseQuery<T extends BaseDocument, R = T>({
     queryFn,
     ...options,
     select: (data) => {
-      return transformSingleItem<T, R>(
+      return transformSingleItem<T, T>(
         data,
         schema,
         {
@@ -42,7 +42,7 @@ export function useBaseQuery<T extends BaseDocument, R = T>({
 /**
  * Hook for querying a list of entities with schema validation
  */
-export function useBaseListQuery<T extends BaseDocument, R = T>({
+export function useBaseListQuery<T extends BaseDocument>({
   queryKey,
   queryFn,
   schema,
@@ -60,7 +60,7 @@ export function useBaseListQuery<T extends BaseDocument, R = T>({
     queryFn,
     ...options,
     select: (data) => {
-      return transformItems<T, R>(
+      return transformItems<T, T>(
         data,
         schema,
         {

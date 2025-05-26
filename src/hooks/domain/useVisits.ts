@@ -1,15 +1,8 @@
 import { createEntityHooks } from '@query/client/factories/entity-factory';
-import { 
-  VisitZodSchema, 
-  VisitInputZodSchema, 
-  Visit, 
-  VisitInput 
-} from '@zod-schema/visits/visit';
-import { 
-  fetchVisits, 
-  createVisit
-} from '@/app/actions/visits/visits';
-import { WithDateObjects } from '@core-types/document';
+import { VisitZodSchema, VisitInputZodSchema, Visit } from '@zod-schema/visits/visit';
+
+import { fetchVisits, createVisit } from '@/app/actions/visits/visits';
+import { WithDateObjects, DocumentInput } from '@core-types/document';
 import { wrapServerActions } from '@transformers/factories/server-action-factory';
 import { QueryParams } from '@core-types/query';
 import { ZodType } from 'zod';
@@ -22,6 +15,10 @@ import { asDateObjectSchema } from '@/lib/schema/zod-schema/base-schemas';
  */
 export type VisitWithDates = WithDateObjects<Visit>;
 
+/**
+ * Input type that satisfies DocumentInput constraint for Visit
+ */
+export type VisitInput = DocumentInput<Visit>;
 /**
  * Adapter to ensure fetchVisits returns PaginatedResponse (adds hasMore and required fields)
  */
@@ -71,7 +68,7 @@ const {
 } = createEntityHooks<VisitWithDates, VisitInput>({
   entityType: 'visits',
   fullSchema: asDateObjectSchema(VisitZodSchema) as ZodType<VisitWithDates>,
-  inputSchema: VisitInputZodSchema,
+  inputSchema: VisitInputZodSchema as unknown as ZodType<VisitInput>,
   serverActions: wrappedActions,
   validSortFields: ['date', 'school', 'coach', 'createdAt', 'updatedAt'],
   defaultParams: {

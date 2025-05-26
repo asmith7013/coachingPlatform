@@ -2,7 +2,9 @@ import { createEntityHooks } from '@query/client/factories/entity-factory';
 import { 
   SchoolZodSchema, 
   SchoolInputZodSchema, 
-  School 
+  School,
+  SchoolReference,
+  schoolToReference
 } from '@zod-schema/core/school';
 import { 
   fetchSchools, 
@@ -12,12 +14,11 @@ import {
   deleteSchool 
 } from '@actions/schools/schools';
 import { DocumentInput, WithDateObjects } from '@core-types/document';
-import { wrapServerActions } from '@transformers/factories/server-action-factory';
-import { transformData } from '@transformers/core/unified-transformer';
-import { z, ZodType } from 'zod';
+import { createTransformationService } from '@transformers/core/transformation-service';
 import { useInvalidation } from '@query/cache/invalidation';
 import { useBulkOperations } from '@query/client/hooks/mutations/useBulkOperations';
 import { useCallback } from 'react';
+import { z } from 'zod';
 
 /**
  * School entity with Date objects instead of string dates
@@ -30,27 +31,27 @@ export type SchoolWithDates = WithDateObjects<School>;
 export type SchoolInput = DocumentInput<School>;
 
 /**
- * Wraps all server actions to transform dates in responses
- * Uses the improved wrapServerActions with proper type support
+ * Create a transformation service for School entities
+ * This centralizes all transformation logic in one place
  */
-const wrappedActions = wrapServerActions<
-  School,              
-  SchoolWithDates,      
-  SchoolInput    
->(
-  {
-    fetch: fetchSchools,
-    fetchById: fetchSchoolById,
-    create: createSchool,
-    update: updateSchool,
-    delete: deleteSchool
-  },
-  items => transformData<School, SchoolWithDates>(items, {
-    schema: SchoolZodSchema as ZodType<SchoolWithDates>,
-    handleDates: true,
-    errorContext: 'useSchools'
-  })
-);
+const schoolTransformation = createTransformationService<School, SchoolWithDates>({
+  entityType: 'schools',
+  schema: SchoolZodSchema as z.ZodSchema<School>,
+  handleDates: true,
+  errorContext: 'useSchools'
+});
+
+/**
+ * Wrap server actions with the transformation service
+ * This ensures consistent data transformation across all operations
+ */
+const wrappedActions = schoolTransformation.wrapServerActions({
+  fetch: fetchSchools,
+  fetchById: fetchSchoolById,
+  create: createSchool,
+  update: updateSchool,
+  delete: deleteSchool
+});
 
 /**
  * Custom React Query hooks for School entity
@@ -214,6 +215,20 @@ function useSchoolManagerWithInvalidation() {
     await invalidateList('schools');
   }, [invalidateList]);
   
+  /**
+   * Convert a school to reference format for select inputs
+   */
+  const toReference = useCallback((school: SchoolWithDates): SchoolReference => {
+    return schoolToReference(school as unknown as School);
+  }, []);
+  
+  /**
+   * Convert multiple schools to reference format
+   */
+  const toReferences = useCallback((schools: SchoolWithDates[]): SchoolReference[] => {
+    return schools.map(school => toReference(school));
+  }, [toReference]);
+  
   return {
     ...manager, // Include all original manager functions
     
@@ -222,6 +237,10 @@ function useSchoolManagerWithInvalidation() {
     bulkAddTeachersToSchool,
     refreshSchool,
     refreshAllSchools,
+    
+    // Add reference conversion utilities
+    toReference,
+    toReferences,
     
     // Expose the bulk operations with loading states
     bulkUpdateSchools: bulkOps.bulkUpdate,
@@ -250,7 +269,10 @@ export const useSchools = {
   manager: useSchoolManager,
   
   // Enhanced hooks with invalidation
-  withInvalidation: useSchoolManagerWithInvalidation
+  withInvalidation: useSchoolManagerWithInvalidation,
+  
+  // Expose transformation service for advanced usage
+  transformation: schoolTransformation
 };
 
 // For backward compatibility during migration

@@ -23,7 +23,7 @@ export function ImplementationRecordCard({
   onUpdate,
   onDelete
 }: ImplementationRecordCardProps) {
-  const updateField = (field: keyof ImplementationRecordType, value: any) => {
+  const updateField = (field: keyof ImplementationRecordType, value: unknown) => {
     onUpdate(index, { ...record, [field]: value });
   };
 

@@ -2,12 +2,9 @@ import { ZodSchema } from 'zod';
 import { CollectionResponse, EntityResponse } from '@core-types/response';
 import { PaginatedResponse } from '@core-types/response';
 import { handleClientError } from '@error/handlers/client';
-import { 
-  transformData, 
-  transformSingleItem,
-  ensureBaseDocumentCompatibility 
-} from '@transformers/core/unified-transformer';
+import { transformData, transformSingleItem } from '@transformers/core/unified-transformer';
 import { BaseDocument } from '@core-types/document';
+import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
 
 /**
  * Creates a transformer for collection responses

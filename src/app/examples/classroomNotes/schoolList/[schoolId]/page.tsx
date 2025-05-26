@@ -75,7 +75,11 @@ export default function SchoolDetail() {
         
         // Fetch school details
         const schoolsResponse = await fetchSchools({ 
-          filters: { _id: schoolId } 
+          filters: { _id: schoolId },
+          page: 1,
+          limit: 1,
+          sortBy: 'createdAt',
+          sortOrder: 'desc'
         });
         
         if (schoolsResponse.items.length === 0) {
@@ -89,7 +93,11 @@ export default function SchoolDetail() {
         
         // Fetch staff associated with this school
         const staffResponse = await fetchNYCPSStaff({ 
-          filters: { schools: [schoolId] } 
+          filters: { schools: [schoolId] },
+          page: 1,
+          limit: 1,
+          sortBy: 'createdAt',
+          sortOrder: 'desc'
         });
         
         setStaff(staffResponse.items as NYCPSStaff[]);

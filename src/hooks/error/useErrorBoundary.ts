@@ -71,7 +71,7 @@ export function useErrorBoundary(options: ErrorBoundaryHookOptions = {}) {
     if (options.onError) {
       options.onError(error, errorInfo);
     }
-  }, [getErrorContext, options.onError]);
+  }, [getErrorContext, options]);
   
   // Reset error state
   const resetError = useCallback(() => {

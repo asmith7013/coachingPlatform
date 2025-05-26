@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { MondayBoard } from '@/lib/integrations/monday/types/board';
 import type { MondayUser } from '@/lib/integrations/monday/types/api';
 import type { MondayImportResponse, ImportPreview } from '@/lib/integrations/monday/types/import';
-import useErrorHandledMutation from '@/hooks/error/useErrorHandledMutation';
+import { useErrorHandledMutation } from '@/hooks/error/useErrorHandledMutation';
 
 /**
  * Hook for testing Monday.com connection

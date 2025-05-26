@@ -13,9 +13,9 @@ import {
   transformEntityData,
   transformItemsWithSchema,
   transformItemWithSchema,
-  ensureBaseDocumentCompatibility,
   TransformOptions
 } from '@transformers/core/unified-transformer';
+import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
 
 /**
  * Options for transformation operations

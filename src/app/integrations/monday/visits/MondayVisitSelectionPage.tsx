@@ -68,7 +68,7 @@ export default function MondayVisitSelectionPage() {
     
     try {
       // This will trigger the previewsQuery by setting the boardId state
-      await boardMutation.mutateAsync([boardId]);
+      await boardMutation.mutate(boardId);
     } catch (err) {
       console.error('Error fetching previews:', err);
       setError(err instanceof Error ? err.message : String(err));

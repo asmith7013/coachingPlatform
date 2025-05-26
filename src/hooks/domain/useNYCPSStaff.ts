@@ -3,8 +3,7 @@ import { createEntityHooks } from '@/query/client/factories/entity-factory';
 import { 
   NYCPSStaffZodSchema, 
   NYCPSStaffInputZodSchema, 
-  NYCPSStaff, 
-  NYCPSStaffInput,
+  NYCPSStaff,
   // MondayUserZodSchema
 } from '@zod-schema/core/staff';
 import { 
@@ -18,12 +17,17 @@ import { WithDateObjects } from '@core-types/document';
 import { wrapServerActions } from '@transformers/factories/server-action-factory';
 import { transformData } from '@transformers/core/unified-transformer';
 import { ZodType } from 'zod';
-import { SchoolWithDates } from './useSchools';
+import { DocumentInput } from '@core-types/document';
 
 /**
  * NYCPSStaff entity with Date objects instead of string dates
  */
 export type NYCPSStaffWithDates = WithDateObjects<NYCPSStaff>;
+
+/**
+ * Input type that satisfies DocumentInput constraint for NYCPSStaff
+ */
+export type NYCPSStaffInput = DocumentInput<NYCPSStaff>;
 
 /**
  * Ensures mondayUser.isConnected is always a boolean
@@ -71,7 +75,7 @@ const {
 } = createEntityHooks<NYCPSStaffWithDates, NYCPSStaffInput>({
   entityType: 'nycps-staff',
   fullSchema: NYCPSStaffZodSchema as z.ZodType<NYCPSStaffWithDates>,
-  inputSchema: NYCPSStaffZodSchema as unknown as z.ZodType<NYCPSStaffInput>,
+  inputSchema: NYCPSStaffInputZodSchema as unknown as z.ZodType<NYCPSStaffInput>,
   serverActions: wrappedActions,
   validSortFields: ['staffName', 'email', 'createdAt', 'updatedAt'],
   defaultParams: {

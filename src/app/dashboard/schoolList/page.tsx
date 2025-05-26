@@ -7,8 +7,10 @@ import { Text } from '@/components/core/typography/Text';
 import { Button } from '@components/core/Button';
 import { DashboardPage } from '@components/composed/layouts/DashboardPage';
 import { useSchoolsList, useSchoolsMutations } from "@hooks/domain/useSchools"; // ✅ Updated import for React Query hooks
-import { School } from "@domain-types/school";
 import { SchoolInput } from "@zod-schema/core/school";
+import { SchoolWithDates } from "@hooks/domain/useSchools";
+
+type School = SchoolWithDates;
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
 import { Field, RigidResourceForm as GenericResourceForm } from "@components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
@@ -26,6 +28,7 @@ export default function SchoolList() {
     error: schoolError,
     page,
     setPage,
+    pageSize: limit = 10,
     applyFilters,
     changeSorting
   } = useSchoolsList();
@@ -44,7 +47,6 @@ export default function SchoolList() {
   }, []);
 
   const [searchInput, setSearchInput] = useState("");
-  const [limit] = useState(10); // Could use pagination.limit and pagination.setLimit from the hook if needed
 
   const handleSearch = useCallback((value: string) => {
     applyFilters({ schoolName: value });
@@ -96,7 +98,7 @@ export default function SchoolList() {
           { key: "schoolName", label: "School Name" },
           { key: "district", label: "District" }
         ]}
-        onSort={(field, order) => changeSorting(field as keyof School, order)}
+        onSort={(field, order) => changeSorting(field as string, order)}
         onSearch={handleSearch}
         searchInput={searchInput}
         setSearchInput={setSearchInput}
@@ -160,7 +162,7 @@ export default function SchoolList() {
               Grade Levels
             </Heading>
             <div className="flex flex-wrap gap-2 mt-2">
-              {school.gradeLevelsSupported && school.gradeLevelsSupported.map((grade, index) => (
+              {school.gradeLevelsSupported && school.gradeLevelsSupported.map((grade: string, index: number) => (
                 <span 
                   key={index} 
                   className={cn(

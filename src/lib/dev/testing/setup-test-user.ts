@@ -1,5 +1,5 @@
 import { clerkClient } from '@clerk/nextjs/server';
-import { User } from '@clerk/nextjs/server';
+// import { User } from '@clerk/nextjs/server';
 
 export async function setupTestUser(email: string, role: string = 'Director') {
   try {

@@ -8,7 +8,8 @@ import {
   NYCPSStaffZodSchema,
   TeachingLabStaffZodSchema 
 } from '@zod-schema/core/staff';
-import { createTransformer, ensureBaseDocumentCompatibility } from '@transformers/core/unified-transformer';
+import { createTransformer } from '@transformers/core/unified-transformer';
+import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
 
 // Define types with date objects
 export type NYCPSStaffWithDates = WithDateObjects<NYCPSStaff>;

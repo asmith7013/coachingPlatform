@@ -132,7 +132,7 @@ const { mutate: setupUser, isLoading, error, isSuccess, reset } = useErrorHandle
         <Card.Body>
           <div className={cn(stack.lg)}>
             <p className={cn(textColors.muted, textSize.base, 'text-center')}>
-              Let's set up your account to get started.
+              Let&apos;s set up your account to get started.
             </p>
             
             <div className={cn('bg-gray-50 p-4 rounded-lg', stack.sm)}>

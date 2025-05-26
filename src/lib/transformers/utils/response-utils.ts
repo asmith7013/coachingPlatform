@@ -2,6 +2,7 @@ import { CollectionResponse, EntityResponse } from '@core-types/response';
 import { PaginatedResponse } from '@core-types/response';
 import { TransformOptions } from '../core/unified-transformer';
 import { BaseDocument } from '@/lib/schema/zod-schema/base-schemas';
+import { ZodSchema } from 'zod';
 
 /**
  * Extracts items from a response
@@ -10,6 +11,16 @@ export function extractItems<T>(response: CollectionResponse<T> | null | undefin
   return response?.items || [];
 }
 
+/**
+ * Type helper that ensures compatibility between Zod schemas and BaseDocument
+ * This acts as a bridge without changing the core BaseDocument constraint
+ */
+export function ensureBaseDocumentCompatibility<T extends BaseDocument>(
+  schema: ZodSchema<unknown>
+): ZodSchema<T> {
+  // This is just a type assertion function - no runtime changes
+  return schema as ZodSchema<T>;
+}
 
 /**
  * Extracts pagination information from a response
