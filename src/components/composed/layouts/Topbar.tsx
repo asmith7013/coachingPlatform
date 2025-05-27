@@ -137,6 +137,9 @@ export function Topbar({ className }: TopbarProps) {
                 className={styles.userAvatar()}
                 src={imageUrl || '/default-avatar.png'}
                 alt={fullName || 'User'}
+                unoptimized
+                width={32}
+                height={32}
               />
               <span className={styles.userInfo()}>
                 <span className={styles.userName()}>

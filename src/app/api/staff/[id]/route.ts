@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchStaffByIdForApi } from "@server/fetchers/staff";
-import { collectionizeResponse } from "@server/api/responses/formatters";
-import { handleServerError } from "@error/handlers/server";
+import { fetchNYCPSStaffById, fetchTeachingLabStaffById } from "@actions/staff/operations";
+import { createEntityResponse, createMonitoredErrorResponse } from "@server/api/responses/action-response-helper";
 
 export async function GET(
   request: NextRequest,
@@ -11,41 +10,41 @@ export async function GET(
     const { id } = await params;
     
     const { searchParams } = new URL(request.url);
-    const staffType = searchParams.get("staffType") || "nycps";
+    const type = searchParams.get("type") || "nycps";
     
-    console.log(`📥 API /staff/[id] request received, ID: ${id}, type: ${staffType}`);
+    console.log(`📥 API /staff/[id] request received, ID: ${id}, type: ${type}`);
 
-    const result = await fetchStaffByIdForApi(id, staffType as string);
+    let result;
+    
+    if (type === "teachinglab") {
+      result = await fetchTeachingLabStaffById(id);
+    } else {
+      result = await fetchNYCPSStaffById(id);
+    }
 
-    if (!result.success) {
+    if (!result.success || !result.items || result.items.length === 0) {
       return NextResponse.json(
-        collectionizeResponse({
-          items: [],
-          success: false,
-          message: result.error
-        }),
+        createMonitoredErrorResponse(
+          new Error(result.error || "Staff member not found"),
+          { component: "StaffAPI", operation: "fetchById" }
+        ),
         { status: 404 }
       );
     }
 
-    return NextResponse.json(
-      collectionizeResponse({
-        items: result.items,
-        success: true
-      })
-    );
-  } catch (error) {
-    const errorMessage = handleServerError(error);
-    const statusCode = errorMessage.startsWith("[404]") ? 404 : 
-                       errorMessage.startsWith("[400]") ? 400 : 500;
+    const staffMember = result.items[0];
     
+    const response = createEntityResponse(staffMember, "Staff member retrieved successfully");
+    
+    return NextResponse.json(response);
+  } catch (error) {
+    console.error("Staff API Error:", error);
     return NextResponse.json(
-      collectionizeResponse({
-        items: [],
-        success: false,
-        message: errorMessage
-      }),
-      { status: statusCode }
+      createMonitoredErrorResponse(
+        error,
+        { component: "StaffAPI", operation: "fetchById" }
+      ),
+      { status: 500 }
     );
   }
 }

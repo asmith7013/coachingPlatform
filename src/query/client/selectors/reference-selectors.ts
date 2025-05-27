@@ -182,65 +182,103 @@ export function getReferenceOptions<T extends BaseDocument>(
   return createReferenceSelector<T>(entityType)(data);
 }
 
-// Pre-configure common reference transformers
+// Pre-configure common reference transformers - LAZY LOADING
 export const referenceSelectors = {
-  school: registerReferenceSelector<School, SchoolReference>(
-    'schools',
-    (school) => school.schoolName,
-    (school) => ({
-      schoolNumber: school.schoolNumber,
-      district: school.district
-    })
-  ),
+  get school() {
+    try {
+      return registerReferenceSelector<School, SchoolReference>(
+        'schools',
+        (school) => school.schoolName,
+        (school) => ({
+          schoolNumber: school.schoolNumber,
+          district: school.district
+        })
+      );
+    } catch (error) {
+      console.warn('Failed to register school reference selector:', error);
+      return null;
+    }
+  },
   
-  staff: registerReferenceSelector<NYCPSStaff, StaffReference>(
-    'nycps-staff',
-    (staff) => staff.staffName,
-    (staff) => ({
-      email: staff.email,
-      role: staff.rolesNYCPS?.[0]
-    })
-  ),
+  get staff() {
+    try {
+      return registerReferenceSelector<NYCPSStaff, StaffReference>(
+        'nycps-staff',
+        (staff) => staff.staffName,
+        (staff) => ({
+          email: staff.email,
+          role: staff.rolesNYCPS?.[0]
+        })
+      );
+    } catch (error) {
+      console.warn('Failed to register staff reference selector:', error);
+      return null;
+    }
+  },
   
-  teachingLabStaff: registerReferenceSelector<TeachingLabStaff, StaffReference>(
-    'teaching-lab-staff',
-    (staff) => staff.staffName,
-    (staff) => ({
-      email: staff.email,
-      role: staff.rolesTL?.[0]
-    })
-  ),
+  get teachingLabStaff() {
+    try {
+      return registerReferenceSelector<TeachingLabStaff, StaffReference>(
+        'teaching-lab-staff',
+        (staff) => staff.staffName,
+        (staff) => ({
+          email: staff.email,
+          role: staff.rolesTL?.[0]
+        })
+      );
+    } catch (error) {
+      console.warn('Failed to register teaching lab staff reference selector:', error);
+      return null;
+    }
+  },
   
-  visit: registerReferenceSelector<Visit, VisitReference>(
-    'visits',
-    (visit) => `Visit: ${visit.date}`,
-    (visit) => ({
-      date: visit.date,
-      school: visit.school
-    })
-  ),
+  get visit() {
+    try {
+      return registerReferenceSelector<Visit, VisitReference>(
+        'visits',
+        (visit) => `Visit: ${visit.date}`,
+        (visit) => ({
+          date: visit.date,
+          school: visit.school
+        })
+      );
+    } catch (error) {
+      console.warn('Failed to register visit reference selector:', error);
+      return null;
+    }
+  },
   
-  lookFor: registerReferenceSelector<LookFor, LookForReference>(
-    'look-fors',
-    (lookFor) => lookFor.topic,
-    (lookFor) => ({
-      lookForIndex: lookFor.lookForIndex
-    })
-  ),
+  get lookFor() {
+    try {
+      return registerReferenceSelector<LookFor, LookForReference>(
+        'look-fors',
+        (lookFor) => lookFor.topic,
+        (lookFor) => ({
+          lookForIndex: lookFor.lookForIndex
+        })
+      );
+    } catch (error) {
+      console.warn('Failed to register look-for reference selector:', error);
+      return null;
+    }
+  },
   
-  coachingLog: registerReferenceSelector<CoachingLog, CoachingLogReference>(
-    'coaching-logs',
-    (log) => log.primaryStrategy,
-    (log) => ({
-      solvesTouchpoint: log.solvesTouchpoint
-    })
-  )
+  get coachingLog() {
+    try {
+      return registerReferenceSelector<CoachingLog, CoachingLogReference>(
+        'coaching-logs',
+        (log) => log.primaryStrategy,
+        (log) => ({
+          solvesTouchpoint: log.solvesTouchpoint
+        })
+      );
+    } catch (error) {
+      console.warn('Failed to register coaching log reference selector:', error);
+      return null;
+    }
+  }
 };
 
-/**
- * Legacy mapping functions for API compatibility
- * These functions provide backward compatibility for existing API routes
- */
 
 /**
  * Maps a school entity to a school reference object

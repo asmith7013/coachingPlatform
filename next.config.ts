@@ -7,7 +7,14 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false // Enable this to see if it builds with errors ignored
   },
   images: {
-    domains: ['images.unsplash.com', 'tailwindcss.com'],
+    domains: [
+      'images.unsplash.com', 
+      'tailwindcss.com',
+      // Add Clerk image domains
+      'img.clerk.com',
+      'images.clerk.dev',
+      'images.clerk.com'
+    ],
   },
 };
 

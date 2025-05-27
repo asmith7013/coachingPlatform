@@ -15,31 +15,20 @@ import { handleClientError } from '@error/handlers/client';
 import { BaseDocument } from '@core-types/document';
 import { ZodType } from 'zod';
 import { getSearchableText } from '@query/client/utilities/selector-helpers';
-// Import the consolidated reference selector function
 import { createReferenceSelector } from '@query/client/selectors/reference-selectors';
 
 /**
  * Create specialized selector variants for an entity type
- * 
- * @param baseSelector The base selector to extend
- * @param entityType The entity type name for error context
- * @returns An object containing specialized selector variants
  */
 function createSpecializedSelectors<T extends BaseDocument>(
   baseSelector: EntitySelector<T>,
   entityType: string
 ) {
   return {
-    // Basic selector
     base: baseSelector,
-    
-    // Reference selector for dropdowns - UPDATED to use consolidated function
     reference: createReferenceSelector<T>(entityType),
-    
-    // Searchable selector that adds a searchable text field
     searchable: (data: unknown) => {
       try {
-        // Use baseSelector.basic to get items (which now uses normalizeToArray internally)
         const items = baseSelector.basic(data);
         return items.map(item => ({
           ...item,
@@ -50,11 +39,8 @@ function createSpecializedSelectors<T extends BaseDocument>(
         return [];
       }
     },
-    
-    // Detail selector with formatted dates
     detail: (data: unknown) => {
       try {
-        // Use baseSelector.detail to get item (which now uses normalizeToArray internally)
         const item = baseSelector.detail(data);
         if (!item) return null;
         
@@ -70,72 +56,136 @@ function createSpecializedSelectors<T extends BaseDocument>(
     }
   };
 }
-// Register and create specialized selectors for all entity types
-const schoolSelectors = createSpecializedSelectors(
-  registerSelector('schools', SchoolZodSchema as ZodType<School>),
-  'schools'
-);
 
-const staffSelectors = createSpecializedSelectors(
-  registerSelector('staff', StaffMemberZodSchema as ZodType<StaffMember>),
-  'staff'
-);
+// ✅ LAZY REGISTRATION - Create functions that register selectors when called
+function getSchoolSelectors() {
+  try {
+    return createSpecializedSelectors(
+      registerSelector('schools', SchoolZodSchema as ZodType<School>),
+      'schools'
+    );
+  } catch (error) {
+    console.warn('Failed to register school selectors:', error);
+    return null;
+  }
+}
 
-const nycpsStaffSelectors = createSpecializedSelectors(
-  registerSelector('nycps-staff', NYCPSStaffZodSchema as ZodType<NYCPSStaff>),
-  'nycps-staff'
-);
+function getStaffSelectors() {
+  try {
+    return createSpecializedSelectors(
+      registerSelector('staff', StaffMemberZodSchema as ZodType<StaffMember>),
+      'staff'
+    );
+  } catch (error) {
+    console.warn('Failed to register staff selectors:', error);
+    return null;
+  }
+}
 
-const teachingLabStaffSelectors = createSpecializedSelectors(
-  registerSelector('teaching-lab-staff', TeachingLabStaffZodSchema as ZodType<TeachingLabStaff>),
-  'teaching-lab-staff'
-);
+function getNYCPSStaffSelectors() {
+  try {
+    return createSpecializedSelectors(
+      registerSelector('nycps-staff', NYCPSStaffZodSchema as ZodType<NYCPSStaff>),
+      'nycps-staff'
+    );
+  } catch (error) {
+    console.warn('Failed to register NYCPS staff selectors:', error);
+    return null;
+  }
+}
 
-const cycleSelectors = createSpecializedSelectors(
-  registerSelector('cycles', CycleZodSchema as ZodType<Cycle>),
-  'cycles'
-);
+function getTeachingLabStaffSelectors() {
+  try {
+    return createSpecializedSelectors(
+      registerSelector('teaching-lab-staff', TeachingLabStaffZodSchema as ZodType<TeachingLabStaff>),
+      'teaching-lab-staff'
+    );
+  } catch (error) {
+    console.warn('Failed to register Teaching Lab staff selectors:', error);
+    return null;
+  }
+}
 
-const visitSelectors = createSpecializedSelectors(
-  registerSelector('visits', VisitZodSchema as ZodType<Visit>),
-  'visits'
-);
+function getCycleSelectors() {
+  try {
+    return createSpecializedSelectors(
+      registerSelector('cycles', CycleZodSchema as ZodType<Cycle>),
+      'cycles'
+    );
+  } catch (error) {
+    console.warn('Failed to register cycle selectors:', error);
+    return null;
+  }
+}
 
-const coachingLogSelectors = createSpecializedSelectors(
-  registerSelector('coaching-logs', CoachingLogZodSchema as ZodType<CoachingLog>),
-  'coaching-logs'
-);
+function getVisitSelectors() {
+  try {
+    return createSpecializedSelectors(
+      registerSelector('visits', VisitZodSchema as ZodType<Visit>),
+      'visits'
+    );
+  } catch (error) {
+    console.warn('Failed to register visit selectors:', error);
+    return null;
+  }
+}
 
-const lookForSelectors = createSpecializedSelectors(
-  registerSelector('look-fors', LookForZodSchema as ZodType<LookFor>),
-  'look-fors'
-);
+function getCoachingLogSelectors() {
+  try {
+    return createSpecializedSelectors(
+      registerSelector('coaching-logs', CoachingLogZodSchema as ZodType<CoachingLog>),
+      'coaching-logs'
+    );
+  } catch (error) {
+    console.warn('Failed to register coaching log selectors:', error);
+    return null;
+  }
+}
 
-const rubricSelectors = createSpecializedSelectors(
-  registerSelector('rubrics', RubricZodSchema as ZodType<Rubric>),
-  'rubrics'
-);
+function getLookForSelectors() {
+  try {
+    return createSpecializedSelectors(
+      registerSelector('look-fors', LookForZodSchema as ZodType<LookFor>),
+      'look-fors'
+    );
+  } catch (error) {
+    console.warn('Failed to register look-for selectors:', error);
+    return null;
+  }
+}
 
-// Export all selectors as a standardized collection
+function getRubricSelectors() {
+  try {
+    return createSpecializedSelectors(
+      registerSelector('rubrics', RubricZodSchema as ZodType<Rubric>),
+      'rubrics'
+    );
+  } catch (error) {
+    console.warn('Failed to register rubric selectors:', error);
+    return null;
+  }
+}
+
+// ✅ LAZY GETTER - Export with lazy getters that handle errors gracefully
 export const standardSelectors = {
-  schools: schoolSelectors,
-  staff: staffSelectors,
-  nycpsStaff: nycpsStaffSelectors,
-  teachingLabStaff: teachingLabStaffSelectors,
-  cycles: cycleSelectors,
-  visits: visitSelectors,
-  coachingLogs: coachingLogSelectors,
-  lookFors: lookForSelectors,
-  rubrics: rubricSelectors
+  get schools() { return getSchoolSelectors(); },
+  get staff() { return getStaffSelectors(); },
+  get nycpsStaff() { return getNYCPSStaffSelectors(); },
+  get teachingLabStaff() { return getTeachingLabStaffSelectors(); },
+  get cycles() { return getCycleSelectors(); },
+  get visits() { return getVisitSelectors(); },
+  get coachingLogs() { return getCoachingLogSelectors(); },
+  get lookFors() { return getLookForSelectors(); },
+  get rubrics() { return getRubricSelectors(); }
 };
 
 // Export individual selectors for direct imports (backward compatibility)
-export const schoolSelector = schoolSelectors.base;
-export const staffSelector = staffSelectors.base;
-export const nycpsStaffSelector = nycpsStaffSelectors.base;
-export const teachingLabStaffSelector = teachingLabStaffSelectors.base;
-export const cycleSelector = cycleSelectors.base;
-export const visitSelector = visitSelectors.base;
-export const coachingLogSelector = coachingLogSelectors.base;
-export const lookForSelector = lookForSelectors.base;
-export const rubricSelector = rubricSelectors.base; 
+export const schoolSelector = () => getSchoolSelectors()?.base;
+export const staffSelector = () => getStaffSelectors()?.base;
+export const nycpsStaffSelector = () => getNYCPSStaffSelectors()?.base;
+export const teachingLabStaffSelector = () => getTeachingLabStaffSelectors()?.base;
+export const cycleSelector = () => getCycleSelectors()?.base;
+export const visitSelector = () => getVisitSelectors()?.base;
+export const coachingLogSelector = () => getCoachingLogSelectors()?.base;
+export const lookForSelector = () => getLookForSelectors()?.base;
+export const rubricSelector = () => getRubricSelectors()?.base; 

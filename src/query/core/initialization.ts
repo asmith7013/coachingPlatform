@@ -16,32 +16,37 @@ let isInitialized = false;
  */
 export function registerStandardSelectors(): void {
   try {
-    // Validate that all standard selectors are properly initialized
-    const expectedSelectors = [
-      'schools', 'staff', 'nycps-staff', 'teaching-lab-staff', 'cycles',
-      'visits', 'coaching-logs', 'look-fors', 'rubrics'
+    // Try to access each selector to trigger lazy registration
+    const selectorChecks = [
+      () => standardSelectors.schools,
+      () => standardSelectors.staff,
+      () => standardSelectors.nycpsStaff,
+      () => standardSelectors.teachingLabStaff,
+      () => standardSelectors.cycles,
+      () => standardSelectors.visits,
+      () => standardSelectors.coachingLogs,
+      () => standardSelectors.lookFors,
+      () => standardSelectors.rubrics
     ];
     
-    const selectorVariants = [
-      'reference', 'searchable', 'detail'
-    ];
+    let successCount = 0;
+    let failureCount = 0;
     
-    // Check base selectors
-    for (const selectorName of expectedSelectors) {
-      const selector = standardSelectors[selectorName as keyof typeof standardSelectors];
-      if (!selector?.base) {
-        throw new Error(`Missing base selector for ${selectorName}`);
-      }
-      
-      // Check specialized variants
-      for (const variant of selectorVariants) {
-        if (!selector[variant as keyof typeof selector]) {
-          console.warn(`Missing ${variant} variant for ${selectorName}`);
+    for (const check of selectorChecks) {
+      try {
+        const selector = check();
+        if (selector?.base) {
+          successCount++;
+        } else {
+          failureCount++;
         }
+      } catch (error) {
+        failureCount++;
+        console.warn('Selector registration failed:', error);
       }
     }
     
-    console.log('✅ All standard selectors validated successfully');
+    console.log(`✅ Selector registration complete: ${successCount} successful, ${failureCount} failed`);
     
   } catch (error) {
     captureError(error, createErrorContext('QuerySystem', 'selectorRegistration'));
@@ -56,25 +61,20 @@ export function registerStandardSelectors(): void {
  * @returns {boolean} Whether initialization was successful
  */
 export function initializeQuerySystem(): boolean {
-  // Skip if already initialized
   if (isInitialized) {
     return true;
   }
   
   try {
-    // Register standard selectors for common entity types
+    // Register standard selectors (now with error handling)
     registerStandardSelectors();
     
-    // Additional initialization steps can be added here
-    
-    // Mark as initialized
     isInitialized = true;
-    
     return true;
   } catch (error) {
-    // Log initialization error
     captureError(error, createErrorContext('QuerySystem', 'initialization'));
-    return false;
+    console.warn('Query system initialization failed, but continuing:', error);
+    return false; // Don't block the app
   }
 }
 

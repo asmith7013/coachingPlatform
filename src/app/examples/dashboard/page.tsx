@@ -117,6 +117,9 @@ export default function Example() {
                     alt="Your Company"
                     src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
                     className="h-8 w-auto"
+                    unoptimized
+                    width={32}
+                    height={32}
                   />
                 </div>
                 <nav className="flex flex-1 flex-col">
@@ -173,6 +176,9 @@ export default function Example() {
                           alt=""
                           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                           className="size-8 rounded-full bg-gray-800"
+                          unoptimized
+                          width={32}
+                          height={32}
                         />
                         <span className="sr-only">Your profile</span>
                         <span aria-hidden="true">Tom Cook</span>
@@ -194,6 +200,9 @@ export default function Example() {
                 alt="Your Company"
                 src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
                 className="h-8 w-auto"
+                unoptimized
+                width={32}
+                height={32}
               />
             </div>
             <nav className="flex flex-1 flex-col">
@@ -250,6 +259,9 @@ export default function Example() {
                       alt=""
                       src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                       className="size-8 rounded-full bg-gray-800"
+                      unoptimized
+                      width={32}
+                      height={32}
                     />
                     <span className="sr-only">Your profile</span>
                     <span aria-hidden="true">Tom Cookie</span>
@@ -379,7 +391,7 @@ export default function Example() {
               {activityItems.map((item) => (
                 <li key={item.commit} className="px-4 py-4 sm:px-6 lg:px-8">
                   <div className="flex items-center gap-x-3">
-                    <Image alt="" src={item.user.imageUrl} className="size-6 flex-none rounded-full bg-gray-800" />
+                    <Image alt="" src={item.user.imageUrl} className="size-6 flex-none rounded-full bg-gray-800" unoptimized width={32} height={32} />
                     <h3 className="flex-auto truncate text-sm/6 font-semibold text-text">{item.user.name}</h3>
                     <time dateTime={item.dateTime} className="flex-none text-xs text-gray-600">
                       {item.date}

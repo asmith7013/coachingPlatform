@@ -4,7 +4,7 @@ import { useState, ReactNode } from 'react'
 import { tv } from 'tailwind-variants'
 import { cn } from '@ui/utils/formatters'
 import { Topbar } from './Topbar'
-import { Sidebar, type NavigationItem, type TeamItem } from './NavigationSidebar'
+import { NavigationSidebar, type NavigationItem, type TeamItem } from './NavigationSidebar'
 import { Heading } from '@/components/core/typography/Heading'
 import { Text } from '@/components/core/typography/Text'
 // import { paddingX, paddingY, textColors, textSize } from '@ui-tokens/tokens'
@@ -128,19 +128,19 @@ export function AppShell({
   return (
     <div className={cn(styles.root(), className)}>
       {/* Navigation sidebar */}
-      <Sidebar 
+      <NavigationSidebar 
         navigation={navigation}
         teams={teams}
         showTeams={showTeams}
         logo={logo}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
       />
 
       {/* Content area */}
       <div className={styles.content()}>
         {/* Top navigation */}
         <Topbar
-          isSidebarOpen={sidebarOpen}
-        
           onSidebarToggle={() => setSidebarOpen(true)}
           user={user}
           userNavigation={userNavigation}

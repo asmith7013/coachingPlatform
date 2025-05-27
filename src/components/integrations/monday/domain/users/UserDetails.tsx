@@ -65,6 +65,7 @@ export function UserDetails({ user, className, onStaffCreated }: UserDetailsProp
             <Image
               src={user.photo_thumb}
               alt={user.name || 'User'}
+              unoptimized
               width={48}
               height={48}
               className="rounded-full"

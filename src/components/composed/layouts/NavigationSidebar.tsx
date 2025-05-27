@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   Dialog,
   DialogBackdrop,
@@ -43,6 +42,8 @@ interface NavigationSidebarProps {
   }
   showTeams?: boolean
   className?: string
+  sidebarOpen: boolean  // ✅ Make these controlled from parent
+  setSidebarOpen: (open: boolean) => void  // ✅ Controlled from parent
 }
 
 // Create the sidebar styles using tv from tailwind-variants
@@ -61,7 +62,7 @@ const sidebar = tv({
     // Shared sidebar content
     sidebarContent: 'flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4',
     sidebarLogo: 'flex h-16 shrink-0 items-center',
-    logoImage: 'h-8 w-auto',
+    logoImage: 'h-8 w-8 object-contain',
     
     // Navigation
     nav: 'flex flex-1 flex-col',
@@ -90,7 +91,7 @@ const sidebar = tv({
   }
 });
 
-export function Sidebar({
+export function NavigationSidebar({
   navigation,
   teams = [],
   logo = {
@@ -98,9 +99,10 @@ export function Sidebar({
     alt: 'Your Company'
   },
   showTeams = true,
-  className
+  className,
+  sidebarOpen,
+  setSidebarOpen
 }: NavigationSidebarProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
   const styles = sidebar();
 
   // Function to render navigation items
@@ -193,6 +195,12 @@ export function Sidebar({
           className={styles.logoImage()}
           width={32}
           height={32}
+          unoptimized // ✅ Add this for external SVGs
+          style={{
+            width: '32px',
+            height: '32px',
+            objectFit: 'contain'
+          }}
         />
       </div>
       <nav className={styles.nav()}>
@@ -284,26 +292,6 @@ export function Sidebar({
       <div className={cn(styles.desktopSidebar(), className)}>
         {renderSidebarContent()}
       </div>
-
-      {/* Mobile sidebar toggle button (to be used in your AppShell or Topbar) */}
-      <button
-        type="button"
-        className="lg:hidden -m-2.5 p-2.5 text-gray-700"
-        onClick={() => setSidebarOpen(true)}
-      >
-        <span className="sr-only">Open sidebar</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-6"
-          aria-hidden="true"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-        </svg>
-      </button>
     </>
   );
 }

@@ -124,6 +124,8 @@
 │   │   │       ├── cycles.ts
 │   │   │       └── visits.ts
 │   │   ├── api
+│   │   │   ├── debug
+│   │   │   │   └── staff-ids
 │   │   │   ├── integrations
 │   │   │   │   └── monday
 │   │   │   │       ├── route.ts
@@ -210,7 +212,6 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── ultra-minimal
 │   │   │       └── page.tsx
-│   │   ├── demo
 │   │   ├── examples
 │   │   │   ├── calendar
 │   │   │   │   ├── CalendarGridView.tsx
@@ -976,4 +977,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-290 directories, 687 files
+291 directories, 687 files
