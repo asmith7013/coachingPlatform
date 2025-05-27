@@ -8,9 +8,6 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/**/*.{js,ts,jsx,tsx,mdx}', // Catch all src files
   ],
-  // content: {
-  //   files: ['./src/**/*.{ts,tsx}', './src/styles/theme-safelist.css'],
-  // },
   theme: {
     extend: {
       colors: tailwindColors,

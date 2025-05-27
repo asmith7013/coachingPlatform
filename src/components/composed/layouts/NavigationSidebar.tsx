@@ -196,11 +196,6 @@ export function NavigationSidebar({
           width={32}
           height={32}
           unoptimized // ✅ Add this for external SVGs
-          style={{
-            width: '32px',
-            height: '32px',
-            objectFit: 'contain'
-          }}
         />
       </div>
       <nav className={styles.nav()}>

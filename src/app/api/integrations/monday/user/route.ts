@@ -13,7 +13,6 @@ export async function GET() {
     message: 'Monday user API placeholder'
   });
 }
-
 // import { NextRequest, NextResponse } from 'next/server';
 // import { fetchMondayUserByEmail } from '@/lib/integrations/monday/client/client';
 // import { handleServerError } from '@error/handlers/server';
