@@ -10,7 +10,7 @@ import { withDbConnection } from "@server/db/ensure-connection";
 import { uploadFileWithProgress } from "@server/file-handling/file-upload";
 import { bulkUploadToDB } from "@server/crud/bulk-operations";
 import { SchoolInput } from "@domain-types/school";
-import { QueryParams } from "@/lib/types/core/query";
+import { QueryParams } from "@core-types/query";
 
 // Create standard CRUD actions for Schools
 const schoolActions = createCrudActions({
@@ -28,7 +28,13 @@ const schoolActions = createCrudActions({
 
 // Export the generated actions with connection handling
 export async function fetchSchools(params: QueryParams) {
-  return withDbConnection(() => schoolActions.fetch(params));
+
+  const result = await withDbConnection(async () => {
+    const actionResult = await schoolActions.fetch(params);
+    return actionResult;
+  });
+  
+  return result;
 }
 
 export async function createSchool(data: SchoolInput) {

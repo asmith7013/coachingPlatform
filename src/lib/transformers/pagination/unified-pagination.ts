@@ -10,6 +10,28 @@ import { handleServerError } from "@error/handlers/server";
 import { transformData, TransformOptions } from "@transformers/core/unified-transformer";
 
 /**
+ * Cleans up empty, null, or undefined filter values that would cause unwanted filtering
+ * This prevents issues where empty string searches filter out all results
+ */
+function cleanFilters(filters: Record<string, unknown>): Record<string, unknown> {
+  const cleaned: Record<string, unknown> = {};
+  
+  for (const [key, value] of Object.entries(filters)) {
+    // Skip empty strings, null, undefined, and empty arrays
+    if (
+      value !== '' &&
+      value !== null &&
+      value !== undefined &&
+      !(Array.isArray(value) && value.length === 0)
+    ) {
+      cleaned[key] = value;
+    }
+  }
+  
+  return cleaned;
+}
+
+/**
  * Sanitizes the sort field to ensure it's a valid field
  */
 function sanitizeSortField(
@@ -59,21 +81,30 @@ export async function executePaginatedQuery<
     // Connect to database
     await connectToDB();
     
+    // 🔧 CLEAN FILTERS - This is the key fix!
+    const cleanedFilters = cleanFilters(filters);
+    
+    // Add debugging to see the difference
+    // console.log('=== FILTER CLEANING DEBUG ===');
+    // console.log('Original filters:', filters);
+    // console.log('Cleaned filters:', cleanedFilters);
+    // console.log('=============================');
+    
     // Sanitize sort field
     const sortField = sanitizeSortField(sortBy, validSortFields, 'createdAt');
     const sortValue = sortOrder === 'asc' ? 1 : -1;
     
-    // Build the query
-    const query = model.find(filters)
+    // Build the query using CLEANED filters
+    const query = model.find(cleanedFilters)  // Use cleanedFilters instead of filters
       .sort({ [sortField]: sortValue })
       .skip(calculateSkip({ page, limit }))
       .limit(limit)
       .lean();
     
-    // Execute query and count total
+    // Execute query and count total using CLEANED filters
     const [rawItems, totalItems] = await Promise.all([
       query.exec(),
-      model.countDocuments(filters)
+      model.countDocuments(cleanedFilters)  // Use cleanedFilters here too
     ]);
     
     // Ensure items is an array

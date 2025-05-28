@@ -1,6 +1,6 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
@@ -68,18 +68,6 @@ export default function SchoolList() {
       console.error("Failed to delete school:", error);
     }
   };
-
-
-
-  useEffect(() => {
-    if (schools && schools.length > 0) {
-      console.log("=== SCHOOL ID INFORMATION ===");
-      schools.forEach(school => {
-        console.log(`School: ${school.schoolName} | Number: ${school.schoolNumber} | ID: ${school._id}`);
-      });
-      console.log("============================");
-    }
-  }, [schools]);
 
   if (loading) return <Text textSize="base">Loading Schools...</Text>;
   if (schoolError) return <Text textSize="base" color="danger">Error loading schools: {schoolError.message}</Text>;

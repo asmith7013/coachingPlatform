@@ -63,6 +63,8 @@
 ├── public
 │   ├── file.svg
 │   ├── globe.svg
+│   ├── logo.svg
+│   ├── logo2.png
 │   ├── next.svg
 │   ├── vercel.svg
 │   └── window.svg
@@ -977,4 +979,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-291 directories, 687 files
+291 directories, 689 files

@@ -1,6 +1,6 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { Card } from '@components/composed/cards/Card';
 import { Heading } from '@components/core/typography/Heading';
 import { Text } from '@components/core/typography/Text';
@@ -48,16 +48,6 @@ export default function SchoolList() {
   }, []);
 
   const [searchInput, setSearchInput] = useState("");
-
-  useEffect(() => {
-    if (schools && schools.length > 0) {
-      console.log("=== SCHOOL ID INFORMATION ===");
-      schools.forEach((school: School) => {
-        console.log(`School: ${school.schoolName} | Number: ${school.schoolNumber} | ID: ${school._id}`);
-      });
-      console.log("============================");
-    }
-  }, [schools]);
   
   const confirmDeleteSchool = (id: string) => {
     if (window.confirm("Are you sure you want to delete this school?")) {

@@ -115,7 +115,7 @@ export function AppShell({
   user = defaultUser,
   userNavigation = defaultUserNavigation,
   logo = {
-    src: 'https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600',
+    src: '/logo.png',
     alt: 'Your Company'
   },
   pageTitle,

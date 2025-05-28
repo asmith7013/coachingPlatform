@@ -95,7 +95,7 @@ export function NavigationSidebar({
   navigation,
   teams = [],
   logo = {
-    src: 'https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600',
+    src: '/logo2.png',
     alt: 'Your Company'
   },
   showTeams = true,
