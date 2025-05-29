@@ -17,10 +17,10 @@ This guide outlines the specific steps to implement new features in our applicat
 
 ## 1. Implement Zod Schemas
 
-Start by defining the Zod schemas in `src/lib/data-schema/zod-schema/`:
+Start by defining the Zod schemas in `src/lib/zod-schema/`:
 
 ```typescript
-// src/lib/data-schema/zod-schema/domain/entity.ts
+// src/lib/zod-schema/domain/entity.ts
 import { z } from "zod";
 import { zDateField } from "../shared/dateHelpers";
 
@@ -43,12 +43,12 @@ export type Entity = z.infer<typeof EntityZodSchema>;
 </section>
 <section id="model-implementation">
 2. Create MongoDB Models
-Create MongoDB models in src/lib/data-schema/mongoose-schema/:
+Create MongoDB models in src/lib/schema/mongoose-schema/:
 
 ```typescript
-// src/lib/data-schema/mongoose-schema/domain/entity.model.ts
+// src/lib/schema/mongoose-schema/domain/entity.model.ts
 import mongoose from "mongoose";
-import { EntityZodSchema } from "@/lib/data-schema/zod-schema/domain/entity";
+import { EntityZodSchema } from "@/lib/zod-schema/domain/entity";
 
 const schemaFields = {
   name: { type: String, required: true },
@@ -71,7 +71,7 @@ Create field configurations in src/lib/ui/forms/fieldConfig/:
 ```typescript
 // src/lib/ui/forms/fieldConfig/domain/entity.ts
 import { Field } from "@/lib/ui/forms/types";
-import { EntityInput } from "@/lib/data-schema/zod-schema/domain/entity";
+import { EntityInput } from "@/lib/zod-schema/domain/entity";
 
 export const EntityFieldConfig: Field<EntityInput>[] = [
   {
@@ -102,8 +102,8 @@ Create server actions in src/app/actions/:
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { EntityInputZodSchema } from "@/lib/data-schema/zod-schema/domain/entity";
-import { EntityModel } from "@/lib/data-schema/mongoose-schema/domain/entity.model";
+import { EntityInputZodSchema } from "@/lib/zod-schema/domain/entity";
+import { EntityModel } from "@/lib/schema/mongoose-schema/domain/entity.model";
 import { handleValidationError } from "@/lib/core/error/handleValidationError";
 import { handleServerError } from "@/lib/core/error/handleServerError";
 
@@ -131,7 +131,7 @@ Create custom hooks in src/hooks/:
 ```typescript
 // src/hooks/useEntityData.ts
 import { useState } from "react";
-import { Entity } from "@/lib/data-schema/zod-schema/domain/entity";
+import { Entity } from "@/lib/zod-schema/domain/entity";
 import { useSafeSWR } from "@/hooks/utils/useSafeSWR";
 import { handleClientError } from "@/lib/core/error/handleClientError";
 
@@ -157,7 +157,7 @@ Create domain components in src/components/domain/:
 ```typescript
 // src/components/domain/entity/EntityCard.tsx
 import { Card } from "@/components/composed/cards";
-import { Entity } from "@/lib/data-schema/zod-schema/domain/entity";
+import { Entity } from "@/lib/zod-schema/domain/entity";
 
 interface EntityCardProps {
   entity: Entity;

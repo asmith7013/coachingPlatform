@@ -1,122 +1,94 @@
 "use server";
 
 import { z, ZodType } from "zod";
-import { LookForModel } from "@mongoose-schema/look-fors";
-import { 
-  LookForZodSchema, 
-  LookForInputZodSchema,
-  type LookFor,
-  type LookForInput
-} from "@zod-schema/look-fors/look-for";
+import { LookForModel } from "@mongoose-schema/look-fors/look-for.model";
+import { LookFor,LookForZodSchema, LookForInputZodSchema } from "@zod-schema/look-fors/look-for";
+import { createCrudActions } from "@server/crud";
+import { withDbConnection } from "@server/db/ensure-connection";
+import type { QueryParams } from "@core-types/query";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
-import { 
-  createItem,
-  updateItem,
-  deleteItem,
-} from "@server/crud/crud-operations";
-import { fetchPaginatedResource } from "@transformers/pagination/unified-pagination";
-import { type QueryParams } from "@core-types/query";
-import { sanitizeSortBy, buildQueryParams } from "@transformers/pagination/pagination-utils";
-import { bulkUploadToDB } from "@/lib/server/crud/bulk-operations";
+import { bulkUploadToDB } from "@server/crud/bulk-operations";
 import { uploadFileWithProgress } from "@server/file-handling/file-upload";
-import { connectToDB } from "@server/db/connection";
 
-// Valid sort fields for look-fors
-const validSortFields = ['lookForIndex', 'topic', 'description', 'category', 'createdAt', 'updatedAt'];
+// Type definitions
+type LookForInput = z.infer<typeof LookForInputZodSchema>;
 
-// Define type alias for inferred input type
-type InferLookForInput = z.infer<typeof LookForInputZodSchema>;
+// Create standard CRUD actions for Look Fors
+const lookForActions = createCrudActions({
+  model: LookForModel,
+  schema: LookForZodSchema as ZodType<LookFor>,
+  inputSchema: LookForInputZodSchema,
+  name: "Look For",
+  revalidationPaths: ["/dashboard/lookFors"],
+  sortFields: ['lookForText', 'createdAt', 'updatedAt'],
+  defaultSortField: 'createdAt',
+  defaultSortOrder: 'desc'
+});
 
-// Types
-export type { LookFor, LookForInput };
-
-/** Fetch Look-Fors */
+// Export the generated actions with connection handling
 export async function fetchLookFors(params: QueryParams) {
-  try {
-    // Sanitize sortBy to ensure it's a valid field name
-    const safeSortBy = sanitizeSortBy(params.sortBy, validSortFields, 'lookForIndex');
-    
-    const fetchParams = buildQueryParams({
-      ...params,
-      sortBy: safeSortBy,
-      sortOrder: params.sortOrder ?? "asc"
-    });
-
-    console.log("Fetching look-fors with params:", fetchParams);
-
-    return fetchPaginatedResource(
-      LookForModel,
-      LookForZodSchema as ZodType<LookFor>,
-      fetchParams
-    );
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
+  return withDbConnection(() => lookForActions.fetch(params));
 }
 
-// Create a new look-for
-export async function createLookFor(data: InferLookForInput) {
-  try {
-    await connectToDB();
-    return createItem(LookForModel, LookForInputZodSchema, data, ["/look-fors", "/look-fors/[id]"]);
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
+export async function createLookFor(data: LookForInput) {
+  return withDbConnection(() => lookForActions.create(data));
 }
 
-// Update a look-for
-export async function updateLookFor(id: string, data: Partial<InferLookForInput>) {
-  try {
-    await connectToDB();
-    return updateItem(LookForModel, LookForInputZodSchema, id, data, ["/look-fors", "/look-fors/[id]"]);
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
+export async function updateLookFor(id: string, data: Partial<LookForInput>) {
+  return withDbConnection(() => lookForActions.update(id, data));
 }
 
-// Delete a look-for
 export async function deleteLookFor(id: string) {
-  try {
-    await connectToDB();
-    return deleteItem(LookForModel, LookForZodSchema, id, ["/look-fors", "/look-fors/[id]"]);
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
+  return withDbConnection(() => lookForActions.delete(id));
 }
 
-// Upload look-fors via file
+export async function fetchLookForById(id: string) {
+  return withDbConnection(() => lookForActions.fetchById(id));
+}
+
+// File upload actions
 export const uploadLookForFile = async (file: File): Promise<string> => {
   try {
-    const result = await uploadFileWithProgress(file, "/api/look-fors/bulk-upload");
+    const result = await uploadFileWithProgress(file, "/api/lookFors/bulk-upload");
     return result.message || "No message";
   } catch (error) {
     throw handleServerError(error);
   }
 };
 
-// Upload look-fors data
-export async function uploadLookFors(data: InferLookForInput[]) {
-  try {
-    await connectToDB();
-    const result = await bulkUploadToDB(data, LookForModel, LookForInputZodSchema, ["/look-fors"]);
-    
-    if (!result.success) {
+export async function uploadLookFors(data: LookForInput[]) {
+  return withDbConnection(async () => {
+    try {
+      const result = await bulkUploadToDB(
+        data, 
+        LookForModel, 
+        LookForInputZodSchema, 
+        ["/dashboard/lookFors"]
+      );
+      
+      if (!result.success) {
+        return {
+          success: false,
+          error: result.error
+        };
+      }
+
+      return {
+        success: true,
+        items: result.items
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return {
+          success: false,
+          error: handleValidationError(error)
+        };
+      }
       return {
         success: false,
-        error: result.error
+        error: handleServerError(error)
       };
     }
-
-    return {
-      success: true,
-      items: result.items
-    };
-  } catch (error) {
-    console.error("Error uploading look-fors:", error);
-    if (error instanceof z.ZodError) {
-      throw handleValidationError(error);
-    }
-    throw handleServerError(error);
-  }
+  });
 }

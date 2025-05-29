@@ -1,7 +1,7 @@
 // src/lib/api/fetchers/school.ts
 import { SchoolModel } from '@mongoose-schema/core/school.model';
 import { SchoolZodSchema } from '@zod-schema/core/school';
-import { createApiSafeFetcher } from '@server/fetchers/factory';
+import { createApiSafeFetcher } from '@/lib/server/fetchers/fetcher-factory';
 import { fetchById } from '@transformers/utils/fetch-utils';
 
 /**

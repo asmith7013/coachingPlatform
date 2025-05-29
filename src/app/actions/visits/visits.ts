@@ -1,54 +1,46 @@
-'use server';
+"use server";
 
-import { z, ZodType } from "zod";
-import { connectToDB } from "@server/db/connection";
+import { createCrudActions } from "@server/crud";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
-import { VisitInputZodSchema, VisitZodSchema } from "@zod-schema/visits/visit";
-import { handleServerError } from "@error/handlers/server";
-import { handleValidationError } from "@error/handlers/validation";
-import { createItem } from "@server/crud/crud-operations";
-import { fetchPaginatedResource } from "@transformers/pagination/unified-pagination";
-import { sanitizeSortBy } from "@transformers/pagination/pagination-utils";
-import type { Visit } from "@zod-schema/visits/visit";
+import { 
+  Visit,
+  VisitZodSchema, 
+  VisitInputZodSchema,
+  type VisitInput
+} from "@zod-schema/visits/visit";
+import { withDbConnection } from "@server/db/ensure-connection";
 import { QueryParams } from "@core-types/query";
+import { ZodType } from "zod";
 
-// Valid sort fields for visits
-const validSortFields = ['date', 'createdAt', 'updatedAt', 'school', 'coach'];
+// Create Visit actions
+const visitActions = createCrudActions({
+  model: VisitModel,
+  schema: VisitZodSchema as ZodType<Visit>,
+  inputSchema: VisitInputZodSchema,
+  name: "Visit",
+  revalidationPaths: ["/dashboard/visits"],
+  sortFields: ['date', 'school', 'coach', 'createdAt', 'updatedAt'],
+  defaultSortField: 'date',
+  defaultSortOrder: 'desc'
+});
 
-/** Fetch Visits */
-export async function fetchVisits(params: QueryParams) {
-  try {
-    // Sanitize sortBy to ensure it's a valid field name
-    const safeSortBy = sanitizeSortBy(params.sortBy, validSortFields, 'date');
-    
-    return fetchPaginatedResource(
-      VisitModel,
-      VisitZodSchema as ZodType<Visit>,
-      {
-        ...params,
-        sortBy: safeSortBy,
-        sortOrder: params.sortOrder ?? "desc"
-      }
-    );
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
+// Export individual functions with connection handling
+export async function createVisit(data: VisitInput) {
+  return withDbConnection(() => visitActions.create(data));
 }
 
-/** Create Visit */
-export async function createVisit(data: Visit) {
-  try {
-    await connectToDB();
-    return createItem(
-      VisitModel, 
-      VisitInputZodSchema, 
-      data, 
-      ["/dashboard/visits"]
-    );
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw handleValidationError(error);
-    }
-    throw handleServerError(error);
-  }
+export async function updateVisit(id: string, data: Partial<VisitInput>) {
+  return withDbConnection(() => visitActions.update(id, data));
+}
+
+export async function deleteVisit(id: string) {
+  return withDbConnection(() => visitActions.delete(id));
+}
+
+export async function fetchVisits(params: QueryParams) {
+  return withDbConnection(() => visitActions.fetch(params));
+}
+
+export async function fetchVisitById(id: string) {
+  return withDbConnection(() => visitActions.fetchById(id));
 } 

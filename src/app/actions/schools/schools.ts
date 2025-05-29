@@ -5,7 +5,7 @@ import { SchoolModel } from "@mongoose-schema/core/school.model";
 import { School, SchoolInputZodSchema, SchoolZodSchema } from "@zod-schema/core/school";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
-import { createCrudActions } from "@server/crud/crud-action-factory";
+import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { uploadFileWithProgress } from "@server/file-handling/file-upload";
 import { bulkUploadToDB } from "@server/crud/bulk-operations";
@@ -15,26 +15,18 @@ import { QueryParams } from "@core-types/query";
 // Create standard CRUD actions for Schools
 const schoolActions = createCrudActions({
   model: SchoolModel,
-  fullSchema: SchoolZodSchema as ZodType<School>,
-  inputSchema: SchoolInputZodSchema,
+  schema: SchoolZodSchema as ZodType<School>,
+  inputSchema: SchoolInputZodSchema as ZodType<SchoolInput>,
+  name: "School",
   revalidationPaths: ["/dashboard/schools"],
-  options: {
-    validSortFields: ['schoolName', 'district', 'createdAt', 'updatedAt'],
-    defaultSortField: 'schoolName',
-    defaultSortOrder: 'asc',
-    entityName: 'School'
-  }
+  sortFields: ['schoolName', 'district', 'createdAt', 'updatedAt'],
+  defaultSortField: 'schoolName',
+  defaultSortOrder: 'asc'
 });
 
 // Export the generated actions with connection handling
 export async function fetchSchools(params: QueryParams) {
-
-  const result = await withDbConnection(async () => {
-    const actionResult = await schoolActions.fetch(params);
-    return actionResult;
-  });
-  
-  return result;
+  return withDbConnection(() => schoolActions.fetch(params));
 }
 
 export async function createSchool(data: SchoolInput) {

@@ -21,7 +21,7 @@ The `checkFieldConfigCoverage` utility ensures that field configurations align w
 
 ```typescript
 import { checkFieldConfigCoverage } from "@/lib/utils/dev/checkFieldConfigCoverage";
-import { SchoolZodSchema } from "@/lib/data/schemas/core/school";
+import { SchoolZodSchema } from "@/lib/zod-schema/core/school";
 import { SchoolFieldConfig } from "@/lib/data/forms/config/core/school";
 
 // Check if field config covers all schema fields

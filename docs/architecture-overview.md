@@ -65,8 +65,8 @@ Our system follows a specific flow from schema definition to UI:
 ## Main System Components
 
 ### 1. Data Layer
-- **Zod Schemas**: Define all data structures (`src/lib/data-schema/zod-schema/`)
-- **MongoDB Models**: Database models derived from schemas (`src/lib/data-schema/mongoose-schema/`)
+- **Zod Schemas**: Define all data structures (`src/lib/zod-schema/`)
+- **MongoDB Models**: Database models derived from schemas (`src/lib/schema/mongoose-schema/`)
 - **API Routes**: Endpoints for data access (`src/app/api/`)
 - **Server Actions**: Direct server operations (`src/app/actions/`)
 
@@ -83,7 +83,7 @@ Our system follows a specific flow from schema definition to UI:
 
 ### 4. Utilities
 - **Error Handling**: Standardized error processing (`src/lib/core/error/`)
-- **Sanitization**: Data cleaning and validation (`src/lib/data-utilities/transformers/`)
+- **Sanitization**: Data cleaning and validation (`src/lib/transformers/`)
 - **Development Tools**: Developer experience enhancements (`src/lib/dev/`)
 
 ## Documentation Structure

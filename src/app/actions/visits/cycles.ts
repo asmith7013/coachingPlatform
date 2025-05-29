@@ -1,17 +1,46 @@
-'use server';
+"use server";
 
-import { connectToDB } from "@server/db/connection";
+import { createCrudActions } from "@server/crud";
 import { CycleModel } from "@mongoose-schema/core/cycle.model";
-import { CycleInputZodSchema } from "@zod-schema/core/cycle";
-import { createItem } from "@/lib/server/crud/crud-operations";
-import type { CycleInput } from "@zod-schema/core/cycle";
+import { 
+  CycleZodSchema, 
+  CycleInputZodSchema,
+  type CycleInput,
+  Cycle
+} from "@zod-schema/core/cycle";
+import { withDbConnection } from "@server/db/ensure-connection";
+import { QueryParams } from "@core-types/query";
+import { ZodType } from "zod";
 
-/**
- * Creates a new cycle
- * @param data The cycle data to create
- * @returns The created cycle
- */
+// Create Cycle actions
+const cycleActions = createCrudActions({
+  model: CycleModel,
+  schema: CycleZodSchema as ZodType<Cycle>,
+  inputSchema: CycleInputZodSchema as ZodType<CycleInput>,
+  name: "Cycle",
+  revalidationPaths: ["/dashboard/cycles"],
+  sortFields: ['cycleNum', 'createdAt', 'updatedAt'],
+  defaultSortField: 'cycleNum',
+  defaultSortOrder: 'asc'
+});
+
+// Export individual functions with connection handling
 export async function createCycle(data: CycleInput) {
-  await connectToDB();
-  return createItem(CycleModel, CycleInputZodSchema, data);
+  return withDbConnection(() => cycleActions.create(data));
+}
+
+export async function updateCycle(id: string, data: Partial<CycleInput>) {
+  return withDbConnection(() => cycleActions.update(id, data));
+}
+
+export async function deleteCycle(id: string) {
+  return withDbConnection(() => cycleActions.delete(id));
+}
+
+export async function fetchCycles(params: QueryParams) {
+  return withDbConnection(() => cycleActions.fetch(params));
+}
+
+export async function fetchCycleById(id: string) {
+  return withDbConnection(() => cycleActions.fetchById(id));
 } 

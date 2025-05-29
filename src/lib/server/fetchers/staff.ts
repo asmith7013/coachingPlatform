@@ -1,6 +1,6 @@
 import { NYCPSStaffModel, TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
 import { NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from '@zod-schema/core/staff';
-import { createApiSafeFetcher } from '@server/fetchers/factory';
+import { createApiSafeFetcher } from '@/lib/server/fetchers/fetcher-factory';
 import { fetchById } from '@transformers/utils/fetch-utils';
 
 /**

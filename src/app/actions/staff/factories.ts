@@ -1,63 +1,53 @@
+"use server";
+
 import { 
-  StaffMemberModel, 
-  NYCPSStaffModel, 
-  TeachingLabStaffModel 
+  StaffMemberModel,
+  NYCPSStaffModel,
+  TeachingLabStaffModel
 } from "@mongoose-schema/core/staff.model";
 import { 
   StaffMemberZodSchema, 
   StaffMemberInputZodSchema,
-  NYCPSStaffZodSchema, 
+  NYCPSStaffZodSchema,
   NYCPSStaffInputZodSchema,
   TeachingLabStaffZodSchema,
   TeachingLabStaffInputZodSchema,
   StaffMember,
-  StaffMemberInput,
   NYCPSStaff,
-  NYCPSStaffInput,
-  TeachingLabStaff,
-  TeachingLabStaffInput
+  TeachingLabStaff
 } from "@zod-schema/core/staff";
-import { createCrudActions } from "@server/crud/crud-action-factory";
 import { ZodType } from "zod";
+import { createCrudActions } from "@server/crud";
 
-// Create standard CRUD actions for general staff
+// Create CRUD actions for Staff Members
 export const staffActions = createCrudActions({
   model: StaffMemberModel,
-  fullSchema: StaffMemberZodSchema as ZodType<StaffMember>,
-  inputSchema: StaffMemberInputZodSchema as ZodType<StaffMemberInput>,
+  schema: StaffMemberZodSchema as ZodType<StaffMember>,
+  inputSchema: StaffMemberInputZodSchema,
+  name: "Staff Member",
   revalidationPaths: ["/dashboard/staff"],
-  options: {
-    validSortFields: ['staffName', 'email', 'createdAt', 'updatedAt'],
-    defaultSortField: 'staffName',
-    defaultSortOrder: 'asc',
-    entityName: 'Staff Member'
-  }
+  sortFields: ['staffName', 'email', 'createdAt', 'updatedAt'],
+  defaultSortField: 'staffName'
 });
 
-// Create standard CRUD actions for NYCPS staff
+// Create CRUD actions for NYCPS Staff
 export const nycpsStaffActions = createCrudActions({
   model: NYCPSStaffModel,
-  fullSchema: NYCPSStaffZodSchema as ZodType<NYCPSStaff>,
-  inputSchema: NYCPSStaffInputZodSchema as ZodType<NYCPSStaffInput>,
+  schema: NYCPSStaffZodSchema as ZodType<NYCPSStaff>,
+  inputSchema: NYCPSStaffInputZodSchema,
+  name: "NYCPS Staff",
   revalidationPaths: ["/dashboard/staff"],
-  options: {
-    validSortFields: ['staffName', 'email', 'createdAt', 'updatedAt'],
-    defaultSortField: 'staffName',
-    defaultSortOrder: 'asc',
-    entityName: 'NYCPS Staff'
-  }
+  sortFields: ['staffName', 'email', 'createdAt', 'updatedAt'],
+  defaultSortField: 'staffName'
 });
 
-// Create standard CRUD actions for Teaching Lab staff
+// Create CRUD actions for Teaching Lab Staff
 export const tlStaffActions = createCrudActions({
   model: TeachingLabStaffModel,
-  fullSchema: TeachingLabStaffZodSchema as ZodType<TeachingLabStaff>,
-  inputSchema: TeachingLabStaffInputZodSchema as ZodType<TeachingLabStaffInput>,
+  schema: TeachingLabStaffZodSchema as ZodType<TeachingLabStaff>,
+  inputSchema: TeachingLabStaffInputZodSchema,
+  name: "Teaching Lab Staff",
   revalidationPaths: ["/dashboard/staff"],
-  options: {
-    validSortFields: ['staffName', 'email', 'createdAt', 'updatedAt'],
-    defaultSortField: 'staffName',
-    defaultSortOrder: 'asc',
-    entityName: 'Teaching Lab Staff'
-  }
+  sortFields: ['staffName', 'email', 'createdAt', 'updatedAt'],
+  defaultSortField: 'staffName'
 }); 

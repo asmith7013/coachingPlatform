@@ -3,9 +3,8 @@ import { z } from "zod";
 import { QueryParamsZodSchema } from "@zod-schema/core-types/query";
 import { BaseReference } from "@core-types/reference";
 import { PaginatedResponse } from "@core-types/response";
-import { withQueryValidation } from "@api-validation/integrated-validation";
+import { withQueryValidation } from "@server/api/validation/api-validation";
 import { createCollectionResponse, createMonitoredErrorResponse } from "@api-responses/action-response-helper";
-import { collectionizeResponse } from "@api-responses/formatters";
 
 /**
  * Generic type for any fetch function that returns items and total
@@ -62,6 +61,7 @@ export interface ReferenceEndpointOptions<T extends Record<string, unknown>, R e
 
 /**
  * Creates a standardized GET handler for reference data endpoints with Zod schema validation
+ * Now uses direct collection response creation instead of collectionizeResponse
  */
 export function createReferenceEndpoint<T extends Record<string, unknown>, R extends BaseReference>(options: ReferenceEndpointOptions<T, R>) {
   const {
@@ -146,11 +146,10 @@ export function createReferenceEndpoint<T extends Record<string, unknown>, R ext
       // Check for fetch errors
       if (!data.success) {
         return NextResponse.json(
-          collectionizeResponse({
-            items: [],
-            success: false,
-            message: data.error || `Failed to fetch ${endpoint} data`
-          }),
+          createCollectionResponse(
+            [],
+            data.error || `Failed to fetch ${endpoint} data`
+          ),
           { status: 400 }
         );
       }
@@ -190,72 +189,3 @@ export function createReferenceEndpoint<T extends Record<string, unknown>, R ext
   // Apply query validation to the handler
   return withQueryValidation(querySchema)(baseHandler);
 }
-
-// /**
-//  * Helper function to create a custom query schema for reference endpoints
-//  * @param additionalFields Additional fields to add to the base query schema
-//  * @returns A new Zod schema that includes standard query params and custom fields
-//  */
-// export function createReferenceQuerySchema<T extends z.ZodRawShape>(
-//   additionalFields: T
-// ): z.ZodType<z.infer<typeof QueryParamsZodSchema> & { [k in keyof T]: z.infer<T[k]> }> {
-//   const baseSchema = QueryParamsZodSchema.extend(additionalFields);
-//   return baseSchema.transform((data) => {
-//     type TransformedType = {
-//       page: number;
-//       limit: number;
-//       sortBy: string;
-//       sortOrder: 'asc' | 'desc';
-//       search?: string;
-//       filter?: Record<string, unknown>;
-//       filters: Record<string, unknown>;
-//       searchFields?: string[];
-//       options?: Record<string, unknown>;
-//       [key: string]: unknown;
-//     };
-
-//     const transformed: TransformedType = {
-//       page: Number(data.page) || 1,
-//       limit: Number(data.limit) || 20,
-//       sortBy: data.sortBy || '',
-//       sortOrder: (data.sortOrder || 'desc') as 'asc' | 'desc',
-//       search: data.search || undefined,
-//       filter: data.filter || undefined,
-//       filters: data.filters || {},
-//       searchFields: data.searchFields || undefined,
-//       options: data.options || undefined,
-//     };
-
-//     // Add any additional fields from the extended schema
-//     Object.entries(data)
-//       .filter(([key]) => !Object.keys(transformed).includes(key))
-//       .forEach(([key, value]) => {
-//         if (value === 'true') transformed[key] = true;
-//         else if (value === 'false') transformed[key] = false;
-//         else transformed[key] = value;
-//       });
-
-//     return transformed as z.infer<typeof QueryParamsZodSchema> & { [k in keyof T]: z.infer<T[k]> };
-//   });
-// }
-
-// /**
-//  * Helper function to create a custom reference response schema
-//  * @param referenceSchema The schema for reference items
-//  * @returns A paginated response schema with the specified reference items
-//  */
-// export function createReferenceResponseSchema<T extends z.ZodRawShape>(
-//   referenceSchema: z.ZodObject<T>
-// ) {
-//   return z.object({
-//     success: z.boolean(),
-//     items: z.array(referenceSchema),
-//     total: z.number(),
-//     page: z.number(),
-//     limit: z.number(),
-//     totalPages: z.number(),
-//     hasMore: z.boolean(),
-//     message: z.string().optional(),
-//     empty: z.boolean().optional()
-//   });
-// }

@@ -20,7 +20,7 @@ Our application implements a consistent pattern for MongoDB integration, with a 
 MongoDB models are defined using a consistent pattern that integrates with our Zod schemas:
 
 ```typescript
-import { SchoolZodSchema } from "@/lib/data/schemas/core/school";
+import { SchoolZodSchema } from "@/lib/zod-schema/core/school";
 import mongoose from "mongoose";
 
 // Define schema fields, mirroring Zod schema structure
@@ -49,7 +49,7 @@ CRUD Operations
 Our system provides standardized CRUD operations through the crud.ts utility:
 
 ```typescript 
-import { createItem, updateItem, deleteItem } from "@/lib/utils/server/crud";
+import { createItem, updateItem, deleteItem } from "@/lib/server/crud/crud-operations";
 
 // Create a new item
 const result = await createItem(
@@ -94,7 +94,7 @@ Provide consistent error handling
 Our system provides a consistent pattern for managing MongoDB connections through the `withDbConnection` utility:
 
 ```typescript
-import { withDbConnection } from "@data-server/db/ensure-connection";
+import { withDbConnection } from "@/lib/server/db/ensure-connection";
 
 export async function fetchSchools(params = {}) {
   return withDbConnection(() => schoolActions.fetch(params));
@@ -135,8 +135,8 @@ Query Sanitization
 User-provided query parameters are sanitized before use in MongoDB operations:
 
 ```typescript
-import { sanitizeFilters } from "@/lib/utils/server/sanitizeFilters";
-import { buildTextSearchQuery, buildDateRangeQuery } from "@/lib/utils/server/sanitizeFilters";
+import { sanitizeFilters } from "@/lib/server/api/responses/formattersFilters";
+import { buildTextSearchQuery, buildDateRangeQuery } from "@/lib/server/api/responses/formattersFilters";
 
 // Sanitize filters
 const safeFilters = sanitizeFilters({
@@ -171,7 +171,7 @@ Pagination Queries
 For paginated database queries, use the pagination utilities:
 
 ```typescript
-import { buildPaginatedQuery, executePaginatedQuery } from "@/lib/utils/server/pagination";
+import { buildPaginatedQuery, executePaginatedQuery } from "@/lib/server/db/mongodb-query-utils";
 
 // Build a paginated query
 const query = buildPaginatedQuery(

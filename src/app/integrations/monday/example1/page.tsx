@@ -116,7 +116,7 @@ export default function MondayLiveExamplePage() {
     setError(null);
     
     try {
-      await boardMutation.mutate(selectedBoardId);
+      boardMutation.mutate([selectedBoardId]);
     } catch (err) {
       console.error('Error fetching board:', err);
       setError(err instanceof Error ? err.message : String(err));
@@ -124,7 +124,7 @@ export default function MondayLiveExamplePage() {
   };
   
   // Determine loading state
-  const isLoading = connectionQuery.isLoading || boardMutation.isLoading || userQuery.isLoading;
+  const isLoading = connectionQuery.isLoading || boardMutation.isPending || userQuery.isPending;
 
   return (
     <div className="container mx-auto p-6">

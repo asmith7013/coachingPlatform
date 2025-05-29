@@ -313,23 +313,23 @@ Examples:
 
 ### Schema Definitions
 
-**Location**: `src/lib/data-schema/zod-schema/{domain}/{resource-name}.ts`
+**Location**: `src/lib/zod-schema/{domain}/{resource-name}.ts`
 
 Zod schema definitions, which serve as the source of truth for data structures.
 
 Examples:
-- `src/lib/data-schema/zod-schema/core/school.ts` - School schema
-- `src/lib/data-schema/zod-schema/visits/visit.ts` - Visit schema
+- `src/lib/zod-schema/core/school.ts` - School schema
+- `src/lib/zod-schema/visits/visit.ts` - Visit schema
 
 ### MongoDB Models
 
-**Location**: `src/lib/data-schema/mongoose-schema/{domain}/{resource-name}.model.ts`
+**Location**: `src/lib/schema/mongoose-schema/{domain}/{resource-name}.model.ts`
 
 Mongoose models derived from Zod schemas.
 
 Examples:
-- `src/lib/data-schema/mongoose-schema/core/school.model.ts` - School model
-- `src/lib/data-schema/mongoose-schema/visits/visit.model.ts` - Visit model
+- `src/lib/schema/mongoose-schema/core/school.model.ts` - School model
+- `src/lib/schema/mongoose-schema/visits/visit.model.ts` - Visit model
 
 [RULE] Always follow these file organization patterns to maintain a consistent, scalable codebase.
 
@@ -354,7 +354,7 @@ import { z } from 'zod';
 // Internal imports using path aliases
 import { Button } from '@/components/core';
 import { useSchools } from '@/hooks';
-import { SchoolZodSchema } from '@/lib/data/schemas';
+import { SchoolZodSchema } from '@/lib/zod-schema';
 
 // Relative imports for closely related files
 import { renderField } from './utils';

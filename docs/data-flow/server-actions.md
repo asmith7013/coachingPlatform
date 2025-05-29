@@ -67,8 +67,8 @@ Server Actions follow a consistent pattern:
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { SchoolInputZodSchema } from "@/lib/data-schema/zod-schema/core/school";
-import { SchoolModel } from "@/lib/data-schema/mongoose-schema/core/school.model";
+import { SchoolInputZodSchema } from "@/lib/zod-schema/core/school";
+import { SchoolModel } from "@/lib/schema/mongoose-schema/core/school.model";
 import { handleValidationError } from "@/lib/core/error/handleValidationError";
 import { handleServerError } from "@/lib/core/error/handleServerError";
 
@@ -120,8 +120,8 @@ Our server actions follow a standardized pattern using the CRUD factory to reduc
 import { z } from "zod";
 import { RubricModel } from "@mongoose-schema/look-fors/rubric.model";
 import { RubricZodSchema, RubricInputZodSchema } from "@data-schema/zod-schema/look-fors/rubric";
-import { createCrudActions } from "@data-server/crud/crud-action-factory";
-import { withDbConnection } from "@data-server/db/ensure-connection";
+import { createCrudActions } from "@/lib/server/crud/crud-action-factory";
+import { withDbConnection } from "@/lib/server/db/ensure-connection";
 
 // Create standard CRUD actions
 export const rubricActions = createCrudActions({

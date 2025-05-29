@@ -1,7 +1,7 @@
 // src/lib/api/fetchers/coaching-log.ts
 import { CoachingLogModel } from '@mongoose-schema/visits/coaching-log.model';
 import { CoachingLogZodSchema } from '@zod-schema/visits/coaching-log';
-import { createApiSafeFetcher } from '@server/fetchers/factory';
+import { createApiSafeFetcher } from '@/lib/server/fetchers/fetcher-factory';
 import { fetchById } from '@transformers/utils/fetch-utils';
 
 /**

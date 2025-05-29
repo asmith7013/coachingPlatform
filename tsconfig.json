@@ -29,6 +29,7 @@
         "@/*": ["./src/*"],
 
         // Core component
+        "@app/*": ["./src/app/*"],
         "@components/*": ["./src/components/*"],
 
         // Hook paths

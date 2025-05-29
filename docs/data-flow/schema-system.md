@@ -11,7 +11,7 @@ Our platform uses a schema-driven architecture where Zod schemas serve as the de
 
 <section id="data-schemas">
 Zod Schema Architecture
-Schemas are organized in src/lib/data-schema/zod-schema/ by domain:
+Schemas are organized in src/lib/zod-schema/ by domain:
 
 core/: Base schemas for common entities (School, Staff, Cycle)
 shared/: Reusable schema parts (notes, enums, date helpers)
@@ -236,12 +236,119 @@ By following this pattern consistently, we maintain clear boundaries between cli
 [RULE] Always use input schemas for creation and update operations, and full schemas for reading operations.
 </section>
 
-<section id="data-model-integration">
-MongoDB Model Integration
-MongoDB models are defined using the Zod schemas and stored in src/lib/data-schema/mongoose-schema/:
+<section id="schema-compatibility-patterns">
+
+## Schema Compatibility Patterns
+
+Our application includes utilities to handle type compatibility between Zod schemas and our type system, particularly when working with the CRUD factory and transformer utilities.
+
+### ensureBaseDocumentCompatibility Function
+
+The `ensureBaseDocumentCompatibility` function bridges the gap between complex Zod schemas and TypeScript's type system when working with BaseDocument constraints:
 
 ```typescript
-import { SchoolZodSchema } from "@/lib/data-schema/zod-schema/core/school";
+import { ensureBaseDocumentCompatibility } from "@zod-schema/shared/base-schemas";
+
+// Complex Zod schema with defaults, optionals, and transformations
+const SchoolZodSchema = BaseDocumentSchema.merge(z.object({
+  schoolName: z.string(),
+  district: z.string(),
+  owners: z.array(z.string()).default([]), // Has default
+  address: z.string().optional(), // Optional field
+  gradeLevelsSupported: z.array(GradeLevelsSupportedZod).transform(...) // Has transform
+}));
+
+// Use compatibility function when type constraints are too strict
+const compatibleSchema = ensureBaseDocumentCompatibility<School>(SchoolZodSchema);
+```
+
+### When to Use ensureBaseDocumentCompatibility
+
+Use this function in these specific scenarios:
+
+1. **CRUD Factory Integration**: When passing schemas to the CRUD factory that expects exact BaseDocument types:
+
+```typescript
+export const schoolActions = createCrudActions({
+  model: SchoolModel,
+  schema: ensureBaseDocumentCompatibility<School>(SchoolZodSchema),
+  inputSchema: ensureBaseDocumentCompatibility<SchoolInput>(SchoolInputZodSchema),
+  // other config...
+});
+```
+
+2. **Transformer Utilities**: When working with transformer functions that have strict type constraints:
+
+```typescript
+const transformer = createTransformer<School, School>({
+  schema: ensureBaseDocumentCompatibility<School>(SchoolZodSchema),
+  handleDates: true,
+  errorContext: 'SchoolTransformer'
+});
+```
+
+3. **Generic Function Parameters**: When passing schemas to generic functions that expect BaseDocument-compatible types:
+
+```typescript
+function processEntityData<T extends BaseDocument>(
+  data: unknown[],
+  schema: ZodSchema<T>
+) {
+  // Function expects exact BaseDocument type match
+}
+
+// Use compatibility function
+processEntityData(rawData, ensureBaseDocumentCompatibility<School>(SchoolZodSchema));
+```
+
+### What This Function Does
+
+The compatibility function performs a **type assertion only** - it doesn't modify the schema at runtime:
+
+- **Runtime**: The original schema validation logic remains unchanged
+- **Compile-time**: TypeScript treats the schema as compatible with BaseDocument constraints
+- **Safety**: Maintains type safety while allowing complex schemas to work with strict interfaces
+
+### When NOT to Use
+
+Don't use this function in these cases:
+
+- **Direct Schema Validation**: When using schemas for direct `.parse()` or `.safeParse()` calls
+- **Form Field Configurations**: Field configs work directly with the original schemas
+- **API Route Validation**: Request/response validation should use original schemas
+- **Client-Side Code**: Generally not needed in React components or hooks
+
+```typescript
+// ❌ Don't use for direct validation
+const result = ensureBaseDocumentCompatibility(SchoolZodSchema).parse(data);
+
+// ✅ Use original schema for direct validation
+const result = SchoolZodSchema.parse(data);
+```
+
+### Common Error Patterns
+
+This function resolves these common TypeScript errors:
+
+```typescript
+// Error: Type 'ZodObject<...>' is not assignable to type 'ZodType<BaseDocument>'
+// The types of '_input.owners' are incompatible between these types.
+//   Type 'string[] | undefined' is not assignable to type 'string[]'.
+
+// Solution: Use compatibility function
+const compatibleSchema = ensureBaseDocumentCompatibility<School>(SchoolZodSchema);
+```
+
+[RULE] Use `ensureBaseDocumentCompatibility` only when working with utilities that have strict BaseDocument type constraints, not for general schema validation.
+
+</section>
+
+<section id="data-model-integration">
+MongoDB Model Integration
+MongoDB models are defined using the Zod schemas and stored in src/lib/schema/mongoose-schema/:
+
+```typescript
+import { SchoolZodSchema } from "@/lib/zod-schema/core/school";
 import mongoose from "mongoose";
 
 const schemaFields = {
@@ -529,7 +636,7 @@ UI Components: Render data and handle user interactions (/components/)
 
 <section id="data-transformers">
 Data Transformers
-Data transformation utilities in src/lib/data-utilities/transformers/ help sanitize and validate data:
+Data transformation utilities in src/lib/transformers/ help sanitize and validate data:
 
 ```typescript
 // Sanitize a MongoDB document for client-side use

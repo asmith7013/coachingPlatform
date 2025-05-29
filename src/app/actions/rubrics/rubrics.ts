@@ -3,29 +3,27 @@
 import { z, ZodType } from "zod";
 import { RubricModel, RubricScoreModel } from "@mongoose-schema/look-fors/rubric.model";
 import { 
+  Rubric,
   RubricZodSchema,
   RubricScoreZodSchema,   
   RubricInputZodSchema,
   RubricInput,
-  Rubric
 } from "@zod-schema/look-fors/rubric";
-import { createCrudActions } from "@server/crud/crud-action-factory";
+import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
-import { QueryParams } from "@/lib/types/core/query";
+import type { QueryParams } from "@core-types/query";
 
 // Create standard CRUD actions for Rubrics
 export const rubricActions = createCrudActions({
   model: RubricModel,
-  fullSchema: RubricZodSchema as ZodType<Rubric>,
+  schema: RubricZodSchema as ZodType<Rubric>,
   inputSchema: RubricInputZodSchema as ZodType<RubricInput>,
+  name: "Rubric",
   revalidationPaths: ["/dashboard/rubrics"],
-  options: {
-    validSortFields: ['score', 'createdAt'],
-    defaultSortField: 'score',
-    defaultSortOrder: 'asc',
-    entityName: 'Rubric'
-  }
+  sortFields: ['score', 'createdAt', 'updatedAt'],
+  defaultSortField: 'score',
+  defaultSortOrder: 'asc'
 });
 
 // Export the generated actions with connection handling

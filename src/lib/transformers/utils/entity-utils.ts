@@ -1,6 +1,6 @@
 // src/lib/data-utilities/transformers/entity-utils.ts
 import { BaseDocument } from '@core-types/document';
-import { isMongoDocument } from '@transformers/core/document';
+import { isMongoDocument } from '@/lib/transformers/core/mongoDocument';
 import { transformSingleItem } from '@transformers/core/unified-transformer';
 
 /**

@@ -4,7 +4,7 @@ import {
     CollectionResponse,
     EntityResponse 
   } from '@core-types/response';
-  import { createErrorResponse as createCoreErrorResponse } from '@error/core/responses';
+  import { createErrorResponse } from '@error/core/responses';
   import { captureError, createErrorContext, handleServerError } from '@error';
   
   /**
@@ -63,20 +63,6 @@ import {
     const errorMessage = handleServerError(error);
     
     // Create the standardized error response
-    return createCoreErrorResponse(errorMessage);
+    return createErrorResponse(errorMessage);
   }
   
-  /**
-   * Creates a simple error response without monitoring
-   * For non-critical errors that don't need monitoring
-   */
-  export function createErrorResponse(
-    error: string | Error,
-  ): BaseResponse {
-    const errorMessage = error instanceof Error ? error.message : error;
-    
-    return {
-      success: false,
-      error: errorMessage
-    };
-  }

@@ -28,7 +28,7 @@ export default function MondayExample2() {
     setError(null);
     
     try {
-      await boardMutation.mutate(boardId);
+      boardMutation.mutate([boardId]);
     } catch (err) {
       console.error('Error fetching board:', err);
       setError(err instanceof Error ? err.message : String(err));
@@ -56,7 +56,7 @@ export default function MondayExample2() {
   };
   
   // Determine loading state
-  const isLoading = connectionQuery.isLoading || boardMutation.isLoading
+  const isLoading = connectionQuery.isLoading || boardMutation.isPending;
 
   return (
     <div className="container mx-auto py-6">

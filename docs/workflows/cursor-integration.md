@@ -190,6 +190,70 @@ This allows Cursor to quickly find and apply the relevant guidance.
 
 </section>
 
+<section id="cursor-scope-definition">
+
+## Scope Definition Requirements
+
+All Cursor prompts for multi-file changes must include a complete file list to ensure proper scope definition and prevent incomplete implementations.
+
+### File List Requirements
+
+Every prompt involving changes to multiple files must include:
+
+```markdown
+## FILES REQUIRING UPDATES (X total)
+1. `path/to/file1.ts` (CREATE NEW | UPDATE | PATTERN UPDATE | COMPLETE REWRITE)
+2. `path/to/file2.tsx` (UPDATE - specific changes)
+3. `path/to/file3.ts` (PATTERN UPDATE - loading states)
+...
+```
+
+### Change Type Classifications
+
+Use these classifications to indicate the scope of changes:
+
+- **CREATE NEW**: File doesn't exist and needs to be created
+- **COMPLETE REWRITE**: File exists but needs fundamental restructuring
+- **UPDATE**: Significant changes to existing functionality
+- **PATTERN UPDATE**: Consistent patterns applied (e.g., `isLoading` → `isPending`)
+
+### Benefits of Complete File Lists
+
+File lists serve multiple purposes:
+
+- **Scope Definition**: Creates clear boundaries for the implementation
+- **Risk Assessment**: Large file counts signal complex changes requiring more planning  
+- **Quality Control**: Acts as a checklist to ensure nothing is forgotten
+- **Dependency Mapping**: Helps identify cascade effects and related changes
+- **Priority Setting**: Distinguishes critical changes from nice-to-have updates
+
+### Example Implementation
+
+```markdown
+# Update Authentication System
+
+## SCOPE
+- IN SCOPE: Migrate from Clerk v4 to v5, update all auth hooks
+- OUT OF SCOPE: Changing permission logic, adding new features
+
+## FILES REQUIRING UPDATES (8 total)
+1. `src/hooks/auth/useAuth.ts` (COMPLETE REWRITE)
+2. `src/components/auth/AuthGuard.tsx` (UPDATE - API changes)
+3. `src/app/layout.tsx` (PATTERN UPDATE - provider props)
+4. `src/lib/auth/config.ts` (UPDATE - configuration format)
+5. `src/types/auth.ts` (UPDATE - type definitions)
+6. `package.json` (UPDATE - dependency versions)
+7. `src/middleware.ts` (PATTERN UPDATE - middleware signature)
+8. `src/app/api/auth/route.ts` (CREATE NEW)
+
+## STEP-BY-STEP IMPLEMENTATION
+[Implementation details...]
+```
+
+[RULE] Always include a complete file list with change classifications for any prompt involving multiple files.
+
+</section>
+
 <section id="cursor-workflow">
 
 ## Cursor Workflow

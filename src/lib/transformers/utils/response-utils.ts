@@ -111,3 +111,44 @@ export function processDateFields<T extends BaseDocument>(
   
   return result;
 }
+
+/**
+ * Validates and standardizes server response format
+ * Extends existing response utilities with validation
+ */
+export function validateServerResponse<T>(
+  response: unknown
+): { success: true; data: T[]; items?: T[] } | { success: false; error: string } {
+  try {
+    if (!response || typeof response !== 'object') {
+      return { success: false, error: 'Invalid server response format' };
+    }
+    
+    const responseObj = response as { 
+      success?: boolean; 
+      items?: T[]; 
+      data?: T; 
+      error?: string;
+      _id?: string;
+    };
+    
+    if (!responseObj.success) {
+      return { success: false, error: responseObj.error || 'Server operation failed' };
+    }
+    
+    // Handle different response formats using existing patterns
+    let items: T[] = [];
+    if (responseObj.items && Array.isArray(responseObj.items)) {
+      items = responseObj.items;
+    } else if (responseObj.data) {
+      items = [responseObj.data];
+    } else if (responseObj._id) {
+      items = [responseObj as unknown as T];
+    }
+    
+    return { success: true, data: items, items };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Server response validation failed';
+    return { success: false, error: errorMessage };
+  }
+}

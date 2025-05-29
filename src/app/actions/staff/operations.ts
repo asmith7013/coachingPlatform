@@ -8,7 +8,7 @@ import {
   staffActions, 
   nycpsStaffActions, 
   tlStaffActions 
-} from "./factories";
+} from "@actions/staff/factories";
 import { determineStaffType } from "@domain-types/staff";
 import { bulkUploadToDB } from "@server/crud/bulk-operations";
 import { uploadFileWithProgress } from "@server/file-handling/file-upload";
@@ -254,4 +254,111 @@ export async function uploadStaff(data: (StaffMemberInput | NYCPSStaffInput | Te
       };
     }
   });
+}
+
+// 🔧 AI IMPORT SYSTEM - Staff-School Linking Functions
+
+/**
+ * Links a staff member to a school by adding the school ID to their schools array
+ */
+export async function linkStaffToSchool(staffId: string, schoolId: string) {
+  return withDbConnection(async () => {
+    try {
+      // Find the staff member
+      const staff = await StaffMemberModel.findById(staffId);
+      if (!staff) {
+        return { success: false, error: "Staff member not found" };
+      }
+      
+      // Add school ID to schools array if not already present
+      const schools = staff.schools || [];
+      if (!schools.includes(schoolId)) {
+        schools.push(schoolId);
+        staff.schools = schools;
+        await staff.save();
+      }
+      
+      return { success: true, data: staff };
+    } catch (error) {
+      return { success: false, error: handleServerError(error) };
+    }
+  });
+}
+
+/**
+ * Creates staff members in bulk and automatically links them to a school
+ */
+export async function bulkCreateStaffWithSchoolLink(staffData: StaffMemberInput[], schoolId: string) {
+  return withDbConnection(async () => {
+    try {
+      // Add school ID to each staff member's schools array
+      const staffWithSchool = staffData.map(staff => ({
+        ...staff,
+        schools: staff.schools ? [...staff.schools, schoolId] : [schoolId]
+      }));
+      
+      // Use existing uploadStaff function
+      const result = await uploadStaff(staffWithSchool);
+      return result;
+    } catch (error) {
+      return { success: false, error: handleServerError(error) };
+    }
+  });
+}
+
+/**
+ * Check if a staff member exists by email address
+ * Searches both NYCPS and Teaching Lab staff
+ */
+export async function checkStaffExistenceByEmail(email: string) {
+  try {
+    // Validate the email
+    if (!email || typeof email !== 'string' || !email.includes('@')) {
+      return {
+        success: false,
+        data: { exists: false },
+        error: "Invalid email format"
+      };
+    }
+    
+    // Check in database with connection wrapper
+    const result = await withDbConnection(async () => {
+      // Search both staff types in parallel
+      const [nycpsStaff, tlStaff] = await Promise.all([
+        NYCPSStaffModel.findOne({ 
+          email: { $regex: new RegExp(`^${email}$`, 'i') } 
+        }).select('_id staffName email'),
+        TeachingLabStaffModel.findOne({ 
+          email: { $regex: new RegExp(`^${email}$`, 'i') } 
+        }).select('_id staffName email')
+      ]);
+      
+      return nycpsStaff || tlStaff;
+    });
+    
+    if (result) {
+      return {
+        success: true,
+        data: {
+          exists: true,
+          staffId: result._id.toString(),
+          message: `Staff member found: ${result.staffName}`
+        }
+      };
+    } else {
+      return {
+        success: true,
+        data: {
+          exists: false,
+          message: `No staff member found with email: ${email}`
+        }
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      data: { exists: false },
+      error: handleServerError(error)
+    };
+  }
 } 

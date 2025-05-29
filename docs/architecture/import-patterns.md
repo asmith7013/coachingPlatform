@@ -52,11 +52,11 @@ Our project uses the following path aliases:
 
         // Server-side and data paths
         "@actions/*": ["./src/app/actions/*"],
-        "@enums": ["./src/lib/data-schema/enum"],
-        "@zod-schema/*": ["./src/lib/data-schema/zod-schema/*"],
-        "@mongoose-schema/*": ["./src/lib/data-schema/mongoose-schema/*"],
-        "@data-server/*": ["./src/lib/data-server/*"],
-        "@data-utilities/*": ["./src/lib/data-utilities/*"],
+        "@enums": ["./src/lib/schema/enum"],
+        "@zod-schema/*": ["./src/lib/zod-schema/*"],
+        "@mongoose-schema/*": ["./src/lib/schema/mongoose-schema/*"],
+        "@/lib/server/*": ["./src/lib/server/*"],
+        "@/lib/transformers/*": ["./src/lib/transformers/*"],
 
         // Library and utility paths
         "@lib/*": ["./src/lib/*"],

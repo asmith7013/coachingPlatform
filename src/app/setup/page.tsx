@@ -7,7 +7,7 @@ import { Button } from '@/components/core';
 import { Alert } from '@/components/core/feedback';
 import { Spinner } from '@/components/core/feedback';
 import { Card } from '@/components/composed/cards';
-import { useErrorHandledMutation } from '@/hooks/error/useErrorHandledMutation';
+import { useErrorHandledMutation } from '@query/client/hooks/mutations/useErrorHandledMutation';
 import { cn } from '@/lib/ui/utils/formatters';
 import { textSize, color as textColors } from '@/lib/tokens/typography';
 import { paddingX, paddingY, stack } from '@/lib/tokens/spacing';
@@ -44,7 +44,7 @@ export default function SetupPage() {
   }, [isLoaded, user, router]);
 
 // Setup mutation
-const { mutate: setupUser, isLoading, error, isSuccess, reset } = useErrorHandledMutation(
+const { mutate: setupUser, isPending, error } = useErrorHandledMutation(
     async () => {
       if (!user) throw new Error('No user found');
       
@@ -64,26 +64,30 @@ const { mutate: setupUser, isLoading, error, isSuccess, reset } = useErrorHandle
       }
       
       return response.json();
-    }
+    },
+    {},
+    "UserSetup"
   );
   
-  // Handle success/error with useEffect
-  useEffect(() => {
-    if (isSuccess) {
-      setSetupStatus('complete');
-      // Reload user to get updated metadata
-      user?.reload().then(() => {
-        router.push('/dashboard');
-      });
-    }
-  }, [isSuccess, user, router]);
-  
+  // Handle error with useEffect
   useEffect(() => {
     if (error) {
       setSetupStatus('error');
-      setErrorMessage(error);
+      setErrorMessage(error instanceof Error ? error.message : 'Setup failed');
     }
   }, [error]);
+
+  const handleSetup = () => {
+    setupUser(undefined, {
+      onSuccess: () => {
+        setSetupStatus('complete');
+        // Reload user to get updated metadata
+        user?.reload().then(() => {
+          router.push('/dashboard');
+        });
+      }
+    });
+  };
 
   // Render based on status
   if (!isLoaded || setupStatus === 'checking') {
@@ -105,11 +109,7 @@ const { mutate: setupUser, isLoading, error, isSuccess, reset } = useErrorHandle
               <Alert.Description>{errorMessage}</Alert.Description>
             </Alert>
             <Button 
-              onClick={() => {
-                setSetupStatus('ready');
-                setErrorMessage('');
-                reset();
-              }}
+              onClick={handleSetup}
               intent="primary"
               className="w-full mt-4"
             >
@@ -145,9 +145,9 @@ const { mutate: setupUser, isLoading, error, isSuccess, reset } = useErrorHandle
             </div>
             
             <Button 
-              onClick={() => setupUser()}
-              disabled={isLoading || setupStatus !== 'ready'}
-              loading={isLoading}
+              onClick={handleSetup}
+              disabled={isPending || setupStatus !== 'ready'}
+              loading={isPending}
               intent="primary"
               className="w-full"
             >

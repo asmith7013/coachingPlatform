@@ -1,4 +1,3 @@
-
 import { createEntityHooks } from '@query/client/factories/entity-factory';
 import { 
   TeacherScheduleZodSchema, 
@@ -7,7 +6,7 @@ import {
   Period
 } from '@zod-schema/schedule/schedule';
 import { 
-  fetchSchedules,
+  fetchTeacherSchedules,
   createTeacherSchedule,
   updateTeacherSchedule,
   deleteTeacherSchedule,
@@ -73,7 +72,7 @@ export interface ScheduleForUI {
  */
 const wrappedActions = wrapServerActions<TeacherSchedule, TeacherScheduleWithDates, TeacherScheduleInput>(
   {
-    fetch: fetchSchedules,
+    fetch: fetchTeacherSchedules,
     fetchById: fetchTeacherScheduleById,
     create: createTeacherSchedule as unknown as CreateTeacherScheduleFn,
     update: updateTeacherSchedule as unknown as UpdateTeacherScheduleFn,

@@ -1,7 +1,7 @@
 import { ZodSchema } from 'zod';
 import { BaseDocument } from '@core-types/document';
 import { CollectionResponse, EntityResponse } from '@core-types/response';
-import { transformDocument } from '@transformers/core/document';
+import { transformMongoDocument } from '@/lib/transformers/core/mongoDocument';
 import { validateSafe, validateStrict } from '@transformers/core/validation';
 import { handleClientError } from '@error/handlers/client';
 import { processDateFields } from '@transformers/utils/response-utils';
@@ -38,7 +38,7 @@ export const transformCache = new WeakMap<object[], unknown[]>();
 
 /**
  * Core transformation function that applies the layered transformation pipeline:
- * 1. MongoDB document transformation
+ * 1. MongoDB document transformation (PRESERVES ALL FIELDS)
  * 2. Schema validation (if schema provided)
  * 3a. Date field processing (if requested)
  * 3b. Domain-specific transformation (if provided)
@@ -48,8 +48,8 @@ function transformItem<T extends BaseDocument, R = T>(
   options: TransformOptions<T, R>
 ): R | null {
   try {
-    // Layer 1: MongoDB document transformation
-    const dbTransformed = transformDocument(item) as T;
+    // Layer 1: MongoDB document transformation - PRESERVE ALL FIELDS
+    const dbTransformed = transformMongoDocument<T>(item);
     
     // Layer 2: Schema validation (if schema provided)
     let validated: T | null = dbTransformed;

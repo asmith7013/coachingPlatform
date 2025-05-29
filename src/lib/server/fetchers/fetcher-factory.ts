@@ -7,7 +7,8 @@ import { connectToDB } from "@server/db/connection";
 import { transformData } from "@transformers/core/unified-transformer";
 import { BaseDocument } from "@core-types/document";
 import { QueryParams } from "@core-types/query";
-import { ensureBaseDocumentCompatibility } from '@transformers/utils/response-utils';
+import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
+import { handleServerError } from "@error/handlers/server";
 
 
 interface ValidationError {
@@ -17,7 +18,8 @@ interface ValidationError {
 
 /**
  * Creates an API-safe version of a data fetching function
- * This avoids the "use server" directive issues when importing into API routes
+ * Uses unified transformation system for consistent data processing
+ * Avoids "use server" directive issues when importing into API routes
  * 
  * @param model The Mongoose model to query
  * @param schema The Zod schema for validation (automatically made BaseDocument compatible)
@@ -25,11 +27,11 @@ interface ValidationError {
  * @returns A function that can be used in API routes
  */
 export function createApiSafeFetcher<
-  T extends BaseDocument, // Keep BaseDocument constraint for return type
+  T extends BaseDocument,
   M extends Document
 >(
   model: Model<M>,
-  schema: ZodSchema<unknown>, // Accept any ZodSchema, handle compatibility internally
+  schema: ZodSchema<unknown>,
   defaultSearchField?: string
 ) {
   return async function(params: QueryParams) {
@@ -63,28 +65,36 @@ export function createApiSafeFetcher<
       const total = await model.countDocuments(query as FilterQuery<M>);
       
       // Transform and validate MongoDB documents using unified transformer
-      // Use ensureBaseDocumentCompatibility to handle merge-based schemas
-      const validItems = transformData(items, {
+      const validItems = transformData<T, T>(items, {
         schema: ensureBaseDocumentCompatibility<T>(schema),
         handleDates: true,
-        errorContext: 'fetcherFactory'
+        errorContext: `ApiSafeFetcher:${model.modelName}`,
+        strictValidation: false // Allow partial success for robustness
       });
       
-      // For backward compatibility, we'll assume no validation errors
-      // since the unified transformer handles validation internally
+      // Calculate validation errors (items that failed transformation)
       const validationErrors: ValidationError[] = [];
+      const failedCount = items.length - validItems.length;
+      
+      if (failedCount > 0) {
+        // For backward compatibility, add a summary error
+        validationErrors.push({
+          id: 'validation_summary',
+          item: { failedCount, modelName: model.modelName }
+        });
+      }
       
       // Log validation errors in development
       if (process.env.NODE_ENV === 'development' && validationErrors.length > 0) {
         console.warn(`Validation errors in ${model.modelName} fetcher:`, 
-          validationErrors.length
+          validationErrors.length, 'failed items'
         );
       }
       
       // Return the response with validated items
       return {
         items: validItems,
-        total, // Keep the total count including invalid items
+        total, // Keep the total count including invalid items for pagination
         success: true,
         page,
         limit,
@@ -93,12 +103,16 @@ export function createApiSafeFetcher<
         validationErrors: validationErrors.length > 0 ? validationErrors : undefined
       };
     } catch (error) {
-      console.error(`API fetch error:`, error);
+      console.error(`API fetch error for ${model.modelName}:`, error);
       return {
         items: [],
         total: 0,
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: handleServerError(error, `ApiFetcher:${model.modelName}`),
+        page: params.page || 1,
+        limit: params.limit || 20,
+        totalPages: 0,
+        hasMore: false
       };
     }
   };

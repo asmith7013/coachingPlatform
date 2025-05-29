@@ -20,7 +20,7 @@ Our application implements a robust sanitization system to ensure data safety, c
 ### Document Sanitization
 
 ```typescript
-import { sanitizeDocument, sanitizeDocuments } from "@/lib/utils/server/sanitize";
+import { sanitizeDocument, sanitizeDocuments } from "@/lib/server/api/responses/formatters";
 
 // Sanitize a single document
 const safeDoc = sanitizeDocument(mongooseDoc, MyZodSchema);
@@ -39,7 +39,7 @@ Validates the output against the provided Zod schema
 Filter Sanitization
 
 ```typescript
-import { sanitizeFilters } from "@/lib/utils/server/sanitizeFilters";
+import { sanitizeFilters } from "@/lib/server/api/responses/formattersFilters";
 
 // Clean up user-provided filter values before using in MongoDB queries
 const safeFilters = sanitizeFilters({
@@ -106,7 +106,7 @@ import {
   safeParseAndLog,
   parseOrThrow,
   parsePartialOrThrow
-} from "@/lib/utils/server/safeParse";
+} from "@/lib/server/api/validation/integrated-validation";
 
 // Parse data without throwing (returns null on error)
 const result = safeParseAndLog(MyZodSchema, data);

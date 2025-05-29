@@ -1,9 +1,9 @@
 // src/lib/api/handlers/reference/types.ts
 
 import { z } from "zod";
-import { PaginatedResponse, CollectionResponse } from "../../../../types/core/response";
-import { QueryParams } from "../../../../types/core/query";
-import { BaseReference } from "../../../../types/core/reference";
+import { PaginatedResponse, CollectionResponse } from "@core-types/response";
+import { QueryParams } from "@core-types/query";
+import { BaseReference } from "@core-types/reference";
 
 /**
  * Generic type for any fetch function that returns items and total

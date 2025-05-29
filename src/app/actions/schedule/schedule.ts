@@ -8,17 +8,10 @@ import {
   BellScheduleZodSchema, 
   BellScheduleInputZodSchema 
 } from "@zod-schema/schedule/schedule";
-import { createCrudActions } from "@server/crud/crud-action-factory";
+import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
-import { connectToDB } from "@server/db/connection";
 import { handleServerError } from "@error/handlers/server";
-import { handleValidationError } from "@error/handlers/validation";
-import { createItem, updateItem, deleteItem } from "@/lib/server/crud/crud-operations";
-import { fetchPaginatedResource } from "@transformers/pagination/unified-pagination";
-import { sanitizeSortBy } from "@/lib/transformers/pagination/pagination-utils";
 import { type QueryParams } from "@core-types/query";
-import { buildQueryParams } from "@transformers/pagination/pagination-utils";
-
 
 // Types
 export type TeacherSchedule = z.infer<typeof TeacherScheduleZodSchema>;
@@ -26,23 +19,18 @@ export type TeacherScheduleInput = z.infer<typeof TeacherScheduleInputZodSchema>
 export type BellSchedule = z.infer<typeof BellScheduleZodSchema>;
 export type BellScheduleInput = z.infer<typeof BellScheduleInputZodSchema>;
 
-// Valid sort fields for schedules
-const validSortFields = ['createdAt', 'updatedAt', 'teacher', 'school'];
-
 // ===== BELL SCHEDULE ACTIONS =====
 
 // Create standard CRUD actions for Bell Schedules
 export const bellScheduleActions = createCrudActions({
   model: BellScheduleModel,
-  fullSchema: BellScheduleZodSchema as ZodType<BellSchedule>,
-  inputSchema: BellScheduleInputZodSchema,
+  schema: BellScheduleZodSchema as ZodType<BellSchedule>,
+  inputSchema: BellScheduleInputZodSchema as ZodType<BellScheduleInput>,
+  name: "Bell Schedule",
   revalidationPaths: ["/dashboard/schedule"],
-  options: {
-    validSortFields: ['school', 'bellScheduleType', 'createdAt', 'updatedAt'],
-    defaultSortField: 'createdAt',
-    defaultSortOrder: 'desc',
-    entityName: 'Bell Schedule'
-  }
+  sortFields: ['school', 'bellScheduleType', 'createdAt', 'updatedAt'],
+  defaultSortField: 'createdAt',
+  defaultSortOrder: 'desc'
 });
 
 // Export the generated bell schedule actions with connection handling
@@ -163,116 +151,59 @@ export async function getActiveCycleDayForDate(schoolId: string, date: string) {
 
 // ===== TEACHER SCHEDULE ACTIONS =====
 
-/** Fetch all Teacher Schedules */
-export async function fetchSchedules(params: QueryParams) {
-  try {
-    await connectToDB();
-    
-    // Sanitize sortBy to ensure it's a valid field name
-    const safeSortBy = sanitizeSortBy(params.sortBy, validSortFields, 'createdAt');
-    
-    const fetchParams = buildQueryParams({
-      ...params,
-      sortBy: safeSortBy,
-      sortOrder: params.sortOrder ?? "desc"
-    });
-    
-    return fetchPaginatedResource(
-      TeacherScheduleModel,
-      TeacherScheduleZodSchema as ZodType<TeacherSchedule>,
-      fetchParams
-    );
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
-}
+// Create Teacher Schedule actions
+const teacherScheduleActions = createCrudActions({
+  model: TeacherScheduleModel,
+  schema: TeacherScheduleZodSchema as ZodType<TeacherSchedule>,
+  inputSchema: TeacherScheduleInputZodSchema,
+  name: "Teacher Schedule",
+  revalidationPaths: ["/dashboard/schedule"],
+  sortFields: ['teacher', 'school', 'createdAt', 'updatedAt'],
+  defaultSortField: 'createdAt',
+  defaultSortOrder: 'desc'
+});
 
-/** Fetch Teacher Schedules with pagination */
+// Teacher Schedule exports using factory
 export async function fetchTeacherSchedules(params: QueryParams) {
-  try {
-    await connectToDB();
-    
-    return fetchPaginatedResource(
-      TeacherScheduleModel,
-      TeacherScheduleZodSchema as ZodType<TeacherSchedule>,
-      {
-        ...params,
-        sortBy: params.sortBy ?? "createdAt",
-        sortOrder: params.sortOrder ?? "desc"
-      }
-    );
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
+  return withDbConnection(() => teacherScheduleActions.fetch(params));
 }
 
-/** Fetch Teacher Schedule by School ID */
-export async function fetchTeacherSchedulesBySchool(schoolId: string) {
-  try {
-    await connectToDB();
-    
-    const schedules = await TeacherScheduleModel.find({ school: schoolId })
-      .lean()
-      .exec();
-    
-    return { 
-      success: true, 
-      items: schedules,
-      total: schedules.length 
-    };
-  } catch (error) {
-    throw new Error(handleServerError(error));
-  }
-}
-
-/** Create Teacher Schedule */
 export async function createTeacherSchedule(data: TeacherScheduleInput) {
-  try {
-    await connectToDB();
-    return createItem(
-      TeacherScheduleModel, 
-      TeacherScheduleInputZodSchema, 
-      data, 
-      ["/dashboard/schedule"]
-    );
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw handleValidationError(error);
-    }
-    throw handleServerError(error);
-  }
+  return withDbConnection(() => teacherScheduleActions.create(data));
 }
 
-/** Update Teacher Schedule */
 export async function updateTeacherSchedule(id: string, data: Partial<TeacherScheduleInput>) {
-  try {
-    await connectToDB();
-    return updateItem(
-      TeacherScheduleModel, 
-      TeacherScheduleInputZodSchema, 
-      id, 
-      data, 
-      ["/dashboard/schedule"]
-    );
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw handleValidationError(error);
-    }
-    throw handleServerError(error);
-  }
+  return withDbConnection(() => teacherScheduleActions.update(id, data));
 }
 
-/** Delete Teacher Schedule */
 export async function deleteTeacherSchedule(id: string) {
-  try {
-    await connectToDB();
-    return deleteItem(
-      TeacherScheduleModel, 
-      TeacherScheduleZodSchema, 
-      id, 
-      ["/dashboard/schedule"]
-    );
-  } catch (error) {
-    throw handleServerError(error);
-  }
+  return withDbConnection(() => teacherScheduleActions.delete(id));
+}
+
+export async function fetchTeacherScheduleById(id: string) {
+  return withDbConnection(() => teacherScheduleActions.fetchById(id));
+}
+
+// Specialized function (can keep as-is but with better error handling)
+export async function fetchTeacherSchedulesBySchool(schoolId: string) {
+  return withDbConnection(async () => {
+    try {
+      const schedules = await TeacherScheduleModel.find({ school: schoolId })
+        .lean()
+        .exec();
+      
+      return { 
+        success: true, 
+        items: schedules.map(item => TeacherScheduleZodSchema.parse(item)),
+        total: schedules.length 
+      };
+    } catch (error) {
+      return {
+        success: false,
+        items: [],
+        total: 0,
+        error: handleServerError(error)
+      };
+    }
+  });
 }

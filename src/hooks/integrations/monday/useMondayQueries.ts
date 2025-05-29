@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { MondayBoard } from '@/lib/integrations/monday/types/board';
 import type { MondayUser } from '@/lib/integrations/monday/types/api';
 import type { MondayImportResponse, ImportPreview } from '@/lib/integrations/monday/types/import';
-import { useErrorHandledMutation } from '@/hooks/error/useErrorHandledMutation';
+import { useErrorHandledMutation } from '@query/client/hooks/mutations/useErrorHandledMutation';
 
 /**
  * Hook for testing Monday.com connection
@@ -34,7 +34,7 @@ export function useMondayConnection() {
  * Hook for fetching a specific Monday.com board
  */
 export function useMondayBoard() {
-  return useErrorHandledMutation<MondayBoard, [string, number?]>(
+  return useErrorHandledMutation<MondayBoard, Error, [string, number?]>(
     async ([boardId, limit]) => {
       const response = await fetch(`/api/integrations/monday/board?boardId=${boardId}${limit ? `&limit=${limit}` : ''}`);
       const data = await response.json();
@@ -45,10 +45,8 @@ export function useMondayBoard() {
       
       return data;
     },
-    { 
-      errorContext: "MondayBoard",
-      defaultErrorMessage: "Failed to fetch Monday.com board"
-    }
+    {},
+    "MondayBoard"
   );
 }
 

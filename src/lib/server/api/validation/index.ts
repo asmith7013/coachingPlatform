@@ -1,2 +1,2 @@
-export * from './integrated-validation';
+export * from './api-validation';
 export * from './clerk-validation';

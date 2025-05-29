@@ -1,21 +1,21 @@
 'use client';
 
-import { useCallback, useRef, useState, useEffect } from 'react';
-import { useErrorHandledMutation, ServerResponse } from '@/hooks/error/useErrorHandledMutation';
-// Import client-safe function instead of server-only fetcher
-import { checkStaffExistenceByEmail } from '@server/api/client/staff';
+import { useCallback, useRef, useState } from 'react';
+import { useErrorHandledMutation } from '@query/client/hooks/mutations/useErrorHandledMutation';
+import { checkStaffExistenceByEmail } from '@actions/staff/operations';
 
-// Define the exact type that will be returned in the data property
+// Define the exact type that will be returned
 interface StaffExistenceData {
   exists: boolean;
+  staffId?: string;
+  message?: string;
 }
 
-// Define a type for debug information
-interface DebugInfo {
-  result?: ServerResponse<StaffExistenceData>;
-  error?: unknown;
-  timestamp?: number;
-  cached?: boolean;
+// Define server response type matching our standard format
+interface StaffExistenceResponse {
+  success: boolean;
+  data: StaffExistenceData;
+  error?: string;
 }
 
 interface UseStaffExistenceResult {
@@ -23,46 +23,37 @@ interface UseStaffExistenceResult {
   checking: boolean;
   error: string | null;
   checkExistence: (email: string) => Promise<boolean>;
-  debugInfo?: DebugInfo; // For debugging only - remove in production
 }
 
 /**
  * Hook to check if a staff member exists by email
- * Uses a client-safe API call instead of direct database access
- * Properly handles the response structure from useErrorHandledMutation
+ * Uses server action with proper error handling
+ * Compatible with our new React Query mutation system
  */
 export function useStaffExistence(): UseStaffExistenceResult {
   const lastCheckedEmailRef = useRef<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<DebugInfo | null>(null);
+  const [existsState, setExistsState] = useState<boolean | null>(null);
   
   const { 
     mutate, 
-    data, 
-    isLoading: checking, 
-    error 
-  } = useErrorHandledMutation<StaffExistenceData, [string]>(
+    isPending: checking, 
+    error: mutationError 
+  } = useErrorHandledMutation<StaffExistenceResponse, Error, string>(
     checkStaffExistenceByEmail,
-    { 
-      errorContext: "StaffExistenceCheck",
-      defaultErrorMessage: "Failed to check if staff exists"
-    }
+    {},
+    "StaffExistenceCheck"
   );
   
   const checkExistence = useCallback(async (email: string): Promise<boolean> => {
-    if (!email) {
+    if (!email?.trim()) {
       console.log("Empty email provided, returning false");
       return false;
     }
     
     // Skip duplicate checks if we have data for this email already
-    if (lastCheckedEmailRef.current === email && data !== null) {
-      console.log("Using cached existence data:", data);
-      setDebugInfo({ 
-        timestamp: Date.now(), 
-        cached: true,
-        result: { success: true, data }
-      });
-      return data.exists;
+    if (lastCheckedEmailRef.current === email && existsState !== null) {
+      console.log("Using cached existence data:", existsState);
+      return existsState;
     }
     
     lastCheckedEmailRef.current = email;
@@ -70,86 +61,32 @@ export function useStaffExistence(): UseStaffExistenceResult {
     try {
       console.log("Checking existence for email:", email);
       
-      // Call the API through the mutate function
-      const result = await mutate(email);
+      // Call the server action through the mutate function
+      const result = await new Promise<StaffExistenceResponse>((resolve, reject) => {
+        mutate(email, {
+          onSuccess: (data) => resolve(data),
+          onError: (error) => reject(error)
+        });
+      });
+      
       console.log("Existence check result:", result);
       
-      // Store debug info
-      setDebugInfo({ 
-        result, 
-        timestamp: Date.now(),
-        cached: false 
-      });
+      // Update local state
+      const exists = result?.success && result?.data?.exists || false;
+      setExistsState(exists);
       
-      // Access the exists property from the result.data
-      if (result && result.data) {
-        return result.data.exists;
-      }
-      
-      return false;
+      return exists;
     } catch (err) {
       console.error('Failed to check staff existence:', err);
-      setDebugInfo({ 
-        error: err, 
-        timestamp: Date.now(),
-        cached: false
-      });
+      setExistsState(false);
       return false;
     }
-  }, [data, mutate]);
+  }, [mutate, existsState]);
 
   return {
-    // Get the exists value from the data state
-    exists: data?.exists ?? null,
+    exists: existsState,
     checking,
-    error,
-    checkExistence,
-    debugInfo: debugInfo || undefined // Remove in production
-  };
-}
-
-/**
- * Self-test function for debugging the useStaffExistence hook
- * This should be used in a React component
- * 
- * Example usage:
- * ```
- * function TestComponent() {
- *   const testResult = useStaffExistenceTest();
- *   return <pre>{JSON.stringify(testResult, null, 2)}</pre>;
- * }
- * ```
- */
-export function useStaffExistenceTest(testEmail = "test@example.com") {
-  const { checkExistence, exists, checking, error, debugInfo } = useStaffExistence();
-  const [testResult, setTestResult] = useState<{ exists: boolean | null, ran: boolean }>({ 
-    exists: null, 
-    ran: false 
-  });
-  
-  useEffect(() => {
-    async function runTest() {
-      console.log("Starting staff existence check test");
-      
-      try {
-        console.log("Checking existence for:", testEmail);
-        const result = await checkExistence(testEmail);
-        console.log("Test result:", result);
-        setTestResult({ exists: result, ran: true });
-      } catch (err) {
-        console.error("Test error:", err);
-        setTestResult({ exists: null, ran: true });
-      }
-    }
-    
-    runTest();
-  }, [checkExistence, testEmail]);
-  
-  return { 
-    exists, 
-    checking, 
-    error, 
-    debugInfo,
-    testResult
+    error: mutationError instanceof Error ? mutationError.message : null,
+    checkExistence
   };
 } 

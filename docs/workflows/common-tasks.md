@@ -22,7 +22,7 @@ To add a new entity to the system (e.g., a new resource type):
 1. **Create the Zod Schema**
 
    ```typescript
-   // src/lib/data/schemas/domain/entity.ts
+   // src/lib/zod-schema/domain/entity.ts
    import { z } from "zod";
    import { zDateField } from "../shared/dateHelpers";
    
@@ -45,9 +45,9 @@ To add a new entity to the system (e.g., a new resource type):
 Create the MongoDB Model
 
 ```typescript
-// src/models/domain/entity.model.ts
+// src/lib/schema/domain/entity.model.ts
 import mongoose from "mongoose";
-import { EntityZodSchema } from "@/lib/data/schemas/domain/entity";
+import { EntityZodSchema } from "@/lib/zod-schema/domain/entity";
 
 const schemaFields = {
   name: { type: String, required: true },
@@ -65,7 +65,7 @@ Create Field Configuration
 ```typescript
 // src/lib/data/forms/config/domain/entity.ts
 import { Field } from "@/lib/data/forms/types";
-import { EntityInput } from "@/lib/data/schemas/domain/entity";
+import { EntityInput } from "@/lib/zod-schema/domain/entity";
 
 export const EntityFieldConfig: Field<EntityInput>[] = [
   {
@@ -91,7 +91,7 @@ Create API Routes or Server Actions
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { EntityInputZodSchema } from "@/lib/data/schemas/domain/entity";
+import { EntityInputZodSchema } from "@/lib/zod-schema/domain/entity";
 import { EntityModel } from "@/models/domain/entity.model";
 import { handleValidationError } from "@/lib/core/error/handleValidationError";
 import { handleServerError } from "@/lib/core/error/handleServerError";
@@ -117,7 +117,7 @@ Implement UI Components
 ```typescript
 // src/components/domain/entity/EntityCard.tsx
 import { Card } from "@/components/composed/cards";
-import { Entity } from "@/lib/data/schemas/domain/entity";
+import { Entity } from "@/lib/zod-schema/domain/entity";
 
 interface EntityCardProps {
   entity: Entity;
@@ -275,7 +275,7 @@ Create the Hook File
 ```typescript
 // src/hooks/useEntityData.ts
 import { useState } from "react";
-import { Entity } from "@/lib/data/schemas/domain/entity";
+import { Entity } from "@/lib/zod-schema/domain/entity";
 import { useSafeSWR } from "@/hooks/utils/useSafeSWR";
 import { handleClientError } from "@/lib/core/error/handleClientError";
 

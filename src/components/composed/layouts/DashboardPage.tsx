@@ -1,7 +1,7 @@
 import React from 'react';
-import { Heading } from '@components/core/typography/Heading';
-import { Text } from '@components/core/typography/Text';
-import { cn } from '@ui/utils/formatters';
+// import { Heading } from '@components/core/typography/Heading';
+// import { Text } from '@components/core/typography/Text';
+// import { cn } from '@ui/utils/formatters';
 import { HydrationBoundary } from '@components/core/query/HydrationBoundary';
 
 interface DashboardPageProps {
@@ -12,8 +12,8 @@ interface DashboardPageProps {
 }
 
 export function DashboardPage({
-  title,
-  description,
+  // title,
+  // description,
   children,
   dehydratedState // New prop for hydration state
 }: DashboardPageProps) {
@@ -25,8 +25,8 @@ export function DashboardPage({
   ) : children;
 
   return (
-    <div className="container mx-auto p-8">
-      {title && (
+    <div className="container">
+      {/* {title && (
         <Heading 
           level="h2"
           color="default"
@@ -43,7 +43,7 @@ export function DashboardPage({
         >
           {description}
         </Text>
-      )}
+      )} */}
       {content}
     </div>
   );

@@ -1,5 +1,5 @@
 // src/lib/api/fetchers/monday.ts
-import { createApiSafeFetcher } from '@server/fetchers/factory';
+import { createApiSafeFetcher } from '@/lib/server/fetchers/fetcher-factory';
 import { VisitZodSchema } from "@zod-schema/visits/visit";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
 import { mondayClient } from "@/lib/integrations/monday/client/client";

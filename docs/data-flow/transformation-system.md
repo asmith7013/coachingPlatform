@@ -47,7 +47,7 @@ This layered approach ensures a clean separation of concerns while providing ful
 The DB transformation layer handles MongoDB-specific concerns:
 
 ```typescript
-import { transformDocument, toPlainObject } from '@/lib/data-utilities/transformers/new';
+import { transformDocument, toPlainObject } from '@/lib/transformers/new';
 
 // Convert MongoDB document to a safe format
 const transformed = transformDocument(mongooseDoc);
@@ -77,7 +77,7 @@ Key features:
 The schema validation layer ensures data conforms to its expected structure:
 
 ```typescript
-import { validateDocument, validateOrThrow } from '@/lib/data-utilities/transformers/new';
+import { validateDocument, validateOrThrow } from '@/lib/transformers/new';
 
 // Validate data without throwing (returns null on error)
 const validated = validateDocument(doc, MyZodSchema);
@@ -110,7 +110,7 @@ The domain transformation layer applies business-specific transformations to val
 import { 
   createDomainPipeline, 
   transformToDomain 
-} from '@/lib/data-utilities/transformers/new';
+} from '@/lib/transformers/new';
 
 // Create a domain transformation pipeline
 const pipeline = createDomainPipeline(
@@ -146,7 +146,7 @@ Key features:
 For simple document transformations without business logic:
 
 ```typescript
-import { validateAndTransformDocument } from '@/lib/data-utilities/transformers/new';
+import { validateAndTransformDocument } from '@/lib/transformers/new';
 
 // In an API route or server action
 const school = await SchoolModel.findById(id);
@@ -158,7 +158,7 @@ return validateAndTransformDocument(school, SchoolZodSchema);
 For transformations that require business logic:
 
 ```typescript
-import { createDomainPipeline, transformToDomain } from '@/lib/data-utilities/transformers/new';
+import { createDomainPipeline, transformToDomain } from '@/lib/transformers/new';
 
 // Define the domain transformation
 const userPipeline = createDomainPipeline(
@@ -180,7 +180,7 @@ return transformToDomain(user, userPipeline);
 When preparing data for MongoDB:
 
 ```typescript
-import { prepareForCreate } from '@/lib/data-utilities/transformers/new';
+import { prepareForCreate } from '@/lib/transformers/new';
 
 // Remove timestamp fields and prepare for MongoDB
 const dataToInsert = prepareForCreate(inputData);
@@ -199,10 +199,10 @@ The transformation system includes a compatibility layer in `compatibility.ts` t
 
 ```typescript
 // Older pattern (still supported)
-import { transformDocument } from '@/lib/data-utilities/transformers';
+import { transformDocument } from '@/lib/transformers';
 
 // Newer, more explicit pattern (preferred)
-import { validateAndTransformDocument } from '@/lib/data-utilities/transformers/new';
+import { validateAndTransformDocument } from '@/lib/transformers/new';
 ```
 
 [RULE] New code should always import directly from the specific transformation modules.
