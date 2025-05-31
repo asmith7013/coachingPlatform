@@ -16,10 +16,8 @@ import { WithDateObjects, DocumentInput } from '@core-types/document';
 import { wrapServerActions } from '@transformers/factories/server-action-factory';
 import { transformData } from '@transformers/core/unified-transformer';
 import { ZodType } from 'zod';
-import { ServerActions } from '@core-types/query-factory';
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CollectionResponse, EntityResponse } from '@core-types/response';
 
 /**
  * TeacherSchedule entity with Date objects instead of string dates
@@ -30,10 +28,6 @@ export type TeacherScheduleWithDates = WithDateObjects<TeacherSchedule>;
  * Input type that satisfies DocumentInput constraint for TeacherSchedule
  */
 export type TeacherScheduleInput = DocumentInput<TeacherSchedule>;
-
-// Type for server action that accepts both TeacherScheduleInput and inferred input
-type CreateTeacherScheduleFn = (data: TeacherScheduleInput) => Promise<CollectionResponse<TeacherScheduleWithDates> | EntityResponse<TeacherScheduleWithDates>>;
-type UpdateTeacherScheduleFn = (id: string, data: Partial<TeacherScheduleInput>) => Promise<CollectionResponse<TeacherScheduleWithDates> | EntityResponse<TeacherScheduleWithDates>>;
 
 // Stub function for fetchById since it doesn't exist in the actions
 const fetchTeacherScheduleById = async (_id: string) => {
@@ -74,8 +68,8 @@ const wrappedActions = wrapServerActions<TeacherSchedule, TeacherScheduleWithDat
   {
     fetch: fetchTeacherSchedules,
     fetchById: fetchTeacherScheduleById,
-    create: createTeacherSchedule as unknown as CreateTeacherScheduleFn,
-    update: updateTeacherSchedule as unknown as UpdateTeacherScheduleFn,
+    create: createTeacherSchedule,
+    update: updateTeacherSchedule,
     delete: deleteTeacherSchedule
   },
   items => transformData<TeacherSchedule, TeacherScheduleWithDates>(items, {
@@ -95,7 +89,7 @@ const entityHooks = createEntityHooks<TeacherScheduleWithDates, TeacherScheduleI
   entityType: 'teacher-schedules',
   fullSchema: TeacherScheduleZodSchema as unknown as ZodType<TeacherScheduleWithDates>,
   inputSchema: TeacherScheduleInputZodSchema as unknown as ZodType<TeacherScheduleInput>,
-  serverActions: wrappedActions as ServerActions<TeacherScheduleWithDates, TeacherScheduleInput>,
+  serverActions: wrappedActions,
   validSortFields: ['createdAt', 'updatedAt'],
   defaultParams: {
     sortBy: 'createdAt',

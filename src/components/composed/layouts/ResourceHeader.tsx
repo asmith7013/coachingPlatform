@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
-import { Select } from '@/components/core/fields/Select';
-import { Text } from '@/components/core/typography/Text';
-import { Card } from '@/components/composed/cards/Card';
+// import { Button } from '@components/core/Button';
+import { Input } from '@components/core/fields/Input';
+import { Select } from '@components/core/fields/Select';
+// import { Text } from '@components/core/typography/Text';
+import { Card } from '@components/composed/cards/Card';
+import { Pagination } from '@components/core/navigation/Pagination';
+
 import { cn } from "@ui/utils/formatters";
 import debounce from 'lodash.debounce';
 
@@ -56,27 +58,11 @@ export function ResourceHeader<T extends Record<string, unknown>>({
       className={cn('bg-surface', 'border-outline')}
     >
       {/* Pagination Controls */}
-      <div className="flex items-center gap-2">
-        <Button 
-          disabled={page === 1} 
-          onClick={() => setPage(page - 1)}
-          textSize="base"
-          padding="md"
-        >
-          ⬅️ Previous
-        </Button>
-        <Text color="default">
-          Page {page} of {Math.ceil(total / limit)}
-        </Text>
-        <Button 
-          disabled={page * limit >= total} 
-          onClick={() => setPage(page + 1)}
-          textSize="base"
-          padding="md"
-        >
-          Next ➡️
-        </Button>
-      </div>
+      <Pagination
+        currentPage={page}
+        totalPages={Math.ceil(total / limit)}
+        onPageChange={setPage}
+      />
 
       {/* Sort and Search Controls */}
       <div className="flex items-center gap-4">

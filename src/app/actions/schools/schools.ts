@@ -45,43 +45,6 @@ export async function fetchSchoolById(id: string) {
   return withDbConnection(() => schoolActions.fetchById(id));
 }
 
-// Specialized actions
-export async function fetchSchoolsByDistrict(district: string) {
-  return withDbConnection(async () => {
-    try {
-      const schools = await SchoolModel.find({ district })
-        .sort({ schoolName: 1 })
-        .lean()
-        .exec();
-      
-      const items = schools.map(school => SchoolZodSchema.parse(school));
-      
-      return {
-        success: true,
-        items,
-        total: items.length,
-        page: 1,
-        limit: items.length,
-        totalPages: 1,
-        hasMore: false,
-        empty: items.length === 0
-      };
-    } catch (error) {
-      return {
-        success: false,
-        items: [],
-        total: 0,
-        page: 1,
-        limit: 10,
-        totalPages: 0,
-        hasMore: false,
-        empty: true,
-        error: handleServerError(error)
-      };
-    }
-  });
-}
-
 // File upload actions
 export const uploadSchoolFile = async (file: File): Promise<string> => {
   try {

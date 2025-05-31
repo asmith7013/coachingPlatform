@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createEntityHooks } from '@/query/client/factories/entity-factory';
+import { createEntityHooks } from '@query/client/factories/entity-factory';
 import { 
   NYCPSStaffZodSchema, 
   NYCPSStaffInputZodSchema, 

@@ -1,7 +1,7 @@
 // src/lib/types/data-access/react-query.ts
 import { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import { BaseDocument } from '@core-types/document';
-import { CollectionResponse, EntityResponse } from '@core-types/response';
+import { EntityResponse, BaseResponse } from '@core-types/response';
 import { PaginatedResponse } from '@core-types/response';
 import { ErrorContext } from '@error-types';
 import { QueryParams } from '@core-types/query';
@@ -43,23 +43,23 @@ export interface ReactQueryHookConfig {
 }
 
 /**
- * Server actions for entity operations
+ * Server actions for entity operations with semantically correct return types
  */
 export interface ServerActions<T, TInput> {
-  /** Function to fetch list of entities */
-  fetch: (params: QueryParams) => Promise<CollectionResponse<T> | PaginatedResponse<T>>;
+  /** Function to fetch list of entities - returns paginated collection */
+  fetch: (params: QueryParams) => Promise<PaginatedResponse<T>>;
   
-  /** Function to fetch single entity by ID */
-  fetchById?: (id: string) => Promise<CollectionResponse<T> | EntityResponse<T>>;
+  /** Function to fetch single entity by ID - returns single entity */
+  fetchById?: (id: string) => Promise<EntityResponse<T>>;
   
-  /** Function to create a new entity */
-  create?: (data: TInput) => Promise<CollectionResponse<T> | EntityResponse<T>>;
+  /** Function to create a new entity - returns single entity */
+  create?: (data: TInput) => Promise<EntityResponse<T>>;
   
-  /** Function to update an existing entity */
-  update?: (id: string, data: Partial<TInput>) => Promise<CollectionResponse<T> | EntityResponse<T>>;
+  /** Function to update an existing entity - returns single entity */
+  update?: (id: string, data: Partial<TInput>) => Promise<EntityResponse<T>>;
   
-  /** Function to delete an entity */
-  delete?: (id: string) => Promise<CollectionResponse<unknown> | EntityResponse<unknown>>;
+  /** Function to delete an entity - returns success/failure only */
+  delete?: (id: string) => Promise<BaseResponse>;
 }
 
 /**

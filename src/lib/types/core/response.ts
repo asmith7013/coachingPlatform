@@ -35,15 +35,3 @@ export type PaginatedResponse<T = unknown> = Omit<z.infer<typeof PaginatedRespon
   items: T[];
 };
 
-/**
- * @deprecated Use CollectionResponse instead
- * Maintained for backward compatibility
- */
-export type StandardResponse<T = unknown> = CollectionResponse<T>;
-
-/**
- * @deprecated Use EntityResponse instead
- * Maintained for backward compatibility
- */
-export type SingleResourceResponse<T = unknown> = EntityResponse<T>;
-

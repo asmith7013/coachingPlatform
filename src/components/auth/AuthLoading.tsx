@@ -9,7 +9,7 @@ export function AuthLoading() {
       <div className="text-center">
         <Spinner size="lg" />
         <p className={cn(textSize.base, textColors.muted, 'mt-4')}>
-          Loading user data...
+          Loading page...
         </p>
       </div>
     </div>

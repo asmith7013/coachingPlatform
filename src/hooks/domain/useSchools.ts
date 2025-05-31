@@ -172,12 +172,12 @@ function useSchoolManagerWithInvalidation() {
     // First, get the current school data using the server action directly
     const schoolData = await fetchSchoolById(schoolId);
     
-    if (!schoolData || !schoolData.success || !schoolData.items || schoolData.items.length === 0) {
+    if (!schoolData || !schoolData.success || !schoolData.data) {
       return { success: false, error: "Failed to fetch school data" };
     }
     
     // Prepare the update - add teachers to the school's staffList
-    const currentSchool = schoolData.items[0];
+    const currentSchool = schoolData.data;
     const updates = [{
       id: schoolId,
       data: {

@@ -1,4 +1,3 @@
-
 import { createEntityHooks } from '@query/client/factories/entity-factory';
 import { 
   LookForZodSchema, 
@@ -15,9 +14,7 @@ import { WithDateObjects, DocumentInput } from '@core-types/document';
 import { wrapServerActions } from '@transformers/factories/server-action-factory';
 import { transformData } from '@transformers/core/unified-transformer';
 import { ZodType } from 'zod';
-import { ServerActions } from '@core-types/query-factory';
 import { useCallback } from 'react';
-import { CollectionResponse, EntityResponse } from '@core-types/response';
 
 /**
  * LookFor entity with Date objects instead of string dates
@@ -28,10 +25,6 @@ export type LookForWithDates = WithDateObjects<LookFor>;
  * Input type that satisfies DocumentInput constraint for LookFor
  */
 export type LookForInput = DocumentInput<LookFor>;
-
-// Type for server action that accepts both LookForInput and inferred input
-type CreateLookForFn = (data: LookForInput) => Promise<CollectionResponse<LookForWithDates> | EntityResponse<LookForWithDates>>;
-type UpdateLookForFn = (id: string, data: Partial<LookForInput>) => Promise<CollectionResponse<LookForWithDates> | EntityResponse<LookForWithDates>>;
 
 // Stub function for fetchById since it doesn't exist in the actions
 const fetchLookForById = async (_id: string) => {
@@ -45,8 +38,8 @@ const wrappedActions = wrapServerActions<LookFor, LookForWithDates, LookForInput
   {
     fetch: fetchLookFors,
     fetchById: fetchLookForById,
-    create: createLookFor as unknown as CreateLookForFn,
-    update: updateLookFor as unknown as UpdateLookForFn,
+    create: createLookFor,
+    update: updateLookFor,
     delete: deleteLookFor
   },
   items => transformData<LookFor, LookForWithDates>(items, {
@@ -66,7 +59,7 @@ const entityHooks = createEntityHooks<LookForWithDates, LookForInput>({
   entityType: 'look-fors',
   fullSchema: LookForZodSchema as unknown as ZodType<LookForWithDates>,
   inputSchema: LookForInputZodSchema as unknown as ZodType<LookForInput>,
-  serverActions: wrappedActions as ServerActions<LookForWithDates, LookForInput>,
+  serverActions: wrappedActions,
   validSortFields: ['topic', 'category', 'status', 'createdAt', 'updatedAt'],
   defaultParams: {
     sortBy: 'topic',

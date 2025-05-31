@@ -4,6 +4,7 @@
 export const textColors = {
   default: 'text-secondary',
   muted: 'text-muted',
+  mutedForeground: 'text-gray-400',
   accent: 'text-accent',
   primary: 'text-primary',
   secondary: 'text-secondary',
@@ -210,7 +211,7 @@ export const hoverBackgroundColors = {
     secondary: 'hover:bg-secondary-300',
     danger: 'hover:bg-danger-300',
     success: 'hover:bg-success-300',
-    muted: 'hover:bg-muted-300'
+    muted: 'hover:bg-gray-50'
   },
 
   // Dark mode variants
@@ -230,6 +231,15 @@ export const hoverBackgroundColors = {
     danger: 'hover:bg-danger-100 dark:hover:bg-danger-800',
     success: 'hover:bg-success-100 dark:hover:bg-success-800'
   }
+};
+
+export const hoverBorderColors = {
+  default: 'hover:border-default-100',
+  primary: 'hover:border-primary-200',
+  secondary: 'hover:border-secondary-200',
+  danger: 'hover:border-danger-100',
+  success: 'hover:border-success-100',
+  muted: 'hover:border-muted-200'
 };
 
 // Fully combined semantic colors

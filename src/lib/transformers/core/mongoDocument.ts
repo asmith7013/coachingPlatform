@@ -5,10 +5,13 @@ import type { BaseDocument } from '@core-types/document';
  * Converts ObjectIds to strings, adds `id` field, and handles dates
  * DOES NOT perform schema validation
  */
-export function transformMongoDocument<T = Record<string, unknown>>(value: unknown): T {
-  // Handle arrays recursively
-  if (Array.isArray(value)) {
-    return value.map(item => transformMongoDocument<T>(item)) as unknown as T;
+export function transformMongoDocument<T = Record<string, unknown>>(
+  value: unknown,
+  pathStack: string[] = []
+): T {
+  // Handle primitives and null/undefined
+  if (value === null || value === undefined || typeof value !== 'object') {
+    return value as unknown as T;
   }
   
   // Handle Date objects
@@ -16,45 +19,52 @@ export function transformMongoDocument<T = Record<string, unknown>>(value: unkno
     return value as unknown as T;
   }
   
-  // Handle Object IDs and other objects
-  if (value && typeof value === 'object') {
-    const out: Record<string, unknown> = {};
-    
-    for (const [k, v] of Object.entries(value)) {
-      if (k === '_id') {
-        // Ensure ObjectIds are converted to strings
-        out[k] = v?.toString ? v.toString() : v;
-        // Add id field at the same level as _id
-        if (!('id' in value) && v) {
-          out['id'] = v?.toString ? v.toString() : v;
-        }
-      } else if (k === 'createdAt' || k === 'updatedAt') {
-        // Convert date strings or objects to Date objects
-        if (v instanceof Date) {
-          out[k] = v;
-        } else if (v && typeof v === 'object' && 'hasOwnProperty' in v && v.hasOwnProperty('$date')) {
-          // Handle MongoDB extended JSON format
-          out[k] = new Date((v as { $date: string }).$date);
-        } else if (typeof v === 'string') {
-          out[k] = new Date(v);
-        } else {
-          out[k] = v;
-        }
-      } else {
-        // KEY FIX: Recursively process ALL fields, not just BaseDocument fields
-        out[k] = Array.isArray(v) || (v && typeof v === 'object') 
-          ? transformMongoDocument(v) 
-          : v;
-      }
-    }
-    
-    return out as T; // Return the full type, not just BaseDocument
+  // Handle arrays
+  if (Array.isArray(value)) {
+    return value.map((item, index) => 
+      transformMongoDocument<T>(item, [...pathStack, `[${index}]`])
+    ) as unknown as T;
   }
   
-  // Return all other types as-is
-  return value as unknown as T;
+  // For objects, check if we're in a potential circular reference by path
+  const currentPath = pathStack.join('.');
+  if (pathStack.length > 10) { // Reasonable depth limit
+    console.warn(`Deep nesting detected at path: ${currentPath}`);
+    return { _deepNesting: true, _path: currentPath } as unknown as T;
+  }
+  
+  const out: Record<string, unknown> = {};
+  
+  for (const [k, v] of Object.entries(value)) {
+    const newPath = [...pathStack, k];
+    
+    if (k === '_id') {
+      // Handle ObjectId conversion
+      const idStr = v?.toString?.() || String(v || '');
+      out[k] = idStr;
+      // Add id field if not present
+      if (!('id' in value) && idStr) {
+        out['id'] = idStr;
+      }
+    } else if (k === 'createdAt' || k === 'updatedAt') {
+      // Handle timestamps
+      if (v instanceof Date) {
+        out[k] = v;
+      } else if (typeof v === 'string') {
+        out[k] = new Date(v);
+      } else if (v && typeof v === 'object' && '$date' in v) {
+        out[k] = new Date((v as { $date: string }).$date);
+      } else {
+        out[k] = v;
+      }
+    } else {
+      // Recursively transform other fields
+      out[k] = transformMongoDocument(v, newPath);
+    }
+  }
+  
+  return out as T;
 }
-
 
 /**
  * Verifies if an object is a MongoDB document

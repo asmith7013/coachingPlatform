@@ -6,7 +6,6 @@ import { WithDateObjects, DocumentInput } from '@core-types/document';
 import { wrapServerActions } from '@transformers/factories/server-action-factory';
 import { QueryParams } from '@core-types/query';
 import { ZodType } from 'zod';
-import { CollectionResponse } from '@core-types/response';
 import { transformData } from '@transformers/core/unified-transformer';
 import { asDateObjectSchema } from '@/lib/schema/zod-schema/base-schemas';
 
@@ -45,7 +44,7 @@ const fetchVisitsWithHasMore = async (params: QueryParams) => {
 const wrappedActions = wrapServerActions<Visit, VisitWithDates, VisitInput>(
   {
     fetch: fetchVisitsWithHasMore,
-    create: createVisit as (data: VisitInput) => Promise<CollectionResponse<Visit>>,
+    create: createVisit,
   },
   (items: Visit[]) => transformData<Visit, VisitWithDates>(items, {
     schema: VisitZodSchema as ZodType<VisitWithDates>,

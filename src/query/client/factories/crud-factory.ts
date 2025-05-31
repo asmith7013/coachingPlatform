@@ -8,7 +8,7 @@ import { createOperationMutation } from '@query/client/utilities/mutation-helper
 import { ServerActions } from '@core-types/query-factory';
 import { QueryParams } from '@core-types/query';
 import { BaseDocument } from '@core-types/document';
-import { CollectionResponse, PaginatedResponse } from '@core-types/response';
+import { EntityResponse, PaginatedResponse } from '@core-types/response';
 
 /**
  * Configuration for CRUD hooks
@@ -76,42 +76,30 @@ export function createCrudHooks<
   function useMutations() {
     const queryClient = useQueryClient();
     
-    // Create mutation
-    const createMutation = createOperationMutation<TInput, TInput, T>(
+    // Create mutation - now clean with overloads
+    const createMutation = createOperationMutation(
       'create',
       entityType,
-      serverActions.create as (data: TInput) => Promise<CollectionResponse<T>>,
+      serverActions.create!,
       queryClient,
       additionalInvalidateKeys
     )();
     
-    // Update mutation
-    const updateMutation = createOperationMutation<
-      { id: string; data: Partial<TInput> },
-      { id: string; data: Partial<TInput> },
-      T
-    >(
+    // Update mutation - now clean with overloads
+    const updateMutation = createOperationMutation(
       'update',
       entityType,
       (params: { id: string; data: Partial<TInput> }) => 
-        (serverActions.update as (id: string, data: Partial<TInput>) => Promise<CollectionResponse<T>>)(
-          params.id,
-          params.data
-        ),
+        serverActions.update!(params.id, params.data),
       queryClient,
       additionalInvalidateKeys
     )();
     
-    // Delete mutation
-    const deleteMutation = createOperationMutation<
-      { id: string },
-      { id: string },
-      T
-    >(
+    // Delete mutation - now clean with overloads
+    const deleteMutation = createOperationMutation(
       'delete',
       entityType,
-      (params: { id: string }) => 
-        (serverActions.delete as (id: string) => Promise<CollectionResponse<T>>)(params.id),
+      (params: { id: string }) => serverActions.delete!(params.id),
       queryClient,
       additionalInvalidateKeys
     )();
@@ -195,7 +183,7 @@ export function createCrudHooks<
       entityType,
       id,
       fetcher: serverActions.fetchById ? 
-        (async (entityId: string) => await serverActions.fetchById!(entityId) as CollectionResponse<unknown>) :
+        (async (entityId: string) => await serverActions.fetchById!(entityId) as EntityResponse<T>) :
         ((_id: string) => { throw new Error(`fetchById action is not defined for ${entityType}`); }),
       schema: fullSchema,
       useSelector: true,

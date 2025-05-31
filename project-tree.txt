@@ -174,7 +174,10 @@
 │   │   │   ├── schedule
 │   │   │   │   └── page.tsx
 │   │   │   ├── schoolList
-│   │   │   │   ├── [schoolId]
+│   │   │   │   └── [schoolId]
+│   │   │   │       └── page.tsx
+│   │   │   ├── schools
+│   │   │   │   ├── [id]
 │   │   │   │   │   ├── client.tsx
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
@@ -292,6 +295,10 @@
 │   │   │   └── page.tsx
 │   │   ├── tools
 │   │   │   ├── data-import
+│   │   │   │   ├── add-to-school
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── create-school
+│   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── dev
 │   │   │   │   ├── seed-data
@@ -324,6 +331,8 @@
 │   │   │   │   ├── FileCard.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── dialogs
+│   │   │   │   ├── CreateSchoolDialog.tsx
+│   │   │   │   ├── DataImportDialog.tsx
 │   │   │   │   ├── Dialog.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── forms
@@ -377,6 +386,9 @@
 │   │   │       └── index.ts
 │   │   ├── core
 │   │   │   ├── Button.tsx
+│   │   │   ├── cards
+│   │   │   │   ├── SimpleCard.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── empty
 │   │   │   │   ├── EmptyListWrapper.tsx
 │   │   │   │   ├── EmptyState.tsx
@@ -398,6 +410,8 @@
 │   │   │   │   ├── Textarea.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── index.ts
+│   │   │   ├── navigation
+│   │   │   │   └── Pagination.tsx
 │   │   │   ├── query
 │   │   │   │   └── HydrationBoundary.tsx
 │   │   │   └── typography
@@ -460,6 +474,9 @@
 │   │   │   │       ├── TimeValidator.ts
 │   │   │   │       └── scheduleHelpers.ts
 │   │   │   ├── schools
+│   │   │   │   ├── SchoolCard.tsx
+│   │   │   │   ├── SchoolDetailView.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── staff
 │   │   │   │   ├── StaffCard.tsx
 │   │   │   │   ├── StaffDetailPage.tsx
@@ -760,6 +777,8 @@
 │   │   │   │   ├── README.md
 │   │   │   │   ├── bulk-operations.ts
 │   │   │   │   ├── crud-factory.ts
+│   │   │   │   ├── domain
+│   │   │   │   │   └── staff-crud-instances.ts
 │   │   │   │   └── index.ts
 │   │   │   ├── db
 │   │   │   │   ├── connection.ts
@@ -975,4 +994,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-293 directories, 683 files
+300 directories, 695 files

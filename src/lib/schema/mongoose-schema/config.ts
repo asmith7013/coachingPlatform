@@ -1,4 +1,4 @@
-import { MongooseTransformDocument } from '@/lib/types/core/document';
+import { MongooseTransformDocument } from '@core-types/mongo';
 
 /**
  * Safe transform for TypeGoose documents

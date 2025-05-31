@@ -54,7 +54,12 @@ export function StaffDetailPage({ staffType = 'nycps' }: StaffDetailPageProps) {
       if (!data.success || !data.items || data.items.length === 0) {
         throw new Error(data.message || 'Failed to fetch staff member');
       }
-      return { success: true, items: [data.items[0]], total: 1 };
+      // Return EntityResponse format
+      return { 
+        success: true, 
+        data: data.items[0],
+        message: data.message 
+      };
     },
     schema: (staffType === 'nycps' ? NYCPSStaffZodSchema : TeachingLabStaffZodSchema) as ZodSchema<StaffMember>,
     errorContext: `fetch_staff_${staffId}`
@@ -78,7 +83,12 @@ export function StaffDetailPage({ staffType = 'nycps' }: StaffDetailPageProps) {
       if (!data.success || !data.items || data.items.length === 0) {
         throw new Error(data.message || 'Failed to fetch staff schedule');
       }
-      return { success: true, items: [data.items[0]], total: 1 };
+      // Return EntityResponse format
+      return { 
+        success: true, 
+        data: data.items[0],
+        message: data.message 
+      };
     },
     schema: TeacherScheduleZodSchema as unknown as ZodSchema<TeacherSchedule>,
     errorContext: `fetch_schedule_${staffId}`

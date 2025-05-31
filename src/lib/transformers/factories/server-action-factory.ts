@@ -1,21 +1,18 @@
 // src/lib/transformers/factories/server-action-factory.ts
-
-import { isPaginatedResponse } from '@transformers/utils/response-utils';
-
-import { handleClientError } from '@error/handlers/client';
+// ULTRA-SIMPLIFIED VERSION - No response format conversion needed!
 
 import { ServerActions } from '@core-types/query-factory';
 import { BaseDocument, DocumentInput } from '@core-types/document';
-import { CollectionResponse, EntityResponse, PaginatedResponse } from '@core-types/response';
+import { EntityResponse } from '@core-types/response';
 import type { QueryParams } from '@core-types/query';
 
 /**
- * Wraps server actions to apply a transformation to all responses
- * with improved type compatibility for DocumentInput constraints
+ * Wraps server actions to apply data transformation only
+ * MASSIVELY SIMPLIFIED - CRUD factory returns correct response types!
  * 
- * @param actions - Original server actions
- * @param transformer - Function to transform items
- * @returns Server actions with transformed responses
+ * @param actions - Original server actions (already return correct response types)
+ * @param transformer - Function to transform individual data items
+ * @returns Server actions with transformed data
  */
 export function wrapServerActions<
   T extends BaseDocument, 
@@ -27,147 +24,73 @@ export function wrapServerActions<
   transformer: (items: T[]) => U[]
 ): ServerActions<U, TInput> {
   return {
+    // Collection operations - transform items array
     fetch: async (params: QueryParams) => {
       const response = await actions.fetch(params);
-      
-      // Apply appropriate transformation based on response type
-      if (isPaginatedResponse<T>(response)) {
-        return transformPaginatedItems(response, transformer);
-      }
-      return transformResponseItems(response, transformer);
+      return {
+        ...response,
+        items: transformer(response.items || [])
+      };
     },
     
+    // Single entity operations - transform the data field
     fetchById: actions.fetchById ? async (id: string) => {
-      if (!actions.fetchById) throw new Error('FetchById action not implemented');
-      const response = await actions.fetchById(id);
+      const response = await actions.fetchById!(id);
       
-      // Apply appropriate transformation based on response type
-      if ('data' in response) {
-        return transformEntityItem(response as EntityResponse<T>, transformer);
+      if (!response.success || !response.data) {
+        return response as unknown as EntityResponse<U>; // Pass through errors unchanged
       }
-      return transformResponseItems(response as CollectionResponse<T>, transformer);
+      
+      const transformedItems = transformer([response.data]);
+      return {
+        ...response,
+        data: transformedItems[0]
+      };
     } : undefined,
     
     create: actions.create ? async (data: TInput) => {
-      if (!actions.create) throw new Error('Create action not implemented');
-      // Type assertion to convert between input types
-      const response = await actions.create(data as unknown as TOriginalInput);
+      const response = await actions.create!(data as unknown as TOriginalInput);
       
-      // Apply appropriate transformation based on response type
-      if ('data' in response) {
-        return transformEntityItem(response as EntityResponse<T>, transformer);
+      if (!response.success || !response.data) {
+        return response as unknown as EntityResponse<U>; // Pass through errors unchanged
       }
-      return transformResponseItems(response as CollectionResponse<T>, transformer);
+      
+      const transformedItems = transformer([response.data]);
+      return {
+        ...response,
+        data: transformedItems[0]
+      };
     } : undefined,
     
     update: actions.update ? async (id: string, data: Partial<TInput>) => {
-      if (!actions.update) throw new Error('Update action not implemented');
-      // Type assertion to convert between input types
-      const response = await actions.update(id, data as unknown as Partial<TOriginalInput>);
+      const response = await actions.update!(id, data as unknown as Partial<TOriginalInput>);
       
-      // Apply appropriate transformation based on response type
-      if ('data' in response) {
-        return transformEntityItem(response as EntityResponse<T>, transformer);
+      if (!response.success || !response.data) {
+        return response as unknown as EntityResponse<U>; // Pass through errors unchanged
       }
-      return transformResponseItems(response as CollectionResponse<T>, transformer);
+      
+      const transformedItems = transformer([response.data]);
+      return {
+        ...response,
+        data: transformedItems[0]
+      };
     } : undefined,
     
+    // Delete operations - no transformation needed
     delete: actions.delete ? async (id: string) => {
-      if (!actions.delete) throw new Error('Delete action not implemented');
-      const response = await actions.delete(id);
-      
-      // Apply appropriate transformation based on response type
-      if ('data' in response) {
-        return transformEntityItem(response as EntityResponse<T>, transformer);
-      }
-      return transformResponseItems(response as CollectionResponse<T>, transformer);
+      return actions.delete!(id); // BaseResponse - pass through unchanged
     } : undefined
   };
 }
 
 /**
- * Applies a transformation function to a collection response
+ * Helper for when no transformation is needed (just type conversion)
  */
-function transformResponseItems<T extends BaseDocument, U extends BaseDocument>(
-  response: CollectionResponse<T>,
-  transformer: (items: T[]) => U[]
-): CollectionResponse<U> {
-  try {
-    // Transform items while preserving response structure
-    return {
-      ...response,
-      items: transformer(response.items || []),
-      total: response.total || 0
-    };
-  } catch (error) {
-    handleClientError(error, 'transformResponseItems');
-    return {
-      ...response,
-      items: [],
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    } as CollectionResponse<U>;
-  }
-}
-
-/**
- * Applies a transformation function to a paginated response
- */
-function transformPaginatedItems<T extends BaseDocument, U extends BaseDocument>(
-  response: PaginatedResponse<T>,
-  transformer: (items: T[]) => U[]
-): PaginatedResponse<U> {
-  try {
-    // Transform items while preserving pagination metadata
-    const transformedItems = transformer(response.items || []);
-    
-    return {
-      ...response,
-      items: transformedItems,
-      total: response.total || transformedItems.length,
-      empty: transformedItems.length === 0
-    };
-  } catch (error) {
-    handleClientError(error, 'transformPaginatedItems');
-    return {
-      ...response,
-      items: [],
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    } as PaginatedResponse<U>;
-  }
-}
-
-/**
- * Applies a transformation function to an entity response
- */
-function transformEntityItem<T extends BaseDocument, U extends BaseDocument>(
-  response: EntityResponse<T>,
-  transformer: (items: T[]) => U[]
-): EntityResponse<U> {
-  try {
-    if (!response.data) {
-      return {
-        ...response,
-        data: undefined as unknown as U,
-        success: false
-      };
-    }
-    
-    // Transform the single entity
-    const transformedItems = transformer([response.data]);
-    
-    return {
-      ...response,
-      data: transformedItems[0],
-      success: Boolean(transformedItems.length > 0)
-    };
-  } catch (error) {
-    handleClientError(error, 'transformEntityItem');
-    return {
-      success: false,
-      data: undefined as unknown as U,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    };
-  }
+export function wrapServerActionsNoTransform<
+  T extends BaseDocument,
+  TInput extends DocumentInput<T> = DocumentInput<T>
+>(
+  actions: ServerActions<T, Record<string, unknown>>
+): ServerActions<T, TInput> {
+  return wrapServerActions(actions, (items) => items);
 }

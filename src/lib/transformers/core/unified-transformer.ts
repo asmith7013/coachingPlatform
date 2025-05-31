@@ -48,17 +48,28 @@ function transformItem<T extends BaseDocument, R = T>(
   options: TransformOptions<T, R>
 ): R | null {
   try {
+    // Debug logging for transformation
+    console.log('🔍 About to transform document:', JSON.stringify(item, null, 2));
+    console.log('🔍 Document type:', typeof item);
+    console.log('🔍 Document constructor:', item?.constructor?.name);
+    
     // Layer 1: MongoDB document transformation - PRESERVE ALL FIELDS
     const dbTransformed = transformMongoDocument<T>(item);
+    console.log('✅ MongoDB transformation successful:', JSON.stringify(dbTransformed, null, 2));
     
     // Layer 2: Schema validation (if schema provided)
     let validated: T | null = dbTransformed;
     if (options.schema) {
+      console.log('🔍 About to validate with schema...');
       validated = options.strictValidation
         ? validateStrict(options.schema, dbTransformed)
         : validateSafe(options.schema, dbTransformed);
       
-      if (!validated) return null;
+      if (!validated) {
+        console.error('❌ Schema validation failed for document');
+        return null;
+      }
+      console.log('✅ Schema validation successful');
     }
     
     // Layer 3a: Date transformation (if requested)
@@ -73,6 +84,7 @@ function transformItem<T extends BaseDocument, R = T>(
     return withDates as unknown as R;
   } catch (error) {
     // Handle item-level errors
+    console.error('❌ Error in transformItem:', error);
     if (options.throwOnError) {
       throw error;
     }

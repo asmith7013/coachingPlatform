@@ -27,7 +27,7 @@ type StaffMemberInput = z.infer<typeof StaffMemberInputZodSchema>;
 type NYCPSStaffInput = z.infer<typeof NYCPSStaffInputZodSchema>;
 type TeachingLabStaffInput = z.infer<typeof TeachingLabStaffInputZodSchema>;
 
-// Base Staff operations
+// Base Staff operations - SIMPLIFIED to match school pattern
 export async function fetchStaffMembers(params: QueryParams) {
   return withDbConnection(() => staffActions.fetch(params));
 }
@@ -48,7 +48,7 @@ export async function fetchStaffMemberById(id: string) {
   return withDbConnection(() => staffActions.fetchById(id));
 }
 
-// NYCPS Staff operations
+// NYCPS Staff operations - SIMPLIFIED to match school pattern
 export async function fetchNYCPSStaff(params: QueryParams) {
   return withDbConnection(() => nycpsStaffActions.fetch(params));
 }
@@ -69,7 +69,7 @@ export async function fetchNYCPSStaffById(id: string) {
   return withDbConnection(() => nycpsStaffActions.fetchById(id));
 }
 
-// Teaching Lab Staff operations
+// Teaching Lab Staff operations - SIMPLIFIED to match school pattern
 export async function fetchTeachingLabStaff(params: QueryParams) {
   return withDbConnection(() => tlStaffActions.fetch(params));
 }
@@ -167,14 +167,9 @@ export async function uploadStaff(data: (StaffMemberInput | NYCPSStaffInput | Te
         }
       }
       
-      // Process each batch
-      const results = {
-        standard: { success: true, items: [] as StaffMemberInput[], total: 0, error: "" },
-        nycps: { success: true, items: [] as NYCPSStaffInput[], total: 0, error: "" },
-        tl: { success: true, items: [] as TeachingLabStaffInput[], total: 0, error: "" }
-      };
+      // Process each batch using the same pattern as schools
+      const results = [];
       
-      // Process standard staff
       if (staffByType.standard.length > 0) {
         const result = await bulkUploadToDB(
           staffByType.standard,
@@ -182,15 +177,9 @@ export async function uploadStaff(data: (StaffMemberInput | NYCPSStaffInput | Te
           StaffMemberInputZodSchema,
           ["/dashboard/staff"]
         );
-        results.standard = {
-          success: result.success,
-          items: result.items || [],
-          total: result.items?.length || 0,
-          error: result.message || result.error || (result.errors?.[0]?.error || "")
-        };
+        results.push(result);
       }
       
-      // Process NYCPS staff
       if (staffByType.nycps.length > 0) {
         const result = await bulkUploadToDB(
           staffByType.nycps,
@@ -198,15 +187,9 @@ export async function uploadStaff(data: (StaffMemberInput | NYCPSStaffInput | Te
           NYCPSStaffInputZodSchema,
           ["/dashboard/staff"]
         );
-        results.nycps = {
-          success: result.success,
-          items: result.items || [],
-          total: result.items?.length || 0,
-          error: result.message || result.error || (result.errors?.[0]?.error || "")
-        };
+        results.push(result);
       }
       
-      // Process TL staff
       if (staffByType.tl.length > 0) {
         const result = await bulkUploadToDB(
           staffByType.tl,
@@ -214,32 +197,18 @@ export async function uploadStaff(data: (StaffMemberInput | NYCPSStaffInput | Te
           TeachingLabStaffInputZodSchema,
           ["/dashboard/staff"]
         );
-        results.tl = {
-          success: result.success,
-          items: result.items || [],
-          total: result.items?.length || 0,
-          error: result.message || result.error || (result.errors?.[0]?.error || "")
-        };
+        results.push(result);
       }
       
       // Combine all results
-      const allItems = [
-        ...(results.standard.items || []),
-        ...(results.nycps.items || []),
-        ...(results.tl.items || [])
-      ];
-      
-      const allErrors = [
-        results.standard.error,
-        results.nycps.error,
-        results.tl.error
-      ].filter(Boolean).join(", ");
+      const allItems = results.flatMap(result => result.items || []);
+      const hasErrors = results.some(result => !result.success);
       
       return {
-        success: !allErrors,
+        success: !hasErrors,
         items: allItems,
         total: allItems.length,
-        error: allErrors || ""
+        error: hasErrors ? "Some staff members failed to upload" : undefined
       };
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -256,21 +225,15 @@ export async function uploadStaff(data: (StaffMemberInput | NYCPSStaffInput | Te
   });
 }
 
-// 🔧 AI IMPORT SYSTEM - Staff-School Linking Functions
-
-/**
- * Links a staff member to a school by adding the school ID to their schools array
- */
+// Remaining specialized functions (simplified)
 export async function linkStaffToSchool(staffId: string, schoolId: string) {
   return withDbConnection(async () => {
     try {
-      // Find the staff member
       const staff = await StaffMemberModel.findById(staffId);
       if (!staff) {
         return { success: false, error: "Staff member not found" };
       }
       
-      // Add school ID to schools array if not already present
       const schools = staff.schools || [];
       if (!schools.includes(schoolId)) {
         schools.push(schoolId);
@@ -285,34 +248,8 @@ export async function linkStaffToSchool(staffId: string, schoolId: string) {
   });
 }
 
-/**
- * Creates staff members in bulk and automatically links them to a school
- */
-export async function bulkCreateStaffWithSchoolLink(staffData: StaffMemberInput[], schoolId: string) {
-  return withDbConnection(async () => {
-    try {
-      // Add school ID to each staff member's schools array
-      const staffWithSchool = staffData.map(staff => ({
-        ...staff,
-        schools: staff.schools ? [...staff.schools, schoolId] : [schoolId]
-      }));
-      
-      // Use existing uploadStaff function
-      const result = await uploadStaff(staffWithSchool);
-      return result;
-    } catch (error) {
-      return { success: false, error: handleServerError(error) };
-    }
-  });
-}
-
-/**
- * Check if a staff member exists by email address
- * Searches both NYCPS and Teaching Lab staff
- */
 export async function checkStaffExistenceByEmail(email: string) {
   try {
-    // Validate the email
     if (!email || typeof email !== 'string' || !email.includes('@')) {
       return {
         success: false,
@@ -321,9 +258,7 @@ export async function checkStaffExistenceByEmail(email: string) {
       };
     }
     
-    // Check in database with connection wrapper
     const result = await withDbConnection(async () => {
-      // Search both staff types in parallel
       const [nycpsStaff, tlStaff] = await Promise.all([
         NYCPSStaffModel.findOne({ 
           email: { $regex: new RegExp(`^${email}$`, 'i') } 
@@ -361,4 +296,44 @@ export async function checkStaffExistenceByEmail(email: string) {
       error: handleServerError(error)
     };
   }
+}
+
+// Bulk creation with school linking (simplified)
+export async function bulkCreateStaffWithSchoolLink(staffData: NYCPSStaffInput[], schoolId: string) {
+  return withDbConnection(async () => {
+    try {
+      if (!Array.isArray(staffData) || staffData.length === 0) {
+        return {
+          success: false,
+          items: [],
+          total: 0,
+          error: "No staff data provided or invalid format"
+        };
+      }
+
+      // Add school ID to each staff member's schools array
+      const staffWithSchool = staffData.map(staff => ({
+        ...staff,
+        schools: staff.schools ? [...staff.schools, schoolId] : [schoolId]
+      }));
+      
+      // Use the simplified uploadStaff function
+      const result = await uploadStaff(staffWithSchool);
+      
+      return {
+        success: result.success,
+        items: result.items || [],
+        total: result.total || 0,
+        error: result.error,
+        message: result.success ? `Created ${result.total} staff members` : undefined
+      };
+    } catch (error) {
+      return {
+        success: false,
+        items: [],
+        total: 0,
+        error: handleServerError(error)
+      };
+    }
+  });
 } 

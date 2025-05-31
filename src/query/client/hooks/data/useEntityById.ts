@@ -2,7 +2,7 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { ZodSchema } from 'zod';
 import { BaseDocument } from '@core-types/document';
-import { CollectionResponse } from '@core-types/response';
+import { EntityResponse } from '@core-types/response';
 import { transformSingleItem } from '@query/client/utilities/hook-helpers';
 import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
 
@@ -16,8 +16,8 @@ export interface UseEntityByIdConfig<T extends BaseDocument> {
   /** Entity ID to fetch */
   id: string | null | undefined;
   
-  /** Function to fetch entity by ID */
-  fetcher: (id: string) => Promise<CollectionResponse<unknown>>;
+  /** Function to fetch entity by ID - now expects EntityResponse */
+  fetcher: (id: string) => Promise<EntityResponse<T>>;
   
   /** Zod schema for validation */
   schema: ZodSchema<T>;
@@ -29,17 +29,18 @@ export interface UseEntityByIdConfig<T extends BaseDocument> {
   errorContext?: string;
   
   /** Additional query options */
-  queryOptions?: Omit<UseQueryOptions<CollectionResponse<unknown>, Error>, 'queryKey' | 'queryFn' | 'select' | 'enabled'>;
+  queryOptions?: Omit<UseQueryOptions<EntityResponse<T>, Error>, 'queryKey' | 'queryFn' | 'select' | 'enabled'>;
 }
 
 /**
- * Hook for fetching a single entity by ID with schema validation
+ * ✅ FIXED: Hook for fetching a single entity by ID with EntityResponse support
  */
 export function useEntityById<T extends BaseDocument>({
   entityType,
   id,
   fetcher,
   schema,
+  useSelector = false,
   errorContext,
   queryOptions = {}
 }: UseEntityByIdConfig<T>) {
@@ -52,15 +53,29 @@ export function useEntityById<T extends BaseDocument>({
       return await fetcher(id);
     },
     
-    select: (data) => {
-      return transformSingleItem<T>(
-        data,
+    // ✅ SIMPLIFIED: Direct EntityResponse handling
+    select: (response) => {
+      // Handle EntityResponse format - extract and validate the single entity
+      if (!response.success || !response.data) {
+        throw new Error(response.error || `Failed to fetch ${entityType}`);
+      }
+      
+      // ✅ FIXED: Transform the single entity directly (no format conversion needed)
+      const transformed = transformSingleItem<T>(
+        response.data, // Pass the raw data item
         ensureBaseDocumentCompatibility<T>(schema),
         {
           entityType,
+          useSelector,
           errorContext: errorContext || `${entityType}.fetchById`
         }
       );
+      
+      if (!transformed) {
+        throw new Error(`Failed to transform ${entityType} data`);
+      }
+      
+      return transformed;
     },
     enabled: !!id,
     ...queryOptions
