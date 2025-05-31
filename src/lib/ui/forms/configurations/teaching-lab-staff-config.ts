@@ -1,6 +1,6 @@
 import type { FormConfiguration } from '@ui-types/form';
 import { TeachingLabStaffInputZodSchema } from '@zod-schema/core/staff';
-import type { TeachingLabStaffInput } from '@domain-types/staff';
+// import type { TeachingLabStaffInput } from '@domain-types/staff';
 import { createModeAwareConfig, type FormMode } from './schema-aware-builders';
 
 /**

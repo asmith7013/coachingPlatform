@@ -25,6 +25,7 @@ export function SchoolCard({ school, onDelete, isDeleting }: SchoolCardProps) {
   const schoolSlug = schoolToSlug(school);
 
   const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (school._id && onDelete) {
       if (window.confirm("Are you sure you want to delete this school?")) {
@@ -34,19 +35,21 @@ export function SchoolCard({ school, onDelete, isDeleting }: SchoolCardProps) {
   };
 
   const handleAddData = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setShowDataImportDialog(true);
   };
 
   return (
     <>
-      {/* Use Link wrapper for better accessibility and SEO */}
-      <Link href={`/dashboard/schools/${schoolSlug}`} className="block">
-        <div className="cursor-pointer hover:shadow-lg transition-shadow duration-200">
-          <Card
-            padding="md"
-            radius="lg"
-          >
+      <Card
+        padding="md"
+        radius="lg"
+        className="relative"
+      >
+        {/* Clickable area for navigation */}
+        <Link href={`/dashboard/schools/${schoolSlug}`} className="block">
+          <div className="cursor-pointer hover:shadow-lg transition-shadow duration-200">
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1 min-w-0">
                 <Heading 
@@ -105,36 +108,39 @@ export function SchoolCard({ school, onDelete, isDeleting }: SchoolCardProps) {
               </div>
             </div>
 
-            {/* Action buttons - these will prevent Link navigation when clicked */}
-            <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-              <Button
-                onClick={handleAddData}
-                appearance="outline"
-                textSize="sm"
-                padding="sm"
-                className="flex items-center gap-2"
-              >
-                <PlusIcon className="h-4 w-4" />
-                Add Data
-              </Button>
-              
-              <Button
-                onClick={handleDelete}
-                appearance="outline"
-                textSize="sm"
-                padding="sm"
-                className="text-danger flex items-center gap-2"
-                disabled={isDeleting}
-              >
-                <TrashIcon className="h-4 w-4" />
-                {isDeleting ? 'Deleting...' : 'Delete'}
-              </Button>
-            </div>
-          </Card>
-        </div>
-      </Link>
+            {/* Add padding bottom to account for absolute positioned buttons */}
+            <div className="pb-12"></div>
+          </div>
+        </Link>
 
-      {/* Keep dialogs outside Link */}
+        {/* Action buttons positioned absolutely outside the Link */}
+        <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center pt-4 border-t border-gray-200 bg-white">
+          <Button
+            onClick={handleAddData}
+            appearance="outline"
+            textSize="sm"
+            padding="sm"
+            className="flex items-center gap-2"
+          >
+            <PlusIcon className="h-4 w-4" />
+            Add Data
+          </Button>
+          
+          <Button
+            onClick={handleDelete}
+            appearance="outline"
+            textSize="sm"
+            padding="sm"
+            className="text-danger flex items-center gap-2"
+            disabled={isDeleting}
+          >
+            <TrashIcon className="h-4 w-4" />
+            {isDeleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </div>
+      </Card>
+
+      {/* Keep dialog outside Card */}
       <DataImportDialog
         open={showDataImportDialog}
         onClose={() => setShowDataImportDialog(false)}

@@ -1,5 +1,5 @@
 import { FieldOverrideMap } from '@ui-types/form';
-import { BellScheduleInput } from '@zod-schema/schedule/schedule';
+// import { BellScheduleInput } from '@zod-schema/schedule/schedule';
 
 export const BellScheduleOverrides: FieldOverrideMap = {
   school: {
