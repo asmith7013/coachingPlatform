@@ -1,7 +1,7 @@
 import { FieldOverrideMap } from '@ui-types/form';
 import { RubricInput } from '@zod-schema/look-fors/rubric';
 
-export const RubricOverrides: FieldOverrideMap<RubricInput> = {
+export const RubricOverrides: FieldOverrideMap = {
   // title: {
   //   type: 'text',
   //   label: 'Rubric Title',

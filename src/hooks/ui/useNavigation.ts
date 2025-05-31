@@ -1,7 +1,8 @@
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
-import { navigationItems, pageMetadata } from '@/app/dashboard/config'
-import type { NavigationItem } from '@/components/composed/layouts/NavigationSidebar'
+import { navigationItems, pageMetadata } from '@app/dashboard/config'
+import type { NavigationItem } from '@composed-components/layouts/NavigationSidebar'
+import { parseSchoolSlug } from '@transformers/utils/school-slug-utils'
 
 export function useNavigation() {
   const pathname = usePathname()
@@ -64,7 +65,10 @@ function findCurrentPage(items: NavigationItem[]): NavigationItem | null {
 
 function getPageInfo(pathname: string): { title: string; description: string } {
   // Handle dynamic routes
-  if (pathname.match(/^\/dashboard\/schoolList\/[^/]+$/)) {
+
+
+  // Handle school slug routes
+  if (pathname.match(/^\/dashboard\/schools\/[^/]+$/)) {
     return {
       title: 'School Details',
       description: 'View and manage school information'
@@ -89,7 +93,26 @@ function generateBreadcrumbs(
     currentPath += '/' + segments[i]
     const isLast = i === segments.length - 1
     
-    // Find matching navigation item
+    // Special handling for school detail pages with slugs
+    if (pathname.startsWith('/dashboard/schools/') && i === 2 && segments.length === 3) {
+      const slug = segments[2]
+      const slugData = parseSchoolSlug(slug)
+      
+      // For now, show formatted slug until we can fetch school data
+      // TODO: Consider server-side breadcrumb generation or caching for full school names
+      const displayName = slugData 
+        ? `${slugData.schoolNumber.toUpperCase()}: School Details`
+        : slug.replace('-', ' ').toUpperCase()
+      
+      breadcrumbs.push({
+        name: displayName,
+        href: currentPath,
+        current: isLast
+      })
+      continue
+    }
+    
+    // Find matching navigation item for other paths
     const navItem = findItemByPath(navigation, currentPath)
     
     breadcrumbs.push({

@@ -1,7 +1,7 @@
 import { NYCPSStaffInput } from '@zod-schema/core/staff';
 import { FieldOverrideMap } from '@ui-types/form';
 
-export const NYCPSStaffOverrides: FieldOverrideMap<NYCPSStaffInput> = {
+export const NYCPSStaffOverrides: FieldOverrideMap = {
   email: {
     helpText: 'This email is synced with your NYCPS account and cannot be edited.',
     disabled: true,

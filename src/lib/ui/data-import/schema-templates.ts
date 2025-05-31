@@ -1,6 +1,14 @@
 import { z } from 'zod';
 import { SchoolInputZodSchema } from '@zod-schema/core/school';
 import { NYCPSStaffInputZodSchema } from '@zod-schema/core/staff';
+import { VisitInputZodSchema } from '@zod-schema/visits/visit';
+import { BellScheduleInputZodSchema } from '@zod-schema/schedule/schedule';
+import { TeacherScheduleInputZodSchema } from '@zod-schema/schedule/schedule';
+
+// Use transformer validation and shared utilities
+import { validateSafe } from '@transformers/core/validation';
+import { handleClientError } from '@error/handlers/client';
+import { extractSchemaFields } from '@transformers/ui/schema-utils';
 
 // Import actual enums from shared-enums
 import {
@@ -11,79 +19,169 @@ import {
   RolesTL,
   AdminLevels,
   AllowedPurposes,
-  ModeDone
+  ModeDone,
+  BellScheduleTypes,
+  DayTypes,
+  BlockDayTypes,
+  PeriodTypes
 } from '@schema/enum/shared-enums';
 
 /**
- * Generate template by parsing an empty object and using error paths
+ * Create template using shared schema utilities
  */
-function getSchemaFields<T>(schema: z.ZodSchema<T>): string[] {
-  const result = schema.safeParse({});
-  if (result.success) return [];
+function createTemplateFromSchema<T>(schema: z.ZodSchema<T>): Record<string, unknown> {
+  const fields = extractSchemaFields(schema);
+  const template: Record<string, unknown> = {};
   
-  const fields = result.error.errors
-    .map(err => err.path[0])
-    .filter((path): path is string => typeof path === 'string');
+  // Use consistent field default logic (simplified)
+  fields.forEach(field => {
+    template[field] = getFieldDefault(field);
+  });
   
-  console.log('📝 Detected schema fields:', fields);
-  return fields;
+  return template;
 }
 
 /**
- * Create manual template for Visit with correct field requirements
- * Based on VisitInputZodSchema = toInputSchema(BaseDocumentSchema.merge(VisitFieldsSchema))
- * 
- * Manual approach needed because zDateField's preprocessing makes date field
- * not fail validation on empty object, so getSchemaFields() misses it
- */
-function createVisitTemplate(): Record<string, unknown> {
-  return {
-    // REQUIRED fields from VisitFieldsSchema
-    date: "",                    // zDateField - REQUIRED (but flexible validation)
-    school: "",                  // z.string() - REQUIRED  
-    coach: "",                   // z.string() - REQUIRED
-    gradeLevelsSupported: [],    // z.array(GradeLevelsSupportedZod) - REQUIRED
-    
-    // REQUIRED from BaseDocumentSchema (after toInputSchema removes system fields)
-    owners: [],                  // z.array(z.string()).default([]) - REQUIRED
-    
-    // OPTIONAL fields from VisitFieldsSchema
-    cycleRef: "",               // z.string().optional()
-    allowedPurpose: "",         // AllowedPurposeZod.optional()
-    modeDone: "",               // ModeDoneZod.optional()
-    events: [],                 // z.array(EventItemZodSchema).optional()
-    sessionLinks: [],           // z.array(SessionLinkZodSchema).optional()
-    
-    // OPTIONAL Monday.com integration fields
-    mondayItemId: "",           // z.string().optional()
-    mondayBoardId: "",          // z.string().optional()
-    mondayItemName: "",         // z.string().optional()
-    mondayLastSyncedAt: "",     // zDateField.optional()
-    siteAddress: "",            // z.string().optional()
-    endDate: "",                // zDateField.optional()
-  };
-}
-
-/**
- * Enhanced field type inference that detects arrays properly
+ * Simplified field default logic - remove duplication with transformers
  */
 function getFieldDefault(fieldName: string): unknown {
-  // Known array fields should return arrays, not strings
+  // Array fields that transformers also recognize
   const arrayFields = [
     'gradeLevelsSupported', 'subjects', 'specialGroups', 'rolesNYCPS', 'rolesTL',
     'staffList', 'schedules', 'cycles', 'owners', 'schools', 'notes', 'experience',
-    'assignedDistricts', 'adminLevel', 'events', 'sessionLinks'
+    'assignedDistricts', 'events', 'sessionLinks', 'classSchedule', 'assignedCycleDays'
   ];
   
-  const defaultValue = arrayFields.includes(fieldName) ? [] : 
-                      fieldName.includes('email') ? "" : "";
-  
-  // console.log(`🔧 Field "${fieldName}" gets default:`, defaultValue);
-  return defaultValue;
+  return arrayFields.includes(fieldName) ? [] : "";
 }
 
 /**
- * Convert enum to formatted definition string for AI prompt
+ * Manual template for Visit - but validate with transformers
+ */
+function createVisitTemplate(): Record<string, unknown> {
+  const template = {
+    // Required fields
+    date: "",
+    school: "",
+    coach: "",
+    gradeLevelsSupported: [],
+    owners: [],
+    
+    // Optional fields
+    cycleRef: "",
+    allowedPurpose: "",
+    modeDone: "",
+    events: [],
+    sessionLinks: [],
+    
+    // Monday.com integration fields
+    mondayItemId: "",
+    mondayBoardId: "",
+    mondayItemName: "",
+    mondayLastSyncedAt: "",
+    siteAddress: "",
+    endDate: "",
+  };
+  
+  // Validate template structure using transformer
+  const validation = validateSafe(VisitInputZodSchema.partial(), template);
+  if (!validation) {
+    console.warn('Visit template validation failed - using fallback');
+  }
+  
+  return template;
+}
+
+/**
+ * Manual template for Bell Schedule - but validate with transformers
+ */
+function createBellScheduleTemplate(): Record<string, unknown> {
+  const template = {
+    // Required fields
+    school: "", // Will be auto-filled with selected school ID
+    bellScheduleType: "", // uniform, weeklyCycle, or abcCycle
+    classSchedule: [], // Array of class schedule items
+    assignedCycleDays: [], // Array of assigned cycle days
+    owners: [], // Will be auto-filled
+    
+    // Example structures to guide AI
+    exampleClassScheduleItem: {
+      dayType: "Monday", // or A, B, C for cycle schedules
+      startTime: "08:00",
+      endTime: "08:45"
+    },
+    
+    exampleAssignedCycleDay: {
+      date: "2024-01-15", // Date object will be handled by zDateField
+      blockDayType: "A" // A, B, or C
+    }
+  };
+  
+  // Validate template structure using transformer
+  const validation = validateSafe(BellScheduleInputZodSchema.partial(), template);
+  if (!validation) {
+    console.warn('Bell schedule template validation failed - using fallback');
+  }
+  
+  return template;
+}
+
+/**
+ * Manual template for Master Schedule - but validate with transformers
+ */
+function createMasterScheduleTemplate(): Record<string, unknown> {
+  const template = {
+    // Master schedule contains teacher schedules
+    teacherSchedules: [
+      {
+        teacherName: "John Smith", // For AI reference
+        teacherEmail: "jsmith@school.edu", // MUST match existing staff
+        scheduleByDay: [
+          {
+            day: "Monday",
+            periods: [
+              {
+                periodNum: 1,
+                className: "Algebra I",
+                room: "101",
+                periodType: "Academic"
+              },
+              {
+                periodNum: 2,
+                className: "Geometry",
+                room: "101", 
+                periodType: "Academic"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+  
+  return template;
+}
+
+/**
+ * Enum mapping - keep this as it's domain-specific knowledge
+ */
+const FIELD_TO_ENUM_MAP = {
+  gradeLevelsSupported: { name: 'GradeLevels', enum: GradeLevels },
+  subjects: { name: 'Subjects', enum: Subjects },
+  specialGroups: { name: 'SpecialGroups', enum: SpecialGroups },
+  rolesNYCPS: { name: 'RolesNYCPS', enum: RolesNYCPS },
+  rolesTL: { name: 'RolesTL', enum: RolesTL },
+  adminLevel: { name: 'AdminLevels', enum: AdminLevels },
+  allowedPurpose: { name: 'AllowedPurposes', enum: AllowedPurposes },
+  modeDone: { name: 'ModeDone', enum: ModeDone },
+  bellScheduleType: { name: 'BellScheduleTypes', enum: BellScheduleTypes },
+  dayType: { name: 'DayTypes', enum: DayTypes },
+  blockDayType: { name: 'BlockDayTypes', enum: BlockDayTypes },
+  periodType: { name: 'PeriodTypes', enum: PeriodTypes }
+};
+
+/**
+ * Generate enum definitions - simplified
  */
 function formatEnumDefinition(enumName: string, enumObj: Record<string, string>): string {
   const enumEntries = Object.entries(enumObj)
@@ -96,35 +194,7 @@ ${enumEntries}
 }
 
 /**
- * Enum mappings - connects field names to actual imported enums
- */
-const FIELD_TO_ENUM_MAP = {
-  gradeLevelsSupported: { name: 'GradeLevels', enum: GradeLevels },
-  subjects: { name: 'Subjects', enum: Subjects },
-  specialGroups: { name: 'SpecialGroups', enum: SpecialGroups },
-  rolesNYCPS: { name: 'RolesNYCPS', enum: RolesNYCPS },
-  rolesTL: { name: 'RolesTL', enum: RolesTL },
-  adminLevel: { name: 'AdminLevels', enum: AdminLevels },
-  allowedPurpose: { name: 'AllowedPurposes', enum: AllowedPurposes },
-  modeDone: { name: 'ModeDone', enum: ModeDone }
-};
-
-/**
- * Generate template from schema
- */
-function createTemplate<T>(schema: z.ZodSchema<T>): Record<string, unknown> {
-  const fields = getSchemaFields(schema);
-  const template: Record<string, unknown> = {};
-  
-  fields.forEach(field => {
-    template[field] = getFieldDefault(field);
-  });
-  
-  return template;
-}
-
-/**
- * Generate enum definitions section for AI prompt
+ * Generate enum definitions for relevant fields
  */
 function generateEnumDefinitions(templateFields: string[]): string {
   const relevantEnums = templateFields
@@ -141,86 +211,254 @@ function generateEnumDefinitions(templateFields: string[]): string {
 }
 
 /**
- * Generate basic field instructions
+ * Field instructions - keep this as it's user-facing content
  */
 function generateFieldInstructions(entityName: string): string {
-  if (entityName === 'school') {
-    return `CRITICAL REQUIREMENTS:
-- schoolNumber: Official school identifier (REQUIRED - cannot be empty)
-- district: School district name (REQUIRED - cannot be empty)  
-- schoolName: Full school name (REQUIRED - cannot be empty)
+  switch (entityName) {
+    case 'school':
+      return `CRITICAL REQUIREMENTS:
+- schoolNumber: Official school identifier (REQUIRED)
+- district: School district name (REQUIRED)  
+- schoolName: Full school name (REQUIRED)
 - gradeLevelsSupported: Array of grade levels (can be empty array [])
-- staffList: Array of staff IDs (MUST be empty array [])
-- schedules: Array of schedule IDs (MUST be empty array [])
-- cycles: Array of cycle IDs (MUST be empty array [])
-- owners: Array of owner IDs (MUST be empty array [])
-- address: Street address (can be empty string "")
-- emoji: School emoji (can be empty string "")`;
-  } else if (entityName === 'staff') {
-    return `Instructions:
+- owners: Array of owner IDs (MUST be empty array [])`;
+    
+    case 'staff':
+      return `Instructions:
 - IMPORTANT: Return an ARRAY of staff objects, even for single person
 - staffName: Full name (required)
 - email: Email address (required)
-- gradeLevelsSupported: Array of grade level values from enum
-- subjects: Array of subject values from enum
-- rolesNYCPS: Array of role values from enum
 - Arrays like schools/notes/experience: Leave empty []`;
-  } else if (entityName === 'visits') {
-    return `CRITICAL REQUIREMENTS:
+    
+    case 'visits':
+      return `CRITICAL REQUIREMENTS:
 - IMPORTANT: Return an ARRAY of visit objects, even for single visit
-- date: Visit date in YYYY-MM-DD format (REQUIRED - cannot be empty)
-- school: School ID (REQUIRED - will be set automatically by system)
-- coach: Coach name or ID (REQUIRED - cannot be empty)
-- gradeLevelsSupported: Array of grade levels (REQUIRED - can be empty array [])
-- owners: Array of owner IDs (REQUIRED - can be empty array [])
-
-OPTIONAL FIELDS (can be empty strings or omitted):
-- cycleRef: Cycle reference
-- allowedPurpose: Purpose of visit (use enum values if provided)
-- modeDone: Mode of visit (use enum values if provided)
-- events: Array of event objects (can be empty array [])
-- sessionLinks: Array of session links (can be empty array [])
-
-Monday.com integration fields (optional):
-- mondayItemId, mondayBoardId, mondayItemName, mondayLastSyncedAt
-- siteAddress, endDate`;
+- date: Visit date in YYYY-MM-DD format (REQUIRED)
+- school: School ID (REQUIRED)
+- coach: Coach name or ID (REQUIRED)
+- gradeLevelsSupported: Array of grade levels (REQUIRED)
+- owners: Array of owner IDs (REQUIRED)`;
+    
+    case 'bellSchedules':
+      return `CRITICAL REQUIREMENTS:
+- IMPORTANT: Return an ARRAY of bell schedule objects, even for single schedule
+- school: Will be auto-filled (leave as empty string "")
+- bellScheduleType: MUST be exactly one of: "uniform", "weeklyCycle", "abcCycle" (REQUIRED)
+- classSchedule: Array of periods with dayType, startTime, endTime (REQUIRED)
+  * For uniform schedules: use "uniform" as dayType
+  * For weekly cycles: use "Monday", "Tuesday", etc.
+  * For ABC cycles: use "A", "B", "C"
+- assignedCycleDays: Array of date assignments (REQUIRED for non-uniform schedules)
+  * date: Use "YYYY-MM-DD" format (e.g., "2024-01-15")
+  * blockDayType: Must be "A", "B", or "C"
+- owners: Will be auto-filled (leave as empty array [])
+- Time format: Use "HH:MM" 24-hour format (e.g., "08:00", "15:30")`;
+    
+    case 'masterSchedule':
+      return `CRITICAL REQUIREMENTS:
+- IMPORTANT: Return a complete master schedule for the school
+- teacherSchedules: Array of teacher schedules
+  * teacherName: Full name of the teacher (REQUIRED)
+  * teacherEmail: Email address of the teacher (REQUIRED)
+  * scheduleByDay: Array of schedule items for each day of the week
+    - day: Day of the week (REQUIRED)
+    - periods: Array of periods for the day
+      - periodNum: Period number (REQUIRED)
+      - className: Class name (REQUIRED)
+      - room: Room number (REQUIRED)
+      - periodType: Period type (REQUIRED)
+- IMPORTANT: Every teacher schedule MUST use an email from the available staff list
+- IMPORTANT: Use EXACT email addresses from the staff list above
+- IMPORTANT: Match teacher names to the staff list (e.g., "Smith" should match "John Smith" with email "jsmith@school.edu")
+- IMPORTANT: If you reference a teacher not in the list above, that schedule will be rejected`;
+    
+    default:
+      return '';
   }
-  
-  return '';
 }
 
-// Generate templates
-export const SCHOOL_TEMPLATE = createTemplate(SchoolInputZodSchema);
-export const STAFF_TEMPLATE = createTemplate(NYCPSStaffInputZodSchema);
-export const VISIT_TEMPLATE = createVisitTemplate(); // Use manual template
+// =============================================================================
+// PUBLIC API - Simplified using transformers
+// =============================================================================
 
-// Get field lists for enum definitions
-const schoolFields = getSchemaFields(SchoolInputZodSchema);
-const staffFields = getSchemaFields(NYCPSStaffInputZodSchema);
-const visitFields = Object.keys(VISIT_TEMPLATE); // Use manual template fields
+/**
+ * Generate templates using transformer-based approach
+ */
+export const SCHOOL_TEMPLATE = createTemplateFromSchema(SchoolInputZodSchema);
+export const STAFF_TEMPLATE = createTemplateFromSchema(NYCPSStaffInputZodSchema);
+export const VISIT_TEMPLATE = createVisitTemplate();
+export const BELL_SCHEDULE_TEMPLATE = createBellScheduleTemplate();
+export const MASTER_SCHEDULE_TEMPLATE = createMasterScheduleTemplate();
 
+/**
+ * Validate template data using consolidated validateSafe approach
+ */
+export function validateTemplateData(
+  data: unknown, 
+  type: 'school' | 'staff' | 'visits' | 'bellSchedules' | 'masterSchedule'
+): { success: boolean; data?: unknown; error?: string } {
+  const schemas = {
+    school: SchoolInputZodSchema,
+    staff: NYCPSStaffInputZodSchema,
+    visits: VisitInputZodSchema,
+    bellSchedules: BellScheduleInputZodSchema,
+    masterSchedule: TeacherScheduleInputZodSchema
+  };
+  
+  const schema = schemas[type];
+  if (!schema) {
+    return { success: false, error: 'Unknown entity type' };
+  }
+  
+  try {
+    // Handle array types for staff, visits, and bell schedules
+    if (type === 'staff' || type === 'visits' || type === 'bellSchedules' || type === 'masterSchedule') {
+      const dataArray = Array.isArray(data) ? data : [data];
+      const validatedItems = dataArray
+        .map(item => validateSafe(schema, item))
+        .filter(Boolean);
+      
+      return validatedItems.length > 0
+        ? { success: true, data: validatedItems }
+        : { success: false, error: 'Validation failed' };
+    }
+    
+    // Handle single item for school
+    const result = validateSafe(schema, data);
+    return result 
+      ? { success: true, data: result }
+      : { success: false, error: 'Validation failed' };
+      
+  } catch (error) {
+    const errorMessage = handleClientError(error, 'validateTemplateData');
+    return { success: false, error: errorMessage };
+  }
+}
+
+/**
+ * Get field information using transformer patterns
+ */
+export function getFieldInfo(type: 'school' | 'staff' | 'visits' | 'bellSchedules' | 'masterSchedule') {
+  switch (type) {
+    case 'school':
+      return {
+        template: SCHOOL_TEMPLATE,
+        fields: extractSchemaFields(SchoolInputZodSchema),
+        schema: SchoolInputZodSchema
+      };
+    case 'staff':
+      return {
+        template: STAFF_TEMPLATE,
+        fields: extractSchemaFields(NYCPSStaffInputZodSchema),
+        schema: NYCPSStaffInputZodSchema
+      };
+    case 'visits':
+      return {
+        template: VISIT_TEMPLATE,
+        fields: Object.keys(VISIT_TEMPLATE),
+        schema: VisitInputZodSchema
+      };
+    case 'bellSchedules':
+      return {
+        template: BELL_SCHEDULE_TEMPLATE,
+        fields: Object.keys(BELL_SCHEDULE_TEMPLATE),
+        schema: BellScheduleInputZodSchema
+      };
+    case 'masterSchedule':
+      return {
+        template: MASTER_SCHEDULE_TEMPLATE,
+        fields: Object.keys(MASTER_SCHEDULE_TEMPLATE),
+        schema: TeacherScheduleInputZodSchema
+      };
+    default:
+      throw new Error('Unknown entity type');
+  }
+}
+
+/**
+ * Generate AI prompts using transformer-validated templates
+ */
 export const AI_PROMPTS = {
-  school: `Fill this JSON schema with school information. ALL fields are required, even if empty:
+  school: (() => {
+    const info = getFieldInfo('school');
+    return `Fill this JSON schema with school information:
 
-${JSON.stringify(SCHOOL_TEMPLATE, null, 2)}
+${JSON.stringify(info.template, null, 2)}
 
 ${generateFieldInstructions('school')}
 
-Return VALID JSON with ALL fields present, no explanation text.${generateEnumDefinitions(schoolFields)}`,
+Return VALID JSON with ALL fields present.${generateEnumDefinitions(info.fields)}`;
+  })(),
 
-  staff: `Fill this JSON schema with staff information:
+  staff: (() => {
+    const info = getFieldInfo('staff');
+    return `Fill this JSON schema with staff information:
 
-${JSON.stringify(STAFF_TEMPLATE, null, 2)}
+${JSON.stringify(info.template, null, 2)}
 
 ${generateFieldInstructions('staff')}
 
-Return only valid JSON, no explanation text${generateEnumDefinitions(staffFields)}`,
+Return only valid JSON array.${generateEnumDefinitions(info.fields)}`;
+  })(),
 
-  visits: `Fill this JSON schema with visit information:
+  visits: (() => {
+    const info = getFieldInfo('visits');
+    return `Fill this JSON schema with visit information:
 
-${JSON.stringify(VISIT_TEMPLATE, null, 2)}
+${JSON.stringify(info.template, null, 2)}
 
 ${generateFieldInstructions('visits')}
 
-Return only valid JSON, no explanation text${generateEnumDefinitions(visitFields)}`
-}; 
+Return only valid JSON array.${generateEnumDefinitions(info.fields)}`;
+  })(),
+
+  bellSchedules: (() => {
+    const info = getFieldInfo('bellSchedules');
+    return `Fill this JSON schema with bell schedule information:
+
+${JSON.stringify(info.template, null, 2)}
+
+${generateFieldInstructions('bellSchedules')}
+
+Return only valid JSON array.${generateEnumDefinitions(info.fields)}`;
+  })(),
+
+  masterSchedule: (() => {
+    const info = getFieldInfo('masterSchedule');
+    return `Fill this JSON schema with master schedule information:
+
+${JSON.stringify(info.template, null, 2)}
+
+${generateFieldInstructions('masterSchedule')}
+
+Return only valid JSON array.${generateEnumDefinitions(info.fields)}`;
+  })()
+};
+
+/**
+ * Create dynamic master schedule prompt that includes school staff
+ */
+export function createMasterSchedulePrompt(schoolStaff: Array<{ staffName: string; email: string }>): string {
+  const staffList = schoolStaff.map(staff => 
+    `- ${staff.staffName} (${staff.email})`
+  ).join('\n');
+
+  const template = createMasterScheduleTemplate();
+
+  return `Create a complete master schedule for this school using ONLY the staff members listed below.
+
+AVAILABLE STAFF MEMBERS AT THIS SCHOOL:
+${staffList}
+
+${JSON.stringify(template, null, 2)}
+
+${generateFieldInstructions('masterSchedule')}
+
+IMPORTANT MATCHING RULES:
+- Use EXACT email addresses from the staff list above
+- Match teacher names to the staff list (e.g., "Smith" should match "John Smith" with email "jsmith@school.edu")
+- Every teacher schedule MUST use an email from the available staff list
+- If you reference a teacher not in the list above, that schedule will be rejected
+
+Return VALID JSON with teacher schedules ONLY for staff members listed above.`;
+} 

@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 import { cn } from '@ui/utils/formatters';
-import { Text } from '@/components/core/typography/Text'
-import { Card } from '@/components/composed/cards/Card'
-import { Button } from '@/components/core/Button'
-import { Dialog } from '@/components/composed/dialogs/Dialog'
-import { RigidResourceForm as GenericResourceForm, Field } from '@/components/composed/forms/RigidResourceForm'
+import { Text } from '@core-components/typography/Text'
+import { Card } from '@composed-components/cards/Card'
+import { Button } from '@core-components/Button'
+import { Dialog } from '@composed-components/dialogs/Dialog'
+import { RigidResourceForm } from '@composed-components/forms/RigidResourceForm'
+import type { Field } from '@ui-types/form'
 import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'
-import { NYCPSStaffFieldConfig } from '@/lib/ui/forms/fieldConfig/core/staff'
-import { TeachingLabStaffFieldConfig } from '@/lib/ui/forms/fieldConfig/core/teaching-lab-staff'
+import { NYCPSStaffFieldConfig, TeachingLabStaffFieldConfig } from '@ui-forms/configurations'
 
 type StaffMember = NYCPSStaff | TeachingLabStaff
 type StaffType = 'nycps' | 'tl'
@@ -148,9 +148,9 @@ export function StaffListItem({
       >
         {isEditMode ? (
           <div>
-            <GenericResourceForm
+            <RigidResourceForm
               title=""
-              fields={fieldConfig as unknown as Field<Record<string, unknown>>[]}
+              fields={fieldConfig as Field[]}
               defaultValues={staff as Record<string, unknown>}
               onSubmit={handleSubmit}
               mode="edit"

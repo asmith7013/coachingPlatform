@@ -7,7 +7,7 @@ import { Spinner } from '@/components/core/feedback/Spinner';
 import { RigidResourceForm as GenericResourceForm } from '@/components/composed/forms/RigidResourceForm';
 import { createTeachingLabStaff } from '@/app/actions/staff';
 import { TeachingLabStaffInput } from '@domain-types/staff';
-import { TeachingLabStaffFieldConfig } from '@/lib/ui/forms/fieldConfig/core/teaching-lab-staff';
+import { TeachingLabStaffFieldConfig } from '@ui-forms/configurations';
 import { MondayUser } from '@lib/integrations/monday/types/api';
 
 // Extended MondayUser interface for additional properties

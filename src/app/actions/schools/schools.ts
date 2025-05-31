@@ -11,6 +11,7 @@ import { uploadFileWithProgress } from "@server/file-handling/file-upload";
 import { bulkUploadToDB } from "@server/crud/bulk-operations";
 import { SchoolInput } from "@domain-types/school";
 import { QueryParams } from "@core-types/query";
+import { parseSchoolSlug } from '@transformers/utils/school-slug-utils';
 
 // Create standard CRUD actions for Schools
 const schoolActions = createCrudActions({
@@ -43,6 +44,33 @@ export async function deleteSchool(id: string) {
 
 export async function fetchSchoolById(id: string) {
   return withDbConnection(() => schoolActions.fetchById(id));
+}
+
+/**
+ * Convert school slug to ObjectID for efficient database operations
+ * Follows our schema-driven approach with proper validation
+ */
+export async function getSchoolIdFromSlug(slug: string): Promise<string | null> {
+  "use server";
+  
+  const slugData = parseSchoolSlug(slug);
+  if (!slugData) return null;
+  
+  return withDbConnection(async () => {
+    try {
+      // Use case-insensitive regex matching for district and school number
+      const school = await SchoolModel.findOne({
+        district: new RegExp(`^${slugData.district}$`, 'i'),
+        schoolNumber: new RegExp(`^${slugData.schoolNumber}$`, 'i')
+      }).select('_id');
+      
+      return school?._id?.toString() || null;
+    } catch (error) {
+      console.error('Error looking up school ID from slug:', error);
+      handleServerError(error, 'getSchoolIdFromSlug');
+      return null;
+    }
+  });
 }
 
 // File upload actions

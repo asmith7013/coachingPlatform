@@ -142,7 +142,7 @@ export default function SchoolList() {
           mode="create"
           title="Add School"
           onSubmit={createSchool}
-          fields={SchoolFieldConfig as Field<SchoolInput>[]}
+          fields={SchoolFieldConfig as Field[]}
         />
         <BulkUploadForm
           title="Bulk Upload Schools"

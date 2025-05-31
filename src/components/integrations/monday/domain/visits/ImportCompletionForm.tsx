@@ -4,10 +4,10 @@ import React, { useState, useMemo } from 'react';
 import { Card } from '@components/composed/cards/Card';
 import { Alert } from '@components/core/feedback/Alert';
 import { Button } from '@components/core/Button';
-import { ResourceForm, type Field } from '@components/composed/forms';
-import { VisitFieldConfig } from '@ui-forms/fieldConfig/visits/visit';
+import { ResourceForm } from '@components/composed/forms';
+import { VisitFieldConfig } from '@ui-forms/configurations';
 import type { VisitInput } from '@zod-schema/visits/visit';
-
+import type { Field } from '@ui-types/form';
 /**
  * Props for the ImportCompletionForm component
  */
@@ -115,7 +115,7 @@ export function ImportCompletionForm({
       <ResourceForm
         title="Complete Visit Information"
         description="The following fields need to be completed before this visit can be imported."
-        fields={fields as Field<VisitInput>[]}
+        fields={fields as Field[]}
         initialValues={formData}
         onSubmit={(data: VisitInput) => onSubmit(data)}
         onCancel={onCancel}

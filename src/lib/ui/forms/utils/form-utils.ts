@@ -1,4 +1,4 @@
-import { FieldOverride, FieldOverrideMap } from '@ui-types/form';
+import { FieldOverride, FieldOverrideMap } from "@ui-types/form";
 
 /**
  * Extracts and validates the props needed for a ReferenceSelect component from a field override
@@ -29,14 +29,14 @@ export function getReferenceSelectProps(override: FieldOverride) {
 /**
  * Gets reference select props from a field override map for a specific field
  */
-export function getReferenceSelectPropsForField<T>(
-  overrides: FieldOverrideMap<T>, 
-  fieldName: keyof T
+export function getReferenceSelectPropsForField(
+  overrides: FieldOverrideMap, 
+  fieldName: string
 ) {
   const override = overrides[fieldName];
   
   if (!override) {
-    throw new Error(`No override found for field ${String(fieldName)}`);
+    throw new Error(`No override found for field ${fieldName}`);
   }
   
   return getReferenceSelectProps(override);

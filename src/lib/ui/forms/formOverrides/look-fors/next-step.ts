@@ -1,7 +1,7 @@
 import { FieldOverrideMap } from '@ui-types/form';
 import { NextStepInput } from '@zod-schema/look-fors/next-step';
 
-export const NextStepOverrides: FieldOverrideMap<NextStepInput> = {
+export const NextStepOverrides: FieldOverrideMap = {
   // title: {
   //   type: 'text',
   //   label: 'Next Step Title',

@@ -6,7 +6,11 @@
  */
 
 import { tv, type VariantProps } from 'tailwind-variants';
-import { booleanVariant } from '../utils/variant-utils';
+
+const booleanVariant = (className: string) => ({
+  true: className,
+  false: '',
+})
 
 // Component state variants
 const disabledVariant = tv({

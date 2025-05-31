@@ -64,11 +64,3 @@ export function createQueryClient(): QueryClient {
 
 // Global instance for use outside of React components
 export const queryClient = createQueryClient();
-
-/**
- * Get the global QueryClient instance
- * @deprecated Import queryClient directly instead
- */
-export function getGlobalQueryClient(): QueryClient {
-  return queryClient;
-}

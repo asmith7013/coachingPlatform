@@ -17,8 +17,7 @@ import { cn } from "@ui/utils/formatters";
 import ReferenceSelect from "@/components/core/fields/ReferenceSelect";
 
 // Import field renderer
-import { renderFormField } from "@/lib/ui/forms/field-renderer";
-import type { FieldOverrideMap } from "@/lib/types/ui/form";
+import type { FieldOverrideMap, Field } from "@ui-types/form";
 
 /////////////////////////////////////////////////////////////
 // LEGACY CODE - PRESERVED FOR REFERENCE
@@ -26,28 +25,12 @@ import type { FieldOverrideMap } from "@/lib/types/ui/form";
 // Please use ResourceForm (exported at the bottom) instead
 /////////////////////////////////////////////////////////////
 
-export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 'switch' | 'checkbox' | 'textarea' | 'reference' | 'multi-select';
 export type Mode = "create" | "edit";
 
-export interface Field<T extends Record<string, unknown>> {
-  key: keyof T;
-  label: string;
-  type: FieldType;
-  required?: boolean;
-  options?: { value: string; label: string }[];
-  defaultValue?: T[keyof T];
-  editable?: boolean;
-  fetcher?: (input: string) => Promise<{ value: string; label: string }[]>;
-  multiple?: boolean;
-  url?: string;
-  helpText?: string;
-  placeholder?: string;
-  error?: string;
-}
-
+// Use the unified Field type from @ui-types/form instead of defining our own
 interface GenericResourceFormProps<T extends Record<string, unknown>> {
   title: string;
-  fields: Field<T>[];
+  fields: Field[];
   onSubmit: (data: T) => void;
   submitLabel?: string;
   defaultValues?: T;
@@ -155,7 +138,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
     handleChange(key, value);
   }, [handleChange]);
 
-  const isFieldEditable = useCallback((field: Field<T>): boolean => {
+  const isFieldEditable = useCallback((field: Field): boolean => {
     if (mode === "create") return true;
     return field.editable !== false; // If not specified, default to true
   }, [mode]);
@@ -164,7 +147,7 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
 
   // Optimize renderField to use formDataRef instead of formData directly
   // This prevents it from being recreated when formData changes
-  const renderField = useCallback((field: Field<T>) => {
+  const renderField = useCallback((field: Field) => {
     // Add diagnostic logging
     // console.log(`🔍 renderField for ${String(field.key)} in ${formId.current}`);
     
@@ -193,15 +176,8 @@ export function GenericResourceForm<T extends Record<string, unknown>>({
               helpText={field.helpText}
             />
           );
-        } else if (field.fetcher) {
-          console.warn(`Fetcher-based ReferenceSelect is deprecated. Please use URL-based references.`);
-          return (
-            <div className="p-3 text-sm border rounded-md bg-yellow-50 border-yellow-200">
-              <p className="font-medium text-yellow-700">Field needs migration</p>
-              <p className="text-yellow-600">Please update to use URL-based reference field.</p>
-            </div>
-          );
         } else {
+          // Legacy fetcher-based code removed - not supported in new Field type
           console.error(`Reference field ${String(field.key)} missing url`);
           return <div>Error: Missing url for reference field</div>;
         }
@@ -347,14 +323,14 @@ export const MemoizedGenericResourceForm = memo(GenericResourceForm) as typeof G
 export interface ResourceFormProps<T extends Record<string, unknown>> {
   title: string;
   description?: string;
-  fields: Field<T>[];
+  fields: Field[];
   onSubmit: (data: T) => void;
   submitLabel?: string;
   initialValues?: Partial<T>;
   mode?: Mode;
   className?: string;
   // New props for flexibility
-  overrides?: FieldOverrideMap<T>;
+  overrides?: FieldOverrideMap;
   onChange?: (data: T) => void;
   onCancel?: () => void;
   showCancelButton?: boolean;
@@ -362,7 +338,7 @@ export interface ResourceFormProps<T extends Record<string, unknown>> {
   disabled?: boolean;
   loading?: boolean;
   error?: string;
-  fieldOverrides?: FieldOverrideMap<T>; // For backward compatibility
+  fieldOverrides?: FieldOverrideMap; // For backward compatibility
 }
 
 export function ResourceForm<T extends Record<string, unknown>>({
@@ -434,7 +410,7 @@ export function ResourceForm<T extends Record<string, unknown>>({
 
   // Apply field overrides if provided
   const fieldsWithOverrides = fields.map(field => {
-    const fieldKey = field.key as keyof T;
+    const fieldKey = String(field.key);
     const override = fieldOverrideMap[fieldKey];
     
     if (override) {
@@ -473,12 +449,15 @@ export function ResourceForm<T extends Record<string, unknown>>({
         <div className={styles.fieldsContainer()}>
           {fieldsWithOverrides.map((field) => (
             <div key={String(field.key)} className={styles.fieldWrapper()}>
-              {renderFormField({
-                field,
-                value: formData[field.key as keyof T],
-                onChange: (value: unknown) => handleChange(field.key as keyof T, value),
-                disabled: disabled || loading || (mode === "edit" && field.editable === false),
-              })}
+              <div>
+                <label>{field.label}</label>
+                <input 
+                  type={field.type === 'text' ? 'text' : field.type}
+                  value={String(formData[field.key as keyof T] || '')}
+                  onChange={(e) => handleChange(field.key as keyof T, e.target.value)}
+                  disabled={disabled || loading || (mode === "edit" && field.editable === false)}
+                />
+              </div>
             </div>
           ))}
         </div>

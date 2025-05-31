@@ -5,45 +5,29 @@ import { Button } from "@/components/core/Button";
 import { Card } from "@/components/composed/cards/Card";
 import { Heading } from "@/components/core/typography/Heading";
 import { Text } from "@/components/core/typography/Text";
-import { Input } from "@/components/core/fields/Input";
-import { Select } from "@/components/core/fields/Select";
-import { Switch } from '@/components/core/fields/Switch';
-import { Checkbox } from '@/components/core/fields/Checkbox';
-import { Textarea } from '@/components/core/fields/Textarea';
 import { tv } from 'tailwind-variants';
 import { shadows, textSize, textColors } from "@/lib/tokens/tokens";
 import { stack } from "@/lib/tokens/tokens";
 import { cn } from "@ui/utils/formatters";
-import ReferenceSelect from "@/components/core/fields/ReferenceSelect";
 
+// Import unified field renderer
+import { renderField } from '@ui-forms/core/field-renderer';
+import type { Field } from '@ui-types/form';
 
-export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 'switch' | 'checkbox' | 'textarea' | 'reference' | 'multi-select';
+// Export Field type for backward compatibility
+// export type { Field };
+
 export type Mode = "create" | "edit";
 
-export interface Field<T extends Record<string, unknown>> {
-  key: keyof T;
-  label: string;
-  type: FieldType;
-  required?: boolean;
-  options?: { value: string; label: string }[];
-  defaultValue?: T[keyof T];
-  editable?: boolean;
-  fetcher?: (input: string) => Promise<{ value: string; label: string }[]>;
-  multiple?: boolean;
-  url?: string;
-  helpText?: string;
-  error?: string;
-  placeholder?: string;
-}
-
-interface GenericResourceFormProps<T extends Record<string, unknown>> {
+interface RigidResourceFormProps<T extends Record<string, unknown>> {
   title: string;
-  fields: Field<T>[];
+  fields: Field[];
   onSubmit: (data: T) => void;
   submitLabel?: string;
   defaultValues?: T;
   mode?: Mode;
   className?: string;
+  errors?: Record<keyof T, string>;
 }
 
 // 🎨 ResourceForm style variants
@@ -83,15 +67,13 @@ export function RigidResourceForm<T extends Record<string, unknown>>({
   defaultValues,
   mode = "create",
   className,
-}: GenericResourceFormProps<T>) {
-  // Add performance monitoring
-
-  
+  errors = {} as Record<keyof T, string>,
+}: RigidResourceFormProps<T>) {
   // Store formData in a ref to avoid recreation of renderField on every state change
   const [formData, setFormData] = useState<T>(
     defaultValues || fields.reduce((acc, field) => ({
       ...acc,
-      [field.key]: field.type === 'select' ? (field.defaultValue ?? []) : (field.defaultValue ?? ''),
+      [field.key]: field.type === 'select' || field.type === 'multi-select' ? (field.defaultValue ?? []) : (field.defaultValue ?? ''),
     }), {} as T)
   );
   
@@ -104,8 +86,6 @@ export function RigidResourceForm<T extends Record<string, unknown>>({
 
   const label = submitLabel ?? (mode === "edit" ? "Save" : "Add");
   const styles = resourceForm({ mode });
-  
-
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -119,157 +99,27 @@ export function RigidResourceForm<T extends Record<string, unknown>>({
     }));
   }, []);
 
-  const handleInputChange = useCallback((
-    key: keyof T,
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const input = e.target;
-    let value: T[keyof T];
-
-    if (input instanceof HTMLInputElement) {
-      if (input.type === 'number') {
-        value = Number(input.value) as T[keyof T];
-      } else if (input.type === 'checkbox') {
-        value = input.checked as T[keyof T];
-      } else {
-        value = input.value as T[keyof T];
-      }
-    } else {
-      value = input.value as T[keyof T];
-    }
-
-    handleChange(key, value);
-  }, [handleChange]);
-
-  const isFieldEditable = useCallback((field: Field<T>): boolean => {
+  const isFieldEditable = useCallback((field: Field): boolean => {
     if (mode === "create") return true;
     return field.editable !== false; // If not specified, default to true
   }, [mode]);
-  
 
+  // Use unified field renderer
+  const fieldRenderer = useCallback((field: Field) => {
+    return renderField({
+      field,
+      value: formDataRef.current[field.key],
+      onChange: (value) => handleChange(field.key, value as T[keyof T]),
+      disabled: !isFieldEditable(field),
+      error: errors[field.key]
+    });
+  }, [handleChange, isFieldEditable, errors]);
 
-  // Optimize renderField to use formDataRef instead of formData directly
-  // This prevents it from being recreated when formData changes
-  const renderField = useCallback((field: Field<T>) => {
-    // Add diagnostic logging
-    // console.log(`🔍 renderField for ${String(field.key)} in ${formId.current}`);
-    
-    // Determine if the field should be disabled
-    const isDisabled = !isFieldEditable(field);
-    
-    // Always access latest formData via ref
-    const currentFormData = formDataRef.current;
-
-    switch (field.type) {
-      case 'reference': {
-        const value = currentFormData[field.key];
-        const multiple = field.multiple !== false;
-        
-        if (field.url) {
-          return (
-            <ReferenceSelect
-              label={field.label}
-              value={value as string[] | string}
-              onChange={(newValue) => {
-                handleChange(field.key, newValue as T[keyof T]);
-              }}
-              url={field.url}
-              multiple={multiple}
-              disabled={isDisabled}
-              helpText={field.helpText}
-            />
-          );
-        } else if (field.fetcher) {
-          console.warn(`Fetcher-based ReferenceSelect is deprecated. Please use URL-based references.`);
-          return (
-            <div className="p-3 text-sm border rounded-md bg-yellow-50 border-yellow-200">
-              <p className="font-medium text-yellow-700">Field needs migration</p>
-              <p className="text-yellow-600">Please update to use URL-based reference field.</p>
-            </div>
-          );
-        } else {
-          console.error(`Reference field ${String(field.key)} missing url`);
-          return <div>Error: Missing url for reference field</div>;
-        }
-      }
-      case 'select': {
-        const value = currentFormData[field.key];
-        const isMultiSelect = Array.isArray(value);
-        
-        if (isMultiSelect) {
-          return (
-            <Select
-              label={field.label}
-              value={value as string[]}
-              onChange={(newValue: string[]) => {
-                handleChange(field.key, newValue as T[keyof T]);
-              }}
-              options={field.options || []}
-              multiple={true}
-              disabled={isDisabled}
-            />
-          );
-        } else {
-          return (
-            <Select
-              label={field.label}
-              value={value as string}
-              onChange={(newValue: string) => {
-                handleChange(field.key, newValue as T[keyof T]);
-              }}
-              options={field.options || []}
-              multiple={false}
-              disabled={isDisabled}
-            />
-          );
-        }
-      }
-      case 'switch':
-        return (
-          <Switch
-            label={field.label}
-            checked={currentFormData[field.key] as boolean}
-            onChange={(checked: boolean) => {
-              handleChange(field.key, checked as T[keyof T]);
-            }}
-            disabled={isDisabled}
-          />
-        );
-      case 'checkbox':
-        return (
-          <Checkbox
-            label={field.label}
-            checked={currentFormData[field.key] as boolean}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              handleChange(field.key, e.target.checked as T[keyof T]);
-            }}
-            disabled={isDisabled}
-          />
-        );
-      case 'textarea':
-        return (
-          <Textarea
-            label={field.label}
-            value={currentFormData[field.key] as string}
-            onChange={(e) => handleInputChange(field.key, e)}
-            required={field.required}
-            disabled={isDisabled}
-          />
-        );
-      default:
-        return (
-          <Input
-            type={field.type}
-            label={field.label}
-            value={currentFormData[field.key] as string}
-            onChange={(e) => handleInputChange(field.key, e)}
-            required={field.required}
-            disabled={isDisabled}
-          />
-        );
-    }
-  // Remove formData from dependencies list, use only stable references
-  }, [handleChange, handleInputChange, isFieldEditable]);
+  // Filter fields that should be rendered
+  const fieldsToRender = fields.filter(field => {
+    if (mode === "create") return true;
+    return field.editable !== false;
+  });
 
   return (
     <Card
@@ -291,9 +141,9 @@ export function RigidResourceForm<T extends Record<string, unknown>>({
           </Text>
         </div>
         <div className={styles.fieldsContainer()}>
-          {fields.map((field) => (
+          {fieldsToRender.map((field) => (
             <div key={String(field.key)} className={styles.fieldWrapper()}>
-              {renderField(field)}
+              {fieldRenderer(field)}
             </div>
           ))}
         </div>

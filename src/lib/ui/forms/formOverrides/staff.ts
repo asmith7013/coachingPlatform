@@ -1,7 +1,7 @@
 import { FieldOverrideMap } from '@ui-types/form';
 import { NYCPSStaffInput } from '@zod-schema/core/staff';
 
-export const NYCPSStaffOverrides: FieldOverrideMap<NYCPSStaffInput> = {
+export const NYCPSStaffOverrides: FieldOverrideMap = {
   schools: {
     type: 'reference',
     label: 'Schools',

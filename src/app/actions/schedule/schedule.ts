@@ -22,7 +22,7 @@ export type BellScheduleInput = z.infer<typeof BellScheduleInputZodSchema>;
 // ===== BELL SCHEDULE ACTIONS =====
 
 // Create standard CRUD actions for Bell Schedules
-export const bellScheduleActions = createCrudActions({
+const bellScheduleActions = createCrudActions({
   model: BellScheduleModel,
   schema: BellScheduleZodSchema as ZodType<BellSchedule>,
   inputSchema: BellScheduleInputZodSchema as ZodType<BellScheduleInput>,

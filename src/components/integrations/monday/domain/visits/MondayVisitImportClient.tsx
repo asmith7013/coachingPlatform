@@ -4,9 +4,10 @@ import { useState, useMemo } from 'react';
 import { Button } from '@components/core/Button';
 import { Alert } from '@components/core/feedback/Alert';
 import { Spinner } from '@components/core/feedback/Spinner';
-import { ResourceForm, type Field } from '@components/composed/forms';
-import { VisitFieldConfig } from '@ui-forms/fieldConfig/visits/visit';
+import { ResourceForm } from '@components/composed/forms';
+import { VisitFieldConfig } from '@ui-forms/configurations';
 import type { VisitInput } from '@zod-schema/visits/visit';
+import type { Field } from '@ui-types/form';
 
 /**
  * Form for completing missing information for a Monday.com visit import
@@ -38,7 +39,7 @@ export function ImportCompletionForm({
     
     // Filter fields to only include missing ones
     return VisitFieldConfig
-      .filter(field => missingFields.includes(field.key))
+      .filter(field => missingFields.includes(field.key as string))
       .map(field => {
         // Setup logic for reference fields
         if (field.type === 'select' || field.type === 'reference') {
@@ -112,7 +113,7 @@ export function ImportCompletionForm({
       <ResourceForm
         title="Complete Visit Information"
         description="Fill in the missing fields to complete the import"
-        fields={fields as Field<VisitInput>[]}
+        fields={fields as Field[]}
         initialValues={formData}
         onSubmit={(data: VisitInput) => onSubmit(data)}
         onCancel={onCancel}

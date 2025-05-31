@@ -31,6 +31,14 @@
         // Core component
         "@app/*": ["./src/app/*"],
         "@components/*": ["./src/components/*"],
+        "@core-components/*": ["./src/components/core/*"],
+        "@core-components": ["./src/components/core"],
+        "@composed-components/*": ["./src/components/composed/*"],
+        "@composed-components": ["./src/components/composed"],
+        "@domain-components/*": ["./src/components/domain/*"],
+        "@domain-components": ["./src/components/domain"],
+        "@error-components/*": ["./src/components/error/*"],
+        "@error-components": ["./src/components/error"],
 
         // Hook paths
         "@hooks/*": ["./src/hooks/*"],

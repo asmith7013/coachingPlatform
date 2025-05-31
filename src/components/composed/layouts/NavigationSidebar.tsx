@@ -5,12 +5,18 @@ import {
   DialogBackdrop,
   DialogPanel,
   TransitionChild,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
 } from '@headlessui/react'
 import { cn } from '@ui/utils/formatters'
 import { tv } from 'tailwind-variants'
 // import { textColors, textSize, paddingX, paddingY, radii } from '@ui-tokens/tokens'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ChevronDownIcon, UserCircleIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
+import { useAuthenticatedUser, useSignOut } from '@/hooks/auth/useAuthenticatedUser'
 
 // Define the navigation item type
 export interface NavigationItem {
@@ -36,10 +42,6 @@ export interface TeamItem {
 interface NavigationSidebarProps {
   navigation: NavigationItem[]
   teams?: TeamItem[]
-  logo?: {
-    src: string
-    alt: string
-  }
   showTeams?: boolean
   className?: string
   sidebarOpen: boolean  // ✅ Make these controlled from parent
@@ -57,12 +59,28 @@ const sidebar = tv({
     mobileCloseIcon: 'size-6 text-white',
     
     // Desktop sidebar
-    desktopSidebar: 'hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col',
+    desktopSidebar: 'hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-52 lg:flex-col',
     
     // Shared sidebar content
     sidebarContent: 'flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4',
-    sidebarLogo: 'flex h-16 shrink-0 items-center',
-    logoImage: 'h-8 w-8 object-contain',
+    
+    // User profile section (replaces logo)
+    userProfileSection: 'flex h-16 shrink-0 items-center border-b border-gray-200 pb-4',
+    userMenuButton: 'flex w-full items-center rounded-md p-2 text-left hover:bg-gray-50',
+    userAvatar: 'h-10 w-10 rounded-full bg-gray-50 shrink-0',
+    userInfo: 'ml-3 min-w-0 flex-1',
+    userName: 'text-sm font-semibold text-gray-900 truncate',
+    userEmail: 'text-xs text-gray-500 truncate',
+    userChevron: 'ml-2 h-4 w-4 text-gray-400 shrink-0',
+    userMenuItems: [
+      'absolute left-4 right-4 top-20 z-10 rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5',
+      'transition focus:outline-none',
+      'data-closed:scale-95 data-closed:transform data-closed:opacity-0',
+      'data-enter:duration-100 data-enter:ease-out',
+      'data-leave:duration-75 data-leave:ease-in'
+    ],
+    userMenuItem: 'flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900',
+    userMenuIcon: 'mr-3 h-4 w-4',
     
     // Navigation
     nav: 'flex flex-1 flex-col',
@@ -94,16 +112,70 @@ const sidebar = tv({
 export function NavigationSidebar({
   navigation,
   teams = [],
-  logo = {
-    src: '/logo2.png',
-    alt: 'Your Company'
-  },
   showTeams = true,
   className,
   sidebarOpen,
   setSidebarOpen
 }: NavigationSidebarProps) {
+  const { fullName, email, imageUrl, isSignedIn } = useAuthenticatedUser();
+  const signOut = useSignOut();
   const styles = sidebar();
+
+  // Function to render user profile section
+  const renderUserProfile = () => {
+    if (!isSignedIn) return null;
+
+    return (
+      <div className={styles.userProfileSection()}>
+        <Menu as="div" className="relative w-full">
+          <MenuButton className={styles.userMenuButton()}>
+            <Image
+              className={styles.userAvatar()}
+              src={imageUrl || '/default-avatar.png'}
+              alt={fullName || 'User'}
+              width={40}
+              height={40}
+              unoptimized
+            />
+            <div className={styles.userInfo()}>
+              <div className={styles.userName()}>
+                {fullName || 'User'}
+              </div>
+              <div className={styles.userEmail()}>
+                {email}
+              </div>
+            </div>
+            <ChevronDownIcon className={styles.userChevron()} aria-hidden="true" />
+          </MenuButton>
+          
+          <MenuItems transition className={styles.userMenuItems()}>
+            <MenuItem>
+              <a href="#" className={styles.userMenuItem()}>
+                <UserCircleIcon className={styles.userMenuIcon()} aria-hidden="true" />
+                Your Profile
+              </a>
+            </MenuItem>
+            <MenuItem>
+              <a href="#" className={styles.userMenuItem()}>
+                <Cog6ToothIcon className={styles.userMenuIcon()} aria-hidden="true" />
+                Settings
+              </a>
+            </MenuItem>
+            <div className="border-t border-gray-200 my-1" />
+            <MenuItem>
+              <button
+                onClick={signOut}
+                className={cn(styles.userMenuItem(), 'w-full text-left')}
+              >
+                <ArrowRightOnRectangleIcon className={styles.userMenuIcon()} aria-hidden="true" />
+                Sign out
+              </button>
+            </MenuItem>
+          </MenuItems>
+        </Menu>
+      </div>
+    );
+  };
 
   // Function to render navigation items
   const renderNavItems = (items: NavigationItem[], depth = 0) => (
@@ -188,16 +260,9 @@ export function NavigationSidebar({
   // Function to render sidebar content (used in both mobile and desktop)
   const renderSidebarContent = () => (
     <div className={styles.sidebarContent()}>
-      <div className={styles.sidebarLogo()}>
-        <Image
-          alt={logo.alt}
-          src={logo.src}
-          className={styles.logoImage()}
-          width={32}
-          height={32}
-          unoptimized // ✅ Add this for external SVGs
-        />
-      </div>
+      {/* Replace logo section with user profile */}
+      {renderUserProfile()}
+      
       <nav className={styles.nav()}>
         <ul role="list" className={styles.navList()}>
           <li>

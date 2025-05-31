@@ -1,7 +1,7 @@
 import { createEntityHooks } from '@query/client/factories/entity-factory';
 import { VisitZodSchema, VisitInputZodSchema, Visit } from '@zod-schema/visits/visit';
 
-import { fetchVisits, createVisit } from '@/app/actions/visits/visits';
+import { fetchVisits, createVisit } from '@actions/visits/visits';
 import { WithDateObjects, DocumentInput } from '@core-types/document';
 import { wrapServerActions } from '@transformers/factories/server-action-factory';
 import { QueryParams } from '@core-types/query';

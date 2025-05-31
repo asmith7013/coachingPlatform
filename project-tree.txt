@@ -175,9 +175,8 @@
 │   │   │   │   └── page.tsx
 │   │   │   ├── schoolList
 │   │   │   │   └── [schoolId]
-│   │   │   │       └── page.tsx
 │   │   │   ├── schools
-│   │   │   │   ├── [id]
+│   │   │   │   ├── [slug]
 │   │   │   │   │   ├── client.tsx
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
@@ -344,7 +343,6 @@
 │   │   │   │   └── index.ts
 │   │   │   ├── layouts
 │   │   │   │   ├── AppShell.tsx
-│   │   │   │   ├── AppShellLegacy.tsx
 │   │   │   │   ├── DashboardLayout.tsx
 │   │   │   │   ├── DashboardPage.tsx
 │   │   │   │   ├── NavigationSidebar.tsx
@@ -353,8 +351,6 @@
 │   │   │   │   ├── ResourceHeader.tsx
 │   │   │   │   ├── Topbar.tsx
 │   │   │   │   └── index.ts
-│   │   │   ├── navigation
-│   │   │   │   └── Breadcrumbs.tsx
 │   │   │   ├── tables
 │   │   │   │   ├── ScheduleTable.tsx
 │   │   │   │   ├── Table.tsx
@@ -411,9 +407,12 @@
 │   │   │   │   └── index.ts
 │   │   │   ├── index.ts
 │   │   │   ├── navigation
-│   │   │   │   └── Pagination.tsx
+│   │   │   │   ├── Breadcrumbs.tsx
+│   │   │   │   ├── Pagination.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── query
-│   │   │   │   └── HydrationBoundary.tsx
+│   │   │   │   ├── HydrationBoundary.tsx
+│   │   │   │   └── index.ts
 │   │   │   └── typography
 │   │   │       ├── Heading.tsx
 │   │   │       ├── Text.tsx
@@ -544,8 +543,7 @@
 │   │   │   ├── useUserStaff.ts
 │   │   │   └── useVisits.ts
 │   │   ├── error
-│   │   │   ├── useErrorBoundary.ts
-│   │   │   └── useErrorHandledMutation.ts
+│   │   │   └── useErrorBoundary.ts
 │   │   ├── index.ts
 │   │   ├── integrations
 │   │   │   └── monday
@@ -819,20 +817,26 @@
 │   │   │   ├── factories
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── reference-factory.ts
-│   │   │   │   ├── response-factory.ts
 │   │   │   │   └── server-action-factory.ts
-│   │   │   ├── helpers
 │   │   │   ├── index.ts
 │   │   │   ├── pagination
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── pagination-utils.ts
 │   │   │   │   └── unified-pagination.ts
+│   │   │   ├── ui
+│   │   │   │   ├── data-preview.ts
+│   │   │   │   ├── form-field-inference.ts
+│   │   │   │   ├── form-schema-validation.ts
+│   │   │   │   ├── form-validation.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   └── schema-utils.ts
 │   │   │   └── utils
 │   │   │       ├── entity-utils.ts
 │   │   │       ├── fetch-utils.ts
 │   │   │       ├── index.ts
 │   │   │       ├── preview-helpers.ts
 │   │   │       ├── response-utils.ts
+│   │   │       ├── school-slug-utils.ts
 │   │   │       └── validation-helpers.ts
 │   │   ├── types
 │   │   │   ├── README.md
@@ -844,6 +848,7 @@
 │   │   │   │   ├── crud.ts
 │   │   │   │   ├── document.ts
 │   │   │   │   ├── index.ts
+│   │   │   │   ├── mongo.ts
 │   │   │   │   ├── query-factory.ts
 │   │   │   │   ├── query.ts
 │   │   │   │   ├── reference.ts
@@ -871,7 +876,6 @@
 │   │   │   ├── index.ts
 │   │   │   ├── ui
 │   │   │   │   ├── form.ts
-│   │   │   │   ├── forms.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   └── table.ts
 │   │   │   └── utilities.ts
@@ -880,19 +884,19 @@
 │   │       │   ├── coaching-log.ts
 │   │       │   └── district-list.ts
 │   │       ├── data-import
-│   │       │   ├── schema-templates.ts
-│   │       │   └── validation-helpers.ts
+│   │       │   └── schema-templates.ts
 │   │       ├── forms
-│   │       │   ├── field-labels.ts
-│   │       │   ├── field-renderer.tsx
-│   │       │   ├── field-values.ts
-│   │       │   ├── fieldConfig
-│   │       │   │   ├── core
+│   │       │   ├── configurations
 │   │       │   │   ├── index.ts
-│   │       │   │   ├── look-fors
-│   │       │   │   ├── scheduling
-│   │       │   │   ├── shared
-│   │       │   │   └── visits
+│   │       │   │   ├── schema-aware-builders.ts
+│   │       │   │   ├── school-config.ts
+│   │       │   │   ├── staff-config.ts
+│   │       │   │   ├── teaching-lab-staff-config.ts
+│   │       │   │   └── visit-config.ts
+│   │       │   ├── core
+│   │       │   │   ├── field-renderer.tsx
+│   │       │   │   └── index.ts
+│   │       │   ├── field-labels.ts
 │   │       │   ├── formOverrides
 │   │       │   │   ├── core
 │   │       │   │   ├── index.ts
@@ -900,16 +904,17 @@
 │   │       │   │   ├── schedule
 │   │       │   │   ├── shared
 │   │       │   │   └── staff.ts
-│   │       │   ├── helpers.ts
 │   │       │   ├── index.ts
 │   │       │   ├── registry.ts
-│   │       │   └── validation.ts
+│   │       │   ├── templates
+│   │       │   │   ├── index.ts
+│   │       │   │   └── templates.ts
+│   │       │   └── utils
+│   │       │       ├── form-utils.ts
+│   │       │       └── index.ts
 │   │       ├── table-schema.ts
 │   │       ├── utils
-│   │       │   ├── form-utils.ts
-│   │       │   ├── formatters.ts
-│   │       │   ├── token-utils.ts
-│   │       │   └── variant-utils.ts
+│   │       │   └── formatters.ts
 │   │       └── variants
 │   │           ├── index.ts
 │   │           ├── layout.ts
@@ -994,4 +999,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-300 directories, 695 files
+297 directories, 703 files

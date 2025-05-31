@@ -1,6 +1,8 @@
 // src/lib/data-server/query-utils.ts
 
 import { QueryParams } from "@core-types/query";
+import { validateStrict } from '@transformers/core/validation';
+
 
 /**
  * Creates MongoDB query options from transformed query parameters
@@ -83,5 +85,6 @@ export const parseQueryParams = <T>(
   );
   
   // Parse with Zod schema
-  return schema.parse(normalizedParams);
+  // return schema.parse(normalizedParams);
+  return validateStrict(schema, normalizedParams);
 };

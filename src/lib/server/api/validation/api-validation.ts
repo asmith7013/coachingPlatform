@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { NextRequest, NextResponse } from "next/server";
-
+import { validateSafe } from '@transformers/core/validation';
+import { handleValidationError } from '@error/handlers/validation';
 /**
  * Streamlined validation service with focused responsibilities
  */
@@ -20,21 +21,18 @@ export class ValidationService {
         return { success: true, data: result };
       } else {
         // Safe mode - returns success/error object
-        const result = schema.safeParse(data);
+        const result = validateSafe(schema, data);
         
-        if (!result.success) {
-          return { success: false, error: this.formatZodError(result.error) };
+        if (!result) {
+          return { success: false, error: 'Validation failed' };
         }
         
-        return { success: true, data: result.data };
+        
+        return { success: true, data: result };
       }
     } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof z.ZodError 
-          ? this.formatZodError(error)
-          : `Validation failed: ${error}`
-      };
+      const errorMessage = handleValidationError(error as z.ZodError, 'validate');
+      return { success: false, error: errorMessage };
     }
   }
 

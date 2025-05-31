@@ -191,54 +191,6 @@ const Footer = ({ className, children }: CardSubComponentProps) => {
   );
 };
 
-/**
- * Legacy Card component interface for backward compatibility
- */
-interface LegacyCardProps extends Omit<CardRootProps, 'children'> {
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
-  contentClassName?: string;
-  children?: React.ReactNode;
-}
-
-/**
- * Legacy Card implementation for backward compatibility
- * @deprecated Use the compound component pattern with Card.Header, Card.Body, and Card.Footer instead
- */
-const LegacyCard = ({
-  className,
-  children,
-  header,
-  footer,
-  padding = 'md',
-  radius = 'md',
-  border = false,
-  variant = 'default',
-  shadow = 'sm',
-  contentClassName,
-}: LegacyCardProps) => {
-  const styles = card({ padding, radius, variant, shadow, border });
-
-  return (
-    <div className={cn(styles.root(), className)}>
-      {header && (
-        <div className={styles.header()}>
-          {header}
-        </div>
-      )}
-      {children && (
-        <div className={cn(styles.body(), contentClassName)}>
-          {children}
-        </div>
-      )}
-      {footer && (
-        <div className={styles.footer()}>
-          {footer}
-        </div>
-      )}
-    </div>
-  );
-};
 
 /**
  * Card component for displaying content in a contained, styled box.
@@ -257,7 +209,6 @@ export const Card = Object.assign(CardRoot, {
   Header,
   Body,
   Footer,
-  Legacy: LegacyCard
 });
 
 /**

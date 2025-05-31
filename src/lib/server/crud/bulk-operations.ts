@@ -5,6 +5,8 @@ import { validateSafe } from "@transformers/core/validation";
 import { connectToDB } from "@server/db/connection";
 import { handleCollectionError, createCollectionErrorResponse } from "@error";
 import { BulkUploadResult } from "@core-types/crud";
+import { validateStrict } from '@transformers/core/validation';
+
 
 // Define type alias for inferred schema types
 type InferSchema<T extends z.ZodType> = z.infer<T>;
@@ -50,7 +52,7 @@ export async function bulkUploadToDB<Doc extends { _id: string }, Schema extends
     return {
       success: true,
       message: successMessage,
-      items: items.map(item => schema.parse(item.toObject())),
+      items: items.map(item => validateStrict(schema, item.toObject())),
       total: items.length
     };
   } catch (error) {

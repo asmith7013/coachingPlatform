@@ -9,18 +9,21 @@ import { DashboardPage } from '@components/composed/layouts/DashboardPage';
 // import { cn } from "@/lib/utils";
 import { EmptyListWrapper } from '@components/core/empty/EmptyListWrapper';
 import { ResourceHeader } from "@components/composed/layouts/ResourceHeader";
-import { Field, FieldType, MemoizedRigidResourceForm } from "@components/composed/forms/RigidResourceForm";
+import { MemoizedRigidResourceForm } from "@components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
 import { useNYCPSStaff } from "@/hooks/domain/useNYCPSStaff";
 import { NYCPSStaff, NYCPSStaffInput } from "@domain-types/staff";
 import { createNYCPSStaff, updateNYCPSStaff, deleteNYCPSStaff, uploadNYCPSStaffFile } from "@actions/staff";
-import { NYCPSStaffFieldConfig } from "@ui-forms/fieldConfig/core/staff";
+import { NYCPSStaffFieldConfig } from "@ui-forms/configurations";
 import { Dialog } from "@components/composed/dialogs/Dialog";
 import { Badge } from '@components/core/feedback/Badge';
+import type { FieldType } from "@ui-types/form";
 // import { fetchSchoolOptions } from "@/lib/client-api";
 import { NYCPSStaffOverrides } from "@ui-forms/formOverrides";
-import { getReferenceSelectPropsForField } from "@ui-forms/helpers";
+import { getReferenceSelectPropsForField } from "@ui/forms/utils";
 import Link from "next/link";
+import type { Field } from "@ui-types/form";
+
 
 
 
@@ -174,7 +177,7 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
             type: 'reference' as FieldType, // Explicitly cast to FieldType
             url: referenceProps.url,
             label: referenceProps.label
-          } as Field<NYCPSStaffInput>;
+          } as Field;
         } catch (error) {
           console.error(`Error applying override for ${String(fieldName)}:`, error);
           return field;

@@ -12,12 +12,13 @@ import { SchoolWithDates } from "@hooks/domain/useSchools";
 
 type School = SchoolWithDates;
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
-import { RigidResourceForm as GenericResourceForm, type Field } from "@components/composed/forms/RigidResourceForm";
+import { RigidResourceForm as GenericResourceForm } from "@components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
 import { ResourceHeader } from "@components/composed/layouts/ResourceHeader";
-import { SchoolFieldConfig } from "@ui-forms/fieldConfig/core/school";
+import { SchoolFieldConfig } from "@ui-forms/configurations";
 import { cn } from "@ui/utils/formatters";
 import { EmptyListWrapper } from '@components/core/empty/EmptyListWrapper';
+import type { Field } from "@ui-types/form";
 
 
 
@@ -164,7 +165,7 @@ export default function SchoolList() {
           mode="create"
           title="Add School"
           onSubmit={createSchool}
-          fields={SchoolFieldConfig as Field<SchoolInput>[]}
+          fields={SchoolFieldConfig as Field[]}
         />
         <BulkUploadForm
           title="Bulk Upload Schools"

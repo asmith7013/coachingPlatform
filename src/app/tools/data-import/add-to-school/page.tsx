@@ -20,10 +20,9 @@ import { bulkCreateStaffWithSchoolLink } from '@actions/staff/operations';
 import { createVisit } from '@actions/visits/visits';
 import { AI_PROMPTS } from '@ui/data-import/schema-templates';
 import { 
-  validateStaffData, 
-  validateVisitData, 
   createDataPreview 
-} from '@ui/data-import/validation-helpers';
+} from '@/lib/transformers/ui/data-preview';
+import { validateVisitData, validateStaffData } from '@/lib/transformers/ui/form-validation';
 import type { SchoolWithDates } from '@hooks/domain/useSchools';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';

@@ -4,8 +4,7 @@
 import { AppShell } from '@/components/composed/layouts/AppShell'
 import { teamItems } from './config'
 import { useAuthorizedNavigation } from '@hooks/ui/useAuthorizedNavigation'
-import { Breadcrumbs } from '@/components/composed/navigation/Breadcrumbs'
-import { AuthGuard } from '@/components/auth/AuthGuard'
+import { AuthGuard } from '@components/auth/AuthGuard'
 import { PERMISSIONS } from '@core-types/auth'
 import { useAuthenticatedUser } from '@hooks/auth/useAuthenticatedUser'
 import { useRouter } from 'next/navigation'
@@ -43,16 +42,10 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       teams={teamItems}
       pageTitle={pageInfo.title}
       pageDescription={pageInfo.description}
+      breadcrumbs={breadcrumbs}
       showTeams={true}
-      logo={{
-        src: '/logo.svg',
-        alt: 'Coaching Platform'
-      }}
     >
-      <div className="space-y-6">
-        <Breadcrumbs items={breadcrumbs} />
-        {children}
-      </div>
+      {children}
     </AppShell>
   )
 }
