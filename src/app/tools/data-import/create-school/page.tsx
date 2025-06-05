@@ -7,7 +7,7 @@ import { Card } from '@/components/composed/cards';
 import { PageHeader } from '@/components/composed/layouts';
 import { ClipboardDocumentIcon, CheckIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
-import { useSchools } from '@hooks/domain/useSchools';
+import { useSchools } from '@/hooks/domain/useSchools';
 import { AI_PROMPTS } from '@ui/data-import/schema-templates';
 import { validateSchoolData } from '@transformers/ui/form-validation';
 import { createDataPreview } from '@transformers/ui/data-preview';

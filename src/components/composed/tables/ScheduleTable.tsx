@@ -1,70 +1,57 @@
 'use client'
 
 import { useMemo } from 'react'
-import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textColors, textSize, weight, paddingX, paddingY } from '@/lib/tokens/tokens'
 import type { ScheduleByDay, Period } from '@zod-schema/schedule/schedule'
+import { getEventColorClasses, type EventColor } from '@/lib/ui/styles/event-styles'
 
 const scheduleTable = tv({
   slots: {
-    wrapper: 'w-full overflow-auto',
-    table: 'min-w-full divide-y border-surface',
-    header: 'bg-surface',
-    headerCell: [
-      'font-medium text-left',
-      textColors.default,
-      `${paddingX.md} ${paddingY.sm}`,
-      'border-b border-surface'
-    ],
-    body: 'divide-y divide-surface',
-    row: 'hover:bg-muted/20',
-    cell: [
-      'whitespace-nowrap',
-      textColors.default,
-      `${paddingX.md} ${paddingY.sm}`,
-    ],
-    periodBadge: [
-      'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-      'bg-blue-100 text-blue-800'
-    ],
-    periodType: [
-      'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium',
-    ]
+    container: 'overflow-hidden shadow ring-1 ring-black ring-opacity-5',
+    table: 'min-w-full divide-y divide-gray-300',
+    thead: 'bg-gray-50',
+    headerRow: '',
+    headerCell: 'px-3 py-3.5 text-left text-sm font-semibold text-gray-900',
+    tbody: 'divide-y divide-gray-200 bg-white',
+    row: 'hover:bg-gray-50',
+    cell: 'whitespace-nowrap px-3 py-4 text-sm text-gray-500',
+    periodCell: 'font-medium text-gray-900',
+    classCell: 'max-w-0 truncate',
+    className: 'text-gray-900 truncate',
+    room: 'text-gray-500 text-xs mt-1',
+    periodBadge: 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset'
   },
   variants: {
     textSize: {
-      xs: { 
-        table: textSize.xs,
-        headerCell: textSize.xs,
-        cell: textSize.xs
+      xs: {
+        headerCell: 'text-xs',
+        cell: 'text-xs',
+        className: 'text-xs',
+        room: 'text-xs'
       },
-      sm: { 
-        table: textSize.sm,
-        headerCell: textSize.sm,
-        cell: textSize.sm
+      sm: {
+        headerCell: 'text-sm',
+        cell: 'text-sm',
+        className: 'text-sm',
+        room: 'text-xs'
       },
-      base: { 
-        table: textSize.base,
-        headerCell: textSize.base,
-        cell: textSize.base
+      base: {
+        headerCell: 'text-sm',
+        cell: 'text-sm',
+        className: 'text-sm',
+        room: 'text-xs'
       },
-      lg: { 
-        table: textSize.lg,
-        headerCell: textSize.lg,
-        cell: textSize.lg
-      },
-      xl: { 
-        table: textSize.xl,
-        headerCell: textSize.xl,
-        cell: textSize.xl
+      lg: {
+        headerCell: 'text-base',
+        cell: 'text-base',
+        className: 'text-base',
+        room: 'text-sm'
       }
     },
     compact: {
-      true: { 
-        headerCell: `${paddingX.sm} ${paddingY.xs}`,
-        cell: `${paddingX.sm} ${paddingY.xs}`,
-        table: 'text-sm leading-tight'
+      true: {
+        headerCell: 'px-2 py-2',
+        cell: 'px-2 py-3'
       },
       false: {}
     },
@@ -80,14 +67,15 @@ const scheduleTable = tv({
   }
 })
 
-// Map of period types to color classes
-const periodTypeColorMap: Record<string, string> = {
-  'Academic': 'bg-blue-50 text-blue-700',
-  'Lunch': 'bg-green-50 text-green-700',
-  'Prep': 'bg-yellow-50 text-yellow-700',
-  'Testing': 'bg-purple-50 text-purple-700',
-  'Specialized': 'bg-indigo-50 text-indigo-700',
-  'Other': 'bg-gray-50 text-gray-700',
+// Map period types to unified color system
+const getPeriodTypeColor = (periodType: string): EventColor => {
+  const type = periodType.toLowerCase()
+  if (type.includes('academic') || type.includes('class')) return 'blue'
+  if (type.includes('lunch')) return 'green'
+  if (type.includes('prep')) return 'yellow'
+  if (type.includes('testing')) return 'purple'
+  if (type.includes('specialized')) return 'purple'
+  return 'gray' // Default for 'Other' and unknown types
 }
 
 export type ScheduleTableVariants = VariantProps<typeof scheduleTable>
@@ -128,55 +116,55 @@ export function ScheduleTable({
     return map
   }, [scheduleByDay])
 
-  // Function to get the period type color class
+  // Function to get the period type color class using unified system
   const getPeriodTypeClass = (periodType: string) => {
     if (!periodTypeColors) return 'bg-gray-50 text-gray-700'
-    return periodTypeColorMap[periodType] || 'bg-gray-50 text-gray-700'
+    
+    const color = getPeriodTypeColor(periodType)
+    const colorClasses = getEventColorClasses(color)
+    return `${colorClasses.container} ${colorClasses.text}`
   }
 
   return (
-    <div className={cn(styles.wrapper(), className)}>
+    <div className={styles.container({ className })}>
       <table className={styles.table()}>
-        <thead className={styles.header()}>
-          <tr>
-            <th scope="col" className={styles.headerCell()}>Period</th>
-            {scheduleByDay.map(day => (
+        <thead className={styles.thead()}>
+          <tr className={styles.headerRow()}>
+            <th scope="col" className={styles.headerCell()}>
+              Period
+            </th>
+            {scheduleByDay.map((day) => (
               <th key={day.day} scope="col" className={styles.headerCell()}>
                 {day.day}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className={styles.body()}>
-          {allPeriodNumbers.map(periodNum => (
+        <tbody className={styles.tbody()}>
+          {allPeriodNumbers.map((periodNum) => (
             <tr key={periodNum} className={styles.row()}>
-              <td className={styles.cell()}>
-                <span className={styles.periodBadge()}>
-                  {periodNum}
-                </span>
+              <td className={`${styles.cell()} ${styles.periodCell()}`}>
+                Period {periodNum}
               </td>
-              {scheduleByDay.map(day => {
+              {scheduleByDay.map((day) => {
                 const period = periodMap.get(`${day.day}-${periodNum}`)
                 return (
-                  <td key={`${day.day}-${periodNum}`} className={styles.cell()}>
+                  <td key={day.day} className={`${styles.cell()} ${styles.classCell()}`}>
                     {period ? (
-                      <div className="flex flex-col">
-                        <span className={cn(weight.medium)}>{period.className}</span>
+                      <div>
+                        <div className={styles.className()}>{period.className}</div>
                         {period.room && (
-                          <span className="text-muted text-sm">
-                            Room: {period.room}
+                          <div className={styles.room()}>Room {period.room}</div>
+                        )}
+                        {periodTypeColors && period.periodType && (
+                          <span className={`${styles.periodBadge()} ${getPeriodTypeClass(period.periodType)}`}>
+                            {period.periodType}
                           </span>
                         )}
-                        <span 
-                          className={cn(
-                            styles.periodType(),
-                            getPeriodTypeClass(period.periodType)
-                          )}
-                        >
-                          {period.periodType}
-                        </span>
                       </div>
-                    ) : null}
+                    ) : (
+                      <span className="text-gray-400 italic">No class</span>
+                    )}
                   </td>
                 )
               })}

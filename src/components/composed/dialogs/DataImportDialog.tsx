@@ -17,12 +17,12 @@ import { createVisit } from '@actions/visits/visits';
 import { createBellSchedule, createTeacherSchedule } from '@actions/schedule/schedule';
 import { AI_PROMPTS, createMasterSchedulePrompt } from '@ui/data-import/schema-templates';
 import { createDataPreview, validateVisitData, validateStaffData, validateBellScheduleData, validateMasterScheduleData } from '@transformers/ui';
-import type { SchoolWithDates } from '@hooks/domain/useSchools';
+import type { SchoolWithDates } from '@/hooks/domain/useSchools';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
 import type { BellScheduleInput, TeacherScheduleInput } from '@zod-schema/schedule/schedule';
-import type { NYCPSStaffWithDates } from '@hooks/domain/useNYCPSStaff';
-import { useNYCPSStaffList } from '@hooks/domain/useNYCPSStaff';
+import type { NYCPSStaffWithDates } from '@/hooks/domain/staff/useNYCPSStaff';
+import { useNYCPSStaffList } from '@/hooks/domain/staff/useNYCPSStaff';
 
 type DataType = 'staff' | 'visits' | 'bellSchedules' | 'masterSchedule';
 type Step = 'selectDataType' | 'importData';

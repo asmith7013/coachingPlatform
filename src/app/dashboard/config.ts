@@ -5,6 +5,7 @@ import {
     UserGroupIcon,
     DocumentTextIcon,
     ClipboardDocumentListIcon,
+    ClipboardDocumentCheckIcon,
     CalendarDaysIcon,
     StarIcon,
     AcademicCapIcon,
@@ -49,6 +50,13 @@ export const navigationItems: NavigationItem[] = [
     icon: CalendarDaysIcon, 
     current: false,
     requiredPermissions: [PERMISSIONS.SCHEDULE_VIEW]
+  },
+  { 
+    name: 'Coaching Plans', 
+    href: '/dashboard/coaching-action-plans', 
+    icon: ClipboardDocumentCheckIcon, 
+    current: false,
+    requiredPermissions: [PERMISSIONS.COACHING_PLANS_VIEW]
   },
   { 
     name: 'Scoring', 
@@ -111,6 +119,10 @@ export const pageMetadata: Record<string, { title: string; description: string }
   '/dashboard/schedule': {
     title: 'Schedule',
     description: 'Manage your coaching visits and appointments'
+  },
+  '/dashboard/coaching-action-plans': {
+    title: 'Coaching Plans',
+    description: 'Create and manage comprehensive coaching action plans'
   },
   '/dashboard/scoring': {
     title: 'Scoring',

@@ -6,7 +6,7 @@ import React, { useState,
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
-import { useSchoolsList, useSchoolsMutations, type SchoolWithDates } from "@hooks/domain/useSchools";
+import { useSchoolsList, useSchoolsMutations, type SchoolWithDates } from "@/hooks/domain/useSchools";
 // import type { SchoolInput } from "@domain-types/school";
 // import { ResourceHeader } from "@/components/composed/layouts/ResourceHeader";
 import { EmptyListWrapper } from '@/components/core/empty/EmptyListWrapper';

@@ -7,8 +7,8 @@ import { Card } from '@components/composed/cards/Card';
 import { Heading, Text } from '@components/core/typography';
 import { typography, paddingY, stack } from '@lib/tokens/tokens';
 import { cn } from '@ui/utils/formatters';
-import { useSchoolById } from "@hooks/domain/useSchools";
-import { useNYCPSStaff } from "@hooks/domain/useNYCPSStaff";
+import { useSchoolById } from "@/hooks/domain/useSchools";
+import { useNYCPSStaff } from "@/hooks/domain/staff/useNYCPSStaff";
 import { Alert, Spinner, Badge } from '@components/core/feedback';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);

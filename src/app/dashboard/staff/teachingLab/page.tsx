@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { DashboardPage } from "@/components/composed/layouts";
 import { PageHeader } from "@/components/composed/layouts";
-import { useTeachingLabStaff } from "@hooks/domain/useTeachingLabStaff";
+import { useTeachingLabStaff } from "@/hooks/domain/staff/useTeachingLabStaff";
 import { PlusIcon } from "lucide-react";
 import { StaffListComponent, StaffSearch } from "@components/domain/staff";
 import { TablePagination } from "@/components/composed/tables/features/pagination";

@@ -46,6 +46,61 @@
 │   ├── lib-catalog.md
 │   ├── lib-changes.md
 │   └── reference-system.md
+<<<<<<< Updated upstream
+=======
+├── docs-product-roadmap
+│   ├── core
+│   │   ├── cross-domain
+│   │   ├── cycle
+│   │   │   ├── PRD-cap2.md
+│   │   │   ├── cap.md
+│   │   │   └── cap2.md
+│   │   ├── cycle-features.md
+│   │   ├── school
+│   │   ├── school-features.md
+│   │   ├── staff
+│   │   ├── staff-features.md
+│   │   └── visit
+│   │       ├── schedule-refactoring-tasks.md
+│   │       ├── schedule.md
+│   │       └── schedule2.md
+│   ├── integrations
+│   │   ├── api-features.md
+│   │   └── monday-features.md
+│   ├── operations
+│   │   ├── PRD-schedule.md
+│   │   ├── PRD-tasks-schedule-builder.md
+│   │   ├── tasks-ui-hooks-quality-improvement.md
+│   │   ├── \23405schedule-ui.md
+│   │   └── \23405tasks-schedule-builder.md
+│   ├── platform
+│   │   ├── admin-features.md
+│   │   ├── analytics-features.md
+│   │   └── auth-features.md
+│   └── product-roadmap.md
+├── docs-product-tasks
+│   ├── core
+│   │   ├── cross-domain
+│   │   ├── cycle
+│   │   │   └── cap.md
+│   │   ├── cycle-features.md
+│   │   ├── school
+│   │   ├── school-features.md
+│   │   ├── staff
+│   │   └── staff-features.md
+│   ├── integrations
+│   │   ├── api-features.md
+│   │   └── monday-features.md
+│   ├── operations
+│   │   ├── coaching-features.md
+│   │   ├── scheduling-features.md
+│   │   └── visit-features.md
+│   ├── platform
+│   │   ├── admin-features.md
+│   │   ├── analytics-features.md
+│   │   └── auth-features.md
+│   └── product-roadmap.md
+>>>>>>> Stashed changes
 ├── eslint.config.mjs
 ├── examples
 ├── next-env.d.ts
@@ -117,6 +172,11 @@
 │   │   │   └── visits
 │   │   │       ├── coachingLogs.ts
 │   │   │       ├── cycles.ts
+<<<<<<< Updated upstream
+=======
+│   │   │       ├── planned-visits.ts
+│   │   │       ├── schedule-builder.ts
+>>>>>>> Stashed changes
 │   │   │       └── visits.ts
 │   │   ├── api
 │   │   │   ├── debug
@@ -165,6 +225,8 @@
 │   │   │   │   │   └── Transcripts
 │   │   │   │   ├── data.ts
 │   │   │   │   └── page.tsx
+│   │   │   ├── coaching-action-plans
+│   │   │   │   └── page.tsx
 │   │   │   ├── config.ts
 │   │   │   ├── layout.tsx
 │   │   │   ├── lookForList
@@ -209,6 +271,25 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── ultra-minimal
 │   │   │       └── page.tsx
+<<<<<<< Updated upstream
+=======
+│   │   ├── demo
+│   │   │   ├── drawer
+│   │   │   │   └── page.tsx
+│   │   │   ├── section-headings
+│   │   │   │   └── page.tsx
+│   │   │   ├── visit-view
+│   │   │   │   └── page.tsx
+│   │   │   └── weekly-calendar
+│   │   │       └── page.tsx
+│   │   ├── dev
+│   │   │   ├── accountability-demo
+│   │   │   │   └── page.tsx
+│   │   │   ├── purpose-dropdown-demo
+│   │   │   │   └── page.tsx
+│   │   │   └── three-zone-demo
+│   │   │       └── page.tsx
+>>>>>>> Stashed changes
 │   │   ├── examples
 │   │   │   ├── calendar
 │   │   │   │   ├── CalendarGridView.tsx
@@ -324,6 +405,30 @@
 │   │   │   ├── PermissionButton.tsx
 │   │   │   └── SignOutButton.tsx
 │   │   ├── composed
+<<<<<<< Updated upstream
+=======
+│   │   │   ├── calendar
+│   │   │   │   ├── schedule
+│   │   │   │   │   ├── BellScheduleGrid.tsx
+│   │   │   │   │   ├── InteractiveScheduleGrid.tsx
+│   │   │   │   │   ├── PeriodTimeColumn.tsx
+│   │   │   │   │   ├── PlannedScheduleColumn.tsx
+│   │   │   │   │   ├── ScheduleEventCell.tsx
+│   │   │   │   │   ├── ScheduleGrid.tsx
+│   │   │   │   │   ├── TeacherDailySchedule.tsx
+│   │   │   │   │   ├── TeacherScheduleCalendar.tsx
+│   │   │   │   │   ├── cells
+│   │   │   │   │   └── index.ts
+│   │   │   │   └── weekly
+│   │   │   │       ├── CalendarHeader.tsx
+│   │   │   │       ├── DayColumns.tsx
+│   │   │   │       ├── EventItem.tsx
+│   │   │   │       ├── TimeGrid.tsx
+│   │   │   │       ├── ViewSelector.tsx
+│   │   │   │       ├── WeekNavigation.tsx
+│   │   │   │       ├── WeeklyCalendar.tsx
+│   │   │   │       └── index.ts
+>>>>>>> Stashed changes
 │   │   │   ├── cards
 │   │   │   │   ├── Card.tsx
 │   │   │   │   ├── ClickableCards.tsx
@@ -382,9 +487,14 @@
 │   │   │       └── index.ts
 │   │   ├── core
 │   │   │   ├── Button.tsx
+<<<<<<< Updated upstream
 │   │   │   ├── cards
 │   │   │   │   ├── SimpleCard.tsx
 │   │   │   │   └── index.ts
+=======
+│   │   │   ├── dropdowns
+│   │   │   │   └── PurposeAssignmentDropdown.tsx
+>>>>>>> Stashed changes
 │   │   │   ├── empty
 │   │   │   │   ├── EmptyListWrapper.tsx
 │   │   │   │   ├── EmptyState.tsx
@@ -405,7 +515,11 @@
 │   │   │   │   ├── Switch.tsx
 │   │   │   │   ├── Textarea.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── icons
+│   │   │   │   └── AccountabilityIcon.tsx
 │   │   │   ├── index.ts
+│   │   │   ├── interactive
+│   │   │   │   └── ThreeZoneTimeSlot.tsx
 │   │   │   ├── navigation
 │   │   │   │   ├── Breadcrumbs.tsx
 │   │   │   │   ├── Pagination.tsx
@@ -452,6 +566,9 @@
 │   │   │   │   ├── RubricFilterPanel.tsx
 │   │   │   │   ├── RubricViewer.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── schedule
+│   │   │   │   ├── BaseGridCell.tsx
+│   │   │   │   └── ScheduleEventGrid.tsx
 │   │   │   ├── schedules
 │   │   │   │   ├── SchoolSchedulePage.tsx
 │   │   │   │   ├── components
@@ -472,6 +589,15 @@
 │   │   │   │   └── utils
 │   │   │   │       ├── TimeValidator.ts
 │   │   │   │       └── scheduleHelpers.ts
+<<<<<<< Updated upstream
+=======
+│   │   │   ├── scheduling
+│   │   │   │   ├── AccountabilityTrackingPanel.tsx
+│   │   │   │   ├── AssignedTeacherCard.tsx
+│   │   │   │   ├── ConflictDetectionProvider.tsx
+│   │   │   │   ├── TeacherSelectionPanel.tsx
+│   │   │   │   └── index.ts
+>>>>>>> Stashed changes
 │   │   │   ├── schools
 │   │   │   │   ├── SchoolCard.tsx
 │   │   │   │   ├── SchoolDetailView.tsx
@@ -500,12 +626,33 @@
 │   │   ├── error
 │   │   │   ├── ErrorBoundary.tsx
 │   │   │   ├── QueryErrorBoundary.tsx
+│   │   │   ├── ScheduleBuilderErrorBoundary.tsx
 │   │   │   ├── SentryBoundaryWrapper.tsx
 │   │   │   └── index.ts
 │   │   ├── features
+<<<<<<< Updated upstream
 │   │   │   └── scoring
 │   │   │       ├── ScoreEntry.tsx
 │   │   │       ├── ScoresPage.tsx
+=======
+│   │   │   ├── coaching
+│   │   │   │   ├── ActionPlanStage.tsx
+│   │   │   │   ├── CoachingActionPlanDashboard.tsx
+│   │   │   │   ├── CoachingActionPlanDetailedEditor.tsx
+│   │   │   │   ├── CoachingActionPlanStage1.tsx
+│   │   │   │   ├── CoachingActionPlanStage2.tsx
+│   │   │   │   ├── CoachingActionPlanStage3.tsx
+│   │   │   │   ├── CoachingActionPlanStage4.tsx
+│   │   │   │   ├── TabbedStageNavigation.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── scoring
+│   │   │   │   ├── ScoreEntry.tsx
+│   │   │   │   ├── ScoresPage.tsx
+│   │   │   │   └── index.ts
+│   │   │   └── visits
+│   │   │       ├── VisitSidebar.tsx
+│   │   │       ├── VisitView.tsx
+>>>>>>> Stashed changes
 │   │   │       └── index.ts
 │   │   ├── index.ts
 │   │   └── integrations
@@ -528,13 +675,18 @@
 │   ├── debug
 │   ├── hooks
 │   │   ├── auth
-│   │   │   └── useAuthenticatedUser.ts
+│   │   │   ├── useAuthenticatedUser.ts
+│   │   │   └── usePermissionFiltering.ts
 │   │   ├── debugging
 │   │   │   ├── checkRenderLoopInTools.tsx
 │   │   │   ├── useComponentTester.tsx
 │   │   │   └── useRenderTracking.ts
 │   │   ├── domain
+│   │   │   ├── cap
+│   │   │   │   ├── useCoachingActionPlans.ts
+│   │   │   │   └── useIPGData.ts
 │   │   │   ├── index.ts
+<<<<<<< Updated upstream
 │   │   │   ├── useLookFors.ts
 │   │   │   ├── useNYCPSStaff.ts
 │   │   │   ├── useSchools.ts
@@ -542,6 +694,22 @@
 │   │   │   ├── useTeachingLabStaff.ts
 │   │   │   ├── useUserStaff.ts
 │   │   │   └── useVisits.ts
+=======
+│   │   │   ├── schedule
+│   │   │   │   ├── useBellSchedules.ts
+│   │   │   │   ├── useSchoolDailyView.ts
+│   │   │   │   └── useTeacherSchedules.ts
+│   │   │   ├── staff
+│   │   │   │   ├── useNYCPSStaff.ts
+│   │   │   │   ├── useTeachingLabStaff.ts
+│   │   │   │   └── useUserStaff.ts
+│   │   │   ├── useLookFors.ts
+│   │   │   ├── usePlannedVisits.ts
+│   │   │   ├── useSchools.ts
+│   │   │   ├── useServerAssignments.ts
+│   │   │   ├── useVisits.ts
+│   │   │   └── useVisitsWithTransforms.ts
+>>>>>>> Stashed changes
 │   │   ├── error
 │   │   │   └── useErrorBoundary.ts
 │   │   ├── index.ts
@@ -556,9 +724,28 @@
 │   │   ├── migration
 │   │   │   └── swr-to-query.ts
 │   │   ├── ui
+<<<<<<< Updated upstream
 │   │   │   ├── useAuthorizedNavigation.ts
 │   │   │   ├── useNavigation.ts
 │   │   │   └── useSchoolAuthorization.ts
+=======
+│   │   │   ├── index.ts
+│   │   │   ├── useAccountabilityTracking.ts
+│   │   │   ├── useAdaptiveHeight.ts
+│   │   │   ├── useAuthorizedNavigation.ts
+│   │   │   ├── useNavigation.ts
+│   │   │   ├── useScheduleDisplay.ts
+│   │   │   ├── useScheduleEvents.ts
+│   │   │   ├── useSchedulePerformance.ts
+│   │   │   ├── useScheduleSelection.ts
+│   │   │   ├── useSchoolAuthorization.ts
+│   │   │   ├── useStatePersistence.ts
+│   │   │   ├── useTeacherSelection.ts
+│   │   │   ├── useUIAssignments.ts
+│   │   │   └── useVisitScheduleBuilder.ts
+│   │   ├── utilities
+│   │   │   └── useAutoSave.ts
+>>>>>>> Stashed changes
 │   │   └── visits
 │   │       ├── useVisitManagerRQ.ts
 │   │       ├── useVisitMutationRQ.ts
@@ -585,12 +772,30 @@
 │   │   │       ├── schema-config-check.ts
 │   │   │       └── setup-test-user.ts
 │   │   ├── domain
+<<<<<<< Updated upstream
 │   │   │   └── imRoutine
 │   │   │       ├── get-unit-URL.ts
 │   │   │       ├── getUnitURL.ts
 │   │   │       ├── render-ILC-esson.tsx
 │   │   │       ├── render-KH-lesson.tsx
 │   │   │       └── routine-utils.ts
+=======
+│   │   │   ├── imRoutine
+│   │   │   │   ├── get-unit-URL.ts
+│   │   │   │   ├── getUnitURL.ts
+│   │   │   │   ├── render-ILC-esson.tsx
+│   │   │   │   ├── render-KH-lesson.tsx
+│   │   │   │   └── routine-utils.ts
+│   │   │   └── schedule
+│   │   │       ├── event-builders.ts
+│   │   │       ├── grid-cell-factory.ts
+│   │   │       ├── grid-positioning.ts
+│   │   │       ├── hover-zone-utils.ts
+│   │   │       ├── index.ts
+│   │   │       ├── period-utils.ts
+│   │   │       ├── schedule-calendar-utils.ts
+│   │   │       └── zone-utils.ts
+>>>>>>> Stashed changes
 │   │   ├── error
 │   │   │   ├── core
 │   │   │   │   ├── classification.ts
@@ -680,6 +885,7 @@
 │   │   │   │   └── visits
 │   │   │   │       ├── coaching-log.model.ts
 │   │   │   │       ├── index.ts
+│   │   │   │       ├── planned-visit.model.ts
 │   │   │   │       └── visit.model.ts
 │   │   │   ├── reference
 │   │   │   │   ├── core
@@ -912,9 +1118,13 @@
 │   │       │   └── utils
 │   │       │       ├── form-utils.ts
 │   │       │       └── index.ts
+│   │       ├── styles
+│   │       │   ├── event-styles.ts
+│   │       │   └── index.ts
 │   │       ├── table-schema.ts
 │   │       ├── utils
-│   │       │   └── formatters.ts
+│   │       │   ├── formatters.ts
+│   │       │   └── navigation-utils.ts
 │   │       └── variants
 │   │           ├── index.ts
 │   │           ├── layout.ts
@@ -994,9 +1204,18 @@
 │       ├── clerk.d.ts
 │       └── dependency-overrides.d.ts
 ├── tailwind.config.ts
+<<<<<<< Updated upstream
+=======
+├── tasks
+│   └── tasks-schedule-refactoring.md
+>>>>>>> Stashed changes
 ├── test-output.css
 ├── tsconfig.json
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
+<<<<<<< Updated upstream
 297 directories, 703 files
+=======
+359 directories, 864 files
+>>>>>>> Stashed changes

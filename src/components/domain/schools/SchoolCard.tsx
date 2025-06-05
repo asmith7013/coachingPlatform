@@ -7,10 +7,20 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DataImportDialog } from '@/components/composed/dialogs/DataImportDialog';
+<<<<<<< Updated upstream:src/components/domain/schools/SchoolCard.tsx
 import { SchoolWithDates } from "@hooks/domain/useSchools";
 import { cn } from '@ui/utils/formatters';
 import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { schoolToSlug } from '@transformers/utils/school-slug-utils';
+=======
+import { SchedulePreview } from '@/components/domain/schedules/SchedulePreview';
+import { SchoolWithDates } from "@/hooks/domain/useSchools";
+import { cn } from '@ui/utils/formatters';
+import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { schoolToSlug } from '@transformers/utils/school-slug-utils';
+import { useTeacherSchedules } from '@/hooks/domain/schedule/useTeacherSchedules';
+import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
+>>>>>>> Stashed changes:src/components/domain/schools/SchoolGrid.tsx
 
 interface SchoolCardProps {
   school: SchoolWithDates;

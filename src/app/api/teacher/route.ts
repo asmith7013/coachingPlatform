@@ -2,7 +2,7 @@ import { fetchNYCPSStaffForApi } from "@server/fetchers/staff";
 import { createReferenceEndpoint, FetchFunction } from "@api-handlers/reference-endpoint";
 import { NYCPSStaff } from "@domain-types/staff";
 import { NYCPSStaffReference } from "@zod-schema/core/staff";
-import { NYCPSStaffWithDates } from "@/hooks/domain/useNYCPSStaff";
+import { NYCPSStaffWithDates } from "@/hooks/domain/staff/useNYCPSStaff";
 
 // Simple direct mapping function that doesn't use the selector system
 function mapStaffToReferenceSimple(staff: NYCPSStaff): NYCPSStaffReference {

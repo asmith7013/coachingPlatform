@@ -6,18 +6,21 @@ import {
   TeacherScheduleZodSchema, 
   TeacherScheduleInputZodSchema,
   BellScheduleZodSchema, 
+<<<<<<< Updated upstream
   BellScheduleInputZodSchema 
+=======
+  BellScheduleInputZodSchema,
+  BellScheduleInput,
+  BellSchedule,
+  TeacherScheduleInput,
+  TeacherSchedule
+>>>>>>> Stashed changes
 } from "@zod-schema/schedule/schedule";
 import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import { type QueryParams } from "@core-types/query";
 
-// Types
-export type TeacherSchedule = z.infer<typeof TeacherScheduleZodSchema>;
-export type TeacherScheduleInput = z.infer<typeof TeacherScheduleInputZodSchema>;
-export type BellSchedule = z.infer<typeof BellScheduleZodSchema>;
-export type BellScheduleInput = z.infer<typeof BellScheduleInputZodSchema>;
 
 // ===== BELL SCHEDULE ACTIONS =====
 

@@ -14,7 +14,7 @@ import {
   CheckIcon 
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
-import { useSchools } from '@hooks/domain/useSchools';
+import { useSchools } from '@/hooks/domain/useSchools';
 import { useErrorHandledMutation } from '@query/client/hooks/mutations/useErrorHandledMutation';
 import { bulkCreateStaffWithSchoolLink } from '@actions/staff/operations';
 import { createVisit } from '@actions/visits/visits';
@@ -23,7 +23,7 @@ import {
   createDataPreview 
 } from '@/lib/transformers/ui/data-preview';
 import { validateVisitData, validateStaffData } from '@/lib/transformers/ui/form-validation';
-import type { SchoolWithDates } from '@hooks/domain/useSchools';
+import type { SchoolWithDates } from '@/hooks/domain/useSchools';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
 
