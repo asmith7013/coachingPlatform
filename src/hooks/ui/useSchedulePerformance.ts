@@ -1,6 +1,5 @@
 import { useMemo, useCallback } from 'react'
-import type { BellScheduleEvent, ScheduleColumn } from '@domain-types/schedule'
-import type { PeriodTime } from '@domain-types/schedule'
+import type { BellSchedule, ScheduleColumn, PeriodTime } from '@domain-types/schedule'
 
 /**
  * Performance optimization hook for schedule components
@@ -8,25 +7,25 @@ import type { PeriodTime } from '@domain-types/schedule'
  */
 
 export interface UseSchedulePerformanceProps {
-  events: BellScheduleEvent[]
+  events: BellSchedule[]
   columns: ScheduleColumn[]
   periodTimes: PeriodTime[]
-  onEventClick?: (event: BellScheduleEvent) => void
-  isEventSelected?: (event: BellScheduleEvent) => boolean
+  onEventClick?: (event: BellSchedule) => void
+  isEventSelected?: (event: BellSchedule) => boolean
 }
 
 export interface SchedulePerformanceHelpers {
   // Memoized calculations
-  eventsByPeriod: Map<number, BellScheduleEvent[]>
-  eventsByColumn: Map<number, BellScheduleEvent[]>
+  eventsByPeriod: Map<number, BellSchedule[]>
+  eventsByColumn: Map<number, BellSchedule[]>
   totalPeriods: number
   totalColumns: number
   hasPlannedColumn: boolean
   
   // Optimized handlers
-  getEventsForCell: (columnIndex: number, periodIndex: number) => BellScheduleEvent[]
-  handleEventClick: (event: BellScheduleEvent) => void
-  checkEventSelected: (event: BellScheduleEvent) => boolean
+  getEventsForCell: (columnIndex: number, periodIndex: number) => BellSchedule[]
+  handleEventClick: (event: BellSchedule) => void
+  checkEventSelected: (event: BellSchedule) => boolean
   
   // Performance metrics
   renderKey: string
@@ -42,7 +41,7 @@ export function useSchedulePerformance({
 
   // Memoized event groupings for fast lookup
   const eventsByPeriod = useMemo(() => {
-    const map = new Map<number, BellScheduleEvent[]>()
+    const map = new Map<number, BellSchedule[]>()
     events.forEach(event => {
       const period = event.period
       if (!map.has(period)) {
@@ -54,7 +53,7 @@ export function useSchedulePerformance({
   }, [events])
 
   const eventsByColumn = useMemo(() => {
-    const map = new Map<number, BellScheduleEvent[]>()
+    const map = new Map<number, BellSchedule[]>()
     events.forEach(event => {
       const column = event.columnIndex
       if (!map.has(column)) {
@@ -73,7 +72,7 @@ export function useSchedulePerformance({
   }), [columns, periodTimes])
 
   // Optimized cell event lookup
-  const getEventsForCell = useCallback((columnIndex: number, periodIndex: number): BellScheduleEvent[] => {
+  const getEventsForCell = useCallback((columnIndex: number, periodIndex: number): BellSchedule[] => {
     const period = periodTimes[periodIndex]?.period
     if (!period) return []
     
@@ -82,11 +81,11 @@ export function useSchedulePerformance({
   }, [eventsByPeriod, periodTimes])
 
   // Memoized event handlers to prevent prop drilling re-renders
-  const handleEventClick = useCallback((event: BellScheduleEvent) => {
+  const handleEventClick = useCallback((event: BellSchedule) => {
     onEventClick?.(event)
   }, [onEventClick])
 
-  const checkEventSelected = useCallback((event: BellScheduleEvent): boolean => {
+  const checkEventSelected = useCallback((event: BellSchedule) => {
     return isEventSelected?.(event) || false
   }, [isEventSelected])
 

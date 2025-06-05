@@ -1,12 +1,7 @@
 import type { BellSchedule } from '@zod-schema/schedule/schedule';
 import { getDayTypeFromDate as getDayTypeFromDateUtil } from '@transformers/utils/date-utils';
 import { getAllPeriodTimes } from '@transformers/domain/schedule-transforms';
-
-export interface PeriodTime {
-  period: number;
-  start: string;
-  end: string;
-}
+import type { PeriodTime } from '@domain-types/schedule';
 
 /**
  * Extract period times from bell schedule for a specific day

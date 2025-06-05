@@ -13,8 +13,9 @@ import {
 import type { 
   ScheduleColumn, 
   PeriodTime, 
-  BellScheduleEvent 
+  BellSchedule 
 } from '@domain-types/schedule'
+import { BellScheduleEvent } from '@/lib/transformers/domain/schedule-transforms'
 
 /**
  * Props for the ScheduleEventGrid component
@@ -23,11 +24,11 @@ export interface ScheduleEventGridProps {
   // Base schedule data
   columns: ScheduleColumn[]
   periodTimes: PeriodTime[]
-  events: BellScheduleEvent[]
+  events: BellSchedule[]
   
   // Event handling
-  onEventClick?: (event: BellScheduleEvent) => void
-  isEventSelected?: (event: BellScheduleEvent) => boolean
+  onEventClick?: (event: BellSchedule) => void
+  isEventSelected?: (event: BellSchedule) => boolean
   
   // UI configuration
   className?: string

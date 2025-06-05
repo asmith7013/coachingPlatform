@@ -2,8 +2,7 @@
 
 
 import { useState, useCallback, useMemo } from 'react'
-import type { HoverState } from '@domain-types/schedule'
-import type { DropZone } from '@domain-types/schedule'
+import type { HoverState, DropZone } from '@domain-types/schedule'
 import { handleClientError } from '@error/handlers/client'
 import { logError } from '@error/core/logging'
 import { useUIAssignments } from './useUIAssignments'

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { AccountabilityTrackingPanel } from '@domain-components/scheduling/AccountabilityTrackingPanel'
 import { useAccountabilityTracking } from '@hooks/ui/useAccountabilityTracking'
 import { Text } from '@core-components/typography'
+import { TeacherAccountabilityState } from '@/lib/schema/zod-schema/visits/schedule-builder-state'
 
 // Mock teachers data
 const mockTeachers = [
@@ -17,20 +18,25 @@ const mockTeachers = [
 export default function AccountabilityDemoPage() {
   const [variant, setVariant] = useState<'default' | 'compact'>('default')
   const {
-    iconAccountability,
-    toggleObservation,
-    toggleMeeting,
-    getCompletionStats
+    accountability,
+    updateTeacherAccountability,
   } = useAccountabilityTracking()
 
   // Transform iconAccountability to the format expected by AccountabilityTrackingPanel
-  const transformedAccountability = iconAccountability.map(state => ({
+  const transformedAccountability = accountability.map(state => ({
     teacherId: state.teacherId,
-    hasObservation: state.hasObservation,
-    hasMeeting: state.hasMeeting
+    isScheduled: state.isScheduled,
+    isCrossedOff: state.isCrossedOff,
+    isCompleted: state.isCompleted,
+    notes: state.notes
   }))
 
-  const stats = getCompletionStats()
+  const stats = {
+    completedObservations: accountability.filter(state => state.isCompleted).length,
+    completedMeetings: accountability.filter(state => state.isCrossedOff).length,
+    totalCompleted: accountability.filter(state => state.isCompleted || state.isCrossedOff).length,
+    completionRate: (accountability.filter(state => state.isCompleted || state.isCrossedOff).length / accountability.length) * 100
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -114,9 +120,9 @@ export default function AccountabilityDemoPage() {
         {/* Accountability Panel */}
         <AccountabilityTrackingPanel
           teachers={mockTeachers}
-          accountabilityState={transformedAccountability}
-          onObservationToggle={toggleObservation}
-          onMeetingToggle={toggleMeeting}
+          accountabilityState={transformedAccountability as TeacherAccountabilityState[]}
+          onObservationToggle={(teacherId, checked) => updateTeacherAccountability(teacherId, checked, false, '')}
+          onMeetingToggle={(teacherId, checked) => updateTeacherAccountability(teacherId, false, checked, '')}
           variant={variant}
         />
 
@@ -126,7 +132,7 @@ export default function AccountabilityDemoPage() {
             Debug Information:
           </Text>
           <pre className="text-xs text-gray-600 overflow-auto">
-            {JSON.stringify(iconAccountability, null, 2)}
+            {JSON.stringify(accountability, null, 2)}
           </pre>
         </div>
 

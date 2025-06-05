@@ -33,7 +33,8 @@ interface CoachingActionPlanStage4Props {
   reflections?: Reflection[];
   showSpotlightSuggestion?: boolean;
   
-  // Optional styling
+  // Optional props
+  planId?: string;
   className?: string;
 }
 
@@ -48,6 +49,7 @@ export function CoachingActionPlanStage4({
   onSpotlightLinkChange,
   reflections = [],
   showSpotlightSuggestion = false,
+  planId: _planId,
   className
 }: CoachingActionPlanStage4Props) {
   return (

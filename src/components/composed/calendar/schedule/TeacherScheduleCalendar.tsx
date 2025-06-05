@@ -7,12 +7,12 @@ import { radiiTop, radii } from '@ui-tokens'
 
 import { BellScheduleGrid } from '@composed-components/calendar/schedule'
 import type { 
-  BellScheduleEvent
+  BellSchedule
 } from '@domain-types/schedule'
 
 import { useScheduleDisplay } from '@/hooks/ui/useScheduleDisplay'
 import { createTeacherColumns } from '@/lib/domain/schedule/event-builders'
-import type { BellSchedule, TeacherSchedule } from '@zod-schema/schedule/schedule'
+import type { TeacherSchedule } from '@zod-schema/schedule/schedule'
 
 const teacherScheduleCalendar = tv({
   slots: {
@@ -43,7 +43,7 @@ export interface TeacherScheduleCalendarProps extends VariantProps<typeof teache
   schedules: TeacherSchedule[]
   staff: Array<{ _id: string; staffName: string }>
   bellSchedule?: BellSchedule
-  onEventClick?: (event: BellScheduleEvent) => void
+  onEventClick?: (event: BellSchedule) => void
   onNavigateDate?: (direction: 'prev' | 'next' | 'today') => void
   className?: string
 }

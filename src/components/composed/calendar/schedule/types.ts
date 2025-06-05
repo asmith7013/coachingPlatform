@@ -1,7 +1,7 @@
 import type { BellScheduleEvent, EventSegment } from '@transformers/domain/schedule-transforms'
 
 // REUSE: Import PeriodTime from existing utilities instead of redefining
-import type { PeriodTime } from '@/lib/domain/schedule/schedule-calendar-utils'
+import type { PeriodTime } from '@domain-types/schedule'
 
 // Import planned visit types for interactive mode
 import type { PlannedVisit, TimeSlot, ScheduleAssignmentType } from '@zod-schema/visits/planned-visit'

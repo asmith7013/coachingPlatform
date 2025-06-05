@@ -7,7 +7,7 @@ alwaysApply: false
 
 ## Goal
 
-To guide an AI assistant in creating a detailed, step-by-step task list in Markdown format based on an existing Product Requirements Document (PRD). The task list should guide a developer through implementation.
+To guide an AI assistant in creating a detailed, step-by-step task list in Markdown format based on an existing Product Requirements Document (PRD). The task list should guide a developer through implementation with concrete file paths and specific implementation details.
 
 ## Output
 
@@ -17,19 +17,45 @@ To guide an AI assistant in creating a detailed, step-by-step task list in Markd
 
 ## Process
 
-1.  **Receive PRD Reference:** The user points the AI to a specific PRD file
-2.  **Analyze PRD:** The AI reads and analyzes the functional requirements, user stories, and other sections of the specified PRD.
-3.  **Context Template Selection:** Based on the PRD analysis, select appropriate context templates from `/docs/context-templates/`:
-    - UI Components → `ui-component-context.md`
-    - Data/Schema work → `data-layer-context.md`  
-    - External APIs → `integration-context.md`
-3.  **Phase 1: Generate Parent Tasks:** Based on the PRD analysis, create the file and generate the main, high-level tasks required to implement the feature. Use your judgement on how many high-level tasks to use. It's likely to be about 5. Present these tasks to the user in the specified format (without sub-tasks yet). Inform the user: "I have generated the high-level tasks based on the PRD. Ready to generate the sub-tasks? Respond with 'Go' to proceed."
-4.  **Wait for Confirmation:** Pause and wait for the user to respond with "Go".
-5.  **Phase 2: Generate Sub-Tasks:** Once the user confirms, break down each parent task into smaller, actionable sub-tasks necessary to complete the parent task. Ensure sub-tasks logically follow from the parent task and cover the implementation details implied by the PRD.
-6.  **Identify Relevant Files:** Based on the tasks and PRD, identify potential files that will need to be created or modified. List these under the `Relevant Files` section
-7.  **Generate Final Output:** Combine the parent tasks, sub-tasks, relevant files, and notes into the final Markdown structure.
-8.  **Save Task List:** Save the generated document in the `/tasks/` directory with the filename `tasks-[prd-file-name].md`, where `[prd-file-name]` matches the base name of the input PRD file (e.g., if the input was `prd-user-profile-editing.md`, the output is `tasks-prd-user-profile-editing.md`).
+1. **Receive PRD Reference:** The user points the AI to a specific PRD file
+2. **Analyze PRD:** The AI reads and analyzes the functional requirements, user stories, and other sections of the specified PRD.
+3. **Context Template Selection:** Based on the PRD analysis, select appropriate context templates from `/docs/context-templates/`:
+   - UI Components → `ui-component-context.md`
+   - Data/Schema work → `data-layer-context.md`  
+   - External APIs → `integration-context.md`
+4. **Phase 1: Generate Parent Tasks:** Based on the PRD analysis, create the file and generate the main, high-level tasks required to implement the feature. Use your judgement on how many high-level tasks to use. It's likely to be about 5. Present these tasks to the user in the specified format (without sub-tasks yet). Inform the user: "I have generated the high-level tasks based on the PRD. Ready to generate the sub-tasks? Respond with 'Go' to proceed."
+5. **Wait for Confirmation:** Pause and wait for the user to respond with "Go".
+6. **Phase 2: Generate Sub-Tasks:** Once the user confirms, break down each parent task into smaller, actionable sub-tasks necessary to complete the parent task. Ensure sub-tasks logically follow from the parent task and cover the implementation details implied by the PRD.
+7. **Specify Concrete File Paths:** For each task, provide:
+   - Exact file paths following project structure conventions
+   - Line count estimates for scope assessment
+   - Specific function signatures to implement
+   - Integration points with existing code
+   - File replacement mapping (what gets deleted)
+8. **Identify Relevant Files:** Based on the tasks and PRD, identify potential files that will need to be created or modified. List these under the `Relevant Files` section
+9. **Generate Final Output:** Combine the parent tasks, sub-tasks, relevant files, and notes into the final Markdown structure.
+10. **Save Task List:** Save the generated document in the `/tasks/` directory with the filename `tasks-[prd-file-name].md`, where `[prd-file-name]` matches the base name of the input PRD file (e.g., if the input was `prd-user-profile-editing.md`, the output is `tasks-prd-user-profile-editing.md`).
 
+## Project Structure Integration
+
+Before generating tasks, reference the project's established patterns:
+
+**Component Location Patterns:**
+- Core UI: `src/components/core/[category]/ComponentName.tsx`
+- Composed UI: `src/components/composed/[category]/ComponentName.tsx`
+- Domain Logic: `src/components/domain/[domain]/ComponentName.tsx`
+- Features: `src/components/features/[feature]/ComponentName.tsx`
+
+**Data Layer Patterns:**
+- Zod Schemas: `src/lib/zod-schema/[domain]/entity.ts`
+- Hooks: `src/hooks/domain/use[EntityName].ts`
+- Server Actions: `src/app/actions/[domain]/entity.ts`
+- Types: `src/lib/types/domain/[domain].ts`
+
+**Import Path Conventions:**
+- Use path aliases: `@components/domain/[domain]`
+- Follow barrel exports: `@hooks/domain`
+- Reference established patterns: `@zod-schema/[domain]`
 
 ## Output Format
 
@@ -44,12 +70,28 @@ The generated task list _must_ follow this enhanced structure, pulling context f
 ## Relevant Files
 
 **Pattern References:** [From PRD's existing functionality analysis]
-- `path/to/pattern-file.tsx` - WHEN: [implementation phase], WHY: [pattern from PRD analysis]
-- `path/to/integration-file.ts` - WHEN: [integration phase], WHY: [existing functionality to extend per PRD]
+- `src/path/to/pattern-file.tsx` - WHEN: [implementation phase], WHY: [pattern from PRD analysis]
+- `src/path/to/integration-file.ts` - WHEN: [integration phase], WHY: [existing functionality to extend per PRD]
 
 **New Files to Create:** [Based on PRD requirements]
-- `path/to/new-component.tsx` - PURPOSE: [main feature component per PRD]
-- `path/to/new-hook.ts` - PURPOSE: [data management per PRD requirements]
+- `src/components/domain/[domain]/ComponentName.tsx` (~200 lines)
+  - PURPOSE: [main feature component per PRD]
+  - IMPORTS: [specific imports with @path/aliases]
+  - EXPORTS: [ComponentName component with ComponentNameProps interface]
+  - REPLACES: [OldComponent1.tsx, OldComponent2.tsx] (if consolidating)
+- `src/hooks/domain/use[EntityName].ts` (~100 lines)
+  - PURPOSE: [data management per PRD requirements]
+  - IMPORTS: [specific hooks and utilities]
+  - EXPORTS: [hook function with return type interface]
+  - INTEGRATES: [existing hooks or API endpoints]
+
+**Files to Modify:**
+- `src/existing/component/Path.tsx` - UPDATE: [specific changes needed]
+- `src/lib/types/domain/[domain].ts` - ADD: [new type definitions]
+
+**Files to Delete:** [After successful migration]
+- `src/old/component/Path.tsx` - REASON: [replaced by new component]
+- `src/duplicate/logic/Path.tsx` - REASON: [functionality consolidated]
 
 ## Tasks
 
@@ -58,6 +100,20 @@ The generated task list _must_ follow this enhanced structure, pulling context f
   **Pattern Reference:** [Existing pattern identified in PRD analysis]
   **Quality Gate:** [Specific quality gate from PRD Implementation Strategy]
   - [ ] 1.1 Sub-task with enhanced guidance
+    **File:** `src/exact/path/to/NewComponent.tsx`
+    **Scope:** ~150 lines, 1 main component + 2 helper functions
+    **Interfaces to Create:**
+    ```typescript
+    interface ComponentNameProps {
+      prop1: Type1
+      prop2: Type2
+      onEvent?: (data: EventData) => void
+    }
+    ```
+    **Functions to Implement:**
+    - `ComponentName(props: ComponentNameProps): JSX.Element` (~100 lines)
+    - `handleEventAction(data: EventData): void` (~30 lines)
+    - `validateComponentData(props: ComponentNameProps): boolean` (~20 lines)
     **Reference Files:**
     - `src/components/existing/Pattern.tsx` - WHEN: [specific implementation phase], WHY: [specific pattern to follow]
     - `src/lib/data/schema.ts` - WHEN: [data definition phase], WHY: [schema consistency reference]
@@ -70,48 +126,55 @@ The generated task list _must_ follow this enhanced structure, pulling context f
     - Avoid [common pitfall] - follow [established pattern]
     **Quality Checklist:**
     - [ ] Uses [specific component/pattern] (not custom implementation)
+    - [ ] Imports from @established/path/aliases (not relative imports)
+    - [ ] File size under 200 lines (split if larger)
+    - [ ] Zero TypeScript errors in strict mode
     - [ ] Follows [specific design pattern]
     - [ ] Implements proper [specific requirement]
-    - [ ] Maintains [specific consistency standard]
   - [ ] 1.2 Sub-task with standard format
+    **File:** `src/hooks/domain/useEntityName.ts`
+    **Scope:** ~80 lines, 1 hook + validation utilities
     **PRD Requirements:**
     - Implement [specific requirement from PRD]
     - Follow [pattern identified in PRD creation]
     - Integrate with [existing functionality per PRD]
+    **Integration Points:**
+    - Imports: `@zod-schema/domain/entity`, `@hooks/data/useSafeSWR`
+    - Exports: `useEntityName` hook, `EntityNameHookReturn` interface
+    - Connects to: `src/app/actions/domain/entity.ts` server actions
 
 - [ ] 2.0 [Next Parent Task from PRD Staging]
   **Context Stack:** [Next stage files from PRD]
   **Pattern Reference:** [Pattern from PRD's code analysis]
   **Quality Gate:** [Quality measure from PRD Implementation Strategy]
+```
 
+## File Specification Requirements
 
-## Interaction Model
+Each file reference MUST include:
+- **Exact file path:** Full path from project root following established conventions
+- **File purpose:** Single responsibility description
+- **Size estimate:** Approximate line count for scope assessment (~N lines)
+- **Dependencies:** What it imports/exports with specific path aliases
+- **Integration points:** How it connects to existing code
+- **Replacement mapping:** What existing files it replaces (if consolidating)
 
-The process explicitly requires a pause after generating parent tasks to get user confirmation ("Go") before proceeding to generate the detailed sub-tasks. This ensures the high-level plan aligns with user expectations before diving into details.
+## Sub-Task Scope Requirements
 
-## Target Audience
+Each sub-task MUST specify:
+- **Exact file path:** Complete path following project structure
+- **Scope estimate:** Line count and complexity estimate
+- **Interfaces to create:** TypeScript interface definitions with exact properties
+- **Functions to implement:** Function signatures with parameters and return types
+- **Integration requirements:** Exact imports and exports needed
+- **Quality constraints:** File size limits, TypeScript requirements, pattern compliance
 
-Assume the primary reader of the task list is a **junior developer** who will implement the feature.
-
-## PRD Integration Requirements
-
-Since PRDs now include existing functionality analysis, the task generation must:
-
-### Leverage PRD Context
-- **Use Implementation Strategy:** Follow the staging approach and context templates specified in the PRD
-- **Reference Code Analysis:** Incorporate existing patterns and components identified during PRD creation
-- **Apply Quality Gates:** Use the specific DRY/Abstraction/Separation checks from the PRD
-
-### Maintain Consistency
-- **Pattern Adherence:** Every task must reference how it follows existing patterns from the PRD
-- **Integration Points:** Clearly show how new code connects to existing functionality per PRD analysis
-- **Quality Assurance:** Include specific checkpoints based on the PRD's established quality gates
-
-### Task Enhancement
-Each sub-task must connect back to:
-- Specific PRD requirements it fulfills
-- Existing code patterns it follows (from PRD analysis)
-- Quality standards it must meet (from PRD Implementation Strategy)
+**Pattern Validation Requirements:**
+- [ ] Verify component follows established [domain] patterns before implementation
+- [ ] Check for existing similar components to avoid duplication
+- [ ] Confirm file location matches project structure conventions
+- [ ] Validate integration points align with existing architecture
+- [ ] Ensure no reinvention of existing functionality
 
 ## Enhanced Sub-Task Requirements
 
@@ -122,8 +185,15 @@ Each sub-task must connect back to:
 - Integration points between systems
 - Components that extend existing patterns
 - Tasks with known anti-patterns from project history
+- File consolidation tasks (replacing multiple files)
 
 ### Enhanced Sub-Task Elements
+
+#### Implementation Specificity
+- **Function signatures:** Complete TypeScript signatures with parameters
+- **Interface definitions:** Exact properties with types
+- **Code quantity:** Line count estimates for scope assessment
+- **File constraints:** Maximum file size and splitting requirements
 
 #### Reference File Documentation
 - **WHEN to reference:** Specific implementation phase requiring the pattern
@@ -145,36 +215,49 @@ Each sub-task must connect back to:
 - **Tool/component usage:** Must use X component (not create custom Y)
 - **Pattern compliance:** Must follow established Z pattern
 - **Integration requirements:** Must work with existing A system
-
-### Example Enhanced Sub-Task
-```markdown
-- [ ] 2.3 Implement IPGSubsectionCards with dynamic color inheritance
-  **Reference Files:**
-  - `src/components/composed/cards/ClickableCards.tsx` - WHEN: Building card layout, WHY: Established selection pattern
-  - `src/app/examples/cap/components/IPGSubsectionCards.tsx` - WHEN: Implementing color inheritance, WHY: Working color mapping example
-  - `src/lib/json/ipg.json` - WHEN: Loading subsection data, WHY: Data structure reference
-  **Implementation Notes:**
-  - Follow getColor function pattern for consistent color mapping (CA1=primary, CA2=secondary, CA3=success)
-  - Use ClickableCards compound component with Card subcomponent
-  - Pass subsection.section as value, subsection.description as description
-  - Maintain layout="vertical" for subsection display
-  **Anti-Patterns:**
-  - Don't create custom selection UI - extend ClickableCards component
-  - Don't hardcode color values - use semantic color mapping system
-  - Don't duplicate card selection logic - reuse established patterns
-  **Quality Checklist:**
-  - [ ] Extends ClickableCards (not custom card implementation)
-  - [ ] Implements proper color inheritance from parentColor prop
-  - [ ] Uses established TypeScript interfaces from examples
-  - [ ] Follows project component hierarchy patterns
-```
+- **File size constraints:** Under N lines (split if larger)
+- **TypeScript compliance:** Zero errors in strict mode
 
 ### Standard Sub-Task Format
-For simpler tasks, use the standard format without enhanced sections:
+For simpler tasks, use the standard format:
 ```markdown
 - [ ] 1.5 Create reference transformer for dropdown components
+  **File:** `src/lib/transformers/domain/entity-transforms.ts`
+  **Scope:** ~60 lines, 2 transformer functions
   **PRD Requirements:**
   - Transform entity data to {value, label} format
   - Support search and filtering
   - Handle empty states appropriately
+  **Integration Points:**
+  - Imports: `@zod-schema/domain/entity`, `@transformers/factories/reference-factory`
+  - Exports: `entityToReference`, `entityCollectionToOptions`
 ```
+
+## Interaction Model
+
+The process explicitly requires a pause after generating parent tasks to get user confirmation ("Go") before proceeding to generate the detailed sub-tasks. This ensures the high-level plan aligns with user expectations before diving into details.
+
+## Target Audience
+
+Assume the primary reader of the task list is a **junior developer** who will implement the feature. Provide sufficient detail for clear implementation without overwhelming complexity.
+
+## PRD Integration Requirements
+
+Since PRDs now include existing functionality analysis, the task generation must:
+
+### Leverage PRD Context
+- **Use Implementation Strategy:** Follow the staging approach and context templates specified in the PRD
+- **Reference Code Analysis:** Incorporate existing patterns and components identified during PRD creation
+- **Apply Quality Gates:** Use the specific DRY/Abstraction/Separation checks from the PRD
+
+### Maintain Consistency
+- **Pattern Adherence:** Every task must reference how it follows existing patterns from the PRD
+- **Integration Points:** Clearly show how new code connects to existing functionality per PRD analysis
+- **Quality Assurance:** Include specific checkpoints based on the PRD's established quality gates
+
+### Task Enhancement
+Each sub-task must connect back to:
+- Specific PRD requirements it fulfills
+- Existing code patterns it follows (from PRD analysis)
+- Quality standards it must meet (from PRD Implementation Strategy)
+- Concrete file paths and implementation specifications

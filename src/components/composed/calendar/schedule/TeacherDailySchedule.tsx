@@ -5,7 +5,7 @@ import { useSchoolDailyView } from '@hooks/domain/schedule/useSchoolDailyView'
 import { TeacherScheduleCalendar } from '@/components/composed/calendar/schedule/TeacherScheduleCalendar'
 import { Alert, Spinner } from '@core-components/feedback'
 import { getTodayString, navigateDate } from '@transformers/utils/date-utils'
-import type { BellScheduleEvent } from '@domain-types/schedule'
+import type { BellSchedule } from '@domain-types/schedule'
 
 export interface TeacherDailyScheduleProps {
   schoolId: string
@@ -40,7 +40,7 @@ export function TeacherDailySchedule({
   }
   
   // Event click handler
-  const handleEventClick = (event: BellScheduleEvent) => {
+  const handleEventClick = (event: BellSchedule) => {
     console.log('Class clicked:', event)
     // TODO: Implement class detail view or editing
   }

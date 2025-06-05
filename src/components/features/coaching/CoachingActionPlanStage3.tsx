@@ -42,7 +42,8 @@ interface CoachingActionPlanStage3Props {
   metrics: MetricType[];
   coachingMoves: CoachingMoveType[];
   
-  // Optional styling
+  // Optional props
+  planId?: string;
   className?: string;
 }
 
@@ -51,6 +52,7 @@ export function CoachingActionPlanStage3({
   onImplementationRecordsChange,
   metrics,
   coachingMoves,
+  planId: _planId,
   className
 }: CoachingActionPlanStage3Props) {
   

@@ -9,7 +9,7 @@ import type { NYCPSStaff } from '@zod-schema/core/staff';
 import type { CalendarEvent } from '@composed-components/calendar/weekly';
 
 // IMPORT: Use existing domain utilities instead of recreating
-import { type PeriodTime } from '@/lib/domain/schedule/schedule-calendar-utils';
+import { type PeriodTime } from '@domain-types/schedule';
 
 /**
  * Simple transformation service - validation only

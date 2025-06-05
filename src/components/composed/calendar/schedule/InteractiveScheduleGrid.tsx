@@ -15,7 +15,7 @@ import {
 import type { 
   ScheduleColumn,
   PeriodTime,
-  BellScheduleEvent, 
+  BellSchedule, 
   PlannedVisit, 
   HoverState,
   ScheduleAssignmentType,
@@ -35,7 +35,7 @@ export interface InteractiveScheduleGridProps {
   // Base schedule data
   columns: ScheduleColumn[]
   periodTimes: PeriodTime[]
-  events: BellScheduleEvent[]
+  events: BellSchedule[]
   
   // Interactive features
   plannedVisits?: PlannedVisit[]
@@ -43,7 +43,7 @@ export interface InteractiveScheduleGridProps {
   activeHoverZone?: HoverState | null
   
   // Event handlers
-  onEventClick?: (event: BellScheduleEvent) => void
+  onEventClick?: (event: BellSchedule) => void
   onPlannedVisitClick?: (visit: PlannedVisit) => void
   onPeriodAssignment?: (
     periodIndex: number,
@@ -53,7 +53,7 @@ export interface InteractiveScheduleGridProps {
   onHoverZoneChange?: (hoverState: HoverState | null) => void
   
   // UI state
-  isEventSelected?: (event: BellScheduleEvent) => boolean
+  isEventSelected?: (event: BellSchedule) => boolean
   className?: string
 }
 
