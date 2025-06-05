@@ -1,0 +1,72 @@
+[
+  {
+    "id": "open-ended-questions",
+    "category": "Questioning Techniques",
+    "specificMove": "Ask open-ended questions",
+    "description": "Use questions that encourage deeper thinking and multiple solution paths",
+    "toolsResources": "Question stems, wait time strategies"
+  },
+  {
+    "id": "wait-time-strategies",
+    "category": "Questioning Techniques",
+    "specificMove": "Wait time strategies",
+    "description": "Provide adequate wait time for student thinking and responses",
+    "toolsResources": "Timer tools, gesture signals"
+  },
+  {
+    "id": "think-pair-share",
+    "category": "Student Discourse",
+    "specificMove": "Think-pair-share",
+    "description": "Structure opportunities for students to discuss mathematical thinking",
+    "toolsResources": "Turn-and-talk protocols"
+  },
+  {
+    "id": "gallery-walk",
+    "category": "Student Discourse",
+    "specificMove": "Gallery walk",
+    "description": "Have students view and discuss each other's work",
+    "toolsResources": "Gallery walk protocol, sticky notes"
+  },
+  {
+    "id": "multiple-representations",
+    "category": "Representation",
+    "specificMove": "Multiple representations",
+    "description": "Use visual, symbolic, and verbal representations of mathematical concepts",
+    "toolsResources": "Visual models, manipulatives"
+  },
+  {
+    "id": "student-generated-models",
+    "category": "Representation", 
+    "specificMove": "Student-generated models",
+    "description": "Encourage students to create their own mathematical models",
+    "toolsResources": "Drawing tools, manipulatives"
+  },
+  {
+    "id": "scaffolded-support",
+    "category": "Differentiation",
+    "specificMove": "Scaffolded support",
+    "description": "Provide targeted support based on student needs",
+    "toolsResources": "Leveled questions, supports"
+  },
+  {
+    "id": "extension-activities",
+    "category": "Differentiation",
+    "specificMove": "Extension activities", 
+    "description": "Offer additional challenges for advanced learners",
+    "toolsResources": "Extension tasks, problem sets"
+  },
+  {
+    "id": "exit-tickets",
+    "category": "Assessment",
+    "specificMove": "Exit tickets",
+    "description": "Use quick formative assessments to gauge understanding",
+    "toolsResources": "Exit ticket templates"
+  },
+  {
+    "id": "peer-feedback",
+    "category": "Assessment",
+    "specificMove": "Peer feedback",
+    "description": "Structure opportunities for students to give each other feedback",
+    "toolsResources": "Feedback protocols, peer review sheets"
+  }
+]

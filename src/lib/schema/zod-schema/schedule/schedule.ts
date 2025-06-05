@@ -15,6 +15,7 @@ export const ClassScheduleItemFieldsSchema = z.object({
   dayType: DayTypeZod,
   startTime: z.string(),
   endTime: z.string(),
+  periodNum: z.number(),
 });
 
 // Class Schedule Item Schema

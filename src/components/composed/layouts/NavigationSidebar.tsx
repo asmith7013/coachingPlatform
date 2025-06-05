@@ -1,7 +1,9 @@
 'use client'
 
 import {
-  Transition,
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
   TransitionChild,
   Menu,
   MenuButton,
@@ -13,7 +15,7 @@ import { tv } from 'tailwind-variants'
 // import { textColors, textSize, paddingX, paddingY, radii } from '@ui-tokens/tokens'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronDownIcon, UserCircleIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon, UserCircleIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
 import { useAuthenticatedUser, useSignOut } from '@/hooks/auth/useAuthenticatedUser'
 
 // Define the navigation item type
@@ -49,6 +51,13 @@ interface NavigationSidebarProps {
 // Create the sidebar styles using tv from tailwind-variants
 const sidebar = tv({
   slots: {
+    // Mobile sidebar dialog
+    mobileBackdrop: 'fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0',
+    mobileContainer: 'fixed inset-0 flex',
+    mobilePanel: 'relative mr-16 flex w-full max-w-xs flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full',
+    mobileCloseButton: 'absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out data-closed:opacity-0',
+    mobileCloseIcon: 'size-6 text-white',
+    
     // Desktop sidebar
     desktopSidebar: 'hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-52 lg:flex-col',
     
@@ -297,59 +306,47 @@ export function NavigationSidebar({
     </div>
   );
 
-  // Render mobile sidebar using Transition (replaces Dialog)
-  const renderMobileSidebar = () => (
-    <div className="lg:hidden">
-      <Transition show={sidebarOpen}>
-        {/* Backdrop */}
-        <TransitionChild
-          enter="transition-opacity ease-linear duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="transition-opacity ease-linear duration-300"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div 
-            className="fixed inset-x-0 top-12 bottom-0 bg-gray-900/80 z-40"
-            onClick={() => setSidebarOpen(false)}
-          />
-        </TransitionChild>
+  // Render mobile dialog for sidebar
+  const renderMobileDialog = () => (
+    <Dialog open={sidebarOpen} onClose={setSidebarOpen} className="relative z-50 lg:hidden">
+      <DialogBackdrop
+        transition
+        className={styles.mobileBackdrop()}
+      />
 
-        {/* Sidebar panel */}
-        <TransitionChild
-          enter="transition ease-in-out duration-300 transform"
-          enterFrom="-translate-x-full"
-          enterTo="translate-x-0"
-          leave="transition ease-in-out duration-300 transform"
-          leaveFrom="translate-x-0"
-          leaveTo="-translate-x-full"
+      <div className={styles.mobileContainer()}>
+        <DialogPanel
+          transition
+          className={styles.mobilePanel()}
         >
-          <div className="fixed top-12 left-0 bottom-0 z-50 w-64 bg-white shadow-xl">
-            {/* Close button */}
-            <div className="absolute top-0 right-0 -mr-12 pt-2">
-              <button
-                type="button"
-                onClick={() => setSidebarOpen(false)}
-                className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              >
+          <TransitionChild>
+            <div className={styles.mobileCloseButton()}>
+              <button type="button" onClick={() => setSidebarOpen(false)} className="-m-2.5 p-2.5">
                 <span className="sr-only">Close sidebar</span>
-                <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className={styles.mobileCloseIcon()}
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
-            
-            {/* Sidebar content */}
-            {renderSidebarContent()}
-          </div>
-        </TransitionChild>
-      </Transition>
-    </div>
+          </TransitionChild>
+          {renderSidebarContent()}
+        </DialogPanel>
+      </div>
+    </Dialog>
   );
 
   return (
     <>
-      {/* Mobile sidebar using Transition */}
-      {renderMobileSidebar()}
+      {/* Mobile sidebar dialog */}
+      {renderMobileDialog()}
 
       {/* Static sidebar for desktop */}
       <div className={cn(styles.desktopSidebar(), className)}>

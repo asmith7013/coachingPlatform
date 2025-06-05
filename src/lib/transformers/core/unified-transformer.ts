@@ -49,18 +49,18 @@ function transformItem<T extends BaseDocument, R = T>(
 ): R | null {
   try {
     // Debug logging for transformation
-    console.log('🔍 About to transform document:', JSON.stringify(item, null, 2));
-    console.log('🔍 Document type:', typeof item);
-    console.log('🔍 Document constructor:', item?.constructor?.name);
+    // console.log('🔍 About to transform document:', JSON.stringify(item, null, 2));
+    // console.log('🔍 Document type:', typeof item);
+    // console.log('🔍 Document constructor:', item?.constructor?.name);
     
     // Layer 1: MongoDB document transformation - PRESERVE ALL FIELDS
     const dbTransformed = transformMongoDocument<T>(item);
-    console.log('✅ MongoDB transformation successful:', JSON.stringify(dbTransformed, null, 2));
+    // console.log('✅ MongoDB transformation successful:', JSON.stringify(dbTransformed, null, 2));
     
     // Layer 2: Schema validation (if schema provided)
     let validated: T | null = dbTransformed;
     if (options.schema) {
-      console.log('🔍 About to validate with schema...');
+      // console.log('🔍 About to validate with schema...');
       validated = options.strictValidation
         ? validateStrict(options.schema, dbTransformed)
         : validateSafe(options.schema, dbTransformed);
@@ -69,7 +69,7 @@ function transformItem<T extends BaseDocument, R = T>(
         console.error('❌ Schema validation failed for document');
         return null;
       }
-      console.log('✅ Schema validation successful');
+      // console.log('✅ Schema validation successful');
     }
     
     // Layer 3a: Date transformation (if requested)

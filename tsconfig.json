@@ -39,6 +39,8 @@
         "@domain-components": ["./src/components/domain"],
         "@error-components/*": ["./src/components/error/*"],
         "@error-components": ["./src/components/error"],
+        "@feature-components/*": ["./src/components/features/*"],
+        "@feature-components": ["./src/components/features"],
 
         // Hook paths
         "@hooks/*": ["./src/hooks/*"],

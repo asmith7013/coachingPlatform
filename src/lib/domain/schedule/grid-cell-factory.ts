@@ -154,4 +154,4 @@ export function generateCellKey(
   periodIndex: number
 ): string {
   return `${column.id}-${periodIndex}`
-} 
+}

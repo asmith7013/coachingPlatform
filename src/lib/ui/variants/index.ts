@@ -13,3 +13,6 @@ export * from './typography';
 
 // Export layout variants
 export * from './layout';
+
+// Export grid layout variants
+export * from './grid-layouts';

@@ -16,6 +16,7 @@ import { BaseDocument } from '@core-types/document';
 import { ZodType } from 'zod';
 import { getSearchableText } from '@query/client/utilities/selector-helpers';
 import { createReferenceSelector } from '@query/client/selectors/reference-selectors';
+import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
 
 /**
  * Create specialized selector variants for an entity type
@@ -46,8 +47,8 @@ function createSpecializedSelectors<T extends BaseDocument>(
         
         return {
           ...item,
-          formattedCreatedAt: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : undefined,
-          formattedUpdatedAt: item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : undefined
+          formattedCreatedAt: item.createdAt ? formatMediumDate(toDateString(new Date(item.createdAt))) : undefined,
+          formattedUpdatedAt: item.updatedAt ? formatMediumDate(toDateString(new Date(item.updatedAt))) : undefined
         };
       } catch (error) {
         handleClientError(error, `${entityType}.detail`);

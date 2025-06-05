@@ -45,18 +45,18 @@ export const navigationItems: NavigationItem[] = [
     requiredPermissions: [PERMISSIONS.LOOKFORS_VIEW]
   },
   { 
-    name: 'Schedule', 
-    href: '/dashboard/schedule', 
-    icon: CalendarDaysIcon, 
-    current: false,
-    requiredPermissions: [PERMISSIONS.SCHEDULE_VIEW]
-  },
-  { 
     name: 'Coaching Plans', 
     href: '/dashboard/coaching-action-plans', 
     icon: ClipboardDocumentCheckIcon, 
     current: false,
     requiredPermissions: [PERMISSIONS.COACHING_PLANS_VIEW]
+  },
+  { 
+    name: 'Schedule', 
+    href: '/dashboard/schedule', 
+    icon: CalendarDaysIcon, 
+    current: false,
+    requiredPermissions: [PERMISSIONS.SCHEDULE_VIEW]
   },
   { 
     name: 'Scoring', 
@@ -120,10 +120,6 @@ export const pageMetadata: Record<string, { title: string; description: string }
     title: 'Schedule',
     description: 'Manage your coaching visits and appointments'
   },
-  '/dashboard/coaching-action-plans': {
-    title: 'Coaching Plans',
-    description: 'Create and manage comprehensive coaching action plans'
-  },
   '/dashboard/scoring': {
     title: 'Scoring',
     description: 'Evaluate and track instructional rubrics'
@@ -135,5 +131,9 @@ export const pageMetadata: Record<string, { title: string; description: string }
   '/dashboard/staff/nycps': {
     title: 'NYCPS Staff',
     description: 'Manage NYC Public School staff'
+  },
+  '/dashboard/coaching-action-plans': {
+    title: 'Coaching Plans',
+    description: 'Create and manage comprehensive coaching action plans for teacher development'
   },
 }

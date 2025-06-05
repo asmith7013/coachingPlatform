@@ -4,7 +4,7 @@ import React from "react";
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
-import { useSchoolById } from "@/hooks/domain/useSchools";
+import { useSchoolById } from "@hooks/domain/useSchools";
 import { MasterScheduleCard } from './cards/MasterScheduleCard';
 import { VisitsCard } from './cards/VisitsCard';
 import { TeachersCard } from './cards/TeachersCard';
@@ -97,6 +97,12 @@ export function SingleSchool({ schoolId }: SingleSchoolProps) {
         </Button>
       </div>
 
+      {/* Master Schedule Section */}
+      <MasterScheduleCard 
+        schoolId={schoolId}
+        schoolName={school.schoolName}
+      />
+
       {/* Visits Section */}
       <VisitsCard
         schoolId={schoolId}
@@ -116,12 +122,6 @@ export function SingleSchool({ schoolId }: SingleSchoolProps) {
       <MetricsCard
         onExportData={handleExportMetrics}
         onViewReport={handleViewMetricsReport}
-      />
-
-      {/* Master Schedule Section */}
-      <MasterScheduleCard 
-        schoolId={schoolId}
-        schoolName={school.schoolName}
       />
     </div>
   );

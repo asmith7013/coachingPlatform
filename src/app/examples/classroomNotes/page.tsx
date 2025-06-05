@@ -8,6 +8,7 @@ import { Input } from '@/components/core/fields/Input';
 import { Textarea } from '@/components/core/fields/Textarea';
 // import { Select } from '@/components/core/fields/Select';
 import { Checkbox } from '@/components/core/fields/Checkbox';
+import { getTodayString } from '@/lib/transformers/utils/date-utils';
 
 // Type definitions for form data
 interface TimeData {
@@ -99,7 +100,7 @@ const CoachingNotesTemplate = () => {
   const [formData, setFormData] = useState<FormData>({
     cycle: '',
     session: '',
-    date: new Date().toISOString().split('T')[0],
+    date: getTodayString(),
     teacher: '',
     lesson: '',
     otherContext: '',

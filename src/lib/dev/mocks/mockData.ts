@@ -7,6 +7,7 @@ import {
   AllowedRolesTLEnum, 
   YesNoEnum
 } from '@enums';
+import { getTodayString, addDays } from '@transformers/utils/date-utils';
 
 // import { Types } from 'mongoose';
 // import { DayType, PeriodType } from "@zod-schema/shared/enums";
@@ -484,17 +485,17 @@ const mockBellSchedule = {
   })),
   assignedCycleDays: [
     {
-      date: new Date().toISOString().split('T')[0],
+      date: getTodayString(),
       blockDayType: "A"
     },
     {
-      date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+      date: addDays(getTodayString(), 1),
       blockDayType: "B"
     }
   ],
   owners: scheduleOwners,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
+  createdAt: getTodayString(),
+  updatedAt: getTodayString()
 };
 
 // Mock data from the CSV - to represent what was in each cell

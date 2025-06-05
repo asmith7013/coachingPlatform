@@ -1,0 +1,10 @@
+{
+    "mcpServers": {
+      "mongodb": {
+        "command": "npx mongodb-mcp-server",
+        "env": {
+          "MDB_MCP_CONNECTION_STRING": "mongodb+srv://asmith7013:liw1Nv1f41NT4q9d@coaching.go309.mongodb.net/ai-coaching-platform"
+        }
+      }
+    }
+}

@@ -6,11 +6,11 @@ import React, { useState,
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
-import { useSchoolsList, useSchoolsMutations, type SchoolWithDates } from "@/hooks/domain/useSchools";
+import { useSchoolsList, useSchoolsMutations, type SchoolWithDates } from "@hooks/domain/useSchools";
 // import type { SchoolInput } from "@domain-types/school";
 // import { ResourceHeader } from "@/components/composed/layouts/ResourceHeader";
 import { EmptyListWrapper } from '@/components/core/empty/EmptyListWrapper';
-import { SchoolCard } from '@/components/domain/schools/SchoolCard';
+import { SchoolGridCard } from '@/components/domain/schools/SchoolGrid';
 import { CreateSchoolDialog } from '@/components/composed/dialogs/CreateSchoolDialog';
 import { BuildingLibraryIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 
@@ -122,7 +122,7 @@ export default function SchoolList() {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {schools.map((school: School) => (
-            <SchoolCard
+            <SchoolGridCard
               key={school._id}
               school={school}
               onDelete={handleDeleteSchool}

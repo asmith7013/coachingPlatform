@@ -12,6 +12,7 @@ import { Input } from '@/components/core/fields/Input';
 import { Button } from '@/components/core/Button';
 import { Plus, Edit2 } from 'lucide-react';
 import ipgData from '@/lib/json/ipg.json';
+import { getTodayString } from '@transformers/utils/date-utils';
 // import { semanticColors } from '@/lib/tokens/colors';
 
 interface MetricType {
@@ -96,7 +97,7 @@ export default function Example3Page() {
   // Helper functions
   const addImplementationRecord = () => {
     const newRecord: ImplementationRecordType = {
-      date: new Date().toISOString().split('T')[0],
+      date: getTodayString(),
       proposedArc: [],
       movesSelected: [],
       metrics: {},
@@ -144,12 +145,12 @@ export default function Example3Page() {
             {!showFocusBox ? (
               <>
                 <IPGFocusCards
-                  selectedValue={selectedCoreAction}
+                  selectedValue={selectedCoreAction || undefined}
                   onSelect={handleCoreActionSelect}
                   options={[
-                    { value: 'CA1', label: 'Focus, Coherence, and Rigor' },
-                    { value: 'CA2', label: 'Instructional Practices' },
-                    { value: 'CA3', label: 'Mathematical Practices' }
+                    { value: 'CA1', label: 'Focus, Coherence, and Rigor', colorCode: 'primary' },
+                    { value: 'CA2', label: 'Instructional Practices', colorCode: 'secondary' },
+                    { value: 'CA3', label: 'Mathematical Practices', colorCode: 'success' }
                   ]}
                 />
 

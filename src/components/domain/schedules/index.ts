@@ -11,6 +11,7 @@ export { StaffSelector } from './components/StaffSelector';
 export { TeacherBadge } from './components/TeacherBadge';
 export { TeacherActivityColumns } from './components/TeacherActivityColumns';
 export { ScheduleSummary } from './components/ScheduleSummary';
+export { SchedulePreview } from './SchedulePreview';
 
 // Utility exports
 export { validateTime } from './utils/TimeValidator';

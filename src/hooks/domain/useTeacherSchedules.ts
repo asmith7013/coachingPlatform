@@ -1,99 +1,69 @@
 import { createEntityHooks } from '@query/client/factories/entity-factory';
+import { z } from 'zod';
 import { 
   TeacherScheduleZodSchema, 
-  TeacherScheduleInputZodSchema, 
-  TeacherSchedule,
-  Period
+  type TeacherSchedule
 } from '@zod-schema/schedule/schedule';
 import { 
-  fetchTeacherSchedules,
-  createTeacherSchedule,
-  updateTeacherSchedule,
-  deleteTeacherSchedule,
-  fetchTeacherSchedulesBySchool
+  fetchTeacherSchedules, 
+  fetchTeacherScheduleById, 
+  createTeacherSchedule, 
+  updateTeacherSchedule, 
+  deleteTeacherSchedule
 } from '@actions/schedule/schedule';
-import { WithDateObjects, DocumentInput } from '@core-types/document';
-import { wrapServerActions } from '@transformers/factories/server-action-factory';
-import { transformData } from '@transformers/core/unified-transformer';
-import { ZodType } from 'zod';
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { DocumentInput, WithDateObjects } from '@core-types/document';
+import { createTransformationService } from '@transformers/core/transformation-service';
+import { ensureBaseDocumentCompatibility } from '@transformers/utils/response-utils';
+
 
 /**
- * TeacherSchedule entity with Date objects instead of string dates
+ * Teacher Schedule entity with Date objects instead of string dates
  */
 export type TeacherScheduleWithDates = WithDateObjects<TeacherSchedule>;
 
 /**
- * Input type that satisfies DocumentInput constraint for TeacherSchedule
+ * Input type that satisfies DocumentInput constraint
  */
-export type TeacherScheduleInput = DocumentInput<TeacherSchedule>;
-
-// Stub function for fetchById since it doesn't exist in the actions
-const fetchTeacherScheduleById = async (_id: string) => {
-  throw new Error('fetchTeacherScheduleById not implemented');
-};
+export type TeacherScheduleInputType = DocumentInput<TeacherSchedule>;
 
 /**
- * Extended Period with optional runtime properties
+ * Create transformation service following established pattern
  */
-interface ExtendedPeriod extends Period {
-  startTime?: string;
-  endTime?: string;
-}
+const teacherScheduleTransformation = createTransformationService({
+  entityType: 'teacherSchedules',
+  schema: ensureBaseDocumentCompatibility<TeacherSchedule>(TeacherScheduleZodSchema),
+  handleDates: true,
+  errorContext: 'useTeacherSchedules'
+});
 
 /**
- * UI representation of schedule data
+ * Wrap server actions with transformation service
  */
-export interface ScheduleForUI {
-  id: string;
-  teacherId: string;
-  teacherName: string;
-  scheduleData: Array<{
-    id: number;
-    startTime: string;
-    endTime: string;
-    timeSlot: string;
-    what: string;
-    who: string[];
-    classInfo: string;
-    roomInfo: string;
-  }>;
-}
+const wrappedActions = teacherScheduleTransformation.wrapServerActions({
+  fetch: fetchTeacherSchedules,
+  fetchById: fetchTeacherScheduleById,
+  create: createTeacherSchedule,
+  update: updateTeacherSchedule,
+  delete: deleteTeacherSchedule
+});
 
 /**
- * Wraps all server actions to transform dates in responses
+ * Create entity hooks using established factory pattern
  */
-const wrappedActions = wrapServerActions<TeacherSchedule, TeacherScheduleWithDates, TeacherScheduleInput>(
-  {
-    fetch: fetchTeacherSchedules,
-    fetchById: fetchTeacherScheduleById,
-    create: createTeacherSchedule,
-    update: updateTeacherSchedule,
-    delete: deleteTeacherSchedule
-  },
-  items => transformData<TeacherSchedule, TeacherScheduleWithDates>(items, {
-    schema: TeacherScheduleZodSchema as unknown as ZodType<TeacherScheduleWithDates>,
-    handleDates: true,
-    errorContext: 'useTeacherSchedules'
-  })
-);
-
-/**
- * Custom React Query hooks for TeacherSchedule entity
- * 
- * These hooks handle fetching, creating, updating, and deleting teacher schedules
- * with proper date transformation (string dates to Date objects)
- */
-const entityHooks = createEntityHooks<TeacherScheduleWithDates, TeacherScheduleInput>({
-  entityType: 'teacher-schedules',
-  fullSchema: TeacherScheduleZodSchema as unknown as ZodType<TeacherScheduleWithDates>,
-  inputSchema: TeacherScheduleInputZodSchema as unknown as ZodType<TeacherScheduleInput>,
+const {
+  useEntityList: useTeacherSchedulesList,
+  useEntityById: useTeacherScheduleById,
+  useMutations: useTeacherSchedulesMutations,
+  useManager: useTeacherScheduleManager
+} = createEntityHooks<TeacherScheduleWithDates, TeacherScheduleInputType>({
+  entityType: 'teacherSchedules',
+  fullSchema: TeacherScheduleZodSchema as z.ZodType<TeacherScheduleWithDates>,
+  inputSchema: ensureBaseDocumentCompatibility<TeacherSchedule>(TeacherScheduleZodSchema),
   serverActions: wrappedActions,
-  validSortFields: ['createdAt', 'updatedAt'],
+  validSortFields: ['teacher', 'school', 'createdAt', 'updatedAt'],
   defaultParams: {
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
+    sortBy: 'teacher',
+    sortOrder: 'asc',
     page: 1,
     limit: 50
   },
@@ -102,78 +72,23 @@ const entityHooks = createEntityHooks<TeacherScheduleWithDates, TeacherScheduleI
   relatedEntityTypes: ['schools', 'staff']
 });
 
-// Export entity hooks with renamed manager function
-export const {
-  useEntityList: useTeacherScheduleList,
-  useEntityById: useTeacherScheduleById, 
-  useMutations: useTeacherScheduleMutations
-} = entityHooks;
-
 /**
- * Hook for accessing teacher schedules for a specific school
+ * Unified interface following useSchools pattern
  */
-export function useTeacherSchedules(schoolId?: string) {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['teacher-schedules', 'school', schoolId],
-    queryFn: async () => {
-      if (!schoolId) return { items: [], success: true, total: 0 };
-      return fetchTeacherSchedulesBySchool(schoolId);
-    },
-    enabled: !!schoolId,
-    staleTime: 5 * 60 * 1000
-  });
-  
-  // Get mutations for CRUD operations
-  const { create, update, delete: remove } = useTeacherScheduleMutations();
-  
-  // Transform data for UI display
-  const schedulesForUI = useMemo(() => {
-    if (!data?.items) return [];
-    
-    return data.items.map((schedule) => {
-      // Type assertion to TeacherSchedule for safe property access
-      const typedSchedule = schedule as unknown as TeacherSchedule;
-      // Get the first day's schedule (usually the default)
-      const daySchedule = typedSchedule.scheduleByDay?.[0] || { day: 'uniform', periods: [] };
-      
-      // Convert periods to UI format
-      const scheduleData = daySchedule.periods.map((period: Period) => {
-        // Cast to ExtendedPeriod to safely access optional properties
-        const extendedPeriod = period as ExtendedPeriod;
-        const startTime = extendedPeriod.startTime || '';
-        const endTime = extendedPeriod.endTime || '';
-        
-        return {
-          id: period.periodNum,
-          startTime,
-          endTime,
-          timeSlot: `${startTime}-${endTime}`,
-          what: period.periodType || 'class',
-          who: [typedSchedule.teacher],
-          classInfo: period.className || '',
-          roomInfo: period.room || ''
-        };
-      });
-      
-      return {
-        id: typedSchedule._id,
-        teacherId: typedSchedule.teacher,
-        teacherName: typedSchedule.teacher, // This would be replaced with actual teacher name in the component
-        scheduleData
-      };
-    });
-  }, [data]);
-  
-  return {
-    schedules: data?.items || [],
-    schedulesForUI,
-    isLoading,
-    error,
-    createSchedule: create,
-    updateSchedule: update,
-    deleteSchedule: remove
-  };
-}
+export const useTeacherSchedules = {
+  list: useTeacherSchedulesList,
+  byId: useTeacherScheduleById,
+  mutations: useTeacherSchedulesMutations,
+  manager: useTeacherScheduleManager,
+  transformation: teacherScheduleTransformation
+};
 
-// Default export
+// Export individual hooks for backward compatibility
+export { 
+  useTeacherSchedulesList, 
+  useTeacherScheduleById, 
+  useTeacherSchedulesMutations, 
+  useTeacherScheduleManager
+};
+
 export default useTeacherSchedules; 

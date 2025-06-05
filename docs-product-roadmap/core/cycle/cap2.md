@@ -33,22 +33,20 @@ Create a comprehensive multi-stage editing interface in a drawer layout with tab
 - `src/hooks/utilities/useAutoSave.ts` - PURPOSE: invisible auto-save functionality
 - `src/app/actions/coaching-action-plans/update-partial.ts` - PURPOSE: partial update server action
 
-**Created Files:**
-- `src/app/dashboard/coaching-action-plans/page.tsx` - CREATED: main coaching plans dashboard page using existing CoachingActionPlanDashboard component
-
-**Modified Files:**
-- `src/lib/types/core/auth.ts` - MODIFIED: added COACHING_PLANS_VIEW, COACHING_PLANS_CREATE, COACHING_PLANS_EDIT permissions and assigned to Coach roles
-- `src/app/dashboard/config.ts` - MODIFIED: added Coaching Plans navigation item with ClipboardDocumentCheckIcon and page metadata
-- `src/hooks/ui/useNavigation.ts` - MODIFIED: added 'coaching-action-plans' special case for breadcrumb display
+**Files to Recreate:**
+- `src/app/dashboard/coaching-action-plans/page.tsx` - RECREATE: main coaching plans dashboard page using existing CoachingActionPlanDashboard component
+- `src/lib/types/core/auth.ts` - RECREATE: add COACHING_PLANS_VIEW, COACHING_PLANS_CREATE, COACHING_PLANS_EDIT permissions and assign to Coach roles
+- `src/app/dashboard/config.ts` - RECREATE: add Coaching Plans navigation item with ClipboardDocumentCheckIcon and page metadata
+- `src/hooks/ui/useNavigation.ts` - RECREATE: add 'coaching-action-plans' special case for breadcrumb display
 
 ## Tasks
 
-- [x] 1.0 Navigation Integration & Route Setup
+- [ ] 1.0 Navigation Integration & Route Setup
   **Context Stack:** Dashboard navigation, routing configuration
   **Pattern Reference:** Existing dashboard navigation structure
   **Quality Gate:** Single responsibility - navigation handles routing, page handles display
 
-  - [x] 1.1 Add coaching action plans to navigation configuration
+  - [ ] 1.1 Add coaching action plans to navigation configuration
     **Reference Files:**
     - `src/app/dashboard/config.ts` - WHEN: adding navigation item, WHY: established navigation pattern
     - `src/hooks/ui/useAuthorizedNavigation.ts` - WHEN: permissions setup, WHY: role-based access control
@@ -66,7 +64,7 @@ Create a comprehensive multi-stage editing interface in a drawer layout with tab
     - [ ] Follows established icon and naming patterns
     - [ ] Integrates with authorized navigation hook
 
-  - [x] 1.2 Create main dashboard route and page structure
+  - [ ] 1.2 Create main dashboard route and page structure
     **Reference Files:**
     - `src/app/dashboard/layout.tsx` - WHEN: understanding layout patterns, WHY: consistent page structure
     - `src/app/dashboard/schoolList/page.tsx` - WHEN: implementing page structure, WHY: established dashboard page pattern
@@ -80,7 +78,7 @@ Create a comprehensive multi-stage editing interface in a drawer layout with tab
     - Must integrate with existing permission system
     - Must provide foundation for detailed editing drawer
 
-  - [x] 1.3 Configure breadcrumb and page navigation
+  - [ ] 1.3 Configure breadcrumb and page navigation
     **Reference Files:**
     - `src/hooks/ui/useNavigation.ts` - WHEN: breadcrumb integration, WHY: consistent navigation experience
     - `src/components/core/navigation/Breadcrumbs.tsx` - WHEN: breadcrumb display, WHY: navigation consistency
@@ -93,12 +91,12 @@ Create a comprehensive multi-stage editing interface in a drawer layout with tab
     - [ ] Page title appears in AppShell header
     - [ ] Navigation state updates properly when on coaching plans page
 
-- [x] 2.0 Dashboard Page & Component Creation  
+- [ ] 2.0 Dashboard Page & Component Creation  
   **Context Stack:** Page layout, dashboard components, data fetching
   **Pattern Reference:** Existing dashboard patterns and component hierarchy
   **Quality Gate:** DRY - reuse existing dashboard layout patterns
 
-  - [x] 2.1 Create coaching action plans dashboard component
+  - [ ] 2.1 Create coaching action plans dashboard component
     **Reference Files:**
     - `src/app/dashboard/coaching-action-plans/components/CoachingActionPlanDashboard.tsx` - WHEN: implementing dashboard, WHY: existing dashboard component pattern
     - `src/components/domain/coaching/ActionPlanCard.tsx` - WHEN: displaying plan cards, WHY: established card display pattern
@@ -111,12 +109,12 @@ Create a comprehensive multi-stage editing interface in a drawer layout with tab
     - Don't create custom dashboard layout - reuse existing patterns
     - Don't duplicate card display logic - use ActionPlanCard component
     **Quality Checklist:**
-    - [x] Reuses existing dashboard component structure
-    - [x] Integrates ActionPlanCard components properly
-    - [x] Includes proper loading and error states
-    - [x] Follows established grid layout patterns
+    - [ ] Reuses existing dashboard component structure
+    - [ ] Integrates ActionPlanCard components properly
+    - [ ] Includes proper loading and error states
+    - [ ] Follows established grid layout patterns
 
-  - [x] 2.2 Integrate data fetching with existing hooks
+  - [ ] 2.2 Integrate data fetching with existing hooks
     **Reference Files:**
     - `src/hooks/domain/useCoachingActionPlans.ts` - WHEN: data fetching, WHY: established data management pattern
     - `src/app/actions/coaching/coaching-action-plans.ts` - WHEN: server actions, WHY: server-side data operations
@@ -130,7 +128,7 @@ Create a comprehensive multi-stage editing interface in a drawer layout with tab
     - Must support real-time updates with React Query
     - Must handle error states gracefully
 
-  - [x] 2.3 Add detailed editor access integration
+  - [ ] 2.3 Add detailed editor access integration
     **Reference Files:**
     - `src/components/domain/coaching/ActionPlanCard.tsx` - WHEN: adding edit functionality, WHY: existing card action patterns
     **Implementation Notes:**
@@ -139,9 +137,9 @@ Create a comprehensive multi-stage editing interface in a drawer layout with tab
     - Ensure proper state management between dashboard and editor
     - Follow established modal/drawer opening patterns
     **Quality Checklist:**
-    - [x] Edit button follows existing ActionPlanCard button patterns
-    - [x] Proper data flow from dashboard to detailed editor
-    - [x] Maintains existing card functionality (duplicate, archive, etc.)
+    - [ ] Edit button follows existing ActionPlanCard button patterns
+    - [ ] Proper data flow from dashboard to detailed editor
+    - [ ] Maintains existing card functionality (duplicate, archive, etc.)
 
 - [ ] 3.0 Drawer-Based Multi-Stage Editor Development
   **Context Stack:** Drawer component, tabbed navigation, stage integration

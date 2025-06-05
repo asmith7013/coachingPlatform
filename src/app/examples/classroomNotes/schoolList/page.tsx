@@ -6,9 +6,9 @@ import { Heading } from '@components/core/typography/Heading';
 import { Text } from '@components/core/typography/Text';
 import { Button } from '@components/core/Button';
 import { DashboardPage } from '@components/composed/layouts/DashboardPage';
-import { useSchoolsList, useSchoolsMutations } from "@/hooks/domain/useSchools"; // ✅ React Query hooks for managing Schools data.
+import { useSchoolsList, useSchoolsMutations } from "@hooks/domain/useSchools"; // ✅ React Query hooks for managing Schools data.
 import { SchoolInput } from "@zod-schema/core/school";
-import { SchoolWithDates } from "@/hooks/domain/useSchools";
+import { SchoolWithDates } from "@hooks/domain/useSchools";
 
 type School = SchoolWithDates;
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";

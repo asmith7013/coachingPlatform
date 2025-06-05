@@ -3,17 +3,15 @@
 import { useState } from 'react'
 import { tv } from 'tailwind-variants'
 import { XMarkIcon, ClockIcon, UserIcon } from '@heroicons/react/24/outline'
-import { PurposeAssignmentDropdown, type EventPurpose, getRecommendedPurpose } from '@/components/core/dropdowns/PurposeAssignmentDropdown'
 import type { AssignmentState } from '@zod-schema/visits/schedule-builder-state'
-import { getEventColorClasses, getEventTextClasses, type EventColor } from '@/lib/ui/styles/event-styles'
 
 const assignedTeacherCard = tv({
   slots: {
     container: 'absolute flex flex-col p-2 rounded border transition-all duration-200 hover:shadow-md cursor-pointer bg-white',
-    // Assignment type specific positioning - now uses unified colors
-    fullPeriod: 'inset-1',
-    firstHalf: 'top-1 left-1 right-1',
-    secondHalf: 'bottom-1 left-1 right-1',
+    // Assignment type specific positioning and styling
+    fullPeriod: 'inset-1 border-green-200 bg-green-50',
+    firstHalf: 'top-1 left-1 right-1 border-blue-200 bg-blue-50',
+    secondHalf: 'bottom-1 left-1 right-1 border-purple-200 bg-purple-50',
     header: 'flex items-center justify-between mb-1',
     teacherInfo: 'flex items-center gap-1 flex-1 min-w-0',
     teacherIcon: 'w-3 h-3 flex-shrink-0 text-gray-500',
@@ -26,97 +24,62 @@ const assignedTeacherCard = tv({
     timeInfo: 'flex items-center gap-1',
     timeIcon: 'w-3 h-3 flex-shrink-0 text-gray-400',
     timeText: 'text-xs text-gray-500',
-    assignmentTypeText: 'text-xs font-medium'
+    assignmentTypeText: 'text-xs font-medium',
+    // Color variants for assignment types
+    fullPeriodText: 'text-green-700',
+    firstHalfText: 'text-blue-700',
+    secondHalfText: 'text-purple-700'
   }
 })
-
-// Map assignment types to unified color system
-const getAssignmentTypeColor = (assignmentType: string): EventColor => {
-  switch (assignmentType) {
-    case 'full_period':
-      return 'green'
-    case 'first_half':
-      return 'blue'
-    case 'second_half':
-      return 'purple'
-    default:
-      return 'green'
-  }
-}
 
 interface AssignedTeacherCardProps {
   assignment: AssignmentState
   teacherName?: string
-  purpose?: EventPurpose | null
+  purpose?: string
   onRemove?: () => void
-  onPurposeChange?: (purpose: EventPurpose) => void
   onEditPurpose?: () => void
-  /** Context for auto-recommending purpose */
-  teacherContext?: {
-    isTeaching: boolean
-    isPrepPeriod: boolean
-  }
-  /** Whether to show the dropdown or static text */
-  interactive?: boolean
   className?: string
 }
 
 export function AssignedTeacherCard({
   assignment,
   teacherName = 'Unknown Teacher',
-  purpose = null,
+  purpose = 'No purpose assigned',
   onRemove,
-  onPurposeChange,
   onEditPurpose,
-  teacherContext,
-  interactive = true,
   className
 }: AssignedTeacherCardProps) {
   const styles = assignedTeacherCard()
   const [isHovered, setIsHovered] = useState(false)
 
-  // Get recommended purpose if teacherContext is provided
-  const recommendedPurpose = teacherContext 
-    ? getRecommendedPurpose(teacherContext.isTeaching, teacherContext.isPrepPeriod)
-    : undefined
-
-  // Get styling based on assignment type using unified system
+  // Get styling based on assignment type
   const getAssignmentTypeStyles = () => {
-    const color = getAssignmentTypeColor(assignment.assignmentType)
-    const colorClasses = getEventColorClasses(color)
-    
-    const baseConfig = {
-      color: colorClasses.container + ' ' + colorClasses.border,
-      text: getEventTextClasses(color),
-      label: ''
-    }
-
     switch (assignment.assignmentType) {
       case 'full_period':
         return {
-          ...baseConfig,
           container: styles.fullPeriod(),
+          text: styles.fullPeriodText(),
           height: '100%',
           label: 'Full Period'
         }
       case 'first_half':
         return {
-          ...baseConfig,
           container: styles.firstHalf(),
+          text: styles.firstHalfText(),
           height: '50%',
           label: 'First Half'
         }
       case 'second_half':
         return {
-          ...baseConfig,
           container: styles.secondHalf(),
+          text: styles.secondHalfText(),
           height: '50%',
           label: 'Second Half'
         }
       default:
         return {
-          ...baseConfig,
           container: styles.fullPeriod(),
+          text: styles.fullPeriodText(),
           height: '100%',
           label: 'Full Period'
         }
@@ -138,7 +101,7 @@ export function AssignedTeacherCard({
 
   return (
     <div
-      className={`${styles.container()} ${typeStyles.container} ${typeStyles.color} ${className || ''}`}
+      className={`${styles.container()} ${typeStyles.container} ${className || ''}`}
       style={{ height: typeStyles.height, zIndex: 10 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -179,24 +142,12 @@ export function AssignedTeacherCard({
         {/* Purpose row */}
         <div className={styles.purposeRow()}>
           <div className="w-2 h-2 rounded-full bg-gray-300 flex-shrink-0" />
-          {interactive ? (
-            <PurposeAssignmentDropdown
-              value={purpose}
-              onChange={onPurposeChange}
-              recommendedPurpose={recommendedPurpose}
-              size="sm"
-              showRemoveButton={false}
-              placeholder="Add purpose"
-              className="flex-1 min-w-0"
-            />
-          ) : (
-            <span 
-              className={`${styles.purposeText()} ${!purpose ? 'italic text-amber-600' : ''}`}
-              title={purpose || 'No purpose assigned'}
-            >
-              {purpose || 'No purpose assigned'}
-            </span>
-          )}
+          <span 
+            className={`${styles.purposeText()} ${purpose === 'No purpose assigned' ? 'italic text-amber-600' : ''}`}
+            title={purpose}
+          >
+            {purpose}
+          </span>
         </div>
 
         {/* Time and assignment type info */}

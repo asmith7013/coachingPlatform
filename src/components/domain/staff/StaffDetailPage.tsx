@@ -19,6 +19,7 @@ import type { TeacherSchedule } from '@zod-schema/schedule/schedule'
 import type { TableColumnSchema } from '@ui/table-schema'
 import { NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from '@zod-schema/core/staff'
 import { TeacherScheduleZodSchema } from '@zod-schema/schedule/schedule'
+import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
 
 type StaffMember = NYCPSStaff | TeachingLabStaff
 type StaffType = 'nycps' | 'tl'
@@ -205,8 +206,8 @@ function StaffInfoTab({
         <dl className="grid grid-cols-1 gap-x-4 gap-y-2">
           <InfoItem label="Name" value={staffMember.staffName} />
           <InfoItem label="Email" value={staffMember.email || 'Not provided'} />
-          <InfoItem label="Created" value={staffMember.createdAt ? new Date(staffMember.createdAt).toLocaleDateString() : 'Unknown'} />
-          <InfoItem label="Last Updated" value={staffMember.updatedAt ? new Date(staffMember.updatedAt).toLocaleDateString() : 'Unknown'} />
+          <InfoItem label="Created" value={staffMember.createdAt ? formatMediumDate(toDateString(new Date(staffMember.createdAt))) : 'Unknown'} />
+          <InfoItem label="Last Updated" value={staffMember.updatedAt ? formatMediumDate(toDateString(new Date(staffMember.updatedAt))) : 'Unknown'} />
         </dl>
       </Card>
 

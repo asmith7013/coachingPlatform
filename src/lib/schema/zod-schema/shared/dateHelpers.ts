@@ -1,6 +1,27 @@
 // src/lib/data-schema/zod-schema/shared/dateHelpers.ts
 import { z } from 'zod';
 
+// Re-export date utilities for consistency
+export {
+  getTodayString,
+  toDateString,
+  fromDateString,
+  formatShortDate,
+  formatMediumDate,
+  formatLongDate,
+  formatDateForAPI,
+  getDayNameFromDate,
+  getDayTypeFromDate,
+  isSameDay,
+  isToday,
+  navigateDate,
+  navigateWeek,
+  navigateMonth,
+  addDays,
+  subtractDays,
+  getRelativeDateDescription
+} from '@transformers/utils/date-utils';
+
 /**
  * Enhanced date field transformer that handles various date formats
  * including strings, Date objects, and timestamps
@@ -55,3 +76,8 @@ export const dateStringSchema = z
   .refine(val => !isNaN(new Date(val).getTime()), {
     message: "Invalid date"
   });
+
+/**
+ * Zod schema for optional Date objects
+ */
+export const zOptionalDateField = z.date().optional();

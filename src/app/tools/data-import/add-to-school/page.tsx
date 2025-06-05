@@ -5,7 +5,6 @@ import { Button } from '@/components/core';
 import { Alert } from '@/components/core/feedback';
 import { Card } from '@/components/composed/cards';
 import { PageHeader } from '@/components/composed/layouts';
-import { SchoolCard } from '@/components/domain/schools';
 import { 
   ArrowLeftIcon, 
   UserGroupIcon, 
@@ -14,7 +13,7 @@ import {
   CheckIcon 
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
-import { useSchools } from '@/hooks/domain/useSchools';
+import { useSchools } from '@hooks/domain/useSchools';
 import { useErrorHandledMutation } from '@query/client/hooks/mutations/useErrorHandledMutation';
 import { bulkCreateStaffWithSchoolLink } from '@actions/staff/operations';
 import { createVisit } from '@actions/visits/visits';
@@ -23,9 +22,10 @@ import {
   createDataPreview 
 } from '@/lib/transformers/ui/data-preview';
 import { validateVisitData, validateStaffData } from '@/lib/transformers/ui/form-validation';
-import type { SchoolWithDates } from '@/hooks/domain/useSchools';
+import type { SchoolWithDates } from '@hooks/domain/useSchools';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
+import { SingleSchool } from '@/components/domain/schools';
 
 type DataType = 'staff' | 'visits';
 type Step = 'selectSchool' | 'selectDataType' | 'importData';
@@ -173,7 +173,7 @@ export default function AddToSchoolPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {schools.map((school: SchoolWithDates) => (
             <div key={school._id} onClick={() => handleSchoolSelect(school)}>
-              <SchoolCard school={school} />
+              <SingleSchool schoolId={school._id} />
             </div>
           ))}
         </div>

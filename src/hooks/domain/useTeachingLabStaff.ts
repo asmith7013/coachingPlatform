@@ -3,7 +3,6 @@ import {
   TeachingLabStaff, 
   MondayUser,
   TeachingLabStaffZodSchema,
-  TeachingLabStaffInputZodSchema
 } from '@zod-schema/core/staff';
 import { 
   fetchTeachingLabStaff, 
@@ -16,6 +15,7 @@ import { WithDateObjects, DocumentInput } from '@core-types/document';
 import { wrapServerActions } from '@transformers/factories/server-action-factory';
 import { createTransformer } from '@transformers/core/unified-transformer';
 import { ZodType } from 'zod';
+import { ensureBaseDocumentCompatibility } from '@transformers/utils/response-utils';
 
 /**
  * TeachingLabStaff entity with Date objects instead of string dates
@@ -31,7 +31,7 @@ export type TeachingLabStaffInput = DocumentInput<TeachingLabStaff>;
  * Create a domain transformer for TeachingLabStaff
  */
 const staffTransformer = createTransformer<TeachingLabStaff, TeachingLabStaffWithDates>({
-  schema: TeachingLabStaffZodSchema as unknown as ZodType<TeachingLabStaff>,
+  schema: TeachingLabStaffZodSchema as ZodType<TeachingLabStaff>,
   strictValidation: true,
   handleDates: true,
   domainTransform: (item) => ({
@@ -76,7 +76,7 @@ const {
   entityType: 'teaching-lab-staff',
   serverActions: wrappedActions,
   fullSchema: TeachingLabStaffZodSchema as ZodType<TeachingLabStaffWithDates>,
-  inputSchema: TeachingLabStaffInputZodSchema as unknown as ZodType<TeachingLabStaffInput>,
+  inputSchema: ensureBaseDocumentCompatibility<TeachingLabStaff>(TeachingLabStaffZodSchema),
   validSortFields: ['staffName', 'email', 'adminLevel', 'createdAt', 'updatedAt'],
   defaultParams: {
     sortBy: 'staffName',

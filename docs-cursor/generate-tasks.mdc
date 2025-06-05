@@ -1,0 +1,180 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Rule: Generating a Task List from a PRD
+
+## Goal
+
+To guide an AI assistant in creating a detailed, step-by-step task list in Markdown format based on an existing Product Requirements Document (PRD). The task list should guide a developer through implementation.
+
+## Output
+
+- **Format:** Markdown (`.md`)
+- **Location:** `/tasks/`
+- **Filename:** `tasks-[prd-file-name].md` (e.g., `tasks-prd-user-profile-editing.md`)
+
+## Process
+
+1.  **Receive PRD Reference:** The user points the AI to a specific PRD file
+2.  **Analyze PRD:** The AI reads and analyzes the functional requirements, user stories, and other sections of the specified PRD.
+3.  **Context Template Selection:** Based on the PRD analysis, select appropriate context templates from `/docs/context-templates/`:
+    - UI Components → `ui-component-context.md`
+    - Data/Schema work → `data-layer-context.md`  
+    - External APIs → `integration-context.md`
+3.  **Phase 1: Generate Parent Tasks:** Based on the PRD analysis, create the file and generate the main, high-level tasks required to implement the feature. Use your judgement on how many high-level tasks to use. It's likely to be about 5. Present these tasks to the user in the specified format (without sub-tasks yet). Inform the user: "I have generated the high-level tasks based on the PRD. Ready to generate the sub-tasks? Respond with 'Go' to proceed."
+4.  **Wait for Confirmation:** Pause and wait for the user to respond with "Go".
+5.  **Phase 2: Generate Sub-Tasks:** Once the user confirms, break down each parent task into smaller, actionable sub-tasks necessary to complete the parent task. Ensure sub-tasks logically follow from the parent task and cover the implementation details implied by the PRD.
+6.  **Identify Relevant Files:** Based on the tasks and PRD, identify potential files that will need to be created or modified. List these under the `Relevant Files` section
+7.  **Generate Final Output:** Combine the parent tasks, sub-tasks, relevant files, and notes into the final Markdown structure.
+8.  **Save Task List:** Save the generated document in the `/tasks/` directory with the filename `tasks-[prd-file-name].md`, where `[prd-file-name]` matches the base name of the input PRD file (e.g., if the input was `prd-user-profile-editing.md`, the output is `tasks-prd-user-profile-editing.md`).
+
+
+## Output Format
+
+The generated task list _must_ follow this enhanced structure, pulling context from the PRD:
+
+```markdown
+## Context Strategy
+
+**Primary Context Template:** [From PRD Implementation Strategy section]
+**Domain Reference:** [From PRD Implementation Strategy section]
+
+## Relevant Files
+
+**Pattern References:** [From PRD's existing functionality analysis]
+- `path/to/pattern-file.tsx` - WHEN: [implementation phase], WHY: [pattern from PRD analysis]
+- `path/to/integration-file.ts` - WHEN: [integration phase], WHY: [existing functionality to extend per PRD]
+
+**New Files to Create:** [Based on PRD requirements]
+- `path/to/new-component.tsx` - PURPOSE: [main feature component per PRD]
+- `path/to/new-hook.ts` - PURPOSE: [data management per PRD requirements]
+
+## Tasks
+
+- [ ] 1.0 [Parent Task from PRD Staging Approach]
+  **Context Stack:** [Files from PRD's recommended context template]
+  **Pattern Reference:** [Existing pattern identified in PRD analysis]
+  **Quality Gate:** [Specific quality gate from PRD Implementation Strategy]
+  - [ ] 1.1 Sub-task with enhanced guidance
+    **Reference Files:**
+    - `src/components/existing/Pattern.tsx` - WHEN: [specific implementation phase], WHY: [specific pattern to follow]
+    - `src/lib/data/schema.ts` - WHEN: [data definition phase], WHY: [schema consistency reference]
+    **Implementation Notes:**
+    - Follow [specific pattern] from reference file
+    - Use [specific approach] for [specific requirement]
+    - Maintain [specific consistency rule]
+    **Anti-Patterns:**
+    - Don't [specific mistake] - use [recommended approach] instead
+    - Avoid [common pitfall] - follow [established pattern]
+    **Quality Checklist:**
+    - [ ] Uses [specific component/pattern] (not custom implementation)
+    - [ ] Follows [specific design pattern]
+    - [ ] Implements proper [specific requirement]
+    - [ ] Maintains [specific consistency standard]
+  - [ ] 1.2 Sub-task with standard format
+    **PRD Requirements:**
+    - Implement [specific requirement from PRD]
+    - Follow [pattern identified in PRD creation]
+    - Integrate with [existing functionality per PRD]
+
+- [ ] 2.0 [Next Parent Task from PRD Staging]
+  **Context Stack:** [Next stage files from PRD]
+  **Pattern Reference:** [Pattern from PRD's code analysis]
+  **Quality Gate:** [Quality measure from PRD Implementation Strategy]
+
+
+## Interaction Model
+
+The process explicitly requires a pause after generating parent tasks to get user confirmation ("Go") before proceeding to generate the detailed sub-tasks. This ensures the high-level plan aligns with user expectations before diving into details.
+
+## Target Audience
+
+Assume the primary reader of the task list is a **junior developer** who will implement the feature.
+
+## PRD Integration Requirements
+
+Since PRDs now include existing functionality analysis, the task generation must:
+
+### Leverage PRD Context
+- **Use Implementation Strategy:** Follow the staging approach and context templates specified in the PRD
+- **Reference Code Analysis:** Incorporate existing patterns and components identified during PRD creation
+- **Apply Quality Gates:** Use the specific DRY/Abstraction/Separation checks from the PRD
+
+### Maintain Consistency
+- **Pattern Adherence:** Every task must reference how it follows existing patterns from the PRD
+- **Integration Points:** Clearly show how new code connects to existing functionality per PRD analysis
+- **Quality Assurance:** Include specific checkpoints based on the PRD's established quality gates
+
+### Task Enhancement
+Each sub-task must connect back to:
+- Specific PRD requirements it fulfills
+- Existing code patterns it follows (from PRD analysis)
+- Quality standards it must meet (from PRD Implementation Strategy)
+
+## Enhanced Sub-Task Requirements
+
+**For Complex UI Components and Integration Points Only** - Apply enhanced format selectively to high-impact tasks that benefit from detailed guidance.
+
+### When to Use Enhanced Format
+- Complex UI components with established patterns
+- Integration points between systems
+- Components that extend existing patterns
+- Tasks with known anti-patterns from project history
+
+### Enhanced Sub-Task Elements
+
+#### Reference File Documentation
+- **WHEN to reference:** Specific implementation phase requiring the pattern
+- **WHY to reference:** Clear rationale for following this approach
+- **HOW to adapt:** Any modifications needed for current context
+
+#### Implementation Notes
+- **Specific patterns:** Exact approach from reference files
+- **Configuration details:** How to adapt patterns for current use
+- **Integration requirements:** How to connect with existing systems
+
+#### Anti-Pattern Prevention
+- **Don't statements:** Explicit guidance on what NOT to do
+- **Instead statements:** Recommended alternatives to common mistakes
+- **Based on project history:** Anti-patterns from actual codebase experience
+
+#### Measurable Quality Gates
+- **Checklist format:** Specific, checkable requirements
+- **Tool/component usage:** Must use X component (not create custom Y)
+- **Pattern compliance:** Must follow established Z pattern
+- **Integration requirements:** Must work with existing A system
+
+### Example Enhanced Sub-Task
+```markdown
+- [ ] 2.3 Implement IPGSubsectionCards with dynamic color inheritance
+  **Reference Files:**
+  - `src/components/composed/cards/ClickableCards.tsx` - WHEN: Building card layout, WHY: Established selection pattern
+  - `src/app/examples/cap/components/IPGSubsectionCards.tsx` - WHEN: Implementing color inheritance, WHY: Working color mapping example
+  - `src/lib/json/ipg.json` - WHEN: Loading subsection data, WHY: Data structure reference
+  **Implementation Notes:**
+  - Follow getColor function pattern for consistent color mapping (CA1=primary, CA2=secondary, CA3=success)
+  - Use ClickableCards compound component with Card subcomponent
+  - Pass subsection.section as value, subsection.description as description
+  - Maintain layout="vertical" for subsection display
+  **Anti-Patterns:**
+  - Don't create custom selection UI - extend ClickableCards component
+  - Don't hardcode color values - use semantic color mapping system
+  - Don't duplicate card selection logic - reuse established patterns
+  **Quality Checklist:**
+  - [ ] Extends ClickableCards (not custom card implementation)
+  - [ ] Implements proper color inheritance from parentColor prop
+  - [ ] Uses established TypeScript interfaces from examples
+  - [ ] Follows project component hierarchy patterns
+```
+
+### Standard Sub-Task Format
+For simpler tasks, use the standard format without enhanced sections:
+```markdown
+- [ ] 1.5 Create reference transformer for dropdown components
+  **PRD Requirements:**
+  - Transform entity data to {value, label} format
+  - Support search and filtering
+  - Handle empty states appropriately
+```

@@ -1,7 +1,6 @@
 import { createEntityHooks } from '@query/client/factories/entity-factory';
 import { 
   LookForZodSchema, 
-  LookForInputZodSchema, 
   LookFor
 } from '@zod-schema/look-fors/look-for';
 import { 
@@ -15,6 +14,7 @@ import { wrapServerActions } from '@transformers/factories/server-action-factory
 import { transformData } from '@transformers/core/unified-transformer';
 import { ZodType } from 'zod';
 import { useCallback } from 'react';
+import { ensureBaseDocumentCompatibility } from '@/lib/transformers/utils/response-utils';
 
 /**
  * LookFor entity with Date objects instead of string dates
@@ -57,8 +57,8 @@ const wrappedActions = wrapServerActions<LookFor, LookForWithDates, LookForInput
  */
 const entityHooks = createEntityHooks<LookForWithDates, LookForInput>({
   entityType: 'look-fors',
-  fullSchema: LookForZodSchema as unknown as ZodType<LookForWithDates>,
-  inputSchema: LookForInputZodSchema as unknown as ZodType<LookForInput>,
+  fullSchema: LookForZodSchema as ZodType<LookForWithDates>,
+  inputSchema: ensureBaseDocumentCompatibility<LookFor>(LookForZodSchema),
   serverActions: wrappedActions,
   validSortFields: ['topic', 'category', 'status', 'createdAt', 'updatedAt'],
   defaultParams: {

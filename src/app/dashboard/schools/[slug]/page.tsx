@@ -1,14 +1,14 @@
 import { Suspense } from 'react';
-import { SchoolDetailView } from '@domain-components/schools/SchoolDetailView';
+import { SingleSchool } from '@/components/domain/schools/singleSchool/SingleSchool';
 import { Spinner } from '@core-components/feedback/Spinner';
 import { getSchoolIdFromSlug } from '@actions/schools/schools';
 import { notFound } from 'next/navigation';
 
-interface SchoolDetailPageProps {
+interface SingleSchoolPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default async function SchoolDetailPage({ params }: SchoolDetailPageProps) {
+export default async function SingleSchoolPage({ params }: SingleSchoolPageProps) {
   const { slug } = await params;
   
   // Convert slug to ID server-side (happens once per page load)
@@ -21,7 +21,7 @@ export default async function SchoolDetailPage({ params }: SchoolDetailPageProps
   return (
     <div className="container mx-auto px-4 py-8">
       <Suspense fallback={<Spinner />}>
-        <SchoolDetailView schoolId={schoolId} />
+        <SingleSchool schoolId={schoolId} />
       </Suspense>
     </div>
   );

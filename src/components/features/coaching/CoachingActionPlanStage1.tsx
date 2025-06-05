@@ -5,7 +5,7 @@ import { IPGSubsectionCards } from '@/components/domain/coaching/IPGSubsectionCa
 import { Textarea } from '@/components/core/fields/Textarea';
 import { Button } from '@/components/core/Button';
 import { Edit2 } from 'lucide-react';
-import { useIPGData } from '@/hooks/domain/cap/useIPGData';
+import { useIPGData } from '@/hooks/domain/useIPGData';
 
 export interface CoachingActionPlanStage1Props {
   initialData?: {
@@ -20,12 +20,14 @@ export interface CoachingActionPlanStage1Props {
     description: string;
     rationale: string;
   }) => void;
+  planId?: string;
   className?: string;
 }
 
 export const CoachingActionPlanStage1: React.FC<CoachingActionPlanStage1Props> = ({
   initialData,
   onChange,
+  planId: _planId,
   className
 }) => {
   const { coreActions, getSubsectionsForCoreAction, getCoreActionById, getSubsectionById } = useIPGData();

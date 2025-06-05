@@ -17,5 +17,21 @@ export const radii = {
   full: 'rounded-full',
 }
 
+export const radiiTop = {
+  none: 'rounded-t-none',
+  sm: 'rounded-t-sm',
+  md: 'rounded-t',
+  lg: 'rounded-t-lg',
+  xl: 'rounded-t-xl',
+}
+
+export const radiiBottom = {
+  none: 'rounded-b-none',
+  sm: 'rounded-b-sm',
+  md: 'rounded-b',
+  lg: 'rounded-b-lg',
+  xl: 'rounded-b-xl',
+}
+
 export type Shadow = keyof typeof shadows
 export type Radius = keyof typeof radii 

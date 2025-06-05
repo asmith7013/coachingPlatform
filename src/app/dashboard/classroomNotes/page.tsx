@@ -14,6 +14,7 @@ import TimeTracking from './components/TimeTracking';
 import Transcripts from './components/Transcripts';
 import PreExitChecklist from './components/PreExitChecklist';
 import { curriculumData, exampleLessonData } from './data';
+import { getTodayString } from '@transformers/utils/date-utils';
 
 // Type definitions for form data
 export interface TimeData {
@@ -95,7 +96,7 @@ const ClassroomNotesPage = () => {
   const [formData, setFormData] = useState<FormData>({
     cycle: 'Cycle 2',
     session: 'Session 3',
-    date: new Date().toISOString().split('T')[0],
+    date: getTodayString(),
     teacher: 'Ms. Johnson',
     curriculum: {
       course: exampleLessonData.course,

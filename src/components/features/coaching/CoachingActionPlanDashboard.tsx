@@ -7,16 +7,16 @@ import { ResourceHeader } from '@/components/composed/layouts/ResourceHeader';
 import { EmptyListWrapper } from '@/components/core/empty/EmptyListWrapper';
 import { Text } from '@/components/core/typography/Text';
 import { useToast } from '@/components/core/feedback/Toast';
-import { CreateCoachingActionPlanDialog, EditCoachingActionPlanDialog } from '@/components/composed/dialogs';
+import { CreateCoachingActionPlanDialog } from '@/components/composed/dialogs';
+import { CoachingActionPlanDetailedEditor } from './CoachingActionPlanDetailedEditor';
 import { ActionPlanCard, StatusTransitionButton } from '@/components/domain/coaching';
-import { useCoachingActionPlans } from '@/hooks/domain/cap/useCoachingActionPlans';
+import { useCoachingActionPlans } from '@/hooks/domain/useCoachingActionPlans';
 import { updateCoachingActionPlanStatus } from '@/app/actions/coaching/coaching-action-plans';
 import { handleClientError } from '@error/handlers/client';
 import { PlusCircleIcon, FolderIcon, CheckCircleIcon } from 'lucide-react';
 import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
 import { type PlanStatus } from '@/lib/transformers/utils/coaching-action-plan-utils';
 import { Button } from '@/components/core/Button';
-import { CoachingActionPlanDetailedEditor } from './CoachingActionPlanDetailedEditor';
 
 interface CoachingActionPlanDashboardProps {
   className?: string;
@@ -28,12 +28,8 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
   
   // Dialog state management
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  const [editingPlanId, setEditingPlanId] = useState<string | null>(null);
-  
-  // NEW: Detailed editor state management
   const [showDetailedEditor, setShowDetailedEditor] = useState(false);
-  const [detailedEditingPlanId, setDetailedEditingPlanId] = useState<string | null>(null);
+  const [editingPlanId, setEditingPlanId] = useState<string | null>(null);
   
   // ✅ Use the factory pattern hook - provides all state management
   const {
@@ -57,12 +53,6 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
   // ✅ Navigation handlers following established patterns  
   const handleEditPlan = (planId: string) => {
     setEditingPlanId(planId);
-    setShowEditDialog(true);
-  };
-
-  // NEW: Detailed editor navigation handler
-  const handleDetailedEdit = (planId: string) => {
-    setDetailedEditingPlanId(planId);
     setShowDetailedEditor(true);
   };
 
@@ -219,7 +209,6 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
                 <ActionPlanCard
                   plan={plan}
                   onEdit={handleEditPlan}
-                  onDetailedEdit={handleDetailedEdit}
                   onDuplicate={handleDuplicatePlan}
                   onArchive={handleArchivePlan}
                   onDelete={handleDeletePlan}
@@ -247,37 +236,16 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
         onSuccess={handleCreateSuccess}
       />
 
-      {/* Edit Dialog */}
-      <EditCoachingActionPlanDialog
-        open={showEditDialog}
+      {/* Detailed Editor */}
+      <CoachingActionPlanDetailedEditor
+        planId={editingPlanId || ''}
+        open={showDetailedEditor}
         onClose={() => {
-          setShowEditDialog(false);
+          setShowDetailedEditor(false);
           setEditingPlanId(null);
         }}
-        planId={editingPlanId}
-        onSuccess={handleEditSuccess}
+        onSave={handleEditSuccess}
       />
-      
-      {/* TODO: Detailed Editor - Will be implemented in Phase 3 */}
-      {showDetailedEditor && detailedEditingPlanId && (
-        <CoachingActionPlanDetailedEditor
-          planId={detailedEditingPlanId}
-          open={showDetailedEditor}
-          onClose={() => {
-            setShowDetailedEditor(false);
-            setDetailedEditingPlanId(null);
-          }}
-          onSave={(_updatedPlan) => {
-            showToast({
-              title: 'Success',
-              description: 'Coaching action plan updated successfully',
-              variant: 'success',
-              icon: CheckCircleIcon
-            });
-            refetch();
-          }}
-        />
-      )}
       
       {/* ✅ Toast notification system for user feedback */}
       <ToastComponent />

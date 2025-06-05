@@ -3,7 +3,7 @@
 import { tv } from 'tailwind-variants'
 
 // IMPORT: Use existing PeriodTime type instead of redefining
-import type { PeriodTime } from '@domain-types/schedule'
+import type { PeriodTime } from '@/lib/domain/schedule/schedule-calendar-utils'
 
 const periodColumn = tv({
   slots: {

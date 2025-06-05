@@ -7,9 +7,10 @@ import { Card } from '@components/composed/cards/Card';
 import { Heading, Text } from '@components/core/typography';
 import { typography, paddingY, stack } from '@lib/tokens/tokens';
 import { cn } from '@ui/utils/formatters';
-import { useSchoolById } from "@/hooks/domain/useSchools";
-import { useNYCPSStaff } from "@/hooks/domain/staff/useNYCPSStaff";
+import { useSchoolById } from "@hooks/domain/useSchools";
+import { useNYCPSStaff } from "@hooks/domain/useNYCPSStaff";
 import { Alert, Spinner, Badge } from '@components/core/feedback';
+import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
@@ -108,7 +109,7 @@ export default function SchoolDetailClient({ schoolId }: SchoolDetailClientProps
             )}
             {school.createdAt && (
               <Text textSize="sm" color="muted" className="mt-1">
-                Created: {school.createdAt.toLocaleDateString()}
+                Created: {formatMediumDate(toDateString(school.createdAt))}
               </Text>
             )}
           </div>

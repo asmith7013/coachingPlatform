@@ -1,7 +1,6 @@
 import { createEntityHooks } from '@query/client/factories/entity-factory';
 import { 
   SchoolZodSchema, 
-  SchoolInputZodSchema, 
   School,
   SchoolReference,
   schoolToReference
@@ -19,6 +18,7 @@ import { useInvalidation } from '@query/cache/invalidation';
 import { useBulkOperations } from '@query/client/hooks/mutations/useBulkOperations';
 import { useCallback } from 'react';
 import { z } from 'zod';
+import { ensureBaseDocumentCompatibility } from '@/lib/transformers/utils/response-utils';
 
 /**
  * School entity with Date objects instead of string dates
@@ -67,7 +67,7 @@ const {
 } = createEntityHooks<SchoolWithDates, SchoolInput>({
   entityType: 'schools',
   fullSchema: SchoolZodSchema as z.ZodType<SchoolWithDates>,
-  inputSchema: SchoolInputZodSchema as unknown as z.ZodType<SchoolInput>,
+  inputSchema: ensureBaseDocumentCompatibility<School>(SchoolZodSchema),
   serverActions: wrappedActions,
   validSortFields: ['schoolName', 'district', 'createdAt', 'updatedAt'],
   defaultParams: {

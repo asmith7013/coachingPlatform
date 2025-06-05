@@ -14,7 +14,6 @@ import { calculatePlanProgress } from '@/lib/transformers/utils/coaching-action-
 interface ActionPlanCardProps {
   plan: CoachingActionPlan & { _id: string; createdAt?: Date; updatedAt?: Date };
   onEdit?: (planId: string) => void;
-  onDetailedEdit?: (planId: string) => void;
   onDuplicate?: (planId: string) => void;
   onArchive?: (planId: string) => void;
   onDelete?: (planId: string) => void;
@@ -80,7 +79,6 @@ function StatusBadge({ status }: { status: string }) {
 export function ActionPlanCard({
   plan,
   onEdit,
-  onDetailedEdit,
   onDuplicate,
   onArchive,
   onDelete,
@@ -191,18 +189,6 @@ export function ActionPlanCard({
               >
                 <Edit2 className="h-4 w-4" />
                 Edit
-              </Button>
-            )}
-            
-            {onDetailedEdit && (
-              <Button
-                intent="primary"
-                appearance="solid"
-                padding="sm"
-                onClick={() => onDetailedEdit(plan._id)}
-              >
-                <Edit2 className="h-4 w-4" />
-                Detailed Edit
               </Button>
             )}
             

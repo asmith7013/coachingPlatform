@@ -9,7 +9,7 @@ import {
   CheckIcon, 
   BuildingLibraryIcon 
 } from '@heroicons/react/24/outline';
-import { useSchoolsMutations } from '@/hooks/domain/useSchools';
+import { useSchoolsMutations } from '@hooks/domain/useSchools';
 import { AI_PROMPTS } from '@ui/data-import/schema-templates';
 import { validateSchoolData } from '@transformers/ui/form-validation';
 import { createDataPreview } from '@transformers/ui/data-preview';

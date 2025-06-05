@@ -14,15 +14,15 @@ import {
 import { useErrorHandledMutation } from '@query/client/hooks/mutations/useErrorHandledMutation';
 import { bulkCreateStaffWithSchoolLink } from '@actions/staff/operations';
 import { createVisit } from '@actions/visits/visits';
-import { createBellSchedule, createTeacherSchedule } from '@actions/schedule/schedule';
+import { createBellSchedule, createMasterSchedule } from '@actions/schedule/schedule';
 import { AI_PROMPTS, createMasterSchedulePrompt } from '@ui/data-import/schema-templates';
 import { createDataPreview, validateVisitData, validateStaffData, validateBellScheduleData, validateMasterScheduleData } from '@transformers/ui';
-import type { SchoolWithDates } from '@/hooks/domain/useSchools';
+import type { SchoolWithDates } from '@hooks/domain/useSchools';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
 import type { BellScheduleInput, TeacherScheduleInput } from '@zod-schema/schedule/schedule';
-import type { NYCPSStaffWithDates } from '@/hooks/domain/staff/useNYCPSStaff';
-import { useNYCPSStaffList } from '@/hooks/domain/staff/useNYCPSStaff';
+import type { NYCPSStaffWithDates } from '@hooks/domain/useNYCPSStaff';
+import { useNYCPSStaffList } from '@hooks/domain/useNYCPSStaff';
 
 type DataType = 'staff' | 'visits' | 'bellSchedules' | 'masterSchedule';
 type Step = 'selectDataType' | 'importData';
@@ -277,13 +277,23 @@ export function DataImportDialog({ open, onClose, school }: DataImportDialogProp
       }
     } else if (selectedDataType === 'masterSchedule' && importData.masterSchedule.length > 0) {
       try {
-        for (const schedule of importData.masterSchedule) {
-          await new Promise<void>((resolve, reject) => {
-            createTeacherSchedule(schedule).then(() => resolve()).catch((error) => reject(error));
-          });
+        // Call the batch function instead of individual creates
+        const result = await createMasterSchedule(importData.masterSchedule, school._id);
+        
+        if (result.success && result.data) {
+          const { data } = result;
+          const successMsg = `Master schedule created! ${data.successfulSchedules}/${data.totalSchedules} schedules added successfully.`;
+          
+          if (data.errors.length > 0) {
+            alert(`${successMsg}\n\nErrors:\n${data.errors.join('\n')}`);
+          } else {
+            alert(successMsg);
+          }
+          
+          handleClose();
+        } else {
+          throw new Error(result.error || 'Failed to create master schedule');
         }
-        alert('Master schedule added successfully!');
-        handleClose();
       } catch (error) {
         alert(`Failed to add master schedule: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }

@@ -11,6 +11,7 @@ import { VisitInputZodSchema } from '@zod-schema/visits/visit';
 import type { SchoolInput } from '@domain-types/school';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
+import { getTodayString } from '@transformers/utils/date-utils';
 
 /**
  * Schema templates for creating new entities
@@ -48,7 +49,7 @@ export const schemaTemplates = {
    * Create a new visit template
    */
   visit: (): VisitInput => ({
-    date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+    date: getTodayString(), // Today's date in YYYY-MM-DD format
     school: '',
     coach: '',
     gradeLevelsSupported: [],

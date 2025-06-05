@@ -129,6 +129,7 @@ export const VisitFieldLabels: Record<keyof Visit, string> = {
     school: "School",
     coach: "Coach",
     cycleRef: "Cycle Reference",
+    plannedScheduleId: "Planned Schedule",
     allowedPurpose: "Purpose",
     modeDone: "Mode of Visit",
     gradeLevelsSupported: "Supported Grade Levels",

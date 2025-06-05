@@ -11,7 +11,7 @@ import { EmptyListWrapper } from '@components/core/empty/EmptyListWrapper';
 import { ResourceHeader } from "@components/composed/layouts/ResourceHeader";
 import { MemoizedRigidResourceForm } from "@components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
-import { useNYCPSStaff } from "@/hooks/domain/staff/useNYCPSStaff";
+import { useNYCPSStaff } from "@/hooks/domain/useNYCPSStaff";
 import { NYCPSStaff, NYCPSStaffInput } from "@domain-types/staff";
 import { createNYCPSStaff, updateNYCPSStaff, deleteNYCPSStaff, uploadNYCPSStaffFile } from "@actions/staff";
 import { NYCPSStaffFieldConfig } from "@ui-forms/configurations";

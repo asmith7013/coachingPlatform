@@ -1,11 +1,5 @@
 import React from 'react';
-
-interface ActionPlanStageProps {
-  number: number;
-  title: string;
-  children: React.ReactNode;
-  className?: string;
-}
+import { ActionPlanStageProps } from '@domain-types/coaching-action-plan';
 
 export const ActionPlanStage: React.FC<ActionPlanStageProps> = ({ 
   number, 

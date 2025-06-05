@@ -1,17 +1,8 @@
 import React from 'react';
 import { ClickableCards, ClickableCardColor } from '@components/composed/cards/ClickableCards';
+import { IPGFocusCardsProps } from '@domain-types/coaching-action-plan';
 
-interface IPGOption {
-  value: string;
-  label: string;
-  hasSubsections?: boolean;
-}
 
-interface IPGFocusCardsProps {
-  selectedValue: string | null;
-  onSelect: (value: string) => void;
-  options: IPGOption[];
-}
 
 export const IPGFocusCards: React.FC<IPGFocusCardsProps> = ({
   selectedValue,
@@ -31,7 +22,7 @@ export const IPGFocusCards: React.FC<IPGFocusCardsProps> = ({
 
   return (
     <ClickableCards
-      selectedValue={selectedValue}
+      selectedValue={selectedValue || null}
       onSelect={onSelect}
       layout="horizontal"
       getColor={getColor}
@@ -41,7 +32,7 @@ export const IPGFocusCards: React.FC<IPGFocusCardsProps> = ({
           key={option.value}
           value={option.value}
           title={option.label}
-          description={option.hasSubsections ? 'Click to view subsections' : undefined}
+          // description={option.hasSubsections ? 'Click to view subsections' : undefined}
         />
       ))}
     </ClickableCards>

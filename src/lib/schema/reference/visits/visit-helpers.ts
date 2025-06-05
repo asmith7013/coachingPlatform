@@ -1,4 +1,5 @@
 import { Visit } from "@zod-schema/visits/visit";
+import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
 
 // Helper function for visit display string
 export function getVisitDisplayString(visit: Visit): string {
@@ -16,11 +17,11 @@ export function getVisitDisplayString(visit: Visit): string {
 
   // Helper function for consistent date formatting
 export function formatVisitDate(date: Date | string | undefined): string {
-    if (!date) return 'No date set';
-    const dateObj = date instanceof Date ? date : new Date(date);
-    return dateObj.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
-    });
-  }
+  if (!date) return 'No date set';
+  
+  const dateString = date instanceof Date 
+    ? toDateString(date)
+    : date;
+    
+  return formatMediumDate(dateString);
+}

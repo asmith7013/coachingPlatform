@@ -39,6 +39,9 @@ export const VisitFieldsSchema = z.object({
   events: z.array(EventItemZodSchema).optional(), // Optional array of events
   sessionLinks: z.array(SessionLinkZodSchema).optional(), // Optional array of session links
 
+  // Planned schedule integration (Task 1.2: Visit model extension)
+  plannedScheduleId: z.string().optional(), // Reference to PlannedVisit for schedule builder integration
+
   // Monday.com integration fields
   mondayItemId: z.string().optional(),
   mondayBoardId: z.string().optional(),

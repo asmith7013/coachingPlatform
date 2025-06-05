@@ -1,3 +1,4 @@
+import { addDays, getTodayString } from '@transformers/utils/date-utils';
 import { Types } from 'mongoose';
 
 /**
@@ -54,12 +55,12 @@ export function generateScheduleWithIds() {
     assignedCycleDays: [
       {
         _id: generateMongoId(),
-        date: new Date().toISOString().split('T')[0],
+        date: getTodayString(),
         blockDayType: "A"
       },
       {
         _id: generateMongoId(),
-        date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+        date: addDays(getTodayString(), 1),
         blockDayType: "B"
       }
     ],

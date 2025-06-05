@@ -37,7 +37,7 @@ export const PERMISSIONS = {
   COACHING_LOG_CREATE: 'coaching.log.create',
   COACHING_LOG_EDIT: 'coaching.log.edit',
   
-  // Coaching Action Plans
+  // Coaching Plans
   COACHING_PLANS_VIEW: 'coaching.plans.view',
   COACHING_PLANS_CREATE: 'coaching.plans.create',
   COACHING_PLANS_EDIT: 'coaching.plans.edit',

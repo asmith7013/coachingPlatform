@@ -5,39 +5,52 @@
 │   └── template.md
 ├── docs
 │   ├── architecture
-│   │   ├── core-principles.md
-│   │   ├── design-patterns.md
-│   │   ├── import-patterns.md
-│   │   └── project-structure.md
-│   ├── architecture-overview.md
+│   │   ├── core-principles.mdc
+│   │   ├── design-patterns.mdc
+│   │   ├── import-patterns.mdc
+│   │   └── project-structure.mdc
+│   ├── architecture-overview.mdc
 │   ├── components
-│   │   ├── component-system.md
-│   │   ├── composed-components.md
-│   │   ├── core-components.md
-│   │   ├── design-token-system.md
-│   │   ├── domain-components.md
-│   │   ├── layout-system.md
-│   │   └── styling-patterns.md
+│   │   ├── component-system.mdc
+│   │   ├── composed-components.mdc
+│   │   ├── core-components.mdc
+│   │   ├── design-token-system.mdc
+│   │   ├── domain-components.mdc
+│   │   ├── layout-system.mdc
+│   │   └── styling-patterns.mdc
+│   ├── context-templates
+│   │   ├── data-layer-context.md
+│   │   ├── documentation-maintenance.md
+│   │   ├── integration-context.md
+│   │   ├── staged-context-loading.md
+│   │   └── ui-component-context.md
 │   ├── data-flow
-│   │   ├── api-patterns.md
-│   │   ├── authentication.md
-│   │   ├── error-handling.md
-│   │   ├── monday-integration.md
-│   │   ├── mongodb-integration.md
-│   │   ├── react-query-patterns.md
-│   │   ├── sanitization-system.md
-│   │   ├── schema-system.md
-│   │   ├── server-actions.md
-│   │   ├── transformation-system.md
-│   │   └── type-system.md
-│   ├── table-of-contents.md
+│   │   ├── api-patterns.mdc
+│   │   ├── authentication.mdc
+│   │   ├── error-handling.mdc
+│   │   ├── monday-integration.mdc
+│   │   ├── mongodb-integration.mdc
+│   │   ├── react-query-patterns.mdc
+│   │   ├── sanitization-system.mdc
+│   │   ├── schema-system.mdc
+│   │   ├── server-actions.mdc
+│   │   ├── transformation-system.mdc
+│   │   └── type-system.mdc
+│   ├── table-of-contents.mdc
+│   ├── workflow-templates
+│   │   └── coding-session-control.md
 │   └── workflows
-│       ├── common-tasks.md
-│       ├── cursor-integration.md
-│       ├── dev-utilities.md
-│       ├── development-workflow.md
-│       ├── hook-development.md
-│       └── implementation-workflow.md
+│       ├── common-tasks.mdc
+│       ├── cursor-integration.mdc
+│       ├── dev-utilities.mdc
+│       ├── development-workflow.mdc
+│       ├── hook-development.mdc
+│       └── implementation-workflow.mdc
+├── docs-cursor
+│   ├── create-prd-new.mdc
+│   ├── create-prd.mdc
+│   ├── generate-tasks.mdc
+│   └── process-task-list.mdc
 ├── docs-export
 │   └── claude-project-instructions.md
 ├── docs-lib
@@ -46,33 +59,25 @@
 │   ├── lib-catalog.md
 │   ├── lib-changes.md
 │   └── reference-system.md
-<<<<<<< Updated upstream
-=======
 ├── docs-product-roadmap
 │   ├── core
 │   │   ├── cross-domain
 │   │   ├── cycle
-│   │   │   ├── PRD-cap2.md
-│   │   │   ├── cap.md
-│   │   │   └── cap2.md
+│   │   │   └── cap.md
 │   │   ├── cycle-features.md
 │   │   ├── school
 │   │   ├── school-features.md
 │   │   ├── staff
-│   │   ├── staff-features.md
-│   │   └── visit
-│   │       ├── schedule-refactoring-tasks.md
-│   │       ├── schedule.md
-│   │       └── schedule2.md
+│   │   └── staff-features.md
 │   ├── integrations
 │   │   ├── api-features.md
 │   │   └── monday-features.md
 │   ├── operations
-│   │   ├── PRD-schedule.md
 │   │   ├── PRD-tasks-schedule-builder.md
-│   │   ├── tasks-ui-hooks-quality-improvement.md
-│   │   ├── \23405schedule-ui.md
-│   │   └── \23405tasks-schedule-builder.md
+│   │   ├── coaching-features.md
+│   │   ├── scheduling-features.md
+│   │   ├── tasks-schedule-builder.md
+│   │   └── visit-features.md
 │   ├── platform
 │   │   ├── admin-features.md
 │   │   ├── analytics-features.md
@@ -100,7 +105,6 @@
 │   │   ├── analytics-features.md
 │   │   └── auth-features.md
 │   └── product-roadmap.md
->>>>>>> Stashed changes
 ├── eslint.config.mjs
 ├── examples
 ├── next-env.d.ts
@@ -145,6 +149,8 @@
 │   │   │   └── sign-up
 │   │   │       └── page.tsx
 │   │   ├── actions
+│   │   │   ├── coaching
+│   │   │   │   └── coaching-action-plans.ts
 │   │   │   ├── cycles
 │   │   │   │   └── cycles.ts
 │   │   │   ├── integrations
@@ -172,13 +178,13 @@
 │   │   │   └── visits
 │   │   │       ├── coachingLogs.ts
 │   │   │       ├── cycles.ts
-<<<<<<< Updated upstream
-=======
 │   │   │       ├── planned-visits.ts
-│   │   │       ├── schedule-builder.ts
->>>>>>> Stashed changes
 │   │   │       └── visits.ts
 │   │   ├── api
+│   │   │   ├── coaching-action-plans
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
 │   │   │   ├── debug
 │   │   │   │   └── staff-ids
 │   │   │   ├── integrations
@@ -225,8 +231,6 @@
 │   │   │   │   │   └── Transcripts
 │   │   │   │   ├── data.ts
 │   │   │   │   └── page.tsx
-│   │   │   ├── coaching-action-plans
-│   │   │   │   └── page.tsx
 │   │   │   ├── config.ts
 │   │   │   ├── layout.tsx
 │   │   │   ├── lookForList
@@ -271,8 +275,6 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── ultra-minimal
 │   │   │       └── page.tsx
-<<<<<<< Updated upstream
-=======
 │   │   ├── demo
 │   │   │   ├── drawer
 │   │   │   │   └── page.tsx
@@ -282,14 +284,6 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── weekly-calendar
 │   │   │       └── page.tsx
-│   │   ├── dev
-│   │   │   ├── accountability-demo
-│   │   │   │   └── page.tsx
-│   │   │   ├── purpose-dropdown-demo
-│   │   │   │   └── page.tsx
-│   │   │   └── three-zone-demo
-│   │   │       └── page.tsx
->>>>>>> Stashed changes
 │   │   ├── examples
 │   │   │   ├── calendar
 │   │   │   │   ├── CalendarGridView.tsx
@@ -373,6 +367,7 @@
 │   │   ├── page.tsx
 │   │   ├── setup
 │   │   │   └── page.tsx
+│   │   ├── test-stage2
 │   │   ├── tools
 │   │   │   ├── data-import
 │   │   │   │   ├── add-to-school
@@ -405,20 +400,14 @@
 │   │   │   ├── PermissionButton.tsx
 │   │   │   └── SignOutButton.tsx
 │   │   ├── composed
-<<<<<<< Updated upstream
-=======
 │   │   │   ├── calendar
 │   │   │   │   ├── schedule
 │   │   │   │   │   ├── BellScheduleGrid.tsx
-│   │   │   │   │   ├── InteractiveScheduleGrid.tsx
 │   │   │   │   │   ├── PeriodTimeColumn.tsx
 │   │   │   │   │   ├── PlannedScheduleColumn.tsx
 │   │   │   │   │   ├── ScheduleEventCell.tsx
-│   │   │   │   │   ├── ScheduleGrid.tsx
-│   │   │   │   │   ├── TeacherDailySchedule.tsx
-│   │   │   │   │   ├── TeacherScheduleCalendar.tsx
-│   │   │   │   │   ├── cells
-│   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── types.ts
 │   │   │   │   └── weekly
 │   │   │   │       ├── CalendarHeader.tsx
 │   │   │   │       ├── DayColumns.tsx
@@ -428,16 +417,22 @@
 │   │   │   │       ├── WeekNavigation.tsx
 │   │   │   │       ├── WeeklyCalendar.tsx
 │   │   │   │       └── index.ts
->>>>>>> Stashed changes
 │   │   │   ├── cards
 │   │   │   │   ├── Card.tsx
 │   │   │   │   ├── ClickableCards.tsx
 │   │   │   │   ├── FileCard.tsx
+│   │   │   │   ├── InfoCard.tsx
+│   │   │   │   ├── SimpleCard.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── dialogs
+│   │   │   │   ├── CreateCoachingActionPlanDialog.tsx
 │   │   │   │   ├── CreateSchoolDialog.tsx
 │   │   │   │   ├── DataImportDialog.tsx
 │   │   │   │   ├── Dialog.tsx
+│   │   │   │   ├── EditCoachingActionPlanDialog.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── drawers
+│   │   │   │   ├── Drawer.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── forms
 │   │   │   │   ├── BulkUploadForm.tsx
@@ -455,6 +450,14 @@
 │   │   │   │   ├── PerformanceMonitorLayout.tsx
 │   │   │   │   ├── ResourceHeader.tsx
 │   │   │   │   ├── Topbar.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── sectionHeadings
+│   │   │   │   ├── SectionHeading.tsx
+│   │   │   │   ├── index.ts
+│   │   │   │   └── types.ts
+│   │   │   ├── statistics
+│   │   │   │   ├── StatCard.tsx
+│   │   │   │   ├── StatisticsGrid.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── tables
 │   │   │   │   ├── ScheduleTable.tsx
@@ -487,14 +490,6 @@
 │   │   │       └── index.ts
 │   │   ├── core
 │   │   │   ├── Button.tsx
-<<<<<<< Updated upstream
-│   │   │   ├── cards
-│   │   │   │   ├── SimpleCard.tsx
-│   │   │   │   └── index.ts
-=======
-│   │   │   ├── dropdowns
-│   │   │   │   └── PurposeAssignmentDropdown.tsx
->>>>>>> Stashed changes
 │   │   │   ├── empty
 │   │   │   │   ├── EmptyListWrapper.tsx
 │   │   │   │   ├── EmptyState.tsx
@@ -515,11 +510,7 @@
 │   │   │   │   ├── Switch.tsx
 │   │   │   │   ├── Textarea.tsx
 │   │   │   │   └── index.ts
-│   │   │   ├── icons
-│   │   │   │   └── AccountabilityIcon.tsx
 │   │   │   ├── index.ts
-│   │   │   ├── interactive
-│   │   │   │   └── ThreeZoneTimeSlot.tsx
 │   │   │   ├── navigation
 │   │   │   │   ├── Breadcrumbs.tsx
 │   │   │   │   ├── Pagination.tsx
@@ -540,6 +531,16 @@
 │   │   │   ├── StaffListDebugger.tsx
 │   │   │   └── TestComponents.tsx
 │   │   ├── domain
+│   │   │   ├── coaching
+│   │   │   │   ├── ActionPlanCard.tsx
+│   │   │   │   ├── CoachingMovesBuilder.tsx
+│   │   │   │   ├── IPGFocusCards.tsx
+│   │   │   │   ├── IPGSubsectionCards.tsx
+│   │   │   │   ├── ImplementationRecordCard.tsx
+│   │   │   │   ├── MetricsBuilder.tsx
+│   │   │   │   ├── ReflectionSection.tsx
+│   │   │   │   ├── StatusTransitionButton.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── imRoutine
 │   │   │   │   ├── curriculum
 │   │   │   │   │   ├── CurriculumVersionSelector.tsx
@@ -566,11 +567,8 @@
 │   │   │   │   ├── RubricFilterPanel.tsx
 │   │   │   │   ├── RubricViewer.tsx
 │   │   │   │   └── index.ts
-│   │   │   ├── schedule
-│   │   │   │   ├── BaseGridCell.tsx
-│   │   │   │   └── ScheduleEventGrid.tsx
 │   │   │   ├── schedules
-│   │   │   │   ├── SchoolSchedulePage.tsx
+│   │   │   │   ├── SchedulePreview.tsx
 │   │   │   │   ├── components
 │   │   │   │   │   ├── ActivitySelector.tsx
 │   │   │   │   │   ├── ScheduleModeToggle.tsx
@@ -589,19 +587,16 @@
 │   │   │   │   └── utils
 │   │   │   │       ├── TimeValidator.ts
 │   │   │   │       └── scheduleHelpers.ts
-<<<<<<< Updated upstream
-=======
 │   │   │   ├── scheduling
-│   │   │   │   ├── AccountabilityTrackingPanel.tsx
 │   │   │   │   ├── AssignedTeacherCard.tsx
 │   │   │   │   ├── ConflictDetectionProvider.tsx
-│   │   │   │   ├── TeacherSelectionPanel.tsx
-│   │   │   │   └── index.ts
->>>>>>> Stashed changes
+│   │   │   │   └── TeacherSelectionPanel.tsx
 │   │   │   ├── schools
-│   │   │   │   ├── SchoolCard.tsx
-│   │   │   │   ├── SchoolDetailView.tsx
-│   │   │   │   └── index.ts
+│   │   │   │   ├── SchoolGrid.tsx
+│   │   │   │   ├── index.ts
+│   │   │   │   └── singleSchool
+│   │   │   │       ├── SingleSchool.tsx
+│   │   │   │       └── cards
 │   │   │   ├── staff
 │   │   │   │   ├── StaffCard.tsx
 │   │   │   │   ├── StaffDetailPage.tsx
@@ -626,24 +621,22 @@
 │   │   ├── error
 │   │   │   ├── ErrorBoundary.tsx
 │   │   │   ├── QueryErrorBoundary.tsx
-│   │   │   ├── ScheduleBuilderErrorBoundary.tsx
 │   │   │   ├── SentryBoundaryWrapper.tsx
 │   │   │   └── index.ts
 │   │   ├── features
-<<<<<<< Updated upstream
-│   │   │   └── scoring
-│   │   │       ├── ScoreEntry.tsx
-│   │   │       ├── ScoresPage.tsx
-=======
 │   │   │   ├── coaching
 │   │   │   │   ├── ActionPlanStage.tsx
 │   │   │   │   ├── CoachingActionPlanDashboard.tsx
-│   │   │   │   ├── CoachingActionPlanDetailedEditor.tsx
 │   │   │   │   ├── CoachingActionPlanStage1.tsx
 │   │   │   │   ├── CoachingActionPlanStage2.tsx
 │   │   │   │   ├── CoachingActionPlanStage3.tsx
 │   │   │   │   ├── CoachingActionPlanStage4.tsx
-│   │   │   │   ├── TabbedStageNavigation.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── scheduling
+│   │   │   │   ├── MasterScheduleCard.tsx
+│   │   │   │   ├── TeacherDailySchedule.tsx
+│   │   │   │   ├── TeacherScheduleCalendar.tsx
+│   │   │   │   ├── VisitScheduleBuilder.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── scoring
 │   │   │   │   ├── ScoreEntry.tsx
@@ -652,7 +645,6 @@
 │   │   │   └── visits
 │   │   │       ├── VisitSidebar.tsx
 │   │   │       ├── VisitView.tsx
->>>>>>> Stashed changes
 │   │   │       └── index.ts
 │   │   ├── index.ts
 │   │   └── integrations
@@ -675,41 +667,28 @@
 │   ├── debug
 │   ├── hooks
 │   │   ├── auth
-│   │   │   ├── useAuthenticatedUser.ts
-│   │   │   └── usePermissionFiltering.ts
+│   │   │   └── useAuthenticatedUser.ts
 │   │   ├── debugging
 │   │   │   ├── checkRenderLoopInTools.tsx
 │   │   │   ├── useComponentTester.tsx
 │   │   │   └── useRenderTracking.ts
 │   │   ├── domain
-│   │   │   ├── cap
-│   │   │   │   ├── useCoachingActionPlans.ts
-│   │   │   │   └── useIPGData.ts
 │   │   │   ├── index.ts
-<<<<<<< Updated upstream
+│   │   │   ├── useBellSchedules.ts
+│   │   │   ├── useCoachingActionPlans.ts
+│   │   │   ├── useIPGData.ts
 │   │   │   ├── useLookFors.ts
 │   │   │   ├── useNYCPSStaff.ts
+│   │   │   ├── usePlannedVisits.ts
+│   │   │   ├── useScheduleDisplay.ts
+│   │   │   ├── useSchoolDailyView.ts
 │   │   │   ├── useSchools.ts
 │   │   │   ├── useTeacherSchedules.ts
 │   │   │   ├── useTeachingLabStaff.ts
 │   │   │   ├── useUserStaff.ts
-│   │   │   └── useVisits.ts
-=======
-│   │   │   ├── schedule
-│   │   │   │   ├── useBellSchedules.ts
-│   │   │   │   ├── useSchoolDailyView.ts
-│   │   │   │   └── useTeacherSchedules.ts
-│   │   │   ├── staff
-│   │   │   │   ├── useNYCPSStaff.ts
-│   │   │   │   ├── useTeachingLabStaff.ts
-│   │   │   │   └── useUserStaff.ts
-│   │   │   ├── useLookFors.ts
-│   │   │   ├── usePlannedVisits.ts
-│   │   │   ├── useSchools.ts
-│   │   │   ├── useServerAssignments.ts
+│   │   │   ├── useVisitScheduleBuilder.ts
 │   │   │   ├── useVisits.ts
 │   │   │   └── useVisitsWithTransforms.ts
->>>>>>> Stashed changes
 │   │   ├── error
 │   │   │   └── useErrorBoundary.ts
 │   │   ├── index.ts
@@ -724,28 +703,15 @@
 │   │   ├── migration
 │   │   │   └── swr-to-query.ts
 │   │   ├── ui
-<<<<<<< Updated upstream
-│   │   │   ├── useAuthorizedNavigation.ts
-│   │   │   ├── useNavigation.ts
-│   │   │   └── useSchoolAuthorization.ts
-=======
 │   │   │   ├── index.ts
 │   │   │   ├── useAccountabilityTracking.ts
-│   │   │   ├── useAdaptiveHeight.ts
+│   │   │   ├── useAssignmentManagement.ts
 │   │   │   ├── useAuthorizedNavigation.ts
+│   │   │   ├── useDragAndDrop.ts
 │   │   │   ├── useNavigation.ts
-│   │   │   ├── useScheduleDisplay.ts
-│   │   │   ├── useScheduleEvents.ts
-│   │   │   ├── useSchedulePerformance.ts
-│   │   │   ├── useScheduleSelection.ts
 │   │   │   ├── useSchoolAuthorization.ts
 │   │   │   ├── useStatePersistence.ts
-│   │   │   ├── useTeacherSelection.ts
-│   │   │   ├── useUIAssignments.ts
-│   │   │   └── useVisitScheduleBuilder.ts
-│   │   ├── utilities
-│   │   │   └── useAutoSave.ts
->>>>>>> Stashed changes
+│   │   │   └── useTeacherSelection.ts
 │   │   └── visits
 │   │       ├── useVisitManagerRQ.ts
 │   │       ├── useVisitMutationRQ.ts
@@ -772,14 +738,6 @@
 │   │   │       ├── schema-config-check.ts
 │   │   │       └── setup-test-user.ts
 │   │   ├── domain
-<<<<<<< Updated upstream
-│   │   │   └── imRoutine
-│   │   │       ├── get-unit-URL.ts
-│   │   │       ├── getUnitURL.ts
-│   │   │       ├── render-ILC-esson.tsx
-│   │   │       ├── render-KH-lesson.tsx
-│   │   │       └── routine-utils.ts
-=======
 │   │   │   ├── imRoutine
 │   │   │   │   ├── get-unit-URL.ts
 │   │   │   │   ├── getUnitURL.ts
@@ -787,15 +745,9 @@
 │   │   │   │   ├── render-KH-lesson.tsx
 │   │   │   │   └── routine-utils.ts
 │   │   │   └── schedule
+│   │   │       ├── column-builders.ts
 │   │   │       ├── event-builders.ts
-│   │   │       ├── grid-cell-factory.ts
-│   │   │       ├── grid-positioning.ts
-│   │   │       ├── hover-zone-utils.ts
-│   │   │       ├── index.ts
-│   │   │       ├── period-utils.ts
-│   │   │       ├── schedule-calendar-utils.ts
-│   │   │       └── zone-utils.ts
->>>>>>> Stashed changes
+│   │   │       └── schedule-calendar-utils.ts
 │   │   ├── error
 │   │   │   ├── core
 │   │   │   │   ├── classification.ts
@@ -851,6 +803,7 @@
 │   │   │           └── monday-utils.ts
 │   │   ├── json
 │   │   │   ├── alg1-links.json
+│   │   │   ├── coaching-moves.json
 │   │   │   ├── ilc-hs.json
 │   │   │   ├── ilc-routines.json
 │   │   │   ├── im-implementation.json
@@ -868,6 +821,7 @@
 │   │   │   │   ├── base-document.ts
 │   │   │   │   ├── config.ts
 │   │   │   │   ├── core
+│   │   │   │   │   ├── coaching-action-plan.model.ts
 │   │   │   │   │   ├── cycle.model.ts
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   ├── school.model.ts
@@ -885,7 +839,6 @@
 │   │   │   │   └── visits
 │   │   │   │       ├── coaching-log.model.ts
 │   │   │   │       ├── index.ts
-│   │   │   │       ├── planned-visit.model.ts
 │   │   │   │       └── visit.model.ts
 │   │   │   ├── reference
 │   │   │   │   ├── core
@@ -904,7 +857,6 @@
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── schedule-helpers.ts
 │   │   │   │   ├── shared
-│   │   │   │   │   ├── date-helpers.ts
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── notes-helpers.ts
 │   │   │   │   └── visits
@@ -914,6 +866,7 @@
 │   │   │   └── zod-schema
 │   │   │       ├── base-schemas.ts
 │   │   │       ├── core
+│   │   │       │   ├── cap.ts
 │   │   │       │   ├── cycle.ts
 │   │   │       │   ├── index.ts
 │   │   │       │   ├── school.ts
@@ -954,6 +907,8 @@
 │   │   │       └── visits
 │   │   │           ├── coaching-log.ts
 │   │   │           ├── index.ts
+│   │   │           ├── planned-visit.ts
+│   │   │           ├── schedule-builder-state.ts
 │   │   │           └── visit.ts
 │   │   ├── server
 │   │   │   ├── api
@@ -991,6 +946,7 @@
 │   │   │   │   ├── model-registry.ts
 │   │   │   │   └── mongodb-query-utils.ts
 │   │   │   ├── fetchers
+│   │   │   │   ├── coachingActionPlan.ts
 │   │   │   │   ├── coachingLog.ts
 │   │   │   │   ├── fetcher-factory.ts
 │   │   │   │   ├── index.ts
@@ -1020,6 +976,10 @@
 │   │   │   │   ├── transformation-service.ts
 │   │   │   │   ├── unified-transformer.ts
 │   │   │   │   └── validation.ts
+│   │   │   ├── domain
+│   │   │   │   ├── coaching-reference-transformers.ts
+│   │   │   │   ├── schedule-transforms.ts
+│   │   │   │   └── visit-transforms.ts
 │   │   │   ├── factories
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── reference-factory.ts
@@ -1037,6 +997,8 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   └── schema-utils.ts
 │   │   │   └── utils
+│   │   │       ├── coaching-action-plan-utils.ts
+│   │   │       ├── date-utils.ts
 │   │   │       ├── entity-utils.ts
 │   │   │       ├── fetch-utils.ts
 │   │   │       ├── index.ts
@@ -1063,6 +1025,7 @@
 │   │   │   │   ├── token.ts
 │   │   │   │   └── utils.ts
 │   │   │   ├── domain
+│   │   │   │   ├── coaching-action-plan.ts
 │   │   │   │   ├── cycle.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── look-fors.ts
@@ -1093,6 +1056,7 @@
 │   │       │   └── schema-templates.ts
 │   │       ├── forms
 │   │       │   ├── configurations
+│   │       │   │   ├── coaching-action-plan-config.ts
 │   │       │   │   ├── index.ts
 │   │       │   │   ├── schema-aware-builders.ts
 │   │       │   │   ├── school-config.ts
@@ -1103,6 +1067,8 @@
 │   │       │   │   ├── field-renderer.tsx
 │   │       │   │   └── index.ts
 │   │       │   ├── field-labels.ts
+│   │       │   ├── fieldConfig
+│   │       │   │   └── coaching
 │   │       │   ├── formOverrides
 │   │       │   │   ├── core
 │   │       │   │   ├── index.ts
@@ -1118,14 +1084,11 @@
 │   │       │   └── utils
 │   │       │       ├── form-utils.ts
 │   │       │       └── index.ts
-│   │       ├── styles
-│   │       │   ├── event-styles.ts
-│   │       │   └── index.ts
 │   │       ├── table-schema.ts
 │   │       ├── utils
-│   │       │   ├── formatters.ts
-│   │       │   └── navigation-utils.ts
+│   │       │   └── formatters.ts
 │   │       └── variants
+│   │           ├── grid-layouts.ts
 │   │           ├── index.ts
 │   │           ├── layout.ts
 │   │           ├── shared-variants.ts
@@ -1204,18 +1167,11 @@
 │       ├── clerk.d.ts
 │       └── dependency-overrides.d.ts
 ├── tailwind.config.ts
-<<<<<<< Updated upstream
-=======
 ├── tasks
-│   └── tasks-schedule-refactoring.md
->>>>>>> Stashed changes
+│   └── tasks-schedule-builder.md
 ├── test-output.css
 ├── tsconfig.json
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-<<<<<<< Updated upstream
-297 directories, 703 files
-=======
-359 directories, 864 files
->>>>>>> Stashed changes
+344 directories, 831 files

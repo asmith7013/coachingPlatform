@@ -3,15 +3,15 @@
 import { useState, useMemo } from 'react'
 import { XMarkIcon, CalendarDaysIcon, BuildingLibraryIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import type { Visit } from '@zod-schema/visits/visit'
+import { useSchoolDailyView } from '@hooks/domain/useSchoolDailyView'
 import { BellScheduleGrid } from '@composed-components/calendar/schedule'
 import { VisitSidebar } from './VisitSidebar'
 import { toDateString, formatLongDate } from '@transformers/utils/date-utils'
-import type { BellScheduleEvent } from '@domain-types/schedule'
+import type { BellScheduleEvent } from '@composed-components/calendar/schedule/types'
 
 // Import shared utilities
-import { useScheduleDisplay } from '@/hooks/ui/useScheduleDisplay'
-import { createVisitColumns } from '@/lib/domain/schedule/event-builders'
-import { useSchoolDailyView } from '@hooks/domain/schedule/useSchoolDailyView'
+import { useScheduleDisplay } from '@hooks/domain/useScheduleDisplay'
+import { createVisitColumns } from '@/lib/domain/schedule/column-builders'
 
 export interface VisitViewProps {
   visit: Visit

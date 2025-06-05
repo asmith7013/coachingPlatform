@@ -1,5 +1,5 @@
 import { createEntityHooks } from '@query/client/factories/entity-factory';
-import { VisitZodSchema, VisitInputZodSchema, Visit } from '@zod-schema/visits/visit';
+import { VisitZodSchema, Visit } from '@zod-schema/visits/visit';
 
 import { fetchVisits, createVisit } from '@actions/visits/visits';
 import { WithDateObjects, DocumentInput } from '@core-types/document';
@@ -7,7 +7,7 @@ import { wrapServerActions } from '@transformers/factories/server-action-factory
 import { QueryParams } from '@core-types/query';
 import { ZodType } from 'zod';
 import { transformData } from '@transformers/core/unified-transformer';
-import { asDateObjectSchema } from '@/lib/schema/zod-schema/base-schemas';
+import { asDateObjectSchema, ensureBaseDocumentCompatibility } from '@/lib/schema/zod-schema/base-schemas';
 
 /**
  * Visit entity with Date objects instead of string dates
@@ -67,7 +67,7 @@ const {
 } = createEntityHooks<VisitWithDates, VisitInput>({
   entityType: 'visits',
   fullSchema: asDateObjectSchema(VisitZodSchema) as ZodType<VisitWithDates>,
-  inputSchema: VisitInputZodSchema as unknown as ZodType<VisitInput>,
+  inputSchema: ensureBaseDocumentCompatibility<Visit>(VisitZodSchema),
   serverActions: wrappedActions,
   validSortFields: ['date', 'school', 'coach', 'createdAt', 'updatedAt'],
   defaultParams: {

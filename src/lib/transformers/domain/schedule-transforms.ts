@@ -9,7 +9,7 @@ import type { NYCPSStaff } from '@zod-schema/core/staff';
 import type { CalendarEvent } from '@composed-components/calendar/weekly';
 
 // IMPORT: Use existing domain utilities instead of recreating
-import type { PeriodTime } from '@domain-types/schedule';
+import { type PeriodTime } from '@/lib/domain/schedule/schedule-calendar-utils';
 
 /**
  * Simple transformation service - validation only
@@ -58,7 +58,6 @@ export interface BellScheduleEvent extends CalendarEvent {
   columnIndex: number
   startPosition: 'start' | 'middle'
   totalDuration: number
-  teacherId: string
 }
 
 export interface EventSegment extends CalendarEvent {
@@ -280,8 +279,7 @@ export function transformScheduleToEvents(
         period: period.periodNum, // Direct assignment from period
         columnIndex: 0, // Will be set by calling component
         startPosition: 'start' as const,
-        totalDuration: 1,
-        teacherId: teacherSchedule._id
+        totalDuration: 1
       };
       
       events.push(event);

@@ -1,5 +1,5 @@
 import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
-import { useUserStaff } from '@/hooks/domain/staff/useUserStaff';
+import { useUserStaff } from '@/hooks/domain/useUserStaff';
 import { Card } from '@/components/composed/cards';
 import { Badge } from '@/components/core/feedback';
 import { textSize, color as textColors } from '@/lib/tokens/typography';

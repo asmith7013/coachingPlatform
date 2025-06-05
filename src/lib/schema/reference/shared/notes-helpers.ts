@@ -1,12 +1,13 @@
-import { Note } from "../../zod-schema/shared/notes";
+import { Note } from "@zod-schema/shared/notes";
+import { formatShortDate, toDateString } from '@transformers/utils/date-utils';
 
 /**
  * Gets a display string for a note
  */
 export function getNoteDisplayString(note: Note): string {
   const dateStr = note.date instanceof Date 
-    ? note.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    : note.date ? new Date(note.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+    ? formatShortDate(toDateString(note.date))
+    : note.date ? formatShortDate(note.date) : '';
   
   return `${dateStr} - ${note.type}`;
 }

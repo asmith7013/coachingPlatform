@@ -15,6 +15,7 @@ import {
   AllowedPurposes,
   ModeDone 
 } from "@enums";
+import { formatDateForAPI } from "@transformers/utils/date-utils";
 /**
  * Enhanced field mappings for Monday.com integration with type safety
  * 
@@ -276,7 +277,7 @@ export const OPTIONAL_FIELD_MAPPERS: FieldMappers = {
     transform: (value: string): VisitInput["endDate"] => {
       if (!value) return undefined;
       try {
-        return new Date(value).toISOString().split('T')[0];
+        return formatDateForAPI(value);;
       } catch {
         return value;
       }

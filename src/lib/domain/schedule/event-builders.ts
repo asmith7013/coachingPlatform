@@ -3,7 +3,7 @@ import type { CalendarEvent } from '@composed-components/calendar/weekly';
 import { getDayNameFromDate, getDayTypeFromDate } from '@transformers/utils/date-utils';
 import { getSubjectColor } from '@transformers/domain/schedule-transforms';
 import { calculateDuration } from '@transformers/domain/schedule-transforms';
-import { ScheduleColumn } from '@/lib/types/domain/schedule';
+import { ScheduleColumn } from '@/components/composed/calendar/schedule/types';
 
 export interface EventBuilderContext {
   teacherIndex: number;
@@ -90,6 +90,16 @@ export function buildAllCalendarEvents(
   );
 }
 
+export function createTeacherColumns(
+  schedules: TeacherSchedule[], 
+  staffMap: Map<string, string>
+): ScheduleColumn[] {
+  return schedules.map((schedule) => ({
+    id: schedule.teacher,
+    title: staffMap.get(schedule.teacher) || `Teacher ${schedule.teacher.slice(-4)}`
+  }))
+}
+
 export function createVisitColumns(
   schedules: TeacherSchedule[], 
   staffMap: Map<string, string>, 
@@ -101,15 +111,3 @@ export function createVisitColumns(
     subtitle: 'Visit Schedule'
   }))
 } 
-
-
-
-export function createTeacherColumns(
-  schedules: TeacherSchedule[], 
-  staffMap: Map<string, string>
-): ScheduleColumn[] {
-  return schedules.map((schedule) => ({
-    id: schedule.teacher,
-    title: staffMap.get(schedule.teacher) || `Teacher ${schedule.teacher.slice(-4)}`
-  }))
-}

@@ -103,12 +103,12 @@ export const borderColors = {
 
   // Light variants for borders (higher numbers = darker)
   light: {
-    primary: 'border-primary-300',
-    secondary: 'border-secondary-300',
-    danger: 'border-danger-300',
-    success: 'border-success-300',
-    muted: 'border-muted-300',
-    surface: 'border-surface-300'
+    primary: 'border-primary-100',
+    secondary: 'border-secondary-100',
+    danger: 'border-danger-100',
+    success: 'border-success-100',
+    muted: 'border-muted-100',
+    surface: 'border-surface-100'
   },
 
   // Dark mode variants

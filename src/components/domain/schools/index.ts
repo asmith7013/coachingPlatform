@@ -1,2 +1,5 @@
-export * from './SchoolCard';
-export * from './SchoolDetailView'; 
+export * from './SchoolGrid';
+export * from './singleSchool/SingleSchool';
+export * from './singleSchool/cards/VisitsCard';
+export * from './singleSchool/cards/TeachersCard';
+export * from './singleSchool/cards/MetricsCard';
