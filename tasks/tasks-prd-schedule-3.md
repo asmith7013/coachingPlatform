@@ -110,11 +110,11 @@
     - Consistent height with schedule rows
     - Empty state messaging for new users
 
-- [ ] 2.0 Implement Three-Zone Selection Interface
+- [x] 2.0 Implement Three-Zone Selection Interface
   **Context Stack:** `ThreeZoneTimeSlot.tsx`, `useThreeZoneScheduling.ts`, `SchedulingInterface.tsx`
   **Pattern Reference:** Existing three-zone time slot component with hover states
   **Quality Gate:** Intuitive click-to-select workflow with immediate visual feedback
-  - [ ] 2.1 Integrate three-zone selection in schedule mode
+  - [x] 2.1 Integrate three-zone selection in schedule mode
     **File:** `src/components/domain/schools/singleSchool/cards/MasterScheduleCard.tsx`
     **Scope:** ~80 lines modification, mode-specific rendering
     **Functions to Modify:**
@@ -135,7 +135,7 @@
     - [ ] Visual feedback during selection process
     - [ ] Consistent with existing `ThreeZoneTimeSlot` patterns
 
-  - [ ] 2.2 Add immediate visit scheduling workflow
+  - [x] 2.2 Add immediate visit scheduling workflow
     **File:** `src/hooks/domain/useVisitScheduling.ts`
     **Scope:** ~150 lines, new hook for visit data management
     **Interfaces to Create:**

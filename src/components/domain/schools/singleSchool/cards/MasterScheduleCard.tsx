@@ -7,8 +7,11 @@ import { StatisticsGrid } from '@composed-components/statistics/StatisticsGrid'
 import { ModeToggle } from '@/components/core/fields/ModeToggle'
 import { TeacherDailySchedule } from '@components/features/scheduleBuilder/TeacherDailySchedule'
 import { SchedulingInterface } from '@components/features/scheduleBuilder/SchedulingInterface'
+import { PlannedVisitsColumn } from '@components/features/scheduleBuilder/PlannedVisitsColumn'
+
 import { useThreeZoneScheduling } from '@components/features/scheduleBuilder/hooks/useThreeZoneScheduling'
 import { useSchoolDailyView } from '@hooks/domain/useSchoolDailyView'
+import { useVisitScheduling } from '@hooks/domain/useVisitScheduling'
 import { Text, Heading } from '@core-components/typography'
 import { Badge } from '@core-components/feedback'
 import { 
@@ -23,6 +26,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { navigateDate, getTodayString, isToday, formatLongDate } from '@transformers/utils/date-utils'
 import type { VisitPortion } from '@components/features/scheduleBuilder/types'
+
 
 const masterScheduleCard = tv({
   slots: {
@@ -112,16 +116,41 @@ export function MasterScheduleCard({
     staffCount 
   } = useSchoolDailyView(schoolId, currentDate)
   
-  // Three-zone scheduling
-  const threeZoneScheduling = useThreeZoneScheduling({
+  // Visit scheduling hook
+  const visitScheduling = useVisitScheduling({
+    schoolId,
     date: currentDate,
-    existingVisits: [], // TODO: Fetch existing visits from API
     onVisitScheduled: (visit) => {
       onVisitScheduled?.({
         teacherId: visit.teacherId,
         periodNumber: visit.periodNumber,
         portion: visit.portion,
         purpose: visit.purpose
+      })
+    },
+    onError: (error) => {
+      console.error('Visit scheduling error:', error)
+    }
+  })
+
+  // Three-zone scheduling
+  const threeZoneScheduling = useThreeZoneScheduling({
+    date: currentDate,
+    existingVisits: [], // Use visitScheduling.visits when compatible types are resolved
+    onVisitScheduled: async (visit) => {
+      // Get teacher name from staff data using _id and staffName
+      const teacher = staff?.find(s => s._id === visit.teacherId)
+      const teacherName = teacher?.staffName || visit.teacherId
+
+      // Schedule visit using the hook
+      await visitScheduling.scheduleVisit({
+        schoolId,
+        teacherId: visit.teacherId,
+        teacherName,
+        periodNumber: visit.periodNumber,
+        portion: visit.portion,
+        purpose: visit.purpose,
+        date: currentDate
       })
     },
     onError: (error) => {
@@ -201,6 +230,60 @@ export function MasterScheduleCard({
   
   const displayDate = formatLongDate(currentDate)
   const isCurrentlyToday = isToday(currentDate)
+
+  // Use actual visits from the scheduling hook
+  const currentVisits = visitScheduling.visits
+  
+  // Get period times from bell schedule
+  const periodTimes = bellSchedule?.classSchedule.map((period, index) => ({
+    period: index + 1,
+    start: period.startTime,
+    end: period.endTime
+  })) || []
+
+  // Render view mode with frozen column layout
+  const renderViewMode = () => (
+    <div className="flex h-[600px] bg-white rounded-md shadow-sm overflow-hidden">
+      {/* Frozen Planned Visits Column */}
+      <PlannedVisitsColumn
+        visits={currentVisits}
+        periodTimes={periodTimes}
+        className="border-r border-gray-200"
+      />
+      
+      {/* Main Teacher Schedule (scrollable) */}
+      <div className="flex-1 overflow-x-auto">
+        <TeacherDailySchedule
+          schoolId={schoolId}
+          initialDate={currentDate}
+          className="h-full"
+        />
+      </div>
+    </div>
+  )
+
+  // Render schedule mode with three-zone interface
+  const renderScheduleMode = () => (
+    <div className="flex h-[600px] bg-white rounded-md shadow-sm overflow-hidden">
+      {/* Frozen Planned Visits Column */}
+      <PlannedVisitsColumn
+        visits={currentVisits}
+        periodTimes={periodTimes}
+        className="border-r border-gray-200"
+      />
+      
+      {/* Three-Zone Scheduling Interface */}
+      <div className="flex-1 overflow-hidden">
+        <SchedulingInterface
+          scheduling={threeZoneScheduling}
+          staff={staff || []}
+          bellSchedule={bellSchedule!}
+          onPeriodPortionSelect={handlePeriodPortionSelect}
+          onScheduleVisit={handleScheduleVisit}
+        />
+      </div>
+    </div>
+  )
 
   return (
     <Card className={className}>
@@ -294,19 +377,9 @@ export function MasterScheduleCard({
           {hasData && !isLoading && (
             <>
               {mode === 'view' ? (
-                <TeacherDailySchedule
-                  schoolId={schoolId}
-                  initialDate={currentDate}
-                  className="h-[600px] bg-white rounded-md shadow-sm"
-                />
+                renderViewMode()
               ) : (
-                <SchedulingInterface
-                  scheduling={threeZoneScheduling}
-                  staff={staff || []}
-                  bellSchedule={bellSchedule!}
-                  onPeriodPortionSelect={handlePeriodPortionSelect}
-                  onScheduleVisit={handleScheduleVisit}
-                />
+                renderScheduleMode()
               )}
             </>
           )}

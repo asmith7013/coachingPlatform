@@ -3,8 +3,8 @@ import type { TeacherSchedule, BellSchedule } from '@zod-schema/schedule/schedul
 import { 
   validateSchedules,
   transformSchedulesToBellScheduleEvents,
-  type BellScheduleEvent
 } from '@/components/features/scheduleBuilder/transformers/schedule-transforms'
+import type { BellScheduleEvent } from '@/components/features/scheduleBuilder/types'
 import { 
   extractPeriodTimes, 
   getDayTypeFromDate 

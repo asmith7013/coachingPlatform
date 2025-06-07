@@ -7,7 +7,7 @@ import { useSchoolDailyView } from '@hooks/domain/useSchoolDailyView'
 import { ScheduleGrid } from '@components/features/scheduleBuilder/ScheduleGrid'
 import { VisitSidebar } from './VisitSidebar'
 import { toDateString, formatLongDate } from '@transformers/utils/date-utils'
-import type { BellScheduleEvent } from '@components/features/scheduleBuilder/transformers/schedule-transforms'
+import type { BellScheduleEvent } from '@components/features/scheduleBuilder/types'
 
 // Import shared utilities
 import { useScheduleDisplay } from '@hooks/domain/useScheduleDisplay'

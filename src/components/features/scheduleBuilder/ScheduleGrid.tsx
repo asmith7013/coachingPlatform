@@ -5,7 +5,7 @@ import { tv } from 'tailwind-variants'
 import { ScheduleCell } from './ScheduleCell'
 import { ThreeZoneTimeSlot } from './ThreeZoneTimeSlot'
 import type { ScheduleGridProps, PeriodPortionSelection, VisitPortion } from './types'
-import type { BellScheduleEvent } from '@/components/features/scheduleBuilder/transformers/schedule-transforms'
+import type { BellScheduleEvent } from '@/components/features/scheduleBuilder/types'
 
 const scheduleGrid = tv({
   slots: {

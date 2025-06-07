@@ -5,7 +5,7 @@ import { useSchoolDailyView } from '@hooks/domain/useSchoolDailyView'
 import { TeacherScheduleCalendar } from '@components/features/scheduleBuilder/TeacherScheduleCalendar'
 import { Alert, Spinner } from '@core-components/feedback'
 import { getTodayString, navigateDate } from '@transformers/utils/date-utils'
-import type { BellScheduleEvent } from '@components/features/scheduleBuilder/transformers/schedule-transforms'
+import type { BellScheduleEvent } from '@components/features/scheduleBuilder/types'
 
 export interface TeacherDailyScheduleProps {
   schoolId: string

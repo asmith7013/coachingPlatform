@@ -6,7 +6,7 @@ import { formatLongDate } from '@transformers/utils/date-utils'
 import { radiiTop, radii } from '@ui-tokens'
 
 import { ScheduleGrid } from '@components/features/scheduleBuilder/ScheduleGrid'
-import type { BellScheduleEvent } from '@components/features/scheduleBuilder/transformers/schedule-transforms'
+import type { BellScheduleEvent } from '@components/features/scheduleBuilder/types'
 
 import { useScheduleDisplay } from '@hooks/domain/useScheduleDisplay'
 import { createTeacherColumns } from '@/components/features/scheduleBuilder/utils/event-builders'
