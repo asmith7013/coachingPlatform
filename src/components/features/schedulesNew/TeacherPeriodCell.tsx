@@ -1,11 +1,12 @@
 import React from 'react';
 import { useScheduleSelection, useVisitData } from './context';
-import type { ClassScheduleItem } from '@zod-schema/schedule/schedule';
+import type { Period } from '@zod-schema/schedule/schedule';
+
 
 interface TeacherPeriodCellProps {
   teacherId: string;
   period: number | string;
-  schedule?: ClassScheduleItem;
+  schedule?: Period; // Changed from ClassScheduleItem to Period
 }
 
 export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriodCellProps) {
@@ -25,7 +26,7 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
     );
   }
 
-  if (schedule?.dayType === 'lunch') {
+  if (schedule?.periodType === 'lunch') {
     const getLunchStyle = () => {
       if (isSelected) {
         return {
@@ -65,7 +66,7 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
     );
   }
 
-  if (schedule?.dayType === 'prep') {
+  if (schedule?.periodType === 'prep') {
     const getPrepStyle = () => {
       if (isSelected) {
         return {
@@ -135,7 +136,7 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
     >
       <div className="h-full flex flex-col items-center justify-center">
         <span className="font-medium text-sm">
-          {schedule?.dayType || 'Available'}
+          {schedule?.periodType || 'Available'}
         </span>
         <span className="text-xs">
           {isSelected ? 'Selected' : dropZoneFullyScheduled ? 'Period scheduled' : 'Click to select'}

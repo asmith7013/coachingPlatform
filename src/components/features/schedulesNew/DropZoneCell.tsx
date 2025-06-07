@@ -1,6 +1,7 @@
 import React from 'react';
 import { Eye } from 'lucide-react';
 import { useScheduleSelection, useDropZoneActions } from './context';
+import { ScheduledVisit } from './types';
 
 interface DropZoneCellProps {
   period: number | string;
@@ -22,9 +23,9 @@ export function DropZoneCell({ period }: DropZoneCellProps) {
 
   const isSelected = selectedTeacher && selectedPeriod === period;
   const dropZoneItems = getDropZoneItems(period);
-  const firstHalfItem = dropZoneItems.find((item: any) => item.portion === 'first_half' || item.portion === 'full_period');
-  const secondHalfItem = dropZoneItems.find((item: any) => item.portion === 'second_half' || item.portion === 'full_period');
-  const fullPeriodItem = dropZoneItems.find((item: any) => item.portion === 'full_period');
+  const firstHalfItem = dropZoneItems.find((item: ScheduledVisit) => item.portion === 'first_half' || item.portion === 'full_period');
+  const secondHalfItem = dropZoneItems.find((item: ScheduledVisit) => item.portion === 'second_half' || item.portion === 'full_period');
+  const fullPeriodItem = dropZoneItems.find((item: ScheduledVisit) => item.portion === 'full_period');
 
   // console.log('🎯 DropZoneCell render:', { 
   //   period, 
