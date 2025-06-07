@@ -12,7 +12,7 @@ import {
     BookOpenIcon
 } from '@heroicons/react/24/outline'
 
-import type { NavigationItem, TeamItem } from '@/components/composed/layouts/NavigationSidebar'
+import type { NavigationItem, TeamItem } from '@/components/composed/layouts/sidebar/NavigationSidebar'
 import { PERMISSIONS } from '@core-types/auth'
 
 // Navigation configuration with proper permission constants

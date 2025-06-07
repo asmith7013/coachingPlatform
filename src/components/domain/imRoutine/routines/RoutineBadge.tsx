@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { cn } from '@ui/utils/formatters';;
-import { getUnitURL } from '@/lib/domain/imRoutine/get-unit-URL';
+import { getUnitURL } from '@/components/domain/imRoutine/utils/get-unit-URL';
 
 type Props = {
   routine: string;

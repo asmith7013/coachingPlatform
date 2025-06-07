@@ -4,11 +4,11 @@ import {
   validateSchedules,
   transformSchedulesToBellScheduleEvents,
   type BellScheduleEvent
-} from '@transformers/domain/schedule-transforms'
+} from '@/components/features/scheduleBuilder/transformers/schedule-transforms'
 import { 
   extractPeriodTimes, 
   getDayTypeFromDate 
-} from '@/lib/domain/schedule/schedule-calendar-utils'
+} from '@/components/features/scheduleBuilder/utils/schedule-calendar-utils'
 
 export interface ScheduleDisplayResult {
   validatedSchedules: TeacherSchedule[];

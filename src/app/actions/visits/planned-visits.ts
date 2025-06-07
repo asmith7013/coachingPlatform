@@ -19,8 +19,6 @@ import {
 
 // Import state management schemas
 import {
-  VisitScheduleBuilderState,
-  VisitScheduleBuilderStateZodSchema,
   type TeacherAccountabilityState
 } from "@zod-schema/visits/schedule-builder-state";
 
@@ -93,51 +91,7 @@ export async function bulkCreatePlannedVisits(data: PlannedVisitInput[]) {
   }
 }
 
-/**
- * Save schedule builder state for session persistence
- * This handles the UI state separate from the actual planned visits
- */
-export async function saveScheduleBuilderState(state: VisitScheduleBuilderState) {
-  try {
-    // Validate the state
-    const validatedState = VisitScheduleBuilderStateZodSchema.parse(state);
-    
-    // TODO: Implement state persistence to database or cache
-    // For now, return success (client will handle local storage)
-    
-    return {
-      success: true,
-      data: validatedState,
-      sessionId: validatedState.sessionId || `session_${Date.now()}`
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: handleServerError(error)
-    };
-  }
-}
 
-/**
- * Load schedule builder state from session
- */
-export async function loadScheduleBuilderState(sessionId: string) {
-  try {
-    // TODO: Implement state loading from database or cache
-    // For now, return empty state structure
-    
-    return {
-      success: true,
-      data: null, // Client will handle local storage fallback
-      sessionId
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: handleServerError(error)
-    };
-  }
-}
 
 // =================== SCHEDULE-SPECIFIC QUERIES ===================
 

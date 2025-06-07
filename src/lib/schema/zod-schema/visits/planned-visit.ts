@@ -12,8 +12,11 @@ export const TimeSlotZodSchema = z.object({
   periodNum: z.number().optional(), // Optional period number for bell schedule alignment
 });
 
-// Schedule Assignment Type (for hover zones)
+// Schedule Assignment Type (for hover zones and three-zone scheduling)
 export const ScheduleAssignmentTypeZod = z.enum(['full_period', 'first_half', 'second_half']);
+
+// Visit Portion Type (alias for three-zone scheduling)
+export const VisitPortionZod = ScheduleAssignmentTypeZod;
 
 // Planned Visit Fields Schema
 export const PlannedVisitFieldsSchema = z.object({
@@ -29,14 +32,21 @@ export const PlannedVisitFieldsSchema = z.object({
   assignmentType: ScheduleAssignmentTypeZod.default('full_period'), // How teacher was assigned to slot
   customPurpose: z.boolean().default(false), // Whether purpose is custom or predefined
   
+  // Three-zone scheduling enhancements
+  periodNumber: z.number().optional(), // Period number (1, 2, 3, etc.) - simplified approach
+  portion: VisitPortionZod.optional().default('full_period'), // Time portion within period
+  
   // Optional scheduling context
   school: z.string().optional(), // School ID for context
-  periodNum: z.number().optional(), // Period number if aligned with bell schedule
+  periodNum: z.number().optional(), // Legacy field - kept for backward compatibility
   notes: z.string().optional(), // Optional planning notes
   
   // Schedule builder state
   scheduleId: z.string().optional(), // Reference to parent schedule if grouped
   orderIndex: z.number().optional(), // Order within the schedule
+  
+  // Conflict tracking for multi-teacher assignments
+  conflictingVisits: z.array(z.string()).optional(), // Array of conflicting visit IDs
 });
 
 // Planned Visit Full Schema
@@ -54,6 +64,8 @@ export const PlannedVisitReferenceZodSchema = BaseReferenceZodSchema.merge(
     date: zDateField.optional(),
     coach: z.string().optional(),
     assignmentType: ScheduleAssignmentTypeZod.optional(),
+    periodNumber: z.number().optional(),
+    portion: VisitPortionZod.optional(),
   })
 ).extend({
   teacherName: z.string().optional().describe("Teacher name (for display)"),
@@ -62,12 +74,25 @@ export const PlannedVisitReferenceZodSchema = BaseReferenceZodSchema.merge(
   timeSlotFormatted: z.string().optional().describe("Formatted time slot string"),
   dateFormatted: z.string().optional().describe("Formatted date string"),
   durationMinutes: z.number().optional().describe("Duration in minutes"),
+  portionLabel: z.string().optional().describe("Human-readable portion label (e.g., 'First half of Period 2')"),
 });
 
 // Planned Visit Reference Transformer
 export const plannedVisitToReference = createReferenceTransformer<PlannedVisit, PlannedVisitReference>(
-  // Label function: Create display string from teacher, time, and purpose
+  // Label function: Create display string with period-portion approach
   (plannedVisit) => {
+    // Use period-portion approach if available, fallback to time slot
+    if (plannedVisit.periodNumber && plannedVisit.portion) {
+      const portionLabels = {
+        first_half: 'First half',
+        second_half: 'Second half',
+        full_period: 'Full period'
+      }
+      const portionLabel = portionLabels[plannedVisit.portion] || 'Full period'
+      return `${portionLabel} of Period ${plannedVisit.periodNumber}: ${plannedVisit.purpose}`
+    }
+    
+    // Fallback to legacy time slot approach
     const timeSlot = `${plannedVisit.timeSlot.startTime}-${plannedVisit.timeSlot.endTime}`;
     return `${timeSlot}: ${plannedVisit.purpose}`;
   },
@@ -79,6 +104,18 @@ export const plannedVisitToReference = createReferenceTransformer<PlannedVisit, 
       : new Date();
     const timeSlotFormatted = `${plannedVisit.timeSlot.startTime} - ${plannedVisit.timeSlot.endTime}`;
     
+    // Generate human-readable portion label
+    let portionLabel = ''
+    if (plannedVisit.periodNumber && plannedVisit.portion) {
+      const portionLabels = {
+        first_half: 'First half',
+        second_half: 'Second half',
+        full_period: 'Full period'
+      }
+      const portion = portionLabels[plannedVisit.portion] || 'Full period'
+      portionLabel = `${portion} of Period ${plannedVisit.periodNumber}`
+    }
+    
     return {
       teacherId: plannedVisit.teacherId,
       timeSlot: plannedVisit.timeSlot,
@@ -86,9 +123,12 @@ export const plannedVisitToReference = createReferenceTransformer<PlannedVisit, 
       date: date,
       coach: plannedVisit.coach,
       assignmentType: plannedVisit.assignmentType,
+      periodNumber: plannedVisit.periodNumber,
+      portion: plannedVisit.portion,
       timeSlotFormatted,
       dateFormatted: date.toISOString().split('T')[0], // YYYY-MM-DD format
       durationMinutes: parseInt(plannedVisit.duration), // Convert duration enum to minutes
+      portionLabel,
     };
   },
   
@@ -99,6 +139,7 @@ export const plannedVisitToReference = createReferenceTransformer<PlannedVisit, 
 // Auto-generate TypeScript types
 export type TimeSlot = z.infer<typeof TimeSlotZodSchema>;
 export type ScheduleAssignmentType = z.infer<typeof ScheduleAssignmentTypeZod>;
+export type VisitPortion = z.infer<typeof VisitPortionZod>;
 export type PlannedVisitInput = z.infer<typeof PlannedVisitInputZodSchema>;
 export type PlannedVisit = z.infer<typeof PlannedVisitZodSchema>;
 export type PlannedVisitReference = z.infer<typeof PlannedVisitReferenceZodSchema>; 

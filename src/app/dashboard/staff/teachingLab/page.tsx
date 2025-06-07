@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { DashboardPage } from "@/components/composed/layouts";
+import { DashboardLayout } from "@/components/composed/layouts";
 import { PageHeader } from "@/components/composed/layouts";
 import { useTeachingLabStaff } from "@hooks/domain/useTeachingLabStaff";
 import { PlusIcon } from "lucide-react";
@@ -21,7 +21,7 @@ export default function TeachingLabStaffPage() {
   const totalPages = Math.ceil((total || 0) / 10);
 
   return (
-    <DashboardPage>
+    <DashboardLayout>
       <PageHeader 
         title="Teaching Lab Staff"
         subtitle="Browse and manage Teaching Lab staff members"
@@ -63,6 +63,6 @@ export default function TeachingLabStaffPage() {
           />
         </div>
       )}
-    </DashboardPage>
+    </DashboardLayout>
   );
 } 

@@ -59,10 +59,10 @@ const sidebar = tv({
     mobileCloseIcon: 'size-6 text-white',
     
     // Desktop sidebar
-    desktopSidebar: 'hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-52 lg:flex-col',
+    desktopSidebar: 'lg:flex lg:flex-col lg:h-full', // Remove fixed positioning
     
     // Shared sidebar content
-    sidebarContent: 'flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4',
+    sidebarContent: 'flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4 h-full',
     
     // User profile section (replaces logo)
     userProfileSection: 'flex h-16 shrink-0 items-center border-b border-gray-200 pb-4',

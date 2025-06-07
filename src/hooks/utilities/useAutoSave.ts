@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect } from 'react'
+import { useCallback, useRef, useEffect, useMemo } from 'react'
 import { debounce } from 'lodash'
 
 export interface AutoSaveStatus {
@@ -64,8 +64,8 @@ export function useAutoSave({
   const isMountedRef = useRef(true)
 
   // Create debounced save function
-  const debouncedSave = useCallback(
-    debounce(async () => {
+  const debouncedSave = useMemo(
+    () => debounce(async () => {
       if (!enabled || !isMountedRef.current) {
         return
       }

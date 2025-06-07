@@ -2,6 +2,7 @@
 
 import { cn } from '@ui/utils/formatters'
 import { tv } from 'tailwind-variants'
+import { Bars3Icon } from '@heroicons/react/24/outline'
 
 interface BreadcrumbItem {
   name: string
@@ -12,14 +13,17 @@ interface BreadcrumbItem {
 interface TopbarProps {
   breadcrumbs?: BreadcrumbItem[]
   className?: string
+  onMenuClick?: () => void
 }
 
 // Create topbar styles using tv from tailwind-variants
 const topbarStyles = tv({
   slots: {
-    container: 'sticky top-0 z-40 lg:mx-auto lg:max-w-7xl lg:px-4',
-    header: 'flex h-12 items-center border-b border-gray-200 bg-white px-4 shadow-xs sm:px-6 lg:px-0 lg:shadow-none',
-    breadcrumbContainer: 'flex items-center flex-1',
+    container: 'w-full', // Remove sticky positioning and max-width
+    header: 'flex h-12 items-center border-b border-gray-200 bg-white px-4 shadow-xs sm:px-6',
+    menuButton: 'lg:hidden -m-2.5 p-2.5 text-gray-700 hover:text-gray-900',
+    menuIcon: 'h-6 w-6',
+    breadcrumbContainer: 'flex items-center flex-1 ml-4 lg:ml-0',
     breadcrumbNav: 'flex',
     breadcrumbList: 'flex items-center space-x-4',
     breadcrumbItem: 'flex',
@@ -29,12 +33,24 @@ const topbarStyles = tv({
   }
 });
 
-export function Topbar({ breadcrumbs = [], className }: TopbarProps) {
+export function Topbar({ breadcrumbs = [], className, onMenuClick }: TopbarProps) {
   const styles = topbarStyles();
   
   return (
     <div className={cn(styles.container(), className)}>
       <div className={styles.header()}>
+        {/* Mobile menu button */}
+        {onMenuClick && (
+          <button
+            type="button"
+            className={styles.menuButton()}
+            onClick={onMenuClick}
+          >
+            <span className="sr-only">Open sidebar</span>
+            <Bars3Icon className={styles.menuIcon()} aria-hidden="true" />
+          </button>
+        )}
+        
         {/* Breadcrumbs */}
         <div className={styles.breadcrumbContainer()}>
           <nav className={styles.breadcrumbNav()} aria-label="Breadcrumb">

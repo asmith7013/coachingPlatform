@@ -1,7 +1,7 @@
 // src/hooks/auth/usePermissionFiltering.ts
 import { useMemo } from 'react'
 import { useUser, useOrganization } from '@clerk/nextjs'
-import type { NavigationItem } from '@composed-components/layouts/NavigationSidebar'
+import type { NavigationItem } from '@/components/composed/layouts/sidebar/NavigationSidebar'
 
 export function usePermissionFiltering() {
   const { user } = useUser()

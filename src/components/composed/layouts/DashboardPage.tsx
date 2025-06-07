@@ -20,7 +20,7 @@ export function DashboardPage({
   ) : children;
 
   return (
-    <div className="container">
+    <div className="space-y-6"> {/* CHANGE: Remove container, use simple spacing */}
       {content}
     </div>
   );

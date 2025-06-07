@@ -1,6 +1,7 @@
-// UI-specific hooks for schedule builder components
-export * from './useTeacherSelection';
-export * from './useDragAndDrop';
-export * from './useAccountabilityTracking';
-export * from './useStatePersistence';
-export * from './useAssignmentManagement'; 
+// UI-specific hooks that are actively used
+export * from './useNavigation';
+export * from './useAuthorizedNavigation';
+export * from './useResizableSidebar';
+export * from './useScheduleDisplay';
+export * from './useAdaptiveHeight';
+export * from './useSchoolAuthorization'; 

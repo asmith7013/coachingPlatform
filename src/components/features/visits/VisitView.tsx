@@ -4,14 +4,14 @@ import { useState, useMemo } from 'react'
 import { XMarkIcon, CalendarDaysIcon, BuildingLibraryIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import type { Visit } from '@zod-schema/visits/visit'
 import { useSchoolDailyView } from '@hooks/domain/useSchoolDailyView'
-import { BellScheduleGrid } from '@composed-components/calendar/schedule'
+import { ScheduleGrid } from '@components/features/scheduleBuilder/ScheduleGrid'
 import { VisitSidebar } from './VisitSidebar'
 import { toDateString, formatLongDate } from '@transformers/utils/date-utils'
-import type { BellScheduleEvent } from '@composed-components/calendar/schedule/types'
+import type { BellScheduleEvent } from '@components/features/scheduleBuilder/transformers/schedule-transforms'
 
 // Import shared utilities
 import { useScheduleDisplay } from '@hooks/domain/useScheduleDisplay'
-import { createVisitColumns } from '@/lib/domain/schedule/column-builders'
+import { createVisitColumns } from '@/components/features/scheduleBuilder/utils/event-builders'
 
 export interface VisitViewProps {
   visit: Visit
@@ -152,9 +152,9 @@ export function VisitView({
       </header>
       
       <div className="flex flex-1 overflow-hidden bg-white">
-        {/* Schedule grid - now uses BellScheduleGrid directly */}
+        {/* Schedule grid - now uses ScheduleGrid directly */}
         <div className="w-1/4 overflow-hidden">
-          <BellScheduleGrid
+          <ScheduleGrid
             columns={visitColumns}
             events={events}
             periodTimes={periodTimes}

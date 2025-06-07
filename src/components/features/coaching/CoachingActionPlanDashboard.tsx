@@ -7,10 +7,10 @@ import { ResourceHeader } from '@/components/composed/layouts/ResourceHeader';
 import { EmptyListWrapper } from '@/components/core/empty/EmptyListWrapper';
 import { Text } from '@/components/core/typography/Text';
 import { useToast } from '@/components/core/feedback/Toast';
-import { CreateCoachingActionPlanDialog } from '@/components/composed/dialogs';
+import { CreateCoachingActionPlanDialog } from './components/CreateCoachingActionPlanDialog';
 import { CoachingActionPlanDetailedEditor } from './CoachingActionPlanDetailedEditor';
 import { ActionPlanCard, StatusTransitionButton } from '@/components/domain/coaching';
-import { useCoachingActionPlans } from '@/hooks/domain/useCoachingActionPlans';
+import { useCoachingActionPlans } from '@components/features/coaching/hooks/useCoachingActionPlans';
 import { updateCoachingActionPlanStatus } from '@/app/actions/coaching/coaching-action-plans';
 import { handleClientError } from '@error/handlers/client';
 import { PlusCircleIcon, FolderIcon, CheckCircleIcon } from 'lucide-react';
@@ -203,7 +203,7 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
             </Button>
           }
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {plans.map((plan) => (
               <div key={plan._id} className="relative group">
                 <ActionPlanCard

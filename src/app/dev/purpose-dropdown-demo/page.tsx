@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { PurposeAssignmentDropdown, type EventPurpose, getRecommendedPurpose } from '@/components/core/dropdowns/PurposeAssignmentDropdown'
+import { PurposeAssignmentDropdown, type EventPurpose, getRecommendedPurpose } from '@/components/features/scheduleBuilder/PurposeAssignmentDropdown'
 import { PageHeader } from '@/components/composed/layouts/PageHeader'
 
 export default function PurposeDropdownDemo() {

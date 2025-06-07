@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from 'react';
 import { cn } from '@ui/utils/formatters';;
-import { GroupWithId, ItemWithId, useItemToGroupMap } from '@lib/hooks/use-item-to-group-map';
+import { GroupWithId, ItemWithId, useItemToGroupMap } from '@/components/domain/rubrics/utils/use-item-to-group-map';
 
 export interface FilterableGridViewProps<TGroup extends GroupWithId, TItem extends ItemWithId> {
   groups: TGroup[];

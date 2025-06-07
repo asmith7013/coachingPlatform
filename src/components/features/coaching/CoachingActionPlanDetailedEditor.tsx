@@ -7,17 +7,17 @@ import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
 import { Button } from '@/components/core/Button';
 import { SaveIcon, XIcon } from 'lucide-react';
-import { useCoachingActionPlans } from '@/hooks/domain/cap/useCoachingActionPlans';
+import { useCoachingActionPlans } from '@components/features/coaching/hooks/useCoachingActionPlans';
 import { useToast } from '@/components/core/feedback/Toast';
 import { handleClientError } from '@error/handlers/client';
 import { calculatePlanProgress } from '@/lib/transformers/utils/coaching-action-plan-utils';
 import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
 
 // Import stage components
-import { CoachingActionPlanStage1 } from './CoachingActionPlanStage1';
-import { CoachingActionPlanStage2 } from './CoachingActionPlanStage2';
-import { CoachingActionPlanStage3 } from './CoachingActionPlanStage3';
-import { CoachingActionPlanStage4 } from './CoachingActionPlanStage4';
+import { CoachingActionPlanStage1 } from './stages/CAPStage1';
+import { CoachingActionPlanStage2 } from './stages/CAPStage2';
+import { CoachingActionPlanStage3 } from './stages/CAPStage3';
+import { CoachingActionPlanStage4 } from './stages/CAPStage4';
 
 interface CoachingActionPlanDetailedEditorProps {
   planId: string;

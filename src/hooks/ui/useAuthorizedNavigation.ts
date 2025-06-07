@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useUser, useOrganization } from '@clerk/nextjs'
 import { navigationItems } from '@/app/dashboard/config'
 import { useNavigation } from './useNavigation'
-import type { NavigationItem } from '@/components/composed/layouts/NavigationSidebar'
+import type { NavigationItem } from '@/components/composed/layouts/sidebar/NavigationSidebar'
 
 export function useAuthorizedNavigation() {
   const { user } = useUser()

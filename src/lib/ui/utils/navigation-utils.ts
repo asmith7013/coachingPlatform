@@ -1,4 +1,4 @@
-import type { NavigationItem } from '@composed-components/layouts/NavigationSidebar'
+import type { NavigationItem } from '@/components/composed/layouts/sidebar/NavigationSidebar'
 
 /**
  * Updates navigation state to reflect current active path

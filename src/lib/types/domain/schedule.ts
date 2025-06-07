@@ -118,44 +118,9 @@ export interface DropZone {
 }
 
 // ===== SCHEDULE GRID COMPONENT PROPS =====
-
-/**
- * Props for BellScheduleGrid component
- * Comprehensive interface for schedule grid displays
- */
-export interface BellScheduleGridProps {
-  columns: ScheduleColumn[];
-  events: BellSchedule[];
-  periodTimes: PeriodTime[];
-  onEventClick?: (event: BellSchedule) => void;
-  className?: string;
-  
-  // Interactive mode props
-  interactive?: boolean;
-  plannedVisits?: PlannedVisit[];
-  onPlannedVisitClick?: (visit: PlannedVisit) => void;
-  
-  // Drag and drop handlers
-  onTeacherDrop?: (teacherId: string, dropZone: DropZone) => void;
-  onHoverZoneChange?: (hoverState: HoverState | null) => void;
-  
-  // Visual feedback state
-  activeHoverZone?: HoverState | null;
-  draggedTeacher?: DraggedTeacher | null;
-}
-
-/**
- * Props for InteractiveScheduleGrid component
- * Enhanced grid with full interactive capabilities
- */
-export interface InteractiveScheduleGridProps extends BellScheduleGridProps {
-  columns: InteractiveScheduleColumn[];
-  activeAssignments?: AssignmentState[];
-  onRemoveAssignment?: (assignment: AssignmentState) => void;
-  onEditAssignmentPurpose?: (assignment: AssignmentState) => void;
-  getTeacherName?: (teacherId: string) => string;
-  enableZoneInteractions?: boolean;
-}
+// Note: Legacy BellScheduleGrid and InteractiveScheduleGrid props removed
+// These components have been consolidated into the new ScheduleGrid component
+// See: src/components/schedule/types.ts for current component interfaces
 
 /**
  * Props for PlannedScheduleColumn component

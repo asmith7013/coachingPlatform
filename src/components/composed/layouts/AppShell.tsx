@@ -4,7 +4,7 @@ import { useState, ReactNode } from 'react'
 import { tv } from 'tailwind-variants'
 import { cn } from '@ui/utils/formatters'
 import { Topbar } from './Topbar'
-import { NavigationSidebar, type NavigationItem, type TeamItem } from './NavigationSidebar'
+import { NavigationSidebar, type NavigationItem, type TeamItem } from './sidebar/NavigationSidebar'
 import { 
   HomeIcon,
   UsersIcon,
@@ -46,11 +46,61 @@ interface IntegratedAppShellProps {
 // Create layout styles using tv from tailwind-variants
 const appShell = tv({
   slots: {
-    root: 'h-full bg-background',
-    content: 'lg:pl-52',
-    mainContent: 'py-4', // Reduced since topbar provides some spacing
-    contentWrapper: 'mx-auto max-w-7xl px-3 sm:px-4 lg:px-6',
-    pageHeader: 'mb-4',
+    root: [
+      'h-screen', // Full viewport height
+      'grid',
+      // Mobile: single column, rows for topbar and content
+      'grid-rows-[auto_1fr]',
+      'grid-cols-1',
+      // Desktop: use flex layout to accommodate dynamic sidebar width
+      'lg:flex lg:flex-row lg:grid-rows-none lg:grid-cols-none',
+      'bg-background'
+    ],
+    // Mobile topbar - spans full width
+    mobileTopbar: [
+      'lg:hidden',
+      'col-span-full',
+      'sticky top-0 z-10',
+      'bg-white border-b border-gray-200'
+    ],
+    // Desktop sidebar - no longer needs grid positioning
+    sidebar: [
+      'hidden lg:block',
+      'lg:flex-shrink-0', // Don't shrink the sidebar
+      'lg:h-screen', // CHANGE: Explicitly set full screen height
+      'overflow-hidden', // CHANGE: Remove overflow from container
+      'border-r border-gray-200',
+      'bg-white'
+    ],
+    // Content area container
+    contentArea: [
+      'col-span-full lg:flex-1', // Take remaining space on desktop
+      'flex flex-col',
+      'min-h-0',
+      'h-full',
+      'lg:min-w-0' // Prevent content area from expanding beyond available space
+    ],
+    // Desktop topbar - only spans content area (after sidebar)
+    desktopTopbar: [
+      'hidden lg:block',
+      'sticky top-0 z-10',
+      'bg-white border-b border-gray-200'
+    ],
+    // Main content - remove overflow from here, move to mainContent
+    content: [
+      'min-h-0',
+      'flex-1',
+      'bg-background'
+    ],
+    mainContent: [
+      'flex-1',
+      'overflow-y-auto', // Primary scroll container
+      'px-0' // Remove any conflicting padding
+    ],
+    contentWrapper: [
+      'mx-auto max-w-7xl px-3 sm:px-4 lg:px-6',
+      'py-4' // Keep padding but remove height constraints that compete with flex
+    ]
   },
   variants: {
     padding: {
@@ -94,25 +144,38 @@ export function AppShell({
 
   return (
     <div className={cn(styles.root(), className)}>
-      {/* Navigation sidebar */}
-      <NavigationSidebar 
-        navigation={navigation}
-        teams={teams}
-        showTeams={showTeams}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
-      />
+      {/* Mobile-only topbar */}
+      <div className={styles.mobileTopbar()}>
+        <Topbar 
+          breadcrumbs={breadcrumbs} 
+          onMenuClick={() => setSidebarOpen(true)}
+        />
+      </div>
 
-      {/* Content area */}
-      <div className={styles.content()}>
-        {/* Top navigation - now visible with breadcrumbs */}
-        <Topbar breadcrumbs={breadcrumbs} />
+      {/* Desktop sidebar - spans full height including topbar area */}
+      <div className={styles.sidebar()}>
+        <NavigationSidebar 
+          navigation={navigation}
+          teams={teams}
+          showTeams={showTeams}
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+      </div>
 
-        {/* Main content */}
-        <main className={styles.mainContent()}>
-          <div className={styles.contentWrapper()}>
-            {/* Page content */}
-            {children}
+      {/* Content area - contains desktop topbar and main content */}
+      <div className={styles.contentArea()}>
+        {/* Desktop-only topbar - positioned after sidebar */}
+        <div className={styles.desktopTopbar()}>
+          <Topbar breadcrumbs={breadcrumbs} />
+        </div>
+
+        {/* Main content area */}
+        <main className={styles.content()}>
+          <div className={styles.mainContent()}>
+            <div className={styles.contentWrapper()}>
+              {children}
+            </div>
           </div>
         </main>
       </div>

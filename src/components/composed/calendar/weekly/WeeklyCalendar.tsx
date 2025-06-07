@@ -34,6 +34,7 @@ export interface CalendarEvent {
   duration: number // in 5-minute increments
   color: 'blue' | 'pink' | 'gray' | 'green' | 'purple' | 'yellow'
   day: number // 0-6 for Sunday-Saturday
+  
 }
 
 export interface WeeklyCalendarProps extends VariantProps<typeof weeklyCalendar> {
