@@ -15,7 +15,7 @@ import {
 import { DocumentInput, WithDateObjects } from '@core-types/document';
 import { createTransformationService } from '@transformers/core/transformation-service';
 import { useInvalidation } from '@query/cache/invalidation';
-import { useBulkOperations } from '@query/client/hooks/mutations/useBulkOperations';
+import { useBulkOperations } from '@/query/client/hooks/mutations/useBulkOperations';
 import { useCallback } from 'react';
 import { z } from 'zod';
 import { ensureBaseDocumentCompatibility } from '@/lib/transformers/utils/response-utils';

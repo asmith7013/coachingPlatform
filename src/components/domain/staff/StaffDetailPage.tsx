@@ -11,7 +11,7 @@ import { Text } from '@/components/core/typography/Text'
 import { Card } from '@/components/composed/cards/Card'
 import { ScheduleTable } from '@/components/composed/tables/ScheduleTable'
 import { Table } from '@/components/composed/tables/Table'
-import { useEntityById } from '@query/client/hooks/data/useEntityById'
+import { useEntityById } from '@/query/client/hooks/queries/useEntityById'
 import { cn } from '@ui/utils/formatters';
 import { weight, paddingY } from '@/lib/tokens/tokens'
 import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'

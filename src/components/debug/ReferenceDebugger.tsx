@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ReferenceSelect } from "@/components/core/fields/ReferenceSelect";
-import { useReferenceData, getEntityTypeFromUrlUtil } from "@query/client/hooks/data/useReferenceData";
+import { useReferenceData, getEntityTypeFromUrlUtil } from "@/query/client/hooks/queries/useReferenceData";
 
 export function ReferenceDebugger() {
   // Debug state

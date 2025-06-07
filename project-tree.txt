@@ -6,30 +6,18 @@
 ├── docs
 │   ├── architecture
 │   │   ├── core-principles.md
-│   │   ├── core-principles.mdc
 │   │   ├── design-patterns.md
-│   │   ├── design-patterns.mdc
 │   │   ├── import-patterns.md
-│   │   ├── import-patterns.mdc
-│   │   ├── project-structure.md
-│   │   └── project-structure.mdc
+│   │   └── project-structure.md
 │   ├── architecture-overview.md
-│   ├── architecture-overview.mdc
 │   ├── components
 │   │   ├── component-system.md
-│   │   ├── component-system.mdc
 │   │   ├── composed-components.md
-│   │   ├── composed-components.mdc
 │   │   ├── core-components.md
-│   │   ├── core-components.mdc
 │   │   ├── design-token-system.md
-│   │   ├── design-token-system.mdc
 │   │   ├── domain-components.md
-│   │   ├── domain-components.mdc
 │   │   ├── layout-system.md
-│   │   ├── layout-system.mdc
-│   │   ├── styling-patterns.md
-│   │   └── styling-patterns.mdc
+│   │   └── styling-patterns.md
 │   ├── context-templates
 │   │   ├── data-layer-context.md
 │   │   ├── documentation-maintenance.md
@@ -38,46 +26,28 @@
 │   │   └── ui-component-context.md
 │   ├── data-flow
 │   │   ├── api-patterns.md
-│   │   ├── api-patterns.mdc
 │   │   ├── authentication.md
-│   │   ├── authentication.mdc
 │   │   ├── error-handling.md
-│   │   ├── error-handling.mdc
 │   │   ├── monday-integration.md
-│   │   ├── monday-integration.mdc
 │   │   ├── mongodb-integration.md
-│   │   ├── mongodb-integration.mdc
 │   │   ├── react-query-patterns.md
-│   │   ├── react-query-patterns.mdc
 │   │   ├── sanitization-system.md
-│   │   ├── sanitization-system.mdc
 │   │   ├── schema-system.md
-│   │   ├── schema-system.mdc
 │   │   ├── server-actions.md
-│   │   ├── server-actions.mdc
 │   │   ├── transformation-system.md
-│   │   ├── transformation-system.mdc
-│   │   ├── type-system.md
-│   │   └── type-system.mdc
+│   │   └── type-system.md
 │   ├── implementation
 │   │   └── three-zone-masterschedulecard-integration.md
 │   ├── table-of-contents.md
-│   ├── table-of-contents.mdc
 │   ├── workflow-templates
 │   │   └── coding-session-control.md
 │   └── workflows
 │       ├── common-tasks.md
-│       ├── common-tasks.mdc
 │       ├── cursor-integration.md
-│       ├── cursor-integration.mdc
 │       ├── dev-utilities.md
-│       ├── dev-utilities.mdc
 │       ├── development-workflow.md
-│       ├── development-workflow.mdc
 │       ├── hook-development.md
-│       ├── hook-development.mdc
-│       ├── implementation-workflow.md
-│       └── implementation-workflow.mdc
+│       └── implementation-workflow.md
 ├── docs-cursor
 │   ├── create-prd-new.mdc
 │   ├── create-prd.mdc
@@ -101,6 +71,7 @@
 │   │   ├── school
 │   │   ├── staff
 │   │   └── visit
+│   │       ├── prd-schedule-3.md
 │   │       ├── prd-three-zone.md
 │   │       ├── schedule-refactoring-tasks.md
 │   │       ├── schedule.md
@@ -329,7 +300,6 @@
 │   │   ├── dev
 │   │   │   ├── accountability-demo
 │   │   │   └── purpose-dropdown-demo
-│   │   │       └── page.tsx
 │   │   ├── examples
 │   │   │   ├── calendar
 │   │   │   │   ├── CalendarGridView.tsx
@@ -620,26 +590,6 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   └── utils
 │   │   │   │       └── use-item-to-group-map.ts
-│   │   │   ├── schedules
-│   │   │   │   ├── SchedulePreview.tsx
-│   │   │   │   ├── components
-│   │   │   │   │   ├── ActivitySelector.tsx
-│   │   │   │   │   ├── ScheduleModeToggle.tsx
-│   │   │   │   │   ├── ScheduleRow.tsx
-│   │   │   │   │   ├── ScheduleSummary.tsx
-│   │   │   │   │   ├── ScheduleTable.tsx
-│   │   │   │   │   ├── SchoolSelector.tsx
-│   │   │   │   │   ├── StaffSelector.tsx
-│   │   │   │   │   ├── TeacherActivityColumns.tsx
-│   │   │   │   │   ├── TeacherBadge.tsx
-│   │   │   │   │   └── TimeCell.tsx
-│   │   │   │   ├── data
-│   │   │   │   │   ├── mockData.ts
-│   │   │   │   │   └── scheduleTypes.ts
-│   │   │   │   ├── index.ts
-│   │   │   │   └── utils
-│   │   │   │       ├── TimeValidator.ts
-│   │   │   │       └── scheduleHelpers.ts
 │   │   │   ├── schools
 │   │   │   │   ├── SchoolCard.tsx
 │   │   │   │   ├── SchoolDetailView.tsx
@@ -693,42 +643,35 @@
 │   │   │   │       ├── CAPStage2.tsx
 │   │   │   │       ├── CAPStage3.tsx
 │   │   │   │       └── CAPStage4.tsx
-│   │   │   ├── scheduleBuilder
-│   │   │   │   ├── AssignedTeacherCard.tsx
-│   │   │   │   ├── PlannedColumn.tsx
-│   │   │   │   ├── PurposeAssignmentDropdown.tsx
-│   │   │   │   ├── ScheduleCell.tsx
+│   │   │   ├── schedulesNew
+│   │   │   │   ├── DropZoneCell.tsx
+│   │   │   │   ├── PlanningStatusBar.tsx
+│   │   │   │   ├── ScheduleBuilder.tsx
 │   │   │   │   ├── ScheduleGrid.tsx
-│   │   │   │   ├── SchedulingInterface.tsx
-│   │   │   │   ├── TeacherDailySchedule.tsx
-│   │   │   │   ├── TeacherScheduleCalendar.tsx
-│   │   │   │   ├── ThreeZoneTimeSlot.tsx
-│   │   │   │   ├── accountability
-│   │   │   │   │   ├── AccountabilityIcon.tsx
-│   │   │   │   │   └── AccountabilityTrackingPanel.tsx
+│   │   │   │   ├── ScheduleLegend.tsx
+│   │   │   │   ├── SchedulePreview.tsx
+│   │   │   │   ├── SelectionStatusFooter.tsx
+│   │   │   │   ├── TeacherPeriodCell.tsx
+│   │   │   │   ├── context
+│   │   │   │   │   ├── ScheduleContext.tsx
+│   │   │   │   │   └── index.ts
 │   │   │   │   ├── hooks
 │   │   │   │   │   ├── index.ts
-│   │   │   │   │   ├── useScheduleSelection.ts
-│   │   │   │   │   └── useThreeZoneScheduling.ts
+│   │   │   │   │   ├── useScheduleBuilder.ts
+│   │   │   │   │   ├── useScheduleBuilderUI.ts
+│   │   │   │   │   └── useVisitScheduling.ts
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── transformers
-│   │   │   │   │   └── schedule-transforms.ts
 │   │   │   │   ├── types.ts
 │   │   │   │   └── utils
-│   │   │   │       ├── event-builders.ts
-│   │   │   │       ├── grid-cell-factory.ts
-│   │   │   │       ├── grid-positioning.ts
-│   │   │   │       ├── hover-zone-utils.ts
 │   │   │   │       ├── index.ts
-│   │   │   │       ├── schedule-calendar-utils.ts
-│   │   │   │       └── zone-utils.ts
+│   │   │   │       ├── schedule-data-utils.ts
+│   │   │   │       └── schedule-time-utils.ts
 │   │   │   ├── scoring
 │   │   │   │   ├── ScoreEntry.tsx
 │   │   │   │   ├── ScoresPage.tsx
 │   │   │   │   └── index.ts
 │   │   │   └── visits
 │   │   │       ├── VisitSidebar.tsx
-│   │   │       ├── VisitView.tsx
 │   │   │       └── index.ts
 │   │   ├── index.ts
 │   │   └── integrations
@@ -771,12 +714,12 @@
 │   │   │   ├── useLookFors.ts
 │   │   │   ├── useNYCPSStaff.ts
 │   │   │   ├── usePlannedVisits.ts
-│   │   │   ├── useScheduleDisplay.ts
 │   │   │   ├── useSchoolDailyView.ts
 │   │   │   ├── useSchools.ts
 │   │   │   ├── useTeacherSchedules.ts
 │   │   │   ├── useTeachingLabStaff.ts
 │   │   │   ├── useUserStaff.ts
+│   │   │   ├── useVisitScheduling.ts
 │   │   │   ├── useVisits.ts
 │   │   │   └── useVisitsWithTransforms.ts
 │   │   ├── error
@@ -798,7 +741,6 @@
 │   │   │   ├── useAuthorizedNavigation.ts
 │   │   │   ├── useNavigation.ts
 │   │   │   ├── useResizableSidebar.ts
-│   │   │   ├── useScheduleDisplay.ts
 │   │   │   └── useSchoolAuthorization.ts
 │   │   ├── utilities
 │   │   │   └── useAutoSave.ts
@@ -986,7 +928,6 @@
 │   │   │           ├── coaching-log.ts
 │   │   │           ├── index.ts
 │   │   │           ├── planned-visit.ts
-│   │   │           ├── schedule-builder-state.ts
 │   │   │           └── visit.ts
 │   │   ├── server
 │   │   │   ├── api
@@ -1191,27 +1132,19 @@
 │   │   │   │   ├── entity-factory.ts
 │   │   │   │   └── index.ts
 │   │   │   ├── hooks
-│   │   │   │   ├── core
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   ├── useBaseQuery.ts
-│   │   │   │   │   ├── useErrorHandledQuery.ts
-│   │   │   │   │   ├── useQueryPagination.ts
-│   │   │   │   │   └── useQueryState.ts
-│   │   │   │   ├── data
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   ├── useEntityById.ts
-│   │   │   │   │   ├── useEntityList.ts
-│   │   │   │   │   ├── useReferenceData.ts
-│   │   │   │   │   └── useResourceQueries.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── mutations
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   ├── useBulkOperations.ts
-│   │   │   │   │   ├── useErrorHandledMutation.ts
-│   │   │   │   │   └── useOptimisticMutation.ts
-│   │   │   │   └── pagination
-│   │   │   │       ├── index.ts
-│   │   │   │       └── usePaginatedQuery.ts
+│   │   │   │   │   ├── useOptimisticMutation.ts
+│   │   │   │   │   └── useStandardMutation.ts
+│   │   │   │   ├── pagination
+│   │   │   │   │   ├── usePagination.ts
+│   │   │   │   │   └── usePaginationState.ts
+│   │   │   │   └── queries
+│   │   │   │       ├── useEntityById.ts
+│   │   │   │       ├── useEntityList.ts
+│   │   │   │       └── useReferenceData.ts
 │   │   │   ├── index.ts
 │   │   │   ├── selectors
 │   │   │   │   ├── index.ts
@@ -1248,9 +1181,11 @@
 │       ├── clerk.d.ts
 │       └── dependency-overrides.d.ts
 ├── tailwind.config.ts
+├── tasks
+│   └── tasks-prd-schedule-3.md
 ├── test-output.css
 ├── tsconfig.json
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-358 directories, 896 files
+353 directories, 836 files

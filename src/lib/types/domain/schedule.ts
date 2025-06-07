@@ -1,8 +1,6 @@
 
 import type { ScheduleAssignmentType, PlannedVisit } from '@zod-schema/visits/planned-visit';
-import type { BellSchedule, Period } from '@zod-schema/schedule/schedule';
-
-import type { AssignmentState } from '@zod-schema/visits/schedule-builder-state';
+import type { BellSchedule, Period, AssignmentState } from '@zod-schema/schedule/schedule';
 
 // ===== UNIFIED TIME SLOT INTERFACES =====
 export type { ScheduleAssignmentType } from '@zod-schema/visits/planned-visit';

@@ -7,7 +7,7 @@ import { Button } from '@/components/core';
 import { Alert } from '@/components/core/feedback';
 import { Spinner } from '@/components/core/feedback';
 import { Card } from '@/components/composed/cards';
-import { useErrorHandledMutation } from '@query/client/hooks/mutations/useErrorHandledMutation';
+import { useErrorHandledMutation } from '@/query/client/hooks/mutations/useStandardMutation';
 import { cn } from '@/lib/ui/utils/formatters';
 import { textSize, color as textColors } from '@/lib/tokens/typography';
 import { paddingX, paddingY, stack } from '@/lib/tokens/spacing';

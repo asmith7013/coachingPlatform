@@ -3,7 +3,7 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import Select from "react-select";
 import { Label } from "./Label";
-import { useReferenceData, getEntityTypeFromUrlUtil } from "@query/client/hooks/data/useReferenceData";
+import { useReferenceData, getEntityTypeFromUrlUtil } from "@/query/client/hooks/queries/useReferenceData";
 import { ZodSchema } from "zod";
 import { BaseDocument } from "@core-types/document";
 

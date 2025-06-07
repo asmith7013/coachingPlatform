@@ -7,7 +7,7 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DataImportDialog } from '@/components/composed/dialogs/DataImportDialog';
-import { SchedulePreview } from '@/components/domain/schedules/SchedulePreview';
+import { SchedulePreview } from '@/components/features/schedulesNew/SchedulePreview';
 import { SchoolWithDates } from "@hooks/domain/useSchools";
 import { cn } from '@ui/utils/formatters';
 import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';

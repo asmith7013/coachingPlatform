@@ -11,7 +11,7 @@ import {
   CheckIcon,
   AcademicCapIcon
 } from '@heroicons/react/24/outline';
-import { useErrorHandledMutation } from '@query/client/hooks/mutations/useErrorHandledMutation';
+import { useErrorHandledMutation } from '@/query/client/hooks/mutations/useStandardMutation';
 import { bulkCreateStaffWithSchoolLink } from '@actions/staff/operations';
 import { createVisit } from '@actions/visits/visits';
 import { createBellSchedule, createMasterSchedule } from '@actions/schedule/schedule';

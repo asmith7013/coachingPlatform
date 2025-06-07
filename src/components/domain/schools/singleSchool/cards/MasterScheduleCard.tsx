@@ -3,30 +3,25 @@
 import { useState } from 'react'
 import { tv, type VariantProps } from 'tailwind-variants'
 import { Card } from '@composed-components/cards/Card'
-import { StatisticsGrid } from '@composed-components/statistics/StatisticsGrid'
+// StatisticsGrid now handled within ScheduleBuilder
 import { ModeToggle } from '@/components/core/fields/ModeToggle'
-import { TeacherDailySchedule } from '@components/features/scheduleBuilder/TeacherDailySchedule'
-import { SchedulingInterface } from '@components/features/scheduleBuilder/SchedulingInterface'
-import { PlannedVisitsColumn } from '@components/features/scheduleBuilder/PlannedVisitsColumn'
+import { ScheduleBuilder } from '@/components/features/schedulesNew'
 
-import { useThreeZoneScheduling } from '@components/features/scheduleBuilder/hooks/useThreeZoneScheduling'
-import { useSchoolDailyView } from '@hooks/domain/useSchoolDailyView'
-import { useVisitScheduling } from '@hooks/domain/useVisitScheduling'
+// ScheduleBuilder now provides its own context, no need for direct hook usage
 import { Text, Heading } from '@core-components/typography'
 import { Badge } from '@core-components/feedback'
 import { 
   CalendarDaysIcon,
-  UserGroupIcon,
-  AcademicCapIcon,
-  ClockIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   EyeIcon,
   CalendarIcon
 } from '@heroicons/react/24/outline'
 import { navigateDate, getTodayString, isToday, formatLongDate } from '@transformers/utils/date-utils'
-import type { VisitPortion } from '@components/features/scheduleBuilder/types'
+import type { ScheduleAssignmentType } from '@/components/features/schedulesNew/types'
 
+// Type alias for backward compatibility
+type VisitPortion = ScheduleAssignmentType
 
 const masterScheduleCard = tv({
   slots: {
@@ -38,7 +33,7 @@ const masterScheduleCard = tv({
     dateButton: 'flex items-center justify-center w-8 h-8 rounded-md border border-gray-300 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors',
     currentDate: 'px-3 py-1 text-sm font-medium text-gray-700 bg-gray-100 rounded-md min-w-[120px] text-center',
     todayButton: 'px-3 py-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-md border border-indigo-200 transition-colors',
-    scheduleContainer: 'bg-gray-50 rounded-lg p-1',
+    scheduleContainer: 'space-y-4',
     emptyState: 'text-center py-12 text-gray-500',
     loadingState: 'text-center py-12'
   },
@@ -47,7 +42,7 @@ const masterScheduleCard = tv({
       default: {},
       compact: {
         container: 'space-y-4',
-        scheduleContainer: 'p-0'
+        scheduleContainer: 'space-y-2'
       }
     }
   },
@@ -93,7 +88,7 @@ export function MasterScheduleCard({
   className,
   defaultMode = 'schedule',
   showPlannedVisits: _showPlannedVisits = true,
-  onVisitScheduled,
+  onVisitScheduled: _onVisitScheduled,
   onVisitModified: _onVisitModified,
   onVisitDeleted: _onVisitDeleted
 }: MasterScheduleCardProps) {
@@ -103,96 +98,11 @@ export function MasterScheduleCard({
   const [currentDate, setCurrentDate] = useState(initialDate || getTodayString())
   const [mode, setMode] = useState<ScheduleMode>(defaultMode)
   
-  // Data fetching
-  const { 
-    school, 
-    schedules, 
-    staff,
-    bellSchedule,
-    isLoading, 
-    error,
-    hasData,
-    teacherCount,
-    staffCount 
-  } = useSchoolDailyView(schoolId, currentDate)
-  
-  // Visit scheduling hook
-  const visitScheduling = useVisitScheduling({
-    schoolId,
-    date: currentDate,
-    onVisitScheduled: (visit) => {
-      onVisitScheduled?.({
-        teacherId: visit.teacherId,
-        periodNumber: visit.periodNumber,
-        portion: visit.portion,
-        purpose: visit.purpose
-      })
-    },
-    onError: (error) => {
-      console.error('Visit scheduling error:', error)
-    }
-  })
-
-  // Three-zone scheduling
-  const threeZoneScheduling = useThreeZoneScheduling({
-    date: currentDate,
-    existingVisits: [], // Use visitScheduling.visits when compatible types are resolved
-    onVisitScheduled: async (visit) => {
-      // Get teacher name from staff data using _id and staffName
-      const teacher = staff?.find(s => s._id === visit.teacherId)
-      const teacherName = teacher?.staffName || visit.teacherId
-
-      // Schedule visit using the hook
-      await visitScheduling.scheduleVisit({
-        schoolId,
-        teacherId: visit.teacherId,
-        teacherName,
-        periodNumber: visit.periodNumber,
-        portion: visit.portion,
-        purpose: visit.purpose,
-        date: currentDate
-      })
-    },
-    onError: (error) => {
-      console.error('Scheduling error:', error)
-    }
-  })
-  
-  // Statistics data
-  const scheduleStatistics = [
-    {
-      id: 'teachers',
-      icon: UserGroupIcon,
-      value: teacherCount,
-      label: 'Teachers',
-      color: 'blue' as const
-    },
-    {
-      id: 'staff',
-      icon: UserGroupIcon,
-      value: staffCount,
-      label: 'Total Staff',
-      color: 'green' as const
-    },
-    {
-      id: 'classes',
-      icon: AcademicCapIcon,
-      value: schedules.reduce((total, schedule) => 
-        total + schedule.scheduleByDay.reduce((dayTotal, day) => 
-          dayTotal + day.periods.filter(p => p.periodType === 'class').length, 0
-        ), 0
-      ),
-      label: 'Classes Today',
-      color: 'purple' as const
-    },
-    {
-      id: 'periods',
-      icon: ClockIcon,
-      value: '1-8',
-      label: 'Periods',
-      color: 'orange' as const
-    }
-  ]
+  // Note: ScheduleBuilder now manages its own state via context
+  // We remove the direct hook usage to prevent duplication
+  const isLoading = false;
+  const error = null;
+  const hasData = true; // ScheduleBuilder will handle its own loading states
   
   // Mode toggle options
   const modeOptions = [
@@ -203,24 +113,7 @@ export function MasterScheduleCard({
   // Event handlers
   const handleModeChange = (newMode: ScheduleMode) => {
     setMode(newMode)
-    if (newMode === 'view') {
-      threeZoneScheduling.clearSelection()
-    }
-  }
-  
-  const handlePeriodPortionSelect = (periodNumber: number, portion: VisitPortion) => {
-    if (mode === 'schedule') {
-      threeZoneScheduling.selectPeriodPortion(periodNumber, portion)
-    }
-  }
-  
-  const handleScheduleVisit = async (purpose?: string) => {
-    if (mode === 'schedule') {
-      const result = await threeZoneScheduling.scheduleVisit(purpose)
-      if (result.success) {
-        setMode('view')
-      }
-    }
+    // The new interface handles mode internally
   }
   
   // Date navigation
@@ -231,58 +124,9 @@ export function MasterScheduleCard({
   const displayDate = formatLongDate(currentDate)
   const isCurrentlyToday = isToday(currentDate)
 
-  // Use actual visits from the scheduling hook
-  const currentVisits = visitScheduling.visits
-  
-  // Get period times from bell schedule
-  const periodTimes = bellSchedule?.classSchedule.map((period, index) => ({
-    period: index + 1,
-    start: period.startTime,
-    end: period.endTime
-  })) || []
-
-  // Render view mode with frozen column layout
-  const renderViewMode = () => (
-    <div className="flex h-[600px] bg-white rounded-md shadow-sm overflow-hidden">
-      {/* Frozen Planned Visits Column */}
-      <PlannedVisitsColumn
-        visits={currentVisits}
-        periodTimes={periodTimes}
-        className="border-r border-gray-200"
-      />
-      
-      {/* Main Teacher Schedule (scrollable) */}
-      <div className="flex-1 overflow-x-auto">
-        <TeacherDailySchedule
-          schoolId={schoolId}
-          initialDate={currentDate}
-          className="h-full"
-        />
-      </div>
-    </div>
-  )
-
-  // Render schedule mode with three-zone interface
-  const renderScheduleMode = () => (
-    <div className="flex h-[600px] bg-white rounded-md shadow-sm overflow-hidden">
-      {/* Frozen Planned Visits Column */}
-      <PlannedVisitsColumn
-        visits={currentVisits}
-        periodTimes={periodTimes}
-        className="border-r border-gray-200"
-      />
-      
-      {/* Three-Zone Scheduling Interface */}
-      <div className="flex-1 overflow-hidden">
-        <SchedulingInterface
-          scheduling={threeZoneScheduling}
-          staff={staff || []}
-          bellSchedule={bellSchedule!}
-          onPeriodPortionSelect={handlePeriodPortionSelect}
-          onScheduleVisit={handleScheduleVisit}
-        />
-      </div>
-    </div>
+  // New unified schedule interface using context architecture
+  const renderScheduleInterface = () => (
+    <ScheduleBuilder schoolId={schoolId} date={currentDate} />
   )
 
   return (
@@ -301,7 +145,7 @@ export function MasterScheduleCard({
               )}
             </div>
             <Text color="muted" textSize="sm">
-              {schoolName || school?.schoolName || 'School'} daily teacher schedules
+              {schoolName || 'School'} daily teacher schedules
             </Text>
           </div>
           
@@ -340,15 +184,7 @@ export function MasterScheduleCard({
           </div>
         </div>
         
-        {/* Statistics */}
-        {hasData && !isLoading && (
-          <StatisticsGrid
-            statistics={scheduleStatistics}
-            columns={4}
-            spacing="md"
-            cardSize="sm"
-          />
-        )}
+        {/* Statistics - now handled within ScheduleBuilder */}
         
         {/* Content */}
         <div className={styles.scheduleContainer()}>
@@ -360,7 +196,7 @@ export function MasterScheduleCard({
           
           {error && !isLoading && (
             <div className={styles.emptyState()}>
-              <Text color="muted">Error loading schedule: {error.message || String(error)}</Text>
+              <Text color="muted">Error loading schedule</Text>
             </div>
           )}
           
@@ -374,15 +210,7 @@ export function MasterScheduleCard({
             </div>
           )}
           
-          {hasData && !isLoading && (
-            <>
-              {mode === 'view' ? (
-                renderViewMode()
-              ) : (
-                renderScheduleMode()
-              )}
-            </>
-          )}
+          {hasData && !isLoading && renderScheduleInterface()}
         </div>
       </div>
     </Card>

@@ -17,20 +17,13 @@ import {
   type PlannedVisitInput
 } from "@zod-schema/visits/planned-visit";
 
-// Import state management schemas
-import {
-  type TeacherAccountabilityState
-} from "@zod-schema/visits/schedule-builder-state";
 
-// TODO: Create PlannedVisitModel - will be implemented in subsequent tasks
-// import { PlannedVisitModel } from "@mongoose-schema/visits/planned-visit.model";
-
-// For now, use a placeholder model structure
-const PlannedVisitModel = null; // Will be replaced when Mongoose model is created
+// Import the real MongoDB model
+import { PlannedVisitModel } from "@mongoose-schema/visits/planned-visit.model";
 
 // Create PlannedVisit CRUD actions (following established visit pattern)
 const plannedVisitActions = createCrudActions({
-  model: PlannedVisitModel!,
+  model: PlannedVisitModel,
   schema: PlannedVisitZodSchema as ZodType<PlannedVisit>,
   inputSchema: PlannedVisitInputZodSchema as ZodType<PlannedVisitInput>,
   name: "Planned Visit",
@@ -175,30 +168,3 @@ export async function checkTeacherScheduleConflicts(
     };
   }
 }
-
-// =================== ACCOUNTABILITY OPERATIONS ===================
-
-/**
- * Update teacher accountability status
- */
-export async function updateTeacherAccountability(
-  date: string,
-  school: string,
-  accountabilityData: TeacherAccountabilityState[]
-) {
-  try {
-    // TODO: Implement accountability tracking persistence
-    // This might be stored as part of a daily schedule record
-    
-    return {
-      success: true,
-      data: accountabilityData,
-      updatedAt: new Date().toISOString()
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: handleServerError(error)
-    };
-  }
-} 

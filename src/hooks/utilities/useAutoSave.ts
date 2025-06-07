@@ -62,8 +62,16 @@ export function useAutoSave({
   const statusRef = useRef<AutoSaveStatus>({ status: 'idle' })
   const retryCountRef = useRef(0)
   const isMountedRef = useRef(true)
+  
+  // Store current data in ref to avoid dependency issues
+  const dataRef = useRef(data)
 
-  // Create debounced save function
+  // Update data ref when data changes
+  useEffect(() => {
+    dataRef.current = data
+  }, [data])
+
+  // Create debounced save function (data removed from dependencies)
   const debouncedSave = useMemo(
     () => debounce(async () => {
       if (!enabled || !isMountedRef.current) {
@@ -73,7 +81,8 @@ export function useAutoSave({
       try {
         statusRef.current = { status: 'saving' }
         
-        await onSave(entityId, data)
+        // Use current data from ref
+        await onSave(entityId, dataRef.current)
         
         if (isMountedRef.current) {
           statusRef.current = { 
@@ -117,15 +126,15 @@ export function useAutoSave({
         }
       }
     }, debounceMs),
-    [entityId, data, onSave, enabled, debounceMs, maxRetries]
+    [entityId, onSave, enabled, debounceMs, maxRetries] // data removed
   )
 
-  // Trigger save function (stable reference)
+  // Trigger save function (data removed from dependencies)
   const triggerSave = useCallback(() => {
-    if (enabled && entityId && data) {
+    if (enabled && entityId && dataRef.current) {
       debouncedSave()
     }
-  }, [enabled, entityId, data, debouncedSave])
+  }, [enabled, entityId, debouncedSave]) // data removed
 
   // Get current status (for debugging/monitoring - not for UI)
   const getStatus = useCallback((): AutoSaveStatus => {

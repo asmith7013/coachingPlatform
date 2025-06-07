@@ -9,6 +9,7 @@ import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
 import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
 import { zDateField } from '@zod-schema/shared/dateHelpers';
+import { ScheduleAssignmentTypeZod, TimeSlotZodSchema } from "../visits/planned-visit";
 
 // Class Schedule Item Fields Schema
 export const ClassScheduleItemFieldsSchema = z.object({
@@ -16,10 +17,10 @@ export const ClassScheduleItemFieldsSchema = z.object({
   startTime: z.string(),
   endTime: z.string(),
   periodNum: z.number(),
+  className: z.string(),
 });
 
 // Class Schedule Item Schema
-export const ClassScheduleItemZodSchema = ClassScheduleItemFieldsSchema;
 
 // Assigned Cycle Day Fields Schema
 export const AssignedCycleDayFieldsSchema = z.object({
@@ -27,15 +28,13 @@ export const AssignedCycleDayFieldsSchema = z.object({
   blockDayType: BlockDayTypeZod,
 });
 
-// Assigned Cycle Day Schema
-export const AssignedCycleDayZodSchema = AssignedCycleDayFieldsSchema;
 
 // Bell Schedule Fields Schema
 export const BellScheduleFieldsSchema = z.object({
   school: z.string(),
   bellScheduleType: BellScheduleTypeZod,
-  classSchedule: z.array(ClassScheduleItemZodSchema),
-  assignedCycleDays: z.array(AssignedCycleDayZodSchema),
+  classSchedule: z.array(ClassScheduleItemFieldsSchema),
+  assignedCycleDays: z.array(AssignedCycleDayFieldsSchema),
 });
 
 // Bell Schedule Full Schema
@@ -142,14 +141,25 @@ export const teacherScheduleToReference = createReferenceTransformer<TeacherSche
   TeacherScheduleReferenceZodSchema
 );
 
+// Assignment State Schema
+export const AssignmentStateZodSchema = z.object({
+  teacherId: z.string(),
+  timeSlot: TimeSlotZodSchema,
+  purpose: z.string().optional(), // May be assigned later
+  assignmentType: ScheduleAssignmentTypeZod,
+  isTemporary: z.boolean().default(true), // Whether assignment is temporary (drag preview)
+  assignedAt: zDateField.optional(), // When assignment was made
+});
+
+
 // Array transformer
 export const teacherSchedulesToReferences = createArrayTransformer<TeacherSchedule, TeacherScheduleReference>(
   teacherScheduleToReference
 );
 
 // Auto-generate TypeScript types
-export type ClassScheduleItem = z.infer<typeof ClassScheduleItemZodSchema>;
-export type AssignedCycleDay = z.infer<typeof AssignedCycleDayZodSchema>;
+export type ClassScheduleItem = z.infer<typeof ClassScheduleItemFieldsSchema>;
+export type AssignedCycleDay = z.infer<typeof AssignedCycleDayFieldsSchema>;
 export type BellScheduleInput = z.infer<typeof BellScheduleInputZodSchema>;
 export type BellSchedule = z.infer<typeof BellScheduleZodSchema>;
 export type BellScheduleReference = z.infer<typeof BellScheduleReferenceZodSchema>;
@@ -158,3 +168,4 @@ export type ScheduleByDay = z.infer<typeof ScheduleByDayZodSchema>;
 export type TeacherScheduleInput = z.infer<typeof TeacherScheduleInputZodSchema>;
 export type TeacherSchedule = z.infer<typeof TeacherScheduleZodSchema>;
 export type TeacherScheduleReference = z.infer<typeof TeacherScheduleReferenceZodSchema>;
+export type AssignmentState = z.infer<typeof AssignmentStateZodSchema>;

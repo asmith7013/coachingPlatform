@@ -5,7 +5,7 @@ import { Card } from '@composed-components/cards/Card';
 import { SectionHeading } from '@composed-components/sectionHeadings';
 import { InfoCard } from '@composed-components/cards/InfoCard';
 import { Dialog } from '@composed-components/dialogs/Dialog';
-import { VisitView } from '@feature-components/visits/VisitView';
+// import { VisitView } from '@feature-components/visits/VisitView';
 import { Text } from '@/components/core/typography/Text';
 import { useSchoolVisitCards } from "@hooks/domain/useVisitsWithTransforms";
 import { cardGridVariant } from '@/lib/ui/variants';
@@ -125,10 +125,10 @@ export function VisitsCard({
       >
         {selectedVisit && (
           <div className="h-full">
-            <VisitView 
-              visit={selectedVisit}
+            {/* <VisitView  */}
+              {/* visit={selectedVisit}
               className="h-full"
-            />
+            /> */}
           </div>
         )}
       </Dialog>

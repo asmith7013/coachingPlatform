@@ -118,6 +118,67 @@ import { useSchools, usePagination } from '@/hooks';
 [RULE] Export all hooks through the barrel file for consistent imports.
 </section>
 
+<section id="feature-context-hooks">
+
+## Feature Context Hooks
+
+For complex features with shared state across multiple components, create context-based hooks that provide selective access to prevent unnecessary re-renders.
+
+### Context Hook Implementation
+
+Feature context hooks follow a specific pattern:
+
+```typescript
+// Base context hook for internal use
+function useFeatureContext(): FeatureContextType {
+  const context = useContext(FeatureContext);
+  if (!context) {
+    throw new Error('Feature hooks must be used within FeatureProvider');
+  }
+  return context;
+}
+
+// Selective hooks for specific state slices
+export function useFeatureSelection() {
+  const context = useFeatureContext();
+  return {
+    selectedItem: context.selectedItem,
+    handleSelect: context.handleSelect
+  };
+}
+
+export function useFeatureData() {
+  const context = useFeatureContext();
+  return {
+    data: context.data,
+    isLoading: context.isLoading,
+    error: context.error
+  };
+}
+```
+
+### Selective Hook Guidelines
+
+When creating selective hooks:
+
+- Focus on specific UI responsibilities rather than exposing all state
+- Group related state and actions together logically
+- Use descriptive names that indicate the hook's purpose
+- Ensure each hook has a clear, single responsibility
+
+### Benefits of Selective Context Hooks
+
+This approach provides several advantages:
+
+- **Performance**: Components only re-render when their specific state changes
+- **Clarity**: Clear separation of concerns for different UI responsibilities  
+- **Maintainability**: Easier to understand what state each component depends on
+- **Testability**: Individual hooks can be tested in isolation
+
+[RULE] Create selective context hooks for features with complex shared state to optimize performance and maintainability.
+
+</section>
+
 <section id="hook-documentation">
 Hook Documentation
 Document all hooks with JSDoc comments:

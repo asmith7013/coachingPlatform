@@ -1,4 +1,4 @@
-export * from './useErrorHandledMutation';
+export * from './useStandardMutation';
 export * from './useBulkOperations';
 export * from './useOptimisticMutation';
 

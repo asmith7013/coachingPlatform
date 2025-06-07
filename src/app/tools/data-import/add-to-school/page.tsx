@@ -14,7 +14,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useSchools } from '@hooks/domain/useSchools';
-import { useErrorHandledMutation } from '@query/client/hooks/mutations/useErrorHandledMutation';
+import { useErrorHandledMutation } from '@/query/client/hooks/mutations/useStandardMutation';
 import { bulkCreateStaffWithSchoolLink } from '@actions/staff/operations';
 import { createVisit } from '@actions/visits/visits';
 import { AI_PROMPTS } from '@ui/data-import/schema-templates';

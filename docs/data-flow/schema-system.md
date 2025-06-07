@@ -4,13 +4,19 @@
 # Data Flow & Schema System
 
 <section id="data-overview">
-Overview
+
+## Overview
+
 Our platform uses a schema-driven architecture where Zod schemas serve as the definitive source of truth for all data structures. This approach ensures consistency across the frontend, backend, and database layers.
+
 [RULE] Always use Zod schemas as the canonical source of truth for data structures.
+
 </section>
 
 <section id="data-schemas">
-Zod Schema Architecture
+
+## Zod Schema Architecture
+
 Schemas are organized in src/lib/zod-schema/ by domain:
 
 core/: Base schemas for common entities (School, Staff, Cycle)
@@ -32,12 +38,17 @@ export const SchoolZodSchema = z.object({
   updatedAt: zDateField.optional(),
 });
 ```
+
 [RULE] When adding new fields, always start by updating the Zod schema first.
+
 </section>
 
 <section id="schema-patterns">
-Zod Schema Patterns
-Input vs. Full Schema Pattern
+
+## Zod Schema Patterns
+
+### Input vs. Full Schema Pattern
+
 All data structures in our system follow a consistent pattern:
 
 Input schemas define fields for user-provided data without system fields
@@ -390,7 +401,9 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
 </section>
 
 <section id="data-form-overrides">
-Form Overrides
+
+## Form Overrides
+
 Form overrides (src/lib/ui/forms/formOverrides/) allow customization of form behavior for specific contexts:
 
 ```typescript
@@ -566,7 +579,9 @@ Automatic breadcrumb generation
 </section>
 
 <section id="data-reference-hook">
-Reference Data Hook
+
+## Reference Data Hook
+
 The useReferenceOptions hook handles fetching options for select components:
 
 ```typescript
@@ -595,7 +610,9 @@ function useReferenceOptions(url: string, searchQuery: string = "") {
 </section>
 
 <section id="data-server-actions">
-Server Actions
+
+## Server Actions
+
 Server actions in src/app/actions/ provide a way to perform server-side operations directly from client components:
 
 ```typescript
@@ -621,7 +638,9 @@ export async function createSchool(data: SchoolInput) {
 </section>
 
 <section id="data-flow-diagram">
-Data Flow Diagram
+
+## Data Flow Diagram
+
 The data flows through our system in this sequence:
 
 Zod Schema Definition: Define data structure and validation (/lib/data-schema/zod-schema/)
@@ -635,7 +654,9 @@ UI Components: Render data and handle user interactions (/components/)
 </section>
 
 <section id="data-transformers">
-Data Transformers
+
+## Data Transformers
+
 Data transformation utilities in src/lib/transformers/ help sanitize and validate data:
 
 ```typescript
@@ -652,7 +673,9 @@ const result = parseOrThrow(MyZodSchema, data);
 </section>
 
 <section id="data-consistency">
-Maintaining Data Consistency
+
+## Maintaining Data Consistency
+
 To ensure data consistency across the application:
 
 Start with the Zod schema as the single source of truth

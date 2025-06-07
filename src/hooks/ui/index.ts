@@ -2,6 +2,6 @@
 export * from './useNavigation';
 export * from './useAuthorizedNavigation';
 export * from './useResizableSidebar';
-export * from './useScheduleDisplay';
+// export * from './useScheduleDisplay';
 export * from './useAdaptiveHeight';
 export * from './useSchoolAuthorization'; 

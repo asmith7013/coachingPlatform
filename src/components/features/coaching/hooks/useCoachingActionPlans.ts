@@ -22,7 +22,7 @@ import { z } from 'zod';
 import { ensureBaseDocumentCompatibility } from '@/lib/transformers/utils/response-utils';
 import { useAutoSave } from '@hooks/utilities/useAutoSave';
 import { useInvalidation } from '@query/cache/invalidation';
-import { useBulkOperations } from '@query/client/hooks/mutations/useBulkOperations';
+import { useBulkOperations } from '@/query/client/hooks/mutations/useBulkOperations';
 
 /**
  * Coaching Action Plan entity with Date objects instead of string dates

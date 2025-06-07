@@ -1,16 +1,22 @@
 ```markdown
 <doc id="styling-patterns">
 
-Component Styling Patterns
+# Component Styling Patterns
 
 <section id="styling-overview">
-Overview
+
+## Overview
+
 This guide explains our approach to styling components using the token system. For detailed information about our token architecture, refer to the Design Token System documentation.
+
 [RULE] Always use the appropriate styling approach based on the component type and usage context.
+
 </section>
 
 <section id="core-principles">
-Core Principles
+
+## Core Principles
+
 Our styling system is based on three key concepts:
 
 Design Tokens: Primitive values (colors, spacing, typography) defined in @/lib/ui/tokens/*
@@ -22,13 +28,18 @@ This separation ensures consistency while maintaining flexibility across the app
 </section>
 
 <section id="when-to-use-tokens">
-Using Design Tokens
+
+## Using Design Tokens
+
 For detailed token usage guidelines, refer to the Design Token System documentation.
+
 [RULE] Always import tokens directly from their respective modules, not through intermediate helpers.
+
 </section>
 
 <section id="best-practices">
-Best Practices
+
+## Best Practices
 
 Atomic Components: Define complete, self-contained styling using tokens
 Composed Components: Compose from atomic components instead of duplicating styles
@@ -40,7 +51,8 @@ This hybrid approach balances consistency with flexibility while avoiding duplic
 </section>
 
 <section id="example-implementation">
-Example Implementation
+
+## Example Implementation
 
 ```tsx
 // Button.tsx - An atomic component

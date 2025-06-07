@@ -335,6 +335,114 @@ Examples:
 
 </section>
 
+<section id="feature-colocated-organization">
+
+## Feature Co-location Patterns
+
+Our application employs feature-level organization that co-locates related files within bounded contexts. This approach reduces cognitive load and creates clear feature boundaries for complex functionality.
+
+### Feature Directory Structure
+
+Complex features organize all related code in self-contained directories:
+
+```
+src/components/features/[featureName]/
+├── context/                 # Feature-specific context providers
+│   ├── index.ts            # Barrel exports for context hooks
+│   └── FeatureContext.tsx  # Context provider and selective hooks
+├── hooks/                  # Feature-specific business logic
+│   ├── index.ts            # Barrel exports
+│   ├── useFeatureBuilder.ts # Main feature coordination
+│   └── useSpecificLogic.ts  # Specialized operations
+├── FeatureMain.tsx         # Primary feature component
+├── SubComponent1.tsx       # Feature sub-components
+├── SubComponent2.tsx       # Additional sub-components
+├── types.ts               # Feature-specific type definitions
+└── index.ts               # Public feature exports
+```
+
+### Context Provider Implementation
+
+Features with complex shared state use context providers that expose selective hooks:
+
+```typescript
+// context/FeatureContext.tsx
+const FeatureContext = createContext<FeatureContextType | null>(null);
+
+export function FeatureProvider({ children }: FeatureProviderProps) {
+  const featureLogic = useFeatureBuilder(props);
+  
+  return (
+    <FeatureContext.Provider value={featureLogic}>
+      {children}
+    </FeatureContext.Provider>
+  );
+}
+
+// Selective hooks prevent unnecessary re-renders
+export function useFeatureSelection() {
+  const context = useFeatureContext();
+  return {
+    selectedItem: context.selectedItem,
+    handleSelect: context.handleSelect
+  };
+}
+
+export function useFeatureData() {
+  const context = useFeatureContext();
+  return {
+    data: context.data,
+    isLoading: context.isLoading,
+    error: context.error
+  };
+}
+```
+
+### Feature Integration Example
+
+```typescript
+// Main feature component
+export function ScheduleBuilder({ schoolId, date }: ScheduleBuilderProps) {
+  return (
+    <ScheduleProvider schoolId={schoolId} date={date}>
+      <PlanningStatusBar />
+      <ScheduleGrid />
+      <SelectionStatusFooter />
+    </ScheduleProvider>
+  );
+}
+
+// Sub-component using selective context
+export function ScheduleGrid() {
+  const { teachers, timeSlots } = useScheduleStructure();
+  const { saveStatus } = useScheduleSaveStatus();
+  
+  // Component logic using only required state
+}
+```
+
+### Benefits and Guidelines
+
+This co-location strategy provides:
+
+- **Bounded Context**: Clear feature boundaries with contained scope
+- **Reduced Coupling**: Components depend only on feature-specific state
+- **Easier Maintenance**: All related code exists in a single location
+- **Performance Optimization**: Selective hooks prevent unnecessary re-renders
+- **Development Efficiency**: Creates coherent units for AI-assisted development
+
+When implementing feature co-location:
+
+- Use context providers for features with complex, shared state
+- Create selective context hooks to expose only needed state slices
+- Co-locate all feature-related files including types and utilities
+- Maintain clear public exports through index files
+- Document feature boundaries and responsibilities
+
+[RULE] Use feature co-location for complex features with multiple components and substantial shared state.
+
+</section>
+
 <section id="import-conventions">
 
 ## Import Conventions

@@ -324,6 +324,79 @@ export function ResourceForm<T extends Record<string, unknown>>({
 [RULE] Use the ResourceForm component for all resource creation and editing.
 </section>
 
+<section id="feature-component-patterns">
+
+## Feature Component Patterns
+
+Complex features with multiple interconnected components use context providers to manage shared state and optimize performance.
+
+### Context Provider Architecture
+
+Features organize related components using a context provider pattern:
+
+```typescript
+// features/schedulesNew/context/ScheduleContext.tsx
+const ScheduleContext = createContext<ScheduleContextType | null>(null);
+
+export function ScheduleProvider({ schoolId, date, children }: ScheduleProviderProps) {
+  const scheduleBuilder = useScheduleBuilder({ schoolId, date });
+  
+  return (
+    <ScheduleContext.Provider value={scheduleBuilder}>
+      {children}
+    </ScheduleContext.Provider>
+  );
+}
+
+// Selective hooks prevent unnecessary re-renders
+export function useScheduleSelection() {
+  const context = useScheduleContext();
+  return {
+    selectedTeacher: context.selectedTeacher,
+    selectedPeriod: context.selectedPeriod,
+    handleTeacherPeriodSelect: context.handleTeacherPeriodSelect
+  };
+}
+```
+
+### Feature Component Structure
+
+Feature components consume only the state they need through selective hooks:
+
+```typescript
+// Main feature component
+export function ScheduleBuilder({ schoolId, date }: ScheduleBuilderProps) {
+  return (
+    <ScheduleProvider schoolId={schoolId} date={date}>
+      <PlanningStatusBar />
+      <ScheduleGrid />
+      <SelectionStatusFooter />
+    </ScheduleProvider>
+  );
+}
+
+// Sub-component using selective context
+export function ScheduleGrid() {
+  const { teachers, timeSlots } = useScheduleStructure();
+  const { saveStatus } = useScheduleSaveStatus();
+  
+  // Component only re-renders when its specific state changes
+}
+```
+
+### Benefits of Feature Context
+
+This pattern provides several advantages:
+
+- **Performance Optimization**: Selective state access prevents unnecessary re-renders
+- **Clear Boundaries**: Component responsibilities are well-defined
+- **Reduced Coupling**: Eliminates prop drilling for complex feature state
+- **Easier Testing**: Feature logic can be tested independently
+
+[RULE] Use feature context providers for complex features with multiple components sharing substantial state.
+
+</section>
+
 <section id="responsive-layout-patterns">
 
 ## Responsive Layout Patterns

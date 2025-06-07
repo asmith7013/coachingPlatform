@@ -1,8 +1,8 @@
 import { ZodSchema } from 'zod';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { useEntityList } from '@query/client/hooks/data/useEntityList';
-import { useEntityById } from '@query/client/hooks/data/useEntityById';
+import { useEntityList } from '@/query/client/hooks/queries/useEntityList';
+import { useEntityById } from '@/query/client/hooks/queries/useEntityById';
 import { createOperationMutation } from '@query/client/utilities/mutation-helpers';
 
 import { ServerActions } from '@core-types/query-factory';

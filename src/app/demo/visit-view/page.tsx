@@ -1,10 +1,10 @@
 'use client'
 
-import { VisitView } from '@/components/features/visits'
+// import { VisitView } from '@/components/features/visits'
 import type { Visit } from '@zod-schema/visits/visit'
 
 // Mock visit data for demonstration
-const mockVisit: Visit = {
+const _mockVisit: Visit = {
   _id: 'demo-visit-1',
   owners: ['demo-coach-1'],
   school: 'demo-school-1',
@@ -22,10 +22,10 @@ export default function VisitViewDemo() {
   return (
     <div className="h-screen bg-gray-50">
       <div className="h-full">
-        <VisitView 
+        {/* <VisitView 
           visit={mockVisit}
           className="h-full"
-        />
+        /> */}
       </div>
     </div>
   )

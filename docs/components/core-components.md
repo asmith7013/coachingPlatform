@@ -1,13 +1,21 @@
 ```markdown
 <doc id="core-components">
-Core Components
+
+# Core Components
+
 <section id="core-components-overview">
-Overview
+
+## Overview
+
 Core components form the foundation of our UI system, implementing primitive elements with minimal dependencies that follow our design token system and consistent patterns.
+
 [RULE] Core components should use design tokens directly and implement consistent patterns for variants and state.
+
 </section>
 <section id="core-component-principles">
-Core Component Principles
+
+## Core Component Principles
+
 Core components follow these key principles:
 
 Token-First Design: Use design tokens directly for all styling
@@ -18,8 +26,11 @@ Composable API: Design for easy composition in higher-level components
 
 </section>
 <section id="core-component-patterns">
-Core Component Patterns
-Component Variant Pattern
+
+## Core Component Patterns
+
+### Component Variant Pattern
+
 Use Tailwind Variants (tv()) to define component styling:
 
 ```typescript
@@ -46,7 +57,8 @@ const button = tv({
 
 export type ButtonVariants = VariantProps<typeof button>;
 ```
-Compound Component Pattern
+### Compound Component Pattern
+
 For components with multiple parts, use the Context API:
 
 ```typescript
@@ -85,8 +97,11 @@ export const Alert = Object.assign(AlertRoot, {
 [RULE] Use these patterns based on component complexity.
 </section>
 <section id="core-implementation-examples">
-Key Implementation Examples
-Button Component
+
+## Key Implementation Examples
+
+### Button Component
+
 The Button component demonstrates compound variants and state handling:
 
 ```typescript
@@ -115,7 +130,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 ```
-Alert Component
+### Alert Component
+
 The Alert component demonstrates the compound component pattern:
 
 ```typescript
@@ -147,14 +163,16 @@ export const Alert = Object.assign(AlertRoot, {
 </section>
 
 <section id="core-components-usage">
-Usage Guidelines
-Basic Components
+
+## Usage Guidelines
+
+### Basic Components
 
 ```tsx
 <Button variant="primary" size="lg">Save Changes</Button>
 <Button variant="outline" disabled>Cancel</Button>
 ```
-Compound Components
+### Compound Components
 
 ```tsx
 <Alert variant="primary" icon={<InfoCircleIcon />}>
@@ -162,7 +180,7 @@ Compound Components
   <Alert.Description>Please read carefully before proceeding.</Alert.Description>
 </Alert>
 ```
-Extending Core Components
+### Extending Core Components
 
 ```tsx
 function SaveButton({ saving, ...props }) {

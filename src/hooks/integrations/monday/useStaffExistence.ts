@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
-import { useErrorHandledMutation } from '@query/client/hooks/mutations/useErrorHandledMutation';
+import { useErrorHandledMutation } from '@/query/client/hooks/mutations/useStandardMutation';
 import { checkStaffExistenceByEmail } from '@actions/staff/operations';
 
 // Define the exact type that will be returned

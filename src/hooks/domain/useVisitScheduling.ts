@@ -1,7 +1,8 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useAutoSave } from '@hooks/utilities/useAutoSave'
-import type { ScheduledVisit } from '@components/features/scheduleBuilder/PlannedVisitsColumn'
-import type { VisitPortion } from '@components/features/scheduleBuilder/types'
+import type { ScheduledVisit } from '@components/features/schedulesNew/types'
+import type { VisitPortion } from '@zod-schema/visits/planned-visit'
+
 
 export interface UseVisitSchedulingOptions {
   schoolId: string
@@ -55,6 +56,9 @@ export function useVisitScheduling({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Track if visits have been loaded to avoid auto-saving empty initial state
+  const hasLoadedVisits = useRef(false)
+
   // Auto-save integration
   const { triggerSave } = useAutoSave({
     entityId: `visits-${schoolId}-${date}`,
@@ -65,12 +69,12 @@ export function useVisitScheduling({
       await new Promise(resolve => setTimeout(resolve, 100)) // Simulate API call
     },
     debounceMs: 2000,
-    enabled: visits.length > 0
+    enabled: visits.length > 0 && hasLoadedVisits.current
   })
 
-  // Trigger auto-save when visits change
+  // Auto-save when visits change (after initial load)
   useEffect(() => {
-    if (visits.length > 0) {
+    if (hasLoadedVisits.current && visits.length > 0) {
       triggerSave()
     }
   }, [visits, triggerSave])
@@ -234,16 +238,16 @@ export function useVisitScheduling({
     }
   }, [visits, onError])
 
-  // Load visits on mount (placeholder for actual data fetching)
+  // Load visits on mount (updated to set loaded flag)
   useEffect(() => {
     setIsLoading(true)
     
-    // TODO: Replace with actual data fetching in Task 4.2
     const loadVisits = async () => {
       try {
         await new Promise(resolve => setTimeout(resolve, 200)) // Simulate API call
         // setVisits(fetchedVisits) // Will be implemented with server actions
         setVisits([]) // Start with empty array for now
+        hasLoadedVisits.current = true // Mark as loaded
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to load visits'
         setError(errorMessage)
