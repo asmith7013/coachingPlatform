@@ -1,88 +1,111 @@
-import { createEntityHooks } from '@query/client/factories/entity-factory';
+import { createCrudHooks } from '@query/client/factories/crud-factory';
 import { VisitZodSchema, Visit } from '@zod-schema/visits/visit';
-
-import { fetchVisits, createVisit } from '@actions/visits/visits';
-import { WithDateObjects, DocumentInput } from '@core-types/document';
-import { wrapServerActions } from '@transformers/factories/server-action-factory';
-import { QueryParams } from '@core-types/query';
-import { ZodType } from 'zod';
-import { transformData } from '@transformers/core/unified-transformer';
-import { asDateObjectSchema, ensureBaseDocumentCompatibility } from '@/lib/schema/zod-schema/base-schemas';
-
-/**
- * Visit entity with Date objects instead of string dates
- */
-export type VisitWithDates = WithDateObjects<Visit>;
-
-/**
- * Input type that satisfies DocumentInput constraint for Visit
- */
-export type VisitInput = DocumentInput<Visit>;
-/**
- * Adapter to ensure fetchVisits returns PaginatedResponse (adds hasMore and required fields)
- */
-const fetchVisitsWithHasMore = async (params: QueryParams) => {
-  const result = await fetchVisits(params);
-  // Ensure required fields for PaginatedResponse
-  const page = typeof result.page === 'number' ? result.page : 1;
-  const limit = typeof result.limit === 'number' ? result.limit : 10;
-  const total = typeof result.total === 'number' ? result.total : 0;
-  const totalPages = typeof result.totalPages === 'number' ? result.totalPages : Math.ceil(total / limit);
-  return {
-    ...result,
-    page,
-    limit,
-    total,
-    totalPages,
-    hasMore: page * limit < total,
-  };
-};
-
-/**
- * Wraps all server actions to transform dates in responses
- */
-const wrappedActions = wrapServerActions<Visit, VisitWithDates, VisitInput>(
-  {
-    fetch: fetchVisitsWithHasMore,
-    create: createVisit,
-  },
-  (items: Visit[]) => transformData<Visit, VisitWithDates>(items, {
-    schema: VisitZodSchema as ZodType<VisitWithDates>,
-    handleDates: true,
-    errorContext: 'useVisits'
-  })
-);
+import { ZodSchema } from 'zod';
+import { fetchVisits, createVisit, updateVisit, deleteVisit, fetchVisitById } from '@actions/visits/visits';
+import { useCallback } from 'react';
+import { DocumentInput } from '@core-types/document';
 
 /**
  * Custom React Query hooks for Visit entity
- * 
- * These hooks handle fetching, creating, updating, and deleting visits
- * with proper date transformation (string dates to Date objects)
+ * SIMPLIFIED: Direct CRUD factory usage, no unnecessary abstraction
  */
-const {
-  useEntityList: useVisitsList,
-  useEntityById: useVisitById,
-  useMutations: useVisitsMutations,
-  useManager: useVisits
-} = createEntityHooks<VisitWithDates, VisitInput>({
+const visitHooks = createCrudHooks({
   entityType: 'visits',
-  fullSchema: asDateObjectSchema(VisitZodSchema) as ZodType<VisitWithDates>,
-  inputSchema: ensureBaseDocumentCompatibility<Visit>(VisitZodSchema),
-  serverActions: wrappedActions,
-  validSortFields: ['date', 'school', 'coach', 'createdAt', 'updatedAt'],
-  defaultParams: {
-    sortBy: 'date',
-    sortOrder: 'desc',
-    page: 1,
-    limit: 10
+  schema: VisitZodSchema as ZodSchema<Visit>,
+  serverActions: {
+    fetch: fetchVisits,
+    fetchById: fetchVisitById,
+    create: createVisit,
+    update: updateVisit,
+    delete: deleteVisit
   },
-  staleTime: 5 * 60 * 1000, // 5 minutes
-  persistFilters: true,
+  validSortFields: ['date', 'school', 'coach', 'createdAt', 'updatedAt'],
   relatedEntityTypes: ['schools', 'coachingLogs']
 });
 
-// Export individual hooks
-export { useVisitsList, useVisitById, useVisitsMutations, useVisits };
+// Export with domain-specific names
+const useVisitsList = visitHooks.useList;
+const useVisitById = visitHooks.useDetail;
+const useVisitsMutations = visitHooks.useMutations;
+const useVisitManager = visitHooks.useManager;
 
-// Default export
+/**
+ * Enhanced visit manager with scheduling-specific functionality
+ */
+function useVisitManagerWithScheduling() {
+  const manager = useVisitManager();
+  
+  /**
+   * Create multiple visits for scheduling scenarios
+   */
+  const createMultipleVisits = useCallback(async (visitsData: DocumentInput<Visit>[]) => {
+    try {
+      const results = await Promise.all(
+        visitsData.map(visitData => manager.createAsync?.(visitData))
+      );
+      
+      return {
+        success: true,
+        data: results.map(r => r?.data).filter(Boolean)
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to create visits'
+      };
+    }
+  }, [manager]);
+  
+  /**
+   * Get visits for a specific school and date - triggers filtering
+   */
+  const getVisitsForSchoolAndDate = useCallback((schoolId: string, date: Date) => {
+    manager.applyFilters({
+      school: schoolId,
+      date: date.toISOString().split('T')[0]
+    });
+    return manager;
+  }, [manager]);
+  
+  /**
+   * Get visits for a date range - triggers filtering
+   */
+  const getVisitsByDateRange = useCallback((startDate: Date, endDate: Date) => {
+    manager.applyFilters({
+      date: {
+        $gte: startDate.toISOString(),
+        $lte: endDate.toISOString()
+      }
+    });
+    return manager;
+  }, [manager]);
+  
+  return {
+    ...manager,
+    createMultipleVisits,
+    getVisitsForSchoolAndDate,
+    getVisitsByDateRange
+  };
+}
+
+/**
+ * Unified interface following the useSchools pattern
+ */
+export const useVisits = {
+  list: useVisitsList,
+  byId: useVisitById,
+  mutations: useVisitsMutations,
+  manager: useVisitManager,
+  withScheduling: useVisitManagerWithScheduling
+};
+
+// Export individual hooks for backward compatibility
+export { 
+  useVisitsList, 
+  useVisitById, 
+  useVisitsMutations, 
+  useVisitManager,
+  useVisitManagerWithScheduling
+};
+
 export default useVisits; 

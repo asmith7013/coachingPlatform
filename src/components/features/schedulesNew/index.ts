@@ -11,9 +11,8 @@ export { SelectionStatusFooter } from './SelectionStatusFooter';
 export { TeacherPeriodCell } from './TeacherPeriodCell';
 
 // Hooks
-export { useScheduleBuilder } from './hooks/useScheduleBuilder';
+// useScheduleBuilder has been eliminated - use focused hooks instead
 export { useScheduleBuilderUI } from './hooks/useScheduleBuilderUI';
-export { useVisitScheduling } from './hooks/useVisitScheduling';
 
 // Utilities
 export * from './utils/schedule-data-utils';

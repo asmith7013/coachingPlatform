@@ -10,8 +10,26 @@ import {
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 
+// Time Slot nested class (matches TimeSlotZodSchema)
+@modelOptions({ 
+  schemaOptions: { 
+    _id: false 
+  } 
+})
+export class TimeSlot {
+  @prop({ type: String, required: true })
+  startTime!: string; // Format: "HH:MM" (24-hour format)
+  
+  @prop({ type: String, required: true })
+  endTime!: string; // Format: "HH:MM" (24-hour format)
+  
+  @prop({ type: Number })
+  periodNum?: number; // Optional period number for bell schedule alignment
+}
+
 @modelOptions({ schemaOptions: { _id: false, collection: 'eventitems' } })
 export class EventItem {
+  // Existing fields
   @prop({ 
     type: String, 
     enum: Object.values(EventTypes), 
@@ -28,6 +46,28 @@ export class EventItem {
     required: true 
   })
   duration!: string;
+
+  // NEW: Scheduling fields from enhanced Zod schema
+  @prop({ type: () => TimeSlot })
+  timeSlot?: TimeSlot; // Time slot for this specific event
+
+  @prop({ type: String })
+  purpose?: string; // Specific purpose for this event
+
+  @prop({ type: Number })
+  periodNumber?: number; // Period number if relevant
+
+  @prop({ 
+    type: String,
+    enum: ['full_period', 'first_half', 'second_half']
+  })
+  portion?: string; // Full/first_half/second_half
+
+  @prop({ type: Number })
+  orderIndex?: number; // Order within the visit schedule
+
+  @prop({ type: String })
+  notes?: string; // Event-specific notes
 }
 
 @modelOptions({ schemaOptions: { _id: false, collection: 'sessionlinks' } })
@@ -84,6 +124,10 @@ export class Visit extends BaseMongooseDocument {
   @prop({ type: () => [SessionLink] })
   sessionLinks?: SessionLink[];
 
+  // NEW: Planned schedule integration field from Zod schema
+  @prop({ type: String })
+  plannedScheduleId?: string; // Reference to PlannedVisit for schedule builder integration
+
   @prop({ type: () => [String], required: true })
   owners!: string[];
 
@@ -108,9 +152,14 @@ export class Visit extends BaseMongooseDocument {
   endDate?: Date;
 }
 
+export const TimeSlotModel = mongoose.models.TimeSlot || getModelForClass(TimeSlot);
 export const EventItemModel = mongoose.models.EventItem || getModelForClass(EventItem);
 export const SessionLinkModel = mongoose.models.SessionLink || getModelForClass(SessionLink);
 export const VisitModel = mongoose.models.Visit || getModelForClass(Visit);
+
+export async function getTimeSlotModel() {
+  return getModel<TimeSlot>('TimeSlot', () => getModelForClass(TimeSlot));
+}
 
 export async function getVisitModel() {
   return getModel<Visit>('Visit', () => getModelForClass(Visit));
@@ -123,4 +172,3 @@ export async function getEventItemModel() {
 export async function getSessionLinkModel() {
   return getModel<SessionLink>('SessionLink', () => getModelForClass(SessionLink));
 }
-

@@ -5,9 +5,9 @@ import { Card } from '@composed-components/cards/Card';
 import { SectionHeading } from '@composed-components/sectionHeadings';
 import { InfoCard } from '@composed-components/cards/InfoCard';
 import { Dialog } from '@composed-components/dialogs/Dialog';
-// import { VisitView } from '@feature-components/visits/VisitView';
+import { ScheduleBuilder } from '@/components/features/schedulesNew/ScheduleBuilder';
 import { Text } from '@/components/core/typography/Text';
-import { useSchoolVisitCards } from "@hooks/domain/useVisitsWithTransforms";
+import { useVisits } from "@hooks/domain/useVisits";
 import { cardGridVariant } from '@/lib/ui/variants';
 import { 
   MapPinIcon, 
@@ -29,30 +29,61 @@ export function VisitsCard({
   gridDensity = 'comfortable'
 }: VisitsCardProps) {
   const [selectedVisit, setSelectedVisit] = useState<Visit | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const handleViewVisit = (visit: Visit) => {
     setSelectedVisit(visit);
-    setIsDialogOpen(true);
+    setIsViewDialogOpen(true);
   };
 
   const handleEditVisit = (visit: Visit) => {
-    console.log('Edit visit:', visit._id);
+    console.log('Opening edit dialog for visit:', visit._id);
+    setSelectedVisit(visit);
+    setIsEditDialogOpen(true);
   };
 
-  // ✨ SIMPLIFIED: Use enhanced hook with transformers
   const { 
-    visits,
-    visitInfoCards,
+    items: visits = [],
     isLoading: visitsLoading, 
     error: visitsError 
-  } = useSchoolVisitCards(schoolId, {
-    onView: handleViewVisit,
-    onEdit: handleEditVisit
+  } = useVisits.list({
+    filters: { school: schoolId },
+    limit: 5, // Show recent 5 visits
+    sortBy: 'date',
+    sortOrder: 'desc'
   });
 
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
+  // Create visit info cards manually
+  const visitInfoCards = visits.map((visit: Visit) => ({
+    title: visit.date ? new Date(visit.date).toLocaleDateString() : 'No Date',
+    subtitle: visit.allowedPurpose || 'No Purpose Set',
+    description: `Coach: ${visit.coach || 'Unknown'}`,
+    details: [
+      { label: 'Events', value: visit.events?.length ? `${visit.events.length}` : '0' },
+      { label: 'Grade Levels', value: visit.gradeLevelsSupported?.join(', ') || 'None' }
+    ],
+    actions: [
+      {
+        label: 'View',
+        icon: undefined,
+        onClick: () => handleViewVisit(visit)
+      },
+      {
+        label: 'Edit',
+        icon: undefined,
+        onClick: () => handleEditVisit(visit)
+      }
+    ]
+  }));
+
+  const handleCloseViewDialog = () => {
+    setIsViewDialogOpen(false);
+    setSelectedVisit(null);
+  };
+
+  const handleCloseEditDialog = () => {
+    setIsEditDialogOpen(false);
     setSelectedVisit(null);
   };
 
@@ -116,19 +147,44 @@ export function VisitsCard({
         )}
       </Card>
 
-      {/* Visit Detail Dialog */}
+      {/* Visit Detail Dialog (View Only) */}
       <Dialog
-        open={isDialogOpen}
-        onClose={handleCloseDialog}
+        open={isViewDialogOpen}
+        onClose={handleCloseViewDialog}
         title="Visit Details"
         size="full"
       >
         {selectedVisit && (
           <div className="h-full">
-            {/* <VisitView  */}
-              {/* visit={selectedVisit}
-              className="h-full"
-            /> */}
+            <div className="p-6">
+              <Text textSize="lg">Visit Details for {selectedVisit.date ? new Date(selectedVisit.date).toLocaleDateString() : 'Unknown Date'}</Text>
+              <Text textSize="sm" color="muted">Read-only view - implementation pending</Text>
+            </div>
+          </div>
+        )}
+      </Dialog>
+
+      {/* Edit Visit Dialog with Schedule Builder */}
+      <Dialog
+        open={isEditDialogOpen}
+        onClose={handleCloseEditDialog}
+        title={`Edit Visit Schedule - ${selectedVisit?.date ? new Date(selectedVisit.date).toLocaleDateString() : ''}`}
+        size="full"
+      >
+        {selectedVisit && (
+          <div className="h-full p-6">
+            <div className="mb-4">
+              <Text textSize="base" color="muted">
+                Use the schedule grid below to update the visit plan for this date.
+              </Text>
+            </div>
+            
+            <ScheduleBuilder 
+              schoolId={schoolId}
+              date={selectedVisit.date ? new Date(selectedVisit.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
+              mode="edit"
+              visitId={selectedVisit._id}
+            />
           </div>
         )}
       </Dialog>

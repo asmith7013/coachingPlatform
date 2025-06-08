@@ -1,9 +1,10 @@
-import { createEntityHooks } from '@query/client/factories/entity-factory';
+import { createCrudHooks } from '@query/client/factories/crud-factory';
 import { 
   CoachingActionPlanZodSchema, 
   CoachingActionPlan,
   type CoachingActionPlanInput
 } from '@zod-schema/core/cap';
+import { ZodSchema } from 'zod';
 import { 
   fetchCoachingActionPlans,
   fetchCoachingActionPlanById,
@@ -16,66 +17,35 @@ import {
 } from "@actions/coaching/coaching-action-plans";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
-import { WithDateObjects } from '@core-types/document';
-import { createTransformationService } from '@transformers/core/transformation-service';
-import { z } from 'zod';
-import { ensureBaseDocumentCompatibility } from '@/lib/transformers/utils/response-utils';
 import { useAutoSave } from '@hooks/utilities/useAutoSave';
 import { useInvalidation } from '@query/cache/invalidation';
 import { useBulkOperations } from '@/query/client/hooks/mutations/useBulkOperations';
 
 /**
- * Coaching Action Plan entity with Date objects instead of string dates
+ * Custom React Query hooks for Coaching Action Plan entity
+ * SIMPLIFIED: Direct CRUD factory usage, no unnecessary transformation
  */
-export type CoachingActionPlanWithDates = WithDateObjects<CoachingActionPlan>;
-
-/**
- * Create transformation service following established pattern
- */
-const coachingActionPlanTransformation = createTransformationService<CoachingActionPlan, CoachingActionPlanWithDates>({
+const coachingActionPlanHooks = createCrudHooks({
   entityType: 'coachingActionPlans',
-  schema: CoachingActionPlanZodSchema as z.ZodSchema<CoachingActionPlan>,
-  handleDates: true,
-  errorContext: 'useCoachingActionPlans'
-});
-
-/**
- * 🔄 PHASE 2: Wrap core server actions with transformation service
- */
-const wrappedActions = coachingActionPlanTransformation.wrapServerActions({
-  fetch: fetchCoachingActionPlans,
-  fetchById: fetchCoachingActionPlanById,
-  create: createCoachingActionPlan,
-  update: updateCoachingActionPlan,
-  delete: deleteCoachingActionPlan
-});
-
-/**
- * Create entity hooks using established factory pattern
- */
-const {
-  useEntityList: useCoachingActionPlansList,
-  useEntityById: useCoachingActionPlanById,
-  useMutations: useCoachingActionPlansMutations,
-  useManager: useCoachingActionPlanManager
-} = createEntityHooks({
-  entityType: 'coachingActionPlans',
-  fullSchema: CoachingActionPlanZodSchema as z.ZodSchema<CoachingActionPlan>,
-  inputSchema: ensureBaseDocumentCompatibility<CoachingActionPlan>(CoachingActionPlanZodSchema),
-  serverActions: wrappedActions,
-  validSortFields: ['title', 'status', 'startDate', 'academicYear', 'createdAt', 'updatedAt'],
-  defaultParams: {
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
-    page: 1,
-    limit: 12
+  schema: CoachingActionPlanZodSchema as ZodSchema<CoachingActionPlan>,
+  serverActions: {
+    fetch: fetchCoachingActionPlans,
+    fetchById: fetchCoachingActionPlanById,
+    create: createCoachingActionPlan,
+    update: updateCoachingActionPlan,
+    delete: deleteCoachingActionPlan
   },
-  staleTime: 5 * 60 * 1000, // 5 minutes
-  persistFilters: true,
+  validSortFields: ['title', 'status', 'startDate', 'academicYear', 'createdAt', 'updatedAt'],
   relatedEntityTypes: ['schools', 'staff']
 });
 
-// 🔄 PHASE 1.2: Enhanced progress hook using transformation service for consistency
+// Export with domain-specific names
+const useCoachingActionPlansList = coachingActionPlanHooks.useList;
+const useCoachingActionPlanById = coachingActionPlanHooks.useDetail;
+const useCoachingActionPlansMutations = coachingActionPlanHooks.useMutations;
+const useCoachingActionPlanManager = coachingActionPlanHooks.useManager;
+
+// Enhanced progress hook using transformation service for consistency
 export function useCoachingActionPlanProgress(id: string) {
   return useQuery({
     queryKey: ['coachingActionPlans', 'detail', id, 'progress'],
@@ -91,7 +61,7 @@ export function useCoachingActionPlanProgress(id: string) {
   });
 }
 
-// 🔄 PHASE 1.2: ENHANCED - Ergonomic auto-save hook wrapper 
+// ENHANCED - Ergonomic auto-save hook wrapper 
 export function useCoachingActionPlanAutoSave(planId: string, data: Partial<CoachingActionPlanInput>) {
   const { invalidateEntity, invalidateList } = useInvalidation();
   
@@ -99,7 +69,7 @@ export function useCoachingActionPlanAutoSave(planId: string, data: Partial<Coac
     const result = await updateCoachingActionPlan(entityId, saveData as Partial<CoachingActionPlanInput>);
     
     if (result.success) {
-      // 🆕 Use standardized invalidation patterns for consistency
+      // Use standardized invalidation patterns for consistency
       await Promise.all([
         invalidateEntity('coachingActionPlans', entityId),
         invalidateList('coachingActionPlans')
@@ -109,7 +79,7 @@ export function useCoachingActionPlanAutoSave(planId: string, data: Partial<Coac
     }
   }, [invalidateEntity, invalidateList]);
 
-  // 🆕 Direct useAutoSave integration - follows your recommended pattern exactly
+  // Direct useAutoSave integration - follows your recommended pattern exactly
   return useAutoSave({
     entityId: planId,
     data,
@@ -119,14 +89,14 @@ export function useCoachingActionPlanAutoSave(planId: string, data: Partial<Coac
   });
 }
 
-// 🆕 PHASE 1.3: Enhanced manager with bulk operations and invalidation
+// Enhanced manager with bulk operations and invalidation
 export function useCoachingActionPlanManagerWithInvalidation() {
   const manager = useCoachingActionPlanManager();
   const { invalidateEntity, invalidateList } = useInvalidation();
   
   const bulkOps = useBulkOperations({
     entityType: 'coachingActionPlans',
-    schema: CoachingActionPlanZodSchema as z.ZodType<CoachingActionPlanWithDates>,
+    schema: CoachingActionPlanZodSchema as ZodSchema<CoachingActionPlan>,
     relatedEntityTypes: ['schools', 'staff', 'visits']
   });
 
@@ -192,7 +162,7 @@ export {
 };
 
 /**
- * 🔄 PHASE 3: Unified interface following schools pattern with enhanced capabilities
+ * Unified interface following schools pattern with enhanced capabilities
  */
 export const useCoachingActionPlans = {
   list: useCoachingActionPlansList,
@@ -200,7 +170,8 @@ export const useCoachingActionPlans = {
   progress: useCoachingActionPlanProgress,
   mutations: useCoachingActionPlansMutations,
   manager: useCoachingActionPlanManager,
-  autoSave: useCoachingActionPlanAutoSave,
   withInvalidation: useCoachingActionPlanManagerWithInvalidation,
-  transformation: coachingActionPlanTransformation
-}; 
+  autoSave: useCoachingActionPlanAutoSave
+};
+
+export default useCoachingActionPlans; 

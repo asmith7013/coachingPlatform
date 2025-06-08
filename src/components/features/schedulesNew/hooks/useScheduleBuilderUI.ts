@@ -1,9 +1,6 @@
 import { useState, useCallback } from 'react';
 
-/**
- * Simple UI state hook for schedule builder
- * Single responsibility: manage UI selection state only
- */
+
 export function useScheduleBuilderUI() {
   const [selectedTeacher, setSelectedTeacher] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<number | string | null>(null);

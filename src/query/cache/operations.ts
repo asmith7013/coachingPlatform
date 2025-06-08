@@ -5,7 +5,6 @@ import { CollectionResponse } from '@core-types/response';
 import { BaseDocument } from '@core-types/document';
 import { EntityCacheOperations } from '@core-types/cache';
 import { handleClientError } from '@error/handlers/client';
-import { getSelectors } from '@/query/client/selectors/selector-factory';
 
 /**
  * Create entity-specific cache operations
@@ -18,8 +17,6 @@ export function createEntityCacheOperations(
   queryClient: QueryClient,
   entityType: string
 ): EntityCacheOperations {
-  // Get selectors for this entity type
-  const selectors = getSelectors(entityType);
   
   /**
    * Invalidate all list queries for the entity
@@ -41,7 +38,7 @@ export function createEntityCacheOperations(
   };
 
   /**
-   * Update entity in cache with consistent transformation
+   * Update entity in cache with simple transformation
    */
   const updateEntity = async <T extends BaseDocument>(
     id: string, 
@@ -54,12 +51,10 @@ export function createEntityCacheOperations(
         if (!old || !old.items || old.items.length === 0) return old;
         
         try {
-          // Use the detail selector to transform the entity consistently
-          const entity = selectors.detail(old);
+          const entity = old.items[0];
           if (!entity) return old;
           
-          // Apply the update
-          const updated = updater(entity as T);
+          const updated = updater(entity);
           
           return {
             ...old,
@@ -67,7 +62,7 @@ export function createEntityCacheOperations(
           };
         } catch (error) {
           handleClientError(error, `${entityType}CacheUpdate`);
-          return old; // Return original data on error
+          return old;
         }
       }
     );
@@ -79,12 +74,8 @@ export function createEntityCacheOperations(
         if (!old || !old.items) return old;
         
         try {
-          // Use the basic selector to transform the list consistently
-          const items = selectors.basic(old) as T[];
-          
-          // Apply the update to the matching item
-          const updatedItems = items.map(item => {
-            if (item._id === id || item.id === id) {
+          const updatedItems = old.items.map((item: T) => {
+            if (item._id === id || (item as Record<string, unknown>).id === id) {
               return updater(item);
             }
             return item;
@@ -96,35 +87,29 @@ export function createEntityCacheOperations(
           };
         } catch (error) {
           handleClientError(error, `${entityType}CacheListUpdate`);
-          return old; // Return original data on error
+          return old;
         }
       }
     );
   };
 
   /**
-   * Add entity to list cache with consistent transformation
+   * Add entity to list cache
    */
   const addEntity = async <T extends BaseDocument>(entity: T) => {
     queryClient.setQueriesData(
       { queryKey: queryKeys.entities.list(entityType) },
       (old: CollectionResponse<T> | undefined) => {
         try {
-          // If no existing data, create a new response
           if (!old) return { 
             items: [entity], 
             success: true,
             total: 1
           };
           
-          // Use the selector to transform existing items
-          const items = selectors.basic(old) as T[];
-          
-          // Check if entity already exists to avoid duplicates
-          const exists = items.some(item => item._id === entity._id);
+          const exists = old.items.some((item: T) => item._id === entity._id);
           if (exists) return old;
           
-          // Add the new entity to the list
           return {
             ...old,
             items: [...old.items, entity],
@@ -132,7 +117,7 @@ export function createEntityCacheOperations(
           };
         } catch (error) {
           handleClientError(error, `${entityType}CacheAdd`);
-          return old; // Return original data on error
+          return old;
         }
       }
     );
@@ -142,26 +127,21 @@ export function createEntityCacheOperations(
    * Remove entity from list cache
    */
   const removeEntity = async (id: string) => {
-    // Remove from detail cache
     queryClient.removeQueries({ 
       queryKey: queryKeys.entities.detail(entityType, id),
       exact: true 
     });
 
-    // Update list caches
     queryClient.setQueriesData(
       { queryKey: queryKeys.entities.list(entityType) },
       (old: CollectionResponse<unknown> | undefined) => {
         if (!old || !old.items) return old;
         
         try {
-          // Use the selector to transform the items
-          const items = selectors.basic(old);
-          
-          // Filter out the item to remove
-          const filteredItems = items.filter(item => 
-            item._id !== id && item.id !== id
-          );
+          const filteredItems = old.items.filter((item: unknown) => {
+            const typedItem = item as Record<string, unknown>;
+            return typedItem._id !== id && typedItem.id !== id;
+          });
           
           return {
             ...old,
@@ -170,7 +150,7 @@ export function createEntityCacheOperations(
           };
         } catch (error) {
           handleClientError(error, `${entityType}CacheRemove`);
-          return old; // Return original data on error
+          return old;
         }
       }
     );

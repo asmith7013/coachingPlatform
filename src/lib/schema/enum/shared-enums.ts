@@ -188,6 +188,13 @@ export enum SessionPurposes {
   PLC = "PLC",
 }
 
+
+export enum ScheduleAssignment {
+  FULL_PERIOD = "full_period",
+  FIRST_HALF = "first_half",
+  SECOND_HALF = "second_half",
+}
+
 /**
  * Allowed Purpose
  */
@@ -273,6 +280,9 @@ export type BellScheduleType = z.infer<typeof BellScheduleTypeZod>;
 // Period Types
 export const PeriodTypeZod = createZodEnum(PeriodTypes);
 export type PeriodType = z.infer<typeof PeriodTypeZod>;
+
+export const ScheduleAssignmentTypeZod = createZodEnum(ScheduleAssignment);
+export type ScheduleAssignmentType = z.infer<typeof ScheduleAssignmentTypeZod>;
 
 // Duration - special case with transformation
 export const DurationZod = createZodEnum(Duration);

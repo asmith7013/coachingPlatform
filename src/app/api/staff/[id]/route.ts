@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchStaffByIdForApi } from "@server/fetchers/staff";
+import { fetchNYCPSStaffByIdForApi, fetchTeachingLabStaffByIdForApi } from "@server/fetchers/staff";
 import { createEntityResponse, createMonitoredErrorResponse } from "@server/api/responses/action-response-helper";
 
 export async function GET(
@@ -14,7 +14,9 @@ export async function GET(
     
     console.log(`📥 API /staff/[id] request received, ID: ${id}, type: ${type}`);
 
-    const result = await fetchStaffByIdForApi(id, type);
+    const result = type === 'nycps' 
+      ? await fetchNYCPSStaffByIdForApi(id)
+      : await fetchTeachingLabStaffByIdForApi(id);
 
     if (!result.success || !result.items || result.items.length === 0) {
       return NextResponse.json(

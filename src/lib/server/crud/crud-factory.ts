@@ -8,7 +8,8 @@ import { QueryParams, DEFAULT_QUERY_PARAMS } from "@core-types/query";
 import { PaginatedResponse, EntityResponse, BaseResponse } from "@core-types/response";
 import { fetchPaginatedResource } from "@transformers/pagination/unified-pagination";
 
-import { createTransformer } from "@transformers/core/unified-transformer";
+// Removed over-engineered transformer - using simple sanitization instead
+import { sanitizeDocument } from "@lib/api/responses/formatters";
 import { createValidator } from "@transformers/utils/validation-helpers";
 import { handleCrudError } from "@error/handlers/crud";
 import { fetchById } from "@transformers/utils/fetch-utils";
@@ -41,13 +42,7 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
     defaultSortOrder = 'desc'
   } = config;
 
-  // Create reusable transformer instances
-  const transformer = createTransformer<T, T>({
-    schema: schema as ZodType<T>,
-    handleDates: true,
-    errorContext: `${name}CRUD`
-  });
-
+  // Create input validator for validation
   const inputValidator = inputSchema ? createValidator(inputSchema as ZodType<TInput>, name) : null;
 
   // Helper function to perform revalidation
@@ -68,7 +63,7 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
           sortOrder: params.sortOrder ?? defaultSortOrder,
         };
 
-        return await fetchPaginatedResource(model, schema as ZodType<T>, fetchParams, {
+        return await fetchPaginatedResource(model as Model<unknown>, schema as ZodType<T>, fetchParams, {
           validSortFields: sortFields
         });
       } catch (error) {
@@ -102,24 +97,14 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
         const doc = await model.create(validated);
         const plainDocument = doc.toObject ? doc.toObject() : doc;
         
-        // Transform the single document
-        let transformed: T[];
-        try {
-          transformed = transformer.transform([plainDocument]);
-        } catch (transformError) {
-          console.warn('⚠️ Transformation failed, using document as-is:', transformError);
-          transformed = [plainDocument as T];
-        }
-        
-        if (!transformed || transformed.length === 0) {
-          throw new Error("Failed to transform created document");
-        }
+        // Simple sanitization instead of over-engineered transformation
+        const sanitized = sanitizeDocument(plainDocument as T);
 
         revalidatePaths();
         
         return {
           success: true,
-          data: transformed[0],
+          data: sanitized,
           message: `${name} created successfully`
         };
       } catch (error) {
@@ -160,17 +145,14 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
           throw new Error(`${name} with ID ${id} not found`);
         }
         
-        const transformed = transformer.transform([doc]);
-        
-        if (!transformed || transformed.length === 0) {
-          throw new Error("Failed to transform updated document");
-        }
+        // Simple sanitization instead of over-engineered transformation
+        const sanitized = sanitizeDocument(doc as T);
         
         revalidatePaths();
         
         return {
           success: true,
-          data: transformed[0],
+          data: sanitized,
           message: `${name} updated successfully`
         };
       } catch (error) {

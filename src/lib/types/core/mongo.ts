@@ -13,3 +13,7 @@ export type MongooseTransformDocument = {
   [key: string]: unknown;
 };
 
+export interface RawMongoDocument extends Record<string, unknown> {
+  _id?: unknown;
+  __v?: number;
+}

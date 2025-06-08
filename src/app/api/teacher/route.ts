@@ -1,8 +1,6 @@
 import { fetchNYCPSStaffForApi } from "@server/fetchers/staff";
 import { createReferenceEndpoint, FetchFunction } from "@api-handlers/reference-endpoint";
-import { NYCPSStaff } from "@domain-types/staff";
-import { NYCPSStaffReference } from "@zod-schema/core/staff";
-import { NYCPSStaffWithDates } from "@/hooks/domain/useNYCPSStaff";
+import { NYCPSStaff, NYCPSStaffReference } from "@zod-schema/core/staff";
 
 // Simple direct mapping function that doesn't use the selector system
 function mapStaffToReferenceSimple(staff: NYCPSStaff): NYCPSStaffReference {
@@ -22,7 +20,7 @@ function mapStaffToReferenceSimple(staff: NYCPSStaff): NYCPSStaffReference {
 
 // Export GET handler directly - follows same pattern as school API
 export const GET = createReferenceEndpoint<NYCPSStaff, NYCPSStaffReference>({
-  fetchFunction: fetchNYCPSStaffForApi as unknown as FetchFunction<NYCPSStaffWithDates>,
+  fetchFunction: fetchNYCPSStaffForApi as unknown as FetchFunction<NYCPSStaff>,
   mapItem: mapStaffToReferenceSimple,
   defaultSearchField: "staffName",
   defaultLimit: 20,

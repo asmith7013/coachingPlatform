@@ -18,6 +18,7 @@ export function handleQueryError(
   entityType?: string,
   additionalInfo?: Record<string, unknown>
 ): string {
+  
   // Validate operation type
   const validatedOperation = QueryOperationTypeSchema.parse(operation);
   

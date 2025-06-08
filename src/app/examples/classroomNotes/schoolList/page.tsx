@@ -8,9 +8,7 @@ import { Button } from '@components/core/Button';
 import { DashboardPage } from '@components/composed/layouts/DashboardPage';
 import { useSchoolsList, useSchoolsMutations } from "@hooks/domain/useSchools"; // ✅ React Query hooks for managing Schools data.
 import { SchoolInput } from "@zod-schema/core/school";
-import { SchoolWithDates } from "@hooks/domain/useSchools";
-
-type School = SchoolWithDates;
+import { School } from "@zod-schema/core/school";
 import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
 import { RigidResourceForm as GenericResourceForm } from "@components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@components/composed/forms/BulkUploadForm";

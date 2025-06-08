@@ -9,39 +9,18 @@ import { ServerActions } from '@core-types/query-factory';
 import { QueryParams } from '@core-types/query';
 import { BaseDocument } from '@core-types/document';
 import { EntityResponse, PaginatedResponse } from '@core-types/response';
+import { DocumentInput } from '@core-types/document';
 
 /**
- * Configuration for CRUD hooks
+ * Configuration for CRUD hooks - simplified with better defaults
  */
-export interface CrudHooksConfig<T extends BaseDocument, TInput> {
-  /** Entity type/name (e.g., 'schools', 'staff') */
+export interface CrudHooksConfig<T extends BaseDocument> {
   entityType: string;
+  serverActions: ServerActions<T, DocumentInput<T>>;
+  schema: ZodSchema<T>;
   
-  /** Server actions for CRUD operations */
-  serverActions: ServerActions<T, TInput>;
-  
-  /** Zod schema for full entity validation */
-  fullSchema: ZodSchema<T>;
-  
-  /** Zod schema for input validation (create/update) */
-  inputSchema: ZodSchema<TInput>;
-  
-  /** Default parameters for queries */
-  defaultParams?: Partial<QueryParams>;
-  
-  /** Valid sort fields */
+  // Optional with good defaults
   validSortFields?: string[];
-  
-  /** Whether to persist filter/sort state */
-  persistFilters?: boolean;
-  
-  /** Storage key for filters */
-  storageKey?: string;
-  
-  /** Stale time for queries in ms */
-  staleTime?: number;
-  
-  /** Related entity types to invalidate on mutations */
   relatedEntityTypes?: string[];
 }
 
@@ -49,148 +28,118 @@ export interface CrudHooksConfig<T extends BaseDocument, TInput> {
  * Factory function that creates a set of React Query hooks for a specific entity type.
  * This mirrors the server-side createCrudActions pattern but for client-side React Query.
  */
-export function createCrudHooks<
-  T extends BaseDocument,
-  TInput extends Record<string, unknown> = Omit<T, '_id' | 'id' | 'createdAt' | 'updatedAt'>
->(config: CrudHooksConfig<T, TInput>) {
-  const {
-    entityType,
-    serverActions,
-    fullSchema,
-    defaultParams = {},
+export function createCrudHooks<T extends BaseDocument>(
+  config: CrudHooksConfig<T>
+) {
+  const { 
+    entityType, 
+    serverActions, 
+    schema, 
     validSortFields = ['createdAt'],
-    persistFilters = true,
-    storageKey = `${entityType}_filters`,
-    staleTime = 60 * 1000, // 1 minute default
     relatedEntityTypes = []
   } = config;
   
+  // Derived defaults (DRY)
+  const defaultParams = { 
+    page: 1, 
+    limit: 10, 
+    sortBy: validSortFields[0], 
+    sortOrder: 'desc' as const 
+  };
+  
   // Create additional invalidation keys from related entity types
-  const additionalInvalidateKeys = relatedEntityTypes.map(type => 
-    [type, 'list'] as string[]
-  );
+  const additionalInvalidateKeys = relatedEntityTypes.map(type => [type, 'list']);
+  
+  // Create hooks once, not wrappers
+  const useList = (customParams?: Partial<QueryParams>) => useEntityList<T>({
+    entityType,
+    fetcher: serverActions.fetch as (params: QueryParams) => Promise<PaginatedResponse<T>>,
+    schema,
+    defaultParams: { ...defaultParams, ...customParams },
+    validSortFields,
+    persistFilters: true,
+    storageKey: `${entityType}_filters`,
+    staleTime: 60 * 1000,
+    errorContextPrefix: entityType
+  });
+  
+  const useDetail = (id: string | null | undefined, options = {}) => {
+    if (!serverActions.fetchById) {
+      throw new Error(`fetchById not implemented for ${entityType}`);
+    }
+    
+    return useEntityById<T>({
+      entityType,
+      id,
+      fetcher: serverActions.fetchById as (id: string) => Promise<EntityResponse<T>>,
+      schema,
+      errorContext: entityType,
+      queryOptions: options
+    });
+  };
 
   /**
    * Hook for creating, updating, and deleting entities with optimistic updates
+   * Only returns operations that are actually implemented
    */
   function useMutations() {
     const queryClient = useQueryClient();
     
-    // Create mutation - now clean with overloads
-    const createMutation = createOperationMutation(
-      'create',
-      entityType,
-      serverActions.create!,
-      queryClient,
-      additionalInvalidateKeys
-    )();
+    const createMutation = serverActions.create ? 
+      createOperationMutation('create', entityType, serverActions.create, queryClient, additionalInvalidateKeys)() : 
+      null;
+      
+    const updateMutation = serverActions.update ? 
+      createOperationMutation('update', entityType, 
+        (params: { id: string; data: Partial<DocumentInput<T>> }) => 
+          serverActions.update!(params.id, params.data),
+        queryClient, additionalInvalidateKeys)() : 
+      null;
+      
+    const deleteMutation = serverActions.delete ? 
+      createOperationMutation('delete', entityType, 
+        (params: { id: string }) => serverActions.delete!(params.id),
+        queryClient, additionalInvalidateKeys)() : 
+      null;
     
-    // Update mutation - now clean with overloads
-    const updateMutation = createOperationMutation(
-      'update',
-      entityType,
-      (params: { id: string; data: Partial<TInput> }) => 
-        serverActions.update!(params.id, params.data),
-      queryClient,
-      additionalInvalidateKeys
-    )();
-    
-    // Delete mutation - now clean with overloads
-    const deleteMutation = createOperationMutation(
-      'delete',
-      entityType,
-      (params: { id: string }) => serverActions.delete!(params.id),
-      queryClient,
-      additionalInvalidateKeys
-    )();
-    
-    // Return combined API
     return {
-      create: serverActions.create ? (data: TInput) => createMutation.mutate(data) : null,
-      createAsync: serverActions.create ? (data: TInput) => createMutation.mutateAsync(data) : null,
-      update: serverActions.update ? (id: string, data: Partial<TInput>) => 
-        updateMutation.mutate({ id, data }) : null,
-      updateAsync: serverActions.update ? (id: string, data: Partial<TInput>) => 
-        updateMutation.mutateAsync({ id, data }) : null,
-      delete: serverActions.delete ? (id: string) => 
-        deleteMutation.mutate({ id }) : null,
-      deleteAsync: serverActions.delete ? (id: string) => 
-        deleteMutation.mutateAsync({ id }) : null,
+      // Only include operations that exist
+      ...(createMutation && {
+        create: (data: DocumentInput<T>) => createMutation.mutate(data),
+        createAsync: (data: DocumentInput<T>) => createMutation.mutateAsync(data),
+        isCreating: createMutation.isPending,
+        createError: createMutation.error
+      }),
       
-      // Loading states
-      isCreating: createMutation.isPending,
-      isUpdating: updateMutation.isPending,
-      isDeleting: deleteMutation.isPending,
+      ...(updateMutation && {
+        update: (id: string, data: Partial<DocumentInput<T>>) => updateMutation.mutate({ id, data }),
+        updateAsync: (id: string, data: Partial<DocumentInput<T>>) => updateMutation.mutateAsync({ id, data }),
+        isUpdating: updateMutation.isPending,
+        updateError: updateMutation.error
+      }),
       
-      // Error states
-      createError: createMutation.error,
-      updateError: updateMutation.error,
-      deleteError: deleteMutation.error
+      ...(deleteMutation && {
+        delete: (id: string) => deleteMutation.mutate({ id }),
+        deleteAsync: (id: string) => deleteMutation.mutateAsync({ id }),
+        isDeleting: deleteMutation.isPending,
+        deleteError: deleteMutation.error
+      })
     };
   }
   
   /**
    * Hook that combines list and mutations functionality
+   * Simple composition, no duplication
    */
   function useManager(customParams?: Partial<QueryParams>) {
-    // Use the existing useEntityList hook directly
-    const list = useEntityList<T>({
-      entityType,
-      fetcher: serverActions.fetch as (params: QueryParams) => Promise<PaginatedResponse<T>>,
-      schema: fullSchema,
-      useSelector: true,
-      defaultParams: {
-        ...defaultParams,
-        ...(customParams || {})
-      },
-      validSortFields,
-      persistFilters,
-      storageKey,
-      staleTime,
-      errorContextPrefix: entityType
-    });
-    
+    const list = useList(customParams);
     const mutations = useMutations();
-    
-    return {
-      // List functionality
-      ...list,
-      
-      // Mutation functionality
-      ...mutations
-    };
+    return { ...list, ...mutations };
   }
   
-  // Return hooks with the new names directly using factory wrappers
   return {
-    useEntityList: (customParams?: Partial<QueryParams>) => useEntityList<T>({
-      entityType,
-      fetcher: serverActions.fetch as (params: QueryParams) => Promise<PaginatedResponse<T>>,
-      schema: fullSchema,
-      useSelector: true,
-      defaultParams: {
-        ...defaultParams,
-        ...(customParams || {})
-      },
-      validSortFields,
-      persistFilters,
-      storageKey,
-      staleTime,
-      errorContextPrefix: entityType
-    }),
-    
-    useEntityById: (id: string | null | undefined, options = {}) => useEntityById<T>({
-      entityType,
-      id,
-      fetcher: serverActions.fetchById ? 
-        (async (entityId: string) => await serverActions.fetchById!(entityId) as EntityResponse<T>) :
-        ((_id: string) => { throw new Error(`fetchById action is not defined for ${entityType}`); }),
-      schema: fullSchema,
-      useSelector: true,
-      errorContext: entityType,
-      queryOptions: options
-    }),
-    
+    useList,
+    useDetail,
     useMutations,
     useManager
   };

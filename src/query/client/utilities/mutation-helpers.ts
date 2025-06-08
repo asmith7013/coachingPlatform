@@ -133,7 +133,9 @@ export function createOperationMutation<TData extends Record<string, unknown>, T
     additionalInvalidateKeys
   });
 
-  // Create a custom hook that uses the optimistic mutation
+  /**
+   * @deprecated 
+   */
   function useMutation() {
     return useOptimisticMutation<TData, EntityResponse<TResult> | BaseResponse, Error, { previousData?: PaginatedResponse<TResult> }>(
       mutationFn,

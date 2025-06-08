@@ -1,89 +1,51 @@
-import type { LucideIcon } from 'lucide-react';
+// src/components/features/schedulesNew/types.ts
+import type { ScheduleAssignmentType } from '@domain-types/schedule'
 
-// Import domain types for re-export and extension
-import type {
-  TimeSlot as DomainTimeSlot,
-  ScheduleAssignmentType,
-  HoverZone,
-  ScheduleEventData
-} from '@domain-types/schedule';
+// ===== USE DOMAIN TYPES DIRECTLY =====
+// Import domain types as needed by components - types file keeps minimal interface only
 
-// Re-export commonly used domain types for convenience
-export type {
-  ScheduleAssignmentType,
-  HoverZone,
-  ScheduleEventData
-};
+// ===== REMOVE UNNECESSARY TYPE ALIASES =====
+// Instead of creating PlannedVisit/ScheduledVisit, use Visit directly with selectors
 
-// ===== EXTENDED TYPES FOR UI COMPONENTS =====
-
-/**
- * TimeSlot interface that extends domain TimeSlot with required UI properties
- * Ensures TimeSlot includes all required properties for components
- */
-export interface TimeSlot extends DomainTimeSlot {
-  period: number | string;  // ✅ This property is required by components
-  label: string;            // ✅ This property is required by components
+// ===== MINIMAL UI STATE (Only What's Actually UI-Specific) =====
+export interface ScheduleUIState {
+  selectedTeacher: string | null
+  selectedPeriod: number | null
+  selectedPortion: ScheduleAssignmentType | null
+  openDropdown: string | null
 }
 
-// ===== COMPONENT-SPECIFIC INTERFACES =====
-
-
-/**
- * Event type options specific to this UI implementation
- * UI-focused configuration for dropdown and display
- */
-export interface EventTypeOption {
-  value: 'observation' | 'debrief' | 'co-planning' | 'professional-learning';
-  label: string;
-  icon: LucideIcon;
+// ===== COMPONENT PROPS (Simplified) =====
+export interface ScheduleBuilderProps {
+  schoolId: string
+  date: string
+  mode?: 'create' | 'edit'
+  visitId?: string
 }
 
-/**
- * UI-specific drop zone item
- * Different from domain PlannedVisit - focused on UI state management
- */
-export interface DropZoneItem {
-  teacherId: string;
-  period: number | string;
-  portion: 'first_half' | 'second_half' | 'full_period';
-  teacherName: string;
-  eventType: EventTypeOption['value'];
-}
-
-/**
- * Schedule builder configuration
- * UI-specific settings for the schedule builder interface
- */
-export interface ScheduleBuilderConfig {
-  enableAutoSave: boolean;
-  saveDelay: number;
-  showTeacherNames: boolean;
-  compactMode: boolean;
-}
-
-/**
- * Props interface for useScheduleBuilder hook
- */
-export interface UseScheduleBuilderProps {
-  schoolId: string;
-  date: string; // ISO date string for the schedule
-}
-
-/**
- * Teacher planning status for UI indicators
- */
-export interface TeacherPlanningStatus {
-  observation: boolean;
-  meeting: boolean;
-} 
-
-export interface ScheduledVisit {
-  id: string
+// ===== VISIT OPERATIONS (Use Domain Types) =====
+export interface VisitCreationData {
   teacherId: string
-  teacherName: string
   periodNumber: number
-  portion: 'first_half' | 'second_half' | 'full_period'
-  purpose?: string
-  createdAt: Date
+  portion: ScheduleAssignmentType
+  purpose: string
+  // Domain hooks will handle schoolId, date, coachId from context
 }
+
+export interface VisitUpdateData {
+  purpose?: string
+  portion?: ScheduleAssignmentType
+}
+
+// ===== HELPER TYPES FOR CONFLICT DETECTION =====
+export interface ConflictCheckData {
+  teacherId: string
+  periodNumber: number
+  portion: ScheduleAssignmentType
+}
+
+export interface ConflictResult {
+  hasConflict: boolean
+  message?: string
+}
+

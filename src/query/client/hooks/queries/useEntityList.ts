@@ -47,7 +47,7 @@ export interface UseEntityListConfig<T extends BaseDocument> {
 /**
  * Hook for fetching and managing lists of entities with schema validation
  */
-export function useEntityList<T extends BaseDocument, R extends Record<string, unknown> = T>({
+export function useEntityList<T extends BaseDocument>({
   entityType,
   fetcher,
   schema,
@@ -56,10 +56,10 @@ export function useEntityList<T extends BaseDocument, R extends Record<string, u
   staleTime,
   queryOptions = {},
   errorContextPrefix
-}: UseEntityListConfig<T>): ReturnType<typeof usePagination<T, R>> {
+}: UseEntityListConfig<T>): ReturnType<typeof usePagination<T, T>> {
   // Create a transformation function using our unified utilities
-  const transformer = (data: PaginatedResponse<T> | undefined) => {
-    return transformPaginatedResponse<T, R>(
+  const transformer: ResponseTransformer<T, T> = (data: PaginatedResponse<T> | undefined): PaginatedResponse<T> => {
+    return transformPaginatedResponse<T>(
       data,
       schema,
       {
@@ -71,12 +71,12 @@ export function useEntityList<T extends BaseDocument, R extends Record<string, u
   };
   
   // Delegate to the base paginated data hook
-  return usePagination<T, R>({
+  return usePagination<T, T>({
     entityType,
     initialParams: defaultParams,
     queryFn: fetcher,
-    transformFn: transformer as ResponseTransformer<T, R>,
     queryOptions,
+    transformFn: transformer,
     staleTime
   });
 }

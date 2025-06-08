@@ -2,11 +2,28 @@ import React from 'react';
 import { Check, Download } from 'lucide-react';
 import { DropZoneCell } from './DropZoneCell';
 import { TeacherPeriodCell } from './TeacherPeriodCell';
-import { useScheduleStructure, useScheduleSaveStatus } from './context';
+import { useScheduleContext } from './context';
+// ✅ Import existing schema types and transformer
+import type { Period } from '@zod-schema/schedule/schedule';
+import { transformTeacherSchedules } from './utils/schedule-data-utils';
+
+// ✅ Define proper type structure using existing schema types
+interface TeacherScheduleMap {
+  [teacherId: string]: {
+    [periodNumber: number]: Period;
+  };
+}
+
+// ✅ MIGRATED: Now uses context directly instead of legacy compatibility hooks
 
 export function ScheduleGrid() {
-  const { teachers, timeSlots, teacherSchedules } = useScheduleStructure();
-  const { saveStatus } = useScheduleSaveStatus();
+  // ✅ Use context directly with proper typing
+  const { teachers, timeSlots, teacherSchedules } = useScheduleContext();
+
+  // ✅ Transform teacherSchedules array to nested object using existing utility
+  const teacherScheduleMap: TeacherScheduleMap = transformTeacherSchedules(
+    teacherSchedules
+  );
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-visible">
@@ -64,7 +81,7 @@ export function ScheduleGrid() {
                       <TeacherPeriodCell 
                         teacherId={teacher._id}
                         period={slot.periodNum || slotIndex + 1}
-                        schedule={teacherSchedules[teacher._id]?.[slot.periodNum || slotIndex + 1]}
+                        schedule={teacherScheduleMap[teacher._id]?.[slot.periodNum || slotIndex + 1]}
                       />
                     </div>
                   </div>
@@ -78,14 +95,10 @@ export function ScheduleGrid() {
       {/* Footer Section */}
       <div className="border-t border-gray-200 p-4 flex justify-end">
         <div className="flex items-center space-x-4">
-          {/* Save Status */}
+          {/* Save Status - Simplified */}
           <div className="flex items-center space-x-2">
-            {saveStatus === 'saved' && (
-              <>
-                <Check className="w-4 h-4 text-green-500" />
-                <span className="text-sm text-green-600">Saved</span>
-              </>
-            )}
+            <Check className="w-4 h-4 text-green-500" />
+            <span className="text-sm text-green-600">Ready</span>
           </div>
           
           {/* Export Button */}

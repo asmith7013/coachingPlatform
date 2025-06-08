@@ -22,7 +22,7 @@ import {
   createDataPreview 
 } from '@/lib/transformers/ui/data-preview';
 import { validateVisitData, validateStaffData } from '@/lib/transformers/ui/form-validation';
-import type { SchoolWithDates } from '@hooks/domain/useSchools';
+import type { School } from '@zod-schema/core/school';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
 import { SingleSchool } from '@/components/domain/schools';
@@ -41,7 +41,7 @@ export default function AddToSchoolPage() {
   const { items: schools = [], isLoading: schoolsLoading } = schoolsList();
   
   const [currentStep, setCurrentStep] = useState<Step>('selectSchool');
-  const [selectedSchool, setSelectedSchool] = useState<SchoolWithDates | null>(null);
+  const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
   const [selectedDataType, setSelectedDataType] = useState<DataType | null>(null);
   const [importData, setImportData] = useState<ImportData>({ staff: [], visits: [] });
   const [jsonInput, setJsonInput] = useState('');
@@ -86,7 +86,7 @@ export default function AddToSchoolPage() {
   }, []);
 
   // Handle school selection
-  const handleSchoolSelect = useCallback((school: SchoolWithDates) => {
+  const handleSchoolSelect = useCallback((school: School) => {
     setSelectedSchool(school);
     setCurrentStep('selectDataType');
   }, []);
@@ -171,7 +171,7 @@ export default function AddToSchoolPage() {
         <div className="text-center py-8">Loading schools...</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {schools.map((school: SchoolWithDates) => (
+          {schools.map((school: School) => (
             <div key={school._id} onClick={() => handleSchoolSelect(school)}>
               <SingleSchool schoolId={school._id} />
             </div>

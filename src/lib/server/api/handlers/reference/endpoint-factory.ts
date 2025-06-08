@@ -7,21 +7,19 @@ import { QueryParams } from "@core-types/query";
 import { CollectionResponse } from "@core-types/response";
 import { QueryParamsZodSchema } from "@zod-schema/core-types/query";
 import { withQueryValidation } from "@/lib/server/api/validation/api-validation";
-import { createTransformer } from "@transformers/core/unified-transformer";
-import { createReferenceTransformer } from "@transformers/factories/reference-factory";
 import { createMonitoredErrorResponse } from "@error/core/responses";
 import { createMongoDBFilter } from "@server/db/mongodb-query-utils";
-import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
+import { sanitizeDocuments } from "@/lib/server/api/responses/formatters";
 import { z } from "zod";
 
 /**
- * Configuration for creating reference endpoints using unified transformation system
+ * Configuration for creating reference endpoints with simple data operations
  */
 export interface ReferenceEndpointConfig<T extends BaseDocument, R extends BaseReference> {
   /** Function to fetch raw data from database */
   fetchFunction: (params: QueryParams) => Promise<CollectionResponse<unknown>>;
   
-  /** Schema for validating and transforming fetched documents */
+  /** Schema for validating fetched documents */
   schema: ZodSchema<T>;
   
   /** Function to extract label from entity */
@@ -50,8 +48,27 @@ export interface ReferenceEndpointConfig<T extends BaseDocument, R extends BaseR
 }
 
 /**
+ * Simple reference transformer function
+ */
+function transformToReference<T extends BaseDocument, R extends BaseReference>(
+  entity: T,
+  getLabelFn: (entity: T) => string,
+  getAdditionalFields?: (entity: T) => Partial<Omit<R, '_id' | 'label' | 'value'>>
+): R {
+  const baseRef = {
+    _id: entity._id,
+    value: entity._id,
+    label: getLabelFn(entity)
+  };
+
+  const additionalFields = getAdditionalFields ? getAdditionalFields(entity) : {};
+  
+  return { ...baseRef, ...additionalFields } as R;
+}
+
+/**
  * Creates a standardized GET handler for reference data endpoints
- * Uses unified transformation system for consistent data processing
+ * Uses simple data operations instead of complex transformations
  */
 export function createReferenceEndpoint<T extends BaseDocument, R extends BaseReference>(
   config: ReferenceEndpointConfig<T, R>
@@ -65,26 +82,8 @@ export function createReferenceEndpoint<T extends BaseDocument, R extends BaseRe
     defaultSearchField,
     logPrefix = "ReferenceAPI",
     querySchema = QueryParamsZodSchema,
-    strictValidation = false,
-    skipCache = false
+    strictValidation = false
   } = config;
-
-  // Create reference transformer using the factory
-  const referenceTransformer = createReferenceTransformer<T, R>(
-    getLabelFn,
-    getAdditionalFields,
-    referenceSchema
-  );
-
-  // Create unified transformer with proper configuration
-  const transformer = createTransformer<T, R>({
-    schema: ensureBaseDocumentCompatibility<T>(schema),
-    handleDates: true,
-    domainTransform: referenceTransformer,
-    strictValidation,
-    skipCache,
-    errorContext: logPrefix
-  });
 
   return withQueryValidation(querySchema)(
     async (validatedParams: z.input<typeof querySchema>, request: NextRequest) => {
@@ -111,28 +110,42 @@ export function createReferenceEndpoint<T extends BaseDocument, R extends BaseRe
           );
         }
 
-        // Transform data through unified pipeline
-        // This handles the full transformation pipeline:
-        // 1. MongoDB document transformation
-        // 2. Schema validation
-        // 3. Date field processing
-        // 4. Reference format transformation
-        const transformedResponse = transformer.transformResponse(rawResponse);
-
-        if (!transformedResponse.success) {
-          return NextResponse.json(
-            createMonitoredErrorResponse(
-              transformedResponse.error || 'Transformation failed',
-              new Error(transformedResponse.error || 'Transformation failed'),
-              { component, operation: 'transformData' }
-            ),
-            { status: 500 }
-          );
+        // Simple data transformation pipeline:
+        // 1. Sanitize MongoDB documents
+        const sanitizedItems = sanitizeDocuments<T>(rawResponse.items || []);
+        
+        // 2. Validate with schema if strict validation enabled
+        let validatedItems = sanitizedItems;
+        if (strictValidation && schema) {
+          validatedItems = sanitizedItems.map(item => {
+            const result = schema.safeParse(item);
+            return result.success ? result.data : item;
+          }).filter(Boolean) as T[];
         }
+
+        // 3. Transform to reference format
+        const referenceItems = validatedItems.map(item => 
+          transformToReference<T, R>(item, getLabelFn, getAdditionalFields)
+        );
+
+        // 4. Validate reference format if schema provided
+        let finalItems = referenceItems;
+        if (referenceSchema) {
+          finalItems = referenceItems.map(item => {
+            const result = referenceSchema.safeParse(item);
+            return result.success ? result.data : item;
+          }).filter(Boolean) as R[];
+        }
+
+        const transformedResponse: CollectionResponse<R> = {
+          items: finalItems,
+          total: finalItems.length,
+          success: true
+        };
 
         logResponse(logPrefix, endpoint, transformedResponse.items.length);
 
-        // Return the already properly formatted response
+        // Return the properly formatted response
         return NextResponse.json(transformedResponse);
 
       } catch (error) {

@@ -1,10 +1,12 @@
 import { UserJSON, OrganizationJSON, DeletedObjectJSON } from '@clerk/nextjs/server';
 import { UserMetadataZodSchema } from '@zod-schema/core-types/auth';
+import type { UserMetadata } from '@core-types/auth';
 import { NYCPSStaffModel } from '@mongoose-schema/core/staff.model';
 import { TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
 import { withDbConnection } from '@server/db/ensure-connection';
 import { validateSafe } from '@transformers/core/validation';
 import { captureError, createErrorContext, handleServerError } from '@error';
+import { clerkClient } from '@clerk/nextjs/server';
 
 // Type definitions
 export type ClerkWebhookEvent = {
@@ -42,6 +44,83 @@ export type SessionCreatedData = {
   created_at?: number;
   [key: string]: unknown; // For any additional properties
 };
+
+// ✅ NEW: Business logic for user creation with staff linking
+export async function handleUserCreation(data: UserWebhookData): Promise<WebhookResult> {
+  const context = createErrorContext('ClerkWebhook', 'handleUserCreation', {
+    metadata: { userId: data.id }
+  });
+
+  return withDbConnection(async () => {
+    try {
+      const primaryEmail = data.email_addresses?.[0]?.email_address;
+      
+      if (!primaryEmail) {
+        return { 
+          success: false, 
+          error: 'No email address provided',
+          action: 'no_email' 
+        };
+      }
+      
+      // Check for existing staff member by email
+      const [nycpsStaff, tlStaff] = await Promise.all([
+        NYCPSStaffModel.findOne({ email: primaryEmail }),
+        TeachingLabStaffModel.findOne({ email: primaryEmail })
+      ]);
+      
+      const existingStaff = nycpsStaff || tlStaff;
+      
+      if (existingStaff) {
+        const staffType = nycpsStaff ? 'nycps' : 'teachinglab';
+        
+        // Update Clerk metadata with staff connection
+        await updateClerkUserMetadata(data.id, {
+          staffId: existingStaff._id.toString(),
+          staffType,
+          roles: extractRolesFromStaff(existingStaff, staffType),
+          schoolIds: extractSchoolIds(existingStaff),
+          onboardingCompleted: true
+        });
+        
+        console.log(`Linked Clerk user ${data.id} to ${staffType} staff ${existingStaff._id}`);
+        
+        return { 
+          success: true, 
+          data: { 
+            staffId: existingStaff._id.toString(),
+            staffType,
+            action: 'user_linked_to_existing_staff'
+          }
+        };
+      } else {
+        // User not found in staff database - flag for manual review
+        await updateClerkUserMetadata(data.id, {
+          onboardingCompleted: false,
+          roles: [], // No roles until linked
+          permissions: [] // No permissions until linked
+        });
+        
+        console.log(`New user ${primaryEmail} not found in staff database - requires manual linking`);
+        
+        return { 
+          success: true, 
+          action: 'user_created_needs_linking',
+          data: { userId: data.id }
+        };
+      }
+      
+    } catch (error) {
+      console.error('Error during user creation:', error);
+      captureError(error, context);
+      return { 
+        success: false, 
+        error: handleServerError(error),
+        action: 'creation_error' 
+      };
+    }
+  });
+}
 
 // Business logic for syncing user metadata
 export async function handleUserSync(data: UserWebhookData): Promise<WebhookResult> {
@@ -236,4 +315,28 @@ export async function handleSessionCreated(data: SessionCreatedData): Promise<We
       action: 'session_error' 
     };
   }
+}
+
+// ✅ NEW: Helper functions for staff-to-user linking
+
+// Helper functions to extract data from staff records
+function extractRolesFromStaff(staff: Record<string, unknown>, staffType: 'nycps' | 'teachinglab'): string[] {
+  if (staffType === 'nycps') {
+    return (staff.rolesNYCPS as string[]) || [];
+  }
+  return (staff.rolesTL as string[]) || [];
+}
+
+function extractSchoolIds(staff: Record<string, unknown>): string[] {
+  const schools = staff.schools as Array<{ toString(): string }> | undefined;
+  return schools?.map((school) => school.toString()) || [];
+}
+
+// Enhanced metadata update function
+async function updateClerkUserMetadata(userId: string, metadata: Partial<UserMetadata>) {
+  const client = await clerkClient();
+  
+  await client.users.updateUserMetadata(userId, {
+    publicMetadata: metadata
+  });
 } 

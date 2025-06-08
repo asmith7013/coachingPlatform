@@ -17,12 +17,12 @@ import { createVisit } from '@actions/visits/visits';
 import { createBellSchedule, createMasterSchedule } from '@actions/schedule/schedule';
 import { AI_PROMPTS, createMasterSchedulePrompt } from '@ui/data-import/schema-templates';
 import { createDataPreview, validateVisitData, validateStaffData, validateBellScheduleData, validateMasterScheduleData } from '@transformers/ui';
-import type { SchoolWithDates } from '@hooks/domain/useSchools';
+import type { School } from '@zod-schema/core/school';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
 import type { BellScheduleInput, TeacherScheduleInput } from '@zod-schema/schedule/schedule';
-import type { NYCPSStaffWithDates } from '@hooks/domain/useNYCPSStaff';
-import { useNYCPSStaffList } from '@hooks/domain/useNYCPSStaff';
+import type { NYCPSStaff } from '@zod-schema/core/staff';
+import { useNYCPSStaffList } from '@hooks/domain/staff/useNYCPSStaff';
 
 type DataType = 'staff' | 'visits' | 'bellSchedules' | 'masterSchedule';
 type Step = 'selectDataType' | 'importData';
@@ -42,7 +42,7 @@ interface ImportData {
 interface DataImportDialogProps {
   open: boolean;
   onClose: () => void;
-  school: SchoolWithDates;
+  school: School;
 }
 
 export function DataImportDialog({ open, onClose, school }: DataImportDialogProps) {
@@ -67,8 +67,8 @@ export function DataImportDialog({ open, onClose, school }: DataImportDialogProp
     if (!allStaff) return [];
     
     return allStaff
-      .filter((staff: NYCPSStaffWithDates) => staff.schools?.includes(school._id))
-      .map((staff: NYCPSStaffWithDates) => ({
+      .filter((staff: NYCPSStaff) => staff.schools?.includes(school._id))
+      .map((staff: NYCPSStaff) => ({
         staffName: staff.staffName,
         email: staff.email
       }));

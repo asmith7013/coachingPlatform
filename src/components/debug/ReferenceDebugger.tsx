@@ -16,8 +16,8 @@ export function ReferenceDebugger() {
   // Entity type info
   const entityType = getEntityTypeFromUrlUtil(url);
   
-  // Use the hook directly to show raw data
-  const { options, isLoading, error, rawData } = useReferenceData({
+  // Use the hook directly
+  const { options, isLoading, error } = useReferenceData({
     url,
     search,
     entityType,
@@ -28,9 +28,8 @@ export function ReferenceDebugger() {
     if (debugMode) {
       console.log("[Debug] Selected value:", isMulti ? multiValue : selectedValue);
       console.log("[Debug] Options:", options);
-      console.log("[Debug] Raw data:", rawData);
     }
-  }, [debugMode, selectedValue, multiValue, options, rawData, isMulti]);
+  }, [debugMode, selectedValue, multiValue, options, isMulti]);
   
   return (
     <div className="space-y-6 p-4">

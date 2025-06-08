@@ -1,6 +1,5 @@
 import { CollectionResponse, EntityResponse } from '@core-types/response';
 import { PaginatedResponse } from '@core-types/response';
-import { TransformOptions } from '../core/unified-transformer';
 import { BaseDocument } from '@/lib/schema/zod-schema/base-schemas';
 import { ZodSchema } from 'zod';
 
@@ -91,9 +90,14 @@ export function isEntityResponse<T>(response: unknown): response is EntityRespon
  * Processes dates in an entity according to options
  * Extracted for better separation of concerns
  */
+interface SimpleDateOptions {
+  handleDates?: boolean;
+  dateFields?: string[];
+}
+
 export function processDateFields<T extends BaseDocument>(
   entity: T, 
-  options: Pick<TransformOptions<T>, 'handleDates' | 'dateFields'>
+  options: SimpleDateOptions
 ): T {
   if (!options.handleDates) return entity;
   
@@ -103,9 +107,9 @@ export function processDateFields<T extends BaseDocument>(
   for (const field of dateFields) {
     const value = entity[field as keyof T];
     if (value !== undefined && typeof value === 'string') {
-      (result as Record<keyof T, unknown>)[field] = new Date(value);
+      (result as Record<string, unknown>)[field] = new Date(value);
     } else if (value !== undefined && value instanceof Date) {
-      (result as Record<keyof T, unknown>)[field] = value;
+      (result as Record<string, unknown>)[field] = value;
     }
   }
   

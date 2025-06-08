@@ -8,15 +8,15 @@ import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DataImportDialog } from '@/components/composed/dialogs/DataImportDialog';
 import { SchedulePreview } from '@/components/features/schedulesNew/SchedulePreview';
-import { SchoolWithDates } from "@hooks/domain/useSchools";
+import { School } from "@zod-schema/core/school";
 import { cn } from '@ui/utils/formatters';
 import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { schoolToSlug } from '@transformers/utils/school-slug-utils';
-import { useTeacherSchedules } from '@/hooks/domain/useTeacherSchedules';
+import { useTeacherSchedules } from '@/hooks/domain/schedule/useTeacherSchedules';
 import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
 
 interface SchoolGridCardProps {
-  school: SchoolWithDates;
+  school: School;
   onDelete?: (id: string) => void;
   isDeleting?: boolean;
 }

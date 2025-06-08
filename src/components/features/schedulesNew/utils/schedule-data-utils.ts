@@ -1,16 +1,17 @@
 import { calculatePeriodTimeSlot } from './schedule-time-utils';
 
 import { TeacherSchedule, BellSchedule, Period } from '@zod-schema/schedule/schedule';
-import { PlannedVisit, TimeSlot } from '@zod-schema/visits/planned-visit';
-import { ClassScheduleItem, BellScheduleZodSchema, ScheduleByDay } from '@zod-schema/schedule/schedule';
+import { TimeSlot } from '@zod-schema/visits/visit';
+import type { Visit } from '@zod-schema/visits/visit';
+import { ClassScheduleItem, ScheduleByDay } from '@zod-schema/schedule/schedule';
 
 // Import transformer system for enhanced validation and ID handling
 // import { getEntityId } from '@transformers/utils/entity-utils';
-import { transformSingleItem } from '@transformers/core/unified-transformer';
+// Removed over-engineered transformer - using direct data manipulation
 import { type NYCPSStaff } from '@zod-schema/core/staff';
+import type { ScheduleAssignmentType } from '@domain-types/schedule'
 
-import type { ScheduleAssignmentType } from '@zod-schema/visits/planned-visit';
-import { ensureBaseDocumentCompatibility } from '@/lib/schema/zod-schema/base-schemas';
+// Removed ensureBaseDocumentCompatibility - no longer needed
 
 /**
  * Transform staff data to Teacher interface for UI display
@@ -21,21 +22,14 @@ export function transformStaffToTeachers(staff: NYCPSStaff[]): NYCPSStaff[] {
     return staff;
   }
 
+  
 /**
  * Generate time slots from bell schedule data
  * Enhanced with defensive programming and validation
  */
 export function generateTimeSlotsFromBellSchedule(bellSchedule: BellSchedule | null): TimeSlot[] {
-    // If we have a potential MongoDB document, try to transform it
-    let validatedSchedule = bellSchedule;
-    if (bellSchedule && typeof bellSchedule === 'object' && '_id' in bellSchedule) {
-      const compatibleSchema = ensureBaseDocumentCompatibility<BellSchedule>(BellScheduleZodSchema);
-      validatedSchedule = transformSingleItem<BellSchedule>(bellSchedule, {
-        schema: compatibleSchema,
-        handleDates: true,
-        errorContext: 'BellScheduleTransformation'
-      }) || bellSchedule;
-    }
+    // Direct data usage - no transformation needed as models handle ObjectId conversion
+    const validatedSchedule = bellSchedule;
   
     if (!validatedSchedule?.classSchedule) {
       // Default time slots if no bell schedule - using proper TimeSlot schema
@@ -90,14 +84,14 @@ export function transformTeacherSchedules(
  * Check for visit conflicts
  */
 export function checkVisitConflicts(
-  existingVisits: PlannedVisit[], 
+  existingVisits: Visit[], 
   newVisit: { teacherId: string; periodNumber: number | string; portion: ScheduleAssignmentType }
 ): boolean {
   return existingVisits.some(visit => 
-    visit.teacherId === newVisit.teacherId && 
-    visit.periodNumber === newVisit.periodNumber &&
-    (visit.portion === newVisit.portion || 
-     visit.portion === 'full_period' || 
+    visit.events?.[0]?.staff?.[0] === newVisit.teacherId && 
+    visit.events?.[0]?.periodNumber === newVisit.periodNumber &&
+    (visit.events?.[0]?.portion === newVisit.portion || 
+     visit.events?.[0]?.portion === 'full_period' || 
      newVisit.portion === 'full_period')
   );
 }
@@ -134,7 +128,7 @@ export function validateVisitData(
     schoolId: string;
     date: string;
   },
-  existingVisits: PlannedVisit[]
+  existingVisits: Visit[]
 ): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
   
@@ -151,4 +145,12 @@ export function validateVisitData(
   }
 
   return { isValid: errors.length === 0, errors };
-} 
+}
+
+// ✅ SIMPLE DATA UTILITIES: Work with domain types directly
+
+export function extractTeacherName(visit: Visit, teachers: NYCPSStaff[]): string {
+  const teacherId = visit.events?.[0]?.staff?.[0]
+  const teacher = teachers.find(t => t._id === teacherId)
+  return teacher?.staffName || 'Unknown Teacher'
+}

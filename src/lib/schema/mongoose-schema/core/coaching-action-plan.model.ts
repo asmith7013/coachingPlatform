@@ -211,7 +211,22 @@ class EndOfCycleAnalysis {
 // Main Coaching Action Plan class
 @modelOptions({ 
   schemaOptions: { 
-    collection: 'coachingactionplans'
+    collection: 'coachingactionplans',
+    // Handle ObjectId conversion at model level
+    toJSON: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    },
+    toObject: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    }
   } 
 })
 class CoachingActionPlan extends BaseMongooseDocument {

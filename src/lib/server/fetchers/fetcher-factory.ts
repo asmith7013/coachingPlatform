@@ -4,12 +4,10 @@ import { ZodSchema } from "zod";
 import { Model, FilterQuery, Document } from "mongoose";
 import { connectToDB } from "@server/db/connection";
 
-import { transformData } from "@transformers/core/unified-transformer";
+import { sanitizeDocuments } from "@/lib/server/api/responses/formatters";
 import { BaseDocument } from "@core-types/document";
 import { QueryParams } from "@core-types/query";
-import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
 import { handleServerError } from "@error/handlers/server";
-
 
 interface ValidationError {
   id: string;
@@ -18,20 +16,17 @@ interface ValidationError {
 
 /**
  * Creates an API-safe version of a data fetching function
- * Uses unified transformation system for consistent data processing
+ * Uses simple data operations instead of complex transformations
  * Avoids "use server" directive issues when importing into API routes
  * 
  * @param model The Mongoose model to query
- * @param schema The Zod schema for validation (automatically made BaseDocument compatible)
+ * @param schema The Zod schema for validation (optional)
  * @param defaultSearchField The field to search by default (e.g., "name", "title")
  * @returns A function that can be used in API routes
  */
-export function createApiSafeFetcher<
-  T extends BaseDocument,
-  M extends Document
->(
+export function createApiSafeFetcher<T extends BaseDocument, M extends Document>(
   model: Model<M>,
-  schema: ZodSchema<unknown>,
+  schema?: ZodSchema<T>,
   defaultSearchField?: string
 ) {
   return async function(params: QueryParams) {
@@ -64,24 +59,26 @@ export function createApiSafeFetcher<
         
       const total = await model.countDocuments(query as FilterQuery<M>);
       
-      // Transform and validate MongoDB documents using unified transformer
-      const validItems = transformData<T, T>(items, {
-        schema: ensureBaseDocumentCompatibility<T>(schema),
-        handleDates: true,
-        errorContext: `ApiSafeFetcher:${model.modelName}`,
-        strictValidation: false // Allow partial success for robustness
-      });
+      // Simple data processing:
+      // 1. Sanitize MongoDB documents
+      let processedItems = sanitizeDocuments<T>(items);
       
-      // Calculate validation errors (items that failed transformation)
+      // 2. Optional schema validation
       const validationErrors: ValidationError[] = [];
-      const failedCount = items.length - validItems.length;
-      
-      if (failedCount > 0) {
-        // For backward compatibility, add a summary error
-        validationErrors.push({
-          id: 'validation_summary',
-          item: { failedCount, modelName: model.modelName }
-        });
+      if (schema) {
+        const originalCount = processedItems.length;
+        processedItems = processedItems.map(item => {
+          const result = schema.safeParse(item);
+          return result.success ? result.data : item;
+        }).filter(Boolean) as T[];
+        
+        const failedCount = originalCount - processedItems.length;
+        if (failedCount > 0) {
+          validationErrors.push({
+            id: 'validation_summary',
+            item: { failedCount, modelName: model.modelName }
+          });
+        }
       }
       
       // Log validation errors in development
@@ -91,9 +88,9 @@ export function createApiSafeFetcher<
         );
       }
       
-      // Return the response with validated items
+      // Return the response with processed items
       return {
-        items: validItems,
+        items: processedItems,
         total, // Keep the total count including invalid items for pagination
         success: true,
         page,

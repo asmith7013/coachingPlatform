@@ -5,11 +5,12 @@ import { VisitModel } from "@mongoose-schema/visits/visit.model";
 import { mondayClient } from "@/lib/integrations/monday/client/client";
 import { BOARD_WITH_ITEMS_QUERY } from "@/lib/integrations/monday/client/queries";
 import { MondayBoardResponse } from "@lib/integrations/monday/types/api";
+import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
 
 // For the standard resource fetching pattern (visits in your MongoDB)
 export const fetchMondayVisitsForApi = createApiSafeFetcher(
   VisitModel,
-  VisitZodSchema,
+  ensureBaseDocumentCompatibility(VisitZodSchema),
   "mondayItemName"
 );
 
@@ -69,3 +70,4 @@ export async function testMondayConnection() {
     };
   }
 }
+

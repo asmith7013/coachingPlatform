@@ -2,17 +2,41 @@
 import { ZodSchema } from 'zod';
 import { CollectionResponse, EntityResponse } from '@core-types/response';
 import { BaseDocument } from '@core-types/document';
-import { 
-  transformResponseData, 
-  createTransformer,
-  TransformOptions 
-} from '@transformers/core/unified-transformer';
-import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
 import { handleClientError } from '@error/handlers/client';
 
 /**
- * Standardizes API responses using unified transformation system
- * Now leverages the centralized transformer instead of custom logic
+ * Simple document sanitization functions
+ */
+export function sanitizeDocument<T>(doc: unknown): T {
+  if (!doc || typeof doc !== 'object') return doc as T;
+  
+  const obj = doc as Record<string, unknown>;
+  const sanitized: Record<string, unknown> = {};
+  
+  for (const [key, value] of Object.entries(obj)) {
+    if (key === '__v' || key.startsWith('__')) continue;
+    
+    if (value instanceof Date) {
+      sanitized[key] = value.toISOString();
+    } else if (Array.isArray(value)) {
+      sanitized[key] = value.map(item => sanitizeDocument(item));
+    } else if (value && typeof value === 'object') {
+      sanitized[key] = sanitizeDocument(value);
+    } else {
+      sanitized[key] = value;
+    }
+  }
+  
+  return sanitized as T;
+}
+
+export function sanitizeDocuments<T>(docs: unknown[]): T[] {
+  if (!Array.isArray(docs)) return [];
+  return docs.map(doc => sanitizeDocument<T>(doc));
+}
+
+/**
+ * Simple response formatter without complex transformations
  */
 export function collectionizeResponse<T extends BaseDocument>(
   data: unknown,
@@ -29,18 +53,25 @@ export function collectionizeResponse<T extends BaseDocument>(
   }
 
   // Convert to standard CollectionResponse format first
-  let standardizedResponse: CollectionResponse<unknown>;
+  let standardizedResponse: CollectionResponse<T>;
 
   if (Array.isArray(data)) {
     // Direct array
+    const sanitized = sanitizeDocuments<T>(data);
     standardizedResponse = {
-      items: data,
-      total: data.length,
+      items: sanitized,
+      total: sanitized.length,
       success: true,
     };
   } else if (typeof data === 'object' && 'items' in (data as object)) {
     // Already in collection format
-    standardizedResponse = data as CollectionResponse<unknown>;
+    const collectionData = data as CollectionResponse<unknown>;
+    const sanitized = sanitizeDocuments<T>(collectionData.items || []);
+    standardizedResponse = {
+      ...collectionData,
+      items: sanitized,
+      success: true
+    } as CollectionResponse<T>;
   } else if (typeof data === 'object') {
     const objectData = data as Record<string, unknown>;
     
@@ -51,16 +82,18 @@ export function collectionizeResponse<T extends BaseDocument>(
     if (arrayProps.length > 0) {
       // Use the first array property as items
       const [propName, propValue] = arrayProps[0];
+      const sanitized = sanitizeDocuments<T>(propValue as unknown[]);
       standardizedResponse = {
-        items: propValue as unknown[],
-        total: (propValue as unknown[]).length,
+        items: sanitized,
+        total: sanitized.length,
         success: true,
         message: `Auto-converted "${propName}" to items array`,
       };
     } else {
       // Single object - wrap in collection
+      const sanitized = sanitizeDocument<T>(objectData);
       standardizedResponse = {
-        items: [objectData],
+        items: [sanitized],
         total: 1,
         success: true,
       };
@@ -75,63 +108,63 @@ export function collectionizeResponse<T extends BaseDocument>(
     };
   }
 
-  // Apply unified transformation if schema provided
+  // Apply schema validation if provided
   if (schema) {
     try {
-      return transformResponseData<T, T>(standardizedResponse, {
-        schema: ensureBaseDocumentCompatibility<T>(schema),
-        handleDates: true,
-        errorContext: 'collectionizeResponse'
+      const validatedItems = standardizedResponse.items.map(item => {
+        const result = schema.safeParse(item);
+        return result.success ? result.data : item;
       });
+      
+      return {
+        ...standardizedResponse,
+        items: validatedItems
+      };
     } catch (error) {
       handleClientError(error, 'collectionizeResponse');
-      // Return standardized response without validation if transformation fails
       return {
         ...standardizedResponse,
         items: [],
         success: false,
-        error: error instanceof Error ? error.message : 'Transformation failed'
-      } as CollectionResponse<T>;
+        error: error instanceof Error ? error.message : 'Validation failed'
+      };
     }
   }
 
-  return standardizedResponse as CollectionResponse<T>;
+  return standardizedResponse;
 }
 
 /**
- * Creates a response transformer factory for a specific schema
- * Uses unified transformation system for consistency
+ * Simple response formatter factory
  */
 export function createResponseFormatter<T extends BaseDocument>(schema: ZodSchema<T>) {
-  const transformer = createTransformer<T, T>({
-    schema: ensureBaseDocumentCompatibility<T>(schema),
-    handleDates: true,
-    errorContext: 'ResponseFormatter'
-  });
-
   return {
     formatResponse: (data: unknown) => collectionizeResponse(data, schema),
-    formatCollection: (response: CollectionResponse<unknown>) => 
-      transformer.transformResponse(response),
-    formatEntity: (response: EntityResponse<unknown>) => 
-      transformer.transformEntity(response),
-    formatPaginated: (response: CollectionResponse<unknown> & { page?: number; limit?: number; totalPages?: number; hasMore?: boolean }) => {
-      const transformed = transformer.transformResponse(response);
+    formatCollection: (response: CollectionResponse<unknown>): CollectionResponse<T> => {
+      const sanitized = sanitizeDocuments<T>(response.items || []);
+      return { ...response, items: sanitized } as CollectionResponse<T>;
+    },
+    formatEntity: (response: EntityResponse<unknown>): EntityResponse<T> => {
+      const sanitized = sanitizeDocument<T>(response.data);
+      return { ...response, data: sanitized } as EntityResponse<T>;
+    },
+    formatPaginated: (response: CollectionResponse<unknown> & { page?: number; limit?: number; totalPages?: number; hasMore?: boolean }): CollectionResponse<T> & { page: number; limit: number; totalPages: number; hasMore: boolean; empty: boolean } => {
+      const sanitized = sanitizeDocuments<T>(response.items || []);
       return {
-        ...transformed,
+        ...response,
+        items: sanitized,
         page: response.page || 1,
         limit: response.limit || 10,
         totalPages: response.totalPages || Math.ceil((response.total || 0) / (response.limit || 10)),
         hasMore: response.hasMore || false,
-        empty: transformed.items.length === 0
+        empty: sanitized.length === 0
       };
     }
   };
 }
 
 /**
- * Use this wrapper for API route handlers to ensure standardized responses
- * Now uses unified transformation system
+ * Simple wrapper for API route handlers
  */
 export function withCollectionResponse<T extends BaseDocument, Args extends unknown[]>(
   handler: (...args: Args) => Promise<T | Response> | T | Response,
@@ -146,7 +179,7 @@ export function withCollectionResponse<T extends BaseDocument, Args extends unkn
         return result;
       }
       
-      // Standardize the result using the updated collectionizeResponse
+      // Standardize the result using simple collectionizeResponse
       const standardized = collectionizeResponse(result, schema);
       
       // Return as Response
@@ -163,36 +196,5 @@ export function withCollectionResponse<T extends BaseDocument, Args extends unkn
         error: errorMessage,
       }, { status: 500 });
     }
-  };
-}
-
-/**
- * Domain-specific response formatter with transformation
- * Supports custom domain transformations through the unified system
- */
-export function createDomainResponseFormatter<
-  T extends BaseDocument, 
-  R extends Record<string, unknown>
->(
-  schema: ZodSchema<T>,
-  domainTransform: (item: T) => R,
-  options?: Partial<TransformOptions<T, R>>
-) {
-  const transformer = createTransformer<T, R>({
-    schema: ensureBaseDocumentCompatibility<T>(schema),
-    handleDates: true,
-    domainTransform,
-    errorContext: 'DomainResponseFormatter',
-    ...options
-  });
-
-  return {
-    formatResponse: (data: unknown) => {
-      // First standardize to collection format
-      const standardized = collectionizeResponse(data as T[], schema);
-      // Then apply domain transformation
-      return transformer.transformResponse(standardized);
-    },
-    transformer // Expose transformer for advanced use cases
   };
 }

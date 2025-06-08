@@ -4,7 +4,7 @@ import React, { useMemo, useState } from "react";
 import { Card } from '@/components/composed/cards/Card';
 import { SectionHeading } from '@/components/composed/sectionHeadings';
 import { Text } from '@/components/core/typography/Text';
-import { useNYCPSStaffList } from "@hooks/domain/useNYCPSStaff";
+import { useNYCPSStaffList } from "@hooks/domain/staff/useNYCPSStaff";
 import { SimpleCard } from '@/components/composed/cards/SimpleCard';
 import { UserGroupIcon } from '@heroicons/react/24/outline';
 

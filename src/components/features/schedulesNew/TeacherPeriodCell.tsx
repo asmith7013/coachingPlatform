@@ -1,26 +1,39 @@
 import React from 'react';
-import { useScheduleSelection, useVisitData } from './context';
+import { useScheduleContext } from './context';
 import type { Period } from '@zod-schema/schedule/schedule';
-
 
 interface TeacherPeriodCellProps {
   teacherId: string;
   period: number | string;
-  schedule?: Period; // Changed from ClassScheduleItem to Period
+  schedule?: Period;
 }
 
 export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriodCellProps) {
-  const { selectedTeacher, selectedPeriod, handleTeacherPeriodSelect } = useScheduleSelection();
-  const { getVisit, isDropZoneFullyScheduled } = useVisitData();
+  // ✅ SIMPLIFIED: Use context directly with UI state
+  const { 
+    uiState,
+    selectTeacherPeriod,
+    getVisitForTeacherPeriod,
+    visits
+  } = useScheduleContext();
+  
+  const { selectedTeacher, selectedPeriod } = uiState;
 
-  const isSelected = selectedTeacher === teacherId && selectedPeriod === period;
-  const visit = getVisit(teacherId, period);
-  const dropZoneFullyScheduled = isDropZoneFullyScheduled(period);
+  const periodNum = typeof period === 'string' ? parseInt(period, 10) : period;
+  const isSelected = selectedTeacher === teacherId && selectedPeriod === periodNum;
+  const visit = getVisitForTeacherPeriod(teacherId, periodNum);
+  
+  // ✅ SIMPLE HELPER: Check if period is fully scheduled
+  const dropZoneFullyScheduled = visits.some(v => 
+    v.events?.[0]?.staff?.[0] === teacherId && 
+    // TODO: Extract period from visit when schema supports it
+    true
+  );
 
   if (visit) {
     return (
       <div className="h-16 flex flex-col items-center justify-center bg-blue-500 text-white rounded border border-blue-600">
-        <span className="font-medium text-sm">{visit.purpose}</span>
+        <span className="font-medium text-sm">{visit.allowedPurpose || 'Visit'}</span>
         <span className="text-xs opacity-90">Scheduled</span>
       </div>
     );
@@ -54,7 +67,7 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
       <div 
         className="h-16 flex items-center justify-center rounded cursor-pointer transition-all border hover:opacity-80"
         style={getLunchStyle()}
-        onClick={() => !dropZoneFullyScheduled && handleTeacherPeriodSelect(teacherId, period)}
+        onClick={() => !dropZoneFullyScheduled && selectTeacherPeriod(teacherId, periodNum)}
       >
         <div className="text-center">
           <div className="font-medium text-sm">LUNCH</div>
@@ -94,7 +107,7 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
       <div 
         className="h-16 flex flex-col items-center justify-center rounded cursor-pointer transition-all border hover:opacity-80"
         style={getPrepStyle()}
-        onClick={() => !dropZoneFullyScheduled && handleTeacherPeriodSelect(teacherId, period)}
+        onClick={() => !dropZoneFullyScheduled && selectTeacherPeriod(teacherId, periodNum)}
       >
         <span className="font-medium text-sm">PREP</span>
         <span className="text-xs">
@@ -132,7 +145,7 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
     <div 
       className="h-16 rounded cursor-pointer transition-all border hover:opacity-80"
       style={getBackgroundStyle()}
-      onClick={() => !dropZoneFullyScheduled && handleTeacherPeriodSelect(teacherId, period)}
+      onClick={() => !dropZoneFullyScheduled && selectTeacherPeriod(teacherId, periodNum)}
     >
       <div className="h-full flex flex-col items-center justify-center">
         <span className="font-medium text-sm">

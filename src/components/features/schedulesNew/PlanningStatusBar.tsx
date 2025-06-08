@@ -1,9 +1,27 @@
 import React from 'react';
 import { Eye, MessageCircle } from 'lucide-react';
-import { useTeacherPlanning } from './context';
+import { useScheduleContext } from './context';
 
 export function PlanningStatusBar() {
-  const { teachers, getTeacherPlanning } = useTeacherPlanning();
+  // ✅ SIMPLIFIED: Use context directly with simple helper
+  const { teachers, visits } = useScheduleContext();
+  
+  // ✅ SIMPLE HELPER: Extract teacher planning from visits
+  const getTeacherPlanning = (teacherId: string) => {
+    const teacherVisits = visits.filter(visit => 
+      visit.events?.[0]?.staff?.[0] === teacherId
+    );
+    return {
+      observation: teacherVisits.some(visit => 
+        visit.allowedPurpose?.includes('observation') || visit.allowedPurpose?.includes('Observation')
+      ),
+      meeting: teacherVisits.some(visit => 
+        visit.allowedPurpose?.includes('debrief') || 
+        visit.allowedPurpose?.includes('meeting') ||
+        visit.allowedPurpose?.includes('co-planning')
+      )
+    };
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">

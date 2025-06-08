@@ -50,7 +50,26 @@ class Experience {
   years!: number;
 }
 
-@modelOptions({ schemaOptions: { collection: 'notes' } })
+@modelOptions({ 
+  schemaOptions: { 
+    collection: 'notes',
+    // Handle ObjectId conversion at model level
+    toJSON: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    },
+    toObject: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    }
+  } 
+})
 class Note extends BaseMongooseDocument {
   @prop({ type: Date, required: true })
   date!: Date;
@@ -62,7 +81,26 @@ class Note extends BaseMongooseDocument {
   subheading!: string[];
 }
 
-@modelOptions({ schemaOptions: { collection: 'staffmembers' } })
+@modelOptions({ 
+  schemaOptions: { 
+    collection: 'staffmembers',
+    // Handle ObjectId conversion at model level
+    toJSON: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    },
+    toObject: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    }
+  } 
+})
 class StaffMember extends BaseMongooseDocument {
   @prop({ type: String, required: true })
   staffName!: string;
@@ -76,7 +114,26 @@ class StaffMember extends BaseMongooseDocument {
   mondayUser?: MondayUser;
 }
 
-@modelOptions({ schemaOptions: { collection: 'nycpsstaffs' } })
+@modelOptions({ 
+  schemaOptions: { 
+    collection: 'nycpsstaffs',
+    // Handle ObjectId conversion at model level
+    toJSON: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    },
+    toObject: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    }
+  } 
+})
 class NYCPSStaff extends StaffMember {
   @prop({ type: () => [String], required: true, enum: Object.values(GradeLevels) })
   gradeLevelsSupported!: string[];
@@ -94,7 +151,26 @@ class NYCPSStaff extends StaffMember {
   experience?: Experience[];
 }
 
-@modelOptions({ schemaOptions: { collection: 'teachinglabstaffs' } })
+@modelOptions({ 
+  schemaOptions: { 
+    collection: 'teachinglabstaffs',
+    // Handle ObjectId conversion at model level
+    toJSON: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    },
+    toObject: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    }
+  } 
+})
 class TeachingLabStaff extends StaffMember {
   @prop({ type: String, enum: Object.values(AdminLevels) })
   adminLevel?: string;

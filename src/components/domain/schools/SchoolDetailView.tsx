@@ -7,7 +7,7 @@ import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { useSchoolById } from "@hooks/domain/useSchools";
 import { useVisitsList } from "@hooks/domain/useVisits";
-import { useNYCPSStaffList } from "@hooks/domain/useNYCPSStaff";
+import { useNYCPSStaffList } from "@hooks/domain/staff/useNYCPSStaff";
 import { cn } from '@ui/utils/formatters';
 import { SimpleCard } from '@/components/core/cards/SimpleCard';
 

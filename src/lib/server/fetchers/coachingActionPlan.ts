@@ -2,6 +2,7 @@ import { CoachingActionPlanModel } from '@mongoose-schema/core/coaching-action-p
 import { CoachingActionPlanZodSchema } from '@zod-schema/core/cap';
 import { createApiSafeFetcher } from '@/lib/server/fetchers/fetcher-factory';
 import { fetchById } from '@transformers/utils/fetch-utils';
+import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
 
 /**
  * API-safe fetcher for coaching action plans 
@@ -9,7 +10,7 @@ import { fetchById } from '@transformers/utils/fetch-utils';
  */
 export const fetchCoachingActionPlansForApi = createApiSafeFetcher(
   CoachingActionPlanModel,
-  CoachingActionPlanZodSchema,
+  ensureBaseDocumentCompatibility(CoachingActionPlanZodSchema),
   "title" // Default search field for coaching action plans
 );
 
@@ -17,5 +18,5 @@ export const fetchCoachingActionPlansForApi = createApiSafeFetcher(
  * Fetches a coaching action plan by ID
  */
 export async function fetchCoachingActionPlanByIdForApi(id: string) {
-  return fetchById(CoachingActionPlanModel, id, CoachingActionPlanZodSchema);
+  return fetchById(CoachingActionPlanModel, id, ensureBaseDocumentCompatibility(CoachingActionPlanZodSchema));
 } 

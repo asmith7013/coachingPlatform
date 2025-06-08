@@ -12,11 +12,29 @@ import { createReferenceTransformer, createArrayTransformer } from "@transformer
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 import { formatVisitDate } from "@schema/reference/visits/visit-helpers";
 
-// Event Item Schema (shared schema)
+// Time Slot Schema (reusable component)
+export const TimeSlotZodSchema = z.object({
+  startTime: z.string(), // Format: "HH:MM" (24-hour format)
+  endTime: z.string(),   // Format: "HH:MM" (24-hour format)
+  periodNum: z.number().optional(), // Optional period number for bell schedule alignment
+});
+
+export const VisitPortionZod = z.enum(['full_period', 'first_half', 'second_half']);
+
 export const EventItemZodSchema = z.object({
-  eventType: EventTypeZod, // Enum for event type
-  staff: z.array(z.string()), // Array of staff IDs
-  duration: DurationZod, // Enum for duration with string->number transform
+  eventType: EventTypeZod, // Existing: event type
+  staff: z.array(z.string()), // Existing: staff IDs
+  duration: DurationZod, // Existing: duration
+  
+  // ADD: Scheduling fields that were in PlannedVisit
+  timeSlot: TimeSlotZodSchema.optional(), // Time slot for this specific event
+  purpose: z.string().optional(), // Specific purpose for this event
+  periodNumber: z.number().optional(), // Period number if relevant
+  portion: VisitPortionZod.optional(), // Full/first_half/second_half
+  
+  // ADD: Event-specific metadata
+  orderIndex: z.number().optional(), // Order within the visit schedule
+  notes: z.string().optional(), // Event-specific notes
 });
 
 // Session Link Schema (shared schema)
@@ -120,6 +138,7 @@ export const visitsToReferences = createArrayTransformer<Visit, VisitReference>(
 );
 
 // Auto-generate TypeScript types
+export type TimeSlot = z.infer<typeof TimeSlotZodSchema>;
 export type EventItem = z.infer<typeof EventItemZodSchema>;
 export type SessionLink = z.infer<typeof SessionLinkZodSchema>;
 export type VisitInput = z.infer<typeof VisitInputZodSchema>;

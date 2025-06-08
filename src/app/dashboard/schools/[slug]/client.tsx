@@ -8,7 +8,7 @@ import { Heading, Text } from '@components/core/typography';
 import { typography, paddingY, stack } from '@lib/tokens/tokens';
 import { cn } from '@ui/utils/formatters';
 import { useSchoolById } from "@hooks/domain/useSchools";
-import { useNYCPSStaff } from "@hooks/domain/useNYCPSStaff";
+import { useNYCPSStaff } from "@hooks/domain/staff/useNYCPSStaff";
 import { Alert, Spinner, Badge } from '@components/core/feedback';
 import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
 

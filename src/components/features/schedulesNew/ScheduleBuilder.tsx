@@ -1,18 +1,28 @@
 import React from 'react';
-import { ScheduleProvider } from './context';
 import { PlanningStatusBar } from './PlanningStatusBar';
 import { ScheduleGrid } from './ScheduleGrid';
 import { ScheduleLegend } from './ScheduleLegend';
 import { SelectionStatusFooter } from './SelectionStatusFooter';
+import { ScheduleProvider } from './context';
+import type { ScheduleBuilderProps } from './types';
 
-interface ScheduleBuilderProps {
-  schoolId: string;
-  date: string;
-}
-
-export function ScheduleBuilder({ schoolId, date }: ScheduleBuilderProps) {
+export function ScheduleBuilder({ 
+  schoolId, 
+  date, 
+  mode = 'create',
+  visitId 
+}: ScheduleBuilderProps) {
+  // ✅ IMPROVEMENT: Context now uses focused hooks internally
+  // Components can gradually migrate to use focused hooks directly
+  // This eliminates the god object while maintaining backward compatibility
+  
   return (
-    <ScheduleProvider schoolId={schoolId} date={date}>
+    <ScheduleProvider 
+      schoolId={schoolId} 
+      date={date}
+      mode={mode}
+      visitId={visitId}
+    >
       <div className="space-y-4">
         {/* Planning Status Bar - shows teacher planning status */}
         <PlanningStatusBar />

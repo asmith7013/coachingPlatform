@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { validateClerkWebhook } from '@server/api/validation/clerk-validation';
-import { handleUserSync, handleOrganizationSync, handleUserDeletion, OrganizationWebhookData, UserWebhookData } from '@server/api/handlers/clerk-webhook';
+import { handleUserCreation, handleUserSync, handleOrganizationSync, handleUserDeletion, OrganizationWebhookData, UserWebhookData } from '@server/api/handlers/clerk-webhook';
 import { UserJSON } from '@clerk/nextjs/server';
 
 export async function POST(request: Request) {
@@ -23,6 +23,10 @@ export async function POST(request: Request) {
     // Handle different webhook events
     switch (type) {
       case 'user.created':
+        // ✅ NEW: Handle user creation with automatic staff linking
+        const creationResult = await handleUserCreation(data as UserJSON);
+        return NextResponse.json(creationResult);
+
       case 'user.updated':
         const userResult = await handleUserSync(data as UserJSON);
         return NextResponse.json(userResult);

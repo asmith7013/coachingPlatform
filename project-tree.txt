@@ -657,15 +657,21 @@
 │   │   │   │   │   └── index.ts
 │   │   │   │   ├── hooks
 │   │   │   │   │   ├── index.ts
-│   │   │   │   │   ├── useScheduleBuilder.ts
+│   │   │   │   │   ├── useScheduleActions.ts
 │   │   │   │   │   ├── useScheduleBuilderUI.ts
-│   │   │   │   │   └── useVisitScheduling.ts
+│   │   │   │   │   ├── useScheduleData.ts
+│   │   │   │   │   ├── useScheduleSelectors.ts
+│   │   │   │   │   ├── useScheduleState.ts
+│   │   │   │   │   └── useVisitOperations.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── types.ts
 │   │   │   │   └── utils
 │   │   │   │       ├── index.ts
 │   │   │   │       ├── schedule-data-utils.ts
-│   │   │   │       └── schedule-time-utils.ts
+│   │   │   │       ├── schedule-time-utils.ts
+│   │   │   │       ├── visit-conflict-detector.ts
+│   │   │   │       ├── visit-data-utils.ts
+│   │   │   │       └── visit-scheduling-transformer.ts
 │   │   │   ├── scoring
 │   │   │   │   ├── ScoreEntry.tsx
 │   │   │   │   ├── ScoresPage.tsx
@@ -695,6 +701,7 @@
 │   ├── hooks
 │   │   ├── auth
 │   │   │   ├── useAuthenticatedUser.ts
+│   │   │   ├── useCoachData.ts
 │   │   │   └── usePermissionFiltering.ts
 │   │   ├── debugging
 │   │   │   ├── checkRenderLoopInTools.tsx
@@ -704,22 +711,14 @@
 │   │   │   ├── index.ts
 │   │   │   ├── schedule
 │   │   │   │   ├── useBellSchedules.ts
-│   │   │   │   ├── useSchoolDailyView.ts
 │   │   │   │   └── useTeacherSchedules.ts
 │   │   │   ├── staff
 │   │   │   │   ├── useNYCPSStaff.ts
 │   │   │   │   ├── useTeachingLabStaff.ts
 │   │   │   │   └── useUserStaff.ts
-│   │   │   ├── useBellSchedules.ts
 │   │   │   ├── useLookFors.ts
-│   │   │   ├── useNYCPSStaff.ts
-│   │   │   ├── usePlannedVisits.ts
 │   │   │   ├── useSchoolDailyView.ts
 │   │   │   ├── useSchools.ts
-│   │   │   ├── useTeacherSchedules.ts
-│   │   │   ├── useTeachingLabStaff.ts
-│   │   │   ├── useUserStaff.ts
-│   │   │   ├── useVisitScheduling.ts
 │   │   │   ├── useVisits.ts
 │   │   │   └── useVisitsWithTransforms.ts
 │   │   ├── error
@@ -1188,4 +1187,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-353 directories, 836 files
+353 directories, 835 files

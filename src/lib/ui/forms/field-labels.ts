@@ -157,6 +157,12 @@ export const EventItemFieldLabels: Record<keyof EventItem, string> = {
     eventType: "Event Type",
     staff: "Involved Staff",
     duration: "Duration",
+    timeSlot: "Time Slot",
+    purpose: "Purpose",
+    periodNumber: "Period Number",
+    portion: "Period Portion",
+    orderIndex: "Order Index",
+    notes: "Notes",
 };
 
 export const NextStepFieldLabels: Record<keyof NextStep, string> = {

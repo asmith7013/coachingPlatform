@@ -8,7 +8,22 @@ import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 @modelOptions({ 
   schemaOptions: { 
     timestamps: true,
-    collection: 'schools' // Explicit collection name
+    collection: 'schools', // Explicit collection name
+    // Handle ObjectId conversion at model level
+    toJSON: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    },
+    toObject: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    }
   } 
 })
 class School extends BaseMongooseDocument {

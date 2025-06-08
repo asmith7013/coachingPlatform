@@ -5,9 +5,7 @@ import { BaseDocument } from "@core-types/document";
 import { QueryParams, PaginationMeta } from "@core-types/query";
 import { PaginatedResponse } from "@core-types/response";
 import { handleServerError } from "@error/handlers/server";
-
-// Import the unified transformer
-import { transformData, TransformOptions } from "@transformers/core/unified-transformer";
+import { sanitizeDocuments } from "@/lib/server/api/responses/formatters";
 
 /**
  * Cleans up empty, null, or undefined filter values that would cause unwanted filtering
@@ -46,26 +44,32 @@ function sanitizeSortField(
 }
 
 /**
- * Core pagination function that leverages the unified transformer system
- * Now supports domain type transformations
+ * Simple validation function using Zod schema
  */
-export async function executePaginatedQuery<
-  T extends BaseDocument,
-  R extends Record<string, unknown> = T
->(
+function validateWithSchema<T>(data: unknown[], schema: ZodSchema<T>): T[] {
+  return data.map(item => {
+    const result = schema.safeParse(item);
+    return result.success ? result.data : item as T;
+  }).filter(Boolean);
+}
+
+/**
+ * Core pagination function with simple data operations
+ */
+export async function executePaginatedQuery<T extends BaseDocument>(
   model: Model<Document>,
   schema: ZodSchema<T>,
   params: QueryParams,
   config: {
     validSortFields?: string[];
-    transformOptions?: Partial<TransformOptions<T, R>>;
+    validateSchema?: boolean;
   } = {}
-): Promise<PaginatedResponse<R>> {
+): Promise<PaginatedResponse<T>> {
   try {
     // Extract configuration options with defaults
     const {
       validSortFields = ['createdAt', 'updatedAt'],
-      transformOptions = {}
+      validateSchema = false
     } = config;
     
     // Extract query parameters
@@ -75,27 +79,20 @@ export async function executePaginatedQuery<
       sortBy = 'createdAt', 
       sortOrder = 'desc',
       filters = {},
-      // other params as needed
     } = params;
     
     // Connect to database
     await connectToDB();
     
-    // 🔧 CLEAN FILTERS - This is the key fix!
+    // Clean filters - this is the key fix!
     const cleanedFilters = cleanFilters(filters);
-    
-    // Add debugging to see the difference
-    // console.log('=== FILTER CLEANING DEBUG ===');
-    // console.log('Original filters:', filters);
-    // console.log('Cleaned filters:', cleanedFilters);
-    // console.log('=============================');
     
     // Sanitize sort field
     const sortField = sanitizeSortField(sortBy, validSortFields, 'createdAt');
     const sortValue = sortOrder === 'asc' ? 1 : -1;
     
     // Build the query using CLEANED filters
-    const query = model.find(cleanedFilters)  // Use cleanedFilters instead of filters
+    const query = model.find(cleanedFilters)
       .sort({ [sortField]: sortValue })
       .skip(calculateSkip({ page, limit }))
       .limit(limit)
@@ -104,19 +101,20 @@ export async function executePaginatedQuery<
     // Execute query and count total using CLEANED filters
     const [rawItems, totalItems] = await Promise.all([
       query.exec(),
-      model.countDocuments(cleanedFilters)  // Use cleanedFilters here too
+      model.countDocuments(cleanedFilters)
     ]);
     
     // Ensure items is an array
     const itemsArray = Array.isArray(rawItems) ? rawItems : [];
     
-    // Use the unified transformer with schema and domain transformation
-    const validatedItems = transformData<T, R>(itemsArray, {
-      schema,
-      handleDates: true,
-      errorContext: `Pagination:${model.modelName}`,
-      ...transformOptions
-    });
+    // Simple data processing:
+    // 1. Sanitize documents
+    let processedItems = sanitizeDocuments<T>(itemsArray);
+    
+    // 2. Optional schema validation
+    if (validateSchema) {
+      processedItems = validateWithSchema(processedItems, schema);
+    }
     
     // Calculate metadata
     const totalPages = calculatePaginationMeta(totalItems, { page, limit }).totalPages;
@@ -124,13 +122,13 @@ export async function executePaginatedQuery<
     // Return the complete paginated response
     return {
       success: true,
-      items: validatedItems,
+      items: processedItems,
       total: totalItems,
       page,
       limit,
       totalPages,
       hasMore: page < totalPages,
-      empty: validatedItems.length === 0
+      empty: processedItems.length === 0
     };
   } catch (error) {
     return {
@@ -143,35 +141,29 @@ export async function executePaginatedQuery<
       hasMore: false,
       empty: true,
       error: handleServerError(error)
-    } as PaginatedResponse<R>;
+    } as PaginatedResponse<T>;
   }
 }
 
-// src/lib/transformers/pagination/unified-pagination.ts (or wherever this function is defined)
-
-// Update the function signature to accept a more generic model type
-export async function fetchPaginatedResource<
-  T extends BaseDocument,
-  R extends Record<string, unknown> = T,
-  DocType = unknown
->(
-  model: Model<DocType>,  // Change this parameter type
+/**
+ * Wrapper function for backward compatibility
+ */
+export async function fetchPaginatedResource<T extends BaseDocument>(
+  model: Model<unknown>,
   schema: ZodSchema<T>,
   params: QueryParams,
   config: {
     validSortFields?: string[];
-    transformOptions?: Partial<TransformOptions<T, R>>;
+    validateSchema?: boolean;
   } = {}
-): Promise<PaginatedResponse<R>> {  
-  // The implementation remains the same
-  return executePaginatedQuery<T, R>(
-    model as unknown as Model<Document>,  // Cast here internally instead
+): Promise<PaginatedResponse<T>> {  
+  return executePaginatedQuery<T>(
+    model as unknown as Model<Document>,
     schema,
     params,
     config
   );
 }
-
 
 /**
  * Calculate skip value for pagination

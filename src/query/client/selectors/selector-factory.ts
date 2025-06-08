@@ -2,84 +2,61 @@ import { ZodSchema } from 'zod';
 import { BaseDocument, WithDateObjects } from '@core-types/document';
 import { EntitySelector, SelectorFunction } from '@query/client/selectors/selector-types';
 import { handleClientError } from '@error/handlers/client';
-import { transformData, transformSingleItem, TransformOptions } from '@transformers/core/unified-transformer';
-import { isCollectionResponse } from '@transformers/utils/response-utils';
-import { normalizeToArray, getEntityLabel } from '@query/client/utilities/selector-helpers';
+import { getEntityLabel, normalizeToArray, validateWithSchema } from '@query/client/utilities/selector-helpers';
+import { isCollectionResponse } from "@transformers/utils/response-utils";
 
 /**
- * Creates an entity selector using the unified transformer
- * 
- * This implementation fully leverages the unified transformer system
- * to provide consistent transformations across all selector functions.
+ * Creates an entity selector with simple data operations
  */
 export function createEntitySelector<T extends BaseDocument>(
   entityType: string, 
   schema: ZodSchema<T>
 ): EntitySelector<T> {
-  // Basic collection selector - uses unified transformer directly
+  // Basic collection selector
   const basic: SelectorFunction<T, T[]> = (data) => {
     try {
-      // Use normalizeToArray utility to handle response formats
       const items = normalizeToArray<unknown>(data);
-      return transformData<T>(items, {
-        schema,
-        errorContext: `${entityType}.basic`
-      });
+      return validateWithSchema(items, schema);
     } catch (error) {
       handleClientError(error, `${entityType}.basic`);
       return [];
     }
   };
   
-  // Detail selector for single entity - uses unified transformer directly
+  // Detail selector for single entity
   const detail: SelectorFunction<T, T | null> = (data) => {
     try {
       if (!data) return null;
       
-      // Use normalizeToArray utility and get first item if available
       const items = normalizeToArray<unknown>(data);
       if (items.length === 0) return null;
       
-      return transformSingleItem<T>(items[0], {
-        schema,
-        errorContext: `${entityType}.detail`
-      });
+      const result = schema.safeParse(items[0]);
+      return result.success ? result.data : items[0] as T;
     } catch (error) {
       handleClientError(error, `${entityType}.detail`);
       return null;
     }
   };
   
-  // With dates selector - explicitly enables date handling
+  // With dates selector - same as basic for now (dates are handled by sanitization)
   const withDates: SelectorFunction<T, WithDateObjects<T>[]> = (data) => {
     try {
-      // Use normalizeToArray utility to handle response formats
       const items = normalizeToArray<unknown>(data);
-      return transformData<T, WithDateObjects<T>>(items, {
-        schema,
-        handleDates: true, // Enable date handling
-        errorContext: `${entityType}.withDates`
-      });
+      return validateWithSchema(items, schema) as WithDateObjects<T>[];
     } catch (error) {
       handleClientError(error, `${entityType}.withDates`);
       return [];
     }
   };
   
-  // Reference selector for dropdowns - adds label and value properties
+  // Reference selector for dropdowns
   const reference: SelectorFunction<T, Array<{ value: string; label: string }>> = (data) => {
     try {
-      // Use normalizeToArray utility to handle response formats
       const items = normalizeToArray<unknown>(data);
+      const validatedItems = validateWithSchema(items, schema);
       
-      // Transform the data with the unified transformer
-      const transformedItems = transformData<T>(items, {
-        schema,
-        errorContext: `${entityType}.reference`
-      });
-      
-      // Map to reference format
-      return transformedItems.map(item => ({
+      return validatedItems.map(item => ({
         value: item._id,
         label: getEntityLabel(item)
       }));
@@ -96,22 +73,19 @@ export function createEntitySelector<T extends BaseDocument>(
         return { items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 0 } };
       }
       
-      // Use the unified transformer to transform items
       const items = normalizeToArray<unknown>(data);
-      const transformedItems = transformData<T>(items, {
-        schema,
-        errorContext: `${entityType}.paginated`
-      });
+      const validatedItems = validateWithSchema(items, schema);
       
       // Extract pagination metadata if available
+      const dataObj = data as Record<string, unknown>;
       const pagination = {
-        total: data.total || transformedItems.length,
-        page: (data as { page?: number }).page || 1,
-        limit: (data as { limit?: number }).limit || transformedItems.length,
-        totalPages: (data as { totalPages?: number }).totalPages || 1
+        total: (dataObj.total as number) || validatedItems.length,
+        page: (dataObj.page as number) || 1,
+        limit: (dataObj.limit as number) || validatedItems.length,
+        totalPages: (dataObj.totalPages as number) || 1
       };
       
-      return { items: transformedItems, pagination };
+      return { items: validatedItems, pagination };
     } catch (error) {
       handleClientError(error, `${entityType}.paginated`);
       return { 
@@ -121,21 +95,16 @@ export function createEntitySelector<T extends BaseDocument>(
     }
   };
   
-  // Custom transformation function - uses unified transformer with domain transform
+  // Custom transformation function
   const transform = <R extends Record<string, unknown>>(
     transformFn: (item: T) => R
   ): SelectorFunction<T, R[]> => {
     return (data) => {
       try {
-        // Use normalizeToArray utility to handle response formats
         const items = normalizeToArray<unknown>(data);
+        const validatedItems = validateWithSchema(items, schema);
         
-        // Use the unified transformer with custom domain transform
-        return transformData<T, R>(items, {
-          schema,
-          domainTransform: transformFn,
-          errorContext: `${entityType}.transform`
-        });
+        return validatedItems.map(transformFn);
       } catch (error) {
         handleClientError(error, `${entityType}.transform`);
         return [];
@@ -143,19 +112,12 @@ export function createEntitySelector<T extends BaseDocument>(
     };
   };
   
-  // Options selector - passes options directly to unified transformer
-  const withOptions = (options: Partial<TransformOptions<T>>): SelectorFunction<T, T[]> => {
+  // Options selector - just validates with schema
+  const withOptions = (_options: Record<string, unknown>): SelectorFunction<T, T[]> => {
     return (data) => {
       try {
-        // Use normalizeToArray utility to handle response formats
         const items = normalizeToArray<unknown>(data);
-        
-        // Use the unified transformer with provided options
-        return transformData<T>(items, {
-          schema,
-          ...options,
-          errorContext: options.errorContext || `${entityType}.withOptions`
-        });
+        return validateWithSchema(items, schema);
       } catch (error) {
         handleClientError(error, `${entityType}.withOptions`);
         return [];
@@ -163,7 +125,7 @@ export function createEntitySelector<T extends BaseDocument>(
     };
   };
   
-  // Schema validation - uses the schema directly
+  // Schema validation
   const validate = (data: unknown): boolean => {
     try {
       return schema.safeParse(data).success;
@@ -198,32 +160,33 @@ class SelectorRegistry {
     entityType: string,
     schema: ZodSchema<T>
   ): EntitySelector<T> {
-    const selector = createEntitySelector<T>(entityType, schema);
+    const selector = createEntitySelector(entityType, schema);
     this.selectors.set(entityType, selector as EntitySelector<BaseDocument>);
     return selector;
   }
   
   /**
-   * Get a selector for an entity type
+   * Get a registered selector
    */
   get<T extends BaseDocument>(
     entityType: string,
     schema?: ZodSchema<T>
   ): EntitySelector<T> {
-    if (this.selectors.has(entityType)) {
-      return this.selectors.get(entityType) as EntitySelector<T>;
+    const existing = this.selectors.get(entityType);
+    if (existing) {
+      return existing as EntitySelector<T>;
     }
     
     if (!schema) {
-      throw new Error(`No selector registered for "${entityType}" and no schema provided`);
+      throw new Error(`No schema provided for unregistered entity type: ${entityType}`);
     }
     
     return this.register(entityType, schema);
   }
 }
 
-// Export a singleton instance
-export const selectorRegistry = new SelectorRegistry();
+// Global registry instance
+const registry = new SelectorRegistry();
 
 /**
  * Register a selector for an entity type
@@ -232,7 +195,7 @@ export function registerSelector<T extends BaseDocument>(
   entityType: string,
   schema: ZodSchema<T>
 ): EntitySelector<T> {
-  return selectorRegistry.register(entityType, schema);
+  return registry.register(entityType, schema);
 }
 
 /**
@@ -242,8 +205,5 @@ export function getSelector<T extends BaseDocument>(
   entityType: string,
   schema?: ZodSchema<T>
 ): EntitySelector<T> {
-  return selectorRegistry.get(entityType, schema);
+  return registry.get(entityType, schema);
 }
-
-// Export for cache-sync usage
-export const getSelectors = getSelector;

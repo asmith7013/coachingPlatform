@@ -12,18 +12,15 @@ import { createTransformer } from '@transformers/core/unified-transformer';
 import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
 
 // Define types with date objects
-export type NYCPSStaffWithDates = WithDateObjects<NYCPSStaff>;
-export type TeachingLabStaffWithDates = WithDateObjects<TeachingLabStaff>;
-export type StaffWithDates = NYCPSStaffWithDates | TeachingLabStaffWithDates;
 
 // Create transformers for each staff type
-const nycpsStaffTransformer = createTransformer<NYCPSStaff, NYCPSStaffWithDates>({
+const nycpsStaffTransformer = createTransformer<NYCPSStaff, WithDateObjects<NYCPSStaff>>({
   schema: ensureBaseDocumentCompatibility<NYCPSStaff>(NYCPSStaffZodSchema),
   handleDates: true,
   errorContext: 'NYCPSStaffTransformer'
 });
 
-const teachingLabStaffTransformer = createTransformer<TeachingLabStaff, TeachingLabStaffWithDates>({
+const teachingLabStaffTransformer = createTransformer<TeachingLabStaff, WithDateObjects<TeachingLabStaff>>({
   schema: ensureBaseDocumentCompatibility<TeachingLabStaff>(TeachingLabStaffZodSchema),
   handleDates: true,
   errorContext: 'TeachingLabStaffTransformer'

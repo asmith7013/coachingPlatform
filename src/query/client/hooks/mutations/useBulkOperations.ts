@@ -51,10 +51,7 @@ export interface BulkOperationOptions<T extends BaseDocument> {
  * bulkOps.bulkUpload(schoolsData);
  * ```
  */
-export function useBulkOperations<
-  T extends BaseDocument, 
-  R extends Record<string, unknown> = T
->({
+export function useBulkOperations<T extends BaseDocument>({
   entityType,
   schema, // ✅ NOW REQUIRED
   bulkUpload,
@@ -97,7 +94,7 @@ export function useBulkOperations<
     },
     onSuccess: async (response) => {
       // Transform response with schema validation
-      transformCollectionResponse<T, R>(
+      transformCollectionResponse<T>(
         response, 
         schema,
         {
@@ -147,7 +144,7 @@ export function useBulkOperations<
     },
     onSuccess: async (response) => {
       // Transform response with schema validation
-      transformCollectionResponse<T, R>(
+      transformCollectionResponse<T>(
         response, 
         schema,
         {

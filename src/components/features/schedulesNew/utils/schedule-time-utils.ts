@@ -37,5 +37,34 @@ export function calculateMidpointTime(startTime: string, endTime: string): strin
   return midpoint.toISOString().substr(11, 5);
 }
 
+/**
+ * Calculate time slot for a specific portion of a period
+ * Handles first_half, second_half, and full_period correctly
+ */
+export function calculatePeriodPortionTimeSlot(
+  periodNumber: number | string, 
+  portion: 'first_half' | 'second_half' | 'full_period'
+): { startTime: string; endTime: string } {
+  const fullPeriod = calculatePeriodTimeSlot(periodNumber);
+  
+  if (portion === 'full_period') {
+    return fullPeriod;
+  }
+  
+  const midpoint = calculateMidpointTime(fullPeriod.startTime, fullPeriod.endTime);
+  
+  if (portion === 'first_half') {
+    return {
+      startTime: fullPeriod.startTime,
+      endTime: midpoint
+    };
+  } else { // second_half
+    return {
+      startTime: midpoint,
+      endTime: fullPeriod.endTime
+    };
+  }
+}
+
 
 

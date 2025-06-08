@@ -6,7 +6,8 @@ import React, { useState,
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
-import { useSchoolsList, useSchoolsMutations, type SchoolWithDates } from "@hooks/domain/useSchools";
+import { useSchoolsList, useSchoolsMutations } from "@hooks/domain/useSchools";
+import { School } from "@zod-schema/core/school";
 // import type { SchoolInput } from "@domain-types/school";
 // import { ResourceHeader } from "@/components/composed/layouts/ResourceHeader";
 import { EmptyListWrapper } from '@/components/core/empty/EmptyListWrapper';
@@ -14,7 +15,6 @@ import { SchoolGridCard } from '@/components/domain/schools/SchoolGrid';
 import { CreateSchoolDialog } from '@/components/composed/dialogs/CreateSchoolDialog';
 import { BuildingLibraryIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 
-type School = SchoolWithDates;
 // import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
 // import { Field, RigidResourceForm as GenericResourceForm } from "@components/composed/forms/RigidResourceForm";
 // import BulkUploadForm from "@components/composed/forms/BulkUploadForm";

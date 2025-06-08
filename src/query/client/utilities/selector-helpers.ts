@@ -2,6 +2,7 @@ import { isEntityResponse } from "@/lib/transformers/utils/response-utils";
 import { isCollectionResponse } from "@/lib/transformers/utils/response-utils";
 import { EntityResponse } from "@/lib/types/core/response";
 import { CollectionResponse } from "@/lib/types/core/response";
+import { ZodSchema } from "zod";
 
 /**
  * Helper function to get a label for an entity
@@ -73,4 +74,11 @@ export function normalizeToArray<T>(data: unknown): T[] {
   // For other cases, try to handle single items
   // This is still potentially unsafe, but that's the nature of this function
   return [data as T];
+}
+
+export function validateWithSchema<T>(data: unknown[], schema: ZodSchema<T>): T[] {
+  return data.map(item => {
+    const result = schema.safeParse(item);
+    return result.success ? result.data : item as T;
+  }).filter(Boolean);
 }

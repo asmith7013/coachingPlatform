@@ -1,14 +1,11 @@
 import React from 'react';
 import { Users, Clock } from 'lucide-react';
-import { useSelectionStatus } from './context';
+import { useScheduleContext } from './context';
 
 export function SelectionStatusFooter() {
-  const {
-    selectedTeacher,
-    selectedPeriod,
-    selectedPortion,
-    teachers
-  } = useSelectionStatus();
+  // ✅ SIMPLIFIED: Use context directly with UI state
+  const { uiState, teachers } = useScheduleContext();
+  const { selectedTeacher, selectedPeriod, selectedPortion } = uiState;
 
   if (!(selectedTeacher && selectedPeriod) && !selectedPortion) {
     return null;
@@ -21,7 +18,7 @@ export function SelectionStatusFooter() {
           <div className="flex items-center space-x-2">
             <Users className="w-5 h-5 text-blue-500" />
             <span className="text-sm font-medium text-blue-700">
-              {teachers.find(t => t.id === selectedTeacher)?.staffName} • Period {selectedPeriod}
+              {teachers.find(t => t._id === selectedTeacher)?.staffName} • Period {selectedPeriod}
             </span>
           </div>
         )}

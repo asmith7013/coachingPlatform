@@ -3,13 +3,16 @@ import {
   BellScheduleTypeZod, 
   BlockDayTypeZod, 
   DayTypeZod, 
-  PeriodTypeZod 
+  PeriodTypeZod,
+  ScheduleAssignmentTypeZod
 } from "@enums"; 
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
 import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
 import { zDateField } from '@zod-schema/shared/dateHelpers';
-import { ScheduleAssignmentTypeZod, TimeSlotZodSchema } from "../visits/planned-visit";
+import { TimeSlotZodSchema } from "@zod-schema/visits/visit";
+
+// Note: ScheduleAssignmentTypeZod was from planned-visit schema - using string for now
 
 // Class Schedule Item Fields Schema
 export const ClassScheduleItemFieldsSchema = z.object({

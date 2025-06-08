@@ -88,31 +88,6 @@ export const RubricScoreReferenceZodSchema = BaseReferenceZodSchema.merge(
   schoolName: z.string().optional(),
 });
 
-// // RubricScore Reference Transformer
-// export const rubricScoreToReference = createReferenceTransformer<RubricScore, RubricScoreReference>(
-//   (score) => {
-//     const dateStr = score.date instanceof Date 
-//       ? score.date.toLocaleDateString() 
-//       : score.date ? new Date(score.date).toLocaleDateString() : '';
-//     return `Score ${score.score} on ${dateStr}`;
-//   },
-//   (score) => ({
-//     date: score.date,
-//     score: score.score,
-//     staffId: score.staffId,
-//     school: score.school,
-//     dateFormatted: score.date instanceof Date 
-//       ? score.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-//       : score.date ? new Date(score.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',
-//   }),
-//   RubricScoreReferenceZodSchema
-// );
-
-// // Array transformer
-// export const rubricScoresToReferences = createArrayTransformer<RubricScore, RubricScoreReference>(
-//   rubricScoreToReference
-// );
-
 // Auto-generate TypeScript types
 export type Rubric = z.infer<typeof RubricZodSchema>;
 export type RubricInput = z.infer<typeof RubricInputZodSchema>;

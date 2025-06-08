@@ -3,6 +3,7 @@ import { SchoolModel } from '@mongoose-schema/core/school.model';
 import { SchoolZodSchema } from '@zod-schema/core/school';
 import { createApiSafeFetcher } from '@/lib/server/fetchers/fetcher-factory';
 import { fetchById } from '@transformers/utils/fetch-utils';
+import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
 
 /**
  * API-safe fetcher for schools 
@@ -10,7 +11,7 @@ import { fetchById } from '@transformers/utils/fetch-utils';
  */
 export const fetchSchoolsForApi = createApiSafeFetcher(
   SchoolModel,
-  SchoolZodSchema,
+  ensureBaseDocumentCompatibility(SchoolZodSchema),
   "schoolName" // Default search field for schools
 );
 
@@ -18,5 +19,5 @@ export const fetchSchoolsForApi = createApiSafeFetcher(
  * Fetches a school by ID
  */
 export async function fetchSchoolByIdForApi(id: string) {
-  return fetchById(SchoolModel, id, SchoolZodSchema);
+  return fetchById(SchoolModel, id, ensureBaseDocumentCompatibility(SchoolZodSchema));
 }

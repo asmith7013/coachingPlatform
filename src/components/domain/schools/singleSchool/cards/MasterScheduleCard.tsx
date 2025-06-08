@@ -5,7 +5,7 @@ import { tv, type VariantProps } from 'tailwind-variants'
 import { Card } from '@composed-components/cards/Card'
 // StatisticsGrid now handled within ScheduleBuilder
 import { ModeToggle } from '@/components/core/fields/ModeToggle'
-import { ScheduleBuilder } from '@/components/features/schedulesNew'
+// import { ScheduleBuilder } from '@/components/features/schedulesNew'
 
 // ScheduleBuilder now provides its own context, no need for direct hook usage
 import { Text, Heading } from '@core-components/typography'
@@ -18,7 +18,7 @@ import {
   CalendarIcon
 } from '@heroicons/react/24/outline'
 import { navigateDate, getTodayString, isToday, formatLongDate } from '@transformers/utils/date-utils'
-import type { ScheduleAssignmentType } from '@/components/features/schedulesNew/types'
+import type { ScheduleAssignmentType } from '@domain-types/schedule'
 
 // Type alias for backward compatibility
 type VisitPortion = ScheduleAssignmentType
@@ -81,7 +81,7 @@ export interface MasterScheduleCardProps extends VariantProps<typeof masterSched
 }
 
 export function MasterScheduleCard({
-  schoolId,
+  // schoolId,
   schoolName,
   initialDate,
   variant,
@@ -126,7 +126,10 @@ export function MasterScheduleCard({
 
   // New unified schedule interface using context architecture
   const renderScheduleInterface = () => (
-    <ScheduleBuilder schoolId={schoolId} date={currentDate} />
+    // <ScheduleBuilder schoolId={schoolId} date={currentDate} />
+    <div>
+      <Text>Schedule Builder</Text>
+    </div>
   )
 
   return (

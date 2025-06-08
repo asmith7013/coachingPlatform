@@ -1,9 +1,13 @@
 
-import type { ScheduleAssignmentType, PlannedVisit } from '@zod-schema/visits/planned-visit';
+import type { Visit } from '@zod-schema/visits/visit';
+
+// Note: ScheduleAssignmentType and PlannedVisit were from planned-visit schema
+type ScheduleAssignmentType = string;
+type PlannedVisit = Visit;
 import type { BellSchedule, Period, AssignmentState } from '@zod-schema/schedule/schedule';
 
 // ===== UNIFIED TIME SLOT INTERFACES =====
-export type { ScheduleAssignmentType } from '@zod-schema/visits/planned-visit';
+export type { ScheduleAssignmentType };
 
 /**
  * Unified TimeSlot interface that combines visit and general schedule types
@@ -69,7 +73,7 @@ export interface InteractiveScheduleColumn extends ScheduleColumn {
  * Hover zone types for three-zone interactions
  * Maps to ScheduleAssignmentType for consistency
  */
-export type HoverZone = 'full_period' | 'first_half' | 'second_half' | null;
+export type HoverZone = ScheduleAssignmentType | null;
 
 /**
  * Hover state for interactive schedule components
@@ -295,4 +299,4 @@ export interface UseScheduleHeightReturn {
   resetHeight: () => void;
 } 
 
-export type { PlannedVisit } from '@zod-schema/visits/planned-visit';
+export type { PlannedVisit };

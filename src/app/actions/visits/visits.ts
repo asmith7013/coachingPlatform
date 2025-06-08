@@ -43,4 +43,7 @@ export async function fetchVisits(params: QueryParams) {
 
 export async function fetchVisitById(id: string) {
   return withDbConnection(() => visitActions.fetchById(id));
-} 
+}
+
+// ✅ ADD: Export the raw actions object for debugging
+// export { visitActions }; 

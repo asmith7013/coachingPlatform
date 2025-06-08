@@ -1,36 +1,39 @@
 import { NYCPSStaffModel, TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
 import { NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from '@zod-schema/core/staff';
-import { createApiSafeFetcher } from '@server/fetchers/fetcher-factory';
+import { createApiSafeFetcher } from '@/lib/server/fetchers/fetcher-factory';
 import { fetchById } from '@transformers/utils/fetch-utils';
+import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
 
 /**
  * API-safe fetcher for NYCPS staff
  */
 export const fetchNYCPSStaffForApi = createApiSafeFetcher(
   NYCPSStaffModel,
-  NYCPSStaffZodSchema,
-  "staffName" 
+  ensureBaseDocumentCompatibility(NYCPSStaffZodSchema),
+  "staffName"
 );
 
 /**
  * API-safe fetcher for Teaching Lab staff
  */
-export const fetchTLStaffForApi = createApiSafeFetcher(
+export const fetchTeachingLabStaffForApi = createApiSafeFetcher(
   TeachingLabStaffModel,
-  TeachingLabStaffZodSchema,
-  "staffName" 
+  ensureBaseDocumentCompatibility(TeachingLabStaffZodSchema),
+  "staffName"
 );
 
 /**
- * Fetches a staff member by ID
+ * Fetches NYCPS staff by ID
  */
-export async function fetchStaffByIdForApi(id: string, staffType = 'nycps') {
-  // Determine the correct model and schema based on staff type
-  const Model = staffType === 'nycps' ? NYCPSStaffModel : TeachingLabStaffModel;
-  const Schema = staffType === 'nycps' ? NYCPSStaffZodSchema : TeachingLabStaffZodSchema;
-  
-  // Use the centralized fetchById utility
-  return fetchById(Model, id, Schema);
+export async function fetchNYCPSStaffByIdForApi(id: string) {
+  return fetchById(NYCPSStaffModel, id, ensureBaseDocumentCompatibility(NYCPSStaffZodSchema));
+}
+
+/**
+ * Fetches Teaching Lab staff by ID
+ */
+export async function fetchTeachingLabStaffByIdForApi(id: string) {
+  return fetchById(TeachingLabStaffModel, id, ensureBaseDocumentCompatibility(TeachingLabStaffZodSchema));
 }
 
 /**

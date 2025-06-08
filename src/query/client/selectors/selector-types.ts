@@ -1,5 +1,4 @@
 import { BaseDocument, WithDateObjects } from '@core-types/document';
-import { TransformOptions } from '@/lib/transformers/core/unified-transformer';
 
 /**
  * Function type for entity selectors
@@ -33,7 +32,7 @@ export interface EntitySelector<T extends BaseDocument> {
   
   // Advanced usage
   transform: <R extends Record<string, unknown>>(transformFn: (item: T) => R) => SelectorFunction<T, R[]>;
-  withOptions: (options: Partial<TransformOptions<T>>) => SelectorFunction<T, T[]>;
+  withOptions: (options: Record<string, unknown>) => SelectorFunction<T, T[]>;
   
   // Schema validation
   validate: (data: unknown) => boolean;

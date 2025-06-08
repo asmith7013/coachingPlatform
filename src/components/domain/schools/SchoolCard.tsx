@@ -7,13 +7,13 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DataImportDialog } from '@/components/composed/dialogs/DataImportDialog';
-import { SchoolWithDates } from "@hooks/domain/useSchools";
+import { School } from "@zod-schema/core/school";
 import { cn } from '@ui/utils/formatters';
 import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { schoolToSlug } from '@transformers/utils/school-slug-utils';
 
 interface SchoolCardProps {
-  school: SchoolWithDates;
+  school: School;
   onDelete?: (id: string) => void;
   isDeleting?: boolean;
 }

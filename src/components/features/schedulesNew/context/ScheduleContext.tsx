@@ -1,8 +1,43 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { useScheduleBuilder } from '../hooks/useScheduleBuilder';
+import { useScheduleData, useScheduleActions, useScheduleState } from '../hooks';
+import type { Visit } from '@zod-schema/visits/visit';
+import type { NYCPSStaff } from '@zod-schema/core/staff';
+import type { ClassScheduleItem, TeacherSchedule } from '@zod-schema/schedule/schedule';
+import type { VisitCreationData, VisitUpdateData, ScheduleUIState, ConflictCheckData } from '../types';
+import type { School } from '@zod-schema/core/school';
 
-// Full context type (internal use only)
-type ScheduleContextType = ReturnType<typeof useScheduleBuilder>;
+// ✅ CLEAN CONTEXT TYPE: Only essential composed interface
+interface ScheduleContextType {
+  // Core props
+  schoolId: string;
+  date: string;
+  mode: 'create' | 'edit';
+  visitId?: string;
+  
+  // Data (direct from domain hooks)
+  teachers: NYCPSStaff[];
+  timeSlots: ClassScheduleItem[];
+  visits: Visit[];
+  teacherSchedules: TeacherSchedule[];
+  school: School;
+  isLoading: boolean;
+  error: unknown;
+  
+  // UI state
+  uiState: ScheduleUIState;
+  selectTeacherPeriod: (teacherId: string, period: number) => void;
+  clearSelection: () => void;
+  toggleDropdown: (dropdownId: string | null) => void;
+  
+  // Operations (delegated to domain hooks)
+  scheduleVisit: (data: VisitCreationData) => Promise<{ success: boolean; error?: string }>;
+  updateVisit: (visitId: string, updates: VisitUpdateData) => Promise<{ success: boolean; error?: string }>;
+  deleteVisit: (visitId: string) => Promise<{ success: boolean; error?: string }>;
+  
+  // Helpers
+  getVisitForTeacherPeriod: (teacherId: string, period: number) => Visit | undefined;
+  hasVisitConflict: (data: ConflictCheckData) => boolean;
+}
 
 // Create context
 const ScheduleContext = createContext<ScheduleContextType | null>(null);
@@ -11,129 +46,73 @@ const ScheduleContext = createContext<ScheduleContextType | null>(null);
 interface ScheduleProviderProps {
   schoolId: string;
   date: string;
+  mode?: 'create' | 'edit';
+  visitId?: string;
   children: ReactNode;
 }
 
-export function ScheduleProvider({ schoolId, date, children }: ScheduleProviderProps) {
-  const scheduleBuilder = useScheduleBuilder({ schoolId, date });
+export function ScheduleProvider({ 
+  schoolId, 
+  date, 
+  mode = 'create',
+  visitId,
+  children 
+}: ScheduleProviderProps) {
+  // ✅ COMPOSE FOCUSED HOOKS: Each with single responsibility
+  const scheduleData = useScheduleData({ schoolId, date, mode, visitId });
+  const scheduleActions = useScheduleActions({ 
+    schoolId, 
+    date, 
+    visits: scheduleData.visits, 
+    mode, 
+    visitId 
+  });
+  const scheduleState = useScheduleState();
   
-  console.log('🏗️ ScheduleProvider rendering with:', { schoolId, date, hasData: !!scheduleBuilder.teachers.length });
+  const contextValue: ScheduleContextType = {
+    // Core props
+    schoolId,
+    date,
+    mode,
+    visitId,
+    
+    // Data (pass through from domain hooks)
+    teachers: scheduleData.teachers,
+    timeSlots: scheduleData.timeSlots,
+    visits: scheduleData.visits,
+    teacherSchedules: scheduleData.teacherSchedules,
+    school: scheduleData.school as School,
+    isLoading: Boolean(scheduleData.isLoading || scheduleActions.isLoading),
+    error: scheduleData.error || scheduleActions.error,
+    
+    // UI state
+    uiState: scheduleState.uiState,
+    selectTeacherPeriod: scheduleState.selectTeacherPeriod,
+    clearSelection: scheduleState.clearSelection,
+    toggleDropdown: scheduleState.toggleDropdown,
+    
+    // Operations (delegated)
+    scheduleVisit: scheduleActions.scheduleVisit,
+    updateVisit: scheduleActions.updateVisit,
+    deleteVisit: scheduleActions.deleteVisit,
+    
+    // Helpers
+    getVisitForTeacherPeriod: scheduleActions.getVisitForTeacherPeriod,
+    hasVisitConflict: scheduleActions.hasVisitConflict
+  };
   
   return (
-    <ScheduleContext.Provider value={scheduleBuilder}>
+    <ScheduleContext.Provider value={contextValue}>
       {children}
     </ScheduleContext.Provider>
   );
 }
 
 // Base hook for internal use
-function useScheduleContext(): ScheduleContextType {
+export function useScheduleContext(): ScheduleContextType {
   const context = useContext(ScheduleContext);
   if (!context) {
     throw new Error('Schedule hooks must be used within ScheduleProvider');
   }
   return context;
 }
-
-// ===== SELECTIVE CONTEXT HOOKS =====
-// These prevent unnecessary re-renders by exposing only specific state slices
-
-/**
- * Hook for teacher/period selection state and actions
- * Use in: TeacherPeriodCell, DropZoneCell
- */
-export function useScheduleSelection() {
-  const context = useScheduleContext();
-  return {
-    selectedTeacher: context.selectedTeacher,
-    selectedPeriod: context.selectedPeriod,
-    handleTeacherPeriodSelect: context.handleTeacherPeriodSelect
-  };
-}
-
-/**
- * Hook for drop zone interactions and state
- * Use in: DropZoneCell
- */
-export function useDropZoneActions() {
-  const context = useScheduleContext();
-  return {
-    teacherSchedules: context.teacherSchedules,
-    eventTypes: context.eventTypes,
-    openDropdown: context.openDropdown,
-    setOpenDropdown: context.setOpenDropdown,
-    getDropZoneItems: context.getDropZoneItems,
-    isHalfAvailable: context.isHalfAvailable,
-    handlePeriodPortionSelect: context.handlePeriodPortionSelect,
-    updateEventType: context.updateEventType,
-    removeDropZoneItem: context.removeDropZoneItem
-  };
-}
-
-/**
- * Hook for teacher planning status
- * Use in: PlanningStatusBar
- */
-export function useTeacherPlanning() {
-  const context = useScheduleContext();
-  return {
-    teachers: context.teachers,
-    getTeacherPlanning: context.getTeacherPlanning
-  };
-}
-
-/**
- * Hook for visit data and queries
- * Use in: TeacherPeriodCell, any component showing visit status
- */
-export function useVisitData() {
-  const context = useScheduleContext();
-  return {
-    scheduledVisits: context.scheduledVisits,
-    getVisit: context.getVisit,
-    hasVisit: context.hasVisit,
-    isDropZoneFullyScheduled: context.isDropZoneFullyScheduled,
-    isTeacherScheduledInDropZone: context.isTeacherScheduledInDropZone
-  };
-}
-
-/**
- * Hook for schedule grid structure data
- * Use in: ScheduleGrid, components that need grid layout info
- */
-export function useScheduleStructure() {
-  const context = useScheduleContext();
-  return {
-    teachers: context.teachers,
-    timeSlots: context.timeSlots,
-    teacherSchedules: context.teacherSchedules,
-    isLoading: context.isLoading,
-    error: context.error,
-    hasData: context.hasData
-  };
-}
-
-/**
- * Hook for save status and actions
- * Use in: ScheduleGrid footer, any save indicators
- */
-export function useScheduleSaveStatus() {
-  const context = useScheduleContext();
-  return {
-    saveStatus: context.saveStatus
-  };
-}
-
-/**
- * Hook for selection status display
- * Use in: SelectionStatusFooter
- */
-export function useSelectionStatus() {
-  const context = useScheduleContext();
-  return {
-    selectedTeacher: context.selectedTeacher,
-    selectedPeriod: context.selectedPeriod,
-    selectedPortion: context.selectedPortion,
-    teachers: context.teachers
-  };
-} 

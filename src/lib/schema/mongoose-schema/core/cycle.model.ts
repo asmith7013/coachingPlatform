@@ -38,7 +38,22 @@ class LookForItem {
 // Main Cycle class now extends BaseMongooseDocument
 @modelOptions({ 
   schemaOptions: { 
-    collection: 'cycles' // Only specify collection name, base class handles timestamps
+    collection: 'cycles', // Only specify collection name, base class handles timestamps
+    // Handle ObjectId conversion at model level
+    toJSON: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    },
+    toObject: { 
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        ret._id = ret._id.toString();
+        return ret;
+      }
+    }
   } 
 })
 class Cycle extends BaseMongooseDocument {
