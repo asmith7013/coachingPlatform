@@ -1,4 +1,4 @@
-
+import { SessionPurposes } from '@/lib/schema/enum';
 // Re-export core visit types from the schema
 export type {
     Visit,
@@ -16,10 +16,10 @@ export type {
 
   // Additional visit-related types
   export type VisitType = 
-    | 'observation' 
-    | 'debrief' 
-    | 'co-planning' 
-    | 'professional-learning';
+    | SessionPurposes.OBSERVATION 
+    | SessionPurposes.DEBRIEF 
+    | SessionPurposes.CO_PLANNING 
+    | SessionPurposes.PLC;
   
   export interface VisitFilters {
     school?: string;

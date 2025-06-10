@@ -12,7 +12,7 @@ import { createErrorContext } from '@error';
  * @param options - Optional React Query mutation options
  * @param errorContext - Optional error context string or object
  */
-export function useErrorHandledMutation<
+export function useStandardMutation<
   TData = unknown,
   TError = Error,
   TVariables = void,
@@ -60,4 +60,5 @@ export function useErrorHandledMutation<
   });
 }
 
-export default useErrorHandledMutation; 
+// Export as default and named export
+export default useStandardMutation; 

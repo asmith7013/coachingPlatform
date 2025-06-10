@@ -2,7 +2,7 @@ import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { navigationItems, pageMetadata } from '@app/dashboard/config'
 import type { NavigationItem } from '@/components/composed/layouts/sidebar/NavigationSidebar'
-import { parseSchoolSlug } from '@transformers/utils/school-slug-utils'
+import { parseSchoolSlug } from '@/lib/data-processing/transformers/utils/school-slug-utils'
 
 export function useNavigation() {
   const pathname = usePathname()

@@ -1,9 +1,9 @@
 import { ZodSchema } from 'zod';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { useEntityList } from '@/query/client/hooks/queries/useEntityList';
-import { useEntityById } from '@/query/client/hooks/queries/useEntityById';
-import { createOperationMutation } from '@query/client/utilities/mutation-helpers';
+import { useEntityList } from '@query/client/hooks/queries/useEntityList';
+import { useEntityById } from '@query/client/hooks/queries/useEntityById';
+import { useStandardMutation } from '@query/client/hooks/mutations/useStandardMutation';
 
 import { ServerActions } from '@core-types/query-factory';
 import { QueryParams } from '@core-types/query';
@@ -22,6 +22,46 @@ export interface CrudHooksConfig<T extends BaseDocument> {
   // Optional with good defaults
   validSortFields?: string[];
   relatedEntityTypes?: string[];
+}
+
+/**
+ * Creates a standardized mutation for CRUD operations with consistent error handling
+ */
+function createOperationMutation<TData, TResult>(
+  operation: 'create' | 'update' | 'delete',
+  entityType: string,
+  mutationFn: (data: TData) => Promise<TResult>,
+  queryClient: ReturnType<typeof useQueryClient>,
+  additionalInvalidateKeys: string[][] = []
+) {
+  return () => useStandardMutation(
+    mutationFn,
+    {
+      mutationKey: [entityType, operation],
+      onSuccess: () => {
+        // ✅ FIX: Add exact: false to match filtered queries
+        queryClient.invalidateQueries({ 
+          queryKey: [entityType, 'list'],
+          exact: false  // ← This fixes filtered query invalidation
+        });
+        
+        // ✅ Fix detail queries too
+        queryClient.invalidateQueries({ 
+          queryKey: [entityType, 'detail'],
+          exact: false  // ← Also fix detail queries
+        });
+        
+        // ✅ Fix related entity invalidation too
+        additionalInvalidateKeys.forEach(key => {
+          queryClient.invalidateQueries({ 
+            queryKey: key,
+            exact: false  // ← Fix related entities too
+          });
+        });
+      }
+    },
+    `${entityType}.${operation}` // Error context
+  );
 }
 
 /**
@@ -51,17 +91,33 @@ export function createCrudHooks<T extends BaseDocument>(
   const additionalInvalidateKeys = relatedEntityTypes.map(type => [type, 'list']);
   
   // Create hooks once, not wrappers
-  const useList = (customParams?: Partial<QueryParams>) => useEntityList<T>({
-    entityType,
-    fetcher: serverActions.fetch as (params: QueryParams) => Promise<PaginatedResponse<T>>,
-    schema,
-    defaultParams: { ...defaultParams, ...customParams },
-    validSortFields,
-    persistFilters: true,
-    storageKey: `${entityType}_filters`,
-    staleTime: 60 * 1000,
-    errorContextPrefix: entityType
-  });
+  const useList = (customParams?: Partial<QueryParams>) => {
+
+    // Create a wrapped fetcher with debugging
+    const debugFetcher = async (params: QueryParams) => {
+      
+      try {
+        const result = await serverActions.fetch(params);
+        
+        return result;
+      } catch (error) {
+        console.error(`🏭❌ CRUD FACTORY: Fetcher error for ${entityType}:`, error);
+        throw error;
+      }
+    };
+    
+    return useEntityList<T>({
+      entityType,
+      fetcher: debugFetcher as (params: QueryParams) => Promise<PaginatedResponse<T>>,
+      schema,
+      defaultParams: { ...defaultParams, ...customParams },
+      validSortFields,
+      persistFilters: true,
+      storageKey: `${entityType}_filters`,
+      staleTime: 60 * 1000,
+      errorContextPrefix: entityType
+    });
+  };
   
   const useDetail = (id: string | null | undefined, options = {}) => {
     if (!serverActions.fetchById) {
@@ -79,7 +135,7 @@ export function createCrudHooks<T extends BaseDocument>(
   };
 
   /**
-   * Hook for creating, updating, and deleting entities with optimistic updates
+   * Hook for creating, updating, and deleting entities with consistent error handling
    * Only returns operations that are actually implemented
    */
   function useMutations() {

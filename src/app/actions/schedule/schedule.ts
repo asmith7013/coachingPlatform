@@ -238,28 +238,28 @@ async function findStaffMemberByEmail(email: string): Promise<StaffMember | null
     }).select('_id staffName email').lean().exec();
     
     if (staffMember) {
-      console.log(`✅ Strategy 1 success: Exact match found for ${email}`);
+      // console.log(`✅ Strategy 1 success: Exact match found for ${email}`);
       return staffMember as unknown as StaffMember;
     }
     
     // Strategy 2: Username match (before @)
     const username = email.split('@')[0];
-    console.log(`🔍 Strategy 2: Trying username match for "${username}"`);
+    // console.log(`🔍 Strategy 2: Trying username match for "${username}"`);
     
     staffMember = await NYCPSStaffModel.findOne({
       email: { $regex: new RegExp(`^${username.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}@`, 'i') }
     }).select('_id staffName email').lean().exec();
     
     if (staffMember) {
-      console.log(`✅ Strategy 2 success: Username match found for ${username}`);
+      // console.log(`✅ Strategy 2 success: Username match found for ${username}`);
       return staffMember as unknown as StaffMember;
     }
     
     // Strategy 3: Database diagnostic
-    console.log(`🔍 Strategy 3: No email match found, running diagnostics`);
+    // console.log(`🔍 Strategy 3: No email match found, running diagnostics`);
     const allStaff = await NYCPSStaffModel.find({}).select('email staffName').lean().exec();
     
-    console.log(`📊 Database contains ${allStaff.length} staff members:`);
+    // console.log(`📊 Database contains ${allStaff.length} staff members:`);
     allStaff.slice(0, 10).forEach(staff => {
       console.log(`  - ${staff.staffName}: ${staff.email}`);
     });

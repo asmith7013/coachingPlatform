@@ -11,12 +11,12 @@ import {
   CheckIcon,
   AcademicCapIcon
 } from '@heroicons/react/24/outline';
-import { useErrorHandledMutation } from '@/query/client/hooks/mutations/useStandardMutation';
+import { useStandardMutation } from '@/query/client/hooks/mutations/useStandardMutation';
 import { bulkCreateStaffWithSchoolLink } from '@actions/staff/operations';
 import { createVisit } from '@actions/visits/visits';
 import { createBellSchedule, createMasterSchedule } from '@actions/schedule/schedule';
 import { AI_PROMPTS, createMasterSchedulePrompt } from '@ui/data-import/schema-templates';
-import { createDataPreview, validateVisitData, validateStaffData, validateBellScheduleData, validateMasterScheduleData } from '@transformers/ui';
+import { createDataPreview, validateVisitData, validateStaffData, validateBellScheduleData, validateMasterScheduleData } from '@/lib/data-processing/transformers/ui';
 import type { School } from '@zod-schema/core/school';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
@@ -95,20 +95,20 @@ export function DataImportDialog({ open, onClose, school }: DataImportDialogProp
   }, [selectedDataType, masterSchedulePrompt]);
 
   // Mutations
-  const { mutate: createStaffMutation, isPending: creatingStaff } = useErrorHandledMutation(
+  const { mutate: createStaffMutation, isPending: creatingStaff } = useStandardMutation(
     ([staffData, schoolId]: [NYCPSStaffInput[], string]) => 
       bulkCreateStaffWithSchoolLink(staffData, schoolId),
     {},
     "StaffCreation"
   );
 
-  const { mutate: createVisitMutation, isPending: creatingVisit } = useErrorHandledMutation(
+  const { mutate: createVisitMutation, isPending: creatingVisit } = useStandardMutation(
     (visitData: VisitInput) => createVisit(visitData),
     {},
     "VisitCreation"
   );
 
-  const { mutate: createBellScheduleMutation, isPending: creatingBellSchedule } = useErrorHandledMutation(
+  const { mutate: createBellScheduleMutation, isPending: creatingBellSchedule } = useStandardMutation(
     (scheduleData: BellScheduleInput) => createBellSchedule(scheduleData),
     {},
     "BellScheduleCreation"

@@ -112,7 +112,7 @@ export function createReferenceEndpoint<T extends BaseDocument, R extends BaseRe
 
         // Simple data transformation pipeline:
         // 1. Sanitize MongoDB documents
-        const sanitizedItems = sanitizeDocuments<T>(rawResponse.items || []);
+        const sanitizedItems = sanitizeDocuments<T>((rawResponse.items || []) as T[]);
         
         // 2. Validate with schema if strict validation enabled
         let validatedItems = sanitizedItems;

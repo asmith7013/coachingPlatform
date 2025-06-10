@@ -48,9 +48,6 @@ export class CoachingLog extends BaseMongooseDocument {
 
   @prop({ type: String })
   aiSummary?: string;
-
-  @prop({ type: () => [String], required: true })
-  owners!: string[];
 }
 
 export const CoachingLogModel =

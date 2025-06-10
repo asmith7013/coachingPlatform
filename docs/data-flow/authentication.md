@@ -1,40 +1,10 @@
-Looking at this question, you raise a good point. The Clerk implementation is indeed comprehensive, but it could be more concise. Here's my assessment:
-
-**Is Clerk important enough to justify this length?**
-Yes, because:
-- It's the entire authentication foundation for the app
-- It handles user identity, permissions, role-based access control
-- It integrates with staff models, navigation, and UI components
-- It includes real-time sync via webhooks
-- Getting auth wrong has serious security implications
-
-**Is it coherently long?**
-Mostly yes, but it could be tighter. The current structure covers:
-1. Core auth system (~20%)
-2. Permission/role system (~15%)
-3. UI components & hooks (~25%)
-4. Webhook integration (~20%)
-5. Testing & troubleshooting (~20%)
-
-**Could it be more concise?**
-Yes. Here's a shortened version that maintains all critical information:
-
-```markdown
-<doc id="authentication">
-
 # Authentication System
-
-<section id="auth-overview">
 
 ## Overview
 
 Our application uses Clerk for identity management with a custom role-based permission system. This provides secure access control while maintaining flexibility for platform requirements.
 
-[RULE] All authentication flows use Clerk as the identity provider with custom metadata for permissions.
-
-</section>
-
-<section id="auth-architecture">
+**[RULE]** All authentication flows use Clerk as the identity provider with custom metadata for permissions.
 
 ## Architecture
 
@@ -46,18 +16,21 @@ The system follows a layered approach:
 4. **Integration**: Links Clerk users to staff models
 5. **Synchronization**: Webhooks maintain data consistency
 
-[RULE] Use Clerk metadata for storing user permissions and roles.
-
-</section>
-
-<section id="auth-implementation">
+**[RULE]** Use Clerk metadata for storing user permissions and roles.
 
 ## Core Implementation
 
-### Authentication Hook
+### useAuthenticatedUser Hook
 
 ```typescript
-const { id, email, metadata, permissions, hasPermission, hasRole } = useAuthenticatedUser();
+const { 
+  id, 
+  email, 
+  metadata, 
+  permissions, 
+  hasPermission, 
+  hasRole 
+} = useAuthenticatedUser();
 ```
 
 ### Protection Components
@@ -86,31 +59,7 @@ export const navigationItems: NavigationItem[] = [
 ];
 ```
 
-[RULE] Use AuthGuard for pages and PermissionButton for UI elements.
-
-</section>
-
-<section id="webhook-integration">
-
-## Webhook Integration
-
-Maintains real-time sync between Clerk and our database:
-
-1. **Validation** (`/lib/api/validation/clerk-webhook`)
-2. **Business Logic** (`/lib/api/handlers/clerk-webhook`)
-3. **Route Handler** (`/api/webhook/clerk`)
-
-Supported events:
-- `user.created/updated`: Syncs with staff records
-- `organization.created/updated`: Updates org settings
-- `user.deleted`: Handles deletions
-
-[RULE] Webhook handlers always return 200 OK.
-[RULE] Business logic separated from route handlers in lib/api.
-
-</section>
-
-<section id="permission-system">
+**[RULE]** Use AuthGuard for pages and PermissionButton for UI elements.
 
 ## Permission System
 
@@ -124,37 +73,127 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     // ... other permissions
   ]
 };
+
+// Permission checking
+if (hasPermission('schools.create')) {
+  // User can create schools
+}
+
+if (hasRole('Coach')) {
+  // User has coach role
+}
 ```
 
-Priority: Direct permissions > Role permissions > Org permissions > Defaults
+**Permission Priority**: Direct permissions > Role permissions > Org permissions > Defaults
 
-[RULE] Follow resource.action naming convention for permissions.
+**[RULE]** Follow resource.action naming convention for permissions.
 
-</section>
+## Coach-Specific Hooks
 
-<section id="auth-troubleshooting">
+### useCoachData Hook
+
+```typescript
+export interface CoachData {
+  isCoach: boolean;
+  coachId: string | null;
+  canCreateVisits: boolean;
+  canScheduleVisits: boolean;
+  assignedSchools: string[];
+  staffType: 'nycps' | 'teachinglab' | null;
+  hasStaffConnection: boolean;
+}
+
+export function useCoachData(): CoachData {
+  const { metadata, hasPermission, hasRole } = useAuthenticatedUser();
+  
+  return {
+    isCoach: hasRole('Coach') || hasPermission('visit.create'),
+    coachId: metadata.staffId || null,
+    canCreateVisits: hasPermission('visit.create'),
+    canScheduleVisits: hasPermission('schedule.create'),
+    assignedSchools: metadata.schoolIds || [],
+    staffType: metadata.staffType || null,
+    hasStaffConnection: !!(metadata.staffId && metadata.staffType)
+  };
+}
+```
+
+### useCoachId Convenience Hook
+
+```typescript
+export function useCoachId(): string | null {
+  const { metadata } = useAuthenticatedUser();
+  return metadata.staffId || null;
+}
+```
+
+**[RULE]** Use `useCoachData` for coach-specific functionality and `useCoachId` when only the ID is needed.
+
+## Integration Patterns
+
+### Staff Connection Validation
+
+```typescript
+function CoachDashboard() {
+  const { hasStaffConnection, staffType, coachId } = useCoachData();
+  
+  if (!hasStaffConnection) {
+    return <StaffConnectionRequired />;
+  }
+  
+  return <Dashboard staffType={staffType} coachId={coachId} />;
+}
+```
+
+### Navigation Filtering
+
+Navigation items are automatically filtered based on user permissions:
+
+```typescript
+// Only users with required permissions see these items
+const filteredNavigation = navigationItems.filter(item => 
+  !item.requiredPermissions || 
+  item.requiredPermissions.some(permission => hasPermission(permission))
+);
+```
+
+## Webhook Integration
+
+Maintains real-time sync between Clerk and our database through three layers:
+
+1. **Validation** (`/lib/api/validation/clerk-webhook`)
+2. **Business Logic** (`/lib/api/handlers/clerk-webhook`)  
+3. **Route Handler** (`/api/webhook/clerk`)
+
+**Supported Events:**
+- `user.created/updated`: Syncs with staff records
+- `organization.created/updated`: Updates org settings
+- `user.deleted`: Handles deletions
+
+**[RULE]** Webhook handlers always return 200 OK.
+**[RULE]** Business logic separated from route handlers in lib/api.
 
 ## Development & Troubleshooting
 
-### Testing
-```typescript
-// Test webhooks locally
-await testClerkWebhook('user.updated');
+### Common Patterns
 
-// Debug permissions
-console.log('Permissions:', user.permissions);
-console.log('Roles:', user.metadata.roles);
+```typescript
+// Check permissions before rendering
+if (!hasPermission('schools.create')) {
+  return <PermissionDenied />;
+}
+
+// Debug permissions in development
+console.log('User permissions:', permissions);
+console.log('User roles:', metadata.roles);
 ```
 
 ### Common Issues
-1. **Missing Permissions**: Check ROLE_PERMISSIONS
-2. **Staff Connection**: Verify staffId in metadata
-3. **Navigation**: Check requiredPermissions config
-4. **Webhooks**: Validate signature and logs
 
-[RULE] Check browser console for permission debugging.
+1. **Missing Permissions**: Check ROLE_PERMISSIONS mapping
+2. **Staff Connection**: Verify staffId in user metadata
+3. **Navigation**: Ensure requiredPermissions are configured
+4. **Webhooks**: Check signature validation and error logs
 
-</section>
-
-</doc>
+**[RULE]** Check browser console for permission debugging information.
 ```

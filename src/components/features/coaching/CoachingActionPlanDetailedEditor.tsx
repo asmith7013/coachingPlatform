@@ -10,7 +10,7 @@ import { SaveIcon, XIcon } from 'lucide-react';
 import { useCoachingActionPlans } from '@components/features/coaching/hooks/useCoachingActionPlans';
 import { useToast } from '@/components/core/feedback/Toast';
 import { handleClientError } from '@error/handlers/client';
-import { calculatePlanProgress } from '@/lib/transformers/utils/coaching-action-plan-utils';
+import { calculatePlanProgress } from '@/lib/data-processing/transformers/utils/coaching-action-plan-utils';
 import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
 
 // Import stage components

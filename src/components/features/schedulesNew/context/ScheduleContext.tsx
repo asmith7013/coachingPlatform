@@ -6,7 +6,7 @@ import type { ClassScheduleItem, TeacherSchedule } from '@zod-schema/schedule/sc
 import type { VisitCreationData, VisitUpdateData, ScheduleUIState, ConflictCheckData } from '../types';
 import type { School } from '@zod-schema/core/school';
 
-// ✅ CLEAN CONTEXT TYPE: Only essential composed interface
+// ✅ SCHEMA-FIRST: Use schema types directly, no transformations
 interface ScheduleContextType {
   // Core props
   schoolId: string;
@@ -14,11 +14,11 @@ interface ScheduleContextType {
   mode: 'create' | 'edit';
   visitId?: string;
   
-  // Data (direct from domain hooks)
+  // Data (direct schema types) - ✅ NO TRANSFORMATIONS
   teachers: NYCPSStaff[];
-  timeSlots: ClassScheduleItem[];
+  timeSlots: ClassScheduleItem[];     // Direct from bell schedule schema
   visits: Visit[];
-  teacherSchedules: TeacherSchedule[];
+  teacherSchedules: TeacherSchedule[]; // Direct from teacher schedule schema
   school: School;
   isLoading: boolean;
   error: unknown;
@@ -33,8 +33,10 @@ interface ScheduleContextType {
   scheduleVisit: (data: VisitCreationData) => Promise<{ success: boolean; error?: string }>;
   updateVisit: (visitId: string, updates: VisitUpdateData) => Promise<{ success: boolean; error?: string }>;
   deleteVisit: (visitId: string) => Promise<{ success: boolean; error?: string }>;
+  removeEventFromVisit: (visitId: string, eventIndex: number) => Promise<{ success: boolean; error?: string }>;
+  clearAllVisits: () => Promise<{ success: boolean; deletedCount: number; error?: string }>;
   
-  // Helpers
+  // Helpers (pure functions, no state)
   getVisitForTeacherPeriod: (teacherId: string, period: number) => Visit | undefined;
   hasVisitConflict: (data: ConflictCheckData) => boolean;
 }
@@ -76,11 +78,11 @@ export function ScheduleProvider({
     mode,
     visitId,
     
-    // Data (pass through from domain hooks)
+    // Data (direct schema types) - ✅ NO TRANSFORMATIONS
     teachers: scheduleData.teachers,
-    timeSlots: scheduleData.timeSlots,
+    timeSlots: scheduleData.timeSlots,           // ClassScheduleItem[] - no transformation
     visits: scheduleData.visits,
-    teacherSchedules: scheduleData.teacherSchedules,
+    teacherSchedules: scheduleData.teacherSchedules, // TeacherSchedule[] - no transformation
     school: scheduleData.school as School,
     isLoading: Boolean(scheduleData.isLoading || scheduleActions.isLoading),
     error: scheduleData.error || scheduleActions.error,
@@ -95,6 +97,8 @@ export function ScheduleProvider({
     scheduleVisit: scheduleActions.scheduleVisit,
     updateVisit: scheduleActions.updateVisit,
     deleteVisit: scheduleActions.deleteVisit,
+    removeEventFromVisit: scheduleActions.removeEventFromVisit,
+    clearAllVisits: scheduleActions.clearAllVisits,
     
     // Helpers
     getVisitForTeacherPeriod: scheduleActions.getVisitForTeacherPeriod,

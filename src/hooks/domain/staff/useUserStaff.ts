@@ -1,30 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuthenticatedUser } from '@hooks/auth/useAuthenticatedUser';
 import { handleClientError } from '@error';
-import { WithDateObjects } from '@core-types/document';
-import { 
-  NYCPSStaff, 
-  TeachingLabStaff, 
-  NYCPSStaffZodSchema,
-  TeachingLabStaffZodSchema 
-} from '@zod-schema/core/staff';
-import { createTransformer } from '@transformers/core/unified-transformer';
-import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
-
-// Define types with date objects
-
-// Create transformers for each staff type
-const nycpsStaffTransformer = createTransformer<NYCPSStaff, WithDateObjects<NYCPSStaff>>({
-  schema: ensureBaseDocumentCompatibility<NYCPSStaff>(NYCPSStaffZodSchema),
-  handleDates: true,
-  errorContext: 'NYCPSStaffTransformer'
-});
-
-const teachingLabStaffTransformer = createTransformer<TeachingLabStaff, WithDateObjects<TeachingLabStaff>>({
-  schema: ensureBaseDocumentCompatibility<TeachingLabStaff>(TeachingLabStaffZodSchema),
-  handleDates: true,
-  errorContext: 'TeachingLabStaffTransformer'
-});
+import { isValidObjectId } from '@data-processing/validation/mongoose-validation';
 
 /**
  * Hook to fetch the authenticated user's staff profile
@@ -34,13 +11,16 @@ const teachingLabStaffTransformer = createTransformer<TeachingLabStaff, WithDate
 export function useUserStaff() {
   const { metadata, isSignedIn } = useAuthenticatedUser();
   
+  // Validate staff ID format before using it
+  const hasValidStaffId = metadata.staffId ? isValidObjectId(metadata.staffId) : false;
+  
   // Determine if we should fetch staff data
-  // Only fetch if user is signed in AND has both staffId and staffType
-  const enabled = isSignedIn && Boolean(metadata.staffId) && Boolean(metadata.staffType);
+  // Only fetch if user is signed in AND has valid staffId and staffType
+  const enabled = isSignedIn && Boolean(metadata.staffId) && Boolean(metadata.staffType) && hasValidStaffId;
   
   // Determine the correct API endpoint based on staff type
   const apiEndpoint = (() => {
-    if (!metadata.staffId || !metadata.staffType) return null;
+    if (!metadata.staffId || !metadata.staffType || !hasValidStaffId) return null;
     return `/api/staff/${metadata.staffId}?type=${metadata.staffType}`;
   })();
   
@@ -77,18 +57,8 @@ export function useUserStaff() {
           return null;
         }
         
-        // Transform data based on staff type
-        if (metadata.staffType === 'nycps') {
-          return {
-            ...data,
-            data: nycpsStaffTransformer.transformSingle(data.data)
-          };
-        } else {
-          return {
-            ...data,
-            data: teachingLabStaffTransformer.transformSingle(data.data)
-          };
-        }
+        // Return data directly - API already handles sanitization
+        return data;
       } catch (error) {
         // Log the error but don't throw - let React Query handle it
         console.error('Error fetching staff data:', error);
@@ -118,6 +88,7 @@ export function useUserStaff() {
     isTeachingLabStaff: metadata.staffType === 'teachinglab',
     hasStaffProfile: Boolean(data?.data),
     staffNotFound: isError && error instanceof Error && error.message.includes('404'),
+    hasValidStaffId, // New field to track ObjectId validity
     refetch,
   };
 }

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { NextRequest, NextResponse } from "next/server";
-import { validateSafe } from '@transformers/core/validation';
+import { validateSafe } from '@/lib/data-processing/validation/zod-validation';
 import { handleValidationError } from '@error/handlers/validation';
 /**
  * Streamlined validation service with focused responsibilities

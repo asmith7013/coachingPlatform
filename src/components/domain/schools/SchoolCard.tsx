@@ -10,7 +10,7 @@ import { DataImportDialog } from '@/components/composed/dialogs/DataImportDialog
 import { School } from "@zod-schema/core/school";
 import { cn } from '@ui/utils/formatters';
 import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { schoolToSlug } from '@transformers/utils/school-slug-utils';
+import { schoolToSlug } from '@/lib/data-processing/transformers/utils/school-slug-utils';
 
 interface SchoolCardProps {
   school: School;
@@ -77,7 +77,7 @@ export function SchoolCard({ school, onDelete, isDeleting }: SchoolCardProps) {
                 )}
                 {school.createdAt && (
                   <Text textSize="sm" color="muted" className="mt-1">
-                    Created: {school.createdAt.toLocaleDateString()}
+                    Created: {school.createdAt}
                   </Text>
                 )}
               </div>

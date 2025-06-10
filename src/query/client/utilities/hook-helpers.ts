@@ -3,8 +3,9 @@
 import { ZodSchema } from 'zod';
 import { BaseDocument } from '@core-types/document';
 import { CollectionResponse, PaginatedResponse, EntityResponse } from '@core-types/response';
-import { EntitySelector } from '@/query/client/selectors/selector-types';
-import { isPaginatedResponse } from '@/lib/transformers/utils/response-utils';
+import { EntitySelector } from '@query/client/selectors/selector-types';
+import { isPaginatedResponse } from '@data-processing/transformers/utils/response-utils';
+import { normalizeVisitPurposes } from '@data-processing/transformers/purpose-normalizer';
 
 /**
  * Simple transformation options interface
@@ -69,18 +70,49 @@ export function extractSingleItem(data: unknown): unknown | null {
 }
 
 /**
+ * Normalize data before validation to fix common issues
+ */
+function normalizeData(item: unknown): unknown {
+  if (!item || typeof item !== 'object') return item;
+  
+  // Special handling for visit data with purpose/eventType normalization
+  if (typeof item === 'object' && item !== null) {
+    const obj = item as Record<string, unknown>;
+    
+    // Check if this looks like visit data (has events array)
+    if (Array.isArray(obj.events)) {
+      return normalizeVisitPurposes(item);
+    }
+  }
+  
+  return item;
+}
+
+/**
  * Simple schema validation for items
  */
 function validateWithSchema<T>(items: unknown[], schema: ZodSchema<T>): T[] {
-  return items
-    .map(item => {
-      try {
-        return schema.parse(item);
-      } catch {
-        return null;
-      }
-    })
-    .filter((item): item is T => item !== null);
+  
+  const results = items.map((item, index) => {
+    try {
+      // Normalize data before validation
+      const normalizedItem = normalizeData(item);
+      const validated = schema.parse(normalizedItem);
+      return { index, success: true, item: validated, error: null };
+    } catch (error) {
+      console.warn(`❌ VALIDATE SCHEMA: Item ${index} failed validation:`, {
+        item: item,
+        error: error instanceof Error ? error.message : String(error)
+      });
+      return { index, success: false, item: null, error };
+    }
+  });
+  
+  const validItems = results
+    .filter(result => result.success && result.item !== null)
+    .map(result => result.item as T);
+  
+  return validItems;
 }
 
 /**
@@ -88,7 +120,9 @@ function validateWithSchema<T>(items: unknown[], schema: ZodSchema<T>): T[] {
  */
 function validateSingleWithSchema<T>(item: unknown, schema: ZodSchema<T>): T | null {
   try {
-    return schema.parse(item);
+    // Normalize data before validation
+    const normalizedItem = normalizeData(item);
+    return schema.parse(normalizedItem);
   } catch {
     return null;
   }
@@ -102,11 +136,17 @@ export function transformItems<T extends BaseDocument>(
   schema: ZodSchema<T>,
   options?: TransformationOptions<T>
 ): T[] {
+  const context = options?.errorContext || 'unknown';
+  
   try {
     const items = extractNormalizedItems(data);
-    return validateWithSchema<T>(items, schema);
+
+    
+    const validated = validateWithSchema<T>(items, schema);
+    
+    return validated;
   } catch (error) {
-    console.error(`Error in transformItems: ${options?.errorContext || ''}`, error);
+    console.error(`📝 TRANSFORM ITEMS: Error for ${context}:`, error);
     return [];
   }
 }
@@ -137,7 +177,10 @@ export function transformPaginatedResponse<T extends BaseDocument>(
   schema: ZodSchema<T>,
   options?: TransformationOptions<T>
 ): PaginatedResponse<T> {
+  const context = options?.errorContext || 'unknown';
+  
   if (!response || typeof response !== 'object') {
+    console.log(`🔧 TRANSFORM PAGINATED ❌: No valid response for ${context}, returning empty`);
     return {
       items: [],
       total: 0,
@@ -150,9 +193,15 @@ export function transformPaginatedResponse<T extends BaseDocument>(
   }
   
   try {
+    const isPaginated = isPaginatedResponse<T>(response);
+
+    
     // Handle non-paginated response
-    if (!isPaginatedResponse<T>(response)) {
+    if (!isPaginated) {
       const items = transformItems<T>(response, schema, options);
+      console.log(`🔧 TRANSFORM PAGINATED: Non-paginated result for ${context}:`, {
+        transformedItemsCount: items.length
+      });
       
       return {
         items,
@@ -168,13 +217,13 @@ export function transformPaginatedResponse<T extends BaseDocument>(
     // Transform paginated response
     const paginatedResponse = response as PaginatedResponse<T>;
     const items = transformItems<T>(paginatedResponse.items, schema, options);
-    
+
     return {
       ...paginatedResponse,
       items
     };
   } catch (error) {
-    console.error(`Error in transformPaginatedResponse: ${options?.errorContext || ''}`, error);
+    console.error(`🔧 TRANSFORM PAGINATED ❌: Error for ${context}:`, error);
     
     return {
       ...(typeof response === 'object' ? response : {}),

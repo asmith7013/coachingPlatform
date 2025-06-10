@@ -4,7 +4,7 @@ import type { UserMetadata } from '@core-types/auth';
 import { NYCPSStaffModel } from '@mongoose-schema/core/staff.model';
 import { TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
 import { withDbConnection } from '@server/db/ensure-connection';
-import { validateSafe } from '@transformers/core/validation';
+import { validateSafe } from '@/lib/data-processing/validation/zod-validation';
 import { captureError, createErrorContext, handleServerError } from '@error';
 import { clerkClient } from '@clerk/nextjs/server';
 

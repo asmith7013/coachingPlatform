@@ -1,19 +1,24 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose from "mongoose";
-import { Rubric } from "./rubric.model";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
-@modelOptions({ schemaOptions: { collection: 'lookfors' } })
+@modelOptions({ 
+  schemaOptions: { 
+    ...standardSchemaOptions,
+    collection: 'lookfors' 
+  } 
+})
 export class LookFor extends BaseMongooseDocument {
   @prop({ type: Number, required: true })
   lookForIndex!: number;
 
   @prop({ type: () => [String], required: true })
-  schools!: string[];
+  schoolIds!: string[];
 
   @prop({ type: () => [String], required: true })
-  teachers!: string[];
+  teacherIds!: string[];
 
   @prop({ type: String, required: true })
   topic!: string;
@@ -30,14 +35,16 @@ export class LookFor extends BaseMongooseDocument {
   @prop({ type: Boolean, required: true })
   studentFacing!: boolean;
 
-  @prop({ type: () => [Rubric], required: true })
-  rubric!: Rubric[];
-
-  @prop({ type: () => [String], required: true })
-  owners!: string[];
+  @prop({ type: () => [String] })
+  rubricIds?: string[];
 }
 
-@modelOptions({ schemaOptions: { collection: 'lookforitems' } })
+@modelOptions({ 
+  schemaOptions: { 
+    ...standardSchemaOptions,
+    collection: 'lookforitems' 
+  } 
+})
 export class LookForItem extends BaseMongooseDocument {
   @prop({ type: String, required: true })
   originalLookFor!: string;

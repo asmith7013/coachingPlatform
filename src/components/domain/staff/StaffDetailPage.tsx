@@ -19,7 +19,7 @@ import type { TeacherSchedule } from '@zod-schema/schedule/schedule'
 import type { TableColumnSchema } from '@ui/table-schema'
 import { NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from '@zod-schema/core/staff'
 import { TeacherScheduleZodSchema } from '@zod-schema/schedule/schedule'
-import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
+import { formatMediumDate, toDateString } from '@/lib/data-processing/transformers/utils/date-utils';
 
 type StaffMember = NYCPSStaff | TeachingLabStaff
 type StaffType = 'nycps' | 'tl'

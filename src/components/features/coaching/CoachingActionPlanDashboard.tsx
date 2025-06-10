@@ -15,7 +15,7 @@ import { updateCoachingActionPlanStatus } from '@/app/actions/coaching/coaching-
 import { handleClientError } from '@error/handlers/client';
 import { PlusCircleIcon, FolderIcon, CheckCircleIcon } from 'lucide-react';
 import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
-import { type PlanStatus } from '@/lib/transformers/utils/coaching-action-plan-utils';
+import { type PlanStatus } from '@/lib/data-processing/transformers/utils/coaching-action-plan-utils';
 import { Button } from '@/components/core/Button';
 
 interface CoachingActionPlanDashboardProps {

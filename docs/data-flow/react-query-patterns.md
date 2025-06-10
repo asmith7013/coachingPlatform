@@ -1,84 +1,17 @@
-
-```markdown
-<doc id="react-query-patterns">
-
 # React Query Patterns
-
-<section id="rq-overview">
 
 ## Overview
 
 Our application uses React Query with a factory-based architecture for DRY, type-safe server state management.
 
-[RULE] Use React Query following our factory-based pattern.
+**[RULE]** Use React Query following our factory-based pattern.
 
-</section>
+## CRUD Factory Pattern
 
-<section id="query-architecture">
-
-## Query System Architecture
-
-Our React Query implementation follows a layered architecture:
-
-- **Core Layer**: Query keys, client configuration, error handling
-- **Factory Layer**: Hook generators for CRUD operations
-- **Utility Layer**: Selectors, cache synchronization, responses
-- **Domain Layer**: Business-specific hooks
-
-```
-src/lib/query/
-├── core/                # Foundation components
-├── factories/           # Hook generation factories
-├── cache-sync/          # Cache synchronization
-├── selectors/           # Response transformation
-├── utilities/           # Helper utilities
-├── hooks/               # Primitive hook implementations
-├── hydration.ts         # SSR hydration utilities
-└── initialization.ts    # Query system initialization
-```
-
-[RULE] Follow the layered architecture for all React Query implementations.
-
-</section>
-
-<section id="factory-pattern">
-
-## Factory Pattern for Hooks
-
-Our factory system follows a three-tier structure:
-
-1. **`crud-hooks.ts`**: Base CRUD operations
-2. **`entity-hooks.ts`**: Entity-specific extensions
-3. **`resource-hooks.ts`**: Domain-specific terminology
+Our factory system provides a standardized approach to creating hooks for CRUD operations:
 
 ```typescript
-// 1. Base CRUD hooks
-const crudHooks = createCrudHooks<School, SchoolInput>({
-  entityType: 'schools',
-  serverActions: schoolActions,
-  validSortFields: ['schoolName', 'district']
-});
-
-// 2. Entity hooks with more configuration
-const entityHooks = createEntityHooks<School, SchoolInput>({
-  entityType: 'schools',
-  serverActions: schoolActions,
-  relatedEntityTypes: ['staff', 'visits']
-});
-
-// 3. Resource hooks with domain terminology
-const resourceHooks = createResourceHooks<School, SchoolInput>({
-  resourceType: 'schools', // Domain-specific terminology
-  serverActions: schoolActions,
-  relatedResourceTypes: ['staff', 'visits']
-});
-```
-
-### CRUD Hook Factory
-
-The base factory produces a complete set of hooks for CRUD operations:
-
-```typescript
+// Create standard CRUD hooks
 const schoolHooks = createCrudHooks<School, SchoolInput>({
   entityType: 'schools',
   serverActions: schoolActions,
@@ -93,11 +26,9 @@ const schoolHooks = createCrudHooks<School, SchoolInput>({
 // schoolHooks.useManager() - Combined functionality
 ```
 
-[RULE] Choose the appropriate factory level based on your needs.
+The factory generates a complete set of hooks for CRUD operations with consistent interfaces across all entities.
 
-</section>
-
-<section id="query-keys">
+**[RULE]** Use `createCrudHooks()` for all domain data management.
 
 ## Query Key Management
 
@@ -126,13 +57,9 @@ export const queryKeys = {
 };
 ```
 
-[RULE] Use query key factories for consistent cache management.
+**[RULE]** Use query key factories for consistent cache management.
 
-</section>
-
-<section id="cache-sync-system">
-
-## Cache Synchronization System
+## Cache Synchronization
 
 Three components for cache management:
 
@@ -175,211 +102,96 @@ const { invalidateEntity, invalidateList } = useInvalidation();
 await invalidateEntity('schools', schoolId);
 ```
 
-[RULE] Use appropriate cache sync utilities based on the context.
+**[RULE]** Use appropriate cache sync utilities based on the context.
 
-</section>
+## Domain Hook Generation
 
-<section id="selector-system">
+Built using the factory system:
 
-## Selector System
-
-The selector system transforms API responses consistently:
+### Entity-Specific Hooks
 
 ```typescript
-// Register a selector
-registerEntitySelector<School, SchoolTransformed>('schools', (data) => {
-  return data.items.map(school => ({
-    ...school,
-    fullName: `${school.district} - ${school.schoolName}`,
-    hasStaff: school.staffList.length > 0,
-    formattedCreatedAt: formatDate(school.createdAt)
-  }));
-});
-
-// Get and use the selector
-const schoolSelector = getEntitySelector<School, SchoolTransformed>('schools');
-const transformedData = schoolSelector(apiResponse);
-```
-
-[RULE] Register selectors for all entity types for consistent data transformation.
-
-</section>
-
-<section id="selector-transformer-relationship">
-
-## Relationship Between Selectors and Transformers
-
-Our query system leverages two interconnected patterns to ensure consistent data handling: **selectors** (for consistent data extraction) and **transformers** (for data validation and normalization).
-
-### Selector-Transformer Interaction
-
-Selectors act as a high-level interface for components, while transformers handle the underlying data processing:
-
-```typescript
-// Selectors use transformers internally
-const selector = createEntitySelector<School>(
-  'schools',
-  SchoolZodSchema // Schema passed to transformer
-);
-
-// When a component uses a selector
-const schools = useQuery(['schools'], fetchSchools, {
-  select: selector.basic // Uses transformer under the hood
-});
-```
-
-#### How They Work Together
-
-1. **Data Flow**: Raw API data → Transformer → Selector → Component
-2. **Responsibility Division**:
-   - **Transformers**: Low-level data validation, sanitization, and normalization
-   - **Selectors**: High-level data extraction, formatting, and presentation
-
-### Core Implementation
-
-The selector factory creates transformers internally and exposes a consistent API:
-
-```typescript
-export function createEntitySelector<T>(entityType: string, schema: ZodSchema<T>) {
-  // Create a transformer using the schema
-  const baseTransformer = createTransformer<T>({
-    schema,
-    errorContext: `${entityType}Selector`
-  });
-  
-  // Expose selector methods that use the transformer
-  return {
-    basic: (data) => baseTransformer.transformResponse(data).items,
-    detail: (data) => baseTransformer.transformSingle(data),
-    // Additional selector methods...
-  };
-}
-```
-
-### Key Benefits
-
-1. **Schema Enforcement**: All data passes through schema validation via transformers
-2. **Consistent Error Handling**: Centralized error processing at the transformation layer
-3. **Type Safety**: Full type safety from raw data to component props
-4. **Abstraction Layers**: Clean separation between API data format and component data needs
-
-### Common Usage Patterns
-
-```typescript
-// 1. Basic data transformation
-const schools = schoolSelector.basic(apiResponse);
-
-// 2. Single entity transformation
-const school = schoolSelector.detail(entityResponse);
-
-// 3. Custom transformation with schema validation
-const enhancedSchools = schoolSelector.transform(school => ({
-  ...school,
-  fullName: `${school.district} - ${school.schoolName}`
-}));
-
-// 4. Direct schema validation
-const isValid = schoolSelector.validate(data);
-```
-
-[RULE] Always use selectors instead of direct transformer calls in components to ensure consistent data handling.
-
-</section>
-
-
-<section id="response-types">
-
-## Response Type Processing
-
-Utilities for standardized API response handling:
-
-```typescript
-// Extract data from responses
-const items = extractItems<School>(response);
-const pagination = extractPagination(response);
-const entity = extractData<School>(response);
-
-// Type guards
-if (isPaginatedResponse<School>(response)) {
-  // Handle paginated response
-}
-
-// Transform responses
-const transformed = transformResponse<School, SchoolDTO>(
-  response,
-  (items) => items.map(transformSchoolToDTO)
-);
-
-// Create selectors
-const schoolsSelector = collectionSelector<School, SchoolDTO>(transformSchool);
-```
-
-[RULE] Use these utilities for consistent API response handling.
-
-</section>
-
-<section id="hydration-system">
-
-## Hydration System
-
-Utilities for server-side rendering support:
-
-```typescript
-// Server: Prefetch and dehydrate
-async function MyPage() {
-  const queryClient = new QueryClient();
-  
-  await prefetchQueries(queryClient, [
-    { queryKey: queryKeys.schools.list(), queryFn: fetchSchools }
-  ]);
-  
-  const dehydratedState = dehydrateClient(queryClient);
-  
-  // Pass to client...
-}
-
-// Client: Hydrate from server data
-export function Providers({ children }) {
-  hydrateQueryClient(); // Automatic hydration
-  return <QueryProvider>{children}</QueryProvider>;
-}
-```
-
-[RULE] Use hydration utilities for SSR scenarios.
-
-</section>
-
-<section id="primitive-hooks">
-
-## Primitive Hook Implementations
-
-Base hooks for common operations:
-
-```typescript
-const {
-  // Data
-  items: schools,
-  isLoading,
-  error,
-  
-  // Pagination
-  page, pageSize, setPage, setPageSize,
-  
-  // Filtering & Sorting
-  filters, search, setSearch, applyFilters,
-  sortBy, sortOrder, changeSorting
-} = useList<School>({
+// Create hooks factory for schools
+export const schoolHooks = createCrudHooks<School, SchoolInput>({
   entityType: 'schools',
-  fetcher: fetchSchools,
-  validSortFields: ['schoolName', 'district']
+  serverActions: schoolActions,
+  validSortFields: ['schoolName', 'district'],
+  relatedEntityTypes: ['staff', 'visits'] // Auto-invalidates related caches
+});
+
+// Export convenient hooks
+export const useSchools = schoolHooks.useList;
+export const useSchoolById = schoolHooks.useById;
+export const useSchoolMutations = schoolHooks.useMutations;
+export const useSchoolManager = schoolHooks.useManager; // Combined functionality
+```
+
+### Business Domain Hooks
+
+```typescript
+export function useDashboardData() {
+  // Use entity hooks
+  const { items: schools, isLoading: schoolsLoading } = useSchools();
+  const { items: visits, isLoading: visitsLoading } = useVisits();
+  
+  // Combined state
+  const isLoading = schoolsLoading || visitsLoading;
+  
+  // Computed data
+  const dashboardData = useMemo(() => {
+    if (isLoading) return null;
+    
+    return {
+      totalSchools: schools.length,
+      totalVisits: visits.length,
+      // Additional metrics...
+    };
+  }, [schools, visits, isLoading]);
+  
+  return { data: dashboardData, isLoading };
+}
+```
+
+**[RULE]** Use domain hooks to encapsulate business logic for components.
+
+## Integration with Server Actions
+
+Our query system integrates seamlessly with server actions:
+
+```typescript
+export async function updateSchool(id: string, data: unknown) {
+  "use server";
+  
+  try {
+    const result = await SchoolModel.findByIdAndUpdate(id, data);
+    
+    // Sync client cache
+    await syncClientCache({
+      entityType: 'schools',
+      operationType: 'update'
+    }, id);
+    
+    return { success: true, data: result };
+  } catch (error) {
+    // Error handling...
+  }
+}
+```
+
+### Integration with Zod Schemas
+
+```typescript
+// Create hooks from Zod schema types
+const schoolHooks = createCrudHooks<
+  z.infer<typeof SchoolZodSchema>,
+  z.infer<typeof SchoolInputZodSchema>
+>({
+  entityType: 'schools',
+  serverActions: schoolActions
 });
 ```
 
-[RULE] Use primitive hooks as building blocks for domain hooks.
-
-</section>
-
-<section id="error-handling">
+**[RULE]** Use factory hooks as the interface between server and UI.
 
 ## Error Handling
 
@@ -414,11 +226,57 @@ function useUpdateResource() {
 }
 ```
 
-[RULE] Use standardized error handling for all queries and mutations.
+**[RULE]** Use standardized error handling for all queries and mutations.
 
-</section>
+## Response Type Processing
 
-<section id="centralized-client">
+Utilities for standardized API response handling:
+
+```typescript
+// Extract data from responses
+const items = extractItems<School>(response);
+const pagination = extractPagination(response);
+const entity = extractData<School>(response);
+
+// Type guards
+if (isPaginatedResponse<School>(response)) {
+  // Handle paginated response
+}
+
+// Transform responses
+const transformed = transformResponse<School, SchoolDTO>(
+  response,
+  (items) => items.map(transformSchoolToDTO)
+);
+```
+
+**[RULE]** Use these utilities for consistent API response handling.
+
+## Primitive Hook Implementations
+
+Base hooks for common operations:
+
+```typescript
+const {
+  // Data
+  items: schools,
+  isLoading,
+  error,
+  
+  // Pagination
+  page, pageSize, setPage, setPageSize,
+  
+  // Filtering & Sorting
+  filters, search, setSearch, applyFilters,
+  sortBy, sortOrder, changeSorting
+} = useList<School>({
+  entityType: 'schools',
+  fetcher: fetchSchools,
+  validSortFields: ['schoolName', 'district']
+});
+```
+
+**[RULE]** Use primitive hooks as building blocks for domain hooks.
 
 ## Centralized Query Client
 
@@ -439,115 +297,7 @@ export function createQueryClient(): QueryClient {
 export const queryClient = createQueryClient();
 ```
 
-[RULE] Import the centralized client instead of creating instances.
-
-</section>
-
-<section id="query-initialization">
-
-## Query System Initialization
-
-Centralized initialization system:
-
-```typescript
-export function initializeQuerySystem(): boolean {
-  if (isInitialized) return true;
-  
-  try {
-    // Register standard selectors
-    registerStandardSelectors();
-    
-    // Additional initialization...
-    
-    isInitialized = true;
-    return true;
-  } catch (error) {
-    captureError(error, /* context */);
-    return false;
-  }
-}
-```
-
-[RULE] Use initialization system to set up query configurations.
-
-</section>
-
-<section id="domain-hooks">
-
-## Domain-Specific Hooks
-
-Built using the factory system:
-
-### Entity-Specific Hooks
-
-```typescript
-// Create hooks factory for schools
-export const schoolHooks = createEntityHooks<School, SchoolInput>({
-  entityType: 'schools',
-  serverActions: schoolActions,
-  // Configuration...
-});
-
-// Export convenient hooks
-export const useSchools = schoolHooks.useList;
-export const useSchoolById = schoolHooks.useById;
-export const useSchoolMutations = schoolHooks.useMutations;
-```
-
-### Business Domain Hooks
-
-```typescript
-export function useDashboardData() {
-  // Use entity hooks
-  const { items: schools, isLoading: schoolsLoading } = useSchools();
-  const { items: visits, isLoading: visitsLoading } = useVisits();
-  
-  // Combined state
-  const isLoading = schoolsLoading || visitsLoading;
-  
-  // Computed data
-  const dashboardData = useMemo(() => {
-    if (isLoading) return null;
-    
-    return {
-      totalSchools: schools.length,
-      totalVisits: visits.length,
-      // Additional metrics...
-    };
-  }, [schools, visits, isLoading]);
-  
-  return { data: dashboardData, isLoading };
-}
-```
-
-[RULE] Use domain hooks to encapsulate business logic for components.
-
-</section>
-
-<section id="feature-flag-integration">
-
-## Feature Flag Integration
-
-For gradual migration from SWR to React Query:
-
-```typescript
-import { useReactQuery } from '@query/utilities/feature-flags';
-
-function useSchoolData() {
-  // Check if React Query should be used
-  if (useReactQuery('schools')) {
-    return useSchoolsRQ(); // React Query implementation
-  }
-  
-  return useSchoolsSWR(); // SWR implementation
-}
-```
-
-[RULE] Use feature flags for safe migration to React Query.
-
-</section>
-
-<section id="data-integration">
+**[RULE]** Import the centralized client instead of creating instances.
 
 ## Data Flow Integration
 
@@ -559,44 +309,10 @@ Zod Schema → Factory Hooks → UI Components
 MongoDB Models ← Server Actions ← Cache Sync
 ```
 
-### Integration with Server Actions
+This architecture ensures:
+- **Type Safety**: Full TypeScript support throughout the chain
+- **Cache Management**: Automatic cache invalidation for related entities
+- **Consistency**: All domain hooks have the same interface
+- **Extensibility**: Easy to add domain-specific functionality
 
-```typescript
-export async function updateSchool(id: string, data: unknown) {
-  "use server";
-  
-  try {
-    const result = await SchoolModel.findByIdAndUpdate(id, data);
-    
-    // Sync client cache
-    await syncClientCache({
-      entityType: 'schools',
-      operationType: 'update'
-    }, id);
-    
-    return { success: true, data: result };
-  } catch (error) {
-    // Error handling...
-  }
-}
-```
-
-### Integration with Zod Schemas
-
-```typescript
-// Create hooks from Zod schema types
-const schoolHooks = createEntityHooks
-  z.infer<typeof SchoolZodSchema>,
-  z.infer<typeof SchoolInputZodSchema>
->({
-  entityType: 'schools',
-  serverActions: schoolActions
-});
-```
-
-[RULE] Use factory hooks as the interface between server and UI.
-
-</section>
-
-</doc>
-```
+**[RULE]** Use the CRUD factory for all new domain hooks to ensure consistency and proper cache management.

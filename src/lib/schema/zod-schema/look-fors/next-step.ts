@@ -1,15 +1,15 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
+import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 import { formatNextStepDescription } from "@schema/reference/look-fors/next-step-helpers";
 
 // NextStep Fields Schema
 export const NextStepFieldsSchema = z.object({
   description: z.string(),
-  lookFor: z.string(),
-  teacher: z.string(),
-  school: z.string(),
+  lookForId: z.string(),
+  teacherId: z.string(),
+  schoolId: z.string(),
 });
 
 // NextStep Full Schema
@@ -22,9 +22,9 @@ export const NextStepInputZodSchema = toInputSchema(NextStepZodSchema);
 export const NextStepReferenceZodSchema = BaseReferenceZodSchema.merge(
   NextStepFieldsSchema
     .pick({
-      lookFor: true,
-      teacher: true,
-      school: true,
+      lookForId: true,
+      teacherId: true,
+      schoolId: true,
     })
     .partial()
 ).extend({
@@ -38,9 +38,9 @@ export const NextStepReferenceZodSchema = BaseReferenceZodSchema.merge(
 export const nextStepToReference = createReferenceTransformer<NextStep, NextStepReference>(
   (nextStep) => nextStep.description,
   (nextStep) => ({
-    lookFor: nextStep.lookFor,
-    teacher: nextStep.teacher,
-    school: nextStep.school,
+    lookForId: nextStep.lookForId,
+    teacherId: nextStep.teacherId,
+    schoolId: nextStep.schoolId,
     descriptionSummary: formatNextStepDescription(nextStep),
   }),
   NextStepReferenceZodSchema

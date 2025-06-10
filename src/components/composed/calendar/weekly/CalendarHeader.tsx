@@ -3,7 +3,7 @@
 import { tv, type VariantProps } from 'tailwind-variants'
 import { WeekNavigation } from './WeekNavigation'
 import { ViewSelector } from './ViewSelector'
-import { formatMediumDate, toDateString } from '@transformers/utils/date-utils'
+import { formatMediumDate, toDateString } from '@/lib/data-processing/transformers/utils/date-utils'
 
 const calendarHeader = tv({
   slots: {

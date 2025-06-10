@@ -6,7 +6,7 @@ import {
   GradeLevelsSupportedZod, 
   ModeDoneZod, 
   AllowedPurposeZod,
-  EventTypeZod,
+  SessionPurposeZod,
   DurationZod
 } from "@enums";
 import { MondayColumn } from "@lib/integrations/monday/types/board";
@@ -15,7 +15,7 @@ import {
   AllowedPurposes,
   ModeDone 
 } from "@enums";
-import { formatDateForAPI } from "@transformers/utils/date-utils";
+import { formatDateForAPI } from "@/lib/data-processing/transformers/utils/date-utils";
 /**
  * Enhanced field mappings for Monday.com integration with type safety
  * 
@@ -196,7 +196,7 @@ export const OPTIONAL_FIELD_MAPPERS: FieldMappers = {
     required: false,
     columnTypes: ["text", "long_text"],
     validator: z.array(z.object({
-      eventType: EventTypeZod,
+      eventType: SessionPurposeZod,
       staff: z.array(z.string()),
       duration: DurationZod
     })).optional(),
@@ -209,7 +209,7 @@ export const OPTIONAL_FIELD_MAPPERS: FieldMappers = {
         if (!Array.isArray(parsed)) return [];
         // Transform each item to ensure it has the right shape
         const events = parsed.map(item => ({
-          eventType: EventTypeZod.options.includes(item.eventType) 
+          eventType: SessionPurposeZod.options.includes(item.eventType) 
             ? item.eventType 
             : "observation",
           staff: Array.isArray(item.staff) ? item.staff : [],

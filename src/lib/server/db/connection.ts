@@ -26,8 +26,8 @@ if (!cached) {
 
 export const connectToDB = async () => {
   if (cached.conn) {
-    console.log("🔄 Using cached connection");
-    console.log("📊 Connection readyState:", mongoose.connection.readyState);
+    // console.log("🔄 Using cached connection");
+    // console.log("📊 Connection readyState:", mongoose.connection.readyState);
     return cached.conn;
   }
 
@@ -39,13 +39,13 @@ export const connectToDB = async () => {
       socketTimeoutMS: 45000,
     };
 
-    console.log(`🌍 Connecting to MongoDB (${process.env.NODE_ENV} environment)`);
+    // console.log(`🌍 Connecting to MongoDB (${process.env.NODE_ENV} environment)`);
     // Log connection string with masked password
-    const maskedURI = MONGO_URI.replace(/:[^:@]+@/, ':****@');
-    console.log("🔗 Connection string:", maskedURI);
+    // const maskedURI = MONGO_URI.replace(/:[^:@]+@/, ':****@');
+    // console.log("🔗 Connection string:", maskedURI);
 
     cached.promise = mongoose.connect(MONGO_URI, opts).then(async (mongoose) => {
-      console.log("✅ Mongoose connected successfully");
+      // console.log("✅ Mongoose connected successfully");
       
       // Get database name
       if (mongoose.connection.db) {

@@ -11,8 +11,7 @@ export interface UseScheduleDataProps {
 }
 
 /**
- * Pure delegation to domain hooks - no transformations
- * Let domain hooks handle filtering, sorting, caching
+ * ✅ SCHEMA-FIRST: Return schema types directly, no transformations
  */
 export function useScheduleData({ schoolId, date, mode = 'create', visitId }: UseScheduleDataProps) {
   // ✅ PURE DELEGATION: Use domain hooks directly
@@ -31,6 +30,23 @@ export function useScheduleData({ schoolId, date, mode = 'create', visitId }: Us
     enabled: mode === 'edit' && !!visitId
   })
 
+  // ✅ SCHEMA-FIRST: Return ClassScheduleItem[] directly from bell schedule
+  const timeSlots = useMemo(() => {
+    // console.log('🔍 Bell Schedule Debug:', schoolData.bellSchedule)
+    
+    // Return classSchedule directly - it's already ClassScheduleItem[]
+    const classSchedule = schoolData.bellSchedule?.classSchedule || []
+    
+    // console.log('🕐 Time Slots (direct from schema):', classSchedule)
+    return classSchedule
+  }, [schoolData.bellSchedule])
+
+  // ✅ SCHEMA-FIRST: Return TeacherSchedule[] directly
+  const teacherSchedules = useMemo(() => {
+    // console.log('👥 Teacher Schedules (direct from schema):', schoolData.schedules)
+    return schoolData.schedules || []
+  }, [schoolData.schedules])
+
   // ✅ MINIMAL PROCESSING: Just combine the data sources
   const visits = useMemo((): Visit[] => {
     if (mode === 'edit' && editVisit.data) {
@@ -42,12 +58,23 @@ export function useScheduleData({ schoolId, date, mode = 'create', visitId }: Us
     return []
   }, [mode, editVisit.data, todayVisits.items])
 
-  // ✅ DIRECT PASSTHROUGH: No unnecessary transformations
+  // ✅ DEBUG LOGGING: Help identify data flow issues
+  // console.log('📊 Schedule Data Summary (Schema Types):', {
+  //   teachers: schoolData.staff?.length || 0,
+  //   timeSlots: timeSlots.length,
+  //   teacherSchedules: teacherSchedules.length,
+  //   visits: visits.length,
+  //   isLoading: schoolData.isLoading,
+  //   bellScheduleExists: !!schoolData.bellSchedule,
+  //   teacherSchedulesExists: !!schoolData.schedules
+  // })
+
+  // ✅ SCHEMA-FIRST: Return schema types directly
   return {
     // School data (direct from domain hook)
     teachers: schoolData.staff || [],
-    timeSlots: schoolData.bellSchedule?.classSchedule || [],
-    teacherSchedules: schoolData.schedules || [],
+    timeSlots,                    // ClassScheduleItem[] - direct from schema
+    teacherSchedules,             // TeacherSchedule[] - direct from schema
     school: schoolData.school,
     
     // Visit data (direct from domain hooks)

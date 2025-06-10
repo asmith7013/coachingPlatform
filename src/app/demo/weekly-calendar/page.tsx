@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { WeeklyCalendar, type CalendarEvent } from '@/components/composed/calendar/weekly'
-import { navigateWeek, toDateString, fromDateString } from '@transformers/utils/date-utils'
+import { navigateWeek, toDateString, fromDateString } from '@/lib/data-processing/transformers/utils/date-utils'
 
 const sampleEvents: CalendarEvent[] = [
   {

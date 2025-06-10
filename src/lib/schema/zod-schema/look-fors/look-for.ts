@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
+import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 import { 
   getLookForDescriptionSummary, 
   isStudentFacing 
@@ -10,14 +10,14 @@ import {
 // LookFor Fields Schema
 export const LookForFieldsSchema = z.object({
   lookForIndex: z.number(),
-  schools: z.array(z.string()),
-  teachers: z.array(z.string()),
+  schoolIds: z.array(z.string()),
+  teacherIds: z.array(z.string()),
   topic: z.string(),
   description: z.string(),
   category: z.string().optional(),
   status: z.string().optional(),
   studentFacing: z.string(),
-  rubric: z.array(z.string()).optional(), // Array of rubric IDs
+  rubricIds: z.array(z.string()).optional(), // Array of rubric IDs
 });
 
 // LookFor Full Schema
@@ -75,8 +75,8 @@ export const lookForToReference = createReferenceTransformer<LookFor, LookForRef
     topic: lookFor.topic,
     category: lookFor.category,
     status: lookFor.status,
-    schoolCount: lookFor.schools?.length || 0,
-    teacherCount: lookFor.teachers?.length || 0,
+    schoolCount: lookFor.schoolIds?.length || 0,
+    teacherCount: lookFor.teacherIds?.length || 0,
     descriptionSummary: getLookForDescriptionSummary(lookFor),
     isStudentFacing: isStudentFacing(lookFor),
   }),

@@ -10,7 +10,7 @@ import { cn } from '@ui/utils/formatters';
 import { useSchoolById } from "@hooks/domain/useSchools";
 import { useNYCPSStaff } from "@hooks/domain/staff/useNYCPSStaff";
 import { Alert, Spinner, Badge } from '@components/core/feedback';
-import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
+import { NYCPSStaff } from "@zod-schema/core/staff";
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
@@ -109,7 +109,7 @@ export default function SchoolDetailClient({ schoolId }: SchoolDetailClientProps
             )}
             {school.createdAt && (
               <Text textSize="sm" color="muted" className="mt-1">
-                Created: {formatMediumDate(toDateString(school.createdAt))}
+                Created: {school.createdAt}
               </Text>
             )}
           </div>
@@ -126,7 +126,7 @@ export default function SchoolDetailClient({ schoolId }: SchoolDetailClientProps
       <Heading level="h3" className="mt-8 mb-4">Staff</Heading>
       {nycpsStaff && nycpsStaff.length > 0 ? (
         <div className="flex flex-wrap gap-4">
-          {nycpsStaff.map((person) => (
+          {nycpsStaff.map((person: NYCPSStaff) => (
             <Badge key={person._id}>{person.staffName}</Badge>
           ))}
         </div>

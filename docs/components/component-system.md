@@ -1,17 +1,16 @@
-```markdown
-<doc id="component-system">
+# Component System
 
-Component System Guide
+## Overview
 
-<section id="component-overview">
-Overview
 Our component system follows an atomic design pattern, starting with primitive core components and building up to complex feature implementations. All components use design tokens for styling consistency, with Tailwind Variants (tv()) for component-specific variants.
-[RULE] Follow the atomic design pattern: core → composed → domain → features.
-</section>
 
-<section id="component-organization">
-Component Organization
+**[RULE]** Follow the atomic design pattern: core → composed → domain → features.
+
+## Component Organization
+
 Components are organized by their level of complexity and purpose:
+
+```
 components/
 ├── core/               # Primitive UI elements
 │   ├── feedback/       # Feedback indicators (Badge, etc.)
@@ -25,72 +24,77 @@ components/
 │   ├── tables/         # Table components
 │   └── tabs/           # Tab components
 ├── domain/             # Business domain specific components
-│   ├── imRoutine/      # Implementation routine components
-│   ├── lookFors/       # Look-for components
-│   ├── rubrics/        # Rubric components
 │   ├── schedules/      # Schedule components
 │   ├── schools/        # School components
 │   ├── staff/          # Staff components
 │   └── visits/         # Visit components
-├── error/              # Error handling components
 ├── features/           # Complete feature implementations
 ├── layouts/            # Page layout components
-├── shared/             # Cross-cutting components
-└── debug/              # Development and debugging components
+└── shared/             # Cross-cutting components
+```
+
 Each component type serves a specific purpose:
 
-Core Components: Building blocks with minimal dependencies
-Composed Components: Combinations of core components for common patterns
-Domain Components: Business-specific implementations
-Error Components: Error boundary and monitoring components
-Feature Components: Complete features combining multiple domain components
-Layout Components: Page and application structure components
-Shared Components: Cross-cutting utility components
-Debug Components: Used during development and debugging
+- **Core Components**: Building blocks with minimal dependencies
+- **Composed Components**: Combinations of core components for common patterns
+- **Domain Components**: Business-specific implementations
+- **Feature Components**: Complete features combining multiple domain components
 
-[RULE] Place new components in the appropriate directory based on their complexity and purpose.
-</section>
+### Component Boundary Examples
 
-<section id="implementation-standards">
-Implementation Standards
-All components should follow these implementation standards to ensure consistency across the codebase:
-Standard Imports
-Use consistent import patterns:
-
+**Core Component** - Atomic UI element with no business logic:
 ```typescript
-// Standard import pattern
-import { cn } from '@ui/utils/formatters';
-import { tv, type VariantProps } from 'tailwind-variants';
-
-// Token imports
-import { textColors, spacing, radii } from '@ui-tokens/tokens';
-
-// Shared variant imports (when needed)
-import { disabledVariant, interactiveVariant } from '@ui-variants/shared-variants';
+// src/components/core/Button.tsx
+export function Button({ intent, appearance, children, ...props }) {
+  return (
+    <button className={buttonVariants({ intent, appearance })} {...props}>
+      {children}
+    </button>
+  );
+}
 ```
-Variant Naming
-Use consistent naming for component variants:
 
-variant: Primary style variation (primary, secondary, etc.)
-Descriptive names for other properties (size, color, etc.)
-Boolean flags for state variations (disabled, error, etc.)
+**Composed Component** - Combines core components for layout/structure:
+```typescript
+// src/components/composed/layouts/DashboardPage.tsx
+export function DashboardPage({ children, dehydratedState }) {
+  const content = dehydratedState ? (
+    <HydrationBoundary state={dehydratedState}>
+      {children}
+    </HydrationBoundary>
+  ) : children;
 
-Field Component Pattern
-Field components should:
+  return <div className="space-y-6">{content}</div>;
+}
+```
 
-Use the FieldWrapper component for layout consistency
-Follow a consistent props interface
-Handle errors through the wrapper
-Support consistent size and padding variants
+**Domain Component** - Contains business logic and domain knowledge:
+```typescript
+// src/components/domain/schools/SchoolCard.tsx
+export function SchoolCard({ school, onDelete }) {
+  const schoolSlug = schoolToSlug(school); // Domain-specific logic
+  
+  return (
+    <Card>
+      <Link href={`/dashboard/schools/${schoolSlug}`}>
+        <Heading>{school.emoji} {school.schoolName}</Heading>
+        <Text>District: {school.district}</Text>
+        {/* School-specific rendering logic */}
+      </Link>
+    </Card>
+  );
+}
+```
 
-[RULE] Follow these implementation standards for all components to ensure consistency and maintainability.
-</section>
+**[RULE]** Place new components in the appropriate directory based on their complexity and purpose.
 
-<section id="styling-approach">
-Styling Approach
+## Styling Approach
+
 Our project uses a clear approach to styling that separates concerns:
-Design Tokens
-Tokens are primitive style values defined in @/lib/ui/tokens/*:
+
+### Design Tokens
+
+Tokens are primitive style values defined in `@/lib/ui/tokens/*`:
 
 ```typescript
 // Example token usage in components
@@ -108,7 +112,9 @@ function Alert() {
   );
 }
 ```
-Component-Specific Variants
+
+### Component-Specific Variants
+
 For component-level styling variations, use Tailwind Variants:
 
 ```typescript
@@ -130,106 +136,61 @@ const button = tv({
   }
 });
 ```
-Shared Behavior Variants
+
+### Shared Behavior Variants
+
 For common UI behaviors that appear across many components, use shared variants:
 
 ```typescript
 import { disabledVariant, loadingVariant } from '@/lib/ui/variants';
 
 const myComponent = tv({
-  // ...
   variants: {
-    // Use shared behavior variants
     disabled: disabledVariant.variants.disabled,
     loading: loadingVariant.variants.loading,
-    
-    // Component-specific variants
-    // ...
+    // Component-specific variants...
   }
 });
 ```
-[RULE] Use tokens directly in atomic components, component-specific variants for styling variations, and shared variants for common behaviors.
-</section>
 
-<section id="component-usage">
+**[RULE]** Use tokens directly in atomic components, component-specific variants for styling variations, and shared variants for common behaviors.
 
-## Component Usage Examples
+## Implementation Standards
 
-This section provides concrete examples of how to correctly use our core components together, following our token-first design system principles.
+All components should follow these implementation standards:
 
-### Basic Component Composition
+### Standard Imports
 
-When combining multiple core components, always respect their token-based APIs rather than applying direct Tailwind classes:
+```typescript
+// Standard import pattern
+import { cn } from '@ui/utils/formatters';
+import { tv, type VariantProps } from 'tailwind-variants';
 
-```tsx
-import { Alert } from '@/components/core/feedback';
-import { Button } from '@/components/core';
-import { Text } from '@/components/core/typography';
-import { InfoIcon } from 'lucide-react';
+// Token imports
+import { textColors, spacing, radii } from '@ui-tokens/tokens';
 
-function SuccessConfirmation() {
-  return (
-    <div className="space-y-4">
-      <Alert variant="success">
-        <Alert.Title>Operation Successful</Alert.Title>
-        <Alert.Description>
-          Your changes have been saved successfully.
-        </Alert.Description>
-      </Alert>
-      
-      <Text textSize="sm" color="muted">
-        You can now proceed to the next step.
-      </Text>
-      
-      <Button 
-        intent="primary" 
-        appearance="solid" 
-        icon={<InfoIcon size={16} />} 
-        iconPosition="right"
-      >
-        Continue
-      </Button>
-    </div>
-  );
-}
+// Shared variant imports (when needed)
+import { disabledVariant, interactiveVariant } from '@ui-variants/shared-variants';
 ```
-Variant Usage
-Core components expose variants through explicit prop interfaces rather than className combinations:
+
+### Component Patterns
+
+**Compound Component Pattern**: Some components like Alert use the compound component pattern:
 
 ```tsx
-// ❌ Incorrect: Using direct Tailwind classes
-<div className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md">
-  Submit
-</div>
-
-// ✅ Correct: Using component API with design tokens
-<Button 
-  intent="primary" 
-  appearance="solid" 
-  padding="md" 
-  radius="md"
->
-  Submit
-</Button>
-Component Patterns
-Compound Component Pattern
-Some components like Alert use the compound component pattern:
-tsx// ✅ Correct usage of compound components
+// ✅ Correct usage of compound components
 <Alert variant="warning" layout="stacked">
   <Alert.Title>Please Review</Alert.Title>
   <Alert.Description>
     Some information requires your attention.
   </Alert.Description>
 </Alert>
+```
 
-// ❌ Incorrect: Not using the subcomponents
-<Alert variant="warning">
-  <h3>Please Review</h3>
-  <p>Some information requires your attention.</p>
-</Alert>
-Typography System
-Typography should use our Text and Heading components rather than raw HTML elements:
-tsx// ✅ Correct: Using the Text component with tokens
+**Typography System**: Use our Text and Heading components rather than raw HTML:
+
+```tsx
+// ✅ Correct: Using the Text component with tokens
 <Text textSize="lg" weight="semibold" color="accent">
   Important message
 </Text>
@@ -238,69 +199,147 @@ tsx// ✅ Correct: Using the Text component with tokens
 <p className="text-lg font-semibold text-blue-600">
   Important message
 </p>
-Responsive Layout Patterns
-Components with responsive variants should use the appropriate layout props:
-tsx// Button with responsive icon placement
-<Button icon={<InfoIcon />} iconPosition="responsive">
-  More Information
-</Button>
-
-// Alert with responsive layout
-<Alert variant="info" layout="responsive">
-  <Alert.Title>Tip</Alert.Title>
-  <Alert.Description>
-    Use responsive layouts for better mobile experiences.
-  </Alert.Description>
-</Alert>
 ```
-[RULE] Always use component APIs rather than direct Tailwind classes, and follow the established patterns for each component type.
-</section>
 
-<section id="component-tokens">
-Design System Tokens
-Our design system provides tokens for:
+**[RULE]** Always use component APIs rather than direct Tailwind classes, and follow the established patterns for each component type.
 
-Typography: Text sizes, weights, and colors
-Spacing: Padding, margins, and gaps
-Colors: Semantic color mapping
-Shapes: Border radius and shadows
-Layout: Grid and flex utilities
+## Feature Context Patterns
+
+Complex features use React Context for state management following a standardized pattern:
+
+### Context Architecture
 
 ```typescript
-// Token imports
-import { 
-  textSize, 
-  textColors, 
-  weight,
-  paddingX,
-  paddingY,
-  radii
-} from '@/lib/ui/tokens';
+// Define clean context interface
+interface ScheduleContextType {
+  // Core props
+  schoolId: string;
+  date: string;
+  mode: 'create' | 'edit';
+  
+  // Data (from domain hooks)
+  teachers: NYCPSStaff[];
+  visits: Visit[];
+  isLoading: boolean;
+  
+  // UI state
+  uiState: ScheduleUIState;
+  selectTeacherPeriod: (teacherId: string, period: number) => void;
+  
+  // Operations (delegated to domain hooks)
+  scheduleVisit: (data: VisitCreationData) => Promise<ActionResult>;
+}
 ```
-[RULE] Always import tokens directly from their respective files, not through intermediate helpers.
-</section>
 
-<section id="atomic-vs-shared">
-Atomic Components vs Shared Variants
-Our system uses a hybrid approach:
-Atomic Components
+### Provider Implementation
 
-Self-contained with explicit styling
-Use tokens directly for predictable rendering
-Define component-specific variants
-Handle internal state and interactions
+```typescript
+export function ScheduleProvider({ 
+  schoolId, 
+  date, 
+  mode = 'create',
+  children 
+}: ScheduleProviderProps) {
+  // Compose focused hooks with single responsibilities
+  const scheduleData = useScheduleData({ schoolId, date, mode });
+  const scheduleActions = useScheduleActions({ schoolId, date });
+  const scheduleState = useScheduleState();
+  
+  const contextValue: ScheduleContextType = {
+    // Core props
+    schoolId,
+    date,
+    mode,
+    
+    // Data (pass through from domain hooks)
+    teachers: scheduleData.teachers,
+    visits: scheduleData.visits,
+    isLoading: Boolean(scheduleData.isLoading || scheduleActions.isLoading),
+    
+    // UI state
+    uiState: scheduleState.uiState,
+    selectTeacherPeriod: scheduleState.selectTeacherPeriod,
+    
+    // Operations (delegated)
+    scheduleVisit: scheduleActions.scheduleVisit
+  };
+  
+  return (
+    <ScheduleContext.Provider value={contextValue}>
+      {children}
+    </ScheduleContext.Provider>
+  );
+}
+```
 
-Shared Variants
+### Hook Composition Pattern
 
-Used for one-off styling needs
-Provide common UI behaviors (disabled, loading, error states)
-Used directly in JSX for quick styling
+Feature contexts compose multiple focused hooks:
 
-[RULE] Use atomic components for reused UI elements and shared variants for one-off styling and common behaviors.
-</section>
+```typescript
+// Data fetching hook
+const useScheduleData = ({ schoolId, date, mode }) => {
+  const { data: teachers } = useNYCPSStaff.list();
+  const { data: visits } = useVisits.list({ schoolId, date });
+  
+  return { teachers, visits, isLoading, error };
+};
 
-<section id="component-form">
-Form Components
+// Operations hook
+const useScheduleActions = ({ schoolId, date }) => {
+  const { mutate: createVisit } = useVisits.mutations().create;
+  
+  const scheduleVisit = async (data: VisitCreationData) => {
+    // Business logic...
+    return createVisit(visitData);
+  };
+  
+  return { scheduleVisit };
+};
+
+// UI state hook
+const useScheduleState = () => {
+  const [uiState, setUiState] = useState<ScheduleUIState>({
+    selectedTeacher: null,
+    selectedPeriod: null
+  });
+  
+  return { uiState, selectTeacherPeriod };
+};
+```
+
+**[RULE]** Use this context pattern for features with multiple components and shared state.
+
+## Feature Component Architecture
+
+Feature components represent complete, self-contained functionality with their own state management and business logic:
+
+```
+components/features/schedulesNew/
+├── context/                 # Feature-specific context
+│   ├── ScheduleContext.tsx    # Main context provider
+│   └── index.ts               # Context exports
+├── hooks/                   # Feature-specific hooks
+│   ├── useScheduleData.ts     # Data fetching
+│   ├── useScheduleActions.ts  # Operations
+│   ├── useScheduleState.ts    # UI state
+│   └── index.ts               # Hook exports
+├── types.ts                 # Feature types
+├── DropZoneCell.tsx         # Individual components
+├── ScheduleGrid.tsx
+└── index.ts                 # Feature exports
+```
+
+Feature components follow these principles:
+- **Self-Contained**: All related functionality in one directory
+- **Context-Driven**: Centralized state through React Context
+- **Modular Hooks**: Separated concerns (data, actions, UI state)
+- **Domain-Specific**: Business logic encapsulated within the feature
+
+**[RULE]** Use this architecture for complex features with multiple components and shared state.
+
+## Form Components
+
 Form components use the schema-driven approach:
 
 ```typescript
@@ -321,207 +360,11 @@ export function ResourceForm<T extends Record<string, unknown>>({
   );
 }
 ```
-[RULE] Use the ResourceForm component for all resource creation and editing.
-</section>
 
-<section id="feature-component-patterns">
+**[RULE]** Use the ResourceForm component for all resource creation and editing.
 
-## Feature Component Patterns
+## Error Handling Patterns
 
-Complex features with multiple interconnected components use context providers to manage shared state and optimize performance.
-
-### Context Provider Architecture
-
-Features organize related components using a context provider pattern:
-
-```typescript
-// features/schedulesNew/context/ScheduleContext.tsx
-const ScheduleContext = createContext<ScheduleContextType | null>(null);
-
-export function ScheduleProvider({ schoolId, date, children }: ScheduleProviderProps) {
-  const scheduleBuilder = useScheduleBuilder({ schoolId, date });
-  
-  return (
-    <ScheduleContext.Provider value={scheduleBuilder}>
-      {children}
-    </ScheduleContext.Provider>
-  );
-}
-
-// Selective hooks prevent unnecessary re-renders
-export function useScheduleSelection() {
-  const context = useScheduleContext();
-  return {
-    selectedTeacher: context.selectedTeacher,
-    selectedPeriod: context.selectedPeriod,
-    handleTeacherPeriodSelect: context.handleTeacherPeriodSelect
-  };
-}
-```
-
-### Feature Component Structure
-
-Feature components consume only the state they need through selective hooks:
-
-```typescript
-// Main feature component
-export function ScheduleBuilder({ schoolId, date }: ScheduleBuilderProps) {
-  return (
-    <ScheduleProvider schoolId={schoolId} date={date}>
-      <PlanningStatusBar />
-      <ScheduleGrid />
-      <SelectionStatusFooter />
-    </ScheduleProvider>
-  );
-}
-
-// Sub-component using selective context
-export function ScheduleGrid() {
-  const { teachers, timeSlots } = useScheduleStructure();
-  const { saveStatus } = useScheduleSaveStatus();
-  
-  // Component only re-renders when its specific state changes
-}
-```
-
-### Benefits of Feature Context
-
-This pattern provides several advantages:
-
-- **Performance Optimization**: Selective state access prevents unnecessary re-renders
-- **Clear Boundaries**: Component responsibilities are well-defined
-- **Reduced Coupling**: Eliminates prop drilling for complex feature state
-- **Easier Testing**: Feature logic can be tested independently
-
-[RULE] Use feature context providers for complex features with multiple components sharing substantial state.
-
-</section>
-
-<section id="responsive-layout-patterns">
-
-## Responsive Layout Patterns
-
-Our component system uses consistent responsive patterns to ensure optimal display across different screen sizes:
-
-### Side-by-Side Layout Pattern
-
-The responsive side-by-side layout pattern is used for components with a primary element (title, heading) and secondary element (description, metadata):
-
-- Displays vertically (stacked) on mobile devices
-- Displays horizontally (side-by-side) on larger screens
-
-This pattern is implemented using our `responsiveLayoutVariant`:
-
-```typescript
-import { responsiveLayoutVariant } from "@ui-variants/layout";
-
-const alert = tv({
-  slots: {
-    root: responsiveLayoutVariant({ stack: 'responsive' }).container(),
-    title: responsiveLayoutVariant({ stack: 'responsive', titleSpacing: 'responsive' }).title(),
-    description: responsiveLayoutVariant({ stack: 'responsive', contentWidth: 'responsive' }).content(),
-  },
-  // Additional variants...
-});
-```
-Icon and Content Layout
-For components that combine icons with text (buttons, menu items, etc.), use the iconContentLayoutVariant:
-
-```typescript
-import { iconContentLayoutVariant } from "@ui-variants/layout";
-
-const button = tv({
-  slots: {
-    base: `inline-flex items-center justify-center font-semibold`,
-    iconWrapper: iconContentLayoutVariant({ position: 'left' }).icon(),
-    content: '',
-  },
-  variants: {
-    iconPosition: {
-      left: {
-        iconWrapper: iconContentLayoutVariant({ position: 'left' }).icon(),
-      },
-      right: {
-        iconWrapper: iconContentLayoutVariant({ position: 'right' }).icon(),
-      },
-      responsive: {
-        iconWrapper: iconContentLayoutVariant({ position: 'responsive' }).icon(),
-      },
-    },
-  },
-  // Additional variants...
-});
-```
-Responsive Grid Layout
-For grid-based layouts that adapt to screen sizes, use the responsiveGridVariant:
-
-```typescript
-import { responsiveGridVariant } from "@ui-variants/layout";
-
-const cardGrid = responsiveGridVariant({ columns: '1-2-3', gap: 'responsive' })();
-```
-Available Responsive Variants
-Our system provides these key responsive variants:
-
-responsiveLayoutVariant: For components with title/description pairs
-iconContentLayoutVariant: For components with icons and text
-responsiveGridVariant: For grid layouts
-responsiveSpacingVariant: For consistent spacing across breakpoints
-
-[RULE] Use the responsive layout pattern for all components with primary/secondary element pairs.
-</section>
-
-<section id="icon-usage">
-Icon Implementation
-Our application uses Heroicons React for consistent, high-quality SVG icons across the interface. Following Heroicons' official best practices:
-
-```typescript
-// Standard icon import pattern
-import { 
-  HomeIcon,
-  UsersIcon,
-  FolderIcon,
-  CalendarIcon,
-  DocumentDuplicateIcon,
-  ChartPieIcon 
-} from '@heroicons/react/24/outline';
-
-// For solid variants
-import { BellIcon } from '@heroicons/react/24/solid';
-```
-
-Icon Usage Guidelines
-Icons should be implemented according to Heroicons' recommended patterns:
-
-```tsx
-// In components with consistent sizing
-<NavItem>
-  <HomeIcon className="size-6 text-gray-500" />
-  Dashboard
-</NavItem>
-
-// In buttons with icons
-<Button 
-  variant="primary"
-  icon={<CalendarIcon className="size-6" />}
-  iconPosition="left"
->
-  Schedule
-</Button>
-```
-When using Heroicons:
-
-Use the proper import path based on icon style and size (24/outline, 24/solid, 20/solid, or 16/solid) GitHub
-Follow the upper camel case naming convention with "Icon" suffix GitHub
-Apply sizing through the "size-x" class names GitHub (size-6 for 24px, etc.)
-Use text color utilities like "text-gray-500" for styling GitHub
-Include proper accessibility attributes when icons convey meaning
-
-[RULE] Use @heroicons/react consistently for all interface icons, following official implementation patterns.
-</section>
-
-<section id="component-error-display">
-Error Display
 Components should display errors in a consistent manner:
 
 ```tsx
@@ -535,13 +378,43 @@ Components should display errors in a consistent manner:
 // API operation error
 {error && (
   <Alert variant="error">
-    <AlertTitle>Operation Failed</AlertTitle>
-    <AlertDescription>{error}</AlertDescription>
+    <Alert.Title>Operation Failed</Alert.Title>
+    <Alert.Description>{error}</Alert.Description>
   </Alert>
 )}
 ```
 
-[RULE] Always display errors using the appropriate error component.
-</section>
-</doc>
+**[RULE]** Always display errors using the appropriate error component.
+
+## Component API Guidelines
+
+### Variant Naming
+
+Use consistent naming for component variants:
+- `variant`: Primary style variation (primary, secondary, etc.)
+- Descriptive names for other properties (size, color, etc.)
+- Boolean flags for state variations (disabled, error, etc.)
+
+### Field Component Pattern
+
+Field components should:
+- Use the FieldWrapper component for layout consistency
+- Follow a consistent props interface
+- Handle errors through the wrapper
+- Support consistent size and padding variants
+
+### Consumer Hook Pattern
+
+Provide a typed hook for consuming context:
+
+```typescript
+export function useScheduleContext(): ScheduleContextType {
+  const context = useContext(ScheduleContext);
+  if (!context) {
+    throw new Error('Schedule hooks must be used within ScheduleProvider');
+  }
+  return context;
+}
 ```
+
+**[RULE]** Follow these implementation standards for all components to ensure consistency and maintainability.

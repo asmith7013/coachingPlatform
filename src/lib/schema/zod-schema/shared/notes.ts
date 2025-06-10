@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
+import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 import { formatSubheadings } from "@schema/reference/shared/notes-helpers";
-import { formatMediumDate, toDateString } from "@transformers/utils/date-utils";
+import { formatMediumDate, toDateString } from "@/lib/data-processing/transformers/utils/date-utils";
 
 // Note Fields Schema
 export const NoteFieldsSchema = z.object({

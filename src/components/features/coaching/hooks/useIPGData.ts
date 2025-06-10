@@ -6,7 +6,7 @@ import {
   type IPGCoreActionReference,
   type IPGSubsectionReference,
   type IPGCoreAction
-} from '@transformers/domain/coaching-reference-transformers';
+} from '@/lib/data-processing/transformers/domain/coaching-reference-transformers';
 import ipgData from '@/lib/json/ipg.json';
 
 /**

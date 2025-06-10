@@ -80,15 +80,25 @@ export function usePagination<T extends BaseDocument, R = T>({
   const query = useQuery<PaginatedResponse<T>, Error, PaginatedResponse<R>>({
     queryKey: fullQueryKey,
     queryFn: async () => {
+      // console.log(`🚀 PAGINATION: Executing query for ${entityType}`, { queryParams });
+      
       try {
-        return await queryFn(queryParams);
+        const result = await queryFn(queryParams);
+        
+        return result;
       } catch (error) {
+        // console.error(`🚀 PAGINATION: Query error for ${entityType}:`, error);
         throw error instanceof Error 
           ? error 
           : new Error(`Fetch ${entityType} list failed: ${String(error)}`);
       }
     },
-    select: transformFn, // Apply the transformer function
+    select: (data) => {
+      
+      const transformed = transformFn(data);
+      
+      return transformed;
+    },
     staleTime,
     ...queryOptions,
   });

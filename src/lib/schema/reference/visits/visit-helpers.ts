@@ -1,5 +1,5 @@
 import { Visit } from "@zod-schema/visits/visit";
-import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
+import { formatMediumDate, toDateString } from '@/lib/data-processing/transformers/utils/date-utils';
 
 // Helper function for visit display string
 export function getVisitDisplayString(visit: Visit): string {

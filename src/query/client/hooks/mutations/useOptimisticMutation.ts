@@ -4,8 +4,8 @@
  * This hook provides a standardized approach to handling optimistic updates
  * with proper error handling and cache invalidation.
  */
-import { useMutation, useQueryClient, QueryKey } from '@tanstack/react-query';
-import { handleClientError } from '@error/handlers/client';
+import { useQueryClient, QueryKey } from '@tanstack/react-query';
+import { useStandardMutation } from '@query/client/hooks/mutations/useStandardMutation';
 
 /**
  * Options for optimistic mutation behavior
@@ -50,59 +50,53 @@ export function useOptimisticMutation<TData, TResult, TError, TContext>(
     retry = 1
   } = options || {};
 
-  return useMutation({
-    mutationFn: async (data: TData) => {
-      try {
-        return await mutationFn(data);
-      } catch (error) {
-        throw error instanceof Error 
-          ? error 
-          : new Error(handleClientError(error, errorContext));
-      }
-    },
-    
-    // Optimistic update handling
-    onMutate: async (newData: TData) => {
-      if (onMutate) {
-        // If invalidation queries are provided, cancel related queries
+  return useStandardMutation(
+    mutationFn, // No need for manual try/catch anymore
+    {
+      // Optimistic update handling
+      onMutate: async (newData: TData) => {
+        if (onMutate) {
+          // If invalidation queries are provided, cancel related queries
+          if (invalidateQueries?.length) {
+            await Promise.all(
+              invalidateQueries.map(queryKey => 
+                queryClient.cancelQueries({ queryKey })
+              )
+            );
+          }
+          
+          // Run the optimistic update function
+          return await onMutate(newData);
+        }
+        return undefined;
+      },
+      
+      // Error handling with rollback
+      onError: (err, newData, context) => {
+        // Handle errors and rollback optimistic updates
+        if (onError) {
+          onError(err as TError, newData, context as TContext);
+        }
+      },
+      
+      // Success handling with cache invalidation
+      onSuccess: (data, variables, context) => {
+        // Invalidate relevant queries on success
         if (invalidateQueries?.length) {
-          await Promise.all(
-            invalidateQueries.map(queryKey => 
-              queryClient.cancelQueries({ queryKey })
-            )
-          );
+          invalidateQueries.forEach(queryKey => {
+            queryClient.invalidateQueries({ queryKey });
+          });
         }
         
-        // Run the optimistic update function
-        return await onMutate(newData);
-      }
-      return undefined;
-    },
-    
-    // Error handling with rollback
-    onError: (err, newData, context) => {
-      // Handle errors and rollback optimistic updates
-      if (onError) {
-        onError(err as TError, newData, context as TContext);
-      }
-    },
-    
-    // Success handling with cache invalidation
-    onSuccess: (data, variables, context) => {
-      // Invalidate relevant queries on success
-      if (invalidateQueries?.length) {
-        invalidateQueries.forEach(queryKey => {
-          queryClient.invalidateQueries({ queryKey });
-        });
-      }
+        // Run additional success callback if provided
+        if (onSuccess) {
+          onSuccess(data, variables, context as TContext);
+        }
+      },
       
-      // Run additional success callback if provided
-      if (onSuccess) {
-        onSuccess(data, variables, context as TContext);
-      }
+      // Retry configuration
+      retry,
     },
-    
-    // Retry configuration
-    retry,
-  });
+    errorContext
+  );
 }

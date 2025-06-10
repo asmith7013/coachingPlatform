@@ -2,8 +2,14 @@ import mongoose from "mongoose";
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
-@modelOptions({ schemaOptions: { collection: 'notes' } })
+@modelOptions({ 
+  schemaOptions: { 
+    ...standardSchemaOptions,
+    collection: 'notes' 
+  } 
+})
 export class Note extends BaseMongooseDocument {
   @prop({ type: Date, required: true })
   date!: Date;

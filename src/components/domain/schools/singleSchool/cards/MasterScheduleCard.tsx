@@ -17,11 +17,9 @@ import {
   EyeIcon,
   CalendarIcon
 } from '@heroicons/react/24/outline'
-import { navigateDate, getTodayString, isToday, formatLongDate } from '@transformers/utils/date-utils'
-import type { ScheduleAssignmentType } from '@domain-types/schedule'
+import { navigateDate, getTodayString, isToday, formatLongDate } from '@/lib/data-processing/transformers/utils/date-utils'
+import type { ScheduleAssignment } from '@domain-types/schedule'
 
-// Type alias for backward compatibility
-type VisitPortion = ScheduleAssignmentType
 
 const masterScheduleCard = tv({
   slots: {
@@ -66,14 +64,14 @@ export interface MasterScheduleCardProps extends VariantProps<typeof masterSched
   onVisitScheduled?: (visitData: { 
     teacherId: string
     periodNumber: number
-    portion: VisitPortion
+    portion: ScheduleAssignment
     purpose?: string 
   }) => void
   /** Callback when visit is modified */
   onVisitModified?: (visitId: string, visitData: Partial<{
     teacherId: string
     periodNumber: number
-    portion: VisitPortion
+    portion: ScheduleAssignment
     purpose?: string
   }>) => void
   /** Callback when visit is deleted */

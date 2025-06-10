@@ -1,14 +1,15 @@
 import { z } from "zod";
 import { 
   GradeLevelsSupportedZod, 
-  EventTypeZod, 
   DurationZod,
   AllowedPurposeZod,
-  ModeDoneZod
+  ModeDoneZod,
+  SessionPurposeZod,
+  ScheduleAssignmentTypeZod
 } from "@enums";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
+import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 import { formatVisitDate } from "@schema/reference/visits/visit-helpers";
 
@@ -19,16 +20,16 @@ export const TimeSlotZodSchema = z.object({
   periodNum: z.number().optional(), // Optional period number for bell schedule alignment
 });
 
-export const VisitPortionZod = z.enum(['full_period', 'first_half', 'second_half']);
+export const VisitPortionZod = ScheduleAssignmentTypeZod;
 
 export const EventItemZodSchema = z.object({
-  eventType: EventTypeZod, // Existing: event type
-  staff: z.array(z.string()), // Existing: staff IDs
+  eventType: SessionPurposeZod, // Existing: event type
+  staffIds: z.array(z.string()), // Existing: staff IDs
   duration: DurationZod, // Existing: duration
   
   // ADD: Scheduling fields that were in PlannedVisit
   timeSlot: TimeSlotZodSchema.optional(), // Time slot for this specific event
-  purpose: z.string().optional(), // Specific purpose for this event
+  purpose: SessionPurposeZod.optional(), // Specific purpose for this event
   periodNumber: z.number().optional(), // Period number if relevant
   portion: VisitPortionZod.optional(), // Full/first_half/second_half
   
@@ -42,15 +43,15 @@ export const SessionLinkZodSchema = z.object({
   purpose: z.string(), // Required purpose
   title: z.string(), // Required title
   url: z.string().url(), // Required valid URL
-  staff: z.array(z.string()), // Array of staff IDs
+  staffIds: z.array(z.string()), // Array of staff IDs
 });
 
 // Visit Fields Schema
 export const VisitFieldsSchema = z.object({
   date: zDateField, // Required date with proper handling
-  school: z.string(), // Required school ID
-  coach: z.string(), // Required coach ID
-  cycleRef: z.string().optional(), // Made optional as requested
+  schoolId: z.string(), // Required school ID
+  coachId: z.string(), // Required coach ID
+  cycleId: z.string().optional(), // Made optional as requested
   allowedPurpose: AllowedPurposeZod.optional(), // Optional enum
   modeDone: ModeDoneZod.optional(), // Optional enum
   gradeLevelsSupported: z.array(GradeLevelsSupportedZod), // Array of grade levels
@@ -82,8 +83,8 @@ export const VisitInputZodSchema = toInputSchema(VisitZodSchema);
 export const VisitReferenceZodSchema = BaseReferenceZodSchema.merge(
   z.object({
     date: zDateField.optional(),
-    school: z.string().optional(),
-    coach: z.string().optional(),
+    schoolId: z.string().optional(),
+    coachId: z.string().optional(),
     allowedPurpose: AllowedPurposeZod.optional(),
     modeDone: ModeDoneZod.optional(),
   })
@@ -99,8 +100,8 @@ export const VisitReferenceZodSchema = BaseReferenceZodSchema.merge(
 export const VisitImportZodSchema = VisitFieldsSchema.extend({
   // Make multiple fields optional for flexible import
   date: zDateField.optional(),
-  school: z.string().optional(),
-  coach: z.string().optional(),
+  schoolId: z.string().optional(),
+  coachId: z.string().optional(),
   gradeLevelsSupported: z.array(GradeLevelsSupportedZod).optional(),
 });
 
@@ -118,8 +119,8 @@ export const visitToReference = createReferenceTransformer<Visit, VisitReference
     const date = visit.date instanceof Date ? visit.date : visit.date ? new Date(visit.date) : undefined;
     return {
       date: date as Date | undefined,
-      school: visit.school,
-      coach: visit.coach,
+      schoolId: visit.schoolId,
+      coachId: visit.coachId,
       allowedPurpose: visit.allowedPurpose,
       modeDone: visit.modeDone,
       dateFormatted: date ? formatVisitDate(date) : undefined,

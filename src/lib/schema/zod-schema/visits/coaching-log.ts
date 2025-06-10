@@ -6,7 +6,7 @@ import {
 } from "@enums"; 
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
+import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 import { getTotalDurationMinutes, hasMicroPL, hasModel } from "@schema/reference/visits/coaching-log-helpers";
 
 // Coaching Log Fields Schema

@@ -7,7 +7,7 @@ import {
   UserMetadata
 } from '@core-types/auth';
 import { UserMetadataZodSchema } from '@zod-schema/core-types/auth';
-import { validateSafe } from '@transformers/core/validation';
+import { validateSafe } from '@/lib/data-processing/validation/zod-validation';
 
 export function useAuthenticatedUser(): AuthenticatedUser {
   const { user, isLoaded, isSignedIn } = useUser();

@@ -9,8 +9,8 @@ import { ClipboardDocumentIcon, CheckIcon, ArrowLeftIcon } from '@heroicons/reac
 import { useRouter } from 'next/navigation';
 import { useSchools } from '@hooks/domain/useSchools';
 import { AI_PROMPTS } from '@ui/data-import/schema-templates';
-import { validateSchoolData } from '@transformers/ui/form-validation';
-import { createDataPreview } from '@transformers/ui/data-preview';
+import { validateSchoolData } from '@/lib/data-processing/transformers/ui/form-validation';
+import { createDataPreview } from '@/lib/data-processing/transformers/ui/data-preview';
 import type { SchoolInput } from '@domain-types/school';
 
 export default function CreateSchoolPage() {

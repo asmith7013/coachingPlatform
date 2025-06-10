@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { QueryParams, DEFAULT_QUERY_PARAMS } from '@core-types/query';
-import { buildQueryParams } from '@/lib/transformers/pagination/pagination-utils';
+import { buildQueryParams } from '@/lib/data-processing/pagination/pagination-utils';
 
 /**
  * Hook to manage query state consistently across paginated queries

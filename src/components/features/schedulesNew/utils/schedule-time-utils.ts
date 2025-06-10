@@ -4,6 +4,8 @@
  * Eliminates duplication across hooks and components
  */
 
+import { ScheduleAssignment } from '@enums';
+
 /**
  * Calculate time slot for a period number with fallback
  * Replaces duplicated logic in useScheduleBuilder and useVisitScheduling
@@ -39,26 +41,26 @@ export function calculateMidpointTime(startTime: string, endTime: string): strin
 
 /**
  * Calculate time slot for a specific portion of a period
- * Handles first_half, second_half, and full_period correctly
+ * Handles ScheduleAssignment enum values correctly
  */
 export function calculatePeriodPortionTimeSlot(
   periodNumber: number | string, 
-  portion: 'first_half' | 'second_half' | 'full_period'
+  portion: ScheduleAssignment
 ): { startTime: string; endTime: string } {
   const fullPeriod = calculatePeriodTimeSlot(periodNumber);
   
-  if (portion === 'full_period') {
+  if (portion === ScheduleAssignment.FULL_PERIOD) {
     return fullPeriod;
   }
   
   const midpoint = calculateMidpointTime(fullPeriod.startTime, fullPeriod.endTime);
   
-  if (portion === 'first_half') {
+  if (portion === ScheduleAssignment.FIRST_HALF) {
     return {
       startTime: fullPeriod.startTime,
       endTime: midpoint
     };
-  } else { // second_half
+  } else { // ScheduleAssignment.SECOND_HALF
     return {
       startTime: midpoint,
       endTime: fullPeriod.endTime

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
-import { useErrorHandledMutation } from '@/query/client/hooks/mutations/useStandardMutation';
+import { useStandardMutation } from '@/query/client/hooks/mutations/useStandardMutation';
 import { checkStaffExistenceByEmail } from '@actions/staff/operations';
 
 // Define the exact type that will be returned
@@ -38,7 +38,7 @@ export function useStaffExistence(): UseStaffExistenceResult {
     mutate, 
     isPending: checking, 
     error: mutationError 
-  } = useErrorHandledMutation<StaffExistenceResponse, Error, string>(
+  } = useStandardMutation<StaffExistenceResponse, Error, string>(
     checkStaffExistenceByEmail,
     {},
     "StaffExistenceCheck"

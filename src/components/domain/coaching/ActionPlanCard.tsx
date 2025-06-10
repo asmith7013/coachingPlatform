@@ -8,11 +8,11 @@ import { cn } from '@ui/utils/formatters';
 import { formatDistance } from 'date-fns';
 import { Edit2, Copy, Archive, Trash2, FileText } from 'lucide-react';
 import type { CoachingActionPlan } from '@zod-schema/core/cap';
-import { calculatePlanProgress } from '@/lib/transformers/utils/coaching-action-plan-utils';
+import { calculatePlanProgress } from '@/lib/data-processing/transformers/utils/coaching-action-plan-utils';
 
 // Types for the component
 interface ActionPlanCardProps {
-  plan: CoachingActionPlan & { _id: string; createdAt?: Date; updatedAt?: Date };
+  plan: CoachingActionPlan & { _id: string; createdAt?: string; updatedAt?: string };
   onEdit?: (planId: string) => void;
   onDuplicate?: (planId: string) => void;
   onArchive?: (planId: string) => void;

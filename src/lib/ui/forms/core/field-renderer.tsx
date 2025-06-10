@@ -11,7 +11,7 @@ import type { Field, FieldComponentProps } from '@ui-types/form';
 import { ZodSchema } from 'zod';
 
 // Import transformer validation for consistency
-import { validateSafe } from '@transformers/core/validation';
+import { validateSafe } from '@/lib/data-processing/validation/zod-validation';
 import { handleClientError } from '@error/handlers/client';
 
 /**

@@ -2,10 +2,7 @@
 
 import { useState } from 'react';
 import { EventItemZodSchema } from '@zod-schema/visits/visit';
-import { 
-  EventTypes, 
-  DurationValues,
-} from '@enums';
+import { DurationValues, SessionPurposes } from '@enums';
 import { Button } from '@/components/core/Button';
 
 // Type for the validation result
@@ -24,7 +21,7 @@ export default function TestEnumMigrationPage() {
     try {
       // Test with a string duration (should be transformed to number)
       const testData = {
-        eventType: Object.values(EventTypes)[0],
+        eventType: Object.values(SessionPurposes)[0],
         staff: ["staffId1", "staffId2"],
         duration: DurationValues[0] // String duration ("15")
       };

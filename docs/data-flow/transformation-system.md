@@ -137,6 +137,136 @@ Key features:
 
 </section>
 
+<section id="mongoose-integration">
+
+## Mongoose Transform Integration
+
+Our transformation system integrates with Mongoose transforms to provide seamless ObjectId handling and consistent document formatting.
+
+### Automatic Document Transformation
+
+Mongoose models with standard schema options automatically handle transformations:
+
+```typescript
+// Model definition with standard options
+const EntitySchema = new mongoose.Schema(schemaFields, standardSchemaOptions);
+
+// Documents are automatically transformed
+const entity = await EntityModel.findById(id); 
+// entity._id is already a string
+// entity.id is automatically added
+// entity.__v is removed
+```
+
+### API Response Integration
+
+The Mongoose transforms work seamlessly with API responses:
+
+```typescript
+// In API routes
+export async function GET() {
+  try {
+    const entities = await EntityModel.find();
+    // Documents are already transformed by Mongoose
+    
+    return Response.json({
+      success: true,
+      items: entities, // No additional transformation needed
+      total: entities.length
+    });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+```
+
+### Server Action Integration
+
+Server actions receive properly transformed documents:
+
+```typescript
+export async function fetchEntities() {
+  "use server";
+  
+  try {
+    const entities = await EntityModel.find();
+    // Documents already have string IDs and proper format
+    
+    return {
+      success: true,
+      data: entities // Ready for client consumption
+    };
+  } catch (error) {
+    return handleServerError(error);
+  }
+}
+```
+
+### Zod Schema Compatibility
+
+Mongoose transforms ensure compatibility with Zod schemas:
+
+```typescript
+// Zod schema expects string _id
+export const EntityZodSchema = z.object({
+  _id: z.string(),
+  name: z.string(),
+  // Additional fields...
+});
+
+// Mongoose documents automatically match schema
+const entity = await EntityModel.findById(id);
+const validated = EntityZodSchema.parse(entity); // ✅ Passes validation
+```
+
+### Custom Transform Extensions
+
+For models requiring additional transformation logic:
+
+```typescript
+import { standardMongooseTransform } from '@/lib/server/db/mongoose-transform-helper';
+
+function customTransform(doc: Document, ret: RawMongoDocument): BaseDocument {
+  // Apply standard transform first
+  const transformed = standardMongooseTransform(doc, ret);
+  
+  // Add custom transformations
+  if (transformed.someField) {
+    transformed.customField = processField(transformed.someField);
+  }
+  
+  return transformed;
+}
+
+const CustomSchema = new mongoose.Schema(schemaFields, {
+  timestamps: true,
+  toJSON: { transform: customTransform },
+  toObject: { transform: customTransform }
+});
+```
+
+### Migration from Manual Transforms
+
+When migrating existing models:
+
+```typescript
+// Before: Manual transformation required
+const entities = await EntityModel.find();
+const transformed = entities.map(entity => ({
+  ...entity.toObject(),
+  _id: entity._id.toString(),
+  id: entity._id.toString()
+}));
+
+// After: Automatic transformation
+const entities = await EntityModel.find(); 
+// Documents are already properly formatted
+```
+
+[RULE] Leverage Mongoose transforms for automatic document formatting and eliminate manual transformation code.
+
+</section>
+
 <section id="usage-patterns">
 
 ## Usage Patterns

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { GradeLevelsSupportedZod } from "@schema/enum";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
+import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 
 // School Fields Schema
 export const SchoolFieldsSchema = z.object({
@@ -11,11 +11,10 @@ export const SchoolFieldsSchema = z.object({
   schoolName: z.string(),
   address: z.string().optional(),
   emoji: z.string().optional(),
-  gradeLevelsSupported: z.array(GradeLevelsSupportedZod), // Array of supported grade levels
-  staffList: z.array(z.string()), // Array of staff IDs
-  schedules: z.array(z.string()), // Array of schedule IDs
-  cycles: z.array(z.string()), // Array of cycle IDs
-  owners: z.array(z.string()), // Owner IDs
+  gradeLevelsSupported: z.array(GradeLevelsSupportedZod).describe("Grade levels taught at this school (K-12, Pre-K, etc.)"),
+  staffListIds: z.array(z.string()).describe("Array of Staff document _ids assigned to this school"),
+  scheduleIds: z.array(z.string()).describe("Array of Schedule document _ids for this school's bell schedules"),
+  cycleIds: z.array(z.string()).describe("Array of Cycle document _ids for coaching cycles at this school"),
 });
 
 // School Full Schema
@@ -24,10 +23,10 @@ export const SchoolZodSchema = BaseDocumentSchema.merge(SchoolFieldsSchema);
 // School Input Schema
 export const SchoolInputZodSchema = toInputSchema(SchoolZodSchema);
 
-// Client-side schema that omits timestamps
-export const SchoolClientZodSchema = SchoolZodSchema.omit({
-  createdAt: true,
-  updatedAt: true
+// Client-side schema with string timestamps (Next.js serialization)
+export const SchoolClientZodSchema = SchoolZodSchema.extend({
+  createdAt: z.string().optional().describe("ISO string from Next.js serialization"),
+  updatedAt: z.string().optional().describe("ISO string from Next.js serialization"),
 });
 
 /**
@@ -73,7 +72,7 @@ export const schoolToReference = createReferenceTransformer<School, SchoolRefere
     schoolNumber: school.schoolNumber,
     district: school.district,
     gradeLevels: school.gradeLevelsSupported,
-    staffCount: school.staffList?.length || 0,
+    staffCount: school.staffListIds?.length || 0,
   }),
   
   // Validation schema

@@ -57,9 +57,11 @@ export function useEntityList<T extends BaseDocument>({
   queryOptions = {},
   errorContextPrefix
 }: UseEntityListConfig<T>): ReturnType<typeof usePagination<T, T>> {
+  
   // Create a transformation function using our unified utilities
   const transformer: ResponseTransformer<T, T> = (data: PaginatedResponse<T> | undefined): PaginatedResponse<T> => {
-    return transformPaginatedResponse<T>(
+    
+    const result = transformPaginatedResponse<T>(
       data,
       schema,
       {
@@ -68,6 +70,9 @@ export function useEntityList<T extends BaseDocument>({
         errorContext: `${errorContextPrefix || entityType}.useEntityList`
       }
     );
+    
+    
+    return result;
   };
   
   // Delegate to the base paginated data hook

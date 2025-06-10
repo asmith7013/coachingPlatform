@@ -2,6 +2,7 @@ import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose from "mongoose"; 
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
 // Evidence nested class
 @modelOptions({ 
@@ -211,22 +212,8 @@ class EndOfCycleAnalysis {
 // Main Coaching Action Plan class
 @modelOptions({ 
   schemaOptions: { 
+    ...standardSchemaOptions,
     collection: 'coachingactionplans',
-    // Handle ObjectId conversion at model level
-    toJSON: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    },
-    toObject: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    }
   } 
 })
 class CoachingActionPlan extends BaseMongooseDocument {

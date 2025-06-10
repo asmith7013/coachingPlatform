@@ -1,15 +1,17 @@
 import React from 'react';
 import { useScheduleContext } from './context';
 import type { Period } from '@zod-schema/schedule/schedule';
+import { SessionPurposes } from '@/lib/schema/enum';
+import { extractEventsForPeriod } from './utils/visit-data-utils';
 
 interface TeacherPeriodCellProps {
   teacherId: string;
-  period: number | string;
+  period: number;
   schedule?: Period;
 }
 
 export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriodCellProps) {
-  // ✅ SIMPLIFIED: Use context directly with UI state
+  // ✅ Use context directly with UI state
   const { 
     uiState,
     selectTeacherPeriod,
@@ -19,21 +21,84 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
   
   const { selectedTeacher, selectedPeriod } = uiState;
 
+  // ✅ Ensure period is number
   const periodNum = typeof period === 'string' ? parseInt(period, 10) : period;
   const isSelected = selectedTeacher === teacherId && selectedPeriod === periodNum;
   const visit = getVisitForTeacherPeriod(teacherId, periodNum);
   
-  // ✅ SIMPLE HELPER: Check if period is fully scheduled
+  // ✅ Simple helper: Check if period is fully scheduled
   const dropZoneFullyScheduled = visits.some(v => 
-    v.events?.[0]?.staff?.[0] === teacherId && 
+    v.events?.[0]?.staffIds?.[0] === teacherId && 
     // TODO: Extract period from visit when schema supports it
     true
   );
 
+  // ✅ HELPER: Get event styling based on event type
+  const getEventStyling = (eventType: string) => {
+    switch (eventType) {
+      case SessionPurposes.OBSERVATION:
+      case 'observation':
+        return {
+          backgroundColor: '#3B82F6', // blue-500
+          borderColor: '#1E40AF',     // blue-700
+          textColor: 'white',
+          label: 'Observation'
+        };
+      case SessionPurposes.DEBRIEF:
+      case 'debrief':
+        return {
+          backgroundColor: '#8B5CF6', // purple-500
+          borderColor: '#7C3AED',     // purple-600
+          textColor: 'white',
+          label: 'Debrief'
+        };
+      case SessionPurposes.CO_PLANNING:
+      case 'co-planning':
+        return {
+          backgroundColor: '#8B5CF6', // purple-500
+          borderColor: '#7C3AED',     // purple-600
+          textColor: 'white',
+          label: 'Co-Planning'
+        };
+      case SessionPurposes.PLC:
+      case 'plc':
+        return {
+          backgroundColor: '#10B981', // green-500
+          borderColor: '#059669',     // green-600
+          textColor: 'white',
+          label: 'PLC'
+        };
+      default:
+        return {
+          backgroundColor: '#3B82F6', // blue-500 (default)
+          borderColor: '#1E40AF',     // blue-700
+          textColor: 'white',
+          label: 'Visit'
+        };
+    }
+  };
+
   if (visit) {
+    // ✅ FIX: Get the actual event for this teacher and period
+    const eventsForPeriod = extractEventsForPeriod(visit, periodNum);
+    const teacherEvent = eventsForPeriod.find(event => 
+      event.staffIds?.includes(teacherId)
+    );
+    
+    // Extract event type from the actual event data
+    const eventType = teacherEvent?.eventType || teacherEvent?.purpose || visit.allowedPurpose || 'observation';
+    const styling = getEventStyling(eventType);
+
     return (
-      <div className="h-16 flex flex-col items-center justify-center bg-blue-500 text-white rounded border border-blue-600">
-        <span className="font-medium text-sm">{visit.allowedPurpose || 'Visit'}</span>
+      <div 
+        className="h-16 flex flex-col items-center justify-center text-white rounded border"
+        style={{
+          backgroundColor: styling.backgroundColor,
+          borderColor: styling.borderColor,
+          color: styling.textColor
+        }}
+      >
+        <span className="font-medium text-sm">{styling.label}</span>
         <span className="text-xs opacity-90">Scheduled</span>
       </div>
     );
@@ -117,7 +182,7 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
     );
   }
 
-  // Force override with !important-style approach using style attribute
+  // ✅ Schema-first: Default case for regular class periods using Period.className
   const getBackgroundStyle = () => {
     if (isSelected) {
       return {
@@ -149,8 +214,13 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
     >
       <div className="h-full flex flex-col items-center justify-center">
         <span className="font-medium text-sm">
-          {schedule?.periodType || 'Available'}
+          {schedule?.className || 'Available'}
         </span>
+        {schedule?.room && (
+          <span className="text-xs opacity-75">
+            Room {schedule.room}
+          </span>
+        )}
         <span className="text-xs">
           {isSelected ? 'Selected' : dropZoneFullyScheduled ? 'Period scheduled' : 'Click to select'}
         </span>

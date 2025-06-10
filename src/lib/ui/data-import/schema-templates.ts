@@ -6,9 +6,9 @@ import { BellScheduleInputZodSchema } from '@zod-schema/schedule/schedule';
 import { TeacherScheduleInputZodSchema } from '@zod-schema/schedule/schedule';
 
 // Use transformer validation and shared utilities
-import { validateSafe } from '@transformers/core/validation';
+import { validateSafe } from '@/lib/data-processing/validation/zod-validation';
 import { handleClientError } from '@error/handlers/client';
-import { extractSchemaFields } from '@transformers/ui/schema-utils';
+import { extractSchemaFields } from '@/lib/data-processing/transformers/ui/schema-utils';
 
 // Import actual enums from shared-enums
 import {

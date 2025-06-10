@@ -1,13 +1,12 @@
 
 import type { Visit } from '@zod-schema/visits/visit';
+import type { ScheduleAssignment } from '@zod-schema/schedule/schedule';
 
 // Note: ScheduleAssignmentType and PlannedVisit were from planned-visit schema
-type ScheduleAssignmentType = string;
 type PlannedVisit = Visit;
 import type { BellSchedule, Period, AssignmentState } from '@zod-schema/schedule/schedule';
 
 // ===== UNIFIED TIME SLOT INTERFACES =====
-export type { ScheduleAssignmentType };
 
 /**
  * Unified TimeSlot interface that combines visit and general schedule types
@@ -73,7 +72,7 @@ export interface InteractiveScheduleColumn extends ScheduleColumn {
  * Hover zone types for three-zone interactions
  * Maps to ScheduleAssignmentType for consistency
  */
-export type HoverZone = ScheduleAssignmentType | null;
+export type HoverZone = ScheduleAssignment | null;
 
 /**
  * Hover state for interactive schedule components
@@ -94,7 +93,7 @@ export interface SelectedTeacherPeriod {
   teacherName: string;
   periodIndex: number;
   timeSlot: TimeSlot;
-  assignmentType: ScheduleAssignmentType;
+  assignmentType: ScheduleAssignment;
 }
 
 // ===== DRAG AND DROP INTERFACES =====
@@ -116,7 +115,7 @@ export interface DropZone {
   columnIndex: number;
   periodIndex: number;
   timeSlot: TimeSlot;
-  zone: ScheduleAssignmentType;
+  zone: ScheduleAssignment;
 }
 
 // ===== SCHEDULE GRID COMPONENT PROPS =====
@@ -155,11 +154,11 @@ export interface ThreeZoneTimeSlotProps {
   timeSlot: TimeSlot;
   periodLabel?: string;
   selectedZone?: HoverZone | null;
-  onZoneClick?: (zone: ScheduleAssignmentType, timeSlot: TimeSlot) => void;
-  onHoverChange?: (zone: ScheduleAssignmentType | null, timeSlot: TimeSlot) => void;
+  onZoneClick?: (zone: ScheduleAssignment, timeSlot: TimeSlot) => void;
+  onHoverChange?: (zone: ScheduleAssignment | null, timeSlot: TimeSlot) => void;
   assignedTeacher?: string | null;
   assignedPurpose?: string | null;
-  availableZones?: ScheduleAssignmentType[];
+  availableZones?: ScheduleAssignment[];
   size?: 'sm' | 'md' | 'lg';
   showLabels?: boolean;
   isSelected?: boolean;
@@ -178,7 +177,7 @@ export interface ScheduleEventData {
   periodIndex: number;
   columnIndex: number;
   timeSlot: TimeSlot;
-  assignmentType: ScheduleAssignmentType;
+  assignmentType: ScheduleAssignment;
 }
 
 /**
@@ -234,69 +233,10 @@ export interface ScheduleConfig {
  */
 export type { BellSchedule };
 
-/**
- * Period identifier type
- * Standardizes period reference patterns
- */
-export type PeriodIdentifier = number | string;
+export { ScheduleAssignment };
 
-/**
- * Time range type for schedule calculations
- * Standardizes time range operations
- */
-export interface TimeRange {
-  start: string;
-  end: string;
-}
-
-/**
- * Schedule validation result
- * Standardizes validation feedback
- */
-export interface ScheduleValidationResult {
-  isValid: boolean;
-  conflicts: string[];
-  warnings: string[];
-  errors: string[];
-}
 
 // ===== HOOK RETURN TYPES =====
 
-/**
- * Return type for useScheduleEvents hook
- */
-export interface UseScheduleEventsReturn {
-  handleCellClick: (eventData: ScheduleEventData) => void;
-  handleCellHover: (eventData: ScheduleEventData | null) => void;
-  handleTeacherAssign: (teacherId: string, eventData: ScheduleEventData) => void;
-  interactionState: ScheduleInteractionState;
-  updateInteractionState: (updates: Partial<ScheduleInteractionState>) => void;
-}
-
-/**
- * Return type for useScheduleSelection hook
- */
-export interface UseScheduleSelectionReturn {
-  selectedPeriods: SelectedTeacherPeriod[];
-  selectedTeachers: string[];
-  selectPeriod: (period: SelectedTeacherPeriod) => void;
-  deselectPeriod: (periodIndex: number, teacherId: string) => void;
-  clearSelection: () => void;
-  toggleTeacher: (teacherId: string) => void;
-  isTeacherSelected: (teacherId: string) => boolean;
-  isPeriodSelected: (periodIndex: number, teacherId: string) => boolean;
-}
-
-/**
- * Return type for useAdaptiveHeight hook
- * Specialized for schedule grid height calculations
- */
-export interface UseScheduleHeightReturn {
-  containerHeight: number;
-  cellHeight: number;
-  headerHeight: number;
-  updateHeight: (element: HTMLElement | null) => void;
-  resetHeight: () => void;
-} 
 
 export type { PlannedVisit };

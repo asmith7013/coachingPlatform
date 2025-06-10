@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react'
 import type { ScheduleUIState } from '../types'
-import { ScheduleAssignmentType } from '@/lib/schema/enum/shared-enums'
+import { ScheduleAssignment } from '@enums'
 // import { useScheduleContext } from '../context/ScheduleContext';
 
 /**
@@ -45,7 +45,7 @@ export function useScheduleState() {
     }))
   }, [])
 
-  const selectPortion = useCallback((portion: ScheduleAssignmentType) => {
+  const selectPortion = useCallback((portion: ScheduleAssignment) => {
     setUIState(prev => ({
       ...prev,
       selectedPortion: portion

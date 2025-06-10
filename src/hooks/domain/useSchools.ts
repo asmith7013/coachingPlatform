@@ -1,9 +1,9 @@
 import { createCrudHooks } from '@query/client/factories/crud-factory';
-import { SchoolZodSchema, School, SchoolReference, schoolToReference } from '@zod-schema/core/school';
+import { SchoolZodSchema, School, SchoolClient, SchoolReference, schoolToReference } from '@zod-schema/core/school';
 import { ZodSchema } from 'zod';
 import { fetchSchools, fetchSchoolById, createSchool, updateSchool, deleteSchool } from '@actions/schools/schools';
 import { useInvalidation } from '@query/cache/invalidation';
-import { useBulkOperations } from '@/query/client/hooks/mutations/useBulkOperations';
+import { useBulkOperations } from '@query/client/hooks/mutations/useBulkOperations';
 import { useCallback } from 'react';
 
 /**
@@ -77,11 +77,11 @@ function useSchoolManagerWithInvalidation() {
     await invalidateList('schools');
   }, [invalidateList]);
   
-  const toReference = useCallback((school: School): SchoolReference => {
-    return schoolToReference(school);
+  const toReference = useCallback((school: SchoolClient): SchoolReference => {
+    return schoolToReference(school as School); // Cast for transformer compatibility
   }, []);
   
-  const toReferences = useCallback((schools: School[]): SchoolReference[] => {
+  const toReferences = useCallback((schools: SchoolClient[]): SchoolReference[] => {
     return schools.map(school => toReference(school));
   }, [toReference]);
   

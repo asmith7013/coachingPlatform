@@ -78,7 +78,7 @@ export function SchoolDetailView({ schoolId }: SchoolDetailViewProps) {
           )}
           {school.createdAt && (
             <Text textSize="sm" color="muted" className="mt-1">
-              Created: {school.createdAt.toLocaleDateString()}
+              Created: {school.createdAt}
             </Text>
           )}
         </div>

@@ -130,6 +130,131 @@ The system handles references and nested document IDs
 [RULE] Never manually convert between ObjectId and string; use the sanitization utilities.
 </section>
 
+<section id="mongoose-transform-helper">
+
+## Mongoose Transform Helper System
+
+Our application provides a standardized transform helper system that ensures consistent ObjectId → string conversion and document formatting across all Mongoose models.
+
+### Standard Transform Function
+
+All Mongoose models use the `standardMongooseTransform` function:
+
+```typescript
+import { standardMongooseTransform, standardSchemaOptions } from '@/lib/server/db/mongoose-transform-helper';
+
+/**
+ * Standard transform function for all Mongoose models
+ * Converts ObjectId to string and adds id field
+ */
+export function standardMongooseTransform(
+  doc: Document, 
+  ret: RawMongoDocument
+): BaseDocument {
+  // Convert _id to string and add id field
+  if (ret._id) {
+    const idString = ret._id.toString();
+    ret.id = idString;
+    ret._id = idString;
+  }
+  
+  // Remove __v field (Mongoose version key)
+  delete ret.__v;
+  
+  return ret as BaseDocument;
+}
+```
+
+### Standard Schema Options
+
+Use `standardSchemaOptions` for all new models:
+
+```typescript
+import { standardSchemaOptions, createSchemaOptions } from '@/lib/server/db/mongoose-transform-helper';
+
+// Basic usage with standard options
+const SchoolSchema = new mongoose.Schema(schemaFields, standardSchemaOptions);
+
+// With custom collection name
+const SchoolSchema = new mongoose.Schema(
+  schemaFields, 
+  createSchemaOptions('schools', { 
+    // Additional options if needed
+  })
+);
+```
+
+### Schema Options Configuration
+
+The standard schema options include:
+
+```typescript
+export const standardSchemaOptions: SchemaOptions = {
+  timestamps: true,
+  toJSON: { 
+    transform: standardMongooseTransform
+  },
+  toObject: { 
+    transform: standardMongooseTransform
+  }
+};
+```
+
+This ensures:
+- Automatic `createdAt` and `updatedAt` timestamps
+- Consistent ObjectId → string conversion
+- Automatic `id` field addition
+- Removal of Mongoose internal fields
+
+### Model Implementation Pattern
+
+All models should follow this pattern:
+
+```typescript
+import mongoose from "mongoose";
+import { standardSchemaOptions } from '@/lib/server/db/mongoose-transform-helper';
+
+const schemaFields = {
+  name: { type: String, required: true },
+  // Additional fields...
+};
+
+const EntitySchema = new mongoose.Schema(schemaFields, standardSchemaOptions);
+
+export const EntityModel = mongoose.models.Entity || 
+  mongoose.model("Entity", EntitySchema);
+```
+
+### Custom Schema Options
+
+For models requiring custom configuration:
+
+```typescript
+import { createSchemaOptions } from '@/lib/server/db/mongoose-transform-helper';
+
+const CustomSchema = new mongoose.Schema(
+  schemaFields,
+  createSchemaOptions('custom_collection', {
+    // Override defaults
+    strict: false,
+    // Additional mongoose options
+  })
+);
+```
+
+### Type Safety Benefits
+
+The transform helper system provides:
+
+- **Consistent Types**: All documents have string `_id` and `id` fields
+- **Automatic Conversion**: No manual ObjectId handling needed
+- **Schema Alignment**: Transforms align with our Zod schemas
+- **Type Compatibility**: Documents work seamlessly with client code
+
+[RULE] Use the standard transform helper system for all new Mongoose models to ensure consistency.
+
+</section>
+
 <section id="query-sanitization">
 Query Sanitization
 User-provided query parameters are sanitized before use in MongoDB operations:

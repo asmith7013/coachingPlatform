@@ -54,7 +54,7 @@ Our project uses the following path aliases:
         // Server-side and data paths
         "@actions/*": ["./src/app/actions/*"],
         "@enums": ["./src/lib/schema/enum"],
-        "@zod-schema/*": ["./src/lib/zod-schema/*"],
+        "@zod-schema/*": ["./src/lib/schema/zod-schema/*"],
         "@mongoose-schema/*": ["./src/lib/schema/mongoose-schema/*"],
         "@/lib/server/*": ["./src/lib/server/*"],
         "@/lib/transformers/*": ["./src/lib/transformers/*"],
@@ -123,7 +123,7 @@ import { z } from 'zod';
 
 import { Button } from '@/components/core';
 import { useSchools } from '@/hooks/useSchools';
-import { SchoolZodSchema } from '@/lib/zod-schema';
+import { SchoolZodSchema } from '@/lib/schema/zod-schema';
 
 import { renderField } from './utils';
 import styles from './styles.module.css';
@@ -172,6 +172,109 @@ const csv = await import('csv-parser');
 ```
 
 [RULE] Follow import best practices for cleaner, more maintainable code.
+</section>
+
+<section id="domain-hook-imports">
+
+## Domain Hook Import Patterns
+
+Our domain hooks are now organized by business domain with specific import patterns for optimal developer experience.
+
+### Recommended Import Patterns
+
+Use barrel imports for most cases:
+
+```typescript
+// ✅ Preferred: Import from domain barrel
+import { useNYCPSStaff, useBellSchedules, useSchools } from '@/hooks/domain';
+
+// ✅ Alternative: Import from top-level hooks barrel
+import { useNYCPSStaff, useBellSchedules, useSchools } from '@/hooks';
+```
+
+### Direct Import for Specific Hooks
+
+For performance-critical code or when you need only one hook:
+
+```typescript
+// ✅ Direct import for single hook from staff subdirectory
+import { useNYCPSStaff } from '@/hooks/domain/staff/useNYCPSStaff';
+import { useTeachingLabStaff } from '@/hooks/domain/staff/useTeachingLabStaff';
+import { useUserStaff } from '@/hooks/domain/staff/useUserStaff';
+
+// ✅ Direct import from schedule subdirectory
+import { useBellSchedules } from '@/hooks/domain/schedule/useBellSchedules';
+import { useTeacherSchedules } from '@/hooks/domain/schedule/useTeacherSchedules';
+
+// ✅ Direct import for core entity hooks (root level)
+import { useSchools } from '@/hooks/domain/useSchools';
+import { useLookFors } from '@/hooks/domain/useLookFors';
+import { useVisits } from '@/hooks/domain/useVisits';
+import { useSchoolDailyView } from '@/hooks/domain/useSchoolDailyView';
+```
+
+### Domain-Specific Imports
+
+When working within a specific domain, import from the subdirectory barrel:
+
+```typescript
+// In staff-related components - import from staff subdirectory
+import { 
+  useNYCPSStaff, 
+  useTeachingLabStaff, 
+  useUserStaff 
+} from '@/hooks/domain/staff';
+
+// In schedule-related components - import from schedule subdirectory
+import { 
+  useBellSchedules, 
+  useTeacherSchedules 
+} from '@/hooks/domain/schedule';
+
+// For core entity hooks - import from domain root
+import { 
+  useSchools, 
+  useLookFors, 
+  useVisits,
+  useSchoolDailyView
+} from '@/hooks/domain';
+```
+
+### TypeScript Path Resolution
+
+Our path aliases support the new structure:
+
+```typescript
+// All of these work with our tsconfig.json
+import { useNYCPSStaff } from '@/hooks/domain';
+import { useNYCPSStaff } from '@hooks/domain';
+import { useNYCPSStaff } from '@/hooks/domain/staff/useNYCPSStaff';
+```
+
+### Import Organization Guidelines
+
+Organize imports by domain grouping:
+
+```typescript
+// External libraries
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+
+// Domain hooks grouped by area
+import { useSchools, useLookFors } from '@/hooks/domain';
+import { useNYCPSStaff, useTeachingLabStaff } from '@/hooks/domain/staff';
+import { useBellSchedules } from '@/hooks/domain/schedule';
+
+// UI and utility hooks
+import { usePagination } from '@/hooks/ui';
+import { useErrorHandledMutation } from '@/hooks/error';
+
+// Local imports
+import { StaffCard } from './StaffCard';
+```
+
+[RULE] Use barrel imports for most cases and organize imports by domain grouping for better readability.
+
 </section>
 <section id="avoiding-circular-dependencies">
 Avoiding Circular Dependencies

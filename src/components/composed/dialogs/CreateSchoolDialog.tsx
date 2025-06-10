@@ -11,8 +11,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { useSchoolsMutations } from '@hooks/domain/useSchools';
 import { AI_PROMPTS } from '@ui/data-import/schema-templates';
-import { validateSchoolData } from '@transformers/ui/form-validation';
-import { createDataPreview } from '@transformers/ui/data-preview';
+import { validateSchoolData } from '@/lib/data-processing/transformers/ui/form-validation';
+import { createDataPreview } from '@/lib/data-processing/transformers/ui/data-preview';
 import type { SchoolInput } from '@domain-types/school';
 
 interface CreateSchoolDialogProps {

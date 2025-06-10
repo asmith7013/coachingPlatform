@@ -10,17 +10,17 @@ import {
 } from "@enums";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer } from "@transformers/factories/reference-factory";
+import { createReferenceTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 
 // Create Monday.com User Schema
 export const MondayUserZodSchema = z.object({
-  mondayId: z.string(),
+  mondayId: z.string().describe("Unique user ID from Monday.com platform"),
   name: z.string(),
   email: z.string().email(),
   title: z.string().optional(),
-  isVerified: z.boolean().optional(),
-  isConnected: z.boolean().default(true),
-  lastSynced: z.union([z.string(), z.date()]).optional()
+  isVerified: z.boolean().optional().describe("Whether user account is verified in Monday.com"),
+  isConnected: z.boolean().default(true).describe("Whether integration is currently active"),
+  lastSynced: z.union([z.string(), z.date()]).optional().describe("Timestamp of most recent data synchronization")
 });
 
 // Experience Schema
@@ -33,8 +33,8 @@ export const ExperienceZodSchema = z.object({
 export const StaffMemberFieldsSchema = z.object({
   staffName: z.string(),
   email: z.string().email(),
-  schools: z.array(z.string()).optional(), // Array of school IDs
-  mondayUser: MondayUserZodSchema.optional(), // Add Monday.com user info
+  schoolIds: z.array(z.string()).optional().describe("Array of School document _ids where this staff member works"),
+  mondayUser: MondayUserZodSchema.optional().describe("Monday.com user integration data for bi-directional sync"),
 });
 
 // Base StaffMember Full Schema
@@ -45,10 +45,10 @@ export const StaffMemberInputZodSchema = toInputSchema(StaffMemberZodSchema);
 
 // NYCPS Staff Fields Schema
 export const NYCPSStaffFieldsSchema = StaffMemberFieldsSchema.extend({
-  gradeLevelsSupported: z.array(GradeLevelsSupportedZod),
-  subjects: z.array(SubjectsZod),
-  specialGroups: z.array(SpecialGroupsZod),
-  rolesNYCPS: z.array(RolesNYCPSZod).optional(),
+  gradeLevelsSupported: z.array(GradeLevelsSupportedZod).describe("Grade levels this teacher is qualified to teach"),
+  subjects: z.array(SubjectsZod).describe("Subject areas this teacher specializes in"),
+  specialGroups: z.array(SpecialGroupsZod).describe("Special education or specialized student groups served"),
+  rolesNYCPS: z.array(RolesNYCPSZod).optional().describe("Official NYCPS role classifications (Teacher, AP, etc.)"),
   pronunciation: z.string().optional(),
   notes: z.array(NoteZodSchema).optional(),
   experience: z.array(ExperienceZodSchema).optional(),
@@ -62,9 +62,9 @@ export const NYCPSStaffInputZodSchema = toInputSchema(NYCPSStaffZodSchema);
 
 // Teaching Lab Staff Fields Schema
 export const TeachingLabStaffFieldsSchema = StaffMemberFieldsSchema.extend({
-  adminLevel: AdminLevelZod.optional(),
-  assignedDistricts: z.array(z.string()).optional(),
-  rolesTL: z.array(RolesTLZod).optional(),
+  adminLevel: AdminLevelZod.optional().describe("Administrative hierarchy level within Teaching Lab"),
+  assignedDistricts: z.array(z.string()).optional().describe("Array of district names this TL staff member supports"),
+  rolesTL: z.array(RolesTLZod).optional().describe("Teaching Lab role classifications (Coach, Manager, etc.)"),
 });
 
 // Teaching Lab Staff Full Schema
@@ -95,7 +95,7 @@ export const staffToReference = createReferenceTransformer<StaffMember, StaffRef
   (staff: StaffMember) => ({
     email: staff.email,
     staffName: staff.staffName,
-    schoolCount: staff.schools?.length || 0,
+    schoolCount: staff.schoolIds?.length || 0,
     isMondayConnected: staff.mondayUser?.isConnected || false,
     mondayName: staff.mondayUser?.name,
     mondayTitle: staff.mondayUser?.title,
@@ -134,7 +134,7 @@ export const nycpsStaffToReference = createReferenceTransformer<NYCPSStaff, NYCP
     staffName: staff.staffName,
     rolesNYCPS: staff.rolesNYCPS,
     gradeLevelsSupported: staff.gradeLevelsSupported?.slice(0, 2),
-    schoolCount: staff.schools?.length || 0,
+    schoolCount: staff.schoolIds?.length || 0,
     subjectsCount: staff.subjects?.length || 0,
     gradeLevel: staff.gradeLevelsSupported?.[0] || '',
     role: staff.rolesNYCPS?.[0] || '',
@@ -175,7 +175,7 @@ export const teachingLabStaffToReference = createReferenceTransformer<TeachingLa
     staffName: staff.staffName,
     adminLevel: staff.adminLevel,
     rolesTL: staff.rolesTL,
-    schoolCount: staff.schools?.length || 0,
+    schoolCount: staff.schoolIds?.length || 0,
     districtsCount: staff.assignedDistricts?.length || 0,
     role: staff.rolesTL?.[0] || '',
     isMondayConnected: staff.mondayUser?.isConnected || false,

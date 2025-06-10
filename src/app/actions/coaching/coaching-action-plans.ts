@@ -24,7 +24,7 @@ import {
   getStageFieldPath,
   statusWorkflow,
   type PlanStatus
-} from '@transformers/utils/coaching-action-plan-utils';
+} from '@/lib/data-processing/transformers/utils/coaching-action-plan-utils';
 
 // Create standard CRUD actions for Coaching Action Plans (following schools pattern)
 const coachingActionPlanActions = createCrudActions({

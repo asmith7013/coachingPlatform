@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
+import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 import { formatRubricCategory, getRubricContentSummary } from "@schema/reference/look-fors/rubric-helpers";
 
@@ -63,7 +63,7 @@ export const RubricScoreFieldsSchema = z.object({
   date: zDateField,
   score: z.number(),
   staffId: z.string(),
-  school: z.string(),
+  schoolId: z.string(),
 });
 
 // RubricScore Full Schema
@@ -79,7 +79,7 @@ export const RubricScoreReferenceZodSchema = BaseReferenceZodSchema.merge(
       date: true,
       score: true,
       staffId: true,
-      school: true,
+      schoolId: true,
     })
     .partial()
 ).extend({

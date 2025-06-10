@@ -1,11 +1,11 @@
 // src/components/features/schedulesNew/utils/visit-conflict-detector.ts
-import type { ScheduleAssignmentType } from '@domain-types/schedule'
+import { ScheduleAssignment } from '@enums'
 
 // ===== SIMPLE INTERFACES =====
 export interface ConflictCheckData {
   teacherId: string
   periodNumber: number
-  portion: ScheduleAssignmentType
+  portion: ScheduleAssignment
 }
 
 export interface ConflictResult {
@@ -14,7 +14,7 @@ export interface ConflictResult {
   conflictingVisit?: {
     id: string
     teacherName: string
-    portion: ScheduleAssignmentType
+    portion: ScheduleAssignment
   }
 }
 
@@ -23,7 +23,7 @@ export interface ScheduledVisitMinimal {
   teacherId: string
   teacherName: string
   periodNumber: number
-  portion: ScheduleAssignmentType
+  portion: ScheduleAssignment
 }
 
 /**
@@ -63,9 +63,9 @@ export class VisitConflictDetector {
    * Simple time conflict logic
    * No complex algorithms - just clear business rules
    */
-  private hasTimeConflict(existing: ScheduleAssignmentType, newPortion: ScheduleAssignmentType): boolean {
+  private hasTimeConflict(existing: ScheduleAssignment, newPortion: ScheduleAssignment): boolean {
     // Full period conflicts with everything
-    if (existing === 'full_period' || newPortion === 'full_period') {
+    if (existing === ScheduleAssignment.FULL_PERIOD || newPortion === ScheduleAssignment.FULL_PERIOD) {
       return true
     }
     
@@ -90,7 +90,7 @@ export class VisitConflictDetector {
    */
   isTeacherAvailableInPeriod(teacherId: string, periodNumber: number): {
     available: boolean
-    availablePortions: ScheduleAssignmentType[]
+    availablePortions: ScheduleAssignment[]
   } {
     const existingVisit = this.existingVisits.find(visit => 
       visit.teacherId === teacherId && visit.periodNumber === periodNumber
@@ -99,11 +99,11 @@ export class VisitConflictDetector {
     if (!existingVisit) {
       return {
         available: true,
-        availablePortions: ['first_half', 'second_half', 'full_period']
+        availablePortions: [ScheduleAssignment.FIRST_HALF, ScheduleAssignment.SECOND_HALF, ScheduleAssignment.FULL_PERIOD]
       }
     }
 
-    if (existingVisit.portion === 'full_period') {
+    if (existingVisit.portion === ScheduleAssignment.FULL_PERIOD) {
       return {
         available: false,
         availablePortions: []
@@ -111,11 +111,11 @@ export class VisitConflictDetector {
     }
 
     // If they have first_half, second_half is available and vice versa
-    const availablePortions: ScheduleAssignmentType[] = []
-    if (existingVisit.portion === 'first_half') {
-      availablePortions.push('second_half')
-    } else if (existingVisit.portion === 'second_half') {
-      availablePortions.push('first_half')
+    const availablePortions: ScheduleAssignment[] = []
+    if (existingVisit.portion === ScheduleAssignment.FIRST_HALF) {
+      availablePortions.push(ScheduleAssignment.SECOND_HALF)
+    } else if (existingVisit.portion === ScheduleAssignment.SECOND_HALF) {
+      availablePortions.push(ScheduleAssignment.FIRST_HALF)
     }
 
     return {
@@ -144,7 +144,7 @@ export function validateConflictCheckData(data: unknown): data is ConflictCheckD
     typeof (data as ConflictCheckData).teacherId === 'string' &&
     typeof (data as ConflictCheckData).periodNumber === 'number' &&
     typeof (data as ConflictCheckData).portion === 'string' &&
-    ['first_half', 'second_half', 'full_period'].includes((data as ConflictCheckData).portion)
+    Object.values(ScheduleAssignment).includes((data as ConflictCheckData).portion)
   )
 }
 

@@ -1,19 +1,10 @@
-```markdown
-<doc id="monday-integration">
-
 # Monday.com Integration
-
-<section id="monday-overview">
 
 ## Overview
 
 Our platform implements a flexible integration with Monday.com that enables bidirectional data synchronization. This integration follows our schema-driven architecture while providing specialized mapping capabilities for Monday.com's unique data structures.
 
 [RULE] All Monday.com integration code must be organized in the designated `/src/lib/integrations/monday/` directory.
-
-</section>
-
-<section id="monday-organization">
 
 ## Code Organization
 
@@ -37,10 +28,6 @@ This organization maintains separation of concerns while keeping the integration
 
 [RULE] Always import Monday integration code from `@/lib/integrations/monday` rather than directly from subfolders.
 
-</section>
-
-<section id="monday-architecture">
-
 ## Integration Architecture
 
 The Monday.com integration follows a layered architecture:
@@ -53,10 +40,6 @@ The Monday.com integration follows a layered architecture:
 This layered approach provides clean separation of concerns and allows each part to evolve independently.
 
 [RULE] Use the API client for all Monday.com GraphQL queries rather than implementing custom fetch logic.
-
-</section>
-
-<section id="monday-data-flow">
 
 ## Data Flow
 
@@ -71,10 +54,6 @@ The integration follows a specific flow when handling Monday.com data:
 This flow ensures data consistency while handling the variations in Monday.com board structures.
 
 [RULE] Always validate transformed data against Zod schemas before storing in the database.
-
-</section>
-
-<section id="monday-mapping-system">
 
 ## Entity Mapping System
 
@@ -102,10 +81,6 @@ The mapping system supports multiple strategies:
 4. **Custom Transformers**: Field-specific transformations for complex types
 
 [RULE] Use the existing mapping system rather than creating custom one-off mappings.
-
-</section>
-
-<section id="monday-hooks">
 
 ## React Hooks
 
@@ -145,16 +120,6 @@ function MondayIntegrationComponent() {
     testConnection();
   }, [testConnection]);
   
-  // Example: Load board when ID is provided
-  const handleBoardLoad = async (boardId) => {
-    await getBoard(boardId);
-  };
-  
-  // Example: Import selected items
-  const handleImport = async (selectedIds) => {
-    await importItems(selectedIds);
-  };
-  
   return (
     // Component implementation
   );
@@ -188,130 +153,116 @@ function StaffIntegrationComponent() {
 
 [RULE] Use these hooks for client-side integration with Monday.com rather than directly calling server actions.
 
-</section>
-
-<section id="monday-extending">
-
 ## Extending the Integration
 
 The integration is designed to be extensible through several mechanisms:
 
 ### Board-Specific Adapters
 
-Custom configurations for specific Monday.com boards:
+Create adapters for boards with unique structures:
 
 ```typescript
-// Create a custom mapping for a specific board
-export const customBoardConfig = {
-  ...baseVisitMappingConfig,
-  titleMappings: {
-    ...baseVisitMappingConfig.titleMappings,
-    date: [...baseVisitMappingConfig.titleMappings.date, "Custom Date Field"]
-  }
-};
+// src/lib/integrations/monday/mappers/adapters/customBoardAdapter.ts
+export function createCustomBoardAdapter(boardId: string) {
+  return {
+    transformItem: (item: MondayItem, columns: MondayColumn[]) => {
+      // Custom transformation logic for this board
+      return transformedData;
+    },
+    validateMapping: (mapping: FieldMapping) => {
+      // Custom validation for this board's requirements
+      return isValid;
+    }
+  };
+}
 ```
 
 ### Custom Field Transformers
 
-For complex field transformations:
+Add transformers for new field types:
 
 ```typescript
-// Custom transformer for a complex field
-const customTransformer = (value: MondayColumnValue): string[] => {
-  // Implementation...
+// src/lib/integrations/monday/mappers/utils/customTransformers.ts
+export function transformCustomField(value: any, column: MondayColumn): any {
+  // Custom transformation logic
   return transformedValue;
+}
+```
+
+### Entity-Specific Mappers
+
+Create mappers for new entity types:
+
+```typescript
+// src/lib/integrations/monday/mappers/schemas/newEntityMapper.ts
+export function transformMondayItemToNewEntity(
+  item: MondayItem, 
+  columns: MondayColumn[]
+): TransformationResult<NewEntity> {
+  // Implementation following existing patterns
+}
+```
+
+[RULE] Follow the established patterns when extending the integration to maintain consistency.
+
+## Configuration Management
+
+The integration uses a configuration system for managing field mappings and board-specific settings:
+
+```typescript
+// Board configuration example
+const boardConfig = {
+  boardId: "12345",
+  entityType: "visit",
+  fieldMappings: {
+    "visit_date": { columnTitle: "Visit Date", required: true },
+    "coach_name": { columnTitle: "Coach", required: true },
+    "school_name": { columnTitle: "School", required: true }
+  },
+  customTransformers: {
+    "visit_date": transformDateField,
+    "coach_name": transformPersonField
+  }
 };
 ```
 
-[RULE] Create board-specific adapters for boards with unique column structures.
-
-</section>
-
-<section id="monday-ui-components">
-
-## UI Components
-
-The integration includes specialized UI components in the `/src/components/integrations/monday/` directory:
-
-1. **MondayVisitsSelector**: Displays visits from Monday.com for selection and import
-2. **ImportCompletionForm**: Form for completing missing fields during import
-3. **MondayUserFinder**: Component for looking up Monday.com users
-
-These components maintain our application's design system while providing specialized functionality for the Monday.com workflow.
-
-[RULE] Use the provided UI components rather than creating custom components for Monday.com integration.
-
-</section>
-
-<section id="monday-server-actions">
-
-## Server Actions
-
-Server actions for Monday.com integration are located in `/src/app/actions/integrations/monday.ts` and provide core functionality:
-
-```typescript
-// Import selected visits from Monday.com
-const result = await importSelectedVisits(selectedItems);
-
-// Test Monday.com connection
-const connectionTest = await testConnection();
-
-// Get Monday.com board data
-const board = await getBoard(boardId);
-
-// Find potential visits to import
-const previewItems = await findPotentialVisitsToImport(boardId);
-```
-
-These server actions handle the server-side logic while providing standardized error handling and response formats.
-
-[RULE] Always access server actions through the provided React hooks in client components.
-
-</section>
-
-<section id="monday-api-endpoints">
-
-## API Endpoints
-
-The integration exposes several API endpoints for external access and integration:
-
-```
-/api/integrations/monday/route.ts         # Reference data endpoint
-/api/integrations/monday/user/route.ts    # Monday.com user lookup
-```
-
-These endpoints follow our standard API patterns and provide error handling and response formatting according to application standards.
-
-The Monday.com API endpoints are designed to:
-
-1. Support external integrations (like webhooks)
-2. Provide reference data for UI components
-3. Enable lookups without requiring server action permissions
-
-[RULE] Use API endpoints for external integrations and React hooks for internal access.
-
-</section>
-
-<section id="monday-error-handling">
+[RULE] Use the configuration system for board-specific settings rather than hardcoding values.
 
 ## Error Handling
 
-The integration implements consistent error handling with several tiers:
+The integration implements comprehensive error handling:
 
-1. **API Errors**: Network and API-level errors from Monday.com
-2. **Mapping Errors**: Field-specific mapping and transformation errors
-3. **Validation Errors**: Schema validation failures for transformed data
-4. **Application Errors**: Errors during database operations
+- **Connection Errors**: Handled at the client layer with retry logic
+- **Mapping Errors**: Collected and presented to users for resolution
+- **Validation Errors**: Caught and displayed with specific field information
+- **Import Errors**: Tracked and reported with detailed error messages
 
-Each error includes:
-- Error category
-- Field or operation that failed
-- Detailed message with context
-- Suggestion for resolution (when possible)
+```typescript
+// Example error handling in components
+const { error, isError } = useMondayIntegration();
 
-[RULE] Always use standardized error handling when working with Monday.com data.
+if (isError) {
+  return <ErrorDisplay error={error} />;
+}
+```
 
-</section>
+[RULE] Always handle errors gracefully and provide meaningful feedback to users.
 
-</doc>
+## Testing Integration Features
+
+Test Monday.com integration features using mocked data:
+
+```typescript
+// Mock Monday API responses for testing
+const mockMondayData = {
+  boards: [{ id: "123", name: "Test Board" }],
+  items: [{ id: "456", name: "Test Item", column_values: [] }]
+};
+
+// Test transformation functions
+const result = transformMondayItemToVisit(mockMondayData.items[0], mockColumns);
+expect(result.valid).toBe(true);
+```
+
+[RULE] Use mocked data for testing to avoid dependencies on external Monday.com boards.
 ```

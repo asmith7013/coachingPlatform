@@ -14,8 +14,8 @@ const _mockVisit: Visit = {
   allowedPurpose: 'Classroom Observation',
   modeDone: 'In-person',
   events: [],
-  createdAt: new Date(),
-  updatedAt: new Date()
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
 }
 
 export default function VisitViewDemo() {

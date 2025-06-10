@@ -1,6 +1,6 @@
 // src/lib/api/validation/parse-query.ts
 import { z } from 'zod';
-import { validateStrict } from '@transformers/core/validation';
+import { validateStrict } from '@/lib/data-processing/validation/zod-validation';
 
 /**
  * Validates and transforms URL query parameters using a Zod schema

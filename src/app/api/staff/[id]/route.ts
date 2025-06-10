@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchNYCPSStaffByIdForApi, fetchTeachingLabStaffByIdForApi } from "@server/fetchers/staff";
+import { fetchNYCPSStaffByIdForApi, fetchTeachingLabStaffByIdForApi } from "@/lib/server/fetchers/domain/staff";
 import { createEntityResponse, createMonitoredErrorResponse } from "@server/api/responses/action-response-helper";
 
 export async function GET(

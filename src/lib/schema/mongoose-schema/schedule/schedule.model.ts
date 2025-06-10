@@ -8,6 +8,7 @@ import {
 } from "@enums";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
 @modelOptions({ schemaOptions: { _id: false, collection: 'classscheduleitems' } })
 export class ClassScheduleItem {
@@ -30,10 +31,15 @@ export class AssignedCycleDay {
   blockDayType!: string;
 }
 
-@modelOptions({ schemaOptions: { collection: 'bellschedules' } })
+@modelOptions({ 
+  schemaOptions: { 
+    ...standardSchemaOptions,
+    collection: 'bellschedules' 
+  } 
+})
 export class BellSchedule extends BaseMongooseDocument {
   @prop({ type: String, required: true })
-  school!: string;
+  schoolId!: string;
 
   @prop({ enum: Object.values(BellScheduleTypes), type: String, required: true })
   bellScheduleType!: string;
@@ -43,9 +49,6 @@ export class BellSchedule extends BaseMongooseDocument {
 
   @prop({ type: () => [AssignedCycleDay], required: true })
   assignedCycleDays!: AssignedCycleDay[];
-
-  @prop({ type: () => [String], required: true })
-  owners!: string[];
 }
 
 @modelOptions({ schemaOptions: { _id: false, collection: 'periods' } })
@@ -72,19 +75,21 @@ export class ScheduleByDay {
   periods!: Period[];
 }
 
-@modelOptions({ schemaOptions: { collection: 'teacherschedules' } })
+@modelOptions({ 
+  schemaOptions: { 
+    ...standardSchemaOptions,
+    collection: 'teacherschedules' 
+  } 
+})
 export class TeacherSchedule extends BaseMongooseDocument {
   @prop({ type: String, required: true })
-  teacher!: string;
+  teacherId!: string;
 
   @prop({ type: String, required: true })
-  school!: string;
+  schoolId!: string;
 
   @prop({ type: () => [ScheduleByDay], required: true })
   scheduleByDay!: ScheduleByDay[];
-
-  @prop({ type: () => [String], required: true })
-  owners!: string[];
 }
 
 export const ClassScheduleItemModel =

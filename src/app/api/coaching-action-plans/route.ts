@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createCoachingActionPlan } from "@actions/coaching/coaching-action-plans";
-import { fetchCoachingActionPlansForApi } from "@server/fetchers/coachingActionPlan";
+import { fetchCoachingActionPlansForApi } from "@/lib/server/fetchers/domain/coachingActionPlan";
 import { createReferenceEndpoint, FetchFunction } from "@api-handlers/reference-endpoint";
 import { CoachingActionPlan, coachingActionPlanToReference } from "@zod-schema/core/cap";
 import { CoachingActionPlanInputZodSchema } from "@zod-schema/core/cap";

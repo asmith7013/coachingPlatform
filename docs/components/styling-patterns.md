@@ -1,67 +1,20 @@
-```markdown
-<doc id="styling-patterns">
+# Component Styling Usage Guide
 
-# Component Styling Patterns
+## Quick Reference
 
-<section id="styling-overview">
+This guide provides practical examples for using our styling system. For comprehensive token architecture details, see [design-token-system].
 
-## Overview
+[RULE] For detailed token usage and architecture information, see [design-token-system][token-overview].
 
-This guide explains our approach to styling components using the token system. For detailed information about our token architecture, refer to the Design Token System documentation.
-
-[RULE] Always use the appropriate styling approach based on the component type and usage context.
-
-</section>
-
-<section id="core-principles">
-
-## Core Principles
-
-Our styling system is based on three key concepts:
-
-Design Tokens: Primitive values (colors, spacing, typography) defined in @/lib/ui/tokens/*
-Component-Specific Variants: Style variations for a specific component using Tailwind Variants
-Shared Behavior Variants: Common UI behaviors (disabled, loading, etc.) reused across components
-
-This separation ensures consistency while maintaining flexibility across the application.
-[RULE] Understand the difference between tokens (primitive values) and variants (reusable patterns).
-</section>
-
-<section id="when-to-use-tokens">
-
-## Using Design Tokens
-
-For detailed token usage guidelines, refer to the Design Token System documentation.
-
-[RULE] Always import tokens directly from their respective modules, not through intermediate helpers.
-
-</section>
-
-<section id="best-practices">
-
-## Best Practices
-
-Atomic Components: Define complete, self-contained styling using tokens
-Composed Components: Compose from atomic components instead of duplicating styles
-Page Components: Use shared variants for one-off styling needs
-Documentation: Document component variants in component files
-
-This hybrid approach balances consistency with flexibility while avoiding duplication.
-[RULE] Follow these best practices to maintain a clean, maintainable styling system.
-</section>
-
-<section id="example-implementation">
-
-## Example Implementation
+## Basic Component Pattern
 
 ```tsx
-// Button.tsx - An atomic component
-import { cn } from '@ui/utils/formatters';;
+// Button.tsx - Basic component implementation
+import { cn } from '@ui/utils/formatters';
 import { tv } from 'tailwind-variants';
 import { textColors, radii } from '@/lib/ui/tokens';
 import { disabledVariant, loadingVariant } from '@/lib/ui/variants';
 
-// Component-specific variants using tokens
 const button = tv({
   base: [
     "inline-flex items-center justify-center transition-colors",
@@ -110,8 +63,26 @@ export function Button({
   );
 }
 ```
-[RULE] Use this pattern as a reference for implementing components in the system.
-</section>
 
-</doc>
+## Common Import Patterns
+
+```typescript
+// Token imports
+import { textColors, backgroundColors, spacing, radii } from '@/lib/ui/tokens';
+
+// Shared variant imports
+import { disabledVariant, loadingVariant, focusVariant } from '@/lib/ui/variants';
+
+// Utility imports
+import { cn } from '@ui/utils/formatters';
+import { tv } from 'tailwind-variants';
 ```
+
+## Quick Usage Rules
+
+1. **Always use tokens**: Import from `@/lib/ui/tokens` for colors, spacing, etc.
+2. **Reuse shared variants**: Import common behaviors from `@/lib/ui/variants`
+3. **Use tv() for variants**: Define component variants with Tailwind Variants
+4. **Apply cn() for className**: Use the className utility for merging classes
+
+[RULE] Follow these patterns for consistent component styling implementation.

@@ -1,5 +1,5 @@
 // src/app/api/school/route.ts
-import { fetchSchoolsForApi } from "@server/fetchers/school"; // Use your API-safe fetcher
+import { fetchSchoolsForApi } from "@/lib/server/fetchers/domain/school"; // Use your API-safe fetcher
 import { createReferenceEndpoint, FetchFunction } from "@api-handlers/reference-endpoint";
 import { School, SchoolReference } from "@/lib/schema/zod-schema/core/school";
 

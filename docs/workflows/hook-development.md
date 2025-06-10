@@ -1,19 +1,10 @@
-```markdown
-<doc id="hook-development">
-
 # Hook Development Guidelines
-
-<section id="hook-development-overview">
 
 ## Overview
 
 This document outlines best practices for developing and organizing custom React hooks in our application.
 
 [RULE] Follow these guidelines when creating new hooks to maintain consistency across the codebase.
-
-</section>
-
-<section id="hook-categorization">
 
 ## Hook Categorization
 
@@ -28,10 +19,6 @@ When creating new hooks:
 
 [RULE] Always place hooks in the appropriate category folder.
 
-</section>
-
-<section id="hook-naming">
-
 ## Naming Conventions
 
 Follow consistent naming patterns for all hooks:
@@ -42,10 +29,6 @@ Follow consistent naming patterns for all hooks:
 - Error hooks should clearly indicate their error-handling purpose
 
 [RULE] Use clear, descriptive names that indicate the hook's purpose.
-
-</section>
-
-<section id="hook-abstractions">
 
 ## Maintaining Proper Abstractions
 
@@ -61,11 +44,9 @@ Example of proper abstraction:
 ```typescript
 // Domain hook using data hooks internally
 export function useSchools() {
-  // Use general data hooks for the implementation
   const { data, error, isLoading } = useSafeSWR<School[]>('/api/schools');
   const { mutate } = useErrorHandledMutation();
   
-  // Implement domain-specific operations
   const createSchool = async (school: SchoolInput) => {
     return mutate('/api/schools', {
       method: 'POST',
@@ -81,44 +62,116 @@ export function useSchools() {
   };
 }
 ```
-[RULE] Maintain proper separation of concerns in hook implementations.
-</section>
 
-<section id="hook-exports">
-Hook Exports
+[RULE] Maintain proper separation of concerns in hook implementations.
+
+## Hook Exports
+
 All hooks should be exported through the barrel file (index.ts) for convenient imports:
 
 ```typescript
 // src/hooks/index.ts
-// Data hooks
 export * from './data/useCrudOperations';
-export * from './data/useSafeSWR';
-// ...
-
-// Domain hooks
 export * from './domain/useSchools';
-export * from './domain/useNYCPSStaff';
-// ...
-
-// UI hooks
 export * from './ui/usePagination';
-export * from './ui/useFiltersAndSorting';
-// ...
-
-// Error hooks
 export * from './error/useErrorHandledMutation';
-export * from './error/useErrorBoundary';
-// ...
 ```
+
 This enables clean imports in components:
 
 ```typescript
 import { useSchools, usePagination } from '@/hooks';
 ```
-[RULE] Export all hooks through the barrel file for consistent imports.
-</section>
 
-<section id="feature-context-hooks">
+[RULE] Export all hooks through the barrel file for consistent imports.
+
+## Domain Hook Organization Patterns
+
+Our application organizes domain hooks by business domain rather than flat structure, improving maintainability and discoverability.
+
+### New Domain Structure
+
+```
+src/hooks/domain/
+├── staff/                  # Staff-related domain hooks
+│   ├── useNYCPSStaff.ts
+│   ├── useTeachingLabStaff.ts
+│   └── useUserStaff.ts
+├── schedule/              # Schedule-related domain hooks
+│   ├── useBellSchedules.ts
+│   └── useTeacherSchedules.ts
+├── useSchools.ts          # Core entity hooks (root level)
+├── useLookFors.ts
+├── useVisits.ts
+└── index.ts               # Barrel exports for all hooks
+```
+
+### Domain Hook Implementation Pattern
+
+All domain hooks use the CRUD factory for consistency:
+
+```typescript
+// src/hooks/domain/staff/useNYCPSStaff.ts
+import { createCrudHooks } from '@query/client/factories/crud-factory';
+import { NYCPSStaffZodSchema } from '@zod-schema/core/staff';
+import { 
+  fetchNYCPSStaff, 
+  createNYCPSStaff, 
+  updateNYCPSStaff, 
+  deleteNYCPSStaff 
+} from '@actions/staff/operations';
+
+const nycpsStaffHooks = createCrudHooks({
+  entityType: 'nycps-staff',
+  schema: NYCPSStaffZodSchema,
+  serverActions: {
+    fetch: fetchNYCPSStaff,
+    create: createNYCPSStaff,
+    update: updateNYCPSStaff,
+    delete: deleteNYCPSStaff
+  },
+  validSortFields: ['staffName', 'email', 'createdAt'],
+  relatedEntityTypes: ['schools']
+});
+
+// Export with domain-specific names
+export const useNYCPSStaffList = nycpsStaffHooks.useList;
+export const useNYCPSStaffById = nycpsStaffHooks.useDetail;
+export const useNYCPSStaffMutations = nycpsStaffHooks.useMutations;
+export const useNYCPSStaff = nycpsStaffHooks.useManager;
+```
+
+### Barrel Export Pattern
+
+The domain index maintains backward compatibility:
+
+```typescript
+// src/hooks/domain/index.ts
+// Staff hooks - organized in subdirectories
+export * from './staff/useNYCPSStaff';
+export * from './staff/useTeachingLabStaff';
+
+// Schedule hooks - organized in subdirectories  
+export * from './schedule/useBellSchedules';
+export * from './schedule/useTeacherSchedules';
+
+// Core entity hooks - remain at root level
+export * from './useSchools';
+export * from './useLookFors';
+export * from './useVisits';
+```
+
+### Benefits of Domain Organization
+
+This structure provides:
+
+- **Domain Separation**: Related hooks are co-located
+- **Namespace Clarity**: Clear ownership of hook responsibilities
+- **Easier Navigation**: Developers can find hooks by domain
+- **Backward Compatibility**: Existing imports continue to work
+- **Scalability**: New domains can be added without cluttering root
+
+[RULE] Organize domain hooks by business domain and maintain backward compatibility through barrel exports.
 
 ## Feature Context Hooks
 
@@ -157,18 +210,9 @@ export function useFeatureData() {
 }
 ```
 
-### Selective Hook Guidelines
-
-When creating selective hooks:
-
-- Focus on specific UI responsibilities rather than exposing all state
-- Group related state and actions together logically
-- Use descriptive names that indicate the hook's purpose
-- Ensure each hook has a clear, single responsibility
-
 ### Benefits of Selective Context Hooks
 
-This approach provides several advantages:
+This approach provides:
 
 - **Performance**: Components only re-render when their specific state changes
 - **Clarity**: Clear separation of concerns for different UI responsibilities  
@@ -177,10 +221,60 @@ This approach provides several advantages:
 
 [RULE] Create selective context hooks for features with complex shared state to optimize performance and maintainability.
 
-</section>
+## Authentication Hook Development Patterns
 
-<section id="hook-documentation">
-Hook Documentation
+When developing authentication-related hooks, follow these patterns to maintain consistency with our auth system.
+
+### Domain-Specific Auth Hooks
+
+Create domain-specific authentication hooks that build on `useAuthenticatedUser`:
+
+```typescript
+// Example: Teacher-specific authentication
+export function useTeacherData(): TeacherData {
+  const { metadata, hasPermission, hasRole } = useAuthenticatedUser();
+  
+  return useMemo(() => ({
+    isTeacher: hasRole('Teacher'),
+    teacherId: metadata.staffId,
+    canViewSchedules: hasPermission('schedule.view'),
+    assignedClasses: metadata.classIds || []
+  }), [metadata, hasPermission, hasRole]);
+}
+```
+
+### Capability-Based Hooks
+
+Create hooks that focus on specific capabilities rather than roles:
+
+```typescript
+// Focus on what the user can do, not what they are
+export function useVisitCapabilities() {
+  const { hasPermission } = useAuthenticatedUser();
+  
+  return useMemo(() => ({
+    canCreate: hasPermission('visit.create'),
+    canEdit: hasPermission('visit.edit'),
+    canDelete: hasPermission('visit.delete'),
+    canViewAll: hasPermission('visit.view_all')
+  }), [hasPermission]);
+}
+```
+
+### Authentication Hook Guidelines
+
+When creating authentication hooks:
+
+1. **Build on Base Hooks**: Always use `useAuthenticatedUser` as the foundation
+2. **Use Memoization**: Wrap computations in `useMemo` for performance
+3. **Focus on Capabilities**: Prefer capability-based over role-based logic
+4. **Clear Naming**: Use descriptive names that indicate the hook's purpose
+5. **Single Responsibility**: Each hook should serve one authentication concern
+
+[RULE] Follow these patterns when creating authentication hooks to ensure consistency and maintainability.
+
+## Hook Documentation
+
 Document all hooks with JSDoc comments:
 
 ```typescript
@@ -192,15 +286,10 @@ Document all hooks with JSDoc comments:
  * @property {Error|null} error - Error if fetch failed
  * @property {boolean} isLoading - Loading state
  * @property {Function} createSchool - Create a new school
- * @property {Function} updateSchool - Update an existing school
- * @property {Function} deleteSchool - Delete a school
  */
 export function useSchools() {
   // Implementation...
 }
 ```
-[RULE] Document all hooks with clear JSDoc comments.
-</section>
 
-</doc>
-```
+[RULE] Document all hooks with clear JSDoc comments.

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { Field } from '@ui-types/form';
-import { extractSchemaFields, extractFieldSchema } from '@transformers/ui/schema-utils';
-import { inferFieldType } from '@transformers/ui/form-field-inference';
+import { extractSchemaFields, extractFieldSchema } from '@/lib/data-processing/transformers/ui/schema-utils';
+import { inferFieldType } from '@/lib/data-processing/transformers/ui/form-field-inference';
 export type FormMode = 'create' | 'edit';
 
 /**

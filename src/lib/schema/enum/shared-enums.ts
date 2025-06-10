@@ -102,14 +102,6 @@ export enum Duration {
 }
 
 /**
- * Event Types
- */
-export enum EventTypes {
-  OBSERVATION = "observation",
-  DEBRIEF = "debrief",
-}
-
-/**
  * Roles in NYC Public Schools
  */
 export enum RolesNYCPS {
@@ -290,10 +282,6 @@ export const DurationZod = createZodEnum(Duration);
 export const DurationValues = Object.values(Duration);
 export type DurationType = z.infer<typeof DurationZod>; // This will be a number type
 
-// Event Types
-export const EventTypeZod = createZodEnum(EventTypes);
-export type EventType = z.infer<typeof EventTypeZod>;
-
 // Roles NYCPS
 export const RolesNYCPSZod = createZodEnum(RolesNYCPS);
 export type RolesNYCPSType = z.infer<typeof RolesNYCPSZod>;
@@ -362,7 +350,6 @@ export { DayTypes as DayTypeEnum };
 export { BlockDayTypes as BlockDayTypeEnum };
 export { BellScheduleTypes as BellScheduleTypesEnum };
 export { PeriodTypes as PeriodTypesEnum };
-export { EventTypes as EventTypesEnum };
 export { ModeDone as SettingTypesEnum };
 export { ReasonDone as YesNoEnum };
 export { TotalDuration as LengthTypeEnum };

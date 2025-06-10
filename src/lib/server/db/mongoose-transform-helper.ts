@@ -1,16 +1,15 @@
 // src/lib/server/db/mongoose-transform-helper.ts
 import { Document, SchemaOptions } from 'mongoose';
-import { BaseDocument } from '@core-types/document';
 import { RawMongoDocument } from '@core-types/mongo';
 
 /**
  * Standard transform function for all Mongoose models
- * Converts ObjectId to string and adds id field
+ * Returns plain objects suitable for client serialization while preserving Date objects
  */
 export function standardMongooseTransform(
   doc: Document, 
   ret: RawMongoDocument
-): BaseDocument {
+): Record<string, unknown> {
   // Convert _id to string and add id field
   if (ret._id) {
     const idString = ret._id.toString();
@@ -18,10 +17,11 @@ export function standardMongooseTransform(
     ret._id = idString;
   }
   
-  // Remove __v field (Mongoose version key)
+  // Remove __v field
   delete ret.__v;
   
-  return ret as BaseDocument;
+  // Don't break dates!
+  return ret;
 }
 
 /**
@@ -50,3 +50,14 @@ export function createSchemaOptions(
     ...additionalOptions
   };
 }
+
+export function isMongoDocument(obj: unknown): boolean {
+  return obj !== null && typeof obj === 'object' && '_id' in (obj as object);
+}
+
+/**
+ * Simple document processor - no longer needed as models handle conversion
+ */
+export function processMongoDocument<T>(doc: T): T {
+  return doc; // Models handle ObjectId conversion via toJSON
+} 

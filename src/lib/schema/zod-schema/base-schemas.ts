@@ -1,6 +1,6 @@
 // src/lib/data-schema/zod-schema/shared/base-schemas.ts
 import { z, ZodSchema } from 'zod';
-import { zDateField } from '@zod-schema/shared/dateHelpers';
+// import { zDateField } from '@zod-schema/shared/dateHelpers';
 
 // === SIMPLE BASE BUILDING BLOCKS ===
 /**
@@ -10,9 +10,11 @@ import { zDateField } from '@zod-schema/shared/dateHelpers';
 export const BaseDocumentSchema = z.object({
   _id: z.string().describe("Unique document identifier"),
   id: z.string().optional().describe("Client-side ID (mirrors _id)"),
-  owners: z.array(z.string()).default([]).describe("User IDs who own this document"),
-  createdAt: zDateField.optional().describe("When document was created"),
-  updatedAt: zDateField.optional().describe("When document was last updated"),
+  ownerIds: z.array(z.string()).default([]).describe("User IDs who own this document"),
+  createdAt: z.string().optional().describe("When document was created"),
+  updatedAt: z.string().optional().describe("When document was last updated"),
+  // createdAt: zDateField.optional().describe("When document was created"),
+  // updatedAt: zDateField.optional().describe("When document was last updated"),
 });
 
 

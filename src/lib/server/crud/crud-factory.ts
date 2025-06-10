@@ -6,13 +6,12 @@ import { connectToDB } from "@server/db/connection";
 import { BaseDocument } from "@core-types/document";
 import { QueryParams, DEFAULT_QUERY_PARAMS } from "@core-types/query";
 import { PaginatedResponse, EntityResponse, BaseResponse } from "@core-types/response";
-import { fetchPaginatedResource } from "@transformers/pagination/unified-pagination";
+import { fetchPaginatedResource } from "@/lib/data-processing/pagination/unified-pagination";
 
 // Removed over-engineered transformer - using simple sanitization instead
-import { sanitizeDocument } from "@lib/api/responses/formatters";
-import { createValidator } from "@transformers/utils/validation-helpers";
+import { sanitizeDocument } from "@server/api/responses/formatters";
+import { createValidator } from "@/lib/data-processing/validation/validation-helpers";
 import { handleCrudError } from "@error/handlers/crud";
-import { fetchById } from "@transformers/utils/fetch-utils";
 
 /**
  * CRUD factory with semantically correct response types
@@ -195,15 +194,20 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
     // ✅ Single entity operation - consistent error handling
     async fetchById(id: string): Promise<EntityResponse<T>> {
       try {
-        const result = await fetchById(model, id, schema as ZodType<T>);
+        await connectToDB();
         
-        if (!result.success || result.items.length === 0) {
-          throw new Error(result.error || `${name} with ID ${id} not found`);
+        const doc = await model.findById(id).lean();
+        
+        if (!doc) {
+          throw new Error(`${name} with ID ${id} not found`);
         }
+        
+        // Simple sanitization instead of over-engineered transformation
+        const sanitized = sanitizeDocument(doc as T);
         
         return {
           success: true,
-          data: result.items[0] as T
+          data: sanitized
         };
       } catch (error) {
         // ✅ Consistent error handling

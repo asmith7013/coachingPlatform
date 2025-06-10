@@ -1,6 +1,6 @@
 // src/lib/data-schema/mongoose-schema/base-document.ts
 
-import { modelOptions } from '@typegoose/typegoose';
+import { modelOptions, prop } from '@typegoose/typegoose';
 import { defaultModelOptions } from '@mongoose-schema/config';
 
 /**
@@ -12,9 +12,12 @@ import { defaultModelOptions } from '@mongoose-schema/config';
  * - Consistent ID transformation
  * - Proper date formatting
  * - __v field removal
+ * - ownerIds field for document ownership
  */
 @modelOptions(defaultModelOptions)
 export class BaseMongooseDocument {
+  @prop({ type: () => [String], default: [] })
+  ownerIds!: string[];
+  
   // TypeGoose will add _id, createdAt, and updatedAt
-  // No explicit properties needed here
 }

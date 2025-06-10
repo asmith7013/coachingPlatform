@@ -11,9 +11,8 @@ import { SchedulePreview } from '@/components/features/schedulesNew/SchedulePrev
 import { School } from "@zod-schema/core/school";
 import { cn } from '@ui/utils/formatters';
 import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { schoolToSlug } from '@transformers/utils/school-slug-utils';
+import { schoolToSlug } from '@/lib/data-processing/transformers/utils/school-slug-utils';
 import { useTeacherSchedules } from '@/hooks/domain/schedule/useTeacherSchedules';
-import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
 
 interface SchoolGridCardProps {
   school: School;
@@ -90,7 +89,7 @@ export function SchoolGridCard({ school, onDelete, isDeleting }: SchoolGridCardP
                 )}
                 {school.createdAt && (
                   <Text textSize="sm" color="muted" className="mt-1">
-                    Created: {formatMediumDate(toDateString(school.createdAt))}
+                    Created: {school.createdAt}
                   </Text>
                 )}
               </div>

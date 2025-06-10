@@ -2,6 +2,7 @@ import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose from "mongoose"; 
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
 // LookForItem remains as a nested class
 @modelOptions({ 
@@ -38,22 +39,8 @@ class LookForItem {
 // Main Cycle class now extends BaseMongooseDocument
 @modelOptions({ 
   schemaOptions: { 
-    collection: 'cycles', // Only specify collection name, base class handles timestamps
-    // Handle ObjectId conversion at model level
-    toJSON: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    },
-    toObject: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    }
+    ...standardSchemaOptions,
+    collection: 'cycles',
   } 
 })
 class Cycle extends BaseMongooseDocument {
@@ -74,9 +61,6 @@ class Cycle extends BaseMongooseDocument {
 
   @prop({ type: () => [LookForItem], required: true })
   lookFors!: LookForItem[];
-
-  @prop({ type: () => [String], required: true })
-  owners!: string[];
 }
 
 // Keep existing model exports for backward compatibility

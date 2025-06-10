@@ -3,7 +3,7 @@ import { BaseDocument, WithDateObjects } from '@core-types/document';
 import { EntitySelector, SelectorFunction } from '@query/client/selectors/selector-types';
 import { handleClientError } from '@error/handlers/client';
 import { getEntityLabel, normalizeToArray, validateWithSchema } from '@query/client/utilities/selector-helpers';
-import { isCollectionResponse } from "@transformers/utils/response-utils";
+import { isCollectionResponse } from "@/lib/data-processing/transformers/utils/response-utils";
 
 /**
  * Creates an entity selector with simple data operations

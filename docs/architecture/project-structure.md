@@ -447,28 +447,9 @@ When implementing feature co-location:
 
 ## Import Conventions
 
-We follow consistent import conventions:
+For comprehensive import patterns and guidance, see [import-patterns].
 
-- **Path Aliases**: Use `@/` and other aliases instead of relative paths
-- **Barrel Imports**: Import from index files when possible
-- **Import Grouping**: Group imports by external, internal, and relative
-- **Destructuring**: Destructure imports when appropriate
-
-```typescript
-// External library imports
-import { useState, useEffect } from 'react';
-import { z } from 'zod';
-
-// Internal imports using path aliases
-import { Button } from '@/components/core';
-import { useSchools } from '@/hooks';
-import { SchoolZodSchema } from '@/lib/zod-schema';
-
-// Relative imports for closely related files
-import { renderField } from './utils';
-import styles from './styles.module.css';
-```
-[RULE] Follow established import conventions for all files.
+[RULE] Follow the detailed import conventions documented in [import-patterns].
 </section>
 </doc>
 ```

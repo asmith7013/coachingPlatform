@@ -14,14 +14,14 @@ import {
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useSchools } from '@hooks/domain/useSchools';
-import { useErrorHandledMutation } from '@/query/client/hooks/mutations/useStandardMutation';
+import { useStandardMutation } from '@/query/client/hooks/mutations/useStandardMutation';
 import { bulkCreateStaffWithSchoolLink } from '@actions/staff/operations';
 import { createVisit } from '@actions/visits/visits';
 import { AI_PROMPTS } from '@ui/data-import/schema-templates';
 import { 
   createDataPreview 
-} from '@/lib/transformers/ui/data-preview';
-import { validateVisitData, validateStaffData } from '@/lib/transformers/ui/form-validation';
+} from '@/lib/data-processing/transformers/ui/data-preview';
+import { validateVisitData, validateStaffData } from '@/lib/data-processing/transformers/ui/form-validation';
 import type { School } from '@zod-schema/core/school';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
@@ -49,14 +49,14 @@ export default function AddToSchoolPage() {
   const [showPrompt, setShowPrompt] = useState(false);
 
   // Mutations
-  const { mutate: createStaffMutation, isPending: creatingStaff } = useErrorHandledMutation(
+  const { mutate: createStaffMutation, isPending: creatingStaff } = useStandardMutation(
     ([staffData, schoolId]: [NYCPSStaffInput[], string]) => 
       bulkCreateStaffWithSchoolLink(staffData, schoolId),
     {},
     "StaffCreation"
   );
 
-  const { mutate: createVisitMutation, isPending: creatingVisit } = useErrorHandledMutation(
+  const { mutate: createVisitMutation, isPending: creatingVisit } = useStandardMutation(
     (visitData: VisitInput) => createVisit(visitData),
     {},
     "VisitCreation"

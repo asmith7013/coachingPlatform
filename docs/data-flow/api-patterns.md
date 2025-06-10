@@ -1,26 +1,16 @@
-
-```markdown
-<doc id="api-patterns">
-
-# API Patterns
-
-<section id="api-overview">
+# API Routes
 
 ## Overview
 
 Our application implements a consistent pattern for API route development, response formatting, and error handling. These patterns ensure a predictable experience for frontend developers and maintain data consistency across the application.
 
-[RULE] All API routes should follow these standard patterns.
-
-</section>
-
-<section id="api-architecture">
+**[RULE]** All API routes should follow these standard patterns.
 
 ## API Architecture
 
 Our API system follows a layered architecture with clear separation of concerns:
 
-```markdown
+```
 src/lib/api/
 ├── client/             # Client-side API utilities
 ├── fetchers/           # API-safe fetchers for MongoDB models
@@ -33,11 +23,7 @@ src/lib/api/
 
 This structure separates different aspects of API functionality while maintaining a consistent approach across the application.
 
-[RULE] Follow the layered architecture to maintain separation of concerns.
-
-</section>
-
-<section id="response-format">
+**[RULE]** Follow the layered architecture to maintain separation of concerns.
 
 ## Standard Response Format
 
@@ -100,11 +86,7 @@ Example error response:
 }
 ```
 
-[RULE] Always use the standard response format for consistency across the application.
-
-</section>
-
-<section id="response-utilities">
+**[RULE]** Always use the standard response format for consistency across the application.
 
 ## Response Formatting Utilities
 
@@ -129,17 +111,13 @@ const standardized = collectionizeResponse(data);
 
 These utilities ensure all API responses follow the standard format regardless of the data source.
 
-[RULE] Use response formatting utilities rather than manually constructing responses.
-
-</section>
-
-<section id="api-safe-fetchers">
+**[RULE]** Use response formatting utilities rather than manually constructing responses.
 
 ## API-Safe Fetchers Pattern
 
 Our architecture maintains a clean separation between Server Actions and API Routes through the "API-Safe Fetchers" pattern:
 
-```markdown
+```
 Server Actions                API Routes
      │                           │
      ▼                           ▼
@@ -176,11 +154,7 @@ This pattern solves a critical architectural challenge:
 - API Routes cannot import files with "use server" directives
 - Both need access to the same data retrieval logic
 
-[RULE] Use API-safe fetchers for all API routes instead of importing server actions directly.
-
-</section>
-
-<section id="validation-system">
+**[RULE]** Use API-safe fetchers for all API routes instead of importing server actions directly.
 
 ## Request Validation System
 
@@ -220,11 +194,7 @@ The validation system:
 3. **Transforms Types**: Converts string parameters to appropriate types
 4. **Standardizes Errors**: Returns consistent error responses
 
-[RULE] Always validate request inputs using the validation middleware.
-
-</section>
-
-<section id="reference-endpoint-pattern">
+**[RULE]** Always validate request inputs using the validation middleware.
 
 ## Reference Endpoint Pattern
 
@@ -255,11 +225,7 @@ The factory encapsulates:
 
 This approach ensures consistency across all reference endpoints while reducing boilerplate code.
 
-[RULE] Use the reference endpoint pattern for all API endpoints that return lists of entities for selection purposes.
-
-</section>
-
-<section id="api-client">
+**[RULE]** Use the reference endpoint pattern for all API endpoints that return lists of entities for selection purposes.
 
 ## API Client Pattern
 
@@ -293,11 +259,7 @@ The API client provides:
 - Query parameter formatting
 - Response type checking
 
-[RULE] Use domain-specific API clients for all client-side API requests.
-
-</section>
-
-<section id="error-handling">
+**[RULE]** Use domain-specific API clients for all client-side API requests.
 
 ## Error Handling
 
@@ -328,36 +290,7 @@ export const GET = createReferenceEndpoint({
 // Error handling is automatic
 ```
 
-[RULE] Use `createMonitoredErrorResponse` for all API error responses to ensure proper monitoring and formatting.
-
-</section>
-
-<section id="api-vs-server-actions">
-
-## API Routes vs Server Actions
-
-Our application uses both API routes and server actions, each with specific use cases:
-
-### When to use API Routes:
-
-- **External Consumption**: Endpoints needed by external systems
-- **Reference Data**: Endpoints for select inputs and lookups
-- **Complex Parameters**: Operations with complex filtering and sorting
-- **File Operations**: Upload and download endpoints
-- **Webhook Handlers**: Endpoints for external service callbacks
-
-### When to use Server Actions:
-
-- **Form Submissions**: Direct form action handlers
-- **Component-Specific Operations**: Actions tied to specific UI components
-- **RSC Optimization**: Actions that benefit from React Server Components
-- **Progressive Enhancement**: Actions that should work without JavaScript
-
-[RULE] Choose the appropriate pattern based on the specific requirements of the operation.
-
-</section>
-
-<section id="webhook-handlers">
+**[RULE]** Use `createMonitoredErrorResponse` for all API error responses to ensure proper monitoring and formatting.
 
 ## Webhook Handlers
 
@@ -392,9 +325,17 @@ This pattern ensures:
 - Consistent response format
 - Separation of validation and business logic
 
-[RULE] Follow the webhook handler pattern for all external service integrations.
+**[RULE]** Follow the webhook handler pattern for all external service integrations.
 
-</section>
+## When to Use API Routes
 
-</doc>
-```
+Use API Routes for:
+
+- **External Consumption**: Endpoints needed by external systems
+- **Reference Data**: Endpoints for select inputs and lookups
+- **Complex Parameters**: Operations with complex filtering and sorting
+- **File Operations**: Upload and download endpoints
+- **Webhook Handlers**: Endpoints for external service callbacks
+- **Shared Endpoints**: Operations called from multiple places
+
+**[RULE]** Choose API routes when you need externally accessible endpoints or complex parameter handling.

@@ -16,7 +16,7 @@ import { BaseDocument } from '@core-types/document';
 import { ZodType } from 'zod';
 import { getSearchableText } from '@query/client/utilities/selector-helpers';
 import { createReferenceSelector } from '@query/client/selectors/reference-selectors';
-import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
+import { formatMediumDate, toDateString } from '@/lib/data-processing/transformers/utils/date-utils';
 
 /**
  * Create specialized selector variants for an entity type

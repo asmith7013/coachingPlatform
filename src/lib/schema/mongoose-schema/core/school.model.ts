@@ -4,26 +4,12 @@ import { GradeLevels } from "@enums";
 // import { connectToDB } from "@data-server/db/connection";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
 @modelOptions({ 
-  schemaOptions: { 
-    timestamps: true,
+  schemaOptions: {
+    ...standardSchemaOptions,
     collection: 'schools', // Explicit collection name
-    // Handle ObjectId conversion at model level
-    toJSON: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    },
-    toObject: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    }
   } 
 })
 class School extends BaseMongooseDocument {

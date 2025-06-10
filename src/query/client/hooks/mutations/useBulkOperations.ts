@@ -1,7 +1,6 @@
 // src/query/client/hooks/mutations/useBulkOperations.ts
 
-import { useMutation } from '@tanstack/react-query';
-import { handleClientError } from '@error/handlers/client';
+import { useStandardMutation } from '@query/client/hooks/mutations/useStandardMutation';
 import { CollectionResponse } from '@core-types/response';
 import { ZodSchema } from 'zod';
 import { BaseDocument } from '@core-types/document';
@@ -78,86 +77,76 @@ export function useBulkOperations<T extends BaseDocument>({
     }
   };
   
-  // Upload mutation with improved transformation
-  const uploadMutation = useMutation({
-    mutationFn: async (data: T[]) => {
+  // Upload mutation with centralized error handling
+  const uploadMutation = useStandardMutation(
+    async (data: T[]) => {
       if (!bulkUpload) {
         throw new Error('Bulk upload function not provided');
       }
-      try {
-        return await bulkUpload(data);
-      } catch (error) {
-        throw error instanceof Error
-          ? error
-          : new Error(handleClientError(error, `Bulk upload ${errorContext}`));
+      return await bulkUpload(data);
+    },
+    {
+      onSuccess: async (response) => {
+        // Transform response with schema validation
+        transformCollectionResponse<T>(
+          response, 
+          schema,
+          {
+            entityType,
+            useSelector,
+            errorContext: `${errorContext}.bulkUpload`
+          }
+        );
+        
+        // Use invalidation hook instead of direct queryClient call
+        await invalidateData();
       }
     },
-    onSuccess: async (response) => {
-      // Transform response with schema validation
-      transformCollectionResponse<T>(
-        response, 
-        schema,
-        {
-          entityType,
-          useSelector,
-          errorContext: `${errorContext}.bulkUpload`
-        }
-      );
-      
-      // Use invalidation hook instead of direct queryClient call
-      await invalidateData();
-    }
-  });
-  
-  const deleteMutation = useMutation({
-    mutationFn: async (ids: string[]) => {
+    `${errorContext}.bulkUpload`
+  );
+
+  // Delete mutation with centralized error handling
+  const deleteMutation = useStandardMutation(
+    async (ids: string[]) => {
       if (!bulkDelete) {
         throw new Error('Bulk delete function not provided');
       }
-      try {
-        return await bulkDelete(ids);
-      } catch (error) {
-        throw error instanceof Error
-          ? error
-          : new Error(handleClientError(error, `Bulk delete ${errorContext}`));
+      return await bulkDelete(ids);
+    },
+    {
+      onSuccess: async () => {
+        await invalidateData();
       }
     },
-    onSuccess: async () => {
-      // Use invalidation hook instead of direct queryClient call
-      await invalidateData();
-    }
-  });
-  
-  // Update mutation
-  const updateMutation = useMutation({
-    mutationFn: async (updates: Array<{ id: string; data: Partial<T> }>) => {
+    `${errorContext}.bulkDelete`
+  );
+
+  // Update mutation with centralized error handling
+  const updateMutation = useStandardMutation(
+    async (updates: Array<{ id: string; data: Partial<T> }>) => {
       if (!bulkUpdate) {
         throw new Error('Bulk update function not provided');
       }
-      try {
-        return await bulkUpdate(updates);
-      } catch (error) {
-        throw error instanceof Error
-          ? error
-          : new Error(handleClientError(error, `Bulk update ${errorContext}`));
+      return await bulkUpdate(updates);
+    },
+    {
+      onSuccess: async (response) => {
+        // Transform response with schema validation
+        transformCollectionResponse<T>(
+          response, 
+          schema,
+          {
+            entityType,
+            useSelector,
+            errorContext: `${errorContext}.bulkUpdate`
+          }
+        );
+        
+        await invalidateData();
       }
     },
-    onSuccess: async (response) => {
-      // Transform response with schema validation
-      transformCollectionResponse<T>(
-        response, 
-        schema,
-        {
-          entityType,
-          useSelector,
-          errorContext: `${errorContext}.bulkUpdate`
-        }
-      );
-      
-      // Use invalidation hook instead of direct queryClient call
-      await invalidateData();
-    }
-  });
+    `${errorContext}.bulkUpdate`
+  );
   
   return {
     // Bulk upload operations

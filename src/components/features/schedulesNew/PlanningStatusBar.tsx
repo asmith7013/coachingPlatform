@@ -1,27 +1,64 @@
 import React from 'react';
 import { Eye, MessageCircle } from 'lucide-react';
 import { useScheduleContext } from './context';
+import { SessionPurposes } from '@/lib/schema/enum';
+import { extractEventsForTeacher } from './utils/visit-data-utils';
 
 export function PlanningStatusBar() {
   // ✅ SIMPLIFIED: Use context directly with simple helper
   const { teachers, visits } = useScheduleContext();
   
-  // ✅ SIMPLE HELPER: Extract teacher planning from visits
+  // ✅ FIXED: Extract teacher planning from actual visit events
   const getTeacherPlanning = (teacherId: string) => {
-    const teacherVisits = visits.filter(visit => 
-      visit.events?.[0]?.staff?.[0] === teacherId
+    // Get all events for this teacher across all visits
+    const teacherEvents = visits.flatMap(visit => 
+      extractEventsForTeacher(visit, teacherId)
     );
+
+    // Debug logging to understand what we're working with
+    console.log(`🎯 Teacher ${teacherId} events:`, {
+      eventsCount: teacherEvents.length,
+      eventTypes: teacherEvents.map(event => event.eventType),
+      eventPurposes: teacherEvents.map(event => event.purpose),
+      events: teacherEvents
+    });
+
     return {
-      observation: teacherVisits.some(visit => 
-        visit.allowedPurpose?.includes('observation') || visit.allowedPurpose?.includes('Observation')
+      observation: teacherEvents.some(event => 
+        event.eventType === SessionPurposes.OBSERVATION ||
+        event.purpose === SessionPurposes.OBSERVATION ||
+        event.eventType === 'observation' ||
+        event.purpose === 'observation'
       ),
-      meeting: teacherVisits.some(visit => 
-        visit.allowedPurpose?.includes('debrief') || 
-        visit.allowedPurpose?.includes('meeting') ||
-        visit.allowedPurpose?.includes('co-planning')
+      meeting: teacherEvents.some(event => 
+        event.eventType === SessionPurposes.DEBRIEF ||
+        event.eventType === SessionPurposes.CO_PLANNING ||
+        event.eventType === SessionPurposes.PLC ||
+        event.purpose === SessionPurposes.DEBRIEF ||
+        event.purpose === SessionPurposes.CO_PLANNING ||
+        event.purpose === SessionPurposes.PLC ||
+        event.eventType === 'debrief' ||
+        event.eventType === 'co-planning' ||
+        event.eventType === 'plc' ||
+        event.purpose === 'debrief' ||
+        event.purpose === 'co-planning' ||
+        event.purpose === 'plc'
       )
     };
   };
+
+  // Debug logging for overall context
+  console.log('🔍 PlanningStatusBar Debug:', {
+    teachersCount: teachers.length,
+    visitsCount: visits.length,
+    teachers: teachers.map(t => ({ id: t._id, name: t.staffName })),
+    visitsStructure: visits.map(v => ({
+      id: v._id,
+      eventsCount: v.events?.length || 0,
+      eventTypes: v.events?.map(e => e.eventType) || [],
+      teachers: v.events?.map(e => e.staff?.[0]) || []
+    }))
+  });
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
@@ -31,21 +68,27 @@ export function PlanningStatusBar() {
           <div className="grid grid-cols-3 gap-4">
             {teachers.map(teacher => {
               const planning = getTeacherPlanning(teacher._id);
+              
+              // Individual teacher debug
+              console.log(`📊 Teacher ${teacher.staffName} (${teacher._id}) planning:`, planning);
+              
               return (
                 <div key={teacher._id} className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-2 border">
-                  <span className="font-medium text-gray-900">{teacher.staffName.split(' ')[0]}</span>
+                  <span className="font-medium text-gray-900 truncate min-w-0 flex-1 mr-2">
+                    {teacher.staffName.length > 20 ? `${teacher.staffName.slice(0, 20)}...` : teacher.staffName}
+                  </span>
                   
-                  <div className="flex items-center space-x-1">
+                  <div className="flex items-center space-x-1 flex-shrink-0">
                     {/* Observation Icon */}
-                    <div className={`w-6 h-6 rounded-full border-2 border-blue-500 flex items-center justify-center transition-colors
+                    <div className={`w-8 h-8 rounded-full border-2 border-blue-500 flex items-center justify-center transition-colors
                       ${planning.observation ? 'bg-blue-500' : 'bg-white'}`}>
-                      <Eye className={`w-3 h-3 ${planning.observation ? 'text-white' : 'text-blue-500'}`} />
+                      <Eye className={`w-4 h-4 ${planning.observation ? 'text-white' : 'text-blue-500'}`} />
                     </div>
                     
                     {/* Meeting Icon */}
-                    <div className={`w-6 h-6 rounded-full border-2 border-purple-500 flex items-center justify-center transition-colors
+                    <div className={`w-8 h-8 rounded-full border-2 border-purple-500 flex items-center justify-center transition-colors
                       ${planning.meeting ? 'bg-purple-500' : 'bg-white'}`}>
-                      <MessageCircle className={`w-3 h-3 ${planning.meeting ? 'text-white' : 'text-purple-500'}`} />
+                      <MessageCircle className={`w-4 h-4 ${planning.meeting ? 'text-white' : 'text-purple-500'}`} />
                     </div>
                   </div>
                 </div>

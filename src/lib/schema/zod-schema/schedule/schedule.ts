@@ -8,7 +8,7 @@ import {
 } from "@enums"; 
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
+import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 import { zDateField } from '@zod-schema/shared/dateHelpers';
 import { TimeSlotZodSchema } from "@zod-schema/visits/visit";
 
@@ -19,8 +19,10 @@ export const ClassScheduleItemFieldsSchema = z.object({
   dayType: DayTypeZod,
   startTime: z.string(),
   endTime: z.string(),
-  periodNum: z.number(),
-  className: z.string(),
+  periodNum: z.number().optional(), // Add if this is also sometimes missing
+  className: z.string().optional(), // ← CHANGE: Make optional
+  room: z.string().optional(), // Add if you have this field
+  periodType: PeriodTypeZod.optional(), // Add if you have this field
 });
 
 // Class Schedule Item Schema
@@ -34,7 +36,7 @@ export const AssignedCycleDayFieldsSchema = z.object({
 
 // Bell Schedule Fields Schema
 export const BellScheduleFieldsSchema = z.object({
-  school: z.string(),
+  schoolId: z.string(),
   bellScheduleType: BellScheduleTypeZod,
   classSchedule: z.array(ClassScheduleItemFieldsSchema),
   assignedCycleDays: z.array(AssignedCycleDayFieldsSchema),
@@ -50,7 +52,7 @@ export const BellScheduleInputZodSchema = toInputSchema(BellScheduleZodSchema);
 export const BellScheduleReferenceZodSchema = BaseReferenceZodSchema.merge(
   BellScheduleFieldsSchema
     .pick({
-      school: true,
+      schoolId: true,
       bellScheduleType: true,
     })
     .partial()
@@ -82,8 +84,8 @@ export const ScheduleByDayZodSchema = ScheduleByDayFieldsSchema;
 
 // Teacher Schedule Fields Schema
 export const TeacherScheduleFieldsSchema = z.object({
-  teacher: z.string(),
-  school: z.string(),
+  teacherId: z.string(),
+  schoolId: z.string(),
   scheduleByDay: z.array(ScheduleByDayZodSchema),
 });
 
@@ -97,8 +99,8 @@ export const TeacherScheduleInputZodSchema = toInputSchema(TeacherScheduleZodSch
 export const TeacherScheduleReferenceZodSchema = BaseReferenceZodSchema.merge(
   TeacherScheduleFieldsSchema
     .pick({
-      teacher: true,
-      school: true,
+      teacherId: true,
+      schoolId: true,
     })
     .partial()
 ).extend({
@@ -112,7 +114,7 @@ export const TeacherScheduleReferenceZodSchema = BaseReferenceZodSchema.merge(
 export const bellScheduleToReference = createReferenceTransformer<BellSchedule, BellScheduleReference>(
   (schedule) => `${schedule.bellScheduleType} Schedule`,
   (schedule) => ({
-    school: schedule.school,
+    schoolId: schedule.schoolId,
     bellScheduleType: schedule.bellScheduleType,
     daysCount: schedule.assignedCycleDays?.length || 0,
     scheduleCount: schedule.classSchedule?.length || 0,
@@ -135,8 +137,8 @@ export const teacherScheduleToReference = createReferenceTransformer<TeacherSche
     );
     
     return {
-      teacher: schedule.teacher,
-      school: schedule.school,
+      teacherId: schedule.teacherId,
+      schoolId: schedule.schoolId,
       daysCount: schedule.scheduleByDay?.length || 0,
       periodsCount,
     };
@@ -172,3 +174,4 @@ export type TeacherScheduleInput = z.infer<typeof TeacherScheduleInputZodSchema>
 export type TeacherSchedule = z.infer<typeof TeacherScheduleZodSchema>;
 export type TeacherScheduleReference = z.infer<typeof TeacherScheduleReferenceZodSchema>;
 export type AssignmentState = z.infer<typeof AssignmentStateZodSchema>;
+export type ScheduleAssignment = z.infer<typeof ScheduleAssignmentTypeZod>;

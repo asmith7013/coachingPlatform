@@ -2,13 +2,15 @@ import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import mongoose from "mongoose";
 import {
   AllowedPurposes,
-  EventTypes,
+  SessionPurposes,
   ModeDone,
   GradeLevels,
   DurationValues,
+  ScheduleAssignment,
 } from "@enums";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
 // Time Slot nested class (matches TimeSlotZodSchema)
 @modelOptions({ 
@@ -32,13 +34,13 @@ export class EventItem {
   // Existing fields
   @prop({ 
     type: String, 
-    enum: Object.values(EventTypes), 
+    enum: Object.values(SessionPurposes), 
     required: true 
   })
   eventType!: string;
 
   @prop({ type: () => [String], required: true })
-  staff!: string[];
+  staffIds!: string[];
 
   @prop({ 
     type: String,
@@ -51,7 +53,10 @@ export class EventItem {
   @prop({ type: () => TimeSlot })
   timeSlot?: TimeSlot; // Time slot for this specific event
 
-  @prop({ type: String })
+  @prop({ 
+    type: String,
+    enum: Object.values(SessionPurposes)
+  })
   purpose?: string; // Specific purpose for this event
 
   @prop({ type: Number })
@@ -59,7 +64,7 @@ export class EventItem {
 
   @prop({ 
     type: String,
-    enum: ['full_period', 'first_half', 'second_half']
+    enum: Object.values(ScheduleAssignment)
   })
   portion?: string; // Full/first_half/second_half
 
@@ -82,22 +87,27 @@ export class SessionLink {
   url!: string;
 
   @prop({ type: () => [String], required: true })
-  staff!: string[];
+  staffIds!: string[];
 }
 
-@modelOptions({ schemaOptions: { collection: 'visits' } })
+@modelOptions({ 
+  schemaOptions: { 
+    ...standardSchemaOptions,
+    collection: 'visits' 
+  } 
+})
 export class Visit extends BaseMongooseDocument {
   @prop({ type: Date, required: true })
   date!: Date;
 
   @prop({ required: true })
-  school!: string;
+  schoolId!: string;
 
   @prop({ required: true })
-  coach!: string;
+  coachId!: string;
 
   @prop({ type: String })
-  cycleRef?: string;
+  cycleId?: string;
 
   @prop({ 
     type: String,
@@ -127,9 +137,6 @@ export class Visit extends BaseMongooseDocument {
   // NEW: Planned schedule integration field from Zod schema
   @prop({ type: String })
   plannedScheduleId?: string; // Reference to PlannedVisit for schedule builder integration
-
-  @prop({ type: () => [String], required: true })
-  owners!: string[];
 
   // Monday.com integration fields
   @prop()

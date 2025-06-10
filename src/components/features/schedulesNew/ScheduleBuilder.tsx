@@ -2,7 +2,7 @@ import React from 'react';
 import { PlanningStatusBar } from './PlanningStatusBar';
 import { ScheduleGrid } from './ScheduleGrid';
 import { ScheduleLegend } from './ScheduleLegend';
-import { SelectionStatusFooter } from './SelectionStatusFooter';
+// import { SelectionStatusFooter } from './SelectionStatusFooter';
 import { ScheduleProvider } from './context';
 import type { ScheduleBuilderProps } from './types';
 
@@ -31,7 +31,7 @@ export function ScheduleBuilder({
         <ScheduleGrid />
         
         {/* Selection Status Footer - shows current selections */}
-        <SelectionStatusFooter />
+        {/* <SelectionStatusFooter /> */}
         
         {/* Schedule Legend - explains how to use the interface */}
         <ScheduleLegend />

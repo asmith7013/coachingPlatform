@@ -58,7 +58,6 @@
         "@zod-schema/*": ["./src/lib/schema/zod-schema/*"],
         "@mongoose-schema/*": ["./src/lib/schema/mongoose-schema/*"],
         "@schema/*": ["./src/lib/schema/*"],
-        "@transformers/*": ["./src/lib/transformers/*"],
         "@server/*": ["./src/lib/server/*"],
 
         // Library and utility paths
@@ -67,6 +66,7 @@
         "@styles/*": ["./src/styles/*"],
         "@core/*": ["./src/lib/core/*"],
         "@domain/*": ["./src/lib/domain/*"],
+        "@data-processing/*": ["./src/lib/data-processing/*"],
         "@error/*": ["./src/lib/error/*"],
         "@error": ["./src/lib/error"],
         "@query/*": ["./src/query/*"],  

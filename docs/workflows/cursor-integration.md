@@ -1,9 +1,4 @@
-```markdown
-<doc id="cursor-integration">
-
 # Cursor Integration Guide
-
-<section id="cursor-overview">
 
 ## Overview
 
@@ -11,30 +6,21 @@ Our project leverages Cursor, an AI-native code editor, to accelerate developmen
 
 [RULE] Use Cursor to accelerate development while maintaining code quality standards.
 
-</section>
-
-<section id="cursor-code-advice">
 ## Code Advice Format
 
-When providing code advice or implementation guidance, almost always format the response as a Cursor prompt that follows our established Cursor prompt patterns. This should include:
+When providing code advice or implementation guidance, format the response as a Cursor prompt that follows our established patterns. This should include:
 
 1. A clear task description at the top
 2. Reference to relevant documentation sections using our standard format: [document-id][section-id]
 3. Scope boundaries (what's in/out of scope)
 4. Implementation requirements
-5. Code examples following our code example formatting guidelines 
+5. Code examples following our formatting guidelines 
 
-Unless explicitly directed otherwise, assume that code advice is intended to be copy-pasted into Cursor as a prompt. Format your response accordingly, even for seemingly simple implementations.
+Unless explicitly directed otherwise, assume that code advice is intended to be copy-pasted into Cursor as a prompt.
 
-Example:
-Instead of directly providing code like this:
-```typescript
-function example() {
-  // Code here
-}
-```
-Format it as a Cursor prompt like this:
-markdown# Implement Example Function
+Example format:
+```markdown
+# Implement Example Function
 
 ## SCOPE
 - IN SCOPE: Create a basic example function
@@ -47,9 +33,7 @@ export function example() {
   // Code implementation
 }
 ```
-</section>
-
-<section id="cursor-setup">
+```
 
 ## Setting Up Cursor
 
@@ -71,16 +55,9 @@ Key section IDs:
 - component-organization
 - component-tokens
 - component-variants
-- component-fields
-- component-form
-- component-error-display
 ```
 
 [RULE] Make sure Cursor can access our documentation system for better assistance.
-
-</section>
-
-<section id="cursor-prompting">
 
 ## Effective Prompting
 
@@ -117,10 +94,6 @@ The component should be used like this:
 
 [RULE] Structure prompts with clear tasks, references, and requirements.
 
-</section>
-
-<section id="cursor-focus">
-
 ## Maintaining Focus
 
 To prevent Cursor from going on tangents and keep it focused on the primary task:
@@ -151,24 +124,7 @@ To prevent Cursor from going on tangents and keep it focused on the primary task
 3. [LOW] Optional enhancement if time permits
 ```
 
-### Step-by-Step Structure
-
-```markdown
-## STEP-BY-STEP IMPLEMENTATION
-### STEP 1: [First Task]
-- Specific action to take
-- CHECK: Verification step
-- EXIT: When to move to the next step
-
-### STEP 2: [Second Task]
-...
-```
-
 [RULE] Include explicit focus mechanisms in complex prompts to prevent tangents.
-
-</section>
-
-<section id="cursor-reference">
 
 ## Documentation References
 
@@ -188,196 +144,93 @@ This allows Cursor to quickly find and apply the relevant guidance.
 
 [RULE] Use consistent documentation references in all Cursor prompts.
 
-</section>
-
-<section id="cursor-scope-definition">
-
 ## Scope Definition Requirements
 
 All Cursor prompts for multi-file changes must include a complete file list to ensure proper scope definition and prevent incomplete implementations.
 
 ### File List Requirements
 
-Every prompt involving changes to multiple files must include:
+When working with multiple files, always include:
 
 ```markdown
-## FILES REQUIRING UPDATES (X total)
-1. `path/to/file1.ts` (CREATE NEW | UPDATE | PATTERN UPDATE | COMPLETE REWRITE)
-2. `path/to/file2.tsx` (UPDATE - specific changes)
-3. `path/to/file3.ts` (PATTERN UPDATE - loading states)
-...
+## FILES TO MODIFY
+- src/components/NewComponent.tsx (CREATE)
+- src/hooks/useNewHook.ts (CREATE)
+- src/types/index.ts (UPDATE - add new types)
+- src/utils/helpers.ts (UPDATE - add utility function)
 ```
 
-### Change Type Classifications
+### Implementation Boundaries
 
-Use these classifications to indicate the scope of changes:
-
-- **CREATE NEW**: File doesn't exist and needs to be created
-- **COMPLETE REWRITE**: File exists but needs fundamental restructuring
-- **UPDATE**: Significant changes to existing functionality
-- **PATTERN UPDATE**: Consistent patterns applied (e.g., `isLoading` → `isPending`)
-
-### Benefits of Complete File Lists
-
-File lists serve multiple purposes:
-
-- **Scope Definition**: Creates clear boundaries for the implementation
-- **Risk Assessment**: Large file counts signal complex changes requiring more planning  
-- **Quality Control**: Acts as a checklist to ensure nothing is forgotten
-- **Dependency Mapping**: Helps identify cascade effects and related changes
-- **Priority Setting**: Distinguishes critical changes from nice-to-have updates
-
-### Example Implementation
+Define clear boundaries for what should and shouldn't be implemented:
 
 ```markdown
-# Update Authentication System
-
-## SCOPE
-- IN SCOPE: Migrate from Clerk v4 to v5, update all auth hooks
-- OUT OF SCOPE: Changing permission logic, adding new features
-
-## FILES REQUIRING UPDATES (8 total)
-1. `src/hooks/auth/useAuth.ts` (COMPLETE REWRITE)
-2. `src/components/auth/AuthGuard.tsx` (UPDATE - API changes)
-3. `src/app/layout.tsx` (PATTERN UPDATE - provider props)
-4. `src/lib/auth/config.ts` (UPDATE - configuration format)
-5. `src/types/auth.ts` (UPDATE - type definitions)
-6. `package.json` (UPDATE - dependency versions)
-7. `src/middleware.ts` (PATTERN UPDATE - middleware signature)
-8. `src/app/api/auth/route.ts` (CREATE NEW)
-
-## STEP-BY-STEP IMPLEMENTATION
-[Implementation details...]
+## IMPLEMENTATION SCOPE
+- IN SCOPE: Core component functionality, basic styling, type definitions
+- OUT OF SCOPE: Advanced animations, complex state management, testing setup
 ```
 
-[RULE] Always include a complete file list with change classifications for any prompt involving multiple files.
+[RULE] Always provide complete file lists and clear scope boundaries for multi-file changes.
 
-</section>
+## Common Patterns
 
-<section id="cursor-workflow">
-
-## Cursor Workflow
-
-The optimal workflow with Cursor follows these steps:
-
-1. **Plan**: Define what you want to build
-2. **Prompt**: Create a specific prompt referencing documentation
-3. **Review**: Carefully review the generated code
-4. **Refine**: Iteratively improve the code with follow-up prompts
-5. **Test**: Verify the code works as expected
-6. **Integrate**: Merge the code into the broader codebase
-
-For complex features, break them down into smaller parts and prompt for each:
+### Component Creation
 
 ```markdown
-# First prompt
-Implement the data model for the feature...
+# Create [ComponentName] Component
 
-# Second prompt
-Now create the UI components using the model...
+## REFERENCE
+- [component-system][component-tokens] Token-First Design
+- [component-system][component-variants] Variant Patterns
 
-# Third prompt
-Connect the components with the data hooks...
+## REQUIREMENTS
+1. Use tv() for styling variants
+2. Follow atomic design principles
+3. Include proper TypeScript types
+4. Export from component index
 ```
 
-[RULE] Use an iterative, step-by-step approach with Cursor for complex features.
-
-</section>
-
-<section id="cursor-limitations">
-
-## Working with Limitations
-
-Cursor works best when you:
-
-- **Limit Scope**: Focus on discrete, well-defined tasks
-- **Provide Context**: Include relevant project context
-- **Handle Edge Cases**: Explicitly prompt for error handling
-- **Review Critically**: Always review generated code for quality
-
-When Cursor struggles:
-
-- Break the problem down further
-- Provide more specific examples
-- Reference more specific documentation sections
-- Take an iterative approach
-
-[RULE] Understand Cursor's limitations and adjust your workflow accordingly.
-
-</section>
-
-<section id="cursor-refocus">
-
-## Redirecting When Off Track
-
-If Cursor begins to go off track:
-
-1. **Interrupt**: Don't let Cursor continue down an unproductive path
-2. **Refocus**: Explicitly state that you want to refocus on the primary task
-3. **Reframe**: Provide a clearer, more focused prompt
-
-Example refocusing prompt:
+### Hook Development
 
 ```markdown
-Let's refocus on the original task: [restate the primary objective].
+# Create [HookName] Hook
 
-Please stop the current exploration of [tangent topic] and instead:
-1. Complete [specific next step]
-2. Focus specifically on [core requirement]
-3. Ignore [distracting elements] for now
+## REFERENCE
+- [hook-development][domain-hooks] Domain Hook Patterns
+- [data-flow][crud-factory] CRUD Factory Usage
+
+## REQUIREMENTS
+1. Use CRUD factory if applicable
+2. Follow domain organization
+3. Include proper error handling
+4. Export from hooks index
 ```
 
-[RULE] Actively redirect Cursor when it goes on tangents rather than letting it continue.
-
-</section>
-
-<section id="cursor-examples">
-
-## Example Prompts
-
-### Good Example: Focused Prompt
+### API Integration
 
 ```markdown
-# TypeScript Error Fixing Plan
+# Implement [EntityName] API Integration
 
-## SCOPE
-- IN SCOPE: Fix import paths, create missing utility files, fix card component props
-- OUT OF SCOPE: Investigating data structures, adding new features, refactoring logic
+## REFERENCE
+- [api-patterns][api-routes] Standard API Patterns
+- [schema-system][core-patterns] Schema Validation
 
-## PRIORITY TASKS
-1. [HIGH] Run path fixing scripts to update imports
-2. [HIGH] Create missing utility files and directories
-3. [MEDIUM] Fix card component prop type issues
-4. [LOW] Add type annotations to improve type safety
-
-## STEP-BY-STEP IMPLEMENTATION
-### STEP 1: Run Path Fixing Scripts
-- Execute the following scripts in sequence:
-  - fix-server-paths.sh
-  - fix-type-paths.sh
-  - fix-misc-paths.sh
-- CHECK: After each script, verify error reduction
-- EXIT: Move to next step after all scripts complete
-
-### STEP 2: Create Missing Files
-- Create required utility files:
-  - src/lib/utils/general/cn.ts
-  - src/lib/data/hooks/useItemToGroupMap.ts
-- EXIT: Move to next step once files are created
-
-### STEP 3: Fix Component Props
-- Update Card component props to fix type errors
-- EXIT: When Card component can be used without type errors
+## REQUIREMENTS
+1. Follow standard response format
+2. Implement proper validation
+3. Use withDbConnection wrapper
+4. Include error handling
 ```
 
-### Poor Example: Unfocused Prompt
+[RULE] Use these common patterns as templates for consistent Cursor prompts.
 
-```markdown
-Fix all the TypeScript errors in the project. Also, can you improve the performance and add some new features while you're at it? Maybe look at how we handle data loading and suggest improvements. Also, check for any security issues.
-```
+## Best Practices
 
-[RULE] Learn from these examples to craft focused, effective prompts.
+1. **Be Specific**: Provide exact requirements rather than vague descriptions
+2. **Reference Documentation**: Always include relevant documentation sections
+3. **Define Scope**: Clearly state what should and shouldn't be implemented
+4. **Include Examples**: Show expected usage patterns
+5. **Set Exit Criteria**: Define when the task is complete
 
-</section>
-</doc>
+[RULE] Follow these best practices for effective Cursor collaboration.
 ```

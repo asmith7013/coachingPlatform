@@ -3,8 +3,7 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { ZodSchema } from 'zod';
 import { BaseDocument } from '@core-types/document';
 import { EntityResponse } from '@core-types/response';
-import { transformSingleItem } from '@query/client/utilities/hook-helpers';
-import { ensureBaseDocumentCompatibility } from '@zod-schema/base-schemas';
+import { sanitizeDocument } from '@server/api/responses/formatters';
 
 /**
  * Configuration for useEntityById hook
@@ -39,9 +38,6 @@ export function useEntityById<T extends BaseDocument>({
   entityType,
   id,
   fetcher,
-  schema,
-  useSelector = false,
-  errorContext,
   queryOptions = {}
 }: UseEntityByIdConfig<T>) {
   const query = useQuery({
@@ -61,15 +57,7 @@ export function useEntityById<T extends BaseDocument>({
       }
       
       // ✅ FIXED: Transform the single entity directly (no format conversion needed)
-      const transformed = transformSingleItem<T>(
-        response.data, // Pass the raw data item
-        ensureBaseDocumentCompatibility<T>(schema),
-        {
-          entityType,
-          useSelector,
-          errorContext: errorContext || `${entityType}.fetchById`
-        }
-      );
+      const transformed = sanitizeDocument<T>(response.data);
       
       if (!transformed) {
         throw new Error(`Failed to transform ${entityType} data`);

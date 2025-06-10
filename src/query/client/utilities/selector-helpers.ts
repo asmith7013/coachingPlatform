@@ -1,5 +1,5 @@
-import { isEntityResponse } from "@/lib/transformers/utils/response-utils";
-import { isCollectionResponse } from "@/lib/transformers/utils/response-utils";
+import { isEntityResponse } from "@/lib/data-processing/transformers/utils/response-utils";
+import { isCollectionResponse } from "@/lib/data-processing/transformers/utils/response-utils";
 import { EntityResponse } from "@/lib/types/core/response";
 import { CollectionResponse } from "@/lib/types/core/response";
 import { ZodSchema } from "zod";

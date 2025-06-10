@@ -8,6 +8,7 @@ export { PlanningStatusBar } from './PlanningStatusBar';
 export { ScheduleGrid } from './ScheduleGrid';
 export { ScheduleLegend } from './ScheduleLegend';
 export { SelectionStatusFooter } from './SelectionStatusFooter';
+
 export { TeacherPeriodCell } from './TeacherPeriodCell';
 
 // Hooks
@@ -15,5 +16,4 @@ export { TeacherPeriodCell } from './TeacherPeriodCell';
 export { useScheduleBuilderUI } from './hooks/useScheduleBuilderUI';
 
 // Utilities
-export * from './utils/schedule-data-utils';
 export * from './utils/schedule-time-utils'; 

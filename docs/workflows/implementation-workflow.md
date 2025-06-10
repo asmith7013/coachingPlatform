@@ -197,6 +197,147 @@ This ensures consistent responsive behavior across all component types.
 [RULE] Use responsive layout patterns for all compound components with title/description pairs.
 </section>
 
+<section id="schedule-feature-implementation">
+
+## Schedule Feature Implementation Guide
+
+When implementing schedule-related features, follow this specific workflow that builds on our standard implementation sequence.
+
+### 1. Implement Schedule Types
+
+Start by defining schedule-specific types in feature types file:
+
+```typescript
+// src/components/features/schedulesNew/types.ts
+export interface VisitCreationData {
+  teacherId: string;
+  periodNumber: number;
+  portion: ScheduleAssignmentType;
+  purpose: string;
+}
+
+export interface ScheduleUIState {
+  selectedTeacher: string | null;
+  selectedPeriod: number | null;
+  activeDropdown: string | null;
+}
+
+export interface ConflictCheckData {
+  teacherId: string;
+  periodNumber: number;
+  portion: ScheduleAssignmentType;
+}
+```
+
+### 2. Create Conflict Detection Logic
+
+Implement conflict detection before building the UI:
+
+```typescript
+// src/components/features/schedulesNew/utils/visit-conflict-detector.ts
+export class VisitConflictDetector {
+  constructor(private existingVisits: ScheduledVisitMinimal[]) {}
+  
+  checkConflict(newVisit: ConflictCheckData): ConflictResult {
+    // Implement clear business logic for conflicts
+    const conflictingVisit = this.existingVisits.find(existing => 
+      existing.teacherId === newVisit.teacherId && 
+      existing.periodNumber === newVisit.periodNumber &&
+      this.hasTimeConflict(existing.portion, newVisit.portion)
+    );
+    
+    return conflictingVisit ? 
+      { hasConflict: true, message: "Conflict detected" } :
+      { hasConflict: false };
+  }
+}
+```
+
+### 3. Implement Modular Hooks
+
+Create focused hooks following the modular pattern:
+
+```typescript
+// Data hook - pure delegation
+export function useScheduleData({ schoolId, date }: ScheduleDataProps) {
+  const schoolData = useSchoolDailyView(schoolId, date);
+  const visits = useVisits.list({ filters: { school: schoolId, date } });
+  
+  return {
+    teachers: schoolData.staff || [],
+    visits: visits.items || [],
+    isLoading: schoolData.isLoading || visits.isLoading
+  };
+}
+
+// Actions hook - operations with validation
+export function useScheduleActions({ visits }: ScheduleActionsProps) {
+  const visitsManager = useVisits.manager();
+  const conflictDetector = useMemo(() => createConflictDetector(visits), [visits]);
+  
+  const scheduleVisit = useCallback(async (data: VisitCreationData) => {
+    const conflict = conflictDetector.checkConflict(data);
+    if (conflict.hasConflict) return { success: false, error: conflict.message };
+    
+    return await visitsManager.createAsync(transformToVisitData(data));
+  }, [conflictDetector, visitsManager]);
+  
+  return { scheduleVisit, isLoading: visitsManager.isCreating };
+}
+```
+
+### 4. Create Context Provider
+
+Compose the modular hooks in a context provider:
+
+```typescript
+export function ScheduleProvider({ schoolId, date, children }: ScheduleProviderProps) {
+  const scheduleData = useScheduleData({ schoolId, date });
+  const scheduleActions = useScheduleActions({ visits: scheduleData.visits });
+  const scheduleState = useScheduleState();
+  
+  const contextValue = {
+    ...scheduleData,
+    ...scheduleActions,
+    ...scheduleState
+  };
+  
+  return (
+    <ScheduleContext.Provider value={contextValue}>
+      {children}
+    </ScheduleContext.Provider>
+  );
+}
+```
+
+### 5. Implement Selective Context Hooks
+
+Create hooks that expose specific slices of context:
+
+```typescript
+export function useScheduleSelection() {
+  const context = useScheduleContext();
+  return {
+    selectedTeacher: context.uiState.selectedTeacher,
+    selectedPeriod: context.uiState.selectedPeriod,
+    selectTeacherPeriod: context.selectTeacherPeriod
+  };
+}
+
+export function useScheduleOperations() {
+  const context = useScheduleContext();
+  return {
+    scheduleVisit: context.scheduleVisit,
+    hasVisitConflict: context.hasVisitConflict,
+    isLoading: context.isLoading
+  };
+}
+```
+
+[RULE] Follow this schedule feature workflow for any complex scheduling functionality requiring conflict detection and state management.
+
+</section>
+
 
 <section id="page-implementation">
 7. Create Pages

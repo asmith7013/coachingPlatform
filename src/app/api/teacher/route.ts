@@ -1,4 +1,4 @@
-import { fetchNYCPSStaffForApi } from "@server/fetchers/staff";
+import { fetchNYCPSStaffForApi } from "@/lib/server/fetchers/domain/staff";
 import { createReferenceEndpoint, FetchFunction } from "@api-handlers/reference-endpoint";
 import { NYCPSStaff, NYCPSStaffReference } from "@zod-schema/core/staff";
 

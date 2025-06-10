@@ -10,6 +10,7 @@ import {
 } from "@enums";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
 // Add Monday.com User Class
 @modelOptions({ 
@@ -52,22 +53,8 @@ class Experience {
 
 @modelOptions({ 
   schemaOptions: { 
+    ...standardSchemaOptions,
     collection: 'notes',
-    // Handle ObjectId conversion at model level
-    toJSON: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    },
-    toObject: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    }
   } 
 })
 class Note extends BaseMongooseDocument {
@@ -83,22 +70,8 @@ class Note extends BaseMongooseDocument {
 
 @modelOptions({ 
   schemaOptions: { 
+    ...standardSchemaOptions,
     collection: 'staffmembers',
-    // Handle ObjectId conversion at model level
-    toJSON: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    },
-    toObject: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    }
   } 
 })
 class StaffMember extends BaseMongooseDocument {
@@ -107,31 +80,15 @@ class StaffMember extends BaseMongooseDocument {
   @prop({ type: String })
   email!: string;
   @prop({ type: () => [String] })
-  schools?: string[];
-  @prop({ type: () => [String] })
-  owners?: string[];
+  schoolIds?: string[];
   @prop({ type: () => MondayUser })
   mondayUser?: MondayUser;
 }
 
 @modelOptions({ 
   schemaOptions: { 
+    ...standardSchemaOptions,
     collection: 'nycpsstaffs',
-    // Handle ObjectId conversion at model level
-    toJSON: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    },
-    toObject: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    }
   } 
 })
 class NYCPSStaff extends StaffMember {
@@ -153,22 +110,8 @@ class NYCPSStaff extends StaffMember {
 
 @modelOptions({ 
   schemaOptions: { 
+    ...standardSchemaOptions,
     collection: 'teachinglabstaffs',
-    // Handle ObjectId conversion at model level
-    toJSON: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    },
-    toObject: { 
-      transform: (doc, ret) => {
-        ret.id = ret._id.toString();
-        ret._id = ret._id.toString();
-        return ret;
-      }
-    }
   } 
 })
 class TeachingLabStaff extends StaffMember {

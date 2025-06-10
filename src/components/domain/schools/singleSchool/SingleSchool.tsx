@@ -9,7 +9,7 @@ import { MasterScheduleCard } from './cards/MasterScheduleCard';
 import { VisitsCard } from './cards/VisitsCard';
 import { TeachersCard } from './cards/TeachersCard';
 import { MetricsCard } from './cards/MetricsCard';
-import { formatMediumDate, toDateString } from '@transformers/utils/date-utils';
+import { formatMediumDate } from '@/lib/data-processing/transformers/utils/date-utils';
 
 interface SingleSchoolProps {
   schoolId: string;
@@ -84,7 +84,7 @@ export function SingleSchool({ schoolId }: SingleSchoolProps) {
           )}
           {school.createdAt && (
             <Text textSize="sm" color="muted" className="mt-1">
-              Created: {formatMediumDate(toDateString(school.createdAt))}
+              Created: {formatMediumDate(school.createdAt as unknown as string)}
             </Text>
           )}
         </div>

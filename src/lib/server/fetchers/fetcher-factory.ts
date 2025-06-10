@@ -4,10 +4,12 @@ import { ZodSchema } from "zod";
 import { Model, FilterQuery, Document } from "mongoose";
 import { connectToDB } from "@server/db/connection";
 
-import { sanitizeDocuments } from "@/lib/server/api/responses/formatters";
 import { BaseDocument } from "@core-types/document";
 import { QueryParams } from "@core-types/query";
+
 import { handleServerError } from "@error/handlers/server";
+// src/lib/server/fetchers/fetch-by-id.ts (better location)
+import { sanitizeDocuments } from "@server/api/responses/formatters";
 
 interface ValidationError {
   id: string;
@@ -61,7 +63,7 @@ export function createApiSafeFetcher<T extends BaseDocument, M extends Document>
       
       // Simple data processing:
       // 1. Sanitize MongoDB documents
-      let processedItems = sanitizeDocuments<T>(items);
+      let processedItems = sanitizeDocuments<T>(items as T[]);
       
       // 2. Optional schema validation
       const validationErrors: ValidationError[] = [];

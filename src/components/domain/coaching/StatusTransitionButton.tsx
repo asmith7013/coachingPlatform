@@ -4,8 +4,8 @@ import { Select } from '@/components/core/fields/Select';
 import { Dialog } from '@/components/composed/dialogs/Dialog';
 import { Text } from '@/components/core/typography/Text';
 import { Badge } from '@/components/core/feedback/Badge';
-import { ArrowRight, AlertCircle } from 'lucide-react';
-import { statusWorkflow, getStatusColor, getStatusLabel, type PlanStatus } from '@/lib/transformers/utils/coaching-action-plan-utils';
+import { ArrowRight as _ArrowRightIcon, AlertCircle } from 'lucide-react';
+import { statusWorkflow, getStatusColor, getStatusLabel, type PlanStatus } from '@/lib/data-processing/transformers/utils/coaching-action-plan-utils';
 import type { CoachingActionPlan } from '@zod-schema/core/cap';
 
 interface StatusTransitionButtonProps {
@@ -18,8 +18,8 @@ interface StatusTransitionButtonProps {
 export function StatusTransitionButton({
   plan,
   onStatusChange,
-  disabled = false,
-  className
+  // disabled = false,
+  // className
 }: StatusTransitionButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<PlanStatus | ''>('');
@@ -61,7 +61,7 @@ export function StatusTransitionButton({
 
   return (
     <>
-      <Button
+      {/* <Button
         intent="secondary"
         appearance="outline"
         padding="sm"
@@ -71,7 +71,7 @@ export function StatusTransitionButton({
       >
         <ArrowRight className="h-4 w-4" />
         Change Status
-      </Button>
+      </Button> */}
 
       <Dialog
         open={isModalOpen}

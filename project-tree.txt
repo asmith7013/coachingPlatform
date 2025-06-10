@@ -25,6 +25,7 @@
 │   │   ├── staged-context-loading.md
 │   │   └── ui-component-context.md
 │   ├── data-flow
+│   │   ├── advanced-schema-techniques.md
 │   │   ├── api-patterns.md
 │   │   ├── authentication.md
 │   │   ├── error-handling.md
@@ -42,6 +43,7 @@
 │   ├── workflow-templates
 │   │   └── coding-session-control.md
 │   └── workflows
+│       ├── breaking-changes-guide.md
 │       ├── common-tasks.md
 │       ├── cursor-integration.md
 │       ├── dev-utilities.md
@@ -187,7 +189,6 @@
 │   │   │   └── visits
 │   │   │       ├── coachingLogs.ts
 │   │   │       ├── cycles.ts
-│   │   │       ├── planned-visits.ts
 │   │   │       └── visits.ts
 │   │   ├── api
 │   │   │   ├── coaching-action-plans
@@ -667,11 +668,10 @@
 │   │   │   │   ├── types.ts
 │   │   │   │   └── utils
 │   │   │   │       ├── index.ts
-│   │   │   │       ├── schedule-data-utils.ts
+│   │   │   │       ├── schedule-helpers.ts
 │   │   │   │       ├── schedule-time-utils.ts
 │   │   │   │       ├── visit-conflict-detector.ts
-│   │   │   │       ├── visit-data-utils.ts
-│   │   │   │       └── visit-scheduling-transformer.ts
+│   │   │   │       └── visit-data-utils.ts
 │   │   │   ├── scoring
 │   │   │   │   ├── ScoreEntry.tsx
 │   │   │   │   ├── ScoresPage.tsx
@@ -711,6 +711,7 @@
 │   │   │   ├── index.ts
 │   │   │   ├── schedule
 │   │   │   │   ├── useBellSchedules.ts
+│   │   │   │   ├── useSchoolDailyView.ts
 │   │   │   │   └── useTeacherSchedules.ts
 │   │   │   ├── staff
 │   │   │   │   ├── useNYCPSStaff.ts
@@ -719,8 +720,7 @@
 │   │   │   ├── useLookFors.ts
 │   │   │   ├── useSchoolDailyView.ts
 │   │   │   ├── useSchools.ts
-│   │   │   ├── useVisits.ts
-│   │   │   └── useVisitsWithTransforms.ts
+│   │   │   └── useVisits.ts
 │   │   ├── error
 │   │   │   └── useErrorBoundary.ts
 │   │   ├── index.ts
@@ -752,6 +752,39 @@
 │   ├── layouts
 │   │   └── MondayLayout.tsx
 │   ├── lib
+│   │   ├── data-processing
+│   │   │   ├── pagination
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── pagination-utils.ts
+│   │   │   │   └── unified-pagination.ts
+│   │   │   ├── transformers
+│   │   │   │   ├── domain
+│   │   │   │   │   ├── coaching-reference-transformers.ts
+│   │   │   │   │   └── visit-transforms.ts
+│   │   │   │   ├── factories
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── reference-factory.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── purpose-normalizer.ts
+│   │   │   │   ├── ui
+│   │   │   │   │   ├── data-preview.ts
+│   │   │   │   │   ├── form-field-inference.ts
+│   │   │   │   │   ├── form-schema-validation.ts
+│   │   │   │   │   ├── form-validation.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── schema-utils.ts
+│   │   │   │   └── utils
+│   │   │   │       ├── coaching-action-plan-utils.ts
+│   │   │   │       ├── date-utils.ts
+│   │   │   │       ├── fetch-utils.ts
+│   │   │   │       ├── index.ts
+│   │   │   │       ├── preview-helpers.ts
+│   │   │   │       ├── response-utils.ts
+│   │   │   │       └── school-slug-utils.ts
+│   │   │   └── validation
+│   │   │       ├── mongoose-validation.ts
+│   │   │       ├── validation-helpers.ts
+│   │   │       └── zod-validation.ts
 │   │   ├── dev
 │   │   │   ├── debugging
 │   │   │   │   ├── README.md
@@ -918,6 +951,7 @@
 │   │   │       │   └── rubric.ts
 │   │   │       ├── schedule
 │   │   │       │   ├── index.ts
+│   │   │       │   ├── schedule-actions.ts
 │   │   │       │   └── schedule.ts
 │   │   │       ├── shared
 │   │   │       │   ├── dateHelpers.ts
@@ -926,7 +960,6 @@
 │   │   │       └── visits
 │   │   │           ├── coaching-log.ts
 │   │   │           ├── index.ts
-│   │   │           ├── planned-visit.ts
 │   │   │           └── visit.ts
 │   │   ├── server
 │   │   │   ├── api
@@ -962,16 +995,19 @@
 │   │   │   │   ├── ensure-connection.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── model-registry.ts
-│   │   │   │   └── mongodb-query-utils.ts
+│   │   │   │   ├── mongodb-query-utils.ts
+│   │   │   │   └── mongoose-transform-helper.ts
 │   │   │   ├── fetchers
-│   │   │   │   ├── coachingActionPlan.ts
-│   │   │   │   ├── coachingLog.ts
+│   │   │   │   ├── domain
+│   │   │   │   │   ├── coachingActionPlan.ts
+│   │   │   │   │   ├── coachingLog.ts
+│   │   │   │   │   ├── lookFors.ts
+│   │   │   │   │   ├── schedule.ts
+│   │   │   │   │   ├── school.ts
+│   │   │   │   │   └── staff.ts
+│   │   │   │   ├── fetch-by-id.ts
 │   │   │   │   ├── fetcher-factory.ts
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── lookFors.ts
-│   │   │   │   ├── schedule.ts
-│   │   │   │   ├── school.ts
-│   │   │   │   └── staff.ts
+│   │   │   │   └── index.ts
 │   │   │   └── file-handling
 │   │   │       ├── csv-parser.ts
 │   │   │       ├── file-upload.ts
@@ -987,42 +1023,6 @@
 │   │   │   ├── tokens.ts
 │   │   │   ├── types.ts
 │   │   │   └── typography.ts
-│   │   ├── transformers
-│   │   │   ├── core
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── mongoDocument.ts
-│   │   │   │   ├── transformation-service.ts
-│   │   │   │   ├── unified-transformer.ts
-│   │   │   │   └── validation.ts
-│   │   │   ├── domain
-│   │   │   │   ├── coaching-reference-transformers.ts
-│   │   │   │   └── visit-transforms.ts
-│   │   │   ├── factories
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── reference-factory.ts
-│   │   │   │   └── server-action-factory.ts
-│   │   │   ├── index.ts
-│   │   │   ├── pagination
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── pagination-utils.ts
-│   │   │   │   └── unified-pagination.ts
-│   │   │   ├── ui
-│   │   │   │   ├── data-preview.ts
-│   │   │   │   ├── form-field-inference.ts
-│   │   │   │   ├── form-schema-validation.ts
-│   │   │   │   ├── form-validation.ts
-│   │   │   │   ├── index.ts
-│   │   │   │   └── schema-utils.ts
-│   │   │   └── utils
-│   │   │       ├── coaching-action-plan-utils.ts
-│   │   │       ├── date-utils.ts
-│   │   │       ├── entity-utils.ts
-│   │   │       ├── fetch-utils.ts
-│   │   │       ├── index.ts
-│   │   │       ├── preview-helpers.ts
-│   │   │       ├── response-utils.ts
-│   │   │       ├── school-slug-utils.ts
-│   │   │       └── validation-helpers.ts
 │   │   ├── types
 │   │   │   ├── README.md
 │   │   │   ├── core
@@ -1128,7 +1128,6 @@
 │   │   ├── client
 │   │   │   ├── factories
 │   │   │   │   ├── crud-factory.ts
-│   │   │   │   ├── entity-factory.ts
 │   │   │   │   └── index.ts
 │   │   │   ├── hooks
 │   │   │   │   ├── index.ts
@@ -1153,7 +1152,6 @@
 │   │   │   │   └── standard-selectors.ts
 │   │   │   └── utilities
 │   │   │       ├── hook-helpers.ts
-│   │   │       ├── mutation-helpers.ts
 │   │   │       ├── optimistic-update-helpers.ts
 │   │   │       └── selector-helpers.ts
 │   │   ├── core
@@ -1187,4 +1185,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-353 directories, 835 files
+355 directories, 831 files

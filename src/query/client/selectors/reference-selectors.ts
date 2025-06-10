@@ -4,7 +4,7 @@ import { BaseDocument } from "@core-types/document";
 import { EntitySelector, SelectorFunction } from "@query/client/selectors/selector-types";
 import { getSelector } from "@query/client/selectors/selector-factory";
 import { handleClientError } from "@error/handlers/client";
-import { createReferenceTransformer, createArrayTransformer } from "@transformers/factories/reference-factory";
+import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 import { getEntityLabel } from "@query/client/utilities/selector-helpers";
 
 // Import entity types

@@ -14,7 +14,7 @@ import TimeTracking from './components/TimeTracking';
 import Transcripts from './components/Transcripts';
 import PreExitChecklist from './components/PreExitChecklist';
 import { curriculumData, exampleLessonData } from './data';
-import { getTodayString } from '@transformers/utils/date-utils';
+import { getTodayString } from '@/lib/data-processing/transformers/utils/date-utils';
 
 // Type definitions for form data
 export interface TimeData {

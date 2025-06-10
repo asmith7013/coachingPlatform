@@ -5,7 +5,7 @@ import { ActionPlanStage } from '../ActionPlanStage';
 import { Button } from '@/components/core/Button';
 import { Plus } from 'lucide-react';
 import { ImplementationRecordCard } from '@/components/domain/coaching/ImplementationRecordCard';
-import { getTodayString } from '@transformers/utils/date-utils';
+import { getTodayString } from '@/lib/data-processing/transformers/utils/date-utils';
 
 // Types for Stage 3 data
 interface MetricType {

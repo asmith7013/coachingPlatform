@@ -1,5 +1,5 @@
 // src/app/api/schools/route.ts
-import { fetchSchoolsForApi } from "@server/fetchers/school";
+import { fetchSchoolsForApi } from "@/lib/server/fetchers/domain/school";
 import { createReferenceEndpoint, FetchFunction } from "@api-handlers/reference-endpoint";
 import { School, SchoolReference } from "@zod-schema/core/school";
 
