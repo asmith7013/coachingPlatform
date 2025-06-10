@@ -58,7 +58,7 @@ export function VisitsCard({
   const visitInfoCards = visits.map((visit: Visit) => ({
     title: visit.date ? new Date(visit.date).toLocaleDateString() : 'No Date',
     subtitle: visit.allowedPurpose || 'No Purpose Set',
-    description: `Coach: ${visit.coach || 'Unknown'}`,
+    description: `Coach: ${visit.coachId || 'Unknown'}`,
     details: [
       { label: 'Events', value: visit.events?.length ? `${visit.events.length}` : '0' },
       { label: 'Grade Levels', value: visit.gradeLevelsSupported?.join(', ') || 'None' }

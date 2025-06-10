@@ -10,14 +10,14 @@ const MOCK_STAFF: Partial<NYCPSStaff>[] = [
     _id: '1', 
     staffName: 'Test Teacher 1', 
     email: 'teacher1@example.com',
-    schools: ['school1'],
+    schoolIds: ['school1'],
     rolesNYCPS: ['Teacher']
   },
   { 
     _id: '2', 
     staffName: 'Test Teacher 2', 
     email: 'teacher2@example.com',
-    schools: ['school1'],
+    schoolIds: ['school1'],
     rolesNYCPS: ['Teacher']
   }
 ];

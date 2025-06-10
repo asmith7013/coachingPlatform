@@ -64,10 +64,10 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
 
     try {
       const schoolDataWithRequiredFields = {
-        staffList: [],
-        schedules: [],
-        cycles: [],
-        owners: [],
+        staffListIds: [],
+        scheduleIds: [],
+        cycleIds: [],
+        ownerIds: [],
         gradeLevelsSupported: [],
         ...schoolData,
         schoolNumber: schoolData.schoolNumber || '',

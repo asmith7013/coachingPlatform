@@ -45,7 +45,7 @@ export function SchoolDetailView({ schoolId }: SchoolDetailViewProps) {
   const schoolStaff = useMemo(() => {
     if (!allStaff || !schoolId) return [];
     return allStaff.filter(staff => 
-      staff.schools && staff.schools.includes(schoolId)
+      staff.schoolIds && staff.schoolIds.includes(schoolId)
     );
   }, [allStaff, schoolId]);
 
@@ -142,7 +142,7 @@ export function SchoolDetailView({ schoolId }: SchoolDetailViewProps) {
                   </Text>
                 </div>
                 <Text textSize="sm" color="muted">
-                  Coach: {visit.coach || 'Unknown'}
+                  Coach: {visit.coachId || 'Unknown'}
                 </Text>
                 {visit.allowedPurpose && (
                   <Text textSize="sm" color="muted">

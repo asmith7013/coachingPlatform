@@ -22,7 +22,7 @@ export function findPeriodForTeacher(
   teacherId: string,
   periodNum: number
 ): Period | undefined {
-  const schedule = teacherSchedules.find(s => s.teacher === teacherId);
+  const schedule = teacherSchedules.find(s => s.teacherId === teacherId);
   if (!schedule) return undefined;
   
   // Navigate schema structure directly
@@ -44,7 +44,7 @@ export function hasScheduledPeriods(
   teacherSchedules: TeacherSchedule[],
   teacherId: string
 ): boolean {
-  const schedule = teacherSchedules.find(s => s.teacher === teacherId);
+  const schedule = teacherSchedules.find(s => s.teacherId === teacherId);
   return schedule?.scheduleByDay.some(day => day.periods.length > 0) || false;
 }
 
@@ -53,7 +53,7 @@ export function getAllPeriodsForTeacher(
   teacherSchedules: TeacherSchedule[],
   teacherId: string
 ): Period[] {
-  const schedule = teacherSchedules.find(s => s.teacher === teacherId);
+  const schedule = teacherSchedules.find(s => s.teacherId === teacherId);
   if (!schedule) return [];
   
   return schedule.scheduleByDay.flatMap(day => day.periods);
@@ -61,7 +61,7 @@ export function getAllPeriodsForTeacher(
 
 // Extract teacher name from visit
 export function extractTeacherName(visit: Visit, teachers: NYCPSStaff[]): string {
-  const teacherId = visit.events?.[0]?.staff?.[0];
+  const teacherId = visit.events?.[0]?.staffIds?.[0];
   const teacher = teachers.find(t => t._id === teacherId);
   return teacher?.staffName || 'Unknown Teacher';
 }
@@ -116,7 +116,7 @@ export function transformTeacherSchedules(
     if (!schedules) return teacherScheduleMap;
     
     schedules.forEach(teacherSchedule => {
-      const teacherId = teacherSchedule.teacher;
+      const teacherId = teacherSchedule.teacherId;
       teacherScheduleMap[teacherId] = {};
       
       teacherSchedule.scheduleByDay.forEach((daySchedule: ScheduleByDay) => {
@@ -143,7 +143,7 @@ export function checkVisitConflicts(
   newVisit: { teacherId: string; periodNumber: number | string; portion: ScheduleAssignment }
 ): boolean {
   return existingVisits.some(visit => 
-    visit.events?.[0]?.staff?.[0] === newVisit.teacherId && 
+    visit.events?.[0]?.staffIds?.[0] === newVisit.teacherId && 
     visit.events?.[0]?.periodNumber === newVisit.periodNumber &&
     (visit.events?.[0]?.portion === newVisit.portion || 
      visit.events?.[0]?.portion === ScheduleAssignment.FULL_PERIOD || 

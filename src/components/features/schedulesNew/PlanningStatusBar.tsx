@@ -56,7 +56,7 @@ export function PlanningStatusBar() {
       id: v._id,
       eventsCount: v.events?.length || 0,
       eventTypes: v.events?.map(e => e.eventType) || [],
-      teachers: v.events?.map(e => e.staff?.[0]) || []
+      teachers: v.events?.map(e => e.staffIds?.[0]) || []
     }))
   });
 

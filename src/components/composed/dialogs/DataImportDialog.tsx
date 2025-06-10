@@ -67,7 +67,7 @@ export function DataImportDialog({ open, onClose, school }: DataImportDialogProp
     if (!allStaff) return [];
     
     return allStaff
-      .filter((staff: NYCPSStaff) => staff.schools?.includes(school._id))
+      .filter((staff: NYCPSStaff) => staff.schoolIds?.includes(school._id))
       .map((staff: NYCPSStaff) => ({
         staffName: staff.staffName,
         email: staff.email

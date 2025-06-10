@@ -46,7 +46,7 @@ export function extractPortionFromVisit(visit: Visit): ScheduleAssignment {
  * Extract teacher ID from visit events
  */
 export function extractTeacherIdFromVisit(visit: Visit): string {
-  return visit.events?.[0]?.staff?.[0] || 'unknown'
+  return visit.events?.[0]?.staffIds?.[0] || 'unknown'
 }
 
 /**
@@ -60,7 +60,7 @@ export function extractPeriodsFromVisit(visit: Visit): number[] {
  * ✅ NEW: Extract ALL teacher IDs from visit events
  */
 export function extractTeacherIdsFromVisit(visit: Visit): string[] {
-  const teacherIds = visit.events?.flatMap(event => event.staff || []) || [];
+  const teacherIds = visit.events?.flatMap(event => event.staffIds || []) || [];
   return [...new Set(teacherIds)]; // Remove duplicates
 }
 
@@ -75,7 +75,7 @@ export function extractEventsForPeriod(visit: Visit, period: number) {
  * ✅ NEW: Extract events for specific teacher
  */
 export function extractEventsForTeacher(visit: Visit, teacherId: string) {
-  return visit.events?.filter(event => event.staff?.includes(teacherId)) || [];
+  return visit.events?.filter(event => event.staffIds?.includes(teacherId)) || [];
 }
 
 /**

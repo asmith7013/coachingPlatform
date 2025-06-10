@@ -56,10 +56,10 @@ export function useScheduleActions({
       visit.events?.forEach((event, eventIndex) => {
         // ✅ VALIDATE each event against schema before using
         const validatedEvent = EventItemZodSchema.safeParse(event)
-        if (validatedEvent.success && validatedEvent.data.periodNumber && validatedEvent.data.staff?.[0]) {
+        if (validatedEvent.success && validatedEvent.data.periodNumber && validatedEvent.data.staffIds?.[0]) {
           conflictData.push({
             id: `${visit._id}-event-${eventIndex}`,
-            teacherId: validatedEvent.data.staff[0],
+            teacherId: validatedEvent.data.staffIds[0],
             teacherName: 'Teacher',
             periodNumber: validatedEvent.data.periodNumber,
             portion: (validatedEvent.data.portion as ScheduleAssignment) || ScheduleAssignment.FULL_PERIOD
@@ -103,15 +103,15 @@ export function useScheduleActions({
 
       // Find existing visit for this school/date/coach combination
       const existingVisit = visits.find(visit => 
-        visit.school === schoolId && 
-        visit.coach === (coachId || 'unknown') &&
+        visit.schoolId === schoolId && 
+        visit.coachId === (coachId || 'unknown') &&
         visit.date && new Date(visit.date).toDateString() === new Date(date).toDateString()
       );
       
       // ✅ SCHEMA-DRIVEN EVENT CREATION using validated purpose
       const newEventData = {
         eventType: validatedData.purpose,  // ← Use validated purpose
-        staff: [validatedData.teacherId],
+        staffIds: [validatedData.teacherId],
         duration: validatedData.portion === ScheduleAssignment.FULL_PERIOD ? Duration.MIN_45 : Duration.MIN_30,
         purpose: validatedData.purpose,    // ← Consistent with eventType
         periodNumber: validatedData.periodNumber,
@@ -389,8 +389,8 @@ export function useScheduleActions({
     try {
       // Find all visits for current school/date/coach combination
       const visitsToDelete = visits.filter(visit => 
-        visit.school === schoolId && 
-        visit.coach === (coachId || 'unknown') &&
+        visit.schoolId === schoolId && 
+        visit.coachId === (coachId || 'unknown') &&
         visit.date && new Date(visit.date).toDateString() === new Date(date).toDateString()
       );
       
@@ -450,7 +450,7 @@ export function useScheduleActions({
       visit.events?.some(event => {
         const eventValidation = EventItemZodSchema.safeParse(event);
         return eventValidation.success && 
-               eventValidation.data.staff?.includes(validation.data.teacherId) && 
+               eventValidation.data.staffIds?.includes(validation.data.teacherId) && 
                eventValidation.data.periodNumber === validation.data.period;
       })
     );

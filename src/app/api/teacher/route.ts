@@ -11,7 +11,7 @@ function mapStaffToReferenceSimple(staff: NYCPSStaff): NYCPSStaffReference {
     email: staff.email,
     staffName: staff.staffName,
     role: staff.rolesNYCPS?.[0],
-    schoolCount: staff.schools?.length || 0,
+    schoolCount: staff.schoolIds?.length || 0,
     gradeLevel: staff.gradeLevelsSupported?.[0],
     subjectsCount: staff.subjects?.length || 0,
     isMondayConnected: staff.mondayUser?.isConnected || false

@@ -50,10 +50,10 @@ export default function CreateSchoolPage() {
 
     try {
       const schoolDataWithRequiredFields = {
-        staffList: [],
-        schedules: [],
-        cycles: [],
-        owners: [],
+        staffListIds: [],
+        scheduleIds: [],
+        cycleIds: [],
+        ownerIds: [],
         gradeLevelsSupported: [],
         ...schoolData,
         schoolNumber: schoolData.schoolNumber || '',

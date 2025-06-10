@@ -11,20 +11,20 @@ import { getTotalDurationMinutes, hasMicroPL, hasModel } from "@schema/reference
 
 // Coaching Log Fields Schema
 export const CoachingLogFieldsSchema = z.object({
-  reasonDone: ReasonDoneZod,
+  reasonDone: ReasonDoneZod.describe("Why coaching was completed: Full completion or early termination"),
   microPLTopic: z.string().optional(),
-  microPLDuration: z.number().optional(),
+  microPLDuration: z.number().optional().describe("Duration in minutes for micro professional learning session"),
   modelTopic: z.string().optional(),
-  modelDuration: z.number().optional(),
-  adminMeet: z.boolean().optional(),
-  adminMeetDuration: z.number().optional(),
-  NYCDone: z.boolean().optional(),
-  totalDuration: TotalDurationZod,
-  solvesTouchpoint: SolvesTouchpointZod,
+  modelDuration: z.number().optional().describe("Duration in minutes for modeling session"),
+  adminMeet: z.boolean().optional().describe("Whether administrator joined the coaching session"),
+  adminMeetDuration: z.number().optional().describe("Duration in minutes of administrator participation"),
+  NYCDone: z.boolean().optional().describe("Whether NYC-specific coaching requirements were met"),
+  totalDuration: TotalDurationZod.describe("Total session duration: 30min, 45min, 60min, or 90min"),
+  solvesTouchpoint: SolvesTouchpointZod.describe("Type of coaching support: Teacher, Leader, or Combined"),
   primaryStrategy: z.string(),
   solvesSpecificStrategy: z.string(),
   aiSummary: z.string().optional(),
-  visitId: z.string().optional(),
+  visitId: z.string().optional().describe("Reference to Visit document _id this log belongs to"),
 });
 
 // Coaching Log Full Schema

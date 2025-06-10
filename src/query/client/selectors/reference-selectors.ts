@@ -239,7 +239,7 @@ export const referenceSelectors = {
         (visit) => `Visit: ${visit.date}`,
         (visit) => ({
           date: visit.date,
-          school: visit.school
+          school: visit.schoolId
         })
       );
     } catch (error) {
@@ -291,7 +291,7 @@ export function mapSchoolToReference(school: School): SchoolReference {
       schoolNumber: school.schoolNumber,
       district: school.district,
       gradeLevels: school.gradeLevelsSupported,
-      staffCount: school.staffList?.length || 0,
+      staffCount: school.staffListIds?.length || 0,
     })
   );
   

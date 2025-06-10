@@ -16,13 +16,13 @@ import { TimeSlotZodSchema } from "@zod-schema/visits/visit";
 
 // Class Schedule Item Fields Schema
 export const ClassScheduleItemFieldsSchema = z.object({
-  dayType: DayTypeZod,
-  startTime: z.string(),
-  endTime: z.string(),
-  periodNum: z.number().optional(), // Add if this is also sometimes missing
-  className: z.string().optional(), // ← CHANGE: Make optional
-  room: z.string().optional(), // Add if you have this field
-  periodType: PeriodTypeZod.optional(), // Add if you have this field
+  dayType: DayTypeZod.describe("Type of school day: Regular, Early Dismissal, etc."),
+  startTime: z.string().describe("24-hour format time: 'HH:MM' (e.g., '08:30')"),
+  endTime: z.string().describe("24-hour format time: 'HH:MM' (e.g., '09:15')"),
+  periodNum: z.number().optional().describe("Period number in bell schedule sequence (1-8)"),
+  className: z.string().optional(),
+  room: z.string().optional(),
+  periodType: PeriodTypeZod.optional().describe("Type of period: class, lunch, prep, assembly, etc."),
 });
 
 // Class Schedule Item Schema
@@ -36,10 +36,10 @@ export const AssignedCycleDayFieldsSchema = z.object({
 
 // Bell Schedule Fields Schema
 export const BellScheduleFieldsSchema = z.object({
-  schoolId: z.string(),
-  bellScheduleType: BellScheduleTypeZod,
-  classSchedule: z.array(ClassScheduleItemFieldsSchema),
-  assignedCycleDays: z.array(AssignedCycleDayFieldsSchema),
+  schoolId: z.string().describe("Reference to School document _id this bell schedule belongs to"),
+  bellScheduleType: BellScheduleTypeZod.describe("Schedule pattern: Regular, Block, Early Dismissal, etc."),
+  classSchedule: z.array(ClassScheduleItemFieldsSchema).describe("Array of time slots defining the daily schedule"),
+  assignedCycleDays: z.array(AssignedCycleDayFieldsSchema).describe("Array of specific dates with assigned cycle days"),
 });
 
 // Bell Schedule Full Schema
@@ -64,10 +64,10 @@ export const BellScheduleReferenceZodSchema = BaseReferenceZodSchema.merge(
 
 // Period Fields Schema
 export const PeriodFieldsSchema = z.object({
-  periodNum: z.number(),
+  periodNum: z.number().describe("Period number in daily sequence (1-8)"),
   className: z.string(),
   room: z.string().optional(),
-  periodType: PeriodTypeZod,
+  periodType: PeriodTypeZod.describe("Type of period: class, lunch, prep, assembly, etc."),
 });
 
 // Period Schema
@@ -84,9 +84,9 @@ export const ScheduleByDayZodSchema = ScheduleByDayFieldsSchema;
 
 // Teacher Schedule Fields Schema
 export const TeacherScheduleFieldsSchema = z.object({
-  teacherId: z.string(),
-  schoolId: z.string(),
-  scheduleByDay: z.array(ScheduleByDayZodSchema),
+  teacherId: z.string().describe("Reference to Teacher document _id this schedule belongs to"),
+  schoolId: z.string().describe("Reference to School document _id where teacher works"),
+  scheduleByDay: z.array(ScheduleByDayZodSchema).describe("Array of daily schedules organized by day type"),
 });
 
 // Teacher Schedule Full Schema
@@ -148,12 +148,12 @@ export const teacherScheduleToReference = createReferenceTransformer<TeacherSche
 
 // Assignment State Schema
 export const AssignmentStateZodSchema = z.object({
-  teacherId: z.string(),
-  timeSlot: TimeSlotZodSchema,
-  purpose: z.string().optional(), // May be assigned later
-  assignmentType: ScheduleAssignmentTypeZod,
-  isTemporary: z.boolean().default(true), // Whether assignment is temporary (drag preview)
-  assignedAt: zDateField.optional(), // When assignment was made
+  teacherId: z.string().describe("Reference to Teacher document _id being assigned"),
+  timeSlot: TimeSlotZodSchema.describe("Time window for this assignment"),
+  purpose: z.string().optional(),
+  assignmentType: ScheduleAssignmentTypeZod.describe("Assignment scope: full_period, first_half, or second_half"),
+  isTemporary: z.boolean().default(true).describe("Whether assignment is temporary preview (drag state)"),
+  assignedAt: zDateField.optional().describe("Timestamp when assignment was confirmed"),
 });
 
 

@@ -12,7 +12,7 @@ function mapSchoolToReferenceSimple(school: School): SchoolReference {
     schoolNumber: school.schoolNumber,
     district: school.district,
     gradeLevels: school.gradeLevelsSupported,
-    staffCount: school.staffList?.length || 0,
+    staffCount: school.staffListIds?.length || 0,
   };
 }
 

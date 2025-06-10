@@ -47,13 +47,13 @@ export function visitToInfoCardTransformer(
   return {
     title: visitDate ? formatMediumDate(toDateString(visitDate)) : 'No Date',
     avatar: {
-      src: `https://ui-avatars.com/api/?name=${encodeURIComponent(visit.coach || 'Coach')}&background=0ea5e9&color=fff`,
-      alt: visit.coach || 'Coach'
+      src: `https://ui-avatars.com/api/?name=${encodeURIComponent(visit.coachId || 'Coach')}&background=0ea5e9&color=fff`,
+      alt: visit.coachId || 'Coach'
     },
     details: [
       {
         label: 'Coach',
-        value: visit.coach || 'Unknown'
+        value: visit.coachId || 'Unknown'
       },
       {
         label: 'Purpose',
@@ -122,7 +122,7 @@ export function visitToSummaryTransformer(visit: Visit) {
   return {
     id: visit._id,
     title: visitDate ? formatMediumDate(toDateString(visitDate)) : 'No Date',
-    coach: visit.coach || 'Unknown',
+    coach: visit.coachId || 'Unknown',
     purpose: visit.allowedPurpose || 'Visit',
     mode: visit.modeDone || 'In-person',
     eventsCount: visit.events?.length || 0,

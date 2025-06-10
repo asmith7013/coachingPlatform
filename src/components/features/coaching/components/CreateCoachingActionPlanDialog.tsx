@@ -77,7 +77,7 @@ export function CreateCoachingActionPlanDialog({
         // Required fields with valid placeholder values (not empty strings)
         teachers: [],
         coaches: [],
-        school: 'placeholder-will-be-set-during-editing', // Valid non-empty value
+        school: 'PS 175', // Valid non-empty value
         owners: [],
         status: 'draft',
         cycleLength: 3,

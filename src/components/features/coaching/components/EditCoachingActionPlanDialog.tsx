@@ -50,7 +50,7 @@ export function EditCoachingActionPlanDialog({
         teachers: plan.teachers,
         coaches: plan.coaches,
         school: plan.school,
-        owners: plan.owners,
+        ownerIds: plan.ownerIds,
       });
     }
   }, [plan]);

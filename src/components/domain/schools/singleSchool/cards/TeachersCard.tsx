@@ -39,7 +39,7 @@ export function TeachersCard({
     if (!allStaff || !schoolId) return [];
     
     let filtered = allStaff.filter(staff => 
-      staff.schools && staff.schools.includes(schoolId)
+      staff.schoolIds && staff.schoolIds.includes(schoolId)
     );
 
     // Apply search filter

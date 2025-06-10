@@ -80,14 +80,14 @@ const StaffCard = memo(function StaffCard({ member, onEdit, onDelete }: StaffCar
               <strong>Roles:</strong> {member.rolesNYCPS.join(', ')}
             </Text>
           )}
-          {member.schools && member.schools.length > 0 && (
+          {member.schoolIds && member.schoolIds.length > 0 && (
             <Text 
               textSize="base"
               color="muted"
               className="mt-2 flex flex-wrap gap-2 items-center"
             >
               <strong>Schools:</strong>
-              {member.schools.map((schoolId) => (
+              {member.schoolIds.map((schoolId) => (
                 <Badge key={schoolId} intent="secondary">
                   {schoolId}
                 </Badge>
@@ -166,8 +166,8 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
     return NYCPSStaffFieldConfig.map(field => {
       const fieldName = field.key as keyof NYCPSStaffInput;
       
-      // Handle reference fields for schools and owners
-      if (fieldName === 'schools' || fieldName === 'owners') {
+      // Handle reference fields for schoolIds and ownerIds
+      if (fieldName === 'schoolIds' || fieldName === 'ownerIds') {
         try {
           // Get the reference props from the overrides
           const referenceProps = getReferenceSelectPropsForField(NYCPSStaffOverrides, fieldName);
@@ -297,8 +297,8 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
             defaultValues={{
               staffName: editTarget.staffName,
               email: editTarget.email ?? '',
-              schools: editTarget.schools,
-              owners: editTarget.owners,
+              schoolIds: editTarget.schoolIds,
+              ownerIds: editTarget.ownerIds,
               gradeLevelsSupported: editTarget.gradeLevelsSupported,
               subjects: editTarget.subjects,
               specialGroups: editTarget.specialGroups,

@@ -8,12 +8,12 @@ import { getImplementationLevel } from "@schema/reference/core/cycle-helpers";
 
 // Cycle Fields Schema
 export const CycleFieldsSchema = z.object({
-  cycleNum: z.number(), // Required number
-  ipgIndicator: z.string().optional(), // Optional string
-  actionPlanURL: z.string().optional(), // Optional URL string
-  implementationIndicator: z.string(), // Required string
-  supportCycle: z.string().optional(), // Optional string
-  lookFors: z.array(LookForItemZodSchema).nonempty(), // Array of LookForItem objects
+  cycleNum: z.number().describe("Coaching cycle number (typically 1-4 per school year)"),
+  ipgIndicator: z.string().optional().describe("Instructional Planning Guide indicator reference"),
+  actionPlanURL: z.string().optional().describe("External URL link to coaching action plan document"),
+  implementationIndicator: z.string().describe("Current implementation level: Beginning, Developing, or Proficient"),
+  supportCycle: z.string().optional().describe("Type of support cycle being provided"),
+  lookFors: z.array(LookForItemZodSchema).nonempty().describe("Look-for items selected for this coaching cycle"),
 });
 
 // Cycle Full Schema

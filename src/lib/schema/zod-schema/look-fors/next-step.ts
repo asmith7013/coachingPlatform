@@ -7,9 +7,9 @@ import { formatNextStepDescription } from "@schema/reference/look-fors/next-step
 // NextStep Fields Schema
 export const NextStepFieldsSchema = z.object({
   description: z.string(),
-  lookForId: z.string(),
-  teacherId: z.string(),
-  schoolId: z.string(),
+  lookForId: z.string().describe("Reference to LookFor document _id this next step relates to"),
+  teacherId: z.string().describe("Reference to Teacher document _id who should implement this step"),
+  schoolId: z.string().describe("Reference to School document _id where this step will be implemented"),
 });
 
 // NextStep Full Schema

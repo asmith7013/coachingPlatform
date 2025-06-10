@@ -7,12 +7,12 @@ import { formatRubricCategory, getRubricContentSummary } from "@schema/reference
 
 // Rubric Fields Schema
 export const RubricFieldsSchema = z.object({
-  score: z.number(),
+  score: z.number().describe("Numeric score value (typically 1-4 scale)"),
   category: z.array(z.string()),
   content: z.array(z.string()).optional(),
-  parentId: z.string().optional(),
-  collectionId: z.string().optional(),
-  hex: z.string().optional(),
+  parentId: z.string().optional().describe("Reference to parent Rubric document _id for hierarchical structure"),
+  collectionId: z.string().optional().describe("Reference to collection/group this rubric belongs to"),
+  hex: z.string().optional().describe("Hexadecimal color code for visual representation"),
 });
 
 // Rubric Full Schema
@@ -61,9 +61,9 @@ export const rubricsToReferences = createArrayTransformer<Rubric, RubricReferenc
 // RubricScore Fields Schema
 export const RubricScoreFieldsSchema = z.object({
   date: zDateField,
-  score: z.number(),
-  staffId: z.string(),
-  schoolId: z.string(),
+  score: z.number().describe("Numeric rubric score achieved (typically 1-4 scale)"),
+  staffId: z.string().describe("Reference to Staff document _id who received this score"),
+  schoolId: z.string().describe("Reference to School document _id where scoring occurred"),
 });
 
 // RubricScore Full Schema

@@ -15,57 +15,57 @@ import { formatVisitDate } from "@schema/reference/visits/visit-helpers";
 
 // Time Slot Schema (reusable component)
 export const TimeSlotZodSchema = z.object({
-  startTime: z.string(), // Format: "HH:MM" (24-hour format)
-  endTime: z.string(),   // Format: "HH:MM" (24-hour format)
-  periodNum: z.number().optional(), // Optional period number for bell schedule alignment
+  startTime: z.string().describe("24-hour format time: 'HH:MM' (e.g., '08:30')"),
+  endTime: z.string().describe("24-hour format time: 'HH:MM' (e.g., '09:15')"),
+  periodNum: z.number().optional().describe("Period number for bell schedule alignment (1-8)"),
 });
 
 export const VisitPortionZod = ScheduleAssignmentTypeZod;
 
 export const EventItemZodSchema = z.object({
-  eventType: SessionPurposeZod, // Existing: event type
-  staffIds: z.array(z.string()), // Existing: staff IDs
-  duration: DurationZod, // Existing: duration
+  eventType: SessionPurposeZod.describe("Type of coaching session: Observation, Debrief, Co-Planning, or PLC"),
+  staffIds: z.array(z.string()).describe("Array of Staff document _ids participating in this event"),
+  duration: DurationZod.describe("Length of session: 15, 30, 45, or 60 minutes"),
   
   // ADD: Scheduling fields that were in PlannedVisit
-  timeSlot: TimeSlotZodSchema.optional(), // Time slot for this specific event
-  purpose: SessionPurposeZod.optional(), // Specific purpose for this event
-  periodNumber: z.number().optional(), // Period number if relevant
-  portion: VisitPortionZod.optional(), // Full/first_half/second_half
+  timeSlot: TimeSlotZodSchema.optional().describe("Specific time window for this event"),
+  purpose: SessionPurposeZod.optional().describe("Override purpose if different from eventType"),
+  periodNumber: z.number().optional().describe("Bell schedule period number (1-8)"),
+  portion: VisitPortionZod.optional().describe("Schedule portion: full_period, first_half, or second_half"),
   
   // ADD: Event-specific metadata
-  orderIndex: z.number().optional(), // Order within the visit schedule
-  notes: z.string().optional(), // Event-specific notes
+  orderIndex: z.number().optional().describe("Sequence order within visit (1, 2, 3...)"),
+  notes: z.string().optional(),
 });
 
 // Session Link Schema (shared schema)
 export const SessionLinkZodSchema = z.object({
-  purpose: z.string(), // Required purpose
-  title: z.string(), // Required title
-  url: z.string().url(), // Required valid URL
-  staffIds: z.array(z.string()), // Array of staff IDs
+  purpose: z.string(),
+  title: z.string(),
+  url: z.string().url().describe("Valid URL to external resource or document"),
+  staffIds: z.array(z.string()).describe("Array of Staff document _ids who should access this link"),
 });
 
 // Visit Fields Schema
 export const VisitFieldsSchema = z.object({
-  date: zDateField, // Required date with proper handling
-  schoolId: z.string(), // Required school ID
-  coachId: z.string(), // Required coach ID
-  cycleId: z.string().optional(), // Made optional as requested
-  allowedPurpose: AllowedPurposeZod.optional(), // Optional enum
-  modeDone: ModeDoneZod.optional(), // Optional enum
-  gradeLevelsSupported: z.array(GradeLevelsSupportedZod), // Array of grade levels
-  events: z.array(EventItemZodSchema).optional(), // Optional array of events
-  sessionLinks: z.array(SessionLinkZodSchema).optional(), // Optional array of session links
+  date: zDateField,
+  schoolId: z.string().describe("Reference to School document _id where visit occurs"),
+  coachId: z.string().describe("Reference to Staff document _id of the coach conducting visit"),
+  cycleId: z.string().optional().describe("Reference to Cycle document _id for coaching cycle"),
+  allowedPurpose: AllowedPurposeZod.optional().describe("Visit type: Initial Walkthrough, Regular Visit, or Final Walkthrough"),
+  modeDone: ModeDoneZod.optional().describe("Visit format: In-Person, Virtual, or Hybrid"),
+  gradeLevelsSupported: z.array(GradeLevelsSupportedZod).describe("Grade levels included in this visit"),
+  events: z.array(EventItemZodSchema).optional(),
+  sessionLinks: z.array(SessionLinkZodSchema).optional(),
 
   // Planned schedule integration (Task 1.2: Visit model extension)
-  plannedScheduleId: z.string().optional(), // Reference to PlannedVisit for schedule builder integration
+  plannedScheduleId: z.string().optional().describe("Reference to planned schedule from Schedule Builder"),
 
   // Monday.com integration fields
-  mondayItemId: z.string().optional(),
-  mondayBoardId: z.string().optional(),
-  mondayItemName: z.string().optional(),
-  mondayLastSyncedAt: zDateField.optional(),
+  mondayItemId: z.string().optional().describe("Monday.com board item ID for bi-directional sync"),
+  mondayBoardId: z.string().optional().describe("Monday.com board ID where visit item exists"),
+  mondayItemName: z.string().optional().describe("Visit name as stored in Monday.com"),
+  mondayLastSyncedAt: zDateField.optional().describe("Timestamp of most recent Monday.com synchronization"),
   
   // Optional fields for data that might be imported from Monday
   // but doesn't map directly to core schema fields

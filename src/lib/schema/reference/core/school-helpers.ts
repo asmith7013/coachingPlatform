@@ -40,6 +40,6 @@ export function getGradeLevelsSummary(school: School, maxCount: number = 3): str
  * @returns Formatted string with staff count
  */
 export function getStaffCountDisplay(school: School): string {
-  const count = school.staffList?.length || 0;
+  const count = school.staffListIds?.length || 0;
   return `${count} ${count === 1 ? 'staff member' : 'staff members'}`;
 }
