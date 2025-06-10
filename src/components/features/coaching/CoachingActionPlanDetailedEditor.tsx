@@ -260,13 +260,16 @@ export function CoachingActionPlanDetailedEditor({
       </Drawer.Header>
       
       <Drawer.Body>
-        <div 
-          id={`stage-panel-${currentStage}`}
-          role="tabpanel"
-          aria-labelledby={`stage-tab-${currentStage}`}
-          className="h-full"
-        >
-          {renderStageContent()}
+        {/* Add padding top to account for sticky header */}
+        <div className="pt-2">
+          <div 
+            id={`stage-panel-${currentStage}`}
+            role="tabpanel"
+            aria-labelledby={`stage-tab-${currentStage}`}
+            className="h-full"
+          >
+            {renderStageContent()}
+          </div>
         </div>
       </Drawer.Body>
     </Drawer>

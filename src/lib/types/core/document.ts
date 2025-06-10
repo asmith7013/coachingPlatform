@@ -3,6 +3,7 @@ import { BaseDocumentSchema } from '@zod-schema/base-schemas';
 
 /**
  * Base document interface for all MongoDB documents
+ * Now properly inferred from the actual schema
  */
 export type BaseDocument = z.infer<typeof BaseDocumentSchema>;
 

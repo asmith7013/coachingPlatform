@@ -37,7 +37,7 @@ const visitConfigFactory = createModeAwareConfig(
       'Grade levels involved in this visit'
     ),
     builder.createReferenceField(
-      'owners', 
+      'ownerIds', 
       'Owners', 
       '/api/reference/staff', 
       true, 

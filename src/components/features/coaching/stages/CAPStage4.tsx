@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { ActionPlanStage } from '../ActionPlanStage';
 import { Textarea } from '@/components/core/fields/Textarea';
 import { Input } from '@/components/core/fields/Input';
@@ -44,12 +44,13 @@ export function CoachingActionPlanStage4({
     lessons: true
   });
 
-  const updateField = <K extends keyof EndOfCycleAnalysis>(
+  // Fix: Use useCallback to prevent function recreation on every render
+  const updateField = useCallback(<K extends keyof EndOfCycleAnalysis>(
     field: K,
     value: EndOfCycleAnalysis[K]
   ) => {
     onChange({ ...data, [field]: value });
-  };
+  }, [data, onChange]);
 
   // Initialize outcome analysis arrays
   React.useEffect(() => {

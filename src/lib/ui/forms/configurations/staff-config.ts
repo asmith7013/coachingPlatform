@@ -33,7 +33,7 @@ const nycpsStaffConfigFactory = createModeAwareConfig(
       'Select all schools this staff member is associated with'
     ),
     builder.createReferenceField(
-      'owners',
+      'ownerIds',
       'Owners',
       '/api/reference/staff',
       true, // multiple

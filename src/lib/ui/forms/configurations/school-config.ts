@@ -52,7 +52,7 @@ const schoolConfigFactory = createModeAwareConfig(
       'Select all grade levels this school supports'
     ),
     builder.createReferenceField(
-      'owners',
+      'ownerIds',
       'Owners',
       '/api/reference/staff',
       true, // multiple

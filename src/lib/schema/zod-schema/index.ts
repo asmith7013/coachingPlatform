@@ -3,6 +3,7 @@ export * from './core';
 export * from './error';
 export * from './integrations';
 export * from './look-fors';
+export * from './observations/classroom-observation';
 export * from './schedule';
 export * from './shared';
 export * from './visits';

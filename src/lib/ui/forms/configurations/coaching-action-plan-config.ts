@@ -86,7 +86,7 @@ const coachingActionPlanConfigFactory = createModeAwareConfig(
       'Number of coaching cycles in this plan (default: 3)'
     ),
     builder.createReferenceField(
-      'owners',
+      'ownerIds',
       'Plan Owners',
       '/api/reference/staff',
       true, // multiple

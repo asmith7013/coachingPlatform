@@ -14,6 +14,8 @@ export function validateSafe<T>(schema: z.ZodSchema<T>, data: unknown): T | null
   const result = schema.safeParse(data);
   if (!result.success) {
     console.warn('Schema validation failed:', result.error.format());
+    console.warn('Input data:', JSON.stringify(data, null, 2));
+    console.warn('Detailed errors:', result.error.issues);
     return null;
   }
   return result.data;

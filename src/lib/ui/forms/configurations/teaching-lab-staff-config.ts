@@ -51,7 +51,7 @@ const teachingLabStaffConfigFactory = createModeAwareConfig(
       'Select all districts this staff member is assigned to'
     ),
     builder.createReferenceField(
-      'owners', 
+      'ownerIds', 
       'Owners', 
       '/api/reference/staff', 
       true, 

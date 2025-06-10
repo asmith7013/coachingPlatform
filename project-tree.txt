@@ -1,4 +1,5 @@
 .
+├── CURSOR_PROMPT_FIX_DATE_TYPES.md
 ├── amplify
 │   ├── docs.md
 │   ├── scope.md
@@ -176,6 +177,10 @@
 │   │   │   ├── notes
 │   │   │   │   ├── index.ts
 │   │   │   │   └── notes.ts
+│   │   │   ├── observations
+│   │   │   │   ├── classroom-observations.ts
+│   │   │   │   ├── contextual-notes.ts
+│   │   │   │   └── index.ts
 │   │   │   ├── rubrics
 │   │   │   │   ├── index.ts
 │   │   │   │   └── rubrics.ts
@@ -386,6 +391,10 @@
 │   │   ├── page.tsx
 │   │   ├── setup
 │   │   │   └── page.tsx
+│   │   ├── test
+│   │   │   ├── layout.tsx
+│   │   │   └── observations
+│   │   │       └── page.tsx
 │   │   ├── test-stage2
 │   │   ├── tools
 │   │   │   ├── data-import
@@ -725,6 +734,9 @@
 │   │   │   └── useRenderTracking.ts
 │   │   ├── domain
 │   │   │   ├── index.ts
+│   │   │   ├── observations
+│   │   │   │   ├── useClassroomObservations.ts
+│   │   │   │   └── useContextualNotes.ts
 │   │   │   ├── schedule
 │   │   │   │   ├── useBellSchedules.ts
 │   │   │   │   ├── useSchoolDailyView.ts
@@ -899,6 +911,10 @@
 │   │   │   │   │   ├── look-for.model.ts
 │   │   │   │   │   ├── next-step.model.ts
 │   │   │   │   │   └── rubric.model.ts
+│   │   │   │   ├── observations
+│   │   │   │   │   ├── classroom-observation.model.ts
+│   │   │   │   │   ├── contextual-note.model.ts
+│   │   │   │   │   └── index.ts
 │   │   │   │   ├── schedule
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── schedule.model.ts
@@ -967,6 +983,8 @@
 │   │   │       │   ├── next-step.ts
 │   │   │       │   ├── rubric-fields.ts
 │   │   │       │   └── rubric.ts
+│   │   │       ├── observations
+│   │   │       │   └── classroom-observation.ts
 │   │   │       ├── schedule
 │   │   │       │   ├── index.ts
 │   │   │       │   ├── schedule-actions.ts
@@ -974,7 +992,8 @@
 │   │   │       ├── shared
 │   │   │       │   ├── dateHelpers.ts
 │   │   │       │   ├── index.ts
-│   │   │       │   └── notes.ts
+│   │   │       │   ├── notes.ts
+│   │   │       │   └── tagging-system.ts
 │   │   │       └── visits
 │   │   │           ├── coaching-log.ts
 │   │   │           ├── index.ts
@@ -1207,4 +1226,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-358 directories, 850 files
+364 directories, 863 files

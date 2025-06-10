@@ -16,6 +16,10 @@ export * from './useLookFors'
 export * from './useVisits'
 // export * from './useVisitsWithTransforms' - Removed during simplification
 
+// Observation hooks
+export * from './observations/useContextualNotes';
+export * from './observations/useClassroomObservations';
+
 // Composite hooks
 export * from './useSchoolDailyView'
 
