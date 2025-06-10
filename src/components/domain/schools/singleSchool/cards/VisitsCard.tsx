@@ -48,7 +48,7 @@ export function VisitsCard({
     isLoading: visitsLoading, 
     error: visitsError 
   } = useVisits.list({
-    filters: { school: schoolId },
+    filters: { schoolId: schoolId },
     limit: 5, // Show recent 5 visits
     sortBy: 'date',
     sortOrder: 'desc'

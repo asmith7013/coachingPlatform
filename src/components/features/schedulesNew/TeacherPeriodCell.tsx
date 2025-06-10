@@ -30,7 +30,7 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
   const dropZoneFullyScheduled = visits.some(v => 
     v.events?.[0]?.staffIds?.[0] === teacherId && 
     // TODO: Extract period from visit when schema supports it
-    true
+    false
   );
 
   // ✅ HELPER: Get event styling based on event type

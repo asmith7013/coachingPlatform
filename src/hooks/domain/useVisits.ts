@@ -61,7 +61,7 @@ function useVisitManagerWithScheduling() {
    */
   const getVisitsForSchoolAndDate = useCallback((schoolId: string, date: Date) => {
     manager.applyFilters({
-      school: schoolId,
+      schoolId: schoolId,
       date: date.toISOString().split('T')[0]
     });
     return manager;

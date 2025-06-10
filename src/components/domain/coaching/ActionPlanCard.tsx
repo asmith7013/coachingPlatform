@@ -1,250 +1,239 @@
-import React from 'react';
+"use client";
+
+import React from "react";
+import Link from 'next/link';
 import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { Badge } from '@/components/core/feedback/Badge';
-import { cn } from '@ui/utils/formatters';
-import { formatDistance } from 'date-fns';
-import { Edit2, Copy, Archive, Trash2, FileText } from 'lucide-react';
 import type { CoachingActionPlan } from '@zod-schema/core/cap';
-import { calculatePlanProgress } from '@/lib/data-processing/transformers/utils/coaching-action-plan-utils';
+import { 
+  PencilIcon,
+  DocumentDuplicateIcon,
+  TrashIcon,
+  DocumentArrowDownIcon
+} from '@heroicons/react/24/outline';
 
-// Types for the component
 interface ActionPlanCardProps {
-  plan: CoachingActionPlan & { _id: string; createdAt?: string; updatedAt?: string };
-  onEdit?: (planId: string) => void;
-  onDuplicate?: (planId: string) => void;
+  plan: CoachingActionPlan;
+  onEdit: (planId: string) => void;
+  onDuplicate: (planId: string) => void;
   onArchive?: (planId: string) => void;
-  onDelete?: (planId: string) => void;
-  onExport?: (planId: string) => void;
-  className?: string;
+  onDelete: (planId: string) => void;
+  onExport: (planId: string) => void;
+  isDeleting?: boolean;
 }
 
-// Stage completion indicator component
-interface StageIndicatorProps {
-  stageName: string;
-  isComplete: boolean;
-  stageNumber: number;
-}
+export function ActionPlanCard({ 
+  plan, 
+  onEdit, 
+  onDuplicate, 
+  onArchive: _onArchive, 
+  onDelete, 
+  onExport,
+  isDeleting 
+}: ActionPlanCardProps) {
+  // Calculate stage progress
+  const stageProgress = formatStageProgress(plan);
+  const progressPercentage = calculateProgressPercentage(plan);
 
-function StageIndicator({ stageName, isComplete, stageNumber }: StageIndicatorProps) {
-  return (
-    <div className="flex items-center gap-2">
-      <div
-        className={cn(
-          "w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-semibold",
-          isComplete
-            ? "bg-success border-success text-white"
-            : "bg-white border-muted text-muted"
-        )}
-      >
-        {stageNumber}
-      </div>
-      <Text
-        textSize="sm"
-        color={isComplete ? "success" : "muted"}
-        className="font-medium"
-      >
-        {stageName}
-      </Text>
-    </div>
-  );
-}
-
-// Status badge component following existing patterns
-function StatusBadge({ status }: { status: string }) {
-  const getStatusIntent = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'draft':
-        return 'neutral';
-      case 'active':
-        return 'primary';
-      case 'completed':
-        return 'success';
-      case 'archived':
-        return 'secondary';
-      default:
-        return 'neutral';
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (plan._id && onDelete) {
+      if (window.confirm("Are you sure you want to delete this coaching action plan?")) {
+        onDelete(plan._id);
+      }
     }
   };
 
   return (
-    <Badge intent={getStatusIntent(status)} size="sm">
-      {status}
-    </Badge>
+    <Card
+      padding="md"
+      radius="lg"
+      className="relative hover:shadow-lg transition-shadow duration-200"
+    >
+      {/* Main content - clickable for navigation */}
+      <Link href={`/dashboard/coaching-action-plans/${plan._id}`} className="block">
+        <div className="cursor-pointer">
+          {/* Header */}
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex-1 min-w-0">
+              <Heading 
+                level="h3" 
+                color="default"
+                className="text-primary font-medium"
+              >
+                {plan.title}
+              </Heading>
+              <Text 
+                textSize="base" 
+                color="muted"
+                className="mt-1"
+              >
+                Academic Year: {plan.academicYear}
+              </Text>
+            </div>
+            
+            {/* Status Badge */}
+            <Badge 
+              intent={getStatusIntent(plan.status)}
+              className="ml-2"
+            >
+              {plan.status.charAt(0).toUpperCase() + plan.status.slice(1)}
+            </Badge>
+          </div>
+
+          {/* Progress Indicator */}
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
+              <Text textSize="sm" color="default" className="font-medium">
+                Progress: {stageProgress}
+              </Text>
+              <Text textSize="sm" color="muted">
+                {progressPercentage}%
+              </Text>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-primary h-2 rounded-full transition-all duration-300"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Focus Area */}
+          {plan.needsAndFocus && (
+            <div className="mb-4">
+              <Text textSize="sm" color="default" className="font-medium">
+                Focus: {plan.needsAndFocus.ipgCoreAction} - {plan.needsAndFocus.ipgSubCategory}
+              </Text>
+            </div>
+          )}
+
+          {/* Dates */}
+          <div className="flex justify-between items-center text-sm text-muted mb-4">
+            <span>Started: {formatDate(plan.startDate)}</span>
+            {plan.endDate && <span>Ends: {formatDate(plan.endDate)}</span>}
+          </div>
+
+          {/* Add padding bottom for absolute positioned buttons */}
+          <div className="pb-16"></div>
+        </div>
+      </Link>
+
+      {/* Action buttons positioned absolutely outside the Link */}
+      <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center pt-4 border-t border-gray-200 bg-white">
+        <div className="flex gap-2">
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onEdit(plan._id);
+            }}
+            intent="secondary"
+            appearance="outline"
+            textSize="sm"
+            padding="sm"
+            className="flex items-center gap-2"
+          >
+            <PencilIcon className="h-4 w-4" />
+            Edit
+          </Button>
+          
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDuplicate(plan._id);
+            }}
+            intent="secondary"
+            appearance="outline"
+            textSize="sm"
+            padding="sm"
+            className="flex items-center gap-2"
+          >
+            <DocumentDuplicateIcon className="h-4 w-4" />
+            Duplicate
+          </Button>
+        </div>
+        
+        <div className="flex gap-2">
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onExport(plan._id);
+            }}
+            intent="secondary"
+            appearance="outline"
+            textSize="sm"
+            padding="sm"
+            className="flex items-center gap-2"
+          >
+            <DocumentArrowDownIcon className="h-4 w-4" />
+            Export
+          </Button>
+          
+          <Button
+            onClick={handleDelete}
+            intent="danger"
+            appearance="outline"
+            textSize="sm"
+            padding="sm"
+            className="flex items-center gap-2"
+            disabled={isDeleting}
+          >
+            <TrashIcon className="h-4 w-4" />
+            {isDeleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </div>
+      </div>
+    </Card>
   );
 }
 
-export function ActionPlanCard({
-  plan,
-  onEdit,
-  onDuplicate,
-  onArchive,
-  onDelete,
-  onExport,
-  className
-}: ActionPlanCardProps) {
-  const progress = calculatePlanProgress(plan);
+// Helper functions
+function formatStageProgress(plan: CoachingActionPlan): string {
+  let completedStages = 0;
   
-  // Extract key information for display (using correct field names)
-  const teacherNames = plan.teachers?.join(', ') || 'Unknown Teacher';
-  const schoolName = plan.school || 'Unknown School';
-  const coreAction = plan.needsAndFocus?.ipgCoreAction || 'Not Set';
-  const status = plan.status || 'draft';
+  if (plan.needsAndFocus) completedStages++;
+  if (plan.goal) completedStages++;
+  if (plan.weeklyPlans && plan.weeklyPlans.length > 0) completedStages++;
+  if (plan.endOfCycleAnalysis) completedStages++;
   
-  // Format dates
-  const createdDate = formatDistance(plan.createdAt || new Date(), new Date(), { addSuffix: true });
-  const updatedDate = formatDistance(plan.updatedAt || new Date(), new Date(), { addSuffix: true });
+  return `${completedStages}/4 stages completed`;
+}
 
-  // Define stages for progress indicators
-  const stages = [
-    { name: 'Needs & Focus', key: 'needsAndFocus', number: 1 },
-    { name: 'Goal & Metrics', key: 'goal', number: 2 },
-    { name: 'Implementation', key: 'implementationRecords', number: 3 },
-    { name: 'Analysis', key: 'endOfCycleAnalysis', number: 4 }
-  ];
+function calculateProgressPercentage(plan: CoachingActionPlan): number {
+  let completedStages = 0;
+  
+  if (plan.needsAndFocus) completedStages++;
+  if (plan.goal) completedStages++;
+  if (plan.weeklyPlans && plan.weeklyPlans.length > 0) completedStages++;
+  if (plan.endOfCycleAnalysis) completedStages++;
+  
+  return Math.round((completedStages / 4) * 100);
+}
 
-  return (
-    <Card 
-      padding="md" 
-      radius="lg" 
-      border 
-      shadow="sm" 
-      className={cn("hover:shadow-md transition-shadow", className)}
-    >
-      <Card.Header>
-        <div className="flex justify-between items-start">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <Heading level="h3" className="text-lg font-semibold">
-                {teacherNames}
-              </Heading>
-              <StatusBadge status={status} />
-            </div>
-            <Text textSize="sm" color="muted">
-              {schoolName} • Focus: {coreAction}
-            </Text>
-          </div>
-          
-          {/* Progress Circle */}
-          <div className="flex flex-col items-center">
-            <div
-              className={cn(
-                "w-12 h-12 rounded-full border-4 flex items-center justify-center",
-                progress.progressPercentage >= 80
-                  ? "border-success bg-success-50"
-                  : progress.progressPercentage >= 50
-                  ? "border-primary bg-primary-50"
-                  : "border-muted bg-muted-50"
-              )}
-            >
-              <Text
-                textSize="sm"
-                weight="bold"
-                color={progress.progressPercentage >= 80 ? "success" : "default"}
-              >
-                {progress.progressPercentage}%
-              </Text>
-            </div>
-            <Text textSize="xs" color="muted" className="mt-1">
-              {progress.completedStages}/{progress.totalStages} stages
-            </Text>
-          </div>
-        </div>
-      </Card.Header>
+function getStatusIntent(status: string): 'success' | 'warning' | 'danger' | 'info' {
+  switch (status) {
+    case 'completed':
+      return 'success';
+    case 'active':
+      return 'info';
+    case 'draft':
+      return 'warning';
+    case 'archived':
+      return 'danger';
+    default:
+      return 'info';
+  }
+}
 
-      <Card.Body>
-        {/* Stage Progress Indicators */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          {stages.map((stage) => {
-            const stageProgress = progress.stageDetails.find(s => s.stage === stage.key);
-            return (
-              <StageIndicator
-                key={stage.key}
-                stageName={stage.name}
-                isComplete={stageProgress?.isValid || false}
-                stageNumber={stage.number}
-              />
-            );
-          })}
-        </div>
-
-        {/* Metadata */}
-        <div className="flex justify-between items-center text-xs text-muted">
-          <span>Created {createdDate}</span>
-          <span>Updated {updatedDate}</span>
-        </div>
-      </Card.Body>
-
-      <Card.Footer>
-        <div className="flex justify-between items-center">
-          <div className="flex gap-2">
-            {onEdit && (
-              <Button
-                intent="secondary"
-                appearance="outline"
-                padding="sm"
-                onClick={() => onEdit(plan._id)}
-              >
-                <Edit2 className="h-4 w-4" />
-                Edit
-              </Button>
-            )}
-            
-            {onDuplicate && (
-              <Button
-                intent="secondary"
-                appearance="outline"
-                padding="sm"
-                onClick={() => onDuplicate(plan._id)}
-              >
-                <Copy className="h-4 w-4" />
-                Duplicate
-              </Button>
-            )}
-          </div>
-
-          <div className="flex gap-2">
-            {onExport && (
-              <Button
-                intent="secondary"
-                appearance="outline"
-                padding="sm"
-                onClick={() => onExport(plan._id)}
-              >
-                <FileText className="h-4 w-4" />
-                Export
-              </Button>
-            )}
-            
-            {onArchive && (
-              <Button
-                intent="secondary"
-                appearance="outline"
-                padding="sm"
-                onClick={() => onArchive(plan._id)}
-              >
-                <Archive className="h-4 w-4" />
-                Archive
-              </Button>
-            )}
-            
-            {onDelete && (
-              <Button
-                intent="danger"
-                appearance="outline"
-                padding="sm"
-                className="text-danger hover:text-danger"
-                onClick={() => onDelete(plan._id)}
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </Button>
-            )}
-          </div>
-        </div>
-      </Card.Footer>
-    </Card>
-  );
+function formatDate(date: Date | undefined): string {
+  if (!date) return 'Not set';
+  if (typeof date === 'string') return date;
+  return date.toLocaleDateString();
 } 

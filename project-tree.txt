@@ -69,7 +69,9 @@
 │   │   ├── cycle
 │   │   │   ├── PRD-cap2.md
 │   │   │   ├── cap.md
-│   │   │   └── cap2.md
+│   │   │   ├── cap2.md
+│   │   │   ├── cap3.md
+│   │   │   └── cap4.md
 │   │   ├── school
 │   │   ├── staff
 │   │   └── visit
@@ -549,6 +551,7 @@
 │   │   ├── domain
 │   │   │   ├── coaching
 │   │   │   │   ├── ActionPlanCard.tsx
+│   │   │   │   ├── ActionPlanStageForm.tsx
 │   │   │   │   ├── CoachingMovesBuilder.tsx
 │   │   │   │   ├── IPGFocusCards.tsx
 │   │   │   │   ├── IPGSubsectionCards.tsx
@@ -556,6 +559,13 @@
 │   │   │   │   ├── MetricsBuilder.tsx
 │   │   │   │   ├── ReflectionSection.tsx
 │   │   │   │   ├── StatusTransitionButton.tsx
+│   │   │   │   ├── field-managers
+│   │   │   │   │   ├── ArrayFieldManager.tsx
+│   │   │   │   │   ├── EvidenceCard.tsx
+│   │   │   │   │   ├── EvidenceManager.tsx
+│   │   │   │   │   ├── OutcomeManager.tsx
+│   │   │   │   │   ├── WeeklyPlanManager.tsx
+│   │   │   │   │   └── index.ts
 │   │   │   │   └── index.ts
 │   │   │   ├── imRoutine
 │   │   │   │   ├── curriculum
@@ -633,8 +643,11 @@
 │   │   │   │   ├── CoachingActionPlanDetailedEditor.tsx
 │   │   │   │   ├── TabbedStageNavigation.tsx
 │   │   │   │   ├── components
+│   │   │   │   │   ├── CollapsedStageView.tsx
 │   │   │   │   │   ├── CreateCoachingActionPlanDialog.tsx
-│   │   │   │   │   └── EditCoachingActionPlanDialog.tsx
+│   │   │   │   │   ├── EditCoachingActionPlanDialog.tsx
+│   │   │   │   │   ├── SectionHeader.tsx
+│   │   │   │   │   └── index.ts
 │   │   │   │   ├── hooks
 │   │   │   │   │   ├── useCoachingActionPlans.ts
 │   │   │   │   │   └── useIPGData.ts
@@ -703,6 +716,9 @@
 │   │   │   ├── useAuthenticatedUser.ts
 │   │   │   ├── useCoachData.ts
 │   │   │   └── usePermissionFiltering.ts
+│   │   ├── coaching
+│   │   │   ├── index.ts
+│   │   │   └── useStageEditor.ts
 │   │   ├── debugging
 │   │   │   ├── checkRenderLoopInTools.tsx
 │   │   │   ├── useComponentTester.tsx
@@ -717,6 +733,7 @@
 │   │   │   │   ├── useNYCPSStaff.ts
 │   │   │   │   ├── useTeachingLabStaff.ts
 │   │   │   │   └── useUserStaff.ts
+│   │   │   ├── useCoachingActionPlans.ts
 │   │   │   ├── useLookFors.ts
 │   │   │   ├── useSchoolDailyView.ts
 │   │   │   ├── useSchools.ts
@@ -740,7 +757,8 @@
 │   │   │   ├── useAuthorizedNavigation.ts
 │   │   │   ├── useNavigation.ts
 │   │   │   ├── useResizableSidebar.ts
-│   │   │   └── useSchoolAuthorization.ts
+│   │   │   ├── useSchoolAuthorization.ts
+│   │   │   └── useSectionToggle.ts
 │   │   ├── utilities
 │   │   │   └── useAutoSave.ts
 │   │   └── visits
@@ -1065,56 +1083,59 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   └── table.ts
 │   │   │   └── utilities.ts
-│   │   └── ui
-│   │       ├── constants
-│   │       │   ├── coaching-log.ts
-│   │       │   └── district-list.ts
-│   │       ├── data-import
-│   │       │   └── schema-templates.ts
-│   │       ├── forms
-│   │       │   ├── configurations
-│   │       │   │   ├── coaching-action-plan-config.ts
-│   │       │   │   ├── index.ts
-│   │       │   │   ├── schema-aware-builders.ts
-│   │       │   │   ├── school-config.ts
-│   │       │   │   ├── staff-config.ts
-│   │       │   │   ├── teaching-lab-staff-config.ts
-│   │       │   │   └── visit-config.ts
-│   │       │   ├── core
-│   │       │   │   ├── field-renderer.tsx
-│   │       │   │   └── index.ts
-│   │       │   ├── field-labels.ts
-│   │       │   ├── fieldConfig
-│   │       │   │   └── coaching
-│   │       │   ├── formOverrides
-│   │       │   │   ├── core
-│   │       │   │   ├── index.ts
-│   │       │   │   ├── look-fors
-│   │       │   │   ├── schedule
-│   │       │   │   ├── shared
-│   │       │   │   └── staff.ts
-│   │       │   ├── index.ts
-│   │       │   ├── registry.ts
-│   │       │   ├── templates
-│   │       │   │   ├── index.ts
-│   │       │   │   └── templates.ts
-│   │       │   └── utils
-│   │       │       ├── form-utils.ts
-│   │       │       └── index.ts
-│   │       ├── styles
-│   │       │   ├── event-styles.ts
-│   │       │   └── index.ts
-│   │       ├── table-schema.ts
-│   │       ├── utils
-│   │       │   ├── formatters.ts
-│   │       │   └── navigation-utils.ts
-│   │       └── variants
-│   │           ├── grid-layouts.ts
-│   │           ├── index.ts
-│   │           ├── layout.ts
-│   │           ├── shared-variants.ts
-│   │           ├── types.ts
-│   │           └── typography.ts
+│   │   ├── ui
+│   │   │   ├── constants
+│   │   │   │   ├── coaching-log.ts
+│   │   │   │   └── district-list.ts
+│   │   │   ├── data-import
+│   │   │   │   └── schema-templates.ts
+│   │   │   ├── forms
+│   │   │   │   ├── configurations
+│   │   │   │   │   ├── coaching-action-plan-config.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── schema-aware-builders.ts
+│   │   │   │   │   ├── school-config.ts
+│   │   │   │   │   ├── staff-config.ts
+│   │   │   │   │   ├── teaching-lab-staff-config.ts
+│   │   │   │   │   └── visit-config.ts
+│   │   │   │   ├── core
+│   │   │   │   │   ├── field-renderer.tsx
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── field-labels.ts
+│   │   │   │   ├── fieldConfig
+│   │   │   │   │   └── coaching
+│   │   │   │   ├── formOverrides
+│   │   │   │   │   ├── core
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── look-fors
+│   │   │   │   │   ├── schedule
+│   │   │   │   │   ├── shared
+│   │   │   │   │   └── staff.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── registry.ts
+│   │   │   │   ├── templates
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── templates.ts
+│   │   │   │   └── utils
+│   │   │   │       ├── form-utils.ts
+│   │   │   │       └── index.ts
+│   │   │   ├── styles
+│   │   │   │   ├── event-styles.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── table-schema.ts
+│   │   │   ├── utils
+│   │   │   │   ├── formatters.ts
+│   │   │   │   └── navigation-utils.ts
+│   │   │   └── variants
+│   │   │       ├── grid-layouts.ts
+│   │   │       ├── index.ts
+│   │   │       ├── layout.ts
+│   │   │       ├── shared-variants.ts
+│   │   │       ├── types.ts
+│   │   │       └── typography.ts
+│   │   └── validation
+│   │       ├── coaching-stages.ts
+│   │       └── index.ts
 │   ├── middleware.ts
 │   ├── providers
 │   │   ├── AuthProvider.tsx
@@ -1179,10 +1200,11 @@
 │       └── dependency-overrides.d.ts
 ├── tailwind.config.ts
 ├── tasks
+│   ├── tasks-coaching-action-plan-refactor.md
 │   └── tasks-prd-schedule-3.md
 ├── test-output.css
 ├── tsconfig.json
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-355 directories, 831 files
+358 directories, 850 files

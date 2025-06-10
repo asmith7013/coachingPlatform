@@ -145,13 +145,13 @@ export function useScheduleActions({
           // ✅ CREATE NEW VISIT: Schema-driven visit creation
           const visitData = {
             date: new Date(date),
-            school: schoolId,
-            coach: coachId || 'unknown',
+            schoolId: schoolId,
+            coachId: coachId || 'unknown',
             gradeLevelsSupported: [],
             allowedPurpose: AllowedPurposes.VISIT,
             modeDone: ModeDone.IN_PERSON,
             events: [validatedEvent.data],
-            owners: [coachId || 'unknown']
+            ownerIds: [coachId || 'unknown']
           }
           
           // ✅ VALIDATE entire visit against schema

@@ -239,7 +239,7 @@ export const referenceSelectors = {
         (visit) => `Visit: ${visit.date}`,
         (visit) => ({
           date: visit.date,
-          school: visit.schoolId
+          schoolId: visit.schoolId
         })
       );
     } catch (error) {

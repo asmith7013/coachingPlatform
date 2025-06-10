@@ -4,71 +4,47 @@ import { Input } from '@/components/core/fields/Input';
 import { Textarea } from '@/components/core/fields/Textarea';
 import { Select } from '@/components/core/fields/Select';
 import { Trash2 } from 'lucide-react';
-
-// Types following the example pattern
-interface MetricType {
-  name: string;
-  type: 'IPG' | 'L&R' | 'Project' | 'Other';
-  ratings: { score: number; description: string }[];
-}
-
-interface CoachingMoveType {
-  category: string;
-  specificMove: string;
-  toolsResources: string;
-}
-
-interface ImplementationRecordType {
-  date: string;
-  proposedArc: string[];
-  movesSelected: string[];
-  metrics: Record<string, number>;
-  evidenceLink: string;
-  teacherNotes: string;
-  studentNotes: string;
-  nextStep: string;
-  nextStepDone: boolean;
-  betweenSessionSupport: string;
-}
+import { ArrayFieldManager } from '@/components/domain/coaching/field-managers/ArrayFieldManager';
+import type { ImplementationRecord, Goal, CoachingCycleNumber, VisitNumber } from '@/lib/schema/zod-schema/core/cap';
+import { CoachingCycleNumberZod, VisitNumberZod } from '@/lib/schema/zod-schema/core/cap';
 
 interface ImplementationRecordCardProps {
-  record: ImplementationRecordType;
+  record: ImplementationRecord;
   index: number;
-  metrics: MetricType[];
-  coachingMoves: CoachingMoveType[];
-  onUpdate: (index: number, record: ImplementationRecordType) => void;
+  goal?: Goal; // For context
+  onUpdate: (index: number, record: ImplementationRecord) => void;
   onDelete: (index: number) => void;
 }
 
 export function ImplementationRecordCard({
   record,
   index,
-  metrics,
-  coachingMoves,
+  goal,
   onUpdate,
   onDelete
 }: ImplementationRecordCardProps) {
-  const updateField = (field: keyof ImplementationRecordType, value: unknown) => {
+  const updateField = <K extends keyof ImplementationRecord>(
+    field: K, 
+    value: ImplementationRecord[K]
+  ) => {
     onUpdate(index, { ...record, [field]: value });
   };
 
-  const updateMetric = (metricName: string, value: number) => {
-    const updatedMetrics = { ...record.metrics, [metricName]: value };
-    onUpdate(index, { ...record, metrics: updatedMetrics });
+  // Format date for input
+  const formatDate = (date: Date) => {
+    return date.toISOString().split('T')[0];
   };
 
-  const updateProposedArc = (value: string[]) => {
-    onUpdate(index, { ...record, proposedArc: value });
-  };
-
-  const updateMovesSelected = (value: string[]) => {
-    onUpdate(index, { ...record, movesSelected: value });
+  const parseDate = (dateString: string) => {
+    return new Date(dateString);
   };
 
   return (
-    <div className="border rounded-lg p-4 space-y-4 mb-4">
+    <div className="border rounded-lg p-4 space-y-4 mb-4 bg-white">
       <div className="flex justify-between items-start">
-        <h4 className="font-semibold text-lg">Session {index + 1}</h4>
+        <h4 className="font-semibold text-lg">
+          Cycle {record.cycleNumber}, Visit {record.visitNumber}
+        </h4>
         <Button
           intent="danger"
           appearance="alt"
@@ -80,101 +56,134 @@ export function ImplementationRecordCard({
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Basic Information */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Input
           label="Date"
           type="date"
-          value={record.date}
-          onChange={(e) => updateField('date', e.target.value)}
+          value={record.date ? formatDate(record.date) : ''}
+          onChange={(e) => updateField('date', parseDate(e.target.value))}
+          required
         />
 
         <Select
-          label="Proposed Arc"
-          value={record.proposedArc}
-          onChange={updateProposedArc}
-          options={[
-            { value: 'Pre-Brief', label: 'Pre-Brief' },
-            { value: 'Observation', label: 'Observation' },
-            { value: 'Debrief', label: 'Debrief' }
-          ]}
-          multiple
-        />
-
-        <Select
-          label="Moves Selected"
-          value={record.movesSelected}
-          onChange={updateMovesSelected}
-          options={coachingMoves.map(move => ({
-            value: move.specificMove,
-            label: `${move.category}: ${move.specificMove}`
+          label="Cycle Number"
+          value={record.cycleNumber}
+          onChange={(value) => updateField('cycleNumber', value as CoachingCycleNumber)}
+          options={CoachingCycleNumberZod.options.map(value => ({
+            value,
+            label: `Cycle ${value}`
           }))}
-          multiple
         />
 
-        <Input
-          label="Evidence Link"
-          value={record.evidenceLink}
-          onChange={(e) => updateField('evidenceLink', e.target.value)}
-          placeholder="Drive Link"
+        <Select
+          label="Visit Number"
+          value={record.visitNumber}
+          onChange={(value) => updateField('visitNumber', value as VisitNumber)}
+          options={VisitNumberZod.options.map(value => ({
+            value,
+            label: `Visit ${value}`
+          }))}
         />
       </div>
 
-      <div className="space-y-4">
-        <h5 className="font-medium">Metrics</h5>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {metrics.map(metric => (
-            <Select
-              key={metric.name}
-              label={metric.name}
-              value={record.metrics[metric.name]?.toString() || ''}
-              onChange={(value) => updateMetric(metric.name, Number(value))}
-              options={metric.ratings.map(rating => ({
-                value: rating.score.toString(),
-                label: `${rating.score}: ${rating.description}`
-              }))}
-            />
-          ))}
+      {/* Visit ID */}
+      <Input
+        label="Visit ID (Optional)"
+        value={record.visitId || ''}
+        onChange={(e) => updateField('visitId', e.target.value || undefined)}
+        placeholder="Reference to actual visit entity"
+      />
+
+      {/* Look For Implemented */}
+      <Textarea
+        label="What Was Actually Observed/Looked For"
+        value={record.lookForImplemented}
+        onChange={(e) => updateField('lookForImplemented', e.target.value)}
+        placeholder="Describe what was actually observed and looked for during this visit..."
+        rows={3}
+        required
+      />
+
+      {/* Array Fields using ArrayFieldManager */}
+      <ArrayFieldManager
+        label="Glows (Areas of Strength)"
+        items={record.glows}
+        onChange={(glows) => updateField('glows', glows)}
+        variant="success"
+        fieldType="input"
+        placeholder="What went well during this visit..."
+        addButtonLabel="Add Glow"
+        emptyMessage="No strengths recorded yet."
+        minItems={0}
+        maxItems={10}
+      />
+
+      <ArrayFieldManager
+        label="Grows (Areas for Improvement)"
+        items={record.grows}
+        onChange={(grows) => updateField('grows', grows)}
+        variant="warning"
+        fieldType="input"
+        placeholder="What could be improved..."
+        addButtonLabel="Add Grow"
+        emptyMessage="No improvement areas recorded yet."
+        minItems={0}
+        maxItems={10}
+      />
+
+      <ArrayFieldManager
+        label="Success Metrics"
+        items={record.successMetrics}
+        onChange={(successMetrics) => updateField('successMetrics', successMetrics)}
+        variant="info"
+        fieldType="input"
+        placeholder="Measurable indicators of success..."
+        addButtonLabel="Add Metric"
+        emptyMessage="No success metrics recorded yet."
+        minItems={0}
+        maxItems={8}
+      />
+
+      <ArrayFieldManager
+        label="Next Steps"
+        items={record.nextSteps}
+        onChange={(nextSteps) => updateField('nextSteps', nextSteps)}
+        variant="default"
+        fieldType="input"
+        placeholder="Action items for next visit..."
+        addButtonLabel="Add Step"
+        emptyMessage="No next steps defined yet."
+        minItems={0}
+        maxItems={8}
+      />
+
+      {/* Reflections Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Textarea
+          label="Teacher Reflection"
+          value={record.teacherReflection || ''}
+          onChange={(e) => updateField('teacherReflection', e.target.value || undefined)}
+          placeholder="Teacher's reflection on the session..."
+          rows={4}
+        />
+
+        <Textarea
+          label="Coach Notes"
+          value={record.coachNotes || ''}
+          onChange={(e) => updateField('coachNotes', e.target.value || undefined)}
+          placeholder="Additional coach observations..."
+          rows={4}
+        />
+      </div>
+
+      {/* Goal Context (if provided) */}
+      {goal && (
+        <div className="bg-gray-50 p-3 rounded border-l-4 border-blue-500">
+          <h6 className="font-medium text-sm mb-1">Goal Context</h6>
+          <p className="text-sm text-gray-700">{goal.description}</p>
         </div>
-      </div>
-
-      <div className="space-y-4">
-        <Textarea
-          label="Teacher Notes"
-          value={record.teacherNotes}
-          onChange={(e) => updateField('teacherNotes', e.target.value)}
-          rows={3}
-        />
-
-        <Textarea
-          label="Student Notes"
-          value={record.studentNotes}
-          onChange={(e) => updateField('studentNotes', e.target.value)}
-          rows={3}
-        />
-
-        <div className="space-y-2">
-          <Input
-            label="Next Step"
-            value={record.nextStep}
-            onChange={(e) => updateField('nextStep', e.target.value)}
-          />
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={record.nextStepDone}
-              onChange={(e) => updateField('nextStepDone', e.target.checked)}
-            />
-            <span>Next Step Done</span>
-          </label>
-        </div>
-
-        <Textarea
-          label="Between Session Support"
-          value={record.betweenSessionSupport}
-          onChange={(e) => updateField('betweenSessionSupport', e.target.value)}
-          rows={3}
-        />
-      </div>
+      )}
     </div>
   );
 } 

@@ -27,19 +27,19 @@ export function useSchoolDailyView(schoolId: string, date: string) {
   const school = useSchools.byId(schoolId);
   
   const staff = useNYCPSStaffList({ 
-    filters: { schools: schoolId },
+    filters: { schoolIds: schoolId },
     limit: 100 // Reasonable limit for school staff
   });
   
   // Use the entity hook that should already exist
   const schedules = useTeacherSchedules.list({
-    filters: { school: schoolId }
+    filters: { schoolId: schoolId }
     // Let the transformation happen in the component or use selectors
   });
   
   // Bell schedule data following same pattern
   const bellSchedules = useBellSchedules.list({
-    filters: { school: schoolId }
+    filters: { schoolId: schoolId }
   });
   
   // Minimal composition - no custom logic

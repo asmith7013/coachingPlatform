@@ -24,7 +24,7 @@ export function SchoolDetailView({ schoolId }: SchoolDetailViewProps) {
     isLoading: visitsLoading, 
     error: visitsError 
   } = useVisitsList({
-    filters: { school: schoolId },
+    filters: { schoolId: schoolId },
     limit: 3,
     sortBy: 'date',
     sortOrder: 'desc'

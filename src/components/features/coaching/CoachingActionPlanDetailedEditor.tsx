@@ -1,17 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Drawer } from '@/components/composed/drawers/Drawer';
+import React, { useState, useMemo } from 'react';
+import { Drawer } from '@components/composed/drawers/Drawer';
 import { TabbedStageNavigation, defaultStageConfiguration } from './TabbedStageNavigation';
-import { Text } from '@/components/core/typography/Text';
-import { Heading } from '@/components/core/typography/Heading';
-import { Button } from '@/components/core/Button';
-import { SaveIcon, XIcon } from 'lucide-react';
+import { Text } from '@components/core/typography/Text';
+import { Heading } from '@components/core/typography/Heading';
+import { Button } from '@components/core/Button';
+import { XIcon } from 'lucide-react';
 import { useCoachingActionPlans } from '@components/features/coaching/hooks/useCoachingActionPlans';
-import { useToast } from '@/components/core/feedback/Toast';
+import { useToast } from '@components/core/feedback/Toast';
 import { handleClientError } from '@error/handlers/client';
-import { calculatePlanProgress } from '@/lib/data-processing/transformers/utils/coaching-action-plan-utils';
-import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
+import { calculatePlanProgress } from '@data-processing/transformers/utils/coaching-action-plan-utils';
+import { CoachingActionPlanInputZodSchema } from '@zod-schema/core/cap';
+import type { CoachingActionPlan } from '@zod-schema/core/cap';
 
 // Import stage components
 import { CoachingActionPlanStage1 } from './stages/CAPStage1';
@@ -31,54 +32,53 @@ export function CoachingActionPlanDetailedEditor({
   planId,
   open,
   onClose,
-  onSave: _onSave,
+  onSave,
   className
 }: CoachingActionPlanDetailedEditorProps) {
-  // Data fetching
-  const { data: plan, isLoading, error, refetch } = useCoachingActionPlans.byId(planId);
+  // Data fetching and mutations
+  const { data: plan, isLoading, error } = useCoachingActionPlans.byId(planId);
+  const mutations = useCoachingActionPlans.mutations();
   
   // UI state
   const [currentStage, setCurrentStage] = useState(1);
-  const [editingData, setEditingData] = useState<Partial<CoachingActionPlanInput> | null>(null);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   
   // Toast notifications
   const { showToast } = useToast();
 
-  // Auto-save integration using the optimized hook with data parameter
-  const autoSaveHook = useCoachingActionPlans.autoSave(planId, editingData || {});
-  const { triggerSave } = autoSaveHook;
+  // Handle stage updates with direct mutation and schema validation
+  const handleStageUpdate = async (
+    stage: keyof CoachingActionPlan,
+    updates: unknown
+  ) => {
+    if (!plan || !mutations?.updateAsync) return;
 
-  // Initialize editing data when plan loads
-  useEffect(() => {
-    if (plan && !editingData) {
-      setEditingData({
-        needsAndFocus: plan.needsAndFocus,
-        goal: plan.goal,
-        implementationRecords: plan.implementationRecords,
-        endOfCycleAnalysis: plan.endOfCycleAnalysis
+    try {
+      // Validate updates with schema
+      const validated = CoachingActionPlanInputZodSchema.partial().parse({
+        [stage]: updates
+      });
+
+      // Direct mutation update
+      const result = await mutations.updateAsync(planId, validated);
+
+      if (result?.data && onSave) {
+        onSave(result.data);
+      }
+
+      showToast({
+        title: 'Success',
+        description: 'Changes saved successfully',
+        variant: 'success'
+      });
+    } catch (error) {
+      const errorMessage = handleClientError(error, 'updateCoachingActionPlan');
+      showToast({
+        title: 'Save Failed',
+        description: errorMessage,
+        variant: 'error'
       });
     }
-  }, [plan, editingData]);
-
-  // Trigger auto-save when data changes (2-second debounce handled by utility)
-  useEffect(() => {
-    if (hasUnsavedChanges && editingData && planId) {
-      triggerSave();
-    }
-  }, [editingData, hasUnsavedChanges, triggerSave, planId]);
-
-  // Handle data changes from stage components with auto-save
-  const handleStageDataChange = useCallback((stageNumber: number, data: unknown) => {
-    setHasUnsavedChanges(true);
-    
-    const stageKey = getStageKey(stageNumber);
-    setEditingData(prev => ({
-      ...prev,
-      [stageKey]: data
-    }));
-  }, []);
+  };
 
   // Calculate stage completion status
   const stageInfo = useMemo(() => {
@@ -103,65 +103,19 @@ export function CoachingActionPlanDetailedEditor({
   }, [plan]);
 
   // Helper function to get correct property key for each stage
-  function getStageKey(stageNumber: number): string {
+  function getStageKey(stageNumber: number): keyof CoachingActionPlan {
     const stageMap = {
       1: 'needsAndFocus',
       2: 'goal', 
       3: 'implementationRecords',
       4: 'endOfCycleAnalysis'
-    };
+    } as const;
     return stageMap[stageNumber as keyof typeof stageMap] || 'needsAndFocus';
   }
 
-  // Handle saving
-  const handleSave = async () => {
-    if (!plan || !editingData || isSaving) return;
-
-    setIsSaving(true);
-    try {
-      // TODO: Implement update functionality when available in hook
-      // const updatedPlan = await updateCoachingActionPlan(plan._id, editingData);
-
-      setHasUnsavedChanges(false);
-      showToast({
-        title: 'Success',
-        description: 'Coaching action plan saved successfully',
-        variant: 'success'
-      });
-
-      // if (onSave) {
-      //   onSave(updatedPlan);
-      // }
-      
-      refetch();
-    } catch (error) {
-      const errorMessage = handleClientError(error, 'updateCoachingActionPlan');
-      showToast({
-        title: 'Save Failed',
-        description: errorMessage,
-        variant: 'error'
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // Handle close with unsaved changes check
-  const handleClose = () => {
-    if (hasUnsavedChanges) {
-      const confirmed = window.confirm(
-        'You have unsaved changes. Are you sure you want to close without saving?'
-      );
-      if (!confirmed) return;
-    }
-    
-    setHasUnsavedChanges(false);
-    onClose();
-  };
-
-  // Render stage content with auto-save enabled onChange handlers
+  // Render stage content with direct mutation handlers
   const renderStageContent = () => {
-    if (!editingData) {
+    if (!plan) {
       return (
         <div className="flex items-center justify-center h-64">
           <Text color="muted">Loading stage data...</Text>
@@ -178,9 +132,14 @@ export function CoachingActionPlanDetailedEditor({
       case 1:
         return (
           <CoachingActionPlanStage1
-            {...commonProps}
-            initialData={editingData.needsAndFocus}
-            onChange={(data) => handleStageDataChange(1, data)}
+            className={commonProps.className}
+            data={plan.needsAndFocus || {
+              ipgCoreAction: undefined,
+              ipgSubCategory: undefined,
+              rationale: '',
+              pdfAttachment: undefined
+            }}
+            onChange={(updates) => handleStageUpdate('needsAndFocus', updates)}
           />
         );
         
@@ -188,18 +147,12 @@ export function CoachingActionPlanDetailedEditor({
         return (
           <CoachingActionPlanStage2
             {...commonProps}
-            smartGoal={editingData.goal?.description || ''}
-            onSmartGoalChange={(value) => 
-              handleStageDataChange(2, { ...editingData.goal, description: value })
-            }
-            metrics={editingData.goal?.teacherOutcomes || []}
-            onMetricsChange={(metrics) => 
-              handleStageDataChange(2, { ...editingData.goal, teacherOutcomes: metrics })
-            }
-            coachingMoves={editingData.goal?.studentOutcomes || []}
-            onCoachingMovesChange={(moves) => 
-              handleStageDataChange(2, { ...editingData.goal, studentOutcomes: moves })
-            }
+            data={plan.goal || {
+              description: '',
+              teacherOutcomes: [],
+              studentOutcomes: []
+            }}
+            onChange={(goalData) => handleStageUpdate('goal', goalData)}
           />
         );
         
@@ -207,10 +160,9 @@ export function CoachingActionPlanDetailedEditor({
         return (
           <CoachingActionPlanStage3
             {...commonProps}
-            implementationRecords={editingData.implementationRecords || []}
-            onImplementationRecordsChange={(records) => handleStageDataChange(3, records)}
-            metrics={editingData.goal?.teacherOutcomes || []}
-            coachingMoves={editingData.goal?.studentOutcomes || []}
+            data={plan.implementationRecords || []}
+            onChange={(records) => handleStageUpdate('implementationRecords', records)}
+            goal={plan.goal}
           />
         );
         
@@ -218,22 +170,17 @@ export function CoachingActionPlanDetailedEditor({
         return (
           <CoachingActionPlanStage4
             {...commonProps}
-            goalMet={editingData.endOfCycleAnalysis?.goalMet ?? null}
-            onGoalMetChange={(goalMet) => 
-              handleStageDataChange(4, { ...editingData.endOfCycleAnalysis, goalMet })
-            }
-            impactOnLearning={editingData.endOfCycleAnalysis?.impactOnLearning || ''}
-            onImpactOnLearningChange={(value) => 
-              handleStageDataChange(4, { ...editingData.endOfCycleAnalysis, impactOnLearning: value })
-            }
-            buildOnThis={editingData.endOfCycleAnalysis?.lessonsLearned || ''}
-            onBuildOnThisChange={(value) => 
-              handleStageDataChange(4, { ...editingData.endOfCycleAnalysis, lessonsLearned: value })
-            }
-            spotlightLink={editingData.endOfCycleAnalysis?.recommendationsForNext || ''}
-            onSpotlightLinkChange={(value) => 
-              handleStageDataChange(4, { ...editingData.endOfCycleAnalysis, recommendationsForNext: value })
-            }
+            data={plan.endOfCycleAnalysis || {
+              goalMet: false,
+              teacherOutcomeAnalysis: [],
+              studentOutcomeAnalysis: [],
+              impactOnLearning: '',
+              overallEvidence: [],
+              lessonsLearned: undefined,
+              recommendationsForNext: undefined
+            }}
+            onChange={(analysisData) => handleStageUpdate('endOfCycleAnalysis', analysisData)}
+            goal={plan.goal}
           />
         );
         
@@ -250,7 +197,7 @@ export function CoachingActionPlanDetailedEditor({
     return (
       <Drawer 
         open={open} 
-        onClose={handleClose}
+        onClose={onClose}
         size="lg"
         position="right"
         background="white"
@@ -271,7 +218,7 @@ export function CoachingActionPlanDetailedEditor({
   return (
     <Drawer 
       open={open} 
-      onClose={handleClose}
+      onClose={onClose}
       size="lg"
       position="right"
       background="white"
@@ -285,31 +232,15 @@ export function CoachingActionPlanDetailedEditor({
                 {plan ? `${plan.teachers?.join(', ')} - ${plan.school}` : 'Loading...'}
               </Heading>
             </Drawer.Title>
-            {hasUnsavedChanges && (
-              <Text textSize="sm" color="muted" className="mt-1">
-                You have unsaved changes
-              </Text>
-            )}
           </div>
           
           {/* Action buttons */}
           <div className="flex items-center gap-2 ml-4">
             <Button
-              intent="primary"
-              appearance="solid"
-              padding="sm"
-              onClick={handleSave}
-              disabled={!hasUnsavedChanges || isSaving}
-            >
-              <SaveIcon className="h-4 w-4" />
-              {isSaving ? 'Saving...' : 'Save'}
-            </Button>
-            
-            <Button
               intent="secondary"
               appearance="outline"
               padding="sm"
-              onClick={handleClose}
+              onClick={onClose}
             >
               <XIcon className="h-4 w-4" />
               Close

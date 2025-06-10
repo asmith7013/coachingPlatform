@@ -20,7 +20,7 @@ export function useScheduleData({ schoolId, date, mode = 'create', visitId }: Us
   // ✅ USE DOMAIN HOOK FILTERING: Let it handle date filtering
   const todayVisits = useVisits.list({
     filters: { 
-      school: schoolId, 
+      schoolId: schoolId, 
       date: new Date(date).toISOString().split('T')[0] 
     },
     enabled: mode === 'create'

@@ -6,81 +6,101 @@ import { Button } from '@/components/core/Button';
 import { Plus } from 'lucide-react';
 import { ImplementationRecordCard } from '@/components/domain/coaching/ImplementationRecordCard';
 import { getTodayString } from '@/lib/data-processing/transformers/utils/date-utils';
-
-// Types for Stage 3 data
-interface MetricType {
-  name: string;
-  type: 'IPG' | 'L&R' | 'Project' | 'Other';
-  ratings: { score: number; description: string }[];
-}
-
-interface CoachingMoveType {
-  category: string;
-  specificMove: string;
-  toolsResources: string;
-}
-
-interface ImplementationRecordType {
-  date: string;
-  proposedArc: string[];
-  movesSelected: string[];
-  metrics: Record<string, number>;
-  evidenceLink: string;
-  teacherNotes: string;
-  studentNotes: string;
-  nextStep: string;
-  nextStepDone: boolean;
-  betweenSessionSupport: string;
-}
+import { useStageEditor } from '@/hooks/coaching/useStageEditor';
+import { useSectionToggle } from '@/hooks/ui/useSectionToggle';
+import { CollapsedStageView } from '../components/CollapsedStageView';
+import { SectionHeader } from '../components/SectionHeader';
+import { stageValidators } from '@/lib/validation/coaching-stages';
+import type { ImplementationRecord, Goal, CoachingCycleNumber, VisitNumber } from '@zod-schema/core/cap';
 
 interface CoachingActionPlanStage3Props {
-  // Implementation records state
-  implementationRecords: ImplementationRecordType[];
-  onImplementationRecordsChange: (records: ImplementationRecordType[]) => void;
-  
-  // Data from previous stages
-  metrics: MetricType[];
-  coachingMoves: CoachingMoveType[];
-  
-  // Optional props
+  data: ImplementationRecord[];
+  onChange: (records: ImplementationRecord[]) => void;
+  goal?: Goal;
   planId?: string;
   className?: string;
 }
 
 export function CoachingActionPlanStage3({
-  implementationRecords,
-  onImplementationRecordsChange,
-  metrics,
-  coachingMoves,
+  data,
+  onChange,
+  goal,
   planId: _planId,
   className
 }: CoachingActionPlanStage3Props) {
-  
+  const { isEditing, isComplete, handleEdit } = useStageEditor({
+    data,
+    onChange,
+    isCompleteCheck: stageValidators.implementation
+  });
+
+  const { sections, toggle, expandAll } = useSectionToggle({
+    records: true
+  });
+
   const addImplementationRecord = () => {
-    const newRecord: ImplementationRecordType = {
-      date: getTodayString(),
-      proposedArc: [],
-      movesSelected: [],
-      metrics: {},
-      evidenceLink: '',
-      teacherNotes: '',
-      studentNotes: '',
-      nextStep: '',
-      nextStepDone: false,
-      betweenSessionSupport: ''
+    // Determine next cycle and visit numbers based on existing records
+    const nextCycleNumber: CoachingCycleNumber = data.length < 3 ? "1" : 
+                                               data.length < 6 ? "2" : "3";
+    const nextVisitNumber: VisitNumber = data.length % 3 === 0 ? "1" :
+                                        data.length % 3 === 1 ? "2" : "3";
+
+    const newRecord: ImplementationRecord = {
+      date: new Date(getTodayString()),
+      visitId: undefined,
+      cycleNumber: nextCycleNumber,
+      visitNumber: nextVisitNumber,
+      lookForImplemented: '',
+      glows: [],
+      grows: [],
+      successMetrics: [],
+      nextSteps: [],
+      teacherReflection: '',
+      coachNotes: ''
     };
-    onImplementationRecordsChange([...implementationRecords, newRecord]);
+    
+    onChange([...data, newRecord]);
   };
 
-  const updateImplementationRecord = (index: number, record: ImplementationRecordType) => {
-    const updated = [...implementationRecords];
+  const updateImplementationRecord = (index: number, record: ImplementationRecord) => {
+    const updated = [...data];
     updated[index] = record;
-    onImplementationRecordsChange(updated);
+    onChange(updated);
   };
 
   const deleteImplementationRecord = (index: number) => {
-    onImplementationRecordsChange(implementationRecords.filter((_, i) => i !== index));
+    onChange(data.filter((_, i) => i !== index));
   };
+
+  const handleEditWithExpand = () => {
+    handleEdit();
+    expandAll();
+  };
+
+  if (isComplete && !isEditing) {
+    return (
+      <ActionPlanStage
+        number={3}
+        title="Implementation + Support"
+        className={className}
+      >
+        <CollapsedStageView
+          title="Implementation Records Complete"
+          summary={
+            <>
+              <p className="mb-2">
+                <strong>Sessions Logged:</strong> {data.length}
+              </p>
+              <p>
+                <strong>Cycles:</strong> {Math.max(...data.map(r => parseInt(r.cycleNumber)))} completed
+              </p>
+            </>
+          }
+          onEdit={handleEditWithExpand}
+        />
+      </ActionPlanStage>
+    );
+  }
 
   return (
     <ActionPlanStage
@@ -90,36 +110,47 @@ export function CoachingActionPlanStage3({
     >
       <div className="space-y-6">
         <div>
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-lg">Implementation Record - Decision Log & Progress Monitoring</h3>
-            <Button
-              intent="primary"
-              appearance="outline"
-              textSize="sm"
-              padding="sm"
-              onClick={addImplementationRecord}
-              className="flex items-center gap-2"
-            >
-              <Plus size={16} />
-              Add Session
-            </Button>
-          </div>
+          <SectionHeader
+            title="Implementation Records - Decision Log & Progress Monitoring"
+            isExpanded={sections.records}
+            onToggle={() => toggle('records')}
+          />
           
-          {implementationRecords.map((record, index) => (
-            <ImplementationRecordCard
-              key={index}
-              record={record}
-              index={index}
-              metrics={metrics}
-              coachingMoves={coachingMoves}
-              onUpdate={updateImplementationRecord}
-              onDelete={deleteImplementationRecord}
-            />
-          ))}
+          {sections.records && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-gray-600">
+                  Track what actually happened during coaching visits with structured observations
+                </p>
+                <Button
+                  intent="primary"
+                  appearance="outline"
+                  textSize="sm"
+                  padding="sm"
+                  onClick={addImplementationRecord}
+                  className="flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  Add Session
+                </Button>
+              </div>
+              
+              {data.map((record, index) => (
+                <ImplementationRecordCard
+                  key={index}
+                  record={record}
+                  index={index}
+                  goal={goal}
+                  onUpdate={updateImplementationRecord}
+                  onDelete={deleteImplementationRecord}
+                />
+              ))}
 
-          {implementationRecords.length === 0 && (
-            <div className="text-center py-8 text-gray-500 border rounded-lg">
-              No implementation records yet. Click &quot;Add Session&quot; to begin tracking progress.
+              {data.length === 0 && (
+                <div className="text-center py-8 text-gray-500 border rounded-lg">
+                  No implementation records yet. Click &quot;Add Session&quot; to begin tracking progress.
+                </div>
+              )}
             </div>
           )}
         </div>
