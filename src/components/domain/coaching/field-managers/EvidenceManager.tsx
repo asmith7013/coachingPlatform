@@ -76,6 +76,7 @@ export function EvidenceManager({
   const addEvidence = () => {
     if (!maxItems || evidence.length < maxItems) {
       const newEvidence: Evidence = {
+        description: '',
         type: 'written_summary',
         title: '',
         content: '',

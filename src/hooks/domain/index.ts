@@ -15,6 +15,7 @@ export * from './useSchools'
 export * from './useLookFors'
 export * from './useVisits'
 // export * from './useVisitsWithTransforms' - Removed during simplification
+export * from './useCoachingActionPlans'
 
 // Observation hooks
 export * from './observations/useContextualNotes';

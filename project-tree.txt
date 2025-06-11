@@ -392,10 +392,15 @@
 │   │   ├── setup
 │   │   │   └── page.tsx
 │   │   ├── test
+│   │   │   ├── coaching-action-plans
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── page.tsx.disabled
 │   │   │   ├── layout.tsx
 │   │   │   └── observations
+│   │   │       ├── ObservationCard.tsx
+│   │   │       ├── ObservationForm.tsx
+│   │   │       ├── ObservationsList.tsx
 │   │   │       └── page.tsx
-│   │   ├── test-stage2
 │   │   ├── tools
 │   │   │   ├── data-import
 │   │   │   │   ├── add-to-school
@@ -746,6 +751,7 @@
 │   │   │   │   ├── useTeachingLabStaff.ts
 │   │   │   │   └── useUserStaff.ts
 │   │   │   ├── useCoachingActionPlans.ts
+│   │   │   ├── useCoachingActionPlans.ts.disabled
 │   │   │   ├── useLookFors.ts
 │   │   │   ├── useSchoolDailyView.ts
 │   │   │   ├── useSchools.ts
@@ -1122,7 +1128,8 @@
 │   │   │   │   │   └── index.ts
 │   │   │   │   ├── field-labels.ts
 │   │   │   │   ├── fieldConfig
-│   │   │   │   │   └── coaching
+│   │   │   │   │   ├── coaching
+│   │   │   │   │   └── observations
 │   │   │   │   ├── formOverrides
 │   │   │   │   │   ├── core
 │   │   │   │   │   ├── index.ts
@@ -1226,4 +1233,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-364 directories, 863 files
+365 directories, 869 files

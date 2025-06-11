@@ -6,6 +6,7 @@ import { CollectionResponse, PaginatedResponse, EntityResponse } from '@core-typ
 import { EntitySelector } from '@query/client/selectors/selector-types';
 import { isPaginatedResponse } from '@data-processing/transformers/utils/response-utils';
 import { normalizeVisitPurposes } from '@data-processing/transformers/purpose-normalizer';
+import { Visit } from '@zod-schema/visits/visit';
 
 /**
  * Simple transformation options interface
@@ -81,7 +82,7 @@ function normalizeData(item: unknown): unknown {
     
     // Check if this looks like visit data (has events array)
     if (Array.isArray(obj.events)) {
-      return normalizeVisitPurposes(item);
+      return normalizeVisitPurposes(item as Visit);
     }
   }
   

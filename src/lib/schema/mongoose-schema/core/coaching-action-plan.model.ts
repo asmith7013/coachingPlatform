@@ -1,30 +1,57 @@
 import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose from "mongoose"; 
+import {
+  IPGCoreActions,
+  IPGSubCategories,
+  MetricCollectionMethods,
+  VisitStatuses,
+  CoachingCycleNumbers,
+  VisitNumbers,
+  CoachingActionPlanStatuses,
+  EvidenceTypes
+} from "@enums";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
-// Evidence nested class
+// =====================================
+// NESTED SCHEMA CLASSES
+// =====================================
+
+// Evidence nested class - aligned with clean Zod schema
 @modelOptions({ 
   schemaOptions: { 
     _id: false 
   } 
 })
 class Evidence {
-  @prop({ type: String, required: true })
+  @prop({ 
+    type: String, 
+    enum: Object.values(EvidenceTypes), 
+    required: true 
+  })
   type!: string;
+  
+  @prop({ type: String, required: true })
+  title!: string;
   
   @prop({ type: String, required: true })
   description!: string;
   
   @prop({ type: String })
+  content?: string;
+  
+  @prop({ type: String })
   url?: string;
   
-  @prop({ type: Date })
-  date?: Date;
+  @prop({ type: String })
+  uploadedFile?: string;
+  
+  @prop({ type: Date, required: true })
+  dateCollected!: Date;
 }
 
-// Metric nested class
+// Metric nested class - aligned with clean Zod schema
 @modelOptions({ 
   schemaOptions: { 
     _id: false 
@@ -40,17 +67,27 @@ class Metric {
   @prop({ type: String, required: true })
   description!: string;
   
+  @prop({ 
+    type: String, 
+    enum: Object.values(MetricCollectionMethods), 
+    required: true 
+  })
+  collectionMethod!: string;
+  
   @prop({ type: String })
   baselineValue?: string;
   
-  @prop({ type: String })
-  targetValue?: string;
+  @prop({ type: String, required: true })
+  targetValue!: string;
   
   @prop({ type: String })
-  measurementMethod?: string;
+  currentValue?: string;
+  
+  @prop({ type: String })
+  notes?: string;
 }
 
-// Outcome nested class
+// Outcome nested class - aligned with clean Zod schema
 @modelOptions({ 
   schemaOptions: { 
     _id: false 
@@ -70,7 +107,7 @@ class Outcome {
   evidence?: Evidence[];
 }
 
-// Goal nested class - aligned with Zod schema
+// Goal nested class - aligned with clean Zod schema
 @modelOptions({ 
   schemaOptions: { 
     _id: false 
@@ -78,7 +115,7 @@ class Outcome {
 })
 class Goal {
   @prop({ type: String, required: true })
-  description!: string;  // ✅ Changed from 'statement' to match Zod schema
+  description!: string;
   
   @prop({ type: () => [Outcome], required: true })
   teacherOutcomes!: Outcome[];
@@ -87,24 +124,32 @@ class Goal {
   studentOutcomes!: Outcome[];
 }
 
-// Needs and Focus nested class - aligned with Zod schema (flattened structure)
+// Needs and Focus nested class - aligned with clean Zod schema
 @modelOptions({ 
   schemaOptions: { 
     _id: false 
   } 
 })
 class NeedsAndFocus {
-  @prop({ type: String, required: true })
-  ipgCoreAction!: string;  // ✅ Direct field, matches Zod: ipgCoreAction
+  @prop({ 
+    type: String, 
+    enum: Object.values(IPGCoreActions), 
+    required: true 
+  })
+  ipgCoreAction!: string;
+  
+  @prop({ 
+    type: String, 
+    enum: Object.values(IPGSubCategories), 
+    required: true 
+  })
+  ipgSubCategory!: string;
   
   @prop({ type: String, required: true })
-  ipgSubCategory!: string; // ✅ Direct field, matches Zod: ipgSubCategory
-  
-  @prop({ type: String, required: true })
-  rationale!: string;      // ✅ Direct field, matches Zod: rationale
+  rationale!: string;
   
   @prop({ type: String })
-  pdfAttachment?: string;  // ✅ Direct field, matches Zod: pdfAttachment
+  pdfAttachment?: string;
 }
 
 // Weekly Visit Plan nested class
@@ -117,10 +162,18 @@ class WeeklyVisitPlan {
   @prop({ type: Date, required: true })
   date!: Date;
   
-  @prop({ type: String, required: true })
+  @prop({ 
+    type: String, 
+    enum: Object.values(CoachingCycleNumbers), 
+    required: true 
+  })
   cycleNumber!: string;
   
-  @prop({ type: String, required: true })
+  @prop({ 
+    type: String, 
+    enum: Object.values(VisitNumbers), 
+    required: true 
+  })
   visitNumber!: string;
   
   @prop({ type: String, required: true })
@@ -141,7 +194,11 @@ class WeeklyVisitPlan {
   @prop({ type: String })
   visitId?: string;
   
-  @prop({ type: String, default: "planned" })
+  @prop({ 
+    type: String, 
+    enum: Object.values(VisitStatuses), 
+    default: "planned" 
+  })
   status!: string;
 }
 
@@ -158,10 +215,18 @@ class ImplementationRecord {
   @prop({ type: String })
   visitId?: string;
   
-  @prop({ type: String, required: true })
+  @prop({ 
+    type: String, 
+    enum: Object.values(CoachingCycleNumbers), 
+    required: true 
+  })
   cycleNumber!: string;
   
-  @prop({ type: String, required: true })
+  @prop({ 
+    type: String, 
+    enum: Object.values(VisitNumbers), 
+    required: true 
+  })
   visitNumber!: string;
   
   @prop({ type: String, required: true })
@@ -186,7 +251,44 @@ class ImplementationRecord {
   coachNotes?: string;
 }
 
-// End of Cycle Analysis nested class
+// Metric Value nested class for analysis
+@modelOptions({ 
+  schemaOptions: { 
+    _id: false 
+  } 
+})
+class FinalMetricValue {
+  @prop({ type: String, required: true })
+  metricId!: string;
+  
+  @prop({ type: String, required: true })
+  finalValue!: string;
+  
+  @prop({ type: Boolean, required: true })
+  goalMet!: boolean;
+}
+
+// Outcome Analysis nested class
+@modelOptions({ 
+  schemaOptions: { 
+    _id: false 
+  } 
+})
+class OutcomeAnalysis {
+  @prop({ type: String, required: true })
+  outcomeId!: string;
+  
+  @prop({ type: Boolean, required: true })
+  achieved!: boolean;
+  
+  @prop({ type: () => [Evidence], required: true })
+  evidence!: Evidence[];
+  
+  @prop({ type: () => [FinalMetricValue], required: true })
+  finalMetricValues!: FinalMetricValue[];
+}
+
+// End of Cycle Analysis nested class - aligned with clean Zod schema
 @modelOptions({ 
   schemaOptions: { 
     _id: false 
@@ -196,11 +298,17 @@ class EndOfCycleAnalysis {
   @prop({ type: Boolean, required: true })
   goalMet!: boolean;
   
+  @prop({ type: () => [OutcomeAnalysis], required: true })
+  teacherOutcomeAnalysis!: OutcomeAnalysis[];
+  
+  @prop({ type: () => [OutcomeAnalysis], required: true })
+  studentOutcomeAnalysis!: OutcomeAnalysis[];
+  
   @prop({ type: String, required: true })
   impactOnLearning!: string;
   
-  @prop({ type: () => [Evidence] })
-  overallEvidence?: Evidence[];
+  @prop({ type: () => [Evidence], required: true })
+  overallEvidence!: Evidence[];
   
   @prop({ type: String })
   lessonsLearned?: string;
@@ -209,11 +317,15 @@ class EndOfCycleAnalysis {
   recommendationsForNext?: string;
 }
 
-// Main Coaching Action Plan class
+// =====================================
+// MAIN COACHING ACTION PLAN CLASS
+// =====================================
+
+// Main Coaching Action Plan class - follows established patterns
 @modelOptions({ 
   schemaOptions: { 
     ...standardSchemaOptions,
-    collection: 'coachingactionplans',
+    collection: 'coachingactionplans'
   } 
 })
 class CoachingActionPlan extends BaseMongooseDocument {
@@ -247,7 +359,11 @@ class CoachingActionPlan extends BaseMongooseDocument {
   @prop({ type: () => EndOfCycleAnalysis })
   endOfCycleAnalysis?: EndOfCycleAnalysis;
 
-  @prop({ type: String, default: "draft" })
+  @prop({ 
+    type: String, 
+    enum: Object.values(CoachingActionPlanStatuses), 
+    default: "draft" 
+  })
   status!: string;
 
   @prop({ type: Date, required: true })
@@ -264,15 +380,16 @@ class CoachingActionPlan extends BaseMongooseDocument {
 
   @prop({ type: () => [String] })
   relatedCycles?: string[];
-
-  @prop({ type: () => [String], required: true })
-  owners!: string[];
 }
 
-// Model exports
+// =====================================
+// MODEL EXPORTS
+// =====================================
+
+// Model exports - following established patterns
 export const CoachingActionPlanModel = mongoose.models.CoachingActionPlan || getModelForClass(CoachingActionPlan);
 
-// Use model registry for async access
+// Use model registry for async access - following established patterns
 export async function getCoachingActionPlanModel() {
   return getModel<CoachingActionPlan>('CoachingActionPlan', () => getModelForClass(CoachingActionPlan));
 } 

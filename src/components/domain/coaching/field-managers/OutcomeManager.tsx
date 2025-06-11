@@ -16,6 +16,7 @@ import {
 } from '@heroicons/react/24/outline';
 import type { Outcome, Metric } from '@zod-schema/core/cap';
 import { getMetricCollectionMethodLabel } from '@/lib/ui/forms/configurations/coaching-action-plan-config';
+import type { Evidence } from '@zod-schema/core/cap';
 
 interface OutcomeManagerProps {
   label: string;
@@ -55,9 +56,10 @@ export function OutcomeManager({
 
   const addOutcome = () => {
     const newOutcome: Outcome = {
+      type: outcomeType,
       description: '',
       metrics: [],
-      evidence: ''
+      evidence: [] as Evidence[]
     };
     onChange([...outcomes, newOutcome]);
     // Auto-expand the new outcome
@@ -77,9 +79,11 @@ export function OutcomeManager({
 
   const addMetric = (outcomeIndex: number) => {
     const newMetric: Metric = {
+      type: 'numeric',
+      name: '',
       description: '',
       collectionMethod: 'observation',
-      goalValue: '',
+      targetValue: '',
       currentValue: '',
       notes: ''
     };
@@ -196,7 +200,7 @@ export function OutcomeManager({
                     {/* Evidence */}
                     <Textarea
                       label="Supporting Evidence"
-                      value={outcome.evidence || ''}
+                      value={outcome.evidence?.map(e => JSON.stringify(e)).join('\n') || ''}
                       onChange={(e) => updateOutcome(outcomeIndex, 'evidence', e.target.value)}
                       placeholder="Evidence that will support the achievement of this outcome..."
                       rows={2}
@@ -269,8 +273,8 @@ export function OutcomeManager({
                                 
                                 <Input
                                   label="Target Goal"
-                                  value={metric.goalValue}
-                                  onChange={(e) => updateMetric(outcomeIndex, metricIndex, 'goalValue', e.target.value)}
+                                  value={metric.targetValue}
+                                  onChange={(e) => updateMetric(outcomeIndex, metricIndex, 'targetValue', e.target.value)}
                                   placeholder="Target value or goal"
                                   required
                                 />

@@ -15,7 +15,15 @@
       "@actions/*": ["./src/app/actions/*"],
       "@utils/*": ["./src/utils/*"],
       "@types/*": ["./src/types/*"],
-      "@styles/*": ["./src/styles/*"]
+      "@styles/*": ["./src/styles/*"],
+      "@query/*": ["./src/lib/query/*"],
+      "@server/*": ["./src/lib/server/*"],
+      "@api-handlers/*": ["./src/lib/api/handlers/*"],
+      "@zod-schema/*": ["./src/lib/schema/zod-schema/*"],
+      "@mongoose-schema/*": ["./src/lib/schema/mongoose-schema/*"],
+      "@core-types/*": ["./src/lib/schema/zod-schema/core-types/*"],
+      "@error/*": ["./src/lib/error/*"],
+      "@domain-hooks/*": ["./src/hooks/domain/*"]
     }
   }
 } 

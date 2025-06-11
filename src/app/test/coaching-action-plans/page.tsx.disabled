@@ -1,0 +1,491 @@
+'use client';
+
+import React, { useState } from 'react';
+import { CoachingActionPlan, CoachingActionPlanInput } from '@/lib/schema/zod-schema/core/cap';
+import { 
+  fetchCoachingActionPlans,
+  fetchCoachingActionPlanById,
+  createCoachingActionPlan,
+  updateCoachingActionPlan,
+  deleteCoachingActionPlan
+} from '@/app/actions/coaching/coaching-action-plans';
+import { Button } from '@/components/core/Button';
+import { Card } from '@/components/composed/cards/Card';
+import { Text, Heading } from '@/components/core/typography';
+import { Input } from '@/components/core/fields/Input';
+import { Textarea } from '@/components/core/fields/Textarea';
+import { Select } from '@/components/core/fields/Select';
+
+// Types
+interface TestResult {
+  operation: string;
+  success: boolean;
+  data?: any;
+  error?: string;
+  timestamp: Date;
+}
+
+interface TestState {
+  results: TestResult[];
+  isLoading: boolean;
+  testPlan: CoachingActionPlanInput | null;
+  selectedPlanId: string | null;
+  plans: CoachingActionPlan[];
+}
+
+export default function CoachingActionPlanCRUDTest() {
+  const [state, setState] = useState<TestState>({
+    results: [],
+    isLoading: false,
+    testPlan: null,
+    selectedPlanId: null,
+    plans: []
+  });
+
+  // Helper to add test result
+  const addResult = (operation: string, success: boolean, data?: unknown, error?: string) => {
+    const result: TestResult = {
+      operation,
+      success,
+      data,
+      error,
+      timestamp: new Date()
+    };
+    
+    setState(prev => ({
+      ...prev,
+      results: [result, ...prev.results]
+    }));
+  };
+
+  // Sample test data generator
+  const generateTestPlan = (): CoachingActionPlanInput => {
+    const timestamp = Date.now();
+    
+    return {
+      title: `Test Coaching Plan ${timestamp}`,
+      teachers: ['teacher_test_id_' + timestamp],
+      coaches: ['coach_test_id_' + timestamp],
+      school: 'test_school_id_' + timestamp,
+      academicYear: '2024-2025',
+      needsAndFocus: {
+        ipgCoreAction: 'CA1',
+        ipgSubCategory: 'CA1A',
+        rationale: 'Test rationale for focusing on grade-level cluster focus'
+      },
+      goal: {
+        description: 'Test goal: Improve student understanding of mathematical concepts',
+        teacherOutcomes: [{
+          description: 'Teacher will demonstrate improved lesson planning',
+          metrics: [{
+            description: 'Lesson plan quality rubric score',
+            collectionMethod: 'documentation_review',
+            goalValue: '3.5/4.0'
+          }]
+        }],
+        studentOutcomes: [{
+          description: 'Students will show improved problem-solving skills',
+          metrics: [{
+            description: 'Problem-solving assessment scores',
+            collectionMethod: 'assessment_data',
+            goalValue: '80% proficiency'
+          }]
+        }]
+      },
+      weeklyPlans: [{
+        date: new Date(),
+        cycleNumber: '1',
+        visitNumber: '1',
+        focus: 'Introduction to coaching cycle',
+        lookFor: 'Evidence of prior knowledge activation',
+        coachAction: 'Observe and provide feedback',
+        teacherAction: 'Implement suggested strategies',
+        progressMonitoring: 'Student engagement tracking'
+      }],
+      implementationRecords: [],
+      status: 'draft',
+      startDate: new Date(),
+      cycleLength: 3,
+      owners: ['test_owner_' + timestamp]
+    };
+  };
+
+  // Test Functions
+  const testFetchAll = async () => {
+    setState(prev => ({ ...prev, isLoading: true }));
+    
+    try {
+      const result = await fetchCoachingActionPlans({
+        page: 1,
+        limit: 10,
+        sortBy: 'createdAt',
+        sortOrder: 'desc' as const,
+        filters: {}
+      });
+      
+      if (result.success) {
+        setState(prev => ({ 
+          ...prev, 
+          plans: Array.isArray(result) ? result : result.items || []
+        }));
+        addResult('FETCH_ALL', true, result);
+      } else {
+        addResult('FETCH_ALL', false, undefined, result.error);
+      }
+    } catch (error) {
+      addResult('FETCH_ALL', false, undefined, error instanceof Error ? error.message : 'Unknown error');
+    } finally {
+      setState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const testCreate = async () => {
+    setState(prev => ({ ...prev, isLoading: true }));
+    
+    try {
+      const testPlan = generateTestPlan();
+      setState(prev => ({ ...prev, testPlan }));
+      
+      const result = await createCoachingActionPlan(testPlan);
+      
+      if (result.success && result.data) {
+        setState(prev => ({ 
+          ...prev,
+          selectedPlanId: result.data._id || result.data.id,
+          plans: [result.data, ...prev.plans]
+        }));
+        addResult('CREATE', true, result.data);
+      } else {
+        addResult('CREATE', false, undefined, result.error);
+      }
+    } catch (error) {
+      addResult('CREATE', false, undefined, error instanceof Error ? error.message : 'Unknown error');
+    } finally {
+      setState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const testFetchById = async () => {
+    if (!state.selectedPlanId) {
+      addResult('FETCH_BY_ID', false, undefined, 'No plan selected');
+      return;
+    }
+
+    setState(prev => ({ ...prev, isLoading: true }));
+    
+    try {
+      const result = await fetchCoachingActionPlanById(state.selectedPlanId);
+      
+      if (result.success) {
+        addResult('FETCH_BY_ID', true, result.data);
+      } else {
+        addResult('FETCH_BY_ID', false, undefined, result.error);
+      }
+    } catch (error) {
+      addResult('FETCH_BY_ID', false, undefined, error instanceof Error ? error.message : 'Unknown error');
+    } finally {
+      setState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const testUpdate = async () => {
+    if (!state.selectedPlanId) {
+      addResult('UPDATE', false, undefined, 'No plan selected');
+      return;
+    }
+
+    setState(prev => ({ ...prev, isLoading: true }));
+    
+    try {
+      const updateData = {
+        title: `Updated Plan ${Date.now()}`,
+        status: 'active' as const
+      };
+      
+      const result = await updateCoachingActionPlan(state.selectedPlanId, updateData);
+      
+      if (result.success) {
+        // Update local state
+        setState(prev => ({
+          ...prev,
+          plans: prev.plans.map(plan => 
+            plan._id === state.selectedPlanId 
+              ? { ...plan, ...updateData }
+              : plan
+          )
+        }));
+        addResult('UPDATE', true, result.data);
+      } else {
+        addResult('UPDATE', false, undefined, result.error);
+      }
+    } catch (error) {
+      addResult('UPDATE', false, undefined, error instanceof Error ? error.message : 'Unknown error');
+    } finally {
+      setState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const testDelete = async () => {
+    if (!state.selectedPlanId) {
+      addResult('DELETE', false, undefined, 'No plan selected');
+      return;
+    }
+
+    setState(prev => ({ ...prev, isLoading: true }));
+    
+    try {
+      const result = await deleteCoachingActionPlan(state.selectedPlanId);
+      
+      if (result.success) {
+        // Remove from local state
+        setState(prev => ({
+          ...prev,
+          plans: prev.plans.filter(plan => plan._id !== state.selectedPlanId),
+          selectedPlanId: null
+        }));
+        addResult('DELETE', true, result.data);
+      } else {
+        addResult('DELETE', false, undefined, result.error);
+      }
+    } catch (error) {
+      addResult('DELETE', false, undefined, error instanceof Error ? error.message : 'Unknown error');
+    } finally {
+      setState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const runAllTests = async () => {
+    await testFetchAll();
+    await new Promise(resolve => setTimeout(resolve, 500));
+    await testCreate();
+    await new Promise(resolve => setTimeout(resolve, 500));
+    await testFetchById();
+    await new Promise(resolve => setTimeout(resolve, 500));
+    await testUpdate();
+    await new Promise(resolve => setTimeout(resolve, 500));
+    // Note: Not running delete automatically to preserve test data
+  };
+
+  const clearResults = () => {
+    setState(prev => ({ ...prev, results: [] }));
+  };
+
+  return (
+    <div className="p-6 space-y-6 max-w-6xl mx-auto">
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold">Coaching Action Plan CRUD Test</h1>
+        <p className="text-gray-600">
+          Test all CRUD operations for Coaching Action Plans
+        </p>
+      </div>
+
+      {/* Control Panel */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 className="text-xl font-semibold mb-4">Test Controls</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Button 
+            onClick={testFetchAll} 
+            disabled={state.isLoading}
+            appearance="outline"
+          >
+            Fetch All
+          </Button>
+          <Button 
+            onClick={testCreate} 
+            disabled={state.isLoading}
+            intent="primary"
+          >
+            Create
+          </Button>
+          <Button 
+            onClick={testFetchById} 
+            disabled={state.isLoading || !state.selectedPlanId}
+            appearance="outline"
+          >
+            Fetch By ID
+          </Button>
+          <Button 
+            onClick={testUpdate} 
+            disabled={state.isLoading || !state.selectedPlanId}
+            appearance="outline"
+          >
+            Update
+          </Button>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <Button 
+            onClick={testDelete} 
+            disabled={state.isLoading || !state.selectedPlanId}
+            intent="danger"
+          >
+            Delete Selected
+          </Button>
+          <Button 
+            onClick={runAllTests} 
+            disabled={state.isLoading}
+            appearance="outline"
+          >
+            Run All Tests
+          </Button>
+          <Button 
+            onClick={clearResults} 
+            appearance="outline"
+          >
+            Clear Results
+          </Button>
+        </div>
+
+        {state.isLoading && (
+          <div className="mt-4 text-center">
+            <p className="text-gray-600">Running test...</p>
+          </div>
+        )}
+      </div>
+
+      {/* Plan Selection */}
+      {state.plans.length > 0 && (
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 className="text-xl font-semibold mb-4">Select Plan for Testing</h2>
+          <Select
+            value={state.selectedPlanId || ''}
+            onChange={(e) => setState(prev => ({ ...prev, selectedPlanId: e.target.value }))}
+          >
+            <option value="">Select a plan...</option>
+            {state.plans.map((plan) => (
+              <option key={plan._id} value={plan._id}>
+                {plan.title} ({plan.status})
+              </option>
+            ))}
+          </Select>
+          
+          {state.selectedPlanId && (
+            <div className="mt-4">
+              <p className="text-gray-600">
+                Selected: {state.plans.find(p => p._id === state.selectedPlanId)?.title}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Current Plans */}
+      {state.plans.length > 0 && (
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 className="text-xl font-semibold mb-4">Current Plans ({state.plans.length})</h2>
+          <div className="space-y-2">
+            {state.plans.map((plan) => (
+              <div 
+                key={plan._id} 
+                className={`p-3 border rounded cursor-pointer hover:bg-gray-50 ${
+                  state.selectedPlanId === plan._id ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                }`}
+                onClick={() => setState(prev => ({ ...prev, selectedPlanId: plan._id }))}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">{plan.title}</p>
+                    <p className="text-sm text-gray-600">
+                      Status: {plan.status} | Academic Year: {plan.academicYear}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-600">
+                      ID: {plan._id}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Test Results */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 className="text-xl font-semibold mb-4">Test Results ({state.results.length})</h2>
+        {state.results.length === 0 ? (
+          <p className="text-gray-600">No test results yet. Run some tests to see results here.</p>
+        ) : (
+          <div className="space-y-4">
+            {state.results.map((result, index) => (
+              <div key={index} className={`p-4 border rounded ${
+                result.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
+              }`}>
+                <div className="flex justify-between items-start mb-2">
+                  <div className="flex items-center space-x-2">
+                    <span className={`px-2 py-1 rounded text-sm font-medium ${
+                      result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {result.operation}
+                    </span>
+                    <span className={`text-sm ${
+                      result.success ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {result.success ? '✅ Success' : '❌ Failed'}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    {result.timestamp.toLocaleTimeString()}
+                  </p>
+                </div>
+                
+                {result.error && (
+                  <div className="mb-2">
+                    <p className="text-sm font-medium text-red-600">Error:</p>
+                    <p className="text-sm text-red-600">{result.error}</p>
+                  </div>
+                )}
+                
+                {result.data && (
+                  <details className="mt-2">
+                    <summary className="cursor-pointer text-sm font-medium text-gray-600 hover:text-gray-800">
+                      View Response Data
+                    </summary>
+                    <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto max-h-40">
+                      {JSON.stringify(result.data, null, 2)}
+                    </pre>
+                  </details>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Schema Information */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 className="text-xl font-semibold mb-4">Schema Information</h2>
+        <div className="space-y-4">
+          <div>
+            <p className="font-medium">Required Fields:</p>
+            <p className="text-sm text-gray-600">
+              title, teachers[], coaches[], school, academicYear, needsAndFocus, goal, weeklyPlans[], startDate, owners[]
+            </p>
+          </div>
+          
+          <div>
+            <p className="font-medium">Optional Fields:</p>
+            <p className="text-sm text-gray-600">
+              implementationRecords[], endOfCycleAnalysis, endDate, relatedVisits[], relatedCycles[]
+            </p>
+          </div>
+          
+          <div>
+            <p className="font-medium">Status Values:</p>
+            <p className="text-sm text-gray-600">
+              draft, active, completed, archived
+            </p>
+          </div>
+          
+          <div>
+            <p className="font-medium">IPG Core Actions:</p>
+            <p className="text-sm text-gray-600">
+              CA1, CA2, CA3
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

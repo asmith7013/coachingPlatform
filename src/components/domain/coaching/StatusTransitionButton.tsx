@@ -27,7 +27,7 @@ export function StatusTransitionButton({
   const [isLoading, setIsLoading] = useState(false);
 
   // Get available transitions for this plan
-  const availableStatuses = statusWorkflow.getNextStatuses(plan.status, plan);
+  const availableStatuses = statusWorkflow.getNextStatuses(plan.status as PlanStatus, plan);
 
   if (availableStatuses.length === 0) {
     return null; // No transitions available
@@ -56,7 +56,7 @@ export function StatusTransitionButton({
   };
 
   const validateTransition = (toStatus: PlanStatus) => {
-    return statusWorkflow.validateTransition(plan.status, toStatus, plan);
+    return statusWorkflow.validateTransition(plan.status as PlanStatus, toStatus, plan);
   };
 
   return (
@@ -85,7 +85,7 @@ export function StatusTransitionButton({
             Current Status
           </Text>
           <Badge intent={getStatusColor(plan.status as PlanStatus) as "primary" | "secondary" | "danger" | "success" | "neutral" | "info" | "warning"} size="sm">
-            {getStatusLabel(plan.status)}
+            {getStatusLabel(plan.status as PlanStatus)}
           </Badge>
         </div>
 

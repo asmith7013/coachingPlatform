@@ -144,7 +144,37 @@ export enum NoteTypes {
 }
 
 /**
- * IPG Indicators
+ * IPG Core Actions (High-level focus areas)
+ */
+export enum IPGCoreActions {
+  CA1 = "CA1", // Ensure the work reflects Focus, Coherence, and Rigor
+  CA2 = "CA2", // Employ instructional practices for all students  
+  CA3 = "CA3"  // Provide opportunities for mathematical practices
+}
+
+/**
+ * IPG Sub Categories (Specific areas within each core action)
+ */
+export enum IPGSubCategories {
+  // CA1 sections
+  CA1A = "CA1A", // Grade-level cluster focus
+  CA1B = "CA1B", // Relates new content to prior math
+  CA1C = "CA1C", // Targets appropriate rigor aspects
+  
+  // CA2 sections  
+  CA2A = "CA2A", // Makes mathematics explicit
+  CA2B = "CA2B", // Strategically shares student representations
+  
+  // CA3 sections
+  CA3A = "CA3A", // Grade-level problems and exercises
+  CA3B = "CA3B", // Cultivates reasoning and problem solving
+  CA3C = "CA3C", // Prompts students to explain thinking
+  CA3D = "CA3D", // Creates conditions for student conversations
+  CA3E = "CA3E"  // Connects informal to precise mathematical language
+}
+
+/**
+ * IPG Indicators (Legacy - maintained for backward compatibility)
  */
 export enum IPGIndicators {
   CA1 = "CA1",
@@ -178,6 +208,69 @@ export enum SessionPurposes {
   DEBRIEF = "Debrief",
   CO_PLANNING = "Co-Planning",
   PLC = "PLC",
+}
+
+/**
+ * Metric Collection Methods
+ */
+export enum MetricCollectionMethods {
+  OBSERVATION = "observation",
+  STUDENT_WORK_ANALYSIS = "student_work_analysis", 
+  ASSESSMENT_DATA = "assessment_data",
+  INTERVIEW = "interview",
+  SURVEY = "survey",
+  DOCUMENTATION_REVIEW = "documentation_review",
+  SELF_REFLECTION = "self_reflection",
+  OTHER = "other"
+}
+
+/**
+ * Visit Status for Coaching Plans
+ */
+export enum VisitStatuses {
+  PLANNED = "planned",
+  COMPLETED = "completed", 
+  CANCELLED = "cancelled",
+  RESCHEDULED = "rescheduled"
+}
+
+/**
+ * Coaching Cycle Numbers
+ */
+export enum CoachingCycleNumbers {
+  CYCLE_1 = "1",
+  CYCLE_2 = "2",
+  CYCLE_3 = "3"
+}
+
+/**
+ * Visit Numbers within a Cycle
+ */
+export enum VisitNumbers {
+  VISIT_1 = "1",
+  VISIT_2 = "2",
+  VISIT_3 = "3"
+}
+
+/**
+ * Coaching Action Plan Status
+ */
+export enum CoachingActionPlanStatuses {
+  DRAFT = "draft",
+  ACTIVE = "active",
+  COMPLETED = "completed",
+  ARCHIVED = "archived"
+}
+
+/**
+ * Evidence Types
+ */
+export enum EvidenceTypes {
+  WRITTEN_SUMMARY = "written_summary",
+  LINK = "link",
+  DOCUMENT = "document",
+  PHOTO = "photo",
+  VIDEO = "video"
 }
 
 
@@ -298,9 +391,41 @@ export type AdminLevel = z.infer<typeof AdminLevelZod>;
 export const NoteTypeZod = createZodEnum(NoteTypes);
 export type NoteType = z.infer<typeof NoteTypeZod>;
 
-// IPG Indicators
+// IPG Core Actions
+export const IPGCoreActionZod = createZodEnum(IPGCoreActions);
+export type IPGCoreAction = z.infer<typeof IPGCoreActionZod>;
+
+// IPG Sub Categories
+export const IPGSubCategoryZod = createZodEnum(IPGSubCategories);
+export type IPGSubCategory = z.infer<typeof IPGSubCategoryZod>;
+
+// IPG Indicators (Legacy)
 export const IPGIndicatorZod = createZodEnum(IPGIndicators);
 export type IPGIndicator = z.infer<typeof IPGIndicatorZod>;
+
+// Metric Collection Methods
+export const MetricCollectionMethodZod = createZodEnum(MetricCollectionMethods);
+export type MetricCollectionMethod = z.infer<typeof MetricCollectionMethodZod>;
+
+// Visit Statuses
+export const VisitStatusZod = createZodEnum(VisitStatuses);
+export type VisitStatus = z.infer<typeof VisitStatusZod>;
+
+// Coaching Cycle Numbers
+export const CoachingCycleNumberZod = createZodEnum(CoachingCycleNumbers);
+export type CoachingCycleNumber = z.infer<typeof CoachingCycleNumberZod>;
+
+// Visit Numbers
+export const VisitNumberZod = createZodEnum(VisitNumbers);
+export type VisitNumber = z.infer<typeof VisitNumberZod>;
+
+// Coaching Action Plan Statuses
+export const CoachingActionPlanStatusZod = createZodEnum(CoachingActionPlanStatuses);
+export type CoachingActionPlanStatus = z.infer<typeof CoachingActionPlanStatusZod>;
+
+// Evidence Types
+export const EvidenceTypeZod = createZodEnum(EvidenceTypes);
+export type EvidenceType = z.infer<typeof EvidenceTypeZod>;
 
 // Implementation Indicators
 export const ImplementationIndicatorZod = createZodEnum(ImplementationIndicators);

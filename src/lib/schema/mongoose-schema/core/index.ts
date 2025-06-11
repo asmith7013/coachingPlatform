@@ -6,4 +6,4 @@ export {
     TeachingLabStaffModel,
     ExperienceModel,
 } from "./staff.model"; 
-export { CoachingActionPlanModel, getCoachingActionPlanModel } from "./coaching-action-plan.model"; 
+export { CoachingActionPlanModel } from "./coaching-action-plan.model"; 

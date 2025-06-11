@@ -32,6 +32,7 @@ export interface PlanProgress {
 }
 
 // Keep existing types but ensure they extend proper base types
+// Use the direct enum values to maintain compatibility
 export type PlanStatus = "draft" | "active" | "completed" | "archived";
 
 export interface StatusTransition {
@@ -370,7 +371,7 @@ export function canBulkTransition(plans: CoachingActionPlan[], targetStatus: Pla
 
   plans.forEach(plan => {
     try {
-      const validation = statusWorkflow.validateTransition(plan.status, targetStatus, plan);
+      const validation = statusWorkflow.validateTransition(plan.status as PlanStatus, targetStatus, plan);
       if (validation.valid) {
         canTransition.push(plan);
       } else {

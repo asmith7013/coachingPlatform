@@ -75,7 +75,7 @@ export async function updateCoachingActionPlanStatus(id: string, newStatus: Plan
       const currentPlan = currentResult.data;
       
       // Validate the status transition
-      const validation = statusWorkflow.validateTransition(currentPlan.status, newStatus, currentPlan);
+      const validation = statusWorkflow.validateTransition(currentPlan.status as PlanStatus, newStatus, currentPlan);
       if (!validation.valid) {
         return {
           success: false,
@@ -144,7 +144,7 @@ export async function getAvailableStatusTransitions(id: string) {
       }
 
       const plan = result.data;
-      const nextStatuses = statusWorkflow.getNextStatuses(plan.status, plan);
+      const nextStatuses = statusWorkflow.getNextStatuses(plan.status as PlanStatus, plan);
       
       return {
         success: true,
