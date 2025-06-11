@@ -1,20 +1,22 @@
 "use client";
 
 import React from 'react';
-import { ResourceForm } from '@/components/composed/forms/UpdatedResourceForm';
-import type { Field } from '@ui-types/form';
-import { 
-  NeedsAndFocusFieldConfig,
-  GoalFieldConfig,
-  ImplementationRecordFieldConfig,
-  EndOfCycleAnalysisFieldConfig
-} from '@/lib/ui/forms/configurations/coaching-action-plan-config';
+import { useForm } from '@tanstack/react-form';
+import { TanStackForm } from '@tanstack-form/components/TanStackForm';
+import { stageFieldConfigs } from '@/lib/ui/forms/fieldConfig/coaching/coaching-action-plan-stages';
 import type { 
   NeedsAndFocus, 
   Goal, 
   ImplementationRecord, 
   EndOfCycleAnalysis 
 } from '@zod-schema/core/cap';
+import { 
+  NeedsAndFocusZodSchema,
+  GoalZodSchema,
+  ImplementationRecordZodSchema,
+  EndOfCycleAnalysisZodSchema
+} from '@zod-schema/core/cap';
+import { FormApi } from '@tanstack-form/types/field-types';
 
 type StageData = NeedsAndFocus | Goal | ImplementationRecord | EndOfCycleAnalysis;
 
@@ -28,27 +30,33 @@ interface ActionPlanStageFormProps<T extends StageData> {
   className?: string;
 }
 
+// Schema-derived field configurations are now imported from domain-organized files
+
 // Stage configuration mapping
 const stageConfig = {
   1: {
     title: 'Stage 1: Needs & Focus',
     description: 'Identify the core instructional focus area based on IPG standards',
-    fields: NeedsAndFocusFieldConfig
+    schema: NeedsAndFocusZodSchema,
+    fields: stageFieldConfigs[1]
   },
   2: {
     title: 'Stage 2: Goal & Outcomes', 
     description: 'Define SMART goals with measurable teacher and student outcomes',
-    fields: GoalFieldConfig
+    schema: GoalZodSchema,
+    fields: stageFieldConfigs[2]
   },
   3: {
     title: 'Stage 3: Implementation Record',
     description: 'Document what actually happened during coaching visits',
-    fields: ImplementationRecordFieldConfig
+    schema: ImplementationRecordZodSchema,
+    fields: stageFieldConfigs[3]
   },
   4: {
     title: 'Stage 4: End of Cycle Analysis',
     description: 'Analyze goal achievement and plan for next steps',
-    fields: EndOfCycleAnalysisFieldConfig
+    schema: EndOfCycleAnalysisZodSchema,
+    fields: stageFieldConfigs[4]
   }
 } as const;
 
@@ -67,22 +75,36 @@ export function ActionPlanStageForm<T extends StageData>({
     throw new Error(`Invalid stage: ${stage}. Must be 1, 2, 3, or 4.`);
   }
 
+  // Create TanStack form with schema validation
+  // Note: Type assertion needed due to complex generic constraints in TanStack Form
+  const form = useForm({
+    defaultValues: initialValues || {},
+    validators: {
+      onChange: config.schema,
+      onSubmit: config.schema
+    },
+    onSubmit: async ({ value }) => {
+      onSubmit(value as T);
+    }
+  }) as unknown as FormApi;
+
   return (
-    <ResourceForm<T>
-      title={config.title}
-      description={config.description}
-      fields={config.fields as Field[]}
-      onSubmit={onSubmit}
-      initialValues={initialValues}
-      submitLabel={`Save ${config.title}`}
-      onCancel={onCancel}
-      showCancelButton={!!onCancel}
-      cancelLabel="Cancel"
-      loading={loading}
-      error={error}
-      className={className}
-      mode="edit"
-    />
+    <div className={className}>
+      {error && (
+        <div className="mb-4 p-4 border border-red-200 bg-red-50 rounded-md">
+          <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
+      <TanStackForm
+        form={form}
+        fields={config.fields}
+        title={config.title}
+        description={config.description}
+        submitLabel={`Save ${config.title}`}
+        onCancel={onCancel}
+        loading={loading}
+      />
+    </div>
   );
 }
 

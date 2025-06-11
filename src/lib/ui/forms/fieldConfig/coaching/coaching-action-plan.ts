@@ -1,84 +1,70 @@
-import type { Field } from "@zod-schema/core-types/form";
+import { createFormFields, createSimpleFields } from "@lib/ui/forms/tanstack/factory/field-factory";
+import { CoachingActionPlanInputZodSchema } from "@zod-schema/core/cap";
 
 /**
- * Basic field configuration for Coaching Action Plan forms
- * Following the established pattern from school field configs
+ * Schema-derived field configuration for Coaching Action Plan forms
+ * Uses createFormFields factory with CoachingActionPlanZodSchema
+ * Follows createCrudHooks factory pattern for consistency
  */
-export const CoachingActionPlanFieldConfig: Field[] = [
+export const CoachingActionPlanFields = createFormFields(
+  CoachingActionPlanInputZodSchema,
   {
-    key: "title",
-    label: "Plan Title",
-    type: "text",
-    required: true,
-    editable: true,
-    placeholder: "Enter a descriptive title for this coaching action plan"
-  },
-  {
-    key: "academicYear",
-    label: "Academic Year",
-    type: "text",
-    required: true,
-    editable: true,
-    placeholder: "e.g., 2024-2025"
-  },
-  {
-    key: "startDate",
-    label: "Start Date",
-    type: "date",
-    required: true,
-    editable: true,
-    placeholder: "When the coaching plan begins"
-  },
-  {
-    key: "endDate",
-    label: "End Date",
-    type: "date",
-    required: false,
-    editable: true,
-    placeholder: "When the coaching plan ends (optional)"
-  },
-  {
-    key: "status",
-    label: "Status",
-    type: "select",
-    options: [
-      { value: "draft", label: "Draft", disabled: false },
-      { value: "active", label: "Active", disabled: false },
-      { value: "completed", label: "Completed", disabled: false },
-      { value: "archived", label: "Archived", disabled: false }
-    ],
-    required: false,
-    editable: true,
-    placeholder: "Select plan status"
+    fieldOrder: ["title", "teachers", "coaches", "school", "academicYear", "startDate", "endDate", "status"],
+    labels: {
+      title: "Plan Title",
+      teachers: "Teachers",
+      coaches: "Coaches", 
+      school: "School",
+      academicYear: "Academic Year",
+      startDate: "Start Date",
+      endDate: "End Date",
+      status: "Status"
+    },
+    placeholders: {
+      title: "Enter a descriptive title for this coaching action plan",
+      academicYear: "e.g., 2024-2025",
+      startDate: "When the coaching plan begins",
+      endDate: "When the coaching plan ends (optional)"
+    },
+    fieldTypes: {
+      teachers: "reference",
+      coaches: "reference", 
+      school: "reference",
+      startDate: "date",
+      endDate: "date",
+      status: "select"
+    },
+    urls: {
+      teachers: "/api/staff?role=teacher",
+      coaches: "/api/staff?role=coach",
+      school: "/api/schools"
+    },
+    options: {
+      status: [
+        { value: "draft", label: "Draft" },
+        { value: "active", label: "Active" },
+        { value: "completed", label: "Completed" },
+        { value: "archived", label: "Archived" }
+      ]
+    }
   }
-];
+);
 
 /**
- * Simplified field configuration for quick creation
+ * Quick creation field configuration
+ * Essential fields only - following YAGNI principle
+ * Uses schema-derived approach for consistency
  */
-export const QuickCreateFieldConfig: Field[] = [
+export const QuickCreateFields = createSimpleFields(
+  CoachingActionPlanInputZodSchema,
+  ["title", "academicYear", "startDate"],
   {
-    key: "title",
-    label: "Plan Title",
-    type: "text",
-    required: true,
-    editable: true,
-    placeholder: "Enter a descriptive title for this coaching action plan"
-  },
-  {
-    key: "academicYear",
-    label: "Academic Year",
-    type: "text",
-    required: true,
-    editable: true,
-    placeholder: "e.g., 2024-2025"
-  },
-  {
-    key: "startDate",
-    label: "Start Date",
-    type: "date",
-    required: true,
-    editable: true,
-    placeholder: "When the coaching plan begins"
+    title: "Plan Title",
+    academicYear: "Academic Year",
+    startDate: "Start Date"
   }
-]; 
+);
+
+// Legacy exports for backward compatibility during migration
+export const CoachingActionPlanFieldConfig = CoachingActionPlanFields;
+export const QuickCreateFieldConfig = QuickCreateFields; 

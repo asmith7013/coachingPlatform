@@ -79,7 +79,27 @@ export const textareaStyles = textarea;
 // ✅ Export type for variant props
 export type TextareaVariants = VariantProps<typeof textarea>;
 
-export interface TextareaProps extends TextareaHTMLProps {
+/**
+ * TanStack Form field integration props (optional)
+ */
+interface TanStackFormProps {
+  fieldApi?: {
+    state: {
+      value: unknown;
+      meta: {
+        errors?: string[];
+        isValidating?: boolean;
+        isDirty?: boolean;
+        isTouched?: boolean;
+      };
+    };
+    handleChange: (value: unknown) => void;
+    handleBlur: () => void;
+    name: string;
+  };
+}
+
+export interface TextareaProps extends TextareaHTMLProps, TanStackFormProps {
   label?: string;
   error?: string;
   textSize?: TextSizeToken;
@@ -103,13 +123,27 @@ export function Textarea({
   className,
   disabled,
   rows = 4, // Set default to 4 rows
+  fieldApi,
   ...props
 }: TextareaProps) {
+  // TanStack Form integration
+  const finalValue = fieldApi ? fieldApi.state.value : props.value;
+  const finalError = fieldApi ? fieldApi.state.meta.errors?.[0] : error;
+  const finalDisabled = disabled || (fieldApi ? fieldApi.state.meta.isValidating : false);
+  
+  const handleChange = fieldApi ? 
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => fieldApi.handleChange(e.target.value) :
+    props.onChange;
+  
+  const handleBlur = fieldApi ? 
+    () => fieldApi.handleBlur() :
+    props.onBlur;
+
   return (
     <FieldWrapper 
-      id={props.id} 
+      id={props.id || fieldApi?.name} 
       label={label} 
-      error={error}
+      error={finalError}
       textSize={textSize}
       padding={padding}
     >
@@ -121,14 +155,17 @@ export function Textarea({
             radius: radius as TextareaVariants['radius'],
             width,
             resize,
-            error: Boolean(error),
-            disabled,
+            error: Boolean(finalError),
+            disabled: finalDisabled,
           }),
           className
         )}
-        disabled={disabled}
-        rows={rows}
         {...props}
+        value={finalValue as string}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        disabled={finalDisabled}
+        rows={rows}
       />
     </FieldWrapper>
   )

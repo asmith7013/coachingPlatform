@@ -3,7 +3,7 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import Select from "react-select";
 import { Label } from "./Label";
-import { useReferenceData, getEntityTypeFromUrlUtil } from "@/query/client/hooks/queries/useReferenceData";
+import { useReferenceData, getEntityTypeFromUrlUtil } from "@query/client/hooks/queries/useReferenceData";
 import { ZodSchema } from "zod";
 import { BaseDocument } from "@core-types/document";
 
@@ -13,7 +13,31 @@ export type OptionType = {
   [key: string]: unknown;
 };
 
-export interface ReferenceSelectProps {
+/**
+ * TanStack Form field integration props (optional)
+ */
+interface TanStackFormProps {
+  fieldApi?: {
+    state: {
+      value: unknown;
+      meta: {
+        errors?: string[];
+        isValidating?: boolean;
+        isDirty?: boolean;
+        isTouched?: boolean;
+      };
+    };
+    handleChange: (value: unknown) => void;
+    handleBlur: () => void;
+    name: string;
+  };
+  /** Error message for field validation */
+  error?: string;
+  /** Required field indicator */
+  required?: boolean;
+}
+
+export interface ReferenceSelectProps extends TanStackFormProps {
   /** Selected value(s) */
   value: string[] | string;
   
@@ -67,8 +91,20 @@ export function ReferenceSelect({
   schema,
   entityType,
   search = "",
-  className = ""
+  className = "",
+  fieldApi,
+  error,
+  required = false
 }: ReferenceSelectProps) {
+  // TanStack Form integration
+  const finalValue = fieldApi ? fieldApi.state.value : value;
+  const _finalError = fieldApi ? fieldApi.state.meta.errors?.[0] : error;
+  const _finalDisabled = disabled || (fieldApi ? fieldApi.state.meta.isValidating : false);
+  const _required = required
+  
+  const _handleChange = fieldApi ? 
+    (selectedValue: string | string[]) => fieldApi.handleChange(selectedValue) :
+    onChange;
   // Add state for retry attempts
   const [retryCount, setRetryCount] = useState(0);
   
@@ -106,7 +142,7 @@ export function ReferenceSelect({
   const { 
     options, 
     isLoading, 
-    error, 
+    error: _error, 
     refetch 
   } = useReferenceData({
     url,
@@ -117,7 +153,7 @@ export function ReferenceSelect({
   });
   
   // Memoize the selectedValue transformation 
-  const selectedValue = useMemo(() => {
+  const _selectedValue = useMemo(() => {
     // Ensure options is always an array
     const safeOptions = Array.isArray(options) ? options : [];
     
@@ -155,7 +191,7 @@ export function ReferenceSelect({
       
       {error ? (
         <div className="text-red-500 text-sm p-2 border border-red-200 bg-red-50 rounded">
-          <p>Error loading options: {error.message}</p>
+          <p>Error loading options: {error}</p>
           <button 
             onClick={handleRetry}
             className="mt-2 px-2 py-1 text-xs bg-red-100 hover:bg-red-200 rounded transition-colors"
@@ -168,7 +204,7 @@ export function ReferenceSelect({
         <Select
           isMulti={multiple}
           options={options}
-          value={selectedValue}
+          value={finalValue}
           onChange={handleChange}
           isLoading={isLoading}
           isDisabled={disabled || isLoading}

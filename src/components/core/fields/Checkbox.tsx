@@ -81,8 +81,28 @@ export const checkboxStyles = checkbox;
 // ✅ Export type for variant props
 export type CheckboxVariants = VariantProps<typeof checkbox>;
 
+/**
+ * TanStack Form field integration props (optional)
+ */
+interface TanStackFormProps {
+  fieldApi?: {
+    state: {
+      value: unknown;
+      meta: {
+        errors?: string[];
+        isValidating?: boolean;
+        isDirty?: boolean;
+        isTouched?: boolean;
+      };
+    };
+    handleChange: (value: unknown) => void;
+    handleBlur: () => void;
+    name: string;
+  };
+}
+
 // Export the interface
-export interface CheckboxProps extends CheckboxHTMLProps {
+export interface CheckboxProps extends CheckboxHTMLProps, TanStackFormProps {
   label?: string;
   description?: string;
   error?: string;
@@ -102,21 +122,35 @@ export function Checkbox({
   padding,
   radius,
   disabled,
+  fieldApi,
   ...props
 }: CheckboxProps) {
+  // TanStack Form integration
+  const finalChecked = fieldApi ? Boolean(fieldApi.state.value) : props.checked;
+  const finalError = fieldApi ? fieldApi.state.meta.errors?.[0] : error;
+  const finalDisabled = disabled || (fieldApi ? fieldApi.state.meta.isValidating : false);
+  
+  const handleChange = fieldApi ? 
+    (e: React.ChangeEvent<HTMLInputElement>) => fieldApi.handleChange(e.target.checked) :
+    props.onChange;
+  
+  const handleBlur = fieldApi ? 
+    () => fieldApi.handleBlur() :
+    props.onBlur;
+
   const styles = checkbox({
     textSize,
     padding,
     radius: radius as CheckboxVariants['radius'],
-    error: Boolean(error),
-    disabled,
+    error: Boolean(finalError),
+    disabled: finalDisabled,
   });
 
   return (
     <FieldWrapper 
-      id={props.id} 
+      id={props.id || fieldApi?.name} 
       label={label} 
-      error={error}
+      error={finalError}
       textSize={textSize}
       padding={padding}
     >
@@ -125,8 +159,11 @@ export function Checkbox({
           <input
             type="checkbox"
             className={cn(styles.input(), className)}
-            disabled={disabled}
             {...props}
+            checked={finalChecked}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={finalDisabled}
           />
         </div>
         {description && (

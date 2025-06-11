@@ -73,6 +73,8 @@
         "@query-hooks/*": ["./src/hooks/query/*"],
         "@config/*": ["./src/lib/config/*"],
         "@config": ["./src/lib/config"],
+        "@tanstack-form/*": ["./src/lib/ui/forms/tanstack/*"],
+        "@forms/*": ["./src/lib/ui/forms/*"],
         // API utilities (in lib)
         "@api-utils/*": ["./src/lib/server/api/*"],
         "@api-client/*": ["./src/lib/server/api/client/*"],

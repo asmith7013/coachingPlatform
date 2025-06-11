@@ -1,271 +1,126 @@
-import { Field } from "@ui-types/form";
-import { ClassroomObservationNoteInput } from "@zod-schema/observations/classroom-observation";
+import { createFormFields } from '@/lib/ui/forms/tanstack/factory/field-factory';
+import { ClassroomObservationNoteInputZodSchema, ClassroomObservationNoteInput } from "@zod-schema/observations/classroom-observation";
 import { set } from 'lodash';
 
-export const ClassroomObservationFieldConfig: Field[] = [
-  // Basic Information Section
-  {
-    key: "cycle",
-    label: "Cycle",
-    type: "text",
-    required: true,
-    editable: true,
-    placeholder: "Enter cycle name"
+/**
+ * Schema-derived field configuration for Classroom Observation forms
+ * Uses createFormFields factory with ClassroomObservationNoteInputZodSchema
+ * Follows established domain-organized configuration pattern
+ */
+export const observationFields = createFormFields(ClassroomObservationNoteInputZodSchema, {
+  fieldOrder: [
+    // Basic Information
+    "cycle", "session", "date", "teacherId", "coachId", "schoolId", "visitId", "status", "isSharedWithTeacher",
+    
+    // Lesson Details  
+    "lesson.title", "lesson.course", "lesson.unit", "lesson.lessonNumber", "otherContext", "learningTargets", "coolDown",
+    
+    // Lesson Flow - Warm Up
+    "lessonFlow.warmUp.launch", "lessonFlow.warmUp.workTime", "lessonFlow.warmUp.synthesis",
+    
+    // Lesson Flow - Activity 1
+    "lessonFlow.activity1.launch", "lessonFlow.activity1.workTime", "lessonFlow.activity1.synthesis",
+    
+    // Lesson Flow - Synthesis
+    "lessonFlow.lessonSynthesis.launch", "lessonFlow.lessonSynthesis.workTime", "lessonFlow.lessonSynthesis.synthesis",
+    
+    // Progress Monitoring & Time Tracking
+    "progressMonitoring.overallNotes", "timeTracking.classStartTime", "timeTracking.classEndTime"
+  ],
+  labels: {
+    cycle: "Cycle",
+    session: "Session", 
+    date: "Date",
+    teacherId: "Teacher",
+    coachId: "Coach",
+    schoolId: "School",
+    visitId: "Visit",
+    status: "Status",
+    isSharedWithTeacher: "Share with Teacher",
+    
+    "lesson.title": "Lesson Title",
+    "lesson.course": "Course",
+    "lesson.unit": "Unit", 
+    "lesson.lessonNumber": "Lesson Number",
+    otherContext: "Other Context",
+    learningTargets: "Learning Targets",
+    coolDown: "Cool Down",
+    
+    "lessonFlow.warmUp.launch": "Warm Up - Launch",
+    "lessonFlow.warmUp.workTime": "Warm Up - Work Time",
+    "lessonFlow.warmUp.synthesis": "Warm Up - Synthesis",
+    
+    "lessonFlow.activity1.launch": "Activity 1 - Launch",
+    "lessonFlow.activity1.workTime": "Activity 1 - Work Time",
+    "lessonFlow.activity1.synthesis": "Activity 1 - Synthesis",
+    
+    "lessonFlow.lessonSynthesis.launch": "Lesson Synthesis - Launch",
+    "lessonFlow.lessonSynthesis.workTime": "Lesson Synthesis - Work Time",
+    "lessonFlow.lessonSynthesis.synthesis": "Lesson Synthesis - Synthesis",
+    
+    "progressMonitoring.overallNotes": "Progress Monitoring Notes",
+    "timeTracking.classStartTime": "Class Start Time",
+    "timeTracking.classEndTime": "Class End Time"
   },
-  {
-    key: "session", 
-    label: "Session",
-    type: "text",
-    required: true,
-    editable: true,
-    placeholder: "Enter session name"
+  placeholders: {
+    cycle: "Enter cycle name",
+    session: "Enter session name",
+    "lesson.title": "Enter lesson title",
+    "lesson.course": "Enter course name",
+    "lesson.unit": "Enter unit name",
+    "lesson.lessonNumber": "Enter lesson number",
+    otherContext: "Additional context or notes",
+    learningTargets: "Enter learning targets (one per line)",
+    coolDown: "Cool down activity or notes",
+    "progressMonitoring.overallNotes": "Overall progress monitoring observations",
+    "timeTracking.classStartTime": "e.g., 08:00",
+    "timeTracking.classEndTime": "e.g., 09:00"
   },
-  {
-    key: "date",
-    label: "Date",
-    type: "date",
-    required: true,
-    editable: true
+  fieldTypes: {
+    teacherId: "reference",
+    coachId: "reference", 
+    schoolId: "reference",
+    visitId: "reference",
+    date: "date",
+    status: "select",
+    isSharedWithTeacher: "checkbox",
+    learningTargets: "textarea",
+    coolDown: "textarea",
+    otherContext: "textarea",
+    "lessonFlow.warmUp.launch": "textarea",
+    "lessonFlow.warmUp.workTime": "textarea", 
+    "lessonFlow.warmUp.synthesis": "textarea",
+    "lessonFlow.activity1.launch": "textarea",
+    "lessonFlow.activity1.workTime": "textarea",
+    "lessonFlow.activity1.synthesis": "textarea",
+    "lessonFlow.lessonSynthesis.launch": "textarea",
+    "lessonFlow.lessonSynthesis.workTime": "textarea",
+    "lessonFlow.lessonSynthesis.synthesis": "textarea",
+    "progressMonitoring.overallNotes": "textarea"
   },
-  {
-    key: "teacherId",
-    label: "Teacher",
-    type: "reference",
-    url: "/api/staff?role=teacher",
-    required: true,
-    editable: true,
-    multiple: false
+  urls: {
+    teacherId: "/api/staff?role=teacher",
+    coachId: "/api/staff?role=coach",
+    schoolId: "/api/schools",
+    visitId: "/api/visits"
   },
-  {
-    key: "coachId",
-    label: "Coach", 
-    type: "reference",
-    url: "/api/staff?role=coach",
-    required: true,
-    editable: true,
-    multiple: false
-  },
-  {
-    key: "schoolId",
-    label: "School",
-    type: "reference", 
-    url: "/api/schools",
-    required: true,
-    editable: true,
-    multiple: false
-  },
-  {
-    key: "visitId",
-    label: "Visit",
-    type: "reference", 
-    url: "/api/visits",
-    required: false,
-    editable: true,
-    multiple: false
-  },
-  
-  // Lesson Information Section
-  {
-    key: "lesson.title",
-    label: "Lesson Title",
-    type: "text",
-    required: false,
-    editable: true,
-    placeholder: "Enter lesson title"
-  },
-  {
-    key: "lesson.course",
-    label: "Course",
-    type: "text", 
-    required: false,
-    editable: true,
-    placeholder: "Enter course name"
-  },
-  {
-    key: "lesson.unit",
-    label: "Unit",
-    type: "text",
-    required: false,
-    editable: true,
-    placeholder: "Enter unit name"
-  },
-  {
-    key: "lesson.lessonNumber",
-    label: "Lesson Number",
-    type: "text",
-    required: false,
-    editable: true,
-    placeholder: "Enter lesson number"
-  },
-  {
-    key: "otherContext",
-    label: "Other Context",
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Additional context or notes"
-  },
-  
-  // Learning Targets (simplified as text for now)
-  {
-    key: "learningTargets",
-    label: "Learning Targets",
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Enter learning targets (one per line)"
-  },
-  
-  // Cool Down
-  {
-    key: "coolDown",
-    label: "Cool Down",
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Cool down activity or notes"
-  },
-  
-  // Lesson Flow - Warm Up
-  {
-    key: "lessonFlow.warmUp.launch",
-    label: "Warm Up - Launch",
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Warm up launch notes"
-  },
-  {
-    key: "lessonFlow.warmUp.workTime",
-    label: "Warm Up - Work Time", 
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Warm up work time notes"
-  },
-  {
-    key: "lessonFlow.warmUp.synthesis",
-    label: "Warm Up - Synthesis",
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Warm up synthesis notes"
-  },
-  
-  // Lesson Flow - Activity 1
-  {
-    key: "lessonFlow.activity1.launch",
-    label: "Activity 1 - Launch",
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Activity 1 launch notes"
-  },
-  {
-    key: "lessonFlow.activity1.workTime",
-    label: "Activity 1 - Work Time",
-    type: "textarea", 
-    required: false,
-    editable: true,
-    placeholder: "Activity 1 work time notes"
-  },
-  {
-    key: "lessonFlow.activity1.synthesis",
-    label: "Activity 1 - Synthesis",
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Activity 1 synthesis notes"
-  },
-  
-  // Lesson Synthesis
-  {
-    key: "lessonFlow.lessonSynthesis.launch",
-    label: "Lesson Synthesis - Launch",
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Lesson synthesis launch notes"
-  },
-  {
-    key: "lessonFlow.lessonSynthesis.workTime",
-    label: "Lesson Synthesis - Work Time",
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Lesson synthesis work time notes"
-  },
-  {
-    key: "lessonFlow.lessonSynthesis.synthesis",
-    label: "Lesson Synthesis - Synthesis",
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Lesson synthesis notes"
-  },
-  
-  // Progress Monitoring
-  {
-    key: "progressMonitoring.overallNotes",
-    label: "Progress Monitoring Notes",
-    type: "textarea",
-    required: false,
-    editable: true,
-    placeholder: "Overall progress monitoring observations"
-  },
-  
-  // Time Tracking
-  {
-    key: "timeTracking.classStartTime",
-    label: "Class Start Time",
-    type: "text",
-    required: false,
-    editable: true,
-    placeholder: "e.g., 08:00"
-  },
-  {
-    key: "timeTracking.classEndTime", 
-    label: "Class End Time",
-    type: "text",
-    required: false,
-    editable: true,
-    placeholder: "e.g., 09:00"
-  },
-  
-  // Status
-  {
-    key: "status",
-    label: "Status",
-    type: "select",
-    options: [
+  options: {
+    status: [
       { value: "draft", label: "Draft" },
       { value: "in_progress", label: "In Progress" },
       { value: "completed", label: "Completed" },
       { value: "reviewed", label: "Reviewed" }
-    ],
-    required: true,
-    editable: true,
-    defaultValue: "draft"
-  },
-  
-  // Shared with Teacher
-  {
-    key: "isSharedWithTeacher",
-    label: "Share with Teacher",
-    type: "checkbox",
-    required: false,
-    editable: true,
-    defaultValue: false
+    ]
   }
-];
+});
 
 // Export subsets for complex nested forms if needed
-export const LessonFieldConfig = ClassroomObservationFieldConfig.filter(field => 
-  String(field.key).startsWith('lesson.')
+export const LessonFieldConfig = observationFields.filter(field => 
+  String(field.name).startsWith('lesson.')
 );
 
-export const LessonFlowFieldConfig = ClassroomObservationFieldConfig.filter(field =>
-  String(field.key).startsWith('lessonFlow.')
+export const LessonFlowFieldConfig = observationFields.filter(field =>
+  String(field.name).startsWith('lessonFlow.')
 );
 
 /**
@@ -288,7 +143,5 @@ export function updateNestedObservationField(
   return result;
 }
 
-// Export field transformer for ResourceForm
-export const classroomObservationFieldTransformer = {
-  updateField: updateNestedObservationField
-}; 
+// Legacy export for backward compatibility during migration
+export const ClassroomObservationFieldConfig = observationFields; 

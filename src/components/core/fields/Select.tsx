@@ -24,7 +24,29 @@ export interface SelectOption {
   online?: boolean;
 }
 
-export interface BaseSelectProps {
+/**
+ * TanStack Form field integration props (optional)
+ * When provided, the component integrates with TanStack Form field state
+ */
+interface TanStackFormProps {
+  /** TanStack Form field API for advanced integration */
+  fieldApi?: {
+    state: {
+      value: unknown;
+      meta: {
+        errors?: string[];
+        isValidating?: boolean;
+        isDirty?: boolean;
+        isTouched?: boolean;
+      };
+    };
+    handleChange: (value: unknown) => void;
+    handleBlur: () => void;
+    name: string;
+  };
+}
+
+export interface BaseSelectProps extends TanStackFormProps {
   label?: string;
   options: SelectOption[];
   placeholder?: string;
@@ -178,31 +200,42 @@ export function Select({
   radius,
   disabled = false,
   labelColor,
+  fieldApi,
 }: SelectProps) {
-  const styles = select({ textSize, padding, radius });
+  // TanStack Form integration: override props when fieldApi is provided
+  const finalValue = fieldApi ? fieldApi.state.value : value;
+  const finalError = fieldApi ? fieldApi.state.meta.errors?.[0] : error;
+  const finalDisabled = disabled || (fieldApi ? fieldApi.state.meta.isValidating : false);
+  
+  // TanStack Form event handlers
+  const handleChange = fieldApi ? 
+    (selectedValue: string | string[]) => fieldApi.handleChange(selectedValue) :
+    onChange;
+
+  const styles = select({ textSize, padding, radius, error: Boolean(finalError), disabled: finalDisabled });
 
   // Add defensive handling for value
   const safeValue = multiple 
-    ? (Array.isArray(value) ? value : []) 
-    : value;
+    ? (Array.isArray(finalValue) ? finalValue : []) 
+    : finalValue;
 
   return (
     <FieldWrapper 
-      id="select" 
+      id={fieldApi?.name || "select"} 
       label={label} 
-      error={error}
+      error={finalError}
       textSize={textSize}
       padding={padding}
       labelColor={labelColor}
     >
       <div className="relative w-full">
-        <Listbox as="div" value={safeValue} onChange={onChange} multiple={multiple}>
+        <Listbox as="div" value={safeValue} onChange={handleChange} multiple={multiple}>
           <Listbox.Button
             className={cn(
               styles.trigger(),
               className
             )}
-            disabled={disabled}
+            disabled={finalDisabled}
           >
             {multiple ? (
               <span className={styles.value()}>

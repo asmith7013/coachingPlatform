@@ -9,14 +9,17 @@ import { DashboardPage } from '@components/composed/layouts/DashboardPage';
 import { useSchoolsList, useSchoolsMutations } from "@hooks/domain/useSchools"; // ✅ React Query hooks for managing Schools data.
 import { SchoolInput } from "@zod-schema/core/school";
 import { School } from "@zod-schema/core/school";
-import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
-import { RigidResourceForm as GenericResourceForm } from "@components/composed/forms/RigidResourceForm";
+// TODO: TanStack Form Migration - Temporarily commented out unused imports
+// import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
+// import { SchoolFieldConfig } from "@ui-forms/configurations";
+// import type { Field } from "@ui-types/form";
+// TODO: TanStack Form Migration - RigidResourceForm has been deleted
+// import { RigidResourceForm as GenericResourceForm } from "@components/composed/forms/RigidResourceForm";
+import { uploadSchoolFile } from "@actions/schools/schools";
 import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
 import { ResourceHeader } from "@components/composed/layouts/ResourceHeader";
-import { SchoolFieldConfig } from "@ui-forms/configurations";
 import { cn } from "@ui/utils/formatters";
 import { EmptyListWrapper } from '@components/core/empty/EmptyListWrapper';
-import type { Field } from "@ui-types/form";
 
 
 
@@ -159,12 +162,13 @@ export default function SchoolList() {
       </EmptyListWrapper>
 
       <div className="mt-8">
-        <GenericResourceForm
+        {/* TODO: TanStack Form Migration - Replace with TanStackForm */}
+        {/* <GenericResourceForm
           mode="create"
           title="Add School"
           onSubmit={createSchool}
           fields={SchoolFieldConfig as Field[]}
-        />
+        /> */}
         <BulkUploadForm
           title="Bulk Upload Schools"
           description="Upload a CSV file with school data"

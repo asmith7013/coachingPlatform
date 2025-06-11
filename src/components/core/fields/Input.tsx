@@ -66,7 +66,29 @@ const input = tv({
 export type InputVariants = VariantProps<typeof input>
 type InputHTMLProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>
 
-export interface InputProps extends InputHTMLProps, Omit<FieldComponentProps, 'children'> {
+/**
+ * TanStack Form field integration props (optional)
+ * When provided, the component integrates with TanStack Form field state
+ */
+interface TanStackFormProps {
+  /** TanStack Form field API for advanced integration */
+  fieldApi?: {
+    state: {
+      value: unknown;
+      meta: {
+        errors?: string[];
+        isValidating?: boolean;
+        isDirty?: boolean;
+        isTouched?: boolean;
+      };
+    };
+    handleChange: (value: unknown) => void;
+    handleBlur: () => void;
+    name: string;
+  };
+}
+
+export interface InputProps extends InputHTMLProps, Omit<FieldComponentProps, 'children'>, TanStackFormProps {
   disabled?: boolean;
 }
 
@@ -81,21 +103,36 @@ export function Input({
   disabled,
   required,
   readOnly,
+  fieldApi,
   ...props
 }: InputProps) {
+  // TanStack Form integration: override props when fieldApi is provided
+  const finalValue = fieldApi ? fieldApi.state.value : props.value;
+  const finalError = fieldApi ? fieldApi.state.meta.errors?.[0] : error;
+  const finalDisabled = disabled || (fieldApi ? fieldApi.state.meta.isValidating : false);
+  
+  // TanStack Form event handlers
+  const handleChange = fieldApi ? 
+    (e: React.ChangeEvent<HTMLInputElement>) => fieldApi.handleChange(e.target.value) :
+    props.onChange;
+  
+  const handleBlur = fieldApi ? 
+    () => fieldApi.handleBlur() :
+    props.onBlur;
+
   const { base } = input({
     textSize,
     padding,
     radius,
-    error: Boolean(error),
-    disabled,
+    error: Boolean(finalError),
+    disabled: finalDisabled,
   })
   
   return (
     <FieldWrapper
-      id={props.id}
+      id={props.id || fieldApi?.name}
       label={label}
-      error={typeof error === 'boolean' ? undefined : error}
+      error={typeof finalError === 'boolean' ? undefined : finalError}
       helpText={helpText}
       textSize={textSize}
       padding={padding}
@@ -103,7 +140,10 @@ export function Input({
     >
       <input
         {...props}
-        disabled={disabled}
+        value={finalValue as string}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        disabled={finalDisabled}
         readOnly={readOnly}
         className={cn(base(), className)}
       />

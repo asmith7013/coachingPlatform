@@ -14,7 +14,27 @@ import {
 } from '@/lib/tokens/types'
 import { FieldWrapper } from './FieldWrapper'
 
-export interface SwitchProps {
+/**
+ * TanStack Form field integration props (optional)
+ */
+interface TanStackFormProps {
+  fieldApi?: {
+    state: {
+      value: unknown;
+      meta: {
+        errors?: string[];
+        isValidating?: boolean;
+        isDirty?: boolean;
+        isTouched?: boolean;
+      };
+    };
+    handleChange: (value: unknown) => void;
+    handleBlur: () => void;
+    name: string;
+  };
+}
+
+export interface SwitchProps extends TanStackFormProps {
   checked: boolean
   onChange: (checked: boolean) => void
   label?: string
@@ -153,11 +173,21 @@ export function Switch({
   textSize,
   padding,
   radius,
+  fieldApi,
 }: SwitchProps) {
+  // TanStack Form integration
+  const finalChecked = fieldApi ? Boolean(fieldApi.state.value) : checked;
+  const finalError = fieldApi ? fieldApi.state.meta.errors?.[0] : error;
+  const finalDisabled = disabled || (fieldApi ? fieldApi.state.meta.isValidating : false);
+  
+  const handleChange = fieldApi ? 
+    (newChecked: boolean) => fieldApi.handleChange(newChecked) :
+    onChange;
+
   const styles = switchStyles({ 
-    checked: checked as boolean, 
-    error: Boolean(error),
-    disabled,
+    checked: finalChecked as boolean, 
+    error: Boolean(finalError),
+    disabled: finalDisabled,
     textSize,
     padding,
     radius: radius as SwitchVariants['radius'],
@@ -165,9 +195,9 @@ export function Switch({
 
   return (
     <FieldWrapper 
-      id="switch" 
+      id={fieldApi?.name || "switch"} 
       label={label} 
-      error={error}
+      error={finalError}
       textSize={textSize}
       padding={padding}
     >
@@ -175,9 +205,10 @@ export function Switch({
         <button
           type="button"
           role="switch"
-          aria-checked={checked}
-          disabled={disabled}
-          onClick={() => onChange(!checked)}
+          aria-checked={finalChecked}
+          disabled={finalDisabled}
+          onClick={() => handleChange(!finalChecked)}
+          onBlur={fieldApi?.handleBlur}
           className={cn(styles.track(), className)}
         >
           <span className={styles.thumb()} />

@@ -1,25 +1,26 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { Card } from '@components/composed/cards/Card';
+import React, { useMemo } from 'react';
+import { useForm } from '@tanstack/react-form';
 import { Alert } from '@components/core/feedback/Alert';
-import { Button } from '@components/core/Button';
-import { ResourceForm } from '@components/composed/forms';
-import { VisitFieldConfig } from '@ui-forms/configurations';
-import type { VisitInput } from '@zod-schema/visits/visit';
-import type { Field } from '@ui-types/form';
+import { TanStackForm } from '@tanstack-form/components/TanStackForm';
+import { VisitInput } from '@zod-schema/visits/visit';
+import { VisitInputZodSchema } from '@zod-schema/visits/visit';
+import { visitFields } from '@forms/fieldConfig/integrations';
+
 /**
  * Props for the ImportCompletionForm component
  */
 interface ImportCompletionFormProps {
   importedVisit: Partial<VisitInput>;
+  missingFields: string[];
   onSubmit: (data: VisitInput) => void;
   onCancel: () => void;
-  missingFields: string[];
-  boardId?: string; // Made optional since it's not used in this component
-  mondayItemName?: string; // Made optional since it's not used in this component
-  mondayUserName?: string; // Made optional since it's not used in this component
   disabled?: boolean;
+  // Unused props kept for interface compatibility
+  boardId?: string;
+  mondayItemName?: string;
+  mondayUserName?: string;
 }
 
 export function ImportCompletionForm({
@@ -27,77 +28,39 @@ export function ImportCompletionForm({
   onSubmit,
   onCancel,
   missingFields,
-  // Rename these to match interface and use _ prefix for unused props
-  boardId: _boardId,
-  mondayItemName: _mondayItemName,
-  mondayUserName: _mondayUserName,
   disabled = false
 }: ImportCompletionFormProps) {
-  const [formData, setFormData] = useState<Partial<VisitInput>>(importedVisit);
   
-  // Filter field config to only include missing fields
-  const fields = useMemo(() => {
-    return VisitFieldConfig
-      .filter(field => missingFields.includes(field.key as string))
-      .map(field => {
-        // Setup logic for reference fields
-        if (field.type === 'select' || field.type === 'reference') {
-          let url = '/api/';
-          
-          // Set proper URL based on field type
-          if (field.key === 'school') {
-            url += 'schools';
-          } else if (field.key === 'coach' || field.key === 'owners') {
-            url += 'staff';
-          }
-          
-          return {
-            ...field,
-            url
-          };
-        }
-        
-        return field;
-      });
+  // Filter fields to only include missing ones
+  const filteredFields = useMemo(() => {
+    return visitFields.filter(field => missingFields.includes(field.name));
   }, [missingFields]);
-  
-  // If no missing fields, show success message
-  if (fields.length === 0) {
+
+  // Create TanStack form with schema validation
+  const form = useForm({
+    defaultValues: importedVisit,
+    validators: {
+      onChange: VisitInputZodSchema,
+      onSubmit: VisitInputZodSchema
+    },
+    onSubmit: async ({ value }) => {
+      onSubmit(value as VisitInput);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  }) as any; // Type assertion needed due to TanStack Form interface compatibility
+
+  // Show message if no missing fields
+  if (missingFields.length === 0) {
     return (
-      <Card>
-        <Card.Header>
-          <h3 className="text-lg font-medium">Complete Import</h3>
-        </Card.Header>
-        <Card.Body>
-          <Alert intent="success">
-            <Alert.Title>All Information Ready</Alert.Title>
-            <Alert.Description>
-              All required information has been imported successfully from Monday.com.
-            </Alert.Description>
-          </Alert>
-          <div className="mt-4 flex justify-end gap-2">
-            <Button 
-              intent="secondary"
-              appearance="outline"
-              onClick={onCancel}
-              disabled={disabled}
-            >
-              Cancel
-            </Button>
-            <Button 
-              intent="primary"
-              onClick={() => onSubmit(importedVisit as VisitInput)}
-              disabled={disabled}
-            >
-              Import Visit
-            </Button>
-          </div>
-        </Card.Body>
-      </Card>
+      <Alert intent="success">
+        <Alert.Title>Ready to Import</Alert.Title>
+        <Alert.Description>
+          All required fields are present. This visit can be imported as-is.
+        </Alert.Description>
+      </Alert>
     );
   }
-  
-  // Show form for completing missing fields
+
   return (
     <div className="space-y-4">
       <Alert intent="info" className="mb-4">
@@ -112,18 +75,15 @@ export function ImportCompletionForm({
         </Alert.Description>
       </Alert>
       
-      <ResourceForm
+      <TanStackForm
+        form={form}
+        fields={filteredFields}
         title="Complete Visit Information"
         description="The following fields need to be completed before this visit can be imported."
-        fields={fields as Field[]}
-        initialValues={formData}
-        onSubmit={(data: VisitInput) => onSubmit(data)}
-        onCancel={onCancel}
-        showCancelButton={true}
-        cancelLabel="Cancel Import"
-        loading={disabled}
         submitLabel="Create Visit"
-        onChange={(data: Partial<VisitInput>) => setFormData(data)}
+        cancelLabel="Cancel Import"
+        onCancel={onCancel}
+        loading={disabled}
       />
     </div>
   );
