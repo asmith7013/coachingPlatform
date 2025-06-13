@@ -1,12 +1,117 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import { Card } from '@/components/composed/cards/Card';
 import { SectionHeading } from '@/components/composed/sectionHeadings';
 import { Text } from '@/components/core/typography/Text';
 import { useNYCPSStaffList } from "@hooks/domain/staff/useNYCPSStaff";
 import { SimpleCard } from '@/components/composed/cards/SimpleCard';
-import { UserGroupIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
+import { tv } from 'tailwind-variants';
+
+// Dropdown component styles
+const teacherDropdown = tv({
+  slots: {
+    dropdownContainer: [
+      'absolute right-0 top-8 z-50 mt-2',
+      'min-w-48 rounded-md',
+      'bg-white shadow-lg ring-1 ring-black ring-opacity-5',
+      'focus:outline-none'
+    ],
+    dropdownItem: [
+      'group flex items-center px-4 py-2 text-sm',
+      'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+      'cursor-pointer transition-colors duration-150 w-full text-left'
+    ],
+    dropdownIcon: [
+      'mr-3 h-5 w-5 text-gray-400',
+      'group-hover:text-gray-500'
+    ]
+  }
+});
+
+interface TeacherDropdownProps {
+  teacherId: string;
+  teacherName: string;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function TeacherDropdown({ 
+  teacherId, 
+  teacherName, 
+  isOpen, 
+  onClose 
+}: TeacherDropdownProps) {
+  const router = useRouter();
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const styles = teacherDropdown();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen, onClose]);
+
+  // Close dropdown on escape key
+  useEffect(() => {
+    function handleEscapeKey(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscapeKey);
+      return () => document.removeEventListener('keydown', handleEscapeKey);
+    }
+  }, [isOpen, onClose]);
+
+  const handleClassroomNotesClick = () => {
+    onClose();
+    // Navigate to classroom notes with teacher pre-selected
+    const params = new URLSearchParams({
+      teacherId: teacherId,
+      teacherName: teacherName
+    });
+    router.push(`/examples/classroomNotes?${params.toString()}`);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      ref={dropdownRef}
+      className={styles.dropdownContainer()}
+      role="menu"
+      aria-orientation="vertical"
+      aria-labelledby="teacher-menu"
+    >
+      <div className="py-1" role="none">
+        <button
+          className={styles.dropdownItem()}
+          role="menuitem"
+          onClick={handleClassroomNotesClick}
+        >
+          <DocumentTextIcon 
+            className={styles.dropdownIcon()} 
+            aria-hidden="true" 
+          />
+          Classroom Notes
+        </button>
+      </div>
+    </div>
+  );
+}
 
 interface TeachersCardProps {
   schoolId: string;
@@ -22,6 +127,7 @@ export function TeachersCard({
   onTeacherActionClick 
 }: TeachersCardProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
   // Fetch real staff data
   const { 
@@ -74,12 +180,22 @@ export function TeachersCard({
 
   const handleTeacherActionClick = (e: React.MouseEvent, teacher: { _id: string; staffName?: string }) => {
     e.stopPropagation();
+    // Toggle dropdown for this specific teacher
+    if (openDropdownId === teacher._id) {
+      setOpenDropdownId(null);
+    } else {
+      setOpenDropdownId(teacher._id);
+    }
     if (onTeacherActionClick) {
       onTeacherActionClick(teacher._id, teacher.staffName || 'Unknown');
     } else {
       console.log('Show teacher options for', teacher.staffName);
       // Default behavior: show teacher options menu
     }
+  };
+
+  const closeDropdown = () => {
+    setOpenDropdownId(null);
   };
 
   return (
@@ -144,17 +260,24 @@ export function TeachersCard({
               : 'No subjects assigned';
             
             return (
-              <SimpleCard
-                key={teacher._id}
-                initials={initials}
-                title={teacher.staffName || 'Unknown Staff'}
-                subtitle={`${primaryRole} • ${subjects}`}
-                colorVariant={teacherColors[index % teacherColors.length]}
-                clickable
-                showAction
-                onClick={() => handleTeacherClick(teacher)}
-                onActionClick={(e: React.MouseEvent) => handleTeacherActionClick(e, teacher)}
-              />
+              <div key={teacher._id} className="relative">
+                <SimpleCard
+                  initials={initials}
+                  title={teacher.staffName || 'Unknown Staff'}
+                  subtitle={`${primaryRole} • ${subjects}`}
+                  colorVariant={teacherColors[index % teacherColors.length]}
+                  clickable
+                  showAction
+                  onClick={() => handleTeacherClick(teacher)}
+                  onActionClick={(e: React.MouseEvent) => handleTeacherActionClick(e, teacher)}
+                />
+                <TeacherDropdown
+                  teacherId={teacher._id}
+                  teacherName={teacher.staffName || 'Unknown Staff'}
+                  isOpen={openDropdownId === teacher._id}
+                  onClose={closeDropdown}
+                />
+              </div>
             );
           })}
         </ul>

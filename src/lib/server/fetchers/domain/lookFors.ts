@@ -1,26 +1,26 @@
 import { LookForModel, RubricModel } from '@mongoose-schema/look-fors';
-import { LookForZodSchema } from '@zod-schema/look-fors/look-for';
-import { RubricZodSchema } from '@zod-schema/look-fors/rubric';
-import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
+// import { LookForZodSchema } from '@zod-schema/look-fors/look-for';
+// import { RubricZodSchema } from '@zod-schema/look-fors/rubric';
+// import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
 
 import { createApiSafeFetcher } from '@server/fetchers/fetcher-factory';
 import { fetchById } from '@server/fetchers/fetch-by-id';
+import { CollectionResponse } from '@/lib/types/core/response';
+import { QueryParams } from '@/lib/types/core/query';
 
 /**
  * API-safe fetcher for look fors
  */
 export const fetchLookForsForApi = createApiSafeFetcher(
   LookForModel,
-  ensureBaseDocumentCompatibility(LookForZodSchema),
   "name"
-);
+) as (params: QueryParams) => Promise<CollectionResponse<typeof LookForModel>>;
 
 /**
  * API-safe fetcher for rubrics
  */
 export const fetchRubricsForApi = createApiSafeFetcher(
   RubricModel,
-  ensureBaseDocumentCompatibility(RubricZodSchema),
   "category"
 );
 
@@ -29,7 +29,6 @@ export const fetchRubricsForApi = createApiSafeFetcher(
  */
 export const fetchLookForCAPsForApi = createApiSafeFetcher(
   LookForModel,
-  ensureBaseDocumentCompatibility(LookForZodSchema),
   "name"
 );
 

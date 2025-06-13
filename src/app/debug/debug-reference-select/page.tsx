@@ -6,6 +6,7 @@ import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
+import { API_ENDPOINTS } from '@/lib/server/api/client/api_endpoints';
 
 export default function DebugReferenceSelect() {
   const [value, setValue] = useState<string[]>([]);
@@ -70,7 +71,7 @@ export default function DebugReferenceSelect() {
           <Heading level="h2" className="mb-4">Multiple Select</Heading>
           <ReferenceSelect
             label="Schools"
-            url="/api/reference/schools"
+            url={API_ENDPOINTS.schools}
             value={value}
             onChange={handleMultipleChange}
             multiple={true}
@@ -89,7 +90,7 @@ export default function DebugReferenceSelect() {
           <Heading level="h2" className="mb-4">Single Select</Heading>
           <ReferenceSelect
             label="School"
-            url="/api/reference/schools"
+            url={API_ENDPOINTS.schools}
             value={singleValue}
             onChange={handleSingleChange}
             multiple={false}

@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
-import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
+import { getModelForClass, prop } from "@typegoose/typegoose";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
-import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
 // Progress Monitoring subdocument schemas
 class CriterionObservation {
@@ -124,13 +123,7 @@ class TranscriptSection {
   customSections!: Record<string, string>;
 }
 
-@modelOptions({ 
-  schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'classroomObservations' 
-  } 
-})
-export class ClassroomObservation extends BaseMongooseDocument {
+class ClassroomObservation extends BaseMongooseDocument {
   @prop({ type: String, default: '' })
   cycle!: string;
   
@@ -195,7 +188,8 @@ export class ClassroomObservation extends BaseMongooseDocument {
   coachingActionPlanId?: string;
 }
 
-export const ClassroomObservationModel = mongoose.models.ClassroomObservation || getModelForClass(ClassroomObservation);
+export const ClassroomObservationModel =
+  mongoose.models.ClassroomObservation || getModelForClass(ClassroomObservation, { schemaOptions: { collection: 'classroomobservations' } });
 
 export async function getClassroomObservationModel() {
   return getModel<ClassroomObservation>('ClassroomObservation', () => getModelForClass(ClassroomObservation));

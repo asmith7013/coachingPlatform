@@ -1,9 +1,9 @@
 // src/lib/api/fetchers/school.ts
 import { SchoolModel } from '@mongoose-schema/core/school.model';
-import { SchoolZodSchema } from '@zod-schema/core/school';
 import { createApiSafeFetcher } from '@server/fetchers/fetcher-factory';
 import { fetchById } from '@server/fetchers/fetch-by-id';
-import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
+import { CollectionResponse } from '@/lib/types/core/response';
+import { QueryParams } from '@/lib/types/core/query';
 
 /**
  * API-safe fetcher for schools 
@@ -11,9 +11,8 @@ import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
  */
 export const fetchSchoolsForApi = createApiSafeFetcher(
   SchoolModel,
-  ensureBaseDocumentCompatibility(SchoolZodSchema),
   "schoolName" // Default search field for schools
-);
+) as (params: QueryParams) => Promise<CollectionResponse<typeof SchoolModel>>;
 
 /**
  * Fetches a school by ID - using centralized utility

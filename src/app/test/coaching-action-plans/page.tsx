@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/composed/cards/Card';
 import { Button } from '@/components/core/Button';
 import { Badge } from '@/components/core/feedback/Badge';
@@ -143,22 +143,16 @@ export default function CoachingActionPlanCRUDTest() {
     deleteError
   } = useCoachingActionPlans.mutations() || {};
 
-  const [state, setState] = useState<TestState>({
+  // Only keep local state for results, testPlan, and selectedPlanId
+  const [state, setState] = useState<Pick<TestState, 'results' | 'testPlan' | 'selectedPlanId'>>({
     results: [],
-    isLoading: false,
     testPlan: null,
-    selectedPlanId: null,
-    plans: [] // This will be populated from domain hook
+    selectedPlanId: null
   });
 
-  // Update state when domain hook data changes
-  useEffect(() => {
-    setState(prev => ({
-      ...prev,
-      plans: plans || [],
-      isLoading: Boolean(isLoadingList || isCreating || isUpdating || isDeleting)
-    }));
-  }, [plans, isLoadingList, isCreating, isUpdating, isDeleting]);
+  // Compute loading state inline
+  const isLoading = isLoadingList || isCreating || isUpdating || isDeleting;
+  const currentPlans = plans || [];
 
   // =====================================
   // HELPER FUNCTIONS
@@ -275,7 +269,7 @@ export default function CoachingActionPlanCRUDTest() {
             <Button 
               onClick={testCreate}
               intent="primary"
-              disabled={state.isLoading}
+              disabled={isLoading}
             >
               {isCreating ? 'Creating...' : 'Test Create'}
             </Button>
@@ -283,7 +277,7 @@ export default function CoachingActionPlanCRUDTest() {
             <Button 
               onClick={testUpdate}
               intent="secondary"
-              disabled={state.isLoading || !state.selectedPlanId}
+              disabled={isLoading || !state.selectedPlanId}
             >
               {isUpdating ? 'Updating...' : 'Test Update'}
             </Button>
@@ -291,7 +285,7 @@ export default function CoachingActionPlanCRUDTest() {
             <Button 
               onClick={testDelete}
               intent="danger"
-              disabled={state.isLoading || !state.selectedPlanId}
+              disabled={isLoading || !state.selectedPlanId}
             >
               {isDeleting ? 'Deleting...' : 'Test Delete'}
             </Button>
@@ -299,7 +293,7 @@ export default function CoachingActionPlanCRUDTest() {
             <Button 
               onClick={runAllTests}
               intent="success"
-              disabled={state.isLoading}
+              disabled={isLoading}
             >
               Run All Tests
             </Button>
@@ -323,7 +317,7 @@ export default function CoachingActionPlanCRUDTest() {
               }))}
               options={[
                 { value: '', label: 'Select a plan...' },
-                ...(plans || []).map(plan => ({
+                ...currentPlans.map(plan => ({
                   value: plan._id,
                   label: `${plan.title} (${plan.status})`
                 }))
@@ -333,7 +327,7 @@ export default function CoachingActionPlanCRUDTest() {
           </div>
 
           {/* Loading State */}
-          {state.isLoading && (
+          {isLoading && (
             <Alert intent="info">
               Operation in progress...
             </Alert>
@@ -366,13 +360,13 @@ export default function CoachingActionPlanCRUDTest() {
 
           {/* Current Plans List */}
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Current Plans ({plans?.length || 0})</h3>
+            <h3 className="text-lg font-semibold">Current Plans ({currentPlans.length})</h3>
             <div className="max-h-40 overflow-y-auto border rounded p-2">
-              {plans?.length === 0 ? (
+              {currentPlans.length === 0 ? (
                 <p className="text-gray-500">No plans found</p>
               ) : (
                 <div className="space-y-1">
-                  {plans?.map((plan) => (
+                  {currentPlans.map((plan) => (
                     <div key={plan._id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                       <div>
                         <span className="font-medium">{plan.title}</span>

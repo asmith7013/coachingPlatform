@@ -2,12 +2,10 @@ import mongoose from "mongoose";
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
-import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
 @modelOptions({ 
   schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'contextualNotes' 
+    collection: 'contextualnotes' 
   } 
 })
 export class ContextualNote extends BaseMongooseDocument {
@@ -39,7 +37,8 @@ export class ContextualNote extends BaseMongooseDocument {
   priority!: string;
 }
 
-export const ContextualNoteModel = mongoose.models.ContextualNote || getModelForClass(ContextualNote);
+export const ContextualNoteModel =
+  mongoose.models.ContextualNote || getModelForClass(ContextualNote, { schemaOptions: { collection: 'contextualnotes' } });
 
 export async function getContextualNoteModel() {
   return getModel<ContextualNote>('ContextualNote', () => getModelForClass(ContextualNote));

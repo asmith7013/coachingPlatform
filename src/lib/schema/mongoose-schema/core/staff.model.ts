@@ -10,7 +10,6 @@ import {
 } from "@enums";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
-import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
 // Add Monday.com User Class
 @modelOptions({ 
@@ -51,12 +50,6 @@ class Experience {
   years!: number;
 }
 
-@modelOptions({ 
-  schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'notes',
-  } 
-})
 class Note extends BaseMongooseDocument {
   @prop({ type: Date, required: true })
   date!: Date;
@@ -68,12 +61,6 @@ class Note extends BaseMongooseDocument {
   subheading!: string[];
 }
 
-@modelOptions({ 
-  schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'staffmembers',
-  } 
-})
 class StaffMember extends BaseMongooseDocument {
   @prop({ type: String, required: true })
   staffName!: string;
@@ -85,12 +72,6 @@ class StaffMember extends BaseMongooseDocument {
   mondayUser?: MondayUser;
 }
 
-@modelOptions({ 
-  schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'nycpsstaffs',
-  } 
-})
 class NYCPSStaff extends StaffMember {
   @prop({ type: () => [String], required: true, enum: Object.values(GradeLevels) })
   gradeLevelsSupported!: string[];
@@ -108,12 +89,6 @@ class NYCPSStaff extends StaffMember {
   experience?: Experience[];
 }
 
-@modelOptions({ 
-  schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'teachinglabstaffs',
-  } 
-})
 class TeachingLabStaff extends StaffMember {
   @prop({ type: String, enum: Object.values(AdminLevels) })
   adminLevel?: string;
@@ -125,15 +100,15 @@ class TeachingLabStaff extends StaffMember {
 
 // Add async model getters using the registry
 export async function getStaffMemberModel() {
-  return getModel<StaffMember>('StaffMember', () => getModelForClass(StaffMember));
+  return getModel<StaffMember>('StaffMember', () => getModelForClass(StaffMember, { schemaOptions: { collection: 'staffmembers' } }));
 }
 
 export async function getNYCPSStaffModel() {
-  return getModel<NYCPSStaff>('NYCPSStaff', () => getModelForClass(NYCPSStaff));
+  return getModel<NYCPSStaff>('NYCPSStaff', () => getModelForClass(NYCPSStaff, { schemaOptions: { collection: 'nycpsstaffs' } }));
 }
 
 export async function getTeachingLabStaffModel() {
-  return getModel<TeachingLabStaff>('TeachingLabStaff', () => getModelForClass(TeachingLabStaff));
+  return getModel<TeachingLabStaff>('TeachingLabStaff', () => getModelForClass(TeachingLabStaff, { schemaOptions: { collection: 'teachinglabstaffs' } }));
 }
 
 export async function getExperienceModel() {
@@ -141,7 +116,7 @@ export async function getExperienceModel() {
 }
 
 export async function getNoteModel() {
-  return getModel<Note>('Note', () => getModelForClass(Note));
+  return getModel<Note>('Note', () => getModelForClass(Note, { schemaOptions: { collection: 'notes' } }));
 }
 
 export async function getMondayUserModel() {
@@ -150,16 +125,16 @@ export async function getMondayUserModel() {
 
 // Keep for backward compatibility
 export const StaffMemberModel =
-  mongoose.models.StaffMember || getModelForClass(StaffMember);
+  mongoose.models.StaffMember || getModelForClass(StaffMember, { schemaOptions: { collection: 'staffmembers' } });
 
 export const NYCPSStaffModel =
-  mongoose.models.NYCPSStaff || getModelForClass(NYCPSStaff);
+  mongoose.models.NYCPSStaff || getModelForClass(NYCPSStaff, { schemaOptions: { collection: 'nycpsstaffs' } });
 
 export const TeachingLabStaffModel =
-  mongoose.models.TeachingLabStaff || getModelForClass(TeachingLabStaff);
+  mongoose.models.TeachingLabStaff || getModelForClass(TeachingLabStaff, { schemaOptions: { collection: 'teachinglabstaffs' } });
 
 export const ExperienceModel =
   mongoose.models.Experience || getModelForClass(Experience);
   
 export const NoteModel =
-  mongoose.models.Note || getModelForClass(Note);
+  mongoose.models.Note || getModelForClass(Note, { schemaOptions: { collection: 'notes' } });

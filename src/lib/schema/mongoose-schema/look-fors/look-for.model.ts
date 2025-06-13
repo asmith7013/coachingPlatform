@@ -1,15 +1,8 @@
-import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
+import { getModelForClass, prop } from "@typegoose/typegoose";
 import mongoose from "mongoose";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
-import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
-@modelOptions({ 
-  schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'lookfors' 
-  } 
-})
 export class LookFor extends BaseMongooseDocument {
   @prop({ type: Number, required: true })
   lookForIndex!: number;
@@ -39,12 +32,6 @@ export class LookFor extends BaseMongooseDocument {
   rubricIds?: string[];
 }
 
-@modelOptions({ 
-  schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'lookforitems' 
-  } 
-})
 export class LookForItem extends BaseMongooseDocument {
   @prop({ type: String, required: true })
   originalLookFor!: string;
@@ -71,8 +58,10 @@ export class LookForItem extends BaseMongooseDocument {
   active!: boolean;
 }
 
-export const LookForModel = mongoose.models.LookFor || getModelForClass(LookFor);
-export const LookForItemModel = mongoose.models.LookForItem || getModelForClass(LookForItem);
+export const LookForModel =
+  mongoose.models.LookFor || getModelForClass(LookFor, { schemaOptions: { collection: 'lookfors' } });
+export const LookForItemModel =
+  mongoose.models.LookForItem || getModelForClass(LookForItem, { schemaOptions: { collection: 'lookforitems' } });
 
 export async function getLookForModel() {
   return getModel<LookFor>('LookFor', () => getModelForClass(LookFor));

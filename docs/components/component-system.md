@@ -203,6 +203,76 @@ import { disabledVariant, interactiveVariant } from '@ui-variants/shared-variant
 
 **[RULE]** Always use component APIs rather than direct Tailwind classes, and follow the established patterns for each component type.
 
+### Toast Integration in Components
+
+Components should choose appropriate hook variants based on their user interaction context:
+
+```typescript
+// Form components - use toast feedback for user actions
+function EntityCreateForm() {
+  const { createWithToast, isCreating } = useEntities.withNotifications();
+  
+  const handleSubmit = async (data: EntityInput) => {
+    try {
+      await createWithToast(data);
+      onSuccess?.(); // Additional success handling
+    } catch (error) {
+      // Error already shown via toast
+      console.error('Create failed:', error);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* Form fields */}
+      <Button type="submit" loading={isCreating}>
+        Create Entity
+      </Button>
+    </form>
+  );
+}
+
+// Background operations - use silent methods
+function DataSyncService() {
+  const { createAsync } = useEntities.manager();
+  
+  const syncData = async (entities: EntityInput[]) => {
+    // Silent operation, handle feedback through other means
+    const results = await Promise.allSettled(
+      entities.map(entity => createAsync(entity))
+    );
+    
+    // Custom notification logic for bulk operations
+    const successful = results.filter(r => r.status === 'fulfilled').length;
+    toast.success(`Synced ${successful}/${entities.length} entities`);
+  };
+}
+
+// Complex operations - compose multiple hook variants
+function EntityManagementPanel() {
+  const entitiesWithToasts = useEntities.withNotifications();
+  const entitiesWithInvalidation = useEntities.withInvalidation();
+  
+  const handleUserAction = async (data: EntityInput) => {
+    // User-triggered action with toast feedback
+    await entitiesWithToasts.createWithToast(data);
+  };
+  
+  const handleSystemRefresh = async () => {
+    // System action with manual cache control
+    await entitiesWithInvalidation.refreshAllEntities();
+  };
+}
+```
+
+**Toast Usage Guidelines:**
+- **User Actions**: Use `withToast` methods for form submissions and user-triggered operations
+- **Background Operations**: Use silent methods for system processes and bulk operations
+- **Error Handling**: Toast-enabled methods handle error display automatically
+- **Loading States**: Use mutation loading states for UI feedback during operations
+
+**[RULE]** Choose hook variants based on interaction context - use toast feedback for user actions and silent operations for background processes.
+
 ## Feature Context Patterns
 
 Complex features use React Context for state management following a standardized pattern:

@@ -1,28 +1,36 @@
-// import { fetchTeacherSchedulesForApi } from "@server/fetchers/schedule";
-// import { createReferenceEndpoint, FetchFunction } from "@api-handlers/reference-endpoint";
-// import type { TeacherSchedule } from "@zod-schema/schedule/schedule";
-// import type { TeacherScheduleReference } from "@zod-schema/schedule/schedule";
 
-// // Export GET handler directly - follows same pattern as school API
-// export const GET = createReferenceEndpoint<TeacherSchedule, TeacherScheduleReference>({
-//   fetchFunction: fetchTeacherSchedulesForApi  as unknown as FetchFunction<TeacherSchedule>,
-//   mapItem: (schedule) => ({
-//     _id: schedule._id,
-//     label: `Schedule for ${schedule.teacher} at ${schedule.school}`,
-//     teacher: schedule.teacher,
-//     school: schedule.school,
-//     value: schedule._id
-//   }),
-//   defaultSearchField: "teacher",
-//   defaultLimit: 20,
-//   logPrefix: "Schedule API"
-// }); 
+import { fetchSchedulesForApi } from "@/lib/server/fetchers/domain/schedule";
+import { createReferenceEndpoint, FetchFunction } from "@api-handlers/reference-endpoint";
+import { TeacherSchedule, BellSchedule } from "@zod-schema/schedule/schedule";
 
-import { NextResponse } from 'next/server';
+function mapScheduleToReference(schedule: TeacherSchedule | BellSchedule) {
+  if ('teacherId' in schedule) {
+    // Teacher schedule
+    return {
+      _id: schedule._id,
+      value: schedule._id,
+      label: `Teacher Schedule: ${schedule.teacherId} at ${schedule.schoolId}`,
+      type: 'teacher',
+      teacherId: schedule.teacherId,
+      schoolId: schedule.schoolId
+    };
+  } else {
+    // Bell schedule
+    const bell = schedule as BellSchedule;
+    return {
+      _id: bell._id,
+      value: bell._id,
+      label: `Bell Schedule: ${bell.bellScheduleType} at ${bell.schoolId}`,
+      type: 'bell',
+      schoolId: bell.schoolId,
+      bellScheduleType: bell.bellScheduleType
+    };
+  }
+}
 
-export async function GET() {
-  return NextResponse.json({
-    success: true,
-    message: 'Schedule API placeholder'
-  });
-} 
+export const GET = createReferenceEndpoint({
+  fetchFunction: fetchSchedulesForApi as FetchFunction<TeacherSchedule | BellSchedule>,
+  mapItem: mapScheduleToReference,
+  defaultSearchField: "schoolId",
+  logPrefix: "Schedule API"
+}); 

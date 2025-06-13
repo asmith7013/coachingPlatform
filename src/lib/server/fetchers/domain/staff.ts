@@ -1,26 +1,19 @@
 import { NYCPSStaffModel, TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
-import { NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from '@zod-schema/core/staff';
+import { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff';
 import { createApiSafeFetcher } from '@/lib/server/fetchers/fetcher-factory';
 import { fetchById } from '@/lib/server/fetchers/fetch-by-id';
-import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
+import type { QueryParams } from '@core-types/query';
+import type { CollectionResponse } from '@core-types/response';
 
-/**
- * API-safe fetcher for NYCPS staff
- */
 export const fetchNYCPSStaffForApi = createApiSafeFetcher(
   NYCPSStaffModel,
-  ensureBaseDocumentCompatibility(NYCPSStaffZodSchema),
   "staffName"
-);
+) as (params: QueryParams) => Promise<CollectionResponse<NYCPSStaff>>;
 
-/**
- * API-safe fetcher for Teaching Lab staff
- */
 export const fetchTeachingLabStaffForApi = createApiSafeFetcher(
   TeachingLabStaffModel,
-  ensureBaseDocumentCompatibility(TeachingLabStaffZodSchema),
   "staffName"
-);
+) as (params: QueryParams) => Promise<CollectionResponse<TeachingLabStaff>>;
 
 /**
  * Fetches NYCPS staff by ID - using centralized utility
@@ -69,5 +62,34 @@ export async function checkStaffExistenceByEmailForApi(email: string) {
       exists: false,
       error: error instanceof Error ? error.message : "Unknown error"
     };
+  }
+}
+
+/**
+ * Unified staff fetcher that handles type parameter
+ */
+export async function fetchStaffForApi(params: QueryParams): Promise<CollectionResponse<NYCPSStaff | TeachingLabStaff>> {
+  const { type, ...otherParams } = params;
+  
+  switch (type) {
+    case 'nycps':
+      return fetchNYCPSStaffForApi(otherParams);
+      
+    case 'teachingLab':
+      return fetchTeachingLabStaffForApi(otherParams);
+      
+    default: {
+      // Fetch both and combine
+      const [nycpsResult, tlResult] = await Promise.all([
+        fetchNYCPSStaffForApi(otherParams),
+        fetchTeachingLabStaffForApi(otherParams)
+      ]);
+      
+      return {
+        success: true,
+        items: [...nycpsResult.items, ...tlResult.items],
+        total: (nycpsResult.total || 0) + (tlResult.total || 0)
+      };
+    }
   }
 }

@@ -5,6 +5,9 @@ import { fetchSchools, fetchSchoolById, createSchool, updateSchool, deleteSchool
 import { useInvalidation } from '@query/cache/invalidation';
 import { useBulkOperations } from '@query/client/hooks/mutations/useBulkOperations';
 import { useCallback } from 'react';
+import { useNotifications } from '@/hooks/ui/useNotifications';
+import { createDefaultToastConfig } from '@/lib/ui/notifications/toast-configs';
+import { FEATURE_FLAGS } from '@/lib/ui/notifications/types';
 
 /**
  * Custom React Query hooks for School entity
@@ -98,13 +101,50 @@ function useSchoolManagerWithInvalidation() {
   };
 }
 
+// Enhanced: Compose CRUD with notifications
+function useSchoolsWithNotifications() {
+  const notifications = useNotifications();
+  const toastConfig = createDefaultToastConfig('schools');
+  const enableToasts = FEATURE_FLAGS?.ENABLE_TOASTS !== false;
+  const mutations = useSchoolsMutations();
+
+  return {
+    ...mutations,
+    createWithToast: (data: Parameters<NonNullable<typeof mutations.createAsync>>[0]) => {
+      if (!mutations.createAsync) throw new Error('createAsync is not defined');
+      return notifications.withToast(
+        () => mutations.createAsync!(data),
+        toastConfig.create!,
+        enableToasts
+      );
+    },
+    updateWithToast: (id: string, data: Partial<School>) => {
+      if (!mutations.updateAsync) throw new Error('updateAsync is not defined');
+      return notifications.withToast(
+        () => mutations.updateAsync!(id, data),
+        toastConfig.update!,
+        enableToasts
+      );
+    },
+    deleteWithToast: (id: string) => {
+      if (!mutations.deleteAsync) throw new Error('deleteAsync is not defined');
+      return notifications.withToast(
+        () => mutations.deleteAsync!(id),
+        toastConfig.delete!,
+        enableToasts
+      );
+    }
+  };
+}
+
 // Export individual hooks
 export { 
   useSchoolsList, 
   useSchoolById, 
   useSchoolsMutations, 
   useSchoolManager,
-  useSchoolManagerWithInvalidation
+  useSchoolManagerWithInvalidation,
+  useSchoolsWithNotifications
 };
 
 /**
@@ -115,7 +155,8 @@ export const useSchools = {
   byId: useSchoolById,
   mutations: useSchoolsMutations,
   manager: useSchoolManager,
-  withInvalidation: useSchoolManagerWithInvalidation
+  withInvalidation: useSchoolManagerWithInvalidation,
+  withNotifications: useSchoolsWithNotifications
 };
 
 export default useSchools;

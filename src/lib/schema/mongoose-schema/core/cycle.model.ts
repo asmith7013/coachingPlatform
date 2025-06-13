@@ -2,7 +2,6 @@ import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose from "mongoose"; 
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
-import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
 // LookForItem remains as a nested class
 @modelOptions({ 
@@ -37,12 +36,6 @@ class LookForItem {
 }
 
 // Main Cycle class now extends BaseMongooseDocument
-@modelOptions({ 
-  schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'cycles',
-  } 
-})
 class Cycle extends BaseMongooseDocument {
   @prop({ type: Number, required: true })
   cycleNum!: number;
@@ -64,7 +57,8 @@ class Cycle extends BaseMongooseDocument {
 }
 
 // Keep existing model exports for backward compatibility
-export const CycleModel = mongoose.models.Cycle || getModelForClass(Cycle);
+export const CycleModel =
+  mongoose.models.Cycle || getModelForClass(Cycle, { schemaOptions: { collection: 'cycles' } });
 
 // Use model registry for async access
 export async function getCycleModel() {

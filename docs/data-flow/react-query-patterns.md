@@ -152,7 +152,118 @@ export function useDashboardData() {
 }
 ```
 
-**[RULE]** Use domain hooks to encapsulate business logic for components.
+### Toast Integration with Domain Hooks
+
+Our domain hooks support optional toast notifications through a clean composition pattern that maintains separation of concerns.
+
+### Basic Toast Integration
+
+```typescript
+// Domain hook with toast support
+export function useSchoolsWithNotifications() {
+  const notifications = useNotifications();
+  const toastConfig = createDefaultToastConfig('schools');
+  const enableToasts = FEATURE_FLAGS?.ENABLE_TOASTS !== false;
+  const mutations = useSchoolsMutations();
+
+  // Fail fast if required mutations aren't available
+  if (!mutations.createAsync || !mutations.updateAsync || !mutations.deleteAsync) {
+    throw new Error('Required CRUD mutations not available for schools');
+  }
+
+  return {
+    ...mutations,
+    createWithToast: (data: Parameters<typeof mutations.createAsync>[0]) => {
+      return notifications.withToast(
+        () => mutations.createAsync(data),
+        toastConfig.create!,
+        enableToasts
+      );
+    },
+    updateWithToast: (id: string, data: Partial<School>) => {
+      return notifications.withToast(
+        () => mutations.updateAsync(id, data),
+        toastConfig.update!,
+        enableToasts
+      );
+    },
+    deleteWithToast: (id: string) => {
+      return notifications.withToast(
+        () => mutations.deleteAsync(id),
+        toastConfig.delete!,
+        enableToasts
+      );
+    }
+  };
+}
+```
+
+### Unified Domain Hook Interface
+
+All domain hooks follow a consistent pattern for progressive enhancement:
+
+```typescript
+export const useSchools = {
+  list: useSchoolsList,                    // Basic data fetching
+  byId: useSchoolById,                     // Single entity
+  mutations: useSchoolsMutations,          // Pure CRUD operations
+  manager: useSchoolManager,               // Enhanced CRUD with cache management
+  withInvalidation: useSchoolManagerWithInvalidation,  // + Manual cache control
+  withNotifications: useSchoolsWithNotifications       // + Toast feedback
+};
+```
+
+### Component Usage Patterns
+
+Components can compose functionality based on their specific needs:
+
+```typescript
+// Basic CRUD operations
+function AdminPanel() {
+  const schools = useSchools.manager();
+  
+  const handleCreate = async (data: SchoolInput) => {
+    await schools.createAsync(data); // No toast, silent operation
+  };
+}
+
+// User-facing operations with feedback
+function SchoolForm() {
+  const schoolsWithToasts = useSchools.withNotifications();
+  
+  const handleCreate = async (data: SchoolInput) => {
+    await schoolsWithToasts.createWithToast(data); // Shows success/error toast
+  };
+}
+
+// Advanced operations with cache control
+function DataManagement() {
+  const schoolsWithInvalidation = useSchools.withInvalidation();
+  
+  const handleBulkImport = async (schools: SchoolInput[]) => {
+    await schoolsWithInvalidation.bulkUpdateSchools(schools);
+    await schoolsWithInvalidation.refreshAllSchools(); // Manual cache refresh
+  };
+}
+
+// Combined usage when both features are needed
+function SchoolEditor() {
+  const schoolsWithToasts = useSchools.withNotifications();
+  const schoolsWithInvalidation = useSchools.withInvalidation();
+  
+  const handleComplexUpdate = async (id: string, data: Partial<School>) => {
+    // Use toast for user feedback
+    const result = await schoolsWithToasts.updateWithToast(id, data);
+    
+    // Manual invalidation for related data
+    if (result.success) {
+      await schoolsWithInvalidation.refreshSchool(id);
+    }
+  };
+}
+```
+
+**[RULE]** Use progressive enhancement - start with basic hooks and add features (notifications, invalidation) only when needed by the specific component context.
 
 ## Integration with Server Actions
 

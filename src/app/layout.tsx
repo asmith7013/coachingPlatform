@@ -6,6 +6,7 @@ import "@/app/globals.css";
 import { PerformanceMonitorProvider } from "@lib/dev/debugging/usePerformanceMonitoring";
 import { ClerkProvider } from '@clerk/nextjs'
 import { AuthProvider } from '@/providers/AuthProvider'
+import { Toaster } from 'sonner';
 
 const geist = Geist({
   subsets: ["latin"],
@@ -43,6 +44,14 @@ export default function RootLayout({
             </AuthProvider>
           </QueryProvider>
         </ClerkProvider>
+        <Toaster 
+          position="top-right"
+          richColors
+          closeButton
+          duration={4000}
+          expand={false}
+          gap={8}
+        />
       </body>
     </html>
   );

@@ -1,9 +1,9 @@
 // src/lib/api/fetchers/coaching-log.ts
 import { CoachingLogModel } from '@mongoose-schema/visits/coaching-log.model';
-import { CoachingLogZodSchema } from '@zod-schema/visits/coaching-log';
 import { createApiSafeFetcher } from '@server/fetchers/fetcher-factory';
 import { fetchById } from '@server/fetchers/fetch-by-id';
-import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
+import { CollectionResponse } from '@/lib/types/core/response';
+import { QueryParams } from '@/lib/types/core/query';
 
 /**
  * API-safe fetcher for coaching logs
@@ -11,9 +11,8 @@ import { ensureBaseDocumentCompatibility } from "@zod-schema/base-schemas";
  */
 export const fetchCoachingLogsForApi = createApiSafeFetcher(
   CoachingLogModel,
-  ensureBaseDocumentCompatibility(CoachingLogZodSchema),
   "primaryStrategy" // Default search field for coaching logs
-);
+) as (params: QueryParams) => Promise<CollectionResponse<typeof CoachingLogModel>>;
 
 /**
  * Fetches a coaching log by ID - using centralized utility

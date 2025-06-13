@@ -12,6 +12,7 @@ import { ImportPreview } from '@lib/integrations/monday/types/import';
 import { cn } from '@ui/utils/formatters';
 import { useState } from 'react';
 import { formatMediumDate, toDateString } from '@/lib/data-processing/transformers/utils/date-utils';
+import { getStaffUrl } from '@server/api/client/api_endpoints';
 
 export interface MondayItemPreviewCardProps {
   preview: ImportPreview;
@@ -41,7 +42,7 @@ function OwnerSelector({
           label=""
           value={selectedOwner}
           onChange={(value) => setSelectedOwner(Array.isArray(value) ? value[0] : value)}
-          url="/api/reference/staff"
+          url={getStaffUrl('nycps')}
           multiple={false}
         />
         <Button

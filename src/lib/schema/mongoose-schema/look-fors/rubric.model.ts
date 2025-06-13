@@ -2,14 +2,7 @@ import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose from "mongoose";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
-import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
-@modelOptions({ 
-  schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'rubrics' 
-  } 
-})
 export class Rubric extends BaseMongooseDocument {
   @prop({ type: Number, required: true })
   score!: number;
@@ -32,7 +25,6 @@ export class Rubric extends BaseMongooseDocument {
 
 @modelOptions({ 
   schemaOptions: { 
-    ...standardSchemaOptions,
     collection: 'rubricscores' 
   } 
 })
@@ -51,7 +43,7 @@ export class RubricScore extends BaseMongooseDocument {
 }
 
 export const RubricModel =
-  mongoose.models.Rubric || getModelForClass(Rubric);
+  mongoose.models.Rubric || getModelForClass(Rubric, { schemaOptions: { collection: 'rubrics' } });
 
 export const RubricScoreModel =
   mongoose.models.RubricScore || getModelForClass(RubricScore);

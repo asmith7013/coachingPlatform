@@ -124,6 +124,8 @@
 │   └── product-roadmap.md
 ├── eslint.config.mjs
 ├── examples
+├── fix-fetcher-factory.ts
+├── fix-fetchers-guide.md
 ├── next-env.d.ts
 ├── next.config.ts
 ├── package.json
@@ -233,7 +235,6 @@
 │   │   │   │   │   └── route.ts
 │   │   │   │   └── route.ts
 │   │   │   ├── teacher
-│   │   │   │   └── route.ts
 │   │   │   ├── visits
 │   │   │   │   └── route.ts
 │   │   │   └── webhooks
@@ -399,8 +400,7 @@
 │   │   │   └── page.tsx
 │   │   ├── test
 │   │   │   ├── coaching-action-plans
-│   │   │   │   ├── page.tsx
-│   │   │   │   └── page.tsx.disabled
+│   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
 │   │   │   └── observations
 │   │   │       ├── ObservationCard.tsx
@@ -470,6 +470,8 @@
 │   │   │   │   └── index.ts
 │   │   │   ├── forms
 │   │   │   │   ├── BulkUploadForm.tsx
+│   │   │   │   ├── FormLayout.tsx
+│   │   │   │   ├── FormSection.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── layouts
 │   │   │   │   ├── AppShell.tsx
@@ -627,12 +629,14 @@
 │   │   │   ├── schools
 │   │   │   │   ├── SchoolCard.tsx
 │   │   │   │   ├── SchoolDetailView.tsx
+│   │   │   │   ├── SchoolForm.tsx
 │   │   │   │   ├── SchoolGrid.tsx
 │   │   │   │   ├── index.ts
 │   │   │   │   └── singleSchool
 │   │   │   │       ├── SingleSchool.tsx
 │   │   │   │       └── cards
 │   │   │   ├── staff
+│   │   │   │   ├── NYCPSStaffForm.tsx
 │   │   │   │   ├── StaffCard.tsx
 │   │   │   │   ├── StaffDetailPage.tsx
 │   │   │   │   ├── index.ts
@@ -785,6 +789,7 @@
 │   │   │   ├── useAdaptiveHeight.ts
 │   │   │   ├── useAuthorizedNavigation.ts
 │   │   │   ├── useNavigation.ts
+│   │   │   ├── useNotifications.ts
 │   │   │   ├── useResizableSidebar.ts
 │   │   │   ├── useSchoolAuthorization.ts
 │   │   │   ├── useSectionToggle.ts
@@ -1015,6 +1020,7 @@
 │   │   ├── server
 │   │   │   ├── api
 │   │   │   │   ├── client
+│   │   │   │   │   ├── api_endpoints.ts
 │   │   │   │   │   ├── base.ts
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   ├── school.ts
@@ -1115,6 +1121,7 @@
 │   │   │   │   └── response.ts
 │   │   │   ├── index.ts
 │   │   │   ├── ui
+│   │   │   │   ├── form.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   └── table.ts
 │   │   │   └── utilities.ts
@@ -1125,23 +1132,22 @@
 │   │   │   ├── data-import
 │   │   │   │   └── schema-templates.ts
 │   │   │   ├── forms
-│   │   │   │   ├── core
-│   │   │   │   │   ├── field-renderer.tsx
-│   │   │   │   │   └── index.ts
-│   │   │   │   ├── field-labels.ts
+│   │   │   │   ├── factories
 │   │   │   │   ├── fieldConfig
 │   │   │   │   │   ├── coaching
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   ├── integrations
 │   │   │   │   │   ├── observations
+│   │   │   │   │   ├── school
 │   │   │   │   │   └── staff
+│   │   │   │   ├── hooks
+│   │   │   │   │   └── useFieldRenderer.tsx
+│   │   │   │   └── index.ts
+│   │   │   ├── notifications
+│   │   │   │   ├── entity-messages.ts
 │   │   │   │   ├── index.ts
-│   │   │   │   └── tanstack
-│   │   │   │       ├── components
-│   │   │   │       ├── factory
-│   │   │   │       ├── hooks
-│   │   │   │       ├── index.ts
-│   │   │   │       └── types
+│   │   │   │   ├── toast-configs.ts
+│   │   │   │   └── types.ts
 │   │   │   ├── styles
 │   │   │   │   ├── event-styles.ts
 │   │   │   │   └── index.ts
@@ -1230,4 +1236,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-368 directories, 863 files
+366 directories, 871 files

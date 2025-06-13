@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { tv } from 'tailwind-variants';
 import { Button } from '@components/core/Button';
 import { Card } from '@components/composed/cards';
@@ -8,6 +8,8 @@ import { Input } from '@components/core/fields/Input';
 import { Textarea } from '@components/core/fields/Textarea';
 import { Checkbox } from '@components/core/fields/Checkbox';
 import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
+import { useSearchParams } from 'next/navigation';
+import { getStaffUrl } from '@server/api/client/api_endpoints';
 
 // Import existing domain hook and types from the established schema
 import { useClassroomObservations } from '@domain-hooks/observations/useClassroomObservations';
@@ -34,6 +36,16 @@ const activitySection = tv({
 });
 
 const CoachingNotesTemplate = () => {
+  const searchParams = useSearchParams();
+  const teacherId = searchParams.get('teacherId');
+  const [selectedTeacher, setSelectedTeacher] = useState<string>('');
+
+  useEffect(() => {
+    if (teacherId) {
+      setSelectedTeacher(teacherId);
+    }
+  }, [teacherId]);
+
   // Replace manual state with schema-driven approach using existing domain hooks
   const { createAsync, isCreating, error } = useClassroomObservations();
   
@@ -255,9 +267,9 @@ const CoachingNotesTemplate = () => {
               <div>
                 <ReferenceSelect
                   label="Teacher"
-                  url="/api/reference/staff?type=nycps"
-                  value={formData.teacherId}
-                  onChange={(value) => setFormData(prev => ({...prev, teacherId: typeof value === 'string' ? value : ''}))}
+                  url={getStaffUrl('nycps')}
+                  value={selectedTeacher}
+                  onChange={(value) => setSelectedTeacher(Array.isArray(value) ? value[0] : value)}
                   placeholder="Select Teacher"
                 />
               </div>

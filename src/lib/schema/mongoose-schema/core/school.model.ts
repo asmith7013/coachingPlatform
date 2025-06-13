@@ -1,17 +1,10 @@
 import mongoose from "mongoose";
-import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
+import { getModelForClass, prop } from "@typegoose/typegoose";
 import { GradeLevels } from "@enums";
 // import { connectToDB } from "@data-server/db/connection";
 import { getModel } from "@server/db/model-registry";
 import { BaseMongooseDocument } from "@mongoose-schema/base-document";
-import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
 
-@modelOptions({ 
-  schemaOptions: {
-    ...standardSchemaOptions,
-    collection: 'schools', // Explicit collection name
-  } 
-})
 class School extends BaseMongooseDocument {
 
   @prop({ type: String, required: true })
@@ -51,10 +44,8 @@ class School extends BaseMongooseDocument {
   updatedAt?: Date;
 }
 
-
-// Keep for backward compatibility
 export const SchoolModel =
-  mongoose.models.School || getModelForClass(School);
+  mongoose.models.School || getModelForClass(School, { schemaOptions: { collection: 'schools' } });
 
 export async function getSchoolModel() {
   return getModel<School>('School', () => getModelForClass(School));

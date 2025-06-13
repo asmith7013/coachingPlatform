@@ -1,8 +1,8 @@
 import { createApiSafeFetcher } from "@server/fetchers/fetcher-factory";
 import { fetchById } from "@server/fetchers/fetch-by-id";
 import { CoachingActionPlanModel } from "@mongoose-schema/core/coaching-action-plan.model";
-import { CoachingActionPlanZodSchema } from "@zod-schema/core/cap";
-import { ensureBaseDocumentCompatibility } from "@/lib/schema/zod-schema/base-schemas";
+import { CollectionResponse } from "@/lib/types/core/response";
+import { QueryParams } from "@/lib/types/core/query";
 
 /**
  * Fetch coaching action plan by ID
@@ -21,6 +21,5 @@ export async function fetchCoachingActionPlanById(id: string) {
  */
 export const fetchCoachingActionPlansForApi = createApiSafeFetcher(
   CoachingActionPlanModel,
-  ensureBaseDocumentCompatibility(CoachingActionPlanZodSchema),
   "title" // Default search field
-); 
+) as (params: QueryParams) => Promise<CollectionResponse<typeof CoachingActionPlanModel>>;

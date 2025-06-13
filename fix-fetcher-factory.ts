@@ -1,4 +1,4 @@
-// src/lib/data-server/api-adapters.ts
+// Fix for src/lib/server/fetchers/fetcher-factory.ts
 
 import { Model, FilterQuery, Document } from "mongoose";
 import { connectToDB } from "@server/db/connection";
@@ -15,11 +15,10 @@ import { sanitizeDocuments } from "@server/api/responses/formatters";
  * Avoids "use server" directive issues when importing into API routes
  * 
  * @param model The Mongoose model to query
- * @param schema The Zod schema for validation (optional)
  * @param defaultSearchField The field to search by default (e.g., "name", "title")
  * @returns A function that can be used in API routes
  */
-export function createApiSafeFetcher<T extends BaseDocument, M extends Document>(
+export function createApiSafeFetcher<M extends Document>(
   model: Model<M>,
   defaultSearchField?: string
 ) {
@@ -29,20 +28,28 @@ export function createApiSafeFetcher<T extends BaseDocument, M extends Document>
       const { page = 1, limit = 20, filters = {}, sortBy, sortOrder = "asc", search } = params;
       const skip = (page - 1) * limit;
       const query: Record<string, unknown> = {};
+
       if (search && defaultSearchField) {
         query[defaultSearchField] = { $regex: search, $options: 'i' };
       }
+
       Object.entries(filters).forEach(([key, value]) => {
         if (key !== defaultSearchField && value !== undefined && value !== null && value !== '') {
           query[key] = value;
         }
       });
+
       const items = await model.find(query as FilterQuery<M>)
         .sort({ [sortBy || 'createdAt']: sortOrder === 'asc' ? 1 : -1 })
         .skip(skip)
         .limit(limit);
+
       const total = await model.countDocuments(query as FilterQuery<M>);
-      const processedItems = sanitizeDocuments<T>(items as T[]);
+
+      // Let Mongoose transforms handle the type conversion
+      // The returned items will have the correct schema based on the model
+      const processedItems = sanitizeDocuments(items);
+
       return {
         items: processedItems,
         total,
