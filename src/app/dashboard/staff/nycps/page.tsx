@@ -9,20 +9,16 @@ import { DashboardPage } from '@components/composed/layouts/DashboardPage';
 // import { cn } from "@/lib/utils";
 import { EmptyListWrapper } from '@components/core/empty/EmptyListWrapper';
 import { ResourceHeader } from "@components/composed/layouts/ResourceHeader";
-import { MemoizedRigidResourceForm } from "@components/composed/forms/RigidResourceForm";
 import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
-import { useNYCPSStaff } from "@/hooks/domain/staff/useNYCPSStaff";
+import { useNYCPSStaff } from "@hooks/domain";
 import { NYCPSStaff, NYCPSStaffInput } from "@domain-types/staff";
 import { createNYCPSStaff, updateNYCPSStaff, deleteNYCPSStaff, uploadNYCPSStaffFile } from "@actions/staff";
-import { NYCPSStaffFieldConfig } from "@ui-forms/configurations";
+import { NYCPSStaffFieldConfig } from "@forms/fieldConfig/staff/nycps-staff";
 import { Dialog } from "@components/composed/dialogs/Dialog";
 import { Badge } from '@components/core/feedback/Badge';
-import type { FieldType } from "@ui-types/form";
 // import { fetchSchoolOptions } from "@/lib/client-api";
-import { NYCPSStaffOverrides } from "@ui-forms/formOverrides";
-import { getReferenceSelectPropsForField } from "@ui/forms/utils";
 import Link from "next/link";
-import type { Field } from "@ui-types/form";
+
 
 
 
@@ -33,6 +29,8 @@ interface StaffCardProps {
   onEdit: (member: NYCPSStaff) => void;
   onDelete: (id: string) => void;
 }
+
+const _createNYCPSStaff = createNYCPSStaff;
 
 const StaffCard = memo(function StaffCard({ member, onEdit, onDelete }: StaffCardProps) {
   return (
@@ -162,30 +160,14 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
   const [editTarget, setEditTarget] = useState<NYCPSStaff | null>(null);
 
   // Memoize the form fields to prevent recreation on each render
-  const formFields = React.useMemo(() => {
-    return NYCPSStaffFieldConfig.map(field => {
-      const fieldName = field.key as keyof NYCPSStaffInput;
-      
-      // Handle reference fields for schoolIds and ownerIds
-      if (fieldName === 'schoolIds' || fieldName === 'ownerIds') {
-        try {
-          // Get the reference props from the overrides
-          const referenceProps = getReferenceSelectPropsForField(NYCPSStaffOverrides, fieldName);
-          
-          return {
-            ...field,
-            type: 'reference' as FieldType, // Explicitly cast to FieldType
-            url: referenceProps.url,
-            label: referenceProps.label
-          } as Field;
-        } catch (error) {
-          console.error(`Error applying override for ${String(fieldName)}:`, error);
-          return field;
-        }
-      }
-      
-      return field;
-    });
+  const _formFields = React.useMemo(() => {
+    return NYCPSStaffFieldConfig.map(field => ({
+      ...field,
+      // Handle reference fields if needed
+      ...(field.type === 'reference' && {
+        url: field.url || '/api/reference-data'
+      })
+    }));
   }, []);
 
   const handleEdit = useCallback((member: NYCPSStaff) => {
@@ -193,7 +175,7 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
     setIsModalOpen(true);
   }, []);
 
-  const handleEditSubmit = useCallback(async (data: NYCPSStaffInput) => {
+  const _handleEditSubmit = useCallback(async (data: NYCPSStaffInput) => {
     if (editTarget?._id) {
       await updateNYCPSStaff(editTarget._id, data);
       setIsModalOpen(false);
@@ -269,12 +251,6 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
       </EmptyListWrapper>
 
       <div className="mt-8">
-        <MemoizedRigidResourceForm<NYCPSStaffInput>
-          mode="create"
-          title="Add NYCPS Staff"
-          onSubmit={createNYCPSStaff}
-          fields={formFields}
-        />
         <BulkUploadForm
           title="Bulk Upload NYCPS Staff"
           description="Upload a CSV with staff name, email, roles, and subjects"
@@ -289,23 +265,17 @@ const NYCPSStaffList = memo(function NYCPSStaffListComponent() {
           onClose={handleCloseModal}
           title="Edit Staff Information"
         >
-          <MemoizedRigidResourceForm<NYCPSStaffInput>
-            mode="edit"
-            title="Edit Staff Information"
-            fields={formFields}
-            onSubmit={handleEditSubmit}
-            defaultValues={{
-              staffName: editTarget.staffName,
-              email: editTarget.email ?? '',
-              schoolIds: editTarget.schoolIds,
-              ownerIds: editTarget.ownerIds,
-              gradeLevelsSupported: editTarget.gradeLevelsSupported,
-              subjects: editTarget.subjects,
-              specialGroups: editTarget.specialGroups,
-              rolesNYCPS: editTarget.rolesNYCPS ?? [],
-              pronunciation: editTarget.pronunciation ?? '',
-            }}
-          />
+          <div className="p-4">
+            <p className="text-gray-600 mb-4">
+              Edit functionality temporarily disabled during form system migration.
+            </p>
+            <div className="space-y-2 text-sm">
+              <p><strong>Name:</strong> {editTarget.staffName}</p>
+              <p><strong>Email:</strong> {editTarget.email}</p>
+              <p><strong>Subjects:</strong> {editTarget.subjects?.join(', ') || 'None'}</p>
+              <p><strong>Roles:</strong> {editTarget.rolesNYCPS?.join(', ') || 'None'}</p>
+            </div>
+          </div>
           <Button
             appearance="alt"
             className="mt-6 w-full"

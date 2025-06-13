@@ -15,7 +15,7 @@ import {
   ChevronRightIcon 
 } from '@heroicons/react/24/outline';
 import type { Outcome, Metric } from '@zod-schema/core/cap';
-import { getMetricCollectionMethodLabel } from '@/lib/ui/forms/configurations/coaching-action-plan-config';
+import { getMetricCollectionMethodLabel } from '@/lib/ui/forms/fieldConfig/coaching/coaching-action-plan-config';
 import type { Evidence } from '@zod-schema/core/cap';
 
 interface OutcomeManagerProps {

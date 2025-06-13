@@ -11,8 +11,9 @@ import {
 } from '@heroicons/react/24/outline';
 import { useSchoolsMutations } from '@hooks/domain/useSchools';
 import { AI_PROMPTS } from '@ui/data-import/schema-templates';
-import { validateSchoolData } from '@/lib/data-processing/transformers/ui/form-validation';
-import { createDataPreview } from '@/lib/data-processing/transformers/ui/data-preview';
+import { validateJsonString } from '@data-processing/validation/validation-helpers';
+import { SchoolInputZodSchema } from '@zod-schema/core/school';
+import { createDataPreview } from '@data-processing/transformers/ui/data-preview';
 import type { SchoolInput } from '@domain-types/school';
 
 interface CreateSchoolDialogProps {
@@ -46,9 +47,9 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
   const handleValidateAndParse = useCallback((jsonString: string) => {
     setValidationError('');
     
-    const result = validateSchoolData(jsonString);
-    if (!result.success || !result.data) {
-      setValidationError(result.error || 'Validation failed');
+    const result = validateJsonString(jsonString, SchoolInputZodSchema);
+    if (!result.success) {
+      setValidationError(result.error);
       return false;
     }
     

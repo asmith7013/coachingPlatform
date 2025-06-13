@@ -5,18 +5,26 @@ import { Dialog as HDialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants';
-import { shadows, textSize, textColors } from '@/lib/tokens/tokens';
+import { 
+  shadows, 
+  textSize, 
+  weight, 
+  paddingX, 
+  paddingY, 
+  radii 
+} from '@/lib/tokens/tokens';
+import { textColors, backgroundColors } from '@/lib/tokens/colors';
 
 // Create dialog variants using tv()
 const dialog = tv({
   slots: {
     backdrop: 'fixed inset-0 bg-black/40 backdrop-blur-sm',
     container: 'fixed inset-0 overflow-y-auto',
-    wrapper: 'flex min-h-full items-start justify-center px-4 py-10',
-    panel: 'bg-white rounded-lg w-full max-h-[90vh] overflow-y-auto',
+    wrapper: `flex min-h-full items-start justify-center ${paddingX.md} py-10`,
+    panel: `${backgroundColors.white} ${radii.lg} w-full max-h-[90vh] overflow-y-auto`,
     closeButton: 'absolute right-4 top-4 focus:outline-none',
     closeIcon: 'h-6 w-6',
-    title: 'mb-4 font-semibold',
+    title: `mb-4 ${weight.semibold}`,
   },
   variants: {
     size: {
@@ -28,9 +36,9 @@ const dialog = tv({
     },
     padding: {
       none: { panel: 'p-0' },
-      sm: { panel: 'p-4' },
-      md: { panel: 'p-6' },
-      lg: { panel: 'p-8' },
+      sm: { panel: `${paddingX.md} ${paddingY.md}` },
+      md: { panel: `${paddingX.lg} ${paddingY.lg}` },
+      lg: { panel: `${paddingX.xl} ${paddingY.xl}` },
     },
     shadow: {
       sm: { panel: shadows.sm },
@@ -44,9 +52,15 @@ const dialog = tv({
       lg: { title: textSize.xl },
     },
     closeButtonColor: {
-      default: { closeButton: textColors.muted + ' hover:text-primary' },
-      muted: { closeButton: textColors.muted + ' hover:text-default' },
-      danger: { closeButton: textColors.muted + ' hover:text-danger' },
+      default: { 
+        closeButton: `${textColors.muted} hover:${textColors.primary}`,
+      },
+      muted: { 
+        closeButton: `${textColors.muted} hover:${textColors.default}`,
+      },
+      danger: { 
+        closeButton: `${textColors.muted} hover:${textColors.danger}`,
+      },
     }
   },
   defaultVariants: {

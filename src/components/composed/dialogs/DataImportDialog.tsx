@@ -16,7 +16,12 @@ import { bulkCreateStaffWithSchoolLink } from '@actions/staff/operations';
 import { createVisit } from '@actions/visits/visits';
 import { createBellSchedule, createMasterSchedule } from '@actions/schedule/schedule';
 import { AI_PROMPTS, createMasterSchedulePrompt } from '@ui/data-import/schema-templates';
-import { createDataPreview, validateVisitData, validateStaffData, validateBellScheduleData, validateMasterScheduleData } from '@/lib/data-processing/transformers/ui';
+import { createDataPreview } from '@data-processing/transformers/ui/data-preview';
+import { validateJsonString } from '@data-processing/validation/validation-helpers';
+import { VisitInputZodSchema } from '@zod-schema/visits/visit';
+import { NYCPSStaffInputZodSchema } from '@zod-schema/core/staff';
+import { BellScheduleInputZodSchema } from '@zod-schema/schedule/schedule';
+import { TeacherScheduleInputZodSchema } from '@zod-schema/schedule/schedule';
 import type { School } from '@zod-schema/core/school';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
@@ -181,46 +186,54 @@ export function DataImportDialog({ open, onClose, school }: DataImportDialogProp
     setValidationError('');
     
     if (selectedDataType === 'staff') {
-      const result = validateStaffData(jsonString);
-      if (!result.success || !result.data) {
-        setValidationError(result.error || 'Validation failed');
+      const result = validateJsonString(jsonString, NYCPSStaffInputZodSchema);
+      if (!result.success) {
+        setValidationError(result.error);
         return false;
       }
-      setImportData(prev => ({ ...prev, staff: result.data! }));
+      // Handle array result
+      const dataArray = Array.isArray(result.data) ? result.data : [result.data];
+      setImportData(prev => ({ ...prev, staff: dataArray }));
     } else if (selectedDataType === 'visits') {
-      const result = validateVisitData(jsonString);
-      if (!result.success || !result.data) {
-        setValidationError(result.error || 'Validation failed');
+      const result = validateJsonString(jsonString, VisitInputZodSchema);
+      if (!result.success) {
+        setValidationError(result.error);
         return false;
       }
-      setImportData(prev => ({ ...prev, visits: result.data! }));
+      // Handle array result
+      const dataArray = Array.isArray(result.data) ? result.data : [result.data];
+      setImportData(prev => ({ ...prev, visits: dataArray }));
     } else if (selectedDataType === 'bellSchedules') {
-      const result = validateBellScheduleData(jsonString);
-      if (!result.success || !result.data) {
-        setValidationError(result.error || 'Validation failed');
+      const result = validateJsonString(jsonString, BellScheduleInputZodSchema);
+      if (!result.success) {
+        setValidationError(result.error);
         return false;
       }
       
-      // Auto-fill school and owners for each bell schedule
-      const scheduleWithSchool = result.data.map(schedule => ({
+      // Handle array result and auto-fill school
+      const dataArray = Array.isArray(result.data) ? result.data : [result.data];
+      const scheduleWithSchool = dataArray.map((schedule: BellScheduleInput) => ({
         ...schedule,
         school: school._id,
-        owners: [] // Or use school.owners if available
+        owners: []
       }));
       
       setImportData(prev => ({ ...prev, bellSchedules: scheduleWithSchool }));
     } else if (selectedDataType === 'masterSchedule') {
-      const result = validateMasterScheduleData(jsonString, school._id, schoolStaff);
-      if (!result.success || !result.data) {
-        setValidationError(result.error || 'Validation failed');
+      const result = validateJsonString(jsonString, TeacherScheduleInputZodSchema);
+      if (!result.success) {
+        setValidationError(result.error);
         return false;
       }
       
-      // Auto-fill school and owners for each master schedule
-      const scheduleWithSchool = result.data.map(schedule => ({
+      // Handle array result and auto-fill school
+      const dataArray = Array.isArray(result.data) ? result.data : [result.data];
+      const scheduleWithSchool = dataArray.map((schedule: TeacherScheduleInput) => ({
         ...schedule,
         school: school._id,
-        owners: [] // Or use school.owners if available
+        owners: [],
+        teacherEmail: '',
+        teacherName: ''
       }));
       
       setImportData(prev => ({ ...prev, masterSchedule: scheduleWithSchool }));
@@ -229,7 +242,7 @@ export function DataImportDialog({ open, onClose, school }: DataImportDialogProp
     setJsonInput('');
     setShowPrompt(false);
     return true;
-  }, [selectedDataType, school._id, schoolStaff]);
+  }, [selectedDataType, school._id]);
 
   // Handle data creation
   const handleCreateData = useCallback(async () => {

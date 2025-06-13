@@ -1,42 +1,33 @@
-import { createFormFields } from '@/lib/ui/forms/tanstack/factory/field-factory';
-import { 
-  NeedsAndFocusZodSchema,
-  GoalZodSchema,
-  ImplementationRecordZodSchema,
-  EndOfCycleAnalysisZodSchema
+import type { Field } from '@ui-types/form';
+import type { 
+  NeedsAndFocus,
+  Goal,
+  ImplementationRecord,
+  EndOfCycleAnalysis
 } from '@zod-schema/core/cap';
 
 /**
- * Schema-derived field configurations for Coaching Action Plan stages
- * Each stage has its own schema and UI hints
- * Follows established domain-organized configuration pattern
+ * Simple field configurations for Coaching Action Plan stages
+ * Following the new domain-specific pattern
  */
 
 // Stage 1: Needs & Focus
-export const needsAndFocusFields = createFormFields(NeedsAndFocusZodSchema, {
-  fieldOrder: ["ipgCoreAction", "ipgSubCategory", "rationale", "pdfAttachment"],
-  labels: {
-    ipgCoreAction: "IPG Core Action",
-    ipgSubCategory: "IPG Sub-Category", 
-    rationale: "Rationale",
-    pdfAttachment: "Supporting Document"
-  },
-  placeholders: {
-    rationale: "Explain why this focus area was selected...",
-  },
-  fieldTypes: {
-    ipgCoreAction: "select",
-    ipgSubCategory: "select",
-    rationale: "textarea",
-    pdfAttachment: "text"
-  },
-  options: {
-    ipgCoreAction: [
+export const NeedsAndFocusFieldConfig: Field<NeedsAndFocus>[] = [
+  {
+    name: "ipgCoreAction",
+    label: "IPG Core Action",
+    type: "select",
+    options: [
       { value: "CA1", label: "Core Action 1" },
       { value: "CA2", label: "Core Action 2" },
       { value: "CA3", label: "Core Action 3" }
-    ],
-    ipgSubCategory: [
+    ]
+  },
+  {
+    name: "ipgSubCategory",
+    label: "IPG Sub-Category",
+    type: "select",
+    options: [
       { value: "CA1A", label: "CA1A" },
       { value: "CA1B", label: "CA1B" },
       { value: "CA1C", label: "CA1C" },
@@ -48,81 +39,128 @@ export const needsAndFocusFields = createFormFields(NeedsAndFocusZodSchema, {
       { value: "CA3D", label: "CA3D" },
       { value: "CA3E", label: "CA3E" }
     ]
+  },
+  {
+    name: "rationale",
+    label: "Rationale",
+    type: "textarea",
+    placeholder: "Explain why this focus area was selected...",
+  },
+  {
+    name: "pdfAttachment",
+    label: "Supporting Document",
+    type: "text",
   }
-});
+];
 
 // Stage 2: Goal & Outcomes
-export const goalFields = createFormFields(GoalZodSchema, {
-  fieldOrder: ["description", "teacherOutcomes", "studentOutcomes"],
-  labels: {
-    description: "SMART Goal Statement",
-    teacherOutcomes: "Teacher Outcomes",
-    studentOutcomes: "Student Outcomes"
+export const GoalFieldConfig: Field<Goal>[] = [
+  {
+    name: "description",
+    label: "SMART Goal Statement",
+    type: "textarea",
+    placeholder: "Write a specific, measurable, achievable, relevant, and time-bound goal...",
   },
-  placeholders: {
-    description: "Write a specific, measurable, achievable, relevant, and time-bound goal...",
+  {
+    name: "teacherOutcomes",
+    label: "Teacher Outcomes",
+    type: "textarea",
   },
-  fieldTypes: {
-    description: "textarea",
-    teacherOutcomes: "textarea", 
-    studentOutcomes: "textarea"
+  {
+    name: "studentOutcomes",
+    label: "Student Outcomes",
+    type: "textarea",
   }
-});
+];
 
 // Stage 3: Implementation Record
-export const implementationRecordFields = createFormFields(ImplementationRecordZodSchema, {
-  fieldOrder: ["date", "cycleNumber", "visitNumber", "coachingFocus", "teacherActions", "studentResponse", "coachReflections"],
-  labels: {
-    date: "Visit Date",
-    cycleNumber: "Cycle Number",
-    visitNumber: "Visit Number", 
-    coachingFocus: "Coaching Focus",
-    teacherActions: "Teacher Actions Observed",
-    studentResponse: "Student Response",
-    coachReflections: "Coach Reflections"
+export const ImplementationRecordFieldConfig: Field<ImplementationRecord>[] = [
+  {
+    name: "date",
+    label: "Visit Date",
+    type: "date",
   },
-  fieldTypes: {
-    date: "date",
-    cycleNumber: "number",
-    visitNumber: "number",
-    coachingFocus: "textarea",
-    teacherActions: "textarea",
-    studentResponse: "textarea", 
-    coachReflections: "textarea"
+  {
+    name: "cycleNumber",
+    label: "Cycle Number",
+    type: "number",
+  },
+  {
+    name: "visitNumber",
+    label: "Visit Number",
+    type: "number",
+  },
+  {
+    name: "lookForImplemented",
+    label: "What Was Observed",
+    type: "textarea",
+  },
+  {
+    name: "glows",
+    label: "Strengths Observed",
+    type: "textarea",
+  },
+  {
+    name: "grows",
+    label: "Areas for Improvement",
+    type: "textarea",
+  },
+  {
+    name: "successMetrics",
+    label: "Success Metrics",
+    type: "textarea",
+  },
+  {
+    name: "nextSteps",
+    label: "Next Steps",
+    type: "textarea",
   }
-});
+];
 
 // Stage 4: End of Cycle Analysis
-export const endOfCycleAnalysisFields = createFormFields(EndOfCycleAnalysisZodSchema, {
-  fieldOrder: ["goalMet", "teacherOutcomeAnalysis", "studentOutcomeAnalysis", "impactOnLearning", "lessonsLearned", "recommendationsForNext"],
-  labels: {
-    goalMet: "Goal Achievement",
-    teacherOutcomeAnalysis: "Teacher Outcome Analysis",
-    studentOutcomeAnalysis: "Student Outcome Analysis", 
-    impactOnLearning: "Impact on Learning",
-    lessonsLearned: "Lessons Learned",
-    recommendationsForNext: "Recommendations for Next Cycle"
+export const EndOfCycleAnalysisFieldConfig: Field<EndOfCycleAnalysis>[] = [
+  {
+    name: "goalMet",
+    label: "Goal Achievement",
+    type: "checkbox",
   },
-  fieldTypes: {
-    goalMet: "checkbox",
-    teacherOutcomeAnalysis: "textarea",
-    studentOutcomeAnalysis: "textarea",
-    impactOnLearning: "textarea",
-    lessonsLearned: "textarea",
-    recommendationsForNext: "textarea"
+  {
+    name: "teacherOutcomeAnalysis",
+    label: "Teacher Outcome Analysis",
+    type: "textarea",
+  },
+  {
+    name: "studentOutcomeAnalysis",
+    label: "Student Outcome Analysis",
+    type: "textarea",
+  },
+  {
+    name: "impactOnLearning",
+    label: "Impact on Learning",
+    type: "textarea",
+  },
+  {
+    name: "lessonsLearned",
+    label: "Lessons Learned",
+    type: "textarea",
+  },
+  {
+    name: "recommendationsForNext",
+    label: "Recommendations for Next Cycle",
+    type: "textarea",
   }
-});
+];
 
 // Combined configuration for stage selection
 export const stageFieldConfigs = {
-  1: needsAndFocusFields,
-  2: goalFields,
-  3: implementationRecordFields,
-  4: endOfCycleAnalysisFields
+  1: NeedsAndFocusFieldConfig,
+  2: GoalFieldConfig,
+  3: ImplementationRecordFieldConfig,
+  4: EndOfCycleAnalysisFieldConfig
 } as const;
 
-// Legacy exports for backward compatibility during migration
-export const NeedsAndFocusFieldConfig = needsAndFocusFields;
-export const GoalFieldConfig = goalFields;
-export const ImplementationRecordFieldConfig = implementationRecordFields;
-export const EndOfCycleAnalysisFieldConfig = endOfCycleAnalysisFields; 
+// Aliases for backward compatibility
+export const needsAndFocusFields = NeedsAndFocusFieldConfig;
+export const goalFields = GoalFieldConfig;
+export const implementationRecordFields = ImplementationRecordFieldConfig;
+export const endOfCycleAnalysisFields = EndOfCycleAnalysisFieldConfig; 

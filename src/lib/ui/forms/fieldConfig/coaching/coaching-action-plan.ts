@@ -1,70 +1,93 @@
-import { createFormFields, createSimpleFields } from "@lib/ui/forms/tanstack/factory/field-factory";
-import { CoachingActionPlanInputZodSchema } from "@zod-schema/core/cap";
+import type { Field } from '@ui-types/form';
+import type { CoachingActionPlanInput } from "@zod-schema/core/cap";
 
 /**
- * Schema-derived field configuration for Coaching Action Plan forms
- * Uses createFormFields factory with CoachingActionPlanZodSchema
- * Follows createCrudHooks factory pattern for consistency
+ * Simple field configuration for Coaching Action Plan forms
+ * Following the new domain-specific pattern
  */
-export const CoachingActionPlanFields = createFormFields(
-  CoachingActionPlanInputZodSchema,
+export const CoachingActionPlanFieldConfig: Field<CoachingActionPlanInput>[] = [
   {
-    fieldOrder: ["title", "teachers", "coaches", "school", "academicYear", "startDate", "endDate", "status"],
-    labels: {
-      title: "Plan Title",
-      teachers: "Teachers",
-      coaches: "Coaches", 
-      school: "School",
-      academicYear: "Academic Year",
-      startDate: "Start Date",
-      endDate: "End Date",
-      status: "Status"
-    },
-    placeholders: {
-      title: "Enter a descriptive title for this coaching action plan",
-      academicYear: "e.g., 2024-2025",
-      startDate: "When the coaching plan begins",
-      endDate: "When the coaching plan ends (optional)"
-    },
-    fieldTypes: {
-      teachers: "reference",
-      coaches: "reference", 
-      school: "reference",
-      startDate: "date",
-      endDate: "date",
-      status: "select"
-    },
-    urls: {
-      teachers: "/api/staff?role=teacher",
-      coaches: "/api/staff?role=coach",
-      school: "/api/schools"
-    },
-    options: {
-      status: [
-        { value: "draft", label: "Draft" },
-        { value: "active", label: "Active" },
-        { value: "completed", label: "Completed" },
-        { value: "archived", label: "Archived" }
-      ]
-    }
+    name: "title",
+    label: "Plan Title",
+    type: "text",
+    placeholder: "Enter a descriptive title for this coaching action plan",
+  },
+  {
+    name: "teachers",
+    label: "Teachers",
+    type: "reference",
+    url: "/api/staff?role=teacher",
+    multiple: true,
+  },
+  {
+    name: "coaches",
+    label: "Coaches",
+    type: "reference",
+    url: "/api/staff?role=coach",
+    multiple: true,
+  },
+  {
+    name: "school",
+    label: "School",
+    type: "reference",
+    url: "/api/schools",
+  },
+  {
+    name: "academicYear",
+    label: "Academic Year",
+    type: "text",
+    placeholder: "e.g., 2024-2025",
+  },
+  {
+    name: "startDate",
+    label: "Start Date",
+    type: "date",
+    placeholder: "When the coaching plan begins",
+  },
+  {
+    name: "endDate",
+    label: "End Date",
+    type: "date",
+    placeholder: "When the coaching plan ends (optional)",
+  },
+  {
+    name: "status",
+    label: "Status",
+    type: "select",
+    options: [
+      { value: "draft", label: "Draft" },
+      { value: "active", label: "Active" },
+      { value: "completed", label: "Completed" },
+      { value: "archived", label: "Archived" }
+    ]
   }
-);
+];
 
 /**
  * Quick creation field configuration
  * Essential fields only - following YAGNI principle
- * Uses schema-derived approach for consistency
  */
-export const QuickCreateFields = createSimpleFields(
-  CoachingActionPlanInputZodSchema,
-  ["title", "academicYear", "startDate"],
+export const QuickCreateFieldConfig: Field<CoachingActionPlanInput>[] = [
   {
-    title: "Plan Title",
-    academicYear: "Academic Year",
-    startDate: "Start Date"
+    name: "title",
+    label: "Plan Title",
+    type: "text",
+    placeholder: "Enter a descriptive title for this coaching action plan",
+  },
+  {
+    name: "academicYear",
+    label: "Academic Year",
+    type: "text",
+    placeholder: "e.g., 2024-2025",
+  },
+  {
+    name: "startDate",
+    label: "Start Date",
+    type: "date",
+    placeholder: "When the coaching plan begins",
   }
-);
+];
 
-// Legacy exports for backward compatibility during migration
-export const CoachingActionPlanFieldConfig = CoachingActionPlanFields;
-export const QuickCreateFieldConfig = QuickCreateFields; 
+// Alias for backward compatibility
+export const CoachingActionPlanFields = CoachingActionPlanFieldConfig;
+export const QuickCreateFields = QuickCreateFieldConfig; 

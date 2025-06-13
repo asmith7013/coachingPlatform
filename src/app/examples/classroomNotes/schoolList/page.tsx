@@ -1,27 +1,22 @@
-"use client"; // ✅ Ensures this component runs on the client-side.
+"use client";
 
 import React, { useState, useCallback } from "react";
+
+import { cn } from "@ui/utils/formatters";
+
+import { useSchoolsList, useSchoolsMutations } from "@hooks/domain/useSchools";
+import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
+import { SchoolForm } from "@components/domain/schools/SchoolForm";
+import type { SchoolInput, School } from "@zod-schema/core/school";
+
 import { Card } from '@components/composed/cards/Card';
 import { Heading } from '@components/core/typography/Heading';
 import { Text } from '@components/core/typography/Text';
 import { Button } from '@components/core/Button';
 import { DashboardPage } from '@components/composed/layouts/DashboardPage';
-import { useSchoolsList, useSchoolsMutations } from "@hooks/domain/useSchools"; // ✅ React Query hooks for managing Schools data.
-import { SchoolInput } from "@zod-schema/core/school";
-import { School } from "@zod-schema/core/school";
-// TODO: TanStack Form Migration - Temporarily commented out unused imports
-// import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
-// import { SchoolFieldConfig } from "@ui-forms/configurations";
-// import type { Field } from "@ui-types/form";
-// TODO: TanStack Form Migration - RigidResourceForm has been deleted
-// import { RigidResourceForm as GenericResourceForm } from "@components/composed/forms/RigidResourceForm";
-import { uploadSchoolFile } from "@actions/schools/schools";
 import BulkUploadForm from "@components/composed/forms/BulkUploadForm";
 import { ResourceHeader } from "@components/composed/layouts/ResourceHeader";
-import { cn } from "@ui/utils/formatters";
 import { EmptyListWrapper } from '@components/core/empty/EmptyListWrapper';
-
-
 
 export default function SchoolList() {
   // Use the React Query-based hooks
@@ -50,6 +45,7 @@ export default function SchoolList() {
   }, []);
 
   const [searchInput, setSearchInput] = useState("");
+  const [showCreateForm, setShowCreateForm] = useState(false);
   
   const confirmDeleteSchool = (id: string) => {
     if (window.confirm("Are you sure you want to delete this school?")) {
@@ -65,6 +61,11 @@ export default function SchoolList() {
     } catch (error) {
       console.error("Failed to delete school:", error);
     }
+  };
+
+  const handleCreateSchool = async (data: SchoolInput) => {
+    await createSchool(data);
+    setShowCreateForm(false);
   };
 
   if (loading) return <Text textSize="base">Loading Schools...</Text>;
@@ -91,6 +92,26 @@ export default function SchoolList() {
         performanceMode={performanceMode}
         togglePerformanceMode={togglePerformanceMode}
       />
+
+      <div className="mb-4">
+        <Button
+          onClick={() => setShowCreateForm(!showCreateForm)}
+          intent="primary"
+          appearance="solid"
+        >
+          {showCreateForm ? 'Cancel' : 'Create School'}
+        </Button>
+      </div>
+
+      {showCreateForm && (
+        <div className="mb-8">
+          <SchoolForm
+            title="Create New School"
+            onSubmit={handleCreateSchool}
+            onCancel={() => setShowCreateForm(false)}
+          />
+        </div>
+      )}
 
       <EmptyListWrapper items={schools} resourceName="schools">
         {schools.map((school: School) => (
@@ -162,13 +183,6 @@ export default function SchoolList() {
       </EmptyListWrapper>
 
       <div className="mt-8">
-        {/* TODO: TanStack Form Migration - Replace with TanStackForm */}
-        {/* <GenericResourceForm
-          mode="create"
-          title="Add School"
-          onSubmit={createSchool}
-          fields={SchoolFieldConfig as Field[]}
-        /> */}
         <BulkUploadForm
           title="Bulk Upload Schools"
           description="Upload a CSV file with school data"

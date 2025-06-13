@@ -3,10 +3,12 @@
 import React, { useMemo } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { Alert } from '@components/core/feedback/Alert';
-import { TanStackForm } from '@tanstack-form/components/TanStackForm';
+import { FormLayout } from '@components/composed/forms/FormLayout';
+import { useFieldRenderer } from '@/lib/ui/forms/hooks/useFieldRenderer';
 import { VisitInput } from '@zod-schema/visits/visit';
 import { VisitInputZodSchema } from '@zod-schema/visits/visit';
-import { visitFields } from '@forms/fieldConfig/integrations';
+import { VisitFieldConfig } from '@forms/fieldConfig/integrations';
+import type { Field } from '@ui-types/form';
 
 /**
  * Props for the ImportCompletionForm component
@@ -30,10 +32,13 @@ export function ImportCompletionForm({
   missingFields,
   disabled = false
 }: ImportCompletionFormProps) {
+  const { renderField } = useFieldRenderer<VisitInput>();
   
   // Filter fields to only include missing ones
   const filteredFields = useMemo(() => {
-    return visitFields.filter(field => missingFields.includes(field.name));
+    return VisitFieldConfig.filter((field: Field<VisitInput>) => 
+      missingFields.includes(String(field.name))
+    );
   }, [missingFields]);
 
   // Create TanStack form with schema validation
@@ -46,8 +51,7 @@ export function ImportCompletionForm({
     onSubmit: async ({ value }) => {
       onSubmit(value as VisitInput);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  }) as any; // Type assertion needed due to TanStack Form interface compatibility
+  });
 
   // Show message if no missing fields
   if (missingFields.length === 0) {
@@ -75,16 +79,37 @@ export function ImportCompletionForm({
         </Alert.Description>
       </Alert>
       
-      <TanStackForm
-        form={form}
-        fields={filteredFields}
+      <FormLayout
         title="Complete Visit Information"
         description="The following fields need to be completed before this visit can be imported."
         submitLabel="Create Visit"
-        cancelLabel="Cancel Import"
         onCancel={onCancel}
-        loading={disabled}
-      />
+        isSubmitting={disabled}
+        canSubmit={form.state.canSubmit}
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+          className="space-y-4"
+        >
+          {filteredFields.map((fieldConfig: Field<VisitInput>) => (
+            <div key={String(fieldConfig.name)} className="space-y-2">
+              <label
+                htmlFor={String(fieldConfig.name)}
+                className="text-sm font-medium leading-none"
+              >
+                {fieldConfig.label}
+              </label>
+              
+              <form.Field name={String(fieldConfig.name)}>
+                {(field) => renderField(fieldConfig, field)}
+              </form.Field>
+            </div>
+          ))}
+        </form>
+      </FormLayout>
     </div>
   );
 } 

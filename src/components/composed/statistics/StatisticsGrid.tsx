@@ -56,7 +56,7 @@ export function StatisticsGrid({
           icon={stat.icon}
           value={stat.value}
           label={stat.label}
-          color={stat.color || 'blue'}
+          color={stat.color || 'primary'}
           size={cardSize}
         />
       ))}

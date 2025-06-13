@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
+import { useForm } from '@tanstack/react-form';
 import { Button } from '@components/core/Button';
 import { Alert } from '@components/core/feedback/Alert';
 import { Spinner } from '@components/core/feedback/Spinner';
-import { ResourceForm } from '@components/composed/forms';
-import { VisitFieldConfig } from '@ui-forms/configurations';
+import { FormLayout } from '@components/composed/forms/FormLayout';
+import { useFieldRenderer } from '@/lib/ui/forms/hooks/useFieldRenderer';
+import { VisitFieldConfig } from '@ui-forms/fieldConfig/integrations/visits';
+import { VisitInputZodSchema } from '@zod-schema/visits/visit';
 import type { VisitInput } from '@zod-schema/visits/visit';
 import type { Field } from '@ui-types/form';
 
@@ -27,8 +30,7 @@ export function ImportCompletionForm({
   onCancel,
   disabled = false
 }: ImportCompletionFormProps) {
-  // Form state
-  const [formData, setFormData] = useState<Partial<VisitInput>>(importedVisit);
+  const { renderField } = useFieldRenderer<VisitInput>();
   
   // Filter field config to only include missing fields
   const fields = useMemo(() => {
@@ -39,16 +41,16 @@ export function ImportCompletionForm({
     
     // Filter fields to only include missing ones
     return VisitFieldConfig
-      .filter(field => missingFields.includes(field.key as string))
-      .map(field => {
+      .filter((field: Field<VisitInput>) => missingFields.includes(String(field.name)))
+      .map((field: Field<VisitInput>) => {
         // Setup logic for reference fields
         if (field.type === 'select' || field.type === 'reference') {
           let url = '/api/';
           
           // Set proper URL based on field type
-          if (field.key === 'school') {
+          if (field.name === 'school') {
             url += 'schools';
-          } else if (field.key === 'coach' || field.key === 'owners') {
+          } else if (field.name === 'coach' || field.name === 'owners') {
             url += 'staff';
           }
           
@@ -61,6 +63,18 @@ export function ImportCompletionForm({
         return field;
       });
   }, [missingFields]);
+
+  // Create TanStack form with schema validation
+  const form = useForm({
+    defaultValues: importedVisit,
+    validators: {
+      onChange: VisitInputZodSchema,
+      onSubmit: VisitInputZodSchema
+    },
+    onSubmit: async ({ value }) => {
+      onSubmit(value as VisitInput);
+    }
+  });
   
   // If no missing fields, show success message
   if (fields.length === 0) {
@@ -110,19 +124,37 @@ export function ImportCompletionForm({
         </Alert.Description>
       </Alert>
       
-      <ResourceForm
+      <FormLayout
         title="Complete Visit Information"
         description="Fill in the missing fields to complete the import"
-        fields={fields as Field[]}
-        initialValues={formData}
-        onSubmit={(data: VisitInput) => onSubmit(data)}
-        onCancel={onCancel}
-        showCancelButton={true}
-        cancelLabel="Cancel Import"
         submitLabel="Complete Import"
-        loading={disabled}
-        onChange={(data: Partial<VisitInput>) => setFormData(data)}
-      />
+        onCancel={onCancel}
+        isSubmitting={disabled}
+        canSubmit={form.state.canSubmit}
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+          className="space-y-4"
+        >
+          {fields.map((fieldConfig: Field<VisitInput>) => (
+            <div key={String(fieldConfig.name)} className="space-y-2">
+              <label
+                htmlFor={String(fieldConfig.name)}
+                className="text-sm font-medium leading-none"
+              >
+                {fieldConfig.label}
+              </label>
+              
+              <form.Field name={String(fieldConfig.name)}>
+                {(field) => renderField(fieldConfig, field)}
+              </form.Field>
+            </div>
+          ))}
+        </form>
+      </FormLayout>
     </div>
   );
 }

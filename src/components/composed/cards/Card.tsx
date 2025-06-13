@@ -7,7 +7,12 @@
 import React from 'react'
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textColors } from '@/lib/tokens/tokens'
+import { 
+  paddingX, paddingY, radii, shadows
+} from '@/lib/tokens/tokens'
+import { 
+  textColors, backgroundColors, borderColors
+} from '@/lib/tokens/colors'
 import {
   PaddingToken,
   RadiusToken,
@@ -37,41 +42,102 @@ export const card = tv({
   },
   variants: {
     padding: {
-      none: { root: 'p-0', header: 'p-0', body: 'p-0', footer: 'p-0' },
-      xs: { root: 'p-2', header: 'px-2 py-1', body: 'p-2', footer: 'px-2 py-1' },
-      sm: { root: 'p-3', header: 'px-3 py-2', body: 'p-3', footer: 'px-3 py-2' },
-      md: { root: 'p-4', header: 'px-4 py-3', body: 'p-4', footer: 'px-4 py-3' },
-      lg: { root: 'p-6', header: 'px-6 py-4', body: 'p-6', footer: 'px-6 py-4' },
-      xl: { root: 'p-8', header: 'px-8 py-6', body: 'p-8', footer: 'px-8 py-6' },
-      '2xl': { root: 'p-10', header: 'px-10 py-8', body: 'p-10', footer: 'px-10 py-8' },
+      none: { 
+        root: [paddingX.none, paddingY.none], 
+        header: [paddingX.none, paddingY.none], 
+        body: [paddingX.none, paddingY.none], 
+        footer: [paddingX.none, paddingY.none] 
+      },
+      xs: { 
+        root: [paddingX.sm, paddingY.sm],        // p-2 → paddingX.sm + paddingY.sm
+        header: [paddingX.sm, paddingY.xs],      // px-2 py-1 → paddingX.sm + paddingY.xs
+        body: [paddingX.sm, paddingY.sm], 
+        footer: [paddingX.sm, paddingY.xs] 
+      },
+      sm: { 
+        root: [paddingX.lg, paddingY.lg],        // p-3 → paddingX.lg + paddingY.lg
+        header: [paddingX.lg, paddingY.sm],      // px-3 py-2 → paddingX.lg + paddingY.sm
+        body: [paddingX.lg, paddingY.lg], 
+        footer: [paddingX.lg, paddingY.sm] 
+      },
+      md: { 
+        root: [paddingX.md, paddingY.md],        // p-4 → paddingX.md + paddingY.md
+        header: [paddingX.md, paddingY.lg],      // px-4 py-3 → paddingX.md + paddingY.lg
+        body: [paddingX.md, paddingY.md], 
+        footer: [paddingX.md, paddingY.lg] 
+      },
+      lg: { 
+        root: [paddingX.lg, paddingY.lg],        // p-6 → paddingX.lg + paddingY.lg
+        header: [paddingX.lg, paddingY.md],      // px-6 py-4 → paddingX.lg + paddingY.md
+        body: [paddingX.lg, paddingY.lg], 
+        footer: [paddingX.lg, paddingY.md] 
+      },
+      xl: { 
+        root: [paddingX.xl, paddingY.xl],        // p-8 → paddingX.xl + paddingY.xl
+        header: [paddingX.xl, paddingY.lg],      // px-8 py-6 → paddingX.xl + paddingY.lg
+        body: [paddingX.xl, paddingY.xl], 
+        footer: [paddingX.xl, paddingY.lg] 
+      },
+      '2xl': { 
+        root: [paddingX['2xl'], paddingY['2xl']], // p-10 → paddingX['2xl'] + paddingY['2xl']
+        header: [paddingX['2xl'], paddingY.xl],   // px-10 py-8 → paddingX['2xl'] + paddingY.xl
+        body: [paddingX['2xl'], paddingY['2xl']], 
+        footer: [paddingX['2xl'], paddingY.xl] 
+      },
     },
     radius: {
-      none: { root: 'rounded-none', header: 'rounded-none', body: 'rounded-none', footer: 'rounded-none' },
-      sm: { root: 'rounded-sm', header: 'rounded-sm', body: 'rounded-sm', footer: 'rounded-sm' },
-      md: { root: 'rounded-md', header: 'rounded-md', body: 'rounded-md', footer: 'rounded-md' },
-      lg: { root: 'rounded-lg', header: 'rounded-lg', body: 'rounded-lg', footer: 'rounded-lg' },
-      xl: { root: 'rounded-xl', header: 'rounded-xl', body: 'rounded-xl', footer: 'rounded-xl' },
-      '2xl': { root: 'rounded-2xl', header: 'rounded-2xl', body: 'rounded-2xl', footer: 'rounded-2xl' },
-      full: { root: 'rounded-full', header: 'rounded-full', body: 'rounded-full', footer: 'rounded-full' },
+      none: { 
+        root: radii.none, header: radii.none, body: radii.none, footer: radii.none      // rounded-none → radii.none
+      },
+      sm: { 
+        root: radii.sm, header: radii.sm, body: radii.sm, footer: radii.sm             // rounded-sm → radii.sm
+      },
+      md: { 
+        root: radii.md, header: radii.md, body: radii.md, footer: radii.md             // rounded-md → radii.md
+      },
+      lg: { 
+        root: radii.lg, header: radii.lg, body: radii.lg, footer: radii.lg             // rounded-lg → radii.lg
+      },
+      xl: { 
+        root: radii.xl, header: radii.xl, body: radii.xl, footer: radii.xl             // rounded-xl → radii.xl
+      },
+      '2xl': { 
+        root: radii['2xl'], header: radii['2xl'], body: radii['2xl'], footer: radii['2xl'] // rounded-2xl → radii['2xl']
+      },
+      full: { 
+        root: radii.full, header: radii.full, body: radii.full, footer: radii.full     // rounded-full → radii.full
+      },
     },
     shadow: {
-      none: { root: 'shadow-none', header: 'shadow-none', body: 'shadow-none', footer: 'shadow-none' },
-      sm: { root: 'shadow-sm', header: 'shadow-sm', body: 'shadow-sm', footer: 'shadow-sm' },
-      md: { root: 'shadow-md', header: 'shadow-md', body: 'shadow-md', footer: 'shadow-md' },
-      lg: { root: 'shadow-lg', header: 'shadow-lg', body: 'shadow-lg', footer: 'shadow-lg' },
-      xl: { root: 'shadow-xl', header: 'shadow-xl', body: 'shadow-xl', footer: 'shadow-xl' },
-      '2xl': { root: 'shadow-2xl', header: 'shadow-2xl', body: 'shadow-2xl', footer: 'shadow-2xl' },
+      none: { 
+        root: shadows.none, header: shadows.none, body: shadows.none, footer: shadows.none     // shadow-none → shadows.none
+      },
+      sm: { 
+        root: shadows.sm, header: shadows.sm, body: shadows.sm, footer: shadows.sm             // shadow-sm → shadows.sm
+      },
+      md: { 
+        root: shadows.md, header: shadows.md, body: shadows.md, footer: shadows.md             // shadow-md → shadows.md
+      },
+      lg: { 
+        root: shadows.lg, header: shadows.lg, body: shadows.lg, footer: shadows.lg             // shadow-lg → shadows.lg
+      },
+      xl: { 
+        root: shadows.xl, header: shadows.xl, body: shadows.xl, footer: shadows.xl             // shadow-xl → shadows.xl
+      },
+      '2xl': { 
+        root: shadows['2xl'], header: shadows['2xl'], body: shadows['2xl'], footer: shadows['2xl'] // shadow-2xl → shadows['2xl']
+      },
     },
     variant: {
-      default: { root: 'bg-surface' },
-      alt: { root: 'bg-alt' },
-      white: { root: 'bg-white' },
-      transparent: { root: 'bg-transparent' },
-      muted: { root: 'bg-muted' },
-      secondary: { root: 'bg-secondary-100' },
+      default: { root: backgroundColors.surface },        // bg-surface → backgroundColors.surface
+      alt: { root: 'bg-alt' },                           // Keep as-is if no direct token
+      white: { root: backgroundColors.white },            // bg-white → backgroundColors.white
+      transparent: { root: 'bg-transparent' },            // Keep as-is (special case)
+      muted: { root: backgroundColors.muted },            // bg-muted → backgroundColors.muted
+      secondary: { root: backgroundColors.light.secondary }, // bg-secondary-100 → backgroundColors.light.secondary
     },
     border: {
-      true: { root: 'border border-primary' },
+      true: { root: ['border', borderColors.primary] },   // border border-primary → border + borderColors.primary
       false: {},
     },
   },

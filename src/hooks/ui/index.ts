@@ -1,3 +1,8 @@
+/**
+ * UI Hooks
+ * Custom hooks for UI interactions and state management
+ */
+
 // UI-specific hooks that are actively used
 export * from './useNavigation';
 export * from './useAuthorizedNavigation';

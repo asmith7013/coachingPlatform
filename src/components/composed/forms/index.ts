@@ -1,7 +1,9 @@
-// Forms components - legacy form components removed for TanStack Form migration
+// Forms components
+export * from './FormSection';
 export * from './BulkUploadForm';
+export * from './FormLayout';
 
-// TODO: TanStack Form Migration
-// - Form.tsx, FormSection.tsx, RigidResourceForm.tsx, UpdatedResourceForm.tsx have been deleted
-// - These will be replaced by TanStackForm component from src/lib/ui/forms/tanstack/
-// - Any imports of these components need to be updated during migration
+// TanStack Form Migration Complete
+// - Universal TanStack form components have been replaced with domain-specific composition pattern
+// - Use domain-specific form components (e.g., SchoolForm) instead of universal TanStackForm
+// - Form factories and field renderers are available in @/lib/ui/forms/

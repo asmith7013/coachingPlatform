@@ -55,6 +55,7 @@ export default function DebugReferenceSelect() {
       <Heading level="h1" className="mb-6">Debug Reference Select</Heading>
       <Text className="mb-8">
         This page allows you to test and debug the ReferenceSelect component.
+        The component has been simplified and now integrates with TanStack Form through useFieldRenderer.
         Open your browser console to see detailed debug information.
       </Text>
       
@@ -110,6 +111,7 @@ export default function DebugReferenceSelect() {
           <Text className="mb-2">Render Count: {renderCount}</Text>
           <Text className="mb-2">Multiple Select Items: {value.length}</Text>
           <Text className="mb-2">Single Select Value: {singleValue || "<none>"}</Text>
+          <Text className="mb-2">Integration: ReferenceSelect now works through useFieldRenderer</Text>
         </Card>
       </div>
     </div>

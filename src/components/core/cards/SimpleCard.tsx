@@ -4,53 +4,100 @@ import React from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { cn } from '@ui/utils/formatters';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
+import { 
+  paddingX, paddingY, textSize, weight, radii, shadows, flex, iconSizes
+} from '@/lib/tokens/tokens';
+import { 
+  backgroundColors, borderColors, textColors, hoverTextColors, ringColors
+} from '@/lib/tokens/colors';
 
 /**
  * SimpleCard component styles using Tailwind Variants
  * Recreates the Tailwind UI card pattern with colored left section,
  * content area, and optional action menu
+ * 
+ * ✅ Migration Status: Using token system for all styling
  */
 const simpleCard = tv({
   slots: {
     container: [
-      'col-span-1 flex rounded-md shadow-sm'
+      // Keep structural classes as-is
+      'col-span-1 flex',
+      // Replace with tokens
+      radii.md,           // rounded-md → radii.md
+      shadows.sm          // shadow-sm → shadows.sm
     ],
     colorSection: [
-      'flex w-16 shrink-0 items-center justify-center rounded-l-md',
-      'text-sm font-medium text-white'
+      // Keep structural classes as-is - Layout utilities migration
+      'flex w-16 items-center justify-center',
+      flex.shrink,        // shrink-0 → flex.shrink
+      // Replace with tokens  
+      'rounded-l-md',     // Keep positioning as-is
+      textSize.sm,        // text-sm → textSize.sm
+      weight.medium,      // font-medium → weight.medium
+      textColors.white    // text-white → textColors.white
     ],
     contentContainer: [
-      'flex flex-1 items-center justify-between truncate rounded-r-md',
-      'border-t border-r border-b border-gray-200 bg-white'
+      // Keep structural classes as-is - Layout utilities migration
+      'flex items-center justify-between truncate',
+      flex.grow,          // flex-1 → flex.grow
+      // Replace with tokens
+      'rounded-r-md',                 // Keep positioning as-is
+      'border-t border-r border-b',   // Keep border positioning as-is
+      borderColors.muted,             // border-gray-200 → borderColors.muted
+      backgroundColors.white          // bg-white → backgroundColors.white
     ],
     contentText: [
-      'flex-1 truncate px-4 py-2 text-sm'
+      // Keep structural classes as-is - Layout utilities migration
+      'truncate',
+      flex.grow,          // flex-1 → flex.grow
+      // Replace with tokens
+      paddingX.md,        // px-4 → paddingX.md
+      paddingY.md,        // py-2 → paddingY.md
+      textSize.sm         // text-sm → textSize.sm
     ],
     title: [
-      'font-medium text-gray-900 hover:text-gray-600'
+      // Replace with tokens
+      weight.medium,         // font-medium → weight.medium
+      textColors.default,    // text-gray-900 → textColors.default
+      hoverTextColors.default // hover:text-gray-600 → hoverTextColors.default
     ],
     subtitle: [
-      'text-gray-500'
+      // Replace with tokens
+      textColors.muted    // text-gray-500 → textColors.muted
     ],
     actionContainer: [
-      'shrink-0 pr-2'
+      // Keep structural classes as-is - Layout utilities migration
+      flex.shrink,        // shrink-0 → flex.shrink
+      // Replace with tokens
+      'pr-2'              // Keep minimal positioning spacing as-is
     ],
     actionButton: [
-      'inline-flex size-8 items-center justify-center rounded-full',
-      'bg-transparent bg-white text-gray-400 hover:text-gray-500',
-      'focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden'
+      // Keep structural classes as-is - Icon sizing migration
+      'inline-flex items-center justify-center',
+      iconSizes.xl,       // size-8 → iconSizes.xl
+      // Replace with tokens
+      radii.full,                    // rounded-full → radii.full
+      'bg-transparent',              // Keep transparent as-is
+      backgroundColors.white,        // bg-white → backgroundColors.white
+      textColors.muted,              // text-gray-400 → textColors.muted
+      hoverTextColors.default,       // hover:text-gray-500 → hoverTextColors.default
+      'focus:ring-2 focus:ring-offset-2 focus:outline-hidden',  // Keep focus as-is for now
+      `focus:${ringColors.primary}`  // focus:ring-indigo-500 → focus:ringColors.primary
     ]
   },
   variants: {
     colorVariant: {
+      // Map semantic intent colors  
+      primary: { colorSection: backgroundColors.primary },     // bg-blue-600 → backgroundColors.primary
+      secondary: { colorSection: backgroundColors.secondary }, // bg-gray-600 → backgroundColors.secondary
+      success: { colorSection: backgroundColors.success },     // bg-green-500 → backgroundColors.success
+      danger: { colorSection: backgroundColors.danger },       // bg-red-600 → backgroundColors.danger
+      // Keep additional color options with raw Tailwind for flexibility
       pink: { colorSection: 'bg-pink-600' },
       purple: { colorSection: 'bg-purple-600' },
       yellow: { colorSection: 'bg-yellow-500' },
-      green: { colorSection: 'bg-green-500' },
-      blue: { colorSection: 'bg-blue-600' },
-      red: { colorSection: 'bg-red-600' },
       indigo: { colorSection: 'bg-indigo-600' },
-      gray: { colorSection: 'bg-gray-600' },
     },
     clickable: {
       true: { 
@@ -61,21 +108,21 @@ const simpleCard = tv({
     },
     size: {
       sm: { 
-        colorSection: 'w-12 text-xs',
-        contentText: 'px-3 py-1.5 text-xs'
+        colorSection: ['w-12', textSize.xs],           // w-12 text-xs → w-12 textSize.xs
+        contentText: [paddingX.sm, 'py-1.5', textSize.xs] // px-3 py-1.5 text-xs → paddingX.sm py-1.5 textSize.xs
       },
       md: { 
-        colorSection: 'w-16 text-sm',
-        contentText: 'px-4 py-2 text-sm'
+        colorSection: ['w-16', textSize.sm],           // w-16 text-sm → w-16 textSize.sm  
+        contentText: [paddingX.md, paddingY.md, textSize.sm] // px-4 py-2 text-sm → paddingX.md paddingY.md textSize.sm
       },
       lg: { 
-        colorSection: 'w-20 text-base',
-        contentText: 'px-5 py-3 text-base'
+        colorSection: ['w-20', textSize.base],         // w-20 text-base → w-20 textSize.base
+        contentText: [paddingX.lg, paddingY.lg, textSize.base] // px-5 py-3 text-base → paddingX.lg paddingY.lg textSize.base
       }
     }
   },
   defaultVariants: {
-    colorVariant: 'blue',
+    colorVariant: 'primary',  // blue → primary (semantic color)
     clickable: false,
     size: 'md'
   }
@@ -137,7 +184,7 @@ export function SimpleCard({
   className,
   actionIcon,
   actionLabel = "Open options",
-  colorVariant = 'blue',
+  colorVariant = 'primary',
   clickable = false,
   size = 'md',
   ...props

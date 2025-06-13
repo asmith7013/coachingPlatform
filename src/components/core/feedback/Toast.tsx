@@ -5,7 +5,12 @@ import { Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { cn } from '@ui/utils/formatters'
 import { tv, type VariantProps } from 'tailwind-variants'
-import { shadows, textColors, textSize } from '@/lib/tokens/tokens'
+import { 
+  shadows, textSize, weight, radii, paddingX, paddingY, iconSizes, flex, spaceBetween
+} from '@/lib/tokens/tokens'
+import { 
+  textColors, backgroundColors, hoverTextColors, ringColors
+} from '@/lib/tokens/colors'
 import { 
   TextSizeToken, 
   TextColorToken,
@@ -16,45 +21,76 @@ import {
 export type ToastVariant = 'success' | 'error' | 'warning' | 'info';
 export type ToastPosition = 'bottomRight' | 'topRight' | 'bottomLeft' | 'topLeft' | 'bottom' | 'top';
 
-// Define Toast variants using tv()
+// Define Toast variants using tv() with full token migration
 const toast = tv({
   slots: {
-    container: 'pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6',
-    wrapper: 'flex w-full flex-col items-center space-y-4 sm:items-end',
-    panel: [
-      'pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5',
-      shadows.lg,
+    // Keep structural classes, replace spacing tokens
+    container: [
+      'pointer-events-none fixed inset-0 flex items-end',
+      paddingX.md,        // px-4 → paddingX.md
+      paddingY.lg,        // py-6 → paddingY.lg
+      'sm:items-start sm:p-6'  // Keep responsive as-is
     ],
-    content: 'p-4',
+    wrapper: ['flex w-full flex-col items-center sm:items-end', spaceBetween.y.md],
+    panel: [
+      // Keep structural classes
+      'pointer-events-auto w-full max-w-sm overflow-hidden',
+      // Replace with tokens
+      radii.lg,                    // rounded-lg → radii.lg
+      backgroundColors.white,       // bg-white → backgroundColors.white
+      shadows.lg,                  // shadow-lg → shadows.lg (already tokenized)
+      'ring-1 ring-black/5'        // Keep complex ring as-is for now
+    ],
+    content: [
+      // Replace with tokens
+      paddingX.md,        // p-4 → paddingX.md + paddingY.md
+      paddingY.md
+    ],
     flex: 'flex items-start',
-    icon: 'shrink-0',
-    iconSvg: 'size-6',
-    body: 'ml-3 w-0 flex-1 pt-0.5',
-    title: `${textSize.sm} font-medium`,
-    description: `mt-1 ${textSize.sm}`,
-    closeWrapper: 'ml-4 flex shrink-0',
-    closeButton: 'inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden',
-    closeIcon: 'size-5',
+    icon: flex.shrink,
+    iconSvg: iconSizes.lg,
+    body: ['ml-3 w-0', flex.grow, 'pt-0.5'],
+    title: [
+      textSize.sm,        // text-sm → textSize.sm
+      weight.medium       // font-medium → weight.medium
+    ],
+    description: [
+      'mt-1',            // Keep margin as-is
+      textSize.sm        // text-sm → textSize.sm
+    ],
+    closeWrapper: ['ml-4 flex', flex.shrink],
+    closeButton: [
+      // Keep structural classes
+      'inline-flex',
+      // Replace with tokens
+      radii.md,                    // rounded-md → radii.md
+      backgroundColors.white,       // bg-white → backgroundColors.white
+      textColors.muted,            // text-gray-400 → textColors.muted
+      hoverTextColors.default,     // hover:text-gray-500 → hoverTextColors.default
+      'focus:ring-2 focus:ring-offset-2 focus:outline-hidden',  // Keep focus as-is
+      `focus:${ringColors.primary}` // focus:ring-indigo-500 → focus:ringColors.primary
+    ],
+    closeIcon: iconSizes.md,     // size-5 → iconSizes.md
   },
   variants: {
     variant: {
       success: {
-        iconSvg: 'text-green-400',
+        iconSvg: textColors.success,    // text-green-400 → textColors.success
         title: textColors.default,
         description: textColors.muted,
       },
       error: {
-        iconSvg: 'text-red-400',
+        iconSvg: textColors.danger,     // text-red-400 → textColors.danger
         title: textColors.danger,
         description: textColors.muted,
       },
       warning: {
-        iconSvg: 'text-amber-400',
+        iconSvg: textColors.danger,     // text-amber-400 → textColors.danger (closest semantic)
         title: textColors.default,
         description: textColors.muted,
       },
       info: {
-        iconSvg: 'text-blue-400',
+        iconSvg: textColors.primary,    // text-blue-400 → textColors.primary
         title: textColors.default,
         description: textColors.muted,
       },

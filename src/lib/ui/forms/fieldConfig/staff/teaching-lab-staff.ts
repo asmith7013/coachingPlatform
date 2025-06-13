@@ -1,52 +1,64 @@
-import { createFormFields } from '@/lib/ui/forms/tanstack/factory/field-factory';
-import { TeachingLabStaffInputZodSchema } from '@zod-schema/core/staff';
+import type { Field } from '@ui-types/form';
+import type { TeachingLabStaffInput } from '@zod-schema/core/staff';
 
 /**
- * Schema-derived field configuration for Teaching Lab Staff forms
- * Uses createFormFields factory with TeachingLabStaffInputZodSchema
- * Follows established domain-organized configuration pattern
+ * Simple field configuration for Teaching Lab Staff forms
+ * Following the new domain-specific pattern
  */
-export const teachingLabStaffFields = createFormFields(TeachingLabStaffInputZodSchema, {
-  fieldOrder: ["staffName", "email", "adminLevel", "rolesTL", "schools", "owners", "assignedDistricts"],
-  labels: {
-    staffName: "Full Name",
-    email: "Email Address",
-    adminLevel: "Admin Level",
-    rolesTL: "Teaching Lab Roles",
-    schools: "Assigned Schools",
-    owners: "Owners",
-    assignedDistricts: "Assigned Districts"
+export const TeachingLabStaffFieldConfig: Field<TeachingLabStaffInput>[] = [
+  {
+    name: "staffName",
+    label: "Full Name",
+    type: "text",
+    placeholder: "Enter full name",
   },
-  placeholders: {
-    staffName: "Enter full name",
-    email: "Enter email address"
+  {
+    name: "email",
+    label: "Email Address",
+    type: "email",
+    placeholder: "Enter email address",
   },
-  fieldTypes: {
-    adminLevel: "select",
-    rolesTL: "select",
-    schools: "reference",
-    owners: "reference",
-    assignedDistricts: "reference"
-  },
-  urls: {
-    schools: "/api/schools",
-    owners: "/api/staff",
-    assignedDistricts: "/api/districts"
-  },
-  options: {
-    adminLevel: [
+  {
+    name: "adminLevel",
+    label: "Admin Level",
+    type: "select",
+    options: [
       { value: "Coach", label: "Coach" },
       { value: "Manager", label: "Manager" },
       { value: "Admin", label: "Admin" }
-    ],
-    rolesTL: [
+    ]
+  },
+  {
+    name: "rolesTL",
+    label: "Teaching Lab Roles",
+    type: "select",
+    multiple: true,
+    options: [
       { value: "Math Specialist", label: "Math Specialist" },
       { value: "ELA Specialist", label: "ELA Specialist" },
       { value: "Coach", label: "Coach" },
       { value: "Manager", label: "Manager" }
     ]
+  },
+  {
+    name: "schools",
+    label: "Assigned Schools",
+    type: "reference",
+    url: "/api/schools",
+    multiple: true,
+  },
+  {
+    name: "owners",
+    label: "Owners",
+    type: "reference",
+    url: "/api/staff",
+    multiple: true,
+  },
+  {
+    name: "assignedDistricts",
+    label: "Assigned Districts",
+    type: "reference",
+    url: "/api/districts",
+    multiple: true,
   }
-});
-
-// Legacy export for backward compatibility during migration
-export const TeachingLabStaffFieldConfig = teachingLabStaffFields; 
+]; 

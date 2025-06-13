@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import Select from "react-select";
 import { Label } from "./Label";
 import { useReferenceData, getEntityTypeFromUrlUtil } from "@query/client/hooks/queries/useReferenceData";
@@ -13,36 +13,15 @@ export type OptionType = {
   [key: string]: unknown;
 };
 
-/**
- * TanStack Form field integration props (optional)
- */
-interface TanStackFormProps {
-  fieldApi?: {
-    state: {
-      value: unknown;
-      meta: {
-        errors?: string[];
-        isValidating?: boolean;
-        isDirty?: boolean;
-        isTouched?: boolean;
-      };
-    };
-    handleChange: (value: unknown) => void;
-    handleBlur: () => void;
-    name: string;
-  };
-  /** Error message for field validation */
-  error?: string;
-  /** Required field indicator */
-  required?: boolean;
-}
-
-export interface ReferenceSelectProps extends TanStackFormProps {
+export interface ReferenceSelectProps {
   /** Selected value(s) */
   value: string[] | string;
   
   /** Handler for value changes */
   onChange: (value: string[] | string) => void;
+  
+  /** Handler for blur events */
+  onBlur?: () => void;
   
   /** Whether multiple selection is allowed */
   multiple?: boolean;
@@ -55,6 +34,9 @@ export interface ReferenceSelectProps extends TanStackFormProps {
   
   /** Whether the field is disabled */
   disabled?: boolean;
+  
+  /** Error state for styling */
+  error?: boolean;
   
   /** Optional help text */
   helpText?: string;
@@ -76,62 +58,27 @@ export interface ReferenceSelectProps extends TanStackFormProps {
 }
 
 /**
- * A component for selecting references from API-sourced options
- * Automatically determines the correct data transformation based on URL pattern
+ * A simplified controlled component for selecting references from API-sourced options
+ * Integrates with TanStack Form through useFieldRenderer
  */
 export function ReferenceSelect({
   value,
   onChange,
+  onBlur,
   multiple = false,
   label,
   url,
   disabled = false,
+  error = false,
   helpText,
   placeholder = "Select...",
   schema,
   entityType,
   search = "",
-  className = "",
-  fieldApi,
-  error,
-  required = false
+  className = ""
 }: ReferenceSelectProps) {
-  // TanStack Form integration
-  const finalValue = fieldApi ? fieldApi.state.value : value;
-  const _finalError = fieldApi ? fieldApi.state.meta.errors?.[0] : error;
-  const _finalDisabled = disabled || (fieldApi ? fieldApi.state.meta.isValidating : false);
-  const _required = required
-  
-  const _handleChange = fieldApi ? 
-    (selectedValue: string | string[]) => fieldApi.handleChange(selectedValue) :
-    onChange;
   // Add state for retry attempts
-  const [retryCount, setRetryCount] = useState(0);
-  
-  // Debug tracking refs
-  const urlRef = useRef(url);
-  const valueRef = useRef(value);
-  const multipleRef = useRef(multiple);
-  
-  // Debug logging in development
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      if (urlRef.current !== url) {
-        console.log(`[Debug] ReferenceSelect URL changed: ${urlRef.current} -> ${url}`);
-        urlRef.current = url;
-      }
-      
-      if (JSON.stringify(valueRef.current) !== JSON.stringify(value)) {
-        console.log(`[Debug] ReferenceSelect value changed:`, { from: valueRef.current, to: value });
-        valueRef.current = value;
-      }
-      
-      if (multipleRef.current !== multiple) {
-        console.log(`[Debug] ReferenceSelect multiple changed: ${multipleRef.current} -> ${multiple}`);
-        multipleRef.current = multiple;
-      }
-    }
-  }, [url, value, multiple]);
+  const [_retryCount, setRetryCount] = useState(0);
   
   // Determine entity type from URL if not provided
   const derivedEntityType = useMemo(() => 
@@ -142,7 +89,7 @@ export function ReferenceSelect({
   const { 
     options, 
     isLoading, 
-    error: _error, 
+    error: fetchError, 
     refetch 
   } = useReferenceData({
     url,
@@ -153,7 +100,7 @@ export function ReferenceSelect({
   });
   
   // Memoize the selectedValue transformation 
-  const _selectedValue = useMemo(() => {
+  const selectedValue = useMemo(() => {
     // Ensure options is always an array
     const safeOptions = Array.isArray(options) ? options : [];
     
@@ -166,32 +113,36 @@ export function ReferenceSelect({
     return safeOptions.find(option => option.value === value) || null;
   }, [value, options, multiple]);
 
-  // Memoize the change handler
-  const handleChange = useCallback((selected: OptionType | readonly OptionType[] | null) => {
+  // Stable change handler
+  const handleSelectChange = useCallback((selected: unknown) => {
+    const typedSelected = selected as OptionType | readonly OptionType[] | null;
+    
     if (multiple) {
-      const values = selected ? (selected as readonly OptionType[]).map((item: OptionType) => item.value) : [];
+      const values = typedSelected ? (typedSelected as readonly OptionType[]).map((item: OptionType) => item.value) : [];
       onChange(values);
     } else {
-      onChange(selected ? (selected as OptionType).value : '');
+      onChange(typedSelected ? (typedSelected as OptionType).value : '');
     }
   }, [multiple, onChange]);
   
   // Handle retry when errors occur
   const handleRetry = useCallback(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[Debug] Retrying ReferenceSelect fetch, attempt: ${retryCount + 1}`);
-    }
     setRetryCount(prev => prev + 1);
     refetch();
-  }, [retryCount, refetch]);
+  }, [refetch]);
+
+  // Handle blur event
+  const handleBlur = useCallback(() => {
+    onBlur?.();
+  }, [onBlur]);
 
   return (
     <div className={`space-y-1 ${className}`}>
       <Label>{label}</Label>
       
-      {error ? (
+      {fetchError ? (
         <div className="text-red-500 text-sm p-2 border border-red-200 bg-red-50 rounded">
-          <p>Error loading options: {error}</p>
+          <p>Error loading options: {String(fetchError)}</p>
           <button 
             onClick={handleRetry}
             className="mt-2 px-2 py-1 text-xs bg-red-100 hover:bg-red-200 rounded transition-colors"
@@ -204,13 +155,14 @@ export function ReferenceSelect({
         <Select
           isMulti={multiple}
           options={options}
-          value={finalValue}
-          onChange={handleChange}
+          value={selectedValue}
+          onChange={handleSelectChange}
+          onBlur={handleBlur}
           isLoading={isLoading}
           isDisabled={disabled || isLoading}
           placeholder={isLoading ? "Loading options..." : placeholder}
           noOptionsMessage={() => options.length === 0 ? "No options available" : "No matching options"}
-          className="w-full"
+          className={`w-full ${error ? 'border-destructive' : ''}`}
           classNamePrefix="reference-select"
         />
       )}

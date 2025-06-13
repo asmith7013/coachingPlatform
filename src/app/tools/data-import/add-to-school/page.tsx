@@ -18,10 +18,10 @@ import { useStandardMutation } from '@/query/client/hooks/mutations/useStandardM
 import { bulkCreateStaffWithSchoolLink } from '@actions/staff/operations';
 import { createVisit } from '@actions/visits/visits';
 import { AI_PROMPTS } from '@ui/data-import/schema-templates';
-import { 
-  createDataPreview 
-} from '@/lib/data-processing/transformers/ui/data-preview';
-import { validateVisitData, validateStaffData } from '@/lib/data-processing/transformers/ui/form-validation';
+import { createDataPreview } from '@data-processing/transformers/ui/data-preview';
+import { validateJsonString } from '@data-processing/validation/validation-helpers';
+import { VisitInputZodSchema } from '@zod-schema/visits/visit';
+import { NYCPSStaffInputZodSchema } from '@zod-schema/core/staff';
 import type { School } from '@zod-schema/core/school';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
@@ -104,19 +104,23 @@ export default function AddToSchoolPage() {
     setValidationError('');
     
     if (selectedDataType === 'staff') {
-      const result = validateStaffData(jsonString);
-      if (!result.success || !result.data) {
-        setValidationError(result.error || 'Validation failed');
+      const result = validateJsonString(jsonString, NYCPSStaffInputZodSchema);
+      if (!result.success) {
+        setValidationError(result.error);
         return false;
       }
-      setImportData(prev => ({ ...prev, staff: result.data! }));
+      // Handle array result
+      const dataArray = Array.isArray(result.data) ? result.data : [result.data];
+      setImportData(prev => ({ ...prev, staff: dataArray }));
     } else if (selectedDataType === 'visits') {
-      const result = validateVisitData(jsonString);
-      if (!result.success || !result.data) {
-        setValidationError(result.error || 'Validation failed');
+      const result = validateJsonString(jsonString, VisitInputZodSchema);
+      if (!result.success) {
+        setValidationError(result.error);
         return false;
       }
-      setImportData(prev => ({ ...prev, visits: result.data! }));
+      // Handle array result
+      const dataArray = Array.isArray(result.data) ? result.data : [result.data];
+      setImportData(prev => ({ ...prev, visits: dataArray }));
     }
     
     setJsonInput('');

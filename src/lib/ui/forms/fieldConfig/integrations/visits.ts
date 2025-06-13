@@ -1,47 +1,57 @@
-import { createFormFields } from '@tanstack-form/factory/field-factory';
-import { VisitInputZodSchema } from '@zod-schema/visits/visit';
+import type { Field } from '@ui-types/form';
+import type { VisitInput } from '@zod-schema/visits/visit';
 
 /**
- * Schema-derived field configuration for Visit forms
+ * Simple field configuration for Visit forms
  * Used primarily in Monday.com integration workflows
- * Follows established domain-organized configuration pattern
+ * Following the new domain-specific pattern
  */
-export const visitFields = createFormFields(VisitInputZodSchema, {
-  fieldOrder: ["school", "coach", "owners", "date", "mode", "status"],
-  labels: {
-    school: "School",
-    coach: "Coach",
-    owners: "Owners", 
-    date: "Visit Date",
-    mode: "Mode",
-    status: "Status"
+export const VisitFieldConfig: Field<VisitInput>[] = [
+  {
+    name: "school",
+    label: "School",
+    type: "reference",
+    url: "/api/schools",
   },
-  fieldTypes: {
-    school: "reference",
-    coach: "reference",
-    owners: "reference",
-    date: "date",
-    mode: "select",
-    status: "select"
+  {
+    name: "coach",
+    label: "Coach",
+    type: "reference",
+    url: "/api/staff",
   },
-  urls: {
-    school: "/api/schools",
-    coach: "/api/staff",
-    owners: "/api/staff"
+  {
+    name: "owners",
+    label: "Owners",
+    type: "reference",
+    url: "/api/staff",
+    multiple: true,
   },
-  options: {
-    mode: [
+  {
+    name: "date",
+    label: "Visit Date",
+    type: "date",
+  },
+  {
+    name: "mode",
+    label: "Mode",
+    type: "select",
+    options: [
       { value: "Virtual", label: "Virtual" },
       { value: "In-person", label: "In-person" },
       { value: "Hybrid", label: "Hybrid" }
-    ],
-    status: [
+    ]
+  },
+  {
+    name: "status",
+    label: "Status",
+    type: "select",
+    options: [
       { value: "scheduled", label: "Scheduled" },
       { value: "completed", label: "Completed" },
       { value: "cancelled", label: "Cancelled" }
     ]
   }
-});
+];
 
-// Legacy export for backward compatibility during migration
-export const VisitFieldConfig = visitFields; 
+// Alias for backward compatibility
+export const visitFields = VisitFieldConfig; 

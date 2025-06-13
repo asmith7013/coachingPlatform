@@ -1,15 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { cn } from '@ui/utils/formatters';
 import { Text } from '@core-components/typography/Text'
 import { Card } from '@composed-components/cards/Card'
 import { Button } from '@core-components/Button'
 import { Dialog } from '@composed-components/dialogs/Dialog'
-import { RigidResourceForm } from '@composed-components/forms/RigidResourceForm'
+import { FormLayout } from '@components/composed/forms/FormLayout';
+import { useFieldRenderer } from '@/lib/ui/forms/hooks/useFieldRenderer';
 import type { Field } from '@ui-types/form'
 import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'
-import { NYCPSStaffFieldConfig, TeachingLabStaffFieldConfig } from '@ui-forms/configurations'
+import { NYCPSStaffFieldConfig } from '@forms/fieldConfig/staff/nycps-staff';
+import { TeachingLabStaffFieldConfig } from '@forms/fieldConfig/staff/teaching-lab-staff';
+import { useForm } from '@tanstack/react-form';
+import { NYCPSStaffInputZodSchema, TeachingLabStaffInputZodSchema } from '@zod-schema/core/staff';
 
 type StaffMember = NYCPSStaff | TeachingLabStaff
 type StaffType = 'nycps' | 'tl'
@@ -29,13 +33,14 @@ export function StaffListItem({
 }: StaffListItemProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
+  const { renderField } = useFieldRenderer<StaffMember>();
 
   // Determine which field config to use based on staff type
   const fieldConfig = staffType === 'nycps' 
     ? NYCPSStaffFieldConfig 
     : TeachingLabStaffFieldConfig
 
-  const handleSubmit = async (formData: Record<string, unknown>) => {
+  const _handleSubmit = async (formData: Record<string, unknown>) => {
     if (onUpdate) {
       onUpdate({
         ...staff,
@@ -44,6 +49,18 @@ export function StaffListItem({
     }
     setIsEditMode(false)
   }
+
+  // Create form instance for editing staff - modern TanStack Form v1+ approach
+  const editStaffForm = useForm({
+    defaultValues: staff as Record<string, unknown>,
+    // Native Zod schema validation - no adapter needed in v1+
+    validators: {
+      onChange: staffType === 'nycps' ? NYCPSStaffInputZodSchema : TeachingLabStaffInputZodSchema,
+    },
+    onSubmit: async ({ value }) => {
+      await _handleSubmit(value);
+    },
+  });
 
   // Function to render a single field value
   const renderFieldValue = (key: string, value: unknown) => {
@@ -147,34 +164,46 @@ export function StaffListItem({
         size="lg"
       >
         {isEditMode ? (
-          <div>
-            <RigidResourceForm
-              title=""
-              fields={fieldConfig as Field[]}
-              defaultValues={staff as Record<string, unknown>}
-              onSubmit={handleSubmit}
-              mode="edit"
-            />
-            <div className="mt-4 flex justify-end space-x-3">
-              <Button
-                intent="secondary"
-                appearance="outline"
-                onClick={handleCancel}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
+          <FormLayout
+            title=""
+            submitLabel="Save Changes"
+            onCancel={handleCancel}
+            isSubmitting={editStaffForm.state.isSubmitting}
+            canSubmit={editStaffForm.state.canSubmit}
+          >
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                editStaffForm.handleSubmit();
+              }}
+              className="space-y-4"
+            >
+              {(fieldConfig as Field<StaffMember>[]).map((fieldConfig) => (
+                <div key={String(fieldConfig.name)} className="space-y-2">
+                  <label
+                    htmlFor={String(fieldConfig.name)}
+                    className="text-sm font-medium leading-none"
+                  >
+                    {fieldConfig.label}
+                  </label>
+                  
+                  <editStaffForm.Field name={String(fieldConfig.name)}>
+                    {(field) => renderField(fieldConfig, field)}
+                  </editStaffForm.Field>
+                </div>
+              ))}
+            </form>
+          </FormLayout>
         ) : (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {fieldConfig.map(field => (
-                <div key={String(field.key)} className="mb-4">
+              {fieldConfig.map((field: Field<StaffMember>) => (
+                <div key={String(field.name)} className="mb-4">
                   <Text textSize="sm" weight="semibold" className="block mb-1">
                     {field.label}
                   </Text>
                   <Text textSize="base">
-                    {renderFieldValue(String(field.key), (staff as Record<string, unknown>)[String(field.key)])}
+                    {renderFieldValue(String(field.name), (staff as Record<string, unknown>)[String(field.name)])}
                   </Text>
                 </div>
               ))}

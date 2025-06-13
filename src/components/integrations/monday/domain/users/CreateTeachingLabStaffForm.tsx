@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
-import { Button } from '@/components/core/Button';
+
 import { Alert } from '@/components/core/feedback/Alert';
 import { Spinner } from '@/components/core/feedback/Spinner';
-import { TanStackForm } from '@/lib/ui/forms/tanstack/components/TanStackForm';
-import { teachingLabStaffFields } from '@/lib/ui/forms/fieldConfig/staff/teaching-lab-staff';
+import { FormLayout } from '@components/composed/forms/FormLayout';
+import { useFieldRenderer } from '@/lib/ui/forms/hooks/useFieldRenderer';
+import { TeachingLabStaffFieldConfig } from '@/lib/ui/forms/fieldConfig/staff/teaching-lab-staff';
 import { createTeachingLabStaff } from '@/app/actions/staff';
 import { TeachingLabStaffInput } from '@domain-types/staff';
 import { TeachingLabStaffInputZodSchema } from '@zod-schema/core/staff';
@@ -23,8 +24,6 @@ interface CreateTeachingLabStaffFormProps {
   onCancel: () => void;
 }
 
-// Field configuration is now imported from domain-organized files
-
 export function CreateTeachingLabStaffForm({ 
   user, 
   onSuccess, 
@@ -32,6 +31,7 @@ export function CreateTeachingLabStaffForm({
 }: CreateTeachingLabStaffFormProps) {
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { renderField } = useFieldRenderer<TeachingLabStaffInput>();
   
   // Create default values based on the Monday user data
   const defaultValues: Partial<TeachingLabStaffInput> = {
@@ -64,8 +64,7 @@ export function CreateTeachingLabStaffForm({
     onSubmit: async ({ value }) => {
       await handleSubmit(value as TeachingLabStaffInput);
     }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  }) as any; // Type assertion needed due to TanStack Form interface compatibility
+  });
   
   // Handle form submission
   const handleSubmit = async (data: TeachingLabStaffInput) => {
@@ -118,25 +117,37 @@ export function CreateTeachingLabStaffForm({
         </Alert>
       )}
       
-      <TanStackForm
-        form={form}
-        fields={teachingLabStaffFields}
+      <FormLayout
         title="Create Teaching Lab Staff"
         description={`Creating staff record for ${user.name} (${user.email})`}
         submitLabel={isCreating ? "Creating Staff..." : "Create Teaching Lab Staff"}
-        loading={isCreating}
-      />
-      
-      <div className="flex justify-end gap-2 mt-6">
-        <Button
-          intent="secondary"
-          appearance="outline"
-          onClick={onCancel}
-          disabled={isCreating}
+        isSubmitting={isCreating}
+        canSubmit={form.state.canSubmit}
+        onCancel={onCancel}
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+          className="space-y-4"
         >
-          Cancel
-        </Button>
-      </div>
+          {TeachingLabStaffFieldConfig.map((fieldConfig) => (
+            <div key={String(fieldConfig.name)} className="space-y-2">
+              <label
+                htmlFor={String(fieldConfig.name)}
+                className="text-sm font-medium leading-none"
+              >
+                {fieldConfig.label}
+              </label>
+              
+              <form.Field name={String(fieldConfig.name)}>
+                {(field) => renderField(fieldConfig, field)}
+              </form.Field>
+            </div>
+          ))}
+        </form>
+      </FormLayout>
       
       {isCreating && (
         <div className="flex justify-center">

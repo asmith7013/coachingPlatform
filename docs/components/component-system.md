@@ -340,28 +340,259 @@ Feature components follow these principles:
 
 ## Form Components
 
-Form components use the schema-driven approach:
+Our form system follows a domain-specific composition pattern that leverages TanStack Form's native API while maintaining consistency and DRY principles. This approach separates form layout, field rendering, and business logic into distinct, reusable concerns.
+
+### Form Architecture
+
+The form system consists of three main layers:
+
+1. **Form Factory** - Creates type-safe TanStack Form instances
+2. **Layout Components** - Handle visual presentation and structure
+3. **Field Renderer Hook** - Provides consistent field rendering logic
+4. **Domain Components** - Combine layers for specific business entities
+
+### Entity Form Factory
+
+The `createEntityForm` factory provides type-safe form creation with schema validation:
 
 ```typescript
-// ResourceForm.tsx
-export function ResourceForm<T extends Record<string, unknown>>({
+// src/lib/ui/forms/factories/createEntityForm.ts
+import { useForm } from '@tanstack/react-form';
+import type { ZodSchema } from 'zod';
+
+export function createEntityForm<T extends Record<string, unknown>>(config: {
+  schema: ZodSchema<T>;
+  defaultValues: T;
+  onSubmit: (data: T) => void | Promise<void>;
+}) {
+  return useForm({
+    defaultValues: config.defaultValues,
+    validators: {
+      onChange: config.schema,
+    },
+    onSubmit: async ({ value }) => {
+      await config.onSubmit(value);
+    },
+  });
+}
+```
+
+### Form Layout Component
+
+The `FormLayout` component handles visual presentation without form logic:
+
+```typescript
+// src/components/composed/forms/FormLayout.tsx
+interface FormLayoutProps {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+  onCancel?: () => void;
+  submitLabel?: string;
+  isSubmitting?: boolean;
+  canSubmit?: boolean;
+}
+
+export function FormLayout({
   title,
-  fields,
-  onSubmit,
-  defaultValues,
-}: ResourceFormProps<T>) {
-  // Form implementation...
-  
+  children,
+  submitLabel = 'Submit',
+  isSubmitting = false,
+  canSubmit = true,
+  // ...other props
+}: FormLayoutProps) {
   return (
-    <form onSubmit={handleSubmit}>
-      {fields.map(field => renderField(field))}
-      <Button type="submit">Save</Button>
-    </form>
+    <Card>
+      <Card.Header>
+        <h2 className="text-xl font-semibold">{title}</h2>
+      </Card.Header>
+      
+      <Card.Body>
+        <fieldset disabled={isSubmitting} className="space-y-4">
+          {children}
+        </fieldset>
+      </Card.Body>
+      
+      <Card.Footer>
+        <Button
+          type="submit"
+          intent="primary"
+          loading={isSubmitting}
+          disabled={!canSubmit}
+        >
+          {isSubmitting ? 'Submitting...' : submitLabel}
+        </Button>
+      </Card.Footer>
+    </Card>
   );
 }
 ```
 
-**[RULE]** Use the ResourceForm component for all resource creation and editing.
+### Field Renderer Hook
+
+The `useFieldRenderer` hook provides consistent field rendering:
+
+```typescript
+// src/lib/ui/forms/hooks/useFieldRenderer.tsx
+export function useFieldRenderer<T extends Record<string, unknown>>() {
+  const renderField = (field: Field<T>, fieldApi: any) => {
+    const hasError = fieldApi.state.meta.errors?.length > 0;
+    const errorMessage = hasError ? fieldApi.state.meta.errors[0] : undefined;
+
+    switch (field.type) {
+      case 'text':
+        return (
+          <div className="space-y-1">
+            <Input
+              value={fieldApi.state.value || ''}
+              onChange={(e) => fieldApi.handleChange(e.target.value)}
+              onBlur={fieldApi.handleBlur}
+              error={hasError}
+              placeholder={field.placeholder}
+            />
+            {errorMessage && (
+              <p className="text-sm text-destructive">{errorMessage}</p>
+            )}
+          </div>
+        );
+      
+      case 'select':
+        return (
+          <div className="space-y-1">
+            <Select
+              value={fieldApi.state.value}
+              onValueChange={fieldApi.handleChange}
+              options={field.options || []}
+              error={hasError}
+            />
+            {errorMessage && (
+              <p className="text-sm text-destructive">{errorMessage}</p>
+            )}
+          </div>
+        );
+        
+      // Additional field types...
+    }
+  };
+
+  return { renderField };
+}
+```
+
+### Domain-Specific Form Implementation
+
+Domain forms combine all layers for specific entities:
+
+```typescript
+// src/components/domain/schools/SchoolForm.tsx
+import { createEntityForm } from '@/lib/ui/forms/factories/createEntityForm';
+import { FormLayout } from '@components/composed/forms/FormLayout';
+import { useFieldRenderer } from '@/lib/ui/forms/hooks/useFieldRenderer';
+import { SchoolFieldConfig } from '@forms/fieldConfig/school';
+import { SchoolInputZodSchema, type SchoolInput } from '@zod-schema/core/school';
+
+interface SchoolFormProps {
+  initialValues?: Partial<SchoolInput>;
+  onSubmit: (data: SchoolInput) => void | Promise<void>;
+  onCancel?: () => void;
+  title?: string;
+}
+
+export function SchoolForm({
+  initialValues = {},
+  onSubmit,
+  onCancel,
+  title = 'School Form'
+}: SchoolFormProps) {
+  const { renderField } = useFieldRenderer<SchoolInput>();
+  
+  const form = createEntityForm({
+    schema: SchoolInputZodSchema,
+    defaultValues: {
+      schoolNumber: '',
+      district: '',
+      schoolName: '',
+      // ...other defaults
+      ...initialValues
+    } as SchoolInput,
+    onSubmit,
+  });
+
+  return (
+    <FormLayout
+      title={title}
+      onCancel={onCancel}
+      isSubmitting={form.state.isSubmitting}
+      canSubmit={form.state.canSubmit}
+    >
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
+        className="space-y-4"
+      >
+        {SchoolFieldConfig.map((fieldConfig) => (
+          <div key={String(fieldConfig.name)} className="space-y-2">
+            <label
+              htmlFor={String(fieldConfig.name)}
+              className="text-sm font-medium"
+            >
+              {fieldConfig.label}
+            </label>
+            
+            <form.Field name={String(fieldConfig.name)}>
+              {(field) => renderField(fieldConfig, field)}
+            </form.Field>
+          </div>
+        ))}
+      </form>
+    </FormLayout>
+  );
+}
+```
+
+### Form Usage in Pages
+
+Domain forms integrate seamlessly into page components:
+
+```typescript
+// Example usage in a page component
+export default function SchoolListPage() {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  
+  const handleCreateSchool = async (data: SchoolInput) => {
+    await createSchool(data);
+    setShowCreateForm(false);
+  };
+
+  return (
+    <div>
+      {showCreateForm && (
+        <SchoolForm
+          title="Create New School"
+          onSubmit={handleCreateSchool}
+          onCancel={() => setShowCreateForm(false)}
+        />
+      )}
+      {/* Rest of page content */}
+    </div>
+  );
+}
+```
+
+### Benefits of This Approach
+
+This domain-specific composition pattern provides:
+
+- **Type Safety**: Full TypeScript inference through TanStack Form's native API
+- **Separation of Concerns**: Layout, field rendering, and form logic are decoupled
+- **Reusability**: FormLayout and field renderer work across all domain forms
+- **Consistency**: All forms follow the same structural patterns
+- **Schema Integration**: Zod schemas drive validation without transformations
+- **Extensibility**: Easy to add new field types and domain forms
+
+**[RULE]** Use domain-specific form components following this composition pattern for all entity forms.
 
 ## Error Handling Patterns
 

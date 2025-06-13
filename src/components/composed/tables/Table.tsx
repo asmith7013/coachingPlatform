@@ -6,7 +6,7 @@ import { TableColumnSchema } from '@ui/table-schema'
 import { TableHeader } from './parts/header'
 import { TableRow } from './parts/row'
 import { TableEmpty } from './features/empty'
-import { textColors } from '@/lib/tokens/tokens'
+import { textColors, textSize, paddingX, paddingY } from '@/lib/tokens/tokens'
 
 const table = tv({
   slots: {
@@ -22,21 +22,21 @@ const table = tv({
       danger: { root: textColors.danger }
     },
     textSize: {
-      xs: { root: 'text-xs' },
-      sm: { root: 'text-sm' },
-      base: { root: 'text-base' },
-      lg: { root: 'text-lg' },
-      xl: { root: 'text-xl' }
+      xs: { root: textSize.xs },
+      sm: { root: textSize.sm },
+      base: { root: textSize.base },
+      lg: { root: textSize.lg },
+      xl: { root: textSize.xl }
     },
     padding: {
-      xs: { root: 'p-2' },
-      sm: { root: 'p-3' },
-      md: { root: 'p-4' },
-      lg: { root: 'p-6' },
-      xl: { root: 'p-8' }
+      xs: { root: `${paddingX.sm} ${paddingY.sm}` },
+      sm: { root: `${paddingX.lg} ${paddingY.lg}` },
+      md: { root: `${paddingX.md} ${paddingY.md}` },
+      lg: { root: `${paddingX.lg} ${paddingY.lg}` },
+      xl: { root: `${paddingX.xl} ${paddingY.xl}` }
     },
     compact: {
-      true: { root: 'text-sm leading-tight' }
+      true: { root: `${textSize.sm} leading-tight` }
     }
   },
   defaultVariants: {

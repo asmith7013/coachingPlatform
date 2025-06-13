@@ -2,8 +2,10 @@
 
 import React from 'react';
 import { useForm } from '@tanstack/react-form';
-import { TanStackForm } from '@tanstack-form/components/TanStackForm';
+import { FormLayout } from '@components/composed/forms/FormLayout';
+import { useFieldRenderer } from '@/lib/ui/forms/hooks/useFieldRenderer';
 import { stageFieldConfigs } from '@/lib/ui/forms/fieldConfig/coaching/coaching-action-plan-stages';
+import type { Field } from '@ui-types/form';
 import type { 
   NeedsAndFocus, 
   Goal, 
@@ -16,7 +18,6 @@ import {
   ImplementationRecordZodSchema,
   EndOfCycleAnalysisZodSchema
 } from '@zod-schema/core/cap';
-import { FormApi } from '@tanstack-form/types/field-types';
 
 type StageData = NeedsAndFocus | Goal | ImplementationRecord | EndOfCycleAnalysis;
 
@@ -29,8 +30,6 @@ interface ActionPlanStageFormProps<T extends StageData> {
   error?: string;
   className?: string;
 }
-
-// Schema-derived field configurations are now imported from domain-organized files
 
 // Stage configuration mapping
 const stageConfig = {
@@ -70,13 +69,13 @@ export function ActionPlanStageForm<T extends StageData>({
   className
 }: ActionPlanStageFormProps<T>) {
   const config = stageConfig[stage];
+  const { renderField } = useFieldRenderer<T>();
   
   if (!config) {
     throw new Error(`Invalid stage: ${stage}. Must be 1, 2, 3, or 4.`);
   }
 
   // Create TanStack form with schema validation
-  // Note: Type assertion needed due to complex generic constraints in TanStack Form
   const form = useForm({
     defaultValues: initialValues || {},
     validators: {
@@ -86,7 +85,7 @@ export function ActionPlanStageForm<T extends StageData>({
     onSubmit: async ({ value }) => {
       onSubmit(value as T);
     }
-  }) as unknown as FormApi;
+  });
 
   return (
     <div className={className}>
@@ -95,15 +94,38 @@ export function ActionPlanStageForm<T extends StageData>({
           <p className="text-sm text-red-600">{error}</p>
         </div>
       )}
-      <TanStackForm
-        form={form}
-        fields={config.fields}
+      
+      <FormLayout
         title={config.title}
         description={config.description}
         submitLabel={`Save ${config.title}`}
         onCancel={onCancel}
-        loading={loading}
-      />
+        isSubmitting={loading}
+        canSubmit={form.state.canSubmit}
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+          className="space-y-4"
+        >
+          {(config.fields as Field<T>[]).map((fieldConfig) => (
+            <div key={String(fieldConfig.name)} className="space-y-2">
+              <label
+                htmlFor={String(fieldConfig.name)}
+                className="text-sm font-medium leading-none"
+              >
+                {fieldConfig.label}
+              </label>
+              
+              <form.Field name={String(fieldConfig.name)}>
+                {(field) => renderField(fieldConfig, field)}
+              </form.Field>
+            </div>
+          ))}
+        </form>
+      </FormLayout>
     </div>
   );
 }

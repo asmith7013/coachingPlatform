@@ -41,6 +41,7 @@
 │   ├── implementation
 │   │   └── three-zone-masterschedulecard-integration.md
 │   ├── table-of-contents.md
+│   ├── token-tailwind-mapping.md
 │   ├── workflow-templates
 │   │   └── coding-session-control.md
 │   └── workflows
@@ -95,7 +96,9 @@
 │   ├── platform
 │   │   ├── admin-features.md
 │   │   ├── analytics-features.md
-│   │   └── auth-features.md
+│   │   ├── auth-features.md
+│   │   ├── react-form-plan.md
+│   │   └── react-form-tasks.md
 │   └── product-roadmap.md
 ├── docs-product-tasks
 │   ├── core
@@ -226,9 +229,12 @@
 │   │   │   │   │   └── route.ts
 │   │   │   │   ├── bulk-upload
 │   │   │   │   │   └── route.ts
-│   │   │   │   └── exists
-│   │   │   │       └── route.ts
+│   │   │   │   ├── exists
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
 │   │   │   ├── teacher
+│   │   │   │   └── route.ts
+│   │   │   ├── visits
 │   │   │   │   └── route.ts
 │   │   │   └── webhooks
 │   │   │       └── clerk
@@ -458,12 +464,12 @@
 │   │   │   ├── drawers
 │   │   │   │   ├── Drawer.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── feedback
+│   │   │   │   ├── SkeletonCard.tsx
+│   │   │   │   ├── SkeletonContainer.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── forms
 │   │   │   │   ├── BulkUploadForm.tsx
-│   │   │   │   ├── Form.tsx
-│   │   │   │   ├── FormSection.tsx
-│   │   │   │   ├── RigidResourceForm.tsx
-│   │   │   │   ├── UpdatedResourceForm.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── layouts
 │   │   │   │   ├── AppShell.tsx
@@ -528,6 +534,7 @@
 │   │   │   ├── feedback
 │   │   │   │   ├── Alert.tsx
 │   │   │   │   ├── Badge.tsx
+│   │   │   │   ├── Skeleton.tsx
 │   │   │   │   ├── Spinner.tsx
 │   │   │   │   ├── Toast.tsx
 │   │   │   │   └── index.ts
@@ -606,6 +613,8 @@
 │   │   │   │       ├── routine-utils.ts
 │   │   │   │       └── use-persisted-curriculum-version.ts
 │   │   │   ├── lookFors
+│   │   │   ├── observations
+│   │   │   │   └── ObservationListSkeleton.tsx
 │   │   │   ├── rubrics
 │   │   │   │   ├── FilterableGridView.tsx
 │   │   │   │   ├── RubricCard.tsx
@@ -725,6 +734,8 @@
 │   │           └── utils
 │   │               └── index.ts
 │   ├── debug
+│   ├── examples
+│   │   └── skeleton-container-examples.tsx
 │   ├── hooks
 │   │   ├── auth
 │   │   │   ├── useAuthenticatedUser.ts
@@ -776,7 +787,8 @@
 │   │   │   ├── useNavigation.ts
 │   │   │   ├── useResizableSidebar.ts
 │   │   │   ├── useSchoolAuthorization.ts
-│   │   │   └── useSectionToggle.ts
+│   │   │   ├── useSectionToggle.ts
+│   │   │   └── useSkeletonLoading.ts
 │   │   ├── utilities
 │   │   │   └── useAutoSave.ts
 │   │   └── visits
@@ -804,9 +816,6 @@
 │   │   │   │   ├── purpose-normalizer.ts
 │   │   │   │   ├── ui
 │   │   │   │   │   ├── data-preview.ts
-│   │   │   │   │   ├── form-field-inference.ts
-│   │   │   │   │   ├── form-schema-validation.ts
-│   │   │   │   │   ├── form-validation.ts
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── schema-utils.ts
 │   │   │   │   └── utils
@@ -968,7 +977,6 @@
 │   │   │       │   ├── auth.ts
 │   │   │       │   ├── cache.ts
 │   │   │       │   ├── document.ts
-│   │   │       │   ├── form.ts
 │   │   │       │   ├── index.ts
 │   │   │       │   ├── query.ts
 │   │   │       │   ├── reference.ts
@@ -1047,7 +1055,8 @@
 │   │   │   │   │   ├── lookFors.ts
 │   │   │   │   │   ├── schedule.ts
 │   │   │   │   │   ├── school.ts
-│   │   │   │   │   └── staff.ts
+│   │   │   │   │   ├── staff.ts
+│   │   │   │   │   └── visits.ts
 │   │   │   │   ├── fetch-by-id.ts
 │   │   │   │   ├── fetcher-factory.ts
 │   │   │   │   └── index.ts
@@ -1058,9 +1067,11 @@
 │   │   ├── tokens
 │   │   │   ├── colors.ts
 │   │   │   ├── index.ts
+│   │   │   ├── layout-utils.ts
 │   │   │   ├── layout.ts
 │   │   │   ├── semantic-colors.ts
 │   │   │   ├── shape.ts
+│   │   │   ├── sizing.ts
 │   │   │   ├── spacing.ts
 │   │   │   ├── text.ts
 │   │   │   ├── tokens.ts
@@ -1104,7 +1115,6 @@
 │   │   │   │   └── response.ts
 │   │   │   ├── index.ts
 │   │   │   ├── ui
-│   │   │   │   ├── form.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   └── table.ts
 │   │   │   └── utilities.ts
@@ -1115,36 +1125,23 @@
 │   │   │   ├── data-import
 │   │   │   │   └── schema-templates.ts
 │   │   │   ├── forms
-│   │   │   │   ├── configurations
-│   │   │   │   │   ├── coaching-action-plan-config.ts
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   ├── schema-aware-builders.ts
-│   │   │   │   │   ├── school-config.ts
-│   │   │   │   │   ├── staff-config.ts
-│   │   │   │   │   ├── teaching-lab-staff-config.ts
-│   │   │   │   │   └── visit-config.ts
 │   │   │   │   ├── core
 │   │   │   │   │   ├── field-renderer.tsx
 │   │   │   │   │   └── index.ts
 │   │   │   │   ├── field-labels.ts
 │   │   │   │   ├── fieldConfig
 │   │   │   │   │   ├── coaching
-│   │   │   │   │   └── observations
-│   │   │   │   ├── formOverrides
-│   │   │   │   │   ├── core
 │   │   │   │   │   ├── index.ts
-│   │   │   │   │   ├── look-fors
-│   │   │   │   │   ├── schedule
-│   │   │   │   │   ├── shared
-│   │   │   │   │   └── staff.ts
+│   │   │   │   │   ├── integrations
+│   │   │   │   │   ├── observations
+│   │   │   │   │   └── staff
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── registry.ts
-│   │   │   │   ├── templates
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   └── templates.ts
-│   │   │   │   └── utils
-│   │   │   │       ├── form-utils.ts
-│   │   │   │       └── index.ts
+│   │   │   │   └── tanstack
+│   │   │   │       ├── components
+│   │   │   │       ├── factory
+│   │   │   │       ├── hooks
+│   │   │   │       ├── index.ts
+│   │   │   │       └── types
 │   │   │   ├── styles
 │   │   │   │   ├── event-styles.ts
 │   │   │   │   └── index.ts
@@ -1233,4 +1230,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-365 directories, 869 files
+368 directories, 863 files

@@ -4,6 +4,7 @@ import React from 'react';
 import { cn } from '@ui/utils/formatters';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { tv } from 'tailwind-variants';
+import { spaceBetween, iconSizes, flex } from '@/lib/tokens/tokens';
 
 // Stage information interface matching existing patterns
 interface StageInfo {
@@ -28,7 +29,7 @@ interface TabbedStageNavigationProps {
 const navigation = tv({
   slots: {
     container: 'border-b border-gray-200 bg-white',
-    tabList: 'flex space-x-8 px-6',
+    tabList: ['flex px-6', spaceBetween.x.xl],
     tab: [
       'relative py-4 px-1 border-b-2 font-medium text-sm transition-colors',
       'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
@@ -36,9 +37,10 @@ const navigation = tv({
     ],
     tabInactive: 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
     tabActive: 'border-primary text-primary',
-    tabContent: 'flex items-center space-x-2',
+    tabContent: ['flex items-center', spaceBetween.x.sm],
     stageNumber: [
-      'flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold',
+      'flex items-center justify-center rounded-full text-xs font-semibold',
+      iconSizes.lg,
       'transition-colors'
     ],
     stageNumberInactive: 'bg-gray-100 text-gray-500',
@@ -47,7 +49,7 @@ const navigation = tv({
     stageNumberWarning: 'bg-warning text-white',
     stageTitle: 'font-medium',
     stageDescription: 'text-xs text-gray-500 max-w-24 truncate',
-    statusIcon: 'w-4 h-4 flex-shrink-0',
+    statusIcon: [iconSizes.sm, flex.shrink],
     statusIconComplete: 'text-success',
     statusIconWarning: 'text-warning'
   }

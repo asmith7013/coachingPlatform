@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormSection } from '@/components/composed/forms/FormSection';
+import { FormSection } from '@components/composed/forms/FormSection';
 import { Button } from '@/components/core/Button';
 import { Label } from '@/components/core/fields/Label';
 import { Text } from '@/components/core/typography/Text';

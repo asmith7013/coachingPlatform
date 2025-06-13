@@ -2,12 +2,16 @@ import React, { useState, useMemo } from 'react';
 import { ActionPlanStage } from '../ActionPlanStage';
 import { IPGFocusCards } from '@components/domain/coaching/IPGFocusCards';
 import { IPGSubsectionCards } from '@components/domain/coaching/IPGSubsectionCards';
-import { ResourceForm } from '@components/composed/forms/UpdatedResourceForm';
+import { FormLayout } from '@components/composed/forms/FormLayout';
+import { useFieldRenderer } from '@ui/forms/hooks/useFieldRenderer';
 import { Button } from '@components/core/Button';
 import { Edit2 } from 'lucide-react';
 import { useIPGData } from '@components/features/coaching/hooks/useIPGData';
-import { NeedsAndFocusFieldConfig, getIPGSubCategoryOptions } from '@ui/forms/configurations/coaching-action-plan-config';
+import { NeedsAndFocusFieldConfig, getIPGSubCategoryOptions } from '@forms/fieldConfig/coaching/coaching-action-plan-config';
 import type { NeedsAndFocus } from '@zod-schema/core/cap';
+import type { Field } from '@ui-types/form';
+import { useForm } from '@tanstack/react-form';
+import { NeedsAndFocusZodSchema } from '@zod-schema/core/cap';
 
 export interface CoachingActionPlanStage1Props {
   data: NeedsAndFocus;
@@ -21,9 +25,22 @@ export const CoachingActionPlanStage1: React.FC<CoachingActionPlanStage1Props> =
   className
 }) => {
   const { coreActions, getCoreActionById } = useIPGData();
+  const { renderField } = useFieldRenderer<NeedsAndFocus>();
   
   // State management for UI interactions
   const [isEditing, setIsEditing] = useState<boolean>(!data.ipgCoreAction);
+
+  // Create form instance for details form
+  const detailsForm = useForm({
+    defaultValues: data,
+    validators: {
+      onChange: NeedsAndFocusZodSchema,
+    },
+    onSubmit: async ({ value }) => {
+      onChange(value);
+      setIsEditing(false);
+    },
+  });
 
   // Get subsections for selected core action
   const subsectionOptions = useMemo(() => {
@@ -58,17 +75,6 @@ export const CoachingActionPlanStage1: React.FC<CoachingActionPlanStage1Props> =
     });
   };
 
-  // Handle ResourceForm data changes
-  const handleFormChange = (formData: NeedsAndFocus) => {
-    onChange(formData);
-  };
-
-  // Handle ResourceForm submission (for validation)
-  const handleFormSubmit = (formData: NeedsAndFocus) => {
-    onChange(formData);
-    setIsEditing(false);
-  };
-
   // Format options for IPGFocusCards
   const coreActionOptions = coreActions.map(ca => ({
     value: ca.value,
@@ -78,15 +84,15 @@ export const CoachingActionPlanStage1: React.FC<CoachingActionPlanStage1Props> =
 
   // Create field config with dynamic subsection options
   const dynamicFieldConfig = useMemo(() => {
-    return NeedsAndFocusFieldConfig.map(field => {
-      if (field.key === 'ipgSubCategory') {
+    return NeedsAndFocusFieldConfig.map((field) => {
+      if (field.name === 'ipgSubCategory') {
         return {
           ...field,
           options: subsectionOptions
         };
       }
       return field;
-    });
+    }) as Field<NeedsAndFocus>[];
   }, [subsectionOptions]);
 
   return (
@@ -157,24 +163,43 @@ export const CoachingActionPlanStage1: React.FC<CoachingActionPlanStage1Props> =
               </div>
             )}
 
-            {/* ResourceForm for remaining fields */}
+            {/* Form for remaining fields */}
             {data.ipgCoreAction && data.ipgSubCategory && (
-              <div>
-                <ResourceForm<NeedsAndFocus>
-                  title="Complete Focus Details"
-                  description="Provide rationale and any supporting documentation"
-                  fields={dynamicFieldConfig.filter(field => 
-                    field.key === 'rationale' || field.key === 'pdfAttachment'
-                  )}
-                  initialValues={data}
-                  onChange={handleFormChange}
-                  onSubmit={handleFormSubmit}
-                  submitLabel={isEditing ? "Save Changes" : "Complete Stage"}
-                  showCancelButton={isEditing}
-                  onCancel={() => setIsEditing(false)}
-                  mode="edit"
-                />
-              </div>
+              <FormLayout
+                title="Complete Focus Details"
+                description="Provide rationale and any supporting documentation"
+                isSubmitting={detailsForm.state.isSubmitting}
+                canSubmit={detailsForm.state.canSubmit}
+                onCancel={() => setIsEditing(false)}
+                submitLabel={isEditing ? "Save Changes" : "Complete Stage"}
+              >
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    detailsForm.handleSubmit();
+                  }}
+                  className="space-y-4"
+                >
+                  {(dynamicFieldConfig as Field<NeedsAndFocus>[])
+                    .filter((field) => 
+                      field.name === 'rationale' || field.name === 'pdfAttachment'
+                    )
+                    .map((fieldConfig) => (
+                      <div key={String(fieldConfig.name)} className="space-y-2">
+                        <label
+                          htmlFor={String(fieldConfig.name)}
+                          className="text-sm font-medium leading-none"
+                        >
+                          {fieldConfig.label}
+                        </label>
+                        
+                        <detailsForm.Field name={String(fieldConfig.name) as keyof NeedsAndFocus}>
+                          {(field) => renderField(fieldConfig, field)}
+                        </detailsForm.Field>
+                      </div>
+                    ))}
+                </form>
+              </FormLayout>
             )}
           </div>
         )}

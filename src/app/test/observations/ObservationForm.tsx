@@ -6,8 +6,9 @@ import { Button } from '@/components/core/Button';
 import { Card } from '@/components/composed/cards';
 import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
-import { TanStackFieldRenderer } from '@tanstack-form/components/FieldRenderer';
-import { observationFields } from '@lib/ui/forms/fieldConfig/observations';
+import { useFieldRenderer } from '@ui/forms/hooks/useFieldRenderer';
+import { ClassroomObservationFieldConfig } from '@ui/forms/fieldConfig/observations';
+import type { Field } from '@ui-types/form';
 import { 
   ClassroomObservationNoteInput,
   ClassroomObservationNoteInputZodSchema
@@ -42,6 +43,7 @@ export function ObservationForm({
   error 
 }: ObservationFormProps) {
   const [activeSection, setActiveSection] = useState<string>('basic');
+  const { renderField } = useFieldRenderer<ClassroomObservationNoteInput>();
 
   // Create TanStack form with schema validation
   const form = useForm({
@@ -53,13 +55,14 @@ export function ObservationForm({
     onSubmit: async ({ value }) => {
       await onSubmit(value as ClassroomObservationNoteInput);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  }) as any; // Type assertion needed due to TanStack Form interface compatibility
+  });
 
   // Get fields for current section
   const getSectionFields = useCallback((sectionKey: string) => {
     const sectionFieldNames = FIELD_SECTIONS[sectionKey as keyof typeof FIELD_SECTIONS] || [];
-    return observationFields.filter(field => sectionFieldNames.includes(field.name));
+    return ClassroomObservationFieldConfig.filter((field: Field<ClassroomObservationNoteInput>) => 
+      sectionFieldNames.includes(String(field.name))
+    );
   }, []);
 
   return (
@@ -112,8 +115,13 @@ export function ObservationForm({
           </nav>
         </div>
 
-        {/* Form with TanStack Provider */}
-        <form.Provider>
+        {/* Form without Provider - TanStack Form doesn't use providers */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+        >
           <fieldset disabled={isSubmitting} className="space-y-4">
             <div className="min-h-[400px]">
               <div className="space-y-4">
@@ -130,26 +138,32 @@ export function ObservationForm({
                 </Heading>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {getSectionFields(activeSection).map((field) => (
+                  {getSectionFields(activeSection).map((fieldConfig: Field<ClassroomObservationNoteInput>) => (
                     <div 
-                      key={field.name} 
+                      key={String(fieldConfig.name)} 
                       className={
-                        field.type === 'textarea' || 
-                        field.name.includes('launch') || 
-                        field.name.includes('synthesis') || 
-                        field.name.includes('workTime') ||
-                        field.name === 'learningTargets' || 
-                        field.name === 'coolDown' || 
-                        field.name === 'otherContext' ||
-                        field.name === 'progressMonitoring.overallNotes' 
+                        fieldConfig.type === 'textarea' || 
+                        String(fieldConfig.name).includes('launch') ||
+                        String(fieldConfig.name).includes('synthesis') ||
+                        String(fieldConfig.name).includes('workTime') ||
+                        fieldConfig.name === 'learningTargets' || 
+                        fieldConfig.name === 'coolDown' || 
+                        fieldConfig.name === 'otherContext' ||
+                        fieldConfig.name === 'progressMonitoring.overallNotes' 
                           ? 'md:col-span-2' 
                           : ''
                       }
                     >
-                                             <TanStackFieldRenderer
-                         form={form}
-                         config={field}
-                       />
+                      <label
+                        htmlFor={String(fieldConfig.name)}
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        {fieldConfig.label}
+                      </label>
+                      
+                      <form.Field name={String(fieldConfig.name)}>
+                        {(field) => renderField(fieldConfig, field)}
+                      </form.Field>
                     </div>
                   ))}
                 </div>
@@ -171,16 +185,12 @@ export function ObservationForm({
                 type="submit"
                 appearance="solid"
                 disabled={isSubmitting}
-                onClick={(e) => {
-                  e.preventDefault();
-                  form.handleSubmit();
-                }}
               >
                 {isSubmitting ? '⏳ Saving...' : mode === 'create' ? 'Create Observation' : 'Update Observation'}
               </Button>
             </div>
           </fieldset>
-        </form.Provider>
+        </form>
       </Card.Body>
     </Card>
   );

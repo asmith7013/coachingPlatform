@@ -12,7 +12,21 @@ import {
 } from '@headlessui/react'
 import { cn } from '@ui/utils/formatters'
 import { tv } from 'tailwind-variants'
-// import { textColors, textSize, paddingX, paddingY, radii } from '@ui-tokens/tokens'
+import { 
+  textSize, 
+  paddingX, 
+  paddingY, 
+  radii, 
+  weight,
+  iconSizes,
+  flex,
+  spaceBetween
+} from '@/lib/tokens/tokens'
+import { 
+  textColors,
+  backgroundColors,
+  borderColors
+} from '@/lib/tokens/colors'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronDownIcon, UserCircleIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
@@ -54,58 +68,59 @@ const sidebar = tv({
     // Mobile sidebar dialog
     mobileBackdrop: 'fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0',
     mobileContainer: 'fixed inset-0 flex',
-    mobilePanel: 'relative mr-16 flex w-full max-w-xs flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full',
+    mobilePanel: ['relative mr-16 flex w-full max-w-xs transform transition duration-300 ease-in-out data-closed:-translate-x-full', flex.grow],
     mobileCloseButton: 'absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out data-closed:opacity-0',
-    mobileCloseIcon: 'size-6 text-white',
+    mobileCloseIcon: [iconSizes.lg, textColors.white],
     
     // Desktop sidebar
     desktopSidebar: 'lg:flex lg:flex-col lg:h-full', // Remove fixed positioning
     
     // Shared sidebar content
-    sidebarContent: 'flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4 h-full',
+    sidebarContent: ['flex grow flex-col gap-y-5 overflow-y-auto h-full', backgroundColors.white, paddingX.lg, 'pb-4'],
     
     // User profile section (replaces logo)
-    userProfileSection: 'flex h-16 shrink-0 items-center border-b border-gray-200 pb-4',
-    userMenuButton: 'flex w-full items-center rounded-md p-2 text-left hover:bg-gray-50',
-    userAvatar: 'h-10 w-10 rounded-full bg-gray-50 shrink-0',
-    userInfo: 'ml-3 min-w-0 flex-1',
-    userName: 'text-sm font-semibold text-gray-900 truncate',
-    userEmail: 'text-xs text-gray-500 truncate',
-    userChevron: 'ml-2 h-4 w-4 text-gray-400 shrink-0',
+    userProfileSection: ['flex h-16 items-center border-b pb-4', flex.shrink, borderColors.light.muted],
+    userMenuButton: ['flex w-full items-center text-left', radii.md, paddingX.sm, paddingY.sm, `hover:${backgroundColors.light.muted}`],
+    userAvatar: ['h-10 w-10', radii.full, backgroundColors.light.muted, flex.shrink],
+    userInfo: ['ml-3 min-w-0', flex.grow],
+    userName: [textSize.sm, weight.semibold, textColors.default, 'truncate'],
+    userEmail: [textSize.xs, textColors.muted, 'truncate'],
+    userChevron: ['ml-2', iconSizes.sm, textColors.muted, flex.shrink],
     userMenuItems: [
-      'absolute left-4 right-4 top-20 z-10 rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5',
+      'absolute left-4 right-4 top-20 z-10 shadow-lg ring-1 ring-gray-900/5',
+      radii.md, backgroundColors.white, paddingY.sm,
       'transition focus:outline-none',
       'data-closed:scale-95 data-closed:transform data-closed:opacity-0',
       'data-enter:duration-100 data-enter:ease-out',
       'data-leave:duration-75 data-leave:ease-in'
     ],
-    userMenuItem: 'flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900',
-    userMenuIcon: 'mr-3 h-4 w-4',
+    userMenuItem: ['flex items-center', paddingX.lg, paddingY.sm, textSize.sm, textColors.default, `hover:${backgroundColors.light.muted}`, `hover:${textColors.default}`],
+    userMenuIcon: ['mr-3', iconSizes.sm],
     
     // Navigation
-    nav: 'flex flex-1 flex-col',
-    navList: 'flex flex-1 flex-col gap-y-7',
-    navGroup: '-mx-2 space-y-1',
-    navItem: 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
-    navItemCurrent: 'bg-gray-50 text-indigo-600',
-    navItemDefault: 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600',
-    navIcon: 'size-6 shrink-0',
-    navIconCurrent: 'text-indigo-600',
-    navIconDefault: 'text-gray-400 group-hover:text-indigo-600',
+    nav: ['flex', flex.grow, 'flex-col'],
+    navList: ['flex', flex.grow, 'flex-col gap-y-7'],
+    navGroup: ['-mx-2', spaceBetween.y.xs],
+    navItem: ['group flex gap-x-3', radii.md, paddingX.sm, paddingY.sm, `${textSize.sm}/6`, weight.semibold],
+    navItemCurrent: [backgroundColors.light.muted, textColors.primary],
+    navItemDefault: [textColors.default, `hover:${backgroundColors.light.muted}`, `hover:${textColors.primary}`],
+    navIcon: [iconSizes.lg, flex.shrink],
+    navIconCurrent: textColors.primary,
+    navIconDefault: [textColors.muted, `group-hover:${textColors.primary}`],
     
     // Teams section
-    teamsLabel: 'text-xs/6 font-semibold text-gray-400',
-    teamsList: '-mx-2 mt-2 space-y-1',
-    teamItem: 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
-    teamItemCurrent: 'bg-gray-50 text-indigo-600',
-    teamItemDefault: 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600',
-    teamBadge: 'flex size-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium',
-    teamBadgeCurrent: 'border-indigo-600 text-indigo-600',
-    teamBadgeDefault: 'border-gray-200 text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600',
+    teamsLabel: [`${textSize.xs}/6`, weight.semibold, textColors.muted],
+    teamsList: ['-mx-2 mt-2', spaceBetween.y.xs],
+    teamItem: ['group flex gap-x-3', radii.md, paddingX.sm, paddingY.sm, `${textSize.sm}/6`, weight.semibold],
+    teamItemCurrent: [backgroundColors.light.muted, textColors.primary],
+    teamItemDefault: [textColors.default, `hover:${backgroundColors.light.muted}`, `hover:${textColors.primary}`],
+    teamBadge: ['flex items-center justify-center border', iconSizes.lg, flex.shrink, radii.lg, backgroundColors.white, textSize.xs, weight.medium],
+    teamBadgeCurrent: [borderColors.primary, textColors.primary],
+    teamBadgeDefault: [borderColors.light.muted, textColors.muted, `group-hover:${borderColors.primary}`, `group-hover:${textColors.primary}`],
     
     // Settings at bottom
-    settingsItem: 'group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600',
-    settingsIcon: 'size-6 shrink-0 text-gray-400 group-hover:text-indigo-600',
+    settingsItem: ['group -mx-2 flex gap-x-3', radii.md, paddingX.sm, paddingY.sm, `${textSize.sm}/6`, weight.semibold, textColors.default, `hover:${backgroundColors.light.muted}`, `hover:${textColors.primary}`],
+    settingsIcon: [iconSizes.lg, flex.shrink, textColors.muted, `group-hover:${textColors.primary}`],
   }
 });
 
@@ -161,7 +176,7 @@ export function NavigationSidebar({
                 Settings
               </a>
             </MenuItem>
-            <div className="border-t border-gray-200 my-1" />
+            <div className={`border-t ${borderColors.light.muted} my-1`} />
             <MenuItem>
               <button
                 onClick={signOut}

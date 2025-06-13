@@ -175,6 +175,138 @@ export function EntityCard({ entity }: EntityCardProps) {
 [RULE] Create components based on the component hierarchy pattern.
 </section>
 
+<section id="tanstack-form-implementation">
+
+## 7. TanStack Form Implementation
+
+For forms requiring complex validation and dynamic field generation, use the TanStack Form system:
+
+### Schema-Driven Field Generation
+
+Generate field configurations automatically from Zod schemas:
+
+```typescript
+// src/lib/ui/forms/fieldConfig/domain/entity.ts
+import { createFormFields } from '@/lib/ui/forms/tanstack/factory/field-factory';
+import { EntityInputZodSchema } from '@zod-schema/domain/entity';
+
+export const entityFields = createFormFields(EntityInputZodSchema, {
+  fieldOrder: ["name", "description", "category", "owners"],
+  labels: {
+    name: "Entity Name",
+    description: "Description",
+    category: "Category",
+    owners: "Owners"
+  },
+  fieldTypes: {
+    category: "select",
+    owners: "reference"
+  },
+  urls: {
+    owners: "/api/staff"
+  },
+  options: {
+    category: [
+      { value: "type1", label: "Type 1" },
+      { value: "type2", label: "Type 2" }
+    ]
+  }
+});
+```
+
+### Form Component Implementation
+
+Create forms using the TanStack Form components:
+
+```typescript
+// src/components/features/entityManagement/EntityForm.tsx
+import { useForm } from '@tanstack/react-form';
+import { TanStackForm } from '@/lib/ui/forms/tanstack/components/TanStackForm';
+import { entityFields } from '@/lib/ui/forms/fieldConfig/domain/entity';
+import { EntityInputZodSchema } from '@zod-schema/domain/entity';
+
+export function EntityForm({ onSubmit, defaultValues }: EntityFormProps) {
+  const form = useForm({
+    defaultValues: defaultValues || {},
+    validators: {
+      onChange: EntityInputZodSchema,
+      onBlur: EntityInputZodSchema,
+      onSubmit: EntityInputZodSchema,
+    },
+    onSubmit: async ({ value }) => {
+      await onSubmit(value);
+    },
+  });
+
+  return (
+    <TanStackForm
+      form={form}
+      fields={entityFields}
+      title="Create Entity"
+      description="Fill out the form to create a new entity"
+      submitLabel="Create Entity"
+      onCancel={() => window.history.back()}
+    />
+  );
+}
+```
+
+### Custom Field Rendering
+
+For complex fields, use custom rendering with TanStack integration:
+
+```typescript
+// Custom field within TanStackForm
+<TanStackForm form={form} fields={[]} title="Custom Form">
+  <form.Field name="complexField">
+    {(field) => (
+      <CustomFieldComponent
+        value={field.state.value}
+        onChange={field.handleChange}
+        error={field.state.meta.errors?.[0]}
+      />
+    )}
+  </form.Field>
+</TanStackForm>
+```
+
+### Form Factory Pattern
+
+For domain-specific forms, use the form factory:
+
+```typescript
+// src/hooks/forms/useEntityForm.ts
+import { createResourceForm } from '@/lib/ui/forms/tanstack/factory/form-factory';
+import { EntityInputZodSchema } from '@zod-schema/domain/entity';
+import { entityFields } from '@/lib/ui/forms/fieldConfig/domain/entity';
+
+export const entityFormHooks = createResourceForm(
+  EntityInputZodSchema,
+  entityFields
+);
+
+// Usage in components
+export function useEntityForm(onSubmit: (data: EntityInput) => Promise<void>) {
+  return entityFormHooks.useResourceForm({
+    onSubmit,
+    mode: 'create'
+  });
+}
+```
+
+### Integration with Existing Patterns
+
+The TanStack Form system integrates seamlessly with existing patterns:
+
+- **Error Handling**: Uses the established error handling system
+- **Design Tokens**: Follows token-first styling approach
+- **Reference Fields**: Built-in support for ReferenceSelect components
+- **CRUD Operations**: Works with existing server actions and hooks
+
+[RULE] Use TanStack Forms for complex forms requiring dynamic validation, while maintaining simple forms with existing patterns.
+
+</section>
+
 <section id="component-layout-patterns">
 
 ## Component Layout Patterns
@@ -340,7 +472,8 @@ export function useScheduleOperations() {
 
 
 <section id="page-implementation">
-7. Create Pages
+
+## 8. Create Pages
 Finally, implement pages in src/app/:
 
 ```typescript

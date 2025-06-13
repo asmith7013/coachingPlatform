@@ -1,19 +1,33 @@
 'use client'
 
 import { tv, type VariantProps } from 'tailwind-variants'
+import { 
+  paddingX, 
+  paddingY, 
+  radii, 
+  textSize, 
+  weight,
+  shadows,
+  spaceBetween,
+  iconSizes
+} from '@/lib/tokens/tokens'
+import { 
+  textColors, 
+  backgroundColors 
+} from '@/lib/tokens/colors'
 
 const modeToggle = tv({
   slots: {
-    container: 'flex items-center space-x-1 bg-gray-100 rounded-lg p-1',
-    button: 'flex items-center space-x-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors'
+    container: ['flex items-center', spaceBetween.x.xs, backgroundColors.light.muted, radii.lg, paddingX.xs],
+    button: ['flex items-center', spaceBetween.x.sm, paddingX.lg, paddingY.sm, textSize.sm, weight.medium, radii.md, 'transition-colors']
   },
   variants: {
     active: {
       true: {
-        button: 'text-blue-600 bg-white shadow-sm'
+        button: [textColors.primary, backgroundColors.white, shadows.sm]
       },
       false: {
-        button: 'text-gray-600 hover:text-gray-700 hover:bg-gray-200'
+        button: [textColors.muted, `hover:${textColors.default}`, `hover:${backgroundColors.light.muted}`]
       }
     }
   }
@@ -57,7 +71,7 @@ export function ModeToggle<T extends string = string>({
             className={styles.button({ active: isActive })}
             aria-pressed={isActive}
           >
-            {Icon && <Icon className="w-4 h-4" />}
+            {Icon && <Icon className={iconSizes.sm} />}
             <span>{option.label}</span>
           </button>
         )

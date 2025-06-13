@@ -1,6 +1,6 @@
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
-import { textColors } from '@/lib/tokens/tokens'
+import { textColors, iconSizes } from '@/lib/tokens/tokens'
 
 const label = tv({
   base: [
@@ -9,12 +9,12 @@ const label = tv({
   ],
   variants: {
     textSize: {
-      xs: { icon: 'size-4', input: 'text-xs' },
-      sm: { icon: 'size-4', input: 'text-sm' },
-      base: { icon: 'size-5', input: 'text-base' },
-      lg: { icon: 'size-6', input: 'text-lg' },
-      xl: { icon: 'size-6', input: 'text-xl' },
-      '2xl': { icon: 'size-6', input: 'text-2xl' }
+      xs: { icon: iconSizes.sm, input: 'text-xs' },
+      sm: { icon: iconSizes.sm, input: 'text-sm' },
+      base: { icon: iconSizes.md, input: 'text-base' },
+      lg: { icon: iconSizes.lg, input: 'text-lg' },
+      xl: { icon: iconSizes.lg, input: 'text-xl' },
+      '2xl': { icon: iconSizes.lg, input: 'text-2xl' }
     },
   },
   defaultVariants: {

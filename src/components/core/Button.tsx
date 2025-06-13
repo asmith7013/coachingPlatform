@@ -7,6 +7,7 @@ import {
   radii, 
   shadows, 
   borderWidths,
+  spaceBetween,
 } from '@/lib/tokens/tokens'
 import { 
   TextSizeToken,
@@ -300,7 +301,7 @@ export const Button = ({
       {...props}
     >
       {loading ? (
-        <div className="flex items-center justify-center space-x-2">
+        <div className={cn("flex items-center justify-center", spaceBetween.x.sm)}>
           <div className={spinner()} />
           <span className="invisible">{children}</span>
         </div>

@@ -8,3 +8,6 @@
 //
 // fieldConfig/ is preserved for migration to TanStackField format
 // New exports will be added when TanStack Form system is implemented
+
+// Form components
+export * from './hooks/useFieldRenderer';
