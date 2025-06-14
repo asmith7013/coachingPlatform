@@ -11,7 +11,7 @@ import { uploadFileWithProgress } from "@server/file-handling/file-upload";
 import { bulkUploadToDB } from "@server/crud/bulk-operations";
 import { SchoolInput } from "@domain-types/school";
 import { QueryParams } from "@core-types/query";
-import { parseSchoolSlug } from '@/lib/data-processing/transformers/utils/school-slug-utils';
+import { parseSchoolSlug } from '@data-processing/transformers/utils/school-slug-utils';
 
 // Create standard CRUD actions for Schools
 const schoolActions = createCrudActions({

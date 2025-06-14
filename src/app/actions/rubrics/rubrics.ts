@@ -15,7 +15,7 @@ import { handleServerError } from "@error/handlers/server";
 import type { QueryParams } from "@core-types/query";
 
 // Create standard CRUD actions for Rubrics
-export const rubricActions = createCrudActions({
+const rubricActions = createCrudActions({
   model: RubricModel,
   schema: RubricZodSchema as ZodType<Rubric>,
   inputSchema: RubricInputZodSchema as ZodType<RubricInput>,

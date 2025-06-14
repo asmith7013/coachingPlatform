@@ -1,5 +1,4 @@
 import { connectToDB } from "@server/db/connection";
-import { sanitizeDocument } from "@server/api/responses/formatters";
 import { Model } from 'mongoose';
 import { isValidObjectId } from '@/lib/data-processing/validation/mongoose-validation';
 import { CollectionResponse } from '@core-types/response';
@@ -44,11 +43,10 @@ export async function fetchById<T>(
       
       // Convert to JSON to apply transforms, then sanitize
       const transformedDoc = document.toJSON();
-      const sanitized = sanitizeDocument(transformedDoc);
       
       return {
         success: true,
-        items: [sanitized as T],
+        items: [transformedDoc as T],
         total: 1
       };
     } catch (error) {

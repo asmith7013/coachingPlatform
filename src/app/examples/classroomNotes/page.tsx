@@ -12,7 +12,7 @@ import { useClassroomObservations } from '@domain-hooks/observations/useClassroo
 import { 
   useClassroomObservationDefaultsSimple,
   type ClassroomObservationNoteInput,
-  ClassroomObservationNote
+  ClassroomObservationNoteInputZodSchema
 } from '@zod-schema/observations/classroom-observation';
 
 // Import tab components
@@ -21,6 +21,7 @@ import { FeedbackTab } from './tabs/FeedbackTab';
 import { LessonFlowTab } from './tabs/LessonFlowTab';
 import { ProgressMonitoringTab } from './tabs/ProgressMonitoringTab';
 import { TimeAndTranscriptsTab } from './tabs/TimeAndTranscriptsTab';
+import { useAutoSave } from '@hooks/utilities/useAutoSave';
 
 type TabKey = 'basic' | 'feedback' | 'lessonFlow' | 'monitoring' | 'timeTranscripts';
 
@@ -37,14 +38,17 @@ const ClassroomNotesExample = () => {
   const teacherId = searchParams.get('teacherId');
   // Tab state
   const [activeTab, setActiveTab] = useState<TabKey>('basic');
-  // Schema-driven state
-  const { createAsync, isCreating, error: createError } = useClassroomObservations();
+  // Enhanced hooks for different capabilities
+  const observationsWithToast = useClassroomObservations.withNotifications();
+  const observationsWithCache = useClassroomObservations.withInvalidation();
   const formDefaults = useClassroomObservationDefaultsSimple({
     cycle: 'Demo Cycle',
     session: 'Demo Session',
   });
   const [formData, setFormData] = useState<ClassroomObservationNoteInput>(formDefaults);
   const [selectedTeacher, setSelectedTeacher] = useState<string>(teacherId || '');
+  const [observationId, setObservationId] = useState<string | null>(null);
+  const autoSaveHook = useClassroomObservations.withAutoSave();
 
   useEffect(() => {
     if (teacherId) {
@@ -52,9 +56,40 @@ const ClassroomNotesExample = () => {
     }
   }, [teacherId]);
 
+  // Create initial draft on component mount
+  useEffect(() => {
+    const createInitialDraft = async () => {
+      try {
+        const draftId = await autoSaveHook.createInitialDraft(formData);
+        setObservationId(draftId);
+        console.log('Initial draft created:', draftId);
+      } catch (error) {
+        console.error('Failed to create initial draft:', error);
+      }
+    };
+    if (!observationId) {
+      createInitialDraft();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount
+
+  // Add autosave hook usage
+  const { triggerSave } = useAutoSave(
+    autoSaveHook.createAutoSaveConfig(observationId || '', formData)
+  );
+
+  // Trigger autosave when form data changes
+  useEffect(() => {
+    if (observationId && formData) {
+      triggerSave();
+      console.log('Autosave triggered for:', observationId);
+    }
+  }, [formData, observationId, triggerSave]);
+
   // Handle input changes (keep existing logic)
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    console.log('Field changed:', name, value); // Debug log
     if (name.includes('.')) {
       const parts = name.split('.');
       if (parts.length === 2) {
@@ -142,21 +177,38 @@ const ClassroomNotesExample = () => {
     }));
   }, []);
 
-  // Handle form submission
+  // Enhanced form submission - finalize draft
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      if (createAsync) {
-        const result = await createAsync(formData as ClassroomObservationNote);
-        if ((result as { success?: boolean }).success) {
-          console.log("Observation saved successfully");
-          setFormData(formDefaults);
+    if (!observationId) {
+      // Create new observation if no draft exists
+      try {
+        const result = await observationsWithToast.createWithToast(formData);
+        if (result.success) {
+          setObservationId(result.data._id);
         }
+      } catch (error) {
+        console.error('Error creating observation:', error);
       }
-    } catch (error) {
-      console.error("Error saving observation:", error);
+      return;
     }
-  }, [createAsync, formData, formDefaults]);
+    try {
+      // Validate form data before submission
+      const validatedData = ClassroomObservationNoteInputZodSchema.parse(formData);
+      // Use toast notifications for final submission
+      await observationsWithToast.updateWithToast(observationId, {
+        ...validatedData,
+        status: 'completed',
+        isDraft: false,
+        submittedAt: new Date().toISOString()
+      });
+      // Refresh cache after successful submission
+      await observationsWithCache.refreshObservation(observationId);
+      console.log("Observation finalized successfully");
+    } catch (error) {
+      console.error("Error finalizing observation:", error);
+    }
+  }, [observationId, formData, observationsWithToast, observationsWithCache]);
 
   // Timer functions (placeholder)
   const startStopwatch = useCallback(() => {
@@ -250,11 +302,7 @@ const ClassroomNotesExample = () => {
             </Card.Header>
             <Card.Body>
               {/* Error Display */}
-              {createError && (
-                <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-md">
-                  <Text color="danger">Error saving observation: {createError.message}</Text>
-                </div>
-              )}
+              {/* Error Display */}
               {/* Tab Navigation */}
               <div className="border-b border-gray-200 mb-6">
                 <nav className="-mb-px flex space-x-8 overflow-x-auto">
@@ -284,8 +332,8 @@ const ClassroomNotesExample = () => {
                 <Button appearance="outline" type="button">
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isCreating}>
-                  {isCreating ? 'Saving...' : 'Save Observation Notes'}
+                <Button type="submit" disabled={!observationId}>
+                  {observationId ? 'Finalize Observation' : 'Save Observation Notes'}
                 </Button>
               </div>
             </Card.Footer>

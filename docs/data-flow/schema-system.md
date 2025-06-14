@@ -15,7 +15,7 @@ Schemas are organized in `src/lib/zod-schema/` by domain:
 - `visits/`, `look-fors/`, etc.: Domain-specific directories
 
 ```typescript
-// Example: School schema
+// Example: School schema with string dates
 export const SchoolZodSchema = z.object({
   _id: z.string(),
   schoolNumber: z.string(),
@@ -25,8 +25,8 @@ export const SchoolZodSchema = z.object({
   gradeLevelsSupported: z.array(GradeLevelsSupportedZod),
   staffList: z.array(z.string()),
   owners: z.array(z.string()),
-  createdAt: zDateField.optional(),
-  updatedAt: zDateField.optional(),
+  createdAt: z.string().optional(), // String dates for consistency
+  updatedAt: z.string().optional(), // String dates for consistency
 });
 ```
 
@@ -64,8 +64,8 @@ Full schemas extend input schemas with system fields:
 // Full schema (for validation of retrieved database documents)
 export const EntityZodSchema = EntityInputZodSchema.extend({
   _id: z.string(),
-  createdAt: zDateField.optional(),
-  updatedAt: zDateField.optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
 ```
 
@@ -156,8 +156,8 @@ export const ParentZodSchema = z.object({
   _id: z.string(),
   name: z.string(),
   items: z.array(NestedItemZodSchema), // Array of nested docs
-  createdAt: zDateField.optional(),
-  updatedAt: zDateField.optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
 ```
 

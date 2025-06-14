@@ -132,45 +132,16 @@ The system handles references and nested document IDs
 
 <section id="mongoose-transform-helper">
 
-## Mongoose Transform Helper System
+## Mongoose Transform System
 
-Our application provides a standardized transform helper system that ensures consistent ObjectId → string conversion and document formatting across all Mongoose models.
-
-### Standard Transform Function
-
-All Mongoose models use the `standardMongooseTransform` function:
-
-```typescript
-import { standardMongooseTransform, standardSchemaOptions } from '@/lib/server/db/mongoose-transform-helper';
-
-/**
- * Standard transform function for all Mongoose models
- * Converts ObjectId to string and adds id field
- */
-export function standardMongooseTransform(
-  doc: Document, 
-  ret: RawMongoDocument
-): BaseDocument {
-  // Convert _id to string and add id field
-  if (ret._id) {
-    const idString = ret._id.toString();
-    ret.id = idString;
-    ret._id = idString;
-  }
-  
-  // Remove __v field (Mongoose version key)
-  delete ret.__v;
-  
-  return ret as BaseDocument;
-}
-```
+Our application uses Mongoose's built-in transform system to ensure consistent ObjectId → string conversion and document formatting across all models. This eliminates the need for manual sanitization.
 
 ### Standard Schema Options
 
-Use `standardSchemaOptions` for all new models:
+All Mongoose models use standardized schema options that include automatic transforms:
 
 ```typescript
-import { standardSchemaOptions, createSchemaOptions } from '@/lib/server/db/mongoose-transform-helper';
+import { standardSchemaOptions, createSchemaOptions } from '@/lib/server/db/shared-options';
 
 // Basic usage with standard options
 const SchoolSchema = new mongoose.Schema(schemaFields, standardSchemaOptions);
@@ -184,74 +155,208 @@ const SchoolSchema = new mongoose.Schema(
 );
 ```
 
-### Schema Options Configuration
+### Automatic Document Transformation
 
-The standard schema options include:
-
-```typescript
-export const standardSchemaOptions: SchemaOptions = {
-  timestamps: true,
-  toJSON: { 
-    transform: standardMongooseTransform
-  },
-  toObject: { 
-    transform: standardMongooseTransform
-  }
-};
-```
-
-This ensures:
-- Automatic `createdAt` and `updatedAt` timestamps
-- Consistent ObjectId → string conversion
-- Automatic `id` field addition
-- Removal of Mongoose internal fields
-
-### Model Implementation Pattern
-
-All models should follow this pattern:
+Mongoose models with standard schema options automatically handle transformations:
 
 ```typescript
-import mongoose from "mongoose";
-import { standardSchemaOptions } from '@/lib/server/db/mongoose-transform-helper';
-
-const schemaFields = {
-  name: { type: String, required: true },
-  // Additional fields...
-};
-
+// Model definition with standard options
 const EntitySchema = new mongoose.Schema(schemaFields, standardSchemaOptions);
 
-export const EntityModel = mongoose.models.Entity || 
-  mongoose.model("Entity", EntitySchema);
+// Documents are automatically transformed when queried
+const entity = await EntityModel.findById(id); 
+// entity._id is already a string
+// entity.id is automatically added  
+// entity.__v is removed
+// Dates are ISO strings due to timestamps: true
 ```
 
-### Custom Schema Options
+The `standardSchemaOptions` configuration handles all necessary transformations without requiring custom transform functions.
 
-For models requiring custom configuration:
+### Mongoose Transform Integration
+
+Mongoose automatically converts Date objects to ISO strings when `timestamps: true` is configured:
 
 ```typescript
-import { createSchemaOptions } from '@/lib/server/db/mongoose-transform-helper';
+// Schema with automatic timestamps
+const EntitySchema = new mongoose.Schema(schemaFields, {
+  timestamps: true, // Automatically adds createdAt/updatedAt as Dates
+  // Transform options convert to strings for JSON serialization
+});
 
-const CustomSchema = new mongoose.Schema(
-  schemaFields,
-  createSchemaOptions('custom_collection', {
-    // Override defaults
-    strict: false,
-    // Additional mongoose options
-  })
-);
+// When documents are serialized (toJSON), dates become ISO strings
+const entity = await EntityModel.findById(id);
+// entity.createdAt and entity.updatedAt are ISO strings when sent to client
 ```
 
-### Type Safety Benefits
+This automatic conversion ensures consistency between server Date objects and client string representations.
 
-The transform helper system provides:
+### Server Action Integration
 
-- **Consistent Types**: All documents have string `_id` and `id` fields
-- **Automatic Conversion**: No manual ObjectId handling needed
-- **Schema Alignment**: Transforms align with our Zod schemas
-- **Type Compatibility**: Documents work seamlessly with client code
+Server actions receive properly transformed documents without additional processing:
 
-[RULE] Use the standard transform helper system for all new Mongoose models to ensure consistency.
+```typescript
+export async function fetchEntities() {
+  "use server";
+  
+  try {
+    const entities = await EntityModel.find();
+    // Documents already have string IDs and proper format
+    // No sanitization needed
+    
+    return {
+      success: true,
+      data: entities // Ready for client consumption
+    };
+  } catch (error) {
+    return handleServerError(error);
+  }
+}
+```
+
+### Avoiding .lean() for Client Data
+
+When returning data to client components, avoid using `.lean()` as it bypasses the transform functions:
+
+```typescript
+// ❌ Bad: .lean() prevents transforms, requires manual sanitization
+const entity = await EntityModel.findById(id).lean();
+
+// ✅ Good: Transforms apply automatically
+const entity = await EntityModel.findById(id);
+// Document is already client-safe with string IDs and proper formatting
+```
+
+### API Response Integration
+
+The Mongoose transforms work seamlessly with API responses:
+
+```typescript
+// In API routes
+export async function GET() {
+  try {
+    const entities = await EntityModel.find();
+    // Documents are already transformed by Mongoose
+    
+    return Response.json({
+      success: true,
+      items: entities, // No additional transformation needed
+      total: entities.length
+    });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+```
+
+### Schema Compatibility
+
+Mongoose transforms ensure automatic compatibility with Zod schemas:
+
+```typescript
+// Zod schema expects string _id and dates
+export const EntityZodSchema = z.object({
+  _id: z.string(),
+  name: z.string(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
+});
+
+// Mongoose documents automatically match schema
+const entity = await EntityModel.findById(id);
+const validated = EntityZodSchema.parse(entity); // ✅ Passes validation automatically
+```
+
+[RULE] Rely on Mongoose transforms for automatic document formatting and avoid .lean() when returning data to client components.
+
+</section>
+
+<section id="date-handling-patterns">
+
+## Date Handling Patterns
+
+Our application uses string-based date handling throughout to ensure consistency between client and server components.
+
+### Schema Date Fields
+
+Zod schemas define date fields as strings rather than Date objects:
+
+```typescript
+// Consistent string-based date handling
+export const EntityZodSchema = z.object({
+  _id: z.string(),
+  name: z.string(),
+  createdAt: z.string().optional(), // String, not Date
+  updatedAt: z.string().optional(), // String, not Date
+});
+```
+
+### Mongoose Transform Integration
+
+Mongoose automatically converts Date objects to ISO strings when `timestamps: true` is configured:
+
+```typescript
+// Schema with automatic timestamps
+const EntitySchema = new mongoose.Schema(schemaFields, {
+  timestamps: true, // Automatically adds createdAt/updatedAt as Dates
+  // Transform options convert to strings for JSON serialization
+});
+
+// When documents are serialized (toJSON), dates become ISO strings
+const entity = await EntityModel.findById(id);
+// entity.createdAt and entity.updatedAt are ISO strings when sent to client
+```
+
+This automatic conversion ensures consistency between server Date objects and client string representations.
+
+### Client-Server Date Consistency
+
+This approach ensures that dates remain consistent across the application:
+
+```typescript
+// Server action returns string dates
+export async function fetchEntity(id: string) {
+  const entity = await EntityModel.findById(id);
+  // Dates are already strings due to transform
+  return { success: true, data: entity };
+}
+
+// Client receives string dates
+function EntityComponent({ entityId }: { entityId: string }) {
+  const { data: entity } = useEntity(entityId);
+  
+  // Dates are strings, no conversion needed
+  const formattedDate = entity?.createdAt 
+    ? new Date(entity.createdAt).toLocaleDateString()
+    : 'Unknown';
+    
+  return <div>Created: {formattedDate}</div>;
+}
+```
+
+### Date Utilities
+
+When working with dates in components, convert strings to Date objects as needed:
+
+```typescript
+// Convert string dates for manipulation
+function formatEntityDate(dateString: string | undefined): string {
+  if (!dateString) return 'Unknown';
+  
+  const date = new Date(dateString);
+  return date.toLocaleDateString();
+}
+
+// For complex date operations
+function calculateDaysSince(dateString: string): number {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - date.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+```
+
+[RULE] Always use string dates in schemas and convert to Date objects only when needed for manipulation or formatting in client components.
 
 </section>
 

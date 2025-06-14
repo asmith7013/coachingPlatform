@@ -41,6 +41,43 @@ export function useFieldRenderer<T extends Record<string, unknown>>() {
           </div>
         );
 
+      case 'date':
+        return (
+          <div className="space-y-1">
+            <Input
+              type="date"
+              value={fieldApi.state.value || ''}
+              onChange={(e) => fieldApi.handleChange(e.target.value)}
+              onBlur={fieldApi.handleBlur}
+              {...commonProps}
+              className={hasError ? 'border-destructive' : ''}
+            />
+            {errorMessage && (
+              <p className="text-sm text-destructive">{errorMessage}</p>
+            )}
+          </div>
+        );
+
+      case 'checkbox':
+        return (
+          <div className="space-y-1">
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={fieldApi.state.value || false}
+                onChange={(e) => fieldApi.handleChange(e.target.checked)}
+                onBlur={fieldApi.handleBlur}
+                {...commonProps}
+                className={hasError ? 'border-destructive' : ''}
+              />
+              <span className="text-sm">{field.label}</span>
+            </label>
+            {errorMessage && (
+              <p className="text-sm text-destructive">{errorMessage}</p>
+            )}
+          </div>
+        );
+
       case 'select':
         return (
           <div className="space-y-1">

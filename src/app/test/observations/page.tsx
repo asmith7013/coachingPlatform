@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { Button } from '@/components/core/Button';
-import { Card } from '@/components/composed/cards';
-import { Text } from '@/components/core/typography/Text';
-import { Heading } from '@/components/core/typography/Heading';
+import { Button } from '@components/core/Button';
+import { Card } from '@components/composed/cards';
+import { Text } from '@components/core/typography/Text';
+import { Heading } from '@components/core/typography/Heading';
 import { 
-  useClassroomObservationDefaultsSimple,
-  type ClassroomObservationNoteInput,
-  ClassroomObservationNote
-} from '@/lib/schema/zod-schema/observations/classroom-observation';
-import { useClassroomObservations } from '@domain-hooks/observations/useClassroomObservations';
+  useClassroomObservationV2DefaultsSimple,
+  type ClassroomObservationV2Input,
+  ClassroomObservationV2
+} from '@zod-schema/observations/classroom-observation-v2';
+import { useClassroomObservationsV2 } from '@domain-hooks/observations/useClassroomObservationsV2';
 import { ObservationForm } from './ObservationForm';
 import { ObservationsList } from './ObservationsList';
 
@@ -19,27 +19,32 @@ type ViewMode = 'list' | 'create' | 'edit';
 export default function ObservationsTestPage() {
   // State management
   const [viewMode, setViewMode] = useState<ViewMode>('list');
-  const [selectedObservation, setSelectedObservation] = useState<ClassroomObservationNote | null>(null);
+  const [selectedObservation, setSelectedObservation] = useState<ClassroomObservationV2 | null>(null);
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
   
   // Get schema defaults
-  const defaultValues = useClassroomObservationDefaultsSimple({
+  const defaultValues = useClassroomObservationV2DefaultsSimple({
     cycle: 'New Cycle',
-    session: 'New Session'
+    session: 'New Session',
+    // date: new Date(),
+    // status: 'draft',
+    // isSharedWithTeacher: false,
+    // lessonTitle: 'New Lesson',
+    // lessonCourse: 'New Course',
   });
   
-  // Initialize CRUD hooks
-  const observationsManager = useClassroomObservations();
+  // Use the new unified interface for CRUD and enhancements
+  const observationsMutations = useClassroomObservationsV2.mutations();
+  // const observationsWithToast = useClassroomObservations.withNotifications();
+  const observationsManager = useClassroomObservationsV2.manager();
   const {
     items: observations,
     isLoading: isLoadingList,
     error: listError,
-    createAsync,
-    updateAsync,
-    deleteAsync,
     isCreating,
     isUpdating
   } = observationsManager;
+  const { createAsync, updateAsync, deleteAsync } = observationsMutations;
   
   // Handle create new observation
   const handleCreateNew = useCallback(() => {
@@ -48,7 +53,7 @@ export default function ObservationsTestPage() {
   }, []);
   
   // Handle edit observation
-  const handleEdit = useCallback((observation: ClassroomObservationNote) => {
+  const handleEdit = useCallback((observation: ClassroomObservationV2) => {
     setSelectedObservation(observation);
     setViewMode('edit');
   }, []);
@@ -60,21 +65,15 @@ export default function ObservationsTestPage() {
   }, []);
   
   // Handle form submission (create or update)
-  const handleFormSubmit = useCallback(async (data: ClassroomObservationNoteInput) => {
+  const handleFormSubmit = useCallback(async (data: ClassroomObservationV2Input) => {
     try {
       if (viewMode === 'create') {
-        if (!createAsync) {
-          throw new Error('Create function not available');
-        }
-        const result = await createAsync(data as ClassroomObservationNote);
+        const result = await createAsync!(data as ClassroomObservationV2);
         if (result.success) {
           setViewMode('list');
         }
       } else if (viewMode === 'edit' && selectedObservation) {
-        if (!updateAsync) {
-          throw new Error('Update function not available');
-        }
-        const result = await updateAsync(selectedObservation._id, data);
+        const result = await updateAsync!(selectedObservation._id, data);
         if (result.success) {
           setViewMode('list');
         }
@@ -87,15 +86,10 @@ export default function ObservationsTestPage() {
   
   // Handle delete observation
   const handleDelete = useCallback(async (id: string) => {
-    if (!deleteAsync) {
-      console.error('Delete function not available');
-      return;
-    }
-    
     setDeletingIds(prev => [...prev, id]);
     
     try {
-      const result = await deleteAsync(id);
+      const result = await deleteAsync!(id);
       if (result.success) {
         // Remove from deleting list
         setDeletingIds(prev => prev.filter(deletingId => deletingId !== id));
@@ -114,11 +108,11 @@ export default function ObservationsTestPage() {
   }, []);
   
   // Get initial form data based on mode
-  const getInitialFormData = useCallback((): ClassroomObservationNoteInput => {
+  const getInitialFormData = useCallback((): ClassroomObservationV2Input => {
     if (viewMode === 'edit' && selectedObservation) {
       // Convert the observation to input format (remove system fields)
       const { _id, createdAt: _createdAt, updatedAt: _updatedAt, ...inputData } = selectedObservation;
-      return inputData as ClassroomObservationNoteInput;
+      return inputData as ClassroomObservationV2Input;
     }
     return defaultValues;
   }, [viewMode, selectedObservation, defaultValues]);

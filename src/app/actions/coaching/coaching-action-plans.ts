@@ -1,53 +1,43 @@
-// accept conditionally - needs further review later
-
-
 "use server";
 
-import { z, ZodType } from "zod";
-import { CoachingActionPlanModel } from "@mongoose-schema/core/coaching-action-plan.model";
-import { 
-  CoachingActionPlan,
-  CoachingActionPlanZodSchema, 
-  CoachingActionPlanInputZodSchema,
-  type CoachingActionPlanInput
-} from "@zod-schema/core/cap";
-import { handleServerError } from "@error/handlers/server";
-import { handleValidationError } from "@error/handlers/validation";
-import { createCrudActions } from "@server/crud";
+import { CoachingActionPlanV2Model } from "@mongoose-schema/cap/coaching-action-plan-v2.model";
+import {
+  CoachingActionPlanV2ZodSchema,
+  CoachingActionPlanV2InputZodSchema,
+  type CoachingActionPlanV2Input,
+  CoachingActionPlanV2,
+} from "@zod-schema/cap/coaching-action-plan-v2";
+import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
+import { handleServerError } from "@error/handlers/server";
 import { uploadFileWithProgress } from "@server/file-handling/file-upload";
-import { bulkUploadToDB } from "@server/crud/bulk-operations";
-import { QueryParams } from "@core-types/query";
-import { 
-  calculatePlanProgress, 
-  isValidStage, 
-  getStageFieldPath,
-  statusWorkflow,
-  type PlanStatus
-} from '@/lib/data-processing/transformers/utils/coaching-action-plan-utils';
+import { ZodType } from "zod";
+import { QueryParams, DEFAULT_QUERY_PARAMS } from "@core-types/query";
 
-// Create standard CRUD actions for Coaching Action Plans (following schools pattern)
 const coachingActionPlanActions = createCrudActions({
-  model: CoachingActionPlanModel,
-  schema: CoachingActionPlanZodSchema as ZodType<CoachingActionPlan>,
-  inputSchema: CoachingActionPlanInputZodSchema as ZodType<CoachingActionPlanInput>,
+  model: CoachingActionPlanV2Model,
+  schema: CoachingActionPlanV2ZodSchema as ZodType<CoachingActionPlanV2>,
+  inputSchema: CoachingActionPlanV2InputZodSchema as ZodType<CoachingActionPlanV2Input>,
   name: "Coaching Action Plan",
   revalidationPaths: ["/dashboard/coaching-action-plans"],
-  sortFields: ['title', 'status', 'startDate', 'academicYear', 'createdAt', 'updatedAt'],
-  defaultSortField: 'createdAt',
+  sortFields: ['title', 'status', 'startDate', 'academicYear', 'createdAt'],
+  defaultSortField: 'startDate',
   defaultSortOrder: 'desc'
 });
 
-// Export the generated actions with connection handling (following schools pattern)
-export async function fetchCoachingActionPlans(params: QueryParams) {
+export async function fetchCoachingActionPlans(params: QueryParams = DEFAULT_QUERY_PARAMS) {
   return withDbConnection(() => coachingActionPlanActions.fetch(params));
 }
 
-export async function createCoachingActionPlan(data: CoachingActionPlanInput) {
+export async function fetchCoachingActionPlanById(id: string) {
+  return withDbConnection(() => coachingActionPlanActions.fetchById(id));
+}
+
+export async function createCoachingActionPlan(data: CoachingActionPlanV2Input) {
   return withDbConnection(() => coachingActionPlanActions.create(data));
 }
 
-export async function updateCoachingActionPlan(id: string, data: Partial<CoachingActionPlanInput>) {
+export async function updateCoachingActionPlan(id: string, data: Partial<CoachingActionPlanV2Input>) {
   return withDbConnection(() => coachingActionPlanActions.update(id, data));
 }
 
@@ -55,65 +45,128 @@ export async function deleteCoachingActionPlan(id: string) {
   return withDbConnection(() => coachingActionPlanActions.delete(id));
 }
 
-export async function fetchCoachingActionPlanById(id: string) {
-  return withDbConnection(() => coachingActionPlanActions.fetchById(id));
-}
-
-// Status management actions
-export async function updateCoachingActionPlanStatus(id: string, newStatus: PlanStatus, reason?: string) {
+// ===== V2 Progress Calculation =====
+export async function getCoachingActionPlanProgress(id: string) {
   return withDbConnection(async () => {
     try {
-      // First, get the current plan to validate the transition
-      const currentResult = await coachingActionPlanActions.fetchById(id);
-      if (!currentResult.success || !currentResult.data) {
-        return {
-          success: false,
-          error: 'Coaching Action Plan not found'
-        };
+      const result = await coachingActionPlanActions.fetchById(id);
+      if (!result.success || !result.data) {
+        throw new Error('Coaching Action Plan not found');
       }
-
-      const currentPlan = currentResult.data;
-      
-      // Validate the status transition
-      const validation = statusWorkflow.validateTransition(currentPlan.status as PlanStatus, newStatus, currentPlan);
-      if (!validation.valid) {
-        return {
-          success: false,
-          error: `Status transition not allowed: ${validation.errors.join(', ')}`
-        };
-      }
-
-      // Update the status
-      const updateData: Partial<CoachingActionPlanInput> = { 
-        status: newStatus,
-        // Add transition metadata if needed
-        ...(reason && { statusChangeReason: reason })
+      const plan = result.data;
+      const progress = {
+        hasBasicInfo: !!(plan.title && plan.goalDescription),
+        hasIPGFocus: !!(plan.ipgCoreAction && plan.ipgSubCategory),
+        hasRationale: !!plan.rationale,
+        hasGoal: !!plan.goalDescription,
+        completionPercentage: 0
       };
-
-      return coachingActionPlanActions.update(id, updateData);
+      const fields = [progress.hasBasicInfo, progress.hasIPGFocus, progress.hasRationale, progress.hasGoal];
+      progress.completionPercentage = (fields.filter(Boolean).length / fields.length) * 100;
+      return {
+        success: true,
+        data: progress
+      };
     } catch (error) {
-      console.error('Error updating plan status:', error);
+      console.error('Error calculating plan progress:', error);
       return {
         success: false,
-        error: handleServerError(error, 'updateCoachingActionPlanStatus')
+        error: handleServerError(error, 'getCoachingActionPlanProgress')
       };
     }
   });
 }
 
-export async function bulkUpdateCoachingActionPlanStatus(planIds: string[], newStatus: PlanStatus) {
+// ===== V2 Status Workflow =====
+export async function getAvailableStatusTransitions(id: string) {
+  return withDbConnection(async () => {
+    try {
+      const result = await coachingActionPlanActions.fetchById(id);
+      if (!result.success || !result.data) {
+        return {
+          success: false,
+          error: 'Coaching Action Plan not found'
+        };
+      }
+      const plan = result.data;
+      const getNextStatuses = (currentStatus: string) => {
+        switch (currentStatus) {
+          case 'draft':
+            return ['active', 'cancelled'];
+          case 'active':
+            return ['completed', 'paused', 'cancelled'];
+          case 'paused':
+            return ['active', 'cancelled'];
+          case 'completed':
+            return ['archived'];
+          default:
+            return [];
+        }
+      };
+      const nextStatuses = getNextStatuses(plan.status);
+      return {
+        success: true,
+        data: {
+          currentStatus: plan.status,
+          availableTransitions: nextStatuses.map(status => ({
+            status,
+            description: `Change status to ${status}`
+          }))
+        }
+      };
+    } catch (error) {
+      console.error('Error getting status transitions:', error);
+      return {
+        success: false,
+        error: handleServerError(error, 'getAvailableStatusTransitions')
+      };
+    }
+  });
+}
+
+// ===== V2 Field Validation =====
+export async function validateCoachingActionPlanField(id: string, fieldName: keyof CoachingActionPlanV2Input) {
+  return withDbConnection(async () => {
+    try {
+      const result = await coachingActionPlanActions.fetchById(id);
+      if (!result.success || !result.data) {
+        throw new Error('Coaching Action Plan not found');
+      }
+      const plan = result.data;
+      const fieldValue = (plan as Record<string, unknown>)[fieldName as string];
+      return {
+        success: true,
+        data: {
+          field: fieldName,
+          hasValue: !!fieldValue,
+          value: fieldValue
+        }
+      };
+    } catch (error) {
+      console.error('Error validating field:', error);
+      return {
+        success: false,
+        error: handleServerError(error, 'validateCoachingActionPlanField')
+      };
+    }
+  });
+}
+
+// ===== V2 Bulk Status Update =====
+export async function bulkUpdateCoachingActionPlanStatus(
+  planIds: string[],
+  newStatus: string
+) {
   return withDbConnection(async () => {
     try {
       const results = await Promise.all(
         planIds.map(async (id) => {
-          const result = await updateCoachingActionPlanStatus(id, newStatus);
+          const result = await updateCoachingActionPlan(id, { status: newStatus });
           return { id, success: result.success, error: result.error };
         })
       );
-
       const successful = results.filter(r => r.success);
       const failed = results.filter(r => !r.success);
-
       return {
         success: true,
         data: {
@@ -132,169 +185,31 @@ export async function bulkUpdateCoachingActionPlanStatus(planIds: string[], newS
   });
 }
 
-export async function getAvailableStatusTransitions(id: string) {
-  return withDbConnection(async () => {
-    try {
-      const result = await coachingActionPlanActions.fetchById(id);
-      if (!result.success || !result.data) {
-        return {
-          success: false,
-          error: 'Coaching Action Plan not found'
-        };
-      }
-
-      const plan = result.data;
-      const nextStatuses = statusWorkflow.getNextStatuses(plan.status as PlanStatus, plan);
-      
-      return {
-        success: true,
-        data: {
-          currentStatus: plan.status,
-          availableTransitions: nextStatuses.map(status => ({
-            status,
-            description: statusWorkflow.transitions.find(t => 
-              t.from === plan.status && t.to === status
-            )?.description || ''
-          }))
-        }
-      };
-    } catch (error) {
-      console.error('Error getting status transitions:', error);
-      return {
-        success: false,
-        error: handleServerError(error, 'getAvailableStatusTransitions')
-      };
-    }
-  });
-}
-
-// Domain-specific utilities (following getSchoolIdFromSlug pattern)
-export async function getCoachingActionPlanProgress(id: string) {
-  return withDbConnection(async () => {
-    try {
-      const result = await coachingActionPlanActions.fetchById(id);
-      if (!result.success || !result.data) {
-        throw new Error('Coaching Action Plan not found');
-      }
-      
-      // Use transformer utility (like parseSchoolSlug)
-      return {
-        success: true,
-        data: calculatePlanProgress(result.data)
-      };
-    } catch (error) {
-      console.error('Error calculating plan progress:', error);
-      return {
-        success: false,
-        error: handleServerError(error, 'getCoachingActionPlanProgress')
-      };
-    }
-  });
-}
-
-export async function validateCoachingActionPlanStage(id: string, stage: string) {
-  return withDbConnection(async () => {
-    try {
-      if (!isValidStage(stage)) {
-        throw new Error(`Invalid stage: ${stage}`);
-      }
-
-      const result = await coachingActionPlanActions.fetchById(id);
-      if (!result.success || !result.data) {
-        throw new Error('Coaching Action Plan not found');
-      }
-
-      // Use transformer utility for stage validation
-      const progress = calculatePlanProgress(result.data);
-      const stageProgress = progress.stageDetails.find(s => s.stage === stage);
-
-      return {
-        success: true,
-        data: stageProgress
-      };
-    } catch (error) {
-      console.error('Error validating stage:', error);
-      return {
-        success: false,
-        error: handleServerError(error, 'validateCoachingActionPlanStage')
-      };
-    }
-  });
-}
-
-// Stage update using standard update operation (simplified)
-export async function updateCoachingActionPlanStage(
-  id: string, 
-  stage: string,
-  data: Partial<CoachingActionPlanInput>
-) {
-  return withDbConnection(async () => {
-    try {
-      if (!isValidStage(stage)) {
-        throw new Error(`Invalid stage: ${stage}`);
-      }
-
-      const stageField = getStageFieldPath(stage);
-      const updateData = { [stageField]: data[stageField as keyof CoachingActionPlanInput] };
-      
-      return coachingActionPlanActions.update(id, updateData);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return {
-          success: false,
-          error: handleValidationError(error)
-        };
-      }
-      return {
-        success: false,
-        error: handleServerError(error, 'updateCoachingActionPlanStage')
-      };
-    }
-  });
-}
-
-// File upload integration (following uploadSchoolFile pattern)
-export const uploadCoachingActionPlanFile = async (file: File): Promise<string> => {
+// ===== File Upload Integration =====
+export async function uploadCoachingActionPlanFile(file: File): Promise<string> {
   try {
     const result = await uploadFileWithProgress(file, "/api/coaching-action-plans/upload");
     return result.message || "No message";
   } catch (error) {
     throw handleServerError(error);
   }
-};
+}
 
-// Bulk upload using existing utilities (following uploadSchools pattern)
-export async function uploadCoachingActionPlans(data: CoachingActionPlanInput[]) {
+export async function fetchCoachingActionPlanWithRelatedData(id: string) {
   return withDbConnection(async () => {
     try {
-      const result = await bulkUploadToDB(
-        data, 
-        CoachingActionPlanModel, 
-        CoachingActionPlanInputZodSchema, 
-        ["/dashboard/coaching-action-plans"]
-      );
-      
-      if (!result.success) {
-        return {
-          success: false,
-          error: result.error
-        };
+      const capResult = await coachingActionPlanActions.fetchById(id);
+      if (!capResult.success) {
+        return capResult;
       }
-
       return {
         success: true,
-        items: result.items
+        data: capResult.data
       };
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return {
-          success: false,
-          error: handleValidationError(error)
-        };
-      }
-      return {
-        success: false,
-        error: handleServerError(error)
+      return { 
+        success: false, 
+        error: `Failed to fetch CAP with related data: ${error instanceof Error ? error.message : 'Unknown error'}` 
       };
     }
   });

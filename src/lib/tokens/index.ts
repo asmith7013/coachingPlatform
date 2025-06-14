@@ -8,6 +8,7 @@ export * from './spacing';
 export * from './semantic-colors';
 export * from './text';
 export * from './colors';
+export * from './sizing';
 
 // Export all token types
 export * from './types';

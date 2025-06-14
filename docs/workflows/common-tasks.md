@@ -24,8 +24,7 @@ To add a new entity to the system (e.g., a new resource type):
    ```typescript
    // src/lib/zod-schema/domain/entity.ts
    import { z } from "zod";
-   import { zDateField } from "../shared/dateHelpers";
-   
+
    export const EntityInputZodSchema = z.object({
      name: z.string(),
      description: z.string(),
@@ -34,8 +33,8 @@ To add a new entity to the system (e.g., a new resource type):
    
    export const EntityZodSchema = EntityInputZodSchema.extend({
      _id: z.string(),
-     createdAt: zDateField.optional(),
-     updatedAt: zDateField.optional(),
+     createdAt: z.string().optional(),
+     updatedAt: z.string().optional(),
    });
    
    export type EntityInput = z.infer<typeof EntityInputZodSchema>;
@@ -92,15 +91,27 @@ Create API Routes or Server Actions
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { EntityInputZodSchema } from "@/lib/zod-schema/domain/entity";
-import { EntityModel } from "@/models/domain/entity.model";
+import { EntityModel } from "@/lib/schema/mongoose-schema/domain/entity.model";
 import { handleValidationError } from "@/lib/core/error/handleValidationError";
 import { handleServerError } from "@/lib/core/error/handleServerError";
+
+export async function fetchEntities() {
+  try {
+    const entities = await EntityModel.find();
+    // Documents are automatically transformed by Mongoose
+    // No manual sanitization needed
+    return { success: true, data: entities };
+  } catch (error) {
+    return { success: false, error: handleServerError(error) };
+  }
+}
 
 export async function createEntity(data: unknown) {
   try {
     const validated = EntityInputZodSchema.parse(data);
     const entity = await EntityModel.create(validated);
     revalidatePath("/dashboard/entityList");
+    // Document is automatically transformed
     return { success: true, data: entity };
   } catch (error) {
     if (error instanceof z.ZodError) {

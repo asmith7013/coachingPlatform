@@ -5,14 +5,14 @@ import { Button } from '@/components/core/Button';
 import { Card } from '@/components/composed/cards';
 import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
-import { ClassroomObservationNote } from '@/lib/schema/zod-schema/observations/classroom-observation';
+import { ClassroomObservationV2 } from '@zod-schema/observations/classroom-observation-v2';
 import { toDateString } from '@/lib/data-processing/transformers/utils/date-utils';
 
 interface ObservationCardProps {
-  observation: ClassroomObservationNote;
-  onEdit: (observation: ClassroomObservationNote) => void;
+  observation: ClassroomObservationV2;
+  onEdit: (observation: ClassroomObservationV2) => void;
   onDelete: (id: string) => void;
-  onView?: (observation: ClassroomObservationNote) => void;
+  onView?: (observation: ClassroomObservationV2) => void;
   isDeleting?: boolean;
   disabled?: boolean;
 }
@@ -44,7 +44,7 @@ export function ObservationCard({
             <div className="space-y-1 text-sm text-gray-600">
               <div>
                 <Text textSize="sm" color="muted">
-                  Date: {toDateString(observation.date as Date)}
+                  Date: {toDateString(new Date(observation.date))}
                 </Text>
               </div>
               
@@ -61,18 +61,18 @@ export function ObservationCard({
                 </Text>
               </div>
               
-              {observation.lesson.title && (
+              {observation.lessonTitle && (
                 <div>
                   <Text textSize="sm" color="muted">
-                    Lesson: {observation.lesson.title}
+                    Lesson: {observation.lessonTitle}
                   </Text>
                 </div>
               )}
               
-              {observation.lesson.course && (
+              {observation.lessonCourse && (
                 <div>
                   <Text textSize="sm" color="muted">
-                    Course: {observation.lesson.course}
+                    Course: {observation.lessonCourse}
                   </Text>
                 </div>
               )}

@@ -1,5 +1,3 @@
-
-```markdown
 <doc id="transformation-system">
 
 # Data Transformation System
@@ -8,170 +6,274 @@
 
 ## Overview
 
-Our application implements a layered data transformation system that ensures type safety, validation, and consistency when moving data between MongoDB and client-side code. This system separates concerns into distinct layers while providing a unified API for common transformation scenarios.
+Our application uses a streamlined transformation system built primarily on Mongoose's automatic transformation capabilities, with focused utilities for specific use cases. This approach ensures type safety and consistency when moving data between MongoDB and client-side code without unnecessary complexity.
 
-[RULE] Use the transformation system for all data conversions between MongoDB and client code.
-
-</section>
-
-<section id="transformation-architecture">
-
-## Architecture
-
-The transformation system is organized into three distinct layers with clear responsibilities:
-
-1. **DB Transformers**: Low-level MongoDB document transformations (ObjectId → string, date handling)
-2. **Schema Validators**: Zod schema validation with error formatting 
-3. **Domain Transformers**: Business-domain specific transformations with validation
-
-This layered approach ensures a clean separation of concerns while providing full transformation pipelines that can be composed as needed.
-
-```
-┌─────────────────────┐     ┌─────────────────────┐     ┌─────────────────────┐
-│  DB Transformers    │     │  Schema Validators  │     │  Domain Transformers │
-├─────────────────────┤     ├─────────────────────┤     ├─────────────────────┤
-│ - ObjectId → string │ ──> │ - Zod validation    │ ──> │ - Business logic    │
-│ - Date conversion   │     │ - Error formatting  │     │ - Custom mapping    │
-│ - ID field handling │     │ - Type safety       │     │ - Data enrichment   │
-└─────────────────────┘     └─────────────────────┘     └─────────────────────┘
-```
-
-[RULE] Each transformation layer should only handle its specific responsibilities.
+[RULE] Rely on Mongoose transforms for document processing and use transformation utilities only for specific business requirements.
 
 </section>
 
-<section id="db-transformers">
+<section id="mongoose-transforms">
 
-## DB Transformers
+## Mongoose Transform System
 
-The DB transformation layer handles MongoDB-specific concerns:
+Our primary transformation layer uses Mongoose's built-in transform capabilities through a standardized transform function.
+
+### Standard Transform Function
+
+All Mongoose models use the `standardTransform` function from `shared-options.ts`:
 
 ```typescript
-import { transformDocument, toPlainObject } from '@/lib/transformers/new';
+import { standardSchemaOptions } from '@mongoose-schema/shared-options';
 
-// Convert MongoDB document to a safe format
-const transformed = transformDocument(mongooseDoc);
+// Automatic transformation applied to all models
+const EntitySchema = new mongoose.Schema(schemaFields, standardSchemaOptions);
 
-// Handle arrays of documents
-const transformedDocs = transformDocuments(mongooseDocs);
+// Documents are automatically processed on serialization
+const entity = await EntityModel.findById(id);
+// - ObjectIds converted to strings
+// - Dates converted to ISO strings
+// - id field added (mirrors _id)
+// - Mongoose internals removed
+```
 
-// Convert Mongoose document to plain object
-const plainObj = toPlainObject(mongooseDoc);
+### Transform Implementation
+
+The `standardTransform` function handles common transformations automatically:
+
+```typescript
+export function standardTransform(_: unknown, ret: Record<string, unknown>): Record<string, unknown> {
+  // Recursively transforms:
+  // - ObjectIds to strings (including nested objects)
+  // - Dates to ISO strings
+  // - Adds id field matching _id
+  // - Removes __v field
+  
+  return transformedDocument;
+}
 ```
 
 Key features:
-- Converts ObjectIds to strings
-- Ensures timestamps are proper Date objects
-- Adds an 'id' field that mirrors the '_id' field
-- Recursively processes nested objects and arrays
-- Does not perform schema validation
+- **Recursive Processing**: Handles nested objects and arrays
+- **ObjectId Detection**: Robust identification of MongoDB ObjectIds
+- **Date Handling**: Consistent ISO string formatting
+- **ID Normalization**: Ensures both `_id` and `id` fields exist as strings
+- **Cleanup**: Removes Mongoose internal fields
 
-[RULE] Always use DB transformers before any schema validation to ensure proper type conversion.
+### Model Configuration
+
+All models use standard schema options for consistent transformation:
+
+```typescript
+import { standardSchemaOptions } from '@mongoose-schema/shared-options';
+
+const EntitySchema = new mongoose.Schema(schemaFields, {
+  ...standardSchemaOptions,
+  collection: 'entities'
+});
+
+// standardSchemaOptions includes:
+// - timestamps: true (adds createdAt/updatedAt)
+// - toJSON/toObject transforms with standardTransform
+```
+
+[RULE] Use `standardSchemaOptions` for all new Mongoose models to ensure consistent transformation behavior.
 
 </section>
 
-<section id="schema-validators">
+<section id="response-utilities">
 
-## Schema Validators
+## Response Processing Utilities
 
-The schema validation layer ensures data conforms to its expected structure:
+For handling API responses and extracting data consistently, we provide focused utilities in `response-utils.ts`.
+
+### Data Extraction
 
 ```typescript
-import { validateDocument, validateOrThrow } from '@/lib/transformers/new';
+import { 
+  extractItems, 
+  extractData, 
+  extractPagination 
+} from '@/lib/data-processing/transformers/utils/response-utils';
 
-// Validate data without throwing (returns null on error)
-const validated = validateDocument(doc, MyZodSchema);
+// Extract items from collection responses
+const schools = extractItems<School>(response);
 
-// Validate data and throw formatted error if validation fails
-const validatedOrThrow = validateOrThrow(doc, MyZodSchema);
+// Extract single entity from response
+const school = extractData<School>(response);
 
-// Validate and transform in one step
-const validatedAndTransformed = validateAndTransformDocument(doc, MyZodSchema);
+// Extract pagination metadata
+const pagination = extractPagination(response);
 ```
 
-Key features:
-- Validates data against Zod schemas
-- Provides both safe (null-returning) and throwing variants
-- Formats validation errors consistently
-- Supports partial schema validation for updates
-- Combines validation with basic transformations
+### Type Guards
 
-[RULE] Use schema validators for all data before using it in application logic.
+```typescript
+import { 
+  isCollectionResponse, 
+  isPaginatedResponse, 
+  isEntityResponse 
+} from '@/lib/data-processing/transformers/utils/response-utils';
+
+// Safely check response types
+if (isCollectionResponse<School>(response)) {
+  // Handle collection response
+  const schools = response.items;
+}
+
+if (isEntityResponse<School>(response)) {
+  // Handle single entity response
+  const school = response.data;
+}
+```
+
+### Response Validation
+
+```typescript
+import { validateServerResponse } from '@/lib/data-processing/transformers/utils/response-utils';
+
+// Standardize server responses
+const result = validateServerResponse<School>(serverResponse);
+
+if (result.success) {
+  const schools = result.data;
+} else {
+  console.error(result.error);
+}
+```
+
+[RULE] Use response utilities for consistent API response handling rather than manual property access.
 
 </section>
 
 <section id="domain-transformers">
 
-## Domain Transformers
+## Domain-Specific Transformers
 
-The domain transformation layer applies business-specific transformations to validated data:
+For business logic transformations, we create focused transformer functions in the `domain/` directory.
+
+### UI Component Transformers
+
+Transform domain entities for specific UI components:
 
 ```typescript
-import { 
-  createDomainPipeline, 
-  transformToDomain 
-} from '@/lib/transformers/new';
+// Transform visit data for InfoCard component
+import { visitToInfoCardTransformer } from '@/lib/data-processing/transformers/domain/visit-transforms';
 
-// Create a domain transformation pipeline
-const pipeline = createDomainPipeline(
-  UserZodSchema,
-  (validUser) => ({
-    ...validUser,
-    displayName: `${validUser.firstName} ${validUser.lastName}`,
-    isAdmin: validUser.roles.includes('admin')
-  })
-);
+const infoCardProps = visitToInfoCardTransformer(visit, {
+  onView: () => handleView(visit),
+  onEdit: () => handleEdit(visit)
+});
 
-// Apply the complete transformation pipeline
-const transformedUser = transformToDomain(mongooseDoc, pipeline);
+// Transform multiple visits
+import { visitCollectionToInfoCards } from '@/lib/data-processing/transformers/domain/visit-transforms';
+
+const infoCards = visitCollectionToInfoCards(visits, (visit) => ({
+  onView: () => handleView(visit),
+  onEdit: () => handleEdit(visit)
+}));
 ```
 
-Key features:
-- Combines DB transformation and schema validation
-- Adds business domain transformations
-- Provides complete end-to-end pipelines
-- Supports both safe (null-returning) and throwing variants
-- Maintains type safety throughout the pipeline
+### Summary Transformers
 
-[RULE] Use domain transformers for complex transformations involving business logic.
+Create summary objects for display:
+
+```typescript
+import { visitToSummaryTransformer } from '@/lib/data-processing/transformers/domain/visit-transforms';
+
+const visitSummary = visitToSummaryTransformer(visit);
+// Returns: { id, title, coach, purpose, mode, eventsCount, etc. }
+```
+
+### Creating Domain Transformers
+
+When creating new domain transformers:
+
+1. **Single Responsibility**: Each transformer handles one specific transformation
+2. **Type Safety**: Use proper TypeScript types for inputs and outputs
+3. **Pure Functions**: No side effects, predictable outputs
+4. **Reusable**: Design for multiple use cases when appropriate
+
+```typescript
+// Example domain transformer structure
+export function entityToSummaryTransformer(entity: Entity): EntitySummary {
+  return {
+    id: entity._id,
+    name: entity.name,
+    status: deriveStatus(entity),
+    formattedDate: formatDate(entity.createdAt)
+  };
+}
+```
+
+[RULE] Create domain transformers only when you need business logic transformations beyond basic data formatting.
 
 </section>
 
-<section id="mongoose-integration">
+<section id="schema-compatibility">
 
-## Mongoose Transform Integration
+## Schema Compatibility Utilities
 
-Our transformation system integrates with Mongoose transforms to provide seamless ObjectId handling and consistent document formatting.
+For type system compatibility, we provide focused utilities without runtime changes.
 
-### Automatic Document Transformation
-
-Mongoose models with standard schema options automatically handle transformations:
+### Base Document Compatibility
 
 ```typescript
-// Model definition with standard options
-const EntitySchema = new mongoose.Schema(schemaFields, standardSchemaOptions);
+import { ensureBaseDocumentCompatibility } from '@/lib/data-processing/transformers/utils/response-utils';
 
-// Documents are automatically transformed
-const entity = await EntityModel.findById(id); 
-// entity._id is already a string
-// entity.id is automatically added
-// entity.__v is removed
+// Type-only compatibility helper for CRUD factories
+const compatibleSchema = ensureBaseDocumentCompatibility<Entity>(EntityZodSchema);
+
+// Used with CRUD factories that have strict type constraints
+const entityActions = createCrudActions({
+  model: EntityModel,
+  schema: compatibleSchema,
+  inputSchema: ensureBaseDocumentCompatibility<EntityInput>(EntityInputZodSchema)
+});
 ```
 
-### API Response Integration
+This utility:
+- **Type Assertion Only**: No runtime changes to schemas
+- **Compatibility Bridge**: Helps with strict generic constraints
+- **CRUD Integration**: Primarily used with CRUD factories
+- **Original Validation**: Maintains original schema validation logic
 
-The Mongoose transforms work seamlessly with API responses:
+[RULE] Use `ensureBaseDocumentCompatibility` only when working with utilities that have strict BaseDocument type constraints.
+
+</section>
+
+<section id="transformation-patterns">
+
+## Common Transformation Patterns
+
+### Server Action Pattern
+
+Server actions automatically receive transformed documents:
 
 ```typescript
-// In API routes
+export async function fetchSchools() {
+  "use server";
+  
+  // Documents already transformed by Mongoose
+  const schools = await SchoolModel.find();
+  
+  // Ready for client consumption - no additional processing needed
+  return { success: true, data: schools };
+}
+```
+
+### API Route Pattern
+
+API routes benefit from automatic transformation:
+
+```typescript
 export async function GET() {
   try {
     const entities = await EntityModel.find();
-    // Documents are already transformed by Mongoose
+    // Documents automatically transformed
     
     return Response.json({
       success: true,
-      items: entities, // No additional transformation needed
+      items: entities, // Already client-ready
       total: entities.length
     });
   } catch (error) {
@@ -180,162 +282,64 @@ export async function GET() {
 }
 ```
 
-### Server Action Integration
+### Component Integration Pattern
 
-Server actions receive properly transformed documents:
+Components receive properly formatted data:
 
 ```typescript
-export async function fetchEntities() {
-  "use server";
+function EntityCard({ entity }: { entity: Entity }) {
+  // entity._id is already a string
+  // entity.createdAt is already an ISO string
+  // No manual transformation needed
   
-  try {
-    const entities = await EntityModel.find();
-    // Documents already have string IDs and proper format
-    
-    return {
-      success: true,
-      data: entities // Ready for client consumption
-    };
-  } catch (error) {
-    return handleServerError(error);
-  }
+  return (
+    <Card>
+      <h3>{entity.name}</h3>
+      <p>Created: {new Date(entity.createdAt).toLocaleDateString()}</p>
+    </Card>
+  );
 }
 ```
 
-### Zod Schema Compatibility
+[RULE] Trust the automatic transformation system - avoid manual ObjectId or date conversion in application code.
 
-Mongoose transforms ensure compatibility with Zod schemas:
+</section>
 
-```typescript
-// Zod schema expects string _id
-export const EntityZodSchema = z.object({
-  _id: z.string(),
-  name: z.string(),
-  // Additional fields...
-});
+<section id="migration-strategy">
 
-// Mongoose documents automatically match schema
-const entity = await EntityModel.findById(id);
-const validated = EntityZodSchema.parse(entity); // ✅ Passes validation
-```
+## Legacy Code Migration
 
-### Custom Transform Extensions
+When updating code that manually transforms documents:
 
-For models requiring additional transformation logic:
+### Before (Manual Transformation)
 
 ```typescript
-import { standardMongooseTransform } from '@/lib/server/db/mongoose-transform-helper';
-
-function customTransform(doc: Document, ret: RawMongoDocument): BaseDocument {
-  // Apply standard transform first
-  const transformed = standardMongooseTransform(doc, ret);
-  
-  // Add custom transformations
-  if (transformed.someField) {
-    transformed.customField = processField(transformed.someField);
-  }
-  
-  return transformed;
-}
-
-const CustomSchema = new mongoose.Schema(schemaFields, {
-  timestamps: true,
-  toJSON: { transform: customTransform },
-  toObject: { transform: customTransform }
-});
-```
-
-### Migration from Manual Transforms
-
-When migrating existing models:
-
-```typescript
-// Before: Manual transformation required
-const entities = await EntityModel.find();
-const transformed = entities.map(entity => ({
+// ❌ Manual transformation no longer needed
+const transformedEntities = entities.map(entity => ({
   ...entity.toObject(),
   _id: entity._id.toString(),
-  id: entity._id.toString()
+  id: entity._id.toString(),
+  createdAt: entity.createdAt.toISOString()
 }));
+```
 
-// After: Automatic transformation
-const entities = await EntityModel.find(); 
+### After (Automatic Transformation)
+
+```typescript
+// ✅ Automatic transformation
+const entities = await EntityModel.find();
 // Documents are already properly formatted
 ```
 
-[RULE] Leverage Mongoose transforms for automatic document formatting and eliminate manual transformation code.
+### Remove Manual Processing
 
-</section>
+Look for and remove these patterns:
+- Manual `.toString()` calls on ObjectIds
+- Manual date formatting
+- Manual addition of `id` fields
+- Custom transform functions that duplicate `standardTransform`
 
-<section id="usage-patterns">
-
-## Usage Patterns
-
-### Basic Document Transformation
-
-For simple document transformations without business logic:
-
-```typescript
-import { validateAndTransformDocument } from '@/lib/transformers/new';
-
-// In an API route or server action
-const school = await SchoolModel.findById(id);
-return validateAndTransformDocument(school, SchoolZodSchema);
-```
-
-### Complete Pipeline with Business Logic
-
-For transformations that require business logic:
-
-```typescript
-import { createDomainPipeline, transformToDomain } from '@/lib/transformers/new';
-
-// Define the domain transformation
-const userPipeline = createDomainPipeline(
-  UserZodSchema,
-  (user) => ({
-    ...user,
-    fullName: `${user.firstName} ${user.lastName}`,
-    isActive: user.lastLogin > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-  })
-);
-
-// In an API route or server action
-const user = await UserModel.findById(id);
-return transformToDomain(user, userPipeline);
-```
-
-### Document Preparation for MongoDB
-
-When preparing data for MongoDB:
-
-```typescript
-import { prepareForCreate } from '@/lib/transformers/new';
-
-// Remove timestamp fields and prepare for MongoDB
-const dataToInsert = prepareForCreate(inputData);
-await UserModel.create(dataToInsert);
-```
-
-[RULE] Choose the appropriate transformation pattern based on the specific use case.
-
-</section>
-
-<section id="backward-compatibility">
-
-## Backward Compatibility
-
-The transformation system includes a compatibility layer in `compatibility.ts` that maintains support for older transformation functions. However, new code should use the specific transformers directly rather than relying on compatibility exports.
-
-```typescript
-// Older pattern (still supported)
-import { transformDocument } from '@/lib/transformers';
-
-// Newer, more explicit pattern (preferred)
-import { validateAndTransformDocument } from '@/lib/transformers/new';
-```
-
-[RULE] New code should always import directly from the specific transformation modules.
+[RULE] Remove manual transformation code that duplicates the automatic Mongoose transformation system.
 
 </section>
 

@@ -32,8 +32,8 @@ export const EntityInputZodSchema = z.object({
 
 export const EntityZodSchema = EntityInputZodSchema.extend({
   _id: z.string(),
-  createdAt: zDateField.optional(),
-  updatedAt: zDateField.optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
 
 export type EntityInput = z.infer<typeof EntityInputZodSchema>;

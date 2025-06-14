@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useId } from "react";
 import Select from "react-select";
 import { Label } from "./Label";
 import { useReferenceData, getEntityTypeFromUrlUtil } from "@query/client/hooks/queries/useReferenceData";
@@ -77,6 +77,11 @@ export function ReferenceSelect({
   search = "",
   className = ""
 }: ReferenceSelectProps) {
+  // Generate stable IDs to prevent hydration mismatches
+  const baseId = useId();
+  const instanceId = `reference-select-${baseId}`;
+  const inputId = `reference-select-input-${baseId}`;
+  
   // Add state for retry attempts
   const [_retryCount, setRetryCount] = useState(0);
   
@@ -138,7 +143,7 @@ export function ReferenceSelect({
 
   return (
     <div className={`space-y-1 ${className}`}>
-      <Label>{label}</Label>
+      <Label htmlFor={inputId}>{label}</Label>
       
       {fetchError ? (
         <div className="text-red-500 text-sm p-2 border border-red-200 bg-red-50 rounded">
@@ -153,6 +158,8 @@ export function ReferenceSelect({
         </div>
       ) : (
         <Select
+          instanceId={instanceId}
+          inputId={inputId}
           isMulti={multiple}
           options={options}
           value={selectedValue}

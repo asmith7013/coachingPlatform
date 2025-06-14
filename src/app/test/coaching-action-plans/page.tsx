@@ -6,7 +6,11 @@ import { Button } from '@/components/core/Button';
 import { Badge } from '@/components/core/feedback/Badge';
 import { Select } from '@/components/core/fields/Select';
 
-import { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
+import {
+  CoachingActionPlanV2,
+  CoachingActionPlanV2Input,
+  createCoachingActionPlanV2Defaults
+} from '@zod-schema/cap/coaching-action-plan-v2';
 import { useCoachingActionPlans } from '@/hooks/domain';
 import { Alert } from '@/components/core/feedback/Alert';
 
@@ -24,93 +28,33 @@ interface TestResult {
 interface TestState {
   results: TestResult[];
   isLoading: boolean;
-  testPlan: CoachingActionPlanInput | null;
-  selectedPlanId: string | null; // ✅ Keep as null, not undefined
-  plans: CoachingActionPlan[];
+  testPlan: CoachingActionPlanV2Input | null;
+  selectedPlanId: string | null;
+  plans: CoachingActionPlanV2[];
 }
 
 // =====================================
 // MOCK DATA FACTORY
 // =====================================
 
-function generateTestPlan(): CoachingActionPlanInput {
+function generateTestPlan(): CoachingActionPlanV2Input {
   const timestamp = Date.now();
-  
+  const basePlan = createCoachingActionPlanV2Defaults({
+    userId: 'test-user-id',
+    schoolId: '507f1f77bcf86cd799439013',
+    teacherId: '507f1f77bcf86cd799439011',
+    coachId: '507f1f77bcf86cd799439012',
+    academicYear: '2024-2025'
+  });
   return {
-    title: `Test CAP ${timestamp}`,
-    teachers: ['507f1f77bcf86cd799439011'], // Mock teacher ID
-    coaches: ['507f1f77bcf86cd799439012'], // Mock coach ID
-    school: '507f1f77bcf86cd799439013', // Mock school ID
-    academicYear: '2024-2025',
-    needsAndFocus: {
-      ipgCoreAction: 'CA1',
-      ipgSubCategory: 'CA1A',
-      rationale: 'Test rationale for needs assessment',
-      pdfAttachment: undefined
-    },
-    goal: {
-      description: 'Test goal description',
-      teacherOutcomes: [
-        {
-          type: 'teacher-facing',
-          description: 'Teacher will demonstrate improved questioning techniques',
-          metrics: [
-            {
-              name: 'Question Quality',
-              type: 'qualitative',
-              description: 'Quality of questions during instruction',
-              collectionMethod: 'observation',
-              targetValue: 'High-quality questions 80% of the time',
-              baselineValue: 'Low-quality questions',
-              currentValue: undefined,
-              notes: 'Focus on open-ended questions'
-            }
-          ],
-          evidence: []
-        }
-      ],
-      studentOutcomes: [
-        {
-          type: 'student-facing',
-          description: 'Students will show increased engagement',
-          metrics: [
-            {
-              name: 'Engagement Level',
-              type: 'quantitative',
-              description: 'Student participation in discussions',
-              collectionMethod: 'observation',
-              targetValue: '85% participation rate',
-              baselineValue: '60% participation rate',
-              currentValue: undefined,
-              notes: 'Track verbal and non-verbal engagement'
-            }
-          ],
-          evidence: []
-        }
-      ]
-    },
-    weeklyPlans: [
-      {
-        date: new Date('2024-02-01'),
-        cycleNumber: '1',
-        visitNumber: '1',
-        focus: 'Initial observation and baseline assessment',
-        lookFor: 'Current questioning strategies and student responses',
-        coachAction: 'Observe and take detailed notes on questioning patterns',
-        teacherAction: 'Teach lesson as normal, focus on student engagement',
-        progressMonitoring: 'Baseline data collection form',
-        visitId: undefined,
-        status: 'planned'
-      }
-    ],
-    implementationRecords: [],
-    endOfCycleAnalysis: undefined,
-    status: 'draft',
-    startDate: new Date('2024-02-01'),
-    endDate: new Date('2024-05-01'),
+    ...basePlan,
+    title: `Test CAP V2 ${timestamp}`,
+    rationale: 'Test rationale using V2 flattened schema',
+    goalDescription: 'Test goal description for V2 structure',
+    startDate: new Date('2024-02-01').toISOString(),
+    endDate: new Date('2024-05-01').toISOString(),
     cycleLength: 3,
-    relatedVisits: [],
-    relatedCycles: []
+    status: 'draft'
   };
 }
 
@@ -181,7 +125,7 @@ export default function CoachingActionPlanCRUDTest() {
       const testPlan = generateTestPlan();
       setState(prev => ({ ...prev, testPlan }));
       
-      const result = await createAsync?.(testPlan as CoachingActionPlan);
+      const result = await createAsync?.(testPlan as CoachingActionPlanV2);
       
       setState(prev => ({ 
         ...prev,
@@ -201,18 +145,15 @@ export default function CoachingActionPlanCRUDTest() {
       addResult('UPDATE', false, undefined, 'No plan selected');
       return;
     }
-
     try {
-      const updateData = {
-        title: `Updated Plan ${Date.now()}`,
-        status: 'active' as const
+      const updateData: Partial<CoachingActionPlanV2Input> = {
+        title: `Updated Plan V2 ${Date.now()}`,
+        status: 'active',
+        goalDescription: 'Updated goal description using V2 schema'
       };
-      
       const result = await updateAsync?.(state.selectedPlanId, updateData);
       addResult('UPDATE', true, result);
-      
-      // Refetch to update list
-      await refetchPlans();
+      refetchPlans();
     } catch (error) {
       addResult('UPDATE', false, undefined, error instanceof Error ? error.message : 'Unknown error');
     }
@@ -234,7 +175,7 @@ export default function CoachingActionPlanCRUDTest() {
       addResult('DELETE', true, { message: 'Plan deleted successfully' });
       
       // Refetch to update list
-      await refetchPlans();
+      refetchPlans();
     } catch (error) {
       addResult('DELETE', false, undefined, error instanceof Error ? error.message : 'Unknown error');
     }
@@ -371,8 +312,12 @@ export default function CoachingActionPlanCRUDTest() {
                       <div>
                         <span className="font-medium">{plan.title}</span>
                         <Badge intent="neutral" className="ml-2">{plan.status}</Badge>
+                        <Badge intent="info" className="ml-1">{plan.academicYear}</Badge>
                       </div>
-                      <span className="text-sm text-gray-500">{plan.academicYear}</span>
+                      <div className="text-right text-sm text-gray-500">
+                        <div>{plan.ipgCoreAction} - {plan.ipgSubCategory}</div>
+                        <div>Cycles: {plan.cycleLength}</div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -383,11 +328,18 @@ export default function CoachingActionPlanCRUDTest() {
           {/* Test Plan Preview */}
           {state.testPlan && (
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold">Last Generated Test Plan</h3>
+              <h3 className="text-lg font-semibold">Last Generated Test Plan (V2 Schema)</h3>
               <div className="max-h-60 overflow-y-auto border rounded p-2">
-                <pre className="text-xs whitespace-pre-wrap">
-                  {JSON.stringify(state.testPlan, null, 2)}
-                </pre>
+                <div className="space-y-2 text-sm">
+                  <div><strong>Title:</strong> {state.testPlan.title}</div>
+                  <div><strong>Goal:</strong> {state.testPlan.goalDescription}</div>
+                  <div><strong>IPG Focus:</strong> {state.testPlan.ipgCoreAction} - {state.testPlan.ipgSubCategory}</div>
+                  <div><strong>Academic Year:</strong> {state.testPlan.academicYear}</div>
+                  <div><strong>Cycle Length:</strong> {state.testPlan.cycleLength}</div>
+                  <div><strong>Status:</strong> {state.testPlan.status}</div>
+                  <div><strong>Start Date:</strong> {state.testPlan.startDate}</div>
+                  <div><strong>Rationale:</strong> {state.testPlan.rationale}</div>
+                </div>
               </div>
             </div>
           )}
@@ -430,6 +382,18 @@ export default function CoachingActionPlanCRUDTest() {
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <h4 className="font-semibold text-blue-800">Updated Infrastructure Used:</h4>
+            <ul className="mt-2 text-sm text-blue-700 space-y-1">
+              <li>✅ CoachingActionPlanV2 Schema (flattened structure)</li>
+              <li>✅ Domain hooks with CRUD factory pattern</li>
+              <li>✅ Server actions with CRUD factory</li>
+              <li>✅ Proper error handling with domain hooks</li>
+              <li>✅ Automatic cache management</li>
+              <li>✅ Type-safe operations</li>
+            </ul>
           </div>
         </Card.Body>
       </Card>

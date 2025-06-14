@@ -156,17 +156,19 @@ export function useDashboardData() {
 
 Our domain hooks support optional toast notifications through a clean composition pattern that maintains separation of concerns.
 
-### Basic Toast Integration
+### Unified Notification System
+
+All domain hooks integrate with the centralized notification system:
 
 ```typescript
-// Domain hook with toast support
+// Domain hook with notification enhancement
 export function useSchoolsWithNotifications() {
   const notifications = useNotifications();
   const toastConfig = createDefaultToastConfig('schools');
   const enableToasts = FEATURE_FLAGS?.ENABLE_TOASTS !== false;
   const mutations = useSchoolsMutations();
 
-  // Fail fast if required mutations aren't available
+  // Fail fast validation
   if (!mutations.createAsync || !mutations.updateAsync || !mutations.deleteAsync) {
     throw new Error('Required CRUD mutations not available for schools');
   }

@@ -2,12 +2,9 @@
 
 import { Model, FilterQuery, Document } from "mongoose";
 import { connectToDB } from "@server/db/connection";
-
-import { BaseDocument } from "@core-types/document";
 import { QueryParams } from "@core-types/query";
 
 import { handleServerError } from "@error/handlers/server";
-import { sanitizeDocuments } from "@server/api/responses/formatters";
 
 /**
  * Creates an API-safe version of a data fetching function
@@ -48,10 +45,9 @@ export function createApiSafeFetcher<M extends Document>(
 
       // Let Mongoose transforms handle the type conversion
       // The returned items will have the correct schema based on the model
-      const processedItems = sanitizeDocuments(items);
 
       return {
-        items: processedItems,
+        items,
         total,
         success: true,
         page,

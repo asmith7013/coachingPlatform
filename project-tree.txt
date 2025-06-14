@@ -26,14 +26,12 @@
 │   │   ├── staged-context-loading.md
 │   │   └── ui-component-context.md
 │   ├── data-flow
-│   │   ├── advanced-schema-techniques.md
 │   │   ├── api-patterns.md
 │   │   ├── authentication.md
 │   │   ├── error-handling.md
 │   │   ├── monday-integration.md
 │   │   ├── mongodb-integration.md
 │   │   ├── react-query-patterns.md
-│   │   ├── sanitization-system.md
 │   │   ├── schema-system.md
 │   │   ├── server-actions.md
 │   │   ├── transformation-system.md
@@ -183,6 +181,7 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   └── notes.ts
 │   │   │   ├── observations
+│   │   │   │   ├── classroom-observations-v2.ts
 │   │   │   │   ├── classroom-observations.ts
 │   │   │   │   ├── contextual-notes.ts
 │   │   │   │   └── index.ts
@@ -541,6 +540,7 @@
 │   │   │   │   └── index.ts
 │   │   │   ├── feedback
 │   │   │   │   ├── Alert.tsx
+│   │   │   │   ├── AutoSaveIndicator.tsx
 │   │   │   │   ├── Badge.tsx
 │   │   │   │   ├── Skeleton.tsx
 │   │   │   │   ├── Spinner.tsx
@@ -765,7 +765,9 @@
 │   │   ├── domain
 │   │   │   ├── index.ts
 │   │   │   ├── observations
+│   │   │   │   ├── index.ts
 │   │   │   │   ├── useClassroomObservations.ts
+│   │   │   │   ├── useClassroomObservationsV2.ts
 │   │   │   │   └── useContextualNotes.ts
 │   │   │   ├── schedule
 │   │   │   │   ├── useBellSchedules.ts
@@ -940,6 +942,7 @@
 │   │   │   │   │   ├── next-step.model.ts
 │   │   │   │   │   └── rubric.model.ts
 │   │   │   │   ├── observations
+│   │   │   │   │   ├── classroom-observation-v2.model.ts
 │   │   │   │   │   ├── classroom-observation.model.ts
 │   │   │   │   │   ├── contextual-note.model.ts
 │   │   │   │   │   └── index.ts
@@ -1012,6 +1015,7 @@
 │   │   │       │   ├── rubric-fields.ts
 │   │   │       │   └── rubric.ts
 │   │   │       ├── observations
+│   │   │       │   ├── classroom-observation-v2.ts
 │   │   │       │   └── classroom-observation.ts
 │   │   │       ├── schedule
 │   │   │       │   ├── index.ts
@@ -1042,7 +1046,6 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── responses
 │   │   │   │   │   ├── action-response-helper.ts
-│   │   │   │   │   ├── formatters.ts
 │   │   │   │   │   └── index.ts
 │   │   │   │   └── validation
 │   │   │   │       ├── api-validation.ts
@@ -1244,4 +1247,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-367 directories, 878 files
+367 directories, 881 files

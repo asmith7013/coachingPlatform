@@ -9,7 +9,6 @@ import { PaginatedResponse, EntityResponse, BaseResponse } from "@core-types/res
 import { fetchPaginatedResource } from "@/lib/data-processing/pagination/unified-pagination";
 
 // Removed over-engineered transformer - using simple sanitization instead
-import { sanitizeDocument } from "@server/api/responses/formatters";
 import { createValidator } from "@/lib/data-processing/validation/validation-helpers";
 import { handleCrudError } from "@error/handlers/crud";
 
@@ -96,14 +95,11 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
         const doc = await model.create(validated);
         const plainDocument = doc.toObject ? doc.toObject() : doc;
         
-        // Simple sanitization instead of over-engineered transformation
-        const sanitized = sanitizeDocument(plainDocument as T);
-
         revalidatePaths();
         
         return {
           success: true,
-          data: sanitized,
+          data: plainDocument as T,
           message: `${name} created successfully`
         };
       } catch (error) {
@@ -145,7 +141,7 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
         }
         
         // Simple sanitization instead of over-engineered transformation
-        const sanitized = sanitizeDocument(doc as T);
+        const sanitized = doc as T;
         
         revalidatePaths();
         
@@ -201,13 +197,10 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
         if (!doc) {
           throw new Error(`${name} with ID ${id} not found`);
         }
-        
-        // Simple sanitization instead of over-engineered transformation
-        const sanitized = sanitizeDocument(doc as T);
-        
+                
         return {
           success: true,
-          data: sanitized
+          data: doc as T
         };
       } catch (error) {
         // ✅ Consistent error handling

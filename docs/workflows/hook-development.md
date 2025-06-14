@@ -317,7 +317,81 @@ function useEntitiesWithNotifications() {
 
 ### Notification System Integration
 
-The notification system provides consistent toast messaging across all entities:
+Our application provides a comprehensive notification system for user feedback through toast messages. This system follows a composition pattern that maintains separation of concerns while providing consistent user experience.
+
+### Core Notification Hook
+
+The `useNotifications` hook provides the foundation for all toast functionality:
+
+```typescript
+import { useNotifications } from '@/hooks/ui/useNotifications';
+
+function MyComponent() {
+  const notifications = useNotifications();
+  
+  const handleAction = async () => {
+    const result = await notifications.withToast(
+      async () => {
+        // Your async operation
+        return await performOperation();
+      },
+      {
+        loading: "Processing...",
+        success: "Operation completed!",
+        error: "Operation failed"
+      }
+    );
+  };
+}
+```
+
+### Domain Hook Notification Enhancement
+
+Domain hooks can be enhanced with notification capabilities:
+
+```typescript
+// Enhanced domain hook with notifications
+export function useSchoolsWithNotifications() {
+  const notifications = useNotifications();
+  const toastConfig = createDefaultToastConfig('schools');
+  const enableToasts = FEATURE_FLAGS?.ENABLE_TOASTS !== false;
+  const mutations = useSchoolsMutations();
+
+  // Fail fast if required mutations aren't available
+  if (!mutations.createAsync || !mutations.updateAsync || !mutations.deleteAsync) {
+    throw new Error('Required CRUD mutations not available for schools');
+  }
+
+  return {
+    ...mutations,
+    createWithToast: (data: Parameters<typeof mutations.createAsync>[0]) => {
+      return notifications.withToast(
+        () => mutations.createAsync(data),
+        toastConfig.create!,
+        enableToasts
+      );
+    },
+    updateWithToast: (id: string, data: Partial<School>) => {
+      return notifications.withToast(
+        () => mutations.updateAsync(id, data),
+        toastConfig.update!,
+        enableToasts
+      );
+    },
+    deleteWithToast: (id: string) => {
+      return notifications.withToast(
+        () => mutations.deleteAsync(id),
+        toastConfig.delete!,
+        enableToasts
+      );
+    }
+  };
+}
+```
+
+### Toast Configuration System
+
+The notification system includes automatic toast configuration for common entity operations:
 
 ```typescript
 // Automatic entity-specific messaging
@@ -334,7 +408,24 @@ const customToastConfig = {
 };
 ```
 
-### Guidelines for Toast Integration
+### Progressive Enhancement Pattern
+
+Use progressive enhancement to provide both silent and notification-enabled operations:
+
+```typescript
+// Basic operations without notifications
+const schools = useSchools.manager();
+
+// Enhanced operations with user feedback
+const schoolsWithToasts = useSchools.withNotifications();
+
+// Component chooses based on context
+const handleCreate = isUserAction 
+  ? schoolsWithToasts.createWithToast 
+  : schools.createAsync;
+```
+
+### Guidelines for Notification Integration
 
 1. **Separate Concerns**: Create dedicated notification-enhanced hooks rather than mixing concerns
 2. **Fail Fast**: Validate required mutations are available before creating toast methods
@@ -342,7 +433,7 @@ const customToastConfig = {
 4. **Consistent Naming**: Use `*WithToast` suffix for notification-enabled methods
 5. **Feature Flags**: Respect toast feature flags for conditional behavior
 
-**[RULE]** Always provide both silent and toast-enabled versions of operations to support different component contexts.
+[RULE] Always provide both silent and toast-enabled versions of operations to support different component contexts.
 
 ## Hook Documentation
 

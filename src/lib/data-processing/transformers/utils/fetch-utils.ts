@@ -1,6 +1,5 @@
 // src/lib/data-utilities/transformers/fetch-by-id.ts
 import { connectToDB } from '@server/db/connection';
-import { sanitizeDocument } from '@server/api/responses/formatters';
 import { Model } from 'mongoose';
 import { isValidObjectId } from '@lib/data-processing/validation/mongoose-validation';
 
@@ -38,12 +37,9 @@ export async function fetchById<T>(
       };
     }
     
-    // Transform and validate the document using unified transformer
-    const sanitized = sanitizeDocument(document);
-    
     return {
       success: true,
-      items: [sanitized],
+      items: [document],
       total: 1
     };
   } catch (error) {
