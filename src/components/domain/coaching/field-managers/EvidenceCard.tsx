@@ -41,14 +41,6 @@ export function EvidenceCard({
 }: EvidenceCardProps) {
   const styles = variantStyles[variant];
 
-  const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0];
-  };
-
-  const parseDate = (dateString: string) => {
-    return new Date(dateString);
-  };
-
   const evidenceTypeOptions = [
     { value: 'written_summary', label: 'Written Summary' },
     { value: 'link', label: 'Link' },
@@ -89,8 +81,8 @@ export function EvidenceCard({
         <Input
           label="Date Collected"
           type="date"
-          value={evidence.dateCollected ? formatDate(evidence.dateCollected) : ''}
-          onChange={(e) => onUpdate({ dateCollected: parseDate(e.target.value) })}
+          value={evidence.dateCollected || ''}
+          onChange={(e) => onUpdate({ dateCollected: e.target.value })}
           textSize="sm"
         />
       </div>

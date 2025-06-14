@@ -1,72 +1,45 @@
-import { getModelForClass, prop } from "@typegoose/typegoose";
 import mongoose from "mongoose";
-import { getModel } from "@server/db/model-registry";
-import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
-export class LookFor extends BaseMongooseDocument {
-  @prop({ type: Number, required: true })
-  lookForIndex!: number;
+const lookForFields = {
+  lookForIndex: { type: Number, required: true },
+  schoolIds: [{ type: String, required: true }],
+  teacherIds: [{ type: String, required: true }],
+  topic: { type: String, required: true },
+  description: { type: String, required: true },
+  category: { type: String },
+  status: { type: String },
+  studentFacing: { type: Boolean, required: true },
+  rubricIds: [{ type: String }],
+  ...standardDocumentFields
+};
 
-  @prop({ type: () => [String], required: true })
-  schoolIds!: string[];
+const LookForSchema = new mongoose.Schema(lookForFields, { ...standardSchemaOptions, collection: 'lookfors' });
 
-  @prop({ type: () => [String], required: true })
-  teacherIds!: string[];
+const lookForItemFields = {
+  originalLookFor: { type: String, required: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  tags: [{ type: String, required: true }],
+  lookForIndex: { type: Number, required: true },
+  teacherIDs: [{ type: String, required: true }],
+  chosenBy: [{ type: String, required: true }],
+  active: { type: Boolean, required: true },
+  ...standardDocumentFields
+};
 
-  @prop({ type: String, required: true })
-  topic!: string;
+const LookForItemSchema = new mongoose.Schema(lookForItemFields, { ...standardSchemaOptions, collection: 'lookforitems' });
 
-  @prop({ type: String, required: true })
-  description!: string;
+export const LookForModel = mongoose.models.LookFor || 
+  mongoose.model("LookFor", LookForSchema);
 
-  @prop({ type: String })
-  category?: string;
-
-  @prop({ type: String })
-  status?: string;
-
-  @prop({ type: Boolean, required: true })
-  studentFacing!: boolean;
-
-  @prop({ type: () => [String] })
-  rubricIds?: string[];
-}
-
-export class LookForItem extends BaseMongooseDocument {
-  @prop({ type: String, required: true })
-  originalLookFor!: string;
-
-  @prop({ type: String, required: true })
-  title!: string;
-
-  @prop({ type: String, required: true })
-  description!: string;
-
-  @prop({ type: () => [String], required: true })
-  tags!: string[];
-
-  @prop({ type: Number, required: true })
-  lookForIndex!: number;
-
-  @prop({ type: () => [String], required: true })
-  teacherIDs!: string[];
-
-  @prop({ type: () => [String], required: true })
-  chosenBy!: string[];
-
-  @prop({ type: Boolean, required: true })
-  active!: boolean;
-}
-
-export const LookForModel =
-  mongoose.models.LookFor || getModelForClass(LookFor, { schemaOptions: { collection: 'lookfors' } });
-export const LookForItemModel =
-  mongoose.models.LookForItem || getModelForClass(LookForItem, { schemaOptions: { collection: 'lookforitems' } });
+export const LookForItemModel = mongoose.models.LookForItem || 
+  mongoose.model("LookForItem", LookForItemSchema);
 
 export async function getLookForModel() {
-  return getModel<LookFor>('LookFor', () => getModelForClass(LookFor));
+  return LookForModel;
 }
 
 export async function getLookForItemModel() {
-  return getModel<LookForItem>('LookForItem', () => getModelForClass(LookForItem));
+  return LookForItemModel;
 }

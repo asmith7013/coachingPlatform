@@ -111,9 +111,25 @@ export function formatShortDate(dateString: string): string {
 
 /**
  * Format date as medium format: "Mon 15, 2024"
- * Replaces: toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+ * Accepts Date, ISO string, or YYYY-MM-DD string
  */
-export function formatMediumDate(dateString: string): string {
+export function formatMediumDate(input: string | Date): string {
+  let dateString: string;
+  if (input instanceof Date) {
+    // Convert Date object to YYYY-MM-DD format
+    dateString = toDateString(input);
+  } else if (typeof input === 'string') {
+    if (input.includes('T') || input.includes('Z')) {
+      // Convert ISO string to YYYY-MM-DD format
+      dateString = toDateString(new Date(input));
+    } else {
+      // Already in YYYY-MM-DD format
+      dateString = input;
+    }
+  } else {
+    throw new Error('Input must be a Date object or string');
+  }
+  // Use existing fromDateString function to maintain consistency
   const date = fromDateString(dateString);
   return date.toLocaleDateString('en-US', { 
     weekday: 'short', 

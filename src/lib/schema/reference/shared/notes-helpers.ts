@@ -5,9 +5,9 @@ import { formatShortDate, toDateString } from '@/lib/data-processing/transformer
  * Gets a display string for a note
  */
 export function getNoteDisplayString(note: Note): string {
-  const dateStr = note.date instanceof Date 
-    ? formatShortDate(toDateString(note.date))
-    : note.date ? formatShortDate(note.date) : '';
+  const dateStr = typeof note.date === 'string' 
+    ? formatShortDate(note.date)
+    : note.date ? formatShortDate(toDateString(note.date)) : '';
   
   return `${dateStr} - ${note.type}`;
 }

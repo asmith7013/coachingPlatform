@@ -46,7 +46,7 @@ export function CoachingActionPlanStage3({
                                         data.length % 3 === 1 ? "2" : "3";
 
     const newRecord: ImplementationRecord = {
-      date: new Date(getTodayString()),
+      date: getTodayString(),
       visitId: undefined,
       cycleNumber: nextCycleNumber,
       visitNumber: nextVisitNumber,

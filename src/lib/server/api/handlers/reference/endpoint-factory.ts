@@ -9,7 +9,6 @@ import { QueryParamsZodSchema } from "@zod-schema/core-types/query";
 import { withQueryValidation } from "@/lib/server/api/validation/api-validation";
 import { createMonitoredErrorResponse } from "@error/core/responses";
 import { createMongoDBFilter } from "@server/db/mongodb-query-utils";
-import { sanitizeDocuments } from "@/lib/server/api/responses/formatters";
 import { z } from "zod";
 
 /**
@@ -111,8 +110,8 @@ export function createReferenceEndpoint<T extends BaseDocument, R extends BaseRe
         }
 
         // Simple data transformation pipeline:
-        // 1. Sanitize MongoDB documents
-        const sanitizedItems = sanitizeDocuments<T>((rawResponse.items || []) as T[]);
+        // 1. Use items as returned (should already be transformed by toJSON)
+        const sanitizedItems = (rawResponse.items || []) as T[];
         
         // 2. Validate with schema if strict validation enabled
         let validatedItems = sanitizedItems;

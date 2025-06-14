@@ -1,196 +1,97 @@
 import mongoose from "mongoose";
-import { getModelForClass, prop } from "@typegoose/typegoose";
-import { getModel } from "@server/db/model-registry";
-import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
-// Progress Monitoring subdocument schemas
-class CriterionObservation {
-  @prop({ type: String, required: true })
-  criterion!: string;
-  
-  @prop({ type: Boolean, default: false })
-  observed!: boolean;
-  
-  @prop({ type: String })
-  notes?: string;
-  
-  @prop({ type: String })
-  category?: string;
-}
+const CriterionObservationSchema = new mongoose.Schema({
+  criterion: { type: String, required: true },
+  observed: { type: Boolean, default: false },
+  notes: { type: String },
+  category: { type: String }
+}, { _id: false });
 
-class ProgressMonitoring {
-  @prop({ type: () => [CriterionObservation], default: [] })
-  observedCriteria!: CriterionObservation[];
-  
-  @prop({ type: String, default: '' })
-  overallNotes!: string;
-}
+const ProgressMonitoringSchema = new mongoose.Schema({
+  observedCriteria: { type: [CriterionObservationSchema], default: [] },
+  overallNotes: { type: String, default: '' }
+}, { _id: false });
 
-// Activity Section subdocument schema
-class ActivitySection {
-  @prop({ type: String, default: '' })
-  launch!: string;
-  
-  @prop({ type: String, default: '' })
-  workTime!: string;
-  
-  @prop({ type: String, default: '' })
-  synthesis!: string;
-  
-  @prop({ type: () => [String], default: [] })
-  notes!: string[];
-}
+const ActivitySectionSchema = new mongoose.Schema({
+  launch: { type: String, default: '' },
+  workTime: { type: String, default: '' },
+  synthesis: { type: String, default: '' },
+  notes: { type: [String], default: [] }
+}, { _id: false });
 
-class LessonFlow {
-  @prop({ type: () => ActivitySection, default: {} })
-  warmUp!: ActivitySection;
-  
-  @prop({ type: () => ActivitySection, default: {} })
-  activity1!: ActivitySection;
-  
-  @prop({ type: () => ActivitySection })
-  activity2?: ActivitySection;
-  
-  @prop({ type: () => ActivitySection, default: {} })
-  lessonSynthesis!: ActivitySection;
-}
+const LessonFlowSchema = new mongoose.Schema({
+  warmUp: { type: ActivitySectionSchema, default: {} },
+  activity1: { type: ActivitySectionSchema, default: {} },
+  activity2: { type: ActivitySectionSchema },
+  lessonSynthesis: { type: ActivitySectionSchema, default: {} }
+}, { _id: false });
 
-class Lesson {
-  @prop({ type: String, default: '' })
-  title!: string;
-  
-  @prop({ type: String, default: '' })
-  course!: string;
-  
-  @prop({ type: String, default: '' })
-  unit!: string;
-  
-  @prop({ type: String, default: '' })
-  lessonNumber!: string;
-  
-  @prop({ type: String, default: '' })
-  curriculum!: string;
-}
+const LessonSchema = new mongoose.Schema({
+  title: { type: String, default: '' },
+  course: { type: String, default: '' },
+  unit: { type: String, default: '' },
+  lessonNumber: { type: String, default: '' },
+  curriculum: { type: String, default: '' }
+}, { _id: false });
 
-class Feedback {
-  @prop({ type: () => [String], default: [] })
-  glow!: string[];
-  
-  @prop({ type: () => [String], default: [] })
-  wonder!: string[];
-  
-  @prop({ type: () => [String], default: [] })
-  grow!: string[];
-  
-  @prop({ type: () => [String], default: [] })
-  nextSteps!: string[];
-}
+const FeedbackSchema = new mongoose.Schema({
+  glow: { type: [String], default: [] },
+  wonder: { type: [String], default: [] },
+  grow: { type: [String], default: [] },
+  nextSteps: { type: [String], default: [] }
+}, { _id: false });
 
-class TimeTracking {
-  @prop({ type: String, default: '' })
-  classStartTime!: string;
-  
-  @prop({ type: String, default: '' })
-  classEndTime!: string;
-  
-  @prop({ type: Date })
-  observationStartTime?: Date;
-  
-  @prop({ type: Date })
-  observationEndTime?: Date;
-  
-  @prop({ type: String, default: '00:00:00' })
-  stopwatchTime!: string;
-  
-  @prop({ type: Number })
-  startedWhenMinutes?: number;
-}
+const TimeTrackingSchema = new mongoose.Schema({
+  classStartTime: { type: String, default: '' },
+  classEndTime: { type: String, default: '' },
+  observationStartTime: { type: Date },
+  observationEndTime: { type: Date },
+  stopwatchTime: { type: String, default: '00:00:00' },
+  startedWhenMinutes: { type: Number }
+}, { _id: false });
 
-class TranscriptSection {
-  @prop({ type: String, default: '' })
-  warmUpLaunch!: string;
-  
-  @prop({ type: String, default: '' })
-  activity1Launch!: string;
-  
-  @prop({ type: String, default: '' })
-  activity2Launch!: string;
-  
-  @prop({ type: String, default: '' })
-  synthesisLaunch!: string;
-  
-  @prop({ type: Object, default: {} })
-  customSections!: Record<string, string>;
-}
+const TranscriptSectionSchema = new mongoose.Schema({
+  warmUpLaunch: { type: String, default: '' },
+  activity1Launch: { type: String, default: '' },
+  activity2Launch: { type: String, default: '' },
+  synthesisLaunch: { type: String, default: '' },
+  customSections: { type: Object, default: {} }
+}, { _id: false });
 
-class ClassroomObservation extends BaseMongooseDocument {
-  @prop({ type: String, default: '' })
-  cycle!: string;
-  
-  @prop({ type: String, default: '' })
-  session!: string;
-  
-  @prop({ type: Date, required: true })
-  date!: Date;
-  
-  @prop({ type: String, default: '' })
-  teacherId!: string;
-  
-  @prop({ type: String, default: '' })
-  coachId!: string;
-  
-  @prop({ type: String, default: '' })
-  schoolId!: string;
-  
-  @prop({ type: () => Lesson, default: {} })
-  lesson!: Lesson;
-  
-  @prop({ type: String, default: '' })
-  otherContext!: string;
-  
-  @prop({ type: () => [String], default: [] })
-  learningTargets!: string[];
-  
-  @prop({ type: String, default: '' })
-  coolDown!: string;
-  
-  @prop({ type: () => Feedback, default: {} })
-  feedback!: Feedback;
-  
-  @prop({ type: () => LessonFlow, default: {} })
-  lessonFlow!: LessonFlow;
-  
-  @prop({ type: () => ProgressMonitoring, default: {} })
-  progressMonitoring!: ProgressMonitoring;
-  
-  @prop({ type: () => TimeTracking, default: {} })
-  timeTracking!: TimeTracking;
-  
-  @prop({ type: () => TranscriptSection, default: {} })
-  transcripts!: TranscriptSection;
-  
-  @prop({ type: () => [String], default: [] })
-  contextualNotes!: string[];
-  
-  @prop({ type: Object, required: true })
-  tagging!: object;
-  
-  @prop({ type: String, enum: ['draft', 'in_progress', 'completed', 'reviewed'], default: 'draft' })
-  status!: string;
-  
-  @prop({ type: Boolean, default: false })
-  isSharedWithTeacher!: boolean;
-  
-  @prop({ type: String })
-  visitId?: string;
-  
-  @prop({ type: String })
-  coachingActionPlanId?: string;
-}
+const classroomObservationFields = {
+  cycle: { type: String, default: '' },
+  session: { type: String, default: '' },
+  date: { type: Date, required: true },
+  teacherId: { type: String, default: '' },
+  coachId: { type: String, default: '' },
+  schoolId: { type: String, default: '' },
+  lesson: { type: LessonSchema, default: {} },
+  otherContext: { type: String, default: '' },
+  learningTargets: { type: [String], default: [] },
+  coolDown: { type: String, default: '' },
+  feedback: { type: FeedbackSchema, default: {} },
+  lessonFlow: { type: LessonFlowSchema, default: {} },
+  progressMonitoring: { type: ProgressMonitoringSchema, default: {} },
+  timeTracking: { type: TimeTrackingSchema, default: {} },
+  transcripts: { type: TranscriptSectionSchema, default: {} },
+  contextualNotes: { type: [String], default: [] },
+  tagging: { type: Object, required: true },
+  status: { type: String, enum: ['draft', 'in_progress', 'completed', 'reviewed'], default: 'draft' },
+  isSharedWithTeacher: { type: Boolean, default: false },
+  visitId: { type: String },
+  coachingActionPlanId: { type: String },
+  ...standardDocumentFields
+};
+
+const ClassroomObservationSchema = new mongoose.Schema(classroomObservationFields, {
+  ...standardSchemaOptions,
+  collection: 'classroomobservations'
+});
 
 export const ClassroomObservationModel =
-  mongoose.models.ClassroomObservation || getModelForClass(ClassroomObservation, { schemaOptions: { collection: 'classroomobservations' } });
+  mongoose.models.ClassroomObservation || mongoose.model('ClassroomObservation', ClassroomObservationSchema);
 
 export async function getClassroomObservationModel() {
-  return getModel<ClassroomObservation>('ClassroomObservation', () => getModelForClass(ClassroomObservation));
+  return ClassroomObservationModel;
 } 

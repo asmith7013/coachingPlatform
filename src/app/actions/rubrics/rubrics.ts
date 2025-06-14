@@ -54,7 +54,6 @@ export async function fetchRubricScoresByStaff(staffId: string) {
       // Create custom query for specialized action
       const results = await RubricScoreModel.find({ staffId })
         .sort({ date: -1 })
-        .lean()
         .exec();
       
       // Type the response items properly

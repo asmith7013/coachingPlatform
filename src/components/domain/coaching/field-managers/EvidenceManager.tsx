@@ -82,7 +82,7 @@ export function EvidenceManager({
         content: '',
         url: '',
         uploadedFile: '',
-        dateCollected: new Date(getTodayString())
+        dateCollected: getTodayString()
       };
       onChange([...evidence, newEvidence]);
     }

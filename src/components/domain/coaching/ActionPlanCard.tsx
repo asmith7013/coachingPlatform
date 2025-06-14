@@ -14,6 +14,7 @@ import {
   TrashIcon,
   DocumentArrowDownIcon
 } from '@heroicons/react/24/outline';
+import { formatMediumDate } from '@data-processing/transformers/utils/date-utils';
 
 interface ActionPlanCardProps {
   plan: CoachingActionPlan;
@@ -114,8 +115,8 @@ export function ActionPlanCard({
 
           {/* Dates */}
           <div className="flex justify-between items-center text-sm text-muted mb-4">
-            <span>Started: {formatDate(plan.startDate)}</span>
-            {plan.endDate && <span>Ends: {formatDate(plan.endDate)}</span>}
+            <span>Started: {formatMediumDate(plan.startDate)}</span>
+            {plan.endDate && <span>Ends: {formatMediumDate(plan.endDate)}</span>}
           </div>
 
           {/* Add padding bottom for absolute positioned buttons */}
@@ -230,10 +231,4 @@ function getStatusIntent(status: string): 'success' | 'warning' | 'danger' | 'in
     default:
       return 'info';
   }
-}
-
-function formatDate(date: Date | undefined): string {
-  if (!date) return 'Not set';
-  if (typeof date === 'string') return date;
-  return date.toLocaleDateString();
 } 

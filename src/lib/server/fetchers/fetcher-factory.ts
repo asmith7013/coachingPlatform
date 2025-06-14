@@ -7,7 +7,6 @@ import { BaseDocument } from "@core-types/document";
 import { QueryParams } from "@core-types/query";
 
 import { handleServerError } from "@error/handlers/server";
-import { sanitizeDocuments } from "@server/api/responses/formatters";
 
 /**
  * Creates an API-safe version of a data fetching function
@@ -29,22 +28,38 @@ export function createApiSafeFetcher<T extends BaseDocument, M extends Document>
       const { page = 1, limit = 20, filters = {}, sortBy, sortOrder = "asc", search } = params;
       const skip = (page - 1) * limit;
       const query: Record<string, unknown> = {};
+
+      // Handle search
       if (search && defaultSearchField) {
         query[defaultSearchField] = { $regex: search, $options: 'i' };
       }
+
+      // Exclude routing/control parameters from MongoDB filters
+      const routingParams = ['type', 'page', 'limit', 'sortBy', 'sortOrder', 'search'];
       Object.entries(filters).forEach(([key, value]) => {
-        if (key !== defaultSearchField && value !== undefined && value !== null && value !== '') {
+        if (
+          !routingParams.includes(key) &&
+          key !== defaultSearchField &&
+          value !== undefined &&
+          value !== null &&
+          value !== ''
+        ) {
           query[key] = value;
         }
       });
+
       const items = await model.find(query as FilterQuery<M>)
         .sort({ [sortBy || 'createdAt']: sortOrder === 'asc' ? 1 : -1 })
         .skip(skip)
         .limit(limit);
+
       const total = await model.countDocuments(query as FilterQuery<M>);
-      const processedItems = sanitizeDocuments<T>(items as T[]);
+      
+      // Apply transforms by converting to JSON
+      const transformedItems = items.map(item => item.toJSON());
+
       return {
-        items: processedItems,
+        items: transformedItems as T[],
         total,
         success: true,
         page,

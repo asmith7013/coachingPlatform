@@ -63,7 +63,6 @@ export async function fetchBellSchedulesBySchool(schoolId: string) {
     try {
       const results = await BellScheduleModel.find({ school: schoolId })
         .sort({ createdAt: -1 })
-        .lean()
         .exec();
       
       return {
@@ -87,7 +86,6 @@ export async function fetchBellSchedulesByType(bellScheduleType: string) {
     try {
       const results = await BellScheduleModel.find({ bellScheduleType })
         .sort({ createdAt: -1 })
-        .lean()
         .exec();
       
       return {
@@ -111,7 +109,6 @@ export async function getActiveCycleDayForDate(schoolId: string, date: string) {
     try {
       // Find bell schedules for the school
       const bellSchedules = await BellScheduleModel.find({ school: schoolId })
-        .lean()
         .exec();
 
       if (!bellSchedules || bellSchedules.length === 0) {
@@ -192,7 +189,6 @@ export async function fetchTeacherSchedulesBySchool(schoolId: string) {
   return withDbConnection(async () => {
     try {
       const schedules = await TeacherScheduleModel.find({ school: schoolId })
-        .lean()
         .exec();
       
       return { 
@@ -235,7 +231,7 @@ async function findStaffMemberByEmail(email: string): Promise<StaffMember | null
     // Strategy 1: Exact case-insensitive match
     let staffMember = await NYCPSStaffModel.findOne({ 
       email: { $regex: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
-    }).select('_id staffName email').lean().exec();
+    }).select('_id staffName email').exec();
     
     if (staffMember) {
       // console.log(`✅ Strategy 1 success: Exact match found for ${email}`);
@@ -248,7 +244,7 @@ async function findStaffMemberByEmail(email: string): Promise<StaffMember | null
     
     staffMember = await NYCPSStaffModel.findOne({
       email: { $regex: new RegExp(`^${username.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}@`, 'i') }
-    }).select('_id staffName email').lean().exec();
+    }).select('_id staffName email').exec();
     
     if (staffMember) {
       // console.log(`✅ Strategy 2 success: Username match found for ${username}`);
@@ -257,7 +253,7 @@ async function findStaffMemberByEmail(email: string): Promise<StaffMember | null
     
     // Strategy 3: Database diagnostic
     // console.log(`🔍 Strategy 3: No email match found, running diagnostics`);
-    const allStaff = await NYCPSStaffModel.find({}).select('email staffName').lean().exec();
+    const allStaff = await NYCPSStaffModel.find({}).select('email staffName').exec();
     
     // console.log(`📊 Database contains ${allStaff.length} staff members:`);
     allStaff.slice(0, 10).forEach(staff => {

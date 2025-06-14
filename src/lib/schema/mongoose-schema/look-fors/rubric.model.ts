@@ -1,57 +1,38 @@
-import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose from "mongoose";
-import { getModel } from "@server/db/model-registry";
-import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
-export class Rubric extends BaseMongooseDocument {
-  @prop({ type: Number, required: true })
-  score!: number;
+const rubricFields = {
+  score: { type: Number, required: true },
+  category: [{ type: String, required: true }],
+  content: [{ type: String }],
+  parentId: { type: String },
+  collectionId: { type: String },
+  hex: { type: String },
+  ...standardDocumentFields
+};
 
-  @prop({ type: () => [String], required: true })
-  category!: string[];
+const RubricSchema = new mongoose.Schema(rubricFields, { ...standardSchemaOptions, collection: 'rubrics' });
 
-  @prop({ type: () => [String] })
-  content?: string[];
+const rubricScoreFields = {
+  date: { type: Date, required: true },
+  score: { type: Number, required: true },
+  staffId: { type: String, required: true },
+  schoolId: { type: String, required: true },
+  ...standardDocumentFields
+};
 
-  @prop({ type: String })
-  parentId?: string;
+const RubricScoreSchema = new mongoose.Schema(rubricScoreFields, { ...standardSchemaOptions, collection: 'rubricscores' });
 
-  @prop({ type: String })
-  collectionId?: string;
+export const RubricModel = mongoose.models.Rubric || 
+  mongoose.model("Rubric", RubricSchema);
 
-  @prop({ type: String })
-  hex?: string;
-}
-
-@modelOptions({ 
-  schemaOptions: { 
-    collection: 'rubricscores' 
-  } 
-})
-export class RubricScore extends BaseMongooseDocument {
-  @prop({ type: Date, required: true })
-  date!: Date;
-
-  @prop({ type: Number, required: true })
-  score!: number;
-
-  @prop({ type: String, required: true })
-  staffId!: string;
-
-  @prop({ type: String, required: true })
-  schoolId!: string;
-}
-
-export const RubricModel =
-  mongoose.models.Rubric || getModelForClass(Rubric, { schemaOptions: { collection: 'rubrics' } });
-
-export const RubricScoreModel =
-  mongoose.models.RubricScore || getModelForClass(RubricScore);
+export const RubricScoreModel = mongoose.models.RubricScore || 
+  mongoose.model("RubricScore", RubricScoreSchema);
 
 export async function getRubricModel() {
-  return getModel<Rubric>('Rubric', () => getModelForClass(Rubric));
+  return RubricModel;
 }
 
 export async function getRubricScoreModel() {
-  return getModel<RubricScore>('RubricScore', () => getModelForClass(RubricScore));
+  return RubricScoreModel;
 }

@@ -1,5 +1,5 @@
-export { LookFor, LookForModel } from "./look-for.model";
-export { LookForItem, LookForItemModel } from "./look-for.model";
-export { Rubric, RubricModel } from "./rubric.model";
-export { RubricScore, RubricScoreModel } from "./rubric.model";
-export { NextStep, NextStepModel } from "./next-step.model"; 
+export { LookForModel } from "./look-for.model";
+export { LookForItemModel } from "./look-for.model";
+export { RubricModel } from "./rubric.model";
+export { RubricScoreModel } from "./rubric.model";
+export { NextStepModel } from "./next-step.model"; 

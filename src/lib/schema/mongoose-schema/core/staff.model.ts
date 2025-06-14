@@ -1,5 +1,4 @@
-import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 import {
   RolesNYCPS,
   RolesTL,
@@ -7,134 +6,85 @@ import {
   SpecialGroups,
   AdminLevels,
   GradeLevels
-} from "@enums";
-import { getModel } from "@server/db/model-registry";
-import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+} from '@enums';
+import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
-// Add Monday.com User Class
-@modelOptions({ 
-  schemaOptions: { _id: false }, 
-  options: { customName: 'MondayUser', automaticName: false } 
-})
-class MondayUser {
-  @prop({ type: String, required: true })
-  mondayId!: string;
-  
-  @prop({ type: String, required: true })
-  name!: string;
-  
-  @prop({ type: String, required: true })
-  email!: string;
-  
-  @prop({ type: String })
-  title?: string;
-  
-  // @prop({ type: () => [{ id: String, name: String }] })
-  // teams?: { id: string; name: string }[];
-  
-  @prop({ type: Boolean })
-  isVerified?: boolean;
-  
-  @prop({ type: Boolean, default: true })
-  isConnected!: boolean;
-  
-  @prop({ type: Date, default: new Date() })
-  lastSynced?: Date;
-}
+const MondayUserSchema = new mongoose.Schema({
+  mondayId: { type: String, required: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  title: { type: String },
+  isVerified: { type: Boolean },
+  isConnected: { type: Boolean, default: true },
+  lastSynced: { type: Date, default: Date.now }
+}, { _id: false });
 
-@modelOptions({ schemaOptions: { _id: false, collection: 'experiences' } })
-class Experience {
-  @prop({ type: String, required: true })
-  type!: string;
-  @prop({ type: Number, required: true, min: 0 })
-  years!: number;
-}
+const ExperienceSchema = new mongoose.Schema({
+  type: { type: String, required: true },
+  years: { type: Number, required: true, min: 0 }
+}, { _id: false });
 
-class Note extends BaseMongooseDocument {
-  @prop({ type: Date, required: true })
-  date!: Date;
-  @prop({ type: String, required: true })
-  type!: string;
-  @prop({ type: String, required: true })
-  heading!: string;
-  @prop({ type: () => [String], required: true })
-  subheading!: string[];
-}
+const NoteSchema = new mongoose.Schema({
+  date: { type: Date, required: true },
+  type: { type: String, required: true },
+  heading: { type: String, required: true },
+  subheading: [{ type: String, required: true }]
+}, { _id: false });
 
-class StaffMember extends BaseMongooseDocument {
-  @prop({ type: String, required: true })
-  staffName!: string;
-  @prop({ type: String })
-  email!: string;
-  @prop({ type: () => [String] })
-  schoolIds?: string[];
-  @prop({ type: () => MondayUser })
-  mondayUser?: MondayUser;
-}
+const baseStaffFields = {
+  staffName: { type: String, required: true },
+  email: { type: String },
+  schoolIds: [{ type: String }],
+  mondayUser: { type: MondayUserSchema },
+  ...standardDocumentFields
+};
 
-class NYCPSStaff extends StaffMember {
-  @prop({ type: () => [String], required: true, enum: Object.values(GradeLevels) })
-  gradeLevelsSupported!: string[];
-  @prop({ type: () => [String], required: true, enum: Object.values(Subjects) })
-  subjects!: string[];
-  @prop({ type: () => [String], required: true, enum: Object.values(SpecialGroups) })
-  specialGroups!: string[];
-  @prop({ type: () => [String], enum: Object.values(RolesNYCPS) })
-  rolesNYCPS?: string[];
-  @prop({ type: String })
-  pronunciation?: string;
-  @prop({ type: () => [Note], default: [] })
-  notes?: Note[];
-  @prop({ type: () => [Experience], default: [] })
-  experience?: Experience[];
-}
+const nycpsStaffFields = {
+  ...baseStaffFields,
+  gradeLevelsSupported: [{ type: String, required: true, enum: Object.values(GradeLevels) }],
+  subjects: [{ type: String, required: true, enum: Object.values(Subjects) }],
+  specialGroups: [{ type: String, required: true, enum: Object.values(SpecialGroups) }],
+  rolesNYCPS: [{ type: String, enum: Object.values(RolesNYCPS) }],
+  pronunciation: { type: String },
+  notes: [NoteSchema],
+  experience: [ExperienceSchema]
+};
 
-class TeachingLabStaff extends StaffMember {
-  @prop({ type: String, enum: Object.values(AdminLevels) })
-  adminLevel?: string;
-  @prop({ type: () => [String]})
-  assignedDistricts?: string[];
-  @prop({ type: () => [String], enum: Object.values(RolesTL) })
-  rolesTL?: string[];
-}
+const teachingLabStaffFields = {
+  ...baseStaffFields,
+  adminLevel: { type: String, enum: Object.values(AdminLevels) },
+  assignedDistricts: [{ type: String }],
+  rolesTL: [{ type: String, enum: Object.values(RolesTL) }]
+};
 
-// Add async model getters using the registry
-export async function getStaffMemberModel() {
-  return getModel<StaffMember>('StaffMember', () => getModelForClass(StaffMember, { schemaOptions: { collection: 'staffmembers' } }));
-}
+const StaffMemberSchema = new mongoose.Schema(baseStaffFields, {
+  ...standardSchemaOptions,
+  collection: 'staffmembers'
+});
+const NYCPSStaffSchema = new mongoose.Schema(nycpsStaffFields, {
+  ...standardSchemaOptions,
+  collection: 'nycpsstaffs'
+});
+const TeachingLabStaffSchema = new mongoose.Schema(teachingLabStaffFields, {
+  ...standardSchemaOptions,
+  collection: 'teachinglabstaffs'
+});
+const ExperienceModelSchema = new mongoose.Schema(ExperienceSchema, {
+  ...standardSchemaOptions,
+  collection: 'experiences'
+});
+const NoteModelSchema = new mongoose.Schema(NoteSchema, {
+  ...standardSchemaOptions,
+  collection: 'notes'
+});
 
-export async function getNYCPSStaffModel() {
-  return getModel<NYCPSStaff>('NYCPSStaff', () => getModelForClass(NYCPSStaff, { schemaOptions: { collection: 'nycpsstaffs' } }));
-}
-
-export async function getTeachingLabStaffModel() {
-  return getModel<TeachingLabStaff>('TeachingLabStaff', () => getModelForClass(TeachingLabStaff, { schemaOptions: { collection: 'teachinglabstaffs' } }));
-}
-
-export async function getExperienceModel() {
-  return getModel<Experience>('Experience', () => getModelForClass(Experience));
-}
-
-export async function getNoteModel() {
-  return getModel<Note>('Note', () => getModelForClass(Note, { schemaOptions: { collection: 'notes' } }));
-}
-
-export async function getMondayUserModel() {
-  return getModel<MondayUser>('MondayUser', () => getModelForClass(MondayUser));
-}
-
-// Keep for backward compatibility
-export const StaffMemberModel =
-  mongoose.models.StaffMember || getModelForClass(StaffMember, { schemaOptions: { collection: 'staffmembers' } });
-
-export const NYCPSStaffModel =
-  mongoose.models.NYCPSStaff || getModelForClass(NYCPSStaff, { schemaOptions: { collection: 'nycpsstaffs' } });
-
-export const TeachingLabStaffModel =
-  mongoose.models.TeachingLabStaff || getModelForClass(TeachingLabStaff, { schemaOptions: { collection: 'teachinglabstaffs' } });
-
-export const ExperienceModel =
-  mongoose.models.Experience || getModelForClass(Experience);
-  
-export const NoteModel =
-  mongoose.models.Note || getModelForClass(Note, { schemaOptions: { collection: 'notes' } });
+export const StaffMemberModel = mongoose.models.StaffMember || 
+  mongoose.model('StaffMember', StaffMemberSchema);
+export const NYCPSStaffModel = mongoose.models.NYCPSStaff || 
+  mongoose.model('NYCPSStaff', NYCPSStaffSchema);
+export const TeachingLabStaffModel = mongoose.models.TeachingLabStaff || 
+  mongoose.model('TeachingLabStaff', TeachingLabStaffSchema);
+export const ExperienceModel = mongoose.models.Experience || 
+  mongoose.model('Experience', ExperienceModelSchema);
+export const NoteModel = mongoose.models.Note || 
+  mongoose.model('Note', NoteModelSchema);

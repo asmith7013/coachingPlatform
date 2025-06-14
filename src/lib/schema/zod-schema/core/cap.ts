@@ -11,8 +11,7 @@ import {
 } from "@enums";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
-import { zDateField } from '@zod-schema/shared/dateHelpers';
+import { createReferenceTransformer, createArrayTransformer } from "@data-processing/transformers/factories/reference-factory";
 
 // =====================================
 // NESTED SCHEMAS
@@ -38,7 +37,7 @@ export const EvidenceZodSchema = z.object({
   content: z.string().optional().describe("Written summary or content"),
   url: z.string().optional().describe("Link to external evidence"),
   uploadedFile: z.string().optional().describe("Path to uploaded file"),
-  dateCollected: zDateField.describe("When this evidence was collected")
+  dateCollected: z.string().describe("When this evidence was collected (ISO string)")
 });
 
 // Outcome Schema - clean implementation
@@ -66,7 +65,7 @@ export const NeedsAndFocusZodSchema = z.object({
 
 // Weekly Visit Plan Schema
 export const WeeklyVisitPlanZodSchema = z.object({
-  date: zDateField.describe("Planned date for this visit"),
+  date: z.string().describe("Planned date for this visit (ISO string)"),
   cycleNumber: CoachingCycleNumberZod.describe("Which coaching cycle this visit belongs to"),
   visitNumber: VisitNumberZod.describe("Which visit within the cycle"),
   focus: z.string().describe("Primary focus for this visit"),
@@ -80,7 +79,7 @@ export const WeeklyVisitPlanZodSchema = z.object({
 
 // Implementation Record Schema - what actually happened
 export const ImplementationRecordZodSchema = z.object({
-  date: zDateField.describe("Date when implementation occurred"),
+  date: z.string().describe("Date when implementation occurred (ISO string)"),
   visitId: z.string().optional().describe("Reference to actual Visit entity"),
   cycleNumber: CoachingCycleNumberZod.describe("Which coaching cycle this visit belongs to"),
   visitNumber: VisitNumberZod.describe("Which visit within the cycle"),
@@ -151,8 +150,8 @@ export const CoachingActionPlanFieldsSchema = z.object({
   
   // Metadata
   status: CoachingActionPlanStatusZod.default("draft").describe("Current status of the plan"),
-  startDate: zDateField.describe("When coaching plan begins"),
-  endDate: zDateField.optional().describe("When coaching plan ends"),
+  startDate: z.string().describe("When coaching plan begins (ISO string)"),
+  endDate: z.string().optional().describe("When coaching plan ends (ISO string)"),
   cycleLength: z.number().default(3).describe("Number of coaching cycles in this plan"),
   
   // Related entities
@@ -178,7 +177,7 @@ export const CoachingActionPlanReferenceZodSchema = BaseReferenceZodSchema.merge
     school: z.string().optional(),
     academicYear: z.string().optional(),
     status: CoachingActionPlanStatusZod.optional(),
-    startDate: zDateField.optional(),
+    startDate: z.string().optional(),
     teacherNames: z.array(z.string()).optional().describe("Teacher names (for display)"),
     coachNames: z.array(z.string()).optional().describe("Coach names (for display)"),
     schoolName: z.string().optional().describe("School name (for display)"),

@@ -138,7 +138,7 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
           id,
           { $set: validated },
           { new: true, runValidators: true }
-        ).lean();
+        );
         
         if (!doc) {
           throw new Error(`${name} with ID ${id} not found`);
@@ -196,7 +196,7 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
       try {
         await connectToDB();
         
-        const doc = await model.findById(id).lean();
+        const doc = await model.findById(id);
         
         if (!doc) {
           throw new Error(`${name} with ID ${id} not found`);

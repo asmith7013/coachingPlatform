@@ -1,4 +1,3 @@
-import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose from "mongoose";
 import {
   DayTypes,
@@ -6,130 +5,90 @@ import {
   BellScheduleTypes,
   PeriodTypes,
 } from "@enums";
-import { getModel } from "@server/db/model-registry";
-import { BaseMongooseDocument } from "@mongoose-schema/base-document";
-import { standardSchemaOptions } from "@server/db/mongoose-transform-helper";
+import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
-@modelOptions({ schemaOptions: { _id: false, collection: 'classscheduleitems' } })
-export class ClassScheduleItem {
-  @prop({ enum: Object.values(DayTypes), type: String, required: true })
-  dayType!: string;
+const ClassScheduleItemSchema = new mongoose.Schema({
+  dayType: { type: String, enum: Object.values(DayTypes), required: true },
+  startTime: { type: String, required: true },
+  endTime: { type: String, required: true }
+}, { _id: false });
 
-  @prop({ type: String, required: true })
-  startTime!: string;
+const AssignedCycleDaySchema = new mongoose.Schema({
+  date: { type: Date, required: true },
+  blockDayType: { type: String, enum: Object.values(BlockDayTypes), required: true }
+}, { _id: false });
 
-  @prop({ type: String, required: true })
-  endTime!: string;
-}
+const BellScheduleSchema = new mongoose.Schema({
+  schoolId: { type: String, required: true },
+  bellScheduleType: { type: String, enum: Object.values(BellScheduleTypes), required: true },
+  classSchedule: { type: [ClassScheduleItemSchema], required: true },
+  assignedCycleDays: { type: [AssignedCycleDaySchema], required: true },
+  ...standardDocumentFields
+}, {
+  ...standardSchemaOptions,
+  collection: 'bellschedules'
+});
 
-@modelOptions({ schemaOptions: { _id: false, collection: 'assignedcycledays' } })
-export class AssignedCycleDay {
-  @prop({ type: Date, required: true })
-  date!: Date;
+const PeriodSchema = new mongoose.Schema({
+  periodNum: { type: Number, required: true },
+  className: { type: String, required: true },
+  room: { type: String },
+  periodType: { type: String, enum: Object.values(PeriodTypes), required: true }
+}, { _id: false });
 
-  @prop({ enum: Object.values(BlockDayTypes), type: String, required: true })
-  blockDayType!: string;
-}
+const ScheduleByDaySchema = new mongoose.Schema({
+  day: { type: String, enum: Object.values(DayTypes), required: true },
+  periods: { type: [PeriodSchema], required: true }
+}, { _id: false });
 
-@modelOptions({ 
-  schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'bellschedules' 
-  } 
-})
-export class BellSchedule extends BaseMongooseDocument {
-  @prop({ type: String, required: true })
-  schoolId!: string;
-
-  @prop({ enum: Object.values(BellScheduleTypes), type: String, required: true })
-  bellScheduleType!: string;
-
-  @prop({ type: () => [ClassScheduleItem], required: true })
-  classSchedule!: ClassScheduleItem[];
-
-  @prop({ type: () => [AssignedCycleDay], required: true })
-  assignedCycleDays!: AssignedCycleDay[];
-}
-
-@modelOptions({ schemaOptions: { _id: false, collection: 'periods' } })
-export class Period {
-  @prop({ type: Number, required: true })
-  periodNum!: number;
-
-  @prop({ type: String, required: true })
-  className!: string;
-
-  @prop({ type: String })
-  room?: string;
-
-  @prop({ enum: Object.values(PeriodTypes), type: String, required: true })
-  periodType!: string;
-}
-
-@modelOptions({ schemaOptions: { _id: false, collection: 'schedulebydays' } })
-export class ScheduleByDay {
-  @prop({ enum: Object.values(DayTypes), type: String, required: true })
-  day!: string;
-
-  @prop({ type: () => [Period], required: true })
-  periods!: Period[];
-}
-
-@modelOptions({ 
-  schemaOptions: { 
-    ...standardSchemaOptions,
-    collection: 'teacherschedules' 
-  } 
-})
-export class TeacherSchedule extends BaseMongooseDocument {
-  @prop({ type: String, required: true })
-  teacherId!: string;
-
-  @prop({ type: String, required: true })
-  schoolId!: string;
-
-  @prop({ type: () => [ScheduleByDay], required: true })
-  scheduleByDay!: ScheduleByDay[];
-}
+const TeacherScheduleSchema = new mongoose.Schema({
+  teacherId: { type: String, required: true },
+  schoolId: { type: String, required: true },
+  scheduleByDay: { type: [ScheduleByDaySchema], required: true },
+  ...standardDocumentFields
+}, {
+  ...standardSchemaOptions,
+  collection: 'teacherschedules'
+});
 
 export const ClassScheduleItemModel =
-  mongoose.models.ClassScheduleItem || getModelForClass(ClassScheduleItem);
+  mongoose.models.ClassScheduleItem || mongoose.model("ClassScheduleItem", ClassScheduleItemSchema);
 
 export const AssignedCycleDayModel =
-  mongoose.models.AssignedCycleDay || getModelForClass(AssignedCycleDay);
+  mongoose.models.AssignedCycleDay || mongoose.model("AssignedCycleDay", AssignedCycleDaySchema);
 
-export const BellScheduleModel =
-  mongoose.models.BellSchedule || getModelForClass(BellSchedule);
+export const BellScheduleModel = mongoose.models.BellSchedule || 
+  mongoose.model("BellSchedule", BellScheduleSchema);
 
 export const PeriodModel =
-  mongoose.models.Period || getModelForClass(Period);
+  mongoose.models.Period || mongoose.model("Period", PeriodSchema);
 
 export const ScheduleByDayModel =
-  mongoose.models.ScheduleByDay || getModelForClass(ScheduleByDay);
+  mongoose.models.ScheduleByDay || mongoose.model("ScheduleByDay", ScheduleByDaySchema);
 
-export const TeacherScheduleModel =
-  mongoose.models.TeacherSchedule || getModelForClass(TeacherSchedule);
+export const TeacherScheduleModel = mongoose.models.TeacherSchedule || 
+  mongoose.model("TeacherSchedule", TeacherScheduleSchema);
 
 export async function getClassScheduleItemModel() {
-  return getModel<ClassScheduleItem>('ClassScheduleItem', () => getModelForClass(ClassScheduleItem));
+  return ClassScheduleItemModel;
 }
 
 export async function getAssignedCycleDayModel() {
-  return getModel<AssignedCycleDay>('AssignedCycleDay', () => getModelForClass(AssignedCycleDay));
+  return AssignedCycleDayModel;
 }
 
 export async function getBellScheduleModel() {
-  return getModel<BellSchedule>('BellSchedule', () => getModelForClass(BellSchedule));
+  return BellScheduleModel;
 }
 
 export async function getPeriodModel() {
-  return getModel<Period>('Period', () => getModelForClass(Period));
+  return PeriodModel;
 }
 
 export async function getScheduleByDayModel() {
-  return getModel<ScheduleByDay>('ScheduleByDay', () => getModelForClass(ScheduleByDay));
+  return ScheduleByDayModel;
 }
 
 export async function getTeacherScheduleModel() {
-  return getModel<TeacherSchedule>('TeacherSchedule', () => getModelForClass(TeacherSchedule));
+  return TeacherScheduleModel;
 }

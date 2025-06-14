@@ -5,7 +5,7 @@ import { BaseDocument } from "@core-types/document";
 import { QueryParams, PaginationMeta } from "@core-types/query";
 import { PaginatedResponse } from "@core-types/response";
 import { handleServerError } from "@error/handlers/server";
-import { sanitizeDocuments } from "@/lib/server/api/responses/formatters";
+import { validateWithSchema } from "@query/client/utilities/selector-helpers";
 
 /**
  * Cleans up empty, null, or undefined filter values that would cause unwanted filtering
@@ -41,16 +41,6 @@ function sanitizeSortField(
     return defaultSortField;
   }
   return sortBy;
-}
-
-/**
- * Simple validation function using Zod schema
- */
-function validateWithSchema<T>(data: unknown[], schema: ZodSchema<T>): T[] {
-  return data.map(item => {
-    const result = schema.safeParse(item);
-    return result.success ? result.data : item as T;
-  }).filter(Boolean);
 }
 
 /**
@@ -95,21 +85,22 @@ export async function executePaginatedQuery<T extends BaseDocument>(
     const query = model.find(cleanedFilters)
       .sort({ [sortField]: sortValue })
       .skip(calculateSkip({ page, limit }))
-      .limit(limit)
-      .lean();
+      .limit(limit);
     
     // Execute query and count total using CLEANED filters
-    const [rawItems, totalItems] = await Promise.all([
+    const [documents, totalItems] = await Promise.all([
       query.exec(),
       model.countDocuments(cleanedFilters)
     ]);
     
+    // Apply toJSON() to each document to trigger transforms
+    const transformedItems = documents.map(doc => doc.toJSON());
+    
     // Ensure items is an array
-    const itemsArray = Array.isArray(rawItems) ? rawItems : [];
+    const itemsArray = Array.isArray(transformedItems) ? transformedItems : [];
     
     // Simple data processing:
-    // 1. Sanitize documents
-    let processedItems = sanitizeDocuments<T>(itemsArray as T[]);
+    let processedItems = itemsArray as T[];
     
     // 2. Optional schema validation
     if (validateSchema) {

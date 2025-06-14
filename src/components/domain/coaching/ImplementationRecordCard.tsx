@@ -30,15 +30,6 @@ export function ImplementationRecordCard({
     onUpdate(index, { ...record, [field]: value });
   };
 
-  // Format date for input
-  const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0];
-  };
-
-  const parseDate = (dateString: string) => {
-    return new Date(dateString);
-  };
-
   return (
     <div className="border rounded-lg p-4 space-y-4 mb-4 bg-white">
       <div className="flex justify-between items-start">
@@ -61,8 +52,8 @@ export function ImplementationRecordCard({
         <Input
           label="Date"
           type="date"
-          value={record.date ? formatDate(record.date) : ''}
-          onChange={(e) => updateField('date', parseDate(e.target.value))}
+          value={record.date || ''}
+          onChange={(e) => updateField('date', e.target.value)}
           required
         />
 

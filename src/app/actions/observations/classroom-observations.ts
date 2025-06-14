@@ -47,7 +47,6 @@ export async function fetchObservationsByTeacher(teacherId: string) {
     try {
       const results = await ClassroomObservationModel.find({ teacherId })
         .sort({ date: -1 })
-        .lean()
         .exec();
       
       return {
@@ -71,7 +70,6 @@ export async function fetchObservationsByVisit(visitId: string) {
     try {
       const results = await ClassroomObservationModel.find({ visitId })
         .sort({ date: -1 })
-        .lean()
         .exec();
       
       return {

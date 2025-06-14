@@ -1,93 +1,38 @@
-import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose from "mongoose";
-import { getModel } from "@server/db/model-registry";
-import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 import { DurationValues, ScheduleAssignment } from "@enums";
+import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
-// Time Slot nested class (matches Zod schema)
-@modelOptions({ 
-  schemaOptions: { 
-    _id: false 
-  } 
-})
-class TimeSlot {
-  @prop({ type: String, required: true })
-  startTime!: string; // Format: "HH:MM" (24-hour format)
-  
-  @prop({ type: String, required: true })
-  endTime!: string; // Format: "HH:MM" (24-hour format)
-  
-  @prop({ type: Number })
-  periodNum?: number; // Optional period number for bell schedule alignment
-}
+const TimeSlotSchema = new mongoose.Schema({
+  startTime: { type: String, required: true },
+  endTime: { type: String, required: true },
+  periodNum: { type: Number }
+}, { _id: false });
 
-// Main Planned Visit class
-@modelOptions({ 
-  schemaOptions: { 
-    collection: 'plannedvisits'
-  } 
-})
-export class PlannedVisit extends BaseMongooseDocument {
-  // Core assignment data
-  @prop({ type: String, required: true })
-  teacherId!: string; // Required teacher ID
-  
-  @prop({ type: () => TimeSlot, required: true })
-  timeSlot!: TimeSlot; // Required time slot information
-  
-  @prop({ type: String, required: true })
-  purpose!: string; // Required purpose (coaching-specific or custom)
-  
-  @prop({ 
-    type: String,
-    enum: DurationValues,
-    required: true 
-  })
-  duration!: string; // Required duration enum
-  
-  @prop({ type: Date, required: true })
-  date!: Date; // Required date for the planned visit
-  
-  @prop({ type: String, required: true })
-  coach!: string; // Required coach ID who created the plan
-  
-  // Planning metadata
-  @prop({ 
-    type: String,
-    enum: Object.values(ScheduleAssignment),
-    default: ScheduleAssignment.FULL_PERIOD
-  })
-  assignmentType!: string; // How teacher was assigned to slot
-  
-  @prop({ type: Boolean, default: false })
-  customPurpose!: boolean; // Whether purpose is custom or predefined
-  
-  // Optional scheduling context
-  @prop({ type: String })
-  school?: string; // School ID for context
-  
-  @prop({ type: Number })
-  periodNum?: number; // Period number if aligned with bell schedule
-  
-  @prop({ type: String })
-  notes?: string; // Optional planning notes
-  
-  // Schedule builder state
-  @prop({ type: String })
-  scheduleId?: string; // Reference to parent schedule if grouped
-  
-  @prop({ type: Number })
-  orderIndex?: number; // Order within the schedule
-  
-  // Required owners field (following established pattern)
-  @prop({ type: () => [String], required: true })
-  owners!: string[]; // Array of user IDs who can access this planned visit
-}
+const plannedVisitFields = {
+  teacherId: { type: String, required: true },
+  timeSlot: { type: TimeSlotSchema, required: true },
+  purpose: { type: String, required: true },
+  duration: { type: String, enum: DurationValues, required: true },
+  date: { type: Date, required: true },
+  coach: { type: String, required: true },
+  assignmentType: { type: String, enum: Object.values(ScheduleAssignment), default: ScheduleAssignment.FULL_PERIOD },
+  customPurpose: { type: Boolean, default: false },
+  school: { type: String },
+  periodNum: { type: Number },
+  notes: { type: String },
+  scheduleId: { type: String },
+  orderIndex: { type: Number },
+  ...standardDocumentFields
+};
 
-// Export direct model (following VisitModel pattern)
-export const PlannedVisitModel = mongoose.models.PlannedVisit || getModelForClass(PlannedVisit);
+const PlannedVisitSchema = new mongoose.Schema(plannedVisitFields, {
+  ...standardSchemaOptions,
+  collection: 'plannedvisits'
+});
 
-// Export model factory function (for advanced use cases)
+export const PlannedVisitModel = mongoose.models.PlannedVisit || 
+  mongoose.model("PlannedVisit", PlannedVisitSchema);
+
 export async function getPlannedVisitModel() {
-  return getModel<PlannedVisit>('PlannedVisit', () => getModelForClass(PlannedVisit));
+  return PlannedVisitModel;
 } 

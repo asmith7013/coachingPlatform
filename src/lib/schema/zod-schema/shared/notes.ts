@@ -1,14 +1,13 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
-import { zDateField } from '@zod-schema/shared/dateHelpers';
+import { createReferenceTransformer, createArrayTransformer } from "@data-processing/transformers/factories/reference-factory";
 import { formatSubheadings } from "@schema/reference/shared/notes-helpers";
-import { formatMediumDate, toDateString } from "@/lib/data-processing/transformers/utils/date-utils";
+import { formatMediumDate } from "@data-processing/transformers/utils/date-utils";
 
 // Note Fields Schema
 export const NoteFieldsSchema = z.object({
-  date: zDateField,
+  date: z.string().describe('Date of note (ISO string)'),
   type: z.string(),
   heading: z.string(),
   subheading: z.array(z.string()),
@@ -34,9 +33,9 @@ export const NoteReferenceZodSchema = BaseReferenceZodSchema.extend({
 export const noteToReference = createReferenceTransformer<Note, NoteReference>(
   (note) => note.heading,
   (note) => ({
-    date: note.date,
+    date: new Date(note.date),
     type: note.type,
-    dateFormatted: note.date ? formatMediumDate(toDateString(note.date)) : undefined,
+    dateFormatted: formatMediumDate(new Date(note.date)),
     subheadingCount: note.subheading?.length || 0,
     subheadingSummary: formatSubheadings(note, 100),
   }),

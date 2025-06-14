@@ -17,6 +17,7 @@ import {
 } from '@heroicons/react/24/outline';
 import type { WeeklyVisitPlan, CoachingCycleNumber, VisitNumber } from '@zod-schema/core/cap';
 import { CoachingCycleNumberZod, VisitNumberZod } from '@zod-schema/core/cap';
+import { getTodayString, formatMediumDate } from '@data-processing/transformers/utils/date-utils';
 
 interface WeeklyPlanManagerProps {
   weeklyPlans: WeeklyVisitPlan[];
@@ -47,7 +48,7 @@ export function WeeklyPlanManager({
                                         weeklyPlans.length % 3 === 1 ? "2" : "3";
 
     const newPlan: WeeklyVisitPlan = {
-      date: new Date(),
+      date: getTodayString(),
       cycleNumber: nextCycleNumber,
       visitNumber: nextVisitNumber,
       focus: '',
@@ -81,14 +82,6 @@ export function WeeklyPlanManager({
       return preview.length < plan.focus.length ? `${preview}...` : preview;
     }
     return `Cycle ${plan.cycleNumber}, Visit ${plan.visitNumber}`;
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0];
-  };
-
-  const parseDate = (dateString: string) => {
-    return new Date(dateString);
   };
 
   return (
@@ -143,7 +136,7 @@ export function WeeklyPlanManager({
                         {getPlanTitle(plan, planIndex)}
                       </Text>
                       <Text textSize="xs" color="muted">
-                        {plan.date ? plan.date.toLocaleDateString() : 'No date set'}
+                        {plan.date ? formatMediumDate(plan.date) : 'No date set'}
                       </Text>
                     </div>
                   </button>
@@ -168,8 +161,8 @@ export function WeeklyPlanManager({
                       <Input
                         label="Planned Date"
                         type="date"
-                        value={plan.date ? formatDate(plan.date) : ''}
-                        onChange={(e) => updatePlan(planIndex, 'date', parseDate(e.target.value))}
+                        value={plan.date || ''}
+                        onChange={(e) => updatePlan(planIndex, 'date', e.target.value)}
                         required
                       />
 

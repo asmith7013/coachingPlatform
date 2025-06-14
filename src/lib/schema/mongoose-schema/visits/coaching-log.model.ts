@@ -1,58 +1,36 @@
-import { getModelForClass, prop, modelOptions } from "@typegoose/typegoose";
 import mongoose from "mongoose";
 import {
   YesNoEnum,
   LengthTypeEnum,
   TeacherLeaderTypeEnum,
 } from "@enums";
-import { getModel } from "@server/db/model-registry";
-import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
-@modelOptions({ schemaOptions: { collection: 'coachinglogs' } })
-export class CoachingLog extends BaseMongooseDocument {
-  @prop({ enum: Object.values(YesNoEnum), type: String, required: true })
-  reasonDone!: string;
+const coachingLogFields = {
+  reasonDone: { type: String, enum: Object.values(YesNoEnum), required: true },
+  microPLTopic: { type: String },
+  microPLDuration: { type: Number },
+  modelTopic: { type: String },
+  modelDuration: { type: Number },
+  adminMeet: { type: Boolean },
+  adminMeetDuration: { type: Number },
+  NYCDone: { type: Boolean },
+  totalDuration: { type: String, enum: Object.values(LengthTypeEnum), required: true },
+  solvesTouchpoint: { type: String, enum: Object.values(TeacherLeaderTypeEnum), required: true },
+  primaryStrategy: { type: String, required: true },
+  solvesSpecificStrategy: { type: String, required: true },
+  aiSummary: { type: String },
+  ...standardDocumentFields
+};
 
-  @prop({ type: String })
-  microPLTopic?: string;
+const CoachingLogSchema = new mongoose.Schema(coachingLogFields, {
+  ...standardSchemaOptions,
+  collection: 'coachinglogs'
+});
 
-  @prop({ type: Number })
-  microPLDuration?: number;
-
-  @prop({ type: String })
-  modelTopic?: string;
-
-  @prop({ type: Number })
-  modelDuration?: number;
-
-  @prop({ type: Boolean })
-  adminMeet?: boolean;
-
-  @prop({ type: Number })
-  adminMeetDuration?: number;
-
-  @prop({ type: Boolean })
-  NYCDone?: boolean;
-
-  @prop({ enum: Object.values(LengthTypeEnum), type: String, required: true })
-  totalDuration!: string;
-
-  @prop({ enum: Object.values(TeacherLeaderTypeEnum), type: String, required: true })
-  solvesTouchpoint!: string;
-
-  @prop({ type: String, required: true })
-  primaryStrategy!: string;
-
-  @prop({ type: String, required: true })
-  solvesSpecificStrategy!: string;
-
-  @prop({ type: String })
-  aiSummary?: string;
-}
-
-export const CoachingLogModel =
-  mongoose.models.CoachingLog || getModelForClass(CoachingLog);
+export const CoachingLogModel = mongoose.models.CoachingLog || 
+  mongoose.model("CoachingLog", CoachingLogSchema);
 
 export async function getCoachingLogModel() {
-  return getModel<CoachingLog>('CoachingLog', () => getModelForClass(CoachingLog));
+  return CoachingLogModel;
 }

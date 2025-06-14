@@ -1,52 +1,27 @@
-import mongoose from "mongoose";
-import { getModelForClass, prop } from "@typegoose/typegoose";
-import { GradeLevels } from "@enums";
+import mongoose from 'mongoose';
+import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import { GradeLevels } from '@enums';
 // import { connectToDB } from "@data-server/db/connection";
-import { getModel } from "@server/db/model-registry";
-import { BaseMongooseDocument } from "@mongoose-schema/base-document";
 
-class School extends BaseMongooseDocument {
+const schoolFields = {
+  schoolNumber: { type: String, required: true },
+  district: { type: String, required: true },
+  schoolName: { type: String, required: true },
+  address: { type: String },
+  emoji: { type: String },
+  gradeLevelsSupported: [{ type: String, required: true, enum: Object.values(GradeLevels) }],
+  staffList: [{ type: String, required: true }],
+  schedules: [{ type: String, required: true }],
+  cycles: [{ type: String, required: true }],
+  owners: [{ type: String, required: true, default: [] }],
+  ...standardDocumentFields
+};
 
-  @prop({ type: String, required: true })
-  schoolNumber!: string;
+const SchoolSchema = new mongoose.Schema(schoolFields, {
+  ...standardSchemaOptions,
+  collection: 'schools'
+});
 
-  @prop({ type: String, required: true })
-  district!: string;
+export const SchoolModel = mongoose.models.School || 
+  mongoose.model('School', SchoolSchema);
 
-  @prop({ type: String, required: true })
-  schoolName!: string;
-
-  @prop({ type: String })
-  address?: string;
-
-  @prop({ type: String })
-  emoji?: string;
-
-  @prop({ type: () => [String], required: true, enum: Object.values(GradeLevels) })
-  gradeLevelsSupported!: string[];
-
-  @prop({ type: () => [String], required: true })
-  staffList!: string[];
-
-  @prop({ type: () => [String], required: true })
-  schedules!: string[];
-
-  @prop({ type: () => [String], required: true })
-  cycles!: string[];
-
-  @prop({ type: () => [String], required: true })
-  owners!: string[];
-
-  @prop({ type: Date })
-  createdAt?: Date;
-
-  @prop({ type: Date })
-  updatedAt?: Date;
-}
-
-export const SchoolModel =
-  mongoose.models.School || getModelForClass(School, { schemaOptions: { collection: 'schools' } });
-
-export async function getSchoolModel() {
-  return getModel<School>('School', () => getModelForClass(School));
-}

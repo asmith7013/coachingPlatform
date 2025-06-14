@@ -105,8 +105,8 @@ export async function fetchStaffBySchool(schoolId: string) {
   return withDbConnection(async () => {
     try {
       // Get raw data for both staff types
-      const nycpsPromise = NYCPSStaffModel.find({ schools: schoolId }).lean().exec();
-      const tlPromise = TeachingLabStaffModel.find({ schools: schoolId }).lean().exec();
+      const nycpsPromise = NYCPSStaffModel.find({ schools: schoolId }).exec();
+      const tlPromise = TeachingLabStaffModel.find({ schools: schoolId }).exec();
       
       // Execute in parallel
       const [nycpsStaff, tlStaff] = await Promise.all([nycpsPromise, tlPromise]);

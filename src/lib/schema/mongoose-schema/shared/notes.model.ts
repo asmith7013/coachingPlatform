@@ -1,29 +1,22 @@
 import mongoose from "mongoose";
-import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
-import { getModel } from "@server/db/model-registry";
-import { BaseMongooseDocument } from "@mongoose-schema/base-document";
+import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
-@modelOptions({ 
-  schemaOptions: { 
-    collection: 'notes' 
-  } 
-})
-export class Note extends BaseMongooseDocument {
-  @prop({ type: Date, required: true })
-  date!: Date;
-  
-  @prop({ type: String, required: true })
-  type!: string;
-  
-  @prop({ type: String, required: true })
-  heading!: string;
-  
-  @prop({ type: () => [String], required: true })
-  subheading!: string[];
-}
+const noteFields = {
+  date: { type: Date, required: true },
+  type: { type: String, required: true },
+  heading: { type: String, required: true },
+  subheading: [{ type: String, required: true }],
+  ...standardDocumentFields
+};
 
-export const NoteModel = mongoose.models.Note || getModelForClass(Note); 
+const NoteSchema = new mongoose.Schema(noteFields, {
+  ...standardSchemaOptions,
+  collection: 'notes'
+});
+
+export const NoteModel = mongoose.models.Note || 
+  mongoose.model("Note", NoteSchema);
 
 export async function getNoteModel() {
-  return getModel<Note>('Note', () => getModelForClass(Note));
+  return NoteModel;
 }

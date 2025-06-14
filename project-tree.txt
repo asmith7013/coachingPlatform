@@ -362,8 +362,14 @@
 │   │   │   │   ├── schoolList
 │   │   │   │   │   ├── [schoolId]
 │   │   │   │   │   └── page.tsx
-│   │   │   │   └── staffList
-│   │   │   │       └── page.tsx
+│   │   │   │   ├── staffList
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── tabs
+│   │   │   │       ├── BasicInfoTab.tsx
+│   │   │   │       ├── FeedbackTab.tsx
+│   │   │   │       ├── LessonFlowTab.tsx
+│   │   │   │       ├── ProgressMonitoringTab.tsx
+│   │   │   │       └── TimeAndTranscriptsTab.tsx
 │   │   │   ├── dashboard
 │   │   │   │   └── page.tsx
 │   │   │   ├── dayView
@@ -666,10 +672,14 @@
 │   │   ├── features
 │   │   │   ├── coaching
 │   │   │   │   ├── ActionPlanStage.tsx
+│   │   │   │   ├── CoachingActionPlanCrudDashboard.tsx
 │   │   │   │   ├── CoachingActionPlanDashboard.tsx
 │   │   │   │   ├── CoachingActionPlanDetailedEditor.tsx
 │   │   │   │   ├── TabbedStageNavigation.tsx
 │   │   │   │   ├── components
+│   │   │   │   │   ├── CoachingActionPlanCard.tsx
+│   │   │   │   │   ├── CoachingActionPlanForm.tsx
+│   │   │   │   │   ├── CoachingActionPlansList.tsx
 │   │   │   │   │   ├── CollapsedStageView.tsx
 │   │   │   │   │   ├── CreateCoachingActionPlanDialog.tsx
 │   │   │   │   │   ├── EditCoachingActionPlanDialog.tsx
@@ -918,8 +928,6 @@
 │   │   │   │   └── shared-enums.ts
 │   │   │   ├── index.ts
 │   │   │   ├── mongoose-schema
-│   │   │   │   ├── base-document.ts
-│   │   │   │   ├── config.ts
 │   │   │   │   ├── core
 │   │   │   │   │   ├── coaching-action-plan.model.ts
 │   │   │   │   │   ├── cycle.model.ts
@@ -940,6 +948,7 @@
 │   │   │   │   │   └── schedule.model.ts
 │   │   │   │   ├── shared
 │   │   │   │   │   └── notes.model.ts
+│   │   │   │   ├── shared-options.ts
 │   │   │   │   └── visits
 │   │   │   │       ├── coaching-log.model.ts
 │   │   │   │       ├── index.ts
@@ -1052,8 +1061,7 @@
 │   │   │   │   ├── ensure-connection.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── model-registry.ts
-│   │   │   │   ├── mongodb-query-utils.ts
-│   │   │   │   └── mongoose-transform-helper.ts
+│   │   │   │   └── mongodb-query-utils.ts
 │   │   │   ├── fetchers
 │   │   │   │   ├── domain
 │   │   │   │   │   ├── coachingActionPlan.ts
@@ -1236,4 +1244,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-366 directories, 871 files
+367 directories, 878 files

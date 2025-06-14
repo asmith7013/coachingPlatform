@@ -1,4 +1,4 @@
-import { CoachingActionPlanDashboard } from '@/components/features/coaching/CoachingActionPlanDashboard';
+import { CoachingActionPlanDashboard } from '@components/features/coaching/CoachingActionPlanDashboard';
 import { Metadata } from 'next';
 
 // Page metadata for SEO and navigation

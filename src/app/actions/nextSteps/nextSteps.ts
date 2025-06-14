@@ -99,7 +99,6 @@ export async function fetchNextStepsByTeacher(teacherId: string) {
     try {
       const results = await NextStepModel.find({ teacher: teacherId })
         .sort({ createdAt: -1 })
-        .lean()
         .exec();
       
       return {
@@ -123,7 +122,6 @@ export async function fetchNextStepsBySchool(schoolId: string) {
     try {
       const results = await NextStepModel.find({ school: schoolId })
         .sort({ createdAt: -1 })
-        .lean()
         .exec();
       
       return {
@@ -147,7 +145,6 @@ export async function fetchNextStepsByLookFor(lookForId: string) {
     try {
       const results = await NextStepModel.find({ lookFor: lookForId })
         .sort({ createdAt: -1 })
-        .lean()
         .exec();
       
       return {

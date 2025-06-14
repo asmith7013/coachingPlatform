@@ -1,7 +1,7 @@
 // src/lib/integrations/monday/config/field-mapping.ts
 
 import { MondayFieldMapping } from '@lib/integrations/monday/types/mapping';
-import { Visit } from '@mongoose-schema/visits/visit.model';
+import { VisitModel } from '@mongoose-schema/visits/visit.model';
 import { SchoolModel } from '@mongoose-schema/core/school.model';
 import { TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
 import { formatDateFromMonday } from '@lib/integrations/monday/utils/monday-utils';
@@ -163,7 +163,7 @@ export const REVERSE_FIELD_MAPPERS: Record<string, {
  * @param visit Visit entity from our database
  * @returns Record of Monday.com column values
  */
-export async function mapVisitToMondayFields(visit: Visit): Promise<Record<string, unknown>> {
+export async function mapVisitToMondayFields(visit: typeof VisitModel): Promise<Record<string, unknown>> {
   const mondayValues: Record<string, unknown> = {};
   
   // Process each field in the visit that has a reverse mapping

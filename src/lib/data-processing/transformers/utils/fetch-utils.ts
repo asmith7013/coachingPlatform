@@ -28,7 +28,7 @@ export async function fetchById<T>(
       };
     }
     
-    const document = await model.findById(id).lean();
+    const document = await model.findById(id);
     
     if (!document) {
       return {

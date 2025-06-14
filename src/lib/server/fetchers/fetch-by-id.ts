@@ -30,7 +30,7 @@ export async function fetchById<T>(
         };
       }
       
-      const document = await model.findById(id).lean();
+      const document = await model.findById(id); // Remove .lean() to allow transforms
       
       if (!document) {
         const entity = entityName || 'Document';
@@ -42,7 +42,9 @@ export async function fetchById<T>(
         };
       }
       
-      const sanitized = sanitizeDocument(document);
+      // Convert to JSON to apply transforms, then sanitize
+      const transformedDoc = document.toJSON();
+      const sanitized = sanitizeDocument(transformedDoc);
       
       return {
         success: true,

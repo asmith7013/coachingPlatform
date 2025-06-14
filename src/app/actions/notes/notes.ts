@@ -47,7 +47,6 @@ export async function fetchNotesByType(type: string) {
     try {
       const results = await NoteModel.find({ type })
         .sort({ date: -1 })
-        .lean()
         .exec();
       
       return {
@@ -76,7 +75,6 @@ export async function fetchNotesByDateRange(startDate: string, endDate: string) 
         }
       })
         .sort({ date: -1 })
-        .lean()
         .exec();
       
       return {
