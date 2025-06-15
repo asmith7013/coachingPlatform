@@ -3,14 +3,14 @@
 import React from 'react';
 import { tv } from 'tailwind-variants';
 import { Checkbox } from '@components/core/fields/Checkbox';
-import { ClassroomObservationNoteInput } from '@zod-schema/observations/classroom-observation';
+import { ClassroomObservationInput } from '@/lib/schema/zod-schema/visits/classroom-observation';
 
 const sectionTitle = tv({
   base: "text-lg font-semibold border-b pb-2 mb-3"
 });
 
 interface ProgressMonitoringTabProps {
-  formData: ClassroomObservationNoteInput;
+  formData: ClassroomObservationInput;
   onCheckboxChange: (criterionIndex: number) => void;
 }
 

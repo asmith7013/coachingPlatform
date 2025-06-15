@@ -5,14 +5,14 @@ import { Button } from '@/components/core/Button';
 import { Card } from '@/components/composed/cards';
 import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
-import { ClassroomObservationV2 } from '@zod-schema/observations/classroom-observation-v2';
+import { ClassroomObservation } from '@/lib/schema/zod-schema/visits/classroom-observation';
 import { toDateString } from '@/lib/data-processing/transformers/utils/date-utils';
 
 interface ObservationCardProps {
-  observation: ClassroomObservationV2;
-  onEdit: (observation: ClassroomObservationV2) => void;
+  observation: ClassroomObservation;
+  onEdit: (observation: ClassroomObservation) => void;
   onDelete: (id: string) => void;
-  onView?: (observation: ClassroomObservationV2) => void;
+  onView?: (observation: ClassroomObservation) => void;
   isDeleting?: boolean;
   disabled?: boolean;
 }

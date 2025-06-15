@@ -1,35 +1,25 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { Button } from '@/components/core/Button';
 import { Card } from '@/components/composed/cards';
 import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
-import { useFieldRenderer } from '@ui/forms/hooks/useFieldRenderer';
-import { classroomObservationV2FieldConfig } from '@ui/forms/fieldConfig/observations/classroom-observation-v2';
-import { 
-  ClassroomObservationV2Input,
-  ClassroomObservationV2InputZodSchema
-} from '@zod-schema/observations/classroom-observation-v2';
+import { Input } from '@components/core/fields/Input';
+import { Select } from '@components/core/fields/Select';
+import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
+import { Textarea } from '@components/core/fields/Textarea';
+import { ClassroomObservationInput, ClassroomObservationInputZodSchema } from '@/lib/schema/zod-schema/visits/classroom-observation';
 
 interface ObservationFormProps {
   mode: 'create' | 'edit';
-  initialData: ClassroomObservationV2Input;
-  onSubmit: (data: ClassroomObservationV2Input) => Promise<void>;
+  initialData: ClassroomObservationInput;
+  onSubmit: (data: ClassroomObservationInput) => Promise<void>;
   onCancel: () => void;
   isSubmitting?: boolean;
   error?: string;
 }
-
-// Group fields by section for better organization
-const FIELD_SECTIONS = {
-  basic: ['cycle', 'session', 'date', 'teacherId', 'coachId', 'schoolId', 'status'],
-  lesson: ['lessonTitle', 'lessonCourse', 'lessonUnit', 'lessonNumber', 'lessonCurriculum'],
-  context: ['otherContext', 'coolDown'],
-  settings: ['isSharedWithTeacher'],
-  references: ['visitId', 'coachingActionPlanId']
-};
 
 export function ObservationForm({ 
   mode, 
@@ -40,27 +30,60 @@ export function ObservationForm({
   error 
 }: ObservationFormProps) {
   const [activeSection, setActiveSection] = useState<string>('basic');
-  const { renderField } = useFieldRenderer<ClassroomObservationV2Input>();
 
-  // Create TanStack form with schema validation
   const form = useForm({
-    defaultValues: initialData,
+    defaultValues: ClassroomObservationInputZodSchema.parse(initialData || {}),
     validators: {
-      onChange: (values) => ClassroomObservationV2InputZodSchema.parse(values),
-      onSubmit: (values) => ClassroomObservationV2InputZodSchema.parse(values)
+      onSubmit: (values) => {
+        const result = ClassroomObservationInputZodSchema.safeParse(values);
+        if (!result.success) throw result.error;
+        return result.data;
+      }
     },
     onSubmit: async ({ value }) => {
-      await onSubmit(value as ClassroomObservationV2Input);
+      await onSubmit(value as ClassroomObservationInput);
     }
   });
 
-  // Get fields for current section
-  const getSectionFields = useCallback((sectionKey: string) => {
-    const sectionFieldNames = FIELD_SECTIONS[sectionKey as keyof typeof FIELD_SECTIONS] || [];
-    return classroomObservationV2FieldConfig.filter((field) => 
-      sectionFieldNames.includes(String(field.name))
-    );
-  }, []);
+  // Section field rendering (explicit, not config-driven)
+  const renderSectionFields = (section: string) => {
+    switch (section) {
+      case 'basic':
+        return <>
+          <form.Field name="cycle">{(field) => <Input fieldApi={field} label="Cycle" />}</form.Field>
+          <form.Field name="session">{(field) => <Input fieldApi={field} label="Session" />}</form.Field>
+          <form.Field name="date">{(field) => <Input fieldApi={field} label="Date" type="date" />}</form.Field>
+          <form.Field name="teacherId">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Teacher" url="/api/staff" />}</form.Field>
+          <form.Field name="coachId">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Coach" url="/api/staff" />}</form.Field>
+          <form.Field name="schoolId">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="School" url="/api/schools" />}</form.Field>
+          <form.Field name="status">{(field) => <Select fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Status" options={[{ value: 'draft', label: 'Draft' }, { value: 'final', label: 'Final' }]} />}</form.Field>
+        </>;
+      case 'lesson':
+        return <>
+          <form.Field name="lessonTitle">{(field) => <Input fieldApi={field} label="Lesson Title" />}</form.Field>
+          <form.Field name="lessonCourse">{(field) => <Input fieldApi={field} label="Lesson Course" />}</form.Field>
+          <form.Field name="lessonUnit">{(field) => <Input fieldApi={field} label="Lesson Unit" />}</form.Field>
+          <form.Field name="lessonNumber">{(field) => <Input fieldApi={field} label="Lesson Number" />}</form.Field>
+          <form.Field name="lessonCurriculum">{(field) => <Input fieldApi={field} label="Lesson Curriculum" />}</form.Field>
+        </>;
+      case 'context':
+        return <>
+          <form.Field name="otherContext">{(field) => <Textarea fieldApi={field} label="Other Context" />}</form.Field>
+          <form.Field name="coolDown">{(field) => <Textarea fieldApi={field} label="Cool Down" />}</form.Field>
+        </>;
+      case 'settings':
+        return <>
+          <form.Field name="isSharedWithTeacher">{(field) => <Select fieldApi={field} value={String(field.state.value)} onChange={v => field.handleChange(v === 'true')} label="Shared with Teacher" options={[{ value: 'true', label: 'Yes' }, { value: 'false', label: 'No' }]} />}</form.Field>
+        </>;
+      case 'references':
+        return <>
+          <form.Field name="visitId">{(field) => <Input fieldApi={field} label="Visit ID" />}</form.Field>
+          <form.Field name="coachingActionPlanId">{(field) => <Input fieldApi={field} label="Coaching Action Plan ID" />}</form.Field>
+        </>;
+      default:
+        return null;
+    }
+  };
 
   return (
     <Card>
@@ -75,7 +98,6 @@ export function ObservationForm({
           }
         </Text>
       </Card.Header>
-      
       <Card.Body>
         {/* Error Display */}
         {error && (
@@ -83,7 +105,6 @@ export function ObservationForm({
             <Text color="danger">{error}</Text>
           </div>
         )}
-
         {/* Section Navigation */}
         <div className="border-b border-gray-200 mb-6">
           <nav className="-mb-px flex space-x-8 overflow-x-auto">
@@ -109,8 +130,6 @@ export function ObservationForm({
             ))}
           </nav>
         </div>
-
-        {/* Form without Provider - TanStack Form doesn't use providers */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -129,52 +148,15 @@ export function ObservationForm({
                     references: 'References'
                   }).find(([key]) => key === activeSection)?.[1]}
                 </Heading>
-                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {getSectionFields(activeSection).map((fieldConfig) => (
-                    <div 
-                      key={String(fieldConfig.name)} 
-                      className={
-                        fieldConfig.type === 'textarea' 
-                          ? 'md:col-span-2' 
-                          : ''
-                      }
-                    >
-                      <label
-                        htmlFor={String(fieldConfig.name)}
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        {fieldConfig.label}
-                        {fieldConfig.required && <span className="text-red-500 ml-1">*</span>}
-                      </label>
-                      
-                      <form.Field name={fieldConfig.name as keyof ClassroomObservationV2Input}>
-                        {(field) => renderField(fieldConfig, field)}
-                      </form.Field>
-                    </div>
-                  ))}
+                  {renderSectionFields(activeSection)}
                 </div>
               </div>
             </div>
-
             {/* Form Actions */}
-            <div className="flex justify-end gap-4 pt-4 border-t border-gray-200">
-              <Button
-                type="button"
-                appearance="outline"
-                onClick={onCancel}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              
-              <Button
-                type="submit"
-                appearance="solid"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? '⏳ Saving...' : mode === 'create' ? 'Create Observation' : 'Update Observation'}
-              </Button>
+            <div className="flex justify-end pt-6">
+              <Button appearance="outline" onClick={onCancel} disabled={isSubmitting}>Cancel</Button>
+              <Button type="submit" disabled={isSubmitting || !form.state.canSubmit} loading={isSubmitting} className="ml-4">Save</Button>
             </div>
           </fieldset>
         </form>

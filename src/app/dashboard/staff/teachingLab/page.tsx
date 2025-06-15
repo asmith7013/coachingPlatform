@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
+// import { useState } from "react";
 import { DashboardLayout } from "@/components/composed/layouts";
 import { PageHeader } from "@/components/composed/layouts";
 import { useTeachingLabStaff } from "@hooks/domain/staff/useTeachingLabStaff";
 import { PlusIcon } from "lucide-react";
-import { StaffListComponent, StaffSearch } from "@components/domain/staff";
+// import { StaffListComponent, StaffSearch } from "@components/domain/staff";
 import { TablePagination } from "@/components/composed/tables/features/pagination";
-import { TeachingLabStaff } from "@zod-schema/core/staff";
+// import { TeachingLabStaff } from "@zod-schema/core/staff";
 
 export default function TeachingLabStaffPage() {
-  const [searchTerm, _setSearchTerm] = useState("");
+  // const [searchTerm, _setSearchTerm] = useState("");
   const {
     error,
     total,
@@ -36,11 +36,11 @@ export default function TeachingLabStaffPage() {
       />
 
       <div className="mb-6 flex gap-4 items-center">
-        <StaffSearch
+        {/* <StaffSearch
           value={searchTerm}
           onChange={() => {}}
           className="flex-grow"
-        />
+        /> */}
       </div>
 
       {error && (
@@ -49,10 +49,10 @@ export default function TeachingLabStaffPage() {
         </div>
       )}
 
-      <StaffListComponent 
+      {/* <StaffListComponent 
         staffMembers={[] as TeachingLabStaff[]} 
         isLoading={false} 
-      />
+      /> */}
 
       {total > 0 && (
         <div className="mt-6">

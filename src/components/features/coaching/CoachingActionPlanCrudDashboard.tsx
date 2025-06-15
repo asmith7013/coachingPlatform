@@ -9,12 +9,12 @@ import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
 import { 
   CoachingActionPlanInput,
   CoachingActionPlan,
-} from '@zod-schema/core/cap';
+} from '@zod-schema/cap/coaching-action-plan';
 import { useCoachingActionPlans } from '@hooks/domain/useCoachingActionPlans';
 
 // Import new form and list components
-import { CoachingActionPlanForm } from './components/CoachingActionPlanForm';
-import { CoachingActionPlansList } from './components/CoachingActionPlansList';
+import { CoachingActionPlanForm } from '@components/features/coaching/components/CoachingActionPlanForm';
+import { CoachingActionPlansList } from '@components/features/coaching/components/CoachingActionPlansList';
 
 type ViewMode = 'list' | 'create' | 'edit';
 
@@ -193,7 +193,7 @@ export function CoachingActionPlanCrudDashboard() {
         {/* Main Content */}
         {viewMode === 'list' && (
           <CoachingActionPlansList
-            plans={plans}
+            plans={plans as CoachingActionPlan[]}
             isLoading={isLoadingList}
             error={listError ? String(listError) : undefined}
             onEdit={handleEdit}

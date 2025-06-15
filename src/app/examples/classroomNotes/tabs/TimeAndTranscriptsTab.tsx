@@ -4,7 +4,7 @@ import React from 'react';
 import { tv } from 'tailwind-variants';
 import { Input } from '@components/core/fields/Input';
 import { Textarea } from '@components/core/fields/Textarea';
-import { ClassroomObservationNoteInput } from '@zod-schema/observations/classroom-observation';
+import { ClassroomObservationInput } from '@zod-schema/visits/classroom-observation';
 
 const sectionTitle = tv({
   base: "text-lg font-semibold border-b pb-2 mb-3"
@@ -15,7 +15,7 @@ const fieldLabel = tv({
 });
 
 interface TimeAndTranscriptsTabProps {
-  formData: ClassroomObservationNoteInput;
+  formData: ClassroomObservationInput;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 

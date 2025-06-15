@@ -7,7 +7,7 @@ import { Textarea } from '@/components/core/fields/Textarea';
 import { Select } from '@/components/core/fields/Select';
 import { Text } from '@/components/core/typography/Text';
 import { TrashIcon } from '@heroicons/react/24/outline';
-import type { Evidence } from '@zod-schema/core/cap';
+import type { Evidence } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
 
 interface EvidenceCardProps {
   evidence: Evidence;

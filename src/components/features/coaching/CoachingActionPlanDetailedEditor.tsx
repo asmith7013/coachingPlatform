@@ -11,8 +11,8 @@ import { useCoachingActionPlans } from '@components/features/coaching/hooks/useC
 import { useToast } from '@components/core/feedback/Toast';
 import { handleClientError } from '@error/handlers/client';
 import { calculatePlanProgress } from '@data-processing/transformers/utils/coaching-action-plan-utils';
-import { CoachingActionPlanInputZodSchema } from '@zod-schema/core/cap';
-import type { CoachingActionPlan } from '@zod-schema/core/cap';
+import { CoachingActionPlanInputZodSchema } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
+import type { CoachingActionPlan } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
 
 // Import stage components
 import { CoachingActionPlanStage1 } from './stages/CAPStage1';
@@ -179,7 +179,7 @@ export function CoachingActionPlanDetailedEditor({
               lessonsLearned: undefined,
               recommendationsForNext: undefined
             }}
-            onChange={(analysisData) => handleStageUpdate('endOfCycleAnalysis', analysisData)}
+            onChange={(analysisData: EndOfCycleAnalysis) => handleStageUpdate('endOfCycleAnalysis', analysisData)}
             goal={plan.goal}
           />
         );

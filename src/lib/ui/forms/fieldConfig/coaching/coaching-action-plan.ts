@@ -1,5 +1,5 @@
 import type { Field } from '@ui-types/form';
-import type { CoachingActionPlanInput } from "@zod-schema/core/cap";
+import type { CoachingActionPlanInput } from "@zod-schema/cap";
 
 /**
  * Simple field configuration for Coaching Action Plan forms

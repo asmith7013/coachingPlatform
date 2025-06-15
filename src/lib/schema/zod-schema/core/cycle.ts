@@ -8,12 +8,12 @@ import { getImplementationLevel } from "@schema/reference/core/cycle-helpers";
 
 // Cycle Fields Schema
 export const CycleFieldsSchema = z.object({
-  cycleNum: z.number().describe("Coaching cycle number (typically 1-4 per school year)"),
-  ipgIndicator: z.string().optional().describe("Instructional Planning Guide indicator reference"),
-  actionPlanURL: z.string().optional().describe("External URL link to coaching action plan document"),
-  implementationIndicator: z.string().describe("Current implementation level: Beginning, Developing, or Proficient"),
-  supportCycle: z.string().optional().describe("Type of support cycle being provided"),
-  lookFors: z.array(LookForItemZodSchema).nonempty().describe("Look-for items selected for this coaching cycle"),
+  cycleNum: z.number().default(1).describe("Coaching cycle number (typically 1-4 per school year)"),
+  ipgIndicator: z.string().optional().default(''),
+  actionPlanURL: z.string().optional().default(''),
+  implementationIndicator: z.string().default('').describe("Current implementation level: Beginning, Developing, or Proficient"),
+  supportCycle: z.string().optional().default(''),
+  lookFors: z.array(LookForItemZodSchema).nonempty().default([LookForItemZodSchema.parse({})]).describe("Look-for items selected for this coaching cycle"),
 });
 
 // Cycle Full Schema
@@ -66,3 +66,11 @@ export const cyclesToReferences = createArrayTransformer<Cycle, CycleReference>(
 export type CycleInput = z.infer<typeof CycleInputZodSchema>;
 export type Cycle = z.infer<typeof CycleZodSchema>;
 export type CycleReference = z.infer<typeof CycleReferenceZodSchema>;
+
+// Add helper for schema-driven defaults
+export function createCycleDefaults(overrides: Partial<CycleInput> = {}): CycleInput {
+  return {
+    ...CycleInputZodSchema.parse({}),
+    ...overrides
+  };
+}

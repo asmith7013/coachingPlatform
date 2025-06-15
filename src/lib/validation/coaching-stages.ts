@@ -1,12 +1,10 @@
 import type { 
-  NeedsAndFocus, 
-  Goal, 
   ImplementationRecord, 
-  EndOfCycleAnalysis 
-} from '@zod-schema/core/cap';
+  CoachingActionPlan
+} from '@zod-schema/cap';
 
 export const stageValidators = {
-  needsAndFocus: (data: NeedsAndFocus): boolean => {
+  needsAndFocus: (data: CoachingActionPlan): boolean => {
     return !!(
       data.ipgCoreAction && 
       data.ipgSubCategory && 
@@ -14,9 +12,9 @@ export const stageValidators = {
     );
   },
   
-  goal: (data: Goal): boolean => {
+  goal: (data: CoachingActionPlan): boolean => {
     return !!(
-      data.description.trim() &&
+      // data.description?.trim() &&
       data.teacherOutcomes.length > 0 &&
       data.studentOutcomes.length > 0 &&
       data.teacherOutcomes.every(outcome => outcome.description.trim()) &&
@@ -32,7 +30,7 @@ export const stageValidators = {
     );
   },
   
-  analysis: (data: EndOfCycleAnalysis): boolean => {
+  analysis: (data: CoachingActionPlan): boolean => {
     return !!(
       data.goalMet !== undefined &&
       data.impactOnLearning.trim() &&

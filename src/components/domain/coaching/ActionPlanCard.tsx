@@ -7,7 +7,7 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { Badge } from '@/components/core/feedback/Badge';
-import type { CoachingActionPlan } from '@zod-schema/core/cap';
+import type { CoachingActionPlan } from '@zod-schema/cap';
 import { 
   PencilIcon,
   DocumentDuplicateIcon,
@@ -105,10 +105,10 @@ export function ActionPlanCard({
           </div>
 
           {/* Focus Area */}
-          {plan.needsAndFocus && (
+          {plan && (
             <div className="mb-4">
               <Text textSize="sm" color="default" className="font-medium">
-                Focus: {plan.needsAndFocus.ipgCoreAction} - {plan.needsAndFocus.ipgSubCategory}
+                Focus: {plan.ipgCoreAction} - {plan.ipgSubCategory}
               </Text>
             </div>
           )}
@@ -198,24 +198,18 @@ export function ActionPlanCard({
 // Helper functions
 function formatStageProgress(plan: CoachingActionPlan): string {
   let completedStages = 0;
-  
-  if (plan.needsAndFocus) completedStages++;
-  if (plan.goal) completedStages++;
-  if (plan.weeklyPlans && plan.weeklyPlans.length > 0) completedStages++;
-  if (plan.endOfCycleAnalysis) completedStages++;
-  
-  return `${completedStages}/4 stages completed`;
+  if (plan.ipgCoreAction) completedStages++;
+  if (plan.goalDescription) completedStages++;
+  // Add more flat fields as needed for your progress logic
+  return `${completedStages}/2`;
 }
 
 function calculateProgressPercentage(plan: CoachingActionPlan): number {
   let completedStages = 0;
-  
-  if (plan.needsAndFocus) completedStages++;
-  if (plan.goal) completedStages++;
-  if (plan.weeklyPlans && plan.weeklyPlans.length > 0) completedStages++;
-  if (plan.endOfCycleAnalysis) completedStages++;
-  
-  return Math.round((completedStages / 4) * 100);
+  if (plan.ipgCoreAction) completedStages++;
+  if (plan.goalDescription) completedStages++;
+  // Add more flat fields as needed
+  return (completedStages / 2) * 100;
 }
 
 function getStatusIntent(status: string): 'success' | 'warning' | 'danger' | 'info' {

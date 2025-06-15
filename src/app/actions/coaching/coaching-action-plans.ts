@@ -1,12 +1,12 @@
 "use server";
 
-import { CoachingActionPlanV2Model } from "@mongoose-schema/cap/coaching-action-plan-v2.model";
+import { CoachingActionPlanModel } from "@mongoose-schema/core/cap.core.model";
 import {
-  CoachingActionPlanV2ZodSchema,
-  CoachingActionPlanV2InputZodSchema,
-  type CoachingActionPlanV2Input,
-  CoachingActionPlanV2,
-} from "@zod-schema/cap/coaching-action-plan-v2";
+  CoachingActionPlanZodSchema,
+  CoachingActionPlanInputZodSchema,
+  type CoachingActionPlanInput,
+  CoachingActionPlan,
+} from "@zod-schema/cap/coaching-action-plan";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
@@ -15,9 +15,9 @@ import { ZodType } from "zod";
 import { QueryParams, DEFAULT_QUERY_PARAMS } from "@core-types/query";
 
 const coachingActionPlanActions = createCrudActions({
-  model: CoachingActionPlanV2Model,
-  schema: CoachingActionPlanV2ZodSchema as ZodType<CoachingActionPlanV2>,
-  inputSchema: CoachingActionPlanV2InputZodSchema as ZodType<CoachingActionPlanV2Input>,
+  model: CoachingActionPlanModel,
+  schema: CoachingActionPlanZodSchema as ZodType<CoachingActionPlan>,
+  inputSchema: CoachingActionPlanInputZodSchema as ZodType<CoachingActionPlanInput>,
   name: "Coaching Action Plan",
   revalidationPaths: ["/dashboard/coaching-action-plans"],
   sortFields: ['title', 'status', 'startDate', 'academicYear', 'createdAt'],
@@ -33,11 +33,11 @@ export async function fetchCoachingActionPlanById(id: string) {
   return withDbConnection(() => coachingActionPlanActions.fetchById(id));
 }
 
-export async function createCoachingActionPlan(data: CoachingActionPlanV2Input) {
+export async function createCoachingActionPlan(data: CoachingActionPlanInput) {
   return withDbConnection(() => coachingActionPlanActions.create(data));
 }
 
-export async function updateCoachingActionPlan(id: string, data: Partial<CoachingActionPlanV2Input>) {
+export async function updateCoachingActionPlan(id: string, data: Partial<CoachingActionPlanInput>) {
   return withDbConnection(() => coachingActionPlanActions.update(id, data));
 }
 
@@ -45,7 +45,7 @@ export async function deleteCoachingActionPlan(id: string) {
   return withDbConnection(() => coachingActionPlanActions.delete(id));
 }
 
-// ===== V2 Progress Calculation =====
+// =====  Progress Calculation =====
 export async function getCoachingActionPlanProgress(id: string) {
   return withDbConnection(async () => {
     try {
@@ -77,7 +77,7 @@ export async function getCoachingActionPlanProgress(id: string) {
   });
 }
 
-// ===== V2 Status Workflow =====
+// =====  Status Workflow =====
 export async function getAvailableStatusTransitions(id: string) {
   return withDbConnection(async () => {
     try {
@@ -124,8 +124,8 @@ export async function getAvailableStatusTransitions(id: string) {
   });
 }
 
-// ===== V2 Field Validation =====
-export async function validateCoachingActionPlanField(id: string, fieldName: keyof CoachingActionPlanV2Input) {
+// =====  Field Validation =====
+export async function validateCoachingActionPlanField(id: string, fieldName: keyof CoachingActionPlanInput) {
   return withDbConnection(async () => {
     try {
       const result = await coachingActionPlanActions.fetchById(id);
@@ -152,7 +152,7 @@ export async function validateCoachingActionPlanField(id: string, fieldName: key
   });
 }
 
-// ===== V2 Bulk Status Update =====
+// =====  Bulk Status Update =====
 export async function bulkUpdateCoachingActionPlanStatus(
   planIds: string[],
   newStatus: string
@@ -211,6 +211,37 @@ export async function fetchCoachingActionPlanWithRelatedData(id: string) {
         success: false, 
         error: `Failed to fetch CAP with related data: ${error instanceof Error ? error.message : 'Unknown error'}` 
       };
+    }
+  });
+}
+
+export async function updateCoachingActionPlanStatus(
+  id: string, 
+  status: string, 
+  reason?: string
+) {
+  return withDbConnection(async () => {
+    try {
+      const updateData = { 
+        status, 
+        ...(reason && { statusChangeReason: reason })
+      };
+      
+        const result = await CoachingActionPlanModel.findByIdAndUpdate(
+        id, 
+        updateData, 
+        { new: true }
+      );
+      
+      if (!result) {
+        return { success: false, error: "Coaching action plan not found" };
+      }
+      
+      // Optionally revalidate path if needed
+      // revalidatePath('/dashboard/coaching-action-plans');
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error: handleServerError(error) };
     }
   });
 } 

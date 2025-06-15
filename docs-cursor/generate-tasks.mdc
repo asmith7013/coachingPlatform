@@ -3,261 +3,365 @@ description:
 globs: 
 alwaysApply: false
 ---
-# Rule: Generating a Task List from a PRD
+# TanStack Form Migration - Enhanced Task List
 
-## Goal
-
-To guide an AI assistant in creating a detailed, step-by-step task list in Markdown format based on an existing Product Requirements Document (PRD). The task list should guide a developer through implementation with concrete file paths and specific implementation details.
-
-## Output
-
-- **Format:** Markdown (`.md`)
-- **Location:** `/tasks/`
-- **Filename:** `tasks-[prd-file-name].md` (e.g., `tasks-prd-user-profile-editing.md`)
-
-## Process
-
-1. **Receive PRD Reference:** The user points the AI to a specific PRD file
-2. **Analyze PRD:** The AI reads and analyzes the functional requirements, user stories, and other sections of the specified PRD.
-3. **Context Template Selection:** Based on the PRD analysis, select appropriate context templates from `/docs/context-templates/`:
-   - UI Components → `ui-component-context.md`
-   - Data/Schema work → `data-layer-context.md`  
-   - External APIs → `integration-context.md`
-4. **Phase 1: Generate Parent Tasks:** Based on the PRD analysis, create the file and generate the main, high-level tasks required to implement the feature. Use your judgement on how many high-level tasks to use. It's likely to be about 5. Present these tasks to the user in the specified format (without sub-tasks yet). Inform the user: "I have generated the high-level tasks based on the PRD. Ready to generate the sub-tasks? Respond with 'Go' to proceed."
-5. **Wait for Confirmation:** Pause and wait for the user to respond with "Go".
-6. **Phase 2: Generate Sub-Tasks:** Once the user confirms, break down each parent task into smaller, actionable sub-tasks necessary to complete the parent task. Ensure sub-tasks logically follow from the parent task and cover the implementation details implied by the PRD.
-7. **Specify Concrete File Paths:** For each task, provide:
-   - Exact file paths following project structure conventions
-   - Line count estimates for scope assessment
-   - Specific function signatures to implement
-   - Integration points with existing code
-   - File replacement mapping (what gets deleted)
-8. **Identify Relevant Files:** Based on the tasks and PRD, identify potential files that will need to be created or modified. List these under the `Relevant Files` section
-9. **Generate Final Output:** Combine the parent tasks, sub-tasks, relevant files, and notes into the final Markdown structure.
-10. **Save Task List:** Save the generated document in the `/tasks/` directory with the filename `tasks-[prd-file-name].md`, where `[prd-file-name]` matches the base name of the input PRD file (e.g., if the input was `prd-user-profile-editing.md`, the output is `tasks-prd-user-profile-editing.md`).
-
-## Project Structure Integration
-
-Before generating tasks, reference the project's established patterns:
-
-**Component Location Patterns:**
-- Core UI: `src/components/core/[category]/ComponentName.tsx`
-- Composed UI: `src/components/composed/[category]/ComponentName.tsx`
-- Domain Logic: `src/components/domain/[domain]/ComponentName.tsx`
-- Features: `src/components/features/[feature]/ComponentName.tsx`
-
-**Data Layer Patterns:**
-- Zod Schemas: `src/lib/zod-schema/[domain]/entity.ts`
-- Hooks: `src/hooks/domain/use[EntityName].ts`
-- Server Actions: `src/app/actions/[domain]/entity.ts`
-- Types: `src/lib/types/domain/[domain].ts`
-
-**Import Path Conventions:**
-- Use path aliases: `@components/domain/[domain]`
-- Follow barrel exports: `@hooks/domain`
-- Reference established patterns: `@zod-schema/[domain]`
-
-## Output Format
-
-The generated task list _must_ follow this enhanced structure, pulling context from the PRD:
-
-```markdown
 ## Context Strategy
 
-**Primary Context Template:** [From PRD Implementation Strategy section]
-**Domain Reference:** [From PRD Implementation Strategy section]
+**Primary Context Template:** UI Component Context (focusing on direct component composition)
+**Domain Reference:** Existing core field components (`Input`, `Select`, `ReferenceSelect`) and TanStack Form integration patterns
 
 ## Relevant Files
 
-**Pattern References:** [From PRD's existing functionality analysis]
-- `src/path/to/pattern-file.tsx` - WHEN: [implementation phase], WHY: [pattern from PRD analysis]
-- `src/path/to/integration-file.ts` - WHEN: [integration phase], WHY: [existing functionality to extend per PRD]
+**Pattern References:**
+- `src/components/core/fields/Input.tsx` - WHEN: creating TanStack field wrappers, WHY: already has TanStack integration via `fieldApi` prop
+- `src/components/core/fields/Select.tsx` - WHEN: creating select field wrapper, WHY: established styling and TanStack integration pattern  
+- `src/components/core/fields/ReferenceSelect.tsx` - WHEN: creating reference field wrapper, WHY: complex reference data handling pattern
+- `src/components/composed/forms/FormLayout.tsx` - WHEN: maintaining form structure, WHY: layout component works with any form implementation
 
-**New Files to Create:** [Based on PRD requirements]
-- `src/components/domain/[domain]/ComponentName.tsx` (~200 lines)
-  - PURPOSE: [main feature component per PRD]
-  - IMPORTS: [specific imports with @path/aliases]
-  - EXPORTS: [ComponentName component with ComponentNameProps interface]
-  - REPLACES: [OldComponent1.tsx, OldComponent2.tsx] (if consolidating)
-- `src/hooks/domain/use[EntityName].ts` (~100 lines)
-  - PURPOSE: [data management per PRD requirements]
-  - IMPORTS: [specific hooks and utilities]
-  - EXPORTS: [hook function with return type interface]
-  - INTEGRATES: [existing hooks or API endpoints]
+**New Files to Create:**
+- `src/components/composed/forms/fields/TextFieldTanStack.tsx` (~80 lines)
+  - PURPOSE: Direct TanStack Form text field wrapper
+  - IMPORTS: `@components/core/fields/Input`, `@tanstack/react-form`
+  - EXPORTS: `TextFieldTanStack` component with `TextFieldTanStackProps` interface
+  - REPLACES: Configuration-driven text field rendering
+
+- `src/components/composed/forms/fields/SelectFieldTanStack.tsx` (~100 lines)
+  - PURPOSE: Direct TanStack Form select field wrapper
+  - IMPORTS: `@components/core/fields/Select`, `@tanstack/react-form`
+  - EXPORTS: `SelectFieldTanStack` component with `SelectFieldTanStackProps` interface
+  - REPLACES: Configuration-driven select field rendering
+
+- `src/components/composed/forms/fields/ReferenceFieldTanStack.tsx` (~120 lines)
+  - PURPOSE: Direct TanStack Form reference field wrapper
+  - IMPORTS: `@components/core/fields/ReferenceSelect`, `@tanstack/react-form`
+  - EXPORTS: `ReferenceFieldTanStack` component with `ReferenceFieldTanStackProps` interface
+  - REPLACES: Configuration-driven reference field rendering
+
+- `src/components/composed/forms/fields/DateFieldTanStack.tsx` (~80 lines)
+  - PURPOSE: Direct TanStack Form date field wrapper
+  - IMPORTS: `@components/core/fields/Input`, `@tanstack/react-form`
+  - EXPORTS: `DateFieldTanStack` component with `DateFieldTanStackProps` interface
+  - REPLACES: Configuration-driven date field rendering
+
+- `src/components/composed/forms/fields/index.ts` (~20 lines)
+  - PURPOSE: Barrel exports for all TanStack field components
+  - IMPORTS: All TanStack field components
+  - EXPORTS: All TanStack field components for easy importing
 
 **Files to Modify:**
-- `src/existing/component/Path.tsx` - UPDATE: [specific changes needed]
-- `src/lib/types/domain/[domain].ts` - ADD: [new type definitions]
+- `src/components/domain/schools/SchoolForm.tsx` - UPDATE: Replace config-driven rendering with direct composition
+- `src/components/domain/staff/NYCPSStaffForm.tsx` - UPDATE: Replace config-driven rendering with direct composition
+- `src/app/test/observations/ObservationForm.tsx` - UPDATE: Replace config-driven rendering with direct composition
+- `src/components/domain/coaching/ActionPlanStageForm.tsx` - UPDATE: Replace config-driven rendering with direct composition
+- `src/components/features/coaching/components/CoachingActionPlanForm.tsx` - UPDATE: Replace config-driven rendering with direct composition
+- `src/components/integrations/monday/domain/visits/ImportCompletionForm.tsx` - UPDATE: Replace config-driven rendering with direct composition
 
-**Files to Delete:** [After successful migration]
-- `src/old/component/Path.tsx` - REASON: [replaced by new component]
-- `src/duplicate/logic/Path.tsx` - REASON: [functionality consolidated]
+**Files to Delete:** (After successful migration)
+- `src/lib/ui/forms/hooks/useFieldRenderer.tsx` - REASON: replaced by direct TanStack field components
+- `src/lib/ui/forms/fieldConfig/` (entire directory) - REASON: configuration-driven approach replaced
+- `src/lib/types/ui/form.ts` (Field interface and config types) - REASON: configuration types no longer needed
+- `src/lib/ui/forms/index.ts` - REASON: only exported useFieldRenderer hook
 
 ## Tasks
 
-- [ ] 1.0 [Parent Task from PRD Staging Approach]
-  **Context Stack:** [Files from PRD's recommended context template]
-  **Pattern Reference:** [Existing pattern identified in PRD analysis]
-  **Quality Gate:** [Specific quality gate from PRD Implementation Strategy]
-  - [ ] 1.1 Sub-task with enhanced guidance
-    **File:** `src/exact/path/to/NewComponent.tsx`
-    **Scope:** ~150 lines, 1 main component + 2 helper functions
+- [ ] **1.0 Create Direct TanStack Form Field Components**
+  **Context Stack:** Core field components, TanStack Form integration patterns
+  **Pattern Reference:** Existing `fieldApi` integration in core components
+  **Quality Gate:** No configuration mapping, direct component usage only
+
+  - [ ] 1.1 Create TextFieldTanStack wrapper component
+    **File:** `src/components/composed/forms/fields/TextFieldTanStack.tsx`
+    **Scope:** ~80 lines, 1 main component + props interface
     **Interfaces to Create:**
     ```typescript
-    interface ComponentNameProps {
-      prop1: Type1
-      prop2: Type2
-      onEvent?: (data: EventData) => void
+    interface TextFieldTanStackProps {
+      field: FieldApi<any, any>;
+      label: string;
+      placeholder?: string;
+      helpText?: string;
+      type?: 'text' | 'email' | 'password';
+      required?: boolean;
     }
     ```
     **Functions to Implement:**
-    - `ComponentName(props: ComponentNameProps): JSX.Element` (~100 lines)
-    - `handleEventAction(data: EventData): void` (~30 lines)
-    - `validateComponentData(props: ComponentNameProps): boolean` (~20 lines)
+    - `TextFieldTanStack(props: TextFieldTanStackProps): JSX.Element` (~60 lines)
     **Reference Files:**
-    - `src/components/existing/Pattern.tsx` - WHEN: [specific implementation phase], WHY: [specific pattern to follow]
-    - `src/lib/data/schema.ts` - WHEN: [data definition phase], WHY: [schema consistency reference]
+    - `src/components/core/fields/Input.tsx` - WHEN: implementation phase, WHY: existing TanStack integration via fieldApi prop
     **Implementation Notes:**
-    - Follow [specific pattern] from reference file
-    - Use [specific approach] for [specific requirement]
-    - Maintain [specific consistency rule]
+    - Use `Input` component directly with `fieldApi` prop
+    - Extract value, onChange, onBlur from `field.state` and handlers
+    - Handle error state from `field.state.meta.errors`
     **Anti-Patterns:**
-    - Don't [specific mistake] - use [recommended approach] instead
-    - Avoid [common pitfall] - follow [established pattern]
+    - Don't create configuration objects - use direct props
+    - Avoid generic field type switching - create specific components
     **Quality Checklist:**
-    - [ ] Uses [specific component/pattern] (not custom implementation)
-    - [ ] Imports from @established/path/aliases (not relative imports)
-    - [ ] File size under 200 lines (split if larger)
+    - [ ] Uses core `Input` component (not custom input implementation)
+    - [ ] Imports from @components/core/fields (not relative imports)
+    - [ ] File size under 100 lines (specific single responsibility)
     - [ ] Zero TypeScript errors in strict mode
-    - [ ] Follows [specific design pattern]
-    - [ ] Implements proper [specific requirement]
-  - [ ] 1.2 Sub-task with standard format
-    **File:** `src/hooks/domain/useEntityName.ts`
-    **Scope:** ~80 lines, 1 hook + validation utilities
+    - [ ] Follows direct composition pattern (no configuration objects)
+    - [ ] Implements proper TanStack Form field integration
+
+  - [ ] 1.2 Create SelectFieldTanStack wrapper component
+    **File:** `src/components/composed/forms/fields/SelectFieldTanStack.tsx`
+    **Scope:** ~100 lines, 1 main component + props interface + option types
+    **Interfaces to Create:**
+    ```typescript
+    interface SelectOption {
+      value: string;
+      label: string;
+    }
+    
+    interface SelectFieldTanStackProps {
+      field: FieldApi<any, any>;
+      label: string;
+      options: SelectOption[];
+      placeholder?: string;
+      multiple?: boolean;
+      helpText?: string;
+      required?: boolean;
+    }
+    ```
+    **Functions to Implement:**
+    - `SelectFieldTanStack(props: SelectFieldTanStackProps): JSX.Element` (~80 lines)
+    **Reference Files:**
+    - `src/components/core/fields/Select.tsx` - WHEN: implementation phase, WHY: existing TanStack integration and multi-select pattern
+    **Implementation Notes:**
+    - Use `Select` component directly with `fieldApi` prop
+    - Handle both single and multi-select cases
+    - Extract options array handling from field configuration pattern
+    **Quality Checklist:**
+    - [ ] Uses core `Select` component (not custom select implementation)
+    - [ ] Supports both single and multi-select modes
+    - [ ] Handles options prop directly (no configuration mapping)
+    - [ ] File size under 120 lines
+    - [ ] Zero TypeScript errors in strict mode
+
+  - [ ] 1.3 Create ReferenceFieldTanStack wrapper component
+    **File:** `src/components/composed/forms/fields/ReferenceFieldTanStack.tsx`
+    **Scope:** ~120 lines, 1 main component + props interface
+    **Interfaces to Create:**
+    ```typescript
+    interface ReferenceFieldTanStackProps {
+      field: FieldApi<any, any>;
+      label: string;
+      url: string;
+      entityType?: string;
+      multiple?: boolean;
+      placeholder?: string;
+      helpText?: string;
+      required?: boolean;
+    }
+    ```
+    **Functions to Implement:**
+    - `ReferenceFieldTanStack(props: ReferenceFieldTanStackProps): JSX.Element` (~100 lines)
+    **Reference Files:**
+    - `src/components/core/fields/ReferenceSelect.tsx` - WHEN: implementation phase, WHY: complex reference data handling and API integration
+    **Implementation Notes:**
+    - Use `ReferenceSelect` component directly
+    - Pass through URL and entityType props for API calls
+    - Handle value transformation for TanStack Form integration
+    **Quality Checklist:**
+    - [ ] Uses core `ReferenceSelect` component (not custom implementation)
+    - [ ] Handles API data fetching through existing component
+    - [ ] Supports both single and multi-reference selection
+    - [ ] File size under 150 lines
+    - [ ] Zero TypeScript errors in strict mode
+
+  - [ ] 1.4 Create DateFieldTanStack wrapper component
+    **File:** `src/components/composed/forms/fields/DateFieldTanStack.tsx`
+    **Scope:** ~80 lines, 1 main component + props interface
+    **Interfaces to Create:**
+    ```typescript
+    interface DateFieldTanStackProps {
+      field: FieldApi<any, any>;
+      label: string;
+      placeholder?: string;
+      helpText?: string;
+      required?: boolean;
+    }
+    ```
+    **Functions to Implement:**
+    - `DateFieldTanStack(props: DateFieldTanStackProps): JSX.Element` (~60 lines)
+    **Reference Files:**
+    - `src/components/core/fields/Input.tsx` - WHEN: implementation phase, WHY: date input uses base Input component with type="date"
+    **Implementation Notes:**
+    - Use `Input` component with `type="date"`
+    - Handle date string format conversion for TanStack Form
+    - Extract date-specific validation from field state
+
+  - [ ] 1.5 Create barrel export file for TanStack field components
+    **File:** `src/components/composed/forms/fields/index.ts`
+    **Scope:** ~20 lines, barrel exports only
+    **Exports:**
+    ```typescript
+    export * from './TextFieldTanStack';
+    export * from './SelectFieldTanStack'; 
+    export * from './ReferenceFieldTanStack';
+    export * from './DateFieldTanStack';
+    ```
+    **Purpose:** Enable clean imports: `import { TextFieldTanStack } from '@components/composed/forms/fields'`
+
+- [ ] **2.0 Migrate Form Components to Direct Composition**
+  **Context Stack:** Existing form components, new TanStack field components
+  **Pattern Reference:** TanStack Form direct composition pattern
+  **Quality Gate:** Zero usage of configuration mapping, all fields explicitly defined
+
+  - [ ] 2.1 Migrate SchoolForm to direct composition
+    **File:** `src/components/domain/schools/SchoolForm.tsx`
+    **Scope:** ~200 lines, remove config mapping, add explicit field composition
     **PRD Requirements:**
-    - Implement [specific requirement from PRD]
-    - Follow [pattern identified in PRD creation]
-    - Integrate with [existing functionality per PRD]
+    - Replace `SchoolFieldConfig.map()` with explicit `<form.Field>` declarations
+    - Remove `useFieldRenderer` import and usage
+    - Use new TanStack field components directly
     **Integration Points:**
-    - Imports: `@zod-schema/domain/entity`, `@hooks/data/useSafeSWR`
-    - Exports: `useEntityName` hook, `EntityNameHookReturn` interface
-    - Connects to: `src/app/actions/domain/entity.ts` server actions
+    - Imports: Remove `@/lib/ui/forms/hooks/useFieldRenderer`, `@forms/fieldConfig/school/school-field-config`
+    - Add: `@components/composed/forms/fields`
+    - Maintains: `@tanstack/react-form`, `@components/composed/forms/FormLayout`
+    **Implementation Example:**
+    ```typescript
+    // REPLACE:
+    {SchoolFieldConfig.map((fieldConfig) => (
+      <form.Field name={String(fieldConfig.name)}>
+        {(field) => renderField(fieldConfig, field)}
+      </form.Field>
+    ))}
+    
+    // WITH:
+    <form.Field name="schoolName">
+      {(field) => (
+        <TextFieldTanStack
+          field={field}
+          label="School Name"
+          placeholder="Enter school name"
+        />
+      )}
+    </form.Field>
+    ```
 
-- [ ] 2.0 [Next Parent Task from PRD Staging]
-  **Context Stack:** [Next stage files from PRD]
-  **Pattern Reference:** [Pattern from PRD's code analysis]
-  **Quality Gate:** [Quality measure from PRD Implementation Strategy]
-```
+  - [ ] 2.2 Migrate NYCPSStaffForm to direct composition  
+    **File:** `src/components/domain/staff/NYCPSStaffForm.tsx`
+    **Scope:** ~250 lines, complex form with reference fields
+    **PRD Requirements:**
+    - Replace all field config mapping with direct field composition
+    - Use `ReferenceFieldTanStack` for schools and owners fields
+    - Use `SelectFieldTanStack` for enum-based fields
+    **Reference Files:**
+    - `src/lib/ui/forms/fieldConfig/staff/nycps-staff.ts` - WHEN: migration phase, WHY: extract field definitions and options to direct props
 
-## File Specification Requirements
+  - [ ] 2.3 Migrate ImportCompletionForm to direct composition
+    **File:** `src/components/integrations/monday/domain/visits/ImportCompletionForm.tsx` 
+    **Scope:** ~180 lines, dynamic field filtering logic
+    **PRD Requirements:**
+    - Replace filtered field config mapping with conditional direct composition
+    - Maintain missing field filtering logic using different approach
+    - Keep dynamic form generation but with direct components
 
-Each file reference MUST include:
-- **Exact file path:** Full path from project root following established conventions
-- **File purpose:** Single responsibility description
-- **Size estimate:** Approximate line count for scope assessment (~N lines)
-- **Dependencies:** What it imports/exports with specific path aliases
-- **Integration points:** How it connects to existing code
-- **Replacement mapping:** What existing files it replaces (if consolidating)
+  - [ ] 2.4 Migrate ObservationForm to direct composition
+    **File:** `src/app/test/observations/ObservationForm.tsx`
+    **Scope:** ~300 lines, sectioned form with field grouping
+    **PRD Requirements:**
+    - Replace section-based field config filtering with explicit field sections
+    - Use direct field composition within each section
+    - Maintain section navigation and organization
 
-## Sub-Task Scope Requirements
+  - [ ] 2.5 Migrate ActionPlanStageForm to direct composition
+    **File:** `src/components/domain/coaching/ActionPlanStageForm.tsx`
+    **Scope:** ~250 lines, generic stage form with dynamic config
+    **PRD Requirements:**
+    - Replace dynamic field config mapping with explicit stage field definitions
+    - Create separate field compositions for each stage
+    - Maintain type safety across different stage data types
 
-Each sub-task MUST specify:
-- **Exact file path:** Complete path following project structure
-- **Scope estimate:** Line count and complexity estimate
-- **Interfaces to create:** TypeScript interface definitions with exact properties
-- **Functions to implement:** Function signatures with parameters and return types
-- **Integration requirements:** Exact imports and exports needed
-- **Quality constraints:** File size limits, TypeScript requirements, pattern compliance
+  - [ ] 2.6 Migrate CoachingActionPlanForm to direct composition
+    **File:** `src/components/features/coaching/components/CoachingActionPlanForm.tsx`
+    **Scope:** ~350 lines, complex sectioned form
+    **PRD Requirements:**
+    - Replace section-based field filtering with explicit section compositions
+    - Use direct field composition for all sections
+    - Maintain section navigation and complex field organization
 
-**Pattern Validation Requirements:**
-- [ ] Verify component follows established [domain] patterns before implementation
-- [ ] Check for existing similar components to avoid duplication
-- [ ] Confirm file location matches project structure conventions
-- [ ] Validate integration points align with existing architecture
-- [ ] Ensure no reinvention of existing functionality
+- [ ] **3.0 Remove Configuration System**
+  **Context Stack:** Migration completed forms, unused configuration code
+  **Pattern Reference:** Clean removal without breaking changes
+  **Quality Gate:** Zero references to removed files, no broken imports
 
-## Enhanced Sub-Task Requirements
+  - [ ] 3.1 Remove useFieldRenderer hook
+    **File:** `src/lib/ui/forms/hooks/useFieldRenderer.tsx` - DELETE
+    **Scope:** Complete file removal
+    **Pre-requisites:** All forms migrated to direct composition
+    **Validation:** Search codebase for any remaining `useFieldRenderer` imports
 
-**For Complex UI Components and Integration Points Only** - Apply enhanced format selectively to high-impact tasks that benefit from detailed guidance.
+  - [ ] 3.2 Remove fieldConfig directory and all configurations
+    **Files:** `src/lib/ui/forms/fieldConfig/` (entire directory) - DELETE
+    **Scope:** ~15 configuration files removed
+    **Pre-requisites:** All forms migrated to direct composition
+    **Files Affected:**
+    - `coaching/` directory (4 files)
+    - `integrations/` directory (2 files) 
+    - `observations/` directory (3 files)
+    - `school/` directory (2 files)
+    - `staff/` directory (3 files)
+    - Root `index.ts` (1 file)
 
-### When to Use Enhanced Format
-- Complex UI components with established patterns
-- Integration points between systems
-- Components that extend existing patterns
-- Tasks with known anti-patterns from project history
-- File consolidation tasks (replacing multiple files)
+  - [ ] 3.3 Remove configuration types from form types file
+    **File:** `src/lib/types/ui/form.ts` - UPDATE (remove config-related types)
+    **Scope:** Remove ~50 lines of configuration interfaces
+    **Types to Remove:**
+    - `Field` interface
+    - `FieldType` type
+    - `FormUIHints` interface
+    - `TanStackFormProps` interface
+    - `TanStackFieldProps` interface
+    - `FormFactoryConfig` interface
+    - Legacy compatibility aliases
+    **Types to Keep:**
+    - Core TanStack Form types (`FormApi`, `BaseFieldProps`, `FieldWrapperProps`)
 
-### Enhanced Sub-Task Elements
+  - [ ] 3.4 Update forms index file
+    **File:** `src/lib/ui/forms/index.ts` - UPDATE
+    **Scope:** Remove useFieldRenderer export, add new field component exports
+    **Changes:**
+    - Remove: `export * from './hooks/useFieldRenderer';`
+    - Add: `export * from '../../components/composed/forms/fields';`
 
-#### Implementation Specificity
-- **Function signatures:** Complete TypeScript signatures with parameters
-- **Interface definitions:** Exact properties with types
-- **Code quantity:** Line count estimates for scope assessment
-- **File constraints:** Maximum file size and splitting requirements
+- [ ] **4.0 Final Cleanup and Validation**
+  **Context Stack:** Migrated codebase, removed configuration system
+  **Pattern Reference:** TanStack Form best practices compliance
+  **Quality Gate:** Full TanStack Form alignment, zero configuration remnants
 
-#### Reference File Documentation
-- **WHEN to reference:** Specific implementation phase requiring the pattern
-- **WHY to reference:** Clear rationale for following this approach
-- **HOW to adapt:** Any modifications needed for current context
+  - [ ] 4.1 Search and remove any remaining configuration imports
+    **Scope:** Codebase-wide search and cleanup
+    **Search Patterns:**
+    - `useFieldRenderer`
+    - `FieldConfig`
+    - `renderField`
+    - `@forms/fieldConfig`
+    - `@ui/forms/hooks`
 
-#### Implementation Notes
-- **Specific patterns:** Exact approach from reference files
-- **Configuration details:** How to adapt patterns for current use
-- **Integration requirements:** How to connect with existing systems
+  - [ ] 4.2 Validate all forms for TanStack Form best practices
+    **Scope:** Review all migrated forms
+    **Quality Checklist:**
+    - [ ] All forms use direct `<form.Field>` composition
+    - [ ] No configuration objects or mapping functions
+    - [ ] Explicit field definitions with clear props
+    - [ ] Direct component usage as intended by TanStack Form
+    - [ ] No abstraction layers between TanStack Form and UI components
 
-#### Anti-Pattern Prevention
-- **Don't statements:** Explicit guidance on what NOT to do
-- **Instead statements:** Recommended alternatives to common mistakes
-- **Based on project history:** Anti-patterns from actual codebase experience
+  - [ ] 4.3 Update documentation and type exports
+    **Scope:** Update any remaining documentation references
+    **Files to Update:**
+    - Update import paths in any example code
+    - Remove references to configuration-driven forms
+    - Add examples of direct composition patterns
 
-#### Measurable Quality Gates
-- **Checklist format:** Specific, checkable requirements
-- **Tool/component usage:** Must use X component (not create custom Y)
-- **Pattern compliance:** Must follow established Z pattern
-- **Integration requirements:** Must work with existing A system
-- **File size constraints:** Under N lines (split if larger)
-- **TypeScript compliance:** Zero errors in strict mode
+## Quality Requirements
 
-### Standard Sub-Task Format
-For simpler tasks, use the standard format:
-```markdown
-- [ ] 1.5 Create reference transformer for dropdown components
-  **File:** `src/lib/transformers/domain/entity-transforms.ts`
-  **Scope:** ~60 lines, 2 transformer functions
-  **PRD Requirements:**
-  - Transform entity data to {value, label} format
-  - Support search and filtering
-  - Handle empty states appropriately
-  **Integration Points:**
-  - Imports: `@zod-schema/domain/entity`, `@transformers/factories/reference-factory`
-  - Exports: `entityToReference`, `entityCollectionToOptions`
-```
-
-## Interaction Model
-
-The process explicitly requires a pause after generating parent tasks to get user confirmation ("Go") before proceeding to generate the detailed sub-tasks. This ensures the high-level plan aligns with user expectations before diving into details.
-
-## Target Audience
-
-Assume the primary reader of the task list is a **junior developer** who will implement the feature. Provide sufficient detail for clear implementation without overwhelming complexity.
-
-## PRD Integration Requirements
-
-Since PRDs now include existing functionality analysis, the task generation must:
-
-### Leverage PRD Context
-- **Use Implementation Strategy:** Follow the staging approach and context templates specified in the PRD
-- **Reference Code Analysis:** Incorporate existing patterns and components identified during PRD creation
-- **Apply Quality Gates:** Use the specific DRY/Abstraction/Separation checks from the PRD
-
-### Maintain Consistency
-- **Pattern Adherence:** Every task must reference how it follows existing patterns from the PRD
-- **Integration Points:** Clearly show how new code connects to existing functionality per PRD analysis
-- **Quality Assurance:** Include specific checkpoints based on the PRD's established quality gates
-
-### Task Enhancement
-Each sub-task must connect back to:
-- Specific PRD requirements it fulfills
-- Existing code patterns it follows (from PRD analysis)
-- Quality standards it must meet (from PRD Implementation Strategy)
-- Concrete file paths and implementation specifications
+- [ ] **DRY**: No duplicated logic within or across TanStack field components
+- [ ] **Clear Separation of Concerns**: Each field component handles one field type with single responsibility
+- [ ] **Proper Abstraction**: TanStack field components wrap core components without over-engineering
+- [ ] **Consistent Patterns**: All field components follow same prop interface pattern
+- [ ] **YAGNI**: No configuration system compatibility or unnecessary future-proofing
+- [ ] **Follow Established Type Patterns**: Use existing TanStack Form types, avoid custom generic constraints
+- [ ] **Schema-First Design**: Maintain Zod schema integration without configuration layer
+- [ ] **TanStack Form Alignment**: Follow official TanStack Form philosophy of direct composition

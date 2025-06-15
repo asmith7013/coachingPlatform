@@ -11,12 +11,12 @@ import { useSectionToggle } from '@/hooks/ui/useSectionToggle';
 import { CollapsedStageView } from '../components/CollapsedStageView';
 import { SectionHeader } from '../components/SectionHeader';
 import { stageValidators } from '@/lib/validation/coaching-stages';
-import type { ImplementationRecord, Goal, CoachingCycleNumber, VisitNumber } from '@zod-schema/core/cap';
+import type { ImplementationRecord, CoachingCycleNumber, VisitNumber, CoachingActionPlan } from '@zod-schema/cap';
 
 interface CoachingActionPlanStage3Props {
   data: ImplementationRecord[];
   onChange: (records: ImplementationRecord[]) => void;
-  goal?: Goal;
+  goal?: CoachingActionPlan;
   planId?: string;
   className?: string;
 }
@@ -47,7 +47,7 @@ export function CoachingActionPlanStage3({
 
     const newRecord: ImplementationRecord = {
       date: getTodayString(),
-      visitId: undefined,
+      visitId: '',
       cycleNumber: nextCycleNumber,
       visitNumber: nextVisitNumber,
       lookForImplemented: '',

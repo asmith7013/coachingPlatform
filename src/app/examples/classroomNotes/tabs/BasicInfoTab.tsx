@@ -6,14 +6,14 @@ import { Input } from '@components/core/fields/Input';
 import { Textarea } from '@components/core/fields/Textarea';
 import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
 import { getStaffUrl } from '@server/api/client/api_endpoints';
-import { ClassroomObservationNoteInput } from '@zod-schema/observations/classroom-observation';
+import { ClassroomObservationInput } from '@/lib/schema/zod-schema/visits/classroom-observation';
 
 const fieldLabel = tv({
   base: "text-sm font-medium text-gray-700 mb-1"
 });
 
 interface BasicInfoTabProps {
-  formData: ClassroomObservationNoteInput;
+  formData: ClassroomObservationInput;
   selectedTeacher: string;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   onTeacherChange: (value: string) => void;
@@ -82,8 +82,8 @@ export function BasicInfoTab({
       <div>
         <label className={fieldLabel()}>Lesson Title</label>
         <Input
-          name="lesson.title"
-          value={formData.lesson.title}
+          name="lessonTitle"
+          value={formData.lessonTitle || ''}
           onChange={onInputChange}
           placeholder="Lesson title or topic"
         />
@@ -92,8 +92,8 @@ export function BasicInfoTab({
         <div>
           <label className={fieldLabel()}>Course</label>
           <Input
-            name="lesson.course"
-            value={formData.lesson.course}
+            name="lessonCourse"
+            value={formData.lessonCourse || ''}
             onChange={onInputChange}
             placeholder="Course name"
           />
@@ -101,8 +101,8 @@ export function BasicInfoTab({
         <div>
           <label className={fieldLabel()}>Unit</label>
           <Input
-            name="lesson.unit"
-            value={formData.lesson.unit}
+            name="lessonUnit"
+            value={formData.lessonUnit || ''}
             onChange={onInputChange}
             placeholder="Unit name"
           />
@@ -110,8 +110,8 @@ export function BasicInfoTab({
         <div>
           <label className={fieldLabel()}>Lesson Number</label>
           <Input
-            name="lesson.lessonNumber"
-            value={formData.lesson.lessonNumber}
+            name="lessonNumber"
+            value={formData.lessonNumber || ''}
             onChange={onInputChange}
             placeholder="Lesson #"
           />

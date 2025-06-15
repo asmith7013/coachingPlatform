@@ -6,11 +6,11 @@ import { Card } from '@components/composed/cards';
 import { Text } from '@components/core/typography/Text';
 import { Heading } from '@components/core/typography/Heading';
 import { 
-  useClassroomObservationV2DefaultsSimple,
-  type ClassroomObservationV2Input,
-  ClassroomObservationV2
-} from '@zod-schema/observations/classroom-observation-v2';
-import { useClassroomObservationsV2 } from '@domain-hooks/observations/useClassroomObservationsV2';
+  useClassroomObservationDefaultsSimple,
+  type ClassroomObservationInput,
+  ClassroomObservation
+} from '@/lib/schema/zod-schema/visits/classroom-observation';
+import { useClassroomObservations } from '@domain-hooks/observations/useClassroomObservations';
 import { ObservationForm } from './ObservationForm';
 import { ObservationsList } from './ObservationsList';
 
@@ -19,11 +19,11 @@ type ViewMode = 'list' | 'create' | 'edit';
 export default function ObservationsTestPage() {
   // State management
   const [viewMode, setViewMode] = useState<ViewMode>('list');
-  const [selectedObservation, setSelectedObservation] = useState<ClassroomObservationV2 | null>(null);
+  const [selectedObservation, setSelectedObservation] = useState<ClassroomObservation | null>(null);
   const [deletingIds, setDeletingIds] = useState<string[]>([]);
   
   // Get schema defaults
-  const defaultValues = useClassroomObservationV2DefaultsSimple({
+  const defaultValues = useClassroomObservationDefaultsSimple({
     cycle: 'New Cycle',
     session: 'New Session',
     // date: new Date(),
@@ -34,9 +34,9 @@ export default function ObservationsTestPage() {
   });
   
   // Use the new unified interface for CRUD and enhancements
-  const observationsMutations = useClassroomObservationsV2.mutations();
+  const observationsMutations = useClassroomObservations.mutations();
   // const observationsWithToast = useClassroomObservations.withNotifications();
-  const observationsManager = useClassroomObservationsV2.manager();
+  const observationsManager = useClassroomObservations.manager();
   const {
     items: observations,
     isLoading: isLoadingList,
@@ -53,7 +53,7 @@ export default function ObservationsTestPage() {
   }, []);
   
   // Handle edit observation
-  const handleEdit = useCallback((observation: ClassroomObservationV2) => {
+  const handleEdit = useCallback((observation: ClassroomObservation) => {
     setSelectedObservation(observation);
     setViewMode('edit');
   }, []);
@@ -65,10 +65,10 @@ export default function ObservationsTestPage() {
   }, []);
   
   // Handle form submission (create or update)
-  const handleFormSubmit = useCallback(async (data: ClassroomObservationV2Input) => {
+  const handleFormSubmit = useCallback(async (data: ClassroomObservationInput) => {
     try {
       if (viewMode === 'create') {
-        const result = await createAsync!(data as ClassroomObservationV2);
+        const result = await createAsync!(data as ClassroomObservation);
         if (result.success) {
           setViewMode('list');
         }
@@ -108,11 +108,11 @@ export default function ObservationsTestPage() {
   }, []);
   
   // Get initial form data based on mode
-  const getInitialFormData = useCallback((): ClassroomObservationV2Input => {
+  const getInitialFormData = useCallback((): ClassroomObservationInput => {
     if (viewMode === 'edit' && selectedObservation) {
       // Convert the observation to input format (remove system fields)
       const { _id, createdAt: _createdAt, updatedAt: _updatedAt, ...inputData } = selectedObservation;
-      return inputData as ClassroomObservationV2Input;
+      return inputData as ClassroomObservationInput;
     }
     return defaultValues;
   }, [viewMode, selectedObservation, defaultValues]);

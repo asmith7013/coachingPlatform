@@ -10,7 +10,7 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import { useCoachingActionPlans } from '@components/features/coaching/hooks/useCoachingActionPlans';
-import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
+import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/cap';
 
 interface EditCoachingActionPlanDialogProps {
   open: boolean;

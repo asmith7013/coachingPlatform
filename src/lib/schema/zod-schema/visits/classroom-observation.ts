@@ -4,11 +4,11 @@ import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { getTodayString } from '@data-processing/transformers/utils/date-utils';
 
 // ===== CORE OBSERVATION SCHEMA (MAIN RECORD) =====
-export const ClassroomObservationV2FieldsSchema = z.object({
+export const ClassroomObservationFieldsSchema = z.object({
   // Core identification
   cycle: z.string().default(''),
   session: z.string().default(''),
-  date: z.string().describe("ISO date string for user input"), // Consistent string dates
+  date: z.string().default(() => getTodayString()).describe("ISO date string for user input"),
   teacherId: z.string().default(''),
   coachId: z.string().default(''),
   schoolId: z.string().default(''),
@@ -29,11 +29,11 @@ export const ClassroomObservationV2FieldsSchema = z.object({
   coachingActionPlanId: z.string().optional(),
 });
 
-export const ClassroomObservationV2ZodSchema = BaseDocumentSchema.merge(ClassroomObservationV2FieldsSchema);
-export const ClassroomObservationV2InputZodSchema = toInputSchema(ClassroomObservationV2ZodSchema);
+export const ClassroomObservationZodSchema = BaseDocumentSchema.merge(ClassroomObservationFieldsSchema);
+export const ClassroomObservationInputZodSchema = toInputSchema(ClassroomObservationZodSchema);
 
-export type ClassroomObservationV2 = z.infer<typeof ClassroomObservationV2ZodSchema>;
-export type ClassroomObservationV2Input = z.infer<typeof ClassroomObservationV2InputZodSchema>;
+export type ClassroomObservation = z.infer<typeof ClassroomObservationZodSchema>;
+export type ClassroomObservationInput = z.infer<typeof ClassroomObservationInputZodSchema>;
 
 // ===== OBSERVATION CRITERIA (PROGRESS MONITORING) =====
 export const ObservationCriterionFieldsSchema = z.object({
@@ -207,7 +207,7 @@ export type ObservationMetadata = z.infer<typeof ObservationMetadataZodSchema>;
 export type ObservationMetadataInput = z.infer<typeof ObservationMetadataInputZodSchema>;
 
 // ===== CONTEXT INTERFACES AND UTILITIES =====
-export interface ClassroomObservationV2Context {
+export interface ClassroomObservationContext {
   userId?: string;
   schoolId?: string;
   visitId?: string;
@@ -219,43 +219,29 @@ export interface ClassroomObservationV2Context {
 }
 
 /**
- * Factory function for creating classroom observation V2 defaults with context
+ * Factory function for creating classroom observation  defaults with context
  * Uses schema defaults and applies contextual overrides
  */
-export function createClassroomObservationV2Defaults(
-  context: ClassroomObservationV2Context = {}
-): ClassroomObservationV2Input {
-  // Create base defaults by parsing an empty object (schema defaults will apply)
-  const baseDefaults = ClassroomObservationV2InputZodSchema.parse({
-    date: getTodayString(), // ISO date string for today
-    ownerIds: context.userId ? [context.userId] : [], // ✅ Fixed: Use ownerIds instead of owners
+export function createClassroomObservationDefaults(
+  context: ClassroomObservationContext = {}
+): ClassroomObservationInput {
+  return ClassroomObservationInputZodSchema.parse({
+    ...context,
+    ownerIds: context.userId ? [context.userId] : undefined,
   });
-  
-  // Apply context overrides
-  return {
-    ...baseDefaults,
-    schoolId: context.schoolId || baseDefaults.schoolId,
-    teacherId: context.teacherId || baseDefaults.teacherId,
-    coachId: context.coachId || context.userId || baseDefaults.coachId,
-    cycle: context.cycle || baseDefaults.cycle,
-    session: context.session || baseDefaults.session,
-    visitId: context.visitId || baseDefaults.visitId,
-    coachingActionPlanId: context.coachingActionPlanId || baseDefaults.coachingActionPlanId,
-    ownerIds: context.userId ? [context.userId] : baseDefaults.ownerIds, // ✅ Fixed: Use ownerIds
-  };
 }
 
 /**
  * Hook for form defaults with authentication context
  * Automatically incorporates user data from auth context
  */
-export function useClassroomObservationV2Defaults(
-  overrides: Partial<ClassroomObservationV2Context> = {}
-): ClassroomObservationV2Input {
+export function useClassroomObservationDefaults(
+  overrides: Partial<ClassroomObservationContext> = {}
+): ClassroomObservationInput {
   // Note: This would typically use your auth hook
   // const { user } = useAuthenticatedUser();
   return useMemo(() => 
-    createClassroomObservationV2Defaults({
+    createClassroomObservationDefaults({
       // userId: user?.staffId,
       // schoolId: user?.schoolId,
       // coachId: user?.staffId,
@@ -269,11 +255,11 @@ export function useClassroomObservationV2Defaults(
  * Simplified hook for testing purposes
  * Creates defaults without auth dependency
  */
-export function useClassroomObservationV2DefaultsSimple(
-  overrides: Partial<ClassroomObservationV2Context> = {}
-): ClassroomObservationV2Input {
+export function useClassroomObservationDefaultsSimple(
+  overrides: Partial<ClassroomObservationContext> = {}
+): ClassroomObservationInput {
   return useMemo(() => 
-    createClassroomObservationV2Defaults({
+    createClassroomObservationDefaults({
       userId: 'test-user-123',
       schoolId: 'test-school-456',
       coachId: 'test-coach-789',
@@ -282,3 +268,5 @@ export function useClassroomObservationV2DefaultsSimple(
     [overrides]
   );
 } 
+
+

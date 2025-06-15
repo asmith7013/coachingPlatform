@@ -9,14 +9,14 @@ import { Text } from '@/components/core/typography/Text';
 import { useToast } from '@/components/core/feedback/Toast';
 import { CreateCoachingActionPlanDialog } from './components/CreateCoachingActionPlanDialog';
 import { CoachingActionPlanDetailedEditor } from './CoachingActionPlanDetailedEditor';
-import { ActionPlanCard, StatusTransitionButton } from '@/components/domain/coaching';
+import { ActionPlanCard, StatusTransitionButton } from '@components/domain/coaching';
 import { useCoachingActionPlans } from '@components/features/coaching/hooks/useCoachingActionPlans';
-import { updateCoachingActionPlanStatus } from '@/app/actions/coaching/coaching-action-plans';
+import { updateCoachingActionPlanStatus } from '@actions/coaching/coaching-action-plans';
 import { handleClientError } from '@error/handlers/client';
 import { PlusCircleIcon, FolderIcon, CheckCircleIcon } from 'lucide-react';
-import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
-import { type PlanStatus } from '@/lib/data-processing/transformers/utils/coaching-action-plan-utils';
-import { Button } from '@/components/core/Button';
+import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/cap/coaching-action-plan';
+import { type PlanStatus } from '@data-processing/transformers/utils/coaching-action-plan-utils';
+import { Button } from '@components/core/Button';
 
 interface CoachingActionPlanDashboardProps {
   className?: string;
@@ -204,7 +204,7 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
           }
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {plans.map((plan) => (
+            {plans.map((plan: CoachingActionPlan) => (
               <div key={plan._id} className="relative group">
                 <ActionPlanCard
                   plan={plan}

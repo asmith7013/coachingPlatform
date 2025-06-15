@@ -118,7 +118,8 @@
 │   ├── platform
 │   │   ├── admin-features.md
 │   │   ├── analytics-features.md
-│   │   └── auth-features.md
+│   │   ├── auth-features.md
+│   │   └── forms-update.md
 │   └── product-roadmap.md
 ├── eslint.config.mjs
 ├── examples
@@ -167,6 +168,11 @@
 │   │   │       └── page.tsx
 │   │   ├── actions
 │   │   │   ├── coaching
+│   │   │   │   ├── cap-evidence.ts
+│   │   │   │   ├── cap-implementation-records.ts
+│   │   │   │   ├── cap-metrics.ts
+│   │   │   │   ├── cap-outcomes.ts
+│   │   │   │   ├── cap-weekly-plans.ts
 │   │   │   │   └── coaching-action-plans.ts
 │   │   │   ├── cycles
 │   │   │   │   └── cycles.ts
@@ -182,7 +188,6 @@
 │   │   │   │   └── notes.ts
 │   │   │   ├── observations
 │   │   │   │   ├── classroom-observations-v2.ts
-│   │   │   │   ├── classroom-observations.ts
 │   │   │   │   ├── contextual-notes.ts
 │   │   │   │   └── index.ts
 │   │   │   ├── rubrics
@@ -763,10 +768,16 @@
 │   │   │   ├── useComponentTester.tsx
 │   │   │   └── useRenderTracking.ts
 │   │   ├── domain
+│   │   │   ├── cap
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── useCapEvidence.ts
+│   │   │   │   ├── useCapImplementationRecords.ts
+│   │   │   │   ├── useCapMetrics.ts
+│   │   │   │   ├── useCapOutcomes.ts
+│   │   │   │   └── useCapWeeklyPlans.ts
 │   │   │   ├── index.ts
 │   │   │   ├── observations
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── useClassroomObservations.ts
 │   │   │   │   ├── useClassroomObservationsV2.ts
 │   │   │   │   └── useContextualNotes.ts
 │   │   │   ├── schedule
@@ -930,6 +941,14 @@
 │   │   │   │   └── shared-enums.ts
 │   │   │   ├── index.ts
 │   │   │   ├── mongoose-schema
+│   │   │   │   ├── cap
+│   │   │   │   │   ├── cap-evidence.model.ts
+│   │   │   │   │   ├── cap-implementation-record.model.ts
+│   │   │   │   │   ├── cap-metric.model.ts
+│   │   │   │   │   ├── cap-outcome.model.ts
+│   │   │   │   │   ├── cap-weekly-plan.model.ts
+│   │   │   │   │   ├── coaching-action-plan-v2.model.ts
+│   │   │   │   │   └── index.ts
 │   │   │   │   ├── core
 │   │   │   │   │   ├── coaching-action-plan.model.ts
 │   │   │   │   │   ├── cycle.model.ts
@@ -943,7 +962,6 @@
 │   │   │   │   │   └── rubric.model.ts
 │   │   │   │   ├── observations
 │   │   │   │   │   ├── classroom-observation-v2.model.ts
-│   │   │   │   │   ├── classroom-observation.model.ts
 │   │   │   │   │   ├── contextual-note.model.ts
 │   │   │   │   │   └── index.ts
 │   │   │   │   ├── schedule
@@ -983,6 +1001,14 @@
 │   │   │   │       └── visit-helpers.ts
 │   │   │   └── zod-schema
 │   │   │       ├── base-schemas.ts
+│   │   │       ├── cap
+│   │   │       │   ├── cap-evidence.ts
+│   │   │       │   ├── cap-implementation-record.ts
+│   │   │       │   ├── cap-metric.ts
+│   │   │       │   ├── cap-outcome.ts
+│   │   │       │   ├── cap-weekly-plan.ts
+│   │   │       │   ├── coaching-action-plan-v2.ts
+│   │   │       │   └── index.ts
 │   │   │       ├── core
 │   │   │       │   ├── cap.ts
 │   │   │       │   ├── cycle.ts
@@ -1015,8 +1041,7 @@
 │   │   │       │   ├── rubric-fields.ts
 │   │   │       │   └── rubric.ts
 │   │   │       ├── observations
-│   │   │       │   ├── classroom-observation-v2.ts
-│   │   │       │   └── classroom-observation.ts
+│   │   │       │   └── classroom-observation-v2.ts
 │   │   │       ├── schedule
 │   │   │       │   ├── index.ts
 │   │   │       │   ├── schedule-actions.ts
@@ -1143,7 +1168,6 @@
 │   │   │   ├── data-import
 │   │   │   │   └── schema-templates.ts
 │   │   │   ├── forms
-│   │   │   │   ├── factories
 │   │   │   │   ├── fieldConfig
 │   │   │   │   │   ├── coaching
 │   │   │   │   │   ├── index.ts
@@ -1247,4 +1271,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-367 directories, 881 files
+369 directories, 903 files

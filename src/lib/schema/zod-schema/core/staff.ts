@@ -25,15 +25,15 @@ export const MondayUserZodSchema = z.object({
 
 // Experience Schema
 export const ExperienceZodSchema = z.object({
-  type: z.string(),
-  years: z.number().nonnegative(),
+  type: z.string().default(''),
+  years: z.number().nonnegative().default(0),
 });
 
 // Base StaffMember Fields Schema
 export const StaffMemberFieldsSchema = z.object({
-  staffName: z.string(),
-  email: z.string().email(),
-  schoolIds: z.array(z.string()).optional().describe("Array of School document _ids where this staff member works"),
+  staffName: z.string().default(''),
+  email: z.string().email().default(''),
+  schoolIds: z.array(z.string()).optional().default([]).describe("Array of School document _ids where this staff member works"),
   mondayUser: MondayUserZodSchema.optional().describe("Monday.com user integration data for bi-directional sync"),
 });
 
@@ -45,13 +45,13 @@ export const StaffMemberInputZodSchema = toInputSchema(StaffMemberZodSchema);
 
 // NYCPS Staff Fields Schema
 export const NYCPSStaffFieldsSchema = StaffMemberFieldsSchema.extend({
-  gradeLevelsSupported: z.array(GradeLevelsSupportedZod).describe("Grade levels this teacher is qualified to teach"),
-  subjects: z.array(SubjectsZod).describe("Subject areas this teacher specializes in"),
-  specialGroups: z.array(SpecialGroupsZod).describe("Special education or specialized student groups served"),
-  rolesNYCPS: z.array(RolesNYCPSZod).optional().describe("Official NYCPS role classifications (Teacher, AP, etc.)"),
-  pronunciation: z.string().optional(),
-  notes: z.array(NoteZodSchema).optional(),
-  experience: z.array(ExperienceZodSchema).optional(),
+  gradeLevelsSupported: z.array(GradeLevelsSupportedZod).default([]).describe("Grade levels this teacher is qualified to teach"),
+  subjects: z.array(SubjectsZod).default([]).describe("Subject areas this teacher specializes in"),
+  specialGroups: z.array(SpecialGroupsZod).default([]).describe("Special education or specialized student groups served"),
+  rolesNYCPS: z.array(RolesNYCPSZod).optional().default([]).describe("Official NYCPS role classifications (Teacher, AP, etc.)"),
+  pronunciation: z.string().optional().default(''),
+  notes: z.array(NoteZodSchema).optional().default([]),
+  experience: z.array(ExperienceZodSchema).optional().default([]),
 });
 
 // NYCPS Staff Full Schema
@@ -62,9 +62,9 @@ export const NYCPSStaffInputZodSchema = toInputSchema(NYCPSStaffZodSchema);
 
 // Teaching Lab Staff Fields Schema
 export const TeachingLabStaffFieldsSchema = StaffMemberFieldsSchema.extend({
-  adminLevel: AdminLevelZod.optional().describe("Administrative hierarchy level within Teaching Lab"),
-  assignedDistricts: z.array(z.string()).optional().describe("Array of district names this TL staff member supports"),
-  rolesTL: z.array(RolesTLZod).optional().describe("Teaching Lab role classifications (Coach, Manager, etc.)"),
+  adminLevel: AdminLevelZod.optional(),
+  assignedDistricts: z.array(z.string()).optional().default([]).describe("Array of district names this TL staff member supports"),
+  rolesTL: z.array(RolesTLZod).optional().default([]).describe("Teaching Lab role classifications (Coach, Manager, etc.)"),
 });
 
 // Teaching Lab Staff Full Schema
@@ -201,3 +201,18 @@ export type TeachingLabStaffReference = z.infer<typeof TeachingLabStaffReference
 
 export type Experience = z.infer<typeof ExperienceZodSchema>;
 export type MondayUser = z.infer<typeof MondayUserZodSchema>;
+
+// Add helper for schema-driven defaults
+export function createNYCPSStaffDefaults(overrides: Partial<NYCPSStaffInput> = {}): NYCPSStaffInput {
+  return {
+    ...NYCPSStaffInputZodSchema.parse({}),
+    ...overrides
+  };
+}
+
+export function createTeachingLabStaffDefaults(overrides: Partial<TeachingLabStaffInput> = {}): TeachingLabStaffInput {
+  return {
+    ...TeachingLabStaffInputZodSchema.parse({}),
+    ...overrides
+  };
+}

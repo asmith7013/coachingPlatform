@@ -13,6 +13,7 @@ import {
   RadiusToken
 } from '@/lib/tokens/types'
 import { FieldWrapper } from './FieldWrapper'
+import type { AnyFieldApi } from '@tanstack/react-form';
 
 type CheckboxHTMLProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>;
 
@@ -84,25 +85,7 @@ export type CheckboxVariants = VariantProps<typeof checkbox>;
 /**
  * TanStack Form field integration props (optional)
  */
-interface TanStackFormProps {
-  fieldApi?: {
-    state: {
-      value: unknown;
-      meta: {
-        errors?: string[];
-        isValidating?: boolean;
-        isDirty?: boolean;
-        isTouched?: boolean;
-      };
-    };
-    handleChange: (value: unknown) => void;
-    handleBlur: () => void;
-    name: string;
-  };
-}
-
-// Export the interface
-export interface CheckboxProps extends CheckboxHTMLProps, TanStackFormProps {
+export interface CheckboxProps extends CheckboxHTMLProps {
   label?: string;
   description?: string;
   error?: string;
@@ -111,6 +94,8 @@ export interface CheckboxProps extends CheckboxHTMLProps, TanStackFormProps {
   radius?: RadiusToken;
   disabled?: boolean;
   className?: string;
+  /** TanStack Form field API for advanced integration */
+  fieldApi?: AnyFieldApi;
 }
 
 export function Checkbox({

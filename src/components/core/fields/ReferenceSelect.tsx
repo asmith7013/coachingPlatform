@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useMemo, useCallback, useState, useId } from "react";
+import React, { useMemo, useCallback, useState, useId, useEffect } from "react";
 import Select from "react-select";
 import { Label } from "./Label";
 import { useReferenceData, getEntityTypeFromUrlUtil } from "@query/client/hooks/queries/useReferenceData";
 import { ZodSchema } from "zod";
 import { BaseDocument } from "@core-types/document";
+import type { AnyFieldApi } from "@tanstack/react-form";
 
 export type OptionType = {
   value: string;
@@ -55,6 +56,9 @@ export interface ReferenceSelectProps {
   
   /** Additional className for the container */
   className?: string;
+  
+  /** TanStack Form field API for advanced integration */
+  fieldApi?: AnyFieldApi;
 }
 
 /**
@@ -84,6 +88,14 @@ export function ReferenceSelect({
   
   // Add state for retry attempts
   const [_retryCount, setRetryCount] = useState(0);
+
+  // Add state to track if component has hydrated
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Set hydrated state after mount to prevent SSR mismatch
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
   
   // Determine entity type from URL if not provided
   const derivedEntityType = useMemo(() => 
@@ -141,6 +153,21 @@ export function ReferenceSelect({
     onBlur?.();
   }, [onBlur]);
 
+  // Don't render the Select component until after hydration to prevent mismatch
+  if (!isHydrated) {
+    return (
+      <div className={`space-y-1 ${className}`}>
+        <Label htmlFor={inputId}>{label}</Label>
+        <div className="w-full p-2 border border-gray-300 rounded bg-gray-50 text-gray-500">
+          Loading...
+        </div>
+        {helpText && (
+          <p className="text-sm text-gray-500 mt-1">{helpText}</p>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={`space-y-1 ${className}`}>
       <Label htmlFor={inputId}>{label}</Label>
@@ -171,6 +198,8 @@ export function ReferenceSelect({
           noOptionsMessage={() => options.length === 0 ? "No options available" : "No matching options"}
           className={`w-full ${error ? 'border-destructive' : ''}`}
           classNamePrefix="reference-select"
+          // Add explicit aria attributes to prevent hydration mismatches
+          aria-activedescendant=""
         />
       )}
       

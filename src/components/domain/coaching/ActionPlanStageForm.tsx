@@ -3,23 +3,15 @@
 import React from 'react';
 import { useForm } from '@tanstack/react-form';
 import { FormLayout } from '@components/composed/forms/FormLayout';
-import { useFieldRenderer } from '@/lib/ui/forms/hooks/useFieldRenderer';
-import { stageFieldConfigs } from '@/lib/ui/forms/fieldConfig/coaching/coaching-action-plan-stages';
+import { useFieldRenderer } from '@ui/forms/hooks/useFieldRenderer';
+import { stageFieldConfigs } from '@ui/forms/fieldConfig/coaching/coaching-action-plan-stages';
 import type { Field } from '@ui-types/form';
-import type { 
-  NeedsAndFocus, 
-  Goal, 
-  ImplementationRecord, 
-  EndOfCycleAnalysis 
-} from '@zod-schema/core/cap';
 import { 
-  NeedsAndFocusZodSchema,
-  GoalZodSchema,
-  ImplementationRecordZodSchema,
-  EndOfCycleAnalysisZodSchema
+  CoachingActionPlanFieldsSchema,
+  CoachingActionPlan
 } from '@zod-schema/core/cap';
 
-type StageData = NeedsAndFocus | Goal | ImplementationRecord | EndOfCycleAnalysis;
+type StageData = CoachingActionPlan;
 
 interface ActionPlanStageFormProps<T extends StageData> {
   stage: 1 | 2 | 3 | 4;
@@ -36,25 +28,25 @@ const stageConfig = {
   1: {
     title: 'Stage 1: Needs & Focus',
     description: 'Identify the core instructional focus area based on IPG standards',
-    schema: NeedsAndFocusZodSchema,
+    schema: CoachingActionPlanFieldsSchema,
     fields: stageFieldConfigs[1]
   },
   2: {
     title: 'Stage 2: Goal & Outcomes', 
     description: 'Define SMART goals with measurable teacher and student outcomes',
-    schema: GoalZodSchema,
+    schema: CoachingActionPlanFieldsSchema,
     fields: stageFieldConfigs[2]
   },
   3: {
     title: 'Stage 3: Implementation Record',
     description: 'Document what actually happened during coaching visits',
-    schema: ImplementationRecordZodSchema,
+    schema: CoachingActionPlanFieldsSchema,
     fields: stageFieldConfigs[3]
   },
   4: {
     title: 'Stage 4: End of Cycle Analysis',
     description: 'Analyze goal achievement and plan for next steps',
-    schema: EndOfCycleAnalysisZodSchema,
+    schema: CoachingActionPlanFieldsSchema,
     fields: stageFieldConfigs[4]
   }
 } as const;
@@ -132,25 +124,25 @@ export function ActionPlanStageForm<T extends StageData>({
 
 // Individual stage form components for type safety
 export function NeedsAndFocusForm(
-  props: Omit<ActionPlanStageFormProps<NeedsAndFocus>, 'stage'>
+  props: Omit<ActionPlanStageFormProps<CoachingActionPlan>, 'stage'>
 ) {
-  return <ActionPlanStageForm<NeedsAndFocus> stage={1} {...props} />;
+  return <ActionPlanStageForm<CoachingActionPlan> stage={1} {...props} />;
 }
 
 export function GoalForm(
-  props: Omit<ActionPlanStageFormProps<Goal>, 'stage'>
+  props: Omit<ActionPlanStageFormProps<CoachingActionPlan>, 'stage'>
 ) {
-  return <ActionPlanStageForm<Goal> stage={2} {...props} />;
+  return <ActionPlanStageForm<CoachingActionPlan> stage={2} {...props} />;
 }
 
 export function ImplementationRecordForm(
-  props: Omit<ActionPlanStageFormProps<ImplementationRecord>, 'stage'>
+  props: Omit<ActionPlanStageFormProps<CoachingActionPlan>, 'stage'>
 ) {
-  return <ActionPlanStageForm<ImplementationRecord> stage={3} {...props} />;
+  return <ActionPlanStageForm<CoachingActionPlan> stage={3} {...props} />;
 }
 
 export function EndOfCycleAnalysisForm(
-  props: Omit<ActionPlanStageFormProps<EndOfCycleAnalysis>, 'stage'>
+  props: Omit<ActionPlanStageFormProps<CoachingActionPlan>, 'stage'>
 ) {
-  return <ActionPlanStageForm<EndOfCycleAnalysis> stage={4} {...props} />;
+  return <ActionPlanStageForm<CoachingActionPlan> stage={4} {...props} />;
 } 

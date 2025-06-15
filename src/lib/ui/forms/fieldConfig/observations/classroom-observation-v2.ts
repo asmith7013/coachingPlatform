@@ -1,14 +1,14 @@
-import { ClassroomObservationV2InputZodSchema, ClassroomObservationV2Input } from '@zod-schema/observations/classroom-observation-v2';
+import { ClassroomObservationInputZodSchema, ClassroomObservationInput } from '@/lib/schema/zod-schema/visits/classroom-observation';
 
-export type ClassroomObservationV2FieldConfig = {
-  name: keyof ClassroomObservationV2Input;
+export type ClassroomObservationFieldConfig = {
+  name: keyof ClassroomObservationInput;
   label: string;
   type: 'text' | 'date' | 'checkbox' | 'select' | 'textarea' | 'reference';
   required: boolean;
   options?: { value: string; label: string }[];
 };
 
-export const classroomObservationV2FieldConfig: ClassroomObservationV2FieldConfig[] = [
+export const classroomObservationFieldConfig: ClassroomObservationFieldConfig[] = [
   {
     name: 'cycle',
     label: 'Cycle',
@@ -119,4 +119,4 @@ export const classroomObservationV2FieldConfig: ClassroomObservationV2FieldConfi
   },
 ];
 
-export const classroomObservationV2Schema = ClassroomObservationV2InputZodSchema; 
+export const classroomObservationSchema = ClassroomObservationInputZodSchema; 

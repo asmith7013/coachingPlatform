@@ -9,7 +9,7 @@ import {
   CheckIcon 
 } from '@heroicons/react/24/outline';
 import { createCoachingActionPlan } from '@actions/coaching/coaching-action-plans';
-import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
+import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/cap';
 
 interface CreateCoachingActionPlanDialogProps {
   open: boolean;
@@ -74,11 +74,11 @@ export function CreateCoachingActionPlanDialog({
         academicYear: formData.academicYear?.trim() || '2024-2025',
         startDate: formData.startDate || new Date(),
         
-        // Required fields with valid placeholder values (not empty strings)
+        // Required fields with valid placeholder values
         teachers: [],
         coaches: [],
-        school: 'PS 175', // Valid non-empty value
-        owners: [],
+        school: 'PS 175',
+        ownerIds: [],
         status: 'draft',
         cycleLength: 3,
         
@@ -87,7 +87,7 @@ export function CreateCoachingActionPlanDialog({
           ipgCoreAction: 'CA1',
           ipgSubCategory: 'CA1A',
           rationale: 'Initial focus area - to be completed during planning phase',
-          // pdfAttachment is optional and can be omitted
+          pdfAttachment: ''
         },
         
         goal: {
@@ -99,6 +99,17 @@ export function CreateCoachingActionPlanDialog({
         // Required arrays that can start empty
         weeklyPlans: [],
         implementationRecords: [],
+        
+        // Optional end of cycle analysis
+        endOfCycleAnalysis: {
+          goalMet: false,
+          teacherOutcomeAnalysis: [],
+          studentOutcomeAnalysis: [],
+          impactOnLearning: '',
+          overallEvidence: [],
+          lessonsLearned: '',
+          recommendationsForNext: ''
+        }
       };
 
       const result = await createCoachingActionPlan(coachingActionPlanData);

@@ -97,17 +97,108 @@ export async function fetchEntity(id: string) {
 
 **[RULE]** Always use input schemas for creation and update operations, and full schemas for reading operations.
 
-## Type Generation
+## BaseDocument Integration Pattern
 
-Always generate TypeScript types from your schemas:
+All schemas now extend from `BaseDocumentSchema` to ensure consistent document structure and eliminate duplication across entity definitions.
+
+### BaseDocument Schema Structure
 
 ```typescript
-// Auto-generate TypeScript types
-export type EntityInput = z.infer<typeof EntityInputZodSchema>;
-export type Entity = z.infer<typeof EntityZodSchema>;
+// Core base document with common fields
+export const BaseDocumentSchema = z.object({
+  _id: z.string(),
+  owners: z.array(z.string()).describe("User IDs with ownership permissions"),
+  createdAt: z.string().optional().describe("ISO timestamp"),
+  updatedAt: z.string().optional().describe("ISO timestamp"),
+});
+
+// Utility to create input schemas by removing system fields
+export function toInputSchema<T extends z.ZodRawShape>(schema: z.ZodObject<T>) {
+  return schema.omit({
+    _id: true,
+    createdAt: true,
+    updatedAt: true,
+  });
+}
 ```
 
-**[RULE]** Use `z.infer<typeof SchemaName>` to generate types from schemas.
+### Entity Schema Implementation
+
+All entity schemas follow this standardized pattern:
+
+```typescript
+// 1. Define entity-specific fields
+export const EntityFieldsSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  // Additional entity-specific fields...
+});
+
+// 2. Create full schema by merging with BaseDocument
+export const EntityZodSchema = BaseDocumentSchema.merge(EntityFieldsSchema);
+
+// 3. Generate input schema using utility
+export const EntityInputZodSchema = toInputSchema(EntityZodSchema);
+
+// 4. Create client schema for Next.js serialization (when needed)
+export const EntityClientZodSchema = EntityZodSchema.extend({
+  createdAt: z.string().optional().describe("ISO string from Next.js serialization"),
+  updatedAt: z.string().optional().describe("ISO string from Next.js serialization"),
+});
+```
+
+### Reference Schema Pattern
+
+For entities used in dropdowns and selection components, implement reference schemas:
+
+```typescript
+// Reference schema extends base reference with entity-specific fields
+export const EntityReferenceZodSchema = BaseReferenceZodSchema.merge(
+  EntityFieldsSchema
+    .pick({
+      name: true,
+      category: true,
+    })
+    .partial() // Make picked fields optional
+).extend({
+  // Add computed/derived fields
+  itemCount: z.number().optional().describe("Number of related items"),
+});
+
+// Create transformer functions for reference conversion
+export const entityToReference = createReferenceTransformer<Entity, EntityReference>(
+  (entity: Entity) => entity.name, // Label function
+  (entity: Entity) => ({ // Additional fields function
+    name: entity.name,
+    category: entity.category,
+    itemCount: entity.relatedItems?.length || 0,
+  }),
+  EntityReferenceZodSchema // Validation schema
+);
+```
+
+**Benefits of BaseDocument Integration:**
+- **Consistency**: All entities have the same base structure
+- **Type Safety**: Automatic inheritance of common fields
+- **Maintainability**: Changes to base fields apply to all entities
+- **DRY Principle**: No duplication of common field definitions
+- **Reference Support**: Standardized pattern for dropdown/selection components
+
+**[RULE]** All new entity schemas must extend BaseDocumentSchema and use the toInputSchema utility for input schemas.
+
+## Type Generation
+
+Always generate TypeScript types from your schemas, leveraging the BaseDocument pattern:
+
+```typescript
+// Auto-generate TypeScript types from schemas
+export type EntityInput = z.infer<typeof EntityInputZodSchema>;
+export type Entity = z.infer<typeof EntityZodSchema>;
+export type EntityClient = z.infer<typeof EntityClientZodSchema>; // When needed
+export type EntityReference = z.infer<typeof EntityReferenceZodSchema>; // For dropdowns
+```
+
+**[RULE]** Use `z.infer<typeof SchemaName>` to generate types from schemas, ensuring all schemas follow the BaseDocument pattern.
 
 ## MongoDB Model Integration
 

@@ -74,9 +74,11 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
         schoolNumber: schoolData.schoolNumber || '',
         district: schoolData.district || '',
         schoolName: schoolData.schoolName || '',
+        emoji: schoolData.emoji || '',
+        address: schoolData.address || '',
       };
 
-      await createSchool(schoolDataWithRequiredFields);
+      createSchool(schoolDataWithRequiredFields);
       alert('School created successfully!');
       handleClose();
     } catch (error) {

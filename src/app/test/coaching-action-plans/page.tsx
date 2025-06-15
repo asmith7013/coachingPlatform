@@ -7,10 +7,10 @@ import { Badge } from '@/components/core/feedback/Badge';
 import { Select } from '@/components/core/fields/Select';
 
 import {
-  CoachingActionPlanV2,
-  CoachingActionPlanV2Input,
-  createCoachingActionPlanV2Defaults
-} from '@zod-schema/cap/coaching-action-plan-v2';
+  CoachingActionPlan,
+  CoachingActionPlanInput,
+  createCoachingActionPlanDefaults
+} from '@/lib/schema/zod-schema/cap/coaching-action-plan';
 import { useCoachingActionPlans } from '@/hooks/domain';
 import { Alert } from '@/components/core/feedback/Alert';
 
@@ -28,18 +28,18 @@ interface TestResult {
 interface TestState {
   results: TestResult[];
   isLoading: boolean;
-  testPlan: CoachingActionPlanV2Input | null;
+  testPlan: CoachingActionPlanInput | null;
   selectedPlanId: string | null;
-  plans: CoachingActionPlanV2[];
+  plans: CoachingActionPlan[];
 }
 
 // =====================================
 // MOCK DATA FACTORY
 // =====================================
 
-function generateTestPlan(): CoachingActionPlanV2Input {
+function generateTestPlan(): CoachingActionPlanInput {
   const timestamp = Date.now();
-  const basePlan = createCoachingActionPlanV2Defaults({
+  const basePlan = createCoachingActionPlanDefaults({
     userId: 'test-user-id',
     schoolId: '507f1f77bcf86cd799439013',
     teacherId: '507f1f77bcf86cd799439011',
@@ -48,9 +48,9 @@ function generateTestPlan(): CoachingActionPlanV2Input {
   });
   return {
     ...basePlan,
-    title: `Test CAP V2 ${timestamp}`,
-    rationale: 'Test rationale using V2 flattened schema',
-    goalDescription: 'Test goal description for V2 structure',
+    title: `Test CAP  ${timestamp}`,
+    rationale: 'Test rationale using  flattened schema',
+    goalDescription: 'Test goal description for  structure',
     startDate: new Date('2024-02-01').toISOString(),
     endDate: new Date('2024-05-01').toISOString(),
     cycleLength: 3,
@@ -125,7 +125,7 @@ export default function CoachingActionPlanCRUDTest() {
       const testPlan = generateTestPlan();
       setState(prev => ({ ...prev, testPlan }));
       
-      const result = await createAsync?.(testPlan as CoachingActionPlanV2);
+      const result = await createAsync?.(testPlan as CoachingActionPlan);
       
       setState(prev => ({ 
         ...prev,
@@ -146,10 +146,10 @@ export default function CoachingActionPlanCRUDTest() {
       return;
     }
     try {
-      const updateData: Partial<CoachingActionPlanV2Input> = {
-        title: `Updated Plan V2 ${Date.now()}`,
+      const updateData: Partial<CoachingActionPlanInput> = {
+        title: `Updated Plan  ${Date.now()}`,
         status: 'active',
-        goalDescription: 'Updated goal description using V2 schema'
+        goalDescription: 'Updated goal description using  schema'
       };
       const result = await updateAsync?.(state.selectedPlanId, updateData);
       addResult('UPDATE', true, result);
@@ -328,7 +328,7 @@ export default function CoachingActionPlanCRUDTest() {
           {/* Test Plan Preview */}
           {state.testPlan && (
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold">Last Generated Test Plan (V2 Schema)</h3>
+              <h3 className="text-lg font-semibold">Last Generated Test Plan ( Schema)</h3>
               <div className="max-h-60 overflow-y-auto border rounded p-2">
                 <div className="space-y-2 text-sm">
                   <div><strong>Title:</strong> {state.testPlan.title}</div>
@@ -387,7 +387,7 @@ export default function CoachingActionPlanCRUDTest() {
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
             <h4 className="font-semibold text-blue-800">Updated Infrastructure Used:</h4>
             <ul className="mt-2 text-sm text-blue-700 space-y-1">
-              <li>✅ CoachingActionPlanV2 Schema (flattened structure)</li>
+              <li>✅ CoachingActionPlan Schema (flattened structure)</li>
               <li>✅ Domain hooks with CRUD factory pattern</li>
               <li>✅ Server actions with CRUD factory</li>
               <li>✅ Proper error handling with domain hooks</li>

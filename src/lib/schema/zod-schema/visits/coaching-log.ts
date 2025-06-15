@@ -11,20 +11,20 @@ import { getTotalDurationMinutes, hasMicroPL, hasModel } from "@schema/reference
 
 // Coaching Log Fields Schema
 export const CoachingLogFieldsSchema = z.object({
-  reasonDone: ReasonDoneZod.describe("Why coaching was completed: Full completion or early termination"),
-  microPLTopic: z.string().optional(),
-  microPLDuration: z.number().optional().describe("Duration in minutes for micro professional learning session"),
-  modelTopic: z.string().optional(),
-  modelDuration: z.number().optional().describe("Duration in minutes for modeling session"),
-  adminMeet: z.boolean().optional().describe("Whether administrator joined the coaching session"),
-  adminMeetDuration: z.number().optional().describe("Duration in minutes of administrator participation"),
-  NYCDone: z.boolean().optional().describe("Whether NYC-specific coaching requirements were met"),
-  totalDuration: TotalDurationZod.describe("Total session duration: 30min, 45min, 60min, or 90min"),
-  solvesTouchpoint: SolvesTouchpointZod.describe("Type of coaching support: Teacher, Leader, or Combined"),
-  primaryStrategy: z.string(),
-  solvesSpecificStrategy: z.string(),
-  aiSummary: z.string().optional(),
-  visitId: z.string().optional().describe("Reference to Visit document _id this log belongs to"),
+  reasonDone: ReasonDoneZod.default(ReasonDoneZod.options[0]).describe("Why coaching was completed: Full completion or early termination"),
+  microPLTopic: z.string().optional().default(''),
+  microPLDuration: z.number().optional().default(0).describe("Duration in minutes for micro professional learning session"),
+  modelTopic: z.string().optional().default(''),
+  modelDuration: z.number().optional().default(0).describe("Duration in minutes for modeling session"),
+  adminMeet: z.boolean().optional().default(false).describe("Whether administrator joined the coaching session"),
+  adminMeetDuration: z.number().optional().default(0).describe("Duration in minutes of administrator participation"),
+  NYCDone: z.boolean().optional().default(false).describe("Whether NYC-specific coaching requirements were met"),
+  totalDuration: TotalDurationZod.default(TotalDurationZod.options[0]).describe("Total session duration: 30min, 45min, 60min, or 90min"),
+  solvesTouchpoint: SolvesTouchpointZod.default(SolvesTouchpointZod.options[0]).describe("Type of coaching support: Teacher, Leader, or Combined"),
+  primaryStrategy: z.string().default(''),
+  solvesSpecificStrategy: z.string().default(''),
+  aiSummary: z.string().optional().default(''),
+  visitId: z.string().optional().default('').describe("Reference to Visit document _id this log belongs to"),
 });
 
 // Coaching Log Full Schema
@@ -79,3 +79,11 @@ export const coachingLogsToReferences = createArrayTransformer<CoachingLog, Coac
 export type CoachingLogInput = z.infer<typeof CoachingLogInputZodSchema>;
 export type CoachingLog = z.infer<typeof CoachingLogZodSchema>;
 export type CoachingLogReference = z.infer<typeof CoachingLogReferenceZodSchema>;
+
+// Add helper for schema-driven defaults
+export function createCoachingLogDefaults(overrides: Partial<CoachingLogInput> = {}): CoachingLogInput {
+  return {
+    ...CoachingLogInputZodSchema.parse({}),
+    ...overrides
+  };
+}

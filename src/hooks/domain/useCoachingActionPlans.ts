@@ -1,5 +1,8 @@
 import { createCrudHooks } from '@query/client/factories/crud-factory';
-import { CoachingActionPlanV2ZodSchema, CoachingActionPlanV2 } from '@zod-schema/cap/coaching-action-plan-v2';
+import { 
+  CoachingActionPlanZodSchema, 
+  CoachingActionPlan
+} from '@/lib/schema/zod-schema/cap/coaching-action-plan';
 import { ZodSchema } from 'zod';
 import { 
   fetchCoachingActionPlans,
@@ -7,11 +10,11 @@ import {
   createCoachingActionPlan,
   updateCoachingActionPlan,
   deleteCoachingActionPlan
-} from "@app/actions/coaching/coaching-action-plans";
+} from "@actions/coaching/coaching-action-plans";
 
 const coachingActionPlanHooks = createCrudHooks({
   entityType: 'coachingActionPlans',
-  schema: CoachingActionPlanV2ZodSchema as ZodSchema<CoachingActionPlanV2>,
+  schema: CoachingActionPlanZodSchema as ZodSchema<CoachingActionPlan>,
   serverActions: {
     fetch: fetchCoachingActionPlans,
     fetchById: fetchCoachingActionPlanById,
@@ -19,8 +22,8 @@ const coachingActionPlanHooks = createCrudHooks({
     update: updateCoachingActionPlan,
     delete: deleteCoachingActionPlan
   },
-  validSortFields: ['title', 'status', 'startDate', 'academicYear', 'createdAt'],
-  relatedEntityTypes: ['schools', 'staff', 'capMetrics', 'capEvidence', 'capOutcomes', 'capWeeklyPlans', 'capImplementationRecords']
+  validSortFields: ['title', 'status', 'startDate', 'academicYear', 'createdAt', 'updatedAt'],
+  relatedEntityTypes: ['schools', 'staff']
 });
 
 export const useCoachingActionPlans = {

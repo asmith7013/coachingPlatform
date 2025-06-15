@@ -323,6 +323,19 @@ export enum SolvesTouchpoint {
   TEACHER_OR_LEADER = "Teacher OR teacher & leader support",
 }
 
+/**
+ * Academic Years
+ */
+export enum AcademicYears {
+  YEAR_2021_2022 = "2021-2022",
+  YEAR_2022_2023 = "2022-2023", 
+  YEAR_2023_2024 = "2023-2024",
+  YEAR_2024_2025 = "2024-2025",
+  YEAR_2025_2026 = "2025-2026",
+  YEAR_2026_2027 = "2026-2027",
+  YEAR_2027_2028 = "2027-2028",
+}
+
 // =====================================
 // HELPER FUNCTIONS
 // =====================================
@@ -458,6 +471,18 @@ export type TotalDurationType = z.infer<typeof TotalDurationZod>;
 // SOLVES Touchpoint
 export const SolvesTouchpointZod = createZodEnum(SolvesTouchpoint);
 export type SolvesTouchpointType = z.infer<typeof SolvesTouchpointZod>;
+
+// Academic Year
+export const AcademicYearZod = z.enum([
+  AcademicYears.YEAR_2021_2022,
+  AcademicYears.YEAR_2022_2023,
+  AcademicYears.YEAR_2023_2024,
+  AcademicYears.YEAR_2024_2025,
+  AcademicYears.YEAR_2025_2026,
+  AcademicYears.YEAR_2026_2027,
+  AcademicYears.YEAR_2027_2028,
+]);
+export type AcademicYear = z.infer<typeof AcademicYearZod>;
 
 // =====================================
 // MONGOOSE MODEL EXPORTS

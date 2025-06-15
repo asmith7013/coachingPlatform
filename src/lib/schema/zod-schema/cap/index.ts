@@ -1,5 +1,5 @@
-// Central export file for all CAP V2 schemas
-export * from './coaching-action-plan-v2';
+// Central export file for all CAP  schemas
+export * from './coaching-action-plan';
 export * from './cap-metric';
 export * from './cap-evidence';
 export * from './cap-outcome';

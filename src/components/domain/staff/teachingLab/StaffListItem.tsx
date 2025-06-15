@@ -7,19 +7,15 @@ import { Card } from '@composed-components/cards/Card'
 import { Button } from '@core-components/Button'
 import { Dialog } from '@composed-components/dialogs/Dialog'
 import { FormLayout } from '@components/composed/forms/FormLayout';
-import { useFieldRenderer } from '@/lib/ui/forms/hooks/useFieldRenderer';
-import type { Field } from '@ui-types/form'
-import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'
-import { NYCPSStaffFieldConfig } from '@forms/fieldConfig/staff/nycps-staff';
-import { TeachingLabStaffFieldConfig } from '@forms/fieldConfig/staff/teaching-lab-staff';
 import { useForm } from '@tanstack/react-form';
-import { NYCPSStaffInputZodSchema, TeachingLabStaffInputZodSchema } from '@zod-schema/core/staff';
+import { Input } from '@components/core/fields/Input';
+import { Textarea } from '@components/core/fields/Textarea';
+import { NYCPSStaff, NYCPSStaffInputZodSchema, StaffMember, TeachingLabStaffInputZodSchema } from '@zod-schema/core/staff';
 
-type StaffMember = NYCPSStaff | TeachingLabStaff
 type StaffType = 'nycps' | 'tl'
 
 export interface StaffListItemProps {
-  staff: StaffMember
+  staff: NYCPSStaff
   staffType?: StaffType
   className?: string
   onUpdate?: (updatedStaff: StaffMember) => void
@@ -33,12 +29,6 @@ export function StaffListItem({
 }: StaffListItemProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
-  const { renderField } = useFieldRenderer<StaffMember>();
-
-  // Determine which field config to use based on staff type
-  const fieldConfig = staffType === 'nycps' 
-    ? NYCPSStaffFieldConfig 
-    : TeachingLabStaffFieldConfig
 
   const _handleSubmit = async (formData: Record<string, unknown>) => {
     if (onUpdate) {
@@ -52,35 +42,22 @@ export function StaffListItem({
 
   // Create form instance for editing staff - modern TanStack Form v1+ approach
   const editStaffForm = useForm({
-    defaultValues: staff as Record<string, unknown>,
-    // Native Zod schema validation - no adapter needed in v1+
+    defaultValues: staffType === 'nycps'
+      ? NYCPSStaffInputZodSchema.parse(staff)
+      : TeachingLabStaffInputZodSchema.parse(staff),
     validators: {
-      onChange: staffType === 'nycps' ? NYCPSStaffInputZodSchema : TeachingLabStaffInputZodSchema,
+      onChange: (value) => {
+        const result = staffType === 'nycps'
+          ? NYCPSStaffInputZodSchema.safeParse(value)
+          : TeachingLabStaffInputZodSchema.safeParse(value);
+        if (!result.success) throw result.error;
+      }
     },
     onSubmit: async ({ value }) => {
       await _handleSubmit(value);
     },
   });
 
-  // Function to render a single field value
-  const renderFieldValue = (key: string, value: unknown) => {
-    if (value === undefined || value === null) {
-      return <span className="text-gray-400 italic">Not provided</span>
-    }
-
-    if (Array.isArray(value)) {
-      if (value.length === 0) {
-        return <span className="text-gray-400 italic">None</span>
-      }
-      return value.join(', ')
-    }
-
-    if (typeof value === 'boolean') {
-      return value ? 'Yes' : 'No'
-    }
-
-    return String(value)
-  }
 
   // Cancel handler for edit mode
   const handleCancel = () => {
@@ -102,7 +79,7 @@ export function StaffListItem({
             
             {staffType === 'nycps' && 'subjects' in staff && (
               <div className="flex flex-wrap gap-1 mt-2">
-                {staff.subjects.slice(0, 3).map((subject, index) => (
+                {staff.subjects.slice(0, 3).map((subject: string, index: number) => (
                   <span 
                     key={index} 
                     className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20"
@@ -118,9 +95,9 @@ export function StaffListItem({
               </div>
             )}
             
-            {staffType === 'tl' && 'rolesTL' in staff && staff.rolesTL && (
+            {/* {staffType === 'tl' && 'rolesTL' in staff && staff.rolesTL && (
               <div className="flex flex-wrap gap-1 mt-2">
-                {staff.rolesTL.slice(0, 3).map((role, index) => (
+                {staff.rolesTL.slice(0, 3).map((role: string, index: number) => (
                   <span 
                     key={index} 
                     className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/20"
@@ -134,7 +111,7 @@ export function StaffListItem({
                   </span>
                 )}
               </div>
-            )}
+            )} */}
           </div>
           
           <div className="flex items-center space-x-2">
@@ -178,35 +155,57 @@ export function StaffListItem({
               }}
               className="space-y-4"
             >
-              {(fieldConfig as Field<StaffMember>[]).map((fieldConfig) => (
-                <div key={String(fieldConfig.name)} className="space-y-2">
-                  <label
-                    htmlFor={String(fieldConfig.name)}
-                    className="text-sm font-medium leading-none"
-                  >
-                    {fieldConfig.label}
-                  </label>
-                  
-                  <editStaffForm.Field name={String(fieldConfig.name)}>
-                    {(field) => renderField(fieldConfig, field)}
-                  </editStaffForm.Field>
-                </div>
-              ))}
+              {/* Explicit field rendering for NYCPSStaff */}
+              {staffType === 'nycps' && <>
+                <editStaffForm.Field name="staffName">{(field) => <Input fieldApi={field} label="Name" />}</editStaffForm.Field>
+                <editStaffForm.Field name="email">{(field) => <Input fieldApi={field} label="Email" />}</editStaffForm.Field>
+                <editStaffForm.Field name="subjects">{(field) => <Textarea fieldApi={field} label="Subjects" />}</editStaffForm.Field>
+                {/* Add more fields as needed for NYCPSStaff */}
+              </>}
+              {/* Explicit field rendering for TeachingLabStaff */}
+              {staffType === 'tl' && <>
+                <editStaffForm.Field name="staffName">{(field) => <Input fieldApi={field} label="Name" />}</editStaffForm.Field>
+                <editStaffForm.Field name="email">{(field) => <Input fieldApi={field} label="Email" />}</editStaffForm.Field>
+                <editStaffForm.Field name="rolesTL">{(field) => <Textarea fieldApi={field} label="Roles" />}</editStaffForm.Field>
+                {/* Add more fields as needed for TeachingLabStaff */}
+              </>}
             </form>
           </FormLayout>
         ) : (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {fieldConfig.map((field: Field<StaffMember>) => (
-                <div key={String(field.name)} className="mb-4">
-                  <Text textSize="sm" weight="semibold" className="block mb-1">
-                    {field.label}
-                  </Text>
-                  <Text textSize="base">
-                    {renderFieldValue(String(field.name), (staff as Record<string, unknown>)[String(field.name)])}
-                  </Text>
+              {/* Explicit field rendering for NYCPSStaff */}
+              {staffType === 'nycps' && <>
+                <div className="mb-4">
+                  <Text textSize="sm" weight="semibold" className="block mb-1">Name</Text>
+                  <span>{staff.staffName}</span>
                 </div>
-              ))}
+                <div className="mb-4">
+                  <Text textSize="sm" weight="semibold" className="block mb-1">Email</Text>
+                  <span>{staff.email}</span>
+                </div>
+                <div className="mb-4">
+                  <Text textSize="sm" weight="semibold" className="block mb-1">Subjects</Text>
+                  <span>{Array.isArray(staff.subjects) ? staff.subjects.join(', ') : staff.subjects}</span>
+                </div>
+                {/* Add more fields as needed for NYCPSStaff */}
+              </>}
+              {/* Explicit field rendering for TeachingLabStaff */}
+              {staffType === 'tl' && <>
+                <div className="mb-4">
+                  <Text textSize="sm" weight="semibold" className="block mb-1">Name</Text>
+                  <span>{staff.staffName}</span>
+                </div>
+                <div className="mb-4">
+                  <Text textSize="sm" weight="semibold" className="block mb-1">Email</Text>
+                  <span>{staff.email}</span>
+                </div>
+                <div className="mb-4">
+                  <Text textSize="sm" weight="semibold" className="block mb-1">Roles</Text>
+                  {/* <span>{Array.isArray(staff.rolesTL) ? staff.rolesTL.join(', ') : staff.rolesTL}</span> */}
+                </div>
+                {/* Add more fields as needed for TeachingLabStaff */}
+              </>}
             </div>
             
             <div className="flex justify-end space-x-3 mt-6">

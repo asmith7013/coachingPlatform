@@ -1,6 +1,6 @@
 import { createApiSafeFetcher } from "@server/fetchers/fetcher-factory";
 import { fetchById } from "@server/fetchers/fetch-by-id";
-import { CoachingActionPlanModel } from "@mongoose-schema/core/coaching-action-plan.model";
+import { CoachingActionPlanModel } from "@/lib/schema/mongoose-schema/core/cap.core.model";
 import { CollectionResponse } from "@/lib/types/core/response";
 import { QueryParams } from "@/lib/types/core/query";
 

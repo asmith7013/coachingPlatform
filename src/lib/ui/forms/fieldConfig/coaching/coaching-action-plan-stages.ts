@@ -1,10 +1,9 @@
 import type { Field } from '@ui-types/form';
 import type { 
-  NeedsAndFocus,
-  Goal,
   ImplementationRecord,
-  EndOfCycleAnalysis
-} from '@zod-schema/core/cap';
+  CoachingActionPlan
+} from '@zod-schema/cap';
+import { IPGCoreActionZod, IPGSubCategoryZod } from '@zod-schema/cap';
 
 /**
  * Simple field configurations for Coaching Action Plan stages
@@ -12,54 +11,41 @@ import type {
  */
 
 // Stage 1: Needs & Focus
-export const NeedsAndFocusFieldConfig: Field<NeedsAndFocus>[] = [
+export const CoachingActionPlanFieldConfig: Field<CoachingActionPlan>[] = [
   {
     name: "ipgCoreAction",
     label: "IPG Core Action",
     type: "select",
-    options: [
-      { value: "CA1", label: "Core Action 1" },
-      { value: "CA2", label: "Core Action 2" },
-      { value: "CA3", label: "Core Action 3" }
-    ]
+    options: IPGCoreActionZod.options.map(option => ({ value: option, label: option }))
   },
   {
     name: "ipgSubCategory",
     label: "IPG Sub-Category",
     type: "select",
-    options: [
-      { value: "CA1A", label: "CA1A" },
-      { value: "CA1B", label: "CA1B" },
-      { value: "CA1C", label: "CA1C" },
-      { value: "CA2A", label: "CA2A" },
-      { value: "CA2B", label: "CA2B" },
-      { value: "CA3A", label: "CA3A" },
-      { value: "CA3B", label: "CA3B" },
-      { value: "CA3C", label: "CA3C" },
-      { value: "CA3D", label: "CA3D" },
-      { value: "CA3E", label: "CA3E" }
-    ]
+    options: IPGSubCategoryZod.options.map(option => ({ value: option, label: option }))
   },
   {
     name: "rationale",
     label: "Rationale",
     type: "textarea",
-    placeholder: "Explain why this focus area was selected...",
+    placeholder: "Explain why this focus area was selected based on teacher needs and observations...",
   },
   {
     name: "pdfAttachment",
-    label: "Supporting Document",
-    type: "text",
+    label: "Supporting Documentation (Optional)",
+    type: "file",
+    // accept: ".pdf",
+    placeholder: "Upload supporting PDF document"
   }
 ];
 
 // Stage 2: Goal & Outcomes
-export const GoalFieldConfig: Field<Goal>[] = [
+export const GoalFieldConfig: Field<CoachingActionPlan>[] = [
   {
-    name: "description",
-    label: "SMART Goal Statement",
+    name: "goalDescription",
+    label: "Primary Goal Description",
     type: "textarea",
-    placeholder: "Write a specific, measurable, achievable, relevant, and time-bound goal...",
+    placeholder: "Describe the main goal for this coaching cycle...",
   },
   {
     name: "teacherOutcomes",
@@ -118,7 +104,7 @@ export const ImplementationRecordFieldConfig: Field<ImplementationRecord>[] = [
 ];
 
 // Stage 4: End of Cycle Analysis
-export const EndOfCycleAnalysisFieldConfig: Field<EndOfCycleAnalysis>[] = [
+export const EndOfCycleAnalysisFieldConfig: Field<CoachingActionPlan>[] = [
   {
     name: "goalMet",
     label: "Goal Achievement",
@@ -153,14 +139,18 @@ export const EndOfCycleAnalysisFieldConfig: Field<EndOfCycleAnalysis>[] = [
 
 // Combined configuration for stage selection
 export const stageFieldConfigs = {
-  1: NeedsAndFocusFieldConfig,
+  1: CoachingActionPlanFieldConfig,
   2: GoalFieldConfig,
   3: ImplementationRecordFieldConfig,
   4: EndOfCycleAnalysisFieldConfig
 } as const;
 
 // Aliases for backward compatibility
-export const needsAndFocusFields = NeedsAndFocusFieldConfig;
+export const needsAndFocusFields = CoachingActionPlanFieldConfig;
 export const goalFields = GoalFieldConfig;
 export const implementationRecordFields = ImplementationRecordFieldConfig;
-export const endOfCycleAnalysisFields = EndOfCycleAnalysisFieldConfig; 
+export const endOfCycleAnalysisFields = EndOfCycleAnalysisFieldConfig;
+
+  export const WeeklyVisitPlanFieldConfig: Field<CoachingActionPlan>[] = [
+  // Define fields for weekly plan stage as needed
+]; 

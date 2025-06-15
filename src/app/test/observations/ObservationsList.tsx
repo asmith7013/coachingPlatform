@@ -4,18 +4,18 @@ import React from 'react';
 import { Card } from '@/components/composed/cards';
 import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
-import { ClassroomObservationV2 } from '@zod-schema/observations/classroom-observation-v2';
+import { ClassroomObservation } from '@/lib/schema/zod-schema/visits/classroom-observation';
 import { ObservationCard } from './ObservationCard';
 import { SkeletonContainer } from '@/components/composed/feedback/SkeletonContainer';
 import { ObservationListSkeleton } from '@/components/domain/observations/ObservationListSkeleton';
 
 interface ObservationsListProps {
-  observations: ClassroomObservationV2[];
+  observations: ClassroomObservation[];
   isLoading: boolean;
   error?: string;
-  onEdit: (observation: ClassroomObservationV2) => void;
+  onEdit: (observation: ClassroomObservation) => void;
   onDelete: (id: string) => void;
-  onView?: (observation: ClassroomObservationV2) => void;
+  onView?: (observation: ClassroomObservation) => void;
   deletingIds?: string[];
 }
 

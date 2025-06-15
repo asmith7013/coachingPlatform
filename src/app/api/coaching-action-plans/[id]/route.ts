@@ -8,7 +8,7 @@ import {
   createEntityResponse, 
   createMonitoredErrorResponse 
 } from "@server/api/responses/action-response-helper";
-import { CoachingActionPlanInputZodSchema } from "@zod-schema/core/cap";
+import { CoachingActionPlanInputZodSchema } from "@zod-schema/cap";
 
 export async function GET(
   request: NextRequest,

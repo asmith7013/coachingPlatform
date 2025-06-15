@@ -1,7 +1,7 @@
 import type { Field } from '@ui-types/form';
-import type { NeedsAndFocus } from '@zod-schema/core/cap';
+import type { CoachingActionPlan } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
 
-export const NeedsAndFocusFieldConfig: Field<NeedsAndFocus>[] = [
+export const CoachingActionPlanFieldConfig: Field<CoachingActionPlan>[] = [
   {
     name: "ipgCoreAction",
     label: "IPG Core Action", 

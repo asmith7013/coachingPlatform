@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/core/Button';
-import { Select } from '@/components/core/fields/Select';
-import { Dialog } from '@/components/composed/dialogs/Dialog';
-import { Text } from '@/components/core/typography/Text';
-import { Badge } from '@/components/core/feedback/Badge';
+import { Button } from '@components/core/Button';
+import { Select } from '@components/core/fields/Select';
+import { Dialog } from '@components/composed/dialogs/Dialog';
+import { Text } from '@components/core/typography/Text';
+import { Badge } from '@components/core/feedback/Badge';
 import { ArrowRight as _ArrowRightIcon, AlertCircle } from 'lucide-react';
-import { statusWorkflow, getStatusColor, getStatusLabel, type PlanStatus } from '@/lib/data-processing/transformers/utils/coaching-action-plan-utils';
+import { statusWorkflow, getStatusColor, getStatusLabel, type PlanStatus } from '@data-processing/transformers/utils/coaching-action-plan-utils';
 import type { CoachingActionPlan } from '@zod-schema/core/cap';
 
 interface StatusTransitionButtonProps {

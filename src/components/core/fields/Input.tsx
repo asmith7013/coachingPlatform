@@ -6,12 +6,13 @@ import {
   paddingY, 
   radii, 
   borderWidths,
-} from '@/lib/tokens/tokens'
+} from '@ui-tokens/tokens'
 
 
 import { backgroundColors, borderColors, ringColors, textColors } from '@/lib/tokens/colors';
 import { FieldWrapper } from './FieldWrapper';
 import type { FieldComponentProps } from '@/lib/types/core/token';
+import type { AnyFieldApi } from '@tanstack/react-form';
 
 const input = tv({
   slots: {
@@ -66,30 +67,10 @@ const input = tv({
 export type InputVariants = VariantProps<typeof input>
 type InputHTMLProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>
 
-/**
- * TanStack Form field integration props (optional)
- * When provided, the component integrates with TanStack Form field state
- */
-interface TanStackFormProps {
-  /** TanStack Form field API for advanced integration */
-  fieldApi?: {
-    state: {
-      value: unknown;
-      meta: {
-        errors?: string[];
-        isValidating?: boolean;
-        isDirty?: boolean;
-        isTouched?: boolean;
-      };
-    };
-    handleChange: (value: unknown) => void;
-    handleBlur: () => void;
-    name: string;
-  };
-}
-
-export interface InputProps extends InputHTMLProps, Omit<FieldComponentProps, 'children'>, TanStackFormProps {
+export interface InputProps extends InputHTMLProps, Omit<FieldComponentProps, 'children'> {
   disabled?: boolean;
+  /** TanStack Form field API for advanced integration */
+  fieldApi?: AnyFieldApi;
 }
 
 export function Input({

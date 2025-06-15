@@ -26,7 +26,7 @@ export * from './cap/useCapImplementationRecords'
 
 // Observation hooks
 export * from './observations/useContextualNotes';
-export * from './observations/useClassroomObservations';
+// export * from './visits/useClassroomObservations';
 
 // Composite hooks
 export * from './useSchoolDailyView'

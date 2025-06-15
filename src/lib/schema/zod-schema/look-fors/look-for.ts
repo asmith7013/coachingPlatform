@@ -9,15 +9,15 @@ import {
 
 // LookFor Fields Schema
 export const LookForFieldsSchema = z.object({
-  lookForIndex: z.number().describe("Unique identifier within coaching cycle (typically 1-5)"),
-  schoolIds: z.array(z.string()).describe("Array of School document _ids where this look-for applies"),
-  teacherIds: z.array(z.string()).describe("Array of Teacher document _ids assigned to this look-for"),
-  topic: z.string(),
-  description: z.string(),
-  category: z.string().optional(),
-  status: z.string().optional(),
-  studentFacing: z.string().describe("Whether look-for involves direct student interaction or teacher behavior"),
-  rubricIds: z.array(z.string()).optional().describe("Array of Rubric document _ids for assessment criteria"),
+  lookForIndex: z.number().default(0).describe("Unique identifier within coaching cycle (typically 1-5)"),
+  schoolIds: z.array(z.string()).default([]).describe("Array of School document _ids where this look-for applies"),
+  teacherIds: z.array(z.string()).default([]).describe("Array of Teacher document _ids assigned to this look-for"),
+  topic: z.string().default(''),
+  description: z.string().default(''),
+  category: z.string().optional().default(''),
+  status: z.string().optional().default(''),
+  studentFacing: z.string().default('').describe("Whether look-for involves direct student interaction or teacher behavior"),
+  rubricIds: z.array(z.string()).optional().default([]).describe("Array of Rubric document _ids for assessment criteria"),
 });
 
 // LookFor Full Schema
@@ -45,14 +45,14 @@ export const LookForReferenceZodSchema = BaseReferenceZodSchema.merge(
 
 // LookForItem Schema (shared schema)
 export const LookForItemZodSchema = z.object({
-  originalLookFor: z.string().describe("Reference to source LookFor document _id"),
-  title: z.string(),
-  description: z.string(),
-  tags: z.array(z.string()),
-  lookForIndex: z.number().describe("Position within coaching cycle sequence (1-5)"),
-  teacherIDs: z.array(z.string()).describe("Array of Teacher document _ids assigned to this item"),
-  chosenBy: z.array(z.string()).describe("Array of User/Coach _ids who selected this item"),
-  active: z.boolean().describe("Whether this look-for item is currently in use"),
+  originalLookFor: z.string().default('').describe("Reference to source LookFor document _id"),
+  title: z.string().default(''),
+  description: z.string().default(''),
+  tags: z.array(z.string()).default([]),
+  lookForIndex: z.number().default(0).describe("Position within coaching cycle sequence (1-5)"),
+  teacherIDs: z.array(z.string()).default([]).describe("Array of Teacher document _ids assigned to this item"),
+  chosenBy: z.array(z.string()).default([]).describe("Array of User/Coach _ids who selected this item"),
+  active: z.boolean().default(false).describe("Whether this look-for item is currently in use"),
 });
 
 // LookForItem Reference Schema
@@ -108,3 +108,11 @@ export type LookFor = z.infer<typeof LookForZodSchema>;
 export type LookForReference = z.infer<typeof LookForReferenceZodSchema>;
 export type LookForItem = z.infer<typeof LookForItemZodSchema>;
 export type LookForItemReference = z.infer<typeof LookForItemReferenceZodSchema>;
+
+// Add helper for schema-driven defaults
+export function createLookForDefaults(overrides: Partial<LookForInput> = {}): LookForInput {
+  return {
+    ...LookForInputZodSchema.parse({}),
+    ...overrides
+  };
+}

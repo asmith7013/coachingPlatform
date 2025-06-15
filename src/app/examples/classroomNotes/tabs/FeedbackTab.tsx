@@ -3,7 +3,7 @@
 import React from 'react';
 import { tv } from 'tailwind-variants';
 import { Textarea } from '@components/core/fields/Textarea';
-import { ClassroomObservationNoteInput } from '@zod-schema/observations/classroom-observation';
+import { ClassroomObservationInput } from '@/lib/schema/zod-schema/visits/classroom-observation';
 
 const sectionTitle = tv({
   base: "text-lg font-semibold border-b pb-2 mb-3"
@@ -14,7 +14,7 @@ const fieldLabel = tv({
 });
 
 interface FeedbackTabProps {
-  formData: ClassroomObservationNoteInput;
+  formData: ClassroomObservationInput;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   onArrayFieldChange: (fieldPath: string, value: string[]) => void;
 }

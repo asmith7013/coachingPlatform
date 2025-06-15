@@ -6,15 +6,23 @@ import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-p
 
 // School Fields Schema
 export const SchoolFieldsSchema = z.object({
-  schoolNumber: z.string(),
-  district: z.string(),
-  schoolName: z.string(),
-  address: z.string().optional(),
-  emoji: z.string().optional(),
-  gradeLevelsSupported: z.array(GradeLevelsSupportedZod).describe("Grade levels taught at this school (K-12, Pre-K, etc.)"),
-  staffListIds: z.array(z.string()).describe("Array of Staff document _ids assigned to this school"),
-  scheduleIds: z.array(z.string()).describe("Array of Schedule document _ids for this school's bell schedules"),
-  cycleIds: z.array(z.string()).describe("Array of Cycle document _ids for coaching cycles at this school"),
+  schoolNumber: z.string().default(''),
+  district: z.string().default(''),
+  schoolName: z.string().default(''),
+  address: z.string().optional().default(''),
+  emoji: z.string().optional().default(''),
+  gradeLevelsSupported: z.array(GradeLevelsSupportedZod)
+    .default([])
+    .describe("Grade levels taught at this school (K-12, Pre-K, etc.)"),
+  staffListIds: z.array(z.string())
+    .default([])
+    .describe("Array of Staff document _ids assigned to this school"),
+  scheduleIds: z.array(z.string())
+    .default([])
+    .describe("Array of Schedule document _ids for this school's bell schedules"),
+  cycleIds: z.array(z.string())
+    .default([])
+    .describe("Array of Cycle document _ids for coaching cycles at this school"),
 });
 
 // School Full Schema
@@ -22,12 +30,6 @@ export const SchoolZodSchema = BaseDocumentSchema.merge(SchoolFieldsSchema);
 
 // School Input Schema
 export const SchoolInputZodSchema = toInputSchema(SchoolZodSchema);
-
-// Client-side schema with string timestamps (Next.js serialization)
-export const SchoolClientZodSchema = SchoolZodSchema.extend({
-  createdAt: z.string().optional().describe("ISO string from Next.js serialization"),
-  updatedAt: z.string().optional().describe("ISO string from Next.js serialization"),
-});
 
 /**
  * School Reference Schema
@@ -51,9 +53,14 @@ export const SchoolReferenceZodSchema = BaseReferenceZodSchema.merge(
 // Auto-generate TypeScript types
 export type SchoolInput = z.infer<typeof SchoolInputZodSchema>;
 export type School = z.infer<typeof SchoolZodSchema>;
-export type SchoolClient = z.infer<typeof SchoolClientZodSchema>;
 export type SchoolReference = z.infer<typeof SchoolReferenceZodSchema>;
 
+export function createSchoolDefaults(overrides: Partial<SchoolInput> = {}): SchoolInput {
+  return {
+    ...SchoolInputZodSchema.parse({}),
+    ...overrides
+  };
+}
 /**
  * Create a transformer function that converts a School entity to a SchoolReference
  * using the reference transformer utility

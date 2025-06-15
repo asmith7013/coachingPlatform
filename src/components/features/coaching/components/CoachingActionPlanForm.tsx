@@ -1,18 +1,21 @@
 "use client";
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { Button } from '@/components/core/Button';
 import { Card } from '@/components/composed/cards';
 import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
-import { useFieldRenderer } from '@ui/forms/hooks/useFieldRenderer';
-import { CoachingActionPlanFieldConfig } from '@ui/forms/fieldConfig/coaching';
-import type { Field } from '@ui-types/form';
+import { Input } from '@components/core/fields/Input';
+import { Select } from '@components/core/fields/Select';
+import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
+import { Textarea } from '@components/core/fields/Textarea';
 import { 
   CoachingActionPlanInput,
   CoachingActionPlanInputZodSchema
-} from '@zod-schema/core/cap';
+} from '@zod-schema/cap';
+import { createCoachingActionPlanDefaults } from '@zod-schema/cap';
+import { AcademicYearZod, CoachingActionPlanStatusZod } from '@enums';
 
 interface CoachingActionPlanFormProps {
   mode: 'create' | 'edit';
@@ -23,17 +26,6 @@ interface CoachingActionPlanFormProps {
   error?: string;
 }
 
-// Group fields by section for better organization
-const FIELD_SECTIONS = {
-  basic: ['title', 'teachers', 'coaches', 'school', 'academicYear', 'status'],
-  needs: ['needsAndFocus.ipgCoreAction', 'needsAndFocus.ipgSubCategory', 'needsAndFocus.rationale'],
-  goal: ['goal.description'],
-  timeline: ['startDate', 'endDate', 'cycleLength'],
-  weekly: ['weeklyPlans'],
-  implementation: ['implementationRecords'],
-  analysis: ['endOfCycleAnalysis']
-};
-
 export function CoachingActionPlanForm({ 
   mode, 
   initialData, 
@@ -43,11 +35,9 @@ export function CoachingActionPlanForm({
   error 
 }: CoachingActionPlanFormProps) {
   const [activeSection, setActiveSection] = useState<string>('basic');
-  const { renderField } = useFieldRenderer<CoachingActionPlanInput>();
 
-  // Create TanStack form with schema validation
   const form = useForm({
-    defaultValues: initialData,
+    defaultValues: createCoachingActionPlanDefaults(initialData),
     validators: {
       onChange: CoachingActionPlanInputZodSchema,
       onSubmit: CoachingActionPlanInputZodSchema
@@ -57,13 +47,48 @@ export function CoachingActionPlanForm({
     }
   });
 
-  // Get fields for current section
-  const getSectionFields = useCallback((sectionKey: string) => {
-    const sectionFieldNames = FIELD_SECTIONS[sectionKey as keyof typeof FIELD_SECTIONS] || [];
-    return CoachingActionPlanFieldConfig.filter((field: Field<CoachingActionPlanInput>) => 
-      sectionFieldNames.includes(String(field.name))
-    );
-  }, []);
+  // Options for select fields
+  const academicYearOptions = AcademicYearZod.options.map((value: string) => ({ value, label: value }));
+  const statusOptions = CoachingActionPlanStatusZod.options.map((value: string) => ({ value, label: value }));
+
+  // Helper to render fields for each section
+  const renderSectionFields = (section: string) => {
+    switch (section) {
+      case 'basic':
+        return <>
+          <form.Field name="title">{(field) => <Input fieldApi={field} label="Title" required />}</form.Field>
+          <form.Field name="teachers">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Teachers" url="/api/staff" multiple />}</form.Field>
+          <form.Field name="coaches">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Coaches" url="/api/staff" multiple />}</form.Field>
+          <form.Field name="school">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="School" url="/api/schools" />}</form.Field>
+          <form.Field name="academicYear">{(field) => <Select fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Academic Year" options={academicYearOptions} />}</form.Field>
+          <form.Field name="status">{(field) => <Select fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Status" options={statusOptions} />}</form.Field>
+        </>;
+      case 'needs':
+        return <>
+          <form.Field name="ipgCoreAction">{(field) => <Input fieldApi={field} label="IPG Core Action" />}</form.Field>
+          <form.Field name="ipgSubCategory">{(field) => <Input fieldApi={field} label="IPG Sub Category" />}</form.Field>
+          <form.Field name="rationale">{(field) => <Textarea fieldApi={field} label="Rationale" />}</form.Field>
+        </>;
+      case 'goal':
+        return <>
+          <form.Field name="goalDescription">{(field) => <Textarea fieldApi={field} label="Goal Description" />}</form.Field>
+        </>;
+      case 'timeline':
+        return <>
+          <form.Field name="startDate">{(field) => <Input fieldApi={field} label="Start Date" type="date" />}</form.Field>
+          <form.Field name="endDate">{(field) => <Input fieldApi={field} label="End Date" type="date" />}</form.Field>
+          <form.Field name="cycleLength">{(field) => <Input fieldApi={field} label="Cycle Length" type="number" />}</form.Field>
+        </>;
+      case 'weekly':
+        return <form.Field name="weeklyPlans">{(field) => <Textarea fieldApi={field} label="Weekly Plans" />}</form.Field>;
+      case 'implementation':
+        return <form.Field name="implementationRecords">{(field) => <Textarea fieldApi={field} label="Implementation Records" />}</form.Field>;
+      case 'analysis':
+        return <form.Field name="endOfCycleAnalysis">{(field) => <Textarea fieldApi={field} label="End of Cycle Analysis" />}</form.Field>;
+      default:
+        return null;
+    }
+  };
 
   return (
     <Card>
@@ -138,32 +163,7 @@ export function CoachingActionPlanForm({
                 </Heading>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {getSectionFields(activeSection).map((fieldConfig: Field<CoachingActionPlanInput>) => (
-                    <div 
-                      key={String(fieldConfig.name)} 
-                      className={
-                        fieldConfig.type === 'textarea' || 
-                        String(fieldConfig.name).includes('description') ||
-                        String(fieldConfig.name).includes('rationale') ||
-                        fieldConfig.name === 'weeklyPlans' || 
-                        fieldConfig.name === 'implementationRecords' ||
-                        fieldConfig.name === 'endOfCycleAnalysis'
-                          ? 'md:col-span-2' 
-                          : ''
-                      }
-                    >
-                      <label
-                        htmlFor={String(fieldConfig.name)}
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        {fieldConfig.label}
-                      </label>
-                      
-                      <form.Field name={String(fieldConfig.name)}>
-                        {(field) => renderField(fieldConfig, field)}
-                      </form.Field>
-                    </div>
-                  ))}
+                  {renderSectionFields(activeSection)}
                 </div>
               </div>
             </div>

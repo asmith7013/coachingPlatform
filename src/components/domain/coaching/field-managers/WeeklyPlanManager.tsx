@@ -15,8 +15,8 @@ import {
   ChevronRightIcon,
   CalendarIcon
 } from '@heroicons/react/24/outline';
-import type { WeeklyVisitPlan, CoachingCycleNumber, VisitNumber } from '@zod-schema/core/cap';
-import { CoachingCycleNumberZod, VisitNumberZod } from '@zod-schema/core/cap';
+import type { WeeklyVisitPlan, CoachingCycleNumber, VisitNumber } from '@zod-schema/cap';
+import { CoachingCycleNumberZod, VisitNumberZod } from '@zod-schema/cap';
 import { getTodayString, formatMediumDate } from '@data-processing/transformers/utils/date-utils';
 
 interface WeeklyPlanManagerProps {

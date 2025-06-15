@@ -1,5 +1,5 @@
 import { createCrudHooks } from '@query/client/factories/crud-factory';
-import { ContextualNoteZodSchema, ContextualNote } from '@zod-schema/observations/classroom-observation';
+import { ContextualNoteZodSchema, ContextualNote } from '@/lib/schema/zod-schema/visits/classroom-observation';
 import { ZodSchema } from 'zod';
 import { 
   fetchContextualNotes, 

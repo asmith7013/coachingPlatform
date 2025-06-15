@@ -13,6 +13,7 @@ import {
   RadiusToken
 } from '@/lib/tokens/types'
 import { FieldWrapper } from './FieldWrapper'
+import type { AnyFieldApi } from '@tanstack/react-form';
 
 type TextareaHTMLProps = Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'>;
 
@@ -79,27 +80,7 @@ export const textareaStyles = textarea;
 // ✅ Export type for variant props
 export type TextareaVariants = VariantProps<typeof textarea>;
 
-/**
- * TanStack Form field integration props (optional)
- */
-interface TanStackFormProps {
-  fieldApi?: {
-    state: {
-      value: unknown;
-      meta: {
-        errors?: string[];
-        isValidating?: boolean;
-        isDirty?: boolean;
-        isTouched?: boolean;
-      };
-    };
-    handleChange: (value: unknown) => void;
-    handleBlur: () => void;
-    name: string;
-  };
-}
-
-export interface TextareaProps extends TextareaHTMLProps, TanStackFormProps {
+export interface TextareaProps extends TextareaHTMLProps {
   label?: string;
   error?: string;
   textSize?: TextSizeToken;
@@ -110,6 +91,8 @@ export interface TextareaProps extends TextareaHTMLProps, TanStackFormProps {
   disabled?: boolean;
   className?: string;
   rows?: number;
+  /** TanStack Form field API for advanced integration */
+  fieldApi?: AnyFieldApi;
 }
 
 export function Textarea({

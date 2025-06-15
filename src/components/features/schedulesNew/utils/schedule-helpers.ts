@@ -101,7 +101,7 @@ export function generateTimeSlotsFromBellSchedule(bellSchedule: BellSchedule | n
     return validatedSchedule.classSchedule.map((classSchedule: ClassScheduleItem) => ({
       startTime: classSchedule.startTime,
       endTime: classSchedule.endTime,
-      periodNum: classSchedule.periodNum
+      periodNum: classSchedule.periodNum || 0 // Default to 0 if periodNum is undefined
     }));
   }
 

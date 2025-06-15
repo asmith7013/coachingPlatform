@@ -6,45 +6,28 @@ import {
 } from '@ui-variants/shared-variants'
 import { 
   textColors 
-} from '@/lib/tokens/tokens'
+} from '@ui-tokens/tokens'
 import { 
   TextSizeToken,
   PaddingToken,
   RadiusToken
-} from '@/lib/tokens/types'
+} from '@ui-tokens/types'
 import { FieldWrapper } from './FieldWrapper'
+import type { AnyFieldApi } from '@tanstack/react-form';
 
-/**
- * TanStack Form field integration props (optional)
- */
-interface TanStackFormProps {
-  fieldApi?: {
-    state: {
-      value: unknown;
-      meta: {
-        errors?: string[];
-        isValidating?: boolean;
-        isDirty?: boolean;
-        isTouched?: boolean;
-      };
-    };
-    handleChange: (value: unknown) => void;
-    handleBlur: () => void;
-    name: string;
-  };
-}
-
-export interface SwitchProps extends TanStackFormProps {
-  checked: boolean
-  onChange: (checked: boolean) => void
-  label?: string
-  description?: string
-  error?: string
-  className?: string
-  disabled?: boolean
-  textSize?: TextSizeToken
-  padding?: PaddingToken
-  radius?: RadiusToken
+export interface SwitchProps {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  label?: string;
+  description?: string;
+  error?: string;
+  className?: string;
+  disabled?: boolean;
+  textSize?: TextSizeToken;
+  padding?: PaddingToken;
+  radius?: RadiusToken;
+  /** TanStack Form field API for advanced integration */
+  fieldApi?: AnyFieldApi;
 }
 
 // 🎨 Switch style variants

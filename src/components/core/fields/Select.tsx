@@ -17,6 +17,7 @@ import {
 import { FieldWrapper } from './FieldWrapper'
 import { Listbox } from '@headlessui/react'
 import { ChevronDownIcon, CheckIcon } from '@heroicons/react/24/solid'
+import type { AnyFieldApi } from '@tanstack/react-form';
 
 export interface SelectOption {
   value: string;
@@ -24,29 +25,7 @@ export interface SelectOption {
   online?: boolean;
 }
 
-/**
- * TanStack Form field integration props (optional)
- * When provided, the component integrates with TanStack Form field state
- */
-interface TanStackFormProps {
-  /** TanStack Form field API for advanced integration */
-  fieldApi?: {
-    state: {
-      value: unknown;
-      meta: {
-        errors?: string[];
-        isValidating?: boolean;
-        isDirty?: boolean;
-        isTouched?: boolean;
-      };
-    };
-    handleChange: (value: unknown) => void;
-    handleBlur: () => void;
-    name: string;
-  };
-}
-
-export interface BaseSelectProps extends TanStackFormProps {
+export interface BaseSelectProps {
   label?: string;
   options: SelectOption[];
   placeholder?: string;
@@ -57,6 +36,8 @@ export interface BaseSelectProps extends TanStackFormProps {
   radius?: RadiusToken;
   disabled?: boolean;
   labelColor?: TextColorToken;
+  /** TanStack Form field API for advanced integration */
+  fieldApi?: AnyFieldApi;
 }
 
 export interface SingleSelectProps extends BaseSelectProps {

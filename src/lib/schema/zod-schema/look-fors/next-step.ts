@@ -6,10 +6,10 @@ import { formatNextStepDescription } from "@schema/reference/look-fors/next-step
 
 // NextStep Fields Schema
 export const NextStepFieldsSchema = z.object({
-  description: z.string(),
-  lookForId: z.string().describe("Reference to LookFor document _id this next step relates to"),
-  teacherId: z.string().describe("Reference to Teacher document _id who should implement this step"),
-  schoolId: z.string().describe("Reference to School document _id where this step will be implemented"),
+  description: z.string().default(''),
+  lookForId: z.string().default('').describe("Reference to LookFor document _id this next step relates to"),
+  teacherId: z.string().default('').describe("Reference to Teacher document _id who should implement this step"),
+  schoolId: z.string().default('').describe("Reference to School document _id where this step will be implemented"),
 });
 
 // NextStep Full Schema
@@ -55,3 +55,11 @@ export const nextStepsToReferences = createArrayTransformer<NextStep, NextStepRe
 export type NextStepInput = z.infer<typeof NextStepInputZodSchema>;
 export type NextStep = z.infer<typeof NextStepZodSchema>;
 export type NextStepReference = z.infer<typeof NextStepReferenceZodSchema>;
+
+// Add helper for schema-driven defaults
+export function createNextStepDefaults(overrides: Partial<NextStepInput> = {}): NextStepInput {
+  return {
+    ...NextStepInputZodSchema.parse({}),
+    ...overrides
+  };
+}

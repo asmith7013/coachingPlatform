@@ -1,12 +1,12 @@
 import type { Field } from '@ui-types/form';
-import type { ClassroomObservationNoteInput } from "@zod-schema/observations/classroom-observation";
+import type { ClassroomObservationInput } from "@/lib/schema/zod-schema/visits/classroom-observation";
 import { set } from 'lodash';
 
 /**
  * Simple field configuration for Classroom Observation forms
  * Following the new domain-specific pattern
  */
-export const ClassroomObservationFieldConfig: Field<ClassroomObservationNoteInput>[] = [
+export const ClassroomObservationFieldConfig: Field<ClassroomObservationInput>[] = [
   // Basic Information
   {
     name: "cycle",
@@ -68,25 +68,25 @@ export const ClassroomObservationFieldConfig: Field<ClassroomObservationNoteInpu
   
   // Lesson Details
   {
-    name: "lesson.title" as keyof ClassroomObservationNoteInput,
+    name: "lesson.title" as keyof ClassroomObservationInput,
     label: "Lesson Title",
     type: "text",
     placeholder: "Enter lesson title",
   },
   {
-    name: "lesson.course" as keyof ClassroomObservationNoteInput,
+    name: "lesson.course" as keyof ClassroomObservationInput,
     label: "Course",
     type: "text",
     placeholder: "Enter course name",
   },
   {
-    name: "lesson.unit" as keyof ClassroomObservationNoteInput,
+    name: "lesson.unit" as keyof ClassroomObservationInput,
     label: "Unit",
     type: "text",
     placeholder: "Enter unit name",
   },
   {
-    name: "lesson.lessonNumber" as keyof ClassroomObservationNoteInput,
+    name: "lesson.lessonNumber" as keyof ClassroomObservationInput,
     label: "Lesson Number",
     type: "text",
     placeholder: "Enter lesson number",
@@ -112,70 +112,70 @@ export const ClassroomObservationFieldConfig: Field<ClassroomObservationNoteInpu
   
   // Lesson Flow - Warm Up
   {
-    name: "lessonFlow.warmUp.launch" as keyof ClassroomObservationNoteInput,
+    name: "lessonFlow.warmUp.launch" as keyof ClassroomObservationInput,
     label: "Warm Up - Launch",
     type: "textarea",
   },
   {
-    name: "lessonFlow.warmUp.workTime" as keyof ClassroomObservationNoteInput,
+    name: "lessonFlow.warmUp.workTime" as keyof ClassroomObservationInput,
     label: "Warm Up - Work Time",
     type: "textarea",
   },
   {
-    name: "lessonFlow.warmUp.synthesis" as keyof ClassroomObservationNoteInput,
+    name: "lessonFlow.warmUp.synthesis" as keyof ClassroomObservationInput,
     label: "Warm Up - Synthesis",
     type: "textarea",
   },
   
   // Lesson Flow - Activity 1
   {
-    name: "lessonFlow.activity1.launch" as keyof ClassroomObservationNoteInput,
+    name: "lessonFlow.activity1.launch" as keyof ClassroomObservationInput,
     label: "Activity 1 - Launch",
     type: "textarea",
   },
   {
-    name: "lessonFlow.activity1.workTime" as keyof ClassroomObservationNoteInput,
+    name: "lessonFlow.activity1.workTime" as keyof ClassroomObservationInput,
     label: "Activity 1 - Work Time",
     type: "textarea",
   },
   {
-    name: "lessonFlow.activity1.synthesis" as keyof ClassroomObservationNoteInput,
+    name: "lessonFlow.activity1.synthesis" as keyof ClassroomObservationInput,
     label: "Activity 1 - Synthesis",
     type: "textarea",
   },
   
   // Lesson Flow - Synthesis
   {
-    name: "lessonFlow.lessonSynthesis.launch" as keyof ClassroomObservationNoteInput,
+    name: "lessonFlow.lessonSynthesis.launch" as keyof ClassroomObservationInput,
     label: "Lesson Synthesis - Launch",
     type: "textarea",
   },
   {
-    name: "lessonFlow.lessonSynthesis.workTime" as keyof ClassroomObservationNoteInput,
+    name: "lessonFlow.lessonSynthesis.workTime" as keyof ClassroomObservationInput,
     label: "Lesson Synthesis - Work Time",
     type: "textarea",
   },
   {
-    name: "lessonFlow.lessonSynthesis.synthesis" as keyof ClassroomObservationNoteInput,
+    name: "lessonFlow.lessonSynthesis.synthesis" as keyof ClassroomObservationInput,
     label: "Lesson Synthesis - Synthesis",
     type: "textarea",
   },
   
   // Progress Monitoring & Time Tracking
   {
-    name: "progressMonitoring.overallNotes" as keyof ClassroomObservationNoteInput,
+    name: "progressMonitoring.overallNotes" as keyof ClassroomObservationInput,
     label: "Progress Monitoring Notes",
     type: "textarea",
     placeholder: "Overall progress monitoring observations",
   },
   {
-    name: "timeTracking.classStartTime" as keyof ClassroomObservationNoteInput,
+    name: "timeTracking.classStartTime" as keyof ClassroomObservationInput,
     label: "Class Start Time",
     type: "text",
     placeholder: "e.g., 08:00",
   },
   {
-    name: "timeTracking.classEndTime" as keyof ClassroomObservationNoteInput,
+    name: "timeTracking.classEndTime" as keyof ClassroomObservationInput,
     label: "Class End Time",
     type: "text",
     placeholder: "e.g., 09:00",
@@ -183,11 +183,11 @@ export const ClassroomObservationFieldConfig: Field<ClassroomObservationNoteInpu
 ];
 
 // Export subsets for complex nested forms if needed
-export const LessonFieldConfig = ClassroomObservationFieldConfig.filter((field: Field<ClassroomObservationNoteInput>) => 
+export const LessonFieldConfig = ClassroomObservationFieldConfig.filter((field: Field<ClassroomObservationInput>) => 
   String(field.name).startsWith('lesson.')
 );
 
-export const LessonFlowFieldConfig = ClassroomObservationFieldConfig.filter((field: Field<ClassroomObservationNoteInput>) =>
+export const LessonFlowFieldConfig = ClassroomObservationFieldConfig.filter((field: Field<ClassroomObservationInput>) =>
   String(field.name).startsWith('lessonFlow.')
 );
 
@@ -195,10 +195,10 @@ export const LessonFlowFieldConfig = ClassroomObservationFieldConfig.filter((fie
  * Helper function to handle nested field updates in classroom observation forms
  */
 export function updateNestedObservationField(
-  data: Partial<ClassroomObservationNoteInput>,
+  data: Partial<ClassroomObservationInput>,
   fieldKey: string,
   value: unknown
-): Partial<ClassroomObservationNoteInput> {
+): Partial<ClassroomObservationInput> {
   const result = { ...data };
   
   // Handle nested field paths (e.g., "lesson.title", "lessonFlow.warmUp.launch")

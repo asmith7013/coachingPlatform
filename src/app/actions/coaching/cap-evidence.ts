@@ -1,6 +1,6 @@
 "use server";
 
-import { CapEvidenceModel } from "@mongoose-schema/cap/cap-evidence.model";
+import { CapEvidenceModel } from "@/lib/schema/mongoose-schema/cap/cap-evidence.model";
 import { 
   CapEvidenceZodSchema, 
   CapEvidenceInputZodSchema,

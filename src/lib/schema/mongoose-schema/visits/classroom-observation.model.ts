@@ -1,8 +1,9 @@
+// src/lib/schema/mongoose-schema/observations/classroom-observation.model.ts
 import mongoose from "mongoose";
 import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
 // ===== CORE OBSERVATION MODEL =====
-const classroomObservationV2Fields = {
+const classroomObservationFields = {
   cycle: { type: String, default: '' },
   session: { type: String, default: '' },
   date: { type: Date, required: true },
@@ -29,10 +30,13 @@ const classroomObservationV2Fields = {
   ...standardDocumentFields
 };
 
-const ClassroomObservationV2Schema = new mongoose.Schema(classroomObservationV2Fields, {
+const ClassroomObservationSchema = new mongoose.Schema(classroomObservationFields, {
   ...standardSchemaOptions,
   collection: 'classroomobservations_v2'
 });
+
+export const ClassroomObservationModel = mongoose.models.ClassroomObservation || 
+  mongoose.model('ClassroomObservation', ClassroomObservationSchema);
 
 // ===== OBSERVATION CRITERIA MODEL =====
 const observationCriterionFields = {
@@ -50,6 +54,9 @@ const ObservationCriterionSchema = new mongoose.Schema(observationCriterionField
   collection: 'observationcriteria'
 });
 
+export const ObservationCriterionModel = mongoose.models.ObservationCriterion || 
+  mongoose.model('ObservationCriterion', ObservationCriterionSchema);
+
 // ===== FEEDBACK ITEMS MODEL =====
 const feedbackItemFields = {
   observationId: { type: String, required: true, index: true },
@@ -63,6 +70,9 @@ const FeedbackItemSchema = new mongoose.Schema(feedbackItemFields, {
   ...standardSchemaOptions,
   collection: 'feedbackitems'
 });
+
+export const FeedbackItemModel = mongoose.models.FeedbackItem || 
+  mongoose.model('FeedbackItem', FeedbackItemSchema);
 
 // ===== LESSON FLOW STEPS MODEL =====
 const lessonFlowStepFields = {
@@ -79,6 +89,9 @@ const LessonFlowStepSchema = new mongoose.Schema(lessonFlowStepFields, {
   collection: 'lessonflowsteps'
 });
 
+export const LessonFlowStepModel = mongoose.models.LessonFlowStep || 
+  mongoose.model('LessonFlowStep', LessonFlowStepSchema);
+
 // ===== LESSON FLOW NOTES MODEL =====
 const lessonFlowNoteFields = {
   observationId: { type: String, required: true, index: true },
@@ -93,6 +106,9 @@ const LessonFlowNoteSchema = new mongoose.Schema(lessonFlowNoteFields, {
   collection: 'lessonflownotes'
 });
 
+export const LessonFlowNoteModel = mongoose.models.LessonFlowNote || 
+  mongoose.model('LessonFlowNote', LessonFlowNoteSchema);
+
 // ===== LEARNING TARGETS MODEL =====
 const learningTargetFields = {
   observationId: { type: String, required: true, index: true },
@@ -105,6 +121,9 @@ const LearningTargetSchema = new mongoose.Schema(learningTargetFields, {
   ...standardSchemaOptions,
   collection: 'learningtargets'
 });
+
+export const LearningTargetModel = mongoose.models.LearningTarget || 
+  mongoose.model('LearningTarget', LearningTargetSchema);
 
 // ===== TIME TRACKING MODEL =====
 const observationTimeTrackingFields = {
@@ -123,6 +142,9 @@ const ObservationTimeTrackingSchema = new mongoose.Schema(observationTimeTrackin
   collection: 'observationtimetracking'
 });
 
+export const ObservationTimeTrackingModel = mongoose.models.ObservationTimeTracking || 
+  mongoose.model('ObservationTimeTracking', ObservationTimeTrackingSchema);
+
 // ===== TRANSCRIPT SECTIONS MODEL =====
 const transcriptSectionFields = {
   observationId: { type: String, required: true, index: true },
@@ -136,6 +158,9 @@ const TranscriptSectionSchema = new mongoose.Schema(transcriptSectionFields, {
   collection: 'transcriptsections'
 });
 
+export const TranscriptSectionModel = mongoose.models.TranscriptSection || 
+  mongoose.model('TranscriptSection', TranscriptSectionSchema);
+
 // ===== CUSTOM TRANSCRIPT SECTIONS MODEL =====
 const customTranscriptSectionFields = {
   observationId: { type: String, required: true, index: true },
@@ -148,6 +173,9 @@ const CustomTranscriptSectionSchema = new mongoose.Schema(customTranscriptSectio
   ...standardSchemaOptions,
   collection: 'customtranscriptsections'
 });
+
+export const CustomTranscriptSectionModel = mongoose.models.CustomTranscriptSection || 
+  mongoose.model('CustomTranscriptSection', CustomTranscriptSectionSchema);
 
 // ===== CONTEXTUAL NOTES MODEL =====
 const contextualNoteFields = {
@@ -168,6 +196,9 @@ const ContextualNoteSchema = new mongoose.Schema(contextualNoteFields, {
   collection: 'contextualnotes'
 });
 
+export const ContextualNoteModel = mongoose.models.ContextualNote || 
+  mongoose.model('ContextualNote', ContextualNoteSchema);
+
 // ===== OBSERVATION TAGS MODEL =====
 const observationTagFields = {
   observationId: { type: String, required: true, index: true },
@@ -184,6 +215,9 @@ const ObservationTagSchema = new mongoose.Schema(observationTagFields, {
   ...standardSchemaOptions,
   collection: 'observationtags'
 });
+
+export const ObservationTagModel = mongoose.models.ObservationTag || 
+  mongoose.model('ObservationTag', ObservationTagSchema);
 
 // ===== OBSERVATION METADATA MODEL =====
 const observationMetadataFields = {
@@ -205,40 +239,6 @@ const ObservationMetadataSchema = new mongoose.Schema(observationMetadataFields,
   ...standardSchemaOptions,
   collection: 'observationmetadata'
 });
-
-// ===== MODEL EXPORTS =====
-export const ClassroomObservationV2Model = mongoose.models.ClassroomObservationV2 || 
-  mongoose.model('ClassroomObservationV2', ClassroomObservationV2Schema);
-
-export const ObservationCriterionModel = mongoose.models.ObservationCriterion || 
-  mongoose.model('ObservationCriterion', ObservationCriterionSchema);
-
-export const FeedbackItemModel = mongoose.models.FeedbackItem || 
-  mongoose.model('FeedbackItem', FeedbackItemSchema);
-
-export const LessonFlowStepModel = mongoose.models.LessonFlowStep || 
-  mongoose.model('LessonFlowStep', LessonFlowStepSchema);
-
-export const LessonFlowNoteModel = mongoose.models.LessonFlowNote || 
-  mongoose.model('LessonFlowNote', LessonFlowNoteSchema);
-
-export const LearningTargetModel = mongoose.models.LearningTarget || 
-  mongoose.model('LearningTarget', LearningTargetSchema);
-
-export const ObservationTimeTrackingModel = mongoose.models.ObservationTimeTracking || 
-  mongoose.model('ObservationTimeTracking', ObservationTimeTrackingSchema);
-
-export const TranscriptSectionModel = mongoose.models.TranscriptSection || 
-  mongoose.model('TranscriptSection', TranscriptSectionSchema);
-
-export const CustomTranscriptSectionModel = mongoose.models.CustomTranscriptSection || 
-  mongoose.model('CustomTranscriptSection', CustomTranscriptSectionSchema);
-
-export const ContextualNoteModel = mongoose.models.ContextualNote || 
-  mongoose.model('ContextualNote', ContextualNoteSchema);
-
-export const ObservationTagModel = mongoose.models.ObservationTag || 
-  mongoose.model('ObservationTag', ObservationTagSchema);
 
 export const ObservationMetadataModel = mongoose.models.ObservationMetadata || 
   mongoose.model('ObservationMetadata', ObservationMetadataSchema);

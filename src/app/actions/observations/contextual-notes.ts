@@ -1,7 +1,7 @@
 "use server";
 
-import { ContextualNoteModel } from "@mongoose-schema/observations/contextual-note.model";
-import { ContextualNote, ContextualNoteZodSchema, ContextualNoteInputZodSchema, ContextualNoteInput } from "@zod-schema/observations/classroom-observation";
+import { ContextualNoteModel } from "@mongoose-schema/visits/classroom-observation.model";
+import { ContextualNote, ContextualNoteZodSchema, ContextualNoteInputZodSchema, ContextualNoteInput } from "@zod-schema/visits/classroom-observation";
 import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
@@ -52,7 +52,7 @@ export async function fetchContextualNotesByVisit(visitId: string) {
       
       return {
         success: true,
-        items: results.map(item => ContextualNoteZodSchema.parse(item)),
+        items: results.map((item: ContextualNote) => ContextualNoteZodSchema.parse(item)),
         total: results.length
       };
     } catch (error) {

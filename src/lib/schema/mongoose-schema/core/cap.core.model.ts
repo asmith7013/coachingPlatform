@@ -34,22 +34,19 @@ const schemaFields = {
   // References to related entities
   relatedVisits: [{ type: String, required: false }],
   relatedCycles: [{ type: String, required: false }],
-
-  // System fields
-  owners: [{ type: String, required: true }],
 };
 
 // Create schema with timestamps and standard transform
-const CoachingActionPlanV2Schema = new mongoose.Schema(schemaFields, standardSchemaOptions);
+const CoachingActionPlanSchema = new mongoose.Schema(schemaFields, standardSchemaOptions);
 
 // Add indexes for performance
-CoachingActionPlanV2Schema.index({ school: 1, academicYear: 1 });
-CoachingActionPlanV2Schema.index({ status: 1 });
-CoachingActionPlanV2Schema.index({ teachers: 1 });
-CoachingActionPlanV2Schema.index({ coaches: 1 });
-CoachingActionPlanV2Schema.index({ startDate: 1 });
-CoachingActionPlanV2Schema.index({ owners: 1 });
+CoachingActionPlanSchema.index({ school: 1, academicYear: 1 });
+CoachingActionPlanSchema.index({ status: 1 });
+CoachingActionPlanSchema.index({ teachers: 1 });
+CoachingActionPlanSchema.index({ coaches: 1 });
+CoachingActionPlanSchema.index({ startDate: 1 });
+CoachingActionPlanSchema.index({ owners: 1 });
 
 // Create model, checking for existing models
-export const CoachingActionPlanV2Model = mongoose.models.CoachingActionPlanV2 || 
-  mongoose.model("CoachingActionPlanV2", CoachingActionPlanV2Schema);
+export const CoachingActionPlanModel = mongoose.models.CoachingActionPlan || 
+  mongoose.model("CoachingActionPlan", CoachingActionPlanSchema);

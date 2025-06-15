@@ -6,9 +6,8 @@ import { handleClientError } from '@error/handlers/client';
 import { semanticColorMap } from '@/lib/tokens/semantic-colors';
 import { 
   CoachingActionPlan,
-  NeedsAndFocusZodSchema,
-  GoalZodSchema 
-} from '@zod-schema/core/cap';
+  CoachingActionPlanZodSchema,
+} from '@zod-schema/cap';
 
 // Updated type definitions using proper base type composition
 export interface StageProgress {
@@ -111,16 +110,16 @@ export function validateStageCompleteness(stage: string, planData: CoachingActio
 
   // Use schema validation for specific stages
   try {
-    if (stage === 'needsAndFocus' && planData.needsAndFocus) {
-      const validated = validateSafe(NeedsAndFocusZodSchema, planData.needsAndFocus);
+    if (stage === 'needsAndFocus' && planData.ipgCoreAction && planData.ipgSubCategory && planData.rationale) {
+      const validated = validateSafe(CoachingActionPlanZodSchema, planData);
       if (!validated) {
         isValid = false;
         errors.push('Schema validation failed for needs and focus');
       }
     }
     
-    if (stage === 'goal' && planData.goal) {
-      const validated = validateSafe(GoalZodSchema, planData.goal);
+    if (stage === 'goal' && planData.teacherOutcomes.length > 0 && planData.studentOutcomes.length > 0) {
+      const validated = validateSafe(CoachingActionPlanZodSchema, planData);
       if (!validated) {
         isValid = false;
         errors.push('Schema validation failed for goal');
@@ -132,35 +131,35 @@ export function validateStageCompleteness(stage: string, planData: CoachingActio
   }
 
   // Check required fields based on stage-specific logic
-  switch (stage) {
-    case 'needsAndFocus':
-      const needsAndFocus = planData.needsAndFocus;
-      if (!needsAndFocus?.ipgCoreAction) missingFields.push('Core Action');
-      if (!needsAndFocus?.ipgSubCategory) missingFields.push('Subsection');
-      if (!needsAndFocus?.rationale) missingFields.push('Rationale');
-      break;
+  // switch (stage) {
+  //   case 'needsAndFocus':
+  //     const needsAndFocus = planData.needsAndFocus;
+  //     if (!needsAndFocus?.ipgCoreAction) missingFields.push('Core Action');
+  //     if (!needsAndFocus?.ipgSubCategory) missingFields.push('Subsection');
+  //     if (!needsAndFocus?.rationale) missingFields.push('Rationale');
+  //     break;
 
-    case 'goal':
-      const goal = planData.goal;
-      if (!goal?.description) missingFields.push('SMART Goal Statement');
-      if (!goal?.teacherOutcomes?.length) missingFields.push('Teacher Outcomes');
-      if (!goal?.studentOutcomes?.length) missingFields.push('Student Outcomes');
-      break;
+  //   case 'goal':
+  //     const goal = planData.goal;
+  //     if (!goal?.description) missingFields.push('SMART Goal Statement');
+  //     if (!goal?.teacherOutcomes?.length) missingFields.push('Teacher Outcomes');
+  //     if (!goal?.studentOutcomes?.length) missingFields.push('Student Outcomes');
+  //     break;
 
-    case 'weeklyPlans':
-      if (!planData.weeklyPlans?.length) missingFields.push('Weekly Visit Plans');
-      break;
+  //   case 'weeklyPlans':
+  //     if (!planData.weeklyPlans?.length) missingFields.push('Weekly Visit Plans');
+  //     break;
 
-    case 'implementationRecords':
-      // Optional during creation
-      break;
+  //   case 'implementationRecords':
+  //     // Optional during creation
+  //     break;
 
-    case 'endOfCycleAnalysis':
-      const analysis = planData.endOfCycleAnalysis;
-      if (analysis?.goalMet === undefined) missingFields.push('Goal Completion Assessment');
-      if (!analysis?.impactOnLearning) missingFields.push('Impact Analysis');
-      break;
-  }
+  //   case 'endOfCycleAnalysis':
+  //     const analysis = planData.endOfCycleAnalysis;
+  //     if (analysis?.goalMet === undefined) missingFields.push('Goal Completion Assessment');
+  //     if (!analysis?.impactOnLearning) missingFields.push('Impact Analysis');
+  //     break;
+  // }
 
   // Calculate completion percentage
   const totalChecks = config.requiredFields.length || 1;

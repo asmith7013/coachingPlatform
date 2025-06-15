@@ -4,16 +4,16 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@components/core/Button';
 import { Card } from '@components/composed/cards';
 import { useSearchParams } from 'next/navigation';
-import { Text } from '@/components/core/typography/Text';
-import { Heading } from '@/components/core/typography/Heading';
+import { Text } from '@components/core/typography/Text';
+import { Heading } from '@components/core/typography/Heading';
 
 // Import existing domain hook and types from the established schema
 import { useClassroomObservations } from '@domain-hooks/observations/useClassroomObservations';
 import { 
   useClassroomObservationDefaultsSimple,
-  type ClassroomObservationNoteInput,
-  ClassroomObservationNoteInputZodSchema
-} from '@zod-schema/observations/classroom-observation';
+  type ClassroomObservationInput,
+  ClassroomObservationInputZodSchema
+} from '@zod-schema/visits/classroom-observation';
 
 // Import tab components
 import { BasicInfoTab } from './tabs/BasicInfoTab';
@@ -45,10 +45,12 @@ const ClassroomNotesExample = () => {
     cycle: 'Demo Cycle',
     session: 'Demo Session',
   });
-  const [formData, setFormData] = useState<ClassroomObservationNoteInput>(formDefaults);
+  const [formData, setFormData] = useState<ClassroomObservationInput>(formDefaults);
   const [selectedTeacher, setSelectedTeacher] = useState<string>(teacherId || '');
   const [observationId, setObservationId] = useState<string | null>(null);
   const autoSaveHook = useClassroomObservations.withAutoSave();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     if (teacherId) {
@@ -94,15 +96,7 @@ const ClassroomNotesExample = () => {
       const parts = name.split('.');
       if (parts.length === 2) {
         const [section, field] = parts;
-        if (section === 'lesson') {
-          setFormData(prev => ({
-            ...prev,
-            lesson: {
-              ...prev.lesson,
-              [field]: value
-            }
-          }));
-        } else if (section === 'timeTracking') {
+        if (section === 'timeTracking') {
           setFormData(prev => ({
             ...prev,
             timeTracking: {
@@ -180,33 +174,36 @@ const ClassroomNotesExample = () => {
   // Enhanced form submission - finalize draft
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!observationId) {
-      // Create new observation if no draft exists
-      try {
+    setIsSubmitting(true);
+    setSubmitError(null);
+    try {
+      if (!observationId) {
         const result = await observationsWithToast.createWithToast(formData);
         if (result.success) {
           setObservationId(result.data._id);
+        } else {
+          throw new Error(result.error || 'Failed to create observation');
         }
-      } catch (error) {
-        console.error('Error creating observation:', error);
+        return;
       }
-      return;
-    }
-    try {
-      // Validate form data before submission
-      const validatedData = ClassroomObservationNoteInputZodSchema.parse(formData);
-      // Use toast notifications for final submission
-      await observationsWithToast.updateWithToast(observationId, {
+      const validatedData = ClassroomObservationInputZodSchema.parse(formData);
+      const result = await observationsWithToast.updateWithToast(observationId, {
         ...validatedData,
         status: 'completed',
         isDraft: false,
         submittedAt: new Date().toISOString()
       });
-      // Refresh cache after successful submission
-      await observationsWithCache.refreshObservation(observationId);
-      console.log("Observation finalized successfully");
+      if (result.success) {
+        await observationsWithCache.refreshObservation(observationId);
+        console.log("Observation finalized successfully");
+      } else {
+        throw new Error(result.error || 'Failed to update observation');
+      }
     } catch (error) {
       console.error("Error finalizing observation:", error);
+      setSubmitError(error instanceof Error ? error.message : 'An unknown error occurred');
+    } finally {
+      setIsSubmitting(false);
     }
   }, [observationId, formData, observationsWithToast, observationsWithCache]);
 
@@ -332,10 +329,22 @@ const ClassroomNotesExample = () => {
                 <Button appearance="outline" type="button">
                   Cancel
                 </Button>
-                <Button type="submit" disabled={!observationId}>
-                  {observationId ? 'Finalize Observation' : 'Save Observation Notes'}
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  loading={isSubmitting}
+                >
+                  {isSubmitting 
+                    ? 'Saving...' 
+                    : (observationId ? 'Finalize Observation' : 'Save Observation Notes')
+                  }
                 </Button>
               </div>
+              {submitError && (
+                <div className="mt-2 text-sm text-red-600">
+                  Error: {submitError}
+                </div>
+              )}
             </Card.Footer>
           </Card>
         </form>

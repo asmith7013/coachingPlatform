@@ -5,8 +5,8 @@ import { Textarea } from '@/components/core/fields/Textarea';
 import { Select } from '@/components/core/fields/Select';
 import { Trash2 } from 'lucide-react';
 import { ArrayFieldManager } from '@/components/domain/coaching/field-managers/ArrayFieldManager';
-import type { ImplementationRecord, Goal, CoachingCycleNumber, VisitNumber } from '@/lib/schema/zod-schema/core/cap';
-import { CoachingCycleNumberZod, VisitNumberZod } from '@/lib/schema/zod-schema/core/cap';
+import type { ImplementationRecord, Goal, CoachingCycleNumber, VisitNumber } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
+import { CoachingCycleNumberZod, VisitNumberZod } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
 
 interface ImplementationRecordCardProps {
   record: ImplementationRecord;
@@ -82,7 +82,7 @@ export function ImplementationRecordCard({
       <Input
         label="Visit ID (Optional)"
         value={record.visitId || ''}
-        onChange={(e) => updateField('visitId', e.target.value || undefined)}
+        onChange={(e) => updateField('visitId', e.target.value || '')}
         placeholder="Reference to actual visit entity"
       />
 
@@ -154,7 +154,7 @@ export function ImplementationRecordCard({
         <Textarea
           label="Teacher Reflection"
           value={record.teacherReflection || ''}
-          onChange={(e) => updateField('teacherReflection', e.target.value || undefined)}
+          onChange={(e) => updateField('teacherReflection', e.target.value || '')}
           placeholder="Teacher's reflection on the session..."
           rows={4}
         />
@@ -162,7 +162,7 @@ export function ImplementationRecordCard({
         <Textarea
           label="Coach Notes"
           value={record.coachNotes || ''}
-          onChange={(e) => updateField('coachNotes', e.target.value || undefined)}
+          onChange={(e) => updateField('coachNotes', e.target.value || '')}
           placeholder="Additional coach observations..."
           rows={4}
         />
@@ -172,7 +172,7 @@ export function ImplementationRecordCard({
       {goal && (
         <div className="bg-gray-50 p-3 rounded border-l-4 border-blue-500">
           <h6 className="font-medium text-sm mb-1">Goal Context</h6>
-          <p className="text-sm text-gray-700">{goal.description}</p>
+          <p className="text-sm text-gray-700">{goalDescription}</p>
         </div>
       )}
     </div>

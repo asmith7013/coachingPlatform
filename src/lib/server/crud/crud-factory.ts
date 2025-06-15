@@ -140,14 +140,14 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
           throw new Error(`${name} with ID ${id} not found`);
         }
         
-        // Simple sanitization instead of over-engineered transformation
-        const sanitized = doc as T;
+        // Convert to plain object to prevent hydration issues
+        const plainDocument = doc.toObject ? doc.toObject() : doc;
         
         revalidatePaths();
         
         return {
           success: true,
-          data: sanitized,
+          data: plainDocument as T,
           message: `${name} updated successfully`
         };
       } catch (error) {
@@ -197,10 +197,13 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
         if (!doc) {
           throw new Error(`${name} with ID ${id} not found`);
         }
+        
+        // Convert to plain object to prevent hydration issues
+        const plainDocument = doc.toObject ? doc.toObject() : doc;
                 
         return {
           success: true,
-          data: doc as T
+          data: plainDocument as T
         };
       } catch (error) {
         // ✅ Consistent error handling

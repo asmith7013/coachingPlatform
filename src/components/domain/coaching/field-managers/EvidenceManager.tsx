@@ -5,7 +5,7 @@ import { Button } from '@/components/core/Button';
 import { Text } from '@/components/core/typography/Text';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { EvidenceCard } from './EvidenceCard';
-import type { Evidence } from '@zod-schema/core/cap';
+import type { Evidence } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
 import { getTodayString } from '@/lib/data-processing/transformers/utils/date-utils';
 
 interface EvidenceManagerProps {

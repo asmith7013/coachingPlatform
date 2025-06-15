@@ -2,7 +2,8 @@ import { createCrudHooks } from '@query/client/factories/crud-factory';
 import { 
   CoachingActionPlanZodSchema, 
   CoachingActionPlan
-} from '@zod-schema/core/cap';
+} from '@/lib/schema/zod-schema/cap/coaching-action-plan';
+
 import { ZodSchema } from 'zod';
 import { 
   fetchCoachingActionPlans,
@@ -35,7 +36,7 @@ const coachingActionPlanHooks = createCrudHooks({
 // Export with domain-specific names
 const useCoachingActionPlansList = coachingActionPlanHooks.useList;
 const useCoachingActionPlanById = coachingActionPlanHooks.useDetail;
-const useCoachingActionPlansMutations = coachingActionPlanHooks.useMutations;
+const useCoachingActionPlanMutations = coachingActionPlanHooks.useMutations;
 const useCoachingActionPlanManager = coachingActionPlanHooks.useManager;
 
 // Progress hook using standard query pattern
@@ -58,7 +59,7 @@ export function useCoachingActionPlanProgress(id: string) {
 export { 
   useCoachingActionPlansList, 
   useCoachingActionPlanById, 
-  useCoachingActionPlansMutations, 
+  useCoachingActionPlanMutations, 
   useCoachingActionPlanManager
 };
 
@@ -69,7 +70,7 @@ export const useCoachingActionPlans = {
   list: useCoachingActionPlansList,
   byId: useCoachingActionPlanById,
   progress: useCoachingActionPlanProgress,
-  mutations: useCoachingActionPlansMutations,
+  mutations: useCoachingActionPlanMutations,
   manager: useCoachingActionPlanManager
 };
 

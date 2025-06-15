@@ -7,12 +7,12 @@ import { formatRubricCategory, getRubricContentSummary } from "@schema/reference
 
 // Rubric Fields Schema
 export const RubricFieldsSchema = z.object({
-  score: z.number().describe("Numeric score value (typically 1-4 scale)"),
-  category: z.array(z.string()),
-  content: z.array(z.string()).optional(),
-  parentId: z.string().optional().describe("Reference to parent Rubric document _id for hierarchical structure"),
-  collectionId: z.string().optional().describe("Reference to collection/group this rubric belongs to"),
-  hex: z.string().optional().describe("Hexadecimal color code for visual representation"),
+  score: z.number().default(1).describe("Numeric score value (typically 1-4 scale)"),
+  category: z.array(z.string()).default([]),
+  content: z.array(z.string()).optional().default([]),
+  parentId: z.string().optional().default('').describe("Reference to parent Rubric document _id for hierarchical structure"),
+  collectionId: z.string().optional().default('').describe("Reference to collection/group this rubric belongs to"),
+  hex: z.string().optional().default('').describe("Hexadecimal color code for visual representation"),
 });
 
 // Rubric Full Schema
@@ -61,9 +61,9 @@ export const rubricsToReferences = createArrayTransformer<Rubric, RubricReferenc
 // RubricScore Fields Schema
 export const RubricScoreFieldsSchema = z.object({
   date: zDateField,
-  score: z.number().describe("Numeric rubric score achieved (typically 1-4 scale)"),
-  staffId: z.string().describe("Reference to Staff document _id who received this score"),
-  schoolId: z.string().describe("Reference to School document _id where scoring occurred"),
+  score: z.number().default(1).describe("Numeric rubric score achieved (typically 1-4 scale)"),
+  staffId: z.string().default('').describe("Reference to Staff document _id who received this score"),
+  schoolId: z.string().default('').describe("Reference to School document _id where scoring occurred"),
 });
 
 // RubricScore Full Schema
@@ -96,3 +96,18 @@ export type RubricReference = z.infer<typeof RubricReferenceZodSchema>;
 export type RubricScore = z.infer<typeof RubricScoreZodSchema>;
 export type RubricScoreInput = z.infer<typeof RubricScoreInputZodSchema>;
 export type RubricScoreReference = z.infer<typeof RubricScoreReferenceZodSchema>;
+
+// Add helpers for schema-driven defaults
+export function createRubricDefaults(overrides: Partial<RubricInput> = {}): RubricInput {
+  return {
+    ...RubricInputZodSchema.parse({}),
+    ...overrides
+  };
+}
+
+export function createRubricScoreDefaults(overrides: Partial<RubricScoreInput> = {}): RubricScoreInput {
+  return {
+    ...RubricScoreInputZodSchema.parse({}),
+    ...overrides
+  };
+}
