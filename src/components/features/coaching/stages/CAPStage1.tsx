@@ -3,7 +3,7 @@ import { useForm } from '@tanstack/react-form';
 import { FormLayout } from '@components/composed/forms/FormLayout';
 import { Select } from '@components/core/fields/Select';
 import { Textarea } from '@components/core/fields/Textarea';
-import { CoachingActionPlan, CoachingActionPlanZodSchema } from '@zod-schema/cap/coaching-action-plan';
+import { CoachingActionPlan, CoachingActionPlanZodSchema } from '@zod-schema/cap';
 import { Button } from '@components/core/Button';
 import { IPGCoreActionZod, IPGSubCategoryZod } from '@enums';
 

@@ -1,8 +1,8 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useScheduleData, useScheduleActions, useScheduleState } from '../hooks';
-import type { Visit } from '@zod-schema/visits/visit';
+import type { TimeSlot, Visit } from '@zod-schema/visits/visit';
 import type { NYCPSStaff } from '@zod-schema/core/staff';
-import type { ClassScheduleItem, TeacherSchedule } from '@zod-schema/schedule/schedule';
+import type { TeacherSchedule } from '@zod-schema/schedule/schedule';
 import type { VisitCreationData, VisitUpdateData, ScheduleUIState, ConflictCheckData } from '../types';
 import type { School } from '@zod-schema/core/school';
 
@@ -16,7 +16,7 @@ interface ScheduleContextType {
   
   // Data (direct schema types) - ✅ NO TRANSFORMATIONS
   teachers: NYCPSStaff[];
-  timeSlots: ClassScheduleItem[];     // Direct from bell schedule schema
+  timeSlots: TimeSlot[];     // Direct from bell schedule schema
   visits: Visit[];
   teacherSchedules: TeacherSchedule[]; // Direct from teacher schedule schema
   school: School;
@@ -80,7 +80,7 @@ export function ScheduleProvider({
     
     // Data (direct schema types) - ✅ NO TRANSFORMATIONS
     teachers: scheduleData.teachers,
-    timeSlots: scheduleData.timeSlots,           // ClassScheduleItem[] - no transformation
+    timeSlots: scheduleData.timeSlots as unknown as TimeSlot[],           // ClassScheduleItem[] - no transformation
     visits: scheduleData.visits,
     teacherSchedules: scheduleData.teacherSchedules, // TeacherSchedule[] - no transformation
     school: scheduleData.school as School,

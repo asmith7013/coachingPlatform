@@ -1,8 +1,5 @@
 import { createCrudHooks } from '@query/client/factories/crud-factory';
-import { 
-  CoachingActionPlanZodSchema, 
-  CoachingActionPlan
-} from '@/lib/schema/zod-schema/cap/coaching-action-plan';
+import { CoachingActionPlanZodSchema, CoachingActionPlan } from '@zod-schema/core/cap';
 import { ZodSchema } from 'zod';
 import { 
   fetchCoachingActionPlans,
@@ -22,8 +19,8 @@ const coachingActionPlanHooks = createCrudHooks({
     update: updateCoachingActionPlan,
     delete: deleteCoachingActionPlan
   },
-  validSortFields: ['title', 'status', 'startDate', 'academicYear', 'createdAt', 'updatedAt'],
-  relatedEntityTypes: ['schools', 'staff']
+  validSortFields: ['title', 'status', 'startDate', 'academicYear', 'createdAt'],
+  relatedEntityTypes: ['schools', 'staff', 'capMetrics', 'capEvidence', 'capOutcomes', 'capWeeklyPlans', 'capImplementationRecords']
 });
 
 export const useCoachingActionPlans = {

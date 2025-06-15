@@ -19,30 +19,22 @@ export function PlanningStatusBar() {
     console.log(`🎯 Teacher ${teacherId} events:`, {
       eventsCount: teacherEvents.length,
       eventTypes: teacherEvents.map(event => event.eventType),
-      eventPurposes: teacherEvents.map(event => event.purpose),
+      eventPurposes: teacherEvents.map(event => event.eventType),
       events: teacherEvents
     });
 
     return {
       observation: teacherEvents.some(event => 
         event.eventType === SessionPurposes.OBSERVATION ||
-        event.purpose === SessionPurposes.OBSERVATION ||
-        event.eventType === 'observation' ||
-        event.purpose === 'observation'
+        event.eventType === 'observation'
       ),
       meeting: teacherEvents.some(event => 
         event.eventType === SessionPurposes.DEBRIEF ||
         event.eventType === SessionPurposes.CO_PLANNING ||
         event.eventType === SessionPurposes.PLC ||
-        event.purpose === SessionPurposes.DEBRIEF ||
-        event.purpose === SessionPurposes.CO_PLANNING ||
-        event.purpose === SessionPurposes.PLC ||
         event.eventType === 'debrief' ||
         event.eventType === 'co-planning' ||
-        event.eventType === 'plc' ||
-        event.purpose === 'debrief' ||
-        event.purpose === 'co-planning' ||
-        event.purpose === 'plc'
+        event.eventType === 'plc'
       )
     };
   };
@@ -54,9 +46,9 @@ export function PlanningStatusBar() {
     teachers: teachers.map(t => ({ id: t._id, name: t.staffName })),
     visitsStructure: visits.map(v => ({
       id: v._id,
-      eventsCount: v.events?.length || 0,
-      eventTypes: v.events?.map(e => e.eventType) || [],
-      teachers: v.events?.map(e => e.staffIds?.[0]) || []
+      eventsCount: v.sessionLinks?.length || 0,
+      eventTypes: v.sessionLinks?.map(e => e.purpose) || [],
+      teachers: v.sessionLinks?.map(e => e.staffIds?.[0]) || []
     }))
   });
 

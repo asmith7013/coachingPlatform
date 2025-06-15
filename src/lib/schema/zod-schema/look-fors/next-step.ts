@@ -6,10 +6,12 @@ import { formatNextStepDescription } from "@schema/reference/look-fors/next-step
 
 // NextStep Fields Schema
 export const NextStepFieldsSchema = z.object({
-  description: z.string().default(''),
-  lookForId: z.string().default('').describe("Reference to LookFor document _id this next step relates to"),
-  teacherId: z.string().default('').describe("Reference to Teacher document _id who should implement this step"),
-  schoolId: z.string().default('').describe("Reference to School document _id where this step will be implemented"),
+  coachingActionPlanId: z.string().describe("Reference to CoachingActionPlan document _id - PRIMARY AGGREGATE"),
+  visitId: z.string().optional().describe("Reference to Visit document _id if step came from visit"),
+  description: z.string().describe("Description of the next step"),
+  lookForId: z.string().describe("Reference to LookFor document _id this next step relates to"),
+  teacherId: z.string().describe("Reference to Teacher document _id who should implement this step"),
+  schoolId: z.string().describe("Reference to School document _id where this step will be implemented"),
 });
 
 // NextStep Full Schema
@@ -20,13 +22,13 @@ export const NextStepInputZodSchema = toInputSchema(NextStepZodSchema);
 
 // NextStep Reference Schema
 export const NextStepReferenceZodSchema = BaseReferenceZodSchema.merge(
-  NextStepFieldsSchema
-    .pick({
-      lookForId: true,
-      teacherId: true,
-      schoolId: true,
-    })
-    .partial()
+  NextStepFieldsSchema.pick({
+    coachingActionPlanId: true,
+    visitId: true,
+    lookForId: true,
+    teacherId: true,
+    schoolId: true,
+  }).partial()
 ).extend({
   descriptionSummary: z.string().optional(),
   lookForTopic: z.string().optional(),
@@ -36,12 +38,14 @@ export const NextStepReferenceZodSchema = BaseReferenceZodSchema.merge(
 
 // NextStep Reference Transformer
 export const nextStepToReference = createReferenceTransformer<NextStep, NextStepReference>(
-  (nextStep) => nextStep.description,
-  (nextStep) => ({
-    lookForId: nextStep.lookForId,
-    teacherId: nextStep.teacherId,
-    schoolId: nextStep.schoolId,
-    descriptionSummary: formatNextStepDescription(nextStep),
+  (step) => step.description || 'Untitled',
+  (step) => ({
+    coachingActionPlanId: step.coachingActionPlanId,
+    visitId: step.visitId,
+    lookForId: step.lookForId,
+    teacherId: step.teacherId,
+    schoolId: step.schoolId,
+    descriptionSummary: formatNextStepDescription(step),
   }),
   NextStepReferenceZodSchema
 );

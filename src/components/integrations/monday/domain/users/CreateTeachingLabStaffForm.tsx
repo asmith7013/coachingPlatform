@@ -6,7 +6,9 @@ import { useForm } from '@tanstack/react-form';
 import { Alert } from '@/components/core/feedback/Alert';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { FormLayout } from '@components/composed/forms/FormLayout';
-import { useFieldRenderer } from '@/lib/ui/forms/hooks/useFieldRenderer';
+import { Input } from '@components/core/fields/Input';
+import { Select } from '@components/core/fields/Select';
+import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
 import { TeachingLabStaffFieldConfig } from '@/lib/ui/forms/fieldConfig/staff/teaching-lab-staff';
 import { createTeachingLabStaff } from '@/app/actions/staff';
 import { TeachingLabStaffInput } from '@domain-types/staff';
@@ -31,7 +33,6 @@ export function CreateTeachingLabStaffForm({
 }: CreateTeachingLabStaffFormProps) {
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const { renderField } = useFieldRenderer<TeachingLabStaffInput>();
   
   // Create default values based on the Monday user data
   const defaultValues: Partial<TeachingLabStaffInput> = {
@@ -142,7 +143,57 @@ export function CreateTeachingLabStaffForm({
               </label>
               
               <form.Field name={String(fieldConfig.name)}>
-                {(field) => renderField(fieldConfig, field)}
+                {(field) => (
+                  <div className="space-y-1">
+                    {['text', 'email', 'password', 'number'].includes(fieldConfig.type) && (
+                      <Input
+                        type={fieldConfig.type}
+                        value={String(field.state.value ?? '')}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        onBlur={field.handleBlur}
+                        placeholder={fieldConfig.placeholder}
+                        disabled={fieldConfig.disabled}
+                      />
+                    )}
+                    {fieldConfig.type === 'select' && (
+                      fieldConfig.multiple ? (
+                        <Select
+                          value={Array.isArray(field.state.value) ? field.state.value as string[] : []}
+                          onChange={field.handleChange}
+                          options={fieldConfig.options || []}
+                          placeholder={fieldConfig.placeholder}
+                          disabled={fieldConfig.disabled}
+                          multiple={true}
+                        />
+                      ) : (
+                        <Select
+                          value={typeof field.state.value === 'string' ? field.state.value as string : ''}
+                          onChange={field.handleChange}
+                          options={fieldConfig.options || []}
+                          placeholder={fieldConfig.placeholder}
+                          disabled={fieldConfig.disabled}
+                        />
+                      )
+                    )}
+                    {fieldConfig.type === 'reference' && (
+                      <ReferenceSelect
+                        url={fieldConfig.url || ''}
+                        value={field.state.value as string | string[]}
+                        onChange={field.handleChange}
+                        multiple={fieldConfig.multiple}
+                        placeholder={fieldConfig.placeholder}
+                        disabled={fieldConfig.disabled}
+                        entityType={fieldConfig.entityType}
+                        label={fieldConfig.label}
+                      />
+                    )}
+                    {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                      <p className="text-sm text-destructive">
+                        {field.state.meta.errors[0]}
+                      </p>
+                    )}
+                  </div>
+                )}
               </form.Field>
             </div>
           ))}

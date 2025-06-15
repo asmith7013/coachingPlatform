@@ -1,7 +1,10 @@
 import type { 
-  ImplementationRecord, 
-  CoachingActionPlan
-} from '@zod-schema/cap';
+  CoachingActionPlan,
+  CoachingActionPlanInput
+} from '@zod-schema/core/cap';
+import { CapImplementationRecord } from '@zod-schema/cap/cap-implementation-record';
+// import { CapWeeklyPlan } from '@zod-schema/cap/cap-weekly-plan';
+import { CapOutcome } from '@zod-schema/cap/cap-outcome';
 
 export const stageValidators = {
   needsAndFocus: (data: CoachingActionPlan): boolean => {
@@ -12,17 +15,17 @@ export const stageValidators = {
     );
   },
   
-  goal: (data: CoachingActionPlan): boolean => {
+  goal: (data: CoachingActionPlanInput): boolean => {
     return !!(
       // data.description?.trim() &&
       data.teacherOutcomes.length > 0 &&
       data.studentOutcomes.length > 0 &&
-      data.teacherOutcomes.every(outcome => outcome.description.trim()) &&
-      data.studentOutcomes.every(outcome => outcome.description.trim())
+      data.teacherOutcomes.every((outcome: CapOutcome) => outcome.description.trim()) &&
+      data.studentOutcomes.every((outcome: CapOutcome) => outcome.description.trim())
     );
   },
   
-  implementation: (data: ImplementationRecord[]): boolean => {
+  implementation: (data: CapImplementationRecord[]): boolean => {
     return data.length > 0 && data.every(record => 
       record.lookForImplemented.trim() && 
       record.glows.length > 0 && 
@@ -30,12 +33,12 @@ export const stageValidators = {
     );
   },
   
-  analysis: (data: CoachingActionPlan): boolean => {
+  analysis: (data: CoachingActionPlanInput): boolean => {
     return !!(
       data.goalMet !== undefined &&
       data.impactOnLearning.trim() &&
-      data.teacherOutcomeAnalysis.every(analysis => analysis.achieved !== undefined) &&
-      data.studentOutcomeAnalysis.every(analysis => analysis.achieved !== undefined)
+      data.teacherOutcomeAnalysis.every((analysis: CapOutcome) => analysis.achieved !== undefined) &&
+      data.studentOutcomeAnalysis.every((analysis: CapOutcome) => analysis.achieved !== undefined)
     );
   }
 };

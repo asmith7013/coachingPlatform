@@ -156,7 +156,7 @@ export function SchoolDetailView({ schoolId }: SchoolDetailViewProps) {
                 )}
                 <div className="flex justify-between items-center mt-2">
                   <Text className="font-semibold">
-                    {visit.events?.length || 0} events
+                    {visit.sessionLinks?.length || 0} events
                   </Text>
                   <span className="px-2 py-1 rounded text-xs bg-blue-100 text-blue-700">
                     {visit.allowedPurpose || 'Visit'}

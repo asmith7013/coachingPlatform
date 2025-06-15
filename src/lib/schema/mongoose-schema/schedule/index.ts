@@ -5,7 +5,7 @@ export {
     // Period,
     // ScheduleByDay,
     // TeacherSchedule,
-    ClassScheduleItemModel,
+    // ClassScheduleItemModel,
     AssignedCycleDayModel,
     BellScheduleModel,
     PeriodModel,

@@ -28,7 +28,7 @@ export function normalizeVisitPurposes(visit: Visit): Visit {
     visit.events = visit.events.map((event: EventItem) => ({
       ...event,
       eventType: event.eventType ? normalizePurpose(event.eventType) : event.eventType,
-      purpose: event.purpose ? normalizePurpose(event.purpose) : event.purpose,
+      purpose: event.eventType ? normalizePurpose(event.eventType) : event.eventType,
     }));
   }
   

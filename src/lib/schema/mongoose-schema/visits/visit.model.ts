@@ -1,31 +1,10 @@
 import mongoose from 'mongoose';
 import {
   AllowedPurposes,
-  SessionPurposes,
   ModeDone,
   GradeLevels,
-  DurationValues,
-  ScheduleAssignment,
 } from '@enums';
 import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
-
-const TimeSlotSchema = new mongoose.Schema({
-  startTime: { type: String, required: true },
-  endTime: { type: String, required: true },
-  periodNum: { type: Number }
-}, { _id: false });
-
-const EventItemSchema = new mongoose.Schema({
-  eventType: { type: String, enum: Object.values(SessionPurposes), required: true },
-  staffIds: [{ type: String, required: true }],
-  duration: { type: String, enum: DurationValues, required: true },
-  timeSlot: { type: TimeSlotSchema },
-  purpose: { type: String, enum: Object.values(SessionPurposes) },
-  periodNumber: { type: Number },
-  portion: { type: String, enum: Object.values(ScheduleAssignment) },
-  orderIndex: { type: Number },
-  notes: { type: String }
-}, { _id: false });
 
 const SessionLinkSchema = new mongoose.Schema({
   purpose: { type: String, required: true },
@@ -35,22 +14,37 @@ const SessionLinkSchema = new mongoose.Schema({
 }, { _id: false });
 
 const visitFields = {
-  date: { type: Date, required: true },
+  // Primary relationships - aligned with Zod
+  coachingActionPlanId: { type: String, required: true },
+  date: { type: String },
   schoolId: { type: String, required: true },
   coachId: { type: String, required: true },
+  
+  // Optional relationships
   cycleId: { type: String },
+  teacherId: { type: String },
+  
+  // Visit metadata
   allowedPurpose: { type: String, enum: Object.values(AllowedPurposes) },
   modeDone: { type: String, enum: Object.values(ModeDone) },
   gradeLevelsSupported: [{ type: String, enum: Object.values(GradeLevels), default: [] }],
-  events: [EventItemSchema],
+  
+  // Schedule reference (replaces embedded events)
+  visitScheduleId: { type: String },
+  
+  // Supporting content
   sessionLinks: [SessionLinkSchema],
-  plannedScheduleId: { type: String },
+  
+  // Monday.com integration
   mondayItemId: { type: String },
   mondayBoardId: { type: String },
   mondayItemName: { type: String },
-  mondayLastSyncedAt: { type: Date },
+  mondayLastSyncedAt: { type: String },
+  
+  // Import fields
   siteAddress: { type: String },
-  endDate: { type: Date },
+  endDate: { type: String },
+  
   ...standardDocumentFields
 };
 

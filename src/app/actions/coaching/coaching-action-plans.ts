@@ -6,7 +6,7 @@ import {
   CoachingActionPlanInputZodSchema,
   type CoachingActionPlanInput,
   CoachingActionPlan,
-} from "@zod-schema/cap/coaching-action-plan";
+} from "@zod-schema/cap";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";

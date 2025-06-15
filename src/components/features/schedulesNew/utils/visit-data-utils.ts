@@ -1,6 +1,4 @@
-import type { Visit } from '@zod-schema/visits/visit'
-import type { ScheduleAssignment } from '@domain-types/schedule'
-import { Duration, ScheduleAssignment as ScheduleAssignmentEnum } from '@enums'
+import type { EventItem, Visit } from '@zod-schema/visits/visit'
 
 /**
  * Utility functions for extracting data from visit objects
@@ -22,45 +20,26 @@ export function extractPeriodFromVisit(visit: Visit): number {
   return 1;
 }
 
-/**
- * Extract portion information from visit event data
- */
-export function extractPortionFromVisit(visit: Visit): ScheduleAssignment {
-  // ✅ FIX: Check the actual portion field first
-  const portion = visit.events?.[0]?.portion;
-  if (portion) {
-    return portion as ScheduleAssignment;
-  }
-  
-  // ✅ FALLBACK: Infer from duration if portion not set (backward compatibility)
-  const duration = visit.events?.[0]?.duration;
-  if (duration === Duration.MIN_30) {
-    return ScheduleAssignmentEnum.FIRST_HALF;
-  }
-  
-  // Default to full period for 45 minutes or unspecified
-  return ScheduleAssignmentEnum.FULL_PERIOD;
-}
 
 /**
  * Extract teacher ID from visit events
  */
 export function extractTeacherIdFromVisit(visit: Visit): string {
-  return visit.events?.[0]?.staffIds?.[0] || 'unknown'
+  return visit.sessionLinks?.[0]?.staffIds?.[0] || 'unknown'
 }
 
 /**
  * ✅ NEW: Extract ALL periods from visit (multiple events may have different periods)
  */
 export function extractPeriodsFromVisit(visit: Visit): number[] {
-  return visit.events?.map(event => event.periodNumber).filter(p => p !== undefined) as number[] || [];
+  return visit.events?.map((event: EventItem) => event.periodNumber).filter(p => p !== undefined) as number[] || [];
 }
 
 /**
  * ✅ NEW: Extract ALL teacher IDs from visit events
  */
 export function extractTeacherIdsFromVisit(visit: Visit): string[] {
-  const teacherIds = visit.events?.flatMap(event => event.staffIds || []) || [];
+  const teacherIds = visit.events?.flatMap((event: EventItem) => event.staffIds || []) || [];
   return [...new Set(teacherIds)]; // Remove duplicates
 }
 
@@ -68,7 +47,7 @@ export function extractTeacherIdsFromVisit(visit: Visit): string[] {
  * ✅ NEW: Extract events for specific period
  */
 export function extractEventsForPeriod(visit: Visit, period: number) {
-  return visit.events?.filter(event => event.periodNumber === period) || [];
+  return visit.events?.filter((event: EventItem) => event.periodNumber === period) || [];
 }
 
 /**
@@ -77,28 +56,3 @@ export function extractEventsForPeriod(visit: Visit, period: number) {
 export function extractEventsForTeacher(visit: Visit, teacherId: string) {
   return visit.events?.filter(event => event.staffIds?.includes(teacherId)) || [];
 }
-
-/**
- * Transform visit to scheduled visit format (LEGACY - for backward compatibility)
- * Used by domain hook selectors
- */
-export function transformVisitToScheduledVisit(visit: Visit): {
-  id: string
-  teacherId: string
-  teacherName: string
-  periodNumber: number
-  portion: ScheduleAssignment
-  purpose: string
-  createdAt: string
-} {
-  return {
-    id: visit._id,
-    teacherId: extractTeacherIdFromVisit(visit),
-    teacherName: 'Unknown', // Will be resolved by caller
-    periodNumber: extractPeriodFromVisit(visit),
-    portion: extractPortionFromVisit(visit),
-    purpose: visit.allowedPurpose || 'Observation',
-    createdAt: visit.createdAt || new Date().toISOString()
-  }
-} 
-

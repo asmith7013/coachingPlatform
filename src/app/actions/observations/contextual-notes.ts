@@ -52,7 +52,7 @@ export async function fetchContextualNotesByVisit(visitId: string) {
       
       return {
         success: true,
-        items: results.map((item: ContextualNote) => ContextualNoteZodSchema.parse(item)),
+        items: results.map((item: ContextualNoteInput) => ContextualNoteInputZodSchema.parse(item)),
         total: results.length
       };
     } catch (error) {

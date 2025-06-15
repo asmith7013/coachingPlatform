@@ -14,7 +14,7 @@ import { useCoachingActionPlans } from '@components/features/coaching/hooks/useC
 import { updateCoachingActionPlanStatus } from '@actions/coaching/coaching-action-plans';
 import { handleClientError } from '@error/handlers/client';
 import { PlusCircleIcon, FolderIcon, CheckCircleIcon } from 'lucide-react';
-import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/cap/coaching-action-plan';
+import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/cap';
 import { type PlanStatus } from '@data-processing/transformers/utils/coaching-action-plan-utils';
 import { Button } from '@components/core/Button';
 
@@ -67,7 +67,7 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
     refetch();
   };
 
-  const handleEditSuccess = (_plan: CoachingActionPlan) => {
+  const _handleEditSuccess = (_plan: CoachingActionPlan) => {
     showToast({
       title: 'Success',
       description: 'Coaching action plan updated successfully',
@@ -244,7 +244,7 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
           setShowDetailedEditor(false);
           setEditingPlanId(null);
         }}
-        onSave={handleEditSuccess}
+        // onSave={handleEditSuccess}
       />
       
       {/* ✅ Toast notification system for user feedback */}

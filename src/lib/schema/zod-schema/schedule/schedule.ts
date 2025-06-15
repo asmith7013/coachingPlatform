@@ -39,7 +39,7 @@ export const BellScheduleInputZodSchema = toInputSchema(BellScheduleZodSchema);
 // =====================================
 
 // Teacher Assignment Fields Schema
-export const TeacherAssignmentFieldsSchema = z.object({
+export const PeriodFieldsSchema = z.object({
   periodNumber: z.number().describe("Maps to bell schedule period"),
   className: z.string().describe("'5th Grade Math', 'Planning Time', 'Lunch Break', etc."),
   room: z.string().describe("'Room 205', 'Teachers Lounge', 'Main Playground', etc."),
@@ -53,7 +53,7 @@ export const TeacherScheduleFieldsSchema = z.object({
   teacherId: z.string().describe("Reference to Staff document _id"),
   schoolId: z.string().describe("Reference to School document _id"),
   bellScheduleId: z.string().describe("References which bell schedule this follows"),
-  assignments: z.array(TeacherAssignmentFieldsSchema).describe("Period-by-period assignments")
+  assignments: z.array(PeriodFieldsSchema).describe("Period-by-period assignments")
 });
 
 // Teacher Schedule Full Schema
@@ -216,7 +216,7 @@ export type BellSchedule = z.infer<typeof BellScheduleZodSchema>;
 export type BellScheduleReference = z.infer<typeof BellScheduleReferenceZodSchema>;
 
 // Teacher Schedule Types
-export type TeacherAssignment = z.infer<typeof TeacherAssignmentFieldsSchema>;
+export type Period = z.infer<typeof PeriodFieldsSchema>;
 export type TeacherScheduleInput = z.infer<typeof TeacherScheduleInputZodSchema>;
 export type TeacherSchedule = z.infer<typeof TeacherScheduleZodSchema>;
 export type TeacherScheduleReference = z.infer<typeof TeacherScheduleReferenceZodSchema>;

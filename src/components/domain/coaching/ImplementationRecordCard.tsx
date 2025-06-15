@@ -5,14 +5,14 @@ import { Textarea } from '@/components/core/fields/Textarea';
 import { Select } from '@/components/core/fields/Select';
 import { Trash2 } from 'lucide-react';
 import { ArrayFieldManager } from '@/components/domain/coaching/field-managers/ArrayFieldManager';
-import type { ImplementationRecord, Goal, CoachingCycleNumber, VisitNumber } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
-import { CoachingCycleNumberZod, VisitNumberZod } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
+import { VisitNumberZod, CoachingCycleNumberZod } from '@enums';
+import { CapImplementationRecord, VisitNumber, CoachingCycleNumber, CapWeeklyPlan } from '@zod-schema/cap';
 
 interface ImplementationRecordCardProps {
-  record: ImplementationRecord;
+  record: CapImplementationRecord;
   index: number;
-  goal?: Goal; // For context
-  onUpdate: (index: number, record: ImplementationRecord) => void;
+  goal?: CapWeeklyPlan; // For context
+  onUpdate: (index: number, record: CapImplementationRecord) => void;
   onDelete: (index: number) => void;
 }
 
@@ -23,9 +23,9 @@ export function ImplementationRecordCard({
   onUpdate,
   onDelete
 }: ImplementationRecordCardProps) {
-  const updateField = <K extends keyof ImplementationRecord>(
+  const updateField = <K extends keyof CapImplementationRecord>(
     field: K, 
-    value: ImplementationRecord[K]
+    value: CapImplementationRecord[K]
   ) => {
     onUpdate(index, { ...record, [field]: value });
   };
@@ -172,7 +172,7 @@ export function ImplementationRecordCard({
       {goal && (
         <div className="bg-gray-50 p-3 rounded border-l-4 border-blue-500">
           <h6 className="font-medium text-sm mb-1">Goal Context</h6>
-          <p className="text-sm text-gray-700">{goalDescription}</p>
+          <p className="text-sm text-gray-700">{goal.focus}</p>
         </div>
       )}
     </div>

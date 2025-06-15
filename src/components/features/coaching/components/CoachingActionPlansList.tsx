@@ -4,7 +4,7 @@ import React from 'react';
 import { Card } from '@/components/composed/cards';
 import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
-import { CoachingActionPlan } from '@zod-schema/cap';
+import { CoachingActionPlan } from '@zod-schema/core/cap';
 import { SkeletonContainer } from '@/components/composed/feedback/SkeletonContainer';
 import { CoachingActionPlanCard } from '@components/features/coaching/components/CoachingActionPlanCard';
 

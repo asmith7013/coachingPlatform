@@ -7,10 +7,12 @@ import { formatMediumDate } from "@data-processing/transformers/utils/date-utils
 
 // Note Fields Schema
 export const NoteFieldsSchema = z.object({
+  coachingActionPlanId: z.string().optional().describe("Reference to CoachingActionPlan document _id - PRIMARY AGGREGATE"),
+  visitId: z.string().optional().describe("Reference to Visit document _id if note is visit-specific"),
   date: z.string().describe('Date of note (ISO string)'),
-  type: z.string(),
-  heading: z.string(),
-  subheading: z.array(z.string()),
+  type: z.string().describe('Type of note'),
+  heading: z.string().describe('Heading for the note'),
+  subheading: z.array(z.string()).describe('Subheadings for the note'),
 });
 
 // Note Full Schema
@@ -20,20 +22,24 @@ export const NoteZodSchema = BaseDocumentSchema.merge(NoteFieldsSchema);
 export const NoteInputZodSchema = toInputSchema(NoteZodSchema);
 
 // Note Reference Schema
-export const NoteReferenceZodSchema = BaseReferenceZodSchema.extend({
-  // Explicitly define fields
-  type: z.string().optional(),
-  date: z.date().optional(), // Define date directly, not picked from NoteFieldsSchema
-  dateFormatted: z.string().optional(),
-  subheadingCount: z.number().optional(),
-  subheadingSummary: z.string().optional(),
-});
+export const NoteReferenceZodSchema = BaseReferenceZodSchema.merge(
+  NoteFieldsSchema.pick({
+    coachingActionPlanId: true,
+    visitId: true,
+    date: true,
+    type: true,
+    heading: true,
+    subheading: true,
+  }).partial()
+);
 
 // Note Reference Transformer
 export const noteToReference = createReferenceTransformer<Note, NoteReference>(
-  (note) => note.heading,
+  (note) => note.heading || 'Untitled',
   (note) => ({
-    date: new Date(note.date),
+    coachingActionPlanId: note.coachingActionPlanId,
+    visitId: note.visitId,
+    date: note.date,
     type: note.type,
     dateFormatted: formatMediumDate(new Date(note.date)),
     subheadingCount: note.subheading?.length || 0,

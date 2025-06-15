@@ -8,7 +8,7 @@ import { Text } from '@components/core/typography/Text';
 import { Heading } from '@components/core/typography/Heading';
 
 // Import existing domain hook and types from the established schema
-import { useClassroomObservations } from '@domain-hooks/observations/useClassroomObservations';
+import { useClassroomObservations } from '@hooks/domain/observations/useClassroomObservations';
 import { 
   useClassroomObservationDefaultsSimple,
   type ClassroomObservationInput,

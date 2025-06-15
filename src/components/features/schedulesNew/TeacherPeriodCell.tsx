@@ -3,6 +3,7 @@ import { useScheduleContext } from './context';
 import type { Period } from '@zod-schema/schedule/schedule';
 import { SessionPurposes } from '@/lib/schema/enum';
 import { extractEventsForPeriod } from './utils/visit-data-utils';
+import { EventItem } from '@/lib/schema/zod-schema/visits/visit';
 
 interface TeacherPeriodCellProps {
   teacherId: string;
@@ -81,12 +82,12 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
   if (visit) {
     // ✅ FIX: Get the actual event for this teacher and period
     const eventsForPeriod = extractEventsForPeriod(visit, periodNum);
-    const teacherEvent = eventsForPeriod.find(event => 
+    const teacherEvent = eventsForPeriod.find((event : EventItem) => 
       event.staffIds?.includes(teacherId)
     );
     
     // Extract event type from the actual event data
-    const eventType = teacherEvent?.eventType || teacherEvent?.purpose || visit.allowedPurpose || 'observation';
+    const eventType = teacherEvent?.eventType || teacherEvent?.eventType || visit.allowedPurpose || 'observation';
     const styling = getEventStyling(eventType);
 
     return (
@@ -104,7 +105,7 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
     );
   }
 
-  if (schedule?.periodType === 'lunch') {
+  if (schedule?.activityType === 'lunch') {
     const getLunchStyle = () => {
       if (isSelected) {
         return {
@@ -144,7 +145,7 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
     );
   }
 
-  if (schedule?.periodType === 'prep') {
+    if (schedule?.activityType === 'prep') {
     const getPrepStyle = () => {
       if (isSelected) {
         return {

@@ -6,7 +6,7 @@ import { Card } from '@/components/composed/cards';
 import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
 import { Badge } from '@/components/core/feedback/Badge';
-import { CoachingActionPlan } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
+import { CoachingActionPlan } from '@zod-schema/core/cap';
 import { EditIcon, TrashIcon, EyeIcon } from 'lucide-react';
 
 interface CoachingActionPlanCardProps {

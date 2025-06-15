@@ -35,7 +35,7 @@ export function useScheduleData({ schoolId, date, mode = 'create', visitId }: Us
     // console.log('🔍 Bell Schedule Debug:', schoolData.bellSchedule)
     
     // Return classSchedule directly - it's already ClassScheduleItem[]
-    const classSchedule = schoolData.bellSchedule?.classSchedule || []
+    const classSchedule = schoolData.bellSchedule?.timeBlocks || []
     
     // console.log('🕐 Time Slots (direct from schema):', classSchedule)
     return classSchedule

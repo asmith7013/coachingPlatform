@@ -7,7 +7,6 @@
 export type {
     School,
     SchoolInput,
-    SchoolClient
   } from '@zod-schema/core/school';
   
   // Additional domain-specific type utilities for school

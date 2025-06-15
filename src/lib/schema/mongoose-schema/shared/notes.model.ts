@@ -6,6 +6,8 @@ const noteFields = {
   type: { type: String, required: true },
   heading: { type: String, required: true },
   subheading: [{ type: String, required: true }],
+  coachingActionPlanId: { type: String, required: false }, // Reference to CoachingActionPlan document _id - PRIMARY AGGREGATE
+  visitId: { type: String, required: false }, // Reference to Visit document _id if note is visit-specific
   ...standardDocumentFields
 };
 

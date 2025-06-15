@@ -7,14 +7,14 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { Badge } from '@/components/core/feedback/Badge';
-import type { CoachingActionPlan } from '@zod-schema/cap';
+import type { CoachingActionPlan } from '@zod-schema/core/cap';
 import { 
   PencilIcon,
   DocumentDuplicateIcon,
   TrashIcon,
   DocumentArrowDownIcon
 } from '@heroicons/react/24/outline';
-import { formatMediumDate } from '@data-processing/transformers/utils/date-utils';
+import { formatMediumDate } from '@/lib/data-processing/transformers/utils/date-utils';
 
 interface ActionPlanCardProps {
   plan: CoachingActionPlan;
@@ -105,7 +105,7 @@ export function ActionPlanCard({
           </div>
 
           {/* Focus Area */}
-          {plan && (
+          {plan.ipgCoreAction && (
             <div className="mb-4">
               <Text textSize="sm" color="default" className="font-medium">
                 Focus: {plan.ipgCoreAction} - {plan.ipgSubCategory}
@@ -198,18 +198,36 @@ export function ActionPlanCard({
 // Helper functions
 function formatStageProgress(plan: CoachingActionPlan): string {
   let completedStages = 0;
+  
   if (plan.ipgCoreAction) completedStages++;
-  if (plan.goalDescription) completedStages++;
-  // Add more flat fields as needed for your progress logic
-  return `${completedStages}/2`;
+  if (plan.ipgSubCategory) completedStages++;
+  if (plan.rationale) completedStages++;
+  if (plan.teachers) completedStages++;
+  if (plan.coaches) completedStages++;
+  if (plan.school) completedStages++;
+  if (plan.academicYear) completedStages++;
+  if (plan.ipgCoreAction) completedStages++;
+  if (plan.ipgSubCategory) completedStages++;
+  if (plan.rationale) completedStages++;
+  
+  return `${completedStages}/4 stages completed`;
 }
 
 function calculateProgressPercentage(plan: CoachingActionPlan): number {
   let completedStages = 0;
+  
   if (plan.ipgCoreAction) completedStages++;
-  if (plan.goalDescription) completedStages++;
-  // Add more flat fields as needed
-  return (completedStages / 2) * 100;
+  if (plan.ipgSubCategory) completedStages++;
+  if (plan.rationale) completedStages++;
+  if (plan.teachers) completedStages++;
+  if (plan.coaches) completedStages++;
+  if (plan.school) completedStages++;
+  if (plan.academicYear) completedStages++;
+  if (plan.ipgCoreAction) completedStages++;
+  if (plan.ipgSubCategory) completedStages++;
+  if (plan.rationale) completedStages++;
+  
+  return Math.round((completedStages / 4) * 100);
 }
 
 function getStatusIntent(status: string): 'success' | 'warning' | 'danger' | 'info' {

@@ -1,10 +1,9 @@
-
 import type { Visit } from '@zod-schema/visits/visit';
-import type { ScheduleAssignment } from '@zod-schema/schedule/schedule';
+import { ScheduleAssignment } from '@enums';
+import type { BellSchedule } from '@zod-schema/schedule/schedule';
 
 // Note: ScheduleAssignmentType and PlannedVisit were from planned-visit schema
 type PlannedVisit = Visit;
-import type { BellSchedule, Period, AssignmentState } from '@zod-schema/schedule/schedule';
 
 // ===== UNIFIED TIME SLOT INTERFACES =====
 
@@ -39,7 +38,6 @@ export interface ScheduleFilters {
  * Schedule display configuration
  */
 export interface ScheduleDisplay {
-  periods: Record<string, Period[]>;
   timeSlots: TimeSlot[];
   teacher?: string;
   school?: string;
@@ -138,9 +136,8 @@ export interface PlannedScheduleColumnProps {
   activeHoverZone?: HoverState | null;
   draggedTeacher?: DraggedTeacher | null;
   className?: string;
-  activeAssignments?: AssignmentState[];
-  onRemoveAssignment?: (assignment: AssignmentState) => void;
-  onEditAssignmentPurpose?: (assignment: AssignmentState) => void;
+  onRemoveAssignment?: (assignment: ScheduleAssignment) => void;
+  onEditAssignmentPurpose?: (assignment: ScheduleAssignment) => void;
   getTeacherName?: (teacherId: string) => string;
 }
 

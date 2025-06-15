@@ -11,20 +11,21 @@ import { getTotalDurationMinutes, hasMicroPL, hasModel } from "@schema/reference
 
 // Coaching Log Fields Schema
 export const CoachingLogFieldsSchema = z.object({
+  coachingActionPlanId: z.string().describe("Reference to CoachingActionPlan document _id - PRIMARY AGGREGATE"),
   reasonDone: ReasonDoneZod.default(ReasonDoneZod.options[0]).describe("Why coaching was completed: Full completion or early termination"),
-  microPLTopic: z.string().optional().default(''),
-  microPLDuration: z.number().optional().default(0).describe("Duration in minutes for micro professional learning session"),
-  modelTopic: z.string().optional().default(''),
-  modelDuration: z.number().optional().default(0).describe("Duration in minutes for modeling session"),
+  microPLTopic: z.string().optional().describe("Topic for micro professional learning session"),
+  microPLDuration: z.number().optional().describe("Duration in minutes for micro professional learning session"),
+  modelTopic: z.string().optional().describe("Topic for modeling session"),
+  modelDuration: z.number().optional().describe("Duration in minutes for modeling session"),
   adminMeet: z.boolean().optional().default(false).describe("Whether administrator joined the coaching session"),
-  adminMeetDuration: z.number().optional().default(0).describe("Duration in minutes of administrator participation"),
+  adminMeetDuration: z.number().optional().describe("Duration in minutes of administrator participation"),
   NYCDone: z.boolean().optional().default(false).describe("Whether NYC-specific coaching requirements were met"),
   totalDuration: TotalDurationZod.default(TotalDurationZod.options[0]).describe("Total session duration: 30min, 45min, 60min, or 90min"),
   solvesTouchpoint: SolvesTouchpointZod.default(SolvesTouchpointZod.options[0]).describe("Type of coaching support: Teacher, Leader, or Combined"),
-  primaryStrategy: z.string().default(''),
-  solvesSpecificStrategy: z.string().default(''),
-  aiSummary: z.string().optional().default(''),
-  visitId: z.string().optional().default('').describe("Reference to Visit document _id this log belongs to"),
+  primaryStrategy: z.string().describe("Primary strategy used in this coaching log"),
+  solvesSpecificStrategy: z.string().describe("Specific strategy solved in this coaching log"),
+  aiSummary: z.string().optional().describe("AI-generated summary of the coaching log"),
+  visitId: z.string().optional().describe("Reference to Visit document _id this log belongs to"),
 });
 
 // Coaching Log Full Schema
@@ -37,6 +38,7 @@ export const CoachingLogInputZodSchema = toInputSchema(CoachingLogZodSchema);
 export const CoachingLogReferenceZodSchema = BaseReferenceZodSchema.merge(
   CoachingLogFieldsSchema
     .pick({
+      coachingActionPlanId: true,
       reasonDone: true,
       totalDuration: true,
       solvesTouchpoint: true,
@@ -52,12 +54,9 @@ export const CoachingLogReferenceZodSchema = BaseReferenceZodSchema.merge(
 
 // Coaching Log Reference Transformer
 export const coachingLogToReference = createReferenceTransformer<CoachingLog, CoachingLogReference>(
-  (log) => {
-    const touchpoint = log.solvesTouchpoint;
-    const duration = log.totalDuration;
-    return `${touchpoint} (${duration})`;
-  },
+  (log) => log.primaryStrategy ? log.primaryStrategy.slice(0, 50) + (log.primaryStrategy.length > 50 ? '...' : '') : 'Coaching Log',
   (log) => ({
+    coachingActionPlanId: log.coachingActionPlanId,
     reasonDone: log.reasonDone,
     totalDuration: log.totalDuration,
     solvesTouchpoint: log.solvesTouchpoint,

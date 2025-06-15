@@ -2,25 +2,23 @@
 
 import React from 'react';
 import { useForm } from '@tanstack/react-form';
-
 import { FormLayout } from '@components/composed/forms/FormLayout';
 import { Input } from '@components/core/fields/Input';
 import { Textarea } from '@components/core/fields/Textarea';
 import { Select } from '@components/core/fields/Select';
-import { Button } from '@components/core/Button';
-import { PlusIcon, TrashIcon } from 'lucide-react';
 import { 
-  MetricCollectionMethodZod,
-  type Outcome,
-  type Metric,
-  CoachingActionPlan,
-  CoachingActionPlanZodSchema
-} from '@zod-schema/cap';
+  CoachingActionPlanInputZodSchema,
+  type CoachingActionPlanInput
+} from '@zod-schema/core/cap';
+import { 
+  IPGCoreActionZod,
+  IPGSubCategoryZod,
+  CoachingActionPlanStatusZod
+} from '@enums';
 
 interface CAPStage2Props {
-  data: CoachingActionPlan;
-  onChange: (goalData: CoachingActionPlan) => void;
-  planId: string;
+  data: CoachingActionPlanInput;
+  onChange: (formData: CoachingActionPlanInput) => void;
   className?: string;
 }
 
@@ -32,216 +30,308 @@ export function CoachingActionPlanStage2({
   const form = useForm({
     defaultValues: data,
     validators: {
-      onChange: (value) => {
-        const result = CoachingActionPlanZodSchema.safeParse(value);
-        if (!result.success) {
-          return result.error.formErrors.fieldErrors;
-        }
-        return undefined;
-      },
+      onChange: CoachingActionPlanInputZodSchema,
     },
     onSubmit: async ({ value }) => {
-      const validatedData = CoachingActionPlanZodSchema.parse(value);
-      onChange(validatedData);
+      onChange(value);
     },
   });
 
-  const collectionMethodOptions = MetricCollectionMethodZod.options.map(
-    (option: string) => ({ value: option, label: option })
-  );
+  // Create options for select fields
+  const ipgCoreActionOptions = IPGCoreActionZod.options.map(option => ({
+    value: option,
+    label: option
+  }));
 
-  // Helper for rendering outcome arrays
-  const renderOutcomeArray = (
-    fieldName: keyof CoachingActionPlan, 
-    label: string
-  ) => (
-    <form.Field name={fieldName}>
-      {(outcomeArrayField) => {
-        const outcomes = (outcomeArrayField.state.value as Outcome[]) || [];
-        
-        return (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="font-medium">{label}</span>
-              <Button
-                type="button"
-                appearance="outline"
-                onClick={() => {
-                  const newOutcome: Outcome = {
-                    type: fieldName === 'teacherOutcomes' ? 'teacher-facing' : 'student-facing',
-                    description: '',
-                    metrics: [],
-                    evidence: []
-                  };
-                  outcomeArrayField.handleChange([...outcomes, newOutcome]);
-                }}
-              >
-                <PlusIcon className="h-4 w-4 mr-1" /> Add Outcome
-              </Button>
-            </div>
-            
-            {outcomes.map((outcome: Outcome, outcomeIndex: number) => (
-              <div key={outcomeIndex} className="border rounded-md p-3 space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Outcome {outcomeIndex + 1}</span>
-                  <Button
-                    type="button"
-                    appearance="outline"
-                    onClick={() => {
-                      const updatedOutcomes = outcomes.filter((_, i) => i !== outcomeIndex);
-                      outcomeArrayField.handleChange(updatedOutcomes);
-                    }}
-                  >
-                    <TrashIcon className="h-4 w-4" />
-                  </Button>
-                </div>
-                
-                <form.Field name={`${fieldName}.${outcomeIndex}.description` as any}>
-                  {(field) => (
-                    <Textarea 
-                      fieldApi={field} 
-                      label="Description" 
-                      placeholder="Describe the expected outcome..." 
-                    />
-                  )}
-                </form.Field>
-                
-                {/* Metrics section */}
-                <form.Field name={`${fieldName}.${outcomeIndex}.metrics` as any}>
-                  {(metricsArrayField) => {
-                    const metrics = (metricsArrayField.state.value as Metric[]) || [];
-                    
-                    return (
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs font-medium">Metrics</span>
-                          <Button
-                            type="button"
-                            appearance="outline"
-                            onClick={() => {
-                              const newMetric: Metric = {
-                                type: 'quantitative',
-                                description: '',
-                                name: '',
-                                collectionMethod: 'observation',
-                                baselineValue: '',
-                                targetValue: '',
-                                currentValue: '',
-                                notes: ''
-                              };
-                              metricsArrayField.handleChange([...metrics, newMetric]);
-                            }}
-                          >
-                            <PlusIcon className="h-4 w-4 mr-1" /> Add Metric
-                          </Button>
-                        </div>
-                        
-                        {metrics.map((metric: Metric, metricIndex: number) => (
-                          <div key={metricIndex} className="border rounded-md p-2 space-y-2">
-                            <Input 
-                              label="Metric Name" 
-                              value={metric.name}
-                              onChange={(e) => {
-                                const updatedMetrics = [...metrics];
-                                updatedMetrics[metricIndex] = {
-                                  ...updatedMetrics[metricIndex],
-                                  name: e.target.value
-                                };
-                                metricsArrayField.handleChange(updatedMetrics);
-                              }}
-                            />
-                            
-                            <Select 
-                              label="Collection Method" 
-                              value={metric.collectionMethod}
-                              onChange={(value) => {
-                                const updatedMetrics = [...metrics];
-                                updatedMetrics[metricIndex] = {
-                                  ...updatedMetrics[metricIndex],
-                                  collectionMethod: value
-                                };
-                                metricsArrayField.handleChange(updatedMetrics);
-                              }}
-                              options={collectionMethodOptions}
-                            />
-                            
-                            <Input 
-                              label="Target Value" 
-                              value={metric.targetValue}
-                              onChange={(e) => {
-                                const updatedMetrics = [...metrics];
-                                updatedMetrics[metricIndex] = {
-                                  ...updatedMetrics[metricIndex],
-                                  targetValue: e.target.value
-                                };
-                                metricsArrayField.handleChange(updatedMetrics);
-                              }}
-                            />
-                            
-                            <Button
-                              type="button"
-                              appearance="outline"
-                              onClick={() => {
-                                const updatedMetrics = metrics.filter((_, i) => i !== metricIndex);
-                                metricsArrayField.handleChange(updatedMetrics);
-                              }}
-                            >
-                              <TrashIcon className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    );
-                  }}
-                </form.Field>
-              </div>
-            ))}
-          </div>
-        );
-      }}
-    </form.Field>
-  );
+  const ipgSubCategoryOptions = IPGSubCategoryZod.options.map(option => ({
+    value: option,
+    label: option
+  }));
+
+  const statusOptions = CoachingActionPlanStatusZod.options.map(option => ({
+    value: option,
+    label: option.charAt(0).toUpperCase() + option.slice(1)
+  }));
 
   return (
     <div className={className}>
       <FormLayout 
         title="Stage 2: Goal Definition" 
-        isSubmitting={false} 
+        isSubmitting={form.state.isSubmitting} 
         canSubmit={form.state.canSubmit} 
-        submitLabel="Save"
+        submitLabel="Save Changes"
       >
-        <form onSubmit={(e) => { 
-          e.preventDefault(); 
-          form.handleSubmit(); 
-        }} className="space-y-8">
+        <form 
+          onSubmit={(e) => { 
+            e.preventDefault(); 
+            form.handleSubmit(); 
+          }} 
+          className="space-y-6"
+        >
           
-          <form.Field name="description">
+          {/* Goal Description */}
+          <form.Field name="goalDescription">
             {(field) => (
-              <Textarea
-                fieldApi={field} 
-                label="Goal Description" 
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Goal Description
+                </label>
+                <Textarea
+                  value={field.state.value || ''}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  placeholder="Describe the primary goal for this coaching plan..."
+                  rows={4}
+                />
+                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                  <p className="text-sm text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
+                )}
+              </div>
             )}
           </form.Field>
-          
-          {renderOutcomeArray('teacherOutcomes', 'Teacher Outcomes')}
-          {renderOutcomeArray('studentOutcomes', 'Student Outcomes')}
-          
-          <div className="flex justify-end pt-6">
-            <Button 
-              type="submit" 
-              disabled={!form.state.canSubmit} 
-              className="ml-auto"
-            >
-              Save Changes
-            </Button>
-        </div>
+
+          {/* IPG Core Action */}
+          <form.Field name="ipgCoreAction">
+            {(field) => (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  IPG Core Action
+                </label>
+                <Select
+                  value={field.state.value || 'CA1'}
+                  onChange={field.handleChange}
+                  options={ipgCoreActionOptions}
+                />
+                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                  <p className="text-sm text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+
+          {/* IPG Sub Category */}
+          <form.Field name="ipgSubCategory">
+            {(field) => (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  IPG Sub Category
+                </label>
+                <Select
+                  value={field.state.value || 'CA1a'}
+                  onChange={field.handleChange}
+                  options={ipgSubCategoryOptions}
+                />
+                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                  <p className="text-sm text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+
+          {/* Rationale */}
+          <form.Field name="rationale">
+            {(field) => (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Rationale
+                </label>
+                <Textarea
+                  value={field.state.value || ''}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  placeholder="Explain the rationale for selecting this focus area..."
+                  rows={3}
+                />
+                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                  <p className="text-sm text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+
+          {/* Impact on Learning */}
+          <form.Field name="impactOnLearning">
+            {(field) => (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Expected Impact on Student Learning
+                </label>
+                <Textarea
+                  value={field.state.value || ''}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  placeholder="Describe the expected impact on student learning outcomes..."
+                  rows={3}
+                />
+                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                  <p className="text-sm text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+
+          {/* Lessons Learned */}
+          <form.Field name="lessonsLearned">
+            {(field) => (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Lessons Learned (Previous Cycles)
+                </label>
+                <Textarea
+                  value={field.state.value || ''}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  placeholder="What key lessons were learned from previous coaching cycles?"
+                  rows={3}
+                />
+                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                  <p className="text-sm text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+
+          {/* Recommendations for Next */}
+          <form.Field name="recommendationsForNext">
+            {(field) => (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Recommendations for Next Cycle
+                </label>
+                <Textarea
+                  value={field.state.value || ''}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  placeholder="What recommendations do you have for the next coaching cycle?"
+                  rows={3}
+                />
+                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                  <p className="text-sm text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+
+          {/* Status */}
+          <form.Field name="status">
+            {(field) => (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Plan Status
+                </label>
+                <Select
+                  value={field.state.value || 'draft'}
+                  onChange={field.handleChange}
+                  options={statusOptions}
+                />
+                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                  <p className="text-sm text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+
+          {/* Cycle Length */}
+          <form.Field name="cycleLength">
+            {(field) => (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Number of Coaching Cycles
+                </label>
+                <Input
+                  type="number"
+                  value={field.state.value || 3}
+                  onChange={(e) => field.handleChange(Number(e.target.value))}
+                  onBlur={field.handleBlur}
+                  min={1}
+                  max={10}
+                />
+                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                  <p className="text-sm text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+
+          {/* Start Date */}
+          <form.Field name="startDate">
+            {(field) => (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Start Date
+                </label>
+                <Input
+                  type="date"
+                  value={field.state.value || ''}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                />
+                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                  <p className="text-sm text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+
+          {/* End Date */}
+          <form.Field name="endDate">
+            {(field) => (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  End Date (Optional)
+                </label>
+                <Input
+                  type="date"
+                  value={field.state.value || ''}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                />
+                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                  <p className="text-sm text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+
+          {/* Form-level error display */}
+          <form.Subscribe 
+            selector={(state) => state.errorMap}
+          >
+            {(errorMap) => 
+              typeof errorMap.onChange === 'string' && (
+                <div className="text-sm text-destructive">
+                  <strong>Form Error:</strong> {errorMap.onChange}
+                </div>
+              )
+            }
+          </form.Subscribe>
+
         </form>
       </FormLayout>
-      </div>
+    </div>
   );
-} 
+}
 
 export type { CAPStage2Props as CoachingActionPlanStage2Props };

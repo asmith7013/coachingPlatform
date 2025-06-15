@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
-import { Button } from '@/components/core/Button';
-import { Card } from '@/components/composed/cards';
-import { Text } from '@/components/core/typography/Text';
-import { Heading } from '@/components/core/typography/Heading';
+import { Button } from '@components/core/Button';
+import { Card } from '@components/composed/cards';
+import { Text } from '@components/core/typography/Text';
+import { Heading } from '@components/core/typography/Heading';
 import { Input } from '@components/core/fields/Input';
 import { Select } from '@components/core/fields/Select';
 import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
@@ -13,8 +13,8 @@ import { Textarea } from '@components/core/fields/Textarea';
 import { 
   CoachingActionPlanInput,
   CoachingActionPlanInputZodSchema
-} from '@zod-schema/cap';
-import { createCoachingActionPlanDefaults } from '@zod-schema/cap';
+} from '@zod-schema/core/cap';
+import { createCoachingActionPlanDefaults } from '@zod-schema/core/cap';
 import { AcademicYearZod, CoachingActionPlanStatusZod } from '@enums';
 
 interface CoachingActionPlanFormProps {
@@ -65,13 +65,13 @@ export function CoachingActionPlanForm({
         </>;
       case 'needs':
         return <>
-          <form.Field name="ipgCoreAction">{(field) => <Input fieldApi={field} label="IPG Core Action" />}</form.Field>
-          <form.Field name="ipgSubCategory">{(field) => <Input fieldApi={field} label="IPG Sub Category" />}</form.Field>
-          <form.Field name="rationale">{(field) => <Textarea fieldApi={field} label="Rationale" />}</form.Field>
+          <form.Field name="needsAndFocus.ipgCoreAction">{(field) => <Input fieldApi={field} label="IPG Core Action" />}</form.Field>
+          <form.Field name="needsAndFocus.ipgSubCategory">{(field) => <Input fieldApi={field} label="IPG Sub Category" />}</form.Field>
+          <form.Field name="needsAndFocus.rationale">{(field) => <Textarea fieldApi={field} label="Rationale" />}</form.Field>
         </>;
       case 'goal':
         return <>
-          <form.Field name="goalDescription">{(field) => <Textarea fieldApi={field} label="Goal Description" />}</form.Field>
+          <form.Field name="goal.description">{(field) => <Textarea fieldApi={field} label="Goal Description" />}</form.Field>
         </>;
       case 'timeline':
         return <>

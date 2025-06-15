@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
 import { textColors, textSize, weight, paddingX, paddingY } from '@/lib/tokens/tokens'
-import type { ScheduleByDay, Period } from '@zod-schema/schedule/schedule'
+import type { TeacherSchedule, Period } from '@zod-schema/schedule/schedule'
 
 const scheduleTable = tv({
   slots: {
@@ -93,7 +93,7 @@ const periodTypeColorMap: Record<string, string> = {
 export type ScheduleTableVariants = VariantProps<typeof scheduleTable>
 
 export interface ScheduleTableProps extends ScheduleTableVariants {
-  scheduleByDay: ScheduleByDay[]
+  scheduleByDay: TeacherSchedule[]
   className?: string
 }
 
@@ -110,8 +110,8 @@ export function ScheduleTable({
   const allPeriodNumbers = useMemo(() => {
     const periodSet = new Set<number>()
     scheduleByDay.forEach(day => {
-      day.periods.forEach(period => {
-        periodSet.add(period.periodNum)
+      day.assignments.forEach(period => {
+        periodSet.add(period.periodNumber)
       })
     })
     return Array.from(periodSet).sort((a, b) => a - b)
@@ -121,8 +121,8 @@ export function ScheduleTable({
   const periodMap = useMemo(() => {
     const map = new Map<string, Period>()
     scheduleByDay.forEach(day => {
-      day.periods.forEach(period => {
-        map.set(`${day.day}-${period.periodNum}`, period)
+      day.assignments.forEach(period => {
+        map.set(`${day.bellScheduleId}-${period.periodNumber}`, period)
       })
     })
     return map
@@ -141,8 +141,8 @@ export function ScheduleTable({
           <tr>
             <th scope="col" className={styles.headerCell()}>Period</th>
             {scheduleByDay.map(day => (
-              <th key={day.day} scope="col" className={styles.headerCell()}>
-                {day.day}
+              <th key={day._id} scope="col" className={styles.headerCell()}>
+                {day._id}
               </th>
             ))}
           </tr>
@@ -156,9 +156,9 @@ export function ScheduleTable({
                 </span>
               </td>
               {scheduleByDay.map(day => {
-                const period = periodMap.get(`${day.day}-${periodNum}`)
+                const period = periodMap.get(`${day.bellScheduleId}-${periodNum}`)
                 return (
-                  <td key={`${day.day}-${periodNum}`} className={styles.cell()}>
+                  <td key={`${day.bellScheduleId}-${periodNum}`} className={styles.cell()}>
                     {period ? (
                       <div className="flex flex-col">
                         <span className={cn(weight.medium)}>{period.className}</span>
@@ -170,10 +170,10 @@ export function ScheduleTable({
                         <span 
                           className={cn(
                             styles.periodType(),
-                            getPeriodTypeClass(period.periodType)
+                            getPeriodTypeClass(period.activityType)
                           )}
                         >
-                          {period.periodType}
+                          {period.activityType}
                         </span>
                       </div>
                     ) : null}

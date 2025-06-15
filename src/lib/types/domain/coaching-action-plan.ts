@@ -1,7 +1,7 @@
 // Domain types for Coaching Action Plan components and workflows
 // These interfaces match the example component patterns and extend the schema types
 
-import { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/cap';
+import { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
 
 // ===== CORE COMPONENT INTERFACES =====
 
@@ -399,7 +399,3 @@ export interface UseIPGSelectionReturn {
   selectedColor: IPGColorCode | null;
 }
 
-// ===== EXPORT TYPES FOR CONVENIENCE =====
-
-// Re-export schema types for convenience
-export type { CoachingActionPlan, CoachingActionPlanInput } from '@/lib/schema/zod-schema/cap/coaching-action-plan'; 

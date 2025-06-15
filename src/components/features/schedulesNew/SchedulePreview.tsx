@@ -25,7 +25,7 @@ export function SchedulePreview({
   className
 }: SchedulePreviewProps) {
   // Get sample schedule for preview (first teacher's schedule)
-  const sampleSchedule = teacherSchedules?.[0]?.scheduleByDay || []
+  const sampleSchedule = teacherSchedules?.[0]?.assignments || []
 
   return (
     <div className={cn("space-y-3", className)}>
@@ -82,14 +82,14 @@ export function SchedulePreview({
                 </span>
               </div>
             )}
-            {sampleSchedule[0]?.periods && (
+            {sampleSchedule[0]?.periodNumber && (
               <div className="flex items-center gap-1">
                 <span className={cn(
                   'rounded-full px-2 py-1',
                   'text-xs font-medium',
                   'bg-purple-100 text-purple-800'
                 )}>
-                  {sampleSchedule[0].periods.length} Periods
+                  {sampleSchedule[0].periodNumber} Periods
                 </span>
               </div>
             )}
@@ -105,7 +105,7 @@ export function SchedulePreview({
               </div>
               <div className="max-h-32 overflow-y-auto">
                 <ScheduleTable
-                  scheduleByDay={sampleSchedule.slice(0, maxDaysPreview)}
+                  scheduleByDay={sampleSchedule.slice(0, maxDaysPreview) as unknown as TeacherSchedule[]}
                   textSize="xs"
                   compact={true}
                   className="border-0"

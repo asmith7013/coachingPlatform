@@ -5,13 +5,13 @@ import { Button } from '@/components/core/Button';
 import { Text } from '@/components/core/typography/Text';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { EvidenceCard } from './EvidenceCard';
-import type { Evidence } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
-import { getTodayString } from '@/lib/data-processing/transformers/utils/date-utils';
+import type { CapEvidence } from '@zod-schema/cap';
+import { getTodayString } from '@data-processing/transformers/utils/date-utils';
 
 interface EvidenceManagerProps {
   label: string;
-  evidence: Evidence[];
-  onChange: (evidence: Evidence[]) => void;
+  evidence: CapEvidence[];
+  onChange: (evidence: CapEvidence[]) => void;
   variant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info';
   className?: string;
   minItems?: number;
@@ -75,7 +75,9 @@ export function EvidenceManager({
 
   const addEvidence = () => {
     if (!maxItems || evidence.length < maxItems) {
-      const newEvidence: Evidence = {
+      const newEvidence: CapEvidence = {
+        _id: '',
+        ownerIds: [],
         description: '',
         type: 'written_summary',
         title: '',
@@ -88,7 +90,7 @@ export function EvidenceManager({
     }
   };
 
-  const updateEvidence = (index: number, updates: Partial<Evidence>) => {
+  const updateEvidence = (index: number, updates: Partial<CapEvidence>) => {
     const updated = [...evidence];
     updated[index] = { ...updated[index], ...updates };
     onChange(updated);

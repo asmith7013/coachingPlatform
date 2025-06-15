@@ -6,6 +6,8 @@ const nextStepFields = {
   lookForId: { type: String, required: true },
   teacherId: { type: String, required: true },
   schoolId: { type: String, required: true },
+  coachingActionPlanId: { type: String, required: true },
+  visitId: { type: String, required: false },
   ...standardDocumentFields
 };
 

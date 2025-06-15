@@ -6,8 +6,17 @@ import {
   IPGSubCategoryZod,
   CoachingActionPlanStatusZod
 } from "@enums";
+import { createReferenceTransformer } from "@data-processing/transformers/factories/reference-factory";
+import { BaseReferenceZodSchema } from "../core-types/reference";
 
-// ===== COACHING ACTION PLAN FIELDS SCHEMA =====
+// Re-export everything from the comprehensive CAP schema
+export * from '../cap/cap-outcome';
+export * from '../cap/cap-metric';
+export * from '../cap/cap-evidence';
+export * from '../cap/cap-implementation-record';
+export * from '../cap/cap-weekly-plan';
+
+// Keep the core simple CAP schema for compatibility
 export const CoachingActionPlanFieldsSchema = z.object({
   // Core identification
   title: z.string().default('').describe("Title of the coaching action plan"),
@@ -61,9 +70,27 @@ export interface CoachingActionPlanContext {
   academicYear?: string;
 }
 
+export const CoachingActionPlanReferenceZodSchema = BaseReferenceZodSchema.extend({
+  title: z.string().describe("Title of the coaching action plan"),
+  startDate: z.string().optional().describe("When coaching plan begins (ISO string)"),
+  endDate: z.string().optional().describe("When coaching plan ends (ISO string)"),
+});
+
+export const coachingActionPlanToReference = createReferenceTransformer<CoachingActionPlan, CoachingActionPlanReference>(
+  (cap) => cap.title,
+  (cap) => ({
+    title: cap.title,
+    startDate: cap.startDate || undefined,
+    endDate: cap.endDate || undefined,
+  }),
+  CoachingActionPlanReferenceZodSchema
+);
+
 export function createCoachingActionPlanDefaults(overrides: Partial<CoachingActionPlanInput> = {}): CoachingActionPlanInput {
   return {
     ...CoachingActionPlanInputZodSchema.parse({}),
     ...overrides
   };
 }
+
+export type CoachingActionPlanReference = z.infer<typeof CoachingActionPlanReferenceZodSchema>;

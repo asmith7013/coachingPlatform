@@ -3,7 +3,7 @@ import { Check, Download } from 'lucide-react';
 import { DropZoneCell } from './DropZoneCell';
 import { TeacherPeriodCell } from './TeacherPeriodCell';
 import { useScheduleContext } from './context';
-import { findPeriodForTeacher } from './utils/schedule-helpers';
+import { findAssignmentForTeacher } from './utils/schedule-helpers';
 
 export function ScheduleGrid() {
   // ✅ Use schema types directly
@@ -92,7 +92,7 @@ export function ScheduleGrid() {
                 <div key={`scrollable-${periodNum}`} className="flex">
                   {teachers.map(teacher => {
                     // ✅ SCHEMA-FIRST: Use helper function instead of transformation
-                    const period = findPeriodForTeacher(teacherSchedules, teacher._id, periodNum);
+                    const period = findAssignmentForTeacher(teacherSchedules, teacher._id, periodNum);
                     
                     return (
                       <div 

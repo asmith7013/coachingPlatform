@@ -9,7 +9,7 @@ import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
 import { 
   CoachingActionPlanInput,
   CoachingActionPlan,
-} from '@zod-schema/cap/coaching-action-plan';
+} from '@zod-schema/cap';
 import { useCoachingActionPlans } from '@hooks/domain/useCoachingActionPlans';
 
 // Import new form and list components
@@ -49,7 +49,7 @@ export function CoachingActionPlanCrudDashboard() {
   }, []);
   
   // Handle edit plan
-  const handleEdit = useCallback((plan: CoachingActionPlan) => {
+  const _handleEdit = useCallback((plan: CoachingActionPlan) => {
     setSelectedPlan(plan);
     setViewMode('edit');
   }, []);
@@ -87,7 +87,7 @@ export function CoachingActionPlanCrudDashboard() {
   }, [viewMode, selectedPlan, createAsync, updateAsync]);
   
   // Handle delete plan
-  const handleDelete = useCallback(async (id: string) => {
+  const _handleDelete = useCallback(async (id: string) => {
     if (!deleteAsync) {
       console.error('Delete function not available');
       return;
@@ -196,8 +196,10 @@ export function CoachingActionPlanCrudDashboard() {
             plans={plans as CoachingActionPlan[]}
             isLoading={isLoadingList}
             error={listError ? String(listError) : undefined}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
+            // onEdit={_handleEdit}
+            // onDelete={handleDelete}
+            onEdit={() => {}}
+            onDelete={() => {}}
             deletingIds={deletingIds}
           />
         )}

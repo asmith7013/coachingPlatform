@@ -11,8 +11,10 @@ import { useCoachingActionPlans } from '@components/features/coaching/hooks/useC
 import { useToast } from '@components/core/feedback/Toast';
 import { handleClientError } from '@error/handlers/client';
 import { calculatePlanProgress } from '@data-processing/transformers/utils/coaching-action-plan-utils';
-import { CoachingActionPlanInputZodSchema } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
-import type { CoachingActionPlan } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
+import { CoachingActionPlanInputZodSchema } from '@zod-schema/core/cap';
+import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
+import { CapOutcomeInput } from '@zod-schema/cap';
+import { createCoachingActionPlanDefaults } from '@zod-schema/core/cap';
 
 // Import stage components
 import { CoachingActionPlanStage1 } from './stages/CAPStage1';
@@ -47,7 +49,7 @@ export function CoachingActionPlanDetailedEditor({
 
   // Handle stage updates with direct mutation and schema validation
   const handleStageUpdate = async (
-    stage: keyof CoachingActionPlan,
+    stage: keyof CoachingActionPlanInput,
     updates: unknown
   ) => {
     if (!plan || !mutations?.updateAsync) return;
@@ -103,7 +105,7 @@ export function CoachingActionPlanDetailedEditor({
   }, [plan]);
 
   // Helper function to get correct property key for each stage
-  function getStageKey(stageNumber: number): keyof CoachingActionPlan {
+  function getStageKey(stageNumber: number): keyof CoachingActionPlanInput {
     const stageMap = {
       1: 'needsAndFocus',
       2: 'goal', 
@@ -123,6 +125,7 @@ export function CoachingActionPlanDetailedEditor({
       );
     }
 
+    const fullPlan = createCoachingActionPlanDefaults(plan);
     const commonProps = {
       planId,
       className: "flex-1"
@@ -133,21 +136,16 @@ export function CoachingActionPlanDetailedEditor({
         return (
           <CoachingActionPlanStage1
             className={commonProps.className}
-            data={plan.needsAndFocus || {
-              ipgCoreAction: undefined,
-              ipgSubCategory: undefined,
-              rationale: '',
-              pdfAttachment: undefined
-            }}
-            onChange={(updates) => handleStageUpdate('needsAndFocus', updates)}
-          />
+            data={fullPlan.ipgCoreAction as CoachingActionPlan}
+            onChange={(updates) => handleStageUpdate('ipgCoreAction', updates)}
+          />  
         );
         
       case 2:
         return (
           <CoachingActionPlanStage2
             {...commonProps}
-            data={plan.goal || {
+            data={fullPlan.goal || {
               description: '',
               teacherOutcomes: [],
               studentOutcomes: []
@@ -160,9 +158,9 @@ export function CoachingActionPlanDetailedEditor({
         return (
           <CoachingActionPlanStage3
             {...commonProps}
-            data={plan.implementationRecords || []}
+            data={fullPlan.implementationRecords || []}
             onChange={(records) => handleStageUpdate('implementationRecords', records)}
-            goal={plan.goal}
+            goal={fullPlan.goal as CoachingActionPlan}
           />
         );
         
@@ -170,7 +168,7 @@ export function CoachingActionPlanDetailedEditor({
         return (
           <CoachingActionPlanStage4
             {...commonProps}
-            data={plan.endOfCycleAnalysis || {
+            data={fullPlan.endOfCycleAnalysis || {
               goalMet: false,
               teacherOutcomeAnalysis: [],
               studentOutcomeAnalysis: [],
@@ -179,8 +177,8 @@ export function CoachingActionPlanDetailedEditor({
               lessonsLearned: undefined,
               recommendationsForNext: undefined
             }}
-            onChange={(analysisData: EndOfCycleAnalysis) => handleStageUpdate('endOfCycleAnalysis', analysisData)}
-            goal={plan.goal}
+            onChange={(analysisData: CapOutcomeInput) => handleStageUpdate('endOfCycleAnalysis', analysisData)}
+            goal={fullPlan.goal}
           />
         );
         

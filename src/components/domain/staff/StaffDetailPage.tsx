@@ -312,7 +312,7 @@ function StaffScheduleTab({
     )
   }
 
-  if (!schedule || !schedule.scheduleByDay || schedule.scheduleByDay.length === 0) {
+  if (!schedule || !schedule.assignments || schedule.assignments.length === 0) {
     return (
       <Card className="p-4 mt-4">
         <Text>No schedule information available for this staff member.</Text>
@@ -324,7 +324,7 @@ function StaffScheduleTab({
     <div className="py-4">
       <Card className="p-4 md:p-6">
         <Heading level="h3" className="mb-4">Weekly Schedule</Heading>
-        <ScheduleTable scheduleByDay={schedule.scheduleByDay} />
+        <ScheduleTable scheduleByDay={schedule.assignments as unknown as TeacherSchedule[]} />
       </Card>
     </div>
   )

@@ -10,8 +10,17 @@ import {
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
 import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
-import { formatVisitDate } from "@schema/reference/visits/visit-helpers";
-
+import { toDateString, formatMediumDate } from '@/lib/data-processing/transformers/utils/date-utils';
+  // Helper function for consistent date formatting
+export function formatVisitDate(date: Date | string | undefined): string {
+  if (!date) return 'No date set';
+  
+  const dateString = date instanceof Date 
+    ? toDateString(date)
+    : date;
+    
+  return formatMediumDate(dateString);
+}
 // Time Slot Schema (reusable component)
 export const TimeSlotZodSchema = z.object({
   startTime: z.string().default('').describe("24-hour format time: 'HH:MM' (e.g., '08:30')"),
@@ -48,6 +57,7 @@ export const SessionLinkFieldsSchema = z.object({
   title: z.string().describe("Display title for the link"),
   url: z.string().url().describe("Valid URL to external resource or document"),
   staffIds: z.array(z.string()).describe("Array of Staff document _ids who should access this link"),
+  periodNum: z.number().optional().default(0).describe("Bell schedule period number (1-8)"),
 });
 
 // =====================================
@@ -73,6 +83,7 @@ export const VisitFieldsSchema = z.object({
   // Schedule reference (NEW - replaces embedded events)
   visitScheduleId: z.string().optional().describe("Reference to VisitSchedule document _id for detailed scheduling"),
   
+  events: z.array(EventItemZodSchema).default([]).describe("Events that occurred during this visit"),
   // Supporting content
   sessionLinks: z.array(SessionLinkFieldsSchema).default([]).describe("External resources and documents"),
   

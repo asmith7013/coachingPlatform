@@ -1,5 +1,5 @@
 import type { Field } from '@ui-types/form';
-import type { CoachingActionPlan } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
+import type { CoachingActionPlan } from '@zod-schema/cap';
 
 export const CoachingActionPlanFieldConfig: Field<CoachingActionPlan>[] = [
   {

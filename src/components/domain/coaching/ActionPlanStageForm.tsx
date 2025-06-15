@@ -3,15 +3,23 @@
 import React from 'react';
 import { useForm } from '@tanstack/react-form';
 import { FormLayout } from '@components/composed/forms/FormLayout';
-import { useFieldRenderer } from '@ui/forms/hooks/useFieldRenderer';
-import { stageFieldConfigs } from '@ui/forms/fieldConfig/coaching/coaching-action-plan-stages';
+import { Input } from '@components/core/fields/Input';
+import { Textarea } from '@components/core/fields/Textarea';
+import { Select } from '@components/core/fields/Select';
+import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
 import type { Field } from '@ui-types/form';
 import { 
-  CoachingActionPlanFieldsSchema,
-  CoachingActionPlan
-} from '@zod-schema/core/cap';
+  CapWeeklyPlan, 
+  CapImplementationRecord, 
+  CapOutcome,
+  CapEvidence,
+  CapWeeklyPlanZodSchema,
+  CapImplementationRecordZodSchema,
+  CapEvidenceZodSchema,
+} from '@zod-schema/cap';
+import { stageFieldConfigs } from '@/lib/ui/forms/fieldConfig/coaching/coaching-action-plan-stages';
 
-type StageData = CoachingActionPlan;
+type StageData = CapWeeklyPlan | CapImplementationRecord | CapOutcome | CapEvidence;
 
 interface ActionPlanStageFormProps<T extends StageData> {
   stage: 1 | 2 | 3 | 4;
@@ -28,25 +36,25 @@ const stageConfig = {
   1: {
     title: 'Stage 1: Needs & Focus',
     description: 'Identify the core instructional focus area based on IPG standards',
-    schema: CoachingActionPlanFieldsSchema,
+    schema: CapWeeklyPlanZodSchema,
     fields: stageFieldConfigs[1]
   },
   2: {
     title: 'Stage 2: Goal & Outcomes', 
     description: 'Define SMART goals with measurable teacher and student outcomes',
-    schema: CoachingActionPlanFieldsSchema,
+    schema: CapWeeklyPlanZodSchema,
     fields: stageFieldConfigs[2]
   },
   3: {
     title: 'Stage 3: Implementation Record',
     description: 'Document what actually happened during coaching visits',
-    schema: CoachingActionPlanFieldsSchema,
+    schema: CapImplementationRecordZodSchema,
     fields: stageFieldConfigs[3]
   },
   4: {
     title: 'Stage 4: End of Cycle Analysis',
     description: 'Analyze goal achievement and plan for next steps',
-    schema: CoachingActionPlanFieldsSchema,
+    schema: CapEvidenceZodSchema,
     fields: stageFieldConfigs[4]
   }
 } as const;
@@ -61,7 +69,6 @@ export function ActionPlanStageForm<T extends StageData>({
   className
 }: ActionPlanStageFormProps<T>) {
   const config = stageConfig[stage];
-  const { renderField } = useFieldRenderer<T>();
   
   if (!config) {
     throw new Error(`Invalid stage: ${stage}. Must be 1, 2, 3, or 4.`);
@@ -112,7 +119,66 @@ export function ActionPlanStageForm<T extends StageData>({
               </label>
               
               <form.Field name={String(fieldConfig.name)}>
-                {(field) => renderField(fieldConfig, field)}
+                {(field) => (
+                  <div className="space-y-1">
+                    {['text', 'email', 'password', 'number'].includes(fieldConfig.type) && (
+                      <Input
+                        type={fieldConfig.type}
+                        value={String(field.state.value ?? '')}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        onBlur={field.handleBlur}
+                        placeholder={fieldConfig.placeholder}
+                        disabled={fieldConfig.disabled}
+                      />
+                    )}
+                    {fieldConfig.type === 'textarea' && (
+                      <Textarea
+                        value={String(field.state.value ?? '')}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        onBlur={field.handleBlur}
+                        placeholder={fieldConfig.placeholder}
+                        disabled={fieldConfig.disabled}
+                      />
+                    )}
+                    {fieldConfig.type === 'select' && (
+                      fieldConfig.multiple ? (
+                        <Select
+                          value={Array.isArray(field.state.value) ? field.state.value as string[] : []}
+                          onChange={field.handleChange}
+                          options={fieldConfig.options || []}
+                          placeholder={fieldConfig.placeholder}
+                          disabled={fieldConfig.disabled}
+                          multiple={true}
+                        />
+                      ) : (
+                        <Select
+                          value={typeof field.state.value === 'string' ? field.state.value as string : ''}
+                          onChange={field.handleChange}
+                          options={fieldConfig.options || []}
+                          placeholder={fieldConfig.placeholder}
+                          disabled={fieldConfig.disabled}
+                        />
+                      )
+                    )}
+                    {fieldConfig.type === 'reference' && (
+                      <ReferenceSelect
+                        url={fieldConfig.url || ''}
+                        value={field.state.value as string | string[]}
+                        onChange={field.handleChange}
+                        multiple={fieldConfig.multiple}
+                        placeholder={fieldConfig.placeholder}
+                        disabled={fieldConfig.disabled}
+                        entityType={fieldConfig.entityType}
+                        label={fieldConfig.label}
+                      />
+                    )}
+                    {field.state.meta.errors?.length > 0 && (
+                      <p className="text-sm text-destructive">
+                        {field.state.meta.errors[0]}
+                      </p>
+                    )}
+                  </div>
+                )}
               </form.Field>
             </div>
           ))}
@@ -124,25 +190,25 @@ export function ActionPlanStageForm<T extends StageData>({
 
 // Individual stage form components for type safety
 export function NeedsAndFocusForm(
-  props: Omit<ActionPlanStageFormProps<CoachingActionPlan>, 'stage'>
+  props: Omit<ActionPlanStageFormProps<CapWeeklyPlan>, 'stage'>
 ) {
-  return <ActionPlanStageForm<CoachingActionPlan> stage={1} {...props} />;
+  return <ActionPlanStageForm<CapWeeklyPlan> stage={1} {...props} />;
 }
 
 export function GoalForm(
-  props: Omit<ActionPlanStageFormProps<CoachingActionPlan>, 'stage'>
+  props: Omit<ActionPlanStageFormProps<CapWeeklyPlan>, 'stage'>
 ) {
-  return <ActionPlanStageForm<CoachingActionPlan> stage={2} {...props} />;
+  return <ActionPlanStageForm<CapWeeklyPlan> stage={2} {...props} />;
 }
 
 export function ImplementationRecordForm(
-  props: Omit<ActionPlanStageFormProps<CoachingActionPlan>, 'stage'>
+  props: Omit<ActionPlanStageFormProps<CapImplementationRecord>, 'stage'>
 ) {
-  return <ActionPlanStageForm<CoachingActionPlan> stage={3} {...props} />;
+  return <ActionPlanStageForm<CapImplementationRecord> stage={3} {...props} />;
 }
 
 export function EndOfCycleAnalysisForm(
-  props: Omit<ActionPlanStageFormProps<CoachingActionPlan>, 'stage'>
+  props: Omit<ActionPlanStageFormProps<CapOutcome>, 'stage'>
 ) {
-  return <ActionPlanStageForm<CoachingActionPlan> stage={4} {...props} />;
+  return <ActionPlanStageForm<CapOutcome> stage={4} {...props} />;
 } 

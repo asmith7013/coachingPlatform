@@ -7,11 +7,11 @@ import { Textarea } from '@/components/core/fields/Textarea';
 import { Select } from '@/components/core/fields/Select';
 import { Text } from '@/components/core/typography/Text';
 import { TrashIcon } from '@heroicons/react/24/outline';
-import type { Evidence } from '@/lib/schema/zod-schema/cap/coaching-action-plan';
+import type { CapEvidence } from '@zod-schema/cap';
 
 interface EvidenceCardProps {
-  evidence: Evidence;
-  onUpdate: (updates: Partial<Evidence>) => void;
+  evidence: CapEvidence;
+  onUpdate: (updates: Partial<CapEvidence>) => void;
   onRemove: () => void;
   variant?: 'default' | 'primary' | 'secondary';
   className?: string;
@@ -73,7 +73,7 @@ export function EvidenceCard({
         <Select
           label="Type"
           value={evidence.type}
-          onChange={(value) => onUpdate({ type: value as Evidence['type'] })}
+          onChange={(value) => onUpdate({ type: value as CapEvidence['type'] })}
           options={evidenceTypeOptions}
           textSize="sm"
         />

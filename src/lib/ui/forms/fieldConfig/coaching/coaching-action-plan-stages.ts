@@ -1,6 +1,7 @@
 import type { Field } from '@ui-types/form';
 import type { 
-  ImplementationRecord,
+  CapImplementationRecord,
+  CapOutcomeInput,
   CoachingActionPlan
 } from '@zod-schema/cap';
 import { IPGCoreActionZod, IPGSubCategoryZod } from '@zod-schema/cap';
@@ -48,19 +49,19 @@ export const GoalFieldConfig: Field<CoachingActionPlan>[] = [
     placeholder: "Describe the main goal for this coaching cycle...",
   },
   {
-    name: "teacherOutcomes",
+    name: "goalDescription",
     label: "Teacher Outcomes",
     type: "textarea",
   },
   {
-    name: "studentOutcomes",
+    name: "goalDescription",
     label: "Student Outcomes",
     type: "textarea",
   }
 ];
 
 // Stage 3: Implementation Record
-export const ImplementationRecordFieldConfig: Field<ImplementationRecord>[] = [
+export const ImplementationRecordFieldConfig: Field<CapImplementationRecord>[] = [
   {
     name: "date",
     label: "Visit Date",
@@ -104,19 +105,19 @@ export const ImplementationRecordFieldConfig: Field<ImplementationRecord>[] = [
 ];
 
 // Stage 4: End of Cycle Analysis
-export const EndOfCycleAnalysisFieldConfig: Field<CoachingActionPlan>[] = [
+export const EndOfCycleAnalysisFieldConfig: Field<CapOutcomeInput>[] = [
   {
     name: "goalMet",
     label: "Goal Achievement",
     type: "checkbox",
   },
   {
-    name: "teacherOutcomeAnalysis",
+    name: "endOfCycleAnalysis.teacherOutcomes",
     label: "Teacher Outcome Analysis",
     type: "textarea",
   },
   {
-    name: "studentOutcomeAnalysis",
+    name: "endOfCycleAnalysis.studentOutcomes",
     label: "Student Outcome Analysis",
     type: "textarea",
   },

@@ -7,6 +7,8 @@ import {
 import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
 const coachingLogFields = {
+  coachingActionPlanId: { type: String, required: true },
+  visitId: { type: String, required: false },
   reasonDone: { type: String, enum: Object.values(YesNoEnum), required: true },
   microPLTopic: { type: String },
   microPLDuration: { type: Number },

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { standardSchemaOptions } from '@mongoose-schema/shared-options';
+import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
 // Define schema fields, mirroring Zod schema structure
 const schemaFields = {
@@ -13,11 +13,11 @@ const schemaFields = {
   // Flattened needs and focus (no nested objects)
   ipgCoreAction: { type: String, required: true },
   ipgSubCategory: { type: String, required: true },
-  rationale: { type: String, default: '' },
+  rationale: { type: String, required: true },
   pdfAttachment: { type: String, required: false },
 
   // Simple goal statement
-  goalDescription: { type: String, default: '' },
+  goalDescription: { type: String, required: true },
 
   // Status and metadata
   status: { type: String, default: 'draft' },
@@ -34,6 +34,10 @@ const schemaFields = {
   // References to related entities
   relatedVisits: [{ type: String, required: false }],
   relatedCycles: [{ type: String, required: false }],
+
+  // BaseDocument pattern
+  // ownerIds: [{ type: String, default: [] }],
+  ...standardDocumentFields
 };
 
 // Create schema with timestamps and standard transform
@@ -45,7 +49,7 @@ CoachingActionPlanSchema.index({ status: 1 });
 CoachingActionPlanSchema.index({ teachers: 1 });
 CoachingActionPlanSchema.index({ coaches: 1 });
 CoachingActionPlanSchema.index({ startDate: 1 });
-CoachingActionPlanSchema.index({ owners: 1 });
+CoachingActionPlanSchema.index({ ownerIds: 1 });
 
 // Create model, checking for existing models
 export const CoachingActionPlanModel = mongoose.models.CoachingActionPlan || 

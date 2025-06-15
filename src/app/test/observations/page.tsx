@@ -9,8 +9,8 @@ import {
   useClassroomObservationDefaultsSimple,
   type ClassroomObservationInput,
   ClassroomObservation
-} from '@/lib/schema/zod-schema/visits/classroom-observation';
-import { useClassroomObservations } from '@domain-hooks/observations/useClassroomObservations';
+} from '@zod-schema/visits/classroom-observation';
+import { useClassroomObservations } from '@hooks/domain/observations/useClassroomObservations';
 import { ObservationForm } from './ObservationForm';
 import { ObservationsList } from './ObservationsList';
 

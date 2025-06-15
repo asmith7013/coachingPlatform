@@ -1,7 +1,7 @@
 import type { SchoolInput } from '@domain-types/school';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
-import type { BellScheduleInput, TeacherScheduleInput, ScheduleByDay } from '@zod-schema/schedule/schedule';
+import type { BellScheduleInput, TeacherScheduleInput } from '@zod-schema/schedule/schedule';
 
 // Reuse existing preview utilities from transformers
 import { createDataPreview as createGenericPreview, formatValidationError, createValidationSummary } from '@/lib/data-processing/transformers/utils/preview-helpers';
@@ -54,7 +54,7 @@ const previewExtractors = {
     teacherName: schedule.teacherName,
     teacherEmail: schedule.teacherEmail,
     daysCount: schedule.scheduleByDay?.length || 0,
-    periodsCount: schedule.scheduleByDay?.reduce((total: number, day: ScheduleByDay) => total + (day.periods?.length || 0), 0) || 0,
+    periodsCount: 0 as number,
     school: schedule.school
   })
 };

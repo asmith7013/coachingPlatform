@@ -7,6 +7,7 @@ import { Badge } from '@components/core/feedback/Badge';
 import { ArrowRight as _ArrowRightIcon, AlertCircle } from 'lucide-react';
 import { statusWorkflow, getStatusColor, getStatusLabel, type PlanStatus } from '@data-processing/transformers/utils/coaching-action-plan-utils';
 import type { CoachingActionPlan } from '@zod-schema/core/cap';
+import { createCoachingActionPlanDefaults } from '@zod-schema/core/cap';
 
 interface StatusTransitionButtonProps {
   plan: CoachingActionPlan & { _id: string };
@@ -27,7 +28,8 @@ export function StatusTransitionButton({
   const [isLoading, setIsLoading] = useState(false);
 
   // Get available transitions for this plan
-  const availableStatuses = statusWorkflow.getNextStatuses(plan.status as PlanStatus, plan);
+  const fullPlan = createCoachingActionPlanDefaults(plan);
+  const availableStatuses = statusWorkflow.getNextStatuses(plan.status as PlanStatus, fullPlan as unknown as CoachingActionPlan);
 
   if (availableStatuses.length === 0) {
     return null; // No transitions available
@@ -56,7 +58,7 @@ export function StatusTransitionButton({
   };
 
   const validateTransition = (toStatus: PlanStatus) => {
-    return statusWorkflow.validateTransition(plan.status as PlanStatus, toStatus, plan);
+    return statusWorkflow.validateTransition(plan.status as PlanStatus, toStatus, fullPlan as unknown as CoachingActionPlan);
   };
 
   return (

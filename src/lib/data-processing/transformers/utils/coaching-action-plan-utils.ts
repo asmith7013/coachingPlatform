@@ -118,7 +118,7 @@ export function validateStageCompleteness(stage: string, planData: CoachingActio
       }
     }
     
-    if (stage === 'goal' && planData.teacherOutcomes.length > 0 && planData.studentOutcomes.length > 0) {
+    if (stage === 'goal' && planData.goalDescription.length > 0 && planData.goalDescription.length > 0) {
       const validated = validateSafe(CoachingActionPlanZodSchema, planData);
       if (!validated) {
         isValid = false;

@@ -15,13 +15,13 @@ import {
   ChevronRightIcon,
   CalendarIcon
 } from '@heroicons/react/24/outline';
-import type { WeeklyVisitPlan, CoachingCycleNumber, VisitNumber } from '@zod-schema/cap';
+import type { CapWeeklyPlan, CoachingCycleNumber, VisitNumber } from '@zod-schema/cap';
 import { CoachingCycleNumberZod, VisitNumberZod } from '@zod-schema/cap';
 import { getTodayString, formatMediumDate } from '@data-processing/transformers/utils/date-utils';
 
 interface WeeklyPlanManagerProps {
-  weeklyPlans: WeeklyVisitPlan[];
-  onChange: (plans: WeeklyVisitPlan[]) => void;
+  weeklyPlans: CapWeeklyPlan[];
+  onChange: (plans: CapWeeklyPlan[]) => void;
   className?: string;
 }
 
@@ -47,7 +47,7 @@ export function WeeklyPlanManager({
     const nextVisitNumber: VisitNumber = weeklyPlans.length % 3 === 0 ? "1" :
                                         weeklyPlans.length % 3 === 1 ? "2" : "3";
 
-    const newPlan: WeeklyVisitPlan = {
+    const newPlan: CapWeeklyPlan = {
       date: getTodayString(),
       cycleNumber: nextCycleNumber,
       visitNumber: nextVisitNumber,
@@ -57,7 +57,11 @@ export function WeeklyPlanManager({
       teacherAction: '',
       progressMonitoring: '',
       visitId: '',
-      status: 'planned'
+      status: 'planned',
+      _id: '',
+      ownerIds: [],
+      createdAt: '',
+      updatedAt: ''
     };
     
     onChange([...weeklyPlans, newPlan]);
@@ -65,7 +69,7 @@ export function WeeklyPlanManager({
     setExpandedPlans(prev => [...prev, weeklyPlans.length]);
   };
 
-  const updatePlan = (index: number, field: keyof WeeklyVisitPlan, value: string | Date | CoachingCycleNumber | VisitNumber) => {
+  const updatePlan = (index: number, field: keyof CapWeeklyPlan, value: string | Date | CoachingCycleNumber | VisitNumber) => {
     const updated = [...weeklyPlans];
     updated[index] = { ...updated[index], [field]: value };
     onChange(updated);
@@ -76,7 +80,7 @@ export function WeeklyPlanManager({
     setExpandedPlans(prev => prev.filter(i => i !== index).map(i => i > index ? i - 1 : i));
   };
 
-  const getPlanTitle = (plan: WeeklyVisitPlan, _index: number) => {
+  const getPlanTitle = (plan: CapWeeklyPlan, _index: number) => {
     if (plan.focus.trim()) {
       const preview = plan.focus.slice(0, 50);
       return preview.length < plan.focus.length ? `${preview}...` : preview;

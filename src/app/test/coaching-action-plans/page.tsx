@@ -10,7 +10,7 @@ import {
   CoachingActionPlan,
   CoachingActionPlanInput,
   createCoachingActionPlanDefaults
-} from '@/lib/schema/zod-schema/cap/coaching-action-plan';
+} from '@zod-schema/core/cap';
 import { useCoachingActionPlans } from '@/hooks/domain';
 import { Alert } from '@/components/core/feedback/Alert';
 

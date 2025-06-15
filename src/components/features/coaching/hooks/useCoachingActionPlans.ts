@@ -2,7 +2,7 @@ import { createCrudHooks } from '@query/client/factories/crud-factory';
 import { 
   CoachingActionPlanZodSchema, 
   CoachingActionPlan
-} from '@/lib/schema/zod-schema/cap/coaching-action-plan';
+} from '@zod-schema/cap';
 
 import { ZodSchema } from 'zod';
 import { 

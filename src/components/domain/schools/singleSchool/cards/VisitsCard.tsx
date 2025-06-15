@@ -60,7 +60,7 @@ export function VisitsCard({
     subtitle: visit.allowedPurpose || 'No Purpose Set',
     description: `Coach: ${visit.coachId || 'Unknown'}`,
     details: [
-      { label: 'Events', value: visit.events?.length ? `${visit.events.length}` : '0' },
+      { label: 'Events', value: visit.sessionLinks?.length ? `${visit.sessionLinks.length}` : '0' },
       { label: 'Grade Levels', value: visit.gradeLevelsSupported?.join(', ') || 'None' }
     ],
     actions: [

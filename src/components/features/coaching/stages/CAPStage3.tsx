@@ -11,11 +11,11 @@ import { useSectionToggle } from '@/hooks/ui/useSectionToggle';
 import { CollapsedStageView } from '../components/CollapsedStageView';
 import { SectionHeader } from '../components/SectionHeader';
 import { stageValidators } from '@/lib/validation/coaching-stages';
-import type { ImplementationRecord, CoachingCycleNumber, VisitNumber, CoachingActionPlan } from '@zod-schema/cap';
+import type { CapImplementationRecord, CoachingCycleNumber, VisitNumber, CoachingActionPlan, CapWeeklyPlan } from '@zod-schema/cap';
 
 interface CoachingActionPlanStage3Props {
-  data: ImplementationRecord[];
-  onChange: (records: ImplementationRecord[]) => void;
+  data: CapImplementationRecord[];
+  onChange: (records: CapImplementationRecord[]) => void;
   goal?: CoachingActionPlan;
   planId?: string;
   className?: string;
@@ -31,7 +31,7 @@ export function CoachingActionPlanStage3({
   const { isEditing, isComplete, handleEdit } = useStageEditor({
     data,
     onChange,
-    isCompleteCheck: stageValidators.implementation
+    isCompleteCheck: stageValidators.implementation as (data: CapImplementationRecord[]) => boolean
   });
 
   const { sections, toggle, expandAll } = useSectionToggle({
@@ -45,7 +45,9 @@ export function CoachingActionPlanStage3({
     const nextVisitNumber: VisitNumber = data.length % 3 === 0 ? "1" :
                                         data.length % 3 === 1 ? "2" : "3";
 
-    const newRecord: ImplementationRecord = {
+    const newRecord: CapImplementationRecord = {
+      _id: '',
+      ownerIds: [],
       date: getTodayString(),
       visitId: '',
       cycleNumber: nextCycleNumber,
@@ -62,7 +64,7 @@ export function CoachingActionPlanStage3({
     onChange([...data, newRecord]);
   };
 
-  const updateImplementationRecord = (index: number, record: ImplementationRecord) => {
+  const updateImplementationRecord = (index: number, record: CapImplementationRecord) => {
     const updated = [...data];
     updated[index] = record;
     onChange(updated);
@@ -138,9 +140,9 @@ export function CoachingActionPlanStage3({
               {data.map((record, index) => (
                 <ImplementationRecordCard
                   key={index}
-                  record={record}
+                  record={record as CapImplementationRecord}
                   index={index}
-                  goal={goal}
+                  goal={goal as unknown as CapWeeklyPlan}
                   onUpdate={updateImplementationRecord}
                   onDelete={deleteImplementationRecord}
                 />

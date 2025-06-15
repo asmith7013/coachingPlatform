@@ -6,7 +6,7 @@ import { Input } from '@components/core/fields/Input';
 import { Textarea } from '@components/core/fields/Textarea';
 import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
 import { getStaffUrl } from '@server/api/client/api_endpoints';
-import { ClassroomObservationInput } from '@/lib/schema/zod-schema/visits/classroom-observation';
+import { ClassroomObservationInput } from '@zod-schema/visits/classroom-observation';
 
 const fieldLabel = tv({
   base: "text-sm font-medium text-gray-700 mb-1"
