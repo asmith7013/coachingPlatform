@@ -1,7 +1,7 @@
 import { useSchools } from '@hooks/domain/useSchools';
 import { useNYCPSStaffList } from '@hooks/domain/staff/useNYCPSStaff';
-import { useTeacherSchedules } from '@hooks/domain/schedule/useTeacherSchedules';
-import { useBellSchedules } from '@hooks/domain/schedule/useBellSchedules';
+import { useTeacherSchedules } from '@/hooks/domain/schedulesOld/useTeacherSchedules';
+import { useBellSchedules } from '@/hooks/domain/schedulesOld/useBellSchedules';
 
 /**
  * Hook for school daily schedule view data composition

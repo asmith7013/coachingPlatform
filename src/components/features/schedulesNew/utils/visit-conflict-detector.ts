@@ -1,11 +1,24 @@
+/**
+ * @fileoverview DEPRECATED - Visit conflict detection utilities
+ * 
+ * These utilities are deprecated and will be removed in a future version.
+ * Please migrate to the new schedule system at src/components/features/schedulesUpdated/
+ * 
+ * Migration path:
+ * - Use the new conflict detection utilities in the schedulesUpdated feature
+ * - Follow the new schema-first architecture patterns
+ * - Use proper schema validation and type safety
+ * 
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
+
 // src/components/features/schedulesNew/utils/visit-conflict-detector.ts
-import { ScheduleAssignment } from '@enums'
 
 // ===== SIMPLE INTERFACES =====
 export interface ConflictCheckData {
   teacherId: string
   periodNumber: number
-  portion: ScheduleAssignment
+  portion: string
 }
 
 export interface ConflictResult {
@@ -14,7 +27,7 @@ export interface ConflictResult {
   conflictingVisit?: {
     id: string
     teacherName: string
-    portion: ScheduleAssignment
+    portion: string
   }
 }
 
@@ -23,12 +36,15 @@ export interface ScheduledVisitMinimal {
   teacherId: string
   teacherName: string
   periodNumber: number
-  portion: ScheduleAssignment
+  portion: string
 }
 
 /**
  * Simple conflict detector following single responsibility principle
  * Focuses only on conflict detection logic, no UI or complex transformations
+ */
+/**
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
  */
 export class VisitConflictDetector {
   constructor(private existingVisits: ScheduledVisitMinimal[]) {}
@@ -63,9 +79,9 @@ export class VisitConflictDetector {
    * Simple time conflict logic
    * No complex algorithms - just clear business rules
    */
-  private hasTimeConflict(existing: ScheduleAssignment, newPortion: ScheduleAssignment): boolean {
+  private hasTimeConflict(existing: string, newPortion: string): boolean {
     // Full period conflicts with everything
-    if (existing === ScheduleAssignment.FULL_PERIOD || newPortion === ScheduleAssignment.FULL_PERIOD) {
+    if (existing === 'full_period' || newPortion === 'full_period') {
       return true
     }
     
@@ -90,7 +106,7 @@ export class VisitConflictDetector {
    */
   isTeacherAvailableInPeriod(teacherId: string, periodNumber: number): {
     available: boolean
-    availablePortions: ScheduleAssignment[]
+    availablePortions: string[]
   } {
     const existingVisit = this.existingVisits.find(visit => 
       visit.teacherId === teacherId && visit.periodNumber === periodNumber
@@ -99,11 +115,11 @@ export class VisitConflictDetector {
     if (!existingVisit) {
       return {
         available: true,
-        availablePortions: [ScheduleAssignment.FIRST_HALF, ScheduleAssignment.SECOND_HALF, ScheduleAssignment.FULL_PERIOD]
+        availablePortions: ['first_half', 'second_half', 'full_period']
       }
     }
 
-    if (existingVisit.portion === ScheduleAssignment.FULL_PERIOD) {
+    if (existingVisit.portion === 'full_period') {
       return {
         available: false,
         availablePortions: []
@@ -111,11 +127,11 @@ export class VisitConflictDetector {
     }
 
     // If they have first_half, second_half is available and vice versa
-    const availablePortions: ScheduleAssignment[] = []
-    if (existingVisit.portion === ScheduleAssignment.FIRST_HALF) {
-      availablePortions.push(ScheduleAssignment.SECOND_HALF)
-    } else if (existingVisit.portion === ScheduleAssignment.SECOND_HALF) {
-      availablePortions.push(ScheduleAssignment.FIRST_HALF)
+    const availablePortions: string[] = []
+    if (existingVisit.portion === 'first_half') {
+      availablePortions.push('second_half')
+    } else if (existingVisit.portion === 'second_half') {
+      availablePortions.push('first_half')
     }
 
     return {
@@ -131,31 +147,4 @@ export class VisitConflictDetector {
  */
 export function createConflictDetector(existingVisits: ScheduledVisitMinimal[]): VisitConflictDetector {
   return new VisitConflictDetector(existingVisits)
-}
-
-/**
- * Validation helper for required fields
- * Follows your existing validation patterns
- */
-export function validateConflictCheckData(data: unknown): data is ConflictCheckData {
-  return (
-    typeof data === 'object' &&
-    data !== null &&
-    typeof (data as ConflictCheckData).teacherId === 'string' &&
-    typeof (data as ConflictCheckData).periodNumber === 'number' &&
-    typeof (data as ConflictCheckData).portion === 'string' &&
-    Object.values(ScheduleAssignment).includes((data as ConflictCheckData).portion)
-  )
-}
-
-/**
- * Utility function for quick conflict check without creating detector instance
- * For one-off checks
- */
-export function hasVisitConflict(
-  newVisit: ConflictCheckData,
-  existingVisits: ScheduledVisitMinimal[]
-): boolean {
-  const detector = createConflictDetector(existingVisits)
-  return detector.checkConflict(newVisit).hasConflict
 }

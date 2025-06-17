@@ -1,9 +1,20 @@
+/**
+ * @fileoverview DEPRECATED - This file is deprecated and will be removed.
+ * Migration: Use hooks from @/components/features/schedulesUpdated/hooks instead
+ * @deprecated
+ */
+
 import { useScheduleContext } from '../context'
 
 /**
- * ✅ SIMPLIFIED VISIT OPERATIONS: Direct delegation to context
+ * @deprecated Use useVisitOperations from @/components/features/schedulesUpdated/hooks instead.
+ * This hook will be removed in a future version.
+ * Migration: Replace with equivalent hook from schedulesUpdated feature.
  */
 export function useVisitOperations() {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: useVisitOperations from schedulesNew is deprecated. Use schedulesUpdated instead.');
+  }
   const context = useScheduleContext()
 
   return {

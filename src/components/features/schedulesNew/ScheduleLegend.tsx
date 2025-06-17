@@ -1,7 +1,21 @@
+/**
+ * @fileoverview DEPRECATED - This file is deprecated and will be removed.
+ * Migration: Use components from @/components/features/schedulesUpdated/ instead
+ * @deprecated
+ */
+
 import React from 'react';
 import { Eye, MessageCircle } from 'lucide-react';
 
+/**
+ * @deprecated Use ScheduleLegend from @/components/features/schedulesUpdated/ instead.
+ * This component will be removed in a future version.
+ * Migration: Replace with equivalent component from schedulesUpdated feature.
+ */
 export function ScheduleLegend() {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: ScheduleLegend from schedulesNew is deprecated. Use schedulesUpdated instead.');
+  }
   return (
     <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
       <div className="flex-1">

@@ -1,10 +1,24 @@
+/**
+ * @fileoverview DEPRECATED - This file is deprecated and will be removed.
+ * Migration: Use components from @/components/features/schedulesUpdated/ instead
+ * @deprecated
+ */
+
 import React from 'react';
 import { Eye, MessageCircle } from 'lucide-react';
 import { useScheduleContext } from './context';
 import { SessionPurposes } from '@/lib/schema/enum';
 import { extractEventsForTeacher } from './utils/visit-data-utils';
 
+/**
+ * @deprecated Use PlanningStatusBar from @/components/features/schedulesUpdated/ instead.
+ * This component will be removed in a future version.
+ * Migration: Replace with equivalent component from schedulesUpdated feature.
+ */
 export function PlanningStatusBar() {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: PlanningStatusBar from schedulesNew is deprecated. Use schedulesUpdated instead.');
+  }
   // ✅ SIMPLIFIED: Use context directly with simple helper
   const { teachers, visits } = useScheduleContext();
   

@@ -1,4 +1,18 @@
 /**
+ * @fileoverview DEPRECATED - Schedule time utilities
+ * 
+ * These utilities are deprecated and will be removed in a future version.
+ * Please migrate to the new schedule system at src/components/features/schedulesUpdated/
+ * 
+ * Migration path:
+ * - Use the new time utilities in the schedulesUpdated feature
+ * - Follow the new schema-first architecture patterns
+ * - Use proper schema validation and type safety
+ * 
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
+
+/**
  * Schedule Time Utilities
  * Centralized time calculations for schedule components
  * Eliminates duplication across hooks and components
@@ -9,6 +23,9 @@ import { ScheduleAssignment } from '@enums';
 /**
  * Calculate time slot for a period number with fallback
  * Replaces duplicated logic in useScheduleBuilder and useVisitScheduling
+ */
+/**
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
  */
 export function calculatePeriodTimeSlot(periodNumber: number | string): { startTime: string; endTime: string } {
   const periodNum = typeof periodNumber === 'number' ? periodNumber : parseInt(String(periodNumber));

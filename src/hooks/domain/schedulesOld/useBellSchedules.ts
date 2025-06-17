@@ -1,13 +1,13 @@
 import { createCrudHooks } from '@query/client/factories/crud-factory';
 import { ZodSchema } from 'zod';
-import { BellScheduleZodSchema, type BellSchedule } from '@zod-schema/schedule/schedule';
+import { BellScheduleZodSchema, type BellSchedule } from '@/lib/schema/zod-schema/schedules/schedule';
 import { 
   fetchBellSchedules, 
   fetchBellScheduleById, 
   createBellSchedule, 
   updateBellSchedule, 
   deleteBellSchedule
-} from '@actions/schedule/schedule';
+} from '@/app/actions/schedulesOld/schedule';
 // import { DocumentInput, WithDateObjects } from '@core-types/document';
 
 /**

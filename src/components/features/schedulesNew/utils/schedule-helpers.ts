@@ -1,8 +1,23 @@
+/**
+ * @fileoverview DEPRECATED - Schedule helper utilities
+ * 
+ * These utilities are deprecated and will be removed in a future version.
+ * Please migrate to the new schedule system at src/components/features/schedulesUpdated/
+ * 
+ * Migration path:
+ * - Use the new schedule utilities in the schedulesUpdated feature
+ * - Follow the new schema-first architecture patterns
+ * - Use proper schema validation and type safety
+ * 
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
+
 import type { 
     TeacherSchedule, 
     BellSchedule
-} from '@zod-schema/schedule/schedule';
-import type { Visit, TimeSlot } from '@zod-schema/visits/visit';
+} from '@/lib/schema/zod-schema/schedules/schedule';
+import type { Visit } from '@zod-schema/visits/visit';
+import type { TimeBlock } from '@/lib/schema/zod-schema/schedules/schedule';
 import { type NYCPSStaff } from '@zod-schema/core/staff';
 import { ScheduleAssignment } from '@enums';
 import { calculatePeriodTimeSlot } from './schedule-time-utils';
@@ -12,6 +27,9 @@ import { calculatePeriodTimeSlot } from './schedule-time-utils';
  */
 
 // Find an assignment for a specific teacher and period
+/**
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
 export function findAssignmentForTeacher(
   teacherSchedules: TeacherSchedule[],
   teacherId: string,
@@ -20,15 +38,6 @@ export function findAssignmentForTeacher(
   const schedule = teacherSchedules.find(s => s.teacherId === teacherId);
   if (!schedule) return undefined;
   return schedule.assignments.find(a => a.periodNumber === periodNum);
-}
-
-// Find a period for a specific teacher (alias for findAssignmentForTeacher)
-export function findPeriodForTeacher(
-  teacherSchedules: TeacherSchedule[],
-  teacherId: string,
-  periodNum: number
-) {
-  return findAssignmentForTeacher(teacherSchedules, teacherId, periodNum);
 }
 
 // Get time block by period number
@@ -78,22 +87,22 @@ export function transformStaffToTeachers(staff: NYCPSStaff[]): NYCPSStaff[] {
  * Generate time slots from bell schedule data
  * Enhanced with defensive programming and validation
  */
-export function generateTimeSlotsFromBellSchedule(bellSchedule: BellSchedule | null): TimeSlot[] {
+export function generateTimeSlotsFromBellSchedule(bellSchedule: BellSchedule | null): TimeBlock[] {
     if (!bellSchedule?.timeBlocks) {
       // Default time slots if no bell schedule - using proper TimeSlot schema
       return [
-        { startTime: '08:00', endTime: '08:45', periodNum: 1 },
-        { startTime: '08:45', endTime: '09:30', periodNum: 2 },
-        { startTime: '09:30', endTime: '10:15', periodNum: 3 },
-        { startTime: '10:15', endTime: '11:00', periodNum: 4 },
-        { startTime: '11:00', endTime: '11:50', periodNum: 5 },
-        { startTime: '11:50', endTime: '12:30', periodNum: 6 } // Lunch period
+        { startTime: '08:00', endTime: '08:45', periodNumber: 1 },
+        { startTime: '08:45', endTime: '09:30', periodNumber: 2 },
+        { startTime: '09:30', endTime: '10:15', periodNumber: 3 },
+        { startTime: '10:15', endTime: '11:00', periodNumber: 4 },
+        { startTime: '11:00', endTime: '11:50', periodNumber: 5 },
+        { startTime: '11:50', endTime: '12:30', periodNumber: 6 } // Lunch period
       ];
     }
     return bellSchedule.timeBlocks.map((block) => ({
       startTime: block.startTime,
       endTime: block.endTime,
-      periodNum: block.periodNumber
+      periodNumber: block.periodNumber
     }));
   }
 
@@ -130,10 +139,10 @@ export function checkVisitConflicts(
  * Get time slot for a period number with fallback calculation
  */
 export function getTimeSlotForPeriod(
-  timeSlots: TimeSlot[], 
+  timeSlots: TimeBlock[], 
   periodNumber: number | string
 ): { startTime: string; endTime: string } {
-  const timeSlot = timeSlots.find(slot => slot.periodNum === periodNumber);
+  const timeSlot = timeSlots.find(slot => slot.periodNumber === periodNumber);
   if (timeSlot) {
     return {
       startTime: timeSlot.startTime,

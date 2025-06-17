@@ -1,3 +1,9 @@
+/**
+ * @fileoverview DEPRECATED - This file is deprecated and will be removed.
+ * Migration: Use hooks from @/components/features/schedulesUpdated/hooks instead
+ * @deprecated
+ */
+
 import { useMemo } from 'react'
 import { useSchoolDailyView } from '@/hooks/domain/useSchoolDailyView'
 import { useVisits } from '@/hooks/domain/useVisits'
@@ -11,9 +17,14 @@ export interface UseScheduleDataProps {
 }
 
 /**
- * ✅ SCHEMA-FIRST: Return schema types directly, no transformations
+ * @deprecated Use useScheduleData from @/components/features/schedulesUpdated/hooks instead.
+ * This hook will be removed in a future version.
+ * Migration: Replace with equivalent hook from schedulesUpdated feature.
  */
 export function useScheduleData({ schoolId, date, mode = 'create', visitId }: UseScheduleDataProps) {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: useScheduleData from schedulesNew is deprecated. Use schedulesUpdated instead.');
+  }
   // ✅ PURE DELEGATION: Use domain hooks directly
   const schoolData = useSchoolDailyView(schoolId, date)
   

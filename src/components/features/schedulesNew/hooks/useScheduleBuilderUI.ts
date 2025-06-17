@@ -1,7 +1,20 @@
+/**
+ * @fileoverview DEPRECATED - This file is deprecated and will be removed.
+ * Migration: Use hooks from @/components/features/schedulesUpdated/hooks instead
+ * @deprecated
+ */
+
 import { useState, useCallback } from 'react';
 
-
+/**
+ * @deprecated Use useScheduleBuilderUI from @/components/features/schedulesUpdated/hooks instead.
+ * This hook will be removed in a future version.
+ * Migration: Replace with equivalent hook from schedulesUpdated feature.
+ */
 export function useScheduleBuilderUI() {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: useScheduleBuilderUI from schedulesNew is deprecated. Use schedulesUpdated instead.');
+  }
   const [selectedTeacher, setSelectedTeacher] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<number | string | null>(null);
   const [selectedPortion, setSelectedPortion] = useState<string | null>(null);

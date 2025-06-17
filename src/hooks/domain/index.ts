@@ -7,8 +7,8 @@ export * from './staff/useTeachingLabStaff'
 export * from './staff/useUserStaff'
 
 // Schedule hooks - use subdirectory versions as canonical
-export * from './schedule/useBellSchedules'
-export * from './schedule/useTeacherSchedules'
+export * from './schedulesOld/useBellSchedules'
+export * from './schedulesOld/useTeacherSchedules'
 
 // Core entity hooks
 export * from './useSchools'

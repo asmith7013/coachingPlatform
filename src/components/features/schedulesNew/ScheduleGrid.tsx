@@ -1,3 +1,9 @@
+/**
+ * @fileoverview DEPRECATED - This file is deprecated and will be removed.
+ * Migration: Use components from @/components/features/schedulesUpdated/ instead
+ * @deprecated
+ */
+
 import React from 'react';
 import { Check, Download } from 'lucide-react';
 import { DropZoneCell } from './DropZoneCell';
@@ -5,7 +11,15 @@ import { TeacherPeriodCell } from './TeacherPeriodCell';
 import { useScheduleContext } from './context';
 import { findAssignmentForTeacher } from './utils/schedule-helpers';
 
+/**
+ * @deprecated Use ScheduleGrid from @/components/features/schedulesUpdated/ instead.
+ * This component will be removed in a future version.
+ * Migration: Replace with equivalent component from schedulesUpdated feature.
+ */
 export function ScheduleGrid() {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: ScheduleGrid from schedulesNew is deprecated. Use schedulesUpdated instead.');
+  }
   // ✅ Use schema types directly
   const { teachers, timeSlots, teacherSchedules } = useScheduleContext();
 
@@ -51,14 +65,14 @@ export function ScheduleGrid() {
 
           {/* Time Slot Rows - Use Schema Data Directly */}
           {timeSlots.map((slot, index) => {
-            const periodNum = slot.periodNum || index + 1;
+            const periodNum = slot.periodNumber || index + 1;
             return (
               <div key={`fixed-${periodNum}`} className="flex">
                 {/* Time Column - Use ClassScheduleItem properties directly */}
                 <div className="border-b border-gray-100 p-4 bg-gray-50 border-r h-20 flex flex-col justify-center w-24 flex-shrink-0">
-                  <div className="text-sm text-gray-500 whitespace-nowrap">{slot.startTime}</div>
+                  <div className="text-sm text-gray-500 whitespace-nowrap">{slot.actualStartTime}</div>
                   <div className="font-medium text-gray-900 whitespace-nowrap">Period {periodNum}</div>
-                  <div className="text-sm text-gray-500 whitespace-nowrap">{slot.endTime}</div>
+                  <div className="text-sm text-gray-500 whitespace-nowrap">{slot.actualEndTime}</div>
                 </div>
 
                 {/* Drop Zone Column */}
@@ -86,7 +100,7 @@ export function ScheduleGrid() {
 
             {/* Time Slot Rows - Teacher Columns */}
             {timeSlots.map((slot, slotIndex) => {
-              const periodNum = slot.periodNum || slotIndex + 1;
+              const periodNum = slot.periodNumber || slotIndex + 1;
               
               return (
                 <div key={`scrollable-${periodNum}`} className="flex">

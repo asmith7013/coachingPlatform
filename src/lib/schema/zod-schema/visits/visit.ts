@@ -1,17 +1,16 @@
 import { z } from "zod";
 import { 
   GradeLevelsSupportedZod, 
-  DurationZod,
   AllowedPurposeZod,
   ModeDoneZod,
-  SessionPurposeZod,
-  ScheduleAssignmentTypeZod
 } from "@enums";
+import { EventFieldsSchema } from "@/lib/schema/zod-schema/schedules/schedule";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
 import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 import { toDateString, formatMediumDate } from '@/lib/data-processing/transformers/utils/date-utils';
-  // Helper function for consistent date formatting
+
+// Helper function for consistent date formatting
 export function formatVisitDate(date: Date | string | undefined): string {
   if (!date) return 'No date set';
   
@@ -21,32 +20,6 @@ export function formatVisitDate(date: Date | string | undefined): string {
     
   return formatMediumDate(dateString);
 }
-// Time Slot Schema (reusable component)
-export const TimeSlotZodSchema = z.object({
-  startTime: z.string().default('').describe("24-hour format time: 'HH:MM' (e.g., '08:30')"),
-  endTime: z.string().default('').describe("24-hour format time: 'HH:MM' (e.g., '09:15')"),
-  periodNum: z.number().optional().default(0).describe("Period number for bell schedule alignment (1-8)"),
-});
-
-export const VisitPortionZod = ScheduleAssignmentTypeZod;
-
-export const EventItemZodSchema = z.object({
-
-  // event-specific context
-  eventType: SessionPurposeZod.default(SessionPurposeZod.options[0]).describe("Type of coaching session: Observation, Debrief, Co-Planning, or PLC"),
-  staffIds: z.array(z.string()).default([]).describe("Array of Staff document _ids participating in this event"),
-  room: z.string().optional().describe("Classroom from teacher schedule"),
-  periodNumber: z.number().optional().default(0).describe("Bell schedule period number (1-8)"),
-
-  // event-specific scheduling
-  portion: VisitPortionZod.optional().default(VisitPortionZod.options[0]).describe("Schedule portion: full_period, first_half, or second_half"),
-  duration: DurationZod.default(DurationZod.options[0]).describe("Length of session: 15, 30, 45, or 60 minutes"),
-  timeSlot: TimeSlotZodSchema.optional().describe("More specific time window from bell schedule - not used currently"),
-
-  // event-specific metadata
-  orderIndex: z.number().optional().default(0).describe("Sequence order within visit (1, 2, 3...)"),
-  notes: z.string().optional().default(''),
-});
 
 // =====================================
 // SESSION LINK SCHEMA
@@ -83,7 +56,7 @@ export const VisitFieldsSchema = z.object({
   // Schedule reference (NEW - replaces embedded events)
   visitScheduleId: z.string().optional().describe("Reference to VisitSchedule document _id for detailed scheduling"),
   
-  events: z.array(EventItemZodSchema).default([]).describe("Events that occurred during this visit"),
+  events: z.array(EventFieldsSchema).default([]).describe("Events that occurred during this visit"),
   // Supporting content
   sessionLinks: z.array(SessionLinkFieldsSchema).default([]).describe("External resources and documents"),
   
@@ -180,8 +153,6 @@ export const visitsToReferences = createArrayTransformer<Visit, VisitReference>(
 // TYPE EXPORTS
 // =====================================
 
-export type TimeSlot = z.infer<typeof TimeSlotZodSchema>;
-export type EventItem = z.infer<typeof EventItemZodSchema>;
 export type SessionLink = z.infer<typeof SessionLinkFieldsSchema>;
 export type VisitInput = z.infer<typeof VisitInputZodSchema>;
 export type Visit = z.infer<typeof VisitZodSchema>;

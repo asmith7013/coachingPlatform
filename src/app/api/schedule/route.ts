@@ -1,7 +1,7 @@
 
 import { fetchSchedulesForApi } from "@/lib/server/fetchers/domain/schedule";
 import { createReferenceEndpoint, FetchFunction } from "@api-handlers/reference-endpoint";
-import { TeacherSchedule, BellSchedule } from "@zod-schema/schedule/schedule";
+import { TeacherSchedule, BellSchedule } from "@/lib/schema/zod-schema/schedules/schedule";
 
 function mapScheduleToReference(schedule: TeacherSchedule | BellSchedule) {
   if ('teacherId' in schedule) {

@@ -1,3 +1,17 @@
+/**
+ * @fileoverview DEPRECATED - SchedulesNew context exports
+ * 
+ * These context providers and hooks are deprecated and will be removed in a future version.
+ * Please migrate to the new schedule system at src/components/features/schedulesUpdated/
+ * 
+ * Migration path:
+ * - Use the new ScheduleProvider from the schedulesUpdated feature
+ * - Use the new useScheduleComposition and useScheduleUI hooks
+ * - Follow the new schema-first architecture patterns
+ * 
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
+
 // Export the main provider and base context
 export {
   ScheduleProvider,

@@ -1,3 +1,17 @@
+/**
+ * @fileoverview DEPRECATED - useScheduleState hook
+ * 
+ * This hook is deprecated and will be removed in a future version.
+ * Please migrate to the new schedule system at src/components/features/schedulesUpdated/
+ * 
+ * Migration path:
+ * - Use the new useScheduleComposition hook for data composition
+ * - Use the new useScheduleUI hook for UI state management
+ * - Follow the new schema-first architecture patterns
+ * 
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
+
 import { useState, useCallback, useMemo } from 'react'
 import type { ScheduleUIState } from '../types'
 import { ScheduleAssignment } from '@enums'
@@ -7,7 +21,13 @@ import { ScheduleAssignment } from '@enums'
  * Focused hook for schedule UI state
  * Single responsibility: Manage selection, dropdowns, and interaction state
  */
+/**
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
 export function useScheduleState() {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('useScheduleState is deprecated. Use the new schedule system at src/components/features/schedulesUpdated/');
+  }
   const [uiState, setUIState] = useState<ScheduleUIState>({
     selectedTeacher: null,
     selectedPeriod: null,

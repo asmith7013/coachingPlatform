@@ -580,31 +580,30 @@ const mockTeacherSchedules = Object.entries(csvScheduleData).map(([teacherName, 
     _id: `ts_${teacherId}`,
     teacher: teacherId,
     school: washingtonHighSchoolId,
-    scheduleByDay: [
-      {
-        day: 'uniform',
-        periods: classes.map((classInfo, index) => {
-          // Determine period type
-          let periodType;
-          if (classInfo.class === "Prep") {
-            periodType = 'prep';
-          } else if (classInfo.class === "Lunch") {
-            periodType = 'lunch';
-          } else if (classInfo.class === "Meeting") {
-            periodType = 'meeting';
-          } else {
-            periodType = 'class';
-          }
-          
-          return {
-            periodNum: index + 1,
-            className: classInfo.class,
-            room: classInfo.room || undefined,
-            periodType: periodType
-          };
-        })
+    bellScheduleId: `bs_${washingtonHighSchoolId}`, // Reference to bell schedule
+    dayIndices: [0, 1, 2, 3, 4], // Monday through Friday
+    assignments: classes.map((classInfo, index) => {
+      // Determine period type
+      let periodType;
+      if (classInfo.class === "Prep") {
+        periodType = 'prep';
+      } else if (classInfo.class === "Lunch") {
+        periodType = 'lunch';
+      } else if (classInfo.class === "Meeting") {
+        periodType = 'meeting';
+      } else {
+        periodType = 'class';
       }
-    ],
+      
+      return {
+        periodNumber: index + 1,
+        className: classInfo.class,
+        room: classInfo.room || undefined,
+        activityType: periodType,
+        subject: classInfo.class.includes('Algebra') ? 'Mathematics' : undefined,
+        gradeLevel: undefined
+      };
+    }),
     owners: scheduleOwners,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()

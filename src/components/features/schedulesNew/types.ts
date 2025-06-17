@@ -1,12 +1,8 @@
-// src/components/features/schedulesNew/types.ts
-// Remove duplicate type definitions and import from schema
-export type { 
-  VisitCreationData, 
-  VisitUpdateData, 
-  ConflictCheckData,
-  TeacherPeriodQuery,
-  EventOperation
-} from '@zod-schema/schedule/schedule-actions';
+/**
+ * @fileoverview DEPRECATED - This file is deprecated and will be removed.
+ * Migration: Use types from @/components/features/schedulesUpdated/types instead
+ * @deprecated
+ */
 
 import { ScheduleAssignment } from '@enums';
 

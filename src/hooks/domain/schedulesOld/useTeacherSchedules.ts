@@ -3,14 +3,14 @@ import { ZodSchema } from 'zod';
 import { 
   TeacherScheduleZodSchema, 
   type TeacherSchedule
-} from '@zod-schema/schedule/schedule';
+} from '@/lib/schema/zod-schema/schedules/schedule';
 import { 
   fetchTeacherSchedules, 
   fetchTeacherScheduleById, 
   createTeacherSchedule, 
   updateTeacherSchedule, 
   deleteTeacherSchedule
-} from '@actions/schedule/schedule';
+} from '@/app/actions/schedulesOld/schedule';
 
 /**
  * Custom React Query hooks for Teacher Schedule entity

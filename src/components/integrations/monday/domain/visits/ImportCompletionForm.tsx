@@ -4,7 +4,9 @@ import React, { useMemo } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { Alert } from '@components/core/feedback/Alert';
 import { FormLayout } from '@components/composed/forms/FormLayout';
-import { useFieldRenderer } from '@/lib/ui/forms/hooks/useFieldRenderer';
+import { Input } from '@components/core/fields/Input';
+import { Select } from '@components/core/fields/Select';
+import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
 import { VisitInput } from '@zod-schema/visits/visit';
 import { VisitInputZodSchema } from '@zod-schema/visits/visit';
 import { VisitFieldConfig } from '@forms/fieldConfig/integrations';
@@ -32,8 +34,6 @@ export function ImportCompletionForm({
   missingFields,
   disabled = false
 }: ImportCompletionFormProps) {
-  const { renderField } = useFieldRenderer<VisitInput>();
-  
   // Filter fields to only include missing ones
   const filteredFields = useMemo(() => {
     return VisitFieldConfig.filter((field: Field<VisitInput>) => 
@@ -104,7 +104,57 @@ export function ImportCompletionForm({
               </label>
               
               <form.Field name={String(fieldConfig.name)}>
-                {(field) => renderField(fieldConfig, field)}
+                {(field) => (
+                  <div className="space-y-1">
+                    {['text', 'email', 'password', 'number', 'date'].includes(fieldConfig.type) && (
+                      <Input
+                        type={fieldConfig.type}
+                        value={String(field.state.value ?? '')}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        onBlur={field.handleBlur}
+                        placeholder={fieldConfig.placeholder}
+                        disabled={fieldConfig.disabled}
+                      />
+                    )}
+                    {fieldConfig.type === 'select' && (
+                      fieldConfig.multiple ? (
+                        <Select
+                          value={Array.isArray(field.state.value) ? field.state.value as string[] : []}
+                          onChange={field.handleChange}
+                          options={fieldConfig.options || []}
+                          placeholder={fieldConfig.placeholder}
+                          disabled={fieldConfig.disabled}
+                          multiple={true}
+                        />
+                      ) : (
+                        <Select
+                          value={typeof field.state.value === 'string' ? field.state.value as string : ''}
+                          onChange={field.handleChange}
+                          options={fieldConfig.options || []}
+                          placeholder={fieldConfig.placeholder}
+                          disabled={fieldConfig.disabled}
+                        />
+                      )
+                    )}
+                    {fieldConfig.type === 'reference' && (
+                      <ReferenceSelect
+                        url={fieldConfig.url || ''}
+                        value={field.state.value as string | string[]}
+                        onChange={field.handleChange}
+                        multiple={fieldConfig.multiple}
+                        placeholder={fieldConfig.placeholder}
+                        disabled={fieldConfig.disabled}
+                        entityType={fieldConfig.entityType}
+                        label={fieldConfig.label}
+                      />
+                    )}
+                    {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
+                      <p className="text-sm text-destructive">
+                        {field.state.meta.errors[0]}
+                      </p>
+                    )}
+                  </div>
+                )}
               </form.Field>
             </div>
           ))}

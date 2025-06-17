@@ -1,9 +1,24 @@
+/**
+ * @fileoverview DEPRECATED - TeacherPeriodCell component
+ * 
+ * This component is deprecated and will be removed in a future version.
+ * Please migrate to the new schedule system at src/components/features/schedulesUpdated/
+ * 
+ * Migration path:
+ * - Use the new ScheduleDisplayTestPage for schedule display
+ * - Use the new useScheduleComposition and useScheduleUI hooks for schedule logic
+ * - Follow the new schema-first architecture patterns
+ * 
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
+
+'use client';
+
 import React from 'react';
 import { useScheduleContext } from './context';
-import type { Period } from '@zod-schema/schedule/schedule';
+import type { Period, Event } from '@/lib/schema/zod-schema/schedules/schedule';
 import { SessionPurposes } from '@/lib/schema/enum';
 import { extractEventsForPeriod } from './utils/visit-data-utils';
-import { EventItem } from '@/lib/schema/zod-schema/visits/visit';
 
 interface TeacherPeriodCellProps {
   teacherId: string;
@@ -11,7 +26,15 @@ interface TeacherPeriodCellProps {
   schedule?: Period;
 }
 
+/**
+ * @deprecated Use TeacherPeriodCell from @/components/features/schedulesUpdated/ instead.
+ * This component will be removed in a future version.
+ * Migration: Replace with equivalent component from schedulesUpdated feature.
+ */
 export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriodCellProps) {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: TeacherPeriodCell from schedulesNew is deprecated. Use schedulesUpdated instead.');
+  }
   // ✅ Use context directly with UI state
   const { 
     uiState,
@@ -82,7 +105,7 @@ export function TeacherPeriodCell({ teacherId, period, schedule }: TeacherPeriod
   if (visit) {
     // ✅ FIX: Get the actual event for this teacher and period
     const eventsForPeriod = extractEventsForPeriod(visit, periodNum);
-    const teacherEvent = eventsForPeriod.find((event : EventItem) => 
+    const teacherEvent = eventsForPeriod.find((event : Event) => 
       event.staffIds?.includes(teacherId)
     );
     

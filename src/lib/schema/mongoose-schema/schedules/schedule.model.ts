@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import {
-  DayTypes,
   BlockDayTypes,
   BellScheduleTypes,
   PeriodTypes,
@@ -38,20 +37,11 @@ const PeriodSchema = new mongoose.Schema({
   periodType: { type: String, enum: Object.values(PeriodTypes), required: true }
 }, { _id: false });
 
-const ScheduleByDaySchema = new mongoose.Schema({
-  day: { type: String, enum: Object.values(DayTypes), required: true },
-  periods: { type: [PeriodSchema], required: true }
-}, { _id: false });
-
 const PeriodByTeacherSchema = new mongoose.Schema({
   periodNumber: { type: Number, required: true },
   className: { type: String, required: true },
   room: { type: String, required: true },
-  activityType: { 
-    type: String, 
-    enum: ["teaching", "prep", "duty", "lunch", "meeting"], 
-    required: true 
-  },
+  activityType: { type: String, enum: Object.values(PeriodTypes), required: true },
   subject: { type: String },
   gradeLevel: { type: String }
 }, { _id: false });
@@ -75,9 +65,6 @@ export const AssignedCycleDayModel =
 
 export const PeriodModel =
   mongoose.models.Period || mongoose.model("Period", PeriodSchema);
-
-export const ScheduleByDayModel =
-  mongoose.models.ScheduleByDay || mongoose.model("ScheduleByDay", ScheduleByDaySchema);
 
 export const TeacherScheduleModel = mongoose.models.TeacherSchedule || 
   mongoose.model("TeacherSchedule", TeacherScheduleSchema);

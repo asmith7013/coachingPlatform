@@ -151,33 +151,27 @@ export function generateScheduleWithIds() {
       _id: generateMongoId(),
       teacher: teacherId,
       school: washingtonHighSchoolId,
-      scheduleByDay: [
-        {
-          _id: generateMongoId(),
-          day: 'uniform',
-          periods: classes.map((classInfo, index) => {
-            // Determine period type
-            let periodType;
-            if (classInfo.class === "Prep") {
-              periodType = 'prep';
-            } else if (classInfo.class === "Lunch") {
-              periodType = 'lunch';
-            } else if (classInfo.class === "Meeting") {
-              periodType = 'meeting';
-            } else {
-              periodType = 'class';
-            }
-            
-            return {
-              _id: generateMongoId(),
-              periodNum: index + 1,
-              className: classInfo.class,
-              room: classInfo.room || undefined,
-              periodType: periodType
-            };
-          })
+      bellScheduleId: bellSchedule._id,
+      dayIndices: [0, 1, 2, 3, 4],
+      assignments: classes.map((classInfo, index) => {
+        let periodType;
+        if (classInfo.class === "Prep") {
+          periodType = 'prep';
+        } else if (classInfo.class === "Lunch") {
+          periodType = 'lunch';
+        } else if (classInfo.class === "Meeting") {
+          periodType = 'meeting';
+        } else {
+          periodType = 'class';
         }
-      ],
+        return {
+          _id: generateMongoId(),
+          periodNumber: index + 1,
+          className: classInfo.class,
+          room: classInfo.room || undefined,
+          activityType: periodType
+        };
+      }),
       owners: scheduleOwners,
       createdAt: new Date(),
       updatedAt: new Date()

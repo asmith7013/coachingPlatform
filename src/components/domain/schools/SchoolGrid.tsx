@@ -12,7 +12,7 @@ import { School } from "@zod-schema/core/school";
 import { cn } from '@ui/utils/formatters';
 import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { schoolToSlug } from '@/lib/data-processing/transformers/utils/school-slug-utils';
-import { useTeacherSchedules } from '@/hooks/domain/schedule/useTeacherSchedules';
+import { useTeacherSchedules } from '@/hooks/domain/schedulesOld/useTeacherSchedules';
 
 interface SchoolGridCardProps {
   school: School;

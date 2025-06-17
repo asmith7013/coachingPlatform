@@ -15,10 +15,10 @@ import { useEntityById } from '@/query/client/hooks/queries/useEntityById'
 import { cn } from '@ui/utils/formatters';
 import { weight, paddingY } from '@/lib/tokens/tokens'
 import type { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff'
-import type { TeacherSchedule } from '@zod-schema/schedule/schedule'
+import type { TeacherSchedule } from '@/lib/schema/zod-schema/schedules/schedule'
 import type { TableColumnSchema } from '@ui/table-schema'
 import { NYCPSStaffZodSchema, TeachingLabStaffZodSchema } from '@zod-schema/core/staff'
-import { TeacherScheduleZodSchema } from '@zod-schema/schedule/schedule'
+import { TeacherScheduleZodSchema } from '@/lib/schema/zod-schema/schedules/schedule'
 import { formatMediumDate, toDateString } from '@/lib/data-processing/transformers/utils/date-utils';
 
 type StaffMember = NYCPSStaff | TeachingLabStaff
@@ -324,7 +324,7 @@ function StaffScheduleTab({
     <div className="py-4">
       <Card className="p-4 md:p-6">
         <Heading level="h3" className="mb-4">Weekly Schedule</Heading>
-        <ScheduleTable scheduleByDay={schedule.assignments as unknown as TeacherSchedule[]} />
+        <ScheduleTable schedule={schedule} />
       </Card>
     </div>
   )

@@ -1,10 +1,27 @@
+/**
+ * @fileoverview DEPRECATED - ScheduleContext provider
+ * 
+ * This context is deprecated and will be removed in a future version.
+ * Please migrate to the new schedule system at src/components/features/schedulesUpdated/
+ * 
+ * Migration path:
+ * - Use the new ScheduleProvider from the schedulesUpdated feature
+ * - Use the new useScheduleComposition and useScheduleUI hooks
+ * - Follow the new schema-first architecture patterns
+ * 
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
+
+'use client';
+
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useScheduleData, useScheduleActions, useScheduleState } from '../hooks';
-import type { TimeSlot, Visit } from '@zod-schema/visits/visit';
+import type { Visit } from '@zod-schema/visits/visit';
 import type { NYCPSStaff } from '@zod-schema/core/staff';
-import type { TeacherSchedule } from '@zod-schema/schedule/schedule';
-import type { VisitCreationData, VisitUpdateData, ScheduleUIState, ConflictCheckData } from '../types';
+import type { TeacherSchedule, ConflictCheckData, Event } from '@/lib/schema/zod-schema/schedules/schedule';
+import type { ScheduleUIState } from '../types';
 import type { School } from '@zod-schema/core/school';
+import { VisitEvent } from '@/lib/schema/zod-schema/schedules/schedule-events';
 
 // ✅ SCHEMA-FIRST: Use schema types directly, no transformations
 interface ScheduleContextType {
@@ -16,7 +33,7 @@ interface ScheduleContextType {
   
   // Data (direct schema types) - ✅ NO TRANSFORMATIONS
   teachers: NYCPSStaff[];
-  timeSlots: TimeSlot[];     // Direct from bell schedule schema
+  timeSlots: Event[];     // Direct from bell schedule schema
   visits: Visit[];
   teacherSchedules: TeacherSchedule[]; // Direct from teacher schedule schema
   school: School;
@@ -30,8 +47,8 @@ interface ScheduleContextType {
   toggleDropdown: (dropdownId: string | null) => void;
   
   // Operations (delegated to domain hooks)
-  scheduleVisit: (data: VisitCreationData) => Promise<{ success: boolean; error?: string }>;
-  updateVisit: (visitId: string, updates: VisitUpdateData) => Promise<{ success: boolean; error?: string }>;
+  scheduleVisit: (data: VisitEvent) => Promise<{ success: boolean; error?: string }>;
+  updateVisit: (visitId: string, updates: VisitEvent) => Promise<{ success: boolean; error?: string }>;
   deleteVisit: (visitId: string) => Promise<{ success: boolean; error?: string }>;
   removeEventFromVisit: (visitId: string, eventIndex: number) => Promise<{ success: boolean; error?: string }>;
   clearAllVisits: () => Promise<{ success: boolean; deletedCount: number; error?: string }>;
@@ -53,6 +70,9 @@ interface ScheduleProviderProps {
   children: ReactNode;
 }
 
+/**
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
 export function ScheduleProvider({ 
   schoolId, 
   date, 
@@ -60,6 +80,9 @@ export function ScheduleProvider({
   visitId,
   children 
 }: ScheduleProviderProps) {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('ScheduleProvider is deprecated. Use the new schedule system at src/components/features/schedulesUpdated/');
+  }
   // ✅ COMPOSE FOCUSED HOOKS: Each with single responsibility
   const scheduleData = useScheduleData({ schoolId, date, mode, visitId });
   const scheduleActions = useScheduleActions({ 
@@ -67,7 +90,8 @@ export function ScheduleProvider({
     date, 
     visits: scheduleData.visits, 
     mode, 
-    visitId 
+    visitId,
+    coachingActionPlanId: '123' // TODO: get from context
   });
   const scheduleState = useScheduleState();
   
@@ -80,9 +104,9 @@ export function ScheduleProvider({
     
     // Data (direct schema types) - ✅ NO TRANSFORMATIONS
     teachers: scheduleData.teachers,
-    timeSlots: scheduleData.timeSlots as unknown as TimeSlot[],           // ClassScheduleItem[] - no transformation
+    timeSlots: scheduleData.timeSlots as unknown as Event[],           // ClassScheduleItem[] - no transformation
     visits: scheduleData.visits,
-    teacherSchedules: scheduleData.teacherSchedules, // TeacherSchedule[] - no transformation
+    teacherSchedules: scheduleData.teacherSchedules as unknown as TeacherSchedule[], // TeacherSchedule[] - no transformation
     school: scheduleData.school as School,
     isLoading: Boolean(scheduleData.isLoading || scheduleActions.isLoading),
     error: scheduleData.error || scheduleActions.error,

@@ -3,7 +3,6 @@ import { SessionPurposes } from '@/lib/schema/enum';
 export type {
     Visit,
     VisitInput,
-    EventItem,
     SessionLink
   } from '@zod-schema/visits/visit';
   

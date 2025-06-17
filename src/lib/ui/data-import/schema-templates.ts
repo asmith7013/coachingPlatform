@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { SchoolInputZodSchema } from '@zod-schema/core/school';
 import { NYCPSStaffInputZodSchema } from '@zod-schema/core/staff';
 import { VisitInputZodSchema } from '@zod-schema/visits/visit';
-import { BellScheduleInputZodSchema } from '@zod-schema/schedule/schedule';
-import { TeacherScheduleInputZodSchema } from '@zod-schema/schedule/schedule';
+import { BellScheduleInputZodSchema } from '@/lib/schema/zod-schema/schedules/schedule';
+import { TeacherScheduleInputZodSchema } from '@/lib/schema/zod-schema/schedules/schedule';
 
 // Use transformer validation and shared utilities
 import { validateSafe } from '@/lib/data-processing/validation/zod-validation';
@@ -49,7 +49,7 @@ function getFieldDefault(fieldName: string): unknown {
   const arrayFields = [
     'gradeLevelsSupported', 'subjects', 'specialGroups', 'rolesNYCPS', 'rolesTL',
     'staffList', 'schedules', 'cycles', 'owners', 'schools', 'notes', 'experience',
-    'assignedDistricts', 'events', 'sessionLinks', 'classSchedule', 'assignedCycleDays'
+    'assignedDistricts', 'events', 'sessionLinks', 'classSchedule'
   ];
   
   return arrayFields.includes(fieldName) ? [] : "";
@@ -131,28 +131,26 @@ function createBellScheduleTemplate(): Record<string, unknown> {
  */
 function createMasterScheduleTemplate(): Record<string, unknown> {
   const template = {
-    // Master schedule contains teacher schedules
     teacherSchedules: [
       {
-        teacherName: "John Smith", // For AI reference
-        teacherEmail: "jsmith@school.edu", // MUST match existing staff
-        scheduleByDay: [
+        teacherName: "John Smith",
+        teacherEmail: "jsmith@school.edu", 
+        bellScheduleId: "", // Will be auto-filled
+        dayIndices: [0, 1, 2, 3, 4], // Monday through Friday
+        assignments: [
           {
-            day: "Monday",
-            periods: [
-              {
-                periodNum: 1,
-                className: "Algebra I",
-                room: "101",
-                periodType: "Academic"
-              },
-              {
-                periodNum: 2,
-                className: "Geometry",
-                room: "101", 
-                periodType: "Academic"
-              }
-            ]
+            periodNumber: 1,
+            className: "Algebra I",
+            room: "101",
+            activityType: "teaching",
+            subject: "Mathematics",
+            gradeLevel: "Grade 9"
+          },
+          {
+            periodNumber: 2,
+            className: "Preparation Period",
+            room: "101",
+            activityType: "prep"
           }
         ]
       }
@@ -260,17 +258,15 @@ function generateFieldInstructions(entityName: string): string {
 - teacherSchedules: Array of teacher schedules
   * teacherName: Full name of the teacher (REQUIRED)
   * teacherEmail: Email address of the teacher (REQUIRED)
-  * scheduleByDay: Array of schedule items for each day of the week
-    - day: Day of the week (REQUIRED)
-    - periods: Array of periods for the day
-      - periodNum: Period number (REQUIRED)
-      - className: Class name (REQUIRED)
-      - room: Room number (REQUIRED)
-      - periodType: Period type (REQUIRED)
-- IMPORTANT: Every teacher schedule MUST use an email from the available staff list
-- IMPORTANT: Use EXACT email addresses from the staff list above
-- IMPORTANT: Match teacher names to the staff list (e.g., "Smith" should match "John Smith" with email "jsmith@school.edu")
-- IMPORTANT: If you reference a teacher not in the list above, that schedule will be rejected`;
+  * bellScheduleId: Reference to bell schedule (leave empty - will be auto-filled)
+  * dayIndices: Array of day numbers this schedule applies to [0,1,2,3,4] for M-F (REQUIRED)
+  * assignments: Flat array of all period assignments (REQUIRED)
+    - periodNumber: Period number 1-8 (REQUIRED)
+    - className: Class name (REQUIRED)
+    - room: Room number (REQUIRED)
+    - activityType: "teaching", "prep", "lunch", "meeting" (REQUIRED)
+    - subject: Subject name (optional)
+    - gradeLevel: Grade level (optional)`;
     
     default:
       return '';

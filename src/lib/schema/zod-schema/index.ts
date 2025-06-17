@@ -4,6 +4,6 @@ export * from './error';
 export * from './integrations';
 export * from './look-fors';
 export * from './visits/classroom-observation';
-export * from './schedule';
+export * from './schedules';
 export * from './shared';
 export * from './visits';

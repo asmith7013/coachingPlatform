@@ -86,8 +86,8 @@ export enum PeriodTypes {
   PREP = "prep",
   LUNCH = "lunch",
   MEETING = "meeting",
+  DUTY = "duty"
 }
-
 /**
  * Duration Values (in minutes)
  * Stored as strings in Zod validation but converted to numbers in processing

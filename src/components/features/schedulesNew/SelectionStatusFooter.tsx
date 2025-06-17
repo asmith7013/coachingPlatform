@@ -1,10 +1,24 @@
+/**
+ * @fileoverview DEPRECATED - This file is deprecated and will be removed.
+ * Migration: Use components from @/components/features/schedulesUpdated/ instead
+ * @deprecated
+ */
+
 import React, { useState } from 'react';
 import { Users, Clock, Trash2 } from 'lucide-react';
 import { Button } from '@/components/core/Button';
 import { useScheduleContext } from './context';
 import { ScheduleAssignment } from '@enums';
 
+/**
+ * @deprecated Use SelectionStatusFooter from @/components/features/schedulesUpdated/ instead.
+ * This component will be removed in a future version.
+ * Migration: Replace with equivalent component from schedulesUpdated feature.
+ */
 export function SelectionStatusFooter() {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: SelectionStatusFooter from schedulesNew is deprecated. Use schedulesUpdated instead.');
+  }
   // ✅ SIMPLIFIED: Use context directly with UI state
   const { uiState, teachers, visits, clearAllVisits, isLoading } = useScheduleContext();
   const { selectedTeacher, selectedPeriod, selectedPortion } = uiState;

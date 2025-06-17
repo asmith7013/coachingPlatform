@@ -14,18 +14,21 @@ import {
 import { useStandardMutation } from '@/query/client/hooks/mutations/useStandardMutation';
 import { bulkCreateStaffWithSchoolLink } from '@actions/staff/operations';
 import { createVisit } from '@actions/visits/visits';
-import { createBellSchedule, createMasterSchedule } from '@actions/schedule/schedule';
+import { 
+  createBellSchedule, 
+  // createMasterSchedule 
+} from '@/app/actions/schedulesOld/schedule';
 import { AI_PROMPTS, createMasterSchedulePrompt } from '@ui/data-import/schema-templates';
 import { createDataPreview } from '@data-processing/transformers/ui/data-preview';
 import { validateJsonString } from '@data-processing/validation/validation-helpers';
 import { VisitInputZodSchema } from '@zod-schema/visits/visit';
 import { NYCPSStaffInputZodSchema } from '@zod-schema/core/staff';
-import { BellScheduleInputZodSchema } from '@zod-schema/schedule/schedule';
-import { TeacherScheduleInputZodSchema } from '@zod-schema/schedule/schedule';
+import { BellScheduleInputZodSchema } from '@/lib/schema/zod-schema/schedules/schedule';
+import { TeacherScheduleInputZodSchema } from '@/lib/schema/zod-schema/schedules/schedule';
 import type { School } from '@zod-schema/core/school';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
-import type { BellScheduleInput, TeacherScheduleInput } from '@zod-schema/schedule/schedule';
+import type { BellScheduleInput, TeacherScheduleInput } from '@/lib/schema/zod-schema/schedules/schedule';
 import type { NYCPSStaff } from '@zod-schema/core/staff';
 import { useNYCPSStaffList } from '@hooks/domain/staff/useNYCPSStaff';
 
@@ -291,22 +294,22 @@ export function DataImportDialog({ open, onClose, school }: DataImportDialogProp
     } else if (selectedDataType === 'masterSchedule' && importData.masterSchedule.length > 0) {
       try {
         // Call the batch function instead of individual creates
-        const result = await createMasterSchedule(importData.masterSchedule, school._id);
+        // const result = await createMasterSchedule(, school._id);
         
-        if (result.success && result.data) {
-          const { data } = result;
-          const successMsg = `Master schedule created! ${data.successfulSchedules}/${data.totalSchedules} schedules added successfully.`;
+        // if (result.success && result.data) {
+        //   const { data } = result;
+        //   const successMsg = `Master schedule created! ${data.successfulSchedules}/${data.totalSchedules} schedules added successfully.`;
           
-          if (data.errors.length > 0) {
-            alert(`${successMsg}\n\nErrors:\n${data.errors.join('\n')}`);
-          } else {
-            alert(successMsg);
-          }
+        //   if (data.errors.length > 0) {
+        //     alert(`${successMsg}\n\nErrors:\n${data.errors.join('\n')}`);
+        //   } else {
+        //     alert(successMsg);
+        //   }
           
-          handleClose();
-        } else {
-          throw new Error(result.error || 'Failed to create master schedule');
-        }
+        //   handleClose();
+        // } else {
+        //   throw new Error(result.error || 'Failed to create master schedule');
+        // }
       } catch (error) {
         alert(`Failed to add master schedule: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }

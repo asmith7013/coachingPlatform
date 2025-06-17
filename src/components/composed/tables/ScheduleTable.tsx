@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
 import { textColors, textSize, weight, paddingX, paddingY } from '@/lib/tokens/tokens'
-import type { TeacherSchedule, Period } from '@zod-schema/schedule/schedule'
+import type { TeacherSchedule, Period, BellSchedule } from '@/lib/schema/zod-schema/schedules/schedule'
 
 const scheduleTable = tv({
   slots: {
@@ -93,12 +93,14 @@ const periodTypeColorMap: Record<string, string> = {
 export type ScheduleTableVariants = VariantProps<typeof scheduleTable>
 
 export interface ScheduleTableProps extends ScheduleTableVariants {
-  scheduleByDay: TeacherSchedule[]
-  className?: string
+  schedule: TeacherSchedule;
+  bellSchedule?: BellSchedule;
+  className?: string;
 }
 
 export function ScheduleTable({
-  scheduleByDay,
+  schedule,
+  bellSchedule,
   className,
   textSize = 'base',
   compact = false,
@@ -106,27 +108,23 @@ export function ScheduleTable({
 }: ScheduleTableProps) {
   const styles = scheduleTable({ textSize, compact, periodTypeColors })
 
-  // Get all unique period numbers across all days
+  // Get all unique period numbers from assignments
   const allPeriodNumbers = useMemo(() => {
     const periodSet = new Set<number>()
-    scheduleByDay.forEach(day => {
-      day.assignments.forEach(period => {
-        periodSet.add(period.periodNumber)
-      })
+    schedule.assignments.forEach(period => {
+      periodSet.add(period.periodNumber)
     })
     return Array.from(periodSet).sort((a, b) => a - b)
-  }, [scheduleByDay])
+  }, [schedule.assignments])
 
-  // Create a lookup map for periods by day and period number
+  // Create a lookup map for periods by period number
   const periodMap = useMemo(() => {
-    const map = new Map<string, Period>()
-    scheduleByDay.forEach(day => {
-      day.assignments.forEach(period => {
-        map.set(`${day.bellScheduleId}-${period.periodNumber}`, period)
-      })
+    const map = new Map<number, Period>()
+    schedule.assignments.forEach(period => {
+      map.set(period.periodNumber, period)
     })
     return map
-  }, [scheduleByDay])
+  }, [schedule.assignments])
 
   // Function to get the period type color class
   const getPeriodTypeClass = (periodType: string) => {
@@ -140,48 +138,61 @@ export function ScheduleTable({
         <thead className={styles.header()}>
           <tr>
             <th scope="col" className={styles.headerCell()}>Period</th>
-            {scheduleByDay.map(day => (
-              <th key={day._id} scope="col" className={styles.headerCell()}>
-                {day._id}
-              </th>
-            ))}
+            <th scope="col" className={styles.headerCell()}>Time</th>
+            <th scope="col" className={styles.headerCell()}>Class</th>
+            <th scope="col" className={styles.headerCell()}>Room</th>
+            <th scope="col" className={styles.headerCell()}>Type</th>
           </tr>
         </thead>
         <tbody className={styles.body()}>
-          {allPeriodNumbers.map(periodNum => (
-            <tr key={periodNum} className={styles.row()}>
-              <td className={styles.cell()}>
-                <span className={styles.periodBadge()}>
-                  {periodNum}
-                </span>
-              </td>
-              {scheduleByDay.map(day => {
-                const period = periodMap.get(`${day.bellScheduleId}-${periodNum}`)
-                return (
-                  <td key={`${day.bellScheduleId}-${periodNum}`} className={styles.cell()}>
-                    {period ? (
-                      <div className="flex flex-col">
-                        <span className={cn(weight.medium)}>{period.className}</span>
-                        {period.room && (
-                          <span className="text-muted text-sm">
-                            Room: {period.room}
-                          </span>
-                        )}
-                        <span 
-                          className={cn(
-                            styles.periodType(),
-                            getPeriodTypeClass(period.activityType)
-                          )}
-                        >
-                          {period.activityType}
-                        </span>
-                      </div>
-                    ) : null}
-                  </td>
-                )
-              })}
-            </tr>
-          ))}
+          {allPeriodNumbers.map(periodNum => {
+            const period = periodMap.get(periodNum)
+            const timeBlock = bellSchedule?.timeBlocks?.find(b => b.periodNumber === periodNum)
+            return (
+              <tr key={periodNum} className={styles.row()}>
+                <td className={styles.cell()}>
+                  <span className={styles.periodBadge()}>
+                    {periodNum}
+                  </span>
+                </td>
+                <td className={styles.cell()}>
+                  {timeBlock ? (
+                    <span className="text-sm">
+                      {timeBlock.startTime} - {timeBlock.endTime}
+                    </span>
+                  ) : (
+                    <span className="text-muted text-sm">-</span>
+                  )}
+                </td>
+                <td className={styles.cell()}>
+                  {period ? (
+                    <span className={cn(weight.medium)}>{period.className}</span>
+                  ) : (
+                    <span className="text-muted text-sm">Free Period</span>
+                  )}
+                </td>
+                <td className={styles.cell()}>
+                  {period?.room ? (
+                    <span className="text-sm">{period.room}</span>
+                  ) : (
+                    <span className="text-muted text-sm">-</span>
+                  )}
+                </td>
+                <td className={styles.cell()}>
+                  {period ? (
+                    <span 
+                      className={cn(
+                        styles.periodType(),
+                        getPeriodTypeClass(period.activityType)
+                      )}
+                    >
+                      {period.activityType}
+                    </span>
+                  ) : null}
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>

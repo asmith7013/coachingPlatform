@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { EventItemZodSchema } from '@zod-schema/visits/visit';
+import { EventFieldsSchema } from '@/lib/schema/zod-schema/schedules/schedule';
 import { DurationValues, SessionPurposes } from '@enums';
 import { Button } from '@/components/core/Button';
 
@@ -27,7 +27,7 @@ export default function TestEnumMigrationPage() {
       };
       
       // The Zod schema will transform the string duration to a number
-      const result = EventItemZodSchema.parse(testData);
+      const result = EventFieldsSchema.parse(testData);
       setValidationResult(result as unknown as EventItemResult);
       setValidationError(null);
       

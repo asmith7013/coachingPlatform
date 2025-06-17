@@ -1,6 +1,6 @@
 import type { Visit } from '@zod-schema/visits/visit';
 import { ScheduleAssignment } from '@enums';
-import type { BellSchedule } from '@zod-schema/schedule/schedule';
+import type { BellSchedule } from '@/lib/schema/zod-schema/schedules/schedule';
 
 // Note: ScheduleAssignmentType and PlannedVisit were from planned-visit schema
 type PlannedVisit = Visit;

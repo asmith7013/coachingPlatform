@@ -1,7 +1,8 @@
 // src/lib/data-processing/transformers/purpose-normalizer.ts
 
 import { SessionPurposes } from '@enums';
-import { Visit, EventItem } from '@zod-schema/visits/visit';
+import { Visit } from '@zod-schema/visits/visit';
+import type { Event } from '@/lib/schema/zod-schema/schedules/schedule';
 
 /**
  * Normalizes session purpose values to match enum casing
@@ -25,7 +26,7 @@ export function normalizeVisitPurposes(visit: Visit): Visit {
   
   // Normalize events array
   if (Array.isArray(visit.events)) {
-    visit.events = visit.events.map((event: EventItem) => ({
+    visit.events = visit.events.map((event: Event) => ({
       ...event,
       eventType: event.eventType ? normalizePurpose(event.eventType) : event.eventType,
       purpose: event.eventType ? normalizePurpose(event.eventType) : event.eventType,

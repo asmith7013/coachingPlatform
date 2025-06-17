@@ -1,8 +1,17 @@
+/**
+ * @fileoverview DEPRECATED - This file is deprecated and will be removed.
+ * Migration: Use components from @/components/features/schedulesUpdated/ instead
+ * @deprecated
+ */
+
 import React, { useState, useMemo } from 'react';
 import { Eye, Calendar, Users, BookOpen } from 'lucide-react';
 import { useScheduleContext } from './context';
 import { extractPeriodFromVisit, extractTeacherIdFromVisit, extractEventsForPeriod } from './utils/visit-data-utils';
 import { ScheduleAssignment, SessionPurposes } from '@enums';
+// import { Visit } from '@zod-schema/visits/visit';
+// import { VisitScheduleFieldsSchema, } from '@zod-schema/schedule/schedule-documents';
+import { VisitEvent } from '@/lib/schema/zod-schema/schedules/schedule-events';
 
 interface DropZoneCellProps {
   period: number;
@@ -16,7 +25,15 @@ const eventTypes = [
   { value: SessionPurposes.PLC, label: 'PLC', icon: BookOpen }
 ];
 
+/**
+ * @deprecated Use DropZoneCell from @/components/features/schedulesUpdated/ instead.
+ * This component will be removed in a future version.
+ * Migration: Replace with equivalent component from schedulesUpdated feature.
+ */
 export function DropZoneCell({ period }: DropZoneCellProps) {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: DropZoneCell from schedulesNew is deprecated. Use schedulesUpdated instead.');
+  }
   const {
     uiState,
     scheduleVisit,
@@ -73,17 +90,6 @@ export function DropZoneCell({ period }: DropZoneCellProps) {
       });
     });
     
-    // console.log(`📊 Period ${period} Enhanced Debug:`, {
-    //   totalVisits: visits.length,
-    //   eventsInPeriod: events.length,
-    //   eventBreakdown: events.map(e => ({
-    //     visitId: e.visitId,
-    //     teacher: e.teacherName,
-    //     portion: e.event.portion,
-    //     purpose: e.event.eventType
-    //   }))
-    // });
-    
     return events;
   }, [visits, period, getTeacherName]);
   
@@ -136,25 +142,22 @@ export function DropZoneCell({ period }: DropZoneCellProps) {
   };
 
   const updateEventType = async (eventId: string, newPurpose: string) => {
-    console.log('🔄 === UPDATE EVENT TYPE DEBUG START ===');
-    console.log('🔄 Event ID:', eventId);
-    console.log('🔄 New Purpose:', newPurpose);
     
     // ✅ CHECK: Is this an event ID or visit ID?
     const isEventId = eventId.includes('-');
-    console.log('🔄 Is event ID?', isEventId);
+    // console.log('🔄 Is event ID?', isEventId);
     
     if (isEventId) {
       // ✅ EXTRACT: Get actual visit ID and event index
       const [actualVisitId, eventIndexStr] = eventId.split('-');
       const eventIndex = parseInt(eventIndexStr, 10);
       
-      console.log('🔄 Extracted:', { actualVisitId, eventIndex });
+      // console.log('🔄 Extracted:', { actualVisitId, eventIndex });
       
       // ✅ FIND: Get the visit and update specific event
       const visit = visits.find(v => v._id === actualVisitId);
       if (!visit || !visit.events || visit.events.length <= eventIndex) {
-        console.error('❌ Visit or event not found for update');
+        // console.error('❌ Visit or event not found for update');
         return;
       }
       
@@ -176,15 +179,15 @@ export function DropZoneCell({ period }: DropZoneCellProps) {
           : event
       );
       
-      console.log('🔄 Updated events:', {
-        originalEventType: visit.events[eventIndex]?.eventType,
-        newEventType: newPurpose,
-        updatedEventAtIndex: updatedEvents[eventIndex]?.eventType
-      });
+      // console.log('🔄 Updated events:', {
+      //   originalEventType: visit.events[eventIndex]?.eventType,
+      //   newEventType: newPurpose,
+      //   updatedEventAtIndex: updatedEvents[eventIndex]?.eventType
+      // });
       
       // ✅ CALL: updateVisit with visit ID and updated events array
-      const result = await updateVisit(actualVisitId, { events: updatedEvents });
-      console.log('🔄 Update result:', result);
+      const result = await updateVisit(actualVisitId, updatedEvents[eventIndex]);
+      // console.log('🔄 Update result:', result);
       
       // ✅ CLOSE DROPDOWN: Auto-close after successful update
       if (result?.success !== false) {
@@ -195,7 +198,7 @@ export function DropZoneCell({ period }: DropZoneCellProps) {
     } else {
       // ✅ LEGACY: Handle visit ID (single event per visit)
       console.log('🔄 Legacy mode: updating visit-level purpose');
-      const result = await updateVisit(eventId, { purpose: newPurpose });
+      const result = await updateVisit(eventId, { eventType: newPurpose } as VisitEvent);
       
       // ✅ CLOSE DROPDOWN: Auto-close after successful legacy update
       if (result?.success !== false) {
@@ -237,15 +240,15 @@ export function DropZoneCell({ period }: DropZoneCellProps) {
       const _teacherName = teachers?.find(t => t._id === selectedTeacher)?.staffName || selectedTeacher;
       
       const visitData = {
-        teacherId: selectedTeacher,
+        staffIds: [selectedTeacher],
         periodNumber: period,
         portion: portion as ScheduleAssignment,
-        purpose: SessionPurposes.OBSERVATION
+        eventType: SessionPurposes.OBSERVATION
       };
       
       console.log('📋 Visit data being sent:', visitData);
       
-      const result = await scheduleVisit(visitData);
+      const result = await scheduleVisit(visitData as VisitEvent);
       
       console.log('📨 Raw result from scheduleVisit:', result);
       

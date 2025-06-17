@@ -1,3 +1,9 @@
+/**
+ * @fileoverview DEPRECATED - This file is deprecated and will be removed.
+ * Migration: Use components from @/components/features/schedulesUpdated/ instead
+ * @deprecated
+ */
+
 'use client'
 
 import React from 'react'
@@ -5,7 +11,7 @@ import { Heading, Text } from '@core-components'
 import { ScheduleTable } from '@composed-components/tables/ScheduleTable'
 import { CalendarIcon } from '@heroicons/react/24/outline'
 import { cn } from '@ui/utils/formatters'
-import type { TeacherSchedule } from '@zod-schema/schedule/schedule'
+import type { TeacherSchedule } from '@/lib/schema/zod-schema/schedules/schedule'
 
 interface SchedulePreviewProps {
   teacherSchedules?: TeacherSchedule[]
@@ -16,16 +22,24 @@ interface SchedulePreviewProps {
   className?: string
 }
 
+/**
+ * @deprecated Use SchedulePreview from @/components/features/schedulesUpdated/ instead.
+ * This component will be removed in a future version.
+ * Migration: Replace with equivalent component from schedulesUpdated feature.
+ */
 export function SchedulePreview({
   teacherSchedules,
   isLoading = false,
   error = false,
   showTitle = true,
-  maxDaysPreview = 3,
+  // maxDaysPreview = 3,
   className
 }: SchedulePreviewProps) {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: SchedulePreview from schedulesNew is deprecated. Use schedulesUpdated instead.');
+  }
   // Get sample schedule for preview (first teacher's schedule)
-  const sampleSchedule = teacherSchedules?.[0]?.assignments || []
+  const sampleSchedule = teacherSchedules?.[0] || null
 
   return (
     <div className={cn("space-y-3", className)}>
@@ -71,32 +85,32 @@ export function SchedulePreview({
                 {teacherSchedules.length} Teachers
               </span>
             </div>
-            {sampleSchedule.length > 0 && (
-              <div className="flex items-center gap-1">
-                <span className={cn(
-                  'rounded-full px-2 py-1',
-                  'text-xs font-medium',
-                  'bg-green-100 text-green-800'
-                )}>
-                  {sampleSchedule.length} Days
-                </span>
-              </div>
-            )}
-            {sampleSchedule[0]?.periodNumber && (
-              <div className="flex items-center gap-1">
-                <span className={cn(
-                  'rounded-full px-2 py-1',
-                  'text-xs font-medium',
-                  'bg-purple-100 text-purple-800'
-                )}>
-                  {sampleSchedule[0].periodNumber} Periods
-                </span>
-              </div>
+            {sampleSchedule && (
+              <>
+                <div className="flex items-center gap-1">
+                  <span className={cn(
+                    'rounded-full px-2 py-1',
+                    'text-xs font-medium',
+                    'bg-green-100 text-green-800'
+                  )}>
+                    {sampleSchedule.dayIndices.length} Days
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className={cn(
+                    'rounded-full px-2 py-1',
+                    'text-xs font-medium',
+                    'bg-purple-100 text-purple-800'
+                  )}>
+                    {sampleSchedule.assignments.length} Assignments
+                  </span>
+                </div>
+              </>
             )}
           </div>
 
           {/* Schedule Preview Table */}
-          {sampleSchedule.length > 0 ? (
+          {sampleSchedule ? (
             <div className="border rounded-md overflow-hidden bg-white">
               <div className="px-3 py-2 bg-gray-50 border-b">
                 <Text textSize="xs" color="muted">
@@ -105,19 +119,12 @@ export function SchedulePreview({
               </div>
               <div className="max-h-32 overflow-y-auto">
                 <ScheduleTable
-                  scheduleByDay={sampleSchedule.slice(0, maxDaysPreview) as unknown as TeacherSchedule[]}
+                  schedule={sampleSchedule}
                   textSize="xs"
                   compact={true}
                   className="border-0"
                 />
               </div>
-              {sampleSchedule.length > maxDaysPreview && (
-                <div className="px-3 py-2 bg-gray-50 border-t">
-                  <Text textSize="xs" color="muted">
-                    +{sampleSchedule.length - maxDaysPreview} more days
-                  </Text>
-                </div>
-              )}
             </div>
           ) : (
             <div className="flex items-center justify-center py-4 bg-gray-50 rounded-md">

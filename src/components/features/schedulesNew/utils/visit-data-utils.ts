@@ -1,4 +1,19 @@
-import type { EventItem, Visit } from '@zod-schema/visits/visit'
+/**
+ * @fileoverview DEPRECATED - Visit data utilities
+ * 
+ * These utilities are deprecated and will be removed in a future version.
+ * Please migrate to the new schedule system at src/components/features/schedulesUpdated/
+ * 
+ * Migration path:
+ * - Use the new visit utilities in the schedulesUpdated feature
+ * - Follow the new schema-first architecture patterns
+ * - Use proper schema validation and type safety
+ * 
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
+
+import type { Event } from '@/lib/schema/zod-schema/schedules/schedule';
+import type { Visit } from '@zod-schema/visits/visit'
 
 /**
  * Utility functions for extracting data from visit objects
@@ -32,22 +47,25 @@ export function extractTeacherIdFromVisit(visit: Visit): string {
  * ✅ NEW: Extract ALL periods from visit (multiple events may have different periods)
  */
 export function extractPeriodsFromVisit(visit: Visit): number[] {
-  return visit.events?.map((event: EventItem) => event.periodNumber).filter(p => p !== undefined) as number[] || [];
+  return visit.events?.map((event: Event) => event.periodNumber).filter(p => p !== undefined) as number[] || [];
 }
 
 /**
  * ✅ NEW: Extract ALL teacher IDs from visit events
  */
 export function extractTeacherIdsFromVisit(visit: Visit): string[] {
-  const teacherIds = visit.events?.flatMap((event: EventItem) => event.staffIds || []) || [];
+  const teacherIds = visit.events?.flatMap((event: Event) => event.staffIds || []) || [];
   return [...new Set(teacherIds)]; // Remove duplicates
 }
 
 /**
  * ✅ NEW: Extract events for specific period
  */
+/**
+ * @deprecated Use the new schedule system at src/components/features/schedulesUpdated/
+ */
 export function extractEventsForPeriod(visit: Visit, period: number) {
-  return visit.events?.filter((event: EventItem) => event.periodNumber === period) || [];
+  return visit.events?.filter((event: Event) => event.periodNumber === period) || [];
 }
 
 /**

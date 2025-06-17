@@ -1,15 +1,26 @@
+/**
+ * @fileoverview DEPRECATED - This file is deprecated and will be removed.
+ * Migration paths:
+ * - Server actions: Use @/app/actions/schedules/ instead
+ * - Components: Use @/components/features/schedulesUpdated/ instead
+ * - Hooks: Use @/hooks/domain/schedules/ instead
+ *
+ * @deprecated
+ */
+
 "use server";
 
 import { z, ZodType } from "zod";
 import { revalidatePath } from "next/cache";
 import { NYCPSStaffModel } from "@mongoose-schema/core/staff.model";
-import { TeacherScheduleModel, BellScheduleModel } from "@mongoose-schema/schedule/schedule.model";
+import { TeacherScheduleModel, BellScheduleModel } from "@/lib/schema/mongoose-schema/schedules/schedule.model";
 import { 
   TeacherScheduleZodSchema, 
   TeacherScheduleInputZodSchema,
   BellScheduleZodSchema, 
-  BellScheduleInputZodSchema
-} from "@zod-schema/schedule/schedule";
+  BellScheduleInputZodSchema,
+  Period
+} from "@/lib/schema/zod-schema/schedules/schedule";
 import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
@@ -36,24 +47,63 @@ const bellScheduleActions = createCrudActions({
   defaultSortOrder: 'desc'
 });
 
-// Export the generated bell schedule actions with connection handling
+/**
+ * @deprecated Use fetchBellSchedules from @/app/actions/schedules/bell-schedule instead.
+ * This function will be removed in a future version.
+ * Migration: Replace with equivalent function from new schedule actions.
+ */
 export async function fetchBellSchedules(params: QueryParams) {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: fetchBellSchedules from schedulesOld is deprecated. Use @/app/actions/schedules/bell-schedule instead.');
+  }
   return withDbConnection(() => bellScheduleActions.fetch(params));
 }
 
+/**
+ * @deprecated Use createBellSchedule from @/app/actions/schedules/bell-schedule instead.
+ * This function will be removed in a future version.
+ * Migration: Replace with equivalent function from new schedule actions.
+ */
 export async function createBellSchedule(data: BellScheduleInput) {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: createBellSchedule from schedulesOld is deprecated. Use @/app/actions/schedules/bell-schedule instead.');
+  }
   return withDbConnection(() => bellScheduleActions.create(data));
 }
 
+/**
+ * @deprecated Use updateBellSchedule from @/app/actions/schedules/bell-schedule instead.
+ * This function will be removed in a future version.
+ * Migration: Replace with equivalent function from new schedule actions.
+ */
 export async function updateBellSchedule(id: string, data: Partial<BellScheduleInput>) {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: updateBellSchedule from schedulesOld is deprecated. Use @/app/actions/schedules/bell-schedule instead.');
+  }
   return withDbConnection(() => bellScheduleActions.update(id, data));
 }
 
+/**
+ * @deprecated Use deleteBellSchedule from @/app/actions/schedules/bell-schedule instead.
+ * This function will be removed in a future version.
+ * Migration: Replace with equivalent function from new schedule actions.
+ */
 export async function deleteBellSchedule(id: string) {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: deleteBellSchedule from schedulesOld is deprecated. Use @/app/actions/schedules/bell-schedule instead.');
+  }
   return withDbConnection(() => bellScheduleActions.delete(id));
 }
 
+/**
+ * @deprecated Use fetchBellScheduleById from @/app/actions/schedules/bell-schedule instead.
+ * This function will be removed in a future version.
+ * Migration: Replace with equivalent function from new schedule actions.
+ */
 export async function fetchBellScheduleById(id: string) {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('DEPRECATED: fetchBellScheduleById from schedulesOld is deprecated. Use @/app/actions/schedules/bell-schedule instead.');
+  }
   return withDbConnection(() => bellScheduleActions.fetchById(id));
 }
 
@@ -212,6 +262,9 @@ interface TeacherScheduleWithEmail extends Omit<TeacherScheduleInput, 'teacher'>
   teacherEmail: string;
   teacherName: string;
   teacher?: string; // Optional until resolved
+  bellScheduleId: string; // Required for new structure
+  dayIndices: number[]; // Required for new structure
+  assignments: Period[]; // Required for new structure
 }
 
 // Type for staff member from database
@@ -313,15 +366,17 @@ export async function createMasterSchedule(
           const scheduleData: TeacherScheduleInput = {
             teacher: staffMember._id.toString(),
             school: schoolId,
-            scheduleByDay: schedule.scheduleByDay,
+            bellScheduleId: schedule.bellScheduleId || '',
+            dayIndices: schedule.dayIndices || [0, 1, 2, 3, 4],
+            assignments: schedule.assignments || [],
             owners: schedule.owners || []
           };
           
           console.log(`📝 Creating schedule data:`, {
             teacher: scheduleData.teacher,
             school: scheduleData.school,
-            daysCount: scheduleData.scheduleByDay.length,
-            firstDayPeriods: scheduleData.scheduleByDay[0]?.periods?.length || 0
+            dayIndicesCount: scheduleData.dayIndices.length,
+            assignmentsCount: scheduleData.assignments.length
           });
           
           // Validate schedule data

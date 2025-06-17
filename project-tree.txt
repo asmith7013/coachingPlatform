@@ -108,6 +108,7 @@
 │   │   ├── school-features.md
 │   │   ├── staff
 │   │   └── staff-features.md
+│   ├── doc.md
 │   ├── integrations
 │   │   ├── api-features.md
 │   │   └── monday-features.md
@@ -187,13 +188,17 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   └── notes.ts
 │   │   │   ├── observations
-│   │   │   │   ├── classroom-observations-v2.ts
+│   │   │   │   ├── classroom-observations.ts
 │   │   │   │   ├── contextual-notes.ts
 │   │   │   │   └── index.ts
 │   │   │   ├── rubrics
 │   │   │   │   ├── index.ts
 │   │   │   │   └── rubrics.ts
-│   │   │   ├── schedule
+│   │   │   ├── schedules
+│   │   │   │   ├── bell-schedule.ts
+│   │   │   │   ├── teacher-schedule.ts
+│   │   │   │   └── visit-schedule.ts
+│   │   │   ├── schedulesOld
 │   │   │   │   └── schedule.ts
 │   │   │   ├── schools
 │   │   │   │   ├── index.ts
@@ -412,21 +417,16 @@
 │   │   │   ├── coaching-action-plans
 │   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
-│   │   │   └── observations
-│   │   │       ├── ObservationCard.tsx
-│   │   │       ├── ObservationForm.tsx
-│   │   │       ├── ObservationsList.tsx
+│   │   │   ├── observations
+│   │   │   │   ├── ObservationCard.tsx
+│   │   │   │   ├── ObservationForm.tsx
+│   │   │   │   ├── ObservationsList.tsx
+│   │   │   │   └── page.tsx
+│   │   │   └── schedules
 │   │   │       └── page.tsx
 │   │   ├── tools
-│   │   │   ├── data-import
-│   │   │   │   ├── add-to-school
-│   │   │   │   │   └── page.tsx
-│   │   │   │   ├── create-school
-│   │   │   │   │   └── page.tsx
-│   │   │   │   └── page.tsx
 │   │   │   ├── dev
 │   │   │   │   ├── seed-data
-│   │   │   │   │   └── page.tsx
 │   │   │   │   ├── test-enum-migration
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── test-enum-mongoose
@@ -653,7 +653,6 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── nycps
 │   │   │   │   └── teachingLab
-│   │   │   │       ├── StaffListComponent.tsx
 │   │   │   │       ├── StaffListItem.tsx
 │   │   │   │       └── StaffSearch.tsx
 │   │   │   ├── things3
@@ -727,6 +726,20 @@
 │   │   │   │       ├── schedule-time-utils.ts
 │   │   │   │       ├── visit-conflict-detector.ts
 │   │   │   │       └── visit-data-utils.ts
+│   │   │   ├── schedulesUpdated
+│   │   │   │   ├── ScheduleDisplayTestPage.tsx
+│   │   │   │   ├── context
+│   │   │   │   │   ├── ScheduleProvider.tsx
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── hooks
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── useScheduleComposition.ts
+│   │   │   │   │   ├── useScheduleDisplayData.ts
+│   │   │   │   │   └── useScheduleUI.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── types.ts
+│   │   │   │   └── utils
+│   │   │   │       └── index.ts
 │   │   │   ├── scoring
 │   │   │   │   ├── ScoreEntry.tsx
 │   │   │   │   ├── ScoresPage.tsx
@@ -778,9 +791,14 @@
 │   │   │   ├── index.ts
 │   │   │   ├── observations
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── useClassroomObservationsV2.ts
+│   │   │   │   ├── useClassroomObservations.ts
 │   │   │   │   └── useContextualNotes.ts
-│   │   │   ├── schedule
+│   │   │   ├── schedules
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── useBellSchedules.ts
+│   │   │   │   ├── useTeacherSchedules.ts
+│   │   │   │   └── useVisitSchedules.ts
+│   │   │   ├── schedulesOld
 │   │   │   │   ├── useBellSchedules.ts
 │   │   │   │   ├── useSchoolDailyView.ts
 │   │   │   │   └── useTeacherSchedules.ts
@@ -835,8 +853,7 @@
 │   │   │   │   └── unified-pagination.ts
 │   │   │   ├── transformers
 │   │   │   │   ├── domain
-│   │   │   │   │   ├── coaching-reference-transformers.ts
-│   │   │   │   │   └── visit-transforms.ts
+│   │   │   │   │   └── coaching-reference-transformers.ts
 │   │   │   │   ├── factories
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── reference-factory.ts
@@ -947,10 +964,9 @@
 │   │   │   │   │   ├── cap-metric.model.ts
 │   │   │   │   │   ├── cap-outcome.model.ts
 │   │   │   │   │   ├── cap-weekly-plan.model.ts
-│   │   │   │   │   ├── coaching-action-plan-v2.model.ts
 │   │   │   │   │   └── index.ts
 │   │   │   │   ├── core
-│   │   │   │   │   ├── coaching-action-plan.model.ts
+│   │   │   │   │   ├── cap.core.model.ts
 │   │   │   │   │   ├── cycle.model.ts
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   ├── school.model.ts
@@ -960,20 +976,18 @@
 │   │   │   │   │   ├── look-for.model.ts
 │   │   │   │   │   ├── next-step.model.ts
 │   │   │   │   │   └── rubric.model.ts
-│   │   │   │   ├── observations
-│   │   │   │   │   ├── classroom-observation-v2.model.ts
-│   │   │   │   │   ├── contextual-note.model.ts
-│   │   │   │   │   └── index.ts
-│   │   │   │   ├── schedule
+│   │   │   │   ├── schedules
 │   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── schedule-documents.model.ts
+│   │   │   │   │   ├── schedule-events.model.ts
 │   │   │   │   │   └── schedule.model.ts
 │   │   │   │   ├── shared
 │   │   │   │   │   └── notes.model.ts
 │   │   │   │   ├── shared-options.ts
 │   │   │   │   └── visits
+│   │   │   │       ├── classroom-observation.model.ts
 │   │   │   │       ├── coaching-log.model.ts
 │   │   │   │       ├── index.ts
-│   │   │   │       ├── planned-visit.model.ts
 │   │   │   │       └── visit.model.ts
 │   │   │   ├── reference
 │   │   │   │   ├── core
@@ -989,16 +1003,14 @@
 │   │   │   │   │   ├── rubric-fields-helpers.ts
 │   │   │   │   │   └── rubric-helpers.ts
 │   │   │   │   ├── schedule
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   └── schedule-helpers.ts
+│   │   │   │   │   └── index.ts
 │   │   │   │   ├── shared
 │   │   │   │   │   ├── date-helpers.ts
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── notes-helpers.ts
 │   │   │   │   └── visits
 │   │   │   │       ├── coaching-log-helpers.ts
-│   │   │   │       ├── index.ts
-│   │   │   │       └── visit-helpers.ts
+│   │   │   │       └── index.ts
 │   │   │   └── zod-schema
 │   │   │       ├── base-schemas.ts
 │   │   │       ├── cap
@@ -1007,7 +1019,6 @@
 │   │   │       │   ├── cap-metric.ts
 │   │   │       │   ├── cap-outcome.ts
 │   │   │       │   ├── cap-weekly-plan.ts
-│   │   │       │   ├── coaching-action-plan-v2.ts
 │   │   │       │   └── index.ts
 │   │   │       ├── core
 │   │   │       │   ├── cap.ts
@@ -1040,11 +1051,10 @@
 │   │   │       │   ├── next-step.ts
 │   │   │       │   ├── rubric-fields.ts
 │   │   │       │   └── rubric.ts
-│   │   │       ├── observations
-│   │   │       │   └── classroom-observation-v2.ts
-│   │   │       ├── schedule
+│   │   │       ├── schedules
 │   │   │       │   ├── index.ts
-│   │   │       │   ├── schedule-actions.ts
+│   │   │       │   ├── schedule-documents.ts
+│   │   │       │   ├── schedule-events.ts
 │   │   │       │   └── schedule.ts
 │   │   │       ├── shared
 │   │   │       │   ├── dateHelpers.ts
@@ -1052,6 +1062,7 @@
 │   │   │       │   ├── notes.ts
 │   │   │       │   └── tagging-system.ts
 │   │   │       └── visits
+│   │   │           ├── classroom-observation.ts
 │   │   │           ├── coaching-log.ts
 │   │   │           ├── index.ts
 │   │   │           └── visit.ts
@@ -1271,4 +1282,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-369 directories, 903 files
+371 directories, 912 files
