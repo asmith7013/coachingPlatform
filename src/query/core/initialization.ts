@@ -29,24 +29,24 @@ export function registerStandardSelectors(): void {
       () => standardSelectors.rubrics
     ];
     
-    let successCount = 0;
-    let failureCount = 0;
+    let _successCount = 0;
+    let _failureCount = 0;
     
     for (const check of selectorChecks) {
       try {
         const selector = check();
         if (selector?.base) {
-          successCount++;
+          _successCount++;
         } else {
-          failureCount++;
+          _failureCount++;
         }
       } catch (error) {
-        failureCount++;
+        _failureCount++;
         console.warn('Selector registration failed:', error);
       }
     }
     
-    console.log(`✅ Selector registration complete: ${successCount} successful, ${failureCount} failed`);
+    // console.log(`✅ Selector registration complete: ${successCount} successful, ${failureCount} failed`);
     
   } catch (error) {
     captureError(error, createErrorContext('QuerySystem', 'selectorRegistration'));

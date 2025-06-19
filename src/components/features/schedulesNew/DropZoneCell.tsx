@@ -7,7 +7,7 @@
 import React, { useState, useMemo } from 'react';
 import { Eye, Calendar, Users, BookOpen } from 'lucide-react';
 import { useScheduleContext } from './context';
-import { extractPeriodFromVisit, extractTeacherIdFromVisit, extractEventsForPeriod } from './utils/visit-data-utils';
+import { extractPeriodFromVisit, extractEventsForPeriod } from './utils/visit-data-utils';
 import { ScheduleAssignment, SessionPurposes } from '@enums';
 // import { Visit } from '@zod-schema/visits/visit';
 // import { VisitScheduleFieldsSchema, } from '@zod-schema/schedule/schedule-documents';
@@ -42,10 +42,10 @@ export function DropZoneCell({ period }: DropZoneCellProps) {
     clearSelection, // ✅ ADD: Import clearSelection function
     teachers,
     visits,
-    schoolId,
-    date,
-    mode,
-    visitId
+    // schoolId,
+    // date,
+    // mode,
+    // visitId
   } = useScheduleContext();
 
   // Local state for dropdown management
@@ -215,19 +215,19 @@ export function DropZoneCell({ period }: DropZoneCellProps) {
   };
 
   const handlePeriodPortionSelect = async (portion: string) => {
-    console.log('🔍 === VISIT CREATION DEBUG START ===');
-    console.log('🎯 Click detected on portion:', portion);
-    console.log('👤 Selected teacher:', selectedTeacher);
-    console.log('⏰ Period number:', period);
-    console.log('🏫 School ID from context:', schoolId);
-    console.log('📅 Date from context:', date);
-    console.log('⚙️ Mode from context:', mode);
-    console.log('🆔 Visit ID from context:', visitId);
-    console.log('📋 Current visits:', visits.map(v => ({ 
-      id: v._id, 
-      period: extractPeriodFromVisit(v),
-      teacher: extractTeacherIdFromVisit(v) 
-    })));
+    // console.log('🔍 === VISIT CREATION DEBUG START ===');
+    // console.log('🎯 Click detected on portion:', portion);
+    // console.log('👤 Selected teacher:', selectedTeacher);
+    // console.log('⏰ Period number:', period);
+    // console.log('🏫 School ID from context:', schoolId);
+    // console.log('📅 Date from context:', date);
+    // console.log('⚙️ Mode from context:', mode);
+    // console.log('🆔 Visit ID from context:', visitId);
+    // console.log('📋 Current visits:', visits.map(v => ({ 
+    //   id: v._id, 
+    //   period: extractPeriodFromVisit(v),
+    //   teacher: extractTeacherIdFromVisit(v) 
+    // })));
     
     if (!selectedTeacher) {
       console.warn('❌ No teacher selected for visit scheduling');

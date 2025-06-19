@@ -1,1 +1,2 @@
-export * from './ScheduleProvider'; 
+export * from './ScheduleProvider';
+export * from './ScheduleErrorBoundary'; 

@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
-import { useSchools } from '@domain-hooks/useSchools';
-import { useNYCPSStaffList } from '@domain-hooks/staff/useNYCPSStaff';
-import { useBellSchedules, useTeacherSchedules, useVisitSchedules } from '@domain-hooks/schedules';
-import { useVisits } from '@domain-hooks/useVisits';
+import { logError } from '@error/core/logging';
+import { createScheduleDataErrorContext } from '../utils/schedule-error-utils';
+import { useSchools } from '@/hooks/domain/useSchools';
+import { useNYCPSStaffList } from '@/hooks/domain/staff/useNYCPSStaff';
+import { useBellSchedules, useTeacherSchedules, useVisitSchedules } from '@/hooks/domain/schedules';
+import { useVisits } from '@/hooks/domain/useVisits';
 import type { BellSchedule, TeacherSchedule, VisitSchedule } from '@zod-schema/schedules/schedule-documents';
 import type { Visit } from '@zod-schema/visits/visit';
 import type { NYCPSStaff } from '@zod-schema/core/staff';
@@ -27,7 +29,7 @@ export interface ScheduleCompositionData {
 }
 
 /**
- * Pure data composition hook - no UI state or business logic
+ * Pure data composition hook with error handling
  * Delegates entirely to domain hooks following established patterns
  */
 export function useScheduleComposition({ 
@@ -61,31 +63,60 @@ export function useScheduleComposition({
     enabled: mode === 'edit' && !!visitId
   });
 
-  return useMemo(() => ({
-    // Schema types directly - no transformations
-    school: school.data,
-    teachers: staff.items || [],
-    bellSchedule: bellSchedules.items?.[0],
-    teacherSchedules: teacherSchedules.items || [],
-    visitSchedules: visitSchedules.items || [],
+  // Error logging for data quality issues
+  const compositionData = useMemo(() => {
+    const errorContext = createScheduleDataErrorContext('composition', schoolId, date, { mode, visitId });
     
-    // Visit coordination
-    visits: mode === 'edit' && editVisit.data 
-      ? [editVisit.data] 
-      : visits.items || [],
+    // Log data quality warnings
+    if (!school.data && !school.isLoading && !school.error) {
+      logError(
+        new Error('School data not found'), 
+        { ...errorContext, severity: 'warning', operation: 'schoolDataCheck' }
+      );
+    }
     
-    // Standard loading/error composition
-    isLoading: school.isLoading || staff.isLoading || bellSchedules.isLoading || 
-               teacherSchedules.isLoading || visitSchedules.isLoading ||
-               (mode === 'create' && visits.isLoading) ||
-               (mode === 'edit' && editVisit.isLoading),
-               
-    error: school.error || staff.error || bellSchedules.error || 
-           teacherSchedules.error || visitSchedules.error ||
-           (mode === 'create' && visits.error) ||
-           (mode === 'edit' && editVisit.error)
-  }), [
+    if (staff.items?.length === 0 && !staff.isLoading && !staff.error) {
+      logError(
+        new Error('No staff found for school'), 
+        { ...errorContext, severity: 'warning', operation: 'staffDataCheck' }
+      );
+    }
+
+    if (bellSchedules.items?.length === 0 && !bellSchedules.isLoading && !bellSchedules.error) {
+      logError(
+        new Error('No bell schedule found for school'), 
+        { ...errorContext, severity: 'warning', operation: 'bellScheduleCheck' }
+      );
+    }
+
+    return {
+      // Schema types directly - no transformations
+      school: school.data,
+      teachers: staff.items || [],
+      bellSchedule: bellSchedules.items?.[0],
+      teacherSchedules: teacherSchedules.items || [],
+      visitSchedules: visitSchedules.items || [],
+      
+      // Visit coordination
+      visits: mode === 'edit' && editVisit.data 
+        ? [editVisit.data] 
+        : visits.items || [],
+      
+      // Standard loading/error composition
+      isLoading: school.isLoading || staff.isLoading || bellSchedules.isLoading || 
+                 teacherSchedules.isLoading || visitSchedules.isLoading ||
+                 (mode === 'create' && visits.isLoading) ||
+                 (mode === 'edit' && editVisit.isLoading),
+                 
+      error: school.error || staff.error || bellSchedules.error || 
+             teacherSchedules.error || visitSchedules.error ||
+             (mode === 'create' && visits.error) ||
+             (mode === 'edit' && editVisit.error)
+    };
+  }, [
     school, staff, bellSchedules, teacherSchedules, visitSchedules, 
-    visits, editVisit, mode
+    visits, editVisit, mode, schoolId, date, visitId
   ]);
+
+  return compositionData;
 } 

@@ -6,7 +6,7 @@ import {
   BellScheduleBlockSchema, 
   TeacherScheduleBlockSchema, 
   VisitScheduleBlockSchema 
-} from '@/lib/schema/mongoose-schema/schedules/schedule-events.model';
+} from '@mongoose-schema/schedules/schedule-events.model';
 import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 
 // =====================================

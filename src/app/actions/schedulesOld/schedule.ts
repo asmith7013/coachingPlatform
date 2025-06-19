@@ -278,7 +278,7 @@ interface StaffMember {
  * Enhanced staff lookup with multiple strategies and detailed logging
  */
 async function findStaffMemberByEmail(email: string): Promise<StaffMember | null> {
-  console.log(`🔍 Starting comprehensive staff lookup for: "${email}"`);
+  // console.log(`🔍 Starting comprehensive staff lookup for: "${email}"`);
   
   try {
     // Strategy 1: Exact case-insensitive match

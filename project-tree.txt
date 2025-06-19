@@ -383,6 +383,14 @@
 │   │   │   │   └── page.tsx
 │   │   │   ├── dayView
 │   │   │   │   └── page.tsx
+│   │   │   ├── ipg
+│   │   │   │   ├── components
+│   │   │   │   │   ├── CoreActionSection.tsx
+│   │   │   │   │   ├── IPGScoreCard.tsx
+│   │   │   │   │   ├── TeacherSelector.tsx
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── ipg.json
+│   │   │   │   └── page.tsx
 │   │   │   ├── reference-select-example
 │   │   │   ├── schedule
 │   │   │   │   └── page.tsx
@@ -734,6 +742,7 @@
 │   │   │   │   ├── hooks
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   ├── useScheduleComposition.ts
+│   │   │   │   │   ├── useScheduleDailyView.ts
 │   │   │   │   │   ├── useScheduleDisplayData.ts
 │   │   │   │   │   └── useScheduleUI.ts
 │   │   │   │   ├── index.ts
@@ -800,14 +809,12 @@
 │   │   │   │   └── useVisitSchedules.ts
 │   │   │   ├── schedulesOld
 │   │   │   │   ├── useBellSchedules.ts
-│   │   │   │   ├── useSchoolDailyView.ts
 │   │   │   │   └── useTeacherSchedules.ts
 │   │   │   ├── staff
 │   │   │   │   ├── useNYCPSStaff.ts
 │   │   │   │   ├── useTeachingLabStaff.ts
 │   │   │   │   └── useUserStaff.ts
 │   │   │   ├── useCoachingActionPlans.ts
-│   │   │   ├── useCoachingActionPlans.ts.disabled
 │   │   │   ├── useLookFors.ts
 │   │   │   ├── useSchoolDailyView.ts
 │   │   │   ├── useSchools.ts
@@ -1282,4 +1289,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-371 directories, 912 files
+373 directories, 917 files
