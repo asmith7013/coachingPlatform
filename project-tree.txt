@@ -431,7 +431,11 @@
 │   │   │   │   ├── ObservationsList.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── schedules
-│   │   │   │   └── page.tsx
+│   │   │   │   ├── error-test
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── refactored-test
+│   │   │   │       └── page.tsx
 │   │   │   └── visit-schedule
 │   │   │       ├── VisitScheduleTest.tsx
 │   │   │       ├── layout.tsx
@@ -479,6 +483,7 @@
 │   │   │   │   ├── SimpleCard.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── dialogs
+│   │   │   │   ├── ConfirmationDialog.tsx
 │   │   │   │   ├── CreateSchoolDialog.tsx
 │   │   │   │   ├── DataImportDialog.tsx
 │   │   │   │   ├── Dialog.tsx
@@ -682,7 +687,6 @@
 │   │   ├── error
 │   │   │   ├── ErrorBoundary.tsx
 │   │   │   ├── QueryErrorBoundary.tsx
-│   │   │   ├── ScheduleBuilderErrorBoundary.tsx
 │   │   │   ├── SentryBoundaryWrapper.tsx
 │   │   │   └── index.ts
 │   │   ├── features
@@ -710,6 +714,28 @@
 │   │   │   │       ├── CAPStage2.tsx
 │   │   │   │       ├── CAPStage3.tsx
 │   │   │   │       └── CAPStage4.tsx
+│   │   │   ├── schedulesComponents
+│   │   │   │   ├── ClearScheduleDialog.tsx
+│   │   │   │   ├── DropZoneCell.tsx
+│   │   │   │   ├── PlanningStatusBar.tsx
+│   │   │   │   ├── ScheduleBuilderContainer.tsx
+│   │   │   │   ├── ScheduleGrid.tsx
+│   │   │   │   ├── ScheduleLegend.tsx
+│   │   │   │   ├── SchedulePreview.tsx
+│   │   │   │   ├── SelectionStatusFooter.tsx
+│   │   │   │   ├── TeacherPeriodCell.tsx
+│   │   │   │   ├── hooks
+│   │   │   │   │   ├── useScheduleDisplayData.ts
+│   │   │   │   │   └── useScheduleUI.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── styles
+│   │   │   │   │   └── schedule-variants.ts
+│   │   │   │   ├── types.ts
+│   │   │   │   └── utils
+│   │   │   │       ├── index.ts
+│   │   │   │       ├── schedule-error-utils.ts
+│   │   │   │       ├── schedule-helpers.ts
+│   │   │   │       └── schedule-styling-helpers.ts
 │   │   │   ├── schedulesNew
 │   │   │   │   ├── DropZoneCell.tsx
 │   │   │   │   ├── PlanningStatusBar.tsx
@@ -753,8 +779,6 @@
 │   │   │   │   │   └── index.ts
 │   │   │   │   ├── hooks
 │   │   │   │   │   ├── index.ts
-│   │   │   │   │   ├── useScheduleComposition.ts
-│   │   │   │   │   ├── useScheduleDailyView.ts
 │   │   │   │   │   ├── useScheduleDisplayData.ts
 │   │   │   │   │   └── useScheduleUI.ts
 │   │   │   │   ├── index.ts
@@ -1024,6 +1048,9 @@
 │   │   │   │   │   └── rubric-helpers.ts
 │   │   │   │   ├── schedule
 │   │   │   │   │   └── index.ts
+│   │   │   │   ├── schedules
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── schedule-helpers.ts
 │   │   │   │   ├── shared
 │   │   │   │   │   ├── date-helpers.ts
 │   │   │   │   │   ├── index.ts
@@ -1225,9 +1252,12 @@
 │   │   │       ├── grid-layouts.ts
 │   │   │       ├── index.ts
 │   │   │       ├── layout.ts
+│   │   │       ├── schedule-variants.ts
 │   │   │       ├── shared-variants.ts
 │   │   │       ├── types.ts
 │   │   │       └── typography.ts
+│   │   ├── utils
+│   │   │   └── entity-helpers.ts
 │   │   └── validation
 │   │       ├── coaching-stages.ts
 │   │       └── index.ts
@@ -1302,4 +1332,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-375 directories, 928 files
+383 directories, 950 files
