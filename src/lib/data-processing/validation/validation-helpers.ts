@@ -69,10 +69,42 @@ export function validateArrayWithPartialSuccess<T>(
 }
 
 /**
+ * Factory function for creating partial validators (for updates)
+ * Uses schema.partial() to make all fields optional
+ */
+export function createPartialValidator<T>(schema: ZodSchema<T>, entityName: string) {
+  // Type guard to check if schema has partial method (ZodObject)
+  const partialSchema = 'partial' in schema && typeof schema.partial === 'function' 
+    ? schema.partial() 
+    : schema; // Fallback to original schema if partial not available
+  
+  return {
+    validateSingle: (jsonString: string) => validateJsonString(jsonString, partialSchema),
+    validateArray: (jsonString: string) => {
+      try {
+        const parsed = JSON.parse(jsonString);
+        const dataArray = Array.isArray(parsed) ? parsed : [parsed];
+        return validateArrayWithPartialSuccess(dataArray, partialSchema);
+      } catch (error) {
+        return {
+          success: false as const,
+          error: error instanceof SyntaxError ? 'Invalid JSON format' : `${entityName} validation failed`
+        };
+      }
+    }
+  };
+}
+
+/**
  * Factory function for creating type-specific validators
  * Follows transformer factory pattern
+ * Enhanced with partial validation support
  */
-export function createValidator<T>(schema: ZodSchema<T>, entityName: string) {
+export function createValidator<T>(schema: ZodSchema<T>, entityName: string, options?: { partial?: boolean }) {
+  if (options?.partial) {
+    return createPartialValidator(schema, entityName);
+  }
+  
   return {
     validateSingle: (jsonString: string) => validateJsonString(jsonString, schema),
     validateArray: (jsonString: string) => {

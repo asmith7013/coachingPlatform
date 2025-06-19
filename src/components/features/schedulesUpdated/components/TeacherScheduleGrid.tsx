@@ -1,58 +1,74 @@
 import React from 'react';
 import { Heading } from '@/components/core/typography';
 import { cn } from '@ui/utils/formatters';
-import type { 
-  TeacherWithSchedule, 
-  TeacherPeriodDisplay, 
-  TimeSlotDisplay 
-} from '../types';
+import type { NYCPSStaff } from '@zod-schema/core/staff';
+import type { TeacherSchedule, BellSchedule } from '@zod-schema/schedules/schedule-documents';
+import { getTeacherSchedule, hasBellSchedule, hasStaff } from '@/lib/schema/reference/schedules';
 
 interface TeacherScheduleGridProps {
-  teachers: TeacherWithSchedule[];
-  timeSlots: TimeSlotDisplay[];
+  teachers: NYCPSStaff[];
+  teacherSchedules: TeacherSchedule[];
+  bellSchedule: BellSchedule | null;
   className?: string;
 }
 
 /**
  * Displays teacher schedules in a grid/table format
+ * Uses domain types directly and shared helper functions
  */
 export function TeacherScheduleGrid({ 
   teachers, 
-  timeSlots, 
+  teacherSchedules,
+  bellSchedule,
   className 
 }: TeacherScheduleGridProps) {
   
-  /**
-   * Renders teacher period information for a specific period
-   */
-  const renderTeacherPeriod = (
-    teacher: TeacherWithSchedule, 
-    periodNumber: number
-  ): TeacherPeriodDisplay => {
-    const timeBlock = teacher.schedule?.timeBlocks?.find(
-      block => block.periodNumber === periodNumber
+  // Use shared validation helpers
+  if (!hasBellSchedule(bellSchedule)) {
+    return (
+      <div className={className}>
+        <Heading level="h2">Teacher Schedules</Heading>
+        <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded">
+          <div className="text-gray-600">
+            Bell schedule required to display teacher schedules
+          </div>
+          <div className="text-sm text-gray-500 mt-1">
+            Found {teachers.length} teachers, {teacherSchedules.length} with schedules
+          </div>
+        </div>
+      </div>
     );
-    
-    return {
-      periodNumber,
-      className: timeBlock?.className || 'Free',
-      room: timeBlock?.room || '',
-      subject: timeBlock?.subject || '',
-      gradeLevel: timeBlock?.gradeLevel || '',
-      activityType: timeBlock?.activityType || 'free'
-    };
-  };
+  }
+  
+  if (!hasStaff(teachers)) {
+    return (
+      <div className={className}>
+        <Heading level="h2">Teacher Schedules</Heading>
+        <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded">
+          <div className="text-gray-600">No teachers found for this school</div>
+        </div>
+      </div>
+    );
+  }
+
+  // At this point, bellSchedule is guaranteed to be non-null due to hasBellSchedule check
+  const timeSlots = bellSchedule!.timeBlocks || []; 
 
   /**
    * Renders the content of a teacher period cell
    */
-  const renderPeriodCell = (teacher: TeacherWithSchedule, period: TimeSlotDisplay) => {
-    const teacherPeriod = renderTeacherPeriod(teacher, period.periodNumber);
-    const isScheduled = teacherPeriod.className !== 'Free';
+  const renderPeriodCell = (teacher: NYCPSStaff, periodNumber: number) => {
+    // Use shared helper function instead of inline logic
+    const teacherSchedule = getTeacherSchedule(teacherSchedules, teacher._id);
+    const timeBlock = teacherSchedule?.timeBlocks?.find(
+      block => block.periodNumber === periodNumber
+    );
+    
+    const isScheduled = !!timeBlock;
     
     return (
       <td 
-        key={period.periodNumber} 
+        key={periodNumber} 
         className={cn(
           "border border-gray-300 p-2 text-center text-sm",
           isScheduled ? "bg-blue-50" : "bg-gray-50"
@@ -62,13 +78,13 @@ export function TeacherScheduleGrid({
           "font-medium", 
           isScheduled ? "text-blue-900" : "text-gray-500"
         )}>
-          {teacherPeriod.className}
+          {timeBlock?.className || 'Free'}
         </div>
-        {isScheduled && (
+        {isScheduled && timeBlock && (
           <div className="text-xs text-gray-600 mt-1">
-            {teacherPeriod.room && <div>Room: {teacherPeriod.room}</div>}
-            {teacherPeriod.subject && <div>{teacherPeriod.subject}</div>}
-            {teacherPeriod.gradeLevel && <div>Grade {teacherPeriod.gradeLevel}</div>}
+            {timeBlock.room && <div>Room: {timeBlock.room}</div>}
+            {timeBlock.subject && <div>{timeBlock.subject}</div>}
+            {timeBlock.gradeLevel && <div>Grade {timeBlock.gradeLevel}</div>}
           </div>
         )}
       </td>
@@ -97,7 +113,7 @@ export function TeacherScheduleGrid({
                 <td className="border border-gray-300 p-2 font-medium">
                   {teacher.staffName}
                 </td>
-                {timeSlots.map(period => renderPeriodCell(teacher, period))}
+                {timeSlots.map(period => renderPeriodCell(teacher, period.periodNumber))}
               </tr>
             ))}
           </tbody>

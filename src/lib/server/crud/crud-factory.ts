@@ -17,8 +17,8 @@ import { handleCrudError } from "@error/handlers/crud";
  */
 interface CrudConfig<T extends BaseDocument, TInput = Partial<T>> {
   model: Model<Document>;
-  schema: ZodType<T>;        // ← FIX: Properly typed schema constraint
-  inputSchema?: ZodType<TInput>;
+  schema: ZodType<T>;
+  inputSchema?: ZodType<TInput>;  // Clean, simple type
   name?: string;
   revalidationPaths?: string[];
   sortFields?: string[];
@@ -40,8 +40,9 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
     defaultSortOrder = 'desc'
   } = config;
 
-  // Create input validator for validation
-  const inputValidator = inputSchema ? createValidator(inputSchema as ZodType<TInput>, name) : null;
+  // Create validators for both full and partial validation
+  const inputValidator = inputSchema ? createValidator(inputSchema, name) : null;
+  const partialValidator = inputSchema ? createValidator(inputSchema, name, { partial: true }) : null;
 
   // Helper function to perform revalidation
   const revalidatePaths = () => {
@@ -118,8 +119,9 @@ export function createCrudActions<T extends BaseDocument, TInput = Partial<T>>(
         await connectToDB();
         
         let validated: Partial<TInput>;
-        if (inputValidator && Object.keys(data).length > 0) {
-          const validation = inputValidator.validateSingle(JSON.stringify(data));
+        if (partialValidator && Object.keys(data).length > 0) {
+          // Use partial validator for updates - consistent pattern!
+          const validation = partialValidator.validateSingle(JSON.stringify(data));
           if (!validation.success) {
             const validationError = new Error(validation.error);
             validationError.name = 'ValidationError';

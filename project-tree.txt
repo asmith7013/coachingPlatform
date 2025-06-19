@@ -430,7 +430,11 @@
 │   │   │   │   ├── ObservationForm.tsx
 │   │   │   │   ├── ObservationsList.tsx
 │   │   │   │   └── page.tsx
-│   │   │   └── schedules
+│   │   │   ├── schedules
+│   │   │   │   └── page.tsx
+│   │   │   └── visit-schedule
+│   │   │       ├── VisitScheduleTest.tsx
+│   │   │       ├── layout.tsx
 │   │   │       └── page.tsx
 │   │   ├── tools
 │   │   │   ├── dev
@@ -736,7 +740,15 @@
 │   │   │   │       └── visit-data-utils.ts
 │   │   │   ├── schedulesUpdated
 │   │   │   │   ├── ScheduleDisplayTestPage.tsx
+│   │   │   │   ├── VisitScheduleTestPage.tsx
+│   │   │   │   ├── components
+│   │   │   │   │   ├── BellScheduleDisplay.tsx
+│   │   │   │   │   ├── TeacherScheduleGrid.tsx
+│   │   │   │   │   ├── TeacherSelectionPanel.tsx
+│   │   │   │   │   ├── VisitScheduleGrid.tsx
+│   │   │   │   │   └── index.ts
 │   │   │   │   ├── context
+│   │   │   │   │   ├── ScheduleErrorBoundary.tsx
 │   │   │   │   │   ├── ScheduleProvider.tsx
 │   │   │   │   │   └── index.ts
 │   │   │   │   ├── hooks
@@ -748,7 +760,8 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── types.ts
 │   │   │   │   └── utils
-│   │   │   │       └── index.ts
+│   │   │   │       ├── index.ts
+│   │   │   │       └── schedule-error-utils.ts
 │   │   │   ├── scoring
 │   │   │   │   ├── ScoreEntry.tsx
 │   │   │   │   ├── ScoresPage.tsx
@@ -1289,4 +1302,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-373 directories, 917 files
+375 directories, 928 files

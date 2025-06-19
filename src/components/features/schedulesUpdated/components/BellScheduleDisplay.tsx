@@ -1,14 +1,15 @@
 import React from 'react';
 import { Heading, Text } from '@/components/core/typography';
-import type { BellScheduleDisplay } from '../types';
+import type { BellSchedule } from '@zod-schema/schedules/schedule-documents';
 
 interface BellScheduleDisplayComponentProps {
-  bellSchedule: BellScheduleDisplay;
+  bellSchedule: BellSchedule;
   className?: string;
 }
 
 /**
  * Displays bell schedule information in a grid layout
+ * Uses domain types directly from schema
  */
 export function BellScheduleDisplayComponent({ bellSchedule, className }: BellScheduleDisplayComponentProps) {
   const { name, timeBlocks } = bellSchedule;
@@ -17,7 +18,7 @@ export function BellScheduleDisplayComponent({ bellSchedule, className }: BellSc
     <div className={className}>
       <Heading level="h2">Bell Schedule: {name}</Heading>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
-        {timeBlocks.map(period => (
+        {timeBlocks?.map(period => (
           <div key={period.periodNumber} className="p-2 bg-gray-100 rounded">
             <Text className="font-medium">
               Period {period.periodNumber}: {period.periodName}

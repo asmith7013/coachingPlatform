@@ -51,7 +51,6 @@ export const TeacherScheduleBlockSchema = new mongoose.Schema({
 export const VisitScheduleBlockSchema = new mongoose.Schema({
   ...BaseTimeBlockSchema.obj,
   blockType: { type: String, enum: ['visitScheduleBlock'], required: true },
-  eventId: { type: String, required: true },
   orderIndex: { type: Number, required: true },
   eventType: { type: String, enum: Object.values(SessionPurposes), required: true },
   staffIds: [{ type: String, required: true }],

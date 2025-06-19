@@ -6,3 +6,5 @@ export * from './components';
 
 // Main page component
 export { default as ScheduleDisplayTestPage } from './ScheduleDisplayTestPage';
+export { VisitScheduleTestPage } from './VisitScheduleTestPage';
+export { ScheduleProvider } from './context/ScheduleProvider';

@@ -1,13 +1,10 @@
 // src/components/features/schedulesUpdated/hooks/index.ts
 
-export { useScheduleDailyView } from './useScheduleDailyView';
 export { useScheduleDisplayData } from './useScheduleDisplayData';
-export { useScheduleComposition } from './useScheduleComposition';
 export { useScheduleUI } from './useScheduleUI';
 
-// Export error-related utilities
+// Export error-related utilities (simplified from 5 to 2 functions)
 export { 
   createScheduleErrorContext,
-  createScheduleDataErrorContext,
-  createScheduleConflictErrorContext 
+  createScheduleDataErrorContext
 } from '../utils/schedule-error-utils';
