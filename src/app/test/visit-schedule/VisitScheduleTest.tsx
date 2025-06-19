@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Button } from '@/components/core/Button';
 import { Card } from '@/components/composed/cards/Card';
-import { Alert } from '@/components/core/Alert';
+import { Alert } from '@/components/core/feedback/Alert';
 
 // Types based on your schema
 enum ScheduleAssignment {
@@ -240,7 +240,8 @@ export default function VisitScheduleTest() {
             {TEST_TEACHERS.map(teacher => (
               <Button
                 key={teacher._id}
-                variant={selectedTeacher === teacher._id ? "primary" : "outline"}
+                intent={selectedTeacher === teacher._id ? "primary" : "secondary"}
+                appearance={selectedTeacher === teacher._id ? "solid" : "outline"}
                 onClick={() => setSelectedTeacher(
                   selectedTeacher === teacher._id ? null : teacher._id
                 )}
@@ -280,8 +281,8 @@ export default function VisitScheduleTest() {
                       </div>
                       {existingBlock && (
                         <Button
-                          variant="outline"
-                          size="sm"
+                          appearance="outline"
+                          textSize="sm"
                           onClick={() => removeVisitBlock(selectedTeacher, period.periodNumber)}
                           className="text-red-600 hover:bg-red-50"
                         >
@@ -351,8 +352,8 @@ export default function VisitScheduleTest() {
                         )}
                       </div>
                       <Button
-                        variant="outline"
-                        size="sm"
+                        appearance="outline"
+                        textSize="sm"
                         onClick={() => removeVisitBlock(block.teacherId, block.periodNumber)}
                         className="text-red-600 hover:bg-red-50"
                       >
@@ -368,7 +369,7 @@ export default function VisitScheduleTest() {
 
       {/* Action Log */}
       {lastAction && (
-        <Alert variant="success" className="mb-6">
+        <Alert intent="success" className="mb-6">
           <Alert.Description>{lastAction}</Alert.Description>
         </Alert>
       )}
