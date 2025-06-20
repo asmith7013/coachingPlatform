@@ -7,7 +7,7 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Button } from '@/components/core/Button';
 import { DataImportDialog } from '@/components/composed/dialogs/DataImportDialog';
-import { SchedulePreview } from '@/components/features/schedulesNew/SchedulePreview';
+// import { SchedulePreview } from '@/components/features/schedulesNew/SchedulePreview';
 import { School } from "@zod-schema/core/school";
 import { cn } from '@ui/utils/formatters';
 import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
@@ -25,9 +25,9 @@ export function SchoolGridCard({ school, onDelete, isDeleting }: SchoolGridCardP
 
   // Fetch teacher schedules for this school
   const { 
-    items: teacherSchedules, 
-    isLoading: isLoadingSchedules,
-    error: schedulesError 
+    items: _teacherSchedules, 
+    isLoading: _isLoadingSchedules,
+    error: _schedulesError 
   } = useTeacherSchedules.list({
     school: school._id
   });
@@ -97,13 +97,13 @@ export function SchoolGridCard({ school, onDelete, isDeleting }: SchoolGridCardP
             
             {/* Schedule Section */}
             <div className="mb-4">
-              <SchedulePreview
+              {/* <SchedulePreview
                 teacherSchedules={teacherSchedules}
                 isLoading={isLoadingSchedules}
                 error={!!schedulesError}
                 showTitle={true}
                 maxDaysPreview={3}
-              />
+              /> */}
             </div>
 
             {/* Add padding bottom to account for absolute positioned buttons */}

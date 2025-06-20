@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { VisitScheduleTestPage } from '@/components/features/schedulesUpdated';
+import { VisitScheduleTestPage } from '@/components/features/schedulesTest';
 
 export default function VisitScheduleTestPageRoute() {
   // Test data from requirements

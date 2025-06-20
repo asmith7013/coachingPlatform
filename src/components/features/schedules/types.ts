@@ -20,6 +20,18 @@ export interface ScheduleGridProps {
   onPortionSelect?: (teacherId: string, period: number, portion: ScheduleAssignmentType) => Promise<void>;
   selectedTeacher?: string;
   selectedPeriod?: number;
+  
+  // Footer props
+  selectedPortion?: ScheduleAssignmentType;
+  onRequestClear?: () => void;
+  clearResult?: ClearScheduleResult | null;
+  isClearing?: boolean;
+  scheduleStatus?: 'ready' | 'loading' | 'error';
+  scheduleStatusText?: string;
+  onExport?: () => void;
+  isExporting?: boolean;
+  showExport?: boolean;
+  
   className?: string;
 }
 
@@ -75,6 +87,15 @@ export interface SelectionStatusFooterProps {
   className?: string;
 }
 
+export interface ScheduleActionFooterProps {
+  status?: 'ready' | 'loading' | 'error';
+  statusText?: string;
+  onExport?: () => void;
+  isExporting?: boolean;
+  showExport?: boolean;
+  className?: string;
+}
+
 // =====================================
 // UTILITY TYPES (only if needed for component logic)
 // =====================================
@@ -99,8 +120,29 @@ export type DropZoneItem = {
 export interface ClearScheduleResult {
   success: boolean;
   message: string;
-  deletedCount?: number;
-  error?: string;
+}
+
+export interface ScheduleFooterProps {
+  // Selection state
+  selectedTeacher?: string;
+  selectedPeriod?: number;
+  selectedPortion?: ScheduleAssignmentType;
+  teachers: NYCPSStaff[];
+  visits: VisitScheduleBlock[];
+  
+  // Clear functionality
+  onRequestClear?: () => void;
+  clearResult?: ClearScheduleResult | null;
+  isClearing?: boolean;
+  
+  // Schedule status and actions
+  scheduleStatus?: 'ready' | 'loading' | 'error';
+  scheduleStatusText?: string;
+  onExport?: () => void;
+  isExporting?: boolean;
+  showExport?: boolean;
+  
+  className?: string;
 }
 
  

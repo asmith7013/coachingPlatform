@@ -121,7 +121,7 @@ export function CoachingActionPlanStage2({
                   IPG Sub Category
                 </label>
                 <Select
-                  value={field.state.value || 'CA1a'}
+                  value={field.state.value || 'CA1A'}
                   onChange={field.handleChange}
                   options={ipgSubCategoryOptions}
                 />

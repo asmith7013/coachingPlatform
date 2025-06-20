@@ -16,11 +16,11 @@ import {
 } from '@zod-schema/visits/classroom-observation';
 
 // Import tab components
-import { BasicInfoTab } from '../../../components/features/classroomNotes/tabs/BasicInfoTab';
-import { FeedbackTab } from '../../../components/features/classroomNotes/tabs/FeedbackTab';
-import { LessonFlowTab } from '../../../components/features/classroomNotes/tabs/LessonFlowTab';
-import { ProgressMonitoringTab } from '../../../components/features/classroomNotes/tabs/ProgressMonitoringTab';
-import { TimeAndTranscriptsTab } from '../../../components/features/classroomNotes/tabs/TimeAndTranscriptsTab';
+import { BasicInfoTab } from '@components/features/classroomNotes/tabs/BasicInfoTab';
+import { FeedbackTab } from '@components/features/classroomNotes/tabs/FeedbackTab';
+import { LessonFlowTab } from '@components/features/classroomNotes/tabs/LessonFlowTab';
+import { ProgressMonitoringTab } from '@components/features/classroomNotes/tabs/ProgressMonitoringTab';
+import { TimeAndTranscriptsTab } from '@components/features/classroomNotes/tabs/TimeAndTranscriptsTab';
 import { useAutoSave } from '@hooks/utilities/useAutoSave';
 
 type TabKey = 'basic' | 'feedback' | 'lessonFlow' | 'monitoring' | 'timeTranscripts';

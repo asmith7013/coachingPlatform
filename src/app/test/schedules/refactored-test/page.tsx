@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ScheduleBuilderContainer } from '@/components/features/schedulesComponents/ScheduleBuilderContainer';
+import { ScheduleBuilderContainer } from '@/components/features/schedules/ScheduleBuilderContainer';
 
 export default function ScheduleComponentsTest() {
 

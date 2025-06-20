@@ -59,8 +59,8 @@ export const getTeacherCellStyle = (isSelected: boolean, activityType?: string) 
  */
 export const getPlanningIconStyle = (isPlanned: boolean, iconType: 'observation' | 'meeting') => {
   if (iconType === 'observation') {
-    return isPlanned ? scheduleColors.observation : scheduleColors.observation;
+    return isPlanned ? scheduleColors.planning.observation.planned : scheduleColors.planning.observation.unplanned;
   }
   
-  return isPlanned ? scheduleColors.debrief : scheduleColors.debrief;
+  return isPlanned ? scheduleColors.planning.meeting.planned : scheduleColors.planning.meeting.unplanned;
 }; 

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Check, Download } from 'lucide-react';
 import { cn } from '@ui/utils/formatters';
 import { TeacherPeriodCell } from './TeacherPeriodCell';
 import { DropZoneCell } from './DropZoneCell';
+import { ScheduleFooter } from './ScheduleFooter';
 import type { ScheduleGridProps } from './types';
 import { getBlocksForTeacherPeriod } from './utils';
 
@@ -18,6 +18,15 @@ export function ScheduleGrid({
   onPortionSelect,
   selectedTeacher,
   selectedPeriod,
+  selectedPortion,
+  onRequestClear,
+  clearResult,
+  isClearing,
+  scheduleStatus,
+  scheduleStatusText,
+  onExport,
+  isExporting,
+  showExport,
   className
 }: ScheduleGridProps) {
 
@@ -141,20 +150,22 @@ export function ScheduleGrid({
         </div>
       </div>
       
-      {/* Footer Section */}
-      <div className="border-t border-gray-200 p-4 flex justify-end">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <Check className="w-4 h-4 text-green-500" />
-            <span className="text-sm text-green-600">Ready</span>
-          </div>
-          
-          <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            <Download className="w-4 h-4" />
-            <span>Export</span>
-          </button>
-        </div>
-      </div>
+      {/* Footer Section - Now using unified ScheduleFooter */}
+      <ScheduleFooter
+        selectedTeacher={selectedTeacher}
+        selectedPeriod={selectedPeriod}
+        selectedPortion={selectedPortion}
+        teachers={teachers}
+        visits={visits}
+        onRequestClear={onRequestClear}
+        clearResult={clearResult}
+        isClearing={isClearing}
+        scheduleStatus={scheduleStatus}
+        scheduleStatusText={scheduleStatusText}
+        onExport={onExport}
+        isExporting={isExporting}
+        showExport={showExport}
+      />
     </div>
   );
 } 

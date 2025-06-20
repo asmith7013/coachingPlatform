@@ -3,12 +3,12 @@
 import React from "react";
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
-import { Button } from '@/components/core/Button';
+// import { Button } from '@/components/core/Button';
 import { useSchoolById } from "@hooks/domain/useSchools";
 import { MasterScheduleCard } from './cards/MasterScheduleCard';
 import { VisitsCard } from './cards/VisitsCard';
 import { TeachersCard } from './cards/TeachersCard';
-import { MetricsCard } from './cards/MetricsCard';
+import { CAPCard } from './cards/CAPCard';
 import { formatMediumDate } from '@/lib/data-processing/transformers/utils/date-utils';
 
 interface SingleSchoolProps {
@@ -57,7 +57,7 @@ export function SingleSchool({ schoolId }: SingleSchoolProps) {
     // router.push(`/dashboard/schools/${schoolId}/metrics`);
   };
 
-  const handleDeleteSchool = () => {
+  const _handleDeleteSchool = () => {
     console.log('Delete school:', schoolId);
     // TODO: Show confirmation dialog and delete functionality
   };
@@ -88,13 +88,13 @@ export function SingleSchool({ schoolId }: SingleSchoolProps) {
             </Text>
           )}
         </div>
-        <Button 
+        {/* <Button 
           className="bg-red-500 text-white hover:bg-red-600"
           padding="md"
           onClick={handleDeleteSchool}
         >
           Delete
-        </Button>
+        </Button> */}
       </div>
 
       {/* Master Schedule Section */}
@@ -119,7 +119,7 @@ export function SingleSchool({ schoolId }: SingleSchoolProps) {
       />
 
       {/* Metrics Section */}
-      <MetricsCard
+      <CAPCard
         onExportData={handleExportMetrics}
         onViewReport={handleViewMetricsReport}
       />

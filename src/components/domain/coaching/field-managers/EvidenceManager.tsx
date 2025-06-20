@@ -78,6 +78,7 @@ export function EvidenceManager({
       const newEvidence: CapEvidence = {
         _id: '',
         ownerIds: [],
+        visitId: '',
         description: '',
         type: 'written_summary',
         title: '',

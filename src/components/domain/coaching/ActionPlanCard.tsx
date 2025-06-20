@@ -36,8 +36,8 @@ export function ActionPlanCard({
   isDeleting 
 }: ActionPlanCardProps) {
   // Calculate stage progress
-  const stageProgress = formatStageProgress(plan);
-  const progressPercentage = calculateProgressPercentage(plan);
+  const _stageProgress = formatStageProgress(plan);
+  const _progressPercentage = calculateProgressPercentage(plan);
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -53,7 +53,7 @@ export function ActionPlanCard({
     <Card
       padding="md"
       radius="lg"
-      className="relative hover:shadow-lg transition-shadow duration-200"
+      className="relative hover:shadow-lg transition-shadow duration-200 bg-white border border-gray-200"
     >
       {/* Main content - clickable for navigation */}
       <Link href={`/dashboard/coaching-action-plans/${plan._id}`} className="block">
@@ -88,20 +88,20 @@ export function ActionPlanCard({
 
           {/* Progress Indicator */}
           <div className="mb-4">
-            <div className="flex justify-between items-center mb-2">
+            {/* <div className="flex justify-between items-center mb-2">
               <Text textSize="sm" color="default" className="font-medium">
                 Progress: {stageProgress}
               </Text>
               <Text textSize="sm" color="muted">
                 {progressPercentage}%
               </Text>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            </div> */}
+            {/* <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
                 className="bg-primary h-2 rounded-full transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Focus Area */}

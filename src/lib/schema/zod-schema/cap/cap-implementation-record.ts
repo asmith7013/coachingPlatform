@@ -3,6 +3,7 @@ import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { CoachingCycleNumberZod, VisitNumberZod } from "@enums";
 
 // ===== CAP IMPLEMENTATION RECORD FIELDS SCHEMA =====
+// This schema is designed to be embedded in CAP documents
 export const CapImplementationRecordFieldsSchema = z.object({
   date: z.string().default('').describe("Date when implementation occurred (ISO string)"),
   visitId: z.string().optional().default('').describe("Reference to actual Visit entity"),
@@ -17,11 +18,15 @@ export const CapImplementationRecordFieldsSchema = z.object({
   coachNotes: z.string().optional().default('').describe("Additional coach observations")
 });
 
+// Keep standalone document schemas for backward compatibility and potential future use
 export const CapImplementationRecordZodSchema = BaseDocumentSchema.merge(CapImplementationRecordFieldsSchema);
 export const CapImplementationRecordInputZodSchema = toInputSchema(CapImplementationRecordZodSchema);
 
 export type CapImplementationRecord = z.infer<typeof CapImplementationRecordZodSchema>;
 export type CapImplementationRecordInput = z.infer<typeof CapImplementationRecordInputZodSchema>;
+
+// Keep type exports for the fields only (used in embedded contexts)
+export type CapImplementationRecordFields = z.infer<typeof CapImplementationRecordFieldsSchema>;
 
 // Add helper for schema-driven defaults
 export function createCapImplementationRecordDefaults(overrides: Partial<CapImplementationRecordInput> = {}): CapImplementationRecordInput {

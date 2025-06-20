@@ -4,7 +4,7 @@ import {
   AllowedPurposeZod,
   ModeDoneZod,
 } from "@enums";
-import { EventFieldsSchema } from "@/lib/schema/zod-schema/schedules/schedule";
+// import { EventFieldsSchema } from "@/lib/schema/zod-schema/schedules/schedule";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
 import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
@@ -56,7 +56,13 @@ export const VisitFieldsSchema = z.object({
   // Schedule reference (NEW - replaces embedded events)
   visitScheduleId: z.string().optional().describe("Reference to VisitSchedule document _id for detailed scheduling"),
   
-  events: z.array(EventFieldsSchema).default([]).describe("Events that occurred during this visit"),
+  // NEW: Reference to embedded weekly plan
+  weeklyPlanIndex: z.number().optional().describe("Index of weekly plan within CAP.weeklyPlans array for this visit"),
+  
+  // NEW: Metrics to focus on during this visit  
+  focusOutcomeIndexes: z.array(z.number()).default([]).describe("Indexes of CAP.outcomes array to focus on during this visit"),
+  
+  // events: z.array(VisitScheduleZodSchema).default([]).describe("Events that occurred during this visit"),
   // Supporting content
   sessionLinks: z.array(SessionLinkFieldsSchema).default([]).describe("External resources and documents"),
   

@@ -4,8 +4,9 @@ import { useStandardMutation } from '@query/client/hooks/mutations/useStandardMu
 import { CollectionResponse } from '@core-types/response';
 import { ZodSchema } from 'zod';
 import { BaseDocument } from '@core-types/document';
-import { transformCollectionResponse } from '@query/client/utilities/hook-helpers';
 import { useInvalidation } from '@query/cache/invalidation';
+import { extractItems } from '@data-processing/transformers/utils/response-utils';
+import { validateArraySafe } from '@data-processing/validation/zod-validation';
 
 export interface BulkOperationOptions<T extends BaseDocument> {
   /** Entity type name (e.g., 'schools', 'staff') */
@@ -57,7 +58,7 @@ export function useBulkOperations<T extends BaseDocument>({
   bulkDelete,
   bulkUpdate,
   errorContext = entityType,
-  useSelector = false,
+  useSelector: _useSelector = false,
   relatedEntityTypes = []
 }: BulkOperationOptions<T>) {
   const { invalidateList } = useInvalidation();
@@ -88,15 +89,8 @@ export function useBulkOperations<T extends BaseDocument>({
     {
       onSuccess: async (response) => {
         // Transform response with schema validation
-        transformCollectionResponse<T>(
-          response, 
-          schema,
-          {
-            entityType,
-            useSelector,
-            errorContext: `${errorContext}.bulkUpload`
-          }
-        );
+        const items = extractItems(response);
+        const _validatedItems = validateArraySafe(schema, items);
         
         // Use invalidation hook instead of direct queryClient call
         await invalidateData();
@@ -132,15 +126,8 @@ export function useBulkOperations<T extends BaseDocument>({
     {
       onSuccess: async (response) => {
         // Transform response with schema validation
-        transformCollectionResponse<T>(
-          response, 
-          schema,
-          {
-            entityType,
-            useSelector,
-            errorContext: `${errorContext}.bulkUpdate`
-          }
-        );
+        const items = extractItems(response);
+        const _validatedItems = validateArraySafe(schema, items);
         
         await invalidateData();
       }

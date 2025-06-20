@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
 import { PageHeader } from '@/components/composed/layouts/PageHeader';
 import { ResourceHeader } from '@/components/composed/layouts/ResourceHeader';
@@ -8,13 +8,13 @@ import { EmptyListWrapper } from '@/components/core/empty/EmptyListWrapper';
 import { Text } from '@/components/core/typography/Text';
 import { useToast } from '@/components/core/feedback/Toast';
 import { CreateCoachingActionPlanDialog } from './components/CreateCoachingActionPlanDialog';
-import { CoachingActionPlanDetailedEditor } from './CoachingActionPlanDetailedEditor';
+import { CoachingActionPlanDetailedEditor } from './CAPEditor';
 import { ActionPlanCard, StatusTransitionButton } from '@components/domain/coaching';
-import { useCoachingActionPlans } from '@components/features/coaching/hooks/useCoachingActionPlans';
+import { useCoachingActionPlans } from '@/hooks/domain/useCoachingActionPlans';
 import { updateCoachingActionPlanStatus } from '@actions/coaching/coaching-action-plans';
 import { handleClientError } from '@error/handlers/client';
 import { PlusCircleIcon, FolderIcon, CheckCircleIcon } from 'lucide-react';
-import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/cap';
+import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
 import { type PlanStatus } from '@data-processing/transformers/utils/coaching-action-plan-utils';
 import { Button } from '@components/core/Button';
 
@@ -31,7 +31,7 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
   const [showDetailedEditor, setShowDetailedEditor] = useState(false);
   const [editingPlanId, setEditingPlanId] = useState<string | null>(null);
   
-  // ✅ Use the factory pattern hook - provides all state management
+  // Use simple domain hook pattern
   const {
     items: plans,
     total,
@@ -45,19 +45,22 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
     refetch
   } = useCoachingActionPlans.list();
 
-  // ✅ Proper navigation handler following established patterns
-  const handleCreatePlan = async () => {
-    setShowCreateDialog(true);
-  };
+  // Stable callback refs to prevent render loops
+  const handleSearch = useCallback((value: string) => {
+    setSearchInput(value);
+    applyFilters({ search: value });
+  }, [applyFilters]);
 
-  // ✅ Navigation handlers following established patterns  
-  const handleEditPlan = (planId: string) => {
+  const handleCreatePlan = useCallback(() => {
+    setShowCreateDialog(true);
+  }, []);
+
+  const handleEditPlan = useCallback((planId: string) => {
     setEditingPlanId(planId);
     setShowDetailedEditor(true);
-  };
+  }, []);
 
-  // Success handlers for dialogs
-  const handleCreateSuccess = (_plan: CoachingActionPlan) => {
+  const handleCreateSuccess = useCallback((_plan: CoachingActionPlan) => {
     showToast({
       title: 'Success',
       description: 'Coaching action plan created successfully',
@@ -65,55 +68,45 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
       icon: CheckCircleIcon
     });
     refetch();
-  };
+  }, [showToast, refetch]);
 
-  const _handleEditSuccess = (_plan: CoachingActionPlan) => {
-    showToast({
-      title: 'Success',
-      description: 'Coaching action plan updated successfully',
-      variant: 'success',
-      icon: CheckCircleIcon
-    });
-    refetch();
-  };
-
-  const handleDuplicatePlan = (_planId: string) => {
+  const handleDuplicatePlan = useCallback((_planId: string) => {
     // TODO: Implement plan duplication
     showToast({
       title: 'Feature Coming Soon',
       description: 'Plan duplication will be available in a future update',
       variant: 'info'
     });
-  };
+  }, [showToast]);
 
-  const handleArchivePlan = (_planId: string) => {
+  const handleArchivePlan = useCallback((_planId: string) => {
     // TODO: Implement plan archiving
     showToast({
       title: 'Feature Coming Soon', 
       description: 'Plan archiving will be available in a future update',
       variant: 'info'
     });
-  };
+  }, [showToast]);
 
-  const handleDeletePlan = (_planId: string) => {
+  const handleDeletePlan = useCallback((_planId: string) => {
     // TODO: Implement plan deletion with confirmation
     showToast({
       title: 'Feature Coming Soon',
       description: 'Plan deletion will be available in a future update',
       variant: 'info'
     });
-  };
+  }, [showToast]);
 
-  const handleExportPlan = (_planId: string) => {
+  const handleExportPlan = useCallback((_planId: string) => {
     // TODO: Implement plan export
     showToast({
       title: 'Feature Coming Soon',
       description: 'Plan export will be available in a future update',
       variant: 'info'
     });
-  };
+  }, [showToast]);
 
-  const handleStatusChange = async (planId: string, newStatus: PlanStatus, reason?: string) => {
+  const handleStatusChange = useCallback(async (planId: string, newStatus: PlanStatus, reason?: string) => {
     try {
       const result = await updateCoachingActionPlanStatus(planId, newStatus, reason);
       if (result.success) {
@@ -140,16 +133,15 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
         variant: 'error'
       });
     }
-  };
+  }, [showToast, refetch]);
 
-  // ✅ Use established early return pattern
+  // Early returns
   if (isLoading) return <Text textSize="base">Loading coaching action plans...</Text>;
   if (error) return <Text textSize="base" color="danger">Error loading plans: {error.message}</Text>;
 
   return (
     <div className={className}>
       <DashboardPage>
-        {/* ✅ Use established PageHeader component pattern */}
         <PageHeader 
           title="Coaching Action Plans"
           subtitle="Manage coaching cycles and track teacher development progress"
@@ -163,7 +155,6 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
           ]}
         />
 
-        {/* ✅ Enhanced ResourceHeader integration with proper search state */}
         <ResourceHeader<CoachingActionPlanInput>
           page={page}
           total={total}
@@ -177,15 +168,11 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
             { key: "updatedAt", label: "Updated Date" }
           ]}
           onSort={(field, order) => changeSorting(field as string, order)}
-          onSearch={(value) => {
-            setSearchInput(value);
-            applyFilters({ search: value });
-          }}
+          onSearch={handleSearch}
           searchInput={searchInput} 
           setSearchInput={setSearchInput}
         />
 
-        {/* ✅ Proper empty state with infrastructure loading handling */}
         <EmptyListWrapper 
           items={plans} 
           resourceName="coaching action plans"
@@ -215,7 +202,6 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
                   onExport={handleExportPlan}
                 />
                 
-                {/* ✅ Enhanced feature - status transition overlay */}
                 <div className="absolute top-2 right-2">
                   <StatusTransitionButton
                     plan={plan}
@@ -229,14 +215,12 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
         </EmptyListWrapper>
       </DashboardPage>
       
-      {/* Create Dialog */}
       <CreateCoachingActionPlanDialog
         open={showCreateDialog}
         onClose={() => setShowCreateDialog(false)}
         onSuccess={handleCreateSuccess}
       />
 
-      {/* Detailed Editor */}
       <CoachingActionPlanDetailedEditor
         planId={editingPlanId || ''}
         open={showDetailedEditor}
@@ -244,10 +228,8 @@ export function CoachingActionPlanDashboard({ className }: CoachingActionPlanDas
           setShowDetailedEditor(false);
           setEditingPlanId(null);
         }}
-        // onSave={handleEditSuccess}
       />
       
-      {/* ✅ Toast notification system for user feedback */}
       <ToastComponent />
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { ScheduleDisplayTestPage } from "@/components/features/schedulesUpdated/ScheduleDisplayTestPage";
+import { ScheduleDisplayTestPage } from "@/components/features/schedulesTest/ScheduleDisplayTestPage";
 import { useSchools } from "@/hooks/domain/useSchools";
 import { Text, Heading } from "@/components/core/typography";
 

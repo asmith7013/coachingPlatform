@@ -1,6 +1,6 @@
 'use client';
 
-import { ScheduleBuilderContainer } from '@/components/features/schedulesComponents/ScheduleBuilderContainer';
+import { ScheduleBuilderContainer } from '@/components/features/schedules/ScheduleBuilderContainer';
 
 /**
  * Test page to verify error handling implementation for schedulesComponents

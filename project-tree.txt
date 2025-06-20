@@ -725,6 +725,8 @@
 │   │   │   │   ├── SelectionStatusFooter.tsx
 │   │   │   │   ├── TeacherPeriodCell.tsx
 │   │   │   │   ├── hooks
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── useScheduleComponentsActions.ts
 │   │   │   │   │   ├── useScheduleDisplayData.ts
 │   │   │   │   │   └── useScheduleUI.ts
 │   │   │   │   ├── index.ts
@@ -1332,4 +1334,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-383 directories, 950 files
+383 directories, 952 files

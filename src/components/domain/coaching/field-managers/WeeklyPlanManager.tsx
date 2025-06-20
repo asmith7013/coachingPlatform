@@ -58,6 +58,7 @@ export function WeeklyPlanManager({
       progressMonitoring: '',
       visitId: '',
       status: 'planned',
+      expectedMetrics: [],
       _id: '',
       ownerIds: [],
       createdAt: '',

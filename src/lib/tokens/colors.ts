@@ -248,7 +248,7 @@ export const hoverBorderColors = {
 
 export const scheduleColors = {
   // Event type colors - using semantic color system
-  observation: 'bg-blue-500 text-white border-blue-700',
+  observation: 'bg-gray-200 text-gray-700 border-gray-300',
   debrief: 'bg-purple-500 text-white border-purple-600',
   coPlanning: 'bg-purple-500 text-white border-purple-600',
   plc: 'bg-green-500 text-white border-green-600',
@@ -264,7 +264,7 @@ export const scheduleColors = {
   regular: 'bg-blue-50 text-blue-700 border-blue-200',
   
   // State colors
-  selected: 'bg-blue-500 text-white border-blue-700',
+  selected: 'bg-gray-600 text-white border-gray-900',
   available: 'bg-gray-50 text-gray-600 border-gray-200',
 
   // Interactive states

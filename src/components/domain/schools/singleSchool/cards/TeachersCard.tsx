@@ -239,7 +239,7 @@ export function TeachersCard({
           )}
         </div>
       ) : (
-        <ul role="list" className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+        <ul role="list" className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-2">
           {schoolStaff.map((teacher, index) => {
             const teacherColors = ['pink', 'purple', 'yellow', 'green', 'blue', 'red'] as const;
             const initials = teacher.staffName

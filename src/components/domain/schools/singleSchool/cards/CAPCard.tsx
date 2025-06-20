@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Card } from '@/components/composed/cards/Card';
-import { CoachingActionPlanDashboard } from "@components/features/coaching/CoachingActionPlanDashboard";
+import { CoachingActionPlanDashboard } from "@/components/features/coaching/CAPDashboard";
 
 interface MetricsCardProps {
   onExportData?: () => void;
@@ -14,7 +14,7 @@ interface MetricsCardProps {
   };
 }
 
-export function MetricsCard({}: MetricsCardProps) {
+export function CAPCard({}: MetricsCardProps) {
   return (
     <Card padding="lg" radius="lg">
       <CoachingActionPlanDashboard />

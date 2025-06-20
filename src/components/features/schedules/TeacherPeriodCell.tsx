@@ -3,7 +3,7 @@ import { cn } from '@ui/utils/formatters';
 import type { TeacherPeriodCellProps } from './types';
 import { getTeacherCellStyle, getEventLabel } from './utils';
 import { getEventStyling } from './utils/schedule-styling-helpers';
-import { SessionPurposes } from '@/lib/schema/enum/shared-enums';
+// import { SessionPurposes } from '@/lib/schema/enum/shared-enums';
 
 /**
  * TeacherPeriodCell Component
@@ -26,7 +26,7 @@ export function TeacherPeriodCell({
   
   // Event styling using visitBlock data
   if (visitBlock) {
-    const eventType = visitBlock.eventType || SessionPurposes.OBSERVATION;
+    const eventType = visitBlock.eventType;
     const styling = getEventStyling(eventType);
 
     return (

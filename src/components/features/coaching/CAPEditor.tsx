@@ -7,7 +7,7 @@ import { Text } from '@components/core/typography/Text';
 import { Heading } from '@components/core/typography/Heading';
 import { Button } from '@components/core/Button';
 import { XIcon } from 'lucide-react';
-import { useCoachingActionPlans } from '@components/features/coaching/hooks/useCoachingActionPlans';
+import { useCoachingActionPlans } from '@/hooks/domain/useCoachingActionPlans';
 import { useToast } from '@components/core/feedback/Toast';
 import { handleClientError } from '@error/handlers/client';
 import { calculatePlanProgress } from '@data-processing/transformers/utils/coaching-action-plan-utils';
@@ -227,7 +227,7 @@ export function CoachingActionPlanDetailedEditor({
           <div className="flex-1">
             <Drawer.Title>
               <Heading level="h2" className="text-xl font-semibold">
-                {plan ? `${plan.teachers?.join(', ')} - ${plan.school}` : 'Loading...'}
+                {plan ? `Spring Action Plan` : 'Loading...'}
               </Heading>
             </Drawer.Title>
           </div>

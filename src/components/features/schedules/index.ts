@@ -14,7 +14,7 @@ export { DropZoneCell } from './DropZoneCell';
 export { PlanningStatusBar } from './PlanningStatusBar';
 export { ScheduleLegend } from './ScheduleLegend';
 export { SchedulePreview } from './SchedulePreview';
-export { SelectionStatusFooter } from './SelectionStatusFooter';
+export { ScheduleFooter } from './ScheduleFooter';
 
 // Dialog components
 export { ClearScheduleDialog } from './ClearScheduleDialog';

@@ -1,10 +1,13 @@
 import { ZodSchema } from 'zod';
 import { UseQueryOptions } from '@tanstack/react-query';
-import { ResponseTransformer, usePagination } from '@/query/client/hooks/pagination/usePagination';
+import { ResponseTransformer, usePagination } from '@query/client/hooks/pagination/usePagination';
+
 import { BaseDocument } from '@core-types/document';
 import { QueryParams } from '@core-types/query';
-import { PaginatedResponse } from '@core-types/response';
-import { transformPaginatedResponse } from '@query/client/utilities/hook-helpers';
+import { PaginatedResponse, CollectionResponse } from '@core-types/response';
+
+import { extractItems, isPaginatedResponse } from '@data-processing/transformers/utils/response-utils';
+import { validateArraySafe } from '@data-processing/validation/zod-validation';
 
 /**
  * Configuration for useEntityList hook
@@ -51,28 +54,51 @@ export function useEntityList<T extends BaseDocument>({
   entityType,
   fetcher,
   schema,
-  useSelector = false,
+  useSelector: _useSelector = false,
   defaultParams = {},
   staleTime,
   queryOptions = {},
-  errorContextPrefix
+  errorContextPrefix: _errorContextPrefix
 }: UseEntityListConfig<T>): ReturnType<typeof usePagination<T, T>> {
   
   // Create a transformation function using our unified utilities
   const transformer: ResponseTransformer<T, T> = (data: PaginatedResponse<T> | undefined): PaginatedResponse<T> => {
+    if (!data) {
+      return {
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 0,
+        hasMore: false,
+        success: false
+      };
+    }
+
+    // Use existing type guard
+    if (!isPaginatedResponse<T>(data)) {
+             // Convert non-paginated to paginated format
+       const items = Array.isArray(data) ? data : extractItems(data as CollectionResponse<T>);
+       const validatedItems = validateArraySafe(schema, items);
+      return {
+        items: validatedItems,
+        total: validatedItems.length,
+        page: 1,
+        limit: validatedItems.length || 10,
+        totalPages: 1,
+        hasMore: false,
+        success: true
+      };
+    }
     
-    const result = transformPaginatedResponse<T>(
-      data,
-      schema,
-      {
-        entityType,
-        useSelector,
-        errorContext: `${errorContextPrefix || entityType}.useEntityList`
-      }
-    );
-    
-    
-    return result;
+    // Transform paginated response
+    const items = extractItems(data);
+    const validatedItems = validateArraySafe(schema, items);
+
+    return {
+      ...data,
+      items: validatedItems
+    };
   };
   
   // Delegate to the base paginated data hook
