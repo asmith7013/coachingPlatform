@@ -75,6 +75,9 @@ export const VisitFieldsSchema = z.object({
   // Import flexibility fields
   siteAddress: z.string().optional().describe("Physical address for visit location"),
   endDate: z.string().optional().describe("ISO string for system timestamp"),
+
+  // Coaching Log Submission Fields
+  coachingLogSubmitted: z.boolean().optional().default(false).describe("Whether the coaching log has been submitted"),
 });
 
 // Visit Full Schema

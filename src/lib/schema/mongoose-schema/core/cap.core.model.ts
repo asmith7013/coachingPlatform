@@ -3,7 +3,6 @@ import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/
 
 // Define embedded schemas
 const WeeklyPlanEmbeddedSchema = new mongoose.Schema({
-  date: { type: String, default: '' },
   cycleNumber: { type: String, required: true },
   visitNumber: { type: String, required: true },
   focus: { type: String, default: '' },

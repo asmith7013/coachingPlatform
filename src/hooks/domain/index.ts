@@ -16,6 +16,7 @@ export * from './useLookFors'
 export * from './useVisits'
 // export * from './useVisitsWithTransforms' - Removed during simplification
 export * from './useCoachingActionPlans'
+export * from './useVisitScheduleData'
 
 // CAP (Coaching Action Plan) hooks - use subdirectory versions as canonical
 export * from './cap/useCapMetrics'

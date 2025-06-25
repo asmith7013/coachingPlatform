@@ -23,6 +23,10 @@ export const SchoolFieldsSchema = z.object({
   cycleIds: z.array(z.string())
     .default([])
     .describe("Array of Cycle document _ids for coaching cycles at this school"),
+  yearsOfIMImplementation: z.number()
+    .min(0)
+    .describe("Years implementing Illustrative Mathematics curriculum"),
+  // ... other fields
 });
 
 // School Full Schema

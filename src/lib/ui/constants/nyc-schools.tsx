@@ -1,4 +1,4 @@
-export const nycSchools = [
+export const NYC_SCHOOLS = [
     {
       "school": "Brownsville Ascend Middle School",
       "district": "NY_Ascend Charter Schools"
@@ -1176,3 +1176,18 @@ export const nycSchools = [
       "district": "NY_Transfer High Schools"
     }
 ]
+
+/**
+ * Get all schools in a specific district
+ */
+export function getSchoolsByDistrict(district: string) {
+    return NYC_SCHOOLS.filter(school => school.district === district);
+  }
+  
+  /**
+   * Get all unique district names
+   */
+  export function getAllDistricts(): string[] {
+    return [...new Set(NYC_SCHOOLS.map(school => school.district))];
+  }
+  

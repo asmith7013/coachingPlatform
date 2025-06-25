@@ -32,6 +32,12 @@ const visitFields = {
   // Schedule reference (replaces embedded events)
   visitScheduleId: { type: String },
   
+  // NEW: Reference to embedded weekly plan
+  weeklyPlanIndex: { type: Number },
+  
+  // NEW: Metrics to focus on during this visit  
+  focusOutcomeIndexes: [{ type: Number }],
+  
   // Supporting content
   sessionLinks: [SessionLinkSchema],
   
@@ -44,6 +50,9 @@ const visitFields = {
   // Import fields
   siteAddress: { type: String },
   endDate: { type: String },
+
+  // Coaching Log Submission Fields
+  coachingLogSubmitted: { type: Boolean, default: false },
   
   ...standardDocumentFields
 };

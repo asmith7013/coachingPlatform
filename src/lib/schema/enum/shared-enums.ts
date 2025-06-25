@@ -192,6 +192,24 @@ export enum ImplementationIndicators {
 }
 
 /**
+ * Implementation Experience Levels (Parent Categories for Hierarchical Coaching Log)
+ */
+export enum ImplementationExperience {
+  FIRST_YEAR = "First year of Implementation",
+  EXPERIENCED = "Experienced with Implementation"
+}
+
+/**
+ * Primary Strategy Categories (Parent Categories for Hierarchical Coaching Log)
+ */
+export enum PrimaryStrategyCategory {
+  PREPARING = "Preparing to Teach",
+  IN_CLASS = "In-class support", 
+  PROFESSIONAL = "Professional Learning",
+  COLLABORATION = "Sustaining Teacher-Led Collaboration"
+}
+
+/**
  * Support Cycle Types
  */
 export enum SupportCycleTypes {
@@ -318,9 +336,18 @@ export enum TotalDuration {
  * SOLVES Touchpoint
  */
 export enum SolvesTouchpoint {
-  TEACHER_SUPPORT = "Teacher support",
-  LEADER_SUPPORT = "Leader support",
+  LEADER_SUPPORT = "Leader support only",
   TEACHER_OR_LEADER = "Teacher OR teacher & leader support",
+}
+
+/**
+ * Teacher Support Types
+ */
+export enum TeacherSupportTypes {
+  SPECIAL_ED = "Special Education Teachers", 
+  ENL_ELL = "English as New Language or English Language Learner Teachers",
+  BILINGUAL_DUAL = "Bilingual/Dual Language Teachers",
+  NONE_OF_ABOVE = "None of the above"
 }
 
 /**
@@ -444,6 +471,14 @@ export type EvidenceType = z.infer<typeof EvidenceTypeZod>;
 export const ImplementationIndicatorZod = createZodEnum(ImplementationIndicators);
 export type ImplementationIndicator = z.infer<typeof ImplementationIndicatorZod>;
 
+// Implementation Experience
+export const ImplementationExperienceZod = createZodEnum(ImplementationExperience);
+export type ImplementationExperienceType = z.infer<typeof ImplementationExperienceZod>;
+
+// Primary Strategy Category
+export const PrimaryStrategyCategoryZod = createZodEnum(PrimaryStrategyCategory);
+export type PrimaryStrategyCategoryType = z.infer<typeof PrimaryStrategyCategoryZod>;
+
 // Support Cycle Types
 export const SupportCycleTypeZod = createZodEnum(SupportCycleTypes);
 export type SupportCycleType = z.infer<typeof SupportCycleTypeZod>;
@@ -471,6 +506,10 @@ export type TotalDurationType = z.infer<typeof TotalDurationZod>;
 // SOLVES Touchpoint
 export const SolvesTouchpointZod = createZodEnum(SolvesTouchpoint);
 export type SolvesTouchpointType = z.infer<typeof SolvesTouchpointZod>;
+
+// Teacher Support Types
+export const TeacherSupportTypesZod = createZodEnum(TeacherSupportTypes);
+export type TeacherSupportType = z.infer<typeof TeacherSupportTypesZod>;
 
 // Academic Year
 export const AcademicYearZod = z.enum([
@@ -535,22 +574,5 @@ export const DurationConverter = {
     const entry = Object.entries(Duration).find(([_, val]) => val === stringValue);
     if (!entry) throw new Error(`Invalid duration value: ${value}`);
     return entry[0] as keyof typeof Duration;
-  }
-};
-
-// =====================================
-// METADATA FOR TYPE HANDLING
-// =====================================
-
-/**
- * Enum metadata to assist with type handling between systems
- */
-export const EnumMetadata = {
-  Duration: {
-    zodType: 'string',  // What Zod expects for validation
-    mongooseType: 'number', // What Mongoose stores
-    // How to convert between them:
-    toMongoose: (val: string) => Number(val),
-    toZod: (val: number) => String(val)
   }
 };

@@ -1,4 +1,6 @@
 import { School } from "@zod-schema/core/school";
+import { ImplementationExperience } from '@enums';
+import { IMPLEMENTATION_INDICATORS } from '@/lib/ui/constants/coaching-log';
 
 /**
  * Convenience function to create a district and name field
@@ -43,3 +45,34 @@ export function getStaffCountDisplay(school: School): string {
   const count = school.staffListIds?.length || 0;
   return `${count} ${count === 1 ? 'staff member' : 'staff members'}`;
 }
+
+/**
+ * Maps years of IM implementation to implementation experience category
+ * Defaults to FIRST_YEAR if years is undefined/null (new schools)
+ * 
+ * @param years - Number of years implementing IM curriculum (can be undefined)
+ * @returns ImplementationExperience enum value
+ */
+export function getImplementationExperience(years: number | undefined | null): ImplementationExperience {
+  // Default to first year if no data available
+  if (years === undefined || years === null) {
+    return ImplementationExperience.FIRST_YEAR;
+  }
+  
+  return years <= 1 
+    ? ImplementationExperience.FIRST_YEAR 
+    : ImplementationExperience.EXPERIENCED;
+}
+
+/**
+ * Gets available implementation focus options based on years of experience
+ * 
+ * @param years - Number of years implementing IM curriculum  
+ * @returns Array of available focus options for the experience level
+ */
+export function getImplementationFocusOptions(years: number | undefined | null): readonly string[] {
+  const experience = getImplementationExperience(years);
+  
+  return IMPLEMENTATION_INDICATORS[experience] || [];
+}
+

@@ -178,6 +178,7 @@
 │   │   │   ├── cycles
 │   │   │   │   └── cycles.ts
 │   │   │   ├── integrations
+│   │   │   │   ├── coaching-log-automation.ts
 │   │   │   │   └── monday.ts
 │   │   │   ├── lookFors
 │   │   │   │   └── lookFors.ts
@@ -210,6 +211,7 @@
 │   │   │   └── visits
 │   │   │       ├── coachingLogs.ts
 │   │   │       ├── cycles.ts
+│   │   │       ├── visit-schedule-data.ts
 │   │   │       └── visits.ts
 │   │   ├── api
 │   │   │   ├── coaching-action-plans
@@ -266,6 +268,9 @@
 │   │   │   │   └── page.tsx
 │   │   │   ├── coaching-action-plans
 │   │   │   │   └── page.tsx
+│   │   │   ├── coaching-log-automation
+│   │   │   │   ├── CoachingLogAutomationTool.tsx
+│   │   │   │   └── page.tsx
 │   │   │   ├── config.ts
 │   │   │   ├── layout.tsx
 │   │   │   ├── lookForList
@@ -278,16 +283,25 @@
 │   │   │   │   └── [schoolId]
 │   │   │   ├── schools
 │   │   │   │   ├── [slug]
+│   │   │   │   │   ├── classroomNotes
 │   │   │   │   │   ├── client.tsx
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── scoring
 │   │   │   │   └── page.tsx
-│   │   │   └── staff
-│   │   │       ├── nycps
-│   │   │       │   └── page.tsx
-│   │   │       └── teachingLab
-│   │   │           └── page.tsx
+│   │   │   ├── staff
+│   │   │   │   ├── nycps
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── teachingLab
+│   │   │   │       └── page.tsx
+│   │   │   └── visits-status
+│   │   │       ├── components
+│   │   │       │   ├── SchoolVisitsGroup.tsx
+│   │   │       │   ├── StatusFilterBar.tsx
+│   │   │       │   ├── VisitStatusCard.tsx
+│   │   │       │   ├── VisitsStatusGrid.tsx
+│   │   │       │   └── VisitsStatusSummary.tsx
+│   │   │       └── page.tsx
 │   │   ├── debug
 │   │   │   ├── debug-reference-select
 │   │   │   │   └── page.tsx
@@ -371,14 +385,8 @@
 │   │   │   │   ├── schoolList
 │   │   │   │   │   ├── [schoolId]
 │   │   │   │   │   └── page.tsx
-│   │   │   │   ├── staffList
-│   │   │   │   │   └── page.tsx
-│   │   │   │   └── tabs
-│   │   │   │       ├── BasicInfoTab.tsx
-│   │   │   │       ├── FeedbackTab.tsx
-│   │   │   │       ├── LessonFlowTab.tsx
-│   │   │   │       ├── ProgressMonitoringTab.tsx
-│   │   │   │       └── TimeAndTranscriptsTab.tsx
+│   │   │   │   └── staffList
+│   │   │   │       └── page.tsx
 │   │   │   ├── dashboard
 │   │   │   │   └── page.tsx
 │   │   │   ├── dayView
@@ -396,10 +404,12 @@
 │   │   │   │   └── page.tsx
 │   │   │   ├── scheduling
 │   │   │   │   └── page.tsx
-│   │   │   └── staff
-│   │   │       ├── [id]
-│   │   │       │   └── page.tsx
-│   │   │       └── layout.tsx
+│   │   │   ├── staff
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── layout.tsx
+│   │   │   └── todays-visit-dashboard
+│   │   │       └── page.tsx
 │   │   ├── global-error.tsx
 │   │   ├── globals.css
 │   │   ├── integrations
@@ -684,17 +694,24 @@
 │   │   │   ├── users
 │   │   │   │   └── UserProfile.tsx
 │   │   │   └── visits
+│   │   │       └── SubmitCoachingLogButton.tsx
 │   │   ├── error
 │   │   │   ├── ErrorBoundary.tsx
 │   │   │   ├── QueryErrorBoundary.tsx
 │   │   │   ├── SentryBoundaryWrapper.tsx
 │   │   │   └── index.ts
 │   │   ├── features
+│   │   │   ├── classroomNotes
+│   │   │   │   └── tabs
+│   │   │   │       ├── BasicInfoTab.tsx
+│   │   │   │       ├── FeedbackTab.tsx
+│   │   │   │       ├── LessonFlowTab.tsx
+│   │   │   │       ├── ProgressMonitoringTab.tsx
+│   │   │   │       └── TimeAndTranscriptsTab.tsx
 │   │   │   ├── coaching
 │   │   │   │   ├── ActionPlanStage.tsx
-│   │   │   │   ├── CoachingActionPlanCrudDashboard.tsx
-│   │   │   │   ├── CoachingActionPlanDashboard.tsx
-│   │   │   │   ├── CoachingActionPlanDetailedEditor.tsx
+│   │   │   │   ├── CAPDashboard.tsx
+│   │   │   │   ├── CAPEditor.tsx
 │   │   │   │   ├── TabbedStageNavigation.tsx
 │   │   │   │   ├── components
 │   │   │   │   │   ├── CoachingActionPlanCard.tsx
@@ -706,7 +723,6 @@
 │   │   │   │   │   ├── SectionHeader.tsx
 │   │   │   │   │   └── index.ts
 │   │   │   │   ├── hooks
-│   │   │   │   │   ├── useCoachingActionPlans.ts
 │   │   │   │   │   └── useIPGData.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   └── stages
@@ -714,15 +730,15 @@
 │   │   │   │       ├── CAPStage2.tsx
 │   │   │   │       ├── CAPStage3.tsx
 │   │   │   │       └── CAPStage4.tsx
-│   │   │   ├── schedulesComponents
+│   │   │   ├── schedules
 │   │   │   │   ├── ClearScheduleDialog.tsx
 │   │   │   │   ├── DropZoneCell.tsx
 │   │   │   │   ├── PlanningStatusBar.tsx
 │   │   │   │   ├── ScheduleBuilderContainer.tsx
+│   │   │   │   ├── ScheduleFooter.tsx
 │   │   │   │   ├── ScheduleGrid.tsx
 │   │   │   │   ├── ScheduleLegend.tsx
 │   │   │   │   ├── SchedulePreview.tsx
-│   │   │   │   ├── SelectionStatusFooter.tsx
 │   │   │   │   ├── TeacherPeriodCell.tsx
 │   │   │   │   ├── hooks
 │   │   │   │   │   ├── index.ts
@@ -738,35 +754,7 @@
 │   │   │   │       ├── schedule-error-utils.ts
 │   │   │   │       ├── schedule-helpers.ts
 │   │   │   │       └── schedule-styling-helpers.ts
-│   │   │   ├── schedulesNew
-│   │   │   │   ├── DropZoneCell.tsx
-│   │   │   │   ├── PlanningStatusBar.tsx
-│   │   │   │   ├── ScheduleBuilder.tsx
-│   │   │   │   ├── ScheduleGrid.tsx
-│   │   │   │   ├── ScheduleLegend.tsx
-│   │   │   │   ├── SchedulePreview.tsx
-│   │   │   │   ├── SelectionStatusFooter.tsx
-│   │   │   │   ├── TeacherPeriodCell.tsx
-│   │   │   │   ├── context
-│   │   │   │   │   ├── ScheduleContext.tsx
-│   │   │   │   │   └── index.ts
-│   │   │   │   ├── hooks
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   ├── useScheduleActions.ts
-│   │   │   │   │   ├── useScheduleBuilderUI.ts
-│   │   │   │   │   ├── useScheduleData.ts
-│   │   │   │   │   ├── useScheduleSelectors.ts
-│   │   │   │   │   ├── useScheduleState.ts
-│   │   │   │   │   └── useVisitOperations.ts
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── types.ts
-│   │   │   │   └── utils
-│   │   │   │       ├── index.ts
-│   │   │   │       ├── schedule-helpers.ts
-│   │   │   │       ├── schedule-time-utils.ts
-│   │   │   │       ├── visit-conflict-detector.ts
-│   │   │   │       └── visit-data-utils.ts
-│   │   │   ├── schedulesUpdated
+│   │   │   ├── schedulesTest
 │   │   │   │   ├── ScheduleDisplayTestPage.tsx
 │   │   │   │   ├── VisitScheduleTestPage.tsx
 │   │   │   │   ├── components
@@ -792,6 +780,16 @@
 │   │   │   │   ├── ScoreEntry.tsx
 │   │   │   │   ├── ScoresPage.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── todaysVisitDashboard
+│   │   │   │   ├── TodaysVisitDashboard.tsx
+│   │   │   │   ├── components
+│   │   │   │   │   ├── FocusAndGoalsCard.tsx
+│   │   │   │   │   ├── MetricsToMeasureCard.tsx
+│   │   │   │   │   ├── ScheduleDisplayCard.tsx
+│   │   │   │   │   └── VisitOverviewCard.tsx
+│   │   │   │   ├── context
+│   │   │   │   │   └── TodaysVisitContext.tsx
+│   │   │   │   └── types.ts
 │   │   │   └── visits
 │   │   │       ├── VisitSidebar.tsx
 │   │   │       └── index.ts
@@ -844,6 +842,7 @@
 │   │   │   ├── schedules
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── useBellSchedules.ts
+│   │   │   │   ├── useClearVisitSchedule.ts
 │   │   │   │   ├── useTeacherSchedules.ts
 │   │   │   │   └── useVisitSchedules.ts
 │   │   │   ├── schedulesOld
@@ -857,6 +856,8 @@
 │   │   │   ├── useLookFors.ts
 │   │   │   ├── useSchoolDailyView.ts
 │   │   │   ├── useSchools.ts
+│   │   │   ├── useTodaysVisit.ts
+│   │   │   ├── useVisitScheduleData.ts
 │   │   │   └── useVisits.ts
 │   │   ├── error
 │   │   │   └── useErrorBoundary.ts
@@ -904,7 +905,6 @@
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── reference-factory.ts
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── purpose-normalizer.ts
 │   │   │   │   ├── ui
 │   │   │   │   │   ├── data-preview.ts
 │   │   │   │   │   ├── index.ts
@@ -928,11 +928,6 @@
 │   │   │   │   ├── monitor.ts
 │   │   │   │   └── usePerformanceMonitoring.tsx
 │   │   │   ├── index.ts
-│   │   │   ├── mocks
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── mockData.ts
-│   │   │   │   ├── mockVisitData.ts
-│   │   │   │   └── scheduleMockGenerator.ts
 │   │   │   └── testing
 │   │   │       ├── index.ts
 │   │   │       ├── schema-config-check.ts
@@ -954,6 +949,16 @@
 │   │   │   │   └── validation.ts
 │   │   │   └── index.ts
 │   │   ├── integrations
+│   │   │   ├── coaching-log
+│   │   │   │   ├── README.md
+│   │   │   │   ├── mappers
+│   │   │   │   │   ├── visit-schedule-to-events.backup.ts
+│   │   │   │   │   ├── visit-schedule-to-events.ts
+│   │   │   │   │   └── visit-to-json.ts
+│   │   │   │   ├── services
+│   │   │   │   │   ├── playwright-form-filler.backup.ts
+│   │   │   │   │   └── playwright-form-filler.ts
+│   │   │   │   └── types.ts
 │   │   │   └── monday
 │   │   │       ├── adapters
 │   │   │       │   └── response-adapters.ts
@@ -987,17 +992,6 @@
 │   │   │       └── utils
 │   │   │           ├── index.ts
 │   │   │           └── monday-utils.ts
-│   │   ├── json
-│   │   │   ├── alg1-links.json
-│   │   │   ├── coaching-moves.json
-│   │   │   ├── ilc-hs.json
-│   │   │   ├── ilc-routines.json
-│   │   │   ├── im-implementation.json
-│   │   │   ├── indicator.tsx
-│   │   │   ├── ipg.json
-│   │   │   ├── kh-routines.json
-│   │   │   ├── primaryStrategy.tsx
-│   │   │   └── school.tsx
 │   │   ├── schema
 │   │   │   ├── enum
 │   │   │   │   ├── index.ts
@@ -1224,7 +1218,8 @@
 │   │   ├── ui
 │   │   │   ├── constants
 │   │   │   │   ├── coaching-log.ts
-│   │   │   │   └── district-list.ts
+│   │   │   │   ├── district-list.ts
+│   │   │   │   └── nyc-schools.tsx
 │   │   │   ├── data-import
 │   │   │   │   └── schema-templates.ts
 │   │   │   ├── forms
@@ -1238,6 +1233,16 @@
 │   │   │   │   ├── hooks
 │   │   │   │   │   └── useFieldRenderer.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── json
+│   │   │   │   ├── alg1-links.json
+│   │   │   │   ├── coaching-moves.json
+│   │   │   │   ├── coachingLog.html
+│   │   │   │   ├── ilc-hs.json
+│   │   │   │   ├── ilc-routines.json
+│   │   │   │   ├── im-implementation.json
+│   │   │   │   ├── indicator.tsx
+│   │   │   │   ├── ipg.json
+│   │   │   │   └── kh-routines.json
 │   │   │   ├── notifications
 │   │   │   │   ├── entity-messages.ts
 │   │   │   │   ├── index.ts
@@ -1299,7 +1304,6 @@
 │   │   │   │   ├── selector-types.ts
 │   │   │   │   └── standard-selectors.ts
 │   │   │   └── utilities
-│   │   │       ├── hook-helpers.ts
 │   │   │       ├── optimistic-update-helpers.ts
 │   │   │       └── selector-helpers.ts
 │   │   ├── core
@@ -1334,4 +1338,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-383 directories, 952 files
+390 directories, 949 files

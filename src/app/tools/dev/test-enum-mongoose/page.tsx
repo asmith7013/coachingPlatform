@@ -5,8 +5,7 @@ import {
   Duration, 
   DurationValues,
   DurationTypesEnum,
-  DurationConverter,
-  EnumMetadata 
+  DurationConverter
 } from '@enums';
 import { Button } from '@/components/core/Button';
 
@@ -51,7 +50,8 @@ export default function TestEnumMongoosePage() {
       try {
         // Only test numeric values, skip string enum names
         if (typeof numValue === 'number') {
-          const stringValue = EnumMetadata.Duration.toZod(numValue);
+          try {
+            const stringValue = String(numValue);
           tests.push({
             testCase: 'Number → String (Mongoose → Zod)',
             input: numValue,
@@ -59,6 +59,15 @@ export default function TestEnumMongoosePage() {
             output: stringValue,
             isValid: DurationValues.includes(stringValue as Duration),
           });
+          } catch (error) {
+            tests.push({
+              testCase: 'Number → String (Mongoose → Zod)',
+              input: numValue,
+              outputType: 'error',
+              output: error instanceof Error ? error.message : String(error),
+              isValid: false,
+            });
+          }
         }
       } catch (error) {
         tests.push({

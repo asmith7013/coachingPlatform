@@ -2,22 +2,15 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/core/Button';
+import { Text } from '@/components/core/typography/Text';
+import { Heading } from '@/components/core/typography/Heading';
 import { Input } from '@/components/core/fields/Input';
 import { Textarea } from '@/components/core/fields/Textarea';
 import { Select } from '@/components/core/fields/Select';
 import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { 
-  PlusIcon, 
-  TrashIcon, 
-  ChevronDownIcon, 
-  ChevronRightIcon,
-  CalendarIcon
-} from '@heroicons/react/24/outline';
-import type { CapWeeklyPlan, CoachingCycleNumber, VisitNumber } from '@zod-schema/cap';
-import { CoachingCycleNumberZod, VisitNumberZod } from '@zod-schema/cap';
-import { getTodayString, formatMediumDate } from '@data-processing/transformers/utils/date-utils';
+import { PlusIcon, TrashIcon, CalendarIcon, ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import type { CapWeeklyPlan } from '@zod-schema/cap';
+import { CoachingCycleNumberZod, VisitNumberZod, type CoachingCycleNumber, type VisitNumber } from '@enums';
 
 interface WeeklyPlanManagerProps {
   weeklyPlans: CapWeeklyPlan[];
@@ -48,7 +41,6 @@ export function WeeklyPlanManager({
                                         weeklyPlans.length % 3 === 1 ? "2" : "3";
 
     const newPlan: CapWeeklyPlan = {
-      date: getTodayString(),
       cycleNumber: nextCycleNumber,
       visitNumber: nextVisitNumber,
       focus: '',
@@ -141,7 +133,7 @@ export function WeeklyPlanManager({
                         {getPlanTitle(plan, planIndex)}
                       </Text>
                       <Text textSize="xs" color="muted">
-                        {plan.date ? formatMediumDate(plan.date) : 'No date set'}
+                        Cycle {plan.cycleNumber}, Visit {plan.visitNumber}
                       </Text>
                     </div>
                   </button>
@@ -162,15 +154,7 @@ export function WeeklyPlanManager({
                 {isExpanded && (
                   <div className="space-y-4">
                     {/* Basic Information */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Input
-                        label="Planned Date"
-                        type="date"
-                        value={plan.date || ''}
-                        onChange={(e) => updatePlan(planIndex, 'date', e.target.value)}
-                        required
-                      />
-
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Select
                         label="Cycle Number"
                         value={plan.cycleNumber}

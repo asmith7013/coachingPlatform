@@ -70,6 +70,7 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
         cycleIds: [],
         ownerIds: [],
         gradeLevelsSupported: [],
+        yearsOfIMImplementation: 0, // Default to 0 if not provided
         ...schoolData,
         schoolNumber: schoolData.schoolNumber || '',
         district: schoolData.district || '',

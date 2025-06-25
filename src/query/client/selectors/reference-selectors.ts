@@ -267,9 +267,11 @@ export const referenceSelectors = {
     try {
       return registerReferenceSelector<CoachingLog, CoachingLogReference>(
         'coaching-logs',
-        (log) => log.primaryStrategy,
+        (log) => log.primaryStrategySpecific || log.primaryStrategy || 'Coaching Log',
         (log) => ({
-          solvesTouchpoint: log.solvesTouchpoint
+          solvesTouchpoint: log.solvesTouchpoint,
+          implementationExperience: log.implementationExperience,
+          primaryStrategyCategory: log.primaryStrategyCategory
         })
       );
     } catch (error) {

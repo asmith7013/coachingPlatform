@@ -5,7 +5,7 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 // import { Button } from '@/components/core/Button';
 import { useSchoolById } from "@hooks/domain/useSchools";
-import { MasterScheduleCard } from './cards/MasterScheduleCard';
+import MasterScheduleCard from './cards/MasterScheduleCard';
 import { VisitsCard } from './cards/VisitsCard';
 import { TeachersCard } from './cards/TeachersCard';
 import { CAPCard } from './cards/CAPCard';

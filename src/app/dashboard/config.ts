@@ -9,7 +9,8 @@ import {
     CalendarDaysIcon,
     StarIcon,
     AcademicCapIcon,
-    BookOpenIcon
+    BookOpenIcon,
+    CheckCircleIcon
 } from '@heroicons/react/24/outline'
 
 import type { NavigationItem, TeamItem } from '@/components/composed/layouts/sidebar/NavigationSidebar'
@@ -57,6 +58,13 @@ export const navigationItems: NavigationItem[] = [
     icon: CalendarDaysIcon, 
     current: false,
     requiredPermissions: [PERMISSIONS.SCHEDULE_VIEW]
+  },
+  { 
+    name: 'Visits Status', 
+    href: '/dashboard/visits-status', 
+    icon: CheckCircleIcon, 
+    current: false,
+    requiredPermissions: [PERMISSIONS.VISIT_VIEW]
   },
   { 
     name: 'Scoring', 
@@ -119,6 +127,10 @@ export const pageMetadata: Record<string, { title: string; description: string }
   '/dashboard/schedule': {
     title: 'Schedule',
     description: 'Manage your coaching visits and appointments'
+  },
+  '/dashboard/visits-status': {
+    title: 'Visits Status',
+    description: 'Track coaching log submissions and visit schedules across all schools'
   },
   '/dashboard/scoring': {
     title: 'Scoring',

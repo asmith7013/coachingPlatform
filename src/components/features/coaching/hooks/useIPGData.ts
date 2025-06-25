@@ -7,7 +7,7 @@ import {
   type IPGSubsectionReference,
   type IPGCoreAction
 } from '@/lib/data-processing/transformers/domain/coaching-reference-transformers';
-import ipgData from '@/lib/json/ipg.json';
+import ipgData from '@/lib/ui/json/ipg.json';
 
 /**
  * Hook for accessing and managing IPG reference data

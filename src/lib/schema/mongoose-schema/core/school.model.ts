@@ -13,6 +13,7 @@ const schoolFields = {
   staffList: [{ type: String, required: true }],
   schedules: [{ type: String, required: true }],
   cycles: [{ type: String, required: true }],
+  yearsOfIMImplementation: { type: Number, required: true, min: 0 },
   ...standardDocumentFields
 };
 

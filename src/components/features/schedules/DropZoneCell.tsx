@@ -6,7 +6,7 @@ import { Eye, MessageCircle, Users } from 'lucide-react';
 import type { DropZoneCellProps } from './types';
 import { 
   createDropZoneItems, 
-  getEventLabel,
+  // getEventLabel,
   isPeriodPortionAvailable,
   isPortionScheduled
 } from './utils';
@@ -138,7 +138,7 @@ export function DropZoneCell({
       <div className={styles.scheduledBadge({ eventType: eventTypeVariant })}>
         {renderEventIcon(item.purpose, styles.badgeIcon())}
         <div className={styles.badgeContent()}>
-          <div className={styles.eventLabel()}>{getEventLabel(item.purpose)}</div>
+          {/* <div className={styles.eventLabel()}>{getEventLabel(item.purpose)}</div> */}
           <div className={styles.teacherName()}>{item.teacherName}</div>
         </div>
       </div>

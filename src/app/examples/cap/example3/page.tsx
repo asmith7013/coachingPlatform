@@ -11,7 +11,7 @@ import { Textarea } from '@/components/core/fields/Textarea';
 import { Input } from '@/components/core/fields/Input';
 import { Button } from '@/components/core/Button';
 import { Plus, Edit2 } from 'lucide-react';
-import ipgData from '@/lib/json/ipg.json';
+import ipgData from '@/lib/ui/json/ipg.json';
 import { getTodayString } from '@/lib/data-processing/transformers/utils/date-utils';
 // import { semanticColors } from '@/lib/tokens/colors';
 

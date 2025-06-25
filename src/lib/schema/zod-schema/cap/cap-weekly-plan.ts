@@ -9,7 +9,6 @@ import {
 // ===== CAP WEEKLY PLAN FIELDS SCHEMA =====
 // This schema is designed to be embedded in CAP documents
 export const CapWeeklyPlanFieldsSchema = z.object({
-  date: z.string().default('').describe("Planned date for this visit (ISO string)"),
   cycleNumber: CoachingCycleNumberZod.default(CoachingCycleNumberZod.options[0]).describe("Which coaching cycle this visit belongs to"),
   visitNumber: VisitNumberZod.default(VisitNumberZod.options[0]).describe("Which visit within the cycle"),
   focus: z.string().default('').describe("Primary focus for this visit"),

@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import KHData from '@/lib/json/kh-routines.json';
-import ILCData from '@/lib/json/ilc-routines.json';
-import ILCHSData from '@/lib/json/ilc-hs.json';
+import KHData from '@/lib/ui/json/kh-routines.json';
+import ILCData from '@/lib/ui/json/ilc-routines.json';
+import ILCHSData from '@/lib/ui/json/ilc-hs.json';
 import { GradeUnitLessonSelector } from '@/components/domain/imRoutine/curriculum/LessonSelector';
 import { RoutineFilter } from '@/components/domain/imRoutine/routines/RoutineFilter';
 import { LessonDetailView } from '@/components/domain/imRoutine/lessons/LessonView';

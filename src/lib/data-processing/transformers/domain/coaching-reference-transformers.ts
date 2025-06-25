@@ -1,8 +1,8 @@
 import { BaseReference } from "@core-types/reference";
 import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
 import { handleClientError } from "@error/handlers/client";
-import ipgData from "@/lib/json/ipg.json";
-import coachingMovesData from "@/lib/json/coaching-moves.json";
+import ipgData from "@/lib/ui/json/ipg.json";
+import coachingMovesData from "@/lib/ui/json/coaching-moves.json";
 
 // Types for IPG data structure
 export interface IPGCoreAction {

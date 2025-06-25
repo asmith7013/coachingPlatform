@@ -47,36 +47,6 @@ export const VisitScheduleBlockSchema = BaseTimeBlockSchema.extend({
   staffIds: z.array(z.string()).describe("Array of staff IDs - supports multiple teachers per event"),
   portion: ScheduleAssignmentTypeZod.describe("Time portion of the period"),
 });
-// export const TimeBlockSchema = z.discriminatedUnion("blockType", [
-//   // Bell schedule structure - defines time blocks only
-//   BaseTimeBlockSchema.extend({
-//     blockType: z.literal("bellScheduleBlock"),
-
-//   }),
-  
-//   // Teacher assignment - what teacher does during this period
-//   BaseTimeBlockSchema.extend({
-//     blockType: z.literal("teacherScheduleBlock"),
-
-//     className: z.string().describe("'5th Grade Math', 'Planning Time', 'Lunch Break', etc."),
-//     room: z.string().describe("'Room 205', 'Teachers Lounge', 'Main Playground', etc."),
-//     activityType: PeriodTypeZod.describe("Type of activity: 'teaching', 'prep', 'duty', 'lunch', 'meeting'"),
-//     subject: z.string().optional().describe("'Math', 'Science', 'Reading', etc."),
-//     gradeLevel: GradeLevelsSupportedZod.optional().describe("'Grade 5', 'Kindergarten', etc."),
-//   }),
-  
-//   // Coaching activity - what coach does during this period
-//   BaseTimeBlockSchema.extend({
-//     blockType: z.literal("visitScheduleBlock"),
-
-//     eventId: z.string().describe("Unique identifier for this event"),
-//     orderIndex: z.number().describe("Sequence within period: 1, 2, 3... for multiple events"),
-//     eventType: SessionPurposeZod.describe("Type of coaching session"),
-//     staffIds: z.array(z.string()).describe("Array of staff IDs - supports multiple teachers per event"),
-//     portion: ScheduleAssignmentTypeZod.describe("Time portion of the period"),
-//   })
-// ]);
-
 
 // =====================================
 // TYPE EXTRACTION (DRY)

@@ -2,7 +2,15 @@ import { z } from "zod";
 import { 
   ReasonDoneZod, 
   TotalDurationZod, 
-  SolvesTouchpointZod 
+  SolvesTouchpointZod,
+  ImplementationExperienceZod,
+  PrimaryStrategyCategoryZod,
+  TeacherSupportTypesZod,
+  GradeLevelsSupportedZod,
+  ImplementationExperience,
+  ReasonDone,
+  TotalDuration,
+  SolvesTouchpoint,
 } from "@enums"; 
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
@@ -11,19 +19,43 @@ import { getTotalDurationMinutes, hasMicroPL, hasModel } from "@schema/reference
 
 // Coaching Log Fields Schema
 export const CoachingLogFieldsSchema = z.object({
-  coachingActionPlanId: z.string().describe("Reference to CoachingActionPlan document _id - PRIMARY AGGREGATE"),
+  coachingActionPlanId: z.string().optional().describe("Reference to CoachingActionPlan document _id - PRIMARY AGGREGATE"),
   reasonDone: ReasonDoneZod.default(ReasonDoneZod.options[0]).describe("Why coaching was completed: Full completion or early termination"),
   microPLTopic: z.string().optional().describe("Topic for micro professional learning session"),
   microPLDuration: z.number().optional().describe("Duration in minutes for micro professional learning session"),
   modelTopic: z.string().optional().describe("Topic for modeling session"),
   modelDuration: z.number().optional().describe("Duration in minutes for modeling session"),
+  
+  // Travel Duration Fields
+  schoolTravelDuration: z.number().default(76).describe("Travel duration in minutes to reach the school"),
+  finalTravelDuration: z.number().default(76).describe("Travel duration in minutes to second school or final destination"),
+  
   adminMeet: z.boolean().optional().default(false).describe("Whether administrator joined the coaching session"),
   adminMeetDuration: z.number().optional().describe("Duration in minutes of administrator participation"),
   NYCDone: z.boolean().optional().default(false).describe("Whether NYC-specific coaching requirements were met"),
   totalDuration: TotalDurationZod.default(TotalDurationZod.options[0]).describe("Total session duration: 30min, 45min, 60min, or 90min"),
   solvesTouchpoint: SolvesTouchpointZod.default(SolvesTouchpointZod.options[0]).describe("Type of coaching support: Teacher, Leader, or Combined"),
-  primaryStrategy: z.string().describe("Primary strategy used in this coaching log"),
-  solvesSpecificStrategy: z.string().describe("Specific strategy solved in this coaching log"),
+  
+  // NEW: Contractor Information
+  isContractor: z.boolean().optional().default(true).describe("Whether coach is a 1099 contractor with Teaching Lab"),
+
+  // NEW: Teacher Support Details  
+  teachersSupportedNumber: z.number().optional().default(1).describe("Number of teachers supported during session"),
+  gradeLevelsSupported: z.array(GradeLevelsSupportedZod).optional().default([]).describe("Grade levels supported during this session"),
+  teachersSupportedTypes: z.array(TeacherSupportTypesZod).optional().default([]).describe("Types of teachers supported"),
+  
+  // Hierarchical Implementation Fields
+  implementationExperience: ImplementationExperienceZod.default(ImplementationExperience.FIRST_YEAR).describe("Parent category: First year or Experienced implementation"),
+  implementationFocus: z.string().optional().describe("Specific implementation focus (validated against constants)"),
+  
+  // Hierarchical Strategy Fields
+  primaryStrategyCategory: PrimaryStrategyCategoryZod.optional().describe("Parent category: Preparing to Teach, In-class support, etc."),
+  primaryStrategySpecific: z.string().optional().describe("Specific primary strategy (validated against constants)"),
+  
+  // Legacy fields (keep for backward compatibility)
+  primaryStrategy: z.string().optional().describe("Primary strategy used in this coaching log (legacy field)"),
+  solvesSpecificStrategy: z.string().optional().describe("Specific strategy solved in this coaching log (legacy field)"),
+  
   aiSummary: z.string().optional().describe("AI-generated summary of the coaching log"),
   visitId: z.string().optional().describe("Reference to Visit document _id this log belongs to"),
 });
@@ -43,6 +75,10 @@ export const CoachingLogReferenceZodSchema = BaseReferenceZodSchema.merge(
       totalDuration: true,
       solvesTouchpoint: true,
       visitId: true,
+      implementationExperience: true,
+      implementationFocus: true,
+      primaryStrategyCategory: true,
+      primaryStrategySpecific: true,
     })
     .partial()
 ).extend({
@@ -54,17 +90,23 @@ export const CoachingLogReferenceZodSchema = BaseReferenceZodSchema.merge(
 
 // Coaching Log Reference Transformer
 export const coachingLogToReference = createReferenceTransformer<CoachingLog, CoachingLogReference>(
-  (log) => log.primaryStrategy ? log.primaryStrategy.slice(0, 50) + (log.primaryStrategy.length > 50 ? '...' : '') : 'Coaching Log',
+  (log) => {
+    const strategy = log.primaryStrategySpecific || log.primaryStrategy;
+    return strategy ? strategy.slice(0, 50) + (strategy.length > 50 ? '...' : '') : 'Coaching Log';
+  },
   (log) => ({
     coachingActionPlanId: log.coachingActionPlanId,
     reasonDone: log.reasonDone,
     totalDuration: log.totalDuration,
     solvesTouchpoint: log.solvesTouchpoint,
     visitId: log.visitId,
+    implementationExperience: log.implementationExperience,
+    implementationFocus: log.implementationFocus,
+    primaryStrategyCategory: log.primaryStrategyCategory,
+    primaryStrategySpecific: log.primaryStrategySpecific,
     hasMicroPL: hasMicroPL(log),
     hasModel: hasModel(log),
     totalDurationMinutes: getTotalDurationMinutes(log),
-    primaryStrategyShort: log.primaryStrategy?.slice(0, 50) + (log.primaryStrategy?.length > 50 ? '...' : ''),
   }),
   CoachingLogReferenceZodSchema
 );
@@ -81,8 +123,32 @@ export type CoachingLogReference = z.infer<typeof CoachingLogReferenceZodSchema>
 
 // Add helper for schema-driven defaults
 export function createCoachingLogDefaults(overrides: Partial<CoachingLogInput> = {}): CoachingLogInput {
+  // Provide explicit defaults instead of parsing empty object
+  const defaults: CoachingLogInput = {
+    reasonDone: ReasonDone.YES,
+    totalDuration: TotalDuration.FULL_DAY,
+    solvesTouchpoint: SolvesTouchpoint.TEACHER_OR_LEADER,
+    primaryStrategy: "Co-facilitation of lesson", // Temporary default
+    solvesSpecificStrategy: "Supporting teacher implementation",  // Temporary default
+    implementationExperience: ImplementationExperience.FIRST_YEAR, // Temporary default
+    
+    // NEW: Add defaults for new fields
+    isContractor: true,
+    teachersSupportedNumber: 1,
+    gradeLevelsSupported: [],
+    teachersSupportedTypes: [],
+    schoolTravelDuration: 76,
+    finalTravelDuration: 76,
+    
+    owners: [],
+    // ... other required fields with defaults
+  };
+  
   return {
-    ...CoachingLogInputZodSchema.parse({}),
+    ...defaults,
     ...overrides
   };
 }
+
+// Note: Validation against constants should be done in form components
+// using the helper functions from @ui/constants/coaching-log
