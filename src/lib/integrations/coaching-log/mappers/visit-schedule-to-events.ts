@@ -17,7 +17,11 @@ export function visitScheduleToEventData(
   console.log('🔄 Converting VisitSchedule to EventData:', {
     hasSchedule: !!visitSchedule,
     timeBlocksCount: visitSchedule?.timeBlocks?.length || 0,
-    staffLookupSize: staffLookup.size
+    staffLookupSize: staffLookup.size,
+    staffLookupEntries: Array.from(staffLookup.entries()).map(([id, staff]) => ({
+      id,
+      name: staff.staffName
+    }))
   });
 
   if (!visitSchedule?.timeBlocks?.length) {

@@ -35,6 +35,7 @@ export function getEntityDisplayName<T extends Pick<BaseDocument, '_id'> & Parti
   fallback = 'Unknown'
 ): string {
   const entity = findEntityById(entities, id);
+  console.log('entity 🟢🟢🟢🟢', entity, entities, 'entities');
   if (!entity) return fallback;
   
   // Check common name fields in priority order

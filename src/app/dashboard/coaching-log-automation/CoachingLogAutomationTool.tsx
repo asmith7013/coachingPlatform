@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 // import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/core/Button';
 import { Card } from '@/components/composed/cards/Card';
@@ -9,6 +9,7 @@ import { ReferenceSelect } from '@/components/core/fields/ReferenceSelect';
 import { useVisits } from '@/hooks/domain/useVisits';
 import { useSchools } from '@/hooks/domain/useSchools';
 import { useTeachingLabStaff } from '@/hooks/domain/staff/useTeachingLabStaff';
+import { useNYCPSStaff } from '@/hooks/domain/staff/useNYCPSStaff';
 import { useVisitSchedules } from '@/hooks/domain/schedules/useVisitSchedules';
 
 import { 
@@ -16,14 +17,63 @@ import {
   createCoachingLogDefaults,
   CoachingLogInputZodSchema 
 } from '@zod-schema/visits/coaching-log';
+import { NYCPSStaff } from '@zod-schema/core/staff';
 import { automateCoachingLogFillFromSchema } from '@actions/integrations/coaching-log-automation';
 import type { TableColumnSchema } from '@ui/table-schema';
-import { VisitScheduleBlock } from '@/lib/schema/zod-schema/schedules/schedule-events';
+import { VisitScheduleBlock } from '@zod-schema/schedules/schedule-events';
+import { getEntityDisplayName } from '@/lib/utils/entity-helpers';
 
 interface FormData {
   schoolName: string;  // Changed from schoolName
   districtName: string;
   coachName: string;
+  gradeLevelsSupported: string[];
+}
+
+interface EventData {
+  name: string[];
+  role: string;
+  activity: string;
+  duration: string;
+}
+
+// Transform visit schedule time blocks to event data for form automation
+function transformTimeBlocksToEvents(timeBlocks: VisitScheduleBlock[], nycpsStaff: NYCPSStaff[]): EventData[] {
+  const events: EventData[] = [];
+  
+  timeBlocks.forEach(block => {
+    if (block.staffIds && block.staffIds.length > 0) {
+      console.log('block 🟢🟢🟢🟢', block.staffIds, 'staffIds');
+      // Calculate duration in minutes
+      const startTime = new Date(`2025-01-01T${block.startTime}:00`);
+      const endTime = new Date(`2025-01-01T${block.endTime}:00`);
+      const durationMinutes = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
+      
+      // Map event type to activity
+      const activityMap: Record<string, string> = {
+        'Observation': 'Observed instruction',
+        'Debrief': 'Debriefed lesson',
+        'Planning': 'Planned lesson',
+        'Coaching': 'Provided coaching'
+      };
+      
+      // Use existing utility to resolve staff names
+      const staffNames = block.staffIds.map(staffId => {
+        console.log('staffId 🟢🟢🟢🟢', staffId, nycpsStaff);
+        // return nycpsStaff[0].staffName
+        return getEntityDisplayName(nycpsStaff, staffId, `Unknown Staff (${staffId.slice(-4)})`)
+      });
+      
+      events.push({
+        name: staffNames,
+        role: 'Teacher',
+        activity: activityMap[block.eventType] || block.eventType,
+        duration: durationMinutes.toString()
+      });
+    }
+  });
+  
+  return events;
 }
 
 export function CoachingLogAutomationTool() {
@@ -33,7 +83,8 @@ export function CoachingLogAutomationTool() {
   const [formData, setFormData] = useState<FormData>({
     schoolName: '',
     districtName: '',
-    coachName: ''
+    coachName: '',
+    gradeLevelsSupported: [],
   });
   const [isAutomating, setIsAutomating] = useState(false);
   const [result, setResult] = useState<{ success: boolean; message?: string; error?: string } | null>(null);
@@ -43,6 +94,7 @@ export function CoachingLogAutomationTool() {
   const { items: allVisits = [], isLoading: visitsLoading } = useVisits.list({ limit: 1000 });
   const { items: schools, isLoading: schoolsLoading } = useSchools.list();
   const { items: coaches, isLoading: coachesLoading } = useTeachingLabStaff();
+  const { items: allNycpsStaff = [], isLoading: nycpsStaffLoading } = useNYCPSStaff();
 
   // ✅ FIXED: Client-side filtering following VisitsStatusGrid pattern
   const visits = useMemo(() => {
@@ -54,6 +106,16 @@ export function CoachingLogAutomationTool() {
       .filter(visit => visit.schoolId === selectedSchoolId)
       .slice(0, 30); // Show first 30 for selected school
   }, [allVisits, selectedSchoolId]);
+
+  // ✅ FIXED: Client-side filtering for NYCPS staff using consistent field names
+  const nycpsStaff = useMemo(() => {
+    if (!selectedSchoolId || !allNycpsStaff.length) return allNycpsStaff;
+    
+    return allNycpsStaff.filter(staff => {
+      // Use the correct field name from schema: schoolIds
+      return staff.schoolIds && staff.schoolIds.includes(selectedSchoolId);
+    });
+  }, [allNycpsStaff, selectedSchoolId]);
 
 
   
@@ -73,7 +135,7 @@ export function CoachingLogAutomationTool() {
     // Clear visit selection when school changes
     if (selectedVisitId) {
       setSelectedVisitId('');
-      setFormData({ schoolName: '', districtName: '', coachName: '' });
+      setFormData({ schoolName: '', districtName: '', coachName: '', gradeLevelsSupported: [] });
       setCoachingLogData(createCoachingLogDefaults());
     }
   }, [selectedVisitId]);
@@ -83,7 +145,7 @@ export function CoachingLogAutomationTool() {
     setResult(null);
     
     if (!visitId) {
-      setFormData({ schoolName: '', districtName: '', coachName: '' });
+      setFormData({ schoolName: '', districtName: '', coachName: '', gradeLevelsSupported: [] });
       return;
     }
 
@@ -107,33 +169,12 @@ export function CoachingLogAutomationTool() {
     // Update form data with auto-populated values
     setFormData({
       schoolName: school?.schoolNumber || '',
+      gradeLevelsSupported: school?.gradeLevelsSupported || [],
       districtName: school?.district || '',
       coachName: coach?.staffName || ''
     });
   }, [visits, schools, coaches]);
   
-  
-
-  // Add useEffect to handle pre-selected visit
-  useEffect(() => {
-    // Handle pre-selected visit from URL
-    // TODO: Re-enable URL parameter handling when needed
-    // const searchParams = useSearchParams();
-    // const preSelectedVisitId = searchParams.get('visitId');
-    
-    // if (preSelectedVisitId && visits && visits.length > 0 && !selectedVisitId) {
-    //   const visitExists = visits.find(visit => visit._id === preSelectedVisitId);
-    //   if (visitExists) {
-    //     // Auto-select the school for this visit if not already selected
-    //     if (!selectedSchoolId && visitExists.schoolId) {
-    //       setSelectedSchoolId(visitExists.schoolId);
-    //     }
-    //     handleVisitSelection(preSelectedVisitId);
-    //   }
-    // }
-  }, [selectedVisitId, visits, selectedSchoolId, handleVisitSelection]);
-
-
 
   const handleFieldChange = (field: keyof CoachingLogInput, value: string | number | boolean) => {
     setCoachingLogData(prev => ({
@@ -165,10 +206,21 @@ export function CoachingLogAutomationTool() {
       // Validate schema before sending
       const validatedData = CoachingLogInputZodSchema.parse(coachingLogData);
       
+      // Transform visit schedule time blocks to events for form automation
+      const events = visitSchedule?.timeBlocks ? transformTimeBlocksToEvents(visitSchedule.timeBlocks, nycpsStaff) : [];
+      
       const automationResult = await automateCoachingLogFillFromSchema(validatedData, {
         schoolName: formData.schoolName,
         districtName: formData.districtName,
-        coachName: formData.coachName
+        coachName: formData.coachName,
+        visitDate: selectedVisit?.date,
+        modeDone: selectedVisit?.modeDone,
+        events: events,                           // ← For form automation (transformed)
+        timeBlocks: visitSchedule?.timeBlocks || [], // ← For banner display (raw)
+        visitId: selectedVisitId,
+        // teacherCount: visitSchedule?.teacherCount,
+        // schoolGradeLevels: visitSchedule?.school?.gradeLevelsSupported,
+        // visitGradeLevels: visitSchedule?.visit?.gradeLevelsSupported,
       });
       
       setResult(automationResult);
@@ -209,18 +261,18 @@ export function CoachingLogAutomationTool() {
       accessor: (block) => block.eventType,
       width: '15%'
     },
-    {
-      id: 'portion',
-      label: 'Portion',
-      accessor: (block) => block.portion,
-      width: '15%'
-    },
+    // {
+    //   id: 'portion',
+    //   label: 'Portion',
+    //   accessor: (block) => block.portion,
+    //   width: '15%'
+    // },
     {
       id: 'staff',
       label: 'Staff Count',
       accessor: (block) => `${block.staffIds.length} teacher${block.staffIds.length !== 1 ? 's' : ''}`,
       align: 'center' as const,
-      width: '15%'
+      width: '25%'
     },
     {
       id: 'notes',
@@ -235,7 +287,7 @@ export function CoachingLogAutomationTool() {
   ];
 
   // Loading state
-  if (schoolsLoading || coachesLoading) {
+  if (schoolsLoading || coachesLoading || nycpsStaffLoading) {
     return (
       <div className="container mx-auto py-8 max-w-4xl">
         <div className="flex items-center justify-center p-8">
@@ -529,6 +581,7 @@ export function CoachingLogAutomationTool() {
                       <div><strong>Coach ID:</strong> {visitSchedule.coachId}</div>
                       <div><strong>School ID:</strong> {visitSchedule.schoolId}</div>
                       <div><strong>Events:</strong> {visitSchedule.timeBlocks?.length || 0} time blocks</div>
+                      <div><strong>ID:</strong> {visitSchedule._id}</div>
                     </div>
                     
                     {/* Time Blocks Table */}
@@ -543,6 +596,14 @@ export function CoachingLogAutomationTool() {
                           className="border rounded"
                           emptyMessage="No time blocks scheduled"
                         />
+                        
+                        {/* Debug: Show transformed events */}
+                        <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                          <h5 className="text-xs font-medium text-yellow-800 mb-1">Events for Automation:</h5>
+                          <pre className="text-xs text-yellow-700 overflow-auto max-h-24">
+                            {JSON.stringify(transformTimeBlocksToEvents(visitSchedule.timeBlocks, nycpsStaff), null, 2)}
+                          </pre>
+                        </div>
                       </div>
                     )}
                   </div>

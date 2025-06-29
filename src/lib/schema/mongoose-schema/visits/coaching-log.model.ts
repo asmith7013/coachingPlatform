@@ -3,6 +3,8 @@ import {
   YesNoEnum,
   LengthTypeEnum,
   TeacherLeaderTypeEnum,
+  NYCSolvesAdminEnum,
+  AdminDoneEnum,
   TeacherSupportTypes,
   GradeLevels,
 } from "@enums";
@@ -24,6 +26,19 @@ const coachingLogFields = {
   adminMeet: { type: Boolean },
   adminMeetDuration: { type: Number },
   NYCDone: { type: Boolean },
+  
+  // NEW: Individual coaching activity fields
+  oneOnOneCoachingDone: { type: Boolean, required: false },
+  microPLDone: { type: Boolean, required: false },
+  modelingPlanningDone: { type: Boolean, required: false },
+  walkthroughDone: { type: Boolean, required: false },
+  
+  // DEPRECATED: Keep for backward compatibility
+  CoachingDone: { type: Boolean, required: false },
+  
+  // NEW: Admin-related form fields
+  NYCSolvesAdmin: { type: String, enum: Object.values(NYCSolvesAdminEnum), required: false },
+  adminDone: { type: String, enum: Object.values(AdminDoneEnum), required: false },
   totalDuration: { type: String, enum: Object.values(LengthTypeEnum), required: true },
   solvesTouchpoint: { type: String, enum: Object.values(TeacherLeaderTypeEnum), required: true },
   

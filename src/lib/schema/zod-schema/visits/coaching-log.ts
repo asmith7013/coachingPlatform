@@ -3,6 +3,8 @@ import {
   ReasonDoneZod, 
   TotalDurationZod, 
   SolvesTouchpointZod,
+  NYCSolvesAdminZod,
+  AdminDoneZod,
   ImplementationExperienceZod,
   PrimaryStrategyCategoryZod,
   TeacherSupportTypesZod,
@@ -11,6 +13,8 @@ import {
   ReasonDone,
   TotalDuration,
   SolvesTouchpoint,
+  NYCSolvesAdmin,
+  AdminDone,
 } from "@enums"; 
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
@@ -20,7 +24,7 @@ import { getTotalDurationMinutes, hasMicroPL, hasModel } from "@schema/reference
 // Coaching Log Fields Schema
 export const CoachingLogFieldsSchema = z.object({
   coachingActionPlanId: z.string().optional().describe("Reference to CoachingActionPlan document _id - PRIMARY AGGREGATE"),
-  reasonDone: ReasonDoneZod.default(ReasonDoneZod.options[0]).describe("Why coaching was completed: Full completion or early termination"),
+  reasonDone: ReasonDoneZod.default(ReasonDone.NO).describe("Why coaching was completed: Full completion or early termination"),
   microPLTopic: z.string().optional().describe("Topic for micro professional learning session"),
   microPLDuration: z.number().optional().describe("Duration in minutes for micro professional learning session"),
   modelTopic: z.string().optional().describe("Topic for modeling session"),
@@ -33,6 +37,19 @@ export const CoachingLogFieldsSchema = z.object({
   adminMeet: z.boolean().optional().default(false).describe("Whether administrator joined the coaching session"),
   adminMeetDuration: z.number().optional().describe("Duration in minutes of administrator participation"),
   NYCDone: z.boolean().optional().default(false).describe("Whether NYC-specific coaching requirements were met"),
+  
+  // NEW: Admin-related form fields
+  NYCSolvesAdmin: NYCSolvesAdminZod.optional().describe("Did you meet with the school administrators and/or school-based coach today?"),
+  adminDone: AdminDoneZod.optional().describe("Did you meet with the school administrators and/or school-based coach about coaching progress at this school today?"),
+  
+  // ✅ NEW: Individual coaching activity controls (replacing single CoachingDone)
+  oneOnOneCoachingDone: z.boolean().optional().default(true).describe("Whether 1:1 coaching was provided at this school today"),
+  microPLDone: z.boolean().optional().default(false).describe("Whether micro PL was delivered at this school today"),
+  modelingPlanningDone: z.boolean().optional().default(false).describe("Whether modeling or planning was provided with teachers"),
+  walkthroughDone: z.boolean().optional().default(false).describe("Whether classroom walkthrough was conducted"),
+  
+  // ✅ DEPRECATED: Keep for backward compatibility
+  // CoachingDone: z.boolean().optional().default(false).describe("@deprecated - use oneOnOneCoachingDone, microPLDone, modelingPlanningDone instead"),
   totalDuration: TotalDurationZod.default(TotalDurationZod.options[0]).describe("Total session duration: 30min, 45min, 60min, or 90min"),
   solvesTouchpoint: SolvesTouchpointZod.default(SolvesTouchpointZod.options[0]).describe("Type of coaching support: Teacher, Leader, or Combined"),
   
@@ -125,7 +142,7 @@ export type CoachingLogReference = z.infer<typeof CoachingLogReferenceZodSchema>
 export function createCoachingLogDefaults(overrides: Partial<CoachingLogInput> = {}): CoachingLogInput {
   // Provide explicit defaults instead of parsing empty object
   const defaults: CoachingLogInput = {
-    reasonDone: ReasonDone.YES,
+    reasonDone: ReasonDone.NO,
     totalDuration: TotalDuration.FULL_DAY,
     solvesTouchpoint: SolvesTouchpoint.TEACHER_OR_LEADER,
     primaryStrategy: "Co-facilitation of lesson", // Temporary default
@@ -139,6 +156,20 @@ export function createCoachingLogDefaults(overrides: Partial<CoachingLogInput> =
     teachersSupportedTypes: [],
     schoolTravelDuration: 76,
     finalTravelDuration: 76,
+    
+    // ✅ NEW: Individual coaching activity defaults
+    oneOnOneCoachingDone: true,  // Default: Yes for 1:1 coaching
+    microPLDone: false,          // Default: No for micro PL
+    modelingPlanningDone: false, // Default: No for modeling/planning
+    walkthroughDone: false,      // Default: No for walkthroughs
+    
+    // DEPRECATED: Keep for backward compatibility
+    CoachingDone: false,
+    
+    // NEW: Admin field defaults
+    NYCSolvesAdmin: NYCSolvesAdmin.NO,
+    adminDone: AdminDone.NO,
+
     
     owners: [],
     // ... other required fields with defaults

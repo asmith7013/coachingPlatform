@@ -21,6 +21,8 @@
     "analyze-city-island-175": "tsx scripts/analyze-city-island-175-staff.ts",
     "fix-visit-staffids": "tsx scripts/fix-visit-schedule-staffids.ts",
     "complete-visit-analysis": "tsx scripts/complete-visit-schedule-analysis.ts",
+    "test-google-sheets": "tsx scripts/test-google-sheets/test-connection.ts",
+    "test-data-normalization": "tsx scripts/test-google-sheets/test-normalization.ts",
     "knip": "knip",
     "prebuild": "npm run generate-css && tsc --noEmit --strict && next lint --max-warnings=0"
   },
@@ -46,6 +48,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.6.3",
+    "googleapis": "^150.0.1",
     "knip": "^5.52.0",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.503.0",

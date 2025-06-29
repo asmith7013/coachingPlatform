@@ -11,18 +11,21 @@ import { z } from 'zod';
  */
 export enum GradeLevels {
   KINDERGARTEN = "Kindergarten",
-  GRADE_1 = "Grade 1",
-  GRADE_2 = "Grade 2",
-  GRADE_3 = "Grade 3",
-  GRADE_4 = "Grade 4",
-  GRADE_5 = "Grade 5",
-  GRADE_6 = "Grade 6",
-  GRADE_7 = "Grade 7",
-  GRADE_8 = "Grade 8",
-  GRADE_9 = "Grade 9",
-  GRADE_10 = "Grade 10",
-  GRADE_11 = "Grade 11",
-  GRADE_12 = "Grade 12",
+  GRADE_1 = "1st Grade",      // ✅ Changed from "Grade 1"
+  GRADE_2 = "2nd Grade",      // ✅ Changed from "Grade 2" 
+  GRADE_3 = "3rd Grade",      // ✅ Changed from "Grade 3"
+  GRADE_4 = "4th Grade",      // ✅ Changed from "Grade 4"
+  GRADE_5 = "5th Grade",      // ✅ Changed from "Grade 5"
+  GRADE_6 = "6th Grade",      // ✅ Changed from "Grade 6"
+  GRADE_7 = "7th Grade",      // ✅ Changed from "Grade 7"
+  GRADE_8 = "8th Grade",      // ✅ Changed from "Grade 8"
+  GRADE_9 = "9th Grade",      // ✅ Changed from "Grade 9"
+  GRADE_10 = "10th Grade",    // ✅ Changed from "Grade 10"
+  GRADE_11 = "11th Grade",    // ✅ Changed from "Grade 11"
+  GRADE_12 = "12th Grade",    // ✅ Changed from "Grade 12"
+  ALGEBRA_I = "Algebra I",
+  ALGEBRA_II = "Algebra II", 
+  GEOMETRY = "Geometry",
 }
 
 /**
@@ -341,6 +344,23 @@ export enum SolvesTouchpoint {
 }
 
 /**
+ * NYC Solves Admin Meeting Types
+ */
+export enum NYCSolvesAdmin {
+  YES_TEACHER_SUPPORT = "Yes - debriefed teacher support only",
+  YES_LEADER_SUPPORT = "Yes - provided leader specific support",
+  NO = "No"
+}
+
+/**
+ * Admin Meeting Completion Status
+ */
+export enum AdminDone {
+  YES = "Yes",
+  NO = "No"
+}
+
+/**
  * Teacher Support Types
  */
 export enum TeacherSupportTypes {
@@ -507,6 +527,12 @@ export type TotalDurationType = z.infer<typeof TotalDurationZod>;
 export const SolvesTouchpointZod = createZodEnum(SolvesTouchpoint);
 export type SolvesTouchpointType = z.infer<typeof SolvesTouchpointZod>;
 
+export const NYCSolvesAdminZod = createZodEnum(NYCSolvesAdmin);
+export type NYCSolvesAdminType = z.infer<typeof NYCSolvesAdminZod>;
+
+export const AdminDoneZod = createZodEnum(AdminDone);
+export type AdminDoneType = z.infer<typeof AdminDoneZod>;
+
 // Teacher Support Types
 export const TeacherSupportTypesZod = createZodEnum(TeacherSupportTypes);
 export type TeacherSupportType = z.infer<typeof TeacherSupportTypesZod>;
@@ -543,6 +569,8 @@ export { ModeDone as SettingTypesEnum };
 export { ReasonDone as YesNoEnum };
 export { TotalDuration as LengthTypeEnum };
 export { SolvesTouchpoint as TeacherLeaderTypeEnum };
+export { NYCSolvesAdmin as NYCSolvesAdminEnum };
+export { AdminDone as AdminDoneEnum };
 export { AllowedPurposes as AllowedPurposeEnum };
 
 // Duration requires special handling for Mongoose

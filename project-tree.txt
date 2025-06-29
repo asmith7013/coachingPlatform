@@ -1,5 +1,4 @@
 .
-├── CURSOR_PROMPT_FIX_DATE_TYPES.md
 ├── amplify
 │   ├── docs.md
 │   ├── scope.md
@@ -156,6 +155,9 @@
 │   │   ├── seed-cycles-coaching.ts
 │   │   ├── seed-look-fors.ts
 │   │   └── seed-schools-staff.ts
+│   ├── test-google-sheets
+│   │   ├── test-connection.ts
+│   │   └── test-normalization.ts
 │   └── test-monday-token.mjs
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
@@ -168,6 +170,9 @@
 │   │   │   └── sign-up
 │   │   │       └── page.tsx
 │   │   ├── actions
+│   │   │   ├── 313
+│   │   │   │   ├── index.ts
+│   │   │   │   └── sync-sheets.ts
 │   │   │   ├── coaching
 │   │   │   │   ├── cap-evidence.ts
 │   │   │   │   ├── cap-implementation-records.ts
@@ -214,6 +219,11 @@
 │   │   │       ├── visit-schedule-data.ts
 │   │   │       └── visits.ts
 │   │   ├── api
+│   │   │   ├── 313
+│   │   │   │   ├── sync
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── sync-manual
+│   │   │   │       └── route.ts
 │   │   │   ├── coaching-action-plans
 │   │   │   │   ├── [id]
 │   │   │   │   │   └── route.ts
@@ -952,13 +962,23 @@
 │   │   │   ├── coaching-log
 │   │   │   │   ├── README.md
 │   │   │   │   ├── mappers
-│   │   │   │   │   ├── visit-schedule-to-events.backup.ts
 │   │   │   │   │   ├── visit-schedule-to-events.ts
 │   │   │   │   │   └── visit-to-json.ts
 │   │   │   │   ├── services
-│   │   │   │   │   ├── playwright-form-filler.backup.ts
-│   │   │   │   │   └── playwright-form-filler.ts
+│   │   │   │   │   ├── playwright-form-filler.ts
+│   │   │   │   │   └── schema-form-mapper.ts
 │   │   │   │   └── types.ts
+│   │   │   ├── google-sheets
+│   │   │   │   ├── README.md
+│   │   │   │   ├── client.ts
+│   │   │   │   ├── data-processor.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── parsers
+│   │   │   │   │   └── row-parser.ts
+│   │   │   │   ├── types
+│   │   │   │   │   └── spreadsheet-types.ts
+│   │   │   │   └── validators
+│   │   │   │       └── row-validator.ts
 │   │   │   └── monday
 │   │   │       ├── adapters
 │   │   │       │   └── response-adapters.ts
@@ -998,6 +1018,8 @@
 │   │   │   │   └── shared-enums.ts
 │   │   │   ├── index.ts
 │   │   │   ├── mongoose-schema
+│   │   │   │   ├── 313
+│   │   │   │   │   └── core.ts
 │   │   │   │   ├── cap
 │   │   │   │   │   ├── cap-evidence.model.ts
 │   │   │   │   │   ├── cap-implementation-record.model.ts
@@ -1055,6 +1077,8 @@
 │   │   │   │       ├── coaching-log-helpers.ts
 │   │   │   │       └── index.ts
 │   │   │   └── zod-schema
+│   │   │       ├── 313
+│   │   │       │   └── core.ts
 │   │   │       ├── base-schemas.ts
 │   │   │       ├── cap
 │   │   │       │   ├── cap-evidence.ts
@@ -1338,4 +1362,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-390 directories, 949 files
+401 directories, 962 files

@@ -14,10 +14,11 @@ interface VisitStatusCardProps {
   visit: Visit;
 }
 
-// Helper function using existing date utilities
+// Helper function using existing date utilities with timezone fix
 function formatVisitDate(date?: string): string {
   if (!date) return 'No date';
   try {
+    // Use the fixed formatMediumDate function which now handles ISO strings properly
     return formatMediumDate(date);
   } catch {
     return 'Invalid date';

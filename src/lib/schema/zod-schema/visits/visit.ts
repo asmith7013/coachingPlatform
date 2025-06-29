@@ -45,7 +45,7 @@ export const VisitFieldsSchema = z.object({
   coachId: z.string().describe("Reference to Staff document _id of the coach conducting visit"),
   
   // Optional relationships
-  cycleId: z.string().optional().describe("Reference to Cycle document _id for coaching cycle"),
+  // cycleId: z.string().optional().describe("Reference to Cycle document _id for coaching cycle"),
   teacherId: z.string().optional().describe("Primary teacher for this visit (most common from schedule events)"),
   
   // Visit metadata

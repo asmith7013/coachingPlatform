@@ -21,7 +21,7 @@ const visitFields = {
   coachId: { type: String, required: true },
   
   // Optional relationships
-  cycleId: { type: String },
+  // cycleId: { type: String },
   teacherId: { type: String },
   
   // Visit metadata

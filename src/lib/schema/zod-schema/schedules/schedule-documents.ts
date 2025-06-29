@@ -41,7 +41,6 @@ export const TeacherScheduleZodSchema = BaseScheduleFields.extend({
 
 export const VisitScheduleZodSchema = BaseScheduleFields.extend({
   scheduleType: z.literal("visitSchedule"),
-  cycleId: z.string().describe("Reference to Cycle document _id"),
   date: z.string().optional().describe("ISO string for system timestamp"),
   coachingActionPlanId: z.string().describe("Reference to primary aggregate"),
   coachId: z.string().describe("Reference to coach Staff document _id"),

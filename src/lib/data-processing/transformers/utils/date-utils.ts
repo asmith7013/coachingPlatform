@@ -112,25 +112,47 @@ export function formatShortDate(dateString: string): string {
 /**
  * Format date as medium format: "Mon 15, 2024"
  * Accepts Date, ISO string, or YYYY-MM-DD string
+ * FIXED: Properly handles ISO strings without timezone conversion
  */
 export function formatMediumDate(input: string | Date): string {
-  let dateString: string;
+  let date: Date;
+  
   if (input instanceof Date) {
-    // Convert Date object to YYYY-MM-DD format
-    dateString = toDateString(input);
+    // Use the Date object directly
+    date = input;
   } else if (typeof input === 'string') {
     if (input.includes('T') || input.includes('Z')) {
-      // Convert ISO string to YYYY-MM-DD format
-      dateString = toDateString(new Date(input));
-    } else {
+      // For ISO strings, extract just the date part to avoid timezone issues
+      const datePart = input.split('T')[0]; // Extract YYYY-MM-DD
+      date = fromDateString(datePart); // Use our timezone-safe parser
+    } else if (input.match(/^\d{4}-\d{2}-\d{2}$/)) {
       // Already in YYYY-MM-DD format
-      dateString = input;
+      date = fromDateString(input);
+    } else {
+      // Fallback for other string formats
+      date = new Date(input);
     }
   } else {
     throw new Error('Input must be a Date object or string');
   }
-  // Use existing fromDateString function to maintain consistency
-  const date = fromDateString(dateString);
+  
+  return date.toLocaleDateString('en-US', { 
+    weekday: 'short', 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+}
+
+/**
+ * Format date from ISO string as medium format: "Mon 15, 2024"
+ * Specialized function for ISO date strings to avoid timezone conversion
+ */
+export function formatMediumDateFromISO(isoString: string): string {
+  // Extract just the date part from ISO string to avoid timezone conversion
+  const datePart = isoString.split('T')[0]; // Gets "2025-04-03" from "2025-04-03T00:00:00.000Z"
+  const date = fromDateString(datePart); // Parse in local timezone
+  
   return date.toLocaleDateString('en-US', { 
     weekday: 'short', 
     month: 'short', 

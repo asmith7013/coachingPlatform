@@ -1,5 +1,5 @@
 import React from 'react';
-import { TodaysVisitDashboard } from '@/components/features/todaysVisitDashboard/TodaysVisitDashboard';
+// import { TodaysVisitDashboard } from '@/components/features/todaysVisitDashboard/TodaysVisitDashboard';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 
@@ -18,8 +18,13 @@ export default function TodaysVisitDashboardExample() {
         </Text>
       </div>
 
-      {/* Dashboard */}
-      <TodaysVisitDashboard />
+      {/* Dashboard - Temporarily disabled due to build issues */}
+      <div className="p-8 border border-gray-200 rounded-lg bg-gray-50">
+        <Text color="muted">
+          Dashboard temporarily disabled due to build issues. Will be re-enabled after fixing React Context problems.
+        </Text>
+      </div>
+      {/* <TodaysVisitDashboard /> */}
 
       {/* Implementation Notes */}
       <div className="border-t pt-8 space-y-4">

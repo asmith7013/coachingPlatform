@@ -11,7 +11,7 @@ import { uploadFileWithProgress } from "@server/file-handling/file-upload";
 import { bulkUploadToDB } from "@server/crud/bulk-operations";
 import { SchoolInput } from "@domain-types/school";
 import { QueryParams } from "@core-types/query";
-import { parseSchoolSlug } from '@data-processing/transformers/utils/school-slug-utils';
+import { parseSchoolSlug, createSchoolSlug } from '@data-processing/transformers/utils/school-slug-utils';
 
 // Create standard CRUD actions for Schools
 const schoolActions = createCrudActions({
@@ -49,6 +49,9 @@ export async function fetchSchoolById(id: string) {
 /**
  * Convert school slug to ObjectID for efficient database operations
  * Follows our schema-driven approach with proper validation
+ * 
+ * NEW APPROACH: Instead of trying to reverse-engineer the original district/school values,
+ * we find all schools and check which one would generate the same slug.
  */
 export async function getSchoolIdFromSlug(slug: string): Promise<string | null> {
   "use server";
@@ -58,13 +61,17 @@ export async function getSchoolIdFromSlug(slug: string): Promise<string | null> 
   
   return withDbConnection(async () => {
     try {
-      // Use case-insensitive regex matching for district and school number
-      const school = await SchoolModel.findOne({
-        district: new RegExp(`^${slugData.district}$`, 'i'),
-        schoolNumber: new RegExp(`^${slugData.schoolNumber}$`, 'i')
-      }).select('_id');
+      // Get all schools and find the one that would generate this slug
+      const schools = await SchoolModel.find({}, { district: 1, schoolNumber: 1 });
       
-      return school?._id?.toString() || null;
+      for (const school of schools) {
+        const schoolSlug = createSchoolSlug(school.district, school.schoolNumber);
+        if (schoolSlug === slug) {
+          return school._id.toString();
+        }
+      }
+      
+      return null;
     } catch (error) {
       console.error('Error looking up school ID from slug:', error);
       handleServerError(error, 'getSchoolIdFromSlug');

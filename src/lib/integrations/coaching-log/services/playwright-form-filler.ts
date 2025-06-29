@@ -2,12 +2,12 @@
 
 import { chromium, Browser, Page } from 'playwright';
 import { CoachingLogInput } from '@zod-schema/visits/coaching-log';
-import { 
-  getImplementationOptions,
-  getPrimaryStrategyOptions 
-} from '@ui/constants/coaching-log';
+// Removed unused hierarchical imports - now handled by schema mapper
 import { fetchVisitScheduleData } from '@actions/visits/visit-schedule-data';
 import { visitScheduleToEventData } from '../mappers/visit-schedule-to-events';
+import { SchemaFormMapper } from './schema-form-mapper';
+import { VisitScheduleBlock } from '@zod-schema/schedules/schedule-events';
+
 
 // Type definitions based on your working JSON structure
 interface FormFieldEntry {
@@ -58,6 +58,7 @@ export class CoachingLogFormFiller {
   private browser: Browser | null = null;
   private page: Page | null = null;
   private readonly formUrl = 'https://tl-coach-log-form-1a0068b965da.herokuapp.com/';
+  private currentStaffLookup: Map<string, { _id: string; staffName: string; [key: string]: unknown }> | null = null; // NEW: Store staff lookup
 
   async initialize(): Promise<void> {
     console.log('Starting CoachingLogFormFiller...');
@@ -67,6 +68,16 @@ export class CoachingLogFormFiller {
     });
 
     this.page = await this.browser.newPage();
+
+    // Set viewport and window size/position
+    await this.page.setViewportSize({ width: 900, height: 750 });
+    
+    // Set window position to top-left corner (0, 0) and size
+    await this.page.evaluate(() => {
+      window.resizeTo(900, 750);
+      window.moveTo(-20, -20);
+    });
+    
     await this.page.goto(this.formUrl, { waitUntil: 'networkidle' });
   }
 
@@ -79,8 +90,11 @@ export class CoachingLogFormFiller {
       coachName?: string;
       visitDate?: string;     // NEW: from related visit
       modeDone?: string;      // NEW: from related visit
-      events?: EventData[];
+      events?: EventData[];   // ← Used for form automation (transformed data)
+      timeBlocks?: VisitScheduleBlock[];  // ← Used for banner display (raw data)
       visitId?: string;       // NEW: for visit record updates
+      teacherCount?: number;  // NEW: Add calculated teacher count
+      schoolGradeLevels?: string[];  // NEW: Add school grade levels
     }
   ): Promise<AutomationResult> {
     if (!this.page) {
@@ -88,33 +102,49 @@ export class CoachingLogFormFiller {
     }
 
     try {
-      console.log('📝 Filling form from CoachingLog schema data:', coachingLog);
+      console.log('📝 Filling form from CoachingLog schema data:', coachingLog, 'formOverrides', formOverrides);
 
-      // Map schema fields directly to form fields
+      // CALLING BANNER - Log form data being passed
+      console.log('🔍 CALLING BANNER - Form overrides being passed:', {
+        visitDate: formOverrides?.visitDate,
+        eventsCount: formOverrides?.events?.length || 0,
+        timeBlocksCount: formOverrides?.timeBlocks?.length || 0,
+        schoolName: formOverrides?.schoolName,
+        coachName: formOverrides?.coachName,
+        fullEvents: formOverrides?.events,
+        fullTimeBlocks: formOverrides?.timeBlocks,
+        firstEvent: formOverrides?.events?.[0],
+        firstTimeBlock: formOverrides?.timeBlocks?.[0]
+      });
+
+      // await this.showVisitInfoSideBanner({
+      //   date: formOverrides?.visitDate,
+      //   timeBlocks: formOverrides?.timeBlocks || [], // ← Now using correct timeBlocks data
+      //   schoolName: formOverrides?.schoolName || 'Unknown School',
+      //   coachName: formOverrides?.coachName || 'Unknown Coach'
+      // });
+
+      // ✅ SINGLE SOURCE OF TRUTH: Map schema to form fields once
       const formData = this.mapSchemaToFormFields(coachingLog, formOverrides);
       
-      // Fill form sections using existing methods
-      await this.selectAllDropdowns("CoachingDone", coachingLog.reasonDone, []);
+      // ✅ CONSISTENT: Fill all fields from the mapped data (no hardcoded overrides)
       await this.populateDropdownsFromSchema(formData);
-      
-      // NEW: Fill contractor-specific fields after basic fields
       await this.populateContractorFields(formData);
-      
       await this.fillCheckboxFieldsFromSchema(formData);
       await this.fillTextFieldsFromSchema(formData);
       
-      // Handle events if provided (from visit schedule or legacy data)
+      // Wait for form to be fully loaded and staff names to be available
+      await this.waitForStaffNamesLoaded();
+      
+      // Handle events if provided
       const events = formOverrides?.events || [];
       if (events.length > 0) {
         console.log('📅 Populating coaching sessions from events:', events.length);
-        await this.populateCoachingSessions(events);
-      } else {
-        console.log('⚠️ No events provided for coaching sessions');
+        await this.populateCoachingSessions(events as []);
       }
       
-      // Fill strategy dropdowns
-      const dropdownsToFill = ['implementationIndicator', 'supportCycle', 'PrimaryStrategy', 'solvesSpecificStrategy'];
-      await this.fillMultipleDropdownsFromSchema(dropdownsToFill, formData);
+      // ✅ FIXED: Fill strategy dropdowns without overriding previous values
+      await this.fillRemainingStrategyFields(formData);
 
       console.log("✅ Form filled successfully from schema!");
       this.showNotification();
@@ -161,20 +191,31 @@ export class CoachingLogFormFiller {
       
       const scheduleData = result.data;
       
-      // Transform to event data (existing logic unchanged)
+      // Transform to event data for form automation
       const events = visitScheduleToEventData(
         scheduleData.visitSchedule,
-        scheduleData.staffLookup
+        new Map(scheduleData.nycpsStaff.map(staff => [staff._id, staff]))
       );
       
-      // Use visit data for additional overrides (existing logic unchanged)
+      // NEW: Store staff lookup for banner display
+      this.currentStaffLookup = new Map(scheduleData.nycpsStaff.map(staff => [staff._id, staff]));
+      
+      // ✅ ENHANCED: Better grade level handling with separated data types
       const enhancedOverrides = {
         ...formOverrides,
         visitDate: scheduleData.visit?.date,
         modeDone: scheduleData.visit?.modeDone,
-        events,
-        visitId  // Pass visitId for record updates
+        events: events, // ← Transformed events for form automation
+        timeBlocks: scheduleData.visitSchedule?.timeBlocks || [], // ← Raw timeBlocks for banner
+        visitId,
+        teacherCount: scheduleData.teacherCount,
+        // ✅ FIXED: Use proper field name and provide fallbacks
+        schoolGradeLevels: scheduleData.school?.gradeLevelsSupported ||
+                           scheduleData.visit?.gradeLevelsSupported ||
+                           []
       };
+      
+      console.log('🎯 Enhanced overrides for form:', enhancedOverrides);
       
       // Fill form using existing schema method (unchanged)
       return await this.fillFormFromSchema(coachingLog, enhancedOverrides);
@@ -216,30 +257,30 @@ export class CoachingLogFormFiller {
 
       // Handle complex dropdown selections
       const dropdownSelections: DropdownSelection[] = [
-        { 
-          unique: "Did you deliver a micro PL at this school today?", 
-          target: "Names of participants:", 
-          name: "microPLParticipants[]", 
-          values: ["James Frey", "Michele Patafio", "Cara Garvey"] 
-        },
-        { 
-          unique: "Did you deliver a micro PL at this school today?", 
-          target: "Participants were:", 
-          name: "microPLParticipantRoles[]", 
-          values: ["Teacher"] 
-        },
-        { 
-          unique: "Did you provide coaching, modeling, or planning with a group of teachers at this school today?", 
-          target: "Names of participants:", 
-          name: "modelParticipants[]", 
-          values: ["James Frey", "Michele Patafio"] 
-        },
-        { 
-          unique: "Did you provide coaching, modeling, or planning with a group of teachers at this school today?", 
-          target: "Participants were:", 
-          name: "modelParticipantRoles[]", 
-          values: ["Teacher"] 
-        }
+        // { 
+        //   unique: "Did you deliver a micro PL at this school today?", 
+        //   target: "Names of participants:", 
+        //   name: "microPLParticipants[]", 
+        //   values: ["James Frey", "Michele Patafio", "Cara Garvey"] 
+        // },
+        // { 
+        //   unique: "Did you deliver a micro PL at this school today?", 
+        //   target: "Participants were:", 
+        //   name: "microPLParticipantRoles[]", 
+        //   values: ["Teacher"] 
+        // },
+        // { 
+        //   unique: "Did you provide coaching, modeling, or planning with a group of teachers at this school today?", 
+        //   target: "Names of participants:", 
+        //   name: "modelParticipants[]", 
+        //   values: ["James Frey", "Michele Patafio"] 
+        // },
+        // { 
+        //   unique: "Did you provide coaching, modeling, or planning with a group of teachers at this school today?", 
+        //   target: "Participants were:", 
+        //   name: "modelParticipantRoles[]", 
+        //   values: ["Teacher"] 
+        // }
       ];
 
       for (const selection of dropdownSelections) {
@@ -264,72 +305,43 @@ export class CoachingLogFormFiller {
     }
   }
 
-  // NEW: Direct schema-to-form mapping with smart constants integration
+  // ✅ ENHANCED: Better boolean to form value mapping
   private mapSchemaToFormFields(
     coachingLog: CoachingLogInput,
     overrides?: {
       schoolName?: string;
       districtName?: string;
       coachName?: string;
-      visitDate?: string;     // NEW: from related visit
-      modeDone?: string;      // NEW: from related visit
+      visitDate?: string;
+      modeDone?: string;
+      teacherCount?: number;
+      schoolGradeLevels?: string[];
+      visitId?: string;
+      events?: EventData[];           // ← For form automation (transformed)
+      timeBlocks?: VisitScheduleBlock[]; // ← For banner display (raw)
     }
   ): Record<string, string | number | boolean | string[]> {
     
-    // Use constants for smart hierarchical field selection
-    const implementationExperience = coachingLog.implementationExperience || 'First year of Implementation';
-    const primaryStrategyCategory = coachingLog.primaryStrategyCategory || coachingLog.primaryStrategy || 'In-class support';
+    const mapper = new SchemaFormMapper();
+    const baseMapping = mapper.mapToFormFields(coachingLog, overrides);
     
-    // Get correct descendant values using existing constants
-    const implementationOptions = getImplementationOptions(implementationExperience);
-    const strategyOptions = getPrimaryStrategyOptions(primaryStrategyCategory);
+    // ✅ ENSURE consistent boolean to string conversion for form fields
+    const formMapping = { ...baseMapping };
     
-    return {
-      // Direct schema mappings
-      reasonDone: coachingLog.reasonDone,
-      totalDuration: coachingLog.totalDuration,
-      
-      // FIX: Use correct form field name with capital 'S' and map value
-      Solvestouchpoint: this.mapSolvesTouchpointValue(coachingLog.solvesTouchpoint),
-      
-      // SMART: Use constants for hierarchical mapping
-      implementationIndicator: implementationOptions[0] || 'Doing the Math: Lesson Planning',
-      PrimaryStrategy: primaryStrategyCategory,
-      solvesSpecificStrategy: strategyOptions[0] || coachingLog.solvesSpecificStrategy || 'Modeling full lesson',
-      
-      // Optional schema fields
-      microPLTopic: coachingLog.microPLTopic || '',
-      microPLDuration: coachingLog.microPLDuration?.toString() || '',
-      modelTopic: coachingLog.modelTopic || '',
-      modelDuration: coachingLog.modelDuration?.toString() || '',
-      
-      // Travel Duration Fields
-      schoolTravelDuration: coachingLog.schoolTravelDuration?.toString() || '76',
-      finalTravelDuration: coachingLog.finalTravelDuration?.toString() || '76',
-      
-      adminMeet: coachingLog.adminMeet ? 'Yes' : 'No',
-      adminMeetDuration: coachingLog.adminMeetDuration?.toString() || '',
-      NYCDone: this.determineNYCCoachStatus(coachingLog),
-      
-      // Form-specific overrides
-      schoolName: overrides?.schoolName || '',
-      districtName: overrides?.districtName || '',
-      coachName: overrides?.coachName || 'Coach',
-      
-            // Visit context from overrides (visit data passed in)
-      coachingDate: overrides?.visitDate || new Date().toISOString().split('T')[0],
-      modeDone: overrides?.modeDone || 'In-person',
-        
-      // UPDATED: Use schema values instead of hardcoded
-      isContractor: coachingLog.isContractor ? 'Yes' : 'No',  // CHANGED from hardcoded 'Yes'
-      teachersSupportedNumber: coachingLog.teachersSupportedNumber?.toString() || '1',
-      NYCSolvesGradeLevels: coachingLog.gradeLevelsSupported?.length > 0 
-        ? coachingLog.gradeLevelsSupported 
-        : ['6th Grade', '7th Grade', '8th Grade'], // Use schema or fallback
-      teachersSupportedType: coachingLog.teachersSupportedTypes?.length > 0
-        ? coachingLog.teachersSupportedTypes 
-        : ['None of the above'] // Use schema or fallback
-    };
+    // Convert boolean fields to form-expected string values
+    const booleanFields = [
+      'oneOnOneCoachingDone', 'microPLDone', 'modelingPlanningDone', 'walkthroughDone',
+      'adminMeet', 'NYCDone', 'CoachingDone' // Keep CoachingDone for backward compatibility
+    ];
+    booleanFields.forEach(field => {
+      if (typeof formMapping[field] === 'boolean') {
+        formMapping[field] = formMapping[field] ? 'Yes' : 'No';
+      }
+    });
+    
+    // Note: NYCSolvesAdmin and adminDone are enum fields (not boolean), so no conversion needed
+    
+    return formMapping;
   }
 
   // ADD: Ultra-simple fallback helper method
@@ -340,35 +352,35 @@ export class CoachingLogFormFiller {
   }
 
   // ADD: Simple value mapping method (Fixed: Remove &amp;)
-  private mapSolvesTouchpointValue(value: string): string {
-    const valueMap: Record<string, string> = {
-      'Teacher support': 'Teacher OR teacher & leader support',  // Fixed: Raw &
-      'Leader support only': 'Leader support only', 
-      'Teacher OR teacher & leader support': 'Teacher OR teacher & leader support'  // Fixed: Raw &
-    };
-    return valueMap[value] || value;
-  }
+  // private mapSolvesTouchpointValue(value: string): string {
+  //   const valueMap: Record<string, string> = {
+  //     'Teacher support': 'Teacher OR teacher & leader support',  // Fixed: Raw &
+  //     'Leader support only': 'Leader support only', 
+  //     'Teacher OR teacher & leader support': 'Teacher OR teacher & leader support'  // Fixed: Raw &
+  //   };
+  //   return valueMap[value] || value;
+  // }
 
-  // ADD: Determine NYC Coach status from schema data
-  private determineNYCCoachStatus(coachingLog: CoachingLogInput): string {
-    // If we have SOLVES-specific data, we're a NYC Solves coach
-    if (coachingLog.solvesTouchpoint && coachingLog.solvesTouchpoint !== 'No') {
-      return 'Yes, NYC Solves';
-    }
+  // // ADD: Determine NYC Coach status from schema data
+  // private determineNYCCoachStatus(coachingLog: CoachingLogInput): string {
+  //   // If we have SOLVES-specific data, we're a NYC Solves coach
+  //   if (coachingLog.solvesTouchpoint && coachingLog.solvesTouchpoint !== 'No') {
+  //     return 'Yes, NYC Solves';
+  //   }
     
-    // If we have implementation experience data, likely NYC Solves
-    if (coachingLog.implementationExperience) {
-      return 'Yes, NYC Solves';
-    }
+  //   // If we have implementation experience data, likely NYC Solves
+  //   if (coachingLog.implementationExperience) {
+  //     return 'Yes, NYC Solves';
+  //   }
     
-    // If we have primary strategy data, likely NYC Solves  
-    if (coachingLog.primaryStrategy || coachingLog.primaryStrategyCategory) {
-      return 'Yes, NYC Solves';
-    }
+  //   // If we have primary strategy data, likely NYC Solves  
+  //   if (coachingLog.primaryStrategy || coachingLog.primaryStrategyCategory) {
+  //     return 'Yes, NYC Solves';
+  //   }
     
-    // Default to No if no NYC-specific data
-    return 'No';
-  }
+  //   // Default to No if no NYC-specific data
+  //   return 'No';
+  // }
 
   private convertFormDataToObject(jsonData: FormFieldEntry[]): FormData {
     const formData: FormData = {};
@@ -421,75 +433,71 @@ export class CoachingLogFormFiller {
       return;
     }
 
-    console.log("📅 Selecting date:", dateValue);
+    console.log("📅 Setting date as text:", dateValue);
+    
     try {
-      const datePicker = this.page.locator('input[name="date"]');
-      await datePicker.click();
-
-      const dateObj = new Date(`${dateValue}T00:00:00`);
-      if (isNaN(dateObj.getTime())) {
-        console.error(`❌ Invalid date format: ${dateValue}`);
-        return;
-      }
-
-      const targetMonth = dateObj.toLocaleString('en-US', { month: 'long' });
-      const targetYear = dateObj.getFullYear();
-      const targetDay = dateObj.getDate();
-
-      console.log(`🔹 Target Date: ${targetMonth} ${targetDay}, ${targetYear}`);
-
-      // Navigate to correct year
-      while (true) {
-        const displayedYearLocator = this.page.locator('.react-datepicker__current-month');
-        const displayedYearText = await displayedYearLocator.innerText();
-        const displayedYear = parseInt(displayedYearText.split(" ")[1]);
-
-        if (displayedYear === targetYear) break;
-
-        if (displayedYear < targetYear) {
-          console.log(`🔄 Increasing year: Clicking NEXT arrow`);
-          await this.page.locator('.react-datepicker__navigation--next').click();
-        } else {
-          console.log(`🔄 Decreasing year: Clicking PREV arrow`);
-          await this.page.locator('.react-datepicker__navigation--previous').click();
-        }
-        await this.page.waitForTimeout(500);
-      }
-
-      // Navigate to correct month
-      while (true) {
-        const displayedMonthLocator = this.page.locator('.react-datepicker__current-month');
-        const displayedMonthText = await displayedMonthLocator.innerText();
-        const displayedMonth = displayedMonthText.split(" ")[0];
-
-        if (displayedMonth === targetMonth) break;
-
-        if (new Date(`${displayedMonth} 1, ${targetYear}`).getMonth() < new Date(`${targetMonth} 1, ${targetYear}`).getMonth()) {
-          console.log(`🔄 Moving forward to month: ${targetMonth}`);
-          await this.page.locator('.react-datepicker__navigation--next').click();
-        } else {
-          console.log(`🔄 Moving backward to month: ${targetMonth}`);
-          await this.page.locator('.react-datepicker__navigation--previous').click();
-        }
-        await this.page.waitForTimeout(500);
-      }
-
-      // Select the day
-      const daySelector = `xpath=//div[contains(@class, 'react-datepicker__day') and not(contains(@class, 'outside-month')) and text()='${targetDay}']`;
-      const dayButton = this.page.locator(daySelector);
-
-      if (await dayButton.count() === 0) {
-        console.error(`❌ Could not find date: ${targetMonth} ${targetDay}, ${targetYear}`);
-        return;
-      }
-
-      console.log(`✅ Clicking on date: ${targetMonth} ${targetDay}, ${targetYear}`);
-      await dayButton.click();
-      await this.page.locator('body').click(); // Click outside to confirm
-
-      console.log(`✅ Successfully selected date: ${targetMonth} ${targetDay}, ${targetYear}`);
+      // Convert date to MM/DD/YYYY format
+      const formattedDate = this.formatDateForForm(dateValue);
+      console.log(`📅 Formatted date: ${dateValue} → ${formattedDate}`);
+      
+      // Simply fill the input field with the formatted date
+      const dateInput = this.page.locator('input[name="date"]');
+      await dateInput.waitFor({ state: 'visible', timeout: 5000 });
+      
+      // Clear and fill the input
+      await dateInput.fill(formattedDate);
+      
+      // Trigger change event to ensure React recognizes the change
+      await dateInput.dispatchEvent('change');
+      await dateInput.dispatchEvent('blur');
+      
+      console.log(`✅ Successfully set date to: ${formattedDate}`);
+      
     } catch (error) {
-      console.error("❌ Error selecting date:", error);
+      console.error("❌ Error setting date:", error);
+    }
+  }
+
+  /**
+   * Convert various date formats to MM/DD/YYYY format expected by the form
+   */
+  private formatDateForForm(dateValue: string): string {
+    try {
+      // Handle different input formats
+      let dateObj: Date;
+      
+      // If already in MM/DD/YYYY format, return as-is
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateValue)) {
+        return dateValue;
+      }
+      
+      // If in ISO format (YYYY-MM-DD with optional time and timezone)
+      if (/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?)?$/.test(dateValue)) {
+        dateObj = new Date(dateValue);
+      } else {
+        // Try parsing as general date
+        dateObj = new Date(dateValue);
+      }
+      
+      if (isNaN(dateObj.getTime())) {
+        throw new Error(`Invalid date format: ${dateValue}`);
+      }
+      
+      // Format as MM/DD/YYYY using UTC to avoid timezone issues
+      const month = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getUTCDate()).padStart(2, '0');
+      const year = dateObj.getUTCFullYear();
+      
+      return `${month}/${day}/${year}`;
+      
+    } catch (error) {
+      console.error(`❌ Error formatting date "${dateValue}":`, error);
+      // Fallback to today's date in correct format using UTC
+      const today = new Date();
+      const month = String(today.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(today.getUTCDate()).padStart(2, '0');
+      const year = today.getUTCFullYear();
+      return `${month}/${day}/${year}`;
     }
   }
 
@@ -630,52 +638,201 @@ export class CoachingLogFormFiller {
   }
 
   // NEW: Schema-based dropdown population
+  // ✅ FIXED: Single, comprehensive dropdown population method
   private async populateDropdownsFromSchema(formData: Record<string, string | number | boolean | string[]>): Promise<void> {
-    const dropdownFields = [
+    
+    // ✅ ALL dropdown fields handled consistently from schema
+    const allDropdownFields = [
       "coachName",
       "districtName", 
       "schoolName",
       "modeDone",
-      "isContractor",    // This triggers the conditional fields
+      "isContractor",
       "coachingDate",
-      "reasonDone",
-      "NYCDone",  // Critical: Do this BEFORE other NYC fields
-      // REMOVED: Travel duration fields moved to contractor-specific section
+      "reasonDone",        // ✅ FIXED: Only set once from schema
+      "NYCDone",
+      "walkthroughDone",
+      "Solvestouchpoint",
+      "totalDuration",
+      "schoolTravelDuration",  // Will be skipped if not contractor
+      "finalTravelDuration",   // Will be skipped if not contractor
+      "NYCSolvesAdmin",       // NEW: Admin meeting type
+      "adminDone"             // NEW: Admin progress meeting
     ];
 
-    for (const field of dropdownFields) {
-      if (formData[field]) {
+    for (const field of allDropdownFields) {
+      if (formData[field] !== undefined) {
         if (field === 'coachingDate') {
           await this.selectDate(formData[field] as string);
         } else {
           await this.selectDropdown(field, formData[field] as string);
           
-          // If we just selected contractor status, wait for conditional fields
-          if (field === 'isContractor') {
-            console.log('⏳ Waiting for contractor-specific fields to appear...');
-            await this.page?.waitForTimeout(2000);
-          }
-          
-          // If we just selected NYC Coach status, wait for conditional fields to appear
-          if (field === 'NYCDone') {
-            console.log('⏳ Waiting for NYC-specific fields to appear...');
+          // Wait for conditional fields after specific selections
+          if (field === 'isContractor' || field === 'NYCDone') {
+            console.log(`⏳ Waiting for ${field}-dependent fields to appear...`);
             await this.page?.waitForTimeout(2000);
           }
         }
       }
     }
 
-    // Now try the NYC-specific fields that should be visible
-    const nycFields = ["Solvestouchpoint", "totalDuration"];
-    for (const field of nycFields) {
+    // ✅ FIXED: Handle CoachingDone consistently from schema
+    await this.handleCoachingDoneFromSchema(formData);
+
+    // Wait for any remaining conditional fields
+    console.log('⏳ Waiting for all conditional fields to appear...');
+    await this.page?.waitForTimeout(3000);
+  }
+
+  // ✅ NEW: Handle CoachingDone dropdowns individually from schema
+  private async handleCoachingDoneFromSchema(formData: Record<string, string | number | boolean | string[]>): Promise<void> {
+    console.log('🔹 Setting CoachingDone dropdowns individually...');
+    
+    // Map schema fields to form dropdown values
+    const coachingDoneValues = [
+      formData.oneOnOneCoachingDone ? 'Yes' : 'No',      // Dropdown #1: 1:1 coaching
+      formData.microPLDone ? 'Yes' : 'No',               // Dropdown #2: micro PL  
+      formData.modelingPlanningDone ? 'Yes' : 'No'       // Dropdown #3: modeling/planning
+    ];
+    
+    console.log('🎯 Setting CoachingDone values:', coachingDoneValues);
+    
+    // Set each dropdown individually using existing selectDropdownByIndex method
+    for (let i = 0; i < coachingDoneValues.length; i++) {
+      await this.selectDropdownByIndex("CoachingDone", i, coachingDoneValues[i]);
+    }
+    
+    console.log('✅ Successfully set all CoachingDone dropdowns individually');
+  }
+
+  // ✅ LEGACY: Keep for backward compatibility (but prefer handleCoachingDoneFromSchema)
+  private async handleCoachingDoneDropdowns(): Promise<void> {
+    console.log('🔹 Setting all CoachingDone dropdowns to "No"...');
+    
+    try {
+      // Method 1: Use .all() (recommended)
+      await this.selectAllDropdownsWithSameName("CoachingDone", "No");
+      
+    } catch {
+      console.warn('⚠️ .all() method failed, trying individual selection...');
+      
+      // Fallback: Try each dropdown individually by index
+      const dropdownCount = await this.page!.locator('select[name="CoachingDone"]').count();
+      
+      for (let i = 0; i < dropdownCount; i++) {
+        await this.selectDropdownByIndex("CoachingDone", i, "No");
+      }
+    }
+  }
+
+  // Solution 1: Use .all() to select all matching elements
+  private async selectAllDropdownsWithSameName(name: string, value: string): Promise<void> {
+    if (!this.page) return;
+
+    try {
+      console.log(`🔹 Selecting '${value}' for ALL '${name}' dropdowns...`);
+
+      // Get all dropdowns with the same name
+      const dropdowns = this.page.locator(`select[name="${name}"]`);
+      const dropdownCount = await dropdowns.count();
+      
+      if (dropdownCount === 0) {
+        console.warn(`⚠️ No '${name}' dropdowns found.`);
+        return;
+      }
+
+      console.log(`✅ Found ${dropdownCount} '${name}' dropdown(s). Setting all to '${value}'...`);
+
+      // Use .all() to get all matching elements, then iterate
+      const allDropdowns = await dropdowns.all();
+      
+      for (let i = 0; i < allDropdowns.length; i++) {
+        const dropdown = allDropdowns[i];
+        
+        try {
+          const options = await dropdown.locator('option').allTextContents();
+          console.log(`📋 Dropdown #${i + 1} options:`, options);
+          
+          if (options.includes(value)) {
+            await dropdown.selectOption({ label: value });
+            console.log(`✅ Set dropdown #${i + 1} to '${value}'`);
+          } else {
+            console.warn(`⚠️ Value '${value}' not found in dropdown #${i + 1}`);
+          }
+          
+          // Small delay between selections
+          await this.page.waitForTimeout(300);
+          
+        } catch (error) {
+          console.error(`❌ Error with dropdown #${i + 1}:`, error);
+        }
+      }
+
+      console.log(`✅ Successfully processed all ${dropdownCount} '${name}' dropdowns.`);
+    } catch (error) {
+      console.error(`❌ Error selecting '${value}' for '${name}' dropdowns:`, error);
+    }
+  }
+
+  // ✅ ENHANCED: Use .nth() to target specific instances with better value matching
+  private async selectDropdownByIndex(name: string, index: number, value: string): Promise<void> {
+    if (!this.page) return;
+
+    try {
+      console.log(`🔹 Setting '${name}' dropdown #${index + 1} to '${value}'...`);
+
+      const dropdown = this.page.locator(`select[name="${name}"]`).nth(index);
+      
+      await dropdown.waitFor({ state: 'visible', timeout: 5000 });
+      
+      const options = await dropdown.locator('option').allTextContents();
+      console.log(`📋 Dropdown #${index + 1} options:`, options);
+      
+      // Handle case-insensitive matching for form values like "yes"/"no" vs "Yes"/"No"
+      const matchingOption = options.find(opt => 
+        opt.toLowerCase() === value.toLowerCase() || 
+        (value.toLowerCase() === 'yes' && opt.toLowerCase() === 'yes') ||
+        (value.toLowerCase() === 'no' && opt.toLowerCase() === 'no')
+      );
+      
+      if (matchingOption) {
+        await dropdown.selectOption({ label: matchingOption });
+        console.log(`✅ Set dropdown #${index + 1} to '${matchingOption}'`);
+      } else {
+        console.warn(`⚠️ Value '${value}' not found in dropdown #${index + 1}, available:`, options);
+        // Fallback to first valid option
+        const fallback = options.find(opt => opt.trim() !== '');
+        if (fallback) {
+          await dropdown.selectOption({ label: fallback });
+          console.log(`🔄 Used fallback '${fallback}' for dropdown #${index + 1}`);
+        }
+      }
+    } catch (error) {
+      console.error(`❌ Error setting dropdown #${index + 1}:`, error);
+    }
+  }
+
+  // ✅ FIXED: Fill strategy fields using correct methods for single vs multiple dropdowns
+  private async fillRemainingStrategyFields(formData: Record<string, string | number | boolean | string[]>): Promise<void> {
+    // Single-instance fields (unique across the form)
+    const singleFields = ['implementationIndicator', 'supportCycle'];
+    
+    for (const field of singleFields) {
       if (formData[field]) {
+        console.log(`📝 Setting single strategy field: ${field} = ${formData[field]}`);
         await this.selectDropdown(field, formData[field] as string);
       }
     }
-
-    // Wait for any remaining conditional fields to appear
-    console.log('⏳ Waiting for grade level-dependent fields to appear...');
-    await this.page?.waitForTimeout(3000);
+    
+    // Multi-instance fields (repeated across grade levels) - use selectAllDropdowns
+    const multiFields = ['PrimaryStrategy', 'solvesSpecificStrategy'];
+    
+    for (const field of multiFields) {
+      if (formData[field]) {
+        console.log(`📝 Setting multi-grade strategy field: ${field} = ${formData[field]} (all grade levels)`);
+        await this.selectAllDropdowns(field, formData[field] as string, []);
+      }
+    }
   }
 
   // NEW METHOD: Handle contractor-specific fields
@@ -753,34 +910,45 @@ export class CoachingLogFormFiller {
 
       console.log(`✅ Found ${dropdownCount} '${selector}' dropdown(s). Processing...`);
 
-      for (let i = 0; i < dropdownCount; i++) {
-        const options = await dropdowns.nth(i).locator('option').allTextContents();
-        console.log(`📋 Available options for '${selector}' dropdown #${i + 1}:`, options);
-        
-        let finalValue = value;
+      // FIX: Use .all() instead of .nth() in a loop to avoid strict mode issues
+      const allDropdowns = await dropdowns.all();
 
-        // Check for JSON override
-        const jsonEntry = jsonData.find(entry => entry.selector === selector && entry.i === i);
-        if (jsonEntry && jsonEntry.value) {
-          finalValue = jsonEntry.value as string;
-          console.log(`🔄 Overriding with JSON data value: '${finalValue}' for '${selector}' dropdown #${i + 1}`);
-        }
-
-        console.log(`🎯 Trying to select: '${finalValue}' (from constants) for dropdown #${i + 1}`);
+      for (let i = 0; i < allDropdowns.length; i++) {
+        const dropdown = allDropdowns[i];
         
-        // Try exact match first (value came from constants)
-        if (options.includes(finalValue)) {
-          await dropdowns.nth(i).selectOption({ label: finalValue });
-          console.log(`✅ Selected '${finalValue}' using constants mapping for '${selector}' dropdown #${i + 1}`);
-        } else {
-          // Simple fallback: just pick first available
-          const fallbackValue = this.getFirstAvailableOption(options);
-          if (fallbackValue) {
-            await dropdowns.nth(i).selectOption({ label: fallbackValue });
-            console.log(`🔄 FALLBACK: Selected '${fallbackValue}' (first available) instead of '${finalValue}' for '${selector}' dropdown #${i + 1}`);
-          } else {
-            console.error(`❌ No valid options available for '${selector}' dropdown #${i + 1}`);
+        try {
+          const options = await dropdown.locator('option').allTextContents();
+          console.log(`📋 Available options for '${selector}' dropdown #${i + 1}:`, options);
+          
+          let finalValue = value;
+
+          // Check for JSON override
+          const jsonEntry = jsonData.find(entry => entry.selector === selector && entry.i === i);
+          if (jsonEntry && jsonEntry.value) {
+            finalValue = jsonEntry.value as string;
+            console.log(`🔄 Overriding with JSON data value: '${finalValue}' for '${selector}' dropdown #${i + 1}`);
           }
+
+          console.log(`🎯 Trying to select: '${finalValue}' for dropdown #${i + 1}`);
+          
+          if (options.includes(finalValue)) {
+            await dropdown.selectOption({ label: finalValue });
+            console.log(`✅ Selected '${finalValue}' for '${selector}' dropdown #${i + 1}`);
+          } else {
+            const fallbackValue = this.getFirstAvailableOption(options);
+            if (fallbackValue) {
+              await dropdown.selectOption({ label: fallbackValue });
+              console.log(`🔄 FALLBACK: Selected '${fallbackValue}' (first available) instead of '${finalValue}' for '${selector}' dropdown #${i + 1}`);
+            } else {
+              console.error(`❌ No valid options available for '${selector}' dropdown #${i + 1}`);
+            }
+          }
+          
+          // Small delay between dropdown selections
+          await this.page.waitForTimeout(300);
+          
+        } catch (error) {
+          console.error(`❌ Error with '${selector}' dropdown #${i + 1}:`, error);
         }
       }
 
@@ -808,13 +976,107 @@ export class CoachingLogFormFiller {
         await this.populateSessionRowWithRetry(i, splitEvents[i]);
       }
 
-      console.log("✅ Enhanced coaching session population completed!");
-      
-    } catch (error) {
-      console.error("❌ Error in enhanced coaching session population:", error);
-      throw error; // Let caller handle the error
-    }
+          console.log("✅ Enhanced coaching session population completed!");
+    
+  } catch (error) {
+    console.error("❌ Error in enhanced coaching session population:", error);
+    throw error; // Let caller handle the error
   }
+}
+
+/**
+ * Wait for staff names to be loaded in coachee dropdowns
+ * Replaces the hardcoded 30-second wait with dynamic detection
+ */
+private async waitForStaffNamesLoaded(): Promise<void> {
+  if (!this.page) return;
+
+  try {
+    console.log('⏳ Waiting for staff names to load in coachee dropdowns...');
+    
+    // Wait for at least one coachee dropdown to exist
+    await this.page.waitForSelector('select[name="coacheeName"]', { timeout: 10000 });
+    
+    // Wait for the dropdown to have actual staff names (not just empty options)
+    await this.page.waitForFunction(() => {
+      const coacheeDropdowns = document.querySelectorAll('select[name="coacheeName"]');
+      if (coacheeDropdowns.length === 0) return false;
+      
+      // Check first dropdown for real staff names
+      const firstDropdown = coacheeDropdowns[0] as HTMLSelectElement;
+      const options = Array.from(firstDropdown.options);
+      
+      // Filter out empty options and check for actual names
+      const validOptions = options.filter(option => 
+        option.value.trim() !== '' && 
+        option.textContent?.trim() !== '' &&
+        !option.textContent?.includes('Loading') &&
+        !option.textContent?.includes('TBD')
+      );
+      
+      console.log(`📋 Found ${validOptions.length} valid staff options in coachee dropdown`);
+      return validOptions.length > 0;
+    }, { timeout: 15000, polling: 1000 });
+    
+    console.log('✅ Staff names loaded successfully');
+    
+    // Small buffer to ensure form is fully ready
+    await this.page.waitForTimeout(2000);
+    
+  } catch (error) {
+    console.warn('⚠️ Timeout waiting for staff names, proceeding anyway:', error);
+    // Continue with form filling even if staff names aren't detected
+    await this.page.waitForTimeout(3000);
+  }
+}
+
+/**
+ * Resolve staff IDs to staff names using the existing /api/staff endpoint
+ * Simple API call to fetch staff names by IDs
+ */
+private async resolveStaffNamesFromIds(staffIds: string[]): Promise<string[]> {
+  if (!staffIds || staffIds.length === 0) return [];
+  
+  try {
+    // Use filters parameter to find staff by IDs
+    const url = new URL('/api/staff', window.location.origin);
+    url.searchParams.set('limit', '1000'); // Get enough records
+    url.searchParams.set('filters[_id][$in]', JSON.stringify(staffIds));
+    
+    console.log('Fetching staff names from:', url.toString());
+    
+    const response = await fetch(url.toString());
+    
+    if (!response.ok) {
+      console.warn('Failed to fetch staff names:', response.statusText);
+      return staffIds.map(id => `Staff ${id.slice(0, 8)}`);
+    }
+    
+    const data = await response.json();
+    console.log('Staff API response:', data);
+    
+    const staffItems: { _id: string; staffName?: string; label?: string }[] = data.items || [];
+    
+    // Create a lookup map
+    const staffMap = new Map(
+      staffItems.map(staff => [staff._id, staff.staffName || staff.label || 'Unknown Staff'])
+    );
+    
+    console.log('Staff lookup map:', staffMap);
+    
+    // Return names in the same order as input IDs
+    const result = staffIds.map(id => 
+      staffMap.get(id) || `Unknown Staff (${id.slice(0, 8)})`
+    );
+    
+    console.log('Resolved staff names:', result);
+    return result;
+    
+  } catch (error) {
+    console.error('Error fetching staff names:', error);
+    return staffIds.map(id => `Staff ${id.slice(0, 8)}`);
+  }
+}
 
   private splitMultiPersonEvents(events: EventData[]): EventData[] {
     const splitEvents: EventData[] = [];
@@ -1176,14 +1438,8 @@ export class CoachingLogFormFiller {
     }
   }
 
-  // NEW: Schema-based multiple dropdown filling
-  private async fillMultipleDropdownsFromSchema(selectors: string[], formData: Record<string, string | number | boolean | string[]>): Promise<void> {
-    for (const selector of selectors) {
-      if (formData[selector]) {
-        await this.selectAllDropdowns(selector, formData[selector] as string, []);
-      }
-    }
-  }
+  // ✅ REMOVED: This method was causing duplicate field filling
+  // Strategy fields are now handled by fillRemainingStrategyFields() to avoid conflicts
 
   private async fillMultipleDropdowns(selectors: string[], formData: FormData): Promise<void> {
     try {
@@ -1254,8 +1510,414 @@ export class CoachingLogFormFiller {
     } catch (error) {
       console.error('❌ Error monitoring submission:', error);
     } finally {
-      await this.close();
+      // await this.close();
     }
+  }
+
+  private async showVisitInfoSideBanner(visitData: {
+    date?: string;
+    timeBlocks: VisitScheduleBlock[];
+    schoolName: string;
+    coachName: string;
+  }): Promise<void> {
+    if (!this.page) return;
+    
+    // STEP 1: Log original data received
+    console.log('🔍 STEP 1 - Original visitData received:', {
+      date: visitData.date,
+      schoolName: visitData.schoolName,
+      coachName: visitData.coachName,
+      timeBlocksCount: visitData.timeBlocks?.length || 0,
+      timeBlocksRaw: visitData.timeBlocks
+    });
+    
+    // STEP 2: Log each time block before processing
+    if (visitData.timeBlocks && visitData.timeBlocks.length > 0) {
+      console.log('🔍 STEP 2 - Individual time blocks:');
+      visitData.timeBlocks.forEach((block, index) => {
+        console.log(`  Block ${index}:`, {
+          periodNumber: block?.periodNumber,
+          periodName: block?.periodName,
+          startTime: block?.startTime,
+          endTime: block?.endTime,
+          eventType: block?.eventType,
+          portion: block?.portion,
+          staffIds: block?.staffIds,
+          staffIdsLength: Array.isArray(block?.staffIds) ? block.staffIds.length : 'NOT_ARRAY',
+          notes: block?.notes,
+          fullObject: block
+        });
+      });
+    } else {
+      console.log('🔍 STEP 2 - No time blocks or empty array');
+    }
+    
+    // STEP 3: Process and log safe data with async staff name resolution
+    const processedTimeBlocks = await Promise.all(
+      (visitData.timeBlocks || []).map(async (block, index) => {
+        // NEW: Resolve staff names from IDs using API call
+        const staffNames = await this.resolveStaffNamesFromIds(block?.staffIds || []);
+        
+        const processed = {
+          originalIndex: index,
+          periodNumber: block?.periodNumber,
+          periodName: block?.periodName,
+          startTime: block?.startTime,
+          endTime: block?.endTime,
+          eventType: block?.eventType,
+          portion: block?.portion,
+          staffIds: block?.staffIds,
+          staffNames: staffNames, // NEW: Add resolved staff names
+          notes: block?.notes,
+          
+          // Processed display values
+          periodDisplay: `${block?.periodNumber || '?'}${block?.periodName ? ` (${block.periodName})` : ''}`,
+          timeDisplay: `${block?.startTime || '?'}-${block?.endTime || '?'}`,
+          eventDisplay: `${block?.eventType || 'Unknown'}${block?.portion ? ` (${block.portion})` : ''}`,
+          staffCount: Array.isArray(block?.staffIds) ? block.staffIds.length : 0,
+          
+          // Keep original values for tooltips
+          fullPeriod: `${block?.periodNumber || '?'}${block?.periodName ? ` (${block.periodName})` : ''}`,
+          fullEvent: `${block?.eventType || 'Unknown'}${block?.portion ? ` (${block.portion})` : ''}`
+        };
+        
+        console.log(`🔍 STEP 3 - Processed block ${index}:`, processed);
+        return processed;
+      })
+    );
+
+    const safeData = {
+      date: visitData.date || '',
+      schoolName: visitData.schoolName || 'Unknown School',
+      coachName: visitData.coachName || 'Unknown Coach',
+      timeBlocks: processedTimeBlocks
+    };
+    
+    console.log('🔍 STEP 4 - Final safe data for browser:', {
+      timeBlocksCount: safeData.timeBlocks.length,
+      schoolName: safeData.schoolName,
+      coachName: safeData.coachName,
+      fullSafeData: safeData
+    });
+    
+    await this.page.evaluate((data) => {
+      // STEP 5: Log data received in browser context
+      console.log('🔍 STEP 5 - Browser received data:', {
+        hasData: !!data,
+        timeBlocksCount: data?.timeBlocks?.length || 0,
+        schoolName: data?.schoolName,
+        coachName: data?.coachName,
+        firstTimeBlock: data?.timeBlocks?.[0] || 'NO_BLOCKS',
+        fullData: data
+      });
+      
+      // Remove existing banner if present
+      const existingBanner = document.getElementById('visit-info-banner');
+      if (existingBanner) existingBanner.remove();
+      
+      const banner = document.createElement('div');
+      banner.id = 'visit-info-banner';
+      banner.style.cssText = `
+        position: fixed; 
+        top: 60px; 
+        right: 20px; 
+        width: 380px;
+        max-height: 80vh;
+        overflow-y: auto;
+        z-index: 9999;
+        background: #fefce8;
+        border: 1px solid #eab308;
+        border-radius: 8px;
+        padding: 12px;
+        font-family: system-ui;
+        font-size: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        opacity: 1 !important;
+      `;
+      
+      // Add debug info section at top
+      const debugInfo = document.createElement('div');
+      debugInfo.style.cssText = `
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        border-radius: 4px;
+        padding: 6px;
+        margin-bottom: 8px;
+        font-size: 10px;
+        color: #92400e;
+        opacity: 1 !important;
+      `;
+      debugInfo.innerHTML = `
+        <strong>Debug Info:</strong><br>
+        Time Blocks: ${data?.timeBlocks?.length || 0}<br>
+        School: ${data?.schoolName || 'Missing'}<br>
+        Coach: ${data?.coachName || 'Missing'}<br>
+        Date: ${data?.date || 'Missing'}
+      `;
+      // banner.appendChild(debugInfo);
+      
+      const formatDate = (dateStr: string) => {
+        try {
+          return new Date(dateStr).toLocaleDateString('en-US', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+        } catch {
+          return dateStr || 'No date';
+        }
+      };
+      
+      // Create collapsible header
+      const header = document.createElement('div');
+      header.style.cssText = `
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        background: rgba(234, 179, 8, 0.1);
+        opacity: 1 !important;
+      `;
+      
+      const title = document.createElement('h5');
+      title.style.cssText = `
+        margin: 0;
+        font-weight: 600;
+        color: #a16207;
+        font-size: 13px;
+      `;
+      title.textContent = '📅 Visit Schedule';
+      
+      const toggleBtn = document.createElement('span');
+      toggleBtn.style.cssText = `
+        color: #a16207;
+        font-weight: bold;
+        font-size: 14px;
+        user-select: none;
+      `;
+      toggleBtn.textContent = '−';
+      
+      header.appendChild(title);
+      header.appendChild(toggleBtn);
+      
+      // Create content container
+      const content = document.createElement('div');
+      content.id = 'visit-content';
+      content.style.cssText = `
+        color: #a16207;
+        line-height: 1.4;
+        opacity: 1 !important;
+      `;
+      
+      // Visit metadata
+      const metadata = document.createElement('div');
+      metadata.style.cssText = `
+        background: rgba(234, 179, 8, 0.1);
+        padding: 8px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        opacity: 1 !important;
+      `;
+      metadata.innerHTML = `
+        <div style="font-weight: 600; margin-bottom: 4px;">📍 ${data.schoolName}</div>
+        <div style="margin-bottom: 2px;">🗓️ ${formatDate(data.date)}</div>
+        <div>👨‍🏫 ${data.coachName}</div>
+      `;
+      
+      // Time blocks table - now using safe data with debugging
+      if (data.timeBlocks && data.timeBlocks.length > 0) {
+        console.log('🔍 STEP 6 - Processing time blocks in browser:', data.timeBlocks);
+        
+        const blocksTitle = document.createElement('div');
+        blocksTitle.style.cssText = `
+          font-weight: 600;
+          margin-bottom: 6px;
+          color: #a16207;
+        `;
+        blocksTitle.textContent = `⏰ Time Blocks (${data.timeBlocks.length})`;
+        
+        const blocksContainer = document.createElement('div');
+        blocksContainer.style.cssText = `
+          background: rgba(234, 179, 8, 0.1);
+          border-radius: 4px;
+          padding: 6px;
+          max-height: 300px;
+          overflow-y: auto;
+          opacity: 1 !important;
+        `;
+        
+        // Create mini table for time blocks with responsive columns
+        const table = document.createElement('table');
+        table.style.cssText = `
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 10px;
+          table-layout: fixed;
+        `;
+        
+        // Table header with flexible column widths
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+          <tr style="background: rgba(234, 179, 8, 0.2);">
+            <th style="padding: 3px 2px; text-align: left; font-weight: 600; width: 20%;">Period</th>
+            <th style="padding: 3px 2px; text-align: left; font-weight: 600; width: 25%;">Time</th>
+            <th style="padding: 3px 2px; text-align: left; font-weight: 600; width: 25%;">Event</th>
+            <th style="padding: 3px 2px; text-align: left; font-weight: 600; width: 30%;">Staff Names</th>
+          </tr>
+        `;
+        
+        // Table body with improved staff name display and text wrapping
+        const tbody = document.createElement('tbody');
+        data.timeBlocks.forEach((block, index) => {
+          console.log(`🔍 STEP 7 - Browser processing block ${index}:`, {
+            block: block,
+            periodDisplay: block?.periodDisplay,
+            timeDisplay: block?.timeDisplay,
+            eventDisplay: block?.eventDisplay,
+            staffNames: block?.staffNames,
+            staffCount: block?.staffCount
+          });
+          
+          const row = document.createElement('tr');
+          row.style.cssText = `
+            border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+            ${index % 2 === 0 ? 'background: rgba(234, 179, 8, 0.05);' : ''}
+          `;
+          
+          // Use staff names instead of IDs, with proper fallbacks
+          const periodDisplay = block?.periodDisplay || `P${block?.periodNumber || '?'}`;
+          const timeDisplay = block?.timeDisplay || `${block?.startTime || '?'}-${block?.endTime || '?'}`;
+          const eventDisplay = block?.eventDisplay || block?.eventType || 'Unknown';
+          
+          // NEW: Display actual staff names with line breaks for readability
+          let staffDisplay = 'No staff';
+          if (block?.staffNames && Array.isArray(block.staffNames) && block.staffNames.length > 0) {
+            // Join names with line breaks for better readability
+            staffDisplay = block.staffNames.join('<br>');
+          } else if (block?.staffCount > 0) {
+            staffDisplay = `${block.staffCount} staff`;
+          }
+          
+          row.innerHTML = `
+            <td style="padding: 2px 1px; word-wrap: break-word; overflow-wrap: break-word;" title="${block?.fullPeriod || periodDisplay}">${periodDisplay}</td>
+            <td style="padding: 2px 1px; word-wrap: break-word; overflow-wrap: break-word;" title="${timeDisplay}">${timeDisplay}</td>
+            <td style="padding: 2px 1px; word-wrap: break-word; overflow-wrap: break-word;" title="${block?.fullEvent || eventDisplay}">${eventDisplay}</td>
+            <td style="padding: 2px 1px; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.2;" title="Staff assigned to this time block">${staffDisplay}</td>
+          `;
+          
+          tbody.appendChild(row);
+        });
+        
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        blocksContainer.appendChild(table);
+        
+        content.appendChild(blocksTitle);
+        content.appendChild(blocksContainer);
+        
+        // Add summary info
+        const summaryDiv = document.createElement('div');
+        summaryDiv.style.cssText = `
+          margin-top: 6px;
+          padding: 4px 6px;
+          background: rgba(234, 179, 8, 0.1);
+          border-radius: 4px;
+          font-size: 10px;
+          text-align: center;
+          opacity: 1 !important;
+        `;
+        
+        const totalStaff = data.timeBlocks.reduce((sum, block) => {
+          if (block?.staffNames && Array.isArray(block.staffNames)) {
+            return sum + block.staffNames.length;
+          }
+          return sum + (block?.staffCount || 0);
+        }, 0);
+        
+        const uniqueEventTypes = [...new Set(
+          data.timeBlocks.map(block => block?.eventDisplay?.split(' (')[0] || 'Unknown')
+        )];
+        
+        summaryDiv.innerHTML = `
+          📊 ${totalStaff} total staff interactions<br>
+          🎯 Events: ${uniqueEventTypes.join(', ')}
+        `;
+        
+        content.appendChild(summaryDiv);
+        
+      } else {
+        console.log('🔍 STEP 6 - No time blocks to process in browser');
+        const noBlocks = document.createElement('div');
+        noBlocks.style.cssText = `
+          text-align: center;
+          padding: 12px;
+          color: #a16207;
+          font-style: italic;
+          background: rgba(234, 179, 8, 0.1);
+          border-radius: 4px;
+          opacity: 1 !important;
+        `;
+        noBlocks.textContent = 'No time blocks scheduled';
+        content.appendChild(noBlocks);
+      }
+      
+      content.insertBefore(metadata, content.firstChild);
+      
+      // Toggle functionality
+      let isCollapsed = false;
+      header.addEventListener('click', () => {
+        isCollapsed = !isCollapsed;
+        if (isCollapsed) {
+          content.style.display = 'none';
+          toggleBtn.textContent = '+';
+          banner.style.width = '300px';
+        } else {
+          content.style.display = 'block';
+          toggleBtn.textContent = '−';
+          banner.style.width = '380px';
+        }
+      });
+      
+      // Close button
+      const closeBtn = document.createElement('button');
+      closeBtn.style.cssText = `
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: none;
+        border: none;
+        color: #a16207;
+        font-size: 16px;
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        opacity: 1 !important;
+      `;
+      closeBtn.innerHTML = '×';
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        banner.remove();
+      });
+      
+      banner.appendChild(closeBtn);
+      banner.appendChild(header);
+      banner.appendChild(content);
+      document.body.appendChild(banner);
+      
+      // Remove auto-hide opacity change - keep banner fully opaque
+      // The original code had an auto-hide after 45 seconds that made it transparent
+      // We're removing this behavior as requested
+      
+    }, safeData);
   }
 
   private async showSubmissionBanner(): Promise<void> {
@@ -1278,8 +1940,8 @@ export class CoachingLogFormFiller {
       const submitButton = document.querySelector('button.submitButton[type="submit"]') as HTMLElement;
       if (submitButton) {
         setTimeout(() => {
-          submitButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          submitButton.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.5)';
+          // submitButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // submitButton.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.5)';
         }, 1000);
       }
     });
@@ -1304,7 +1966,7 @@ export class CoachingLogFormFiller {
 
   async close(): Promise<void> {
     if (this.browser) {
-      await this.browser.close();
+      // await this.browser.close();
       this.browser = null;
       this.page = null;
     }
