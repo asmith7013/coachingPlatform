@@ -1,11 +1,13 @@
+import { z } from 'zod';
+
 import { 
   DailyClassEventInput, 
   ZearnCompletionInput, 
-  SnorklCompletionInput,
-  Teachers,
-  Sections,
-  AttendanceStatusType
+  AssessmentCompletionInput,
+  AttendanceStatusType,
 } from '@zod-schema/313/core';
+import { SyncResultZodSchema } from '@zod-schema/integrations/google-sheets-export';
+import { CollectionResponse } from '@core-types/response';
 
 // =====================================
 // RAW SPREADSHEET TYPES
@@ -34,9 +36,10 @@ export type SpreadsheetHeaders = string[];
 export interface ValidatedRowData {
   date: string;
   studentId: number;
-  studentName: string;
-  teacher: Teachers;
-  section: Sections;
+  firstName: string;
+  lastName: string;
+  teacher: string;
+  section: string;
   classLengthMin: number;
   attendance: AttendanceStatusType;
   instructionReceivedMin?: number;
@@ -50,6 +53,7 @@ export interface ValidatedRowData {
   behaviorNotes?: string;
 }
 
+export type SyncResult = z.infer<typeof SyncResultZodSchema>;
 /**
  * Individual mastery check detail
  */
@@ -64,45 +68,23 @@ export interface MasteryDetail {
 // =====================================
 
 /**
- * Result of normalizing a single row
+ * Result using existing response patterns
  */
-export interface NormalizationResult {
-  success: boolean;
-  data: {
-    dailyEvents: DailyClassEventInput[];
-    lessonCompletions: (ZearnCompletionInput | SnorklCompletionInput)[];
-  };
-  errors?: NormalizationError[];
-  metadata: {
-    zearnCompletionsCreated: number;
-    snorklCompletionsCreated: number;
-    dailyEventsCreated: number;
-  };
-}
+export type SpreadsheetNormalizationResult = CollectionResponse<{
+  dailyEvents: DailyClassEventInput[];
+  lessonCompletions: (ZearnCompletionInput | AssessmentCompletionInput)[];
+}>;
 
 /**
- * Error details for normalization failures
+ * Batch processing result matching the expected structure for sync-sheets action
  */
-export interface NormalizationError {
-  type: 'validation' | 'parsing' | 'missing_column';
-  message: string;
-  field?: string;
-}
-
-/**
- * Result of processing multiple rows
- */
-export interface BatchNormalizationResult {
+export interface BatchSpreadsheetResult {
   success: boolean;
+  message?: string;
   data: {
     dailyEvents: DailyClassEventInput[];
-    lessonCompletions: (ZearnCompletionInput | SnorklCompletionInput)[];
+    lessonCompletions: (ZearnCompletionInput | AssessmentCompletionInput)[];
   };
-  errors: Array<{
-    row: number;
-    studentName?: string;
-    errors: NormalizationError[];
-  }>;
   metadata: {
     totalRows: number;
     successfulRows: number;
@@ -111,6 +93,12 @@ export interface BatchNormalizationResult {
     snorklCompletionsCreated: number;
     dailyEventsCreated: number;
   };
+  errors: Array<{
+    row?: number;
+    studentName?: string;
+    item?: unknown;
+    error: string;
+  }>;
 }
 
 // =====================================

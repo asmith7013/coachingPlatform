@@ -3,8 +3,6 @@ import mongoose from 'mongoose';
 import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
 import { 
   SCOPE_SEQUENCE, 
-  Teachers, 
-  Sections, 
   AttendanceStatus 
 } from '@zod-schema/313/core';
 
@@ -20,8 +18,8 @@ const baseCompletionFields = {
   studentName: { type: String, required: true },
   lessonCode: { type: String, required: true, enum: SCOPE_SEQUENCE },
   dateOfCompletion: { type: String, required: true },
-  teacher: { type: String, required: true, enum: Object.values(Teachers) },
-  section: { type: String, required: true, enum: Object.values(Sections) },
+  teacher: { type: String, required: true },
+  section: { type: String, required: true },
   
   // Core attempt/completion tracking
   attempted: { type: Boolean, required: true, default: true },
@@ -84,8 +82,8 @@ export const SnorklCompletionModel = LessonCompletionModel.discriminators?.snork
 const studentRosterFields = {
 //   studentID: { type: Number, required: true, unique: true, min: 1 },
   studentName: { type: String, required: true },
-  teacher: { type: String, required: true, enum: Object.values(Teachers) },
-  section: { type: String, required: true, enum: Object.values(Sections) },
+  teacher: { type: String, required: true },
+  section: { type: String, required: true },
   enrollmentDate: { type: String, required: false },
   active: { type: Boolean, required: true, default: true },
   
@@ -111,20 +109,23 @@ export const StudentRosterModel = mongoose.models.StudentRoster ||
 // =====================================
 
 const dailyClassEventFields = {
-  date: { 
-    type: String, 
-    required: true,
-    match: /^\d{1,2}\/\d{1,2}\/\d{4}$/ // MM/DD/YYYY format
-  },
+  date: { type: String, required: true },
+  section: { type: String, required: true },
+  teacher: { type: String, required: true },
   studentIDref: { type: Number, required: true, min: 1 },
-  studentName: { type: String, required: true },
-  teacher: { type: String, required: true, enum: Object.values(Teachers) },
-  section: { type: String, required: true, enum: Object.values(Sections) },
+  
+  // Split name fields to match Google Sheets structure
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
   
   // Class timing and attendance
   classLengthMin: { type: Number, required: true, min: 1 },
   attendance: { type: String, required: true, enum: Object.values(AttendanceStatus) },
-  instructionReceivedMin: { type: Number, required: false, min: 0 },
+  classMissedMin: { type: Number, required: false, min: 0 },
+  
+  // Export tracking metadata
+  exportDate: { type: String, required: false },
+  exportSheet: { type: String, required: false },
   
   // Intervention tracking
   teacherInterventionMin: { type: Number, required: true, default: 0, min: 0, max: 60 },

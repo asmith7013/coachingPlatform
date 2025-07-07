@@ -1,4 +1,5 @@
 .
+├── GOOGLE_SHEETS_EXPORT_IMPLEMENTATION.md
 ├── amplify
 │   ├── docs.md
 │   ├── scope.md
@@ -38,6 +39,7 @@
 │   ├── implementation
 │   │   └── three-zone-masterschedulecard-integration.md
 │   ├── table-of-contents.md
+│   ├── tanstack-table-implementation.md
 │   ├── token-tailwind-mapping.md
 │   ├── workflow-templates
 │   │   └── coding-session-control.md
@@ -63,6 +65,9 @@
 │   ├── lib-changes.md
 │   └── reference-system.md
 ├── docs-product-roadmap
+│   ├── 313
+│   │   ├── dashboard-tasks.md
+│   │   └── dashboard.md
 │   ├── core
 │   │   ├── cross-domain
 │   │   ├── cycle
@@ -155,9 +160,6 @@
 │   │   ├── seed-cycles-coaching.ts
 │   │   ├── seed-look-fors.ts
 │   │   └── seed-schools-staff.ts
-│   ├── test-google-sheets
-│   │   ├── test-connection.ts
-│   │   └── test-normalization.ts
 │   └── test-monday-token.mjs
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
@@ -169,9 +171,18 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── sign-up
 │   │   │       └── page.tsx
+│   │   ├── 313
+│   │   │   ├── config.ts
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx
+│   │   │   └── students
+│   │   │       └── page.tsx
 │   │   ├── actions
 │   │   │   ├── 313
+│   │   │   │   ├── analytics.ts
+│   │   │   │   ├── google-sheets-export.ts
 │   │   │   │   ├── index.ts
+│   │   │   │   ├── students.ts
 │   │   │   │   └── sync-sheets.ts
 │   │   │   ├── coaching
 │   │   │   │   ├── cap-evidence.ts
@@ -218,6 +229,16 @@
 │   │   │       ├── cycles.ts
 │   │   │       ├── visit-schedule-data.ts
 │   │   │       └── visits.ts
+│   │   ├── analytics
+│   │   │   ├── attendance
+│   │   │   │   └── page.tsx
+│   │   │   ├── config.ts
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── sync
+│   │   │   │   └── page.tsx
+│   │   │   └── zearn
+│   │   │       └── page.tsx
 │   │   ├── api
 │   │   │   ├── 313
 │   │   │   │   ├── sync
@@ -418,6 +439,8 @@
 │   │   │   │   ├── [id]
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── layout.tsx
+│   │   │   ├── tanstack-simple
+│   │   │   │   └── page.tsx
 │   │   │   └── todays-visit-dashboard
 │   │   │       └── page.tsx
 │   │   ├── global-error.tsx
@@ -467,6 +490,8 @@
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── test-enum-mongoose
 │   │   │   │       └── page.tsx
+│   │   │   ├── google-sheets-export
+│   │   │   │   └── page.tsx
 │   │   │   ├── im-routines
 │   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
@@ -524,7 +549,6 @@
 │   │   │   │   ├── AppShell.tsx
 │   │   │   │   ├── DashboardLayout.tsx
 │   │   │   │   ├── DashboardPage.tsx
-│   │   │   │   ├── NavigationSidebar.tsx
 │   │   │   │   ├── PageHeader.tsx
 │   │   │   │   ├── PerformanceMonitorLayout.tsx
 │   │   │   │   ├── ResourceHeader.tsx
@@ -563,6 +587,9 @@
 │   │   │   │   │   ├── header.tsx
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── row.tsx
+│   │   │   │   ├── tanstack
+│   │   │   │   │   ├── TanStackTable.tsx
+│   │   │   │   │   └── index.ts
 │   │   │   │   └── variants
 │   │   │   │       ├── compact.tsx
 │   │   │   │       ├── index.ts
@@ -711,6 +738,10 @@
 │   │   │   ├── SentryBoundaryWrapper.tsx
 │   │   │   └── index.ts
 │   │   ├── features
+│   │   │   ├── 313
+│   │   │   │   ├── SummerProgramAppShell.tsx
+│   │   │   │   ├── SummerProgramShell.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── classroomNotes
 │   │   │   │   └── tabs
 │   │   │   │       ├── BasicInfoTab.tsx
@@ -740,6 +771,11 @@
 │   │   │   │       ├── CAPStage2.tsx
 │   │   │   │       ├── CAPStage3.tsx
 │   │   │   │       └── CAPStage4.tsx
+│   │   │   ├── dashboard
+│   │   │   │   ├── DashboardAppShell.tsx
+│   │   │   │   ├── DashboardAuthGuard.tsx
+│   │   │   │   ├── DashboardShell.tsx
+│   │   │   │   └── SetupRedirect.tsx
 │   │   │   ├── schedules
 │   │   │   │   ├── ClearScheduleDialog.tsx
 │   │   │   │   ├── DropZoneCell.tsx
@@ -805,6 +841,8 @@
 │   │   │       └── index.ts
 │   │   ├── index.ts
 │   │   └── integrations
+│   │       ├── googleSheets
+│   │       │   └── ExportDashboard.tsx
 │   │       └── monday
 │   │           ├── README.md
 │   │           ├── UserForm.tsx
@@ -837,6 +875,10 @@
 │   │   │   ├── useComponentTester.tsx
 │   │   │   └── useRenderTracking.ts
 │   │   ├── domain
+│   │   │   ├── 313
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── useAnalytics.ts
+│   │   │   │   └── useStudents.ts
 │   │   │   ├── cap
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── useCapEvidence.ts
@@ -873,6 +915,8 @@
 │   │   │   └── useErrorBoundary.ts
 │   │   ├── index.ts
 │   │   ├── integrations
+│   │   │   ├── google-sheets
+│   │   │   │   └── useGoogleSheetsExport.ts
 │   │   │   └── monday
 │   │   │       ├── MondayImportContext.tsx
 │   │   │       ├── MondayIntegrationContext.tsx
@@ -975,10 +1019,17 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── parsers
 │   │   │   │   │   └── row-parser.ts
+│   │   │   │   ├── processors
+│   │   │   │   │   └── spreadsheet-processor.ts
+│   │   │   │   ├── services
+│   │   │   │   │   ├── email-service.ts
+│   │   │   │   │   ├── export-service.ts
+│   │   │   │   │   └── sync-service.ts
 │   │   │   │   ├── types
 │   │   │   │   │   └── spreadsheet-types.ts
 │   │   │   │   └── validators
-│   │   │   │       └── row-validator.ts
+│   │   │   │       ├── row-validator.ts
+│   │   │   │       └── spreadsheet-validator.ts
 │   │   │   └── monday
 │   │   │       ├── adapters
 │   │   │       │   └── response-adapters.ts
@@ -1014,12 +1065,14 @@
 │   │   │           └── monday-utils.ts
 │   │   ├── schema
 │   │   │   ├── enum
+│   │   │   │   ├── 313.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   └── shared-enums.ts
 │   │   │   ├── index.ts
 │   │   │   ├── mongoose-schema
 │   │   │   │   ├── 313
-│   │   │   │   │   └── core.ts
+│   │   │   │   │   ├── core.ts
+│   │   │   │   │   └── student.model.ts
 │   │   │   │   ├── cap
 │   │   │   │   │   ├── cap-evidence.model.ts
 │   │   │   │   │   ├── cap-implementation-record.model.ts
@@ -1078,7 +1131,8 @@
 │   │   │   │       └── index.ts
 │   │   │   └── zod-schema
 │   │   │       ├── 313
-│   │   │       │   └── core.ts
+│   │   │       │   ├── core.ts
+│   │   │       │   └── student.ts
 │   │   │       ├── base-schemas.ts
 │   │   │       ├── cap
 │   │   │       │   ├── cap-evidence.ts
@@ -1110,6 +1164,7 @@
 │   │   │       │   └── response.ts
 │   │   │       ├── index.ts
 │   │   │       ├── integrations
+│   │   │       │   ├── google-sheets-export.ts
 │   │   │       │   ├── index.ts
 │   │   │       │   └── monday.ts
 │   │   │       ├── look-fors
@@ -1181,6 +1236,7 @@
 │   │   │   │   ├── fetcher-factory.ts
 │   │   │   │   └── index.ts
 │   │   │   └── file-handling
+│   │   │       ├── csv-generator.ts
 │   │   │       ├── csv-parser.ts
 │   │   │       ├── file-upload.ts
 │   │   │       └── index.ts
@@ -1276,8 +1332,11 @@
 │   │   │   │   ├── event-styles.ts
 │   │   │   │   └── index.ts
 │   │   │   ├── table-schema.ts
+│   │   │   ├── tanstack
 │   │   │   ├── utils
+│   │   │   │   ├── clipboard-utils.ts
 │   │   │   │   ├── formatters.ts
+│   │   │   │   ├── index.ts
 │   │   │   │   └── navigation-utils.ts
 │   │   │   └── variants
 │   │   │       ├── grid-layouts.ts
@@ -1362,4 +1421,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-401 directories, 962 files
+418 directories, 1004 files

@@ -68,6 +68,14 @@ export const PERMISSIONS = {
   // Reports
   REPORTS_VIEW: 'reports.view',
   ANALYTICS_VIEW: 'analytics.view',
+
+  STUDENTS_VIEW: 'students.view',
+  STUDENTS_CREATE: 'students.create',
+  STUDENTS_EDIT: 'students.edit',
+  STUDENTS_DELETE: 'students.delete',
+
+  CURRICULUM_VIEW: 'curriculum.view',
+
 } as const;
 
 export type Permission = typeof PERMISSIONS[keyof typeof PERMISSIONS];

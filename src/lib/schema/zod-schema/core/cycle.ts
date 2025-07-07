@@ -2,7 +2,7 @@ import { z } from "zod";
 import { LookForItemZodSchema } from "@zod-schema/look-fors/look-for";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
+import { createReferenceTransformer, createArrayTransformer } from "@data-processing/transformers/factories/reference-factory";
 import { getCycleDisplayString } from "@schema/reference/core/cycle-helpers";
 import { getImplementationLevel } from "@schema/reference/core/cycle-helpers";
 

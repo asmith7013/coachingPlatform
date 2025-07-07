@@ -53,7 +53,7 @@ const handleSyncRequest = async (
     console.log('📤 Sheets sync completed:', {
       processed: result.processed,
       eventsCreated: result.dailyEventsCreated,
-      hasErrors: !!(result.processingErrors || result.insertErrors)
+      hasErrors: !result.success || !!result.error
     });
     
     return NextResponse.json(

@@ -1,7 +1,7 @@
 import { 
   DailyClassEventInput,
   ZearnCompletionInput,
-  SnorklCompletionInput,
+  AssessmentCompletionInput,
   LessonCodeZod,
   LessonCode
 } from '@zod-schema/313/core';
@@ -18,7 +18,8 @@ export function createDailyClassEvent(data: ValidatedRowData): DailyClassEventIn
   return {
     date: data.date,
     studentIDref: data.studentId,
-    studentName: data.studentName,
+    firstName: data.firstName,
+    lastName: data.lastName,
     teacher: data.teacher,
     section: data.section,
     classLengthMin: data.classLengthMin,
@@ -55,8 +56,8 @@ export function createZearnCompletions(data: ValidatedRowData): ZearnCompletionI
     
     return {
       studentIDref: data.studentId,
-      studentName: data.studentName,
-             lessonCode: lessonCode as LessonCode, // Type assertion after validation
+      studentName: `${data.firstName} ${data.lastName}`,
+      lessonCode: lessonCode as LessonCode, // Type assertion after validation
       dateOfCompletion: data.date,
       teacher: data.teacher,
       section: data.section,
@@ -72,31 +73,62 @@ export function createZearnCompletions(data: ValidatedRowData): ZearnCompletionI
 /**
  * Create Snorkl/Mastery completion records from validated row data
  */
-export function createSnorklCompletions(data: ValidatedRowData): SnorklCompletionInput[] {
-  const completions: SnorklCompletionInput[] = [];
-  
-  // Process each mastery detail
-  [data.mastery1, data.mastery2, data.mastery3].forEach(mastery => {
-    if (!mastery) return;
-    
-    // Validate lesson code
-    LessonCodeZod.parse(mastery.lesson);
-    
-    completions.push({
-      studentIDref: data.studentId,
-      studentName: data.studentName,
-             lessonCode: mastery.lesson as LessonCode, // Type assertion after validation
-      dateOfCompletion: data.date,
-      teacher: data.teacher,
-      section: data.section,
-      attempted: true,
-      completed: mastery.mastered,
-      completionType: "snorkl" as const,
-      numberOfAttempts: mastery.attempts,
-      snorklScore: mastery.mastered ? 4 : undefined, // Max score if mastered
-      ownerIds: [],
-    });
+export function createSnorklCompletions(data: ValidatedRowData): AssessmentCompletionInput[] {
+  console.log(`🎯 [DEBUG] Creating Snorkl completions for ${data.firstName} ${data.lastName}`);
+  console.log(`🔍 [DEBUG] Mastery data input:`, {
+    mastery1: data.mastery1,
+    mastery2: data.mastery2,
+    mastery3: data.mastery3
   });
   
+  const completions: AssessmentCompletionInput[] = [];
+  
+  // Process each mastery detail
+  [data.mastery1, data.mastery2, data.mastery3].forEach((mastery, index) => {
+    const masteryNum = index + 1;
+    console.log(`🔍 [DEBUG] Processing mastery ${masteryNum} for ${data.firstName} ${data.lastName}:`, mastery);
+    
+    if (!mastery) {
+      console.log(`⏭️ [DEBUG] Mastery ${masteryNum} is null/undefined, skipping`);
+      return;
+    }
+    
+    try {
+      // Validate lesson code
+      LessonCodeZod.parse(mastery.lesson);
+      console.log(`✅ [DEBUG] Lesson code '${mastery.lesson}' is valid`);
+      
+      const completion: AssessmentCompletionInput = {
+        studentIDref: data.studentId,
+        studentName: `${data.firstName} ${data.lastName}`,
+        lessonCode: mastery.lesson as LessonCode, // Type assertion after validation
+        dateOfCompletion: data.date,
+        teacher: data.teacher,
+        section: data.section,
+        attempted: true,
+        completed: mastery.mastered,
+        completionType: "snorkl" as const,
+        numberOfAttempts: mastery.attempts,
+        snorklScore: mastery.mastered ? 4 : undefined, // Max score if mastered
+        ownerIds: [],
+      };
+      
+      console.log(`🎯 [DEBUG] Created Snorkl completion ${masteryNum}:`, {
+        student: completion.studentName,
+        lesson: completion.lessonCode,
+        attempts: completion.numberOfAttempts,
+        completed: completion.completed,
+        score: completion.snorklScore
+      });
+      
+      completions.push(completion);
+      
+    } catch (error) {
+      console.error(`❌ [DEBUG] Failed to create Snorkl completion ${masteryNum} for ${data.firstName} ${data.lastName}:`, error);
+      console.error(`❌ [DEBUG] Invalid lesson code: '${mastery.lesson}'`);
+    }
+  });
+  
+  console.log(`📊 [DEBUG] Total Snorkl completions created for ${data.firstName} ${data.lastName}: ${completions.length}`);
   return completions;
 } 

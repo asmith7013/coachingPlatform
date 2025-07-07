@@ -29,12 +29,16 @@ export * from './cap/useCapImplementationRecords'
 export * from './observations/useContextualNotes';
 // export * from './visits/useClassroomObservations';
 
+// 313 Summer Program hooks
+export * from './313';
+
 // Composite hooks
 export * from './useSchoolDailyView'
 
 // ✅ CLEAN ARCHITECTURE: All domain hooks organized by responsibility
 // - staff/ - Staff-related domain hooks
 // - schedule/ - Schedule-related domain hooks  
+// - 313/ - 313 Summer Program hooks
 // - Root level - Core entity and composite hooks
 //
 // This structure follows single responsibility principle while

@@ -1,11 +1,8 @@
 import { z } from 'zod';
 import { 
   TeacherZod, 
-  SectionZod, 
-  AttendanceStatusZod,
-  Teachers,
-  Sections,
-  AttendanceStatusType
+  AttendanceStatusZod, 
+  AttendanceStatusType 
 } from '@zod-schema/313/core';
 import { 
   RawSpreadsheetRow, 
@@ -15,6 +12,7 @@ import {
   ColumnAliases,
   ColumnMappingResult
 } from '../types/spreadsheet-types';
+import { SummerSectionsType } from '@/lib/schema/enum/313';
 
 // =====================================
 // COLUMN MAPPING UTILITIES
@@ -143,8 +141,8 @@ export function mapColumns(headers: SpreadsheetHeaders): ColumnMappingResult {
 /**
  * Parse mastery detail from row values
  */
-function parseMasteryDetail(
-  rowValues: string[],
+export function parseMasteryDetail(
+  rowValues: RawSpreadsheetRow,
   columnIndexes: Record<string, number>,
   number: number
 ): MasteryDetail | null {
@@ -203,13 +201,13 @@ export function validateAndParseRow(
   const classLengthStr = rowValues[columnIndexes['Class length (min)']];
 
   // Validate enums using existing Zod schemas
-  let teacher: Teachers;
-  let section: Sections;
+  let teacher: string;
+  let section: string;
   let attendance: AttendanceStatusType;
   
   try {
     teacher = TeacherZod.parse(teacherStr);
-    section = SectionZod.parse(sectionStr);
+    section = sectionStr as SummerSectionsType;
     attendance = AttendanceStatusZod.parse(attendanceStr);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -247,14 +245,15 @@ export function validateAndParseRow(
     rowValues[behaviorNotesCol] || undefined : undefined;
 
   // Parse mastery details
-  const mastery1 = parseMasteryDetail(rowValues, columnIndexes, 1);
-  const mastery2 = parseMasteryDetail(rowValues, columnIndexes, 2);
-  const mastery3 = parseMasteryDetail(rowValues, columnIndexes, 3);
+  const mastery1 = parseMasteryDetail(rawRow, columnIndexes, 1);
+  const mastery2 = parseMasteryDetail(rawRow, columnIndexes, 2);
+  const mastery3 = parseMasteryDetail(rawRow, columnIndexes, 3);
 
   return {
     date: rowValues[columnIndexes['Date']],
     studentId,
-    studentName: rowValues[columnIndexes['Name']],
+    firstName: rowValues[columnIndexes['First Name']],
+    lastName: rowValues[columnIndexes['Last Name']],
     teacher,
     section,
     classLengthMin,

@@ -1,14 +1,43 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
+import { SummerSectionsZod } from "@schema/enum/313";
 
 // =====================================
 // LESSON CODE DEFINITIONS  
 // =====================================
 
+// Updated scope and sequence based on full curriculum
 export const SCOPE_SEQUENCE = [
-  "U2.L10", "U2.L11", "U2.L12", "U3.L1", "U3.L2", "U3.L3", "U3.L4", 
-  "U3.L5", "U3.L6", "U3.L7", "U3.L8", "U3.L9", "U3.L10", "U3.L11", 
-  "U3.L13", "U3.L14", "U5.L1", "U5.L2", "U5.L3", "U5.L4", "U5.L5"
+  // Grade 6 - Unit 2
+  "G6.U2.L01", "G6.U2.L02", "G6.U2.L03", "G6.U2.L04", "G6.U2.L05", 
+  "G6.U2.L06", "G6.U2.L07", "G6.U2.L08", "G6.U2.L11", "G6.U2.L12", 
+  "G6.U2.L13", "G6.U2.L14", "G6.U2.L16",
+  
+  // Grade 6 - Unit 3
+  "G6.U3.L06", "G6.U3.L07", "G6.U3.L09", "G6.U3.L10", "G6.U3.L11", 
+  "G6.U3.L12", "G6.U3.L13", "G6.U3.L14", "G6.U3.L16", "G6.U3.L17",
+  
+  // Grade 7 - Unit 2
+  "G7.U2.L02", "G7.U2.L03", "G7.U2.L04", "G7.U2.L05", "G7.U2.L06", 
+  "G7.U2.L07", "G7.U2.L08", "G7.U2.L10", "G7.U2.L11", "G7.U2.L12", 
+  "G7.U2.L13",
+  
+  // Grade 7 - Unit 6
+  "G7.U6.L04", "G7.U6.L05", "G7.U6.L06", "G7.U6.L07", "G7.U6.L08", 
+  "G7.U6.L09", "G7.U6.L10", "G7.U6.L11", "G7.U6.L13", "G7.U6.L14", 
+  "G7.U6.L15", "G7.U6.L16",
+  
+  // Grade 8 - Unit 2
+  "G8.U2.PR1", "G8.U2.PR2", "G8.U2.PR3", "G8.U2.L10", "G8.U2.L11", 
+  "G8.U2.L12",
+  
+  // Grade 8 - Unit 3
+  "G8.U3.L01", "G8.U3.L02", "G8.U3.L03", "G8.U3.L04", "G8.U3.L05", 
+  "G8.U3.L06", "G8.U3.L07", "G8.U3.L08", "G8.U3.L09", "G8.U3.L10", 
+  "G8.U3.L11", "G8.U3.L13", "G8.U3.L14",
+  
+  // Grade 8 - Unit 5
+  "G8.U5.L01", "G8.U5.L02", "G8.U5.L03", "G8.U5.L04", "G8.U5.L05"
 ] as const;
 
 export const LessonCodeZod = z.enum(SCOPE_SEQUENCE);
@@ -18,18 +47,9 @@ export type LessonCode = z.infer<typeof LessonCodeZod>;
 // TEACHER AND SECTION ENUMS
 // =====================================
 
-export enum Teachers {
-  ISAAC = "Isaac",
-  SCERRA = "Scerra"
-}
-
-export enum Sections {
-  SECTION_601 = "601",
-  SECTION_802 = "802"
-}
-
-export const TeacherZod = z.enum([Teachers.ISAAC, Teachers.SCERRA]);
-export const SectionZod = z.enum([Sections.SECTION_601, Sections.SECTION_802]);
+// Replace the existing enum-based schemas with string schemas for flexibility
+export const TeacherZod = z.string().describe("Teacher name");
+export const SectionZod = z.array(SummerSectionsZod).describe("Class section identifier");
 
 export type Teacher = z.infer<typeof TeacherZod>;
 export type Section = z.infer<typeof SectionZod>;
@@ -83,26 +103,80 @@ export const ZearnCompletionInputZodSchema = toInputSchema(ZearnCompletionZodSch
 // =====================================
 
 /**
+ * Individual response attempt schema - matches CSV export format
+ */
+export const ResponseAttemptSchema = z.object({
+  attemptNumber: z.number().int().min(1).max(5).describe("Which attempt this was (1st, 2nd, 3rd, 4th, 5th)"),
+  correct: z.boolean().describe("Whether the response was correct (Yes/No)"),
+  explanationScore: z.number().int().min(0).max(4).describe("Explanation quality score (0-4)"),
+  responseDate: z.string().describe("Date/time of response (ISO string)"),
+});
+
+/**
+ * Best response summary - derived from all attempts
+ */
+export const BestResponseSchema = z.object({
+  correct: z.boolean().describe("Whether the best response was correct"),
+  explanationScore: z.number().int().min(0).max(4).describe("Best explanation score achieved"),
+  responseDate: z.string().describe("Date of the best response"),
+  attemptNumber: z.number().int().min(1).max(5).describe("Which attempt number was the best"),
+});
+
+/**
+ * Updated Snorkl/Assessment completion fields schema
+ * This replaces the simple SnorklCompletionFieldsSchema to match CSV export format
+ */
+export const AssessmentCompletionFieldsSchema = z.object({
+  // Student identification
+  studentIDref: z.number().int().positive().describe("Unique student identifier"),
+  studentName: z.string().describe("Student's full name"),
+  
+  // Assessment identification
+  assessmentQuestion: z.string().describe("Assessment question identifier (e.g., '#1')"),
+  
+  // Class context
+  gradeLevel: z.string().describe("Grade level (e.g., '6 (Rising 7)')"),
+  section: z.array(SummerSectionsZod).describe("Class section identifier"),
+  
+  // Assessment completion data
+  attempts: z.array(ResponseAttemptSchema).min(1).max(5)
+    .describe("All response attempts (1-5 attempts possible)"),
+  
+  bestResponse: BestResponseSchema
+    .describe("Best scoring response from all attempts"),
+  
+  // Metadata
+  dateOfCompletion: z.string().describe("Date when assessment was completed"),
+  completionType: z.literal("snorkl_assessment").describe("Type identifier for assessment completions"),
+  
+  // Derived summary fields
+  totalAttempts: z.number().int().min(1).max(5).describe("Total number of attempts made"),
+  finallyCorrect: z.boolean().describe("Whether student eventually got correct answer"),
+  improvementShown: z.boolean().describe("Whether explanation score improved across attempts"),
+});
+
+
+/**
  * Snorkl/Mastery-specific completion fields
  */
-export const SnorklCompletionFieldsSchema = BaseCompletionFieldsSchema.extend({
-  completionType: z.literal("snorkl"),
-  numberOfAttempts: z.number().int().min(1)
-    .describe("Number of attempts made (always tracked for Snorkl)"),
-  // Score only recorded if completed successfully
-  snorklScore: z.number().int().min(1).max(4).optional()
-    .describe("Final mastery score (only if completed: true)"),
-});
+// export const SnorklCompletionFieldsSchema = BaseCompletionFieldsSchema.extend({
+//   completionType: z.literal("snorkl"),
+//   numberOfAttempts: z.number().int().min(1)
+//     .describe("Number of attempts made (always tracked for Snorkl)"),
+//   // Score only recorded if completed successfully
+//   snorklScore: z.number().int().min(1).max(4).optional()
+//     .describe("Final mastery score (only if completed: true)"),
+// });
 
 /**
  * Full Snorkl completion schema with base document fields
  */
-export const SnorklCompletionZodSchema = BaseDocumentSchema.merge(SnorklCompletionFieldsSchema);
+export const AssessmentCompletionZodSchema = BaseDocumentSchema.merge(AssessmentCompletionFieldsSchema);
 
 /**
  * Input schema for creating/updating Snorkl completions
  */
-export const SnorklCompletionInputZodSchema = toInputSchema(SnorklCompletionZodSchema);
+export const AssessmentCompletionInputZodSchema = toInputSchema(AssessmentCompletionZodSchema);
 
 // =====================================
 // UNION COMPLETION SCHEMA
@@ -113,7 +187,7 @@ export const SnorklCompletionInputZodSchema = toInputSchema(SnorklCompletionZodS
  */
 export const LessonCompletionZodSchema = z.discriminatedUnion("completionType", [
   ZearnCompletionZodSchema,
-  SnorklCompletionZodSchema,
+  AssessmentCompletionZodSchema,
 ]);
 
 
@@ -163,23 +237,28 @@ export const AttendanceStatusZod = z.enum([
 ]);
 
 /**
- * Daily class event fields schema
+ * Daily class event fields schema - updated for Google Sheets export data
  */
 export const DailyClassEventFieldsSchema = z.object({
-  date: z.string().regex(/^\d{1,2}\/\d{1,2}\/\d{4}$/)
-    .describe("Class date in MM/DD/YYYY format"),
+  date: z.string().describe("Class date"),
+  section: z.string().describe("Class section"), 
+  teacher: z.string().describe("Teacher name"),
   studentIDref: z.number().int().positive().describe("Student identifier"),
-  studentName: z.string().describe("Student's full name"),
-  teacher: TeacherZod.describe("Teacher name"),
-  section: SectionZod.describe("Class section"),
+  
+  // Split name fields to match Google Sheets structure
+  firstName: z.string().describe("Student first name"),
+  lastName: z.string().describe("Student last name"),
   
   // Class timing and attendance
-  classLengthMin: z.number().int().positive().describe("Total class length in minutes"),
+  classLengthMin: z.number().int().positive().describe("Total class length in minutes").default(60),
   attendance: AttendanceStatusZod.describe("Student attendance status"),
-  instructionReceivedMin: z.number().int().min(0).optional()
-    .describe("Minutes of instruction received"),
+  classMissedMin: z.number().int().min(0).optional().describe("Minutes of class missed").default(0),
   
-  // Intervention tracking
+  // Export tracking metadata
+  exportDate: z.string().optional().describe("When this data was exported"),
+  exportSheet: z.string().optional().describe("Which sheet this data came from"),
+  
+  // Intervention tracking (keep existing)
   teacherInterventionMin: z.number().int().min(0).max(60).default(0)
     .describe("Minutes of teacher intervention provided"),
   interventionNotes: z.string().optional().describe("Notes about interventions"),
@@ -202,12 +281,12 @@ export const DailyClassEventInputZodSchema = toInputSchema(DailyClassEventZodSch
 
 // Completion types
 export type ZearnCompletion = z.infer<typeof ZearnCompletionZodSchema>;
-export type SnorklCompletion = z.infer<typeof SnorklCompletionZodSchema>;
+export type AssessmentCompletion = z.infer<typeof AssessmentCompletionZodSchema>;
 export type LessonCompletion = z.infer<typeof LessonCompletionZodSchema>;
 
 // Input types
 export type ZearnCompletionInput = z.infer<typeof ZearnCompletionInputZodSchema>;
-export type SnorklCompletionInput = z.infer<typeof SnorklCompletionInputZodSchema>;
+export type AssessmentCompletionInput = z.infer<typeof AssessmentCompletionInputZodSchema>;
 
 // Other entity types
 export type StudentRoster = z.infer<typeof StudentRosterZodSchema>;
@@ -232,8 +311,8 @@ export function createZearnCompletionDefaults(overrides: Partial<ZearnCompletion
     studentName: "",
     lessonCode: "U3.L1",
     dateOfCompletion: new Date().toISOString(),
-    teacher: Teachers.ISAAC,
-    section: Sections.SECTION_601,
+    teacher: "",
+    section: "",
     attempted: true,
     completed: false,
     completionType: "zearn",
@@ -245,14 +324,14 @@ export function createZearnCompletionDefaults(overrides: Partial<ZearnCompletion
 /**
  * Create default values for Snorkl completion input
  */
-export function createSnorklCompletionDefaults(overrides: Partial<SnorklCompletionInput> = {}): SnorklCompletionInput {
+export function createAssessmentCompletionDefaults(overrides: Partial<AssessmentCompletionInput> = {}): AssessmentCompletionInput {
   return {
     studentIDref: 0,
     studentName: "",
     lessonCode: "U3.L1",
     dateOfCompletion: new Date().toISOString(),
-    teacher: Teachers.ISAAC,
-    section: Sections.SECTION_601,
+    teacher: "",
+    section: "",
     attempted: true,
     completed: false,
     completionType: "snorkl",
@@ -272,9 +351,10 @@ export function createDailyClassEventDefaults(overrides: Partial<DailyClassEvent
   return {
     date: dateString,
     studentIDref: 0,
-    studentName: "",
-    teacher: Teachers.ISAAC,
-    section: Sections.SECTION_601,
+    firstName: "",
+    lastName: "",
+    teacher: "",
+    section: "",
     classLengthMin: 60,
     attendance: AttendanceStatus.PRESENT,
     teacherInterventionMin: 0,

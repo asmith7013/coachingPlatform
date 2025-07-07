@@ -31,8 +31,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable} ${inter.className}`}>
-      <body className={`bg-seasalt text-gunmetal font-sans antialiased`}>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} ${inter.className} h-full`}>
+      <body className={`bg-seasalt text-gunmetal font-sans antialiased h-full`}>
         <ClerkProvider dynamic>
           <QueryProvider> 
             <AuthProvider>  

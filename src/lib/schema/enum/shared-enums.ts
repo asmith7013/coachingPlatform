@@ -390,7 +390,7 @@ export enum AcademicYears {
 /**
  * Creates a Zod enum from a TypeScript enum
  */
-function createZodEnum<T extends Record<string, string>>(enumObj: T) {
+export function createZodEnum<T extends Record<string, string>>(enumObj: T) {
   return z.enum(Object.values(enumObj) as [string, ...string[]]);
 }
 

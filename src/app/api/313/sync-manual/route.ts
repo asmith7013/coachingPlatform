@@ -35,10 +35,10 @@ export async function POST(_req: NextRequest) {
       );
     }
     
-    console.log('📤 Manual sync completed:', {
-      processed: result.processed,
-      eventsCreated: result.dailyEventsCreated,
-    });
+    // console.log('📤 Manual sync completed:', {
+    //   processed: result.metadata.processed,
+    //   eventsCreated: result.metadata.dailyEventsCreated,
+    // });
     
     return NextResponse.json(
       createEntityResponse(result, 'Manual sync completed successfully')

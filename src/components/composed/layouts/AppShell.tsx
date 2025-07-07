@@ -64,22 +64,32 @@ const appShell = tv({
       'bg-white border-b border-gray-200'
     ],
     // Desktop sidebar - no longer needs grid positioning
+    // sidebar: [
+    //   'hidden lg:block',
+    //   'lg:flex-shrink-0', // Don't shrink the sidebar
+    //   'lg:h-screen', // CHANGE: Explicitly set full screen height
+    //   'overflow-hidden', // CHANGE: Remove overflow from container
+    //   'border-r border-gray-200',
+    //   'bg-white'
+    // ],
     sidebar: [
       'hidden lg:block',
-      'lg:flex-shrink-0', // Don't shrink the sidebar
-      'lg:h-screen', // CHANGE: Explicitly set full screen height
-      'overflow-hidden', // CHANGE: Remove overflow from container
+      'lg:fixed lg:left-0 lg:top-0', // Fixed positioning
+      'lg:h-screen lg:w-64',          // Full height, fixed width
+      'overflow-hidden',              // Sidebar container doesn't scroll
       'border-r border-gray-200',
-      'bg-white'
+      'bg-white',
+      'z-30'                          // Above content
     ],
     // Content area container
     contentArea: [
-      'col-span-full lg:flex-1', // Take remaining space on desktop
+      'col-span-full lg:flex-1 lg:ml-64', // Take remaining space on desktop
       'flex flex-col',
       'min-h-0',
       'h-full',
       'lg:min-w-0' // Prevent content area from expanding beyond available space
     ],
+
     // Desktop topbar - only spans content area (after sidebar)
     desktopTopbar: [
       'hidden lg:block',

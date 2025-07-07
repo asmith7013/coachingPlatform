@@ -16,6 +16,20 @@ export {
   mapColumns 
 } from './validators/row-validator';
 
+// Main processor class
+export { SpreadsheetProcessor } from './processors/spreadsheet-processor';
+
+// Type exports
+export type { 
+  SpreadsheetNormalizationResult, 
+  BatchSpreadsheetResult,
+  RawSpreadsheetRow,
+  SpreadsheetHeaders
+} from './types/spreadsheet-types';
+
+// Validator exports
+export { SpreadsheetColumnMapper, SpreadsheetRowValidator } from './validators/spreadsheet-validator';
+
 // Event creation functions
 export { 
   createDailyClassEvent, 
@@ -23,21 +37,39 @@ export {
   createSnorklCompletions 
 } from './parsers/row-parser';
 
-// Google Sheets client
-export {
-  fetchSheetData,
-  rowsToObjects
-} from './client';
-
-// Types
-export type {
+// Import types for function signatures
+import { 
+  SpreadsheetProcessor 
+} from './processors/spreadsheet-processor';
+import { 
+  SpreadsheetNormalizationResult, 
+  BatchSpreadsheetResult,
   RawSpreadsheetRow,
-  SpreadsheetHeaders,
-  ValidatedRowData,
-  MasteryDetail,
-  NormalizationResult,
-  NormalizationError,
-  BatchNormalizationResult,
-  ColumnAliases,
-  ColumnMappingResult
+  SpreadsheetHeaders
 } from './types/spreadsheet-types';
+
+/**
+ * Simplified API following existing patterns
+ */
+export function createSpreadsheetProcessor(headers: SpreadsheetHeaders): SpreadsheetProcessor {
+  return new SpreadsheetProcessor(headers);
+}
+
+/**
+ * Quick processing functions for common use cases
+ */
+export function processSpreadsheetRow(
+  row: RawSpreadsheetRow,
+  headers: SpreadsheetHeaders
+): SpreadsheetNormalizationResult {
+  const processor = createSpreadsheetProcessor(headers);
+  return processor.processRow(row, headers);
+}
+
+export function processSpreadsheetRows(
+  rows: RawSpreadsheetRow[],
+  headers: SpreadsheetHeaders
+): BatchSpreadsheetResult {
+  const processor = createSpreadsheetProcessor(headers);
+  return processor.processRows(rows, headers);
+}

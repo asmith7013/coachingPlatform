@@ -64,7 +64,7 @@ const sidebar = tv({
     // Desktop sidebar
     desktopSidebar: [
       'lg:flex lg:flex-col',
-      'lg:h-full', // CHANGE: Ensure full height
+      // 'lg:h-screen', // FIXED: Use viewport height instead of content height
       'transition-all duration-200 ease-out', // Smooth transitions
       'border-r border-gray-200', // Add border to separate from content
       'relative', // For absolute positioned resize handle
