@@ -1,12 +1,11 @@
 {
     "mcpServers": {
-      "mongodb": {
+      "coaching-fs": {
         "command": "npx",
         "args": [
           "-y",
-          "mongodb-mcp-server",
-          "--connectionString",
-          "${MONGODB_URI}"
+          "@modelcontextprotocol/server-filesystem",
+          "/Users/alexsmith/ai-coaching-platform"
         ]
       }
     }

@@ -146,13 +146,16 @@
 ├── response_patterns.txt
 ├── response_patterns_with_context.txt
 ├── scripts
+│   ├── add-students.ts
 │   ├── combine-docs.ts
+│   ├── delete-all-students.ts
 │   ├── generate-theme-css.ts
 │   ├── im-curriculum
 │   │   ├── README.md
 │   │   ├── course-config.js
 │   │   ├── pdf-downloader.js
 │   │   └── scraper.ts
+│   ├── import-students-from-table.ts
 │   ├── seed
 │   │   ├── README.md
 │   │   ├── index.ts
@@ -160,6 +163,11 @@
 │   │   ├── seed-cycles-coaching.ts
 │   │   ├── seed-look-fors.ts
 │   │   └── seed-schools-staff.ts
+│   ├── snorkl
+│   ├── snorkl-comprehensive-scraper.ts
+│   ├── snorkl-csv-processor.ts
+│   ├── snorkl-orchestrator.ts
+│   ├── snorkl-simple-scraper.ts
 │   └── test-monday-token.mjs
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
@@ -195,7 +203,8 @@
 │   │   │   │   └── cycles.ts
 │   │   │   ├── integrations
 │   │   │   │   ├── coaching-log-automation.ts
-│   │   │   │   └── monday.ts
+│   │   │   │   ├── monday.ts
+│   │   │   │   └── snorkl.ts
 │   │   │   ├── lookFors
 │   │   │   │   └── lookFors.ts
 │   │   │   ├── nextSteps
@@ -540,11 +549,15 @@
 │   │   │   │   ├── SkeletonCard.tsx
 │   │   │   │   ├── SkeletonContainer.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── filters
+│   │   │   │   ├── FilterHeader.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── forms
 │   │   │   │   ├── BulkUploadForm.tsx
 │   │   │   │   ├── FormLayout.tsx
 │   │   │   │   ├── FormSection.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── index.ts
 │   │   │   ├── layouts
 │   │   │   │   ├── AppShell.tsx
 │   │   │   │   ├── DashboardLayout.tsx
@@ -1024,6 +1037,8 @@
 │   │   │   │   ├── services
 │   │   │   │   │   ├── email-service.ts
 │   │   │   │   │   ├── export-service.ts
+│   │   │   │   │   ├── reset-service.ts
+│   │   │   │   │   ├── student-service.ts
 │   │   │   │   │   └── sync-service.ts
 │   │   │   │   ├── types
 │   │   │   │   │   └── spreadsheet-types.ts
@@ -1072,6 +1087,7 @@
 │   │   │   ├── mongoose-schema
 │   │   │   │   ├── 313
 │   │   │   │   │   ├── core.ts
+│   │   │   │   │   ├── storage.ts
 │   │   │   │   │   └── student.model.ts
 │   │   │   │   ├── cap
 │   │   │   │   │   ├── cap-evidence.model.ts
@@ -1132,6 +1148,7 @@
 │   │   │   └── zod-schema
 │   │   │       ├── 313
 │   │   │       │   ├── core.ts
+│   │   │       │   ├── storage.ts
 │   │   │       │   └── student.ts
 │   │   │       ├── base-schemas.ts
 │   │   │       ├── cap
@@ -1317,6 +1334,8 @@
 │   │   │   │   ├── alg1-links.json
 │   │   │   │   ├── coaching-moves.json
 │   │   │   │   ├── coachingLog.html
+│   │   │   │   ├── d11student.json
+│   │   │   │   ├── d9student.json
 │   │   │   │   ├── ilc-hs.json
 │   │   │   │   ├── ilc-routines.json
 │   │   │   │   ├── im-implementation.json
@@ -1416,9 +1435,10 @@
 ├── tasks
 │   ├── tasks-coaching-action-plan-refactor.md
 │   └── tasks-prd-schedule-3.md
+├── test-mongodb.js
 ├── test-output.css
 ├── tsconfig.json
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-418 directories, 1004 files
+420 directories, 1022 files

@@ -23,8 +23,14 @@
     "complete-visit-analysis": "tsx scripts/complete-visit-schedule-analysis.ts",
     "test-google-sheets": "tsx scripts/test-google-sheets/test-connection.ts",
     "test-data-normalization": "tsx scripts/test-google-sheets/test-normalization.ts",
+    "delete-all-students": "tsx scripts/delete-all-students.ts",
     "knip": "knip",
-    "prebuild": "npm run generate-css && tsc --noEmit --strict && next lint --max-warnings=0"
+    "prebuild": "npm run generate-css && tsc --noEmit --strict && next lint --max-warnings=0",
+    "hunt-ids": "tsx scripts/snorkl/id-hunter.mjs",
+    "snorkl:scrape": "tsx scripts/snorkl-comprehensive-scraper.ts",
+    "snorkl:process": "tsx scripts/snorkl-csv-processor.ts",
+    "snorkl:full": "tsx scripts/snorkl-orchestrator.ts",
+    "snorkl:simple": "tsx scripts/snorkl-simple-scraper.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.20.0",
@@ -82,6 +88,7 @@
     "@eslint/eslintrc": "^3",
     "@types/node": "^20.17.23",
     "@types/node-fetch": "^2.6.12",
+    "@types/papaparse": "^5.3.16",
     "@types/pg": "^8.11.14",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",

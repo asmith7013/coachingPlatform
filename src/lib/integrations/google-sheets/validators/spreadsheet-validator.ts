@@ -128,7 +128,7 @@ export class SpreadsheetRowValidator {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         teacher,
-        section: section[0] as SummerSectionsType,
+        section: section as SummerSectionsType,
         classLengthMin: classLengthMin || 60,
         attendance,
         instructionReceivedMin: parseInt(getValue('instruction')) || undefined,

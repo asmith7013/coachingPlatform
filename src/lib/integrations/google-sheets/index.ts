@@ -3,6 +3,11 @@ export * from './client';
 export * from './data-processor';
 export * from './types/spreadsheet-types';
 
+// Services
+export { GoogleSheetsExportService } from './services/export-service';
+export { GoogleSheetsSyncService } from './services/sync-service';
+export { GoogleSheetsResetService } from './services/reset-service';
+
 // Main data processing functions
 export { 
   normalizeRowToEvents, 
@@ -24,7 +29,12 @@ export type {
   SpreadsheetNormalizationResult, 
   BatchSpreadsheetResult,
   RawSpreadsheetRow,
-  SpreadsheetHeaders
+  SpreadsheetHeaders,
+  SheetResetRequest,
+  ResetResult,
+  BatchResetResult,
+  ResetOperation,
+  SyncResult
 } from './types/spreadsheet-types';
 
 // Validator exports

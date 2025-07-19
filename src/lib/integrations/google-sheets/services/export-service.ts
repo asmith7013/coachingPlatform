@@ -6,6 +6,7 @@ import {
 import { handleServerError } from '@error/handlers/server';
 import { ExportResult } from '@zod-schema/integrations/google-sheets-export';
 import { GoogleSheetsSyncService } from './sync-service';
+import { GoogleSheetsResetService } from './reset-service';
 import { SyncResult } from '../types/spreadsheet-types';
 
 
@@ -16,13 +17,16 @@ interface DuplicateDetail {
 }
 
 
-
 export class GoogleSheetsExportService {
   private static readonly DAILY_SHEET_PREFIX = 'Daily - ';
-  private static readonly COMBINED_DATA_SHEET = 'Combined Data';
+  private static readonly COMBINED_DATA_SHEET = 'Combined Data ✅';
   private static readonly DEBUG_LOG_SHEET = 'Full Export Log';
 
-  constructor(private spreadsheetId: string) {}
+  private resetService: GoogleSheetsResetService;
+
+  constructor(private spreadsheetId: string) {
+    this.resetService = new GoogleSheetsResetService(spreadsheetId);
+  }
 
   async exportAndResetDailyData(
     userEmail: string, 
@@ -124,15 +128,16 @@ export class GoogleSheetsExportService {
     // Step 2: Log to Debug Sheet
     await this.logToDebugSheet(sheetTitle, exportDate, userEmail);
     
-    // Step 3: Reset sheet (commented out for safety - uncomment when ready)
-    // await this.resetSheetForNextDay(sheetTitle);
+    // Step 3: Reset sheet for next day
+    // const resetResult = await this.resetSheetForNextDay(sheetTitle);
+    // console.log(`🔄 Reset result for ${sheetTitle}:`, resetResult.success ? 'Success' : `Failed: ${resetResult.error}`);
     
     return exportResult;
   }
 
   private async exportToCombinedData(sheetTitle: string, exportDate: Date) {
     // Read with one extra column to prevent truncation
-    const dataResult = await fetchSheetData(this.spreadsheetId, `${sheetTitle}!A3:J50`);
+    const dataResult = await fetchSheetData(this.spreadsheetId, `${sheetTitle}!A3:M50`);
     if (!dataResult.success) {
       throw new Error(`Failed to read data from ${sheetTitle}: ${dataResult.error}`);
     }
@@ -144,7 +149,16 @@ export class GoogleSheetsExportService {
         // Ensure row has 9 columns (pad if truncated by API)
         const paddedRow = [...row];
         while (paddedRow.length < 9) paddedRow.push('');
-        return [...paddedRow.slice(0, 9), exportDate.toISOString(), sheetTitle];
+
+        // Column M (index 12) already contains "Lessons Mastered Today"
+        // const lessonsMasteredToday = paddedRow[12] || 0; // Direct read from column M
+
+        return [
+          ...paddedRow.slice(0, 13), 
+          // exportDate.toISOString(), 
+          // sheetTitle,
+          // lessonsMasteredToday
+        ];
       });
 
     if (dataRows.length === 0) {
@@ -157,7 +171,7 @@ export class GoogleSheetsExportService {
     // Append to Combined Data sheet
     const appendResult = await appendSheetData(
       this.spreadsheetId, 
-      `${GoogleSheetsExportService.COMBINED_DATA_SHEET}!A:L`, 
+      `${GoogleSheetsExportService.COMBINED_DATA_SHEET}!A:O`, 
       dataRows
     );
 
@@ -231,14 +245,27 @@ export class GoogleSheetsExportService {
     if (debugRows.length > 0) {
       await appendSheetData(
         this.spreadsheetId, 
-        `${GoogleSheetsExportService.DEBUG_LOG_SHEET}!A:N`, 
+        `${GoogleSheetsExportService.DEBUG_LOG_SHEET}!A:P`, 
         debugRows
       );
     }
   }
 
-  // Commented out for safety - uncomment when ready to implement reset functionality
-  // private async resetSheetForNextDay(sheetTitle: string) {
-  //   // Implementation for sheet reset functionality
-  // }
+  // Reset sheet for next day using the reset service
+  private async resetSheetForNextDay(sheetTitle: string) {
+    try {
+      // Extract worksheet ID from sheet title if needed (for now use 0 as default)
+      const worksheetId = 0; // This would need to be determined from sheet metadata
+      
+      const result = await this.resetService.resetSheetForNextDay(worksheetId, sheetTitle);
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        sheetName: sheetTitle,
+        operations: [],
+        error: handleServerError(error)
+      };
+    }
+  }
 } 

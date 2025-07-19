@@ -119,4 +119,46 @@ export interface ColumnMappingResult {
   success: boolean;
   columnIndexes: Record<string, number>;
   missingColumns: string[];
+}
+
+// =====================================
+// RESET SERVICE TYPES
+// =====================================
+
+/**
+ * Request to reset a specific sheet
+ */
+export interface SheetResetRequest {
+  sheetId: string;
+  worksheetId: number;
+  sheetName: string;
+}
+
+/**
+ * Result of a single reset operation
+ */
+export interface ResetOperation {
+  operation: 'updateDate' | 'convertFilter' | 'setFormulas' | 'clearInterventions';
+  success: boolean;
+  details?: string;
+}
+
+/**
+ * Result of resetting a single sheet
+ */
+export interface ResetResult {
+  success: boolean;
+  sheetName: string;
+  operations: ResetOperation[];
+  error?: string;
+}
+
+/**
+ * Result of batch reset operations
+ */
+export interface BatchResetResult {
+  totalSheets: number;
+  successfulResets: number;
+  failedResets: number;
+  results: ResetResult[];
 } 

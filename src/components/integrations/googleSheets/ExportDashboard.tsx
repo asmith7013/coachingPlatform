@@ -4,11 +4,18 @@ import { useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { Card } from '@/components/composed/cards/Card';
 import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
+import { Select } from '@/components/core/fields/Select';
 import { Badge } from '@/components/core/feedback/Badge';
 import { Alert } from '@/components/core/feedback/Alert';
 import { useGoogleSheetsExport } from '@/hooks/integrations/google-sheets/useGoogleSheetsExport';
 import { ExportConfig } from '@/lib/schema/zod-schema/integrations/google-sheets-export';
+
+// District options with predefined spreadsheet IDs
+const districtOptions = [
+  { value: '12nRSGcLlo6SMEyYUWPjfMAcEd-ZDdil-zw44tGjpN7E', label: 'D9' },
+  { value: '1c1B3l_e0z10Z8dnM0VngJ8oEaoxwsq0vMBrkC72P95g', label: 'D11' },
+  { value: '1ocvb1ak5qk-ktsd35qYMVE0QKgv4w6fUi_hcjRFq_5w', label: 'Test' },
+];
 
 export function ExportDashboard() {
   const { user } = useUser();
@@ -28,12 +35,12 @@ export function ExportDashboard() {
   } = useGoogleSheetsExport();
 
   const handleExport = async () => {
-    if (!spreadsheetId.trim() || !user?.primaryEmailAddress?.emailAddress) {
+    if (!spreadsheetId || !user?.primaryEmailAddress?.emailAddress) {
       return;
     }
 
     const config: ExportConfig = {
-      spreadsheetId: spreadsheetId.trim(),
+      spreadsheetId: spreadsheetId,
       userEmail: user.primaryEmailAddress.emailAddress,
       dryRun,
       syncToMongoDB
@@ -43,10 +50,10 @@ export function ExportDashboard() {
   };
 
   const handleTestConnection = async () => {
-    if (!spreadsheetId.trim()) {
+    if (!spreadsheetId) {
       return;
     }
-    await testConnection(spreadsheetId.trim());
+    await testConnection(spreadsheetId);
   };
 
   const handleReset = () => {
@@ -67,18 +74,16 @@ export function ExportDashboard() {
         </Card.Header>
         <Card.Body className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="spreadsheetId" className="text-sm font-medium">
-              Spreadsheet ID
-            </label>
-            <Input
-              id="spreadsheetId"
-              placeholder="Enter Google Sheets ID"
+            <Select
+              label="District"
+              options={districtOptions}
               value={spreadsheetId}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSpreadsheetId(e.target.value)}
+              onChange={setSpreadsheetId}
+              placeholder="Select a district"
               disabled={isExporting || isTesting}
             />
             <p className="text-xs text-muted-foreground">
-              Extract from the URL: https://docs.google.com/spreadsheets/d/[SPREADSHEET_ID]/edit
+              Select the district to export data from
             </p>
           </div>
 
@@ -111,14 +116,14 @@ export function ExportDashboard() {
           <div className="flex space-x-2">
             <Button
               onClick={handleTestConnection}
-              disabled={!spreadsheetId.trim() || isExporting || isTesting}
+              disabled={!spreadsheetId || isExporting || isTesting}
               appearance="outline"
             >
               {isTesting ? 'Testing...' : 'Test Connection'}
             </Button>
             <Button
               onClick={handleExport}
-              disabled={!spreadsheetId.trim() || !user?.primaryEmailAddress?.emailAddress || isExporting || isTesting}
+              disabled={!spreadsheetId || !user?.primaryEmailAddress?.emailAddress || isExporting || isTesting}
             >
               {isExporting ? 'Exporting...' : 'Export Data'}
             </Button>

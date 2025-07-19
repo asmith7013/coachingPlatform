@@ -49,7 +49,7 @@ export type LessonCode = z.infer<typeof LessonCodeZod>;
 
 // Replace the existing enum-based schemas with string schemas for flexibility
 export const TeacherZod = z.string().describe("Teacher name");
-export const SectionZod = z.array(SummerSectionsZod).describe("Class section identifier");
+export const SectionZod = SummerSectionsZod.describe("Class section identifier");
 
 export type Teacher = z.infer<typeof TeacherZod>;
 export type Section = z.infer<typeof SectionZod>;
@@ -136,7 +136,7 @@ export const AssessmentCompletionFieldsSchema = z.object({
   
   // Class context
   gradeLevel: z.string().describe("Grade level (e.g., '6 (Rising 7)')"),
-  section: z.array(SummerSectionsZod).describe("Class section identifier"),
+  section: SectionZod.describe("Class section identifier"),
   
   // Assessment completion data
   attempts: z.array(ResponseAttemptSchema).min(1).max(5)

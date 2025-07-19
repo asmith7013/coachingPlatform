@@ -1,6 +1,6 @@
 import { z, ZodType } from "zod";
-import { StudentModel } from "@/lib/schema/mongoose-schema/313/student.model";
-import { Student, StudentZodSchema, StudentInputZodSchema, StudentInput } from "@/lib/schema/zod-schema/313/student";
+import { StudentModel } from "@mongoose-schema/313/student.model";
+import { Student, StudentZodSchema, StudentInputZodSchema, StudentInput } from "@zod-schema/313/student";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { handleServerError } from "@error/handlers/server";
 import { QueryParams, DEFAULT_QUERY_PARAMS } from "@core-types/query";
@@ -50,7 +50,11 @@ export class StudentService {
       const students = await StudentModel.find({ section, active: true })
         .sort({ lastName: 1, firstName: 1 });
       
-      return { success: true, data: students };
+      // ✅ Convert to plain objects using Mongoose transform
+      const plainStudents = students.map(doc => doc.toObject());
+      
+      // ✅ Use correct response format to match client expectations
+      return { success: true, items: plainStudents };
     } catch (error) {
       return { success: false, error: handleServerError(error) };
     }
@@ -61,7 +65,11 @@ export class StudentService {
       const students = await StudentModel.find({ teacher, active: true })
         .sort({ section: 1, lastName: 1, firstName: 1 });
       
-      return { success: true, data: students };
+      // ✅ Convert to plain objects
+      const plainStudents = students.map(doc => doc.toObject());
+      
+      // ✅ Use correct response format
+      return { success: true, items: plainStudents };
     } catch (error) {
       return { success: false, error: handleServerError(error) };
     }
@@ -75,7 +83,8 @@ export class StudentService {
         return { success: false, error: `Student with ID ${studentID} not found` };
       }
       
-      return { success: true, data: student };
+      // ✅ Convert to plain object (single entity still uses 'data')
+      return { success: true, data: student.toObject() };
     } catch (error) {
       return { success: false, error: handleServerError(error) };
     }

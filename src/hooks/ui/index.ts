@@ -10,4 +10,5 @@ export * from './useResizableSidebar';
 // export * from './useScheduleDisplay';
 export * from './useAdaptiveHeight';
 export * from './useSchoolAuthorization';
-export * from './useSectionToggle'; 
+export * from './useSectionToggle';
+export * from './useLocalStorage'; 

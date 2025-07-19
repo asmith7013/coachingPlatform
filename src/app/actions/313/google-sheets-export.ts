@@ -7,7 +7,7 @@ import { handleServerError } from "@/lib/error/handlers/server";
 import { withDbConnection } from "@/lib/server/db/ensure-connection";
 import { GoogleSheetsExportService } from "@/lib/integrations/google-sheets/services/export-service";
 import { EmailService } from "@/lib/integrations/google-sheets/services/email-service";
-import { ExportConfigZodSchema, ExportResult } from "@/lib/schema/zod-schema/integrations/google-sheets-export";
+import { ExportConfigZodSchema, ExportResult } from "@zod-schema/integrations/google-sheets-export";
 import { EntityResponse } from "@/lib/types/core/response";
 
 export async function exportAndResetDailySheets(

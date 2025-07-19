@@ -3,7 +3,9 @@ import {
   UserGroupIcon,
   ChartBarIcon,
   DocumentChartBarIcon,
-  BookOpenIcon
+  BookOpenIcon,
+  TableCellsIcon,
+  ArrowDownTrayIcon
 } from '@heroicons/react/24/outline'
 
 import type { NavigationItem, TeamItem } from '@/components/composed/layouts/sidebar/NavigationSidebar'
@@ -22,7 +24,7 @@ export const navigationItems: NavigationItem[] = [
     href: '/313/students', 
     icon: UserGroupIcon, 
     current: false,
-    requiredPermissions: [PERMISSIONS.STAFF_VIEW] // Using existing permission for student data access
+    requiredPermissions: [PERMISSIONS.STUDENTS_VIEW]
   },
   { 
     name: 'Analytics', 
@@ -32,18 +34,18 @@ export const navigationItems: NavigationItem[] = [
     requiredPermissions: [PERMISSIONS.ANALYTICS_VIEW]
   },
   { 
-    name: 'Reports', 
-    href: '/313/reports', 
-    icon: DocumentChartBarIcon, 
+    name: 'Zearn Import', 
+    href: '/313/zearn-import', 
+    icon: ArrowDownTrayIcon, 
     current: false,
-    requiredPermissions: [PERMISSIONS.REPORTS_VIEW]
+    requiredPermissions: [PERMISSIONS.STUDENTS_EDIT] // Requires ability to modify student data
   },
   { 
-    name: 'Curriculum', 
-    href: '/313/curriculum', 
-    icon: BookOpenIcon, 
+    name: 'Google Sheets Export', 
+    href: '/313/google-sheets-export', 
+    icon: TableCellsIcon, 
     current: false,
-    requiredPermissions: [PERMISSIONS.DASHBOARD_VIEW] // Using basic dashboard permission for curriculum access
+    requiredPermissions: [PERMISSIONS.REPORTS_VIEW]
   }
 ]
 
@@ -67,12 +69,12 @@ export const pageMetadata: Record<string, { title: string; description: string }
     title: 'Analytics',
     description: 'View summer program analytics and performance metrics'
   },
-  '/313/reports': {
-    title: 'Reports',
-    description: 'Generate and view summer program reports'
+  '/313/zearn-import': {
+    title: 'Zearn Import',
+    description: 'Import Zearn completion data for students'
   },
-  '/313/curriculum': {
-    title: 'Curriculum',
-    description: 'Manage summer program curriculum and materials'
+  '/313/google-sheets-export': {
+    title: 'Google Sheets Export',
+    description: 'Export student data to Google Sheets'
   }
 } 

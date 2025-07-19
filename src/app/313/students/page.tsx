@@ -3,9 +3,9 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { DashboardPage } from '@components/composed/layouts/DashboardPage';
 import { Table } from '@components/composed/tables/Table';
+import { FilterHeader, type FilterConfig } from '@components/composed/filters';
 import { Select } from '@components/core/fields/Select';
 import { Text } from '@components/core/typography/Text';
-import { Button } from '@components/core/Button';
 import { Badge } from '@components/core/feedback/Badge';
 import { useStudents } from "@hooks/domain/313/useStudents";
 import { Student } from "@/lib/schema/zod-schema/313/student";
@@ -34,7 +34,7 @@ export default function StudentViewerPage() {
     items: students = [], 
     isLoading, 
     error 
-  } = useStudents.list();
+  } = useStudents.list({ limit: 1000 });
   
   const { updateWithToast } = useStudents.withNotifications();
   
@@ -42,6 +42,7 @@ export default function StudentViewerPage() {
   const [selectedDistrict, setSelectedDistrict] = useState<string>("");
   const [selectedTeacher, setSelectedTeacher] = useState<string>("");
   const [selectedSection, setSelectedSection] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   
   // Get district mapping
   const districtMapping = useMemo(() => getDistrictMapping(), []);
@@ -57,32 +58,38 @@ export default function StudentViewerPage() {
     return districtMapping[selectedDistrict as keyof typeof districtMapping]?.sections || [];
   }, [selectedDistrict, districtMapping]);
   
-  // Filtered students based on selected filters
+  // ✅ Updated filtering logic with search
   const filteredStudents = useMemo(() => {
     return students.filter(student => {
+      // Existing district filtering
       if (selectedDistrict) {
-        const studentTeachers = Array.isArray(student.teacher) ? student.teacher : [student.teacher];
-        const studentSections = Array.isArray(student.section) ? student.section : [student.section];
-        
-        const teacherInDistrict = studentTeachers.some(t => availableTeachers.includes(t as SummerTeachersType));
-        const sectionInDistrict = studentSections.some(s => availableSections.includes(s as SummerSectionsType));
+        const teacherInDistrict = availableTeachers.includes(student.teacher as SummerTeachersType);
+        const sectionInDistrict = availableSections.includes(student.section as SummerSectionsType);
         
         if (!teacherInDistrict || !sectionInDistrict) return false;
       }
       
-      if (selectedTeacher) {
-        const studentTeachers = Array.isArray(student.teacher) ? student.teacher : [student.teacher];
-        if (!studentTeachers.includes(selectedTeacher as SummerTeachersType)) return false;
-      }
+      // Existing teacher/section filtering
+      if (selectedTeacher && student.teacher !== selectedTeacher) return false;
+      if (selectedSection && student.section !== selectedSection) return false;
       
-      if (selectedSection) {
-        const studentSections = Array.isArray(student.section) ? student.section : [student.section];
-        if (!studentSections.includes(selectedSection as SummerSectionsType)) return false;
+      // NEW: Search functionality
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        const fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
+        const username = student.username.toLowerCase();
+        const studentId = student.studentID.toString();
+        
+        const matchesSearch = fullName.includes(query) || 
+                             username.includes(query) || 
+                             studentId.includes(query);
+        
+        if (!matchesSearch) return false;
       }
       
       return true;
     });
-  }, [students, selectedDistrict, selectedTeacher, selectedSection, availableTeachers, availableSections]);
+  }, [students, selectedDistrict, selectedTeacher, selectedSection, searchQuery, availableTeachers, availableSections]);
   
   // Handle field updates
   const handleGradeLevelChange = useCallback(async (studentId: string, newGradeLevel: string) => {
@@ -95,7 +102,7 @@ export default function StudentViewerPage() {
   
   const handleSectionChange = useCallback(async (studentId: string, newSection: string) => {
     try {
-      await updateWithToast(studentId, { section: [newSection as SummerSectionsType] });
+      await updateWithToast(studentId, { section: newSection as SummerSectionsType });
     } catch (error) {
       console.error('Failed to update section:', error);
     }
@@ -103,17 +110,55 @@ export default function StudentViewerPage() {
   
   const handleTeacherChange = useCallback(async (studentId: string, newTeacher: string) => {
     try {
-      await updateWithToast(studentId, { teacher: [newTeacher as SummerTeachersType] });
+      await updateWithToast(studentId, { teacher: newTeacher as SummerTeachersType });
     } catch (error) {
       console.error('Failed to update teacher:', error);
     }
   }, [updateWithToast]);
   
+  // Filter configuration for the component
+  const filterConfigs: FilterConfig[] = useMemo(() => [
+    {
+      key: 'district',
+      label: 'District',
+      options: [
+        { value: "", label: "All Districts" },
+        ...SummerDistricts.map(district => ({ value: district, label: district }))
+      ],
+      value: selectedDistrict,
+      onChange: setSelectedDistrict,
+      placeholder: "Select district"
+    },
+    {
+      key: 'teacher',
+      label: 'Teacher',
+      options: [
+        { value: "", label: "All Teachers" },
+        ...availableTeachers.map(teacher => ({ value: teacher, label: teacher }))
+      ],
+      value: selectedTeacher,
+      onChange: setSelectedTeacher,
+      placeholder: "Select teacher"
+    },
+    {
+      key: 'section',
+      label: 'Section',
+      options: [
+        { value: "", label: "All Sections" },
+        ...availableSections.map(section => ({ value: section, label: section }))
+      ],
+      value: selectedSection,
+      onChange: setSelectedSection,
+      placeholder: "Select section"
+    }
+  ], [selectedDistrict, selectedTeacher, selectedSection, availableTeachers, availableSections]);
+
   // Clear filters
-  const clearFilters = useCallback(() => {
+  const handleClearFilters = useCallback(() => {
     setSelectedDistrict("");
     setSelectedTeacher("");
     setSelectedSection("");
+    setSearchQuery("");
   }, []);
   
   // Table columns configuration
@@ -143,9 +188,9 @@ export default function StudentViewerPage() {
       accessor: (row) => (
         <Select
           options={[
-            { value: "6 (Rising 7)", label: "6 (Rising 7)" },
-            { value: "7 (Rising 8)", label: "7 (Rising 8)" },
-            { value: "8 (Rising 9)", label: "8 (Rising 9)" }
+            { value: "6", label: "6 (Rising 7)" },
+            { value: "7", label: "7 (Rising 8)" },
+            { value: "8", label: "8 (Rising 9)" }
           ]}
           value={row.gradeLevel || ""}
           onChange={(value) => handleGradeLevelChange(row._id, value)}
@@ -159,52 +204,32 @@ export default function StudentViewerPage() {
     {
       id: 'section',
       label: 'Section',
-      accessor: (row) => {
-        const currentSections = Array.isArray(row.section) ? row.section : [row.section];
-        const currentSection = currentSections[0] || "";
-        
-        return (
-          <Select
-            options={availableSections.map(section => ({ value: section, label: section }))}
-            value={currentSection}
-            onChange={(value) => handleSectionChange(row._id, value)}
-            placeholder="Select section"
-            textSize="sm"
-            padding="sm"
-          />
-        );
-      },
-      width: '120px'
+      accessor: (row) => (
+        <Select
+          options={availableSections.map(section => ({ value: section, label: section }))}
+          value={row.section || ""}
+          onChange={(value) => handleSectionChange(row._id, value)}
+          placeholder="Select section"
+          textSize="sm"
+          padding="sm"
+        />
+      ),
+      width: '180px'
     },
     {
       id: 'teacher',
       label: 'Teacher',
-      accessor: (row) => {
-        const currentTeachers = Array.isArray(row.teacher) ? row.teacher : [row.teacher];
-        const currentTeacher = currentTeachers[0] || "";
-        
-        return (
-          <Select
-            options={availableTeachers.map(teacher => ({ value: teacher, label: teacher }))}
-            value={currentTeacher}
-            onChange={(value) => handleTeacherChange(row._id, value)}
-            placeholder="Select teacher"
-            textSize="sm"
-            padding="sm"
-          />
-        );
-      },
-      width: '120px'
-    },
-    {
-      id: 'email',
-      label: 'Email',
       accessor: (row) => (
-        <Text textSize="sm" color="muted">
-          {row.email || 'N/A'}
-        </Text>
+        <Select
+          options={availableTeachers.map(teacher => ({ value: teacher, label: teacher }))}
+          value={row.teacher || ""}
+          onChange={(value) => handleTeacherChange(row._id, value)}
+          placeholder="Select teacher"
+          textSize="sm"
+          padding="sm"
+        />
       ),
-      width: '200px'
+      width: '180px'
     },
     {
       id: 'active',
@@ -239,74 +264,27 @@ export default function StudentViewerPage() {
       title="Students"
       description={`Viewing ${filteredStudents.length} of ${students.length} students`}
     >
-      {/* Filters Section */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border mb-6">
-        <div className="flex flex-wrap gap-4 items-center">
-          <div className="flex flex-col">
-            <Text textSize="sm" className="mb-2 font-medium">District</Text>
-            <Select
-              options={[
-                { value: "", label: "All Districts" },
-                ...SummerDistricts.map(district => ({ value: district, label: district }))
-              ]}
-              value={selectedDistrict}
-              onChange={setSelectedDistrict}
-              placeholder="Select district"
-              className="w-40"
-            />
-          </div>
-          
-          <div className="flex flex-col">
-            <Text textSize="sm" className="mb-2 font-medium">Teacher</Text>
-            <Select
-              options={[
-                { value: "", label: "All Teachers" },
-                ...availableTeachers.map(teacher => ({ value: teacher, label: teacher }))
-              ]}
-              value={selectedTeacher}
-              onChange={setSelectedTeacher}
-              placeholder="Select teacher"
-              className="w-40"
-            />
-          </div>
-          
-          <div className="flex flex-col">
-            <Text textSize="sm" className="mb-2 font-medium">Section</Text>
-            <Select
-              options={[
-                { value: "", label: "All Sections" },
-                ...availableSections.map(section => ({ value: section, label: section }))
-              ]}
-              value={selectedSection}
-              onChange={setSelectedSection}
-              placeholder="Select section"
-              className="w-40"
-            />
-          </div>
-          
-          <div className="flex flex-col justify-end">
-            <Button
-              intent="secondary"
-              appearance="outline"
-              onClick={clearFilters}
-              className="mt-6"
-            >
-              Clear Filters
-            </Button>
-          </div>
-        </div>
-      </div>
+      {/* Filters Section - Using Reusable Component */}
+      <FilterHeader
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by name..."
+        filters={filterConfigs}
+        onClearFilters={handleClearFilters}
+        columns={4}
+      />
       
       {/* Results Summary */}
       <div className="mb-4">
         <Text textSize="sm" color="muted">
           Showing {filteredStudents.length} of {students.length} students
-          {(selectedDistrict || selectedTeacher || selectedSection) && (
+          {(selectedDistrict || selectedTeacher || selectedSection || searchQuery) && (
             <span className="ml-2">
               (filtered by: {[
                 selectedDistrict && `District: ${selectedDistrict}`,
                 selectedTeacher && `Teacher: ${selectedTeacher}`,
-                selectedSection && `Section: ${selectedSection}`
+                selectedSection && `Section: ${selectedSection}`,
+                searchQuery && `Search: "${searchQuery}"`
               ].filter(Boolean).join(', ')})
             </span>
           )}
