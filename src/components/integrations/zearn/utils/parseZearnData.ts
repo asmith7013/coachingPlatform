@@ -17,7 +17,9 @@ export interface ParsedStudentData {
 }
 
 export function parseZearnData(text: string): ParsedStudentData {
+
   const lines = text.trim().split('\n');
+
   const result = {
     studentName: '',
     firstName: '',
@@ -25,6 +27,8 @@ export function parseZearnData(text: string): ParsedStudentData {
     zearnCompletions: [] as ZearnCompletion[],
     zearnWeeks: [] as ZearnWeek[]
   };
+
+  console.log('Initial result:', result);
   
   let weeklyMinutes = '';
   let weekRange = '';
@@ -35,8 +39,10 @@ export function parseZearnData(text: string): ParsedStudentData {
     
     if (!line) continue;
     
-    // Extract student name
-    const nameMatch = line.match(/([A-Z\s]+)\s+completed\s+\d+\s+Lessons/);
+    // Extract student name - include hyphens in the pattern
+    const nameMatch = line.match(/([A-Z\s-]+)\s+completed\s+\d+\s+Lessons?/);
+    //                              ^^^^ added hyphen to character class
+
     if (nameMatch) {
       result.studentName = nameMatch[1].trim();
       const nameParts = result.studentName.split(/\s+/);
@@ -83,6 +89,27 @@ export function parseZearnData(text: string): ParsedStudentData {
       zearnMin: weeklyMinutes
     });
   }
+
+  console.log('Final result:', result);
   
   return result;
 } 
+
+function formatLessonTitle(lessonTitle: string): string {
+  // Match the pattern G# M# L# and extract the parts
+  const match = lessonTitle.match(/^(G\d+)\s+(M\d+)\s+L(\d+)$/);
+  
+  if (match) {
+    const gradeNum = match[1];      // G6, G7, G8, etc.
+    const moduleNum = match[2];     // M1, M2, M3, etc.
+    const lessonNum = match[3];  // 1, 2, 10, etc.
+    
+    // Pad lesson number with leading zero if single digit
+    const paddedLesson = lessonNum.padStart(2, '0');
+    
+    return `${gradeNum} ${moduleNum} L${paddedLesson}`;
+  }
+  
+  // Return original if pattern doesn't match
+  return lessonTitle;
+}

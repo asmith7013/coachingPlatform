@@ -2,8 +2,8 @@ import {
   HomeIcon,
   UserGroupIcon,
   ChartBarIcon,
-  DocumentChartBarIcon,
-  BookOpenIcon,
+  // DocumentChartBarIcon,
+  // BookOpenIcon,
   TableCellsIcon,
   ArrowDownTrayIcon
 } from '@heroicons/react/24/outline'

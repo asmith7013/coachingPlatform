@@ -13,9 +13,9 @@ export const ZearnImportRecordFieldsSchema = z.object({
   firstName: z.string().describe("Student first name"),
   lastName: z.string().describe("Student last name"),
   
-  // Zearn-specific fields (exactly as requested)
-  lessonTitle: ZearnLessonFormatZod.describe("Lesson title from Zearn"),
-  lessonCompletionDate: z.string().describe("Completion timestamp"),
+  // Zearn-specific fields (optional with defaults for zero lessons cases)
+  lessonTitle: z.string().optional().default('').describe("Lesson title from Zearn"),
+  lessonCompletionDate: z.string().optional().default('').describe("Completion timestamp"),
   
   // Optional weekly summary fields
   weekRange: z.string().optional().describe("Week range (e.g., 'Jul 14 – Jul 20')"),

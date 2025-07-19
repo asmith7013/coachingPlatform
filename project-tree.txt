@@ -155,7 +155,6 @@
 │   │   ├── course-config.js
 │   │   ├── pdf-downloader.js
 │   │   └── scraper.ts
-│   ├── import-students-from-table.ts
 │   ├── seed
 │   │   ├── README.md
 │   │   ├── index.ts
@@ -181,9 +180,13 @@
 │   │   │       └── page.tsx
 │   │   ├── 313
 │   │   │   ├── config.ts
+│   │   │   ├── google-sheets-export
+│   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
-│   │   │   └── students
+│   │   │   ├── students
+│   │   │   │   └── page.tsx
+│   │   │   └── zearn-import
 │   │   │       └── page.tsx
 │   │   ├── actions
 │   │   │   ├── 313
@@ -191,7 +194,8 @@
 │   │   │   │   ├── google-sheets-export.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── students.ts
-│   │   │   │   └── sync-sheets.ts
+│   │   │   │   ├── sync-sheets.ts
+│   │   │   │   └── zearn-import.ts
 │   │   │   ├── coaching
 │   │   │   │   ├── cap-evidence.ts
 │   │   │   │   ├── cap-implementation-records.ts
@@ -499,8 +503,6 @@
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── test-enum-mongoose
 │   │   │   │       └── page.tsx
-│   │   │   ├── google-sheets-export
-│   │   │   │   └── page.tsx
 │   │   │   ├── im-routines
 │   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
@@ -856,22 +858,28 @@
 │   │   └── integrations
 │   │       ├── googleSheets
 │   │       │   └── ExportDashboard.tsx
-│   │       └── monday
-│   │           ├── README.md
-│   │           ├── UserForm.tsx
-│   │           ├── boards
-│   │           │   └── index.ts
-│   │           ├── common
-│   │           │   ├── ConnectionTest.tsx
-│   │           │   └── index.ts
-│   │           ├── domain
-│   │           │   ├── users
-│   │           │   └── visits
-│   │           ├── imports
-│   │           │   └── index.ts
-│   │           ├── index.ts
+│   │       ├── monday
+│   │       │   ├── README.md
+│   │       │   ├── UserForm.tsx
+│   │       │   ├── boards
+│   │       │   │   └── index.ts
+│   │       │   ├── common
+│   │       │   │   ├── ConnectionTest.tsx
+│   │       │   │   └── index.ts
+│   │       │   ├── domain
+│   │       │   │   ├── users
+│   │       │   │   └── visits
+│   │       │   ├── imports
+│   │       │   │   └── index.ts
+│   │       │   ├── index.ts
+│   │       │   └── utils
+│   │       │       └── index.ts
+│   │       └── zearn
+│   │           ├── ZearnDataParser.tsx
+│   │           ├── hooks
+│   │           │   └── useZearnBatchData.ts
 │   │           └── utils
-│   │               └── index.ts
+│   │               └── parseZearnData.ts
 │   ├── debug
 │   ├── examples
 │   │   └── skeleton-container-examples.tsx
@@ -943,6 +951,7 @@
 │   │   │   ├── index.ts
 │   │   │   ├── useAdaptiveHeight.ts
 │   │   │   ├── useAuthorizedNavigation.ts
+│   │   │   ├── useLocalStorage.ts
 │   │   │   ├── useNavigation.ts
 │   │   │   ├── useNotifications.ts
 │   │   │   ├── useResizableSidebar.ts
@@ -1039,7 +1048,8 @@
 │   │   │   │   │   ├── export-service.ts
 │   │   │   │   │   ├── reset-service.ts
 │   │   │   │   │   ├── student-service.ts
-│   │   │   │   │   └── sync-service.ts
+│   │   │   │   │   ├── sync-service.ts
+│   │   │   │   │   └── zearn-import-service.ts
 │   │   │   │   ├── types
 │   │   │   │   │   └── spreadsheet-types.ts
 │   │   │   │   └── validators
@@ -1088,7 +1098,8 @@
 │   │   │   │   ├── 313
 │   │   │   │   │   ├── core.ts
 │   │   │   │   │   ├── storage.ts
-│   │   │   │   │   └── student.model.ts
+│   │   │   │   │   ├── student.model.ts
+│   │   │   │   │   └── zearn-import.model.ts
 │   │   │   │   ├── cap
 │   │   │   │   │   ├── cap-evidence.model.ts
 │   │   │   │   │   ├── cap-implementation-record.model.ts
@@ -1149,7 +1160,8 @@
 │   │   │       ├── 313
 │   │   │       │   ├── core.ts
 │   │   │       │   ├── storage.ts
-│   │   │       │   └── student.ts
+│   │   │       │   ├── student.ts
+│   │   │       │   └── zearn-import.ts
 │   │   │       ├── base-schemas.ts
 │   │   │       ├── cap
 │   │   │       │   ├── cap-evidence.ts
@@ -1435,10 +1447,9 @@
 ├── tasks
 │   ├── tasks-coaching-action-plan-refactor.md
 │   └── tasks-prd-schedule-3.md
-├── test-mongodb.js
 ├── test-output.css
 ├── tsconfig.json
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-420 directories, 1022 files
+424 directories, 1029 files

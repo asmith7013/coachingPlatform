@@ -23,6 +23,11 @@ export interface StudentRowData {
   rawData: string;
   parsedData: ParsedStudentData | null;
   parseError: string | null;
+  nameMatch: {
+    isMatched: boolean;
+    attemptedName: string;
+    confidence: 'high' | 'medium' | 'low' | 'none';
+  };
 }
 
 const STORAGE_KEY = 'zearn-batch-data';
@@ -57,6 +62,53 @@ export function useZearnBatchData() {
     if (!selectedDistrict) return [];
     return DISTRICT_OPTIONS[selectedDistrict].sections;
   }, [selectedDistrict]);
+
+  // Check name match between student and parsed data
+  const checkNameMatch = useCallback((student: Student, parsedData: ParsedStudentData | null) => {
+    if (!parsedData || !parsedData.studentName) {
+      return {
+        isMatched: false,
+        attemptedName: '',
+        confidence: 'none' as const
+      };
+    }
+
+    const studentFullName = `${student.firstName} ${student.lastName}`.toLowerCase().trim();
+    const zearnName = parsedData.studentName.toLowerCase().trim();
+    const zearnParsedName = `${parsedData.firstName} ${parsedData.lastName}`.toLowerCase().trim();
+
+    // Exact match
+    if (studentFullName === zearnName || studentFullName === zearnParsedName) {
+      return {
+        isMatched: true,
+        attemptedName: parsedData.studentName,
+        confidence: 'high' as const
+      };
+    }
+
+    // Partial match (contains all words)
+    const studentWords = studentFullName.split(/\s+/);
+    const zearnWords = zearnName.split(/\s+/);
+    
+    const allWordsMatch = studentWords.every(word => 
+      zearnWords.some(zearnWord => zearnWord.includes(word) || word.includes(zearnWord))
+    );
+
+    if (allWordsMatch) {
+      return {
+        isMatched: true,
+        attemptedName: parsedData.studentName,
+        confidence: 'medium' as const
+      };
+    }
+
+    // No match
+    return {
+      isMatched: false,
+      attemptedName: parsedData.studentName,
+      confidence: 'low' as const
+    };
+  }, []);
 
   // Reset sections when district changes
   useEffect(() => {
@@ -98,7 +150,6 @@ export function useZearnBatchData() {
           setStudents(sortedStudents);
         } else {
           setStudentsError('No students found for selected sections');
-          handleClientError(new Error('No students found for selected sections'), 'fetchStudentsBySection');
         }
       } catch (error) {
         const errorMsg = 'Error loading students';
@@ -136,9 +187,7 @@ export function useZearnBatchData() {
           if (!parsedData.studentName) {
             throw new Error('Could not extract student name from data');
           }
-          if (parsedData.zearnCompletions.length === 0) {
-            throw new Error('No lesson completions found');
-          }
+          // That's it - if we have a name and week data, it's valid
         } catch (error) {
           parseError = error instanceof Error ? error.message : 'Parse error';
           parsedData = null;
@@ -159,6 +208,53 @@ export function useZearnBatchData() {
     });
   }, [students, selectedSections, setStorageData]);
 
+  // Handle manual name correction
+  const handleManualNameCorrection = useCallback((studentId: string, correctedName: string) => {
+    const student = students.find(s => s._id === studentId);
+    const studentSection = student?.section || selectedSections[0] || '';
+    
+    setStorageData(prev => {
+      const sectionData = prev[studentSection] || {};
+      const studentData = sectionData[studentId];
+      
+      if (!studentData || !studentData.rawData) return prev;
+      
+      // Re-parse with corrected name
+      try {
+        const correctedData = parseZearnData(studentData.rawData);
+        correctedData.studentName = correctedName;
+        
+        // Re-parse firstName/lastName from corrected name
+        const nameParts = correctedName.trim().split(/\s+/);
+        correctedData.firstName = nameParts[0] || '';
+        correctedData.lastName = nameParts.slice(1).join(' ') || '';
+        
+        return {
+          ...prev,
+          [studentSection]: {
+            ...sectionData,
+            [studentId]: {
+              ...studentData,
+              parsedData: correctedData,
+              parseError: null
+            }
+          }
+        };
+      } catch (error) {
+        return {
+          ...prev,
+          [studentSection]: {
+            ...sectionData,
+            [studentId]: {
+              ...studentData,
+              parseError: error instanceof Error ? error.message : 'Parse error after correction'
+            }
+          }
+        };
+      }
+    });
+  }, [students, selectedSections, setStorageData]);
+
   // Create table data
   const tableData: StudentRowData[] = useMemo(() => {
     return students.map(student => {
@@ -169,18 +265,25 @@ export function useZearnBatchData() {
         parseError: null
       };
       
+      const nameMatch = checkNameMatch(student, studentData.parsedData);
+      
       return {
         student,
         rawData: studentData.rawData,
         parsedData: studentData.parsedData,
-        parseError: studentData.parseError
+        parseError: studentData.parseError,
+        nameMatch
       };
     });
-  }, [students, storageData]);
+  }, [students, storageData, checkNameMatch]);
 
-  // Count valid entries
+  // Count valid entries - now requires name matching
   const validEntries = useMemo(() => {
-    return tableData.filter(row => row.parsedData && !row.parseError).length;
+    return tableData.filter(row => 
+      row.parsedData && 
+      !row.parseError && 
+      row.nameMatch.isMatched
+    ).length;
   }, [tableData]);
 
   // Handle batch upload
@@ -195,10 +298,14 @@ export function useZearnBatchData() {
       return;
     }
 
-    const validRows = tableData.filter(row => row.parsedData && !row.parseError);
+    const validRows = tableData.filter(row => 
+      row.parsedData && 
+      !row.parseError && 
+      row.nameMatch.isMatched
+    );
     
     if (validRows.length === 0) {
-      setUploadError('No valid data to upload');
+      setUploadError('No valid data to upload. All students must have parsed data with matching names.');
       return;
     }
 
@@ -211,30 +318,45 @@ export function useZearnBatchData() {
     setUploadError('');
 
     try {
-      // Transform all valid data to import records
+      // Transform all valid data to import records - single path for both cases
       const allRecords: ZearnImportRecordInput[] = [];
       
       for (const row of validRows) {
         const { student, parsedData } = row;
         if (!parsedData) continue;
         
-        const records = parsedData.zearnCompletions.map(completion => 
-          createZearnImportRecordDefaults({
+        if (parsedData.zearnCompletions.length > 0) {
+          // Multiple records for lessons
+          parsedData.zearnCompletions.forEach(completion => {
+            allRecords.push(createZearnImportRecordDefaults({
+              date: new Date().toLocaleDateString(),
+              section: student.section,
+              teacher: student.teacher,
+              studentID: student.studentID,
+              firstName: student.firstName,
+              lastName: student.lastName,
+              lessonTitle: completion.lessonTitle,
+              lessonCompletionDate: completion.lessonCompletionDate,
+              weekRange: parsedData.zearnWeeks[0]?.week || '',
+              weeklyMinutes: parsedData.zearnWeeks[0]?.zearnMin || '',
+              ownerIds: []
+            }));
+          });
+        } else {
+          // Single record with empty lesson fields
+          allRecords.push(createZearnImportRecordDefaults({
             date: new Date().toLocaleDateString(),
             section: student.section,
             teacher: student.teacher,
             studentID: student.studentID,
             firstName: student.firstName,
             lastName: student.lastName,
-            lessonTitle: completion.lessonTitle,
-            lessonCompletionDate: completion.lessonCompletionDate,
+            // lessonTitle and lessonCompletionDate default to empty
             weekRange: parsedData.zearnWeeks[0]?.week || '',
             weeklyMinutes: parsedData.zearnWeeks[0]?.zearnMin || '',
             ownerIds: []
-          })
-        );
-        
-        allRecords.push(...records);
+          }));
+        }
       }
 
       // Use district-specific spreadsheet ID
@@ -247,7 +369,7 @@ export function useZearnBatchData() {
       });
 
       if (result.success) {
-        alert(`Successfully imported ${result.data.rowsAdded} lesson completions for ${validRows.length} students!`);
+        alert(`Successfully imported ${result.data.rowsAdded} records for ${validRows.length} students!`);
         
         // Clear localStorage for selected sections after successful upload
         setStorageData(prev => {
@@ -302,6 +424,7 @@ export function useZearnBatchData() {
     // Actions
     handleRawDataChange,
     handleBatchUpload,
-    handleClearSections
+    handleClearSections,
+    handleManualNameCorrection
   };
 } 
