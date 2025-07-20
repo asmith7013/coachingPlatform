@@ -3,7 +3,7 @@ import { ZearnImportRecordInput } from '@zod-schema/313/zearn-import';
 import { handleServerError } from '@error/handlers/server';
 
 export class ZearnImportService {
-  private static readonly ZEARN_SHEET_NAME = 'Zearn Completions';
+  private static readonly ZEARN_SHEET_NAME = '🅩 Zearn Completions';
   
   constructor(private spreadsheetId: string) {}
   
@@ -41,7 +41,7 @@ export class ZearnImportService {
         userEmail // importedBy
       ];
     });
-    
+
       // // Transform to spreadsheet rows - each lesson completion becomes one row
       // const rows = completions.map(completion => [
       //   completion.date,

@@ -62,7 +62,7 @@ export function parseZearnData(text: string): ParsedStudentData {
     const timeMatch = line.match(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s+.+,\s+\d{1,2}:\d{2}\s+[AP]M$/);
     if (timeMatch && currentLesson) {
       result.zearnCompletions.push({
-        lessonTitle: currentLesson,
+        lessonTitle: formatLessonTitle(currentLesson),
         lessonCompletionDate: line
       });
       currentLesson = null;
@@ -102,12 +102,15 @@ function formatLessonTitle(lessonTitle: string): string {
   if (match) {
     const gradeNum = match[1];      // G6, G7, G8, etc.
     const moduleNum = match[2];     // M1, M2, M3, etc.
-    const lessonNum = match[3];  // 1, 2, 10, etc.
+    const lessonNum = match[3];     // 1, 2, 10, etc.
+    
+    // Convert M to U
+    const convertedModule = moduleNum.replace('M', 'U');
     
     // Pad lesson number with leading zero if single digit
     const paddedLesson = lessonNum.padStart(2, '0');
     
-    return `${gradeNum} ${moduleNum} L${paddedLesson}`;
+    return `${gradeNum} ${convertedModule} L${paddedLesson}`;
   }
   
   // Return original if pattern doesn't match
