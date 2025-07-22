@@ -99,6 +99,7 @@ function formatLessonTitle(lessonTitle: string): string {
   // Match the pattern G# M# L# and extract the parts
   const match = lessonTitle.match(/^(G\d+)\s+(M\d+)\s+L(\d+)$/);
   
+  
   if (match) {
     const gradeNum = match[1];      // G6, G7, G8, etc.
     const moduleNum = match[2];     // M1, M2, M3, etc.
