@@ -142,11 +142,17 @@ export function useZearnBatchData() {
         
         if (allStudents.length > 0) {
           // Sort by section first, then by firstName alphabetically
+        //   const sortedStudents = allStudents.sort((a, b) => {
+        //     const sectionCompare = a.section.localeCompare(b.section);
+        //     if (sectionCompare !== 0) return sectionCompare;
+        //     return a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase());
+        //   });
           const sortedStudents = allStudents.sort((a, b) => {
-            const sectionCompare = a.section.localeCompare(b.section);
-            if (sectionCompare !== 0) return sectionCompare;
-            return a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase());
+            const fullNameA = `${a.firstName} ${a.lastName}`.toLowerCase();
+            const fullNameB = `${b.firstName} ${b.lastName}`.toLowerCase();
+            return fullNameA.localeCompare(fullNameB);
           });
+          console.log('🔍 Sorted students:', sortedStudents);
           setStudents(sortedStudents);
         } else {
           setStudentsError('No students found for selected sections');
