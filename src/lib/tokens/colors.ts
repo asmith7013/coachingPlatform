@@ -3,7 +3,7 @@
 // Text color tokens
 export const textColors = {
   default: 'text-secondary',
-  muted: 'text-muted',
+  muted: 'text-secondary',
   mutedForeground: 'text-gray-400',
   accent: 'text-accent',
   primary: 'text-primary',

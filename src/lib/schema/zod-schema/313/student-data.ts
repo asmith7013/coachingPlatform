@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { GradeLevelZod, AllLessonsZod } from '@/lib/schema/enum/scope-sequence';
+import { type SectionType } from '@/lib/schema/enum/snorkl-links';
 
 export const StudentAttendanceZodSchema = z.object({
   date: z.string(),
@@ -48,4 +49,16 @@ export type StudentData = z.infer<typeof StudentDataZodSchema>;
 export type StudentAttendance = z.infer<typeof StudentAttendanceZodSchema>;
 export type StudentZearnProgress = z.infer<typeof StudentZearnProgressZodSchema>;
 export type StudentPreAssessment = z.infer<typeof StudentPreAssessmentZodSchema>;
-export type ScopeSequenceProgress = z.infer<typeof ScopeSequenceProgressZodSchema>; 
+export type ScopeSequenceProgress = z.infer<typeof ScopeSequenceProgressZodSchema>;
+
+/**
+ * Helper function to convert section string to SectionType
+ */
+export function getSectionType(section: string): SectionType {
+  const normalized = section.toUpperCase();
+  if (normalized.includes('SRF')) return 'SRF';
+  if (normalized.includes('SR6')) return 'SR6';
+  if (normalized.includes('SR7')) return 'SR7';
+  if (normalized.includes('SR8')) return 'SR8';
+  return 'SRF'; // Default fallback
+} 

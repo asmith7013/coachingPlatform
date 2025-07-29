@@ -12,3 +12,11 @@ export function SummerProgramShell({ children }: { children: React.ReactNode }) 
     </DashboardAuthGuard>
   )
 } 
+
+
+
+{/* <DashboardAuthGuard>
+<SummerProgramAppShell>
+  {children}
+</SummerProgramAppShell>
+</DashboardAuthGuard> */}

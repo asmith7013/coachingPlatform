@@ -11,7 +11,7 @@ export function SummerProgramAppShell({ children }: { children: React.ReactNode 
   // Check if this is a student dashboard route
   const isStudentRoute = useMemo(() => {
     // Pattern: /313/[studentId] where studentId is numeric
-    const studentRoutePattern = /^\/313\/\d+$/
+    const studentRoutePattern = /^\/313student\/[^/]+/
     return studentRoutePattern.test(pathname)
   }, [pathname])
   
