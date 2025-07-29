@@ -179,11 +179,20 @@
 │   │   │   └── sign-up
 │   │   │       └── page.tsx
 │   │   ├── 313
+│   │   │   ├── [studentId]
+│   │   │   │   └── page.tsx
 │   │   │   ├── config.ts
 │   │   │   ├── google-sheets-export
 │   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
+│   │   │   ├── snorkl-import
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── types.ts
+│   │   │   │   └── utils
+│   │   │   │       ├── fuzzy-matcher.ts
+│   │   │   │       ├── parser.ts
+│   │   │   │       └── table-config.tsx
 │   │   │   ├── students
 │   │   │   │   └── page.tsx
 │   │   │   └── zearn-import
@@ -193,6 +202,7 @@
 │   │   │   │   ├── analytics.ts
 │   │   │   │   ├── google-sheets-export.ts
 │   │   │   │   ├── index.ts
+│   │   │   │   ├── student-data.ts
 │   │   │   │   ├── students.ts
 │   │   │   │   ├── sync-sheets.ts
 │   │   │   │   └── zearn-import.ts
@@ -756,7 +766,14 @@
 │   │   │   ├── 313
 │   │   │   │   ├── SummerProgramAppShell.tsx
 │   │   │   │   ├── SummerProgramShell.tsx
-│   │   │   │   └── index.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   └── studentDashboard
+│   │   │   │       ├── AttendanceOverview.tsx
+│   │   │   │       ├── PreAssessmentData.tsx
+│   │   │   │       ├── ScopeSequenceProgress.tsx
+│   │   │   │       ├── StudentAuth.tsx
+│   │   │   │       ├── StudentDashboard.tsx
+│   │   │   │       └── ZearnProgress.tsx
 │   │   │   ├── classroomNotes
 │   │   │   │   └── tabs
 │   │   │   │       ├── BasicInfoTab.tsx
@@ -899,6 +916,7 @@
 │   │   │   ├── 313
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── useAnalytics.ts
+│   │   │   │   ├── useStudentData.ts
 │   │   │   │   └── useStudents.ts
 │   │   │   ├── cap
 │   │   │   │   ├── index.ts
@@ -1047,6 +1065,7 @@
 │   │   │   │   │   ├── email-service.ts
 │   │   │   │   │   ├── export-service.ts
 │   │   │   │   │   ├── reset-service.ts
+│   │   │   │   │   ├── student-dashboard-service.ts
 │   │   │   │   │   ├── student-service.ts
 │   │   │   │   │   ├── sync-service.ts
 │   │   │   │   │   └── zearn-import-service.ts
@@ -1092,6 +1111,7 @@
 │   │   │   ├── enum
 │   │   │   │   ├── 313.ts
 │   │   │   │   ├── index.ts
+│   │   │   │   ├── scope-sequence.ts
 │   │   │   │   └── shared-enums.ts
 │   │   │   ├── index.ts
 │   │   │   ├── mongoose-schema
@@ -1160,6 +1180,7 @@
 │   │   │       ├── 313
 │   │   │       │   ├── core.ts
 │   │   │       │   ├── storage.ts
+│   │   │       │   ├── student-data.ts
 │   │   │       │   ├── student.ts
 │   │   │       │   └── zearn-import.ts
 │   │   │       ├── base-schemas.ts
@@ -1353,7 +1374,8 @@
 │   │   │   │   ├── im-implementation.json
 │   │   │   │   ├── indicator.tsx
 │   │   │   │   ├── ipg.json
-│   │   │   │   └── kh-routines.json
+│   │   │   │   ├── kh-routines.json
+│   │   │   │   └── snorkl.json
 │   │   │   ├── notifications
 │   │   │   │   ├── entity-messages.ts
 │   │   │   │   ├── index.ts
@@ -1452,4 +1474,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-424 directories, 1029 files
+428 directories, 1047 files
