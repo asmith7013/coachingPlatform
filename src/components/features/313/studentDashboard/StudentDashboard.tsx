@@ -2,7 +2,7 @@
 
 import { StudentAuth } from './StudentAuth';
 import { AttendanceOverview } from './AttendanceOverview';
-import { ZearnProgress } from './ZearnProgress';
+// import { ZearnProgress } from './ZearnProgress';
 // import { PreAssessmentData } from './PreAssessmentData';
 import { ScopeSequenceProgress } from './ScopeSequenceProgress';
 import { useStudentData } from '@/hooks/domain/313/useStudentData';
@@ -135,11 +135,11 @@ export function StudentDashboard({ studentId }: StudentDashboardProps) {
         {/* Row 2 - Attendance (Half Width) + Zearn Progress (Half Width) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <AttendanceOverview attendance={data.attendance} />
-          <ZearnProgress 
+          {/* <ZearnProgress 
             progress={data.zearnProgress} 
             weeklyMinutes={data.weeklyZearnMinutes}
             grade={data.grade}
-          />
+          /> */}
         </div>
 
         {/* Pre-Assessment Data - Commented Out */}
