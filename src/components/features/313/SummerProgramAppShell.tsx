@@ -8,6 +8,13 @@ import { useMemo } from 'react'
 export function SummerProgramAppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   
+  // Check if this is a student dashboard route
+  const isStudentRoute = useMemo(() => {
+    // Pattern: /313/[studentId] where studentId is numeric
+    const studentRoutePattern = /^\/313\/\d+$/
+    return studentRoutePattern.test(pathname)
+  }, [pathname])
+  
   // Use 313 config directly since useAuthorizedNavigation might not support config path yet
   const { navigation, breadcrumbs } = useMemo(() => {
     // Mark current navigation item
@@ -33,6 +40,11 @@ export function SummerProgramAppShell({ children }: { children: React.ReactNode 
       breadcrumbs
     }
   }, [pathname])
+  
+  // If student route, render without shell for clean, distraction-free experience
+  if (isStudentRoute) {
+    return <>{children}</>
+  }
   
   return (
     <AppShell
