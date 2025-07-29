@@ -1,4 +1,4 @@
-import { StudentData, StudentDataZodSchema, StudentZearnProgress } from '@zod-schema/313/student-data';
+import { ScopeSequenceProgress, StudentData, StudentDataZodSchema, StudentZearnProgress } from '@zod-schema/313/student-data';
 import { fetchSheetData } from '../client';
 import { handleServerError } from '@/lib/error/handlers/server';
 import { StudentModel } from '@mongoose-schema/313/student.model';
@@ -6,7 +6,8 @@ import {
   calculateProgress, 
   getGradeFromLesson, 
   AllLessonsZod,
-  type GradeLevel 
+  type GradeLevel,
+  type AllLessons
 } from '@/lib/schema/enum/scope-sequence';
 
 /**
@@ -202,7 +203,7 @@ export class StudentDashboardService {
       const scopeSequenceProgress = {
         grade: studentGrade,
         ...progressStats
-      } as any; // Type assertion to handle lesson enum validation
+      } as ScopeSequenceProgress; // Type assertion to handle lesson enum validation
 
       // Calculate weekly Zearn minutes (placeholder - would need actual time data)
       const weeklyZearnMinutes = this.calculateWeeklyMinutes(studentRows);
@@ -247,7 +248,7 @@ export class StudentDashboardService {
   /**
    * Determine student's grade level from their lesson completions or section
    */
-  private static determineStudentGrade(zearnProgress: any[], section: string): GradeLevel {
+  private static determineStudentGrade(zearnProgress: StudentZearnProgress[], section: string): GradeLevel {
     // Try to determine from completed lessons first
     for (const progress of zearnProgress) {
       const grade = getGradeFromLesson(progress.lesson);
@@ -291,11 +292,11 @@ export class StudentDashboardService {
               });
             }
           } catch (error) {
-            console.warn(`Unknown lesson found: ${lesson}`);
+            console.warn(`Unknown lesson found: ${lesson}`, error);
             // For unknown lessons, we'll still include them but cast as any to bypass type checking
             if (!lessonsMap.has(lesson)) {
               lessonsMap.set(lesson, {
-                lesson: lesson as any,
+                lesson: lesson as AllLessons,
                 completedDate: date,
                 mastered: true
               });
