@@ -4,15 +4,17 @@ import { StudentAuth } from './StudentAuth';
 import { AttendanceOverview } from './AttendanceOverview';
 // import { ZearnProgress } from './ZearnProgress';
 // import { PreAssessmentData } from './PreAssessmentData';
-import { ScopeSequenceProgress } from './ScopeSequenceProgress';
+// import { ScopeSequenceProgress } from './ScopeSequenceProgress';
+import { CombinedLessonProgress } from './CombinedLessonProgress';
 import { useStudentData } from '@/hooks/domain/313/useStudentData';
 import { Card } from '@/components/composed/cards/Card';
 import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
 import { Button } from '@/components/core/Button';
-import { MonthlyCalendar } from '@/components/features/313/studentDashboard/monthlyCalendar';
+import { MonthlyCalendar } from './monthlyCalendar/MonthlyCalendar';
 import { useStudentCalendarData } from '@/hooks/domain/313/useStudentCalendarData';
 import { StudentData } from '@/lib/schema/zod-schema/313/student-data';
+import { ScopeSequenceProgress } from './ScopeSequenceProgress';
 
 interface StudentDashboardProps {
   studentId: string;
@@ -145,10 +147,14 @@ export function StudentDashboard({ studentId }: StudentDashboardProps) {
 
       {/* Main Dashboard Content */}
       <div className="max-w-6xl mx-auto p-6 space-y-6">
-        {/* Row 1 - Scope & Sequence Progress (Full Width, Most Prominent) */}
-        <ScopeSequenceProgress 
+                {/* Row 1 - Scope & Sequence Progress (Full Width, Most Prominent) */}
+        {/* <ScopeSequenceProgress 
           progress={data.scopeSequenceProgress} 
           studentSection={data.section}
+        /> */}
+        {/* Row 1 - Combined Lesson Progress (Full Width, Most Prominent) */}
+        <CombinedLessonProgress 
+          studentData={data}
         />
 
         {/* Row 2 - Attendance (Half Width) + Calendar (Half Width) */}

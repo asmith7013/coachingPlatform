@@ -774,11 +774,13 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   └── studentDashboard
 │   │   │   │       ├── AttendanceOverview.tsx
+│   │   │   │       ├── CombinedLessonProgress.tsx
 │   │   │   │       ├── PreAssessmentData.tsx
 │   │   │   │       ├── ScopeSequenceProgress.tsx
 │   │   │   │       ├── StudentAuth.tsx
 │   │   │   │       ├── StudentDashboard.tsx
-│   │   │   │       └── ZearnProgress.tsx
+│   │   │   │       ├── ZearnProgress.tsx
+│   │   │   │       └── monthlyCalendar
 │   │   │   ├── classroomNotes
 │   │   │   │   └── tabs
 │   │   │   │       ├── BasicInfoTab.tsx
@@ -921,6 +923,8 @@
 │   │   │   ├── 313
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── useAnalytics.ts
+│   │   │   │   ├── useCombinedLessonData.ts
+│   │   │   │   ├── useStudentCalendarData.ts
 │   │   │   │   ├── useStudentData.ts
 │   │   │   │   └── useStudents.ts
 │   │   │   ├── cap
@@ -1483,4 +1487,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-431 directories, 1053 files
+432 directories, 1056 files

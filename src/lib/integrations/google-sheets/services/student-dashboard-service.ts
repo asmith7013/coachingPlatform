@@ -188,17 +188,20 @@ export class StudentDashboardService {
         classMissed: this.parseNumber(row[this.COLUMN_MAPPING.CLASS_MISSED])
       })).filter(record => record.date && record.status);
 
-      // Parse Zearn progress from lessons mastered column
-      const zearnProgress = this.parseZearnProgress(studentRows);
+          // Parse Zearn progress from Zearn lessons column (Column O)
+    const zearnProgress = this.parseZearnProgress(studentRows);
 
-      // Determine student's grade level from completed lessons
-      const studentGrade = this.determineStudentGrade(zearnProgress, section);
+    // Parse Snorkl progress from Lessons Mastered column (Column J) 
+    const snorklProgress = this.parseSnorklProgress(studentRows);
 
-      // Calculate scope and sequence progress
-      const progressStats = calculateProgress(
-        zearnProgress.filter(p => p.mastered).map(p => p.lesson),
-        studentGrade
-      );
+    // Determine student's grade level from completed lessons
+    const studentGrade = this.determineStudentGrade(zearnProgress, section);
+
+    // FIX: Calculate scope and sequence progress using SNORKL data, not Zearn data
+    const progressStats = calculateProgress(
+      snorklProgress, // Use Snorkl lessons instead of Zearn
+      studentGrade
+    );
       
       const scopeSequenceProgress = {
         grade: studentGrade,
@@ -233,6 +236,7 @@ export class StudentDashboardService {
         grade: studentGrade,
         attendanceRecords: attendance.length,
         zearnLessons: zearnProgress.length,
+        snorklLessons: snorklProgress.length,
         progressPercentage: scopeSequenceProgress.percentage,
         weeklyMinutes: Object.keys(weeklyZearnMinutes).length
       });
@@ -266,18 +270,49 @@ export class StudentDashboardService {
   }
 
   /**
-   * Parse Zearn progress from lessons mastered column
+   * Parse Snorkl progress from lessons mastered column (Column J)
+   */
+  private static parseSnorklProgress(studentRows: string[][]): string[] {
+    const lessonsSet = new Set<string>();
+
+    studentRows.forEach(row => {
+      const lessonsText = row[this.COLUMN_MAPPING.LESSONS_MASTERED] || '';
+      
+      if (lessonsText) {
+        // Parse comma-separated lessons: "G6 U2 L05, G6 U2 L03, G6 U2 L06"
+        const lessons = lessonsText.split(',').map(l => l.trim()).filter(l => l);
+        
+        lessons.forEach(lesson => {
+          // Validate lesson against known scope and sequence
+          try {
+            AllLessonsZod.parse(lesson);
+            lessonsSet.add(lesson);
+          } catch (error) {
+            console.warn(`Unknown Snorkl lesson found: ${lesson}`, error);
+            // Still include unknown lessons
+            lessonsSet.add(lesson);
+          }
+        });
+      }
+    });
+
+    return Array.from(lessonsSet);
+  }
+
+  /**
+   * Parse Zearn progress from Zearn lessons column (Column O)
    */
   private static parseZearnProgress(studentRows: string[][]): StudentZearnProgress[] {
     const lessonsMap = new Map<string, StudentZearnProgress>();
 
     studentRows.forEach(row => {
       const date = this.formatDate(row[this.COLUMN_MAPPING.DATE] || '');
-      const lessonsText = row[this.COLUMN_MAPPING.LESSONS_MASTERED] || '';
+      // FIX: Use ZEARN_LESSONS column instead of LESSONS_MASTERED
+      const zearnLessonsText = row[this.COLUMN_MAPPING.ZEARN_LESSONS] || '';
       
-      if (lessonsText && date) {
+      if (zearnLessonsText && date) {
         // Parse comma-separated lessons: "G6 U2 L05, G6 U2 L03, G6 U2 L06"
-        const lessons = lessonsText.split(',').map(l => l.trim()).filter(l => l);
+        const lessons = zearnLessonsText.split(',').map(l => l.trim()).filter(l => l);
         
         lessons.forEach(lesson => {
           // Validate lesson against known scope and sequence
@@ -319,7 +354,7 @@ export class StudentDashboardService {
     
     studentRows.forEach((row, index) => {
       const weekNum = Math.floor(index / 5) + 1; // Rough week calculation
-      const lessonsCount = (row[this.COLUMN_MAPPING.LESSONS_MASTERED] || '').split(',').filter(l => l.trim()).length;
+      const lessonsCount = (row[this.COLUMN_MAPPING.ZEARN_LESSONS] || '').split(',').filter(l => l.trim()).length;
       
       if (lessonsCount > 0) {
         const estimatedMinutes = lessonsCount * 15; // Rough estimate: 15 min per lesson
