@@ -19,6 +19,7 @@ export function CalendarDay({
   const lessons = completions?.lessons || [];
   const displayLessons = lessons.slice(0, 2); // Show max 2 badges
   const remainingCount = Math.max(0, lessons.length - 2);
+  const isAbsent = completions?.isAbsent || false;
   
   return (
     <div className={cn(
@@ -36,9 +37,23 @@ export function CalendarDay({
         {dayNumber}
       </time>
       
-      {/* Lesson completion badges */}
+      {/* Absence indicator */}
+      {isAbsent && (
+        <div className="mt-1">
+          <Badge
+            intent="danger" 
+            appearance="outline"
+            size="xs"
+            className="block w-full text-center text-xs py-1"
+          >
+            Absent
+          </Badge>
+        </div>
+      )}
+      
+      {/* Lesson completion badges - show below absence indicator if present */}
       {lessons.length > 0 && (
-        <div className="mt-1 space-y-1">
+        <div className={cn("space-y-1", isAbsent ? "mt-1" : "mt-1")}>
           {displayLessons.map((lesson, index) => (
             <Badge
               key={`${date}-${lesson}-${index}`}

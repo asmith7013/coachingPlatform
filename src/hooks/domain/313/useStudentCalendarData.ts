@@ -1,19 +1,29 @@
 import { useMemo } from 'react';
-import { StudentData } from '@zod-schema/313/student-data';
-import { StudentZearnProgress } from '@zod-schema/313/student-data';
+import { StudentData, StudentZearnProgress } from '@/lib/schema/zod-schema/313/student-data';
 
 interface DailyCompletion {
   date: string; // YYYY-MM-DD
   lessons: string[]; // Array of lesson codes like ["U2 L01", "U2 L02"]
   count: number;
+  isAbsent?: boolean; // Add attendance status
 }
 
 /**
  * Transform student data for calendar display
  * Shows lesson completions by date within summer session timeframe
+ * Includes attendance status for visual indicators
  */
 export function useStudentCalendarData(studentData: StudentData) {
   const dailyCompletions = useMemo((): DailyCompletion[] => {
+    // Create attendance lookup map
+    const attendanceMap = new Map<string, boolean>();
+    studentData.attendance.forEach(attendance => {
+      const formattedDate = formatDateToYYYYMMDD(attendance.date);
+      if (isInSummerSession(formattedDate)) {
+        attendanceMap.set(formattedDate, attendance.status === '❌');
+      }
+    });
+    
     // Group Zearn progress by completion date
     const completionsByDate = new Map<string, string[]>();
     
@@ -28,14 +38,21 @@ export function useStudentCalendarData(studentData: StudentData) {
       }
     });
     
-    // Convert Map to array format
-    return Array.from(completionsByDate.entries()).map(([date, lessons]) => ({
+    // Get all summer session dates that have attendance or completion data
+    const allRelevantDates = new Set([
+      ...Array.from(attendanceMap.keys()),
+      ...Array.from(completionsByDate.keys())
+    ]);
+    
+    // Convert to array format with attendance info
+    return Array.from(allRelevantDates).map(date => ({
       date,
-      lessons: Array.from(new Set(lessons)), // Remove duplicates - fix for Set spread
-      count: lessons.length
+      lessons: Array.from(new Set(completionsByDate.get(date) || [])), // Remove duplicates
+      count: (completionsByDate.get(date) || []).length,
+      isAbsent: attendanceMap.get(date) || false
     })).sort((a, b) => a.date.localeCompare(b.date));
     
-  }, [studentData.zearnProgress]);
+  }, [studentData.zearnProgress, studentData.attendance]); // Add attendance dependency
   
   return { dailyCompletions };
 }

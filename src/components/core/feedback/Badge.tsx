@@ -53,7 +53,7 @@ const badge = tv({
     {
       appearance: 'solid',
       intent: 'danger',
-      className: `${backgroundColors.light.danger} ${ringColors.light.danger}`,
+      className: `${backgroundColors.light.danger} ${ringColors.light.danger} border-danger text-danger`,
     },
     {
       appearance: 'solid',
@@ -81,6 +81,11 @@ const badge = tv({
       appearance: 'outline',
       intent: 'success',
       className: `${backgroundColors.light.success} ${textColors.success} ${ringColors.success}`,
+    },
+    {
+      appearance: 'outline',
+      intent: 'danger',
+      className: `${backgroundColors.light.danger} ${ringColors.light.danger} border-danger text-danger`,
     },
   ],
   defaultVariants: {
