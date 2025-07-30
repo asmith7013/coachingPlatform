@@ -86,7 +86,7 @@ export function ScopeSequenceProgress({ progress, studentSection }: ScopeSequenc
                 
                 <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                   <div 
-                    className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                    className="bg-success h-2 rounded-full transition-all duration-300"
                     style={{ width: `${unitProgress}%` }}
                   />
                 </div>
@@ -112,8 +112,8 @@ export function ScopeSequenceProgress({ progress, studentSection }: ScopeSequenc
                         }
                       >
                         <Badge
-                          intent={isCompleted ? "success" : "secondary"}
-                          className="text-xs p-2 text-center min-h-8 flex items-center justify-center w-full"
+                          intent={isCompleted ? "success" : "secondary"} appearance='solid'
+                          className="text-xs p-2 text-center min-h-8 flex items-center justify-center w-full border-2"
                         >
                           {lessonShort}
                           {/* {isClickable && (
@@ -162,7 +162,7 @@ export function ScopeSequenceProgress({ progress, studentSection }: ScopeSequenc
         {/* Clickable lessons indicator */}
         <div className="text-center">
           <Text textSize="xs" color="muted">
-            🔗 Click on lessons to open in Snorkl • Available for {sectionType} students
+            🔗 Click on lessons to open in Snorkl
           </Text>
         </div>
       </Card.Body>

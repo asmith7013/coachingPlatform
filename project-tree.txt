@@ -1475,9 +1475,12 @@
 ├── tasks
 │   ├── tasks-coaching-action-plan-refactor.md
 │   └── tasks-prd-schedule-3.md
+├── temp-fix
+│   ├── complete-fix-summary.md
+│   └── react-fix.md
 ├── test-output.css
 ├── tsconfig.json
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-430 directories, 1051 files
+431 directories, 1053 files

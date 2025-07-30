@@ -98,7 +98,7 @@ export function StudentDashboard({ studentId }: StudentDashboardProps) {
             <div>
               <Heading level="h1">Welcome, {data.firstName}! 👋</Heading>
               <Text color="muted">
-                Summer Rising Program - Section {data.section}
+                Summer Rising - Section {data.section}
               </Text>
             </div>
             <div className="flex space-x-2">
@@ -111,14 +111,14 @@ export function StudentDashboard({ studentId }: StudentDashboardProps) {
               >
                 {isLoading ? 'Refreshing...' : 'Refresh'}
               </Button>
-              <Button 
+              {/* <Button 
                 intent="secondary" 
                 appearance="outline"
                 onClick={logout}
                 className="text-sm"
               >
                 Logout
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
