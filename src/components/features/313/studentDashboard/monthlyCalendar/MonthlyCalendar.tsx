@@ -21,7 +21,7 @@ export function MonthlyCalendar({
       {/* Simple header without navigation */}
       <header className="flex items-center justify-center border-b border-gray-200 px-4 py-3">
         <h3 className="text-sm font-semibold text-gray-900">
-          Summer Session Progress
+          Summer Session Progress (Mon-Thu)
         </h3>
       </header>
       

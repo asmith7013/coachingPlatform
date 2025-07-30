@@ -10,7 +10,7 @@ import { Card } from '@/components/composed/cards/Card';
 import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
 import { Button } from '@/components/core/Button';
-import { MonthlyCalendar } from '@/components/composed/calendar/monthly';
+import { MonthlyCalendar } from '@/components/features/313/studentDashboard/monthlyCalendar';
 import { useStudentCalendarData } from '@/hooks/domain/313/useStudentCalendarData';
 import { StudentData } from '@/lib/schema/zod-schema/313/student-data';
 

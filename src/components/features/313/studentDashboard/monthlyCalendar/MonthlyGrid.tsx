@@ -14,25 +14,29 @@ interface CalendarDayData {
 }
 
 export function MonthlyGrid({ dailyCompletions, startDate, endDate }: MonthlyGridProps) {
-  const days = generateCalendarDays(startDate, endDate);
+  const allDays = generateCalendarDays(startDate, endDate);
   const completionsMap = new Map(dailyCompletions.map(comp => [comp.date, comp]));
   
-  const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  // Filter to only show Mon-Thu (1-4, where Sunday = 0)
+  const weekdaysOnly = allDays.filter(day => {
+    const date = new Date(day.date + 'T00:00:00'); // Force local timezone
+    const dayOfWeek = date.getDay();
+    return dayOfWeek >= 1 && dayOfWeek <= 4; // Monday(1) through Thursday(4)
+  });
   
   return (
     <div className="bg-gray-200 text-xs text-gray-700 lg:flex-auto">
-      {/* Day headers */}
-      <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold text-gray-700">
-        {dayHeaders.map(day => (
-          <div key={day} className="bg-white py-2">
-            {day}
-          </div>
-        ))}
+      {/* Day headers - only show Mon-Thu */}
+      <div className="grid grid-cols-4 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold text-gray-700">
+        <div className="bg-white py-2">Mon</div>
+        <div className="bg-white py-2">Tue</div>
+        <div className="bg-white py-2">Wed</div>
+        <div className="bg-white py-2">Thu</div>
       </div>
       
-      {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-px bg-gray-200">
-        {days.map((day) => (
+      {/* Calendar grid - 4 columns instead of 7 */}
+      <div className="grid grid-cols-4 gap-px bg-gray-200">
+        {weekdaysOnly.map((day) => (
           <CalendarDay
             key={day.date}
             date={day.date}
