@@ -84,7 +84,7 @@ export function ScopeSequenceProgress({ progress, studentSection }: ScopeSequenc
                   </Text>
                 </div>
                 
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
                   <div 
                     className="bg-success h-2 rounded-full transition-all duration-300"
                     style={{ width: `${unitProgress}%` }}

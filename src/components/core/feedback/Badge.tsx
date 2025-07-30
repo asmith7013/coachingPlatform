@@ -58,7 +58,7 @@ const badge = tv({
     {
       appearance: 'solid',
       intent: 'success',
-      className: `${backgroundColors.success} ${ringColors.success} border-success ${textColors.white}`,
+      className: `${backgroundColors.light.success} ${ringColors.success} border-success text-success`,
     },
     // Alt appearance - add more as needed
     {
