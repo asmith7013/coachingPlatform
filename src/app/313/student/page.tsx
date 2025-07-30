@@ -5,7 +5,7 @@ import { Text } from '@/components/core/typography/Text';
 
 export const metadata: Metadata = {
   title: 'Student Access - Summer Rising',
-  description: 'Access your Summer Rising Program dashboard',
+  description: 'Access your Summer Rising dashboard',
   robots: 'noindex, nofollow',
 };
 

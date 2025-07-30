@@ -10,9 +10,26 @@ import { Card } from '@/components/composed/cards/Card';
 import { Text } from '@/components/core/typography/Text';
 import { Heading } from '@/components/core/typography/Heading';
 import { Button } from '@/components/core/Button';
+import { MonthlyCalendar } from '@/components/composed/calendar/monthly';
+import { useStudentCalendarData } from '@/hooks/domain/313/useStudentCalendarData';
+import { StudentData } from '@/lib/schema/zod-schema/313/student-data';
 
 interface StudentDashboardProps {
   studentId: string;
+}
+
+/**
+ * Wrapper component for the student calendar
+ */
+function StudentCalendarView({ studentData }: { studentData: StudentData }) {
+  const { dailyCompletions } = useStudentCalendarData(studentData);
+  
+  return (
+    <MonthlyCalendar
+      dailyCompletions={dailyCompletions}
+      currentMonth="2025-07"
+    />
+  );
 }
 
 export function StudentDashboard({ studentId }: StudentDashboardProps) {
@@ -134,14 +151,22 @@ export function StudentDashboard({ studentId }: StudentDashboardProps) {
           studentSection={data.section}
         />
 
-        {/* Row 2 - Attendance (Half Width) + Zearn Progress (Half Width) */}
+        {/* Row 2 - Attendance (Half Width) + Calendar (Half Width) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <AttendanceOverview attendance={data.attendance} />
-          {/* <ZearnProgress 
-            progress={data.zearnProgress} 
-            weeklyMinutes={data.weeklyZearnMinutes}
-            grade={data.grade}
-          /> */}
+          
+          {/* Daily Progress Calendar */}
+          <Card>
+            <Card.Header>
+              <Heading level="h3">Daily Progress Calendar</Heading>
+              <Text color="muted" textSize="sm">
+                Lessons mastered each day during Summer Rising
+              </Text>
+            </Card.Header>
+            <Card.Body>
+              <StudentCalendarView studentData={data} />
+            </Card.Body>
+          </Card>
         </div>
 
         {/* Pre-Assessment Data - Commented Out */}
