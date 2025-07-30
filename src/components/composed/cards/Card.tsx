@@ -1,10 +1,12 @@
 // src/components/composed/cards/Card.tsx
+"use client"
 /**
  * Card component for displaying content in a contained, styled box.
  * Uses the compound component pattern for flexible layout.
  */
 
-import React from 'react'
+import { createContext, useContext } from 'react'
+import type { ReactNode } from 'react'
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
 import { 
@@ -161,7 +163,7 @@ type CardContextType = {
   styles: ReturnType<typeof card>;
 };
 
-const CardContext = React.createContext<CardContextType | undefined>(undefined);
+const CardContext = createContext<CardContextType | undefined>(undefined);
 
 /**
  * Hook to use card context in subcomponents.
@@ -170,7 +172,7 @@ const CardContext = React.createContext<CardContextType | undefined>(undefined);
  * @throws Error if used outside of a Card component
  */
 const useCardContext = () => {
-  const context = React.useContext(CardContext);
+  const context = useContext(CardContext);
   if (!context) {
     throw new Error("Card subcomponents must be used within a Card component. See documentation at [component-system][compound-component-pattern]");
   }
@@ -182,7 +184,7 @@ const useCardContext = () => {
  */
 interface CardRootProps extends Omit<CardStyleProps, 'variant'> {
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
   padding?: PaddingToken;
   radius?: RadiusToken;
   shadow?: ShadowToken;
@@ -218,7 +220,7 @@ const CardRoot = ({
 // Card subcomponents
 interface CardSubComponentProps {
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 /**

@@ -179,8 +179,6 @@
 │   │   │   └── sign-up
 │   │   │       └── page.tsx
 │   │   ├── 313
-│   │   │   ├── [studentId]
-│   │   │   │   └── page.tsx
 │   │   │   ├── config.ts
 │   │   │   ├── google-sheets-export
 │   │   │   │   └── page.tsx
@@ -193,9 +191,15 @@
 │   │   │   │       ├── fuzzy-matcher.ts
 │   │   │   │       ├── parser.ts
 │   │   │   │       └── table-config.tsx
+│   │   │   ├── student
+│   │   │   │   └── page.tsx
 │   │   │   ├── students
 │   │   │   │   └── page.tsx
 │   │   │   └── zearn-import
+│   │   │       └── page.tsx
+│   │   ├── 313student
+│   │   │   └── [studentId]
+│   │   │       ├── layout.tsx
 │   │   │       └── page.tsx
 │   │   ├── actions
 │   │   │   ├── 313
@@ -764,6 +768,7 @@
 │   │   │   └── index.ts
 │   │   ├── features
 │   │   │   ├── 313
+│   │   │   │   ├── PublicSummerProgramShell.tsx
 │   │   │   │   ├── SummerProgramAppShell.tsx
 │   │   │   │   ├── SummerProgramShell.tsx
 │   │   │   │   ├── index.ts
@@ -1475,4 +1480,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-428 directories, 1048 files
+430 directories, 1051 files

@@ -46,7 +46,8 @@ export function ScopeSequenceProgress({ progress, studentSection }: ScopeSequenc
   return (
     <Card>
       <Card.Header>
-        <Heading level="h2">Grade {progress.grade} Mastery Progress</Heading>
+        {/* <Heading level="h2">Grade {progress.grade} Mastery Progress</Heading> */}
+        <Heading level="h2">Snorkl Progress</Heading>
         {/* <Text color="secondary" textSize="lg">
           {progress.completed} of {progress.total} lessons completed ({progress.percentage}%)
         </Text> */}
