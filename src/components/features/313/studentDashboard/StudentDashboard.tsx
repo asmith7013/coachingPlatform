@@ -96,7 +96,9 @@ export function StudentDashboard({ studentId }: StudentDashboardProps) {
         <div className="max-w-6xl mx-auto px-6 py-6">
           <div className="flex justify-between items-center">
             <div>
-              <Heading level="h1">Welcome, {data.firstName}! 👋</Heading>
+              <Heading level="h1">Welcome
+                {/* , {data.firstName}  */}
+                ! 👋</Heading>
               <Text color="muted">
                 Summer Rising - Section {data.section}
               </Text>
