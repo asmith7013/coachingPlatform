@@ -10,6 +10,7 @@ export const semanticColorMap = {
   success: 'green-success',
   danger: 'raspberry',
   lavender: 'lavender',
+  blue: 'blue',
 };
 
 export const tailwindColors = {
@@ -154,5 +155,18 @@ export const tailwindColors = {
     700: '#853fb2',
     800: '#612a80',
     900: '#391a4d',
+  },
+  blue: {
+    DEFAULT: '#007bff',
+    50: '#f0f9ff',
+    100: '#e0f2fe',
+    200: '#bae6fd',
+    300: '#7dd3fc',
+    400: '#36bffa',
+    500: '#0ea5e9',
+    600: '#0d94d0',
+    700: '#0b7eb2',
+    800: '#096894',
+    900: '#074e76',
   },
 };

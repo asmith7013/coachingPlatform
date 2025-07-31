@@ -16,6 +16,9 @@ const badge = tv({
       success: ``,
       info: ``,
       warning: ``,
+      mastery: ``,
+      blue: ``,
+      muted: ``,
     },
     appearance: {
       solid: '',
@@ -31,6 +34,11 @@ const badge = tv({
       default: radii.md,
       full: radii.full,
       none: radii.none
+    },
+    // Add interactive variant for clickable badges
+    interactive: {
+      true: 'cursor-pointer transition-opacity duration-200 hover:opacity-80 active:scale-95',
+      false: ''
     }
   },
   compoundVariants: [
@@ -55,11 +63,16 @@ const badge = tv({
       intent: 'danger',
       className: `${backgroundColors.light.danger} ${ringColors.light.danger} border-danger text-danger`,
     },
-    {
-      appearance: 'solid',
-      intent: 'success',
-      className: `${backgroundColors.light.success} ${ringColors.success} border-success text-success`,
-    },
+      {
+        appearance: 'solid',
+        intent: 'success',
+        className: `${backgroundColors.success} ${ringColors.success} border-success text-white`,
+      },
+      {
+        appearance: 'solid',
+        intent: 'mastery',
+        className: `${backgroundColors.success} ${ringColors.blue} border-blue text-white border-2 ring-2 ring-inset ring-white`,
+      },
     // Alt appearance - add more as needed
     {
       appearance: 'alt',
@@ -70,7 +83,7 @@ const badge = tv({
     {
       appearance: 'outline',
       intent: 'primary',
-      className: `${ringColors.light.primary}`,
+      className: `${ringColors.light.primary} ${textColors.primary} ${backgroundColors.light.primary}`,
     },
     {
       appearance: 'outline',
@@ -87,18 +100,29 @@ const badge = tv({
       intent: 'danger',
       className: `${backgroundColors.light.danger} ${ringColors.light.danger} border-danger text-danger`,
     },
+    {
+      appearance: 'outline',
+      intent: 'muted',
+      className: `${backgroundColors.light.secondary} ${textColors.muted} ${ringColors.secondary}`,    },
+    {
+      appearance: 'outline',
+      intent: 'blue',
+      className: `${backgroundColors.light.blue} ${ringColors.blue} border-blue text-blue hover:bg-blue-500 hover:text-white`,
+    },
   ],
   defaultVariants: {
     intent: "neutral",
     appearance: "solid",
     size: "xs",
-    rounded: "default"
+    rounded: "default",
+    interactive: false
   }
 });
 
 export type BadgeProps = {
   children: React.ReactNode;
   className?: string;
+  onClick?: () => void;
 } & VariantProps<typeof badge>;
 
 export function Badge({ 
@@ -108,15 +132,29 @@ export function Badge({
   size,
   rounded,
   appearance,
+  onClick,
 }: BadgeProps) {
+  const isInteractive = Boolean(onClick);
+  
+  // Use button element if interactive, span if not
+  const Component = isInteractive ? 'button' : 'span';
+  
   return (
-    <span
+    <Component
       className={cn(
-        badge({ intent, size, rounded, appearance }),
+        badge({ 
+          intent, 
+          size, 
+          rounded, 
+          appearance, 
+          interactive: isInteractive 
+        }),
         className
       )}
+      onClick={onClick}
+      type={isInteractive && Component === 'button' ? 'button' : undefined}
     >
       {children}
-    </span>
+    </Component>
   );
 }

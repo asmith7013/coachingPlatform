@@ -3,7 +3,7 @@
 // Text color tokens
 export const textColors = {
   default: 'text-secondary',
-  muted: 'text-secondary',
+  muted: 'text-muted',
   mutedForeground: 'text-gray-400',
   accent: 'text-accent',
   primary: 'text-primary',
@@ -13,6 +13,7 @@ export const textColors = {
   surface: 'text-surface',
   background: 'text-background',
   border: 'text-border',
+  blue: 'text-blue',
 
   // Explicit white and black for high contrast needs
   white: 'text-white',
@@ -55,15 +56,17 @@ export const backgroundColors = {
   surface: 'bg-surface',
   subtle: 'bg-subtle-100',
   white: 'bg-white',
+  blue: 'bg-blue',
 
   // Light variants for backgrounds (higher numbers = darker)
   light: {
     primary: 'bg-primary-50/40',
-    secondary: 'bg-secondary-50/40',
+    secondary: 'bg-secondary-50/30',
     danger: 'bg-danger-50/40',
     success: 'bg-success-50/40',
     muted: 'bg-muted-50/40',
-    surface: 'bg-surface-50/40'
+    surface: 'bg-surface-50/40',
+    blue: 'bg-blue-100'
   },
 
   // Dark mode variants
@@ -108,7 +111,8 @@ export const borderColors = {
     danger: 'border-danger-100',
     success: 'border-success-100',
     muted: 'border-muted-100',
-    surface: 'border-surface-100'
+    surface: 'border-surface-100',
+    blue: 'border-blue-100'
   },
 
   // Dark mode variants
@@ -141,6 +145,7 @@ export const ringColors = {
   secondary: 'ring-secondary-400',
   danger: 'ring-danger-400',
   success: 'ring-success-400',
+  blue: 'ring-blue-400',
 
   // Light variants for rings (higher numbers = darker)
   light: {
@@ -148,7 +153,8 @@ export const ringColors = {
     secondary: 'ring-secondary-300',
     danger: 'ring-danger-300',
     success: 'ring-success-300',
-    muted: 'ring-muted-300'
+    muted: 'ring-muted-300',
+    blue: 'ring-blue-300'
   },
 
   // Dark mode variants
