@@ -83,29 +83,35 @@ export function CombinedLessonProgress({ studentData }: CombinedLessonProgressPr
           <div className="flex gap-6 text-sm flex-wrap">
             {/* Both Complete - Mastery badge with blue border */}
             <div className="flex items-center gap-3">
-              <div className="flex flex-col space-y-2 mb-3">
-                <Badge 
-                  appearance="solid" 
-                  intent="mastery"
-                  className="w-full justify-center py-2 font-bold mb-1 border-blue border-2"
-                >
-                  U2 L01
-                </Badge>
-                <div className="grid grid-cols-2 gap-1">
-                  <Badge
-                    appearance="outline"
-                    intent="blue"
-                    className="justify-center text-xs hover:bg-blue hover:text-white"
+              <div className="flex flex-col w-20">
+                <div className="mb-1">
+                  <Badge 
+                    appearance="solid" 
+                    intent="mastery"
+                    className="w-full justify-center py-2 font-bold border-blue border-2"
                   >
-                    Zearn
+                    U2 L01
                   </Badge>
-                  <Badge
-                    appearance="outline"
-                    intent="success"
-                    className="justify-center text-xs bg-success border-success hover:bg-success hover:text-white"
-                  >
-                    Snorkl
-                  </Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-1 w-full">
+                  <div className="w-full">
+                    <Badge
+                      appearance="outline"
+                      intent="blue"
+                      className="w-full justify-center text-xs py-1 hover:bg-blue hover:text-white"
+                    >
+                      Zearn
+                    </Badge>
+                  </div>
+                  <div className="w-full">
+                    <Badge
+                      appearance="outline"
+                      intent="success"
+                      className="w-full justify-center text-xs py-1 bg-success border-success hover:bg-success hover:text-white"
+                    >
+                      Snorkl
+                    </Badge>
+                  </div>
                 </div>
               </div>
               <span className="font-medium">Both Complete</span>
@@ -113,29 +119,35 @@ export function CombinedLessonProgress({ studentData }: CombinedLessonProgressPr
             
             {/* Snorkl Only - Success badge, no blue border */}
             <div className="flex items-center gap-3">
-              <div className="flex flex-col space-y-2 mb-3">
-                <Badge 
-                  appearance="solid" 
-                  intent="success"
-                  className="w-full justify-center py-2 font-bold mb-1"
-                >
-                  U2 L02
-                </Badge>
-                <div className="grid grid-cols-2 gap-1">
-                  <Badge
-                    appearance="outline"
-                    intent="muted"
-                    className="justify-center text-xs bg-gray-100 border-gray-300 hover:bg-gray-200"
-                  >
-                    Zearn
-                  </Badge>
-                  <Badge
-                    appearance="outline"
+              <div className="flex flex-col w-20">
+                <div className="mb-1">
+                  <Badge 
+                    appearance="solid" 
                     intent="success"
-                    className="justify-center text-xs bg-success border-success hover:bg-success hover:text-white"
+                    className="w-full justify-center py-2 font-bold"
                   >
-                    Snorkl
+                    U2 L02
                   </Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-1 w-full">
+                  <div className="w-full">
+                    <Badge
+                      appearance="outline"
+                      intent="muted"
+                      className="w-full justify-center text-xs py-1 bg-gray-100 border-gray-300 hover:bg-gray-200"
+                    >
+                      Zearn
+                    </Badge>
+                  </div>
+                  <div className="w-full">
+                    <Badge
+                      appearance="outline"
+                      intent="success"
+                      className="w-full justify-center text-xs py-1 bg-success border-success hover:bg-success hover:text-white"
+                    >
+                      Snorkl
+                    </Badge>
+                  </div>
                 </div>
               </div>
               <span className="font-medium">Snorkl Only</span>
@@ -143,29 +155,35 @@ export function CombinedLessonProgress({ studentData }: CombinedLessonProgressPr
             
             {/* Zearn Only - Secondary badge with blue border */}
             <div className="flex items-center gap-3">
-              <div className="flex flex-col space-y-2 mb-3">
-                <Badge 
-                  appearance="outline" 
-                  intent="secondary"
-                  className="w-full justify-center py-2 font-bold mb-1 border-blue border-2"
-                >
-                  U2 L03
-                </Badge>
-                <div className="grid grid-cols-2 gap-1">
-                  <Badge
-                    appearance="outline"
-                    intent="blue"
-                    className="justify-center text-xs hover:bg-blue hover:text-white"
+              <div className="flex flex-col w-20">
+                <div className="mb-1">
+                  <Badge 
+                    appearance="outline" 
+                    intent="secondary"
+                    className="w-full justify-center py-2 font-bold border-blue border-2"
                   >
-                    Zearn
+                    U2 L03
                   </Badge>
-                  <Badge
-                    appearance="outline"
-                    intent="muted"
-                    className="justify-center text-xs bg-gray-100 border-gray-300 hover:bg-gray-200"
-                  >
-                    Snorkl
-                  </Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-1 w-full">
+                  <div className="w-full">
+                    <Badge
+                      appearance="outline"
+                      intent="blue"
+                      className="w-full justify-center text-xs py-1 hover:bg-blue hover:text-white"
+                    >
+                      Zearn
+                    </Badge>
+                  </div>
+                  <div className="w-full">
+                    <Badge
+                      appearance="outline"
+                      intent="muted"
+                      className="w-full justify-center text-xs py-1 bg-gray-100 border-gray-300 hover:bg-gray-200"
+                    >
+                      Snorkl
+                    </Badge>
+                  </div>
                 </div>
               </div>
               <span className="font-medium">Zearn Only</span>
@@ -173,29 +191,35 @@ export function CombinedLessonProgress({ studentData }: CombinedLessonProgressPr
             
             {/* Not Started - Secondary badge, no blue border */}
             <div className="flex items-center gap-3">
-              <div className="flex flex-col space-y-2 mb-3">
-                <Badge 
-                  appearance="outline" 
-                  intent="secondary"
-                  className="w-full justify-center py-2 font-bold mb-1"
-                >
-                  U2 L04
-                </Badge>
-                <div className="grid grid-cols-2 gap-1">
-                  <Badge
-                    appearance="outline"
-                    intent="muted"
-                    className="justify-center text-xs bg-gray-100 border-gray-300 hover:bg-gray-200"
+              <div className="flex flex-col w-20">
+                <div className="mb-1">
+                  <Badge 
+                    appearance="outline" 
+                    intent="secondary"
+                    className="w-full justify-center py-2 font-bold"
                   >
-                    Zearn
+                    U2 L04
                   </Badge>
-                  <Badge
-                    appearance="outline"
-                    intent="muted"
-                    className="justify-center text-xs bg-gray-100 border-gray-300 hover:bg-gray-200"
-                  >
-                    Snorkl
-                  </Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-1 w-full">
+                  <div className="w-full">
+                    <Badge
+                      appearance="outline"
+                      intent="muted"
+                      className="w-full justify-center text-xs py-1 bg-gray-100 border-gray-300 hover:bg-gray-200"
+                    >
+                      Zearn
+                    </Badge>
+                  </div>
+                  <div className="w-full">
+                    <Badge
+                      appearance="outline"
+                      intent="muted"
+                      className="w-full justify-center text-xs py-1 bg-gray-100 border-gray-300 hover:bg-gray-200"
+                    >
+                      Snorkl
+                    </Badge>
+                  </div>
                 </div>
               </div>
               <span className="font-medium">Not Started</span>
@@ -232,16 +256,14 @@ function CombinedLessonBadge({
   const { lessonShort, hasSnorkl, hasZearn, lesson } = lessonStatus;
   
   return (
-    <div className="flex flex-col space-y-2 w-full mb-4">
+    <div className="flex flex-col w-full">
       {/* Main lesson badge - always clickable for Snorkl */}
-      <div className="mb-0"
-        title={`Click to open ${lesson} in Snorkl`}
-      >
+      <div className="mb-1" title={`Click to open ${lesson} in Snorkl`}>
         <Badge 
           appearance={hasSnorkl ? "solid" : "outline"} 
           intent={hasSnorkl && hasZearn ? "mastery" : hasSnorkl ? "success" : "secondary"}
           className={cn(
-            "w-full justify-center py-2 font-bold mb-1 cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm",
+            "w-full justify-center py-2 font-bold cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-sm",
             hasZearn && "border-blue border-2"
           )}
           onClick={onSnorklClick}
@@ -250,15 +272,15 @@ function CombinedLessonBadge({
         </Badge>
       </div>
       
-      {/* Platform completion badges - now always clickable */}
-      <div className="grid grid-cols-2 gap-0">
-        {/* Zearn badge - always clickable */}
-        <div title="Click to open Zearn.org">
+      {/* Platform completion badges - now always clickable and full width */}
+      <div className="grid grid-cols-2 gap-1 w-full">
+        {/* Zearn badge - always clickable, full width */}
+        <div title="Click to open Zearn.org" className="w-full">
           <Badge
             appearance="outline"
             intent={hasZearn ? "blue" : "muted"}
             className={cn(
-              "justify-center text-xs transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-pointer",
+              "w-full justify-center text-xs py-1 transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-pointer",
               hasZearn
                 ? "hover:bg-blue hover:text-white" 
                 : "bg-gray-100 border-gray-300 hover:bg-gray-200"
@@ -269,13 +291,13 @@ function CombinedLessonBadge({
           </Badge>
         </div>
         
-        {/* Snorkl badge - always clickable */}
-        <div title={`Click to open ${lesson} in Snorkl`}>
+        {/* Snorkl badge - always clickable, full width */}
+        <div title={`Click to open ${lesson} in Snorkl`} className="w-full">
           <Badge
             appearance="outline"
             intent={hasSnorkl ? "success" : "muted"}
             className={cn(
-              "justify-center text-xs transition-all duration-200 cursor-pointer",
+              "w-full justify-center text-xs py-1 transition-all duration-200 cursor-pointer",
               hasSnorkl 
                 ? "bg-success border-success hover:bg-success hover:text-white hover:scale-105 hover:shadow-md hover:ring-2 hover:ring-success" 
                 : "bg-gray-100 border-gray-300 hover:bg-gray-200 hover:scale-105 hover:shadow-sm"
