@@ -256,7 +256,7 @@ function CombinedLessonBadge({
   const { lessonShort, hasSnorkl, hasZearn, lesson } = lessonStatus;
   
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full mb-4">
       {/* Main lesson badge - always clickable for Snorkl */}
       <div className="mb-1" title={`Click to open ${lesson} in Snorkl`}>
         <Badge 
