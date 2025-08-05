@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { StudentData } from '@/lib/schema/zod-schema/313/student-data';
 import { fetchStudentData, authenticateStudent } from '@/app/actions/313/student-data';
 import { handleClientError } from '@/lib/error/handlers/client';
@@ -12,7 +12,10 @@ export function useStudentData(studentId: string) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(true); // TODO: Remove this
-  const [isAuthenticating, setIsAuthenticating] = useState(false); 
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  
+  // Use ref to track if we've already loaded data for this studentId
+  const loadedStudentIdRef = useRef<string | null>(null);
 
   /**
    * Load student data from server
@@ -28,6 +31,7 @@ export function useStudentData(studentId: string) {
       
       if (result.success && result.data) {
         setData(result.data);
+        loadedStudentIdRef.current = studentId; // Mark as loaded
       } else {
         setError(result.error || 'Failed to load student data');
         setData(null);
@@ -42,14 +46,28 @@ export function useStudentData(studentId: string) {
   }, [studentId]);
 
   /**
-   * Auto-load student data on component mount
+   * Auto-load student data on component mount or studentId change
+   * Fixed: Remove problematic dependencies that cause race conditions
    */
   useEffect(() => {
-    if (isAuthenticated && !data && !isLoading) {
+    // Only load if authenticated, no existing data for this studentId, and not currently loading
+    if (isAuthenticated && loadedStudentIdRef.current !== studentId && !isLoading) {
       console.log(`🚀 Hook: Auto-loading data on mount for student: ${studentId}`);
       loadData();
     }
-  }, [isAuthenticated, data, isLoading, loadData, studentId]);
+  }, [studentId, isAuthenticated]); // Removed data, isLoading, and loadData dependencies
+
+  /**
+   * Reset state when studentId changes
+   */
+  useEffect(() => {
+    if (loadedStudentIdRef.current && loadedStudentIdRef.current !== studentId) {
+      console.log(`🔄 Hook: StudentId changed, resetting state`);
+      setData(null);
+      setError(null);
+      loadedStudentIdRef.current = null;
+    }
+  }, [studentId]);
 
   /**
    * Authenticate student with email
@@ -70,6 +88,8 @@ export function useStudentData(studentId: string) {
       
       if (authResult.success) {
         setIsAuthenticated(true);
+        // Reset loaded tracking to trigger data load
+        loadedStudentIdRef.current = null;
         // Automatically load data after successful authentication
         await loadData();
       } else {
@@ -92,6 +112,7 @@ export function useStudentData(studentId: string) {
     setIsAuthenticated(false);
     setData(null);
     setError(null);
+    loadedStudentIdRef.current = null;
   }, []);
 
   /**
@@ -99,6 +120,7 @@ export function useStudentData(studentId: string) {
    */
   const refreshData = useCallback(async () => {
     if (isAuthenticated) {
+      loadedStudentIdRef.current = null; // Reset tracking
       await loadData();
     }
   }, [isAuthenticated, loadData]);
@@ -123,4 +145,4 @@ export function useStudentData(studentId: string) {
     hasData: !!data,
     isReady: isAuthenticated && !isLoading && !!data
   };
-} 
+}

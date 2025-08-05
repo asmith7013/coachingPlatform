@@ -38,8 +38,11 @@ export function CombinedLessonProgress({ studentData }: CombinedLessonProgressPr
     <Card>
       <Card.Header>
         <Heading level="h2">Summer Rising Progress</Heading>
-        <Text color="muted" textSize="sm">
-          Combined Snorkl and Zearn completion status
+        <Text color="secondary" textSize="sm">
+          Remember:
+        </Text>
+        <Text color="secondary" textSize="sm">
+          Remember:
         </Text>
       </Card.Header>
       
