@@ -55,7 +55,7 @@ export function useStudentData(studentId: string) {
       console.log(`🚀 Hook: Auto-loading data on mount for student: ${studentId}`);
       loadData();
     }
-  }, [studentId, isAuthenticated]); // Removed data, isLoading, and loadData dependencies
+  }, [studentId, isAuthenticated, isLoading, loadData]); // Removed data, isLoading, and loadData dependencies
 
   /**
    * Reset state when studentId changes
