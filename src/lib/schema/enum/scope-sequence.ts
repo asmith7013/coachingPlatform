@@ -12,11 +12,16 @@ export const Grade6LessonsZod = z.enum([
   "G6 U2 L06",
   "G6 U2 L07",
   "G6 U2 L08",
+  "G6 U2 L09", // Added - Zearn lesson outside Summer Rising scope
+  "G6 U2 L10", // Added - Zearn lesson outside Summer Rising scope
   "G6 U2 L11",
   "G6 U2 L12",
   "G6 U2 L13",
   "G6 U2 L14",
+  "G6 U2 L15", // Added - Zearn lesson outside Summer Rising scope
   "G6 U2 L16",
+  "G6 U3 L01", // Added - Zearn lesson outside Summer Rising scope
+  "G6 U3 L03", // Added - Zearn lesson outside Summer Rising scope
   "G6 U3 L06",
   "G6 U3 L07",
   "G6 U3 L09",

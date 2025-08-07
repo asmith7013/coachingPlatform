@@ -38,12 +38,12 @@ export function CombinedLessonProgress({ studentData }: CombinedLessonProgressPr
     <Card>
       <Card.Header>
         <Heading level="h2">Summer Rising Progress</Heading>
-        <Text color="secondary" textSize="sm">
+        {/* <Text color="secondary" textSize="sm">
           Remember:
         </Text>
         <Text color="secondary" textSize="sm">
           Remember:
-        </Text>
+        </Text> */}
       </Card.Header>
       
       <Card.Body className="space-y-6">

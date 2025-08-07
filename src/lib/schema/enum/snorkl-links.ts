@@ -38,6 +38,12 @@ export const Grade6SnorklLinks: Record<Grade6Lessons, Partial<Record<SectionType
     "SRF": "https://student.snorkl.app/a7gn3k",
     "SR6": "https://student.snorkl.app/51n1ze"
   },
+  "G6 U2 L09": {
+    // Non-Summer Rising lesson - no Snorkl links
+  },
+  "G6 U2 L10": {
+    // Non-Summer Rising lesson - no Snorkl links
+  },
   "G6 U2 L11": {
     "SRF": "https://student.snorkl.app/awde5n",
     "SR6": "https://student.snorkl.app/zcucjt"
@@ -54,9 +60,18 @@ export const Grade6SnorklLinks: Record<Grade6Lessons, Partial<Record<SectionType
     "SRF": "https://student.snorkl.app/bpkbfc",
     "SR6": "https://student.snorkl.app/9mxj64"
   },
+  "G6 U2 L15": {
+    // Non-Summer Rising lesson - no Snorkl links
+  },
   "G6 U2 L16": {
     "SRF": "https://student.snorkl.app/qpsdb6",
     "SR6": "https://student.snorkl.app/vej4gx"
+  },
+  "G6 U3 L01": {
+    // Non-Summer Rising lesson - no Snorkl links
+  },
+  "G6 U3 L03": {
+    // Non-Summer Rising lesson - no Snorkl links
   },
   "G6 U3 L06": {
     "SRF": "https://student.snorkl.app/8r9a6c",

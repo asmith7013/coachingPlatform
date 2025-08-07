@@ -47,15 +47,15 @@ export function useStudentData(studentId: string) {
 
   /**
    * Auto-load student data on component mount or studentId change
-   * Fixed: Remove problematic dependencies that cause race conditions
+   * Fixed: Removed isLoading dependency and check to prevent race conditions
    */
   useEffect(() => {
-    // Only load if authenticated, no existing data for this studentId, and not currently loading
-    if (isAuthenticated && loadedStudentIdRef.current !== studentId && !isLoading) {
+    // Only load if authenticated and haven't loaded data for this studentId yet
+    if (isAuthenticated && loadedStudentIdRef.current !== studentId) {
       console.log(`🚀 Hook: Auto-loading data on mount for student: ${studentId}`);
       loadData();
     }
-  }, [studentId, isAuthenticated, isLoading, loadData]); // Removed data, isLoading, and loadData dependencies
+  }, [studentId, isAuthenticated, loadData]); // Keep loadData but remove isLoading
 
   /**
    * Reset state when studentId changes
