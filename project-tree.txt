@@ -517,14 +517,6 @@
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── test-enum-mongoose
 │   │   │   │       └── page.tsx
-│   │   │   ├── html-to-pdf
-│   │   │   │   ├── components
-│   │   │   │   │   ├── HtmlInput.tsx
-│   │   │   │   │   ├── PdfOptions.tsx
-│   │   │   │   │   └── PreviewPanel.tsx
-│   │   │   │   ├── page.tsx
-│   │   │   │   └── utils
-│   │   │   │       └── pdfGenerator.ts
 │   │   │   ├── im-routines
 │   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
@@ -1495,4 +1487,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-435 directories, 1061 files
+432 directories, 1056 files
