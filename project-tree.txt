@@ -4,6 +4,10 @@
 │   ├── docs.md
 │   ├── scope.md
 │   └── template.md
+├── debug-1755632884205.png
+├── debug-1755632894634.png
+├── debug-1755632927268.png
+├── debug-1755632938729.png
 ├── docs
 │   ├── architecture
 │   │   ├── core-principles.md
@@ -141,6 +145,36 @@
 │   ├── logo.svg
 │   ├── logo2.png
 │   ├── next.svg
+│   ├── screenshots
+│   │   ├── cooldown-full-6-1-a-2-1755686742348.png
+│   │   ├── cooldown-full-6-1-b-4-1755685797283.png
+│   │   ├── cooldown-full-6-1-b-4-1755686754953.png
+│   │   ├── cooldown-full-6-1-b-5-1755686768349.png
+│   │   ├── cooldown-full-6-1-b-6-1755686781944.png
+│   │   ├── cooldown-image-6-1-a-2-0-1755686742348.png
+│   │   ├── cooldown-image-6-1-b-4-0-1755685797283.png
+│   │   ├── cooldown-image-6-1-b-4-0-1755686754953.png
+│   │   ├── cooldown-image-6-1-b-5-0-1755686768349.png
+│   │   ├── cooldown-image-6-1-b-6-0-1755686781944.png
+│   │   ├── cooldown-response-math-6-1-a-2-0-1755686742348.png
+│   │   ├── cooldown-response-math-6-1-b-4-0-1755685797283.png
+│   │   ├── cooldown-response-math-6-1-b-4-0-1755686754953.png
+│   │   ├── cooldown-response-math-6-1-b-5-0-1755686768349.png
+│   │   ├── cooldown-response-math-6-1-b-6-0-1755686781944.png
+│   │   ├── cooldown-task-math-6-1-a-2-0-1755686742348.png
+│   │   ├── cooldown-task-math-6-1-b-4-0-1755685797283.png
+│   │   ├── cooldown-task-math-6-1-b-4-0-1755686754953.png
+│   │   ├── cooldown-task-math-6-1-b-5-0-1755686768349.png
+│   │   ├── cooldown-task-math-6-1-b-6-0-1755686781944.png
+│   │   ├── cooldown-task-statement-6-1-a-2-1755686742348.png
+│   │   ├── cooldown-task-statement-6-1-b-4-1755685797283.png
+│   │   ├── cooldown-task-statement-6-1-b-4-1755686754953.png
+│   │   ├── cooldown-task-statement-6-1-b-5-1755686768349.png
+│   │   ├── cooldown-task-statement-6-1-b-6-1755686781944.png
+│   │   ├── lesson-image-6-1-b-4-0-1755685283234.png
+│   │   ├── student-response-math-6-1-b-4-0-1755685283234.png
+│   │   ├── student-task-6-1-b-4-1755685283234.png
+│   │   └── student-task-math-6-1-b-4-0-1755685283234.png
 │   ├── vercel.svg
 │   └── window.svg
 ├── response_patterns.txt
@@ -518,6 +552,23 @@
 │   │   │   │   └── test-enum-mongoose
 │   │   │   │       └── page.tsx
 │   │   │   ├── im-routines
+│   │   │   │   └── page.tsx
+│   │   │   ├── imScraper
+│   │   │   │   ├── actions
+│   │   │   │   │   └── scraper.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── AuthenticationForm.tsx
+│   │   │   │   │   ├── IMScraperDashboard.tsx
+│   │   │   │   │   ├── ResultsDisplay.tsx
+│   │   │   │   │   ├── ScrapingControls.tsx
+│   │   │   │   │   └── ScreenshotDisplay.tsx
+│   │   │   │   ├── hooks
+│   │   │   │   │   └── useIMScraper.ts
+│   │   │   │   ├── lib
+│   │   │   │   │   ├── cooldown-parser.ts
+│   │   │   │   │   ├── im-scraper.ts
+│   │   │   │   │   ├── image-clipboard.ts
+│   │   │   │   │   └── types.ts
 │   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
@@ -1487,4 +1538,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-432 directories, 1056 files
+438 directories, 1101 files
