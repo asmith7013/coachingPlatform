@@ -84,7 +84,7 @@ export class ValidationService {
 
   // Helper methods
   private static formatZodError(error: z.ZodError): string {
-    return error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+    return error.issues.map((e: z.core.$ZodIssue) => `${e.path.join('.')}: ${e.message}`).join(', ');
   }
 
   private static extractQueryParams(req: NextRequest): Record<string, unknown> {

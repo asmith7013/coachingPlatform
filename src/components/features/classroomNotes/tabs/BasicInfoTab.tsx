@@ -33,7 +33,7 @@ export function BasicInfoTab({
           <label className={fieldLabel()}>Cycle</label>
           <Input
             name="cycle"
-            value={formData.cycle}
+            value={formData.cycle as string}
             onChange={onInputChange}
             placeholder="Cycle #"
           />
@@ -42,7 +42,7 @@ export function BasicInfoTab({
           <label className={fieldLabel()}>Session</label>
           <Input
             name="session"
-            value={formData.session}
+            value={formData.session as string}
             onChange={onInputChange}
             placeholder="Session #"
           />
@@ -83,7 +83,7 @@ export function BasicInfoTab({
         <label className={fieldLabel()}>Lesson Title</label>
         <Input
           name="lessonTitle"
-          value={formData.lessonTitle || ''}
+          value={(formData.lessonTitle as string) || ''}
           onChange={onInputChange}
           placeholder="Lesson title or topic"
         />
@@ -93,7 +93,7 @@ export function BasicInfoTab({
           <label className={fieldLabel()}>Course</label>
           <Input
             name="lessonCourse"
-            value={formData.lessonCourse || ''}
+            value={(formData.lessonCourse as string) || ''}
             onChange={onInputChange}
             placeholder="Course name"
           />
@@ -102,7 +102,7 @@ export function BasicInfoTab({
           <label className={fieldLabel()}>Unit</label>
           <Input
             name="lessonUnit"
-            value={formData.lessonUnit || ''}
+            value={(formData.lessonUnit as string) || ''}
             onChange={onInputChange}
             placeholder="Unit name"
           />
@@ -111,7 +111,7 @@ export function BasicInfoTab({
           <label className={fieldLabel()}>Lesson Number</label>
           <Input
             name="lessonNumber"
-            value={formData.lessonNumber || ''}
+            value={(formData.lessonNumber as string) || ''}
             onChange={onInputChange}
             placeholder="Lesson #"
           />
@@ -121,7 +121,7 @@ export function BasicInfoTab({
         <label className={fieldLabel()}>Other Context</label>
         <Textarea
           name="otherContext"
-          value={formData.otherContext}
+          value={formData.otherContext as string}
           onChange={onInputChange}
           placeholder="Additional context about the classroom, students, etc."
           rows={2}

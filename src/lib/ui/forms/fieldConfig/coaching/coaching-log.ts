@@ -114,37 +114,37 @@ export function getSmartBooleanDefault(
   switch (fieldName) {
     case 'oneOnOneCoachingDone':
       // ✅ EXPLICIT: Use field value if provided, otherwise default to true
-      return coachingLog.oneOnOneCoachingDone ?? true;
+      return (coachingLog.oneOnOneCoachingDone as boolean | undefined) ?? true;
       
     case 'microPLDone':
       // ✅ FIXED: Use explicit field value if provided, otherwise default to false
       if (coachingLog.microPLDone !== undefined) {
-        return coachingLog.microPLDone;
+        return coachingLog.microPLDone as boolean;
       }
       // Only infer from data if no explicit value AND there's actual content
-      return !!(coachingLog.microPLTopic && coachingLog.microPLTopic.trim()) || 
-             !!(coachingLog.microPLDuration && coachingLog.microPLDuration > 0);
+      return !!((coachingLog.microPLTopic as string)?.trim()) ||
+             !!((coachingLog.microPLDuration as number) > 0);
       
     case 'modelingPlanningDone':
       // ✅ FIXED: Use explicit field value if provided, otherwise default to false
       if (coachingLog.modelingPlanningDone !== undefined) {
-        return coachingLog.modelingPlanningDone;
+        return coachingLog.modelingPlanningDone as boolean;
       }
       // Only infer from data if no explicit value AND there's actual content
-      return !!(coachingLog.modelTopic && coachingLog.modelTopic.trim()) || 
-             !!(coachingLog.modelDuration && coachingLog.modelDuration > 0);
+      return !!((coachingLog.modelTopic as string)?.trim()) ||
+             !!((coachingLog.modelDuration as number) > 0);
       
     case 'walkthroughDone':
-      return coachingLog.walkthroughDone ?? false;
+      return (coachingLog.walkthroughDone as boolean | undefined) ?? false;
       
     case 'adminMeet':
       if (coachingLog.adminMeet !== undefined) {
-        return coachingLog.adminMeet;
+        return coachingLog.adminMeet as boolean;
       }
-      return !!(coachingLog.adminMeetDuration && coachingLog.adminMeetDuration > 0);
+      return !!((coachingLog.adminMeetDuration as number) > 0);
       
     case 'isContractor':
-      return coachingLog.isContractor ?? true;
+      return (coachingLog.isContractor as boolean | undefined) ?? true;
 
     default:
       return false;

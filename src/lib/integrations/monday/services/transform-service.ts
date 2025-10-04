@@ -99,7 +99,7 @@ export async function transformMondayItemToVisit(mondayItem: MondayItem): Promis
     
     // Add validation errors to the errors object
     if (validationError instanceof z.ZodError) {
-      validationError.errors.forEach((err) => {
+      validationError.issues.forEach((err: z.core.$ZodIssue) => {
         const field = err.path.join('.');
         errors[field] = err.message;
       });
@@ -111,7 +111,7 @@ export async function transformMondayItemToVisit(mondayItem: MondayItem): Promis
     VisitInputZodSchema.parse(transformed);
   } catch (validationError) {
     if (validationError instanceof z.ZodError) {
-      validationError.errors.forEach((err) => {
+      validationError.issues.forEach((err: z.core.$ZodIssue) => {
         const field = err.path.join('.');
         // Only add to requiredForFinalValidation if not already in errors
         // to avoid duplicating error messaging

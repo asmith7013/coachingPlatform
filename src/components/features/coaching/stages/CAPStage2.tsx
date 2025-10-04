@@ -77,7 +77,7 @@ export function CoachingActionPlanStage2({
                   Goal Description
                 </label>
                 <Textarea
-                  value={field.state.value || ''}
+                  value={(field.state.value as string) || ''}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   placeholder="Describe the primary goal for this coaching plan..."
@@ -100,7 +100,7 @@ export function CoachingActionPlanStage2({
                   IPG Core Action
                 </label>
                 <Select
-                  value={field.state.value || 'CA1'}
+                  value={(field.state.value as string) || 'CA1'}
                   onChange={field.handleChange}
                   options={ipgCoreActionOptions}
                 />
@@ -121,7 +121,7 @@ export function CoachingActionPlanStage2({
                   IPG Sub Category
                 </label>
                 <Select
-                  value={field.state.value || 'CA1A'}
+                  value={(field.state.value as string) || 'CA1A'}
                   onChange={field.handleChange}
                   options={ipgSubCategoryOptions}
                 />
@@ -142,7 +142,7 @@ export function CoachingActionPlanStage2({
                   Rationale
                 </label>
                 <Textarea
-                  value={field.state.value || ''}
+                  value={(field.state.value as string | number) || ''}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   placeholder="Explain the rationale for selecting this focus area..."
@@ -165,7 +165,7 @@ export function CoachingActionPlanStage2({
                   Expected Impact on Student Learning
                 </label>
                 <Textarea
-                  value={field.state.value || ''}
+                  value={(field.state.value as string | number) || ''}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   placeholder="Describe the expected impact on student learning outcomes..."
@@ -188,7 +188,7 @@ export function CoachingActionPlanStage2({
                   Lessons Learned (Previous Cycles)
                 </label>
                 <Textarea
-                  value={field.state.value || ''}
+                  value={(field.state.value as string | number) || ''}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   placeholder="What key lessons were learned from previous coaching cycles?"
@@ -211,7 +211,7 @@ export function CoachingActionPlanStage2({
                   Recommendations for Next Cycle
                 </label>
                 <Textarea
-                  value={field.state.value || ''}
+                  value={(field.state.value as string | number) || ''}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   placeholder="What recommendations do you have for the next coaching cycle?"
@@ -234,7 +234,7 @@ export function CoachingActionPlanStage2({
                   Plan Status
                 </label>
                 <Select
-                  value={field.state.value || 'draft'}
+                  value={(field.state.value as string) || 'draft'}
                   onChange={field.handleChange}
                   options={statusOptions}
                 />
@@ -256,7 +256,7 @@ export function CoachingActionPlanStage2({
                 </label>
                 <Input
                   type="number"
-                  value={field.state.value || 3}
+                  value={(field.state.value as number) || 3}
                   onChange={(e) => field.handleChange(Number(e.target.value))}
                   onBlur={field.handleBlur}
                   min={1}
@@ -280,7 +280,7 @@ export function CoachingActionPlanStage2({
                 </label>
                 <Input
                   type="date"
-                  value={field.state.value || ''}
+                  value={(field.state.value as string | number) || ''}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                 />
@@ -302,7 +302,7 @@ export function CoachingActionPlanStage2({
                 </label>
                 <Input
                   type="date"
-                  value={field.state.value || ''}
+                  value={(field.state.value as string | number) || ''}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                 />

@@ -108,7 +108,7 @@ export function SchoolForm({
         <form.Field name="gradeLevelsSupported">
           {(field) => (
             <Select
-              value={field.state.value}
+              value={field.state.value as string[]}
               onChange={field.handleChange}
               fieldApi={field}
               label="Grade Levels Supported"

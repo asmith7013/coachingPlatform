@@ -19,10 +19,25 @@ interface TimeAndTranscriptsTabProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 
-export function TimeAndTranscriptsTab({ 
-  formData, 
+export function TimeAndTranscriptsTab({
+  formData,
   onInputChange
 }: TimeAndTranscriptsTabProps) {
+  // Type assertions to ensure nested objects are properly typed
+  const timeTracking = formData.timeTracking as {
+    stopwatchTime: string;
+    startedWhenMinutes: string;
+    classStartTime: string;
+    classEndTime: string;
+  };
+
+  const transcripts = formData.transcripts as {
+    warmUpLaunch: string;
+    activity1Launch: string;
+    activity2Launch: string;
+    synthesisLaunch: string;
+  };
+
   return (
     <div className="space-y-6">
       {/* Time Tracking */}
@@ -30,7 +45,7 @@ export function TimeAndTranscriptsTab({
         <div>
           <label className={fieldLabel()}>Stopwatch</label>
           <Input 
-            value={formData.timeTracking.stopwatchTime} 
+            value={timeTracking.stopwatchTime} 
             readOnly 
           />
         </div>
@@ -39,7 +54,7 @@ export function TimeAndTranscriptsTab({
           <Input 
             type="number"
             name="timeTracking.startedWhenMinutes"
-            value={formData.timeTracking.startedWhenMinutes || ''}
+            value={timeTracking.startedWhenMinutes || ''}
             onChange={onInputChange}
             placeholder="Minutes"
           />
@@ -49,7 +64,7 @@ export function TimeAndTranscriptsTab({
           <Input 
             type="time"
             name="timeTracking.classStartTime"
-            value={formData.timeTracking.classStartTime}
+            value={timeTracking.classStartTime}
             onChange={onInputChange}
           />
         </div>
@@ -58,7 +73,7 @@ export function TimeAndTranscriptsTab({
           <Input 
             type="time"
             name="timeTracking.classEndTime"
-            value={formData.timeTracking.classEndTime}
+            value={timeTracking.classEndTime}
             onChange={onInputChange}
           />
         </div>
@@ -71,7 +86,7 @@ export function TimeAndTranscriptsTab({
             <label className={fieldLabel()}>Warm Up Launch Transcript</label>
             <Textarea
               name="transcripts.warmUpLaunch"
-              value={formData.transcripts.warmUpLaunch}
+              value={transcripts.warmUpLaunch}
               onChange={onInputChange}
               placeholder="What was said during warm up launch..."
               rows={3}
@@ -81,7 +96,7 @@ export function TimeAndTranscriptsTab({
             <label className={fieldLabel()}>Activity 1 Launch Transcript</label>
             <Textarea
               name="transcripts.activity1Launch"
-              value={formData.transcripts.activity1Launch}
+              value={transcripts.activity1Launch}
               onChange={onInputChange}
               placeholder="What was said during activity 1 launch..."
               rows={3}
@@ -91,7 +106,7 @@ export function TimeAndTranscriptsTab({
             <label className={fieldLabel()}>Activity 2 Launch Transcript</label>
             <Textarea
               name="transcripts.activity2Launch"
-              value={formData.transcripts.activity2Launch}
+              value={transcripts.activity2Launch}
               onChange={onInputChange}
               placeholder="What was said during activity 2 launch..."
               rows={3}
@@ -101,7 +116,7 @@ export function TimeAndTranscriptsTab({
             <label className={fieldLabel()}>Synthesis Launch Transcript</label>
             <Textarea
               name="transcripts.synthesisLaunch"
-              value={formData.transcripts.synthesisLaunch}
+              value={transcripts.synthesisLaunch}
               onChange={onInputChange}
               placeholder="What was said during synthesis launch..."
               rows={3}

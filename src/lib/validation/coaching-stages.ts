@@ -16,12 +16,14 @@ export const stageValidators = {
   },
   
   goal: (data: CoachingActionPlanInput): boolean => {
+    const teacherOutcomes = (data.teacherOutcomes as CapOutcome[] | undefined) || [];
+    const studentOutcomes = (data.studentOutcomes as CapOutcome[] | undefined) || [];
     return !!(
       // data.description?.trim() &&
-      data.teacherOutcomes.length > 0 &&
-      data.studentOutcomes.length > 0 &&
-      data.teacherOutcomes.every((outcome: CapOutcome) => outcome.description.trim()) &&
-      data.studentOutcomes.every((outcome: CapOutcome) => outcome.description.trim())
+      teacherOutcomes.length > 0 &&
+      studentOutcomes.length > 0 &&
+      teacherOutcomes.every((outcome: CapOutcome) => outcome.description.trim()) &&
+      studentOutcomes.every((outcome: CapOutcome) => outcome.description.trim())
     );
   },
   
@@ -34,11 +36,13 @@ export const stageValidators = {
   },
   
   analysis: (data: CoachingActionPlanInput): boolean => {
+    const teacherOutcomeAnalysis = (data.teacherOutcomeAnalysis as CapOutcome[] | undefined) || [];
+    const studentOutcomeAnalysis = (data.studentOutcomeAnalysis as CapOutcome[] | undefined) || [];
     return !!(
       data.goalMet !== undefined &&
-      data.impactOnLearning.trim() &&
-      data.teacherOutcomeAnalysis.every((analysis: CapOutcome) => analysis.achieved !== undefined) &&
-      data.studentOutcomeAnalysis.every((analysis: CapOutcome) => analysis.achieved !== undefined)
+      (data.impactOnLearning as string | undefined)?.trim() &&
+      teacherOutcomeAnalysis.every((analysis: CapOutcome) => analysis.achieved !== undefined) &&
+      studentOutcomeAnalysis.every((analysis: CapOutcome) => analysis.achieved !== undefined)
     );
   }
 };

@@ -32,7 +32,7 @@ export const UserMetadataZodSchema = z.object({
 export const ErrorContextBaseZodSchema = z.object({
   component: z.string().optional(),
   operation: z.string().optional(),
-  metadata: z.record(z.unknown()).optional()
+  metadata: z.record(z.string(), z.unknown()).optional()
 });
 
 // Base authenticated user data schema (without methods)

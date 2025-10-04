@@ -1,7 +1,7 @@
 import type { SchoolInput } from '@domain-types/school';
 import type { NYCPSStaffInput } from '@domain-types/staff';
 import type { VisitInput } from '@domain-types/visit';
-import type { BellScheduleInput, TeacherScheduleInput } from '@/lib/schema/zod-schema/schedules/schedule';
+import type { BellScheduleInput, TeacherScheduleInput } from '@/lib/schema/zod-schema/schedules/schedule-documents';
 
 // Reuse existing preview utilities from transformers
 import { createDataPreview as createGenericPreview, formatValidationError, createValidationSummary } from '@/lib/data-processing/transformers/utils/preview-helpers';
@@ -45,16 +45,16 @@ const previewExtractors = {
 
   bellSchedule: (schedule: BellScheduleInput) => ({
     bellScheduleType: schedule.bellScheduleType,
-    classScheduleCount: schedule.classSchedule?.length || 0,
-    assignedCycleDaysCount: schedule.assignedCycleDays?.length || 0,
+    classScheduleCount: (schedule.classSchedule as unknown[])?.length || 0,
+    assignedCycleDaysCount: (schedule.assignedCycleDays as unknown[])?.length || 0,
     school: schedule.school
   }),
 
   masterSchedule: (schedule: ProcessedTeacherSchedule) => ({
     teacherName: schedule.teacherName,
     teacherEmail: schedule.teacherEmail,
-    daysCount: schedule.dayIndices?.length || 0,
-    periodsCount: schedule.assignments?.length || 0,
+    daysCount: (schedule.dayIndices as unknown[])?.length || 0,
+    periodsCount: (schedule.assignments as unknown[])?.length || 0,
     school: schedule.school
   })
 };
@@ -154,7 +154,7 @@ export function createSummaryPreview(
       case 'bellSchedules': {
         const schedules = data as BellScheduleInput[];
         if (schedules.length === 1) {
-          return `${schedules[0].bellScheduleType} schedule with ${schedules[0].classSchedule?.length || 0} periods`;
+          return `${schedules[0].bellScheduleType} schedule with ${(schedules[0].classSchedule as unknown[] | undefined)?.length || 0} periods`;
         }
         return `${schedules.length} bell schedules: ${schedules.map(s => s.bellScheduleType).join(', ')}`;
       }

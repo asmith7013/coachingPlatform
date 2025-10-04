@@ -72,11 +72,11 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
         gradeLevelsSupported: [],
         yearsOfIMImplementation: 0, // Default to 0 if not provided
         ...schoolData,
-        schoolNumber: schoolData.schoolNumber || '',
-        district: schoolData.district || '',
-        schoolName: schoolData.schoolName || '',
-        emoji: schoolData.emoji || '',
-        address: schoolData.address || '',
+        schoolNumber: (schoolData.schoolNumber as string | undefined) || '',
+        district: (schoolData.district as string | undefined) || '',
+        schoolName: (schoolData.schoolName as string | undefined) || '',
+        emoji: (schoolData.emoji as string | undefined) || '',
+        address: (schoolData.address as string | undefined) || '',
       };
 
       createSchool(schoolDataWithRequiredFields);
@@ -181,14 +181,14 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
             </Alert>
             
             <div className="bg-gray-50 rounded-lg p-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">{schoolData.schoolName}</h3>
-              <p className="text-sm text-gray-600">District: {schoolData.district}</p>
-              {schoolData.address && (
-                <p className="text-sm text-gray-600">Address: {schoolData.address}</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{String(schoolData.schoolName)}</h3>
+              <p className="text-sm text-gray-600">District: {String(schoolData.district)}</p>
+              {(schoolData.address as string | undefined) && (
+                <p className="text-sm text-gray-600">Address: {String(schoolData.address as string)}</p>
               )}
-              {schoolData.gradeLevelsSupported && schoolData.gradeLevelsSupported.length > 0 && (
+              {(schoolData.gradeLevelsSupported as string[] | undefined) && Array.isArray(schoolData.gradeLevelsSupported) && schoolData.gradeLevelsSupported.length > 0 && (
                 <p className="text-sm text-gray-600">
-                  Grades: {schoolData.gradeLevelsSupported.join(', ')}
+                  Grades: {(schoolData.gradeLevelsSupported as string[]).join(', ')}
                 </p>
               )}
             </div>

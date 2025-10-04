@@ -21,6 +21,71 @@ export const ClassroomObservationFieldsSchema = z.object({
   // Simple context
   otherContext: z.string().default(''),
   coolDown: z.string().default(''),
+  // Lesson flow structure for form compatibility
+  lessonFlow: z.object({
+    warmUp: z.object({
+      launch: z.string().default(''),
+      workTime: z.string().default(''),
+      synthesis: z.string().default(''),
+    }),
+    activity1: z.object({
+      launch: z.string().default(''),
+      workTime: z.string().default(''),
+      synthesis: z.string().default(''),
+    }),
+    activity2: z.object({
+      launch: z.string().default(''),
+      workTime: z.string().default(''),
+      synthesis: z.string().default(''),
+    }).optional(),
+    lessonSynthesis: z.object({
+      launch: z.string().default(''),
+      workTime: z.string().default(''),
+      synthesis: z.string().default(''),
+    }),
+  }).default({
+    warmUp: { launch: '', workTime: '', synthesis: '' },
+    activity1: { launch: '', workTime: '', synthesis: '' },
+    activity2: { launch: '', workTime: '', synthesis: '' },
+    lessonSynthesis: { launch: '', workTime: '', synthesis: '' }
+  }),
+  // Feedback structure for form compatibility
+  feedback: z.object({
+    glow: z.array(z.string()).default([]),
+    wonder: z.array(z.string()).default([]),
+    grow: z.array(z.string()).default([]),
+    nextSteps: z.array(z.string()).default([]),
+  }).default({ glow: [], wonder: [], grow: [], nextSteps: [] }),
+  // Learning targets array
+  learningTargets: z.array(z.string()).default([]),
+  // Time tracking structure
+  timeTracking: z.object({
+    stopwatchTime: z.string().default(''),
+    startedWhenMinutes: z.string().default(''),
+    classStartTime: z.string().default(''),
+    classEndTime: z.string().default(''),
+  }).default({
+    stopwatchTime: '',
+    startedWhenMinutes: '',
+    classStartTime: '',
+    classEndTime: ''
+  }),
+  // Transcripts structure
+  transcripts: z.object({
+    warmUpLaunch: z.string().default(''),
+    activity1Launch: z.string().default(''),
+    activity2Launch: z.string().default(''),
+    synthesisLaunch: z.string().default(''),
+  }).default({
+    warmUpLaunch: '',
+    activity1Launch: '',
+    activity2Launch: '',
+    synthesisLaunch: ''
+  }),
+  // Progress monitoring
+  progressMonitoring: z.object({
+    observedCriteria: z.array(z.any()).default([]),
+  }).default({ observedCriteria: [] }),
   // Status and metadata
   status: z.enum(['draft', 'in_progress', 'completed', 'reviewed']).default('draft'),
   isSharedWithTeacher: z.boolean().default(false),
@@ -29,7 +94,7 @@ export const ClassroomObservationFieldsSchema = z.object({
   coachingActionPlanId: z.string().optional(),
 });
 
-export const ClassroomObservationZodSchema = BaseDocumentSchema.merge(ClassroomObservationFieldsSchema);
+export const ClassroomObservationZodSchema = BaseDocumentSchema.extend(ClassroomObservationFieldsSchema.shape);
 export const ClassroomObservationInputZodSchema = toInputSchema(ClassroomObservationZodSchema);
 
 export type ClassroomObservation = z.infer<typeof ClassroomObservationZodSchema>;

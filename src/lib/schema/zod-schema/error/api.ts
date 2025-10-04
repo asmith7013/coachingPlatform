@@ -21,7 +21,7 @@ export const GraphQLErrorZodSchema = z.object({
     column: z.number()
   })).optional().describe("Error locations in the query"),
   path: z.array(z.string()).optional().describe("Path to the error in the result"),
-  extensions: z.record(z.unknown()).optional().describe("Additional error information")
+  extensions: z.record(z.string(), z.unknown()).optional().describe("Additional error information")
 });
 
 // OAuth error schema

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(xargs:*)",
+      "Bash(tsc:*)",
+      "Bash(mv:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run lint:*)",
+      "Bash(sed:*)",
+      "Bash(npm run prebuild:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

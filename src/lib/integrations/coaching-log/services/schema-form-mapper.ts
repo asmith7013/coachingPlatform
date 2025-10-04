@@ -146,13 +146,13 @@ export class SchemaFormMapper {
    */
   private mapEnumFields(data: CoachingLogInput): Record<string, string> {
     return {
-      reasonDone: data.reasonDone || 'No',
-      totalDuration: data.totalDuration || EnumFieldMappings.totalDuration.options[0],
-      Solvestouchpoint: this.mapSolvesTouchpointValue(data.solvesTouchpoint || EnumFieldMappings.solvesTouchpoint.options[0]),
+      reasonDone: (data.reasonDone as string) || 'No',
+      totalDuration: (data.totalDuration as string) || EnumFieldMappings.totalDuration.options[0],
+      Solvestouchpoint: this.mapSolvesTouchpointValue((data.solvesTouchpoint as string) || EnumFieldMappings.solvesTouchpoint.options[0]),
       
       // NEW: Admin fields with smart defaults
-      NYCSolvesAdmin: data.NYCSolvesAdmin || this.determineNYCSolvesAdminDefault(data),
-      adminDone: data.adminDone || this.determineAdminDoneDefault(data),
+      NYCSolvesAdmin: (data.NYCSolvesAdmin as string) || this.determineNYCSolvesAdminDefault(data),
+      adminDone: (data.adminDone as string) || this.determineAdminDoneDefault(data),
       
       // Hierarchical fields with smart selection
       implementationIndicator: this.getImplementationIndicator(data),
@@ -184,8 +184,8 @@ export class SchemaFormMapper {
    */
   private mapTextFields(data: CoachingLogInput): Record<string, string> {
     return {
-      microPLTopic: data.microPLTopic || '',
-      modelTopic: data.modelTopic || '',
+      microPLTopic: (data.microPLTopic as string) || '',
+      modelTopic: (data.modelTopic as string) || '',
     };
   }
   
@@ -194,15 +194,15 @@ export class SchemaFormMapper {
    */
   private mapSpecialFields(data: CoachingLogInput, overrides: FormOverrides): Record<string, string | string[]> {
     return {
-      NYCDone: NYCCoachMapping.transformToForm(data.NYCDone || false),
+      NYCDone: NYCCoachMapping.transformToForm((data.NYCDone as boolean) || false),
       
       // ✅ FIXED: Enhanced grade levels with proper fallback chain
       NYCSolvesGradeLevels: this.getGradeLevelsForForm(data, overrides),
       
       // Enhanced teacher support types
       teachersSupportedType: (
-        data.teachersSupportedTypes?.length ? 
-        data.teachersSupportedTypes : 
+        (data.teachersSupportedTypes as string[])?.length ?
+        (data.teachersSupportedTypes as string[]) :
         ['None of the above']
       ),
     };
@@ -219,11 +219,11 @@ export class SchemaFormMapper {
     });
     
     // Priority order: school data > coaching log data > defaults
-    const gradeLevels = 
+    const gradeLevels =
       overrides.schoolGradeLevels?.length ? overrides.schoolGradeLevels :
-      data.gradeLevelsSupported?.length ? data.gradeLevelsSupported :
+      (data.gradeLevelsSupported as string[])?.length ? (data.gradeLevelsSupported as string[]) :
       this.getDefaultGradeLevels();
-      
+
     console.log('✅ Final grade levels for form:', gradeLevels);
     return gradeLevels;
   }
@@ -252,19 +252,19 @@ export class SchemaFormMapper {
   // Helper methods for hierarchical field selection
   
   private getImplementationIndicator(data: CoachingLogInput): string {
-    const experience = data.implementationExperience || 'First year of Implementation';
+    const experience = (data.implementationExperience as string) || 'First year of Implementation';
     const options = getImplementationOptions(experience);
-    return data.implementationFocus || options[0] || 'Doing the Math: Lesson Planning';
+    return (data.implementationFocus as string) || options[0] || 'Doing the Math: Lesson Planning';
   }
   
   private getPrimaryStrategyCategory(data: CoachingLogInput): string {
-    return data.primaryStrategyCategory || data.primaryStrategy || 'In-class support';
+    return (data.primaryStrategyCategory as string) || (data.primaryStrategy as string) || 'In-class support';
   }
   
   private getSolvesSpecificStrategy(data: CoachingLogInput): string {
     const category = this.getPrimaryStrategyCategory(data);
     const options = getPrimaryStrategyOptions(category);
-    return data.primaryStrategySpecific || data.solvesSpecificStrategy || options[0] || 'Modeling full lesson';
+    return (data.primaryStrategySpecific as string) || (data.solvesSpecificStrategy as string) || options[0] || 'Modeling full lesson';
   }
   
   private mapSolvesTouchpointValue(value: string): string {
@@ -303,7 +303,7 @@ export class SchemaFormMapper {
     if (data.adminMeet === true) {
       return "Yes - debriefed teacher support only";
     }
-    if (data.solvesTouchpoint?.includes('Leader support')) {
+    if ((data.solvesTouchpoint as string[])?.includes('Leader support')) {
       return "Yes - provided leader specific support";
     }
     return "No";
@@ -315,6 +315,6 @@ export class SchemaFormMapper {
   private determineAdminDoneDefault(data: CoachingLogInput): string {
     if (data.adminMeet === true) return "Yes";
     if (data.adminMeet === false) return "No";
-    return data.solvesTouchpoint?.includes('Leader support') ? "Yes" : "No";
+    return (data.solvesTouchpoint as string[])?.includes('Leader support') ? "Yes" : "No";
   }
 } 

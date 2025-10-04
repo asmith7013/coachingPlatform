@@ -64,17 +64,17 @@ export function NYCPSStaffForm({
         </form.Field>
         <form.Field name="schools">
           {(field) => (
-            <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Schools" url="/api/schools" multiple placeholder="Select schools" />
+            <ReferenceSelect fieldApi={field} value={field.state.value as string[]} onChange={field.handleChange} label="Schools" url="/api/schools" multiple placeholder="Select schools" />
           )}
         </form.Field>
         <form.Field name="owners">
           {(field) => (
-            <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Owners" url="/api/staff" multiple placeholder="Select owners" />
+            <ReferenceSelect fieldApi={field} value={field.state.value as string[]} onChange={field.handleChange} label="Owners" url="/api/staff" multiple placeholder="Select owners" />
           )}
         </form.Field>
         <form.Field name="gradeLevelsSupported">
           {(field) => (
-            <Select fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Grade Levels Supported" options={gradeLevelOptions} multiple placeholder="Select grade levels" />
+            <Select fieldApi={field} value={field.state.value as string[]} onChange={field.handleChange} label="Grade Levels Supported" options={gradeLevelOptions} multiple placeholder="Select grade levels" />
           )}
         </form.Field>
         <form.Field name="subjects">
@@ -89,7 +89,7 @@ export function NYCPSStaffForm({
         </form.Field>
         <form.Field name="rolesNYCPS">
           {(field) => (
-            <Select fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Roles (NYCPS)" options={roleOptions} multiple placeholder="Select roles" />
+            <Select fieldApi={field} value={field.state.value as string[]} onChange={field.handleChange} label="Roles (NYCPS)" options={roleOptions} multiple placeholder="Select roles" />
           )}
         </form.Field>
         <form.Field name="pronunciation">

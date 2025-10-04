@@ -331,14 +331,14 @@ export default function CoachingActionPlanCRUDTest() {
               <h3 className="text-lg font-semibold">Last Generated Test Plan ( Schema)</h3>
               <div className="max-h-60 overflow-y-auto border rounded p-2">
                 <div className="space-y-2 text-sm">
-                  <div><strong>Title:</strong> {state.testPlan.title}</div>
-                  <div><strong>Goal:</strong> {state.testPlan.goalDescription}</div>
-                  <div><strong>IPG Focus:</strong> {state.testPlan.ipgCoreAction} - {state.testPlan.ipgSubCategory}</div>
-                  <div><strong>Academic Year:</strong> {state.testPlan.academicYear}</div>
-                  <div><strong>Cycle Length:</strong> {state.testPlan.cycleLength}</div>
-                  <div><strong>Status:</strong> {state.testPlan.status}</div>
-                  <div><strong>Start Date:</strong> {state.testPlan.startDate}</div>
-                  <div><strong>Rationale:</strong> {state.testPlan.rationale}</div>
+                  <div><strong>Title:</strong> {String(state.testPlan.title)}</div>
+                  <div><strong>Goal:</strong> {String(state.testPlan.goalDescription)}</div>
+                  <div><strong>IPG Focus:</strong> {String(state.testPlan.ipgCoreAction)} - {String(state.testPlan.ipgSubCategory)}</div>
+                  <div><strong>Academic Year:</strong> {String(state.testPlan.academicYear)}</div>
+                  <div><strong>Cycle Length:</strong> {String(state.testPlan.cycleLength)}</div>
+                  <div><strong>Status:</strong> {String(state.testPlan.status)}</div>
+                  <div><strong>Start Date:</strong> {String(state.testPlan.startDate)}</div>
+                  <div><strong>Rationale:</strong> {String(state.testPlan.rationale)}</div>
                 </div>
               </div>
             </div>

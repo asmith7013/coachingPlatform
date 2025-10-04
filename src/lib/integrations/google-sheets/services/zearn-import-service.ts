@@ -18,7 +18,7 @@ export class ZearnImportService {
       let dateOnly = completion.lessonCompletionDate;
       try {
         // If it's a parseable date, format it as MM/DD/YYYY
-        const parsedDate = new Date(completion.lessonCompletionDate);
+        const parsedDate = new Date(completion.lessonCompletionDate as string);
         if (!isNaN(parsedDate.getTime())) {
           dateOnly = parsedDate.toLocaleDateString('en-US');
         }
@@ -61,7 +61,7 @@ export class ZearnImportService {
       const result = await appendSheetData(
         this.spreadsheetId,
         `${ZearnImportService.ZEARN_SHEET_NAME}!A:L`,
-        rows
+        rows as (string | number | boolean)[][]
       );
       
       if (!result.success) {

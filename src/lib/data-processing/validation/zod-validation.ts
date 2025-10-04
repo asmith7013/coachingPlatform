@@ -38,23 +38,23 @@ export function validateStrict<T>(schema: z.ZodSchema<T>, data: unknown): T {
 /**
  * Partial validation for updates - safe version
  */
-export function validatePartialSafe<T>(
-  schema: z.ZodObject<z.ZodRawShape, 'strip', z.ZodTypeAny, T>,
+export function validatePartialSafe<T extends z.ZodRawShape>(
+  schema: z.ZodObject<T>,
   data: unknown
-): Partial<T> | null {
+): Partial<z.infer<z.ZodObject<T>>> | null {
   const partialSchema = schema.partial();
-  return validateSafe(partialSchema, data) as Partial<T> | null;
+  return validateSafe(partialSchema, data) as Partial<z.infer<z.ZodObject<T>>> | null;
 }
 
 /**
  * Partial validation for updates - strict version
  */
-export function validatePartialStrict<T>(
-  schema: z.ZodObject<z.ZodRawShape, 'strip', z.ZodTypeAny, T>,
+export function validatePartialStrict<T extends z.ZodRawShape>(
+  schema: z.ZodObject<T>,
   data: unknown
-): Partial<T> {
+): Partial<z.infer<z.ZodObject<T>>> {
   const partialSchema = schema.partial();
-  return validateStrict(partialSchema, data) as Partial<T>;
+  return validateStrict(partialSchema, data) as Partial<z.infer<z.ZodObject<T>>>;
 }
 
 /**

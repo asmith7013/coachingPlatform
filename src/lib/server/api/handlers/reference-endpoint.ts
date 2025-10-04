@@ -98,23 +98,24 @@ export function createReferenceEndpoint<T extends Record<string, unknown>, R ext
     
     try {
       // Extract parameters from validated object and convert types
-      const { 
-        page: rawPage = 1, 
-        limit: rawLimit = defaultLimit, 
-        sortBy, 
-        sortOrder = 'desc', 
-        search, 
+      const params = validatedParams as Record<string, unknown>;
+      const {
+        page: rawPage = 1,
+        limit: rawLimit = defaultLimit,
+        sortBy,
+        sortOrder = 'desc',
+        search,
         filters = {},
         ...rest
-      } = validatedParams;
-      
+      } = params;
+
       // Convert string values to numbers
       const page = typeof rawPage === 'string' ? parseInt(rawPage, 10) || 1 : rawPage;
       const limit = typeof rawLimit === 'string' ? parseInt(rawLimit, 10) || defaultLimit : rawLimit;
-      
+
       // Combine explicit filters and additional query parameters
       const combinedFilters = {
-        ...filters,
+        ...(filters as Record<string, unknown>),
         // Include other params that aren't standard pagination/sorting
         ...Object.fromEntries(
           Object.entries(rest)
@@ -135,9 +136,9 @@ export function createReferenceEndpoint<T extends Record<string, unknown>, R ext
       const data = await fetchFunction({
         page: Number(page),
         limit: Number(limit),
-        sortBy: sortBy || 'createdAt',
+        sortBy: (sortBy as string) || 'createdAt',
         sortOrder: sortOrder as 'asc' | 'desc',
-        search,
+        search: search as string | undefined,
         filters: combinedFilters,
         // Include all params for maximum flexibility
         ...rest
@@ -156,17 +157,29 @@ export function createReferenceEndpoint<T extends Record<string, unknown>, R ext
 
       // Map items to reference format
       const references = data.items.map((item) => mapItem(item as T));
-      
+
       console.log(`📤 ${logPrefix} /${endpoint} response: ${references.length} items found`);
+
+      // Type the data object for safe property access
+      const typedData = data as {
+        page?: number;
+        limit?: number;
+        total: number;
+        totalPages?: number;
+        hasMore?: boolean;
+      };
 
       // Use the response helper to create a consistent collection response
       // Add pagination metadata
+      const finalPage = typedData.page || (page as number);
+      const finalLimit = typedData.limit || (limit as number);
+
       const response = {
         ...createCollectionResponse(references),
-        page: data.page || page,
-        limit: data.limit || limit,
-        totalPages: data.totalPages || Math.ceil(data.total / (data.limit || limit)),
-        hasMore: data.hasMore || ((data.page || page) * (data.limit || limit)) < data.total,
+        page: finalPage,
+        limit: finalLimit,
+        totalPages: typedData.totalPages || Math.ceil(typedData.total / finalLimit),
+        hasMore: typedData.hasMore || (finalPage * finalLimit) < typedData.total,
       };
 
       return NextResponse.json(response);

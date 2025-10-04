@@ -82,12 +82,12 @@ export function EditCoachingActionPlanDialog({
     }
 
     // Basic validation
-    if (!formData.title?.trim()) {
+    if (!(formData.title as string)?.trim()) {
       setError('Plan title is required');
       return;
     }
 
-    if (!formData.academicYear?.trim()) {
+    if (!(formData.academicYear as string)?.trim()) {
       setError('Academic year is required');
       return;
     }
@@ -186,7 +186,7 @@ export function EditCoachingActionPlanDialog({
                 required
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="Enter a descriptive title for this coaching action plan"
-                value={formData.title || ''}
+                value={(formData.title as string) || ''}
                 onChange={(e) => handleFieldChange('title', e.target.value)}
               />
             </div>
@@ -204,7 +204,7 @@ export function EditCoachingActionPlanDialog({
                 required
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="e.g., 2024-2025"
-                value={formData.academicYear || ''}
+                value={(formData.academicYear as string) || ''}
                 onChange={(e) => handleFieldChange('academicYear', e.target.value)}
               />
             </div>
@@ -220,7 +220,7 @@ export function EditCoachingActionPlanDialog({
                 id="startDate"
                 type="date"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                value={formData.startDate ? new Date(formData.startDate).toISOString().split('T')[0] : ''}
+                value={(formData.startDate as Date | string | undefined) ? new Date(formData.startDate as Date | string).toISOString().split('T')[0] : ''}
                 onChange={(e) => handleFieldChange('startDate', e.target.value ? new Date(e.target.value) : undefined)}
               />
             </div>
@@ -236,7 +236,7 @@ export function EditCoachingActionPlanDialog({
                 id="endDate"
                 type="date"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                value={formData.endDate ? new Date(formData.endDate).toISOString().split('T')[0] : ''}
+                value={(formData.endDate as Date | string | undefined) ? new Date(formData.endDate as Date | string).toISOString().split('T')[0] : ''}
                 onChange={(e) => handleFieldChange('endDate', e.target.value ? new Date(e.target.value) : undefined)}
               />
             </div>
@@ -251,7 +251,7 @@ export function EditCoachingActionPlanDialog({
               <select
                 id="status"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                value={formData.status || 'draft'}
+                value={(formData.status as string) || 'draft'}
                 onChange={(e) => handleFieldChange('status', e.target.value)}
               >
                 <option value="draft">Draft</option>

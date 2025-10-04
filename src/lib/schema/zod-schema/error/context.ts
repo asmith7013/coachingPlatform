@@ -16,6 +16,6 @@ export const ErrorContextZodSchema = z.object({
   environment: EnvironmentSchema.optional().describe("Environment where error occurred"),
   timestamp: z.number().optional().describe("Error timestamp"),
   requestId: z.string().optional().describe("Request ID for tracing"),
-  tags: z.record(z.string()).optional().describe("Additional error tags"),
-  metadata: z.record(z.unknown()).optional().describe("Additional error metadata")
+  tags: z.record(z.string(), z.string()).optional().describe("Additional error tags"),
+  metadata: z.record(z.string(), z.unknown()).optional().describe("Additional error metadata")
 }); 

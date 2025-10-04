@@ -14,13 +14,9 @@ import { z, ZodType } from "zod";
 import { revalidatePath } from "next/cache";
 import { NYCPSStaffModel } from "@mongoose-schema/core/staff.model";
 import { TeacherScheduleModel, BellScheduleModel } from "@/lib/schema/mongoose-schema/schedules/schedule.model";
-import { 
-  TeacherScheduleZodSchema, 
-  TeacherScheduleInputZodSchema,
-  BellScheduleZodSchema, 
-  BellScheduleInputZodSchema,
-  Period
-} from "@/lib/schema/zod-schema/schedules/schedule";
+import { TeacherScheduleZodSchema, TeacherScheduleInputZodSchema, BellScheduleZodSchema, BellScheduleInputZodSchema,
+  TeacherScheduleReference
+ } from "@/lib/schema/zod-schema/schedules/schedule-documents";
 import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
@@ -264,7 +260,7 @@ interface TeacherScheduleWithEmail extends Omit<TeacherScheduleInput, 'teacher'>
   teacher?: string; // Optional until resolved
   bellScheduleId: string; // Required for new structure
   dayIndices: number[]; // Required for new structure
-  assignments: Period[]; // Required for new structure
+  assignments: TeacherScheduleReference[]; // Required for new structure
 }
 
 // Type for staff member from database
@@ -367,16 +363,16 @@ export async function createMasterSchedule(
             teacher: staffMember._id.toString(),
             school: schoolId,
             bellScheduleId: schedule.bellScheduleId || '',
-            dayIndices: schedule.dayIndices || [0, 1, 2, 3, 4],
-            assignments: schedule.assignments || [],
-            owners: schedule.owners || []
+            dayIndices: (schedule.dayIndices as number[]) || [0, 1, 2, 3, 4],
+            assignments: (schedule.assignments as TeacherScheduleReference[]) || [],
+            owners: (schedule.owners as string[]) || []
           };
           
           console.log(`📝 Creating schedule data:`, {
             teacher: scheduleData.teacher,
             school: scheduleData.school,
-            dayIndicesCount: scheduleData.dayIndices.length,
-            assignmentsCount: scheduleData.assignments.length
+            dayIndicesCount: (scheduleData.dayIndices as number[]).length,
+            assignmentsCount: (scheduleData.assignments as TeacherScheduleReference[]).length
           });
           
           // Validate schedule data

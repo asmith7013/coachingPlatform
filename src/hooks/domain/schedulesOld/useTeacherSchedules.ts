@@ -1,8 +1,6 @@
 import { createCrudHooks } from '@query/client/factories/crud-factory';
-import { ZodSchema } from 'zod';
-import { 
-  TeacherScheduleZodSchema, 
-  type TeacherSchedule
+import {
+  TeacherScheduleZodSchema
 } from '@/lib/schema/zod-schema/schedules/schedule';
 import { 
   fetchTeacherSchedules, 
@@ -18,7 +16,7 @@ import {
  */
 const teacherScheduleHooks = createCrudHooks({
   entityType: 'teacherSchedules',
-  schema: TeacherScheduleZodSchema as ZodSchema<TeacherSchedule>,
+  schema: TeacherScheduleZodSchema as never,
   serverActions: {
     fetch: fetchTeacherSchedules,
     fetchById: fetchTeacherScheduleById,

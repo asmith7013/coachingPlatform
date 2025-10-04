@@ -42,7 +42,7 @@ export const StudentDataZodSchema = z.object({
   zearnProgress: z.array(StudentZearnProgressZodSchema),
   scopeSequenceProgress: ScopeSequenceProgressZodSchema, // Add progress tracking
   preAssessment: StudentPreAssessmentZodSchema,
-  weeklyZearnMinutes: z.record(z.string()) // Week1: "1h 53m"
+  weeklyZearnMinutes: z.record(z.string(), z.string()) // Week1: "1h 53m"
 });
 
 export type StudentData = z.infer<typeof StudentDataZodSchema>;

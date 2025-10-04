@@ -13,6 +13,7 @@ import { handleClientError } from '@error/handlers/client';
 import { calculatePlanProgress } from '@data-processing/transformers/utils/coaching-action-plan-utils';
 import { CoachingActionPlanInputZodSchema } from '@zod-schema/core/cap';
 import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
+import type { CapImplementationRecord } from '@zod-schema/cap/cap-implementation-record';
 import { CapOutcomeInput } from '@zod-schema/cap';
 import { createCoachingActionPlanDefaults } from '@zod-schema/core/cap';
 
@@ -145,7 +146,7 @@ export function CoachingActionPlanDetailedEditor({
         return (
           <CoachingActionPlanStage2
             {...commonProps}
-            data={fullPlan.goal || {
+            data={(fullPlan.goal as CoachingActionPlanInput) || {
               description: '',
               teacherOutcomes: [],
               studentOutcomes: []
@@ -158,7 +159,7 @@ export function CoachingActionPlanDetailedEditor({
         return (
           <CoachingActionPlanStage3
             {...commonProps}
-            data={fullPlan.implementationRecords || []}
+            data={(fullPlan.implementationRecords as CapImplementationRecord[]) || []}
             onChange={(records) => handleStageUpdate('implementationRecords', records)}
             goal={fullPlan.goal as CoachingActionPlan}
           />
@@ -168,7 +169,7 @@ export function CoachingActionPlanDetailedEditor({
         return (
           <CoachingActionPlanStage4
             {...commonProps}
-            data={fullPlan.endOfCycleAnalysis || {
+            data={(fullPlan.endOfCycleAnalysis as CoachingActionPlan) || ({
               goalMet: false,
               teacherOutcomeAnalysis: [],
               studentOutcomeAnalysis: [],
@@ -176,9 +177,9 @@ export function CoachingActionPlanDetailedEditor({
               overallEvidence: [],
               lessonsLearned: undefined,
               recommendationsForNext: undefined
-            }}
+            } as CoachingActionPlanInput)}
             onChange={(analysisData: CapOutcomeInput) => handleStageUpdate('endOfCycleAnalysis', analysisData)}
-            goal={fullPlan.goal}
+            goal={fullPlan.goal as CoachingActionPlan}
           />
         );
         

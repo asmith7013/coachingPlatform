@@ -52,7 +52,7 @@ export async function bulkUploadToDB<Doc extends { _id: string }, Schema extends
     return {
       success: true,
       message: successMessage,
-      items: items.map(item => validateStrict(schema, item.toObject())),
+      items: items.map(item => validateStrict(schema, item.toObject())) as InferSchema<Schema>[],
       total: items.length
     };
   } catch (error) {

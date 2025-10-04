@@ -1,4 +1,4 @@
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 import { logError } from "@error/core/logging";
 import { ErrorContext } from "@error-types";
 
@@ -13,7 +13,7 @@ export function handleValidationError(
   context: ErrorContext | string = {}
 ): string {
   // Format error messages with field paths
-  const errorMessages = error.errors.map(err => {
+  const errorMessages = error.issues.map((err: z.core.$ZodIssue) => {
     const path = err.path.join(".");
     return `${path}: ${err.message}`;
   });
@@ -32,7 +32,7 @@ export function handleValidationError(
     severity: "warning",
     metadata: {
       ...errorContext.metadata,
-      validationErrors: error.errors
+      validationErrors: error.issues
     }
   };
   

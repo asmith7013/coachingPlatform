@@ -53,10 +53,10 @@ export function ObservationForm({
           <form.Field name="cycle">{(field) => <Input fieldApi={field} label="Cycle" />}</form.Field>
           <form.Field name="session">{(field) => <Input fieldApi={field} label="Session" />}</form.Field>
           <form.Field name="date">{(field) => <Input fieldApi={field} label="Date" type="date" />}</form.Field>
-          <form.Field name="teacherId">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Teacher" url="/api/staff" />}</form.Field>
-          <form.Field name="coachId">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Coach" url="/api/staff" />}</form.Field>
-          <form.Field name="schoolId">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="School" url="/api/schools" />}</form.Field>
-          <form.Field name="status">{(field) => <Select fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Status" options={[{ value: 'draft', label: 'Draft' }, { value: 'final', label: 'Final' }]} />}</form.Field>
+          <form.Field name="teacherId">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value as string} onChange={field.handleChange} label="Teacher" url="/api/staff" />}</form.Field>
+          <form.Field name="coachId">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value as string} onChange={field.handleChange} label="Coach" url="/api/staff" />}</form.Field>
+          <form.Field name="schoolId">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value as string} onChange={field.handleChange} label="School" url="/api/schools" />}</form.Field>
+          <form.Field name="status">{(field) => <Select fieldApi={field} value={field.state.value as string} onChange={field.handleChange} label="Status" options={[{ value: 'draft', label: 'Draft' }, { value: 'final', label: 'Final' }]} />}</form.Field>
         </>;
       case 'lesson':
         return <>

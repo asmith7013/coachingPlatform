@@ -442,7 +442,7 @@ export function CoachingLogAutomationTool() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Reason Done</label>
               <select 
                 className="w-full p-2 border border-gray-300 rounded-md"
-                value={coachingLogData.reasonDone}
+                value={coachingLogData.reasonDone as string}
                 onChange={(e) => handleFieldChange('reasonDone', e.target.value)}
               >
                 <option value="Yes">Yes</option>
@@ -454,7 +454,7 @@ export function CoachingLogAutomationTool() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Total Duration</label>
               <select 
                 className="w-full p-2 border border-gray-300 rounded-md"
-                value={coachingLogData.totalDuration}
+                value={coachingLogData.totalDuration as string}
                 onChange={(e) => handleFieldChange('totalDuration', e.target.value)}
               >
                 <option value="Half day - 3 hours">Half day - 3 hours</option>
@@ -466,7 +466,7 @@ export function CoachingLogAutomationTool() {
               <label className="block text-sm font-medium text-gray-700 mb-1">SOLVES Touchpoint</label>
               <select 
                 className="w-full p-2 border border-gray-300 rounded-md"
-                value={coachingLogData.solvesTouchpoint}
+                value={coachingLogData.solvesTouchpoint as string}
                 onChange={(e) => handleFieldChange('solvesTouchpoint', e.target.value)}
               >
                 <option value="Teacher support">Teacher support</option>
@@ -480,7 +480,7 @@ export function CoachingLogAutomationTool() {
               <input 
                 type="text"
                 className="w-full p-2 border border-gray-300 rounded-md"
-                value={coachingLogData.primaryStrategy}
+                value={coachingLogData.primaryStrategy as string}
                 onChange={(e) => handleFieldChange('primaryStrategy', e.target.value)}
                 placeholder="Enter primary strategy"
               />

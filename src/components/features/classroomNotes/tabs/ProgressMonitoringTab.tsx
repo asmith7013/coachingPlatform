@@ -15,11 +15,16 @@ interface ProgressMonitoringTabProps {
 }
 
 export function ProgressMonitoringTab({ formData, onCheckboxChange }: ProgressMonitoringTabProps) {
+  // Type assertion to ensure progressMonitoring is properly typed
+  const progressMonitoring = formData.progressMonitoring as {
+    observedCriteria: Array<{ criterion: string; observed: boolean; }>;
+  };
+
   return (
     <div>
       <h3 className={sectionTitle()}>Progress Monitoring</h3>
       <div className="space-y-2">
-        {formData.progressMonitoring.observedCriteria.map((criterion: typeof formData.progressMonitoring.observedCriteria[number], index: number) => (
+        {progressMonitoring.observedCriteria.map((criterion, index: number) => (
           <div key={index} className="flex items-start gap-2">
             <Checkbox 
               id={`progress.observedCriteria.${index}`}

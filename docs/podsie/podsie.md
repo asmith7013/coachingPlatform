@@ -24,143 +24,97 @@ You will receive HTML content from Illustrative Mathematics lessons that needs t
 
 ## Output Structure
 
-Transform the scraped content into exactly these four sections:
+Transform the scraped content into exactly these sections:
 
-### **Lesson Reference**
-- **Purpose**: Provide direct access to the original lesson
-- **Content**: Clickable link to the lesson on Illustrative Mathematics
+### Title Format
+- **Format**: `## Lesson [Number]` (H2 heading)
+- **Example**: `## Lesson 2`, `## Lesson 8`
+
+### Lesson URL
 - **Format**: `**Lesson URL:** [Grade X - Unit Y - Section Z - Lesson N](lesson-url)`
 
 ### Canvas
+- **Header**: `### Canvas` (H3)
+- **Content**: Include canvas images first, then descriptive text about visual elements students see
 - **Purpose**: Describe the starting state and visual elements students see
-- **Content**: Images, diagrams, graphs, initial problem setup
-- **Source**: Extract from figures, images, and visual MathJax elements
-- **Format**: Descriptive text using alt text and screen reader content when available
 
 ### Question Text  
-- **Purpose**: Text transcription of what students read and see
-- **Content**: The actual task/question with mathematical expressions converted to readable text
-- **Source**: Student Task Statement section from HTML
-- **Format**: Clean prose with mathematical expressions in plain text notation
-- **IMPORTANT**: For visual elements, include detailed image descriptions formatted as **"Image Description for Visual Accessibility:"**
+- **Header**: `### Question Text` (H3)
+- **Content**: The actual task/question with mathematical expressions in plain text
+- **Images**: Include detailed descriptions with **"Image Description:"** header
+- **Format**: `![Image Description](image-source-url)` when source URLs available
 
 ### Acceptance Criteria
-- **Purpose**: What constitutes correct student responses for grading
-- **Content**: Expected answers, sample reasoning, acceptable approaches
-- **Source**: Student Response section from HTML  
-- **Format**: Bullet points for key criteria + sample responses from IM answer key
-- **IMPORTANT**: Start with specific points AI should look for, then include sample responses
+- **Header**: `### Acceptance Criteria` (H3)
+- **Content**: **Essential criteria only** - list the minimum requirements a student must meet to be marked correct
+- **Source**: Extract criteria directly from the IM sample responses - identify what mathematical elements are consistently present across all acceptable answers
+- **Format**: Start with 2-4 key criteria that are objectively measurable, then include sample responses for reference only
+- **Focus**: What must be present vs. what would be nice to have
+- **Universal requirement**: Each criterion should end with "with mathematically sound reasoning"
+- **Method flexibility**: When multiple valid solution methods exist, include "or an alternative, mathematically sound method" in acceptance criteria to allow for different approaches while maintaining mathematical rigor
 
-## Processing Instructions
-
-### Mathematical Content Handling (Notion-Compatible)
-1. **Check for screen reader text** → Use directly if found
-2. **Check for alt text** → Use for visual context if available  
-3. **Interpret MathJax SVG** → Convert to plain text only (e.g., `1/2`, `x^2`)
-4. **Never use LaTeX syntax** → Avoid `$\frac{1}{2}$`, `$x^2$` as these don't render in Notion
-5. **Mark unclear content** → `**[NEEDS MANUAL REVIEW]**` when uncertain
-
-### Mathematical Notation Guidelines
+## Mathematical Notation Guidelines
 - **Fractions**: Use `1/2`, `3/4`, etc. (not `$\frac{1}{2}$`)
 - **Exponents**: Use `x^2`, `2^n`, etc. (not `$x^2$`)
 - **Operations**: Use `+`, `-`, `*`, `/` in plain text
 - **Equations**: Write as `1 + 1 + 1 + 1/2 + 1/2 = 4`
 - **When in doubt**: Use the most readable plain text format
 
-### Visual Content Enhancement
+## Image Handling
+- **Extract `src` attributes** from `<img>` tags in HTML
+- **Format as markdown images**: `![alt-text](source-url)`
+- **Place after text descriptions**: Always include text description first, then image link
+- **Use descriptive alt text**: Pull from existing alt attributes or screenreader content
+- **Handle missing sources gracefully**: If no `src` attribute, proceed without image link
+
+## Visual Content Enhancement
 - **Create detailed image descriptions** when alt text is minimal or missing
-- **Use "Image Description for Visual Accessibility:" header** for visual descriptions
+- **Use "Image Description:" header** for visual descriptions
 - **Include spatial relationships** (above/below, left/right, positioning)
 - **Describe shapes, lines, labels** with precision
 - **Explain the mathematical relationship** the visual demonstrates
-
-### Content Organization
-- **Include lesson URL**: Always start with the lesson reference link
-- **Maintain lesson context**: Include grade/unit/lesson info at top
-- **Preserve mathematical accuracy**: Don't simplify correct mathematical language
-- **Use standard markdown**: Headers (#), lists (-), emphasis (*) - NO math syntax
-- **Flag uncertainties**: Mark any content you're not confident about
-
-### Quality Control
-- **Indicate source**: Note when using screen reader vs. your interpretation
-- **Preserve structure**: Maintain numbered lists, ordered steps from original
-- **Focus on pedagogy**: Emphasize what students should learn and demonstrate
-- **Test Notion compatibility**: Ensure all formatting will paste cleanly
+- **Always include image source links** when `src` attributes are present in HTML
 
 ## Example Output Format
 
 ```markdown
-# Grade 8 - Unit 1 - Lesson 2
+## Lesson 8
 
-**Lesson URL:** [Grade 8 - Unit 1 - Lesson 2](https://accessim.org/6-8/grade-8/unit-1/section-a/lesson-2?a=teacher)
+**Lesson URL:** [Grade 6 - Unit 1 - Section C - Lesson 8](https://accessim.org/6-8/grade-6/unit-1/section-c/lesson-8?a=teacher)
 
-## Canvas
-### Canvas Screenshot:
+### Canvas
+![Screenshot of triangle Q with student solutions](attachment:screenshot.png)
+Three images of triangle Q showing different student approaches to finding area.
 
-### Canvas Description: 
-Two identical polygon shapes positioned on opposite sides of a dashed diagonal line.
+### Question Text  
+Elena, Lin, and Noah all found the area of Triangle Q to be 14 square units but reasoned about it differently, as shown in the diagrams. Explain at least one student's way of thinking and why his or her answer is correct.
 
-## Question Text  
-What type of move takes Figure A to Figure B?
-Explain your reasoning.
+**Image Description:** Three images of triangle Q labeled Elena, Lin, and Noah. Elena's triangle has two additional triangles next to it to compose a rectangle, Lin's triangle has a copy of the same triangle composed into a parallelogram, and Noah's triangle shows the top portion of the triangle cut off and moved next to the bottom portion to create a parallelogram.
 
-**Image Description for Visual Accessibility:**
-The image shows two identical polygon shapes positioned on opposite sides of a dashed diagonal line (labeled with the letter ℓ).
-* **Figure A** is a polygon located above and to the right of the dashed line. It appears to be an irregular pentagon (5-sided shape) with one side that angles inward, creating a concave portion.
-* **Figure B** is an identical polygon located below and to the left of the dashed line. It has the exact same shape as Figure A.
-* **The dashed line ℓ** runs diagonally through the image from upper left to lower right, separating the two figures.
+![Three images of triangle Q labeled Elena, Lin, and Noah](https://cms-assets.illustrativemathematics.org/9f01nauu7p99y5jxdter54gutj59)
 
-The two polygons are positioned as mirror images of each other across the dashed line. If you were to fold the paper along the dashed line ℓ, Figure A would exactly match up with Figure B. This suggests that Figure B is a reflection of Figure A across line ℓ.
+### Acceptance Criteria
+- Student explains at least one student's approach correctly with mathematically sound reasoning
+- Student justifies why the chosen approach gives the correct answer with mathematically sound reasoning
 
-## Acceptance Criteria
-* Student identifies a valid move that takes Figure A to Figure B
-* Student explains reasoning (see acceptable sample responses below)
-
-Sample responses:
-* The move is 1 rotation. If Figure A is turned around the point shared by Figures A and B, it can land on Figure B.
-* The move is 2 reflections. If Figure A is flipped over line ℓ and then flipped over again so that the shared points and angle line up, then it can land on Figure B.
+**Sample responses:**
+- Elena drew two rectangles that decomposed the triangle into two right triangles. She found the area of each right triangle to be half of the area of its enclosing rectangle. This means that the area of the original triangle is the sum of half of the area of the rectangle on the left and half of the rectangle on the right. Half of (4 × 5) plus half of (4 × 2) is 10 + 4, so the area is 14 square units.
+- Lin saw it as half of a parallelogram with the base of 7 units and height of 4 units (and thus an area of 28 square units). Half of 28 is 14.
+- Noah decomposed the triangle by cutting it at half of the triangle's height, turning the top triangle around, and joining it with the bottom trapezoid to make a parallelogram. He then calculated the area of that parallelogram, which has the same base length but half the height of the triangle. 7 × 2 = 14, so the area is 14 square units.
 ```
-
-## Key Formatting Guidelines
-
-### For Question Text:
-- Include the actual question text first
-- Add **"Image Description for Visual Accessibility:"** as a bold header
-- Provide detailed spatial and mathematical descriptions
-- Use bullet points for multiple visual elements
-- Bold key figure/element names (**Figure A**, **Figure B**, etc.)
-
-### For Acceptance Criteria:
-- Start with bullet points of what AI should specifically look for
-- Include phrase "see acceptable sample responses below" when sample responses follow
-- List sample responses exactly as they appear in IM answer key
-- Maintain original formatting and mathematical language
-- Use plain text for all mathematical expressions
-
-## Notion Compatibility Requirements
-- **No LaTeX math syntax**: Never use `$...$` notation
-- **Plain text math only**: Use `1/2`, `x^2`, `2 + 3 = 5`
-- **Standard markdown only**: Headers, lists, bold, italic
-- **Test paste-ability**: All content should paste cleanly into Notion without formatting errors
 
 ## Error Handling
 - When mathematical content is unclear: **[NEEDS MANUAL REVIEW - unclear MathJax]**
 - When visual elements lack descriptions: **[NEEDS MANUAL REVIEW - missing alt text]**  
 - When structure is ambiguous: **[NEEDS MANUAL REVIEW - unclear section boundaries]**
+- When image sources are missing: **[NEEDS MANUAL REVIEW - missing image source]**
 
 ## Success Criteria
 Your output should be ready to paste directly into Notion and provide coaches with:
 - **Direct access** to the original lesson (URL)
 - **Clean rendering**: All mathematical content in plain text that displays correctly
+- **Visual content access**: Direct links to original images from Illustrative Mathematics
 - Clear understanding of what students see (Canvas)
 - Exact task requirements (Question Text) with detailed visual descriptions
-- Grading guidelines (Acceptance Criteria) with specific AI criteria and sample responses
-- **Perfect Notion compatibility**: No formatting errors when pasted
-
----
-
-**Key Updates:**
-1. **Notion compatibility focus** - emphasis on plain text mathematical notation
-2. **Explicit prohibition** of LaTeX math syntax (`$...$`)
-3. **Clear mathematical formatting guidelines** for fractions, exponents, equations
-4. **Enhanced success criteria** including paste-ability testing
+- Grading guidelines (Acceptance Criteria) with specific AI criteria and verbatim sample responses
+- **Perfect Notion compatibility**: No formatting errors when pasted, images display properly

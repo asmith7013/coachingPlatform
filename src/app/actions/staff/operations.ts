@@ -311,10 +311,10 @@ export async function bulkCreateStaffWithSchoolLink(staffData: NYCPSStaffInput[]
         };
       }
 
-      // Add school ID to each staff member's schools array
+      // Add school ID to each staff member's schoolIds array
       const staffWithSchool = staffData.map(staff => ({
         ...staff,
-        schools: staff.schools ? [...staff.schools, schoolId] : [schoolId]
+        schoolIds: Array.isArray(staff.schoolIds) ? [...staff.schoolIds, schoolId] : [schoolId]
       }));
       
       // Use the simplified uploadStaff function

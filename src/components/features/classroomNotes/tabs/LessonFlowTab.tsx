@@ -27,6 +27,14 @@ interface LessonFlowTabProps {
 }
 
 export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
+  // Type assertion to ensure lessonFlow is properly typed
+  const lessonFlow = formData.lessonFlow as {
+    warmUp: { launch: string; workTime: string; synthesis: string; };
+    activity1: { launch: string; workTime: string; synthesis: string; };
+    activity2?: { launch: string; workTime: string; synthesis: string; };
+    lessonSynthesis: { launch: string; workTime: string; synthesis: string; };
+  };
+
   return (
     <div>
       <h3 className={sectionTitle()}>Lesson Flow</h3>
@@ -37,7 +45,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Launch</label>
             <Textarea
               name="lessonFlow.warmUp.launch"
-              value={formData.lessonFlow.warmUp.launch}
+              value={lessonFlow.warmUp.launch}
               onChange={onInputChange}
               placeholder="Warm up launch notes"
               rows={2}
@@ -47,7 +55,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Work Time</label>
             <Textarea
               name="lessonFlow.warmUp.workTime"
-              value={formData.lessonFlow.warmUp.workTime}
+              value={lessonFlow.warmUp.workTime}
               onChange={onInputChange}
               placeholder="Warm up work time notes"
               rows={2}
@@ -57,7 +65,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Synthesis</label>
             <Textarea
               name="lessonFlow.warmUp.synthesis"
-              value={formData.lessonFlow.warmUp.synthesis}
+              value={lessonFlow.warmUp.synthesis}
               onChange={onInputChange}
               placeholder="Warm up synthesis notes"
               rows={2}
@@ -72,7 +80,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Launch</label>
             <Textarea
               name="lessonFlow.activity1.launch"
-              value={formData.lessonFlow.activity1.launch}
+              value={lessonFlow.activity1.launch}
               onChange={onInputChange}
               placeholder="Activity 1 launch notes"
               rows={2}
@@ -82,7 +90,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Work Time</label>
             <Textarea
               name="lessonFlow.activity1.workTime"
-              value={formData.lessonFlow.activity1.workTime}
+              value={lessonFlow.activity1.workTime}
               onChange={onInputChange}
               placeholder="Activity 1 work time notes"
               rows={2}
@@ -92,7 +100,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Synthesis</label>
             <Textarea
               name="lessonFlow.activity1.synthesis"
-              value={formData.lessonFlow.activity1.synthesis}
+              value={lessonFlow.activity1.synthesis}
               onChange={onInputChange}
               placeholder="Activity 1 synthesis notes"
               rows={2}
@@ -107,7 +115,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Launch</label>
             <Textarea
               name="lessonFlow.activity2.launch"
-              value={formData.lessonFlow.activity2?.launch || ''}
+              value={lessonFlow.activity2?.launch || ''}
               onChange={onInputChange}
               placeholder="Activity 2 launch notes"
               rows={2}
@@ -117,7 +125,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Work Time</label>
             <Textarea
               name="lessonFlow.activity2.workTime"
-              value={formData.lessonFlow.activity2?.workTime || ''}
+              value={lessonFlow.activity2?.workTime || ''}
               onChange={onInputChange}
               placeholder="Activity 2 work time notes"
               rows={2}
@@ -127,7 +135,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Synthesis</label>
             <Textarea
               name="lessonFlow.activity2.synthesis"
-              value={formData.lessonFlow.activity2?.synthesis || ''}
+              value={lessonFlow.activity2?.synthesis || ''}
               onChange={onInputChange}
               placeholder="Activity 2 synthesis notes"
               rows={2}
@@ -142,7 +150,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Launch</label>
             <Textarea
               name="lessonFlow.lessonSynthesis.launch"
-              value={formData.lessonFlow.lessonSynthesis.launch}
+              value={lessonFlow.lessonSynthesis.launch}
               onChange={onInputChange}
               placeholder="Lesson synthesis launch notes"
               rows={2}
@@ -152,7 +160,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Work Time</label>
             <Textarea
               name="lessonFlow.lessonSynthesis.workTime"
-              value={formData.lessonFlow.lessonSynthesis.workTime}
+              value={lessonFlow.lessonSynthesis.workTime}
               onChange={onInputChange}
               placeholder="Lesson synthesis work time notes"
               rows={2}
@@ -162,7 +170,7 @@ export function LessonFlowTab({ formData, onInputChange }: LessonFlowTabProps) {
             <label className={fieldLabel()}>Synthesis</label>
             <Textarea
               name="lessonFlow.lessonSynthesis.synthesis"
-              value={formData.lessonFlow.lessonSynthesis.synthesis}
+              value={lessonFlow.lessonSynthesis.synthesis}
               onChange={onInputChange}
               placeholder="Lesson synthesis notes"
               rows={2}

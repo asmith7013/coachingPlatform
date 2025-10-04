@@ -57,11 +57,11 @@ export function CoachingActionPlanForm({
       case 'basic':
         return <>
           <form.Field name="title">{(field) => <Input fieldApi={field} label="Title" required />}</form.Field>
-          <form.Field name="teachers">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Teachers" url="/api/staff" multiple />}</form.Field>
-          <form.Field name="coaches">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Coaches" url="/api/staff" multiple />}</form.Field>
-          <form.Field name="school">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value} onChange={field.handleChange} label="School" url="/api/schools" />}</form.Field>
-          <form.Field name="academicYear">{(field) => <Select fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Academic Year" options={academicYearOptions} />}</form.Field>
-          <form.Field name="status">{(field) => <Select fieldApi={field} value={field.state.value} onChange={field.handleChange} label="Status" options={statusOptions} />}</form.Field>
+          <form.Field name="teachers">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value as string[]} onChange={field.handleChange} label="Teachers" url="/api/staff" multiple />}</form.Field>
+          <form.Field name="coaches">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value as string[]} onChange={field.handleChange} label="Coaches" url="/api/staff" multiple />}</form.Field>
+          <form.Field name="school">{(field) => <ReferenceSelect fieldApi={field} value={field.state.value as string} onChange={field.handleChange} label="School" url="/api/schools" />}</form.Field>
+          <form.Field name="academicYear">{(field) => <Select fieldApi={field} value={field.state.value as string} onChange={field.handleChange} label="Academic Year" options={academicYearOptions} />}</form.Field>
+          <form.Field name="status">{(field) => <Select fieldApi={field} value={field.state.value as string} onChange={field.handleChange} label="Status" options={statusOptions} />}</form.Field>
         </>;
       case 'needs':
         return <>

@@ -25,14 +25,14 @@ export const QueryParamsZodSchema = PaginationParamsZodSchema.extend({
   sortOrder: z.enum(['asc', 'desc']).default('desc').describe("Sort direction"),
   
   // Filtering parameters
-  filters: z.record(z.unknown()).default({}).describe("Query filters"),
+  filters: z.record(z.string(), z.unknown()).default({}).describe("Query filters"),
   
   // Search parameters
   search: z.string().optional().describe("Search query"),
   searchFields: z.array(z.string()).optional().describe("Fields to search in"),
   
   // Additional options
-  options: z.record(z.unknown()).optional().describe("Additional query options")
+  options: z.record(z.string(), z.unknown()).optional().describe("Additional query options")
 }).catchall(
   // Handle boolean string values and other unknown properties
   z.union([

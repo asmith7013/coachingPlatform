@@ -123,7 +123,7 @@ export class StudentService {
       if (error instanceof z.ZodError) {
         return { 
           success: false, 
-          error: `Validation failed: ${error.errors.map(e => e.message).join(', ')}` 
+          error: `Validation failed: ${error.issues.map((e: z.core.$ZodIssue) => e.message).join(', ')}` 
         };
       }
       

@@ -211,7 +211,7 @@ export function validateAndParseRow(
     attendance = AttendanceStatusZod.parse(attendanceStr);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      throw new Error(`Validation failed: ${error.errors.map(e => e.message).join(', ')}`);
+      throw new Error(`Validation failed: ${error.issues.map((e: z.core.$ZodIssue) => e.message).join(', ')}`);  
     }
     throw error;
   }

@@ -1,13 +1,8 @@
 .
-├── GOOGLE_SHEETS_EXPORT_IMPLEMENTATION.md
 ├── amplify
 │   ├── docs.md
 │   ├── scope.md
 │   └── template.md
-├── debug-1755632884205.png
-├── debug-1755632894634.png
-├── debug-1755632927268.png
-├── debug-1755632938729.png
 ├── docs
 │   ├── architecture
 │   │   ├── core-principles.md
@@ -42,6 +37,18 @@
 │   │   └── type-system.md
 │   ├── implementation
 │   │   └── three-zone-masterschedulecard-integration.md
+│   ├── podsie
+│   │   ├── curricula
+│   │   │   ├── 6th-grade
+│   │   │   │   └── Unit-2
+│   │   │   │       └── ramp-ups
+│   │   │   └── 7th-grade
+│   │   │       └── Unit-2
+│   │   │           └── ramp-ups
+│   │   ├── images
+│   │   ├── podsie-old.md
+│   │   ├── podsie.md
+│   │   └── roadmap.html
 │   ├── table-of-contents.md
 │   ├── tanstack-table-implementation.md
 │   ├── token-tailwind-mapping.md
@@ -132,8 +139,6 @@
 │   └── product-roadmap.md
 ├── eslint.config.mjs
 ├── examples
-├── fix-fetcher-factory.ts
-├── fix-fetchers-guide.md
 ├── next-env.d.ts
 ├── next.config.ts
 ├── package.json
@@ -145,36 +150,6 @@
 │   ├── logo.svg
 │   ├── logo2.png
 │   ├── next.svg
-│   ├── screenshots
-│   │   ├── cooldown-full-6-1-a-2-1755686742348.png
-│   │   ├── cooldown-full-6-1-b-4-1755685797283.png
-│   │   ├── cooldown-full-6-1-b-4-1755686754953.png
-│   │   ├── cooldown-full-6-1-b-5-1755686768349.png
-│   │   ├── cooldown-full-6-1-b-6-1755686781944.png
-│   │   ├── cooldown-image-6-1-a-2-0-1755686742348.png
-│   │   ├── cooldown-image-6-1-b-4-0-1755685797283.png
-│   │   ├── cooldown-image-6-1-b-4-0-1755686754953.png
-│   │   ├── cooldown-image-6-1-b-5-0-1755686768349.png
-│   │   ├── cooldown-image-6-1-b-6-0-1755686781944.png
-│   │   ├── cooldown-response-math-6-1-a-2-0-1755686742348.png
-│   │   ├── cooldown-response-math-6-1-b-4-0-1755685797283.png
-│   │   ├── cooldown-response-math-6-1-b-4-0-1755686754953.png
-│   │   ├── cooldown-response-math-6-1-b-5-0-1755686768349.png
-│   │   ├── cooldown-response-math-6-1-b-6-0-1755686781944.png
-│   │   ├── cooldown-task-math-6-1-a-2-0-1755686742348.png
-│   │   ├── cooldown-task-math-6-1-b-4-0-1755685797283.png
-│   │   ├── cooldown-task-math-6-1-b-4-0-1755686754953.png
-│   │   ├── cooldown-task-math-6-1-b-5-0-1755686768349.png
-│   │   ├── cooldown-task-math-6-1-b-6-0-1755686781944.png
-│   │   ├── cooldown-task-statement-6-1-a-2-1755686742348.png
-│   │   ├── cooldown-task-statement-6-1-b-4-1755685797283.png
-│   │   ├── cooldown-task-statement-6-1-b-4-1755686754953.png
-│   │   ├── cooldown-task-statement-6-1-b-5-1755686768349.png
-│   │   ├── cooldown-task-statement-6-1-b-6-1755686781944.png
-│   │   ├── lesson-image-6-1-b-4-0-1755685283234.png
-│   │   ├── student-response-math-6-1-b-4-0-1755685283234.png
-│   │   ├── student-task-6-1-b-4-1755685283234.png
-│   │   └── student-task-math-6-1-b-4-0-1755685283234.png
 │   ├── vercel.svg
 │   └── window.svg
 ├── response_patterns.txt
@@ -189,17 +164,7 @@
 │   │   ├── course-config.js
 │   │   ├── pdf-downloader.js
 │   │   └── scraper.ts
-│   ├── seed
-│   │   ├── README.md
-│   │   ├── index.ts
-│   │   ├── mockRubrics.ts
-│   │   ├── seed-cycles-coaching.ts
-│   │   ├── seed-look-fors.ts
-│   │   └── seed-schools-staff.ts
-│   ├── snorkl
 │   ├── snorkl-comprehensive-scraper.ts
-│   ├── snorkl-csv-processor.ts
-│   ├── snorkl-orchestrator.ts
 │   ├── snorkl-simple-scraper.ts
 │   └── test-monday-token.mjs
 ├── sentry.edge.config.ts
@@ -215,6 +180,13 @@
 │   │   ├── 313
 │   │   │   ├── config.ts
 │   │   │   ├── google-sheets-export
+│   │   │   │   └── page.tsx
+│   │   │   ├── im-roadmaps
+│   │   │   │   ├── components
+│   │   │   │   │   ├── LessonBadges.tsx
+│   │   │   │   │   ├── LessonSkillsView.tsx
+│   │   │   │   │   ├── SkillDetails.tsx
+│   │   │   │   │   └── TargetSkillCard.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
@@ -239,8 +211,11 @@
 │   │   │   ├── 313
 │   │   │   │   ├── analytics.ts
 │   │   │   │   ├── google-sheets-export.ts
+│   │   │   │   ├── im-lessons.ts
 │   │   │   │   ├── index.ts
+│   │   │   │   ├── roadmaps-lessons.ts
 │   │   │   │   ├── student-data.ts
+│   │   │   │   ├── student-performance.ts
 │   │   │   │   ├── students.ts
 │   │   │   │   ├── sync-sheets.ts
 │   │   │   │   └── zearn-import.ts
@@ -468,17 +443,6 @@
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── classroomNotes
-│   │   │   │   ├── layout.tsx
-│   │   │   │   ├── lookForList
-│   │   │   │   │   └── page.tsx
-│   │   │   │   ├── page.tsx
-│   │   │   │   ├── schedule
-│   │   │   │   │   └── page.tsx
-│   │   │   │   ├── schoolList
-│   │   │   │   │   ├── [schoolId]
-│   │   │   │   │   └── page.tsx
-│   │   │   │   └── staffList
-│   │   │   │       └── page.tsx
 │   │   │   ├── dashboard
 │   │   │   │   └── page.tsx
 │   │   │   ├── dayView
@@ -553,16 +517,34 @@
 │   │   │   │       └── page.tsx
 │   │   │   ├── im-routines
 │   │   │   │   └── page.tsx
-│   │   │   ├── imScraper
+│   │   │   ├── im-scraper
 │   │   │   │   ├── actions
+│   │   │   │   │   ├── claude-processor.ts
 │   │   │   │   │   └── scraper.ts
 │   │   │   │   ├── components
+│   │   │   │   │   ├── ActionButtons.tsx
 │   │   │   │   │   ├── AuthenticationForm.tsx
+│   │   │   │   │   ├── ClaudeExportToggle.tsx
+│   │   │   │   │   ├── ClaudeProcessingPanel.tsx
+│   │   │   │   │   ├── CredentialsForm.tsx
+│   │   │   │   │   ├── DashboardHeader.tsx
+│   │   │   │   │   ├── ErrorDisplay.tsx
 │   │   │   │   │   ├── IMScraperDashboard.tsx
+│   │   │   │   │   ├── InstructionsPanel.tsx
+│   │   │   │   │   ├── LessonSelectionForm.tsx
+│   │   │   │   │   ├── LessonSelector.tsx
+│   │   │   │   │   ├── ProcessedResultsDisplay.tsx
 │   │   │   │   │   ├── ResultsDisplay.tsx
+│   │   │   │   │   ├── ResultsSection.tsx
 │   │   │   │   │   ├── ScrapingControls.tsx
-│   │   │   │   │   └── ScreenshotDisplay.tsx
+│   │   │   │   │   ├── ScreenshotDisplay.tsx
+│   │   │   │   │   ├── SetupPanel.tsx
+│   │   │   │   │   ├── UrlPreview.tsx
+│   │   │   │   │   └── index.ts
 │   │   │   │   ├── hooks
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── useClaudeProcessor.ts
+│   │   │   │   │   ├── useDashboardState.ts
 │   │   │   │   │   └── useIMScraper.ts
 │   │   │   │   ├── lib
 │   │   │   │   │   ├── cooldown-parser.ts
@@ -572,6 +554,25 @@
 │   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
+│   │   │   ├── pdf-save
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── test.ts
+│   │   │   │   ├── types.ts
+│   │   │   │   └── utils.ts
+│   │   │   ├── roadmaps-scraper
+│   │   │   │   ├── README.md
+│   │   │   │   ├── actions
+│   │   │   │   │   └── scrape-skills.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── ResultsDisplay.tsx
+│   │   │   │   │   └── RoadmapsScraperForm.tsx
+│   │   │   │   ├── hooks
+│   │   │   │   │   └── useRoadmapsScraper.ts
+│   │   │   │   ├── lib
+│   │   │   │   │   ├── roadmaps-auth.ts
+│   │   │   │   │   ├── skill-extractor.ts
+│   │   │   │   │   └── types.ts
+│   │   │   │   └── page.tsx
 │   │   │   ├── rubric-viewer
 │   │   │   │   └── page.tsx
 │   │   │   └── things3
@@ -1047,6 +1048,10 @@
 │   ├── layouts
 │   │   └── MondayLayout.tsx
 │   ├── lib
+│   │   ├── api
+│   │   │   └── integrations
+│   │   │       └── claude
+│   │   │           └── client.ts
 │   │   ├── data-processing
 │   │   │   ├── pagination
 │   │   │   │   ├── index.ts
@@ -1154,7 +1159,6 @@
 │   │   │       ├── services
 │   │   │       │   ├── import-service.ts
 │   │   │       │   ├── index.ts
-│   │   │       │   ├── legacy
 │   │   │       │   ├── sync-service.ts
 │   │   │       │   └── transform-service.ts
 │   │   │       ├── types
@@ -1178,7 +1182,10 @@
 │   │   │   ├── mongoose-schema
 │   │   │   │   ├── 313
 │   │   │   │   │   ├── core.ts
+│   │   │   │   │   ├── roadmap.model.ts
+│   │   │   │   │   ├── roadmaps-student-data.model.ts
 │   │   │   │   │   ├── storage.ts
+│   │   │   │   │   ├── student-performance.model.ts
 │   │   │   │   │   ├── student.model.ts
 │   │   │   │   │   └── zearn-import.model.ts
 │   │   │   │   ├── cap
@@ -1240,8 +1247,10 @@
 │   │   │   └── zod-schema
 │   │   │       ├── 313
 │   │   │       │   ├── core.ts
+│   │   │       │   ├── roadmap.ts
 │   │   │       │   ├── storage.ts
 │   │   │       │   ├── student-data.ts
+│   │   │       │   ├── student-performance.ts
 │   │   │       │   ├── student.ts
 │   │   │       │   └── zearn-import.ts
 │   │   │       ├── base-schemas.ts
@@ -1538,4 +1547,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-438 directories, 1101 files
+449 directories, 1099 files

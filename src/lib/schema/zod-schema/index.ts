@@ -7,3 +7,4 @@ export * from './visits/classroom-observation';
 export * from './schedules';
 export * from './shared';
 export * from './visits';
+export * from './313/student-performance';

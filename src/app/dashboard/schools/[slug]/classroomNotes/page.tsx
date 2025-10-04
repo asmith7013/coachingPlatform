@@ -100,7 +100,7 @@ const ClassroomNotesExample = () => {
           setFormData(prev => ({
             ...prev,
             timeTracking: {
-              ...prev.timeTracking,
+              ...(prev.timeTracking as object),
               [field]: field === 'startedWhenMinutes' ? (value ? Number(value) : undefined) : value
             }
           }));
@@ -108,7 +108,7 @@ const ClassroomNotesExample = () => {
           setFormData(prev => ({
             ...prev,
             transcripts: {
-              ...prev.transcripts,
+              ...(prev.transcripts as object),
               [field]: value
             }
           }));
@@ -119,9 +119,9 @@ const ClassroomNotesExample = () => {
           setFormData(prev => ({
             ...prev,
             lessonFlow: {
-              ...prev.lessonFlow,
+              ...(prev.lessonFlow as object),
               [activityType]: {
-                ...prev.lessonFlow[activityType as keyof typeof prev.lessonFlow],
+                ...((prev.lessonFlow as Record<string, Record<string, unknown>>)?.[activityType] || {}),
                 [field]: value
               }
             }
@@ -144,7 +144,7 @@ const ClassroomNotesExample = () => {
       setFormData(prev => ({
         ...prev,
         feedback: {
-          ...prev.feedback,
+          ...(prev.feedback as object),
           [feedbackField]: value
         }
       }));
@@ -161,9 +161,9 @@ const ClassroomNotesExample = () => {
     setFormData(prev => ({
       ...prev,
       progressMonitoring: {
-        ...prev.progressMonitoring,
-        observedCriteria: prev.progressMonitoring.observedCriteria.map((criterion: typeof prev.progressMonitoring.observedCriteria[number], index: number) =>
-          index === criterionIndex 
+        ...(prev.progressMonitoring as object),
+        observedCriteria: (prev.progressMonitoring as { observedCriteria: Array<{ observed: boolean }> }).observedCriteria.map((criterion: { observed: boolean }, index: number) =>
+          index === criterionIndex
             ? { ...criterion, observed: !criterion.observed }
             : criterion
         )

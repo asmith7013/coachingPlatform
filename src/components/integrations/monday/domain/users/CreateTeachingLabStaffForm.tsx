@@ -80,18 +80,19 @@ export function CreateTeachingLabStaffForm({
       setError(null);
       
       // Make a deep copy and ensure mondayUser data is preserved
+      const mondayUser = defaultValues.mondayUser as { mondayId?: string; name?: string; email?: string; lastSynced?: string } | undefined;
       const staffData: TeachingLabStaffInput = {
         ...data,
         mondayUser: {
           // Ensure all required fields from defaultValues are included
-          mondayId: defaultValues.mondayUser?.mondayId || user.id,
-          name: defaultValues.mondayUser?.name || user.name || '',
-          email: defaultValues.mondayUser?.email || user.email || '',
+          mondayId: mondayUser?.mondayId || user.id,
+          name: mondayUser?.name || user.name || '',
+          email: mondayUser?.email || user.email || '',
           isConnected: true,
           // Include any other fields from the current mondayUser
-          ...data.mondayUser,
+          ...(data.mondayUser as object | undefined),
           // Ensure the lastSynced is always a Date object
-          lastSynced: defaultValues.mondayUser?.lastSynced || new Date().toISOString()
+          lastSynced: mondayUser?.lastSynced || new Date().toISOString()
         }
       };
       

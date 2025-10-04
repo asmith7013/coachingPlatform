@@ -29,7 +29,7 @@ export function FeedbackTab({ formData, onInputChange, onArrayFieldChange }: Fee
             <label className={fieldLabel()}>Glow</label>
             <Textarea
               name="glow"
-              value={formData.feedback.glow?.join('\n') || ''}
+              value={(formData.feedback as { glow?: string[] })?.glow?.join('\n') || ''}
               onChange={(e) => {
                 const lines = e.target.value.split('\n').filter(line => line.trim());
                 onArrayFieldChange('feedback.glow', lines);
@@ -42,7 +42,7 @@ export function FeedbackTab({ formData, onInputChange, onArrayFieldChange }: Fee
             <label className={fieldLabel()}>Wonder</label>
             <Textarea
               name="wonder"
-              value={formData.feedback.wonder?.join('\n') || ''}
+              value={(formData.feedback as { wonder?: string[] })?.wonder?.join('\n') || ''}
               onChange={(e) => {
                 const lines = e.target.value.split('\n').filter(line => line.trim());
                 onArrayFieldChange('feedback.wonder', lines);
@@ -55,7 +55,7 @@ export function FeedbackTab({ formData, onInputChange, onArrayFieldChange }: Fee
             <label className={fieldLabel()}>Grow</label>
             <Textarea
               name="grow"
-              value={formData.feedback.grow?.join('\n') || ''}
+              value={(formData.feedback as { grow?: string[] })?.grow?.join('\n') || ''}
               onChange={(e) => {
                 const lines = e.target.value.split('\n').filter(line => line.trim());
                 onArrayFieldChange('feedback.grow', lines);
@@ -68,7 +68,7 @@ export function FeedbackTab({ formData, onInputChange, onArrayFieldChange }: Fee
             <label className={fieldLabel()}>Next Steps</label>
             <Textarea
               name="nextSteps"
-              value={formData.feedback.nextSteps?.join('\n') || ''}
+              value={(formData.feedback as { nextSteps?: string[] })?.nextSteps?.join('\n') || ''}
               onChange={(e) => {
                 const lines = e.target.value.split('\n').filter(line => line.trim());
                 onArrayFieldChange('feedback.nextSteps', lines);
@@ -86,7 +86,7 @@ export function FeedbackTab({ formData, onInputChange, onArrayFieldChange }: Fee
             <label className={fieldLabel()}>Learning Goals (Teacher-Facing)</label>
             <Textarea
               name="learningTargets"
-              value={formData.learningTargets.join('\n')}
+              value={(formData.learningTargets as string[])?.join('\n') || ''}
               onChange={(e) => {
                 const lines = e.target.value.split('\n').filter(line => line.trim());
                 onArrayFieldChange('learningTargets', lines);
@@ -99,7 +99,7 @@ export function FeedbackTab({ formData, onInputChange, onArrayFieldChange }: Fee
             <label className={fieldLabel()}>Cool Down</label>
             <Textarea
               name="coolDown"
-              value={formData.coolDown}
+              value={formData.coolDown as string}
               onChange={onInputChange}
               placeholder="Cool down activity notes"
               rows={4}
