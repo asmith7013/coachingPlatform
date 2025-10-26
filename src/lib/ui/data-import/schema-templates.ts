@@ -66,14 +66,14 @@ function createVisitTemplate(): Record<string, unknown> {
     coach: "",
     gradeLevelsSupported: [],
     owners: [],
-    
-    // Optional fields
+
+    // Optional fields - use valid enum defaults
     cycleRef: "",
-    allowedPurpose: "",
-    modeDone: "",
+    allowedPurpose: AllowedPurposes.VISIT, // Default to "Visit"
+    modeDone: ModeDone.IN_PERSON, // Default to "In-person"
     events: [],
     sessionLinks: [],
-    
+
     // Monday.com integration fields
     mondayItemId: "",
     mondayBoardId: "",
@@ -82,13 +82,13 @@ function createVisitTemplate(): Record<string, unknown> {
     siteAddress: "",
     endDate: "",
   };
-  
+
   // Validate template structure using transformer
   const validation = validateSafe(VisitInputZodSchema.partial(), template);
   if (!validation) {
     console.warn('Visit template validation failed - using fallback');
   }
-  
+
   return template;
 }
 
@@ -99,7 +99,7 @@ function createBellScheduleTemplate(): Record<string, unknown> {
   const template = {
     // Required fields
     school: "", // Will be auto-filled with selected school ID
-    bellScheduleType: "", // uniform, weeklyCycle, or abcCycle
+    bellScheduleType: BellScheduleTypes.UNIFORM, // Default to "uniform"
     classSchedule: [], // Array of class schedule items
     assignedCycleDays: [], // Array of assigned cycle days
     owners: [], // Will be auto-filled

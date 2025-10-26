@@ -1,4 +1,5 @@
-import { z, ZodError } from "zod";
+import { ZodError } from "zod";
+import { fromZodError } from 'zod-validation-error';
 import { logError } from "@error/core/logging";
 import { ErrorContext } from "@error-types";
 
@@ -12,30 +13,31 @@ export function handleValidationError(
   error: ZodError,
   context: ErrorContext | string = {}
 ): string {
-  // Format error messages with field paths
-  const errorMessages = error.issues.map((err: z.core.$ZodIssue) => {
-    const path = err.path.join(".");
-    return `${path}: ${err.message}`;
+  // Use zod-validation-error for better formatting
+  const validationError = fromZodError(error, {
+    prefix: 'Validation failed',
+    prefixSeparator: ': ',
+    issueSeparator: '; ',
   });
 
-  const formattedMessage = `[422] Validation failed: ${errorMessages.join(", ")}`;
-  
+  const formattedMessage = `[422] ${validationError.message}`;
+
   // Create context if string provided
   const errorContext: ErrorContext = typeof context === 'string'
     ? { component: "Validation", operation: context }
     : { component: "Validation", ...context };
-  
+
   // Add validation-specific context
   const enhancedContext: ErrorContext = {
     ...errorContext,
-    category: "validation", 
+    category: "validation",
     severity: "warning",
     metadata: {
       ...errorContext.metadata,
       validationErrors: error.issues
     }
   };
-  
+
   // Log validation error through unified system
   logError(error, enhancedContext);
 

@@ -8,7 +8,10 @@
       "Bash(npx tsc:*)",
       "Bash(npm run lint:*)",
       "Bash(sed:*)",
-      "Bash(npm run prebuild:*)"
+      "Bash(npm run prebuild:*)",
+      "Bash(npm run build:*)",
+      "Bash(cat:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,11 +1,16 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
+import { PracticeProblemSchema } from './roadmap-skill';
 
 // =====================================
 // ROADMAPS LESSON SCHEMA
 // =====================================
 
 /**
+ * @deprecated This schema is kept for backwards compatibility with existing roadmaps-lessons collection.
+ * For new scrapers and features, use RoadmapsSkillFieldsSchema from './roadmap-skill' instead,
+ * which includes structured skill references and practiceProblems.
+ *
  * Core fields for a Roadmaps skill lesson
  */
 export const RoadmapsLessonFieldsSchema = z.object({
@@ -46,6 +51,7 @@ export const RoadmapsLessonFieldsSchema = z.object({
   // Media and resources
   images: z.array(z.string()).default([]),
   videoUrl: z.string(),
+  practiceProblems: z.array(PracticeProblemSchema).default([]),
 
   // Metadata
   scrapedAt: z.string(),

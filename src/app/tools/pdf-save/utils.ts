@@ -1,8 +1,11 @@
 import { pdfjs } from 'react-pdf';
 import JSZip from 'jszip';
 
-// Configure PDF.js worker for react-pdf using local file
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+// Configure PDF.js worker for react-pdf using npm package
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url
+).toString();
 
 /**
  * Extract pages from PDF as high-resolution PNG images

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { fromZodError } from 'zod-validation-error';
 import { handleServerError } from '@error/handlers/server';
 import { handleValidationError } from '@error/handlers/validation';
 
@@ -13,9 +14,9 @@ import { handleValidationError } from '@error/handlers/validation';
 export function validateSafe<T>(schema: z.ZodSchema<T>, data: unknown): T | null {
   const result = schema.safeParse(data);
   if (!result.success) {
-    console.warn('Schema validation failed:', result.error.format());
+    const validationError = fromZodError(result.error);
+    console.warn('Schema validation failed:', validationError.message);
     console.warn('Input data:', JSON.stringify(data, null, 2));
-    console.warn('Detailed errors:', result.error.issues);
     return null;
   }
   return result.data;
