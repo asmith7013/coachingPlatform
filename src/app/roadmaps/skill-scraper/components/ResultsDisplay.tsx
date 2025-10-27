@@ -48,24 +48,27 @@ export function ResultsDisplay({
   };
 
   const saveSkillToMongoDB = async (skill: SkillData) => {
-    if (!skill.success) return;
+    if (!skill.success || !skill.url) return;
 
-    setSavingSkills(prev => new Set(prev).add(skill.url));
+    const skillUrl = skill.url;
+
+    setSavingSkills(prev => new Set(prev).add(skillUrl));
     setSaveErrors(prev => {
       const newMap = new Map(prev);
-      newMap.delete(skill.url);
+      newMap.delete(skillUrl);
       return newMap;
     });
 
     try {
       console.log(`🔍 [SAVE] Preparing to save skill: ${skill.title}`);
-      console.log(`🔍 [SAVE] Skill has ${skill.practiceProblems?.length || 0} practice problems`);
+      const practiceProblems = skill.practiceProblems as Array<{problemNumber: number, screenshotUrl: string, scrapedAt: string}> | undefined;
+      console.log(`🔍 [SAVE] Skill has ${practiceProblems?.length || 0} practice problems`);
 
       // Convert SkillData to RoadmapsSkillInput format
       const skillData = {
-        skillNumber: skill.skillNumber || extractSkillNumber(skill.url),
+        skillNumber: skill.skillNumber || extractSkillNumber(skillUrl),
         title: skill.title,
-        url: skill.url,
+        url: skillUrl,
         essentialSkills: [], // These come from unit scraper
         helpfulSkills: [], // These come from unit scraper
         description: skill.description,
@@ -81,6 +84,7 @@ export function ResultsDisplay({
         standards: skill.standards,
         vocabulary: skill.vocabulary,
         images: skill.images,
+        imagesWithContext: skill.imagesWithContext || [],
         videoUrl: skill.videoUrl,
         practiceProblems: skill.practiceProblems || [],
         scrapedAt: skill.scrapedAt,
@@ -96,41 +100,42 @@ export function ResultsDisplay({
       console.log(`🔍 [SAVE] Result:`, result);
 
       if (result.success) {
-        setSavedSkills(prev => new Set(prev).add(skill.url));
+        setSavedSkills(prev => new Set(prev).add(skillUrl));
         console.log('✅ Skill saved to MongoDB:', skill.title);
-        if (result.data?.practiceProblems) {
-          console.log(`🔍 [SAVE] Saved skill has ${result.data.practiceProblems.length} practice problems in DB`);
+        if (result.data) {
+          const savedPracticeProblems = result.data.practiceProblems as Array<{problemNumber: number, screenshotUrl: string, scrapedAt: string}> | undefined;
+          console.log(`🔍 [SAVE] Saved skill has ${savedPracticeProblems?.length || 0} practice problems in DB`);
         }
       } else {
-        setSaveErrors(prev => new Map(prev).set(skill.url, result.error || 'Save failed'));
+        setSaveErrors(prev => new Map(prev).set(skillUrl, result.error || 'Save failed'));
         console.error('❌ Failed to save skill:', result.error);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      setSaveErrors(prev => new Map(prev).set(skill.url, errorMessage));
+      setSaveErrors(prev => new Map(prev).set(skillUrl, errorMessage));
       console.error('❌ Error saving skill:', error);
     } finally {
       setSavingSkills(prev => {
         const newSet = new Set(prev);
-        newSet.delete(skill.url);
+        newSet.delete(skillUrl);
         return newSet;
       });
     }
   };
 
   const saveAllSkillsToMongoDB = async () => {
-    const successfulSkills = results.filter(skill => skill.success);
+    const successfulSkills = results.filter(skill => skill.success && skill.url);
     if (successfulSkills.length === 0) return;
 
-    setSavingSkills(new Set(successfulSkills.map(skill => skill.url)));
+    setSavingSkills(new Set(successfulSkills.map(skill => skill.url!)));
     setSaveErrors(new Map());
 
     try {
       // Convert all successful skills to RoadmapsSkillInput format
       const skillsData = successfulSkills.map(skill => ({
-        skillNumber: skill.skillNumber || extractSkillNumber(skill.url),
+        skillNumber: skill.skillNumber || extractSkillNumber(skill.url!),
         title: skill.title,
-        url: skill.url,
+        url: skill.url!,
         essentialSkills: [], // These come from unit scraper
         helpfulSkills: [], // These come from unit scraper
         description: skill.description,
@@ -146,6 +151,7 @@ export function ResultsDisplay({
         standards: skill.standards,
         vocabulary: skill.vocabulary,
         images: skill.images,
+        imagesWithContext: skill.imagesWithContext || [],
         videoUrl: skill.videoUrl || '',
         practiceProblems: skill.practiceProblems || [],
         scrapedAt: skill.scrapedAt,
@@ -157,7 +163,7 @@ export function ResultsDisplay({
       const result = await bulkUpdateRoadmapsSkillsContent(skillsData);
 
       if (result.success) {
-        setSavedSkills(new Set(successfulSkills.map(skill => skill.url)));
+        setSavedSkills(new Set(successfulSkills.map(skill => skill.url!)));
         console.log('✅ All skills saved to MongoDB:', result.data);
       } else {
         setSaveErrors(new Map([['bulk', result.error || 'Bulk save failed']]));
@@ -271,7 +277,10 @@ export function ResultsDisplay({
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-amber-600">
-                {successfulResults.reduce((total, skill) => total + (skill.practiceProblems?.length || 0), 0)}
+                {successfulResults.reduce((total, skill) => {
+              const practiceProblems = skill.practiceProblems as Array<{problemNumber: number, screenshotUrl: string, scrapedAt: string}> | undefined;
+              return total + (practiceProblems?.length || 0);
+            }, 0)}
               </div>
               <div className="text-sm text-gray-500">Practice Problems</div>
             </div>

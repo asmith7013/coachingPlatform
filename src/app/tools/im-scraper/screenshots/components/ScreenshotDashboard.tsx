@@ -186,7 +186,7 @@ https://accessim.org/6-8/grade-6/unit-1/section-a/lesson-2?a=teacher"
                         <p className="text-sm text-green-600 font-semibold mb-2">
                           ✅ Screenshot captured successfully
                         </p>
-                        <
+                        <img
                           src={`/screenshots/${result.screenshotPath}`}
                           alt={`Screenshot for ${result.url}`}
                           className="border border-gray-300 rounded-lg shadow-sm max-w-full"

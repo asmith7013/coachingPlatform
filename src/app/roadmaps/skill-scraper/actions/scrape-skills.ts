@@ -79,7 +79,7 @@ export async function scrapeRoadmapsSkills(request: unknown) {
         
       } catch (skillError) {
         console.error(`💥 Error processing skill ${url}:`, skillError);
-        
+
         // Add failed skill to results
         skills.push({
           title: '',
@@ -101,9 +101,11 @@ export async function scrapeRoadmapsSkills(request: unknown) {
           standards: '',
           vocabulary: [],
           images: [],
+          imagesWithContext: [],
+          videoUrl: '',
+          practiceProblems: [],
           scrapedAt: new Date().toISOString(),
           success: false,
-          videoUrl: '',
           error: skillError instanceof Error ? skillError.message : 'Unknown error',
           tags: []
         });
@@ -337,9 +339,11 @@ export async function scrapeRoadmapsSkillsDebug(request: unknown) {
           standards: '',
           vocabulary: [],
           images: [],
+          imagesWithContext: [],
+          videoUrl: '',
+          practiceProblems: [],
           scrapedAt: new Date().toISOString(),
           success: false,
-          videoUrl: '',
           error: skillError instanceof Error ? skillError.message : 'Unknown error',
           tags: []
         });

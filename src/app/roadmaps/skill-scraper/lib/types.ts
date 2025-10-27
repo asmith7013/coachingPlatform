@@ -97,6 +97,13 @@ export const ROADMAPS_CONSTANTS = {
 
     // Content areas
     FIELDSET_CONTENT: '.p-fieldset-content',
-    PRIMER_CONTENT: '#primer'
+    PRIMER_CONTENT: '#primer',
+
+    // Video extraction
+    ADDITIONAL_LESSONS_ACCORDION: 'a[aria-controls*="content"]:has-text("Additional Lessons")',
+    WORKED_EXAMPLE_VIDEO_LINK: 'span.cursor-pointer:has-text("Worked Example Video")',
+    VIDEO_DIALOG: '.p-dialog',
+    VIDEO_SOURCE: 'video source[src*=".mp4"]',
+    VIDEO_DIALOG_CLOSE: '.p-dialog-header-close'
   }
 } as const;

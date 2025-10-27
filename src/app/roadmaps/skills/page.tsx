@@ -8,25 +8,73 @@ import { SkillDetailView } from "./components/SkillDetailView";
 import { Alert } from "@/components/core/feedback/Alert";
 
 export default function RoadmapsSkillsPage() {
-  const [skills, setSkills] = useState<RoadmapsSkill[]>([]);
-  const [filteredSkills, setFilteredSkills] = useState<RoadmapsSkill[]>([]);
+  const [allSkills, setAllSkills] = useState<RoadmapsSkill[]>([]); // All skills for dropdown population
+  const [skills, setSkills] = useState<RoadmapsSkill[]>([]); // Currently displayed skills
+  const [filteredSkills, setFilteredSkills] = useState<RoadmapsSkill[]>([]); // After search filtering
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedGrade, setSelectedGrade] = useState<string>("");
+  const [selectedUnit, setSelectedUnit] = useState<string>("");
 
+  // Load all skills once on mount for dropdown population
+  useEffect(() => {
+    const loadAllSkills = async () => {
+      try {
+        console.log('🔍 Loading all skills for filters...');
+        const result = await fetchRoadmapsSkills({ limit: 10000 });
+
+        if (result.success && result.items) {
+          const sortedSkills = (result.items as RoadmapsSkill[]).sort((a, b) => {
+            const numA = parseInt(a.skillNumber) || 0;
+            const numB = parseInt(b.skillNumber) || 0;
+            return numA - numB;
+          });
+          console.log('✅ Loaded all skills for filters:', sortedSkills.length);
+          setAllSkills(sortedSkills);
+        }
+      } catch (err) {
+        console.error('💥 Error loading all skills:', err);
+      }
+    };
+
+    loadAllSkills();
+  }, []);
+
+  // Load filtered skills when grade/unit changes
   useEffect(() => {
     const loadSkills = async () => {
       try {
         setLoading(true);
         console.log('🔍 Fetching roadmaps skills...');
-        const result = await fetchRoadmapsSkills();
+
+        // Build filters based on selected grade and unit
+        const filters: Record<string, unknown> = {};
+
+        if (selectedGrade) {
+          filters['units.grade'] = selectedGrade;
+        }
+
+        if (selectedUnit) {
+          filters['units.unitTitle'] = selectedUnit;
+        }
+
+        // When filters are applied, fetch all skills (no limit)
+        // Otherwise use default limit of 20
+        const hasFilters = selectedGrade || selectedUnit;
+        const queryParams = hasFilters
+          ? { filters, limit: 10000 } // Effectively "no limit" when filtered
+          : { limit: 20 };
+
+        const result = await fetchRoadmapsSkills(queryParams);
 
         console.log('📊 Fetch result:', {
           success: result.success,
           itemsLength: result.items?.length,
           error: result.error,
-          fullResult: result
+          filters,
+          hasFilters
         });
 
         if (result.success && result.items) {
@@ -52,7 +100,7 @@ export default function RoadmapsSkillsPage() {
     };
 
     loadSkills();
-  }, []);
+  }, [selectedGrade, selectedUnit]);
 
   // Filter skills when search query changes
   useEffect(() => {
@@ -82,6 +130,45 @@ export default function RoadmapsSkillsPage() {
   const handleClearSearch = () => {
     setSearchQuery("");
   };
+
+  const handleGradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedGrade(e.target.value);
+    setSelectedUnit(""); // Reset unit when grade changes
+    setSelectedSkillId(null); // Clear selection
+  };
+
+  const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedUnit(e.target.value);
+    setSelectedSkillId(null); // Clear selection
+  };
+
+  const handleClearFilters = () => {
+    setSelectedGrade("");
+    setSelectedUnit("");
+    setSearchQuery("");
+    setSelectedSkillId(null);
+  };
+
+  // Extract unique grades from all skills (not just filtered ones)
+  const availableGrades = Array.from(
+    new Set(
+      allSkills.flatMap(skill =>
+        skill.units.map(unit => unit.grade)
+      )
+    )
+  ).sort();
+
+  // Extract unique units for the selected grade
+  const availableUnits = selectedGrade
+    ? Array.from(
+        new Set(
+          allSkills
+            .flatMap(skill => skill.units)
+            .filter(unit => unit.grade === selectedGrade)
+            .map(unit => unit.unitTitle)
+        )
+      ).sort()
+    : [];
 
   // Get the selected skill object
   const selectedSkill = selectedSkillId
@@ -137,16 +224,62 @@ export default function RoadmapsSkillsPage() {
       <div className="container mx-auto p-6">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">Roadmaps Skills</h1>
-              <p className="text-gray-600">
-                {searchQuery ? `Showing ${filteredSkills.length} of ${skills.length} skills` : `Browse all ${skills.length} skills from the Teach to One Roadmaps collection`}
-              </p>
+          <div className="mb-4">
+            <h1 className="text-3xl font-bold mb-2">Roadmaps Skills</h1>
+            <p className="text-gray-600">
+              {searchQuery || selectedGrade || selectedUnit
+                ? `Showing ${filteredSkills.length} skills`
+                : `Showing ${skills.length} of ${allSkills.length} skills`}
+            </p>
+          </div>
+
+          {/* Filters Row */}
+          <div className="flex gap-4 items-end mb-4">
+            {/* Grade Filter */}
+            <div className="flex-1">
+              <label htmlFor="grade-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                Filter by Grade
+              </label>
+              <select
+                id="grade-filter"
+                value={selectedGrade}
+                onChange={handleGradeChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">All Grades</option>
+                {availableGrades.map(grade => (
+                  <option key={grade} value={grade}>
+                    {grade}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Unit Filter */}
+            <div className="flex-1">
+              <label htmlFor="unit-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                Filter by Unit
+              </label>
+              <select
+                id="unit-filter"
+                value={selectedUnit}
+                onChange={handleUnitChange}
+                disabled={!selectedGrade}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+              >
+                <option value="">
+                  {selectedGrade ? "All Units" : "Select a grade first"}
+                </option>
+                {availableUnits.map(unit => (
+                  <option key={unit} value={unit}>
+                    {unit}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Search Bar */}
-            <div className="w-96">
+            <div className="flex-1">
               <label htmlFor="skill-search" className="block text-sm font-medium text-gray-700 mb-2">
                 Search Skills
               </label>
@@ -179,6 +312,18 @@ export default function RoadmapsSkillsPage() {
                 )}
               </div>
             </div>
+
+            {/* Clear Filters Button */}
+            {(selectedGrade || selectedUnit || searchQuery) && (
+              <div className="flex items-end">
+                <button
+                  onClick={handleClearFilters}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Clear All
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -188,8 +333,15 @@ export default function RoadmapsSkillsPage() {
           <div className="w-2/5 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
             <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10">
               <h3 className="font-semibold text-gray-900">
-                Skills {searchQuery && `(${filteredSkills.length})`}
+                Skills ({filteredSkills.length})
               </h3>
+              {(selectedGrade || selectedUnit || searchQuery) && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {selectedGrade && `Grade: ${selectedGrade}`}
+                  {selectedUnit && ` • Unit: ${selectedUnit}`}
+                  {searchQuery && ` • Search: "${searchQuery}"`}
+                </p>
+              )}
             </div>
             <div className="overflow-y-auto">
               {filteredSkills.length === 0 ? (

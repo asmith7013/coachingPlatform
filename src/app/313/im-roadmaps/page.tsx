@@ -56,6 +56,7 @@ export default function IMRoadmapsPage() {
             vocabulary: (lesson.vocabulary as string[]) || [],
             images: (lesson.images as string[]) || [],
             videoUrl: (lesson.videoUrl as string) || '',
+            practiceProblems: (lesson.practiceProblems as Array<{problemNumber: number, screenshotUrl: string, scrapedAt: string}>) || [],
             scrapedAt: (lesson.scrapedAt as string) || new Date().toISOString(),
             success: (lesson.success as boolean) ?? true,
             tags: (lesson.tags as string[]) || []

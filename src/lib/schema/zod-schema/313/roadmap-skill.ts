@@ -65,12 +65,20 @@ export const RoadmapsSkillFieldsSchema = z.object({
 
   // IM Lesson fields (optional for skills from IM lessons)
   section: z.string().optional(), // A, B, C, D
-  lesson: z.number().optional(), // Lesson number
+  lesson: z.number().optional(), // Lesson number (deprecated: use imLessons for multiple)
   lessonName: z.string().optional(), // e.g., "Naming the Moves"
   grade: z.string().optional(), // e.g., "Grade 8"
   unit: z.string().optional(), // e.g., "Unit 1"
   learningTargets: z.string().optional(), // Learning objectives text
   suggestedTargetSkills: z.array(z.string()).default([]), // Array of skill descriptions with IDs
+
+  // IM Lesson mappings - skills can appear in multiple lessons
+  imLessons: z.array(z.object({
+    grade: z.string().optional(), // e.g., "Grade 7", "Grade 8"
+    unitNumber: z.number(),
+    lessonNumber: z.number(),
+    lessonName: z.string().optional(),
+  })).default([]),
 
   // Content sections
   description: z.string().default(''),

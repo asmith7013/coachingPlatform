@@ -244,6 +244,7 @@
 │   │   │   │   ├── roadmaps-lessons.ts
 │   │   │   │   ├── roadmaps-skills.ts
 │   │   │   │   ├── roadmaps-units.ts
+│   │   │   │   ├── scope-and-sequence.ts
 │   │   │   │   ├── student-data.ts
 │   │   │   │   ├── student-performance.ts
 │   │   │   │   ├── students.ts
@@ -519,6 +520,12 @@
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
 │   │   ├── roadmaps
+│   │   │   ├── im-lesson-updater
+│   │   │   │   └── page.tsx
+│   │   │   ├── scope-and-sequence
+│   │   │   │   └── page.tsx
+│   │   │   ├── scope-and-sequence-uploader
+│   │   │   │   └── page.tsx
 │   │   │   ├── shared
 │   │   │   │   └── lib
 │   │   │   │       └── roadmaps-auth.ts
@@ -1264,6 +1271,7 @@
 │   │   │   │   │   ├── roadmap-unit.model.ts
 │   │   │   │   │   ├── roadmap.model.ts
 │   │   │   │   │   ├── roadmaps-student-data.model.ts
+│   │   │   │   │   ├── scope-and-sequence.model.ts
 │   │   │   │   │   ├── storage.ts
 │   │   │   │   │   ├── student-performance.model.ts
 │   │   │   │   │   ├── student.model.ts
@@ -1330,6 +1338,7 @@
 │   │   │       │   ├── roadmap-skill.ts
 │   │   │       │   ├── roadmap-unit.ts
 │   │   │       │   ├── roadmap.ts
+│   │   │       │   ├── scope-and-sequence.ts
 │   │   │       │   ├── storage.ts
 │   │   │       │   ├── student-data.ts
 │   │   │       │   ├── student-performance.ts
@@ -1612,6 +1621,8 @@
 │   │   │   └── hydration-utils.ts
 │   │   └── utilities
 │   │       └── index.ts
+│   ├── scripts
+│   │   └── drop-old-scope-sequence-index.ts
 │   ├── styles
 │   │   └── theme.css
 │   └── types
@@ -1629,4 +1640,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-480 directories, 1150 files
+484 directories, 1157 files

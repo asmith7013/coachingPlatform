@@ -1,11 +1,13 @@
 "use server";
 
-import { z } from "zod";
+import { z, ZodType } from "zod";
 import { revalidatePath } from "next/cache";
 import { RoadmapUnitModel } from "@mongoose-schema/313/roadmap-unit.model";
 import {
   RoadmapUnitZodSchema,
-  RoadmapUnitInputZodSchema
+  RoadmapUnitInputZodSchema,
+  RoadmapUnit,
+  RoadmapUnitInput
 } from "@zod-schema/313/roadmap-unit";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -19,8 +21,8 @@ import { upsertRoadmapsSkill } from "./roadmaps-skills";
 
 const roadmapUnitCrud = createCrudActions({
   model: RoadmapUnitModel,
-  schema: RoadmapUnitZodSchema,
-  inputSchema: RoadmapUnitInputZodSchema,
+  schema: RoadmapUnitZodSchema as ZodType<RoadmapUnit>,
+  inputSchema: RoadmapUnitInputZodSchema as ZodType<RoadmapUnitInput>,
   name: 'RoadmapUnit',
   revalidationPaths: ['/roadmaps/units', '/roadmaps/unit-scraper'],
   sortFields: ['grade', 'unitNumber', 'unitTitle', 'createdAt', 'updatedAt'],
@@ -169,7 +171,8 @@ export async function bulkCreateRoadmapUnits(data: unknown) {
 
             if (updateResult) {
               const saved = updateResult.toObject();
-              console.log(`   ✅ Updated - Saved with ${saved.targetSkills?.length || 0} target skill references`);
+              const targetSkills = saved.targetSkills as string[] | undefined;
+              console.log(`   ✅ Updated - Saved with ${targetSkills?.length || 0} target skill references`);
               results.push({
                 action: 'updated',
                 unit: saved
@@ -185,7 +188,8 @@ export async function bulkCreateRoadmapUnits(data: unknown) {
 
             const savedUnit = await unit.save();
             const saved = savedUnit.toObject();
-            console.log(`   ✅ Created - Saved with ${saved.targetSkills?.length || 0} target skill references`);
+            const targetSkills = saved.targetSkills as string[] | undefined;
+            console.log(`   ✅ Created - Saved with ${targetSkills?.length || 0} target skill references`);
             results.push({
               action: 'created',
               unit: saved

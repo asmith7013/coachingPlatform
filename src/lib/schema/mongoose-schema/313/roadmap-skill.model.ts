@@ -31,6 +31,12 @@ const imageWithContextSchema = {
   orderInSection: { type: Number, required: true },
 };
 
+const imLessonSchema = {
+  unitNumber: { type: Number, required: true },
+  lessonNumber: { type: Number, required: true },
+  lessonName: { type: String },
+};
+
 const roadmapsSkillFields = {
   // Core identification
   skillNumber: { type: String, required: true, unique: true, index: true },
@@ -46,12 +52,15 @@ const roadmapsSkillFields = {
 
   // IM Lesson fields (optional for skills from IM lessons)
   section: { type: String },
-  lesson: { type: Number },
+  lesson: { type: Number }, // Deprecated: use imLessons for multiple
   lessonName: { type: String },
   grade: { type: String, index: true },
   unit: { type: String },
   learningTargets: { type: String },
   suggestedTargetSkills: { type: [String], default: [] },
+
+  // IM Lesson mappings - skills can appear in multiple lessons
+  imLessons: { type: [imLessonSchema], default: [] },
 
   // Content sections
   description: { type: String, default: '' },

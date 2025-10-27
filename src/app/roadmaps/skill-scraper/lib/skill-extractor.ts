@@ -1,6 +1,6 @@
 import { Page } from 'playwright';
 import { SkillData, ROADMAPS_CONSTANTS } from './types';
-import { put } from '@vercel/blob';
+import { put, list } from '@vercel/blob';
 
 interface PracticeProblem {
   problemNumber: number;
@@ -69,6 +69,9 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
     // Extract images with context
     const imagesWithContext = await extractImagesWithContext(page);
 
+    // Extract worked example video
+    const videoUrl = await extractAndSaveWorkedExampleVideo(page, skillNumber);
+
     // Navigate to Practice Problems tab and screenshot
     const practiceProblems = await screenshotPracticeProblems(page, skillNumber);
     console.log(`🔍 [EXTRACTOR] Practice problems extracted: ${practiceProblems.length}`);
@@ -85,6 +88,8 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
       suggestedTargetSkills: [],
       essentialSkills: [],
       helpfulSkills: [],
+      units: [],
+      imLessons: [],
       description,
       skillChallengeCriteria,
       essentialQuestion,
@@ -99,7 +104,7 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
       vocabulary,
       images, // Deprecated: kept for backwards compatibility
       imagesWithContext,
-      videoUrl: '',
+      videoUrl,
       practiceProblems,
       scrapedAt: new Date().toISOString(),
       success: true,
@@ -107,6 +112,8 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
     };
 
     console.log(`🔍 [EXTRACTOR] Returning skill data with ${skillData.practiceProblems.length} practice problems`);
+    console.log(`🔍 [EXTRACTOR] Video URL: ${skillData.videoUrl || '(empty)'}`);
+    console.log(`🔍 [EXTRACTOR] Images with context: ${skillData.imagesWithContext.length}`);
 
     return skillData;
     
@@ -121,6 +128,8 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
       suggestedTargetSkills: [],
       essentialSkills: [],
       helpfulSkills: [],
+      units: [],
+      imLessons: [],
       description: '',
       skillChallengeCriteria: '',
       essentialQuestion: '',
@@ -134,6 +143,7 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
       standards: '',
       vocabulary: [],
       images: [],
+      imagesWithContext: [],
       videoUrl: '',
       practiceProblems: [],
       scrapedAt: new Date().toISOString(),
@@ -478,6 +488,156 @@ async function navigateToPracticeProblemsTab(page: Page): Promise<boolean> {
   } catch (error) {
     console.warn('Could not navigate to Practice Problems tab:', error);
     return false;
+  }
+}
+
+/**
+ * Extract and save worked example video to Vercel Blob
+ */
+async function extractAndSaveWorkedExampleVideo(
+  page: Page,
+  skillNumber: string
+): Promise<string> {
+  try {
+    console.log('🎥 Extracting worked example video...');
+
+    // Check if Additional Lessons & Resources accordion is expanded
+    const additionalLessonsAccordion = page.locator(ROADMAPS_CONSTANTS.SELECTORS.ADDITIONAL_LESSONS_ACCORDION);
+
+    if (await additionalLessonsAccordion.count() === 0) {
+      console.log('ℹ️ Additional Lessons & Resources accordion not found');
+      return '';
+    }
+
+    // Expand accordion if it's collapsed
+    const isExpanded = await additionalLessonsAccordion.getAttribute('aria-expanded');
+    if (isExpanded === 'false') {
+      console.log('🔄 Expanding Additional Lessons & Resources accordion...');
+      await additionalLessonsAccordion.click();
+      await page.waitForTimeout(500);
+    }
+
+    // Find and click the Worked Example Video link
+    const videoLink = page.locator(ROADMAPS_CONSTANTS.SELECTORS.WORKED_EXAMPLE_VIDEO_LINK);
+
+    if (await videoLink.count() === 0) {
+      console.log('ℹ️ Worked Example Video link not found');
+      return '';
+    }
+
+    await videoLink.click();
+    console.log('🔄 Clicked Worked Example Video link, waiting for dialog...');
+
+    // Wait for video dialog to open
+    await page.waitForSelector(ROADMAPS_CONSTANTS.SELECTORS.VIDEO_DIALOG, { timeout: 5000 });
+    await page.waitForTimeout(1000); // Wait for video element to load
+
+    // Extract video source URL
+    const videoSource = page.locator(ROADMAPS_CONSTANTS.SELECTORS.VIDEO_SOURCE);
+
+    if (await videoSource.count() === 0) {
+      console.log('⚠️ Video source element not found in dialog');
+      // Close dialog before returning
+      await page.locator(ROADMAPS_CONSTANTS.SELECTORS.VIDEO_DIALOG_CLOSE).click();
+      return '';
+    }
+
+    const videoSrc = await videoSource.getAttribute('src');
+
+    if (!videoSrc) {
+      console.log('⚠️ Video source URL is empty');
+      await page.locator(ROADMAPS_CONSTANTS.SELECTORS.VIDEO_DIALOG_CLOSE).click();
+      return '';
+    }
+
+    console.log(`📥 Downloading video from: ${videoSrc.substring(0, 100)}...`);
+
+    // Download video using Playwright's context
+    const response = await page.context().request.get(videoSrc);
+
+    if (!response.ok()) {
+      console.error(`❌ Failed to download video: ${response.status()} ${response.statusText()}`);
+      await page.locator(ROADMAPS_CONSTANTS.SELECTORS.VIDEO_DIALOG_CLOSE).click();
+      return '';
+    }
+
+    const videoBuffer = await response.body();
+    const videoSizeMB = (videoBuffer.length / 1024 / 1024).toFixed(2);
+    console.log(`📦 Downloaded video: ${videoSizeMB}MB`);
+
+    // Check if video already exists in Vercel Blob
+    const blobFileName = `roadmaps/skill-${skillNumber}/worked-example-video.mp4`;
+    const prefix = `roadmaps/skill-${skillNumber}/`;
+
+    try {
+      const { blobs } = await list({ prefix });
+      const existingVideo = blobs.find(blob => blob.pathname === blobFileName);
+
+      if (existingVideo) {
+        console.log(`♻️ Video already exists in Vercel Blob, reusing: ${existingVideo.url}`);
+        // Close the video dialog
+        await page.locator(ROADMAPS_CONSTANTS.SELECTORS.VIDEO_DIALOG_CLOSE).click();
+        await page.waitForTimeout(500);
+        return existingVideo.url;
+      }
+    } catch (listError) {
+      console.warn('⚠️ Could not check for existing video:', listError);
+      // Continue to upload if list fails
+    }
+
+    // Upload to Vercel Blob
+    console.log(`☁️ Uploading to Vercel Blob: ${blobFileName}...`);
+
+    let blobUrl: string;
+    try {
+      const blob = await put(blobFileName, videoBuffer, {
+        access: 'public',
+        contentType: 'video/mp4',
+      });
+      blobUrl = blob.url;
+      console.log(`✅ Video uploaded successfully: ${blobUrl}`);
+    } catch (uploadError: any) {
+      // If upload fails because blob already exists, try to get the existing URL
+      if (uploadError?.message?.includes('already exists')) {
+        console.log(`♻️ Upload failed (blob exists), fetching existing video URL...`);
+        try {
+          const { blobs } = await list({ prefix });
+          const existingVideo = blobs.find(blob => blob.pathname === blobFileName);
+          if (existingVideo) {
+            blobUrl = existingVideo.url;
+            console.log(`✅ Using existing video: ${blobUrl}`);
+          } else {
+            throw new Error('Video exists but could not retrieve URL');
+          }
+        } catch (listError) {
+          console.error('❌ Could not retrieve existing video URL:', listError);
+          throw uploadError; // Re-throw original error
+        }
+      } else {
+        throw uploadError; // Re-throw if it's a different error
+      }
+    }
+
+    // Close the video dialog
+    await page.locator(ROADMAPS_CONSTANTS.SELECTORS.VIDEO_DIALOG_CLOSE).click();
+    await page.waitForTimeout(500);
+
+    return blobUrl;
+
+  } catch (error) {
+    console.error('❌ Error extracting worked example video:', error);
+
+    // Try to close dialog if it's still open
+    try {
+      const dialogClose = page.locator(ROADMAPS_CONSTANTS.SELECTORS.VIDEO_DIALOG_CLOSE);
+      if (await dialogClose.count() > 0 && await dialogClose.isVisible()) {
+        await dialogClose.click();
+      }
+    } catch (closeError) {
+      // Ignore errors when trying to close dialog
+    }
+
+    return '';
   }
 }
 

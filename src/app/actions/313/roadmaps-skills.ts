@@ -1,11 +1,13 @@
 "use server";
 
-import { z } from "zod";
+import { z, ZodType } from "zod";
 import { revalidatePath } from "next/cache";
 import { RoadmapsSkillModel } from "@mongoose-schema/313/roadmap-skill.model";
 import {
   RoadmapsSkillZodSchema,
-  RoadmapsSkillInputZodSchema
+  RoadmapsSkillInputZodSchema,
+  RoadmapsSkill,
+  RoadmapsSkillInput
 } from "@zod-schema/313/roadmap-skill";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -18,8 +20,8 @@ import { handleValidationError } from "@error/handlers/validation";
 
 const roadmapsSkillCrud = createCrudActions({
   model: RoadmapsSkillModel,
-  schema: RoadmapsSkillZodSchema,
-  inputSchema: RoadmapsSkillInputZodSchema,
+  schema: RoadmapsSkillZodSchema as ZodType<RoadmapsSkill>,
+  inputSchema: RoadmapsSkillInputZodSchema as ZodType<RoadmapsSkillInput>,
   name: 'RoadmapsSkill',
   revalidationPaths: ['/roadmaps/units', '/roadmaps/unit-scraper'],
   sortFields: ['skillNumber', 'title', 'createdAt', 'updatedAt'],
@@ -113,8 +115,9 @@ export async function upsertRoadmapsSkill(skillData: {
 
       if (existingSkill) {
         // Check if this unit is already in the units array
-        const unitExists = existingSkill.units.some(
-          (u: any) => u.grade === skillData.unit.grade && u.unitTitle === skillData.unit.unitTitle
+        const units = existingSkill.get('units') as Array<{grade: string, unitTitle: string, unitNumber: number}>;
+        const unitExists = units.some(
+          (u) => u.grade === skillData.unit.grade && u.unitTitle === skillData.unit.unitTitle
         );
 
         if (!unitExists) {
@@ -201,11 +204,13 @@ export async function updateRoadmapsSkillContent(skillData: z.infer<typeof Roadm
   return withDbConnection(async () => {
     try {
       console.log(`🔍 [DB] updateRoadmapsSkillContent called for skill ${skillData.skillNumber}`);
-      console.log(`🔍 [DB] Input has ${skillData.practiceProblems?.length || 0} practice problems`);
+      const practiceProblemsInput = skillData.practiceProblems as Array<{problemNumber: number, screenshotUrl: string, scrapedAt: string}> | undefined;
+      console.log(`🔍 [DB] Input has ${practiceProblemsInput?.length || 0} practice problems`);
 
       // Validate input
       const validatedData = RoadmapsSkillInputZodSchema.parse(skillData);
-      console.log(`🔍 [DB] After validation: ${validatedData.practiceProblems?.length || 0} practice problems`);
+      const practiceProblemsValidated = validatedData.practiceProblems as Array<{problemNumber: number, screenshotUrl: string, scrapedAt: string}> | undefined;
+      console.log(`🔍 [DB] After validation: ${practiceProblemsValidated?.length || 0} practice problems`);
 
       // Find existing skill by skillNumber
       const existingSkill = await RoadmapsSkillModel.findOne({
@@ -213,10 +218,6 @@ export async function updateRoadmapsSkillContent(skillData: z.infer<typeof Roadm
       });
 
       if (existingSkill) {
-        console.log(`⚠️ Updating existing skill ${validatedData.skillNumber}:`, validatedData.title);
-        console.log(`🔍 [DB] Existing skill has ${existingSkill.practiceProblems?.length || 0} practice problems`);
-        console.log(`🔍 [DB] Will update with ${validatedData.practiceProblems?.length || 0} practice problems`);
-
         // Update with new content, preserving existing relationship arrays
         const updatedSkill = await RoadmapsSkillModel.findByIdAndUpdate(
           existingSkill._id,
@@ -224,16 +225,17 @@ export async function updateRoadmapsSkillContent(skillData: z.infer<typeof Roadm
             $set: {
               ...validatedData,
               // Preserve existing data from unit scraper
-              units: existingSkill.units,
-              essentialSkills: existingSkill.essentialSkills,
-              helpfulSkills: existingSkill.helpfulSkills,
+              units: existingSkill.get('units'),
+              essentialSkills: existingSkill.get('essentialSkills'),
+              helpfulSkills: existingSkill.get('helpfulSkills'),
               updatedAt: new Date().toISOString()
             }
           },
           { new: true, runValidators: true }
         );
 
-        console.log(`🔍 [DB] Updated skill now has ${updatedSkill?.practiceProblems?.length || 0} practice problems`);
+        const updatedPracticeProblems = updatedSkill?.get('practiceProblems') as Array<{problemNumber: number, screenshotUrl: string, scrapedAt: string}> | undefined;
+        console.log(`🔍 [DB] Updated skill now has ${updatedPracticeProblems?.length || 0} practice problems`);
 
         revalidatePath('/roadmaps/skills');
         revalidatePath('/roadmaps/skill-scraper');
@@ -280,6 +282,154 @@ export async function updateRoadmapsSkillContent(skillData: z.infer<typeof Roadm
 }
 
 /**
+ * Add IM lesson to a skill's imLessons array
+ */
+export async function addImLessonToSkill(data: {
+  skillNumber: string;
+  grade?: string;
+  unitNumber: number;
+  lessonNumber: number;
+  lessonName?: string;
+}) {
+  return withDbConnection(async () => {
+    try {
+      // Find existing skill by skillNumber
+      const existingSkill = await RoadmapsSkillModel.findOne({
+        skillNumber: data.skillNumber
+      });
+
+      if (!existingSkill) {
+        return {
+          success: false,
+          error: `Skill ${data.skillNumber} not found`
+        };
+      }
+
+      // Check if this IM lesson already exists
+      const imLessons = existingSkill.get('imLessons') as Array<{unitNumber: number, lessonNumber: number, lessonName?: string, grade?: string}> | undefined;
+      const existingLessonIndex = imLessons?.findIndex(
+        (lesson) =>
+          lesson.unitNumber === data.unitNumber &&
+          lesson.lessonNumber === data.lessonNumber
+      );
+
+      // Case 1: Lesson exists and has grade matching the new grade
+      if (existingLessonIndex !== undefined && existingLessonIndex !== -1 && imLessons) {
+        const existingLesson = imLessons[existingLessonIndex];
+
+        // If existing lesson has grade and matches our grade, skip
+        if (existingLesson.grade && data.grade && existingLesson.grade === data.grade) {
+          return {
+            success: true,
+            message: `IM Lesson already exists for skill ${data.skillNumber} (${data.grade})`,
+            action: 'skipped'
+          };
+        }
+
+        // If existing lesson has NO grade but we have one, update it
+        if (!existingLesson.grade && data.grade) {
+          await RoadmapsSkillModel.findOneAndUpdate(
+            {
+              _id: existingSkill._id,
+              'imLessons.unitNumber': data.unitNumber,
+              'imLessons.lessonNumber': data.lessonNumber
+            },
+            {
+              $set: {
+                'imLessons.$.grade': data.grade,
+                'imLessons.$.lessonName': data.lessonName || existingLesson.lessonName,
+                updatedAt: new Date().toISOString()
+              }
+            },
+            { new: true }
+          );
+
+          revalidatePath('/roadmaps/skills');
+
+          return {
+            success: true,
+            message: `Updated IM Lesson with grade for skill ${data.skillNumber} (${data.grade})`,
+            action: 'updated'
+          };
+        }
+
+        // If existing lesson has different grade, this is a new entry for different grade
+        if (existingLesson.grade && data.grade && existingLesson.grade !== data.grade) {
+          // Add as new entry
+          const updatedSkill = await RoadmapsSkillModel.findByIdAndUpdate(
+            existingSkill._id,
+            {
+              $addToSet: {
+                imLessons: {
+                  grade: data.grade,
+                  unitNumber: data.unitNumber,
+                  lessonNumber: data.lessonNumber,
+                  lessonName: data.lessonName
+                }
+              },
+              $set: {
+                updatedAt: new Date().toISOString()
+              }
+            },
+            { new: true }
+          );
+
+          revalidatePath('/roadmaps/skills');
+
+          return {
+            success: true,
+            message: `Added IM Lesson for different grade to skill ${data.skillNumber} (${data.grade})`,
+            action: 'updated',
+            data: updatedSkill?.toObject()
+          };
+        }
+
+        // If no grade provided and lesson exists, skip
+        return {
+          success: true,
+          message: `IM Lesson already exists for skill ${data.skillNumber}`,
+          action: 'skipped'
+        };
+      }
+
+      // Case 2: Lesson doesn't exist at all, add it
+      const updatedSkill = await RoadmapsSkillModel.findByIdAndUpdate(
+        existingSkill._id,
+        {
+          $addToSet: {
+            imLessons: {
+              grade: data.grade,
+              unitNumber: data.unitNumber,
+              lessonNumber: data.lessonNumber,
+              lessonName: data.lessonName
+            }
+          },
+          $set: {
+            updatedAt: new Date().toISOString()
+          }
+        },
+        { new: true }
+      );
+
+      revalidatePath('/roadmaps/skills');
+
+      return {
+        success: true,
+        message: `Added IM Lesson to skill ${data.skillNumber}${data.grade ? ` (${data.grade})` : ''}`,
+        action: 'updated',
+        data: updatedSkill?.toObject()
+      };
+    } catch (error) {
+      console.error('💥 Error adding IM lesson to skill:', error);
+      return {
+        success: false,
+        error: handleServerError(error, 'addImLessonToSkill')
+      };
+    }
+  });
+}
+
+/**
  * Bulk update skills content from scraper
  */
 export async function bulkUpdateRoadmapsSkillsContent(
@@ -310,16 +460,16 @@ export async function bulkUpdateRoadmapsSkillsContent(
                 $set: {
                   ...validatedData,
                   // Preserve existing data from unit scraper
-                  units: existingSkill.units,
-                  essentialSkills: existingSkill.essentialSkills,
-                  helpfulSkills: existingSkill.helpfulSkills,
+                  units: existingSkill.get('units'),
+                  essentialSkills: existingSkill.get('essentialSkills'),
+                  helpfulSkills: existingSkill.get('helpfulSkills'),
                   updatedAt: new Date().toISOString()
                 }
               },
               { new: true, runValidators: true }
             );
 
-            results.updated.push(validatedData.skillNumber);
+            results.updated.push(validatedData.skillNumber as string);
           } else {
             console.log(`✨ Creating new skill ${validatedData.skillNumber}:`, validatedData.title);
 
@@ -330,12 +480,12 @@ export async function bulkUpdateRoadmapsSkillsContent(
               updatedAt: new Date().toISOString()
             });
 
-            results.created.push(validatedData.skillNumber);
+            results.created.push(validatedData.skillNumber as string);
           }
         } catch (itemError) {
           console.error(`Error processing skill:`, itemError);
           results.failed.push({
-            skillNumber: skillData.skillNumber || 'unknown',
+            skillNumber: skillData.skillNumber as string || 'unknown',
             error: itemError instanceof Error ? itemError.message : 'Unknown error'
           });
         }
