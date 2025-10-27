@@ -333,15 +333,15 @@ export function ResultsDisplay({
       <div className="space-y-3">
         {filteredResults.map((skill, index) => (
           <SkillResultCard
-            key={skill.url}
+            key={skill.url || `skill-${index}`}
             skill={skill}
             index={index}
-            isExpanded={expandedSkills.has(skill.url)}
-            onToggleExpansion={() => toggleSkillExpansion(skill.url)}
+            isExpanded={expandedSkills.has(skill.url || '')}
+            onToggleExpansion={() => skill.url && toggleSkillExpansion(skill.url)}
             onSaveSkill={saveSkillToMongoDB}
-            isSaving={savingSkills.has(skill.url)}
-            isSaved={savedSkills.has(skill.url)}
-            saveError={saveErrors.get(skill.url)}
+            isSaving={savingSkills.has(skill.url || '')}
+            isSaved={savedSkills.has(skill.url || '')}
+            saveError={saveErrors.get(skill.url || '')}
           />
         ))}
       </div>
@@ -435,9 +435,11 @@ function SkillResultCard({ skill, index, isExpanded, onToggleExpansion, onSaveSk
       </div>
       {isExpanded && (
         <div className="bg-white border border-gray-200 rounded-b-lg shadow-sm -mt-1 px-6 pb-6 space-y-4">
-          <div className="text-sm text-gray-600">
-            <strong>URL:</strong> <a href={skill.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{skill.url}</a>
-          </div>
+          {skill.url && (
+            <div className="text-sm text-gray-600">
+              <strong>URL:</strong> <a href={skill.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{skill.url}</a>
+            </div>
+          )}
           
           <div className="text-sm text-gray-600">
             <strong>Scraped:</strong> {new Date(skill.scrapedAt).toLocaleString()}

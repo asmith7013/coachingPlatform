@@ -18,7 +18,7 @@ export function ScreenshotDashboard() {
     duration: string;
   } | null>(null);
 
-  const handleCredentialsSubmit = (creds: IMCredentials) => {
+  const handleCredentialsSubmit = async (creds: IMCredentials) => {
     setCredentials(creds);
     setError(null);
   };
@@ -51,8 +51,9 @@ export function ScreenshotDashboard() {
         delayBetweenRequests: 2000
       });
 
-      if (!response.success) {
-        setError(response.error?.message || 'Failed to screenshot pages');
+      if (!response.success || !response.data) {
+        const errorMsg = typeof response.error === 'string' ? response.error : 'message' in (response.error || {}) ? ((response.error || {}) as {message: string}).message : 'Failed to screenshot pages';
+        setError(errorMsg);
         return;
       }
 
@@ -86,7 +87,11 @@ export function ScreenshotDashboard() {
           {!credentials ? (
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Step 1: Authenticate</h2>
-              <AuthenticationForm onCredentialsSubmit={handleCredentialsSubmit} />
+              <AuthenticationForm
+                onCredentialsSubmit={handleCredentialsSubmit}
+                isValidating={false}
+                credentialsValid={false}
+              />
             </div>
           ) : (
             <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">

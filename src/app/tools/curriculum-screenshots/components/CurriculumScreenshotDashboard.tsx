@@ -45,8 +45,9 @@ export function CurriculumScreenshotDashboard() {
         prefix: 'problem'
       });
 
-      if (!response.success) {
-        setError(response.error?.message || 'Failed to screenshot questions');
+      if (!response.success || !response.data) {
+        const errorMsg = typeof response.error === 'string' ? response.error : 'message' in (response.error || {}) ? ((response.error || {}) as {message: string}).message : 'Failed to screenshot questions';
+        setError(errorMsg);
         return;
       }
 

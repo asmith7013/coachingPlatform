@@ -115,7 +115,7 @@ export async function upsertRoadmapsSkill(skillData: {
 
       if (existingSkill) {
         // Check if this unit is already in the units array
-        const units = existingSkill.get('units') as Array<{grade: string, unitTitle: string, unitNumber: number}>;
+        const units = existingSkill.get('units') as unknown as Array<{grade: string, unitTitle: string, unitNumber: number}>;
         const unitExists = units.some(
           (u) => u.grade === skillData.unit.grade && u.unitTitle === skillData.unit.unitTitle
         );
@@ -306,7 +306,7 @@ export async function addImLessonToSkill(data: {
       }
 
       // Check if this IM lesson already exists
-      const imLessons = existingSkill.get('imLessons') as Array<{unitNumber: number, lessonNumber: number, lessonName?: string, grade?: string}> | undefined;
+      const imLessons = existingSkill.get('imLessons') as unknown as Array<{unitNumber: number, lessonNumber: number, lessonName?: string, grade?: string}> | undefined;
       const existingLessonIndex = imLessons?.findIndex(
         (lesson) =>
           lesson.unitNumber === data.unitNumber &&

@@ -1,0 +1,1472 @@
+[
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.1",
+    "unitNumber": 1,
+    "lessonNumber": 1,
+    "lessonName": "Tiling the Plane",
+    "roadmapSkills": ["647"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.2",
+    "unitNumber": 1,
+    "lessonNumber": 2,
+    "lessonName": "Finding Area by Decomposing and Rearranging",
+    "roadmapSkills": ["647"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.3",
+    "unitNumber": 1,
+    "lessonNumber": 3,
+    "lessonName": "Reasoning to Find Area",
+    "roadmapSkills": ["647"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.4",
+    "unitNumber": 1,
+    "lessonNumber": 4,
+    "lessonName": "Parallelograms",
+    "roadmapSkills": ["646"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.5",
+    "unitNumber": 1,
+    "lessonNumber": 5,
+    "lessonName": "Bases and Heights of Parallelograms",
+    "roadmapSkills": ["646"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.6",
+    "unitNumber": 1,
+    "lessonNumber": 6,
+    "lessonName": "Area of Parallelograms",
+    "roadmapSkills": ["646"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.7",
+    "unitNumber": 1,
+    "lessonNumber": 7,
+    "lessonName": "From Parallelograms to Triangles",
+    "roadmapSkills": ["120"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.8",
+    "unitNumber": 1,
+    "lessonNumber": 8,
+    "lessonName": "Area of Triangles",
+    "roadmapSkills": ["120"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.9",
+    "unitNumber": 1,
+    "lessonNumber": 9,
+    "lessonName": "Formula for the Area of a Triangle",
+    "roadmapSkills": ["120"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.10",
+    "unitNumber": 1,
+    "lessonNumber": 10,
+    "lessonName": "Bases and Heights of Triangles",
+    "roadmapSkills": ["120"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.11",
+    "unitNumber": 1,
+    "lessonNumber": 11,
+    "lessonName": "Polygons",
+    "roadmapSkills": ["647"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.12",
+    "unitNumber": 1,
+    "lessonNumber": 12,
+    "lessonName": "What is Surface Area?",
+    "roadmapSkills": ["122", "508"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.13",
+    "unitNumber": 1,
+    "lessonNumber": 13,
+    "lessonName": "Polyhedra",
+    "roadmapSkills": ["122"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.14",
+    "unitNumber": 1,
+    "lessonNumber": 14,
+    "lessonName": "Nets and Surface Area",
+    "roadmapSkills": ["122", "508"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.15",
+    "unitNumber": 1,
+    "lessonNumber": 15,
+    "lessonName": "More Nets, More Surface Area",
+    "roadmapSkills": ["508"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.16",
+    "unitNumber": 1,
+    "lessonNumber": 16,
+    "lessonName": "Distinguishing Between Surface Area and Volume",
+    "roadmapSkills": ["508"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.17",
+    "unitNumber": 1,
+    "lessonNumber": 17,
+    "lessonName": "Squares and Cubes",
+    "roadmapSkills": ["265"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.18",
+    "unitNumber": 1,
+    "lessonNumber": 18,
+    "lessonName": "Surface Area of a Cube",
+    "roadmapSkills": ["265", "138", "116", "508"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 1 - Area and Surface Area",
+    "unitLessonId": "1.19",
+    "unitNumber": 1,
+    "lessonNumber": 19,
+    "lessonName": "Designing a Tent",
+    "roadmapSkills": ["138", "508"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.1",
+    "unitNumber": 2,
+    "lessonNumber": 1,
+    "lessonName": "Introducing Ratios and Ratio Language",
+    "roadmapSkills": ["213"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.2",
+    "unitNumber": 2,
+    "lessonNumber": 2,
+    "lessonName": "Representing Ratios with Diagrams",
+    "roadmapSkills": ["213"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.3",
+    "unitNumber": 2,
+    "lessonNumber": 3,
+    "lessonName": "Recipes",
+    "roadmapSkills": ["213"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.4",
+    "unitNumber": 2,
+    "lessonNumber": 4,
+    "lessonName": "Color Mixtures",
+    "roadmapSkills": ["213"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.5",
+    "unitNumber": 2,
+    "lessonNumber": 5,
+    "lessonName": "Defining Equivalent Ratios",
+    "roadmapSkills": ["213"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.6",
+    "unitNumber": 2,
+    "lessonNumber": 6,
+    "lessonName": "Introducing Double Number Line Diagrams",
+    "roadmapSkills": ["117"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.7",
+    "unitNumber": 2,
+    "lessonNumber": 7,
+    "lessonName": "Creating Double Number Line Diagrams",
+    "roadmapSkills": ["117"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.8",
+    "unitNumber": 2,
+    "lessonNumber": 8,
+    "lessonName": "How Much for One?",
+    "roadmapSkills": ["226", "523"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.9",
+    "unitNumber": 2,
+    "lessonNumber": 9,
+    "lessonName": "Constant Speed",
+    "roadmapSkills": ["226", "523"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.10",
+    "unitNumber": 2,
+    "lessonNumber": 10,
+    "lessonName": "Comparing Situations by Examining Ratios",
+    "roadmapSkills": ["226", "523"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.11",
+    "unitNumber": 2,
+    "lessonNumber": 11,
+    "lessonName": "Representing Ratios with Tables",
+    "roadmapSkills": ["117"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.12",
+    "unitNumber": 2,
+    "lessonNumber": 12,
+    "lessonName": "Navigating a Table of Equivalent Ratios",
+    "roadmapSkills": ["117"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.13",
+    "unitNumber": 2,
+    "lessonNumber": 13,
+    "lessonName": "Tables and Double Number Line Diagrams",
+    "roadmapSkills": ["117"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.14",
+    "unitNumber": 2,
+    "lessonNumber": 14,
+    "lessonName": "Solving Equivalent Ratio Problems",
+    "roadmapSkills": ["117", "523"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.15",
+    "unitNumber": 2,
+    "lessonNumber": 15,
+    "lessonName": "Part-Part-Whole Ratios",
+    "roadmapSkills": ["117", "523"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.16",
+    "unitNumber": 2,
+    "lessonNumber": 16,
+    "lessonName": "Solving More Ratio Problems",
+    "roadmapSkills": ["117"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 2 - Introducing Ratios",
+    "unitLessonId": "2.17",
+    "unitNumber": 2,
+    "lessonNumber": 17,
+    "lessonName": "A Fermi Problem",
+    "roadmapSkills": ["117", "523"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.1",
+    "unitNumber": 3,
+    "lessonNumber": 1,
+    "lessonName": "The Burj Khalifa",
+    "roadmapSkills": ["226", "523"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.2",
+    "unitNumber": 3,
+    "lessonNumber": 2,
+    "lessonName": "Anchoring Units of Measurement",
+    "roadmapSkills": ["317"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.3",
+    "unitNumber": 3,
+    "lessonNumber": 3,
+    "lessonName": "Measuring with Different-Sized Units",
+    "roadmapSkills": ["317"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.4",
+    "unitNumber": 3,
+    "lessonNumber": 4,
+    "lessonName": "Converting Units",
+    "roadmapSkills": ["317"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.5",
+    "unitNumber": 3,
+    "lessonNumber": 5,
+    "lessonName": "Comparing Speeds and Prices",
+    "roadmapSkills": ["226"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.6",
+    "unitNumber": 3,
+    "lessonNumber": 6,
+    "lessonName": "Interpreting Rates",
+    "roadmapSkills": ["226", "523"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.7",
+    "unitNumber": 3,
+    "lessonNumber": 7,
+    "lessonName": "Equivalent Ratios Have the Same Unit Rates",
+    "roadmapSkills": ["226", "523"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.8",
+    "unitNumber": 3,
+    "lessonNumber": 8,
+    "lessonName": "More about Constant Speed",
+    "roadmapSkills": ["523"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.9",
+    "unitNumber": 3,
+    "lessonNumber": 9,
+    "lessonName": "Solving Rate Problems",
+    "roadmapSkills": ["226", "523", "317"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.10",
+    "unitNumber": 3,
+    "lessonNumber": 10,
+    "lessonName": "What Are Percentages?",
+    "roadmapSkills": ["588"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.11",
+    "unitNumber": 3,
+    "lessonNumber": 11,
+    "lessonName": "Percentages and Double Number Lines",
+    "roadmapSkills": ["141", "292"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.12",
+    "unitNumber": 3,
+    "lessonNumber": 12,
+    "lessonName": "Percentages and Tape Diagrams",
+    "roadmapSkills": ["141", "292"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.13",
+    "unitNumber": 3,
+    "lessonNumber": 13,
+    "lessonName": "Benchmark Percentages",
+    "roadmapSkills": ["141", "292"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.14",
+    "unitNumber": 3,
+    "lessonNumber": 14,
+    "lessonName": "Solving Percentage Problems",
+    "roadmapSkills": ["141", "292"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.15",
+    "unitNumber": 3,
+    "lessonNumber": 15,
+    "lessonName": "Finding This Percent of That",
+    "roadmapSkills": ["292"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.16",
+    "unitNumber": 3,
+    "lessonNumber": 16,
+    "lessonName": "Finding the Percentage",
+    "roadmapSkills": ["141", "292"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 3 - Unit Rates and Percentages",
+    "unitLessonId": "3.17",
+    "unitNumber": 3,
+    "lessonNumber": 17,
+    "lessonName": "Painting a Room",
+    "roadmapSkills": ["647", "292"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.1",
+    "unitNumber": 4,
+    "lessonNumber": 1,
+    "lessonName": "Size of Divisor and Size of Quotient",
+    "roadmapSkills": ["644"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.2",
+    "unitNumber": 4,
+    "lessonNumber": 2,
+    "lessonName": "Meanings of Division",
+    "roadmapSkills": ["644"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.3",
+    "unitNumber": 4,
+    "lessonNumber": 3,
+    "lessonName": "Interpreting Division Situations",
+    "roadmapSkills": ["644"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.4",
+    "unitNumber": 4,
+    "lessonNumber": 4,
+    "lessonName": "How Many Groups? (Part 1)",
+    "roadmapSkills": ["644"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.5",
+    "unitNumber": 4,
+    "lessonNumber": 5,
+    "lessonName": "How Many Groups? (Part 2)",
+    "roadmapSkills": ["644"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.6",
+    "unitNumber": 4,
+    "lessonNumber": 6,
+    "lessonName": "Using Diagrams to Find the Number of Groups",
+    "roadmapSkills": ["644"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.7",
+    "unitNumber": 4,
+    "lessonNumber": 7,
+    "lessonName": "What Fraction of a Group?",
+    "roadmapSkills": ["644"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.8",
+    "unitNumber": 4,
+    "lessonNumber": 8,
+    "lessonName": "How Much in Each Group? (Part 1)",
+    "roadmapSkills": ["644"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.9",
+    "unitNumber": 4,
+    "lessonNumber": 9,
+    "lessonName": "How Much in Each Group? (Part 2)",
+    "roadmapSkills": ["644"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.10",
+    "unitNumber": 4,
+    "lessonNumber": 10,
+    "lessonName": "Dividing by Unit and Non-Unit Fractions",
+    "roadmapSkills": ["318"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.11",
+    "unitNumber": 4,
+    "lessonNumber": 11,
+    "lessonName": "Using an Algorithm to Divide Fractions",
+    "roadmapSkills": ["318"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.12",
+    "unitNumber": 4,
+    "lessonNumber": 12,
+    "lessonName": "Fractional Lengths",
+    "roadmapSkills": ["318"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.13",
+    "unitNumber": 4,
+    "lessonNumber": 13,
+    "lessonName": "Rectangles with Fractional Side Lengths",
+    "roadmapSkills": ["318"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.14",
+    "unitNumber": 4,
+    "lessonNumber": 14,
+    "lessonName": "Fractional Lengths in Triangles and Prisms",
+    "roadmapSkills": ["120", "487"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.15",
+    "unitNumber": 4,
+    "lessonNumber": 15,
+    "lessonName": "Volume of Prisms",
+    "roadmapSkills": ["487"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.16",
+    "unitNumber": 4,
+    "lessonNumber": 16,
+    "lessonName": "Solving Problems Involving Fractions",
+    "roadmapSkills": ["318"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 4 - Dividing Fractions",
+    "unitLessonId": "4.17",
+    "unitNumber": 4,
+    "lessonNumber": 17,
+    "lessonName": "Fitting Boxes into Boxes",
+    "roadmapSkills": ["487", "318"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.1",
+    "unitNumber": 5,
+    "lessonNumber": 1,
+    "lessonName": "Using Decimals in a Shopping Context",
+    "roadmapSkills": ["233", "186"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.2",
+    "unitNumber": 5,
+    "lessonNumber": 2,
+    "lessonName": "Using Diagrams to Represent Addition and Subtraction",
+    "roadmapSkills": ["233"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.3",
+    "unitNumber": 5,
+    "lessonNumber": 3,
+    "lessonName": "Adding and Subtracting Decimals with Few Non-Zero Digits",
+    "roadmapSkills": ["233"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.4",
+    "unitNumber": 5,
+    "lessonNumber": 4,
+    "lessonName": "Adding and Subtracting Decimals with Many Non-Zero Digits",
+    "roadmapSkills": ["233"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.5",
+    "unitNumber": 5,
+    "lessonNumber": 5,
+    "lessonName": "Decimal Points in Products",
+    "roadmapSkills": ["186"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.6",
+    "unitNumber": 5,
+    "lessonNumber": 6,
+    "lessonName": "Methods for Multiplying Decimals",
+    "roadmapSkills": ["186"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.7",
+    "unitNumber": 5,
+    "lessonNumber": 7,
+    "lessonName": "Using Diagrams to Represent Multiplication",
+    "roadmapSkills": ["186"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.8",
+    "unitNumber": 5,
+    "lessonNumber": 8,
+    "lessonName": "Calculating Products of Decimals",
+    "roadmapSkills": ["186"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.9",
+    "unitNumber": 5,
+    "lessonNumber": 9,
+    "lessonName": "Using the Partial Quotients Method",
+    "roadmapSkills": ["532"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.10",
+    "unitNumber": 5,
+    "lessonNumber": 10,
+    "lessonName": "Using Long Division",
+    "roadmapSkills": ["532"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.11",
+    "unitNumber": 5,
+    "lessonNumber": 11,
+    "lessonName": "Dividing Numbers that Result in Decimals",
+    "roadmapSkills": ["532"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.12",
+    "unitNumber": 5,
+    "lessonNumber": 12,
+    "lessonName": "Dividing Decimals by Whole Numbers",
+    "roadmapSkills": ["532", "216"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.13",
+    "unitNumber": 5,
+    "lessonNumber": 13,
+    "lessonName": "Dividing Decimals by Decimals",
+    "roadmapSkills": ["216"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.14",
+    "unitNumber": 5,
+    "lessonNumber": 14,
+    "lessonName": "Using Operations on Decimals to Solve Problems",
+    "roadmapSkills": ["186", "532", "216"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 5 - Arithmetic in Base Ten",
+    "unitLessonId": "5.15",
+    "unitNumber": 5,
+    "lessonNumber": 15,
+    "lessonName": "Making and Measuring Boxes",
+    "roadmapSkills": ["233", "186", "216"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.1",
+    "unitNumber": 6,
+    "lessonNumber": 1,
+    "lessonName": "Tape Diagrams and Equations",
+    "roadmapSkills": ["659"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.2",
+    "unitNumber": 6,
+    "lessonNumber": 2,
+    "lessonName": "Truth and Equations",
+    "roadmapSkills": ["659"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.3",
+    "unitNumber": 6,
+    "lessonNumber": 3,
+    "lessonName": "Staying in Balance",
+    "roadmapSkills": ["222"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.4",
+    "unitNumber": 6,
+    "lessonNumber": 4,
+    "lessonName": "Practice Solving Equations and Representing Situations with Equations",
+    "roadmapSkills": ["222", "524"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.5",
+    "unitNumber": 6,
+    "lessonNumber": 5,
+    "lessonName": "A New Way to Interpret a over b",
+    "roadmapSkills": ["222", "524"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.6",
+    "unitNumber": 6,
+    "lessonNumber": 6,
+    "lessonName": "Write Expressions Where Letters Stand for Numbers",
+    "roadmapSkills": ["290", "203"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.7",
+    "unitNumber": 6,
+    "lessonNumber": 7,
+    "lessonName": "Revisit Percentages",
+    "roadmapSkills": ["524", "292"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.8",
+    "unitNumber": 6,
+    "lessonNumber": 8,
+    "lessonName": "Equal and Equivalent",
+    "roadmapSkills": ["478"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.9",
+    "unitNumber": 6,
+    "lessonNumber": 9,
+    "lessonName": "The Distributive Property, Part 1",
+    "roadmapSkills": ["478"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.10",
+    "unitNumber": 6,
+    "lessonNumber": 10,
+    "lessonName": "The Distributive Property, Part 2",
+    "roadmapSkills": ["478"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.11",
+    "unitNumber": 6,
+    "lessonNumber": 11,
+    "lessonName": "The Distributive Property, Part 3",
+    "roadmapSkills": ["478"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.12",
+    "unitNumber": 6,
+    "lessonNumber": 12,
+    "lessonName": "Meaning of Exponents",
+    "roadmapSkills": ["265"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.13",
+    "unitNumber": 6,
+    "lessonNumber": 13,
+    "lessonName": "Expressions with Exponents",
+    "roadmapSkills": ["265", "138"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.14",
+    "unitNumber": 6,
+    "lessonNumber": 14,
+    "lessonName": "Evaluating Expressions with Exponents",
+    "roadmapSkills": ["138"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.15",
+    "unitNumber": 6,
+    "lessonNumber": 15,
+    "lessonName": "Equivalent Exponential Expressions",
+    "roadmapSkills": ["116"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.16",
+    "unitNumber": 6,
+    "lessonNumber": 16,
+    "lessonName": "Two Related Quantities, Part 1",
+    "roadmapSkills": ["117", "228"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.17",
+    "unitNumber": 6,
+    "lessonNumber": 17,
+    "lessonName": "Two Related Quantities, Part 2",
+    "roadmapSkills": ["117", "228"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.18",
+    "unitNumber": 6,
+    "lessonNumber": 18,
+    "lessonName": "More Relationships",
+    "roadmapSkills": ["228"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 6 - Expressions and Equations",
+    "unitLessonId": "6.19",
+    "unitNumber": 6,
+    "lessonNumber": 19,
+    "lessonName": "Tables, Equations, and Graphs, Oh My!",
+    "roadmapSkills": ["228"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.1",
+    "unitNumber": 7,
+    "lessonNumber": 1,
+    "lessonName": "Positive and Negative Numbers",
+    "roadmapSkills": ["567"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.2",
+    "unitNumber": 7,
+    "lessonNumber": 2,
+    "lessonName": "Points on the Number Line",
+    "roadmapSkills": ["567"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.3",
+    "unitNumber": 7,
+    "lessonNumber": 3,
+    "lessonName": "Comparing Positive and Negative Numbers",
+    "roadmapSkills": ["499"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.4",
+    "unitNumber": 7,
+    "lessonNumber": 4,
+    "lessonName": "Ordering Rational Numbers",
+    "roadmapSkills": ["499"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.5",
+    "unitNumber": 7,
+    "lessonNumber": 5,
+    "lessonName": "Using Negative Numbers to Make Sense of Contexts",
+    "roadmapSkills": ["567"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.6",
+    "unitNumber": 7,
+    "lessonNumber": 6,
+    "lessonName": "Absolute Value of Numbers",
+    "roadmapSkills": ["304"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.7",
+    "unitNumber": 7,
+    "lessonNumber": 7,
+    "lessonName": "Comparing Numbers and Distance from Zero",
+    "roadmapSkills": ["499", "304"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.8",
+    "unitNumber": 7,
+    "lessonNumber": 8,
+    "lessonName": "Writing and Graphing Inequalities",
+    "roadmapSkills": ["177"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.9",
+    "unitNumber": 7,
+    "lessonNumber": 9,
+    "lessonName": "Solutions of Inequalities",
+    "roadmapSkills": ["177"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.10",
+    "unitNumber": 7,
+    "lessonNumber": 10,
+    "lessonName": "Interpreting Inequalities",
+    "roadmapSkills": ["177"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.11",
+    "unitNumber": 7,
+    "lessonNumber": 11,
+    "lessonName": "Points on the Coordinate Plane",
+    "roadmapSkills": ["209"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.12",
+    "unitNumber": 7,
+    "lessonNumber": 12,
+    "lessonName": "Constructing the Coordinate Plane",
+    "roadmapSkills": ["209"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.13",
+    "unitNumber": 7,
+    "lessonNumber": 13,
+    "lessonName": "Interpreting Points on a Coordinate Plane",
+    "roadmapSkills": ["209"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.14",
+    "unitNumber": 7,
+    "lessonNumber": 14,
+    "lessonName": "Distances on a Coordinate Plane",
+    "roadmapSkills": ["731"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.15",
+    "unitNumber": 7,
+    "lessonNumber": 15,
+    "lessonName": "Shapes on the Coordinate Plane",
+    "roadmapSkills": ["648"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.16",
+    "unitNumber": 7,
+    "lessonNumber": 16,
+    "lessonName": "Common Factors",
+    "roadmapSkills": ["247"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.17",
+    "unitNumber": 7,
+    "lessonNumber": 17,
+    "lessonName": "Common Multiples",
+    "roadmapSkills": ["170"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.18",
+    "unitNumber": 7,
+    "lessonNumber": 18,
+    "lessonName": "Using Common Multiples and Common Factors",
+    "roadmapSkills": ["247", "170"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 7 - Rational Numbers",
+    "unitLessonId": "7.19",
+    "unitNumber": 7,
+    "lessonNumber": 19,
+    "lessonName": "Drawing on the Coordinate Plane",
+    "roadmapSkills": ["648"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.1",
+    "unitNumber": 8,
+    "lessonNumber": 1,
+    "lessonName": "Got Data?",
+    "roadmapSkills": ["732"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.2",
+    "unitNumber": 8,
+    "lessonNumber": 2,
+    "lessonName": "Statistical Questions",
+    "roadmapSkills": ["732"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.3",
+    "unitNumber": 8,
+    "lessonNumber": 3,
+    "lessonName": "Representing Data Graphically",
+    "roadmapSkills": ["225"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.4",
+    "unitNumber": 8,
+    "lessonNumber": 4,
+    "lessonName": "Dot Plots",
+    "roadmapSkills": ["225"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.5",
+    "unitNumber": 8,
+    "lessonNumber": 5,
+    "lessonName": "Using Dot Plots to Answer Statistical Questions",
+    "roadmapSkills": ["537"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.6",
+    "unitNumber": 8,
+    "lessonNumber": 6,
+    "lessonName": "Interpreting Histograms",
+    "roadmapSkills": ["140"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.7",
+    "unitNumber": 8,
+    "lessonNumber": 7,
+    "lessonName": "Using Histograms to Answer Statistical Questions",
+    "roadmapSkills": ["140", "537"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.8",
+    "unitNumber": 8,
+    "lessonNumber": 8,
+    "lessonName": "Describing Distributions on Histograms",
+    "roadmapSkills": ["537"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.9",
+    "unitNumber": 8,
+    "lessonNumber": 9,
+    "lessonName": "Mean",
+    "roadmapSkills": ["105"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.10",
+    "unitNumber": 8,
+    "lessonNumber": 10,
+    "lessonName": "Finding and Interpreting the Mean as the Balance Point",
+    "roadmapSkills": ["105"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.11",
+    "unitNumber": 8,
+    "lessonNumber": 11,
+    "lessonName": "Variability and MAD",
+    "roadmapSkills": ["536"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.12",
+    "unitNumber": 8,
+    "lessonNumber": 12,
+    "lessonName": "Using Mean and MAD to Make Comparisons",
+    "roadmapSkills": ["536"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.13",
+    "unitNumber": 8,
+    "lessonNumber": 13,
+    "lessonName": "Median",
+    "roadmapSkills": ["293"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.14",
+    "unitNumber": 8,
+    "lessonNumber": 14,
+    "lessonName": "Comparing Mean and Median",
+    "roadmapSkills": ["302"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.15",
+    "unitNumber": 8,
+    "lessonNumber": 15,
+    "lessonName": "Quartiles and Interquartile Range",
+    "roadmapSkills": ["123"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.16",
+    "unitNumber": 8,
+    "lessonNumber": 16,
+    "lessonName": "Box Plots",
+    "roadmapSkills": ["123"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.17",
+    "unitNumber": 8,
+    "lessonNumber": 17,
+    "lessonName": "Using Box Plots",
+    "roadmapSkills": ["123"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 8 - Data Sets and Distributions",
+    "unitLessonId": "8.18",
+    "unitNumber": 8,
+    "lessonNumber": 18,
+    "lessonName": "Using Data to Solve Problems",
+    "roadmapSkills": ["105", "293", "536", "140", "123", "225", "302"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 9 - Putting It All Together",
+    "unitLessonId": "9.1",
+    "unitNumber": 9,
+    "lessonNumber": 1,
+    "lessonName": "Fermi Problems",
+    "roadmapSkills": ["317", "647", "487"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 9 - Putting It All Together",
+    "unitLessonId": "9.2",
+    "unitNumber": 9,
+    "lessonNumber": 2,
+    "lessonName": "If Our Class Were the World",
+    "roadmapSkills": ["117", "141", "292"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 9 - Putting It All Together",
+    "unitLessonId": "9.3",
+    "unitNumber": 9,
+    "lessonNumber": 3,
+    "lessonName": "Rectangle Madness",
+    "roadmapSkills": ["318", "247"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 9 - Putting It All Together",
+    "unitLessonId": "9.4",
+    "unitNumber": 9,
+    "lessonNumber": 4,
+    "lessonName": "How Do We Choose?",
+    "roadmapSkills": ["141", "292"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 9 - Putting It All Together",
+    "unitLessonId": "9.5",
+    "unitNumber": 9,
+    "lessonNumber": 5,
+    "lessonName": "More than Two Choices",
+    "roadmapSkills": ["141"],
+    "targetSkills": []
+  },
+  {
+    "grade": "6",
+    "unit": "Unit 9 - Putting It All Together",
+    "unitLessonId": "9.6",
+    "unitNumber": 9,
+    "lessonNumber": 6,
+    "lessonName": "Picking Representatives",
+    "roadmapSkills": ["523", "141"],
+    "targetSkills": []
+  }
+]

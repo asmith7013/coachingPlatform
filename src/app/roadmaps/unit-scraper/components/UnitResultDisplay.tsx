@@ -149,7 +149,7 @@ export function UnitResultDisplay({
               initials={skill.skillNumber}
               title={skill.title}
               subtitle={`Essential: ${skill.essentialSkills.length} | Helpful: ${skill.helpfulSkills.length}`}
-              colorVariant="info"
+              colorVariant="indigo"
               size="md"
               className="cursor-pointer"
               onClick={() => toggleSkillExpansion(skill.skillNumber)}

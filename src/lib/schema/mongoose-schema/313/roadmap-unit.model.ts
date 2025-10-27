@@ -41,9 +41,5 @@ const RoadmapUnitSchema = new mongoose.Schema(roadmapUnitFields, {
 // Create compound index for unique constraint on grade + unitTitle
 RoadmapUnitSchema.index({ grade: 1, unitTitle: 1 }, { unique: true });
 
-// Force recompilation of the model
-if (mongoose.models.RoadmapUnit) {
-  delete mongoose.models.RoadmapUnit;
-}
-
-export const RoadmapUnitModel = mongoose.model('RoadmapUnit', RoadmapUnitSchema);
+export const RoadmapUnitModel = mongoose.models.RoadmapUnit ||
+  mongoose.model('RoadmapUnit', RoadmapUnitSchema);

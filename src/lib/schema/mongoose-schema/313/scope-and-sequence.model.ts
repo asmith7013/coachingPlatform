@@ -35,6 +35,8 @@ const scopeAndSequenceFields = {
     index: true,
     enum: SCOPE_SEQUENCE_TAG_VALUES
   },
+  roadmapSkills: { type: [String], default: [] },
+  targetSkills: { type: [String], default: [] },
 
   ...standardDocumentFields
 };
@@ -54,9 +56,5 @@ ScopeAndSequenceSchema.index(
   { unique: true, sparse: true } // sparse: true allows multiple docs with null scopeSequenceTag
 );
 
-// Force recompilation of the model
-if (mongoose.models.ScopeAndSequence) {
-  delete mongoose.models.ScopeAndSequence;
-}
-
-export const ScopeAndSequenceModel = mongoose.model('ScopeAndSequence', ScopeAndSequenceSchema);
+export const ScopeAndSequenceModel = mongoose.models.ScopeAndSequence ||
+  mongoose.model('ScopeAndSequence', ScopeAndSequenceSchema);

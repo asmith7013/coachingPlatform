@@ -55,7 +55,7 @@ export default function RoadmapUnitsPage() {
 
           // Sort by createdAt ascending (oldest first)
           const sortedUnits = unitsWithStringIds.sort((a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
           );
 
           setUnits(sortedUnits);
@@ -85,7 +85,7 @@ export default function RoadmapUnitsPage() {
 
     // Maintain createdAt sort order
     const sorted = filtered.sort((a, b) =>
-      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
     );
 
     setFilteredUnits(sorted);

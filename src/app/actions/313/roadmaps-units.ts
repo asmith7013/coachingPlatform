@@ -171,7 +171,7 @@ export async function bulkCreateRoadmapUnits(data: unknown) {
 
             if (updateResult) {
               const saved = updateResult.toObject();
-              const targetSkills = saved.targetSkills as string[] | undefined;
+              const targetSkills = saved.targetSkills as unknown as string[] | undefined;
               console.log(`   ✅ Updated - Saved with ${targetSkills?.length || 0} target skill references`);
               results.push({
                 action: 'updated',
@@ -188,7 +188,7 @@ export async function bulkCreateRoadmapUnits(data: unknown) {
 
             const savedUnit = await unit.save();
             const saved = savedUnit.toObject();
-            const targetSkills = saved.targetSkills as string[] | undefined;
+            const targetSkills = saved.targetSkills as unknown as string[] | undefined;
             console.log(`   ✅ Created - Saved with ${targetSkills?.length || 0} target skill references`);
             results.push({
               action: 'created',

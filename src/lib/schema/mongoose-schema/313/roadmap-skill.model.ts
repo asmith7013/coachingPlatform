@@ -102,9 +102,5 @@ const RoadmapsSkillSchema = new mongoose.Schema(roadmapsSkillFields, {
   collection: 'roadmaps-skills'
 });
 
-// Force recompilation of the model
-if (mongoose.models.RoadmapsSkill) {
-  delete mongoose.models.RoadmapsSkill;
-}
-
-export const RoadmapsSkillModel = mongoose.model('RoadmapsSkill', RoadmapsSkillSchema);
+export const RoadmapsSkillModel = mongoose.models.RoadmapsSkill ||
+  mongoose.model('RoadmapsSkill', RoadmapsSkillSchema);

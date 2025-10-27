@@ -23,7 +23,13 @@ export default function RoadmapsSkillsPage() {
     const loadAllSkills = async () => {
       try {
         console.log('🔍 Loading all skills for filters...');
-        const result = await fetchRoadmapsSkills({ limit: 10000 });
+        const result = await fetchRoadmapsSkills({
+          page: 1,
+          limit: 10000,
+          sortBy: 'skillNumber',
+          sortOrder: 'asc',
+          filters: {}
+        });
 
         if (result.success && result.items) {
           const sortedSkills = (result.items as RoadmapsSkill[]).sort((a, b) => {
@@ -64,8 +70,8 @@ export default function RoadmapsSkillsPage() {
         // Otherwise use default limit of 20
         const hasFilters = selectedGrade || selectedUnit;
         const queryParams = hasFilters
-          ? { filters, limit: 10000 } // Effectively "no limit" when filtered
-          : { limit: 20 };
+          ? { page: 1, filters, limit: 10000, sortBy: 'skillNumber', sortOrder: 'asc' as const } // Effectively "no limit" when filtered
+          : { page: 1, limit: 20, sortBy: 'skillNumber', sortOrder: 'asc' as const, filters: {} };
 
         const result = await fetchRoadmapsSkills(queryParams);
 
