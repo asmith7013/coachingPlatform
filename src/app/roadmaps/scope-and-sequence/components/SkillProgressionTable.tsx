@@ -38,7 +38,7 @@ const SKILL_COLORS = [
 
 export function SkillProgressionTable({ lessons, onLessonClick, masteredSkills = [], selectedLessonId = null }: SkillProgressionTableProps) {
   const [skillsData, setSkillsData] = useState<Map<string, RoadmapsSkill>>(new Map());
-  const [loadingSkills, setLoadingSkills] = useState(false);
+  const [_loadingSkills, setLoadingSkills] = useState(false);
   const [showPrerequisites, setShowPrerequisites] = useState(false);
 
   // Extract all unique target skills across all lessons (to use as column headers)

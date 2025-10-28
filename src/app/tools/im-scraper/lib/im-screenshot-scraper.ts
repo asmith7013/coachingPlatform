@@ -98,7 +98,7 @@ export class IMScreenshotScraper {
             });
             totalRemoved += count;
           }
-        } catch (error) {
+        } catch {
           // Ignore errors for elements that don't exist
         }
       }

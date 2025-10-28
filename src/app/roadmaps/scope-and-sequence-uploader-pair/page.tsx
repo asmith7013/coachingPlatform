@@ -170,7 +170,7 @@ export default function ScopeAndSequenceUploaderPairPage() {
           },
           differences: Object.keys(differences).length > 0 ? differences : undefined,
         });
-      } catch (err) {
+      } catch {
         results.push({
           jsonEntry: item,
           dbEntry: null,
@@ -507,11 +507,11 @@ export default function ScopeAndSequenceUploaderPairPage() {
               <p className="text-xs text-blue-800 font-semibold mb-2">How to use:</p>
               <ol className="text-xs text-blue-700 space-y-1 list-decimal list-inside">
                 <li>Paste JSON array with lesson skill data</li>
-                <li>Click "Parse JSON" to validate the format</li>
-                <li>Click "Validate Matches" to check against database</li>
+                <li>Click &quot;Parse JSON&quot; to validate the format</li>
+                <li>Click &quot;Validate Matches&quot; to check against database</li>
                 <li>Review matches (perfect/partial/not-found)</li>
                 <li>Select which lessons to update (perfect matches auto-selected)</li>
-                <li>Click "Update Selected" to save skills to database</li>
+                <li>Click &quot;Update Selected&quot; to save skills to database</li>
               </ol>
             </div>
           </div>
@@ -598,7 +598,7 @@ export default function ScopeAndSequenceUploaderPairPage() {
                           <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
                             <p className="text-xs font-semibold text-yellow-800 mb-1">Differences:</p>
                             {result.differences.grade && (
-                              <p className="text-xs text-yellow-700">Curriculum: JSON="{result.differences.grade.json}" vs DB="{result.differences.grade.db}"</p>
+                              <p className="text-xs text-yellow-700">Curriculum: JSON=&quot;{result.differences.grade.json}&quot; vs DB=&quot;{result.differences.grade.db}&quot;</p>
                             )}
                             {result.differences.unitNumber && (
                               <p className="text-xs text-yellow-700">Unit #: JSON={result.differences.unitNumber.json} vs DB={result.differences.unitNumber.db}</p>
@@ -607,7 +607,7 @@ export default function ScopeAndSequenceUploaderPairPage() {
                               <p className="text-xs text-yellow-700">Lesson #: JSON={result.differences.lessonNumber.json} vs DB={result.differences.lessonNumber.db}</p>
                             )}
                             {result.differences.lessonName && (
-                              <p className="text-xs text-yellow-700">Name: JSON="{result.differences.lessonName.json}" vs DB="{result.differences.lessonName.db}"</p>
+                              <p className="text-xs text-yellow-700">Name: JSON=&quot;{result.differences.lessonName.json}&quot; vs DB=&quot;{result.differences.lessonName.db}&quot;</p>
                             )}
                           </div>
                         )}

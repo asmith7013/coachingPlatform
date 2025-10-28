@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { fetchScopeAndSequence } from "@actions/313/scope-and-sequence";
 import { fetchRoadmapsSkillsByNumbers } from "@actions/313/roadmaps-skills";
-import { LessonListItem } from "./components/LessonListItem";
 import { LessonDetailView } from "./components/LessonDetailView";
 import { SkillProgressionTable } from "./components/SkillProgressionTable";
 import { SkillDetailView } from "./components/SkillDetailView";
@@ -39,7 +38,7 @@ export default function ScopeAndSequencePage() {
   const [selectedTag, setSelectedTag] = useState("");
   const [selectedUnit, setSelectedUnit] = useState("");
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
-  const [selectedSkillNumber, setSelectedSkillNumber] = useState<string | null>(null);
+  const [_selectedSkillNumber, setSelectedSkillNumber] = useState<string | null>(null);
   const [selectedSkillData, setSelectedSkillData] = useState<RoadmapsSkill | null>(null);
   const [loadingSkill, setLoadingSkill] = useState(false);
   const [selectedSkillColor, setSelectedSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('blue');
