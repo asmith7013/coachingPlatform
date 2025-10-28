@@ -6,16 +6,10 @@ export const SummerDistricts = [
 ] as const;
 
 export const SummerSections = [
-    // D11 subjects
-    "SRF",
-    "SR6",
-    "SR7",
-    "SR8",
-
-    // D9 subjects
-    "SR1",
-    "SR2",
-    "SR3",
+    "802",
+    "803",
+    "804",
+    "805",
 ] as const;
 
 export const SummerTeachers = [

@@ -19,13 +19,15 @@ export async function createRoadmapsLesson(lessonData: unknown) {
       const validatedData = RoadmapsLessonInputZodSchema.parse(lessonData);
       
       console.log('📚 Creating Roadmaps lesson:', validatedData.title);
-      console.log('🔍 Validated data keys:', Object.keys(validatedData));
-      
-      // Check if lesson with this URL already exists
-      const existingLesson = await RoadmapsLessonModel.findOne({ url: validatedData.url });
-      if (existingLesson) {
-        console.log('⚠️ Lesson with this URL already exists, updating instead');
-        return updateRoadmapsLesson(existingLesson._id.toString(), validatedData);
+      console.log('🔍 Skill Number:', validatedData.skillNumber);
+
+      // Check if skill with this skillNumber already exists (skills are unique by skillNumber)
+      if (validatedData.skillNumber) {
+        const existingLesson = await RoadmapsLessonModel.findOne({ skillNumber: validatedData.skillNumber });
+        if (existingLesson) {
+          console.log(`⚠️ Skill ${validatedData.skillNumber} already exists, updating instead`);
+          return updateRoadmapsLesson(existingLesson._id.toString(), validatedData);
+        }
       }
       
       // Create new lesson
@@ -83,11 +85,13 @@ export async function bulkCreateRoadmapsLessons(lessonsData: unknown) {
       
       for (const lessonData of lessonsArray) {
         try {
-          // Check if lesson already exists
-          const existingLesson = await RoadmapsLessonModel.findOne({ url: lessonData.url });
-          
+          // Check if skill with this skillNumber already exists
+          const existingLesson = lessonData.skillNumber
+            ? await RoadmapsLessonModel.findOne({ skillNumber: lessonData.skillNumber })
+            : null;
+
           if (existingLesson) {
-            console.log('⚠️ Updating existing lesson:', lessonData.title);
+            console.log(`⚠️ Updating existing skill ${lessonData.skillNumber}:`, lessonData.title);
             const updateResult = await RoadmapsLessonModel.findByIdAndUpdate(
               existingLesson._id,
               {

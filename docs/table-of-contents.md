@@ -3,6 +3,7 @@
 ## Table of Contents
 
 - [Architecture Overview](#architecture-overview)
+- [Exemplar Stack](#exemplar-stack) ⭐
 - [Architecture](#architecture)
   - [core principles](#core-principles)
   - [design patterns](#design-patterns)

@@ -35,6 +35,7 @@
 │   │   ├── server-actions.md
 │   │   ├── transformation-system.md
 │   │   └── type-system.md
+│   ├── exemplar-stack.md
 │   ├── implementation
 │   │   └── three-zone-masterschedulecard-integration.md
 │   ├── podsie
@@ -42,9 +43,21 @@
 │   │   │   ├── 6th-grade
 │   │   │   │   └── Unit-2
 │   │   │   │       └── ramp-ups
-│   │   │   └── 7th-grade
-│   │   │       └── Unit-2
-│   │   │           └── ramp-ups
+│   │   │   ├── 7th-grade
+│   │   │   │   └── Unit-2
+│   │   │   │       └── ramp-ups
+│   │   │   ├── 8th-grade
+│   │   │   │   └── Unit-2
+│   │   │   │       └── ramp-ups
+│   │   │   └── algebra-1
+│   │   │       └── ramp-ups
+│   │   │           ├── ramp-up-1-visual-representations-of-data
+│   │   │           ├── ramp-up-2-linear-relationships
+│   │   │           ├── ramp-up-3-what-is-a-function
+│   │   │           ├── ramp-up-4-linearity
+│   │   │           ├── ramp-up-5-unit-rate-problems
+│   │   │           ├── ramp-up-6-percent-problems
+│   │   │           └── ramp-up-7-slope-and-similar-triangles
 │   │   ├── images
 │   │   ├── podsie-old.md
 │   │   ├── podsie.md
@@ -150,6 +163,21 @@
 │   ├── logo.svg
 │   ├── logo2.png
 │   ├── next.svg
+│   ├── screenshots
+│   │   ├── problem-problem-1-1759876905868.png
+│   │   ├── problem-problem-1-1759877263707.png
+│   │   ├── problem-problem-2-1759876905868.png
+│   │   ├── problem-problem-2-1759877263707.png
+│   │   ├── problem-problem-3-1759876905868.png
+│   │   ├── problem-problem-3-1759877263707.png
+│   │   ├── problem-problem-4-1759876905868.png
+│   │   ├── problem-problem-4-1759877263707.png
+│   │   ├── problem-problem-5-1759876905868.png
+│   │   ├── problem-problem-5-1759877263707.png
+│   │   ├── problem-problem-6-1759876905868.png
+│   │   ├── problem-problem-6-1759877263707.png
+│   │   ├── problem-problem-7-1759876905868.png
+│   │   └── problem-problem-7-1759877263707.png
 │   ├── vercel.svg
 │   └── window.svg
 ├── response_patterns.txt
@@ -214,6 +242,9 @@
 │   │   │   │   ├── im-lessons.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── roadmaps-lessons.ts
+│   │   │   │   ├── roadmaps-skills.ts
+│   │   │   │   ├── roadmaps-units.ts
+│   │   │   │   ├── scope-and-sequence.ts
 │   │   │   │   ├── student-data.ts
 │   │   │   │   ├── student-performance.ts
 │   │   │   │   ├── students.ts
@@ -468,6 +499,7 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── todays-visit-dashboard
 │   │   │       └── page.tsx
+│   │   ├── exemplar
 │   │   ├── global-error.tsx
 │   │   ├── globals.css
 │   │   ├── integrations
@@ -487,6 +519,67 @@
 │   │   │           └── page.tsx
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
+│   │   ├── roadmaps
+│   │   │   ├── im-lesson-updater
+│   │   │   │   └── page.tsx
+│   │   │   ├── json
+│   │   │   │   ├── algebra-1.json
+│   │   │   │   ├── grade-6.json
+│   │   │   │   ├── grade-7.json
+│   │   │   │   └── grade-8.json
+│   │   │   ├── scope-and-sequence
+│   │   │   │   ├── components
+│   │   │   │   │   ├── LessonDetailView.tsx
+│   │   │   │   │   └── LessonListItem.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── scope-and-sequence-uploader
+│   │   │   │   └── page.tsx
+│   │   │   ├── scope-and-sequence-uploader-pair
+│   │   │   │   └── page.tsx
+│   │   │   ├── shared
+│   │   │   │   └── lib
+│   │   │   │       └── roadmaps-auth.ts
+│   │   │   ├── skill-scraper
+│   │   │   │   ├── README.md
+│   │   │   │   ├── actions
+│   │   │   │   │   └── scrape-skills.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── ResultsDisplay.tsx
+│   │   │   │   │   └── RoadmapsScraperForm.tsx
+│   │   │   │   ├── hooks
+│   │   │   │   │   └── useRoadmapsScraper.ts
+│   │   │   │   ├── lib
+│   │   │   │   │   ├── roadmaps-auth.ts
+│   │   │   │   │   ├── skill-extractor.ts
+│   │   │   │   │   └── types.ts
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── practice.html
+│   │   │   │   └── skill.html
+│   │   │   ├── skills
+│   │   │   │   ├── components
+│   │   │   │   │   ├── SkillCard.tsx
+│   │   │   │   │   ├── SkillDetailModal.tsx
+│   │   │   │   │   ├── SkillDetailView.tsx
+│   │   │   │   │   └── SkillListItem.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── unit-scraper
+│   │   │   │   ├── actions
+│   │   │   │   │   └── scrape-units-batch.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── BatchUnitResultDisplay.tsx
+│   │   │   │   │   ├── UnitResultDisplay.tsx
+│   │   │   │   │   └── UnitScraperForm.tsx
+│   │   │   │   ├── example.html
+│   │   │   │   ├── lib
+│   │   │   │   │   ├── dropdown-navigator.ts
+│   │   │   │   │   ├── types.ts
+│   │   │   │   │   └── unit-extractor.ts
+│   │   │   │   └── page.tsx
+│   │   │   └── units
+│   │   │       ├── components
+│   │   │       │   ├── UnitDetailView.tsx
+│   │   │       │   └── UnitListItem.tsx
+│   │   │       └── page.tsx
 │   │   ├── setup
 │   │   │   └── page.tsx
 │   │   ├── test
@@ -509,6 +602,14 @@
 │   │   │       ├── layout.tsx
 │   │   │       └── page.tsx
 │   │   ├── tools
+│   │   │   ├── curriculum-screenshots
+│   │   │   │   ├── actions
+│   │   │   │   │   └── screenshot-questions.ts
+│   │   │   │   ├── components
+│   │   │   │   │   └── CurriculumScreenshotDashboard.tsx
+│   │   │   │   ├── lib
+│   │   │   │   │   └── htmlToPng.ts
+│   │   │   │   └── page.tsx
 │   │   │   ├── dev
 │   │   │   │   ├── seed-data
 │   │   │   │   ├── test-enum-migration
@@ -520,7 +621,9 @@
 │   │   │   ├── im-scraper
 │   │   │   │   ├── actions
 │   │   │   │   │   ├── claude-processor.ts
-│   │   │   │   │   └── scraper.ts
+│   │   │   │   │   ├── scraper.ts
+│   │   │   │   │   └── screenshot-scraper.ts
+│   │   │   │   ├── api-example.json
 │   │   │   │   ├── components
 │   │   │   │   │   ├── ActionButtons.tsx
 │   │   │   │   │   ├── AuthenticationForm.tsx
@@ -549,9 +652,14 @@
 │   │   │   │   ├── lib
 │   │   │   │   │   ├── cooldown-parser.ts
 │   │   │   │   │   ├── im-scraper.ts
+│   │   │   │   │   ├── im-screenshot-scraper.ts
 │   │   │   │   │   ├── image-clipboard.ts
 │   │   │   │   │   └── types.ts
-│   │   │   │   └── page.tsx
+│   │   │   │   ├── page-example.html
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── screenshots
+│   │   │   │       ├── components
+│   │   │   │       └── page.tsx
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── pdf-save
@@ -559,20 +667,6 @@
 │   │   │   │   ├── test.ts
 │   │   │   │   ├── types.ts
 │   │   │   │   └── utils.ts
-│   │   │   ├── roadmaps-scraper
-│   │   │   │   ├── README.md
-│   │   │   │   ├── actions
-│   │   │   │   │   └── scrape-skills.ts
-│   │   │   │   ├── components
-│   │   │   │   │   ├── ResultsDisplay.tsx
-│   │   │   │   │   └── RoadmapsScraperForm.tsx
-│   │   │   │   ├── hooks
-│   │   │   │   │   └── useRoadmapsScraper.ts
-│   │   │   │   ├── lib
-│   │   │   │   │   ├── roadmaps-auth.ts
-│   │   │   │   │   ├── skill-extractor.ts
-│   │   │   │   │   └── types.ts
-│   │   │   │   └── page.tsx
 │   │   │   ├── rubric-viewer
 │   │   │   │   └── page.tsx
 │   │   │   └── things3
@@ -1182,8 +1276,11 @@
 │   │   │   ├── mongoose-schema
 │   │   │   │   ├── 313
 │   │   │   │   │   ├── core.ts
+│   │   │   │   │   ├── roadmap-skill.model.ts
+│   │   │   │   │   ├── roadmap-unit.model.ts
 │   │   │   │   │   ├── roadmap.model.ts
 │   │   │   │   │   ├── roadmaps-student-data.model.ts
+│   │   │   │   │   ├── scope-and-sequence.model.ts
 │   │   │   │   │   ├── storage.ts
 │   │   │   │   │   ├── student-performance.model.ts
 │   │   │   │   │   ├── student.model.ts
@@ -1247,7 +1344,10 @@
 │   │   │   └── zod-schema
 │   │   │       ├── 313
 │   │   │       │   ├── core.ts
+│   │   │       │   ├── roadmap-skill.ts
+│   │   │       │   ├── roadmap-unit.ts
 │   │   │       │   ├── roadmap.ts
+│   │   │       │   ├── scope-and-sequence.ts
 │   │   │       │   ├── storage.ts
 │   │   │       │   ├── student-data.ts
 │   │   │       │   ├── student-performance.ts
@@ -1530,6 +1630,8 @@
 │   │   │   └── hydration-utils.ts
 │   │   └── utilities
 │   │       └── index.ts
+│   ├── scripts
+│   │   └── drop-old-scope-sequence-index.ts
 │   ├── styles
 │   │   └── theme.css
 │   └── types
@@ -1547,4 +1649,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-449 directories, 1099 files
+487 directories, 1163 files
