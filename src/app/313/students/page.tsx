@@ -18,11 +18,11 @@ import { UserGroupIcon } from '@heroicons/react/24/outline';
 const getDistrictMapping = () => {
   return {
     "D11": {
-      sections: ["SRF", "SR6", "SR7", "SR8"] as SummerSectionsType[],
+      sections: ["802", "803"] as SummerSectionsType[],
       teachers: ["ISAAC", "SCERRA"] as SummerTeachersType[]
     },
     "D9": {
-      sections: ["SR1", "SR2", "SR3"] as SummerSectionsType[],
+      sections: ["804", "805"] as SummerSectionsType[],
       teachers: ["BANIK", "VIVAR"] as SummerTeachersType[]
     }
   };
@@ -77,11 +77,9 @@ export default function StudentViewerPage() {
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
         const fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
-        const username = student.username.toLowerCase();
         const studentId = student.studentID.toString();
-        
-        const matchesSearch = fullName.includes(query) || 
-                             username.includes(query) || 
+
+        const matchesSearch = fullName.includes(query) ||
                              studentId.includes(query);
         
         if (!matchesSearch) return false;
@@ -177,7 +175,7 @@ export default function StudentViewerPage() {
           <Text textSize="sm" className="font-medium">
             {row.firstName} {row.lastName}
           </Text>
-          <Text textSize="xs" color="muted">{row.username}</Text>
+          <Text textSize="xs" color="muted">ID: {row.studentID}</Text>
         </div>
       ),
       width: '200px'

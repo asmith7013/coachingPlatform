@@ -13,6 +13,8 @@ interface ScopeAndSequenceEntry {
   lessonName: string;
   section?: string;
   scopeSequenceTag?: string;
+  roadmapSkills?: string[];
+  targetSkills?: string[];
 }
 
 interface UpdateResult {
@@ -67,7 +69,9 @@ export default function ScopeAndSequenceUploaderPage() {
           lessonNumber,
           lessonName: String(item.lessonName),
           section: item.section ? String(item.section) : undefined,
-          scopeSequenceTag: item.scopeSequenceTag ? String(item.scopeSequenceTag) : undefined
+          scopeSequenceTag: item.scopeSequenceTag ? String(item.scopeSequenceTag) : undefined,
+          roadmapSkills: Array.isArray(item.roadmapSkills) ? item.roadmapSkills.map(String) : undefined,
+          targetSkills: Array.isArray(item.targetSkills) ? item.targetSkills.map(String) : undefined
         } as ScopeAndSequenceEntry;
       });
 
@@ -243,7 +247,9 @@ export default function ScopeAndSequenceUploaderPage() {
     "lessonNumber": 15,
     "lessonName": "Using Linear Relations to Solve Problems",
     "section": "B",
-    "scopeSequenceTag": "Algebra 1"
+    "scopeSequenceTag": "Algebra 1",
+    "roadmapSkills": ["3.12", "5.1", "6.2"],
+    "targetSkills": ["5.1", "6.2"]
   }
 ]`}
                   disabled={isProcessing}

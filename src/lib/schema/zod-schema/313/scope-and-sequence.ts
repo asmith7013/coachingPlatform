@@ -14,10 +14,6 @@ export const ScopeSequenceTagZod = z.enum([
   "Grade 7",
   "Grade 8",
   "Algebra 1",
-  "Geometry",
-  "Algebra 2",
-  "Pre-Calculus",
-  "Statistics",
 ]);
 
 export type ScopeSequenceTag = z.infer<typeof ScopeSequenceTagZod>;

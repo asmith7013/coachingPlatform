@@ -19,7 +19,7 @@ import { handleValidationError } from "@error/handlers/validation";
 // =====================================
 
 const scopeAndSequenceCrud = createCrudActions({
-  model: ScopeAndSequenceModel,
+  model: ScopeAndSequenceModel as unknown as Parameters<typeof createCrudActions>[0]['model'],
   schema: ScopeAndSequenceZodSchema as ZodType<ScopeAndSequence>,
   inputSchema: ScopeAndSequenceInputZodSchema as ZodType<ScopeAndSequenceInput>,
   name: 'ScopeAndSequence',
@@ -270,6 +270,88 @@ export async function fetchScopeAndSequenceByUnit(grade: string, unitNumber: num
       return {
         success: false,
         error: handleServerError(error, 'fetchScopeAndSequenceByUnit')
+      };
+    }
+  });
+}
+
+/**
+ * Update roadmap and target skills for a lesson
+ * Uses direct MongoDB update to properly handle array fields
+ */
+export async function updateLessonSkills(
+  id: string,
+  data: {
+    roadmapSkills?: string[];
+    targetSkills?: string[];
+  }
+) {
+  return withDbConnection(async () => {
+    try {
+      console.log(`🔄 [updateLessonSkills] Starting update for lesson ID: ${id}`);
+      console.log(`   📝 Roadmap skills to set:`, data.roadmapSkills);
+      console.log(`   📝 Target skills to set:`, data.targetSkills);
+
+      // Build update object
+      const updateFields: Record<string, unknown> = {
+        updatedAt: new Date().toISOString()
+      };
+
+      if (data.roadmapSkills !== undefined) {
+        updateFields.roadmapSkills = data.roadmapSkills;
+      }
+
+      if (data.targetSkills !== undefined) {
+        updateFields.targetSkills = data.targetSkills;
+      }
+
+      console.log(`   🔧 Update fields:`, JSON.stringify(updateFields, null, 2));
+
+      // First, fetch the document to see its current state
+      const beforeDoc = await ScopeAndSequenceModel.findById(id);
+      if (!beforeDoc) {
+        console.error(`   ❌ Lesson with ID ${id} not found`);
+        return {
+          success: false,
+          error: `Lesson with ID ${id} not found`
+        };
+      }
+
+      console.log(`   📋 BEFORE update - roadmapSkills:`, beforeDoc.roadmapSkills);
+      console.log(`   📋 BEFORE update - targetSkills:`, beforeDoc.targetSkills);
+
+      // Direct MongoDB update using $set
+      const updatedDoc = await ScopeAndSequenceModel.findByIdAndUpdate(
+        id,
+        { $set: updateFields },
+        { new: true, runValidators: false } // Disable validators to allow empty arrays
+      );
+
+      if (!updatedDoc) {
+        console.error(`   ❌ Update returned null`);
+        return {
+          success: false,
+          error: `Update failed for lesson with ID ${id}`
+        };
+      }
+
+      console.log(`   ✅ Successfully updated lesson`);
+      console.log(`   📊 AFTER update - roadmapSkills:`, updatedDoc.roadmapSkills);
+      console.log(`   📊 AFTER update - targetSkills:`, updatedDoc.targetSkills);
+      console.log(`   📊 AFTER update - updatedAt:`, updatedDoc.get('updatedAt'));
+
+      revalidatePath('/roadmaps/scope-and-sequence');
+
+      return {
+        success: true,
+        data: updatedDoc.toObject(),
+        message: `Skills updated successfully`
+      };
+    } catch (error) {
+      console.error('💥 [updateLessonSkills] Error:', error);
+      return {
+        success: false,
+        error: handleServerError(error, 'updateLessonSkills')
       };
     }
   });

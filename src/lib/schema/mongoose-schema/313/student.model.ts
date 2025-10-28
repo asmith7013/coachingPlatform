@@ -16,12 +16,11 @@ const studentSchemaFields = {
   lastName: { type: String, required: true },
   section: { type: String, required: true, index: true },
   teacher: { type: String, required: true, index: true },
-  username: { type: String, required: true },
-  password: { type: String, required: true },
   gradeLevel: { type: String, required: false },
 //   subject: { type: String, required: true },
   email: { type: String, required: false },
   active: { type: Boolean, default: true, index: true },
+  masteredSkills: { type: [String], default: [], index: true },
   ...standardDocumentFields
 };
 

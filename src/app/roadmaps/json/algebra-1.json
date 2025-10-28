@@ -6,8 +6,16 @@
     "unitNumber": 1,
     "lessonNumber": 1,
     "lessonName": "Getting to Know You",
-    "roadmapSkills": ["384", "385"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "384",
+      "385"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -16,8 +24,17 @@
     "unitNumber": 1,
     "lessonNumber": 2,
     "lessonName": "Data Representations",
-    "roadmapSkills": ["384", "385"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "384",
+      "385"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
@@ -26,8 +43,16 @@
     "unitNumber": 1,
     "lessonNumber": 3,
     "lessonName": "A Gallery of Data",
-    "roadmapSkills": ["384", "385"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "384",
+      "385"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -36,8 +61,16 @@
     "unitNumber": 1,
     "lessonNumber": 4,
     "lessonName": "The Shape of Distributions",
-    "roadmapSkills": ["384", "385"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "384",
+      "385"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -46,8 +79,17 @@
     "unitNumber": 1,
     "lessonNumber": 5,
     "lessonName": "Calculating Measures of Center and Variability",
-    "roadmapSkills": ["384", "385"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "384",
+      "385"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
@@ -57,7 +99,12 @@
     "lessonNumber": 6,
     "lessonName": "Mystery Computations",
     "roadmapSkills": [],
-    "targetSkills": []
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -67,7 +114,12 @@
     "lessonNumber": 7,
     "lessonName": "Spreadsheet Computations",
     "roadmapSkills": [],
-    "targetSkills": []
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -77,7 +129,12 @@
     "lessonNumber": 8,
     "lessonName": "Spreadsheet Shortcuts",
     "roadmapSkills": [],
-    "targetSkills": []
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -87,7 +144,12 @@
     "lessonNumber": 9,
     "lessonName": "Technological Graphing",
     "roadmapSkills": [],
-    "targetSkills": []
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -96,8 +158,16 @@
     "unitNumber": 1,
     "lessonNumber": 10,
     "lessonName": "The Effect of Extremes",
-    "roadmapSkills": ["565"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "565"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
   },
   {
     "grade": "Algebra 1",
@@ -106,8 +176,18 @@
     "unitNumber": 1,
     "lessonNumber": 11,
     "lessonName": "Comparing and Contrasting Data Distributions",
-    "roadmapSkills": ["384", "385", "565"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "384",
+      "385",
+      "565"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
   },
   {
     "grade": "Algebra 1",
@@ -116,8 +196,16 @@
     "unitNumber": 1,
     "lessonNumber": 12,
     "lessonName": "Standard Deviation",
-    "roadmapSkills": ["565"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "565"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
   },
   {
     "grade": "Algebra 1",
@@ -126,8 +214,15 @@
     "unitNumber": 1,
     "lessonNumber": 13,
     "lessonName": "More Standard Deviation",
-    "roadmapSkills": ["565"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "565"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -136,8 +231,16 @@
     "unitNumber": 1,
     "lessonNumber": 14,
     "lessonName": "Outliers",
-    "roadmapSkills": ["565"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "565"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
   },
   {
     "grade": "Algebra 1",
@@ -146,8 +249,18 @@
     "unitNumber": 1,
     "lessonNumber": 15,
     "lessonName": "Comparing Data Sets",
-    "roadmapSkills": ["384", "385", "565"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "384",
+      "385",
+      "565"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
   },
   {
     "grade": "Algebra 1",
@@ -156,8 +269,17 @@
     "unitNumber": 1,
     "lessonNumber": 16,
     "lessonName": "Analyzing Data",
-    "roadmapSkills": ["384", "385", "565"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "384",
+      "385",
+      "565"
+    ],
+    "targetSkills": [
+      "385",
+      "384",
+      "565"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -166,8 +288,24 @@
     "unitNumber": 2,
     "lessonNumber": 1,
     "lessonName": "Planning a Pizza Party",
-    "roadmapSkills": ["331"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "331"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -176,8 +314,25 @@
     "unitNumber": 2,
     "lessonNumber": 2,
     "lessonName": "Writing Equations to Model Relationships (Part 1)",
-    "roadmapSkills": ["331"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "331"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
@@ -187,7 +342,22 @@
     "lessonNumber": 3,
     "lessonName": "Writing Equations to Model Relationships (Part 2)",
     "roadmapSkills": [],
-    "targetSkills": []
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
@@ -196,8 +366,25 @@
     "unitNumber": 2,
     "lessonNumber": 4,
     "lessonName": "Equations and Their Solutions",
-    "roadmapSkills": ["358"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "358"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
@@ -206,8 +393,26 @@
     "unitNumber": 2,
     "lessonNumber": 5,
     "lessonName": "Equations and Their Graphs",
-    "roadmapSkills": ["358", "167"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "358",
+      "167"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
@@ -216,8 +421,25 @@
     "unitNumber": 2,
     "lessonNumber": 6,
     "lessonName": "Equivalent Equations",
-    "roadmapSkills": ["204"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "204"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
@@ -226,8 +448,25 @@
     "unitNumber": 2,
     "lessonNumber": 7,
     "lessonName": "Explaining Steps for Rewriting Equations",
-    "roadmapSkills": ["204", "601"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "204",
+      "601"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -236,8 +475,25 @@
     "unitNumber": 2,
     "lessonNumber": 8,
     "lessonName": "Which Variable to Solve for? (Part 1)",
-    "roadmapSkills": ["345"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "345"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
@@ -246,8 +502,24 @@
     "unitNumber": 2,
     "lessonNumber": 9,
     "lessonName": "Which Variable to Solve for? (Part 2)",
-    "roadmapSkills": ["345"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "345"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -256,8 +528,25 @@
     "unitNumber": 2,
     "lessonNumber": 10,
     "lessonName": "Connecting Equations to Graphs (Part 1)",
-    "roadmapSkills": ["326"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "326"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
@@ -266,8 +555,24 @@
     "unitNumber": 2,
     "lessonNumber": 11,
     "lessonName": "Connecting Equations to Graphs (Part 2)",
-    "roadmapSkills": ["326"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "326"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -276,8 +581,25 @@
     "unitNumber": 2,
     "lessonNumber": 12,
     "lessonName": "Writing and Graphing Systems of Linear Equations",
-    "roadmapSkills": ["236", "332"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "236",
+      "332"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -286,8 +608,24 @@
     "unitNumber": 2,
     "lessonNumber": 13,
     "lessonName": "Solving Systems by Substitution",
-    "roadmapSkills": ["335"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "335"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -296,8 +634,25 @@
     "unitNumber": 2,
     "lessonNumber": 14,
     "lessonName": "Solving Systems by Elimination (Part 1)",
-    "roadmapSkills": ["553"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "553"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
@@ -306,8 +661,24 @@
     "unitNumber": 2,
     "lessonNumber": 15,
     "lessonName": "Solving Systems by Elimination (Part 2)",
-    "roadmapSkills": ["553"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "553"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -316,8 +687,25 @@
     "unitNumber": 2,
     "lessonNumber": 16,
     "lessonName": "Solving Systems by Elimination (Part 3)",
-    "roadmapSkills": ["553"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "553"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
@@ -326,98 +714,213 @@
     "unitNumber": 2,
     "lessonNumber": 17,
     "lessonName": "Systems of Linear Equations and Their Solutions",
-    "roadmapSkills": ["544"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "544"
+    ],
+    "targetSkills": [
+      "167",
+      "204",
+      "236",
+      "326",
+      "331",
+      "332",
+      "335",
+      "345",
+      "358",
+      "544",
+      "553",
+      "601"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 2 - Linear Equations, Inequalities, and Systems",
-    "unitLessonId": "2.18",
-    "unitNumber": 2,
-    "lessonNumber": 18,
+    "unit": "Unit 4 - Linear Inequalities and Systems",
+    "unitLessonId": "4.1",
+    "unitNumber": 4,
+    "lessonNumber": 1,
     "lessonName": "Representing Situations with Inequalities",
-    "roadmapSkills": ["331"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "331"
+    ],
+    "targetSkills": [
+      "273",
+      "331",
+      "346",
+      "363",
+      "364",
+      "765"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 2 - Linear Equations, Inequalities, and Systems",
-    "unitLessonId": "2.19",
-    "unitNumber": 2,
-    "lessonNumber": 19,
+    "unit": "Unit 4 - Linear Inequalities and Systems",
+    "unitLessonId": "4.2",
+    "unitNumber": 4,
+    "lessonNumber": 2,
     "lessonName": "Solutions to Inequalities in One Variable",
-    "roadmapSkills": ["273", "346"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "273",
+      "346"
+    ],
+    "targetSkills": [
+      "273",
+      "331",
+      "346",
+      "363",
+      "364",
+      "765"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 2 - Linear Equations, Inequalities, and Systems",
-    "unitLessonId": "2.20",
-    "unitNumber": 2,
-    "lessonNumber": 20,
+    "unit": "Unit 4 - Linear Inequalities and Systems",
+    "unitLessonId": "4.3",
+    "unitNumber": 4,
+    "lessonNumber": 3,
     "lessonName": "Writing and Solving Inequalities in One Variable",
-    "roadmapSkills": ["273", "346"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "273",
+      "346"
+    ],
+    "targetSkills": [
+      "273",
+      "331",
+      "346",
+      "363",
+      "364",
+      "765"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 2 - Linear Equations, Inequalities, and Systems",
-    "unitLessonId": "2.21",
-    "unitNumber": 2,
-    "lessonNumber": 21,
+    "unit": "Unit 4 - Linear Inequalities and Systems",
+    "unitLessonId": "4.4",
+    "unitNumber": 4,
+    "lessonNumber": 4,
     "lessonName": "Graphing Linear Inequalities in Two Variables (Part 1)",
-    "roadmapSkills": ["363"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "363"
+    ],
+    "targetSkills": [
+      "273",
+      "331",
+      "346",
+      "363",
+      "364",
+      "765"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 2 - Linear Equations, Inequalities, and Systems",
-    "unitLessonId": "2.22",
-    "unitNumber": 2,
-    "lessonNumber": 22,
+    "unit": "Unit 4 - Linear Inequalities and Systems",
+    "unitLessonId": "4.5",
+    "unitNumber": 4,
+    "lessonNumber": 5,
     "lessonName": "Graphing Linear Inequalities in Two Variables (Part 2)",
-    "roadmapSkills": ["363"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "363"
+    ],
+    "targetSkills": [
+      "273",
+      "331",
+      "346",
+      "363",
+      "364",
+      "765"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 2 - Linear Equations, Inequalities, and Systems",
-    "unitLessonId": "2.23",
-    "unitNumber": 2,
-    "lessonNumber": 23,
+    "unit": "Unit 4 - Linear Inequalities and Systems",
+    "unitLessonId": "4.6",
+    "unitNumber": 4,
+    "lessonNumber": 6,
     "lessonName": "Solving Problems with Inequalities in Two Variables",
-    "roadmapSkills": ["363"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "363"
+    ],
+    "targetSkills": [
+      "273",
+      "331",
+      "346",
+      "363",
+      "364",
+      "765"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 2 - Linear Equations, Inequalities, and Systems",
-    "unitLessonId": "2.24",
-    "unitNumber": 2,
-    "lessonNumber": 24,
+    "unit": "Unit 4 - Linear Inequalities and Systems",
+    "unitLessonId": "4.7",
+    "unitNumber": 4,
+    "lessonNumber": 7,
     "lessonName": "Solutions to Systems of Linear Inequalities in Two Variables",
-    "roadmapSkills": ["364"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "364"
+    ],
+    "targetSkills": [
+      "273",
+      "331",
+      "346",
+      "363",
+      "364",
+      "765"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 2 - Linear Equations, Inequalities, and Systems",
-    "unitLessonId": "2.25",
-    "unitNumber": 2,
-    "lessonNumber": 25,
+    "unit": "Unit 4 - Linear Inequalities and Systems",
+    "unitLessonId": "4.8",
+    "unitNumber": 4,
+    "lessonNumber": 8,
     "lessonName": "Solving Problems with Systems of Linear Inequalities in Two Variables",
-    "roadmapSkills": ["765"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "765"
+    ],
+    "targetSkills": [
+      "273",
+      "331",
+      "346",
+      "363",
+      "364",
+      "765"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 2 - Linear Equations, Inequalities, and Systems",
-    "unitLessonId": "2.26",
-    "unitNumber": 2,
-    "lessonNumber": 26,
+    "unit": "Unit 4 - Linear Inequalities and Systems",
+    "unitLessonId": "4.9",
+    "unitNumber": 4,
+    "lessonNumber": 9,
     "lessonName": "Modeling with Systems of Inequalities in Two Variables",
-    "roadmapSkills": ["765"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "765"
+    ],
+    "targetSkills": [
+      "273",
+      "331",
+      "346",
+      "363",
+      "364",
+      "765"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
@@ -426,8 +929,17 @@
     "unitNumber": 3,
     "lessonNumber": 1,
     "lessonName": "Two-way Tables",
-    "roadmapSkills": ["562"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "562"
+    ],
+    "targetSkills": [
+      "503",
+      "381",
+      "800",
+      "562",
+      "558"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -436,8 +948,18 @@
     "unitNumber": 3,
     "lessonNumber": 2,
     "lessonName": "Relative Frequency Tables",
-    "roadmapSkills": ["562"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "562"
+    ],
+    "targetSkills": [
+      "503",
+      "381",
+      "800",
+      "562",
+      "558"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
@@ -446,8 +968,18 @@
     "unitNumber": 3,
     "lessonNumber": 3,
     "lessonName": "Associations in Categorical Data",
-    "roadmapSkills": ["562"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "562"
+    ],
+    "targetSkills": [
+      "503",
+      "381",
+      "800",
+      "562",
+      "558"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
@@ -456,8 +988,18 @@
     "unitNumber": 3,
     "lessonNumber": 4,
     "lessonName": "Linear Models",
-    "roadmapSkills": ["800"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "800"
+    ],
+    "targetSkills": [
+      "503",
+      "381",
+      "800",
+      "562",
+      "558"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
@@ -466,8 +1008,17 @@
     "unitNumber": 3,
     "lessonNumber": 5,
     "lessonName": "Fitting Lines",
-    "roadmapSkills": ["800"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "800"
+    ],
+    "targetSkills": [
+      "503",
+      "381",
+      "800",
+      "562",
+      "558"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -476,8 +1027,17 @@
     "unitNumber": 3,
     "lessonNumber": 6,
     "lessonName": "Residuals",
-    "roadmapSkills": ["623"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "623"
+    ],
+    "targetSkills": [
+      "503",
+      "381",
+      "800",
+      "562",
+      "558"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -486,8 +1046,18 @@
     "unitNumber": 3,
     "lessonNumber": 7,
     "lessonName": "The Correlation Coefficient",
-    "roadmapSkills": ["558"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "558"
+    ],
+    "targetSkills": [
+      "503",
+      "381",
+      "800",
+      "562",
+      "558"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
@@ -496,8 +1066,17 @@
     "unitNumber": 3,
     "lessonNumber": 8,
     "lessonName": "Using the Correlation Coefficient",
-    "roadmapSkills": ["558"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "558"
+    ],
+    "targetSkills": [
+      "503",
+      "381",
+      "800",
+      "562",
+      "558"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -506,8 +1085,17 @@
     "unitNumber": 3,
     "lessonNumber": 9,
     "lessonName": "Causal Relationships",
-    "roadmapSkills": ["381"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "381"
+    ],
+    "targetSkills": [
+      "503",
+      "381",
+      "800",
+      "562",
+      "558"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
@@ -516,807 +1104,2114 @@
     "unitNumber": 3,
     "lessonNumber": 10,
     "lessonName": "Fossils and Flags",
-    "roadmapSkills": ["800", "381"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "800",
+      "381"
+    ],
+    "targetSkills": [
+      "503",
+      "381",
+      "800",
+      "562",
+      "558"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.1",
-    "unitNumber": 4,
-    "lessonNumber": 1,
-    "lessonName": "Describing and Graphing Situations",
-    "roadmapSkills": ["325"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.2",
-    "unitNumber": 4,
-    "lessonNumber": 2,
-    "lessonName": "Function Notation",
-    "roadmapSkills": ["548"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.3",
-    "unitNumber": 4,
-    "lessonNumber": 3,
-    "lessonName": "Interpreting & Using Function Notation",
-    "roadmapSkills": ["548"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.4",
-    "unitNumber": 4,
-    "lessonNumber": 4,
-    "lessonName": "Using Function Notation to Describe Rules (Part 1)",
-    "roadmapSkills": ["548"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.5",
-    "unitNumber": 4,
-    "lessonNumber": 5,
-    "lessonName": "Using Function Notation to Describe Rules (Part 2)",
-    "roadmapSkills": ["548"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.6",
-    "unitNumber": 4,
-    "lessonNumber": 6,
-    "lessonName": "Features of Graphs",
-    "roadmapSkills": ["129"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.7",
-    "unitNumber": 4,
-    "lessonNumber": 7,
-    "lessonName": "Using Graphs to Find Average Rate of Change",
-    "roadmapSkills": ["554"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.8",
-    "unitNumber": 4,
-    "lessonNumber": 8,
-    "lessonName": "Interpreting and Creating Graphs",
-    "roadmapSkills": ["129"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.9",
-    "unitNumber": 4,
-    "lessonNumber": 9,
-    "lessonName": "Comparing Graphs",
-    "roadmapSkills": ["129", "548"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.10",
-    "unitNumber": 4,
-    "lessonNumber": 10,
-    "lessonName": "Domain and Range (Part 1)",
-    "roadmapSkills": ["752"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.11",
-    "unitNumber": 4,
-    "lessonNumber": 11,
-    "lessonName": "Domain and Range (Part 2)",
-    "roadmapSkills": ["752"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.12",
-    "unitNumber": 4,
-    "lessonNumber": 12,
-    "lessonName": "Piecewise Functions",
-    "roadmapSkills": ["561"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.13",
-    "unitNumber": 4,
-    "lessonNumber": 13,
-    "lessonName": "Absolute Value Functions (Part 1)",
-    "roadmapSkills": ["763"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.14",
-    "unitNumber": 4,
-    "lessonNumber": 14,
-    "lessonName": "Absolute Value Functions (Part 2)",
-    "roadmapSkills": ["763"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.15",
-    "unitNumber": 4,
-    "lessonNumber": 15,
-    "lessonName": "Inverse Functions",
-    "roadmapSkills": ["559"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.16",
-    "unitNumber": 4,
-    "lessonNumber": 16,
-    "lessonName": "Finding and Interpreting Inverse Functions",
-    "roadmapSkills": ["559"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.17",
-    "unitNumber": 4,
-    "lessonNumber": 17,
-    "lessonName": "Writing Inverse Functions to Solve Problems",
-    "roadmapSkills": ["559"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 4 - Functions",
-    "unitLessonId": "4.18",
-    "unitNumber": 4,
-    "lessonNumber": 18,
-    "lessonName": "Using Functions to Model Battery Power",
-    "roadmapSkills": ["554", "800"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.1",
     "unitNumber": 5,
     "lessonNumber": 1,
-    "lessonName": "Growing and Growing",
-    "roadmapSkills": ["622"],
-    "targetSkills": []
+    "lessonName": "Describing and Graphing Situations",
+    "roadmapSkills": [
+      "325"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.2",
     "unitNumber": 5,
     "lessonNumber": 2,
-    "lessonName": "Patterns of Growth",
-    "roadmapSkills": ["622"],
-    "targetSkills": []
+    "lessonName": "Function Notation",
+    "roadmapSkills": [
+      "548"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.3",
     "unitNumber": 5,
     "lessonNumber": 3,
-    "lessonName": "Representing Exponential Growth",
-    "roadmapSkills": ["365"],
-    "targetSkills": []
+    "lessonName": "Interpreting & Using Function Notation",
+    "roadmapSkills": [
+      "548"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.4",
     "unitNumber": 5,
     "lessonNumber": 4,
-    "lessonName": "Understanding Decay",
-    "roadmapSkills": ["365"],
-    "targetSkills": []
+    "lessonName": "Using Function Notation to Describe Rules (Part 1)",
+    "roadmapSkills": [
+      "548"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.5",
     "unitNumber": 5,
     "lessonNumber": 5,
-    "lessonName": "Representing Exponential Decay",
-    "roadmapSkills": ["365"],
-    "targetSkills": []
+    "lessonName": "Using Function Notation to Describe Rules (Part 2)",
+    "roadmapSkills": [
+      "548"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.6",
     "unitNumber": 5,
     "lessonNumber": 6,
-    "lessonName": "Analyzing Graphs",
-    "roadmapSkills": ["365"],
-    "targetSkills": []
+    "lessonName": "Features of Graphs",
+    "roadmapSkills": [
+      "129"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.7",
     "unitNumber": 5,
     "lessonNumber": 7,
-    "lessonName": "Using Negative Exponents",
-    "roadmapSkills": ["365", "334"],
-    "targetSkills": []
+    "lessonName": "Using Graphs to Find Average Rate of Change",
+    "roadmapSkills": [
+      "554"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.8",
     "unitNumber": 5,
     "lessonNumber": 8,
-    "lessonName": "Exponential Situations as Functions",
-    "roadmapSkills": ["334", "764"],
-    "targetSkills": []
+    "lessonName": "Interpreting and Creating Graphs",
+    "roadmapSkills": [
+      "129"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.9",
     "unitNumber": 5,
     "lessonNumber": 9,
-    "lessonName": "Interpreting Exponential Functions",
-    "roadmapSkills": ["764", "334"],
-    "targetSkills": []
+    "lessonName": "Comparing Graphs",
+    "roadmapSkills": [
+      "129",
+      "548"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.10",
     "unitNumber": 5,
     "lessonNumber": 10,
-    "lessonName": "Looking at Rates of Change",
-    "roadmapSkills": ["764"],
-    "targetSkills": []
+    "lessonName": "Domain and Range (Part 1)",
+    "roadmapSkills": [
+      "752"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.11",
     "unitNumber": 5,
     "lessonNumber": 11,
-    "lessonName": "Modeling Exponential Behavior",
-    "roadmapSkills": ["764"],
-    "targetSkills": []
+    "lessonName": "Domain and Range (Part 2)",
+    "roadmapSkills": [
+      "752"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.12",
     "unitNumber": 5,
     "lessonNumber": 12,
-    "lessonName": "Reasoning about Exponential Graphs (Part 1)",
-    "roadmapSkills": ["365", "334", "764"],
-    "targetSkills": []
+    "lessonName": "Piecewise Functions",
+    "roadmapSkills": [
+      "561"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.13",
     "unitNumber": 5,
     "lessonNumber": 13,
-    "lessonName": "Reasoning about Exponential Graphs (Part 2)",
-    "roadmapSkills": ["764", "365", "334", "555"],
-    "targetSkills": []
+    "lessonName": "Absolute Value Functions (Part 1)",
+    "roadmapSkills": [
+      "763"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.14",
     "unitNumber": 5,
     "lessonNumber": 14,
-    "lessonName": "Recalling Percent Change",
-    "roadmapSkills": ["799"],
-    "targetSkills": []
+    "lessonName": "Absolute Value Functions (Part 2)",
+    "roadmapSkills": [
+      "763"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.15",
     "unitNumber": 5,
     "lessonNumber": 15,
-    "lessonName": "Functions Involving Percent Change",
-    "roadmapSkills": ["799"],
-    "targetSkills": []
+    "lessonName": "Inverse Functions",
+    "roadmapSkills": [
+      "559"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.16",
     "unitNumber": 5,
     "lessonNumber": 16,
-    "lessonName": "Compounding Interest",
-    "roadmapSkills": ["799"],
-    "targetSkills": []
+    "lessonName": "Finding and Interpreting Inverse Functions",
+    "roadmapSkills": [
+      "559"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.17",
     "unitNumber": 5,
     "lessonNumber": 17,
-    "lessonName": "Different Compounding Intervals",
-    "roadmapSkills": ["799"],
-    "targetSkills": []
+    "lessonName": "Writing Inverse Functions to Solve Problems",
+    "roadmapSkills": [
+      "559"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
+    "unit": "Unit 5 - Functions",
     "unitLessonId": "5.18",
     "unitNumber": 5,
     "lessonNumber": 18,
-    "lessonName": "Expressed in Different Ways",
-    "roadmapSkills": ["799", "334", "754", "755"],
-    "targetSkills": []
+    "lessonName": "Using Functions to Model Battery Power",
+    "roadmapSkills": [
+      "554",
+      "800"
+    ],
+    "targetSkills": [
+      "325",
+      "129",
+      "752",
+      "548",
+      "554",
+      "561",
+      "559",
+      "766",
+      "555",
+      "768"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
-    "unitLessonId": "5.19",
-    "unitNumber": 5,
-    "lessonNumber": 19,
-    "lessonName": "Which One Changes Faster?",
-    "roadmapSkills": ["799", "622", "555"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
-    "unitLessonId": "5.20",
-    "unitNumber": 5,
-    "lessonNumber": 20,
-    "lessonName": "Changes over Equal Intervals",
-    "roadmapSkills": ["622", "555"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 5 - Introduction to Exponential Functions",
-    "unitLessonId": "5.21",
-    "unitNumber": 5,
-    "lessonNumber": 21,
-    "lessonName": "Predicting Populations",
-    "roadmapSkills": ["554", "622"],
-    "targetSkills": []
-  },
-  {
-    "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.1",
     "unitNumber": 6,
     "lessonNumber": 1,
-    "lessonName": "A Different Kind of Change",
-    "roadmapSkills": ["547"],
-    "targetSkills": []
+    "lessonName": "Growing and Growing",
+    "roadmapSkills": [
+      "622"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.2",
     "unitNumber": 6,
     "lessonNumber": 2,
-    "lessonName": "How Does it Change?",
-    "roadmapSkills": ["547"],
-    "targetSkills": []
+    "lessonName": "Patterns of Growth",
+    "roadmapSkills": [
+      "622"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.3",
     "unitNumber": 6,
     "lessonNumber": 3,
-    "lessonName": "Building Quadratic Functions from Geometric Patterns",
-    "roadmapSkills": ["547"],
-    "targetSkills": []
+    "lessonName": "Representing Exponential Growth",
+    "roadmapSkills": [
+      "365"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.4",
     "unitNumber": 6,
     "lessonNumber": 4,
-    "lessonName": "Comparing Quadratic and Exponential Functions",
-    "roadmapSkills": ["547"],
-    "targetSkills": []
+    "lessonName": "Understanding Decay",
+    "roadmapSkills": [
+      "365"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.5",
     "unitNumber": 6,
     "lessonNumber": 5,
-    "lessonName": "Building Quadratic Functions to Describe Situations (Part 1)",
-    "roadmapSkills": ["547"],
-    "targetSkills": []
+    "lessonName": "Representing Exponential Decay",
+    "roadmapSkills": [
+      "365"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.6",
     "unitNumber": 6,
     "lessonNumber": 6,
-    "lessonName": "Building Quadratic Functions to Describe Situations (Part 2)",
-    "roadmapSkills": ["319"],
-    "targetSkills": []
+    "lessonName": "Analyzing Graphs",
+    "roadmapSkills": [
+      "365"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.7",
     "unitNumber": 6,
     "lessonNumber": 7,
-    "lessonName": "Building Quadratic Functions to Describe Situations (Part 3)",
-    "roadmapSkills": ["319"],
-    "targetSkills": []
+    "lessonName": "Using Negative Exponents",
+    "roadmapSkills": [
+      "365",
+      "334"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.8",
     "unitNumber": 6,
     "lessonNumber": 8,
-    "lessonName": "Equivalent Quadratic Expressions",
-    "roadmapSkills": ["749", "259", "761"],
-    "targetSkills": []
+    "lessonName": "Exponential Situations as Functions",
+    "roadmapSkills": [
+      "334",
+      "764"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.9",
     "unitNumber": 6,
     "lessonNumber": 9,
-    "lessonName": "Standard Form and Factored Form",
-    "roadmapSkills": ["761"],
-    "targetSkills": []
+    "lessonName": "Interpreting Exponential Functions",
+    "roadmapSkills": [
+      "764",
+      "334"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.10",
     "unitNumber": 6,
     "lessonNumber": 10,
-    "lessonName": "Graphs of Functions in Standard and Factored Forms",
-    "roadmapSkills": ["761"],
-    "targetSkills": []
+    "lessonName": "Looking at Rates of Change",
+    "roadmapSkills": [
+      "764"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.11",
     "unitNumber": 6,
     "lessonNumber": 11,
-    "lessonName": "Graphing from the Factored Form",
-    "roadmapSkills": ["547"],
-    "targetSkills": []
+    "lessonName": "Modeling Exponential Behavior",
+    "roadmapSkills": [
+      "764"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.12",
     "unitNumber": 6,
     "lessonNumber": 12,
-    "lessonName": "Graphing the Standard Form (Part 1)",
-    "roadmapSkills": ["547", "761"],
-    "targetSkills": []
+    "lessonName": "Reasoning about Exponential Graphs (Part 1)",
+    "roadmapSkills": [
+      "365",
+      "334",
+      "764"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.13",
     "unitNumber": 6,
     "lessonNumber": 13,
-    "lessonName": "Graphing the Standard Form (Part 2)",
-    "roadmapSkills": ["547", "761"],
-    "targetSkills": []
+    "lessonName": "Reasoning about Exponential Graphs (Part 2)",
+    "roadmapSkills": [
+      "764",
+      "365",
+      "334",
+      "555"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.14",
     "unitNumber": 6,
     "lessonNumber": 14,
-    "lessonName": "Graphs That Represent Situations",
-    "roadmapSkills": ["319"],
-    "targetSkills": []
+    "lessonName": "Recalling Percent Change",
+    "roadmapSkills": [
+      "799"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.15",
     "unitNumber": 6,
     "lessonNumber": 15,
-    "lessonName": "Vertex Form",
-    "roadmapSkills": ["761"],
-    "targetSkills": []
+    "lessonName": "Functions Involving Percent Change",
+    "roadmapSkills": [
+      "799"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.16",
     "unitNumber": 6,
     "lessonNumber": 16,
-    "lessonName": "Graphing from the Vertex Form",
-    "roadmapSkills": ["761"],
-    "targetSkills": []
+    "lessonName": "Compounding Interest",
+    "roadmapSkills": [
+      "799"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 6 - Introduction to Quadratic Functions",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
     "unitLessonId": "6.17",
     "unitNumber": 6,
     "lessonNumber": 17,
-    "lessonName": "Changing the Vertex",
-    "roadmapSkills": ["761"],
-    "targetSkills": []
+    "lessonName": "Different Compounding Intervals",
+    "roadmapSkills": [
+      "799"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
+    "unitLessonId": "6.18",
+    "unitNumber": 6,
+    "lessonNumber": 18,
+    "lessonName": "Expressed in Different Ways",
+    "roadmapSkills": [
+      "799",
+      "334",
+      "754",
+      "755"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
+    "unitLessonId": "6.19",
+    "unitNumber": 6,
+    "lessonNumber": 19,
+    "lessonName": "Which One Changes Faster?",
+    "roadmapSkills": [
+      "799",
+      "622",
+      "555"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "E"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
+    "unitLessonId": "6.20",
+    "unitNumber": 6,
+    "lessonNumber": 20,
+    "lessonName": "Changes over Equal Intervals",
+    "roadmapSkills": [
+      "622",
+      "555"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 6 - Introduction to Exponential Functions",
+    "unitLessonId": "6.21",
+    "unitNumber": 6,
+    "lessonNumber": 21,
+    "lessonName": "Predicting Populations",
+    "roadmapSkills": [
+      "554",
+      "622"
+    ],
+    "targetSkills": [
+      "111",
+      "620",
+      "734",
+      "552",
+      "146",
+      "365",
+      "622",
+      "764",
+      "560",
+      "799",
+      "334"
+    ],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.1",
     "unitNumber": 7,
     "lessonNumber": 1,
-    "lessonName": "Finding Unknown Inputs",
-    "roadmapSkills": ["333"],
-    "targetSkills": []
+    "lessonName": "A Different Kind of Change",
+    "roadmapSkills": [
+      "547"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.2",
     "unitNumber": 7,
     "lessonNumber": 2,
-    "lessonName": "When and Why Do We Write Quadratic Equations?",
-    "roadmapSkills": ["333"],
-    "targetSkills": []
+    "lessonName": "How Does it Change?",
+    "roadmapSkills": [
+      "547"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.3",
     "unitNumber": 7,
     "lessonNumber": 3,
-    "lessonName": "Solving Quadratic Equations by Reasoning",
-    "roadmapSkills": ["313", "349"],
-    "targetSkills": []
+    "lessonName": "Building Quadratic Functions from Geometric Patterns",
+    "roadmapSkills": [
+      "547"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.4",
     "unitNumber": 7,
     "lessonNumber": 4,
-    "lessonName": "Solving Quadratic Equations with the Zero Product Property",
-    "roadmapSkills": ["349"],
-    "targetSkills": []
+    "lessonName": "Comparing Quadratic and Exponential Functions",
+    "roadmapSkills": [
+      "547"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.5",
     "unitNumber": 7,
     "lessonNumber": 5,
-    "lessonName": "How Many Solutions?",
-    "roadmapSkills": ["349"],
-    "targetSkills": []
+    "lessonName": "Building Quadratic Functions to Describe Situations (Part 1)",
+    "roadmapSkills": [
+      "547"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.6",
     "unitNumber": 7,
     "lessonNumber": 6,
-    "lessonName": "Rewriting Quadratic Expressions in Factored Form (Part 1)",
-    "roadmapSkills": ["285", "200"],
-    "targetSkills": []
+    "lessonName": "Building Quadratic Functions to Describe Situations (Part 2)",
+    "roadmapSkills": [
+      "319"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.7",
     "unitNumber": 7,
     "lessonNumber": 7,
-    "lessonName": "Rewriting Quadratic Expressions in Factored Form (Part 2)",
-    "roadmapSkills": ["285"],
-    "targetSkills": []
+    "lessonName": "Building Quadratic Functions to Describe Situations (Part 3)",
+    "roadmapSkills": [
+      "319"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.8",
     "unitNumber": 7,
     "lessonNumber": 8,
-    "lessonName": "Rewriting Quadratic Expressions in Factored Form (Part 3)",
-    "roadmapSkills": ["342"],
-    "targetSkills": []
+    "lessonName": "Equivalent Quadratic Expressions",
+    "roadmapSkills": [
+      "749",
+      "259",
+      "761"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.9",
     "unitNumber": 7,
     "lessonNumber": 9,
-    "lessonName": "Solving Quadratic Equations by Using Factored Form",
-    "roadmapSkills": ["349"],
-    "targetSkills": []
+    "lessonName": "Standard Form and Factored Form",
+    "roadmapSkills": [
+      "761"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.10",
     "unitNumber": 7,
     "lessonNumber": 10,
-    "lessonName": "Rewriting Quadratic Expressions in Factored Form (Part 4)",
-    "roadmapSkills": ["550"],
-    "targetSkills": []
+    "lessonName": "Graphs of Functions in Standard and Factored Forms",
+    "roadmapSkills": [
+      "761"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.11",
     "unitNumber": 7,
     "lessonNumber": 11,
-    "lessonName": "What are Perfect Squares?",
-    "roadmapSkills": ["285", "549"],
-    "targetSkills": []
+    "lessonName": "Graphing from the Factored Form",
+    "roadmapSkills": [
+      "547"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.12",
     "unitNumber": 7,
     "lessonNumber": 12,
-    "lessonName": "Completing the Square (Part 1)",
-    "roadmapSkills": ["549"],
-    "targetSkills": []
+    "lessonName": "Graphing the Standard Form (Part 1)",
+    "roadmapSkills": [
+      "547",
+      "761"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.13",
     "unitNumber": 7,
     "lessonNumber": 13,
-    "lessonName": "Completing the Square (Part 2)",
-    "roadmapSkills": ["549"],
-    "targetSkills": []
+    "lessonName": "Graphing the Standard Form (Part 2)",
+    "roadmapSkills": [
+      "547",
+      "761"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.14",
     "unitNumber": 7,
     "lessonNumber": 14,
-    "lessonName": "Completing the Square (Part 3)",
-    "roadmapSkills": ["549"],
-    "targetSkills": []
+    "lessonName": "Graphs That Represent Situations",
+    "roadmapSkills": [
+      "319"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.15",
     "unitNumber": 7,
     "lessonNumber": 15,
-    "lessonName": "Quadratic Equations with Irrational Solutions",
-    "roadmapSkills": ["549"],
-    "targetSkills": []
+    "lessonName": "Vertex Form",
+    "roadmapSkills": [
+      "761"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.16",
     "unitNumber": 7,
     "lessonNumber": 16,
-    "lessonName": "The Quadratic Formula",
-    "roadmapSkills": ["551"],
-    "targetSkills": []
+    "lessonName": "Graphing from the Vertex Form",
+    "roadmapSkills": [
+      "761"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
+    "unit": "Unit 7 - Introduction to Quadratic Functions",
     "unitLessonId": "7.17",
     "unitNumber": 7,
     "lessonNumber": 17,
-    "lessonName": "Applying the Quadratic Formula (Part 1)",
-    "roadmapSkills": ["551"],
-    "targetSkills": []
+    "lessonName": "Changing the Vertex",
+    "roadmapSkills": [
+      "761"
+    ],
+    "targetSkills": [
+      "547",
+      "319",
+      "761",
+      "320"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
-    "unitLessonId": "7.18",
-    "unitNumber": 7,
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.1",
+    "unitNumber": 8,
+    "lessonNumber": 1,
+    "lessonName": "Finding Unknown Inputs",
+    "roadmapSkills": [
+      "333"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.2",
+    "unitNumber": 8,
+    "lessonNumber": 2,
+    "lessonName": "When and Why Do We Write Quadratic Equations?",
+    "roadmapSkills": [
+      "333"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "A"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.3",
+    "unitNumber": 8,
+    "lessonNumber": 3,
+    "lessonName": "Solving Quadratic Equations by Reasoning",
+    "roadmapSkills": [
+      "313",
+      "349"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.4",
+    "unitNumber": 8,
+    "lessonNumber": 4,
+    "lessonName": "Solving Quadratic Equations with the Zero Product Property",
+    "roadmapSkills": [
+      "349"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.5",
+    "unitNumber": 8,
+    "lessonNumber": 5,
+    "lessonName": "How Many Solutions?",
+    "roadmapSkills": [
+      "349"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.6",
+    "unitNumber": 8,
+    "lessonNumber": 6,
+    "lessonName": "Rewriting Quadratic Expressions in Factored Form (Part 1)",
+    "roadmapSkills": [
+      "285",
+      "200"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.7",
+    "unitNumber": 8,
+    "lessonNumber": 7,
+    "lessonName": "Rewriting Quadratic Expressions in Factored Form (Part 2)",
+    "roadmapSkills": [
+      "285"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.8",
+    "unitNumber": 8,
+    "lessonNumber": 8,
+    "lessonName": "Rewriting Quadratic Expressions in Factored Form (Part 3)",
+    "roadmapSkills": [
+      "342"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.9",
+    "unitNumber": 8,
+    "lessonNumber": 9,
+    "lessonName": "Solving Quadratic Equations by Using Factored Form",
+    "roadmapSkills": [
+      "349"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "B"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.10",
+    "unitNumber": 8,
+    "lessonNumber": 10,
+    "lessonName": "Rewriting Quadratic Expressions in Factored Form (Part 4)",
+    "roadmapSkills": [
+      "550"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.11",
+    "unitNumber": 8,
+    "lessonNumber": 11,
+    "lessonName": "What are Perfect Squares?",
+    "roadmapSkills": [
+      "285",
+      "549"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.12",
+    "unitNumber": 8,
+    "lessonNumber": 12,
+    "lessonName": "Completing the Square (Part 1)",
+    "roadmapSkills": [
+      "549"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.13",
+    "unitNumber": 8,
+    "lessonNumber": 13,
+    "lessonName": "Completing the Square (Part 2)",
+    "roadmapSkills": [
+      "549"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "C"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.14",
+    "unitNumber": 8,
+    "lessonNumber": 14,
+    "lessonName": "Completing the Square (Part 3)",
+    "roadmapSkills": [
+      "549"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.15",
+    "unitNumber": 8,
+    "lessonNumber": 15,
+    "lessonName": "Quadratic Equations with Irrational Solutions",
+    "roadmapSkills": [
+      "549"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.16",
+    "unitNumber": 8,
+    "lessonNumber": 16,
+    "lessonName": "The Quadratic Formula",
+    "roadmapSkills": [
+      "551"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.17",
+    "unitNumber": 8,
+    "lessonNumber": 17,
+    "lessonName": "Applying the Quadratic Formula (Part 1)",
+    "roadmapSkills": [
+      "551"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "D"
+  },
+  {
+    "grade": "Algebra 1",
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.18",
+    "unitNumber": 8,
     "lessonNumber": 18,
     "lessonName": "Applying the Quadratic Formula (Part 2)",
-    "roadmapSkills": ["551"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "551"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
-    "unitLessonId": "7.19",
-    "unitNumber": 7,
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.19",
+    "unitNumber": 8,
     "lessonNumber": 19,
     "lessonName": "Deriving the Quadratic Formula",
-    "roadmapSkills": ["551"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "551"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
-    "unitLessonId": "7.20",
-    "unitNumber": 7,
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.20",
+    "unitNumber": 8,
     "lessonNumber": 20,
     "lessonName": "Rational and Irrational Solutions",
-    "roadmapSkills": ["551", "557"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "551",
+      "557"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
-    "unitLessonId": "7.21",
-    "unitNumber": 7,
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.21",
+    "unitNumber": 8,
     "lessonNumber": 21,
     "lessonName": "Sums and Products of Rational and Irrational Numbers",
-    "roadmapSkills": ["557"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "557"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
-    "unitLessonId": "7.22",
-    "unitNumber": 7,
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.22",
+    "unitNumber": 8,
     "lessonNumber": 22,
     "lessonName": "Rewriting Quadratic Expressions in Vertex Form",
-    "roadmapSkills": ["556"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "556"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "E"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
-    "unitLessonId": "7.23",
-    "unitNumber": 7,
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.23",
+    "unitNumber": 8,
     "lessonNumber": 23,
     "lessonName": "Using Quadratic Expressions in Vertex Form to Solve Problems",
-    "roadmapSkills": ["556"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "556"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1",
+    "section": "E"
   },
   {
     "grade": "Algebra 1",
-    "unit": "Unit 7 - Quadratic Equations",
-    "unitLessonId": "7.24",
-    "unitNumber": 7,
+    "unit": "Unit 8 - Quadratic Equations",
+    "unitLessonId": "8.24",
+    "unitNumber": 8,
     "lessonNumber": 24,
     "lessonName": "Using Quadratic Equations to Model Situations and Solve Problems",
-    "roadmapSkills": ["333"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "333"
+    ],
+    "targetSkills": [
+      "313",
+      "749",
+      "267",
+      "342",
+      "563",
+      "237",
+      "259",
+      "285",
+      "343",
+      "371",
+      "557",
+      "551",
+      "349",
+      "372",
+      "333",
+      "549",
+      "336",
+      "324"
+    ],
+    "scopeSequenceTag": "Algebra 1"
   }
 ]

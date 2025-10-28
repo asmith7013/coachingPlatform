@@ -1,0 +1,523 @@
+[
+  {
+    "grade": "8",
+    "unit": "Unit 3 - Linear Relationships",
+    "unitLessonId": "3.5",
+    "unitNumber": 3,
+    "lessonNumber": 5,
+    "lessonName": "Introduction to Linear Relationships",
+    "roadmapSkills": [
+      "145"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 3 - Linear Relationships",
+    "unitLessonId": "3.6",
+    "unitNumber": 3,
+    "lessonNumber": 6,
+    "lessonName": "More Linear Relationships",
+    "roadmapSkills": [
+      "145"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 3 - Linear Relationships",
+    "unitLessonId": "3.8",
+    "unitNumber": 3,
+    "lessonNumber": 8,
+    "lessonName": "Translating to y=mx+b",
+    "roadmapSkills": [
+      "145"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 3 - Linear Relationships",
+    "unitLessonId": "3.9",
+    "unitNumber": 3,
+    "lessonNumber": 9,
+    "lessonName": "Slopes Don't Have to be Positive",
+    "roadmapSkills": [
+      "145"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 3 - Linear Relationships",
+    "unitLessonId": "3.10",
+    "unitNumber": 3,
+    "lessonNumber": 10,
+    "lessonName": "Calculating Slope",
+    "roadmapSkills": [
+      "145"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 3 - Linear Relationships",
+    "unitLessonId": "3.12",
+    "unitNumber": 3,
+    "lessonNumber": 12,
+    "lessonName": "Equations of All Kinds of Lines",
+    "roadmapSkills": [
+      "145",
+      "167"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 3 - Linear Relationships",
+    "unitLessonId": "3.13",
+    "unitNumber": 3,
+    "lessonNumber": 13,
+    "lessonName": "Solutions to Linear Equations",
+    "roadmapSkills": [
+      "167"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 3 - Linear Relationships",
+    "unitLessonId": "3.14",
+    "unitNumber": 3,
+    "lessonNumber": 14,
+    "lessonName": "More Solutions to Linear Equations",
+    "roadmapSkills": [
+      "167"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 3 - Linear Relationships",
+    "unitLessonId": "3.14",
+    "unitNumber": 3,
+    "lessonNumber": 14,
+    "lessonName": "Using Linear Relations to Solve Problems",
+    "roadmapSkills": [
+      "167",
+      "145",
+      "514"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.2",
+    "unitNumber": 4,
+    "lessonNumber": 2,
+    "lessonName": "Keeping the Equation Balanced",
+    "roadmapSkills": [
+      "240"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.3",
+    "unitNumber": 4,
+    "lessonNumber": 3,
+    "lessonName": "Balanced Moves",
+    "roadmapSkills": [
+      "240"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.4",
+    "unitNumber": 4,
+    "lessonNumber": 4,
+    "lessonName": "More Balanced Moves",
+    "roadmapSkills": [
+      "204"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.5",
+    "unitNumber": 4,
+    "lessonNumber": 5,
+    "lessonName": "Solving Any Linear Equation",
+    "roadmapSkills": [
+      "204"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.6",
+    "unitNumber": 4,
+    "lessonNumber": 6,
+    "lessonName": "Strategic Solving",
+    "roadmapSkills": [
+      "204"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.7",
+    "unitNumber": 4,
+    "lessonNumber": 7,
+    "lessonName": "All, Some, or No Solutions",
+    "roadmapSkills": [
+      "601"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.9",
+    "unitNumber": 4,
+    "lessonNumber": 9,
+    "lessonName": "When Are They the Same?",
+    "roadmapSkills": [
+      "240",
+      "236"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.10",
+    "unitNumber": 4,
+    "lessonNumber": 10,
+    "lessonName": "On or Off the Line?",
+    "roadmapSkills": [
+      "751"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.11",
+    "unitNumber": 4,
+    "lessonNumber": 11,
+    "lessonName": "On Both of the Lines",
+    "roadmapSkills": [
+      "751"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.12",
+    "unitNumber": 4,
+    "lessonNumber": 12,
+    "lessonName": "Systems of Equations",
+    "roadmapSkills": [
+      "236"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.13",
+    "unitNumber": 4,
+    "lessonNumber": 13,
+    "lessonName": "Solving Systems of Equations",
+    "roadmapSkills": [
+      "236",
+      "335",
+      "544"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 4 - Linear Equations and Linear Systems",
+    "unitLessonId": "4.14",
+    "unitNumber": 4,
+    "lessonNumber": 14,
+    "lessonName": "Solving More Systems",
+    "roadmapSkills": [
+      "335",
+      "544",
+      "553"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 5 - Functions and Volume",
+    "unitLessonId": "5.2",
+    "unitNumber": 5,
+    "lessonNumber": 2,
+    "lessonName": "Introduction to Functions",
+    "roadmapSkills": [
+      "325",
+      "188"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 5 - Functions and Volume",
+    "unitLessonId": "5.3",
+    "unitNumber": 5,
+    "lessonNumber": 3,
+    "lessonName": "Equations for Functions",
+    "roadmapSkills": [
+      "325",
+      "188"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 5 - Functions and Volume",
+    "unitLessonId": "5.4",
+    "unitNumber": 5,
+    "lessonNumber": 4,
+    "lessonName": "Tables, Equations, and Graphs of Functions",
+    "roadmapSkills": [
+      "325",
+      "146"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 5 - Functions and Volume",
+    "unitLessonId": "5.5",
+    "unitNumber": 5,
+    "lessonNumber": 5,
+    "lessonName": "More Graphs of Functions",
+    "roadmapSkills": [
+      "129"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 5 - Functions and Volume",
+    "unitLessonId": "5.6",
+    "unitNumber": 5,
+    "lessonNumber": 6,
+    "lessonName": "Even More Graphs of Functions",
+    "roadmapSkills": [
+      "129"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 5 - Functions and Volume",
+    "unitLessonId": "5.7",
+    "unitNumber": 5,
+    "lessonNumber": 7,
+    "lessonName": "Connecting Representations of Functions",
+    "roadmapSkills": [
+      "232",
+      "146"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 5 - Functions and Volume",
+    "unitLessonId": "5.8",
+    "unitNumber": 5,
+    "lessonNumber": 8,
+    "lessonName": "Linear Functions",
+    "roadmapSkills": [
+      "167",
+      "224"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 5 - Functions and Volume",
+    "unitLessonId": "5.9",
+    "unitNumber": 5,
+    "lessonNumber": 9,
+    "lessonName": "Linear Models",
+    "roadmapSkills": [
+      "224"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 5 - Functions and Volume",
+    "unitLessonId": "5.10",
+    "unitNumber": 5,
+    "lessonNumber": 10,
+    "lessonName": "Piecewise Linear Functions",
+    "roadmapSkills": [
+      "129"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 6 - Associations in Data",
+    "unitLessonId": "6.1",
+    "unitNumber": 6,
+    "lessonNumber": 1,
+    "lessonName": "Organizing Data",
+    "roadmapSkills": [
+      "538"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 6 - Associations in Data",
+    "unitLessonId": "6.3",
+    "unitNumber": 6,
+    "lessonNumber": 3,
+    "lessonName": "What a Point in a Scatter Plot Means",
+    "roadmapSkills": [
+      "538"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 6 - Associations in Data",
+    "unitLessonId": "6.4",
+    "unitNumber": 6,
+    "lessonNumber": 4,
+    "lessonName": "Fitting a Line to Data",
+    "roadmapSkills": [
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 6 - Associations in Data",
+    "unitLessonId": "6.5",
+    "unitNumber": 6,
+    "lessonNumber": 5,
+    "lessonName": "Describing Trends in Scatter Plots",
+    "roadmapSkills": [
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 6 - Associations in Data",
+    "unitLessonId": "6.6",
+    "unitNumber": 6,
+    "lessonNumber": 6,
+    "lessonName": "The Slope of a Fitted Line",
+    "roadmapSkills": [
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 6 - Associations in Data",
+    "unitLessonId": "6.7",
+    "unitNumber": 6,
+    "lessonNumber": 7,
+    "lessonName": "Observing More Patterns in Scatter Plots",
+    "roadmapSkills": [
+      "538",
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 6 - Associations in Data",
+    "unitLessonId": "6.8",
+    "unitNumber": 6,
+    "lessonNumber": 8,
+    "lessonName": "Analyzing Bivariate Data",
+    "roadmapSkills": [
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 6 - Associations in Data",
+    "unitLessonId": "6.9",
+    "unitNumber": 6,
+    "lessonNumber": 9,
+    "lessonName": "Looking for Associations",
+    "roadmapSkills": [
+      "503"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 6 - Associations in Data",
+    "unitLessonId": "6.10",
+    "unitNumber": 6,
+    "lessonNumber": 10,
+    "lessonName": "Using Data Displays to Find Associations",
+    "roadmapSkills": [
+      "503"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Algebra 1"
+  }
+]

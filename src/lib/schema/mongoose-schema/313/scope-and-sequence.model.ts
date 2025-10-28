@@ -56,5 +56,9 @@ ScopeAndSequenceSchema.index(
   { unique: true, sparse: true } // sparse: true allows multiple docs with null scopeSequenceTag
 );
 
-export const ScopeAndSequenceModel = mongoose.models.ScopeAndSequence ||
-  mongoose.model('ScopeAndSequence', ScopeAndSequenceSchema);
+// Delete existing model to force schema refresh (ensures new fields are recognized)
+if (mongoose.models.ScopeAndSequence) {
+  delete mongoose.models.ScopeAndSequence;
+}
+
+export const ScopeAndSequenceModel = mongoose.model('ScopeAndSequence', ScopeAndSequenceSchema);

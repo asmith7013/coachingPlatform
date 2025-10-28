@@ -213,7 +213,7 @@ export class IMScreenshotScraper {
       });
 
       // Restore original styles
-      await problemStatement.evaluate((el: HTMLElement, styles: any) => {
+      await problemStatement.evaluate((el: HTMLElement, styles: {padding: string; backgroundColor: string; boxSizing: string}) => {
         el.style.padding = styles.padding || '';
         el.style.backgroundColor = styles.backgroundColor || '';
         el.style.boxSizing = styles.boxSizing || '';

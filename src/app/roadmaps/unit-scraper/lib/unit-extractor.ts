@@ -18,11 +18,13 @@ function parseSkillText(text: string): { title: string; skillNumber: string } {
   };
 }
 
+import { Locator } from 'playwright';
+
 /**
  * Extract skills from a support skills section (Essential or Helpful)
  */
 async function extractSkillsFromSection(
-  accordionContent: any,
+  accordionContent: Locator,
   sectionHeading: string
 ): Promise<SkillReference[]> {
   const skills: SkillReference[] = [];

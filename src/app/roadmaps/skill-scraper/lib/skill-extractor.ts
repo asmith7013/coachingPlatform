@@ -370,7 +370,7 @@ async function extractImagesWithContext(page: Page): Promise<ImageWithContext[]>
 
           if (!targetHeader) return [];
 
-          const images: any[] = [];
+          const images: Array<{url: string; altText: string; caption: string; section: string; orderInSection: number}> = [];
           let currentElement = targetHeader.nextElementSibling;
           let orderInSection = 0;
 
@@ -385,7 +385,7 @@ async function extractImagesWithContext(page: Page): Promise<ImageWithContext[]>
 
               // Get caption from previous paragraph sibling
               let caption = '';
-              let prevElement = img.parentElement?.previousElementSibling;
+              const prevElement = img.parentElement?.previousElementSibling;
               if (prevElement && prevElement.tagName === 'P') {
                 caption = prevElement.textContent?.trim() || '';
               }
@@ -393,7 +393,6 @@ async function extractImagesWithContext(page: Page): Promise<ImageWithContext[]>
               // If no previous sibling, try the text content of parent element before the image
               if (!caption && img.parentElement) {
                 const parentText = img.parentElement.textContent || '';
-                const imgAlt = img.getAttribute('alt') || '';
                 // Get text before the image in the parent
                 caption = parentText.substring(0, 200).trim();
               }
@@ -596,9 +595,10 @@ async function extractAndSaveWorkedExampleVideo(
       });
       blobUrl = blob.url;
       console.log(`✅ Video uploaded successfully: ${blobUrl}`);
-    } catch (uploadError: any) {
+    } catch (uploadError: unknown) {
       // If upload fails because blob already exists, try to get the existing URL
-      if (uploadError?.message?.includes('already exists')) {
+      const errorMessage = uploadError instanceof Error ? uploadError.message : '';
+      if (errorMessage.includes('already exists')) {
         console.log(`♻️ Upload failed (blob exists), fetching existing video URL...`);
         try {
           const { blobs } = await list({ prefix });
@@ -633,7 +633,7 @@ async function extractAndSaveWorkedExampleVideo(
       if (await dialogClose.count() > 0 && await dialogClose.isVisible()) {
         await dialogClose.click();
       }
-    } catch (closeError) {
+    } catch {
       // Ignore errors when trying to close dialog
     }
 

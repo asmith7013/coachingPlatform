@@ -6,8 +6,11 @@
     "unitNumber": 1,
     "lessonNumber": 1,
     "lessonName": "Moving in the Plane",
-    "roadmapSkills": ["262"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "262"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -16,8 +19,11 @@
     "unitNumber": 1,
     "lessonNumber": 2,
     "lessonName": "Naming the Moves",
-    "roadmapSkills": ["262"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "262"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -26,8 +32,11 @@
     "unitNumber": 1,
     "lessonNumber": 3,
     "lessonName": "Grid Moves",
-    "roadmapSkills": ["262"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "262"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -36,8 +45,11 @@
     "unitNumber": 1,
     "lessonNumber": 4,
     "lessonName": "Making the Moves",
-    "roadmapSkills": ["262"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "262"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -46,8 +58,13 @@
     "unitNumber": 1,
     "lessonNumber": 5,
     "lessonName": "Coordinate Moves",
-    "roadmapSkills": ["194", "242", "284"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "194",
+      "242",
+      "284"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -56,8 +73,11 @@
     "unitNumber": 1,
     "lessonNumber": 6,
     "lessonName": "Describing Transformations",
-    "roadmapSkills": ["114"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "114"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -66,8 +86,13 @@
     "unitNumber": 1,
     "lessonNumber": 7,
     "lessonName": "No Bending or Stretching",
-    "roadmapSkills": ["194", "242", "284"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "194",
+      "242",
+      "284"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -76,8 +101,11 @@
     "unitNumber": 1,
     "lessonNumber": 8,
     "lessonName": "Rotation Patterns",
-    "roadmapSkills": ["242"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "242"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -86,8 +114,13 @@
     "unitNumber": 1,
     "lessonNumber": 9,
     "lessonName": "Moves in Parallel",
-    "roadmapSkills": ["194", "242", "284"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "194",
+      "242",
+      "284"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -96,8 +129,11 @@
     "unitNumber": 1,
     "lessonNumber": 10,
     "lessonName": "Composing Figures",
-    "roadmapSkills": ["262"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "262"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -106,8 +142,11 @@
     "unitNumber": 1,
     "lessonNumber": 11,
     "lessonName": "What Is the Same?",
-    "roadmapSkills": ["114"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "114"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -116,8 +155,11 @@
     "unitNumber": 1,
     "lessonNumber": 12,
     "lessonName": "Congruent Polygons",
-    "roadmapSkills": ["114"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "114"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -126,8 +168,11 @@
     "unitNumber": 1,
     "lessonNumber": 13,
     "lessonName": "Congruence",
-    "roadmapSkills": ["114"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "114"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -136,8 +181,11 @@
     "unitNumber": 1,
     "lessonNumber": 14,
     "lessonName": "Alternate Interior Angles",
-    "roadmapSkills": ["249"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "249"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -146,8 +194,11 @@
     "unitNumber": 1,
     "lessonNumber": 15,
     "lessonName": "Adding the Angles in a Triangle",
-    "roadmapSkills": ["512"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "512"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -156,8 +207,11 @@
     "unitNumber": 1,
     "lessonNumber": 16,
     "lessonName": "Parallel Lines and the Angles in a Triangle",
-    "roadmapSkills": ["512"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "512"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -166,8 +220,14 @@
     "unitNumber": 1,
     "lessonNumber": 17,
     "lessonName": "Rotate and Tessellate",
-    "roadmapSkills": ["242", "194", "284", "114"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "242",
+      "194",
+      "284",
+      "114"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -176,8 +236,11 @@
     "unitNumber": 2,
     "lessonNumber": 1,
     "lessonName": "Projecting and Scaling",
-    "roadmapSkills": ["173"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "173"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -186,8 +249,11 @@
     "unitNumber": 2,
     "lessonNumber": 2,
     "lessonName": "Circular Grid",
-    "roadmapSkills": ["173"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "173"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -196,8 +262,11 @@
     "unitNumber": 2,
     "lessonNumber": 3,
     "lessonName": "Dilations with no Grid",
-    "roadmapSkills": ["173"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "173"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -206,8 +275,11 @@
     "unitNumber": 2,
     "lessonNumber": 4,
     "lessonName": "Dilations on a Square Grid",
-    "roadmapSkills": ["173"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "173"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -216,8 +288,11 @@
     "unitNumber": 2,
     "lessonNumber": 5,
     "lessonName": "More Dilations",
-    "roadmapSkills": ["173"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "173"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -226,8 +301,11 @@
     "unitNumber": 2,
     "lessonNumber": 6,
     "lessonName": "Similarity",
-    "roadmapSkills": ["205"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "205"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -236,8 +314,11 @@
     "unitNumber": 2,
     "lessonNumber": 7,
     "lessonName": "Similar Polygons",
-    "roadmapSkills": ["205"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "205"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -246,8 +327,11 @@
     "unitNumber": 2,
     "lessonNumber": 8,
     "lessonName": "Similar Triangles",
-    "roadmapSkills": ["316"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "316"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -256,8 +340,11 @@
     "unitNumber": 2,
     "lessonNumber": 9,
     "lessonName": "Side Length Quotients in Similar Triangles",
-    "roadmapSkills": ["205"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "205"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -266,8 +353,11 @@
     "unitNumber": 2,
     "lessonNumber": 10,
     "lessonName": "Meet Slope",
-    "roadmapSkills": ["514"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "514"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -276,8 +366,11 @@
     "unitNumber": 2,
     "lessonNumber": 11,
     "lessonName": "Writing Equations for Lines",
-    "roadmapSkills": ["514"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "514"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -286,8 +379,11 @@
     "unitNumber": 2,
     "lessonNumber": 12,
     "lessonName": "Using Equations for Lines",
-    "roadmapSkills": ["514"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "514"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -296,8 +392,11 @@
     "unitNumber": 2,
     "lessonNumber": 13,
     "lessonName": "The Shadow Knows",
-    "roadmapSkills": ["316"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "316"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -306,8 +405,11 @@
     "unitNumber": 3,
     "lessonNumber": 1,
     "lessonName": "Understanding Proportional Relationships",
-    "roadmapSkills": ["513"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "513"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -316,8 +418,11 @@
     "unitNumber": 3,
     "lessonNumber": 2,
     "lessonName": "Graphs of Proportional Relationships",
-    "roadmapSkills": ["513"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "513"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -326,8 +431,11 @@
     "unitNumber": 3,
     "lessonNumber": 3,
     "lessonName": "Representing Proportional Relationships",
-    "roadmapSkills": ["513"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "513"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -336,8 +444,11 @@
     "unitNumber": 3,
     "lessonNumber": 4,
     "lessonName": "Comparing Proportional Relationships",
-    "roadmapSkills": ["513"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "513"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -346,8 +457,11 @@
     "unitNumber": 3,
     "lessonNumber": 5,
     "lessonName": "Introduction to Linear Relationships",
-    "roadmapSkills": ["145"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "145"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -356,8 +470,11 @@
     "unitNumber": 3,
     "lessonNumber": 6,
     "lessonName": "More Linear Relationships",
-    "roadmapSkills": ["145"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "145"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -366,8 +483,11 @@
     "unitNumber": 3,
     "lessonNumber": 7,
     "lessonName": "Representations of Linear Relationships",
-    "roadmapSkills": ["145"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "145"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -376,8 +496,11 @@
     "unitNumber": 3,
     "lessonNumber": 8,
     "lessonName": "Translating to y=mx+b",
-    "roadmapSkills": ["145"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "145"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -386,8 +509,11 @@
     "unitNumber": 3,
     "lessonNumber": 9,
     "lessonName": "Slopes Don't Have to be Positive",
-    "roadmapSkills": ["145"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "145"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -396,18 +522,11 @@
     "unitNumber": 3,
     "lessonNumber": 10,
     "lessonName": "Calculating Slope",
-    "roadmapSkills": ["145"],
-    "targetSkills": []
-  },
-  {
-    "grade": "8",
-    "unit": "Unit 3 - Linear Relationships",
-    "unitLessonId": "3.11",
-    "unitNumber": 3,
-    "lessonNumber": 11,
-    "lessonName": "Equations of All Kinds of Lines",
-    "roadmapSkills": ["145", "167"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "145"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -415,9 +534,13 @@
     "unitLessonId": "3.12",
     "unitNumber": 3,
     "lessonNumber": 12,
-    "lessonName": "Solutions to Linear Equations",
-    "roadmapSkills": ["167"],
-    "targetSkills": []
+    "lessonName": "Equations of All Kinds of Lines",
+    "roadmapSkills": [
+      "145",
+      "167"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -425,9 +548,25 @@
     "unitLessonId": "3.13",
     "unitNumber": 3,
     "lessonNumber": 13,
+    "lessonName": "Solutions to Linear Equations",
+    "roadmapSkills": [
+      "167"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 3 - Linear Relationships",
+    "unitLessonId": "3.14",
+    "unitNumber": 3,
+    "lessonNumber": 14,
     "lessonName": "More Solutions to Linear Equations",
-    "roadmapSkills": ["167"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "167"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -436,8 +575,13 @@
     "unitNumber": 3,
     "lessonNumber": 14,
     "lessonName": "Using Linear Relations to Solve Problems",
-    "roadmapSkills": ["167", "145", "514"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "167",
+      "145",
+      "514"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -445,9 +589,12 @@
     "unitLessonId": "4.1",
     "unitNumber": 4,
     "lessonNumber": 1,
-    "lessonName": "Number Puzzles",
-    "roadmapSkills": ["240"],
-    "targetSkills": []
+    "lessonName": "Writing Equivalent Equations",
+    "roadmapSkills": [
+      "240"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -456,8 +603,11 @@
     "unitNumber": 4,
     "lessonNumber": 2,
     "lessonName": "Keeping the Equation Balanced",
-    "roadmapSkills": ["240"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "240"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -466,8 +616,11 @@
     "unitNumber": 4,
     "lessonNumber": 3,
     "lessonName": "Balanced Moves",
-    "roadmapSkills": ["240"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "240"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -476,8 +629,11 @@
     "unitNumber": 4,
     "lessonNumber": 4,
     "lessonName": "More Balanced Moves",
-    "roadmapSkills": ["204"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "204"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -486,8 +642,11 @@
     "unitNumber": 4,
     "lessonNumber": 5,
     "lessonName": "Solving Any Linear Equation",
-    "roadmapSkills": ["204"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "204"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -496,8 +655,11 @@
     "unitNumber": 4,
     "lessonNumber": 6,
     "lessonName": "Strategic Solving",
-    "roadmapSkills": ["204"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "204"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -506,8 +668,11 @@
     "unitNumber": 4,
     "lessonNumber": 7,
     "lessonName": "All, Some, or No Solutions",
-    "roadmapSkills": ["601"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "601"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -516,8 +681,11 @@
     "unitNumber": 4,
     "lessonNumber": 8,
     "lessonName": "How Many Solutions?",
-    "roadmapSkills": ["601"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "601"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -526,8 +694,12 @@
     "unitNumber": 4,
     "lessonNumber": 9,
     "lessonName": "When Are They the Same?",
-    "roadmapSkills": ["240", "236"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "240",
+      "236"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -536,8 +708,11 @@
     "unitNumber": 4,
     "lessonNumber": 10,
     "lessonName": "On or Off the Line?",
-    "roadmapSkills": ["751"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "751"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -546,8 +721,11 @@
     "unitNumber": 4,
     "lessonNumber": 11,
     "lessonName": "On Both of the Lines",
-    "roadmapSkills": ["751"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "751"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -556,8 +734,11 @@
     "unitNumber": 4,
     "lessonNumber": 12,
     "lessonName": "Systems of Equations",
-    "roadmapSkills": ["236"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "236"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -566,8 +747,13 @@
     "unitNumber": 4,
     "lessonNumber": 13,
     "lessonName": "Solving Systems of Equations",
-    "roadmapSkills": ["236", "335", "544"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "236",
+      "335",
+      "544"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -576,8 +762,13 @@
     "unitNumber": 4,
     "lessonNumber": 14,
     "lessonName": "Solving More Systems",
-    "roadmapSkills": ["335", "544", "553"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "335",
+      "544",
+      "553"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -586,8 +777,12 @@
     "unitNumber": 4,
     "lessonNumber": 15,
     "lessonName": "Writing Systems of Equations",
-    "roadmapSkills": ["544", "332"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "544",
+      "332"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -596,8 +791,11 @@
     "unitNumber": 4,
     "lessonNumber": 16,
     "lessonName": "Solving Problems with Systems of Equations",
-    "roadmapSkills": ["332"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "332"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -606,8 +804,12 @@
     "unitNumber": 5,
     "lessonNumber": 1,
     "lessonName": "Inputs and Outputs",
-    "roadmapSkills": ["325", "188"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "325",
+      "188"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -616,8 +818,12 @@
     "unitNumber": 5,
     "lessonNumber": 2,
     "lessonName": "Introduction to Functions",
-    "roadmapSkills": ["325", "188"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "325",
+      "188"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -626,8 +832,12 @@
     "unitNumber": 5,
     "lessonNumber": 3,
     "lessonName": "Equations for Functions",
-    "roadmapSkills": ["325", "188"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "325",
+      "188"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -636,8 +846,12 @@
     "unitNumber": 5,
     "lessonNumber": 4,
     "lessonName": "Tables, Equations, and Graphs of Functions",
-    "roadmapSkills": ["325", "146"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "325",
+      "146"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -646,8 +860,11 @@
     "unitNumber": 5,
     "lessonNumber": 5,
     "lessonName": "More Graphs of Functions",
-    "roadmapSkills": ["129"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "129"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -656,8 +873,11 @@
     "unitNumber": 5,
     "lessonNumber": 6,
     "lessonName": "Even More Graphs of Functions",
-    "roadmapSkills": ["129"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "129"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -666,8 +886,12 @@
     "unitNumber": 5,
     "lessonNumber": 7,
     "lessonName": "Connecting Representations of Functions",
-    "roadmapSkills": ["232", "146"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "232",
+      "146"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -676,8 +900,12 @@
     "unitNumber": 5,
     "lessonNumber": 8,
     "lessonName": "Linear Functions",
-    "roadmapSkills": ["167", "224"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "167",
+      "224"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -686,8 +914,11 @@
     "unitNumber": 5,
     "lessonNumber": 9,
     "lessonName": "Linear Models",
-    "roadmapSkills": ["224"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "224"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -696,8 +927,11 @@
     "unitNumber": 5,
     "lessonNumber": 10,
     "lessonName": "Piecewise Linear Functions",
-    "roadmapSkills": ["129"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "129"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -706,8 +940,11 @@
     "unitNumber": 5,
     "lessonNumber": 11,
     "lessonName": "Filling Containers",
-    "roadmapSkills": ["129"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "129"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -716,8 +953,13 @@
     "unitNumber": 5,
     "lessonNumber": 12,
     "lessonName": "How Much Will Fit?",
-    "roadmapSkills": ["613", "614", "615"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "613",
+      "614",
+      "615"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -726,8 +968,11 @@
     "unitNumber": 5,
     "lessonNumber": 13,
     "lessonName": "The Volume of a Cylinder",
-    "roadmapSkills": ["613"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "613"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -736,8 +981,11 @@
     "unitNumber": 5,
     "lessonNumber": 14,
     "lessonName": "Finding Cylinder Dimensions",
-    "roadmapSkills": ["613"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "613"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -746,8 +994,11 @@
     "unitNumber": 5,
     "lessonNumber": 15,
     "lessonName": "The Volume of a Cone",
-    "roadmapSkills": ["614"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "614"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -756,8 +1007,11 @@
     "unitNumber": 5,
     "lessonNumber": 16,
     "lessonName": "Finding Cone Dimensions",
-    "roadmapSkills": ["614"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "614"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -766,8 +1020,12 @@
     "unitNumber": 5,
     "lessonNumber": 17,
     "lessonName": "Scaling One Dimension",
-    "roadmapSkills": ["613", "614"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "613",
+      "614"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -776,8 +1034,13 @@
     "unitNumber": 5,
     "lessonNumber": 18,
     "lessonName": "Scaling Two Dimensions",
-    "roadmapSkills": ["613", "614", "146"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "613",
+      "614",
+      "146"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -786,8 +1049,11 @@
     "unitNumber": 5,
     "lessonNumber": 19,
     "lessonName": "Estimating a Hemisphere",
-    "roadmapSkills": ["615"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "615"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -796,8 +1062,11 @@
     "unitNumber": 5,
     "lessonNumber": 20,
     "lessonName": "The Volume of a Sphere",
-    "roadmapSkills": ["615"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "615"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -806,8 +1075,13 @@
     "unitNumber": 5,
     "lessonNumber": 21,
     "lessonName": "Cylinders, Cones, and Spheres",
-    "roadmapSkills": ["613", "614", "615"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "613",
+      "614",
+      "615"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -816,8 +1090,13 @@
     "unitNumber": 5,
     "lessonNumber": 22,
     "lessonName": "Volume As a Function of . . .",
-    "roadmapSkills": ["613", "614", "615"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "613",
+      "614",
+      "615"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -826,8 +1105,11 @@
     "unitNumber": 6,
     "lessonNumber": 1,
     "lessonName": "Organizing Data",
-    "roadmapSkills": ["538"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "538"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -836,8 +1118,11 @@
     "unitNumber": 6,
     "lessonNumber": 2,
     "lessonName": "Plotting Data",
-    "roadmapSkills": ["538"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "538"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -846,8 +1131,11 @@
     "unitNumber": 6,
     "lessonNumber": 3,
     "lessonName": "What a Point in a Scatter Plot Means",
-    "roadmapSkills": ["538"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "538"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -856,8 +1144,11 @@
     "unitNumber": 6,
     "lessonNumber": 4,
     "lessonName": "Fitting a Line to Data",
-    "roadmapSkills": ["150"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -866,8 +1157,11 @@
     "unitNumber": 6,
     "lessonNumber": 5,
     "lessonName": "Describing Trends in Scatter Plots",
-    "roadmapSkills": ["150"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -876,8 +1170,11 @@
     "unitNumber": 6,
     "lessonNumber": 6,
     "lessonName": "The Slope of a Fitted Line",
-    "roadmapSkills": ["150"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -886,8 +1183,12 @@
     "unitNumber": 6,
     "lessonNumber": 7,
     "lessonName": "Observing More Patterns in Scatter Plots",
-    "roadmapSkills": ["538", "150"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "538",
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -896,8 +1197,11 @@
     "unitNumber": 6,
     "lessonNumber": 8,
     "lessonName": "Analyzing Bivariate Data",
-    "roadmapSkills": ["150"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -906,8 +1210,11 @@
     "unitNumber": 6,
     "lessonNumber": 9,
     "lessonName": "Looking for Associations",
-    "roadmapSkills": ["503"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "503"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -916,8 +1223,11 @@
     "unitNumber": 6,
     "lessonNumber": 10,
     "lessonName": "Using Data Displays to Find Associations",
-    "roadmapSkills": ["503"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "503"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -926,8 +1236,13 @@
     "unitNumber": 6,
     "lessonNumber": 11,
     "lessonName": "Gone In 30 Seconds",
-    "roadmapSkills": ["538", "150", "503"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "538",
+      "150",
+      "503"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -936,8 +1251,11 @@
     "unitNumber": 7,
     "lessonNumber": 1,
     "lessonName": "Exponent Review",
-    "roadmapSkills": ["111"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "111"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -945,9 +1263,12 @@
     "unitLessonId": "7.2",
     "unitNumber": 7,
     "lessonNumber": 2,
-    "lessonName": "Multiplying Powers of Ten",
-    "roadmapSkills": ["111"],
-    "targetSkills": []
+    "lessonName": "Multiplying Powers of 10",
+    "roadmapSkills": [
+      "111"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -956,8 +1277,11 @@
     "unitNumber": 7,
     "lessonNumber": 3,
     "lessonName": "Powers of Powers of 10",
-    "roadmapSkills": ["552"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "552"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -966,8 +1290,11 @@
     "unitNumber": 7,
     "lessonNumber": 4,
     "lessonName": "Dividing Powers of 10",
-    "roadmapSkills": ["734"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "734"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -976,8 +1303,11 @@
     "unitNumber": 7,
     "lessonNumber": 5,
     "lessonName": "Negative Exponents with Powers of 10",
-    "roadmapSkills": ["620"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "620"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -986,8 +1316,12 @@
     "unitNumber": 7,
     "lessonNumber": 6,
     "lessonName": "What about Other Bases?",
-    "roadmapSkills": ["620", "552"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "620",
+      "552"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -996,8 +1330,13 @@
     "unitNumber": 7,
     "lessonNumber": 7,
     "lessonName": "Practice with Rational Bases",
-    "roadmapSkills": ["620", "734", "552"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "620",
+      "734",
+      "552"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1006,8 +1345,11 @@
     "unitNumber": 7,
     "lessonNumber": 8,
     "lessonName": "Combining Bases",
-    "roadmapSkills": ["734"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "734"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1016,8 +1358,11 @@
     "unitNumber": 7,
     "lessonNumber": 9,
     "lessonName": "Describing Large and Small Numbers Using Powers of 10",
-    "roadmapSkills": ["542"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "542"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1026,8 +1371,11 @@
     "unitNumber": 7,
     "lessonNumber": 10,
     "lessonName": "Representing Large Numbers on the Number Line",
-    "roadmapSkills": ["542"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "542"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1036,8 +1384,11 @@
     "unitNumber": 7,
     "lessonNumber": 11,
     "lessonName": "Representing Small Numbers on the Number Line",
-    "roadmapSkills": ["542"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "542"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1046,8 +1397,11 @@
     "unitNumber": 7,
     "lessonNumber": 12,
     "lessonName": "Applications of Arithmetic with Powers of 10",
-    "roadmapSkills": ["542"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "542"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1056,8 +1410,11 @@
     "unitNumber": 7,
     "lessonNumber": 13,
     "lessonName": "Definition of Scientific Notation",
-    "roadmapSkills": ["270"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "270"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1065,9 +1422,12 @@
     "unitLessonId": "7.14",
     "unitNumber": 7,
     "lessonNumber": 14,
-    "lessonName": "Multiplying, Dividing, and Estimating with Scientific Notation",
-    "roadmapSkills": ["280"],
-    "targetSkills": []
+    "lessonName": "Estimating with Scientific Notation",
+    "roadmapSkills": [
+      "280"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1076,8 +1436,11 @@
     "unitNumber": 7,
     "lessonNumber": 15,
     "lessonName": "Adding and Subtracting with Scientific Notation",
-    "roadmapSkills": ["280"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "280"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1086,18 +1449,24 @@
     "unitNumber": 7,
     "lessonNumber": 16,
     "lessonName": "Is a Smartphone Smart Enough to Go to the Moon?",
-    "roadmapSkills": ["280"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "280"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
     "unit": "Unit 8 - Pythagorean Theorem and Irrational Numbers",
-    "unitLessonId": "8.1",
+    "unitLessonId": "8.3",
     "unitNumber": 8,
-    "lessonNumber": 1,
-    "lessonName": "The Areas of Squares and Their Side Lengths",
-    "roadmapSkills": ["178"],
-    "targetSkills": []
+    "lessonNumber": 3,
+    "lessonName": "Square Roots",
+    "roadmapSkills": [
+      "178"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1106,18 +1475,11 @@
     "unitNumber": 8,
     "lessonNumber": 2,
     "lessonName": "Side Lengths and Areas",
-    "roadmapSkills": ["178"],
-    "targetSkills": []
-  },
-  {
-    "grade": "8",
-    "unit": "Unit 8 - Pythagorean Theorem and Irrational Numbers",
-    "unitLessonId": "8.3",
-    "unitNumber": 8,
-    "lessonNumber": 3,
-    "lessonName": "Rational and Irrational Numbers",
-    "roadmapSkills": ["178", "310", "313"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "178"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1125,9 +1487,14 @@
     "unitLessonId": "8.4",
     "unitNumber": 8,
     "lessonNumber": 4,
-    "lessonName": "Square Roots on the Number Line",
-    "roadmapSkills": ["178", "263"],
-    "targetSkills": []
+    "lessonName": "Rational and Irrational Numbers",
+    "roadmapSkills": [
+      "178",
+      "310",
+      "313"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1135,9 +1502,13 @@
     "unitLessonId": "8.5",
     "unitNumber": 8,
     "lessonNumber": 5,
-    "lessonName": "Reasoning About Square Roots",
-    "roadmapSkills": ["263", "313"],
-    "targetSkills": []
+    "lessonName": "Square Roots on the Number Line",
+    "roadmapSkills": [
+      "178",
+      "263"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1145,9 +1516,13 @@
     "unitLessonId": "8.6",
     "unitNumber": 8,
     "lessonNumber": 6,
-    "lessonName": "Finding Side Lengths of Triangles",
-    "roadmapSkills": ["261"],
-    "targetSkills": []
+    "lessonName": "Reasoning About Square Roots",
+    "roadmapSkills": [
+      "263",
+      "313"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1155,9 +1530,12 @@
     "unitLessonId": "8.7",
     "unitNumber": 8,
     "lessonNumber": 7,
-    "lessonName": "A Proof of the Pythagorean Theorem",
-    "roadmapSkills": ["261"],
-    "targetSkills": []
+    "lessonName": "Finding Side Lengths of Triangles",
+    "roadmapSkills": [
+      "261"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1165,9 +1543,25 @@
     "unitLessonId": "8.8",
     "unitNumber": 8,
     "lessonNumber": 8,
+    "lessonName": "A Proof of the Pythagorean Theorem",
+    "roadmapSkills": [
+      "261"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 8 - Pythagorean Theorem and Irrational Numbers",
+    "unitLessonId": "8.9",
+    "unitNumber": 8,
+    "lessonNumber": 9,
     "lessonName": "Finding Unknown Side Lengths",
-    "roadmapSkills": ["275"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "275"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1176,18 +1570,12 @@
     "unitNumber": 8,
     "lessonNumber": 9,
     "lessonName": "The Converse",
-    "roadmapSkills": ["261", "275"],
-    "targetSkills": []
-  },
-  {
-    "grade": "8",
-    "unit": "Unit 8 - Pythagorean Theorem and Irrational Numbers",
-    "unitLessonId": "8.10",
-    "unitNumber": 8,
-    "lessonNumber": 10,
-    "lessonName": "Applications of the Pythagorean Theorem",
-    "roadmapSkills": ["221"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "261",
+      "275"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1195,19 +1583,38 @@
     "unitLessonId": "8.11",
     "unitNumber": 8,
     "lessonNumber": 11,
-    "lessonName": "Finding Distances in the Coordinate Plane",
-    "roadmapSkills": ["308"],
-    "targetSkills": []
+    "lessonName": "Applications of the Pythagorean Theorem",
+    "roadmapSkills": [
+      "221"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
     "unit": "Unit 8 - Pythagorean Theorem and Irrational Numbers",
-    "unitLessonId": "8.12",
+    "unitLessonId": "8.13",
     "unitNumber": 8,
-    "lessonNumber": 12,
+    "lessonNumber": 13,
+    "lessonName": "Finding Distances in the Coordinate Plane",
+    "roadmapSkills": [
+      "308"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
+  },
+  {
+    "grade": "8",
+    "unit": "Unit 8 - Pythagorean Theorem and Irrational Numbers",
+    "unitLessonId": "8.14",
+    "unitNumber": 8,
+    "lessonNumber": 14,
     "lessonName": "Edge Lengths and Volumes",
-    "roadmapSkills": ["313"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "313"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1216,8 +1623,11 @@
     "unitNumber": 8,
     "lessonNumber": 13,
     "lessonName": "Cube Roots",
-    "roadmapSkills": ["313"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "313"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1226,8 +1636,11 @@
     "unitNumber": 8,
     "lessonNumber": 14,
     "lessonName": "Decimal Representations of Rational Numbers",
-    "roadmapSkills": ["310"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "310"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1236,8 +1649,11 @@
     "unitNumber": 8,
     "lessonNumber": 15,
     "lessonName": "Infinite Decimal Expansions",
-    "roadmapSkills": ["310"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "310"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1246,8 +1662,11 @@
     "unitNumber": 8,
     "lessonNumber": 16,
     "lessonName": "When Is the Same Size Not the Same Size?",
-    "roadmapSkills": ["221"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "221"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1256,8 +1675,12 @@
     "unitNumber": 9,
     "lessonNumber": 1,
     "lessonName": "Tessellations of the Plane",
-    "roadmapSkills": ["262", "114"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "262",
+      "114"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1266,8 +1689,12 @@
     "unitNumber": 9,
     "lessonNumber": 2,
     "lessonName": "Regular Tessellations",
-    "roadmapSkills": ["262", "114"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "262",
+      "114"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1276,8 +1703,12 @@
     "unitNumber": 9,
     "lessonNumber": 3,
     "lessonName": "Tessellating Polygons",
-    "roadmapSkills": ["262", "114"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "262",
+      "114"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1286,8 +1717,12 @@
     "unitNumber": 9,
     "lessonNumber": 4,
     "lessonName": "What Influences Temperature?",
-    "roadmapSkills": ["129", "150"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "129",
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1296,8 +1731,12 @@
     "unitNumber": 9,
     "lessonNumber": 5,
     "lessonName": "Plotting the Weather",
-    "roadmapSkills": ["538", "150"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "538",
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   },
   {
     "grade": "8",
@@ -1306,7 +1745,10 @@
     "unitNumber": 9,
     "lessonNumber": 6,
     "lessonName": "Using and Interpreting a Mathematical Model",
-    "roadmapSkills": ["150"],
-    "targetSkills": []
+    "roadmapSkills": [
+      "150"
+    ],
+    "targetSkills": [],
+    "scopeSequenceTag": "Grade 8"
   }
 ]

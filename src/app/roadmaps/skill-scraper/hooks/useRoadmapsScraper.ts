@@ -20,6 +20,9 @@ export interface RoadmapsScraperState {
     authenticated?: boolean;
     message?: string;
   } | null;
+  currentSkillNumber?: string;
+  currentSkillIndex?: number;
+  totalSkills?: number;
 }
 
 export interface RoadmapsScraperActions {
@@ -37,7 +40,10 @@ const initialState: RoadmapsScraperState = {
   error: null,
   lastResponse: null,
   isValidating: false,
-  validationResult: null
+  validationResult: null,
+  currentSkillNumber: undefined,
+  currentSkillIndex: undefined,
+  totalSkills: undefined
 };
 
 /**
@@ -72,20 +78,28 @@ export function useRoadmapsScraper(): RoadmapsScraperState & RoadmapsScraperActi
   }, []);
 
   const scrapeSkills = useCallback(async (
-    credentials: RoadmapsCredentials, 
-    urls: string[], 
+    credentials: RoadmapsCredentials,
+    urls: string[],
     delay: number = 2000
   ) => {
     setLoading(true);
     setError(null);
-    
+    setState(prev => ({
+      ...prev,
+      totalSkills: urls.length,
+      currentSkillIndex: 0,
+      currentSkillNumber: urls[0]?.split('/').pop() || ''
+    }));
+
     try {
+      // Since server action doesn't support streaming, we'll update state after completion
+      // but show initial progress
       const response = await scrapeRoadmapsSkills({
         credentials,
         skillUrls: urls,
         delayBetweenRequests: delay
       });
-      
+
       if (response.success && response.data) {
         setResults(response.data.skills, response.data);
       } else {
@@ -98,6 +112,12 @@ export function useRoadmapsScraper(): RoadmapsScraperState & RoadmapsScraperActi
       setResults([]);
     } finally {
       setLoading(false);
+      setState(prev => ({
+        ...prev,
+        currentSkillNumber: undefined,
+        currentSkillIndex: undefined,
+        totalSkills: undefined
+      }));
     }
   }, [setLoading, setError, setResults]);
 

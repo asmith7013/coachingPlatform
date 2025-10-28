@@ -28,30 +28,18 @@ export function LessonListItem({ lesson, isSelected, onClick }: LessonListItemPr
           : 'hover:bg-gray-50 border-l-4 border-l-transparent'
       }`}
     >
-      {/* Lesson ID and Name */}
-      <div className={`font-medium mb-2 ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
-        {lesson.unitLessonId} - {lesson.lessonName}
-      </div>
-
-      {/* Additional Info */}
-      <div className="flex gap-4 text-xs">
-        <div className="flex items-center gap-1">
-          <span className="text-gray-500">Lesson:</span>
-          <span className="font-medium text-gray-700">{lesson.lessonNumber}</span>
+      {/* Lesson Badge and Name */}
+      <div className="space-y-2">
+        <div>
+          <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold ${
+            isSelected ? 'bg-blue-600 text-white' : 'bg-gray-600 text-white'
+          }`}>
+            Lesson {lesson.lessonNumber}
+          </span>
         </div>
-        {lesson.section && (
-          <div className="flex items-center gap-1">
-            <span className="text-gray-500">Section:</span>
-            <span className="font-medium text-purple-600">{lesson.section}</span>
-          </div>
-        )}
-        {lesson.scopeSequenceTag && (
-          <div className="flex items-center gap-1">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              {lesson.scopeSequenceTag}
-            </span>
-          </div>
-        )}
+        <div className={`font-medium ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
+          {lesson.lessonName}
+        </div>
       </div>
     </div>
   );

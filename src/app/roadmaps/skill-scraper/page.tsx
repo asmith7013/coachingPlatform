@@ -15,6 +15,9 @@ export default function RoadmapsScraperPage() {
     lastResponse,
     isValidating,
     validationResult,
+    currentSkillNumber,
+    currentSkillIndex,
+    totalSkills,
     scrapeSkills,
     scrapeSkillsDebug,
     validateCredentials,
@@ -76,6 +79,29 @@ export default function RoadmapsScraperPage() {
           isValidating={isValidating}
           error={error}
         />
+
+        {/* Progress Indicator */}
+        {isLoading && currentSkillNumber && totalSkills && (
+          <Alert intent="info">
+            <Alert.Title>Scraping in Progress</Alert.Title>
+            <Alert.Description>
+              Currently scraping skill <strong>{currentSkillNumber}</strong>
+              {currentSkillIndex !== undefined && (
+                <span className="ml-1">
+                  ({currentSkillIndex + 1} of {totalSkills})
+                </span>
+              )}
+            </Alert.Description>
+            <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                style={{
+                  width: `${currentSkillIndex !== undefined ? ((currentSkillIndex + 1) / totalSkills) * 100 : 0}%`
+                }}
+              />
+            </div>
+          </Alert>
+        )}
 
         {/* Results Display */}
         {(results.length > 0 || isLoading || error) && (

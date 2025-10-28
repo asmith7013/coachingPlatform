@@ -522,9 +522,19 @@
 │   │   ├── roadmaps
 │   │   │   ├── im-lesson-updater
 │   │   │   │   └── page.tsx
+│   │   │   ├── json
+│   │   │   │   ├── algebra-1.json
+│   │   │   │   ├── grade-6.json
+│   │   │   │   ├── grade-7.json
+│   │   │   │   └── grade-8.json
 │   │   │   ├── scope-and-sequence
+│   │   │   │   ├── components
+│   │   │   │   │   ├── LessonDetailView.tsx
+│   │   │   │   │   └── LessonListItem.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── scope-and-sequence-uploader
+│   │   │   │   └── page.tsx
+│   │   │   ├── scope-and-sequence-uploader-pair
 │   │   │   │   └── page.tsx
 │   │   │   ├── shared
 │   │   │   │   └── lib
@@ -554,7 +564,6 @@
 │   │   │   │   └── page.tsx
 │   │   │   ├── unit-scraper
 │   │   │   │   ├── actions
-│   │   │   │   │   ├── scrape-unit.ts
 │   │   │   │   │   └── scrape-units-batch.ts
 │   │   │   │   ├── components
 │   │   │   │   │   ├── BatchUnitResultDisplay.tsx
@@ -1640,4 +1649,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-484 directories, 1157 files
+487 directories, 1163 files

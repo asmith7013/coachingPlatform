@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { chromium, Browser, BrowserContext, Page } from 'playwright';
-import { 
+import {
   RoadmapsScrapingRequestZodSchema,
   RoadmapsScrapingResponseZodSchema,
   type RoadmapsScrapingResponse,
@@ -12,6 +12,7 @@ import { authenticateRoadmaps } from '../lib/roadmaps-auth';
 import { extractSkillData } from '../lib/skill-extractor';
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
+import { updateRoadmapsSkillContent } from "@actions/313/roadmaps-skills";
 
 /**
  * Server action to scrape Teach to One Roadmaps skills from provided URLs
@@ -67,16 +68,26 @@ export async function scrapeRoadmapsSkills(request: unknown) {
 
         if (skillData.success) {
           console.log(`✅ Successfully scraped: ${skillData.title}`);
+
+          // Immediately save to MongoDB
+          console.log(`💾 Saving skill ${skillData.skillNumber} to database...`);
+          const saveResult = await updateRoadmapsSkillContent(skillData as Parameters<typeof updateRoadmapsSkillContent>[0]);
+
+          if (saveResult.success) {
+            console.log(`✅ Skill ${skillData.skillNumber} saved to database`);
+          } else {
+            console.error(`❌ Failed to save skill ${skillData.skillNumber}: ${saveResult.error}`);
+          }
         } else {
           console.log(`❌ Failed to scrape: ${url} - ${skillData.error}`);
         }
-        
+
         // Add delay between requests to be respectful
         if (i < skillUrls.length - 1) {
           console.log(`⏳ Waiting ${delayBetweenRequests}ms before next request...`);
           await page.waitForTimeout(delayBetweenRequests);
         }
-        
+
       } catch (skillError) {
         console.error(`💥 Error processing skill ${url}:`, skillError);
 

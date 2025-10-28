@@ -84,7 +84,7 @@ export function RoadmapsScraperForm({
     }
   };
 
-  const isFormValid = credentials.email && credentials.password && skillNumbers.length > 0 && skillNumbers.length <= 12;
+  const isFormValid = credentials.email && credentials.password && skillNumbers.length > 0;
   
   return (
     <div className="bg-white rounded-lg shadow p-6 space-y-6">
@@ -159,10 +159,7 @@ export function RoadmapsScraperForm({
           </div>
 
           <div className="text-sm text-gray-600">
-            Skills found: {skillNumbers.length} / 12 max
-            {skillNumbers.length >= 12 && (
-              <span className="text-red-600 ml-2">Only first 12 skills will be scraped</span>
-            )}
+            Skills found: {skillNumbers.length}
           </div>
 
           {/* Skill Numbers List */}
