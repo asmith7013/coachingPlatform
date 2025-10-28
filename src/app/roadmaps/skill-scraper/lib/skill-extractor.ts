@@ -460,7 +460,7 @@ async function navigateToPracticeProblemsTab(page: Page): Promise<boolean> {
         // Wait for practice problem divs to load
         await page.waitForSelector('div[id*="_practice_"]', { timeout: 5000 });
         console.log('🔍 [DEBUG] Practice problem divs loaded');
-      } catch (e) {
+      } catch {
         console.log('⚠️ [DEBUG] Timeout waiting for practice problems to load');
       }
 

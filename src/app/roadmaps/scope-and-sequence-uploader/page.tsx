@@ -415,7 +415,7 @@ export default function ScopeAndSequenceUploaderPage() {
             {results.length === 0 && (
               <div className="text-center text-gray-400 py-12">
                 <div className="text-4xl mb-2">📚</div>
-                <p>No data parsed yet. Paste JSON and click "Parse JSON".</p>
+                <p>No data parsed yet. Paste JSON and click &quot;Parse JSON&quot;.</p>
               </div>
             )}
           </div>

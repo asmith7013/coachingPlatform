@@ -22,7 +22,9 @@ const eslintConfig = [
         },
       ],
       // Add the React Fragment props rule
-      "react/jsx-no-undef": "error"
+      "react/jsx-no-undef": "error",
+      // Disable the img element warning - using img for external/blob URLs
+      "@next/next/no-img-element": "off"
     },
   },
 ];

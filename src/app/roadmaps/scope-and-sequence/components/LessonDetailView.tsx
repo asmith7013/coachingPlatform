@@ -28,7 +28,7 @@ interface LessonDetailViewProps {
 
 export function LessonDetailView({ lesson, onSkillClick, masteredSkills = [] }: LessonDetailViewProps) {
   const [roadmapSkillsData, setRoadmapSkillsData] = useState<RoadmapsSkill[]>([]);
-  const [targetSkillsData, setTargetSkillsData] = useState<RoadmapsSkill[]>([]);
+  const [_targetSkillsData, setTargetSkillsData] = useState<RoadmapsSkill[]>([]);
   const [loadingSkills, setLoadingSkills] = useState(false);
 
   // Fetch skills when lesson changes

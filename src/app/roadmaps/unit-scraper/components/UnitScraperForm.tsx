@@ -177,9 +177,9 @@ export function UnitScraperForm({
         <ul className="text-sm text-blue-800 space-y-1">
           <li>• Enter your Teach to One Roadmaps login credentials</li>
           <li>• Select a roadmap (grade level) from the dropdown</li>
-          <li>• Click "Scrape All Units in Roadmap" to begin batch scraping</li>
+          <li>• Click &quot;Scrape All Units in Roadmap&quot; to begin batch scraping</li>
           <li>• The scraper will automatically process all units in the selected roadmap</li>
-          <li>• Use "Debug Mode" to test with just the first 2 units and keep browser open</li>
+          <li>• Use &quot;Debug Mode&quot; to test with just the first 2 units and keep browser open</li>
           <li>• Results will be displayed below and can be exported as JSON</li>
         </ul>
       </div>
