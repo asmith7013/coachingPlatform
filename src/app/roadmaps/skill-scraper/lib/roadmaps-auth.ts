@@ -135,49 +135,37 @@ export async function authenticateRoadmaps(
     
     // Step 7: Wait for navigation after login
     console.log('⏳ Waiting for authentication to complete...');
-    
-    // Wait for either successful login (URL change) or error message
-    try {
-      await Promise.race([
-        // Wait for navigation away from login page
-        page.waitForURL('**/plan/**', { timeout: 15000 }),
-        page.waitForURL('**/skills/**', { timeout: 15000 }),
-        // Or wait for dashboard/home page
-        page.waitForURL('**/dashboard', { timeout: 15000 })
-      ]);
-      
-      console.log('✅ Authentication successful!');
-      return { success: true };
-      
-    } catch (navigationError) {
-      console.error('💥 Navigation error:', navigationError);
-      // Check if we're still on a login page or got an error
-      const currentUrl = page.url();
-      
-      if (currentUrl.includes('login') || currentUrl.includes('auth')) {
-        // Look for error messages
-        const errorSelectors = [
-          '.error', '.alert', '.notification', 
-          '[class*="error"]', '[class*="alert"]',
-          'text=Invalid', 'text=incorrect', 'text=failed'
-        ];
-        
-        for (const selector of errorSelectors) {
-          const errorElement = page.locator(selector);
-          if (await errorElement.count() > 0) {
-            const errorText = await errorElement.first().textContent();
-            console.log('❌ Authentication error found:', errorText);
-            return { success: false, error: `Authentication failed: ${errorText}` };
-          }
+
+    // Wait a moment for navigation to start
+    await page.waitForTimeout(3000);
+
+    // Check if we're still on a login page or got an error
+    const currentUrl = page.url();
+    console.log(`🔍 Current URL after login: ${currentUrl}`);
+
+    if (currentUrl.includes('login') || currentUrl.includes('auth')) {
+      // Look for error messages
+      const errorSelectors = [
+        '.error', '.alert', '.notification',
+        '[class*="error"]', '[class*="alert"]',
+        'text=Invalid', 'text=incorrect', 'text=failed'
+      ];
+
+      for (const selector of errorSelectors) {
+        const errorElement = page.locator(selector);
+        if (await errorElement.count() > 0) {
+          const errorText = await errorElement.first().textContent();
+          console.log('❌ Authentication error found:', errorText);
+          return { success: false, error: `Authentication failed: ${errorText}` };
         }
-        
-        return { success: false, error: 'Authentication failed: Still on login page after credentials submission' };
       }
-      
-      // If we're not on login page, consider it successful
-      console.log('✅ Authentication appears successful (not on login page)');
-      return { success: true };
+
+      return { success: false, error: 'Authentication failed: Still on login page after credentials submission' };
     }
+
+    // If we're not on login page, consider it successful
+    console.log('✅ Authentication successful!');
+    return { success: true };
     
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown authentication error';

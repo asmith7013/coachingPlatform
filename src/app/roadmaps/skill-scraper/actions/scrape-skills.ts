@@ -39,7 +39,8 @@ export async function scrapeRoadmapsSkills(request: unknown) {
     });
     
     context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      viewport: { width: 1280, height: 700 }
     });
     
     page = await context.newPage();
@@ -215,7 +216,8 @@ export async function validateRoadmapsCredentials(credentials: unknown) {
     });
     
     context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      viewport: { width: 1280, height: 1000 }
     });
     
     page = await context.newPage();
@@ -296,7 +298,8 @@ export async function scrapeRoadmapsSkillsDebug(request: unknown) {
     });
     
     context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      viewport: { width: 1280, height: 1000 }
     });
     
     page = await context.newPage();

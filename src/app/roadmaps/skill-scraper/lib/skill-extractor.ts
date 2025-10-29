@@ -44,7 +44,10 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
     
     // Expand any collapsed accordion sections to access hidden content
     await expandAccordions(page);
-    
+
+    // Wait for accordions to fully expand
+    await page.waitForTimeout(1000);
+
     // Extract fieldset content
     const description = await extractFieldsetContent(page, 'Description');
     const skillChallengeCriteria = await extractFieldsetContent(page, 'Skill Challenge Criteria');
@@ -114,6 +117,15 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
     console.log(`🔍 [EXTRACTOR] Returning skill data with ${skillData.practiceProblems.length} practice problems`);
     console.log(`🔍 [EXTRACTOR] Video URL: ${skillData.videoUrl || '(empty)'}`);
     console.log(`🔍 [EXTRACTOR] Images with context: ${skillData.imagesWithContext.length}`);
+    console.log(`📚 [EXTRACTOR] Vocabulary terms: ${skillData.vocabulary.length}`);
+    if (skillData.vocabulary.length > 0) {
+      console.log(`📚 [EXTRACTOR] Vocabulary: ${skillData.vocabulary.join(', ')}`);
+    }
+    console.log(`📋 [EXTRACTOR] Standards extracted: ${skillData.standards ? 'Yes' : 'No'}`);
+    if (skillData.standards) {
+      const standardsCount = skillData.standards.split('\n\n').filter(s => s.trim()).length;
+      console.log(`📋 [EXTRACTOR] Number of standards: ${standardsCount}`);
+    }
 
     return skillData;
     
@@ -174,14 +186,21 @@ async function extractTitle(page: Page): Promise<string> {
 async function expandAccordions(page: Page): Promise<void> {
   try {
     console.log('🔄 Expanding accordion sections...');
-    
-    const collapsedAccordions = page.locator(ROADMAPS_CONSTANTS.SELECTORS.COLLAPSED_ACCORDION);
+
+    // Find all accordion header links that are collapsed (aria-expanded="false")
+    const collapsedAccordions = page.locator('.p-accordion-header-link[aria-expanded="false"]');
     const count = await collapsedAccordions.count();
-    
+
+    console.log(`📋 Found ${count} collapsed accordions`);
+
     for (let i = 0; i < count; i++) {
       try {
         const accordion = collapsedAccordions.nth(i);
         if (await accordion.isVisible()) {
+          // Get the accordion text for logging
+          const accordionText = await accordion.textContent();
+          console.log(`🔄 Expanding accordion ${i + 1}/${count}: ${accordionText?.trim().substring(0, 50)}...`);
+
           await accordion.click();
           // Wait a moment for content to expand
           await page.waitForTimeout(500);
@@ -190,7 +209,7 @@ async function expandAccordions(page: Page): Promise<void> {
         console.warn(`Could not expand accordion ${i}:`, error);
       }
     }
-    
+
     console.log(`✅ Expanded ${count} accordion sections`);
   } catch (error) {
     console.warn('Error expanding accordions:', error);
@@ -223,16 +242,70 @@ async function extractFieldsetContent(page: Page, legendText: string): Promise<s
  */
 async function extractStandardsContent(page: Page): Promise<string> {
   try {
-    // Look for standards fieldset (contains "CC." in legend)
-    const standardsFieldset = page.locator('fieldset:has(legend:has-text("CC."))');
-    
-    if (await standardsFieldset.count() > 0) {
-      const content = standardsFieldset.locator('.p-fieldset-content');
-      const text = await content.textContent();
-      return text?.trim() || '';
+    // Look for Standards accordion header link by text content
+    const headerLink = page.locator('.p-accordion-header-link:has-text("Standards")').first();
+
+    if (await headerLink.count() === 0) {
+      console.log('ℹ️ No standards accordion found');
+      return '';
     }
-    
-    return '';
+
+    // Expand accordion if it's collapsed (same pattern as worked example video)
+    const isExpanded = await headerLink.getAttribute('aria-expanded');
+    if (isExpanded === 'false') {
+      console.log('🔄 Expanding Standards accordion...');
+      await headerLink.click();
+      await page.waitForTimeout(500);
+    }
+
+    // Get the content area using aria-controls
+    const contentId = await headerLink.getAttribute('aria-controls');
+    if (!contentId) {
+      console.log('⚠️ Could not find standards content ID');
+      return '';
+    }
+
+    const contentArea = page.locator(`#${contentId}`);
+
+    // Wait for the content area to be attached
+    try {
+      await contentArea.waitFor({ state: 'attached', timeout: 3000 });
+    } catch {
+      console.warn(`Standards content area #${contentId} not attached after 3s`);
+      return '';
+    }
+
+    // Extract standards from fieldsets, excluding "Curriculum Alignment Documents"
+    const standardsData: string[] = [];
+    const fieldsets = contentArea.locator('fieldset');
+    const count = await fieldsets.count();
+
+    console.log(`📋 Found ${count} fieldsets in standards section`);
+
+    for (let i = 0; i < count; i++) {
+      try {
+        const fieldset = fieldsets.nth(i);
+        const legendText = await fieldset.locator('legend .p-fieldset-legend-text').textContent({ timeout: 2000 });
+
+        // Skip "Curriculum Alignment Documents" fieldset
+        if (legendText?.includes('Curriculum Alignment')) {
+          continue;
+        }
+
+        const contentText = await fieldset.locator('.p-fieldset-content').textContent({ timeout: 2000 });
+
+        if (legendText && contentText) {
+          standardsData.push(`${legendText.trim()}: ${contentText.trim()}`);
+        }
+      } catch (error) {
+        console.warn(`Could not extract standard ${i}:`, error);
+      }
+    }
+
+    const result = standardsData.join('\n\n');
+    console.log(`📋 Extracted ${standardsData.length} standards`);
+    return result;
+
   } catch (error) {
     console.warn('Could not extract standards content:', error);
     return '';
@@ -241,36 +314,38 @@ async function extractStandardsContent(page: Page): Promise<string> {
 
 /**
  * Extract content from a section based on h4 header text
+ * Returns HTML to preserve formatting, tables, and structure
  */
 async function extractSectionContent(page: Page, headerText: string): Promise<string> {
   try {
     // Find the h4 element with the matching text
     const header = page.locator(`h4:has-text("${headerText}")`);
-    
+
     if (await header.count() > 0) {
-      // Use JavaScript to get content between headers
+      // Use JavaScript to get HTML content between headers
       const content = await page.evaluate((headerText) => {
-        const headers = Array.from(document.querySelectorAll('h4'));
+        const headers = Array.from(document.querySelectorAll('#primer h4'));
         const targetHeader = headers.find(h => h.textContent?.includes(headerText));
-        
+
         if (!targetHeader) return '';
-        
-        let content = '';
+
+        let htmlContent = '';
         let currentElement = targetHeader.nextElementSibling;
-        
+
         while (currentElement && currentElement.tagName !== 'H4') {
-          if (currentElement.textContent) {
-            content += currentElement.textContent + '\n';
+          // Get outerHTML to preserve structure
+          if (currentElement instanceof HTMLElement) {
+            htmlContent += currentElement.outerHTML + '\n';
           }
           currentElement = currentElement.nextElementSibling;
         }
-        
-        return content.trim();
+
+        return htmlContent.trim();
       }, headerText);
-      
+
       return content || '';
     }
-    
+
     return '';
   } catch (error) {
     console.warn(`Could not extract section content for ${headerText}:`, error);
@@ -283,27 +358,60 @@ async function extractSectionContent(page: Page, headerText: string): Promise<st
  */
 async function extractVocabulary(page: Page): Promise<string[]> {
   try {
-    // Look for vocabulary accordion content
-    const vocabularyAccordion = page.locator('[aria-controls*="content"]:has-text("Vocabulary")');
-    
-    if (await vocabularyAccordion.count() > 0) {
-      // Get the associated content area
-      const contentId = await vocabularyAccordion.getAttribute('aria-controls');
-      if (contentId) {
-        const contentArea = page.locator(`#${contentId}`);
-        const text = await contentArea.textContent();
-        
-        if (text) {
-          // Split by common delimiters and clean up
-          return text
-            .split(/[,\n\r\t•·]/)
-            .map(term => term.trim())
-            .filter(term => term.length > 0 && !term.includes('Resource Available'));
+    // Look for vocabulary accordion header link by text content
+    const headerLink = page.locator('.p-accordion-header-link:has-text("Vocabulary")').first();
+
+    if (await headerLink.count() === 0) {
+      console.log('ℹ️ No vocabulary accordion found');
+      return [];
+    }
+
+    // Expand accordion if it's collapsed (same pattern as worked example video)
+    const isExpanded = await headerLink.getAttribute('aria-expanded');
+    if (isExpanded === 'false') {
+      console.log('🔄 Expanding Vocabulary accordion...');
+      await headerLink.click();
+      await page.waitForTimeout(500);
+    }
+
+    // Get the content area using aria-controls
+    const contentId = await headerLink.getAttribute('aria-controls');
+    if (!contentId) {
+      console.log('⚠️ Could not find vocabulary content ID');
+      return [];
+    }
+
+    const contentArea = page.locator(`#${contentId}`);
+
+    // Wait for the content area to be visible with a shorter timeout
+    try {
+      await contentArea.waitFor({ state: 'attached', timeout: 3000 });
+    } catch {
+      console.warn(`Vocabulary content area #${contentId} not attached after 3s`);
+      return [];
+    }
+
+    // Extract vocabulary terms from fieldsets within the vocabulary section
+    const vocabularyTerms: string[] = [];
+    const fieldsets = contentArea.locator('fieldset legend .p-fieldset-legend-text');
+    const count = await fieldsets.count();
+
+    console.log(`📚 Found ${count} vocabulary fieldsets`);
+
+    for (let i = 0; i < count; i++) {
+      try {
+        const term = await fieldsets.nth(i).textContent({ timeout: 2000 });
+        if (term && term.trim()) {
+          vocabularyTerms.push(term.trim());
         }
+      } catch (error) {
+        console.warn(`Could not extract vocabulary term ${i}:`, error);
       }
     }
-    
-    return [];
+
+    console.log(`📚 Extracted ${vocabularyTerms.length} vocabulary terms`);
+    return vocabularyTerms;
+
   } catch (error) {
     console.warn('Could not extract vocabulary:', error);
     return [];
@@ -660,6 +768,20 @@ async function screenshotPracticeProblems(
 
     console.log(`🔍 Looking for divs with id starting with "${skillNumber}_practice_"`);
 
+    // Hide the footer and UI elements to prevent them from appearing in screenshots
+    await page.evaluate(() => {
+      const footer = document.querySelector('.nc_footer');
+      if (footer) {
+        (footer as HTMLElement).style.display = 'none';
+      }
+
+      const userGuidingLauncher = document.getElementById('userguiding-launcher');
+      if (userGuidingLauncher) {
+        (userGuidingLauncher as HTMLElement).style.display = 'none';
+      }
+    });
+    console.log('👻 Footer and UI elements hidden for clean screenshots');
+
     // Find all practice problem divs with pattern: {skillNumber}_practice_{number}
     const problemDivs = page.locator(`div[id^="${skillNumber}_practice_"]`);
     const count = await problemDivs.count();
@@ -681,6 +803,10 @@ async function screenshotPracticeProblems(
       console.log('ℹ️ No practice problems found for this skill');
       return problems;
     }
+
+    // Wait once for all practice problems to fully render (images, MathJax, etc.)
+    console.log(`⏳ Waiting 5 seconds for all ${count} practice problems to fully render...`);
+    await page.waitForTimeout(5000);
 
     for (let i = 0; i < count; i++) {
       try {

@@ -523,6 +523,8 @@
 │   │   │   ├── im-lesson-updater
 │   │   │   │   └── page.tsx
 │   │   │   ├── json
+│   │   │   │   ├── algebra-1-8.json
+│   │   │   │   ├── algebra-1-combined.json
 │   │   │   │   ├── algebra-1.json
 │   │   │   │   ├── grade-6.json
 │   │   │   │   ├── grade-7.json
@@ -530,7 +532,12 @@
 │   │   │   ├── scope-and-sequence
 │   │   │   │   ├── components
 │   │   │   │   │   ├── LessonDetailView.tsx
-│   │   │   │   │   └── LessonListItem.tsx
+│   │   │   │   │   ├── LessonListItem.tsx
+│   │   │   │   │   ├── SkillDetailView.tsx
+│   │   │   │   │   ├── SkillProgressionTable.tsx
+│   │   │   │   │   └── StudentFilter.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── scope-and-sequence-edit
 │   │   │   │   └── page.tsx
 │   │   │   ├── scope-and-sequence-uploader
 │   │   │   │   └── page.tsx
@@ -1649,4 +1656,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-487 directories, 1163 files
+488 directories, 1169 files

@@ -101,6 +101,12 @@ export default function ScopeAndSequencePage() {
     setSelectedLessonId(null);
   }, [selectedTag, selectedUnit]);
 
+  // Clear selected skill when lesson changes
+  useEffect(() => {
+    setSelectedSkillNumber(null);
+    setSelectedSkillData(null);
+  }, [selectedLessonId]);
+
   const handleLessonClick = (lessonId: string) => {
     setSelectedLessonId(lessonId);
   };

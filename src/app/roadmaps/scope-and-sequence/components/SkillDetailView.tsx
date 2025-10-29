@@ -231,27 +231,29 @@ export function SkillDetailView({ skill, onSkillClick, color = 'blue', masteredS
               Practice Problems ({skill.practiceProblems!.length})
             </h4>
             <div className="relative bg-white rounded-lg border border-gray-200 overflow-hidden">
-              <img
-                src={skill.practiceProblems![currentProblemIndex].screenshotUrl}
-                alt={`Practice Problem ${skill.practiceProblems![currentProblemIndex].problemNumber}`}
-                className="w-full"
-              />
+              <div className="flex items-center justify-center bg-gray-50" style={{ height: '600px' }}>
+                <img
+                  src={skill.practiceProblems![currentProblemIndex].screenshotUrl}
+                  alt={`Practice Problem ${skill.practiceProblems![currentProblemIndex].problemNumber}`}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
 
               {skill.practiceProblems!.length > 1 && (
                 <>
                   <button
                     onClick={prevProblem}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-900 rounded-full p-2 shadow-lg transition-all"
                     aria-label="Previous problem"
                   >
-                    <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
+                    <ChevronLeftIcon className="w-5 h-5 text-white" />
                   </button>
                   <button
                     onClick={nextProblem}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-900 rounded-full p-2 shadow-lg transition-all"
                     aria-label="Next problem"
                   >
-                    <ChevronRightIcon className="w-5 h-5 text-gray-600" />
+                    <ChevronRightIcon className="w-5 h-5 text-white" />
                   </button>
                   <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/70 text-white px-3 py-1 rounded-full text-xs font-medium">
                     {currentProblemIndex + 1} / {skill.practiceProblems!.length}

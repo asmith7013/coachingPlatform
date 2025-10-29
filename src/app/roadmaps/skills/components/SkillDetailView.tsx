@@ -431,10 +431,15 @@ function Section({ title, color, children }: SectionProps) {
     gray: "border-gray-500 bg-gray-50 text-gray-900",
   };
 
+  // Check if content is HTML or plain text
+  const content = typeof children === 'string' && children.includes('<')
+    ? <div className="text-sm prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: children }} />
+    : <div className="text-sm whitespace-pre-wrap">{children}</div>;
+
   return (
     <div className={`border-l-4 ${colorClasses[color]} p-4 rounded`}>
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <div className="text-sm whitespace-pre-wrap">{children}</div>
+      {content}
     </div>
   );
 }
@@ -489,10 +494,15 @@ function SectionWithImages({ title, color, content, images }: SectionWithImagesP
     gray: "hover:border-gray-400",
   };
 
+  // Check if content is HTML or plain text
+  const contentDisplay = typeof content === 'string' && content.includes('<')
+    ? <div className="text-sm prose prose-sm max-w-none mb-3" dangerouslySetInnerHTML={{ __html: content }} />
+    : <div className="text-sm whitespace-pre-wrap mb-3">{content}</div>;
+
   return (
     <div className={`border-l-4 ${colorClasses[color]} p-4 rounded`}>
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <div className="text-sm whitespace-pre-wrap mb-3">{content}</div>
+      {contentDisplay}
 
       {/* Images for this section */}
       {images && images.length > 0 && (
@@ -562,15 +572,16 @@ function PracticeProblemsCarousel({
       </h3>
 
       <div className="relative bg-white rounded-lg border border-indigo-200 overflow-hidden">
-        {/* Problem Image */}
+        {/* Problem Image - Fixed height container */}
         <div
-          className="cursor-pointer hover:opacity-90 transition-opacity"
+          className="cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center bg-gray-50"
+          style={{ height: '600px' }}
           onClick={onImageClick}
         >
           <img
             src={currentProblem.screenshotUrl}
             alt={`Practice Problem ${currentProblem.problemNumber}`}
-            className="w-full"
+            className="max-w-full max-h-full object-contain"
           />
         </div>
 
@@ -579,17 +590,17 @@ function PracticeProblemsCarousel({
           <>
             <button
               onClick={onPrev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-900 rounded-full p-2 shadow-lg transition-all"
               aria-label="Previous problem"
             >
-              <ChevronLeftIcon className="w-6 h-6 text-indigo-600" />
+              <ChevronLeftIcon className="w-6 h-6 text-white" />
             </button>
             <button
               onClick={onNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-all"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-900 rounded-full p-2 shadow-lg transition-all"
               aria-label="Next problem"
             >
-              <ChevronRightIcon className="w-6 h-6 text-indigo-600" />
+              <ChevronRightIcon className="w-6 h-6 text-white" />
             </button>
           </>
         )}
