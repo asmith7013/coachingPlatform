@@ -3,15 +3,21 @@
 import { useState, useEffect } from "react";
 import { RoadmapUnit } from "@zod-schema/313/roadmap-unit";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
+import { Student } from "@zod-schema/313/student";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
+import { fetchStudentsBySection } from "@/app/actions/313/students";
 
 interface UnitDetailViewProps {
   unit: RoadmapUnit | null;
+  selectedSection: string;
+  onSkillClick?: (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple') => void;
 }
 
-export function UnitDetailView({ unit }: UnitDetailViewProps) {
+export function UnitDetailView({ unit, selectedSection, onSkillClick }: UnitDetailViewProps) {
   const [targetSkills, setTargetSkills] = useState<RoadmapsSkill[]>([]);
+  const [additionalSupportSkills, setAdditionalSupportSkills] = useState<RoadmapsSkill[]>([]);
   const [loadingSkills, setLoadingSkills] = useState(false);
+  const [sectionStudents, setSectionStudents] = useState<Student[]>([]);
 
   // Fetch target skills when unit changes
   useEffect(() => {
@@ -36,6 +42,62 @@ export function UnitDetailView({ unit }: UnitDetailViewProps) {
 
     fetchSkills();
   }, [unit]);
+
+  // Fetch additional support skills when unit changes
+  useEffect(() => {
+    if (!unit || !unit.additionalSupportSkills || unit.additionalSupportSkills.length === 0) {
+      setAdditionalSupportSkills([]);
+      return;
+    }
+
+    const fetchSkills = async () => {
+      try {
+        const result = await fetchRoadmapsSkillsByNumbers(unit.additionalSupportSkills);
+        if (result.success && result.data) {
+          setAdditionalSupportSkills(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching additional support skills:', error);
+      }
+    };
+
+    fetchSkills();
+  }, [unit]);
+
+  // Fetch section students when selectedSection changes
+  useEffect(() => {
+    if (!selectedSection) {
+      setSectionStudents([]);
+      return;
+    }
+
+    const fetchSectionData = async () => {
+      try {
+        console.log('[UnitDetailView] Fetching section students for:', selectedSection);
+        const result = await fetchStudentsBySection(selectedSection);
+        console.log('[UnitDetailView] Section students result:', result);
+        if (result.success && result.items) {
+          setSectionStudents(result.items as Student[]);
+          console.log('[UnitDetailView] Section students count:', result.items.length);
+        }
+      } catch (error) {
+        console.error('Error fetching section students:', error);
+      }
+    };
+
+    fetchSectionData();
+  }, [selectedSection]);
+
+  // Calculate mastery percentage for a skill
+  const calculateMasteryPercentage = (skillNumber: string): number => {
+    if (sectionStudents.length === 0) return 0;
+    const masteredCount = sectionStudents.filter(s =>
+      s.masteredSkills?.includes(skillNumber)
+    ).length;
+    const percentage = Math.round((masteredCount / sectionStudents.length) * 100);
+    console.log(`[UnitDetailView] Skill ${skillNumber}: ${masteredCount}/${sectionStudents.length} = ${percentage}%`);
+    return percentage;
+  };
 
   // Empty state
   if (!unit) {
@@ -89,66 +151,154 @@ export function UnitDetailView({ unit }: UnitDetailViewProps) {
               Target Skills ({targetSkills.length})
             </h3>
             <div className="space-y-3">
-              {targetSkills.map((skill, idx) => (
-                <div key={skill.skillNumber} className="border border-gray-200 rounded-lg p-3 bg-gray-50">
-                  {/* Skill Title */}
-                  <div className="font-medium text-gray-900 mb-2">
-                    {idx + 1}. {skill.title} ({skill.skillNumber})
-                  </div>
+              {targetSkills.map((skill, idx) => {
+                const masteryPercentage = sectionStudents.length > 0 ? calculateMasteryPercentage(skill.skillNumber) : null;
 
-                  {/* Essential and Helpful Skills in compact format */}
-                  <div className="space-y-1">
+                return (
+                  <div key={skill.skillNumber} className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                    {/* Skill Title with Progress Bar */}
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-600 text-white font-bold text-sm flex-shrink-0">
+                          {skill.skillNumber}
+                        </div>
+                        <div className="font-medium text-gray-900">
+                          {skill.title}
+                        </div>
+                      </div>
+                      {masteryPercentage !== null && (
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <div className="w-24 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-blue-600 h-2 rounded-full transition-all"
+                              style={{ width: `${masteryPercentage}%` }}
+                            />
+                          </div>
+                          <span className="text-xs font-medium text-gray-600 w-10 text-right">
+                            {masteryPercentage}%
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                  {/* Essential and Helpful Skills */}
+                  <div className="space-y-2">
                     {/* Essential Skills */}
                     {skill.essentialSkills && skill.essentialSkills.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 items-center">
-                        <span className="text-xs font-medium text-gray-600 mr-1">Essential:</span>
-                        {skill.essentialSkills.map((s) => (
-                          <span
-                            key={s.skillNumber}
-                            className="bg-green-100 text-green-800 px-2 py-0.5 rounded text-xs font-medium"
-                          >
-                            {s.title} ({s.skillNumber})
-                          </span>
-                        ))}
+                      <div>
+                        <div className="text-xs font-medium text-gray-600 mb-1">Essential:</div>
+                        <div className="space-y-1">
+                          {skill.essentialSkills.map((s) => {
+                            const essentialMastery = sectionStudents.length > 0 ? calculateMasteryPercentage(s.skillNumber) : null;
+                            return (
+                              <div key={s.skillNumber} className="flex items-center justify-between bg-orange-50 border border-orange-200 px-2 py-1.5 rounded gap-2">
+                                <div className="flex items-center gap-2">
+                                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-orange-500 text-white font-bold text-xs flex-shrink-0">
+                                    {s.skillNumber}
+                                  </div>
+                                  <span className="text-gray-900 text-xs font-medium">
+                                    {s.title}
+                                  </span>
+                                </div>
+                                {essentialMastery !== null && (
+                                  <div className="flex items-center gap-2 flex-shrink-0">
+                                    <div className="w-24 bg-gray-200 rounded-full h-2">
+                                      <div
+                                        className="bg-orange-500 h-2 rounded-full transition-all"
+                                        style={{ width: `${essentialMastery}%` }}
+                                      />
+                                    </div>
+                                    <span className="text-xs font-medium text-gray-700 w-10 text-right">
+                                      {essentialMastery}%
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     )}
 
                     {/* Helpful Skills */}
                     {skill.helpfulSkills && skill.helpfulSkills.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 items-center">
-                        <span className="text-xs font-medium text-gray-600 mr-1">Helpful:</span>
-                        {skill.helpfulSkills.map((s) => (
-                          <span
-                            key={s.skillNumber}
-                            className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs font-medium"
-                          >
-                            {s.title} ({s.skillNumber})
-                          </span>
-                        ))}
+                      <div>
+                        <div className="text-xs font-medium text-gray-600 mb-1">Helpful:</div>
+                        <div className="space-y-1">
+                          {skill.helpfulSkills.map((s) => {
+                            const helpfulMastery = sectionStudents.length > 0 ? calculateMasteryPercentage(s.skillNumber) : null;
+                            return (
+                              <div key={s.skillNumber} className="flex items-center justify-between bg-purple-50 border border-purple-200 px-2 py-1.5 rounded gap-2">
+                                <div className="flex items-center gap-2">
+                                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-purple-500 text-white font-bold text-xs flex-shrink-0">
+                                    {s.skillNumber}
+                                  </div>
+                                  <span className="text-gray-900 text-xs font-medium">
+                                    {s.title}
+                                  </span>
+                                </div>
+                                {helpfulMastery !== null && (
+                                  <div className="flex items-center gap-2 flex-shrink-0">
+                                    <div className="w-24 bg-gray-200 rounded-full h-2">
+                                      <div
+                                        className="bg-purple-500 h-2 rounded-full transition-all"
+                                        style={{ width: `${helpfulMastery}%` }}
+                                      />
+                                    </div>
+                                    <span className="text-xs font-medium text-gray-700 w-10 text-right">
+                                      {helpfulMastery}%
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
-              ))}
+              );
+            })}
             </div>
           </div>
         ) : null}
 
-        {/* Additional Support Skills Section - just show skill numbers */}
-        {unit.additionalSupportSkills && unit.additionalSupportSkills.length > 0 && (
+        {/* Additional Support Skills Section */}
+        {additionalSupportSkills.length > 0 && (
           <div className="border-t border-gray-200 pt-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4">
-              Additional Support Skills ({unit.additionalSupportSkills.length})
+              Additional Support Skills ({additionalSupportSkills.length})
             </h3>
-            <div className="flex flex-wrap gap-2">
-              {unit.additionalSupportSkills.map((skillNumber) => (
-                <span
-                  key={skillNumber}
-                  className="bg-green-100 text-green-800 px-3 py-1.5 rounded-md text-sm font-medium"
-                >
-                  {skillNumber}
-                </span>
-              ))}
+            <div className="space-y-1">
+              {additionalSupportSkills.map((skill) => {
+                const supportMastery = sectionStudents.length > 0 ? calculateMasteryPercentage(skill.skillNumber) : null;
+                return (
+                  <div key={skill.skillNumber} className="flex items-center justify-between bg-blue-50 border border-blue-200 px-2 py-1.5 rounded gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 text-white font-bold text-xs flex-shrink-0">
+                        {skill.skillNumber}
+                      </div>
+                      <span className="text-gray-900 text-xs font-medium">
+                        {skill.title}
+                      </span>
+                    </div>
+                    {supportMastery !== null && (
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="w-24 bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-blue-500 h-2 rounded-full transition-all"
+                            style={{ width: `${supportMastery}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-medium text-gray-700 w-10 text-right">
+                          {supportMastery}%
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

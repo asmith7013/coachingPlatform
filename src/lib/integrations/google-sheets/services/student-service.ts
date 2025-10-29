@@ -92,41 +92,100 @@ export class StudentService {
 
   static async bulkCreateStudents(studentsData: StudentInput[]) {
     try {
+      console.log('[StudentService] bulkCreateStudents called with', studentsData.length, 'students');
+
       // Validate all student data first
-      const validatedStudents = studentsData.map(data => 
-        StudentInputZodSchema.parse(data)
-      );
-      
-      const result = await StudentModel.insertMany(validatedStudents, { 
-        ordered: false // Continue inserting even if some fail due to duplicates
+      const validatedStudents = studentsData.map((data, index) => {
+        console.log(`[StudentService] Validating student ${index}:`, data);
+        return StudentInputZodSchema.parse(data);
       });
-      
-      return { 
-        success: true, 
-        data: result,
-        message: `Successfully created ${result.length} students`
+
+      console.log('[StudentService] All students validated, calling insertMany...');
+
+      // Check for existing students first
+      const studentIDs = validatedStudents.map(s => s.studentID);
+      const existingStudents = await StudentModel.find({ studentID: { $in: studentIDs } });
+      console.log('[StudentService] Found', existingStudents.length, 'existing students with these IDs');
+      if (existingStudents.length > 0) {
+        console.log('[StudentService] Existing student IDs:', existingStudents.map(s => s.studentID));
+      }
+
+      const result = await StudentModel.insertMany(validatedStudents, {
+        ordered: false, // Continue inserting even if some fail due to duplicates
+        rawResult: true // Get detailed result including errors
+      });
+
+      console.log('[StudentService] insertMany rawResult:', JSON.stringify(result, null, 2));
+
+      // Extract inserted documents from rawResult
+      const insertedDocs = result.insertedDocs || [];
+      console.log('[StudentService] Inserted count:', insertedDocs.length);
+
+      // Verify students were actually inserted
+      const verifyCount = await StudentModel.countDocuments({ studentID: { $in: studentIDs } });
+      console.log('[StudentService] Verification: Found', verifyCount, 'students in DB after insert');
+
+      if (insertedDocs.length === 0 && validatedStudents.length > 0) {
+        // All inserts failed - likely all duplicates
+        return {
+          success: false,
+          error: `No students were created. All ${validatedStudents.length} students may already exist (duplicate studentIDs).`,
+          data: []
+        };
+      }
+
+      return {
+        success: true,
+        data: insertedDocs.map((doc: any) => doc.toObject()),
+        message: `Successfully created ${insertedDocs.length} students`
       };
     } catch (error) {
+      console.error('[StudentService] Error in bulkCreateStudents:', error);
+
       // Handle bulk insert errors (some may succeed, some may fail)
       if (error && typeof error === 'object' && 'insertedDocs' in error) {
-        const insertedDocs = (error as unknown as { insertedDocs: unknown[] }).insertedDocs;
-        const insertedCount = insertedDocs?.length || 0;
-        
+        const insertedDocs = (error as any).insertedDocs || [];
+        const insertedCount = insertedDocs.length || 0;
+
+        console.log('[StudentService] Partial success:', insertedCount, 'students created');
+
+        // Convert Mongoose documents to plain objects to avoid circular references
+        const plainDocs = insertedDocs.map((doc: any) => {
+          if (doc && typeof doc.toObject === 'function') {
+            return doc.toObject();
+          }
+          // If it's already a plain object, extract only necessary fields
+          return {
+            _id: doc._id,
+            studentID: doc.studentID,
+            firstName: doc.firstName,
+            lastName: doc.lastName,
+            section: doc.section,
+            teacher: doc.teacher,
+            gradeLevel: doc.gradeLevel,
+            email: doc.email,
+            active: doc.active,
+            masteredSkills: doc.masteredSkills || []
+          };
+        });
+
         return {
           success: insertedCount > 0,
-          data: insertedDocs,
+          data: plainDocs,
           message: `Partial success: created ${insertedCount} students, some failed due to duplicates`,
           warning: 'Some students may have been skipped due to duplicate student IDs'
         };
       }
-      
+
       if (error instanceof z.ZodError) {
-        return { 
-          success: false, 
-          error: `Validation failed: ${error.issues.map((e: z.core.$ZodIssue) => e.message).join(', ')}` 
+        console.error('[StudentService] Validation error:', error.issues);
+        return {
+          success: false,
+          error: `Validation failed: ${error.issues.map((e: z.core.$ZodIssue) => e.message).join(', ')}`
         };
       }
-      
+
+      console.error('[StudentService] Unhandled error:', error);
       return { success: false, error: handleServerError(error) };
     }
   }

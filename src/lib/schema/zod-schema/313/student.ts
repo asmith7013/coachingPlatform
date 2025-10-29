@@ -16,11 +16,11 @@ export const StudentFieldsSchema = z.object({
   
   // ✅ Keep enum validation but expect string instead of array
   section: SummerSectionsZod.describe("Class section identifier"),
-  teacher: SummerTeachersZod.describe("Assigned teacher"),
+  teacher: SummerTeachersZod.describe("Assigned teacher").optional(),
 
-  gradeLevel: z.string().describe("Current grade level (e.g., '6 (Rising 7)')").optional(),
+  gradeLevel: z.string().describe("Current grade level (e.g., '6'").optional(),
 //   subject: z.string().min(1).describe("Subject area"),
-  email: z.string().email().optional().describe("Student email address").optional(),
+  email: z.email().optional().describe("Student email address").optional(),
   active: z.boolean().default(true).describe("Whether student is currently active"),
   masteredSkills: z.array(z.string()).default([]).describe("Array of skill numbers that the student has mastered"),
 });
@@ -54,10 +54,8 @@ export function createStudentDefaults(overrides: Partial<StudentInput> = {}): St
     studentID: 0,
     firstName: "",
     lastName: "",
-    section: "", // ✅ Now expects string, not array
-    teacher: "", // ✅ Now expects string, not array
+    section: "",
     gradeLevel: "",
-    // subject: "",
     active: true,
     masteredSkills: [],
     ownerIds: [],

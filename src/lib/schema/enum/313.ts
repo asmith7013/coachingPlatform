@@ -10,6 +10,9 @@ export const SummerSections = [
     "803",
     "804",
     "805",
+    "603/605",
+    "604/704",
+    "703/705"
 ] as const;
 
 export const SummerTeachers = [
@@ -20,6 +23,14 @@ export const SummerTeachers = [
     // D9 sections
     "BANIK",
     "VIVAR",
+
+    // 313 sections
+    "CARDONA",
+    "COMPRES",
+    "MALUNGA",
+    "DELANCER",
+    "VIERY",
+    "NEWMAN"
 ] as const;
 
 export const SummerDistrictsZod = z.enum(SummerDistricts);

@@ -15,7 +15,7 @@ const studentSchemaFields = {
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   section: { type: String, required: true, index: true },
-  teacher: { type: String, required: true, index: true },
+  teacher: { type: String, required: false, index: true },
   gradeLevel: { type: String, required: false },
 //   subject: { type: String, required: true },
   email: { type: String, required: false },

@@ -9,6 +9,9 @@ interface UnitListItemProps {
 }
 
 export function UnitListItem({ unit, isSelected, onClick }: UnitListItemProps) {
+  // Remove leading "XX - " pattern from unit title
+  const cleanTitle = unit.unitTitle.replace(/^\d+\s*-\s*/, '');
+
   return (
     <div
       onClick={onClick}
@@ -19,8 +22,15 @@ export function UnitListItem({ unit, isSelected, onClick }: UnitListItemProps) {
       }`}
     >
       {/* Unit Number and Title */}
-      <div className={`font-medium mb-2 ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
-        {unit.unitNumber} - {unit.unitTitle}
+      <div className="flex items-center gap-3 mb-2">
+        <span className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${
+          isSelected ? 'bg-blue-600' : 'bg-green-600'
+        } text-white font-bold text-sm flex-shrink-0`}>
+          {unit.unitNumber}
+        </span>
+        <div className={`font-medium ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
+          {cleanTitle}
+        </div>
       </div>
 
       {/* Skill Counts */}

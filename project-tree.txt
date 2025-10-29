@@ -185,6 +185,8 @@
 ├── scripts
 │   ├── add-students.ts
 │   ├── combine-docs.ts
+│   ├── db
+│   │   └── drop-studentidref-index.ts
 │   ├── delete-all-students.ts
 │   ├── generate-theme-css.ts
 │   ├── im-curriculum
@@ -568,6 +570,18 @@
 │   │   │   │   │   ├── SkillDetailModal.tsx
 │   │   │   │   │   ├── SkillDetailView.tsx
 │   │   │   │   │   └── SkillListItem.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── student-creator
+│   │   │   │   └── page.tsx
+│   │   │   ├── student-upload
+│   │   │   │   ├── actions
+│   │   │   │   │   └── import-student-skills.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── ImportForm.tsx
+│   │   │   │   │   └── ResultsDisplay.tsx
+│   │   │   │   ├── lib
+│   │   │   │   │   ├── parser.ts
+│   │   │   │   │   └── types.ts
 │   │   │   │   └── page.tsx
 │   │   │   ├── unit-scraper
 │   │   │   │   ├── actions
@@ -1656,4 +1670,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-488 directories, 1169 files
+494 directories, 1177 files
