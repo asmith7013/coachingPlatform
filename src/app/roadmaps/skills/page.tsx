@@ -244,7 +244,11 @@ export default function RoadmapsSkillsPage() {
                 id="grade-filter"
                 value={selectedGrade}
                 onChange={handleGradeChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  !selectedGrade
+                    ? 'border-blue-500 ring-2 ring-blue-200'
+                    : 'border-gray-300'
+                }`}
               >
                 <option value="">All Grades</option>
                 {availableGrades.map(grade => (
@@ -289,8 +293,9 @@ export default function RoadmapsSkillsPage() {
                   type="text"
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  placeholder="Search by skill number or name..."
-                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder={selectedGrade ? "Search by skill number or name..." : "Select a grade first"}
+                  disabled={!selectedGrade}
+                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 />
                 {searchQuery && (
                   <button

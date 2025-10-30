@@ -7,7 +7,7 @@ export function RoadmapsNav() {
   const pathname = usePathname();
 
   const navItems = [
-    { href: "/roadmaps/scope-and-sequence", label: "Scope & Sequence" },
+    { href: "/roadmaps/scope-and-sequence", label: "Lesson by Lesson" },
     { href: "/roadmaps/units", label: "Units" },
     { href: "/roadmaps/skills", label: "Skills" },
   ];

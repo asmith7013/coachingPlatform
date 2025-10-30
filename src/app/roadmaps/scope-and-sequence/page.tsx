@@ -187,7 +187,7 @@ export default function ScopeAndSequencePage() {
 
         {/* Header and Filters */}
         <div className="flex gap-4 mb-6">
-          {/* Left Card: Curriculum/Unit Filters */}
+          {/* Left Card: Title and Curriculum/Unit Filters */}
           <div className="flex-1 bg-white rounded-lg shadow-sm p-6">
             <div className="mb-4">
               <h1 className="text-3xl font-bold mb-2">Scope and Sequence</h1>
@@ -209,7 +209,11 @@ export default function ScopeAndSequencePage() {
                     setSelectedTag(e.target.value);
                     setSelectedUnit("");
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    !selectedTag
+                      ? 'border-blue-500 ring-2 ring-blue-200'
+                      : 'border-gray-300'
+                  }`}
                 >
                   {SCOPE_SEQUENCE_TAG_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -228,7 +232,11 @@ export default function ScopeAndSequencePage() {
                   value={selectedUnit}
                   onChange={(e) => setSelectedUnit(e.target.value)}
                   disabled={!selectedTag}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    selectedTag && !selectedUnit
+                      ? 'border-blue-500 ring-2 ring-blue-200'
+                      : 'border-gray-300'
+                  } disabled:bg-gray-100 disabled:cursor-not-allowed`}
                 >
                   <option value="">Select Unit</option>
                   {availableUnits.map((unit) => (
@@ -241,29 +249,31 @@ export default function ScopeAndSequencePage() {
             </div>
           </div>
 
-          {/* Right Card: Student Filter */}
-          <div className="w-1/4 bg-white rounded-lg shadow-sm p-6">
-            <div className="mb-4">
-              <h2 className="text-lg font-semibold">Student Filter</h2>
-              <p className="text-sm text-gray-600">
-                View mastery progress
-              </p>
+          {/* Right Card: Student Filter - Only show when grade and unit are selected */}
+          {selectedTag && selectedUnit && (
+            <div className="w-1/4 bg-white rounded-lg shadow-sm p-6">
+              <div className="mb-4">
+                <h2 className="text-lg font-semibold">Student Filter</h2>
+                <p className="text-sm text-gray-600">
+                  View mastery progress
+                </p>
+              </div>
+              <div>
+                <label htmlFor="student-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Students
+                </label>
+                <StudentFilter
+                  selectedStudent={selectedStudent}
+                  onStudentSelect={setSelectedStudent}
+                  onSectionSelect={setSelectedSection}
+                  multiSelect={true}
+                  onStudentsSelect={setSelectedStudents}
+                  selectedStudents={selectedStudents}
+                  maxStudents={5}
+                />
+              </div>
             </div>
-            <div className={!selectedTag || !selectedUnit ? "opacity-50 pointer-events-none" : ""}>
-              <label htmlFor="student-filter" className="block text-sm font-medium text-gray-700 mb-2">
-                Select Student
-              </label>
-              <StudentFilter
-                selectedStudent={selectedStudent}
-                onStudentSelect={setSelectedStudent}
-                onSectionSelect={setSelectedSection}
-                multiSelect={true}
-                onStudentsSelect={setSelectedStudents}
-                selectedStudents={selectedStudents}
-                maxStudents={5}
-              />
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Skill Progression Visualization */}

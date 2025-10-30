@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function RoadmapsHomePage() {
   const pages = [
     {
-      title: "Scope & Sequence",
+      title: "Lesson by Lesson",
       href: "/roadmaps/scope-and-sequence",
       icon: "🗓️",
       description: "See how skills progress across lessons in each unit."

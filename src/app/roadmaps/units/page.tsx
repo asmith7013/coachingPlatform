@@ -196,12 +196,32 @@ export default function RoadmapUnitsPage() {
 
         {/* Header */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Left Card: Title + Stats */}
+          {/* Left Card: Title + Grade Filter + Stats */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow-sm p-6">
             <h1 className="text-3xl font-bold mb-2">Roadmap Units</h1>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-4">
               Select a grade and unit to view lessons
             </p>
+
+            {/* Grade Filter */}
+            <div className="mb-6">
+              <select
+                id="grade-filter"
+                value={selectedGrade}
+                onChange={(e) => setSelectedGrade(e.target.value)}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  !selectedGrade
+                    ? 'border-blue-500 ring-2 ring-blue-200'
+                    : 'border-gray-300'
+                }`}
+              >
+                {GRADE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             {/* Stats Summary */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -230,28 +250,8 @@ export default function RoadmapUnitsPage() {
             </div>
           </div>
 
-          {/* Right Card: Filters */}
+          {/* Right Card: Section & Student Filter */}
           <div className="lg:col-span-1 bg-white rounded-lg shadow-sm p-6">
-            {/* Grade Filter */}
-            <div className="mb-6">
-              <label htmlFor="grade-filter" className="block text-sm font-medium text-gray-700 mb-2">
-                Filter by Grade
-              </label>
-              <select
-                id="grade-filter"
-                value={selectedGrade}
-                onChange={(e) => setSelectedGrade(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {GRADE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Student Filter */}
             <div className={selectedGrade === "" ? "opacity-50 pointer-events-none" : ""}>
               <StudentFilter
                 onStudentSelect={setSelectedStudent}
