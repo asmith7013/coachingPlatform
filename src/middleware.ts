@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
   '/',                      // Landing page
   '/sign-in(.*)',           // Sign in flow
   '/sign-up(.*)',           // Sign up flow
+  '/sign-out(.*)',          // Sign out flow
   '/setup',                 // Setup page for new users
   '/terms',                 // Legal pages
   '/privacy',

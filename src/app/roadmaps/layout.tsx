@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 
 const ALLOWED_DOMAINS = ['schools.nyc.gov', 'teachinglab.org'];
@@ -15,24 +15,18 @@ export default async function RoadmapsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Skip authentication in development (localhost)
-  const isDevelopment = process.env.NODE_ENV === 'development';
-
-  if (isDevelopment) {
-    return <>{children}</>;
-  }
-
   // Production: Enforce authentication and domain restrictions
   const { userId } = await auth();
 
-  // Require authentication
+  // Require authentication - redirect to sign-in if not logged in
   if (!userId) {
-    redirect('/sign-in?redirect_url=/roadmaps/units');
+    const currentPath = '/roadmaps';
+    redirect(`/sign-in?redirect_url=${encodeURIComponent(currentPath)}`);
   }
 
-  // Get user's email from Clerk
-  const { sessionClaims } = await auth();
-  const email = sessionClaims?.email as string | undefined;
+  // Get full user object to access email addresses
+  const user = await currentUser();
+  const email = user?.emailAddresses?.[0]?.emailAddress;
 
   // Check if user's email domain is allowed
   if (!isAllowedDomain(email)) {
@@ -47,9 +41,15 @@ export default async function RoadmapsLayout({
           <p className="text-sm text-gray-500 mb-6">
             Allowed domains: {ALLOWED_DOMAINS.map(d => `@${d}`).join(', ')}
           </p>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-400 mb-6">
             Your email: <strong>{email || 'Unknown'}</strong>
           </p>
+          <a
+            href="/sign-out"
+            className="inline-block px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            Sign Out
+          </a>
         </div>
       </div>
     );
