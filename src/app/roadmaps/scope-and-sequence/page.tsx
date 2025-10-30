@@ -9,6 +9,7 @@ import { SkillDetailView } from "./components/SkillDetailView";
 import { StudentFilter } from "./components/StudentFilter";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { Student } from "@zod-schema/313/student";
+import { RoadmapsNav } from "../components/RoadmapsNav";
 
 interface ScopeAndSequenceEntry {
   _id: string;
@@ -181,6 +182,9 @@ export default function ScopeAndSequencePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-6">
+        {/* Navigation */}
+        <RoadmapsNav />
+
         {/* Header and Filters */}
         <div className="flex gap-4 mb-6">
           {/* Left Card: Curriculum/Unit Filters */}

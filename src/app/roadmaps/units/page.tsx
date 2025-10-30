@@ -10,6 +10,7 @@ import { StudentFilter } from "../scope-and-sequence/components/StudentFilter";
 import { SkillDetailView } from "../components/SkillDetailView";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
+import { RoadmapsNav } from "../components/RoadmapsNav";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },
@@ -190,6 +191,9 @@ export default function RoadmapUnitsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-6">
+        {/* Navigation */}
+        <RoadmapsNav />
+
         {/* Header */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Left Card: Title + Stats */}

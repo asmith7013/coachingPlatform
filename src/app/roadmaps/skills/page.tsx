@@ -6,6 +6,7 @@ import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { SkillListItem } from "./components/SkillListItem";
 import { SkillDetailView } from "../components/SkillDetailView";
 import { Alert } from "@/components/core/feedback/Alert";
+import { RoadmapsNav } from "../components/RoadmapsNav";
 
 export default function RoadmapsSkillsPage() {
   const [allSkills, setAllSkills] = useState<RoadmapsSkill[]>([]); // All skills for dropdown population
@@ -218,6 +219,9 @@ export default function RoadmapsSkillsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-6">
+        {/* Navigation */}
+        <RoadmapsNav />
+
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="mb-4">
