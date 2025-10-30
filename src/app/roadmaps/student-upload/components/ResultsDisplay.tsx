@@ -43,7 +43,7 @@ export function ResultsDisplay({ response, isLoading, onClear }: ResultsDisplayP
             </div>
           )}
         </div>
-        <Button onClick={onClear} intent="secondary" appearance="outline" size="sm">
+        <Button onClick={onClear} intent="secondary" appearance="outline">
           Clear Results
         </Button>
       </div>
@@ -150,7 +150,6 @@ export function ResultsDisplay({ response, isLoading, onClear }: ResultsDisplayP
           }}
           intent="secondary"
           appearance="outline"
-          size="sm"
         >
           Export Results as JSON
         </Button>

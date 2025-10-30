@@ -198,14 +198,17 @@ export function SkillDetailModal({ skill, isOpen, onClose }: SkillDetailModalPro
                   Vocabulary
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {skill.vocabulary.map((term, index) => (
-                    <span
-                      key={index}
-                      className="bg-violet-100 text-violet-800 px-3 py-1 rounded-full text-sm font-medium"
-                    >
-                      {term}
-                    </span>
-                  ))}
+                  {skill.vocabulary.map((vocabItem, index) => {
+                    const term = typeof vocabItem === 'string' ? vocabItem : vocabItem.term;
+                    return (
+                      <span
+                        key={index}
+                        className="bg-violet-100 text-violet-800 px-3 py-1 rounded-full text-sm font-medium"
+                      >
+                        {term}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             )}

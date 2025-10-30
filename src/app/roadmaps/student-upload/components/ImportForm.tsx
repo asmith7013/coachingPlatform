@@ -3,7 +3,6 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/core/Button';
 import { Input } from '@/components/core/fields/Input';
-import { Alert } from '@/components/core/feedback/Alert';
 
 interface ImportFormProps {
   onSubmit: (file: File, sheetName: string) => void;
@@ -72,7 +71,6 @@ export function ImportForm({ onSubmit, isLoading }: ImportFormProps) {
                   disabled={isLoading}
                   intent="secondary"
                   appearance="outline"
-                  size="sm"
                 >
                   Clear
                 </Button>
@@ -101,10 +99,10 @@ export function ImportForm({ onSubmit, isLoading }: ImportFormProps) {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h4 className="font-medium text-blue-900 mb-2">Expected Sheet Format</h4>
           <ul className="text-sm text-blue-800 space-y-1">
-            <li>" <strong>Row 1, Column C:</strong> Metadata (Section | Teacher | Roadmap | Date)</li>
-            <li>" <strong>Row 3, Starting Column I:</strong> Student names (LASTNAME, FIRSTNAME)</li>
-            <li>" <strong>Column A, Row 4+:</strong> Skill numbers with Unit headers</li>
-            <li>" <strong>Student columns:</strong> Mark &quot;PO&quot; for Passed Out (mastered skills)</li>
+            <li>• <strong>Row 1, Column C:</strong> Metadata (Section | Teacher | Roadmap | Date)</li>
+            <li>• <strong>Row 3, Starting Column I:</strong> Student names (LASTNAME, FIRSTNAME)</li>
+            <li>• <strong>Column A, Row 4+:</strong> Skill numbers with Unit headers</li>
+            <li>• <strong>Student columns:</strong> Mark &quot;PO&quot; for Passed Out (mastered skills)</li>
           </ul>
         </div>
 
@@ -121,10 +119,10 @@ export function ImportForm({ onSubmit, isLoading }: ImportFormProps) {
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <h4 className="font-medium text-yellow-900 mb-2">Important Notes</h4>
         <ul className="text-sm text-yellow-800 space-y-1">
-          <li>" Students matched by exact name format: &quot;LASTNAME, FIRSTNAME&quot;</li>
-          <li>" New skills will be added to existing mastered skills (not replaced)</li>
-          <li>" Only active students in the database will be updated</li>
-          <li>" Accepts .xlsx and .xls Excel file formats</li>
+          <li>• Students matched by exact name format: &quot;LASTNAME, FIRSTNAME&quot;</li>
+          <li>• New skills will be added to existing mastered skills (not replaced)</li>
+          <li>• Only active students in the database will be updated</li>
+          <li>• Accepts .xlsx and .xls Excel file formats</li>
         </ul>
       </div>
     </div>

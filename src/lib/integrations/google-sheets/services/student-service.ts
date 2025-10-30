@@ -117,15 +117,15 @@ export class StudentService {
 
       console.log('[StudentService] insertMany rawResult:', JSON.stringify(result, null, 2));
 
-      // Extract inserted documents from rawResult
-      const insertedDocs = result.insertedDocs || [];
-      console.log('[StudentService] Inserted count:', insertedDocs.length);
+      // Extract inserted IDs from rawResult
+      const insertedCount = Object.keys(result.insertedIds || {}).length;
+      console.log('[StudentService] Inserted count:', insertedCount);
 
       // Verify students were actually inserted
       const verifyCount = await StudentModel.countDocuments({ studentID: { $in: studentIDs } });
       console.log('[StudentService] Verification: Found', verifyCount, 'students in DB after insert');
 
-      if (insertedDocs.length === 0 && validatedStudents.length > 0) {
+      if (insertedCount === 0 && validatedStudents.length > 0) {
         // All inserts failed - likely all duplicates
         return {
           success: false,
@@ -134,22 +134,27 @@ export class StudentService {
         };
       }
 
+      // Fetch the inserted students to return them
+      const insertedStudents = await StudentModel.find({ studentID: { $in: studentIDs } });
+
       return {
         success: true,
-        data: insertedDocs.map((doc: any) => doc.toObject()),
-        message: `Successfully created ${insertedDocs.length} students`
+        data: insertedStudents.map((doc) => doc.toObject()),
+        message: `Successfully created ${insertedCount} students`
       };
     } catch (error) {
       console.error('[StudentService] Error in bulkCreateStudents:', error);
 
       // Handle bulk insert errors (some may succeed, some may fail)
       if (error && typeof error === 'object' && 'insertedDocs' in error) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const insertedDocs = (error as any).insertedDocs || [];
         const insertedCount = insertedDocs.length || 0;
 
         console.log('[StudentService] Partial success:', insertedCount, 'students created');
 
         // Convert Mongoose documents to plain objects to avoid circular references
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const plainDocs = insertedDocs.map((doc: any) => {
           if (doc && typeof doc.toObject === 'function') {
             return doc.toObject();
