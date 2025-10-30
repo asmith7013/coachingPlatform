@@ -37,6 +37,11 @@ const imLessonSchema = {
   lessonName: { type: String },
 };
 
+const vocabularyTermSchema = {
+  term: { type: String, required: true },
+  definition: { type: String, required: true },
+};
+
 const roadmapsSkillFields = {
   // Core identification
   skillNumber: { type: String, required: true, unique: true, index: true },
@@ -67,6 +72,9 @@ const roadmapsSkillFields = {
   skillChallengeCriteria: { type: String, default: '' },
   essentialQuestion: { type: String, default: '' },
 
+  // Complete primer section HTML with column layout preserved
+  primerHtml: { type: String, default: '' },
+
   // Teaching strategies and resources
   launch: { type: String, default: '' },
   teacherStudentStrategies: { type: String, default: '' },
@@ -78,7 +86,7 @@ const roadmapsSkillFields = {
 
   // Standards and vocabulary
   standards: { type: String, default: '' },
-  vocabulary: { type: [String], default: [] },
+  vocabulary: { type: [vocabularyTermSchema], default: [] },
 
   // Media and resources
   images: { type: [String], default: [] }, // Deprecated: Use imagesWithContext instead

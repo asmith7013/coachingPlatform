@@ -323,21 +323,57 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
           </div>
         )}
 
-        {/* Models and Manipulatives - moved to end */}
-        {skill.modelsAndManipulatives && (
-          <div className="py-6">
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Models & Manipulatives</h4>
-            <div
-              className="all-initial"
-              dangerouslySetInnerHTML={{ __html: skill.modelsAndManipulatives }}
-              style={{
-                fontSize: '14px',
-                color: '#4b5563',
-                lineHeight: '1.5'
-              }}
-            />
-          </div>
-        )}
+        {/* Models and Manipulatives - show full primer with other sections hidden */}
+        {skill.primerHtml && (() => {
+          // Parse the primer HTML and hide sections we don't want
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(skill.primerHtml, 'text/html');
+
+          // Find all h4 headers
+          const h4Elements = Array.from(doc.querySelectorAll('h4'));
+
+          // Hide all sections except Models and Manipulatives
+          const sectionsToHide = [
+            'Launch:',
+            'Teacher/Student Strategies:',
+            'Questions to Help Students Get Unstuck:',
+            'Discussion Questions:',
+            'Common Misconceptions:',
+            'Additional Resources:'
+          ];
+
+          h4Elements.forEach(h4 => {
+            const headerText = h4.textContent?.trim() || '';
+            if (sectionsToHide.some(section => headerText.includes(section))) {
+              h4.style.display = 'none';
+
+              // Hide all siblings until we hit another h4 or end
+              let currentElement = h4.nextElementSibling;
+              while (currentElement && currentElement.tagName !== 'H4') {
+                (currentElement as HTMLElement).style.display = 'none';
+                currentElement = currentElement.nextElementSibling;
+              }
+            }
+          });
+
+          // Get the modified HTML
+          const modifiedHtml = doc.body.innerHTML;
+
+          return (
+            <div className="py-6">
+              <h4 className="text-sm font-semibold text-gray-700 mb-2">Models & Manipulatives</h4>
+              <div
+                className="all-initial"
+                dangerouslySetInnerHTML={{ __html: modifiedHtml }}
+                style={{
+                  fontSize: '14px',
+                  color: '#4b5563',
+                  lineHeight: '1.5'
+                }}
+              />
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

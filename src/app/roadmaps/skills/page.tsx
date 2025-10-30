@@ -50,37 +50,41 @@ export default function RoadmapsSkillsPage() {
 
   // Load filtered skills when grade/unit changes
   useEffect(() => {
+    // Don't load skills until a grade is selected
+    if (!selectedGrade) {
+      setSkills([]);
+      setFilteredSkills([]);
+      setLoading(false);
+      return;
+    }
+
     const loadSkills = async () => {
       try {
         setLoading(true);
         console.log('🔍 Fetching roadmaps skills...');
 
         // Build filters based on selected grade and unit
-        const filters: Record<string, unknown> = {};
-
-        if (selectedGrade) {
-          filters['units.grade'] = selectedGrade;
-        }
+        const filters: Record<string, unknown> = {
+          'units.grade': selectedGrade
+        };
 
         if (selectedUnit) {
           filters['units.unitTitle'] = selectedUnit;
         }
 
-        // When filters are applied, fetch all skills (no limit)
-        // Otherwise use default limit of 20
-        const hasFilters = selectedGrade || selectedUnit;
-        const queryParams = hasFilters
-          ? { page: 1, filters, limit: 10000, sortBy: 'skillNumber', sortOrder: 'asc' as const } // Effectively "no limit" when filtered
-          : { page: 1, limit: 20, sortBy: 'skillNumber', sortOrder: 'asc' as const, filters: {} };
-
-        const result = await fetchRoadmapsSkills(queryParams);
+        const result = await fetchRoadmapsSkills({
+          page: 1,
+          filters,
+          limit: 10000,
+          sortBy: 'skillNumber',
+          sortOrder: 'asc' as const
+        });
 
         console.log('📊 Fetch result:', {
           success: result.success,
           itemsLength: result.items?.length,
           error: result.error,
-          filters,
-          hasFilters
+          filters
         });
 
         if (result.success && result.items) {
@@ -209,21 +213,7 @@ export default function RoadmapsSkillsPage() {
     );
   }
 
-  if (skills.length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto p-6">
-          <h1 className="text-3xl font-bold mb-6">Roadmaps Skills</h1>
-          <Alert intent="warning">
-            <Alert.Title>No Skills Found</Alert.Title>
-            <Alert.Description>
-              No skills found in the database. Skills will be created when you scrape units from the unit scraper.
-            </Alert.Description>
-          </Alert>
-        </div>
-      </div>
-    );
-  }
+  // Remove the early return for empty skills - we'll show the UI with instructions to select a grade
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -233,9 +223,9 @@ export default function RoadmapsSkillsPage() {
           <div className="mb-4">
             <h1 className="text-3xl font-bold mb-2">Roadmaps Skills</h1>
             <p className="text-gray-600">
-              {searchQuery || selectedGrade || selectedUnit
+              {selectedGrade
                 ? `Showing ${filteredSkills.length} skills`
-                : `Showing ${skills.length} of ${allSkills.length} skills`}
+                : 'Select a grade to view skills'}
             </p>
           </div>
 
@@ -350,16 +340,27 @@ export default function RoadmapsSkillsPage() {
               )}
             </div>
             <div className="overflow-y-auto">
-              {filteredSkills.length === 0 ? (
+              {!selectedGrade ? (
+                <div className="p-8 text-center text-gray-500">
+                  <div className="text-gray-400 text-lg mb-2">🎓</div>
+                  <div className="text-sm">Select a grade to view skills</div>
+                </div>
+              ) : filteredSkills.length === 0 ? (
                 <div className="p-8 text-center text-gray-500">
                   <div className="text-gray-400 text-lg mb-2">🔍</div>
-                  <div className="text-sm">No skills match your search</div>
-                  <button
-                    onClick={handleClearSearch}
-                    className="mt-3 text-sm text-blue-600 hover:text-blue-800 underline"
-                  >
-                    Clear search
-                  </button>
+                  <div className="text-sm">
+                    {searchQuery
+                      ? 'No skills match your search'
+                      : 'No skills found for this selection'}
+                  </div>
+                  {searchQuery && (
+                    <button
+                      onClick={handleClearSearch}
+                      className="mt-3 text-sm text-blue-600 hover:text-blue-800 underline"
+                    >
+                      Clear search
+                    </button>
+                  )}
                 </div>
               ) : (
                 filteredSkills.map((skill) => (

@@ -523,7 +523,8 @@
 │   │   ├── page.tsx
 │   │   ├── roadmaps
 │   │   │   ├── components
-│   │   │   │   └── SkillDetailView.tsx
+│   │   │   │   ├── SkillDetailView.tsx
+│   │   │   │   └── SkillListWithProgress.tsx
 │   │   │   ├── im-lesson-updater
 │   │   │   │   └── page.tsx
 │   │   │   ├── json
@@ -570,7 +571,6 @@
 │   │   │   │   ├── components
 │   │   │   │   │   ├── SkillCard.tsx
 │   │   │   │   │   ├── SkillDetailModal.tsx
-│   │   │   │   │   ├── SkillDetailView.tsx
 │   │   │   │   │   └── SkillListItem.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── student-creator
