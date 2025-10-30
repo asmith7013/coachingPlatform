@@ -11,7 +11,8 @@
       "Bash(npm run prebuild:*)",
       "Bash(npm run build:*)",
       "Bash(cat:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(npm run generate-css:*)"
     ],
     "deny": [],
     "ask": []

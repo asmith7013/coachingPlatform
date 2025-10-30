@@ -160,7 +160,7 @@ export function SkillProgressionTable({ lessons, onLessonClick, masteredSkills =
                       {/* Essential Skills */}
                       {essentialSkills.length > 0 && (
                         <div>
-                          <div className="font-semibold mb-1 text-orange-700">Essential:</div>
+                          <div className="font-semibold mb-1 text-skill-essential">Essential:</div>
                           <div className="space-y-0.5">
                             {essentialSkills.map((essSkill) => {
                               const skillNum = typeof essSkill === 'string' ? essSkill : essSkill.skillNumber;
@@ -189,7 +189,7 @@ export function SkillProgressionTable({ lessons, onLessonClick, masteredSkills =
                       {/* Helpful Skills */}
                       {helpfulSkills.length > 0 && (
                         <div>
-                          <div className="font-semibold mb-1 text-purple-700">Helpful:</div>
+                          <div className="font-semibold mb-1 text-skill-helpful">Helpful:</div>
                           <div className="space-y-0.5">
                             {helpfulSkills.map((helpSkill) => {
                               const skillNum = typeof helpSkill === 'string' ? helpSkill : helpSkill.skillNumber;

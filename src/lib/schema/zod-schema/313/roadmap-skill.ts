@@ -43,6 +43,15 @@ export const ImageWithContextSchema = z.object({
 });
 
 // =====================================
+// VOCABULARY TERM SCHEMA
+// =====================================
+
+export const VocabularyTermSchema = z.object({
+  term: z.string(),
+  definition: z.string(),
+});
+
+// =====================================
 // ROADMAPS SKILL SCHEMA (Comprehensive)
 // =====================================
 
@@ -86,6 +95,7 @@ export const RoadmapsSkillFieldsSchema = z.object({
   essentialQuestion: z.string().default(''),
 
   // Teaching strategies and resources
+  primerHtml: z.string().default(''), // Complete primer section HTML with column layout preserved
   launch: z.string().default(''),
   teacherStudentStrategies: z.string().default(''),
   modelsAndManipulatives: z.string().default(''),
@@ -96,7 +106,7 @@ export const RoadmapsSkillFieldsSchema = z.object({
 
   // Standards and vocabulary
   standards: z.string().default(''),
-  vocabulary: z.array(z.string()).default([]),
+  vocabulary: z.array(VocabularyTermSchema).default([]),
 
   // Media and resources
   images: z.array(z.string()).default([]), // Deprecated: Use imagesWithContext instead

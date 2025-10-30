@@ -522,6 +522,8 @@
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
 │   │   ├── roadmaps
+│   │   │   ├── components
+│   │   │   │   └── SkillDetailView.tsx
 │   │   │   ├── im-lesson-updater
 │   │   │   │   └── page.tsx
 │   │   │   ├── json
@@ -1670,4 +1672,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-494 directories, 1177 files
+495 directories, 1178 files

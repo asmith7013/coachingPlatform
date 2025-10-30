@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { fetchRoadmapsSkills } from "@actions/313/roadmaps-skills";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { SkillListItem } from "./components/SkillListItem";
-import { SkillDetailView } from "./components/SkillDetailView";
+import { SkillDetailView } from "../components/SkillDetailView";
 import { Alert } from "@/components/core/feedback/Alert";
 
 export default function RoadmapsSkillsPage() {
@@ -375,8 +375,18 @@ export default function RoadmapsSkillsPage() {
           </div>
 
           {/* Right Column: Skill Detail View */}
-          <div className="w-3/5">
-            <SkillDetailView skill={selectedSkill} />
+          <div className="w-3/5 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+            <SkillDetailView
+              skill={selectedSkill}
+              color="green"
+              onSkillClick={(skillNumber) => {
+                // Find and select the skill by skill number
+                const skill = filteredSkills.find(s => s.skillNumber === skillNumber);
+                if (skill) {
+                  setSelectedSkillId(skill._id);
+                }
+              }}
+            />
           </div>
         </div>
       </div>

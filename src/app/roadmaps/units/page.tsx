@@ -9,7 +9,7 @@ import { UnitDetailView } from "./components/UnitDetailView";
 import { StudentFilter } from "../scope-and-sequence/components/StudentFilter";
 import { SkillDetailView } from "../components/SkillDetailView";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
-import { fetchRoadmapsSkillByNumber } from "@/app/actions/313/roadmaps-skills";
+import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },
@@ -29,6 +29,7 @@ export default function RoadmapUnitsPage() {
   const [selectedGrade, setSelectedGrade] = useState("");
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [selectedSection, setSelectedSection] = useState<string>("");
   const [selectedSkill, setSelectedSkill] = useState<RoadmapsSkill | null>(null);
   const [selectedSkillColor, setSelectedSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('green');
@@ -112,21 +113,24 @@ export default function RoadmapUnitsPage() {
   };
 
   const handleSkillClick = async (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple') => {
+    setSelectedSkillColor(color);
     try {
-      const result = await fetchRoadmapsSkillByNumber(skillNumber);
-      if (result.success && result.data) {
-        setSelectedSkill(result.data);
-        setSelectedSkillColor(color);
+      const result = await fetchRoadmapsSkillsByNumbers([skillNumber]);
+      if (result.success && result.data && result.data.length > 0) {
+        setSelectedSkill(result.data[0]);
       } else {
         // Show not found skill
         setSelectedSkill({
           skillNumber,
           notFound: true,
         } as unknown as RoadmapsSkill);
-        setSelectedSkillColor(color);
       }
     } catch (error) {
       console.error('Error fetching skill:', error);
+      setSelectedSkill({
+        skillNumber,
+        notFound: true,
+      } as unknown as RoadmapsSkill);
     }
   };
 
@@ -202,19 +206,19 @@ export default function RoadmapUnitsPage() {
                 <div className="text-sm text-gray-500">Units</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-skill-target">
                   {filteredUnits.reduce((sum, unit) => sum + unit.targetCount, 0)}
                 </div>
                 <div className="text-sm text-gray-500">Target Skills</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">
+                <div className="text-2xl font-bold text-skill-support">
                   {filteredUnits.reduce((sum, unit) => sum + unit.supportCount, 0)}
                 </div>
                 <div className="text-sm text-gray-500">Support Skills</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">
+                <div className="text-2xl font-bold text-skill-helpful">
                   {filteredUnits.reduce((sum, unit) => sum + unit.extensionCount, 0)}
                 </div>
                 <div className="text-sm text-gray-500">Extension Skills</div>
@@ -244,33 +248,41 @@ export default function RoadmapUnitsPage() {
             </div>
 
             {/* Student Filter */}
-            <StudentFilter
-              onStudentSelect={setSelectedStudent}
-              selectedStudent={selectedStudent}
-              onSectionSelect={setSelectedSection}
-            />
+            <div className={selectedGrade === "" ? "opacity-50 pointer-events-none" : ""}>
+              <StudentFilter
+                onStudentSelect={setSelectedStudent}
+                selectedStudent={selectedStudent}
+                onSectionSelect={setSelectedSection}
+                multiSelect={true}
+                onStudentsSelect={setSelectedStudents}
+                selectedStudents={selectedStudents}
+                maxStudents={5}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Three Column Layout: Unit List (20%) + Unit Detail (40%) + Skill Detail (40%) */}
+        {/* Dynamic Layout: Unit List + Unit Detail (+ Skill Detail when skill selected) */}
         <div className="flex gap-6">
-          {/* Left Column: Unit List (20%) */}
-          <div className="w-1/5 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+          {/* Left Column: Unit List (compact when skill selected, expanded when not) */}
+          <div className={`${selectedSkill ? 'w-20' : 'w-2/5'} bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all duration-300`}>
             <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10">
-              <h3 className="font-semibold text-gray-900">Units</h3>
+              <h3 className={`font-semibold text-gray-900 ${selectedSkill ? 'text-center text-xs' : ''}`}>
+                {selectedSkill ? 'Units' : 'Units'}
+              </h3>
             </div>
             <div className="overflow-y-auto">
               {filteredUnits.length === 0 ? (
-                <div className="p-8 text-center text-gray-500">
+                <div className={`p-8 text-center text-gray-500 ${selectedSkill ? 'p-4' : ''}`}>
                   {selectedGrade === "" ? (
                     <>
                       <div className="text-gray-400 text-lg mb-2">🎓</div>
-                      <div className="text-sm">Select a grade to view units</div>
+                      {!selectedSkill && <div className="text-sm">Select a grade to view units</div>}
                     </>
                   ) : (
                     <>
                       <div className="text-gray-400 text-lg mb-2">📚</div>
-                      <div className="text-sm">No units found for this grade</div>
+                      {!selectedSkill && <div className="text-sm">No units found for this grade</div>}
                     </>
                   )}
                 </div>
@@ -281,30 +293,35 @@ export default function RoadmapUnitsPage() {
                     unit={unit}
                     isSelected={selectedUnitId === unit._id}
                     onClick={() => handleUnitClick(unit._id)}
+                    compact={selectedSkill !== null}
                   />
                 ))
               )}
             </div>
           </div>
 
-          {/* Middle Column: Unit Detail View (40%) */}
-          <div className="w-2/5">
+          {/* Middle Column: Unit Detail View (stays same width) */}
+          <div className={`${selectedSkill ? 'w-2/5' : 'w-3/5'} transition-all duration-300`}>
             <UnitDetailView
               unit={selectedUnit}
               selectedSection={selectedSection}
               onSkillClick={handleSkillClick}
+              selectedStudents={selectedStudents}
             />
           </div>
 
-          {/* Right Column: Skill Detail View (40%) */}
-          <div className="w-2/5 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-            <SkillDetailView
-              skill={selectedSkill}
-              color={selectedSkillColor}
-              onSkillClick={handleSkillClick}
-              masteredSkills={selectedStudent?.masteredSkills || []}
-            />
-          </div>
+          {/* Right Column: Skill Detail View (expands to use space from compressed left column) */}
+          {selectedSkill && (
+            <div className="flex-1 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all duration-300">
+              <SkillDetailView
+                skill={selectedSkill}
+                color={selectedSkillColor}
+                onSkillClick={handleSkillClick}
+                onClose={() => setSelectedSkill(null)}
+                masteredSkills={selectedStudent?.masteredSkills || []}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

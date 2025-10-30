@@ -2,25 +2,26 @@
 
 import { useState } from "react";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
 
 interface SkillDetailViewProps {
   skill: RoadmapsSkill | null;
   onSkillClick?: (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple') => void;
+  onClose?: () => void;
   color?: 'blue' | 'green' | 'orange' | 'purple';
   masteredSkills?: string[];
 }
 
 const colorClasses = {
-  blue: 'bg-blue-600',
-  green: 'bg-green-600',
-  orange: 'bg-orange-600',
-  purple: 'bg-purple-600',
+  blue: 'bg-skill-target',
+  green: 'bg-skill-target', // Target skills
+  orange: 'bg-skill-essential', // Essential skills
+  purple: 'bg-skill-helpful', // Helpful skills
 };
 
-export function SkillDetailView({ skill, onSkillClick, color = 'blue', masteredSkills = [] }: SkillDetailViewProps) {
+export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', masteredSkills = [] }: SkillDetailViewProps) {
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
 
   if (!skill) {
@@ -87,13 +88,24 @@ export function SkillDetailView({ skill, onSkillClick, color = 'blue', masteredS
     <div className="h-full overflow-y-auto">
       {/* Header */}
       <div className="border-b border-gray-200 p-6 bg-gray-50">
-        <div className="flex items-center gap-3">
-          <span className={`inline-flex items-center justify-center w-12 h-12 rounded-full text-white font-bold text-sm flex-shrink-0 ${colorClasses[color]}`}>
-            {skill.skillNumber}
-          </span>
-          <div className="text-xl font-bold text-gray-900">
-            {skill.title}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className={`inline-flex items-center justify-center w-12 h-12 rounded-full text-white font-bold text-sm flex-shrink-0 ${colorClasses[color]}`}>
+              {skill.skillNumber}
+            </span>
+            <div className="text-xl font-bold text-gray-900">
+              {skill.title}
+            </div>
           </div>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-200 transition-colors flex-shrink-0"
+              title="Close skill details"
+            >
+              <XMarkIcon className="w-5 h-5 text-gray-600" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -127,11 +139,11 @@ export function SkillDetailView({ skill, onSkillClick, color = 'blue', masteredS
                     return (
                       <div
                         key={skillNum}
-                        className="flex items-center gap-2 px-2 py-1 rounded bg-orange-50 border border-orange-200 max-w-full"
+                        className="flex items-center gap-2 px-2 py-1 rounded bg-skill-essential-100 border border-skill-essential-300 max-w-full"
                       >
                         <span
                           onClick={() => onSkillClick?.(skillNum, 'orange')}
-                          className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-600 text-white font-bold text-xs flex-shrink-0 cursor-pointer hover:opacity-80"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0 cursor-pointer hover:opacity-80"
                         >
                           {skillNum}
                         </span>
@@ -166,11 +178,11 @@ export function SkillDetailView({ skill, onSkillClick, color = 'blue', masteredS
                     return (
                       <div
                         key={skillNum}
-                        className="flex items-center gap-2 px-2 py-1 rounded bg-purple-50 border border-purple-200 max-w-full"
+                        className="flex items-center gap-2 px-2 py-1 rounded bg-skill-helpful-100 border border-skill-helpful-300 max-w-full"
                       >
                         <span
                           onClick={() => onSkillClick?.(skillNum, 'purple')}
-                          className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-purple-600 text-white font-bold text-xs flex-shrink-0 cursor-pointer hover:opacity-80"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0 cursor-pointer hover:opacity-80"
                         >
                           {skillNum}
                         </span>
@@ -291,14 +303,22 @@ export function SkillDetailView({ skill, onSkillClick, color = 'blue', masteredS
           <div className="border-b border-gray-200 py-6">
             <h4 className="text-sm font-semibold text-gray-700 mb-2">Vocabulary</h4>
             <div className="flex flex-wrap gap-2">
-              {skill.vocabulary.map((term, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs"
-                >
-                  {term}
-                </span>
-              ))}
+              {skill.vocabulary.map((vocabItem, index) => {
+                // Handle both old format (string) and new format (object with term/definition)
+                const term = typeof vocabItem === 'string' ? vocabItem : vocabItem.term;
+                const definition = typeof vocabItem === 'object' && 'definition' in vocabItem ? vocabItem.definition : null;
+
+                return (
+                  <span
+                    key={index}
+                    className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs"
+                    title={definition || undefined}
+                  >
+                    {term}
+                    {definition && <span className="text-gray-500 ml-1">— {definition}</span>}
+                  </span>
+                );
+              })}
             </div>
           </div>
         )}
@@ -308,8 +328,13 @@ export function SkillDetailView({ skill, onSkillClick, color = 'blue', masteredS
           <div className="py-6">
             <h4 className="text-sm font-semibold text-gray-700 mb-2">Models & Manipulatives</h4>
             <div
-              className="text-sm text-gray-600 prose prose-sm max-w-none"
+              className="all-initial"
               dangerouslySetInnerHTML={{ __html: skill.modelsAndManipulatives }}
+              style={{
+                fontSize: '14px',
+                color: '#4b5563',
+                lineHeight: '1.5'
+              }}
             />
           </div>
         )}

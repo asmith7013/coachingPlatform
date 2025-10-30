@@ -54,7 +54,10 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
     const essentialQuestion = await extractFieldsetContent(page, 'Essential Question');
     const standards = await extractStandardsContent(page);
     
-    // Extract section-based content from the primer area
+    // Extract the entire primer section as complete HTML (preserves column layout)
+    const primerHtml = await extractPrimerHtml(page);
+
+    // Extract section-based content from the primer area (for backwards compatibility)
     const launch = await extractSectionContent(page, 'Launch:');
     const teacherStudentStrategies = await extractSectionContent(page, 'Teacher/Student Strategies:');
     const modelsAndManipulatives = await extractSectionContent(page, 'Models and Manipulatives:');
@@ -96,6 +99,7 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
       description,
       skillChallengeCriteria,
       essentialQuestion,
+      primerHtml, // Complete primer section HTML with column layout preserved
       launch,
       teacherStudentStrategies,
       modelsAndManipulatives,
@@ -119,7 +123,7 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
     console.log(`🔍 [EXTRACTOR] Images with context: ${skillData.imagesWithContext.length}`);
     console.log(`📚 [EXTRACTOR] Vocabulary terms: ${skillData.vocabulary.length}`);
     if (skillData.vocabulary.length > 0) {
-      console.log(`📚 [EXTRACTOR] Vocabulary: ${skillData.vocabulary.join(', ')}`);
+      console.log(`📚 [EXTRACTOR] Vocabulary: ${skillData.vocabulary.map(v => v.term).join(', ')}`);
     }
     console.log(`📋 [EXTRACTOR] Standards extracted: ${skillData.standards ? 'Yes' : 'No'}`);
     if (skillData.standards) {
@@ -145,6 +149,7 @@ export async function extractSkillData(page: Page, url: string): Promise<SkillDa
       description: '',
       skillChallengeCriteria: '',
       essentialQuestion: '',
+      primerHtml: '',
       launch: '',
       teacherStudentStrategies: '',
       modelsAndManipulatives: '',
@@ -313,6 +318,30 @@ async function extractStandardsContent(page: Page): Promise<string> {
 }
 
 /**
+ * Extract the entire primer section HTML to preserve column layout
+ */
+async function extractPrimerHtml(page: Page): Promise<string> {
+  try {
+    const primerElement = page.locator('#primer');
+
+    if (await primerElement.count() === 0) {
+      console.log('ℹ️ No primer section found');
+      return '';
+    }
+
+    // Get the complete innerHTML of the primer section
+    const primerHtml = await primerElement.innerHTML();
+
+    console.log(`📄 Extracted complete primer HTML (${primerHtml.length} characters)`);
+    return primerHtml;
+
+  } catch (error) {
+    console.warn('Could not extract primer HTML:', error);
+    return '';
+  }
+}
+
+/**
  * Extract content from a section based on h4 header text
  * Returns HTML to preserve formatting, tables, and structure
  */
@@ -354,9 +383,9 @@ async function extractSectionContent(page: Page, headerText: string): Promise<st
 }
 
 /**
- * Extract vocabulary terms from the vocabulary accordion
+ * Extract vocabulary terms and definitions from the vocabulary accordion
  */
-async function extractVocabulary(page: Page): Promise<string[]> {
+async function extractVocabulary(page: Page): Promise<Array<{term: string; definition: string}>> {
   try {
     // Look for vocabulary accordion header link by text content
     const headerLink = page.locator('.p-accordion-header-link:has-text("Vocabulary")').first();
@@ -391,25 +420,34 @@ async function extractVocabulary(page: Page): Promise<string[]> {
       return [];
     }
 
-    // Extract vocabulary terms from fieldsets within the vocabulary section
-    const vocabularyTerms: string[] = [];
-    const fieldsets = contentArea.locator('fieldset legend .p-fieldset-legend-text');
+    // Extract vocabulary terms and definitions from fieldsets within the vocabulary section
+    const vocabularyTerms: Array<{term: string; definition: string}> = [];
+    const fieldsets = contentArea.locator('fieldset');
     const count = await fieldsets.count();
 
     console.log(`📚 Found ${count} vocabulary fieldsets`);
 
     for (let i = 0; i < count; i++) {
       try {
-        const term = await fieldsets.nth(i).textContent({ timeout: 2000 });
-        if (term && term.trim()) {
-          vocabularyTerms.push(term.trim());
+        const fieldset = fieldsets.nth(i);
+        const term = await fieldset.locator('legend .p-fieldset-legend-text').textContent({ timeout: 2000 });
+        const definition = await fieldset.locator('.p-fieldset-content').textContent({ timeout: 2000 });
+
+        if (term && term.trim() && definition && definition.trim()) {
+          vocabularyTerms.push({
+            term: term.trim(),
+            definition: definition.trim()
+          });
         }
       } catch (error) {
         console.warn(`Could not extract vocabulary term ${i}:`, error);
       }
     }
 
-    console.log(`📚 Extracted ${vocabularyTerms.length} vocabulary terms`);
+    console.log(`📚 Extracted ${vocabularyTerms.length} vocabulary terms with definitions`);
+    if (vocabularyTerms.length > 0) {
+      console.log(`📚 Sample: ${vocabularyTerms[0].term}: ${vocabularyTerms[0].definition.substring(0, 50)}...`);
+    }
     return vocabularyTerms;
 
   } catch (error) {

@@ -133,4 +133,78 @@
   --color-blue-800: #096894;
   --color-blue-900: #074e76;
   --color-blue: #007bff;
+  --color-skill-target-50: #f0e9fd;
+  --color-skill-target-100: #e1d3fb;
+  --color-skill-target-200: #c3a7f7;
+  --color-skill-target-300: #a57bf3;
+  --color-skill-target-400: #874fef;
+  --color-skill-target-500: #6920ee;
+  --color-skill-target-600: #6320ee;
+  --color-skill-target-700: #4e1abe;
+  --color-skill-target-800: #3a148f;
+  --color-skill-target-900: #270d5f;
+  --color-skill-target: #6320EE;
+  --color-skill-essential-50: #f8f0f8;
+  --color-skill-essential-100: #f1e1f1;
+  --color-skill-essential-200: #e3c3e3;
+  --color-skill-essential-300: #d5a5d5;
+  --color-skill-essential-400: #c787c7;
+  --color-skill-essential-500: #b969b9;
+  --color-skill-essential-600: #c855c8;
+  --color-skill-essential-700: #9d439d;
+  --color-skill-essential-800: #733173;
+  --color-skill-essential-900: #4a1f4a;
+  --color-skill-essential: #C855C8;
+  --color-skill-helpful-50: #e6f5f8;
+  --color-skill-helpful-100: #ccebf1;
+  --color-skill-helpful-200: #99d7e3;
+  --color-skill-helpful-300: #66c3d5;
+  --color-skill-helpful-400: #33afc7;
+  --color-skill-helpful-500: #009bb9;
+  --color-skill-helpful-600: #009fb7;
+  --color-skill-helpful-700: #007f92;
+  --color-skill-helpful-800: #005f6e;
+  --color-skill-helpful-900: #003f49;
+  --color-skill-helpful: #009FB7;
+  --color-skill-support-50: #e8f2f1;
+  --color-skill-support-100: #d1e5e3;
+  --color-skill-support-200: #a3cbc7;
+  --color-skill-support-300: #75b1ab;
+  --color-skill-support-400: #47978f;
+  --color-skill-support-500: #197d73;
+  --color-skill-support-600: #136f63;
+  --color-skill-support-700: #0f574e;
+  --color-skill-support-800: #0a3f3a;
+  --color-skill-support-900: #052725;
+  --color-skill-support: #136F63;
+}
+
+/* Reset Tailwind styles for raw HTML content */
+.all-initial {
+  all: initial;
+  display: block;
+}
+
+.all-initial * {
+  all: revert;
+}
+
+.all-initial a {
+  color: #0000EE;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.all-initial a:visited {
+  color: #551A8B;
+}
+
+.all-initial table {
+  border-collapse: collapse;
+}
+
+.all-initial img {
+  display: block;
+  max-width: 100%;
+  height: auto;
 }

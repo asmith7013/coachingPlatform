@@ -43,6 +43,8 @@ export default function ScopeAndSequencePage() {
   const [loadingSkill, setLoadingSkill] = useState(false);
   const [selectedSkillColor, setSelectedSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('blue');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
+  const [selectedSection, setSelectedSection] = useState<string>("");
 
   // Load all lessons on mount
   useEffect(() => {
@@ -243,13 +245,18 @@ export default function ScopeAndSequencePage() {
                 View mastery progress
               </p>
             </div>
-            <div>
+            <div className={!selectedTag || !selectedUnit ? "opacity-50 pointer-events-none" : ""}>
               <label htmlFor="student-filter" className="block text-sm font-medium text-gray-700 mb-2">
                 Select Student
               </label>
               <StudentFilter
                 selectedStudent={selectedStudent}
                 onStudentSelect={setSelectedStudent}
+                onSectionSelect={setSelectedSection}
+                multiSelect={true}
+                onStudentsSelect={setSelectedStudents}
+                selectedStudents={selectedStudents}
+                maxStudents={5}
               />
             </div>
           </div>
@@ -278,6 +285,8 @@ export default function ScopeAndSequencePage() {
                   lesson={selectedLesson}
                   onSkillClick={handleSkillClick}
                   masteredSkills={selectedStudent?.masteredSkills || []}
+                  selectedSection={selectedSection}
+                  selectedStudents={selectedStudents}
                 />
               </div>
             </div>
