@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 import { fetchScopeAndSequence } from "@actions/313/scope-and-sequence";
 import { fetchRoadmapsSkillsByNumbers } from "@actions/313/roadmaps-skills";
 import { LessonDetailView } from "./components/LessonDetailView";
-import { SkillProgressionTable } from "./components/SkillProgressionTable";
-import { SkillDetailView } from "./components/SkillDetailView";
 import { StudentFilter } from "./components/StudentFilter";
 import { SkillGanttChart } from "./components/SkillGanttChart";
 import { SkillDetailWrapper } from "../components/SkillDetailWrapper";

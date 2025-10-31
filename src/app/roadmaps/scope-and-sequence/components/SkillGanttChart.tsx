@@ -3,7 +3,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { scaleLinear, scaleBand } from "@visx/scale";
 import { Group } from "@visx/group";
-import { AxisBottom, AxisLeft } from "@visx/axis";
 import { GridRows } from "@visx/grid";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
@@ -427,7 +426,6 @@ export function SkillGanttChart({
               // Limit to 2 lines and add ellipsis if needed
               const maxLines = 2;
               const displayLines = lines.slice(0, maxLines);
-              let isTruncated = lines.length > maxLines;
 
               if (lines.length > maxLines) {
                 const lastLine = displayLines[maxLines - 1];
