@@ -213,12 +213,12 @@ export function SkillListWithProgress({
           return (
             <div
               key={skill.skillNumber}
-              className={`flex items-center justify-between ${colorClasses.bgLight} border ${colorClasses.border} px-2 py-1.5 rounded gap-2`}
+              onClick={() => onSkillClick?.(skill.skillNumber, colorClasses.clickColor)}
+              className={`flex items-center justify-between ${colorClasses.bgLight} border ${colorClasses.border} px-2 py-1.5 rounded gap-2 cursor-pointer hover:shadow-md hover:border-gray-400 transition-all`}
             >
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <span
-                  onClick={() => onSkillClick?.(skill.skillNumber, colorClasses.clickColor)}
-                  className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${colorClasses.bg} text-white font-bold text-xs flex-shrink-0 cursor-pointer hover:opacity-80`}
+                  className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${colorClasses.bg} text-white font-bold text-xs flex-shrink-0`}
                 >
                   {skill.skillNumber}
                 </span>
@@ -281,12 +281,14 @@ export function SkillListWithProgress({
             }`}
           >
             {/* Main skill card */}
-            <div className="p-3">
+            <div
+              className="p-3 cursor-pointer hover:bg-gray-100 transition-all rounded-t-lg"
+              onClick={() => onSkillClick?.(skill.skillNumber, colorClasses.clickColor)}
+            >
               <div className="flex items-center justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2 flex-1">
                   <span
-                    onClick={() => onSkillClick?.(skill.skillNumber, colorClasses.clickColor)}
-                    className={`inline-flex items-center justify-center w-12 h-12 rounded-full text-white font-bold text-sm flex-shrink-0 cursor-pointer hover:opacity-80 ${colorClasses.bg}`}
+                    className={`inline-flex items-center justify-center w-12 h-12 rounded-full text-white font-bold text-sm flex-shrink-0 ${colorClasses.bg}`}
                   >
                     {skill.skillNumber}
                   </span>
@@ -359,12 +361,15 @@ export function SkillListWithProgress({
                         return (
                           <div
                             key={skillNum}
-                            className="flex items-center justify-between bg-skill-essential-50 border border-skill-essential-200 px-2 py-1.5 rounded gap-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSkillClick?.(skillNum, 'orange');
+                            }}
+                            className="flex items-center justify-between bg-skill-essential-50 border border-skill-essential-200 px-2 py-1.5 rounded gap-2 cursor-pointer hover:shadow-md hover:border-skill-essential-300 transition-all"
                           >
                             <div className="flex items-center gap-2 flex-1 min-w-0">
                               <span
-                                onClick={() => onSkillClick?.(skillNum, 'orange')}
-                                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0 cursor-pointer hover:opacity-80"
+                                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0"
                               >
                                 {skillNum}
                               </span>
@@ -433,12 +438,15 @@ export function SkillListWithProgress({
                         return (
                           <div
                             key={skillNum}
-                            className="flex items-center justify-between bg-skill-helpful-50 border border-skill-helpful-200 px-2 py-1.5 rounded gap-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSkillClick?.(skillNum, 'purple');
+                            }}
+                            className="flex items-center justify-between bg-skill-helpful-50 border border-skill-helpful-200 px-2 py-1.5 rounded gap-2 cursor-pointer hover:shadow-md hover:border-skill-helpful-300 transition-all"
                           >
                             <div className="flex items-center gap-2 flex-1 min-w-0">
                               <span
-                                onClick={() => onSkillClick?.(skillNum, 'purple')}
-                                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0 cursor-pointer hover:opacity-80"
+                                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0"
                               >
                                 {skillNum}
                               </span>

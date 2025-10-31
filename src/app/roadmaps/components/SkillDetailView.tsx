@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
-import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon, ChevronDownIcon, ChevronRightIcon as ChevronRightIconSolid } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
 
@@ -23,6 +23,18 @@ const colorClasses = {
 
 export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', masteredSkills = [] }: SkillDetailViewProps) {
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
+  const [expandedStandards, setExpandedStandards] = useState<Set<number>>(new Set());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleStandard = (index: number) => {
+    const newExpanded = new Set(expandedStandards);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
+    } else {
+      newExpanded.add(index);
+    }
+    setExpandedStandards(newExpanded);
+  };
 
   if (!skill) {
     return (
@@ -111,6 +123,17 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
 
       {/* Content */}
       <div className="p-6 space-y-0">
+        {/* Description */}
+        {skill.description && (
+          <div className="border-b border-gray-200 pb-6">
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">Description</h4>
+            <div
+              className="text-sm text-gray-600 prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: skill.description }}
+            />
+          </div>
+        )}
+
         {/* Standards */}
         {skill.standards && (() => {
           // Parse standards HTML to extract standard codes and descriptions
@@ -179,27 +202,37 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
           }
 
           return (
-            <div className="border-b border-gray-200 pb-6">
+            <div className="border-b border-gray-200 py-6">
               <h4 className="text-sm font-semibold text-gray-700 mb-3">Standards</h4>
-              <div className="space-y-3">
-                {groups.map((group, groupIndex) => (
-                  <div key={groupIndex} className="flex flex-wrap items-start gap-2">
-                    {group.map((part, partIndex) =>
-                      part.type === 'code' ? (
-                        <span
-                          key={partIndex}
-                          className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-300 flex-shrink-0"
-                        >
-                          {part.content}
+              <div className="space-y-2">
+                {groups.map((group, groupIndex) => {
+                  const isExpanded = expandedStandards.has(groupIndex);
+                  const code = group.find(p => p.type === 'code')?.content || '';
+                  const description = group.filter(p => p.type === 'text').map(p => p.content).join(' ');
+
+                  return (
+                    <div key={groupIndex} className="border border-gray-200 rounded-lg overflow-hidden">
+                      <button
+                        onClick={() => toggleStandard(groupIndex)}
+                        className="w-full flex items-center justify-between px-3 py-2 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                      >
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-300">
+                          {code}
                         </span>
-                      ) : (
-                        <span key={partIndex} className="text-sm text-gray-600">
-                          {part.content}
-                        </span>
-                      )
-                    )}
-                  </div>
-                ))}
+                        {isExpanded ? (
+                          <ChevronDownIcon className="w-4 h-4 text-gray-600 flex-shrink-0" />
+                        ) : (
+                          <ChevronRightIconSolid className="w-4 h-4 text-gray-600 flex-shrink-0" />
+                        )}
+                      </button>
+                      {isExpanded && description && (
+                        <div className="px-3 py-2 bg-white border-t border-gray-200">
+                          <p className="text-sm text-gray-600">{description}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );
@@ -207,7 +240,7 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
 
         {/* Prerequisites - moved to top */}
         {(hasEssentialSkills || hasHelpfulSkills) && (
-          <div className="border-b border-gray-200 pb-6">
+          <div className="border-b border-gray-200 py-6">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Prerequisites</h4>
 
             {/* Essential Skills */}
@@ -222,11 +255,11 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
                     return (
                       <div
                         key={skillNum}
-                        className="flex items-center gap-2 px-2 py-1 rounded bg-skill-essential-100 border border-skill-essential-300 max-w-full"
+                        onClick={() => onSkillClick?.(skillNum, 'orange')}
+                        className="flex items-center gap-2 px-2 py-1 rounded bg-skill-essential-100 border border-skill-essential-300 max-w-full cursor-pointer hover:bg-skill-essential-200 hover:shadow-sm transition-all"
                       >
                         <span
-                          onClick={() => onSkillClick?.(skillNum, 'orange')}
-                          className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0 cursor-pointer hover:opacity-80"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0"
                         >
                           {skillNum}
                         </span>
@@ -261,11 +294,11 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
                     return (
                       <div
                         key={skillNum}
-                        className="flex items-center gap-2 px-2 py-1 rounded bg-skill-helpful-100 border border-skill-helpful-300 max-w-full"
+                        onClick={() => onSkillClick?.(skillNum, 'purple')}
+                        className="flex items-center gap-2 px-2 py-1 rounded bg-skill-helpful-100 border border-skill-helpful-300 max-w-full cursor-pointer hover:bg-skill-helpful-200 hover:shadow-sm transition-all"
                       >
                         <span
-                          onClick={() => onSkillClick?.(skillNum, 'purple')}
-                          className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0 cursor-pointer hover:opacity-80"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0"
                         >
                           {skillNum}
                         </span>
@@ -287,17 +320,6 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
                 </div>
               </div>
             )}
-          </div>
-        )}
-
-        {/* Description */}
-        {skill.description && (
-          <div className="border-b border-gray-200 py-6">
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Description</h4>
-            <div
-              className="text-sm text-gray-600 prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: skill.description }}
-            />
           </div>
         )}
 
@@ -330,7 +352,8 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
                 <img
                   src={skill.practiceProblems![currentProblemIndex].screenshotUrl}
                   alt={`Practice Problem ${skill.practiceProblems![currentProblemIndex].problemNumber}`}
-                  className="max-w-full max-h-full object-contain"
+                  className="max-w-full max-h-full object-contain cursor-pointer"
+                  onClick={() => setIsModalOpen(true)}
                 />
               </div>
 
@@ -355,10 +378,75 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
                   </div>
                 </>
               )}
+
+              {/* Expand button */}
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="absolute top-2 right-2 bg-gray-800/80 hover:bg-gray-900 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg transition-all"
+              >
+                Click to Expand
+              </button>
             </div>
             <p className="text-xs text-gray-500 mt-2 text-center">
               Problem {skill.practiceProblems![currentProblemIndex].problemNumber}
             </p>
+          </div>
+        )}
+
+        {/* Practice Problem Modal */}
+        {isModalOpen && hasProblems && (
+          <div className="fixed inset-0 z-50 overflow-y-auto">
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-black bg-opacity-75 transition-opacity"
+              onClick={() => setIsModalOpen(false)}
+            />
+
+            {/* Modal */}
+            <div className="flex min-h-full items-center justify-center p-4">
+              <div className="relative bg-white rounded-lg shadow-xl w-full max-w-7xl max-h-[90vh] overflow-hidden">
+                {/* Close button */}
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="absolute top-4 right-4 z-10 bg-gray-800/80 hover:bg-gray-900 text-white rounded-full p-2 shadow-lg transition-all"
+                  aria-label="Close modal"
+                >
+                  <XMarkIcon className="w-6 h-6" />
+                </button>
+
+                {/* Image container */}
+                <div className="flex items-center justify-center bg-gray-50 p-8" style={{ minHeight: '80vh' }}>
+                  <img
+                    src={skill.practiceProblems![currentProblemIndex].screenshotUrl}
+                    alt={`Practice Problem ${skill.practiceProblems![currentProblemIndex].problemNumber}`}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+
+                {/* Navigation */}
+                {skill.practiceProblems!.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevProblem}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-900 rounded-full p-3 shadow-lg transition-all"
+                      aria-label="Previous problem"
+                    >
+                      <ChevronLeftIcon className="w-6 h-6 text-white" />
+                    </button>
+                    <button
+                      onClick={nextProblem}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-900 rounded-full p-3 shadow-lg transition-all"
+                      aria-label="Next problem"
+                    >
+                      <ChevronRightIcon className="w-6 h-6 text-white" />
+                    </button>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm font-medium">
+                      Problem {skill.practiceProblems![currentProblemIndex].problemNumber} - {currentProblemIndex + 1} / {skill.practiceProblems!.length}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
@@ -427,14 +515,17 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
 
           h4Elements.forEach(h4 => {
             const headerText = h4.textContent?.trim() || '';
-            if (sectionsToHide.some(section => headerText.includes(section))) {
+            // Hide all h4 headers (including Models and Manipulatives)
+            if (sectionsToHide.some(section => headerText.includes(section)) || headerText.includes('Models and Manipulatives')) {
               h4.style.display = 'none';
 
-              // Hide all siblings until we hit another h4 or end
-              let currentElement = h4.nextElementSibling;
-              while (currentElement && currentElement.tagName !== 'H4') {
-                (currentElement as HTMLElement).style.display = 'none';
-                currentElement = currentElement.nextElementSibling;
+              // If it's not Models and Manipulatives, hide the content too
+              if (!headerText.includes('Models and Manipulatives')) {
+                let currentElement = h4.nextElementSibling;
+                while (currentElement && currentElement.tagName !== 'H4') {
+                  (currentElement as HTMLElement).style.display = 'none';
+                  currentElement = currentElement.nextElementSibling;
+                }
               }
             }
           });

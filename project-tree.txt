@@ -205,6 +205,8 @@
 │   │   │   ├── layout.tsx
 │   │   │   ├── sign-in
 │   │   │   │   └── page.tsx
+│   │   │   ├── sign-out
+│   │   │   │   └── page.tsx
 │   │   │   └── sign-up
 │   │   │       └── page.tsx
 │   │   ├── 313
@@ -523,6 +525,7 @@
 │   │   ├── page.tsx
 │   │   ├── roadmaps
 │   │   │   ├── components
+│   │   │   │   ├── RoadmapsNav.tsx
 │   │   │   │   ├── SkillDetailView.tsx
 │   │   │   │   └── SkillListWithProgress.tsx
 │   │   │   ├── im-lesson-updater
@@ -534,6 +537,8 @@
 │   │   │   │   ├── grade-6.json
 │   │   │   │   ├── grade-7.json
 │   │   │   │   └── grade-8.json
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx
 │   │   │   ├── scope-and-sequence
 │   │   │   │   ├── components
 │   │   │   │   │   ├── LessonDetailView.tsx
@@ -572,8 +577,6 @@
 │   │   │   │   │   ├── SkillCard.tsx
 │   │   │   │   │   ├── SkillDetailModal.tsx
 │   │   │   │   │   └── SkillListItem.tsx
-│   │   │   │   └── page.tsx
-│   │   │   ├── student-creator
 │   │   │   │   └── page.tsx
 │   │   │   ├── student-upload
 │   │   │   │   ├── actions
@@ -1672,4 +1675,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-495 directories, 1178 files
+495 directories, 1181 files

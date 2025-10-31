@@ -5,12 +5,25 @@ import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/
 // STUDENT MODEL
 // =====================================
 
+const studentActivitySchema = new mongoose.Schema({
+  date: { type: String, required: true },
+  activityType: { type: String, required: true },
+  activityLabel: { type: String, required: true },
+  unitId: { type: String, required: false },
+  lessonId: { type: String, required: false },
+  skillId: { type: String, required: false },
+  inquiryQuestion: { type: String, required: false },
+  customDetail: { type: String, required: false },
+  loggedBy: { type: String, required: false },
+  createdAt: { type: String, required: false }
+}, { _id: false });
+
 const studentSchemaFields = {
-  studentID: { 
-    type: Number, 
-    required: true, 
-    unique: true, 
-    index: true 
+  studentID: {
+    type: Number,
+    required: true,
+    unique: true,
+    index: true
   },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -21,6 +34,7 @@ const studentSchemaFields = {
   email: { type: String, required: false },
   active: { type: Boolean, default: true, index: true },
   masteredSkills: { type: [String], default: [], index: true },
+  classActivities: { type: [studentActivitySchema], default: [] },
   ...standardDocumentFields
 };
 

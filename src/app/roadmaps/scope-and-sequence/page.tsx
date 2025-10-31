@@ -7,6 +7,8 @@ import { LessonDetailView } from "./components/LessonDetailView";
 import { SkillProgressionTable } from "./components/SkillProgressionTable";
 import { SkillDetailView } from "./components/SkillDetailView";
 import { StudentFilter } from "./components/StudentFilter";
+import { SkillGanttChart } from "./components/SkillGanttChart";
+import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { Student } from "@zod-schema/313/student";
 import { RoadmapsNav } from "../components/RoadmapsNav";
@@ -46,6 +48,9 @@ export default function ScopeAndSequencePage() {
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [selectedSection, setSelectedSection] = useState<string>("");
+  const [contextSkillNumber, setContextSkillNumber] = useState<string | null>(null);
+  const [contextSkillData, setContextSkillData] = useState<RoadmapsSkill | null>(null);
+  const [loadingContextSkill, setLoadingContextSkill] = useState(false);
 
   // Load all lessons on mount
   useEffect(() => {
@@ -102,12 +107,16 @@ export default function ScopeAndSequencePage() {
   // Clear selected lesson when filters change
   useEffect(() => {
     setSelectedLessonId(null);
+    setContextSkillNumber(null);
+    setContextSkillData(null);
   }, [selectedTag, selectedUnit]);
 
   // Clear selected skill when lesson changes
   useEffect(() => {
     setSelectedSkillNumber(null);
     setSelectedSkillData(null);
+    setContextSkillNumber(null);
+    setContextSkillData(null);
   }, [selectedLessonId]);
 
   const handleLessonClick = (lessonId: string) => {
@@ -138,6 +147,31 @@ export default function ScopeAndSequencePage() {
       } as unknown as RoadmapsSkill);
     } finally {
       setLoadingSkill(false);
+    }
+  };
+
+  const handleContextSkillClick = async (skillNumber: string) => {
+    setContextSkillNumber(skillNumber);
+    setLoadingContextSkill(true);
+    setContextSkillData(null);
+    try {
+      const result = await fetchRoadmapsSkillsByNumbers([skillNumber]);
+      if (result.success && result.data && result.data.length > 0) {
+        setContextSkillData(result.data[0]);
+      } else {
+        setContextSkillData({
+          skillNumber,
+          notFound: true,
+        } as unknown as RoadmapsSkill);
+      }
+    } catch (error) {
+      console.error('Error fetching context skill:', error);
+      setContextSkillData({
+        skillNumber,
+        notFound: true,
+      } as unknown as RoadmapsSkill);
+    } finally {
+      setLoadingContextSkill(false);
     }
   };
 
@@ -278,18 +312,17 @@ export default function ScopeAndSequencePage() {
 
         {/* Skill Progression Visualization */}
         {selectedTag && selectedUnit && filteredLessons.length > 0 && (
-          <SkillProgressionTable
+          <SkillGanttChart
             lessons={filteredLessons}
             onLessonClick={handleLessonClick}
-            masteredSkills={selectedStudent?.masteredSkills || []}
             selectedLessonId={selectedLessonId}
           />
         )}
 
-        {/* Two-Column Layout: Lesson Detail (40%) + Skill Detail (60%) */}
+        {/* Two-Column Layout: Adjust based on context column */}
         <div className="flex gap-6">
           {/* Left Column: Lesson Detail View */}
-          <div className="w-2/5">
+          <div className={`transition-all ${contextSkillNumber ? 'w-1/4' : 'w-2/5'}`}>
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
               <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10">
                 <h3 className="font-semibold text-gray-900">Lesson Skills</h3>
@@ -306,27 +339,38 @@ export default function ScopeAndSequencePage() {
             </div>
           </div>
 
-          {/* Right Column: Skill Detail View */}
-          <div className="w-3/5 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-            <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10">
-              <h3 className="font-semibold text-gray-900">Skill Details</h3>
-            </div>
-            <div className="overflow-y-auto">
-              {loadingSkill ? (
-                <div className="p-6 text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                  <span className="text-gray-600 text-sm mt-2 block">Loading skill...</span>
-                </div>
-              ) : (
-                <SkillDetailView
-                  skill={selectedSkillData}
-                  onSkillClick={handleSkillClick}
-                  color={selectedSkillColor}
-                  masteredSkills={selectedStudent?.masteredSkills || []}
-                />
-              )}
-            </div>
+          {/* Middle Column: Skill Detail View */}
+          <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
+            contextSkillNumber ? 'w-2/5' : 'w-3/5'
+          }`}>
+            <SkillDetailWrapper
+              skill={selectedSkillData}
+              onSkillClick={handleContextSkillClick}
+              color={selectedSkillColor}
+              masteredSkills={selectedStudent?.masteredSkills || []}
+              loading={loadingSkill}
+              showHeader={true}
+              headerTitle="Skill Details"
+            />
           </div>
+
+          {/* Right Column: Context Skill View (only when contextSkillNumber is set) */}
+          {contextSkillNumber && (
+            <div className="w-1/3 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all">
+              <SkillDetailWrapper
+                skill={contextSkillData}
+                onSkillClick={handleContextSkillClick}
+                color="orange"
+                masteredSkills={selectedStudent?.masteredSkills || []}
+                loading={loadingContextSkill}
+                showHeader={true}
+                onClose={() => {
+                  setContextSkillNumber(null);
+                  setContextSkillData(null);
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

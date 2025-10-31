@@ -7,7 +7,7 @@ import { Student } from "@zod-schema/313/student";
 import { UnitListItem } from "./components/UnitListItem";
 import { UnitDetailView } from "./components/UnitDetailView";
 import { StudentFilter } from "../scope-and-sequence/components/StudentFilter";
-import { SkillDetailView } from "../components/SkillDetailView";
+import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
 import { RoadmapsNav } from "../components/RoadmapsNav";
@@ -317,12 +317,13 @@ export default function RoadmapUnitsPage() {
           {/* Right Column: Skill Detail View (expands to use space from compressed left column) */}
           {selectedSkill && (
             <div className="flex-1 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all duration-300">
-              <SkillDetailView
+              <SkillDetailWrapper
                 skill={selectedSkill}
                 color={selectedSkillColor}
                 onSkillClick={handleSkillClick}
-                onClose={() => setSelectedSkill(null)}
                 masteredSkills={selectedStudent?.masteredSkills || []}
+                showHeader={true}
+                onClose={() => setSelectedSkill(null)}
               />
             </div>
           )}

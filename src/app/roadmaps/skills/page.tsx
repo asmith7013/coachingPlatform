@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { fetchRoadmapsSkills } from "@actions/313/roadmaps-skills";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { SkillListItem } from "./components/SkillListItem";
-import { SkillDetailView } from "../components/SkillDetailView";
+import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { Alert } from "@/components/core/feedback/Alert";
 import { RoadmapsNav } from "../components/RoadmapsNav";
 
@@ -18,6 +18,7 @@ export default function RoadmapsSkillsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGrade, setSelectedGrade] = useState<string>("");
   const [selectedUnit, setSelectedUnit] = useState<string>("");
+  const [contextSkillId, setContextSkillId] = useState<string | null>(null);
 
   // Load all skills once on mount for dropdown population
   useEffect(() => {
@@ -146,11 +147,13 @@ export default function RoadmapsSkillsPage() {
     setSelectedGrade(e.target.value);
     setSelectedUnit(""); // Reset unit when grade changes
     setSelectedSkillId(null); // Clear selection
+    setContextSkillId(null); // Clear context
   };
 
   const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedUnit(e.target.value);
     setSelectedSkillId(null); // Clear selection
+    setContextSkillId(null); // Clear context
   };
 
   const handleClearFilters = () => {
@@ -184,6 +187,11 @@ export default function RoadmapsSkillsPage() {
   // Get the selected skill object
   const selectedSkill = selectedSkillId
     ? filteredSkills.find(s => s._id === selectedSkillId) || null
+    : null;
+
+  // Get the context skill object
+  const contextSkill = contextSkillId
+    ? allSkills.find(s => s._id === contextSkillId) || null
     : null;
 
   if (loading) {
@@ -332,13 +340,15 @@ export default function RoadmapsSkillsPage() {
           </div>
         </div>
 
-        {/* Split View Layout: Skill List (40%) + Detail View (60%) */}
+        {/* Split View Layout: Adjust based on context column */}
         <div className="flex gap-6">
           {/* Left Column: Skill List */}
-          <div className="w-2/5 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+          <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
+            contextSkillId ? 'w-[12.5%]' : 'w-2/5'
+          }`}>
             <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10">
               <h3 className="font-semibold text-gray-900">
-                Skills ({filteredSkills.length})
+                {contextSkillId ? `Skills (${filteredSkills.length})` : `Skills (${filteredSkills.length})`}
               </h3>
               {(selectedGrade || selectedUnit || searchQuery) && (
                 <p className="text-xs text-gray-500 mt-1">
@@ -384,20 +394,41 @@ export default function RoadmapsSkillsPage() {
             </div>
           </div>
 
-          {/* Right Column: Skill Detail View */}
-          <div className="w-3/5 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-            <SkillDetailView
+          {/* Middle Column: Skill Detail View */}
+          <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
+            contextSkillId ? 'w-[43.75%]' : 'w-3/5'
+          }`}>
+            <SkillDetailWrapper
               skill={selectedSkill}
               color="green"
               onSkillClick={(skillNumber) => {
-                // Find and select the skill by skill number
-                const skill = filteredSkills.find(s => s.skillNumber === skillNumber);
+                // Find the skill by skill number in allSkills
+                const skill = allSkills.find(s => s.skillNumber === skillNumber);
                 if (skill) {
-                  setSelectedSkillId(skill._id);
+                  setContextSkillId(skill._id);
                 }
               }}
             />
           </div>
+
+          {/* Right Column: Context Skill View (only when contextSkillId is set) */}
+          {contextSkillId && (
+            <div className="w-[43.75%] bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all">
+              <SkillDetailWrapper
+                skill={contextSkill}
+                color="orange"
+                onSkillClick={(skillNumber) => {
+                  // Find the skill by skill number in allSkills
+                  const skill = allSkills.find(s => s.skillNumber === skillNumber);
+                  if (skill) {
+                    setContextSkillId(skill._id);
+                  }
+                }}
+                showHeader={true}
+                onClose={() => setContextSkillId(null)}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
