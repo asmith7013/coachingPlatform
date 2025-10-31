@@ -39,6 +39,20 @@ const SKILL_COLORS = [
   "#10b981", // green
 ];
 
+// Lighter versions of the colors for backgrounds - muted pastels
+const SKILL_COLORS_LIGHT = [
+  "#f5e6d3", // muted peach
+  "#d4e8e4", // muted teal
+  "#d9e4f5", // muted blue
+  "#e8dff5", // muted purple
+  "#f5dfe8", // muted pink
+  "#f5f0d4", // muted yellow
+  "#dfe2f5", // muted indigo
+  "#f5d9d9", // muted red
+  "#d4eef5", // muted cyan
+  "#d9f0e0", // muted green
+];
+
 export function SkillGanttChart({
   lessons,
   width = 1200,
@@ -222,6 +236,78 @@ export function SkillGanttChart({
               );
             })}
 
+            {/* Section bars at the very top */}
+            {(() => {
+              // Group lessons by section to create section spans
+              const sectionGroups: { section: string; start: number; end: number; index: number }[] = [];
+              let currentSection = lessons[0]?.section || '';
+              let startIndex = 0;
+              let sectionIndex = 0;
+
+              lessons.forEach((lesson, index) => {
+                const lessonSection = lesson.section || '';
+                if (lessonSection !== currentSection) {
+                  sectionGroups.push({
+                    section: currentSection,
+                    start: startIndex,
+                    end: index,
+                    index: sectionIndex
+                  });
+                  currentSection = lessonSection;
+                  startIndex = index;
+                  sectionIndex++;
+                }
+              });
+
+              // Add the last section
+              if (lessons.length > 0) {
+                sectionGroups.push({
+                  section: currentSection,
+                  start: startIndex,
+                  end: lessons.length,
+                  index: sectionIndex
+                });
+              }
+
+              return sectionGroups.map((group) => {
+                const barX = xScale(group.start);
+                const barWidth = xScale(group.end) - xScale(group.start);
+                const barHeight = 20; // Fixed narrow height
+                const barY = -15; // Position below lesson titles
+
+                // Alternating grayscale colors
+                const fillColor = group.index % 2 === 0 ? '#f3f4f6' : '#e5e7eb'; // gray-100 and gray-200
+                const textColor = '#374151'; // gray-700
+
+                return (
+                  <g key={`section-${group.start}`}>
+                    {/* Section bar background */}
+                    <rect
+                      x={barX}
+                      y={barY}
+                      width={barWidth}
+                      height={barHeight}
+                      fill={fillColor}
+                      stroke="#d1d5db"
+                      strokeWidth={1}
+                    />
+                    {/* Section label */}
+                    <text
+                      x={barX + barWidth / 2}
+                      y={barY + barHeight / 2}
+                      fontSize={11}
+                      fontWeight={600}
+                      fill={textColor}
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                    >
+                      {group.section ? `Section ${group.section}` : 'No Section'}
+                    </text>
+                  </g>
+                );
+              });
+            })()}
+
             {/* Lesson titles at the top */}
             {lessons.map((lesson, index) => {
               const x = xScale(index) + (xScale(1) - xScale(0)) / 2;
@@ -312,6 +398,7 @@ export function SkillGanttChart({
               const barX = xScale(item.start);
               const barWidth = xScale(item.end) - xScale(item.start);
               const color = SKILL_COLORS[index % SKILL_COLORS.length];
+              const lightColor = SKILL_COLORS_LIGHT[index % SKILL_COLORS_LIGHT.length];
               const skillData = skillsData.get(item.skill);
               const skillTitle = skillData?.title || "";
 
@@ -359,8 +446,8 @@ export function SkillGanttChart({
                     y={barY}
                     width={barWidth}
                     height={barHeight}
-                    fill={color}
-                    fillOpacity={0.15}
+                    fill={lightColor}
+                    fillOpacity={1}
                     stroke={color}
                     strokeWidth={2}
                     rx={4}
