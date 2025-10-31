@@ -89,6 +89,13 @@ export function SkillListWithProgress({
     return Math.round((masteredCount / sectionStudents.length) * 100);
   };
 
+  // Get students who have/haven't mastered a skill
+  const getStudentsByMastery = (skillNumber: string): { mastered: Student[]; notMastered: Student[] } => {
+    const mastered = sectionStudents.filter(s => s.masteredSkills?.includes(skillNumber));
+    const notMastered = sectionStudents.filter(s => !s.masteredSkills?.includes(skillNumber));
+    return { mastered, notMastered };
+  };
+
   // Get color class based on skill type
   const getSkillColor = (type: 'target' | 'essential' | 'helpful' | 'support'): {
     bg: string;
@@ -113,6 +120,70 @@ export function SkillListWithProgress({
 
   // Use multi-student mode if selectedStudents has items
   const useMultiStudentMode = selectedStudents.length > 0;
+
+  // Progress bar with tooltip component
+  const ProgressBarWithTooltip = ({
+    skillNumber,
+    percentage,
+    bgColor
+  }: {
+    skillNumber: string;
+    percentage: number;
+    bgColor: string;
+  }) => {
+    const { mastered, notMastered } = getStudentsByMastery(skillNumber);
+
+    return (
+      <div className="flex items-center gap-2 flex-shrink-0 relative group">
+        <div className="w-24 bg-gray-200 rounded-full h-2 cursor-help">
+          <div
+            className={`${bgColor} h-2 rounded-full transition-all`}
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
+        <span className="text-xs font-medium text-gray-700 w-10 text-right">
+          {percentage}%
+        </span>
+        {/* Tooltip */}
+        <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300 delay-400 z-50">
+          <div className="bg-gray-900 text-white text-xs rounded-lg shadow-lg p-3 min-w-[300px]">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Mastered column */}
+              <div>
+                <div className="font-semibold mb-1 text-green-400">Mastered ({mastered.length})</div>
+                <div className="space-y-0.5">
+                  {mastered.length > 0 ? (
+                    mastered.map((student) => (
+                      <div key={student._id} className="text-gray-200">
+                        {student.firstName} {student.lastName}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-gray-400 italic">None</div>
+                  )}
+                </div>
+              </div>
+              {/* Not Mastered column */}
+              <div>
+                <div className="font-semibold mb-1 text-red-400">Not Mastered ({notMastered.length})</div>
+                <div className="space-y-0.5">
+                  {notMastered.length > 0 ? (
+                    notMastered.map((student) => (
+                      <div key={student._id} className="text-gray-200">
+                        {student.firstName} {student.lastName}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-gray-400 italic">None</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   if (loadingSkills) {
     return (
@@ -189,17 +260,11 @@ export function SkillListWithProgress({
               )}
               {/* Section progress bar */}
               {!useMultiStudentMode && masteryPercentage !== null && (
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <div className="w-24 bg-gray-200 rounded-full h-2">
-                    <div
-                      className={`${colorClasses.bg} h-2 rounded-full transition-all`}
-                      style={{ width: `${masteryPercentage}%` }}
-                    />
-                  </div>
-                  <span className="text-xs font-medium text-gray-700 w-10 text-right">
-                    {masteryPercentage}%
-                  </span>
-                </div>
+                <ProgressBarWithTooltip
+                  skillNumber={skill.skillNumber}
+                  percentage={masteryPercentage}
+                  bgColor={colorClasses.bg}
+                />
               )}
             </div>
           );
@@ -268,17 +333,11 @@ export function SkillListWithProgress({
                 )}
                 {/* Section progress bar (only if not in multi-student mode) */}
                 {!useMultiStudentMode && masteryPercentage !== null && (
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <div className="w-24 bg-gray-200 rounded-full h-2">
-                      <div
-                        className={`${colorClasses.bg} h-2 rounded-full transition-all`}
-                        style={{ width: `${masteryPercentage}%` }}
-                      />
-                    </div>
-                    <span className="text-xs font-medium text-gray-600 w-10 text-right">
-                      {masteryPercentage}%
-                    </span>
-                  </div>
+                  <ProgressBarWithTooltip
+                    skillNumber={skill.skillNumber}
+                    percentage={masteryPercentage}
+                    bgColor={colorClasses.bg}
+                  />
                 )}
               </div>
             </div>
@@ -347,17 +406,11 @@ export function SkillListWithProgress({
                             )}
                             {/* Section progress bar for essential skills */}
                             {!useMultiStudentMode && essentialMastery !== null && (
-                              <div className="flex items-center gap-2 flex-shrink-0">
-                                <div className="w-24 bg-gray-200 rounded-full h-2">
-                                  <div
-                                    className="bg-skill-essential h-2 rounded-full transition-all"
-                                    style={{ width: `${essentialMastery}%` }}
-                                  />
-                                </div>
-                                <span className="text-xs font-medium text-gray-700 w-10 text-right">
-                                  {essentialMastery}%
-                                </span>
-                              </div>
+                              <ProgressBarWithTooltip
+                                skillNumber={skillNum}
+                                percentage={essentialMastery}
+                                bgColor="bg-skill-essential"
+                              />
                             )}
                           </div>
                         );
@@ -427,17 +480,11 @@ export function SkillListWithProgress({
                             )}
                             {/* Section progress bar for helpful skills */}
                             {!useMultiStudentMode && helpfulMastery !== null && (
-                              <div className="flex items-center gap-2 flex-shrink-0">
-                                <div className="w-24 bg-gray-200 rounded-full h-2">
-                                  <div
-                                    className="bg-skill-helpful h-2 rounded-full transition-all"
-                                    style={{ width: `${helpfulMastery}%` }}
-                                  />
-                                </div>
-                                <span className="text-xs font-medium text-gray-700 w-10 text-right">
-                                  {helpfulMastery}%
-                                </span>
-                              </div>
+                              <ProgressBarWithTooltip
+                                skillNumber={skillNum}
+                                percentage={helpfulMastery}
+                                bgColor="bg-skill-helpful"
+                              />
                             )}
                           </div>
                         );

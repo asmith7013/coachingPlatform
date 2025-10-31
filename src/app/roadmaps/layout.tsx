@@ -15,6 +15,13 @@ export default async function RoadmapsLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Skip authentication in development (localhost)
+  const isDevelopment = process.env.NODE_ENV === 'development';
+
+  if (isDevelopment) {
+    return <>{children}</>;
+  }
+
   // Production: Enforce authentication and domain restrictions
   const { userId } = await auth();
 

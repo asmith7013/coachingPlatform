@@ -185,11 +185,84 @@ export function SkillDetailModal({ skill, isOpen, onClose }: SkillDetailModalPro
             )}
 
             {/* Standards */}
-            {skill.standards && (
-              <Section title="Standards" color="gray">
-                {skill.standards}
-              </Section>
-            )}
+            {skill.standards && (() => {
+              // Parse standards text to extract standard codes and descriptions
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(skill.standards, 'text/html');
+              const text = doc.body.textContent || '';
+
+              // Match patterns like "NY.8.F.4:" or "NY.A1.IF.7a:" followed by description
+              const standardRegex = /([A-Z]{2}\.[A-Z0-9]+(?:\.[A-Z0-9]+)*(?:\.[a-z]+)?)\s*:\s*/g;
+              const parts: Array<{ type: 'code' | 'text', content: string }> = [];
+              let lastIndex = 0;
+              let match;
+
+              while ((match = standardRegex.exec(text)) !== null) {
+                // Add any text before this match
+                if (match.index > lastIndex) {
+                  const beforeText = text.substring(lastIndex, match.index).trim();
+                  if (beforeText) {
+                    parts.push({ type: 'text', content: beforeText });
+                  }
+                }
+
+                // Add the standard code
+                parts.push({ type: 'code', content: match[1] });
+                lastIndex = standardRegex.lastIndex;
+              }
+
+              // Add remaining text after last match
+              if (lastIndex < text.length) {
+                const remainingText = text.substring(lastIndex).trim();
+                if (remainingText) {
+                  parts.push({ type: 'text', content: remainingText });
+                }
+              }
+
+              // If no matches found, fall back to original rendering
+              if (parts.length === 0) {
+                return (
+                  <Section title="Standards" color="gray">
+                    {skill.standards}
+                  </Section>
+                );
+              }
+
+              return (
+                <div className="border-l-4 border-gray-500 bg-gray-50 p-4 rounded">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Standards</h3>
+                  <div className="space-y-3">
+                    {parts.reduce<Array<Array<{ type: 'code' | 'text', content: string }>>>((acc, part) => {
+                      if (part.type === 'code') {
+                        acc.push([part]);
+                      } else if (acc.length > 0) {
+                        acc[acc.length - 1].push(part);
+                      } else {
+                        acc.push([part]);
+                      }
+                      return acc;
+                    }, []).map((group, groupIndex) => (
+                      <div key={groupIndex} className="flex flex-wrap items-start gap-2">
+                        {group.map((part, partIndex) =>
+                          part.type === 'code' ? (
+                            <span
+                              key={partIndex}
+                              className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-300 flex-shrink-0"
+                            >
+                              {part.content}
+                            </span>
+                          ) : (
+                            <span key={partIndex} className="text-sm text-gray-900">
+                              {part.content}
+                            </span>
+                          )
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Vocabulary */}
             {skill.vocabulary && skill.vocabulary.length > 0 && (

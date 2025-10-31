@@ -112,15 +112,88 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
       {/* Content */}
       <div className="p-6 space-y-0">
         {/* Standards */}
-        {skill.standards && (
-          <div className="border-b border-gray-200 pb-6">
-            <h4 className="text-sm font-semibold text-gray-700 mb-3">Standards</h4>
-            <div
-              className="text-sm text-gray-600 prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: skill.standards }}
-            />
-          </div>
-        )}
+        {skill.standards && (() => {
+          // Parse standards HTML to extract standard codes and descriptions
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(skill.standards, 'text/html');
+          const text = doc.body.textContent || '';
+
+          // Match patterns like "NY.8.F.4:" or "NY.A1.IF.7a:" followed by description
+          const standardRegex = /([A-Z]{2}\.[A-Z0-9]+(?:\.[A-Z0-9]+)*(?:\.[a-z]+)?)\s*:\s*/g;
+          const parts: Array<{ type: 'code' | 'text', content: string }> = [];
+          let lastIndex = 0;
+          let match;
+
+          while ((match = standardRegex.exec(text)) !== null) {
+            // Add any text before this match
+            if (match.index > lastIndex) {
+              const beforeText = text.substring(lastIndex, match.index).trim();
+              if (beforeText) {
+                parts.push({ type: 'text', content: beforeText });
+              }
+            }
+
+            // Add the standard code
+            parts.push({ type: 'code', content: match[1] });
+            lastIndex = standardRegex.lastIndex;
+          }
+
+          // Add remaining text after last match
+          if (lastIndex < text.length) {
+            const remainingText = text.substring(lastIndex).trim();
+            if (remainingText) {
+              parts.push({ type: 'text', content: remainingText });
+            }
+          }
+
+          // If no matches found, fall back to original HTML rendering
+          if (parts.length === 0) {
+            return (
+              <div className="border-b border-gray-200 pb-6">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Standards</h4>
+                <div
+                  className="text-sm text-gray-600 prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: skill.standards }}
+                />
+              </div>
+            );
+          }
+
+          return (
+            <div className="border-b border-gray-200 pb-6">
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">Standards</h4>
+              <div className="space-y-3">
+                {parts.reduce<Array<Array<{ type: 'code' | 'text', content: string }>>>((acc, part, index) => {
+                  if (part.type === 'code') {
+                    acc.push([part]);
+                  } else if (acc.length > 0) {
+                    acc[acc.length - 1].push(part);
+                  } else {
+                    acc.push([part]);
+                  }
+                  return acc;
+                }, []).map((group, groupIndex) => (
+                  <div key={groupIndex} className="flex flex-wrap items-start gap-2">
+                    {group.map((part, partIndex) =>
+                      part.type === 'code' ? (
+                        <span
+                          key={partIndex}
+                          className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-300 flex-shrink-0"
+                        >
+                          {part.content}
+                        </span>
+                      ) : (
+                        <span key={partIndex} className="text-sm text-gray-600">
+                          {part.content}
+                        </span>
+                      )
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Prerequisites - moved to top */}
         {(hasEssentialSkills || hasHelpfulSkills) && (
