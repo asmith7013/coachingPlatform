@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
-import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon, ChevronDownIcon, ChevronRightIcon as ChevronRightIconSolid } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
+import { AccordionItem } from "./AccordionItem";
 
 interface SkillDetailViewProps {
   skill: RoadmapsSkill | null;
@@ -24,6 +25,7 @@ const colorClasses = {
 export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', masteredSkills = [] }: SkillDetailViewProps) {
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [expandedStandards, setExpandedStandards] = useState<Set<number>>(new Set());
+  const [expandedVocabulary, setExpandedVocabulary] = useState<Set<number>>(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleStandard = (index: number) => {
@@ -34,6 +36,16 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
       newExpanded.add(index);
     }
     setExpandedStandards(newExpanded);
+  };
+
+  const toggleVocabulary = (index: number) => {
+    const newExpanded = new Set(expandedVocabulary);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
+    } else {
+      newExpanded.add(index);
+    }
+    setExpandedVocabulary(newExpanded);
   };
 
   if (!skill) {
@@ -204,33 +216,19 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
           return (
             <div className="border-b border-gray-200 py-6">
               <h4 className="text-sm font-semibold text-gray-700 mb-3">Standards</h4>
-              <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
                 {groups.map((group, groupIndex) => {
-                  const isExpanded = expandedStandards.has(groupIndex);
                   const code = group.find(p => p.type === 'code')?.content || '';
                   const description = group.filter(p => p.type === 'text').map(p => p.content).join(' ');
 
                   return (
-                    <div key={groupIndex} className="border border-gray-200 rounded-lg overflow-hidden">
-                      <button
-                        onClick={() => toggleStandard(groupIndex)}
-                        className="w-full flex items-center justify-between px-3 py-2 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
-                      >
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-300">
-                          {code}
-                        </span>
-                        {isExpanded ? (
-                          <ChevronDownIcon className="w-4 h-4 text-gray-600 flex-shrink-0" />
-                        ) : (
-                          <ChevronRightIconSolid className="w-4 h-4 text-gray-600 flex-shrink-0" />
-                        )}
-                      </button>
-                      {isExpanded && description && (
-                        <div className="px-3 py-2 bg-white border-t border-gray-200">
-                          <p className="text-sm text-gray-600">{description}</p>
-                        </div>
-                      )}
-                    </div>
+                    <AccordionItem
+                      key={groupIndex}
+                      title={code}
+                      content={description}
+                      isExpanded={expandedStandards.has(groupIndex)}
+                      onToggle={() => toggleStandard(groupIndex)}
+                    />
                   );
                 })}
               </div>
@@ -259,7 +257,7 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
                         className="flex items-center gap-2 px-2 py-1 rounded bg-skill-essential-100 border border-skill-essential-300 max-w-full cursor-pointer hover:bg-skill-essential-200 hover:shadow-sm transition-all"
                       >
                         <span
-                          className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0"
                         >
                           {skillNum}
                         </span>
@@ -298,7 +296,7 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
                         className="flex items-center gap-2 px-2 py-1 rounded bg-skill-helpful-100 border border-skill-helpful-300 max-w-full cursor-pointer hover:bg-skill-helpful-200 hover:shadow-sm transition-all"
                       >
                         <span
-                          className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0"
                         >
                           {skillNum}
                         </span>
@@ -472,22 +470,21 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
         {/* Vocabulary */}
         {skill.vocabulary && skill.vocabulary.length > 0 && (
           <div className="border-b border-gray-200 py-6">
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Vocabulary</h4>
-            <div className="flex flex-wrap gap-2">
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">Vocabulary ({skill.vocabulary.length})</h4>
+            <div className="grid grid-cols-2 gap-2">
               {skill.vocabulary.map((vocabItem, index) => {
                 // Handle both old format (string) and new format (object with term/definition)
                 const term = typeof vocabItem === 'string' ? vocabItem : vocabItem.term;
                 const definition = typeof vocabItem === 'object' && 'definition' in vocabItem ? vocabItem.definition : null;
 
                 return (
-                  <span
+                  <AccordionItem
                     key={index}
-                    className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs"
-                    title={definition || undefined}
-                  >
-                    {term}
-                    {definition && <span className="text-gray-500 ml-1">— {definition}</span>}
-                  </span>
+                    title={term}
+                    content={definition || undefined}
+                    isExpanded={expandedVocabulary.has(index)}
+                    onToggle={() => toggleVocabulary(index)}
+                  />
                 );
               })}
             </div>

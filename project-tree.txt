@@ -506,6 +506,27 @@
 │   │   ├── exemplar
 │   │   ├── global-error.tsx
 │   │   ├── globals.css
+│   │   ├── incentives
+│   │   │   ├── data
+│   │   │   │   ├── actions.ts
+│   │   │   │   └── page.tsx
+│   │   │   ├── form
+│   │   │   │   ├── actions.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── CustomDetailInput.tsx
+│   │   │   │   │   ├── DetailCard.tsx
+│   │   │   │   │   ├── InquiryPicker.tsx
+│   │   │   │   │   ├── LessonPicker.tsx
+│   │   │   │   │   ├── ManageColumnsModal.tsx
+│   │   │   │   │   ├── SkillPicker.tsx
+│   │   │   │   │   └── StudentGrid.tsx
+│   │   │   │   ├── hooks
+│   │   │   │   │   ├── useActivityTypes.ts
+│   │   │   │   │   └── useFormState.ts
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── utils
+│   │   │   │       └── generateInquiryOptions.ts
+│   │   │   └── layout.tsx
 │   │   ├── integrations
 │   │   │   └── monday
 │   │   │       ├── example1
@@ -527,6 +548,7 @@
 │   │   │   ├── components
 │   │   │   │   ├── RoadmapsNav.tsx
 │   │   │   │   ├── SkillDetailView.tsx
+│   │   │   │   ├── SkillDetailWrapper.tsx
 │   │   │   │   └── SkillListWithProgress.tsx
 │   │   │   ├── im-lesson-updater
 │   │   │   │   └── page.tsx
@@ -544,6 +566,7 @@
 │   │   │   │   │   ├── LessonDetailView.tsx
 │   │   │   │   │   ├── LessonListItem.tsx
 │   │   │   │   │   ├── SkillDetailView.tsx
+│   │   │   │   │   ├── SkillGanttChart.tsx
 │   │   │   │   │   ├── SkillProgressionTable.tsx
 │   │   │   │   │   └── StudentFilter.tsx
 │   │   │   │   └── page.tsx
@@ -1301,6 +1324,7 @@
 │   │   │   ├── index.ts
 │   │   │   ├── mongoose-schema
 │   │   │   │   ├── 313
+│   │   │   │   │   ├── activity-type-config.model.ts
 │   │   │   │   │   ├── core.ts
 │   │   │   │   │   ├── roadmap-skill.model.ts
 │   │   │   │   │   ├── roadmap-unit.model.ts
@@ -1308,6 +1332,7 @@
 │   │   │   │   │   ├── roadmaps-student-data.model.ts
 │   │   │   │   │   ├── scope-and-sequence.model.ts
 │   │   │   │   │   ├── storage.ts
+│   │   │   │   │   ├── student-activity.model.ts
 │   │   │   │   │   ├── student-performance.model.ts
 │   │   │   │   │   ├── student.model.ts
 │   │   │   │   │   └── zearn-import.model.ts
@@ -1369,12 +1394,14 @@
 │   │   │   │       └── index.ts
 │   │   │   └── zod-schema
 │   │   │       ├── 313
+│   │   │       │   ├── activity-type-config.ts
 │   │   │       │   ├── core.ts
 │   │   │       │   ├── roadmap-skill.ts
 │   │   │       │   ├── roadmap-unit.ts
 │   │   │       │   ├── roadmap.ts
 │   │   │       │   ├── scope-and-sequence.ts
 │   │   │       │   ├── storage.ts
+│   │   │       │   ├── student-activity.ts
 │   │   │       │   ├── student-data.ts
 │   │   │       │   ├── student-performance.ts
 │   │   │       │   ├── student.ts
@@ -1657,7 +1684,8 @@
 │   │   └── utilities
 │   │       └── index.ts
 │   ├── scripts
-│   │   └── drop-old-scope-sequence-index.ts
+│   │   ├── drop-old-scope-sequence-index.ts
+│   │   └── seed-activity-types.ts
 │   ├── styles
 │   │   └── theme.css
 │   └── types
@@ -1675,4 +1703,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-495 directories, 1181 files
+501 directories, 1203 files

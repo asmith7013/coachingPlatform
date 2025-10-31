@@ -288,7 +288,7 @@ export function SkillListWithProgress({
               <div className="flex items-center justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2 flex-1">
                   <span
-                    className={`inline-flex items-center justify-center w-12 h-12 rounded-full text-white font-bold text-sm flex-shrink-0 ${colorClasses.bg}`}
+                    className={`inline-flex items-center justify-center w-10 h-10 rounded-full text-white font-bold text-xs flex-shrink-0 ${colorClasses.bg}`}
                   >
                     {skill.skillNumber}
                   </span>
@@ -369,7 +369,7 @@ export function SkillListWithProgress({
                           >
                             <div className="flex items-center gap-2 flex-1 min-w-0">
                               <span
-                                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0"
+                                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0"
                               >
                                 {skillNum}
                               </span>
@@ -446,7 +446,7 @@ export function SkillListWithProgress({
                           >
                             <div className="flex items-center gap-2 flex-1 min-w-0">
                               <span
-                                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0"
+                                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0"
                               >
                                 {skillNum}
                               </span>

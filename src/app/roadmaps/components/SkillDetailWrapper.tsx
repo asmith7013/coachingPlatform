@@ -27,8 +27,10 @@ export function SkillDetailWrapper({
   return (
     <>
       {showHeader && (
-        <div className="sticky top-0 bg-gray-600 border-b border-gray-200 px-4 py-3 z-10 flex items-center justify-between">
-          <h3 className="font-semibold text-white">{headerTitle}</h3>
+        <div className={`sticky top-0 border-b border-gray-200 px-4 py-3 z-10 flex items-center justify-between ${
+          onClose ? 'bg-gray-600' : 'bg-gray-50'
+        }`}>
+          <h3 className={`font-semibold ${onClose ? 'text-white' : 'text-gray-900'}`}>{headerTitle}</h3>
           {onClose && (
             <button
               onClick={onClose}

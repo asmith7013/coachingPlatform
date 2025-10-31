@@ -17,7 +17,6 @@ import {
   submitActivities,
   StudentActivitySubmission,
 } from "./actions";
-import { ActivityTypeConfig } from "@zod-schema/313/activity-type-config";
 import { StudentActivity } from "@zod-schema/313/student";
 
 interface Student {
@@ -72,7 +71,7 @@ export default function IncentivesFormPage() {
   useEffect(() => {
     async function loadUnits() {
       const result = await fetchUnitsByGrade("8");
-      if (result.success && result.data) {
+      if (typeof result !== 'string' && result.success && result.data) {
         setUnits(result.data as Unit[]);
       }
     }
@@ -88,7 +87,7 @@ export default function IncentivesFormPage() {
 
     async function loadStudents() {
       const result = await fetchStudentsBySection(section, "8");
-      if (result.success && result.data) {
+      if (typeof result !== 'string' && result.success && result.data) {
         setStudents(result.data as Student[]);
       }
     }
@@ -107,9 +106,10 @@ export default function IncentivesFormPage() {
     setSelectedUnit(unit || null);
 
     if (unit) {
+      const unitNumber = unit.unitNumber;
       async function loadSections() {
-        const result = await fetchSectionsForUnit("8", unit.unitNumber);
-        if (result.success && result.data) {
+        const result = await fetchSectionsForUnit("8", unitNumber);
+        if (typeof result !== 'string' && result.success && result.data) {
           setUnitSections(result.data as string[]);
         }
       }
@@ -216,7 +216,12 @@ export default function IncentivesFormPage() {
       // Submit to server
       const result = await submitActivities(submissions, "Teacher Name"); // TODO: Get from auth
 
-      if (result.success) {
+      if (typeof result === 'string') {
+        setSubmitMessage({
+          type: "error",
+          message: "Failed to submit activities",
+        });
+      } else if (result.success && result.data) {
         const { successful, failed } = result.data;
         setSubmitMessage({
           type: "success",
@@ -231,7 +236,7 @@ export default function IncentivesFormPage() {
       } else {
         setSubmitMessage({
           type: "error",
-          message: result.error || "Failed to submit activities",
+          message: result.error ?? "Failed to submit activities",
         });
       }
     } catch (error) {

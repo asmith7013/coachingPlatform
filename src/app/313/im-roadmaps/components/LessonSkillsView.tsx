@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getRoadmapsLessons } from '@actions/313/roadmaps-lessons';
 import { RoadmapsLesson } from '@zod-schema/313/roadmap';
+import { AccordionList } from './AccordionList';
 
 interface RoadmapsSkill {
   _id: string;
@@ -140,75 +141,26 @@ interface AccordionSkillsProps {
 }
 
 function AccordionSkills({ title, skills, colorScheme, isExpanded, onToggle }: AccordionSkillsProps) {
-  const colorClasses = colorScheme === 'red' 
-    ? {
-        headerBg: 'bg-red-100',
-        headerText: 'text-red-800',
-        headerBorder: 'border-red-200',
-        icon: 'text-red-600'
-      }
-    : {
-        headerBg: 'bg-green-100',
-        headerText: 'text-green-800', 
-        headerBorder: 'border-green-200',
-        icon: 'text-green-600'
-      };
-
   // Count skills by mastery status - combine into complete/incomplete
   const completeCount = skills.filter(skill => skill.masteryStatus === 'Demonstrated').length;
-  const incompleteCount = skills.length - completeCount;
 
   return (
-    <div className={`border ${colorClasses.headerBorder} rounded-lg overflow-hidden`}>
-      <button
-        onClick={onToggle}
-        className={`w-full ${colorClasses.headerBg} ${colorClasses.headerText} p-3 text-left flex items-center justify-between hover:opacity-80 transition-opacity`}
-      >
-        <div className="flex items-center gap-3">
-          <h4 className="font-semibold text-sm">{title}</h4>
-          <div className="flex items-center gap-1">
-            {/* Complete Skills Badge */}
-            {completeCount > 0 && (
-              <span className="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
-                <span>✓</span>
-                <span>{completeCount}</span>
-              </span>
-            )}
-            
-            {/* Incomplete Skills Badge */}
-            {incompleteCount > 0 && (
-              <span className={`${
-                colorScheme === 'red' ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-green-100 text-green-700 border border-green-200'
-              } px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1`}>
-                <span>○</span>
-                <span>{incompleteCount}</span>
-              </span>
-            )}
-          </div>
-        </div>
-        <span className={`${colorClasses.icon} transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-          ▼
-        </span>
-      </button>
-      
-      {isExpanded && (
-        <div className="p-3 space-y-2 bg-white">
-          {skills.length > 0 ? (
-            skills.map((skill, index) => (
-              <SkillCard 
-                key={index}
-                skill={skill}
-                colorScheme={colorScheme}
-              />
-            ))
-          ) : (
-            <p className="text-gray-500 text-sm italic">
-              No {title.toLowerCase()} identified
-            </p>
-          )}
-        </div>
+    <AccordionList
+      title={title}
+      items={skills.map(skill => ({ label: skill.title, details: skill.description }))}
+      colorScheme={colorScheme}
+      accordionId={title}
+      isExpanded={isExpanded}
+      onToggle={onToggle}
+      completedCount={completeCount}
+      renderItem={(_, index) => (
+        <SkillCard
+          key={index}
+          skill={skills[index]}
+          colorScheme={colorScheme}
+        />
       )}
-    </div>
+    />
   );
 }
 
@@ -485,6 +437,35 @@ export function LessonSkillsView({ lessonId, lessons, studentData }: LessonSkill
           </div>
         )}
       </div>
+
+      {/* Vocabulary Section */}
+      {selectedLesson.vocabulary && selectedLesson.vocabulary.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Vocabulary ({selectedLesson.vocabulary.length})
+          </h2>
+          <div className="space-y-3">
+            {selectedLesson.vocabulary.map((term, index) => {
+              // Split by first colon to separate term from definition
+              const colonIndex = term.indexOf(':');
+              const word = colonIndex > -1 ? term.substring(0, colonIndex).trim() : term;
+              const definition = colonIndex > -1 ? term.substring(colonIndex + 1).trim() : '';
+
+              return (
+                <AccordionList
+                  key={index}
+                  title={word}
+                  items={definition ? [{ label: definition }] : []}
+                  colorScheme="purple"
+                  accordionId={`vocab-${index}`}
+                  isExpanded={expandedAccordions[`vocab-${index}`] || false}
+                  onToggle={() => toggleAccordion(`vocab-${index}`)}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

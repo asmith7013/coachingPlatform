@@ -8,7 +8,6 @@ import { ScopeAndSequenceModel } from "@mongoose-schema/313/scope-and-sequence.m
 import { RoadmapsSkillModel } from "@mongoose-schema/313/roadmap-skill.model";
 import {
   ActivityTypeConfigInput,
-  ActivityTypeConfig,
 } from "@zod-schema/313/activity-type-config";
 import { StudentActivity } from "@zod-schema/313/student";
 import { StudentActivityEventInput } from "@zod-schema/313/student-activity";
@@ -30,7 +29,7 @@ export async function fetchActivityTypes() {
       const serializedTypes = types.map(t => JSON.parse(JSON.stringify(t.toJSON())));
       return { success: true, data: serializedTypes };
     } catch (error) {
-      return handleServerError(error, "Failed to fetch activity types");
+      return { success: false, error: handleServerError(error, "Failed to fetch activity types") };
     }
   });
 }
@@ -65,7 +64,7 @@ export async function createActivityType(config: ActivityTypeConfigInput) {
       const newType = await ActivityTypeConfigModel.create(config);
       return { success: true, data: newType.toJSON() };
     } catch (error) {
-      return handleServerError(error, "Failed to create activity type");
+      return { success: false, error: handleServerError(error, "Failed to create activity type") };
     }
   });
 }
@@ -112,7 +111,7 @@ export async function updateActivityType(
 
       return { success: true, data: type.toJSON() };
     } catch (error) {
-      return handleServerError(error, "Failed to update activity type");
+      return { success: false, error: handleServerError(error, "Failed to update activity type") };
     }
   });
 }
@@ -139,7 +138,7 @@ export async function deleteActivityType(id: string) {
       await ActivityTypeConfigModel.deleteOne({ id });
       return { success: true, data: { id } };
     } catch (error) {
-      return handleServerError(error, "Failed to delete activity type");
+      return { success: false, error: handleServerError(error, "Failed to delete activity type") };
     }
   });
 }
@@ -160,7 +159,7 @@ export async function reorderActivityTypes(orderedIds: string[]) {
       const types = await ActivityTypeConfigModel.find({}).sort({ order: 1 }).lean();
       return { success: true, data: types };
     } catch (error) {
-      return handleServerError(error, "Failed to reorder activity types");
+      return { success: false, error: handleServerError(error, "Failed to reorder activity types") };
     }
   });
 }
@@ -186,7 +185,7 @@ export async function fetchStudentsBySection(section: string, grade: string = "8
       const serializedStudents = students.map(s => JSON.parse(JSON.stringify(s.toJSON())));
       return { success: true, data: serializedStudents };
     } catch (error) {
-      return handleServerError(error, "Failed to fetch students");
+      return { success: false, error: handleServerError(error, "Failed to fetch students") };
     }
   });
 }
@@ -206,7 +205,7 @@ export async function fetchUnitsByGrade(grade: string = "8") {
       const serializedUnits = units.map(u => JSON.parse(JSON.stringify(u.toJSON())));
       return { success: true, data: serializedUnits };
     } catch (error) {
-      return handleServerError(error, "Failed to fetch units");
+      return { success: false, error: handleServerError(error, "Failed to fetch units") };
     }
   });
 }
@@ -227,7 +226,7 @@ export async function fetchLessonsForUnit(grade: string, unitNumber: number) {
       const serializedLessons = lessons.map(l => JSON.parse(JSON.stringify(l.toJSON())));
       return { success: true, data: serializedLessons };
     } catch (error) {
-      return handleServerError(error, "Failed to fetch lessons");
+      return { success: false, error: handleServerError(error, "Failed to fetch lessons") };
     }
   });
 }
@@ -238,17 +237,17 @@ export async function fetchLessonsForUnit(grade: string, unitNumber: number) {
 export async function fetchSectionsForUnit(grade: string, unitNumber: number) {
   return withDbConnection(async () => {
     try {
-      const sections = await ScopeAndSequenceModel.distinct("section", {
+      const sections: string[] = await ScopeAndSequenceModel.distinct("section", {
         grade,
         unitNumber,
-      });
+      }) as unknown as string[];
 
       // Sort alphabetically
       sections.sort();
 
       return { success: true, data: sections };
     } catch (error) {
-      return handleServerError(error, "Failed to fetch sections");
+      return { success: false, error: handleServerError(error, "Failed to fetch sections") };
     }
   });
 }
@@ -265,10 +264,10 @@ export async function fetchSkillDetails(skillIds: string[]) {
         .sort({ skillNumber: 1 });
 
       // Convert to JSON to ensure proper serialization
-      const serializedSkills = skills.map((s: any) => JSON.parse(JSON.stringify(s.toJSON())));
+      const serializedSkills = skills.map((s) => JSON.parse(JSON.stringify(s.toJSON())));
       return { success: true, data: serializedSkills };
     } catch (error) {
-      return handleServerError(error, "Failed to fetch skill details");
+      return { success: false, error: handleServerError(error, "Failed to fetch skill details") };
     }
   });
 }
@@ -298,10 +297,10 @@ export async function fetchUnitSkills(unitId: string) {
         .sort({ skillNumber: 1 });
 
       // Convert to JSON to ensure proper serialization
-      const serializedSkills = skills.map((s: any) => JSON.parse(JSON.stringify(s.toJSON())));
+      const serializedSkills = skills.map((s) => JSON.parse(JSON.stringify(s.toJSON())));
       return { success: true, data: serializedSkills };
     } catch (error) {
-      return handleServerError(error, "Failed to fetch unit skills");
+      return { success: false, error: handleServerError(error, "Failed to fetch unit skills") };
     }
   });
 }
@@ -340,7 +339,8 @@ export async function submitActivities(
 
         try {
           // Fetch student info for enrichment
-          const student = await StudentModel.findById(submission.studentId).lean();
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const student: any = await StudentModel.findById(submission.studentId).lean();
 
           if (!student) {
             console.error("❌ [submitActivities] Student not found:", submission.studentId);
@@ -420,7 +420,7 @@ export async function submitActivities(
       };
     } catch (error) {
       console.error("❌ [submitActivities] Fatal error:", error);
-      return handleServerError(error, "Failed to submit activities");
+      return { success: false, error: handleServerError(error, "Failed to submit activities") };
     }
   });
 }

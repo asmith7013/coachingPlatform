@@ -1,9 +1,6 @@
 "use server";
 
-import { StudentModel } from "@mongoose-schema/313/student.model";
 import { StudentActivityModel } from "@mongoose-schema/313/student-activity.model";
-import { ActivityTypeConfigModel } from "@mongoose-schema/313/activity-type-config.model";
-import { RoadmapUnitModel } from "@mongoose-schema/313/roadmap-unit.model";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 
@@ -41,10 +38,11 @@ export interface StudentActivityRecord {
  * Fetch all activity data with optional filters
  * NOW QUERIES student-activities collection instead of embedded arrays
  */
-export async function fetchActivityData(filters: ActivityDataFilters = {}) {
+export async function fetchActivityData(filters: ActivityDataFilters = {}): Promise<{ success: boolean; data?: StudentActivityRecord[]; error?: string }> {
   return withDbConnection(async () => {
     try {
       // Build MongoDB query for student-activities collection
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const query: any = {
         gradeLevel: "8"
       };
@@ -101,7 +99,7 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}) {
 
       return { success: true, data: records };
     } catch (error) {
-      return handleServerError(error, "Failed to fetch activity data");
+      return { success: false, error: handleServerError(error, "Failed to fetch activity data") };
     }
   });
 }
@@ -109,13 +107,14 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}) {
 /**
  * Get activity summary statistics
  */
-export async function getActivitySummary(filters: ActivityDataFilters = {}) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function getActivitySummary(filters: ActivityDataFilters = {}): Promise<{ success: boolean; data?: any; error?: string }> {
   return withDbConnection(async () => {
     try {
       const result = await fetchActivityData(filters);
 
-      if (!result.success || !result.data) {
-        return { success: false, error: result.error };
+      if (typeof result === 'string' || !result.success || !result.data) {
+        return { success: false, error: typeof result !== 'string' && result.error ? result.error : "Failed to fetch data" };
       }
 
       const records = result.data as StudentActivityRecord[];
@@ -163,7 +162,7 @@ export async function getActivitySummary(filters: ActivityDataFilters = {}) {
         },
       };
     } catch (error) {
-      return handleServerError(error, "Failed to calculate summary");
+      return { success: false, error: handleServerError(error, "Failed to calculate summary") };
     }
   });
 }
@@ -171,13 +170,13 @@ export async function getActivitySummary(filters: ActivityDataFilters = {}) {
 /**
  * Export activity data as CSV
  */
-export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {}) {
+export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {}): Promise<{ success: boolean; data?: string; error?: string }> {
   return withDbConnection(async () => {
     try {
       const result = await fetchActivityData(filters);
 
-      if (!result.success || !result.data) {
-        return { success: false, error: result.error };
+      if (typeof result === 'string' || !result.success || !result.data) {
+        return { success: false, error: typeof result !== 'string' && result.error ? result.error : "Failed to fetch data" };
       }
 
       const records = result.data as StudentActivityRecord[];
@@ -228,7 +227,7 @@ export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {})
 
       return { success: true, data: csv };
     } catch (error) {
-      return handleServerError(error, "Failed to export CSV");
+      return { success: false, error: handleServerError(error, "Failed to export CSV") };
     }
   });
 }

@@ -37,10 +37,10 @@ export function SkillPicker({
       try {
         const result = await fetchUnitSkills(unitId);
 
-        if (result.success && result.data) {
+        if (typeof result !== 'string' && result.success && result.data) {
           setSkills(result.data as Skill[]);
         } else {
-          setError(result.error || "Failed to load skills");
+          setError(typeof result !== 'string' && result.error ? result.error : "Failed to load skills");
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");

@@ -23,10 +23,12 @@ export function useActivityTypes() {
     try {
       const result = await fetchActivityTypes();
 
-      if (result.success && result.data) {
+      if (typeof result === 'string') {
+        setError("Failed to load activity types");
+      } else if (result.success && result.data) {
         setActivityTypes(result.data as ActivityTypeConfig[]);
       } else {
-        setError(result.error || "Failed to load activity types");
+        setError(result.error ?? "Failed to load activity types");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");

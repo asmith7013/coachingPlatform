@@ -40,10 +40,12 @@ export function LessonPicker({
       try {
         const result = await fetchLessonsForUnit(grade, unitNumber);
 
-        if (result.success && result.data) {
+        if (typeof result === 'string') {
+          setError("Failed to load lessons");
+        } else if (result.success && result.data) {
           setLessons(result.data as Lesson[]);
         } else {
-          setError(result.error || "Failed to load lessons");
+          setError(result.error ?? "Failed to load lessons");
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");

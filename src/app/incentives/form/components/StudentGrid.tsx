@@ -40,7 +40,7 @@ export function StudentGrid({
   if (activityTypes.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        No activity types configured. Use "Manage Columns" to add activity types.
+        No activity types configured. Use &ldquo;Manage Columns&rdquo; to add activity types.
       </div>
     );
   }

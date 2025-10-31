@@ -3,7 +3,6 @@
 import React from "react";
 import {
   generateInquiryOptions,
-  InquiryOptionGroup,
 } from "../utils/generateInquiryOptions";
 
 interface InquiryPickerProps {

@@ -54,21 +54,16 @@ export default function IncentivesDataPage() {
         fetchUnitsByGrade("8"),
       ]);
 
-      if (typesResult.success && typesResult.data) {
+      if (typeof typesResult !== 'string' && typesResult.success && typesResult.data) {
         setActivityTypes(typesResult.data as ActivityTypeConfig[]);
       }
 
-      if (unitsResult.success && unitsResult.data) {
+      if (typeof unitsResult !== 'string' && unitsResult.success && unitsResult.data) {
         setUnits(unitsResult.data as Unit[]);
       }
     }
     loadMetadata();
   }, []);
-
-  // Load data when filters change
-  useEffect(() => {
-    loadData();
-  }, [section, unitId, activityType, startDate, endDate]);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -85,16 +80,22 @@ export default function IncentivesDataPage() {
       getActivitySummary(filters),
     ]);
 
-    if (dataResult.success && dataResult.data) {
+    if (typeof dataResult !== 'string' && dataResult.success && dataResult.data) {
       setRecords(dataResult.data as StudentActivityRecord[]);
     }
 
-    if (summaryResult.success && summaryResult.data) {
+    if (typeof summaryResult !== 'string' && summaryResult.success && summaryResult.data) {
       setSummary(summaryResult.data as Summary);
     }
 
     setIsLoading(false);
   };
+
+  // Load data when filters change
+  useEffect(() => {
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [section, unitId, activityType, startDate, endDate]);
 
   const handleExportCSV = async () => {
     setIsExporting(true);
@@ -108,7 +109,7 @@ export default function IncentivesDataPage() {
 
     const result = await exportActivityDataAsCSV(filters);
 
-    if (result.success && result.data) {
+    if (typeof result !== 'string' && result.success && result.data) {
       // Create download link
       const blob = new Blob([result.data as string], { type: "text/csv" });
       const url = window.URL.createObjectURL(blob);

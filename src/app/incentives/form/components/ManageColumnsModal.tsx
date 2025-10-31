@@ -6,7 +6,6 @@ import {
   createActivityType,
   updateActivityType,
   deleteActivityType,
-  reorderActivityTypes,
 } from "../actions";
 
 interface ManageColumnsModalProps {
@@ -14,6 +13,14 @@ interface ManageColumnsModalProps {
   onClose: () => void;
   activityTypes: ActivityTypeConfig[];
   onUpdate: () => void;
+}
+
+interface FormData {
+  label: string;
+  icon: string;
+  color: string;
+  requiresDetails: boolean;
+  detailType: DetailType;
 }
 
 /**
@@ -31,7 +38,7 @@ export function ManageColumnsModal({
   const [error, setError] = useState<string | null>(null);
 
   // Form state for new/edit activity type
-  const [formData, setFormData] = useState<Partial<ActivityTypeConfigInput>>({
+  const [formData, setFormData] = useState<FormData>({
     label: "",
     icon: "📝",
     color: "#3b82f6",
@@ -105,17 +112,17 @@ export function ManageColumnsModal({
 
     const result = await deleteActivityType(id);
 
-    if (result.success) {
+    if (typeof result !== 'string' && result.success) {
       onUpdate();
     } else {
-      setError(result.error || "Failed to delete activity type");
+      setError(typeof result !== 'string' && result.error ? result.error : "Failed to delete activity type");
     }
 
     setIsSubmitting(false);
   };
 
   const handleSaveNew = async () => {
-    if (!formData.label) {
+    if (!formData.label || formData.label.trim() === "") {
       setError("Label is required");
       return;
     }
@@ -127,10 +134,10 @@ export function ManageColumnsModal({
     const newType: ActivityTypeConfigInput = {
       id,
       label: formData.label,
-      icon: formData.icon || "📝",
-      color: formData.color || "#3b82f6",
-      requiresDetails: formData.requiresDetails || false,
-      detailType: formData.detailType || "none",
+      icon: formData.icon,
+      color: formData.color,
+      requiresDetails: formData.requiresDetails,
+      detailType: formData.detailType,
       isDefault: false,
       order: activityTypes.length + 1,
       ownerIds: [],
@@ -138,7 +145,7 @@ export function ManageColumnsModal({
 
     const result = await createActivityType(newType);
 
-    if (result.success) {
+    if (typeof result !== 'string' && result.success) {
       setIsAdding(false);
       setFormData({
         label: "",
@@ -149,7 +156,7 @@ export function ManageColumnsModal({
       });
       onUpdate();
     } else {
-      setError(result.error || "Failed to create activity type");
+      setError(typeof result !== 'string' && result.error ? result.error : "Failed to create activity type");
     }
 
     setIsSubmitting(false);
@@ -174,7 +181,7 @@ export function ManageColumnsModal({
 
     const result = await updateActivityType(editingId, updates);
 
-    if (result.success) {
+    if (typeof result !== 'string' && result.success) {
       setEditingId(null);
       setFormData({
         label: "",
@@ -185,7 +192,7 @@ export function ManageColumnsModal({
       });
       onUpdate();
     } else {
-      setError(result.error || "Failed to update activity type");
+      setError(typeof result !== 'string' && result.error ? result.error : "Failed to update activity type");
     }
 
     setIsSubmitting(false);
@@ -325,7 +332,7 @@ export function ManageColumnsModal({
                   </label>
                   <input
                     type="text"
-                    value={formData.label || ""}
+                    value={formData.label}
                     onChange={(e) =>
                       setFormData({ ...formData, label: e.target.value })
                     }
@@ -334,7 +341,7 @@ export function ManageColumnsModal({
                     placeholder="e.g., Exit Ticket"
                   />
                   <div className="text-xs text-gray-500 mt-1">
-                    {(formData.label || "").length} / 50
+                    {formData.label.length} / 50
                   </div>
                 </div>
 
@@ -346,7 +353,7 @@ export function ManageColumnsModal({
                   <div className="flex items-center gap-2 mb-2">
                     <input
                       type="text"
-                      value={formData.icon || ""}
+                      value={formData.icon}
                       onChange={(e) =>
                         setFormData({ ...formData, icon: e.target.value })
                       }
@@ -377,7 +384,7 @@ export function ManageColumnsModal({
                   <div className="flex items-center gap-2 mb-2">
                     <input
                       type="color"
-                      value={formData.color || "#3b82f6"}
+                      value={formData.color}
                       onChange={(e) =>
                         setFormData({ ...formData, color: e.target.value })
                       }
@@ -385,7 +392,7 @@ export function ManageColumnsModal({
                     />
                     <input
                       type="text"
-                      value={formData.color || "#3b82f6"}
+                      value={formData.color}
                       onChange={(e) =>
                         setFormData({ ...formData, color: e.target.value })
                       }
@@ -411,7 +418,7 @@ export function ManageColumnsModal({
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formData.requiresDetails || false}
+                      checked={formData.requiresDetails}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
@@ -434,7 +441,7 @@ export function ManageColumnsModal({
                       Detail Type
                     </label>
                     <select
-                      value={formData.detailType || "custom"}
+                      value={formData.detailType}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
