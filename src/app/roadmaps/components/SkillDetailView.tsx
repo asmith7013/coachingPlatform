@@ -118,36 +118,36 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
           const doc = parser.parseFromString(skill.standards, 'text/html');
           const text = doc.body.textContent || '';
 
-          // Match patterns like "NY.8.F.4:" or "NY.A1.IF.7a:" followed by description
-          const standardRegex = /([A-Z]{2}\.[A-Z0-9]+(?:\.[A-Z0-9]+)*(?:\.[a-z]+)?)\s*:\s*/g;
-          const parts: Array<{ type: 'code' | 'text', content: string }> = [];
-          let lastIndex = 0;
-          let match;
+          // Split by "NY." to find standard boundaries
+          const segments = text.split(/\b(NY\.[A-Z0-9.a-z]+)/g).filter(s => s.trim());
 
-          while ((match = standardRegex.exec(text)) !== null) {
-            // Add any text before this match
-            if (match.index > lastIndex) {
-              const beforeText = text.substring(lastIndex, match.index).trim();
-              if (beforeText) {
-                parts.push({ type: 'text', content: beforeText });
+          const parsed: Array<{ type: 'code' | 'text', content: string }> = [];
+
+          segments.forEach((segment) => {
+            if (segment.match(/^NY\.[A-Z0-9.a-z]+/)) {
+              // This is a standard code - extract up to first space or colon, then remove trailing colon
+              const match = segment.match(/^(NY\.[A-Z0-9.a-z]+):?/);
+              if (match) {
+                const code = match[1]; // Get code without colon
+                parsed.push({ type: 'code', content: code });
+
+                // Get remaining text after the code (and optional colon)
+                const remaining = segment.substring(match[0].length).trim();
+                if (remaining) {
+                  parsed.push({ type: 'text', content: remaining });
+                }
+              }
+            } else {
+              // Regular text - remove leading colon if present
+              const trimmed = segment.trim().replace(/^:\s*/, '');
+              if (trimmed) {
+                parsed.push({ type: 'text', content: trimmed });
               }
             }
+          });
 
-            // Add the standard code
-            parts.push({ type: 'code', content: match[1] });
-            lastIndex = standardRegex.lastIndex;
-          }
-
-          // Add remaining text after last match
-          if (lastIndex < text.length) {
-            const remainingText = text.substring(lastIndex).trim();
-            if (remainingText) {
-              parts.push({ type: 'text', content: remainingText });
-            }
-          }
-
-          // If no matches found, fall back to original HTML rendering
-          if (parts.length === 0) {
+          // If no standards found, fall back to original HTML rendering
+          if (parsed.filter(p => p.type === 'code').length === 0) {
             return (
               <div className="border-b border-gray-200 pb-6">
                 <h4 className="text-sm font-semibold text-gray-700 mb-3">Standards</h4>
@@ -159,20 +159,30 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
             );
           }
 
+          // Group by standard code
+          const groups: Array<Array<{ type: 'code' | 'text', content: string }>> = [];
+          let currentGroup: Array<{ type: 'code' | 'text', content: string }> = [];
+
+          parsed.forEach((item) => {
+            if (item.type === 'code') {
+              if (currentGroup.length > 0) {
+                groups.push(currentGroup);
+              }
+              currentGroup = [item];
+            } else {
+              currentGroup.push(item);
+            }
+          });
+
+          if (currentGroup.length > 0) {
+            groups.push(currentGroup);
+          }
+
           return (
             <div className="border-b border-gray-200 pb-6">
               <h4 className="text-sm font-semibold text-gray-700 mb-3">Standards</h4>
               <div className="space-y-3">
-                {parts.reduce<Array<Array<{ type: 'code' | 'text', content: string }>>>((acc, part, index) => {
-                  if (part.type === 'code') {
-                    acc.push([part]);
-                  } else if (acc.length > 0) {
-                    acc[acc.length - 1].push(part);
-                  } else {
-                    acc.push([part]);
-                  }
-                  return acc;
-                }, []).map((group, groupIndex) => (
+                {groups.map((group, groupIndex) => (
                   <div key={groupIndex} className="flex flex-wrap items-start gap-2">
                     {group.map((part, partIndex) =>
                       part.type === 'code' ? (
