@@ -149,7 +149,7 @@ export function SkillGanttChart({
     () =>
       scaleBand<string>({
         domain: allSkills,
-        range: [0, innerHeight],
+        range: [12, innerHeight], // Start at 12px to add spacing after section row (pb-3)
         padding: 0.2,
       }),
     [allSkills, innerHeight]
@@ -165,8 +165,8 @@ export function SkillGanttChart({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-      <h3 className="text-sm font-semibold text-gray-900 mb-3">Skill Progression Timeline</h3>
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm py-6 mb-6">
+      <h3 className="text-sm font-semibold text-gray-900 mb-3 px-6">Skill Progression Timeline</h3>
 
       <style>{`
         svg title {
@@ -202,7 +202,7 @@ export function SkillGanttChart({
                       y={-80}
                       width={columnWidth}
                       height={innerHeight + 80}
-                      fill="#f9fafb"
+                      fill="#f3f4f6"
                       opacity={0.5}
                       pointerEvents="none"
                     />
@@ -234,78 +234,6 @@ export function SkillGanttChart({
                 </g>
               );
             })}
-
-            {/* Section bars at the very top */}
-            {(() => {
-              // Group lessons by section to create section spans
-              const sectionGroups: { section: string; start: number; end: number; index: number }[] = [];
-              let currentSection = lessons[0]?.section || '';
-              let startIndex = 0;
-              let sectionIndex = 0;
-
-              lessons.forEach((lesson, index) => {
-                const lessonSection = lesson.section || '';
-                if (lessonSection !== currentSection) {
-                  sectionGroups.push({
-                    section: currentSection,
-                    start: startIndex,
-                    end: index,
-                    index: sectionIndex
-                  });
-                  currentSection = lessonSection;
-                  startIndex = index;
-                  sectionIndex++;
-                }
-              });
-
-              // Add the last section
-              if (lessons.length > 0) {
-                sectionGroups.push({
-                  section: currentSection,
-                  start: startIndex,
-                  end: lessons.length,
-                  index: sectionIndex
-                });
-              }
-
-              return sectionGroups.map((group) => {
-                const barX = xScale(group.start);
-                const barWidth = xScale(group.end) - xScale(group.start);
-                const barHeight = 20; // Fixed narrow height
-                const barY = -15; // Position below lesson titles
-
-                // Alternating grayscale colors
-                const fillColor = group.index % 2 === 0 ? '#f3f4f6' : '#e5e7eb'; // gray-100 and gray-200
-                const textColor = '#374151'; // gray-700
-
-                return (
-                  <g key={`section-${group.start}`}>
-                    {/* Section bar background */}
-                    <rect
-                      x={barX}
-                      y={barY}
-                      width={barWidth}
-                      height={barHeight}
-                      fill={fillColor}
-                      stroke="#d1d5db"
-                      strokeWidth={1}
-                    />
-                    {/* Section label */}
-                    <text
-                      x={barX + barWidth / 2}
-                      y={barY + barHeight / 2}
-                      fontSize={11}
-                      fontWeight={600}
-                      fill={textColor}
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                    >
-                      {group.section ? `Section ${group.section}` : 'No Section'}
-                    </text>
-                  </g>
-                );
-              });
-            })()}
 
             {/* Lesson titles at the top */}
             {lessons.map((lesson, index) => {
@@ -388,6 +316,81 @@ export function SkillGanttChart({
               opacity={0.5}
             />
 
+            {/* Section bars - rendered after grid lines to cover them */}
+            {(() => {
+              // Group lessons by section to create section spans
+              const sectionGroups: { section: string; start: number; end: number; index: number }[] = [];
+              let currentSection = lessons[0]?.section || '';
+              let startIndex = 0;
+              let sectionIndex = 0;
+
+              lessons.forEach((lesson, index) => {
+                const lessonSection = lesson.section || '';
+                if (lessonSection !== currentSection) {
+                  sectionGroups.push({
+                    section: currentSection,
+                    start: startIndex,
+                    end: index,
+                    index: sectionIndex
+                  });
+                  currentSection = lessonSection;
+                  startIndex = index;
+                  sectionIndex++;
+                }
+              });
+
+              // Add the last section
+              if (lessons.length > 0) {
+                sectionGroups.push({
+                  section: currentSection,
+                  start: startIndex,
+                  end: lessons.length,
+                  index: sectionIndex
+                });
+              }
+
+              return sectionGroups.map((group) => {
+                const barX = xScale(group.start);
+                const barWidth = xScale(group.end) - xScale(group.start);
+                const barHeight = 20; // Fixed narrow height
+                const barY = -15; // Position below lesson titles
+
+                // Use lighter greyscale colors with same dark border for all
+                const color = '#4b5563'; // gray-600 - same darkness for all borders
+                const greyScaleLight = ['#f3f4f6', '#d1d5db']; // gray-100 and gray-300
+                const lightColor = greyScaleLight[group.index % greyScaleLight.length];
+
+                return (
+                  <g key={`section-${group.start}`}>
+                    {/* Section bar background with rounded corners - same styling as skill bars */}
+                    <rect
+                      x={barX}
+                      y={barY}
+                      width={barWidth}
+                      height={barHeight}
+                      fill={lightColor}
+                      fillOpacity={1}
+                      stroke={color}
+                      strokeWidth={2}
+                      rx={4}
+                    />
+                    {/* Section label */}
+                    <text
+                      x={barX + barWidth / 2}
+                      y={barY + barHeight / 2}
+                      fontSize={11}
+                      fontWeight={600}
+                      fill="#1f2937"
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                    >
+                      {group.section ? `Section ${group.section}` : 'No Section'}
+                    </text>
+                  </g>
+                );
+              });
+            })()}
+
             {/* Gantt bars */}
             {ganttData.map((item, index) => {
               if (!item) return null;
@@ -423,18 +426,8 @@ export function SkillGanttChart({
               });
               if (currentLine) lines.push(currentLine);
 
-              // Limit to 2 lines and add ellipsis if needed
-              const maxLines = 2;
-              const displayLines = lines.slice(0, maxLines);
-
-              if (lines.length > maxLines) {
-                const lastLine = displayLines[maxLines - 1];
-                if (lastLine.length > charsPerLine - 3) {
-                  displayLines[maxLines - 1] = lastLine.substring(0, charsPerLine - 3) + '...';
-                } else {
-                  displayLines[maxLines - 1] = lastLine + '...';
-                }
-              }
+              // Display all lines without limiting
+              const displayLines = lines;
 
               return (
                 <g key={item.skill}>
@@ -507,7 +500,7 @@ export function SkillGanttChart({
         </svg>
       </div>
 
-      <div className="mt-3 text-xs text-gray-600">
+      <div className="mt-3 text-xs text-gray-600 px-6">
         Showing progression of {allSkills.length} skill{allSkills.length !== 1 ? 's' : ''} across {lessons.length} lesson{lessons.length !== 1 ? 's' : ''}
       </div>
     </div>
