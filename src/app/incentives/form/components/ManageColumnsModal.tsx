@@ -84,14 +84,14 @@ export function ManageColumnsModal({
       setError("Cannot edit default activity types");
       return;
     }
-    setEditingId(type.id);
+    setEditingId(type.typeId ?? null);
     setIsAdding(false);
     setFormData({
-      label: type.label,
-      icon: type.icon,
-      color: type.color,
-      requiresDetails: type.requiresDetails,
-      detailType: type.detailType,
+      label: type.label ?? "",
+      icon: type.icon ?? "📝",
+      color: type.color ?? "#3b82f6",
+      requiresDetails: type.requiresDetails ?? false,
+      detailType: type.detailType ?? "none",
     });
     setError(null);
   };
@@ -274,7 +274,7 @@ export function ManageColumnsModal({
             <div className="space-y-2 mb-4">
               {activityTypes.map((type) => (
                 <div
-                  key={type.id}
+                  key={type.typeId}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-md"
                 >
                   <div className="flex items-center gap-3">
@@ -300,7 +300,7 @@ export function ManageColumnsModal({
                           Edit
                         </button>
                         <button
-                          onClick={() => handleDelete(type.id)}
+                          onClick={() => handleDelete(type.typeId ?? "")}
                           disabled={isSubmitting}
                           className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
                         >

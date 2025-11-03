@@ -64,11 +64,11 @@ export function UnitListItem({ unit, isSelected, onClick, compact = false }: Uni
         </div>
         <div className="flex items-center gap-1">
           <span className="font-medium text-green-600">{unit.supportCount}</span>
-          <span className="text-gray-500">Support</span>
+          <span className="text-gray-500">Essential</span>
         </div>
         <div className="flex items-center gap-1">
           <span className="font-medium text-purple-600">{unit.extensionCount}</span>
-          <span className="text-gray-500">Extension</span>
+          <span className="text-gray-500">Helpful</span>
         </div>
       </div>
     </div>

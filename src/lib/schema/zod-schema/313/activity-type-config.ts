@@ -20,7 +20,7 @@ export const DetailTypeZod = z.enum([
  * Activity type configuration fields
  */
 export const ActivityTypeConfigFieldsSchema = z.object({
-  id: z.string().min(1).describe("Unique identifier (kebab-case, e.g., 'inquiry-activity')"),
+  typeId: z.string().min(1).describe("Unique identifier (kebab-case, e.g., 'inquiry-activity')"),
   label: z.string().min(1).max(50).describe("Display name (e.g., 'Inquiry Activity')"),
   requiresDetails: z.boolean().describe("Whether to show detail card when checked"),
   detailType: DetailTypeZod.describe("Type of detail to collect"),
@@ -59,7 +59,7 @@ export function createActivityTypeConfigDefaults(
   overrides: Partial<ActivityTypeConfigInput> = {}
 ): ActivityTypeConfigInput {
   return {
-    id: "",
+    typeId: "",
     label: "",
     requiresDetails: false,
     detailType: "none",
@@ -77,7 +77,7 @@ export function createActivityTypeConfigDefaults(
  */
 export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
   {
-    id: "inquiry-activity",
+    typeId: "inquiry-activity",
     label: "Inquiry Activity",
     requiresDetails: true,
     detailType: "inquiry",
@@ -88,7 +88,7 @@ export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
     ownerIds: []
   },
   {
-    id: "small-group-acceleration",
+    typeId: "small-group-acceleration",
     label: "Small Group (Acceleration)",
     requiresDetails: true,
     detailType: "lesson",
@@ -99,7 +99,7 @@ export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
     ownerIds: []
   },
   {
-    id: "small-group-prerequisite",
+    typeId: "small-group-prerequisite",
     label: "Small Group (Prerequisite)",
     requiresDetails: true,
     detailType: "skill",
@@ -110,7 +110,7 @@ export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
     ownerIds: []
   },
   {
-    id: "student-of-day",
+    typeId: "student-of-day",
     label: "Student of the Day",
     requiresDetails: false,
     detailType: "none",

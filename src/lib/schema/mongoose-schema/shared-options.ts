@@ -44,12 +44,15 @@ export function standardTransform(_: unknown, ret: Record<string, unknown>): Rec
 
   const result: Record<string, unknown> = { ...ret };
 
-  // Convert _id to string and add id field
+  // Convert _id to string and add id field (only if id doesn't already exist)
   if (result._id) {
     const transformedId = transformValue(result._id);
     // console.log('🆔 Transformed _id from:', result._id, 'to:', transformedId);
     result._id = transformedId;
-    result.id = transformedId;
+    // Only set id to _id if id field doesn't already exist (some schemas have their own id field)
+    if (!result.id) {
+      result.id = transformedId;
+    }
   }
 
   // Recursively transform all fields

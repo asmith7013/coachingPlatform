@@ -5,12 +5,14 @@ import {
   fetchActivityData,
   getActivitySummary,
   exportActivityDataAsCSV,
+  deleteActivity,
   ActivityDataFilters,
   StudentActivityRecord,
 } from "./actions";
 import { fetchActivityTypes } from "../form/actions";
 import { fetchUnitsByGrade } from "../form/actions";
 import { ActivityTypeConfig } from "@zod-schema/313/activity-type-config";
+import { TrackingTables } from "./TrackingTables";
 
 interface Unit {
   _id: string;
@@ -28,12 +30,17 @@ interface Summary {
 }
 
 export default function IncentivesDataPage() {
+  // Calculate default dates (last 4 weeks)
+  const today = new Date();
+  const fourWeeksAgo = new Date();
+  fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
+
   // Filters
   const [section, setSection] = useState<string>("");
   const [unitId, setUnitId] = useState<string>("");
   const [activityType, setActivityType] = useState<string>("");
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>(fourWeeksAgo.toISOString().split("T")[0]);
+  const [endDate, setEndDate] = useState<string>(today.toISOString().split("T")[0]);
 
   // Data
   const [records, setRecords] = useState<StudentActivityRecord[]>([]);
@@ -44,7 +51,7 @@ export default function IncentivesDataPage() {
   // UI State
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-  const [view, setView] = useState<"table" | "summary">("table");
+  const [view, setView] = useState<"table" | "summary" | "tracking">("tracking");
 
   // Load activity types and units on mount
   useEffect(() => {
@@ -133,6 +140,22 @@ export default function IncentivesDataPage() {
     setEndDate("");
   };
 
+  const handleDeleteActivity = async (activityId: string, studentName: string) => {
+    if (!confirm(`Delete this activity for ${studentName}?`)) {
+      return;
+    }
+
+    const result = await deleteActivity(activityId);
+
+    if (typeof result !== 'string' && result.success) {
+      // Reload data after successful delete
+      await loadData();
+    } else {
+      const errorMsg = typeof result === 'string' ? result : result.error;
+      alert(`Failed to delete activity: ${errorMsg}`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -149,10 +172,34 @@ export default function IncentivesDataPage() {
             </div>
             <div className="flex gap-2">
               <button
-                onClick={() => setView(view === "table" ? "summary" : "table")}
-                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                onClick={() => setView("tracking")}
+                className={`px-4 py-2 border rounded-md transition-colors ${
+                  view === "tracking"
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "border-gray-300 hover:bg-gray-50"
+                }`}
               >
-                {view === "table" ? "📊 View Summary" : "📋 View Table"}
+                📈 Tracking
+              </button>
+              <button
+                onClick={() => setView("table")}
+                className={`px-4 py-2 border rounded-md transition-colors ${
+                  view === "table"
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                📋 Table
+              </button>
+              <button
+                onClick={() => setView("summary")}
+                className={`px-4 py-2 border rounded-md transition-colors ${
+                  view === "summary"
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                📊 Summary
               </button>
               <button
                 onClick={handleExportCSV}
@@ -212,7 +259,7 @@ export default function IncentivesDataPage() {
               >
                 <option value="">All Types</option>
                 {activityTypes.map((type) => (
-                  <option key={type.id} value={type.id}>
+                  <option key={type.typeId} value={type.typeId}>
                     {type.icon} {type.label}
                   </option>
                 ))}
@@ -256,6 +303,11 @@ export default function IncentivesDataPage() {
             </button>
           </div>
         </div>
+
+        {/* Tracking View */}
+        {view === "tracking" && (
+          <TrackingTables section={section} unitId={unitId} />
+        )}
 
         {/* Summary View */}
         {view === "summary" && summary && (
@@ -353,6 +405,9 @@ export default function IncentivesDataPage() {
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Logged By
                       </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -374,11 +429,19 @@ export default function IncentivesDataPage() {
                           {record.inquiryQuestion ||
                             record.customDetail ||
                             record.skillId ||
-                            record.lessonId ||
+                            record.lessonName ||
                             "-"}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                           {record.loggedBy || "-"}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm">
+                          <button
+                            onClick={() => handleDeleteActivity(record._id, record.studentName)}
+                            className="text-red-600 hover:text-red-800 font-medium"
+                          >
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ))}

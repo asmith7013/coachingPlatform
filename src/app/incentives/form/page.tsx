@@ -137,9 +137,9 @@ export default function IncentivesFormPage() {
     for (const type of activityTypes) {
       if (!type.requiresDetails) continue;
 
-      const studentsWithType = getStudentsForActivityType(type.id);
+      const studentsWithType = getStudentsForActivityType(type.typeId ?? "");
       for (const student of studentsWithType) {
-        const detail = formState[student._id]?.[type.id]?.detail;
+        const detail = formState[student._id]?.[type.typeId ?? ""]?.detail;
         if (!detail || detail.trim() === "") {
           return `Please provide details for ${student.firstName} ${student.lastName}'s ${type.label}`;
         }
@@ -151,8 +151,11 @@ export default function IncentivesFormPage() {
 
   // Handle form submission
   const handleSubmit = async () => {
+    console.log("🟢 [handleSubmit] Starting submission...");
+
     const validationError = validateForm();
     if (validationError) {
+      console.log("❌ [handleSubmit] Validation error:", validationError);
       setSubmitMessage({ type: "error", message: validationError });
       return;
     }
@@ -163,17 +166,32 @@ export default function IncentivesFormPage() {
     try {
       // Build submissions
       const submissions: StudentActivitySubmission[] = [];
+      console.log("🟢 [handleSubmit] Building submissions", {
+        studentCount: students.length,
+        activityTypeCount: activityTypes.length,
+        date,
+        unitId
+      });
 
       for (const student of students) {
         const studentActivities: Omit<StudentActivity, "createdAt">[] = [];
 
         for (const type of activityTypes) {
-          const activityState = formState[student._id]?.[type.id];
+          const activityState = formState[student._id]?.[type.typeId ?? ""];
           if (!activityState?.checked) continue;
+
+          console.log("🟢 [handleSubmit] Type object:", type);
+          console.log("🟢 [handleSubmit] Adding activity", {
+            student: `${student.firstName} ${student.lastName}`,
+            studentId: student._id,
+            activityType: type.typeId ?? "",
+            activityLabel: type.label,
+            detail: activityState.detail
+          });
 
           const activity: Omit<StudentActivity, "createdAt"> = {
             date,
-            activityType: type.id,
+            activityType: type.typeId ?? "",
             activityLabel: type.label,
             unitId: unitId,
           };
@@ -185,6 +203,7 @@ export default function IncentivesFormPage() {
                 activity.inquiryQuestion = activityState.detail;
                 break;
               case "lesson":
+                // Store the lesson ID - the backend will resolve the lesson name
                 activity.lessonId = activityState.detail;
                 break;
               case "skill":
@@ -207,22 +226,29 @@ export default function IncentivesFormPage() {
         }
       }
 
+      console.log("🟢 [handleSubmit] Total submissions built:", submissions.length);
+
       if (submissions.length === 0) {
+        console.log("❌ [handleSubmit] No activities to submit");
         setSubmitMessage({ type: "error", message: "No activities to submit" });
         setIsSubmitting(false);
         return;
       }
 
       // Submit to server
+      console.log("🟢 [handleSubmit] Calling submitActivities...");
       const result = await submitActivities(submissions, "Teacher Name"); // TODO: Get from auth
+      console.log("🟢 [handleSubmit] submitActivities result:", result);
 
       if (typeof result === 'string') {
+        console.log("❌ [handleSubmit] Result is string:", result);
         setSubmitMessage({
           type: "error",
           message: "Failed to submit activities",
         });
       } else if (result.success && result.data) {
         const { successful, failed } = result.data;
+        console.log("✅ [handleSubmit] Success!", { successful, failed });
         setSubmitMessage({
           type: "success",
           message: `✓ Logged activities for ${successful} student${successful !== 1 ? "s" : ""}${failed > 0 ? ` (${failed} failed)` : ""}`,
@@ -234,12 +260,14 @@ export default function IncentivesFormPage() {
           setSubmitMessage(null);
         }, 5000);
       } else {
+        console.log("❌ [handleSubmit] Failed with error:", result.error);
         setSubmitMessage({
           type: "error",
           message: result.error ?? "Failed to submit activities",
         });
       }
     } catch (error) {
+      console.error("❌ [handleSubmit] Exception caught:", error);
       setSubmitMessage({
         type: "error",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -255,8 +283,8 @@ export default function IncentivesFormPage() {
       student._id,
       Object.fromEntries(
         activityTypes.map((type) => [
-          type.id,
-          formState[student._id]?.[type.id]?.checked || false,
+          type.typeId,
+          formState[student._id]?.[type.typeId ?? ""]?.checked || false,
         ])
       ),
     ])
@@ -355,6 +383,19 @@ export default function IncentivesFormPage() {
             {/* Left Column - Student Grid */}
             <div className="col-span-7">
               <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-gray-900">Student Activities</h2>
+                  <button
+                    onClick={() => {
+                      if (confirm("Are you sure you want to clear all checkboxes?")) {
+                        clearDraft();
+                      }
+                    }}
+                    className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-gray-700"
+                  >
+                    Clear All
+                  </button>
+                </div>
                 <StudentGrid
                   students={students}
                   activityTypes={activityTypes}
@@ -371,20 +412,20 @@ export default function IncentivesFormPage() {
               <div className="space-y-4">
                 {activityTypes
                   .filter(
-                    (type) => type.requiresDetails && hasActivityTypeChecked(type.id)
+                    (type) => type.requiresDetails && hasActivityTypeChecked(type.typeId ?? "")
                   )
                   .map((type) => {
-                    const studentsWithType = getStudentsForActivityType(type.id);
+                    const studentsWithType = getStudentsForActivityType(type.typeId ?? "");
 
                     return (
                       <DetailCard
-                        key={type.id}
+                        key={type.typeId}
                         title={type.label}
                         icon={type.icon}
                         color={type.color}
                       >
                         {studentsWithType.map((student) => {
-                          const detail = formState[student._id]?.[type.id]?.detail || "";
+                          const detail = formState[student._id]?.[type.typeId ?? ""]?.detail || "";
 
                           return (
                             <StudentDetailRow
@@ -396,7 +437,7 @@ export default function IncentivesFormPage() {
                                   sections={unitSections}
                                   value={detail}
                                   onChange={(value) =>
-                                    updateDetail(student._id, type.id, value)
+                                    updateDetail(student._id, type.typeId ?? "", value)
                                   }
                                   required
                                 />
@@ -407,17 +448,17 @@ export default function IncentivesFormPage() {
                                   unitNumber={selectedUnit.unitNumber}
                                   value={detail}
                                   onChange={(value) =>
-                                    updateDetail(student._id, type.id, value)
+                                    updateDetail(student._id, type.typeId ?? "", value)
                                   }
                                   required
                                 />
                               )}
                               {type.detailType === "skill" && (
                                 <SkillPicker
-                                  unitId={unitId}
+                                  unitId={unitId ?? ""}
                                   value={detail}
                                   onChange={(value) =>
-                                    updateDetail(student._id, type.id, value)
+                                    updateDetail(student._id, type.typeId ?? "", value)
                                   }
                                   required
                                 />
@@ -426,7 +467,7 @@ export default function IncentivesFormPage() {
                                 <CustomDetailInput
                                   value={detail}
                                   onChange={(value) =>
-                                    updateDetail(student._id, type.id, value)
+                                    updateDetail(student._id, type.typeId ?? "", value)
                                   }
                                   required
                                 />

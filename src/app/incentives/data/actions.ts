@@ -1,6 +1,7 @@
 "use server";
 
 import { StudentActivityModel } from "@mongoose-schema/313/student-activity.model";
+import { ScopeAndSequenceModel } from "@mongoose-schema/313/scope-and-sequence.model";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 
@@ -18,6 +19,7 @@ export interface ActivityDataFilters {
 }
 
 export interface StudentActivityRecord {
+  _id: string;
   studentId: string;
   studentName: string;
   section: string;
@@ -28,6 +30,7 @@ export interface StudentActivityRecord {
   unitId?: string;
   unitTitle?: string;
   lessonId?: string;
+  lessonName?: string;
   skillId?: string;
   inquiryQuestion?: string;
   customDetail?: string;
@@ -41,6 +44,8 @@ export interface StudentActivityRecord {
 export async function fetchActivityData(filters: ActivityDataFilters = {}): Promise<{ success: boolean; data?: StudentActivityRecord[]; error?: string }> {
   return withDbConnection(async () => {
     try {
+      console.log("🔵 [fetchActivityData] Called with filters:", filters);
+
       // Build MongoDB query for student-activities collection
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const query: any = {
@@ -73,14 +78,39 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
         }
       }
 
+      console.log("🔵 [fetchActivityData] MongoDB query:", JSON.stringify(query, null, 2));
+
       // Fetch activities from dedicated collection
       const activities = await StudentActivityModel.find(query)
         .sort({ date: -1, studentName: 1 });
+
+      console.log("🔵 [fetchActivityData] Found activities:", activities.length);
+
+      // Extract unique lesson IDs to fetch lesson names
+      const lessonIds = [...new Set(
+        activities
+          .map(a => a.lessonId)
+          .filter((id): id is string => !!id)
+      )];
+
+      // Fetch lesson names if there are any lesson IDs
+      const lessonMap = new Map<string, string>();
+      if (lessonIds.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const lessons: any[] = await ScopeAndSequenceModel.find({
+          _id: { $in: lessonIds }
+        }).select('_id lessonName').lean();
+
+        lessons.forEach((lesson: any) => {
+          lessonMap.set(lesson._id.toString(), lesson.lessonName);
+        });
+      }
 
       // Convert to plain objects
       const records: StudentActivityRecord[] = activities.map((activity) => {
         const activityData = activity.toJSON();
         return {
+          _id: activityData._id.toString(),
           studentId: activityData.studentId,
           studentName: activityData.studentName,
           section: activityData.section,
@@ -90,6 +120,7 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
           activityLabel: activityData.activityLabel,
           unitId: activityData.unitId,
           lessonId: activityData.lessonId,
+          lessonName: activityData.lessonId ? lessonMap.get(activityData.lessonId) : undefined,
           skillId: activityData.skillId,
           inquiryQuestion: activityData.inquiryQuestion,
           customDetail: activityData.customDetail,
@@ -189,7 +220,7 @@ export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {})
         "Activity Type",
         "Unit ID",
         "Inquiry Question",
-        "Lesson ID",
+        "Lesson Name",
         "Skill ID",
         "Custom Detail",
         "Logged By",
@@ -203,7 +234,7 @@ export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {})
         r.activityLabel,
         r.unitId || "",
         r.inquiryQuestion || "",
-        r.lessonId || "",
+        r.lessonName || "",
         r.skillId || "",
         r.customDetail || "",
         r.loggedBy || "",
@@ -228,6 +259,25 @@ export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {})
       return { success: true, data: csv };
     } catch (error) {
       return { success: false, error: handleServerError(error, "Failed to export CSV") };
+    }
+  });
+}
+
+/**
+ * Delete a single activity by ID
+ */
+export async function deleteActivity(activityId: string): Promise<{ success: boolean; error?: string }> {
+  return withDbConnection(async () => {
+    try {
+      const result = await StudentActivityModel.findByIdAndDelete(activityId);
+
+      if (!result) {
+        return { success: false, error: "Activity not found" };
+      }
+
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: handleServerError(error, "Failed to delete activity") };
     }
   });
 }

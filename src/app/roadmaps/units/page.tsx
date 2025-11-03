@@ -236,16 +236,16 @@ export default function RoadmapUnitsPage() {
                 <div className="text-sm text-gray-500">Target Skills</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-skill-support">
+                <div className="text-2xl font-bold text-skill-essential">
                   {filteredUnits.reduce((sum, unit) => sum + unit.supportCount, 0)}
                 </div>
-                <div className="text-sm text-gray-500">Support Skills</div>
+                <div className="text-sm text-gray-500">Essential Skills</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-skill-helpful">
                   {filteredUnits.reduce((sum, unit) => sum + unit.extensionCount, 0)}
                 </div>
-                <div className="text-sm text-gray-500">Extension Skills</div>
+                <div className="text-sm text-gray-500">Helpful Skills</div>
               </div>
             </div>
           </div>

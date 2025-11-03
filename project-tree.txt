@@ -215,6 +215,7 @@
 │   │   │   │   └── page.tsx
 │   │   │   ├── im-roadmaps
 │   │   │   │   ├── components
+│   │   │   │   │   ├── AccordionList.tsx
 │   │   │   │   │   ├── LessonBadges.tsx
 │   │   │   │   │   ├── LessonSkillsView.tsx
 │   │   │   │   │   ├── SkillDetails.tsx
@@ -508,8 +509,10 @@
 │   │   ├── globals.css
 │   │   ├── incentives
 │   │   │   ├── data
+│   │   │   │   ├── TrackingTables.tsx
 │   │   │   │   ├── actions.ts
-│   │   │   │   └── page.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── tracking-actions.ts
 │   │   │   ├── form
 │   │   │   │   ├── actions.ts
 │   │   │   │   ├── components
@@ -546,6 +549,8 @@
 │   │   ├── page.tsx
 │   │   ├── roadmaps
 │   │   │   ├── components
+│   │   │   │   ├── AccordionItem.tsx
+│   │   │   │   ├── AccordionList.tsx
 │   │   │   │   ├── RoadmapsNav.tsx
 │   │   │   │   ├── SkillDetailView.tsx
 │   │   │   │   ├── SkillDetailWrapper.tsx
@@ -1703,4 +1708,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-501 directories, 1203 files
+501 directories, 1208 files

@@ -62,7 +62,7 @@ export function StudentGrid({
             {/* Activity Type Columns */}
             {activityTypes.map((type) => (
               <th
-                key={type.id}
+                key={type.typeId}
                 scope="col"
                 className="px-2 py-3 text-center text-xs font-medium uppercase tracking-tight"
                 style={{
@@ -103,19 +103,19 @@ export function StudentGrid({
               {/* Checkbox Cells */}
               {activityTypes.map((type) => (
                 <td
-                  key={`${student._id}-${type.id}`}
+                  key={`${student._id}-${type.typeId}`}
                   className="px-2 py-3 text-center"
                   style={{ width: "80px", maxWidth: "80px" }}
                 >
                   <input
                     type="checkbox"
                     checked={
-                      checkedState[student._id]?.[type.id] || false
+                      type.typeId ? (checkedState[student._id]?.[type.typeId] || false) : false
                     }
                     onChange={(e) =>
                       onCheckboxChange(
                         student._id,
-                        type.id,
+                        type.typeId ?? "",
                         e.target.checked
                       )
                     }

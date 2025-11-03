@@ -6,7 +6,7 @@ import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/
 // =====================================
 
 const activityTypeConfigSchemaFields = {
-  id: {
+  typeId: {
     type: String,
     required: true,
     unique: true,
