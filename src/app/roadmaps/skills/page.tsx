@@ -118,18 +118,49 @@ export default function RoadmapsSkillsPage() {
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setFilteredSkills(skills);
-    } else {
-      const query = searchQuery.toLowerCase();
-      const filtered = skills.filter(skill =>
-        skill.skillNumber.toLowerCase().includes(query) ||
-        skill.title.toLowerCase().includes(query)
-      );
-      setFilteredSkills(filtered);
+      return;
     }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = skills.filter(skill =>
+      skill.skillNumber.toLowerCase().includes(query) ||
+      skill.title.toLowerCase().includes(query)
+    );
+    setFilteredSkills(filtered);
 
     // Clear selection when search changes
     setSelectedSkillId(null);
   }, [searchQuery, skills]);
+
+  // Auto-search for skill by number when 3 digits are typed
+  useEffect(() => {
+    const trimmedQuery = searchQuery.trim();
+
+    // Check if the query is exactly 3 digits
+    if (trimmedQuery.length === 3 && /^\d{3}$/.test(trimmedQuery)) {
+      const searchForSkill = async () => {
+        try {
+          // Search in allSkills first (already loaded)
+          const foundSkill = allSkills.find(skill => skill.skillNumber === trimmedQuery);
+
+          if (foundSkill) {
+            // If found in allSkills, select it and update context
+            setSelectedSkillId(foundSkill._id);
+
+            // If the skill is not in the current filtered list, we should show it anyway
+            if (!filteredSkills.find(s => s._id === foundSkill._id)) {
+              // Add it to filtered skills temporarily
+              setFilteredSkills([foundSkill]);
+            }
+          }
+        } catch (error) {
+          console.error('Error searching for skill:', error);
+        }
+      };
+
+      searchForSkill();
+    }
+  }, [searchQuery, allSkills, filteredSkills]);
 
   const handleSkillClick = (skillId: string) => {
     setSelectedSkillId(skillId);
@@ -301,9 +332,8 @@ export default function RoadmapsSkillsPage() {
                   type="text"
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  placeholder={selectedGrade ? "Search by skill number or name..." : "Select a grade first"}
-                  disabled={!selectedGrade}
-                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  placeholder="Type 3 digits to find skill or search name..."
+                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 {searchQuery && (
                   <button

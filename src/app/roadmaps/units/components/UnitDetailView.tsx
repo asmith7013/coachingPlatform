@@ -126,7 +126,7 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
         <div className={`grid gap-4 ${hasSupportSkills ? 'grid-cols-4' : 'grid-cols-3'}`}>
           {/* Target Skills */}
           <div className="text-center bg-white rounded-lg border border-gray-200 p-3">
-            <div className="text-2xl font-bold text-skill-target">
+            <div className="text-2xl font-bold text-purple-600">
               {targetMastery ? `${targetMastery.mastered}/${targetMastery.total}` : unit.targetCount}
             </div>
             <div className="text-xs text-gray-500">Target Skills</div>
@@ -134,7 +134,7 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
 
           {/* Essential Skills */}
           <div className="text-center bg-white rounded-lg border border-gray-200 p-3">
-            <div className="text-2xl font-bold text-skill-essential">
+            <div className="text-2xl font-bold text-pink-600">
               {isLoadingPrerequisites ? (
                 <span className="text-sm text-gray-400">...</span>
               ) : essentialMastery ? (
@@ -148,7 +148,7 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
 
           {/* Helpful Skills */}
           <div className="text-center bg-white rounded-lg border border-gray-200 p-3">
-            <div className="text-2xl font-bold text-skill-helpful">
+            <div className="text-2xl font-bold text-cyan-600">
               {isLoadingPrerequisites ? (
                 <span className="text-sm text-gray-400">...</span>
               ) : helpfulMastery ? (
@@ -163,7 +163,7 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
           {/* Support Skills (if applicable) */}
           {hasSupportSkills && (
             <div className="text-center bg-white rounded-lg border border-gray-200 p-3">
-              <div className="text-2xl font-bold text-skill-support">
+              <div className="text-2xl font-bold text-green-600">
                 {supportMastery ? `${supportMastery.mastered}/${supportMastery.total}` : unit.additionalSupportSkills.length}
               </div>
               <div className="text-xs text-gray-500">Support Skills</div>
