@@ -548,6 +548,11 @@
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
 │   │   ├── roadmaps
+│   │   │   ├── class-overview
+│   │   │   │   ├── components
+│   │   │   │   │   ├── OverviewTable.tsx
+│   │   │   │   │   └── SkillBadge.tsx
+│   │   │   │   └── page.tsx
 │   │   │   ├── components
 │   │   │   │   ├── AccordionItem.tsx
 │   │   │   │   ├── AccordionList.tsx
@@ -631,6 +636,7 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── units
 │   │   │       ├── components
+│   │   │       │   ├── StudentGridView.tsx
 │   │   │       │   ├── UnitDetailView.tsx
 │   │   │       │   └── UnitListItem.tsx
 │   │   │       └── page.tsx
@@ -1708,4 +1714,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-501 directories, 1208 files
+503 directories, 1212 files

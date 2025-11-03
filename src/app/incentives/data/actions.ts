@@ -96,13 +96,17 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
       // Fetch lesson names if there are any lesson IDs
       const lessonMap = new Map<string, string>();
       if (lessonIds.length > 0) {
+        interface LessonData {
+          _id: { toString: () => string };
+          lessonName: string;
+        }
+
         const lessons = await ScopeAndSequenceModel.find({
           _id: { $in: lessonIds }
-        }).select('_id lessonName').lean();
+        }).select('_id lessonName').lean() as unknown as LessonData[];
 
         lessons.forEach((lesson) => {
-          const lessonData = lesson as unknown as { _id: { toString: () => string }; lessonName: string };
-          lessonMap.set(lessonData._id.toString(), lessonData.lessonName);
+          lessonMap.set(lesson._id.toString(), lesson.lessonName);
         });
       }
 

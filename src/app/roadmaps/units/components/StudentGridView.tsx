@@ -139,24 +139,27 @@ export function StudentGridView({
                   {/* Target Skill Row */}
                   <tr className="bg-purple-50 border-b border-gray-200">
                     <td className="bg-purple-50 px-4 py-3 border-r border-gray-300">
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-600 text-white text-xs font-bold">
+                      <div className="flex flex-col items-center gap-2">
+                        <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-600 text-white text-base font-bold">
                           {skill.skillNumber}
                         </span>
+                        <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                          <div
+                            className="bg-purple-600 h-1.5 rounded-full transition-all"
+                            style={{ width: `${sectionStudents.length > 0 ? (masteredCount / sectionStudents.length) * 100 : 0}%` }}
+                          />
+                        </div>
                       </div>
                     </td>
                     <td className="bg-purple-50 px-4 py-3 border-r border-gray-300 font-medium text-gray-900">
                       {skill.title}
-                      <span className="ml-2 text-xs text-gray-500">
-                        ({masteredCount}/{sectionStudents.length})
-                      </span>
                     </td>
                     {sectionStudents.map(student => {
                       const isMastered = hasMastered(student, skill.skillNumber);
                       return (
                         <td key={student._id} className="px-2 py-3 border-r border-gray-300 text-center">
                           <div className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
-                            isMastered ? 'bg-green-600' : 'border-2 border-gray-300'
+                            isMastered ? 'bg-purple-600' : 'border-2 border-gray-300'
                           }`}>
                             {isMastered && (
                               <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -179,25 +182,28 @@ export function StudentGridView({
 
                         return (
                           <tr key={essentialSkill.skillNumber} className="border-b border-gray-200 hover:bg-gray-50">
-                            <td className="bg-white px-4 py-2 border-r border-gray-300 pl-8">
-                              <div className="flex items-center gap-2">
+                            <td className="bg-white px-4 py-2 border-r border-gray-300">
+                              <div className="flex flex-col items-center gap-2">
                                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-pink-600 text-white text-xs font-bold">
                                   {essentialSkill.skillNumber}
                                 </span>
+                                <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                                  <div
+                                    className="bg-pink-600 h-1.5 rounded-full transition-all"
+                                    style={{ width: `${sectionStudents.length > 0 ? (essentialMasteredCount / sectionStudents.length) * 100 : 0}%` }}
+                                  />
+                                </div>
                               </div>
                             </td>
-                            <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700 pl-6">
+                            <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700">
                               {essentialSkill.title}
-                              <span className="ml-2 text-xs text-gray-500">
-                                ({essentialMasteredCount}/{sectionStudents.length})
-                              </span>
                             </td>
                             {sectionStudents.map(student => {
                               const isMastered = hasMastered(student, essentialSkill.skillNumber);
                               return (
                                 <td key={student._id} className="px-2 py-2 border-r border-gray-300 text-center">
                                   <div className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
-                                    isMastered ? 'bg-green-600' : 'border-2 border-gray-300'
+                                    isMastered ? 'bg-pink-600' : 'border-2 border-gray-300'
                                   }`}>
                                     {isMastered && (
                                       <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -224,25 +230,28 @@ export function StudentGridView({
 
                         return (
                           <tr key={helpfulSkill.skillNumber} className="border-b border-gray-200 hover:bg-gray-50">
-                            <td className="bg-white px-4 py-2 border-r border-gray-300 pl-8">
-                              <div className="flex items-center gap-2">
+                            <td className="bg-white px-4 py-2 border-r border-gray-300">
+                              <div className="flex flex-col items-center gap-2">
                                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-cyan-600 text-white text-xs font-bold">
                                   {helpfulSkill.skillNumber}
                                 </span>
+                                <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                                  <div
+                                    className="bg-cyan-600 h-1.5 rounded-full transition-all"
+                                    style={{ width: `${sectionStudents.length > 0 ? (helpfulMasteredCount / sectionStudents.length) * 100 : 0}%` }}
+                                  />
+                                </div>
                               </div>
                             </td>
-                            <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700 pl-6">
+                            <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700">
                               {helpfulSkill.title}
-                              <span className="ml-2 text-xs text-gray-500">
-                                ({helpfulMasteredCount}/{sectionStudents.length})
-                              </span>
                             </td>
                             {sectionStudents.map(student => {
                               const isMastered = hasMastered(student, helpfulSkill.skillNumber);
                               return (
                                 <td key={student._id} className="px-2 py-2 border-r border-gray-300 text-center">
                                   <div className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
-                                    isMastered ? 'bg-green-600' : 'border-2 border-gray-300'
+                                    isMastered ? 'bg-cyan-600' : 'border-2 border-gray-300'
                                   }`}>
                                     {isMastered && (
                                       <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
