@@ -49,12 +49,12 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
 
           result.data.forEach(skill => {
             if (skill.essentialSkills) {
-              skill.essentialSkills.forEach(essential => {
+              skill.essentialSkills.forEach((essential: { skillNumber: string }) => {
                 allEssentialSkills.add(essential.skillNumber);
               });
             }
             if (skill.helpfulSkills) {
-              skill.helpfulSkills.forEach(helpful => {
+              skill.helpfulSkills.forEach((helpful: { skillNumber: string }) => {
                 allHelpfulSkills.add(helpful.skillNumber);
               });
             }
@@ -73,7 +73,7 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
     };
 
     loadPrerequisiteSkills();
-  }, [unit?.targetSkills, unit?._id]);
+  }, [unit]);
   // Empty state
   if (!unit) {
     return (

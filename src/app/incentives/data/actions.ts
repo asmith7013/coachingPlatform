@@ -96,12 +96,11 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
       // Fetch lesson names if there are any lesson IDs
       const lessonMap = new Map<string, string>();
       if (lessonIds.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const lessons: any[] = await ScopeAndSequenceModel.find({
+        const lessons = await ScopeAndSequenceModel.find({
           _id: { $in: lessonIds }
-        }).select('_id lessonName').lean();
+        }).select('_id lessonName').lean() as Array<{ _id: unknown; lessonName: string }>;
 
-        lessons.forEach((lesson: any) => {
+        lessons.forEach((lesson) => {
           lessonMap.set(lesson._id.toString(), lesson.lessonName);
         });
       }

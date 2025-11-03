@@ -12,7 +12,7 @@ interface SkillBadgeProps {
 
 export function SkillBadge({
   skillNumber,
-  skillName,
+  skillName: _skillName,
   selectedStudent,
   selectedStudents = [],
   selectedSection

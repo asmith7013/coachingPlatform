@@ -73,7 +73,7 @@ export default function ClassOverviewPage() {
           // Filter by selected grade and sort by unit number
           const filteredUnits = unitsWithStringIds
             .filter(unit => unit.grade === selectedGrade)
-            .sort((a, b) => a.unitNumber - b.unitNumber);
+            .sort((a, b) => (a.unitNumber ?? 0) - (b.unitNumber ?? 0));
 
           setUnits(filteredUnits);
 
@@ -120,13 +120,13 @@ export default function ClassOverviewPage() {
 
           const existing = grouped[gradeBand].find(s => s.skill === skillNumber);
           if (existing) {
-            if (!existing.units.includes(unit.unitNumber)) {
+            if (unit.unitNumber !== undefined && !existing.units.includes(unit.unitNumber)) {
               existing.units.push(unit.unitNumber);
             }
           } else {
             grouped[gradeBand].push({
               skill: skillNumber,
-              units: [unit.unitNumber]
+              units: unit.unitNumber !== undefined ? [unit.unitNumber] : []
             });
           }
         });
