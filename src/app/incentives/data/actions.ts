@@ -98,10 +98,11 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
       if (lessonIds.length > 0) {
         const lessons = await ScopeAndSequenceModel.find({
           _id: { $in: lessonIds }
-        }).select('_id lessonName').lean() as Array<{ _id: unknown; lessonName: string }>;
+        }).select('_id lessonName').lean();
 
         lessons.forEach((lesson) => {
-          lessonMap.set(lesson._id.toString(), lesson.lessonName);
+          const lessonData = lesson as unknown as { _id: { toString: () => string }; lessonName: string };
+          lessonMap.set(lessonData._id.toString(), lessonData.lessonName);
         });
       }
 

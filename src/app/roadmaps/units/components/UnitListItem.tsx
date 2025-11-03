@@ -59,15 +59,15 @@ export function UnitListItem({ unit, isSelected, onClick, compact = false }: Uni
       {/* Skill Counts */}
       <div className="flex gap-4 text-xs">
         <div className="flex items-center gap-1">
-          <span className="font-medium text-blue-600">{unit.targetCount}</span>
+          <span className="font-medium text-skill-target">{unit.targetCount}</span>
           <span className="text-gray-500">Target</span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="font-medium text-green-600">{unit.supportCount}</span>
+          <span className="font-medium text-skill-essential">{unit.supportCount}</span>
           <span className="text-gray-500">Essential</span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="font-medium text-purple-600">{unit.extensionCount}</span>
+          <span className="font-medium text-skill-helpful">{unit.extensionCount}</span>
           <span className="text-gray-500">Helpful</span>
         </div>
       </div>
