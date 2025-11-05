@@ -46,8 +46,8 @@ export function StudentGrid({
   }
 
   return (
-    <div className="w-fit max-w-full overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
-      <table className="divide-y divide-gray-200">
+    <div className="h-full overflow-auto border border-gray-200 rounded-lg shadow-sm">
+      <table className="w-full divide-y divide-gray-200">
         <thead className="bg-gray-50 sticky top-0 z-10">
           <tr>
             {/* Student Name Column */}

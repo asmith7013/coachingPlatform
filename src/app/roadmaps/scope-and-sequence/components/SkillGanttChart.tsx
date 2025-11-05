@@ -55,16 +55,15 @@ const SKILL_COLORS_LIGHT = [
 export function SkillGanttChart({
   lessons,
   width = 1200,
-  height = 500,
+  height: baseHeight = 500,
   onLessonClick,
   selectedLessonId = null,
 }: SkillGanttChartProps) {
   const margin = { top: 100, right: 40, bottom: 40, left: 40 };
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
 
   const [skillsData, setSkillsData] = useState<Map<string, RoadmapsSkill>>(new Map());
   const [hoveredLessonIndex, setHoveredLessonIndex] = useState<number | null>(null);
+  const [showPrerequisites, setShowPrerequisites] = useState(false);
 
   // Extract all unique skills across all lessons, sorted by first appearance
   const allSkills = useMemo(() => {
@@ -108,9 +107,10 @@ export function SkillGanttChart({
   }, [allSkills]);
 
   // Create data structure for the gantt chart
-  // For each skill, find the first and last lesson it appears in
+  // Separate target skills and prerequisite skills
   const ganttData = useMemo(() => {
-    return allSkills.map((skill) => {
+    // First, collect all target skills
+    const targetSkills = allSkills.map((skill) => {
       const lessonsWithSkill = lessons
         .map((lesson, index) => ({
           lesson,
@@ -129,11 +129,128 @@ export function SkillGanttChart({
       return {
         skill,
         start: firstLesson,
-        end: lastLesson + 1, // +1 to make it inclusive
+        end: lastLesson + 1,
         lessons: lessonsWithSkill.map((item) => item.lesson),
+        isTarget: true,
       };
     }).filter((item) => item !== null);
-  }, [allSkills, lessons]);
+
+    // Now collect all unique prerequisite skills across all target skills
+    const prerequisiteMap = new Map<string, {
+      skillNumber: string;
+      title: string;
+      type: 'essential' | 'helpful' | 'both';
+      lessonSpans: Array<{ start: number; end: number; parentSkill: string }>;
+    }>();
+
+    allSkills.forEach((skill) => {
+      const skillData = skillsData.get(skill);
+      if (!skillData) return;
+
+      // Find the lesson span for this target skill
+      const targetSkillData = targetSkills.find(t => t?.skill === skill);
+      if (!targetSkillData) return;
+
+      const essentialSet = new Set(skillData.essentialSkills?.map(s => s.skillNumber) || []);
+      const helpfulSet = new Set(skillData.helpfulSkills?.map(s => s.skillNumber) || []);
+
+      // Process essential skills
+      skillData.essentialSkills?.forEach(prereq => {
+        const existing = prerequisiteMap.get(prereq.skillNumber);
+        const type = helpfulSet.has(prereq.skillNumber) ? 'both' : 'essential';
+
+        if (existing) {
+          // Add this lesson span
+          existing.lessonSpans.push({
+            start: targetSkillData.start,
+            end: targetSkillData.end,
+            parentSkill: skill
+          });
+          // Update type if it's now both
+          if (type === 'both' || existing.type === 'both') {
+            existing.type = 'both';
+          } else if ((existing.type === 'essential' && helpfulSet.has(prereq.skillNumber)) ||
+                     (existing.type === 'helpful' && essentialSet.has(prereq.skillNumber))) {
+            existing.type = 'both';
+          }
+        } else {
+          prerequisiteMap.set(prereq.skillNumber, {
+            skillNumber: prereq.skillNumber,
+            title: prereq.title,
+            type,
+            lessonSpans: [{
+              start: targetSkillData.start,
+              end: targetSkillData.end,
+              parentSkill: skill
+            }]
+          });
+        }
+      });
+
+      // Process helpful skills
+      skillData.helpfulSkills?.forEach(prereq => {
+        const existing = prerequisiteMap.get(prereq.skillNumber);
+        const type = essentialSet.has(prereq.skillNumber) ? 'both' : 'helpful';
+
+        if (existing) {
+          existing.lessonSpans.push({
+            start: targetSkillData.start,
+            end: targetSkillData.end,
+            parentSkill: skill
+          });
+          if (type === 'both' || existing.type === 'both') {
+            existing.type = 'both';
+          } else if ((existing.type === 'essential' && helpfulSet.has(prereq.skillNumber)) ||
+                     (existing.type === 'helpful' && essentialSet.has(prereq.skillNumber))) {
+            existing.type = 'both';
+          }
+        } else {
+          prerequisiteMap.set(prereq.skillNumber, {
+            skillNumber: prereq.skillNumber,
+            title: prereq.title,
+            type,
+            lessonSpans: [{
+              start: targetSkillData.start,
+              end: targetSkillData.end,
+              parentSkill: skill
+            }]
+          });
+        }
+      });
+    });
+
+    // Convert prerequisite map to array
+    const prerequisiteSkills = Array.from(prerequisiteMap.values()).map(prereq => ({
+      skill: prereq.skillNumber,
+      title: prereq.title,
+      type: prereq.type,
+      lessonSpans: prereq.lessonSpans,
+      isTarget: false,
+    }));
+
+    // Return target skills first, then prerequisite skills
+    return [...targetSkills, ...prerequisiteSkills];
+  }, [allSkills, lessons, skillsData]);
+
+  // Calculate dynamic height based on total skills
+  const { height, innerHeight } = useMemo(() => {
+    let totalHeight = baseHeight;
+
+    if (showPrerequisites) {
+      // Count prerequisite skills (non-target skills)
+      const prereqCount = ganttData.filter(item => item && !item.isTarget).length;
+      // Each prerequisite adds roughly 30px (smaller bar height + spacing)
+      const prereqExtraHeight = prereqCount * 30;
+      totalHeight = baseHeight + prereqExtraHeight;
+    }
+
+    return {
+      height: totalHeight,
+      innerHeight: totalHeight - margin.top - margin.bottom,
+    };
+  }, [baseHeight, showPrerequisites, ganttData, margin.top, margin.bottom]);
+
+  const innerWidth = width - margin.left - margin.right;
 
   // Scales
   const xScale = useMemo(
@@ -146,13 +263,20 @@ export function SkillGanttChart({
   );
 
   const yScale = useMemo(
-    () =>
-      scaleBand<string>({
-        domain: allSkills,
+    () => {
+      // When showing prerequisites, include all skills (target + prerequisite)
+      // Otherwise just target skills
+      const domain = showPrerequisites
+        ? ganttData.map(item => item?.skill || '').filter(Boolean)
+        : allSkills;
+
+      return scaleBand<string>({
+        domain,
         range: [12, innerHeight], // Start at 12px to add spacing after section row (pb-3)
-        padding: 0.2,
-      }),
-    [allSkills, innerHeight]
+        padding: 0.2, // Normal padding for all skills
+      });
+    },
+    [allSkills, ganttData, innerHeight, showPrerequisites]
   );
 
   if (ganttData.length === 0 || lessons.length === 0) {
@@ -166,7 +290,18 @@ export function SkillGanttChart({
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm py-6 mb-6">
-      <h3 className="text-sm font-semibold text-gray-900 mb-3 px-6">Skill Progression Timeline</h3>
+      <div className="flex items-center justify-between mb-3 px-6">
+        <h3 className="text-sm font-semibold text-gray-900">Skill Progression Timeline</h3>
+        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showPrerequisites}
+            onChange={(e) => setShowPrerequisites(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+          />
+          <span>Show Essential & Helpful Skills</span>
+        </label>
+      </div>
 
       <style>{`
         svg title {
@@ -391,109 +526,247 @@ export function SkillGanttChart({
               });
             })()}
 
+            {/* Separator line between target skills and prerequisites */}
+            {showPrerequisites && (() => {
+              // Find the last target skill's Y position
+              const lastTargetSkill = ganttData.findLast(item => item?.isTarget);
+              if (lastTargetSkill) {
+                const separatorY = (yScale(lastTargetSkill.skill) ?? 0) + yScale.bandwidth() + 5;
+                return (
+                  <line
+                    x1={0}
+                    y1={separatorY}
+                    x2={innerWidth}
+                    y2={separatorY}
+                    stroke="#9ca3af"
+                    strokeWidth={2}
+                    strokeDasharray="4,4"
+                    opacity={0.6}
+                  />
+                );
+              }
+              return null;
+            })()}
+
             {/* Gantt bars */}
             {ganttData.map((item, index) => {
               if (!item) return null;
 
+              // Skip prerequisite skills if toggle is off
+              if (!item.isTarget && !showPrerequisites) return null;
+
               const barHeight = yScale.bandwidth();
               const barY = yScale(item.skill) ?? 0;
-              const barX = xScale(item.start);
-              const barWidth = xScale(item.end) - xScale(item.start);
-              const color = SKILL_COLORS[index % SKILL_COLORS.length];
-              const lightColor = SKILL_COLORS_LIGHT[index % SKILL_COLORS_LIGHT.length];
-              const skillData = skillsData.get(item.skill);
-              const skillTitle = skillData?.title || "";
 
-              // Calculate available width for text (bar width minus circle, padding, and margins)
-              const circleWidth = 28; // circle diameter
-              const padding = 16; // left and right padding
-              const availableWidth = barWidth - circleWidth - padding - 8; // 8px extra margin
+              // For target skills, render normal bar
+              if (item.isTarget && 'start' in item && 'end' in item) {
+                const barX = xScale(item.start);
+                const barWidth = xScale(item.end) - xScale(item.start);
+                const color = SKILL_COLORS[index % SKILL_COLORS.length];
+                const lightColor = SKILL_COLORS_LIGHT[index % SKILL_COLORS_LIGHT.length];
+                const skillData = skillsData.get(item.skill);
+                const skillTitle = skillData?.title || "";
 
-              // Word wrap logic - split into lines that fit within available width
-              const charsPerLine = Math.floor(availableWidth / 7); // ~7px per character at font size 11
-              const words = skillTitle.split(' ');
-              const lines: string[] = [];
-              let currentLine = '';
+                // Calculate available width for text
+                const circleWidth = 28;
+                const padding = 16;
+                const availableWidth = barWidth - circleWidth - padding - 8;
 
-              words.forEach(word => {
-                const testLine = currentLine ? `${currentLine} ${word}` : word;
-                if (testLine.length <= charsPerLine) {
-                  currentLine = testLine;
-                } else {
-                  if (currentLine) lines.push(currentLine);
-                  currentLine = word;
-                }
-              });
-              if (currentLine) lines.push(currentLine);
+                // Word wrap logic
+                const charsPerLine = Math.floor(availableWidth / 7);
+                const words = skillTitle.split(' ');
+                const lines: string[] = [];
+                let currentLine = '';
 
-              // Display all lines without limiting
-              const displayLines = lines;
+                words.forEach((word: string) => {
+                  const testLine = currentLine ? `${currentLine} ${word}` : word;
+                  if (testLine.length <= charsPerLine) {
+                    currentLine = testLine;
+                  } else {
+                    if (currentLine) lines.push(currentLine);
+                    currentLine = word;
+                  }
+                });
+                if (currentLine) lines.push(currentLine);
 
-              return (
-                <g key={item.skill}>
-                  {/* Light background bar */}
-                  <rect
-                    x={barX}
-                    y={barY}
-                    width={barWidth}
-                    height={barHeight}
-                    fill={lightColor}
-                    fillOpacity={1}
-                    stroke={color}
-                    strokeWidth={2}
-                    rx={4}
-                  >
-                    <title>{skillTitle}</title>
-                  </rect>
-                  {/* Skill circle badge and title */}
-                  <g transform={`translate(${barX + 8}, ${barY + barHeight / 2})`}>
-                    {/* Circular badge */}
-                    <circle
-                      cx={14}
-                      cy={0}
-                      r={14}
-                      fill={color}
+                const displayLines = lines;
+
+                return (
+                  <g key={`target-${item.skill}`}>
+                    <rect
+                      x={barX}
+                      y={barY}
+                      width={barWidth}
+                      height={barHeight}
+                      fill={lightColor}
+                      fillOpacity={1}
                       stroke={color}
                       strokeWidth={2}
+                      rx={4}
                     >
                       <title>{skillTitle}</title>
-                    </circle>
-                    <text
-                      x={14}
-                      y={0}
-                      fontSize={10}
-                      fontWeight={700}
-                      fill="white"
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                      pointerEvents="none"
-                    >
-                      {item.skill}
-                    </text>
-                    {/* Title - wrapped to multiple lines */}
-                    {displayLines.map((line, lineIndex) => {
-                      const yOffset = displayLines.length === 1
-                        ? 0
-                        : (lineIndex - (displayLines.length - 1) / 2) * 12;
+                    </rect>
+                    <g transform={`translate(${barX + 8}, ${barY + barHeight / 2})`}>
+                      <circle
+                        cx={14}
+                        cy={0}
+                        r={14}
+                        fill={color}
+                        stroke={color}
+                        strokeWidth={2}
+                      >
+                        <title>{skillTitle}</title>
+                      </circle>
+                      <text
+                        x={14}
+                        y={0}
+                        fontSize={10}
+                        fontWeight={700}
+                        fill="white"
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        pointerEvents="none"
+                      >
+                        {item.skill}
+                      </text>
+                      {displayLines.map((line, lineIndex) => {
+                        const yOffset = displayLines.length === 1
+                          ? 0
+                          : (lineIndex - (displayLines.length - 1) / 2) * 12;
+                        return (
+                          <text
+                            key={lineIndex}
+                            x={34}
+                            y={yOffset}
+                            fontSize={11}
+                            fontWeight={600}
+                            fill="#1f2937"
+                            textAnchor="start"
+                            dominantBaseline="central"
+                            pointerEvents="none"
+                          >
+                            {line}
+                          </text>
+                        );
+                      })}
+                    </g>
+                  </g>
+                );
+              }
+
+              // For prerequisite skills, render multiple bars for each lesson span
+              if (!item.isTarget && 'type' in item && 'lessonSpans' in item) {
+                const prereqType = item.type;
+                let prereqColor, prereqLightColor;
+                if (prereqType === 'essential' || prereqType === 'both') {
+                  prereqColor = '#C855C8'; // skill-essential
+                  prereqLightColor = '#f1e1f1'; // skill-essential-100
+                } else { // helpful
+                  prereqColor = '#009FB7'; // skill-helpful
+                  prereqLightColor = '#ccebf1'; // skill-helpful-100
+                }
+
+                const prereqHeight = barHeight * 0.6; // 60% of target skill height
+                const skillTitle = item.title || "";
+
+                return (
+                  <g key={`prereq-${item.skill}`}>
+                    {/* Render a bar for each lesson span */}
+                    {item.lessonSpans.map((span: { start: number; end: number; parentSkill: string }, spanIndex: number) => {
+                    const barX = xScale(span.start);
+                    const barWidth = xScale(span.end) - xScale(span.start);
+
+                    // Calculate available width for text
+                    const circleWidth = 18;
+                    const padding = 10;
+                    const availableWidth = barWidth - circleWidth - padding - 6;
+
+                      // Word wrap
+                      const charsPerLine = Math.floor(availableWidth / 5.5);
+                      const words = skillTitle.split(' ');
+                      const lines: string[] = [];
+                      let currentLine = '';
+
+                      words.forEach((word: string) => {
+                        const testLine = currentLine ? `${currentLine} ${word}` : word;
+                        if (testLine.length <= charsPerLine) {
+                          currentLine = testLine;
+                        } else {
+                          if (currentLine) lines.push(currentLine);
+                          currentLine = word;
+                        }
+                      });
+                      if (currentLine) lines.push(currentLine);
+
+                      const displayLines = lines.slice(0, 2); // max 2 lines
+
                       return (
-                        <text
-                          key={lineIndex}
-                          x={34}
-                          y={yOffset}
-                          fontSize={11}
-                          fontWeight={600}
-                          fill="#1f2937"
-                          textAnchor="start"
-                          dominantBaseline="central"
-                          pointerEvents="none"
+                      <g key={`${item.skill}-span-${spanIndex}`}>
+                        <rect
+                          x={barX}
+                          y={barY}
+                          width={barWidth}
+                          height={prereqHeight}
+                          fill={prereqLightColor}
+                          fillOpacity={1}
+                          stroke={prereqColor}
+                          strokeWidth={1.5}
+                          rx={3}
                         >
-                          {line}
-                        </text>
+                          <title>{skillTitle}</title>
+                        </rect>
+                        <g transform={`translate(${barX + 5}, ${barY + prereqHeight / 2})`}>
+                          <circle
+                            cx={9}
+                            cy={0}
+                            r={9}
+                            fill={prereqColor}
+                            stroke={prereqColor}
+                            strokeWidth={1.5}
+                          >
+                            <title>{skillTitle}</title>
+                          </circle>
+                          <text
+                            x={9}
+                            y={0}
+                            fontSize={7}
+                            fontWeight={700}
+                            fill="white"
+                            textAnchor="middle"
+                            dominantBaseline="central"
+                            pointerEvents="none"
+                          >
+                            {item.skill}
+                          </text>
+                          {displayLines.map((line, lineIndex) => {
+                            const yOffset = displayLines.length === 1
+                              ? 0
+                              : (lineIndex - (displayLines.length - 1) / 2) * 9;
+                            return (
+                              <text
+                                key={lineIndex}
+                                x={21}
+                                y={yOffset}
+                                fontSize={8}
+                                fontWeight={500}
+                                fill="#374151"
+                                textAnchor="start"
+                                dominantBaseline="central"
+                                pointerEvents="none"
+                              >
+                                {line}
+                              </text>
+                            );
+                          })}
+                        </g>
+                      </g>
                       );
                     })}
                   </g>
-                </g>
-              );
+                );
+              }
+
+              return null;
             })}
 
           </Group>

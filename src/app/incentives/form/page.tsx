@@ -382,7 +382,7 @@ export default function IncentivesFormPage() {
           <div className="grid grid-cols-12 gap-6">
             {/* Left Column - Student Grid */}
             <div className="col-span-7">
-              <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="bg-white rounded-lg shadow-sm p-6 flex flex-col h-full">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-gray-900">Student Activities</h2>
                   <button
@@ -396,14 +396,16 @@ export default function IncentivesFormPage() {
                     Clear All
                   </button>
                 </div>
-                <StudentGrid
-                  students={students}
-                  activityTypes={activityTypes}
-                  checkedState={checkedState}
-                  onCheckboxChange={(studentId, activityTypeId, checked) => {
-                    toggleCheckbox(studentId, activityTypeId, checked);
-                  }}
-                />
+                <div className="flex-1 min-h-0">
+                  <StudentGrid
+                    students={students}
+                    activityTypes={activityTypes}
+                    checkedState={checkedState}
+                    onCheckboxChange={(studentId, activityTypeId, checked) => {
+                      toggleCheckbox(studentId, activityTypeId, checked);
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
