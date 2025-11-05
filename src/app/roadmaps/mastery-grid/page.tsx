@@ -27,7 +27,6 @@ export default function MasteryGridPage() {
   const [selectedGrade, setSelectedGrade] = useState("");
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<string>("");
-  const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [sections, setSections] = useState<string[]>([]);
   // Student grid view is hardcoded to true
   const studentGridView = true;
@@ -98,7 +97,6 @@ export default function MasteryGridPage() {
           searchFields: []
         });
         if (result.success && result.items) {
-          setAllStudents(result.items as Student[]);
           const uniqueSections = Array.from(new Set((result.items as Student[]).map(s => s.section))).sort();
           setSections(uniqueSections);
         }

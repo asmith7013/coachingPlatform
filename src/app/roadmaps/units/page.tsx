@@ -11,7 +11,6 @@ import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
 import { RoadmapsNav } from "../components/RoadmapsNav";
-import { StudentGridView } from "./components/StudentGridView";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },
@@ -35,7 +34,6 @@ export default function RoadmapUnitsPage() {
   const [selectedSection, setSelectedSection] = useState<string>("");
   const [selectedSkill, setSelectedSkill] = useState<RoadmapsSkill | null>(null);
   const [selectedSkillColor, setSelectedSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('green');
-  const [studentGridView, setStudentGridView] = useState(false);
 
   useEffect(() => {
     const loadUnits = async () => {
@@ -264,54 +262,31 @@ export default function RoadmapUnitsPage() {
                 selectedStudents={selectedStudents}
                 maxStudents={5}
               />
-
-              {/* Student Grid Toggle */}
-              {selectedSection && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <label className="flex items-center justify-between cursor-pointer">
-                    <span className="text-sm font-medium text-gray-700">Student Grid View</span>
-                    <div className="relative">
-                      <input
-                        type="checkbox"
-                        className="sr-only"
-                        checked={studentGridView}
-                        onChange={(e) => setStudentGridView(e.target.checked)}
-                      />
-                      <div className={`block w-10 h-6 rounded-full transition ${
-                        studentGridView ? 'bg-blue-600' : 'bg-gray-300'
-                      }`}></div>
-                      <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition ${
-                        studentGridView ? 'transform translate-x-4' : ''
-                      }`}></div>
-                    </div>
-                  </label>
-                </div>
-              )}
             </div>
           </div>
         </div>
 
         {/* Dynamic Layout: Unit List + Unit Detail (+ Skill Detail when skill selected) */}
         <div className="flex gap-6">
-          {/* Left Column: Unit List (compact when skill selected OR student grid view, expanded when not) */}
-          <div className={`${selectedSkill || studentGridView ? 'w-20' : 'w-2/5'} bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all duration-300`}>
+          {/* Left Column: Unit List (compact when skill selected, expanded when not) */}
+          <div className={`${selectedSkill ? 'w-20' : 'w-2/5'} bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all duration-300`}>
             <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10">
-              <h3 className={`font-semibold text-gray-900 ${selectedSkill || studentGridView ? 'text-center text-xs' : ''}`}>
-                {selectedSkill || studentGridView ? 'Units' : 'Units'}
+              <h3 className={`font-semibold text-gray-900 ${selectedSkill ? 'text-center text-xs' : ''}`}>
+                Units
               </h3>
             </div>
             <div className="overflow-y-auto">
               {filteredUnits.length === 0 ? (
-                <div className={`p-8 text-center text-gray-500 ${selectedSkill || studentGridView ? 'p-4' : ''}`}>
+                <div className={`p-8 text-center text-gray-500 ${selectedSkill ? 'p-4' : ''}`}>
                   {selectedGrade === "" ? (
                     <>
                       <div className="text-gray-400 text-lg mb-2">🎓</div>
-                      {!selectedSkill && !studentGridView && <div className="text-sm">Select a grade to view units</div>}
+                      {!selectedSkill && <div className="text-sm">Select a grade to view units</div>}
                     </>
                   ) : (
                     <>
                       <div className="text-gray-400 text-lg mb-2">📚</div>
-                      {!selectedSkill && !studentGridView && <div className="text-sm">No units found for this grade</div>}
+                      {!selectedSkill && <div className="text-sm">No units found for this grade</div>}
                     </>
                   )}
                 </div>
@@ -322,29 +297,21 @@ export default function RoadmapUnitsPage() {
                     unit={unit}
                     isSelected={selectedUnitId === unit._id}
                     onClick={() => handleUnitClick(unit._id)}
-                    compact={selectedSkill !== null || studentGridView}
+                    compact={selectedSkill !== null}
                   />
                 ))
               )}
             </div>
           </div>
 
-          {/* Middle Column: Unit Detail View OR Student Grid View */}
-          <div className={`${studentGridView ? 'w-[calc(100%-5rem-1.5rem)]' : selectedSkill ? 'w-2/5' : 'w-3/5'} transition-all duration-300`}>
-            {studentGridView && selectedSection ? (
-              <StudentGridView
-                unit={selectedUnit}
-                selectedStudents={selectedStudents}
-                selectedSection={selectedSection}
-              />
-            ) : (
-              <UnitDetailView
-                unit={selectedUnit}
-                selectedSection={selectedSection}
-                onSkillClick={handleSkillClick}
-                selectedStudents={selectedStudents}
-              />
-            )}
+          {/* Middle Column: Unit Detail View */}
+          <div className={`${selectedSkill ? 'w-2/5' : 'w-3/5'} transition-all duration-300`}>
+            <UnitDetailView
+              unit={selectedUnit}
+              selectedSection={selectedSection}
+              onSkillClick={handleSkillClick}
+              selectedStudents={selectedStudents}
+            />
           </div>
 
           {/* Right Column: Skill Detail View (expands to use space from compressed left column) */}
