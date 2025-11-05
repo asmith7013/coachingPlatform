@@ -10,7 +10,7 @@ import {
   ActivityTypeConfigInput,
 } from "@zod-schema/313/activity-type-config";
 import { StudentActivity } from "@zod-schema/313/student";
-import { StudentActivityEventInput } from "@zod-schema/313/student-activity";
+import { StudentActivityEventInput, StudentActivityInputZodSchema } from "@zod-schema/313/student-activity";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 
@@ -363,12 +363,26 @@ export async function submitActivities(
 
           // Convert each activity to a standalone event
           for (const activity of submission.activities) {
-            const event: StudentActivityEventInput = {
+            // Normalize date to YYYY-MM-DD format
+            let normalizedDate = activity.date;
+            if (activity.date && activity.date.match(/^\d{1,2}\/\d{1,2}\/\d{2,4}$/)) {
+              const parts = activity.date.split('/');
+              const month = parts[0].padStart(2, '0');
+              const day = parts[1].padStart(2, '0');
+              let year = parts[2];
+              // Convert 2-digit year to 4-digit year
+              if (year.length === 2) {
+                year = `20${year}`;
+              }
+              normalizedDate = `${year}-${month}-${day}`;
+            }
+
+            const eventData = {
               studentId: submission.studentId,
               studentName: `${student.lastName}, ${student.firstName}`,
               section: student.section,
               gradeLevel: student.gradeLevel || "8",
-              date: activity.date,
+              date: normalizedDate,
               activityType: activity.activityType,
               activityLabel: activity.activityLabel,
               unitId: activity.unitId,
@@ -381,7 +395,20 @@ export async function submitActivities(
               ownerIds: [],
             };
 
-            eventsToInsert.push(event);
+            // Validate with Zod schema
+            const validationResult = StudentActivityInputZodSchema.safeParse(eventData);
+
+            if (!validationResult.success) {
+              console.error("❌ [submitActivities] Validation error:", validationResult.error.format());
+              const firstError = validationResult.error.issues[0];
+              errors.push({
+                studentId: submission.studentId,
+                error: `Validation failed: ${firstError.path.join('.')}: ${firstError.message}`,
+              });
+              continue;
+            }
+
+            eventsToInsert.push(validationResult.data);
           }
 
           results.push({

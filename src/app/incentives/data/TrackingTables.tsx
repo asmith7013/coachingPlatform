@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import {
   fetchStudentOfTheDay,
   fetchSmallGroupActivities,
@@ -74,28 +76,31 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
 
   return (
     <div className="space-y-6">
-      {/* Student of the Day Calendar */}
-      <StudentOfTheDayCalendar data={studentOfDayData} />
+      {/* Top Row: Small Groups Table (left) and Calendar (right) */}
+      <div className="grid grid-cols-2 gap-6">
+        {/* Small Groups / Acceleration Table */}
+        {!unitId || !section ? (
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              Small Groups / Acceleration Tracking
+            </h2>
+            <p className="text-sm text-gray-500">
+              Please select both a section and a unit to view small group activities.
+            </p>
+          </div>
+        ) : (
+          <SmallGroupsTable
+            data={smallGroupData}
+            lessons={lessons}
+            isLoading={isLoading}
+          />
+        )}
 
-      {/* Small Groups / Acceleration Table */}
-      {!unitId || !section ? (
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">
-            Small Groups / Acceleration Tracking
-          </h2>
-          <p className="text-sm text-gray-500">
-            Please select both a section and a unit to view small group activities.
-          </p>
-        </div>
-      ) : (
-        <SmallGroupsTable
-          data={smallGroupData}
-          lessons={lessons}
-          isLoading={isLoading}
-        />
-      )}
+        {/* Student of the Day Calendar */}
+        <StudentOfTheDayCalendar data={studentOfDayData} />
+      </div>
 
-      {/* Inquiry Groups Table */}
+      {/* Bottom Row: Inquiry Groups Table (full width) */}
       {!unitId || !section ? (
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">
@@ -117,88 +122,125 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
 // =====================================
 
 function StudentOfTheDayCalendar({ data }: { data: StudentOfTheDayRecord[] }) {
-  // Generate calendar for last 4 weeks
   const today = new Date();
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - 27); // Last 28 days including today
 
-  const weeks: Date[][] = [];
-  let currentWeek: Date[] = [];
-
-  // Start from the beginning of the week containing startDate
-  const current = new Date(startDate);
-  current.setDate(current.getDate() - current.getDay()); // Go to Sunday
-
-  for (let i = 0; i < 28; i++) {
-    if (currentWeek.length === 7) {
-      weeks.push(currentWeek);
-      currentWeek = [];
-    }
-    currentWeek.push(new Date(current));
-    current.setDate(current.getDate() + 1);
-  }
-  if (currentWeek.length > 0) {
-    weeks.push(currentWeek);
-  }
-
-  // Create a map for quick lookup
+  // Create a map for quick lookup: date string -> student name
   const dataMap = new Map(data.map((d) => [d.date, d.studentName]));
+
+  // Custom tile content to show student name on the date
+  const tileContent = ({ date }: { date: Date }) => {
+    const dateStr = date.toISOString().split("T")[0];
+    const studentName = dataMap.get(dateStr);
+
+    if (studentName) {
+      return (
+        <div className="w-full text-center">
+          <div className="text-[10px] font-semibold text-blue-700 break-words px-0.5 leading-tight">
+            {studentName}
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Custom tile styling
+  const tileClassName = ({ date }: { date: Date }) => {
+    const dateStr = date.toISOString().split("T")[0];
+    const studentName = dataMap.get(dateStr);
+
+    if (studentName) {
+      return "has-student-of-day";
+    }
+    return "";
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">
-        Student of the Day (Last 4 Weeks)
+        Student of the Day
       </h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse">
-          <thead>
-            <tr>
-              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                <th
-                  key={day}
-                  className="px-2 py-2 text-xs font-semibold text-gray-600 border border-gray-200 bg-gray-50"
-                >
-                  {day}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {weeks.map((week, weekIndex) => (
-              <tr key={weekIndex}>
-                {week.map((date, dayIndex) => {
-                  const dateStr = date.toISOString().split("T")[0];
-                  const studentName = dataMap.get(dateStr);
-                  const isToday = dateStr === today.toISOString().split("T")[0];
-                  const isPast = date < startDate || date > today;
-
-                  return (
-                    <td
-                      key={dayIndex}
-                      className={`px-2 py-3 border border-gray-200 text-sm align-top min-w-[100px] ${
-                        isToday
-                          ? "bg-blue-50 border-blue-300"
-                          : isPast
-                          ? "bg-gray-50 text-gray-400"
-                          : ""
-                      }`}
-                    >
-                      <div className="font-semibold text-gray-700 mb-1">
-                        {date.getDate()}
-                      </div>
-                      {studentName && (
-                        <div className="text-xs text-gray-900 font-medium">
-                          {studentName}
-                        </div>
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <style jsx global>{`
+        .react-calendar {
+          width: 100%;
+          border: 1px solid #e5e7eb;
+          border-radius: 0.5rem;
+          font-family: inherit;
+          font-size: 0.875rem;
+        }
+        .react-calendar__navigation {
+          height: 36px;
+          margin-bottom: 0.25rem;
+        }
+        .react-calendar__navigation button {
+          min-width: 36px;
+          font-size: 0.875rem;
+        }
+        .react-calendar__month-view__weekdays {
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+        .react-calendar__month-view__weekdays__weekday {
+          padding: 0.25rem;
+        }
+        .react-calendar__tile {
+          height: 60px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 0.25rem 0.125rem;
+          position: relative;
+          font-size: 0.75rem;
+        }
+        .react-calendar__tile abbr {
+          margin-bottom: 0.125rem;
+          font-size: 0.875rem;
+        }
+        .react-calendar__tile.has-student-of-day {
+          background-color: #dbeafe !important;
+        }
+        .react-calendar__tile.has-student-of-day:enabled:hover,
+        .react-calendar__tile.has-student-of-day:enabled:focus {
+          background-color: #bfdbfe !important;
+        }
+        .react-calendar__tile--now {
+          background-color: #fef3c7 !important;
+        }
+        .react-calendar__tile--now:enabled:hover,
+        .react-calendar__tile--now:enabled:focus {
+          background-color: #fde68a !important;
+        }
+        .react-calendar__tile--now abbr {
+          color: #1f2937 !important;
+        }
+        .react-calendar__tile.has-student-of-day.react-calendar__tile--now {
+          background-color: #bbf7d0 !important;
+        }
+        .react-calendar__tile.has-student-of-day.react-calendar__tile--now:enabled:hover,
+        .react-calendar__tile.has-student-of-day.react-calendar__tile--now:enabled:focus {
+          background-color: #86efac !important;
+        }
+        .react-calendar__month-view__days__day--neighboringMonth {
+          color: #d1d5db;
+        }
+        .react-calendar__month-view__days__day--weekend {
+          visibility: hidden;
+          pointer-events: none;
+        }
+        .react-calendar__month-view__weekdays abbr[title="Sunday"],
+        .react-calendar__month-view__weekdays abbr[title="Saturday"] {
+          visibility: hidden;
+        }
+      `}</style>
+      <Calendar
+        value={today}
+        defaultActiveStartDate={today}
+        tileContent={tileContent}
+        tileClassName={tileClassName}
+        showNeighboringMonth={false}
+        tileDisabled={({ date }) => date.getDay() === 0 || date.getDay() === 6}
+      />
     </div>
   );
 }
@@ -244,10 +286,29 @@ function SmallGroupsTable({
     );
   }
 
+  if (students.length === 0 || lessons.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Small Groups / Acceleration Tracking
+        </h2>
+        <div className="text-center text-gray-500 py-8">
+          {students.length === 0 && lessons.length === 0 ? (
+            <p>No small group activities or lessons found for this unit.</p>
+          ) : students.length === 0 ? (
+            <p>No small group activities found for this unit. Lessons: {lessons.length}</p>
+          ) : (
+            <p>No lessons found for this unit. Students with activities: {students.length}</p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">
-        Small Groups / Acceleration Tracking
+        Small Groups / Acceleration Tracking ({students.length} students, {lessons.length} lessons)
       </h2>
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse">

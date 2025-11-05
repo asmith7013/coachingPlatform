@@ -553,11 +553,6 @@
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
 │   │   ├── roadmaps
-│   │   │   ├── class-overview
-│   │   │   │   ├── components
-│   │   │   │   │   ├── OverviewTable.tsx
-│   │   │   │   │   └── SkillBadge.tsx
-│   │   │   │   └── page.tsx
 │   │   │   ├── components
 │   │   │   │   ├── AccordionItem.tsx
 │   │   │   │   ├── AccordionList.tsx
@@ -575,6 +570,8 @@
 │   │   │   │   ├── grade-7.json
 │   │   │   │   └── grade-8.json
 │   │   │   ├── layout.tsx
+│   │   │   ├── mastery-grid
+│   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── scope-and-sequence
 │   │   │   │   ├── components
@@ -1722,4 +1719,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-504 directories, 1219 files
+503 directories, 1217 files

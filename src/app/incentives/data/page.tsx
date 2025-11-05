@@ -3,15 +3,12 @@
 import React, { useState, useEffect } from "react";
 import {
   fetchActivityData,
-  getActivitySummary,
   exportActivityDataAsCSV,
   deleteActivity,
   ActivityDataFilters,
   StudentActivityRecord,
 } from "./actions";
-import { fetchActivityTypes } from "../form/actions";
 import { fetchUnitsByGrade } from "../form/actions";
-import { ActivityTypeConfig } from "@zod-schema/313/activity-type-config";
 import { TrackingTables } from "./TrackingTables";
 
 interface Unit {
@@ -20,32 +17,24 @@ interface Unit {
   unitTitle: string;
 }
 
-interface Summary {
-  totalActivities: number;
-  uniqueStudents: number;
-  byType: { [key: string]: number };
-  byDate: { [key: string]: number };
-  topStudents: Array<{ name: string; count: number }>;
-  dateRange: { earliest: string; latest: string } | null;
-}
-
 export default function IncentivesDataPage() {
-  // Calculate default dates (last 4 weeks)
-  const today = new Date();
-  const fourWeeksAgo = new Date();
-  fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
 
-  // Filters
-  const [section, setSection] = useState<string>("");
-  const [unitId, setUnitId] = useState<string>("");
-  const [activityType, setActivityType] = useState<string>("");
-  const [startDate, setStartDate] = useState<string>(fourWeeksAgo.toISOString().split("T")[0]);
-  const [endDate, setEndDate] = useState<string>(today.toISOString().split("T")[0]);
+  // Load saved filters from localStorage (shared with form page)
+  const [section, setSection] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('incentives-form-section') || "";
+    }
+    return "";
+  });
+  const [unitId, setUnitId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('incentives-form-current-unit') || "";
+    }
+    return "";
+  });
 
   // Data
   const [records, setRecords] = useState<StudentActivityRecord[]>([]);
-  const [summary, setSummary] = useState<Summary | null>(null);
-  const [activityTypes, setActivityTypes] = useState<ActivityTypeConfig[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
 
   // UI State
@@ -53,17 +42,10 @@ export default function IncentivesDataPage() {
   const [isExporting, setIsExporting] = useState(false);
   const [view, setView] = useState<"table" | "summary" | "tracking">("tracking");
 
-  // Load activity types and units on mount
+  // Load units on mount
   useEffect(() => {
     async function loadMetadata() {
-      const [typesResult, unitsResult] = await Promise.all([
-        fetchActivityTypes(),
-        fetchUnitsByGrade("8"),
-      ]);
-
-      if (typeof typesResult !== 'string' && typesResult.success && typesResult.data) {
-        setActivityTypes(typesResult.data as ActivityTypeConfig[]);
-      }
+      const unitsResult = await fetchUnitsByGrade("8");
 
       if (typeof unitsResult !== 'string' && unitsResult.success && unitsResult.data) {
         setUnits(unitsResult.data as Unit[]);
@@ -78,31 +60,42 @@ export default function IncentivesDataPage() {
     const filters: ActivityDataFilters = {};
     if (section) filters.section = section;
     if (unitId) filters.unitId = unitId;
-    if (activityType) filters.activityType = activityType;
-    if (startDate) filters.startDate = startDate;
-    if (endDate) filters.endDate = endDate;
 
-    const [dataResult, summaryResult] = await Promise.all([
-      fetchActivityData(filters),
-      getActivitySummary(filters),
-    ]);
+    const dataResult = await fetchActivityData(filters);
 
     if (typeof dataResult !== 'string' && dataResult.success && dataResult.data) {
       setRecords(dataResult.data as StudentActivityRecord[]);
     }
 
-    if (typeof summaryResult !== 'string' && summaryResult.success && summaryResult.data) {
-      setSummary(summaryResult.data as Summary);
-    }
-
     setIsLoading(false);
   };
+
+  // Save section and unitId to localStorage when they change (shared with form page)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (section) {
+        localStorage.setItem('incentives-form-section', section);
+      } else {
+        localStorage.removeItem('incentives-form-section');
+      }
+    }
+  }, [section]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (unitId) {
+        localStorage.setItem('incentives-form-current-unit', unitId);
+      } else {
+        localStorage.removeItem('incentives-form-current-unit');
+      }
+    }
+  }, [unitId]);
 
   // Load data when filters change
   useEffect(() => {
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [section, unitId, activityType, startDate, endDate]);
+  }, [section, unitId]);
 
   const handleExportCSV = async () => {
     setIsExporting(true);
@@ -110,9 +103,6 @@ export default function IncentivesDataPage() {
     const filters: ActivityDataFilters = {};
     if (section) filters.section = section;
     if (unitId) filters.unitId = unitId;
-    if (activityType) filters.activityType = activityType;
-    if (startDate) filters.startDate = startDate;
-    if (endDate) filters.endDate = endDate;
 
     const result = await exportActivityDataAsCSV(filters);
 
@@ -135,9 +125,6 @@ export default function IncentivesDataPage() {
   const clearFilters = () => {
     setSection("");
     setUnitId("");
-    setActivityType("");
-    setStartDate("");
-    setEndDate("");
   };
 
   const handleDeleteActivity = async (activityId: string, studentName: string) => {
@@ -192,16 +179,6 @@ export default function IncentivesDataPage() {
                 📋 Table
               </button>
               <button
-                onClick={() => setView("summary")}
-                className={`px-4 py-2 border rounded-md transition-colors ${
-                  view === "summary"
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "border-gray-300 hover:bg-gray-50"
-                }`}
-              >
-                📊 Summary
-              </button>
-              <button
                 onClick={handleExportCSV}
                 disabled={isExporting || records.length === 0}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -212,7 +189,7 @@ export default function IncentivesDataPage() {
           </div>
 
           {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Section
@@ -247,48 +224,6 @@ export default function IncentivesDataPage() {
                 ))}
               </select>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Activity Type
-              </label>
-              <select
-                value={activityType}
-                onChange={(e) => setActivityType(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">All Types</option>
-                {activityTypes.map((type) => (
-                  <option key={type.typeId} value={type.typeId}>
-                    {type.icon} {type.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Start Date
-              </label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                End Date
-              </label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
           </div>
 
           <div className="flex items-center justify-between mt-4">
@@ -307,70 +242,6 @@ export default function IncentivesDataPage() {
         {/* Tracking View */}
         {view === "tracking" && (
           <TrackingTables section={section} unitId={unitId} />
-        )}
-
-        {/* Summary View */}
-        {view === "summary" && summary && (
-          <div className="space-y-4">
-            {/* Overview Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="text-sm text-gray-500 mb-1">Total Activities</div>
-                <div className="text-3xl font-bold text-gray-900">
-                  {summary.totalActivities}
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="text-sm text-gray-500 mb-1">Unique Students</div>
-                <div className="text-3xl font-bold text-gray-900">
-                  {summary.uniqueStudents}
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="text-sm text-gray-500 mb-1">Date Range</div>
-                <div className="text-lg font-semibold text-gray-900">
-                  {summary.dateRange
-                    ? `${summary.dateRange.earliest} to ${summary.dateRange.latest}`
-                    : "No data"}
-                </div>
-              </div>
-            </div>
-
-            {/* Activities by Type */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Activities by Type
-              </h3>
-              <div className="space-y-2">
-                {Object.entries(summary.byType).map(([type, count]) => (
-                  <div key={type} className="flex items-center justify-between">
-                    <span className="text-gray-700">{type}</span>
-                    <span className="font-semibold text-gray-900">{count}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Top Students */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Top 10 Most Active Students
-              </h3>
-              <div className="space-y-2">
-                {summary.topStudents.map((student, index) => (
-                  <div key={student.name} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-500 w-6">{index + 1}.</span>
-                      <span className="text-gray-700">{student.name}</span>
-                    </div>
-                    <span className="font-semibold text-gray-900">
-                      {student.count} {student.count === 1 ? "activity" : "activities"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         )}
 
         {/* Table View */}

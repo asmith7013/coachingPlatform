@@ -2,6 +2,7 @@
 
 import { StudentActivityModel } from "@mongoose-schema/313/student-activity.model";
 import { ScopeAndSequenceModel } from "@mongoose-schema/313/scope-and-sequence.model";
+import { RoadmapUnitModel } from "@mongoose-schema/313/roadmap-unit.model";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 
@@ -15,25 +16,19 @@ export interface StudentOfTheDayRecord {
 }
 
 /**
- * Fetch student of the day records for the last 4 weeks
+ * Fetch all student of the day records (no date filtering)
  */
 export async function fetchStudentOfTheDay(section?: string) {
   return withDbConnection(async () => {
     try {
       console.log("🔵 [fetchStudentOfTheDay] Called with section:", section);
 
-      // Calculate date range (last 4 weeks)
-      const endDate = new Date();
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - 28); // 4 weeks
-
       const query: Record<string, unknown> = {
         gradeLevel: "8",
-        activityType: "student-of-day",
-        date: {
-          $gte: startDate.toISOString().split("T")[0],
-          $lte: endDate.toISOString().split("T")[0]
-        }
+        $or: [
+          { activityType: "student-of-day" },
+          { activityLabel: "Student of the Day" }
+        ]
       };
 
       if (section) {
@@ -48,11 +43,27 @@ export async function fetchStudentOfTheDay(section?: string) {
         .lean();
 
       console.log("🔵 [fetchStudentOfTheDay] Found activities:", activities.length);
+      if (activities.length > 0) {
+        console.log("🔵 [fetchStudentOfTheDay] Sample activity:", JSON.stringify(activities[0], null, 2));
+      }
 
-      const records: StudentOfTheDayRecord[] = activities.map((activity) => ({
-        date: activity.date,
-        studentName: activity.studentName
-      }));
+      // Normalize dates to YYYY-MM-DD format
+      const records: StudentOfTheDayRecord[] = activities.map((activity) => {
+        let normalizedDate = activity.date;
+
+        // Check if date is in MM/DD/YY format and convert to YYYY-MM-DD
+        if (activity.date && activity.date.match(/^\d{1,2}\/\d{1,2}\/\d{2}$/)) {
+          const [month, day, year] = activity.date.split('/');
+          normalizedDate = `20${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        }
+
+        return {
+          date: normalizedDate,
+          studentName: activity.studentName
+        };
+      });
+
+      console.log("🔵 [fetchStudentOfTheDay] Total records:", records.length);
 
       return { success: true, data: records };
     } catch (error) {
@@ -83,7 +94,10 @@ export async function fetchSmallGroupActivities(unitId: string, section?: string
       const query: Record<string, unknown> = {
         gradeLevel: "8",
         unitId,
-        activityType: { $in: ["small-group-acceleration", "small-group-prerequisite"] }
+        $or: [
+          { activityType: { $in: ["small-group-acceleration", "small-group-prerequisite"] } },
+          { activityLabel: { $in: ["Small Group (Acceleration)", "Small Group (Prerequisite)"] } }
+        ]
       };
 
       if (section) {
@@ -93,16 +107,19 @@ export async function fetchSmallGroupActivities(unitId: string, section?: string
       console.log("🔵 [fetchSmallGroupActivities] Query:", JSON.stringify(query, null, 2));
 
       const activities = await StudentActivityModel.find(query)
-        .select("studentId studentName lessonId activityType")
+        .select("studentId studentName lessonId activityType activityLabel")
         .lean();
 
       console.log("🔵 [fetchSmallGroupActivities] Found activities:", activities.length);
+      if (activities.length > 0) {
+        console.log("🔵 [fetchSmallGroupActivities] Sample activity:", JSON.stringify(activities[0], null, 2));
+      }
 
       const records: SmallGroupRecord[] = activities.map((activity) => ({
         studentId: activity.studentId,
         studentName: activity.studentName,
         lessonId: activity.lessonId || "",
-        isAcceleration: activity.activityType === "small-group-acceleration"
+        isAcceleration: activity.activityType === "small-group-acceleration" || activity.activityLabel === "Small Group (Acceleration)"
       }));
 
       return { success: true, data: records };
@@ -131,7 +148,10 @@ export async function fetchInquiryActivities(unitId: string, section?: string) {
       const query: Record<string, unknown> = {
         gradeLevel: "8",
         unitId,
-        activityType: "inquiry-activity",
+        $or: [
+          { activityType: "inquiry-activity" },
+          { activityLabel: "Inquiry Activity" }
+        ],
         inquiryQuestion: { $exists: true, $ne: "" }
       };
 
@@ -167,30 +187,50 @@ export interface LessonInfo {
 }
 
 /**
- * Fetch lessons for a given unit
+ * Fetch lessons for a given unit from scope-and-sequence collection
+ * Gets grade and unitNumber from RoadmapUnit, then queries scope-and-sequence
  */
 export async function fetchLessonsForUnit(unitId: string) {
   return withDbConnection(async () => {
     try {
+      console.log("🔵 [fetchLessonsForUnit] Called with unitId:", unitId);
+
+      // Get the unit to extract grade and unitNumber
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const scopeEntry: any = await ScopeAndSequenceModel.findOne({
-        "unit._id": unitId
-      })
-        .select("lessons")
+      const unit: any = await RoadmapUnitModel.findById(unitId)
+        .select("grade unitNumber")
         .lean();
 
-      if (!scopeEntry || !scopeEntry.lessons) {
+      if (!unit) {
+        console.log("🔵 [fetchLessonsForUnit] Unit not found");
         return { success: true, data: [] };
       }
 
+      // Extract grade number from grade string (e.g., "Illustrative Math New York - 8th Grade" -> "8")
+      const gradeMatch = unit.grade.match(/(\d+)th Grade/);
+      const grade = gradeMatch ? gradeMatch[1] : "8";
+      const unitNumber = unit.unitNumber;
+
+      console.log("🔵 [fetchLessonsForUnit] Unit info - grade:", grade, "unitNumber:", unitNumber);
+
+      // Query scope-and-sequence by grade and unitNumber
+      const lessons = await ScopeAndSequenceModel.find({
+        grade,
+        unitNumber
+      })
+        .sort({ lessonNumber: 1 })
+        .lean();
+
+      console.log("🔵 [fetchLessonsForUnit] Found lessons:", lessons.length);
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const lessons: LessonInfo[] = scopeEntry.lessons.map((lesson: any) => ({
+      const lessonInfo: LessonInfo[] = lessons.map((lesson: any) => ({
         lessonId: lesson._id.toString(),
-        lessonNumber: lesson.lessonNumber,
-        lessonName: lesson.lessonName
+        lessonNumber: lesson.lessonNumber || 0,
+        lessonName: lesson.lessonName || `Lesson ${lesson.lessonNumber}`
       }));
 
-      return { success: true, data: lessons };
+      return { success: true, data: lessonInfo };
     } catch (error) {
       return { success: false, error: handleServerError(error, "fetchLessonsForUnit") };
     }
