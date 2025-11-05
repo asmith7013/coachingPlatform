@@ -72,6 +72,22 @@ export const RoadmapsSkillFieldsSchema = z.object({
   // Which units contain this skill
   units: z.array(UnitReferenceSchema).default([]),
 
+  // Pre-computed relationships - where this skill appears (optional for backward compatibility)
+  appearsIn: z.object({
+    asTarget: z.array(UnitReferenceSchema).default([]),
+    asEssential: z.array(z.object({
+      skillNumber: z.string(),
+      title: z.string(),
+      units: z.array(UnitReferenceSchema).default([])
+    })).default([]),
+    asHelpful: z.array(z.object({
+      skillNumber: z.string(),
+      title: z.string(),
+      units: z.array(UnitReferenceSchema).default([])
+    })).default([]),
+    asSupport: z.array(UnitReferenceSchema).default([]),
+  }).optional(),
+
   // IM Lesson fields (optional for skills from IM lessons)
   section: z.string().optional(), // A, B, C, D
   lesson: z.number().optional(), // Lesson number (deprecated: use imLessons for multiple)

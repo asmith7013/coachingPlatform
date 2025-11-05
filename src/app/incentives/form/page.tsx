@@ -419,7 +419,7 @@ export default function IncentivesFormPage() {
 
                     return (
                       <DetailCard
-                        key={type.typeId}
+                        key={type.typeId || type.id}
                         title={type.label}
                         icon={type.icon}
                         color={type.color}

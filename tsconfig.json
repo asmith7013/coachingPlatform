@@ -107,5 +107,5 @@
     
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "scripts/combine-docs.js", "src/types/**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "scripts/migrate-skill-appears-in.ts", "scripts/test-migrate-one-skill.ts"]
 }

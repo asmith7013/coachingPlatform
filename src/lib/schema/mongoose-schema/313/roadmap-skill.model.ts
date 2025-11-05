@@ -55,6 +55,31 @@ const roadmapsSkillFields = {
   // Which units contain this skill
   units: { type: [unitReferenceSchema], default: [] },
 
+  // Pre-computed relationships - where this skill appears
+  appearsIn: {
+    type: {
+      asTarget: { type: [unitReferenceSchema], default: [] },
+      asEssential: {
+        type: [{
+          skillNumber: { type: String, required: true },
+          title: { type: String, required: true },
+          units: { type: [unitReferenceSchema], default: [] }
+        }],
+        default: []
+      },
+      asHelpful: {
+        type: [{
+          skillNumber: { type: String, required: true },
+          title: { type: String, required: true },
+          units: { type: [unitReferenceSchema], default: [] }
+        }],
+        default: []
+      },
+      asSupport: { type: [unitReferenceSchema], default: [] }
+    },
+    required: false
+  },
+
   // IM Lesson fields (optional for skills from IM lessons)
   section: { type: String },
   lesson: { type: Number }, // Deprecated: use imLessons for multiple

@@ -25,8 +25,15 @@ export async function fetchActivityTypes() {
   return withDbConnection(async () => {
     try {
       const types = await ActivityTypeConfigModel.find({}).sort({ order: 1 });
-      // Convert to JSON to ensure proper serialization (now preserves id field)
-      const serializedTypes = types.map(t => JSON.parse(JSON.stringify(t.toJSON())));
+      // Convert to JSON and map id to typeId for backward compatibility
+      const serializedTypes = types.map(t => {
+        const json = JSON.parse(JSON.stringify(t.toJSON()));
+        // Map id to typeId if typeId doesn't exist
+        if (!json.typeId && json.id) {
+          json.typeId = json.id;
+        }
+        return json;
+      });
       console.log("🔵 [fetchActivityTypes] Sample type:", serializedTypes[0]);
       return { success: true, data: serializedTypes };
     } catch (error) {

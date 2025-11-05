@@ -25,6 +25,38 @@ interface LessonDetailViewProps {
   selectedStudents?: Student[];
 }
 
+// Helper function to generate IM360 URL
+function getIM360Url(lesson: Lesson): string {
+  // Extract grade number
+  const gradeNum = lesson.grade.match(/\d+/)?.[0];
+
+  // Determine if this is Algebra 1 (grade 9)
+  const isAlgebra1 = gradeNum === "9" || lesson.grade.toLowerCase().includes("algebra");
+
+  // Build URL based on course type
+  let baseUrl = "";
+  if (isAlgebra1) {
+    baseUrl = "https://accessim.org/9-12-aga/algebra-1";
+  } else if (gradeNum === "6" || gradeNum === "7" || gradeNum === "8") {
+    baseUrl = `https://accessim.org/6-8/grade-${gradeNum}`;
+  }
+
+  // Extract unit and section
+  const unitMatch = lesson.unit.match(/Unit (\d+)/i);
+  const unit = unitMatch ? `unit-${unitMatch[1]}` : "";
+
+  // Try to match section in different formats: "Section A", "A", etc.
+  let section = "";
+  if (lesson.section) {
+    const sectionMatch = lesson.section.match(/Section ([A-Z])/i) || lesson.section.match(/^([A-Z])$/i);
+    section = sectionMatch ? `section-${sectionMatch[1].toLowerCase()}` : "";
+  }
+
+  const lessonNum = `lesson-${lesson.lessonNumber}`;
+
+  return `${baseUrl}/${unit}/${section}/${lessonNum}/preparation?a=teacher`;
+}
+
 export function LessonDetailView({ lesson, onSkillClick, masteredSkills = [], selectedSection, selectedStudents = [] }: LessonDetailViewProps) {
   // Empty state
   if (!lesson) {
@@ -39,6 +71,8 @@ export function LessonDetailView({ lesson, onSkillClick, masteredSkills = [], se
     );
   }
 
+  const im360Url = getIM360Url(lesson);
+
   return (
     <div>
       {/* Header Card - Lesson Title */}
@@ -47,8 +81,18 @@ export function LessonDetailView({ lesson, onSkillClick, masteredSkills = [], se
           <span className="inline-flex items-center px-3 py-2 rounded-md text-sm font-semibold flex-shrink-0 bg-gray-600 text-white">
             Lesson {lesson.lessonNumber}
           </span>
-          <div className="text-2xl font-bold text-gray-900">
-            {lesson.lessonName}
+          <div>
+            <div className="text-2xl font-bold text-gray-900">
+              {lesson.lessonName}
+            </div>
+            <a
+              href={im360Url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 text-sm mt-1 inline-block"
+            >
+              Open Lesson on IM 360 →
+            </a>
           </div>
         </div>
       </div>

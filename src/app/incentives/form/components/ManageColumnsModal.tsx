@@ -272,9 +272,9 @@ export function ManageColumnsModal({
 
             {/* Activity Types List */}
             <div className="space-y-2 mb-4">
-              {activityTypes.map((type) => (
+              {activityTypes.map((type, index) => (
                 <div
-                  key={type.typeId}
+                  key={type.typeId || type.id || `activity-type-${index}`}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-md"
                 >
                   <div className="flex items-center gap-3">

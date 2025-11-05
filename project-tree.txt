@@ -183,6 +183,8 @@
 ├── response_patterns.txt
 ├── response_patterns_with_context.txt
 ├── scripts
+│   ├── MIGRATION-EXAMPLE.md
+│   ├── README-skill-migration.md
 │   ├── add-students.ts
 │   ├── combine-docs.ts
 │   ├── db
@@ -194,8 +196,10 @@
 │   │   ├── course-config.js
 │   │   ├── pdf-downloader.js
 │   │   └── scraper.ts
+│   ├── migrate-skill-appears-in.ts
 │   ├── snorkl-comprehensive-scraper.ts
 │   ├── snorkl-simple-scraper.ts
+│   ├── test-migrate-one-skill.ts
 │   └── test-monday-token.mjs
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
@@ -247,6 +251,7 @@
 │   │   │   │   ├── im-lessons.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── roadmaps-lessons.ts
+│   │   │   │   ├── roadmaps-skill-relationships.ts
 │   │   │   │   ├── roadmaps-skills.ts
 │   │   │   │   ├── roadmaps-units.ts
 │   │   │   │   ├── scope-and-sequence.ts
@@ -728,6 +733,9 @@
 │   │   │   │   ├── types.ts
 │   │   │   │   └── utils.ts
 │   │   │   ├── rubric-viewer
+│   │   │   │   └── page.tsx
+│   │   │   ├── skill-migration
+│   │   │   │   ├── actions.ts
 │   │   │   │   └── page.tsx
 │   │   │   └── things3
 │   │   │       └── page.tsx
@@ -1714,4 +1722,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-503 directories, 1212 files
+504 directories, 1219 files

@@ -136,7 +136,8 @@ export function useFormDraft(date: string) {
             timestamp: timestamp.toISOString(),
           })
         );
-        setFormState(state);
+        // Don't call setFormState here - it causes cascading updates
+        // The state is already updated by toggleCheckbox/updateDetail
         setLastSaved(timestamp);
       } catch (error) {
         console.error("Failed to save draft:", error);

@@ -62,7 +62,7 @@ export function StudentGrid({
             {/* Activity Type Columns */}
             {activityTypes.map((type) => (
               <th
-                key={type.typeId}
+                key={type.typeId || type.id}
                 scope="col"
                 className="px-2 py-3 text-center text-xs font-medium uppercase tracking-tight"
                 style={{
@@ -103,7 +103,7 @@ export function StudentGrid({
               {/* Checkbox Cells */}
               {activityTypes.map((type) => (
                 <td
-                  key={`${student._id}-${type.typeId}`}
+                  key={`${student._id}-${type.typeId || type.id}`}
                   className="px-2 py-3 text-center"
                   style={{ width: "80px", maxWidth: "80px" }}
                 >
