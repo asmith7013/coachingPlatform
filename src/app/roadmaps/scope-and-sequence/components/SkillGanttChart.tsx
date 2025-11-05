@@ -22,6 +22,7 @@ interface SkillGanttChartProps {
   height?: number;
   onLessonClick?: (lessonId: string) => void;
   selectedLessonId?: string | null;
+  onSkillClick?: (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple') => void;
 }
 
 // Generate distinct colors for each skill row
@@ -58,6 +59,7 @@ export function SkillGanttChart({
   height: baseHeight = 500,
   onLessonClick,
   selectedLessonId = null,
+  onSkillClick,
 }: SkillGanttChartProps) {
   const margin = { top: 100, right: 40, bottom: 40, left: 40 };
 
@@ -132,6 +134,7 @@ export function SkillGanttChart({
         end: lastLesson + 1,
         lessons: lessonsWithSkill.map((item) => item.lesson),
         isTarget: true,
+        prerequisiteSpans: [] as Array<{ start: number; end: number; type: 'essential' | 'helpful' | 'both'; parentSkill: string }>,
       };
     }).filter((item) => item !== null);
 
@@ -157,7 +160,6 @@ export function SkillGanttChart({
       // Process essential skills
       skillData.essentialSkills?.forEach(prereq => {
         const existing = prerequisiteMap.get(prereq.skillNumber);
-        const type = helpfulSet.has(prereq.skillNumber) ? 'both' : 'essential';
 
         if (existing) {
           // Add this lesson span
@@ -166,18 +168,15 @@ export function SkillGanttChart({
             end: targetSkillData.end,
             parentSkill: skill
           });
-          // Update type if it's now both
-          if (type === 'both' || existing.type === 'both') {
-            existing.type = 'both';
-          } else if ((existing.type === 'essential' && helpfulSet.has(prereq.skillNumber)) ||
-                     (existing.type === 'helpful' && essentialSet.has(prereq.skillNumber))) {
+          // If this prereq is helpful elsewhere, mark as both
+          if (existing.type === 'helpful') {
             existing.type = 'both';
           }
         } else {
           prerequisiteMap.set(prereq.skillNumber, {
             skillNumber: prereq.skillNumber,
             title: prereq.title,
-            type,
+            type: 'essential',
             lessonSpans: [{
               start: targetSkillData.start,
               end: targetSkillData.end,
@@ -190,7 +189,6 @@ export function SkillGanttChart({
       // Process helpful skills
       skillData.helpfulSkills?.forEach(prereq => {
         const existing = prerequisiteMap.get(prereq.skillNumber);
-        const type = essentialSet.has(prereq.skillNumber) ? 'both' : 'helpful';
 
         if (existing) {
           existing.lessonSpans.push({
@@ -198,17 +196,15 @@ export function SkillGanttChart({
             end: targetSkillData.end,
             parentSkill: skill
           });
-          if (type === 'both' || existing.type === 'both') {
-            existing.type = 'both';
-          } else if ((existing.type === 'essential' && helpfulSet.has(prereq.skillNumber)) ||
-                     (existing.type === 'helpful' && essentialSet.has(prereq.skillNumber))) {
+          // If this prereq is essential elsewhere, mark as both
+          if (existing.type === 'essential') {
             existing.type = 'both';
           }
         } else {
           prerequisiteMap.set(prereq.skillNumber, {
             skillNumber: prereq.skillNumber,
             title: prereq.title,
-            type,
+            type: 'helpful',
             lessonSpans: [{
               start: targetSkillData.start,
               end: targetSkillData.end,
@@ -220,13 +216,33 @@ export function SkillGanttChart({
     });
 
     // Convert prerequisite map to array
-    const prerequisiteSkills = Array.from(prerequisiteMap.values()).map(prereq => ({
-      skill: prereq.skillNumber,
-      title: prereq.title,
-      type: prereq.type,
-      lessonSpans: prereq.lessonSpans,
-      isTarget: false,
-    }));
+    // For prerequisites that are also target skills, attach the spans to the target skill row
+    const targetSkillNumbers = new Set(allSkills);
+
+    // Attach prerequisite spans to target skills that reappear as prerequisites
+    prerequisiteMap.forEach((prereqData, skillNumber) => {
+      if (targetSkillNumbers.has(skillNumber)) {
+        const targetSkill = targetSkills.find(t => t?.skill === skillNumber);
+        if (targetSkill) {
+          targetSkill.prerequisiteSpans = prereqData.lessonSpans.map(span => ({
+            start: span.start,
+            end: span.end,
+            type: prereqData.type,
+            parentSkill: span.parentSkill
+          }));
+        }
+      }
+    });
+
+    const prerequisiteSkills = Array.from(prerequisiteMap.values())
+      .filter(prereq => !targetSkillNumbers.has(prereq.skillNumber))
+      .map(prereq => ({
+        skill: prereq.skillNumber,
+        title: prereq.title,
+        type: prereq.type,
+        lessonSpans: prereq.lessonSpans,
+        isTarget: false,
+      }));
 
     // Return target skills first, then prerequisite skills
     return [...targetSkills, ...prerequisiteSkills];
@@ -531,7 +547,7 @@ export function SkillGanttChart({
               // Find the last target skill's Y position
               const lastTargetSkill = ganttData.findLast(item => item?.isTarget);
               if (lastTargetSkill) {
-                const separatorY = (yScale(lastTargetSkill.skill) ?? 0) + yScale.bandwidth() + 5;
+                const separatorY = (yScale(lastTargetSkill.skill) ?? 0) + yScale.bandwidth() + 15;
                 return (
                   <line
                     x1={0}
@@ -556,7 +572,18 @@ export function SkillGanttChart({
               if (!item.isTarget && !showPrerequisites) return null;
 
               const barHeight = yScale.bandwidth();
-              const barY = yScale(item.skill) ?? 0;
+              let barY = yScale(item.skill) ?? 0;
+
+              // For prerequisite skills, add margin and reduce vertical spacing
+              if (!item.isTarget && showPrerequisites) {
+                // Add margin below the separator line
+                barY += 20;
+                // Count how many prerequisite skills come before this one
+                const prereqsBefore = ganttData.slice(0, index).filter(i => i && !i.isTarget).length;
+                // Shift up by reducing the gap (each prereq moves up by 95% of the padding)
+                const gapReduction = prereqsBefore * (barHeight * 0.2 * 0.95);
+                barY -= gapReduction;
+              }
 
               // For target skills, render normal bar
               if (item.isTarget && 'start' in item && 'end' in item) {
@@ -593,6 +620,7 @@ export function SkillGanttChart({
 
                 return (
                   <g key={`target-${item.skill}`}>
+                    {/* Main target skill bar */}
                     <rect
                       x={barX}
                       y={barY}
@@ -603,10 +631,12 @@ export function SkillGanttChart({
                       stroke={color}
                       strokeWidth={2}
                       rx={4}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => onSkillClick?.(item.skill, 'blue')}
                     >
                       <title>{skillTitle}</title>
                     </rect>
-                    <g transform={`translate(${barX + 8}, ${barY + barHeight / 2})`}>
+                    <g transform={`translate(${barX + 8}, ${barY + barHeight / 2})`} style={{ cursor: 'pointer' }} onClick={() => onSkillClick?.(item.skill, 'blue')}>
                       <circle
                         cx={14}
                         cy={0}
@@ -650,22 +680,128 @@ export function SkillGanttChart({
                         );
                       })}
                     </g>
+
+                    {/* Render prerequisite spans on the same row if showPrerequisites is on */}
+                    {showPrerequisites && 'prerequisiteSpans' in item && item.prerequisiteSpans.length > 0 && (
+                      <>
+                        {item.prerequisiteSpans.map((span: { start: number; end: number; type: 'essential' | 'helpful' | 'both'; parentSkill: string }, spanIndex: number) => {
+                          const prereqBarX = xScale(span.start);
+                          const prereqBarWidth = xScale(span.end) - xScale(span.start);
+                          const prereqHeight = barHeight * 0.6;
+
+                          // Get the actual type for this specific span from the parent skill's essential/helpful lists
+                          const parentSkillData = skillsData.get(span.parentSkill);
+                          const isEssential = parentSkillData?.essentialSkills?.some(s => s.skillNumber === item.skill);
+                          const isHelpful = parentSkillData?.helpfulSkills?.some(s => s.skillNumber === item.skill);
+
+                          let prereqColor, prereqLightColor;
+                          let spanType: string;
+                          if (isEssential) {
+                            prereqColor = '#C855C8';
+                            prereqLightColor = '#f1e1f1';
+                            spanType = 'essential';
+                          } else {
+                            prereqColor = '#009FB7';
+                            prereqLightColor = '#ccebf1';
+                            spanType = 'helpful';
+                          }
+
+                          // Calculate available width for text
+                          const circleWidth = 18;
+                          const padding = 10;
+                          const availableWidth = prereqBarWidth - circleWidth - padding - 6;
+
+                          // Word wrap
+                          const charsPerLine = Math.floor(availableWidth / 5.5);
+                          const words = skillTitle.split(' ');
+                          const lines: string[] = [];
+                          let currentLine = '';
+
+                          words.forEach((word: string) => {
+                            const testLine = currentLine ? `${currentLine} ${word}` : word;
+                            if (testLine.length <= charsPerLine) {
+                              currentLine = testLine;
+                            } else {
+                              if (currentLine) lines.push(currentLine);
+                              currentLine = word;
+                            }
+                          });
+                          if (currentLine) lines.push(currentLine);
+
+                          const displayLines = lines.slice(0, 2);
+
+                          return (
+                            <g key={`${item.skill}-prereq-span-${spanIndex}`}>
+                              <rect
+                                x={prereqBarX}
+                                y={barY}
+                                width={prereqBarWidth}
+                                height={prereqHeight}
+                                fill={prereqLightColor}
+                                fillOpacity={0.8}
+                                stroke={prereqColor}
+                                strokeWidth={1.5}
+                                rx={3}
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => onSkillClick?.(item.skill, spanType === 'essential' ? 'purple' : 'green')}
+                              >
+                                <title>{`${skillTitle} (as ${spanType} skill)`}</title>
+                              </rect>
+                              <g transform={`translate(${prereqBarX + 5}, ${barY + prereqHeight / 2})`} style={{ cursor: 'pointer' }} onClick={() => onSkillClick?.(item.skill, spanType === 'essential' ? 'purple' : 'green')}>
+                                <circle
+                                  cx={9}
+                                  cy={0}
+                                  r={9}
+                                  fill={prereqColor}
+                                  stroke={prereqColor}
+                                  strokeWidth={1.5}
+                                >
+                                  <title>{`${skillTitle} (as ${spanType} skill)`}</title>
+                                </circle>
+                                <text
+                                  x={9}
+                                  y={0}
+                                  fontSize={8}
+                                  fontWeight={700}
+                                  fill="white"
+                                  textAnchor="middle"
+                                  dominantBaseline="central"
+                                  pointerEvents="none"
+                                >
+                                  {item.skill}
+                                </text>
+                                {displayLines.map((line, lineIndex) => {
+                                  const yOffset = displayLines.length === 1
+                                    ? 0
+                                    : (lineIndex - (displayLines.length - 1) / 2) * 10;
+                                  return (
+                                    <text
+                                      key={lineIndex}
+                                      x={22}
+                                      y={yOffset}
+                                      fontSize={9}
+                                      fontWeight={600}
+                                      fill="#1f2937"
+                                      textAnchor="start"
+                                      dominantBaseline="central"
+                                      pointerEvents="none"
+                                    >
+                                      {line}
+                                    </text>
+                                  );
+                                })}
+                              </g>
+                            </g>
+                          );
+                        })}
+                      </>
+                    )}
                   </g>
                 );
               }
 
               // For prerequisite skills, render multiple bars for each lesson span
               if (!item.isTarget && 'type' in item && 'lessonSpans' in item) {
-                const prereqType = item.type;
-                let prereqColor, prereqLightColor;
-                if (prereqType === 'essential' || prereqType === 'both') {
-                  prereqColor = '#C855C8'; // skill-essential
-                  prereqLightColor = '#f1e1f1'; // skill-essential-100
-                } else { // helpful
-                  prereqColor = '#009FB7'; // skill-helpful
-                  prereqLightColor = '#ccebf1'; // skill-helpful-100
-                }
-
                 const prereqHeight = barHeight * 0.6; // 60% of target skill height
                 const skillTitle = item.title || "";
 
@@ -675,6 +811,22 @@ export function SkillGanttChart({
                     {item.lessonSpans.map((span: { start: number; end: number; parentSkill: string }, spanIndex: number) => {
                     const barX = xScale(span.start);
                     const barWidth = xScale(span.end) - xScale(span.start);
+
+                    // Get the actual type for this specific span from the parent skill's essential/helpful lists
+                    const parentSkillData = skillsData.get(span.parentSkill);
+                    const isEssential = parentSkillData?.essentialSkills?.some(s => s.skillNumber === item.skill);
+
+                    let prereqColor, prereqLightColor;
+                    let spanType: string;
+                    if (isEssential) {
+                      prereqColor = '#C855C8';
+                      prereqLightColor = '#f1e1f1';
+                      spanType = 'essential';
+                    } else {
+                      prereqColor = '#009FB7';
+                      prereqLightColor = '#ccebf1';
+                      spanType = 'helpful';
+                    }
 
                     // Calculate available width for text
                     const circleWidth = 18;
@@ -712,10 +864,12 @@ export function SkillGanttChart({
                           stroke={prereqColor}
                           strokeWidth={1.5}
                           rx={3}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => onSkillClick?.(item.skill, spanType === 'essential' ? 'purple' : 'green')}
                         >
-                          <title>{skillTitle}</title>
+                          <title>{`${skillTitle} (as ${spanType} skill)`}</title>
                         </rect>
-                        <g transform={`translate(${barX + 5}, ${barY + prereqHeight / 2})`}>
+                        <g transform={`translate(${barX + 5}, ${barY + prereqHeight / 2})`} style={{ cursor: 'pointer' }} onClick={() => onSkillClick?.(item.skill, spanType === 'essential' ? 'purple' : 'green')}>
                           <circle
                             cx={9}
                             cy={0}
@@ -724,7 +878,7 @@ export function SkillGanttChart({
                             stroke={prereqColor}
                             strokeWidth={1.5}
                           >
-                            <title>{skillTitle}</title>
+                            <title>{`${skillTitle} (as ${spanType} skill)`}</title>
                           </circle>
                           <text
                             x={9}

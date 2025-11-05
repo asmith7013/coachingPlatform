@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { fetchScopeAndSequence } from "@actions/313/scope-and-sequence";
 import { fetchRoadmapsSkillsByNumbers } from "@actions/313/roadmaps-skills";
+import { getRoadmapUnits } from "@/app/actions/313/roadmaps-units";
 import { LessonDetailView } from "./components/LessonDetailView";
 import { StudentFilter } from "./components/StudentFilter";
 import { SkillGanttChart } from "./components/SkillGanttChart";
@@ -10,6 +11,7 @@ import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { Student } from "@zod-schema/313/student";
 import { RoadmapsNav } from "../components/RoadmapsNav";
+import { RoadmapUnit } from "@zod-schema/313/roadmap-unit";
 
 interface ScopeAndSequenceEntry {
   _id: string;
@@ -35,6 +37,7 @@ const SCOPE_SEQUENCE_TAG_OPTIONS = [
 
 export default function ScopeAndSequencePage() {
   const [allLessons, setAllLessons] = useState<ScopeAndSequenceEntry[]>([]);
+  const [allUnits, setAllUnits] = useState<RoadmapUnit[]>([]);
   const [isLoadingLessons, setIsLoadingLessons] = useState(true);
   const [selectedTag, setSelectedTag] = useState("");
   const [selectedUnit, setSelectedUnit] = useState("");
@@ -50,9 +53,10 @@ export default function ScopeAndSequencePage() {
   const [contextSkillData, setContextSkillData] = useState<RoadmapsSkill | null>(null);
   const [loadingContextSkill, setLoadingContextSkill] = useState(false);
 
-  // Load all lessons on mount
+  // Load all lessons and units on mount
   useEffect(() => {
     loadLessons();
+    loadUnits();
   }, []);
 
   const loadLessons = async () => {
@@ -82,6 +86,21 @@ export default function ScopeAndSequencePage() {
       console.error("Error loading lessons:", error);
     } finally {
       setIsLoadingLessons(false);
+    }
+  };
+
+  const loadUnits = async () => {
+    try {
+      const result = await getRoadmapUnits({
+        successOnly: true,
+        limit: 1000
+      });
+
+      if (result.success && result.data) {
+        setAllUnits(Array.isArray(result.data) ? result.data as RoadmapUnit[] : []);
+      }
+    } catch (error) {
+      console.error("Error loading units:", error);
     }
   };
 
@@ -279,6 +298,61 @@ export default function ScopeAndSequencePage() {
                 </select>
               </div>
             </div>
+
+            {/* Stats Summary - shown when unit is selected */}
+            {selectedTag && selectedUnit && filteredLessons.length > 0 && (() => {
+              // Get unitNumber from the first filtered lesson
+              const unitNumber = filteredLessons[0]?.unitNumber;
+
+              // Map selectedTag to full grade name
+              const gradeMap: Record<string, string> = {
+                "Grade 6": "Illustrative Math New York - 6th Grade",
+                "Grade 7": "Illustrative Math New York - 7th Grade",
+                "Grade 8": "Illustrative Math New York - 8th Grade",
+                "Algebra 1": "Illustrative Math New York - Algebra 1",
+              };
+
+              const fullGradeName = gradeMap[selectedTag] || selectedTag;
+
+              const currentUnit = allUnits.find(u =>
+                u.unitNumber === unitNumber && u.grade === fullGradeName
+              );
+
+              console.log('Stats lookup:', { selectedTag, fullGradeName, selectedUnit, unitNumber, currentUnit, allUnitsCount: allUnits.length });
+
+              if (!currentUnit) {
+                return (
+                  <div className="mt-6">
+                    <div className="text-xs text-gray-500">Loading unit data...</div>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="mt-6">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-skill-target">
+                        {currentUnit.targetCount || 0}
+                      </div>
+                      <div className="text-sm text-gray-500">Target Skills</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-skill-essential">
+                        {currentUnit.supportCount || 0}
+                      </div>
+                      <div className="text-sm text-gray-500">Essential Skills</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-skill-helpful">
+                        {currentUnit.extensionCount || 0}
+                      </div>
+                      <div className="text-sm text-gray-500">Helpful Skills</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Right Card: Student Filter - Only show when grade and unit are selected */}
@@ -314,6 +388,7 @@ export default function ScopeAndSequencePage() {
             lessons={filteredLessons}
             onLessonClick={handleLessonClick}
             selectedLessonId={selectedLessonId}
+            onSkillClick={handleSkillClick}
           />
         )}
 
