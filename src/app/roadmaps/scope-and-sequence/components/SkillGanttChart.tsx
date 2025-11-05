@@ -154,9 +154,6 @@ export function SkillGanttChart({
       const targetSkillData = targetSkills.find(t => t?.skill === skill);
       if (!targetSkillData) return;
 
-      const essentialSet = new Set(skillData.essentialSkills?.map(s => s.skillNumber) || []);
-      const helpfulSet = new Set(skillData.helpfulSkills?.map(s => s.skillNumber) || []);
-
       // Process essential skills
       skillData.essentialSkills?.forEach(prereq => {
         const existing = prerequisiteMap.get(prereq.skillNumber);
@@ -692,7 +689,6 @@ export function SkillGanttChart({
                           // Get the actual type for this specific span from the parent skill's essential/helpful lists
                           const parentSkillData = skillsData.get(span.parentSkill);
                           const isEssential = parentSkillData?.essentialSkills?.some(s => s.skillNumber === item.skill);
-                          const isHelpful = parentSkillData?.helpfulSkills?.some(s => s.skillNumber === item.skill);
 
                           let prereqColor, prereqLightColor;
                           let spanType: string;

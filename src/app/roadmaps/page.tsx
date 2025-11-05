@@ -21,6 +21,12 @@ export default function RoadmapsHomePage() {
       href: "/roadmaps/skills",
       icon: "🎯",
       description: "Browse individual skills with teaching resources and prerequisites."
+    },
+    {
+      title: "Mastery Grid",
+      href: "/roadmaps/mastery-grid",
+      icon: "📊",
+      description: "View student mastery progress by unit and section."
     }
   ];
 

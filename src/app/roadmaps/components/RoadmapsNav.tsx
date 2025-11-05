@@ -10,7 +10,7 @@ export function RoadmapsNav() {
     { href: "/roadmaps/scope-and-sequence", label: "Lesson by Lesson" },
     { href: "/roadmaps/units", label: "Units" },
     { href: "/roadmaps/skills", label: "Skills" },
-    // { href: "/roadmaps/class-overview", label: "Class Overview" },
+    { href: "/roadmaps/mastery-grid", label: "Mastery Grid" },
   ];
 
   return (

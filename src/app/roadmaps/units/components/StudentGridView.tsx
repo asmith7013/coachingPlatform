@@ -19,6 +19,7 @@ export function StudentGridView({
   selectedSection
 }: StudentGridViewProps) {
   const [skills, setSkills] = useState<RoadmapsSkill[]>([]);
+  const [supportSkills, setSupportSkills] = useState<RoadmapsSkill[]>([]);
   const [sectionStudents, setSectionStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -76,6 +77,27 @@ export function StudentGridView({
     loadSkills();
   }, [unit]);
 
+  // Fetch support skills for this unit
+  useEffect(() => {
+    if (!unit || !unit.additionalSupportSkills || unit.additionalSupportSkills.length === 0) {
+      setSupportSkills([]);
+      return;
+    }
+
+    const loadSupportSkills = async () => {
+      try {
+        const result = await fetchRoadmapsSkillsByNumbers(unit.additionalSupportSkills);
+        if (result.success && result.data) {
+          setSupportSkills(result.data as RoadmapsSkill[]);
+        }
+      } catch (error) {
+        console.error('Error loading support skills:', error);
+      }
+    };
+
+    loadSupportSkills();
+  }, [unit]);
+
   // Helper to check if student has mastered a skill
   const hasMastered = (student: Student, skillNumber: string): boolean => {
     return student.masteredSkills?.includes(skillNumber) || false;
@@ -103,23 +125,28 @@ export function StudentGridView({
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
       {/* Header */}
       <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
-        <h2 className="text-xl font-bold text-gray-900">
-          {unit.unitTitle.replace(/^\d+\s*-\s*/, '')}
-        </h2>
-        <p className="text-sm text-gray-600 mt-1">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="inline-flex items-center justify-center px-2 py-1 rounded bg-gray-700 text-white font-bold text-xs flex-shrink-0 whitespace-nowrap">
+            Unit {unit.unitNumber}
+          </span>
+          <h2 className="text-xl font-bold text-gray-900">
+            {unit.unitTitle.replace(/^\d+\s*-\s*/, '')}
+          </h2>
+        </div>
+        <p className="text-sm text-gray-600">
           Student Mastery Grid - {sectionStudents.length} students
         </p>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto max-h-[800px] overflow-y-auto">
         <table className="w-full border-collapse text-sm">
-          <thead className="sticky top-0 z-20">
+          <thead className="sticky top-0 z-20 bg-gray-100">
             <tr className="bg-gray-100 border-b-2 border-gray-300">
-              <th className="bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300 w-24">Skill #</th>
-              <th className="bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300">Skill Name</th>
+              <th className="sticky top-0 bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300 w-24">Skill #</th>
+              <th className="sticky top-0 bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300">Skill Name</th>
               {sectionStudents.map(student => (
-                <th key={student._id} className="bg-gray-100 px-2 py-3 text-center font-semibold text-gray-700 border-r border-gray-300 text-xs min-w-[80px]">
+                <th key={student._id} className="sticky top-0 bg-gray-100 px-2 py-3 text-center font-semibold text-gray-700 border-r border-gray-300 text-xs min-w-[80px]">
                   <div className="break-words">
                     {student.firstName} {student.lastName}
                   </div>
@@ -140,7 +167,7 @@ export function StudentGridView({
                   <tr className="bg-purple-50 border-b border-gray-200">
                     <td className="bg-purple-50 px-4 py-3 border-r border-gray-300">
                       <div className="flex flex-col items-center gap-2">
-                        <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-600 text-white text-base font-bold">
+                        <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-purple-600 text-white text-lg font-bold">
                           {skill.skillNumber}
                         </span>
                         <div className="w-16 bg-gray-200 rounded-full h-1.5">
@@ -151,7 +178,7 @@ export function StudentGridView({
                         </div>
                       </div>
                     </td>
-                    <td className="bg-purple-50 px-4 py-3 border-r border-gray-300 font-medium text-gray-900">
+                    <td className="bg-purple-50 px-4 py-3 border-r border-gray-300 font-medium text-gray-900 text-base">
                       {skill.title}
                     </td>
                     {sectionStudents.map(student => {
@@ -170,6 +197,19 @@ export function StudentGridView({
                         </td>
                       );
                     })}
+                  </tr>
+
+                  {/* Target Skill Description Row */}
+                  <tr className="bg-purple-50 border-b border-gray-200">
+                    <td className="bg-purple-50 px-4 py-2 border-r border-gray-300"></td>
+                    <td colSpan={1 + sectionStudents.length} className="px-4 py-2">
+                      {skill.description && (
+                        <div className="text-sm text-gray-700">
+                          <span className="font-semibold">Skill Description: </span>
+                          {skill.description}
+                        </div>
+                      )}
+                    </td>
                   </tr>
 
                   {/* Essential Skills Rows */}
@@ -268,6 +308,59 @@ export function StudentGridView({
                     </>
                   )}
                 </React.Fragment>
+              );
+            })}
+
+            {/* Support Skills Section Header */}
+            {supportSkills.length > 0 && (
+              <tr className="bg-gray-100 border-t-2 border-b border-gray-300">
+                <td colSpan={2 + sectionStudents.length} className="px-4 py-2 text-left font-semibold text-gray-700">
+                  Support Skills
+                </td>
+              </tr>
+            )}
+
+            {/* Support Skills Rows */}
+            {supportSkills.map((supportSkill) => {
+              const supportMasteredCount = sectionStudents.filter(student =>
+                hasMastered(student, supportSkill.skillNumber)
+              ).length;
+
+              return (
+                <tr key={supportSkill.skillNumber} className="border-b border-gray-200 hover:bg-gray-50">
+                  <td className="bg-white px-4 py-2 border-r border-gray-300">
+                    <div className="flex flex-col items-center gap-2">
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-support text-white text-xs font-bold">
+                        {supportSkill.skillNumber}
+                      </span>
+                      <div className="w-16 bg-gray-200 rounded-full h-1.5">
+                        <div
+                          className="bg-skill-support h-1.5 rounded-full transition-all"
+                          style={{ width: `${sectionStudents.length > 0 ? (supportMasteredCount / sectionStudents.length) * 100 : 0}%` }}
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700">
+                    {supportSkill.title}
+                  </td>
+                  {sectionStudents.map(student => {
+                    const isMastered = hasMastered(student, supportSkill.skillNumber);
+                    return (
+                      <td key={student._id} className="px-2 py-2 border-r border-gray-300 text-center">
+                        <div className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
+                          isMastered ? 'bg-skill-support' : 'border-2 border-gray-300'
+                        }`}>
+                          {isMastered && (
+                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
               );
             })}
           </tbody>
