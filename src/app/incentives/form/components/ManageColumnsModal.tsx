@@ -96,8 +96,8 @@ export function ManageColumnsModal({
     setError(null);
   };
 
-  const handleDelete = async (id: string) => {
-    const type = activityTypes.find((t) => t.id === id);
+  const handleDelete = async (typeId: string) => {
+    const type = activityTypes.find((t) => t.typeId === typeId);
     if (type?.isDefault) {
       setError("Cannot delete default activity types");
       return;
@@ -110,7 +110,7 @@ export function ManageColumnsModal({
     setIsSubmitting(true);
     setError(null);
 
-    const result = await deleteActivityType(id);
+    const result = await deleteActivityType(typeId);
 
     if (typeof result !== 'string' && result.success) {
       onUpdate();
@@ -130,9 +130,7 @@ export function ManageColumnsModal({
     setIsSubmitting(true);
     setError(null);
 
-    const id = generateActivityTypeId(formData.label);
     const newType: ActivityTypeConfigInput = {
-      id,
       label: formData.label,
       icon: formData.icon,
       color: formData.color,

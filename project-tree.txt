@@ -253,6 +253,7 @@
 │   │   │   │   ├── roadmaps-lessons.ts
 │   │   │   │   ├── roadmaps-skill-relationships.ts
 │   │   │   │   ├── roadmaps-skills.ts
+│   │   │   │   ├── roadmaps-student-data.ts
 │   │   │   │   ├── roadmaps-units.ts
 │   │   │   │   ├── scope-and-sequence.ts
 │   │   │   │   ├── student-data.ts
@@ -534,7 +535,8 @@
 │   │   │   │   ├── page.tsx
 │   │   │   │   └── utils
 │   │   │   │       └── generateInquiryOptions.ts
-│   │   │   └── layout.tsx
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
 │   │   ├── integrations
 │   │   │   └── monday
 │   │   │       ├── example1
@@ -553,6 +555,19 @@
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
 │   │   ├── roadmaps
+│   │   │   ├── assessment-scraper
+│   │   │   │   ├── actions
+│   │   │   │   │   ├── scrape-and-update.ts
+│   │   │   │   │   ├── scrape-assessment-history.ts
+│   │   │   │   │   └── update-student-data.ts
+│   │   │   │   ├── components
+│   │   │   │   │   ├── AssessmentScraperForm.tsx
+│   │   │   │   │   └── ResultsDisplay.tsx
+│   │   │   │   ├── hooks
+│   │   │   │   │   └── useAssessmentScraper.ts
+│   │   │   │   ├── lib
+│   │   │   │   │   └── csv-parser.ts
+│   │   │   │   └── page.tsx
 │   │   │   ├── components
 │   │   │   │   ├── AccordionItem.tsx
 │   │   │   │   ├── AccordionList.tsx
@@ -560,6 +575,15 @@
 │   │   │   │   ├── SkillDetailView.tsx
 │   │   │   │   ├── SkillDetailWrapper.tsx
 │   │   │   │   └── SkillListWithProgress.tsx
+│   │   │   ├── history
+│   │   │   │   ├── components
+│   │   │   │   └── page.tsx
+│   │   │   ├── html
+│   │   │   │   ├── assessment-history.html
+│   │   │   │   ├── classes.html
+│   │   │   │   ├── roadmap.html
+│   │   │   │   ├── skillGrade.html
+│   │   │   │   └── studentGrade.html
 │   │   │   ├── im-lesson-updater
 │   │   │   │   └── page.tsx
 │   │   │   ├── json
@@ -1411,10 +1435,12 @@
 │   │   │   └── zod-schema
 │   │   │       ├── 313
 │   │   │       │   ├── activity-type-config.ts
+│   │   │       │   ├── assessment-scraper.ts
 │   │   │       │   ├── core.ts
 │   │   │       │   ├── roadmap-skill.ts
 │   │   │       │   ├── roadmap-unit.ts
 │   │   │       │   ├── roadmap.ts
+│   │   │       │   ├── roadmaps-student-data.ts
 │   │   │       │   ├── scope-and-sequence.ts
 │   │   │       │   ├── storage.ts
 │   │   │       │   ├── student-activity.ts
@@ -1719,4 +1745,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-503 directories, 1217 files
+511 directories, 1235 files

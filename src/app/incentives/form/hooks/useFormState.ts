@@ -47,7 +47,12 @@ export function useFormFilters() {
   const [unitId, setUnitIdState] = useState<string>("");
   const [section, setSectionState] = useState<string>("");
   const [date, setDateState] = useState<string>(() => {
-    return new Date().toISOString().split("T")[0];
+    // Get local timezone date (YYYY-MM-DD)
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   });
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -55,11 +60,10 @@ export function useFormFilters() {
   useEffect(() => {
     const storedUnit = localStorage.getItem(STORAGE_KEYS.UNIT);
     const storedSection = localStorage.getItem(STORAGE_KEYS.SECTION);
-    const storedDate = localStorage.getItem(STORAGE_KEYS.DATE);
+    // Always default to today's date (don't load from localStorage)
 
     if (storedUnit) setUnitIdState(storedUnit);
     if (storedSection) setSectionState(storedSection);
-    if (storedDate) setDateState(storedDate);
 
     setIsLoaded(true);
   }, []);

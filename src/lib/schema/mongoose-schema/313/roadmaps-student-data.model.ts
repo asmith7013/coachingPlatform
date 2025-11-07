@@ -9,6 +9,15 @@ import { standardSchemaOptions } from "../shared-options";
  * Schema for roadmaps student data with embedded skill performances
  * Maps to existing roadmaps-student-data collection
  */
+
+// Schema for individual attempts at a skill
+const attemptSchema = {
+  attemptNumber: { type: Number, required: true },
+  dateCompleted: { type: String, required: true },
+  score: { type: String, required: true },
+  passed: { type: Boolean, required: true }
+};
+
 const roadmapsStudentDataFields = {
   studentId: { type: String, required: true, index: true },
   studentName: { type: String, required: true },
@@ -20,13 +29,22 @@ const roadmapsStudentDataFields = {
     skillName: { type: String, required: false },
     skillGrade: { type: String, required: false },
     standards: { type: String, required: false },
-    status: { 
-      type: String, 
+    status: {
+      type: String,
       enum: ["Demonstrated", "Attempted But Not Passed", "Not Started"],
-      required: true 
+      required: true
     },
-    score: { type: String, required: false },
-    lastUpdated: { type: String, required: false }
+    score: { type: String, required: false }, // Keep for backward compatibility
+    lastUpdated: { type: String, required: false }, // Keep for backward compatibility
+
+    // NEW: Track all attempts
+    attempts: { type: [attemptSchema], default: [] },
+
+    // NEW: Computed fields from attempts
+    bestScore: { type: String, required: false },
+    attemptCount: { type: Number, default: 0 },
+    masteredDate: { type: String, required: false },
+    lastAttemptDate: { type: String, required: false }
   }]
 };
 

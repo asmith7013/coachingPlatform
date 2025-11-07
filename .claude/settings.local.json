@@ -1,19 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(rm:*)",
-      "Bash(xargs:*)",
-      "Bash(tsc:*)",
-      "Bash(mv:*)",
-      "Bash(npx tsc:*)",
-      "Bash(npm run lint:*)",
-      "Bash(sed:*)",
-      "Bash(npm run prebuild:*)",
-      "Bash(npm run build:*)",
-      "Bash(cat:*)",
-      "Bash(git log:*)",
-      "Bash(npm run generate-css:*)",
-      "Bash(mongosh \"mongodb://localhost:27017/ai-coaching-platform\" --quiet --eval 'db.getCollection(\"\"\"\"roadmaps-units\"\"\"\").find({ $or: [ { targetSkills: \"\"\"\"660\"\"\"\" }, { additionalSupportSkills: \"\"\"\"660\"\"\"\" } ] }).toArray()')"
+      "Bash(mkdir:*)",
+      "Bash(mongosh:*)"
     ],
     "deny": [],
     "ask": []

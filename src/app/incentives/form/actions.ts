@@ -34,7 +34,6 @@ export async function fetchActivityTypes() {
         }
         return json;
       });
-      console.log("🔵 [fetchActivityTypes] Sample type:", serializedTypes[0]);
       return { success: true, data: serializedTypes };
     } catch (error) {
       return { success: false, error: handleServerError(error, "Failed to fetch activity types") };
@@ -48,15 +47,15 @@ export async function fetchActivityTypes() {
 export async function createActivityType(config: ActivityTypeConfigInput) {
   return withDbConnection(async () => {
     try {
-      // Check for duplicate ID or label
+      // Check for duplicate label
       const existing = await ActivityTypeConfigModel.findOne({
-        $or: [{ id: config.id }, { label: config.label }],
+        label: config.label
       });
 
       if (existing) {
         return {
           success: false,
-          error: "Activity type with this ID or label already exists",
+          error: "Activity type with this label already exists",
         };
       }
 
@@ -86,7 +85,7 @@ export async function updateActivityType(
 ) {
   return withDbConnection(async () => {
     try {
-      const type = await ActivityTypeConfigModel.findOne({ id });
+      const type = await ActivityTypeConfigModel.findById(id);
 
       if (!type) {
         return { success: false, error: "Activity type not found" };
@@ -103,7 +102,7 @@ export async function updateActivityType(
       if (updates.label && updates.label !== type.label) {
         const existing = await ActivityTypeConfigModel.findOne({
           label: updates.label,
-          id: { $ne: id },
+          _id: { $ne: id },
         });
 
         if (existing) {
@@ -130,7 +129,7 @@ export async function updateActivityType(
 export async function deleteActivityType(id: string) {
   return withDbConnection(async () => {
     try {
-      const type = await ActivityTypeConfigModel.findOne({ id });
+      const type = await ActivityTypeConfigModel.findById(id);
 
       if (!type) {
         return { success: false, error: "Activity type not found" };
@@ -143,7 +142,7 @@ export async function deleteActivityType(id: string) {
         };
       }
 
-      await ActivityTypeConfigModel.deleteOne({ id });
+      await ActivityTypeConfigModel.deleteOne({ _id: id });
       return { success: true, data: { id } };
     } catch (error) {
       return { success: false, error: handleServerError(error, "Failed to delete activity type") };
@@ -157,9 +156,9 @@ export async function deleteActivityType(id: string) {
 export async function reorderActivityTypes(orderedIds: string[]) {
   return withDbConnection(async () => {
     try {
-      // Update order field for each type
+      // Update order field for each type by _id
       const updates = orderedIds.map((id, index) =>
-        ActivityTypeConfigModel.updateOne({ id }, { order: index + 1 })
+        ActivityTypeConfigModel.updateOne({ _id: id }, { order: index + 1 })
       );
 
       await Promise.all(updates);

@@ -9,7 +9,7 @@ import { Text } from '@components/core/typography/Text';
 import { Badge } from '@components/core/feedback/Badge';
 import { useStudents } from "@hooks/domain/313/useStudents";
 import { Student } from "@/lib/schema/zod-schema/313/student";
-import { SummerDistricts, SummerSections, SummerTeachers, SummerSectionsType, SummerTeachersType } from "@/lib/schema/enum/313";
+import { SummerDistricts, Sections313, Teachers313, Sections313Type, Teachers313Type } from "@/lib/schema/enum/313";
 import type { TableColumnSchema } from '@ui/table-schema';
 import { EmptyListWrapper } from '@components/core/empty/EmptyListWrapper';
 import { UserGroupIcon } from '@heroicons/react/24/outline';
@@ -18,12 +18,12 @@ import { UserGroupIcon } from '@heroicons/react/24/outline';
 const getDistrictMapping = () => {
   return {
     "D11": {
-      sections: ["802", "803"] as SummerSectionsType[],
-      teachers: ["ISAAC", "SCERRA"] as SummerTeachersType[]
+      sections: ["802", "803"] as Sections313Type[],
+      teachers: [] as Teachers313Type[]
     },
     "D9": {
-      sections: ["804", "805"] as SummerSectionsType[],
-      teachers: ["BANIK", "VIVAR"] as SummerTeachersType[]
+      sections: ["804", "805"] as Sections313Type[],
+      teachers: [] as Teachers313Type[]
     }
   };
 };
@@ -49,12 +49,12 @@ export default function StudentViewerPage() {
   
   // Filter available teachers and sections based on selected district
   const availableTeachers = useMemo(() => {
-    if (!selectedDistrict) return SummerTeachers;
+    if (!selectedDistrict) return Teachers313;
     return districtMapping[selectedDistrict as keyof typeof districtMapping]?.teachers || [];
   }, [selectedDistrict, districtMapping]);
-  
+
   const availableSections = useMemo(() => {
-    if (!selectedDistrict) return SummerSections;
+    if (!selectedDistrict) return Sections313;
     return districtMapping[selectedDistrict as keyof typeof districtMapping]?.sections || [];
   }, [selectedDistrict, districtMapping]);
   
@@ -63,9 +63,9 @@ export default function StudentViewerPage() {
     return students.filter(student => {
       // Existing district filtering
       if (selectedDistrict) {
-        const teacherInDistrict = availableTeachers.includes(student.teacher as SummerTeachersType);
-        const sectionInDistrict = availableSections.includes(student.section as SummerSectionsType);
-        
+        const teacherInDistrict = availableTeachers.includes(student.teacher as Teachers313Type);
+        const sectionInDistrict = availableSections.includes(student.section as Sections313Type);
+
         if (!teacherInDistrict || !sectionInDistrict) return false;
       }
       
@@ -100,15 +100,15 @@ export default function StudentViewerPage() {
   
   const handleSectionChange = useCallback(async (studentId: string, newSection: string) => {
     try {
-      await updateWithToast(studentId, { section: newSection as SummerSectionsType });
+      await updateWithToast(studentId, { section: newSection as Sections313Type });
     } catch (error) {
       console.error('Failed to update section:', error);
     }
   }, [updateWithToast]);
-  
+
   const handleTeacherChange = useCallback(async (studentId: string, newTeacher: string) => {
     try {
-      await updateWithToast(studentId, { teacher: newTeacher as SummerTeachersType });
+      await updateWithToast(studentId, { teacher: newTeacher as Teachers313Type });
     } catch (error) {
       console.error('Failed to update teacher:', error);
     }

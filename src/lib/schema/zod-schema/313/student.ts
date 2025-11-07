@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
-import { SummerSectionsZod, SummerTeachersZod } from "@schema/enum/313";
+import { Sections313Zod, Teachers313Zod } from "@schema/enum/313";
 
 // =====================================
 // STUDENT ACTIVITY SCHEMA
@@ -38,8 +38,8 @@ export const StudentFieldsSchema = z.object({
   lastName: z.string().describe("Student's last name"),
 
   // ✅ Keep enum validation but expect string instead of array
-  section: SummerSectionsZod.describe("Class section identifier"),
-  teacher: SummerTeachersZod.describe("Assigned teacher").optional(),
+  section: Sections313Zod.describe("Class section identifier"),
+  teacher: Teachers313Zod.describe("Assigned teacher").optional(),
 
   gradeLevel: z.string().describe("Current grade level (e.g., '6'").optional(),
 //   subject: z.string().min(1).describe("Subject area"),

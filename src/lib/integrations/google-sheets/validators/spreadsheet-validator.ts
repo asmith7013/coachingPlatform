@@ -1,11 +1,11 @@
 import { validateStrict } from '@data-processing/validation/zod-validation';
-import { 
+import {
   TeacherZod,
   SectionZod,
   AttendanceStatusZod
 } from '@zod-schema/313/core';
 import { SpreadsheetHeaders, RawSpreadsheetRow, ValidatedRowData, MasteryDetail } from '../types/spreadsheet-types';
-import { SummerSectionsType } from '@schema/enum/313';
+import { Sections313Type } from '@schema/enum/313';
 
 /**
  * Column mapping using existing normalization patterns
@@ -128,7 +128,7 @@ export class SpreadsheetRowValidator {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         teacher,
-        section: section as SummerSectionsType,
+        section: section as Sections313Type,
         classLengthMin: classLengthMin || 60,
         attendance,
         instructionReceivedMin: parseInt(getValue('instruction')) || undefined,

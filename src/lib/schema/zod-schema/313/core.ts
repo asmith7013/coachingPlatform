@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
-import { SummerSectionsZod } from "@schema/enum/313";
+import { Sections313Zod } from "@schema/enum/313";
 
 // =====================================
 // LESSON CODE DEFINITIONS  
@@ -49,7 +49,7 @@ export type LessonCode = z.infer<typeof LessonCodeZod>;
 
 // Replace the existing enum-based schemas with string schemas for flexibility
 export const TeacherZod = z.string().describe("Teacher name");
-export const SectionZod = SummerSectionsZod.describe("Class section identifier");
+export const SectionZod = Sections313Zod.describe("Class section identifier");
 
 export type Teacher = z.infer<typeof TeacherZod>;
 export type Section = z.infer<typeof SectionZod>;

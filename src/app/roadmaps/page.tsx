@@ -27,6 +27,12 @@ export default function RoadmapsHomePage() {
       href: "/roadmaps/mastery-grid",
       icon: "📊",
       description: "View student mastery progress by unit and section."
+    },
+    {
+      title: "History",
+      href: "/roadmaps/history",
+      icon: "📜",
+      description: "View all student assessment attempts and progress over time."
     }
   ];
 

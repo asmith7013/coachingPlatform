@@ -6,16 +6,9 @@ import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/
 // =====================================
 
 const activityTypeConfigSchemaFields = {
-  typeId: {
-    type: String,
-    required: true,
-    unique: true,
-    index: true
-  },
   label: {
     type: String,
     required: true,
-    unique: true,
     maxlength: 50
   },
   requiresDetails: {
@@ -43,8 +36,7 @@ const activityTypeConfigSchemaFields = {
   },
   order: {
     type: Number,
-    required: true,
-    index: true
+    required: true
   },
   ...standardDocumentFields
 };
@@ -53,13 +45,16 @@ const ActivityTypeConfigSchema = new mongoose.Schema(
   activityTypeConfigSchemaFields,
   {
     ...standardSchemaOptions,
-    collection: 'activity-type-configs'
+    collection: 'activity-type-configs',
+    autoIndex: false, // Disable automatic index creation
+    id: false, // Disable Mongoose's built-in id virtual getter
+    _id: true // Keep MongoDB's _id field
   }
 );
 
-// Indexes for common queries
-ActivityTypeConfigSchema.index({ order: 1 });
-ActivityTypeConfigSchema.index({ isDefault: 1 });
+// Force delete cached model to ensure schema changes are applied
+if (mongoose.models.ActivityTypeConfig) {
+  delete mongoose.models.ActivityTypeConfig;
+}
 
-export const ActivityTypeConfigModel = mongoose.models.ActivityTypeConfig ||
-  mongoose.model("ActivityTypeConfig", ActivityTypeConfigSchema);
+export const ActivityTypeConfigModel = mongoose.model("ActivityTypeConfig", ActivityTypeConfigSchema);

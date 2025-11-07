@@ -5,7 +5,7 @@ export const SummerDistricts = [
     "D9",
 ] as const;
 
-export const SummerSections = [
+export const Sections313 = [
     "802",
     "803",
     "804",
@@ -15,16 +15,7 @@ export const SummerSections = [
     "703/705"
 ] as const;
 
-export const SummerTeachers = [
-    // D11 sections
-    "ISAAC",
-    "SCERRA",
-
-    // D9 sections
-    "BANIK",
-    "VIVAR",
-
-    // 313 sections
+export const Teachers313 = [
     "CARDONA",
     "COMPRES",
     "MALUNGA",
@@ -36,8 +27,8 @@ export const SummerTeachers = [
 export const SummerDistrictsZod = z.enum(SummerDistricts);
 export type SummerDistrictsType = z.infer<typeof SummerDistrictsZod>;
 
-export const SummerSectionsZod = z.enum(SummerSections);
-export type SummerSectionsType = z.infer<typeof SummerSectionsZod>;
+export const Sections313Zod = z.enum(Sections313);
+export type Sections313Type = z.infer<typeof Sections313Zod>;
 
-export const SummerTeachersZod = z.enum(SummerTeachers);
-export type SummerTeachersType = z.infer<typeof SummerTeachersZod>;
+export const Teachers313Zod = z.enum(Teachers313);
+export type Teachers313Type = z.infer<typeof Teachers313Zod>;

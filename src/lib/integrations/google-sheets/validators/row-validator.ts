@@ -4,15 +4,15 @@ import {
   AttendanceStatusZod, 
   AttendanceStatusType 
 } from '@zod-schema/313/core';
-import { 
-  RawSpreadsheetRow, 
-  SpreadsheetHeaders, 
-  ValidatedRowData, 
+import {
+  RawSpreadsheetRow,
+  SpreadsheetHeaders,
+  ValidatedRowData,
   MasteryDetail,
   ColumnAliases,
   ColumnMappingResult
 } from '../types/spreadsheet-types';
-import { SummerSectionsType } from '@/lib/schema/enum/313';
+import { Sections313Type } from '@/lib/schema/enum/313';
 
 // =====================================
 // COLUMN MAPPING UTILITIES
@@ -204,14 +204,14 @@ export function validateAndParseRow(
   let teacher: string;
   let section: string;
   let attendance: AttendanceStatusType;
-  
+
   try {
     teacher = TeacherZod.parse(teacherStr);
-    section = sectionStr as SummerSectionsType;
+    section = sectionStr as Sections313Type;
     attendance = AttendanceStatusZod.parse(attendanceStr);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      throw new Error(`Validation failed: ${error.issues.map((e: z.core.$ZodIssue) => e.message).join(', ')}`);  
+      throw new Error(`Validation failed: ${error.issues.map((e: z.core.$ZodIssue) => e.message).join(', ')}`);
     }
     throw error;
   }
