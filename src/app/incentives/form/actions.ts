@@ -13,6 +13,7 @@ import { StudentActivity } from "@zod-schema/313/student";
 import { StudentActivityEventInput, StudentActivityInputZodSchema } from "@zod-schema/313/student-activity";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
+import { IncentiveEmailService } from "@/lib/email/incentive-notifications";
 
 // =====================================
 // ACTIVITY TYPE ACTIONS
@@ -441,6 +442,47 @@ export async function submitActivities(
 
       if (errors.length > 0) {
         console.log("🔵 [submitActivities] Errors:", JSON.stringify(errors, null, 2));
+      }
+
+      // Send email notification on successful submission
+      if (results.length > 0 && eventsToInsert.length > 0) {
+        try {
+          console.log("📧 [submitActivities] Sending email notification...");
+
+          // Get unit info for email
+          let unitTitle: string | undefined;
+          const firstEvent = eventsToInsert[0];
+          if (firstEvent.unitId) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const unit: any = await RoadmapUnitModel.findById(firstEvent.unitId).lean();
+            unitTitle = unit?.unitTitle;
+          }
+
+          // Calculate activity breakdown
+          const activityCounts = new Map<string, number>();
+          eventsToInsert.forEach(event => {
+            const label = event.activityLabel as string;
+            activityCounts.set(label, (activityCounts.get(label) || 0) + 1);
+          });
+
+          const activityBreakdown = Array.from(activityCounts.entries()).map(([label, count]) => ({
+            label,
+            count
+          }));
+
+          const emailService = new IncentiveEmailService();
+          await emailService.sendSubmissionNotification({
+            teacherName: teacherName || 'Unknown',
+            section: eventsToInsert[0].section as string,
+            unitTitle,
+            date: eventsToInsert[0].date as string,
+            studentCount: results.length,
+            activityBreakdown
+          });
+        } catch (emailError) {
+          // Log email error but don't fail the submission
+          console.error("❌ [submitActivities] Email notification failed:", emailError);
+        }
       }
 
       return {

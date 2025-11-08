@@ -177,6 +177,95 @@ export async function fetchInquiryActivities(unitId: string, section?: string) {
 }
 
 // =====================================
+// SHOUTOUTS AND TEAMWORK TRACKING
+// =====================================
+
+export interface ShoutoutsTeamworkRecord {
+  studentId: string;
+  studentName: string;
+  shoutoutDates: string[]; // Array of dates (YYYY-MM-DD)
+  teamworkDates: string[]; // Array of dates (YYYY-MM-DD)
+}
+
+/**
+ * Fetch shoutouts and teamwork activities for a section with optional date filtering
+ */
+export async function fetchShoutoutsTeamwork(section?: string, startDate?: string, endDate?: string) {
+  return withDbConnection(async () => {
+    try {
+      console.log("🔵 [fetchShoutoutsTeamwork] Called with section:", section, "startDate:", startDate, "endDate:", endDate);
+
+      // Get teamwork activity type ID
+      const teamworkTypeId = "690e180b3b195af5c3d371f1";
+      const shoutoutsTypeId = "shoutouts";
+
+      const query: Record<string, unknown> = {
+        gradeLevel: "8",
+        $or: [
+          { activityType: teamworkTypeId },
+          { activityType: shoutoutsTypeId },
+          { activityLabel: "Teamwork" },
+          { activityLabel: "Shoutouts" }
+        ]
+      };
+
+      if (section) {
+        query.section = section;
+      }
+
+      if (startDate && endDate) {
+        query.date = { $gte: startDate, $lte: endDate };
+      }
+
+      console.log("🔵 [fetchShoutoutsTeamwork] Query:", JSON.stringify(query, null, 2));
+
+      const activities = await StudentActivityModel.find(query)
+        .select("studentId studentName date activityType activityLabel")
+        .sort({ studentName: 1, date: 1 })
+        .lean();
+
+      console.log("🔵 [fetchShoutoutsTeamwork] Found activities:", activities.length);
+
+      // Group by student
+      const studentMap = new Map<string, ShoutoutsTeamworkRecord>();
+
+      activities.forEach((activity) => {
+        const key = `${activity.studentId}|||${activity.studentName}`;
+
+        if (!studentMap.has(key)) {
+          studentMap.set(key, {
+            studentId: activity.studentId,
+            studentName: activity.studentName,
+            shoutoutDates: [],
+            teamworkDates: []
+          });
+        }
+
+        const record = studentMap.get(key)!;
+        const isTeamwork = activity.activityType === teamworkTypeId || activity.activityLabel === "Teamwork";
+        const isShoutouts = activity.activityType === shoutoutsTypeId || activity.activityLabel === "Shoutouts";
+
+        if (isTeamwork) {
+          record.teamworkDates.push(activity.date);
+        } else if (isShoutouts) {
+          record.shoutoutDates.push(activity.date);
+        }
+      });
+
+      const records = Array.from(studentMap.values()).sort((a, b) =>
+        a.studentName.localeCompare(b.studentName)
+      );
+
+      console.log("🔵 [fetchShoutoutsTeamwork] Total students:", records.length);
+
+      return { success: true, data: records };
+    } catch (error) {
+      return { success: false, error: handleServerError(error, "fetchShoutoutsTeamwork") };
+    }
+  });
+}
+
+// =====================================
 // FETCH LESSONS FOR UNIT
 // =====================================
 

@@ -8,10 +8,12 @@ import {
   fetchSmallGroupActivities,
   fetchInquiryActivities,
   fetchLessonsForUnit,
+  fetchShoutoutsTeamwork,
   StudentOfTheDayRecord,
   SmallGroupRecord,
   InquiryRecord,
-  LessonInfo
+  LessonInfo,
+  ShoutoutsTeamworkRecord
 } from "./tracking-actions";
 
 interface TrackingTablesProps {
@@ -23,6 +25,7 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
   const [studentOfDayData, setStudentOfDayData] = useState<StudentOfTheDayRecord[]>([]);
   const [smallGroupData, setSmallGroupData] = useState<SmallGroupRecord[]>([]);
   const [inquiryData, setInquiryData] = useState<InquiryRecord[]>([]);
+  const [shoutoutsTeamworkData, setShoutoutsTeamworkData] = useState<ShoutoutsTeamworkRecord[]>([]);
   const [lessons, setLessons] = useState<LessonInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,6 +38,17 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
       }
     }
     loadStudentOfDay();
+  }, [section]);
+
+  // Fetch Shoutouts/Teamwork data (always shown, independent of unit)
+  useEffect(() => {
+    async function loadShoutoutsTeamwork() {
+      const result = await fetchShoutoutsTeamwork(section);
+      if (result.success && result.data) {
+        setShoutoutsTeamworkData(result.data);
+      }
+    }
+    loadShoutoutsTeamwork();
   }, [section]);
 
   // Fetch unit-specific data when unit is selected
@@ -99,6 +113,9 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
         {/* Student of the Day Calendar */}
         <StudentOfTheDayCalendar data={studentOfDayData} />
       </div>
+
+      {/* Middle Row: Shoutouts/Teamwork Table (full width) */}
+      <ShoutoutsTeamworkTable data={shoutoutsTeamworkData} section={section} />
 
       {/* Bottom Row: Inquiry Groups Table (full width) */}
       {!unitId || !section ? (
@@ -350,6 +367,183 @@ function SmallGroupsTable({
                       </td>
                     );
                   })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// =====================================
+// SHOUTOUTS AND TEAMWORK TABLE
+// =====================================
+
+function ShoutoutsTeamworkTable({
+  data,
+  section
+}: {
+  data: ShoutoutsTeamworkRecord[];
+  section?: string;
+}) {
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [filteredData, setFilteredData] = useState<ShoutoutsTeamworkRecord[]>(data);
+
+  // Update filtered data when date range or data changes
+  useEffect(() => {
+    if (!startDate || !endDate) {
+      setFilteredData(data);
+      return;
+    }
+
+    const filtered = data.map(student => ({
+      ...student,
+      shoutoutDates: student.shoutoutDates.filter(date => date >= startDate && date <= endDate),
+      teamworkDates: student.teamworkDates.filter(date => date >= startDate && date <= endDate)
+    })).filter(student => student.shoutoutDates.length > 0 || student.teamworkDates.length > 0);
+
+    setFilteredData(filtered);
+  }, [data, startDate, endDate]);
+
+  // Reload data when date range changes
+  useEffect(() => {
+    async function reloadData() {
+      if (startDate && endDate) {
+        const result = await fetchShoutoutsTeamwork(section, startDate, endDate);
+        if (result.success && result.data) {
+          setFilteredData(result.data);
+        }
+      }
+    }
+    reloadData();
+  }, [startDate, endDate, section]);
+
+  if (data.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Shoutouts & Teamwork Tracking
+        </h2>
+        <div className="text-center text-gray-500 py-8">
+          No shoutouts or teamwork activities found.
+        </div>
+      </div>
+    );
+  }
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return `${date.getMonth() + 1}/${date.getDate()}`;
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">
+          Shoutouts & Teamwork Tracking ({filteredData.length} students)
+        </h2>
+
+        {/* Date Range Filters */}
+        <div className="flex gap-4 items-end">
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              Start Date
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              End Date
+            </label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          {(startDate || endDate) && (
+            <button
+              onClick={() => {
+                setStartDate("");
+                setEndDate("");
+              }}
+              className="px-3 py-2 text-sm text-blue-600 hover:text-blue-700"
+            >
+              Clear Dates
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full border-collapse">
+          <thead>
+            <tr>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 border border-gray-200 bg-gray-50 sticky left-0 z-10">
+                Student
+              </th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 border border-gray-200 bg-gray-50">
+                Teamwork (👥)
+              </th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 border border-gray-200 bg-gray-50">
+                Shoutouts (💡)
+              </th>
+              <th className="px-3 py-2 text-center text-xs font-semibold text-gray-600 border border-gray-200 bg-gray-50">
+                Total Points
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.map((student) => {
+              const totalPoints = (student.teamworkDates.length + student.shoutoutDates.length) * 5;
+
+              return (
+                <tr key={student.studentId}>
+                  <td className="px-3 py-2 text-sm text-gray-900 border border-gray-200 bg-white sticky left-0 z-10">
+                    {student.studentName}
+                  </td>
+                  <td className="px-3 py-2 text-sm border border-gray-200">
+                    <div className="flex flex-wrap gap-1">
+                      {student.teamworkDates.map((date, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                        >
+                          {formatDate(date)}
+                        </span>
+                      ))}
+                      {student.teamworkDates.length === 0 && (
+                        <span className="text-gray-400 text-xs">-</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-3 py-2 text-sm border border-gray-200">
+                    <div className="flex flex-wrap gap-1">
+                      {student.shoutoutDates.map((date, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-cyan-100 text-cyan-800"
+                        >
+                          {formatDate(date)}
+                        </span>
+                      ))}
+                      {student.shoutoutDates.length === 0 && (
+                        <span className="text-gray-400 text-xs">-</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-3 py-2 text-center text-sm font-semibold text-gray-900 border border-gray-200">
+                    {totalPoints}
+                  </td>
                 </tr>
               );
             })}

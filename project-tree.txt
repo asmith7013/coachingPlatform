@@ -1278,6 +1278,8 @@
 │   │   │       ├── index.ts
 │   │   │       ├── schema-config-check.ts
 │   │   │       └── setup-test-user.ts
+│   │   ├── email
+│   │   │   └── incentive-notifications.ts
 │   │   ├── error
 │   │   │   ├── core
 │   │   │   │   ├── classification.ts
@@ -1749,4 +1751,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-511 directories, 1239 files
+512 directories, 1240 files

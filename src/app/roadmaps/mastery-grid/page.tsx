@@ -7,6 +7,7 @@ import { Student } from "@zod-schema/313/student";
 import { UnitListItem } from "../units/components/UnitListItem";
 import { RoadmapsNav } from "../components/RoadmapsNav";
 import { StudentGridView } from "../units/components/StudentGridView";
+import { AllUnitsGridView } from "../units/components/AllUnitsGridView";
 import { fetchStudents } from "@/app/actions/313/students";
 
 const GRADE_OPTIONS = [
@@ -128,7 +129,7 @@ export default function MasteryGridPage() {
     setSelectedUnitId(null);
   }, [selectedGrade, units]);
 
-  const handleUnitClick = (unitId: string) => {
+  const handleUnitClick = (unitId: string | null) => {
     setSelectedUnitId(unitId);
   };
 
@@ -298,15 +299,52 @@ export default function MasteryGridPage() {
                   )}
                 </div>
               ) : (
-                filteredUnits.map((unit) => (
-                  <UnitListItem
-                    key={unit._id}
-                    unit={unit}
-                    isSelected={selectedUnitId === unit._id}
-                    onClick={() => handleUnitClick(unit._id)}
-                    compact={studentGridView}
-                  />
-                ))
+                <>
+                  {filteredUnits.map((unit) => (
+                    <UnitListItem
+                      key={unit._id}
+                      unit={unit}
+                      isSelected={selectedUnitId === unit._id}
+                      onClick={() => handleUnitClick(unit._id)}
+                      compact={studentGridView}
+                    />
+                  ))}
+                  {/* All Units Option */}
+                  {studentGridView ? (
+                    <div
+                      onClick={() => handleUnitClick(null)}
+                      className={`p-3 border-b border-gray-200 cursor-pointer transition-all flex items-center justify-center ${
+                        selectedUnitId === null
+                          ? 'bg-blue-50 border-l-4 border-l-blue-600'
+                          : 'hover:bg-gray-50 border-l-4 border-l-transparent'
+                      }`}
+                      title="All Units"
+                    >
+                      <span className={`inline-flex items-center justify-center px-2 py-1 rounded ${
+                        selectedUnitId === null ? 'bg-blue-700' : 'bg-blue-600'
+                      } text-white font-bold text-xs whitespace-nowrap`}>
+                        All
+                      </span>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => handleUnitClick(null)}
+                      className={`p-4 border-b border-gray-200 cursor-pointer transition-colors ${
+                        selectedUnitId === null
+                          ? 'bg-blue-50 border-l-4 border-l-blue-600'
+                          : 'hover:bg-gray-50 border-l-4 border-l-transparent'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className={`inline-flex items-center justify-center px-2 py-1 rounded ${
+                          selectedUnitId === null ? 'bg-blue-700' : 'bg-blue-600'
+                        } text-white font-bold text-xs flex-shrink-0 whitespace-nowrap`}>
+                          All Units
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -314,11 +352,19 @@ export default function MasteryGridPage() {
           {/* Middle Column: Student Grid View */}
           <div className={`${studentGridView ? 'w-[calc(100%-5rem-1.5rem)]' : 'w-3/5'} transition-all duration-300`}>
             {studentGridView && selectedSection ? (
-              <StudentGridView
-                unit={selectedUnit}
-                selectedStudents={[]}
-                selectedSection={selectedSection}
-              />
+              selectedUnitId === null ? (
+                <AllUnitsGridView
+                  units={filteredUnits}
+                  selectedSection={selectedSection}
+                  selectedGrade={selectedGrade}
+                />
+              ) : (
+                <StudentGridView
+                  unit={selectedUnit}
+                  selectedStudents={[]}
+                  selectedSection={selectedSection}
+                />
+              )
             ) : (
               <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12 text-center">
                 <div className="text-gray-400 text-lg mb-2">👥</div>

@@ -6,6 +6,7 @@ import { Student } from "@zod-schema/313/student";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
 import { fetchStudents } from "@/app/actions/313/students";
+import { SkillProgressBar } from "./SkillProgressBar";
 
 interface StudentGridViewProps {
   unit: RoadmapUnit | null;
@@ -142,7 +143,7 @@ export function StudentGridView({
       <div className="overflow-x-auto max-h-[800px] overflow-y-auto">
         <table className="w-full border-collapse text-sm">
           <thead className="sticky top-0 z-20 bg-gray-100">
-            <tr className="bg-gray-100 border-b-2 border-gray-300">
+            <tr className="bg-gray-100 border-b border-gray-300">
               <th className="sticky top-0 bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300 w-24">Skill #</th>
               <th className="sticky top-0 bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300">Skill Name</th>
               {sectionStudents.map(student => (
@@ -152,6 +153,42 @@ export function StudentGridView({
                   </div>
                 </th>
               ))}
+            </tr>
+            <tr className="bg-gray-100 border-b-2 border-gray-300">
+              <th className="bg-gray-100 px-4 py-2 border-r border-gray-300"></th>
+              <th className="bg-gray-100 px-4 py-2 border-r border-gray-300"></th>
+              {sectionStudents.map(student => {
+                // Collect all skill numbers visible on this page
+                const allSkillNumbers: string[] = [];
+
+                // Add target skills
+                skills.forEach(skill => {
+                  allSkillNumbers.push(skill.skillNumber);
+                  // Add essential skills
+                  if (skill.essentialSkills) {
+                    skill.essentialSkills.forEach(es => allSkillNumbers.push(es.skillNumber));
+                  }
+                  // Add helpful skills
+                  if (skill.helpfulSkills) {
+                    skill.helpfulSkills.forEach(hs => allSkillNumbers.push(hs.skillNumber));
+                  }
+                });
+
+                // Add support skills
+                supportSkills.forEach(ss => allSkillNumbers.push(ss.skillNumber));
+
+                // Count mastered skills
+                const masteredCount = allSkillNumbers.filter(skillNum =>
+                  hasMastered(student, skillNum)
+                ).length;
+                const totalCount = allSkillNumbers.length;
+
+                return (
+                  <th key={student._id} className="bg-gray-100 px-2 py-2 text-center text-xs font-semibold text-gray-700 border-r border-gray-300">
+                    {masteredCount}/{totalCount}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
@@ -166,17 +203,13 @@ export function StudentGridView({
                   {/* Target Skill Row */}
                   <tr className="bg-purple-50 border-b border-gray-200">
                     <td className="bg-purple-50 px-4 py-3 border-r border-gray-300">
-                      <div className="flex flex-col items-center gap-2">
-                        <span className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-purple-600 text-white text-lg font-bold">
-                          {skill.skillNumber}
-                        </span>
-                        <div className="w-16 bg-gray-200 rounded-full h-1.5">
-                          <div
-                            className="bg-purple-600 h-1.5 rounded-full transition-all"
-                            style={{ width: `${sectionStudents.length > 0 ? (masteredCount / sectionStudents.length) * 100 : 0}%` }}
-                          />
-                        </div>
-                      </div>
+                      <SkillProgressBar
+                        skillNumber={skill.skillNumber}
+                        masteredCount={masteredCount}
+                        totalCount={sectionStudents.length}
+                        color="purple"
+                        size="large"
+                      />
                     </td>
                     <td className="bg-purple-50 px-4 py-3 border-r border-gray-300 font-medium text-gray-900 text-base">
                       {skill.title}
@@ -223,17 +256,12 @@ export function StudentGridView({
                         return (
                           <tr key={essentialSkill.skillNumber} className="border-b border-gray-200 hover:bg-gray-50">
                             <td className="bg-white px-4 py-2 border-r border-gray-300">
-                              <div className="flex flex-col items-center gap-2">
-                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-pink-600 text-white text-xs font-bold">
-                                  {essentialSkill.skillNumber}
-                                </span>
-                                <div className="w-16 bg-gray-200 rounded-full h-1.5">
-                                  <div
-                                    className="bg-pink-600 h-1.5 rounded-full transition-all"
-                                    style={{ width: `${sectionStudents.length > 0 ? (essentialMasteredCount / sectionStudents.length) * 100 : 0}%` }}
-                                  />
-                                </div>
-                              </div>
+                              <SkillProgressBar
+                                skillNumber={essentialSkill.skillNumber}
+                                masteredCount={essentialMasteredCount}
+                                totalCount={sectionStudents.length}
+                                color="pink"
+                              />
                             </td>
                             <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700">
                               {essentialSkill.title}
@@ -271,17 +299,12 @@ export function StudentGridView({
                         return (
                           <tr key={helpfulSkill.skillNumber} className="border-b border-gray-200 hover:bg-gray-50">
                             <td className="bg-white px-4 py-2 border-r border-gray-300">
-                              <div className="flex flex-col items-center gap-2">
-                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-cyan-600 text-white text-xs font-bold">
-                                  {helpfulSkill.skillNumber}
-                                </span>
-                                <div className="w-16 bg-gray-200 rounded-full h-1.5">
-                                  <div
-                                    className="bg-cyan-600 h-1.5 rounded-full transition-all"
-                                    style={{ width: `${sectionStudents.length > 0 ? (helpfulMasteredCount / sectionStudents.length) * 100 : 0}%` }}
-                                  />
-                                </div>
-                              </div>
+                              <SkillProgressBar
+                                skillNumber={helpfulSkill.skillNumber}
+                                masteredCount={helpfulMasteredCount}
+                                totalCount={sectionStudents.length}
+                                color="cyan"
+                              />
                             </td>
                             <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700">
                               {helpfulSkill.title}
@@ -329,17 +352,12 @@ export function StudentGridView({
               return (
                 <tr key={supportSkill.skillNumber} className="border-b border-gray-200 hover:bg-gray-50">
                   <td className="bg-white px-4 py-2 border-r border-gray-300">
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-support text-white text-xs font-bold">
-                        {supportSkill.skillNumber}
-                      </span>
-                      <div className="w-16 bg-gray-200 rounded-full h-1.5">
-                        <div
-                          className="bg-skill-support h-1.5 rounded-full transition-all"
-                          style={{ width: `${sectionStudents.length > 0 ? (supportMasteredCount / sectionStudents.length) * 100 : 0}%` }}
-                        />
-                      </div>
-                    </div>
+                    <SkillProgressBar
+                      skillNumber={supportSkill.skillNumber}
+                      masteredCount={supportMasteredCount}
+                      totalCount={sectionStudents.length}
+                      color="support"
+                    />
                   </td>
                   <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700">
                     {supportSkill.title}
