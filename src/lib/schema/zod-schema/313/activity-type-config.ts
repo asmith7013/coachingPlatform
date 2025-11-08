@@ -27,6 +27,7 @@ export const ActivityTypeConfigFieldsSchema = z.object({
   color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).describe("Hex color code (e.g., '#3b82f6')"),
   isDefault: z.boolean().default(false).describe("Cannot be deleted if true"),
   order: z.number().int().nonnegative().describe("Display order (lower = left)"),
+  typeId: z.string().optional().describe("Legacy field for backwards compatibility"),
 });
 
 /**

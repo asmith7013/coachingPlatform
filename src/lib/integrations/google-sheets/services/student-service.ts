@@ -13,7 +13,8 @@ import { QueryParams, DEFAULT_QUERY_PARAMS } from "@core-types/query";
 export class StudentService {
   // Create standard CRUD actions using the factory
   private static studentActions = createCrudActions({
-    model: StudentModel,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    model: StudentModel as any,
     schema: StudentZodSchema as ZodType<Student>,
     inputSchema: StudentInputZodSchema as ZodType<StudentInput>,
     name: 'Student',

@@ -1,4 +1,6 @@
 .
+├── AGENTS.md
+├── CLAUDE.md
 ├── amplify
 │   ├── docs.md
 │   ├── scope.md
@@ -256,6 +258,7 @@
 │   │   │   │   ├── roadmaps-student-data.ts
 │   │   │   │   ├── roadmaps-units.ts
 │   │   │   │   ├── scope-and-sequence.ts
+│   │   │   │   ├── student-assessments.ts
 │   │   │   │   ├── student-data.ts
 │   │   │   │   ├── student-performance.ts
 │   │   │   │   ├── students.ts
@@ -558,6 +561,7 @@
 │   │   │   ├── assessment-scraper
 │   │   │   │   ├── actions
 │   │   │   │   │   ├── scrape-and-update.ts
+│   │   │   │   │   ├── scrape-assessment-history-batch.ts
 │   │   │   │   │   ├── scrape-assessment-history.ts
 │   │   │   │   │   └── update-student-data.ts
 │   │   │   │   ├── components
@@ -565,6 +569,12 @@
 │   │   │   │   │   └── ResultsDisplay.tsx
 │   │   │   │   ├── hooks
 │   │   │   │   │   └── useAssessmentScraper.ts
+│   │   │   │   ├── html
+│   │   │   │   │   ├── assessment-history.html
+│   │   │   │   │   ├── classes.html
+│   │   │   │   │   ├── roadmap.html
+│   │   │   │   │   ├── skillGrade.html
+│   │   │   │   │   └── studentGrade.html
 │   │   │   │   ├── lib
 │   │   │   │   │   └── csv-parser.ts
 │   │   │   │   └── page.tsx
@@ -578,12 +588,6 @@
 │   │   │   ├── history
 │   │   │   │   ├── components
 │   │   │   │   └── page.tsx
-│   │   │   ├── html
-│   │   │   │   ├── assessment-history.html
-│   │   │   │   ├── classes.html
-│   │   │   │   ├── roadmap.html
-│   │   │   │   ├── skillGrade.html
-│   │   │   │   └── studentGrade.html
 │   │   │   ├── im-lesson-updater
 │   │   │   │   └── page.tsx
 │   │   │   ├── json
@@ -1745,4 +1749,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-511 directories, 1235 files
+511 directories, 1239 files

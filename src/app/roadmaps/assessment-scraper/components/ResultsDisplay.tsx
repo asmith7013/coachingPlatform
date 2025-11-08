@@ -17,13 +17,29 @@ interface ScraperResults {
   };
 }
 
+interface BatchScraperResults {
+  scrapeResults: {
+    totalConfigs: number;
+    successfulConfigs: number;
+    failedConfigs: number;
+    duration: string;
+  };
+  updateResults: {
+    totalStudentsUpdated: number;
+    configsProcessed: number;
+    errors: string[];
+  };
+  totalDuration: string;
+}
+
 interface ResultsDisplayProps {
   results: ScraperResults | null;
+  batchResults: BatchScraperResults | null;
   error: string | null;
   isLoading: boolean;
 }
 
-export function ResultsDisplay({ results, error, isLoading }: ResultsDisplayProps) {
+export function ResultsDisplay({ results, batchResults, error, isLoading }: ResultsDisplayProps) {
   if (isLoading) {
     return (
       <Alert intent="info">
@@ -41,6 +57,97 @@ export function ResultsDisplay({ results, error, isLoading }: ResultsDisplayProp
         <Alert.Title>Error</Alert.Title>
         <Alert.Description>{error}</Alert.Description>
       </Alert>
+    );
+  }
+
+  // Handle batch results
+  if (batchResults) {
+    const hasErrors = batchResults.updateResults.errors.length > 0;
+
+    return (
+      <div className="space-y-4">
+        {/* Success Message */}
+        <Alert intent={hasErrors ? "warning" : "success"}>
+          <Alert.Title>
+            {hasErrors ? 'Batch Completed with Warnings' : 'Batch Scraping Complete!'}
+          </Alert.Title>
+          <Alert.Description>
+            All sections scraped and student records updated
+          </Alert.Description>
+        </Alert>
+
+        {/* Batch Scraping Results */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Batch Scraping Results</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <div className="text-sm text-gray-500">Total Configurations</div>
+              <div className="text-2xl font-semibold text-gray-900">
+                {batchResults.scrapeResults.totalConfigs}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Successful</div>
+              <div className="text-2xl font-semibold text-green-600">
+                {batchResults.scrapeResults.successfulConfigs}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Failed</div>
+              <div className="text-2xl font-semibold text-red-600">
+                {batchResults.scrapeResults.failedConfigs}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Scrape Duration</div>
+              <div className="text-2xl font-semibold text-gray-900">
+                {batchResults.scrapeResults.duration}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Batch Update Results */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Database Update Results</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div>
+              <div className="text-sm text-gray-500">Total Students Updated</div>
+              <div className="text-2xl font-semibold text-green-600">
+                {batchResults.updateResults.totalStudentsUpdated}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Configs Processed</div>
+              <div className="text-2xl font-semibold text-gray-900">
+                {batchResults.updateResults.configsProcessed}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Total Duration</div>
+              <div className="text-2xl font-semibold text-blue-600">
+                {batchResults.totalDuration}
+              </div>
+            </div>
+          </div>
+
+          {/* Errors */}
+          {hasErrors && (
+            <div className="mt-4 pt-4 border-t">
+              <h4 className="text-sm font-medium text-red-600 mb-2">
+                Errors ({batchResults.updateResults.errors.length})
+              </h4>
+              <ul className="space-y-1 max-h-60 overflow-y-auto">
+                {batchResults.updateResults.errors.map((error, index) => (
+                  <li key={index} className="text-sm text-gray-600">
+                    • {error}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
     );
   }
 

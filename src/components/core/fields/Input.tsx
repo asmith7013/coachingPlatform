@@ -71,12 +71,15 @@ export interface InputProps extends InputHTMLProps, Omit<FieldComponentProps, 'c
   disabled?: boolean;
   /** TanStack Form field API for advanced integration */
   fieldApi?: AnyFieldApi;
+  /** @deprecated Use helpText instead */
+  helperText?: string;
 }
 
 export function Input({
   label,
   error,
   helpText,
+  helperText: _helperText,
   className,
   textSize,
   padding,

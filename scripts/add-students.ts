@@ -87,9 +87,9 @@ async function importStudents(): Promise<void> {
     
     // Check for existing students to avoid duplicates
     const existingStudentIds = await StudentModel.find({}, { studentID: 1 }).lean();
-    const existingIds = new Set(existingStudentIds.map(s => s.studentID));
-    
-    const newStudents = validStudents.filter(student => !existingIds.has(student.studentID));
+    const existingIds = new Set(existingStudentIds.map(s => s.studentID as unknown as number));
+
+    const newStudents = validStudents.filter(student => !existingIds.has(student.studentID as number));
     const duplicateCount = validStudents.length - newStudents.length;
     
     if (duplicateCount > 0) {
@@ -111,10 +111,10 @@ async function importStudents(): Promise<void> {
     
     // Log any insertion errors
     if (result.mongoose?.results) {
-      const failedInserts = result.mongoose.results.filter((r: { error: unknown }) => r.error);
+      const failedInserts = result.mongoose.results.filter((r: any) => r.error);
       if (failedInserts.length > 0) {
         console.log(`⚠️  ${failedInserts.length} students failed to insert:`);
-        failedInserts.forEach((failure: { error: unknown }, index: number) => {
+        failedInserts.forEach((failure: any, index: number) => {
           console.log(`  - Student ${index}: ${failure.error}`);
         });
       }

@@ -137,43 +137,34 @@ export async function authenticateRoadmaps(
     // Step 7: Wait for navigation after login
     console.log('⏳ Waiting for authentication to complete...');
 
-    try {
-      await Promise.race([
-        page.waitForURL('**/plan/**', { timeout: 15000 }),
-        page.waitForURL('**/skills/**', { timeout: 15000 }),
-        page.waitForURL('**/units/**', { timeout: 15000 }),
-        page.waitForURL('**/dashboard', { timeout: 15000 })
-      ]);
+    // Wait a moment for the redirect to settle
+    await page.waitForTimeout(2000);
 
-      console.log('✅ Authentication successful!');
-      return { success: true };
+    const currentUrl = page.url();
+    console.log(`📍 Current URL after login: ${currentUrl}`);
 
-    } catch (navigationError) {
-      console.error('💥 Navigation error:', navigationError);
-      const currentUrl = page.url();
+    // Check if we're still on login/auth page (which would indicate failure)
+    if (currentUrl.includes('login') || currentUrl.includes('auth')) {
+      const errorSelectors = [
+        '.error', '.alert', '.notification',
+        '[class*="error"]', '[class*="alert"]',
+        'text=Invalid', 'text=incorrect', 'text=failed'
+      ];
 
-      if (currentUrl.includes('login') || currentUrl.includes('auth')) {
-        const errorSelectors = [
-          '.error', '.alert', '.notification',
-          '[class*="error"]', '[class*="alert"]',
-          'text=Invalid', 'text=incorrect', 'text=failed'
-        ];
-
-        for (const selector of errorSelectors) {
-          const errorElement = page.locator(selector);
-          if (await errorElement.count() > 0) {
-            const errorText = await errorElement.first().textContent();
-            console.log('❌ Authentication error found:', errorText);
-            return { success: false, error: `Authentication failed: ${errorText}` };
-          }
+      for (const selector of errorSelectors) {
+        const errorElement = page.locator(selector);
+        if (await errorElement.count() > 0) {
+          const errorText = await errorElement.first().textContent();
+          console.log('❌ Authentication error found:', errorText);
+          return { success: false, error: `Authentication failed: ${errorText}` };
         }
-
-        return { success: false, error: 'Authentication failed: Still on login page after credentials submission' };
       }
 
-      console.log('✅ Authentication appears successful (not on login page)');
-      return { success: true };
+      return { success: false, error: 'Authentication failed: Still on login page after credentials submission' };
     }
+
+    console.log('✅ Authentication successful!');
+    return { success: true };
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown authentication error';

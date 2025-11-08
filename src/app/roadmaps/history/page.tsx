@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { RoadmapsNav } from "../components/RoadmapsNav";
-import { fetchStudentAssessmentData, getAssessmentDateRange } from "@/app/actions/313/roadmaps-student-data";
+import { fetchStudentAssessments, getAssessmentDateRange } from "@/app/actions/313/student-assessments";
 import { fetchStudents } from "@/app/actions/313/students";
 import { Student } from "@zod-schema/313/student";
 import { Sections313 } from "@/lib/schema/enum/313";
@@ -10,6 +10,7 @@ import { Sections313 } from "@/lib/schema/enum/313";
 type AssessmentRow = {
   studentId: string;
   studentName: string;
+  section: string;
   schoolId: string;
   assessmentDate: string;
   skillCode: string;
@@ -28,6 +29,12 @@ const SECTION_OPTIONS: Array<{ value: string; label: string }> = [
   ...Sections313.map(section => ({ value: section, label: section }))
 ];
 
+const STATUS_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: "", label: "All Statuses" },
+  { value: "Demonstrated", label: "✅ Demonstrated" },
+  { value: "Attempted But Not Passed", label: "⏳ Attempted But Not Passed" }
+];
+
 export default function AssessmentHistoryPage() {
   const [data, setData] = useState<AssessmentRow[]>([]);
   const [filteredData, setFilteredData] = useState<AssessmentRow[]>([]);
@@ -36,9 +43,20 @@ export default function AssessmentHistoryPage() {
 
   // Filters
   const [selectedSection, setSelectedSection] = useState("");
-  const [selectedDates, setSelectedDates] = useState<Set<string>>(new Set());
-  const [availableDates, setAvailableDates] = useState<string[]>([]);
-  const [studentsBySection, setStudentsBySection] = useState<Map<string, Set<string>>>(new Map());
+  const [selectedStatus, setSelectedStatus] = useState<string>(""); // Show all statuses by default
+  const [startDate, setStartDate] = useState<string>(''); // No start date filter by default
+  const [endDate, setEndDate] = useState<string>(''); // Will be set to today
+  const [_availableDates, setAvailableDates] = useState<string[]>([]);
+  const [_studentsBySection, setStudentsBySection] = useState<Map<string, Set<string>>>(new Map());
+
+  // Set end date to today (in local timezone)
+  useEffect(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    setEndDate(`${year}-${month}-${day}`);
+  }, []);
 
   // Load students to map sections
   useEffect(() => {
@@ -82,7 +100,7 @@ export default function AssessmentHistoryPage() {
     loadStudents();
   }, []);
 
-  // Load date range
+  // Load date range (for reference, not needed for filtering anymore)
   useEffect(() => {
     const loadDateRange = async () => {
       try {
@@ -90,8 +108,6 @@ export default function AssessmentHistoryPage() {
         if (result.success && result.data) {
           const dates = result.data.allDates || [];
           setAvailableDates(dates);
-          // Select all dates by default
-          setSelectedDates(new Set(dates));
         }
       } catch (err) {
         console.error('Error loading date range:', err);
@@ -106,13 +122,15 @@ export default function AssessmentHistoryPage() {
     const loadData = async () => {
       try {
         setLoading(true);
-        const result = await fetchStudentAssessmentData({});
+        const result = await fetchStudentAssessments();
 
         if (result.success && result.data) {
-          console.log('[History] Sample assessment rows:', (result.data as AssessmentRow[]).slice(0, 5).map(row => ({
-            studentId: row.studentId,
-            studentName: row.studentName,
-            skillCode: row.skillCode
+          // Log first 3 records to see actual date format
+          console.log('[History] First 3 records with dates:', (result.data as AssessmentRow[]).slice(0, 3).map(r => ({
+            student: r.studentName,
+            dateCompleted: r.dateCompleted,
+            dateType: typeof r.dateCompleted,
+            split: r.dateCompleted.split('T')[0]
           })));
           setData(result.data as AssessmentRow[]);
           setFilteredData(result.data as AssessmentRow[]);
@@ -132,28 +150,44 @@ export default function AssessmentHistoryPage() {
 
   // Apply filters
   useEffect(() => {
+    // Helper function to convert dateCompleted to YYYY-MM-DD format for comparison
+    const toComparableDate = (dateStr: string): string => {
+      // Handle format: "11/06/2025, 2:12 PM" -> "2025-11-06"
+      const datePart = dateStr.split(',')[0]; // Get "11/06/2025"
+      const [month, day, year] = datePart.split('/');
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    };
+
     let filtered = [...data];
 
     // Hide "Not Started" status
     filtered = filtered.filter(row => row.status !== 'Not Started');
 
-    // Filter by section - match students in the selected section
-    if (selectedSection) {
-      const studentIdsInSection = studentsBySection.get(selectedSection);
-      console.log('[History] Filtering by section:', selectedSection);
-      console.log('[History] Student IDs in section:', studentIdsInSection ? Array.from(studentIdsInSection) : 'none');
-      console.log('[History] Sample studentIds from data:', filtered.slice(0, 5).map(r => r.studentId));
-      if (studentIdsInSection) {
-        filtered = filtered.filter(row => studentIdsInSection.has(row.studentId));
-        console.log('[History] Filtered count:', filtered.length);
-      }
+    // Filter by status
+    if (selectedStatus) {
+      filtered = filtered.filter(row => row.status === selectedStatus);
     }
 
-    // Filter by selected dates
-    if (selectedDates.size > 0 && selectedDates.size < availableDates.length) {
+    // Filter by section - use the section field directly from the row
+    if (selectedSection) {
+      filtered = filtered.filter(row => row.section === selectedSection);
+    }
+
+    // Filter by date range
+    if (startDate && endDate) {
       filtered = filtered.filter(row => {
-        const dateStr = row.dateCompleted.split('T')[0];
-        return selectedDates.has(dateStr);
+        const dateStr = toComparableDate(row.dateCompleted);
+        return dateStr >= startDate && dateStr <= endDate;
+      });
+    } else if (startDate) {
+      filtered = filtered.filter(row => {
+        const dateStr = toComparableDate(row.dateCompleted);
+        return dateStr >= startDate;
+      });
+    } else if (endDate) {
+      filtered = filtered.filter(row => {
+        const dateStr = toComparableDate(row.dateCompleted);
+        return dateStr <= endDate;
       });
     }
 
@@ -165,27 +199,7 @@ export default function AssessmentHistoryPage() {
     });
 
     setFilteredData(filtered);
-  }, [data, selectedSection, selectedDates, studentsBySection, availableDates.length]);
-
-  const toggleDate = (date: string) => {
-    setSelectedDates(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(date)) {
-        newSet.delete(date);
-      } else {
-        newSet.add(date);
-      }
-      return newSet;
-    });
-  };
-
-  const toggleAllDates = () => {
-    if (selectedDates.size === availableDates.length) {
-      setSelectedDates(new Set());
-    } else {
-      setSelectedDates(new Set(availableDates));
-    }
-  };
+  }, [data, selectedSection, selectedStatus, startDate, endDate]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -204,7 +218,7 @@ export default function AssessmentHistoryPage() {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Section Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -223,29 +237,47 @@ export default function AssessmentHistoryPage() {
               </select>
             </div>
 
-            {/* Date Filter */}
+            {/* Status Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Dates
-                <button
-                  onClick={toggleAllDates}
-                  className="ml-2 text-sm text-blue-600 hover:text-blue-700"
-                >
-                  ({selectedDates.size === availableDates.length ? 'Deselect' : 'Select'} All)
-                </button>
+                Status
               </label>
-              <div className="max-h-40 overflow-y-auto border border-gray-300 rounded-lg p-2">
-                {availableDates.map(date => (
-                  <label key={date} className="flex items-center gap-2 p-1 hover:bg-gray-50 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selectedDates.has(date)}
-                      onChange={() => toggleDate(date)}
-                      className="rounded text-blue-600"
-                    />
-                    <span className="text-sm">{new Date(date).toLocaleDateString()}</span>
-                  </label>
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                {STATUS_OPTIONS.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
                 ))}
+              </select>
+            </div>
+
+            {/* Date Range Filter */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
             </div>
           </div>
@@ -274,6 +306,9 @@ export default function AssessmentHistoryPage() {
                       Student
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Section
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Skill
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -299,7 +334,7 @@ export default function AssessmentHistoryPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredData.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={9} className="px-6 py-8 text-center text-gray-500">
                         No assessment data found
                       </td>
                     </tr>
@@ -308,6 +343,9 @@ export default function AssessmentHistoryPage() {
                       <tr key={index} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {row.studentName}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {row.section}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
                           {row.skillName}
@@ -339,6 +377,7 @@ export default function AssessmentHistoryPage() {
                               ? 'bg-yellow-100 text-yellow-800'
                               : 'bg-gray-100 text-gray-800'
                           }`}>
+                            {row.status === 'Demonstrated' ? '✅ ' : row.status === 'Attempted But Not Passed' ? '⏳ ' : ''}
                             {row.status}
                           </span>
                         </td>

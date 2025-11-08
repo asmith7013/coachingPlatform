@@ -37,7 +37,7 @@ export async function fetchStudentAssessmentData(filters?: {
     // Flatten the data to show all attempts for all students
     const flattenedData = studentData.flatMap(student => {
       return student.skillPerformances.flatMap(skill => {
-        if (skill.attempts && skill.attempts.length > 0) {
+        if (skill.attempts && Array.isArray(skill.attempts) && skill.attempts.length > 0) {
           return skill.attempts.map(attempt => ({
             studentId: student.studentId,
             studentName: student.studentName,
@@ -68,7 +68,7 @@ export async function fetchStudentAssessmentData(filters?: {
             attemptNumber: 0,
             dateCompleted: skill.lastUpdated || '',
             score: skill.score || '',
-            passed: skill.status === 'Demonstrated'
+            passed: (skill.status as unknown as string) === 'Demonstrated'
           }];
         }
       });
@@ -113,12 +113,15 @@ export async function getAssessmentDateRange() {
 
     const allDates: Date[] = [];
 
-    studentData.forEach(student => {
-      student.skillPerformances.forEach(skill => {
-        if (skill.attempts && skill.attempts.length > 0) {
-          skill.attempts.forEach(attempt => {
+    studentData.forEach((student: unknown) => {
+      const s = student as Record<string, unknown>;
+      const skills = s.skillPerformances as Array<Record<string, unknown>>;
+      skills?.forEach((skill) => {
+        const attempts = skill.attempts as Array<Record<string, unknown>>;
+        if (attempts && Array.isArray(attempts) && attempts.length > 0) {
+          attempts.forEach((attempt) => {
             if (attempt.dateCompleted) {
-              allDates.push(new Date(attempt.dateCompleted));
+              allDates.push(new Date(attempt.dateCompleted as string));
             }
           });
         }

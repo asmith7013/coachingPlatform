@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { RoadmapsStudentDataModel } from '@/lib/schema/mongoose-schema/313/roadmaps-student-data.model';
+import { StudentModel } from '@/lib/schema/mongoose-schema/313/student.model';
 import { type AssessmentRow } from '@/lib/schema/zod-schema/313/assessment-scraper';
 import { groupByStudent, groupBySkill } from '../lib/csv-parser';
 import { handleServerError } from "@error/handlers/server";
@@ -73,20 +73,41 @@ export async function updateStudentData(request: unknown) {
     console.log(`   👥 Students to process: ${studentGroups.size}`);
 
     let studentsUpdated = 0;
-    let studentsCreated = 0;
+    const studentsCreated = 0;
     const errors: string[] = [];
 
     // Process each student
     for (const [studentName, studentRows] of studentGroups) {
       try {
-        // Generate a simple student ID from name (you may want a better approach)
-        const studentId = studentName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        // Parse student name (format: "LASTNAME, FIRSTNAME")
+        const [lastName, firstName] = studentName.split(',').map(s => s.trim());
+
+        if (!lastName || !firstName) {
+          const errorMsg = `Invalid student name format: "${studentName}" (expected "LASTNAME, FIRSTNAME")`;
+          console.error(`  ❌ ${errorMsg}`);
+          errors.push(errorMsg);
+          continue;
+        }
+
+        // Look up student in database to get their actual studentID
+        const student = await StudentModel.findOne({
+          firstName: new RegExp(`^${firstName}$`, 'i'),
+          lastName: new RegExp(`^${lastName}$`, 'i')
+        }).lean();
+
+        if (!student) {
+          const errorMsg = `Student not found in database: ${studentName}`;
+          console.error(`  ⚠️  ${errorMsg}`);
+          errors.push(errorMsg);
+          continue;
+        }
 
         // Group student's rows by skill
         const skillGroups = groupBySkill(studentRows);
 
         // Build skill performances
         const skillPerformances = [];
+        const masteredSkills: string[] = [];
 
         for (const [skillNumber, skillAttempts] of skillGroups) {
           // Sort attempts by attempt number
@@ -115,6 +136,11 @@ export async function updateStudentData(request: unknown) {
           // Determine status
           const status = getStatus(bestScore);
 
+          // Add to mastered skills if demonstrated
+          if (status === 'Demonstrated') {
+            masteredSkills.push(skillNumber);
+          }
+
           // Get skill name from first row
           const skillName = sortedAttempts[0].skillName;
 
@@ -132,26 +158,27 @@ export async function updateStudentData(request: unknown) {
           });
         }
 
-        // Upsert student record
-        const result = await RoadmapsStudentDataModel.findOneAndUpdate(
-          { studentId, schoolId },
+        // Update student document with skill performances
+        const result = await StudentModel.findOneAndUpdate(
+          { studentID: student.studentID },
           {
-            studentId,
-            studentName,
-            schoolId,
-            assessmentDate,
-            skillPerformances
+            $set: {
+              skillPerformances: skillPerformances,
+              masteredSkills: masteredSkills,
+              lastAssessmentDate: assessmentDate
+            }
           },
           {
-            upsert: true,
             new: true,
-            setDefaultsOnInsert: true
+            runValidators: true
           }
         );
 
         if (result) {
           studentsUpdated++;
-          console.log(`  ✅ Updated: ${studentName} (${skillPerformances.length} skills)`);
+          console.log(`  ✅ Updated: ${studentName} (${skillPerformances.length} skills, ${masteredSkills.length} mastered)`);
+        } else {
+          throw new Error(`Failed to update student document`);
         }
 
       } catch (studentError) {
@@ -181,7 +208,7 @@ export async function updateStudentData(request: unknown) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: `Validation error: ${error.errors.map(e => e.message).join(', ')}`
+        error: `Validation error: ${error.issues.map((e: z.ZodIssue) => e.message).join(', ')}`
       };
     }
 

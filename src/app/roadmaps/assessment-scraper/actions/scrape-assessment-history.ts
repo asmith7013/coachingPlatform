@@ -5,8 +5,7 @@ import { chromium, Browser, BrowserContext, Page } from 'playwright';
 import {
   AssessmentScraperConfigZod,
   AssessmentScraperResponseZod,
-  type AssessmentScraperResponse,
-  type AssessmentRow
+  type AssessmentScraperResponse
 } from '@/lib/schema/zod-schema/313/assessment-scraper';
 import { authenticateRoadmaps } from '../../shared/lib/roadmaps-auth';
 import { parseAssessmentCSV } from '../lib/csv-parser';
@@ -57,13 +56,14 @@ async function selectClass(page: Page, className: string): Promise<void> {
   await page.waitForSelector(SELECTORS.CLASS_PANEL, { timeout: 5000 });
   await page.waitForTimeout(500);
 
-  // Find and click the specific class
+  // Find and click the specific class - look for span text inside the li
   const items = await page.locator(SELECTORS.CLASS_ITEMS).all();
   let found = false;
 
   for (const item of items) {
-    const text = await item.textContent();
-    if (text?.trim() === className) {
+    // Get the text from the span element inside the li
+    const spanText = await item.locator('span').textContent();
+    if (spanText?.trim() === className) {
       await item.click();
       found = true;
       console.log(`  ✅ Class "${className}" selected`);
@@ -120,13 +120,13 @@ async function selectMultiselectOption(
   await page.waitForSelector('.p-multiselect-panel', { timeout: 5000 });
   await page.waitForTimeout(500);
 
-  // Find and click the specific option
+  // Find and click the specific option - look for span text inside the li
   const items = await page.locator('.p-multiselect-items .p-multiselect-item').all();
   let found = false;
 
   for (const item of items) {
-    const text = await item.textContent();
-    if (text?.trim() === optionText) {
+    const spanText = await item.locator('span').textContent();
+    if (spanText?.trim() === optionText) {
       await item.click();
       found = true;
       console.log(`  ✅ ${label} "${optionText}" selected`);
@@ -156,7 +156,7 @@ export async function scrapeAssessmentHistory(request: unknown) {
   try {
     // Validate request data
     const validatedRequest = AssessmentScraperConfigZod.parse(request);
-    const { credentials, filters, schoolId, delayBetweenActions } = validatedRequest;
+    const { credentials, filters, delayBetweenActions } = validatedRequest;
 
     console.log('🚀 Starting Assessment History scraping...');
     console.log(`📊 Filters:`, filters);

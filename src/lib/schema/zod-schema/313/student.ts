@@ -26,6 +26,46 @@ export const StudentActivitySchema = z.object({
 });
 
 // =====================================
+// SKILL PERFORMANCE SCHEMA
+// =====================================
+
+/**
+ * Individual skill attempt
+ */
+export const SkillAttemptSchema = z.object({
+  attemptNumber: z.number().int().positive().describe("Attempt number for this skill"),
+  dateCompleted: z.string().describe("Date of attempt (ISO format)"),
+  score: z.string().describe("Score as percentage string (e.g., '80%')"),
+  passed: z.boolean().describe("Whether this attempt passed (typically 80%+)"),
+});
+
+/**
+ * Skill performance tracking
+ */
+export const SkillPerformanceSchema = z.object({
+  skillCode: z.string().describe("Skill code/number"),
+  skillName: z.string().describe("Skill name"),
+  skillGrade: z.string().optional().describe("Grade level for this skill"),
+  unit: z.string().optional().describe("Unit name this skill belongs to"),
+  standards: z.string().optional().describe("Standards covered by this skill"),
+
+  status: z.enum(["Not Started", "Attempted But Not Passed", "Demonstrated"]).describe("Current mastery status"),
+
+  // Attempt history
+  attempts: z.array(SkillAttemptSchema).default([]).describe("All attempts for this skill"),
+
+  // Summary fields
+  bestScore: z.string().optional().describe("Best score achieved (e.g., '80%')"),
+  attemptCount: z.number().int().default(0).describe("Total number of attempts"),
+  masteredDate: z.string().optional().describe("Date when skill was first mastered (ISO format)"),
+  lastAttemptDate: z.string().optional().describe("Date of most recent attempt (ISO format)"),
+
+  // Legacy fields for backward compatibility
+  score: z.string().optional().describe("Legacy: best score"),
+  lastUpdated: z.string().optional().describe("Legacy: last attempt date"),
+});
+
+// =====================================
 // STUDENT SCHEMA
 // =====================================
 
@@ -47,6 +87,10 @@ export const StudentFieldsSchema = z.object({
   active: z.boolean().default(true).describe("Whether student is currently active"),
   masteredSkills: z.array(z.string()).default([]).describe("Array of skill numbers that the student has mastered"),
   classActivities: z.array(StudentActivitySchema).default([]).describe("Array of classroom activity events"),
+
+  // Assessment/skill performance tracking
+  skillPerformances: z.array(SkillPerformanceSchema).default([]).describe("Array of skill performance data with attempt history"),
+  lastAssessmentDate: z.string().optional().describe("Date of most recent assessment update (ISO format)"),
 });
 
 /**
@@ -64,6 +108,8 @@ export const StudentInputZodSchema = toInputSchema(StudentZodSchema);
 // =====================================
 
 export type StudentActivity = z.infer<typeof StudentActivitySchema>;
+export type SkillAttempt = z.infer<typeof SkillAttemptSchema>;
+export type SkillPerformance = z.infer<typeof SkillPerformanceSchema>;
 export type Student = z.infer<typeof StudentZodSchema>;
 export type StudentInput = z.infer<typeof StudentInputZodSchema>;
 
@@ -84,6 +130,7 @@ export function createStudentDefaults(overrides: Partial<StudentInput> = {}): St
     active: true,
     masteredSkills: [],
     classActivities: [],
+    skillPerformances: [],
     ownerIds: [],
     ...overrides
   };

@@ -47,24 +47,24 @@ export class StudentDashboardService {
       console.log(`🔍 Fetching student data for ID: ${studentId}`);
       
     // First, verify student exists in database
-    const student = await StudentModel.findOne({ 
+    const student = await StudentModel.findOne({
         studentID: parseInt(studentId),
-        active: true 
-    });
-      
+        active: true
+    }).lean();
+
       if (!student) {
-        return { 
-          success: false, 
-          error: "Student not found" 
+        return {
+          success: false,
+          error: "Student not found"
         };
       }
 
       // Fetch data from Google Sheets
       const sheetResult = await fetchSheetData(
-        this.STUDENT_DATA_SPREADSHEET_ID, 
+        this.STUDENT_DATA_SPREADSHEET_ID,
         this.STUDENT_DATA_RANGE
       );
-      
+
       if (!sheetResult.success) {
         return {
           success: false,
@@ -74,11 +74,11 @@ export class StudentDashboardService {
 
       // Parse sheet data to find student record
       const studentData = this.parseStudentDataFromSheet(
-        sheetResult.data, 
-        student.studentID.toString(),
-        student.firstName,
-        student.lastName,
-        student.section
+        sheetResult.data,
+        (student.studentID as unknown as number).toString(),
+        student.firstName as unknown as string,
+        student.lastName as unknown as string,
+        student.section as unknown as string
       );
 
       if (!studentData) {
@@ -111,13 +111,13 @@ export class StudentDashboardService {
   static async validateStudentEmail(email: string, studentId: string): Promise<{ success: boolean; error?: string }> {
     try {
       // Find student by ID
-      const student = await StudentModel.findOne({ 
+      const student = await StudentModel.findOne({
         $or: [
           { _id: studentId },
           { studentID: parseInt(studentId) }
         ],
-        active: true 
-      });
+        active: true
+      }).lean();
       
       if (!student || !student.email) {
         return { 
@@ -128,7 +128,7 @@ export class StudentDashboardService {
 
       // Fuzzy email matching (similar to name matching patterns)
       const normalizedInputEmail = email.toLowerCase().trim();
-      const normalizedStudentEmail = student.email.toLowerCase().trim();
+      const normalizedStudentEmail = (student.email as unknown as string).toLowerCase().trim();
       
       // Exact match
       if (normalizedInputEmail === normalizedStudentEmail) {

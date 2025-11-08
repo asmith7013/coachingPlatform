@@ -18,6 +18,34 @@ const studentActivitySchema = new mongoose.Schema({
   createdAt: { type: String, required: false }
 }, { _id: false });
 
+const skillAttemptSchema = new mongoose.Schema({
+  attemptNumber: { type: Number, required: true },
+  dateCompleted: { type: String, required: true },
+  score: { type: String, required: true },
+  passed: { type: Boolean, required: true }
+}, { _id: false });
+
+const skillPerformanceSchema = new mongoose.Schema({
+  skillCode: { type: String, required: true },
+  skillName: { type: String, required: true },
+  skillGrade: { type: String, required: false },
+  unit: { type: String, required: false },
+  standards: { type: String, required: false },
+  status: {
+    type: String,
+    required: true,
+    enum: ['Not Started', 'Attempted But Not Passed', 'Demonstrated']
+  },
+  attempts: { type: [skillAttemptSchema], default: [] },
+  bestScore: { type: String, required: false },
+  attemptCount: { type: Number, default: 0 },
+  masteredDate: { type: String, required: false },
+  lastAttemptDate: { type: String, required: false },
+  // Legacy fields for backward compatibility
+  score: { type: String, required: false },
+  lastUpdated: { type: String, required: false }
+}, { _id: false });
+
 const studentSchemaFields = {
   studentID: {
     type: Number,
@@ -35,6 +63,8 @@ const studentSchemaFields = {
   active: { type: Boolean, default: true, index: true },
   masteredSkills: { type: [String], default: [], index: true },
   classActivities: { type: [studentActivitySchema], default: [] },
+  skillPerformances: { type: [skillPerformanceSchema], default: [] },
+  lastAssessmentDate: { type: String, required: false },
   ...standardDocumentFields
 };
 
@@ -48,5 +78,9 @@ StudentSchema.index({ teacher: 1, section: 1, active: 1 });
 StudentSchema.index({ firstName: 1, lastName: 1 });
 StudentSchema.index({ section: 1, active: 1 });
 
-export const StudentModel = mongoose.models.Student || 
-  mongoose.model("Student", StudentSchema); 
+// Force delete cached model to ensure schema changes are applied
+if (mongoose.models.Student) {
+  delete mongoose.models.Student;
+}
+
+export const StudentModel = mongoose.model("Student", StudentSchema); 

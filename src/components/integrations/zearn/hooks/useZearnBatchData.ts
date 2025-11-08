@@ -132,9 +132,27 @@ export function useZearnBatchData() {
         
         for (const section of selectedSections) {
           const result = await fetchStudentsBySection(section);
-          
+
           if (result.success && result.items) {
-            allStudents.push(...result.items);
+            // Map MongoDB documents to Student type
+            const students: Student[] = result.items.map((item: Record<string, unknown>) => ({
+              _id: (item._id as { toString(): string }).toString(),
+              ownerIds: item.ownerIds as string[],
+              studentID: item.studentID as number,
+              firstName: item.firstName as string,
+              lastName: item.lastName as string,
+              section: item.section as Student['section'],
+              active: item.active as boolean,
+              roadmapSkills: item.roadmapSkills as string[],
+              roadmap: item.roadmap as string,
+              studentGrade: item.studentGrade as string,
+              skillGrade: item.skillGrade as string,
+              lastAssessmentDate: item.lastAssessmentDate as string | undefined,
+              masteredSkills: (item.masteredSkills as string[]) || [],
+              classActivities: (item.classActivities as Student['classActivities']) || [],
+              skillPerformances: (item.skillPerformances as Student['skillPerformances']) || []
+            }));
+            allStudents.push(...students);
           } else {
             console.warn(`Failed to load students for section ${section}:`, result.error);
           }
