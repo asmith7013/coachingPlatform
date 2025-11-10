@@ -294,7 +294,7 @@ export function AllUnitsGridView({
                 <React.Fragment key={unit._id}>
                   {/* Unit Header Row */}
                   <tr className="bg-gray-200 border-t-2 border-b border-gray-400">
-                    <td colSpan={3} className="px-4 py-3 text-left font-bold text-gray-900">
+                    <td colSpan={3} className="px-4 py-2 text-left font-semibold text-gray-900 text-xs">
                       Unit {unit.unitNumber} - {unit.unitTitle.replace(/^\d+\s*-\s*/, '')}
                     </td>
                     {sectionStudents.map(student => {
