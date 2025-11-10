@@ -3,7 +3,8 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(mongosh:*)",
-      "Bash(npm run prebuild:*)"
+      "Bash(npm run prebuild:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

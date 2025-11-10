@@ -159,22 +159,22 @@ export async function updateStudentData(request: unknown) {
         }
 
         // Fetch existing student data to merge
-        const existingStudent = await StudentModel.findOne({ studentID: student.studentID });
+        const existingStudent = await StudentModel.findOne({ studentID: student.studentID }).lean();
 
         // Merge skill performances (keep existing skills not in current assessment)
-        const existingSkillPerformances = existingStudent?.skillPerformances || [];
+        const existingSkillPerformances = (existingStudent?.skillPerformances || []) as Array<{ skillCode: string; [key: string]: unknown }>;
         const newSkillCodes = new Set(skillPerformances.map(sp => sp.skillCode));
 
         // Keep existing skills that aren't in the new data
         const keptSkillPerformances = existingSkillPerformances.filter(
-          (sp: { skillCode: string }) => !newSkillCodes.has(sp.skillCode)
+          (sp) => !newSkillCodes.has(sp.skillCode)
         );
 
         // Combine existing (non-updated) skills with new/updated skills
         const mergedSkillPerformances = [...keptSkillPerformances, ...skillPerformances];
 
         // Merge mastered skills (union of existing and new)
-        const existingMasteredSkills = existingStudent?.masteredSkills || [];
+        const existingMasteredSkills = (existingStudent?.masteredSkills || []) as string[];
         const mergedMasteredSkills = Array.from(
           new Set([...existingMasteredSkills, ...masteredSkills])
         );
