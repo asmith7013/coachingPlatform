@@ -216,6 +216,9 @@
 │   │   │   └── sign-up
 │   │   │       └── page.tsx
 │   │   ├── 313
+│   │   │   ├── animations
+│   │   │   │   ├── examples.ts
+│   │   │   │   └── page.tsx
 │   │   │   ├── config.ts
 │   │   │   ├── google-sheets-export
 │   │   │   │   └── page.tsx
@@ -666,6 +669,8 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── units
 │   │   │       ├── components
+│   │   │       │   ├── AllUnitsGridView.tsx
+│   │   │       │   ├── SkillProgressBar.tsx
 │   │   │       │   ├── StudentGridView.tsx
 │   │   │       │   ├── UnitDetailView.tsx
 │   │   │       │   └── UnitListItem.tsx
@@ -1751,4 +1756,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-512 directories, 1240 files
+513 directories, 1244 files

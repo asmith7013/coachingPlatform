@@ -1,0 +1,48 @@
+# Math Manipulative Animation System
+
+## Directory Structure
+
+### 📁 `/primitives/`
+Core building blocks and constraints for p5.js manipulatives:
+- **shapes.md** - Available shapes (rect, circle, array, etc.)
+- **colors.md** - Color palette and RGB values
+- **animations.md** - Animation patterns and techniques
+- **p5-format.md** - Required p5.js global mode format
+
+### 📁 `/scenarios/`
+Flexible AI prompts for specific math concepts:
+- **multiplication.md** - Arrays, groups, repeated addition
+- **division.md** - Partitive and quotative division models
+- **fractions.md** - Part-whole, number line, area models
+- **algebra.md** - Tape diagrams, balance scales, equations
+- **geometry.md** - Transformations, shapes, measurements
+- **number-sense.md** - Counting, place value, number lines
+
+### 📁 `/examples/`
+Working p5.js code examples for each scenario:
+- **multiplication-array.js**
+- **tape-diagram-solver.js**
+- **fraction-circles.js**
+- etc.
+
+## How to Use
+
+### For LLMs:
+1. Read `/primitives/` to understand constraints
+2. Read relevant scenario from `/scenarios/` for the math concept
+3. Reference `/examples/` for working code patterns
+4. Generate p5.js code following the format
+
+### For Developers:
+1. Start with a scenario template
+2. Customize for specific problem
+3. Test in p5.js playground
+4. Save successful examples
+
+## Philosophy
+
+**Constrained Creativity**: By limiting the vocabulary (shapes, colors, motions), we increase reliability while maintaining flexibility for diverse math concepts.
+
+**Scenario-Based**: Each math concept has its own prompt template that guides the LLM toward appropriate visual representations.
+
+**Example-Driven**: Working code examples serve as references and training data for better LLM output.

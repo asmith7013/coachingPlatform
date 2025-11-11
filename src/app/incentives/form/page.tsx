@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 import { StudentGrid } from "./components/StudentGrid";
 import { ManageColumnsModal } from "./components/ManageColumnsModal";
 import { DetailCard, StudentDetailRow } from "./components/DetailCard";
@@ -33,6 +34,9 @@ interface Unit {
 }
 
 export default function IncentivesFormPage() {
+  // Get current user from Clerk
+  const { user } = useUser();
+
   // Form filters
   const { unitId, section, date, setUnitId, setSection, setDate, isLoaded: filtersLoaded } = useFormFilters();
 
@@ -237,7 +241,8 @@ export default function IncentivesFormPage() {
 
       // Submit to server
       console.log("🟢 [handleSubmit] Calling submitActivities...");
-      const result = await submitActivities(submissions, "Teacher Name"); // TODO: Get from auth
+      const teacherName = user?.fullName || user?.firstName || user?.emailAddresses[0]?.emailAddress || "Unknown";
+      const result = await submitActivities(submissions, teacherName);
       console.log("🟢 [handleSubmit] submitActivities result:", result);
 
       if (typeof result === 'string') {
