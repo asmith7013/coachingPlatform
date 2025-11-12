@@ -277,8 +277,10 @@ export async function scrapeAssessmentHistoryBatch(configs: AssessmentScraperCon
     console.log(`📁 Download directory: ${downloadPath}`);
 
     // Initialize browser
+    // Run headless in production, non-headless in local development
+    const isProduction = process.env.NODE_ENV === 'production';
     browser = await chromium.launch({
-      headless: false,
+      headless: isProduction,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 

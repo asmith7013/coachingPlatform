@@ -6,6 +6,7 @@ import { fetchStudentAssessments, getAssessmentDateRange } from "@/app/actions/3
 import { fetchStudents } from "@/app/actions/313/students";
 import { Student } from "@zod-schema/313/student";
 import { Sections313 } from "@/lib/schema/enum/313";
+import { useAssessmentScraper } from "../assessment-scraper/hooks/useAssessmentScraper";
 
 type AssessmentRow = {
   studentId: string;
@@ -53,6 +54,12 @@ export default function AssessmentHistoryPage() {
   const [filteredData, setFilteredData] = useState<AssessmentRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Assessment scraper hook
+  const {
+    isLoading: isScraping,
+    scrapeAndUpdateBatch
+  } = useAssessmentScraper();
 
   // Filters
   const [selectedSection, setSelectedSection] = useState("");
@@ -223,6 +230,20 @@ export default function AssessmentHistoryPage() {
   const masteredAttempts = filteredData.filter(row => row.passed).length;
   const masteryPercentage = totalAttempts > 0 ? (masteredAttempts / totalAttempts) * 100 : 0;
 
+  // Handle scrape all sections
+  const handleScrapeAll = async () => {
+    await scrapeAndUpdateBatch({
+      email: 'alex.smith@teachinglab.org',
+      password: 'rbx1KQD3fpv7qhd!erc'
+    });
+    // Reload data after scraping
+    const result = await fetchStudentAssessments();
+    if (result.success && result.data) {
+      setData(result.data as AssessmentRow[]);
+      setFilteredData(result.data as AssessmentRow[]);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-6 max-w-7xl">
@@ -282,7 +303,23 @@ export default function AssessmentHistoryPage() {
         {/* Filters */}
         <div className="mb-6">
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+              <button
+                onClick={handleScrapeAll}
+                disabled={isScraping}
+                className={`
+                  px-4 py-2 rounded-lg font-medium text-white text-sm
+                  transition-all duration-200
+                  ${isScraping
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg'
+                  }
+                `}
+              >
+                {isScraping ? 'Updating...' : '🔄 Update Assessment Data'}
+              </button>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Section Filter */}
