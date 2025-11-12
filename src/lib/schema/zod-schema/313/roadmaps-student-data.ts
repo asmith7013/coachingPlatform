@@ -23,7 +23,7 @@ export const SkillPerformanceZodSchema = z.object({
   skillName: z.string().optional(),
   skillGrade: z.string().optional(),
   standards: z.string().optional(),
-  status: z.enum(["Demonstrated", "Attempted But Not Passed", "Not Started"]),
+  status: z.enum(["Mastered", "Attempted But Not Mastered", "Not Started"]),
   score: z.string().optional(), // Backward compatibility
   lastUpdated: z.string().optional(), // Backward compatibility
 

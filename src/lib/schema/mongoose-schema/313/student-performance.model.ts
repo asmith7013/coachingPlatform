@@ -14,10 +14,10 @@ const skillPerformanceItemFields = {
   skillName: { type: String, required: true },
   skillGrade: { type: String, required: true },
   standards: { type: String, required: true },
-  status: { 
-    type: String, 
-    enum: ["Demonstrated", "Attempted But Not Passed", "Not Started"],
-    required: true 
+  status: {
+    type: String,
+    enum: ["Mastered", "Attempted But Not Mastered", "Not Started"],
+    required: true
   },
   score: { type: String, required: false },
   lastUpdated: { type: String, required: false }

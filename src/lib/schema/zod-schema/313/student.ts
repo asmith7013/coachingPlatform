@@ -49,7 +49,7 @@ export const SkillPerformanceSchema = z.object({
   unit: z.string().optional().describe("Unit name this skill belongs to"),
   standards: z.string().optional().describe("Standards covered by this skill"),
 
-  status: z.enum(["Not Started", "Attempted But Not Passed", "Demonstrated"]).describe("Current mastery status"),
+  status: z.enum(["Not Started", "Attempted But Not Mastered", "Mastered"]).describe("Current mastery status"),
 
   // Attempt history
   attempts: z.array(SkillAttemptSchema).default([]).describe("All attempts for this skill"),

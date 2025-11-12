@@ -31,7 +31,7 @@ const roadmapsStudentDataFields = {
     standards: { type: String, required: false },
     status: {
       type: String,
-      enum: ["Demonstrated", "Attempted But Not Passed", "Not Started"],
+      enum: ["Mastered", "Attempted But Not Mastered", "Not Started"],
       required: true
     },
     score: { type: String, required: false }, // Keep for backward compatibility

@@ -25,14 +25,14 @@ const UpdateStudentDataRequestZod = z.object({
 
 /**
  * Determine if a score represents mastery (passed)
- * Default threshold: 80%
+ * Only 80% or 100% are considered passing
  */
-function isPassed(scoreString: string, threshold: number = 80): boolean {
+function isPassed(scoreString: string): boolean {
   const match = scoreString.match(/(\d+)%/);
   if (!match) return false;
 
   const score = parseInt(match[1], 10);
-  return score >= threshold;
+  return score === 80 || score === 100;
 }
 
 /**
@@ -45,13 +45,13 @@ function getNumericScore(scoreString: string): number {
 
 /**
  * Determine status based on best score
- * - 80% or 100%: "Demonstrated" ✅
- * - 60% or lower: "Attempted But Not Passed" ⏳
+ * - 80% or 100%: "Mastered" ✅
+ * - 60% or lower: "Attempted But Not Mastered" ⏳
  * - Not attempted: "Not Started"
  */
-function getStatus(bestScore: number): "Demonstrated" | "Attempted But Not Passed" | "Not Started" {
-  if (bestScore === 80 || bestScore === 100) return "Demonstrated";
-  if (bestScore > 0) return "Attempted But Not Passed";
+function getStatus(bestScore: number): "Mastered" | "Attempted But Not Mastered" | "Not Started" {
+  if (bestScore === 80 || bestScore === 100) return "Mastered";
+  if (bestScore > 0) return "Attempted But Not Mastered";
   return "Not Started";
 }
 
@@ -139,8 +139,8 @@ export async function updateStudentData(request: unknown) {
           // Determine status
           const status = getStatus(bestScore);
 
-          // Add to mastered skills if demonstrated
-          if (status === 'Demonstrated') {
+          // Add to mastered skills if mastered
+          if (status === 'Mastered') {
             masteredSkills.push(skillNumber);
           }
 

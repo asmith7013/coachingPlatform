@@ -446,7 +446,7 @@ export async function deleteStudentPerformance(performanceId: string) {
 
 export async function getStudentsBySkillStatus(
   skillCode: string,
-  status: "Demonstrated" | "Attempted But Not Passed" | "Not Started",
+  status: "Mastered" | "Attempted But Not Mastered" | "Not Started",
   schoolId?: string
 ) {
   return withDbConnection(async () => {

@@ -68,7 +68,7 @@ export async function fetchStudentAssessmentData(filters?: {
             attemptNumber: 0,
             dateCompleted: skill.lastUpdated || '',
             score: skill.score || '',
-            passed: (skill.status as unknown as string) === 'Demonstrated'
+            passed: (skill.status as unknown as string) === 'Mastered'
           }];
         }
       });

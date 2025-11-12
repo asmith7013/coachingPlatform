@@ -31,8 +31,8 @@ const SECTION_OPTIONS: Array<{ value: string; label: string }> = [
 
 const STATUS_OPTIONS: Array<{ value: string; label: string }> = [
   { value: "", label: "All Statuses" },
-  { value: "Demonstrated", label: "✅ Demonstrated" },
-  { value: "Attempted But Not Passed", label: "⏳ Attempted But Not Passed" }
+  { value: "Mastered", label: "✅ Mastered" },
+  { value: "Attempted But Not Mastered", label: "⏳ Attempted But Not Mastered" }
 ];
 
 export default function AssessmentHistoryPage() {
@@ -160,12 +160,16 @@ export default function AssessmentHistoryPage() {
 
     let filtered = [...data];
 
-    // Hide "Not Started" status
+    // Hide "Not Started" status (no attempts recorded)
     filtered = filtered.filter(row => row.status !== 'Not Started');
 
-    // Filter by status
+    // Filter by status based on individual attempt pass/fail
     if (selectedStatus) {
-      filtered = filtered.filter(row => row.status === selectedStatus);
+      if (selectedStatus === 'Mastered') {
+        filtered = filtered.filter(row => row.passed === true);
+      } else if (selectedStatus === 'Attempted But Not Mastered') {
+        filtered = filtered.filter(row => row.passed === false);
+      }
     }
 
     // Filter by section - use the section field directly from the row
@@ -371,14 +375,11 @@ export default function AssessmentHistoryPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            row.status === 'Demonstrated'
+                            row.passed
                               ? 'bg-green-100 text-green-800'
-                              : row.status === 'Attempted But Not Passed'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-gray-100 text-gray-800'
+                              : 'bg-yellow-100 text-yellow-800'
                           }`}>
-                            {row.status === 'Demonstrated' ? '✅ ' : row.status === 'Attempted But Not Passed' ? '⏳ ' : ''}
-                            {row.status}
+                            {row.passed ? '✅ Mastered' : '⏳ Attempted But Not Mastered'}
                           </span>
                         </td>
                       </tr>

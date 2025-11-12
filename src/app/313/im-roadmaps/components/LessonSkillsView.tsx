@@ -20,7 +20,7 @@ interface LessonSkillsViewProps {
     studentName: string;
     skillPerformances: Array<{
       skillCode: string;
-      status: 'Demonstrated' | 'Attempted But Not Passed' | 'Not Started';
+      status: 'Mastered' | 'Attempted But Not Mastered' | 'Not Started';
       score?: string;
       lastUpdated?: string;
     }>;
@@ -30,14 +30,14 @@ interface LessonSkillsViewProps {
 // Helper function to get mastery status styling (moved from TargetSkillCard)
 const getMasteryStyles = (status?: string) => {
   switch (status) {
-    case 'Demonstrated':
+    case 'Mastered':
       return {
         containerClass: 'opacity-60 bg-gray-50',
         textClass: 'text-gray-500 line-through',
         indicator: '✅',
         indicatorClass: 'text-green-600'
       };
-    case 'Attempted But Not Passed':
+    case 'Attempted But Not Mastered':
       return {
         containerClass: 'border-amber-300 bg-amber-50',
         textClass: 'text-amber-900',
@@ -64,7 +64,7 @@ interface TargetSkillDisplayProps {
     description: string;
     skillChallengeCriteria: string;
     roadmapsUrl: string;
-    masteryStatus?: 'Demonstrated' | 'Attempted But Not Passed' | 'Not Started';
+    masteryStatus?: 'Mastered' | 'Attempted But Not Mastered' | 'Not Started';
   };
   isSelected: boolean;
 }
@@ -82,16 +82,16 @@ function TargetSkillDisplay({ targetSkill, isSelected }: TargetSkillDisplayProps
             {/* Mastery Status Badge - inline with title */}
             {targetSkill.masteryStatus && (
               <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
-                targetSkill.masteryStatus === 'Demonstrated' 
+                targetSkill.masteryStatus === 'Mastered' 
                   ? 'bg-green-600 text-white'
-                  : targetSkill.masteryStatus === 'Attempted But Not Passed'
+                  : targetSkill.masteryStatus === 'Attempted But Not Mastered'
                   ? 'bg-amber-100 text-amber-800 border border-amber-300'
                   : 'bg-gray-100 text-gray-700 border border-gray-300'
               }`}>
                 <span>
-                  {targetSkill.masteryStatus === 'Demonstrated' 
+                  {targetSkill.masteryStatus === 'Mastered' 
                     ? '✓'
-                    : targetSkill.masteryStatus === 'Attempted But Not Passed'
+                    : targetSkill.masteryStatus === 'Attempted But Not Mastered'
                     ? '⚠'
                     : '○'
                   }
@@ -132,7 +132,7 @@ interface AccordionSkillsProps {
     title: string;
     description: string;
     roadmapsUrl: string;
-    masteryStatus?: 'Demonstrated' | 'Attempted But Not Passed' | 'Not Started';
+    masteryStatus?: 'Mastered' | 'Attempted But Not Mastered' | 'Not Started';
   }>;
   colorScheme: 'red' | 'green';
   accordionId: string;
@@ -142,7 +142,7 @@ interface AccordionSkillsProps {
 
 function AccordionSkills({ title, skills, colorScheme, isExpanded, onToggle }: AccordionSkillsProps) {
   // Count skills by mastery status - combine into complete/incomplete
-  const completeCount = skills.filter(skill => skill.masteryStatus === 'Demonstrated').length;
+  const completeCount = skills.filter(skill => skill.masteryStatus === 'Mastered').length;
 
   return (
     <AccordionList
@@ -172,7 +172,7 @@ interface SkillCardProps {
     title: string;
     description: string;
     roadmapsUrl: string;
-    masteryStatus?: 'Demonstrated' | 'Attempted But Not Passed' | 'Not Started';
+    masteryStatus?: 'Mastered' | 'Attempted But Not Mastered' | 'Not Started';
   };
   colorScheme: 'red' | 'green';
 }
@@ -202,16 +202,16 @@ function SkillCard({ skill, colorScheme }: SkillCardProps) {
           {/* Mastery Status Badge - inline with title */}
           {skill.masteryStatus && (
             <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
-              skill.masteryStatus === 'Demonstrated' 
+              skill.masteryStatus === 'Mastered' 
                 ? 'bg-green-600 text-white'
-                : skill.masteryStatus === 'Attempted But Not Passed'
+                : skill.masteryStatus === 'Attempted But Not Mastered'
                 ? 'bg-amber-100 text-amber-800 border border-amber-300'
                 : 'bg-gray-100 text-gray-700 border border-gray-300'
             }`}>
               <span>
-                {skill.masteryStatus === 'Demonstrated' 
+                {skill.masteryStatus === 'Mastered' 
                   ? '✓'
-                  : skill.masteryStatus === 'Attempted But Not Passed'
+                  : skill.masteryStatus === 'Attempted But Not Mastered'
                   ? '⚠'
                   : '○'
                 }

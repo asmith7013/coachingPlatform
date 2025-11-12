@@ -145,7 +145,7 @@ export default function AssessmentScraperPage() {
                 <li>• <strong>Best score</strong> achieved across all attempts</li>
                 <li>• <strong>Mastery date</strong> - when student first passed (≥80%)</li>
                 <li>• <strong>Attempt count</strong> and last attempt date</li>
-                <li>• <strong>Current status</strong> - Demonstrated, Attempted But Not Passed, or Not Started</li>
+                <li>• <strong>Current status</strong> - Mastered, Attempted But Not Mastered, or Not Started</li>
               </ul>
             </div>
 

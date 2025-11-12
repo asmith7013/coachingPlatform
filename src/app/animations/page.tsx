@@ -8,7 +8,7 @@ export default function AnimationsPlayground() {
   const [error, setError] = useState<string | null>(null);
   const [selectedExample, setSelectedExample] = useState("");
   const [isRecording, setIsRecording] = useState(false);
-  const [recordingStatus, setRecordingStatus] = useState<"idle" | "capturing">("idle");
+  const [_recordingStatus, setRecordingStatus] = useState<"idle" | "capturing">("idle");
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const currentSketchRef = useRef<{ iframe: HTMLIFrameElement; messageHandler: (event: MessageEvent) => void } | null>(null);
 

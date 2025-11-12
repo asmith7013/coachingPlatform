@@ -5,7 +5,7 @@ interface SkillWithDetails {
   description: string;
   skillChallengeCriteria: string;
   roadmapsUrl: string;
-  masteryStatus?: 'Demonstrated' | 'Attempted But Not Passed' | 'Not Started';
+  masteryStatus?: 'Mastered' | 'Attempted But Not Mastered' | 'Not Started';
 }
 
 interface TargetSkillCardProps {
@@ -17,14 +17,14 @@ interface TargetSkillCardProps {
 // Helper function to get mastery status styling
 const getMasteryStyles = (status?: string) => {
   switch (status) {
-    case 'Demonstrated':
+    case 'Mastered':
       return {
         containerClass: 'opacity-60 bg-gray-50',
         textClass: 'text-gray-500 line-through',
         indicator: '✅',
         indicatorClass: 'text-green-600'
       };
-    case 'Attempted But Not Passed':
+    case 'Attempted But Not Mastered':
       return {
         containerClass: 'border-amber-300 bg-amber-50',
         textClass: 'text-amber-900',
@@ -68,9 +68,9 @@ export function TargetSkillCard({
             {targetSkill.masteryStatus && (
               <div className="mb-2">
                 <span className={`text-sm font-medium px-2 py-1 rounded ${
-                  targetSkill.masteryStatus === 'Demonstrated' 
+                  targetSkill.masteryStatus === 'Mastered' 
                     ? 'bg-green-100 text-green-800'
-                    : targetSkill.masteryStatus === 'Attempted But Not Passed'
+                    : targetSkill.masteryStatus === 'Attempted But Not Mastered'
                     ? 'bg-amber-100 text-amber-800'
                     : 'bg-gray-100 text-gray-800'
                 }`}>
@@ -142,9 +142,9 @@ export function TargetSkillCard({
                     {skill.masteryStatus && (
                       <div className="mb-1">
                         <span className={`text-xs font-medium px-1 py-0.5 rounded ${
-                          skill.masteryStatus === 'Demonstrated' 
+                          skill.masteryStatus === 'Mastered' 
                             ? 'bg-green-100 text-green-700'
-                            : skill.masteryStatus === 'Attempted But Not Passed'
+                            : skill.masteryStatus === 'Attempted But Not Mastered'
                             ? 'bg-amber-100 text-amber-700'
                             : 'bg-gray-100 text-gray-700'
                         }`}>
@@ -200,9 +200,9 @@ export function TargetSkillCard({
                     {skill.masteryStatus && (
                       <div className="mb-1">
                         <span className={`text-xs font-medium px-1 py-0.5 rounded ${
-                          skill.masteryStatus === 'Demonstrated' 
+                          skill.masteryStatus === 'Mastered' 
                             ? 'bg-green-100 text-green-700'
-                            : skill.masteryStatus === 'Attempted But Not Passed'
+                            : skill.masteryStatus === 'Attempted But Not Mastered'
                             ? 'bg-amber-100 text-amber-700'
                             : 'bg-gray-100 text-gray-700'
                         }`}>

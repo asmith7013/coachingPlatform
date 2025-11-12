@@ -13,7 +13,7 @@ export const SkillPerformanceItemZodSchema = z.object({
   skillName: z.string(),
   skillGrade: z.string(),
   standards: z.string(),
-  status: z.enum(["Demonstrated", "Attempted But Not Passed", "Not Started"]),
+  status: z.enum(["Mastered", "Attempted But Not Mastered", "Not Started"]),
   score: z.string().optional(),
   lastUpdated: z.string().optional()
 });

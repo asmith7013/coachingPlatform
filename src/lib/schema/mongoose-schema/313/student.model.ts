@@ -34,7 +34,7 @@ const skillPerformanceSchema = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: ['Not Started', 'Attempted But Not Passed', 'Demonstrated']
+    enum: ['Not Started', 'Attempted But Not Mastered', 'Mastered']
   },
   attempts: { type: [skillAttemptSchema], default: [] },
   bestScore: { type: String, required: false },
