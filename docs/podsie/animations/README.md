@@ -9,6 +9,13 @@ Core building blocks and constraints for p5.js manipulatives:
 - **animations.md** - Animation patterns and techniques
 - **p5-format.md** - Required p5.js global mode format
 
+### 📄 `AUTO-MANUAL-TOGGLE-PATTERN.md`
+**REQUIRED READING** - Standard pattern for all multi-phase animations:
+- Auto-play mode (default): Phases advance automatically
+- Manual mode: User clicks to advance phases
+- Toggle button in bottom right corner
+- Universal pattern applied to all animations
+
 ### 📁 `/scenarios/`
 Flexible AI prompts for specific math concepts:
 - **multiplication.md** - Arrays, groups, repeated addition
@@ -28,10 +35,11 @@ Working p5.js code examples for each scenario:
 ## How to Use
 
 ### For LLMs:
-1. Read `/primitives/` to understand constraints
-2. Read relevant scenario from `/scenarios/` for the math concept
-3. Reference `/examples/` for working code patterns
-4. Generate p5.js code following the format
+1. Read `AUTO-MANUAL-TOGGLE-PATTERN.md` for animation structure (REQUIRED)
+2. Read `/primitives/` to understand constraints
+3. Read relevant scenario from `/scenarios/` for the math concept
+4. Reference `/examples/` for working code patterns
+5. Generate p5.js code following the format
 
 ### For Developers:
 1. Start with a scenario template

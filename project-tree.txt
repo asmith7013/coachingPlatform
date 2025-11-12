@@ -48,6 +48,7 @@
 │   │   │   ├── README.md
 │   │   │   ├── VISUAL-GUIDE.md
 │   │   │   ├── examples
+│   │   │   │   ├── equivalent-fractions-2-10-20-100.js
 │   │   │   │   ├── ratio-apples-oranges.js
 │   │   │   │   ├── ratio-dollars-hours.js
 │   │   │   │   ├── ratio-flour-eggs.js
@@ -347,10 +348,17 @@
 │   │   ├── animations
 │   │   │   ├── examples
 │   │   │   │   ├── basic.ts
-│   │   │   │   ├── fractions.ts
+│   │   │   │   ├── fractions
+│   │   │   │   │   ├── equivalent-1-2-2-4-4-8.ts
+│   │   │   │   │   ├── equivalent-2-10-20-100.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── tape-diagram-3-4.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── multiplication.ts
 │   │   │   │   ├── ratios
+│   │   │   │   │   ├── apples-oranges.ts
+│   │   │   │   │   ├── dollars-hours.ts
+│   │   │   │   │   ├── flour-eggs.ts
 │   │   │   │   │   └── index.ts
 │   │   │   │   └── triangleRatios
 │   │   │   │       └── index.ts
@@ -1771,6 +1779,7 @@
 │   │       └── index.ts
 │   ├── scripts
 │   │   ├── drop-old-scope-sequence-index.ts
+│   │   ├── migrate-assessment-status.ts
 │   │   └── seed-activity-types.ts
 │   ├── styles
 │   │   └── theme.css
@@ -1789,4 +1798,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-520 directories, 1270 files
+521 directories, 1278 files

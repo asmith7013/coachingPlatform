@@ -37,7 +37,7 @@ function draw() {
   }, [code]);
 
   // Run the p5.js code using iframe sandbox (most reliable approach)
-  const runCode = () => {
+  const runCodeWithCode = (codeToRun: string) => {
     setError(null);
 
     // Clear the container
@@ -49,8 +49,8 @@ function draw() {
       // Create an iframe for complete isolation
       const iframe = document.createElement("iframe");
       iframe.style.border = "none";
-      iframe.style.width = "400px";
-      iframe.style.height = "400px";
+      iframe.style.width = "500px";
+      iframe.style.height = "500px";
       iframe.style.margin = "auto";
       iframe.style.display = "block";
 
@@ -77,6 +77,7 @@ function draw() {
               justify-content: center;
               align-items: center;
               min-height: 100vh;
+              position: relative;
             }
             canvas {
               display: block;
@@ -86,10 +87,50 @@ function draw() {
               transform-origin: center center;
               transition: transform 0.1s ease-out;
             }
+            #toggle-mode-btn {
+              position: fixed;
+              bottom: 20px;
+              right: 20px;
+              background: rgba(6, 167, 125, 0.9);
+              color: white;
+              border: none;
+              border-radius: 6px;
+              padding: 8px 14px;
+              font-size: 12px;
+              font-family: Arial, sans-serif;
+              cursor: pointer;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+              transition: background 0.2s;
+              z-index: 1000;
+            }
+            #toggle-mode-btn:hover {
+              background: rgba(6, 167, 125, 1);
+            }
           </style>
         </head>
         <body>
           <div id="canvas-container"></div>
+          <button id="toggle-mode-btn">🔄 Auto</button>
+          <script>
+            // Animation Mode Control System
+            window.animationMode = 'auto';  // 'auto' or 'manual'
+            window.animationTimer = 0;
+            window.animationPhaseDelay = 120;  // 2 seconds per phase
+
+            // Toggle button
+            const toggleBtn = document.getElementById('toggle-mode-btn');
+            toggleBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              if (window.animationMode === 'auto') {
+                window.animationMode = 'manual';
+                toggleBtn.textContent = '👆 Manual';
+              } else {
+                window.animationMode = 'auto';
+                toggleBtn.textContent = '🔄 Auto';
+                window.animationTimer = 0;  // Reset timer when switching to auto
+              }
+            });
+          </script>
           <script>
             // Pinch to zoom support
             let scale = 1;
@@ -174,11 +215,11 @@ function draw() {
 
             window.addEventListener('message', function(event) {
               if (event.data.type === 'startGifRecording') {
-                startGifRecording(event.data.duration);
+                startGifRecording(event.data.duration, event.data.filename);
               }
             });
 
-            function startGifRecording(duration) {
+            function startGifRecording(duration, filename) {
               if (isRecordingGif) return;
               isRecordingGif = true;
 
@@ -187,11 +228,14 @@ function draw() {
               }, '*');
 
               // Use p5.gif to capture animation from the start
+              // Scale 2x for higher resolution export
               if (typeof saveGif === 'function') {
-                saveGif('animation', duration, {
+                saveGif(filename || 'animation', duration, {
                   units: 'seconds',
                   delay: 0,
-                  fps: 30
+                  fps: 30,
+                  scale: 2.0,  // 2x resolution (500x500 becomes 1000x1000)
+                  endDelay: 3  // 3 second pause at the end before looping
                 }).then(function() {
                   isRecordingGif = false;
                   window.parent.postMessage({
@@ -215,7 +259,7 @@ function draw() {
 
             // User code
             try {
-              ${code}
+              ${codeToRun}
             } catch (err) {
               window.parent.postMessage({
                 type: 'error',
@@ -258,12 +302,15 @@ function draw() {
     }
   };
 
-  // Load an example
+
+  // Load an example and run it automatically
   const loadExample = (exampleId: string) => {
     const example = EXAMPLE_SKETCHES.find((ex) => ex.id === exampleId);
     if (example) {
       setCode(example.code);
       setSelectedExample(exampleId);
+      // Auto-run the example immediately with the new code
+      runCodeWithCode(example.code);
     }
   };
 
@@ -281,10 +328,15 @@ function draw() {
     setIsRecording(true);
     setRecordingStatus("capturing");
 
+    // Get the filename from the selected example name
+    const example = EXAMPLE_SKETCHES.find((ex) => ex.id === selectedExample);
+    const filename = example ? example.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() : 'animation';
+
     // Send message to iframe to start recording
     currentSketchRef.current.iframe.contentWindow?.postMessage({
       type: 'startGifRecording',
-      duration: 5 // 5 seconds
+      duration: 5, // 5 seconds
+      filename: filename
     }, '*');
   };
 
@@ -320,12 +372,6 @@ function draw() {
                 ))}
               </select>
               <button
-                onClick={runCode}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
-              >
-                ▶ Run
-              </button>
-              <button
                 onClick={clearCode}
                 className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
               >
@@ -352,9 +398,9 @@ function draw() {
 
       {/* Main Content */}
       <div className="max-w-[1800px] mx-auto p-6">
-        <div className="grid grid-cols-2 gap-6 h-[calc(100vh-180px)]">
+        <div className="grid grid-cols-3 gap-6 h-[calc(100vh-140px)]">
           {/* Code Editor */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+          <div className="col-span-1 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
             <div className="bg-gray-50 border-b border-gray-200 px-4 py-2">
               <h2 className="text-sm font-semibold text-gray-700">Code Editor</h2>
             </div>
@@ -368,11 +414,11 @@ function draw() {
           </div>
 
           {/* Preview */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+          <div className="col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
             <div className="bg-gray-50 border-b border-gray-200 px-4 py-2">
               <h2 className="text-sm font-semibold text-gray-700">Preview</h2>
             </div>
-            <div className="flex-1 bg-gray-100 p-0 overflow-auto relative flex items-center justify-center">
+            <div className="flex-1 bg-gray-100 p-4 overflow-auto relative flex items-center justify-center min-h-[600px]">
               <div ref={canvasContainerRef} className="bg-white"></div>
             </div>
 
@@ -394,11 +440,11 @@ function draw() {
         <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h3 className="text-sm font-semibold text-blue-900 mb-2">Quick Tips:</h3>
           <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-            <li>Write your p5.js code in the editor (setup and draw functions)</li>
-            <li>Click &quot;Run&quot; to see your animation</li>
+            <li>Select an example from the dropdown to see it instantly</li>
+            <li>Edit the code in the editor to customize your animation</li>
             <li>Your code is automatically saved in your browser</li>
-            <li>Use the dropdown to load example sketches</li>
-            <li>Press Cmd/Ctrl + Enter to run (coming soon)</li>
+            <li>Use the Clear button to reset to the default template</li>
+            <li>Click Export GIF to save your animation</li>
           </ul>
         </div>
       </div>

@@ -93,7 +93,42 @@ for (let i = 0; i < count; i++) {
 }
 ```
 
-### Phased Animation
+### Auto/Manual Toggle Animation (PREFERRED)
+```javascript
+let phase = 0;
+let maxPhase = 2;
+
+function draw() {
+  background(255);
+
+  if (phase === 0) drawPhase1();
+  if (phase === 1) drawPhase2();
+  if (phase === 2) drawFinalPhase();
+
+  // Auto-advance (only in auto mode)
+  if (window.animationMode === 'auto') {
+    window.animationTimer++;
+    if (window.animationTimer > window.animationPhaseDelay && phase < maxPhase) {
+      phase++;
+      window.animationTimer = 0;
+    }
+    if (phase === maxPhase && window.animationTimer > window.animationPhaseDelay) {
+      phase = 0;
+      window.animationTimer = 0;
+    }
+  }
+}
+
+function mousePressed() {
+  // Manual advance (only in manual mode)
+  if (window.animationMode === 'manual') {
+    phase = (phase < maxPhase) ? phase + 1 : 0;
+  }
+}
+```
+**Toggle button (bottom right) switches between 🔄 Auto and 👆 Manual modes**
+
+### Auto-Advance Animation (LEGACY)
 ```javascript
 let phase = 0;
 let timer = 0;

@@ -205,6 +205,11 @@ export default function AssessmentHistoryPage() {
     setFilteredData(filtered);
   }, [data, selectedSection, selectedStatus, startDate, endDate]);
 
+  // Calculate summary statistics
+  const totalAttempts = filteredData.length;
+  const masteredAttempts = filteredData.filter(row => row.passed).length;
+  const masteryPercentage = totalAttempts > 0 ? (masteredAttempts / totalAttempts) * 100 : 0;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-6 max-w-7xl">
@@ -218,49 +223,50 @@ export default function AssessmentHistoryPage() {
           <p className="text-gray-600">View all student assessment attempts and progress.</p>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
+        {/* Filters and Summary Statistics */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          {/* Filters */}
+          <div className="bg-white rounded-lg shadow-sm p-6 lg:col-span-2">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Section Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Section
-              </label>
-              <select
-                value={selectedSection}
-                onChange={(e) => setSelectedSection(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {SECTION_OPTIONS.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {/* Section Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Section
+                </label>
+                <select
+                  value={selectedSection}
+                  onChange={(e) => setSelectedSection(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  {SECTION_OPTIONS.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Status Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Status
-              </label>
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {STATUS_OPTIONS.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+              {/* Status Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status
+                </label>
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  {STATUS_OPTIONS.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Date Range Filter */}
-            <div className="space-y-4">
+              {/* Date Range Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Start Date
@@ -284,10 +290,52 @@ export default function AssessmentHistoryPage() {
                 />
               </div>
             </div>
+
+            <div className="mt-4 text-sm text-gray-600">
+              Showing {filteredData.length.toLocaleString()} of {data.length.toLocaleString()} records
+            </div>
           </div>
 
-          <div className="mt-4 text-sm text-gray-600">
-            Showing {filteredData.length.toLocaleString()} of {data.length.toLocaleString()} records
+          {/* Summary Statistics Combined */}
+          <div className="bg-gradient-to-br from-green-50 via-blue-50 to-blue-100 rounded-lg shadow-sm p-6 border-2 border-blue-200">
+            <div className="space-y-4">
+              {/* Total Skills Mastered */}
+              <div className="flex items-center justify-between pb-4 border-b border-blue-200">
+                <div>
+                  <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">
+                    Total Skills Mastered
+                  </p>
+                  <p className="text-3xl font-bold text-green-900">
+                    {masteredAttempts.toLocaleString()}
+                  </p>
+                </div>
+                <div className="text-4xl">✅</div>
+              </div>
+
+              {/* Mastery Percentage */}
+              <div>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="text-xs font-medium text-blue-700 uppercase tracking-wide mb-1">
+                      Mastery Rate
+                    </p>
+                    <p className="text-3xl font-bold text-blue-900">
+                      {masteryPercentage.toFixed(1)}%
+                    </p>
+                  </div>
+                  <div className="text-4xl">📊</div>
+                </div>
+                {/* Progress Bar */}
+                <div className="mt-3">
+                  <div className="w-full bg-blue-200 rounded-full h-2 overflow-hidden">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${masteryPercentage}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

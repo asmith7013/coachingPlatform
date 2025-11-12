@@ -2,7 +2,71 @@
 
 ## Core Animation Patterns
 
-### 1. Variable-Based Animation
+### 1. Auto/Manual Toggle Mode (PREFERRED FOR MULTI-PHASE ANIMATIONS)
+Animations support both auto-play and manual click-through via toggle button:
+
+```javascript
+let phase = 0;
+let maxPhase = 3;
+
+function setup() {
+  createCanvas(500, 500);
+}
+
+function draw() {
+  background(255);
+
+  // Show different content based on phase
+  if (phase === 0) {
+    drawPhase1();
+  } else if (phase === 1) {
+    drawPhase2();
+  } else if (phase === 2) {
+    drawPhase3();
+  } else if (phase === 3) {
+    drawPhase4();
+  }
+
+  // Auto-advance logic (only in auto mode)
+  if (window.animationMode === 'auto') {
+    window.animationTimer++;
+    if (window.animationTimer > window.animationPhaseDelay && phase < maxPhase) {
+      phase++;
+      window.animationTimer = 0;
+    }
+    // Loop back to start after final phase
+    if (phase === maxPhase && window.animationTimer > window.animationPhaseDelay) {
+      phase = 0;
+      window.animationTimer = 0;
+    }
+  }
+}
+
+function mousePressed() {
+  // Manual advance (only in manual mode)
+  if (window.animationMode === 'manual') {
+    if (phase < maxPhase) {
+      phase++;
+    } else {
+      phase = 0;  // Loop back to start
+    }
+  }
+}
+```
+
+**How it works:**
+- Toggle button in bottom right corner switches between 🔄 Auto and 👆 Manual modes
+- **Auto mode** (default): Phases advance automatically every 2 seconds, loops continuously
+- **Manual mode**: User clicks canvas to advance phases at their own pace
+- Uses global `window.animationMode` variable injected by iframe wrapper
+
+**Benefits:**
+- Best of both worlds: auto-play for demos, manual for learning
+- User controls pacing when needed
+- Works well for step-by-step explanations
+- Recommended for all multi-phase math manipulatives
+
+### 2. Variable-Based Animation
 Change variables in `draw()` loop:
 
 ```javascript
@@ -25,8 +89,8 @@ function draw() {
 }
 ```
 
-### 2. Phased Animation
-Show different states over time:
+### 3. Auto-Advance Phased Animation (LEGACY - Use Click-to-Advance Instead)
+Show different states over time with automatic progression:
 
 ```javascript
 let phase = 0;
@@ -39,7 +103,7 @@ function setup() {
 
 function draw() {
   background(255);
-  
+
   // Show different content based on phase
   if (phase === 0) {
     drawPhase1();
@@ -48,7 +112,7 @@ function draw() {
   } else if (phase === 2) {
     drawPhase3();
   }
-  
+
   // Auto-advance timer
   timer++;
   if (timer > phaseDelay && phase < 2) {
@@ -58,7 +122,9 @@ function draw() {
 }
 ```
 
-### 3. Fade In/Out
+**Note:** Prefer click-to-advance (#1) for better user control.
+
+### 4. Fade In/Out
 Use transparency:
 
 ```javascript
@@ -78,7 +144,7 @@ function draw() {
 }
 ```
 
-### 4. Sequential Fill
+### 5. Sequential Fill
 Fill array elements one by one:
 
 ```javascript
@@ -114,7 +180,7 @@ function draw() {
 }
 ```
 
-### 5. Movement
+### 6. Movement
 Move objects smoothly:
 
 ```javascript
@@ -132,7 +198,7 @@ function draw() {
 }
 ```
 
-### 6. Scaling
+### 7. Scaling
 Grow or shrink objects:
 
 ```javascript
@@ -154,7 +220,7 @@ function draw() {
 }
 ```
 
-### 7. Rotation
+### 8. Rotation
 Rotate shapes:
 
 ```javascript
@@ -174,7 +240,7 @@ function draw() {
 }
 ```
 
-### 8. Color Change
+### 9. Color Change
 Animate colors:
 
 ```javascript
