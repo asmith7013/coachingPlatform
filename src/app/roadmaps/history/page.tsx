@@ -24,9 +24,22 @@ type AssessmentRow = {
   passed: boolean;
 };
 
-const SECTION_OPTIONS: Array<{ value: string; label: string }> = [
+const SECTION_OPTIONS: Array<{ value: string; label: string; grade?: string }> = [
   { value: "", label: "All Sections" },
-  ...Sections313.map(section => ({ value: section, label: section }))
+  ...Sections313
+    .sort((a, b) => {
+      const numA = parseInt(a.match(/\d+/)?.[0] || '0');
+      const numB = parseInt(b.match(/\d+/)?.[0] || '0');
+      return numA - numB;
+    })
+    .map(section => {
+      const firstChar = section.charAt(0);
+      let grade = '';
+      if (firstChar === '6') grade = 'Grade 6';
+      else if (firstChar === '7') grade = 'Grade 7';
+      else if (firstChar === '8') grade = 'Grade 8';
+      return { value: section, label: section, grade };
+    })
 ];
 
 const STATUS_OPTIONS: Array<{ value: string; label: string }> = [
@@ -215,21 +228,63 @@ export default function AssessmentHistoryPage() {
       <div className="container mx-auto p-6 max-w-7xl">
         <RoadmapsNav />
 
-        <div className="bg-white rounded-lg shadow-sm p-8 mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-3xl">📜</span>
-            <h1 className="text-4xl font-bold text-gray-900">Assessment History</h1>
+        {/* Title and Summary Statistics */}
+        <div className="flex flex-col lg:flex-row gap-6 mb-6">
+          {/* Title */}
+          <div className="bg-white rounded-lg shadow-sm p-8 flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-3xl">📜</span>
+              <h1 className="text-4xl font-bold text-gray-900">Assessment History</h1>
+            </div>
+            <p className="text-gray-600">View all student assessment attempts and progress.</p>
           </div>
-          <p className="text-gray-600">View all student assessment attempts and progress.</p>
+
+          {/* Total Skills Mastered */}
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow-sm p-6 border-2 border-green-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">
+                  Total Skills Mastered
+                </p>
+                <p className="text-3xl font-bold text-green-900">
+                  {masteredAttempts.toLocaleString()}
+                </p>
+              </div>
+              <div className="text-4xl">✅</div>
+            </div>
+          </div>
+
+          {/* Mastery Percentage */}
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-sm p-6 border-2 border-blue-200">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-xs font-medium text-blue-700 uppercase tracking-wide mb-1">
+                  Mastery Rate
+                </p>
+                <p className="text-3xl font-bold text-blue-900">
+                  {masteryPercentage.toFixed(1)}%
+                </p>
+              </div>
+              <div className="text-4xl">📊</div>
+            </div>
+            {/* Progress Bar */}
+            <div className="mt-3">
+              <div className="w-full bg-blue-200 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${masteryPercentage}%` }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Filters and Summary Statistics */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Filters */}
-          <div className="bg-white rounded-lg shadow-sm p-6 lg:col-span-2">
+        {/* Filters */}
+        <div className="mb-6">
+          <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Section Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -240,11 +295,37 @@ export default function AssessmentHistoryPage() {
                   onChange={(e) => setSelectedSection(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  {SECTION_OPTIONS.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
+                  {SECTION_OPTIONS.map(option => {
+                    if (option.value === '') {
+                      return (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      );
+                    }
+
+                    // Check if this is the first section of a grade
+                    const currentIndex = SECTION_OPTIONS.indexOf(option);
+                    const prevOption = SECTION_OPTIONS[currentIndex - 1];
+                    const isFirstOfGrade = !prevOption || prevOption.grade !== option.grade;
+
+                    if (isFirstOfGrade && option.grade) {
+                      // Render optgroup header
+                      const gradeOptions = SECTION_OPTIONS.filter(opt => opt.grade === option.grade);
+                      return (
+                        <optgroup key={option.grade} label={option.grade}>
+                          {gradeOptions.map(gradeOpt => (
+                            <option key={gradeOpt.value} value={gradeOpt.value}>
+                              {gradeOpt.label}
+                            </option>
+                          ))}
+                        </optgroup>
+                      );
+                    }
+
+                    // Skip if already rendered in optgroup
+                    return null;
+                  })}
                 </select>
               </div>
 
@@ -266,7 +347,7 @@ export default function AssessmentHistoryPage() {
                 </select>
               </div>
 
-              {/* Date Range Filter */}
+              {/* Start Date Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Start Date
@@ -278,6 +359,8 @@ export default function AssessmentHistoryPage() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
+
+              {/* End Date Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   End Date
@@ -293,48 +376,6 @@ export default function AssessmentHistoryPage() {
 
             <div className="mt-4 text-sm text-gray-600">
               Showing {filteredData.length.toLocaleString()} of {data.length.toLocaleString()} records
-            </div>
-          </div>
-
-          {/* Summary Statistics Combined */}
-          <div className="bg-gradient-to-br from-green-50 via-blue-50 to-blue-100 rounded-lg shadow-sm p-6 border-2 border-blue-200">
-            <div className="space-y-4">
-              {/* Total Skills Mastered */}
-              <div className="flex items-center justify-between pb-4 border-b border-blue-200">
-                <div>
-                  <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-1">
-                    Total Skills Mastered
-                  </p>
-                  <p className="text-3xl font-bold text-green-900">
-                    {masteredAttempts.toLocaleString()}
-                  </p>
-                </div>
-                <div className="text-4xl">✅</div>
-              </div>
-
-              {/* Mastery Percentage */}
-              <div>
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-xs font-medium text-blue-700 uppercase tracking-wide mb-1">
-                      Mastery Rate
-                    </p>
-                    <p className="text-3xl font-bold text-blue-900">
-                      {masteryPercentage.toFixed(1)}%
-                    </p>
-                  </div>
-                  <div className="text-4xl">📊</div>
-                </div>
-                {/* Progress Bar */}
-                <div className="mt-3">
-                  <div className="w-full bg-blue-200 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-500"
-                      style={{ width: `${masteryPercentage}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
