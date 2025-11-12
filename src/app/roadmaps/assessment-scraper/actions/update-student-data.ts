@@ -45,9 +45,12 @@ function getNumericScore(scoreString: string): number {
 
 /**
  * Determine status based on best score
+ * - 80% or 100%: "Demonstrated" ✅
+ * - 60% or lower: "Attempted But Not Passed" ⏳
+ * - Not attempted: "Not Started"
  */
 function getStatus(bestScore: number): "Demonstrated" | "Attempted But Not Passed" | "Not Started" {
-  if (bestScore >= 80) return "Demonstrated";
+  if (bestScore === 80 || bestScore === 100) return "Demonstrated";
   if (bestScore > 0) return "Attempted But Not Passed";
   return "Not Started";
 }

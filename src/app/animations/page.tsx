@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { EXAMPLE_SKETCHES } from "./examples";
+import { EXAMPLE_SKETCHES, EXAMPLE_CATEGORIES } from "./examples";
 
 export default function AnimationsPlayground() {
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [selectedExample, setSelectedExample] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingStatus, setRecordingStatus] = useState<"idle" | "capturing">("idle");
   const canvasContainerRef = useRef<HTMLDivElement>(null);
-  const currentSketchRef = useRef<any>(null);
+  const currentSketchRef = useRef<{ iframe: HTMLIFrameElement; messageHandler: (event: MessageEvent) => void } | null>(null);
 
   // Default starter code
   const DEFAULT_CODE = `function setup() {
@@ -25,7 +27,7 @@ function draw() {
   useEffect(() => {
     const savedCode = localStorage.getItem("p5-playground-code");
     setCode(savedCode || DEFAULT_CODE);
-  }, []);
+  }, [DEFAULT_CODE]);
 
   // Save code to localStorage whenever it changes
   useEffect(() => {
@@ -59,6 +61,7 @@ function draw() {
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
           <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+          <script src="https://unpkg.com/p5.gif@0.2.1/dist/p5.gif.min.js"></script>
           <style>
             html, body {
               margin: 0;
@@ -166,6 +169,50 @@ function draw() {
               return canvas;
             };
 
+            // GIF Recording Setup
+            let isRecordingGif = false;
+
+            window.addEventListener('message', function(event) {
+              if (event.data.type === 'startGifRecording') {
+                startGifRecording(event.data.duration);
+              }
+            });
+
+            function startGifRecording(duration) {
+              if (isRecordingGif) return;
+              isRecordingGif = true;
+
+              window.parent.postMessage({
+                type: 'gifStarted'
+              }, '*');
+
+              // Use p5.gif to capture animation from the start
+              if (typeof saveGif === 'function') {
+                saveGif('animation', duration, {
+                  units: 'seconds',
+                  delay: 0,
+                  fps: 30
+                }).then(function() {
+                  isRecordingGif = false;
+                  window.parent.postMessage({
+                    type: 'gifComplete'
+                  }, '*');
+                }).catch(function(err) {
+                  isRecordingGif = false;
+                  window.parent.postMessage({
+                    type: 'error',
+                    message: 'GIF export failed: ' + err.message
+                  }, '*');
+                });
+              } else {
+                isRecordingGif = false;
+                window.parent.postMessage({
+                  type: 'error',
+                  message: 'p5.gif library not loaded'
+                }, '*');
+              }
+            }
+
             // User code
             try {
               ${code}
@@ -182,10 +229,15 @@ function draw() {
 
       iframe.srcdoc = iframeContent;
 
-      // Listen for error messages from iframe
+      // Listen for messages from iframe
       const messageHandler = (event: MessageEvent) => {
         if (event.data.type === "error") {
           setError(event.data.message);
+        } else if (event.data.type === "gifStarted") {
+          setRecordingStatus("capturing");
+        } else if (event.data.type === "gifComplete") {
+          setIsRecording(false);
+          setRecordingStatus("idle");
         }
       };
 
@@ -222,6 +274,20 @@ function draw() {
     setSelectedExample("");
   };
 
+  // Export GIF
+  const exportGif = () => {
+    if (!currentSketchRef.current?.iframe || isRecording) return;
+
+    setIsRecording(true);
+    setRecordingStatus("capturing");
+
+    // Send message to iframe to start recording
+    currentSketchRef.current.iframe.contentWindow?.postMessage({
+      type: 'startGifRecording',
+      duration: 5 // 5 seconds
+    }, '*');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -243,10 +309,14 @@ function draw() {
                 className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Load Example...</option>
-                {EXAMPLE_SKETCHES.map((example) => (
-                  <option key={example.id} value={example.id}>
-                    {example.name}
-                  </option>
+                {EXAMPLE_CATEGORIES.map((category) => (
+                  <optgroup key={category.name} label={category.name}>
+                    {category.examples.map((example) => (
+                      <option key={example.id} value={example.id}>
+                        {example.name}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
               <button
@@ -260,6 +330,20 @@ function draw() {
                 className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
               >
                 Clear
+              </button>
+              <button
+                onClick={exportGif}
+                disabled={isRecording || !code}
+                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isRecording ? (
+                  <>
+                    <span className="inline-block animate-pulse mr-2">🔴</span>
+                    Recording...
+                  </>
+                ) : (
+                  <>📹 Export GIF</>
+                )}
               </button>
             </div>
           </div>
@@ -311,7 +395,7 @@ function draw() {
           <h3 className="text-sm font-semibold text-blue-900 mb-2">Quick Tips:</h3>
           <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
             <li>Write your p5.js code in the editor (setup and draw functions)</li>
-            <li>Click "Run" to see your animation</li>
+            <li>Click &quot;Run&quot; to see your animation</li>
             <li>Your code is automatically saved in your browser</li>
             <li>Use the dropdown to load example sketches</li>
             <li>Press Cmd/Ctrl + Enter to run (coming soon)</li>

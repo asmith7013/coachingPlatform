@@ -41,6 +41,30 @@
 │   ├── implementation
 │   │   └── three-zone-masterschedulecard-integration.md
 │   ├── podsie
+│   │   ├── animations
+│   │   │   ├── GIF-EXPORT-IMPLEMENTATION.md
+│   │   │   ├── ORGANIZATION.md
+│   │   │   ├── QUICK-REFERENCE.md
+│   │   │   ├── README.md
+│   │   │   ├── VISUAL-GUIDE.md
+│   │   │   ├── examples
+│   │   │   │   ├── ratio-apples-oranges.js
+│   │   │   │   ├── ratio-dollars-hours.js
+│   │   │   │   ├── ratio-flour-eggs.js
+│   │   │   │   ├── similar-triangles-long-medium.js
+│   │   │   │   ├── similar-triangles-medium-short.js
+│   │   │   │   ├── similar-triangles-scale-factor.js
+│   │   │   │   ├── tape-diagram-equivalent-fractions.js
+│   │   │   │   └── tape-diagram-fraction-3-4.js
+│   │   │   ├── primitives
+│   │   │   │   ├── animations.md
+│   │   │   │   ├── colors.md
+│   │   │   │   ├── p5-format.md
+│   │   │   │   └── shapes.md
+│   │   │   └── scenarios
+│   │   │       ├── algebra.md
+│   │   │       ├── fractions-tape-diagrams.md
+│   │   │       └── multiplication.md
 │   │   ├── curricula
 │   │   │   ├── 6th-grade
 │   │   │   │   └── Unit-2
@@ -216,9 +240,6 @@
 │   │   │   └── sign-up
 │   │   │       └── page.tsx
 │   │   ├── 313
-│   │   │   ├── animations
-│   │   │   │   ├── examples.ts
-│   │   │   │   └── page.tsx
 │   │   │   ├── config.ts
 │   │   │   ├── google-sheets-export
 │   │   │   │   └── page.tsx
@@ -323,6 +344,18 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── zearn
 │   │   │       └── page.tsx
+│   │   ├── animations
+│   │   │   ├── examples
+│   │   │   │   ├── basic.ts
+│   │   │   │   ├── fractions.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── multiplication.ts
+│   │   │   │   ├── ratios
+│   │   │   │   │   └── index.ts
+│   │   │   │   └── triangleRatios
+│   │   │   │       └── index.ts
+│   │   │   ├── page.tsx
+│   │   │   └── types.ts
 │   │   ├── api
 │   │   │   ├── 313
 │   │   │   │   ├── sync
@@ -1756,4 +1789,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-513 directories, 1244 files
+520 directories, 1270 files
