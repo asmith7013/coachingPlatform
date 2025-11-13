@@ -12,7 +12,7 @@ export default function IncentivesPage() {
             Track and manage student incentive activities
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Form Card */}
             <Link
               href="/incentives/form"
@@ -27,17 +27,31 @@ export default function IncentivesPage() {
               </p>
             </Link>
 
-            {/* Data Card */}
+            {/* Summary Card */}
             <Link
               href="/incentives/data"
               className="block p-6 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all group"
             >
               <div className="text-4xl mb-3">📊</div>
               <h2 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600">
-                Data
+                Summary
               </h2>
               <p className="text-gray-600 text-sm">
-                View and analyze activity tracking data
+                View activity tracking summaries and charts
+              </p>
+            </Link>
+
+            {/* Table Card */}
+            <Link
+              href="/incentives/table"
+              className="block p-6 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all group"
+            >
+              <div className="text-4xl mb-3">📋</div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600">
+                Table
+              </h2>
+              <p className="text-gray-600 text-sm">
+                View, edit, and export activity records
               </p>
             </Link>
           </div>

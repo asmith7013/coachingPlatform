@@ -185,6 +185,7 @@ export interface ShoutoutsTeamworkRecord {
   studentName: string;
   shoutoutDates: string[]; // Array of dates (YYYY-MM-DD)
   teamworkDates: string[]; // Array of dates (YYYY-MM-DD)
+  studentOfDayDates: string[]; // Array of dates (YYYY-MM-DD)
 }
 
 /**
@@ -195,7 +196,7 @@ export async function fetchShoutoutsTeamwork(section?: string, startDate?: strin
     try {
       console.log("🔵 [fetchShoutoutsTeamwork] Called with section:", section, "startDate:", startDate, "endDate:", endDate);
 
-      // Get teamwork activity type ID
+      // Get activity type IDs
       const teamworkTypeId = "690e180b3b195af5c3d371f1";
       const shoutoutsTypeId = "shoutouts";
 
@@ -204,8 +205,10 @@ export async function fetchShoutoutsTeamwork(section?: string, startDate?: strin
         $or: [
           { activityType: teamworkTypeId },
           { activityType: shoutoutsTypeId },
+          { activityType: "student-of-day" },
           { activityLabel: "Teamwork" },
-          { activityLabel: "Shoutouts" }
+          { activityLabel: "Shoutouts" },
+          { activityLabel: "Student of the Day" }
         ]
       };
 
@@ -237,18 +240,22 @@ export async function fetchShoutoutsTeamwork(section?: string, startDate?: strin
             studentId: activity.studentId,
             studentName: activity.studentName,
             shoutoutDates: [],
-            teamworkDates: []
+            teamworkDates: [],
+            studentOfDayDates: []
           });
         }
 
         const record = studentMap.get(key)!;
         const isTeamwork = activity.activityType === teamworkTypeId || activity.activityLabel === "Teamwork";
         const isShoutouts = activity.activityType === shoutoutsTypeId || activity.activityLabel === "Shoutouts";
+        const isStudentOfDay = activity.activityType === "student-of-day" || activity.activityLabel === "Student of the Day";
 
         if (isTeamwork) {
           record.teamworkDates.push(activity.date);
         } else if (isShoutouts) {
           record.shoutoutDates.push(activity.date);
+        } else if (isStudentOfDay) {
+          record.studentOfDayDates.push(activity.date);
         }
       });
 

@@ -21,7 +21,13 @@ export default function IncentivesLayout({
               href="/incentives/data"
               className="px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-100 transition-colors"
             >
-              📊 Data
+              📊 Summary
+            </Link>
+            <Link
+              href="/incentives/table"
+              className="px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-100 transition-colors"
+            >
+              📋 Table
             </Link>
           </div>
         </div>

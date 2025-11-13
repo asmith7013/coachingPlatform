@@ -95,12 +95,12 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
         {/* Small Groups / Acceleration Table */}
         {!unitId || !section ? (
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Small Groups / Acceleration Tracking
             </h2>
-            <p className="text-sm text-gray-500">
-              Please select both a section and a unit to view small group activities.
-            </p>
+            <div className="text-center text-gray-500 py-8">
+              <p>Please select both a section and a unit to view small group activities.</p>
+            </div>
           </div>
         ) : (
           <SmallGroupsTable
@@ -120,12 +120,12 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
       {/* Bottom Row: Inquiry Groups Table (full width) */}
       {!unitId || !section ? (
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Inquiry Groups Tracking
           </h2>
-          <p className="text-sm text-gray-500">
-            Please select both a section and a unit to view inquiry activities.
-          </p>
+          <div className="text-center text-gray-500 py-8">
+            <p>Please select both a section and a unit to view inquiry activities.</p>
+          </div>
         </div>
       ) : (
         <InquiryGroupsTable data={inquiryData} isLoading={isLoading} />
@@ -402,8 +402,9 @@ function ShoutoutsTeamworkTable({
     const filtered = data.map(student => ({
       ...student,
       shoutoutDates: student.shoutoutDates.filter(date => date >= startDate && date <= endDate),
-      teamworkDates: student.teamworkDates.filter(date => date >= startDate && date <= endDate)
-    })).filter(student => student.shoutoutDates.length > 0 || student.teamworkDates.length > 0);
+      teamworkDates: student.teamworkDates.filter(date => date >= startDate && date <= endDate),
+      studentOfDayDates: student.studentOfDayDates.filter(date => date >= startDate && date <= endDate)
+    })).filter(student => student.shoutoutDates.length > 0 || student.teamworkDates.length > 0 || student.studentOfDayDates.length > 0);
 
     setFilteredData(filtered);
   }, [data, startDate, endDate]);
@@ -425,25 +426,27 @@ function ShoutoutsTeamworkTable({
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Shoutouts & Teamwork Tracking
+          Shoutouts, Teamwork & Student of the Day Tracking
         </h2>
         <div className="text-center text-gray-500 py-8">
-          No shoutouts or teamwork activities found.
+          No activities found.
         </div>
       </div>
     );
   }
 
   const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return `${date.getMonth() + 1}/${date.getDate()}`;
+    // Parse date as local date to avoid timezone issues
+    // dateStr is in YYYY-MM-DD format
+    const [_year, month, day] = dateStr.split('-').map(Number);
+    return `${month}/${day}`;
   };
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-900 mb-2">
-          Shoutouts & Teamwork Tracking ({filteredData.length} students)
+          Shoutouts, Teamwork & Student of the Day Tracking ({filteredData.length} students)
         </h2>
 
         {/* Date Range Filters */}
@@ -497,6 +500,9 @@ function ShoutoutsTeamworkTable({
               <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 border border-gray-200 bg-gray-50">
                 Shoutouts (💡)
               </th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 border border-gray-200 bg-gray-50">
+                Student of the Day (⭐)
+              </th>
               <th className="px-3 py-2 text-center text-xs font-semibold text-gray-600 border border-gray-200 bg-gray-50">
                 Total Points
               </th>
@@ -504,7 +510,7 @@ function ShoutoutsTeamworkTable({
           </thead>
           <tbody>
             {filteredData.map((student) => {
-              const totalPoints = (student.teamworkDates.length + student.shoutoutDates.length) * 5;
+              const totalPoints = (student.teamworkDates.length + student.shoutoutDates.length + student.studentOfDayDates.length) * 5;
 
               return (
                 <tr key={student.studentId}>
@@ -537,6 +543,21 @@ function ShoutoutsTeamworkTable({
                         </span>
                       ))}
                       {student.shoutoutDates.length === 0 && (
+                        <span className="text-gray-400 text-xs">-</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-3 py-2 text-sm border border-gray-200">
+                    <div className="flex flex-wrap gap-1">
+                      {student.studentOfDayDates.map((date, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800"
+                        >
+                          {formatDate(date)}
+                        </span>
+                      ))}
+                      {student.studentOfDayDates.length === 0 && (
                         <span className="text-gray-400 text-xs">-</span>
                       )}
                     </div>
@@ -618,7 +639,7 @@ function InquiryGroupsTable({
         <table className="min-w-full border-collapse">
           <thead>
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 border border-gray-200 bg-gray-50 sticky left-0 z-10 bg-gray-50">
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 border border-gray-200 bg-gray-50 sticky left-0 z-10">
                 Student
               </th>
               {inquiryQuestions.map((question, index) => (

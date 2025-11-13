@@ -25,6 +25,7 @@ export interface StudentActivityRecord {
   section: string;
   gradeLevel: string;
   activityDate: string;
+  loggedAt?: string;
   activityType: string;
   activityLabel: string;
   unitId?: string;
@@ -120,6 +121,7 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
           section: activityData.section,
           gradeLevel: activityData.gradeLevel,
           activityDate: activityData.date,
+          loggedAt: activityData.loggedAt,
           activityType: activityData.activityType,
           activityLabel: activityData.activityLabel,
           unitId: activityData.unitId,
@@ -263,6 +265,44 @@ export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {})
       return { success: true, data: csv };
     } catch (error) {
       return { success: false, error: handleServerError(error, "Failed to export CSV") };
+    }
+  });
+}
+
+/**
+ * Update a single activity by ID
+ */
+export async function updateActivity(
+  activityId: string,
+  updates: { activityDate?: string; activityType?: string; activityLabel?: string }
+): Promise<{ success: boolean; error?: string }> {
+  return withDbConnection(async () => {
+    try {
+      const updateData: { date?: string; activityType?: string; activityLabel?: string } = {};
+
+      if (updates.activityDate !== undefined) {
+        updateData.date = updates.activityDate;
+      }
+      if (updates.activityType !== undefined) {
+        updateData.activityType = updates.activityType;
+      }
+      if (updates.activityLabel !== undefined) {
+        updateData.activityLabel = updates.activityLabel;
+      }
+
+      const result = await StudentActivityModel.findByIdAndUpdate(
+        activityId,
+        { $set: updateData },
+        { new: true }
+      );
+
+      if (!result) {
+        return { success: false, error: "Activity not found" };
+      }
+
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: handleServerError(error, "Failed to update activity") };
     }
   });
 }
