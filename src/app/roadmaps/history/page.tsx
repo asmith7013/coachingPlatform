@@ -27,13 +27,13 @@ type AssessmentRow = {
 
 const SECTION_OPTIONS: Array<{ value: string; label: string; grade?: string }> = [
   { value: "", label: "All Sections" },
-  ...Sections313
-    .sort((a, b) => {
+  ...[...Sections313]
+    .sort((a: string, b: string) => {
       const numA = parseInt(a.match(/\d+/)?.[0] || '0');
       const numB = parseInt(b.match(/\d+/)?.[0] || '0');
       return numA - numB;
     })
-    .map(section => {
+    .map((section: string) => {
       const firstChar = section.charAt(0);
       let grade = '';
       if (firstChar === '6') grade = 'Grade 6';
@@ -490,7 +490,30 @@ export default function AssessmentHistoryPage() {
                           {row.attemptNumber || '-'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {row.dateCompleted ? new Date(row.dateCompleted).toLocaleDateString() : '-'}
+                          {row.dateCompleted ? (() => {
+                            const date = new Date(row.dateCompleted);
+                            const today = new Date();
+                            const yesterday = new Date(today);
+                            yesterday.setDate(yesterday.getDate() - 1);
+
+                            const isToday = date.getDate() === today.getDate() &&
+                                           date.getMonth() === today.getMonth() &&
+                                           date.getFullYear() === today.getFullYear();
+                            const isYesterday = date.getDate() === yesterday.getDate() &&
+                                               date.getMonth() === yesterday.getMonth() &&
+                                               date.getFullYear() === yesterday.getFullYear();
+
+                            if (isToday) {
+                              return `Today, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                            } else if (isYesterday) {
+                              return `Yesterday, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                            } else {
+                              const dayOfWeek = date.toLocaleDateString([], { weekday: 'short' });
+                              const dateStr = date.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
+                              const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                              return `${dayOfWeek}, ${dateStr}, ${timeStr}`;
+                            }
+                          })() : '-'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <span className={`font-medium ${
@@ -499,13 +522,14 @@ export default function AssessmentHistoryPage() {
                             {row.score}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        <td className="px-6 py-4 text-sm">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1 ${
                             row.passed
                               ? 'bg-green-100 text-green-800'
                               : 'bg-yellow-100 text-yellow-800'
                           }`}>
-                            {row.passed ? '✅ Mastered' : '⏳ Attempted But Not Mastered'}
+                            <span>{row.passed ? '✅' : '⏳'}</span>
+                            <span>{row.passed ? 'Mastered' : 'Not Mastered'}</span>
                           </span>
                         </td>
                       </tr>

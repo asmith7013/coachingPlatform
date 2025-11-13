@@ -4,7 +4,8 @@
       "Bash(mkdir:*)",
       "Bash(mongosh:*)",
       "Bash(npm run prebuild:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(./create-icons.sh:*)"
     ],
     "deny": [],
     "ask": []

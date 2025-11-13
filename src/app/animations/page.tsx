@@ -305,6 +305,7 @@ function draw() {
 
   // Load an example and run it automatically
   const loadExample = (exampleId: string) => {
+    // Force fresh import by re-reading from EXAMPLE_SKETCHES each time
     const example = EXAMPLE_SKETCHES.find((ex) => ex.id === exampleId);
     if (example) {
       setCode(example.code);

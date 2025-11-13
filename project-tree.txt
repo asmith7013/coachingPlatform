@@ -42,6 +42,7 @@
 │   │   └── three-zone-masterschedulecard-integration.md
 │   ├── podsie
 │   │   ├── animations
+│   │   │   ├── AUTO-MANUAL-TOGGLE-PATTERN.md
 │   │   │   ├── GIF-EXPORT-IMPLEMENTATION.md
 │   │   │   ├── ORGANIZATION.md
 │   │   │   ├── QUICK-REFERENCE.md
@@ -351,17 +352,29 @@
 │   │   │   │   ├── fractions
 │   │   │   │   │   ├── equivalent-1-2-2-4-4-8.ts
 │   │   │   │   │   ├── equivalent-2-10-20-100.ts
+│   │   │   │   │   ├── equivalent-4-6-2-3.ts
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── tape-diagram-3-4.ts
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── multiplication.ts
+│   │   │   │   ├── multiplication
+│   │   │   │   │   ├── fraction-circles.ts
+│   │   │   │   │   ├── grid.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── number-line.ts
+│   │   │   │   ├── proportionalRelationships
+│   │   │   │   │   ├── carrot-balance.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── weight-ratios.ts
 │   │   │   │   ├── ratios
 │   │   │   │   │   ├── apples-oranges.ts
 │   │   │   │   │   ├── dollars-hours.ts
 │   │   │   │   │   ├── flour-eggs.ts
 │   │   │   │   │   └── index.ts
 │   │   │   │   └── triangleRatios
-│   │   │   │       └── index.ts
+│   │   │   │       ├── index.ts
+│   │   │   │       ├── long-medium.ts
+│   │   │   │       ├── medium-short.ts
+│   │   │   │       └── scale-factor.ts
 │   │   │   ├── page.tsx
 │   │   │   └── types.ts
 │   │   ├── api
@@ -1798,4 +1811,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-521 directories, 1278 files
+523 directories, 1289 files

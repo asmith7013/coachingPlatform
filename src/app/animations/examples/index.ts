@@ -4,6 +4,7 @@ import { MATH_EXAMPLES } from "./multiplication";
 import { RATIO_EXAMPLES } from "./ratios";
 import { FRACTION_EXAMPLES } from "./fractions";
 import { GEOMETRY_EXAMPLES } from "./triangleRatios";
+import { PROPORTIONAL_EXAMPLES } from "./proportionalRelationships";
 
 export const EXAMPLE_CATEGORIES: ExampleCategory[] = [
   {
@@ -23,6 +24,10 @@ export const EXAMPLE_CATEGORIES: ExampleCategory[] = [
     examples: RATIO_EXAMPLES,
   },
   {
+    name: "Proportional Relationships",
+    examples: PROPORTIONAL_EXAMPLES,
+  },
+  {
     name: "Geometry",
     examples: GEOMETRY_EXAMPLES,
   },
@@ -34,5 +39,6 @@ export const EXAMPLE_SKETCHES = [
   ...MATH_EXAMPLES,
   ...FRACTION_EXAMPLES,
   ...RATIO_EXAMPLES,
+  ...PROPORTIONAL_EXAMPLES,
   ...GEOMETRY_EXAMPLES,
 ];

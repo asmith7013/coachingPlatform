@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
@@ -28,6 +28,11 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
   const [expandedVocabulary, setExpandedVocabulary] = useState<Set<number>>(new Set());
   const [expandedGrades, setExpandedGrades] = useState<Set<string>>(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Reset currentProblemIndex when skill changes
+  useEffect(() => {
+    setCurrentProblemIndex(0);
+  }, [skill?.skillNumber]);
 
   const toggleStandard = (index: number) => {
     const newExpanded = new Set(expandedStandards);
@@ -636,6 +641,7 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Worked Example Video</h4>
             <div className="bg-white rounded-lg overflow-hidden border border-gray-200">
               <video
+                key={skill.skillNumber}
                 controls
                 className="w-full"
                 preload="metadata"
@@ -649,7 +655,7 @@ export function SkillDetailView({ skill, onSkillClick, onClose, color = 'blue', 
         )}
 
         {/* Practice Problems */}
-        {hasProblems && (
+        {hasProblems && skill.practiceProblems![currentProblemIndex] && (
           <div className="border-b border-gray-200 py-6">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">
               Practice Problems ({skill.practiceProblems!.length})
