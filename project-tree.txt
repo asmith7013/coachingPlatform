@@ -596,7 +596,9 @@
 │   │   │   │   └── utils
 │   │   │   │       └── generateInquiryOptions.ts
 │   │   │   ├── layout.tsx
-│   │   │   └── page.tsx
+│   │   │   ├── page.tsx
+│   │   │   └── table
+│   │   │       └── page.tsx
 │   │   ├── integrations
 │   │   │   └── monday
 │   │   │       ├── example1
@@ -1811,4 +1813,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-523 directories, 1289 files
+524 directories, 1290 files

@@ -52,7 +52,7 @@ export class IncentiveEmailService {
         body += `   • ${activity.label}: ${activity.count} student${activity.count !== 1 ? 's' : ''}\n`;
       });
 
-      body += `\n⏰ Submitted at: ${new Date().toLocaleString()}\n`;
+      body += `\n⏰ Submitted at: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}\n`;
       body += `\n🔗 View data: ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/incentives/data`;
 
       await this.transporter.sendMail({
