@@ -57,7 +57,7 @@ export class IncentiveEmailService {
       });
 
       body += `\n⏰ Submitted at: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}\n`;
-      body += `\n🔗 View data: ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/incentives/data`;
+      body += `\n🔗 View data: https://www.solvescoaching.com/incentives/data`;
 
       await this.transporter.sendMail({
         from: process.env.EMAIL_USER,
