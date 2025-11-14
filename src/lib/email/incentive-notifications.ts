@@ -30,7 +30,11 @@ export class IncentiveEmailService {
         return false;
       }
 
-      const recipientEmail = process.env.INCENTIVE_NOTIFICATION_EMAIL || process.env.EMAIL_USER;
+      // Define recipient email addresses directly
+      const recipients = [
+        'asmith7013@gmail.com',
+        'mika.asaba@teachinglabstudio.com',
+      ].join(', ');
 
       const subject = `📊 New Incentive Activities Logged - ${data.section} (${data.date})`;
 
@@ -57,12 +61,12 @@ export class IncentiveEmailService {
 
       await this.transporter.sendMail({
         from: process.env.EMAIL_USER,
-        to: recipientEmail,
+        to: recipients,
         subject,
         text: body
       });
 
-      console.log('✅ Email notification sent successfully to:', recipientEmail);
+      console.log('✅ Email notification sent successfully to:', recipients);
       return true;
     } catch (error) {
       console.error('❌ Failed to send email notification:', error);
