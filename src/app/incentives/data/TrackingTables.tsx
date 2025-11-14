@@ -510,7 +510,7 @@ function ShoutoutsTeamworkTable({
           </thead>
           <tbody>
             {filteredData.map((student) => {
-              const totalPoints = (student.teamworkDates.length + student.shoutoutDates.length + student.studentOfDayDates.length) * 5;
+              const totalPoints = (student.teamworkDates.length * 5) + (student.shoutoutDates.length * 5) + (student.studentOfDayDates.length * 10);
 
               return (
                 <tr key={student.studentId}>
