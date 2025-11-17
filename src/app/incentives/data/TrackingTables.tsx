@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import { Spinner } from "@/components/core/feedback/Spinner";
 import {
   fetchStudentOfTheDay,
   fetchSmallGroupActivities,
@@ -28,14 +29,18 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
   const [shoutoutsTeamworkData, setShoutoutsTeamworkData] = useState<ShoutoutsTeamworkRecord[]>([]);
   const [lessons, setLessons] = useState<LessonInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingStudentOfDay, setIsLoadingStudentOfDay] = useState(true);
+  const [isLoadingShoutoutsTeamwork, setIsLoadingShoutoutsTeamwork] = useState(true);
 
   // Fetch Student of the Day data (always shown, independent of unit)
   useEffect(() => {
     async function loadStudentOfDay() {
+      setIsLoadingStudentOfDay(true);
       const result = await fetchStudentOfTheDay(section);
       if (result.success && result.data) {
         setStudentOfDayData(result.data);
       }
+      setIsLoadingStudentOfDay(false);
     }
     loadStudentOfDay();
   }, [section]);
@@ -43,10 +48,12 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
   // Fetch Shoutouts/Teamwork data (always shown, independent of unit)
   useEffect(() => {
     async function loadShoutoutsTeamwork() {
+      setIsLoadingShoutoutsTeamwork(true);
       const result = await fetchShoutoutsTeamwork(section);
       if (result.success && result.data) {
         setShoutoutsTeamworkData(result.data);
       }
+      setIsLoadingShoutoutsTeamwork(false);
     }
     loadShoutoutsTeamwork();
   }, [section]);
@@ -93,43 +100,22 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
       {/* Top Row: Small Groups Table (left) and Calendar (right) */}
       <div className="grid grid-cols-2 gap-6">
         {/* Small Groups / Acceleration Table */}
-        {!unitId || !section ? (
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Small Groups / Acceleration Tracking
-            </h2>
-            <div className="text-center text-gray-500 py-8">
-              <p>Please select both a section and a unit to view small group activities.</p>
-            </div>
-          </div>
-        ) : (
-          <SmallGroupsTable
-            data={smallGroupData}
-            lessons={lessons}
-            isLoading={isLoading}
-          />
-        )}
+        <SmallGroupsTable
+          data={smallGroupData}
+          lessons={lessons}
+          isLoading={isLoading}
+          hasSelection={!!(unitId && section)}
+        />
 
         {/* Student of the Day Calendar */}
-        <StudentOfTheDayCalendar data={studentOfDayData} />
+        <StudentOfTheDayCalendar data={studentOfDayData} isLoading={isLoadingStudentOfDay} />
       </div>
 
       {/* Middle Row: Shoutouts/Teamwork Table (full width) */}
-      <ShoutoutsTeamworkTable data={shoutoutsTeamworkData} section={section} />
+      <ShoutoutsTeamworkTable data={shoutoutsTeamworkData} section={section} isLoading={isLoadingShoutoutsTeamwork} />
 
       {/* Bottom Row: Inquiry Groups Table (full width) */}
-      {!unitId || !section ? (
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Inquiry Groups Tracking
-          </h2>
-          <div className="text-center text-gray-500 py-8">
-            <p>Please select both a section and a unit to view inquiry activities.</p>
-          </div>
-        </div>
-      ) : (
-        <InquiryGroupsTable data={inquiryData} isLoading={isLoading} />
-      )}
+      <InquiryGroupsTable data={inquiryData} isLoading={isLoading} hasSelection={!!(unitId && section)} />
     </div>
   );
 }
@@ -138,8 +124,21 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
 // STUDENT OF THE DAY CALENDAR
 // =====================================
 
-function StudentOfTheDayCalendar({ data }: { data: StudentOfTheDayRecord[] }) {
+function StudentOfTheDayCalendar({ data, isLoading }: { data: StudentOfTheDayRecord[]; isLoading: boolean }) {
   const today = new Date();
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Student of the Day
+        </h2>
+        <div className="flex justify-center items-center py-20">
+          <Spinner size="lg" variant="primary" />
+        </div>
+      </div>
+    );
+  }
 
   // Create a map for quick lookup: date string -> student name
   const dataMap = new Map(data.map((d) => [d.date, d.studentName]));
@@ -269,11 +268,13 @@ function StudentOfTheDayCalendar({ data }: { data: StudentOfTheDayRecord[] }) {
 function SmallGroupsTable({
   data,
   lessons,
-  isLoading
+  isLoading,
+  hasSelection
 }: {
   data: SmallGroupRecord[];
   lessons: LessonInfo[];
   isLoading: boolean;
+  hasSelection: boolean;
 }) {
   // Get unique students
   const students = Array.from(
@@ -292,13 +293,28 @@ function SmallGroupsTable({
     activityMap.get(record.studentId)!.set(record.lessonId, record.isAcceleration);
   });
 
+  if (!hasSelection) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Small Groups / Acceleration Tracking
+        </h2>
+        <div className="text-center text-gray-500 py-8">
+          <p>Please select both a section and a unit to view small group activities.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Small Groups / Acceleration Tracking
         </h2>
-        <div className="text-center text-gray-500">Loading...</div>
+        <div className="flex justify-center items-center py-20">
+          <Spinner size="lg" variant="primary" />
+        </div>
       </div>
     );
   }
@@ -383,10 +399,12 @@ function SmallGroupsTable({
 
 function ShoutoutsTeamworkTable({
   data,
-  section
+  section,
+  isLoading
 }: {
   data: ShoutoutsTeamworkRecord[];
   section?: string;
+  isLoading: boolean;
 }) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -421,6 +439,19 @@ function ShoutoutsTeamworkTable({
     }
     reloadData();
   }, [startDate, endDate, section]);
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Shoutouts, Teamwork & Student of the Day Tracking
+        </h2>
+        <div className="flex justify-center items-center py-20">
+          <Spinner size="lg" variant="primary" />
+        </div>
+      </div>
+    );
+  }
 
   if (data.length === 0) {
     return (
@@ -581,18 +612,35 @@ function ShoutoutsTeamworkTable({
 
 function InquiryGroupsTable({
   data,
-  isLoading
+  isLoading,
+  hasSelection
 }: {
   data: InquiryRecord[];
   isLoading: boolean;
+  hasSelection: boolean;
 }) {
+  if (!hasSelection) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Inquiry Groups Tracking
+        </h2>
+        <div className="text-center text-gray-500 py-8">
+          <p>Please select both a section and a unit to view inquiry activities.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Inquiry Groups Tracking
         </h2>
-        <div className="text-center text-gray-500">Loading...</div>
+        <div className="flex justify-center items-center py-20">
+          <Spinner size="lg" variant="primary" />
+        </div>
       </div>
     );
   }
