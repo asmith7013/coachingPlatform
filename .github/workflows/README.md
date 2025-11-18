@@ -39,7 +39,7 @@ Your Teach to One Roadmaps password
 #### `VERCEL_DEPLOYMENT_URL` (Optional)
 Your Vercel deployment URL
 
-Example: `https://ai-coaching-platform.vercel.app`
+Example: `https://solvescoaching.com`
 
 If not set, it will use the default URL from the workflow file.
 
@@ -137,7 +137,7 @@ GitHub will email you if a workflow fails (check your GitHub notification settin
 
 - The workflow now includes `-L` flag to follow redirects automatically
 - If still occurring, verify `VERCEL_DEPLOYMENT_URL` uses `https://` (not `http://`)
-- Example: `https://ai-coaching-platform.vercel.app` (no trailing slash)
+- Example: `https://solvescoaching.com` (no trailing slash)
 
 ### "Missing credentials" error
 

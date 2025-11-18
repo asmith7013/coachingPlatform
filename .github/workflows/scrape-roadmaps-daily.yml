@@ -19,7 +19,7 @@ jobs:
 
       - name: Trigger Roadmaps Scraper
         env:
-          API_URL: ${{ secrets.VERCEL_DEPLOYMENT_URL || 'https://ai-coaching-platform.vercel.app' }}
+          API_URL: ${{ secrets.VERCEL_DEPLOYMENT_URL || 'https://solvescoaching.com' }}
           API_KEY: ${{ secrets.SCRAPER_API_KEY }}
           ROADMAPS_EMAIL: ${{ secrets.ROADMAPS_EMAIL }}
           ROADMAPS_PASSWORD: ${{ secrets.ROADMAPS_PASSWORD }}
