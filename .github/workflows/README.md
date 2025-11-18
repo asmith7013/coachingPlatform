@@ -133,6 +133,12 @@ GitHub will email you if a workflow fails (check your GitHub notification settin
 - Make sure `SCRAPER_API_KEY` matches in both GitHub Secrets and Vercel Environment Variables
 - Redeploy Vercel after adding environment variable
 
+### 308 Redirect error
+
+- The workflow now includes `-L` flag to follow redirects automatically
+- If still occurring, verify `VERCEL_DEPLOYMENT_URL` uses `https://` (not `http://`)
+- Example: `https://ai-coaching-platform.vercel.app` (no trailing slash)
+
 ### "Missing credentials" error
 
 - Verify `ROADMAPS_EMAIL` and `ROADMAPS_PASSWORD` are set in GitHub Secrets

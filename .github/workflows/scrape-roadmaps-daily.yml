@@ -28,7 +28,8 @@ jobs:
           echo "📍 API URL: $API_URL"
 
           # Call the scraper API endpoint
-          response=$(curl -s -w "\n%{http_code}" -X POST "$API_URL/api/roadmaps/scrape" \
+          # -L follows redirects, -v shows verbose output for debugging
+          response=$(curl -L -s -w "\n%{http_code}" -X POST "$API_URL/api/roadmaps/scrape" \
             -H "Authorization: Bearer $API_KEY" \
             -H "Content-Type: application/json" \
             -d "{
