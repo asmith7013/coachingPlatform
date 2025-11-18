@@ -5,7 +5,8 @@
       "Bash(mongosh:*)",
       "Bash(npm run prebuild:*)",
       "Bash(npm run build:*)",
-      "Bash(./create-icons.sh:*)"
+      "Bash(./create-icons.sh:*)",
+      "Bash(git ls-tree:*)"
     ],
     "deny": [],
     "ask": []

@@ -66,6 +66,18 @@ export const SkillPerformanceSchema = z.object({
 });
 
 // =====================================
+// ZEARN LESSON COMPLETION SCHEMA
+// =====================================
+
+/**
+ * Individual Zearn lesson completion
+ */
+export const ZearnLessonCompletionSchema = z.object({
+  lessonCode: z.string().describe("Lesson code in format 'G8 M2 L1' (Grade Module Lesson)"),
+  completionDate: z.string().describe("Date completed (ISO format or MM/DD/YY)"),
+});
+
+// =====================================
 // STUDENT SCHEMA
 // =====================================
 
@@ -91,6 +103,9 @@ export const StudentFieldsSchema = z.object({
   // Assessment/skill performance tracking
   skillPerformances: z.array(SkillPerformanceSchema).default([]).describe("Array of skill performance data with attempt history"),
   lastAssessmentDate: z.string().optional().describe("Date of most recent assessment update (ISO format)"),
+
+  // Zearn lesson completions
+  zearnLessons: z.array(ZearnLessonCompletionSchema).default([]).describe("Array of completed Zearn lessons with dates"),
 });
 
 /**
@@ -110,6 +125,7 @@ export const StudentInputZodSchema = toInputSchema(StudentZodSchema);
 export type StudentActivity = z.infer<typeof StudentActivitySchema>;
 export type SkillAttempt = z.infer<typeof SkillAttemptSchema>;
 export type SkillPerformance = z.infer<typeof SkillPerformanceSchema>;
+export type ZearnLessonCompletion = z.infer<typeof ZearnLessonCompletionSchema>;
 export type Student = z.infer<typeof StudentZodSchema>;
 export type StudentInput = z.infer<typeof StudentInputZodSchema>;
 
@@ -131,6 +147,7 @@ export function createStudentDefaults(overrides: Partial<StudentInput> = {}): St
     masteredSkills: [],
     classActivities: [],
     skillPerformances: [],
+    zearnLessons: [],
     ownerIds: [],
     ...overrides
   };

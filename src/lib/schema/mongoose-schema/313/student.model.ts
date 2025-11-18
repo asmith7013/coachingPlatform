@@ -46,6 +46,11 @@ const skillPerformanceSchema = new mongoose.Schema({
   lastUpdated: { type: String, required: false }
 }, { _id: false });
 
+const zearnLessonCompletionSchema = new mongoose.Schema({
+  lessonCode: { type: String, required: true },
+  completionDate: { type: String, required: true }
+}, { _id: false });
+
 const studentSchemaFields = {
   studentID: {
     type: Number,
@@ -65,6 +70,7 @@ const studentSchemaFields = {
   classActivities: { type: [studentActivitySchema], default: [] },
   skillPerformances: { type: [skillPerformanceSchema], default: [] },
   lastAssessmentDate: { type: String, required: false },
+  zearnLessons: { type: [zearnLessonCompletionSchema], default: [] },
   ...standardDocumentFields
 };
 

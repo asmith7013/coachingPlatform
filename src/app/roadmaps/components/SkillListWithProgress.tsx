@@ -86,7 +86,8 @@ export function SkillListWithProgress({
             lastAssessmentDate: item.lastAssessmentDate as string | undefined,
             masteredSkills: (item.masteredSkills as string[]) || [],
             classActivities: (item.classActivities as Student['classActivities']) || [],
-            skillPerformances: (item.skillPerformances as Student['skillPerformances']) || []
+            skillPerformances: (item.skillPerformances as Student['skillPerformances']) || [],
+            zearnLessons: (item.zearnLessons as Student['zearnLessons']) || []
           }));
           setSectionStudents(students);
         }

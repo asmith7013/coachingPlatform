@@ -225,6 +225,7 @@
 │   │   ├── pdf-downloader.js
 │   │   └── scraper.ts
 │   ├── migrate-skill-appears-in.ts
+│   ├── run-scraper.ts
 │   ├── snorkl-comprehensive-scraper.ts
 │   ├── snorkl-simple-scraper.ts
 │   ├── test-migrate-one-skill.ts
@@ -289,6 +290,7 @@
 │   │   │   │   ├── student-performance.ts
 │   │   │   │   ├── students.ts
 │   │   │   │   ├── sync-sheets.ts
+│   │   │   │   ├── zearn-completions.ts
 │   │   │   │   └── zearn-import.ts
 │   │   │   ├── coaching
 │   │   │   │   ├── cap-evidence.ts
@@ -406,6 +408,9 @@
 │   │   │   │       └── visits
 │   │   │   ├── look-fors
 │   │   │   │   └── bulk-upload
+│   │   │   │       └── route.ts
+│   │   │   ├── roadmaps
+│   │   │   │   └── scrape
 │   │   │   │       └── route.ts
 │   │   │   ├── schedule
 │   │   │   │   └── route.ts
@@ -733,13 +738,15 @@
 │   │   │   │   │   ├── types.ts
 │   │   │   │   │   └── unit-extractor.ts
 │   │   │   │   └── page.tsx
-│   │   │   └── units
-│   │   │       ├── components
-│   │   │       │   ├── AllUnitsGridView.tsx
-│   │   │       │   ├── SkillProgressBar.tsx
-│   │   │       │   ├── StudentGridView.tsx
-│   │   │       │   ├── UnitDetailView.tsx
-│   │   │       │   └── UnitListItem.tsx
+│   │   │   ├── units
+│   │   │   │   ├── components
+│   │   │   │   │   ├── AllUnitsGridView.tsx
+│   │   │   │   │   ├── SkillProgressBar.tsx
+│   │   │   │   │   ├── StudentGridView.tsx
+│   │   │   │   │   ├── UnitDetailView.tsx
+│   │   │   │   │   └── UnitListItem.tsx
+│   │   │   │   └── page.tsx
+│   │   │   └── zearn
 │   │   │       └── page.tsx
 │   │   ├── setup
 │   │   │   └── page.tsx
@@ -1350,6 +1357,7 @@
 │   │   │       ├── schema-config-check.ts
 │   │   │       └── setup-test-user.ts
 │   │   ├── email
+│   │   │   ├── email-notifications.ts
 │   │   │   └── incentive-notifications.ts
 │   │   ├── error
 │   │   │   ├── core
@@ -1431,6 +1439,7 @@
 │   │   │       └── utils
 │   │   │           ├── index.ts
 │   │   │           └── monday-utils.ts
+│   │   ├── puppeteer-config.ts
 │   │   ├── schema
 │   │   │   ├── enum
 │   │   │   │   ├── 313.ts
@@ -1823,4 +1832,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-526 directories, 1298 files
+529 directories, 1304 files
