@@ -198,12 +198,12 @@ export async function updateStudentData(request: unknown) {
           }
         );
 
-        if (result) {
-          studentsUpdated++;
-          console.log(`  ✅ Updated: ${studentName} (${skillPerformances.length} skills, ${masteredSkills.length} mastered)`);
-        } else {
+        if (!result) {
           throw new Error(`Failed to update student document`);
         }
+
+        studentsUpdated++;
+        console.log(`  ✅ Updated: ${studentName} (${skillPerformances.length} skills, ${masteredSkills.length} mastered)`);
 
       } catch (studentError) {
         const errorMsg = `Failed to update ${studentName}: ${studentError instanceof Error ? studentError.message : 'Unknown error'}`;

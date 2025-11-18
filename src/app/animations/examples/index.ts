@@ -5,6 +5,8 @@ import { RATIO_EXAMPLES } from "./ratios";
 import { FRACTION_EXAMPLES } from "./fractions";
 import { GEOMETRY_EXAMPLES } from "./triangleRatios";
 import { PROPORTIONAL_EXAMPLES } from "./proportionalRelationships";
+import { COORDINATE_PLANE_EXAMPLES } from "./coordinatePlane";
+import { TAPE_DIAGRAM_EXAMPLES } from "./tapeDiagrams";
 
 export const EXAMPLE_CATEGORIES: ExampleCategory[] = [
   {
@@ -24,12 +26,20 @@ export const EXAMPLE_CATEGORIES: ExampleCategory[] = [
     examples: RATIO_EXAMPLES,
   },
   {
+    name: "Tape Diagrams",
+    examples: TAPE_DIAGRAM_EXAMPLES,
+  },
+  {
     name: "Proportional Relationships",
     examples: PROPORTIONAL_EXAMPLES,
   },
   {
     name: "Geometry",
     examples: GEOMETRY_EXAMPLES,
+  },
+  {
+    name: "Coordinate Plane",
+    examples: COORDINATE_PLANE_EXAMPLES,
   },
 ];
 
@@ -39,6 +49,8 @@ export const EXAMPLE_SKETCHES = [
   ...MATH_EXAMPLES,
   ...FRACTION_EXAMPLES,
   ...RATIO_EXAMPLES,
+  ...TAPE_DIAGRAM_EXAMPLES,
   ...PROPORTIONAL_EXAMPLES,
   ...GEOMETRY_EXAMPLES,
+  ...COORDINATE_PLANE_EXAMPLES,
 ];

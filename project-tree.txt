@@ -347,8 +347,15 @@
 │   │   │   └── zearn
 │   │   │       └── page.tsx
 │   │   ├── animations
+│   │   │   ├── COORDINATE-PLANE-DRAWING.md
 │   │   │   ├── examples
 │   │   │   │   ├── basic.ts
+│   │   │   │   ├── coordinatePlane
+│   │   │   │   │   ├── LLM-USAGE.md
+│   │   │   │   │   ├── README.md
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── linear-graph-drawing.ts
+│   │   │   │   │   └── simple-coordinate-plane.ts
 │   │   │   │   ├── fractions
 │   │   │   │   │   ├── equivalent-1-2-2-4-4-8.ts
 │   │   │   │   │   ├── equivalent-2-10-20-100.ts
@@ -369,6 +376,9 @@
 │   │   │   │   │   ├── apples-oranges.ts
 │   │   │   │   │   ├── dollars-hours.ts
 │   │   │   │   │   ├── flour-eggs.ts
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── tapeDiagrams
+│   │   │   │   │   ├── equivalent-ratios.ts
 │   │   │   │   │   └── index.ts
 │   │   │   │   └── triangleRatios
 │   │   │   │       ├── index.ts
@@ -1813,4 +1823,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-524 directories, 1290 files
+526 directories, 1298 files

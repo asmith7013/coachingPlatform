@@ -207,14 +207,16 @@ async function applyFilters(
   await page.waitForTimeout(delayBetweenActions);
 
   // 3. Select student grade (multiselect)
-  await selectMultiselectOption(page, SELECTORS.STUDENT_GRADE_TRIGGER, config.filters.studentGrade, 'Student Grade');
-  await page.waitForTimeout(delayBetweenActions);
+  // TEMPORARILY DISABLED - may be filtering out recent data
+  // await selectMultiselectOption(page, SELECTORS.STUDENT_GRADE_TRIGGER, config.filters.studentGrade, 'Student Grade');
+  // await page.waitForTimeout(delayBetweenActions);
 
   // 4. Select skill grade (multiselect)
-  await selectMultiselectOption(page, SELECTORS.SKILL_GRADE_TRIGGER, config.filters.skillGrade, 'Skill Grade');
-  await page.waitForTimeout(delayBetweenActions);
+  // TEMPORARILY DISABLED - may be filtering out recent data
+  // await selectMultiselectOption(page, SELECTORS.SKILL_GRADE_TRIGGER, config.filters.skillGrade, 'Skill Grade');
+  // await page.waitForTimeout(delayBetweenActions);
 
-  console.log('✅ All filters applied');
+  console.log('✅ All filters applied (Student Grade and Skill Grade filters temporarily disabled)');
 
   // Wait for table to load with filtered data
   await page.waitForTimeout(2000);
