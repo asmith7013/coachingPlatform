@@ -36,36 +36,34 @@ export async function getPlaywrightBrowser(): Promise<PlaywrightBrowser> {
 // PUPPETEER CONFIGURATION (For Reference / Future Use)
 // ============================================================================
 
-import type { Browser as PuppeteerBrowser, Page } from 'puppeteer';
-
-/**
- * Gets a configured Puppeteer browser instance.
- * Automatically detects environment (local vs Vercel) and uses appropriate configuration.
+/*
+ * PUPPETEER FUNCTIONS - Commented out until puppeteer is needed
  *
- * For Puppeteer on Vercel, you need:
- * - puppeteer-core (lightweight version)
- * - @sparticuz/chromium-min (minimal Chromium for serverless)
+ * To use Puppeteer instead of Playwright:
+ * 1. Install dependencies: npm install puppeteer puppeteer-core @sparticuz/chromium-min
+ * 2. Uncomment the functions below
+ * 3. Import and use getPuppeteerBrowser() instead of getPlaywrightBrowser()
  */
+
+/*
+import type { Browser as PuppeteerBrowser, Page } from 'puppeteer-core';
+
 export async function getPuppeteerBrowser(): Promise<PuppeteerBrowser> {
   const isVercel = !!process.env.VERCEL;
 
   if (isVercel) {
-    // Vercel/Production environment - use puppeteer-core with minimal Chromium
     const puppeteerCore = await import('puppeteer-core');
     const chromium = await import('@sparticuz/chromium-min');
 
     return await puppeteerCore.default.launch({
       args: chromium.default.args,
-      defaultViewport: chromium.default.defaultViewport,
       executablePath: await chromium.default.executablePath(
         'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
       ),
-      headless: chromium.default.headless,
+      headless: true,
     });
   } else {
-    // Local development - use full puppeteer
     const puppeteer = await import('puppeteer');
-
     return await puppeteer.default.launch({
       headless: true,
       args: [
@@ -78,9 +76,6 @@ export async function getPuppeteerBrowser(): Promise<PuppeteerBrowser> {
   }
 }
 
-/**
- * Safely closes a browser instance with error handling
- */
 export async function closePuppeteerBrowser(browser: PuppeteerBrowser | null): Promise<void> {
   if (browser) {
     try {
@@ -91,41 +86,20 @@ export async function closePuppeteerBrowser(browser: PuppeteerBrowser | null): P
   }
 }
 
-/**
- * Creates a new page with common configurations
- */
 export async function createPuppeteerPage(browser: PuppeteerBrowser): Promise<Page> {
   const page = await browser.newPage();
-
-  // Set reasonable defaults
   await page.setViewport({ width: 1920, height: 1080 });
-
-  // Set a user agent to avoid detection
   await page.setUserAgent(
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
   );
-
   return page;
 }
+*/
 
 /**
- * Example usage with Puppeteer:
+ * EXAMPLE USAGE
  *
- * ```typescript
- * import { getPuppeteerBrowser, createPuppeteerPage, closePuppeteerBrowser } from '@/lib/puppeteer-config';
- *
- * const browser = await getPuppeteerBrowser();
- * try {
- *   const page = await createPuppeteerPage(browser);
- *   await page.goto('https://example.com');
- *   // ... do your scraping
- * } finally {
- *   await closePuppeteerBrowser(browser);
- * }
- * ```
- *
- * Example usage with Playwright (current approach):
- *
+ * Playwright (current approach):
  * ```typescript
  * import { getPlaywrightBrowser } from '@/lib/puppeteer-config';
  *
@@ -137,6 +111,20 @@ export async function createPuppeteerPage(browser: PuppeteerBrowser): Promise<Pa
  *   // ... do your scraping
  * } finally {
  *   await browser.close();
+ * }
+ * ```
+ *
+ * Puppeteer (when uncommented above):
+ * ```typescript
+ * import { getPuppeteerBrowser, createPuppeteerPage, closePuppeteerBrowser } from '@/lib/puppeteer-config';
+ *
+ * const browser = await getPuppeteerBrowser();
+ * try {
+ *   const page = await createPuppeteerPage(browser);
+ *   await page.goto('https://example.com');
+ *   // ... do your scraping
+ * } finally {
+ *   await closePuppeteerBrowser(browser);
  * }
  * ```
  */

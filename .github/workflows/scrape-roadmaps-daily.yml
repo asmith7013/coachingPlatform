@@ -1,0 +1,61 @@
+name: Scrape Roadmaps Daily
+
+on:
+  # Runs daily at 2 AM UTC (9 PM EST / 6 PM PST)
+  schedule:
+    - cron: '0 2 * * *'
+
+  # Allows manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  scrape-roadmaps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Trigger Roadmaps Scraper
+        env:
+          API_URL: ${{ secrets.VERCEL_DEPLOYMENT_URL || 'https://ai-coaching-platform.vercel.app' }}
+          API_KEY: ${{ secrets.SCRAPER_API_KEY }}
+          ROADMAPS_EMAIL: ${{ secrets.ROADMAPS_EMAIL }}
+          ROADMAPS_PASSWORD: ${{ secrets.ROADMAPS_PASSWORD }}
+        run: |
+          echo "🚀 Starting roadmaps scraper..."
+          echo "📍 API URL: $API_URL"
+
+          # Call the scraper API endpoint
+          response=$(curl -s -w "\n%{http_code}" -X POST "$API_URL/api/roadmaps/scrape" \
+            -H "Authorization: Bearer $API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"credentials\": {
+                \"email\": \"$ROADMAPS_EMAIL\",
+                \"password\": \"$ROADMAPS_PASSWORD\"
+              }
+            }")
+
+          # Extract HTTP status code and body
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "📊 Response status: $http_code"
+          echo "📄 Response body: $body"
+
+          # Check if successful
+          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
+            echo "✅ Scraper completed successfully!"
+            exit 0
+          else
+            echo "❌ Scraper failed with status code $http_code"
+            exit 1
+          fi
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Scraping failed. Check the logs above for details."
+          echo "💡 You can re-run this workflow manually from the Actions tab."

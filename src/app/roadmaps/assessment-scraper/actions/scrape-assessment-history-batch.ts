@@ -135,8 +135,9 @@ async function selectDropdownOption(
 
 /**
  * Clear multiselect and select new option
+ * @deprecated Currently not used - Student Grade and Skill Grade filters temporarily disabled
  */
-async function selectMultiselectOption(
+async function _selectMultiselectOption(
   page: Page,
   triggerSelector: string,
   optionText: string,
