@@ -4,7 +4,9 @@ This guide explains how to set up automated daily scraping of Roadmaps assessmen
 
 ## Overview
 
-The scraper runs daily at 2 AM UTC (9 PM EST / 6 PM PST) and can also be triggered manually. It calls your deployed Vercel API endpoint, which runs the Playwright scraper and saves data to MongoDB.
+The scraper runs daily at 2 AM UTC (9 PM EST / 6 PM PST) and can also be triggered manually. It runs directly on GitHub Actions with Playwright installed, connecting directly to MongoDB to save the scraped data.
+
+**Why GitHub Actions instead of Vercel?** Vercel serverless functions don't include browser binaries, so Playwright can't run there. GitHub Actions provides a full Ubuntu environment where we can install Playwright browsers.
 
 ## Setup Instructions
 

@@ -17,43 +17,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Trigger Roadmaps Scraper
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+
+      - name: Run Scraper
         env:
-          API_URL: ${{ secrets.VERCEL_DEPLOYMENT_URL || 'https://solvescoaching.com' }}
-          API_KEY: ${{ secrets.SCRAPER_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ROADMAPS_EMAIL: ${{ secrets.ROADMAPS_EMAIL }}
           ROADMAPS_PASSWORD: ${{ secrets.ROADMAPS_PASSWORD }}
         run: |
           echo "🚀 Starting roadmaps scraper..."
-          echo "📍 API URL: $API_URL"
-
-          # Call the scraper API endpoint
-          # -L follows redirects, -v shows verbose output for debugging
-          response=$(curl -L -s -w "\n%{http_code}" -X POST "$API_URL/api/roadmaps/scrape" \
-            -H "Authorization: Bearer $API_KEY" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"credentials\": {
-                \"email\": \"$ROADMAPS_EMAIL\",
-                \"password\": \"$ROADMAPS_PASSWORD\"
-              }
-            }")
-
-          # Extract HTTP status code and body
-          http_code=$(echo "$response" | tail -n1)
-          body=$(echo "$response" | sed '$d')
-
-          echo "📊 Response status: $http_code"
-          echo "📄 Response body: $body"
-
-          # Check if successful
-          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
-            echo "✅ Scraper completed successfully!"
-            exit 0
-          else
-            echo "❌ Scraper failed with status code $http_code"
-            exit 1
-          fi
+          npx tsx scripts/run-scraper.ts
 
       - name: Notify on failure
         if: failure()
