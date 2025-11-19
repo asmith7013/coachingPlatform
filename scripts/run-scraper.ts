@@ -14,7 +14,12 @@ import { scrapeAndUpdateAllSections } from '../src/app/roadmaps/assessment-scrap
 
 async function main() {
   console.log('🚀 Starting assessment scraper...');
-  console.log(`📅 Time: ${new Date().toISOString()}`);
+  const easternTime = new Date().toLocaleString('en-US', {
+    timeZone: 'America/New_York',
+    dateStyle: 'full',
+    timeStyle: 'long'
+  });
+  console.log(`📅 Time (ET): ${easternTime}`);
 
   // Validate environment variables
   const email = process.env.ROADMAPS_EMAIL;

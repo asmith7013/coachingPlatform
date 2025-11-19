@@ -102,7 +102,7 @@ db['collection-name'].dropIndex('index_name');
 - **Use Zod for validation** - All external data should be validated with Zod schemas
 - **Server Actions** - Use "use server" directive for backend operations
 - Before making commits, run:
-  - `npm run build` - Check for build errors
+  - `npm run prebuild` - Check for TypeScript and linting errors (DO NOT use `npm run build` as it interferes with dev server)
   - `npm run lint` - Fix linting issues
 
 ## Architecture

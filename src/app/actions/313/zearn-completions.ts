@@ -6,6 +6,7 @@ import { withDbConnection } from "@/lib/server/db/ensure-connection";
 import { StudentModel } from "@mongoose-schema/313/student.model";
 import { EntityResponse, PaginatedResponse } from "@/lib/types/core/response";
 import { ScraperEmailService } from "@/lib/email/email-notifications";
+import fs from "fs/promises";
 
 // Schema for parsing Zearn completion data
 const ZearnCompletionRowSchema = z.object({
@@ -51,6 +52,25 @@ export async function importZearnCompletions(
           error: "No data rows found",
           data: { imported: 0, skipped: 0, errors: [] }
         };
+      }
+
+      // Save CSV file locally (development only)
+      if (process.env.NODE_ENV !== 'production') {
+        try {
+          // Convert TSV back to CSV format
+          const csvData = lines.map(line => {
+            const parts = line.split('\t');
+            // Wrap fields in quotes and join with commas
+            return parts.map(field => `"${field}"`).join(',');
+          }).join('\n');
+
+          const localFilePath = '/Users/alexsmith/Documents/GitHub/tl-connect/scripts/zearn.csv';
+          await fs.writeFile(localFilePath, csvData, 'utf-8');
+          console.log(`✓ Saved CSV file to: ${localFilePath}`);
+        } catch (fileError) {
+          // Log error but don't fail the import
+          console.warn('Failed to save CSV file locally:', fileError);
+        }
       }
 
       // Parse all rows

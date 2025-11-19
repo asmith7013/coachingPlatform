@@ -11,6 +11,7 @@ export default function AnimationsPlayground() {
   const [_recordingStatus, setRecordingStatus] = useState<"idle" | "capturing">("idle");
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const currentSketchRef = useRef<{ iframe: HTMLIFrameElement; messageHandler: (event: MessageEvent) => void } | null>(null);
+  const [canvasSize, setCanvasSize] = useState({ width: 600, height: 600 });
 
   // Default starter code
   const DEFAULT_CODE = `function setup() {
@@ -22,6 +23,18 @@ function draw() {
   fill(255, 153, 51);
   rect(150, 150, 100, 100);
 }`;
+
+  // Extract canvas size from code
+  const extractCanvasSize = (codeToCheck: string) => {
+    const match = codeToCheck.match(/createCanvas\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)/);
+    if (match) {
+      return {
+        width: parseInt(match[1], 10),
+        height: parseInt(match[2], 10)
+      };
+    }
+    return { width: 600, height: 600 }; // Default
+  };
 
   // Load code from localStorage or use default
   useEffect(() => {
@@ -40,6 +53,10 @@ function draw() {
   const runCodeWithCode = (codeToRun: string) => {
     setError(null);
 
+    // Extract and set canvas size
+    const size = extractCanvasSize(codeToRun);
+    setCanvasSize(size);
+
     // Clear the container
     if (canvasContainerRef.current) {
       canvasContainerRef.current.innerHTML = "";
@@ -49,8 +66,10 @@ function draw() {
       // Create an iframe for complete isolation
       const iframe = document.createElement("iframe");
       iframe.style.border = "none";
-      iframe.style.width = "500px";
-      iframe.style.height = "500px";
+      // Add padding for the toggle button and some margin
+      iframe.style.width = `${size.width + 40}px`;
+      iframe.style.height = `${size.height + 60}px`;
+      iframe.style.maxWidth = "100%";
       iframe.style.margin = "auto";
       iframe.style.display = "block";
 
@@ -345,21 +364,21 @@ function draw() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-[1800px] mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+        <div className="max-w-[1800px] mx-auto px-4 md:px-6 py-3 md:py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900">
                 p5.js Animation Playground
               </h1>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-xs md:text-sm text-gray-500 mt-1">
                 Create math manipulatives and animations
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <select
                 value={selectedExample}
                 onChange={(e) => loadExample(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 sm:flex-none px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
               >
                 <option value="">Load Example...</option>
                 {EXAMPLE_CATEGORIES.map((category) => (
@@ -374,22 +393,26 @@ function draw() {
               </select>
               <button
                 onClick={clearCode}
-                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                className="px-3 md:px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-sm"
               >
                 Clear
               </button>
               <button
                 onClick={exportGif}
                 disabled={isRecording || !code}
-                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 md:px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
               >
                 {isRecording ? (
                   <>
-                    <span className="inline-block animate-pulse mr-2">🔴</span>
-                    Recording...
+                    <span className="inline-block animate-pulse mr-1">🔴</span>
+                    <span className="hidden sm:inline">Recording...</span>
+                    <span className="sm:hidden">Rec</span>
                   </>
                 ) : (
-                  <>📹 Export GIF</>
+                  <>
+                    <span className="hidden sm:inline">📹 Export GIF</span>
+                    <span className="sm:hidden">📹 GIF</span>
+                  </>
                 )}
               </button>
             </div>
@@ -398,10 +421,10 @@ function draw() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-[1800px] mx-auto p-6">
-        <div className="grid grid-cols-3 gap-6 h-[calc(100vh-140px)]">
+      <div className="max-w-[1800px] mx-auto p-4 md:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:min-h-[750px]">
           {/* Code Editor */}
-          <div className="col-span-1 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+          <div className="lg:col-span-1 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col order-2 lg:order-1 h-[300px] lg:h-auto">
             <div className="bg-gray-50 border-b border-gray-200 px-4 py-2">
               <h2 className="text-sm font-semibold text-gray-700">Code Editor</h2>
             </div>
@@ -415,11 +438,17 @@ function draw() {
           </div>
 
           {/* Preview */}
-          <div className="col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
-            <div className="bg-gray-50 border-b border-gray-200 px-4 py-2">
+          <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col order-1 lg:order-2">
+            <div className="bg-gray-50 border-b border-gray-200 px-4 py-2 flex items-center justify-between">
               <h2 className="text-sm font-semibold text-gray-700">Preview</h2>
+              <span className="text-xs text-gray-500">
+                {canvasSize.width} × {canvasSize.height}
+              </span>
             </div>
-            <div className="flex-1 bg-gray-100 p-4 overflow-auto relative flex items-center justify-center min-h-[600px]">
+            <div
+              className="flex-1 bg-gray-100 p-2 md:p-4 overflow-auto relative flex items-center justify-center"
+              style={{ minHeight: canvasSize.height + 100 }}
+            >
               <div ref={canvasContainerRef} className="bg-white"></div>
             </div>
 
@@ -438,13 +467,13 @@ function draw() {
         </div>
 
         {/* Instructions */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="text-sm font-semibold text-blue-900 mb-2">Quick Tips:</h3>
-          <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+        <div className="mt-4 md:mt-6 bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
+          <h3 className="text-xs md:text-sm font-semibold text-blue-900 mb-2">Quick Tips:</h3>
+          <ul className="text-xs md:text-sm text-blue-800 space-y-1 list-disc list-inside">
             <li>Select an example from the dropdown to see it instantly</li>
             <li>Edit the code in the editor to customize your animation</li>
             <li>Your code is automatically saved in your browser</li>
-            <li>Use the Clear button to reset to the default template</li>
+            <li className="hidden sm:list-item">Use the Clear button to reset to the default template</li>
             <li>Click Export GIF to save your animation</li>
           </ul>
         </div>

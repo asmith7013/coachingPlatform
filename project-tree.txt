@@ -364,6 +364,9 @@
 │   │   │   │   │   ├── equivalent-4-6-2-3.ts
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   └── tape-diagram-3-4.ts
+│   │   │   │   ├── geometry
+│   │   │   │   │   ├── dilation.ts
+│   │   │   │   │   └── index.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── multiplication
 │   │   │   │   │   ├── fraction-circles.ts
@@ -1098,6 +1101,7 @@
 │   │   │   │       ├── StudentDashboard.tsx
 │   │   │   │       ├── ZearnProgress.tsx
 │   │   │   │       └── monthlyCalendar
+│   │   │   ├── animations
 │   │   │   ├── classroomNotes
 │   │   │   │   └── tabs
 │   │   │   │       ├── BasicInfoTab.tsx
@@ -1832,4 +1836,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-529 directories, 1304 files
+531 directories, 1306 files
