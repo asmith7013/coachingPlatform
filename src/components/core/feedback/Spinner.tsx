@@ -3,25 +3,24 @@ import React from 'react';
 import { tv } from 'tailwind-variants';
 import { cn } from '@ui/utils/formatters';
 import { borderWidths } from '@/lib/tokens/tokens';
-import { borderColors } from '@/lib/tokens/colors';
 
 // Define spinner variants using the token-first approach
 const spinnerVariants = tv({
-  base: "animate-spin rounded-full border-solid border-t-transparent",
+  base: "animate-spin rounded-full border-solid",
   variants: {
     size: {
       xs: `h-3 w-3 ${borderWidths.sm}`,
       sm: `h-4 w-4 ${borderWidths.sm}`,
-      md: `h-6 w-6 ${borderWidths.sm}`,
+      md: `h-6 w-6 ${borderWidths.md}`,
       lg: `h-8 w-8 ${borderWidths.md}`,
       xl: `h-12 w-12 ${borderWidths.lg}`,
     },
     variant: {
-      default: `${borderColors.muted}`,
-      primary: `${borderColors.primary}`,
-      success: `${borderColors.success}`,
-      warning: `${borderColors.danger}`,
-      error: `${borderColors.danger}`,
+      default: "border-gray-300 border-t-gray-600",
+      primary: "border-blue-200 border-t-blue-600",
+      success: "border-green-200 border-t-green-600",
+      warning: "border-yellow-200 border-t-yellow-600",
+      error: "border-red-200 border-t-red-600",
     },
   },
   defaultVariants: {
