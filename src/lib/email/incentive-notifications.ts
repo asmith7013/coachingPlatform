@@ -34,6 +34,7 @@ export class IncentiveEmailService {
       const recipients = [
         'asmith7013@gmail.com',
         'mika.asaba@teachinglabstudio.com',
+        'tran.hoang@teachinglabstudio.com',
       ].join(', ');
 
       const subject = `📊 New Incentive Activities Logged - ${data.section} (${data.date})`;
