@@ -18,17 +18,24 @@ const GRADE_OPTIONS = [
   { value: "Algebra 1", label: "Algebra 1" },
 ];
 
-// Color palette for units - each has base, light (odd sections), and lighter (even sections)
+// Color palette for units - each has base, light (50), medium (200), dark (300) for section rotation
+// Sections rotate: A=light, B=medium, C=dark, D=light, E=medium, F=dark...
 const UNIT_COLORS = [
-  { base: "#2563EB", light: "#DBEAFE", lighter: "#EFF6FF" }, // blue
-  { base: "#059669", light: "#D1FAE5", lighter: "#ECFDF5" }, // green
-  { base: "#D97706", light: "#FEF3C7", lighter: "#FFFBEB" }, // amber
-  { base: "#DC2626", light: "#FEE2E2", lighter: "#FEF2F2" }, // red
-  { base: "#7C3AED", light: "#EDE9FE", lighter: "#F5F3FF" }, // purple
-  { base: "#DB2777", light: "#FCE7F3", lighter: "#FDF2F8" }, // pink
-  { base: "#0891B2", light: "#CFFAFE", lighter: "#ECFEFF" }, // cyan
-  { base: "#EA580C", light: "#FFEDD5", lighter: "#FFF7ED" }, // orange
+  { base: "#2563EB", light: "#EFF6FF", medium: "#BFDBFE", dark: "#93C5FD" }, // blue (50, 200, 300)
+  { base: "#059669", light: "#ECFDF5", medium: "#A7F3D0", dark: "#6EE7B7" }, // green (50, 200, 300)
+  { base: "#D97706", light: "#FFFBEB", medium: "#FDE68A", dark: "#FCD34D" }, // amber (50, 200, 300)
+  { base: "#DC2626", light: "#FEF2F2", medium: "#FECACA", dark: "#FCA5A5" }, // red (50, 200, 300)
+  { base: "#7C3AED", light: "#F5F3FF", medium: "#DDD6FE", dark: "#C4B5FD" }, // purple (50, 200, 300)
+  { base: "#DB2777", light: "#FDF2F8", medium: "#FBCFE8", dark: "#F9A8D4" }, // pink (50, 200, 300)
+  { base: "#0891B2", light: "#ECFEFF", medium: "#A5F3FC", dark: "#67E8F9" }, // cyan (50, 200, 300)
+  { base: "#EA580C", light: "#FFF7ED", medium: "#FED7AA", dark: "#FDBA74" }, // orange (50, 200, 300)
 ];
+
+// Get shade for a section based on its index (0=light, 1=medium, 2=dark, 3=light, ...)
+const getSectionShade = (sectionIndex: number): "light" | "medium" | "dark" => {
+  const shadeIndex = sectionIndex % 3;
+  return shadeIndex === 0 ? "light" : shadeIndex === 1 ? "medium" : "dark";
+};
 
 // Types
 interface ScopeAndSequenceLesson {
@@ -51,6 +58,8 @@ interface SectionSchedule {
 }
 
 interface UnitScheduleLocal {
+  unitKey: string; // Composite key: "grade-unitNumber" for uniqueness
+  grade: string;
   unitNumber: number;
   unitName: string;
   startDate: string;
@@ -77,7 +86,7 @@ interface SavedUnitSchedule {
 // Selection mode for interactive date picking
 type SelectionMode = {
   type: "start" | "end";
-  unitNumber: number;
+  unitKey: string;
   sectionId: string;
 } | null;
 
@@ -106,11 +115,28 @@ export default function CalendarPage() {
     const loadData = async () => {
       setLoading(true);
       try {
+        // For Algebra 1, we need to fetch saved schedules for both Grade 8 (prerequisites) and Algebra 1
+        const scheduleFetches = selectedGrade === 'Algebra 1'
+          ? Promise.all([
+              fetchUnitSchedules(schoolYear, '8'),
+              fetchUnitSchedules(schoolYear, 'Algebra 1'),
+            ]).then(([grade8Result, alg1Result]) => {
+              const combined: SavedUnitSchedule[] = [];
+              if (grade8Result.success && grade8Result.data) {
+                combined.push(...(grade8Result.data as unknown as SavedUnitSchedule[]));
+              }
+              if (alg1Result.success && alg1Result.data) {
+                combined.push(...(alg1Result.data as unknown as SavedUnitSchedule[]));
+              }
+              return { success: true, data: combined };
+            })
+          : fetchUnitSchedules(schoolYear, selectedGrade);
+
         const [calendarResult, lessonsResult, daysOffResult, schedulesResult] = await Promise.all([
           fetchSchoolCalendar(schoolYear),
           fetchScopeAndSequenceByGrade(selectedGrade),
           getDaysOff(schoolYear),
-          fetchUnitSchedules(schoolYear, selectedGrade),
+          scheduleFetches,
         ]);
 
         if (calendarResult.success && calendarResult.data) {
@@ -137,45 +163,83 @@ export default function CalendarPage() {
 
   // Build unit schedules from lessons and merge with saved schedules
   useEffect(() => {
-    const groups: Map<number, { unitName: string; sections: Map<string, number> }> = new Map();
+    // Use composite key (grade-unitNumber) to handle Algebra 1 which combines 8th grade prerequisites + Algebra 1 curriculum
+    const groups: Map<string, { grade: string; unitNumber: number; unitName: string; sections: Map<string, number> }> = new Map();
 
     for (const lesson of lessons) {
       if (!lesson.unitNumber) continue;
 
-      if (!groups.has(lesson.unitNumber)) {
-        groups.set(lesson.unitNumber, {
+      const unitKey = `${lesson.grade}-${lesson.unitNumber}`;
+
+      if (!groups.has(unitKey)) {
+        groups.set(unitKey, {
+          grade: lesson.grade,
+          unitNumber: lesson.unitNumber,
           unitName: lesson.unit || `Unit ${lesson.unitNumber}`,
           sections: new Map(),
         });
       }
-      const group = groups.get(lesson.unitNumber)!;
+      const group = groups.get(unitKey)!;
       const sectionId = lesson.section || "Unknown";
       const currentCount = group.sections.get(sectionId) || 0;
       group.sections.set(sectionId, currentCount + 1);
     }
 
+    // Sort: 8th grade prerequisites first (by unit number), then Algebra 1 (by unit number)
     const schedules: UnitScheduleLocal[] = Array.from(groups.entries())
-      .sort(([a], [b]) => a - b)
-      .map(([unitNumber, data]) => {
-        const saved = savedSchedules.find(s => s.unitNumber === unitNumber);
+      .sort(([, a], [, b]) => {
+        // If one is grade 8 and other is Algebra 1, grade 8 comes first
+        if (a.grade === '8' && b.grade === 'Algebra 1') return -1;
+        if (a.grade === 'Algebra 1' && b.grade === '8') return 1;
+        // Otherwise sort by unit number
+        return a.unitNumber - b.unitNumber;
+      })
+      .map(([unitKey, data]) => {
+        // Find saved schedule matching grade and unitNumber
+        const saved = savedSchedules.find(s => s.grade === data.grade && s.unitNumber === data.unitNumber);
+
+        // Build sections: Ramp Up first, then curriculum sections (A, B, C...), then Unit Test
+        const curriculumSections = Array.from(data.sections.entries())
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([sectionId, lessonCount]) => {
+            const savedSection = saved?.sections?.find(s => s.sectionId === sectionId);
+            return {
+              sectionId,
+              name: `Section ${sectionId}`,
+              startDate: savedSection?.startDate || "",
+              endDate: savedSection?.endDate || "",
+              lessonCount,
+            };
+          });
+
+        // Add Ramp Up at the beginning
+        const rampUpSaved = saved?.sections?.find(s => s.sectionId === "Ramp Up");
+        const rampUp: SectionSchedule = {
+          sectionId: "Ramp Up",
+          name: "Ramp Up",
+          startDate: rampUpSaved?.startDate || "",
+          endDate: rampUpSaved?.endDate || "",
+          lessonCount: 1,
+        };
+
+        // Add Unit Test at the end
+        const unitTestSaved = saved?.sections?.find(s => s.sectionId === "Unit Test");
+        const unitTest: SectionSchedule = {
+          sectionId: "Unit Test",
+          name: "Unit Test",
+          startDate: unitTestSaved?.startDate || "",
+          endDate: unitTestSaved?.endDate || "",
+          lessonCount: 1,
+        };
 
         return {
-          unitNumber,
+          unitKey,
+          grade: data.grade,
+          unitNumber: data.unitNumber,
           unitName: data.unitName,
           startDate: saved?.startDate || "",
           endDate: saved?.endDate || "",
-          sections: Array.from(data.sections.entries())
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([sectionId, lessonCount]) => {
-              const savedSection = saved?.sections?.find(s => s.sectionId === sectionId);
-              return {
-                sectionId,
-                name: `Section ${sectionId}`,
-                startDate: savedSection?.startDate || "",
-                endDate: savedSection?.endDate || "",
-                lessonCount,
-              };
-            }),
+          sections: [rampUp, ...curriculumSections, unitTest],
         };
       });
 
@@ -183,16 +247,16 @@ export default function CalendarPage() {
   }, [lessons, savedSchedules]);
 
   // Handle clicking a section to start date selection
-  const startDateSelection = (unitNumber: number, sectionId: string, type: "start" | "end") => {
-    setSelectionMode({ type, unitNumber, sectionId });
+  const startDateSelection = (unitKey: string, sectionId: string, type: "start" | "end") => {
+    setSelectionMode({ type, unitKey, sectionId });
   };
 
   // Clear dates for a section
-  const clearSectionDates = useCallback(async (unitNumber: number, sectionId: string) => {
+  const clearSectionDates = useCallback(async (unitKey: string, sectionId: string) => {
     // Update local state
     setUnitSchedules((prev) =>
       prev.map((unit) => {
-        if (unit.unitNumber !== unitNumber) return unit;
+        if (unit.unitKey !== unitKey) return unit;
         return {
           ...unit,
           sections: unit.sections.map((section) => {
@@ -204,15 +268,15 @@ export default function CalendarPage() {
     );
 
     // Get current unit data for saving
-    const unit = unitSchedules.find(u => u.unitNumber === unitNumber);
+    const unit = unitSchedules.find(u => u.unitKey === unitKey);
     if (!unit) return;
 
-    const existingSchedule = savedSchedules.find(s => s.unitNumber === unitNumber);
+    const existingSchedule = savedSchedules.find(s => s.grade === unit.grade && s.unitNumber === unit.unitNumber);
 
     setSaving(true);
     try {
       if (existingSchedule) {
-        await updateSectionDates(schoolYear, selectedGrade, unitNumber, sectionId, "", "");
+        await updateSectionDates(schoolYear, unit.grade, unit.unitNumber, sectionId, "", "");
         // Refresh saved schedules
         const result = await fetchUnitSchedules(schoolYear, selectedGrade);
         if (result.success && result.data) {
@@ -230,12 +294,12 @@ export default function CalendarPage() {
   const handleDateClick = useCallback(async (dateStr: string) => {
     if (!selectionMode) return;
 
-    const { type, unitNumber, sectionId } = selectionMode;
+    const { type, unitKey, sectionId } = selectionMode;
 
     // Update local state
     setUnitSchedules((prev) =>
       prev.map((unit) => {
-        if (unit.unitNumber !== unitNumber) return unit;
+        if (unit.unitKey !== unitKey) return unit;
         return {
           ...unit,
           sections: unit.sections.map((section) => {
@@ -247,7 +311,7 @@ export default function CalendarPage() {
     );
 
     // Get current section data for saving
-    const unit = unitSchedules.find(u => u.unitNumber === unitNumber);
+    const unit = unitSchedules.find(u => u.unitKey === unitKey);
     const section = unit?.sections.find(s => s.sectionId === sectionId);
     if (!unit || !section) {
       setSelectionMode(null);
@@ -257,30 +321,30 @@ export default function CalendarPage() {
     const newStartDate = type === "start" ? dateStr : section.startDate;
     const newEndDate = type === "end" ? dateStr : section.endDate;
 
-    // Save to DB
-    const existingSchedule = savedSchedules.find(s => s.unitNumber === unitNumber);
+    // Save to DB - use the unit's grade (important for Algebra 1 which has mixed grades)
+    const existingSchedule = savedSchedules.find(s => s.grade === unit.grade && s.unitNumber === unit.unitNumber);
 
     setSaving(true);
     try {
       if (existingSchedule) {
         const result = await updateSectionDates(
           schoolYear,
-          selectedGrade,
-          unitNumber,
+          unit.grade,
+          unit.unitNumber,
           sectionId,
           newStartDate,
           newEndDate
         );
         if (result.success && result.data) {
           setSavedSchedules(prev =>
-            prev.map(s => s.unitNumber === unitNumber ? result.data as unknown as SavedUnitSchedule : s)
+            prev.map(s => (s.grade === unit.grade && s.unitNumber === unit.unitNumber) ? result.data as unknown as SavedUnitSchedule : s)
           );
         }
       } else {
         const result = await upsertUnitSchedule({
           schoolYear,
-          grade: selectedGrade,
-          unitNumber,
+          grade: unit.grade,
+          unitNumber: unit.unitNumber,
           unitName: unit.unitName,
           sections: unit.sections.map(s => ({
             sectionId: s.sectionId,
@@ -302,11 +366,11 @@ export default function CalendarPage() {
 
     // If we just set start date, auto-switch to end date selection
     if (type === "start") {
-      setSelectionMode({ type: "end", unitNumber, sectionId });
+      setSelectionMode({ type: "end", unitKey, sectionId });
     } else {
       setSelectionMode(null);
     }
-  }, [selectionMode, unitSchedules, savedSchedules, schoolYear, selectedGrade]);
+  }, [selectionMode, unitSchedules, savedSchedules, schoolYear]);
 
   // Get unit/section info for a date
   const getScheduleForDate = (dateStr: string) => {
@@ -385,7 +449,7 @@ export default function CalendarPage() {
             let bgColor = "bg-white";
             let textColor = "text-gray-900";
             let customBg = "";
-            let cursor = isSelecting && !weekend && !dayOff ? "cursor-pointer" : "";
+            const cursor = isSelecting && !weekend && !dayOff ? "cursor-pointer" : "";
 
             // Check if this is the first day of a section (for left border)
             const isFirstDayOfSection = scheduleInfo && scheduleInfo.section.startDate === dateStr;
@@ -395,8 +459,9 @@ export default function CalendarPage() {
               textColor = "text-gray-400";
             } else if (scheduleInfo) {
               const unitColor = UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length];
-              // Alternate between light and lighter based on section index
-              customBg = scheduleInfo.sectionIndex % 2 === 0 ? unitColor.light : unitColor.lighter;
+              // Rotate through light → medium → dark based on section index (A=light, B=medium, C=dark, D=light, ...)
+              const shade = getSectionShade(scheduleInfo.sectionIndex);
+              customBg = unitColor[shade];
             }
 
             return (
@@ -434,8 +499,11 @@ export default function CalendarPage() {
                       style={{ backgroundColor: UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base }}
                     />
                     <span
-                      className="absolute -top-0.5 -right-0.5 text-[8px] font-bold leading-none px-1 py-0.5 rounded-full text-white"
-                      style={{ backgroundColor: UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base }}
+                      className="absolute -top-0.5 -right-0.5 text-[8px] font-bold leading-none px-1 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base,
+                        color: "white"
+                      }}
                     >
                       {scheduleInfo.section.sectionId}
                     </span>
@@ -448,11 +516,6 @@ export default function CalendarPage() {
         </div>
       </div>
     );
-  };
-
-  // Get unit index for coloring
-  const getUnitIndex = (unitNumber: number) => {
-    return unitSchedules.findIndex(u => u.unitNumber === unitNumber);
   };
 
   if (loading) {
@@ -528,7 +591,7 @@ export default function CalendarPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {unitSchedules.map((unit, unitIndex) => (
-                    <React.Fragment key={`unit-group-${unit.unitNumber}`}>
+                    <React.Fragment key={`unit-group-${unit.unitKey}`}>
                       {/* Unit Header */}
                       <tr
                         className="bg-gray-50"
@@ -540,14 +603,14 @@ export default function CalendarPage() {
                       </tr>
                       {/* Section Rows */}
                       {unit.sections.map((section) => {
-                        const isSelected = selectionMode?.unitNumber === unit.unitNumber && selectionMode?.sectionId === section.sectionId;
+                        const isSelected = selectionMode?.unitKey === unit.unitKey && selectionMode?.sectionId === section.sectionId;
                         const isSelectingStart = isSelected && selectionMode?.type === "start";
                         const isSelectingEnd = isSelected && selectionMode?.type === "end";
                         const unitColor = UNIT_COLORS[unitIndex % UNIT_COLORS.length];
 
                         return (
                           <tr
-                            key={`unit-${unit.unitNumber}-section-${section.sectionId}`}
+                            key={`unit-${unit.unitKey}-section-${section.sectionId}`}
                             style={{
                               borderLeft: `4px solid ${unitColor.base}`,
                               backgroundColor: isSelected ? unitColor.light : undefined
@@ -562,7 +625,7 @@ export default function CalendarPage() {
                             <td className="px-3 py-1.5 text-center">
                               {section.startDate ? (
                                 <button
-                                  onClick={() => startDateSelection(unit.unitNumber, section.sectionId, "start")}
+                                  onClick={() => startDateSelection(unit.unitKey, section.sectionId, "start")}
                                   className="text-xs px-2 py-1 rounded"
                                   style={{
                                     backgroundColor: isSelectingStart ? unitColor.base : unitColor.light,
@@ -573,7 +636,7 @@ export default function CalendarPage() {
                                 </button>
                               ) : (
                                 <button
-                                  onClick={() => startDateSelection(unit.unitNumber, section.sectionId, "start")}
+                                  onClick={() => startDateSelection(unit.unitKey, section.sectionId, "start")}
                                   className="text-xs px-2 py-1 rounded"
                                   style={{
                                     backgroundColor: isSelectingStart ? unitColor.base : unitColor.light,
@@ -587,7 +650,7 @@ export default function CalendarPage() {
                             <td className="px-3 py-1.5 text-center">
                               {section.endDate ? (
                                 <button
-                                  onClick={() => startDateSelection(unit.unitNumber, section.sectionId, "end")}
+                                  onClick={() => startDateSelection(unit.unitKey, section.sectionId, "end")}
                                   className="text-xs px-2 py-1 rounded"
                                   style={{
                                     backgroundColor: isSelectingEnd ? unitColor.base : unitColor.light,
@@ -598,7 +661,7 @@ export default function CalendarPage() {
                                 </button>
                               ) : (
                                 <button
-                                  onClick={() => startDateSelection(unit.unitNumber, section.sectionId, "end")}
+                                  onClick={() => startDateSelection(unit.unitKey, section.sectionId, "end")}
                                   className="text-xs px-2 py-1 rounded"
                                   style={{
                                     backgroundColor: isSelectingEnd ? unitColor.base : unitColor.light,
@@ -612,7 +675,7 @@ export default function CalendarPage() {
                             <td className="px-2 py-1.5 text-center">
                               {(section.startDate || section.endDate) && (
                                 <button
-                                  onClick={() => clearSectionDates(unit.unitNumber, section.sectionId)}
+                                  onClick={() => clearSectionDates(unit.unitKey, section.sectionId)}
                                   className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded p-1"
                                   title="Clear dates"
                                 >

@@ -58,9 +58,12 @@ export async function fetchUnitSchedules(schoolYear: string, grade: string) {
         .sort({ unitNumber: 1 })
         .lean();
 
+      // Fully serialize for client (handles ObjectIds and other MongoDB types)
+      const serialized = JSON.parse(JSON.stringify(schedules));
+
       return {
         success: true,
-        data: schedules as unknown as UnitSchedule[]
+        data: serialized as UnitSchedule[]
       };
     } catch (error) {
       return {
@@ -210,13 +213,10 @@ export async function upsertUnitSchedule(data: {
         { upsert: true, new: true }
       ).lean();
 
-      // Serialize ObjectId for client
-      const serialized = {
-        ...schedule,
-        _id: (schedule as { _id: { toString(): string } })._id.toString(),
-      };
+      // Fully serialize for client (handles ObjectIds and other MongoDB types)
+      const serialized = JSON.parse(JSON.stringify(schedule));
 
-      return { success: true, data: serialized as unknown as UnitSchedule };
+      return { success: true, data: serialized as UnitSchedule };
     } catch (error) {
       return {
         success: false,
@@ -260,13 +260,10 @@ export async function updateSectionDates(
         return { success: false, error: "Unit schedule or section not found" };
       }
 
-      // Serialize ObjectId for client
-      const serialized = {
-        ...schedule,
-        _id: (schedule as { _id: { toString(): string } })._id.toString(),
-      };
+      // Fully serialize for client (handles ObjectIds and other MongoDB types)
+      const serialized = JSON.parse(JSON.stringify(schedule));
 
-      return { success: true, data: serialized as unknown as UnitSchedule };
+      return { success: true, data: serialized as UnitSchedule };
     } catch (error) {
       return {
         success: false,

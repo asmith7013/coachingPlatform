@@ -227,14 +227,37 @@ export async function bulkUpsertScopeAndSequence(
 
 /**
  * Fetch scope and sequence by grade
+ * For Algebra 1, includes both 8th grade prerequisites (with scopeSequenceTag: 'Algebra 1')
+ * and the Algebra 1 curriculum itself
  */
 export async function fetchScopeAndSequenceByGrade(grade: string) {
   return withDbConnection(async () => {
     try {
-      const entries = await ScopeAndSequenceModel
-        .find({ grade })
-        .sort({ unitNumber: 1, lessonNumber: 1 })
-        .exec();
+      let entries;
+
+      if (grade === 'Algebra 1') {
+        // For Algebra 1, fetch:
+        // 1. Grade 8 lessons tagged with 'Algebra 1' (prerequisites)
+        // 2. Grade 'Algebra 1' lessons (the actual curriculum)
+        const [grade8Prerequisites, algebra1Curriculum] = await Promise.all([
+          ScopeAndSequenceModel
+            .find({ grade: '8', scopeSequenceTag: 'Algebra 1' })
+            .sort({ unitNumber: 1, lessonNumber: 1 })
+            .exec(),
+          ScopeAndSequenceModel
+            .find({ grade: 'Algebra 1' })
+            .sort({ unitNumber: 1, lessonNumber: 1 })
+            .exec()
+        ]);
+
+        // Combine: 8th grade prerequisites first, then Algebra 1 curriculum
+        entries = [...grade8Prerequisites, ...algebra1Curriculum];
+      } else {
+        entries = await ScopeAndSequenceModel
+          .find({ grade })
+          .sort({ unitNumber: 1, lessonNumber: 1 })
+          .exec();
+      }
 
       return {
         success: true,
