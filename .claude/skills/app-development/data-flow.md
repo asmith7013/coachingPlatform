@@ -140,6 +140,28 @@ Key differences:
 - Transforms add `id` field for client use
 - Always use `.toJSON()` when returning to client
 
+### Mongoose Model Export Pattern (IMPORTANT)
+
+**Always use the conditional export pattern for Mongoose models:**
+
+```typescript
+// ✅ CORRECT - Required for CRUD factory compatibility
+export const MyModel = mongoose.models.MyModel ||
+  mongoose.model("MyModel", MySchema);
+
+// ❌ WRONG - Causes TypeScript errors with CRUD factory
+if (mongoose.models.MyModel) {
+  delete mongoose.models.MyModel;
+}
+export const MyModel = mongoose.model("MyModel", MySchema);
+```
+
+**Why this matters:**
+- The `||` pattern allows TypeScript to infer the cached model type from `mongoose.models`
+- This satisfies the `Model<Document>` constraint required by `createCrudActions`
+- The delete pattern creates a raw schema type that doesn't match the CRUD factory's type constraints
+- Both patterns work at runtime, but only the `||` pattern has correct TypeScript inference
+
 ## React Query Patterns
 
 ### Query Hook Pattern
@@ -243,7 +265,7 @@ const validated = MySchema.parse(rawData);
 ### Common Pitfalls
 
 1. **ID Format Mismatches** - Some use numeric IDs, others use string slugs
-2. **Mongoose Model Caching** - Use `delete mongoose.models.ModelName` during dev
+2. **Mongoose Model Export** - Always use `mongoose.models.X || mongoose.model(...)` pattern (see above)
 3. **Index Conflicts** - Drop old indexes manually after schema changes
 4. **Timezone Issues** - Use local timezone for dates in forms
 

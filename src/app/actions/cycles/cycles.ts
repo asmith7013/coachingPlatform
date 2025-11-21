@@ -2,7 +2,7 @@
 
 import { connectToDB } from "@server/db/connection";
 import { CycleModel } from "@mongoose-schema/core/cycle.model";
-import { fetchPaginatedResource } from "@/lib/data-processing/pagination/unified-pagination";
+import { fetchPaginatedResource } from "@data-processing/pagination/unified-pagination";
 import { handleServerError } from "@error/handlers/server";
 import type { QueryParams } from "@core-types/query";
 import { Cycle, CycleZodSchema } from "@zod-schema/core/cycle";

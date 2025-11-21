@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Roadmaps',
+  title: 'School Calendar',
 };
 
 const ALLOWED_DOMAINS = ['schools.nyc.gov', 'teachinglab.org'];
@@ -15,7 +15,7 @@ function isAllowedDomain(email: string | null | undefined): boolean {
   return ALLOWED_DOMAINS.includes(domain);
 }
 
-export default async function RoadmapsLayout({
+export default async function CalendarLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -32,7 +32,7 @@ export default async function RoadmapsLayout({
 
   // Require authentication - redirect to sign-in if not logged in
   if (!userId) {
-    const currentPath = '/roadmaps';
+    const currentPath = '/calendar';
     redirect(`/sign-in?redirect_url=${encodeURIComponent(currentPath)}`);
   }
 
@@ -48,7 +48,7 @@ export default async function RoadmapsLayout({
           <div className="text-red-600 text-5xl mb-4">🚫</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
           <p className="text-gray-600 mb-4">
-            Access to Roadmaps is restricted to authorized email domains only.
+            Access to the Calendar is restricted to authorized email domains only.
           </p>
           <p className="text-sm text-gray-500 mb-6">
             Allowed domains: {ALLOWED_DOMAINS.map(d => `@${d}`).join(', ')}

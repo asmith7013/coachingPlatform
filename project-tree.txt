@@ -292,6 +292,10 @@
 │   │   │   │   ├── sync-sheets.ts
 │   │   │   │   ├── zearn-completions.ts
 │   │   │   │   └── zearn-import.ts
+│   │   │   ├── calendar
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── school-calendar.ts
+│   │   │   │   └── unit-schedule.ts
 │   │   │   ├── coaching
 │   │   │   │   ├── cap-evidence.ts
 │   │   │   │   ├── cap-implementation-records.ts
@@ -351,6 +355,9 @@
 │   │   ├── animations
 │   │   │   ├── COORDINATE-PLANE-DRAWING.md
 │   │   │   ├── examples
+│   │   │   │   ├── algebraTiles
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── simple-manipulative.ts
 │   │   │   │   ├── basic.ts
 │   │   │   │   ├── coordinatePlane
 │   │   │   │   │   ├── LLM-USAGE.md
@@ -383,6 +390,7 @@
 │   │   │   │   │   ├── flour-eggs.ts
 │   │   │   │   │   └── index.ts
 │   │   │   │   ├── tapeDiagrams
+│   │   │   │   │   ├── dynamic-builder.ts
 │   │   │   │   │   ├── equivalent-ratios.ts
 │   │   │   │   │   └── index.ts
 │   │   │   │   └── triangleRatios
@@ -438,6 +446,9 @@
 │   │   │   └── webhooks
 │   │   │       └── clerk
 │   │   │           └── route.ts
+│   │   ├── calendar
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
 │   │   ├── dashboard
 │   │   │   ├── classroomNotes
 │   │   │   │   ├── components
@@ -589,6 +600,10 @@
 │   │   │   └── todays-visit-dashboard
 │   │   │       └── page.tsx
 │   │   ├── exemplar
+│   │   ├── gif-converter
+│   │   │   ├── actions
+│   │   │   │   └── upload-gif.ts
+│   │   │   └── page.tsx
 │   │   ├── global-error.tsx
 │   │   ├── globals.css
 │   │   ├── incentives
@@ -1466,6 +1481,10 @@
 │   │   │   │   │   ├── student-performance.model.ts
 │   │   │   │   │   ├── student.model.ts
 │   │   │   │   │   └── zearn-import.model.ts
+│   │   │   │   ├── calendar
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── school-calendar.model.ts
+│   │   │   │   │   └── unit-schedule.model.ts
 │   │   │   │   ├── cap
 │   │   │   │   │   ├── cap-evidence.model.ts
 │   │   │   │   │   ├── cap-implementation-record.model.ts
@@ -1539,6 +1558,10 @@
 │   │   │       │   ├── student.ts
 │   │   │       │   └── zearn-import.ts
 │   │   │       ├── base-schemas.ts
+│   │   │       ├── calendar
+│   │   │       │   ├── index.ts
+│   │   │       │   ├── school-calendar.ts
+│   │   │       │   └── unit-schedule.ts
 │   │   │       ├── cap
 │   │   │       │   ├── cap-evidence.ts
 │   │   │       │   ├── cap-implementation-record.ts
@@ -1836,4 +1859,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-531 directories, 1306 files
+538 directories, 1322 files

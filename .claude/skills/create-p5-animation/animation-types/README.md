@@ -64,6 +64,63 @@ let scaleFactors = [
 }
 ```
 
+### 3. [Dynamic Tape Diagram](implement-dynamic-tape-diagram/)
+**Pattern:** Interactive tape diagram builder with drag-and-drop
+**Use for:** Building algebraic equations, bar models, proportional relationships
+**Features:**
+- Drag variables (x) from palette to tape
+- Resize constants before adding to tape
+- Set total value to see proportional sizing
+- Remove parts with X button
+- Live equation display
+
+**Example Configuration:**
+```javascript
+{
+  variable: {
+    x: 80, y: 100, w: 60, h: 60,
+    color: [230, 57, 70],
+    label: 'x'
+  },
+  constant: {
+    x: 200, y: 100, w: 100, h: 60,
+    minWidth: 40, maxWidth: 300,
+    initialValue: 1, maxValue: 20,
+    color: [6, 167, 125]
+  },
+  totalConfig: {
+    initial: 0,
+    showProportions: true
+  }
+}
+```
+
+### 4. [Algebra Tiles](implement-algebra-tiles/)
+**Pattern:** Interactive algebra tiles manipulative with cancellation
+**Use for:** Modeling algebraic expressions, zero principle, combining like terms
+**Features:**
+- Drag tiles (x, -x, 1, -1) from palette to workspace
+- Move and rearrange placed tiles
+- Automatic cancellation when opposite tiles are close
+- Visual feedback with grey color and dashed lines
+- Live simplified equation display
+
+**Example Configuration:**
+```javascript
+{
+  tileConfig: {
+    x: { width: 80, height: 60, color: [102, 178, 102], label: 'x' },
+    negX: { width: 80, height: 60, color: [230, 57, 70], label: '-x' },
+    one: { width: 50, height: 50, color: [255, 193, 94], label: '1' },
+    negOne: { width: 50, height: 50, color: [230, 57, 70], label: '-1' }
+  },
+  cancelConfig: {
+    snapDistance: 40,
+    cancelledColor: [150, 150, 150]
+  }
+}
+```
+
 ## How to Use Animation Types
 
 ### 1. Identify Your Animation Need
@@ -95,7 +152,7 @@ Don't modify:
 ## Decision Tree
 
 ```
-What type of geometry/coordinate interaction?
+What type of interaction do you need?
 
 Interactive dilation with scale factors?
 ├─ YES → implement-dynamic-dilation
@@ -103,6 +160,14 @@ Interactive dilation with scale factors?
 
 Draw lines on coordinate plane?
 ├─ YES → implement-dynamic-graph-question
+└─ NO ↓
+
+Build tape diagrams with drag-and-drop?
+├─ YES → implement-dynamic-tape-diagram
+└─ NO ↓
+
+Drag algebra tiles with cancellation?
+├─ YES → implement-algebra-tiles
 └─ NO → Check other animation types or create custom
 ```
 
@@ -116,10 +181,18 @@ animation-types/
 │   ├── SKILL.md                       # Full documentation
 │   └── snippets/
 │       └── dynamic-dilation.ts        # Complete working code
-└── implement-dynamic-graph-question/
+├── implement-dynamic-graph-question/
+│   ├── SKILL.md                       # Full documentation
+│   └── snippets/
+│       └── coordinate-plane-p5.js     # Complete working code
+├── implement-dynamic-tape-diagram/
+│   ├── SKILL.md                       # Full documentation
+│   └── snippets/
+│       └── dynamic-tape-diagram.ts    # Complete working code
+└── implement-algebra-tiles/
     ├── SKILL.md                       # Full documentation
     └── snippets/
-        └── coordinate-plane-p5.js     # Complete working code
+        └── algebra-tiles.ts           # Complete working code
 ```
 
 ## Integration with create-p5-animation Skill
@@ -161,6 +234,8 @@ This ensures:
 |---------------|--------|-------------|-----------------|
 | Dynamic Dilation | ✅ Complete | ✅ Yes | ✅ 3 patterns |
 | Dynamic Graph | ✅ Complete | ✅ Yes | ✅ 4 patterns |
+| Dynamic Tape Diagram | ✅ Complete | ✅ Yes | ✅ 3 patterns |
+| Algebra Tiles | ✅ Complete | ✅ Yes | ✅ 4 patterns |
 
 ## Related Skills
 
