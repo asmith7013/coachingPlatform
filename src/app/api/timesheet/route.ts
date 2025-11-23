@@ -7,6 +7,34 @@ import { TimesheetBatchInputSchema } from "@/lib/schema/zod-schema/313/timesheet
 // Simple API key for authentication (store in .env.local for production)
 const TIMESHEET_API_KEY = process.env.TIMESHEET_API_KEY || "timesheet-dev-key-2024";
 
+// CORS headers for cross-origin requests from Chrome extension
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+/**
+ * Helper to create JSON response with CORS headers
+ */
+function jsonResponse(data: unknown, status: number = 200) {
+  return NextResponse.json(data, {
+    status,
+    headers: CORS_HEADERS,
+  });
+}
+
+/**
+ * OPTIONS /api/timesheet
+ * Handle CORS preflight requests
+ */
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: CORS_HEADERS,
+  });
+}
+
 /**
  * Adjusts the date if submission is after 7pm EST
  * If after 7pm, shifts to the next day
@@ -41,13 +69,13 @@ export async function POST(request: NextRequest) {
     const validationResult = TimesheetBatchInputSchema.safeParse(body);
     if (!validationResult.success) {
       console.error("Validation error:", validationResult.error);
-      return NextResponse.json(
+      return jsonResponse(
         {
           success: false,
           error: "Invalid input data",
           details: validationResult.error.issues,
         },
-        { status: 400 }
+        400
       );
     }
 
@@ -56,10 +84,7 @@ export async function POST(request: NextRequest) {
     // Verify API key
     if (apiKey !== TIMESHEET_API_KEY) {
       console.error("Invalid API key provided");
-      return NextResponse.json(
-        { success: false, error: "Invalid API key" },
-        { status: 401 }
-      );
+      return jsonResponse({ success: false, error: "Invalid API key" }, 401);
     }
 
     // Process and save entries
@@ -93,23 +118,23 @@ export async function POST(request: NextRequest) {
 
     console.log(`✅ Saved ${savedEntries.length} timesheet entries`);
 
-    return NextResponse.json(
+    return jsonResponse(
       {
         success: true,
         message: `Saved ${savedEntries.length} timesheet entries`,
         data: savedEntries,
       },
-      { status: 201 }
+      201
     );
   } catch (error) {
     console.error("Timesheet API Error:", error);
 
-    return NextResponse.json(
+    return jsonResponse(
       {
         success: false,
         error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      500
     );
   }
 }
@@ -157,7 +182,7 @@ export async function GET(request: NextRequest) {
       }));
     });
 
-    return NextResponse.json({
+    return jsonResponse({
       success: true,
       data: entries,
       count: entries.length,
@@ -165,12 +190,12 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Timesheet API GET Error:", error);
 
-    return NextResponse.json(
+    return jsonResponse(
       {
         success: false,
         error: error instanceof Error ? error.message : "Internal server error",
       },
-      { status: 500 }
+      500
     );
   }
 }
