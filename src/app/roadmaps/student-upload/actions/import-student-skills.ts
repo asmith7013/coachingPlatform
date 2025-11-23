@@ -1,6 +1,6 @@
 "use server";
 
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { fetchStudents, updateStudent } from '@actions/313/students';
 import { parseRoadmapSheet } from '../lib/parser';
 import { ImportResponse, StudentUpdateResult } from '../lib/types';
@@ -14,29 +14,54 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
 
   try {
     // Parse Excel file
-    const workbook = XLSX.read(fileBuffer, { type: 'array' });
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(fileBuffer);
+
+    // Get sheet names
+    const sheetNames = workbook.worksheets.map(ws => ws.name);
 
     // Check if sheet exists
-    if (!workbook.SheetNames.includes(sheetName)) {
+    if (!sheetNames.includes(sheetName)) {
       return {
         success: false,
         totalStudentsProcessed: 0,
         successfulUpdates: 0,
         failedUpdates: 0,
         studentResults: [],
-        errors: [`Sheet "${sheetName}" not found. Available sheets: ${workbook.SheetNames.join(', ')}`],
+        errors: [`Sheet "${sheetName}" not found. Available sheets: ${sheetNames.join(', ')}`],
       };
     }
 
     // Get the specific sheet
-    const worksheet = workbook.Sheets[sheetName];
+    const worksheet = workbook.getWorksheet(sheetName);
+    if (!worksheet) {
+      return {
+        success: false,
+        totalStudentsProcessed: 0,
+        successfulUpdates: 0,
+        failedUpdates: 0,
+        studentResults: [],
+        errors: [`Sheet "${sheetName}" could not be loaded`],
+      };
+    }
 
     // Convert sheet to 2D array (preserving empty cells)
-    const sheetData = XLSX.utils.sheet_to_json<string[]>(worksheet, {
-      header: 1,
-      defval: '',
-      raw: false,
-    }) as string[][];
+    const sheetData: string[][] = [];
+    worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+      const rowData: string[] = [];
+      row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+        // Pad with empty strings if there are gaps
+        while (rowData.length < colNumber - 1) {
+          rowData.push('');
+        }
+        rowData.push(cell.value?.toString() ?? '');
+      });
+      // Pad to ensure consistent array from row 1
+      while (sheetData.length < rowNumber - 1) {
+        sheetData.push([]);
+      }
+      sheetData.push(rowData);
+    });
 
     if (sheetData.length === 0) {
       return {
