@@ -78,6 +78,37 @@ export const ZearnLessonCompletionSchema = z.object({
 });
 
 // =====================================
+// RAMP-UP PROGRESS SCHEMA
+// =====================================
+
+/**
+ * Individual ramp-up question completion
+ */
+export const RampUpQuestionSchema = z.object({
+  questionNumber: z.number().int().positive().describe("Question number (1-indexed)"),
+  completed: z.boolean().default(false).describe("Whether question was answered correctly"),
+  completedAt: z.string().optional().describe("When question was completed (ISO format)"),
+});
+
+/**
+ * Progress on a single ramp-up assignment
+ */
+export const RampUpProgressSchema = z.object({
+  unitCode: z.string().describe("Unit code (e.g., '8.4')"),
+  rampUpId: z.string().describe("Ramp-up identifier (e.g., '4.RU1')"),
+  rampUpName: z.string().optional().describe("Ramp-up name"),
+  podsyAssignmentId: z.string().optional().describe("Podsie assignment ID"),
+
+  questions: z.array(RampUpQuestionSchema).default([]).describe("Per-question completion status"),
+  totalQuestions: z.number().int().default(0).describe("Total questions in ramp-up"),
+  completedCount: z.number().int().default(0).describe("Number of questions completed"),
+  percentComplete: z.number().default(0).describe("Completion percentage"),
+  isFullyComplete: z.boolean().default(false).describe("Whether all questions completed"),
+
+  lastSyncedAt: z.string().optional().describe("Last Podsie sync timestamp"),
+});
+
+// =====================================
 // STUDENT SCHEMA
 // =====================================
 
@@ -106,6 +137,9 @@ export const StudentFieldsSchema = z.object({
 
   // Zearn lesson completions
   zearnLessons: z.array(ZearnLessonCompletionSchema).default([]).describe("Array of completed Zearn lessons with dates"),
+
+  // Ramp-up progress tracking
+  rampUpProgress: z.array(RampUpProgressSchema).default([]).describe("Array of ramp-up assignment progress"),
 });
 
 /**
@@ -126,6 +160,8 @@ export type StudentActivity = z.infer<typeof StudentActivitySchema>;
 export type SkillAttempt = z.infer<typeof SkillAttemptSchema>;
 export type SkillPerformance = z.infer<typeof SkillPerformanceSchema>;
 export type ZearnLessonCompletion = z.infer<typeof ZearnLessonCompletionSchema>;
+export type RampUpQuestion = z.infer<typeof RampUpQuestionSchema>;
+export type RampUpProgress = z.infer<typeof RampUpProgressSchema>;
 export type Student = z.infer<typeof StudentZodSchema>;
 export type StudentInput = z.infer<typeof StudentInputZodSchema>;
 
@@ -148,6 +184,7 @@ export function createStudentDefaults(overrides: Partial<StudentInput> = {}): St
     classActivities: [],
     skillPerformances: [],
     zearnLessons: [],
+    rampUpProgress: [],
     ownerIds: [],
     ...overrides
   };

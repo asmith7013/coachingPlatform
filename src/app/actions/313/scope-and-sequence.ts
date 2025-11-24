@@ -253,8 +253,17 @@ export async function fetchScopeAndSequenceByGrade(grade: string) {
         // Combine: 8th grade prerequisites first, then Algebra 1 curriculum
         entries = [...grade8Prerequisites, ...algebra1Curriculum];
       } else {
+        // For regular grades, exclude entries tagged for other scopes (e.g., 'Algebra 1' prerequisites)
+        // Only include entries with matching scopeSequenceTag or no tag
         entries = await ScopeAndSequenceModel
-          .find({ grade })
+          .find({
+            grade,
+            $or: [
+              { scopeSequenceTag: { $exists: false } },
+              { scopeSequenceTag: null },
+              { scopeSequenceTag: `Grade ${grade}` }
+            ]
+          })
           .sort({ unitNumber: 1, lessonNumber: 1 })
           .exec();
       }
@@ -293,6 +302,148 @@ export async function fetchScopeAndSequenceByUnit(grade: string, unitNumber: num
       return {
         success: false,
         error: handleServerError(error, 'fetchScopeAndSequenceByUnit')
+      };
+    }
+  });
+}
+
+/**
+ * Fetch all ramp-up lessons for a given scopeSequenceTag
+ * For 'Algebra 1', fetches 8th grade content tagged for Algebra 1
+ * Returns ramp-ups grouped by unit for dropdown selection
+ */
+export async function fetchRampUpsByScope(scopeSequenceTag: string) {
+  return withDbConnection(async () => {
+    try {
+      const rampUps = await ScopeAndSequenceModel
+        .find({
+          scopeSequenceTag,
+          lessonType: 'ramp-up'
+        })
+        .sort({ unitNumber: 1, lessonNumber: 1 })
+        .lean();
+
+      return {
+        success: true,
+        data: rampUps.map(ru => ({
+          _id: String(ru._id),
+          unitNumber: ru.unitNumber,
+          unitLessonId: ru.unitLessonId,
+          lessonName: ru.lessonName,
+          unit: ru.unit,
+          grade: ru.grade,
+          scopeSequenceTag: ru.scopeSequenceTag,
+          podsyAssignmentId: ru.podsyAssignmentId,
+          totalQuestions: ru.totalQuestions || 0,
+        }))
+      };
+    } catch (error) {
+      console.error('💥 Error fetching ramp-ups by scope:', error);
+      return {
+        success: false,
+        data: [],
+        error: handleServerError(error, 'fetchRampUpsByScope')
+      };
+    }
+  });
+}
+
+/**
+ * Fetch all ramp-ups for a specific unit within a scopeSequenceTag
+ */
+export async function fetchRampUpsByUnit(scopeSequenceTag: string, unitNumber: number) {
+  return withDbConnection(async () => {
+    try {
+      interface RampUpDoc {
+        _id: unknown;
+        unitNumber: number;
+        unitLessonId: string;
+        lessonName: string;
+        unit: string;
+        grade: string;
+        scopeSequenceTag?: string;
+        podsyAssignmentId?: string;
+        totalQuestions?: number;
+      }
+
+      const rampUps = await ScopeAndSequenceModel
+        .find({
+          scopeSequenceTag,
+          unitNumber,
+          lessonType: 'ramp-up'
+        })
+        .sort({ lessonNumber: 1, unitLessonId: 1 })
+        .lean<RampUpDoc[]>();
+
+      return {
+        success: true,
+        data: rampUps.map(ru => ({
+          _id: String(ru._id),
+          unitNumber: ru.unitNumber,
+          unitLessonId: ru.unitLessonId,
+          lessonName: ru.lessonName,
+          unit: ru.unit,
+          grade: ru.grade,
+          scopeSequenceTag: ru.scopeSequenceTag || '',
+          podsyAssignmentId: ru.podsyAssignmentId,
+          totalQuestions: ru.totalQuestions || 0,
+        }))
+      };
+    } catch (error) {
+      console.error('💥 Error fetching ramp-ups by unit:', error);
+      return {
+        success: false,
+        data: [] as Array<{
+          _id: string;
+          unitNumber: number;
+          unitLessonId: string;
+          lessonName: string;
+          unit: string;
+          grade: string;
+          scopeSequenceTag: string;
+          podsyAssignmentId?: string;
+          totalQuestions: number;
+        }>,
+        error: handleServerError(error, 'fetchRampUpsByUnit')
+      };
+    }
+  });
+}
+
+/**
+ * Get unique units that have ramp-ups for a scopeSequenceTag
+ */
+export async function fetchUnitsWithRampUps(scopeSequenceTag: string) {
+  return withDbConnection(async () => {
+    try {
+      const units = await ScopeAndSequenceModel.aggregate([
+        { $match: { scopeSequenceTag, lessonType: 'ramp-up' } },
+        {
+          $group: {
+            _id: '$unitNumber',
+            unit: { $first: '$unit' },
+            grade: { $first: '$grade' },
+            rampUpCount: { $sum: 1 }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ]);
+
+      return {
+        success: true,
+        data: units.map(u => ({
+          unitNumber: u._id,
+          unitName: u.unit,
+          grade: u.grade,
+          rampUpCount: u.rampUpCount
+        }))
+      };
+    } catch (error) {
+      console.error('💥 Error fetching units with ramp-ups:', error);
+      return {
+        success: false,
+        data: [],
+        error: handleServerError(error, 'fetchUnitsWithRampUps')
       };
     }
   });

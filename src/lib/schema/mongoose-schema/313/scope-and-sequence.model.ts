@@ -21,6 +21,8 @@ const SCOPE_SEQUENCE_TAG_VALUES = [
 // SCOPE AND SEQUENCE MODEL
 // =====================================
 
+const LESSON_TYPE_VALUES = ["lesson", "ramp-up"] as const;
+
 const scopeAndSequenceFields = {
   grade: { type: String, required: true, index: true },
   unit: { type: String, required: true, index: true },
@@ -37,6 +39,17 @@ const scopeAndSequenceFields = {
   },
   roadmapSkills: { type: [String], default: [] },
   targetSkills: { type: [String], default: [] },
+
+  // Lesson type and Podsy integration
+  lessonType: {
+    type: String,
+    required: false,
+    default: "lesson",
+    enum: LESSON_TYPE_VALUES,
+    index: true
+  },
+  podsyAssignmentId: { type: String, required: false, index: true },
+  totalQuestions: { type: Number, required: false },
 
   ...standardDocumentFields
 };
