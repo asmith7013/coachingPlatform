@@ -310,7 +310,7 @@ export default function RampUpProgressPage() {
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors cursor-pointer"
             >
               <PlusIcon className="w-5 h-5" />
               Create Ramp-Up
@@ -555,7 +555,7 @@ function RampUpCard({
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
               syncing || !rampUp.podsieAssignmentId
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700"
+                : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
             }`}
           >
             <ArrowPathIcon
@@ -814,6 +814,7 @@ function SmartboardDisplay({
 }: SmartboardDisplayProps) {
   // Edit mode state
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [dueDate, setDueDate] = useState<string>(() => {
     // Default to next Friday
     const today = new Date();
@@ -823,6 +824,11 @@ function SmartboardDisplay({
     return nextFriday.toISOString().split("T")[0];
   });
   const [learningContent, setLearningContent] = useState<string>("");
+
+  // Fullscreen toggle handler
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
 
   // Format due date for display
   const formattedDueDate = useMemo(() => {
@@ -867,30 +873,15 @@ function SmartboardDisplay({
       )
     : 0;
 
-  return (
-    <div className="mt-8">
-      {/* Edit Mode Toggle */}
-      <div className="flex justify-end mb-2">
-        <button
-          onClick={() => setIsEditMode(!isEditMode)}
-          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-            isEditMode
-              ? "bg-indigo-600 text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-          }`}
-        >
-          <PencilIcon className="w-4 h-4" />
-          {isEditMode ? "Done Editing" : "Edit Display"}
-        </button>
-      </div>
-
+  const smartboardContent = (
+    <>
       {/* Smartboard Header */}
-      <div className="bg-indigo-900 rounded-t-xl p-4 flex items-center justify-between">
+      <div className={`bg-indigo-900 rounded-t-xl flex items-center justify-between ${isFullscreen ? "p-8 text-xl" : "p-4"}`}>
         <div className="flex items-center gap-4">
-          <div className="bg-teal-500 text-white px-4 py-2 rounded-lg font-bold text-lg">
+          <div className={`bg-teal-500 text-white rounded-lg font-bold ${isFullscreen ? "px-6 py-3 text-2xl" : "px-4 py-2 text-lg"}`}>
             Mini Goal
           </div>
-          <div className="bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold">
+          <div className={`bg-indigo-700 text-white rounded-lg font-semibold ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
             Unit {selectedUnit}, Ramp-Ups
           </div>
           {isEditMode ? (
@@ -898,26 +889,30 @@ function SmartboardDisplay({
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-lg border border-indigo-400 focus:outline-none focus:ring-2 focus:ring-white"
+              className={`bg-indigo-600 text-white rounded-lg border border-indigo-400 focus:outline-none focus:ring-2 focus:ring-white ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}
             />
           ) : (
-            <div className="bg-indigo-600 text-white px-4 py-2 rounded-lg">
+            <div className={`bg-indigo-600 text-white rounded-lg ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
               By {formattedDueDate}
             </div>
           )}
         </div>
         <div className="flex items-center gap-4">
-          <div className="bg-white text-indigo-900 px-4 py-2 rounded-lg font-bold">
+          <div className={`bg-white text-indigo-900 rounded-lg font-bold ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
             {rampUps.length} Ramp-Up{rampUps.length !== 1 ? "s" : ""}
           </div>
-          <div className="bg-indigo-700 rounded-lg p-2">
-            <TvIcon className="w-6 h-6 text-white" />
-          </div>
+          <button
+            onClick={toggleFullscreen}
+            className={`bg-indigo-700 hover:bg-indigo-600 rounded-lg transition-colors cursor-pointer ${isFullscreen ? "p-3" : "p-2"}`}
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            <TvIcon className={isFullscreen ? "w-8 h-8 text-white" : "w-6 h-6 text-white"} />
+          </button>
         </div>
       </div>
 
       {/* Smartboard Content - Combined Goal and Progress */}
-      <div className="bg-indigo-800 rounded-b-xl p-6 flex gap-8">
+      <div className={`bg-indigo-800 rounded-b-xl flex gap-8 ${isFullscreen ? "p-12 flex-1" : "p-6"}`}>
         {/* Left: Class Goal + Individual Progress */}
         <div className="flex-1 space-y-6">
           {/* Class Goal - Main Progress */}
@@ -937,12 +932,11 @@ function SmartboardDisplay({
           </div>
 
           {/* Individual Ramp-Up Progress */}
-          <div className="space-y-3 pl-4 border-l-2 border-indigo-600">
-            {rampUpStats.map(({ rampUp, avgCompletion }, idx) => (
+          <div className="space-y-3 pl-4 pr-32 border-l-2 border-indigo-600">
+            {rampUpStats.map(({ rampUp, avgCompletion }) => (
               <SmartboardProgressBar
                 key={rampUp._id}
-                label={`Ramp-Up ${idx + 1}`}
-                sublabel={rampUp.lessonName}
+                label={rampUp.lessonName}
                 percentage={avgCompletion}
                 size="small"
               />
@@ -991,6 +985,39 @@ function SmartboardDisplay({
           )}
         </div>
       </div>
+    </>
+  );
+
+  return (
+    <div className="mt-8">
+      {/* Edit Mode Toggle */}
+      {!isFullscreen && (
+        <div className="flex justify-end mb-2">
+          <button
+            onClick={() => setIsEditMode(!isEditMode)}
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+              isEditMode
+                ? "bg-indigo-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            <PencilIcon className="w-4 h-4" />
+            {isEditMode ? "Done Editing" : "Edit Display"}
+          </button>
+        </div>
+      )}
+
+      {/* Normal Display */}
+      {!isFullscreen && smartboardContent}
+
+      {/* Fullscreen Modal */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-50 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-6">
+          <div className="w-full h-full max-w-[94vw] max-h-[94vh] flex flex-col">
+            {smartboardContent}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1020,33 +1047,66 @@ function SmartboardProgressBar({
   const trackColor = color === "purple" ? "bg-purple-200" : "bg-white";
   const isSmall = size === "small";
 
+  if (isSmall) {
+    // Stacked layout for small bars
+    return (
+      <div className="space-y-2">
+        {/* Title */}
+        {showLabel && (
+          <div className="text-white font-semibold text-sm leading-tight">
+            {label}
+          </div>
+        )}
+        {/* Progress bar */}
+        <div className="flex items-center gap-3 pr-24">
+          <div className={`flex-1 ${trackColor} rounded-full relative overflow-hidden h-8`}>
+            <div
+              className={`${bgColor} h-full rounded-full transition-all duration-500 flex items-center justify-end pr-2`}
+              style={{ width: `${Math.max(percentage, 5)}%` }}
+            >
+              {percentage >= 20 && (
+                <span className="text-white font-bold text-sm">{percentage}%</span>
+              )}
+            </div>
+            {percentage < 20 && (
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 font-bold text-sm">
+                {percentage}%
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Horizontal layout for normal bars
   return (
     <div className="flex items-center gap-4">
       {showLabel && (
-        <div className={isSmall ? "w-28 text-white" : "w-32 text-white"}>
-          <div className={isSmall ? "font-semibold text-sm" : "font-bold text-lg"}>{label}</div>
+        <div className="w-32 text-white">
+          <div className="font-bold text-lg">{label}</div>
           {sublabel && (
-            <div className={`text-indigo-300 truncate ${isSmall ? "text-xs" : "text-xs"}`}>{sublabel}</div>
+            <div className="text-indigo-300 truncate text-xs">{sublabel}</div>
           )}
         </div>
       )}
-      <div className={`flex-1 ${trackColor} rounded-full relative overflow-hidden ${isSmall ? "h-6" : "h-8"}`}>
+      <div className={`flex-1 ${trackColor} rounded-full relative overflow-hidden h-10`}>
         <div
           className={`${bgColor} h-full rounded-full transition-all duration-500 flex items-center justify-end pr-2`}
           style={{ width: `${Math.max(percentage, 5)}%` }}
         >
           {percentage >= 20 && (
-            <span className={`text-white font-bold ${isSmall ? "text-xs" : "text-sm"}`}>{percentage}%</span>
+            <span className="text-white font-bold text-base">{percentage}%</span>
           )}
         </div>
         {percentage < 20 && (
-          <span className={`absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 font-bold ${isSmall ? "text-xs" : "text-sm"}`}>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 font-bold text-sm">
             {percentage}%
           </span>
         )}
       </div>
-      <div className={isSmall ? "w-12 text-right" : "w-16 text-right"}>
-        <span className={`text-white font-bold ${isSmall ? "text-base" : "text-xl"}`}>{percentage}%</span>
+      <div className="w-16 text-right">
+        <span className="text-white font-bold text-xl">{percentage}%</span>
       </div>
     </div>
   );
@@ -1189,7 +1249,7 @@ function CreateRampUpModal({
             <h2 className="text-xl font-bold text-gray-900">Create New Ramp-Up</h2>
             <button
               onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+              className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer"
             >
               <XMarkIcon className="w-5 h-5" />
             </button>
@@ -1365,7 +1425,7 @@ function CreateRampUpModal({
                     type="button"
                     onClick={handleFetchAssignments}
                     disabled={loadingAssignments || !podsieSection}
-                    className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
                   >
                     {loadingAssignments && (
                       <ArrowPathIcon className="w-4 h-4 animate-spin" />
@@ -1461,7 +1521,7 @@ function CreateRampUpModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg font-medium hover:bg-gray-200 transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -1471,7 +1531,7 @@ function CreateRampUpModal({
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   saving
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
                 }`}
               >
                 {saving ? "Creating..." : "Create Ramp-Up"}
