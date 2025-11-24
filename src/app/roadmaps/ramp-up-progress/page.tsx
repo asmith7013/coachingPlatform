@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon as CheckCircleOutlineIcon, PencilIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, TvIcon } from "@heroicons/react/24/outline";
 import { RoadmapsNav } from "../components/RoadmapsNav";
 import { fetchStudents } from "@/app/actions/313/students";
 import { Student, RampUpQuestion } from "@zod-schema/313/student";
@@ -11,11 +11,15 @@ import {
   fetchRampUpProgress,
   syncSectionRampUpProgress,
   SyncSectionResult,
+  fetchAssignmentsForSection,
+  PodsieAssignmentInfo,
 } from "@/app/actions/313/podsie-sync";
 import {
   fetchUnitsWithRampUps,
   fetchRampUpsByUnit,
+  createScopeAndSequence,
 } from "@/app/actions/313/scope-and-sequence";
+import { SCOPE_SEQUENCE_TAG_OPTIONS } from "@zod-schema/313/scope-and-sequence";
 
 // Map section to scopeSequenceTag based on first digit
 // 802 = Algebra 1
@@ -47,7 +51,7 @@ interface RampUpConfig {
   unit: string;
   grade: string;
   scopeSequenceTag: string;
-  podsyAssignmentId?: string;
+  podsieAssignmentId?: string;
   totalQuestions: number;
 }
 
@@ -83,6 +87,7 @@ export default function RampUpProgressPage() {
   const [units, setUnits] = useState<UnitOption[]>([]);
   const [rampUps, setRampUps] = useState<RampUpConfig[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Derive scopeSequenceTag from section
   const scopeSequenceTag = useMemo(() => {
@@ -208,7 +213,7 @@ export default function RampUpProgressPage() {
 
   // Sync a single ramp-up from Podsie
   const handleSyncRampUp = async (rampUp: RampUpConfig, testMode: boolean = false) => {
-    if (!selectedSection || !rampUp.podsyAssignmentId) return;
+    if (!selectedSection || !rampUp.podsieAssignmentId) return;
 
     try {
       setSyncing(rampUp._id);
@@ -218,7 +223,7 @@ export default function RampUpProgressPage() {
       const unitCode = `${rampUp.grade}.${selectedUnit}`;
       const result = await syncSectionRampUpProgress(
         selectedSection,
-        rampUp.podsyAssignmentId,
+        rampUp.podsieAssignmentId,
         unitCode,
         rampUp.unitLessonId,
         rampUp.totalQuestions,
@@ -296,10 +301,21 @@ export default function RampUpProgressPage() {
 
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h1 className="text-3xl font-bold mb-2">Ramp-Up Progress</h1>
-          <p className="text-gray-600 mb-4">
-            Track student progress on ramp-up assessments by question
-          </p>
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Ramp-Up Progress</h1>
+              <p className="text-gray-600">
+                Track student progress on ramp-up assessments by question
+              </p>
+            </div>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
+            >
+              <PlusIcon className="w-5 h-5" />
+              Create Ramp-Up
+            </button>
+          </div>
 
           {/* Filters */}
           <div className="grid grid-cols-2 gap-4 mb-6">
@@ -449,6 +465,38 @@ export default function RampUpProgressPage() {
             </div>
           </div>
         )}
+
+        {/* Smartboard Display */}
+        {selectedSection && selectedUnit !== null && rampUps.length > 0 && (
+          <SmartboardDisplay
+            rampUps={rampUps}
+            progressData={progressData}
+            selectedUnit={selectedUnit}
+            selectedSection={selectedSection}
+            calculateSummaryStats={calculateSummaryStats}
+          />
+        )}
+
+        {/* Create Ramp-Up Modal */}
+        {showCreateModal && (
+          <CreateRampUpModal
+            scopeSequenceTag={scopeSequenceTag}
+            selectedUnit={selectedUnit}
+            selectedSection={selectedSection}
+            sections={sections}
+            onClose={() => setShowCreateModal(false)}
+            onSuccess={async () => {
+              setShowCreateModal(false);
+              // Reload ramp-ups for current unit
+              if (selectedUnit !== null && scopeSequenceTag) {
+                const rampUpResult = await fetchRampUpsByUnit(scopeSequenceTag, selectedUnit);
+                if (rampUpResult.success) {
+                  setRampUps(rampUpResult.data);
+                }
+              }
+            }}
+          />
+        )}
       </div>
     </div>
   );
@@ -494,7 +542,7 @@ function RampUpCard({
             </h3>
             <p className="text-sm text-gray-500">
               {rampUp.unitLessonId} • {rampUp.totalQuestions} questions
-              {!rampUp.podsyAssignmentId && (
+              {!rampUp.podsieAssignmentId && (
                 <span className="text-yellow-600 ml-2">
                   (No Podsie ID configured)
                 </span>
@@ -503,9 +551,9 @@ function RampUpCard({
           </div>
           <button
             onClick={() => onSync(false)}
-            disabled={syncing || !rampUp.podsyAssignmentId}
+            disabled={syncing || !rampUp.podsieAssignmentId}
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-              syncing || !rampUp.podsyAssignmentId
+              syncing || !rampUp.podsieAssignmentId
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                 : "bg-blue-600 text-white hover:bg-blue-700"
             }`}
@@ -740,3 +788,698 @@ function RampUpProgressTable({
   );
 }
 
+// =====================================
+// SMARTBOARD DISPLAY COMPONENT
+// =====================================
+
+interface SmartboardDisplayProps {
+  rampUps: RampUpConfig[];
+  progressData: ProgressData[];
+  selectedUnit: number;
+  selectedSection: string;
+  calculateSummaryStats: (data: ProgressData[]) => {
+    avgCompletion: number;
+    fullyComplete: number;
+    totalStudents: number;
+    syncedStudents: number;
+  };
+}
+
+function SmartboardDisplay({
+  rampUps,
+  progressData,
+  selectedUnit,
+  selectedSection: _selectedSection,
+  calculateSummaryStats,
+}: SmartboardDisplayProps) {
+  // Edit mode state
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [dueDate, setDueDate] = useState<string>(() => {
+    // Default to next Friday
+    const today = new Date();
+    const daysUntilFriday = (5 - today.getDay() + 7) % 7 || 7;
+    const nextFriday = new Date(today);
+    nextFriday.setDate(today.getDate() + daysUntilFriday);
+    return nextFriday.toISOString().split("T")[0];
+  });
+  const [learningContent, setLearningContent] = useState<string>("");
+
+  // Format due date for display
+  const formattedDueDate = useMemo(() => {
+    const date = new Date(dueDate + "T00:00:00");
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    });
+  }, [dueDate]);
+
+  // Calculate stats per ramp-up
+  const rampUpStats = useMemo(() => {
+    return rampUps.map((rampUp) => {
+      const stats = calculateSummaryStats(progressData);
+      return {
+        rampUp,
+        avgCompletion: stats.avgCompletion,
+        totalStudents: stats.totalStudents,
+        syncedStudents: stats.syncedStudents,
+      };
+    });
+  }, [rampUps, progressData, calculateSummaryStats]);
+
+  // Parse markdown-like content for display
+  const parsedLearningContent = useMemo(() => {
+    if (!learningContent.trim()) return [];
+    return learningContent
+      .split("\n")
+      .filter((line) => line.trim())
+      .map((line) => {
+        // Remove leading "- " or "• " if present
+        return line.replace(/^[-•]\s*/, "").trim();
+      });
+  }, [learningContent]);
+
+  // Calculate overall class goal percentage
+  const overallPercentage = rampUpStats.length > 0
+    ? Math.round(
+        rampUpStats.reduce((sum, s) => sum + s.avgCompletion, 0) /
+          rampUpStats.length
+      )
+    : 0;
+
+  return (
+    <div className="mt-8">
+      {/* Edit Mode Toggle */}
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={() => setIsEditMode(!isEditMode)}
+          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            isEditMode
+              ? "bg-indigo-600 text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+          }`}
+        >
+          <PencilIcon className="w-4 h-4" />
+          {isEditMode ? "Done Editing" : "Edit Display"}
+        </button>
+      </div>
+
+      {/* Smartboard Header */}
+      <div className="bg-indigo-900 rounded-t-xl p-4 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="bg-teal-500 text-white px-4 py-2 rounded-lg font-bold text-lg">
+            Mini Goal
+          </div>
+          <div className="bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold">
+            Unit {selectedUnit}, Ramp-Ups
+          </div>
+          {isEditMode ? (
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-lg border border-indigo-400 focus:outline-none focus:ring-2 focus:ring-white"
+            />
+          ) : (
+            <div className="bg-indigo-600 text-white px-4 py-2 rounded-lg">
+              By {formattedDueDate}
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="bg-white text-indigo-900 px-4 py-2 rounded-lg font-bold">
+            {rampUps.length} Ramp-Up{rampUps.length !== 1 ? "s" : ""}
+          </div>
+          <div className="bg-indigo-700 rounded-lg p-2">
+            <TvIcon className="w-6 h-6 text-white" />
+          </div>
+        </div>
+      </div>
+
+      {/* Smartboard Content - Combined Goal and Progress */}
+      <div className="bg-indigo-800 rounded-b-xl p-6 flex gap-8">
+        {/* Left: Class Goal + Individual Progress */}
+        <div className="flex-1 space-y-6">
+          {/* Class Goal - Main Progress */}
+          <div className="bg-indigo-900/50 rounded-xl p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="bg-purple-600 text-white px-3 py-1 rounded-lg font-bold text-sm">
+                Class Goal
+              </div>
+              <span className="text-indigo-300 text-sm">Complete All Ramp-Ups</span>
+            </div>
+            <SmartboardProgressBar
+              label=""
+              percentage={overallPercentage}
+              color="purple"
+              showLabel={false}
+            />
+          </div>
+
+          {/* Individual Ramp-Up Progress */}
+          <div className="space-y-3 pl-4 border-l-2 border-indigo-600">
+            {rampUpStats.map(({ rampUp, avgCompletion }, idx) => (
+              <SmartboardProgressBar
+                key={rampUp._id}
+                label={`Ramp-Up ${idx + 1}`}
+                sublabel={rampUp.lessonName}
+                percentage={avgCompletion}
+                size="small"
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Info Panel */}
+        <div className="w-80 bg-indigo-100 rounded-xl p-5 border-4 border-indigo-300">
+          <h3 className="text-indigo-900 font-bold text-lg mb-4 text-center">
+            What We&apos;re Learning
+          </h3>
+          {isEditMode ? (
+            <div>
+              <textarea
+                value={learningContent}
+                onChange={(e) => setLearningContent(e.target.value)}
+                placeholder="Enter learning objectives (one per line)&#10;- Learn equivalent expressions&#10;- Practice combining like terms"
+                className="w-full h-40 p-3 border border-indigo-300 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              />
+              <p className="text-xs text-indigo-600 mt-2">
+                Enter one item per line. Use &quot;-&quot; or just text.
+              </p>
+            </div>
+          ) : parsedLearningContent.length > 0 ? (
+            <ul className="space-y-3 text-indigo-900">
+              {parsedLearningContent.map((item, idx) => (
+                <li key={idx} className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold mt-0.5">•</span>
+                  <div>{item}</div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul className="space-y-3 text-indigo-900">
+              {rampUps.map((rampUp, idx) => (
+                <li key={rampUp._id} className="flex items-start gap-2">
+                  <span className="text-indigo-600 font-bold mt-0.5">•</span>
+                  <div>
+                    <span className="font-semibold">Ramp-Up {idx + 1}:</span>{" "}
+                    {rampUp.lessonName}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =====================================
+// SMARTBOARD PROGRESS BAR COMPONENT
+// =====================================
+
+interface SmartboardProgressBarProps {
+  label: string;
+  sublabel?: string;
+  percentage: number;
+  color?: "green" | "purple";
+  size?: "normal" | "small";
+  showLabel?: boolean;
+}
+
+function SmartboardProgressBar({
+  label,
+  sublabel,
+  percentage,
+  color = "green",
+  size = "normal",
+  showLabel = true,
+}: SmartboardProgressBarProps) {
+  const bgColor = color === "purple" ? "bg-purple-600" : "bg-emerald-500";
+  const trackColor = color === "purple" ? "bg-purple-200" : "bg-white";
+  const isSmall = size === "small";
+
+  return (
+    <div className="flex items-center gap-4">
+      {showLabel && (
+        <div className={isSmall ? "w-28 text-white" : "w-32 text-white"}>
+          <div className={isSmall ? "font-semibold text-sm" : "font-bold text-lg"}>{label}</div>
+          {sublabel && (
+            <div className={`text-indigo-300 truncate ${isSmall ? "text-xs" : "text-xs"}`}>{sublabel}</div>
+          )}
+        </div>
+      )}
+      <div className={`flex-1 ${trackColor} rounded-full relative overflow-hidden ${isSmall ? "h-6" : "h-8"}`}>
+        <div
+          className={`${bgColor} h-full rounded-full transition-all duration-500 flex items-center justify-end pr-2`}
+          style={{ width: `${Math.max(percentage, 5)}%` }}
+        >
+          {percentage >= 20 && (
+            <span className={`text-white font-bold ${isSmall ? "text-xs" : "text-sm"}`}>{percentage}%</span>
+          )}
+        </div>
+        {percentage < 20 && (
+          <span className={`absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 font-bold ${isSmall ? "text-xs" : "text-sm"}`}>
+            {percentage}%
+          </span>
+        )}
+      </div>
+      <div className={isSmall ? "w-12 text-right" : "w-16 text-right"}>
+        <span className={`text-white font-bold ${isSmall ? "text-base" : "text-xl"}`}>{percentage}%</span>
+      </div>
+    </div>
+  );
+}
+
+// =====================================
+// CREATE RAMP-UP MODAL COMPONENT
+// =====================================
+
+interface CreateRampUpModalProps {
+  scopeSequenceTag: string;
+  selectedUnit: number | null;
+  selectedSection: string | null;
+  sections: string[]; // Class sections like "801", "802" for Podsie fetch
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+function CreateRampUpModal({
+  scopeSequenceTag,
+  selectedUnit,
+  selectedSection,
+  sections,
+  onClose,
+  onSuccess,
+}: CreateRampUpModalProps) {
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [loadingAssignments, setLoadingAssignments] = useState(false);
+  const [podsieAssignments, setPodsieAssignments] = useState<PodsieAssignmentInfo[]>([]);
+  const [podsieSection, setPodsieSection] = useState<string>(selectedSection || ""); // Class section for Podsie fetch
+
+  // Derive grade from scopeSequenceTag
+  const getGradeFromTag = (tag: string): string => {
+    if (tag === "Algebra 1") return "8";
+    if (tag.startsWith("Grade ")) return tag.replace("Grade ", "");
+    return "8";
+  };
+
+  // Form state with prefilled values
+  const [formData, setFormData] = useState({
+    grade: getGradeFromTag(scopeSequenceTag),
+    unit: selectedUnit ? `Unit ${selectedUnit}` : "",
+    unitNumber: selectedUnit || 1,
+    lessonNumber: 0, // Ramp-ups use 0 or negative
+    unitLessonId: selectedUnit ? `${selectedUnit}.RU1` : "",
+    lessonName: "",
+    section: "Ramp Ups",
+    scopeSequenceTag: scopeSequenceTag || "",
+    lessonType: "ramp-up" as const,
+    podsieAssignmentId: "",
+    totalQuestions: 10,
+  });
+
+  // Update unitLessonId when unitNumber changes
+  const handleUnitNumberChange = (value: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      unitNumber: value,
+      unit: `Unit ${value}`,
+      unitLessonId: `${value}.RU1`,
+    }));
+  };
+
+  // Fetch assignments from Podsie for the current section
+  const handleFetchAssignments = async () => {
+    if (!podsieSection) {
+      setFormError("Please select a class section first");
+      return;
+    }
+
+    setLoadingAssignments(true);
+    setFormError(null);
+
+    try {
+      const result = await fetchAssignmentsForSection(podsieSection);
+      if (result.success) {
+        setPodsieAssignments(result.assignments);
+        if (result.assignments.length === 0) {
+          setFormError("No assignments found for this section");
+        }
+      } else {
+        setFormError(result.error || "Failed to fetch assignments");
+      }
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : "Failed to fetch assignments");
+    } finally {
+      setLoadingAssignments(false);
+    }
+  };
+
+  // Handle selecting an assignment from the dropdown
+  const handleSelectAssignment = (assignment: PodsieAssignmentInfo) => {
+    setFormData((prev) => ({
+      ...prev,
+      podsieAssignmentId: String(assignment.assignmentId),
+      lessonName: assignment.assignmentName,
+      totalQuestions: assignment.totalQuestions,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    setSaving(true);
+
+    try {
+      const result = await createScopeAndSequence({
+        ...formData,
+        roadmapSkills: [],
+        targetSkills: [],
+        ownerIds: [],
+      });
+
+      if (result.success) {
+        onSuccess();
+      } else {
+        setFormError(result.error || "Failed to create ramp-up");
+      }
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/50 transition-opacity"
+        onClick={onClose}
+      />
+
+      {/* Modal */}
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="relative bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <h2 className="text-xl font-bold text-gray-900">Create New Ramp-Up</h2>
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+            >
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            {formError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                {formError}
+              </div>
+            )}
+
+            {/* Prefilled/readonly fields */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Scope Sequence Tag
+                </label>
+                <select
+                  value={formData.scopeSequenceTag}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      scopeSequenceTag: e.target.value,
+                      grade: getGradeFromTag(e.target.value),
+                    }))
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select Tag</option>
+                  {SCOPE_SEQUENCE_TAG_OPTIONS.map((tag) => (
+                    <option key={tag} value={tag}>
+                      {tag}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Grade
+                </label>
+                <input
+                  type="text"
+                  value={formData.grade}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, grade: e.target.value }))
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  placeholder="e.g., 8"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Unit Number *
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  value={formData.unitNumber}
+                  onChange={(e) => handleUnitNumberChange(parseInt(e.target.value) || 1)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Unit Lesson ID *
+                </label>
+                <input
+                  type="text"
+                  value={formData.unitLessonId}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, unitLessonId: e.target.value }))
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., 4.RU1"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Lesson Name *
+              </label>
+              <input
+                type="text"
+                value={formData.lessonName}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, lessonName: e.target.value }))
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="e.g., Ramp-Up 1: Equivalent Expressions"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Section
+                </label>
+                <select
+                  value={formData.section}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, section: e.target.value }))
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="Ramp Ups">Ramp Ups</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Lesson Number
+                </label>
+                <input
+                  type="number"
+                  value={formData.lessonNumber}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      lessonNumber: parseInt(e.target.value) || 0,
+                    }))
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  placeholder="0 for ramp-ups"
+                />
+              </div>
+            </div>
+
+            {/* Podsie Assignment Section */}
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-medium text-blue-900">
+                  Podsie Assignment
+                </h4>
+              </div>
+
+              {/* Class section selector for Podsie fetch */}
+              <div className="flex items-center gap-2">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-blue-900 mb-1">
+                    Class Section
+                  </label>
+                  <select
+                    value={podsieSection}
+                    onChange={(e) => setPodsieSection(e.target.value)}
+                    className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  >
+                    <option value="">Select class section...</option>
+                    {sections.map((section) => (
+                      <option key={section} value={section}>
+                        {section}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="pt-6">
+                  <button
+                    type="button"
+                    onClick={handleFetchAssignments}
+                    disabled={loadingAssignments || !podsieSection}
+                    className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {loadingAssignments && (
+                      <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                    )}
+                    {loadingAssignments ? "Fetching..." : "Fetch from Podsie"}
+                  </button>
+                </div>
+              </div>
+
+              {podsieAssignments.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-blue-900 mb-1">
+                    Select Assignment
+                  </label>
+                  <select
+                    onChange={(e) => {
+                      const selected = podsieAssignments.find(
+                        (a) => String(a.assignmentId) === e.target.value
+                      );
+                      if (selected) handleSelectAssignment(selected);
+                    }}
+                    value={formData.podsieAssignmentId}
+                    className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  >
+                    <option value="">Select an assignment...</option>
+                    {podsieAssignments.map((a) => (
+                      <option key={a.assignmentId} value={String(a.assignmentId)}>
+                        {a.assignmentName} ({a.totalQuestions} questions)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Podsie Assignment ID
+                </label>
+                <input
+                  type="text"
+                  value={formData.podsieAssignmentId}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      podsieAssignmentId: e.target.value,
+                    }))
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                  placeholder="Auto-filled from selection above"
+                  readOnly={podsieAssignments.length > 0}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Total Questions
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  value={formData.totalQuestions}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      totalQuestions: parseInt(e.target.value) || 10,
+                    }))
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                  readOnly={podsieAssignments.length > 0}
+                />
+              </div>
+            </div>
+
+            {/* Readonly fields display */}
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">
+                Auto-filled Fields
+              </h4>
+              <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                <div>
+                  <span className="font-medium">Unit:</span> {formData.unit}
+                </div>
+                <div>
+                  <span className="font-medium">Lesson Type:</span> {formData.lessonType}
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  saving
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-green-600 text-white hover:bg-green-700"
+                }`}
+              >
+                {saving ? "Creating..." : "Create Ramp-Up"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}

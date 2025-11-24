@@ -47,9 +47,9 @@ export const ScopeAndSequenceFieldsSchema = z.object({
   roadmapSkills: z.array(z.string()).default([]).describe("Array of roadmap skill numbers tagged to this lesson"),
   targetSkills: z.array(z.string()).default([]).describe("Array of target skill numbers for this lesson"),
 
-  // Lesson type and Podsy integration
+  // Lesson type and Podsie integration
   lessonType: LessonTypeZod.default("lesson").describe("Type of lesson: regular lesson or ramp-up"),
-  podsyAssignmentId: z.string().optional().describe("Podsy assignment ID for fetching completion data"),
+  podsieAssignmentId: z.string().optional().describe("Podsie assignment ID for fetching completion data"),
   totalQuestions: z.number().int().positive().optional().describe("Total questions in the assessment (for ramp-ups)"),
 });
 

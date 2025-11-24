@@ -61,7 +61,7 @@ const rampUpProgressSchema = new mongoose.Schema({
   unitCode: { type: String, required: true },
   rampUpId: { type: String, required: true },
   rampUpName: { type: String, required: false },
-  podsyAssignmentId: { type: String, required: false },
+  podsieAssignmentId: { type: String, required: false },
   questions: { type: [rampUpQuestionSchema], default: [] },
   totalQuestions: { type: Number, default: 0 },
   completedCount: { type: Number, default: 0 },

@@ -97,11 +97,11 @@ let canvasConfig = {
   label: 'Workspace'
 };
 
-// Cancellation settings
+// Snap & cancellation settings
 let cancelConfig = {
-  snapDistance: 40,              // How close tiles need to be to link
-  cancelledColor: [150, 150, 150], // Grey color for cancelled tiles
-  showCancelledLabel: true
+  snapDistance: 60,              // How close tiles need to be to snap together
+  cancelledColor: [200, 200, 200], // Light grey color for snapped tiles
+  snapGap: 2                     // Small gap between snapped tiles
 };
 
 // Visual settings
@@ -128,18 +128,20 @@ let visualConfig = {
    - Drag outside workspace to remove
    - Real-time cancellation updates
 
-3. **Automatic Cancellation**
-   - When opposite tiles are close, they link
-   - x and -x cancel each other
-   - 1 and -1 cancel each other
-   - Cancelled tiles turn grey with dashed line
+3. **Automatic Snap & Cancellation**
+   - When opposite tiles are dragged close, they snap together
+   - x and -x snap and cancel each other
+   - 1 and -1 snap and cancel each other
+   - Snapped tiles physically move to align side-by-side
+   - Both tiles turn light grey when snapped
    - Cancellations update as tiles move
 
 ### Visual Elements
 
 - **Palette area** with four tile types (x, -x, 1, -1)
 - **Workspace** for placing and arranging tiles
-- **Cancellation indicators** (grey color, dashed lines)
+- **Snap indicators** (tiles physically align when cancelled)
+- **Cancellation visuals** (light grey color for snapped pairs)
 - **Equation display** showing simplified expression
 - **Hover effects** for interactive feedback
 - **Instructions** for user guidance
@@ -180,9 +182,9 @@ let tileConfig = {
 };
 
 let cancelConfig = {
-  snapDistance: 40,
-  cancelledColor: [150, 150, 150],
-  showCancelledLabel: true
+  snapDistance: 60,
+  cancelledColor: [200, 200, 200],
+  snapGap: 2
 };
 ```
 
@@ -266,15 +268,16 @@ let cancelConfig = {
 - Release on workspace → update position
 - Release outside workspace → remove tile
 
-### Cancellation Detection
-- On every mouse move/release → check all pairs
+### Snap & Cancellation Detection
+- On every mouse release → check all pairs
 - Calculate distance between tile centers
-- If distance < snapDistance and opposite types → link
-- Linked tiles turn grey and show connection
+- If distance < snapDistance and opposite types → snap together
+- Snapped tiles physically align side-by-side
+- Both tiles turn light grey to indicate cancellation
 
 ## Drawing Logic
 
-### Cancellation Detection Algorithm
+### Snap & Cancellation Algorithm
 ```javascript
 function updateCancellations() {
   // Reset all cancellations
@@ -305,10 +308,23 @@ function updateCancellations() {
         );
 
         if (distance < cancelConfig.snapDistance) {
+          // Mark as cancelled
           tile1.isCancelled = true;
           tile2.isCancelled = true;
           tile1.linkedTo = tile2;
           tile2.linkedTo = tile1;
+
+          // SNAP: Position tiles side-by-side
+          // Calculate midpoint between the two tiles
+          let midX = (tile1.x + tile2.x) / 2;
+          let midY = (tile1.y + tile2.y) / 2;
+
+          // Position tiles side-by-side at the midpoint
+          let gap = 2; // Small gap between snapped tiles
+          tile1.x = midX - tile1.config.width / 2 - gap / 2;
+          tile2.x = midX + tile2.config.width / 2 + gap / 2 - tile2.config.width;
+          tile1.y = midY;
+          tile2.y = midY;
         }
       }
     }
@@ -372,35 +388,38 @@ function mouseMoved() {
 - [ ] Implement drag of placed tiles
 - [ ] Add workspace area with visual boundaries
 - [ ] Implement drop detection (in/out of workspace)
-- [ ] Create cancellation detection algorithm
+- [ ] Create snap & cancellation detection algorithm
 - [ ] Calculate distance between tile centers
-- [ ] Link opposite tiles when close enough
-- [ ] Apply grey color to cancelled tiles
-- [ ] Draw dashed lines between linked pairs
+- [ ] Snap opposite tiles together when close enough
+- [ ] Position snapped tiles side-by-side at midpoint
+- [ ] Apply light grey color to snapped/cancelled tiles
 - [ ] Count non-cancelled tiles by type
 - [ ] Display simplified equation
 - [ ] Add hover effects for palette tiles
 - [ ] Add hover effects for placed tiles
 - [ ] Show instructions and labels
 - [ ] Test all drag and drop scenarios
-- [ ] Verify cancellation logic works correctly
+- [ ] Verify snap and cancellation logic works correctly
 
 ## Tips and Best Practices
 
-### Cancellation Logic
-- Check cancellations on every draw frame
+### Snap & Cancellation Logic
+- Check for snap opportunities on mouse release
 - Reset all cancellation states before checking
 - Use center points for distance calculation
 - Only pair each tile once (skip already cancelled)
+- Calculate midpoint for snap positioning
+- Align tiles side-by-side at the midpoint
 
 ### Visual Feedback
 - Use distinct colors for positive/negative
-- Make cancelled tiles clearly different (grey)
-- Show dashed lines for cancelled pairs
+- Make snapped tiles clearly different (light grey)
+- Tiles physically move together when snapped
 - Provide hover feedback on interactive elements
 
 ### User Experience
 - Make snap distance reasonable (not too small/large)
+- Snap provides satisfying visual feedback
 - Allow removing tiles by dragging outside
 - Update equation in real-time
 - Provide clear instructions
@@ -417,7 +436,7 @@ Standard algebra tile colors:
 - **Negative x**: Red [230, 57, 70]
 - **Positive 1**: Yellow/Gold [255, 193, 94]
 - **Negative 1**: Red [230, 57, 70]
-- **Cancelled**: Grey [150, 150, 150]
+- **Snapped/Cancelled**: Light Grey [200, 200, 200]
 
 Alternative color schemes:
 - Traditional: Yellow (positive), Red (negative)

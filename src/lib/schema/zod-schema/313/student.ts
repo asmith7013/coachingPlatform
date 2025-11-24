@@ -97,7 +97,7 @@ export const RampUpProgressSchema = z.object({
   unitCode: z.string().describe("Unit code (e.g., '8.4')"),
   rampUpId: z.string().describe("Ramp-up identifier (e.g., '4.RU1')"),
   rampUpName: z.string().optional().describe("Ramp-up name"),
-  podsyAssignmentId: z.string().optional().describe("Podsie assignment ID"),
+  podsieAssignmentId: z.string().optional().describe("Podsie assignment ID"),
 
   questions: z.array(RampUpQuestionSchema).default([]).describe("Per-question completion status"),
   totalQuestions: z.number().int().default(0).describe("Total questions in ramp-up"),

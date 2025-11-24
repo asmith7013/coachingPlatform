@@ -3,7 +3,7 @@ import { ExampleSketch } from "../../types";
 export const ALGEBRA_TILES_SIMPLE: ExampleSketch = {
   id: "algebra-tiles-simple",
   name: "Algebra Tiles - Simple Manipulative",
-  description: "Drag algebra tiles (x, -x, 1, -1) onto the canvas. When opposite tiles overlap, they link and turn grey to show cancellation.",
+  description: "Drag algebra tiles (x, -x, 1, -1) onto the canvas. When opposite tiles are close, they snap together and turn light grey to show cancellation.",
   code: `// ==========================================
 // CONFIGURATION - Easily modifiable
 // ==========================================
@@ -63,11 +63,11 @@ let canvasConfig = {
   label: 'Workspace'
 };
 
-// Cancellation settings
+// Snap & cancellation settings
 let cancelConfig = {
-  snapDistance: 40,              // How close tiles need to be to link
-  cancelledColor: [150, 150, 150], // Grey color for cancelled tiles
-  showCancelledLabel: true
+  snapDistance: 60,              // How close tiles need to be to snap together
+  cancelledColor: [200, 200, 200], // Light grey color for snapped tiles
+  snapGap: 2                     // Small gap between snapped tiles
 };
 
 // Visual settings
@@ -171,19 +171,11 @@ function drawCanvasArea() {
 }
 
 function drawPlacedTiles() {
-  // Update cancellation status for all tiles
-  updateCancellations();
-
   // Draw each placed tile
   placedTiles.forEach(tile => {
     if (!tile.isDragging) {
       let isHovered = isMouseOverTile(tile) && !draggedTile;
-      drawTile(tile.x, tile.y, tile.config, tile.isCancelled, isHovered, tile.isCancelled ? 0.7 : 1);
-
-      // Draw link indicator if cancelled
-      if (tile.isCancelled && tile.linkedTo) {
-        drawLinkLine(tile, tile.linkedTo);
-      }
+      drawTile(tile.x, tile.y, tile.config, tile.isCancelled, isHovered, 1);
     }
   });
 }
@@ -221,14 +213,6 @@ function drawTile(x, y, config, isCancelled, isHovered, opacity) {
   textStyle(BOLD);
   textAlign(CENTER, CENTER);
   text(config.label, x + w/2, y + h/2);
-
-  // Cancelled indicator
-  if (isCancelled && cancelConfig.showCancelledLabel) {
-    fill(0, 0, 0, opacity * 200);
-    textSize(10);
-    textStyle(NORMAL);
-    text('cancelled', x + w/2, y + h + 12);
-  }
 }
 
 function drawDraggedTile() {
@@ -246,25 +230,6 @@ function drawDraggedTile() {
   textStyle(BOLD);
   textAlign(CENTER, CENTER);
   text(draggedTile.config.label, x + draggedTile.config.width/2, y + draggedTile.config.height/2);
-}
-
-function drawLinkLine(tile1, tile2) {
-  stroke(100, 100, 100, 150);
-  strokeWeight(2);
-  setLineDash([5, 5]);
-
-  let x1 = tile1.x + tile1.config.width/2;
-  let y1 = tile1.y + tile1.config.height/2;
-  let x2 = tile2.x + tile2.config.width/2;
-  let y2 = tile2.y + tile2.config.height/2;
-
-  line(x1, y1, x2, y2);
-
-  setLineDash([]);
-}
-
-function setLineDash(list) {
-  drawingContext.setLineDash(list);
 }
 
 function drawEquation() {
@@ -314,47 +279,102 @@ function drawInstructions() {
   textStyle(NORMAL);
   textAlign(LEFT, TOP);
   text('• Drag tiles from the top palette onto the workspace', 50, 170);
-  text('• Drag tiles close together to link opposite types (x and -x, or 1 and -1)', 50, 188);
-  text('• Linked tiles turn grey to show they cancel each other', 50, 206);
+  text('• Drag opposite tiles close together (x with -x, or 1 with -1) to snap them', 50, 188);
+  text('• Snapped tiles turn light grey to show they cancel each other', 50, 206);
+
+  // Debug info
+  let cancelledCount = 0;
+  for (let i = 0; i < placedTiles.length; i++) {
+    if (placedTiles[i].isCancelled) cancelledCount++;
+  }
+  text('DEBUG: ' + placedTiles.length + ' tiles, ' + cancelledCount + ' cancelled', 50, 224);
 }
 
-// Update which tiles are cancelled based on proximity
+// Update which tiles are cancelled and snap them together
 function updateCancellations() {
-  // Reset all cancellations
-  placedTiles.forEach(tile => {
-    tile.isCancelled = false;
-    tile.linkedTo = null;
-  });
+  // Reset all cancellations first
+  for (let i = 0; i < placedTiles.length; i++) {
+    placedTiles[i].isCancelled = false;
+    placedTiles[i].linkedTo = null;
+  }
 
-  // Check each pair of tiles
+  // Track which tile indices have been used (array of booleans)
+  let used = [];
+  for (let i = 0; i < placedTiles.length; i++) {
+    used.push(false);
+  }
+
+  // Build list of all potential pairs with their distances
+  // Store as arrays: [idx1, idx2, distance]
+  let allPairs = [];
   for (let i = 0; i < placedTiles.length; i++) {
     for (let j = i + 1; j < placedTiles.length; j++) {
       let tile1 = placedTiles[i];
       let tile2 = placedTiles[j];
 
-      // Skip if either is already cancelled
-      if (tile1.isCancelled || tile2.isCancelled) continue;
-
       // Check if they can cancel (same value, opposite signs)
       if (tile1.config.value === tile2.config.value &&
           tile1.config.sign !== tile2.config.sign) {
 
-        // Check if they're close enough
-        let distance = dist(
+        // Check if they're close enough to snap
+        let d = dist(
           tile1.x + tile1.config.width/2,
           tile1.y + tile1.config.height/2,
           tile2.x + tile2.config.width/2,
           tile2.y + tile2.config.height/2
         );
 
-        if (distance < cancelConfig.snapDistance) {
-          tile1.isCancelled = true;
-          tile2.isCancelled = true;
-          tile1.linkedTo = tile2;
-          tile2.linkedTo = tile1;
+        if (d < cancelConfig.snapDistance) {
+          allPairs.push([i, j, d]);
         }
       }
     }
+  }
+
+  // Sort by distance (closest first) - compare third element
+  for (let i = 0; i < allPairs.length - 1; i++) {
+    for (let j = i + 1; j < allPairs.length; j++) {
+      if (allPairs[j][2] < allPairs[i][2]) {
+        let temp = allPairs[i];
+        allPairs[i] = allPairs[j];
+        allPairs[j] = temp;
+      }
+    }
+  }
+
+  // Process each pair
+  for (let p = 0; p < allPairs.length; p++) {
+    let idx1 = allPairs[p][0];
+    let idx2 = allPairs[p][1];
+
+    // Skip if either tile is already used
+    if (used[idx1] === true || used[idx2] === true) continue;
+
+    // Mark as used
+    used[idx1] = true;
+    used[idx2] = true;
+
+    let tile1 = placedTiles[idx1];
+    let tile2 = placedTiles[idx2];
+
+    // Mark as cancelled
+    tile1.isCancelled = true;
+    tile2.isCancelled = true;
+    tile1.linkedTo = tile2;
+    tile2.linkedTo = tile1;
+
+    // SNAP: Position tiles side-by-side
+    let midX = (tile1.x + tile1.config.width/2 + tile2.x + tile2.config.width/2) / 2;
+    let midY = (tile1.y + tile1.config.height/2 + tile2.y + tile2.config.height/2) / 2;
+
+    // Position tiles side-by-side at the midpoint
+    let gap = cancelConfig.snapGap;
+    tile1.x = midX - tile1.config.width - gap/2;
+    tile2.x = midX + gap/2;
+
+    // Align vertically
+    tile1.y = midY - tile1.config.height/2;
+    tile2.y = midY - tile2.config.height/2;
   }
 }
 
@@ -449,6 +469,9 @@ function mouseReleased() {
     }
 
     draggedTile = null;
+
+    // Check for snap/cancellation after placing tile
+    updateCancellations();
   }
 
   cursor(ARROW);

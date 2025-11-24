@@ -38,6 +38,15 @@
 │   │   ├── transformation-system.md
 │   │   └── type-system.md
 │   ├── exemplar-stack.md
+│   ├── fillTimesheet
+│   │   ├── README.md
+│   │   ├── create-icons.sh
+│   │   ├── icon128.png
+│   │   ├── icon16.png
+│   │   ├── icon48.png
+│   │   ├── manifest.json
+│   │   ├── popup.html
+│   │   └── popup.js
 │   ├── implementation
 │   │   └── three-zone-masterschedulecard-integration.md
 │   ├── podsie
@@ -279,6 +288,7 @@
 │   │   │   │   ├── google-sheets-export.ts
 │   │   │   │   ├── im-lessons.ts
 │   │   │   │   ├── index.ts
+│   │   │   │   ├── podsie-sync.ts
 │   │   │   │   ├── roadmaps-lessons.ts
 │   │   │   │   ├── roadmaps-skill-relationships.ts
 │   │   │   │   ├── roadmaps-skills.ts
@@ -441,6 +451,8 @@
 │   │   │   │   │   └── route.ts
 │   │   │   │   └── route.ts
 │   │   │   ├── teacher
+│   │   │   ├── timesheet
+│   │   │   │   └── route.ts
 │   │   │   ├── visits
 │   │   │   │   └── route.ts
 │   │   │   └── webhooks
@@ -693,6 +705,8 @@
 │   │   │   ├── mastery-grid
 │   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
+│   │   │   ├── ramp-up-progress
+│   │   │   │   └── page.tsx
 │   │   │   ├── scope-and-sequence
 │   │   │   │   ├── components
 │   │   │   │   │   ├── LessonDetailView.tsx
@@ -787,6 +801,8 @@
 │   │   │       ├── VisitScheduleTest.tsx
 │   │   │       ├── layout.tsx
 │   │   │       └── page.tsx
+│   │   ├── timesheet
+│   │   │   └── page.tsx
 │   │   ├── tools
 │   │   │   ├── curriculum-screenshots
 │   │   │   │   ├── actions
@@ -1471,6 +1487,7 @@
 │   │   │   │   ├── 313
 │   │   │   │   │   ├── activity-type-config.model.ts
 │   │   │   │   │   ├── core.ts
+│   │   │   │   │   ├── ramp-up-progress.model.ts
 │   │   │   │   │   ├── roadmap-skill.model.ts
 │   │   │   │   │   ├── roadmap-unit.model.ts
 │   │   │   │   │   ├── roadmap.model.ts
@@ -1480,6 +1497,7 @@
 │   │   │   │   │   ├── student-activity.model.ts
 │   │   │   │   │   ├── student-performance.model.ts
 │   │   │   │   │   ├── student.model.ts
+│   │   │   │   │   ├── timesheet
 │   │   │   │   │   └── zearn-import.model.ts
 │   │   │   │   ├── calendar
 │   │   │   │   │   ├── index.ts
@@ -1546,6 +1564,8 @@
 │   │   │       │   ├── activity-type-config.ts
 │   │   │       │   ├── assessment-scraper.ts
 │   │   │       │   ├── core.ts
+│   │   │       │   ├── podsie-response.ts
+│   │   │       │   ├── ramp-up-progress.ts
 │   │   │       │   ├── roadmap-skill.ts
 │   │   │       │   ├── roadmap-unit.ts
 │   │   │       │   ├── roadmap.ts
@@ -1556,6 +1576,7 @@
 │   │   │       │   ├── student-data.ts
 │   │   │       │   ├── student-performance.ts
 │   │   │       │   ├── student.ts
+│   │   │       │   ├── timesheet
 │   │   │       │   └── zearn-import.ts
 │   │   │       ├── base-schemas.ts
 │   │   │       ├── calendar
@@ -1859,4 +1880,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-538 directories, 1322 files
+544 directories, 1337 files

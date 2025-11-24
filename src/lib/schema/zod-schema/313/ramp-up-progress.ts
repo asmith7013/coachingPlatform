@@ -41,7 +41,7 @@ export const RampUpProgressFieldsSchema = z.object({
   isFullyComplete: z.boolean().default(false).describe("Whether all questions are completed"),
 
   // Timestamps
-  lastUpdated: z.string().optional().describe("When progress was last synced from Podsy"),
+  lastUpdated: z.string().optional().describe("When progress was last synced from Podsie"),
   firstAttemptDate: z.string().optional().describe("When student first attempted this ramp-up"),
   completionDate: z.string().optional().describe("When student completed all questions"),
 });
@@ -61,9 +61,9 @@ export const RampUpProgressInputZodSchema = toInputSchema(RampUpProgressZodSchem
 // =====================================
 
 /**
- * Schema for Podsy API response (will be refined based on actual API)
+ * Schema for Podsie API response (will be refined based on actual API)
  */
-export const PodsyRampUpResponseSchema = z.object({
+export const PodsieRampUpResponseSchema = z.object({
   studentId: z.string(),
   unitCode: z.string(),
   questions: z.array(
@@ -78,9 +78,9 @@ export const PodsyRampUpResponseSchema = z.object({
 /**
  * Batch response for multiple students
  */
-export const PodsyBatchResponseSchema = z.object({
+export const PodsieBatchResponseSchema = z.object({
   success: z.boolean(),
-  data: z.array(PodsyRampUpResponseSchema),
+  data: z.array(PodsieRampUpResponseSchema),
   error: z.string().optional(),
 });
 
@@ -91,8 +91,8 @@ export const PodsyBatchResponseSchema = z.object({
 export type RampUpQuestion = z.infer<typeof RampUpQuestionSchema>;
 export type RampUpProgress = z.infer<typeof RampUpProgressZodSchema>;
 export type RampUpProgressInput = z.infer<typeof RampUpProgressInputZodSchema>;
-export type PodsyRampUpResponse = z.infer<typeof PodsyRampUpResponseSchema>;
-export type PodsyBatchResponse = z.infer<typeof PodsyBatchResponseSchema>;
+export type PodsieRampUpResponse = z.infer<typeof PodsieRampUpResponseSchema>;
+export type PodsieBatchResponse = z.infer<typeof PodsieBatchResponseSchema>;
 
 // =====================================
 // HELPER FUNCTIONS

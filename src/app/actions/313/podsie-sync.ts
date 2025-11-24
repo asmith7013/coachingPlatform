@@ -8,10 +8,95 @@ import {
   PodsieApiResponseSchema,
   PodsieResponse,
 } from "@zod-schema/313/podsie-response";
+import { z } from "zod";
 
 // =====================================
 // FETCH FROM PODSIE API
 // =====================================
+
+/**
+ * Schema for Podsie assignment questions endpoint response
+ */
+const PodsieAssignmentQuestionsSchema = z.object({
+  success: z.boolean(),
+  data: z.array(z.object({
+    group_name: z.string(),
+    assignment_name: z.string(),
+    assignment_id: z.number(),
+    assignment_questions: z.array(z.object({
+      questions: z.object({
+        id: z.number(),
+        questionContent: z.object({
+          questionText: z.string(),
+        }).passthrough(),
+      }),
+    })),
+  })),
+});
+
+/**
+ * Fetch assignment question IDs from Podsie
+ * These are the "base" question IDs that can be used for mapping
+ */
+export async function fetchPodsieAssignmentQuestions(
+  assignmentId: string
+): Promise<{ success: boolean; questionIds: number[]; error?: string }> {
+  const token = process.env.PODSIE_API_TOKEN;
+
+  if (!token) {
+    return { success: false, questionIds: [], error: "PODSIE_API_TOKEN not configured" };
+  }
+
+  try {
+    const response = await fetch(
+      `https://www.podsie.org/api/assignments/${assignmentId}/questions`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return {
+        success: false,
+        questionIds: [],
+        error: `Podsie API error: ${response.status} ${response.statusText}`,
+      };
+    }
+
+    const rawData = await response.json();
+    const parseResult = PodsieAssignmentQuestionsSchema.safeParse(rawData);
+
+    if (!parseResult.success) {
+      console.error("Podsie questions response validation failed:", parseResult.error.issues);
+      return {
+        success: false,
+        questionIds: [],
+        error: `Invalid response format: ${parseResult.error.message}`,
+      };
+    }
+
+    // Extract question IDs in order
+    const data = parseResult.data;
+    if (data.data.length === 0) {
+      return { success: false, questionIds: [], error: "No assignment data found" };
+    }
+
+    const questionIds = data.data[0].assignment_questions.map(q => q.questions.id);
+
+    return { success: true, questionIds };
+  } catch (error) {
+    console.error("Error fetching Podsie assignment questions:", error);
+    return {
+      success: false,
+      questionIds: [],
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
 
 /**
  * Fetch student responses from Podsie API for a given assignment
@@ -61,48 +146,372 @@ async function fetchPodsieResponses(
 }
 
 // =====================================
+// FETCH ASSIGNED ASSIGNMENTS FOR A STUDENT
+// =====================================
+
+/**
+ * Schema for Podsie assigned-assignments endpoint response
+ */
+const PodsieAssignedAssignmentsSchema = z.object({
+  success: z.boolean(),
+  data: z.array(z.object({
+    group_name: z.string(),
+    assignment_name: z.string(),
+    assignment_id: z.number(),
+    module_name: z.string().optional(),
+    assignment_url: z.string().optional(),
+    assignment_questions: z.array(z.object({
+      questions: z.object({
+        id: z.number(),
+        questionContent: z.object({
+          questionText: z.string(),
+        }).passthrough(),
+      }),
+    })),
+  })),
+});
+
+export interface PodsieAssignmentInfo {
+  assignmentId: number;
+  assignmentName: string;
+  groupName: string;
+  moduleName?: string;
+  totalQuestions: number;
+  questionIds: number[];
+}
+
+/**
+ * Fetch all assigned assignments for a student from Podsie
+ * Returns assignment info including question counts and IDs
+ */
+export async function fetchAssignedAssignments(
+  studentEmail: string
+): Promise<{ success: boolean; assignments: PodsieAssignmentInfo[]; error?: string }> {
+  const token = process.env.PODSIE_API_TOKEN;
+
+  if (!token) {
+    return { success: false, assignments: [], error: "PODSIE_API_TOKEN not configured" };
+  }
+
+  try {
+    const response = await fetch(
+      "https://www.podsie.org/api/assigned-assignments",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email: studentEmail }),
+      }
+    );
+
+    if (!response.ok) {
+      return {
+        success: false,
+        assignments: [],
+        error: `Podsie API error: ${response.status} ${response.statusText}`,
+      };
+    }
+
+    const rawData = await response.json();
+    const parseResult = PodsieAssignedAssignmentsSchema.safeParse(rawData);
+
+    if (!parseResult.success) {
+      console.error("Podsie assigned-assignments validation failed:", parseResult.error.issues);
+      return {
+        success: false,
+        assignments: [],
+        error: `Invalid response format: ${parseResult.error.message}`,
+      };
+    }
+
+    const data = parseResult.data;
+    if (!data.success) {
+      return { success: false, assignments: [], error: "Podsie returned unsuccessful response" };
+    }
+
+    // Transform to our format
+    const assignments: PodsieAssignmentInfo[] = data.data.map(a => ({
+      assignmentId: a.assignment_id,
+      assignmentName: a.assignment_name,
+      groupName: a.group_name,
+      moduleName: a.module_name,
+      totalQuestions: a.assignment_questions.length,
+      questionIds: a.assignment_questions.map(q => q.questions.id),
+    }));
+
+    return { success: true, assignments };
+  } catch (error) {
+    console.error("Error fetching assigned assignments:", error);
+    return {
+      success: false,
+      assignments: [],
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+/**
+ * Get a sample student email from a section for fetching assignments
+ */
+export async function getSampleStudentEmailForSection(
+  section: string
+): Promise<{ success: boolean; email?: string; error?: string }> {
+  try {
+    const student = await withDbConnection(async () => {
+      return StudentModel.findOne({
+        section,
+        active: true,
+        email: { $exists: true, $ne: "" },
+      })
+        .select("email")
+        .lean<{ email: string }>();
+    });
+
+    if (!student || !student.email) {
+      return { success: false, error: "No student with email found in section" };
+    }
+
+    return { success: true, email: student.email };
+  } catch (error) {
+    console.error("Error getting sample student email:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+/**
+ * Fetch assignments available for a section (uses first student with email)
+ */
+export async function fetchAssignmentsForSection(
+  section: string
+): Promise<{ success: boolean; assignments: PodsieAssignmentInfo[]; error?: string }> {
+  // Get a sample student email
+  const emailResult = await getSampleStudentEmailForSection(section);
+  if (!emailResult.success || !emailResult.email) {
+    return { success: false, assignments: [], error: emailResult.error };
+  }
+
+  // Fetch assignments for that student
+  return fetchAssignedAssignments(emailResult.email);
+}
+
+// =====================================
 // PROCESS RESPONSES INTO PROGRESS
 // =====================================
 
 /**
  * Process Podsie responses into question completion status
- * A question is "completed" if ANY attempt was correct
+ * A question is "completed" if ANY attempt was correct AND accepted
+ *
+ * @param responses - Array of Podsie responses
+ * @param questionMapping - Optional mapping of logical positions to question_ids (including variations)
+ *                          Format: [[id1, id2], [id3], ...] where index = logical question (0-indexed)
+ * @param totalQuestions - Optional limit on number of questions
+ * @param baseQuestionIds - Optional array of base question IDs from assignment (in order)
+ * @returns Map of logical question numbers (1-indexed) to completion status
  */
-function processResponsesToQuestions(responses: PodsieResponse[]): {
+function processResponsesToQuestions(
+  responses: PodsieResponse[],
+  questionMapping?: number[][],
+  totalQuestions?: number,
+  baseQuestionIds?: number[]
+): {
   questions: Map<number, { completed: boolean; completedAt?: string }>;
   assignmentName: string;
 } {
-  const questionMap = new Map<number, { completed: boolean; completedAt?: string }>();
   let assignmentName = "";
 
+  // Extract assignment name from first response
   for (const response of responses) {
-    if (!assignmentName && response.assignment_name) {
+    if (response.assignment_name) {
       assignmentName = response.assignment_name;
+      break;
+    }
+  }
+
+  // If we have a question mapping, use it to group variations
+  if (questionMapping && questionMapping.length > 0) {
+    return processWithMapping(responses, questionMapping, assignmentName);
+  }
+
+  // Fallback: Use baseQuestionIds or totalQuestions
+  return processWithoutMapping(responses, assignmentName, totalQuestions, baseQuestionIds);
+}
+
+/**
+ * Process responses using the question mapping to properly handle variations
+ */
+function processWithMapping(
+  responses: PodsieResponse[],
+  questionMapping: number[][],
+  assignmentName: string
+): {
+  questions: Map<number, { completed: boolean; completedAt?: string }>;
+  assignmentName: string;
+} {
+  // Create a reverse lookup: question_id -> logical question number (1-indexed)
+  const idToLogicalQuestion = new Map<number, number>();
+  questionMapping.forEach((ids, index) => {
+    const logicalQuestionNum = index + 1; // 1-indexed
+    for (const id of ids) {
+      idToLogicalQuestion.set(id, logicalQuestionNum);
+    }
+  });
+
+  // Track completion by logical question number
+  const questionMap = new Map<number, { completed: boolean; completedAt?: string }>();
+
+  // Initialize all mapped questions as not completed
+  for (let i = 1; i <= questionMapping.length; i++) {
+    questionMap.set(i, { completed: false });
+  }
+
+  // Process responses
+  for (const response of responses) {
+    const questionId = response.question_id;
+    const logicalQuestion = idToLogicalQuestion.get(questionId);
+
+    // Skip if this question_id isn't in our mapping
+    if (!logicalQuestion) {
+      continue;
     }
 
-    const questionId = response.question_id;
-    const existing = questionMap.get(questionId);
+    const existing = questionMap.get(logicalQuestion);
 
     // If already marked as completed, keep it
     if (existing?.completed) {
       continue;
     }
 
-    // If this response is correct, mark as completed
-    if (response.is_correct) {
-      questionMap.set(questionId, {
+    // Check both is_correct and aiEvaluation.isAccepted
+    const isAccepted = response.response_payload?.aiEvaluation?.isAccepted ?? true;
+
+    // If this response is correct AND accepted, mark as completed
+    if (response.is_correct && isAccepted) {
+      questionMap.set(logicalQuestion, {
         completed: true,
         completedAt: response.createdAt,
-      });
-    } else if (!existing) {
-      // First attempt, not correct yet
-      questionMap.set(questionId, {
-        completed: false,
       });
     }
   }
 
   return { questions: questionMap, assignmentName };
+}
+
+/**
+ * Fallback: Process responses without explicit mapping
+ * Uses baseQuestionIds (from assignment) to determine which responses count
+ * Only responses matching a base question ID are counted
+ */
+function processWithoutMapping(
+  responses: PodsieResponse[],
+  assignmentName: string,
+  totalQuestions?: number,
+  baseQuestionIds?: number[]
+): {
+  questions: Map<number, { completed: boolean; completedAt?: string }>;
+  assignmentName: string;
+} {
+  // If we have base question IDs from the assignment, use them as the authoritative list
+  if (baseQuestionIds && baseQuestionIds.length > 0) {
+    // Track completion by logical question number (1-indexed)
+    const questionMap = new Map<number, { completed: boolean; completedAt?: string }>();
+
+    // Initialize all base questions as not completed
+    baseQuestionIds.forEach((_, index) => {
+      questionMap.set(index + 1, { completed: false });
+    });
+
+    // Create reverse lookup: base question_id -> logical position
+    const idToPosition = new Map<number, number>();
+    baseQuestionIds.forEach((id, index) => {
+      idToPosition.set(id, index + 1);
+    });
+
+    // Process responses - only count those matching base question IDs
+    for (const response of responses) {
+      const questionId = response.question_id;
+      const position = idToPosition.get(questionId);
+
+      // Skip if not a base question
+      if (!position) {
+        continue;
+      }
+
+      const existing = questionMap.get(position);
+
+      // If already marked as completed, keep it
+      if (existing?.completed) {
+        continue;
+      }
+
+      // Check both is_correct and aiEvaluation.isAccepted
+      const isAccepted = response.response_payload?.aiEvaluation?.isAccepted ?? true;
+
+      // If this response is correct AND accepted, mark as completed
+      if (response.is_correct && isAccepted) {
+        questionMap.set(position, {
+          completed: true,
+          completedAt: response.createdAt,
+        });
+      }
+    }
+
+    return { questions: questionMap, assignmentName };
+  }
+
+  // Legacy fallback: collect all unique question_ids from responses
+  const rawQuestionMap = new Map<number, { completed: boolean; completedAt?: string }>();
+
+  for (const response of responses) {
+    const questionId = response.question_id;
+    const existing = rawQuestionMap.get(questionId);
+
+    // If already marked as completed, keep it
+    if (existing?.completed) {
+      continue;
+    }
+
+    // Check both is_correct and aiEvaluation.isAccepted
+    const isAccepted = response.response_payload?.aiEvaluation?.isAccepted ?? true;
+
+    // If this response is correct AND accepted, mark as completed
+    if (response.is_correct && isAccepted) {
+      rawQuestionMap.set(questionId, {
+        completed: true,
+        completedAt: response.createdAt,
+      });
+    } else if (!existing) {
+      // First attempt, not correct yet
+      rawQuestionMap.set(questionId, {
+        completed: false,
+      });
+    }
+  }
+
+  // If we have a totalQuestions limit but no base IDs, limit by count
+  if (totalQuestions && totalQuestions > 0) {
+    const allIds = Array.from(rawQuestionMap.keys());
+    const limitedIds = allIds.slice(0, totalQuestions);
+
+    // Create new map with only the limited IDs, mapped to logical positions
+    const questionMap = new Map<number, { completed: boolean; completedAt?: string }>();
+    limitedIds.forEach((questionId, index) => {
+      const status = rawQuestionMap.get(questionId);
+      questionMap.set(index + 1, {
+        completed: status?.completed ?? false,
+        completedAt: status?.completedAt,
+      });
+    });
+
+    return { questions: questionMap, assignmentName };
+  }
+
+  return { questions: rawQuestionMap, assignmentName };
 }
 
 // =====================================
@@ -121,43 +530,76 @@ export interface SyncResult {
 /**
  * Sync a single student's ramp-up progress from Podsie
  * Saves directly to student document's rampUpProgress array
+ *
+ * @param questionMapping - Optional mapping of logical positions to question_ids
+ *                          Format: [[id1, id2], [id3], ...] where index = logical question (0-indexed)
+ * @param baseQuestionIds - Optional array of base question IDs from assignment (in order)
  */
 export async function syncStudentRampUpProgress(
   studentId: string,
   studentEmail: string,
   studentName: string,
-  podsyAssignmentId: string,
+  podsieAssignmentId: string,
   unitCode: string,
   rampUpId: string,
-  totalQuestions: number
+  totalQuestions: number,
+  questionMapping?: number[][],
+  baseQuestionIds?: number[]
 ): Promise<SyncResult> {
   try {
     // Fetch from Podsie
-    const responses = await fetchPodsieResponses(podsyAssignmentId, studentEmail);
+    const responses = await fetchPodsieResponses(podsieAssignmentId, studentEmail);
 
-    // Process responses
-    const { questions: questionMap, assignmentName } = processResponsesToQuestions(responses);
+    // Process responses - use mapping if provided, or baseQuestionIds, or totalQuestions
+    const { questions: questionMap, assignmentName } = processResponsesToQuestions(
+      responses,
+      questionMapping,
+      totalQuestions,
+      baseQuestionIds
+    );
 
-    // Convert to array format, ensuring all questions are represented
+    // Convert map to array format
     const questions: RampUpQuestion[] = [];
-    const questionIds = Array.from(questionMap.keys()).sort((a, b) => a - b);
 
-    // Map question_ids to sequential question numbers
-    questionIds.forEach((questionId, index) => {
-      const status = questionMap.get(questionId);
-      questions.push({
-        questionNumber: index + 1,
-        completed: status?.completed ?? false,
-        completedAt: status?.completedAt,
+    if (questionMapping && questionMapping.length > 0) {
+      // With mapping: use logical question numbers directly
+      for (let i = 1; i <= questionMapping.length; i++) {
+        const status = questionMap.get(i);
+        questions.push({
+          questionNumber: i,
+          completed: status?.completed ?? false,
+          completedAt: status?.completedAt,
+        });
+      }
+    } else if (totalQuestions > 0) {
+      // With totalQuestions: the map already has logical positions (1-indexed)
+      for (let i = 1; i <= totalQuestions; i++) {
+        const status = questionMap.get(i);
+        questions.push({
+          questionNumber: i,
+          completed: status?.completed ?? false,
+          completedAt: status?.completedAt,
+        });
+      }
+    } else {
+      // Legacy fallback: use sorted question_ids as sequential numbers
+      const questionIds = Array.from(questionMap.keys()).sort((a, b) => a - b);
+      questionIds.forEach((questionId, index) => {
+        const status = questionMap.get(questionId);
+        questions.push({
+          questionNumber: index + 1,
+          completed: status?.completed ?? false,
+          completedAt: status?.completedAt,
+        });
       });
-    });
 
-    // Pad with remaining questions if we know the total
-    while (questions.length < totalQuestions) {
-      questions.push({
-        questionNumber: questions.length + 1,
-        completed: false,
-      });
+      // Pad with remaining questions if we know the total
+      while (questions.length < totalQuestions) {
+        questions.push({
+          questionNumber: questions.length + 1,
+          completed: false,
+        });
+      }
     }
 
     // Calculate summary
@@ -175,7 +617,7 @@ export async function syncStudentRampUpProgress(
         {
           $set: {
             "rampUpProgress.$.rampUpName": assignmentName || `Unit ${unitCode} Ramp-Up`,
-            "rampUpProgress.$.podsyAssignmentId": podsyAssignmentId,
+            "rampUpProgress.$.podsieAssignmentId": podsieAssignmentId,
             "rampUpProgress.$.questions": questions,
             "rampUpProgress.$.totalQuestions": Math.max(totalQuestions, questions.length),
             "rampUpProgress.$.completedCount": summary.completedCount,
@@ -196,7 +638,7 @@ export async function syncStudentRampUpProgress(
                 unitCode,
                 rampUpId,
                 rampUpName: assignmentName || `Unit ${unitCode} Ramp-Up`,
-                podsyAssignmentId,
+                podsieAssignmentId,
                 questions,
                 totalQuestions: Math.max(totalQuestions, questions.length),
                 completedCount: summary.completedCount,
@@ -244,6 +686,8 @@ export interface SyncSectionResult {
 export interface SyncOptions {
   testMode?: boolean;  // If true, only sync first student with email
   testStudentId?: string;  // Specific student ID to test with
+  questionMapping?: number[][];  // Mapping of logical positions to question_ids
+  baseQuestionIds?: number[];  // Base question IDs from assignment (in order)
 }
 
 /**
@@ -251,7 +695,7 @@ export interface SyncOptions {
  */
 export async function syncSectionRampUpProgress(
   section: string,
-  podsyAssignmentId: string,
+  podsieAssignmentId: string,
   unitCode: string,
   rampUpId: string,
   totalQuestions: number,
@@ -317,10 +761,12 @@ export async function syncSectionRampUpProgress(
         student._id,
         student.email,
         `${student.lastName}, ${student.firstName}`,
-        podsyAssignmentId,
+        podsieAssignmentId,
         unitCode,
         rampUpId,
-        totalQuestions
+        totalQuestions,
+        options.questionMapping,
+        options.baseQuestionIds
       );
 
       results.push(result);

@@ -333,7 +333,7 @@ export async function fetchRampUpsByScope(scopeSequenceTag: string) {
           unit: ru.unit,
           grade: ru.grade,
           scopeSequenceTag: ru.scopeSequenceTag,
-          podsyAssignmentId: ru.podsyAssignmentId,
+          podsieAssignmentId: ru.podsieAssignmentId,
           totalQuestions: ru.totalQuestions || 0,
         }))
       };
@@ -362,7 +362,7 @@ export async function fetchRampUpsByUnit(scopeSequenceTag: string, unitNumber: n
         unit: string;
         grade: string;
         scopeSequenceTag?: string;
-        podsyAssignmentId?: string;
+        podsieAssignmentId?: string;
         totalQuestions?: number;
       }
 
@@ -385,7 +385,7 @@ export async function fetchRampUpsByUnit(scopeSequenceTag: string, unitNumber: n
           unit: ru.unit,
           grade: ru.grade,
           scopeSequenceTag: ru.scopeSequenceTag || '',
-          podsyAssignmentId: ru.podsyAssignmentId,
+          podsieAssignmentId: ru.podsieAssignmentId,
           totalQuestions: ru.totalQuestions || 0,
         }))
       };
@@ -401,7 +401,7 @@ export async function fetchRampUpsByUnit(scopeSequenceTag: string, unitNumber: n
           unit: string;
           grade: string;
           scopeSequenceTag: string;
-          podsyAssignmentId?: string;
+          podsieAssignmentId?: string;
           totalQuestions: number;
         }>,
         error: handleServerError(error, 'fetchRampUpsByUnit')

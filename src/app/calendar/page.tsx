@@ -18,23 +18,43 @@ const GRADE_OPTIONS = [
   { value: "Algebra 1", label: "Algebra 1" },
 ];
 
-// Color palette for units - each has base, light (50), medium (200), dark (300) for section rotation
+// Color palette for units - each has base, light (100), medium (500), dark (900) for section rotation
 // Sections rotate: A=light, B=medium, C=dark, D=light, E=medium, F=dark...
 const UNIT_COLORS = [
-  { base: "#2563EB", light: "#EFF6FF", medium: "#BFDBFE", dark: "#93C5FD" }, // blue (50, 200, 300)
-  { base: "#059669", light: "#ECFDF5", medium: "#A7F3D0", dark: "#6EE7B7" }, // green (50, 200, 300)
-  { base: "#D97706", light: "#FFFBEB", medium: "#FDE68A", dark: "#FCD34D" }, // amber (50, 200, 300)
-  { base: "#DC2626", light: "#FEF2F2", medium: "#FECACA", dark: "#FCA5A5" }, // red (50, 200, 300)
-  { base: "#7C3AED", light: "#F5F3FF", medium: "#DDD6FE", dark: "#C4B5FD" }, // purple (50, 200, 300)
-  { base: "#DB2777", light: "#FDF2F8", medium: "#FBCFE8", dark: "#F9A8D4" }, // pink (50, 200, 300)
-  { base: "#0891B2", light: "#ECFEFF", medium: "#A5F3FC", dark: "#67E8F9" }, // cyan (50, 200, 300)
-  { base: "#EA580C", light: "#FFF7ED", medium: "#FED7AA", dark: "#FDBA74" }, // orange (50, 200, 300)
+  { base: "#2563EB", light: "#DBEAFE", medium: "#3B82F6", dark: "#1E3A8A" }, // blue (100, 500, 900)
+  { base: "#059669", light: "#D1FAE5", medium: "#10B981", dark: "#064E3B" }, // green (100, 500, 900)
+  { base: "#D97706", light: "#FEF3C7", medium: "#F59E0B", dark: "#78350F" }, // amber (100, 500, 900)
+  { base: "#0D9488", light: "#CCFBF1", medium: "#14B8A6", dark: "#134E4A" }, // teal (100, 500, 900)
+  { base: "#7C3AED", light: "#EDE9FE", medium: "#8B5CF6", dark: "#4C1D95" }, // purple (100, 500, 900)
+  { base: "#DB2777", light: "#FCE7F3", medium: "#EC4899", dark: "#831843" }, // pink (100, 500, 900)
+  { base: "#0891B2", light: "#CFFAFE", medium: "#06B6D4", dark: "#164E63" }, // cyan (100, 500, 900)
+  { base: "#EA580C", light: "#FFEDD5", medium: "#F97316", dark: "#7C2D12" }, // orange (100, 500, 900)
 ];
 
 // Get shade for a section based on its index (0=light, 1=medium, 2=dark, 3=light, ...)
 const getSectionShade = (sectionIndex: number): "light" | "medium" | "dark" => {
   const shadeIndex = sectionIndex % 3;
   return shadeIndex === 0 ? "light" : shadeIndex === 1 ? "medium" : "dark";
+};
+
+
+// Get display label for section badge (Ramp Up -> R, Unit Test -> T, otherwise use sectionId)
+const getSectionBadgeLabel = (sectionId: string): string => {
+  if (sectionId === "Ramp Up") return "R";
+  if (sectionId === "Unit Test") return "T";
+  return sectionId;
+};
+
+// Render a badge with rounded square shape (positioned on left edge of cell)
+const SectionBadge = ({ label, color }: { label: string; color: string }) => {
+  return (
+    <span
+      className="absolute left-0 top-1/2 -translate-y-1/2 text-[7px] font-bold leading-none px-1 pr-1.5 py-0.5 rounded-r"
+      style={{ backgroundColor: "white", color: color }}
+    >
+      {label}
+    </span>
+  );
 };
 
 // Types
@@ -246,6 +266,32 @@ export default function CalendarPage() {
     setUnitSchedules(schedules);
   }, [lessons, savedSchedules]);
 
+  // Calculate school days between two dates (excludes weekends and days off)
+  const calculateSchoolDays = useCallback((startDate: string, endDate: string): number => {
+    if (!startDate || !endDate) return 0;
+
+    const start = new Date(startDate + "T12:00:00");
+    const end = new Date(endDate + "T12:00:00");
+    const daysOffSet = new Set(daysOff);
+
+    let count = 0;
+    const current = new Date(start);
+
+    while (current <= end) {
+      const dayOfWeek = current.getDay();
+      const dateStr = current.toISOString().split('T')[0];
+
+      // Count if it's a weekday and not a day off
+      if (dayOfWeek !== 0 && dayOfWeek !== 6 && !daysOffSet.has(dateStr)) {
+        count++;
+      }
+
+      current.setDate(current.getDate() + 1);
+    }
+
+    return count;
+  }, [daysOff]);
+
   // Handle clicking a section to start date selection
   const startDateSelection = (unitKey: string, sectionId: string, type: "start" | "end") => {
     setSelectionMode({ type, unitKey, sectionId });
@@ -276,11 +322,15 @@ export default function CalendarPage() {
     setSaving(true);
     try {
       if (existingSchedule) {
-        await updateSectionDates(schoolYear, unit.grade, unit.unitNumber, sectionId, "", "");
-        // Refresh saved schedules
-        const result = await fetchUnitSchedules(schoolYear, selectedGrade);
+        const result = await updateSectionDates(schoolYear, unit.grade, unit.unitNumber, sectionId, "", "");
+        // Update saved schedules directly with the returned data
         if (result.success && result.data) {
-          setSavedSchedules(result.data as unknown as SavedUnitSchedule[]);
+          setSavedSchedules(prev =>
+            prev.map(s => (s.grade === unit.grade && s.unitNumber === unit.unitNumber)
+              ? result.data as unknown as SavedUnitSchedule
+              : s
+            )
+          );
         }
       }
     } catch (error) {
@@ -288,7 +338,7 @@ export default function CalendarPage() {
     } finally {
       setSaving(false);
     }
-  }, [unitSchedules, savedSchedules, schoolYear, selectedGrade]);
+  }, [unitSchedules, savedSchedules, schoolYear]);
 
   // Handle clicking a date in the calendar
   const handleDateClick = useCallback(async (dateStr: string) => {
@@ -448,20 +498,23 @@ export default function CalendarPage() {
 
             let bgColor = "bg-white";
             let textColor = "text-gray-900";
-            let customBg = "";
+            let customBgStyle: React.CSSProperties = {};
             const cursor = isSelecting && !weekend && !dayOff ? "cursor-pointer" : "";
-
-            // Check if this is the first day of a section (for left border)
-            const isFirstDayOfSection = scheduleInfo && scheduleInfo.section.startDate === dateStr;
 
             if (weekend || dayOff) {
               bgColor = "bg-gray-100";
               textColor = "text-gray-400";
             } else if (scheduleInfo) {
               const unitColor = UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length];
-              // Rotate through light → medium → dark based on section index (A=light, B=medium, C=dark, D=light, ...)
+              // Rotate through light → medium → dark based on section index
               const shade = getSectionShade(scheduleInfo.sectionIndex);
-              customBg = unitColor[shade];
+              customBgStyle = { backgroundColor: unitColor[shade] };
+              // Clear bg-white class so inline style takes effect
+              bgColor = "";
+              // Use white text for medium and dark shades
+              if (shade === "medium" || shade === "dark") {
+                textColor = "text-white";
+              }
             }
 
             return (
@@ -475,13 +528,7 @@ export default function CalendarPage() {
                 className={`h-7 rounded text-xs flex items-center justify-center relative ${bgColor} ${textColor} ${cursor} ${
                   isSelecting && !weekend && !dayOff ? "hover:ring-2 hover:ring-blue-400" : ""
                 }`}
-                style={{
-                  ...(customBg ? { backgroundColor: customBg } : {}),
-                  ...(isFirstDayOfSection ? {
-                    borderLeft: `3px solid ${UNIT_COLORS[scheduleInfo!.unitIndex % UNIT_COLORS.length].base}`,
-                    borderRadius: '4px 2px 2px 4px'
-                  } : {})
-                }}
+                style={customBgStyle}
                 title={
                   weekend
                     ? "Weekend"
@@ -498,15 +545,10 @@ export default function CalendarPage() {
                       className="absolute top-0 left-0 right-0 h-0.5"
                       style={{ backgroundColor: UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base }}
                     />
-                    <span
-                      className="absolute -top-0.5 -right-0.5 text-[8px] font-bold leading-none px-1 py-0.5 rounded-full"
-                      style={{
-                        backgroundColor: UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base,
-                        color: "white"
-                      }}
-                    >
-                      {scheduleInfo.section.sectionId}
-                    </span>
+                    <SectionBadge
+                      label={getSectionBadgeLabel(scheduleInfo.section.sectionId)}
+                      color={UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base}
+                    />
                   </>
                 )}
                 {date.getDate()}
@@ -567,151 +609,116 @@ export default function CalendarPage() {
 
       {/* Main content - two columns */}
       <div className="flex h-[calc(100vh-80px)]">
-        {/* Left column - Units table */}
+        {/* Left column - Unit cards */}
         <div className="w-1/2 p-4 overflow-y-auto border-r border-gray-200">
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-4 py-3 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Unit Schedule - Grade {selectedGrade}
-              </h2>
-              <p className="text-xs text-gray-500 mt-1">
-                Click &quot;Set Start&quot; or &quot;Set End&quot;, then click a date on the calendar
-              </p>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b">
-                  <tr>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Unit / Section</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Lessons</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Start</th>
-                    <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">End</th>
-                    <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase w-8"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {unitSchedules.map((unit, unitIndex) => (
-                    <React.Fragment key={`unit-group-${unit.unitKey}`}>
-                      {/* Unit Header */}
-                      <tr
-                        className="bg-gray-50"
-                        style={{ borderLeft: `4px solid ${UNIT_COLORS[unitIndex % UNIT_COLORS.length].base}` }}
-                      >
-                        <td colSpan={5} className="px-3 py-2 font-semibold text-sm text-gray-900">
-                          {unit.unitName}
-                        </td>
-                      </tr>
-                      {/* Section Rows */}
-                      {unit.sections.map((section) => {
-                        const isSelected = selectionMode?.unitKey === unit.unitKey && selectionMode?.sectionId === section.sectionId;
-                        const isSelectingStart = isSelected && selectionMode?.type === "start";
-                        const isSelectingEnd = isSelected && selectionMode?.type === "end";
-                        const unitColor = UNIT_COLORS[unitIndex % UNIT_COLORS.length];
+          <div className="space-y-3">
+            {unitSchedules.map((unit, unitIndex) => {
+              const unitColor = UNIT_COLORS[unitIndex % UNIT_COLORS.length];
 
-                        return (
-                          <tr
-                            key={`unit-${unit.unitKey}-section-${section.sectionId}`}
-                            style={{
-                              borderLeft: `4px solid ${unitColor.base}`,
-                              backgroundColor: isSelected ? unitColor.light : undefined
-                            }}
-                          >
-                            <td className="px-3 py-1.5 pl-6 text-sm text-gray-700">
-                              {section.name}
-                            </td>
-                            <td className="px-3 py-1.5 text-xs text-center text-gray-500">
-                              {section.lessonCount}
-                            </td>
-                            <td className="px-3 py-1.5 text-center">
-                              {section.startDate ? (
-                                <button
-                                  onClick={() => startDateSelection(unit.unitKey, section.sectionId, "start")}
-                                  className="text-xs px-2 py-1 rounded"
-                                  style={{
-                                    backgroundColor: isSelectingStart ? unitColor.base : unitColor.light,
-                                    color: isSelectingStart ? "white" : unitColor.base
-                                  }}
-                                >
-                                  {new Date(section.startDate + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => startDateSelection(unit.unitKey, section.sectionId, "start")}
-                                  className="text-xs px-2 py-1 rounded"
-                                  style={{
-                                    backgroundColor: isSelectingStart ? unitColor.base : unitColor.light,
-                                    color: isSelectingStart ? "white" : unitColor.base
-                                  }}
-                                >
-                                  Set Start
-                                </button>
-                              )}
-                            </td>
-                            <td className="px-3 py-1.5 text-center">
-                              {section.endDate ? (
-                                <button
-                                  onClick={() => startDateSelection(unit.unitKey, section.sectionId, "end")}
-                                  className="text-xs px-2 py-1 rounded"
-                                  style={{
-                                    backgroundColor: isSelectingEnd ? unitColor.base : unitColor.light,
-                                    color: isSelectingEnd ? "white" : unitColor.base
-                                  }}
-                                >
-                                  {new Date(section.endDate + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => startDateSelection(unit.unitKey, section.sectionId, "end")}
-                                  className="text-xs px-2 py-1 rounded"
-                                  style={{
-                                    backgroundColor: isSelectingEnd ? unitColor.base : unitColor.light,
-                                    color: isSelectingEnd ? "white" : unitColor.base
-                                  }}
-                                >
-                                  Set End
-                                </button>
-                              )}
-                            </td>
-                            <td className="px-2 py-1.5 text-center">
-                              {(section.startDate || section.endDate) && (
-                                <button
-                                  onClick={() => clearSectionDates(unit.unitKey, section.sectionId)}
-                                  className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded p-1"
-                                  title="Clear dates"
-                                >
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Days Off Summary */}
-          <div className="mt-4 bg-white rounded-lg shadow p-4">
-            <h3 className="text-sm font-semibold text-gray-900 mb-2">Days Off</h3>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              {calendar?.events
-                ?.filter((e) => ["holiday", "school_closed"].includes(e.type))
-                .sort((a, b) => a.date.localeCompare(b.date))
-                .slice(0, 12)
-                .map((event) => (
-                  <div key={event.date} className="flex items-center gap-1">
-                    <span className="text-gray-400">
-                      {new Date(event.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                    </span>
-                    <span className="text-gray-600 truncate">{event.name}</span>
+              return (
+                <div
+                  key={`unit-card-${unit.unitKey}`}
+                  className="bg-white rounded-lg shadow overflow-hidden"
+                  style={{ borderLeft: `4px solid ${unitColor.base}` }}
+                >
+                  {/* Unit Header */}
+                  <div
+                    className="px-3 py-2 font-semibold text-sm"
+                    style={{ backgroundColor: unitColor.light, color: unitColor.base }}
+                  >
+                    {unit.unitName}
                   </div>
-                ))}
-            </div>
+
+                  {/* Sections */}
+                  <div className="divide-y divide-gray-100">
+                    {unit.sections.map((section) => {
+                      const isSelected = selectionMode?.unitKey === unit.unitKey && selectionMode?.sectionId === section.sectionId;
+                      const isSelectingStart = isSelected && selectionMode?.type === "start";
+                      const isSelectingEnd = isSelected && selectionMode?.type === "end";
+                      const allocatedDays = section.startDate && section.endDate
+                        ? calculateSchoolDays(section.startDate, section.endDate)
+                        : null;
+
+                      return (
+                        <div
+                          key={`unit-${unit.unitKey}-section-${section.sectionId}`}
+                          className="flex items-center px-3 py-1.5"
+                          style={{ backgroundColor: isSelected ? unitColor.light : undefined }}
+                        >
+                          {/* Section name */}
+                          <div className="flex-1 text-sm text-gray-700">
+                            {section.name}
+                          </div>
+
+                          {/* Allocated days */}
+                          <div className="w-14 text-xs text-center">
+                            {allocatedDays !== null ? (
+                              <span style={{ color: allocatedDays >= section.lessonCount ? unitColor.base : '#DC2626' }}>
+                                {allocatedDays} days
+                              </span>
+                            ) : (
+                              <span className="text-gray-400">-</span>
+                            )}
+                          </div>
+
+                          {/* Lesson count */}
+                          <div className="w-16 text-xs text-center text-gray-500">
+                            {`${section.lessonCount} Lessons`}
+                          </div>
+
+                          {/* Start button */}
+                          <div className="w-20 text-center">
+                            <button
+                              onClick={() => startDateSelection(unit.unitKey, section.sectionId, "start")}
+                              className="text-xs px-2 py-1 rounded cursor-pointer"
+                              style={{
+                                backgroundColor: isSelectingStart ? unitColor.base : unitColor.light,
+                                color: isSelectingStart ? "white" : unitColor.base
+                              }}
+                            >
+                              {section.startDate
+                                ? new Date(section.startDate + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })
+                                : "Set Start"}
+                            </button>
+                          </div>
+
+                          {/* End button */}
+                          <div className="w-20 text-center">
+                            <button
+                              onClick={() => startDateSelection(unit.unitKey, section.sectionId, "end")}
+                              className="text-xs px-2 py-1 rounded cursor-pointer"
+                              style={{
+                                backgroundColor: isSelectingEnd ? unitColor.base : unitColor.light,
+                                color: isSelectingEnd ? "white" : unitColor.base
+                              }}
+                            >
+                              {section.endDate
+                                ? new Date(section.endDate + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })
+                                : "Set End"}
+                            </button>
+                          </div>
+
+                          {/* Clear button */}
+                          <div className="w-6 text-center">
+                            {(section.startDate || section.endDate) && (
+                              <button
+                                onClick={() => clearSectionDates(unit.unitKey, section.sectionId)}
+                                className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded p-1 cursor-pointer"
+                                title="Clear dates"
+                              >
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
