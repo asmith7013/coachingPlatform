@@ -21,9 +21,7 @@ const SCOPE_SEQUENCE_TAG_VALUES = [
 // SCOPE AND SEQUENCE MODEL
 // =====================================
 
-const LESSON_TYPE_VALUES = ["lesson", "ramp-up"] as const;
-
-const SECTION_VALUES = ["A", "B", "C", "D", "E", "Ramp Ups"] as const;
+const SECTION_VALUES = ["A", "B", "C", "D", "E", "F", "Ramp Ups"] as const;
 
 const scopeAndSequenceFields = {
   grade: { type: String, required: true, index: true },
@@ -32,7 +30,7 @@ const scopeAndSequenceFields = {
   unitNumber: { type: Number, required: true, index: true },
   lessonNumber: { type: Number, required: true, index: true },
   lessonName: { type: String, required: true },
-  section: { type: String, required: false, enum: SECTION_VALUES },
+  section: { type: String, required: false, enum: SECTION_VALUES, index: true },
   scopeSequenceTag: {
     type: String,
     required: false,
@@ -42,15 +40,12 @@ const scopeAndSequenceFields = {
   roadmapSkills: { type: [String], default: [] },
   targetSkills: { type: [String], default: [] },
 
-  // Lesson type and Podsie integration
-  lessonType: {
-    type: String,
-    required: false,
-    default: "lesson",
-    enum: LESSON_TYPE_VALUES,
-    index: true
-  },
+  // Podsie integration
   podsieAssignmentId: { type: String, required: false, index: true },
+  podsieQuestionMap: [{
+    questionNumber: { type: Number, required: true },
+    questionId: { type: String, required: true }
+  }],
   totalQuestions: { type: Number, required: false },
 
   ...standardDocumentFields

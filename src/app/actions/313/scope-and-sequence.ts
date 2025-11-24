@@ -318,7 +318,7 @@ export async function fetchRampUpsByScope(scopeSequenceTag: string) {
       const rampUps = await ScopeAndSequenceModel
         .find({
           scopeSequenceTag,
-          lessonType: 'ramp-up'
+          section: 'Ramp Ups'
         })
         .sort({ unitNumber: 1, lessonNumber: 1 })
         .lean();
@@ -349,48 +349,66 @@ export async function fetchRampUpsByScope(scopeSequenceTag: string) {
 }
 
 /**
- * Fetch all ramp-ups for a specific unit within a scopeSequenceTag
+ * Fetch lessons with Podsie assignments for a specific unit within a scopeSequenceTag
+ * @param section - Optional filter by lesson section (e.g., 'Ramp Ups', 'A', 'B')
  */
-export async function fetchRampUpsByUnit(scopeSequenceTag: string, unitNumber: number) {
+export async function fetchRampUpsByUnit(
+  scopeSequenceTag: string,
+  unitNumber: number,
+  options?: {
+    section?: string;
+  }
+) {
   return withDbConnection(async () => {
     try {
-      interface RampUpDoc {
+      interface LessonDoc {
         _id: unknown;
         unitNumber: number;
         unitLessonId: string;
         lessonName: string;
         unit: string;
         grade: string;
+        section?: string;
         scopeSequenceTag?: string;
         podsieAssignmentId?: string;
+        podsieQuestionMap?: Array<{ questionNumber: number; questionId: string }>;
         totalQuestions?: number;
       }
 
-      const rampUps = await ScopeAndSequenceModel
-        .find({
-          scopeSequenceTag,
-          unitNumber,
-          lessonType: 'ramp-up'
-        })
-        .sort({ lessonNumber: 1, unitLessonId: 1 })
-        .lean<RampUpDoc[]>();
+      const query: Record<string, unknown> = {
+        scopeSequenceTag,
+        unitNumber,
+        podsieAssignmentId: { $exists: true, $ne: null }
+      };
+
+      // Optional section filter
+      if (options?.section) {
+        query.section = options.section;
+      }
+
+      const lessons = await ScopeAndSequenceModel
+        .find(query)
+        .sort({ section: 1, lessonNumber: 1, unitLessonId: 1 })
+        .lean<LessonDoc[]>();
 
       return {
         success: true,
-        data: rampUps.map(ru => ({
-          _id: String(ru._id),
-          unitNumber: ru.unitNumber,
-          unitLessonId: ru.unitLessonId,
-          lessonName: ru.lessonName,
-          unit: ru.unit,
-          grade: ru.grade,
-          scopeSequenceTag: ru.scopeSequenceTag || '',
-          podsieAssignmentId: ru.podsieAssignmentId,
-          totalQuestions: ru.totalQuestions || 0,
+        data: lessons.map(lesson => ({
+          _id: String(lesson._id),
+          unitNumber: lesson.unitNumber,
+          unitLessonId: lesson.unitLessonId,
+          lessonName: lesson.lessonName,
+          unit: lesson.unit,
+          grade: lesson.grade,
+          section: lesson.section,
+          scopeSequenceTag: lesson.scopeSequenceTag || '',
+          podsieAssignmentId: lesson.podsieAssignmentId,
+          podsieQuestionMap: lesson.podsieQuestionMap,
+          totalQuestions: lesson.totalQuestions || 0,
         }))
       };
     } catch (error) {
-      console.error('💥 Error fetching ramp-ups by unit:', error);
+      console.error('💥 Error fetching lessons by unit:', error);
       return {
         success: false,
         data: [] as Array<{
@@ -400,8 +418,10 @@ export async function fetchRampUpsByUnit(scopeSequenceTag: string, unitNumber: n
           lessonName: string;
           unit: string;
           grade: string;
+          section?: string;
           scopeSequenceTag: string;
           podsieAssignmentId?: string;
+          podsieQuestionMap?: Array<{ questionNumber: number; questionId: string }>;
           totalQuestions: number;
         }>,
         error: handleServerError(error, 'fetchRampUpsByUnit')
@@ -411,13 +431,26 @@ export async function fetchRampUpsByUnit(scopeSequenceTag: string, unitNumber: n
 }
 
 /**
- * Get unique units that have ramp-ups for a scopeSequenceTag
+ * Get unique units that have Podsie assignments for a scopeSequenceTag
+ * @param section - Optional filter by section (e.g., 'Ramp Ups', 'A', 'B')
  */
-export async function fetchUnitsWithRampUps(scopeSequenceTag: string) {
+export async function fetchUnitsWithRampUps(
+  scopeSequenceTag: string,
+  section?: string
+) {
   return withDbConnection(async () => {
     try {
+      const matchQuery: Record<string, unknown> = {
+        scopeSequenceTag,
+        podsieAssignmentId: { $exists: true, $ne: null }
+      };
+
+      if (section) {
+        matchQuery.section = section;
+      }
+
       const units = await ScopeAndSequenceModel.aggregate([
-        { $match: { scopeSequenceTag, lessonType: 'ramp-up' } },
+        { $match: matchQuery },
         {
           $group: {
             _id: '$unitNumber',
@@ -439,11 +472,52 @@ export async function fetchUnitsWithRampUps(scopeSequenceTag: string) {
         }))
       };
     } catch (error) {
-      console.error('💥 Error fetching units with ramp-ups:', error);
+      console.error('💥 Error fetching units with Podsie data:', error);
       return {
         success: false,
         data: [],
         error: handleServerError(error, 'fetchUnitsWithRampUps')
+      };
+    }
+  });
+}
+
+/**
+ * Get unique sections that have Podsie assignments for a scope and unit
+ */
+export async function fetchSectionsWithPodsieData(scopeSequenceTag: string, unitNumber: number) {
+  return withDbConnection(async () => {
+    try {
+      const sections = await ScopeAndSequenceModel.aggregate([
+        {
+          $match: {
+            scopeSequenceTag,
+            unitNumber,
+            podsieAssignmentId: { $exists: true, $ne: null }
+          }
+        },
+        {
+          $group: {
+            _id: '$section',
+            lessonCount: { $sum: 1 }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ]);
+
+      return {
+        success: true,
+        data: sections.map(s => ({
+          section: s._id || 'None',
+          lessonCount: s.lessonCount
+        }))
+      };
+    } catch (error) {
+      console.error('💥 Error fetching sections with Podsie data:', error);
+      return {
+        success: false,
+        data: [],
+        error: handleServerError(error, 'fetchSectionsWithPodsieData')
       };
     }
   });

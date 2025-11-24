@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'School Calendar',
 };
 
-const ALLOWED_DOMAINS = ['schools.nyc.gov', 'teachinglab.org'];
+const ALLOWED_DOMAINS = ['schools.nyc.gov', 'teachinglab.org', 'teachinglabstudio.com'];
 
 function isAllowedDomain(email: string | null | undefined): boolean {
   if (!email) return false;
