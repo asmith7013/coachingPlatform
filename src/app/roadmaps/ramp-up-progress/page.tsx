@@ -414,11 +414,6 @@ export default function RampUpProgressPage() {
           )}
         </div>
 
-        {/* Preview Section - Per-Question Progress Bars */}
-        {selectedSection && selectedUnit !== null && rampUps.length > 0 && progressData.length > 0 && (
-          <RampUpProgressPreview rampUps={rampUps} progressData={progressData} />
-        )}
-
         {/* Ramp-Up Cards */}
         {selectedSection && selectedUnit !== null ? (
           rampUps.length === 0 ? (
@@ -524,18 +519,12 @@ function RampUpCard({
 
         {/* Summary Stats */}
         {progressData.length > 0 && (
-          <div className="grid grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-200">
+          <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-200">
             <div className="text-center">
               <div className="text-xl font-bold text-gray-900">
                 {summaryStats.totalStudents}
               </div>
               <div className="text-xs text-gray-500">Students</div>
-            </div>
-            <div className="text-center">
-              <div className="text-xl font-bold text-purple-600">
-                {summaryStats.syncedStudents}
-              </div>
-              <div className="text-xs text-gray-500">Synced</div>
             </div>
             <div className="text-center">
               <div className="text-xl font-bold text-blue-600">
@@ -751,149 +740,3 @@ function RampUpProgressTable({
   );
 }
 
-// =====================================
-// RAMP-UP PROGRESS PREVIEW COMPONENT
-// =====================================
-
-interface RampUpProgressPreviewProps {
-  rampUps: RampUpConfig[];
-  progressData: ProgressData[];
-}
-
-function RampUpProgressPreview({ rampUps, progressData }: RampUpProgressPreviewProps) {
-  // Get synced students only
-  const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
-  const totalSyncedStudents = syncedStudents.length;
-
-  // For each ramp-up, calculate per-question completion rates
-  const rampUpStats = useMemo(() => {
-    return rampUps.map((rampUp) => {
-      // Get max questions for this ramp-up
-      const totalQuestions = rampUp.totalQuestions;
-      const questionColumns = Array.from({ length: totalQuestions }, (_, i) => i + 1);
-
-      // Calculate stats for each question
-      const questionStats = questionColumns.map((qNum) => {
-        const completed = syncedStudents.filter((p) =>
-          p.questions.find((q) => q.questionNumber === qNum && q.completed)
-        ).length;
-        return {
-          questionNumber: qNum,
-          completed,
-          total: totalSyncedStudents,
-          percent: totalSyncedStudents > 0 ? Math.round((completed / totalSyncedStudents) * 100) : 0,
-        };
-      });
-
-      // Calculate overall completion
-      const avgCompletion =
-        syncedStudents.length > 0
-          ? Math.round(
-              syncedStudents.reduce((sum, p) => sum + p.percentComplete, 0) / syncedStudents.length
-            )
-          : 0;
-
-      return {
-        rampUp,
-        questionStats,
-        avgCompletion,
-      };
-    });
-  }, [rampUps, syncedStudents, totalSyncedStudents]);
-
-  if (totalSyncedStudents === 0) {
-    return null;
-  }
-
-  return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-6">
-      <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
-        <h2 className="text-lg font-semibold text-gray-900">Class Progress Overview</h2>
-        <p className="text-sm text-gray-500">{totalSyncedStudents} students synced</p>
-      </div>
-
-      <div className="p-6 space-y-6">
-        {rampUpStats.map(({ rampUp, questionStats, avgCompletion }) => (
-          <div key={rampUp._id}>
-            {/* Ramp-Up Header */}
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <span className="font-medium text-gray-900">{rampUp.lessonName}</span>
-                <span className="text-gray-500 text-sm ml-2">({rampUp.unitLessonId})</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-24 bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full transition-all"
-                    style={{ width: `${avgCompletion}%` }}
-                  />
-                </div>
-                <span className="text-sm font-bold text-gray-700 w-12 text-right">
-                  {avgCompletion}%
-                </span>
-              </div>
-            </div>
-
-            {/* Per-Question Progress Bars */}
-            <div className="flex flex-wrap gap-2">
-              {questionStats.map((stat) => (
-                <QuestionProgressBar
-                  key={stat.questionNumber}
-                  questionNumber={stat.questionNumber}
-                  completed={stat.completed}
-                  total={stat.total}
-                  percent={stat.percent}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// =====================================
-// QUESTION PROGRESS BAR COMPONENT
-// =====================================
-
-interface QuestionProgressBarProps {
-  questionNumber: number;
-  completed: number;
-  total: number;
-  percent: number;
-}
-
-function QuestionProgressBar({ questionNumber, completed, total, percent }: QuestionProgressBarProps) {
-  // Color based on completion percentage
-  const getBarColor = (pct: number) => {
-    if (pct >= 80) return "bg-green-500";
-    if (pct >= 50) return "bg-yellow-500";
-    if (pct >= 20) return "bg-orange-500";
-    return "bg-red-500";
-  };
-
-  return (
-    <div className="flex flex-col items-center gap-1 min-w-[60px]">
-      {/* Question Badge */}
-      <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-600 text-white text-xs font-bold">
-        Q{questionNumber}
-      </span>
-      {/* Progress Bar */}
-      <div className="w-14 bg-gray-200 rounded-full h-1.5">
-        <div
-          className={`${getBarColor(percent)} h-1.5 rounded-full transition-all`}
-          style={{ width: `${percent}%` }}
-        />
-      </div>
-      {/* Percentage */}
-      <span className="text-[9px] font-bold text-gray-500">
-        {percent}%
-      </span>
-      {/* Count */}
-      <span className="text-[8px] text-gray-400">
-        {completed}/{total}
-      </span>
-    </div>
-  );
-}
