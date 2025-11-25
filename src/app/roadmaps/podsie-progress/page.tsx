@@ -360,7 +360,8 @@ export default function RampUpProgressPage() {
         const progressResult = await fetchRampUpProgress(
           selectedSection,
           unitCode,
-          assignment.unitLessonId  // Only fetch this specific assignment
+          assignment.unitLessonId,  // Filter by rampUpId
+          assignment.podsieAssignmentId  // Filter by podsieAssignmentId to prevent duplicates
         );
         if (progressResult.success) {
           console.log('📊 Fetched progress data for synced assignment:', {

@@ -827,7 +827,8 @@ export interface StudentRampUpProgressData {
 export async function fetchRampUpProgress(
   section: string,
   unitCode: string,
-  rampUpId?: string
+  rampUpId?: string,
+  podsieAssignmentId?: string
 ): Promise<{
   success: boolean;
   data: StudentRampUpProgressData[];
@@ -874,6 +875,7 @@ export async function fetchRampUpProgress(
       const progressEntries = (student.rampUpProgress || []).filter(p => {
         if (p.unitCode !== unitCode) return false;
         if (rampUpId && p.rampUpId !== rampUpId) return false;
+        if (podsieAssignmentId && p.podsieAssignmentId !== podsieAssignmentId) return false;
         return true;
       });
 
