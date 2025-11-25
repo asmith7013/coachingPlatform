@@ -64,21 +64,47 @@ export function AssignmentCard({
   // Filter progress data to only show this assignment's data
   // Use podsieAssignmentId to distinguish between lesson and mastery-check with same unitLessonId
   const filteredProgressData = useMemo(
-    () => progressData.filter(p =>
-      p.podsieAssignmentId
-        ? p.podsieAssignmentId === assignment.podsieAssignmentId
-        : p.rampUpId === assignment.unitLessonId
-    ),
+    () => {
+      const filtered = progressData.filter(p =>
+        p.podsieAssignmentId
+          ? p.podsieAssignmentId === assignment.podsieAssignmentId
+          : p.rampUpId === assignment.unitLessonId
+      );
+
+      // Deduplicate by studentId (keep only the first occurrence of each student)
+      const seen = new Set();
+      return filtered.filter(p => {
+        if (seen.has(p.studentId)) {
+          return false;
+        }
+        seen.add(p.studentId);
+        return true;
+      });
+    },
     [progressData, assignment.podsieAssignmentId, assignment.unitLessonId]
   );
 
   // Filter mastery check progress data if provided
   const filteredMasteryCheckData = useMemo(
-    () => masteryCheckAssignment ? progressData.filter(p =>
-      p.podsieAssignmentId
-        ? p.podsieAssignmentId === masteryCheckAssignment.podsieAssignmentId
-        : p.rampUpId === masteryCheckAssignment.unitLessonId
-    ) : [],
+    () => {
+      if (!masteryCheckAssignment) return [];
+
+      const filtered = progressData.filter(p =>
+        p.podsieAssignmentId
+          ? p.podsieAssignmentId === masteryCheckAssignment.podsieAssignmentId
+          : p.rampUpId === masteryCheckAssignment.unitLessonId
+      );
+
+      // Deduplicate by studentId (keep only the first occurrence of each student)
+      const seen = new Set();
+      return filtered.filter(p => {
+        if (seen.has(p.studentId)) {
+          return false;
+        }
+        seen.add(p.studentId);
+        return true;
+      });
+    },
     [progressData, masteryCheckAssignment]
   );
 
