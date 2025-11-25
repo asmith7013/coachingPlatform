@@ -60,6 +60,22 @@ export function AssignmentCard({
   calculateSummaryStats: _calculateSummaryStats,
 }: AssignmentCardProps) {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [syncingBoth, setSyncingBoth] = useState(false);
+
+  // Handler to sync both lesson and mastery check
+  const handleSyncBoth = async () => {
+    if (!masteryCheckAssignment || !onMasteryCheckSync) return;
+
+    setSyncingBoth(true);
+    try {
+      // Sync lesson first
+      await onSync(false);
+      // Then sync mastery check
+      await onMasteryCheckSync(false);
+    } finally {
+      setSyncingBoth(false);
+    }
+  };
 
   // Filter progress data to only show this assignment's data
   // Use podsieAssignmentId to distinguish between lesson and mastery-check with same unitLessonId
@@ -133,11 +149,28 @@ export function AssignmentCard({
           <div className="flex items-center gap-2">
             {isEditMode ? (
               <>
+                {/* Sync Both Button - Only show if mastery check exists */}
+                {masteryCheckAssignment && onMasteryCheckSync && (
+                  <button
+                    onClick={handleSyncBoth}
+                    disabled={syncingBoth || syncing || masteryCheckSyncing || !assignment.podsieAssignmentId || !masteryCheckAssignment.podsieAssignmentId}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                      syncingBoth || syncing || masteryCheckSyncing || !assignment.podsieAssignmentId || !masteryCheckAssignment.podsieAssignmentId
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-purple-600 text-white hover:bg-purple-700 cursor-pointer"
+                    }`}
+                  >
+                    <ArrowPathIcon
+                      className={`w-5 h-5 ${syncingBoth ? "animate-spin" : ""}`}
+                    />
+                    {syncingBoth ? "Syncing Both..." : "Sync Both"}
+                  </button>
+                )}
                 <button
                   onClick={() => onSync(false)}
-                  disabled={syncing || !assignment.podsieAssignmentId}
+                  disabled={syncing || syncingBoth || !assignment.podsieAssignmentId}
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                    syncing || !assignment.podsieAssignmentId
+                    syncing || syncingBoth || !assignment.podsieAssignmentId
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
                   }`}
@@ -150,9 +183,9 @@ export function AssignmentCard({
                 {masteryCheckAssignment && onMasteryCheckSync && (
                   <button
                     onClick={() => onMasteryCheckSync(false)}
-                    disabled={masteryCheckSyncing || !masteryCheckAssignment.podsieAssignmentId}
+                    disabled={masteryCheckSyncing || syncingBoth || !masteryCheckAssignment.podsieAssignmentId}
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                      masteryCheckSyncing || !masteryCheckAssignment.podsieAssignmentId
+                      masteryCheckSyncing || syncingBoth || !masteryCheckAssignment.podsieAssignmentId
                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                         : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
                     }`}
