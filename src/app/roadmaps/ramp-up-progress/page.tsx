@@ -15,11 +15,14 @@ import {
   PodsieAssignmentInfo,
 } from "@/app/actions/313/podsie-sync";
 import {
-  fetchUnitsWithRampUps,
+  fetchAllUnitsByScopeTag,
   fetchRampUpsByUnit,
   createScopeAndSequence,
 } from "@/app/actions/313/scope-and-sequence";
 import { SCOPE_SEQUENCE_TAG_OPTIONS } from "@zod-schema/313/scope-and-sequence";
+import { Sections313, SectionsPS19 } from "@schema/enum/313";
+import { getSectionConfig } from "@/app/actions/313/section-config";
+import type { PodsieAssignment } from "@zod-schema/313/section-config";
 
 // Map section to scopeSequenceTag based on first digit
 // 802 = Algebra 1
@@ -43,31 +46,74 @@ function getScopeTagForSection(section: string): string {
   return "Grade 8";
 }
 
-interface RampUpConfig {
-  _id: string;
-  unitNumber: number;
+// Get grade from section
+function getGradeForSection(section: string): string {
+  if (section === "802") {
+    return "8"; // Algebra 1 uses grade 8 in the database
+  }
+  if (section.startsWith("6")) {
+    return "6";
+  }
+  if (section.startsWith("7")) {
+    return "7";
+  }
+  if (section.startsWith("8")) {
+    return "8";
+  }
+  // Default fallback
+  return "8";
+}
+
+// Get school for a section
+function getSchoolForSection(section: string): "IS313" | "PS19" | "X644" | "Unknown" {
+  if (Sections313.includes(section as typeof Sections313[number])) {
+    return "IS313";
+  }
+  if (SectionsPS19.includes(section as typeof SectionsPS19[number])) {
+    return "PS19";
+  }
+  return "Unknown";
+}
+
+// Group sections by school
+function groupSectionsBySchool(sections: string[]): Array<{ school: string; sections: string[] }> {
+  const is313 = sections.filter(s => getSchoolForSection(s) === "IS313").sort();
+  const ps19 = sections.filter(s => getSchoolForSection(s) === "PS19").sort();
+  const x644 = sections.filter(s => getSchoolForSection(s) === "X644").sort();
+  const unknown = sections.filter(s => getSchoolForSection(s) === "Unknown").sort();
+
+  const groups = [];
+  if (is313.length > 0) groups.push({ school: "IS313", sections: is313 });
+  if (ps19.length > 0) groups.push({ school: "PS19", sections: ps19 });
+  if (x644.length > 0) groups.push({ school: "X644", sections: x644 });
+  if (unknown.length > 0) groups.push({ school: "Other", sections: unknown });
+
+  return groups;
+}
+
+interface LessonConfig {
   unitLessonId: string;
   lessonName: string;
-  unit: string;
   grade: string;
-  scopeSequenceTag: string;
-  podsieAssignmentId?: string;
+  podsieAssignmentId: string;
   totalQuestions: number;
+  section?: string;
+  unitNumber: number;
 }
 
 interface UnitOption {
   unitNumber: number;
   unitName: string;
   grade: string;
-  rampUpCount: number;
+  lessonCount: number;
 }
 
 interface ProgressData {
   studentId: string;
   studentName: string;
   unitCode: string;
-  rampUpId: string;
-  rampUpName?: string;
+  rampUpId: string; // This is actually the lesson/assignment ID
+  rampUpName?: string; // This is actually the lesson name
   questions: RampUpQuestion[];
   totalQuestions: number;
   completedCount: number;
@@ -78,16 +124,22 @@ interface ProgressData {
 
 export default function RampUpProgressPage() {
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState<string | null>(null); // Track which ramp-up is syncing
+  const [syncing, setSyncing] = useState<string | null>(null); // Track which lesson is syncing
   const [syncResult, setSyncResult] = useState<SyncSectionResult | null>(null);
   const [progressData, setProgressData] = useState<ProgressData[]>([]);
   const [selectedSection, setSelectedSection] = useState<string>("");
   const [selectedUnit, setSelectedUnit] = useState<number | null>(null);
+  const [selectedLessonSection, setSelectedLessonSection] = useState<string>("");
   const [sections, setSections] = useState<string[]>([]);
   const [units, setUnits] = useState<UnitOption[]>([]);
-  const [rampUps, setRampUps] = useState<RampUpConfig[]>([]);
+  const [lessons, setLessons] = useState<LessonConfig[]>([]);
+  const [sectionConfigAssignments, setSectionConfigAssignments] = useState<PodsieAssignment[]>([]);
+  const [availableSections, setAvailableSections] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  // Group sections by school
+  const sectionGroups = useMemo(() => groupSectionsBySchool(sections), [sections]);
 
   // Derive scopeSequenceTag from section
   const scopeSequenceTag = useMemo(() => {
@@ -127,71 +179,132 @@ export default function RampUpProgressPage() {
     loadSections();
   }, []);
 
-  // Load units when section changes (via scopeSequenceTag)
+  // Load units and section config when section changes
   useEffect(() => {
-    const loadUnits = async () => {
-      if (!scopeSequenceTag) {
+    const loadUnitsAndSectionConfig = async () => {
+      if (!scopeSequenceTag || !selectedSection) {
         setUnits([]);
         setSelectedUnit(null);
-        setRampUps([]);
+        setLessons([]);
+        setSectionConfigAssignments([]);
         return;
       }
 
       try {
-        const result = await fetchUnitsWithRampUps(scopeSequenceTag);
-        if (result.success) {
-          setUnits(result.data);
+        // Load units - filter by scopeSequenceTag and grade
+        const grade = getGradeForSection(selectedSection);
+        const unitsResult = await fetchAllUnitsByScopeTag(scopeSequenceTag, grade);
+        if (unitsResult.success) {
+          setUnits(unitsResult.data);
           // Clear unit selection when section changes
           setSelectedUnit(null);
-          setRampUps([]);
+          setLessons([]);
         } else {
-          setError(result.error || "Failed to load units");
+          setError(unitsResult.error || "Failed to load units");
+        }
+
+        // Load section config to get Podsie assignments
+        const school = getSchoolForSection(selectedSection);
+        const configResult = await getSectionConfig(school, selectedSection);
+        if (configResult.success && configResult.data) {
+          setSectionConfigAssignments(configResult.data.podsieAssignments || []);
+        } else {
+          setSectionConfigAssignments([]);
         }
       } catch (err) {
-        console.error("Error loading units:", err);
-        setError("Failed to load units");
+        console.error("Error loading units and section config:", err);
+        setError("Failed to load data");
       }
     };
 
-    loadUnits();
-  }, [scopeSequenceTag]);
+    loadUnitsAndSectionConfig();
+  }, [scopeSequenceTag, selectedSection]);
 
-  // Load ramp-ups when unit changes
+  // Build lessons from section-config assignments when unit or lesson section changes
   useEffect(() => {
-    const loadRampUps = async () => {
-      if (!scopeSequenceTag || selectedUnit === null) {
-        setRampUps([]);
+    const buildLessons = async () => {
+      if (!scopeSequenceTag || selectedUnit === null || sectionConfigAssignments.length === 0) {
+        setLessons([]);
+        setAvailableSections([]);
         return;
       }
 
       try {
+        // Fetch ALL lessons from scope-and-sequence for this unit
         const result = await fetchRampUpsByUnit(scopeSequenceTag, selectedUnit);
-        if (result.success) {
-          setRampUps(result.data);
-        } else {
-          setError(result.error || "Failed to load ramp-ups");
+        if (!result.success) {
+          setError(result.error || "Failed to load lessons");
+          return;
         }
+
+        // Extract unique sections from all lessons that have assignments
+        const lessonsWithAssignments = result.data.filter(lesson =>
+          sectionConfigAssignments.some(a =>
+            a.unitLessonId === lesson.unitLessonId &&
+            a.lessonName === lesson.lessonName
+          )
+        );
+        const uniqueSections = Array.from(
+          new Set(lessonsWithAssignments.map(lesson => lesson.section).filter(Boolean))
+        ).sort() as string[];
+        setAvailableSections(uniqueSections);
+
+        // Filter lessons by selected section if one is selected
+        const filteredLessons = selectedLessonSection
+          ? result.data.filter(lesson => lesson.section === selectedLessonSection)
+          : result.data;
+
+        // Now match with section-config assignments to build LessonConfig
+        const lessonConfigs: LessonConfig[] = filteredLessons
+          .filter(lesson => {
+            // Only include lessons that have a Podsie assignment in section-config
+            // Match by BOTH unitLessonId AND lessonName to handle duplicate unitLessonIds
+            return sectionConfigAssignments.some(a =>
+              a.unitLessonId === lesson.unitLessonId &&
+              a.lessonName === lesson.lessonName
+            );
+          })
+          .map(lesson => {
+            // Find the matching Podsie assignment for this lesson
+            // Match by BOTH unitLessonId AND lessonName
+            const assignment = sectionConfigAssignments.find(
+              a => a.unitLessonId === lesson.unitLessonId &&
+                   a.lessonName === lesson.lessonName
+            )!; // Safe to use ! because we filtered above
+
+            return {
+              unitLessonId: lesson.unitLessonId,
+              lessonName: assignment.lessonName,
+              grade: scopeSequenceTag.replace("Grade ", "").replace("Algebra 1", "8"),
+              podsieAssignmentId: assignment.podsieAssignmentId,
+              totalQuestions: assignment.totalQuestions || 10,
+              section: lesson.section,
+              unitNumber: selectedUnit
+            };
+          });
+
+        setLessons(lessonConfigs);
       } catch (err) {
-        console.error("Error loading ramp-ups:", err);
-        setError("Failed to load ramp-ups");
+        console.error("Error building lessons:", err);
+        setError("Failed to load lessons");
       }
     };
 
-    loadRampUps();
-  }, [scopeSequenceTag, selectedUnit]);
+    buildLessons();
+  }, [scopeSequenceTag, selectedUnit, selectedLessonSection, sectionConfigAssignments]);
 
   // Fetch progress data when section and unit are selected
   useEffect(() => {
     const loadProgress = async () => {
-      if (!selectedSection || selectedUnit === null || rampUps.length === 0) {
+      if (!selectedSection || selectedUnit === null || lessons.length === 0) {
         setProgressData([]);
         return;
       }
 
       try {
         setLoading(true);
-        // Get the grade from the first ramp-up (all ramp-ups in a unit share the same grade)
-        const grade = rampUps[0]?.grade || "8";
+        // Get the grade from the first lesson (all lessons in a unit share the same grade)
+        const grade = lessons[0]?.grade || "8";
         const unitCode = `${grade}.${selectedUnit}`;
         const result = await fetchRampUpProgress(selectedSection, unitCode);
 
@@ -209,24 +322,24 @@ export default function RampUpProgressPage() {
     };
 
     loadProgress();
-  }, [selectedSection, selectedUnit, rampUps]);
+  }, [selectedSection, selectedUnit, lessons]);
 
-  // Sync a single ramp-up from Podsie
-  const handleSyncRampUp = async (rampUp: RampUpConfig, testMode: boolean = false) => {
-    if (!selectedSection || !rampUp.podsieAssignmentId) return;
+  // Sync a single assignment from Podsie
+  const handleSyncAssignment = async (assignment: LessonConfig, testMode: boolean = false) => {
+    if (!selectedSection || !assignment.podsieAssignmentId) return;
 
     try {
-      setSyncing(rampUp._id);
+      setSyncing(assignment.unitLessonId);
       setSyncResult(null);
       setError(null);
 
-      const unitCode = `${rampUp.grade}.${selectedUnit}`;
+      const unitCode = `${assignment.grade}.${selectedUnit}`;
       const result = await syncSectionRampUpProgress(
         selectedSection,
-        rampUp.podsieAssignmentId,
+        assignment.podsieAssignmentId,
         unitCode,
-        rampUp.unitLessonId,
-        rampUp.totalQuestions,
+        assignment.unitLessonId,
+        assignment.totalQuestions,
         { testMode }
       );
 
@@ -303,9 +416,9 @@ export default function RampUpProgressPage() {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Ramp-Up Progress</h1>
+              <h1 className="text-3xl font-bold mb-2">Podsie Assignment Progress</h1>
               <p className="text-gray-600">
-                Track student progress on ramp-up assessments by question
+                Track student progress on Podsie assignments by question
               </p>
             </div>
             <button
@@ -313,12 +426,12 @@ export default function RampUpProgressPage() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors cursor-pointer"
             >
               <PlusIcon className="w-5 h-5" />
-              Create Ramp-Up
+              Create Assignment
             </button>
           </div>
 
           {/* Filters */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-3 gap-4 mb-6">
             <div>
               <label
                 htmlFor="section-filter"
@@ -332,6 +445,7 @@ export default function RampUpProgressPage() {
                 onChange={(e) => {
                   setSelectedSection(e.target.value);
                   setSelectedUnit(null);
+                  setSelectedLessonSection("");
                   setSyncResult(null);
                 }}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -341,10 +455,14 @@ export default function RampUpProgressPage() {
                 }`}
               >
                 <option value="">Select Section</option>
-                {sections.map((section) => (
-                  <option key={section} value={section}>
-                    {section}
-                  </option>
+                {sectionGroups.map((group) => (
+                  <optgroup key={group.school} label={group.school}>
+                    {group.sections.map((section) => (
+                      <option key={section} value={section}>
+                        {section}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
             </div>
@@ -362,6 +480,7 @@ export default function RampUpProgressPage() {
                 onChange={(e) => {
                   const val = e.target.value;
                   setSelectedUnit(val ? parseInt(val, 10) : null);
+                  setSelectedLessonSection("");
                   setSyncResult(null);
                 }}
                 disabled={!selectedSection || units.length === 0}
@@ -375,13 +494,50 @@ export default function RampUpProgressPage() {
                   {!selectedSection
                     ? "Select section first"
                     : units.length === 0
-                    ? "No ramp-ups available"
+                    ? "No units available"
                     : "Select Unit"}
                 </option>
                 {units.map((unit) => (
                   <option key={unit.unitNumber} value={unit.unitNumber}>
-                    Unit {unit.unitNumber} ({unit.rampUpCount} ramp-up
-                    {unit.rampUpCount !== 1 ? "s" : ""})
+                    Unit {unit.unitNumber}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="lesson-section-filter"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Lesson Section
+              </label>
+              <select
+                id="lesson-section-filter"
+                value={selectedLessonSection}
+                onChange={(e) => {
+                  setSelectedLessonSection(e.target.value);
+                  setSyncResult(null);
+                }}
+                disabled={!selectedUnit}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  !selectedUnit
+                    ? "bg-gray-100 cursor-not-allowed border-gray-300"
+                    : selectedLessonSection
+                    ? "border-gray-300"
+                    : "border-blue-500 ring-2 ring-blue-200"
+                }`}
+              >
+                <option value="">
+                  {!selectedUnit
+                    ? "Select unit first"
+                    : availableSections.length === 0
+                    ? "No sections available"
+                    : "Select Section"}
+                </option>
+                {availableSections.map((section) => (
+                  <option key={section} value={section}>
+                    {section}
                   </option>
                 ))}
               </select>
@@ -430,28 +586,27 @@ export default function RampUpProgressPage() {
           )}
         </div>
 
-        {/* Ramp-Up Cards */}
-        {selectedSection && selectedUnit !== null ? (
-          rampUps.length === 0 ? (
+        {/* Assignment Cards */}
+        {selectedSection && selectedUnit !== null && selectedLessonSection ? (
+          lessons.length === 0 ? (
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12 text-center">
               <div className="text-gray-400 text-4xl mb-4">📚</div>
               <div className="text-gray-600">
-                No ramp-ups found for Unit {selectedUnit}
+                No assignments found for Unit {selectedUnit}, Section {selectedLessonSection}
               </div>
               <div className="text-gray-500 text-sm mt-2">
-                Add ramp-up entries to the scope-and-sequence collection with
-                lessonType: &quot;ramp-up&quot; and scopeSequenceTag: &quot;{scopeSequenceTag}&quot;
+                Add Podsie assignments in the Section Config page for this class section
               </div>
             </div>
           ) : (
             <div className="space-y-6">
-              {rampUps.map((rampUp) => (
-                <RampUpCard
-                  key={rampUp._id}
-                  rampUp={rampUp}
+              {lessons.map((assignment) => (
+                <AssignmentCard
+                  key={`${assignment.section}-${assignment.unitLessonId}`}
+                  assignment={assignment}
                   progressData={progressData}
-                  syncing={syncing === rampUp._id}
-                  onSync={(testMode) => handleSyncRampUp(rampUp, testMode)}
+                  syncing={syncing === assignment.unitLessonId}
+                  onSync={(testMode) => handleSyncAssignment(assignment, testMode)}
                   calculateSummaryStats={calculateSummaryStats}
                 />
               ))}
@@ -461,15 +616,15 @@ export default function RampUpProgressPage() {
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12 text-center">
             <div className="text-gray-400 text-4xl mb-4">📊</div>
             <div className="text-gray-600">
-              Select a class section and unit to view ramp-up progress
+              Select a class section, unit, and lesson section to view assignment progress
             </div>
           </div>
         )}
 
         {/* Smartboard Display */}
-        {selectedSection && selectedUnit !== null && rampUps.length > 0 && (
+        {selectedSection && selectedUnit !== null && selectedLessonSection && lessons.length > 0 && (
           <SmartboardDisplay
-            rampUps={rampUps}
+            assignments={lessons}
             progressData={progressData}
             selectedUnit={selectedUnit}
             selectedSection={selectedSection}
@@ -477,9 +632,9 @@ export default function RampUpProgressPage() {
           />
         )}
 
-        {/* Create Ramp-Up Modal */}
+        {/* Create Assignment Modal */}
         {showCreateModal && (
-          <CreateRampUpModal
+          <CreateAssignmentModal
             scopeSequenceTag={scopeSequenceTag}
             selectedUnit={selectedUnit}
             selectedSection={selectedSection}
@@ -487,11 +642,12 @@ export default function RampUpProgressPage() {
             onClose={() => setShowCreateModal(false)}
             onSuccess={async () => {
               setShowCreateModal(false);
-              // Reload ramp-ups for current unit
-              if (selectedUnit !== null && scopeSequenceTag) {
-                const rampUpResult = await fetchRampUpsByUnit(scopeSequenceTag, selectedUnit);
-                if (rampUpResult.success) {
-                  setRampUps(rampUpResult.data);
+              // Reload section config to get updated assignments
+              if (selectedSection) {
+                const school = getSchoolForSection(selectedSection);
+                const configResult = await getSectionConfig(school, selectedSection);
+                if (configResult.success && configResult.data) {
+                  setSectionConfigAssignments(configResult.data.podsieAssignments || []);
                 }
               }
             }}
@@ -503,11 +659,11 @@ export default function RampUpProgressPage() {
 }
 
 // =====================================
-// RAMP-UP CARD COMPONENT
+// ASSIGNMENT CARD COMPONENT
 // =====================================
 
-interface RampUpCardProps {
-  rampUp: RampUpConfig;
+interface AssignmentCardProps {
+  assignment: LessonConfig;
   progressData: ProgressData[];
   syncing: boolean;
   onSync: (testMode: boolean) => void;
@@ -519,16 +675,22 @@ interface RampUpCardProps {
   };
 }
 
-function RampUpCard({
-  rampUp,
+function AssignmentCard({
+  assignment,
   progressData,
   syncing,
   onSync,
   calculateSummaryStats,
-}: RampUpCardProps) {
+}: AssignmentCardProps) {
+  // Filter progress data to only show this assignment's data
+  const filteredProgressData = useMemo(
+    () => progressData.filter(p => p.rampUpId === assignment.unitLessonId),
+    [progressData, assignment.unitLessonId]
+  );
+
   const summaryStats = useMemo(
-    () => calculateSummaryStats(progressData),
-    [progressData, calculateSummaryStats]
+    () => calculateSummaryStats(filteredProgressData),
+    [filteredProgressData, calculateSummaryStats]
   );
 
   return (
@@ -538,11 +700,16 @@ function RampUpCard({
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-gray-900 text-lg">
-              {rampUp.lessonName}
+              {assignment.lessonName}
             </h3>
             <p className="text-sm text-gray-500">
-              {rampUp.unitLessonId} • {rampUp.totalQuestions} questions
-              {!rampUp.podsieAssignmentId && (
+              {assignment.unitLessonId} • {assignment.totalQuestions} questions
+              {assignment.section && (
+                <span className="ml-2 text-gray-600">
+                  Section: {assignment.section}
+                </span>
+              )}
+              {!assignment.podsieAssignmentId && (
                 <span className="text-yellow-600 ml-2">
                   (No Podsie ID configured)
                 </span>
@@ -551,9 +718,9 @@ function RampUpCard({
           </div>
           <button
             onClick={() => onSync(false)}
-            disabled={syncing || !rampUp.podsieAssignmentId}
+            disabled={syncing || !assignment.podsieAssignmentId}
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-              syncing || !rampUp.podsieAssignmentId
+              syncing || !assignment.podsieAssignmentId
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                 : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
             }`}
@@ -566,7 +733,7 @@ function RampUpCard({
         </div>
 
         {/* Summary Stats */}
-        {progressData.length > 0 && (
+        {filteredProgressData.length > 0 && (
           <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-200">
             <div className="text-center">
               <div className="text-xl font-bold text-gray-900">
@@ -591,27 +758,27 @@ function RampUpCard({
       </div>
 
       {/* Progress Table */}
-      <RampUpProgressTable
-        progressData={progressData}
-        totalQuestions={rampUp.totalQuestions}
+      <AssignmentProgressTable
+        progressData={filteredProgressData}
+        totalQuestions={assignment.totalQuestions}
       />
     </div>
   );
 }
 
 // =====================================
-// RAMP-UP PROGRESS TABLE COMPONENT
+// ASSIGNMENT PROGRESS TABLE COMPONENT
 // =====================================
 
-interface RampUpProgressTableProps {
+interface AssignmentProgressTableProps {
   progressData: ProgressData[];
   totalQuestions: number;
 }
 
-function RampUpProgressTable({
+function AssignmentProgressTable({
   progressData,
   totalQuestions,
-}: RampUpProgressTableProps) {
+}: AssignmentProgressTableProps) {
   // Generate question column headers
   const questionColumns = Array.from(
     { length: totalQuestions },
@@ -793,7 +960,7 @@ function RampUpProgressTable({
 // =====================================
 
 interface SmartboardDisplayProps {
-  rampUps: RampUpConfig[];
+  assignments: LessonConfig[];
   progressData: ProgressData[];
   selectedUnit: number;
   selectedSection: string;
@@ -806,7 +973,7 @@ interface SmartboardDisplayProps {
 }
 
 function SmartboardDisplay({
-  rampUps,
+  assignments,
   progressData,
   selectedUnit,
   selectedSection: _selectedSection,
@@ -840,18 +1007,22 @@ function SmartboardDisplay({
     });
   }, [dueDate]);
 
-  // Calculate stats per ramp-up
-  const rampUpStats = useMemo(() => {
-    return rampUps.map((rampUp) => {
-      const stats = calculateSummaryStats(progressData);
+  // Calculate stats per assignment
+  const assignmentStats = useMemo(() => {
+    return assignments.map((assignment) => {
+      // Filter progress data for THIS specific assignment only
+      const assignmentProgressData = progressData.filter(
+        p => p.rampUpId === assignment.unitLessonId
+      );
+      const stats = calculateSummaryStats(assignmentProgressData);
       return {
-        rampUp,
+        assignment,
         avgCompletion: stats.avgCompletion,
         totalStudents: stats.totalStudents,
         syncedStudents: stats.syncedStudents,
       };
     });
-  }, [rampUps, progressData, calculateSummaryStats]);
+  }, [assignments, progressData, calculateSummaryStats]);
 
   // Parse markdown-like content for display
   const parsedLearningContent = useMemo(() => {
@@ -866,10 +1037,10 @@ function SmartboardDisplay({
   }, [learningContent]);
 
   // Calculate overall class goal percentage
-  const overallPercentage = rampUpStats.length > 0
+  const overallPercentage = assignmentStats.length > 0
     ? Math.round(
-        rampUpStats.reduce((sum, s) => sum + s.avgCompletion, 0) /
-          rampUpStats.length
+        assignmentStats.reduce((sum, s) => sum + s.avgCompletion, 0) /
+          assignmentStats.length
       )
     : 0;
 
@@ -882,7 +1053,7 @@ function SmartboardDisplay({
             Mini Goal
           </div>
           <div className={`bg-indigo-700 text-white rounded-lg font-semibold ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
-            Unit {selectedUnit}, Ramp-Ups
+            Unit {selectedUnit} Assignments
           </div>
           {isEditMode ? (
             <input
@@ -899,7 +1070,7 @@ function SmartboardDisplay({
         </div>
         <div className="flex items-center gap-4">
           <div className={`bg-white text-indigo-900 rounded-lg font-bold ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
-            {rampUps.length} Ramp-Up{rampUps.length !== 1 ? "s" : ""}
+            {assignments.length} Assignment{assignments.length !== 1 ? "s" : ""}
           </div>
           <button
             onClick={toggleFullscreen}
@@ -921,7 +1092,7 @@ function SmartboardDisplay({
               <div className="bg-purple-600 text-white px-3 py-1 rounded-lg font-bold text-sm">
                 Class Goal
               </div>
-              <span className="text-indigo-300 text-sm">Complete All Ramp-Ups</span>
+              <span className="text-indigo-300 text-sm">Complete All Assignments</span>
             </div>
             <SmartboardProgressBar
               label=""
@@ -931,15 +1102,22 @@ function SmartboardDisplay({
             />
           </div>
 
-          {/* Individual Ramp-Up Progress */}
+          {/* Individual Assignment Progress */}
           <div className="space-y-3 pl-4 pr-32 border-l-2 border-indigo-600">
-            {rampUpStats.map(({ rampUp, avgCompletion }) => (
-              <SmartboardProgressBar
-                key={rampUp._id}
-                label={rampUp.lessonName}
-                percentage={avgCompletion}
-                size="small"
-              />
+            {assignmentStats.map(({ assignment, avgCompletion }) => (
+              <div key={`${assignment.section}-${assignment.unitLessonId}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-semibold text-indigo-300 bg-indigo-700 px-2 py-0.5 rounded">
+                    {assignment.section}
+                  </span>
+                  <span className="text-sm text-indigo-200">{assignment.unitLessonId}</span>
+                </div>
+                <SmartboardProgressBar
+                  label={assignment.lessonName}
+                  percentage={avgCompletion}
+                  size="small"
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -972,12 +1150,17 @@ function SmartboardDisplay({
             </ul>
           ) : (
             <ul className="space-y-3 text-indigo-900">
-              {rampUps.map((rampUp, idx) => (
-                <li key={rampUp._id} className="flex items-start gap-2">
+              {assignments.map((assignment) => (
+                <li key={`${assignment.section}-${assignment.unitLessonId}`} className="flex items-start gap-2">
                   <span className="text-indigo-600 font-bold mt-0.5">•</span>
                   <div>
-                    <span className="font-semibold">Ramp-Up {idx + 1}:</span>{" "}
-                    {rampUp.lessonName}
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-xs font-semibold text-white bg-indigo-600 px-2 py-0.5 rounded">
+                        {assignment.section}
+                      </span>
+                      <span className="text-xs text-indigo-600">{assignment.unitLessonId}</span>
+                    </div>
+                    <span className="font-semibold">{assignment.lessonName}</span>
                   </div>
                 </li>
               ))}
@@ -1113,10 +1296,10 @@ function SmartboardProgressBar({
 }
 
 // =====================================
-// CREATE RAMP-UP MODAL COMPONENT
+// CREATE ASSIGNMENT MODAL COMPONENT
 // =====================================
 
-interface CreateRampUpModalProps {
+interface CreateAssignmentModalProps {
   scopeSequenceTag: string;
   selectedUnit: number | null;
   selectedSection: string | null;
@@ -1125,14 +1308,14 @@ interface CreateRampUpModalProps {
   onSuccess: () => void;
 }
 
-function CreateRampUpModal({
+function CreateAssignmentModal({
   scopeSequenceTag,
   selectedUnit,
   selectedSection,
   sections,
   onClose,
   onSuccess,
-}: CreateRampUpModalProps) {
+}: CreateAssignmentModalProps) {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [loadingAssignments, setLoadingAssignments] = useState(false);
@@ -1246,7 +1429,7 @@ function CreateRampUpModal({
         <div className="relative bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Create New Ramp-Up</h2>
+            <h2 className="text-xl font-bold text-gray-900">Create New Assignment</h2>
             <button
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer"
@@ -1534,7 +1717,7 @@ function CreateRampUpModal({
                     : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
                 }`}
               >
-                {saving ? "Creating..." : "Create Ramp-Up"}
+                {saving ? "Creating..." : "Create Assignment"}
               </button>
             </div>
           </form>
