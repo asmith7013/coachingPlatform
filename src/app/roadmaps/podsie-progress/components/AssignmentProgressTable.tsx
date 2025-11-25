@@ -23,11 +23,13 @@ interface ProgressData {
 
 interface AssignmentProgressTableProps {
   progressData: ProgressData[];
+  masteryCheckProgressData?: ProgressData[];
   totalQuestions: number;
 }
 
 export function AssignmentProgressTable({
   progressData,
+  masteryCheckProgressData = [],
   totalQuestions,
 }: AssignmentProgressTableProps) {
   // Generate question column headers
@@ -84,6 +86,11 @@ export function AssignmentProgressTable({
             <th className="px-4 py-3 text-center text-sm font-semibold text-gray-900 min-w-[80px]">
               Total
             </th>
+            {masteryCheckProgressData.length > 0 && (
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-900 min-w-[100px]">
+                Mastery Check
+              </th>
+            )}
           </tr>
 
           {/* Class Completion Row */}
@@ -111,12 +118,29 @@ export function AssignmentProgressTable({
               })()}
               %
             </td>
+            {masteryCheckProgressData.length > 0 && (
+              <td className="px-4 py-2 text-center text-sm font-bold text-blue-800">
+                {(() => {
+                  const synced = masteryCheckProgressData.filter((p) => p.totalQuestions > 0);
+                  const completed = synced.filter(p => p.isFullyComplete).length;
+                  return synced.length > 0
+                    ? Math.round((completed / synced.length) * 100)
+                    : 0;
+                })()}%
+              </td>
+            )}
           </tr>
         </thead>
 
         <tbody>
           {progressData.map((progress, idx) => {
             const hasSynced = progress.totalQuestions > 0;
+
+            // Find matching mastery check data for this student
+            const masteryCheckProgress = masteryCheckProgressData.find(
+              mc => mc.studentId === progress.studentId
+            );
+            const masteryCheckSynced = masteryCheckProgress && masteryCheckProgress.totalQuestions > 0;
 
             return (
               <tr
@@ -197,6 +221,27 @@ export function AssignmentProgressTable({
                     <span className="text-gray-400">—</span>
                   )}
                 </td>
+
+                {/* Mastery Check Column */}
+                {masteryCheckProgressData.length > 0 && (
+                  <td className="px-4 py-3 text-center">
+                    {masteryCheckSynced ? (
+                      masteryCheckProgress.isFullyComplete ? (
+                        <CheckCircleIcon
+                          className="w-7 h-7 text-green-600 mx-auto"
+                          title="Mastery check completed"
+                        />
+                      ) : (
+                        <CheckCircleOutlineIcon
+                          className="w-7 h-7 text-gray-300 mx-auto"
+                          title="Mastery check not completed"
+                        />
+                      )
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
+                  </td>
+                )}
               </tr>
             );
           })}

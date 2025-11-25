@@ -404,6 +404,7 @@ export default function SectionConfigsPage() {
           unitLessonId: lessonToUse.unitLessonId,
           lessonName: lessonToUse.lessonName,
           grade: lessonToUse.grade,
+          assignmentType: 'mastery-check', // Default to mastery-check for imported assignments
           podsieAssignmentId: String(match.podsieAssignment.assignmentId),
           podsieQuestionMap: match.podsieAssignment.questionIds.map((questionId: number, idx: number) => ({
             questionNumber: idx + 1,

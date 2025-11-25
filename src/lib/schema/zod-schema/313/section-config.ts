@@ -17,12 +17,24 @@ export const PodsieQuestionMapSchema = z.object({
 export type PodsieQuestionMap = z.infer<typeof PodsieQuestionMapSchema>;
 
 /**
+ * Assignment type enum - differentiates between lesson activities and mastery assessments
+ */
+export const AssignmentTypeSchema = z.enum([
+  'lesson',        // Lesson activities (warm-up, activities, cool-down)
+  'mastery-check', // Mastery/summative assessment
+]).describe("Type of assignment");
+
+export type AssignmentType = z.infer<typeof AssignmentTypeSchema>;
+
+/**
  * Podsie assignment configuration for a single lesson in this section
  */
 export const PodsieAssignmentSchema = z.object({
   unitLessonId: z.string().describe("Unit.Lesson ID (e.g., '3.15', '4.RU1')"),
   lessonName: z.string().describe("Lesson name for display"),
   grade: z.string().optional().describe("Grade level (denormalized from lesson)"),
+
+  assignmentType: AssignmentTypeSchema.default('mastery-check').describe("Type of assignment (lesson or mastery-check)"),
 
   podsieAssignmentId: z.string().describe("Podsie assignment ID"),
   podsieQuestionMap: z.array(PodsieQuestionMapSchema).default([]).describe("Map of question numbers to Podsie question IDs"),
@@ -122,6 +134,7 @@ export type ScopeAndSequenceWithPodsie = {
   // From section-config podsieAssignments array
   podsieAssignment?: {
     podsieAssignmentId: string;
+    assignmentType: AssignmentType;
     podsieQuestionMap: PodsieQuestionMap[];
     totalQuestions?: number;
     active: boolean;

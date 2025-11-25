@@ -26,6 +26,7 @@ export function joinLessonWithPodsieAssignment(
     targetSkills: lesson.targetSkills,
     podsieAssignment: podsieAssignment ? {
       podsieAssignmentId: podsieAssignment.podsieAssignmentId,
+      assignmentType: podsieAssignment.assignmentType,
       podsieQuestionMap: podsieAssignment.podsieQuestionMap || [],
       totalQuestions: podsieAssignment.totalQuestions,
       active: podsieAssignment.active,

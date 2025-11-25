@@ -78,22 +78,38 @@ export function SmartboardDisplay({
     });
   }, [dueDate]);
 
-  // Calculate stats per assignment
-  const assignmentStats = useMemo(() => {
-    return assignments.map((assignment) => {
-      // Filter progress data for THIS specific assignment only
-      // Use podsieAssignmentId to distinguish between lesson and mastery-check with same unitLessonId
-      const assignmentProgressData = progressData.filter(
+  // Group lessons with their mastery checks
+  const groupedLessons = useMemo(() => {
+    const lessonAssignments = assignments.filter(a => a.assignmentType === 'lesson');
+    const masteryCheckAssignments = assignments.filter(a => a.assignmentType === 'mastery-check' || !a.assignmentType);
+
+    return lessonAssignments.map(lesson => {
+      const masteryCheck = masteryCheckAssignments.find(mc => mc.unitLessonId === lesson.unitLessonId);
+
+      // Calculate stats for lesson
+      const lessonProgressData = progressData.filter(
         p => p.podsieAssignmentId
-          ? p.podsieAssignmentId === assignment.podsieAssignmentId
-          : p.rampUpId === assignment.unitLessonId
+          ? p.podsieAssignmentId === lesson.podsieAssignmentId
+          : p.rampUpId === lesson.unitLessonId
       );
-      const stats = calculateSummaryStats(assignmentProgressData);
+      const lessonStats = calculateSummaryStats(lessonProgressData);
+
+      // Calculate stats for mastery check if it exists
+      let masteryCheckStats = null;
+      if (masteryCheck) {
+        const masteryCheckProgressData = progressData.filter(
+          p => p.podsieAssignmentId
+            ? p.podsieAssignmentId === masteryCheck.podsieAssignmentId
+            : p.rampUpId === masteryCheck.unitLessonId
+        );
+        masteryCheckStats = calculateSummaryStats(masteryCheckProgressData);
+      }
+
       return {
-        assignment,
-        avgCompletion: stats.avgCompletion,
-        totalStudents: stats.totalStudents,
-        syncedStudents: stats.syncedStudents,
+        lesson,
+        masteryCheck,
+        lessonAvgCompletion: lessonStats.avgCompletion,
+        masteryCheckAvgCompletion: masteryCheckStats?.avgCompletion || 0,
       };
     });
   }, [assignments, progressData, calculateSummaryStats]);
@@ -110,11 +126,11 @@ export function SmartboardDisplay({
       });
   }, [learningContent]);
 
-  // Calculate overall class goal percentage
-  const overallPercentage = assignmentStats.length > 0
+  // Calculate overall class goal percentage (average of all lesson completions)
+  const overallPercentage = groupedLessons.length > 0
     ? Math.round(
-        assignmentStats.reduce((sum, s) => sum + s.avgCompletion, 0) /
-          assignmentStats.length
+        groupedLessons.reduce((sum, g) => sum + g.lessonAvgCompletion, 0) /
+          groupedLessons.length
       )
     : 0;
 
@@ -144,7 +160,7 @@ export function SmartboardDisplay({
         </div>
         <div className="flex items-center gap-4">
           <div className={`bg-white text-indigo-900 rounded-lg font-bold ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
-            {assignments.length} Assignment{assignments.length !== 1 ? "s" : ""}
+            {groupedLessons.length} Lesson{groupedLessons.length !== 1 ? "s" : ""}
           </div>
           <button
             onClick={toggleFullscreen}
@@ -176,20 +192,28 @@ export function SmartboardDisplay({
             />
           </div>
 
-          {/* Individual Assignment Progress */}
-          <div className="space-y-3 pl-4 pr-32 border-l-2 border-indigo-600">
-            {assignmentStats.map(({ assignment, avgCompletion }, index) => {
-              // Extract lesson number from unitLessonId (e.g., "3.5" -> "Lesson 5")
-              const lessonNumber = assignment.unitLessonId.split('.')[1] || '';
-              const lessonLabel = `${assignment.section} ${lessonNumber}: ${assignment.lessonName}`;
-
+          {/* Individual Assignment Progress - Grouped by Lesson */}
+          <div className="space-y-4 pl-4 pr-32 border-l-2 border-indigo-600">
+            {groupedLessons.map(({ lesson, masteryCheck, lessonAvgCompletion, masteryCheckAvgCompletion }, index) => {
               return (
-                <div key={`${assignment.section}-${assignment.unitLessonId}-${assignment.assignmentType || 'default'}-${index}`}>
+                <div key={`${lesson.section}-${lesson.unitLessonId}-${index}`} className="space-y-2">
+                  {/* Lesson Progress Bar */}
                   <SmartboardProgressBar
-                    label={lessonLabel}
-                    percentage={avgCompletion}
+                    label={lesson.lessonName}
+                    percentage={lessonAvgCompletion}
                     size="small"
                   />
+                  {/* Mastery Check Progress Bar (if exists) */}
+                  {masteryCheck && (
+                    <div className="pl-4">
+                      <SmartboardProgressBar
+                        label="Mastery Check"
+                        percentage={masteryCheckAvgCompletion}
+                        size="small"
+                        color="green"
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -224,17 +248,17 @@ export function SmartboardDisplay({
             </ul>
           ) : (
             <ul className="space-y-3 text-indigo-900">
-              {assignments.map((assignment, index) => (
-                <li key={`${assignment.section}-${assignment.unitLessonId}-${assignment.assignmentType || 'default'}-${index}`} className="flex items-start gap-2">
+              {groupedLessons.map(({ lesson }, index) => (
+                <li key={`${lesson.section}-${lesson.unitLessonId}-${index}`} className="flex items-start gap-2">
                   <span className="text-indigo-600 font-bold mt-0.5">•</span>
                   <div>
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-xs font-semibold text-white bg-indigo-600 px-2 py-0.5 rounded">
-                        {assignment.section}
+                        {lesson.section}
                       </span>
-                      <span className="text-xs text-indigo-600">{assignment.unitLessonId}</span>
+                      <span className="text-xs text-indigo-600">{lesson.unitLessonId}</span>
                     </div>
-                    <span className="font-semibold">{assignment.lessonName}</span>
+                    <span className="font-semibold">{lesson.lessonName}</span>
                   </div>
                 </li>
               ))}

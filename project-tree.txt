@@ -711,7 +711,13 @@
 │   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── podsie-progress
-│   │   │   ├── ramp-up-progress
+│   │   │   │   ├── components
+│   │   │   │   │   ├── AssignmentCard.tsx
+│   │   │   │   │   ├── AssignmentProgressTable.tsx
+│   │   │   │   │   ├── CreateAssignmentModal.tsx
+│   │   │   │   │   ├── SmartboardDisplay.tsx
+│   │   │   │   │   ├── SmartboardProgressBar.tsx
+│   │   │   │   │   └── index.ts
 │   │   │   │   └── page.tsx
 │   │   │   ├── scope-and-sequence
 │   │   │   │   ├── components
@@ -1894,4 +1900,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-546 directories, 1349 files
+546 directories, 1355 files

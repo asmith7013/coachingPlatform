@@ -12,6 +12,13 @@ const podsieAssignmentSchema = new mongoose.Schema({
   lessonName: { type: String, required: true },
   grade: { type: String, required: false },
 
+  assignmentType: {
+    type: String,
+    enum: ['lesson', 'mastery-check'],
+    default: 'mastery-check',
+    required: true
+  },
+
   podsieAssignmentId: { type: String, required: true },
   podsieQuestionMap: [{
     questionNumber: { type: Number, required: true },
