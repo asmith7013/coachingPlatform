@@ -647,11 +647,11 @@ export default function RampUpProgressPage() {
 
                 return (
                   <>
-                    {/* Lesson Activities with Mastery Checks */}
+                    {/* Lessons with Mastery Checks */}
                     {groupedLessons.length > 0 && (
                       <div>
                         <div className="flex items-center gap-3 mb-4">
-                          <h2 className="text-2xl font-bold text-gray-900">Lesson Activities</h2>
+                          <h2 className="text-2xl font-bold text-gray-900">Lessons</h2>
                           <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                             {groupedLessons.length} {groupedLessons.length === 1 ? 'Lesson' : 'Lessons'}
                           </span>

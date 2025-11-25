@@ -83,9 +83,6 @@ export function AssignmentProgressTable({
                 Q{qNum}
               </th>
             ))}
-            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-900 min-w-[80px]">
-              Total
-            </th>
             {masteryCheckProgressData.length > 0 && (
               <th className="px-4 py-3 text-center text-sm font-semibold text-gray-900 min-w-[100px]">
                 Mastery Check
@@ -106,18 +103,6 @@ export function AssignmentProgressTable({
                 {stat.percent}%
               </td>
             ))}
-            <td className="px-4 py-2 text-center text-sm font-bold text-blue-800">
-              {(() => {
-                const synced = progressData.filter((p) => p.totalQuestions > 0);
-                return synced.length > 0
-                  ? Math.round(
-                      synced.reduce((sum, p) => sum + p.percentComplete, 0) /
-                        synced.length
-                    )
-                  : 0;
-              })()}
-              %
-            </td>
             {masteryCheckProgressData.length > 0 && (
               <td className="px-4 py-2 text-center text-sm font-bold text-blue-800">
                 {(() => {
@@ -149,24 +134,34 @@ export function AssignmentProgressTable({
                   idx % 2 === 0 ? "bg-white" : "bg-gray-50/50"
                 }`}
               >
-                {/* Student Name */}
+                {/* Student Name with Progress Bar */}
                 <td className="sticky left-0 bg-inherit px-4 py-3 text-sm font-medium text-gray-900 z-10">
-                  <div className="flex items-center gap-2">
-                    {progress.isFullyComplete && (
-                      <span
-                        className="text-green-600"
-                        title="All questions complete"
-                      >
-                        ★
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className={!hasSynced ? "text-gray-400" : ""}>
+                        {progress.studentName}
                       </span>
-                    )}
-                    <span className={!hasSynced ? "text-gray-400" : ""}>
-                      {progress.studentName}
-                    </span>
-                    {!hasSynced && (
-                      <span className="text-xs text-gray-400 italic">
-                        (not synced)
-                      </span>
+                      {!hasSynced && (
+                        <span className="text-xs text-gray-400 italic">
+                          (not synced)
+                        </span>
+                      )}
+                    </div>
+                    {hasSynced && (
+                      <div className="w-full bg-gray-200 rounded-full h-1.5">
+                        <div
+                          className="h-1.5 rounded-full transition-all bg-green-600"
+                          style={{
+                            width: `${(() => {
+                              // Lesson progress is worth 75%
+                              const lessonProgress = progress.percentComplete * 0.75;
+                              // Mastery check is worth 25% (only if it exists and is synced)
+                              const masteryProgress = masteryCheckSynced && masteryCheckProgress?.isFullyComplete ? 25 : 0;
+                              return Math.round(lessonProgress + masteryProgress);
+                            })()}%`
+                          }}
+                        />
+                      </div>
                     )}
                   </div>
                 </td>
@@ -202,25 +197,6 @@ export function AssignmentProgressTable({
                     </td>
                   );
                 })}
-
-                {/* Total Column */}
-                <td className="px-4 py-3 text-center">
-                  {hasSynced ? (
-                    <span
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        progress.isFullyComplete
-                          ? "bg-green-100 text-green-800"
-                          : progress.percentComplete >= 50
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {progress.completedCount}/{progress.totalQuestions}
-                    </span>
-                  ) : (
-                    <span className="text-gray-400">—</span>
-                  )}
-                </td>
 
                 {/* Mastery Check Column */}
                 {masteryCheckProgressData.length > 0 && (
