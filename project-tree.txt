@@ -1,6 +1,7 @@
 .
 ├── AGENTS.md
 ├── CLAUDE.md
+├── SCHEMA_CHANGES_SUMMARY.md
 ├── amplify
 │   ├── docs.md
 │   ├── scope.md
@@ -99,6 +100,7 @@
 │   │   ├── podsie-old.md
 │   │   ├── podsie.md
 │   │   └── roadmap.html
+│   ├── student.json
 │   ├── table-of-contents.md
 │   ├── tanstack-table-implementation.md
 │   ├── token-tailwind-mapping.md
@@ -238,7 +240,8 @@
 │   ├── snorkl-comprehensive-scraper.ts
 │   ├── snorkl-simple-scraper.ts
 │   ├── test-migrate-one-skill.ts
-│   └── test-monday-token.mjs
+│   ├── test-monday-token.mjs
+│   └── update-unit-8-4-podsie-data.ts
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
 ├── src
@@ -288,6 +291,7 @@
 │   │   │   │   ├── google-sheets-export.ts
 │   │   │   │   ├── im-lessons.ts
 │   │   │   │   ├── index.ts
+│   │   │   │   ├── podsie-completion.ts
 │   │   │   │   ├── podsie-sync.ts
 │   │   │   │   ├── roadmaps-lessons.ts
 │   │   │   │   ├── roadmaps-skill-relationships.ts
@@ -295,6 +299,7 @@
 │   │   │   │   ├── roadmaps-student-data.ts
 │   │   │   │   ├── roadmaps-units.ts
 │   │   │   │   ├── scope-and-sequence.ts
+│   │   │   │   ├── section-config.ts
 │   │   │   │   ├── student-assessments.ts
 │   │   │   │   ├── student-data.ts
 │   │   │   │   ├── student-performance.ts
@@ -705,6 +710,7 @@
 │   │   │   ├── mastery-grid
 │   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
+│   │   │   ├── podsie-progress
 │   │   │   ├── ramp-up-progress
 │   │   │   │   └── page.tsx
 │   │   │   ├── scope-and-sequence
@@ -721,6 +727,8 @@
 │   │   │   ├── scope-and-sequence-uploader
 │   │   │   │   └── page.tsx
 │   │   │   ├── scope-and-sequence-uploader-pair
+│   │   │   │   └── page.tsx
+│   │   │   ├── section-configs
 │   │   │   │   └── page.tsx
 │   │   │   ├── shared
 │   │   │   │   └── lib
@@ -1487,12 +1495,14 @@
 │   │   │   │   ├── 313
 │   │   │   │   │   ├── activity-type-config.model.ts
 │   │   │   │   │   ├── core.ts
+│   │   │   │   │   ├── podsie-completion.model.ts
 │   │   │   │   │   ├── ramp-up-progress.model.ts
 │   │   │   │   │   ├── roadmap-skill.model.ts
 │   │   │   │   │   ├── roadmap-unit.model.ts
 │   │   │   │   │   ├── roadmap.model.ts
 │   │   │   │   │   ├── roadmaps-student-data.model.ts
 │   │   │   │   │   ├── scope-and-sequence.model.ts
+│   │   │   │   │   ├── section-config.model.ts
 │   │   │   │   │   ├── storage.ts
 │   │   │   │   │   ├── student-activity.model.ts
 │   │   │   │   │   ├── student-performance.model.ts
@@ -1564,6 +1574,7 @@
 │   │   │       │   ├── activity-type-config.ts
 │   │   │       │   ├── assessment-scraper.ts
 │   │   │       │   ├── core.ts
+│   │   │       │   ├── podsie-completion.ts
 │   │   │       │   ├── podsie-response.ts
 │   │   │       │   ├── ramp-up-progress.ts
 │   │   │       │   ├── roadmap-skill.ts
@@ -1571,6 +1582,7 @@
 │   │   │       │   ├── roadmap.ts
 │   │   │       │   ├── roadmaps-student-data.ts
 │   │   │       │   ├── scope-and-sequence.ts
+│   │   │       │   ├── section-config.ts
 │   │   │       │   ├── storage.ts
 │   │   │       │   ├── student-activity.ts
 │   │   │       │   ├── student-data.ts
@@ -1799,7 +1811,9 @@
 │   │   │       ├── types.ts
 │   │   │       └── typography.ts
 │   │   ├── utils
-│   │   │   └── entity-helpers.ts
+│   │   │   ├── entity-helpers.ts
+│   │   │   ├── podsie-completion-helpers.ts
+│   │   │   └── section-config-helpers.ts
 │   │   └── validation
 │   │       ├── coaching-stages.ts
 │   │       └── index.ts
@@ -1880,4 +1894,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-544 directories, 1337 files
+546 directories, 1349 files

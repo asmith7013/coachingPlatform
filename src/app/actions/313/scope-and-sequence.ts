@@ -333,8 +333,7 @@ export async function fetchRampUpsByScope(scopeSequenceTag: string) {
           unit: ru.unit,
           grade: ru.grade,
           scopeSequenceTag: ru.scopeSequenceTag,
-          podsieAssignmentId: ru.podsieAssignmentId,
-          totalQuestions: ru.totalQuestions || 0,
+          // Note: podsieAssignmentId and totalQuestions moved to section-config collection
         }))
       };
     } catch (error) {
@@ -349,7 +348,8 @@ export async function fetchRampUpsByScope(scopeSequenceTag: string) {
 }
 
 /**
- * Fetch lessons with Podsie assignments for a specific unit within a scopeSequenceTag
+ * Fetch lessons for a specific unit within a scopeSequenceTag
+ * Fetches ALL lesson types (ramp-ups, regular lessons, unit assessments)
  * @param section - Optional filter by lesson section (e.g., 'Ramp Ups', 'A', 'B')
  */
 export async function fetchRampUpsByUnit(
@@ -377,8 +377,8 @@ export async function fetchRampUpsByUnit(
 
       const query: Record<string, unknown> = {
         scopeSequenceTag,
-        unitNumber,
-        podsieAssignmentId: { $exists: true, $ne: null }
+        unitNumber
+        // Removed lessonType filter - fetch ALL lesson types
       };
 
       // Optional section filter
@@ -402,9 +402,9 @@ export async function fetchRampUpsByUnit(
           grade: lesson.grade,
           section: lesson.section,
           scopeSequenceTag: lesson.scopeSequenceTag || '',
-          podsieAssignmentId: lesson.podsieAssignmentId,
-          podsieQuestionMap: lesson.podsieQuestionMap,
-          totalQuestions: lesson.totalQuestions || 0,
+          // Note: Podsie data moved to section-config collection
+          podsieAssignmentId: undefined,
+          totalQuestions: 10, // Default for now - should come from section-config
         }))
       };
     } catch (error) {
@@ -477,6 +477,52 @@ export async function fetchUnitsWithRampUps(
         success: false,
         data: [],
         error: handleServerError(error, 'fetchUnitsWithRampUps')
+      };
+    }
+  });
+}
+
+/**
+ * Fetch all available units for a given scope sequence tag
+ * Returns ALL units, not just those with Podsie assignments configured
+ */
+export async function fetchAllUnitsByScopeTag(scopeSequenceTag: string, grade?: string) {
+  return withDbConnection(async () => {
+    try {
+      // Build match criteria
+      const matchCriteria: Record<string, unknown> = { scopeSequenceTag };
+      if (grade) {
+        matchCriteria.grade = grade;
+      }
+
+      const units = await ScopeAndSequenceModel.aggregate([
+        { $match: matchCriteria },
+        {
+          $group: {
+            _id: '$unitNumber',
+            unit: { $first: '$unit' },
+            grade: { $first: '$grade' },
+            lessonCount: { $sum: 1 }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ]);
+
+      return {
+        success: true,
+        data: units.map(u => ({
+          unitNumber: u._id,
+          unitName: u.unit,
+          grade: u.grade,
+          lessonCount: u.lessonCount || 0
+        }))
+      };
+    } catch (error) {
+      console.error('💥 Error fetching all units by scope tag:', error);
+      return {
+        success: false,
+        data: [],
+        error: handleServerError(error, 'fetchAllUnitsByScopeTag')
       };
     }
   });

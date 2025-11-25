@@ -21,7 +21,7 @@ const SCOPE_SEQUENCE_TAG_VALUES = [
 // SCOPE AND SEQUENCE MODEL
 // =====================================
 
-const SECTION_VALUES = ["A", "B", "C", "D", "E", "F", "Ramp Ups"] as const;
+const SECTION_VALUES = ["Ramp Ups", "A", "B", "C", "D", "E", "F", "Unit Assessment"] as const;
 
 const scopeAndSequenceFields = {
   grade: { type: String, required: true, index: true },
@@ -40,14 +40,6 @@ const scopeAndSequenceFields = {
   roadmapSkills: { type: [String], default: [] },
   targetSkills: { type: [String], default: [] },
 
-  // Podsie integration
-  podsieAssignmentId: { type: String, required: false, index: true },
-  podsieQuestionMap: [{
-    questionNumber: { type: Number, required: true },
-    questionId: { type: String, required: true }
-  }],
-  totalQuestions: { type: Number, required: false },
-
   ...standardDocumentFields
 };
 
@@ -59,11 +51,11 @@ const ScopeAndSequenceSchema = new mongoose.Schema(scopeAndSequenceFields, {
 // Create compound indexes for efficient queries
 ScopeAndSequenceSchema.index({ grade: 1, unitNumber: 1, lessonNumber: 1 });
 
-// Create compound unique index to ensure uniqueness across grade + unitLessonId + scopeSequenceTag
-// This allows same unitLessonId across different grades or tags
+// Create compound unique index to ensure uniqueness across grade + unitLessonId + scopeSequenceTag + section
+// This allows same unitLessonId for different sections (e.g., "3.2" can be both a Section A lesson and a Ramp Up)
 ScopeAndSequenceSchema.index(
-  { grade: 1, unitLessonId: 1, scopeSequenceTag: 1 },
-  { unique: true, sparse: true } // sparse: true allows multiple docs with null scopeSequenceTag
+  { grade: 1, unitLessonId: 1, scopeSequenceTag: 1, section: 1 },
+  { unique: true, sparse: true } // sparse: true allows multiple docs with null scopeSequenceTag or section
 );
 
 // Delete existing model to force schema refresh (ensures new fields are recognized)

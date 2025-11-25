@@ -608,11 +608,13 @@ export async function syncStudentRampUpProgress(
     // Update student document's rampUpProgress array
     await withDbConnection(async () => {
       // First, try to update existing entry in array
+      // Match by unitCode, rampUpId AND podsieAssignmentId to distinguish lesson vs mastery-check
       const updateResult = await StudentModel.updateOne(
         {
           _id: studentId,
           "rampUpProgress.unitCode": unitCode,
-          "rampUpProgress.rampUpId": rampUpId
+          "rampUpProgress.rampUpId": rampUpId,
+          "rampUpProgress.podsieAssignmentId": podsieAssignmentId
         },
         {
           $set: {
@@ -810,6 +812,7 @@ export interface StudentRampUpProgressData {
   unitCode: string;
   rampUpId: string;
   rampUpName?: string;
+  podsieAssignmentId?: string;
   questions: RampUpQuestion[];
   totalQuestions: number;
   completedCount: number;
@@ -839,6 +842,7 @@ export async function fetchRampUpProgress(
         unitCode: string;
         rampUpId: string;
         rampUpName?: string;
+        podsieAssignmentId?: string;
         questions: RampUpQuestion[];
         totalQuestions: number;
         completedCount: number;
@@ -882,6 +886,7 @@ export async function fetchRampUpProgress(
             unitCode: p.unitCode,
             rampUpId: p.rampUpId,
             rampUpName: p.rampUpName,
+            podsieAssignmentId: p.podsieAssignmentId,
             questions: p.questions || [],
             totalQuestions: p.totalQuestions || 0,
             completedCount: p.completedCount || 0,

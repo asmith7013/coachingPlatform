@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import { Schools, AllSections, Teachers313 } from '@schema/enum/313';
 
 // =====================================
 // STUDENT MODEL
@@ -79,8 +80,9 @@ const studentSchemaFields = {
   },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  section: { type: String, required: true, index: true },
-  teacher: { type: String, required: false, index: true },
+  school: { type: String, required: true, enum: Schools, index: true },
+  section: { type: String, required: true, enum: AllSections, index: true },
+  teacher: { type: String, required: false, enum: Teachers313, index: true },
   gradeLevel: { type: String, required: false },
 //   subject: { type: String, required: true },
   email: { type: String, required: false },
@@ -100,6 +102,7 @@ const StudentSchema = new mongoose.Schema(studentSchemaFields, {
 });
 
 // Compound indexes for common queries
+StudentSchema.index({ school: 1, section: 1, active: 1 });
 StudentSchema.index({ teacher: 1, section: 1, active: 1 });
 StudentSchema.index({ firstName: 1, lastName: 1 });
 StudentSchema.index({ section: 1, active: 1 });

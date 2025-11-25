@@ -56,40 +56,13 @@ async function updateUnit84Lessons() {
         });
 
         if (existing) {
-          // Check if Podsie data is already set
-          if (String(existing.podsieAssignmentId) === lesson.assignmentId &&
-              existing.podsieQuestionMap &&
-              existing.podsieQuestionMap.length > 0) {
-            console.log(`   ⏭️  Already has Podsie data, skipping`);
-            results.skipped.push(unitLessonId);
-            continue;
-          }
-
-          // Update with Podsie data, preserving existing skills
-          await ScopeAndSequenceModel.findByIdAndUpdate(
-            existing._id,
-            {
-              $set: {
-                podsieAssignmentId: lesson.assignmentId,
-                podsieQuestionMap: [
-                  {
-                    questionNumber: 1,
-                    questionId: lesson.questionId
-                  }
-                ],
-                totalQuestions: 1,
-                updatedAt: new Date().toISOString()
-              }
-            },
-            { runValidators: true }
-          );
-
-          console.log(`   ✅ Updated with Podsie data`);
-          console.log(`      Assignment ID: ${lesson.assignmentId}`);
-          console.log(`      Question ID: ${lesson.questionId}`);
-          results.updated.push(unitLessonId);
+          // Note: Podsie data now lives in section-config collection, not scope-and-sequence
+          // This script is deprecated - use section-config server actions instead
+          console.log(`   ⏭️  Document exists, but Podsie data is now in section-config, skipping`);
+          results.skipped.push(unitLessonId);
+          continue;
         } else {
-          // Create new document
+          // Create new document (without Podsie data - that goes in section-config now)
           const newDoc = await ScopeAndSequenceModel.create({
             grade: '8',
             unit: 'Unit 4 - Linear Equations and Linear Systems',
@@ -99,14 +72,7 @@ async function updateUnit84Lessons() {
             lessonName: lesson.lessonName,
             scopeSequenceTag: 'Algebra 1',
             section: 'A', // Default section for regular lessons
-            podsieAssignmentId: lesson.assignmentId,
-            podsieQuestionMap: [
-              {
-                questionNumber: 1,
-                questionId: lesson.questionId
-              }
-            ],
-            totalQuestions: 1,
+            lessonType: 'lesson', // Add lesson type
             roadmapSkills: [],
             targetSkills: [],
             ownerIds: [],
@@ -114,9 +80,8 @@ async function updateUnit84Lessons() {
             updatedAt: new Date().toISOString()
           });
 
-          console.log(`   ✨ Created new document`);
-          console.log(`      Assignment ID: ${lesson.assignmentId}`);
-          console.log(`      Question ID: ${lesson.questionId}`);
+          console.log(`   ✨ Created new document (without Podsie data)`);
+          console.log(`      Note: Add Podsie data to section-config collection`);
           results.created.push(unitLessonId);
         }
 

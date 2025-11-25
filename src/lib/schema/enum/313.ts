@@ -17,6 +17,12 @@ export const Sections313 = [
     "703/705"
 ] as const;
 
+export const SectionsPS19 = [
+    "601",
+    "602",
+    "603"
+] as const;
+
 export const Teachers313 = [
     "CARDONA",
     "COMPRES",
@@ -35,17 +41,45 @@ export const Roadmaps313 = [
     "Illustrative Math New York - Algebra 1"
 ] as const;
 
+export const Schools = [
+    "IS313",
+    "PS19",
+    "X644"
+] as const;
+
 export const SummerDistrictsZod = z.enum(SummerDistricts);
 export type SummerDistrictsType = z.infer<typeof SummerDistrictsZod>;
 
 export const Sections313Zod = z.enum(Sections313);
 export type Sections313Type = z.infer<typeof Sections313Zod>;
 
+export const SectionsPS19Zod = z.enum(SectionsPS19);
+export type SectionsPS19Type = z.infer<typeof SectionsPS19Zod>;
+
+// Combined sections for all schools
+export const AllSections = [...Sections313, ...SectionsPS19] as const;
+export const AllSectionsZod = z.enum(AllSections);
+export type AllSectionsType = z.infer<typeof AllSectionsZod>;
+
 export const Teachers313Zod = z.enum(Teachers313);
 export type Teachers313Type = z.infer<typeof Teachers313Zod>;
 
 export const Roadmaps313Zod = z.enum(Roadmaps313);
 export type Roadmaps313Type = z.infer<typeof Roadmaps313Zod>;
+
+export const SchoolsZod = z.enum(Schools);
+export type SchoolsType = z.infer<typeof SchoolsZod>;
+
+// Scope and Sequence Tags
+export const SCOPE_SEQUENCE_TAG_OPTIONS = [
+    "Grade 6",
+    "Grade 7",
+    "Grade 8",
+    "Algebra 1"
+] as const;
+
+export const ScopeSequenceTagZod = z.enum(SCOPE_SEQUENCE_TAG_OPTIONS);
+export type ScopeSequenceTagType = z.infer<typeof ScopeSequenceTagZod>;
 
 // =====================================
 // SECTION-ROADMAP CONFIGURATION
