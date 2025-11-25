@@ -248,20 +248,18 @@ export function SmartboardDisplay({
             </ul>
           ) : (
             <ul className="space-y-3 text-indigo-900">
-              {groupedLessons.map(({ lesson }, index) => (
-                <li key={`${lesson.section}-${lesson.unitLessonId}-${index}`} className="flex items-start gap-2">
-                  <span className="text-indigo-600 font-bold mt-0.5">•</span>
-                  <div>
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-xs font-semibold text-white bg-indigo-600 px-2 py-0.5 rounded">
-                        {lesson.section}
-                      </span>
-                      <span className="text-xs text-indigo-600">{lesson.unitLessonId}</span>
-                    </div>
-                    <span className="font-semibold">{lesson.lessonName}</span>
-                  </div>
-                </li>
-              ))}
+              <li className="flex items-start gap-2">
+                <span className="text-indigo-600 font-bold mt-0.5">•</span>
+                <div>Get ready for our unit about equations</div>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-indigo-600 font-bold mt-0.5">•</span>
+                <div>Steps to solve equations</div>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-indigo-600 font-bold mt-0.5">•</span>
+                <div>Strategies for making equations simpler (simplifying)</div>
+              </li>
             </ul>
           )}
         </div>
