@@ -608,13 +608,18 @@ export async function syncStudentRampUpProgress(
     // Update student document's rampUpProgress array
     await withDbConnection(async () => {
       // First, try to update existing entry in array
-      // Match by unitCode, rampUpId AND podsieAssignmentId to distinguish lesson vs mastery-check
+      // Use $elemMatch to ensure all three conditions match on the SAME array element
+      // This prevents creating duplicates when multiple entries exist with same unitCode/rampUpId
       const updateResult = await StudentModel.updateOne(
         {
           _id: studentId,
-          "rampUpProgress.unitCode": unitCode,
-          "rampUpProgress.rampUpId": rampUpId,
-          "rampUpProgress.podsieAssignmentId": podsieAssignmentId
+          rampUpProgress: {
+            $elemMatch: {
+              unitCode: unitCode,
+              rampUpId: rampUpId,
+              podsieAssignmentId: podsieAssignmentId
+            }
+          }
         },
         {
           $set: {
