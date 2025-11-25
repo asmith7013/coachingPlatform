@@ -134,36 +134,35 @@ export function AssignmentProgressTable({
                   idx % 2 === 0 ? "bg-white" : "bg-gray-50/50"
                 }`}
               >
-                {/* Student Name with Progress Bar */}
+                {/* Student Name */}
                 <td className="sticky left-0 bg-inherit px-4 py-3 text-sm font-medium text-gray-900 z-10">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className={!hasSynced ? "text-gray-400" : ""}>
-                        {progress.studentName}
+                  <div className="flex items-center gap-2">
+                    <span className={!hasSynced ? "text-gray-400" : ""}>
+                      {progress.studentName}
+                    </span>
+                    {!hasSynced && (
+                      <span className="text-xs text-gray-400 italic">
+                        (not synced)
                       </span>
-                      {!hasSynced && (
-                        <span className="text-xs text-gray-400 italic">
-                          (not synced)
-                        </span>
-                      )}
-                    </div>
-                    {hasSynced && (
-                      <div className="w-full bg-gray-200 rounded-full h-1.5">
-                        <div
-                          className="h-1.5 rounded-full transition-all bg-green-600"
-                          style={{
-                            width: `${(() => {
-                              // Lesson progress is worth 75%
-                              const lessonProgress = progress.percentComplete * 0.75;
-                              // Mastery check is worth 25% (only if it exists and is synced)
-                              const masteryProgress = masteryCheckSynced && masteryCheckProgress?.isFullyComplete ? 25 : 0;
-                              return Math.round(lessonProgress + masteryProgress);
-                            })()}%`
-                          }}
-                        />
-                      </div>
                     )}
                   </div>
+                  {/* Progress bar - commented out */}
+                  {/* {hasSynced && (
+                    <div className="w-full bg-gray-200 rounded-full h-1.5">
+                      <div
+                        className="h-1.5 rounded-full transition-all bg-green-600"
+                        style={{
+                          width: `${(() => {
+                            // Lesson progress is worth 75%
+                            const lessonProgress = progress.percentComplete * 0.75;
+                            // Mastery check is worth 25% (only if it exists and is synced)
+                            const masteryProgress = masteryCheckSynced && masteryCheckProgress?.isFullyComplete ? 25 : 0;
+                            return Math.round(lessonProgress + masteryProgress);
+                          })()}%`
+                        }}
+                      />
+                    </div>
+                  )} */}
                 </td>
 
                 {/* Question Checkmarks */}
