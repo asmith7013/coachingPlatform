@@ -129,6 +129,7 @@
     "form-data": ">=4.0.4",
     "devalue": ">=5.3.2",
     "brace-expansion": ">=2.0.2",
-    "js-yaml": ">=4.1.1"
+    "js-yaml": ">=4.1.1",
+    "trim": ">=0.0.3"
   }
 }
