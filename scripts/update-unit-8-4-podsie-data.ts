@@ -11,13 +11,13 @@
 import mongoose from 'mongoose';
 import { ScopeAndSequenceModel } from '../src/lib/schema/mongoose-schema/313/scope-and-sequence.model';
 
-const DATABASE_URL = process.env.DATABASE_URL;
-
-if (!DATABASE_URL) {
+if (!process.env.DATABASE_URL) {
   console.error('❌ ERROR: DATABASE_URL environment variable is not set.');
   console.error('Please set it in your .env.local file or export it in your shell.');
   process.exit(1);
 }
+
+const DATABASE_URL: string = process.env.DATABASE_URL;
 
 // Unit 8.4 lesson data from docs/student.json
 const UNIT_8_4_LESSONS = [
