@@ -1,0 +1,492 @@
+8.1: Rigid Transformations and Congruence
+Lesson	Standards Addressed
+Lesson 1: Moving in the Plane	
+MP.5
+MP.6
+NY-8.G.1.
+Lesson 2: Naming the Moves	
+MP.3
+MP.6
+NY-8.G.1.
+Lesson 3: Grid Moves	
+MP.5
+MP.6
+MP.7
+NY-8.G.1.
+Lesson 4: Making the Moves	
+MP.5
+MP.6
+MP.7
+NY-8.G.1.
+Lesson 5: Coordinate Moves	
+MP.7
+MP.8
+NY-8.G.3.
+Lesson 6: Describing Transformations	
+MP.1
+MP.3
+MP.6
+NY-8.G.1.
+NY-8.G.3.
+Lesson 7: No Bending or Stretching	
+MP.5
+MP.7
+NY-8.G.1.a.
+NY-8.G.1.b.
+Lesson 8: Rotation Patterns	
+MP.7
+MP.8
+NY-8.G.1.a.
+NY-8.G.1.b.
+Lesson 9: Moves in Parallel	
+MP.7
+NY-8.G.1.a.
+NY-8.G.1.b.
+NY-8.G.1.c.
+Lesson 10: Composing Figures	
+MP.7
+MP.8
+NY-8.G.1.a.
+NY-8.G.1.b.
+Lesson 11: What Is the Same?	
+MP.3
+MP.6
+MP.7
+NY-8.G.1.
+NY-8.G.2.
+Lesson 12: Congruent Polygons	
+MP.3
+MP.5
+MP.6
+MP.7
+NY-8.G.2.
+Lesson 13: Congruence	
+MP.3
+MP.6
+MP.7
+NY-8.G.1.a.
+NY-8.G.2.
+Lesson 14: Alternate Interior Angles	
+MP.5
+MP.8
+NY-8.G.1.
+NY-8.G.5.
+Lesson 15: Adding the Angles in a Triangle	
+MP.7
+NY-8.G.2.
+NY-8.G.5.
+Lesson 16: Parallel Lines and the Angles in a Triangle	
+MP.7
+NY-8.G.5.
+Lesson 17: Rotate and Tessellate	
+MP.2
+MP.7
+
+
+8.2: Dilations, Similarity, and Introducing Slope
+Lesson	Standards Addressed
+Lesson 1: Projecting and Scaling	
+NY-8.G.
+Lesson 2: Circular Grid	
+MP.3
+MP.5
+MP.7
+NY-8.G.
+Lesson 3: Dilations with No Grid	
+MP.1
+MP.5
+NY-8.G.
+Lesson 4: Dilations on a Square Grid	
+MP.6
+MP.7
+NY-8.G.
+Lesson 5: More Dilations	
+NY-8.G.
+NY-8.G.3.
+Lesson 6: Similarity	
+MP.8
+NY-8.G.2.
+NY-8.G.4.
+Lesson 7: Similar Polygons	
+MP.3
+NY-8.G.2.
+NY-8.G.4.
+Lesson 8: Similar Triangles	
+NY-8.G.5.
+Lesson 9: Side Length Quotients in Similar Triangles	
+NY-8.G.4.
+Lesson 10: Meet Slope	
+MP.3
+MP.7
+NY-8.EE.6.
+Lesson 11: Writing Equations for Lines	
+MP.7
+NY-8.EE.6.
+Lesson 12: Using Equations for Lines	
+MP.8
+NY-8.EE.6.
+NY-8.G.3.
+Lesson 13: The Shadow Knows	
+MP.1
+MP.3
+MP.4
+NY-8.G.5.
+
+8.3: Linear Relationships
+Lesson	Standards Addressed
+Lesson 1: Understanding Proportional Relationships	
+MP.6
+Lesson 2: Graphs of Proportional Relationships	
+MP.1
+MP.3
+MP.5
+NY-8.EE.5.
+Lesson 3: Representing Proportional Relationships	
+NY-8.EE.5.
+Lesson 4: Comparing Proportional Relationships	
+NY-8.EE.5.
+Lesson 5: Introduction to Linear Relationships	
+MP.2
+MP.8
+Lesson 6: More Linear Relationships	
+MP.2
+MP.4
+NY-8.EE.5.
+Lesson 7: Representations of Linear Relationships	
+MP.8
+NY-8.EE.6.
+Lesson 8: Translating to y = mx + b	
+MP.4
+MP.8
+NY-8.G.1.
+Lesson 9: Slopes Don't Have to Be Positive	
+MP.8
+Lesson 10: Calculating Slope	
+MP.6
+NY-8.EE.6.
+Lesson 11: Line Designs	
+Lesson 12: Equations of All Kinds of Lines	
+MP.3
+NY-8.EE.6.
+Lesson 13: Solutions to Linear Equations	
+MP.3
+Lesson 14: More Solutions to Linear Equations	
+MP.7
+NY-8.EE.8.a.
+Lesson 15: Using Linear Relations to Solve Problems	
+MP.2
+MP.4
+NY-8.EE.6.
+NY-8.EE.8.a.
+
+8.4: Linear Equations and Linear Systems
+Lesson	Standards Addressed
+Lesson 1: Writing Equivalent Equations	
+MP.5
+NY-8.EE.7.
+Lesson 2: Keeping the Equation Balanced	
+MP.2
+Lesson 3: Balanced Moves	
+MP.3
+NY-8.EE.7.
+Lesson 4: More Balanced Moves	
+MP.3
+MP.6
+NY-8.EE.7.
+Lesson 5: Solving Any Linear Equation	
+MP.7
+NY-8.EE.7.
+Lesson 6: Strategic Solving	
+MP.7
+NY-8.EE.7.
+NY-8.EE.8.b.
+Lesson 7: All, Some, or No Solutions	
+NY-8.EE.8.a.
+Lesson 8: How Many Solutions?	
+MP.7
+NY-8.EE.8.a.
+Lesson 9: When Are They the Same?	
+NY-8.EE.7.
+NY-8.EE.8.
+Lesson 10: On or Off the Line?	
+NY-8.EE.8.
+Lesson 11: On Both of the Lines	
+NY-8.EE.8.
+Lesson 12: Systems of Equations	
+MP.2
+NY-8.EE.8.
+NY-8.EE.8.a.
+NY-8.EE.8.b.
+Lesson 13: Solving Systems of Equations	
+MP.7
+NY-8.EE.8.
+NY-8.EE.8.a.
+Lesson 14: Solving More Systems	
+MP.3
+MP.7
+NY-8.EE.8.
+Lesson 15: Writing Systems of Equations	
+MP.4
+NY-8.EE.8.
+NY-8.EE.8.b.
+NY-8.EE.8.c.
+Lesson 16: Solving Problems with Systems of Equations	
+MP.1
+MP.3
+NY-8.EE.8.c.
+
+8.5: Functions and Volume
+Lesson	Standards Addressed
+Lesson 1: Inputs and Outputs	
+NY-8.F.1.
+Lesson 2: Introduction to Functions	
+MP.7
+NY-8.F.1.
+Lesson 3: Equations for Functions	
+MP.8
+NY-8.F.1.
+Lesson 4: Tables, Equations, and Graphs of Functions	
+MP.2
+NY-8.F.1.
+NY-8.F.3.
+Lesson 5: More Graphs of Functions	
+MP.2
+MP.4
+NY-8.F.1.
+NY-8.F.5.
+Lesson 6: Even More Graphs of Functions	
+MP.3
+MP.4
+MP.6
+NY-8.F.5.
+Lesson 7: Connecting Representations of Functions	
+NY-8.F.2.
+NY-8.F.3.
+Lesson 8: Linear Functions	
+NY-8.F.2.
+NY-8.F.3.
+NY-8.F.4.
+Lesson 9: Linear Models	
+MP.4
+NY-8.F.4.
+Lesson 10: Piecewise Linear Functions	
+MP.4
+NY-8.F.4.
+NY-8.F.5.
+Lesson 11: Filling Containers	
+MP.4
+NY-8.F.4.
+Lesson 12: How Much Will Fit?	
+Lesson 13: The Volume of a Cylinder	
+NY-8.G.9.
+Lesson 14: Finding Cylinder Dimensions	
+NY-8.G.9.
+Lesson 15: The Volume of a Cone	
+NY-8.G.9.
+Lesson 16: Finding Cone Dimensions	
+MP.3
+NY-8.G.9.
+Lesson 17: Scaling One Dimension	
+NY-8.F.1.
+NY-8.G.9.
+Lesson 18: Scaling Two Dimensions	
+NY-8.F.3.
+NY-8.G.9.
+Lesson 19: Estimating a Hemisphere	
+NY-8.G.9.
+Lesson 20: The Volume of a Sphere	
+NY-8.G.9.
+Lesson 21: Cylinders, Cones, and Spheres	
+MP.1
+MP.6
+NY-8.G.9.
+Lesson 22: Volume As a Function of . . .	
+NY-8.G.9.
+
+
+8.6: Associations in Data
+Lesson	Standards Addressed
+Lesson 1: Organizing Data	
+MP.1
+MP.2
+NY-8.SP.1.
+Lesson 2: Plotting Data	
+MP.4
+MP.5
+MP.6
+MP.7
+NY-8.SP.1.
+Lesson 3: What a Point in a Scatter Plot Means	
+MP.2
+MP.6
+NY-8.SP.1.
+NY-8.SP.3.
+Lesson 4: Fitting a Line to Data	
+MP.2
+MP.4
+MP.7
+NY-8.SP.1.
+NY-8.SP.2.
+Lesson 5: Describing Trends in Scatter Plots	
+MP.3
+MP.5
+MP.6
+NY-8.SP.1.
+NY-8.SP.2.
+Lesson 6: The Slope of a Fitted Line	
+MP.2
+MP.4
+MP.6
+MP.7
+NY-8.SP.1.
+NY-8.SP.2.
+NY-8.SP.3.
+Lesson 7: Observing More Patterns in Scatter Plots	
+MP.1
+MP.4
+MP.7
+NY-8.SP.1.
+Lesson 8: Analyzing Bivariate Data	
+MP.2
+MP.4
+NY-8.SP.1.
+NY-8.SP.2.
+NY-8.SP.3.
+Lesson 9: Looking for Associations	
+MP.1
+Lesson 10: Using Data Displays to Find Associations	
+MP.3
+MP.4
+Lesson 11: Gone In 30 Seconds	
+MP.2
+MP.4
+
+
+8.7: Exponents and Scientific Notation
+Lesson	Standards Addressed
+Lesson 1: Exponent Review	
+NY-8.EE.1.
+Lesson 2: Multiplying Powers of 10	
+MP.2
+MP.8
+NY-8.EE.1.
+Lesson 3: Powers of Powers of 10	
+MP.2
+MP.8
+NY-8.EE.1.
+Lesson 4: Dividing Powers of 10	
+MP.3
+MP.8
+NY-8.EE.1.
+Lesson 5: Negative Exponents with Powers of 10	
+MP.3
+MP.8
+NY-8.EE.1.
+Lesson 6: What About Other Bases?	
+NY-8.EE.1.
+Lesson 7: Practice with Rational Bases	
+MP.7
+NY-8.EE.1.
+Lesson 8: Combining Bases	
+MP.3
+MP.7
+MP.8
+NY-8.EE.1.
+Lesson 9: Describing Large and Small Numbers Using Powers of 10	
+MP.6
+NY-8.EE.3.
+Lesson 10: Representing Large Numbers on the Number Line	
+MP.2
+MP.7
+NY-8.EE.3.
+NY-8.EE.4.
+Lesson 11: Representing Small Numbers on the Number Line	
+MP.3
+MP.6
+NY-8.EE.1.
+NY-8.EE.3.
+NY-8.EE.4.
+Lesson 12: Applications of Arithmetic with Powers of 10	
+MP.1
+MP.2
+MP.4
+MP.6
+NY-8.EE.3.
+NY-8.EE.4.
+Lesson 13: Definition of Scientific Notation	
+MP.6
+NY-8.EE.4.
+Lesson 14: Estimating with Scientific Notation	
+MP.2
+NY-8.EE.1.
+NY-8.EE.3.
+NY-8.EE.4.
+Lesson 15: Adding and Subtracting with Scientific Notation	
+MP.1
+MP.2
+MP.3
+MP.6
+NY-8.EE.4.
+Lesson 16: Is a Smartphone Smart Enough to Go to the Moon?	
+MP.2
+MP.4
+NY-8.EE.3.
+NY-8.EE.4.
+
+8.8: Pythagorean Theorem and Irrational Numbers
+Lesson	Standards Addressed
+Lesson 1: The Areas of Squares	
+MP.1
+MP.3
+MP.5
+NY-8.NS.2.
+Lesson 2: Side Lengths and Areas	
+MP.7
+NY-8.EE.2.
+Lesson 3: Square Roots	
+Lesson 4: Rational and Irrational Numbers	
+MP.6
+NY-8.EE.2.
+Lesson 5: Square Roots on the Number Line	
+MP.7
+NY-8.EE.2.
+NY-8.NS.2.
+Lesson 6: Reasoning about Square Roots	
+MP.3
+NY-8.EE.2.
+NY-8.NS.2.
+Lesson 7: Finding Side Lengths of Triangles	
+MP.8
+NY-8.G.7.
+Lesson 8: A Proof of the Pythagorean Theorem	
+MP.1
+NY-8.G.6.
+NY-8.G.7.
+Lesson 9: Finding Unknown Side Lengths	
+NY-8.G.7.
+Lesson 10: The Converse	
+NY-8.G.6.
+Lesson 11: Applications of the Pythagorean Theorem	
+MP.2
+NY-8.EE.2.
+NY-8.G.7.
+Lesson 12: More Applications of the Pythagorean Theorem	
+Lesson 13: Finding Distances in the Coordinate Plane	
+MP.7
+NY-8.G.8.
+Lesson 14: Edge Lengths and Volumes	
+NY-8.EE.2.
+NY-8.NS.2.
+Lesson 15: Cube Roots	
+MP.3
+NY-8.EE.2.
+NY-8.NS.2.
+Lesson 16: Decimal Representations of Rational Numbers	
+MP.8
+NY-8.NS.1.
+Lesson 17: Infinite Decimal Expansions	
+MP.7
+MP.8
+NY-8.NS.1.
+Lesson 18: When Is the Same Size Not the Same Size?	
+NY-8.G.7.

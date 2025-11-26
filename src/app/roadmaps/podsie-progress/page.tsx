@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 // import { PlusIcon } from "@heroicons/react/24/outline";
 import { RoadmapsNav } from "../components/RoadmapsNav";
+import { useToast } from "@/components/core/feedback/Toast";
 import { fetchStudents } from "@/app/actions/313/students";
 import { Student, RampUpQuestion } from "@zod-schema/313/student";
 import {
   fetchRampUpProgress,
   syncSectionRampUpProgress,
-  SyncSectionResult,
 } from "@/app/actions/313/podsie-sync";
 import {
   fetchAllUnitsByScopeTag,
@@ -21,6 +21,7 @@ import type { PodsieAssignment } from "@zod-schema/313/section-config";
 import { AssignmentCard } from "./components/AssignmentCard";
 import { SmartboardDisplay } from "./components/SmartboardDisplay";
 import { CreateAssignmentModal } from "./components/CreateAssignmentModal";
+import { LessonProgressCard } from "./components/LessonProgressCard";
 
 // Map section to scopeSequenceTag based on first digit
 // 802 = Algebra 1
@@ -105,6 +106,7 @@ interface UnitOption {
   unitName: string;
   grade: string;
   lessonCount: number;
+  scopeSequenceTag?: string; // Add scope tag to group units
 }
 
 interface ProgressData {
@@ -125,7 +127,6 @@ interface ProgressData {
 export default function RampUpProgressPage() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState<string | null>(null); // Track which lesson is syncing
-  const [syncResult, setSyncResult] = useState<SyncSectionResult | null>(null);
   const [progressData, setProgressData] = useState<ProgressData[]>([]);
   const [selectedSection, setSelectedSection] = useState<string>("");
   const [selectedUnit, setSelectedUnit] = useState<number | null>(null);
@@ -137,6 +138,7 @@ export default function RampUpProgressPage() {
   const [availableSections, setAvailableSections] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const { showToast, ToastComponent } = useToast();
 
   // Group sections by school
   const sectionGroups = useMemo(() => groupSectionsBySchool(sections), [sections]);
@@ -191,16 +193,42 @@ export default function RampUpProgressPage() {
       }
 
       try {
-        // Load units - filter by scopeSequenceTag and grade
+        // Load units - for section 802, load both Grade 8 and Algebra 1 units
         const grade = getGradeForSection(selectedSection);
-        const unitsResult = await fetchAllUnitsByScopeTag(scopeSequenceTag, grade);
-        if (unitsResult.success) {
-          setUnits(unitsResult.data);
-          // Clear unit selection when section changes
+
+        if (selectedSection === "802") {
+          // Section 802 shows Algebra 1 units with both grade "8" and grade "Algebra 1"
+          const [alg1Grade8Result, alg1GradeAlg1Result] = await Promise.all([
+            fetchAllUnitsByScopeTag("Algebra 1", "8"),
+            fetchAllUnitsByScopeTag("Algebra 1") // No grade filter to get Algebra 1 grade units
+          ]);
+
+          const allUnits: UnitOption[] = [];
+          if (alg1Grade8Result.success) {
+            allUnits.push(...alg1Grade8Result.data.map(u => ({ ...u, scopeSequenceTag: "Algebra 1" })));
+          }
+          if (alg1GradeAlg1Result.success) {
+            // Only add units that aren't already in the list (avoid duplicates)
+            const existingUnitNumbers = new Set(allUnits.map(u => u.unitNumber));
+            const newUnits = alg1GradeAlg1Result.data
+              .filter(u => !existingUnitNumbers.has(u.unitNumber))
+              .map(u => ({ ...u, scopeSequenceTag: "Algebra 1" }));
+            allUnits.push(...newUnits);
+          }
+
+          setUnits(allUnits);
           setSelectedUnit(null);
           setLessons([]);
         } else {
-          setError(unitsResult.error || "Failed to load units");
+          // For other sections, load units normally
+          const unitsResult = await fetchAllUnitsByScopeTag(scopeSequenceTag, grade);
+          if (unitsResult.success) {
+            setUnits(unitsResult.data);
+            setSelectedUnit(null);
+            setLessons([]);
+          } else {
+            setError(unitsResult.error || "Failed to load units");
+          }
         }
 
         // Load section config to get Podsie assignments
@@ -231,7 +259,9 @@ export default function RampUpProgressPage() {
 
       try {
         // Fetch ALL lessons from scope-and-sequence for this unit
-        const result = await fetchRampUpsByUnit(scopeSequenceTag, selectedUnit);
+        // For section 802, always use "Algebra 1" scope tag
+        const actualScopeTag = selectedSection === "802" ? "Algebra 1" : scopeSequenceTag;
+        const result = await fetchRampUpsByUnit(actualScopeTag, selectedUnit);
         if (!result.success) {
           setError(result.error || "Failed to load lessons");
           return;
@@ -287,7 +317,7 @@ export default function RampUpProgressPage() {
     };
 
     buildLessons();
-  }, [scopeSequenceTag, selectedUnit, selectedLessonSection, sectionConfigAssignments]);
+  }, [scopeSequenceTag, selectedUnit, selectedLessonSection, sectionConfigAssignments, selectedSection]);
 
   // Fetch progress data when section and unit are selected
   useEffect(() => {
@@ -328,7 +358,6 @@ export default function RampUpProgressPage() {
       // Create unique syncing key that includes both unitLessonId and assignmentType
       const syncingKey = `${assignment.unitLessonId}-${assignment.assignmentType || 'default'}`;
       setSyncing(syncingKey);
-      setSyncResult(null);
       setError(null);
 
       const unitCode = `${assignment.grade}.${selectedUnit}`;
@@ -353,10 +382,18 @@ export default function RampUpProgressPage() {
       );
 
       console.log('✅ Sync result:', result);
-      setSyncResult(result);
 
-      // Reload progress data - only for the specific assignment that was synced
+      // Show toast notification
       if (result.success) {
+        const assignmentTypeLabel = assignment.assignmentType === 'lesson' ? 'Lesson' : 'Mastery Check';
+        showToast({
+          title: 'Sync Successful',
+          description: `Synced ${result.successfulSyncs} of ${result.totalStudents} students for ${assignmentTypeLabel}${result.failedSyncs > 0 ? ` (${result.failedSyncs} failed)` : ''}`,
+          variant: 'success',
+          icon: CheckCircleIcon,
+        });
+
+        // Reload progress data - only for the specific assignment that was synced
         const progressResult = await fetchRampUpProgress(
           selectedSection,
           unitCode,
@@ -389,10 +426,22 @@ export default function RampUpProgressPage() {
             return [...filtered, ...newData];
           });
         }
+      } else {
+        showToast({
+          title: 'Sync Failed',
+          description: result.error || 'Failed to sync from Podsie',
+          variant: 'error',
+          icon: ExclamationTriangleIcon,
+        });
       }
     } catch (err) {
       console.error("Error syncing:", err);
-      setError("Failed to sync from Podsie");
+      showToast({
+        title: 'Sync Failed',
+        description: 'An unexpected error occurred while syncing',
+        variant: 'error',
+        icon: ExclamationTriangleIcon,
+      });
     } finally {
       setSyncing(null);
     }
@@ -481,7 +530,6 @@ export default function RampUpProgressPage() {
                   setSelectedSection(e.target.value);
                   setSelectedUnit(null);
                   setSelectedLessonSection("");
-                  setSyncResult(null);
                 }}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   !selectedSection
@@ -516,7 +564,6 @@ export default function RampUpProgressPage() {
                   const val = e.target.value;
                   setSelectedUnit(val ? parseInt(val, 10) : null);
                   setSelectedLessonSection("");
-                  setSyncResult(null);
                 }}
                 disabled={!selectedSection || units.length === 0}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -532,11 +579,42 @@ export default function RampUpProgressPage() {
                     ? "No units available"
                     : "Select Unit"}
                 </option>
-                {units.map((unit) => (
-                  <option key={unit.unitNumber} value={unit.unitNumber}>
-                    Unit {unit.unitNumber}
-                  </option>
-                ))}
+                {/* For section 802, group by grade type */}
+                {selectedSection === "802" ? (
+                  <>
+                    {/* Algebra 1 (Grade 8) Units */}
+                    {units.filter(u => u.grade === "8").length > 0 && (
+                      <optgroup label="Algebra 1 (Grade 8)">
+                        {units
+                          .filter(u => u.grade === "8")
+                          .map((unit) => (
+                            <option key={`alg1-g8-${unit.unitNumber}`} value={unit.unitNumber}>
+                              {unit.unitName}
+                            </option>
+                          ))}
+                      </optgroup>
+                    )}
+                    {/* Algebra 1 (Algebra Grade) Units */}
+                    {units.filter(u => u.grade !== "8").length > 0 && (
+                      <optgroup label="Algebra 1">
+                        {units
+                          .filter(u => u.grade !== "8")
+                          .map((unit) => (
+                            <option key={`alg1-galg1-${unit.unitNumber}`} value={unit.unitNumber}>
+                              {unit.unitName}
+                            </option>
+                          ))}
+                      </optgroup>
+                    )}
+                  </>
+                ) : (
+                  /* Regular units for other sections */
+                  units.map((unit) => (
+                    <option key={unit.unitNumber} value={unit.unitNumber}>
+                      {unit.unitName}
+                    </option>
+                  ))
+                )}
               </select>
             </div>
 
@@ -545,14 +623,13 @@ export default function RampUpProgressPage() {
                 htmlFor="lesson-section-filter"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Lesson Section
+                Section of Unit
               </label>
               <select
                 id="lesson-section-filter"
                 value={selectedLessonSection}
                 onChange={(e) => {
                   setSelectedLessonSection(e.target.value);
-                  setSyncResult(null);
                 }}
                 disabled={!selectedUnit}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -578,40 +655,6 @@ export default function RampUpProgressPage() {
               </select>
             </div>
           </div>
-
-          {/* Sync Result */}
-          {syncResult && (
-            <div
-              className={`p-4 rounded-lg mb-4 ${
-                syncResult.success
-                  ? "bg-green-50 border border-green-200"
-                  : "bg-red-50 border border-red-200"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                {syncResult.success ? (
-                  <CheckCircleIcon className="w-5 h-5 text-green-600" />
-                ) : (
-                  <span className="text-red-600">⚠️</span>
-                )}
-                <span
-                  className={
-                    syncResult.success ? "text-green-800" : "text-red-800"
-                  }
-                >
-                  {syncResult.success
-                    ? `Synced ${syncResult.successfulSyncs} of ${syncResult.totalStudents} students`
-                    : syncResult.error || "Sync failed"}
-                </span>
-              </div>
-              {syncResult.failedSyncs > 0 && (
-                <div className="mt-2 text-sm text-yellow-700">
-                  {syncResult.failedSyncs} students failed to sync (may not have
-                  email or no Podsie data)
-                </div>
-              )}
-            </div>
-          )}
 
           {/* Error */}
           {error && (
@@ -657,10 +700,25 @@ export default function RampUpProgressPage() {
                             {groupedLessons.length} {groupedLessons.length === 1 ? 'Lesson' : 'Lessons'}
                           </span>
                         </div>
+
+                        {/* Progress Cards Grid (max 5 per row) */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6">
+                          {groupedLessons.map(({ lesson, masteryCheck }) => (
+                            <LessonProgressCard
+                              key={`progress-${lesson.section}-${lesson.unitLessonId}`}
+                              lesson={lesson}
+                              masteryCheck={masteryCheck}
+                              progressData={progressData}
+                              calculateSummaryStats={calculateSummaryStats}
+                            />
+                          ))}
+                        </div>
+
+                        {/* Assignment Cards */}
                         <div className="space-y-6">
                           {groupedLessons.map(({ lesson, masteryCheck }) => (
                             <AssignmentCard
-                              key={`${lesson.section}-${lesson.unitLessonId}-${lesson.assignmentType}`}
+                              key={`assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.assignmentType}`}
                               assignment={lesson}
                               masteryCheckAssignment={masteryCheck}
                               progressData={progressData}
@@ -720,6 +778,9 @@ export default function RampUpProgressPage() {
             }}
           />
         )}
+
+        {/* Toast Notifications */}
+        <ToastComponent />
       </div>
     </div>
   );
