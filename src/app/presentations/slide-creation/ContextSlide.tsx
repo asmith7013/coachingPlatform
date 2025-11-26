@@ -18,7 +18,7 @@ export function ContextSlide({
   tableData,
   inputLabel = 'Input',
   outputLabel = 'Output',
-  showAllValues = false,
+  showAllValues = false, 
 }: ContextSlideProps) {
   return (
     <Slide className="bg-gradient-to-br from-green-50 to-emerald-100">
