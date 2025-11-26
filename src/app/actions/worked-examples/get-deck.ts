@@ -27,9 +27,12 @@ export async function getDeckBySlug(slug: string) {
         };
       }
 
+      // Convert to plain object and serialize ObjectIds
+      const plainDeck = JSON.parse(JSON.stringify(deck.toJSON()));
+
       return {
         success: true,
-        data: deck.toJSON(),
+        data: plainDeck,
       };
     } catch (error) {
       return {
@@ -62,9 +65,12 @@ export async function getDeckById(deckId: string) {
         };
       }
 
+      // Convert to plain object and serialize ObjectIds
+      const plainDeck = JSON.parse(JSON.stringify(deck.toJSON()));
+
       return {
         success: true,
-        data: deck.toJSON(),
+        data: plainDeck,
       };
     } catch (error) {
       return {
