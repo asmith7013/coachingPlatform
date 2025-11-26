@@ -62,6 +62,11 @@ export default withSentryConfig(
     // For all available options, see:
     // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
+    // Disable source map uploads to reduce memory usage during build
+    // This prevents OOM errors on Vercel
+    disableServerWebpackPlugin: true,
+    disableClientWebpackPlugin: true,
+
     // Upload a larger set of source maps for prettier stack traces (increases build time)
     // Disabled to improve build performance - can be re-enabled if needed for debugging
     widenClientFileUpload: false,
