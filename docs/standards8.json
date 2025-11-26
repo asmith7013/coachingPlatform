@@ -1,0 +1,2502 @@
+[
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 1,
+    "lessonTitle": "Moving in the Plane",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.G.1",
+        "text": "Verify experimentally the properties of rotations, reflections, and translations."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 2,
+    "lessonTitle": "Naming the Moves",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.G.1",
+        "text": "Verify experimentally the properties of rotations, reflections, and translations."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 3,
+    "lessonTitle": "Grid Moves",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G.1",
+        "text": "Verify experimentally the properties of rotations, reflections, and translations."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 4,
+    "lessonTitle": "Making the Moves",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G.1",
+        "text": "Verify experimentally the properties of rotations, reflections, and translations."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 5,
+    "lessonTitle": "Coordinate Moves",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.G.3",
+        "text": "Describe the effect of dilations, translations, rotations, and reflections on two-dimensional figures using coordinates."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 6,
+    "lessonTitle": "Describing Transformations",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.G.1",
+        "text": "Verify experimentally the properties of rotations, reflections, and translations."
+      },
+      {
+        "code": "NY-8.G.3",
+        "text": "Describe the effect of dilations, translations, rotations, and reflections on two-dimensional figures using coordinates."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 7,
+    "lessonTitle": "No Bending or Stretching",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G.1.a",
+        "text": "Verify experimentally lines are mapped to lines, and line segments to line segments of the same length."
+      },
+      {
+        "code": "NY-8.G.1.b",
+        "text": "Verify experimentally angles are mapped to angles of the same measure."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 8,
+    "lessonTitle": "Rotation Patterns",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.G.1.a",
+        "text": "Verify experimentally lines are mapped to lines, and line segments to line segments of the same length."
+      },
+      {
+        "code": "NY-8.G.1.b",
+        "text": "Verify experimentally angles are mapped to angles of the same measure."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 9,
+    "lessonTitle": "Moves in Parallel",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G.1.a",
+        "text": "Verify experimentally lines are mapped to lines, and line segments to line segments of the same length."
+      },
+      {
+        "code": "NY-8.G.1.b",
+        "text": "Verify experimentally angles are mapped to angles of the same measure."
+      },
+      {
+        "code": "NY-8.G.1.c",
+        "text": "Verify experimentally parallel lines are mapped to parallel lines."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 10,
+    "lessonTitle": "Composing Figures",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.G.1.a",
+        "text": "Verify experimentally lines are mapped to lines, and line segments to line segments of the same length."
+      },
+      {
+        "code": "NY-8.G.1.b",
+        "text": "Verify experimentally angles are mapped to angles of the same measure."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 11,
+    "lessonTitle": "What Is the Same?",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G.1",
+        "text": "Verify experimentally the properties of rotations, reflections, and translations."
+      },
+      {
+        "code": "NY-8.G.2",
+        "text": "Know that a two-dimensional figure is congruent to another if the corresponding angles are congruent and the corresponding sides are congruent. Equivalently, two two-dimensional figures are congruent if one is the image of the other after a sequence of rotations, reflections, and translations. Given two congruent figures, describe a sequence that maps the congruence between them on the coordinate plane."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 12,
+    "lessonTitle": "Congruent Polygons",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G.2",
+        "text": "Know that a two-dimensional figure is congruent to another if the corresponding angles are congruent and the corresponding sides are congruent. Equivalently, two two-dimensional figures are congruent if one is the image of the other after a sequence of rotations, reflections, and translations. Given two congruent figures, describe a sequence that maps the congruence between them on the coordinate plane."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 13,
+    "lessonTitle": "Congruence",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G.1.a",
+        "text": "Verify experimentally lines are mapped to lines, and line segments to line segments of the same length."
+      },
+      {
+        "code": "NY-8.G.2",
+        "text": "Know that a two-dimensional figure is congruent to another if the corresponding angles are congruent and the corresponding sides are congruent. Equivalently, two two-dimensional figures are congruent if one is the image of the other after a sequence of rotations, reflections, and translations. Given two congruent figures, describe a sequence that maps the congruence between them on the coordinate plane."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 14,
+    "lessonTitle": "Alternate Interior Angles",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.G.1",
+        "text": "Verify experimentally the properties of rotations, reflections, and translations."
+      },
+      {
+        "code": "NY-8.G.5",
+        "text": "Use informal arguments to establish facts about the angle sum and exterior angle of triangles, about the angles created when parallel lines are cut by a transversal, and the angle-angle criterion for similarity of triangles."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 15,
+    "lessonTitle": "Adding the Angles in a Triangle",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G.2",
+        "text": "Know that a two-dimensional figure is congruent to another if the corresponding angles are congruent and the corresponding sides are congruent. Equivalently, two two-dimensional figures are congruent if one is the image of the other after a sequence of rotations, reflections, and translations. Given two congruent figures, describe a sequence that maps the congruence between them on the coordinate plane."
+      },
+      {
+        "code": "NY-8.G.5",
+        "text": "Use informal arguments to establish facts about the angle sum and exterior angle of triangles, about the angles created when parallel lines are cut by a transversal, and the angle-angle criterion for similarity of triangles."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 16,
+    "lessonTitle": "Parallel Lines and the Angles in a Triangle",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G.5",
+        "text": "Use informal arguments to establish facts about the angle sum and exterior angle of triangles, about the angles created when parallel lines are cut by a transversal, and the angle-angle criterion for similarity of triangles."
+      }
+    ]
+  },
+  {
+    "unit": "8.1",
+    "unitTitle": "Rigid Transformations and Congruence",
+    "lessonNumber": 17,
+    "lessonTitle": "Rotate and Tessellate",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 1,
+    "lessonTitle": "Projecting and Scaling",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G",
+        "text": "Geometry (general)"
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 2,
+    "lessonTitle": "Circular Grid",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G",
+        "text": "Geometry (general)"
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 3,
+    "lessonTitle": "Dilations with No Grid",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "NY-8.G",
+        "text": "Geometry (general)"
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 4,
+    "lessonTitle": "Dilations on a Square Grid",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G",
+        "text": "Geometry (general)"
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 5,
+    "lessonTitle": "More Dilations",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G",
+        "text": "Geometry (general)"
+      },
+      {
+        "code": "NY-8.G.3",
+        "text": "Describe the effect of dilations, translations, rotations, and reflections on two-dimensional figures using coordinates."
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 6,
+    "lessonTitle": "Similarity",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.G.2",
+        "text": "Know that a two-dimensional figure is congruent to another if the corresponding angles are congruent and the corresponding sides are congruent. Equivalently, two two-dimensional figures are congruent if one is the image of the other after a sequence of rotations, reflections, and translations. Given two congruent figures, describe a sequence that maps the congruence between them on the coordinate plane."
+      },
+      {
+        "code": "NY-8.G.4",
+        "text": "Know that a two-dimensional figure is similar to another if the corresponding angles are congruent and the corresponding sides are in proportion. Equivalently, two two-dimensional figures are similar if one is the image of the other after a sequence of rotations, reflections, translations, and dilations. Given two similar two-dimensional figures, describe a sequence that maps the similarity between them on the coordinate plane."
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 7,
+    "lessonTitle": "Similar Polygons",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "NY-8.G.2",
+        "text": "Know that a two-dimensional figure is congruent to another if the corresponding angles are congruent and the corresponding sides are congruent. Equivalently, two two-dimensional figures are congruent if one is the image of the other after a sequence of rotations, reflections, and translations. Given two congruent figures, describe a sequence that maps the congruence between them on the coordinate plane."
+      },
+      {
+        "code": "NY-8.G.4",
+        "text": "Know that a two-dimensional figure is similar to another if the corresponding angles are congruent and the corresponding sides are in proportion. Equivalently, two two-dimensional figures are similar if one is the image of the other after a sequence of rotations, reflections, translations, and dilations. Given two similar two-dimensional figures, describe a sequence that maps the similarity between them on the coordinate plane."
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 8,
+    "lessonTitle": "Similar Triangles",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G.5",
+        "text": "Use informal arguments to establish facts about the angle sum and exterior angle of triangles, about the angles created when parallel lines are cut by a transversal, and the angle-angle criterion for similarity of triangles."
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 9,
+    "lessonTitle": "Side Length Quotients in Similar Triangles",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G.4",
+        "text": "Know that a two-dimensional figure is similar to another if the corresponding angles are congruent and the corresponding sides are in proportion. Equivalently, two two-dimensional figures are similar if one is the image of the other after a sequence of rotations, reflections, translations, and dilations. Given two similar two-dimensional figures, describe a sequence that maps the similarity between them on the coordinate plane."
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 10,
+    "lessonTitle": "Meet Slope",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.6",
+        "text": "Use similar triangles to explain why the slope m is the same between any two distinct points on a non-vertical line in the coordinate plane; derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 11,
+    "lessonTitle": "Writing Equations for Lines",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.6",
+        "text": "Use similar triangles to explain why the slope m is the same between any two distinct points on a non-vertical line in the coordinate plane; derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 12,
+    "lessonTitle": "Using Equations for Lines",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.EE.6",
+        "text": "Use similar triangles to explain why the slope m is the same between any two distinct points on a non-vertical line in the coordinate plane; derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+      },
+      {
+        "code": "NY-8.G.3",
+        "text": "Describe the effect of dilations, translations, rotations, and reflections on two-dimensional figures using coordinates."
+      }
+    ]
+  },
+  {
+    "unit": "8.2",
+    "unitTitle": "Dilations, Similarity, and Introducing Slope",
+    "lessonNumber": 13,
+    "lessonTitle": "The Shadow Knows",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "NY-8.G.5",
+        "text": "Use informal arguments to establish facts about the angle sum and exterior angle of triangles, about the angles created when parallel lines are cut by a transversal, and the angle-angle criterion for similarity of triangles."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 1,
+    "lessonTitle": "Understanding Proportional Relationships",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 2,
+    "lessonTitle": "Graphs of Proportional Relationships",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "NY-8.EE.5",
+        "text": "Graph proportional relationships, interpreting the unit rate as the slope of the graph. Compare two different proportional relationships represented in different ways."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 3,
+    "lessonTitle": "Representing Proportional Relationships",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.EE.5",
+        "text": "Graph proportional relationships, interpreting the unit rate as the slope of the graph. Compare two different proportional relationships represented in different ways."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 4,
+    "lessonTitle": "Comparing Proportional Relationships",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.EE.5",
+        "text": "Graph proportional relationships, interpreting the unit rate as the slope of the graph. Compare two different proportional relationships represented in different ways."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 5,
+    "lessonTitle": "Introduction to Linear Relationships",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 6,
+    "lessonTitle": "More Linear Relationships",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "NY-8.EE.5",
+        "text": "Graph proportional relationships, interpreting the unit rate as the slope of the graph. Compare two different proportional relationships represented in different ways."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 7,
+    "lessonTitle": "Representations of Linear Relationships",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.EE.6",
+        "text": "Use similar triangles to explain why the slope m is the same between any two distinct points on a non-vertical line in the coordinate plane; derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 8,
+    "lessonTitle": "Translating to y = mx + b",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.G.1",
+        "text": "Verify experimentally the properties of rotations, reflections, and translations."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 9,
+    "lessonTitle": "Slopes Don't Have to Be Positive",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 10,
+    "lessonTitle": "Calculating Slope",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.EE.6",
+        "text": "Use similar triangles to explain why the slope m is the same between any two distinct points on a non-vertical line in the coordinate plane; derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 11,
+    "lessonTitle": "Line Designs",
+    "grade": 8,
+    "standards": []
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 12,
+    "lessonTitle": "Equations of All Kinds of Lines",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "NY-8.EE.6",
+        "text": "Use similar triangles to explain why the slope m is the same between any two distinct points on a non-vertical line in the coordinate plane; derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 13,
+    "lessonTitle": "Solutions to Linear Equations",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 14,
+    "lessonTitle": "More Solutions to Linear Equations",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.8.a",
+        "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously. Recognize when the system has one solution, no solution, or infinitely many solutions."
+      }
+    ]
+  },
+  {
+    "unit": "8.3",
+    "unitTitle": "Linear Relationships",
+    "lessonNumber": 15,
+    "lessonTitle": "Using Linear Relations to Solve Problems",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "NY-8.EE.6",
+        "text": "Use similar triangles to explain why the slope m is the same between any two distinct points on a non-vertical line in the coordinate plane; derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+      },
+      {
+        "code": "NY-8.EE.8.a",
+        "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously. Recognize when the system has one solution, no solution, or infinitely many solutions."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 1,
+    "lessonTitle": "Writing Equivalent Equations",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "NY-8.EE.7",
+        "text": "Solve linear equations in one variable."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 2,
+    "lessonTitle": "Keeping the Equation Balanced",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 3,
+    "lessonTitle": "Balanced Moves",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "NY-8.EE.7",
+        "text": "Solve linear equations in one variable."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 4,
+    "lessonTitle": "More Balanced Moves",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.EE.7",
+        "text": "Solve linear equations in one variable."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 5,
+    "lessonTitle": "Solving Any Linear Equation",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.7",
+        "text": "Solve linear equations in one variable."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 6,
+    "lessonTitle": "Strategic Solving",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.7",
+        "text": "Solve linear equations in one variable."
+      },
+      {
+        "code": "NY-8.EE.8.b",
+        "text": "Solve systems of two linear equations in two variables with integer coefficients: graphically, numerically using a table, and algebraically. Solve simple cases by inspection."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 7,
+    "lessonTitle": "All, Some, or No Solutions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.EE.8.a",
+        "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously. Recognize when the system has one solution, no solution, or infinitely many solutions."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 8,
+    "lessonTitle": "How Many Solutions?",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.8.a",
+        "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously. Recognize when the system has one solution, no solution, or infinitely many solutions."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 9,
+    "lessonTitle": "When Are They the Same?",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.EE.7",
+        "text": "Solve linear equations in one variable."
+      },
+      {
+        "code": "NY-8.EE.8",
+        "text": "Analyze and solve pairs of simultaneous linear equations."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 10,
+    "lessonTitle": "On or Off the Line?",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.EE.8",
+        "text": "Analyze and solve pairs of simultaneous linear equations."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 11,
+    "lessonTitle": "On Both of the Lines",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.EE.8",
+        "text": "Analyze and solve pairs of simultaneous linear equations."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 12,
+    "lessonTitle": "Systems of Equations",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "NY-8.EE.8",
+        "text": "Analyze and solve pairs of simultaneous linear equations."
+      },
+      {
+        "code": "NY-8.EE.8.a",
+        "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously. Recognize when the system has one solution, no solution, or infinitely many solutions."
+      },
+      {
+        "code": "NY-8.EE.8.b",
+        "text": "Solve systems of two linear equations in two variables with integer coefficients: graphically, numerically using a table, and algebraically. Solve simple cases by inspection."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 13,
+    "lessonTitle": "Solving Systems of Equations",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.8",
+        "text": "Analyze and solve pairs of simultaneous linear equations."
+      },
+      {
+        "code": "NY-8.EE.8.a",
+        "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously. Recognize when the system has one solution, no solution, or infinitely many solutions."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 14,
+    "lessonTitle": "Solving More Systems",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.8",
+        "text": "Analyze and solve pairs of simultaneous linear equations."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 15,
+    "lessonTitle": "Writing Systems of Equations",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "NY-8.EE.8",
+        "text": "Analyze and solve pairs of simultaneous linear equations."
+      },
+      {
+        "code": "NY-8.EE.8.b",
+        "text": "Solve systems of two linear equations in two variables with integer coefficients: graphically, numerically using a table, and algebraically. Solve simple cases by inspection."
+      },
+      {
+        "code": "NY-8.EE.8.c",
+        "text": "Solve real-world and mathematical problems involving systems of two linear equations in two variables with integer coefficients."
+      }
+    ]
+  },
+  {
+    "unit": "8.4",
+    "unitTitle": "Linear Equations and Linear Systems",
+    "lessonNumber": 16,
+    "lessonTitle": "Solving Problems with Systems of Equations",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "NY-8.EE.8.c",
+        "text": "Solve real-world and mathematical problems involving systems of two linear equations in two variables with integer coefficients."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 1,
+    "lessonTitle": "Inputs and Outputs",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.F.1",
+        "text": "Understand that a function is a rule that assigns to each input exactly one output. The graph of a function is the set of ordered pairs consisting of an input and the corresponding output."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 2,
+    "lessonTitle": "Introduction to Functions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.F.1",
+        "text": "Understand that a function is a rule that assigns to each input exactly one output. The graph of a function is the set of ordered pairs consisting of an input and the corresponding output."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 3,
+    "lessonTitle": "Equations for Functions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.F.1",
+        "text": "Understand that a function is a rule that assigns to each input exactly one output. The graph of a function is the set of ordered pairs consisting of an input and the corresponding output."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 4,
+    "lessonTitle": "Tables, Equations, and Graphs of Functions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "NY-8.F.1",
+        "text": "Understand that a function is a rule that assigns to each input exactly one output. The graph of a function is the set of ordered pairs consisting of an input and the corresponding output."
+      },
+      {
+        "code": "NY-8.F.3",
+        "text": "Interpret the equation y = mx + b as defining a linear function, whose graph is a straight line. Recognize examples of functions that are linear and non-linear."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 5,
+    "lessonTitle": "More Graphs of Functions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "NY-8.F.1",
+        "text": "Understand that a function is a rule that assigns to each input exactly one output. The graph of a function is the set of ordered pairs consisting of an input and the corresponding output."
+      },
+      {
+        "code": "NY-8.F.5",
+        "text": "Describe qualitatively the functional relationship between two quantities by analyzing a graph. Sketch a graph that exhibits the qualitative features of a function that has been described in a real-world context."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 6,
+    "lessonTitle": "Even More Graphs of Functions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.F.5",
+        "text": "Describe qualitatively the functional relationship between two quantities by analyzing a graph. Sketch a graph that exhibits the qualitative features of a function that has been described in a real-world context."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 7,
+    "lessonTitle": "Connecting Representations of Functions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.F.2",
+        "text": "Compare properties of two functions each represented in a different way (algebraically, graphically, numerically in tables, or by verbal descriptions)."
+      },
+      {
+        "code": "NY-8.F.3",
+        "text": "Interpret the equation y = mx + b as defining a linear function, whose graph is a straight line. Recognize examples of functions that are linear and non-linear."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 8,
+    "lessonTitle": "Linear Functions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.F.2",
+        "text": "Compare properties of two functions each represented in a different way (algebraically, graphically, numerically in tables, or by verbal descriptions)."
+      },
+      {
+        "code": "NY-8.F.3",
+        "text": "Interpret the equation y = mx + b as defining a linear function, whose graph is a straight line. Recognize examples of functions that are linear and non-linear."
+      },
+      {
+        "code": "NY-8.F.4",
+        "text": "Construct a function to model a linear relationship between two quantities. Determine the rate of change and initial value of the function from a description of a relationship or from two (x, y) values, including reading these from a table or from a graph. Interpret the rate of change and initial value of a linear function in terms of the situation it models, and in terms of its graph or a table of values."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 9,
+    "lessonTitle": "Linear Models",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "NY-8.F.4",
+        "text": "Construct a function to model a linear relationship between two quantities. Determine the rate of change and initial value of the function from a description of a relationship or from two (x, y) values, including reading these from a table or from a graph. Interpret the rate of change and initial value of a linear function in terms of the situation it models, and in terms of its graph or a table of values."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 10,
+    "lessonTitle": "Piecewise Linear Functions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "NY-8.F.4",
+        "text": "Construct a function to model a linear relationship between two quantities. Determine the rate of change and initial value of the function from a description of a relationship or from two (x, y) values, including reading these from a table or from a graph. Interpret the rate of change and initial value of a linear function in terms of the situation it models, and in terms of its graph or a table of values."
+      },
+      {
+        "code": "NY-8.F.5",
+        "text": "Describe qualitatively the functional relationship between two quantities by analyzing a graph. Sketch a graph that exhibits the qualitative features of a function that has been described in a real-world context."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 11,
+    "lessonTitle": "Filling Containers",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "NY-8.F.4",
+        "text": "Construct a function to model a linear relationship between two quantities. Determine the rate of change and initial value of the function from a description of a relationship or from two (x, y) values, including reading these from a table or from a graph. Interpret the rate of change and initial value of a linear function in terms of the situation it models, and in terms of its graph or a table of values."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 12,
+    "lessonTitle": "How Much Will Fit?",
+    "grade": 8,
+    "standards": []
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 13,
+    "lessonTitle": "The Volume of a Cylinder",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G.9",
+        "text": "Given the formulas for the volume of cones, cylinders, and spheres, solve mathematical and real-world problems."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 14,
+    "lessonTitle": "Finding Cylinder Dimensions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G.9",
+        "text": "Given the formulas for the volume of cones, cylinders, and spheres, solve mathematical and real-world problems."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 15,
+    "lessonTitle": "The Volume of a Cone",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G.9",
+        "text": "Given the formulas for the volume of cones, cylinders, and spheres, solve mathematical and real-world problems."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 16,
+    "lessonTitle": "Finding Cone Dimensions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "NY-8.G.9",
+        "text": "Given the formulas for the volume of cones, cylinders, and spheres, solve mathematical and real-world problems."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 17,
+    "lessonTitle": "Scaling One Dimension",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.F.1",
+        "text": "Understand that a function is a rule that assigns to each input exactly one output. The graph of a function is the set of ordered pairs consisting of an input and the corresponding output."
+      },
+      {
+        "code": "NY-8.G.9",
+        "text": "Given the formulas for the volume of cones, cylinders, and spheres, solve mathematical and real-world problems."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 18,
+    "lessonTitle": "Scaling Two Dimensions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.F.3",
+        "text": "Interpret the equation y = mx + b as defining a linear function, whose graph is a straight line. Recognize examples of functions that are linear and non-linear."
+      },
+      {
+        "code": "NY-8.G.9",
+        "text": "Given the formulas for the volume of cones, cylinders, and spheres, solve mathematical and real-world problems."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 19,
+    "lessonTitle": "Estimating a Hemisphere",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G.9",
+        "text": "Given the formulas for the volume of cones, cylinders, and spheres, solve mathematical and real-world problems."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 20,
+    "lessonTitle": "The Volume of a Sphere",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G.9",
+        "text": "Given the formulas for the volume of cones, cylinders, and spheres, solve mathematical and real-world problems."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 21,
+    "lessonTitle": "Cylinders, Cones, and Spheres",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.G.9",
+        "text": "Given the formulas for the volume of cones, cylinders, and spheres, solve mathematical and real-world problems."
+      }
+    ]
+  },
+  {
+    "unit": "8.5",
+    "unitTitle": "Functions and Volume",
+    "lessonNumber": 22,
+    "lessonTitle": "Volume As a Function of . . .",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G.9",
+        "text": "Given the formulas for the volume of cones, cylinders, and spheres, solve mathematical and real-world problems."
+      }
+    ]
+  },
+  {
+    "unit": "8.6",
+    "unitTitle": "Associations in Data",
+    "lessonNumber": 1,
+    "lessonTitle": "Organizing Data",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "NY-8.SP.1",
+        "text": "Construct and interpret scatter plots for bivariate measurement data to investigate patterns of association between two quantities. Describe patterns such as clustering, outliers, positive or negative association, linear association, and nonlinear association."
+      }
+    ]
+  },
+  {
+    "unit": "8.6",
+    "unitTitle": "Associations in Data",
+    "lessonNumber": 2,
+    "lessonTitle": "Plotting Data",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.SP.1",
+        "text": "Construct and interpret scatter plots for bivariate measurement data to investigate patterns of association between two quantities. Describe patterns such as clustering, outliers, positive or negative association, linear association, and nonlinear association."
+      }
+    ]
+  },
+  {
+    "unit": "8.6",
+    "unitTitle": "Associations in Data",
+    "lessonNumber": 3,
+    "lessonTitle": "What a Point in a Scatter Plot Means",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.SP.1",
+        "text": "Construct and interpret scatter plots for bivariate measurement data to investigate patterns of association between two quantities. Describe patterns such as clustering, outliers, positive or negative association, linear association, and nonlinear association."
+      },
+      {
+        "code": "NY-8.SP.3",
+        "text": "Use the equation of a linear model to solve problems in the context of bivariate measurement data, interpreting the slope and intercept."
+      }
+    ]
+  },
+  {
+    "unit": "8.6",
+    "unitTitle": "Associations in Data",
+    "lessonNumber": 4,
+    "lessonTitle": "Fitting a Line to Data",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.SP.1",
+        "text": "Construct and interpret scatter plots for bivariate measurement data to investigate patterns of association between two quantities. Describe patterns such as clustering, outliers, positive or negative association, linear association, and nonlinear association."
+      },
+      {
+        "code": "NY-8.SP.2",
+        "text": "Understand that straight lines are widely used to model relationships between two quantitative variables. For scatter plots that suggest a linear association, informally fit a straight line, and informally assess the model fit by judging the closeness of the data points to the line."
+      }
+    ]
+  },
+  {
+    "unit": "8.6",
+    "unitTitle": "Associations in Data",
+    "lessonNumber": 5,
+    "lessonTitle": "Describing Trends in Scatter Plots",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.SP.1",
+        "text": "Construct and interpret scatter plots for bivariate measurement data to investigate patterns of association between two quantities. Describe patterns such as clustering, outliers, positive or negative association, linear association, and nonlinear association."
+      },
+      {
+        "code": "NY-8.SP.2",
+        "text": "Understand that straight lines are widely used to model relationships between two quantitative variables. For scatter plots that suggest a linear association, informally fit a straight line, and informally assess the model fit by judging the closeness of the data points to the line."
+      }
+    ]
+  },
+  {
+    "unit": "8.6",
+    "unitTitle": "Associations in Data",
+    "lessonNumber": 6,
+    "lessonTitle": "The Slope of a Fitted Line",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.SP.1",
+        "text": "Construct and interpret scatter plots for bivariate measurement data to investigate patterns of association between two quantities. Describe patterns such as clustering, outliers, positive or negative association, linear association, and nonlinear association."
+      },
+      {
+        "code": "NY-8.SP.2",
+        "text": "Understand that straight lines are widely used to model relationships between two quantitative variables. For scatter plots that suggest a linear association, informally fit a straight line, and informally assess the model fit by judging the closeness of the data points to the line."
+      },
+      {
+        "code": "NY-8.SP.3",
+        "text": "Use the equation of a linear model to solve problems in the context of bivariate measurement data, interpreting the slope and intercept."
+      }
+    ]
+  },
+  {
+    "unit": "8.6",
+    "unitTitle": "Associations in Data",
+    "lessonNumber": 7,
+    "lessonTitle": "Observing More Patterns in Scatter Plots",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.SP.1",
+        "text": "Construct and interpret scatter plots for bivariate measurement data to investigate patterns of association between two quantities. Describe patterns such as clustering, outliers, positive or negative association, linear association, and nonlinear association."
+      }
+    ]
+  },
+  {
+    "unit": "8.6",
+    "unitTitle": "Associations in Data",
+    "lessonNumber": 8,
+    "lessonTitle": "Analyzing Bivariate Data",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "NY-8.SP.1",
+        "text": "Construct and interpret scatter plots for bivariate measurement data to investigate patterns of association between two quantities. Describe patterns such as clustering, outliers, positive or negative association, linear association, and nonlinear association."
+      },
+      {
+        "code": "NY-8.SP.2",
+        "text": "Understand that straight lines are widely used to model relationships between two quantitative variables. For scatter plots that suggest a linear association, informally fit a straight line, and informally assess the model fit by judging the closeness of the data points to the line."
+      },
+      {
+        "code": "NY-8.SP.3",
+        "text": "Use the equation of a linear model to solve problems in the context of bivariate measurement data, interpreting the slope and intercept."
+      }
+    ]
+  },
+  {
+    "unit": "8.6",
+    "unitTitle": "Associations in Data",
+    "lessonNumber": 9,
+    "lessonTitle": "Looking for Associations",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      }
+    ]
+  },
+  {
+    "unit": "8.6",
+    "unitTitle": "Associations in Data",
+    "lessonNumber": 10,
+    "lessonTitle": "Using Data Displays to Find Associations",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      }
+    ]
+  },
+  {
+    "unit": "8.6",
+    "unitTitle": "Associations in Data",
+    "lessonNumber": 11,
+    "lessonTitle": "Gone In 30 Seconds",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 1,
+    "lessonTitle": "Exponent Review",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.EE.1",
+        "text": "Know and apply the properties of integer exponents to generate equivalent numerical expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 2,
+    "lessonTitle": "Multiplying Powers of 10",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.EE.1",
+        "text": "Know and apply the properties of integer exponents to generate equivalent numerical expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 3,
+    "lessonTitle": "Powers of Powers of 10",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.EE.1",
+        "text": "Know and apply the properties of integer exponents to generate equivalent numerical expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 4,
+    "lessonTitle": "Dividing Powers of 10",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.EE.1",
+        "text": "Know and apply the properties of integer exponents to generate equivalent numerical expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 5,
+    "lessonTitle": "Negative Exponents with Powers of 10",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.EE.1",
+        "text": "Know and apply the properties of integer exponents to generate equivalent numerical expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 6,
+    "lessonTitle": "What About Other Bases?",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.EE.1",
+        "text": "Know and apply the properties of integer exponents to generate equivalent numerical expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 7,
+    "lessonTitle": "Practice with Rational Bases",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.1",
+        "text": "Know and apply the properties of integer exponents to generate equivalent numerical expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 8,
+    "lessonTitle": "Combining Bases",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.EE.1",
+        "text": "Know and apply the properties of integer exponents to generate equivalent numerical expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 9,
+    "lessonTitle": "Describing Large and Small Numbers Using Powers of 10",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.EE.3",
+        "text": "Use numbers expressed in the form of a single digit times an integer power of 10 to estimate very large or very small quantities, and to express how many times as much one is than the other."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 10,
+    "lessonTitle": "Representing Large Numbers on the Number Line",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.3",
+        "text": "Use numbers expressed in the form of a single digit times an integer power of 10 to estimate very large or very small quantities, and to express how many times as much one is than the other."
+      },
+      {
+        "code": "NY-8.EE.4",
+        "text": "Perform multiplication and division with numbers expressed in scientific notation, including problems where both standard decimal form and scientific notation are used. Use scientific notation and choose units of appropriate size for measurements of very large or very small quantities. Interpret scientific notation that has been generated by technology."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 11,
+    "lessonTitle": "Representing Small Numbers on the Number Line",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.EE.1",
+        "text": "Know and apply the properties of integer exponents to generate equivalent numerical expressions."
+      },
+      {
+        "code": "NY-8.EE.3",
+        "text": "Use numbers expressed in the form of a single digit times an integer power of 10 to estimate very large or very small quantities, and to express how many times as much one is than the other."
+      },
+      {
+        "code": "NY-8.EE.4",
+        "text": "Perform multiplication and division with numbers expressed in scientific notation, including problems where both standard decimal form and scientific notation are used. Use scientific notation and choose units of appropriate size for measurements of very large or very small quantities. Interpret scientific notation that has been generated by technology."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 12,
+    "lessonTitle": "Applications of Arithmetic with Powers of 10",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.EE.3",
+        "text": "Use numbers expressed in the form of a single digit times an integer power of 10 to estimate very large or very small quantities, and to express how many times as much one is than the other."
+      },
+      {
+        "code": "NY-8.EE.4",
+        "text": "Perform multiplication and division with numbers expressed in scientific notation, including problems where both standard decimal form and scientific notation are used. Use scientific notation and choose units of appropriate size for measurements of very large or very small quantities. Interpret scientific notation that has been generated by technology."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 13,
+    "lessonTitle": "Definition of Scientific Notation",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.EE.4",
+        "text": "Perform multiplication and division with numbers expressed in scientific notation, including problems where both standard decimal form and scientific notation are used. Use scientific notation and choose units of appropriate size for measurements of very large or very small quantities. Interpret scientific notation that has been generated by technology."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 14,
+    "lessonTitle": "Estimating with Scientific Notation",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "NY-8.EE.1",
+        "text": "Know and apply the properties of integer exponents to generate equivalent numerical expressions."
+      },
+      {
+        "code": "NY-8.EE.3",
+        "text": "Use numbers expressed in the form of a single digit times an integer power of 10 to estimate very large or very small quantities, and to express how many times as much one is than the other."
+      },
+      {
+        "code": "NY-8.EE.4",
+        "text": "Perform multiplication and division with numbers expressed in scientific notation, including problems where both standard decimal form and scientific notation are used. Use scientific notation and choose units of appropriate size for measurements of very large or very small quantities. Interpret scientific notation that has been generated by technology."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 15,
+    "lessonTitle": "Adding and Subtracting with Scientific Notation",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.EE.4",
+        "text": "Perform multiplication and division with numbers expressed in scientific notation, including problems where both standard decimal form and scientific notation are used. Use scientific notation and choose units of appropriate size for measurements of very large or very small quantities. Interpret scientific notation that has been generated by technology."
+      }
+    ]
+  },
+  {
+    "unit": "8.7",
+    "unitTitle": "Exponents and Scientific Notation",
+    "lessonNumber": 16,
+    "lessonTitle": "Is a Smartphone Smart Enough to Go to the Moon?",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "MP.4",
+        "text": "Model with mathematics."
+      },
+      {
+        "code": "NY-8.EE.3",
+        "text": "Use numbers expressed in the form of a single digit times an integer power of 10 to estimate very large or very small quantities, and to express how many times as much one is than the other."
+      },
+      {
+        "code": "NY-8.EE.4",
+        "text": "Perform multiplication and division with numbers expressed in scientific notation, including problems where both standard decimal form and scientific notation are used. Use scientific notation and choose units of appropriate size for measurements of very large or very small quantities. Interpret scientific notation that has been generated by technology."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 1,
+    "lessonTitle": "The Areas of Squares",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "MP.5",
+        "text": "Use appropriate tools strategically."
+      },
+      {
+        "code": "NY-8.NS.2",
+        "text": "Use rational approximations of irrational numbers to compare the size of irrational numbers, locate them approximately on a number line, and estimate the value of expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 2,
+    "lessonTitle": "Side Lengths and Areas",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.2",
+        "text": "Use square root and cube root symbols to represent solutions to equations of the form x2 = p and x3 = p, where p is a positive rational number. Know square roots of perfect squares up to 225 and cube roots of perfect cubes up to 125. Know that the square root of a non-perfect square is irrational."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 3,
+    "lessonTitle": "Square Roots",
+    "grade": 8,
+    "standards": []
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 4,
+    "lessonTitle": "Rational and Irrational Numbers",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.6",
+        "text": "Attend to precision."
+      },
+      {
+        "code": "NY-8.EE.2",
+        "text": "Use square root and cube root symbols to represent solutions to equations of the form x2 = p and x3 = p, where p is a positive rational number. Know square roots of perfect squares up to 225 and cube roots of perfect cubes up to 125. Know that the square root of a non-perfect square is irrational."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 5,
+    "lessonTitle": "Square Roots on the Number Line",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.EE.2",
+        "text": "Use square root and cube root symbols to represent solutions to equations of the form x2 = p and x3 = p, where p is a positive rational number. Know square roots of perfect squares up to 225 and cube roots of perfect cubes up to 125. Know that the square root of a non-perfect square is irrational."
+      },
+      {
+        "code": "NY-8.NS.2",
+        "text": "Use rational approximations of irrational numbers to compare the size of irrational numbers, locate them approximately on a number line, and estimate the value of expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 6,
+    "lessonTitle": "Reasoning about Square Roots",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "NY-8.EE.2",
+        "text": "Use square root and cube root symbols to represent solutions to equations of the form x2 = p and x3 = p, where p is a positive rational number. Know square roots of perfect squares up to 225 and cube roots of perfect cubes up to 125. Know that the square root of a non-perfect square is irrational."
+      },
+      {
+        "code": "NY-8.NS.2",
+        "text": "Use rational approximations of irrational numbers to compare the size of irrational numbers, locate them approximately on a number line, and estimate the value of expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 7,
+    "lessonTitle": "Finding Side Lengths of Triangles",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.G.7",
+        "text": "Apply the Pythagorean Theorem to determine unknown side lengths in right triangles in real-world and mathematical problems in two and three dimensions."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 8,
+    "lessonTitle": "A Proof of the Pythagorean Theorem",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.1",
+        "text": "Make sense of problems and persevere in solving them."
+      },
+      {
+        "code": "NY-8.G.6",
+        "text": "Understand a proof of the Pythagorean Theorem and its converse."
+      },
+      {
+        "code": "NY-8.G.7",
+        "text": "Apply the Pythagorean Theorem to determine unknown side lengths in right triangles in real-world and mathematical problems in two and three dimensions."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 9,
+    "lessonTitle": "Finding Unknown Side Lengths",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G.7",
+        "text": "Apply the Pythagorean Theorem to determine unknown side lengths in right triangles in real-world and mathematical problems in two and three dimensions."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 10,
+    "lessonTitle": "The Converse",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G.6",
+        "text": "Understand a proof of the Pythagorean Theorem and its converse."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 11,
+    "lessonTitle": "Applications of the Pythagorean Theorem",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.2",
+        "text": "Reason abstractly and quantitatively."
+      },
+      {
+        "code": "NY-8.EE.2",
+        "text": "Use square root and cube root symbols to represent solutions to equations of the form x2 = p and x3 = p, where p is a positive rational number. Know square roots of perfect squares up to 225 and cube roots of perfect cubes up to 125. Know that the square root of a non-perfect square is irrational."
+      },
+      {
+        "code": "NY-8.G.7",
+        "text": "Apply the Pythagorean Theorem to determine unknown side lengths in right triangles in real-world and mathematical problems in two and three dimensions."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 12,
+    "lessonTitle": "More Applications of the Pythagorean Theorem",
+    "grade": 8,
+    "standards": []
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 13,
+    "lessonTitle": "Finding Distances in the Coordinate Plane",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "NY-8.G.8",
+        "text": "Apply the Pythagorean Theorem to find the distance between two points in a coordinate system."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 14,
+    "lessonTitle": "Edge Lengths and Volumes",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.EE.2",
+        "text": "Use square root and cube root symbols to represent solutions to equations of the form x2 = p and x3 = p, where p is a positive rational number. Know square roots of perfect squares up to 225 and cube roots of perfect cubes up to 125. Know that the square root of a non-perfect square is irrational."
+      },
+      {
+        "code": "NY-8.NS.2",
+        "text": "Use rational approximations of irrational numbers to compare the size of irrational numbers, locate them approximately on a number line, and estimate the value of expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 15,
+    "lessonTitle": "Cube Roots",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.3",
+        "text": "Construct viable arguments and critique the reasoning of others."
+      },
+      {
+        "code": "NY-8.EE.2",
+        "text": "Use square root and cube root symbols to represent solutions to equations of the form x2 = p and x3 = p, where p is a positive rational number. Know square roots of perfect squares up to 225 and cube roots of perfect cubes up to 125. Know that the square root of a non-perfect square is irrational."
+      },
+      {
+        "code": "NY-8.NS.2",
+        "text": "Use rational approximations of irrational numbers to compare the size of irrational numbers, locate them approximately on a number line, and estimate the value of expressions."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 16,
+    "lessonTitle": "Decimal Representations of Rational Numbers",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.NS.1",
+        "text": "Understand informally that every number has a decimal expansion; for rational numbers show that the decimal expansion eventually repeats. Know that other numbers that are not rational are called irrational."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 17,
+    "lessonTitle": "Infinite Decimal Expansions",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "MP.7",
+        "text": "Look for and make use of structure."
+      },
+      {
+        "code": "MP.8",
+        "text": "Look for and express regularity in repeated reasoning."
+      },
+      {
+        "code": "NY-8.NS.1",
+        "text": "Understand informally that every number has a decimal expansion; for rational numbers show that the decimal expansion eventually repeats. Know that other numbers that are not rational are called irrational."
+      }
+    ]
+  },
+  {
+    "unit": "8.8",
+    "unitTitle": "Pythagorean Theorem and Irrational Numbers",
+    "lessonNumber": 18,
+    "lessonTitle": "When Is the Same Size Not the Same Size?",
+    "grade": 8,
+    "standards": [
+      {
+        "code": "NY-8.G.7",
+        "text": "Apply the Pythagorean Theorem to determine unknown side lengths in right triangles in real-world and mathematical problems in two and three dimensions."
+      }
+    ]
+  }
+]

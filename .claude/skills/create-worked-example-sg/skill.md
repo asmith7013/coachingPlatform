@@ -75,42 +75,83 @@ Ensure your data matches the structure in `DATABASE-SCHEMA.md`:
 
 ### Step 5: Save to Database
 
-Import and use the server action:
+Use mongosh to save the deck directly to MongoDB:
 
-```typescript
-import { saveWorkedExampleDeck } from '@actions/worked-examples';
-import type { CreateWorkedExampleDeckInput } from '@zod-schema/worked-example-deck';
+**Process:**
+1. Create a JavaScript file with the deck data structure
+2. Use mongosh with the `--file` flag to execute the script
+3. The script will insert the document into the `workedexampledecks` collection (Mongoose default naming)
 
-const deckData: CreateWorkedExampleDeckInput = {
-  title: "...",
-  slug: "...", // kebab-case URL-safe version of title
-  mathConcept: "...",
-  mathStandard: "...",
-  gradeLevel: 7,
+**Example:**
+
+```javascript
+// temp-save-deck.js
+const deckData = {
+  title: "Solving One-Step Division Equations",
+  slug: "solving-division-equations-grade6", // kebab-case URL-safe version of title
+  mathConcept: "One-Step Equations",
+  mathStandard: "6.EE.B.7",
+  gradeLevel: 6,
   isPublic: true,
+  generatedBy: "ai",
+  sourceImage: "problem-image.png",
+  createdBy: "system",
+
+  files: {
+    pageComponent: "src/app/presentations/solving-division-equations-grade6/page.tsx",
+    dataFile: "src/app/presentations/solving-division-equations-grade6/data.ts",
+  },
+
   slides: {
     slide1: { /* ... */ },
     slide2: { /* ... */ },
     // ... all 9 slides
-  }
+  },
+
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
-const result = await saveWorkedExampleDeck(deckData);
+// Check if deck already exists and delete if it does
+// Note: Use 'workedexampledecks' (Mongoose's default pluralized lowercase collection name)
+const existingDeck = db.workedexampledecks.findOne({ slug: deckData.slug });
+if (existingDeck) {
+  print('⚠️  Deck already exists. Deleting old version...');
+  db.workedexampledecks.deleteOne({ slug: deckData.slug });
+}
 
-if (result.success) {
-  // Provide user with link to view deck
+// Insert the deck
+const result = db.workedexampledecks.insertOne(deckData);
+
+if (result.acknowledged) {
+  print('✅ Deck saved successfully!');
+  print('Deck ID: ' + result.insertedId);
+  print('Slug: ' + deckData.slug);
+  print('\n🔗 View at: /presentations/' + deckData.slug);
 } else {
-  // Handle error
+  print('❌ Error: Failed to insert deck');
 }
 ```
+
+**Execute with mongosh:**
+```bash
+# The DATABASE_URL is stored in .env.local
+# Use it directly from the environment
+mongosh "$DATABASE_URL" --file temp-save-deck.js
+```
+
+**Note on Security:**
+- The DATABASE_URL is read from the `.env.local` file (not hardcoded)
+- Make sure your shell has access to environment variables
+- If the env var isn't available, load it first: `export $(cat .env.local | grep DATABASE_URL | xargs)`
 
 ## Output
 
 Provide the user with:
 1. **Summary** of the deck created (title, concept, grade level)
 2. **The 3 scenarios** you generated and why you chose them
-3. **Link to view**: `/presentations/slide-viewer/{slug}`
-4. **Link to list**: `/presentations/slide-viewer`
+3. **Link to view**: `/presentations/{slug}`
+4. **Link to list**: `/presentations`
 
 ## Quality Checklist
 

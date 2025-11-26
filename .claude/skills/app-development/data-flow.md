@@ -92,27 +92,25 @@ export async function getData() {
 
 ### Using mongosh CLI
 
-This project uses MongoDB Atlas. Connection string is in `.env.local`:
+This project uses MongoDB Atlas. Connection string is in `.env.local` as `DATABASE_URL`.
 
-```bash
-DATABASE_URL="mongodb+srv://asmith7013:pnz0uvb5ztj_qxj0EXQ@coaching.go309.mongodb.net/ai-coaching-platform"
-```
+**Always use the environment variable instead of hardcoding credentials.**
 
 Common mongosh patterns:
 
 ```bash
 # Find documents
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 db['collection-name'].find({ field: 'value' }).forEach(printjson);
 "
 
 # Count documents
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 print('Total:', db['collection-name'].countDocuments());
 "
 
 # Update documents
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 db['collection-name'].updateOne(
   { _id: ObjectId('...') },
   { \$set: { field: 'value' } }
@@ -120,7 +118,7 @@ db['collection-name'].updateOne(
 "
 
 # Aggregation
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 db['collection-name'].aggregate([
   { \$group: { _id: '\$field', count: { \$sum: 1 } } }
 ]).forEach(printjson);

@@ -13,7 +13,7 @@ import {
   RevealSlide,
   ReasoningSlide,
   PracticeSlide,
-} from '../../slide-creation';
+} from '../slide-creation';
 import * as LucideIcons from 'lucide-react';
 
 export default function WorkedExampleViewer() {

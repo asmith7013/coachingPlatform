@@ -64,7 +64,15 @@ export async function listWorkedExampleDecks(filters?: ListDecksFilters) {
 
       return {
         success: true,
-        data: decks.map(d => d.toJSON()),
+        data: decks.map(d => {
+          const json = d.toJSON();
+          // Convert ObjectId to string for client compatibility
+          return {
+            ...json,
+            _id: d._id.toString(),
+            id: d._id.toString(),
+          };
+        }),
         pagination: {
           total,
           limit: filters?.limit || 50,

@@ -1,7 +1,6 @@
 .
 ├── AGENTS.md
 ├── CLAUDE.md
-├── SCHEMA_CHANGES_SUMMARY.md
 ├── amplify
 │   ├── docs.md
 │   ├── scope.md
@@ -100,7 +99,15 @@
 │   │   ├── podsie-old.md
 │   │   ├── podsie.md
 │   │   └── roadmap.html
-│   ├── student.json
+│   ├── standands8.html
+│   ├── standards6.html
+│   ├── standards6.json
+│   ├── standards7.html
+│   ├── standards7.json
+│   ├── standards8.json
+│   ├── standards8.txt
+│   ├── standardsAlg1.html
+│   ├── standardsAlg1.json
 │   ├── table-of-contents.md
 │   ├── tanstack-table-implementation.md
 │   ├── token-tailwind-mapping.md
@@ -241,6 +248,10 @@
 │   ├── snorkl-simple-scraper.ts
 │   ├── test-migrate-one-skill.ts
 │   ├── test-monday-token.mjs
+│   ├── update-alg1-standards.js
+│   ├── update-grade6-standards.js
+│   ├── update-grade7-standards.js
+│   ├── update-grade8-standards.js
 │   └── update-unit-8-4-podsie-data.ts
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
@@ -352,11 +363,16 @@
 │   │   │   │   ├── factories.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   └── operations.ts
-│   │   │   └── visits
-│   │   │       ├── coachingLogs.ts
-│   │   │       ├── cycles.ts
-│   │   │       ├── visit-schedule-data.ts
-│   │   │       └── visits.ts
+│   │   │   ├── visits
+│   │   │   │   ├── coachingLogs.ts
+│   │   │   │   ├── cycles.ts
+│   │   │   │   ├── visit-schedule-data.ts
+│   │   │   │   └── visits.ts
+│   │   │   └── worked-examples
+│   │   │       ├── get-deck.ts
+│   │   │       ├── index.ts
+│   │   │       ├── list-decks.ts
+│   │   │       └── save-deck.ts
 │   │   ├── analytics
 │   │   │   ├── attendance
 │   │   │   │   └── page.tsx
@@ -666,6 +682,20 @@
 │   │   │           └── page.tsx
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
+│   │   ├── presentations
+│   │   │   ├── [slug]
+│   │   │   │   └── page.tsx
+│   │   │   ├── page.tsx
+│   │   │   └── slide-creation
+│   │   │       ├── ContextSlide.tsx
+│   │   │       ├── PracticeSlide.tsx
+│   │   │       ├── PredictionSlide.tsx
+│   │   │       ├── ReasoningSlide.tsx
+│   │   │       ├── RevealSlide.tsx
+│   │   │       ├── TitleSlide.tsx
+│   │   │       ├── components
+│   │   │       │   └── DataTable.tsx
+│   │   │       └── index.ts
 │   │   ├── roadmaps
 │   │   │   ├── assessment-scraper
 │   │   │   │   ├── actions
@@ -715,6 +745,7 @@
 │   │   │   │   │   ├── AssignmentCard.tsx
 │   │   │   │   │   ├── AssignmentProgressTable.tsx
 │   │   │   │   │   ├── CreateAssignmentModal.tsx
+│   │   │   │   │   ├── LessonProgressCard.tsx
 │   │   │   │   │   ├── SmartboardDisplay.tsx
 │   │   │   │   │   ├── SmartboardProgressBar.tsx
 │   │   │   │   │   └── index.ts
@@ -1545,11 +1576,12 @@
 │   │   │   │   ├── shared
 │   │   │   │   │   └── notes.model.ts
 │   │   │   │   ├── shared-options.ts
-│   │   │   │   └── visits
-│   │   │   │       ├── classroom-observation.model.ts
-│   │   │   │       ├── coaching-log.model.ts
-│   │   │   │       ├── index.ts
-│   │   │   │       └── visit.model.ts
+│   │   │   │   ├── visits
+│   │   │   │   │   ├── classroom-observation.model.ts
+│   │   │   │   │   ├── coaching-log.model.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── visit.model.ts
+│   │   │   │   └── worked-example-deck.model.ts
 │   │   │   ├── reference
 │   │   │   │   ├── core
 │   │   │   │   │   ├── cycle-helpers.ts
@@ -1650,11 +1682,12 @@
 │   │   │       │   ├── index.ts
 │   │   │       │   ├── notes.ts
 │   │   │       │   └── tagging-system.ts
-│   │   │       └── visits
-│   │   │           ├── classroom-observation.ts
-│   │   │           ├── coaching-log.ts
-│   │   │           ├── index.ts
-│   │   │           └── visit.ts
+│   │   │       ├── visits
+│   │   │       │   ├── classroom-observation.ts
+│   │   │       │   ├── coaching-log.ts
+│   │   │       │   ├── index.ts
+│   │   │       │   └── visit.ts
+│   │   │       └── worked-example-deck.ts
 │   │   ├── server
 │   │   │   ├── api
 │   │   │   │   ├── client
@@ -1900,4 +1933,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-546 directories, 1355 files
+551 directories, 1383 files

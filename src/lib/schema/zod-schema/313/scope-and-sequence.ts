@@ -38,6 +38,23 @@ export type Section = z.infer<typeof SectionZod>;
 // Array of section options for UI dropdowns
 export const SECTION_OPTIONS = SectionZod.options;
 
+/**
+ * Standard context enum - defines how a standard relates to the lesson
+ */
+export const StandardContextZod = z.enum(["current", "buildingOn", "buildingTowards"]);
+export type StandardContext = z.infer<typeof StandardContextZod>;
+
+/**
+ * Standard schema - represents a single educational standard
+ */
+export const StandardZod = z.object({
+  code: z.string().describe("Standard code (e.g., 'NY-8.G.1', 'MP.5')"),
+  text: z.string().describe("Full text description of the standard"),
+  context: StandardContextZod.optional().describe("Context of how the standard relates to the lesson: current (addressed in this lesson), buildingOn (prerequisite), or buildingTowards (future learning)"),
+});
+
+export type Standard = z.infer<typeof StandardZod>;
+
 export const ScopeAndSequenceFieldsSchema = z.object({
   grade: z.string().describe("Grade level (e.g., '8')"),
   unit: z.string().describe("Unit title with number (e.g., 'Unit 3 - Linear Relationships')"),
@@ -49,7 +66,7 @@ export const ScopeAndSequenceFieldsSchema = z.object({
   scopeSequenceTag: ScopeSequenceTagZod.optional().describe("Scope and sequence tag identifying which curriculum this lesson belongs to"),
   roadmapSkills: z.array(z.string()).default([]).describe("Array of roadmap skill numbers tagged to this lesson"),
   targetSkills: z.array(z.string()).default([]).describe("Array of target skill numbers for this lesson"),
-  standards: z.array(z.string()).default([]).describe("Array of NY state standards addressed in this lesson (e.g., 'NY-8.G.1.', 'NY-8.G.2.')"),
+  standards: z.array(StandardZod).default([]).describe("Array of standards addressed in this lesson (NY standards and Mathematical Practices)"),
 });
 
 // Full Scope and Sequence Schema with base document fields

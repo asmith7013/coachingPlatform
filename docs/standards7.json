@@ -1,0 +1,1949 @@
+[
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 1,
+    "lessonTitle": "What Are Scaled Copies?",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 2,
+    "lessonTitle": "Corresponding Parts and Scale Factors",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 3,
+    "lessonTitle": "Making Scaled Copies",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 4,
+    "lessonTitle": "Scaled Relationships",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 5,
+    "lessonTitle": "The Size of the Scale Factor",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 6,
+    "lessonTitle": "Scaling and Area",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      },
+      {
+        "code": "NY-7.G.6",
+        "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 7,
+    "lessonTitle": "Scale Drawings",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 8,
+    "lessonTitle": "Scale Drawings and Maps",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 9,
+    "lessonTitle": "Creating Scale Drawings",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 10,
+    "lessonTitle": "Changing Scales in Scale Drawings",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 11,
+    "lessonTitle": "Scales without Units",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 12,
+    "lessonTitle": "Units in Scale Drawings",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.1",
+    "unitTitle": "Scale Drawings",
+    "lessonNumber": 13,
+    "lessonTitle": "Draw It to Scale",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 1,
+    "lessonTitle": "One of These Things Is Not Like the Others",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 2,
+    "lessonTitle": "Introducing Proportional Relationships with Tables",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 3,
+    "lessonTitle": "More about Constant of Proportionality",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 4,
+    "lessonTitle": "Proportional Relationships and Equations",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 5,
+    "lessonTitle": "Two Equations for Each Relationship",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 6,
+    "lessonTitle": "Writing Equations to Represent Relationships",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 7,
+    "lessonTitle": "Comparing Relationships with Tables",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 8,
+    "lessonTitle": "Comparing Relationships with Equations",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.6",
+        "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms."
+      },
+      {
+        "code": "NY-7.RP.1",
+        "text": "Compute unit rates associated with ratios of fractions."
+      },
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 9,
+    "lessonTitle": "Solving Problems about Proportional Relationships",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 10,
+    "lessonTitle": "Introducing Graphs of Proportional Relationships",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 11,
+    "lessonTitle": "Interpreting Graphs of Proportional Relationships",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 12,
+    "lessonTitle": "Using Graphs to Compare Relationships",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 13,
+    "lessonTitle": "Two Graphs for Each Relationship",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 14,
+    "lessonTitle": "Four Representations",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.2",
+    "unitTitle": "Introducing Proportional Relationships",
+    "lessonNumber": 15,
+    "lessonTitle": "Using Water Efficiently",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.3",
+    "unitTitle": "Measuring Circles",
+    "lessonNumber": 1,
+    "lessonTitle": "How Well Can You Measure?",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.3",
+    "unitTitle": "Measuring Circles",
+    "lessonNumber": 2,
+    "lessonTitle": "Exploring Circles",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.3",
+    "unitTitle": "Measuring Circles",
+    "lessonNumber": 3,
+    "lessonTitle": "Exploring Circumference",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.4",
+        "text": "Apply the formulas for the area and circumference of a circle to solve problems."
+      },
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.3",
+    "unitTitle": "Measuring Circles",
+    "lessonNumber": 4,
+    "lessonTitle": "Applying Circumference",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.4",
+        "text": "Apply the formulas for the area and circumference of a circle to solve problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.3",
+    "unitTitle": "Measuring Circles",
+    "lessonNumber": 5,
+    "lessonTitle": "Circumference and Wheels",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.4",
+        "text": "Apply the formulas for the area and circumference of a circle to solve problems."
+      },
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      },
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.3",
+    "unitTitle": "Measuring Circles",
+    "lessonNumber": 6,
+    "lessonTitle": "Estimating Areas",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      },
+      {
+        "code": "NY-7.G.6",
+        "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms."
+      }
+    ]
+  },
+  {
+    "unit": "7.3",
+    "unitTitle": "Measuring Circles",
+    "lessonNumber": 7,
+    "lessonTitle": "Exploring the Area of a Circle",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.4",
+        "text": "Apply the formulas for the area and circumference of a circle to solve problems."
+      },
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.3",
+    "unitTitle": "Measuring Circles",
+    "lessonNumber": 8,
+    "lessonTitle": "Relating Area to Circumference",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.4",
+        "text": "Apply the formulas for the area and circumference of a circle to solve problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.3",
+    "unitTitle": "Measuring Circles",
+    "lessonNumber": 9,
+    "lessonTitle": "Applying Area of Circles",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.4",
+        "text": "Apply the formulas for the area and circumference of a circle to solve problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.3",
+    "unitTitle": "Measuring Circles",
+    "lessonNumber": 10,
+    "lessonTitle": "Distinguishing Circumference and Area",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.4",
+        "text": "Apply the formulas for the area and circumference of a circle to solve problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.3",
+    "unitTitle": "Measuring Circles",
+    "lessonNumber": 11,
+    "lessonTitle": "Stained-Glass Windows",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      },
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      },
+      {
+        "code": "NY-7.G.4",
+        "text": "Apply the formulas for the area and circumference of a circle to solve problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 1,
+    "lessonTitle": "Lots of Flags",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 2,
+    "lessonTitle": "Ratios and Rates With Fractions",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.1",
+        "text": "Compute unit rates associated with ratios of fractions."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 3,
+    "lessonTitle": "Revisiting Proportional Relationships",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.1",
+        "text": "Compute unit rates associated with ratios of fractions."
+      },
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 4,
+    "lessonTitle": "More than That, Less than That",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 5,
+    "lessonTitle": "Say It with Decimals",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.2",
+        "text": "Apply and extend previous understandings of multiplication and division and of fractions to multiply and divide rational numbers."
+      },
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 6,
+    "lessonTitle": "Increasing and Decreasing",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 7,
+    "lessonTitle": "One Hundred Percent",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 8,
+    "lessonTitle": "Percent Increase and Decrease with Equations",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 9,
+    "lessonTitle": "Part of a Percent",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 10,
+    "lessonTitle": "Tax and Tip",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 11,
+    "lessonTitle": "Percentage Contexts",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 12,
+    "lessonTitle": "Solving Multi-step Percentage Problems",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 13,
+    "lessonTitle": "Measurement Error",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 14,
+    "lessonTitle": "Percent Error",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 15,
+    "lessonTitle": "Changes on the Earth",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.4",
+    "unitTitle": "Proportional Relationships and Percentages",
+    "lessonNumber": 16,
+    "lessonTitle": "Posing Percentage Problems",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 1,
+    "lessonTitle": "Interpreting Negative Numbers",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.1",
+        "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 2,
+    "lessonTitle": "Changing Temperatures",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.1",
+        "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 3,
+    "lessonTitle": "Changing Elevation",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.1",
+        "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 4,
+    "lessonTitle": "Money and Debts",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.1",
+        "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 5,
+    "lessonTitle": "Representing Subtraction",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.1",
+        "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 6,
+    "lessonTitle": "Finding Differences",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.1",
+        "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 7,
+    "lessonTitle": "Adding and Subtracting to Solve Problems",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.1",
+        "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line."
+      },
+      {
+        "code": "NY-7.NS.3",
+        "text": "Solve real-world and mathematical problems involving the four operations with rational numbers."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 8,
+    "lessonTitle": "Multiplying Rational Numbers (Part 1)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.2",
+        "text": "Apply and extend previous understandings of multiplication and division and of fractions to multiply and divide rational numbers."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 9,
+    "lessonTitle": "Multiplying Rational Numbers (Part 2)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.2",
+        "text": "Apply and extend previous understandings of multiplication and division and of fractions to multiply and divide rational numbers."
+      },
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 10,
+    "lessonTitle": "Multiply!",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.2",
+        "text": "Apply and extend previous understandings of multiplication and division and of fractions to multiply and divide rational numbers."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 11,
+    "lessonTitle": "Dividing Rational Numbers",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.2",
+        "text": "Apply and extend previous understandings of multiplication and division and of fractions to multiply and divide rational numbers."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 12,
+    "lessonTitle": "Negative Rates",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      },
+      {
+        "code": "NY-7.NS.3",
+        "text": "Solve real-world and mathematical problems involving the four operations with rational numbers."
+      },
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 13,
+    "lessonTitle": "Expressions with Rational Numbers",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.3",
+        "text": "Solve real-world and mathematical problems involving the four operations with rational numbers."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 14,
+    "lessonTitle": "Solving Problems with Rational Numbers",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.3",
+        "text": "Solve real-world and mathematical problems involving the four operations with rational numbers."
+      },
+      {
+        "code": "NY-7.RP.2",
+        "text": "Recognize and represent proportional relationships between quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 15,
+    "lessonTitle": "Solving Equations with Rational Numbers",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      },
+      {
+        "code": "NY-7.NS.3",
+        "text": "Solve real-world and mathematical problems involving the four operations with rational numbers."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 16,
+    "lessonTitle": "Representing Contexts with Equations",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      },
+      {
+        "code": "NY-7.NS.3",
+        "text": "Solve real-world and mathematical problems involving the four operations with rational numbers."
+      }
+    ]
+  },
+  {
+    "unit": "7.5",
+    "unitTitle": "Rational Number Arithmetic",
+    "lessonNumber": 17,
+    "lessonTitle": "The Stock Market",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      },
+      {
+        "code": "NY-7.NS.3",
+        "text": "Solve real-world and mathematical problems involving the four operations with rational numbers."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 1,
+    "lessonTitle": "Relationships between Quantities",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 2,
+    "lessonTitle": "Reasoning about Contexts with Tape Diagrams",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 3,
+    "lessonTitle": "Reasoning about Equations with Tape Diagrams",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 4,
+    "lessonTitle": "Reasoning about Equations and Tape Diagrams (Part 1)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      },
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 5,
+    "lessonTitle": "Reasoning about Equations and Tape Diagrams (Part 2)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      },
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 6,
+    "lessonTitle": "Distinguishing between Two Types of Situations",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 7,
+    "lessonTitle": "Reasoning about Solving Equations (Part 1)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 8,
+    "lessonTitle": "Reasoning about Solving Equations (Part 2)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 9,
+    "lessonTitle": "Dealing with Negative Numbers",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 10,
+    "lessonTitle": "Different Options for Solving One Equation",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 11,
+    "lessonTitle": "Using Equations to Solve Problems",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      },
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 12,
+    "lessonTitle": "Solving Problems about Percent Increase or Decrease",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.2",
+        "text": "Understand that rewriting an expression in different forms in real-world and mathematical problems can reveal and explain how the quantities are related."
+      },
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      },
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 13,
+    "lessonTitle": "Reintroducing Inequalities",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 14,
+    "lessonTitle": "Finding Solutions to Inequalities in Context",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 15,
+    "lessonTitle": "Efficiently Solving Inequalities",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 16,
+    "lessonTitle": "Interpreting Inequalities",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 17,
+    "lessonTitle": "Modeling with Inequalities",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 18,
+    "lessonTitle": "Subtraction in Equivalent Expressions",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.1",
+        "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations."
+      },
+      {
+        "code": "NY-7.NS.1",
+        "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 19,
+    "lessonTitle": "Expanding and Factoring",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.1",
+        "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 20,
+    "lessonTitle": "Combining Like Terms (Part 1)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.1",
+        "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 21,
+    "lessonTitle": "Combining Like Terms (Part 2)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.1",
+        "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations."
+      }
+    ]
+  },
+  {
+    "unit": "7.6",
+    "unitTitle": "Expressions, Equations, and Inequalities",
+    "lessonNumber": 22,
+    "lessonTitle": "Applications of Expressions",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 1,
+    "lessonTitle": "Relationships of Angles",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 2,
+    "lessonTitle": "Adjacent Angles",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.5",
+        "text": "Use facts about supplementary, complementary, vertical, and adjacent angles in a multi-step problem to write and solve simple equations for an unknown angle in a figure."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 3,
+    "lessonTitle": "Nonadjacent Angles",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.5",
+        "text": "Use facts about supplementary, complementary, vertical, and adjacent angles in a multi-step problem to write and solve simple equations for an unknown angle in a figure."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 4,
+    "lessonTitle": "Solving for Unknown Angles",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.5",
+        "text": "Use facts about supplementary, complementary, vertical, and adjacent angles in a multi-step problem to write and solve simple equations for an unknown angle in a figure."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 5,
+    "lessonTitle": "Using Equations to Solve for Unknown Angles",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      },
+      {
+        "code": "NY-7.G.5",
+        "text": "Use facts about supplementary, complementary, vertical, and adjacent angles in a multi-step problem to write and solve simple equations for an unknown angle in a figure."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 6,
+    "lessonTitle": "Building Polygons (Part 1)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.2",
+        "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle."
+      },
+      {
+        "code": "NY-7.NS.1",
+        "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 7,
+    "lessonTitle": "Building Polygons (Part 2)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.2",
+        "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 8,
+    "lessonTitle": "Triangles with 3 Common Measures",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.2",
+        "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 9,
+    "lessonTitle": "Drawing Triangles (Part 1)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.2",
+        "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 10,
+    "lessonTitle": "Drawing Triangles (Part 2)",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.2",
+        "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 11,
+    "lessonTitle": "Slicing Solids",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.3",
+        "text": "Describe the two-dimensional shapes that result from slicing three-dimensional solids parallel or perpendicular to the base."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 12,
+    "lessonTitle": "Volume of Right Prisms",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.6",
+        "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 13,
+    "lessonTitle": "Decomposing Bases for Area",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.3",
+        "text": "Describe the two-dimensional shapes that result from slicing three-dimensional solids parallel or perpendicular to the base."
+      },
+      {
+        "code": "NY-7.G.6",
+        "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 14,
+    "lessonTitle": "Surface Area of Right Prisms",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.6",
+        "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 15,
+    "lessonTitle": "Distinguishing Volume and Surface Area",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.6",
+        "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 16,
+    "lessonTitle": "Applying Volume and Surface Area",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.6",
+        "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms."
+      }
+    ]
+  },
+  {
+    "unit": "7.7",
+    "unitTitle": "Angles, Triangles, and Prisms",
+    "lessonNumber": 17,
+    "lessonTitle": "Building Prisms",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.2",
+        "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle."
+      },
+      {
+        "code": "NY-7.G.6",
+        "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 1,
+    "lessonTitle": "Mystery Bags",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 2,
+    "lessonTitle": "Chance Experiments",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 3,
+    "lessonTitle": "What Are Probabilities?",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 4,
+    "lessonTitle": "Estimating Probabilities Through Repeated Experiments",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 5,
+    "lessonTitle": "More Estimating Probabilities",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 6,
+    "lessonTitle": "Estimating Probabilities Using Simulation",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.8",
+        "text": "Find probabilities of compound events using organized lists, tables, and tree diagrams. Understand that the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs. Represent sample spaces for compound events. Design and use a simulation to generate frequencies for compound events."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 7,
+    "lessonTitle": "Simulating Multi-step Experiments",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.8",
+        "text": "Find probabilities of compound events using organized lists, tables, and tree diagrams. Understand that the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs. Represent sample spaces for compound events. Design and use a simulation to generate frequencies for compound events."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 8,
+    "lessonTitle": "Keeping Track of All Possible Outcomes",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.8",
+        "text": "Find probabilities of compound events using organized lists, tables, and tree diagrams. Understand that the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs. Represent sample spaces for compound events. Design and use a simulation to generate frequencies for compound events."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 9,
+    "lessonTitle": "Multi-step Experiments",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.8",
+        "text": "Find probabilities of compound events using organized lists, tables, and tree diagrams. Understand that the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs. Represent sample spaces for compound events. Design and use a simulation to generate frequencies for compound events."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 10,
+    "lessonTitle": "Designing Simulations",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.8",
+        "text": "Find probabilities of compound events using organized lists, tables, and tree diagrams. Understand that the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs. Represent sample spaces for compound events. Design and use a simulation to generate frequencies for compound events."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 11,
+    "lessonTitle": "Comparing Groups",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.3",
+        "text": "Informally assess the degree of visual overlap of two quantitative data distributions."
+      },
+      {
+        "code": "NY-7.SP.4",
+        "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 12,
+    "lessonTitle": "Larger Populations",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.1",
+        "text": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 13,
+    "lessonTitle": "What Makes a Good Sample?",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.1",
+        "text": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 14,
+    "lessonTitle": "Sampling in a Fair Way",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.1",
+        "text": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 15,
+    "lessonTitle": "Estimating Population Measures of Center",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.1",
+        "text": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 16,
+    "lessonTitle": "Estimating Population Proportions",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.1",
+        "text": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 17,
+    "lessonTitle": "More about Sampling Variability",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.1",
+        "text": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier."
+      },
+      {
+        "code": "NY-7.SP.4",
+        "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 18,
+    "lessonTitle": "Comparing Populations Using Samples",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.1",
+        "text": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier."
+      },
+      {
+        "code": "NY-7.SP.4",
+        "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations."
+      }
+    ]
+  },
+  {
+    "unit": "7.8",
+    "unitTitle": "Probability and Sampling",
+    "lessonNumber": 19,
+    "lessonTitle": "Comparing Populations With Friends",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.SP.1",
+        "text": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier."
+      },
+      {
+        "code": "NY-7.SP.4",
+        "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations."
+      }
+    ]
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 1,
+    "lessonTitle": "Planning a Pizza Party",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      },
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 2,
+    "lessonTitle": "What a Trip!",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      },
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 3,
+    "lessonTitle": "Now What Can You Make?",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.1",
+        "text": "Compute unit rates associated with ratios of fractions."
+      },
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 4,
+    "lessonTitle": "Bagels for Everybody",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      },
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 5,
+    "lessonTitle": "Shipping Options",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.EE.3",
+        "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies."
+      },
+      {
+        "code": "NY-7.EE.4",
+        "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities."
+      },
+      {
+        "code": "NY-7.RP.1",
+        "text": "Compute unit rates associated with ratios of fractions."
+      },
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 6,
+    "lessonTitle": "How Much Taller or Shorter?",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.NS.3",
+        "text": "Solve real-world and mathematical problems involving the four operations with rational numbers."
+      },
+      {
+        "code": "NY-7.SP.1",
+        "text": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier."
+      },
+      {
+        "code": "NY-7.SP.4",
+        "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations."
+      }
+    ]
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 7,
+    "lessonTitle": "Measurement Error",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 8,
+    "lessonTitle": "Deforestation at Scale",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.6",
+        "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms."
+      }
+    ]
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 9,
+    "lessonTitle": "Measuring Long Distances over Uneven Terrain",
+    "grade": 7,
+    "standards": []
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 10,
+    "lessonTitle": "Building a Trundle Wheel",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.4",
+        "text": "Apply the formulas for the area and circumference of a circle to solve problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 11,
+    "lessonTitle": "Using a Trundle Wheel to Measure Distances",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.4",
+        "text": "Apply the formulas for the area and circumference of a circle to solve problems."
+      }
+    ]
+  },
+  {
+    "unit": "7.9",
+    "unitTitle": "Putting it All Together",
+    "lessonNumber": 12,
+    "lessonTitle": "Designing a 5K Course",
+    "grade": 7,
+    "standards": [
+      {
+        "code": "NY-7.G.1",
+        "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale."
+      },
+      {
+        "code": "NY-7.RP.3",
+        "text": "Use proportional relationships to solve multistep ratio and percent problems."
+      }
+    ]
+  }
+]

@@ -104,14 +104,35 @@ export default function ScopeAndSequencePage() {
     }
   };
 
-  // Get unique units for the selected tag
-  const availableUnits = selectedTag
-    ? Array.from(new Set(
-        allLessons
-          .filter(lesson => lesson.scopeSequenceTag === selectedTag)
-          .map(lesson => lesson.unit)
-      )).sort()
-    : [];
+  // Get unique units for the selected tag, grouped by grade
+  const unitsByGrade = selectedTag
+    ? allLessons
+        .filter(lesson => lesson.scopeSequenceTag === selectedTag)
+        .reduce((acc, lesson) => {
+          const grade = lesson.grade;
+          if (!acc[grade]) {
+            acc[grade] = new Set<string>();
+          }
+          acc[grade].add(lesson.unit);
+          return acc;
+        }, {} as Record<string, Set<string>>)
+    : {};
+
+  // Convert to sorted array format for rendering
+  const gradeGroups = Object.keys(unitsByGrade)
+    .sort((a, b) => {
+      // Sort grades: numeric grades first, then alphabetic (Algebra, Geometry, etc.)
+      const aNum = parseInt(a);
+      const bNum = parseInt(b);
+      if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+      if (!isNaN(aNum)) return -1;
+      if (!isNaN(bNum)) return 1;
+      return a.localeCompare(b);
+    })
+    .map(grade => ({
+      grade,
+      units: Array.from(unitsByGrade[grade]).sort()
+    }));
 
   // Get lessons for the selected tag and unit
   const filteredLessons = allLessons.filter(lesson => {
@@ -290,10 +311,14 @@ export default function ScopeAndSequencePage() {
                   } disabled:bg-gray-100 disabled:cursor-not-allowed`}
                 >
                   <option value="">Select Unit</option>
-                  {availableUnits.map((unit) => (
-                    <option key={unit} value={unit}>
-                      {unit}
-                    </option>
+                  {gradeGroups.map(({ grade, units }) => (
+                    <optgroup key={grade} label={`Grade ${grade}`}>
+                      {units.map((unit) => (
+                        <option key={unit} value={unit}>
+                          {unit}
+                        </option>
+                      ))}
+                    </optgroup>
                   ))}
                 </select>
               </div>

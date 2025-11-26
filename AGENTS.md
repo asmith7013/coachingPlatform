@@ -20,16 +20,16 @@ This file contains specialized prompts and workflows for Claude Code agents work
 
 ```bash
 # Find all documents in a collection
-mongosh "mongodb+srv://..." --eval "db['collection-name'].find().limit(5).forEach(printjson);"
+mongosh "$DATABASE_URL" --eval "db['collection-name'].find().limit(5).forEach(printjson);"
 
 # Check for ID format issues
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 db.students.findOne({}, { studentID: 1 });
 db['other-collection'].findOne({}, { studentId: 1 });
 "
 
 # Count documents by field
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 db['collection-name'].aggregate([
   { \$group: { _id: '\$field', count: { \$sum: 1 } } },
   { \$sort: { count: -1 } }

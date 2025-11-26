@@ -8,7 +8,21 @@
       "Bash(./create-icons.sh:*)",
       "Bash(git ls-tree:*)",
       "Bash(npm install:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(node /tmp/extract_standards.js:*)",
+      "Bash(node:*)",
+      "Bash(python3:*)",
+      "Bash(standards-output.json)",
+      "Bash(/Users/alexsmith/ai-coaching-platform/standards-output-v2.json)",
+      "Bash(cat:*)",
+      "Bash(/tmp/standards_output.json)",
+      "Bash(/tmp/standards_final.json)",
+      "Bash(pip3 install:*)",
+      "Bash(/tmp/standards_result.json)",
+      "Bash(/tmp/standards_clean.json)",
+      "Bash(/tmp/final_standards.json)",
+      "Bash(echo \"Total <strong> tags:\")",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []

@@ -6,20 +6,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Connecting to MongoDB Atlas
 
-This project uses MongoDB Atlas. The connection string is in `.env.local`:
-
-```bash
-DATABASE_URL="mongodb+srv://asmith7013:pnz0uvb5ztj_qxj0EXQ@coaching.go309.mongodb.net/ai-coaching-platform"
-```
+This project uses MongoDB Atlas. The connection string is in `.env.local` as `DATABASE_URL`.
 
 ### Using mongosh for Database Operations
 
-Claude Code CAN and SHOULD use `mongosh` for database operations. Here are common patterns:
+Claude Code CAN and SHOULD use `mongosh` for database operations. Always use the `$DATABASE_URL` environment variable instead of hardcoding the connection string.
+
+**Important:** Make sure the DATABASE_URL environment variable is loaded in your shell session.
+
+Here are common patterns:
 
 #### Find Documents
 
 ```bash
-mongosh "mongodb+srv://asmith7013:pnz0uvb5ztj_qxj0EXQ@coaching.go309.mongodb.net/ai-coaching-platform" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['collection-name'].find({ field: 'value' }).forEach(printjson);
 "
 ```
@@ -27,7 +27,7 @@ db['collection-name'].find({ field: 'value' }).forEach(printjson);
 #### Count Documents
 
 ```bash
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 print('Total documents:', db['collection-name'].countDocuments());
 "
 ```
@@ -35,7 +35,7 @@ print('Total documents:', db['collection-name'].countDocuments());
 #### Update Documents
 
 ```bash
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 const result = db['collection-name'].updateOne(
   { _id: ObjectId('...') },
   { \$set: { field: 'new value' } }
@@ -47,7 +47,7 @@ printjson(result);
 #### Delete Documents
 
 ```bash
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 const result = db['collection-name'].deleteOne({ _id: ObjectId('...') });
 printjson(result);
 print('Deleted:', result.deletedCount, 'documents');
@@ -57,7 +57,7 @@ print('Deleted:', result.deletedCount, 'documents');
 #### Aggregation Pipelines
 
 ```bash
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 const pipeline = [
   { \$group: { _id: '\$field', count: { \$sum: 1 } } },
   { \$sort: { count: -1 } }
@@ -70,22 +70,30 @@ db['collection-name'].aggregate(pipeline).forEach(printjson);
 
 ```bash
 # List indexes
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 printjson(db['collection-name'].getIndexes());
 "
 
 # Drop an index
-mongosh "mongodb+srv://..." --eval "
+mongosh "$DATABASE_URL" --eval "
 db['collection-name'].dropIndex('index_name');
 "
 ```
 
+#### Running JavaScript Files
+
+For complex operations, create a `.js` file and execute it:
+
+```bash
+mongosh "$DATABASE_URL" --file script.js
+```
+
 ### Important Notes
 
-- Always use the full connection string with database name
+- Always use `$DATABASE_URL` environment variable (never hardcode credentials)
 - Use `printjson()` for formatted output
 - Escape special characters in shell commands (e.g., `\$` for MongoDB operators)
-- Use `--eval` for single commands, or create a `.js` file for complex scripts
+- Use `--eval` for single commands, or `--file` for complex scripts
 
 ## Tech Stack
 

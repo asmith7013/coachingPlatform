@@ -23,6 +23,15 @@ const SCOPE_SEQUENCE_TAG_VALUES = [
 
 const SECTION_VALUES = ["Ramp Ups", "A", "B", "C", "D", "E", "F", "Unit Assessment"] as const;
 
+const STANDARD_CONTEXT_VALUES = ["current", "buildingOn", "buildingTowards"] as const;
+
+// Standard subdocument schema
+const StandardSchema = new mongoose.Schema({
+  code: { type: String, required: true },
+  text: { type: String, required: true },
+  context: { type: String, required: false, enum: STANDARD_CONTEXT_VALUES }
+}, { _id: false }); // _id: false prevents MongoDB from creating an _id for each standard
+
 const scopeAndSequenceFields = {
   grade: { type: String, required: true, index: true },
   unit: { type: String, required: true, index: true },
@@ -39,7 +48,7 @@ const scopeAndSequenceFields = {
   },
   roadmapSkills: { type: [String], default: [] },
   targetSkills: { type: [String], default: [] },
-  standards: { type: [String], default: [] },
+  standards: { type: [StandardSchema], default: [] },
 
   ...standardDocumentFields
 };

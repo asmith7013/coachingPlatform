@@ -197,7 +197,7 @@ Follow conventional commits:
 
 #### Query with mongosh
 ```bash
-mongosh "mongodb+srv://asmith7013:pnz0uvb5ztj_qxj0EXQ@coaching.go309.mongodb.net/ai-coaching-platform" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['collection-name'].find({}).forEach(printjson);
 "
 ```
@@ -226,7 +226,7 @@ db['collection-name'].find({}).forEach(printjson);
 2. **Schema Migration**
    ```bash
    # Create migration script
-   mongosh "mongodb+srv://..." --eval "
+   mongosh "$DATABASE_URL" --eval "
    db['collection'].updateMany(
      { oldField: { \$exists: true } },
      { \$rename: { oldField: 'newField' } }
