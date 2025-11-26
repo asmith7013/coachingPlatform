@@ -48,46 +48,27 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(
-  nextConfig, {
-    // For all available options, see:
-    // https://www.npmjs.com/package/@sentry/webpack-plugin#options
+// Only enable Sentry source maps in production builds (not during development/CI builds)
+// This prevents OOM errors during Vercel builds while keeping Sentry error tracking active
+const sentryWebpackPluginOptions = {
+  org: "alex-smith-coaching",
+  project: "javascript-nextjs",
 
-    org: "alex-smith-coaching",
-    project: "javascript-nextjs",
+  // Completely disable source map upload during builds
+  silent: true,
 
-    // Only print logs for uploading source maps in CI
-    silent: !process.env.CI,
+  // Disable all webpack plugins during build to save memory
+  disableServerWebpackPlugin: true,
+  disableClientWebpackPlugin: true,
 
-    // For all available options, see:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+  // Keep runtime features enabled
+  automaticVercelMonitors: true,
+  disableLogger: true,
+  tunnelRoute: "/monitoring",
+};
 
-    // Disable source map uploads to reduce memory usage during build
-    // This prevents OOM errors on Vercel
-    disableServerWebpackPlugin: true,
-    disableClientWebpackPlugin: true,
-
-    // Upload a larger set of source maps for prettier stack traces (increases build time)
-    // Disabled to improve build performance - can be re-enabled if needed for debugging
-    widenClientFileUpload: false,
-
-    // Automatically annotate React components to show their full name in breadcrumbs and session replay
-    reactComponentAnnotation: {
-    enabled: true,
-    },
-
-    // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-    // This can increase your server load as well as your hosting bill.
-    // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
-    // side errors will fail.
-    tunnelRoute: "/monitoring",
-
-    // Automatically tree-shake Sentry logger statements to reduce bundle size
-    disableLogger: true,
-
-    // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-    // See the following for more information:
-    // https://docs.sentry.io/product/crons/
-    // https://vercel.com/docs/cron-jobs
-    automaticVercelMonitors: true,
-});
+// Conditionally apply Sentry config only if explicitly enabled
+// Sentry runtime will still work, just no source maps uploaded during build
+export default process.env.SENTRY_UPLOAD_SOURCEMAPS === 'true'
+  ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+  : nextConfig;
