@@ -8,13 +8,43 @@ const nextConfig: NextConfig = {
   },
   images: {
     domains: [
-      'images.unsplash.com', 
+      'images.unsplash.com',
       'tailwindcss.com',
       // Add Clerk image domains
       'img.clerk.com',
       'images.clerk.dev',
       'images.clerk.com'
     ],
+  },
+  experimental: {
+    // Optimize server memory usage
+    serverMinification: true,
+  },
+  webpack: (config, { isServer }) => {
+    // Optimize for memory usage during build
+    if (!isServer) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            // Separate spectacle into its own chunk
+            spectacle: {
+              test: /[\\/]node_modules[\\/](spectacle|react-syntax-highlighter)[\\/]/,
+              name: 'spectacle-vendor',
+              priority: 10,
+            },
+            // Separate lucide-react icons
+            icons: {
+              test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
+              name: 'icons-vendor',
+              priority: 9,
+            },
+          },
+        },
+      };
+    }
+    return config;
   },
 };
 

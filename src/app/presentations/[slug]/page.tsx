@@ -3,18 +3,51 @@
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Deck } from 'spectacle';
+import dynamic from 'next/dynamic';
 import { getDeckBySlug } from '@actions/worked-examples';
 import type { WorkedExampleDeck } from '@zod-schema/worked-example-deck';
+// Import only the specific icons we use instead of the entire library
 import {
-  TitleSlide,
-  ContextSlide,
-  PredictionSlide,
-  RevealSlide,
-  ReasoningSlide,
-  PracticeSlide,
-} from '../slide-creation';
-import * as LucideIcons from 'lucide-react';
+  Calculator,
+  Cake,
+  Gamepad2,
+  Pizza,
+  Video,
+  TrendingUp,
+  Rocket,
+  Download,
+  Smartphone,
+  Wind,
+  type LucideIcon
+} from 'lucide-react';
+
+// Dynamically import Spectacle to reduce initial bundle size
+const Deck = dynamic(() => import('spectacle').then(mod => ({ default: mod.Deck })), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-screen">Loading presentation...</div>
+});
+
+// Dynamically import slide components
+const TitleSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.TitleSlide })));
+const ContextSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.ContextSlide })));
+const PredictionSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.PredictionSlide })));
+const RevealSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.RevealSlide })));
+const ReasoningSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.ReasoningSlide })));
+const PracticeSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.PracticeSlide })));
+
+// Map of icon names to icon components (only the ones we use)
+const iconMap: Record<string, LucideIcon> = {
+  Calculator,
+  Cake,
+  Gamepad2,
+  Pizza,
+  Video,
+  TrendingUp,
+  Rocket,
+  Download,
+  Smartphone,
+  Wind,
+};
 
 export default function WorkedExampleViewer() {
   const params = useParams();
@@ -48,8 +81,11 @@ export default function WorkedExampleViewer() {
   const getIcon = (iconName?: string, size = 48) => {
     if (!iconName) return null;
 
-    const Icon = LucideIcons[iconName as keyof typeof LucideIcons] as React.ComponentType<{ size?: number }>;
-    if (!Icon) return null;
+    const Icon = iconMap[iconName];
+    if (!Icon) {
+      console.warn(`Icon "${iconName}" not found in iconMap. Add it to the imports if needed.`);
+      return null;
+    }
 
     return <Icon size={size} />;
   };
