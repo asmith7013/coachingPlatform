@@ -15,6 +15,7 @@ import {
   fetchAllUnitsByScopeTag,
   fetchRampUpsByUnit,
 } from "@/app/actions/313/scope-and-sequence";
+import { SECTION_OPTIONS } from "@zod-schema/313/scope-and-sequence";
 import { Sections313, SectionsPS19 } from "@schema/enum/313";
 import { getSectionConfig } from "@/app/actions/313/section-config";
 import type { PodsieAssignment } from "@zod-schema/313/section-config";
@@ -276,8 +277,25 @@ export default function RampUpProgressPage() {
         );
         const uniqueSections = Array.from(
           new Set(lessonsWithAssignments.map(lesson => lesson.section).filter(Boolean))
-        ).sort() as string[];
-        setAvailableSections(uniqueSections);
+        ) as string[];
+
+        // Sort sections according to the schema-defined order
+        const sortedSections = uniqueSections.sort((a, b) => {
+          const indexA = SECTION_OPTIONS.indexOf(a as typeof SECTION_OPTIONS[number]);
+          const indexB = SECTION_OPTIONS.indexOf(b as typeof SECTION_OPTIONS[number]);
+
+          // If both are in the order array, sort by their position
+          if (indexA !== -1 && indexB !== -1) {
+            return indexA - indexB;
+          }
+          // If only one is in the order array, it comes first
+          if (indexA !== -1) return -1;
+          if (indexB !== -1) return 1;
+          // If neither is in the order array, maintain alphabetical order
+          return a.localeCompare(b);
+        });
+
+        setAvailableSections(sortedSections);
 
         // Filter lessons by selected section if one is selected
         const filteredLessons = selectedLessonSection
@@ -385,10 +403,9 @@ export default function RampUpProgressPage() {
 
       // Show toast notification
       if (result.success) {
-        const assignmentTypeLabel = assignment.assignmentType === 'lesson' ? 'Lesson' : 'Mastery Check';
         showToast({
           title: 'Sync Successful',
-          description: `Synced ${result.successfulSyncs} of ${result.totalStudents} students for ${assignmentTypeLabel}${result.failedSyncs > 0 ? ` (${result.failedSyncs} failed)` : ''}`,
+          description: `${assignment.lessonName}: Synced ${result.successfulSyncs} of ${result.totalStudents} students${result.failedSyncs > 0 ? ` (${result.failedSyncs} failed)` : ''}`,
           variant: 'success',
           icon: CheckCircleIcon,
         });

@@ -66,7 +66,7 @@ export const ScopeAndSequenceFieldsSchema = z.object({
   scopeSequenceTag: ScopeSequenceTagZod.optional().describe("Scope and sequence tag identifying which curriculum this lesson belongs to"),
   roadmapSkills: z.array(z.string()).default([]).describe("Array of roadmap skill numbers tagged to this lesson"),
   targetSkills: z.array(z.string()).default([]).describe("Array of target skill numbers for this lesson"),
-  standards: z.array(StandardZod).default([]).describe("Array of standards addressed in this lesson (NY standards and Mathematical Practices)"),
+  standards: z.array(StandardZod).optional().default([]).describe("Array of standards addressed in this lesson (NY standards and Mathematical Practices)"),
 });
 
 // Full Scope and Sequence Schema with base document fields

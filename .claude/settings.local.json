@@ -22,7 +22,8 @@
       "Bash(/tmp/standards_clean.json)",
       "Bash(/tmp/final_standards.json)",
       "Bash(echo \"Total <strong> tags:\")",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(vercel link:*)"
     ],
     "deny": [],
     "ask": []
