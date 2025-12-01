@@ -91,16 +91,20 @@ interface ExtractedQuestion {
 
 The `/create-worked-example-sg` skill takes this extracted structure and generates all 9 slides:
 
-| Slide | Content Source |
-|-------|---------------|
-| **Slide 1** | `mathConcept` → title<br>`pattern` → big idea<br>First table row → example |
-| **Slide 2** | `scenario` → context<br>`tableData` → table |
-| **Slide 3** | Ask: "How did I know to divide {output} by {input}?"<br>Highlight first row |
-| **Slide 4** | `constantValue` → answer<br>First 2 steps → explanation |
-| **Slide 5** | Ask: "How do we find the missing value?"<br>Highlight row with null |
-| **Slide 6** | `finalAnswer` → answer<br>Last 2 steps → explanation |
-| **Slide 7** | `pattern` → reasoning<br>`mathRule` → optional notation |
-| **Slide 8-9** | Auto-generate practice scenarios using same structure |
+| Slide | Content Source | Layout Notes |
+|-------|---------------|--------------|
+| **Slide 1** | `mathConcept` → title<br>`pattern` → big idea<br>First table row → example | N/A |
+| **Slide 2** | `scenario` → context<br>`tableData` → table | **Establishes table position** (default: center) |
+| **Slide 3** | Ask: "How did I know to divide {output} by {input}?"<br>Highlight first row | **Maintains table position** from slide 2 |
+| **Slide 4** | `constantValue` → answer<br>First 2 steps → explanation | **Maintains table position**, calculation appears to right |
+| **Slide 5** | Ask: "How do we find the missing value?"<br>Highlight row with null | **Maintains table position** |
+| **Slide 6** | `finalAnswer` → answer<br>Last 2 steps → explanation | **Maintains table position**, calculation appears to right |
+| **Slide 7** | `pattern` → reasoning<br>`mathRule` → optional notation | N/A (no table) |
+| **Slide 8-9** | Auto-generate practice scenarios using same structure | Fresh layout (new context) |
+
+### Layout Consistency Rule
+
+**Critical:** Slides 2-6 must maintain the same table position to reduce cognitive load. The skill automatically adds layout configuration to ensure visual stability across the worked example sequence.
 
 ## Usage
 

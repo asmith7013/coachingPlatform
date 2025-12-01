@@ -256,7 +256,7 @@ export function ResultsDisplay({
           </div>
         </div>
         <div className="p-6 space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">{results.length}</div>
               <div className="text-sm text-gray-500">Total</div>
@@ -268,21 +268,6 @@ export function ResultsDisplay({
             <div className="text-center">
               <div className="text-2xl font-bold text-red-600">{failedResults.length}</div>
               <div className="text-sm text-gray-500">Failed</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">
-                {successfulResults.reduce((total, skill) => total + skill.images.length, 0)}
-              </div>
-              <div className="text-sm text-gray-500">Images Found</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-amber-600">
-                {successfulResults.reduce((total, skill) => {
-              const practiceProblems = skill.practiceProblems as Array<{problemNumber: number, screenshotUrl: string, scrapedAt: string}> | undefined;
-              return total + (practiceProblems?.length || 0);
-            }, 0)}
-              </div>
-              <div className="text-sm text-gray-500">Practice Problems</div>
             </div>
           </div>
 
@@ -364,14 +349,23 @@ function SkillResultCard({ skill, index, isExpanded, onToggleExpansion, onSaveSk
   const [showDropdown, setShowDropdown] = useState(false);
   const colorVariant = skill.success ? "success" : "danger";
 
+  // Calculate stats for this skill
+  const practiceProblems = skill.practiceProblems as Array<{problemNumber: number, screenshotUrl: string, scrapedAt: string}> | undefined;
+  const stats = [
+    `${skill.images.length} images`,
+    `${skill.vocabulary.length} vocab`,
+    `${practiceProblems?.length || 0} practice`,
+    skill.videoUrl ? '✓ video' : '✗ video'
+  ].join(' • ');
+
   return (
     <div>
       <div className="relative">
         <SimpleCard
           initials={`${index + 1}`}
           title={skill.title || 'Untitled Skill'}
-          subtitle={skill.success ? 
-            `Content extracted: ${skill.description.slice(0, 100)}${skill.description.length > 100 ? '...' : ''}` : 
+          subtitle={skill.success ?
+            stats :
             `Error: ${skill.error}`
           }
           colorVariant={colorVariant}
@@ -444,6 +438,20 @@ function SkillResultCard({ skill, index, isExpanded, onToggleExpansion, onSaveSk
           <div className="text-sm text-gray-600">
             <strong>Scraped:</strong> {new Date(skill.scrapedAt).toLocaleString()}
           </div>
+
+          {skill.videoUrl && (
+            <div className="text-sm">
+              <strong className="text-gray-700">Worked Example Video:</strong>{' '}
+              <a
+                href={skill.videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline break-all"
+              >
+                {skill.videoUrl}
+              </a>
+            </div>
+          )}
 
           {skill.success && (
             <SkillContent skill={skill} />
@@ -518,8 +526,19 @@ function SkillContent({ skill }: SkillContentProps) {
       {skill.vocabulary.length > 0 && (
         <div>
           <span className="font-medium text-pink-700">Vocabulary ({skill.vocabulary.length} terms):</span>
-          <div className="ml-2 mt-1 text-sm text-gray-600 bg-pink-50 p-2 rounded">
-            {skill.vocabulary.join(', ')}
+          <div className="ml-2 mt-1 space-y-2">
+            {skill.vocabulary.map((vocabItem, i) => (
+              <div key={i} className="bg-pink-50 p-3 rounded border-l-4 border-pink-400">
+                <div className="font-semibold text-pink-900 text-sm mb-1">
+                  {typeof vocabItem === 'string' ? vocabItem : vocabItem.term}
+                </div>
+                {typeof vocabItem === 'object' && vocabItem.definition && (
+                  <div className="text-sm text-gray-700">
+                    {vocabItem.definition}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -607,7 +626,7 @@ function SkillContent({ skill }: SkillContentProps) {
         <div className="text-sm text-gray-500">
           <strong>Has Content Sections:</strong> {[
             skill.launch && 'Launch',
-            skill.teacherStudentStrategies && 'Strategies', 
+            skill.teacherStudentStrategies && 'Strategies',
             skill.modelsAndManipulatives && 'Models',
             skill.questionsToHelp && 'Questions',
             skill.discussionQuestions && 'Discussion',
@@ -623,6 +642,13 @@ function SkillContent({ skill }: SkillContentProps) {
         </div>
         <div className="text-sm text-gray-500">
           <strong>Practice Problems:</strong> {skill.practiceProblems?.length || 0}
+        </div>
+        <div className="text-sm text-gray-500">
+          <strong>Worked Example Video:</strong> {skill.videoUrl ? (
+            <span className="text-green-600 font-medium">✓ Scraped</span>
+          ) : (
+            <span className="text-gray-400">Not found</span>
+          )}
         </div>
       </div>
     </div>

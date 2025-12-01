@@ -39,8 +39,8 @@ interface AssignmentCardProps {
   progressData: ProgressData[];
   syncing: boolean;
   masteryCheckSyncing?: boolean;
-  onSync: (testMode: boolean) => void;
-  onMasteryCheckSync?: (testMode: boolean) => void;
+  onSync: (testMode: boolean) => Promise<void>;
+  onMasteryCheckSync?: (testMode: boolean) => Promise<void>;
   calculateSummaryStats: (data: ProgressData[]) => {
     avgCompletion: number;
     fullyComplete: number;
@@ -62,16 +62,16 @@ export function AssignmentCard({
   const [isEditMode, setIsEditMode] = useState(false);
   const [syncingBoth, setSyncingBoth] = useState(false);
 
-  // Handler to sync both lesson and mastery check
+  // Handler to sync both lesson and mastery check (or just lesson if no mastery check)
   const handleSyncBoth = async () => {
-    if (!masteryCheckAssignment || !onMasteryCheckSync) return;
-
     setSyncingBoth(true);
     try {
       // Sync lesson first
       await onSync(false);
-      // Then sync mastery check
-      await onMasteryCheckSync(false);
+      // Then sync mastery check if it exists
+      if (masteryCheckAssignment && onMasteryCheckSync) {
+        await onMasteryCheckSync(false);
+      }
     } finally {
       setSyncingBoth(false);
     }
@@ -149,53 +149,35 @@ export function AssignmentCard({
           <div className="flex items-center gap-2">
             {isEditMode ? (
               <>
-                {/* Sync Both Button - Only show if mastery check exists */}
-                {masteryCheckAssignment && onMasteryCheckSync && (
-                  <button
-                    onClick={handleSyncBoth}
-                    disabled={syncingBoth || syncing || masteryCheckSyncing || !assignment.podsieAssignmentId || !masteryCheckAssignment.podsieAssignmentId}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                      syncingBoth || syncing || masteryCheckSyncing || !assignment.podsieAssignmentId || !masteryCheckAssignment.podsieAssignmentId
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-purple-600 text-white hover:bg-purple-700 cursor-pointer"
-                    }`}
-                  >
-                    <ArrowPathIcon
-                      className={`w-5 h-5 ${syncingBoth ? "animate-spin" : ""}`}
-                    />
-                    {syncingBoth ? "Syncing Both..." : "Sync Both"}
-                  </button>
-                )}
+                {/* Single Sync Button */}
                 <button
-                  onClick={() => onSync(false)}
-                  disabled={syncing || syncingBoth || !assignment.podsieAssignmentId}
+                  onClick={handleSyncBoth}
+                  disabled={
+                    syncingBoth ||
+                    syncing ||
+                    masteryCheckSyncing ||
+                    !assignment.podsieAssignmentId ||
+                    (masteryCheckAssignment && !masteryCheckAssignment.podsieAssignmentId)
+                  }
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                    syncing || syncingBoth || !assignment.podsieAssignmentId
+                    syncingBoth ||
+                    syncing ||
+                    masteryCheckSyncing ||
+                    !assignment.podsieAssignmentId ||
+                    (masteryCheckAssignment && !masteryCheckAssignment.podsieAssignmentId)
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
                   }`}
                 >
                   <ArrowPathIcon
-                    className={`w-5 h-5 ${syncing ? "animate-spin" : ""}`}
+                    className={`w-5 h-5 ${syncingBoth || syncing || masteryCheckSyncing ? "animate-spin" : ""}`}
                   />
-                  {syncing ? "Syncing Lesson..." : "Sync Lesson"}
+                  {syncingBoth || syncing || masteryCheckSyncing
+                    ? "Syncing..."
+                    : masteryCheckAssignment
+                      ? "Sync Both"
+                      : "Sync"}
                 </button>
-                {masteryCheckAssignment && onMasteryCheckSync && (
-                  <button
-                    onClick={() => onMasteryCheckSync(false)}
-                    disabled={masteryCheckSyncing || syncingBoth || !masteryCheckAssignment.podsieAssignmentId}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                      masteryCheckSyncing || syncingBoth || !masteryCheckAssignment.podsieAssignmentId
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
-                    }`}
-                  >
-                    <ArrowPathIcon
-                      className={`w-5 h-5 ${masteryCheckSyncing ? "animate-spin" : ""}`}
-                    />
-                    {masteryCheckSyncing ? "Syncing Mastery..." : "Sync Mastery Check"}
-                  </button>
-                )}
               </>
             ) : null}
             <button

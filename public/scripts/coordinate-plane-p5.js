@@ -1,0 +1,1 @@
+/Users/alexsmith/ai-coaching-platform/.claude/skills/question-types/implement-dynamic-graph-question/snippets/coordinate-plane-p5.js

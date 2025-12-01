@@ -69,21 +69,21 @@ export function LessonProgressCard({
   }, [progressData, masteryCheck, calculateSummaryStats]);
 
   return (
-    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg border border-indigo-200 p-5 mb-4 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-900 mb-3">
+    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg border border-indigo-200 p-5 mb-4 shadow-sm flex flex-col h-full">
+      <h3 className="text-base font-semibold text-gray-900 mb-3">
         {lesson.lessonName}
       </h3>
 
-      <div className="space-y-3">
+      <div className="space-y-3 mt-auto">
         {/* Lesson Progress Bar */}
         <div>
           <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium text-gray-700">Lesson Progress</span>
-            <span className="text-sm font-bold text-blue-700">{lessonProgress}%</span>
+            <span className="text-xs font-medium text-gray-700">Lesson Progress</span>
+            <span className="text-xs font-bold text-blue-700">{lessonProgress}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
+          <div className="w-full bg-gray-200 rounded-full h-2">
             <div
-              className="h-3 rounded-full transition-all bg-gradient-to-r from-blue-500 to-blue-600"
+              className="h-2 rounded-full transition-all bg-gradient-to-r from-blue-500 to-blue-600"
               style={{ width: `${lessonProgress}%` }}
             />
           </div>
@@ -93,12 +93,12 @@ export function LessonProgressCard({
         {masteryCheck && masteryCheckProgress !== null && (
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-sm font-medium text-gray-700">Mastery Check Progress</span>
-              <span className="text-sm font-bold text-green-700">{masteryCheckProgress}%</span>
+              <span className="text-xs font-medium text-gray-700">Mastery Check Progress</span>
+              <span className="text-xs font-bold text-green-700">{masteryCheckProgress}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
+            <div className="w-full bg-gray-200 rounded-full h-2">
               <div
-                className="h-3 rounded-full transition-all bg-gradient-to-r from-green-500 to-green-600"
+                className="h-2 rounded-full transition-all bg-gradient-to-r from-green-500 to-green-600"
                 style={{ width: `${masteryCheckProgress}%` }}
               />
             </div>

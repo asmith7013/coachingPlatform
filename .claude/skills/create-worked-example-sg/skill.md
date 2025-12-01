@@ -72,6 +72,47 @@ Ensure your data matches the structure in `DATABASE-SCHEMA.md`:
 - Icon names are valid Lucide React icon names
 - Table data uses correct format: `{input: number, output: number | null}`
 - Grade level is a number (6-12)
+- Layout configuration is included for slides 2-6 to maintain visual stability
+
+**Layout Configuration:**
+
+For slides 2-6 (the worked example sequence), include layout hints to ensure visual consistency:
+
+```javascript
+slide2: {
+  // ... other slide data
+  layout: {
+    tablePosition: "center",  // Options: "center", "left", "right"
+    annotationPosition: "below" // Where questions/highlights appear
+  }
+},
+slide3: {
+  // ... other slide data
+  layout: {
+    maintainTablePosition: true,  // Reuse position from slide2
+    highlightStyle: "border",     // How to draw attention: "border", "glow", "arrow"
+    questionPosition: "below"     // Where the question text appears
+  }
+},
+slide4: {
+  // ... other slide data
+  layout: {
+    maintainTablePosition: true,
+    calculationPosition: "right"  // Show math to the side, not replacing table
+  }
+},
+// ... same pattern for slides 5-6
+```
+
+**The Whiteboard Principle:**
+Think of these slides as a teacher working at a whiteboard:
+1. Teacher draws the table (Slide 2)
+2. Teacher circles a row and asks "How did I get this?" (Slide 3)
+3. Teacher writes calculation nearby (Slide 4)
+4. Teacher circles another row (Slide 5)
+5. Teacher shows calculation (Slide 6)
+
+The original table NEVER moves. Only annotations appear around it.
 
 ### Step 5: Save to Database
 
@@ -204,6 +245,13 @@ Follow these rules exactly when creating any worked example:
 - Each scenario must have a Lucide icon
 - Helps students differentiate "The Video Problem" from "The Drone Problem"
 - Better memory encoding than "Problem 1" vs "Problem 2"
+
+**The "Stationary Elements" Rule:**
+- Keep repeating elements (especially tables) in the SAME position across related slides
+- Add annotations, highlights, and callouts AROUND the stationary element
+- NEVER reposition the table between prediction pair slides (2→3→4→5→6)
+- Mimics a teacher writing on a whiteboard: the problem stays put, annotations appear around it
+- Reduces cognitive load from visual searching and eye tracking fatigue
 
 **The Reasoning Bridge (Slide 7):**
 - Stop the math and explain the pattern in plain English

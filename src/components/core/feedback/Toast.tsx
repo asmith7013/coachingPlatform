@@ -26,7 +26,7 @@ const toast = tv({
   slots: {
     // Keep structural classes, replace spacing tokens
     container: [
-      'pointer-events-none fixed inset-0 flex items-end',
+      'pointer-events-none fixed inset-0 flex items-end z-[9999]',
       paddingX.md,        // px-4 → paddingX.md
       paddingY.lg,        // py-6 → paddingY.lg
       'sm:items-start sm:p-6'  // Keep responsive as-is
@@ -61,7 +61,7 @@ const toast = tv({
     closeWrapper: ['ml-4 flex', flex.shrink],
     closeButton: [
       // Keep structural classes
-      'inline-flex',
+      'inline-flex cursor-pointer',
       // Replace with tokens
       radii.md,                    // rounded-md → radii.md
       backgroundColors.white,       // bg-white → backgroundColors.white
@@ -169,7 +169,7 @@ export function Toast({
           enter="transform transition ease-out duration-300"
           enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
           enterTo="translate-y-0 opacity-100 sm:translate-x-0"
-          leave="transition ease-in duration-100"
+          leave="transition ease-out duration-500"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
@@ -217,6 +217,11 @@ export function useToast() {
   const showToast = (props: Omit<ToastProps, 'show' | 'onClose'>) => {
     setToastProps(props)
     setIsVisible(true)
+
+    // Auto-hide after 4 seconds
+    setTimeout(() => {
+      setIsVisible(false)
+    }, 4000)
   }
 
   const hideToast = () => {

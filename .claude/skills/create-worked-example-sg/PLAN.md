@@ -181,6 +181,165 @@ Forces active prediction rather than passive consumption. Students must think be
 
 ---
 
+## Visual Stability Across Slides (Reducing Cognitive Load)
+
+### The Whiteboard Metaphor
+
+When a teacher explains a problem on a whiteboard, they:
+1. **Draw the problem once** (table, diagram, equation)
+2. **Keep it in the same spot** on the board
+3. **Add annotations around it** (circles, arrows, calculations)
+4. **Never erase and redraw** the original problem in a new location
+
+This approach minimizes cognitive load by letting students focus on the NEW information (annotations) rather than re-finding the FAMILIAR information (the table).
+
+### Why Element Movement is Harmful
+
+**The Problem:**
+If the data table moves position between slides, students must:
+1. **Visually search** for the table's new location
+2. **Re-orient** their mental model
+3. **Track movement** instead of tracking content changes
+
+This creates **extrinsic cognitive load** - mental effort spent on navigation rather than learning.
+
+**Research Basis:**
+- **Split Attention Effect** (Sweller, 1999): Students perform worse when related information appears in different locations
+- **Eye Tracking Studies**: Unnecessary eye movement increases cognitive processing time by 20-40%
+- **Spatial Contiguity Principle** (Mayer, 2009): Related elements should stay close together
+
+### Implementation Guidelines
+
+#### For Slides 2-6 (The Worked Example Sequence)
+
+**Slide 2 - The Hook (establishes position):**
+```
+┌─────────────────────────────────┐
+│ 📹 Viral Video Problem          │
+│                                 │
+│       ┌─────────────┐           │
+│       │   TABLE     │  ← Position established
+│       │   (x, y)    │           │
+│       └─────────────┘           │
+│                                 │
+└─────────────────────────────────┘
+```
+
+**Slide 3 - Ask (table stays put, highlight added):**
+```
+┌─────────────────────────────────┐
+│ 📹 How did I know to divide?    │
+│                                 │
+│       ┌─────────────┐           │
+│       │   TABLE     │  ← SAME position
+│       │   (x, y)    │           │
+│       └─────────────┘           │
+│           ↑↑↑                   │
+│       [Row 1 highlighted]       │
+└─────────────────────────────────┘
+```
+
+**Slide 4 - Reveal (table stays put, calculation appears beside):**
+```
+┌─────────────────────────────────┐
+│ 📹 Calculation                  │
+│                                 │
+│  ┌─────────────┐  ┌──────────┐ │
+│  │   TABLE     │  │ 250 ÷ 5  │ │  ← Calculation appears
+│  │   (x, y)    │  │ = 50     │ │     to the RIGHT
+│  └─────────────┘  └──────────┘ │
+│   ↑ Still here!                │
+└─────────────────────────────────┘
+```
+
+**Slide 5 - Ask (same position, different highlight):**
+```
+┌─────────────────────────────────┐
+│ 📹 How do we find the answer?   │
+│                                 │
+│       ┌─────────────┐           │
+│       │   TABLE     │  ← STILL same position
+│       │   (x, y)    │           │
+│       └─────────────┘           │
+│              ↑↑↑                │
+│       [Row 3 highlighted]       │
+└─────────────────────────────────┘
+```
+
+**Slide 6 - Reveal (same position, new calculation):**
+```
+┌─────────────────────────────────┐
+│ 📹 Final Answer                 │
+│                                 │
+│  ┌─────────────┐  ┌──────────┐ │
+│  │   TABLE     │  │ 50 × 12  │ │  ← New calculation
+│  │   (x, y)    │  │ = 600    │ │     (same position)
+│  └─────────────┘  └──────────┘ │
+│                                 │
+└─────────────────────────────────┘
+```
+
+### CSS/Component Implementation
+
+**Use Fixed Positioning for Tables:**
+```css
+.slide-table {
+  position: absolute;
+  left: 50%;              /* Centered horizontally */
+  top: 45%;               /* Slightly above center */
+  transform: translate(-50%, -50%);
+  transition: none;       /* NO animation/movement */
+}
+
+.slide-annotation {
+  position: absolute;
+  /* Flexible positioning around the table */
+}
+```
+
+**Layout Variants:**
+
+| Table Position | Best For | Annotation Space |
+|---------------|----------|------------------|
+| **Center** | Simple tables, standard problems | Annotations above/below |
+| **Left (40%)** | Complex calculations needed | Large calculation area on right |
+| **Top (30%)** | Questions with diagrams | Diagram space below |
+
+**Rule of Thumb:** Choose the position on Slide 2, then LOCK IT for slides 3-6.
+
+### Annotation Strategies (What CAN Move)
+
+Since the table is stationary, use these techniques to guide attention:
+
+1. **Border Highlighting**
+   ```css
+   .highlighted-row {
+     outline: 3px solid #FFD700;  /* Gold border */
+     animation: pulse 1.5s ease-in-out;
+   }
+   ```
+
+2. **Callout Boxes** (appear to the side)
+   ```
+   [Table]  →  "Start here!"
+   ```
+
+3. **Arrow Indicators**
+   ```
+   [Table]
+      ↑
+   "This row"
+   ```
+
+4. **Floating Calculations** (overlay, don't replace)
+   ```
+   Position calculation boxes with z-index layering
+   ```
+
+---
+
+---
+
 ## The Approach to Worked Examples
 
 ### Scaffolded Annotation
@@ -249,6 +408,8 @@ Studied examples with step-by-step explanations are more effective than problem-
 ❌ **Making practice problems easier** - Slides 8-9 must be equally rigorous
 ❌ **Over-scaffolding practice** - Independence requires removing all hints
 ❌ **Text-heavy "Ask" slides** - Visual highlighting is more effective
+❌ **Moving tables between slides** - Creates visual search burden and cognitive overload
+❌ **Repositioning elements without purpose** - Every layout change must serve pedagogy
 
 ---
 

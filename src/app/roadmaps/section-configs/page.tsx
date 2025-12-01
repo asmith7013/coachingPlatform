@@ -18,6 +18,7 @@ import { fetchScopeAndSequence, createScopeAndSequence } from "@/app/actions/313
 import type { ScopeAndSequence } from "@zod-schema/313/scope-and-sequence";
 import type { PodsieAssignment } from "@zod-schema/313/section-config";
 import { SECTION_OPTIONS } from "@zod-schema/313/scope-and-sequence";
+import { ManualCreateAssignmentModal } from "./components/ManualCreateAssignmentModal";
 
 interface AssignmentMatch {
   podsieAssignment: PodsieAssignmentInfo;
@@ -39,6 +40,7 @@ export default function SectionConfigsPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showUnmatchedOnly, setShowUnmatchedOnly] = useState(false);
+  const [showManualCreateModal, setShowManualCreateModal] = useState(false);
 
   // Data states
   const [podsieAssignments, setPodsieAssignments] = useState<PodsieAssignmentInfo[]>([]);
@@ -521,9 +523,19 @@ export default function SectionConfigsPage() {
         {/* Existing Assignments */}
         {existingAssignments.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-lg font-semibold mb-4">
-              Existing Assignments ({existingAssignments.length})
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">
+                Existing Assignments ({existingAssignments.length})
+              </h2>
+              <button
+                onClick={() => setShowManualCreateModal(true)}
+                disabled={!selectedSchool || !selectedSection}
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-600 text-white text-sm rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
+                <PlusIcon className="w-4 h-4" />
+                Manual Create
+              </button>
+            </div>
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {existingAssignments.map((assignment, idx) => (
                 <div key={idx} className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -532,7 +544,7 @@ export default function SectionConfigsPage() {
                       {assignment.unitLessonId}: {assignment.lessonName}
                     </div>
                     <div className="text-sm text-gray-600">
-                      Assignment ID: {assignment.podsieAssignmentId} • {assignment.totalQuestions} questions
+                      Assignment ID: {assignment.podsieAssignmentId} • {assignment.totalQuestions} questions • {assignment.assignmentType}
                     </div>
                   </div>
                   <CheckIcon className="w-5 h-5 text-green-600" />
@@ -780,6 +792,25 @@ export default function SectionConfigsPage() {
               Click &quot;Fetch from Podsie&quot; to load assignments for {selectedSection}
             </div>
           </div>
+        )}
+
+        {/* Manual Create Assignment Modal */}
+        {showManualCreateModal && selectedSchool && selectedSection && (
+          <ManualCreateAssignmentModal
+            school={selectedSchool}
+            classSection={selectedSection}
+            gradeLevel={selectedSection.startsWith('6') ? '6' : selectedSection.startsWith('7') ? '7' : '8'}
+            onClose={() => setShowManualCreateModal(false)}
+            onSuccess={async () => {
+              setShowManualCreateModal(false);
+              setSuccess("Assignment added successfully!");
+              // Reload existing assignments
+              const result = await getSectionConfig(selectedSchool, selectedSection);
+              if (result.success && result.data && result.data.podsieAssignments) {
+                setExistingAssignments(result.data.podsieAssignments as unknown as PodsieAssignment[]);
+              }
+            }}
+          />
         )}
       </div>
     </div>

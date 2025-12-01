@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
-// import { PlusIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { RoadmapsNav } from "../components/RoadmapsNav";
 import { useToast } from "@/components/core/feedback/Toast";
 import { fetchStudents } from "@/app/actions/313/students";
@@ -23,6 +23,7 @@ import { AssignmentCard } from "./components/AssignmentCard";
 import { SmartboardDisplay } from "./components/SmartboardDisplay";
 import { CreateAssignmentModal } from "./components/CreateAssignmentModal";
 import { LessonProgressCard } from "./components/LessonProgressCard";
+import { SectionRadioGroup } from "@/components/core/inputs/SectionRadioGroup";
 
 // Map section to scopeSequenceTag based on first digit
 // 802 = Algebra 1
@@ -127,16 +128,45 @@ interface ProgressData {
 
 export default function RampUpProgressPage() {
   const [loading, setLoading] = useState(true);
+  const [loadingUnits, setLoadingUnits] = useState(false);
+  const [loadingLessons, setLoadingLessons] = useState(false);
   const [syncing, setSyncing] = useState<string | null>(null); // Track which lesson is syncing
+  const [syncingAll, setSyncingAll] = useState(false); // Track if syncing all lessons
   const [progressData, setProgressData] = useState<ProgressData[]>([]);
-  const [selectedSection, setSelectedSection] = useState<string>("");
-  const [selectedUnit, setSelectedUnit] = useState<number | null>(null);
-  const [selectedLessonSection, setSelectedLessonSection] = useState<string>("");
+
+  // Initialize from localStorage if available
+  const [selectedSection, setSelectedSection] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('podsieProgress_selectedSection') || "";
+    }
+    return "";
+  });
+
+  const [selectedUnit, setSelectedUnit] = useState<number | null>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('podsieProgress_selectedUnit');
+      return stored ? parseInt(stored, 10) : null;
+    }
+    return null;
+  });
+
+  const [selectedLessonSection, setSelectedLessonSection] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('podsieProgress_selectedLessonSection') || "";
+    }
+    return "";
+  });
+
   const [sections, setSections] = useState<string[]>([]);
   const [units, setUnits] = useState<UnitOption[]>([]);
   const [lessons, setLessons] = useState<LessonConfig[]>([]);
   const [sectionConfigAssignments, setSectionConfigAssignments] = useState<PodsieAssignment[]>([]);
-  const [availableSections, setAvailableSections] = useState<string[]>([]);
+  const [sectionOptions, setSectionOptions] = useState<Array<{
+    id: string;
+    name: string;
+    count: number;
+    inStock: boolean;
+  }>>([]);
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { showToast, ToastComponent } = useToast();
@@ -148,6 +178,39 @@ export default function RampUpProgressPage() {
   const scopeSequenceTag = useMemo(() => {
     return selectedSection ? getScopeTagForSection(selectedSection) : "";
   }, [selectedSection]);
+
+  // Save selectedSection to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (selectedSection) {
+        localStorage.setItem('podsieProgress_selectedSection', selectedSection);
+      } else {
+        localStorage.removeItem('podsieProgress_selectedSection');
+      }
+    }
+  }, [selectedSection]);
+
+  // Save selectedUnit to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (selectedUnit !== null) {
+        localStorage.setItem('podsieProgress_selectedUnit', selectedUnit.toString());
+      } else {
+        localStorage.removeItem('podsieProgress_selectedUnit');
+      }
+    }
+  }, [selectedUnit]);
+
+  // Save selectedLessonSection to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (selectedLessonSection) {
+        localStorage.setItem('podsieProgress_selectedLessonSection', selectedLessonSection);
+      } else {
+        localStorage.removeItem('podsieProgress_selectedLessonSection');
+      }
+    }
+  }, [selectedLessonSection]);
 
   // Load sections on mount
   useEffect(() => {
@@ -190,9 +253,11 @@ export default function RampUpProgressPage() {
         setSelectedUnit(null);
         setLessons([]);
         setSectionConfigAssignments([]);
+        setLoadingUnits(false);
         return;
       }
 
+      setLoadingUnits(true);
       try {
         // Load units - for section 802, load both Grade 8 and Algebra 1 units
         const grade = getGradeForSection(selectedSection);
@@ -243,6 +308,8 @@ export default function RampUpProgressPage() {
       } catch (err) {
         console.error("Error loading units and section config:", err);
         setError("Failed to load data");
+      } finally {
+        setLoadingUnits(false);
       }
     };
 
@@ -254,10 +321,12 @@ export default function RampUpProgressPage() {
     const buildLessons = async () => {
       if (!scopeSequenceTag || selectedUnit === null || sectionConfigAssignments.length === 0) {
         setLessons([]);
-        setAvailableSections([]);
+        setSectionOptions([]);
+        setLoadingLessons(false);
         return;
       }
 
+      setLoadingLessons(true);
       try {
         // Fetch ALL lessons from scope-and-sequence for this unit
         // For section 802, always use "Algebra 1" scope tag
@@ -295,7 +364,27 @@ export default function RampUpProgressPage() {
           return a.localeCompare(b);
         });
 
-        setAvailableSections(sortedSections);
+        // Create section options with counts
+        const sectionOpts = sortedSections.map(section => {
+          const lessonCount = lessonsWithAssignments.filter(l => l.section === section).length;
+
+          // Helper function to get display name
+          const getName = (sectionName: string) => {
+            if (sectionName === 'Ramp Ups' || sectionName === 'Unit Assessment') {
+              return sectionName;
+            }
+            return `Section ${sectionName}`;
+          };
+
+          return {
+            id: section,
+            name: getName(section),
+            count: lessonCount,
+            inStock: lessonCount > 0,
+          };
+        });
+
+        setSectionOptions(sectionOpts);
 
         // Filter lessons by selected section if one is selected
         const filteredLessons = selectedLessonSection
@@ -331,6 +420,8 @@ export default function RampUpProgressPage() {
       } catch (err) {
         console.error("Error building lessons:", err);
         setError("Failed to load lessons");
+      } finally {
+        setLoadingLessons(false);
       }
     };
 
@@ -403,8 +494,9 @@ export default function RampUpProgressPage() {
 
       // Show toast notification
       if (result.success) {
+        const assignmentTypeLabel = assignment.assignmentType === 'mastery-check' ? 'Mastery Check' : 'Lesson';
         showToast({
-          title: 'Sync Successful',
+          title: `${assignmentTypeLabel} Synced`,
           description: `${assignment.lessonName}: Synced ${result.successfulSyncs} of ${result.totalStudents} students${result.failedSyncs > 0 ? ` (${result.failedSyncs} failed)` : ''}`,
           variant: 'success',
           icon: CheckCircleIcon,
@@ -461,6 +553,52 @@ export default function RampUpProgressPage() {
       });
     } finally {
       setSyncing(null);
+    }
+  };
+
+  // Sync all lessons in the current section
+  const handleSyncAll = async () => {
+    if (lessons.length === 0) return;
+
+    setSyncingAll(true);
+    try {
+      // Group lessons with their mastery checks
+      const lessonAssignments = lessons.filter(a => a.assignmentType === 'lesson');
+      const masteryCheckAssignments = lessons.filter(a => a.assignmentType === 'mastery-check' || !a.assignmentType);
+
+      const groupedLessons = lessonAssignments.map(lesson => {
+        const masteryCheck = masteryCheckAssignments.find(mc => mc.unitLessonId === lesson.unitLessonId);
+        return { lesson, masteryCheck };
+      });
+
+      // Sync each lesson and its mastery check sequentially
+      for (const { lesson, masteryCheck } of groupedLessons) {
+        // Sync lesson
+        await handleSyncAssignment(lesson, false);
+
+        // Sync mastery check if it exists
+        if (masteryCheck) {
+          await handleSyncAssignment(masteryCheck, false);
+        }
+      }
+
+      // Show final success toast
+      showToast({
+        title: 'All Syncs Complete',
+        description: `Successfully synced all ${groupedLessons.length} lesson${groupedLessons.length !== 1 ? 's' : ''} in ${selectedLessonSection}`,
+        variant: 'success',
+        icon: CheckCircleIcon,
+      });
+    } catch (err) {
+      console.error("Error syncing all:", err);
+      showToast({
+        title: 'Sync All Failed',
+        description: 'An error occurred while syncing all lessons',
+        variant: 'error',
+        icon: ExclamationTriangleIcon,
+      });
+    } finally {
+      setSyncingAll(false);
     }
   };
 
@@ -532,79 +670,83 @@ export default function RampUpProgressPage() {
           </div>
 
           {/* Filters */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div>
-              <label
-                htmlFor="section-filter"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Class Section
-              </label>
-              <select
-                id="section-filter"
-                value={selectedSection}
-                onChange={(e) => {
-                  setSelectedSection(e.target.value);
-                  setSelectedUnit(null);
-                  setSelectedLessonSection("");
-                }}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  !selectedSection
-                    ? "border-blue-500 ring-2 ring-blue-200"
-                    : "border-gray-300"
-                }`}
-              >
-                <option value="">Select Section</option>
-                {sectionGroups.map((group) => (
-                  <optgroup key={group.school} label={group.school}>
-                    {group.sections.map((section) => (
-                      <option key={section} value={section}>
-                        {section}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-            </div>
+          <div className="space-y-4 mb-6">
+            {/* Row 1: Class Section and Unit (50% each) */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="section-filter"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Class Section
+                </label>
+                <select
+                  id="section-filter"
+                  value={selectedSection}
+                  onChange={(e) => {
+                    setSelectedSection(e.target.value);
+                    setSelectedUnit(null);
+                    setSelectedLessonSection("");
+                  }}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    !selectedSection
+                      ? "border-blue-500 ring-2 ring-blue-200"
+                      : "border-gray-300"
+                  }`}
+                >
+                  <option value="">Select Section</option>
+                  {sectionGroups.map((group) => (
+                    <optgroup key={group.school} label={group.school}>
+                      {group.sections.map((section) => (
+                        <option key={section} value={section}>
+                          {section}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
 
-            <div>
-              <label
-                htmlFor="unit-filter"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Unit
-              </label>
-              <select
-                id="unit-filter"
-                value={selectedUnit ?? ""}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setSelectedUnit(val ? parseInt(val, 10) : null);
-                  setSelectedLessonSection("");
-                }}
-                disabled={!selectedSection || units.length === 0}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  selectedSection && selectedUnit === null && units.length > 0
-                    ? "border-blue-500 ring-2 ring-blue-200"
-                    : "border-gray-300"
-                } ${!selectedSection || units.length === 0 ? "bg-gray-100 cursor-not-allowed" : ""}`}
-              >
-                <option value="">
-                  {!selectedSection
-                    ? "Select section first"
-                    : units.length === 0
-                    ? "No units available"
-                    : "Select Unit"}
-                </option>
-                {/* For section 802, group by grade type */}
-                {selectedSection === "802" ? (
-                  <>
-                    {/* Algebra 1 (Grade 8) Units */}
-                    {units.filter(u => u.grade === "8").length > 0 && (
-                      <optgroup label="Algebra 1 (Grade 8)">
-                        {units
-                          .filter(u => u.grade === "8")
-                          .map((unit) => (
+              <div>
+                <label
+                  htmlFor="unit-filter"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Unit
+                </label>
+                <select
+                  id="unit-filter"
+                  value={selectedUnit ?? ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSelectedUnit(val ? parseInt(val, 10) : null);
+                    setSelectedLessonSection("");
+                  }}
+                  disabled={!selectedSection || units.length === 0 || loadingUnits}
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    selectedSection && selectedUnit === null && units.length > 0
+                      ? "border-blue-500 ring-2 ring-blue-200"
+                      : "border-gray-300"
+                  } ${!selectedSection || units.length === 0 || loadingUnits ? "bg-gray-100 cursor-not-allowed" : ""}`}
+                >
+                  <option value="">
+                    {!selectedSection
+                      ? "Select section first"
+                      : loadingUnits
+                      ? "Loading units..."
+                      : units.length === 0
+                      ? "No units available"
+                      : "Select Unit"}
+                  </option>
+                  {/* For section 802, group by grade type */}
+                  {selectedSection === "802" ? (
+                    <>
+                      {/* Algebra 1 (Grade 8) Units */}
+                      {units.filter(u => u.grade === "8").length > 0 && (
+                        <optgroup label="Algebra 1 (Grade 8)">
+                          {units
+                            .filter(u => u.grade === "8")
+                            .map((unit) => (
                             <option key={`alg1-g8-${unit.unitNumber}`} value={unit.unitNumber}>
                               {unit.unitName}
                             </option>
@@ -633,44 +775,21 @@ export default function RampUpProgressPage() {
                   ))
                 )}
               </select>
+              </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="lesson-section-filter"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Section of Unit
-              </label>
-              <select
-                id="lesson-section-filter"
-                value={selectedLessonSection}
-                onChange={(e) => {
-                  setSelectedLessonSection(e.target.value);
-                }}
-                disabled={!selectedUnit}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  !selectedUnit
-                    ? "bg-gray-100 cursor-not-allowed border-gray-300"
-                    : selectedLessonSection
-                    ? "border-gray-300"
-                    : "border-blue-500 ring-2 ring-blue-200"
-                }`}
-              >
-                <option value="">
-                  {!selectedUnit
-                    ? "Select unit first"
-                    : availableSections.length === 0
-                    ? "No sections available"
-                    : "Select Section"}
-                </option>
-                {availableSections.map((section) => (
-                  <option key={section} value={section}>
-                    {section}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {/* Row 2: Section of Unit (100% width, only show when section and unit are selected) */}
+            {selectedSection && selectedUnit !== null && (
+              <div>
+                <SectionRadioGroup
+                  options={sectionOptions}
+                  value={selectedLessonSection}
+                  onChange={setSelectedLessonSection}
+                  label="Section of Unit"
+                  disabled={loadingLessons}
+                />
+              </div>
+            )}
           </div>
 
           {/* Error */}
@@ -683,7 +802,22 @@ export default function RampUpProgressPage() {
 
         {/* Assignment Cards */}
         {selectedSection && selectedUnit !== null && selectedLessonSection ? (
-          lessons.length === 0 ? (
+          loadingLessons || loading ? (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12 text-center">
+              <div className="flex flex-col items-center justify-center">
+                <svg className="animate-spin h-12 w-12 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <div className="text-gray-600 font-medium mb-1">
+                  {loadingLessons ? 'Loading lessons...' : 'Loading progress data...'}
+                </div>
+                <div className="text-gray-500 text-sm">
+                  Please wait while we fetch the assignment data
+                </div>
+              </div>
+            </div>
+          ) : lessons.length === 0 ? (
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12 text-center">
               <div className="text-gray-400 text-4xl mb-4">📚</div>
               <div className="text-gray-600">
@@ -711,25 +845,73 @@ export default function RampUpProgressPage() {
                     {/* Lessons with Mastery Checks */}
                     {groupedLessons.length > 0 && (
                       <div>
-                        <div className="flex items-center gap-3 mb-4">
-                          <h2 className="text-2xl font-bold text-gray-900">Lessons</h2>
-                          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                            {groupedLessons.length} {groupedLessons.length === 1 ? 'Lesson' : 'Lessons'}
-                          </span>
-                        </div>
+                        {/* Lessons Header with Overall Progress */}
+                        {(() => {
+                          // Calculate overall progress for all lessons in this section
+                          const allLessonProgressData = groupedLessons.flatMap(({ lesson, masteryCheck }) => {
+                            const lessonData = progressData.filter(p =>
+                              p.podsieAssignmentId
+                                ? p.podsieAssignmentId === lesson.podsieAssignmentId
+                                : p.rampUpId === lesson.unitLessonId
+                            );
+                            const masteryCheckData = masteryCheck
+                              ? progressData.filter(p =>
+                                  p.podsieAssignmentId
+                                    ? p.podsieAssignmentId === masteryCheck.podsieAssignmentId
+                                    : p.rampUpId === masteryCheck.unitLessonId
+                                )
+                              : [];
+                            return [...lessonData, ...masteryCheckData];
+                          });
 
-                        {/* Progress Cards Grid (max 5 per row) */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6">
-                          {groupedLessons.map(({ lesson, masteryCheck }) => (
-                            <LessonProgressCard
-                              key={`progress-${lesson.section}-${lesson.unitLessonId}`}
-                              lesson={lesson}
-                              masteryCheck={masteryCheck}
-                              progressData={progressData}
-                              calculateSummaryStats={calculateSummaryStats}
-                            />
-                          ))}
-                        </div>
+                          const overallStats = calculateSummaryStats(allLessonProgressData);
+                          const overallProgress = Math.round(overallStats.avgCompletion);
+
+                          return (
+                            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+                              <div className="flex items-center gap-4 mb-6">
+                                <h2 className="text-2xl font-bold text-gray-900">Unit {selectedUnit}: {selectedLessonSection}</h2>
+                                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                  {groupedLessons.length} {groupedLessons.length === 1 ? 'Lesson' : 'Lessons'}
+                                </span>
+                                <div className="flex-1 flex items-center gap-3">
+                                  <div className="flex-1 bg-gray-200 rounded-full h-3 max-w-md">
+                                    <div
+                                      className="h-3 rounded-full transition-all bg-gradient-to-r from-blue-500 to-blue-600"
+                                      style={{ width: `${overallProgress}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-sm font-bold text-blue-700 min-w-[3rem]">{overallProgress}%</span>
+                                </div>
+                                <button
+                                  onClick={handleSyncAll}
+                                  disabled={syncingAll || syncing !== null}
+                                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    syncingAll || syncing !== null
+                                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                      : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
+                                  }`}
+                                >
+                                  <ArrowPathIcon className={`w-5 h-5 ${syncingAll ? "animate-spin" : ""}`} />
+                                  {syncingAll ? "Syncing All..." : "Sync All"}
+                                </button>
+                              </div>
+
+                              {/* Progress Cards Grid (max 5 per row) */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                                {groupedLessons.map(({ lesson, masteryCheck }) => (
+                                  <LessonProgressCard
+                                    key={`progress-${lesson.section}-${lesson.unitLessonId}`}
+                                    lesson={lesson}
+                                    masteryCheck={masteryCheck}
+                                    progressData={progressData}
+                                    calculateSummaryStats={calculateSummaryStats}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })()}
 
                         {/* Assignment Cards */}
                         <div className="space-y-6">

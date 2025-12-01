@@ -1,0 +1,1 @@
+/Users/alexsmith/ai-coaching-platform/.claude/skills/question-types/implement-static-graph-question/snippets/static-graph.js

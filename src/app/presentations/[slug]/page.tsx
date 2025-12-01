@@ -18,6 +18,7 @@ import {
   Download,
   Smartphone,
   Wind,
+  X,
   type LucideIcon
 } from 'lucide-react';
 
@@ -114,9 +115,19 @@ export default function WorkedExampleViewer() {
   const { slides } = deck;
 
   return (
-    <Deck>
-      {/* Slide 1: Title */}
-      <TitleSlide
+    <>
+      {/* Close button - fixed position in top-right corner */}
+      <Link
+        href="/presentations"
+        className="fixed top-4 right-4 z-50 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all hover:scale-110"
+        aria-label="Close presentation"
+      >
+        <X size={24} className="text-gray-700" />
+      </Link>
+
+      <Deck>
+        {/* Slide 1: Title */}
+        <TitleSlide
         unit={slides.slide1.unit}
         title={slides.slide1.title}
         bigIdea={slides.slide1.bigIdea}
@@ -194,6 +205,7 @@ export default function WorkedExampleViewer() {
         inputLabel={slides.slide9.inputLabel}
         outputLabel={slides.slide9.outputLabel}
       />
-    </Deck>
+      </Deck>
+    </>
   );
 }

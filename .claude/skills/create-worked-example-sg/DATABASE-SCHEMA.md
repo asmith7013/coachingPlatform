@@ -2,7 +2,20 @@
 
 ## Single Collection: `worked-example-decks`
 
-Simple, embedded schema that handles text, tables, p5.js code, and diagrams.
+Flexible schema supporting **any visual type** (tables, graphs, double number lines, equations, etc.) while maintaining the core principle: **stationary visuals reduce cognitive load**.
+
+---
+
+## Core Principle
+
+The schema uses **discriminated unions** to support multiple visual types:
+- **Table** - Numerical data in rows/columns
+- **Graph** - Static or dynamic coordinate planes
+- **Double Number Line** - Proportional relationship visualization
+- **Equation** - Algebraic expressions with variables
+- **Custom D3** - Any D3 component from your question-types library
+
+All visual types follow the **stationary element rule**: position is established in Slide 2 and maintained through Slide 6.
 
 ---
 
@@ -11,6 +24,70 @@ Simple, embedded schema that handles text, tables, p5.js code, and diagrams.
 ```typescript
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
+
+// Visual type discriminated union
+const VisualContentSchema = z.discriminatedUnion('type', [
+  // Table visual
+  z.object({
+    type: z.literal('table'),
+    tableData: z.array(z.object({
+      input: z.number(),
+      output: z.number().nullable(),
+    })),
+    inputLabel: z.string(),
+    outputLabel: z.string(),
+  }),
+
+  // Graph visual (static or dynamic)
+  z.object({
+    type: z.literal('graph'),
+    graphType: z.enum(['static', 'dynamic']),
+    points: z.array(z.tuple([z.number(), z.number().nullable()])),
+    xLabel: z.string(),
+    yLabel: z.string(),
+    xMin: z.number().optional(),
+    xMax: z.number().optional(),
+    yMin: z.number().optional(),
+    yMax: z.number().optional(),
+    showOrigin: z.boolean().default(true),
+  }),
+
+  // Double number line visual
+  z.object({
+    type: z.literal('double-number-line'),
+    topLabel: z.string(),
+    bottomLabel: z.string(),
+    segments: z.array(z.object({
+      top: z.number().nullable(),
+      bottom: z.number().nullable(),
+    })),
+  }),
+
+  // Equation visual
+  z.object({
+    type: z.literal('equation'),
+    equation: z.string(), // LaTeX or plain text
+    variables: z.record(z.number().nullable()), // { x: 5, y: null }
+  }),
+
+  // Custom D3 component (for any question type from your library)
+  z.object({
+    type: z.literal('d3-component'),
+    componentName: z.string(), // e.g., 'StaticGraph', 'DoubleNumberLine', 'Table'
+    config: z.record(z.unknown()), // Component-specific configuration
+  }),
+]);
+
+// Layout configuration (same across all visual types)
+const LayoutConfigSchema = z.object({
+  visualPosition: z.enum(['center', 'left', 'right', 'top']).default('center'),
+  annotationPosition: z.enum(['below', 'above', 'right', 'left']).default('below'),
+  maintainPosition: z.boolean().default(true),
+  highlightStyle: z.enum(['border', 'glow', 'arrow', 'underline']).default('border'),
+  questionPosition: z.enum(['below', 'above', 'right', 'left']).default('below'),
+  calculationPosition: z.enum(['right', 'left', 'below', 'overlay']).default('right'),
+  showVisualOnReveal: z.boolean().default(true),
+});
 
 const WorkedExampleDeckSchema = z.object({
   _id: z.instanceof(ObjectId),
@@ -34,74 +111,93 @@ const WorkedExampleDeckSchema = z.object({
       icon: z.string().optional(),
     }),
 
-    slide2: z.object({ // Context
+    slide2: z.object({ // Context - The Hook
       scenario: z.string(),
       context: z.string(),
       icon: z.string(),
-      tableData: z.array(z.object({
-        input: z.number(),
-        output: z.number().nullable(),
-      })),
-      inputLabel: z.string(),
-      outputLabel: z.string(),
-      // Optional: diagram or visualization
+
+      // Primary visual content (discriminated union)
+      visual: VisualContentSchema,
+
+      // Optional: Additional diagram or visualization
       diagram: z.object({
         type: z.enum(['image', 'p5js']),
         content: z.string(), // URL or p5.js code
       }).optional(),
+
+      // Layout configuration for visual stability
+      layout: LayoutConfigSchema.optional(),
     }),
 
-    slide3: z.object({ // Prediction 1
+    slide3: z.object({ // Prediction 1 - Ask
       question: z.string(),
-      tableData: z.array(z.object({
-        input: z.number(),
-        output: z.number().nullable(),
-      })),
-      highlightRow: z.number().optional(),
-      inputLabel: z.string(),
-      outputLabel: z.string(),
-      // Optional: visual aid
+
+      // Same visual as slide2, with potential highlight
+      visual: VisualContentSchema,
+      highlightTarget: z.string().optional(), // What to highlight (row index, point, segment, etc.)
+
+      // Optional: Additional visual aid
       diagram: z.object({
         type: z.enum(['image', 'p5js']),
         content: z.string(),
       }).optional(),
+
+      // Layout configuration - maintains position from slide2
+      layout: LayoutConfigSchema.optional(),
     }),
 
-    slide4: z.object({ // Reveal 1
+    slide4: z.object({ // Reveal 1 - Answer
       calculation: z.string(),
       explanation: z.string(),
       answer: z.string(),
       isConstant: z.boolean(),
-      // Optional: animated visualization
+
+      // Optional: Same visual as slides 2-3 (for context)
+      visual: VisualContentSchema.optional(),
+
+      // Optional: Animated visualization
       diagram: z.object({
         type: z.enum(['image', 'p5js']),
         content: z.string(),
       }).optional(),
+
+      // Layout configuration - maintains position from slide2
+      layout: LayoutConfigSchema.optional(),
     }),
 
-    slide5: z.object({ // Prediction 2
+    slide5: z.object({ // Prediction 2 - Ask
       question: z.string(),
-      tableData: z.array(z.object({
-        input: z.number(),
-        output: z.number().nullable(),
-      })),
-      highlightRow: z.number().optional(),
-      inputLabel: z.string(),
-      outputLabel: z.string(),
+
+      // Same visual as slide2, with different highlight
+      visual: VisualContentSchema,
+      highlightTarget: z.string().optional(),
+
+      // Optional: Additional visual aid
       diagram: z.object({
         type: z.enum(['image', 'p5js']),
         content: z.string(),
       }).optional(),
+
+      // Layout configuration - maintains position from slide2
+      layout: LayoutConfigSchema.optional(),
     }),
 
-    slide6: z.object({ // Reveal 2
+    slide6: z.object({ // Reveal 2 - Answer
       calculation: z.string(),
       explanation: z.string(),
       answer: z.string(),
+
+      // Optional: Same visual as slides 2-5 (for context)
+      visual: VisualContentSchema.optional(),
+
+      // Optional: Additional visualization
       diagram: z.object({
         type: z.enum(['image', 'p5js']),
         content: z.string(),
       }).optional(),
+
+      // Layout configuration - maintains position from slide2
+      layout: LayoutConfigSchema.optional(),
     }),
 
     slide7: z.object({ // Reasoning
@@ -116,36 +212,40 @@ const WorkedExampleDeckSchema = z.object({
       }).optional(),
     }),
 
-    slide8: z.object({ // Practice 1
+    slide8: z.object({ // Practice 1 - Independent Application
       scenario: z.string(),
       context: z.string(),
       icon: z.string(),
-      tableData: z.array(z.object({
-        input: z.number(),
-        output: z.number().nullable(),
-      })),
-      inputLabel: z.string(),
-      outputLabel: z.string(),
+
+      // Visual content (same structure as worked example)
+      visual: VisualContentSchema,
+
+      // Optional: Additional diagram
       diagram: z.object({
         type: z.enum(['image', 'p5js']),
         content: z.string(),
       }).optional(),
+
+      // Layout (fresh layout, not necessarily same as slides 2-6)
+      layout: LayoutConfigSchema.optional(),
     }),
 
-    slide9: z.object({ // Practice 2
+    slide9: z.object({ // Practice 2 - Independent Application
       scenario: z.string(),
       context: z.string(),
       icon: z.string(),
-      tableData: z.array(z.object({
-        input: z.number(),
-        output: z.number().nullable(),
-      })),
-      inputLabel: z.string(),
-      outputLabel: z.string(),
+
+      // Visual content (same structure as worked example)
+      visual: VisualContentSchema,
+
+      // Optional: Additional diagram
       diagram: z.object({
         type: z.enum(['image', 'p5js']),
         content: z.string(),
       }).optional(),
+
+      // Layout (fresh layout, not necessarily same as slides 2-6)
+      layout: LayoutConfigSchema.optional(),
     }),
   }),
 
@@ -184,6 +284,19 @@ const diagramSchema = {
   content: String, // URL for images, code string for p5.js
 };
 
+const layoutSchema = {
+  // For slide2
+  tablePosition: { type: String, enum: ['center', 'left', 'right', 'top'], default: 'center' },
+  annotationPosition: { type: String, enum: ['below', 'above', 'right', 'left'], default: 'below' },
+
+  // For slides 3-6 (prediction pairs)
+  maintainTablePosition: { type: Boolean, default: true },
+  highlightStyle: { type: String, enum: ['border', 'glow', 'arrow', 'underline'], default: 'border' },
+  questionPosition: { type: String, enum: ['below', 'above', 'right', 'left'], default: 'below' },
+  calculationPosition: { type: String, enum: ['right', 'left', 'below', 'overlay'], default: 'right' },
+  showTableOnReveal: { type: Boolean, default: true },
+};
+
 const workedExampleDeckSchema = new mongoose.Schema({
   title: { type: String, required: true },
   slug: { type: String, required: true, unique: true, index: true },
@@ -208,6 +321,7 @@ const workedExampleDeckSchema = new mongoose.Schema({
       inputLabel: String,
       outputLabel: String,
       diagram: diagramSchema,
+      layout: layoutSchema,
     },
     slide3: {
       question: String,
@@ -216,6 +330,7 @@ const workedExampleDeckSchema = new mongoose.Schema({
       inputLabel: String,
       outputLabel: String,
       diagram: diagramSchema,
+      layout: layoutSchema,
     },
     slide4: {
       calculation: String,
@@ -223,6 +338,7 @@ const workedExampleDeckSchema = new mongoose.Schema({
       answer: String,
       isConstant: Boolean,
       diagram: diagramSchema,
+      layout: layoutSchema,
     },
     slide5: {
       question: String,
@@ -231,12 +347,14 @@ const workedExampleDeckSchema = new mongoose.Schema({
       inputLabel: String,
       outputLabel: String,
       diagram: diagramSchema,
+      layout: layoutSchema,
     },
     slide6: {
       calculation: String,
       explanation: String,
       answer: String,
       diagram: diagramSchema,
+      layout: layoutSchema,
     },
     slide7: {
       title: String,
@@ -375,6 +493,116 @@ await saveWorkedExampleDeck({
 
 ---
 
+## Layout Configuration System
+
+### Purpose
+
+The `layout` field on slides 2-6 ensures **visual stability** across the worked example sequence. This reduces cognitive load by keeping the data table in a fixed position while annotations appear around it.
+
+### How It Works
+
+**Slide 2 (The Hook)** establishes the table position:
+```javascript
+layout: {
+  tablePosition: "center",        // Where the table appears
+  annotationPosition: "below"     // Where supporting text goes
+}
+```
+
+**Slides 3-6 (Prediction Pairs)** maintain that position:
+```javascript
+layout: {
+  maintainTablePosition: true,    // Lock to slide2's position
+  highlightStyle: "border",       // How to emphasize rows
+  questionPosition: "below",      // Where questions appear
+  calculationPosition: "right",   // Where math appears (reveal slides)
+  showTableOnReveal: true         // Keep table visible with answer
+}
+```
+
+### Layout Options
+
+| Field | Options | Description |
+|-------|---------|-------------|
+| `tablePosition` | `"center"`, `"left"`, `"right"`, `"top"` | Initial table placement (slide 2) |
+| `maintainTablePosition` | `true`, `false` | Lock to slide 2 position (slides 3-6) |
+| `highlightStyle` | `"border"`, `"glow"`, `"arrow"`, `"underline"` | How to emphasize table rows |
+| `questionPosition` | `"below"`, `"above"`, `"right"`, `"left"` | Where "Ask" text appears |
+| `calculationPosition` | `"right"`, `"left"`, `"below"`, `"overlay"` | Where math appears on reveals |
+| `showTableOnReveal` | `true`, `false` | Show table with answer or hide it |
+
+### Default Behavior
+
+If `layout` is omitted, defaults to:
+- Table: centered
+- Questions: below table
+- Calculations: to the right
+- Table always visible
+- Border-style highlighting
+
+### Example: Center-Based Layout
+
+```javascript
+slides: {
+  slide2: {
+    // ... other fields
+    layout: { tablePosition: "center", annotationPosition: "below" }
+  },
+  slide3: {
+    // ... other fields
+    layout: {
+      maintainTablePosition: true,
+      highlightStyle: "border",
+      questionPosition: "below"
+    }
+  },
+  slide4: {
+    // ... other fields
+    layout: {
+      maintainTablePosition: true,
+      calculationPosition: "right",
+      showTableOnReveal: true
+    }
+  },
+  // ... slides 5-6 follow same pattern
+}
+```
+
+### Example: Left-Aligned Layout (More Calculation Space)
+
+```javascript
+slides: {
+  slide2: {
+    layout: { tablePosition: "left", annotationPosition: "below" }
+  },
+  slide3: {
+    layout: {
+      maintainTablePosition: true,
+      highlightStyle: "glow",
+      questionPosition: "below"
+    }
+  },
+  slide4: {
+    layout: {
+      maintainTablePosition: true,
+      calculationPosition: "right",  // Large space for complex math
+      showTableOnReveal: true
+    }
+  },
+}
+```
+
+### When to Use Each Position
+
+| Position | Best For | Trade-offs |
+|----------|----------|------------|
+| **center** | Standard problems, balanced layout | Limited space for calculations |
+| **left** | Complex calculations needed | Less symmetrical |
+| **right** | Complex questions, left-to-right reading | Less symmetrical |
+| **top** | Diagrams or visualizations below | Less vertical space |
+
+---
+
 ## That's It
 
 Simple schema, handles your needs:
@@ -383,5 +611,6 @@ Simple schema, handles your needs:
 - ✅ p5.js code (stored as string)
 - ✅ Image URLs
 - ✅ Searchable by grade/concept
+- ✅ Layout hints for visual stability
 - ❌ No unnecessary complexity
 

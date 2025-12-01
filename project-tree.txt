@@ -1,4 +1,5 @@
 .
+├── 161 WE.mp4
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── amplify
@@ -224,6 +225,8 @@
 │   │   ├── problem-problem-6-1759877263707.png
 │   │   ├── problem-problem-7-1759876905868.png
 │   │   └── problem-problem-7-1759877263707.png
+│   ├── scripts
+│   │   └── coordinate-plane-p5.js -> /Users/alexsmith/ai-coaching-platform/.claude/skills/question-types/implement-dynamic-graph-question/snippets/coordinate-plane-p5.js
 │   ├── vercel.svg
 │   └── window.svg
 ├── response_patterns.txt
@@ -233,8 +236,10 @@
 │   ├── README-skill-migration.md
 │   ├── add-students.ts
 │   ├── combine-docs.ts
+│   ├── create-section-configs.ts
 │   ├── db
 │   │   └── drop-studentidref-index.ts
+│   ├── debug-803-unit3.js
 │   ├── delete-all-students.ts
 │   ├── generate-theme-css.ts
 │   ├── im-curriculum
@@ -242,6 +247,7 @@
 │   │   ├── course-config.js
 │   │   ├── pdf-downloader.js
 │   │   └── scraper.ts
+│   ├── link-question-type-scripts.sh
 │   ├── migrate-skill-appears-in.ts
 │   ├── run-scraper.ts
 │   ├── snorkl-comprehensive-scraper.ts
@@ -252,7 +258,8 @@
 │   ├── update-grade6-standards.js
 │   ├── update-grade7-standards.js
 │   ├── update-grade8-standards.js
-│   └── update-unit-8-4-podsie-data.ts
+│   ├── update-unit-8-4-podsie-data.ts
+│   └── upload-skill-video.ts
 ├── sentry.edge.config.ts
 ├── sentry.server.config.ts
 ├── src
@@ -685,17 +692,22 @@
 │   │   ├── presentations
 │   │   │   ├── [slug]
 │   │   │   │   └── page.tsx
+│   │   │   ├── components
+│   │   │   │   ├── D3ComponentRenderer.tsx
+│   │   │   │   └── DynamicGraphComponent.tsx
 │   │   │   ├── page.tsx
-│   │   │   └── slide-creation
-│   │   │       ├── ContextSlide.tsx
-│   │   │       ├── PracticeSlide.tsx
-│   │   │       ├── PredictionSlide.tsx
-│   │   │       ├── ReasoningSlide.tsx
-│   │   │       ├── RevealSlide.tsx
-│   │   │       ├── TitleSlide.tsx
-│   │   │       ├── components
-│   │   │       │   └── DataTable.tsx
-│   │   │       └── index.ts
+│   │   │   ├── slide-creation
+│   │   │   │   ├── ContextSlide.tsx
+│   │   │   │   ├── PracticeSlide.tsx
+│   │   │   │   ├── PredictionSlide.tsx
+│   │   │   │   ├── ReasoningSlide.tsx
+│   │   │   │   ├── RevealSlide.tsx
+│   │   │   │   ├── TitleSlide.tsx
+│   │   │   │   ├── components
+│   │   │   │   │   └── DataTable.tsx
+│   │   │   │   └── index.ts
+│   │   │   └── test
+│   │   │       └── page.tsx
 │   │   ├── roadmaps
 │   │   │   ├── assessment-scraper
 │   │   │   │   ├── actions
@@ -766,6 +778,8 @@
 │   │   │   ├── scope-and-sequence-uploader-pair
 │   │   │   │   └── page.tsx
 │   │   │   ├── section-configs
+│   │   │   │   ├── components
+│   │   │   │   │   └── ManualCreateAssignmentModal.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── shared
 │   │   │   │   └── lib
@@ -921,8 +935,9 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── things3
 │   │   │       └── page.tsx
-│   │   └── unauthorized
-│   │       └── page.tsx
+│   │   ├── unauthorized
+│   │   │   └── page.tsx
+│   │   └── upload-skill-video
 │   ├── components
 │   │   ├── auth
 │   │   │   ├── AuthGuard.tsx
@@ -1052,6 +1067,8 @@
 │   │   │   │   ├── Textarea.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── index.ts
+│   │   │   ├── inputs
+│   │   │   │   └── SectionRadioGroup.tsx
 │   │   │   ├── navigation
 │   │   │   │   ├── Breadcrumbs.tsx
 │   │   │   │   ├── Pagination.tsx
@@ -1933,4 +1950,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-551 directories, 1383 files
+557 directories, 1394 files
