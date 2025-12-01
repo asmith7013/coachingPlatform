@@ -185,7 +185,8 @@ export interface PodsieAssignmentInfo {
  * Returns assignment info including question counts and IDs
  */
 export async function fetchAssignedAssignments(
-  studentEmail: string
+  studentEmail: string,
+  includeLessons?: boolean
 ): Promise<{ success: boolean; assignments: PodsieAssignmentInfo[]; error?: string }> {
   const token = process.env.PODSIE_API_TOKEN;
 
@@ -202,7 +203,10 @@ export async function fetchAssignedAssignments(
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ email: studentEmail }),
+        body: JSON.stringify({
+          email: studentEmail,
+          ...(includeLessons !== undefined && { includeLessons })
+        }),
       }
     );
 
@@ -287,7 +291,8 @@ export async function getSampleStudentEmailForSection(
  * Fetch assignments available for a section (uses first student with email)
  */
 export async function fetchAssignmentsForSection(
-  section: string
+  section: string,
+  includeLessons?: boolean
 ): Promise<{ success: boolean; assignments: PodsieAssignmentInfo[]; error?: string }> {
   // Get a sample student email
   const emailResult = await getSampleStudentEmailForSection(section);
@@ -296,7 +301,7 @@ export async function fetchAssignmentsForSection(
   }
 
   // Fetch assignments for that student
-  return fetchAssignedAssignments(emailResult.email);
+  return fetchAssignedAssignments(emailResult.email, includeLessons);
 }
 
 // =====================================

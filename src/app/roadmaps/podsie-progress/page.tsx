@@ -471,6 +471,13 @@ export default function RampUpProgressPage() {
 
       const unitCode = `${assignment.grade}.${selectedUnit}`;
 
+      // Extract base question IDs from the question map, limited by totalQuestions
+      const baseQuestionIds = assignment.podsieQuestionMap && assignment.totalQuestions
+        ? assignment.podsieQuestionMap
+            .slice(0, assignment.totalQuestions)
+            .map(q => Number(q.questionId))
+        : undefined;
+
       // Debug logging
       console.log('🔄 Syncing assignment:', {
         unitLessonId: assignment.unitLessonId,
@@ -479,6 +486,9 @@ export default function RampUpProgressPage() {
         assignmentType: assignment.assignmentType,
         section: selectedSection,
         unitCode,
+        totalQuestions: assignment.totalQuestions,
+        questionMapLength: assignment.podsieQuestionMap?.length,
+        baseQuestionIdsLength: baseQuestionIds?.length,
       });
 
       const result = await syncSectionRampUpProgress(
@@ -486,8 +496,8 @@ export default function RampUpProgressPage() {
         assignment.podsieAssignmentId,
         unitCode,
         assignment.unitLessonId,
-        assignment.totalQuestions,
-        { testMode }
+        assignment.totalQuestions || 0,
+        { testMode, baseQuestionIds }
       );
 
       console.log('✅ Sync result:', result);
@@ -787,7 +797,23 @@ export default function RampUpProgressPage() {
                   onChange={setSelectedLessonSection}
                   label="Section of Unit"
                   disabled={loadingLessons}
+                  loading={loadingLessons}
                 />
+                {!loadingLessons && sectionOptions.length === 0 && (
+                  <div className="mt-2 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <div className="text-blue-600 text-2xl">ℹ️</div>
+                      <div>
+                        <div className="text-sm font-medium text-blue-900 mb-1">
+                          No lessons found for Unit {selectedUnit}
+                        </div>
+                        <div className="text-sm text-blue-700">
+                          This unit doesn't have any assigned lessons yet. Try selecting a different unit or check the section configuration.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -899,15 +925,24 @@ export default function RampUpProgressPage() {
 
                               {/* Progress Cards Grid (max 5 per row) */}
                               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                                {groupedLessons.map(({ lesson, masteryCheck }) => (
-                                  <LessonProgressCard
-                                    key={`progress-${lesson.section}-${lesson.unitLessonId}`}
-                                    lesson={lesson}
-                                    masteryCheck={masteryCheck}
-                                    progressData={progressData}
-                                    calculateSummaryStats={calculateSummaryStats}
-                                  />
-                                ))}
+                                {groupedLessons.map(({ lesson, masteryCheck }) => {
+                                  const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.assignmentType || 'default'}`;
+                                  return (
+                                    <LessonProgressCard
+                                      key={`progress-${lesson.section}-${lesson.unitLessonId}`}
+                                      lesson={lesson}
+                                      masteryCheck={masteryCheck}
+                                      progressData={progressData}
+                                      calculateSummaryStats={calculateSummaryStats}
+                                      onClick={() => {
+                                        const element = document.getElementById(cardId);
+                                        if (element) {
+                                          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        }
+                                      }}
+                                    />
+                                  );
+                                })}
                               </div>
                             </div>
                           );
@@ -915,19 +950,23 @@ export default function RampUpProgressPage() {
 
                         {/* Assignment Cards */}
                         <div className="space-y-6">
-                          {groupedLessons.map(({ lesson, masteryCheck }) => (
-                            <AssignmentCard
-                              key={`assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.assignmentType}`}
-                              assignment={lesson}
-                              masteryCheckAssignment={masteryCheck}
-                              progressData={progressData}
-                              syncing={syncing === `${lesson.unitLessonId}-${lesson.assignmentType || 'default'}`}
-                              masteryCheckSyncing={masteryCheck ? syncing === `${masteryCheck.unitLessonId}-${masteryCheck.assignmentType || 'default'}` : false}
-                              onSync={(testMode) => handleSyncAssignment(lesson, testMode)}
-                              onMasteryCheckSync={masteryCheck ? (testMode) => handleSyncAssignment(masteryCheck, testMode) : undefined}
-                              calculateSummaryStats={calculateSummaryStats}
-                            />
-                          ))}
+                          {groupedLessons.map(({ lesson, masteryCheck }) => {
+                            const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.assignmentType || 'default'}`;
+                            return (
+                              <div key={cardId} id={cardId}>
+                                <AssignmentCard
+                                  assignment={lesson}
+                                  masteryCheckAssignment={masteryCheck}
+                                  progressData={progressData}
+                                  syncing={syncing === `${lesson.unitLessonId}-${lesson.assignmentType || 'default'}`}
+                                  masteryCheckSyncing={masteryCheck ? syncing === `${masteryCheck.unitLessonId}-${masteryCheck.assignmentType || 'default'}` : false}
+                                  onSync={(testMode) => handleSyncAssignment(lesson, testMode)}
+                                  onMasteryCheckSync={masteryCheck ? (testMode) => handleSyncAssignment(masteryCheck, testMode) : undefined}
+                                  calculateSummaryStats={calculateSummaryStats}
+                                />
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     )}

@@ -182,6 +182,7 @@ export async function upsertSectionConfig(data: {
 
 /**
  * Add a Podsie assignment to a section config
+ * Updates if an assignment with the same podsieAssignmentId already exists
  */
 export async function addPodsieAssignment(
   school: string,
@@ -190,7 +191,36 @@ export async function addPodsieAssignment(
 ) {
   return withDbConnection(async () => {
     try {
-      const result = await SectionConfigModel.findOneAndUpdate(
+      // First, try to update existing assignment with same podsieAssignmentId
+      const updateResult = await SectionConfigModel.findOneAndUpdate(
+        {
+          school,
+          classSection,
+          'podsieAssignments.podsieAssignmentId': assignment.podsieAssignmentId
+        },
+        {
+          $set: {
+            'podsieAssignments.$': assignment,
+            updatedAt: new Date().toISOString()
+          }
+        },
+        { new: true, runValidators: true }
+      );
+
+      // If found and updated, return success
+      if (updateResult) {
+        revalidatePath('/roadmaps/ramp-up-progress');
+        revalidatePath('/roadmaps/scope-and-sequence');
+
+        return {
+          success: true,
+          data: updateResult.toObject(),
+          message: `Updated assignment ${assignment.unitLessonId} in ${school} ${classSection}`
+        };
+      }
+
+      // Otherwise, push as new assignment
+      const pushResult = await SectionConfigModel.findOneAndUpdate(
         { school, classSection },
         {
           $push: { podsieAssignments: assignment },
@@ -199,7 +229,7 @@ export async function addPodsieAssignment(
         { new: true, runValidators: true }
       );
 
-      if (!result) {
+      if (!pushResult) {
         return {
           success: false,
           error: "Section config not found"
@@ -211,7 +241,7 @@ export async function addPodsieAssignment(
 
       return {
         success: true,
-        data: result.toObject(),
+        data: pushResult.toObject(),
         message: `Added assignment ${assignment.unitLessonId} to ${school} ${classSection}`
       };
     } catch (error) {

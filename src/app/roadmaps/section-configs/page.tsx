@@ -24,6 +24,7 @@ interface AssignmentMatch {
   podsieAssignment: PodsieAssignmentInfo;
   matchedLesson: ScopeAndSequence | null;
   isCreatingNew: boolean;
+  assignmentType: 'lesson' | 'mastery-check';
   newLessonData?: {
     unitNumber: number;
     section: string;
@@ -124,7 +125,7 @@ export default function SectionConfigsPage() {
     try {
       setFetchingPodsie(true);
       setError(null);
-      const result = await fetchAssignmentsForSection(selectedSection);
+      const result = await fetchAssignmentsForSection(selectedSection, true);
 
       if (result.success) {
         setPodsieAssignments(result.assignments);
@@ -134,6 +135,8 @@ export default function SectionConfigsPage() {
           podsieAssignment: assignment,
           matchedLesson: null,
           isCreatingNew: false,
+          // Auto-detect based on module_name: if it contains "LESSONS", it's a lesson; otherwise mastery-check
+          assignmentType: assignment.moduleName?.includes('LESSONS') ? 'lesson' : 'mastery-check',
           newLessonData: {
             unitNumber: 1,
             section: "Ramp Ups",
@@ -141,7 +144,7 @@ export default function SectionConfigsPage() {
           }
         }));
         setMatches(initialMatches);
-        setSuccess(`Fetched ${result.assignments.length} assignments from Podsie`);
+        setSuccess(`Fetched ${result.assignments.length} assignments from Podsie (including lessons)`);
       } else {
         setError(result.error || 'Failed to fetch Podsie assignments');
       }
@@ -406,7 +409,7 @@ export default function SectionConfigsPage() {
           unitLessonId: lessonToUse.unitLessonId,
           lessonName: lessonToUse.lessonName,
           grade: lessonToUse.grade,
-          assignmentType: 'mastery-check', // Default to mastery-check for imported assignments
+          assignmentType: match.assignmentType, // Use the detected/selected assignment type
           podsieAssignmentId: String(match.podsieAssignment.assignmentId),
           podsieQuestionMap: match.podsieAssignment.questionIds.map((questionId: number, idx: number) => ({
             questionNumber: idx + 1,
@@ -635,6 +638,47 @@ export default function SectionConfigsPage() {
                         ID: {match.podsieAssignment.assignmentId} • {match.podsieAssignment.totalQuestions} questions
                       </div>
                     </div>
+
+                  {/* Assignment Type Toggle */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Assignment Type
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => {
+                          setMatches(prev => prev.map(m =>
+                            m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
+                              ? { ...m, assignmentType: 'mastery-check' }
+                              : m
+                          ));
+                        }}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                          match.assignmentType === 'mastery-check'
+                            ? 'bg-green-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        Mastery Check
+                      </button>
+                      <button
+                        onClick={() => {
+                          setMatches(prev => prev.map(m =>
+                            m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
+                              ? { ...m, assignmentType: 'lesson' }
+                              : m
+                          ));
+                        }}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                          match.assignmentType === 'lesson'
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        Lesson
+                      </button>
+                    </div>
+                  </div>
 
                   {/* Action Buttons */}
                   <div className="grid grid-cols-2 gap-3 mb-4">
