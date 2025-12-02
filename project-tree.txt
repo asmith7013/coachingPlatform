@@ -1,6 +1,8 @@
 .
 ├── 161 WE.mp4
 ├── AGENTS.md
+├── ANALYTICS.md
+├── ANALYTICS_SETUP_COMPLETE.md
 ├── CLAUDE.md
 ├── amplify
 │   ├── docs.md
@@ -328,6 +330,7 @@
 │   │   │   │   ├── sync-sheets.ts
 │   │   │   │   ├── zearn-completions.ts
 │   │   │   │   └── zearn-import.ts
+│   │   │   ├── analytics.ts
 │   │   │   ├── calendar
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── school-calendar.ts
@@ -776,12 +779,15 @@
 │   │   │   │   ├── components
 │   │   │   │   │   ├── AssignmentCard.tsx
 │   │   │   │   │   ├── AssignmentProgressTable.tsx
+│   │   │   │   │   ├── CompletionCheckmark.tsx
 │   │   │   │   │   ├── CreateAssignmentModal.tsx
 │   │   │   │   │   ├── LessonProgressCard.tsx
 │   │   │   │   │   ├── SmartboardDisplay.tsx
 │   │   │   │   │   ├── SmartboardProgressBar.tsx
 │   │   │   │   │   └── index.ts
-│   │   │   │   └── page.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── utils
+│   │   │   │       └── groupAssignments.ts
 │   │   │   ├── scope-and-sequence
 │   │   │   │   ├── components
 │   │   │   │   │   ├── LessonDetailView.tsx
@@ -959,6 +965,11 @@
 │   │   │   └── page.tsx
 │   │   └── upload-skill-video
 │   ├── components
+│   │   ├── analytics
+│   │   │   ├── AnalyticsDashboard.tsx
+│   │   │   ├── PageViewTracker.tsx
+│   │   │   ├── PostHogPageView.tsx
+│   │   │   └── UserHistory.tsx
 │   │   ├── auth
 │   │   │   ├── AuthGuard.tsx
 │   │   │   ├── AuthLoading.tsx
@@ -1313,31 +1324,33 @@
 │   │   │       ├── VisitSidebar.tsx
 │   │   │       └── index.ts
 │   │   ├── index.ts
-│   │   └── integrations
-│   │       ├── googleSheets
-│   │       │   └── ExportDashboard.tsx
-│   │       ├── monday
-│   │       │   ├── README.md
-│   │       │   ├── UserForm.tsx
-│   │       │   ├── boards
-│   │       │   │   └── index.ts
-│   │       │   ├── common
-│   │       │   │   ├── ConnectionTest.tsx
-│   │       │   │   └── index.ts
-│   │       │   ├── domain
-│   │       │   │   ├── users
-│   │       │   │   └── visits
-│   │       │   ├── imports
-│   │       │   │   └── index.ts
-│   │       │   ├── index.ts
-│   │       │   └── utils
-│   │       │       └── index.ts
-│   │       └── zearn
-│   │           ├── ZearnDataParser.tsx
-│   │           ├── hooks
-│   │           │   └── useZearnBatchData.ts
-│   │           └── utils
-│   │               └── parseZearnData.ts
+│   │   ├── integrations
+│   │   │   ├── googleSheets
+│   │   │   │   └── ExportDashboard.tsx
+│   │   │   ├── monday
+│   │   │   │   ├── README.md
+│   │   │   │   ├── UserForm.tsx
+│   │   │   │   ├── boards
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── common
+│   │   │   │   │   ├── ConnectionTest.tsx
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── domain
+│   │   │   │   │   ├── users
+│   │   │   │   │   └── visits
+│   │   │   │   ├── imports
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   └── utils
+│   │   │   │       └── index.ts
+│   │   │   └── zearn
+│   │   │       ├── ZearnDataParser.tsx
+│   │   │       ├── hooks
+│   │   │       │   └── useZearnBatchData.ts
+│   │   │       └── utils
+│   │   │           └── parseZearnData.ts
+│   │   └── ui
+│   │       └── card.tsx
 │   ├── debug
 │   ├── examples
 │   │   └── skeleton-container-examples.tsx
@@ -1419,6 +1432,7 @@
 │   │   │   ├── useSchoolAuthorization.ts
 │   │   │   ├── useSectionToggle.ts
 │   │   │   └── useSkeletonLoading.ts
+│   │   ├── useAnalytics.ts
 │   │   ├── utilities
 │   │   │   └── useAutoSave.ts
 │   │   └── visits
@@ -1583,6 +1597,8 @@
 │   │   │   │   │   ├── student.model.ts
 │   │   │   │   │   ├── timesheet
 │   │   │   │   │   └── zearn-import.model.ts
+│   │   │   │   ├── PageView.ts
+│   │   │   │   ├── Session.ts
 │   │   │   │   ├── calendar
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   ├── school-calendar.model.ts
@@ -1665,6 +1681,7 @@
 │   │   │       │   ├── student.ts
 │   │   │       │   ├── timesheet
 │   │   │       │   └── zearn-import.ts
+│   │   │       ├── analytics.ts
 │   │   │       ├── base-schemas.ts
 │   │   │       ├── calendar
 │   │   │       │   ├── index.ts
@@ -1896,6 +1913,7 @@
 │   ├── middleware.ts
 │   ├── providers
 │   │   ├── AuthProvider.tsx
+│   │   ├── PostHogProvider.tsx
 │   │   └── SWRProvider.tsx
 │   ├── query
 │   │   ├── cache
@@ -1970,4 +1988,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-562 directories, 1409 files
+565 directories, 1424 files

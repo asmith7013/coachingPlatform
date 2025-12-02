@@ -7,6 +7,10 @@ import { PerformanceMonitorProvider } from "@lib/dev/debugging/usePerformanceMon
 import { ClerkProvider } from '@clerk/nextjs'
 import { AuthProvider } from '@/providers/AuthProvider'
 import { Toaster } from 'sonner';
+import { Analytics } from '@vercel/analytics/react';
+import { PostHogProvider, PostHogIdentifier } from '@/providers/PostHogProvider';
+import { PostHogPageView } from '@/components/analytics/PostHogPageView';
+import { PageViewTracker } from '@/components/analytics/PageViewTracker';
 
 const geist = Geist({
   subsets: ["latin"],
@@ -33,18 +37,23 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable} ${inter.className} h-full`}>
       <body className={`bg-seasalt text-gunmetal font-sans antialiased h-full`}>
-        <ClerkProvider dynamic>
-          <QueryProvider> 
-            <AuthProvider>  
-              <SentryBoundaryWrapper>
-                <PerformanceMonitorProvider>
-                  {children}
-                </PerformanceMonitorProvider>
-              </SentryBoundaryWrapper>
-            </AuthProvider>
-          </QueryProvider>
-        </ClerkProvider>
-        <Toaster 
+        <PostHogProvider>
+          <ClerkProvider dynamic>
+            <PostHogIdentifier />
+            <PostHogPageView />
+            <PageViewTracker />
+            <QueryProvider>
+              <AuthProvider>
+                <SentryBoundaryWrapper>
+                  <PerformanceMonitorProvider>
+                    {children}
+                  </PerformanceMonitorProvider>
+                </SentryBoundaryWrapper>
+              </AuthProvider>
+            </QueryProvider>
+          </ClerkProvider>
+        </PostHogProvider>
+        <Toaster
           position="top-right"
           richColors
           closeButton
@@ -52,6 +61,7 @@ export default function RootLayout({
           expand={false}
           gap={8}
         />
+        <Analytics />
       </body>
     </html>
   );
