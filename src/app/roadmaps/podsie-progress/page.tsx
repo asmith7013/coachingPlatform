@@ -24,6 +24,7 @@ import { SmartboardDisplay } from "./components/SmartboardDisplay";
 import { CreateAssignmentModal } from "./components/CreateAssignmentModal";
 import { LessonProgressCard } from "./components/LessonProgressCard";
 import { SectionRadioGroup } from "@/components/core/inputs/SectionRadioGroup";
+import { groupAssignmentsByUnitLesson } from "./utils/groupAssignments";
 
 // Map section to scopeSequenceTag based on first digit
 // 802 = Algebra 1
@@ -102,6 +103,7 @@ interface LessonConfig {
   section?: string;
   unitNumber: number;
   assignmentType?: 'lesson' | 'mastery-check';
+  hasZearnLesson?: boolean;
 }
 
 interface UnitOption {
@@ -125,6 +127,8 @@ interface ProgressData {
   percentComplete: number;
   isFullyComplete: boolean;
   lastSyncedAt?: string;
+  zearnCompleted?: boolean; // Whether student completed the Zearn lesson
+  zearnCompletionDate?: string; // Date when Zearn lesson was completed
 }
 
 export default function RampUpProgressPage() {
@@ -302,7 +306,12 @@ export default function RampUpProgressPage() {
         const school = getSchoolForSection(selectedSection);
         const configResult = await getSectionConfig(school, selectedSection);
         if (configResult.success && configResult.data) {
-          setSectionConfigAssignments(configResult.data.podsieAssignments || []);
+          // Add scopeSequenceTag to each assignment from the parent config
+          const assignmentsWithScope = (configResult.data.podsieAssignments || []).map((assignment: PodsieAssignment) => ({
+            ...assignment,
+            scopeSequenceTag: configResult.data.scopeSequenceTag
+          }));
+          setSectionConfigAssignments(assignmentsWithScope);
         } else {
           setSectionConfigAssignments([]);
         }
@@ -400,7 +409,14 @@ export default function RampUpProgressPage() {
         const relevantUnitLessonIds = new Set(filteredLessons.map(l => l.unitLessonId));
 
         sectionConfigAssignments
-          .filter(assignment => relevantUnitLessonIds.has(assignment.unitLessonId))
+          .filter(assignment => {
+            // Match by unitLessonId
+            if (!relevantUnitLessonIds.has(assignment.unitLessonId)) return false;
+
+            // Also filter by scopeSequenceTag to ensure we only show assignments for the current scope
+            const assignmentScopeTag = (assignment as PodsieAssignment & { scopeSequenceTag?: string }).scopeSequenceTag;
+            return assignmentScopeTag === actualScopeTag;
+          })
           .forEach(assignment => {
             // Find the corresponding scope-and-sequence lesson (just for section metadata)
             const scopeLesson = filteredLessons.find(l => l.unitLessonId === assignment.unitLessonId);
@@ -413,7 +429,8 @@ export default function RampUpProgressPage() {
               totalQuestions: assignment.totalQuestions || 10,
               section: scopeLesson?.section,
               unitNumber: selectedUnit,
-              assignmentType: assignment.assignmentType || 'mastery-check'
+              assignmentType: assignment.assignmentType || 'mastery-check',
+              hasZearnLesson: assignment.hasZearnLesson || false
             });
           });
 
@@ -573,30 +590,15 @@ export default function RampUpProgressPage() {
 
     setSyncingAll(true);
     try {
-      // Group lessons with their mastery checks
-      const lessonAssignments = lessons.filter(a => a.assignmentType === 'lesson');
-      const masteryCheckAssignments = lessons.filter(a => a.assignmentType === 'mastery-check' || !a.assignmentType);
-
-      const groupedLessons = lessonAssignments.map(lesson => {
-        const masteryCheck = masteryCheckAssignments.find(mc => mc.unitLessonId === lesson.unitLessonId);
-        return { lesson, masteryCheck };
-      });
-
-      // Sync each lesson and its mastery check sequentially
-      for (const { lesson, masteryCheck } of groupedLessons) {
-        // Sync lesson
-        await handleSyncAssignment(lesson, false);
-
-        // Sync mastery check if it exists
-        if (masteryCheck) {
-          await handleSyncAssignment(masteryCheck, false);
-        }
+      // Sync each assignment sequentially
+      for (const assignment of lessons) {
+        await handleSyncAssignment(assignment, false);
       }
 
       // Show final success toast
       showToast({
         title: 'All Syncs Complete',
-        description: `Successfully synced all ${groupedLessons.length} lesson${groupedLessons.length !== 1 ? 's' : ''} in ${selectedLessonSection}`,
+        description: `Successfully synced all ${lessons.length} assignment${lessons.length !== 1 ? 's' : ''} in ${selectedLessonSection}`,
         variant: 'success',
         icon: CheckCircleIcon,
       });
@@ -640,6 +642,29 @@ export default function RampUpProgressPage() {
       syncedStudents: studentsWithProgress.length,
     };
   };
+
+  // Group lessons with their matching mastery checks by unitLessonId
+  const groupedAssignments = useMemo(() => {
+    console.log('=== GROUPING ASSIGNMENTS (page.tsx) ===');
+    console.log('Total lessons:', lessons.length);
+    console.log('All assignments:', lessons.map(l => ({
+      podsieAssignmentId: l.podsieAssignmentId,
+      unitLessonId: l.unitLessonId,
+      lessonName: l.lessonName,
+      assignmentType: l.assignmentType
+    })));
+
+    const grouped = groupAssignmentsByUnitLesson(lessons);
+
+    console.log('\n=== GROUPING RESULTS (page.tsx) ===');
+    console.log('Grouped count:', grouped.length);
+    console.log('Groups:', grouped.map(g => ({
+      lesson: `${g.lesson.podsieAssignmentId} (${g.lesson.assignmentType})`,
+      masteryCheck: g.masteryCheck ? `${g.masteryCheck.podsieAssignmentId} (${g.masteryCheck.assignmentType})` : 'NONE'
+    })));
+
+    return grouped;
+  }, [lessons]);
 
   if (loading && sections.length === 0) {
     return (
@@ -856,124 +881,109 @@ export default function RampUpProgressPage() {
             </div>
           ) : (
             <div className="space-y-8">
-              {/* Group lessons with their mastery checks */}
-              {(() => {
-                const lessonAssignments = lessons.filter(a => a.assignmentType === 'lesson');
-                const masteryCheckAssignments = lessons.filter(a => a.assignmentType === 'mastery-check' || !a.assignmentType);
+              {/* Assignments */}
+              {lessons.length > 0 && (
+                <div>
+                  {/* Assignments Header with Overall Progress */}
+                  {(() => {
+                    // Calculate overall progress for all assignments in this section
+                    const allAssignmentProgressData = lessons.flatMap(assignment => {
+                      return progressData.filter(p =>
+                        p.podsieAssignmentId
+                          ? p.podsieAssignmentId === assignment.podsieAssignmentId
+                          : p.rampUpId === assignment.unitLessonId
+                      );
+                    });
 
-                // Group by unitLessonId
-                const groupedLessons = lessonAssignments.map(lesson => {
-                  const masteryCheck = masteryCheckAssignments.find(mc => mc.unitLessonId === lesson.unitLessonId);
-                  return { lesson, masteryCheck };
-                });
+                    const overallStats = calculateSummaryStats(allAssignmentProgressData);
+                    const overallProgress = Math.round(overallStats.avgCompletion);
 
-                return (
-                  <>
-                    {/* Lessons with Mastery Checks */}
-                    {groupedLessons.length > 0 && (
-                      <div>
-                        {/* Lessons Header with Overall Progress */}
-                        {(() => {
-                          // Calculate overall progress for all lessons in this section
-                          const allLessonProgressData = groupedLessons.flatMap(({ lesson, masteryCheck }) => {
-                            const lessonData = progressData.filter(p =>
-                              p.podsieAssignmentId
-                                ? p.podsieAssignmentId === lesson.podsieAssignmentId
-                                : p.rampUpId === lesson.unitLessonId
-                            );
-                            const masteryCheckData = masteryCheck
-                              ? progressData.filter(p =>
-                                  p.podsieAssignmentId
-                                    ? p.podsieAssignmentId === masteryCheck.podsieAssignmentId
-                                    : p.rampUpId === masteryCheck.unitLessonId
-                                )
-                              : [];
-                            return [...lessonData, ...masteryCheckData];
-                          });
-
-                          const overallStats = calculateSummaryStats(allLessonProgressData);
-                          const overallProgress = Math.round(overallStats.avgCompletion);
-
-                          return (
-                            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
-                              <div className="flex items-center gap-4 mb-6">
-                                <h2 className="text-2xl font-bold text-gray-900">Unit {selectedUnit}: {selectedLessonSection}</h2>
-                                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                                  {groupedLessons.length} {groupedLessons.length === 1 ? 'Lesson' : 'Lessons'}
-                                </span>
-                                <div className="flex-1 flex items-center gap-3">
-                                  <div className="flex-1 bg-gray-200 rounded-full h-3 max-w-md">
-                                    <div
-                                      className="h-3 rounded-full transition-all bg-gradient-to-r from-blue-500 to-blue-600"
-                                      style={{ width: `${overallProgress}%` }}
-                                    />
-                                  </div>
-                                  <span className="text-sm font-bold text-blue-700 min-w-[3rem]">{overallProgress}%</span>
-                                </div>
-                                <button
-                                  onClick={handleSyncAll}
-                                  disabled={syncingAll || syncing !== null}
-                                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                                    syncingAll || syncing !== null
-                                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                      : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
-                                  }`}
-                                >
-                                  <ArrowPathIcon className={`w-5 h-5 ${syncingAll ? "animate-spin" : ""}`} />
-                                  {syncingAll ? "Syncing All..." : "Sync All"}
-                                </button>
-                              </div>
-
-                              {/* Progress Cards Grid (max 5 per row) */}
-                              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                                {groupedLessons.map(({ lesson, masteryCheck }) => {
-                                  const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.assignmentType || 'default'}`;
-                                  return (
-                                    <LessonProgressCard
-                                      key={`progress-${lesson.section}-${lesson.unitLessonId}`}
-                                      lesson={lesson}
-                                      masteryCheck={masteryCheck}
-                                      progressData={progressData}
-                                      calculateSummaryStats={calculateSummaryStats}
-                                      onClick={() => {
-                                        const element = document.getElementById(cardId);
-                                        if (element) {
-                                          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                        }
-                                      }}
-                                    />
-                                  );
-                                })}
-                              </div>
+                    return (
+                      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
+                        <div className="flex items-center gap-4 mb-6">
+                          <h2 className="text-2xl font-bold text-gray-900">
+                            Unit {selectedUnit}: {
+                              // Add "Section" prefix for single letter sections (A, B, C, etc.)
+                              // but not for "Ramp Ups" or "Unit Assessment"
+                              selectedLessonSection.length === 1
+                                ? `Section ${selectedLessonSection}`
+                                : selectedLessonSection
+                            }
+                          </h2>
+                          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                            {lessons.length} {lessons.length === 1 ? 'Assignment' : 'Assignments'}
+                          </span>
+                          <div className="flex-1 flex items-center gap-3">
+                            <div className="flex-1 bg-gray-200 rounded-full h-3 max-w-md">
+                              <div
+                                className="h-3 rounded-full transition-all bg-gradient-to-r from-blue-500 to-blue-600"
+                                style={{ width: `${overallProgress}%` }}
+                              />
                             </div>
-                          );
-                        })()}
+                            <span className="text-sm font-bold text-blue-700 min-w-[3rem]">{overallProgress}%</span>
+                          </div>
+                          <button
+                            onClick={handleSyncAll}
+                            disabled={syncingAll || syncing !== null}
+                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                              syncingAll || syncing !== null
+                                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
+                            }`}
+                          >
+                            <ArrowPathIcon className={`w-5 h-5 ${syncingAll ? "animate-spin" : ""}`} />
+                            {syncingAll ? "Syncing All..." : "Sync All"}
+                          </button>
+                        </div>
 
-                        {/* Assignment Cards */}
-                        <div className="space-y-6">
-                          {groupedLessons.map(({ lesson, masteryCheck }) => {
-                            const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.assignmentType || 'default'}`;
+                        {/* Progress Cards Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                          {groupedAssignments.map(({ lesson, masteryCheck }) => {
+                            const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.podsieAssignmentId}`;
                             return (
-                              <div key={cardId} id={cardId}>
-                                <AssignmentCard
-                                  assignment={lesson}
-                                  masteryCheckAssignment={masteryCheck}
-                                  progressData={progressData}
-                                  syncing={syncing === `${lesson.unitLessonId}-${lesson.assignmentType || 'default'}`}
-                                  masteryCheckSyncing={masteryCheck ? syncing === `${masteryCheck.unitLessonId}-${masteryCheck.assignmentType || 'default'}` : false}
-                                  onSync={(testMode) => handleSyncAssignment(lesson, testMode)}
-                                  onMasteryCheckSync={masteryCheck ? (testMode) => handleSyncAssignment(masteryCheck, testMode) : undefined}
-                                  calculateSummaryStats={calculateSummaryStats}
-                                />
-                              </div>
+                              <LessonProgressCard
+                                key={`progress-${lesson.podsieAssignmentId}`}
+                                lesson={lesson}
+                                masteryCheck={masteryCheck || undefined}
+                                progressData={progressData}
+                                calculateSummaryStats={calculateSummaryStats}
+                                sectionName={selectedLessonSection}
+                                onClick={() => {
+                                  const element = document.getElementById(cardId);
+                                  if (element) {
+                                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                  }
+                                }}
+                              />
                             );
                           })}
                         </div>
                       </div>
-                    )}
-                  </>
-                );
-              })()}
+                    );
+                  })()}
+
+                  {/* Assignment Cards */}
+                  <div className="space-y-6">
+                    {groupedAssignments.map(({ lesson, masteryCheck }) => {
+                      const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.podsieAssignmentId}`;
+                      return (
+                        <div key={cardId} id={cardId}>
+                          <AssignmentCard
+                            assignment={lesson}
+                            masteryCheckAssignment={masteryCheck || undefined}
+                            progressData={progressData}
+                            syncing={syncing === `${lesson.unitLessonId}-${lesson.assignmentType || 'default'}`}
+                            masteryCheckSyncing={masteryCheck ? syncing === `${masteryCheck.unitLessonId}-${masteryCheck.assignmentType || 'default'}` : false}
+                            onSync={(testMode) => handleSyncAssignment(lesson, testMode)}
+                            onMasteryCheckSync={masteryCheck ? (testMode) => handleSyncAssignment(masteryCheck, testMode) : undefined}
+                            calculateSummaryStats={calculateSummaryStats}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )
         ) : (
@@ -1011,7 +1021,12 @@ export default function RampUpProgressPage() {
                 const school = getSchoolForSection(selectedSection);
                 const configResult = await getSectionConfig(school, selectedSection);
                 if (configResult.success && configResult.data) {
-                  setSectionConfigAssignments(configResult.data.podsieAssignments || []);
+                  // Add scopeSequenceTag to each assignment from the parent config
+                  const assignmentsWithScope = (configResult.data.podsieAssignments || []).map((assignment: PodsieAssignment) => ({
+                    ...assignment,
+                    scopeSequenceTag: configResult.data.scopeSequenceTag
+                  }));
+                  setSectionConfigAssignments(assignmentsWithScope);
                 }
               }
             }}

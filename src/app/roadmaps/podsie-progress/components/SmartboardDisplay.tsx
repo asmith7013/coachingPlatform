@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { PencilIcon, TvIcon } from "@heroicons/react/24/outline";
 import { SmartboardProgressBar } from "./SmartboardProgressBar";
+import { groupAssignmentsByUnitLesson } from "../utils/groupAssignments";
 
 interface LessonConfig {
   unitLessonId: string;
@@ -13,6 +14,7 @@ interface LessonConfig {
   section?: string;
   unitNumber: number;
   assignmentType?: 'lesson' | 'mastery-check';
+  hasZearnLesson?: boolean;
 }
 
 interface ProgressData {
@@ -28,6 +30,7 @@ interface ProgressData {
   percentComplete: number;
   isFullyComplete: boolean;
   lastSyncedAt?: string;
+  zearnCompleted?: boolean;
 }
 
 interface SmartboardDisplayProps {
@@ -47,7 +50,7 @@ export function SmartboardDisplay({
   assignments,
   progressData,
   selectedUnit,
-  selectedSection: _selectedSection,
+  selectedSection,
   calculateSummaryStats,
 }: SmartboardDisplayProps) {
   // Edit mode state
@@ -78,15 +81,19 @@ export function SmartboardDisplay({
     });
   }, [dueDate]);
 
-  // Group lessons with their mastery checks
-  const groupedLessons = useMemo(() => {
-    const lessonAssignments = assignments.filter(a => a.assignmentType === 'lesson');
-    const masteryCheckAssignments = assignments.filter(a => a.assignmentType === 'mastery-check' || !a.assignmentType);
+  // Group lessons with their mastery checks and map progress data
+  const assignmentProgress = useMemo(() => {
+    console.log('=== GROUPING ASSIGNMENTS (SmartboardDisplay) ===');
+    console.log('Total assignments:', assignments.length);
 
-    return lessonAssignments.map(lesson => {
-      const masteryCheck = masteryCheckAssignments.find(mc => mc.unitLessonId === lesson.unitLessonId);
+    // Use shared grouping utility
+    const groupedAssignments = groupAssignmentsByUnitLesson(assignments);
 
-      // Calculate stats for lesson
+    console.log('Grouped assignments:', groupedAssignments.length);
+
+    // Map grouped assignments to progress data
+    const progressMapped = groupedAssignments.map(({ lesson, masteryCheck }) => {
+      // Get lesson progress
       const lessonProgressData = progressData.filter(
         p => p.podsieAssignmentId
           ? p.podsieAssignmentId === lesson.podsieAssignmentId
@@ -94,24 +101,42 @@ export function SmartboardDisplay({
       );
       const lessonStats = calculateSummaryStats(lessonProgressData);
 
-      // Calculate stats for mastery check if it exists
-      let masteryCheckStats = null;
+      // Calculate Zearn progress
+      let zearnProgress = null;
+      if (lesson.hasZearnLesson && lessonProgressData.length > 0) {
+        const zearnCompleted = lessonProgressData.filter(p => p.zearnCompleted).length;
+        zearnProgress = Math.round((zearnCompleted / lessonProgressData.length) * 100);
+      }
+
+      // Get mastery check progress if exists
+      let masteryCheckProgress = null;
       if (masteryCheck) {
-        const masteryCheckProgressData = progressData.filter(
+        const masteryProgressData = progressData.filter(
           p => p.podsieAssignmentId
             ? p.podsieAssignmentId === masteryCheck.podsieAssignmentId
             : p.rampUpId === masteryCheck.unitLessonId
         );
-        masteryCheckStats = calculateSummaryStats(masteryCheckProgressData);
+        const masteryStats = calculateSummaryStats(masteryProgressData);
+        masteryCheckProgress = masteryStats.avgCompletion;
       }
 
       return {
         lesson,
+        lessonProgress: lessonStats.avgCompletion,
+        zearnProgress,
         masteryCheck,
-        lessonAvgCompletion: lessonStats.avgCompletion,
-        masteryCheckAvgCompletion: masteryCheckStats?.avgCompletion || 0,
+        masteryCheckProgress,
       };
     });
+
+    console.log('Progress mapped:', progressMapped.map(p => ({
+      lesson: `${p.lesson.podsieAssignmentId} (${p.lesson.assignmentType})`,
+      masteryCheck: p.masteryCheck ? `${p.masteryCheck.podsieAssignmentId} (${p.masteryCheck.assignmentType})` : 'NONE',
+      lessonProgress: p.lessonProgress,
+      masteryCheckProgress: p.masteryCheckProgress
+    })));
+
+    return progressMapped;
   }, [assignments, progressData, calculateSummaryStats]);
 
   // Parse markdown-like content for display
@@ -126,13 +151,17 @@ export function SmartboardDisplay({
       });
   }, [learningContent]);
 
-  // Calculate overall class goal percentage (average of all lesson completions)
-  const overallPercentage = groupedLessons.length > 0
-    ? Math.round(
-        groupedLessons.reduce((sum, g) => sum + g.lessonAvgCompletion, 0) /
-          groupedLessons.length
-      )
-    : 0;
+  // Calculate overall class goal percentage (average of all assignments)
+  const overallPercentage = useMemo(() => {
+    if (assignmentProgress.length === 0) return 0;
+
+    const totalCompletion = assignmentProgress.reduce(
+      (sum, item) => sum + item.lessonProgress,
+      0
+    );
+
+    return Math.round(totalCompletion / assignmentProgress.length);
+  }, [assignmentProgress]);
 
   const smartboardContent = (
     <>
@@ -160,7 +189,7 @@ export function SmartboardDisplay({
         </div>
         <div className="flex items-center gap-4">
           <div className={`bg-white text-indigo-900 rounded-lg font-bold ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
-            {groupedLessons.length} Lesson{groupedLessons.length !== 1 ? "s" : ""}
+            {assignmentProgress.length} Assignment{assignmentProgress.length !== 1 ? "s" : ""}
           </div>
           <button
             onClick={toggleFullscreen}
@@ -192,28 +221,50 @@ export function SmartboardDisplay({
             />
           </div>
 
-          {/* Individual Assignment Progress - Grouped by Lesson */}
-          <div className="space-y-4 pl-4 pr-32 border-l-2 border-indigo-600">
-            {groupedLessons.map(({ lesson, masteryCheck, lessonAvgCompletion, masteryCheckAvgCompletion }, index) => {
+          {/* Individual Assignment Progress */}
+          <div className="space-y-3 pl-4 pr-32 border-l-2 border-indigo-600">
+            {assignmentProgress.map(({ lesson, lessonProgress, zearnProgress, masteryCheck, masteryCheckProgress }) => {
+              // Extract lesson number and determine if we should show it
+              const lessonNumber = lesson.unitLessonId.includes('.')
+                ? lesson.unitLessonId.split('.')[1]
+                : lesson.unitLessonId;
+              const showLessonNumber = selectedSection !== 'Ramp Ups' && selectedSection !== 'Unit Assessment';
+
+              // Build label with optional lesson number
+              const label = showLessonNumber
+                ? `Lesson ${lessonNumber}: ${lesson.lessonName}`
+                : lesson.lessonName;
+
+              // Build segments for split bar
+              const segments = [];
+
+              // Add Zearn if present (35%)
+              if (zearnProgress !== null) {
+                segments.push({ percentage: zearnProgress, color: 'purple' as const, widthPercent: 35 });
+              }
+
+              // Determine lesson/mastery split
+              if (masteryCheck && masteryCheckProgress !== null) {
+                // Has both lesson and mastery check: 60% lesson, 40% mastery check
+                const lessonWidth = zearnProgress !== null ? 39 : 60; // 60% of remaining 65%, or 60% of 100%
+                const masteryWidth = zearnProgress !== null ? 26 : 40; // 40% of remaining 65%, or 40% of 100%
+                segments.push({ percentage: lessonProgress, color: 'blue' as const, widthPercent: lessonWidth });
+                segments.push({ percentage: masteryCheckProgress, color: 'green' as const, widthPercent: masteryWidth });
+              } else {
+                // Only lesson or standalone mastery check
+                const barColor = lesson.assignmentType === 'mastery-check' ? 'green' : 'blue';
+                const widthPercent = zearnProgress !== null ? 65 : 100;
+                segments.push({ percentage: lessonProgress, color: barColor as 'blue' | 'green', widthPercent });
+              }
+
               return (
-                <div key={`${lesson.section}-${lesson.unitLessonId}-${index}`} className="space-y-2">
-                  {/* Lesson Progress Bar */}
+                <div key={lesson.podsieAssignmentId} className="pl-4">
                   <SmartboardProgressBar
-                    label={lesson.lessonName}
-                    percentage={lessonAvgCompletion}
-                    size="small"
+                    label={label}
+                    segments={segments}
+                    size="split"
+                    showLabel={true}
                   />
-                  {/* Mastery Check Progress Bar (if exists) */}
-                  {masteryCheck && (
-                    <div className="pl-4">
-                      <SmartboardProgressBar
-                        label="Mastery Check"
-                        percentage={masteryCheckAvgCompletion}
-                        size="small"
-                        color="green"
-                      />
-                    </div>
-                  )}
                 </div>
               );
             })}
