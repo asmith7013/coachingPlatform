@@ -226,7 +226,10 @@
 │   │   ├── problem-problem-7-1759876905868.png
 │   │   └── problem-problem-7-1759877263707.png
 │   ├── scripts
-│   │   └── coordinate-plane-p5.js -> /Users/alexsmith/ai-coaching-platform/.claude/skills/question-types/implement-dynamic-graph-question/snippets/coordinate-plane-p5.js
+│   │   ├── coordinate-plane-p5.js -> /Users/alexsmith/ai-coaching-platform/.claude/skills/question-types/implement-dynamic-graph-question/snippets/coordinate-plane-p5.js
+│   │   ├── double-number-line.js -> /Users/alexsmith/ai-coaching-platform/.claude/skills/question-types/implement-double-number-line-question/snippets/double-number-line.js
+│   │   ├── static-graph.js -> /Users/alexsmith/ai-coaching-platform/.claude/skills/question-types/implement-static-graph-question/snippets/static-graph.js
+│   │   └── tables.js -> /Users/alexsmith/ai-coaching-platform/.claude/skills/question-types/implement-table-question/snippets/tables.js
 │   ├── vercel.svg
 │   └── window.svg
 ├── response_patterns.txt
@@ -412,6 +415,9 @@
 │   │   │   │   ├── geometry
 │   │   │   │   │   ├── dilation.ts
 │   │   │   │   │   └── index.ts
+│   │   │   │   ├── hangerBalance
+│   │   │   │   │   ├── hanger-balance-grade8.ts
+│   │   │   │   │   └── index.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── multiplication
 │   │   │   │   │   ├── fraction-circles.ts
@@ -458,6 +464,9 @@
 │   │   │   ├── look-fors
 │   │   │   │   └── bulk-upload
 │   │   │   │       └── route.ts
+│   │   │   ├── presentations
+│   │   │   │   └── html
+│   │   │   │       └── [slug]
 │   │   │   ├── roadmaps
 │   │   │   │   └── scrape
 │   │   │   │       └── route.ts
@@ -695,6 +704,17 @@
 │   │   │   ├── components
 │   │   │   │   ├── D3ComponentRenderer.tsx
 │   │   │   │   └── DynamicGraphComponent.tsx
+│   │   │   ├── critique-linear-equations-grade8
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
 │   │   │   ├── page.tsx
 │   │   │   ├── slide-creation
 │   │   │   │   ├── ContextSlide.tsx
@@ -1950,4 +1970,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-557 directories, 1394 files
+562 directories, 1409 files

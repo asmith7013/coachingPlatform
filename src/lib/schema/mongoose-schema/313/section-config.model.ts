@@ -26,6 +26,8 @@ const podsieAssignmentSchema = new mongoose.Schema({
   }],
   totalQuestions: { type: Number, required: false },
 
+  hasZearnLesson: { type: Boolean, default: false },
+
   active: { type: Boolean, default: true },
   notes: { type: String, required: false }
 }, { _id: false });

@@ -1,454 +1,189 @@
-# The 9-Slide Worked Example Framework
+# Pedagogical Framework for Worked Example Slide Decks
 
-This document explains the pedagogical rationale behind the Scaffolded Guidance slide structure.
+This document explains the research-based framework behind the slide structure.
 
-## Overview
+## Core Principles
 
-The 9-slide structure is intentionally designed to move from concept to application without overwhelming the student. It's grounded in:
+### 1. Cognitive Load Theory
+Breaking complex problems into micro-steps prevents cognitive overload. Students can focus on one decision point at a time.
 
-- **Cognitive Load Theory** - Breaking complex problems into micro-steps
-- **Active Prediction Pedagogy** - Forcing mental commitment before revealing answers
-- **Transfer of Learning** - Testing application to new contexts without scaffolding
+### 2. Active Prediction Pedagogy
+Separating questions from answers forces mental commitment before revealing solutions. This active engagement improves retention.
 
----
+### 3. Transfer of Learning
+Independent practice (final slides) tests whether students can apply logic to new contexts without scaffolding.
 
-## Slide Breakdown (The "What")
+## Slide Structure (7-9 Slides)
 
-### Slide 1: The Anchor (Title & Big Idea)
+### Slide 1: Learning Goal
+**Purpose**: Translate objectives into student-friendly language with concrete example
+**Content**:
+- Student-facing learning goal
+- Simple numerical example
+- Optional unit/lesson badge
 
-**Content:**
-- Unit/Lesson number
-- Student-friendly definition of the concept
-- One simple numerical example
+### Slide 2: Problem Setup (Worked Example)
+**Purpose**: Provide context and show complete problem
+**Content**:
+- Engaging scenario
+- Problem statement
+- Visual representation (table, diagram, graph)
+- No solution yet
 
-**Why:**
-Sets the stage. Translates "teacher speak" (objectives) into "student speak" (big idea).
+### Slides 3-6 (or 3-8): Step-by-Step with CFU
+**Structure**: Pairs of Ask + Reveal slides
 
-**Example:**
-```
-Title: "7.2 Proportional Relationships"
-Big Idea: "Find patterns by identifying the constant rate"
-Example: "If 5 minutes = 250 views, then 1 minute = 50 views"
-```
+**Ask Slide**:
+- Shows visual with annotation/highlighting
+- Check-for-Understanding question
+- NO answer shown yet
+- Question focuses on strategy ("Why did I..."), not computation ("What is...")
 
----
+**Reveal Slide**:
+- Same visual as Ask slide
+- Answer to CFU question
+- Brief explanation of reasoning
+- Visual stays in same position
 
-### Slide 2: The Hook (Contextual Problem)
+**Number of Steps**: 2-3 maximum (4-6 slides total)
 
-**Content:**
-- First scenario with relevant image (e.g., "The Viral Video")
-- Blank table showing the relationship
-- Context that grounds the math in reality
-
-**Why:**
-Answers "When would I use this?" before introducing calculations. Provides cognitive scaffolding through familiar contexts.
-
-**Example:**
-```
-Scenario: A YouTube video is going viral!
-[Icon: Video/TrendingUp]
-[Table showing minutes vs. views with some cells blank]
-```
-
----
-
-### Slides 3-6: The Deconstructed Worked Example
-
-These four slides form two "Prediction Pairs" - the core of the active learning approach.
-
-#### Slides 3 & 4: Finding the Constant
-
-**Slide 3 - The "Ask":**
-- Shows data table with visual highlighting
-- Asks a "Check for Understanding" question
-- **Critically: Does NOT show the calculation yet**
-- Uses visual focus (highlighting boxes/rows) instead of heavy text
-
-**Slide 4 - The "Reveal":**
-- Shows the calculation
-- Displays the answer
-- Explains the reasoning
-
-**Why this structure:**
-Separating question from answer forces students to mentally commit to a strategy before seeing if they're right. If both were on the same slide, students would simply read the answer.
-
-**Example:**
-```
-Slide 3 (Ask):
-"Look at the first row. How did I know to write 250 ÷ 5?"
-[Highlights first row of table: 5 minutes | 250 views]
-
-Slide 4 (Reveal):
-Calculation: 250 ÷ 5 = 50
-"We divided total views by minutes to find the rate: 50 views per minute"
-```
-
-#### Slides 5 & 6: Applying the Constant
-
-**Slide 5 - The "Ask":**
-- Shows the next step in the problem
-- Highlights the relevant data
-- Asks how to use the constant we just found
-
-**Slide 6 - The "Reveal":**
-- Shows the multiplication/application
-- Explains how the constant solves the problem
-
-**Why:**
-Separates "finding the pattern" from "using the pattern" - two distinct cognitive steps that shouldn't be conflated.
-
-**Example:**
-```
-Slide 5 (Ask):
-"Now that we know the rate is 50 views/minute, how do we find views at 12 minutes?"
-[Highlights row: 12 minutes | ??? views]
-
-Slide 6 (Reveal):
-Calculation: 50 × 12 = 600
-"Multiply the rate by the new time to find total views"
-```
-
----
-
-### Slide 7: The "Metacognition" Slide (Reasoning)
-
-**Content:**
-- Summary of rules or patterns discovered
-- Explains the "why" behind the math
-- Bridges computation to conceptual understanding
-- **First time abstract language/variables can appear**
-
-**Why:**
-Supports students who are conceptually strong but computationally weak. Makes the implicit explicit.
-
-**Example:**
-```
-"Pattern for Proportional Relationships:"
-1. Find the constant rate (divide one quantity by the other)
-2. Use the rate to find missing values (multiply rate × input)
-3. All rows in the table follow the same rate
-
-Math Rule: y = kx, where k is the constant rate
-```
-
----
+### Slide 7 (Optional): Reasoning/Pattern
+**When to include**: Only if original problem asks "explain your reasoning"
+**Purpose**: Make the implicit pattern explicit
+**Content**:
+- Pattern explanation in plain English
+- Step-by-step breakdown
+- Mathematical rule (optional)
+- Key conceptual insight
 
 ### Slides 8-9: Independent Practice
+**Purpose**: Test transfer without scaffolding
+**Content**:
+- New scenarios (different contexts)
+- Same mathematical structure
+- Zero step-by-step guidance
+- Just problem setup
 
-**Content:**
-- Two new scenarios (e.g., "Game Update Downloads", "Drone Flight")
-- **Identical mathematical structure** to the worked example
-- **Zero scaffolding** - no step-by-step guidance
-- Only the table and context
+## The Four Rules
 
-**Why:**
-Tests transfer of knowledge. Can the student apply the logic from the video example to a drone example? This reveals true understanding vs. memorization.
+### Rule 1: The "Two-Slide" Rule
+**Never show question and answer together**
 
-**Example:**
-```
-Slide 8:
-"A mobile game update is downloading at a constant rate"
-[Icon: Download/Smartphone]
-[Table with missing values]
+Why: Forces students to mentally commit to a strategy before seeing if they're correct. Passive reading becomes active prediction.
 
-Slide 9:
-"A drone flies at a constant speed"
-[Icon: Drone/Wind]
-[Table with missing values]
-```
+### Rule 2: The "Visual Stability" Rule
+**Keep main visual in same position across slides 2-6**
 
----
+Why: Reduces cognitive load from visual searching. Mimics teacher at whiteboard who keeps problem visible while adding annotations.
 
-## The Arrangement Strategy (The "How")
+Implementation:
+- Fix position of table/diagram on slide 2
+- Slides 3-6 maintain that exact position
+- Add highlights, arrows, CFU boxes AROUND the stationary element
+- Never reposition the core visual
 
-### The "Prediction Pair" Technique
+### Rule 3: The "Real World" Rule
+**Use engaging, age-appropriate contexts**
 
-The worked example is NOT a continuous lecture. It's arranged in pairs:
+Why: Increases motivation and helps students see relevance.
 
-**A-Slide (The Ask):**
-- Shows data
-- Highlights focus area
-- Asks "Check for Understanding" question
-- **Does NOT show math**
+Do:
+- Gaming scenarios (RPG items, esports)
+- Social media (views, followers, subscribers)
+- STEM contexts (drones, coding, data)
+- Sports and fitness
 
-**B-Slide (The Reveal):**
-- Shows calculation
-- Shows answer
-- Explains reasoning
+Don't:
+- Generic "Person A and Person B"
+- Boring textbook scenarios
+- Abstract variables until reasoning slide
 
-**Why it works:**
-Forces active prediction rather than passive consumption. Students must think before seeing the answer.
+### Rule 4: The "Scaffolding Removal" Rule
+**Maximum support → Zero support**
 
----
+Why: Tests true understanding vs. pattern matching.
 
-## Visual Stability Across Slides (Reducing Cognitive Load)
+- Slides 2-6: Full scaffolding (highlighting, CFU, step-by-step)
+- Slides 8-9: No scaffolding (just the raw problem)
 
-### The Whiteboard Metaphor
+## Check-for-Understanding (CFU) Question Patterns
 
-When a teacher explains a problem on a whiteboard, they:
-1. **Draw the problem once** (table, diagram, equation)
-2. **Keep it in the same spot** on the board
-3. **Add annotations around it** (circles, arrows, calculations)
-4. **Never erase and redraw** the original problem in a new location
+### Good CFU Questions (Strategy-focused)
+- "Why did I divide 6 by 2 instead of multiply?"
+- "How did I know to remove the same amount from both sides?"
+- "What operation undoes addition?"
+- "How did I decide which step to do first?"
 
-This approach minimizes cognitive load by letting students focus on the NEW information (annotations) rather than re-finding the FAMILIAR information (the table).
+### Bad CFU Questions (Computation-focused)
+- "What is 6 ÷ 2?" ❌
+- "What's the answer?" ❌
+- "How many are left?" ❌
 
-### Why Element Movement is Harmful
+**The difference**: Good questions ask about decision-making and strategy. Bad questions just ask for calculations.
 
-**The Problem:**
-If the data table moves position between slides, students must:
-1. **Visually search** for the table's new location
-2. **Re-orient** their mental model
-3. **Track movement** instead of tracking content changes
+## Visual Annotation Guidelines
 
-This creates **extrinsic cognitive load** - mental effort spent on navigation rather than learning.
+### Minimal Text Principle
+On Ask slides, let the visual do the talking:
+- Highlight the relevant part
+- Add arrows if needed
+- Keep annotations simple
+- Put the question in the CFU box at bottom
 
-**Research Basis:**
-- **Split Attention Effect** (Sweller, 1999): Students perform worse when related information appears in different locations
-- **Eye Tracking Studies**: Unnecessary eye movement increases cognitive processing time by 20-40%
-- **Spatial Contiguity Principle** (Mayer, 2009): Related elements should stay close together
+### Highlighting Techniques
+- **Border/outline**: Circle or box around element
+- **Background color**: Shade the row/cell
+- **Arrows**: Point to specific parts (with small labels)
+- **X-marks**: Cross out removed items
 
-### Implementation Guidelines
+## Context Variety Across Problems
 
-#### For Slides 2-6 (The Worked Example Sequence)
+All three exit tickets must have:
+- **Different surface details** (different scenarios, numbers)
+- **Same deep structure** (same mathematical concept and steps)
 
-**Slide 2 - The Hook (establishes position):**
-```
-┌─────────────────────────────────┐
-│ 📹 Viral Video Problem          │
-│                                 │
-│       ┌─────────────┐           │
-│       │   TABLE     │  ← Position established
-│       │   (x, y)    │           │
-│       └─────────────┘           │
-│                                 │
-└─────────────────────────────────┘
-```
+Example:
+1. Worked Example: RPG game item crafting
+2. Practice 1: Sneaker-to-hoodie trade value
+3. Practice 2: Gym weight plate comparison
 
-**Slide 3 - Ask (table stays put, highlight added):**
-```
-┌─────────────────────────────────┐
-│ 📹 How did I know to divide?    │
-│                                 │
-│       ┌─────────────┐           │
-│       │   TABLE     │  ← SAME position
-│       │   (x, y)    │           │
-│       └─────────────┘           │
-│           ↑↑↑                   │
-│       [Row 1 highlighted]       │
-└─────────────────────────────────┘
-```
+All three involve hanger balance, but use completely different contexts.
 
-**Slide 4 - Reveal (table stays put, calculation appears beside):**
-```
-┌─────────────────────────────────┐
-│ 📹 Calculation                  │
-│                                 │
-│  ┌─────────────┐  ┌──────────┐ │
-│  │   TABLE     │  │ 250 ÷ 5  │ │  ← Calculation appears
-│  │   (x, y)    │  │ = 50     │ │     to the RIGHT
-│  └─────────────┘  └──────────┘ │
-│   ↑ Still here!                │
-└─────────────────────────────────┘
-```
+## When to Use Different Visual Types
 
-**Slide 5 - Ask (same position, different highlight):**
-```
-┌─────────────────────────────────┐
-│ 📹 How do we find the answer?   │
-│                                 │
-│       ┌─────────────┐           │
-│       │   TABLE     │  ← STILL same position
-│       │   (x, y)    │           │
-│       └─────────────┘           │
-│              ↑↑↑                │
-│       [Row 3 highlighted]       │
-└─────────────────────────────────┘
-```
+### HTML/CSS Tables
+- Proportional relationships
+- Data tables
+- Simple numerical comparisons
+- Static content
 
-**Slide 6 - Reveal (same position, new calculation):**
-```
-┌─────────────────────────────────┐
-│ 📹 Final Answer                 │
-│                                 │
-│  ┌─────────────┐  ┌──────────┐ │
-│  │   TABLE     │  │ 50 × 12  │ │  ← New calculation
-│  │   (x, y)    │  │ = 600    │ │     (same position)
-│  └─────────────┘  └──────────┘ │
-│                                 │
-└─────────────────────────────────┘
-```
+### P5.js Animations
+- Hanger diagrams
+- Balance problems
+- Geometric transformations
+- Shape manipulations
+- Custom visualizations
 
-### CSS/Component Implementation
+### D3.js Visualizations
+- Coordinate planes
+- Graphs and plots
+- Data visualizations
+- Mathematical functions
 
-**Use Fixed Positioning for Tables:**
-```css
-.slide-table {
-  position: absolute;
-  left: 50%;              /* Centered horizontally */
-  top: 45%;               /* Slightly above center */
-  transform: translate(-50%, -50%);
-  transition: none;       /* NO animation/movement */
-}
+## Why This Framework Works
 
-.slide-annotation {
-  position: absolute;
-  /* Flexible positioning around the table */
-}
-```
+**Research Support:**
+- Cognitive Load Theory (Sweller, 1988)
+- Worked Example Effect (Atkinson et al., 2000)
+- Self-Explanation Prompts (Chi et al., 1989)
+- Transfer of Learning (Bransford & Schwartz, 1999)
 
-**Layout Variants:**
-
-| Table Position | Best For | Annotation Space |
-|---------------|----------|------------------|
-| **Center** | Simple tables, standard problems | Annotations above/below |
-| **Left (40%)** | Complex calculations needed | Large calculation area on right |
-| **Top (30%)** | Questions with diagrams | Diagram space below |
-
-**Rule of Thumb:** Choose the position on Slide 2, then LOCK IT for slides 3-6.
-
-### Annotation Strategies (What CAN Move)
-
-Since the table is stationary, use these techniques to guide attention:
-
-1. **Border Highlighting**
-   ```css
-   .highlighted-row {
-     outline: 3px solid #FFD700;  /* Gold border */
-     animation: pulse 1.5s ease-in-out;
-   }
-   ```
-
-2. **Callout Boxes** (appear to the side)
-   ```
-   [Table]  →  "Start here!"
-   ```
-
-3. **Arrow Indicators**
-   ```
-   [Table]
-      ↑
-   "This row"
-   ```
-
-4. **Floating Calculations** (overlay, don't replace)
-   ```
-   Position calculation boxes with z-index layering
-   ```
+**Practical Benefits:**
+- Breaks overwhelming problems into digestible steps
+- Forces active thinking vs. passive reading
+- Builds conceptual understanding alongside procedural fluency
+- Tests true learning through transfer problems
 
 ---
 
----
-
-## The Approach to Worked Examples
-
-### Scaffolded Annotation
-
-**Principle 1: Zero-Word Initial Focus**
-On "Ask" slides, use purely visual highlighting (colored boxes, arrows) to draw attention without requiring heavy text reading.
-
-**Principle 2: "Why" Over "What"**
-Questions don't ask "What is 250 ÷ 5?" (computation).
-They ask "How did I know to write 250 ÷ 5?" (strategy).
-
-**Principle 3: Step-by-Step Logic**
-1. **Find the Constant** - Isolate the unit rate (the "magic number")
-2. **Apply the Constant** - Use that rate with multiplication
-3. **Reverse the Constant** (optional) - Division to find input from output
-
----
-
-## Generalizing the Framework (The Checklist)
-
-To create this for ANY math topic:
-
-### The "Real World" Rule
-✅ Do NOT use abstract numbers (x and y) until Slide 7
-✅ Always start with context (Videos, Speed, Cost, Weight)
-✅ Use scenarios relevant to student interests
-
-### The "Two-Slide" Rule
-✅ Never show step and solution on same slide
-✅ Always separate Question (Ask) from Explanation (Reveal)
-✅ Force prediction before revelation
-
-### The Visual Anchor Rule
-✅ Every problem needs an icon or photo
-✅ Helps differentiate "The Video Problem" vs "The Drone Problem"
-✅ Better than "Problem 1" and "Problem 3"
-
-### The Reasoning Bridge
-✅ Always include Slide 7 that explains the pattern in English
-✅ Supports conceptual learners
-✅ Makes abstract connections explicit
-
----
-
-## Research Basis
-
-### Cognitive Load Theory (Sweller, 1988)
-Breaking complex problems into micro-steps prevents working memory overload. Each "Prediction Pair" addresses ONE cognitive decision.
-
-### Active Retrieval Practice (Roediger & Karpicke, 2006)
-Forcing students to predict answers (even incorrectly) strengthens long-term retention more than passive review.
-
-### Transfer of Learning (Perkins & Salomon, 1992)
-Slides 8-9 test "far transfer" - applying learned principles to new contexts without explicit guidance.
-
-### Worked Example Effect (Atkinson et al., 2000)
-Studied examples with step-by-step explanations are more effective than problem-solving alone, but only when properly sequenced and scaffolded.
-
----
-
-## Common Pitfalls to Avoid
-
-❌ **Showing question and answer together** - Eliminates prediction opportunity
-❌ **Using variables too early** - Creates abstraction barrier for struggling students
-❌ **Skipping Slide 7** - Leaves conceptual understanding implicit
-❌ **Making practice problems easier** - Slides 8-9 must be equally rigorous
-❌ **Over-scaffolding practice** - Independence requires removing all hints
-❌ **Text-heavy "Ask" slides** - Visual highlighting is more effective
-❌ **Moving tables between slides** - Creates visual search burden and cognitive overload
-❌ **Repositioning elements without purpose** - Every layout change must serve pedagogy
-
----
-
-## Customization Guidelines
-
-### For Different Grade Levels
-
-**Elementary (3-5):**
-- Use more concrete contexts (cookies, toys, animals)
-- Larger font sizes, fewer numbers per table
-- 2-step worked example may be sufficient (slides 3-4 only)
-
-**Middle School (6-8):**
-- Teen-relevant contexts (gaming, social media, sports)
-- Standard 4-step worked example (slides 3-6)
-- Can introduce variables on Slide 7
-
-**High School (9-12):**
-- More complex contexts (economics, physics, data science)
-- May extend to 6-step worked example (3 prediction pairs)
-- Earlier introduction of formal notation
-
-### For Different Math Topics
-
-**Proportional Relationships:** Find rate → Apply rate
-**Linear Equations:** Isolate variable → Verify solution
-**Geometry:** Identify formula → Substitute values → Simplify
-**Statistics:** Calculate measure → Interpret meaning
-**Functions:** Identify rule → Apply to new input
-
-The 2-step structure (Find/Apply) generalizes across most topics.
-
----
-
-## Success Metrics
-
-A well-designed worked example deck should:
-- ✅ Students can articulate the strategy (not just compute)
-- ✅ 70%+ accuracy on independent practice (Slides 8-9)
-- ✅ Students can explain "why" the method works
-- ✅ Transfer to similar problems in different contexts
-- ✅ Engagement maintained through all 9 slides (no drop-off)
+**Remember**: The structure is flexible (7-9 slides depending on problem complexity), but the principles are fixed: separate Ask from Reveal, maintain visual stability, use engaging contexts, remove scaffolding at the end.

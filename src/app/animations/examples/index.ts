@@ -9,6 +9,7 @@ import { PROPORTIONAL_EXAMPLES } from "./proportionalRelationships";
 import { COORDINATE_PLANE_EXAMPLES } from "./coordinatePlane";
 import { TAPE_DIAGRAM_EXAMPLES } from "./tapeDiagrams";
 import { ALGEBRA_TILES_EXAMPLES } from "./algebraTiles";
+import { HANGER_BALANCE_EXAMPLES } from "./hangerBalance";
 
 export const EXAMPLE_CATEGORIES: ExampleCategory[] = [
   {
@@ -47,6 +48,10 @@ export const EXAMPLE_CATEGORIES: ExampleCategory[] = [
     name: "Algebra Tiles",
     examples: ALGEBRA_TILES_EXAMPLES,
   },
+  {
+    name: "Hanger Balance",
+    examples: HANGER_BALANCE_EXAMPLES,
+  },
 ];
 
 // Flat list for backward compatibility
@@ -61,4 +66,5 @@ export const EXAMPLE_SKETCHES = [
   ...GEOMETRY_DILATION_EXAMPLES,
   ...COORDINATE_PLANE_EXAMPLES,
   ...ALGEBRA_TILES_EXAMPLES,
+  ...HANGER_BALANCE_EXAMPLES,
 ];

@@ -2,19 +2,25 @@
  * P5.js Coordinate Plane Component (Instance Mode)
  *
  * Interactive coordinate plane for drawing linear lines with snap-to-grid.
+ * Can also be used as a static graph display by setting allowInput: false.
  * Based on: alex/coordinatePlane/linear-graph-drawing.ts
  *
  * Usage:
  * const plane = createCoordinatePlane(containerElementId, config, callbacks);
  *
  * Config options:
+ * - width, height - Canvas size in pixels (default: 600x600)
  * - xMin, xMax, yMin, yMax - Axis ranges
  * - gridScaleX, gridScaleY - Grid spacing
  * - xLabel, yLabel - Axis labels
  * - xVariable, yVariable - Optional italic variables
- * - initialPoints, initialEquations - Pre-drawn data
- * - predrawnStartPoint - Force line start point
+ * - initialPoints - Points to display
+ * - initialEquations - Equations as lines (slope/intercept)
+ * - initialLines - Pre-drawn line segments with optional colors
+ * - predrawnStartPoint - Force line start point (interactive mode)
  * - showCoordinatesOnHover - Show (x, y) on hover (default: true)
+ * - drawFullLines - Extend lines to canvas edges (default: true)
+ * - allowInput - Enable interactive drawing (default: true, set false for static display)
  *
  * Returns API:
  * - getLines() - Get all drawn lines
@@ -28,6 +34,10 @@ function createCoordinatePlane(containerId, config, callbacks) {
     // ==========================================
     // CONFIGURATION
     // ==========================================
+
+    // Canvas size
+    let canvasWidth = config.width || 600;
+    let canvasHeight = config.height || 600;
 
     // Axis Configuration
     let xMin = config.xMin || 0;
@@ -46,11 +56,15 @@ function createCoordinatePlane(containerId, config, callbacks) {
     // Initial data
     let initialPoints = config.initialPoints || [];
     let initialEquations = config.initialEquations || [];
+    let initialLines = config.initialLines || [];
     let predrawnStartPoint = config.predrawnStartPoint || null;
 
     // Display options
     let showCoordinatesOnHover = config.showCoordinatesOnHover !== false; // Default true
     let drawFullLines = config.drawFullLines !== false; // Default true (extend to canvas edges)
+
+    // Interaction mode
+    let allowInput = config.allowInput !== false; // Default true (interactive mode)
 
     // Canvas configuration
     let padding = {
@@ -73,7 +87,7 @@ function createCoordinatePlane(containerId, config, callbacks) {
     const onLinesChanged = callbacks?.onLinesChanged || (() => {});
 
     p.setup = function() {
-      p.createCanvas(600, 600);
+      p.createCanvas(canvasWidth, canvasHeight);
       p.textFont('Arial');
     };
 
@@ -83,19 +97,25 @@ function createCoordinatePlane(containerId, config, callbacks) {
       drawGrid();
       drawAxes();
       drawInitialEquations();
+      drawInitialLines();
       drawInitialPoints();
       drawPredrawnStartPoint();
       drawLines();
 
-      if (startPoint && currentPoint) {
+      if (startPoint && currentPoint && allowInput) {
         drawPreviewLine();
       }
 
+      // Show hover indicator in both modes if coordinates should be shown
       if (hoverPoint && !startPoint) {
-        drawHoverIndicator();
+        if (allowInput || showCoordinatesOnHover) {
+          drawHoverIndicator();
+        }
       }
 
-      drawInstructions();
+      if (allowInput) {
+        drawInstructions();
+      }
     };
 
     function drawGrid() {
@@ -289,6 +309,90 @@ function createCoordinatePlane(containerId, config, callbacks) {
       }
     }
 
+    function drawInitialLines() {
+      if (initialLines.length === 0) return;
+
+      for (let lineSegment of initialLines) {
+        let start = coordToPixel(lineSegment.start.x, lineSegment.start.y);
+        let end = coordToPixel(lineSegment.end.x, lineSegment.end.y);
+        let color = lineSegment.color || [100, 100, 100]; // Default gray
+
+        if (drawFullLines) {
+          // Draw full line extending to canvas edges
+          let dx = lineSegment.end.x - lineSegment.start.x;
+          let dy = lineSegment.end.y - lineSegment.start.y;
+
+          if (dx === 0) {
+            // Vertical line
+            let topPx = coordToPixel(lineSegment.start.x, yMax);
+            let bottomPx = coordToPixel(lineSegment.start.x, yMin);
+            p.stroke(color[0], color[1], color[2], 180);
+            p.strokeWeight(2);
+            p.line(topPx.x, topPx.y, bottomPx.x, bottomPx.y);
+          } else {
+            // Calculate slope and intercept
+            let slope = dy / dx;
+            let intercept = lineSegment.start.y - slope * lineSegment.start.x;
+
+            // Find intersection points with canvas edges
+            let coordPoints = [];
+
+            let yAtXMin = slope * xMin + intercept;
+            if (yAtXMin >= yMin && yAtXMin <= yMax) {
+              coordPoints.push({ x: xMin, y: yAtXMin });
+            }
+
+            let yAtXMax = slope * xMax + intercept;
+            if (yAtXMax >= yMin && yAtXMax <= yMax) {
+              coordPoints.push({ x: xMax, y: yAtXMax });
+            }
+
+            let xAtYMin = (yMin - intercept) / slope;
+            if (xAtYMin >= xMin && xAtYMin <= xMax) {
+              coordPoints.push({ x: xAtYMin, y: yMin });
+            }
+
+            let xAtYMax = (yMax - intercept) / slope;
+            if (xAtYMax >= xMin && xAtYMax <= xMax) {
+              coordPoints.push({ x: xAtYMax, y: yMax });
+            }
+
+            // Deduplicate points
+            const EPSILON = 0.0001;
+            let uniqueCoordPoints = [];
+            for (let pt of coordPoints) {
+              let isDuplicate = uniqueCoordPoints.some(
+                existing => Math.abs(existing.x - pt.x) < EPSILON &&
+                            Math.abs(existing.y - pt.y) < EPSILON
+              );
+              if (!isDuplicate) {
+                uniqueCoordPoints.push(pt);
+              }
+            }
+
+            if (uniqueCoordPoints.length >= 2) {
+              let p1 = coordToPixel(uniqueCoordPoints[0].x, uniqueCoordPoints[0].y);
+              let p2 = coordToPixel(uniqueCoordPoints[1].x, uniqueCoordPoints[1].y);
+              p.stroke(color[0], color[1], color[2], 180);
+              p.strokeWeight(2);
+              p.line(p1.x, p1.y, p2.x, p2.y);
+            }
+          }
+        } else {
+          // Draw line segment only
+          p.stroke(color[0], color[1], color[2], 180);
+          p.strokeWeight(2);
+          p.line(start.x, start.y, end.x, end.y);
+        }
+
+        // Draw endpoint circles
+        p.fill(color[0], color[1], color[2], 180);
+        p.noStroke();
+        p.circle(start.x, start.y, 6);
+        p.circle(end.x, end.y, 6);
+      }
+    }
+
     function drawLines() {
       for (let lineSegment of lines) {
         let start = coordToPixel(lineSegment.start.x, lineSegment.start.y);
@@ -456,10 +560,15 @@ function createCoordinatePlane(containerId, config, callbacks) {
 
     function drawHoverIndicator() {
       let pos = coordToPixel(hoverPoint.x, hoverPoint.y);
-      p.fill(16, 185, 129, 50);
-      p.noStroke();
-      p.circle(pos.x, pos.y, 12);
 
+      // Only show green hover circle in interactive mode
+      if (allowInput) {
+        p.fill(16, 185, 129, 50);
+        p.noStroke();
+        p.circle(pos.x, pos.y, 12);
+      }
+
+      // Show coordinates if enabled (works in both modes)
       if (showCoordinatesOnHover) {
         p.fill(0);
         p.textSize(11);
@@ -588,16 +697,18 @@ function createCoordinatePlane(containerId, config, callbacks) {
     }
 
     p.mouseMoved = function() {
-      // Check if hovering over help button
-      let toggleX = p.width - 35;
-      let toggleY = 10;
-      let toggleSize = 25;
+      // Check if hovering over help button (only in interactive mode)
+      if (allowInput) {
+        let toggleX = p.width - 35;
+        let toggleY = 10;
+        let toggleSize = 25;
 
-      if (p.mouseX >= toggleX && p.mouseX <= toggleX + toggleSize &&
-          p.mouseY >= toggleY && p.mouseY <= toggleY + toggleSize) {
-        p.cursor(p.HAND);
-      } else {
-        p.cursor(p.ARROW);
+        if (p.mouseX >= toggleX && p.mouseX <= toggleX + toggleSize &&
+            p.mouseY >= toggleY && p.mouseY <= toggleY + toggleSize) {
+          p.cursor(p.HAND);
+        } else {
+          p.cursor(p.ARROW);
+        }
       }
 
       if (!isInBounds(p.mouseX, p.mouseY)) {
@@ -608,6 +719,10 @@ function createCoordinatePlane(containerId, config, callbacks) {
       let coord = pixelToCoord(p.mouseX, p.mouseY);
       hoverPoint = snapToGrid(coord);
 
+      // In static mode, only track hover for coordinate display
+      if (!allowInput) return;
+
+      // Interactive mode: track for drawing
       // Auto-start drawing from predrawn point when hovering
       if (predrawnStartPoint && lines.length === 0 && !startPoint) {
         startPoint = predrawnStartPoint;
@@ -618,12 +733,12 @@ function createCoordinatePlane(containerId, config, callbacks) {
     };
 
     p.mousePressed = function() {
-      // Check if clicking the help button (when closed)
+      // Allow help button interaction even in static mode
       let toggleX = p.width - 35;
       let toggleY = 10;
       let toggleSize = 25;
 
-      if (!showInstructions &&
+      if (allowInput && !showInstructions &&
           p.mouseX >= toggleX && p.mouseX <= toggleX + toggleSize &&
           p.mouseY >= toggleY && p.mouseY <= toggleY + toggleSize) {
         showInstructions = true;
@@ -631,7 +746,7 @@ function createCoordinatePlane(containerId, config, callbacks) {
       }
 
       // Check if clicking the close button (X) when instructions are shown
-      if (showInstructions) {
+      if (allowInput && showInstructions) {
         let boxX = p.width - 235;
         let boxY = 10;
         let boxWidth = 225;
@@ -646,6 +761,7 @@ function createCoordinatePlane(containerId, config, callbacks) {
         }
       }
 
+      if (!allowInput) return; // No drawing in static mode
       if (locked) return;
       if (!isInBounds(p.mouseX, p.mouseY)) return;
 
@@ -716,12 +832,13 @@ function createCoordinatePlane(containerId, config, callbacks) {
     }
 
     p.keyPressed = function() {
-      // H key toggles instructions (works even when locked)
-      if (p.key === 'h' || p.key === 'H') {
+      // H key toggles instructions (only in interactive mode)
+      if (allowInput && (p.key === 'h' || p.key === 'H')) {
         showInstructions = !showInstructions;
         return;
       }
 
+      if (!allowInput) return; // No keyboard interaction in static mode
       if (locked) return;
 
       if (p.key === 'r' || p.key === 'R') {

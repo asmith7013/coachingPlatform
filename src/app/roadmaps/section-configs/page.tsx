@@ -44,6 +44,7 @@ export default function SectionConfigsPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [showUnmatchedOnly, setShowUnmatchedOnly] = useState(false);
   const [showManualCreateModal, setShowManualCreateModal] = useState(false);
+  const [savingIndividual, setSavingIndividual] = useState<number | null>(null);
 
   // Data states
   const [podsieAssignments, setPodsieAssignments] = useState<PodsieAssignmentInfo[]>([]);
@@ -316,6 +317,134 @@ export default function SectionConfigsPage() {
     setSuccess('Auto-matched assignments by name similarity');
   };
 
+  // Save individual assignment
+  const handleSaveIndividual = async (match: AssignmentMatch) => {
+    if (!selectedSchool || !selectedSection) {
+      setError('Please select school and section');
+      return;
+    }
+
+    if (!match.matchedLesson && !match.isCreatingNew) {
+      setError('Please select or create a lesson first');
+      return;
+    }
+
+    try {
+      setSavingIndividual(match.podsieAssignment.assignmentId);
+      setError(null);
+
+      // First, ensure section config exists
+      const configResult = await getSectionConfig(selectedSchool, selectedSection);
+
+      if (!configResult.success || !configResult.data) {
+        // Create new section config
+        const createResult = await upsertSectionConfig({
+          school: selectedSchool,
+          classSection: selectedSection,
+          gradeLevel: selectedSection.startsWith('6') ? '6' :
+                     selectedSection.startsWith('7') ? '7' : '8',
+          podsieAssignments: [],
+          active: true
+        });
+
+        if (!createResult.success) {
+          setError(createResult.error || 'Failed to create section config');
+          return;
+        }
+      }
+
+      let lessonToUse = match.matchedLesson;
+
+      // Create new lesson if needed
+      if (match.isCreatingNew && match.newLessonData) {
+        const gradeLevel = selectedSection.startsWith('6') ? '6' :
+                          selectedSection.startsWith('7') ? '7' : '8';
+
+        const unitLessonId = `${match.newLessonData.unitNumber}.${match.newLessonData.lessonNumber}`;
+        const scopeTag = selectedSection === '802' ? 'Algebra 1' : `Grade ${gradeLevel}`;
+
+        const newLessonResult = await createScopeAndSequence({
+          grade: gradeLevel,
+          unit: `Unit ${match.newLessonData.unitNumber}`,
+          unitNumber: match.newLessonData.unitNumber,
+          unitLessonId,
+          lessonNumber: match.newLessonData.lessonNumber,
+          lessonName: match.podsieAssignment.assignmentName,
+          section: match.newLessonData.section,
+          lessonType: match.newLessonData.section === 'Ramp Ups' ? 'ramp-up' : 'lesson',
+          scopeSequenceTag: scopeTag,
+          roadmapSkills: [],
+          targetSkills: [],
+          ownerIds: []
+        });
+
+        if (newLessonResult.success && newLessonResult.data) {
+          lessonToUse = newLessonResult.data as ScopeAndSequence;
+        } else if (newLessonResult.error?.includes('E11000 duplicate key error')) {
+          // Lesson already exists, try to fetch it
+          const existingLesson = lessons.find(l =>
+            l.unitLessonId === unitLessonId &&
+            l.grade === gradeLevel &&
+            l.scopeSequenceTag === scopeTag
+          );
+
+          if (existingLesson) {
+            lessonToUse = existingLesson;
+          } else {
+            setError('Lesson exists in DB but not found in loaded lessons. Try refreshing the page.');
+            return;
+          }
+        } else {
+          setError(newLessonResult.error || 'Failed to create lesson');
+          return;
+        }
+      }
+
+      if (!lessonToUse) {
+        setError('No lesson selected');
+        return;
+      }
+
+      const assignment: PodsieAssignment = {
+        unitLessonId: lessonToUse.unitLessonId,
+        lessonName: lessonToUse.lessonName,
+        grade: lessonToUse.grade,
+        assignmentType: match.assignmentType,
+        podsieAssignmentId: String(match.podsieAssignment.assignmentId),
+        podsieQuestionMap: match.podsieAssignment.questionIds.map((questionId: number, idx: number) => ({
+          questionNumber: idx + 1,
+          questionId: String(questionId)
+        })),
+        totalQuestions: match.totalQuestions ?? match.podsieAssignment.totalQuestions,
+        hasZearnLesson: false,
+        active: true
+      };
+
+      const result = await addPodsieAssignment(
+        selectedSchool,
+        selectedSection,
+        assignment
+      );
+
+      if (result.success) {
+        setSuccess(`Successfully saved assignment: ${lessonToUse.lessonName}`);
+
+        // Reload existing assignments
+        const reloadResult = await getSectionConfig(selectedSchool, selectedSection);
+        if (reloadResult.success && reloadResult.data && reloadResult.data.podsieAssignments) {
+          setExistingAssignments(reloadResult.data.podsieAssignments as unknown as PodsieAssignment[]);
+        }
+      } else {
+        setError(result.error || 'Failed to save assignment');
+      }
+    } catch (err) {
+      console.error('Error saving assignment:', err);
+      setError('Failed to save assignment');
+    } finally {
+      setSavingIndividual(null);
+    }
+  };
+
   // Save all matches to section config
   const handleSaveAll = async () => {
     if (!selectedSchool || !selectedSection) {
@@ -420,6 +549,7 @@ export default function SectionConfigsPage() {
             questionId: String(questionId)
           })),
           totalQuestions: match.totalQuestions ?? match.podsieAssignment.totalQuestions,
+          hasZearnLesson: false,
           active: true
         };
 
@@ -616,17 +746,42 @@ export default function SectionConfigsPage() {
                   existing => existing.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
                 );
 
+                // Check if assignment has question mapping
+                const existingAssignment = existingAssignments.find(
+                  existing => existing.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
+                );
+                const hasQuestionMapping = existingAssignment?.podsieQuestionMap &&
+                                         existingAssignment.podsieQuestionMap.length > 0;
+
                 return (
                   <div key={match.podsieAssignment.assignmentId} className={`border rounded-lg p-4 ${
                     alreadyExists ? 'border-green-300 bg-green-50/30' : 'border-gray-200'
                   }`}>
-                    {/* Already Exists Indicator */}
+                    {/* Status Badges - Split Row */}
                     {alreadyExists && (
-                      <div className="mb-3 flex items-center gap-2 px-3 py-2 bg-green-100 border border-green-300 rounded-lg">
-                        <CheckIcon className="w-5 h-5 text-green-600 flex-shrink-0" />
-                        <span className="text-sm font-medium text-green-800">
-                          Already saved in section config
-                        </span>
+                      <div className="mb-3 grid grid-cols-2 gap-2">
+                        {/* Already Saved Badge */}
+                        <div className="flex items-center gap-2 px-3 py-2 bg-green-100 border border-green-300 rounded-lg">
+                          <CheckIcon className="w-4 h-4 text-green-600 flex-shrink-0" />
+                          <span className="text-xs font-medium text-green-800">
+                            Saved in section config
+                          </span>
+                        </div>
+
+                        {/* Question Mapping Badge */}
+                        <div className={`flex items-center gap-2 px-3 py-2 border rounded-lg ${
+                          hasQuestionMapping
+                            ? 'bg-blue-100 border-blue-300'
+                            : 'bg-gray-100 border-gray-300'
+                        }`}>
+                          <span className={`text-xs font-medium ${
+                            hasQuestionMapping ? 'text-blue-800' : 'text-gray-600'
+                          }`}>
+                            {hasQuestionMapping
+                              ? `✓ Question mapping (${existingAssignment.podsieQuestionMap?.length} questions)`
+                              : '✗ No question mapping'}
+                          </span>
+                        </div>
                       </div>
                     )}
 
@@ -814,6 +969,29 @@ export default function SectionConfigsPage() {
                           {match.newLessonData.unitNumber}.{match.newLessonData.lessonNumber}
                         </span> - {match.podsieAssignment.assignmentName}
                       </div>
+                    </div>
+                  )}
+
+                  {/* Individual Save Button */}
+                  {(match.matchedLesson || match.isCreatingNew) && (
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <button
+                        onClick={() => handleSaveIndividual(match)}
+                        disabled={savingIndividual === match.podsieAssignment.assignmentId}
+                        className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                      >
+                        {savingIndividual === match.podsieAssignment.assignmentId ? (
+                          <>
+                            <ArrowPathIcon className="w-5 h-5 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <CheckIcon className="w-5 h-5" />
+                            {alreadyExists ? 'Update Assignment' : 'Save Assignment'}
+                          </>
+                        )}
+                      </button>
                     </div>
                   )}
                   </div>

@@ -23,7 +23,8 @@
       "Bash(/tmp/final_standards.json)",
       "Bash(echo \"Total <strong> tags:\")",
       "Bash(tree:*)",
-      "Bash(vercel link:*)"
+      "Bash(vercel link:*)",
+      "SlashCommand(/create-worked-example-sg)"
     ],
     "deny": [],
     "ask": []

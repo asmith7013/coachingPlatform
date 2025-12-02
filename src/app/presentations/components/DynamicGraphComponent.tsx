@@ -11,6 +11,10 @@ import { useEffect, useRef } from 'react';
 
 // This matches the config structure from coordinate-plane-p5.js
 export interface CoordinatePlaneConfig {
+  // Canvas size
+  width?: number; // Canvas width in pixels (default: 600)
+  height?: number; // Canvas height in pixels (default: 600)
+
   // Axis Configuration
   xMin?: number;
   xMax?: number;
@@ -28,11 +32,15 @@ export interface CoordinatePlaneConfig {
   // Initial data
   initialPoints?: Array<{ x: number; y: number }>;
   initialEquations?: Array<{ slope: number; intercept: number; color?: [number, number, number] }>;
+  initialLines?: Array<{ start: { x: number; y: number }; end: { x: number; y: number }; color?: [number, number, number] }>;
   predrawnStartPoint?: { x: number; y: number } | null;
 
   // Display options
   showCoordinatesOnHover?: boolean;
   drawFullLines?: boolean;
+
+  // Interaction mode
+  allowInput?: boolean; // If false, displays as static graph (no drawing/editing)
 }
 
 export interface CoordinatePlaneCallbacks {

@@ -40,6 +40,8 @@ export const PodsieAssignmentSchema = z.object({
   podsieQuestionMap: z.array(PodsieQuestionMapSchema).default([]).describe("Map of question numbers to Podsie question IDs"),
   totalQuestions: z.number().int().positive().optional().describe("Total questions in the assignment"),
 
+  hasZearnLesson: z.boolean().optional().default(false).describe("Whether this assignment has a corresponding Zearn lesson (controls Zearn column visibility)"),
+
   active: z.boolean().default(true).describe("Whether this assignment is active"),
   notes: z.string().optional().describe("Optional notes about this assignment"),
 });

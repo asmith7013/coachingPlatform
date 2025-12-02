@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 7: Correct Solution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Roboto', sans-serif;
+        }
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            background: linear-gradient(135deg, #121212 0%, #14141e 100%);
+            padding: 50px 60px;
+            color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+        .solution-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .solution-box {
+            background: rgba(30, 41, 59, 0.6);
+            border: 2px solid #475569;
+            border-radius: 12px;
+            padding: 25px;
+        }
+        .solution-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-bottom: 15px;
+        }
+        .step {
+            background: rgba(15, 23, 42, 0.8);
+            border-left: 3px solid #64748b;
+            padding: 12px 18px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            color: #e2e8f0;
+        }
+        .step.correct {
+            border-left-color: #4ade80;
+        }
+        .step.error {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .summary {
+            background: rgba(168, 85, 247, 0.15);
+            border: 2px solid #a855f7;
+            border-radius: 12px;
+            padding: 25px;
+        }
+        .summary-title {
+            color: #a855f7;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .summary-text {
+            color: #e0e7ff;
+            font-size: 20px;
+            line-height: 1.6;
+        }
+        .final-answer {
+            background: rgba(34, 197, 94, 0.2);
+            border: 3px solid #4ade80;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .final-answer-text {
+            color: #4ade80;
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <h2>The Correct Solution</h2>
+
+        <div class="solution-grid">
+            <div class="solution-box">
+                <div class="solution-title">Lin's Work (with errors marked)</div>
+                <div class="step correct">8(x − 3) + 7 = 2x(4 − 17)</div>
+                <div class="step correct">8(x − 3) + 7 = 2x(−13)</div>
+                <div class="step correct">8x − 24 + 7 = −26x</div>
+                <div class="step correct">8x − 17 = −26x</div>
+                <div class="step correct">−17 = −34x</div>
+                <div class="step correct">x = 1/2</div>
+            </div>
+
+            <div class="solution-box">
+                <div class="solution-title">Verification</div>
+                <div class="step correct">All steps are actually correct!</div>
+                <div class="step correct">Step 1: Simplified inside parentheses ✓</div>
+                <div class="step correct">Step 2: Applied distributive property ✓</div>
+                <div class="step correct">Step 3: Combined like terms ✓</div>
+                <div class="step correct">Step 4: Subtracted 8x from both sides ✓</div>
+                <div class="step correct">Step 5: Divided both sides by −34 ✓</div>
+            </div>
+        </div>
+
+        <div class="summary">
+            <div class="summary-title"><i class="fa-solid fa-lightbulb"></i> Key Takeaway</div>
+            <div class="summary-text">
+                When critiquing someone's work, check each step carefully:<br>
+                1. Are the operations valid?<br>
+                2. Is the arithmetic correct?<br>
+                3. Did they maintain equivalence between equations?<br>
+                <br>
+                In this case, Lin's solution was <strong>completely correct</strong>!
+            </div>
+            <div class="final-answer">
+                <div class="final-answer-text">x = 1/2 (or 0.5)</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

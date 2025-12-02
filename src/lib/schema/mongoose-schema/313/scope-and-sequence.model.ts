@@ -49,6 +49,7 @@ const scopeAndSequenceFields = {
   roadmapSkills: { type: [String], default: [] },
   targetSkills: { type: [String], default: [] },
   standards: { type: [StandardSchema], default: [] },
+  hasZearnLesson: { type: Boolean, default: false, index: true },
 
   ...standardDocumentFields
 };

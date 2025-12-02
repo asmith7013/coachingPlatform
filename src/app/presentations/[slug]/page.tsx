@@ -1,75 +1,33 @@
-"use client";
+'use client';
 
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import dynamic from 'next/dynamic';
-import { getDeckBySlug } from '@actions/worked-examples';
+import { useEffect, useState, useCallback } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import type { WorkedExampleDeck } from '@zod-schema/worked-example-deck';
-// Import only the specific icons we use instead of the entire library
-import {
-  Calculator,
-  Cake,
-  Gamepad2,
-  Pizza,
-  Video,
-  TrendingUp,
-  Rocket,
-  Download,
-  Smartphone,
-  Wind,
-  X,
-  type LucideIcon
-} from 'lucide-react';
+import { getDeckBySlug } from '@actions/worked-examples';
 
-// Dynamically import Spectacle to reduce initial bundle size
-const Deck = dynamic(() => import('spectacle').then(mod => ({ default: mod.Deck })), {
-  ssr: false,
-  loading: () => <div className="flex items-center justify-center h-screen">Loading presentation...</div>
-});
-
-// Dynamically import slide components
-const TitleSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.TitleSlide })));
-const ContextSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.ContextSlide })));
-const PredictionSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.PredictionSlide })));
-const RevealSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.RevealSlide })));
-const ReasoningSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.ReasoningSlide })));
-const PracticeSlide = dynamic(() => import('../slide-creation').then(mod => ({ default: mod.PracticeSlide })));
-
-// Map of icon names to icon components (only the ones we use)
-const iconMap: Record<string, LucideIcon> = {
-  Calculator,
-  Cake,
-  Gamepad2,
-  Pizza,
-  Video,
-  TrendingUp,
-  Rocket,
-  Download,
-  Smartphone,
-  Wind,
-};
-
-export default function WorkedExampleViewer() {
+export default function PresentationViewer() {
   const params = useParams();
+  const router = useRouter();
   const slug = params.slug as string;
 
   const [deck, setDeck] = useState<WorkedExampleDeck | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [scriptsLoaded, setScriptsLoaded] = useState<Set<string>>(new Set());
 
+  // Load deck from database
   useEffect(() => {
     async function loadDeck() {
       try {
         const result = await getDeckBySlug(slug);
-
         if (result.success && result.data) {
           setDeck(result.data as WorkedExampleDeck);
         } else {
           setError(result.error || 'Failed to load deck');
         }
-      } catch {
-        setError('An error occurred while loading the deck');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load deck');
       } finally {
         setLoading(false);
       }
@@ -78,134 +36,209 @@ export default function WorkedExampleViewer() {
     loadDeck();
   }, [slug]);
 
-  // Helper to get Lucide icon component from icon name string
-  const getIcon = (iconName?: string, size = 48) => {
-    if (!iconName) return null;
-
-    const Icon = iconMap[iconName];
-    if (!Icon) {
-      console.warn(`Icon "${iconName}" not found in iconMap. Add it to the imports if needed.`);
-      return null;
+  // Navigation functions
+  const nextSlide = useCallback(() => {
+    if (deck?.htmlSlides && currentSlide < deck.htmlSlides.length - 1) {
+      setCurrentSlide(prev => prev + 1);
     }
+  }, [deck, currentSlide]);
 
-    return <Icon size={size} />;
-  };
+  const prevSlide = useCallback(() => {
+    if (currentSlide > 0) {
+      setCurrentSlide(prev => prev - 1);
+    }
+  }, [currentSlide]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Escape') {
+        router.push('/presentations');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [nextSlide, prevSlide, router]);
+
+  // Load scripts for current slide
+  const currentSlideData = deck?.htmlSlides?.[currentSlide];
+
+  useEffect(() => {
+    if (!currentSlideData?.scripts) return;
+
+    // Load CDN scripts
+    const cdnScripts = currentSlideData.scripts.filter(s => s.type === 'cdn');
+    cdnScripts.forEach(script => {
+      if (!scriptsLoaded.has(script.content)) {
+        const scriptEl = document.createElement('script');
+        scriptEl.src = script.content;
+        scriptEl.async = true;
+        scriptEl.onload = () => {
+          setScriptsLoaded(prev => new Set([...prev, script.content]));
+        };
+        document.body.appendChild(scriptEl);
+      }
+    });
+
+    // Execute inline scripts (after CDN scripts are loaded)
+    const inlineScripts = currentSlideData.scripts.filter(s => s.type === 'inline');
+    const executeInlineScripts = () => {
+      inlineScripts.forEach(script => {
+        try {
+          const scriptFunc = new Function(script.content);
+          scriptFunc();
+        } catch (err) {
+          console.error('Error executing inline script:', err);
+        }
+      });
+    };
+
+    // Wait a bit for CDN scripts to load before executing inline scripts
+    const timer = setTimeout(executeInlineScripts, 100);
+    return () => clearTimeout(timer);
+  }, [currentSlide, currentSlideData, scriptsLoaded]);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl">Loading presentation...</p>
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <div className="text-white text-2xl">Loading presentation...</div>
       </div>
     );
   }
 
   if (error || !deck) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-xl text-red-600 mb-4">{error || 'Deck not found'}</p>
-          <Link href="/presentations/slide-viewer" className="text-blue-600 hover:underline">
-            Back to presentations list
-          </Link>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
+        <div className="text-white text-2xl mb-4">
+          {error || 'Presentation not found'}
         </div>
+        <button
+          onClick={() => router.push('/presentations')}
+          className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+        >
+          Back to Presentations
+        </button>
       </div>
     );
   }
 
-  const { slides } = deck;
+  const totalSlides = deck.htmlSlides?.length || 0;
+
+  if (totalSlides === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
+        <div className="text-white text-2xl mb-4">
+          This presentation has no slides
+        </div>
+        <button
+          onClick={() => router.push('/presentations')}
+          className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+        >
+          Back to Presentations
+        </button>
+      </div>
+    );
+  }
+  const slide = deck.htmlSlides[currentSlide];
 
   return (
     <>
-      {/* Close button - fixed position in top-right corner */}
-      <Link
-        href="/presentations"
-        className="fixed top-4 right-4 z-50 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all hover:scale-110"
-        aria-label="Close presentation"
-      >
-        <X size={24} className="text-gray-700" />
-      </Link>
+      {/* Slide Container */}
+      <div className="relative w-screen h-screen overflow-hidden bg-gray-900">
+        {/* Custom CSS for current slide */}
+        {slide.customCSS && (
+          <style dangerouslySetInnerHTML={{ __html: slide.customCSS }} />
+        )}
 
-      <Deck>
-        {/* Slide 1: Title */}
-        <TitleSlide
-        unit={slides.slide1.unit}
-        title={slides.slide1.title}
-        bigIdea={slides.slide1.bigIdea}
-        example={slides.slide1.example}
-        icon={getIcon(slides.slide1.icon, 64)}
-      />
+        {/* Slide Content */}
+        <div
+          className="w-full h-full"
+          dangerouslySetInnerHTML={{ __html: slide.htmlContent }}
+        />
 
-      {/* Slide 2: Context */}
-      <ContextSlide
-        scenario={slides.slide2.scenario}
-        context={slides.slide2.context}
-        icon={getIcon(slides.slide2.icon)}
-        tableData={slides.slide2.tableData}
-        inputLabel={slides.slide2.inputLabel}
-        outputLabel={slides.slide2.outputLabel}
-      />
+        {/* Close Button */}
+        <button
+          onClick={() => router.push('/presentations')}
+          className="fixed top-4 right-4 w-12 h-12 flex items-center justify-center bg-gray-800/80 hover:bg-gray-700/90 text-white rounded-full transition-colors z-50"
+          aria-label="Close presentation"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
 
-      {/* Slide 3: Prediction 1 */}
-      <PredictionSlide
-        question={slides.slide3.question}
-        tableData={slides.slide3.tableData}
-        highlightRow={slides.slide3.highlightRow}
-        inputLabel={slides.slide3.inputLabel}
-        outputLabel={slides.slide3.outputLabel}
-      />
+        {/* Navigation Controls */}
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-4 bg-gray-800/90 px-6 py-3 rounded-full z-50">
+          {/* Previous Button */}
+          <button
+            onClick={prevSlide}
+            disabled={currentSlide === 0}
+            className="w-10 h-10 flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-700 rounded-full transition-colors"
+            aria-label="Previous slide"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 19.5L8.25 12l7.5-7.5"
+              />
+            </svg>
+          </button>
 
-      {/* Slide 4: Reveal 1 */}
-      <RevealSlide
-        calculation={slides.slide4.calculation}
-        explanation={slides.slide4.explanation}
-        answer={slides.slide4.answer}
-        isConstant={slides.slide4.isConstant}
-      />
+          {/* Slide Counter */}
+          <div className="text-white font-medium px-3">
+            {currentSlide + 1} / {totalSlides}
+          </div>
 
-      {/* Slide 5: Prediction 2 */}
-      <PredictionSlide
-        question={slides.slide5.question}
-        tableData={slides.slide5.tableData}
-        highlightRow={slides.slide5.highlightRow}
-        inputLabel={slides.slide5.inputLabel}
-        outputLabel={slides.slide5.outputLabel}
-      />
-
-      {/* Slide 6: Reveal 2 */}
-      <RevealSlide
-        calculation={slides.slide6.calculation}
-        explanation={slides.slide6.explanation}
-        answer={slides.slide6.answer}
-      />
-
-      {/* Slide 7: Reasoning */}
-      <ReasoningSlide
-        title={slides.slide7.title}
-        steps={slides.slide7.steps}
-        mathRule={slides.slide7.mathRule}
-        keyInsight={slides.slide7.keyInsight}
-      />
-
-      {/* Slide 8: Practice 1 */}
-      <PracticeSlide
-        scenario={slides.slide8.scenario}
-        context={slides.slide8.context}
-        icon={getIcon(slides.slide8.icon)}
-        tableData={slides.slide8.tableData}
-        inputLabel={slides.slide8.inputLabel}
-        outputLabel={slides.slide8.outputLabel}
-      />
-
-      {/* Slide 9: Practice 2 */}
-      <PracticeSlide
-        scenario={slides.slide9.scenario}
-        context={slides.slide9.context}
-        icon={getIcon(slides.slide9.icon)}
-        tableData={slides.slide9.tableData}
-        inputLabel={slides.slide9.inputLabel}
-        outputLabel={slides.slide9.outputLabel}
-      />
-      </Deck>
+          {/* Next Button */}
+          <button
+            onClick={nextSlide}
+            disabled={currentSlide === totalSlides - 1}
+            className="w-10 h-10 flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-700 rounded-full transition-colors"
+            aria-label="Next slide"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
     </>
   );
 }

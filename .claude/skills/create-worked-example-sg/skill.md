@@ -1,285 +1,394 @@
-# Create Worked Example Slide Deck
+# Create Worked Example (HTML Slides)
 
-You are an expert educational content creator specializing in mathematics pedagogy and the Scaffolded Guidance (SG) instructional framework.
+You are an expert educational content creator specializing in mathematics pedagogy and worked example slide decks.
 
-Your task is to generate slide content for a 9-slide worked example presentation and save it to the database.
+Your task is to generate HTML-based slide decks for math worked examples and save them to the database.
 
-## Input
+## Example Slides Reference
 
-The user will provide:
-1. **An image of a math problem** (primary input)
-2. Optionally: Grade level, math standard, or specific learning objective
+Before starting, **study these example slide patterns from a complete hanger balance worked example**:
+
+### Full Example Available
+See `.claude/skills/create-worked-example-sg/examples/example1.html` for a complete 9-slide hanger balance deck.
+
+### Pattern 1: Title Slide (Learning Goal)
+
+```html
+<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif;">
+    <h3 style="font-size: 32px; font-weight: 500; color: #94a3b8; margin: 0; text-transform: uppercase;">Unit 4 Lesson 1</h3>
+    <h1 style="font-size: 80px; font-weight: 700; letter-spacing: 2px; color: #a855f7; text-shadow: 0 0 20px rgba(168, 85, 247, 0.4); margin: 20px 0; text-transform: uppercase;">Balancing the Equation</h1>
+    <p style="font-size: 28px; line-height: 1.6; color: #cbd5e1; max-width: 800px; text-align: center; margin-top: 30px;">Big Idea: We can find the weight of an unknown object using a hanger diagram. Just like a balanced scale, if you add or remove the same amount from both sides, it stays equal!</p>
+</div>
+```
+
+**Key Elements:** Student-facing "Big Idea", large purple title, unit badge, simple example
+
+### Pattern 2: Problem Setup with Balance Visual
+
+Uses Font Awesome icons, balance container with two sides, engaging scenario ("RPG Crafting Station")
+
+### Pattern 3: Ask Slide (with crossed-out annotations)
+
+```html
+<!-- Step title -->
+<h2>Step 1: Simplify</h2>
+
+<!-- Same balance visual, but items marked with crossed-out class -->
+<i class="fa-solid fa-gem crossed-out"></i>
+
+<!-- CFU at bottom in yellow -->
+<div style="color: #fbbf24; font-size: 32px; text-align: center;">
+    <i class="fa-solid fa-circle-question"></i> Check for Understanding: Why did I choose to cross out exactly one Crystal from both sides?
+</div>
+```
+
+**Key Rule:** Visual stays in SAME position as problem setup. Only add annotations (X marks, highlights).
+
+### Pattern 4: Reveal Slide
+
+IDENTICAL visual to Ask slide, but replace yellow question with green answer:
+
+```html
+<div style="color: #4ade80; font-size: 32px; text-align: center;">
+    To remove the duplicates! By removing the crystal on the right, I get closer to isolating the unknown variables.
+</div>
+```
+
+### Pattern 5: Practice Problem (Zero Scaffolding)
+
+Same structure as problem setup, but different scenario ("Hypebeast Trade" with sneakers/hoodies instead of gems/gold). NO annotations, NO CFU, NO steps.
+
+## Getting Started: Required Information
+
+When the user asks you to create a worked example, **ALWAYS prompt them for these three pieces of information**:
+
+1. **Learning Goal** - What should students be able to do after this lesson? (Use student-facing language)
+2. **Grade Level** - What grade is this for? (6-12)
+3. **Problem Image** - Upload an image of the math problem that needs a worked example
+
+**Example Prompt to User:**
+```
+To create a worked example, I need three things:
+
+1. **Learning Goal**: What should students learn from this?
+   (e.g., "Students will be able to find unit rates using division")
+2. **Grade Level**: What grade is this for? (e.g., Grade 8)
+3. **Problem Image**: Please upload an image of the problem you want a worked example for.
+
+Once I have these, I'll create a complete HTML slide deck!
+```
+
+**Do NOT proceed** until you have all three pieces of information.
 
 ## Your Process
 
 ### Step 1: Analyze the Math Problem
 
 Extract from the image:
-- Mathematical concept (e.g., proportional relationships, solving equations)
-- Grade level and relevant math standard
+- Mathematical concept (e.g., unit rates, hanger diagrams, proportional relationships)
 - Core structure (what are the key steps?)
 - Existing context or scenario (if any)
+- Visual type needed: **HTML**, **P5.js**, or **D3.js**
 
-### Step 2: Generate Three Engaging Scenarios
+**Determine Visual Type:**
 
-Create scenarios that are:
-- Relevant to student interests (gaming, social media, sports, technology, nature)
-- Age-appropriate for the grade level
-- Mathematically equivalent to the original problem
-- Each with a Lucide React icon name (e.g., "Video", "Gamepad2", "Rocket")
+- **Use HTML/CSS** when:
+  - Simple tables with highlighting
+  - Text-based problems
+  - Static equations
+  - Minimal animation needed
 
-**Scenarios needed:**
-1. **Worked Example** (Slides 2-6): Full scaffolding with prediction pairs
-2. **Practice Problem 1** (Slide 8): Independent practice, no scaffolding
-3. **Practice Problem 2** (Slide 9): Independent practice, no scaffolding
+- **Use P5.js** when:
+  - Hanger diagrams
+  - Geometric shapes and transformations
+  - Balance/scale problems
+  - Interactive manipulatives
+  - Custom animations
 
-### Step 3: Generate All 9 Slides Following the Framework
+- **Use D3.js** when:
+  - Coordinate planes and graphs
+  - Data visualizations
+  - Complex charts
+  - Mathematical plots
 
-Follow the exact 9-slide structure defined in `PLAN.md`:
+### Step 2: Generate Three Exit Tickets
 
-**Slide 1: The Anchor**
-- Unit number, title, big idea (student-friendly language)
-- Simple numerical example
-- Icon
+Create three variations of the problem with:
+- **Same rigor and mathematical structure** as original
+- **Different numbers/contexts** to prevent memorization
+- **Engaging scenarios** for the grade level (gaming, social media, STEM, sports - NOT boring textbook examples)
+- Each with a unique icon/theme
 
-**Slide 2: The Hook**
-- Worked example scenario with context
-- Data table with some blank values
-- Icon
+**Examples of Good Scenarios:**
+- Grade 6-7: Video game items, YouTube views, TikTok followers, sports stats
+- Grade 8-9: Drone flight, crypto mining, streaming subscriptions, esports tournaments
+- Grade 10-12: Investment returns, data science, engineering projects, startup growth
 
-**Slides 3-4: First Prediction Pair (Find the Constant)**
-- Slide 3 (Ask): Question with visual highlighting
-- Slide 4 (Reveal): Calculation, explanation, answer
+### Step 3: Create Worked Example for First Problem
 
-**Slides 5-6: Second Prediction Pair (Apply the Constant)**
-- Slide 5 (Ask): Question with visual highlighting
-- Slide 6 (Reveal): Calculation, explanation, answer
+Break the solution into **2-3 key steps** (maximum 3 steps):
 
-**Slide 7: The Metacognition**
-- Pattern explanation in English (not pure math)
-- Step-by-step reasoning
-- Optional: Math rule (e.g., "y = kx")
-- Key insight
+For each step, create:
+1. **Ask Slide** - Visual annotation showing what to focus on + Check-for-Understanding question
+2. **Reveal Slide** - Answer to the CFU question with explanation
 
-**Slides 8-9: Independent Practice**
-- New scenarios with no scaffolding
-- Students apply the same pattern
+**Check-for-Understanding Question Patterns:**
+- "Why did I..." (strategy question)
+- "How did I know to..." (decision-making question)
+- "What operation should I use here and why?" (conceptual question)
 
-### Step 4: Validate Against Schema
+**Do NOT ask:**
+- "What is X + Y?" (computation question)
+- "What's the answer?" (result question)
 
-Ensure your data matches the structure in `DATABASE-SCHEMA.md`:
-- All required fields present
-- Icon names are valid Lucide React icon names
-- Table data uses correct format: `{input: number, output: number | null}`
-- Grade level is a number (6-12)
-- Layout configuration is included for slides 2-6 to maintain visual stability
+### Step 4: Generate HTML Slides (7-9 slides total)
 
-**Layout Configuration:**
+**Slide Structure:**
 
-For slides 2-6 (the worked example sequence), include layout hints to ensure visual consistency:
+1. **Learning Goal Slide** (Title slide)
+   - Learning goal in student-facing language
+   - Simple example
+   - Badge with unit/lesson number (optional)
 
-```javascript
-slide2: {
-  // ... other slide data
-  layout: {
-    tablePosition: "center",  // Options: "center", "left", "right"
-    annotationPosition: "below" // Where questions/highlights appear
-  }
-},
-slide3: {
-  // ... other slide data
-  layout: {
-    maintainTablePosition: true,  // Reuse position from slide2
-    highlightStyle: "border",     // How to draw attention: "border", "glow", "arrow"
-    questionPosition: "below"     // Where the question text appears
-  }
-},
-slide4: {
-  // ... other slide data
-  layout: {
-    maintainTablePosition: true,
-    calculationPosition: "right"  // Show math to the side, not replacing table
-  }
-},
-// ... same pattern for slides 5-6
+2. **Problem Slide** (First exit ticket - worked example)
+   - Scenario/context
+   - Problem statement
+   - Visual representation (table, hanger diagram, graph)
+   - Icon/image
+
+3. **Step 1 - Ask**
+   - Same visual as slide 2, with annotation/highlighting
+   - CFU question at bottom (yellow accent)
+   - Minimal text on the visual itself
+
+4. **Step 1 - Reveal**
+   - Same visual as slide 3
+   - Answer to CFU at bottom (green accent)
+   - Brief explanation
+
+5. **Step 2 - Ask**
+   - Updated visual showing next step
+   - CFU question at bottom
+   - Highlight the new focus area
+
+6. **Step 2 - Reveal**
+   - Updated visual
+   - Answer to CFU at bottom
+   - Explanation
+
+7. *[Optional]* **Step 3 - Ask/Reveal** (only if problem requires 3 steps)
+
+8. *[Optional]* **Reasoning Slide** (only if original problem asks "explain your reasoning")
+   - Pattern explanation in plain English
+   - Step-by-step breakdown
+   - Mathematical rule (optional)
+   - Key insight
+
+9. **Practice Problem 1** (Second exit ticket)
+   - New scenario, no scaffolding
+   - Just the problem setup
+
+10. **Practice Problem 2** (Third exit ticket)
+    - New scenario, no scaffolding
+    - Just the problem setup
+
+### Step 5: Generate HTML with Visual Stability
+
+**Critical Rule: Keep visuals in the same position across slides 2-6**
+
+- Do NOT move the table/diagram between Ask and Reveal slides
+- Add annotations AROUND the stationary element
+- Use absolute positioning for CFU boxes at the bottom
+- Mimic a teacher at a whiteboard: problem stays put, annotations appear around it
+
+**HTML Generation Patterns:**
+
+**For Table-Based Problems:**
+```html
+<div class="slide-container" style="...dark gradient background...">
+  <h2>STEP 1: FIND THE UNIT RATE</h2>
+
+  <div style="display: flex; justify-content: center; margin: 3rem 0;">
+    <table style="...styled table...">
+      <thead>
+        <tr>
+          <th>Chips (bags)</th>
+          <th>Price ($)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background: rgba(251, 191, 36, 0.15);">
+          <td>2</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>3</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CFU Box at bottom -->
+  <div style="position: absolute; bottom: 3rem; left: 3rem; right: 3rem;">
+    <div style="background: rgba(245, 158, 11, 0.15); border-left: 4px solid #fbbf24; padding: 1.5rem 2rem; border-radius: 0.75rem;">
+      <span style="font-size: 1.5rem;">❓</span>
+      <span style="color: #fbbf24; font-size: 1.25rem;">
+        Check for Understanding: Why did I divide 6 by 2?
+      </span>
+    </div>
+  </div>
+</div>
 ```
 
-**The Whiteboard Principle:**
-Think of these slides as a teacher working at a whiteboard:
-1. Teacher draws the table (Slide 2)
-2. Teacher circles a row and asks "How did I get this?" (Slide 3)
-3. Teacher writes calculation nearby (Slide 4)
-4. Teacher circles another row (Slide 5)
-5. Teacher shows calculation (Slide 6)
+**For P5.js Problems (Hanger Diagrams):**
+```javascript
+// Slide with embedded P5.js
+{
+  slideNumber: 2,
+  htmlContent: `
+    <div class="slide-container" style="...">
+      <h2>THE RPG CRAFTING STATION</h2>
+      <p>The game says these two sets have equal power...</p>
+      <div id="p5-canvas-container"></div>
+    </div>
+  `,
+  visualType: "p5",
+  scripts: [
+    {
+      type: "cdn",
+      content: "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"
+    },
+    {
+      type: "inline",
+      content: `
+        function setup() {
+          let canvas = createCanvas(700, 500);
+          canvas.parent('p5-canvas-container');
+          noLoop();
+        }
 
-The original table NEVER moves. Only annotations appear around it.
+        function draw() {
+          background(26, 26, 46);
+          // Draw hanger
+          // Draw shapes
+          // etc.
+        }
+      `
+    }
+  ]
+}
+```
 
-### Step 5: Save to Database
+**Styling Reference:**
+See `SLIDE-STYLES.md` for patterns and examples.
 
-Use mongosh to save the deck directly to MongoDB:
+### Step 6: Dual-Save System (Local Files + Database)
+
+Save the HTML slides in TWO locations:
+1. **Local files** in `src/app/presentations/[slug]/` for version control and easy editing
+2. **MongoDB database** for the web viewer
+
+**Part A: Save HTML Files Locally**
+
+Create directory structure:
+```
+src/app/presentations/
+  └── {slug}/
+      ├── metadata.json
+      ├── slide-1.html
+      ├── slide-2.html
+      ├── slide-3.html
+      └── ... (7-9 total)
+```
 
 **Process:**
-1. Create a JavaScript file with the deck data structure
-2. Use mongosh with the `--file` flag to execute the script
-3. The script will insert the document into the `workedexampledecks` collection (Mongoose default naming)
+1. Create directory: `mkdir -p src/app/presentations/{slug}`
+2. Create `metadata.json` with deck information (see template in `.claude/skills/create-worked-example-sg-2/templates/metadata.json`)
+3. Write each slide to a separate HTML file using the Write tool
+4. Each file is standalone HTML with inline styles
+
+**Example metadata.json:**
+```json
+{
+  "title": "Finding Unit Rates with Division",
+  "slug": "unit-rates-division-grade7",
+  "mathConcept": "Unit Rates",
+  "mathStandard": "7.RP.A.1",
+  "gradeLevel": 7,
+  "learningGoals": [
+    "Students will be able to find unit rates using division",
+    "Students will understand that a unit rate is the amount per one unit"
+  ],
+  "sourceImage": "unit-rate-problem.png"
+}
+```
+
+**Part B: Sync to Database**
+
+After creating all local HTML files, sync to MongoDB using the utility script:
+
+```bash
+# Sync the presentation to database
+node .claude/skills/create-worked-example-sg-2/templates/sync-to-db.js {slug} | mongosh "$DATABASE_URL"
+```
+
+The sync script automatically:
+- Reads all `slide-*.html` files from the presentation directory
+- Detects visual type (html/p5/d3) based on content
+- Extracts P5.js or D3.js scripts if present
+- Creates properly formatted MongoDB document
+- Inserts or updates the deck in the database
 
 **Example:**
-
-```javascript
-// temp-save-deck.js
-const deckData = {
-  title: "Solving One-Step Division Equations",
-  slug: "solving-division-equations-grade6", // kebab-case URL-safe version of title
-  mathConcept: "One-Step Equations",
-  mathStandard: "6.EE.B.7",
-  gradeLevel: 6,
-  isPublic: true,
-  generatedBy: "ai",
-  sourceImage: "problem-image.png",
-  createdBy: "system",
-
-  files: {
-    pageComponent: "src/app/presentations/solving-division-equations-grade6/page.tsx",
-    dataFile: "src/app/presentations/solving-division-equations-grade6/data.ts",
-  },
-
-  slides: {
-    slide1: { /* ... */ },
-    slide2: { /* ... */ },
-    // ... all 9 slides
-  },
-
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
-
-// Check if deck already exists and delete if it does
-// Note: Use 'workedexampledecks' (Mongoose's default pluralized lowercase collection name)
-const existingDeck = db.workedexampledecks.findOne({ slug: deckData.slug });
-if (existingDeck) {
-  print('⚠️  Deck already exists. Deleting old version...');
-  db.workedexampledecks.deleteOne({ slug: deckData.slug });
-}
-
-// Insert the deck
-const result = db.workedexampledecks.insertOne(deckData);
-
-if (result.acknowledged) {
-  print('✅ Deck saved successfully!');
-  print('Deck ID: ' + result.insertedId);
-  print('Slug: ' + deckData.slug);
-  print('\n🔗 View at: /presentations/' + deckData.slug);
-} else {
-  print('❌ Error: Failed to insert deck');
-}
-```
-
-**Execute with mongosh:**
 ```bash
-# The DATABASE_URL is stored in .env.local
-# Use it directly from the environment
-mongosh "$DATABASE_URL" --file temp-save-deck.js
+# After creating files in src/app/presentations/unit-rates-division-grade7/
+node .claude/skills/create-worked-example-sg-2/templates/sync-to-db.js unit-rates-division-grade7 | mongosh "$DATABASE_URL"
 ```
-
-**Note on Security:**
-- The DATABASE_URL is read from the `.env.local` file (not hardcoded)
-- Make sure your shell has access to environment variables
-- If the env var isn't available, load it first: `export $(cat .env.local | grep DATABASE_URL | xargs)`
 
 ## Output
 
 Provide the user with:
-1. **Summary** of the deck created (title, concept, grade level)
+1. **Summary** of the deck created (title, concept, grade level, number of slides)
 2. **The 3 scenarios** you generated and why you chose them
-3. **Link to view**: `/presentations/{slug}`
-4. **Link to list**: `/presentations`
+3. **Link to view**: `/presentations/html/{slug}`
 
 ## Quality Checklist
 
 Before saving, verify:
-- ✅ All 9 slides follow the exact structure from PLAN.md
-- ✅ Questions and answers are on separate slides (3→4, 5→6)
-- ✅ Three unique, engaging contexts with visual anchors
-- ✅ Slide 7 explains the pattern in plain English
+- ✅ All required user inputs captured (learning goal, grade level, problem image)
+- ✅ 3 unique, engaging exit ticket scenarios generated
+- ✅ First problem has 2-3 steps with Ask/Reveal pairs
+- ✅ CFU questions ask "why/how" not "what"
+- ✅ Visual elements stay in same position across slides 2-6
 - ✅ Slides 8-9 have zero scaffolding
 - ✅ All math is accurate
-- ✅ Data structure matches DATABASE-SCHEMA.md
-- ✅ Icon names are valid Lucide React icons
+- ✅ HTML is valid and properly styled
+- ✅ P5/D3 scripts are properly embedded if used
 
-## Pedagogical Principles (from PLAN.md)
-
-**The "Prediction Pair" Technique:**
-- Never show question and answer on same slide
-- Force mental commitment before revealing solution
-- Use visual highlighting (minimal text) on "Ask" slides
-
-**Scaffolded Annotation:**
-- Zero-Word Initial Focus on "Ask" slides
-- Ask "Why" over "What" (strategy over computation)
-
-**The "Real World" Rule:**
-- No abstract variables until Slide 7
-- Always start with concrete context
-- Include visual anchor (icon) for each scenario
-
-## Reference Documentation
-
-- **PLAN.md** - Detailed pedagogical framework and research basis
-- **DATABASE-SCHEMA.md** - Data structure for worked example decks
-
-## Core Framework Rules
-
-Follow these rules exactly when creating any worked example:
+## Core Pedagogical Principles
 
 **The "Two-Slide" Rule:**
-- NEVER show a step and its solution on the same slide
-- Always separate Question (Ask slide) from Explanation (Reveal slide)
-- This forces mental commitment before seeing the answer
+- NEVER show a question and its answer on the same slide
+- Always separate Ask from Reveal
+- Forces mental commitment before seeing solution
 
 **The "Real World" Rule:**
-- Do NOT use abstract numbers (x and y) until Slide 7
-- Always start with concrete context (Videos, Speed, Cost, Weight)
-- Every problem needs a visual anchor (icon or image)
+- Use engaging, age-appropriate contexts
+- Avoid boring textbook scenarios
+- Each scenario needs a visual anchor (icon or theme)
 
-**The Visual Anchor Rule:**
-- Each scenario must have a Lucide icon
-- Helps students differentiate "The Video Problem" from "The Drone Problem"
-- Better memory encoding than "Problem 1" vs "Problem 2"
+**The "Visual Stability" Rule:**
+- Keep main visual (table, diagram) in SAME position across related slides
+- Add annotations AROUND the stationary element
+- Mimics teacher at whiteboard
 
-**The "Stationary Elements" Rule:**
-- Keep repeating elements (especially tables) in the SAME position across related slides
-- Add annotations, highlights, and callouts AROUND the stationary element
-- NEVER reposition the table between prediction pair slides (2→3→4→5→6)
-- Mimics a teacher writing on a whiteboard: the problem stays put, annotations appear around it
-- Reduces cognitive load from visual searching and eye tracking fatigue
-
-**The Reasoning Bridge (Slide 7):**
-- Stop the math and explain the pattern in plain English
-- Example: "To find total, multiply by rate" NOT just "y = kx"
-- Supports students who are conceptually strong but computationally weak
-
-**Scaffolded Annotation on "Ask" Slides:**
-- Zero-Word Initial Focus: Use visual highlighting, minimal text
-- Ask "Why/How" questions (strategy), NOT "What" questions (computation)
-- Example: "How did I know to divide 250 by 5?" NOT "What is 250 ÷ 5?"
-
-**Step-by-Step Logic Pattern:**
-1. Find the Constant (isolate the unit rate)
-2. Apply the Constant (multiply rate × input)
-3. Reverse the Constant (optional: find input given output)
-
-## Why This Works
-
-**Cognitive Load Theory:**
-Presenting a full solution at once overwhelms students. Breaking into specific decision points (finding vs. using the rate) makes it digestible.
-
-**Active Prediction vs. Passive Consumption:**
-Separating questions from answers forces students to mentally commit to a strategy before seeing if they're correct.
-
-**Transfer of Knowledge:**
-Independent practice (Slides 8-9) tests whether students can apply logic from the worked example to completely new contexts.
+**The "Scaffolding Removal" Rule:**
+- Slides 2-6: Maximum scaffolding (step-by-step, highlighting, CFU)
+- Slides 8-9: ZERO scaffolding (just the problem)
 
 ## Example Invocation
 
 ```
-User: [uploads image of proportional relationships problem]
+User: [uploads image of unit rate problem]
+User: Grade 7, learning goal is "Students will find unit rates using division"

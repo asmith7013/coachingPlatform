@@ -1,13 +1,14 @@
 import mongoose from 'mongoose';
 
-const diagramSchema = {
-  type: { type: String, enum: ['image', 'p5js'] },
-  content: String, // URL for images, code string for p5.js
-};
-
-const tableRowSchema = {
-  input: { type: Number, required: true },
-  output: { type: Number, default: null },
+const htmlSlideSchema = {
+  slideNumber: { type: Number, required: true },
+  htmlContent: { type: String, required: true }, // Full HTML for the slide
+  visualType: { type: String, enum: ['html', 'p5', 'd3'], default: 'html' },
+  scripts: [{
+    type: { type: String, enum: ['cdn', 'inline'] },
+    content: String,
+  }],
+  customCSS: String,
 };
 
 const workedExampleDeckSchema = new mongoose.Schema({
@@ -20,79 +21,11 @@ const workedExampleDeckSchema = new mongoose.Schema({
   mathStandard: { type: String, required: true },
   gradeLevel: { type: Number, required: true, min: 3, max: 12, index: true },
 
-  // The 9 Slides
-  slides: {
-    slide1: {
-      unit: String,
-      title: String,
-      bigIdea: String,
-      example: String,
-      icon: String,
-    },
-    slide2: {
-      scenario: String,
-      context: String,
-      icon: String,
-      tableData: [tableRowSchema],
-      inputLabel: String,
-      outputLabel: String,
-      diagram: diagramSchema,
-    },
-    slide3: {
-      question: String,
-      tableData: [tableRowSchema],
-      highlightRow: Number,
-      inputLabel: String,
-      outputLabel: String,
-      diagram: diagramSchema,
-    },
-    slide4: {
-      calculation: String,
-      explanation: String,
-      answer: String,
-      isConstant: Boolean,
-      diagram: diagramSchema,
-    },
-    slide5: {
-      question: String,
-      tableData: [tableRowSchema],
-      highlightRow: Number,
-      inputLabel: String,
-      outputLabel: String,
-      diagram: diagramSchema,
-    },
-    slide6: {
-      calculation: String,
-      explanation: String,
-      answer: String,
-      diagram: diagramSchema,
-    },
-    slide7: {
-      title: String,
-      steps: [String],
-      mathRule: String,
-      keyInsight: String,
-      diagram: diagramSchema,
-    },
-    slide8: {
-      scenario: String,
-      context: String,
-      icon: String,
-      tableData: [tableRowSchema],
-      inputLabel: String,
-      outputLabel: String,
-      diagram: diagramSchema,
-    },
-    slide9: {
-      scenario: String,
-      context: String,
-      icon: String,
-      tableData: [tableRowSchema],
-      inputLabel: String,
-      outputLabel: String,
-      diagram: diagramSchema,
-    },
-  },
+  // HTML Slides (required)
+  htmlSlides: { type: [htmlSlideSchema], required: true },
+
+  // Learning Goals
+  learningGoals: [String],
 
   // Generation Info
   generatedBy: { type: String, enum: ['ai', 'manual'], required: true },

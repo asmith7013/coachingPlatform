@@ -358,6 +358,11 @@ function processWithMapping(
   questions: Map<number, { completed: boolean; completedAt?: string }>;
   assignmentName: string;
 } {
+  // Sort responses by timestamp (earliest first) to ensure we capture the earliest completion time
+  const sortedResponses = [...responses].sort((a, b) => {
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  });
+
   // Create a reverse lookup: question_id -> logical question number (1-indexed)
   const idToLogicalQuestion = new Map<number, number>();
   questionMapping.forEach((ids, index) => {
@@ -375,8 +380,8 @@ function processWithMapping(
     questionMap.set(i, { completed: false });
   }
 
-  // Process responses
-  for (const response of responses) {
+  // Process responses in chronological order
+  for (const response of sortedResponses) {
     const questionId = response.question_id;
     const logicalQuestion = idToLogicalQuestion.get(questionId);
 
@@ -387,7 +392,7 @@ function processWithMapping(
 
     const existing = questionMap.get(logicalQuestion);
 
-    // If already marked as completed, keep it
+    // If already marked as completed, keep the earlier timestamp (already sorted)
     if (existing?.completed) {
       continue;
     }
@@ -421,6 +426,11 @@ function processWithoutMapping(
   questions: Map<number, { completed: boolean; completedAt?: string }>;
   assignmentName: string;
 } {
+  // Sort responses by timestamp (earliest first) to ensure we capture the earliest completion time
+  const sortedResponses = [...responses].sort((a, b) => {
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  });
+
   // If we have base question IDs from the assignment, use them as the authoritative list
   if (baseQuestionIds && baseQuestionIds.length > 0) {
     // Track completion by logical question number (1-indexed)
@@ -437,8 +447,8 @@ function processWithoutMapping(
       idToPosition.set(id, index + 1);
     });
 
-    // Process responses - only count those matching base question IDs
-    for (const response of responses) {
+    // Process responses in chronological order - only count those matching base question IDs
+    for (const response of sortedResponses) {
       const questionId = response.question_id;
       const position = idToPosition.get(questionId);
 
@@ -449,7 +459,7 @@ function processWithoutMapping(
 
       const existing = questionMap.get(position);
 
-      // If already marked as completed, keep it
+      // If already marked as completed, keep the earlier timestamp (already sorted)
       if (existing?.completed) {
         continue;
       }
@@ -472,11 +482,12 @@ function processWithoutMapping(
   // Legacy fallback: collect all unique question_ids from responses
   const rawQuestionMap = new Map<number, { completed: boolean; completedAt?: string }>();
 
-  for (const response of responses) {
+  // Process responses in chronological order
+  for (const response of sortedResponses) {
     const questionId = response.question_id;
     const existing = rawQuestionMap.get(questionId);
 
-    // If already marked as completed, keep it
+    // If already marked as completed, keep the earlier timestamp (already sorted)
     if (existing?.completed) {
       continue;
     }
@@ -829,6 +840,8 @@ export interface StudentRampUpProgressData {
   percentComplete: number;
   isFullyComplete: boolean;
   lastSyncedAt?: string;
+  zearnCompleted?: boolean;
+  zearnCompletionDate?: string;
 }
 
 /**
@@ -861,6 +874,24 @@ export async function fetchRampUpProgress(
         isFullyComplete: boolean;
         lastSyncedAt?: string;
       }>;
+      zearnLessons?: Array<{
+        lessonCode: string;
+        completionDate: string;
+      }>;
+    }
+
+    // Helper function to parse Zearn lesson code (e.g., "G8 M3 L10")
+    function parseZearnLessonCode(lessonCode: string): { grade: string; module: string; lesson: string } | null {
+      const match = lessonCode.match(/G(\d+)\s+M(\d+)\s+L(\d+)/);
+      if (!match) return null;
+      return { grade: match[1], module: match[2], lesson: match[3] };
+    }
+
+    // Helper function to convert Zearn lesson to unitLessonId format
+    function zearnToUnitLessonId(lessonCode: string): string | null {
+      const parsed = parseZearnLessonCode(lessonCode);
+      if (!parsed) return null;
+      return `${parsed.module}.${parsed.lesson}`;
     }
 
     const students = await withDbConnection(async () => {
@@ -868,7 +899,7 @@ export async function fetchRampUpProgress(
         section,
         active: true,
       })
-        .select("_id firstName lastName rampUpProgress")
+        .select("_id firstName lastName rampUpProgress zearnLessons")
         .lean<StudentDoc[]>();
 
       return docs;
@@ -892,6 +923,22 @@ export async function fetchRampUpProgress(
       if (progressEntries.length > 0) {
         // Add each matching entry
         for (const p of progressEntries) {
+          // Check if student has completed corresponding Zearn lesson
+          let zearnCompleted = false;
+          let zearnCompletionDate: string | undefined;
+
+          if (student.zearnLessons && p.rampUpId) {
+            const matchingZearnLesson = student.zearnLessons.find(zl => {
+              const convertedId = zearnToUnitLessonId(zl.lessonCode);
+              return convertedId === p.rampUpId;
+            });
+
+            if (matchingZearnLesson) {
+              zearnCompleted = true;
+              zearnCompletionDate = matchingZearnLesson.completionDate;
+            }
+          }
+
           result.push({
             studentId,
             studentName,
@@ -905,10 +952,28 @@ export async function fetchRampUpProgress(
             percentComplete: p.percentComplete || 0,
             isFullyComplete: p.isFullyComplete || false,
             lastSyncedAt: p.lastSyncedAt,
+            zearnCompleted,
+            zearnCompletionDate,
           });
         }
       } else {
-        // No progress yet - return empty entry
+        // No progress yet - check for Zearn completion
+        let zearnCompleted = false;
+        let zearnCompletionDate: string | undefined;
+
+        if (student.zearnLessons && rampUpId) {
+          const matchingZearnLesson = student.zearnLessons.find(zl => {
+            const convertedId = zearnToUnitLessonId(zl.lessonCode);
+            return convertedId === rampUpId;
+          });
+
+          if (matchingZearnLesson) {
+            zearnCompleted = true;
+            zearnCompletionDate = matchingZearnLesson.completionDate;
+          }
+        }
+
+        // Return empty entry with Zearn data if available
         result.push({
           studentId,
           studentName,
@@ -919,6 +984,8 @@ export async function fetchRampUpProgress(
           completedCount: 0,
           percentComplete: 0,
           isFullyComplete: false,
+          zearnCompleted,
+          zearnCompletionDate,
         });
       }
     }

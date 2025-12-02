@@ -299,6 +299,10 @@ function createDefaultState() {
 
 ```javascript
 {
+  // Canvas size
+  width: 600,         // Canvas width in pixels (default: 600)
+  height: 600,        // Canvas height in pixels (default: 600)
+
   // Axis ranges
   xMin: 0,
   xMax: 10,
@@ -317,6 +321,7 @@ function createDefaultState() {
 
   // Display options
   showCoordinatesOnHover: true,  // Show (x, y) on hover (default: true)
+  allowInput: true,               // Enable interactive drawing (default: true)
 }
 ```
 
@@ -329,10 +334,10 @@ function createDefaultState() {
   gridScaleX: 1, gridScaleY: 10,
   xLabel: "X", yLabel: "Y",
 
-  // Show reference equations (green lines)
+  // Show reference equations (extended lines)
   initialEquations: [
-    { slope: 5, intercept: 0, color: [34, 197, 94] },  // y = 5x
-    { slope: 8, intercept: 10, color: [59, 130, 246] } // y = 8x + 10
+    { slope: 5, intercept: 0, color: [34, 197, 94] },  // y = 5x (green)
+    { slope: 8, intercept: 10, color: [59, 130, 246] } // y = 8x + 10 (blue)
   ],
 
   // Show specific points
@@ -341,6 +346,18 @@ function createDefaultState() {
     { x: 5, y: 25 },
     { x: 8, y: 40 }
   ],
+
+  // Show line segments (can be used instead of equations)
+  initialLines: [
+    {
+      start: { x: 0, y: 0 },
+      end: { x: 10, y: 50 },
+      color: [37, 99, 235]  // Optional RGB color
+    }
+  ],
+
+  // Make it static (no drawing allowed)
+  allowInput: false,
 }
 ```
 
@@ -385,7 +402,8 @@ const plane = createCoordinatePlane("container", {
   xLabel: "Time", yLabel: "Distance",
   initialEquations: [
     { slope: 5, intercept: 0, color: [34, 197, 94] } // Reference: 5 mph
-  ]
+  ],
+  allowInput: true, // Students can draw their own lines
 }, {
   onLinesChanged: (lines) => {
     // Students draw their own speed, compare to reference
@@ -393,7 +411,30 @@ const plane = createCoordinatePlane("container", {
 });
 ```
 
-### Pattern 3: Connect the Dots
+### Pattern 3: Static Display (No Interaction)
+
+```javascript
+const plane = createCoordinatePlane("container", {
+  width: 800, height: 400,
+  xMin: 0, xMax: 12,
+  yMin: 0, yMax: 60,
+  xLabel: "Months", yLabel: "Temperature (°F)",
+  initialPoints: [
+    { x: 1, y: 32 }, { x: 3, y: 45 }, { x: 6, y: 72 },
+    { x: 9, y: 58 }, { x: 12, y: 35 }
+  ],
+  initialLines: [
+    { start: { x: 0, y: 40 }, end: { x: 12, y: 40 }, color: [200, 200, 200] }
+  ],
+  allowInput: false, // No drawing allowed - display only
+  showCoordinatesOnHover: true, // Can still show coordinates on hover
+  drawFullLines: false, // Don't extend lines to edges
+});
+```
+
+**Note**: Even in static mode (`allowInput: false`), you can still enable `showCoordinatesOnHover: true` to display coordinate values on hover without allowing any drawing or editing.
+
+### Pattern 4: Connect the Dots
 
 ```javascript
 const plane = createCoordinatePlane("container", {
@@ -404,7 +445,8 @@ const plane = createCoordinatePlane("container", {
     { x: 1, y: 800 },
     { x: 3, y: 2400 },
     { x: 5, y: 4000 }
-  ]
+  ],
+  allowInput: true, // Students can draw lines through points
 });
 ```
 

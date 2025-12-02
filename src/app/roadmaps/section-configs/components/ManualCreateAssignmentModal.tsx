@@ -256,6 +256,7 @@ export function ManualCreateAssignmentModal({
           podsieAssignmentId: formData.podsieAssignmentId,
           podsieQuestionMap: [], // Empty initially - can be populated later
           totalQuestions: formData.totalQuestions,
+          hasZearnLesson: false,
           active: true,
           notes: formData.notes || undefined,
         };

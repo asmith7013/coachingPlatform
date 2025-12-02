@@ -13,7 +13,7 @@ const query = {
 };
 
 print('\nExecuting query...');
-const lessons = db['scope-and-sequences']
+const lessons = db['scope-and-sequence']
   .find(query)
   .sort({ section: 1, lessonNumber: 1, unitLessonId: 1 })
   .toArray();
