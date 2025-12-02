@@ -166,9 +166,13 @@ export function AssignmentProgressTable({
   const showQuestionColumns = hasLessonData && totalQuestions > 0;
 
   // Generate question column headers
-  const questionColumns = showQuestionColumns
-    ? Array.from({ length: totalQuestions }, (_, i) => i + 1)
-    : [];
+  const questionColumns = useMemo(
+    () =>
+      showQuestionColumns
+        ? Array.from({ length: totalQuestions }, (_, i) => i + 1)
+        : [],
+    [showQuestionColumns, totalQuestions]
+  );
 
   // Calculate per-question completion rates (only for synced students)
   const questionStats = useMemo(() => {

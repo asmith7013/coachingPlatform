@@ -124,13 +124,6 @@ export function CompletionCheckmark({
     blue: "text-blue-600",
   };
 
-  // Color classes for not completed outline icon
-  const notCompletedColorClasses = {
-    green: "text-gray-300",
-    purple: "text-gray-300",
-    blue: "text-gray-300",
-  };
-
   const sizeClass = sizeClasses[size];
 
   // Determine tooltip text

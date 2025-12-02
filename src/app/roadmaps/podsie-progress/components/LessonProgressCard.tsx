@@ -95,7 +95,7 @@ export function LessonProgressCard({
 
     const zearnCompleted = lessonProgressData.filter(p => p.zearnCompleted).length;
     return Math.round((zearnCompleted / lessonProgressData.length) * 100);
-  }, [progressData, lesson, calculateSummaryStats]);
+  }, [progressData, lesson]);
 
   return (
     <div

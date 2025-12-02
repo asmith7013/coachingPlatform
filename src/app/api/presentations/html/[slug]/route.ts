@@ -4,12 +4,13 @@ import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   return withDbConnection(async () => {
     try {
+      const { slug } = await params;
       const deck = await WorkedExampleDeck.findOne({
-        slug: params.slug,
+        slug: slug,
         presentationType: 'html',
       });
 

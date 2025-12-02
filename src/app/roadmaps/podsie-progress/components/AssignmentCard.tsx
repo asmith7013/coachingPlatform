@@ -134,7 +134,7 @@ export function AssignmentCard({
         return true;
       });
     },
-    [progressData, assignment.podsieAssignmentId, assignment.unitLessonId, isStandaloneMasteryCheck, assignment]
+    [progressData, assignment, isStandaloneMasteryCheck]
   );
 
   // Filter mastery check progress data if provided
