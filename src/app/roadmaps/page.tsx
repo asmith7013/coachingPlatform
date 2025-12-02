@@ -29,6 +29,12 @@ export default function RoadmapsHomePage() {
       description: "View student mastery progress by unit and section."
     },
     {
+      title: "Podsie Progress",
+      href: "/roadmaps/podsie-progress",
+      icon: "📈",
+      description: "Track student progress on Podsie lessons and assessments."
+    },
+    {
       title: "History",
       href: "/roadmaps/history",
       icon: "📜",

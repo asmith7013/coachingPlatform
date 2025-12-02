@@ -11,6 +11,7 @@ export function RoadmapsNav() {
     { href: "/roadmaps/units", label: "Units" },
     { href: "/roadmaps/skills", label: "Skills" },
     { href: "/roadmaps/mastery-grid", label: "Mastery Grid" },
+    { href: "/roadmaps/podsie-progress", label: "Podsie Progress" },
     { href: "/roadmaps/history", label: "History" },
   ];
 
