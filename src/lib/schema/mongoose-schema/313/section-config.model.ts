@@ -7,27 +7,45 @@ import { Schools, AllSections, Teachers313 } from '@schema/enum/313';
 // SECTION CONFIG MODEL
 // =====================================
 
-const podsieAssignmentSchema = new mongoose.Schema({
-  unitLessonId: { type: String, required: true },
-  lessonName: { type: String, required: true },
-  grade: { type: String, required: false },
-
-  assignmentType: {
+// Podsie activity subdocument schema
+const podsieActivitySchema = new mongoose.Schema({
+  activityType: {
     type: String,
-    enum: ['lesson', 'mastery-check'],
-    default: 'mastery-check',
+    enum: ['sidekick', 'mastery-check'],
     required: true
   },
-
   podsieAssignmentId: { type: String, required: true },
   podsieQuestionMap: [{
     questionNumber: { type: Number, required: true },
     questionId: { type: String, required: true }
   }],
   totalQuestions: { type: Number, required: false },
+  active: { type: Boolean, default: true }
+}, { _id: false });
 
-  hasZearnLesson: { type: Boolean, default: false },
+// Zearn activity subdocument schema
+const zearnActivitySchema = new mongoose.Schema({
+  zearnLessonId: { type: String, required: false },
+  zearnUrl: { type: String, required: false },
+  active: { type: Boolean, default: true }
+}, { _id: false });
 
+// Assignment content subdocument schema
+const assignmentContentSchema = new mongoose.Schema({
+  // Link to scope-and-sequence
+  scopeAndSequenceId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'ScopeAndSequence' },
+
+  // Denormalized fields for display/sorting
+  unitLessonId: { type: String, required: true },
+  lessonName: { type: String, required: true },
+  section: { type: String, required: false },
+  grade: { type: String, required: false },
+
+  // Activity configurations
+  podsieActivities: { type: [podsieActivitySchema], default: [] },
+  zearnActivity: { type: zearnActivitySchema, required: false },
+
+  // Metadata
   active: { type: Boolean, default: true },
   notes: { type: String, required: false }
 }, { _id: false });
@@ -49,8 +67,8 @@ const sectionConfigFields = {
 
   active: { type: Boolean, default: true, index: true },
 
-  // Podsie assignment configurations
-  podsieAssignments: { type: [podsieAssignmentSchema], default: [] },
+  // Assignment content configurations
+  assignmentContent: { type: [assignmentContentSchema], default: [] },
 
   // Metadata
   notes: { type: String, required: false },
@@ -80,7 +98,10 @@ SectionConfigSchema.index({ teacher: 1, active: 1 });
 SectionConfigSchema.index({ gradeLevel: 1, active: 1 });
 
 // Query assignments by unitLessonId (for lookups)
-SectionConfigSchema.index({ 'podsieAssignments.unitLessonId': 1 });
+SectionConfigSchema.index({ 'assignmentContent.unitLessonId': 1 });
+
+// Query assignments by scopeAndSequenceId (for joins)
+SectionConfigSchema.index({ 'assignmentContent.scopeAndSequenceId': 1 });
 
 // Delete existing model to force schema refresh
 if (mongoose.models.SectionConfig) {

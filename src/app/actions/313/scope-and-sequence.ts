@@ -366,6 +366,8 @@ export async function fetchRampUpsByUnit(
         unitNumber: number;
         unitLessonId: string;
         lessonName: string;
+        lessonType?: string;
+        lessonTitle?: string;
         unit: string;
         grade: string;
         section?: string;
@@ -398,6 +400,8 @@ export async function fetchRampUpsByUnit(
           unitNumber: lesson.unitNumber,
           unitLessonId: lesson.unitLessonId,
           lessonName: lesson.lessonName,
+          lessonType: lesson.lessonType,
+          lessonTitle: lesson.lessonTitle,
           unit: lesson.unit,
           grade: lesson.grade,
           section: lesson.section,
@@ -416,6 +420,8 @@ export async function fetchRampUpsByUnit(
           unitNumber: number;
           unitLessonId: string;
           lessonName: string;
+          lessonType?: string;
+          lessonTitle?: string;
           unit: string;
           grade: string;
           section?: string;

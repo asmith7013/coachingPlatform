@@ -153,7 +153,7 @@ export function useZearnBatchData() {
               classActivities: (item.classActivities as Student['classActivities']) || [],
               skillPerformances: (item.skillPerformances as Student['skillPerformances']) || [],
               zearnLessons: (item.zearnLessons as Student['zearnLessons']) || [],
-              rampUpProgress: (item.rampUpProgress as Student['rampUpProgress']) || []
+              podsieProgress: (item.podsieProgress as Student['podsieProgress']) || []
             }));
             allStudents.push(...students);
           } else {

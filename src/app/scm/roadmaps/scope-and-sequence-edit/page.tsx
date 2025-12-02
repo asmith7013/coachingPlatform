@@ -179,7 +179,7 @@ export default function ScopeAndSequenceEditPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto p-6">
+        <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
           <div className="flex items-center justify-center min-h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
@@ -193,7 +193,7 @@ export default function ScopeAndSequenceEditPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto p-6 max-w-[1800px]">
+      <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
         {/* Header */}
         <div className="mb-6 flex justify-between items-start">
           <div>

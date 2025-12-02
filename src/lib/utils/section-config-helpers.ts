@@ -4,17 +4,17 @@
  */
 
 import { ScopeAndSequence } from "@zod-schema/313/scope-and-sequence";
-import { SectionConfig, ScopeAndSequenceWithPodsie, PodsieAssignment } from "@zod-schema/313/section-config";
+import { SectionConfig, ScopeAndSequenceWithAssignmentContent, AssignmentContent } from "@zod-schema/313/section-config";
 import { fetchScopeAndSequence } from "@actions/313/scope-and-sequence";
 import { getSectionConfig } from "@actions/313/section-config";
 
 /**
- * Join a single scope-and-sequence lesson with its Podsie assignment from a section config
+ * Join a single scope-and-sequence lesson with its assignment content from a section config
  */
-export function joinLessonWithPodsieAssignment(
+export function joinLessonWithAssignmentContent(
   lesson: ScopeAndSequence,
-  podsieAssignment: PodsieAssignment | null | undefined
-): ScopeAndSequenceWithPodsie {
+  assignmentContent: AssignmentContent | null | undefined
+): ScopeAndSequenceWithAssignmentContent {
   return {
     id: lesson.id || '',
     unitLessonId: lesson.unitLessonId,
@@ -24,41 +24,40 @@ export function joinLessonWithPodsieAssignment(
     section: lesson.section,
     roadmapSkills: lesson.roadmapSkills,
     targetSkills: lesson.targetSkills,
-    podsieAssignment: podsieAssignment ? {
-      podsieAssignmentId: podsieAssignment.podsieAssignmentId,
-      assignmentType: podsieAssignment.assignmentType,
-      podsieQuestionMap: podsieAssignment.podsieQuestionMap || [],
-      totalQuestions: podsieAssignment.totalQuestions,
-      active: podsieAssignment.active,
-      notes: podsieAssignment.notes
+    assignmentContent: assignmentContent ? {
+      scopeAndSequenceId: assignmentContent.scopeAndSequenceId,
+      podsieActivities: assignmentContent.podsieActivities || [],
+      zearnActivity: assignmentContent.zearnActivity,
+      active: assignmentContent.active,
+      notes: assignmentContent.notes
     } : undefined
   };
 }
 
 /**
- * Join multiple scope-and-sequence lessons with their Podsie assignments from a section config
+ * Join multiple scope-and-sequence lessons with their assignment content from a section config
  * @param lessons Array of scope-and-sequence lessons
- * @param sectionConfig Section config containing podsieAssignments
- * @returns Array of lessons with their Podsie assignments attached
+ * @param sectionConfig Section config containing assignmentContent
+ * @returns Array of lessons with their assignment content attached
  */
 export function joinLessonsWithSectionConfig(
   lessons: ScopeAndSequence[],
   sectionConfig: SectionConfig | null
-): ScopeAndSequenceWithPodsie[] {
-  if (!sectionConfig || !sectionConfig.podsieAssignments) {
-    return lessons.map(lesson => joinLessonWithPodsieAssignment(lesson, null));
+): ScopeAndSequenceWithAssignmentContent[] {
+  if (!sectionConfig || !sectionConfig.assignmentContent) {
+    return lessons.map(lesson => joinLessonWithAssignmentContent(lesson, null));
   }
 
   // Create a map for quick lookup
-  const assignmentMap = new Map<string, PodsieAssignment>();
-  sectionConfig.podsieAssignments.forEach(assignment => {
+  const assignmentMap = new Map<string, AssignmentContent>();
+  sectionConfig.assignmentContent.forEach(assignment => {
     assignmentMap.set(assignment.unitLessonId, assignment);
   });
 
   // Join each lesson with its assignment
   return lessons.map(lesson => {
     const assignment = assignmentMap.get(lesson.unitLessonId);
-    return joinLessonWithPodsieAssignment(lesson, assignment);
+    return joinLessonWithAssignmentContent(lesson, assignment);
   });
 }
 
@@ -120,33 +119,33 @@ export async function fetchLessonsWithSectionConfig(
 }
 
 /**
- * Get Podsie assignment ID for a specific lesson in a section
- * Returns undefined if no assignment exists
+ * Get Podsie assignment IDs for a specific lesson in a section
+ * Returns array of assignment IDs from all active podsieActivities
  */
-export function getPodsieAssignmentId(
+export function getPodsieAssignmentIds(
   unitLessonId: string,
   sectionConfig: SectionConfig | null
-): string | undefined {
-  if (!sectionConfig || !sectionConfig.podsieAssignments) return undefined;
-  const assignment = sectionConfig.podsieAssignments.find(
+): string[] {
+  if (!sectionConfig || !sectionConfig.assignmentContent) return [];
+  const assignment = sectionConfig.assignmentContent.find(
     a => a.unitLessonId === unitLessonId && a.active
   );
-  return assignment?.podsieAssignmentId;
+  return assignment?.podsieActivities?.map(activity => activity.podsieAssignmentId) || [];
 }
 
 /**
- * Get Podsie question map for a specific lesson in a section
- * Returns empty array if no assignment exists
+ * Get Podsie question maps for a specific lesson in a section
+ * Returns array of question maps from all podsieActivities
  */
-export function getPodsieQuestionMap(
+export function getPodsieQuestionMaps(
   unitLessonId: string,
   sectionConfig: SectionConfig | null
-): Array<{ questionNumber: number; questionId: string }> {
-  if (!sectionConfig || !sectionConfig.podsieAssignments) return [];
-  const assignment = sectionConfig.podsieAssignments.find(
+): Array<Array<{ questionNumber: number; questionId: string }>> {
+  if (!sectionConfig || !sectionConfig.assignmentContent) return [];
+  const assignment = sectionConfig.assignmentContent.find(
     a => a.unitLessonId === unitLessonId && a.active
   );
-  return assignment?.podsieQuestionMap || [];
+  return assignment?.podsieActivities?.map(activity => activity.podsieQuestionMap || []) || [];
 }
 
 /**
@@ -156,32 +155,32 @@ export function hasPodsieAssignment(
   unitLessonId: string,
   sectionConfig: SectionConfig | null
 ): boolean {
-  if (!sectionConfig || !sectionConfig.podsieAssignments) return false;
-  return sectionConfig.podsieAssignments.some(
-    a => a.unitLessonId === unitLessonId && a.active
+  if (!sectionConfig || !sectionConfig.assignmentContent) return false;
+  return sectionConfig.assignmentContent.some(
+    a => a.unitLessonId === unitLessonId && a.active && a.podsieActivities && a.podsieActivities.length > 0
   );
 }
 
 /**
- * Get all lessons that have Podsie assignments for a section
+ * Get all lessons that have assignment content for a section
  */
-export function getLessonsWithPodsieAssignments(
+export function getLessonsWithAssignmentContent(
   lessons: ScopeAndSequence[],
   sectionConfig: SectionConfig | null
-): ScopeAndSequenceWithPodsie[] {
+): ScopeAndSequenceWithAssignmentContent[] {
   const joined = joinLessonsWithSectionConfig(lessons, sectionConfig);
-  return joined.filter(lesson => lesson.podsieAssignment !== undefined);
+  return joined.filter(lesson => lesson.assignmentContent !== undefined);
 }
 
 /**
- * Get all lessons that DON'T have Podsie assignments for a section
+ * Get all lessons that DON'T have assignment content for a section
  */
-export function getLessonsWithoutPodsieAssignments(
+export function getLessonsWithoutAssignmentContent(
   lessons: ScopeAndSequence[],
   sectionConfig: SectionConfig | null
-): ScopeAndSequenceWithPodsie[] {
+): ScopeAndSequenceWithAssignmentContent[] {
   const joined = joinLessonsWithSectionConfig(lessons, sectionConfig);
-  return joined.filter(lesson => lesson.podsieAssignment === undefined);
+  return joined.filter(lesson => lesson.assignmentContent === undefined);
 }
 
 /**
@@ -197,10 +196,10 @@ export function getSectionConfigStats(sectionConfig: SectionConfig | null) {
     };
   }
 
-  const assignments = sectionConfig.podsieAssignments || [];
+  const assignments = sectionConfig.assignmentContent || [];
   const activeAssignments = assignments.filter(a => a.active);
   const totalQuestions = activeAssignments.reduce(
-    (sum, a) => sum + (a.totalQuestions || 0),
+    (sum, a) => sum + (a.podsieActivities?.reduce((activitySum, activity) => activitySum + (activity.totalQuestions || 0), 0) || 0),
     0
   );
 

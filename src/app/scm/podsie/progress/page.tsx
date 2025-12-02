@@ -5,7 +5,7 @@ import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/so
 import { useToast } from "@/components/core/feedback/Toast";
 import { fetchRampUpProgress, syncSectionRampUpProgress } from "@/app/actions/313/podsie-sync";
 import { getSectionConfig } from "@/app/actions/313/section-config";
-import type { PodsieAssignment } from "@zod-schema/313/section-config";
+import type { AssignmentContent } from "@zod-schema/313/section-config";
 import { AssignmentCard } from "./components/AssignmentCard";
 import { SmartboardDisplay } from "./components/SmartboardDisplay";
 import { CreateAssignmentModal } from "./components/CreateAssignmentModal";
@@ -13,7 +13,7 @@ import { PageHeader } from "./components/PageHeader";
 import { FiltersSection } from "./components/FiltersSection";
 import { ProgressOverview } from "./components/ProgressOverview";
 import { LoadingState, ProgressLoadingState, NoAssignmentsState, SelectFiltersState } from "./components/EmptyStates";
-import { groupAssignmentsByUnitLesson } from "./utils/groupAssignments";
+import { groupAssignmentsByUnitLesson, groupAssignmentsBySection } from "./utils/groupAssignments";
 import { getScopeTagForSection, getSchoolForSection, groupSectionsBySchool } from "./utils/sectionHelpers";
 import { calculateSummaryStats } from "./utils/progressStats";
 import { useSections } from "./hooks/useSections";
@@ -49,6 +49,8 @@ export default function PodsieProgressPage() {
   // Derived data
   const sectionGroups = useMemo(() => groupSectionsBySchool(sections), [sections]);
   const groupedAssignments = useMemo(() => groupAssignmentsByUnitLesson(lessons), [lessons]);
+  const groupedBySection = useMemo(() => groupAssignmentsBySection(lessons), [lessons]);
+  const showingSections = selectedLessonSection === 'all';
   const error = sectionsError || unitsError || lessonsError || progressError;
 
   // Handlers
@@ -67,7 +69,7 @@ export default function PodsieProgressPage() {
     if (!selectedSection || !assignment.podsieAssignmentId) return;
 
     try {
-      const syncingKey = `${assignment.unitLessonId}-${assignment.assignmentType || 'default'}`;
+      const syncingKey = `${assignment.unitLessonId}-${assignment.activityType || 'default'}`;
       setSyncing(syncingKey);
 
       const unitCode = `${assignment.grade}.${selectedUnit}`;
@@ -81,17 +83,18 @@ export default function PodsieProgressPage() {
 
       const result = await syncSectionRampUpProgress(
         selectedSection,
+        assignment.scopeAndSequenceId,
         assignment.podsieAssignmentId,
         unitCode,
         assignment.unitLessonId,
         assignment.totalQuestions || 0,
-        { testMode, baseQuestionIds }
+        { testMode, baseQuestionIds, activityType: assignment.activityType }
       );
 
       if (result.success) {
-        const assignmentTypeLabel = assignment.assignmentType === 'mastery-check' ? 'Mastery Check' : 'Lesson';
+        const activityTypeLabel = assignment.activityType === 'mastery-check' ? 'Mastery Check' : 'Sidekick';
         showToast({
-          title: `${assignmentTypeLabel} Synced`,
+          title: `${activityTypeLabel} Synced`,
           description: `${assignment.lessonName}: Synced ${result.successfulSyncs} of ${result.totalStudents} students${result.failedSyncs > 0 ? ` (${result.failedSyncs} failed)` : ''}`,
           variant: 'success',
           icon: CheckCircleIcon,
@@ -168,7 +171,7 @@ export default function PodsieProgressPage() {
       const school = getSchoolForSection(selectedSection);
       const configResult = await getSectionConfig(school, selectedSection);
       if (configResult.success && configResult.data) {
-        const assignmentsWithScope = (configResult.data.podsieAssignments || []).map((assignment: PodsieAssignment) => ({
+        const assignmentsWithScope = (configResult.data.assignmentContent || []).map((assignment: AssignmentContent) => ({
           ...assignment,
           scopeSequenceTag: configResult.data.scopeSequenceTag
         }));
@@ -185,7 +188,7 @@ export default function PodsieProgressPage() {
   // Render: Main Page
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto p-6">
+      <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
         {/* Header and Filters */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <PageHeader onCreateClick={() => setShowCreateModal(true)} />
@@ -233,23 +236,57 @@ export default function PodsieProgressPage() {
 
               {/* Assignment Cards */}
               <div className="space-y-6">
-                {groupedAssignments.map(({ lesson, masteryCheck }) => {
-                  const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.podsieAssignmentId}`;
-                  return (
-                    <div key={cardId} id={cardId}>
-                      <AssignmentCard
-                        assignment={lesson}
-                        masteryCheckAssignment={masteryCheck || undefined}
-                        progressData={progressData}
-                        syncing={syncing === `${lesson.unitLessonId}-${lesson.assignmentType || 'default'}`}
-                        masteryCheckSyncing={masteryCheck ? syncing === `${masteryCheck.unitLessonId}-${masteryCheck.assignmentType || 'default'}` : false}
-                        onSync={(testMode) => handleSyncAssignment(lesson, testMode)}
-                        onMasteryCheckSync={masteryCheck ? (testMode) => handleSyncAssignment(masteryCheck, testMode) : undefined}
-                        calculateSummaryStats={calculateSummaryStats}
-                      />
+                {showingSections ? (
+                  // When showing "All", group by section with headers
+                  groupedBySection.map(({ section, sectionDisplayName, assignments }) => (
+                    <div key={`section-${section}`} className="space-y-4">
+                      {/* Section Header */}
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 px-4 py-2 rounded-r">
+                        <h3 className="text-lg font-semibold text-blue-900">{sectionDisplayName}</h3>
+                      </div>
+
+                      {/* Assignments in this section */}
+                      <div className="space-y-6 pl-4">
+                        {assignments.map(({ lesson, masteryCheck }) => {
+                          const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.podsieAssignmentId}`;
+                          return (
+                            <div key={cardId} id={cardId}>
+                              <AssignmentCard
+                                assignment={lesson}
+                                masteryCheckAssignment={masteryCheck || undefined}
+                                progressData={progressData}
+                                syncing={syncing === `${lesson.unitLessonId}-${lesson.activityType || 'default'}`}
+                                masteryCheckSyncing={masteryCheck ? syncing === `${masteryCheck.unitLessonId}-${masteryCheck.activityType || 'default'}` : false}
+                                onSync={(testMode) => handleSyncAssignment(lesson, testMode)}
+                                onMasteryCheckSync={masteryCheck ? (testMode) => handleSyncAssignment(masteryCheck, testMode) : undefined}
+                                calculateSummaryStats={calculateSummaryStats}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  );
-                })}
+                  ))
+                ) : (
+                  // When showing a specific section, no section headers needed
+                  groupedAssignments.map(({ lesson, masteryCheck }) => {
+                    const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.podsieAssignmentId}`;
+                    return (
+                      <div key={cardId} id={cardId}>
+                        <AssignmentCard
+                          assignment={lesson}
+                          masteryCheckAssignment={masteryCheck || undefined}
+                          progressData={progressData}
+                          syncing={syncing === `${lesson.unitLessonId}-${lesson.activityType || 'default'}`}
+                          masteryCheckSyncing={masteryCheck ? syncing === `${masteryCheck.unitLessonId}-${masteryCheck.activityType || 'default'}` : false}
+                          onSync={(testMode) => handleSyncAssignment(lesson, testMode)}
+                          onMasteryCheckSync={masteryCheck ? (testMode) => handleSyncAssignment(masteryCheck, testMode) : undefined}
+                          calculateSummaryStats={calculateSummaryStats}
+                        />
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </div>
           )

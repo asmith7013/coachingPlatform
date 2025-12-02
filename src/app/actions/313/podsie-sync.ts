@@ -544,23 +544,27 @@ export interface SyncResult {
 }
 
 /**
- * Sync a single student's ramp-up progress from Podsie
- * Saves directly to student document's rampUpProgress array
+ * Sync a single student's Podsie progress from Podsie
+ * Saves directly to student document's podsieProgress array
  *
+ * @param scopeAndSequenceId - MongoDB ObjectId reference to scope-and-sequence document
  * @param questionMapping - Optional mapping of logical positions to question_ids
  *                          Format: [[id1, id2], [id3], ...] where index = logical question (0-indexed)
  * @param baseQuestionIds - Optional array of base question IDs from assignment (in order)
+ * @param activityType - Type of Podsie activity (sidekick, mastery-check, ramp-up)
  */
 export async function syncStudentRampUpProgress(
   studentId: string,
   studentEmail: string,
   studentName: string,
+  scopeAndSequenceId: string,
   podsieAssignmentId: string,
   unitCode: string,
   rampUpId: string,
   totalQuestions: number,
   questionMapping?: number[][],
-  baseQuestionIds?: number[]
+  baseQuestionIds?: number[],
+  activityType?: 'sidekick' | 'mastery-check' | 'ramp-up'
 ): Promise<SyncResult> {
   try {
     // Fetch from Podsie
@@ -621,32 +625,32 @@ export async function syncStudentRampUpProgress(
     // Calculate summary
     const summary = calculateRampUpSummary(questions);
 
-    // Update student document's rampUpProgress array
+    // Update student document's podsieProgress array
     await withDbConnection(async () => {
       // First, try to update existing entry in array
-      // Use $elemMatch to ensure all three conditions match on the SAME array element
-      // This prevents creating duplicates when multiple entries exist with same unitCode/rampUpId
+      // Match on scopeAndSequenceId + podsieAssignmentId (prevents duplicates)
       const updateResult = await StudentModel.updateOne(
         {
           _id: studentId,
-          rampUpProgress: {
+          podsieProgress: {
             $elemMatch: {
-              unitCode: unitCode,
-              rampUpId: rampUpId,
+              scopeAndSequenceId: scopeAndSequenceId,
               podsieAssignmentId: podsieAssignmentId
             }
           }
         },
         {
           $set: {
-            "rampUpProgress.$.rampUpName": assignmentName || `Unit ${unitCode} Ramp-Up`,
-            "rampUpProgress.$.podsieAssignmentId": podsieAssignmentId,
-            "rampUpProgress.$.questions": questions,
-            "rampUpProgress.$.totalQuestions": Math.max(totalQuestions, questions.length),
-            "rampUpProgress.$.completedCount": summary.completedCount,
-            "rampUpProgress.$.percentComplete": summary.percentComplete,
-            "rampUpProgress.$.isFullyComplete": summary.isFullyComplete,
-            "rampUpProgress.$.lastSyncedAt": new Date().toISOString(),
+            "podsieProgress.$.unitCode": unitCode,
+            "podsieProgress.$.rampUpId": rampUpId,
+            "podsieProgress.$.rampUpName": assignmentName || `Unit ${unitCode} Ramp-Up`,
+            "podsieProgress.$.activityType": activityType,
+            "podsieProgress.$.questions": questions,
+            "podsieProgress.$.totalQuestions": Math.max(totalQuestions, questions.length),
+            "podsieProgress.$.completedCount": summary.completedCount,
+            "podsieProgress.$.percentComplete": summary.percentComplete,
+            "podsieProgress.$.isFullyComplete": summary.isFullyComplete,
+            "podsieProgress.$.lastSyncedAt": new Date().toISOString(),
           }
         }
       );
@@ -657,11 +661,13 @@ export async function syncStudentRampUpProgress(
           { _id: studentId },
           {
             $push: {
-              rampUpProgress: {
+              podsieProgress: {
+                scopeAndSequenceId,
+                podsieAssignmentId,
                 unitCode,
                 rampUpId,
                 rampUpName: assignmentName || `Unit ${unitCode} Ramp-Up`,
-                podsieAssignmentId,
+                activityType,
                 questions,
                 totalQuestions: Math.max(totalQuestions, questions.length),
                 completedCount: summary.completedCount,
@@ -711,6 +717,7 @@ export interface SyncOptions {
   testStudentId?: string;  // Specific student ID to test with
   questionMapping?: number[][];  // Mapping of logical positions to question_ids
   baseQuestionIds?: number[];  // Base question IDs from assignment (in order)
+  activityType?: 'sidekick' | 'mastery-check' | 'ramp-up';  // Type of Podsie activity
 }
 
 /**
@@ -718,6 +725,7 @@ export interface SyncOptions {
  */
 export async function syncSectionRampUpProgress(
   section: string,
+  scopeAndSequenceId: string,
   podsieAssignmentId: string,
   unitCode: string,
   rampUpId: string,
@@ -784,12 +792,14 @@ export async function syncSectionRampUpProgress(
         student._id,
         student.email,
         `${student.lastName}, ${student.firstName}`,
+        scopeAndSequenceId,
         podsieAssignmentId,
         unitCode,
         rampUpId,
         totalQuestions,
         options.questionMapping,
-        options.baseQuestionIds
+        options.baseQuestionIds,
+        options.activityType
       );
 
       results.push(result);
@@ -830,10 +840,12 @@ export async function syncSectionRampUpProgress(
 export interface StudentRampUpProgressData {
   studentId: string;
   studentName: string;
+  scopeAndSequenceId: string;
+  podsieAssignmentId: string;
   unitCode: string;
   rampUpId: string;
   rampUpName?: string;
-  podsieAssignmentId?: string;
+  activityType?: 'sidekick' | 'mastery-check' | 'ramp-up';
   questions: RampUpQuestion[];
   totalQuestions: number;
   completedCount: number;
@@ -862,11 +874,13 @@ export async function fetchRampUpProgress(
       _id: unknown;
       firstName: string;
       lastName: string;
-      rampUpProgress: Array<{
+      podsieProgress: Array<{
+        scopeAndSequenceId: string;
+        podsieAssignmentId: string;
         unitCode: string;
         rampUpId: string;
         rampUpName?: string;
-        podsieAssignmentId?: string;
+        activityType?: 'sidekick' | 'mastery-check' | 'ramp-up';
         questions: RampUpQuestion[];
         totalQuestions: number;
         completedCount: number;
@@ -899,7 +913,7 @@ export async function fetchRampUpProgress(
         section,
         active: true,
       })
-        .select("_id firstName lastName rampUpProgress zearnLessons")
+        .select("_id firstName lastName podsieProgress zearnLessons")
         .lean<StudentDoc[]>();
 
       return docs;
@@ -913,7 +927,7 @@ export async function fetchRampUpProgress(
       const studentName = `${student.lastName}, ${student.firstName}`;
 
       // Find matching progress entry(ies)
-      const progressEntries = (student.rampUpProgress || []).filter(p => {
+      const progressEntries = (student.podsieProgress || []).filter(p => {
         if (p.unitCode !== unitCode) return false;
         if (rampUpId && p.rampUpId !== rampUpId) return false;
         if (podsieAssignmentId && p.podsieAssignmentId !== podsieAssignmentId) return false;
@@ -942,10 +956,12 @@ export async function fetchRampUpProgress(
           result.push({
             studentId,
             studentName,
+            scopeAndSequenceId: p.scopeAndSequenceId,
+            podsieAssignmentId: p.podsieAssignmentId,
             unitCode: p.unitCode,
             rampUpId: p.rampUpId,
             rampUpName: p.rampUpName,
-            podsieAssignmentId: p.podsieAssignmentId,
+            activityType: p.activityType,
             questions: p.questions || [],
             totalQuestions: p.totalQuestions || 0,
             completedCount: p.completedCount || 0,
@@ -977,6 +993,8 @@ export async function fetchRampUpProgress(
         result.push({
           studentId,
           studentName,
+          scopeAndSequenceId: "", // No progress yet
+          podsieAssignmentId: "", // No progress yet
           unitCode,
           rampUpId: rampUpId || "",
           questions: [],

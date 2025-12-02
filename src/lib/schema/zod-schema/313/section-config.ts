@@ -17,43 +17,81 @@ export const PodsieQuestionMapSchema = z.object({
 export type PodsieQuestionMap = z.infer<typeof PodsieQuestionMapSchema>;
 
 /**
- * Assignment type enum - differentiates between lesson activities and mastery assessments
+ * Activity type enum - differentiates between sidekick activities and mastery assessments
  */
-export const AssignmentTypeSchema = z.enum([
-  'lesson',        // Lesson activities (warm-up, activities, cool-down)
+export const ActivityTypeSchema = z.enum([
+  'sidekick',      // Podsie Sidekick lesson activities (warm-up, activities, cool-down)
   'mastery-check', // Mastery/summative assessment
-]).describe("Type of assignment");
+]).describe("Type of activity");
 
-export type AssignmentType = z.infer<typeof AssignmentTypeSchema>;
+export type ActivityType = z.infer<typeof ActivityTypeSchema>;
 
 /**
- * Podsie assignment configuration for a single lesson in this section
+ * Podsie activity configuration
  */
-export const PodsieAssignmentSchema = z.object({
-  unitLessonId: z.string().describe("Unit.Lesson ID (e.g., '3.15', '4.RU1')"),
-  lessonName: z.string().describe("Lesson name for display"),
-  grade: z.string().optional().describe("Grade level (denormalized from lesson)"),
-
-  assignmentType: AssignmentTypeSchema.default('mastery-check').describe("Type of assignment (lesson or mastery-check)"),
-
+export const PodsieActivitySchema = z.object({
+  activityType: ActivityTypeSchema,
   podsieAssignmentId: z.string().describe("Podsie assignment ID"),
   podsieQuestionMap: z.array(PodsieQuestionMapSchema).default([]).describe("Map of question numbers to Podsie question IDs"),
   totalQuestions: z.number().int().positive().optional().describe("Total questions in the assignment"),
-
-  hasZearnLesson: z.boolean().optional().default(false).describe("Whether this assignment has a corresponding Zearn lesson (controls Zearn column visibility)"),
-
-  active: z.boolean().default(true).describe("Whether this assignment is active"),
-  notes: z.string().optional().describe("Optional notes about this assignment"),
+  active: z.boolean().default(true).describe("Whether this activity is active"),
 });
 
-export type PodsieAssignment = z.infer<typeof PodsieAssignmentSchema>;
+export type PodsieActivity = z.infer<typeof PodsieActivitySchema>;
+
+/**
+ * Zearn activity configuration
+ */
+export const ZearnActivitySchema = z.object({
+  zearnLessonId: z.string().optional().describe("Zearn lesson ID"),
+  zearnUrl: z.string().optional().describe("Direct URL to Zearn lesson"),
+  active: z.boolean().default(true).describe("Whether this Zearn lesson is active"),
+});
+
+export type ZearnActivity = z.infer<typeof ZearnActivitySchema>;
+
+/**
+ * Assignment content configuration for a single lesson in this section
+ *
+ * Links to a specific scope-and-sequence lesson and defines how students engage with it
+ * through various activity types (Podsie Sidekick, Mastery Checks, Zearn, etc.)
+ */
+export const AssignmentContentSchema = z.object({
+  // =====================================
+  // LINK TO SCOPE AND SEQUENCE
+  // =====================================
+
+  scopeAndSequenceId: z.string().describe("MongoDB ObjectId reference to the scope-and-sequence document - provides unambiguous link to exact lesson"),
+
+  // Denormalized fields for display/sorting (kept in sync with scope-and-sequence)
+  unitLessonId: z.string().describe("Denormalized: Unit.Lesson ID (e.g., '3.15', '4.RU1')"),
+  lessonName: z.string().describe("Denormalized: Lesson name for display"),
+  section: z.string().optional().describe("Denormalized: Section (A, B, C, D, E, F, Ramp Ups, Unit Assessment)"),
+  grade: z.string().optional().describe("Denormalized: Grade level"),
+
+  // =====================================
+  // ACTIVITY CONFIGURATIONS
+  // =====================================
+
+  podsieActivities: z.array(PodsieActivitySchema).default([]).describe("Array of Podsie activity configurations (sidekick lessons and/or mastery checks)"),
+  zearnActivity: ZearnActivitySchema.optional().describe("Optional Zearn lesson configuration"),
+
+  // =====================================
+  // METADATA
+  // =====================================
+
+  active: z.boolean().default(true).describe("Whether this assignment content is active"),
+  notes: z.string().optional().describe("Optional notes about this assignment content"),
+});
+
+export type AssignmentContent = z.infer<typeof AssignmentContentSchema>;
 
 /**
  * Section Configuration - Complete configuration for a class section
  *
  * This collection stores all configuration for a single class section including:
  * - Section metadata (school, teacher, grade)
- * - All Podsie assignment configurations for lessons taught in this section
+ * - Assignment content configurations defining how students engage with each lesson
  *
  * Why section-centric?
  * - Natural mental model: "What's configured for my 802 class?"
@@ -78,10 +116,10 @@ export const SectionConfigFieldsSchema = z.object({
   active: z.boolean().default(true).describe("Whether this section is currently active"),
 
   // =====================================
-  // PODSIE ASSIGNMENT CONFIGURATIONS
+  // ASSIGNMENT CONTENT CONFIGURATIONS
   // =====================================
 
-  podsieAssignments: z.array(PodsieAssignmentSchema).default([]).describe("All Podsie assignment configurations for this section"),
+  assignmentContent: z.array(AssignmentContentSchema).default([]).describe("All assignment content configurations for this section (links to scope-and-sequence lessons with activity configs)"),
 
   // =====================================
   // METADATA
@@ -121,10 +159,10 @@ export const SectionConfigQuerySchema = z.object({
 export type SectionConfigQuery = z.infer<typeof SectionConfigQuerySchema>;
 
 /**
- * Joined type: Scope and Sequence + Podsie Assignment from Section Config
- * Used when you need both curriculum data and section-specific Podsie data
+ * Joined type: Scope and Sequence + Assignment Content from Section Config
+ * Used when you need both curriculum data and section-specific activity configurations
  */
-export type ScopeAndSequenceWithPodsie = {
+export type ScopeAndSequenceWithAssignmentContent = {
   // From scope-and-sequence
   id: string;
   unitLessonId: string;
@@ -135,16 +173,19 @@ export type ScopeAndSequenceWithPodsie = {
   roadmapSkills: string[];
   targetSkills: string[];
 
-  // From section-config podsieAssignments array
-  podsieAssignment?: {
-    podsieAssignmentId: string;
-    assignmentType: AssignmentType;
-    podsieQuestionMap: PodsieQuestionMap[];
-    totalQuestions?: number;
+  // From section-config assignmentContent array
+  assignmentContent?: {
+    scopeAndSequenceId: string;
+    podsieActivities: PodsieActivity[];
+    zearnActivity?: ZearnActivity;
     active: boolean;
     notes?: string;
   };
 };
+
+// Legacy type alias for backwards compatibility during migration
+/** @deprecated Use ScopeAndSequenceWithAssignmentContent instead */
+export type ScopeAndSequenceWithPodsie = ScopeAndSequenceWithAssignmentContent;
 
 /**
  * Section dropdown option with metadata

@@ -492,7 +492,7 @@ export default function AssessmentHistoryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto p-6 max-w-7xl">
+      <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
 
         {/* Title */}
         <div className="bg-white rounded-lg shadow-sm p-8 mb-6">

@@ -1,16 +1,20 @@
 import { RampUpQuestion } from "@zod-schema/313/student";
+import type { LessonType } from "@/lib/utils/lesson-display";
 
 export interface LessonConfig {
+  scopeAndSequenceId: string;
   unitLessonId: string;
   lessonName: string;
+  lessonType?: LessonType;
+  lessonTitle?: string;
   grade: string;
   podsieAssignmentId: string;
   totalQuestions: number;
   podsieQuestionMap?: Array<{ questionNumber: number; questionId: string }>;
   section?: string;
   unitNumber: number;
-  assignmentType?: 'lesson' | 'mastery-check';
-  hasZearnLesson?: boolean;
+  activityType?: 'sidekick' | 'mastery-check';
+  hasZearnActivity?: boolean;
 }
 
 export interface UnitOption {

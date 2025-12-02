@@ -18,6 +18,8 @@ type NavCategory = {
 export function SCMNav() {
   const pathname = usePathname();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -31,6 +33,29 @@ export function SCMNav() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Handle scroll to show/hide navigation
+  useEffect(() => {
+    function handleScroll() {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < 10) {
+        // At the top of the page, always show
+        setIsVisible(true);
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling up, show navigation
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY) {
+        // Scrolling down, hide navigation
+        setIsVisible(false);
+      }
+
+      setLastScrollY(currentScrollY);
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const categories: NavCategory[] = [
     {
@@ -71,8 +96,14 @@ export function SCMNav() {
   };
 
   return (
-    <nav className="bg-white rounded-lg shadow-sm p-4 mb-6" ref={dropdownRef}>
-      <div className="flex justify-between items-center gap-2">
+    <nav
+      className={`bg-gray-900 shadow-lg sticky top-0 z-50 transition-transform duration-300 ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+      ref={dropdownRef}
+    >
+      <div className="mx-auto px-6 py-3" style={{ maxWidth: "1600px" }}>
+        <div className="flex justify-between items-center gap-2">
         <div className="flex gap-2 relative">
           {categories.map((category) => {
             const isActive = isActiveCategory(category);
@@ -82,10 +113,10 @@ export function SCMNav() {
               <div key={category.label} className="relative">
                 <button
                   onClick={() => toggleDropdown(category.label)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 cursor-pointer ${
+                  className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 cursor-pointer ${
                     isActive
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "bg-gray-700 text-white"
+                      : "text-gray-300 hover:text-white hover:bg-gray-800"
                   }`}
                 >
                   {category.iconLetter ? (
@@ -133,10 +164,11 @@ export function SCMNav() {
         </div>
         <Link
           href="/sign-out"
-          className="px-4 py-2 rounded-lg font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200"
+          className="px-4 py-2 rounded-md font-medium transition-colors text-white hover:bg-gray-800 bg-gray-700"
         >
           Sign Out
         </Link>
+        </div>
       </div>
     </nav>
   );

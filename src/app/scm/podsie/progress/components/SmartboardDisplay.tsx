@@ -4,10 +4,14 @@ import { useState, useMemo } from "react";
 import { PencilIcon, TvIcon } from "@heroicons/react/24/outline";
 import { SmartboardProgressBar } from "./SmartboardProgressBar";
 import { groupAssignmentsByUnitLesson } from "../utils/groupAssignments";
+import { formatLessonDisplay } from "@/lib/utils/lesson-display";
+import type { LessonType } from "@/lib/utils/lesson-display";
 
 interface LessonConfig {
   unitLessonId: string;
   lessonName: string;
+  lessonType?: LessonType;
+  lessonTitle?: string;
   grade: string;
   podsieAssignmentId: string;
   totalQuestions: number;
@@ -224,16 +228,22 @@ export function SmartboardDisplay({
           {/* Individual Assignment Progress */}
           <div className="space-y-3 pl-4 pr-32 border-l-2 border-indigo-600">
             {assignmentProgress.map(({ lesson, lessonProgress, zearnProgress, masteryCheck, masteryCheckProgress }) => {
-              // Extract lesson number and determine if we should show it
+              // Extract lesson number
               const lessonNumber = lesson.unitLessonId.includes('.')
                 ? lesson.unitLessonId.split('.')[1]
                 : lesson.unitLessonId;
-              const showLessonNumber = selectedSection !== 'Ramp Ups' && selectedSection !== 'Unit Assessment';
 
-              // Build label with optional lesson number
-              const label = showLessonNumber
-                ? `Lesson ${lessonNumber}: ${lesson.lessonName}`
-                : lesson.lessonName;
+              // Build label using helper function (handles ramp-ups, assessments, and regular lessons)
+              const label = formatLessonDisplay(
+                lesson.lessonName,
+                lessonNumber,
+                {
+                  showLessonNumber: selectedSection !== 'Ramp Ups' && selectedSection !== 'Unit Assessment',
+                  section: lesson.section
+                },
+                lesson.lessonType,
+                lesson.lessonTitle
+              );
 
               // Build segments for split bar
               const segments = [];

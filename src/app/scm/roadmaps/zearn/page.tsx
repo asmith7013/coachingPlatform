@@ -96,7 +96,7 @@ export default function ZearnImportPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto p-6 max-w-4xl">
+      <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
 
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-8 mb-6">

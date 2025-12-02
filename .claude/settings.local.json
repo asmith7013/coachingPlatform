@@ -24,7 +24,9 @@
       "Bash(echo \"Total <strong> tags:\")",
       "Bash(tree:*)",
       "Bash(vercel link:*)",
-      "SlashCommand(/create-worked-example-sg)"
+      "SlashCommand(/create-worked-example-sg)",
+      "Bash(find:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []

@@ -3,17 +3,20 @@ import { ArrowPathIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
 import { AssignmentProgressTable } from "./AssignmentProgressTable";
+import type { LessonType } from "@/lib/utils/lesson-display";
 
 interface LessonConfig {
   unitLessonId: string;
   lessonName: string;
+  lessonType?: LessonType;
+  lessonTitle?: string;
   grade: string;
   podsieAssignmentId: string;
   totalQuestions: number;
   section?: string;
   unitNumber: number;
-  assignmentType?: 'lesson' | 'mastery-check';
-  hasZearnLesson?: boolean;
+  activityType?: 'sidekick' | 'mastery-check';
+  hasZearnActivity?: boolean;
 }
 
 interface RampUpQuestion {
@@ -82,7 +85,7 @@ export function AssignmentCard({
   };
 
   // Check if this is a standalone mastery check (mastery check without a paired lesson)
-  const isStandaloneMasteryCheck = assignment.assignmentType === 'mastery-check' && !masteryCheckAssignment;
+  const isStandaloneMasteryCheck = assignment.activityType === 'mastery-check' && !masteryCheckAssignment;
 
   // Filter progress data to only show this assignment's data
   // Use podsieAssignmentId to distinguish between lesson and mastery-check with same unitLessonId
@@ -277,7 +280,7 @@ export function AssignmentCard({
           progressData={filteredProgressData}
           masteryCheckProgressData={filteredMasteryCheckData}
           totalQuestions={assignment.totalQuestions}
-          showZearnColumn={assignment.hasZearnLesson ?? false}
+          showZearnColumn={assignment.hasZearnActivity ?? false}
         />
       </div>
     </div>

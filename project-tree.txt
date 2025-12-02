@@ -4,6 +4,7 @@
 ├── ANALYTICS.md
 ├── ANALYTICS_SETUP_COMPLETE.md
 ├── CLAUDE.md
+├── LESSON-NAMING-STANDARDIZATION.md
 ├── amplify
 │   ├── docs.md
 │   ├── scope.md
@@ -253,6 +254,7 @@
 │   │   ├── pdf-downloader.js
 │   │   └── scraper.ts
 │   ├── link-question-type-scripts.sh
+│   ├── migrate-lesson-naming.ts
 │   ├── migrate-skill-appears-in.ts
 │   ├── run-scraper.ts
 │   ├── snorkl-comprehensive-scraper.ts
@@ -658,32 +660,6 @@
 │   │   │   └── page.tsx
 │   │   ├── global-error.tsx
 │   │   ├── globals.css
-│   │   ├── incentives
-│   │   │   ├── data
-│   │   │   │   ├── TrackingTables.tsx
-│   │   │   │   ├── actions.ts
-│   │   │   │   ├── page.tsx
-│   │   │   │   └── tracking-actions.ts
-│   │   │   ├── form
-│   │   │   │   ├── actions.ts
-│   │   │   │   ├── components
-│   │   │   │   │   ├── CustomDetailInput.tsx
-│   │   │   │   │   ├── DetailCard.tsx
-│   │   │   │   │   ├── InquiryPicker.tsx
-│   │   │   │   │   ├── LessonPicker.tsx
-│   │   │   │   │   ├── ManageColumnsModal.tsx
-│   │   │   │   │   ├── SkillPicker.tsx
-│   │   │   │   │   └── StudentGrid.tsx
-│   │   │   │   ├── hooks
-│   │   │   │   │   ├── useActivityTypes.ts
-│   │   │   │   │   └── useFormState.ts
-│   │   │   │   ├── page.tsx
-│   │   │   │   └── utils
-│   │   │   │       └── generateInquiryOptions.ts
-│   │   │   ├── layout.tsx
-│   │   │   ├── page.tsx
-│   │   │   └── table
-│   │   │       └── page.tsx
 │   │   ├── integrations
 │   │   │   └── monday
 │   │   │       ├── example1
@@ -731,140 +707,102 @@
 │   │   │   │   └── index.ts
 │   │   │   └── test
 │   │   │       └── page.tsx
-│   │   ├── roadmaps
-│   │   │   ├── assessment-scraper
-│   │   │   │   ├── actions
-│   │   │   │   │   ├── scrape-and-update.ts
-│   │   │   │   │   ├── scrape-assessment-history-batch.ts
-│   │   │   │   │   ├── scrape-assessment-history.ts
-│   │   │   │   │   └── update-student-data.ts
-│   │   │   │   ├── components
-│   │   │   │   │   ├── AssessmentScraperForm.tsx
-│   │   │   │   │   └── ResultsDisplay.tsx
-│   │   │   │   ├── hooks
-│   │   │   │   │   └── useAssessmentScraper.ts
-│   │   │   │   ├── html
-│   │   │   │   │   ├── assessment-history.html
-│   │   │   │   │   ├── classes.html
-│   │   │   │   │   ├── roadmap.html
-│   │   │   │   │   ├── skillGrade.html
-│   │   │   │   │   └── studentGrade.html
-│   │   │   │   ├── lib
-│   │   │   │   │   └── csv-parser.ts
-│   │   │   │   └── page.tsx
-│   │   │   ├── components
-│   │   │   │   ├── AccordionItem.tsx
-│   │   │   │   ├── AccordionList.tsx
-│   │   │   │   ├── RoadmapsNav.tsx
-│   │   │   │   ├── SkillDetailView.tsx
-│   │   │   │   ├── SkillDetailWrapper.tsx
-│   │   │   │   └── SkillListWithProgress.tsx
-│   │   │   ├── history
-│   │   │   │   ├── components
-│   │   │   │   └── page.tsx
-│   │   │   ├── im-lesson-updater
-│   │   │   │   └── page.tsx
-│   │   │   ├── json
-│   │   │   │   ├── algebra-1-8.json
-│   │   │   │   ├── algebra-1-combined.json
-│   │   │   │   ├── algebra-1.json
-│   │   │   │   ├── grade-6.json
-│   │   │   │   ├── grade-7.json
-│   │   │   │   └── grade-8.json
+│   │   ├── scm
+│   │   │   ├── SCMNav.tsx
+│   │   │   ├── incentives
+│   │   │   │   ├── data
+│   │   │   │   │   ├── TrackingTables.tsx
+│   │   │   │   │   ├── actions.ts
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   └── tracking-actions.ts
+│   │   │   │   ├── form
+│   │   │   │   │   ├── actions.ts
+│   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   └── utils
+│   │   │   │   └── table
+│   │   │   │       └── page.tsx
 │   │   │   ├── layout.tsx
-│   │   │   ├── mastery-grid
-│   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
-│   │   │   ├── podsie-progress
-│   │   │   │   ├── components
-│   │   │   │   │   ├── AssignmentCard.tsx
-│   │   │   │   │   ├── AssignmentProgressTable.tsx
-│   │   │   │   │   ├── CompletionCheckmark.tsx
-│   │   │   │   │   ├── CreateAssignmentModal.tsx
-│   │   │   │   │   ├── LessonProgressCard.tsx
-│   │   │   │   │   ├── SmartboardDisplay.tsx
-│   │   │   │   │   ├── SmartboardProgressBar.tsx
-│   │   │   │   │   └── index.ts
-│   │   │   │   ├── page.tsx
-│   │   │   │   └── utils
-│   │   │   │       └── groupAssignments.ts
-│   │   │   ├── scope-and-sequence
-│   │   │   │   ├── components
-│   │   │   │   │   ├── LessonDetailView.tsx
-│   │   │   │   │   ├── LessonListItem.tsx
-│   │   │   │   │   ├── SkillDetailView.tsx
-│   │   │   │   │   ├── SkillGanttChart.tsx
-│   │   │   │   │   ├── SkillProgressionTable.tsx
-│   │   │   │   │   └── StudentFilter.tsx
-│   │   │   │   └── page.tsx
-│   │   │   ├── scope-and-sequence-edit
-│   │   │   │   └── page.tsx
-│   │   │   ├── scope-and-sequence-uploader
-│   │   │   │   └── page.tsx
-│   │   │   ├── scope-and-sequence-uploader-pair
-│   │   │   │   └── page.tsx
-│   │   │   ├── section-configs
-│   │   │   │   ├── components
-│   │   │   │   │   └── ManualCreateAssignmentModal.tsx
-│   │   │   │   └── page.tsx
-│   │   │   ├── shared
-│   │   │   │   └── lib
-│   │   │   │       └── roadmaps-auth.ts
-│   │   │   ├── skill-scraper
-│   │   │   │   ├── README.md
-│   │   │   │   ├── actions
-│   │   │   │   │   └── scrape-skills.ts
-│   │   │   │   ├── components
-│   │   │   │   │   ├── ResultsDisplay.tsx
-│   │   │   │   │   └── RoadmapsScraperForm.tsx
-│   │   │   │   ├── hooks
-│   │   │   │   │   └── useRoadmapsScraper.ts
-│   │   │   │   ├── lib
-│   │   │   │   │   ├── roadmaps-auth.ts
-│   │   │   │   │   ├── skill-extractor.ts
-│   │   │   │   │   └── types.ts
-│   │   │   │   ├── page.tsx
-│   │   │   │   ├── practice.html
-│   │   │   │   └── skill.html
-│   │   │   ├── skills
-│   │   │   │   ├── components
-│   │   │   │   │   ├── SkillCard.tsx
-│   │   │   │   │   ├── SkillDetailModal.tsx
-│   │   │   │   │   └── SkillListItem.tsx
-│   │   │   │   └── page.tsx
-│   │   │   ├── student-upload
-│   │   │   │   ├── actions
-│   │   │   │   │   └── import-student-skills.ts
-│   │   │   │   ├── components
-│   │   │   │   │   ├── ImportForm.tsx
-│   │   │   │   │   └── ResultsDisplay.tsx
-│   │   │   │   ├── lib
-│   │   │   │   │   ├── parser.ts
-│   │   │   │   │   └── types.ts
-│   │   │   │   └── page.tsx
-│   │   │   ├── unit-scraper
-│   │   │   │   ├── actions
-│   │   │   │   │   └── scrape-units-batch.ts
-│   │   │   │   ├── components
-│   │   │   │   │   ├── BatchUnitResultDisplay.tsx
-│   │   │   │   │   ├── UnitResultDisplay.tsx
-│   │   │   │   │   └── UnitScraperForm.tsx
-│   │   │   │   ├── example.html
-│   │   │   │   ├── lib
-│   │   │   │   │   ├── dropdown-navigator.ts
-│   │   │   │   │   ├── types.ts
-│   │   │   │   │   └── unit-extractor.ts
-│   │   │   │   └── page.tsx
-│   │   │   ├── units
-│   │   │   │   ├── components
-│   │   │   │   │   ├── AllUnitsGridView.tsx
-│   │   │   │   │   ├── SkillProgressBar.tsx
-│   │   │   │   │   ├── StudentGridView.tsx
-│   │   │   │   │   ├── UnitDetailView.tsx
-│   │   │   │   │   └── UnitListItem.tsx
-│   │   │   │   └── page.tsx
-│   │   │   └── zearn
-│   │   │       └── page.tsx
+│   │   │   ├── podsie
+│   │   │   │   └── progress
+│   │   │   │       ├── components
+│   │   │   │       ├── hooks
+│   │   │   │       ├── page.tsx
+│   │   │   │       ├── types.ts
+│   │   │   │       └── utils
+│   │   │   └── roadmaps
+│   │   │       ├── assessment-scraper
+│   │   │       │   ├── actions
+│   │   │       │   ├── components
+│   │   │       │   ├── hooks
+│   │   │       │   ├── html
+│   │   │       │   ├── lib
+│   │   │       │   └── page.tsx
+│   │   │       ├── components
+│   │   │       │   ├── AccordionItem.tsx
+│   │   │       │   ├── AccordionList.tsx
+│   │   │       │   ├── RoadmapsNav.tsx
+│   │   │       │   ├── SkillDetailView.tsx
+│   │   │       │   ├── SkillDetailWrapper.tsx
+│   │   │       │   └── SkillListWithProgress.tsx
+│   │   │       ├── history
+│   │   │       │   ├── components
+│   │   │       │   └── page.tsx
+│   │   │       ├── im-lesson-updater
+│   │   │       │   └── page.tsx
+│   │   │       ├── json
+│   │   │       │   ├── algebra-1-8.json
+│   │   │       │   ├── algebra-1-combined.json
+│   │   │       │   ├── algebra-1.json
+│   │   │       │   ├── grade-6.json
+│   │   │       │   ├── grade-7.json
+│   │   │       │   └── grade-8.json
+│   │   │       ├── mastery-grid
+│   │   │       │   └── page.tsx
+│   │   │       ├── scope-and-sequence
+│   │   │       │   ├── components
+│   │   │       │   └── page.tsx
+│   │   │       ├── scope-and-sequence-edit
+│   │   │       │   └── page.tsx
+│   │   │       ├── scope-and-sequence-uploader
+│   │   │       │   └── page.tsx
+│   │   │       ├── scope-and-sequence-uploader-pair
+│   │   │       │   └── page.tsx
+│   │   │       ├── section-configs
+│   │   │       │   ├── components
+│   │   │       │   └── page.tsx
+│   │   │       ├── shared
+│   │   │       │   └── lib
+│   │   │       ├── skill-scraper
+│   │   │       │   ├── README.md
+│   │   │       │   ├── actions
+│   │   │       │   ├── components
+│   │   │       │   ├── hooks
+│   │   │       │   ├── lib
+│   │   │       │   ├── page.tsx
+│   │   │       │   ├── practice.html
+│   │   │       │   └── skill.html
+│   │   │       ├── skills
+│   │   │       │   ├── components
+│   │   │       │   └── page.tsx
+│   │   │       ├── student-upload
+│   │   │       │   ├── actions
+│   │   │       │   ├── components
+│   │   │       │   ├── lib
+│   │   │       │   └── page.tsx
+│   │   │       ├── unit-scraper
+│   │   │       │   ├── actions
+│   │   │       │   ├── components
+│   │   │       │   ├── example.html
+│   │   │       │   ├── lib
+│   │   │       │   └── page.tsx
+│   │   │       ├── units
+│   │   │       │   ├── components
+│   │   │       │   └── page.tsx
+│   │   │       └── zearn
+│   │   │           └── page.tsx
 │   │   ├── setup
 │   │   │   └── page.tsx
 │   │   ├── test
@@ -1905,6 +1843,7 @@
 │   │   │       └── typography.ts
 │   │   ├── utils
 │   │   │   ├── entity-helpers.ts
+│   │   │   ├── lesson-display.ts
 │   │   │   ├── podsie-completion-helpers.ts
 │   │   │   └── section-config-helpers.ts
 │   │   └── validation
@@ -1988,4 +1927,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-565 directories, 1424 files
+568 directories, 1360 files

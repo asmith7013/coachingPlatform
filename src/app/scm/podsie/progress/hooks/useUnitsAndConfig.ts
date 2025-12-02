@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { fetchAllUnitsByScopeTag } from "@/app/actions/313/scope-and-sequence";
 import { getSectionConfig } from "@/app/actions/313/section-config";
-import { PodsieAssignment } from "@zod-schema/313/section-config";
+import { AssignmentContent } from "@zod-schema/313/section-config";
 import { UnitOption } from "../types";
 import { getGradeForSection, getSchoolForSection } from "../utils/sectionHelpers";
 
 export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: string) {
   const [units, setUnits] = useState<UnitOption[]>([]);
-  const [sectionConfigAssignments, setSectionConfigAssignments] = useState<PodsieAssignment[]>([]);
+  const [sectionConfigAssignments, setSectionConfigAssignments] = useState<AssignmentContent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,12 +56,12 @@ export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: str
           }
         }
 
-        // Load section config to get Podsie assignments
+        // Load section config to get assignment content
         const school = getSchoolForSection(selectedSection);
         const configResult = await getSectionConfig(school, selectedSection);
         if (configResult.success && configResult.data) {
           // Add scopeSequenceTag to each assignment from the parent config
-          const assignmentsWithScope = (configResult.data.podsieAssignments || []).map((assignment: PodsieAssignment) => ({
+          const assignmentsWithScope = (configResult.data.assignmentContent || []).map((assignment: AssignmentContent) => ({
             ...assignment,
             scopeSequenceTag: configResult.data.scopeSequenceTag
           }));

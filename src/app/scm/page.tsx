@@ -98,7 +98,7 @@ export default function SCMHomePage() {
   ];
 
   return (
-    <div className="container mx-auto max-w-7xl">
+    <div className="mx-auto" style={{ maxWidth: "1600px" }}>
       <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Studio Classroom Math</h1>
         <p className="text-gray-600">

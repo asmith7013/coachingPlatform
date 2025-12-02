@@ -29,7 +29,7 @@ export default function AssessmentScraperPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ maxWidth: "1600px" }}>
       {/* Header */}
       <div className="mb-8">
         <div className="flex justify-between items-center">

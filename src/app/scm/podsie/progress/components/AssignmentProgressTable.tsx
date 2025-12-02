@@ -1,127 +1,5 @@
 import { useMemo } from "react";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
-
-/**
- * Component for rendering completion checkmark with different styles
- * - Today: ● Fully filled dark green solid checkmark
- * - Yesterday/Prior: ○ Dark green outline with white/transparent center
- */
-function CompletionCheckmark({
-  iconStyle,
-  title,
-}: {
-  iconStyle: "today" | "yesterday" | "prior" | "default";
-  title: string;
-}) {
-  if (iconStyle === "today") {
-    // ● Fully filled dark green solid checkmark (only for today)
-    return (
-      <div className="group relative inline-block">
-        <CheckCircleIcon className="w-5 h-5 text-green-700 mx-auto" />
-        <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
-          {title}
-        </span>
-      </div>
-    );
-  }
-
-  if (iconStyle === "yesterday" || iconStyle === "prior") {
-    // ○ Dark green outline with white/transparent center (using outline icon)
-    return (
-      <div className="group relative inline-block">
-        <CheckCircleOutlineIcon className="w-5 h-5 text-green-700 mx-auto" />
-        <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
-          {title}
-        </span>
-      </div>
-    );
-  }
-
-  // Default fallback
-  return (
-    <div className="group relative inline-block">
-      <CheckCircleIcon className="w-5 h-5 text-green-600 mx-auto" />
-      <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
-        {title}
-      </span>
-    </div>
-  );
-}
-
-/**
- * Helper function to determine the green shade based on completion date
- * Returns the appropriate styling info and formatted date string
- */
-function getCompletionStyle(completedAt?: string): {
-  iconStyle: "today" | "yesterday" | "prior" | "default";
-  formattedDate: string;
-  dateLabel: string;
-} {
-  if (!completedAt) {
-    return {
-      iconStyle: "default",
-      formattedDate: "",
-      dateLabel: "",
-    };
-  }
-
-  // Parse the completion date (which is in ISO format from Podsie)
-  const completedDate = new Date(completedAt);
-
-  // Get today's date at midnight in local timezone
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  // Get yesterday's date at midnight
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  // Get the completion date at midnight in local timezone
-  const completedDateOnly = new Date(
-    completedDate.getFullYear(),
-    completedDate.getMonth(),
-    completedDate.getDate()
-  );
-
-  // Format the date for tooltip
-  const formattedDate = completedDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  // Debug logging (remove after testing)
-  // console.log('Date comparison:', {
-  //   completedAt,
-  //   completedDateOnly: completedDateOnly.toISOString(),
-  //   today: today.toISOString(),
-  //   yesterday: yesterday.toISOString(),
-  //   isToday: completedDateOnly.getTime() === today.getTime(),
-  //   isYesterday: completedDateOnly.getTime() === yesterday.getTime(),
-  // });
-
-  // Determine the style based on when it was completed
-  if (completedDateOnly.getTime() === today.getTime()) {
-    return {
-      iconStyle: "today",
-      formattedDate,
-      dateLabel: "today",
-    };
-  } else if (completedDateOnly.getTime() === yesterday.getTime()) {
-    return {
-      iconStyle: "yesterday",
-      formattedDate,
-      dateLabel: "yesterday",
-    };
-  } else {
-    return {
-      iconStyle: "prior",
-      formattedDate,
-      dateLabel: "prior",
-    };
-  }
-}
+import { CompletionCheckmark } from "./CompletionCheckmark";
 
 interface RampUpQuestion {
   questionNumber: number;
@@ -321,21 +199,12 @@ export function AssignmentProgressTable({
                 {/* Zearn Column */}
                 {showZearnColumn && (
                   <td className="px-4 py-3 text-center bg-purple-50/30">
-                    {hasSynced && progress.zearnCompleted ? (
-                      <div className="group relative inline-block">
-                        <CheckCircleIcon
-                          className="w-6 h-6 text-purple-600 mx-auto"
-                          title={`Zearn lesson completed${progress.zearnCompletionDate ? ` on ${progress.zearnCompletionDate}` : ''}`}
-                        />
-                        {progress.zearnCompletionDate && (
-                          <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
-                            Completed: {progress.zearnCompletionDate}
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-gray-400 text-xs">—</span>
-                    )}
+                    <CompletionCheckmark
+                      completed={Boolean(hasSynced && progress.zearnCompleted)}
+                      completedAt={progress.zearnCompletionDate}
+                      color="purple"
+                      size="medium"
+                    />
                   </td>
                 )}
 
@@ -353,26 +222,14 @@ export function AssignmentProgressTable({
                     (q) => q.questionNumber === qNum
                   );
                   const isCompleted = question?.completed ?? false;
-                  const completionInfo = isCompleted
-                    ? getCompletionStyle(question?.completedAt)
-                    : null;
 
                   return (
                     <td key={qNum} className="px-3 py-3 text-center">
-                      {isCompleted ? (
-                        <CompletionCheckmark
-                          iconStyle={completionInfo?.iconStyle || "default"}
-                          title={
-                            completionInfo?.formattedDate
-                              ? `Question ${qNum} completed on ${completionInfo.formattedDate}`
-                              : `Question ${qNum} completed`
-                          }
-                        />
-                      ) : (
-                        <span className="text-gray-400 text-xs" title={`Question ${qNum} not completed`}>
-                          —
-                        </span>
-                      )}
+                      <CompletionCheckmark
+                        completed={isCompleted}
+                        completedAt={question?.completedAt}
+                        size="small"
+                      />
                     </td>
                   );
                 })}
@@ -380,25 +237,11 @@ export function AssignmentProgressTable({
                 {/* Mastery Check Column */}
                 {masteryCheckProgressData.length > 0 && (
                   <td className="px-4 py-3 text-center">
-                    {masteryCheckSynced && masteryCheckProgress.isFullyComplete ? (
-                      <div className="group relative inline-block">
-                        <CheckCircleIcon
-                          className="w-7 h-7 text-green-600 mx-auto"
-                          title={`Mastery check completed${masteryCheckProgress.lastSyncedAt ? ` on ${new Date(masteryCheckProgress.lastSyncedAt).toLocaleDateString()}` : ''}`}
-                        />
-                        {masteryCheckProgress.lastSyncedAt && (
-                          <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
-                            Completed: {new Date(masteryCheckProgress.lastSyncedAt).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric'
-                            })}
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-gray-400 text-xs">—</span>
-                    )}
+                    <CompletionCheckmark
+                      completed={Boolean(masteryCheckSynced && masteryCheckProgress?.isFullyComplete)}
+                      completedAt={masteryCheckProgress?.lastSyncedAt}
+                      size="large"
+                    />
                   </td>
                 )}
               </tr>

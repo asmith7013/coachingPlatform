@@ -78,29 +78,65 @@ export const ZearnLessonCompletionSchema = z.object({
 });
 
 // =====================================
-// RAMP-UP PROGRESS SCHEMA
+// PODSIE PROGRESS SCHEMA
 // =====================================
 
 /**
- * Individual ramp-up question completion
+ * Individual Podsie question completion
  */
-export const RampUpQuestionSchema = z.object({
+export const PodsieQuestionSchema = z.object({
   questionNumber: z.number().int().positive().describe("Question number (1-indexed)"),
   completed: z.boolean().default(false).describe("Whether question was answered correctly"),
   completedAt: z.string().optional().describe("When question was completed (ISO format)"),
 });
 
 /**
- * Progress on a single ramp-up assignment
+ * Activity type enum - differentiates between different Podsie activity types
  */
-export const RampUpProgressSchema = z.object({
-  unitCode: z.string().describe("Unit code (e.g., '8.4')"),
-  rampUpId: z.string().describe("Ramp-up identifier (e.g., '4.RU1')"),
-  rampUpName: z.string().optional().describe("Ramp-up name"),
-  podsieAssignmentId: z.string().optional().describe("Podsie assignment ID"),
+export const PodsieActivityTypeSchema = z.enum([
+  'sidekick',      // Podsie Sidekick lesson activities (warm-up, activities, cool-down)
+  'mastery-check', // Mastery/summative assessment
+  'ramp-up',       // Ramp-up/prerequisite practice
+]).describe("Type of Podsie activity");
 
-  questions: z.array(RampUpQuestionSchema).default([]).describe("Per-question completion status"),
-  totalQuestions: z.number().int().default(0).describe("Total questions in ramp-up"),
+export type PodsieActivityType = z.infer<typeof PodsieActivityTypeSchema>;
+
+/**
+ * Progress on a single Podsie assignment for a lesson
+ *
+ * NEW STRUCTURE (prevents duplicates):
+ * - Primary keys: scopeAndSequenceId + podsieAssignmentId
+ * - Each unique Podsie assignment appears only once
+ * - Multiple activities for same lesson have different podsieAssignmentIds
+ */
+export const PodsieProgressSchema = z.object({
+  // =====================================
+  // PRIMARY KEYS
+  // =====================================
+
+  scopeAndSequenceId: z.string().describe("MongoDB ObjectId reference to scope-and-sequence document - provides unambiguous link to exact lesson"),
+  podsieAssignmentId: z.string().describe("Podsie assignment ID - unique identifier for this specific activity"),
+
+  // =====================================
+  // DENORMALIZED FIELDS (from scope-and-sequence)
+  // =====================================
+
+  unitCode: z.string().describe("Denormalized: Unit code (e.g., '8.4')"),
+  rampUpId: z.string().describe("Denormalized: Ramp-up identifier (e.g., '4.RU1')"),
+  rampUpName: z.string().optional().describe("Denormalized: Ramp-up name for display"),
+
+  // =====================================
+  // ACTIVITY TYPE
+  // =====================================
+
+  activityType: PodsieActivityTypeSchema.optional().describe("Type of Podsie activity"),
+
+  // =====================================
+  // PROGRESS DATA
+  // =====================================
+
+  questions: z.array(PodsieQuestionSchema).default([]).describe("Per-question completion status"),
+  totalQuestions: z.number().int().default(0).describe("Total questions in this assignment"),
   completedCount: z.number().int().default(0).describe("Number of questions completed"),
   percentComplete: z.number().default(0).describe("Completion percentage"),
   isFullyComplete: z.boolean().default(false).describe("Whether all questions completed"),
@@ -138,8 +174,8 @@ export const StudentFieldsSchema = z.object({
   // Zearn lesson completions
   zearnLessons: z.array(ZearnLessonCompletionSchema).default([]).describe("Array of completed Zearn lessons with dates"),
 
-  // Ramp-up progress tracking
-  rampUpProgress: z.array(RampUpProgressSchema).default([]).describe("Array of ramp-up assignment progress"),
+  // Podsie progress tracking (all activity types: sidekick, mastery-check, ramp-up)
+  podsieProgress: z.array(PodsieProgressSchema).default([]).describe("Array of Podsie assignment progress across all activity types"),
 });
 
 /**
@@ -160,10 +196,16 @@ export type StudentActivity = z.infer<typeof StudentActivitySchema>;
 export type SkillAttempt = z.infer<typeof SkillAttemptSchema>;
 export type SkillPerformance = z.infer<typeof SkillPerformanceSchema>;
 export type ZearnLessonCompletion = z.infer<typeof ZearnLessonCompletionSchema>;
-export type RampUpQuestion = z.infer<typeof RampUpQuestionSchema>;
-export type RampUpProgress = z.infer<typeof RampUpProgressSchema>;
+export type PodsieQuestion = z.infer<typeof PodsieQuestionSchema>;
+export type PodsieProgress = z.infer<typeof PodsieProgressSchema>;
 export type Student = z.infer<typeof StudentZodSchema>;
 export type StudentInput = z.infer<typeof StudentInputZodSchema>;
+
+// Legacy type aliases for backwards compatibility
+/** @deprecated Use PodsieQuestion instead */
+export type RampUpQuestion = PodsieQuestion;
+/** @deprecated Use PodsieProgress instead */
+export type RampUpProgress = PodsieProgress;
 
 // =====================================
 // DEFAULT VALUE CREATORS
@@ -185,7 +227,7 @@ export function createStudentDefaults(overrides: Partial<StudentInput> = {}): St
     classActivities: [],
     skillPerformances: [],
     zearnLessons: [],
-    rampUpProgress: [],
+    podsieProgress: [],
     ownerIds: [],
     ...overrides
   };

@@ -48,11 +48,17 @@ interface NoAssignmentsStateProps {
 }
 
 export function NoAssignmentsState({ selectedUnit, selectedLessonSection }: NoAssignmentsStateProps) {
+  const sectionDisplay = selectedLessonSection === 'all'
+    ? 'All Lessons'
+    : selectedLessonSection.length === 1
+    ? `Section ${selectedLessonSection}`
+    : selectedLessonSection;
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12 text-center">
       <div className="text-gray-400 text-4xl mb-4">📚</div>
       <div className="text-gray-600">
-        No assignments found for Unit {selectedUnit}, Section {selectedLessonSection}
+        No assignments found for Unit {selectedUnit}, {sectionDisplay}
       </div>
       <div className="text-gray-500 text-sm mt-2">
         Add Podsie assignments in the Section Config page for this class section

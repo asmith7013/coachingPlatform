@@ -36,31 +36,47 @@ function getCompletionStyle(completedAt?: string): {
     completedDate.getDate()
   );
 
-  // Format the date for tooltip
-  const formattedDate = completedDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  // Format time in 1:45pm format
+  let hours = completedDate.getHours();
+  const minutes = completedDate.getMinutes();
+  const ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+  const timeStr = `${hours}:${minutesStr}${ampm}`;
 
-  // Determine the style based on when it was completed
+  // Determine the date label and format
+  let dateLabel: string;
+  let formattedDate: string;
+
   if (completedDateOnly.getTime() === today.getTime()) {
+    dateLabel = "today";
+    formattedDate = `${timeStr}, today`;
     return {
       iconStyle: "today",
       formattedDate,
-      dateLabel: "today",
+      dateLabel,
     };
   } else if (completedDateOnly.getTime() === yesterday.getTime()) {
+    dateLabel = "yesterday";
+    formattedDate = `${timeStr}, yesterday`;
     return {
       iconStyle: "yesterday",
       formattedDate,
-      dateLabel: "yesterday",
+      dateLabel,
     };
   } else {
+    // Format date in 4/5 format (M/D)
+    const month = completedDate.getMonth() + 1;
+    const day = completedDate.getDate();
+    const dateStr = `${month}/${day}`;
+
+    dateLabel = "prior";
+    formattedDate = `${timeStr}, ${dateStr}`;
     return {
       iconStyle: "prior",
       formattedDate,
-      dateLabel: "prior",
+      dateLabel,
     };
   }
 }
@@ -129,7 +145,7 @@ export function CompletionCheckmark({
   // Determine tooltip text
   const tooltipText = title || (
     completionInfo.formattedDate
-      ? `Completed on ${completionInfo.formattedDate}`
+      ? `Completed: ${completionInfo.formattedDate}`
       : "Completed"
   );
 

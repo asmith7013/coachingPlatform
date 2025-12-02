@@ -45,6 +45,19 @@ export const StandardContextZod = z.enum(["current", "buildingOn", "buildingTowa
 export type StandardContext = z.infer<typeof StandardContextZod>;
 
 /**
+ * Lesson type enum - categorizes lessons by their instructional purpose
+ */
+export const LessonTypeZod = z.enum([
+  "lesson",           // Regular instructional lesson
+  "ramp-up",         // Prerequisite skill review/ramp-up activity
+  "unit-assessment", // End-of-unit assessment
+]);
+export type LessonType = z.infer<typeof LessonTypeZod>;
+
+// Array of lesson type options for UI dropdowns
+export const LESSON_TYPE_OPTIONS = LessonTypeZod.options;
+
+/**
  * Standard schema - represents a single educational standard
  */
 export const StandardZod = z.object({
@@ -61,7 +74,9 @@ export const ScopeAndSequenceFieldsSchema = z.object({
   unitLessonId: z.string().describe("Combined unit.lesson identifier (e.g., '3.15' or '3.RU1' for ramp-ups)"),
   unitNumber: z.number().int().positive().describe("Unit number"),
   lessonNumber: z.number().int().describe("Lesson number within the unit (0 or negative for ramp-ups)"),
-  lessonName: z.string().describe("Full lesson name"),
+  lessonName: z.string().describe("Full lesson name (includes prefix for ramp-ups/assessments, e.g., 'Ramp Up 1: Division of Fractions')"),
+  lessonType: LessonTypeZod.optional().describe("Lesson type: lesson (regular), ramp-up, or unit-assessment"),
+  lessonTitle: z.string().optional().describe("Pure lesson title without type prefix (e.g., 'Division of Fractions' extracted from 'Ramp Up 1: Division of Fractions')"),
   section: SectionZod.optional().describe("Lesson section: A, B, C, D, E, F, or Ramp Ups"),
   scopeSequenceTag: ScopeSequenceTagZod.optional().describe("Scope and sequence tag identifying which curriculum this lesson belongs to"),
   roadmapSkills: z.array(z.string()).default([]).describe("Array of roadmap skill numbers tagged to this lesson"),

@@ -204,7 +204,7 @@ export default function ScopeAndSequenceUploaderPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto p-6 max-w-7xl">
+      <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
         <div className="mb-6 flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold mb-2">Scope and Sequence Uploader</h1>

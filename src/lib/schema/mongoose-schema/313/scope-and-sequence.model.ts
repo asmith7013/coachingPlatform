@@ -25,6 +25,8 @@ const SECTION_VALUES = ["Ramp Ups", "A", "B", "C", "D", "E", "F", "Unit Assessme
 
 const STANDARD_CONTEXT_VALUES = ["current", "buildingOn", "buildingTowards"] as const;
 
+const LESSON_TYPE_VALUES = ["lesson", "ramp-up", "unit-assessment"] as const;
+
 // Standard subdocument schema
 const StandardSchema = new mongoose.Schema({
   code: { type: String, required: true },
@@ -39,6 +41,8 @@ const scopeAndSequenceFields = {
   unitNumber: { type: Number, required: true, index: true },
   lessonNumber: { type: Number, required: true, index: true },
   lessonName: { type: String, required: true },
+  lessonType: { type: String, required: false, enum: LESSON_TYPE_VALUES, index: true },
+  lessonTitle: { type: String, required: false },
   section: { type: String, required: false, enum: SECTION_VALUES, index: true },
   scopeSequenceTag: {
     type: String,

@@ -52,18 +52,31 @@ const zearnLessonCompletionSchema = new mongoose.Schema({
   completionDate: { type: String, required: true }
 }, { _id: false });
 
-const rampUpQuestionSchema = new mongoose.Schema({
+const podsieQuestionSchema = new mongoose.Schema({
   questionNumber: { type: Number, required: true },
   completed: { type: Boolean, default: false },
   completedAt: { type: String, required: false }
 }, { _id: false });
 
-const rampUpProgressSchema = new mongoose.Schema({
+const podsieProgressSchema = new mongoose.Schema({
+  // Primary keys (prevents duplicates)
+  scopeAndSequenceId: { type: String, required: true },
+  podsieAssignmentId: { type: String, required: true },
+
+  // Denormalized fields (from scope-and-sequence)
   unitCode: { type: String, required: true },
   rampUpId: { type: String, required: true },
   rampUpName: { type: String, required: false },
-  podsieAssignmentId: { type: String, required: false },
-  questions: { type: [rampUpQuestionSchema], default: [] },
+
+  // Activity type
+  activityType: {
+    type: String,
+    required: false,
+    enum: ['sidekick', 'mastery-check', 'ramp-up']
+  },
+
+  // Progress data
+  questions: { type: [podsieQuestionSchema], default: [] },
   totalQuestions: { type: Number, default: 0 },
   completedCount: { type: Number, default: 0 },
   percentComplete: { type: Number, default: 0 },
@@ -92,7 +105,7 @@ const studentSchemaFields = {
   skillPerformances: { type: [skillPerformanceSchema], default: [] },
   lastAssessmentDate: { type: String, required: false },
   zearnLessons: { type: [zearnLessonCompletionSchema], default: [] },
-  rampUpProgress: { type: [rampUpProgressSchema], default: [] },
+  podsieProgress: { type: [podsieProgressSchema], default: [] },
   ...standardDocumentFields
 };
 

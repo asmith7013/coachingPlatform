@@ -1,7 +1,7 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
-import { SCMNav } from './components/SCMNav';
+import { SCMNav } from './SCMNav';
 
 export const metadata: Metadata = {
   title: 'SCM',
@@ -26,11 +26,11 @@ export default async function SCMLayout({
 
   if (isDevelopment) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="container mx-auto max-w-7xl">
-          <SCMNav />
+      <div className="min-h-screen bg-gray-50">
+        <SCMNav />
+        <div className="p-6">
+          {children}
         </div>
-        {children}
       </div>
     );
   }
@@ -76,11 +76,11 @@ export default async function SCMLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="container mx-auto max-w-7xl">
-        <SCMNav />
+    <div className="min-h-screen bg-gray-50">
+      <SCMNav />
+      <div className="p-6">
+        {children}
       </div>
-      {children}
     </div>
   );
 }

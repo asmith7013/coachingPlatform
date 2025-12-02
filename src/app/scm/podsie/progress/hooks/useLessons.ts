@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { fetchRampUpsByUnit } from "@/app/actions/313/scope-and-sequence";
 import { SECTION_OPTIONS } from "@zod-schema/313/scope-and-sequence";
-import { PodsieAssignment } from "@zod-schema/313/section-config";
+import { AssignmentContent } from "@zod-schema/313/section-config";
 import { LessonConfig } from "../types";
 
 export function useLessons(
@@ -9,7 +9,7 @@ export function useLessons(
   selectedSection: string,
   selectedUnit: number | null,
   selectedLessonSection: string,
-  sectionConfigAssignments: PodsieAssignment[]
+  sectionConfigAssignments: AssignmentContent[]
 ) {
   const [lessons, setLessons] = useState<LessonConfig[]>([]);
   const [sectionOptions, setSectionOptions] = useState<Array<{
@@ -88,43 +88,77 @@ export function useLessons(
           };
         });
 
-        setSectionOptions(sectionOpts);
+        // Add "All" option at the end
+        const totalLessonsCount = lessonsWithAssignments.length;
+        const allOption = {
+          id: 'all',
+          name: 'All',
+          count: totalLessonsCount,
+          inStock: totalLessonsCount > 0,
+        };
 
-        // Filter lessons by selected section if one is selected
-        const filteredLessons = selectedLessonSection
+        setSectionOptions([...sectionOpts, allOption]);
+
+        // Filter lessons by selected section if one is selected (but not "all")
+        const filteredLessons = selectedLessonSection && selectedLessonSection !== 'all'
           ? result.data.filter(lesson => lesson.section === selectedLessonSection)
           : result.data;
 
         // Build LessonConfig from ALL section-config assignments that match this unit
-        // We match by unitLessonId only, then create entries for each assignment type
+        // We match by scopeAndSequenceId (preferred) or unitLessonId+lessonName (fallback)
         const lessonConfigs: LessonConfig[] = [];
 
-        // Get all assignments for lessons in the filtered scope-and-sequence results
-        const relevantUnitLessonIds = new Set(filteredLessons.map(l => l.unitLessonId));
+        // Create a Set of scopeAndSequenceIds from filtered lessons for exact matching
+        const relevantScopeAndSequenceIds = new Set(
+          filteredLessons.map(l => (l as { _id?: string })._id).filter(Boolean)
+        );
+
+        // Also create a map of unitLessonId+lessonName as fallback for assignments without scopeAndSequenceId
+        const relevantLessonKeys = new Set(
+          filteredLessons.map(l => `${l.unitLessonId}|${l.lessonName}`)
+        );
 
         sectionConfigAssignments
-          .filter(assignment => {
-            // Match by unitLessonId
-            if (!relevantUnitLessonIds.has(assignment.unitLessonId)) return false;
+          .filter(assignmentContent => {
+            // First, try to match by scopeAndSequenceId (unambiguous, preferred)
+            const scopeAndSeqId = (assignmentContent as AssignmentContent & { scopeAndSequenceId?: string }).scopeAndSequenceId;
+            if (scopeAndSeqId && relevantScopeAndSequenceIds.has(scopeAndSeqId)) {
+              return true;
+            }
+
+            // Fallback: Match by unitLessonId AND lessonName (to avoid matching wrong lessons with same ID)
+            const lessonKey = `${assignmentContent.unitLessonId}|${assignmentContent.lessonName}`;
+            if (!relevantLessonKeys.has(lessonKey)) return false;
 
             // Also filter by scopeSequenceTag to ensure we only show assignments for the current scope
-            const assignmentScopeTag = (assignment as PodsieAssignment & { scopeSequenceTag?: string }).scopeSequenceTag;
+            const assignmentScopeTag = (assignmentContent as AssignmentContent & { scopeSequenceTag?: string }).scopeSequenceTag;
             return assignmentScopeTag === actualScopeTag;
           })
-          .forEach(assignment => {
-            // Find the corresponding scope-and-sequence lesson (just for section metadata)
-            const scopeLesson = filteredLessons.find(l => l.unitLessonId === assignment.unitLessonId);
+          .forEach(assignmentContent => {
+            // Find matching scope-and-sequence lesson to get lessonType and lessonTitle
+            const matchingLesson = filteredLessons.find(l =>
+              l.unitLessonId === assignmentContent.unitLessonId &&
+              l.lessonName === assignmentContent.lessonName
+            );
 
-            lessonConfigs.push({
-              unitLessonId: assignment.unitLessonId,
-              lessonName: assignment.lessonName,
-              grade: scopeSequenceTag.replace("Grade ", "").replace("Algebra 1", "8"),
-              podsieAssignmentId: assignment.podsieAssignmentId,
-              totalQuestions: assignment.totalQuestions || 10,
-              section: scopeLesson?.section,
-              unitNumber: selectedUnit,
-              assignmentType: assignment.assignmentType || 'mastery-check',
-              hasZearnLesson: assignment.hasZearnLesson || false
+            // Each assignmentContent can have multiple podsieActivities
+            // Create a LessonConfig for each activity
+            assignmentContent.podsieActivities?.forEach(activity => {
+              lessonConfigs.push({
+                scopeAndSequenceId: assignmentContent.scopeAndSequenceId,
+                unitLessonId: assignmentContent.unitLessonId,
+                lessonName: assignmentContent.lessonName,
+                lessonType: matchingLesson?.lessonType as 'lesson' | 'ramp-up' | 'unit-assessment' | undefined,
+                lessonTitle: matchingLesson?.lessonTitle,
+                grade: scopeSequenceTag.replace("Grade ", "").replace("Algebra 1", "8"),
+                podsieAssignmentId: activity.podsieAssignmentId,
+                totalQuestions: activity.totalQuestions || 10,
+                podsieQuestionMap: activity.podsieQuestionMap,
+                section: assignmentContent.section,
+                unitNumber: selectedUnit,
+                activityType: activity.activityType || 'mastery-check',
+                hasZearnActivity: assignmentContent.zearnActivity?.active || false
+              });
             });
           });
 
