@@ -16,6 +16,22 @@ const nextConfig: NextConfig = {
       'images.clerk.com'
     ],
   },
+  async redirects() {
+    return [
+      // Redirect all /roadmaps/* paths to /scm/roadmaps/*
+      {
+        source: '/roadmaps/:path*',
+        destination: '/scm/roadmaps/:path*',
+        permanent: true,
+      },
+      // Redirect all /incentives/* paths to /scm/incentives/*
+      {
+        source: '/incentives/:path*',
+        destination: '/scm/incentives/:path*',
+        permanent: true,
+      },
+    ];
+  },
   experimental: {
     // Optimize server memory usage
     serverMinification: true,
