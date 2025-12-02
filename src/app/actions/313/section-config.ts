@@ -126,6 +126,7 @@ export async function upsertSectionConfig(data: {
   teacher?: string;
   gradeLevel: string;
   scopeSequenceTag?: string;
+  groupId?: string;
   active?: boolean;
   podsieAssignments?: PodsieAssignment[];
   notes?: string;

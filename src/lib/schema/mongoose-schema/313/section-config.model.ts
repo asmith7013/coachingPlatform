@@ -43,6 +43,8 @@ const sectionConfigFields = {
     index: true
   },
 
+  groupId: { type: String, required: false },
+
   active: { type: Boolean, default: true, index: true },
 
   // Podsie assignment configurations

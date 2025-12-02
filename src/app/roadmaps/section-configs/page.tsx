@@ -19,12 +19,14 @@ import type { ScopeAndSequence } from "@zod-schema/313/scope-and-sequence";
 import type { PodsieAssignment } from "@zod-schema/313/section-config";
 import { SECTION_OPTIONS } from "@zod-schema/313/scope-and-sequence";
 import { ManualCreateAssignmentModal } from "./components/ManualCreateAssignmentModal";
+import { SectionRadioGroup } from "@/components/core/inputs/SectionRadioGroup";
 
 interface AssignmentMatch {
   podsieAssignment: PodsieAssignmentInfo;
   matchedLesson: ScopeAndSequence | null;
   isCreatingNew: boolean;
   assignmentType: 'lesson' | 'mastery-check';
+  totalQuestions?: number; // Allow override of totalQuestions
   newLessonData?: {
     unitNumber: number;
     section: string;
@@ -102,8 +104,10 @@ export default function SectionConfigsPage() {
 
       try {
         const result = await getSectionConfig(selectedSchool, selectedSection);
-        if (result.success && result.data && result.data.podsieAssignments) {
-          setExistingAssignments(result.data.podsieAssignments as unknown as PodsieAssignment[]);
+        if (result.success && result.data) {
+          if (result.data.podsieAssignments) {
+            setExistingAssignments(result.data.podsieAssignments as unknown as PodsieAssignment[]);
+          }
         } else {
           setExistingAssignments([]);
         }
@@ -415,7 +419,7 @@ export default function SectionConfigsPage() {
             questionNumber: idx + 1,
             questionId: String(questionId)
           })),
-          totalQuestions: match.podsieAssignment.totalQuestions,
+          totalQuestions: match.totalQuestions ?? match.podsieAssignment.totalQuestions,
           active: true
         };
 
@@ -639,44 +643,43 @@ export default function SectionConfigsPage() {
                       </div>
                     </div>
 
-                  {/* Assignment Type Toggle */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Assignment Type
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => {
+                  {/* Assignment Type and Total Questions */}
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <SectionRadioGroup
+                        label="Assignment Type"
+                        options={[
+                          { id: 'mastery-check', name: 'Mastery Check' },
+                          { id: 'lesson', name: 'Lesson' }
+                        ]}
+                        value={match.assignmentType}
+                        onChange={(value) => {
                           setMatches(prev => prev.map(m =>
                             m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
-                              ? { ...m, assignmentType: 'mastery-check' }
+                              ? { ...m, assignmentType: value as 'lesson' | 'mastery-check' }
                               : m
                           ));
                         }}
-                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                          match.assignmentType === 'mastery-check'
-                            ? 'bg-green-600 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                      >
-                        Mastery Check
-                      </button>
-                      <button
-                        onClick={() => {
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Total Questions
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={match.totalQuestions ?? match.podsieAssignment.totalQuestions}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || undefined;
                           setMatches(prev => prev.map(m =>
                             m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
-                              ? { ...m, assignmentType: 'lesson' }
+                              ? { ...m, totalQuestions: value }
                               : m
                           ));
                         }}
-                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                          match.assignmentType === 'lesson'
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                      >
-                        Lesson
-                      </button>
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      />
                     </div>
                   </div>
 

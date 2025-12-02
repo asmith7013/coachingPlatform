@@ -98,6 +98,7 @@ interface LessonConfig {
   grade: string;
   podsieAssignmentId: string;
   totalQuestions: number;
+  podsieQuestionMap?: Array<{ questionNumber: number; questionId: string }>;
   section?: string;
   unitNumber: number;
   assignmentType?: 'lesson' | 'mastery-check';
@@ -808,7 +809,7 @@ export default function RampUpProgressPage() {
                           No lessons found for Unit {selectedUnit}
                         </div>
                         <div className="text-sm text-blue-700">
-                          This unit doesn't have any assigned lessons yet. Try selecting a different unit or check the section configuration.
+                          This unit doesn&apos;t have any assigned lessons yet. Try selecting a different unit or check the section configuration.
                         </div>
                       </div>
                     </div>

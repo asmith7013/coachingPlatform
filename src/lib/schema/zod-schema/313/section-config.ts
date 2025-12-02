@@ -71,6 +71,8 @@ export const SectionConfigFieldsSchema = z.object({
   gradeLevel: z.string().describe("Grade level (e.g., '6', '7', '8')"),
   scopeSequenceTag: ScopeSequenceTagZod.optional().describe("Scope and sequence tag (e.g., 'Grade 8', 'Algebra 1')"),
 
+  groupId: z.string().optional().describe("Podsie group ID for this section (used in Podsie URLs)"),
+
   active: z.boolean().default(true).describe("Whether this section is currently active"),
 
   // =====================================

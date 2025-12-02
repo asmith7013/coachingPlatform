@@ -36,6 +36,7 @@ interface LessonProgressCardProps {
     totalStudents: number;
     syncedStudents: number;
   };
+  onClick?: () => void;
 }
 
 export function LessonProgressCard({
@@ -43,6 +44,7 @@ export function LessonProgressCard({
   masteryCheck,
   progressData,
   calculateSummaryStats,
+  onClick,
 }: LessonProgressCardProps) {
   // Calculate lesson progress
   const lessonProgress = useMemo(() => {
@@ -69,7 +71,10 @@ export function LessonProgressCard({
   }, [progressData, masteryCheck, calculateSummaryStats]);
 
   return (
-    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg border border-indigo-200 p-5 mb-4 shadow-sm flex flex-col h-full">
+    <div
+      onClick={onClick}
+      className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg border border-indigo-200 p-5 mb-4 shadow-sm flex flex-col h-full cursor-pointer hover:shadow-md hover:border-indigo-300 transition-all"
+    >
       <h3 className="text-base font-semibold text-gray-900 mb-3">
         {lesson.lessonName}
       </h3>
