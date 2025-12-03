@@ -29,42 +29,41 @@ Uses Font Awesome icons, balance container with two sides, engaging scenario ("R
 
 ### Pattern 3: Ask Slide (with Interactive CFU Box)
 
-**IMPORTANT:** CFU boxes and answer reveals must be **toggleable** to prevent visual overlap. This pattern uses the **CSS checkbox hack** which is the most reliable method for React's `dangerouslySetInnerHTML`.
+**IMPORTANT:** CFU boxes and answer reveals must be **toggleable** to prevent visual overlap. This pattern uses **inline onclick handlers** which is the most reliable method for React's `dangerouslySetInnerHTML`.
 
-**Why Checkbox Hack?**
-- Pure HTML/CSS solution - no JavaScript required
+**Why Inline Onclick?**
 - Works reliably with React's `dangerouslySetInnerHTML`
-- `onclick` attributes and `addEventListener` don't work in dangerouslySetInnerHTML
-- Checkbox hack is battle-tested and works across all browsers
+- Simpler than checkbox hack (no hidden inputs or labels needed)
+- Direct JavaScript manipulation of element visibility and transform
+- Battle-tested across multiple presentations
+
+**Complete Template Available:**
+See `.claude/skills/create-worked-example-sg/templates/cfu-toggle-snippet.html` for the full reusable template.
 
 ```html
-<!-- CSS-only toggle using checkbox hack -->
-<input type="checkbox" id="cfu-toggle" style="display: none;">
-
 <div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
 
-    <!-- Main content (with extra bottom padding to avoid overlap) -->
+    <!-- YOUR SLIDE CONTENT HERE -->
     <h2>STEP 1: SIMPLIFY</h2>
     <!-- Your visual content here -->
 
 </div>
 
-<!-- Toggle label acts as button - Pure HTML/CSS solution -->
-<label for="cfu-toggle" id="toggle-hint" style="position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
+<!-- Toggle button -->
+<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('cfu-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
     ↓ Show Question
-</label>
+</button>
 
-    <!-- CFU Box - Initially hidden, slides up from bottom -->
-    <div id="cfu-box" style="position: absolute; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
-        <div style="background: #f59e0b; border-top: 4px solid #fbbf24; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);">
-            <span style="font-size: 1.25rem;">❓</span>
-            <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
-                Check for Understanding: Why did I...?
-            </span>
-            <button onclick="window.toggleCFU && window.toggleCFU()" style="float: right; background: rgba(0,0,0,0.2); border: none; color: #000; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;">
-                Hide ↑
-            </button>
-        </div>
+<!-- CFU Box at bottom -->
+<div id="cfu-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
+    <div style="background: #f59e0b; border-top: 4px solid #fbbf24; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
+        <button onclick="document.getElementById('cfu-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
+            ×
+        </button>
+        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">❓ CHECK FOR UNDERSTANDING</div>
+        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
+            [YOUR QUESTION HERE]
+        </span>
     </div>
 </div>
 
@@ -73,78 +72,80 @@ Uses Font Awesome icons, balance container with two sides, engaging scenario ("R
     0%, 100% { opacity: 1; }
     50% { opacity: 0.6; }
 }
+
 #toggle-hint:hover {
     background: rgba(148, 163, 184, 0.2);
     transform: translateX(-50%) scale(1.05);
 }
 </style>
-
-<script>
-// Wait for DOM to be ready (important for React's dangerouslySetInnerHTML)
-setTimeout(function() {
-    let cfuVisible = false;
-    const cfuBox = document.getElementById('cfu-box');
-    const hint = document.getElementById('toggle-hint');
-
-    if (!cfuBox || !hint) return;
-
-    window.toggleCFU = function() {
-        cfuVisible = !cfuVisible;
-        if (cfuVisible) {
-            cfuBox.style.transform = 'translateY(0)';
-            if (hint) hint.style.display = 'none';
-        } else {
-            cfuBox.style.transform = 'translateY(100%)';
-            if (hint) hint.style.display = 'block';
-        }
-    };
-
-    // Add click handler directly (onclick attribute doesn't work with dangerouslySetInnerHTML)
-    hint.addEventListener('click', function() {
-        window.toggleCFU();
-    });
-
-    // Also listen for down arrow key
-    function handleKeyDown(e) {
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            e.stopPropagation();
-            window.toggleCFU();
-        }
-    }
-
 ```
 
 **Key Points:**
-- Hidden checkbox (`<input type="checkbox" id="cfu-toggle" style="display: none;">`) goes **outside** the slide container
-- Use `<label for="cfu-toggle">` instead of `<button>` - labels can control checkboxes
-- CSS sibling selector (`#cfu-toggle:checked ~ #cfu-box`) shows box when checked
+- Toggle button at `bottom: 20px` (low enough to avoid content overlap)
+- Use inline `onclick` handlers with `document.getElementById()` to manipulate elements
+- Close button (×) positioned in top-right corner for visibility
+- Badge-style title with `background: rgba(0,0,0,0.3)` and rounded corners
 - Use `position: fixed` for toggle button and CFU box (not `absolute`)
-- No JavaScript needed - pure HTML/CSS solution
-- **This is the ONLY reliable method** for interactive elements with React's `dangerouslySetInnerHTML`
+- Orange background (#f59e0b) for CFU questions
+- **Inline onclick DOES work** with React's `dangerouslySetInnerHTML` despite earlier assumptions
 
 **Key Rules:**
 - Visual stays in SAME position as problem setup. Only add annotations (X marks, highlights).
-- CFU/Answer box is hidden by default and toggles by clicking the "Show Question" label
-  - Pressing down arrow key (↓)
-  - Clicking "Hide" button inside the box
+- CFU box is hidden by default (`transform: translateY(100%)`)
+- Clicking "Show Question" hides button and slides box up
+- Clicking × button hides box and shows button again
 - Use solid background (#f59e0b for questions, #4ade80 for answers) for readability
-- Extra bottom padding (120px) ensures content doesn't get hidden
-- Use `window.toggleCFU` as a global function for onclick handlers
-- Use event capture (`true` parameter) to ensure keyboard events work
+- Extra bottom padding (120px) ensures content doesn't get hidden by toggle button
 
-### Pattern 4: Reveal Slide
+### Pattern 4: Reveal Slide (Answer Box)
 
 IDENTICAL visual to Ask slide, but change:
 - Button text: "↓ Show Answer" instead of "↓ Show Question"
+- Box ID: `answer-box` instead of `cfu-box`
 - Box background: #4ade80 (green) instead of #f59e0b (orange)
-- Icon: ✅ instead of ❓
+- Border: #22c55e instead of #fbbf24
+- Badge icon: ✅ ANSWER instead of ❓ CHECK FOR UNDERSTANDING
 - Content: Answer text instead of question text
 
+**Complete Template Available:**
+See `.claude/skills/create-worked-example-sg/templates/answer-toggle-snippet.html` for the full reusable template.
+
 ```html
-<div style="color: #4ade80; font-size: 32px; text-align: center;">
-    To remove the duplicates! By removing the crystal on the right, I get closer to isolating the unknown variables.
+<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+
+    <!-- YOUR SLIDE CONTENT HERE -->
+
 </div>
+
+<!-- Toggle button -->
+<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('answer-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
+    ↓ Show Answer
+</button>
+
+<!-- Answer Box at bottom -->
+<div id="answer-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
+    <div style="background: #4ade80; border-top: 4px solid #22c55e; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
+        <button onclick="document.getElementById('answer-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
+            ×
+        </button>
+        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">✅ ANSWER</div>
+        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
+            [YOUR ANSWER HERE]
+        </span>
+    </div>
+</div>
+
+<style>
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+#toggle-hint:hover {
+    background: rgba(148, 163, 184, 0.2);
+    transform: translateX(-50%) scale(1.05);
+}
+</style>
 ```
 
 ### Pattern 5: Practice Problem (Zero Scaffolding)
