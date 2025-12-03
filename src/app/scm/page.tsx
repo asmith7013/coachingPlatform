@@ -12,7 +12,8 @@ import {
   GiftIcon,
   DocumentPlusIcon,
   TableCellsIcon,
-  ArrowTrendingUpIcon
+  ArrowTrendingUpIcon,
+  PresentationChartBarIcon
 } from '@heroicons/react/24/outline';
 
 export default function SCMHomePage() {
@@ -92,6 +93,20 @@ export default function SCMHomePage() {
           href: "/scm/incentives/table",
           Icon: DocumentTextIcon,
           description: "View and edit all activity records."
+        }
+      ]
+    },
+    {
+      title: "Worked Examples",
+      Icon: PresentationChartBarIcon,
+      iconType: "heroicon" as const,
+      description: "Browse and view worked example slide decks",
+      pages: [
+        {
+          title: "All Worked Examples",
+          href: "/scm/workedExamples",
+          Icon: PresentationChartBarIcon,
+          description: "View all scaffolded guidance slide decks."
         }
       ]
     }

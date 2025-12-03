@@ -687,36 +687,6 @@
 │   │   │           └── page.tsx
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
-│   │   ├── presentations
-│   │   │   ├── [slug]
-│   │   │   │   └── page.tsx
-│   │   │   ├── components
-│   │   │   │   ├── D3ComponentRenderer.tsx
-│   │   │   │   └── DynamicGraphComponent.tsx
-│   │   │   ├── critique-linear-equations-grade8
-│   │   │   │   ├── metadata.json
-│   │   │   │   ├── slide-1.html
-│   │   │   │   ├── slide-2.html
-│   │   │   │   ├── slide-3.html
-│   │   │   │   ├── slide-4.html
-│   │   │   │   ├── slide-5.html
-│   │   │   │   ├── slide-6.html
-│   │   │   │   ├── slide-7.html
-│   │   │   │   ├── slide-8.html
-│   │   │   │   └── slide-9.html
-│   │   │   ├── page.tsx
-│   │   │   ├── slide-creation
-│   │   │   │   ├── ContextSlide.tsx
-│   │   │   │   ├── PracticeSlide.tsx
-│   │   │   │   ├── PredictionSlide.tsx
-│   │   │   │   ├── ReasoningSlide.tsx
-│   │   │   │   ├── RevealSlide.tsx
-│   │   │   │   ├── TitleSlide.tsx
-│   │   │   │   ├── components
-│   │   │   │   │   └── DataTable.tsx
-│   │   │   │   └── index.ts
-│   │   │   └── test
-│   │   │       └── page.tsx
 │   │   ├── scm
 │   │   │   ├── SCMNav.tsx
 │   │   │   ├── incentives
@@ -742,79 +712,120 @@
 │   │   │   │       ├── page.tsx
 │   │   │   │       ├── types.ts
 │   │   │   │       └── utils
-│   │   │   └── roadmaps
-│   │   │       ├── assessment-scraper
-│   │   │       │   ├── actions
-│   │   │       │   ├── components
-│   │   │       │   ├── hooks
-│   │   │       │   ├── html
-│   │   │       │   ├── lib
+│   │   │   ├── roadmaps
+│   │   │   │   ├── assessment-scraper
+│   │   │   │   │   ├── actions
+│   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
+│   │   │   │   │   ├── html
+│   │   │   │   │   ├── lib
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── components
+│   │   │   │   │   ├── AccordionItem.tsx
+│   │   │   │   │   ├── AccordionList.tsx
+│   │   │   │   │   ├── RoadmapsNav.tsx
+│   │   │   │   │   ├── SkillDetailView.tsx
+│   │   │   │   │   ├── SkillDetailWrapper.tsx
+│   │   │   │   │   └── SkillListWithProgress.tsx
+│   │   │   │   ├── history
+│   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── im-lesson-updater
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── json
+│   │   │   │   │   ├── algebra-1-8.json
+│   │   │   │   │   ├── algebra-1-combined.json
+│   │   │   │   │   ├── algebra-1.json
+│   │   │   │   │   ├── grade-6.json
+│   │   │   │   │   ├── grade-7.json
+│   │   │   │   │   └── grade-8.json
+│   │   │   │   ├── manage-configs
+│   │   │   │   │   ├── actions.ts
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── mastery-grid
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── scope-and-sequence
+│   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── scope-and-sequence-edit
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── scope-and-sequence-uploader
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── scope-and-sequence-uploader-pair
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── section-configs
+│   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── shared
+│   │   │   │   │   └── lib
+│   │   │   │   ├── skill-scraper
+│   │   │   │   │   ├── README.md
+│   │   │   │   │   ├── actions
+│   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
+│   │   │   │   │   ├── lib
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   ├── practice.html
+│   │   │   │   │   └── skill.html
+│   │   │   │   ├── skills
+│   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── student-upload
+│   │   │   │   │   ├── actions
+│   │   │   │   │   ├── components
+│   │   │   │   │   ├── lib
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── unit-scraper
+│   │   │   │   │   ├── actions
+│   │   │   │   │   ├── components
+│   │   │   │   │   ├── example.html
+│   │   │   │   │   ├── lib
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── units
+│   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── zearn
+│   │   │   │       └── page.tsx
+│   │   │   └── workedExamples
+│   │   │       ├── [slug]
 │   │   │       │   └── page.tsx
 │   │   │       ├── components
-│   │   │       │   ├── AccordionItem.tsx
-│   │   │       │   ├── AccordionList.tsx
-│   │   │       │   ├── RoadmapsNav.tsx
-│   │   │       │   ├── SkillDetailView.tsx
-│   │   │       │   ├── SkillDetailWrapper.tsx
-│   │   │       │   └── SkillListWithProgress.tsx
-│   │   │       ├── history
+│   │   │       │   ├── D3ComponentRenderer.tsx
+│   │   │       │   └── DynamicGraphComponent.tsx
+│   │   │       ├── critique-linear-equations-grade8
+│   │   │       │   ├── metadata.json
+│   │   │       │   ├── slide-1.html
+│   │   │       │   ├── slide-2.html
+│   │   │       │   ├── slide-3.html
+│   │   │       │   ├── slide-4.html
+│   │   │       │   ├── slide-5.html
+│   │   │       │   ├── slide-6.html
+│   │   │       │   ├── slide-7.html
+│   │   │       │   ├── slide-8.html
+│   │   │       │   └── slide-9.html
+│   │   │       ├── equation-solving-distribute-vs-divide-grade8
+│   │   │       │   ├── metadata.json
+│   │   │       │   ├── slide-1.html
+│   │   │       │   ├── slide-10.html
+│   │   │       │   ├── slide-2.html
+│   │   │       │   ├── slide-3.html
+│   │   │       │   ├── slide-4.html
+│   │   │       │   ├── slide-5.html
+│   │   │       │   ├── slide-6.html
+│   │   │       │   ├── slide-7.html
+│   │   │       │   ├── slide-8.html
+│   │   │       │   └── slide-9.html
+│   │   │       ├── page.tsx
+│   │   │       ├── slide-creation
+│   │   │       │   ├── ContextSlide.tsx
+│   │   │       │   ├── PracticeSlide.tsx
+│   │   │       │   ├── PredictionSlide.tsx
+│   │   │       │   ├── ReasoningSlide.tsx
+│   │   │       │   ├── RevealSlide.tsx
+│   │   │       │   ├── TitleSlide.tsx
 │   │   │       │   ├── components
-│   │   │       │   └── page.tsx
-│   │   │       ├── im-lesson-updater
-│   │   │       │   └── page.tsx
-│   │   │       ├── json
-│   │   │       │   ├── algebra-1-8.json
-│   │   │       │   ├── algebra-1-combined.json
-│   │   │       │   ├── algebra-1.json
-│   │   │       │   ├── grade-6.json
-│   │   │       │   ├── grade-7.json
-│   │   │       │   └── grade-8.json
-│   │   │       ├── manage-configs
-│   │   │       │   ├── actions.ts
-│   │   │       │   └── page.tsx
-│   │   │       ├── mastery-grid
-│   │   │       │   └── page.tsx
-│   │   │       ├── scope-and-sequence
-│   │   │       │   ├── components
-│   │   │       │   └── page.tsx
-│   │   │       ├── scope-and-sequence-edit
-│   │   │       │   └── page.tsx
-│   │   │       ├── scope-and-sequence-uploader
-│   │   │       │   └── page.tsx
-│   │   │       ├── scope-and-sequence-uploader-pair
-│   │   │       │   └── page.tsx
-│   │   │       ├── section-configs
-│   │   │       │   ├── components
-│   │   │       │   └── page.tsx
-│   │   │       ├── shared
-│   │   │       │   └── lib
-│   │   │       ├── skill-scraper
-│   │   │       │   ├── README.md
-│   │   │       │   ├── actions
-│   │   │       │   ├── components
-│   │   │       │   ├── hooks
-│   │   │       │   ├── lib
-│   │   │       │   ├── page.tsx
-│   │   │       │   ├── practice.html
-│   │   │       │   └── skill.html
-│   │   │       ├── skills
-│   │   │       │   ├── components
-│   │   │       │   └── page.tsx
-│   │   │       ├── student-upload
-│   │   │       │   ├── actions
-│   │   │       │   ├── components
-│   │   │       │   ├── lib
-│   │   │       │   └── page.tsx
-│   │   │       ├── unit-scraper
-│   │   │       │   ├── actions
-│   │   │       │   ├── components
-│   │   │       │   ├── example.html
-│   │   │       │   ├── lib
-│   │   │       │   └── page.tsx
-│   │   │       ├── units
-│   │   │       │   ├── components
-│   │   │       │   └── page.tsx
-│   │   │       └── zearn
+│   │   │       │   └── index.ts
+│   │   │       └── test
 │   │   │           └── page.tsx
 │   │   ├── setup
 │   │   │   └── page.tsx
@@ -1942,4 +1953,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-574 directories, 1369 files
+575 directories, 1379 files

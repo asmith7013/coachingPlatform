@@ -165,7 +165,7 @@ export const StudentFieldsSchema = z.object({
 
   gradeLevel: z.string().describe("Current grade level (e.g., '6'").optional(),
 //   subject: z.string().min(1).describe("Subject area"),
-  email: z.email().optional().describe("Student email address").optional(),
+  email: z.string().email().describe("Student email address"),
   active: z.boolean().default(true).describe("Whether student is currently active"),
   masteredSkills: z.array(z.string()).default([]).describe("Array of skill numbers that the student has mastered"),
   classActivities: z.array(StudentActivitySchema).default([]).describe("Array of classroom activity events"),
@@ -225,6 +225,7 @@ export function createStudentDefaults(overrides: Partial<StudentInput> = {}): St
     school: "IS313",
     section: "",
     gradeLevel: "",
+    email: "",
     active: true,
     masteredSkills: [],
     classActivities: [],

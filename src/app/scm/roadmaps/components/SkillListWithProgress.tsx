@@ -79,6 +79,7 @@ export function SkillListWithProgress({
             lastName: item.lastName as string,
             school: item.school as Student['school'],
             section: item.section as Student['section'],
+            email: (item.email as string) || '',
             active: item.active as boolean,
             roadmapSkills: item.roadmapSkills as string[],
             roadmap: item.roadmap as string,

@@ -74,7 +74,7 @@ export default function PresentationsList() {
           {decks.map((deck) => (
             <Link
               key={deck.slug}
-              href={`/presentations/${deck.slug}`}
+              href={`/scm/workedExamples/${deck.slug}`}
               className="block p-6 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="mb-4">

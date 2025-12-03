@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import {
   MapIcon,
-  GiftIcon
+  GiftIcon,
+  PresentationChartBarIcon
 } from '@heroicons/react/24/outline';
 
 type NavCategory = {
@@ -83,6 +84,13 @@ export function SCMNav() {
         { href: "/scm/incentives/form", label: "Form" },
         { href: "/scm/incentives/data", label: "Summary" },
         { href: "/scm/incentives/table", label: "Table" },
+      ],
+    },
+    {
+      label: "Worked Examples",
+      Icon: PresentationChartBarIcon,
+      items: [
+        { href: "/scm/workedExamples", label: "All Worked Examples" },
       ],
     },
   ];

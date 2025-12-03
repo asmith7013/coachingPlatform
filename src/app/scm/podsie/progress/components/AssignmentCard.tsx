@@ -3,21 +3,7 @@ import { ArrowPathIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
 import { AssignmentProgressTable } from "./AssignmentProgressTable";
-import type { LessonType } from "@/lib/utils/lesson-display";
-
-interface LessonConfig {
-  unitLessonId: string;
-  lessonName: string;
-  lessonType?: LessonType;
-  lessonTitle?: string;
-  grade: string;
-  podsieAssignmentId: string;
-  totalQuestions: number;
-  section?: string;
-  unitNumber: number;
-  activityType?: 'sidekick' | 'mastery-check';
-  hasZearnActivity?: boolean;
-}
+import type { LessonConfig } from "../types";
 
 interface RampUpQuestion {
   questionNumber: number;
@@ -71,6 +57,7 @@ export function AssignmentCard({
   const [isEditMode, setIsEditMode] = useState(false);
   const [syncingBoth, setSyncingBoth] = useState(false);
   const [showDetailedScore, setShowDetailedScore] = useState(false);
+  const [showAllQuestions, setShowAllQuestions] = useState(false);
 
   // Handler to sync both lesson and mastery check (or just lesson if no mastery check)
   const handleSyncBoth = async () => {
@@ -212,6 +199,28 @@ export function AssignmentCard({
             </p>
           </div>
           <div className="flex items-center gap-4">
+            {/* Show All Questions Toggle */}
+            <div className="bg-white border border-gray-300 rounded-lg px-3 py-2">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={showAllQuestions}
+                  onClick={() => setShowAllQuestions(!showAllQuestions)}
+                  className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${
+                    showAllQuestions ? 'bg-gray-500' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      showAllQuestions ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+                <span className="text-xs font-medium text-gray-700">Show All Questions</span>
+              </div>
+            </div>
+
             {/* Detailed Score Toggle */}
             <div className="bg-white border border-gray-300 rounded-lg px-3 py-2">
               <div className="flex items-center gap-2">
@@ -307,8 +316,10 @@ export function AssignmentCard({
           progressData={filteredProgressData}
           masteryCheckProgressData={filteredMasteryCheckData}
           totalQuestions={assignment.totalQuestions}
+          questionMap={assignment.podsieQuestionMap}
           showZearnColumn={assignment.hasZearnActivity ?? false}
           showDetailedScore={showDetailedScore}
+          showAllQuestions={showAllQuestions}
         />
       </div>
     </div>

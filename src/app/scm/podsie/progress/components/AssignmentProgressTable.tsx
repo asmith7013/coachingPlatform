@@ -25,20 +25,32 @@ interface ProgressData {
   zearnCompletionDate?: string;
 }
 
+interface QuestionMapEntry {
+  questionNumber: number;
+  questionId: string;
+  isRoot?: boolean;
+  rootQuestionId?: string;
+  variantNumber?: number;
+}
+
 interface AssignmentProgressTableProps {
   progressData: ProgressData[];
   masteryCheckProgressData?: ProgressData[];
   totalQuestions: number;
+  questionMap?: QuestionMapEntry[];
   showZearnColumn?: boolean;
   showDetailedScore?: boolean;
+  showAllQuestions?: boolean;
 }
 
 export function AssignmentProgressTable({
   progressData,
   masteryCheckProgressData = [],
   totalQuestions,
+  questionMap,
   showZearnColumn = false,
   showDetailedScore = false,
+  showAllQuestions = false,
 }: AssignmentProgressTableProps) {
   // Check if we have actual lesson data (students with synced lesson progress)
   const hasLessonData = progressData.some(p => p.totalQuestions > 0);
@@ -48,23 +60,50 @@ export function AssignmentProgressTable({
   const showQuestionColumns = hasLessonData && totalQuestions > 0;
 
   // Generate question column headers
+  // If questionMap is provided and showAllQuestions is true, use all questions (roots + variants)
+  // Otherwise, show only root questions
   const questionColumns = useMemo(
-    () =>
-      showQuestionColumns
-        ? Array.from({ length: totalQuestions }, (_, i) => i + 1)
-        : [],
-    [showQuestionColumns, totalQuestions]
+    () => {
+      if (!showQuestionColumns) return [];
+
+      if (questionMap && questionMap.length > 0) {
+        // Filter based on showAllQuestions toggle
+        const filteredQuestions = showAllQuestions
+          ? questionMap // Show all questions (roots + variants)
+          : questionMap.filter(q => q.isRoot); // Show only root questions
+
+        return filteredQuestions.map(q => ({
+          questionNumber: q.questionNumber,
+          questionId: q.questionId,
+          isRoot: q.isRoot,
+          variantNumber: q.variantNumber,
+          // Display label: "Q2" for root, "Q2-V1" for variant 1, etc.
+          label: q.isRoot || q.variantNumber === undefined
+            ? `Q${q.questionNumber}`
+            : `Q${q.questionNumber}-V${q.variantNumber}`
+        }));
+      }
+
+      // Fallback: show only root questions
+      return Array.from({ length: totalQuestions }, (_, i) => ({
+        questionNumber: i + 1,
+        questionId: String(i + 1),
+        isRoot: true,
+        label: `Q${i + 1}`
+      }));
+    },
+    [showQuestionColumns, totalQuestions, questionMap, showAllQuestions]
   );
 
   // Calculate per-question completion rates (only for synced students)
   const questionStats = useMemo(() => {
     const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
-    return questionColumns.map((qNum) => {
+    return questionColumns.map((col) => {
       const completed = syncedStudents.filter((p) =>
-        p.questions.find((q) => q.questionNumber === qNum && q.completed)
+        p.questions.find((q) => q.questionNumber === col.questionNumber && q.completed)
       ).length;
       return {
-        questionNumber: qNum,
+        ...col,
         completed,
         total: syncedStudents.length,
         percent:
@@ -98,12 +137,12 @@ export function AssignmentProgressTable({
                 Zearn
               </th>
             )}
-            {questionColumns.map((qNum) => (
+            {questionColumns.map((col, idx) => (
               <th
-                key={qNum}
+                key={`${col.questionId}-${idx}`}
                 className="px-3 py-3 text-center text-sm font-semibold text-gray-700 min-w-[50px]"
               >
-                Q{qNum}
+                {col.label}
               </th>
             ))}
             {masteryCheckProgressData.length > 0 && (
@@ -129,9 +168,9 @@ export function AssignmentProgressTable({
                 })()}%
               </td>
             )}
-            {questionStats.map((stat) => (
+            {questionStats.map((stat, idx) => (
               <td
-                key={stat.questionNumber}
+                key={`${stat.questionId}-${idx}`}
                 className="px-3 py-2 text-center text-xs font-medium text-blue-700"
               >
                 {stat.percent}%
@@ -213,17 +252,17 @@ export function AssignmentProgressTable({
                 )}
 
                 {/* Question Checkmarks or Detailed Scores */}
-                {questionColumns.map((qNum) => {
+                {questionColumns.map((col, idx) => {
                   if (!hasSynced) {
                     return (
-                      <td key={qNum} className="px-3 py-3 text-center">
+                      <td key={`${col.questionId}-${idx}`} className="px-3 py-3 text-center">
                         <span className="text-gray-300">—</span>
                       </td>
                     );
                   }
 
                   const question = progress.questions.find(
-                    (q) => q.questionNumber === qNum
+                    (q) => q.questionNumber === col.questionNumber
                   );
                   const isCompleted = question?.completed ?? false;
 
@@ -233,7 +272,7 @@ export function AssignmentProgressTable({
                     const explanationScore = question?.explanationScore;
 
                     return (
-                      <td key={qNum} className="px-3 py-3 text-center">
+                      <td key={`${col.questionId}-${idx}`} className="px-3 py-3 text-center">
                         {correctScore !== undefined || explanationScore !== undefined ? (
                           <div className="flex flex-col items-center gap-0.5">
                             {/* Correct/Incorrect Icon */}
@@ -274,7 +313,7 @@ export function AssignmentProgressTable({
 
                   // Regular Checkmark Mode
                   return (
-                    <td key={qNum} className="px-3 py-3 text-center">
+                    <td key={`${col.questionId}-${idx}`} className="px-3 py-3 text-center">
                       <CompletionCheckmark
                         completed={isCompleted}
                         completedAt={question?.completedAt}
