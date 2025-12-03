@@ -164,6 +164,40 @@ export function useLessons(
             });
           });
 
+        // Sort lessons by unitLessonId to ensure proper order
+        // Extract numeric parts for proper sorting (e.g., "3.RU1" -> 1, "3.15" -> 15)
+        lessonConfigs.sort((a, b) => {
+          const aId = a.unitLessonId;
+          const bId = b.unitLessonId;
+
+          // Extract the numeric part after the dot
+          const aMatch = aId.match(/\.(.+)$/);
+          const bMatch = bId.match(/\.(.+)$/);
+
+          if (!aMatch || !bMatch) return 0;
+
+          const aPart = aMatch[1];
+          const bPart = bMatch[1];
+
+          // Handle ramp-ups (e.g., "RU1", "RU2", "RU3")
+          if (aPart.startsWith('RU') && bPart.startsWith('RU')) {
+            const aNum = parseInt(aPart.substring(2));
+            const bNum = parseInt(bPart.substring(2));
+            return aNum - bNum;
+          }
+
+          // Handle regular lessons (numeric)
+          const aNum = parseFloat(aPart);
+          const bNum = parseFloat(bPart);
+
+          if (!isNaN(aNum) && !isNaN(bNum)) {
+            return aNum - bNum;
+          }
+
+          // Fallback to string comparison
+          return aPart.localeCompare(bPart);
+        });
+
         setLessons(lessonConfigs);
       } catch (err) {
         console.error("Error building lessons:", err);

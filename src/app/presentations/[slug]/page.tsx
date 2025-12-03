@@ -185,22 +185,22 @@ export default function PresentationViewer() {
           </svg>
         </button>
 
-        {/* Navigation Controls */}
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-4 bg-gray-800/90 px-6 py-3 rounded-full z-50">
+        {/* Navigation Controls - Bottom Right, Compact */}
+        <div className="fixed bottom-4 right-4 flex items-center gap-2 bg-gray-800/70 px-3 py-2 rounded-full z-50 text-sm">
           {/* Previous Button */}
           <button
             onClick={prevSlide}
             disabled={currentSlide === 0}
-            className="w-10 h-10 flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-700 rounded-full transition-colors"
+            className="w-7 h-7 flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-700 rounded-full transition-colors"
             aria-label="Previous slide"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={2}
+              strokeWidth={2.5}
               stroke="currentColor"
-              className="w-6 h-6"
+              className="w-4 h-4"
             >
               <path
                 strokeLinecap="round"
@@ -211,24 +211,24 @@ export default function PresentationViewer() {
           </button>
 
           {/* Slide Counter */}
-          <div className="text-white font-medium px-3">
-            {currentSlide + 1} / {totalSlides}
+          <div className="text-white text-xs font-medium px-2">
+            {currentSlide + 1}/{totalSlides}
           </div>
 
           {/* Next Button */}
           <button
             onClick={nextSlide}
             disabled={currentSlide === totalSlides - 1}
-            className="w-10 h-10 flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-700 rounded-full transition-colors"
+            className="w-7 h-7 flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-700 rounded-full transition-colors"
             aria-label="Next slide"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={2}
+              strokeWidth={2.5}
               stroke="currentColor"
-              className="w-6 h-6"
+              className="w-4 h-4"
             >
               <path
                 strokeLinecap="round"

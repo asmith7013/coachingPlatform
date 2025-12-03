@@ -121,6 +121,9 @@ const mongoScript = `
 // Sync HTML deck: ${slug}
 // Generated: ${new Date().toISOString()}
 
+// Switch to the correct database
+use('ai-coaching-platform');
+
 const deckData = ${JSON.stringify(deckData, null, 2)};
 
 // Check if deck already exists

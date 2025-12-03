@@ -26,7 +26,8 @@
       "Bash(vercel link:*)",
       "SlashCommand(/create-worked-example-sg)",
       "Bash(find:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(source:*)"
     ],
     "deny": [],
     "ask": []
