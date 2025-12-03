@@ -13,11 +13,11 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
         person_profiles: 'identified_only',
         capture_pageview: false,
         capture_pageleave: true,
-        loaded: (posthog) => {
-          if (process.env.NODE_ENV === 'development') {
-            posthog.debug()
-          }
-        },
+        // loaded: (posthog) => {
+        //   if (process.env.NODE_ENV === 'development') {
+        //     posthog.debug()
+        //   }
+        // },
       })
     }
   }, [])

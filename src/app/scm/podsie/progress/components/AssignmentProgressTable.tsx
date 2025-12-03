@@ -5,6 +5,8 @@ interface RampUpQuestion {
   questionNumber: number;
   completed: boolean;
   completedAt?: string;
+  correctScore?: number;
+  explanationScore?: number;
 }
 
 interface ProgressData {
@@ -28,6 +30,7 @@ interface AssignmentProgressTableProps {
   masteryCheckProgressData?: ProgressData[];
   totalQuestions: number;
   showZearnColumn?: boolean;
+  showDetailedScore?: boolean;
 }
 
 export function AssignmentProgressTable({
@@ -35,6 +38,7 @@ export function AssignmentProgressTable({
   masteryCheckProgressData = [],
   totalQuestions,
   showZearnColumn = false,
+  showDetailedScore = false,
 }: AssignmentProgressTableProps) {
   // Check if we have actual lesson data (students with synced lesson progress)
   const hasLessonData = progressData.some(p => p.totalQuestions > 0);
@@ -90,7 +94,7 @@ export function AssignmentProgressTable({
               Student
             </th>
             {showZearnColumn && (
-              <th className="px-4 py-3 text-center text-sm font-semibold text-purple-900 min-w-[80px] bg-purple-50">
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-900 min-w-[80px] bg-gray-100">
                 Zearn
               </th>
             )}
@@ -208,7 +212,7 @@ export function AssignmentProgressTable({
                   </td>
                 )}
 
-                {/* Question Checkmarks */}
+                {/* Question Checkmarks or Detailed Scores */}
                 {questionColumns.map((qNum) => {
                   if (!hasSynced) {
                     return (
@@ -223,6 +227,52 @@ export function AssignmentProgressTable({
                   );
                   const isCompleted = question?.completed ?? false;
 
+                  // Detailed Score Mode
+                  if (showDetailedScore) {
+                    const correctScore = question?.correctScore;
+                    const explanationScore = question?.explanationScore;
+
+                    return (
+                      <td key={qNum} className="px-3 py-3 text-center">
+                        {correctScore !== undefined || explanationScore !== undefined ? (
+                          <div className="flex flex-col items-center gap-0.5">
+                            {/* Correct/Incorrect Icon */}
+                            <div>
+                              {correctScore === 1 ? (
+                                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                              ) : correctScore === 0 ? (
+                                <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <span className="text-gray-300 text-xs">—</span>
+                              )}
+                            </div>
+                            {/* Explanation Score */}
+                            <div className="text-xs font-medium text-gray-600">
+                              {explanationScore !== undefined ? (
+                                <span className={
+                                  explanationScore === 3 ? "text-green-700" :
+                                  explanationScore === 2 ? "text-yellow-700" :
+                                  "text-red-700"
+                                }>
+                                  {explanationScore}/3
+                                </span>
+                              ) : (
+                                <span className="text-gray-300">—</span>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-gray-300 text-xs">—</span>
+                        )}
+                      </td>
+                    );
+                  }
+
+                  // Regular Checkmark Mode
                   return (
                     <td key={qNum} className="px-3 py-3 text-center">
                       <CompletionCheckmark
@@ -239,7 +289,14 @@ export function AssignmentProgressTable({
                   <td className="px-4 py-3 text-center">
                     <CompletionCheckmark
                       completed={Boolean(masteryCheckSynced && masteryCheckProgress?.isFullyComplete)}
-                      completedAt={masteryCheckProgress?.lastSyncedAt}
+                      completedAt={
+                        masteryCheckProgress?.isFullyComplete
+                          ? masteryCheckProgress.questions
+                              .filter(q => q.completedAt)
+                              .map(q => q.completedAt!)
+                              .sort()[0] // Get earliest completion date
+                          : undefined
+                      }
                       size="large"
                     />
                   </td>

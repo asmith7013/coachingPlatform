@@ -23,6 +23,8 @@ interface RampUpQuestion {
   questionNumber: number;
   completed: boolean;
   completedAt?: string;
+  correctScore?: number;
+  explanationScore?: number;
 }
 
 interface ProgressData {
@@ -68,6 +70,7 @@ export function AssignmentCard({
 }: AssignmentCardProps) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [syncingBoth, setSyncingBoth] = useState(false);
+  const [showDetailedScore, setShowDetailedScore] = useState(false);
 
   // Handler to sync both lesson and mastery check (or just lesson if no mastery check)
   const handleSyncBoth = async () => {
@@ -209,19 +212,43 @@ export function AssignmentCard({
             </p>
           </div>
           <div className="flex items-center gap-4">
-            {/* Legend Key - White Card */}
+            {/* Detailed Score Toggle */}
             <div className="bg-white border border-gray-300 rounded-lg px-3 py-2">
-              <div className="flex items-center gap-3 text-xs text-gray-700">
-                <div className="flex items-center gap-1">
-                  <CheckCircleIcon className="w-4 h-4 text-green-700" />
-                  <span className="font-medium">Today</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <CheckCircleOutlineIcon className="w-4 h-4 text-green-700" />
-                  <span className="font-medium">Earlier</span>
-                </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={showDetailedScore}
+                  onClick={() => setShowDetailedScore(!showDetailedScore)}
+                  className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${
+                    showDetailedScore ? 'bg-gray-500' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      showDetailedScore ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+                <span className="text-xs font-medium text-gray-700">Detailed Score</span>
               </div>
             </div>
+
+            {/* Legend Key - White Card */}
+            {!showDetailedScore && (
+              <div className="bg-white border border-gray-300 rounded-lg px-3 py-2">
+                <div className="flex items-center gap-3 text-xs text-gray-700">
+                  <div className="flex items-center gap-1">
+                    <CheckCircleIcon className="w-4 h-4 text-green-700" />
+                    <span className="font-medium">Today</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CheckCircleOutlineIcon className="w-4 h-4 text-green-700" />
+                    <span className="font-medium">Earlier</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex items-center gap-2">
@@ -281,6 +308,7 @@ export function AssignmentCard({
           masteryCheckProgressData={filteredMasteryCheckData}
           totalQuestions={assignment.totalQuestions}
           showZearnColumn={assignment.hasZearnActivity ?? false}
+          showDetailedScore={showDetailedScore}
         />
       </div>
     </div>

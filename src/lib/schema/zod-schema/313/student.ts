@@ -88,6 +88,9 @@ export const PodsieQuestionSchema = z.object({
   questionNumber: z.number().int().positive().describe("Question number (1-indexed)"),
   completed: z.boolean().default(false).describe("Whether question was answered correctly"),
   completedAt: z.string().optional().describe("When question was completed (ISO format)"),
+  // AI Analysis fields (scored 0-3)
+  correctScore: z.number().int().min(0).max(1).optional().describe("Answer correctness: 0 (incorrect) or 1 (correct)"),
+  explanationScore: z.number().int().min(1).max(3).optional().describe("Explanation quality: 1 (none), 2 (partial), or 3 (full)"),
 });
 
 /**

@@ -11,7 +11,8 @@ import {
   SectionConfigQuery,
   SectionConfigQuerySchema,
   AssignmentContent,
-  SectionOption
+  SectionOption,
+  PodsieQuestionMap
 } from "@zod-schema/313/section-config";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -438,4 +439,166 @@ export async function getPodsieAssignment(
       };
     }
   });
+}
+
+// =====================================
+// NEW SCHEMA OPERATIONS
+// =====================================
+
+/**
+ * Add or update assignment content in a section config
+ * Uses the new assignmentContent schema structure
+ */
+export async function addAssignmentContent(
+  school: string,
+  classSection: string,
+  assignment: {
+    scopeAndSequenceId: string;
+    unitLessonId: string;
+    lessonName: string;
+    section?: string;
+    grade?: string;
+    activityType: 'sidekick' | 'mastery-check';
+    podsieAssignmentId: string;
+    podsieQuestionMap: PodsieQuestionMap[];
+    totalQuestions: number;
+    variations?: number;
+    q1HasVariations?: boolean;
+    hasZearnLesson?: boolean;
+    active?: boolean;
+  }
+): Promise<{ success: boolean; data?: SectionConfig; error?: string }> {
+  try {
+    return await withDbConnection(async () => {
+      // Find the section config
+      const config = await SectionConfigModel.findOne({ school, classSection });
+
+      if (!config) {
+        return {
+          success: false,
+          error: 'Section config not found. Please create it first.'
+        };
+      }
+
+      // Get assignmentContent as a plain array
+      const assignmentContentArray = config.assignmentContent as unknown as AssignmentContent[];
+
+      // Check if assignment content with this scopeAndSequenceId already exists
+      const existingIndex = assignmentContentArray.findIndex(
+        (a: AssignmentContent) => a.scopeAndSequenceId?.toString() === assignment.scopeAndSequenceId
+      );
+
+      if (existingIndex >= 0) {
+        // Assignment content exists, check if activity with this podsieAssignmentId exists
+        const existingAssignment = assignmentContentArray[existingIndex];
+        const activityIndex = existingAssignment.podsieActivities?.findIndex(
+          (a) => a.podsieAssignmentId === assignment.podsieAssignmentId
+        ) ?? -1;
+
+        if (activityIndex >= 0) {
+          // Update existing activity
+          if (existingAssignment.podsieActivities) {
+            existingAssignment.podsieActivities[activityIndex] = {
+              activityType: assignment.activityType,
+              podsieAssignmentId: assignment.podsieAssignmentId,
+              podsieQuestionMap: assignment.podsieQuestionMap,
+              totalQuestions: assignment.totalQuestions,
+              variations: assignment.variations ?? 3,
+              q1HasVariations: assignment.q1HasVariations ?? false,
+              active: assignment.active ?? true
+            };
+          }
+        } else {
+          // Add new activity to existing assignment
+          if (!existingAssignment.podsieActivities) {
+            existingAssignment.podsieActivities = [];
+          }
+          existingAssignment.podsieActivities.push({
+            activityType: assignment.activityType,
+            podsieAssignmentId: assignment.podsieAssignmentId,
+            podsieQuestionMap: assignment.podsieQuestionMap,
+            totalQuestions: assignment.totalQuestions,
+            variations: assignment.variations ?? 3,
+            q1HasVariations: assignment.q1HasVariations ?? false,
+            active: assignment.active ?? true
+          });
+        }
+
+        // Update the assignment in the config
+        config.assignmentContent = assignmentContentArray as never;
+      } else {
+        // Add new assignment content
+        assignmentContentArray.push({
+          scopeAndSequenceId: assignment.scopeAndSequenceId,
+          unitLessonId: assignment.unitLessonId,
+          lessonName: assignment.lessonName,
+          section: assignment.section,
+          grade: assignment.grade,
+          podsieActivities: [
+            {
+              activityType: assignment.activityType,
+              podsieAssignmentId: assignment.podsieAssignmentId,
+              podsieQuestionMap: assignment.podsieQuestionMap,
+              totalQuestions: assignment.totalQuestions,
+              variations: assignment.variations ?? 3,
+              q1HasVariations: assignment.q1HasVariations ?? false,
+              active: assignment.active ?? true
+            }
+          ],
+          zearnActivity: assignment.hasZearnLesson
+            ? { active: true }
+            : undefined,
+          active: true
+        });
+        config.assignmentContent = assignmentContentArray as never;
+      }
+
+      await config.save();
+
+      revalidatePath('/scm/roadmaps/section-configs');
+      revalidatePath('/scm/podsie/progress');
+
+      return {
+        success: true,
+        data: JSON.parse(JSON.stringify(config.toJSON())) as SectionConfig
+      };
+    });
+  } catch (error) {
+    return {
+      success: false,
+      error: handleServerError(error, 'Failed to add assignment content')
+    };
+  }
+}
+
+/**
+ * Get assignment content from a section config
+ * Returns array in new assignmentContent format
+ */
+export async function getAssignmentContent(
+  school: string,
+  classSection: string
+): Promise<{ success: boolean; data?: AssignmentContent[]; error?: string }> {
+  try {
+    return await withDbConnection(async () => {
+      const config = await SectionConfigModel.findOne({ school, classSection }).lean();
+
+      if (!config) {
+        return { success: true, data: [] };
+      }
+
+      // Serialize to ensure proper type conversion
+      const serialized = JSON.parse(JSON.stringify(config.assignmentContent || []));
+
+      return {
+        success: true,
+        data: serialized as AssignmentContent[]
+      };
+    });
+  } catch (error) {
+    return {
+      success: false,
+      error: handleServerError(error, 'Failed to fetch assignment content')
+    };
+  }
 }

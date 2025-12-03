@@ -1,40 +1,31 @@
 "use client";
 
-// NOTE: This page needs refactoring to work with new schema structure
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState, useEffect } from "react";
-import { ArrowPathIcon, CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { Schools, AllSections } from "@schema/enum/313";
 import type { SchoolsType, AllSectionsType } from "@schema/enum/313";
 import {
   getSectionConfig,
   upsertSectionConfig,
-  addPodsieAssignment
+  addAssignmentContent,
+  getAssignmentContent
 } from "@/app/actions/313/section-config";
 import {
   fetchAssignmentsForSection,
   PodsieAssignmentInfo
 } from "@/app/actions/313/podsie-sync";
-import { fetchScopeAndSequence, createScopeAndSequence } from "@/app/actions/313/scope-and-sequence";
+import { fetchScopeAndSequence } from "@/app/actions/313/scope-and-sequence";
 import type { ScopeAndSequence } from "@zod-schema/313/scope-and-sequence";
-import { SECTION_OPTIONS } from "@zod-schema/313/scope-and-sequence";
-import { ManualCreateAssignmentModal } from "./components/ManualCreateAssignmentModal";
-import { SectionRadioGroup } from "@/components/core/inputs/SectionRadioGroup";
-
-type PodsieAssignment = any; // Temporary - needs refactoring for new schema
+import type { AssignmentContent } from "@zod-schema/313/section-config";
+import { SchoolSectionSelector } from "./components/SchoolSectionSelector";
+import { ExistingAssignmentsList } from "./components/ExistingAssignmentsList";
+import { MatchingControls } from "./components/MatchingControls";
+import { AssignmentMatchRow } from "./components/AssignmentMatchRow";
+import { findBestMatch } from "@/lib/utils/lesson-name-normalization";
 
 interface AssignmentMatch {
   podsieAssignment: PodsieAssignmentInfo;
   matchedLesson: ScopeAndSequence | null;
-  isCreatingNew: boolean;
-  assignmentType: 'lesson' | 'mastery-check';
-  totalQuestions?: number; // Allow override of totalQuestions
-  newLessonData?: {
-    unitNumber: number;
-    section: string;
-    lessonNumber: number;
-  };
+  assignmentType: 'sidekick' | 'mastery-check';
+  totalQuestions?: number;
 }
 
 export default function SectionConfigsPage() {
@@ -46,14 +37,13 @@ export default function SectionConfigsPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showUnmatchedOnly, setShowUnmatchedOnly] = useState(false);
-  const [showManualCreateModal, setShowManualCreateModal] = useState(false);
   const [savingIndividual, setSavingIndividual] = useState<number | null>(null);
 
   // Data states
   const [podsieAssignments, setPodsieAssignments] = useState<PodsieAssignmentInfo[]>([]);
   const [lessons, setLessons] = useState<ScopeAndSequence[]>([]);
   const [matches, setMatches] = useState<AssignmentMatch[]>([]);
-  const [existingAssignments, setExistingAssignments] = useState<PodsieAssignment[]>([]);
+  const [existingAssignments, setExistingAssignments] = useState<AssignmentContent[]>([]);
 
   // Fetch lessons when school/section changes
   useEffect(() => {
@@ -107,11 +97,9 @@ export default function SectionConfigsPage() {
       }
 
       try {
-        const result = await getSectionConfig(selectedSchool, selectedSection);
+        const result = await getAssignmentContent(selectedSchool, selectedSection);
         if (result.success && result.data) {
-          if (result.data.podsieAssignments) {
-            setExistingAssignments(result.data.podsieAssignments as unknown as PodsieAssignment[]);
-          }
+          setExistingAssignments(result.data);
         } else {
           setExistingAssignments([]);
         }
@@ -142,17 +130,11 @@ export default function SectionConfigsPage() {
         const initialMatches: AssignmentMatch[] = result.assignments.map(assignment => ({
           podsieAssignment: assignment,
           matchedLesson: null,
-          isCreatingNew: false,
-          // Auto-detect based on module_name: if it contains "LESSONS", it's a lesson; otherwise mastery-check
-          assignmentType: assignment.moduleName?.includes('LESSONS') ? 'lesson' : 'mastery-check',
-          newLessonData: {
-            unitNumber: 1,
-            section: "Ramp Ups",
-            lessonNumber: 0
-          }
+          // Auto-detect based on module_name: if it contains "LESSONS", it's a sidekick; otherwise mastery-check
+          assignmentType: assignment.moduleName?.includes('LESSONS') ? 'sidekick' : 'mastery-check',
         }));
         setMatches(initialMatches);
-        setSuccess(`Fetched ${result.assignments.length} assignments from Podsie (including lessons)`);
+        setSuccess(`Fetched ${result.assignments.length} assignments from Podsie`);
       } else {
         setError(result.error || 'Failed to fetch Podsie assignments');
       }
@@ -162,123 +144,6 @@ export default function SectionConfigsPage() {
     } finally {
       setFetchingPodsie(false);
     }
-  };
-
-  // Update a match
-  const handleMatchChange = (assignmentId: number, lessonId: string) => {
-    setMatches(prev => {
-      const currentIndex = prev.findIndex(m => m.podsieAssignment.assignmentId === assignmentId);
-
-      return prev.map((match) => {
-        if (match.podsieAssignment.assignmentId === assignmentId) {
-          if (lessonId === 'CREATE_NEW') {
-            // Find the previous match that has lesson data
-            let unitNumber = 1;
-            let lessonNumber = 0;
-            let section = "Ramp Ups";
-
-            // Look at the previous match in the list
-            if (currentIndex > 0) {
-              const prevMatch = prev[currentIndex - 1];
-
-              // Check if we should auto-increment (only if entries are consecutive)
-              let shouldAutoIncrement = false;
-              let prevUnitNumber = 0;
-              let prevLessonNumber = 0;
-              let prevSection = "Ramp Ups";
-
-              // Get previous lesson data
-              if (prevMatch.matchedLesson) {
-                prevUnitNumber = prevMatch.matchedLesson.unitNumber;
-                prevLessonNumber = prevMatch.matchedLesson.lessonNumber;
-                prevSection = prevMatch.matchedLesson.section || "Ramp Ups";
-                section = prevSection;
-                shouldAutoIncrement = true;
-              } else if (prevMatch.isCreatingNew && prevMatch.newLessonData) {
-                prevUnitNumber = prevMatch.newLessonData.unitNumber;
-                prevLessonNumber = prevMatch.newLessonData.lessonNumber;
-                prevSection = prevMatch.newLessonData.section;
-                section = prevSection;
-                shouldAutoIncrement = true;
-              }
-
-              // Only auto-increment for Ramp Ups, not Unit Assessment or other sections
-              if (prevSection !== "Ramp Ups") {
-                shouldAutoIncrement = false;
-              }
-
-              // If we have previous data, check if we should increment
-              if (shouldAutoIncrement) {
-                // Check if current assignment follows the previous one consecutively
-                // by checking if there are 2+ previous entries and comparing the pattern
-                let isConsecutive = true;
-
-                if (currentIndex >= 2) {
-                  const prevPrevMatch = prev[currentIndex - 2];
-                  let prevPrevLessonNumber = 0;
-
-                  if (prevPrevMatch.matchedLesson) {
-                    prevPrevLessonNumber = prevPrevMatch.matchedLesson.lessonNumber;
-                  } else if (prevPrevMatch.isCreatingNew && prevPrevMatch.newLessonData) {
-                    prevPrevLessonNumber = prevPrevMatch.newLessonData.lessonNumber;
-                  }
-
-                  // Check if the previous entry was consecutive (incremented by 1)
-                  if (prevPrevLessonNumber > 0) {
-                    isConsecutive = (prevLessonNumber === prevPrevLessonNumber + 1);
-                  }
-                }
-
-                if (isConsecutive) {
-                  unitNumber = prevUnitNumber;
-                  lessonNumber = prevLessonNumber + 1;
-                } else {
-                  // Not consecutive, use defaults
-                  unitNumber = 1;
-                  lessonNumber = 0;
-                  section = "Ramp Ups";
-                }
-              }
-            }
-
-            return {
-              ...match,
-              matchedLesson: null,
-              isCreatingNew: true,
-              newLessonData: {
-                unitNumber,
-                section,
-                lessonNumber
-              }
-            };
-          } else {
-            const lesson = lessons.find(l => l.id === lessonId);
-            return {
-              ...match,
-              matchedLesson: lesson || null,
-              isCreatingNew: false
-            };
-          }
-        }
-        return match;
-      });
-    });
-  };
-
-  // Update new lesson data
-  const handleNewLessonDataChange = (assignmentId: number, field: string, value: string | number) => {
-    setMatches(prev => prev.map(match => {
-      if (match.podsieAssignment.assignmentId === assignmentId) {
-        return {
-          ...match,
-          newLessonData: {
-            ...match.newLessonData!,
-            [field]: value
-          }
-        };
-      }
-      return match;
-    }));
   };
 
   // Group lessons by unit
@@ -294,27 +159,30 @@ export default function SectionConfigsPage() {
   // Filter matches based on toggle
   const filteredMatches = showUnmatchedOnly
     ? matches.filter(match => {
-        const alreadyExists = existingAssignments.some(
-          existing => existing.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
-        );
+        // Check if this assignment already exists in the section config
+        const alreadyExists = existingAssignments.some(existing => {
+          // Find the activity with matching podsieAssignmentId
+          return existing.podsieActivities?.some(
+            activity => activity.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
+          );
+        });
         return !alreadyExists;
       })
     : matches;
 
-  // Auto-match by name similarity
+  // Auto-match by name similarity using normalization
   const handleAutoMatch = () => {
     setMatches(prev => prev.map(match => {
-      // Try to find a lesson with similar name
-      const podsieNameLower = match.podsieAssignment.assignmentName.toLowerCase();
-      const bestMatch = lessons.find(lesson => {
-        const lessonNameLower = lesson.lessonName.toLowerCase();
-        return lessonNameLower.includes(podsieNameLower) ||
-               podsieNameLower.includes(lessonNameLower);
-      });
+      // Use the normalization utility to find best match
+      const bestMatchResult = findBestMatch(
+        match.podsieAssignment.assignmentName,
+        lessons,
+        0.6 // Lower threshold to be more permissive
+      );
 
       return {
         ...match,
-        matchedLesson: bestMatch || match.matchedLesson
+        matchedLesson: bestMatchResult.match || match.matchedLesson
       };
     }));
     setSuccess('Auto-matched assignments by name similarity');
@@ -327,8 +195,8 @@ export default function SectionConfigsPage() {
       return;
     }
 
-    if (!match.matchedLesson && !match.isCreatingNew) {
-      setError('Please select or create a lesson first');
+    if (!match.matchedLesson) {
+      setError('Please select a lesson first');
       return;
     }
 
@@ -356,86 +224,51 @@ export default function SectionConfigsPage() {
         }
       }
 
-      let lessonToUse = match.matchedLesson;
-
-      // Create new lesson if needed
-      if (match.isCreatingNew && match.newLessonData) {
-        const gradeLevel = selectedSection.startsWith('6') ? '6' :
-                          selectedSection.startsWith('7') ? '7' : '8';
-
-        const unitLessonId = `${match.newLessonData.unitNumber}.${match.newLessonData.lessonNumber}`;
-        const scopeTag = selectedSection === '802' ? 'Algebra 1' : `Grade ${gradeLevel}`;
-
-        const newLessonResult = await createScopeAndSequence({
-          grade: gradeLevel,
-          unit: `Unit ${match.newLessonData.unitNumber}`,
-          unitNumber: match.newLessonData.unitNumber,
-          unitLessonId,
-          lessonNumber: match.newLessonData.lessonNumber,
-          lessonName: match.podsieAssignment.assignmentName,
-          section: match.newLessonData.section,
-          lessonType: match.newLessonData.section === 'Ramp Ups' ? 'ramp-up' : 'lesson',
-          scopeSequenceTag: scopeTag,
-          roadmapSkills: [],
-          targetSkills: [],
-          ownerIds: []
-        });
-
-        if (newLessonResult.success && newLessonResult.data) {
-          lessonToUse = newLessonResult.data as ScopeAndSequence;
-        } else if (newLessonResult.error?.includes('E11000 duplicate key error')) {
-          // Lesson already exists, try to fetch it
-          const existingLesson = lessons.find(l =>
-            l.unitLessonId === unitLessonId &&
-            l.grade === gradeLevel &&
-            l.scopeSequenceTag === scopeTag
-          );
-
-          if (existingLesson) {
-            lessonToUse = existingLesson;
-          } else {
-            setError('Lesson exists in DB but not found in loaded lessons. Try refreshing the page.');
-            return;
-          }
-        } else {
-          setError(newLessonResult.error || 'Failed to create lesson');
-          return;
-        }
-      }
-
-      if (!lessonToUse) {
-        setError('No lesson selected');
-        return;
-      }
-
-      const assignment: PodsieAssignment = {
-        unitLessonId: lessonToUse.unitLessonId,
-        lessonName: lessonToUse.lessonName,
-        grade: lessonToUse.grade,
-        assignmentType: match.assignmentType,
+      // Add assignment content using new schema
+      const assignmentData: {
+        scopeAndSequenceId: string;
+        unitLessonId: string;
+        lessonName: string;
+        section?: string;
+        grade?: string;
+        activityType: 'sidekick' | 'mastery-check';
+        podsieAssignmentId: string;
+        podsieQuestionMap: Array<{ questionNumber: number; questionId: string; isRoot: boolean; rootQuestionId?: string; variantNumber?: number }>;
+        totalQuestions: number;
+        hasZearnLesson?: boolean;
+        active?: boolean;
+      } = {
+        scopeAndSequenceId: match.matchedLesson.id || match.matchedLesson._id,
+        unitLessonId: match.matchedLesson.unitLessonId,
+        lessonName: match.matchedLesson.lessonName,
+        activityType: match.assignmentType,
         podsieAssignmentId: String(match.podsieAssignment.assignmentId),
         podsieQuestionMap: match.podsieAssignment.questionIds.map((questionId: number, idx: number) => ({
           questionNumber: idx + 1,
-          questionId: String(questionId)
+          questionId: String(questionId),
+          isRoot: true
         })),
         totalQuestions: match.totalQuestions ?? match.podsieAssignment.totalQuestions,
         hasZearnLesson: false,
         active: true
       };
 
-      const result = await addPodsieAssignment(
+      if (match.matchedLesson.section) assignmentData.section = match.matchedLesson.section;
+      if (match.matchedLesson.grade) assignmentData.grade = match.matchedLesson.grade;
+
+      const result = await addAssignmentContent(
         selectedSchool,
         selectedSection,
-        assignment
+        assignmentData
       );
 
       if (result.success) {
-        setSuccess(`Successfully saved assignment: ${lessonToUse.lessonName}`);
+        setSuccess(`Successfully saved assignment: ${match.matchedLesson.lessonName}`);
 
         // Reload existing assignments
-        const reloadResult = await getSectionConfig(selectedSchool, selectedSection);
-        if (reloadResult.success && reloadResult.data && reloadResult.data.podsieAssignments) {
-          setExistingAssignments(reloadResult.data.podsieAssignments as unknown as PodsieAssignment[]);
+        const reloadResult = await getAssignmentContent(selectedSchool, selectedSection);
+        if (reloadResult.success && reloadResult.data) {
+          setExistingAssignments(reloadResult.data);
         }
       } else {
         setError(result.error || 'Failed to save assignment');
@@ -455,7 +288,7 @@ export default function SectionConfigsPage() {
       return;
     }
 
-    const validMatches = matches.filter(m => m.matchedLesson !== null || m.isCreatingNew);
+    const validMatches = matches.filter(m => m.matchedLesson !== null);
     if (validMatches.length === 0) {
       setError('No matches to save');
       return;
@@ -488,78 +321,43 @@ export default function SectionConfigsPage() {
       // Process each match
       let successCount = 0;
       for (const match of validMatches) {
-        let lessonToUse = match.matchedLesson;
+        if (!match.matchedLesson) continue;
 
-        // Create new lesson if needed
-        if (match.isCreatingNew && match.newLessonData) {
-          const gradeLevel = selectedSection.startsWith('6') ? '6' :
-                            selectedSection.startsWith('7') ? '7' : '8';
-
-          const unitLessonId = `${match.newLessonData.unitNumber}.${match.newLessonData.lessonNumber}`;
-          const scopeTag = selectedSection === '802' ? 'Algebra 1' : `Grade ${gradeLevel}`;
-
-          const newLessonResult = await createScopeAndSequence({
-            grade: gradeLevel,
-            unit: `Unit ${match.newLessonData.unitNumber}`,
-            unitNumber: match.newLessonData.unitNumber,
-            unitLessonId,
-            lessonNumber: match.newLessonData.lessonNumber,
-            lessonName: match.podsieAssignment.assignmentName,
-            section: match.newLessonData.section,
-            lessonType: match.newLessonData.section === 'Ramp Ups' ? 'ramp-up' : 'lesson',
-            scopeSequenceTag: scopeTag,
-            roadmapSkills: [],
-            targetSkills: [],
-            ownerIds: []
-          });
-
-          if (newLessonResult.success && newLessonResult.data) {
-            lessonToUse = newLessonResult.data as ScopeAndSequence;
-          } else if (newLessonResult.error?.includes('E11000 duplicate key error')) {
-            // Lesson already exists, try to fetch it
-            console.log(`Lesson ${unitLessonId} already exists, fetching existing lesson...`);
-
-            // Find the existing lesson in our loaded lessons
-            const existingLesson = lessons.find(l =>
-              l.unitLessonId === unitLessonId &&
-              l.grade === gradeLevel &&
-              l.scopeSequenceTag === scopeTag
-            );
-
-            if (existingLesson) {
-              lessonToUse = existingLesson;
-              console.log(`Using existing lesson: ${existingLesson.lessonName}`);
-            } else {
-              console.error('Lesson exists in DB but not found in loaded lessons. Try refreshing the page.');
-              continue;
-            }
-          } else {
-            console.error('Failed to create lesson:', newLessonResult.error);
-            continue;
-          }
-        }
-
-        if (!lessonToUse) continue;
-
-        const assignment: PodsieAssignment = {
-          unitLessonId: lessonToUse.unitLessonId,
-          lessonName: lessonToUse.lessonName,
-          grade: lessonToUse.grade,
-          assignmentType: match.assignmentType, // Use the detected/selected assignment type
+        const assignmentData: {
+          scopeAndSequenceId: string;
+          unitLessonId: string;
+          lessonName: string;
+          section?: string;
+          grade?: string;
+          activityType: 'sidekick' | 'mastery-check';
+          podsieAssignmentId: string;
+          podsieQuestionMap: Array<{ questionNumber: number; questionId: string; isRoot: boolean; rootQuestionId?: string; variantNumber?: number }>;
+          totalQuestions: number;
+          hasZearnLesson?: boolean;
+          active?: boolean;
+        } = {
+          scopeAndSequenceId: match.matchedLesson.id || match.matchedLesson._id,
+          unitLessonId: match.matchedLesson.unitLessonId,
+          lessonName: match.matchedLesson.lessonName,
+          activityType: match.assignmentType,
           podsieAssignmentId: String(match.podsieAssignment.assignmentId),
           podsieQuestionMap: match.podsieAssignment.questionIds.map((questionId: number, idx: number) => ({
             questionNumber: idx + 1,
-            questionId: String(questionId)
+            questionId: String(questionId),
+            isRoot: true
           })),
           totalQuestions: match.totalQuestions ?? match.podsieAssignment.totalQuestions,
           hasZearnLesson: false,
           active: true
         };
 
-        const result = await addPodsieAssignment(
+        if (match.matchedLesson.section) assignmentData.section = match.matchedLesson.section;
+        if (match.matchedLesson.grade) assignmentData.grade = match.matchedLesson.grade;
+
+        const result = await addAssignmentContent(
           selectedSchool,
           selectedSection,
-          assignment
+          assignmentData
         );
 
         if (result.success) {
@@ -570,9 +368,9 @@ export default function SectionConfigsPage() {
       setSuccess(`Successfully saved ${successCount} of ${validMatches.length} assignments`);
 
       // Reload existing assignments
-      const reloadResult = await getSectionConfig(selectedSchool, selectedSection);
-      if (reloadResult.success && reloadResult.data && reloadResult.data.podsieAssignments) {
-        setExistingAssignments(reloadResult.data.podsieAssignments as unknown as PodsieAssignment[]);
+      const reloadResult = await getAssignmentContent(selectedSchool, selectedSection);
+      if (reloadResult.success && reloadResult.data) {
+        setExistingAssignments(reloadResult.data);
       }
 
       // Clear matches
@@ -586,13 +384,11 @@ export default function SectionConfigsPage() {
     }
   };
 
-  const matchedCount = matches.filter(m => m.matchedLesson !== null || m.isCreatingNew).length;
+  const matchedCount = matches.filter(m => m.matchedLesson !== null).length;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
-        {/* Navigation */}
-
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h1 className="text-3xl font-bold mb-2">Section Configuration</h1>
@@ -602,95 +398,27 @@ export default function SectionConfigsPage() {
         </div>
 
         {/* School and Section Selection */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">Select Section</h2>
-
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                School
-              </label>
-              <select
-                value={selectedSchool}
-                onChange={(e) => {
-                  setSelectedSchool(e.target.value as SchoolsType);
-                  setSelectedSection("");
-                  setPodsieAssignments([]);
-                  setMatches([]);
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select School</option>
-                {Schools.map(school => (
-                  <option key={school} value={school}>{school}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Class Section
-              </label>
-              <select
-                value={selectedSection}
-                onChange={(e) => {
-                  setSelectedSection(e.target.value as AllSectionsType);
-                  setPodsieAssignments([]);
-                  setMatches([]);
-                }}
-                disabled={!selectedSchool}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-              >
-                <option value="">Select Section</option>
-                {AllSections.map(section => (
-                  <option key={section} value={section}>{section}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <button
-            onClick={handleFetchPodsieAssignments}
-            disabled={!selectedSection || fetchingPodsie}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
-          >
-            <ArrowPathIcon className={`w-5 h-5 ${fetchingPodsie ? 'animate-spin' : ''}`} />
-            {fetchingPodsie ? 'Fetching...' : 'Fetch from Podsie'}
-          </button>
-        </div>
+        <SchoolSectionSelector
+          selectedSchool={selectedSchool}
+          selectedSection={selectedSection}
+          onSchoolChange={(school) => {
+            setSelectedSchool(school);
+            setSelectedSection("");
+            setPodsieAssignments([]);
+            setMatches([]);
+          }}
+          onSectionChange={(section) => {
+            setSelectedSection(section);
+            setPodsieAssignments([]);
+            setMatches([]);
+          }}
+          onFetchPodsie={handleFetchPodsieAssignments}
+          fetchingPodsie={fetchingPodsie}
+        />
 
         {/* Existing Assignments */}
         {existingAssignments.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">
-                Existing Assignments ({existingAssignments.length})
-              </h2>
-              <button
-                onClick={() => setShowManualCreateModal(true)}
-                disabled={!selectedSchool || !selectedSection}
-                className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-600 text-white text-sm rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
-              >
-                <PlusIcon className="w-4 h-4" />
-                Manual Create
-              </button>
-            </div>
-            <div className="space-y-2 max-h-60 overflow-y-auto">
-              {existingAssignments.map((assignment, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900">
-                      {assignment.unitLessonId}: {assignment.lessonName}
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      Assignment ID: {assignment.podsieAssignmentId} • {assignment.totalQuestions} questions • {assignment.assignmentType}
-                    </div>
-                  </div>
-                  <CheckIcon className="w-5 h-5 text-green-600" />
-                </div>
-              ))}
-            </div>
-          </div>
+          <ExistingAssignmentsList assignments={existingAssignments} />
         )}
 
         {/* Messages */}
@@ -709,294 +437,75 @@ export default function SectionConfigsPage() {
         {/* Assignment Matching */}
         {podsieAssignments.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-4">
-                <h2 className="text-lg font-semibold">
-                  Match Assignments ({matchedCount} / {podsieAssignments.length})
-                </h2>
-                <label className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={showUnmatchedOnly}
-                    onChange={(e) => setShowUnmatchedOnly(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
-                  />
-                  <span className="text-gray-700">Show unmatched only</span>
-                </label>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={handleAutoMatch}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-600 text-white text-sm rounded-lg font-medium hover:bg-purple-700 transition-colors cursor-pointer"
-                >
-                  Auto-Match
-                </button>
-                <button
-                  onClick={handleSaveAll}
-                  disabled={matchedCount === 0 || saving}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
-                >
-                  <PlusIcon className="w-5 h-5" />
-                  {saving ? 'Saving...' : `Save All (${matchedCount})`}
-                </button>
-              </div>
-            </div>
+            <MatchingControls
+              matchedCount={matchedCount}
+              totalCount={podsieAssignments.length}
+              showUnmatchedOnly={showUnmatchedOnly}
+              onToggleUnmatched={setShowUnmatchedOnly}
+              onAutoMatch={handleAutoMatch}
+              onSaveAll={handleSaveAll}
+              saving={saving}
+            />
 
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
               {filteredMatches.map((match, idx) => {
-                const alreadyExists = existingAssignments.some(
-                  existing => existing.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
-                );
+                // Check if assignment already exists
+                const alreadyExists = existingAssignments.some(existing => {
+                  return existing.podsieActivities?.some(
+                    activity => activity.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
+                  );
+                });
 
                 // Check if assignment has question mapping
-                const existingAssignment = existingAssignments.find(
-                  existing => existing.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
+                const existingAssignment = existingAssignments.find(existing => {
+                  return existing.podsieActivities?.some(
+                    activity => activity.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
+                  );
+                });
+
+                const existingActivity = existingAssignment?.podsieActivities?.find(
+                  activity => activity.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
                 );
-                const hasQuestionMapping = existingAssignment?.podsieQuestionMap &&
-                                         existingAssignment.podsieQuestionMap.length > 0;
+
+                const hasQuestionMapping = !!(existingActivity?.podsieQuestionMap &&
+                                         existingActivity.podsieQuestionMap.length > 0);
 
                 return (
-                  <div key={match.podsieAssignment.assignmentId} className={`border rounded-lg p-4 ${
-                    alreadyExists ? 'border-green-300 bg-green-50/30' : 'border-gray-200'
-                  }`}>
-                    {/* Status Badges - Split Row */}
-                    {alreadyExists && (
-                      <div className="mb-3 grid grid-cols-2 gap-2">
-                        {/* Already Saved Badge */}
-                        <div className="flex items-center gap-2 px-3 py-2 bg-green-100 border border-green-300 rounded-lg">
-                          <CheckIcon className="w-4 h-4 text-green-600 flex-shrink-0" />
-                          <span className="text-xs font-medium text-green-800">
-                            Saved in section config
-                          </span>
-                        </div>
-
-                        {/* Question Mapping Badge */}
-                        <div className={`flex items-center gap-2 px-3 py-2 border rounded-lg ${
-                          hasQuestionMapping
-                            ? 'bg-blue-100 border-blue-300'
-                            : 'bg-gray-100 border-gray-300'
-                        }`}>
-                          <span className={`text-xs font-medium ${
-                            hasQuestionMapping ? 'text-blue-800' : 'text-gray-600'
-                          }`}>
-                            {hasQuestionMapping
-                              ? `✓ Question mapping (${existingAssignment.podsieQuestionMap?.length} questions)`
-                              : '✗ No question mapping'}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Podsie Assignment Info */}
-                    <div className="bg-blue-50 p-3 rounded mb-4">
-                      <div className="text-sm font-medium text-blue-900 mb-1">
-                        Podsie Assignment #{idx + 1}
-                      </div>
-                      <div className="font-semibold text-gray-900 mb-1">
-                        {match.podsieAssignment.assignmentName}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        ID: {match.podsieAssignment.assignmentId} • {match.podsieAssignment.totalQuestions} questions
-                      </div>
-                    </div>
-
-                  {/* Assignment Type and Total Questions */}
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <SectionRadioGroup
-                        label="Assignment Type"
-                        options={[
-                          { id: 'mastery-check', name: 'Mastery Check' },
-                          { id: 'lesson', name: 'Lesson' }
-                        ]}
-                        value={match.assignmentType}
-                        onChange={(value) => {
-                          setMatches(prev => prev.map(m =>
-                            m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
-                              ? { ...m, assignmentType: value as 'lesson' | 'mastery-check' }
-                              : m
-                          ));
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Total Questions
-                      </label>
-                      <input
-                        type="number"
-                        min="1"
-                        value={match.totalQuestions ?? match.podsieAssignment.totalQuestions}
-                        onChange={(e) => {
-                          const value = parseInt(e.target.value) || undefined;
-                          setMatches(prev => prev.map(m =>
-                            m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
-                              ? { ...m, totalQuestions: value }
-                              : m
-                          ));
-                        }}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    <button
-                      onClick={() => {
-                        if (match.isCreatingNew) {
-                          setMatches(prev => prev.map(m =>
-                            m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
-                              ? { ...m, isCreatingNew: false }
-                              : m
-                          ));
-                        }
-                      }}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-                        !match.isCreatingNew
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                    >
-                      Match with Existing Lesson
-                    </button>
-                    <button
-                      onClick={() => handleMatchChange(match.podsieAssignment.assignmentId, 'CREATE_NEW')}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer flex items-center justify-center gap-2 ${
-                        match.isCreatingNew
-                          ? 'bg-yellow-600 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                    >
-                      <PlusIcon className="w-4 h-4" />
-                      Create New Lesson
-                    </button>
-                  </div>
-
-                  {/* Match with Existing Lesson */}
-                  {!match.isCreatingNew && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Select Lesson
-                      </label>
-                      <select
-                        value={match.matchedLesson?.id || ''}
-                        onChange={(e) => handleMatchChange(match.podsieAssignment.assignmentId, e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          match.matchedLesson
-                            ? 'border-green-500 bg-green-50'
-                            : 'border-gray-300'
-                        }`}
-                      >
-                        <option value="">Select a lesson...</option>
-                        {Object.entries(lessonsByUnit).map(([unit, unitLessons]) => (
-                          <optgroup key={unit} label={unit}>
-                            {unitLessons.map(lesson => (
-                              <option key={lesson.id} value={lesson.id}>
-                                {lesson.unitLessonId}: {lesson.lessonName}
-                              </option>
-                            ))}
-                          </optgroup>
-                        ))}
-                      </select>
-                      {match.matchedLesson && (
-                        <div className="mt-2 text-sm text-green-700 flex items-center gap-1">
-                          <CheckIcon className="w-4 h-4" />
-                          Matched: {match.matchedLesson.unitLessonId}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* New Lesson Form */}
-                  {match.isCreatingNew && match.newLessonData && (
-                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <h4 className="text-sm font-semibold text-gray-900 mb-3">New Lesson Details</h4>
-                      <div className="grid grid-cols-3 gap-3">
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">
-                            Unit Number
-                          </label>
-                          <input
-                            type="number"
-                            min="1"
-                            value={match.newLessonData.unitNumber}
-                            onChange={(e) => handleNewLessonDataChange(
-                              match.podsieAssignment.assignmentId,
-                              'unitNumber',
-                              parseInt(e.target.value) || 1
-                            )}
-                            className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">
-                            Section
-                          </label>
-                          <select
-                            value={match.newLessonData.section}
-                            onChange={(e) => handleNewLessonDataChange(
-                              match.podsieAssignment.assignmentId,
-                              'section',
-                              e.target.value
-                            )}
-                            className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          >
-                            {SECTION_OPTIONS.map(section => (
-                              <option key={section} value={section}>
-                                {section}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-700 mb-1">
-                            Lesson Number
-                          </label>
-                          <input
-                            type="number"
-                            min="0"
-                            value={match.newLessonData.lessonNumber}
-                            onChange={(e) => handleNewLessonDataChange(
-                              match.podsieAssignment.assignmentId,
-                              'lessonNumber',
-                              parseInt(e.target.value) || 0
-                            )}
-                            className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                        </div>
-                      </div>
-                      <div className="mt-2 text-xs text-gray-600">
-                        Will create: <span className="font-mono font-semibold">
-                          {match.newLessonData.unitNumber}.{match.newLessonData.lessonNumber}
-                        </span> - {match.podsieAssignment.assignmentName}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Individual Save Button */}
-                  {(match.matchedLesson || match.isCreatingNew) && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <button
-                        onClick={() => handleSaveIndividual(match)}
-                        disabled={savingIndividual === match.podsieAssignment.assignmentId}
-                        className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
-                      >
-                        {savingIndividual === match.podsieAssignment.assignmentId ? (
-                          <>
-                            <ArrowPathIcon className="w-5 h-5 animate-spin" />
-                            Saving...
-                          </>
-                        ) : (
-                          <>
-                            <CheckIcon className="w-5 h-5" />
-                            {alreadyExists ? 'Update Assignment' : 'Save Assignment'}
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  )}
-                  </div>
+                  <AssignmentMatchRow
+                    key={match.podsieAssignment.assignmentId}
+                    index={idx}
+                    podsieAssignment={match.podsieAssignment}
+                    matchedLesson={match.matchedLesson}
+                    assignmentType={match.assignmentType}
+                    totalQuestions={match.totalQuestions}
+                    lessonsByUnit={lessonsByUnit}
+                    alreadyExists={alreadyExists}
+                    hasQuestionMapping={hasQuestionMapping}
+                    saving={savingIndividual === match.podsieAssignment.assignmentId}
+                    onMatchChange={(lessonId) => {
+                      const lesson = lessons.find(l => l.id === lessonId);
+                      setMatches(prev => prev.map(m =>
+                        m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
+                          ? { ...m, matchedLesson: lesson || null }
+                          : m
+                      ));
+                    }}
+                    onTypeChange={(type) => {
+                      setMatches(prev => prev.map(m =>
+                        m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
+                          ? { ...m, assignmentType: type }
+                          : m
+                      ));
+                    }}
+                    onTotalQuestionsChange={(total) => {
+                      setMatches(prev => prev.map(m =>
+                        m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
+                          ? { ...m, totalQuestions: total }
+                          : m
+                      ));
+                    }}
+                    onSave={() => handleSaveIndividual(match)}
+                  />
                 );
               })}
             </div>
@@ -1019,25 +528,6 @@ export default function SectionConfigsPage() {
               Click &quot;Fetch from Podsie&quot; to load assignments for {selectedSection}
             </div>
           </div>
-        )}
-
-        {/* Manual Create Assignment Modal */}
-        {showManualCreateModal && selectedSchool && selectedSection && (
-          <ManualCreateAssignmentModal
-            school={selectedSchool}
-            classSection={selectedSection}
-            gradeLevel={selectedSection.startsWith('6') ? '6' : selectedSection.startsWith('7') ? '7' : '8'}
-            onClose={() => setShowManualCreateModal(false)}
-            onSuccess={async () => {
-              setShowManualCreateModal(false);
-              setSuccess("Assignment added successfully!");
-              // Reload existing assignments
-              const result = await getSectionConfig(selectedSchool, selectedSection);
-              if (result.success && result.data && result.data.podsieAssignments) {
-                setExistingAssignments(result.data.podsieAssignments as unknown as PodsieAssignment[]);
-              }
-            }}
-          />
         )}
       </div>
     </div>

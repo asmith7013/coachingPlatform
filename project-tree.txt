@@ -16,6 +16,7 @@
 │   │   ├── import-patterns.md
 │   │   └── project-structure.md
 │   ├── architecture-overview.md
+│   ├── assessment.json
 │   ├── components
 │   │   ├── component-system.md
 │   │   ├── composed-components.md
@@ -112,6 +113,7 @@
 │   ├── standards8.txt
 │   ├── standardsAlg1.html
 │   ├── standardsAlg1.json
+│   ├── studentExample.json
 │   ├── table-of-contents.md
 │   ├── tanstack-table-implementation.md
 │   ├── token-tailwind-mapping.md
@@ -317,6 +319,14 @@
 │   │   │   │   ├── im-lessons.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── podsie-completion.ts
+│   │   │   │   ├── podsie-sync
+│   │   │   │   │   ├── api
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── processing
+│   │   │   │   │   ├── query
+│   │   │   │   │   ├── sync
+│   │   │   │   │   └── types.ts
+│   │   │   │   ├── podsie-sync.legacy.ts
 │   │   │   │   ├── podsie-sync.ts
 │   │   │   │   ├── roadmaps-lessons.ts
 │   │   │   │   ├── roadmaps-skill-relationships.ts
@@ -759,6 +769,9 @@
 │   │   │       │   ├── grade-6.json
 │   │   │       │   ├── grade-7.json
 │   │   │       │   └── grade-8.json
+│   │   │       ├── manage-configs
+│   │   │       │   ├── actions.ts
+│   │   │       │   └── page.tsx
 │   │   │       ├── mastery-grid
 │   │   │       │   └── page.tsx
 │   │   │       ├── scope-and-sequence
@@ -1844,7 +1857,9 @@
 │   │   ├── utils
 │   │   │   ├── entity-helpers.ts
 │   │   │   ├── lesson-display.ts
+│   │   │   ├── lesson-name-normalization.ts
 │   │   │   ├── podsie-completion-helpers.ts
+│   │   │   ├── podsie-question-mapping.ts
 │   │   │   └── section-config-helpers.ts
 │   │   └── validation
 │   │       ├── coaching-stages.ts
@@ -1927,4 +1942,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-568 directories, 1360 files
+574 directories, 1369 files

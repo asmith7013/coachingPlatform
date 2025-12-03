@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { scrapeAndUpdateAllSections } from '@/app/roadmaps/assessment-scraper/actions/scrape-and-update';
+import { scrapeAndUpdateAllSections } from '@/app/scm/roadmaps/assessment-scraper/actions/scrape-and-update';
 
 /**
  * API endpoint for triggering roadmaps scraper

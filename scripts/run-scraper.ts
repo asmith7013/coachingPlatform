@@ -10,7 +10,7 @@
  * - ROADMAPS_PASSWORD: Teach to One Roadmaps password
  */
 
-import { scrapeAndUpdateAllSections } from '../src/app/roadmaps/assessment-scraper/actions/scrape-and-update';
+import { scrapeAndUpdateAllSections } from '../src/app/scm/roadmaps/assessment-scraper/actions/scrape-and-update';
 
 async function main() {
   console.log('🚀 Starting assessment scraper...');

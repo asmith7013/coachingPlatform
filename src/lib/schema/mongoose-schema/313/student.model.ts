@@ -55,7 +55,10 @@ const zearnLessonCompletionSchema = new mongoose.Schema({
 const podsieQuestionSchema = new mongoose.Schema({
   questionNumber: { type: Number, required: true },
   completed: { type: Boolean, default: false },
-  completedAt: { type: String, required: false }
+  completedAt: { type: String, required: false },
+  // AI Analysis scores (from response_payload.aiAnalysis)
+  correctScore: { type: Number, required: false, min: 0, max: 1 },        // 0 or 1 (answersCorrect)
+  explanationScore: { type: Number, required: false, min: 1, max: 3 }     // 1, 2, or 3 (explanationGrading)
 }, { _id: false });
 
 const podsieProgressSchema = new mongoose.Schema({

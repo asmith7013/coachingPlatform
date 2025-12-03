@@ -154,6 +154,8 @@ export function useLessons(
                 podsieAssignmentId: activity.podsieAssignmentId,
                 totalQuestions: activity.totalQuestions || 10,
                 podsieQuestionMap: activity.podsieQuestionMap,
+                variations: activity.variations ?? 3,
+                q1HasVariations: activity.q1HasVariations ?? false,
                 section: assignmentContent.section,
                 unitNumber: selectedUnit,
                 activityType: activity.activityType || 'mastery-check',

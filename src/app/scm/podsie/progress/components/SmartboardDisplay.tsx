@@ -18,7 +18,7 @@ interface LessonConfig {
   section?: string;
   unitNumber: number;
   assignmentType?: 'lesson' | 'mastery-check';
-  hasZearnLesson?: boolean;
+  hasZearnActivity?: boolean;
 }
 
 interface ProgressData {
@@ -107,7 +107,7 @@ export function SmartboardDisplay({
 
       // Calculate Zearn progress
       let zearnProgress = null;
-      if (lesson.hasZearnLesson && lessonProgressData.length > 0) {
+      if (lesson.hasZearnActivity && lessonProgressData.length > 0) {
         const zearnCompleted = lessonProgressData.filter(p => p.zearnCompleted).length;
         zearnProgress = Math.round((zearnCompleted / lessonProgressData.length) * 100);
       }

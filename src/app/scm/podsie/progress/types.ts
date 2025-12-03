@@ -11,6 +11,8 @@ export interface LessonConfig {
   podsieAssignmentId: string;
   totalQuestions: number;
   podsieQuestionMap?: Array<{ questionNumber: number; questionId: string }>;
+  variations?: number;
+  q1HasVariations?: boolean;
   section?: string;
   unitNumber: number;
   activityType?: 'sidekick' | 'mastery-check';

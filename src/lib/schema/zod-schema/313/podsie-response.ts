@@ -5,12 +5,28 @@ import { z } from "zod";
 // =====================================
 
 /**
- * AI evaluation included in some response payloads
+ * AI evaluation included in some response payloads (legacy)
  */
 export const PodsieAiEvaluationSchema = z.object({
   score: z.number(),
   reasoning: z.string(),
   isAccepted: z.boolean(),
+});
+
+/**
+ * AI analysis included in response payloads (newer format)
+ * Contains detailed grading information
+ */
+export const PodsieAiAnalysisSchema = z.object({
+  thinking: z.string().optional(),
+  isCorrect: z.boolean(),
+  answersCorrect: z.boolean(),
+  explanationGrading: z.enum(['none', 'partial', 'full']),
+  overallAIFeedback: z.string().optional(),
+  additionalFeedback: z.array(z.object({
+    content: z.string(),
+    sectionTitle: z.string()
+  })).optional(),
 });
 
 /**
@@ -20,6 +36,7 @@ export const PodsieResponsePayloadSchema = z.object({
   type: z.string(),
   answerJson: z.unknown(),
   aiEvaluation: PodsieAiEvaluationSchema.optional(),
+  aiAnalysis: PodsieAiAnalysisSchema.optional(),
 });
 
 /**
@@ -57,6 +74,7 @@ export const PodsieApiResponseSchema = z.object({
 // =====================================
 
 export type PodsieAiEvaluation = z.infer<typeof PodsieAiEvaluationSchema>;
+export type PodsieAiAnalysis = z.infer<typeof PodsieAiAnalysisSchema>;
 export type PodsieResponsePayload = z.infer<typeof PodsieResponsePayloadSchema>;
 export type PodsieResponse = z.infer<typeof PodsieResponseSchema>;
 export type PodsieApiResponse = z.infer<typeof PodsieApiResponseSchema>;

@@ -8,10 +8,14 @@ import { AllSectionsZod, SchoolsZod, Teachers313Zod, ScopeSequenceTagZod } from 
 
 /**
  * Podsie question mapping - maps question numbers to Podsie question IDs
+ * Now includes explicit root/variant distinction for proper question mapping
  */
 export const PodsieQuestionMapSchema = z.object({
   questionNumber: z.number().int().positive().describe("Question number (1-based index)"),
   questionId: z.string().describe("Podsie question ID"),
+  isRoot: z.boolean().default(true).describe("Whether this is a root question (true) or a variant (false)"),
+  rootQuestionId: z.string().optional().describe("For variants: the Podsie question ID of the root question this variant belongs to"),
+  variantNumber: z.number().int().positive().optional().describe("For variants: which variation this is (1, 2, 3, etc.)"),
 });
 
 export type PodsieQuestionMap = z.infer<typeof PodsieQuestionMapSchema>;
@@ -34,6 +38,8 @@ export const PodsieActivitySchema = z.object({
   podsieAssignmentId: z.string().describe("Podsie assignment ID"),
   podsieQuestionMap: z.array(PodsieQuestionMapSchema).default([]).describe("Map of question numbers to Podsie question IDs"),
   totalQuestions: z.number().int().positive().optional().describe("Total questions in the assignment"),
+  variations: z.number().int().min(0).max(10).default(3).describe("Number of variations per question (0 means root only, 3 means root + 3 variants). Default is 3."),
+  q1HasVariations: z.boolean().default(false).describe("Whether Question 1 has variations (default: false, Q1 typically has no variations)"),
   active: z.boolean().default(true).describe("Whether this activity is active"),
 });
 
