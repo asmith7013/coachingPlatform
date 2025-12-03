@@ -1,4 +1,4 @@
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { LessonProgressCard } from "./LessonProgressCard";
 import { LessonConfig, ProgressData, SummaryStats } from "../types";
 import { groupAssignmentsByUnitLesson, groupAssignmentsBySection } from "../utils/groupAssignments";
@@ -11,6 +11,8 @@ interface ProgressOverviewProps {
   syncing: string | null;
   syncingAll: boolean;
   onSyncAll: () => void;
+  onExportCsv: () => void;
+  exportingCsv: boolean;
   calculateSummaryStats: (data: ProgressData[]) => SummaryStats;
 }
 
@@ -22,6 +24,8 @@ export function ProgressOverview({
   syncing,
   syncingAll,
   onSyncAll,
+  onExportCsv,
+  exportingCsv,
   calculateSummaryStats,
 }: ProgressOverviewProps) {
   // Calculate overall progress for all assignments in this section
@@ -66,18 +70,32 @@ export function ProgressOverview({
           </div>
           <span className="text-sm font-bold text-blue-700 min-w-[3rem]">{overallProgress}%</span>
         </div>
-        <button
-          onClick={onSyncAll}
-          disabled={syncingAll || syncing !== null}
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-            syncingAll || syncing !== null
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
-          }`}
-        >
-          <ArrowPathIcon className={`w-5 h-5 ${syncingAll ? "animate-spin" : ""}`} />
-          {syncingAll ? "Syncing All..." : "Sync All"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onExportCsv}
+            disabled={exportingCsv || lessons.length === 0}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+              exportingCsv || lessons.length === 0
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+            }`}
+          >
+            <ArrowDownTrayIcon className="w-5 h-5" />
+            {exportingCsv ? "Exporting..." : "Export CSV"}
+          </button>
+          <button
+            onClick={onSyncAll}
+            disabled={syncingAll || syncing !== null}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+              syncingAll || syncing !== null
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
+            }`}
+          >
+            <ArrowPathIcon className={`w-5 h-5 ${syncingAll ? "animate-spin" : ""}`} />
+            {syncingAll ? "Syncing All..." : "Sync All"}
+          </button>
+        </div>
       </div>
 
       {/* Progress Cards Grid */}

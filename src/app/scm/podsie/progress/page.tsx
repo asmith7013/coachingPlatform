@@ -5,6 +5,7 @@ import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/so
 import { useToast } from "@/components/core/feedback/Toast";
 import { fetchRampUpProgress, syncSectionRampUpProgress } from "@/app/actions/313/podsie-sync";
 import { getSectionConfig } from "@/app/actions/313/section-config";
+import { fetchStudentsBySection } from "@/app/actions/313/students";
 import type { AssignmentContent } from "@zod-schema/313/section-config";
 import { AssignmentCard } from "./components/AssignmentCard";
 import { SmartboardDisplay } from "./components/SmartboardDisplay";
@@ -16,6 +17,7 @@ import { LoadingState, ProgressLoadingState, NoAssignmentsState, SelectFiltersSt
 import { groupAssignmentsByUnitLesson, groupAssignmentsBySection } from "./utils/groupAssignments";
 import { getScopeTagForSection, getSchoolForSection, groupSectionsBySchool } from "./utils/sectionHelpers";
 import { calculateSummaryStats } from "./utils/progressStats";
+import { generateProgressCsv, downloadCsv, generateCsvFilename } from "./utils/exportCsv";
 import { useSections } from "./hooks/useSections";
 import { useUnitsAndConfig } from "./hooks/useUnitsAndConfig";
 import { useLessons } from "./hooks/useLessons";
@@ -27,6 +29,7 @@ export default function PodsieProgressPage() {
   // State
   const [syncing, setSyncing] = useState<string | null>(null);
   const [syncingAll, setSyncingAll] = useState(false);
+  const [exportingCsv, setExportingCsv] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { showToast, ToastComponent } = useToast();
 
@@ -88,7 +91,13 @@ export default function PodsieProgressPage() {
         unitCode,
         assignment.unitLessonId,
         assignment.totalQuestions || 0,
-        { testMode, baseQuestionIds, activityType: assignment.activityType }
+        {
+          testMode,
+          baseQuestionIds,
+          variations: assignment.variations ?? 3,
+          q1HasVariations: assignment.q1HasVariations ?? false,
+          activityType: assignment.activityType
+        }
       );
 
       if (result.success) {
@@ -164,6 +173,57 @@ export default function PodsieProgressPage() {
     }
   };
 
+  const handleExportCsv = async () => {
+    if (!selectedSection || lessons.length === 0) return;
+
+    setExportingCsv(true);
+    try {
+      // Fetch students for this section to get email addresses
+      const studentsResult = await fetchStudentsBySection(selectedSection);
+
+      if (!studentsResult.success || !studentsResult.items) {
+        showToast({
+          title: 'Export Failed',
+          description: 'Could not fetch student data for export',
+          variant: 'error',
+          icon: ExclamationTriangleIcon,
+        });
+        return;
+      }
+
+      // Generate CSV content
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const csvContent = generateProgressCsv(lessons, progressData, studentsResult.items as any);
+
+      // Generate filename based on current filters
+      const filename = generateCsvFilename(
+        selectedSection,
+        selectedUnit,
+        selectedLessonSection
+      );
+
+      // Trigger download
+      downloadCsv(csvContent, filename);
+
+      showToast({
+        title: 'CSV Exported',
+        description: `Successfully exported ${lessons.length} assignment${lessons.length !== 1 ? 's' : ''} to ${filename}`,
+        variant: 'success',
+        icon: CheckCircleIcon,
+      });
+    } catch (err) {
+      console.error("Error exporting CSV:", err);
+      showToast({
+        title: 'Export Failed',
+        description: 'An unexpected error occurred while exporting CSV',
+        variant: 'error',
+        icon: ExclamationTriangleIcon,
+      });
+    } finally {
+      setExportingCsv(false);
+    }
+  };
+
   const handleCreateModalSuccess = async () => {
     setShowCreateModal(false);
     // Reload section config to get updated assignments
@@ -231,6 +291,8 @@ export default function PodsieProgressPage() {
                 syncing={syncing}
                 syncingAll={syncingAll}
                 onSyncAll={handleSyncAll}
+                onExportCsv={handleExportCsv}
+                exportingCsv={exportingCsv}
                 calculateSummaryStats={calculateSummaryStats}
               />
 
