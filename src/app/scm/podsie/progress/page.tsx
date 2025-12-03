@@ -77,11 +77,26 @@ export default function PodsieProgressPage() {
 
       const unitCode = `${assignment.grade}.${selectedUnit}`;
 
-      // Extract base question IDs from the question map, limited by totalQuestions
-      const baseQuestionIds = assignment.podsieQuestionMap && assignment.totalQuestions
-        ? assignment.podsieQuestionMap
-            .slice(0, assignment.totalQuestions)
-            .map(q => Number(q.questionId))
+      // Extract base question IDs (root questions only) from the question map
+      // NEW format: Filter for isRoot === true
+      // OLD format (fallback): Take first N questions if isRoot field is missing
+      const baseQuestionIds = assignment.podsieQuestionMap
+        ? (() => {
+            // Check if using new format (has isRoot field)
+            const hasNewFormat = assignment.podsieQuestionMap.some(q => q.isRoot !== undefined);
+
+            if (hasNewFormat) {
+              // NEW format: Filter for root questions only
+              return assignment.podsieQuestionMap
+                .filter(q => q.isRoot === true)
+                .map(q => Number(q.questionId));
+            } else {
+              // OLD format fallback: Take first N questions (limited by totalQuestions)
+              return assignment.podsieQuestionMap
+                .slice(0, assignment.totalQuestions)
+                .map(q => Number(q.questionId));
+            }
+          })()
         : undefined;
 
       const result = await syncSectionRampUpProgress(

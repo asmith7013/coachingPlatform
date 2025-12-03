@@ -8,8 +8,8 @@ interface LessonConfig {
   totalQuestions: number;
   section?: string;
   unitNumber: number;
-  assignmentType?: 'lesson' | 'mastery-check';
-  hasZearnLesson?: boolean;
+  activityType?: 'sidekick' | 'mastery-check';
+  hasZearnActivity?: boolean;
 }
 
 interface ProgressData {
@@ -83,7 +83,7 @@ export function LessonProgressCard({
 
   // Calculate Zearn progress if the lesson has Zearn
   const zearnProgress = useMemo(() => {
-    if (!lesson.hasZearnLesson) return null;
+    if (!lesson.hasZearnActivity) return null;
 
     const lessonProgressData = progressData.filter(
       p => p.podsieAssignmentId
@@ -131,23 +131,39 @@ export function LessonProgressCard({
           </div>
         )}
 
-        {/* Main Assignment Progress Bar */}
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs font-medium text-gray-700">
-              {lesson.assignmentType === 'mastery-check' ? 'Mastery Check' : 'Lesson'}
-            </span>
-            <span className="text-xs font-bold text-blue-700">{lessonProgress}%</span>
+        {/* Sidekick Progress Bar (if lesson is sidekick) */}
+        {lesson.activityType === 'sidekick' && (
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-medium text-gray-700">Sidekick</span>
+              <span className="text-xs font-bold text-blue-700">{lessonProgress}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="h-2 rounded-full transition-all bg-gradient-to-r from-blue-500 to-blue-600"
+                style={{ width: `${lessonProgress}%` }}
+              />
+            </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="h-2 rounded-full transition-all bg-gradient-to-r from-blue-500 to-blue-600"
-              style={{ width: `${lessonProgress}%` }}
-            />
-          </div>
-        </div>
+        )}
 
-        {/* Mastery Check Progress Bar (if exists) */}
+        {/* Mastery Check Progress Bar (if lesson is mastery-check OR if separate masteryCheck exists) */}
+        {lesson.activityType === 'mastery-check' && (
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-medium text-gray-700">Mastery Check</span>
+              <span className="text-xs font-bold text-green-700">{lessonProgress}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="h-2 rounded-full transition-all bg-gradient-to-r from-green-500 to-green-600"
+                style={{ width: `${lessonProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Separate Mastery Check Progress Bar (if paired with a sidekick lesson) */}
         {masteryCheck && masteryCheckProgress !== null && (
           <div>
             <div className="flex items-center justify-between mb-1">

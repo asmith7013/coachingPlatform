@@ -10,7 +10,13 @@ export interface LessonConfig {
   grade: string;
   podsieAssignmentId: string;
   totalQuestions: number;
-  podsieQuestionMap?: Array<{ questionNumber: number; questionId: string }>;
+  podsieQuestionMap?: Array<{
+    questionNumber: number;
+    questionId: string;
+    isRoot?: boolean;
+    rootQuestionId?: string;
+    variantNumber?: number;
+  }>;
   variations?: number;
   q1HasVariations?: boolean;
   section?: string;
