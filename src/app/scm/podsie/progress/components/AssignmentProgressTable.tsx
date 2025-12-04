@@ -97,9 +97,9 @@ export function AssignmentProgressTable({
     [showQuestionColumns, totalQuestions, questionMap, showAllQuestions]
   );
 
-  // Calculate per-question completion rates (only for synced students with at least one completed question)
+  // Calculate per-question completion rates (only for synced students)
   const questionStats = useMemo(() => {
-    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0 && p.completedCount > 0);
+    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
     return questionColumns.map((col) => {
       const completed = syncedStudents.filter((p) =>
         p.questions.find((q) => q.questionNumber === col.questionNumber && q.completed)
@@ -107,17 +107,23 @@ export function AssignmentProgressTable({
 
       // For assessments, calculate average score per question
       let avgScore = 0;
-      if (isAssessment && syncedStudents.length > 0) {
-        const totalScore = syncedStudents.reduce((sum, student) => {
+      if (isAssessment) {
+        let totalScore = 0;
+        let studentsWithResponse = 0;
+
+        // Loop through ALL synced students, not just those with completedCount > 0
+        syncedStudents.forEach(student => {
           const question = student.questions.find(q => q.questionNumber === col.questionNumber);
-          if (question) {
+          // Only include if the student has a response (correctScore or explanationScore exists)
+          if (question && (question.correctScore !== undefined || question.explanationScore !== undefined)) {
             const correctScore = question.correctScore ?? 0;
             const explanationScore = question.explanationScore ?? 0;
-            return sum + correctScore + explanationScore;
+            totalScore += correctScore + explanationScore;
+            studentsWithResponse++;
           }
-          return sum;
-        }, 0);
-        avgScore = totalScore / syncedStudents.length;
+        });
+
+        avgScore = studentsWithResponse > 0 ? totalScore / studentsWithResponse : 0;
       }
 
       return {
@@ -227,35 +233,61 @@ export function AssignmentProgressTable({
               <>
                 <td className="px-4 py-2 text-center text-sm font-bold text-blue-800 bg-blue-100">
                   {(() => {
-                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0 && p.completedCount > 0);
-                    if (syncedStudents.length === 0) return '—';
+                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
+                    // Only include students who have at least one response
+                    const studentsWithResponses = syncedStudents.filter(student =>
+                      student.questions.some(q => q.correctScore !== undefined || q.explanationScore !== undefined)
+                    );
 
-                    const totalPointsReceived = syncedStudents.reduce((sum, student) => {
-                      return sum + student.questions.reduce((qSum, q) => {
-                        const correctScore = q.correctScore ?? 0;
-                        const explanationScore = q.explanationScore ?? 0;
-                        return qSum + correctScore + explanationScore;
-                      }, 0);
-                    }, 0);
-                    const avgPointsReceived = totalPointsReceived / syncedStudents.length;
+                    if (studentsWithResponses.length === 0) return '—';
+
+                    // Calculate total points across all students with responses
+                    let totalPointsReceived = 0;
+
+                    studentsWithResponses.forEach(student => {
+                      student.questions.forEach(q => {
+                        // Only count questions that were actually answered
+                        if (q.correctScore !== undefined || q.explanationScore !== undefined) {
+                          const correctScore = q.correctScore ?? 0;
+                          const explanationScore = q.explanationScore ?? 0;
+                          totalPointsReceived += correctScore + explanationScore;
+                        }
+                      });
+                    });
+
+                    const avgPointsReceived = totalPointsReceived / studentsWithResponses.length;
                     const possiblePoints = totalQuestions * 4;
+
                     return `${avgPointsReceived.toFixed(1)}/${possiblePoints}`;
                   })()}
                 </td>
                 <td className="px-4 py-2 text-center text-sm font-bold text-blue-800 bg-blue-100">
                   {(() => {
-                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0 && p.completedCount > 0);
-                    if (syncedStudents.length === 0) return '—';
+                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
+                    // Only include students who have at least one response
+                    const studentsWithResponses = syncedStudents.filter(student =>
+                      student.questions.some(q => q.correctScore !== undefined || q.explanationScore !== undefined)
+                    );
 
-                    const totalPointsReceived = syncedStudents.reduce((sum, student) => {
-                      return sum + student.questions.reduce((qSum, q) => {
-                        const correctScore = q.correctScore ?? 0;
-                        const explanationScore = q.explanationScore ?? 0;
-                        return qSum + correctScore + explanationScore;
-                      }, 0);
-                    }, 0);
-                    const avgPointsReceived = totalPointsReceived / syncedStudents.length;
+                    if (studentsWithResponses.length === 0) return '—';
+
+                    // Calculate total points across all students with responses
+                    let totalPointsReceived = 0;
+
+                    studentsWithResponses.forEach(student => {
+                      student.questions.forEach(q => {
+                        // Only count questions that were actually answered
+                        if (q.correctScore !== undefined || q.explanationScore !== undefined) {
+                          const correctScore = q.correctScore ?? 0;
+                          const explanationScore = q.explanationScore ?? 0;
+                          totalPointsReceived += correctScore + explanationScore;
+                        }
+                      });
+                    });
+
+                    const avgPointsReceived = totalPointsReceived / studentsWithResponses.length;
                     const possiblePoints = totalQuestions * 4;
+
                     return possiblePoints > 0
                       ? `${Math.round((avgPointsReceived / possiblePoints) * 100)}%`
                       : '—';

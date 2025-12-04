@@ -1,9 +1,9 @@
 // Border utilities
 export const borderWidths = {
   none: 'border-0',
-  sm: 'border',
-  md: 'border-2',
-  lg: 'border-4',
+  sm: 'border-[3px]',
+  md: 'border-[4px]',
+  lg: 'border-[6px]',
 }
 
 export const borderStyles = {

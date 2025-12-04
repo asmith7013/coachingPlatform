@@ -16,9 +16,6 @@
 │   │   ├── import-patterns.md
 │   │   └── project-structure.md
 │   ├── architecture-overview.md
-│   ├── assessment.json
-│   ├── assignment-clean.json
-│   ├── assignment.json
 │   ├── components
 │   │   ├── component-system.md
 │   │   ├── composed-components.md
@@ -107,17 +104,6 @@
 │   │   ├── podsie.md
 │   │   └── roadmap.html
 │   ├── question-variant-integration.md
-│   ├── question-variant-mapping.json
-│   ├── standands8.html
-│   ├── standards6.html
-│   ├── standards6.json
-│   ├── standards7.html
-│   ├── standards7.json
-│   ├── standards8.json
-│   ├── standards8.txt
-│   ├── standardsAlg1.html
-│   ├── standardsAlg1.json
-│   ├── studentExample.json
 │   ├── table-of-contents.md
 │   ├── tanstack-table-implementation.md
 │   ├── token-tailwind-mapping.md
@@ -1971,4 +1957,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-577 directories, 1395 files
+577 directories, 1381 files
