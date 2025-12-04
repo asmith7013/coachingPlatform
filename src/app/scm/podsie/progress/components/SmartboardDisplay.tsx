@@ -28,13 +28,18 @@ interface ProgressData {
   rampUpId: string;
   rampUpName?: string;
   podsieAssignmentId?: string;
-  questions: Array<{ questionNumber: number; completed: boolean }>;
+  questions: Array<{
+    questionNumber: number;
+    completed: boolean;
+    completedAt?: string;
+  }>;
   totalQuestions: number;
   completedCount: number;
   percentComplete: number;
   isFullyComplete: boolean;
   lastSyncedAt?: string;
   zearnCompleted?: boolean;
+  zearnCompletionDate?: string;
 }
 
 interface SmartboardDisplayProps {
@@ -91,6 +96,23 @@ export function SmartboardDisplay({
     });
   }, [dueDate]);
 
+  // Helper function to determine if a completion happened today
+  const isCompletedToday = (completedAt?: string): boolean => {
+    if (!completedAt) return false;
+
+    const completedDate = new Date(completedAt);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const completedDateOnly = new Date(
+      completedDate.getFullYear(),
+      completedDate.getMonth(),
+      completedDate.getDate()
+    );
+
+    return completedDateOnly.getTime() === today.getTime();
+  };
+
   // Group lessons with their mastery checks and map progress data
   const assignmentProgress = useMemo(() => {
     console.log('=== GROUPING ASSIGNMENTS (SmartboardDisplay) ===');
@@ -111,15 +133,45 @@ export function SmartboardDisplay({
       );
       const lessonStats = calculateSummaryStats(lessonProgressData);
 
+      // Calculate today's lesson progress
+      let lessonTodayProgress = 0;
+      if (lessonProgressData.length > 0) {
+        // Count questions completed today across all students
+        let totalQuestionsCompletedToday = 0;
+        let totalPossibleQuestions = 0;
+
+        lessonProgressData.forEach(student => {
+          if (student.totalQuestions > 0) {
+            totalPossibleQuestions += student.totalQuestions;
+            const questionsCompletedToday = student.questions.filter(q =>
+              q.completed && isCompletedToday(q.completedAt)
+            ).length;
+            totalQuestionsCompletedToday += questionsCompletedToday;
+          }
+        });
+
+        lessonTodayProgress = totalPossibleQuestions > 0
+          ? Math.round((totalQuestionsCompletedToday / totalPossibleQuestions) * 100)
+          : 0;
+      }
+
       // Calculate Zearn progress
       let zearnProgress = null;
+      let zearnTodayProgress = 0;
       if (lesson.hasZearnActivity && lessonProgressData.length > 0) {
         const zearnCompleted = lessonProgressData.filter(p => p.zearnCompleted).length;
         zearnProgress = Math.round((zearnCompleted / lessonProgressData.length) * 100);
+
+        // Count Zearn completions from today
+        const zearnCompletedToday = lessonProgressData.filter(p =>
+          p.zearnCompleted && isCompletedToday(p.zearnCompletionDate)
+        ).length;
+        zearnTodayProgress = Math.round((zearnCompletedToday / lessonProgressData.length) * 100);
       }
 
       // Get mastery check progress if exists
       let masteryCheckProgress = null;
+      let masteryCheckTodayProgress = 0;
       if (masteryCheck) {
         const masteryProgressData = progressData.filter(
           p => p.podsieAssignmentId
@@ -128,23 +180,40 @@ export function SmartboardDisplay({
         );
         const masteryStats = calculateSummaryStats(masteryProgressData);
         masteryCheckProgress = masteryStats.avgCompletion;
+
+        // Calculate today's mastery check progress
+        if (masteryProgressData.length > 0) {
+          let totalQuestionsCompletedToday = 0;
+          let totalPossibleQuestions = 0;
+
+          masteryProgressData.forEach(student => {
+            if (student.totalQuestions > 0) {
+              totalPossibleQuestions += student.totalQuestions;
+              const questionsCompletedToday = student.questions.filter(q =>
+                q.completed && isCompletedToday(q.completedAt)
+              ).length;
+              totalQuestionsCompletedToday += questionsCompletedToday;
+            }
+          });
+
+          masteryCheckTodayProgress = totalPossibleQuestions > 0
+            ? Math.round((totalQuestionsCompletedToday / totalPossibleQuestions) * 100)
+            : 0;
+        }
       }
 
       return {
         lesson,
         lessonProgress: lessonStats.avgCompletion,
+        lessonTodayProgress,
         zearnProgress,
+        zearnTodayProgress,
         masteryCheck,
         masteryCheckProgress,
+        masteryCheckTodayProgress,
       };
     });
 
-    console.log('Progress mapped:', progressMapped.map(p => ({
-      lesson: `${p.lesson.podsieAssignmentId} (${p.lesson.activityType})`,
-      masteryCheck: p.masteryCheck ? `${p.masteryCheck.podsieAssignmentId} (${p.masteryCheck.activityType})` : 'NONE',
-      lessonProgress: p.lessonProgress,
-      masteryCheckProgress: p.masteryCheckProgress
-    })));
 
     return progressMapped;
   }, [assignments, progressData, calculateSummaryStats]);
@@ -171,6 +240,18 @@ export function SmartboardDisplay({
     );
 
     return Math.round(totalCompletion / assignmentProgress.length);
+  }, [assignmentProgress]);
+
+  // Calculate overall today's progress
+  const overallTodayPercentage = useMemo(() => {
+    if (assignmentProgress.length === 0) return 0;
+
+    const totalTodayCompletion = assignmentProgress.reduce(
+      (sum, item) => sum + item.lessonTodayProgress,
+      0
+    );
+
+    return Math.round(totalTodayCompletion / assignmentProgress.length);
   }, [assignmentProgress]);
 
   // Format lesson section for display (add "Section" prefix for single letters)
@@ -246,6 +327,7 @@ export function SmartboardDisplay({
             <SmartboardProgressBar
               label=""
               percentage={overallPercentage}
+              todayPercentage={overallTodayPercentage}
               color="teal"
               showLabel={false}
             />
@@ -253,7 +335,7 @@ export function SmartboardDisplay({
 
           {/* Individual Assignment Progress */}
           <div className="space-y-3 pl-4 pr-32 border-l-2 border-indigo-600">
-            {assignmentProgress.map(({ lesson, lessonProgress, zearnProgress, masteryCheck, masteryCheckProgress }) => {
+            {assignmentProgress.map(({ lesson, lessonProgress, lessonTodayProgress, zearnProgress, zearnTodayProgress, masteryCheck, masteryCheckProgress, masteryCheckTodayProgress }) => {
               // Extract lesson number
               const lessonNumber = lesson.unitLessonId.includes('.')
                 ? lesson.unitLessonId.split('.')[1]
@@ -281,7 +363,12 @@ export function SmartboardDisplay({
 
               // Add Zearn if present (35%)
               if (shouldShowZearn) {
-                segments.push({ percentage: zearnProgress, color: 'purple' as const, widthPercent: 35 });
+                segments.push({
+                  percentage: zearnProgress,
+                  todayPercentage: zearnTodayProgress,
+                  color: 'purple' as const,
+                  widthPercent: 35
+                });
               }
 
               // Determine lesson/mastery split
@@ -289,13 +376,28 @@ export function SmartboardDisplay({
                 // Has both lesson and mastery check: 60% lesson, 40% mastery check
                 const lessonWidth = shouldShowZearn ? 39 : 60; // 60% of remaining 65%, or 60% of 100%
                 const masteryWidth = shouldShowZearn ? 26 : 40; // 40% of remaining 65%, or 40% of 100%
-                segments.push({ percentage: lessonProgress, color: 'blue' as const, widthPercent: lessonWidth });
-                segments.push({ percentage: masteryCheckProgress, color: 'green' as const, widthPercent: masteryWidth });
+                segments.push({
+                  percentage: lessonProgress,
+                  todayPercentage: lessonTodayProgress,
+                  color: 'blue' as const,
+                  widthPercent: lessonWidth
+                });
+                segments.push({
+                  percentage: masteryCheckProgress,
+                  todayPercentage: masteryCheckTodayProgress,
+                  color: 'green' as const,
+                  widthPercent: masteryWidth
+                });
               } else {
                 // Only lesson or standalone mastery check
                 const barColor = lesson.activityType === 'mastery-check' ? 'green' : 'blue';
                 const widthPercent = shouldShowZearn ? 65 : 100;
-                segments.push({ percentage: lessonProgress, color: barColor as 'blue' | 'green', widthPercent });
+                segments.push({
+                  percentage: lessonProgress,
+                  todayPercentage: lessonTodayProgress,
+                  color: barColor as 'blue' | 'green',
+                  widthPercent
+                });
               }
 
               return (
