@@ -60,10 +60,10 @@ export function AssignmentCard({
   // Check if this is an assessment lesson
   const isAssessment = assignment.section === 'Assessment' || assignment.section === 'Unit Assessment';
 
-  // For assessments, show detailed score by default
+  // For assessments, show detailed score and all questions by default
   // For non-assessments, default to false
   const [showDetailedScore, setShowDetailedScore] = useState(isAssessment);
-  const [showAllQuestions, setShowAllQuestions] = useState(false);
+  const [showAllQuestions, setShowAllQuestions] = useState(isAssessment);
 
   // Handler to sync both lesson and mastery check (or just lesson if no mastery check)
   const handleSyncBoth = async () => {
