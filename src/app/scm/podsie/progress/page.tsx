@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useToast } from "@/components/core/feedback/Toast";
 import { fetchRampUpProgress, syncSectionRampUpProgress } from "@/app/actions/313/podsie-sync";
 import { getSectionConfig } from "@/app/actions/313/section-config";

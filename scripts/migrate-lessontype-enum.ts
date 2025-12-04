@@ -10,7 +10,7 @@
  * Run with: npm run tsx scripts/migrate-lessontype-enum.ts
  */
 
-import { connectToDatabase } from '@/lib/db';
+import { connectToDB } from '@server/db/connection';
 import mongoose from 'mongoose';
 
 async function migrateLessonTypes() {
@@ -18,7 +18,7 @@ async function migrateLessonTypes() {
 
   try {
     // Connect to database
-    await connectToDatabase();
+    await connectToDB();
     const db = mongoose.connection.db;
     if (!db) {
       throw new Error('Database connection not established');

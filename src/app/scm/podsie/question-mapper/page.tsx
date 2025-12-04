@@ -210,7 +210,7 @@ export default function QuestionMapperPage() {
             {existingMapping && (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <p className="text-sm text-yellow-800">
-                  <strong>Warning:</strong> Existing mapping found for "{existingMapping.assignmentName}".
+                  <strong>Warning:</strong> Existing mapping found for &quot;{existingMapping.assignmentName}&quot;.
                   Saving will overwrite it.
                 </p>
               </div>
@@ -256,7 +256,7 @@ export default function QuestionMapperPage() {
                 >
                   {saving ? (
                     <>
-                      <Spinner size="sm" variant="white" />
+                      <Spinner size="sm" />
                       <span>Saving...</span>
                     </>
                   ) : (
@@ -316,7 +316,7 @@ export default function QuestionMapperPage() {
         {/* Empty State */}
         {!loading && questionMap.length === 0 && (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <p className="text-gray-600">Enter an assignment ID and click "Fetch & Map" to get started</p>
+            <p className="text-gray-600">Enter an assignment ID and click &quot;Fetch &amp; Map&quot; to get started</p>
           </div>
         )}
 

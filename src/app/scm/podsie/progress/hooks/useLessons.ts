@@ -148,7 +148,7 @@ export function useLessons(
                 scopeAndSequenceId: assignmentContent.scopeAndSequenceId,
                 unitLessonId: assignmentContent.unitLessonId,
                 lessonName: assignmentContent.lessonName,
-                lessonType: matchingLesson?.lessonType as 'lesson' | 'ramp-up' | 'unit-assessment' | undefined,
+                lessonType: matchingLesson?.lessonType as 'lesson' | 'rampUp' | 'assessment' | undefined,
                 lessonTitle: matchingLesson?.lessonTitle,
                 grade: scopeSequenceTag.replace("Grade ", "").replace("Algebra 1", "8"),
                 podsieAssignmentId: activity.podsieAssignmentId,
