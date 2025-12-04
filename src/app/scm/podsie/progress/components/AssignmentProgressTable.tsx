@@ -204,6 +204,8 @@ export function AssignmentProgressTable({
                 <td className="px-4 py-2 text-center text-sm font-bold text-blue-800 bg-blue-100">
                   {(() => {
                     const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
+                    if (syncedStudents.length === 0) return '—';
+
                     const totalPointsReceived = syncedStudents.reduce((sum, student) => {
                       return sum + student.questions.reduce((qSum, q) => {
                         const correctScore = q.correctScore ?? 0;
@@ -211,15 +213,16 @@ export function AssignmentProgressTable({
                         return qSum + correctScore + explanationScore;
                       }, 0);
                     }, 0);
-                    const totalPossiblePoints = syncedStudents.length * totalQuestions * 4;
-                    return syncedStudents.length > 0
-                      ? `${totalPointsReceived}/${totalPossiblePoints}`
-                      : '—';
+                    const avgPointsReceived = totalPointsReceived / syncedStudents.length;
+                    const possiblePoints = totalQuestions * 4;
+                    return `${avgPointsReceived.toFixed(1)}/${possiblePoints}`;
                   })()}
                 </td>
                 <td className="px-4 py-2 text-center text-sm font-bold text-blue-800 bg-blue-100">
                   {(() => {
                     const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
+                    if (syncedStudents.length === 0) return '—';
+
                     const totalPointsReceived = syncedStudents.reduce((sum, student) => {
                       return sum + student.questions.reduce((qSum, q) => {
                         const correctScore = q.correctScore ?? 0;
@@ -227,9 +230,10 @@ export function AssignmentProgressTable({
                         return qSum + correctScore + explanationScore;
                       }, 0);
                     }, 0);
-                    const totalPossiblePoints = syncedStudents.length * totalQuestions * 4;
-                    return syncedStudents.length > 0 && totalPossiblePoints > 0
-                      ? `${Math.round((totalPointsReceived / totalPossiblePoints) * 100)}%`
+                    const avgPointsReceived = totalPointsReceived / syncedStudents.length;
+                    const possiblePoints = totalQuestions * 4;
+                    return possiblePoints > 0
+                      ? `${Math.round((avgPointsReceived / possiblePoints) * 100)}%`
                       : '—';
                   })()}
                 </td>
