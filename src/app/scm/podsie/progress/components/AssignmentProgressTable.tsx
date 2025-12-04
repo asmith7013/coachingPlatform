@@ -97,9 +97,9 @@ export function AssignmentProgressTable({
     [showQuestionColumns, totalQuestions, questionMap, showAllQuestions]
   );
 
-  // Calculate per-question completion rates (only for synced students)
+  // Calculate per-question completion rates (only for synced students with at least one completed question)
   const questionStats = useMemo(() => {
-    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
+    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0 && p.completedCount > 0);
     return questionColumns.map((col) => {
       const completed = syncedStudents.filter((p) =>
         p.questions.find((q) => q.questionNumber === col.questionNumber && q.completed)
@@ -227,7 +227,7 @@ export function AssignmentProgressTable({
               <>
                 <td className="px-4 py-2 text-center text-sm font-bold text-blue-800 bg-blue-100">
                   {(() => {
-                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
+                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0 && p.completedCount > 0);
                     if (syncedStudents.length === 0) return '—';
 
                     const totalPointsReceived = syncedStudents.reduce((sum, student) => {
@@ -244,7 +244,7 @@ export function AssignmentProgressTable({
                 </td>
                 <td className="px-4 py-2 text-center text-sm font-bold text-blue-800 bg-blue-100">
                   {(() => {
-                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
+                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0 && p.completedCount > 0);
                     if (syncedStudents.length === 0) return '—';
 
                     const totalPointsReceived = syncedStudents.reduce((sum, student) => {
