@@ -332,6 +332,7 @@ export function AssignmentCard({
           showZearnColumn={assignment.hasZearnActivity ?? false}
           showDetailedScore={showDetailedScore}
           showAllQuestions={showAllQuestions}
+          isAssessment={isAssessment}
         />
       </div>
     </div>

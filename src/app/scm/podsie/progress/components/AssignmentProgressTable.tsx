@@ -41,6 +41,7 @@ interface AssignmentProgressTableProps {
   showZearnColumn?: boolean;
   showDetailedScore?: boolean;
   showAllQuestions?: boolean;
+  isAssessment?: boolean;
 }
 
 export function AssignmentProgressTable({
@@ -51,6 +52,7 @@ export function AssignmentProgressTable({
   showZearnColumn = false,
   showDetailedScore = false,
   showAllQuestions = false,
+  isAssessment = false,
 }: AssignmentProgressTableProps) {
   // Check if we have actual lesson data (students with synced lesson progress)
   const hasLessonData = progressData.some(p => p.totalQuestions > 0);
@@ -150,6 +152,16 @@ export function AssignmentProgressTable({
                 Mastery Check
               </th>
             )}
+            {isAssessment && (
+              <>
+                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-900 min-w-[100px] bg-blue-50">
+                  Total Score
+                </th>
+                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-900 min-w-[80px] bg-blue-50">
+                  %
+                </th>
+              </>
+            )}
           </tr>
 
           {/* Class Completion Row */}
@@ -186,6 +198,42 @@ export function AssignmentProgressTable({
                     : 0;
                 })()}%
               </td>
+            )}
+            {isAssessment && (
+              <>
+                <td className="px-4 py-2 text-center text-sm font-bold text-blue-800 bg-blue-100">
+                  {(() => {
+                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
+                    const totalPointsReceived = syncedStudents.reduce((sum, student) => {
+                      return sum + student.questions.reduce((qSum, q) => {
+                        const correctScore = q.correctScore ?? 0;
+                        const explanationScore = q.explanationScore ?? 0;
+                        return qSum + correctScore + explanationScore;
+                      }, 0);
+                    }, 0);
+                    const totalPossiblePoints = syncedStudents.length * totalQuestions * 4;
+                    return syncedStudents.length > 0
+                      ? `${totalPointsReceived}/${totalPossiblePoints}`
+                      : '—';
+                  })()}
+                </td>
+                <td className="px-4 py-2 text-center text-sm font-bold text-blue-800 bg-blue-100">
+                  {(() => {
+                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
+                    const totalPointsReceived = syncedStudents.reduce((sum, student) => {
+                      return sum + student.questions.reduce((qSum, q) => {
+                        const correctScore = q.correctScore ?? 0;
+                        const explanationScore = q.explanationScore ?? 0;
+                        return qSum + correctScore + explanationScore;
+                      }, 0);
+                    }, 0);
+                    const totalPossiblePoints = syncedStudents.length * totalQuestions * 4;
+                    return syncedStudents.length > 0 && totalPossiblePoints > 0
+                      ? `${Math.round((totalPointsReceived / totalPossiblePoints) * 100)}%`
+                      : '—';
+                  })()}
+                </td>
+              </>
             )}
           </tr>
         </thead>
@@ -339,6 +387,48 @@ export function AssignmentProgressTable({
                       size="large"
                     />
                   </td>
+                )}
+
+                {/* Assessment Total Score Columns */}
+                {isAssessment && (
+                  <>
+                    <td className="px-4 py-3 text-center bg-blue-50/50">
+                      {hasSynced ? (
+                        <span className="text-sm font-semibold text-gray-900">
+                          {(() => {
+                            const pointsReceived = progress.questions.reduce((sum, q) => {
+                              const correctScore = q.correctScore ?? 0;
+                              const explanationScore = q.explanationScore ?? 0;
+                              return sum + correctScore + explanationScore;
+                            }, 0);
+                            const possiblePoints = totalQuestions * 4;
+                            return `${pointsReceived}/${possiblePoints}`;
+                          })()}
+                        </span>
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-center bg-blue-50/50">
+                      {hasSynced ? (
+                        <span className="text-sm font-bold text-gray-900">
+                          {(() => {
+                            const pointsReceived = progress.questions.reduce((sum, q) => {
+                              const correctScore = q.correctScore ?? 0;
+                              const explanationScore = q.explanationScore ?? 0;
+                              return sum + correctScore + explanationScore;
+                            }, 0);
+                            const possiblePoints = totalQuestions * 4;
+                            return possiblePoints > 0
+                              ? `${Math.round((pointsReceived / possiblePoints) * 100)}%`
+                              : '—';
+                          })()}
+                        </span>
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
+                    </td>
+                  </>
                 )}
               </tr>
             );
