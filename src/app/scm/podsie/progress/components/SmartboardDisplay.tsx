@@ -17,7 +17,7 @@ interface LessonConfig {
   totalQuestions: number;
   section?: string;
   unitNumber: number;
-  assignmentType?: 'lesson' | 'mastery-check';
+  activityType?: 'sidekick' | 'mastery-check';
   hasZearnActivity?: boolean;
 }
 
@@ -140,8 +140,8 @@ export function SmartboardDisplay({
     });
 
     console.log('Progress mapped:', progressMapped.map(p => ({
-      lesson: `${p.lesson.podsieAssignmentId} (${p.lesson.assignmentType})`,
-      masteryCheck: p.masteryCheck ? `${p.masteryCheck.podsieAssignmentId} (${p.masteryCheck.assignmentType})` : 'NONE',
+      lesson: `${p.lesson.podsieAssignmentId} (${p.lesson.activityType})`,
+      masteryCheck: p.masteryCheck ? `${p.masteryCheck.podsieAssignmentId} (${p.masteryCheck.activityType})` : 'NONE',
       lessonProgress: p.lessonProgress,
       masteryCheckProgress: p.masteryCheckProgress
     })));
@@ -274,22 +274,27 @@ export function SmartboardDisplay({
               // Build segments for split bar
               const segments = [];
 
+              // Determine if we should show Zearn
+              // Hide Zearn when there's both a sidekick and mastery check
+              const hasSidekickAndMasteryCheck = lesson.activityType === 'sidekick' && masteryCheck && masteryCheckProgress !== null;
+              const shouldShowZearn = zearnProgress !== null && !hasSidekickAndMasteryCheck;
+
               // Add Zearn if present (35%)
-              if (zearnProgress !== null) {
+              if (shouldShowZearn) {
                 segments.push({ percentage: zearnProgress, color: 'purple' as const, widthPercent: 35 });
               }
 
               // Determine lesson/mastery split
               if (masteryCheck && masteryCheckProgress !== null) {
                 // Has both lesson and mastery check: 60% lesson, 40% mastery check
-                const lessonWidth = zearnProgress !== null ? 39 : 60; // 60% of remaining 65%, or 60% of 100%
-                const masteryWidth = zearnProgress !== null ? 26 : 40; // 40% of remaining 65%, or 40% of 100%
+                const lessonWidth = shouldShowZearn ? 39 : 60; // 60% of remaining 65%, or 60% of 100%
+                const masteryWidth = shouldShowZearn ? 26 : 40; // 40% of remaining 65%, or 40% of 100%
                 segments.push({ percentage: lessonProgress, color: 'blue' as const, widthPercent: lessonWidth });
                 segments.push({ percentage: masteryCheckProgress, color: 'green' as const, widthPercent: masteryWidth });
               } else {
                 // Only lesson or standalone mastery check
-                const barColor = lesson.assignmentType === 'mastery-check' ? 'green' : 'blue';
-                const widthPercent = zearnProgress !== null ? 65 : 100;
+                const barColor = lesson.activityType === 'mastery-check' ? 'green' : 'blue';
+                const widthPercent = shouldShowZearn ? 65 : 100;
                 segments.push({ percentage: lessonProgress, color: barColor as 'blue' | 'green', widthPercent });
               }
 
