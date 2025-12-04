@@ -6,6 +6,7 @@ import { SmartboardProgressBar } from "./SmartboardProgressBar";
 import { groupAssignmentsByUnitLesson } from "../utils/groupAssignments";
 import { formatLessonDisplay } from "@/lib/utils/lesson-display";
 import type { LessonType } from "@/lib/utils/lesson-display";
+import { isCompletedToday, calculateTodayProgress, calculateTodayCompletionRate } from "@/lib/utils/completion-date-helpers";
 
 interface LessonConfig {
   unitLessonId: string;
@@ -96,22 +97,6 @@ export function SmartboardDisplay({
     });
   }, [dueDate]);
 
-  // Helper function to determine if a completion happened today
-  const isCompletedToday = (completedAt?: string): boolean => {
-    if (!completedAt) return false;
-
-    const completedDate = new Date(completedAt);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const completedDateOnly = new Date(
-      completedDate.getFullYear(),
-      completedDate.getMonth(),
-      completedDate.getDate()
-    );
-
-    return completedDateOnly.getTime() === today.getTime();
-  };
 
   // Group lessons with their mastery checks and map progress data
   const assignmentProgress = useMemo(() => {
@@ -134,26 +119,11 @@ export function SmartboardDisplay({
       const lessonStats = calculateSummaryStats(lessonProgressData);
 
       // Calculate today's lesson progress
-      let lessonTodayProgress = 0;
-      if (lessonProgressData.length > 0) {
-        // Count questions completed today across all students
-        let totalQuestionsCompletedToday = 0;
-        let totalPossibleQuestions = 0;
-
-        lessonProgressData.forEach(student => {
-          if (student.totalQuestions > 0) {
-            totalPossibleQuestions += student.totalQuestions;
-            const questionsCompletedToday = student.questions.filter(q =>
-              q.completed && isCompletedToday(q.completedAt)
-            ).length;
-            totalQuestionsCompletedToday += questionsCompletedToday;
-          }
-        });
-
-        lessonTodayProgress = totalPossibleQuestions > 0
-          ? Math.round((totalQuestionsCompletedToday / totalPossibleQuestions) * 100)
-          : 0;
-      }
+      const lessonTodayProgress = calculateTodayProgress(
+        lessonProgressData,
+        (student) => student.questions,
+        (student) => student.totalQuestions
+      );
 
       // Calculate Zearn progress
       let zearnProgress = null;
@@ -163,10 +133,11 @@ export function SmartboardDisplay({
         zearnProgress = Math.round((zearnCompleted / lessonProgressData.length) * 100);
 
         // Count Zearn completions from today
-        const zearnCompletedToday = lessonProgressData.filter(p =>
-          p.zearnCompleted && isCompletedToday(p.zearnCompletionDate)
-        ).length;
-        zearnTodayProgress = Math.round((zearnCompletedToday / lessonProgressData.length) * 100);
+        zearnTodayProgress = calculateTodayCompletionRate(
+          lessonProgressData,
+          (student) => student.zearnCompleted ?? false,
+          (student) => student.zearnCompletionDate
+        );
       }
 
       // Get mastery check progress if exists
@@ -182,24 +153,11 @@ export function SmartboardDisplay({
         masteryCheckProgress = masteryStats.avgCompletion;
 
         // Calculate today's mastery check progress
-        if (masteryProgressData.length > 0) {
-          let totalQuestionsCompletedToday = 0;
-          let totalPossibleQuestions = 0;
-
-          masteryProgressData.forEach(student => {
-            if (student.totalQuestions > 0) {
-              totalPossibleQuestions += student.totalQuestions;
-              const questionsCompletedToday = student.questions.filter(q =>
-                q.completed && isCompletedToday(q.completedAt)
-              ).length;
-              totalQuestionsCompletedToday += questionsCompletedToday;
-            }
-          });
-
-          masteryCheckTodayProgress = totalPossibleQuestions > 0
-            ? Math.round((totalQuestionsCompletedToday / totalPossibleQuestions) * 100)
-            : 0;
-        }
+        masteryCheckTodayProgress = calculateTodayProgress(
+          masteryProgressData,
+          (student) => student.questions,
+          (student) => student.totalQuestions
+        );
       }
 
       return {

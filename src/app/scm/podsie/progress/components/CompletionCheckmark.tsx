@@ -1,84 +1,25 @@
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { getCompletionDateInfo } from "@/lib/utils/completion-date-helpers";
 
 /**
  * Helper function to determine the completion style based on completion date
  * Returns the appropriate styling info and formatted date string
+ *
+ * @deprecated Use getCompletionDateInfo from completion-date-helpers.ts instead
  */
 function getCompletionStyle(completedAt?: string): {
   iconStyle: "today" | "yesterday" | "prior" | "default";
   formattedDate: string;
   dateLabel: string;
 } {
-  if (!completedAt) {
-    return {
-      iconStyle: "default",
-      formattedDate: "",
-      dateLabel: "",
-    };
-  }
+  const info = getCompletionDateInfo(completedAt);
 
-  // Parse the completion date (which is in ISO format from Podsie)
-  const completedDate = new Date(completedAt);
-
-  // Get today's date at midnight in local timezone
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  // Get yesterday's date at midnight
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  // Get the completion date at midnight in local timezone
-  const completedDateOnly = new Date(
-    completedDate.getFullYear(),
-    completedDate.getMonth(),
-    completedDate.getDate()
-  );
-
-  // Format time in 1:45pm format
-  let hours = completedDate.getHours();
-  const minutes = completedDate.getMinutes();
-  const ampm = hours >= 12 ? 'pm' : 'am';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-  const timeStr = `${hours}:${minutesStr}${ampm}`;
-
-  // Determine the date label and format
-  let dateLabel: string;
-  let formattedDate: string;
-
-  if (completedDateOnly.getTime() === today.getTime()) {
-    dateLabel = "today";
-    formattedDate = `${timeStr}, today`;
-    return {
-      iconStyle: "today",
-      formattedDate,
-      dateLabel,
-    };
-  } else if (completedDateOnly.getTime() === yesterday.getTime()) {
-    dateLabel = "yesterday";
-    formattedDate = `${timeStr}, yesterday`;
-    return {
-      iconStyle: "yesterday",
-      formattedDate,
-      dateLabel,
-    };
-  } else {
-    // Format date in 4/5 format (M/D)
-    const month = completedDate.getMonth() + 1;
-    const day = completedDate.getDate();
-    const dateStr = `${month}/${day}`;
-
-    dateLabel = "prior";
-    formattedDate = `${timeStr}, ${dateStr}`;
-    return {
-      iconStyle: "prior",
-      formattedDate,
-      dateLabel,
-    };
-  }
+  return {
+    iconStyle: info.timing === "incomplete" ? "default" : info.timing,
+    formattedDate: info.formattedDate,
+    dateLabel: info.dateLabel,
+  };
 }
 
 interface CompletionCheckmarkProps {

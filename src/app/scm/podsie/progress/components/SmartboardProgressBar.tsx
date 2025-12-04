@@ -91,11 +91,9 @@ export function SmartboardProgressBar({
                   <span className="text-white font-bold text-xs whitespace-nowrap">
                     {segment.percentage}%
                   </span>
-                  {todayProgress > 0 && (
-                    <span className="bg-white/20 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-                      +{todayProgress}%
-                    </span>
-                  )}
+                  <span className={`bg-white/20 text-white text-[10px] font-bold px-1.5 py-0.5 rounded ${todayProgress === 0 ? 'invisible' : ''}`}>
+                    +{todayProgress}%
+                  </span>
                 </div>
               </div>
             );
@@ -146,11 +144,9 @@ export function SmartboardProgressBar({
             <span className="text-white font-semibold text-[10px]">
               {safePercentage}%
             </span>
-            {safeTodayPercentage > 0 && (
-              <span className="bg-white/20 text-white text-[8px] font-bold px-1 py-0.5 rounded">
-                +{safeTodayPercentage}%
-              </span>
-            )}
+            <span className={`bg-white/20 text-white text-[8px] font-bold px-1 py-0.5 rounded ${safeTodayPercentage === 0 ? 'invisible' : ''}`}>
+              +{safeTodayPercentage}%
+            </span>
           </div>
         </div>
       </div>
@@ -198,11 +194,9 @@ export function SmartboardProgressBar({
             <span className="text-white font-bold text-xs">
               {safePercentage}%
             </span>
-            {safeTodayPercentage > 0 && (
-              <span className="bg-white/20 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-                +{safeTodayPercentage}%
-              </span>
-            )}
+            <span className={`bg-white/20 text-white text-[10px] font-bold px-1.5 py-0.5 rounded ${safeTodayPercentage === 0 ? 'invisible' : ''}`}>
+              +{safeTodayPercentage}%
+            </span>
           </div>
         </div>
       </div>
@@ -249,11 +243,9 @@ export function SmartboardProgressBar({
         <span className="text-white font-bold text-lg">
           {safePercentage}%
         </span>
-        {safeTodayPercentage > 0 && (
-          <span className="bg-white/20 text-white text-sm font-bold px-2 py-0.5 rounded">
-            +{safeTodayPercentage}%
-          </span>
-        )}
+        <span className={`bg-white/20 text-white text-sm font-bold px-2 py-0.5 rounded ${safeTodayPercentage === 0 ? 'invisible' : ''}`}>
+          +{safeTodayPercentage}%
+        </span>
       </div>
     </div>
   );
