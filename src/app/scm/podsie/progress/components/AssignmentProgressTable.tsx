@@ -104,6 +104,22 @@ export function AssignmentProgressTable({
       const completed = syncedStudents.filter((p) =>
         p.questions.find((q) => q.questionNumber === col.questionNumber && q.completed)
       ).length;
+
+      // For assessments, calculate average score per question
+      let avgScore = 0;
+      if (isAssessment && syncedStudents.length > 0) {
+        const totalScore = syncedStudents.reduce((sum, student) => {
+          const question = student.questions.find(q => q.questionNumber === col.questionNumber);
+          if (question) {
+            const correctScore = question.correctScore ?? 0;
+            const explanationScore = question.explanationScore ?? 0;
+            return sum + correctScore + explanationScore;
+          }
+          return sum;
+        }, 0);
+        avgScore = totalScore / syncedStudents.length;
+      }
+
       return {
         ...col,
         completed,
@@ -112,9 +128,10 @@ export function AssignmentProgressTable({
           syncedStudents.length > 0
             ? Math.round((completed / syncedStudents.length) * 100)
             : 0,
+        avgScore, // Average score out of 4 for assessments
       };
     });
-  }, [progressData, questionColumns]);
+  }, [progressData, questionColumns, isAssessment]);
 
   if (progressData.length === 0) {
     return (
@@ -185,7 +202,14 @@ export function AssignmentProgressTable({
                 key={`${stat.questionId}-${idx}`}
                 className="px-3 py-2 text-center text-xs font-medium text-blue-700"
               >
-                {stat.percent}%
+                {isAssessment ? (
+                  <div className="flex flex-col items-center">
+                    <span className="font-semibold">{stat.avgScore.toFixed(1)}/4</span>
+                    <span className="text-[10px]">({Math.round((stat.avgScore / 4) * 100)}%)</span>
+                  </div>
+                ) : (
+                  `${stat.percent}%`
+                )}
               </td>
             ))}
             {masteryCheckProgressData.length > 0 && (
