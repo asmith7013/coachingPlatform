@@ -31,7 +31,7 @@ export function SmartboardProgressBar({
     const trackColor = barColor === "purple" ? "bg-purple-200" :
                        barColor === "blue" ? "bg-blue-200" :
                        barColor === "teal" ? "bg-teal-100" :
-                       "bg-white";
+                       "bg-emerald-200";
     return { bgColor, trackColor };
   };
 
