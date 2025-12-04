@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { PencilIcon, TvIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TvIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import { SmartboardProgressBar } from "./SmartboardProgressBar";
 import { groupAssignmentsByUnitLesson } from "../utils/groupAssignments";
 import { formatLessonDisplay } from "@/lib/utils/lesson-display";
@@ -42,12 +42,15 @@ interface SmartboardDisplayProps {
   progressData: ProgressData[];
   selectedUnit: number;
   selectedSection: string;
+  selectedLessonSection: string;
   calculateSummaryStats: (data: ProgressData[]) => {
     avgCompletion: number;
     fullyComplete: number;
     totalStudents: number;
     syncedStudents: number;
   };
+  onSyncAll?: () => void;
+  syncingAll?: boolean;
 }
 
 export function SmartboardDisplay({
@@ -55,7 +58,10 @@ export function SmartboardDisplay({
   progressData,
   selectedUnit,
   selectedSection,
+  selectedLessonSection,
   calculateSummaryStats,
+  onSyncAll,
+  syncingAll = false,
 }: SmartboardDisplayProps) {
   // Edit mode state
   const [isEditMode, setIsEditMode] = useState(false);
@@ -167,6 +173,16 @@ export function SmartboardDisplay({
     return Math.round(totalCompletion / assignmentProgress.length);
   }, [assignmentProgress]);
 
+  // Format lesson section for display (add "Section" prefix for single letters)
+  const formattedLessonSection = useMemo(() => {
+    if (!selectedLessonSection) return '';
+    // If it's a single letter (A, B, C, D, E, etc), add "Section" prefix
+    if (selectedLessonSection.length === 1 && /^[A-Z]$/i.test(selectedLessonSection)) {
+      return `Section ${selectedLessonSection}`;
+    }
+    return selectedLessonSection;
+  }, [selectedLessonSection]);
+
   const smartboardContent = (
     <>
       {/* Smartboard Header */}
@@ -176,7 +192,7 @@ export function SmartboardDisplay({
             Mini Goal
           </div>
           <div className={`bg-indigo-700 text-white rounded-lg font-semibold ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
-            Unit {selectedUnit} Assignments
+            Unit {selectedUnit}: {formattedLessonSection}
           </div>
           {isEditMode ? (
             <input
@@ -195,6 +211,16 @@ export function SmartboardDisplay({
           <div className={`bg-white text-indigo-900 rounded-lg font-bold ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
             {assignmentProgress.length} Assignment{assignmentProgress.length !== 1 ? "s" : ""}
           </div>
+          {onSyncAll && (
+            <button
+              onClick={onSyncAll}
+              disabled={syncingAll}
+              className={`bg-indigo-700 hover:bg-indigo-600 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${isFullscreen ? "p-3" : "p-2"}`}
+              title="Sync All Assignments"
+            >
+              <ArrowPathIcon className={`${isFullscreen ? "w-8 h-8" : "w-6 h-6"} text-white ${syncingAll ? 'animate-spin' : ''}`} />
+            </button>
+          )}
           <button
             onClick={toggleFullscreen}
             className={`bg-indigo-700 hover:bg-indigo-600 rounded-lg transition-colors cursor-pointer ${isFullscreen ? "p-3" : "p-2"}`}
@@ -212,7 +238,7 @@ export function SmartboardDisplay({
           {/* Class Goal - Main Progress */}
           <div className="bg-indigo-900/50 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="bg-purple-600 text-white px-3 py-1 rounded-lg font-bold text-sm">
+              <div className="bg-teal-500 text-white px-3 py-1 rounded-lg font-bold text-sm">
                 Class Goal
               </div>
               <span className="text-indigo-300 text-sm">Complete All Assignments</span>
@@ -220,7 +246,7 @@ export function SmartboardDisplay({
             <SmartboardProgressBar
               label=""
               percentage={overallPercentage}
-              color="purple"
+              color="teal"
               showLabel={false}
             />
           </div>

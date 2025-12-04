@@ -24,6 +24,7 @@ const PodsieAssignedAssignmentsSchema = z.object({
       questions: z.object({
         id: z.number(),
         questionContent: z.object({
+          type: z.string(),
           questionText: z.string(),
         }).passthrough(),
       }),
@@ -98,6 +99,7 @@ export async function fetchAssignedAssignments(
       moduleName: a.module_name,
       totalQuestions: a.assignment_questions.length,
       questionIds: a.assignment_questions.map(q => q.questions.id),
+      questions: a.assignment_questions.map(q => q.questions), // Include full question data for variant analysis
     }));
 
     return { success: true, assignments };

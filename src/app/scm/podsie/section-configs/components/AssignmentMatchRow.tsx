@@ -1,7 +1,10 @@
-import { CheckIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
+import { CheckIcon, ArrowPathIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import type { PodsieAssignmentInfo } from "@/app/actions/313/podsie-sync";
 import type { ScopeAndSequence } from "@zod-schema/313/scope-and-sequence";
 import { SectionRadioGroup } from "@/components/core/inputs/SectionRadioGroup";
+import { getQuestionMap } from "@/app/actions/313/podsie-question-map";
+import type { PodsieQuestionMap } from "@zod-schema/313/section-config";
 
 interface AssignmentMatchRowProps {
   index: number;
@@ -17,6 +20,7 @@ interface AssignmentMatchRowProps {
   onTypeChange: (type: 'sidekick' | 'mastery-check') => void;
   onTotalQuestionsChange: (total: number | undefined) => void;
   onSave: () => void;
+  onQuestionMapImport?: (questionMap: PodsieQuestionMap[]) => void;
 }
 
 export function AssignmentMatchRow({
@@ -32,8 +36,32 @@ export function AssignmentMatchRow({
   onMatchChange,
   onTypeChange,
   onTotalQuestionsChange,
-  onSave
+  onSave,
+  onQuestionMapImport
 }: AssignmentMatchRowProps) {
+  const [importing, setImporting] = useState(false);
+
+  const handleImportQuestionMap = async () => {
+    if (!onQuestionMapImport) return;
+
+    setImporting(true);
+    try {
+      const result = await getQuestionMap(podsieAssignment.assignmentId.toString());
+
+      if (result.success && result.data) {
+        onQuestionMapImport(result.data.questionMap);
+        alert(`Imported ${result.data.questionMap.length} questions for ${result.data.assignmentName}`);
+      } else {
+        alert(`No question map found for assignment ID ${podsieAssignment.assignmentId}.\n\nPlease create one in the Question Mapper page first.`);
+      }
+    } catch (error) {
+      console.error("Error importing question map:", error);
+      alert('Failed to import question map');
+    } finally {
+      setImporting(false);
+    }
+  };
+
   return (
     <div className={`border rounded-lg p-4 ${
       alreadyExists ? 'border-green-300 bg-green-50/30' : 'border-gray-200'
@@ -139,9 +167,31 @@ export function AssignmentMatchRow({
         )}
       </div>
 
-      {/* Save Button */}
+      {/* Action Buttons */}
       {matchedLesson && (
-        <div className="pt-4 border-t border-gray-200">
+        <div className="pt-4 border-t border-gray-200 space-y-2">
+          {/* Import Question Map Button */}
+          {onQuestionMapImport && (
+            <button
+              onClick={handleImportQuestionMap}
+              disabled={importing}
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            >
+              {importing ? (
+                <>
+                  <ArrowPathIcon className="w-5 h-5 animate-spin" />
+                  Importing...
+                </>
+              ) : (
+                <>
+                  <ArrowDownTrayIcon className="w-5 h-5" />
+                  Import Question Map
+                </>
+              )}
+            </button>
+          )}
+
+          {/* Save Button */}
           <button
             onClick={onSave}
             disabled={saving}

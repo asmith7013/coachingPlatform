@@ -25,7 +25,9 @@ const SECTION_VALUES = ["Ramp Ups", "A", "B", "C", "D", "E", "F", "Unit Assessme
 
 const STANDARD_CONTEXT_VALUES = ["current", "buildingOn", "buildingTowards"] as const;
 
-const LESSON_TYPE_VALUES = ["lesson", "ramp-up", "unit-assessment"] as const;
+const LESSON_TYPE_VALUES = ["lesson", "rampUp", "assessment"] as const;
+
+const GRADE_VALUES = ["6", "7", "8", "Algebra 1"] as const;
 
 // Standard subdocument schema
 const StandardSchema = new mongoose.Schema({
@@ -35,7 +37,7 @@ const StandardSchema = new mongoose.Schema({
 }, { _id: false }); // _id: false prevents MongoDB from creating an _id for each standard
 
 const scopeAndSequenceFields = {
-  grade: { type: String, required: true, index: true },
+  grade: { type: String, required: true, index: true, enum: GRADE_VALUES },
   unit: { type: String, required: true, index: true },
   unitLessonId: { type: String, required: true, index: true },
   unitNumber: { type: Number, required: true, index: true },
@@ -53,7 +55,6 @@ const scopeAndSequenceFields = {
   roadmapSkills: { type: [String], default: [] },
   targetSkills: { type: [String], default: [] },
   standards: { type: [StandardSchema], default: [] },
-  hasZearnLesson: { type: Boolean, default: false, index: true },
 
   ...standardDocumentFields
 };

@@ -11,6 +11,7 @@ import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { Student } from "@zod-schema/313/student";
 import { RoadmapUnit } from "@zod-schema/313/roadmap-unit";
+import { Spinner } from "@/components/core/feedback/Spinner";
 
 interface ScopeAndSequenceEntry {
   _id: string;
@@ -221,11 +222,8 @@ export default function ScopeAndSequencePage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
-          <div className="flex items-center justify-center min-h-64">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <div className="text-gray-600">Loading lessons...</div>
-            </div>
+          <div className="flex justify-center items-center min-h-[400px]">
+            <Spinner size="lg" variant="primary" />
           </div>
         </div>
       </div>

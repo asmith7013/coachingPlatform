@@ -19,6 +19,7 @@ import {
   StudentActivitySubmission,
 } from "./actions";
 import { StudentActivity } from "@zod-schema/313/student";
+import { Spinner } from "@/components/core/feedback/Spinner";
 
 interface Student {
   _id: string;
@@ -297,8 +298,8 @@ export default function IncentivesFormPage() {
 
   if (!filtersLoaded || !draftLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+      <div className="min-h-screen flex justify-center items-center">
+        <Spinner size="lg" variant="primary" />
       </div>
     );
   }

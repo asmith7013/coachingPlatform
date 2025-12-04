@@ -60,7 +60,7 @@ See `.claude/skills/create-worked-example-sg/templates/cfu-toggle-snippet.html` 
         <button onclick="document.getElementById('cfu-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
             ×
         </button>
-        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">❓ CHECK FOR UNDERSTANDING</div>
+        <div style="display: inline-block; background: #e5e7eb; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px; color: #000;">❓ CHECK FOR UNDERSTANDING</div>
         <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
             [YOUR QUESTION HERE]
         </span>
@@ -128,7 +128,7 @@ See `.claude/skills/create-worked-example-sg/templates/answer-toggle-snippet.htm
         <button onclick="document.getElementById('answer-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
             ×
         </button>
-        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">✅ ANSWER</div>
+        <div style="display: inline-block; background: #e5e7eb; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px; color: #000;">✅ ANSWER</div>
         <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
             [YOUR ANSWER HERE]
         </span>
@@ -154,29 +154,64 @@ Same structure as problem setup, but different scenario ("Hypebeast Trade" with 
 
 ## Getting Started: Required Information
 
-When the user asks you to create a worked example, **ALWAYS prompt them for these three pieces of information**:
+When the user asks you to create a worked example, **ALWAYS prompt them for these pieces of information**:
 
-1. **Learning Goal** - What should students be able to do after this lesson? (Use student-facing language)
-2. **Grade Level** - What grade is this for? (6-12)
-3. **Problem Image** - Upload an image of the math problem that needs a worked example
+1. **Grade Level** - What grade is this for? Valid values: "6", "7", "8", or "Algebra 1"
+2. **Unit Number** - What unit is this from? (e.g., 4)
+3. **Lesson Number** - What lesson is this? (e.g., 1, can be 0 or negative for ramp-ups)
+4. **Learning Goals** - What should students be able to do after this lesson? (Use student-facing language, can be multiple goals)
+5. **Problem Image** - Upload an image of the math problem that needs a worked example
 
 **Example Prompt to User:**
 ```
-To create a worked example, I need three things:
+To create a worked example, I need the following information:
 
-1. **Learning Goal**: What should students learn from this?
-   (e.g., "Students will be able to find unit rates using division")
-2. **Grade Level**: What grade is this for? (e.g., Grade 8)
-3. **Problem Image**: Please upload an image of the problem you want a worked example for.
+1. **Grade Level**: What grade is this for? (Valid: "6", "7", "8", or "Algebra 1")
+2. **Unit Number**: What unit is this from? (e.g., 4)
+3. **Lesson Number**: What lesson is this? (e.g., 1)
+4. **Learning Goals**: What should students learn from this?
+   (e.g., "Students will be able to solve linear equations using the distributive property")
+   You can provide multiple learning goals if needed.
+5. **Problem Image**: Please upload an image of the problem you want a worked example for.
 
 Once I have these, I'll create a complete HTML slide deck!
 ```
 
-**Do NOT proceed** until you have all three pieces of information.
+**Do NOT proceed** until you have all required pieces of information.
 
 ## Your Process
 
-### Step 1: Analyze the Math Problem
+### Step 1: Look up Scope and Sequence ID
+
+After receiving the grade, unit number, and lesson number from the user, query MongoDB to find the matching scope and sequence document:
+
+```bash
+mongosh "$DATABASE_URL" --eval "
+const grade = '[GRADE]';  // e.g., '8'
+const unitNumber = [UNIT_NUMBER];  // e.g., 4
+const lessonNumber = [LESSON_NUMBER];  // e.g., 1
+
+const result = db['scope-and-sequence'].findOne({
+  grade: grade,
+  unitNumber: unitNumber,
+  lessonNumber: lessonNumber
+});
+
+if (result) {
+  print('Scope and Sequence ID:', result._id.toString());
+  print('Lesson Name:', result.lessonName);
+  print('Unit:', result.unit);
+} else {
+  print('No matching scope and sequence found for Grade', grade, 'Unit', unitNumber, 'Lesson', lessonNumber);
+}
+" --quiet
+```
+
+Store the `scopeAndSequenceId` (the `_id` value as a string) to include in the deck metadata later.
+
+**Important:** If no matching scope and sequence is found, warn the user but continue with the worked example creation. Set `scopeAndSequenceId` to `undefined` in the metadata.
+
+### Step 2: Analyze the Math Problem
 
 Extract from the image:
 - Mathematical concept (e.g., unit rates, hanger diagrams, proportional relationships)

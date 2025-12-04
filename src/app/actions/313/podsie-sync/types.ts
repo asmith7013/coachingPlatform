@@ -5,6 +5,20 @@ import { RampUpQuestion } from "@zod-schema/313/student";
 // =====================================
 
 /**
+ * Question data from Podsie API
+ */
+export interface PodsieQuestionData {
+  id: number;
+  questionContent: {
+    type: string;
+    questionText: string;
+    d3Content?: string;
+    explanation?: string;
+    [key: string]: unknown;
+  };
+}
+
+/**
  * Information about a Podsie assignment
  */
 export interface PodsieAssignmentInfo {
@@ -14,6 +28,7 @@ export interface PodsieAssignmentInfo {
   moduleName?: string;
   totalQuestions: number;
   questionIds: number[];
+  questions?: PodsieQuestionData[]; // Full question data for variant analysis
 }
 
 // =====================================

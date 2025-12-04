@@ -5,7 +5,7 @@
  * Handles the nuances of ramp-ups, assessments, and regular lessons.
  */
 
-export type LessonType = 'lesson' | 'ramp-up' | 'unit-assessment';
+export type LessonType = 'lesson' | 'rampUp' | 'assessment';
 
 export interface LessonDisplayOptions {
   /**
@@ -80,7 +80,7 @@ export function formatLessonDisplay(
   const type = lessonType || getLessonType(lessonName, section);
 
   // For ramp-ups and assessments, return as-is (they already have descriptive prefixes)
-  if (type === 'ramp-up' || type === 'unit-assessment') {
+  if (type === 'rampUp' || type === 'assessment') {
     return lessonName;
   }
 
@@ -164,20 +164,20 @@ export function getLessonType(
 
   // Check lesson name for indicators
   if (/^Ramp Up/i.test(lessonName)) {
-    return 'ramp-up';
+    return 'rampUp';
   }
 
   if (/^End of Unit Assessment/i.test(lessonName)) {
-    return 'unit-assessment';
+    return 'assessment';
   }
 
   // Fallback: check section
   if (section === 'Ramp Ups') {
-    return 'ramp-up';
+    return 'rampUp';
   }
 
   if (section === 'Unit Assessment') {
-    return 'unit-assessment';
+    return 'assessment';
   }
 
   return 'lesson';
@@ -217,10 +217,10 @@ export function buildLessonDisplayName(
   const { showLessonNumber = false } = options;
 
   switch (lessonType) {
-    case 'ramp-up':
+    case 'rampUp':
       return `Ramp Up ${lessonNumber}: ${lessonTitle}`;
 
-    case 'unit-assessment':
+    case 'assessment':
       return lessonTitle; // Title already includes "End of Unit Assessment"
 
     case 'lesson':

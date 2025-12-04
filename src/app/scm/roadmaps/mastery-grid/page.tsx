@@ -8,6 +8,7 @@ import { UnitListItem } from "../units/components/UnitListItem";
 import { StudentGridView } from "../units/components/StudentGridView";
 import { AllUnitsGridView } from "../units/components/AllUnitsGridView";
 import { fetchStudents } from "@/app/actions/313/students";
+import { Spinner } from "@/components/core/feedback/Spinner";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },
@@ -141,11 +142,8 @@ export default function MasteryGridPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
-          <div className="flex items-center justify-center min-h-64">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <div className="text-gray-600">Loading units...</div>
-            </div>
+          <div className="flex justify-center items-center min-h-[400px]">
+            <Spinner size="lg" variant="primary" />
           </div>
         </div>
       </div>

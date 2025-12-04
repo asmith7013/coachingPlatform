@@ -6,6 +6,7 @@ import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
 import { SkillListItem } from "./components/SkillListItem";
 import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { Alert } from "@/components/core/feedback/Alert";
+import { Spinner } from "@/components/core/feedback/Spinner";
 
 export default function RoadmapsSkillsPage() {
   const [allSkills, setAllSkills] = useState<RoadmapsSkill[]>([]); // All skills for dropdown population
@@ -228,11 +229,8 @@ export default function RoadmapsSkillsPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto p-6">
-          <div className="flex items-center justify-center min-h-64">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <div className="text-gray-600">Loading skills...</div>
-            </div>
+          <div className="flex justify-center items-center min-h-[400px]">
+            <Spinner size="lg" variant="primary" />
           </div>
         </div>
       </div>

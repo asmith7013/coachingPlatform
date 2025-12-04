@@ -1,6 +1,6 @@
 interface ProgressBarSegment {
   percentage: number;
-  color: "green" | "purple" | "blue";
+  color: "green" | "purple" | "blue" | "teal";
   widthPercent: number; // Percentage of total width this segment takes (e.g., 35 for 35%)
 }
 
@@ -8,7 +8,7 @@ interface SmartboardProgressBarProps {
   label: string;
   sublabel?: string;
   percentage?: number; // For single bar mode
-  color?: "green" | "purple" | "blue"; // For single bar mode
+  color?: "green" | "purple" | "blue" | "teal"; // For single bar mode
   segments?: ProgressBarSegment[]; // For multi-bar mode
   size?: "normal" | "small" | "mini" | "split";
   showLabel?: boolean;
@@ -24,8 +24,14 @@ export function SmartboardProgressBar({
   showLabel = true,
 }: SmartboardProgressBarProps) {
   const getColorClasses = (barColor: string) => {
-    const bgColor = barColor === "purple" ? "bg-purple-600" : barColor === "blue" ? "bg-blue-600" : "bg-emerald-500";
-    const trackColor = barColor === "purple" ? "bg-purple-200" : barColor === "blue" ? "bg-blue-200" : "bg-white";
+    const bgColor = barColor === "purple" ? "bg-purple-600" :
+                    barColor === "blue" ? "bg-blue-600" :
+                    barColor === "teal" ? "bg-teal-500" :
+                    "bg-emerald-500";
+    const trackColor = barColor === "purple" ? "bg-purple-200" :
+                       barColor === "blue" ? "bg-blue-200" :
+                       barColor === "teal" ? "bg-teal-100" :
+                       "bg-white";
     return { bgColor, trackColor };
   };
 

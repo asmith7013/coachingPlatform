@@ -7,6 +7,15 @@ import { Schools, AllSections, Teachers313 } from '@schema/enum/313';
 // SECTION CONFIG MODEL
 // =====================================
 
+// Podsie question map subdocument schema
+const podsieQuestionMapSchema = new mongoose.Schema({
+  questionNumber: { type: Number, required: true },
+  questionId: { type: String, required: true },
+  isRoot: { type: Boolean, default: true },
+  rootQuestionId: { type: String, required: false },
+  variantNumber: { type: Number, required: false }
+}, { _id: false });
+
 // Podsie activity subdocument schema
 const podsieActivitySchema = new mongoose.Schema({
   activityType: {
@@ -15,11 +24,10 @@ const podsieActivitySchema = new mongoose.Schema({
     required: true
   },
   podsieAssignmentId: { type: String, required: true },
-  podsieQuestionMap: [{
-    questionNumber: { type: Number, required: true },
-    questionId: { type: String, required: true }
-  }],
+  podsieQuestionMap: { type: [podsieQuestionMapSchema], default: [] },
   totalQuestions: { type: Number, required: false },
+  variations: { type: Number, default: 3, min: 0, max: 10 },
+  q1HasVariations: { type: Boolean, default: false },
   active: { type: Boolean, default: true }
 }, { _id: false });
 
@@ -104,6 +112,7 @@ SectionConfigSchema.index({ 'assignmentContent.unitLessonId': 1 });
 SectionConfigSchema.index({ 'assignmentContent.scopeAndSequenceId': 1 });
 
 // Delete existing model to force schema refresh
+// Updated: Added isRoot, rootQuestionId, variantNumber to podsieQuestionMap
 if (mongoose.models.SectionConfig) {
   delete mongoose.models.SectionConfig;
 }

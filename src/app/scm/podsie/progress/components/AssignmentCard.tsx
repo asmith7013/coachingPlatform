@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowPathIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, PencilIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
 import { AssignmentProgressTable } from "./AssignmentProgressTable";
@@ -56,7 +56,13 @@ export function AssignmentCard({
 }: AssignmentCardProps) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [syncingBoth, setSyncingBoth] = useState(false);
-  const [showDetailedScore, setShowDetailedScore] = useState(false);
+
+  // Check if this is an assessment lesson
+  const isAssessment = assignment.section === 'Assessment' || assignment.section === 'Unit Assessment';
+
+  // For assessments, show detailed score by default
+  // For non-assessments, default to false
+  const [showDetailedScore, setShowDetailedScore] = useState(isAssessment);
   const [showAllQuestions, setShowAllQuestions] = useState(false);
 
   // Handler to sync both lesson and mastery check (or just lesson if no mastery check)
@@ -221,27 +227,29 @@ export function AssignmentCard({
               </div>
             </div>
 
-            {/* Detailed Score Toggle */}
-            <div className="bg-white border border-gray-300 rounded-lg px-3 py-2">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={showDetailedScore}
-                  onClick={() => setShowDetailedScore(!showDetailedScore)}
-                  className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${
-                    showDetailedScore ? 'bg-gray-500' : 'bg-gray-300'
-                  }`}
-                >
-                  <span
-                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      showDetailedScore ? 'translate-x-4' : 'translate-x-0'
+            {/* Detailed Score Toggle - Show ONLY for assessments */}
+            {isAssessment && (
+              <div className="bg-white border border-gray-300 rounded-lg px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={showDetailedScore}
+                    onClick={() => setShowDetailedScore(!showDetailedScore)}
+                    className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${
+                      showDetailedScore ? 'bg-gray-500' : 'bg-gray-300'
                     }`}
-                  />
-                </button>
-                <span className="text-xs font-medium text-gray-700">Detailed Score</span>
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                        showDetailedScore ? 'translate-x-4' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                  <span className="text-xs font-medium text-gray-700">Detailed Score</span>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Legend Key - White Card */}
             {!showDetailedScore && (
@@ -253,6 +261,10 @@ export function AssignmentCard({
                   </div>
                   <div className="flex items-center gap-1">
                     <CheckCircleOutlineIcon className="w-4 h-4 text-green-700" />
+                    <span className="font-medium">Yesterday</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CheckIcon className="w-4 h-4 text-green-700" />
                     <span className="font-medium">Earlier</span>
                   </div>
                 </div>

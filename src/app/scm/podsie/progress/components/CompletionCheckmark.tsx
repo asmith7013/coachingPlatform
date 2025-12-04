@@ -1,5 +1,5 @@
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon as CheckCircleOutlineIcon, CheckIcon } from "@heroicons/react/24/outline";
 
 /**
  * Helper function to determine the completion style based on completion date
@@ -93,8 +93,9 @@ interface CompletionCheckmarkProps {
  * Reusable component for rendering completion checkmarks with different styles
  *
  * Features:
- * - Completed today: Fully filled checkmark
- * - Completed earlier: Outline checkmark
+ * - Completed today: Fully filled circle with checkmark
+ * - Completed yesterday: Outline circle with checkmark
+ * - Completed earlier: Just a checkmark (no circle)
  * - Not completed: Dash (—)
  * - Customizable color: green (default), purple, blue
  * - Customizable size: small, medium (default), large
@@ -161,10 +162,22 @@ export function CompletionCheckmark({
     );
   }
 
-  // Render outline checkmark for earlier completions
+  // Render outline checkmark for yesterday's completions
+  if (completionInfo.iconStyle === "yesterday") {
+    return (
+      <div className="group relative inline-block">
+        <CheckCircleOutlineIcon className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`} />
+        <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
+          {tooltipText}
+        </span>
+      </div>
+    );
+  }
+
+  // Render plain checkmark for earlier completions (prior days)
   return (
     <div className="group relative inline-block">
-      <CheckCircleOutlineIcon className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`} />
+      <CheckIcon className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`} />
       <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
         {tooltipText}
       </span>

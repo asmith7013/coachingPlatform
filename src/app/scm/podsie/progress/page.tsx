@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useToast } from "@/components/core/feedback/Toast";
 import { fetchRampUpProgress, syncSectionRampUpProgress } from "@/app/actions/313/podsie-sync";
 import { getSectionConfig } from "@/app/actions/313/section-config";
@@ -68,7 +69,7 @@ export default function PodsieProgressPage() {
     setSelectedLessonSection("");
   };
 
-  const handleSyncAssignment = async (assignment: LessonConfig, testMode: boolean = false) => {
+  const handleSyncAssignment = async (assignment: LessonConfig, testMode: boolean = false, progressBadge?: string) => {
     if (!selectedSection || !assignment.podsieAssignmentId) return;
 
     try {
@@ -78,25 +79,12 @@ export default function PodsieProgressPage() {
       const unitCode = `${assignment.grade}.${selectedUnit}`;
 
       // Extract base question IDs (root questions only) from the question map
-      // NEW format: Filter for isRoot === true
-      // OLD format (fallback): Take first N questions if isRoot field is missing
+      // NEW format: Filter for isRoot === true or isRoot === undefined (backwards compat)
+      // If isRoot field is not present, treat question as root
       const baseQuestionIds = assignment.podsieQuestionMap
-        ? (() => {
-            // Check if using new format (has isRoot field)
-            const hasNewFormat = assignment.podsieQuestionMap.some(q => q.isRoot !== undefined);
-
-            if (hasNewFormat) {
-              // NEW format: Filter for root questions only
-              return assignment.podsieQuestionMap
-                .filter(q => q.isRoot === true)
-                .map(q => Number(q.questionId));
-            } else {
-              // OLD format fallback: Take first N questions (limited by totalQuestions)
-              return assignment.podsieQuestionMap
-                .slice(0, assignment.totalQuestions)
-                .map(q => Number(q.questionId));
-            }
-          })()
+        ? assignment.podsieQuestionMap
+            .filter(q => q.isRoot !== false) // Include true and undefined
+            .map(q => Number(q.questionId))
         : undefined;
 
       const result = await syncSectionRampUpProgress(
@@ -117,8 +105,9 @@ export default function PodsieProgressPage() {
 
       if (result.success) {
         const activityTypeLabel = assignment.activityType === 'mastery-check' ? 'Mastery Check' : 'Sidekick';
+        const titlePrefix = progressBadge ? `${progressBadge} ` : '';
         showToast({
-          title: `${activityTypeLabel} Synced`,
+          title: `${titlePrefix}${activityTypeLabel} Synced`,
           description: `${assignment.lessonName}: Synced ${result.successfulSyncs} of ${result.totalStudents} students${result.failedSyncs > 0 ? ` (${result.failedSyncs} failed)` : ''}`,
           variant: 'success',
           icon: CheckCircleIcon,
@@ -164,14 +153,18 @@ export default function PodsieProgressPage() {
     if (lessons.length === 0) return;
 
     setSyncingAll(true);
+    const totalLessons = lessons.length;
+
     try {
-      for (const assignment of lessons) {
-        await handleSyncAssignment(assignment, false);
+      for (let i = 0; i < lessons.length; i++) {
+        const assignment = lessons[i];
+        const progressBadge = `${i + 1}/${totalLessons}`;
+        await handleSyncAssignment(assignment, false, progressBadge);
       }
 
       showToast({
         title: 'All Syncs Complete',
-        description: `Successfully synced all ${lessons.length} assignment${lessons.length !== 1 ? 's' : ''} in ${selectedLessonSection}`,
+        description: `Successfully synced all ${totalLessons} assignment${totalLessons !== 1 ? 's' : ''} in ${selectedLessonSection}`,
         variant: 'success',
         icon: CheckCircleIcon,
       });
@@ -378,7 +371,10 @@ export default function PodsieProgressPage() {
             progressData={progressData}
             selectedUnit={selectedUnit}
             selectedSection={selectedSection}
+            selectedLessonSection={selectedLessonSection}
             calculateSummaryStats={calculateSummaryStats}
+            onSyncAll={handleSyncAll}
+            syncingAll={syncingAll}
           />
         )}
 

@@ -17,6 +17,8 @@
 │   │   └── project-structure.md
 │   ├── architecture-overview.md
 │   ├── assessment.json
+│   ├── assignment-clean.json
+│   ├── assignment.json
 │   ├── components
 │   │   ├── component-system.md
 │   │   ├── composed-components.md
@@ -104,6 +106,8 @@
 │   │   ├── podsie-old.md
 │   │   ├── podsie.md
 │   │   └── roadmap.html
+│   ├── question-variant-integration.md
+│   ├── question-variant-mapping.json
 │   ├── standands8.html
 │   ├── standards6.html
 │   ├── standards6.json
@@ -243,6 +247,8 @@
 │   ├── MIGRATION-EXAMPLE.md
 │   ├── README-skill-migration.md
 │   ├── add-students.ts
+│   ├── analyze-question-variants.py
+│   ├── analyze-question-variants.ts
 │   ├── combine-docs.ts
 │   ├── create-section-configs.ts
 │   ├── db
@@ -257,12 +263,16 @@
 │   │   └── scraper.ts
 │   ├── link-question-type-scripts.sh
 │   ├── migrate-lesson-naming.ts
+│   ├── migrate-lessontype-enum.ts
+│   ├── migrate-question-mapping-field.js
 │   ├── migrate-skill-appears-in.ts
 │   ├── run-scraper.ts
 │   ├── snorkl-comprehensive-scraper.ts
 │   ├── snorkl-simple-scraper.ts
+│   ├── test-json-parse.js
 │   ├── test-migrate-one-skill.ts
 │   ├── test-monday-token.mjs
+│   ├── test-variant-mapping.ts
 │   ├── update-alg1-standards.js
 │   ├── update-grade6-standards.js
 │   ├── update-grade7-standards.js
@@ -319,6 +329,8 @@
 │   │   │   │   ├── im-lessons.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── podsie-completion.ts
+│   │   │   │   ├── podsie-question-map
+│   │   │   │   │   └── index.ts
 │   │   │   │   ├── podsie-sync
 │   │   │   │   │   ├── api
 │   │   │   │   │   ├── index.ts
@@ -706,12 +718,20 @@
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── podsie
-│   │   │   │   └── progress
+│   │   │   │   ├── manage-configs
+│   │   │   │   │   ├── actions.ts
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── progress
+│   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   ├── types.ts
+│   │   │   │   │   └── utils
+│   │   │   │   ├── question-mapper
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── section-configs
 │   │   │   │       ├── components
-│   │   │   │       ├── hooks
-│   │   │   │       ├── page.tsx
-│   │   │   │       ├── types.ts
-│   │   │   │       └── utils
+│   │   │   │       └── page.tsx
 │   │   │   ├── roadmaps
 │   │   │   │   ├── assessment-scraper
 │   │   │   │   │   ├── actions
@@ -739,9 +759,6 @@
 │   │   │   │   │   ├── grade-6.json
 │   │   │   │   │   ├── grade-7.json
 │   │   │   │   │   └── grade-8.json
-│   │   │   │   ├── manage-configs
-│   │   │   │   │   ├── actions.ts
-│   │   │   │   │   └── page.tsx
 │   │   │   │   ├── mastery-grid
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── scope-and-sequence
@@ -752,9 +769,6 @@
 │   │   │   │   ├── scope-and-sequence-uploader
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── scope-and-sequence-uploader-pair
-│   │   │   │   │   └── page.tsx
-│   │   │   │   ├── section-configs
-│   │   │   │   │   ├── components
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── shared
 │   │   │   │   │   └── lib
@@ -787,8 +801,6 @@
 │   │   │   │   └── zearn
 │   │   │   │       └── page.tsx
 │   │   │   └── workedExamples
-│   │   │       ├── [slug]
-│   │   │       │   └── page.tsx
 │   │   │       ├── components
 │   │   │       │   ├── D3ComponentRenderer.tsx
 │   │   │       │   └── DynamicGraphComponent.tsx
@@ -1311,6 +1323,8 @@
 │   │   │       │   └── useZearnBatchData.ts
 │   │   │       └── utils
 │   │   │           └── parseZearnData.ts
+│   │   ├── presentations
+│   │   │   └── PresentationModal.tsx
 │   │   └── ui
 │   │       └── card.tsx
 │   ├── debug
@@ -1546,6 +1560,7 @@
 │   │   │   │   │   ├── activity-type-config.model.ts
 │   │   │   │   │   ├── core.ts
 │   │   │   │   │   ├── podsie-completion.model.ts
+│   │   │   │   │   ├── podsie-question-map.model.ts
 │   │   │   │   │   ├── ramp-up-progress.model.ts
 │   │   │   │   │   ├── roadmap-skill.model.ts
 │   │   │   │   │   ├── roadmap-unit.model.ts
@@ -1628,6 +1643,7 @@
 │   │   │       │   ├── assessment-scraper.ts
 │   │   │       │   ├── core.ts
 │   │   │       │   ├── podsie-completion.ts
+│   │   │       │   ├── podsie-question-map.ts
 │   │   │       │   ├── podsie-response.ts
 │   │   │       │   ├── ramp-up-progress.ts
 │   │   │       │   ├── roadmap-skill.ts
@@ -1871,6 +1887,8 @@
 │   │   │   ├── lesson-name-normalization.ts
 │   │   │   ├── podsie-completion-helpers.ts
 │   │   │   ├── podsie-question-mapping.ts
+│   │   │   ├── question-variant-analyzer.ts
+│   │   │   ├── question-variant-mapping.ts
 │   │   │   └── section-config-helpers.ts
 │   │   └── validation
 │   │       ├── coaching-stages.ts
@@ -1953,4 +1971,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-575 directories, 1379 files
+577 directories, 1395 files

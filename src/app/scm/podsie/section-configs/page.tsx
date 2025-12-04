@@ -20,6 +20,7 @@ import { ExistingAssignmentsList } from "./components/ExistingAssignmentsList";
 import { MatchingControls } from "./components/MatchingControls";
 import { AssignmentMatchRow } from "./components/AssignmentMatchRow";
 import { findBestMatch } from "@/lib/utils/lesson-name-normalization";
+import { Spinner } from "@/components/core/feedback/Spinner";
 
 interface AssignmentMatch {
   podsieAssignment: PodsieAssignmentInfo;
@@ -224,7 +225,28 @@ export default function SectionConfigsPage() {
         }
       }
 
-      // Add assignment content using new schema
+      // Add assignment content - save first N questions as root questions
+      console.log('🔍 Preparing to save assignment:', match.matchedLesson.lessonName);
+      console.log('  Podsie Assignment ID:', match.podsieAssignment.assignmentId);
+      console.log('  Total question IDs from Podsie:', match.podsieAssignment.questionIds.length);
+
+      // Determine total questions (use totalQuestions field if set, otherwise use actual count)
+      const totalQuestionsToSave = match.totalQuestions ?? match.podsieAssignment.totalQuestions;
+
+      // Take first N questions as root questions
+      const mappedQuestions = match.podsieAssignment.questionIds
+        .slice(0, totalQuestionsToSave)
+        .map((questionId, index) => ({
+          questionNumber: index + 1,
+          questionId: String(questionId),
+          isRoot: true,
+        }));
+
+      console.log('  📊 Saving questions:');
+      console.log('    - Total questions to save:', mappedQuestions.length);
+      console.log('    - All marked as root questions');
+      console.log('  📝 First 5 questions:', mappedQuestions.slice(0, 5));
+
       const assignmentData: {
         scopeAndSequenceId: string;
         unitLessonId: string;
@@ -243,11 +265,8 @@ export default function SectionConfigsPage() {
         lessonName: match.matchedLesson.lessonName,
         activityType: match.assignmentType,
         podsieAssignmentId: String(match.podsieAssignment.assignmentId),
-        podsieQuestionMap: match.podsieAssignment.questionIds.map((questionId: number, idx: number) => ({
-          questionNumber: idx + 1,
-          questionId: String(questionId),
-          isRoot: true
-        })),
+        // Use variant mapping to save ALL questions with proper root/variant info
+        podsieQuestionMap: mappedQuestions,
         totalQuestions: match.totalQuestions ?? match.podsieAssignment.totalQuestions,
         hasZearnLesson: false,
         active: true
@@ -256,6 +275,7 @@ export default function SectionConfigsPage() {
       if (match.matchedLesson.section) assignmentData.section = match.matchedLesson.section;
       if (match.matchedLesson.grade) assignmentData.grade = match.matchedLesson.grade;
 
+      console.log('💾 Calling addAssignmentContent...');
       const result = await addAssignmentContent(
         selectedSchool,
         selectedSection,
@@ -263,14 +283,36 @@ export default function SectionConfigsPage() {
       );
 
       if (result.success) {
+        console.log('✅ Save successful!');
+        console.log('  Result:', result);
         setSuccess(`Successfully saved assignment: ${match.matchedLesson.lessonName}`);
 
         // Reload existing assignments
+        console.log('🔄 Reloading assignments to verify...');
         const reloadResult = await getAssignmentContent(selectedSchool, selectedSection);
         if (reloadResult.success && reloadResult.data) {
+          console.log('✅ Reload successful, found', reloadResult.data.length, 'assignments');
           setExistingAssignments(reloadResult.data);
+
+          // Find and log the assignment we just saved
+          const savedAssignment = reloadResult.data.find(a =>
+            a.podsieActivities?.some(act => act.podsieAssignmentId === String(match.podsieAssignment.assignmentId))
+          );
+          if (savedAssignment) {
+            const savedActivity = savedAssignment.podsieActivities?.find(
+              act => act.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
+            );
+            if (savedActivity) {
+              console.log('📋 Verified saved question map:');
+              console.log('  Total questions:', savedActivity.podsieQuestionMap?.length);
+              console.log('  Root questions:', savedActivity.podsieQuestionMap?.filter(q => q.isRoot === true).length);
+              console.log('  Variant questions:', savedActivity.podsieQuestionMap?.filter(q => q.isRoot === false).length);
+              console.log('  First 3:', savedActivity.podsieQuestionMap?.slice(0, 3));
+            }
+          }
         }
       } else {
+        console.log('❌ Save failed:', result.error);
         setError(result.error || 'Failed to save assignment');
       }
     } catch (err) {
@@ -323,6 +365,16 @@ export default function SectionConfigsPage() {
       for (const match of validMatches) {
         if (!match.matchedLesson) continue;
 
+        // Determine total questions and create question map
+        const totalQuestionsToSave = match.totalQuestions ?? match.podsieAssignment.totalQuestions;
+        const questionMap = match.podsieAssignment.questionIds
+          .slice(0, totalQuestionsToSave)
+          .map((questionId, index) => ({
+            questionNumber: index + 1,
+            questionId: String(questionId),
+            isRoot: true,
+          }));
+
         const assignmentData: {
           scopeAndSequenceId: string;
           unitLessonId: string;
@@ -341,12 +393,9 @@ export default function SectionConfigsPage() {
           lessonName: match.matchedLesson.lessonName,
           activityType: match.assignmentType,
           podsieAssignmentId: String(match.podsieAssignment.assignmentId),
-          podsieQuestionMap: match.podsieAssignment.questionIds.map((questionId: number, idx: number) => ({
-            questionNumber: idx + 1,
-            questionId: String(questionId),
-            isRoot: true
-          })),
-          totalQuestions: match.totalQuestions ?? match.podsieAssignment.totalQuestions,
+          // Save first N questions as root questions
+          podsieQuestionMap: questionMap,
+          totalQuestions: totalQuestionsToSave,
           hasZearnLesson: false,
           active: true
         };
@@ -514,9 +563,10 @@ export default function SectionConfigsPage() {
 
         {/* Loading State */}
         {loading && lessons.length === 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <div className="text-gray-600">Loading lessons...</div>
+          <div className="bg-white rounded-lg shadow-sm p-12">
+            <div className="flex justify-center items-center min-h-[400px]">
+              <Spinner size="lg" variant="primary" />
+            </div>
           </div>
         )}
 

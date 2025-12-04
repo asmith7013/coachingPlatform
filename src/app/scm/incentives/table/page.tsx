@@ -11,6 +11,7 @@ import {
 } from "../data/actions";
 import { fetchUnitsByGrade, fetchActivityTypes } from "../form/actions";
 import { ActivityTypeConfig } from "@zod-schema/313/activity-type-config";
+import { Spinner } from "@/components/core/feedback/Spinner";
 
 interface Unit {
   _id: string;
@@ -290,7 +291,9 @@ export default function IncentivesTablePage() {
         {/* Table View */}
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           {isLoading ? (
-            <div className="p-8 text-center text-gray-500">Loading...</div>
+            <div className="flex justify-center items-center min-h-[400px]">
+              <Spinner size="lg" variant="primary" />
+            </div>
           ) : records.length === 0 ? (
             <div className="p-8 text-center text-gray-500">
               No activity records found. Try adjusting your filters.

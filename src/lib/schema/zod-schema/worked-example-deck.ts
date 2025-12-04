@@ -31,6 +31,9 @@ export const WorkedExampleDeckSchema = z.object({
   mathConcept: z.string(),
   mathStandard: z.string(),
   gradeLevel: z.number().min(3).max(12),
+  unitNumber: z.number().int().positive().optional(), // Unit number (matches scope-and-sequence)
+  lessonNumber: z.number().int().optional(), // Lesson number (matches scope-and-sequence, can be 0 or negative for ramp-ups)
+  scopeAndSequenceId: z.string().optional(), // Link to scope-and-sequence collection
 
   // HTML Slides (required)
   htmlSlides: z.array(HtmlSlideSchema).min(1),

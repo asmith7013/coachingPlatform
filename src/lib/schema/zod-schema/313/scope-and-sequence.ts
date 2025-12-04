@@ -48,9 +48,9 @@ export type StandardContext = z.infer<typeof StandardContextZod>;
  * Lesson type enum - categorizes lessons by their instructional purpose
  */
 export const LessonTypeZod = z.enum([
-  "lesson",           // Regular instructional lesson
-  "ramp-up",         // Prerequisite skill review/ramp-up activity
-  "unit-assessment", // End-of-unit assessment
+  "lesson",      // Regular instructional lesson
+  "rampUp",      // Prerequisite skill review/ramp-up activity
+  "assessment",  // End-of-unit assessment
 ]);
 export type LessonType = z.infer<typeof LessonTypeZod>;
 
@@ -68,21 +68,29 @@ export const StandardZod = z.object({
 
 export type Standard = z.infer<typeof StandardZod>;
 
+/**
+ * Grade level enum - defines valid grade levels
+ */
+export const GradeZod = z.enum(["6", "7", "8", "Algebra 1"]);
+export type Grade = z.infer<typeof GradeZod>;
+
+// Array of grade options for UI dropdowns
+export const GRADE_OPTIONS = GradeZod.options;
+
 export const ScopeAndSequenceFieldsSchema = z.object({
-  grade: z.string().describe("Grade level (e.g., '8')"),
+  grade: GradeZod.describe("Grade level (e.g., '8')"),
   unit: z.string().describe("Unit title with number (e.g., 'Unit 3 - Linear Relationships')"),
   unitLessonId: z.string().describe("Combined unit.lesson identifier (e.g., '3.15' or '3.RU1' for ramp-ups)"),
   unitNumber: z.number().int().positive().describe("Unit number"),
   lessonNumber: z.number().int().describe("Lesson number within the unit (0 or negative for ramp-ups)"),
   lessonName: z.string().describe("Full lesson name (includes prefix for ramp-ups/assessments, e.g., 'Ramp Up 1: Division of Fractions')"),
-  lessonType: LessonTypeZod.optional().describe("Lesson type: lesson (regular), ramp-up, or unit-assessment"),
+  lessonType: LessonTypeZod.optional().describe("Lesson type: lesson (regular), rampUp, or assessment"),
   lessonTitle: z.string().optional().describe("Pure lesson title without type prefix (e.g., 'Division of Fractions' extracted from 'Ramp Up 1: Division of Fractions')"),
-  section: SectionZod.optional().describe("Lesson section: A, B, C, D, E, F, or Ramp Ups"),
+  section: SectionZod.optional().describe("Lesson section within the unit"),
   scopeSequenceTag: ScopeSequenceTagZod.optional().describe("Scope and sequence tag identifying which curriculum this lesson belongs to"),
   roadmapSkills: z.array(z.string()).default([]).describe("Array of roadmap skill numbers tagged to this lesson"),
   targetSkills: z.array(z.string()).default([]).describe("Array of target skill numbers for this lesson"),
   standards: z.array(StandardZod).optional().default([]).describe("Array of standards addressed in this lesson (NY standards and Mathematical Practices)"),
-  hasZearnLesson: z.boolean().optional().default(false).describe("Whether this lesson has a corresponding Zearn lesson (based on unitLessonId mapping)"),
 });
 
 // Full Scope and Sequence Schema with base document fields
