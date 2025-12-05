@@ -7,6 +7,8 @@ import { StudentModel } from "@mongoose-schema/313/student/student.model";
 import { SchoolCalendarModel } from "@mongoose-schema/calendar/school-calendar.model";
 import { handleServerError } from "@error/handlers/server";
 import type { SectionConfig } from "@zod-schema/313/podsie/section-config";
+import type { AttendanceRecord } from "@zod-schema/313/student/attendance";
+import type { Student } from "@zod-schema/313/student/student";
 
 // =====================================
 // TYPES
@@ -87,25 +89,51 @@ export async function getSectionOverviewData(
       }).lean();
 
       // Serialize the config properly to handle ObjectIds
-      const configAny = config as any;
+      interface LeanDocument {
+        _id: { toString(): string };
+        [key: string]: unknown;
+      }
+
+      interface LeanAssignmentContent {
+        scopeAndSequenceId?: { toString(): string } | string;
+        podsieActivities?: unknown[];
+        [key: string]: unknown;
+      }
+
+      const configDoc = config as unknown as LeanDocument & { assignmentContent?: LeanAssignmentContent[] };
       const serializedConfig = {
-        ...configAny,
-        id: configAny._id.toString(),
-        _id: configAny._id.toString(),
-        assignmentContent: (configAny.assignmentContent || []).map((ac: any) => ({
+        ...configDoc,
+        id: configDoc._id.toString(),
+        _id: configDoc._id.toString(),
+        assignmentContent: (configDoc.assignmentContent || []).map((ac) => ({
           ...ac,
-          scopeAndSequenceId: ac.scopeAndSequenceId?.toString() || ac.scopeAndSequenceId,
-          podsieActivities: (ac.podsieActivities || []).map((pa: any) => ({
-            ...pa,
-          })),
+          scopeAndSequenceId: typeof ac.scopeAndSequenceId === 'object' && ac.scopeAndSequenceId
+            ? ac.scopeAndSequenceId.toString()
+            : ac.scopeAndSequenceId,
+          podsieActivities: ac.podsieActivities || [],
         })),
       };
+
+      interface LeanStudent extends LeanDocument {
+        studentID: number;
+        firstName: string;
+        lastName: string;
+        email: string;
+        active: boolean;
+      }
+
+      interface LeanCalendar extends LeanDocument {
+        schoolYear: string;
+        startDate: string;
+        endDate: string;
+        events?: unknown[];
+      }
 
       return {
         success: true,
         data: {
           config: serializedConfig as unknown as SectionConfig,
-          students: students.map((s: any) => ({
+          students: (students as LeanStudent[]).map((s) => ({
             id: s._id.toString(),
             studentID: s.studentID,
             firstName: s.firstName,
@@ -115,11 +143,11 @@ export async function getSectionOverviewData(
           })),
           schoolCalendar: calendar
             ? {
-                id: (calendar as any)._id.toString(),
-                schoolYear: (calendar as any).schoolYear,
-                startDate: (calendar as any).startDate,
-                endDate: (calendar as any).endDate,
-                events: (calendar as any).events || [],
+                id: (calendar as LeanCalendar)._id.toString(),
+                schoolYear: (calendar as LeanCalendar).schoolYear,
+                startDate: (calendar as LeanCalendar).startDate,
+                endDate: (calendar as LeanCalendar).endDate,
+                events: (calendar as LeanCalendar).events || [],
               }
             : undefined,
         },
@@ -212,9 +240,9 @@ export async function getSectionVelocityByDateRange(
 
       // Group attendance by date
       const attendanceByDate = new Map<string, Set<number>>();
-      for (const record of attendanceRecords) {
-        const recDate = (record as any).date;
-        const recStudentId = (record as any).studentId;
+      for (const record of attendanceRecords as AttendanceRecord[]) {
+        const recDate = record.date;
+        const recStudentId = record.studentId;
         if (!attendanceByDate.has(recDate)) {
           attendanceByDate.set(recDate, new Set());
         }
@@ -228,12 +256,12 @@ export async function getSectionVelocityByDateRange(
         let totalMasteries = 0;
 
         // For each student present that day
-        for (const student of students) {
-          const studentID = (student as any).studentID;
+        for (const student of students as Pick<Student, 'studentID' | 'podsieProgress'>[]) {
+          const studentID = student.studentID;
           if (!presentStudentIds.has(studentID)) continue;
 
           // Count mastery checks completed on this date
-          const podsieProgress = (student as any).podsieProgress;
+          const podsieProgress = student.podsieProgress;
           if (podsieProgress && Array.isArray(podsieProgress)) {
             for (const progress of podsieProgress) {
               // Check if fully completed on this date
@@ -284,19 +312,26 @@ export async function getAllSectionConfigs(): Promise<
         .lean();
 
       // Group by school
+      interface LeanSectionConfig {
+        _id: { toString(): string };
+        school: string;
+        classSection: string;
+        teacher?: string;
+        gradeLevel: string;
+      }
+
       const bySchool = new Map<string, Array<{ id: string; classSection: string; teacher?: string; gradeLevel: string }>>();
 
-      for (const config of configs) {
-        const configAny = config as any;
-        const school = configAny.school;
+      for (const config of configs as LeanSectionConfig[]) {
+        const school = config.school;
         if (!bySchool.has(school)) {
           bySchool.set(school, []);
         }
         bySchool.get(school)!.push({
-          id: configAny._id.toString(),
-          classSection: configAny.classSection,
-          teacher: configAny.teacher,
-          gradeLevel: configAny.gradeLevel,
+          id: config._id.toString(),
+          classSection: config.classSection,
+          teacher: config.teacher,
+          gradeLevel: config.gradeLevel,
         });
       }
 

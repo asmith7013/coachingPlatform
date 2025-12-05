@@ -92,8 +92,8 @@ export async function importAttendanceData(jsonData: unknown) {
       // Store with lowercase keys for case-insensitive matching
       const emailToStudentId = new Map<string, number>(
         students.map(s => [
-          (s.email as unknown as string).toLowerCase(),
-          s.studentID as unknown as number
+          String(s.email).toLowerCase(),
+          Number(s.studentID)
         ])
       );
 

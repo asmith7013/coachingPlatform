@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { syncSectionAttendance } from "@/app/actions/313/attendance-sync";
+import { syncSectionAttendance, type AttendanceSyncResult } from "@/app/actions/313/attendance-sync";
 import { fetchSectionConfigs } from "@/app/actions/313/section-config";
-import { toast } from "sonner";
+import { useToast } from "@/components/core/feedback/Toast";
+import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/24/solid";
 
 interface SectionConfigOption {
   classSection: string;
@@ -18,11 +19,17 @@ export default function ImportAttendancePage() {
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [startDate, setStartDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<AttendanceSyncResult | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [rawJson, setRawJson] = useState<any>(null);
+
+  // Three separate toast instances for progress tracking
+  // fetchToast: Shows when fetching data from Podsie API
+  // processToast: Shows when processing/importing records to database
+  // resultToast: Shows final success/error result with stats
+  const fetchToast = useToast();
+  const processToast = useToast();
+  const resultToast = useToast();
 
   useEffect(() => {
     loadSections();
@@ -46,10 +53,9 @@ export default function ImportAttendancePage() {
       if (response.success && response.items) {
         console.log("Section configs data:", response.items);
         // Filter sections that have groupId
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const sectionsWithGroupId = response.items
-          .filter((s: any) => s.groupId)
-          .map((s: any) => ({
+          .filter((s) => s.groupId)
+          .map((s) => ({
             classSection: String(s.classSection),
             groupId: String(s.groupId),
             teacher: s.teacher,
@@ -68,21 +74,34 @@ export default function ImportAttendancePage() {
 
   const handleFetchAndImport = async () => {
     if (!selectedGroupId) {
-      toast.error("Please select a section");
+      resultToast.showToast({
+        title: "Please select a section",
+        variant: "error",
+        icon: ExclamationCircleIcon,
+      });
       return;
     }
     if (!startDate) {
-      toast.error("Please select a start date");
+      resultToast.showToast({
+        title: "Please select a start date",
+        variant: "error",
+        icon: ExclamationCircleIcon,
+      });
       return;
     }
 
     setIsLoading(true);
-    setIsFetching(true);
     setResult(null);
+    setRawJson(null);
+
+    // Step 1: Show fetching toast
+    fetchToast.showToast({
+      title: "Fetching attendance data from Podsie...",
+      variant: "info",
+      icon: InformationCircleIcon,
+    });
 
     try {
-      toast.info("Syncing attendance from Podsie...");
-
       // Use the attendance sync module (follows podsie-sync pattern)
       const syncResponse = await syncSectionAttendance(
         selectedGroupId,
@@ -90,22 +109,65 @@ export default function ImportAttendancePage() {
         { startDate }
       );
 
-      setIsFetching(false);
+      // Hide fetch toast
+      fetchToast.hideToast();
 
       if (syncResponse.success) {
+        // Step 2: Show processing toast
+        processToast.showToast({
+          title: "Processing and importing attendance records...",
+          description: `Importing ${syncResponse.totalProcessed} records`,
+          variant: "info",
+          icon: InformationCircleIcon,
+        });
+
+        // Small delay to show the processing state
+        await new Promise(resolve => setTimeout(resolve, 800));
+
         setResult(syncResponse);
         setRawJson(syncResponse.rawData);
-        toast.success("Attendance data synced successfully!");
+
+        // Hide process toast
+        processToast.hideToast();
+
+        // Step 3: Show success with stats
+        resultToast.showToast({
+          title: "Attendance data synced successfully!",
+          description: `${syncResponse.totalProcessed} records processed: ${syncResponse.created} created, ${syncResponse.updated} updated, ${syncResponse.notTracked} not tracked`,
+          variant: "success",
+          icon: CheckCircleIcon,
+        });
       } else {
-        toast.error(syncResponse.error || "Sync failed");
-        setResult({ error: syncResponse.error });
+        resultToast.showToast({
+          title: "Sync failed",
+          description: syncResponse.error || "Unknown error",
+          variant: "error",
+          icon: ExclamationCircleIcon,
+        });
+        setResult(syncResponse);
         setRawJson(syncResponse.rawData);
       }
     } catch (error) {
+      fetchToast.hideToast();
+      processToast.hideToast();
+
       const errorMessage = error instanceof Error ? error.message : "Failed to sync attendance data";
-      toast.error(errorMessage);
-      setResult({ error: errorMessage });
-      setIsFetching(false);
+      resultToast.showToast({
+        title: "Sync failed",
+        description: errorMessage,
+        variant: "error",
+        icon: ExclamationCircleIcon,
+      });
+      setResult({
+        success: false,
+        section: selectedSection?.classSection || '',
+        groupId: selectedGroupId,
+        totalProcessed: 0,
+        created: 0,
+        updated: 0,
+        notTracked: 0,
+        error: errorMessage,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -115,6 +177,10 @@ export default function ImportAttendancePage() {
 
   return (
     <div className="container mx-auto p-6 max-w-6xl">
+      {/* Toast Components */}
+      <fetchToast.ToastComponent />
+      <processToast.ToastComponent />
+      <resultToast.ToastComponent />
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">Import Attendance Data</h1>
         <p className="text-gray-600">
@@ -214,7 +280,7 @@ export default function ImportAttendancePage() {
                 disabled={isLoading || !selectedGroupId || !startDate}
                 className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
               >
-                {isFetching ? "Fetching from Podsie..." : isLoading ? "Importing..." : "Fetch & Import Attendance"}
+                {isLoading ? "Syncing..." : "Fetch & Import Attendance"}
               </button>
             </div>
           </div>

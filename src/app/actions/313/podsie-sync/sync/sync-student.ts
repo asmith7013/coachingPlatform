@@ -121,12 +121,18 @@ export async function syncStudentRampUpProgress(
             }
           }
         }
-      );
+      ).lean();
 
-      const podsieProgressArray = (existingStudent as any)?.podsieProgress;
+      interface PodsieProgressEntry {
+        scopeAndSequenceId: string;
+        podsieAssignmentId: string;
+        fullyCompletedDate?: string;
+      }
+
+      const podsieProgressArray = existingStudent?.podsieProgress as PodsieProgressEntry[] | undefined;
       const existingProgress = Array.isArray(podsieProgressArray)
         ? podsieProgressArray.find(
-            (p: any) => p.scopeAndSequenceId === scopeAndSequenceId && p.podsieAssignmentId === podsieAssignmentId
+            (p) => p.scopeAndSequenceId === scopeAndSequenceId && p.podsieAssignmentId === podsieAssignmentId
           )
         : undefined;
 
