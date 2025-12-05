@@ -1,20 +1,24 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon, ExclamationTriangleIcon, InformationCircleIcon } from "@heroicons/react/24/solid";
 import { useToast } from "@/components/core/feedback/Toast";
 import { Spinner } from "@/components/core/feedback/Spinner";
-import { getSectionOptions, getAssignmentContent } from "@actions/313/section-config";
+import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
+import { getAssignmentContent } from "@actions/313/section-config";
 import { syncSectionRampUpProgress } from "@actions/313/podsie-sync";
 import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
-import { SchoolSelector, SectionCard } from "./components";
+import { MultiSectionSelector, SectionCard } from "./components";
+import { getSectionColors } from "@/app/scm/podsie/velocity/utils/colors";
 
 interface SectionOption {
+  id: string;
   school: string;
   classSection: string;
   teacher?: string;
   gradeLevel: string;
-  scopeSequenceTag?: string;
+  displayName: string;
 }
 
 interface UnitGroup {
@@ -41,13 +45,14 @@ interface SyncProgress {
 }
 
 export default function BulkSyncPage() {
-  const [sections, setSections] = useState<SectionOption[]>([]);
-  const [selectedSchool, setSelectedSchool] = useState<string>("");
+  const [sectionOptions, setSectionOptions] = useState<SectionOption[]>([]);
+  const [selectedSections, setSelectedSections] = useState<string[]>([]);
   const [sectionsData, setSectionsData] = useState<Map<string, SectionWithUnits>>(new Map());
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [syncProgress, setSyncProgress] = useState<SyncProgress | null>(null);
+  const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
 
   // Toast instances for live progress tracking
   const progressToast = useToast();
@@ -59,32 +64,68 @@ export default function BulkSyncPage() {
   }, []);
 
   const loadSections = async () => {
+    setLoading(true);
     try {
-      const result = await getSectionOptions();
+      const result = await getAllSectionConfigs();
+
       if (result.success && result.data) {
-        setSections(result.data);
+        const options: SectionOption[] = [];
+        result.data.forEach((schoolGroup) => {
+          schoolGroup.sections.forEach((section) => {
+            options.push({
+              id: section.id,
+              school: schoolGroup.school,
+              classSection: section.classSection,
+              teacher: section.teacher,
+              gradeLevel: section.gradeLevel,
+              displayName: section.teacher ? `${section.classSection} (${section.teacher})` : section.classSection,
+            });
+          });
+        });
+        setSectionOptions(options);
+
+        // Select all sections by default
+        setSelectedSections(options.map(opt => opt.id));
+
+        // Compute colors for all sections
+        const colors = getSectionColors(options);
+        setSectionColors(colors);
       }
     } catch (err) {
       console.error("Error loading sections:", err);
       setError("Failed to load sections");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Load all sections for the selected school
-  const loadSchoolSections = useCallback(async () => {
-    if (!selectedSchool) return;
+  // Toggle section selection
+  const handleToggleSection = (sectionId: string) => {
+    setSelectedSections(prev =>
+      prev.includes(sectionId)
+        ? prev.filter(id => id !== sectionId)
+        : [...prev, sectionId]
+    );
+  };
+
+  // Load assignments for selected sections
+  const loadSelectedSections = useCallback(async () => {
+    if (selectedSections.length === 0) {
+      setSectionsData(new Map());
+      return;
+    }
 
     setLoading(true);
     setError(null);
-    setSectionsData(new Map());
+    const newSectionsData = new Map<string, SectionWithUnits>();
 
     try {
-      const schoolSections = sections.filter(s => s.school === selectedSchool);
-      const newSectionsData = new Map<string, SectionWithUnits>();
+      // Get the actual section objects for selected IDs
+      const sectionsToLoad = sectionOptions.filter(opt => selectedSections.includes(opt.id));
 
-      // Load assignments for each section
-      for (const section of schoolSections) {
-        const result = await getAssignmentContent(selectedSchool, section.classSection);
+      // Load assignments for each selected section
+      for (const section of sectionsToLoad) {
+        const result = await getAssignmentContent(section.school, section.classSection);
         if (result.success && result.data) {
           const assignments = result.data;
 
@@ -105,7 +146,7 @@ export default function BulkSyncPage() {
 
           const unitGroups = Array.from(unitGroupsMap.values()).sort((a, b) => a.unitNumber - b.unitNumber);
 
-          newSectionsData.set(section.classSection, {
+          newSectionsData.set(section.id, {
             classSection: section.classSection,
             teacher: section.teacher,
             gradeLevel: section.gradeLevel,
@@ -117,21 +158,17 @@ export default function BulkSyncPage() {
 
       setSectionsData(newSectionsData);
     } catch (err) {
-      console.error("Error loading school sections:", err);
-      setError("Failed to load sections for school");
+      console.error("Error loading sections:", err);
+      setError("Failed to load section assignments");
     } finally {
       setLoading(false);
     }
-  }, [selectedSchool, sections]);
+  }, [selectedSections, sectionOptions]);
 
-  // Load school sections when school is selected
+  // Load sections when selection changes
   useEffect(() => {
-    if (selectedSchool) {
-      loadSchoolSections();
-    } else {
-      setSectionsData(new Map());
-    }
-  }, [selectedSchool, loadSchoolSections]);
+    loadSelectedSections();
+  }, [selectedSections, loadSelectedSections]);
 
   // Sync a single assignment
   const syncAssignment = async (
@@ -180,9 +217,9 @@ export default function BulkSyncPage() {
     }
   };
 
-  // Sync all sections in the school
-  const syncAllSchool = async () => {
-    if (!selectedSchool || sectionsData.size === 0) return;
+  // Sync all selected sections
+  const syncAllSections = async () => {
+    if (sectionsData.size === 0) return;
 
     setSyncing(true);
 
@@ -196,37 +233,40 @@ export default function BulkSyncPage() {
 
     // Show initial progress toast
     progressToast.showToast({
-      title: "Syncing School Progress",
-      description: `Starting sync for ${selectedSchool}...`,
+      title: "Syncing All Sections",
+      description: `Starting sync for ${sectionsData.size} section${sectionsData.size !== 1 ? 's' : ''}...`,
       variant: "info",
       icon: InformationCircleIcon,
     });
 
     try {
       // Iterate through each section
-      for (const [sectionName, sectionData] of sectionsData) {
+      for (const [sectionId, sectionData] of sectionsData) {
+        const section = sectionOptions.find(opt => opt.id === sectionId);
+        if (!section) continue;
+
         // Iterate through each assignment in the section
         for (const assignment of sectionData.assignments) {
           // Update progress state
           setSyncProgress({
             totalAssignments,
             completedAssignments,
-            currentSchool: selectedSchool,
-            currentSection: sectionName,
+            currentSchool: section.school,
+            currentSection: section.classSection,
             currentLesson: assignment.lessonName,
             currentActivity: ''
           });
 
           // Update progress toast
           progressToast.showToast({
-            title: `Syncing ${selectedSchool} (${completedAssignments}/${totalAssignments})`,
-            description: `Section: ${sectionName} | Lesson: ${assignment.lessonName}`,
+            title: `Syncing All Sections (${completedAssignments}/${totalAssignments})`,
+            description: `${section.school} - ${section.classSection} | Lesson: ${assignment.lessonName}`,
             variant: "info",
             icon: InformationCircleIcon,
           });
 
           // Sync the assignment
-          await syncAssignment(sectionName, assignment, (lesson, activity) => {
+          await syncAssignment(section.classSection, assignment, (lesson, activity) => {
             setSyncProgress(prev => prev ? {
               ...prev,
               currentLesson: lesson,
@@ -243,17 +283,17 @@ export default function BulkSyncPage() {
 
       // Show success toast
       resultToast.showToast({
-        title: "School Sync Complete!",
-        description: `Successfully synced ${totalAssignments} assignments across ${sectionsData.size} sections in ${selectedSchool}`,
+        title: "Sync Complete!",
+        description: `Successfully synced ${totalAssignments} assignments across ${sectionsData.size} section${sectionsData.size !== 1 ? 's' : ''}`,
         variant: "success",
         icon: CheckCircleIcon,
       });
     } catch (err) {
-      console.error("Error syncing school:", err);
+      console.error("Error syncing sections:", err);
       progressToast.hideToast();
       resultToast.showToast({
-        title: "School Sync Failed",
-        description: `An error occurred while syncing ${selectedSchool}`,
+        title: "Sync Failed",
+        description: "An error occurred while syncing",
         variant: "error",
         icon: ExclamationTriangleIcon,
       });
@@ -264,9 +304,10 @@ export default function BulkSyncPage() {
   };
 
   // Sync a single section
-  const syncSection = async (sectionName: string) => {
-    const sectionData = sectionsData.get(sectionName);
-    if (!sectionData) return;
+  const syncSection = async (sectionId: string) => {
+    const sectionData = sectionsData.get(sectionId);
+    const section = sectionOptions.find(opt => opt.id === sectionId);
+    if (!sectionData || !section) return;
 
     setSyncing(true);
 
@@ -276,7 +317,7 @@ export default function BulkSyncPage() {
     // Show initial progress toast
     progressToast.showToast({
       title: "Syncing Section Progress",
-      description: `Starting sync for ${sectionName}...`,
+      description: `Starting sync for ${section.classSection}...`,
       variant: "info",
       icon: InformationCircleIcon,
     });
@@ -287,21 +328,21 @@ export default function BulkSyncPage() {
         setSyncProgress({
           totalAssignments,
           completedAssignments,
-          currentSchool: selectedSchool,
-          currentSection: sectionName,
+          currentSchool: section.school,
+          currentSection: section.classSection,
           currentLesson: assignment.lessonName,
           currentActivity: ''
         });
 
         // Update progress toast
         progressToast.showToast({
-          title: `Syncing ${sectionName} (${completedAssignments}/${totalAssignments})`,
+          title: `Syncing ${section.classSection} (${completedAssignments}/${totalAssignments})`,
           description: `Lesson: ${assignment.lessonName}`,
           variant: "info",
           icon: InformationCircleIcon,
         });
 
-        await syncAssignment(sectionName, assignment, (lesson, activity) => {
+        await syncAssignment(section.classSection, assignment, (lesson, activity) => {
           setSyncProgress(prev => prev ? {
             ...prev,
             currentLesson: lesson,
@@ -318,7 +359,7 @@ export default function BulkSyncPage() {
       // Show success toast
       resultToast.showToast({
         title: "Section Sync Complete!",
-        description: `Successfully synced ${totalAssignments} assignments for ${sectionName}`,
+        description: `Successfully synced ${totalAssignments} assignments for ${section.classSection}`,
         variant: "success",
         icon: CheckCircleIcon,
       });
@@ -327,7 +368,7 @@ export default function BulkSyncPage() {
       progressToast.hideToast();
       resultToast.showToast({
         title: "Section Sync Failed",
-        description: `An error occurred while syncing ${sectionName}`,
+        description: `An error occurred while syncing ${section.classSection}`,
         variant: "error",
         icon: ExclamationTriangleIcon,
       });
@@ -338,9 +379,10 @@ export default function BulkSyncPage() {
   };
 
   // Sync a single unit within a section
-  const syncUnit = async (sectionName: string, unitNumber: number) => {
-    const sectionData = sectionsData.get(sectionName);
-    if (!sectionData) return;
+  const syncUnit = async (sectionId: string, unitNumber: number) => {
+    const sectionData = sectionsData.get(sectionId);
+    const section = sectionOptions.find(opt => opt.id === sectionId);
+    if (!sectionData || !section) return;
 
     const unitAssignments = sectionData.assignments.filter(a => {
       const parts = a.unitLessonId.split('.');
@@ -367,21 +409,21 @@ export default function BulkSyncPage() {
         setSyncProgress({
           totalAssignments,
           completedAssignments,
-          currentSchool: selectedSchool,
-          currentSection: sectionName,
+          currentSchool: section.school,
+          currentSection: section.classSection,
           currentLesson: assignment.lessonName,
           currentActivity: ''
         });
 
         // Update progress toast
         progressToast.showToast({
-          title: `Syncing Unit ${unitNumber} - ${sectionName} (${completedAssignments}/${totalAssignments})`,
+          title: `Syncing Unit ${unitNumber} - ${section.classSection} (${completedAssignments}/${totalAssignments})`,
           description: `Lesson: ${assignment.lessonName}`,
           variant: "info",
           icon: InformationCircleIcon,
         });
 
-        await syncAssignment(sectionName, assignment, (lesson, activity) => {
+        await syncAssignment(section.classSection, assignment, (lesson, activity) => {
           setSyncProgress(prev => prev ? {
             ...prev,
             currentLesson: lesson,
@@ -426,19 +468,50 @@ export default function BulkSyncPage() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Bulk Sync</h1>
-          <p className="text-gray-600">Sync assignments across entire schools or sections</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Bulk Sync</h1>
+              <p className="text-gray-600">Sync assignments across selected sections</p>
+            </div>
+            {/* Sync All Button with Progress */}
+            {sectionsData.size > 0 && (
+              <div className="flex items-center gap-3">
+                {syncing && syncProgress && (
+                  <div className="flex-shrink-0 w-48">
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${(syncProgress.completedAssignments / syncProgress.totalAssignments) * 100}%` }}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-600 mt-1 text-center">
+                      {syncProgress.completedAssignments} / {syncProgress.totalAssignments}
+                    </div>
+                  </div>
+                )}
+                <button
+                  onClick={syncAllSections}
+                  disabled={syncing}
+                  className={`inline-flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors ${
+                    syncing
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
+                  }`}
+                >
+                  <ArrowPathIcon className={`w-5 h-5 ${syncing ? "animate-spin" : ""}`} />
+                  {syncing ? "Syncing..." : "Sync All Selected"}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* School Selection */}
-        <SchoolSelector
-          schools={Array.from(new Set(sections.map(s => s.school)))}
-          selectedSchool={selectedSchool}
-          onSchoolChange={setSelectedSchool}
-          hasSections={sectionsData.size > 0}
-          syncing={syncing}
-          syncProgress={syncProgress}
-          onSyncAll={syncAllSchool}
+        {/* Section Selection */}
+        <MultiSectionSelector
+          sections={sectionOptions}
+          selectedSections={selectedSections}
+          onToggle={handleToggleSection}
+          sectionColors={sectionColors}
         />
 
         {/* Loading State */}
@@ -457,35 +530,35 @@ export default function BulkSyncPage() {
         )}
 
         {/* Sections Display */}
-        {!loading && selectedSchool && sectionsData.size > 0 && (
+        {!loading && sectionsData.size > 0 && (
           <div className="space-y-8">
-            {Array.from(sectionsData.entries()).map(([sectionName, sectionData]) => (
+            {Array.from(sectionsData.entries()).map(([sectionId, sectionData]) => (
               <SectionCard
-                key={sectionName}
-                sectionName={sectionName}
+                key={sectionId}
+                sectionName={sectionData.classSection}
                 teacher={sectionData.teacher}
                 gradeLevel={sectionData.gradeLevel}
                 assignmentsCount={sectionData.assignments.length}
                 unitGroups={sectionData.unitGroups}
                 syncing={syncing}
-                onSyncSection={() => syncSection(sectionName)}
-                onSyncUnit={(unitNumber) => syncUnit(sectionName, unitNumber)}
+                onSyncSection={() => syncSection(sectionId)}
+                onSyncUnit={(unitNumber) => syncUnit(sectionId, unitNumber)}
               />
             ))}
           </div>
         )}
 
-        {/* No School Selected */}
-        {!loading && !selectedSchool && (
+        {/* No Sections Selected */}
+        {!loading && selectedSections.length === 0 && (
           <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-            <p className="text-gray-600">Select a school to view sections and assignments</p>
+            <p className="text-gray-600">Select sections above to view and sync assignments</p>
           </div>
         )}
 
-        {/* No Sections Found */}
-        {!loading && selectedSchool && sectionsData.size === 0 && (
+        {/* Sections Selected but No Data */}
+        {!loading && selectedSections.length > 0 && sectionsData.size === 0 && (
           <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-            <p className="text-gray-600">No sections found for this school</p>
+            <p className="text-gray-600">Loading assignments for selected sections...</p>
           </div>
         )}
       </div>
