@@ -458,7 +458,7 @@ export async function addAssignmentContent(
     lessonName: string;
     section?: string;
     grade?: string;
-    activityType: 'sidekick' | 'mastery-check';
+    activityType: 'sidekick' | 'mastery-check' | 'assessment';
     podsieAssignmentId: string;
     podsieQuestionMap: PodsieQuestionMap[];
     totalQuestions: number;

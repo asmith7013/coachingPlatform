@@ -21,7 +21,7 @@ export interface LessonConfig {
   q1HasVariations?: boolean;
   section?: string;
   unitNumber: number;
-  activityType?: 'sidekick' | 'mastery-check';
+  activityType?: 'sidekick' | 'mastery-check' | 'assessment';
   hasZearnActivity?: boolean;
 }
 

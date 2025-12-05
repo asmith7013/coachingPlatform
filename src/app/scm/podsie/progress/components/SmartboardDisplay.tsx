@@ -6,7 +6,7 @@ import { SmartboardProgressBar } from "./SmartboardProgressBar";
 import { groupAssignmentsByUnitLesson } from "../utils/groupAssignments";
 import { formatLessonDisplay } from "@/lib/utils/lesson-display";
 import type { LessonType } from "@/lib/utils/lesson-display";
-import { isCompletedToday, calculateTodayProgress, calculateTodayCompletionRate } from "@/lib/utils/completion-date-helpers";
+import { calculateTodayProgress, calculateTodayCompletionRate } from "@/lib/utils/completion-date-helpers";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 
 interface LessonConfig {
@@ -19,7 +19,7 @@ interface LessonConfig {
   totalQuestions: number;
   section?: string;
   unitNumber: number;
-  activityType?: 'sidekick' | 'mastery-check';
+  activityType?: 'sidekick' | 'mastery-check' | 'assessment';
   hasZearnActivity?: boolean;
 }
 

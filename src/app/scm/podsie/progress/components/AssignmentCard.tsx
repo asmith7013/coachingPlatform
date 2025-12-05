@@ -58,8 +58,11 @@ export function AssignmentCard({
   const [isEditMode, setIsEditMode] = useState(false);
   const [syncingBoth, setSyncingBoth] = useState(false);
 
-  // Check if this is an assessment lesson
-  const isAssessment = assignment.section === 'Assessment' || assignment.section === 'Unit Assessment';
+  // Check if this is an assessment lesson (either by activityType or section)
+  const isAssessment =
+    assignment.activityType === 'assessment' ||
+    assignment.section === 'Assessment' ||
+    assignment.section === 'Unit Assessment';
 
   // For assessments, show detailed score and all questions by default
   // For non-assessments, default to false
@@ -206,15 +209,17 @@ export function AssignmentCard({
             </p>
           </div>
           <div className="flex items-center gap-4">
-            {/* Show All Questions Toggle */}
-            <ToggleSwitch
-              checked={showAllQuestions}
-              onChange={setShowAllQuestions}
-              label="Show All Questions"
-            />
+            {/* Show All Questions Toggle - Hide for assessments (always true) */}
+            {!isAssessment && (
+              <ToggleSwitch
+                checked={showAllQuestions}
+                onChange={setShowAllQuestions}
+                label="Show All Questions"
+              />
+            )}
 
-            {/* Detailed Score Toggle - Show ONLY for assessments */}
-            {isAssessment && (
+            {/* Detailed Score Toggle - Hide for assessments (always true) */}
+            {!isAssessment && (
               <ToggleSwitch
                 checked={showDetailedScore}
                 onChange={setShowDetailedScore}

@@ -236,7 +236,9 @@
 │   ├── analyze-question-variants.py
 │   ├── analyze-question-variants.ts
 │   ├── combine-docs.ts
+│   ├── create-algebra1-assessments.ts
 │   ├── create-section-configs.ts
+│   ├── create-unit-assessments.ts
 │   ├── db
 │   │   └── drop-studentidref-index.ts
 │   ├── debug-803-unit3.js
@@ -248,6 +250,7 @@
 │   │   ├── pdf-downloader.js
 │   │   └── scraper.ts
 │   ├── link-question-type-scripts.sh
+│   ├── migrate-assessment-activity-types.ts
 │   ├── migrate-lesson-naming.ts
 │   ├── migrate-lessontype-enum.ts
 │   ├── migrate-question-mapping-field.js
@@ -1047,6 +1050,7 @@
 │   │   │   │   ├── Toast.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── fields
+│   │   │   │   ├── BinaryToggle.tsx
 │   │   │   │   ├── Checkbox.tsx
 │   │   │   │   ├── FieldWrapper.tsx
 │   │   │   │   ├── Input.tsx
@@ -1056,6 +1060,7 @@
 │   │   │   │   ├── Select.tsx
 │   │   │   │   ├── Switch.tsx
 │   │   │   │   ├── Textarea.tsx
+│   │   │   │   ├── ToggleSwitch.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── index.ts
 │   │   │   ├── inputs
@@ -1868,6 +1873,7 @@
 │   │   │       ├── types.ts
 │   │   │       └── typography.ts
 │   │   ├── utils
+│   │   │   ├── completion-date-helpers.ts
 │   │   │   ├── entity-helpers.ts
 │   │   │   ├── lesson-display.ts
 │   │   │   ├── lesson-name-normalization.ts
@@ -1957,4 +1963,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-577 directories, 1381 files
+577 directories, 1387 files

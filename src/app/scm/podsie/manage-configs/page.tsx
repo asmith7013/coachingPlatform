@@ -20,7 +20,7 @@ interface QuestionRow {
   podsieAssignmentId: string;
   unitLessonId: string;
   lessonName: string;
-  activityType: 'sidekick' | 'mastery-check';
+  activityType: 'sidekick' | 'mastery-check' | 'assessment';
   questionMapIndex: number;
   questionData: PodsieQuestionMap;
 }

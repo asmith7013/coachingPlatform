@@ -33,7 +33,7 @@ export async function fetchRampUpProgress(
         unitCode: string;
         rampUpId: string;
         rampUpName?: string;
-        activityType?: 'sidekick' | 'mastery-check' | 'ramp-up';
+        activityType?: 'sidekick' | 'mastery-check' | 'assessment';
         questions: RampUpQuestion[];
         totalQuestions: number;
         completedCount: number;

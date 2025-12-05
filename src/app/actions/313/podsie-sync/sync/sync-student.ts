@@ -20,7 +20,7 @@ import type { SyncResult } from "../types";
  * @param questionMapping - Optional mapping of logical positions to question_ids
  *                          Format: [[id1, id2], [id3], ...] where index = logical question (0-indexed)
  * @param baseQuestionIds - Optional array of base question IDs from assignment (in order)
- * @param activityType - Type of Podsie activity (sidekick, mastery-check, ramp-up)
+ * @param activityType - Type of Podsie activity (sidekick, mastery-check, assessment)
  */
 export async function syncStudentRampUpProgress(
   studentId: string,
@@ -33,7 +33,7 @@ export async function syncStudentRampUpProgress(
   totalQuestions: number,
   questionMapping?: number[][],
   baseQuestionIds?: number[],
-  activityType?: 'sidekick' | 'mastery-check' | 'ramp-up'
+  activityType?: 'sidekick' | 'mastery-check' | 'assessment'
 ): Promise<SyncResult> {
   try {
     // Fetch from Podsie

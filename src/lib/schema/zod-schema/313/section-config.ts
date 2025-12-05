@@ -21,11 +21,12 @@ export const PodsieQuestionMapSchema = z.object({
 export type PodsieQuestionMap = z.infer<typeof PodsieQuestionMapSchema>;
 
 /**
- * Activity type enum - differentiates between sidekick activities and mastery assessments
+ * Activity type enum - differentiates between sidekick activities, mastery checks, and unit assessments
  */
 export const ActivityTypeSchema = z.enum([
   'sidekick',      // Podsie Sidekick lesson activities (warm-up, activities, cool-down)
-  'mastery-check', // Mastery/summative assessment
+  'mastery-check', // Mastery check assessment
+  'assessment',    // Unit assessment (end of unit summative assessment)
 ]).describe("Type of activity");
 
 export type ActivityType = z.infer<typeof ActivityTypeSchema>;

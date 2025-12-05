@@ -69,7 +69,7 @@ export interface SyncOptions {
   baseQuestionIds?: number[];    // Base question IDs from assignment (in order)
   variations?: number;           // Number of variations per question (default: 3)
   q1HasVariations?: boolean;     // Whether Question 1 has variations (default: false)
-  activityType?: 'sidekick' | 'mastery-check' | 'ramp-up';  // Type of Podsie activity
+  activityType?: 'sidekick' | 'mastery-check' | 'assessment';  // Type of Podsie activity
 }
 
 // =====================================
@@ -87,7 +87,7 @@ export interface StudentRampUpProgressData {
   unitCode: string;
   rampUpId: string;
   rampUpName?: string;
-  activityType?: 'sidekick' | 'mastery-check' | 'ramp-up';
+  activityType?: 'sidekick' | 'mastery-check' | 'assessment';
   questions: RampUpQuestion[];
   totalQuestions: number;
   completedCount: number;

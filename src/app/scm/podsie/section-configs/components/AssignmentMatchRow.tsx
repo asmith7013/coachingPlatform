@@ -10,14 +10,14 @@ interface AssignmentMatchRowProps {
   index: number;
   podsieAssignment: PodsieAssignmentInfo;
   matchedLesson: ScopeAndSequence | null;
-  assignmentType: 'sidekick' | 'mastery-check';
+  assignmentType: 'sidekick' | 'mastery-check' | 'assessment';
   totalQuestions?: number;
   lessonsByUnit: Record<string, ScopeAndSequence[]>;
   alreadyExists: boolean;
   hasQuestionMapping: boolean;
   saving: boolean;
   onMatchChange: (lessonId: string) => void;
-  onTypeChange: (type: 'sidekick' | 'mastery-check') => void;
+  onTypeChange: (type: 'sidekick' | 'mastery-check' | 'assessment') => void;
   onTotalQuestionsChange: (total: number | undefined) => void;
   onSave: () => void;
   onQuestionMapImport?: (questionMap: PodsieQuestionMap[]) => void;
@@ -110,11 +110,12 @@ export function AssignmentMatchRow({
           <SectionRadioGroup
             label="Assignment Type"
             options={[
+              { id: 'assessment', name: 'Assessment' },
               { id: 'mastery-check', name: 'Mastery Check' },
               { id: 'sidekick', name: 'Sidekick' }
             ]}
             value={assignmentType}
-            onChange={(value) => onTypeChange(value as 'sidekick' | 'mastery-check')}
+            onChange={(value) => onTypeChange(value as 'sidekick' | 'mastery-check' | 'assessment')}
           />
         </div>
         <div>

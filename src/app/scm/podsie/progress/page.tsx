@@ -103,7 +103,10 @@ export default function PodsieProgressPage() {
       );
 
       if (result.success) {
-        const activityTypeLabel = assignment.activityType === 'mastery-check' ? 'Mastery Check' : 'Sidekick';
+        const activityTypeLabel =
+          assignment.activityType === 'mastery-check' ? 'Mastery Check' :
+          assignment.activityType === 'assessment' ? 'Assessment' :
+          'Sidekick';
         const titlePrefix = progressBadge ? `${progressBadge} ` : '';
         showToast({
           title: `${titlePrefix}${activityTypeLabel} Synced`,

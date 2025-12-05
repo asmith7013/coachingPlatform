@@ -8,7 +8,7 @@ interface LessonConfig {
   totalQuestions: number;
   section?: string;
   unitNumber: number;
-  activityType?: 'sidekick' | 'mastery-check';
+  activityType?: 'sidekick' | 'mastery-check' | 'assessment';
   hasZearnActivity?: boolean;
 }
 

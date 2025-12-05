@@ -7,7 +7,7 @@ import { SECTION_OPTIONS } from "@zod-schema/313/scope-and-sequence";
 interface Assignment {
   podsieAssignmentId: string;
   unitLessonId: string;
-  activityType?: 'sidekick' | 'mastery-check';
+  activityType?: 'sidekick' | 'mastery-check' | 'assessment';
   section?: string;
 }
 
@@ -24,9 +24,10 @@ export interface GroupedBySection<T extends Assignment> {
 
 /**
  * Groups lessons with their matching mastery checks by unitLessonId.
- * Uses a two-pass approach to ensure proper pairing regardless of sort order:
- * 1. First pass: Process all lessons and find their matching mastery checks
- * 2. Second pass: Process any standalone mastery checks (those without a matching lesson)
+ * Uses a three-pass approach to ensure proper pairing regardless of sort order:
+ * 1. First pass: Process all sidekick lessons and find their matching mastery checks
+ * 2. Second pass: Process any standalone mastery checks (those without a matching sidekick lesson)
+ * 3. Third pass: Process assessments as standalone items (they display like sidekick lessons)
  *
  * @param assignments - Array of assignments to group
  * @returns Array of grouped assignments with lesson and optional masteryCheck
@@ -61,6 +62,19 @@ export function groupAssignmentsByUnitLesson<T extends Assignment>(
   // SECOND PASS: Process any standalone mastery checks (those without a matching sidekick lesson)
   assignments.forEach(assignment => {
     if (assignment.activityType !== 'mastery-check') return;
+    if (processedIds.has(assignment.podsieAssignmentId)) return;
+
+    grouped.push({
+      lesson: assignment,
+      masteryCheck: null,
+    });
+
+    processedIds.add(assignment.podsieAssignmentId);
+  });
+
+  // THIRD PASS: Process assessments as standalone items (displayed like sidekick lessons)
+  assignments.forEach(assignment => {
+    if (assignment.activityType !== 'assessment') return;
     if (processedIds.has(assignment.podsieAssignmentId)) return;
 
     grouped.push({

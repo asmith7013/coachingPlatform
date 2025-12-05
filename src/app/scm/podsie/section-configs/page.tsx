@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import { useToast } from "@/components/core/feedback/Toast";
 import type { SchoolsType, AllSectionsType } from "@schema/enum/313";
 import {
   getSectionConfig,
@@ -25,7 +27,7 @@ import { Spinner } from "@/components/core/feedback/Spinner";
 interface AssignmentMatch {
   podsieAssignment: PodsieAssignmentInfo;
   matchedLesson: ScopeAndSequence | null;
-  assignmentType: 'sidekick' | 'mastery-check';
+  assignmentType: 'sidekick' | 'mastery-check' | 'assessment';
   totalQuestions?: number;
 }
 
@@ -39,6 +41,7 @@ export default function SectionConfigsPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [showUnmatchedOnly, setShowUnmatchedOnly] = useState(false);
   const [savingIndividual, setSavingIndividual] = useState<number | null>(null);
+  const { showToast, ToastComponent } = useToast();
 
   // Data states
   const [podsieAssignments, setPodsieAssignments] = useState<PodsieAssignmentInfo[]>([]);
@@ -181,9 +184,27 @@ export default function SectionConfigsPage() {
         0.6 // Lower threshold to be more permissive
       );
 
+      const matchedLesson = bestMatchResult.match || match.matchedLesson;
+
+      // Auto-detect assignment type based on matched lesson's lessonType
+      let assignmentType = match.assignmentType;
+      if (matchedLesson) {
+        if (matchedLesson.lessonType === 'assessment') {
+          // Unit assessments
+          assignmentType = 'assessment';
+        } else if (match.podsieAssignment.moduleName?.includes('LESSONS')) {
+          // Sidekick activities (warm-up, activities, cool-down)
+          assignmentType = 'sidekick';
+        } else {
+          // Default to mastery-check for other activities
+          assignmentType = 'mastery-check';
+        }
+      }
+
       return {
         ...match,
-        matchedLesson: bestMatchResult.match || match.matchedLesson
+        matchedLesson,
+        assignmentType
       };
     }));
     setSuccess('Auto-matched assignments by name similarity');
@@ -192,12 +213,26 @@ export default function SectionConfigsPage() {
   // Save individual assignment
   const handleSaveIndividual = async (match: AssignmentMatch) => {
     if (!selectedSchool || !selectedSection) {
-      setError('Please select school and section');
+      const errorMsg = 'Please select school and section';
+      setError(errorMsg);
+      showToast({
+        title: 'Selection Required',
+        description: errorMsg,
+        variant: 'error',
+        icon: ExclamationTriangleIcon,
+      });
       return;
     }
 
     if (!match.matchedLesson) {
-      setError('Please select a lesson first');
+      const errorMsg = 'Please select a lesson first';
+      setError(errorMsg);
+      showToast({
+        title: 'Lesson Required',
+        description: errorMsg,
+        variant: 'error',
+        icon: ExclamationTriangleIcon,
+      });
       return;
     }
 
@@ -253,7 +288,7 @@ export default function SectionConfigsPage() {
         lessonName: string;
         section?: string;
         grade?: string;
-        activityType: 'sidekick' | 'mastery-check';
+        activityType: 'sidekick' | 'mastery-check' | 'assessment';
         podsieAssignmentId: string;
         podsieQuestionMap: Array<{ questionNumber: number; questionId: string; isRoot: boolean; rootQuestionId?: string; variantNumber?: number }>;
         totalQuestions: number;
@@ -285,7 +320,14 @@ export default function SectionConfigsPage() {
       if (result.success) {
         console.log('✅ Save successful!');
         console.log('  Result:', result);
-        setSuccess(`Successfully saved assignment: ${match.matchedLesson.lessonName}`);
+        const successMsg = `Successfully saved assignment: ${match.matchedLesson.lessonName}`;
+        setSuccess(successMsg);
+        showToast({
+          title: 'Assignment Saved',
+          description: successMsg,
+          variant: 'success',
+          icon: CheckCircleIcon,
+        });
 
         // Reload existing assignments
         console.log('🔄 Reloading assignments to verify...');
@@ -313,11 +355,25 @@ export default function SectionConfigsPage() {
         }
       } else {
         console.log('❌ Save failed:', result.error);
-        setError(result.error || 'Failed to save assignment');
+        const errorMsg = result.error || 'Failed to save assignment';
+        setError(errorMsg);
+        showToast({
+          title: 'Save Failed',
+          description: errorMsg,
+          variant: 'error',
+          icon: ExclamationTriangleIcon,
+        });
       }
     } catch (err) {
       console.error('Error saving assignment:', err);
-      setError('Failed to save assignment');
+      const errorMsg = 'Failed to save assignment';
+      setError(errorMsg);
+      showToast({
+        title: 'Save Error',
+        description: errorMsg,
+        variant: 'error',
+        icon: ExclamationTriangleIcon,
+      });
     } finally {
       setSavingIndividual(null);
     }
@@ -326,13 +382,27 @@ export default function SectionConfigsPage() {
   // Save all matches to section config
   const handleSaveAll = async () => {
     if (!selectedSchool || !selectedSection) {
-      setError('Please select school and section');
+      const errorMsg = 'Please select school and section';
+      setError(errorMsg);
+      showToast({
+        title: 'Selection Required',
+        description: errorMsg,
+        variant: 'error',
+        icon: ExclamationTriangleIcon,
+      });
       return;
     }
 
     const validMatches = matches.filter(m => m.matchedLesson !== null);
     if (validMatches.length === 0) {
-      setError('No matches to save');
+      const errorMsg = 'No matches to save';
+      setError(errorMsg);
+      showToast({
+        title: 'No Matches',
+        description: errorMsg,
+        variant: 'error',
+        icon: ExclamationTriangleIcon,
+      });
       return;
     }
 
@@ -381,7 +451,7 @@ export default function SectionConfigsPage() {
           lessonName: string;
           section?: string;
           grade?: string;
-          activityType: 'sidekick' | 'mastery-check';
+          activityType: 'sidekick' | 'mastery-check' | 'assessment';
           podsieAssignmentId: string;
           podsieQuestionMap: Array<{ questionNumber: number; questionId: string; isRoot: boolean; rootQuestionId?: string; variantNumber?: number }>;
           totalQuestions: number;
@@ -414,7 +484,14 @@ export default function SectionConfigsPage() {
         }
       }
 
-      setSuccess(`Successfully saved ${successCount} of ${validMatches.length} assignments`);
+      const successMsg = `Successfully saved ${successCount} of ${validMatches.length} assignment${validMatches.length !== 1 ? 's' : ''}`;
+      setSuccess(successMsg);
+      showToast({
+        title: 'Save Complete',
+        description: successMsg,
+        variant: 'success',
+        icon: CheckCircleIcon,
+      });
 
       // Reload existing assignments
       const reloadResult = await getAssignmentContent(selectedSchool, selectedSection);
@@ -427,7 +504,14 @@ export default function SectionConfigsPage() {
       setPodsieAssignments([]);
     } catch (err) {
       console.error('Error saving assignments:', err);
-      setError('Failed to save assignments');
+      const errorMsg = 'Failed to save assignments';
+      setError(errorMsg);
+      showToast({
+        title: 'Save Error',
+        description: errorMsg,
+        variant: 'error',
+        icon: ExclamationTriangleIcon,
+      });
     } finally {
       setSaving(false);
     }
@@ -580,6 +664,7 @@ export default function SectionConfigsPage() {
           </div>
         )}
       </div>
+      <ToastComponent />
     </div>
   );
 }
