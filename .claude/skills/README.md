@@ -123,7 +123,27 @@ Use **`create-p5-animation`** for:
 1. Create a new folder in `.claude/skills/`
 2. Add a `SKILL.md` as the main reference
 3. Include supporting documentation files
-4. Update this README
+4. **IMPORTANT: Add the skill to `.claude/settings.local.json`**
+   - Open `.claude/settings.local.json`
+   - Add `Skill(your-skill-name)` to the `permissions.allow` array
+   - Example: `"Skill(create-new-feature)"`
+   - This allows the skill to be auto-approved and used without prompts
+5. Update this README with skill details
+
+### Example: Adding a New Skill
+
+```bash
+# 1. Create skill folder and files
+mkdir .claude/skills/my-new-skill
+echo "# My New Skill" > .claude/skills/my-new-skill/SKILL.md
+
+# 2. Add to settings.local.json
+# Open .claude/settings.local.json and add to the "allow" array:
+"Skill(my-new-skill)"
+
+# 3. Test the skill
+/skill my-new-skill
+```
 
 ### Updating Existing Skills
 
@@ -131,7 +151,15 @@ Use **`create-p5-animation`** for:
 2. Update `SKILL.md` if structure changes
 3. Test by invoking the skill
 
+### Currently Registered Skills
+
+Skills in `.claude/settings.local.json`:
+- `Skill(app-development)` - General app/page development
+- `Skill(create-p5-animation)` - Math animation creation
+- `Skill(create-worked-example-sg)` - Worked example study guides
+- `Skill(question-types)` - Question type patterns
+
 ---
 
-**Last Updated**: November 2024
+**Last Updated**: December 2024
 **Maintained By**: AI Coaching Platform Team

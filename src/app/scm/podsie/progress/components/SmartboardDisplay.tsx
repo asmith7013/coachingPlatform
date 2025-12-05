@@ -7,6 +7,7 @@ import { groupAssignmentsByUnitLesson } from "../utils/groupAssignments";
 import { formatLessonDisplay } from "@/lib/utils/lesson-display";
 import type { LessonType } from "@/lib/utils/lesson-display";
 import { isCompletedToday, calculateTodayProgress, calculateTodayCompletionRate } from "@/lib/utils/completion-date-helpers";
+import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 
 interface LessonConfig {
   unitLessonId: string;
@@ -72,6 +73,7 @@ export function SmartboardDisplay({
   // Edit mode state
   const [isEditMode, setIsEditMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showDailyProgress, setShowDailyProgress] = useState(true);
   const [dueDate, setDueDate] = useState<string>(() => {
     // Default to next Friday
     const today = new Date();
@@ -280,12 +282,12 @@ export function SmartboardDisplay({
               <div className="bg-teal-500 text-white px-3 py-1 rounded-lg font-bold text-sm">
                 Class Goal
               </div>
-              <span className="text-indigo-300 text-sm">Complete All Assignments</span>
+              <span className="text-indigo-300 text-sm">Complete Unit {selectedUnit}: {formattedLessonSection}</span>
             </div>
             <SmartboardProgressBar
               label=""
               percentage={overallPercentage}
-              todayPercentage={overallTodayPercentage}
+              todayPercentage={showDailyProgress ? overallTodayPercentage : undefined}
               color="teal"
               showLabel={false}
             />
@@ -323,7 +325,7 @@ export function SmartboardDisplay({
               if (shouldShowZearn) {
                 segments.push({
                   percentage: zearnProgress,
-                  todayPercentage: zearnTodayProgress,
+                  todayPercentage: showDailyProgress ? zearnTodayProgress : undefined,
                   color: 'purple' as const,
                   widthPercent: 35
                 });
@@ -336,13 +338,13 @@ export function SmartboardDisplay({
                 const masteryWidth = shouldShowZearn ? 26 : 40; // 40% of remaining 65%, or 40% of 100%
                 segments.push({
                   percentage: lessonProgress,
-                  todayPercentage: lessonTodayProgress,
+                  todayPercentage: showDailyProgress ? lessonTodayProgress : undefined,
                   color: 'blue' as const,
                   widthPercent: lessonWidth
                 });
                 segments.push({
                   percentage: masteryCheckProgress,
-                  todayPercentage: masteryCheckTodayProgress,
+                  todayPercentage: showDailyProgress ? masteryCheckTodayProgress : undefined,
                   color: 'green' as const,
                   widthPercent: masteryWidth
                 });
@@ -352,7 +354,7 @@ export function SmartboardDisplay({
                 const widthPercent = shouldShowZearn ? 65 : 100;
                 segments.push({
                   percentage: lessonProgress,
-                  todayPercentage: lessonTodayProgress,
+                  todayPercentage: showDailyProgress ? lessonTodayProgress : undefined,
                   color: barColor as 'blue' | 'green',
                   widthPercent
                 });
@@ -421,9 +423,14 @@ export function SmartboardDisplay({
 
   return (
     <div className="mt-8">
-      {/* Edit Mode Toggle */}
+      {/* Controls */}
       {!isFullscreen && (
-        <div className="flex justify-end mb-2">
+        <div className="flex justify-end gap-2 mb-2">
+          <ToggleSwitch
+            checked={showDailyProgress}
+            onChange={setShowDailyProgress}
+            label="Show Today's Progress"
+          />
           <button
             onClick={() => setIsEditMode(!isEditMode)}
             className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${

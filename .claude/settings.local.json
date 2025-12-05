@@ -27,7 +27,11 @@
       "SlashCommand(/create-worked-example-sg)",
       "Bash(find:*)",
       "Bash(npx tsc:*)",
-      "Bash(source:*)"
+      "Bash(source:*)",
+      "Skill(app-development)",
+      "Skill(create-p5-animation)",
+      "Skill(create-worked-example-sg)",
+      "Skill(question-types)"
     ],
     "deny": [],
     "ask": []
