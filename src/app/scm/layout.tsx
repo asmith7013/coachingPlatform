@@ -9,11 +9,40 @@ export const metadata: Metadata = {
 
 const ALLOWED_DOMAINS = ['schools.nyc.gov', 'teachinglab.org', 'teachinglabstudio.com'];
 
+const ALLOWED_NYC_EMAILS = [
+  'ADurant@schools.nyc.gov',
+  'YSanchez27@schools.nyc.gov',
+  'knewman7@schools.nyc.gov',
+  'JDeLancer3@schools.nyc.gov',
+  'pcompres@schools.nyc.gov',
+  'ccardona@schools.nyc.gov',
+  'hviery@schools.nyc.gov',
+  'EMorales5@schools.nyc.gov',
+  'eburnside@schools.nyc.gov',
+  'YDurant@schools.nyc.gov',
+  'mmalunga@schools.nyc.gov',
+  'NMcandrewesteve@schools.nyc.gov',
+  'codonnell11@schools.nyc.gov',
+  'dcolosimo@schools.nyc.gov',
+  'AKatechis@schools.nyc.gov',
+  'CMccarthy@schools.nyc.gov',
+];
+
 function isAllowedDomain(email: string | null | undefined): boolean {
   if (!email) return false;
 
   const domain = email.split('@')[1];
   return ALLOWED_DOMAINS.includes(domain);
+}
+
+function isAllowedEmail(email: string | null | undefined): boolean {
+  if (!email) return false;
+
+  // Check if email is in the specific allowlist
+  if (ALLOWED_NYC_EMAILS.includes(email)) return true;
+
+  // Otherwise check domain
+  return isAllowedDomain(email);
 }
 
 export default async function SCMLayout({
@@ -48,8 +77,8 @@ export default async function SCMLayout({
   const user = await currentUser();
   const email = user?.emailAddresses?.[0]?.emailAddress;
 
-  // Check if user's email domain is allowed
-  if (!isAllowedDomain(email)) {
+  // Check if user's email is allowed (specific email or domain)
+  if (!isAllowedEmail(email)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md text-center">
