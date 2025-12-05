@@ -164,8 +164,8 @@ export function VelocityGraph({
     )
   );
 
-  // Set Y-axis max to 2 by default, or extend proportionally if data exceeds it
-  const yAxisMax = Math.max(2, Math.ceil(maxVelocity * 1.1)); // Add 10% padding
+  // Set Y-axis max to 1.5 by default, or extend proportionally if data exceeds it
+  const yAxisMax = Math.max(1.5, Math.ceil(maxVelocity * 1.1)); // Add 10% padding
 
   const chartOptions = {
     responsive: true,

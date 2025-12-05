@@ -717,6 +717,8 @@
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── podsie
+│   │   │   │   ├── bulk-sync
+│   │   │   │   │   └── page.tsx
 │   │   │   │   ├── import-attendance
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── manage-configs
@@ -732,8 +734,6 @@
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── section-configs
 │   │   │   │   │   ├── components
-│   │   │   │   │   └── page.tsx
-│   │   │   │   ├── section-configs-update
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── section-overview
 │   │   │   │   │   ├── components
