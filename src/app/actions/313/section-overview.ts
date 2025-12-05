@@ -9,6 +9,7 @@ import { handleServerError } from "@error/handlers/server";
 import type { SectionConfig } from "@zod-schema/313/podsie/section-config";
 import type { AttendanceRecord } from "@zod-schema/313/student/attendance";
 import type { Student } from "@zod-schema/313/student/student";
+import type { SchoolCalendar, CalendarEvent } from "@zod-schema/calendar/school-calendar";
 
 // =====================================
 // TYPES
@@ -29,12 +30,7 @@ export interface SectionOverviewData {
     schoolYear: string;
     startDate: string;
     endDate: string;
-    events: Array<{
-      date: string;
-      name: string;
-      type: string;
-      description?: string;
-    }>;
+    events: CalendarEvent[];
   };
 }
 
@@ -48,9 +44,30 @@ export interface DailyAttendanceStats {
 
 export interface DailyVelocityStats {
   date: string;
-  averageVelocity: number; // Average mastery checks completed per student present
-  totalMasteries: number;
+  averageVelocity: number; // Total completions / students present (all activity types)
+  totalCompletions: number; // All completed activities
   studentsPresent: number;
+
+  // Breakdown by activity type (HOW they practiced)
+  byActivityType: {
+    masteryChecks: number;    // activityType='mastery-check'
+    sidekicks: number;        // activityType='sidekick'
+    assessments: number;      // activityType='assessment'
+  };
+
+  // Breakdown by lesson type (WHAT they practiced)
+  byLessonType: {
+    lessons: number;          // lessonType='lesson'
+    rampUps: number;          // lessonType='rampUp'
+    assessments: number;      // lessonType='assessment'
+  };
+
+  // Velocity metrics for filtering
+  velocityMetrics: {
+    masteryChecksOnly: number;     // Only mastery-check activities / students present
+    withoutRampUps: number;        // Exclude rampUp lessonType / students present
+    lessonsOnly: number;           // Only lesson lessonType / students present
+  };
 }
 
 // =====================================
@@ -122,32 +139,27 @@ export async function getSectionOverviewData(
         active: boolean;
       }
 
-      interface LeanCalendar extends LeanDocument {
-        schoolYear: string;
-        startDate: string;
-        endDate: string;
-        events?: unknown[];
-      }
+      type LeanCalendar = Pick<SchoolCalendar, 'schoolYear' | 'startDate' | 'endDate' | 'events'> & LeanDocument;
 
       return {
         success: true,
         data: {
           config: serializedConfig as unknown as SectionConfig,
-          students: (students as LeanStudent[]).map((s) => ({
-            id: s._id.toString(),
-            studentID: s.studentID,
-            firstName: s.firstName,
-            lastName: s.lastName,
-            email: s.email,
-            active: s.active,
+          students: students.map((s) => ({
+            id: (s as unknown as LeanDocument)._id.toString(),
+            studentID: (s as unknown as { studentID: number }).studentID,
+            firstName: (s as unknown as { firstName: string }).firstName,
+            lastName: (s as unknown as { lastName: string }).lastName,
+            email: (s as unknown as { email: string }).email,
+            active: (s as unknown as { active: boolean }).active,
           })),
           schoolCalendar: calendar
             ? {
-                id: (calendar as LeanCalendar)._id.toString(),
-                schoolYear: (calendar as LeanCalendar).schoolYear,
-                startDate: (calendar as LeanCalendar).startDate,
-                endDate: (calendar as LeanCalendar).endDate,
-                events: (calendar as LeanCalendar).events || [],
+                id: (calendar as unknown as LeanCalendar)._id.toString(),
+                schoolYear: (calendar as unknown as LeanCalendar).schoolYear,
+                startDate: (calendar as unknown as LeanCalendar).startDate,
+                endDate: (calendar as unknown as LeanCalendar).endDate,
+                events: (calendar as unknown as LeanCalendar).events || [],
               }
             : undefined,
         },
@@ -256,7 +268,7 @@ export async function getSectionVelocityByDateRange(
         let totalMasteries = 0;
 
         // For each student present that day
-        for (const student of students as Pick<Student, 'studentID' | 'podsieProgress'>[]) {
+        for (const student of students as unknown as Pick<Student, 'studentID' | 'podsieProgress'>[]) {
           const studentID = student.studentID;
           if (!presentStudentIds.has(studentID)) continue;
 
@@ -322,7 +334,7 @@ export async function getAllSectionConfigs(): Promise<
 
       const bySchool = new Map<string, Array<{ id: string; classSection: string; teacher?: string; gradeLevel: string }>>();
 
-      for (const config of configs as LeanSectionConfig[]) {
+      for (const config of configs as unknown as LeanSectionConfig[]) {
         const school = config.school;
         if (!bySchool.has(school)) {
           bySchool.set(school, []);
