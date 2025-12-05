@@ -317,6 +317,11 @@
 │   │   │   ├── 313
 │   │   │   │   ├── analytics.ts
 │   │   │   │   ├── attendance-import.ts
+│   │   │   │   ├── attendance-sync
+│   │   │   │   │   ├── api
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── sync
+│   │   │   │   │   └── types.ts
 │   │   │   │   ├── google-sheets-export.ts
 │   │   │   │   ├── im-lessons.ts
 │   │   │   │   ├── index.ts
@@ -339,6 +344,7 @@
 │   │   │   │   ├── roadmaps-units.ts
 │   │   │   │   ├── scope-and-sequence.ts
 │   │   │   │   ├── section-config.ts
+│   │   │   │   ├── section-overview.ts
 │   │   │   │   ├── student-assessments.ts
 │   │   │   │   ├── student-data.ts
 │   │   │   │   ├── student-performance.ts
@@ -515,8 +521,7 @@
 │   │   │       └── clerk
 │   │   │           └── route.ts
 │   │   ├── calendar
-│   │   │   ├── layout.tsx
-│   │   │   └── page.tsx
+│   │   │   └── layout.tsx
 │   │   ├── dashboard
 │   │   │   ├── classroomNotes
 │   │   │   │   ├── components
@@ -710,6 +715,8 @@
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── podsie
+│   │   │   │   ├── group-ids
+│   │   │   │   │   └── page.tsx
 │   │   │   │   ├── import-attendance
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── manage-configs
@@ -726,7 +733,10 @@
 │   │   │   │   ├── section-configs
 │   │   │   │   │   ├── components
 │   │   │   │   │   └── page.tsx
-│   │   │   │   └── section-configs-update
+│   │   │   │   ├── section-configs-update
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── section-overview
+│   │   │   │       ├── components
 │   │   │   │       └── page.tsx
 │   │   │   ├── roadmaps
 │   │   │   │   ├── assessment-scraper
@@ -735,6 +745,8 @@
 │   │   │   │   │   ├── hooks
 │   │   │   │   │   ├── html
 │   │   │   │   │   ├── lib
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── calendar
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── components
 │   │   │   │   │   ├── AccordionItem.tsx
@@ -1951,4 +1963,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-588 directories, 1364 files
+595 directories, 1369 files

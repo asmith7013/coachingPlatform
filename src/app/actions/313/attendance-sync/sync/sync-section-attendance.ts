@@ -23,7 +23,7 @@ export async function syncSectionAttendance(
     // Import the fetched data using existing import logic
     const importResult = await importAttendanceData(attendanceData);
 
-    if (!importResult.success) {
+    if (!importResult.success || !importResult.data) {
       return {
         success: false,
         section,

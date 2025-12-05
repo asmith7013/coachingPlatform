@@ -20,16 +20,15 @@ export async function fetchPodsieAttendance(
     throw new Error("PODSIE_API_TOKEN not configured");
   }
 
-  // Try POST method (similar to other Podsie endpoints like /responses)
+  // POST method with startDate as query parameter
   const response = await fetch(
-    `https://www.podsie.org/api/external/mastery-checks-passed/${groupId}`,
+    `https://www.podsie.org/api/external/mastery-checks-passed/${groupId}?startDate=${startDate}`,
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ startDate }),
     }
   );
 

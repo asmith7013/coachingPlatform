@@ -86,14 +86,25 @@ export async function getSectionOverviewData(
         schoolId: config.school,
       }).lean();
 
+      // Serialize the config properly to handle ObjectIds
+      const configAny = config as any;
+      const serializedConfig = {
+        ...configAny,
+        id: configAny._id.toString(),
+        _id: configAny._id.toString(),
+        assignmentContent: (configAny.assignmentContent || []).map((ac: any) => ({
+          ...ac,
+          scopeAndSequenceId: ac.scopeAndSequenceId?.toString() || ac.scopeAndSequenceId,
+          podsieActivities: (ac.podsieActivities || []).map((pa: any) => ({
+            ...pa,
+          })),
+        })),
+      };
+
       return {
         success: true,
         data: {
-          config: {
-            ...(config as any),
-            id: (config as any)._id.toString(),
-            _id: (config as any)._id.toString(),
-          } as unknown as SectionConfig,
+          config: serializedConfig as unknown as SectionConfig,
           students: students.map((s: any) => ({
             id: s._id.toString(),
             studentID: s.studentID,

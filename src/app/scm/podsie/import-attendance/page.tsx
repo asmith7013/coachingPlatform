@@ -27,36 +27,14 @@ export default function ImportAttendancePage() {
   useEffect(() => {
     loadSections();
     // Set default start date to September 1st of current school year
-    // School year 2024-2025 runs from Sept 2024 to June 2025
     const now = new Date();
     const currentMonth = now.getMonth(); // 0-11 (Jan=0, Dec=11)
     const currentYear = now.getFullYear();
 
-    // If we're in Jan-Aug (months 0-7), the school year started last September
-    // If we're in Sept-Dec (months 8-11), the school year started this September
-    // Wait, we're in Dec 2025, so school year started Sept 2024!
-    // Actually: If month >= 8, subtract 1 from year. If month < 8, subtract 2 from year.
-    // No wait... let me think: Dec 2025 → school year is 2024-2025 → started Sept 2024
-    // Aug 2025 → school year is 2024-2025 → started Sept 2024
-    // Sept 2025 → school year is 2025-2026 → started Sept 2025
-
-    // Correct logic: If we're in Sept or later of year Y, use year Y-1 for school start
-    // Wait no... if we're in Dec 2025, we want Sept 2024. So year - 1.
-    // If we're in Aug 2025, we want Sept 2024. So year - 1.
-    // If we're in Jan 2025, we want Sept 2024. So year - 1.
-
-    // Actually simplest: always go back to most recent Sept 1st
-    const year = currentMonth >= 8 ? currentYear : currentYear - 1;
-    // No wait, that gives Sept 2025 for Dec 2025. We want Sept 2024!
-
-    // Let me recalculate: Today is Dec 2025. Most recent Sept 1 was... Sept 2025!
-    // But you want the school year START which is Sept 2024 (over a year ago)
-    // So you want: "beginning of this school year" not "most recent September"
-
-    // For Dec 2025 in school year 2024-2025, we want Sept 2024 (last year)
-    const schoolYearStartYear = currentYear - 1;
+    // If we're in Sept-Dec (months 8-11), use current year
+    // If we're in Jan-Aug (months 0-7), use previous year
+    const schoolYearStartYear = currentMonth >= 8 ? currentYear : currentYear - 1;
     const defaultDate = `${schoolYearStartYear}-09-01`;
-    console.log('Setting default start date:', defaultDate, 'Current month:', currentMonth, 'Current year:', currentYear);
     setStartDate(defaultDate);
   }, []);
 
