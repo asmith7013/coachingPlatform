@@ -9,6 +9,7 @@ import { VelocityGraph } from "./components/VelocityGraph";
 import { SectionSelector } from "./components/SectionSelector";
 import { MonthCalendar } from "./components/MonthCalendar";
 import { VelocityLegend } from "./components/VelocityLegend";
+import { getSectionColors } from "./utils/colors";
 
 // Default school year
 const DEFAULT_SCHOOL_YEAR = "2025-2026";
@@ -31,6 +32,7 @@ export default function VelocityPage() {
   const [daysOff, setDaysOff] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingVelocity, setLoadingVelocity] = useState(false);
+  const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
 
   // Graph date filters - default to 9/1/25 to today
   const [graphStartDate, setGraphStartDate] = useState("2025-09-01");
@@ -39,7 +41,8 @@ export default function VelocityPage() {
     return today.toISOString().split("T")[0];
   });
 
-  // Current month for calendar navigation
+  // Current month for calendar navigation - default to current month
+  // The displayed range will be: [currentMonth - 1, currentMonth]
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
@@ -71,6 +74,10 @@ export default function VelocityPage() {
             });
           });
           setSectionOptions(options);
+
+          // Compute colors for all sections
+          const colors = getSectionColors(options);
+          setSectionColors(colors);
         }
 
         if (daysOffResult.success && daysOffResult.data) {
@@ -197,6 +204,7 @@ export default function VelocityPage() {
           sections={sectionOptions}
           selectedSections={selectedSections}
           onToggle={handleSectionToggle}
+          sectionColors={sectionColors}
         />
 
         {selectedSections.length === 0 ? (
@@ -205,24 +213,30 @@ export default function VelocityPage() {
           </div>
         ) : (
           <>
-            {/* Velocity Graphs for all selected sections */}
-            {selectedSections.map((sectionId) => {
-              const sectionData = velocityData.get(sectionId);
-              const section = sectionOptions.find((s) => s.id === sectionId);
-              const fullName = section ? `${section.school} - ${section.displayName}` : "";
-
-              return sectionData && sectionData.length > 0 ? (
-                <VelocityGraph
-                  key={`graph-${sectionId}`}
-                  sectionName={fullName}
-                  data={sectionData}
-                  startDate={graphStartDate}
-                  endDate={graphEndDate}
-                  onStartDateChange={setGraphStartDate}
-                  onEndDateChange={setGraphEndDate}
-                />
-              ) : null;
-            })}
+            {/* Combined Velocity Graph for all selected sections */}
+            {selectedSections.length > 0 && (
+              <VelocityGraph
+                sections={selectedSections
+                  .map((sectionId) => {
+                    const section = sectionOptions.find((s) => s.id === sectionId);
+                    const data = velocityData.get(sectionId);
+                    if (!section || !data || data.length === 0) return null;
+                    return {
+                      id: sectionId,
+                      name: `${section.school} - ${section.displayName}`,
+                      shortName: section.classSection,
+                      data,
+                      color: sectionColors.get(sectionId) || '#6B7280',
+                    };
+                  })
+                  .filter((s) => s !== null)}
+                startDate={graphStartDate}
+                endDate={graphEndDate}
+                onStartDateChange={setGraphStartDate}
+                onEndDateChange={setGraphEndDate}
+                daysOff={daysOff}
+              />
+            )}
 
             {/* Month navigation */}
             <div className="flex items-center justify-between mb-4 bg-white rounded-lg shadow px-4 py-3">
@@ -240,16 +254,20 @@ export default function VelocityPage() {
             {/* Calendars for each selected section */}
             {selectedSections.map((sectionId) => {
               const section = sectionOptions.find((s) => s.id === sectionId);
-              const fullName = section ? `${section.school} - ${section.displayName}` : "";
 
               return (
                 <div key={sectionId} className="mb-8">
                   <div className="bg-white rounded-lg shadow p-4">
-                    <h2 className="text-lg font-bold text-gray-900 mb-4">
-                      {fullName}
-                    </h2>
-                    <div className="space-y-4">
-                      {[0, 1, 2].map((offset) => {
+                    <div className="flex items-center gap-2 mb-4">
+                      <h2 className="text-lg font-bold text-gray-900">
+                        {section?.classSection}
+                      </h2>
+                      <span className="px-3 py-1 bg-indigo-100 text-indigo-800 text-sm font-medium rounded-full">
+                        {section?.school}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[-1, 0].map((offset) => {
                         const monthDate = new Date(
                           currentMonth.getFullYear(),
                           currentMonth.getMonth() + offset,

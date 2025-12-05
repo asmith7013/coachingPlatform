@@ -19,7 +19,7 @@ export function CalendarDay({ date, stats, isWeekend, isDayOff }: CalendarDayPro
   }
 
   return (
-    <div className={`h-20 rounded ${bgColor} ${textColor} p-1 flex flex-col`}>
+    <div className={`h-20 rounded border border-gray-200 ${bgColor} ${textColor} p-1 flex flex-col`}>
       {/* Date number at top */}
       <div className="text-xs font-medium mb-0.5">{date.getDate()}</div>
 
@@ -40,12 +40,17 @@ export function CalendarDay({ date, stats, isWeekend, isDayOff }: CalendarDayPro
           <div className="flex gap-0.5 flex-wrap justify-center items-end">
             {stats.byLessonType.lessons > 0 && (
               <span className="text-[8px] px-1 py-0.5 bg-blue-500 text-white rounded font-bold leading-none">
-                Lesson: {stats.byLessonType.lessons}
+                {stats.byLessonType.lessons}
               </span>
             )}
             {stats.byLessonType.rampUps > 0 && (
               <span className="text-[8px] px-1 py-0.5 bg-orange-500 text-white rounded font-bold leading-none">
-                Ramp Up: {stats.byLessonType.rampUps}
+                {stats.byLessonType.rampUps}
+              </span>
+            )}
+            {stats.blockType && stats.blockType !== 'none' && (
+              <span className="text-[8px] px-1 py-0.5 bg-gray-700 text-white rounded font-bold leading-none flex items-center gap-0.5">
+                {stats.blockType === 'single' ? '•' : '••'}
               </span>
             )}
           </div>

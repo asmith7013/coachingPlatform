@@ -14,9 +14,10 @@ import type { Student } from "@zod-schema/313/student/student";
 
 export interface DailyVelocityStats {
   date: string;
-  averageVelocity: number; // Total completions / students present (all activity types)
+  averageVelocity: number; // Total completions / students present (adjusted for block type)
   totalCompletions: number; // All completed activities
   studentsPresent: number;
+  blockType: 'single' | 'double' | 'none'; // Based on bell schedule meetingCount
 
   // Breakdown by activity type (HOW they practiced)
   byActivityType: {
@@ -56,7 +57,7 @@ export async function getSectionVelocityByDateRange(
 ): Promise<{ success: true; data: DailyVelocityStats[] } | { success: false; error: string }> {
   return withDbConnection(async () => {
     try {
-      // Get section config to build podsieAssignmentId -> lessonType lookup
+      // Get section config to build podsieAssignmentId -> lessonType lookup and get bell schedule
       const sectionConfig = await SectionConfigModel.findOne({
         school,
         classSection: section,
@@ -81,6 +82,41 @@ export async function getSectionVelocityByDateRange(
           }
         }
       }
+
+      // Get bell schedule for block type determination
+      const bellSchedule = sectionConfig?.bellSchedule as unknown as {
+        monday?: { meetingCount: number };
+        tuesday?: { meetingCount: number };
+        wednesday?: { meetingCount: number };
+        thursday?: { meetingCount: number };
+        friday?: { meetingCount: number };
+      } | undefined;
+
+      // Helper function to determine block type for a given date
+      const getBlockType = (dateStr: string): 'single' | 'double' | 'none' => {
+        if (!bellSchedule) return 'none';
+
+        // Parse date string directly to avoid timezone issues
+        // dateStr format is "YYYY-MM-DD"
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const date = new Date(year, month - 1, day); // month is 0-indexed
+        const dayOfWeek = date.getDay(); // 0=Sunday, 1=Monday, ..., 6=Saturday
+
+        let meetingCount = 0;
+        switch (dayOfWeek) {
+          case 1: meetingCount = bellSchedule.monday?.meetingCount || 0; break;
+          case 2: meetingCount = bellSchedule.tuesday?.meetingCount || 0; break;
+          case 3: meetingCount = bellSchedule.wednesday?.meetingCount || 0; break;
+          case 4: meetingCount = bellSchedule.thursday?.meetingCount || 0; break;
+          case 5: meetingCount = bellSchedule.friday?.meetingCount || 0; break;
+          default: return 'none'; // Weekend
+        }
+
+        if (meetingCount === 0) return 'none';
+        if (meetingCount === 1) return 'single';
+        if (meetingCount >= 2) return 'double';
+        return 'none';
+      };
 
       // Get students in section
       const students = await StudentModel.find({
@@ -178,27 +214,43 @@ export async function getSectionVelocityByDateRange(
       // Calculate velocity for each date
       const velocityStats: DailyVelocityStats[] = [];
 
+      // Get total number of students in section for default attendance assumption
+      const totalStudents = students.length;
+
       // Iterate through all dates that have either attendance or completions
       const allDates = new Set([...attendanceByDate.keys(), ...completionsByDate.keys()]);
 
       for (const date of allDates) {
-        const studentsPresent = attendanceByDate.get(date)?.size || 0;
+        // Determine block type for this date
+        const blockType = getBlockType(date);
+
+        // If no attendance data exists for a school day, assume all students are present
+        let studentsPresent = attendanceByDate.get(date)?.size;
+        if (studentsPresent === undefined && blockType !== 'none') {
+          studentsPresent = totalStudents;
+        } else if (studentsPresent === undefined) {
+          studentsPresent = 0;
+        }
+
         const completions = completionsByDate.get(date) || {
           byActivityType: { masteryChecks: 0, sidekicks: 0, assessments: 0 },
           byLessonType: { lessons: 0, rampUps: 0, assessments: 0 },
           total: 0,
         };
 
-        // Calculate velocities
-        const averageVelocity = studentsPresent > 0 ? completions.total / studentsPresent : 0;
+        // Calculate velocities (divide by 2 for double blocks since it's essentially 2 classes)
+        const blockDivisor = blockType === 'double' ? 2 : 1;
+        const averageVelocity = studentsPresent > 0
+          ? (completions.total / studentsPresent) / blockDivisor
+          : 0;
         const masteryChecksOnlyVelocity = studentsPresent > 0
-          ? completions.byActivityType.masteryChecks / studentsPresent
+          ? (completions.byActivityType.masteryChecks / studentsPresent) / blockDivisor
           : 0;
         const withoutRampUpsVelocity = studentsPresent > 0
-          ? (completions.total - completions.byLessonType.rampUps) / studentsPresent
+          ? ((completions.total - completions.byLessonType.rampUps) / studentsPresent) / blockDivisor
           : 0;
         const lessonsOnlyVelocity = studentsPresent > 0
-          ? completions.byLessonType.lessons / studentsPresent
+          ? (completions.byLessonType.lessons / studentsPresent) / blockDivisor
           : 0;
 
         velocityStats.push({
@@ -206,6 +258,7 @@ export async function getSectionVelocityByDateRange(
           averageVelocity: Math.round(averageVelocity * 100) / 100,
           totalCompletions: completions.total,
           studentsPresent,
+          blockType,
           byActivityType: completions.byActivityType,
           byLessonType: completions.byLessonType,
           velocityMetrics: {

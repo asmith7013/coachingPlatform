@@ -9,6 +9,8 @@ export interface ToggleSwitchProps {
   label: string
   /** Optional class name for the container */
   className?: string
+  /** Optional accent color (gray, orange) */
+  accentColor?: 'gray' | 'orange'
 }
 
 /**
@@ -27,8 +29,25 @@ export function ToggleSwitch({
   checked,
   onChange,
   label,
-  className
+  className,
+  accentColor = 'gray'
 }: ToggleSwitchProps) {
+  // Define color classes based on accent color
+  const colorClasses = {
+    gray: {
+      checked: 'bg-gray-500',
+      unchecked: 'bg-gray-300',
+      ring: 'focus:ring-gray-500'
+    },
+    orange: {
+      checked: 'bg-orange-500',
+      unchecked: 'bg-gray-300',
+      ring: 'focus:ring-orange-500'
+    }
+  };
+
+  const colors = colorClasses[accentColor];
+
   return (
     <div className={`bg-white border border-gray-300 rounded-lg px-3 py-2 ${className || ''}`}>
       <div className="flex items-center gap-2">
@@ -37,8 +56,8 @@ export function ToggleSwitch({
           role="switch"
           aria-checked={checked}
           onClick={() => onChange(!checked)}
-          className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${
-            checked ? 'bg-gray-500' : 'bg-gray-300'
+          className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 ${colors.ring} focus:ring-offset-2 ${
+            checked ? colors.checked : colors.unchecked
           }`}
         >
           <span

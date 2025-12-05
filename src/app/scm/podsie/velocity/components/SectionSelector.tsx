@@ -10,9 +10,10 @@ interface SectionSelectorProps {
   sections: SectionOption[];
   selectedSections: string[];
   onToggle: (sectionId: string) => void;
+  sectionColors: Map<string, string>;
 }
 
-export function SectionSelector({ sections, selectedSections, onToggle }: SectionSelectorProps) {
+export function SectionSelector({ sections, selectedSections, onToggle, sectionColors }: SectionSelectorProps) {
   // Group sections by school
   const sectionsBySchool = sections.reduce((acc, section) => {
     if (!acc[section.school]) {
@@ -103,44 +104,44 @@ export function SectionSelector({ sections, selectedSections, onToggle }: Sectio
               </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-3">
-                  {schoolSections.map((section, optionIdx) => (
-                    <div key={section.id} className="flex gap-3">
-                      <div className="flex h-5 shrink-0 items-center">
-                        <div className="group grid size-4 grid-cols-1">
-                          <input
-                            id={`${school}-${optionIdx}`}
-                            type="checkbox"
-                            checked={selectedSections.includes(section.id)}
-                            onChange={() => onToggle(section.id)}
-                            className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto cursor-pointer"
-                          />
-                          <svg
-                            fill="none"
-                            viewBox="0 0 14 14"
-                            className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                          >
-                            <path
-                              d="M3 8L6 11L11 3.5"
-                              strokeWidth={2}
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="opacity-0 group-has-checked:opacity-100"
+                  {schoolSections.map((section, optionIdx) => {
+                    const sectionColor = sectionColors.get(section.id) || '#6B7280';
+                    return (
+                      <div key={section.id} className="flex gap-3">
+                        <div className="flex h-5 shrink-0 items-center">
+                          <div className="group grid size-4 grid-cols-1">
+                            <input
+                              id={`${school}-${optionIdx}`}
+                              type="checkbox"
+                              checked={selectedSections.includes(section.id)}
+                              onChange={() => onToggle(section.id)}
+                              className="col-start-1 row-start-1 appearance-none rounded-sm border-2 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto cursor-pointer"
+                              style={{
+                                borderColor: sectionColor,
+                                backgroundColor: selectedSections.includes(section.id) ? sectionColor : 'white',
+                              }}
                             />
-                            <path
-                              d="M3 7H11"
-                              strokeWidth={2}
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="opacity-0 group-has-indeterminate:opacity-100"
-                            />
-                          </svg>
+                            <svg
+                              fill="none"
+                              viewBox="0 0 14 14"
+                              className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+                            >
+                              <path
+                                d="M3 8L6 11L11 3.5"
+                                strokeWidth={2}
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="opacity-0 group-has-checked:opacity-100"
+                              />
+                            </svg>
+                          </div>
                         </div>
+                        <label htmlFor={`${school}-${optionIdx}`} className="text-sm text-gray-600 cursor-pointer">
+                          {section.displayName}
+                        </label>
                       </div>
-                      <label htmlFor={`${school}-${optionIdx}`} className="text-sm text-gray-600 cursor-pointer">
-                        {section.displayName}
-                      </label>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
             </fieldset>
           </div>
