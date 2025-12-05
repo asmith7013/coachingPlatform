@@ -4,7 +4,7 @@
 // NOTE: These are pure utility functions, not Server Actions
 // They do NOT have "use server" directive
 
-import type { PodsieResponse } from "@zod-schema/313/podsie-response";
+import type { PodsieResponse } from "@zod-schema/313/podsie/podsie-response";
 import type { ProcessedQuestionData } from "../types";
 
 /**

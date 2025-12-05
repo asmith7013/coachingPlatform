@@ -1,10 +1,10 @@
 "use server";
 
 import { withDbConnection } from "@/lib/server/db/ensure-connection";
-import { PodsieQuestionMapModel } from "@mongoose-schema/313/podsie-question-map.model";
+import { PodsieQuestionMapModel } from "@mongoose-schema/313/podsie/podsie-question-map.model";
 import { fetchPodsieResponses } from "../podsie-sync/api/fetch-responses";
-import type { PodsieQuestionMap } from "@zod-schema/313/section-config";
-import type { PodsieQuestionMapInput } from "@zod-schema/313/podsie-question-map";
+import type { PodsieQuestionMap } from "@zod-schema/313/podsie/section-config";
+import type { PodsieQuestionMapInput } from "@zod-schema/313/podsie/podsie-question-map";
 import { handleServerError } from "@/lib/error/handlers/server";
 
 // =====================================

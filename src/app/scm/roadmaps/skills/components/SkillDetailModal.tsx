@@ -1,7 +1,7 @@
 "use client";
 
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
+import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
 
 interface SkillDetailModalProps {
   skill: RoadmapsSkill | null;

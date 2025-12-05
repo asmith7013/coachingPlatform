@@ -7,7 +7,7 @@ import { useToast } from "@/components/core/feedback/Toast";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { getSectionOptions, getAssignmentContent } from "@actions/313/section-config";
 import { syncSectionRampUpProgress } from "@actions/313/podsie-sync";
-import type { AssignmentContent } from "@zod-schema/313/section-config";
+import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
 
 interface SectionOption {
   school: string;

@@ -8,7 +8,7 @@ import { Select } from '@components/core/fields/Select';
 import { Text } from '@components/core/typography/Text';
 import { Badge } from '@components/core/feedback/Badge';
 import { useStudents } from "@hooks/domain/313/useStudents";
-import { Student } from "@/lib/schema/zod-schema/313/student";
+import { Student } from "@/lib/schema/zod-schema/313/student/student";
 import { SummerDistricts, Sections313, Teachers313, Sections313Type, Teachers313Type } from "@/lib/schema/enum/313";
 import type { TableColumnSchema } from '@ui/table-schema';
 import { EmptyListWrapper } from '@components/core/empty/EmptyListWrapper';

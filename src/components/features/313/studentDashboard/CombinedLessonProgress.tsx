@@ -4,7 +4,7 @@ import { Text } from '@/components/core/typography/Text';
 import { Badge } from '@/components/core/feedback/Badge';
 import { cn } from '@/lib/ui/utils/formatters';
 import { useCombinedLessonData, type CombinedLessonStatus } from '@/hooks/domain/313/useCombinedLessonData';
-import { StudentData, getSectionType } from '@/lib/schema/zod-schema/313/student-data';
+import { StudentData, getSectionType } from '@/lib/schema/zod-schema/313/student/student-data';
 import { getSnorklLink } from '@/lib/schema/enum/snorkl-links';
 
 interface CombinedLessonProgressProps {

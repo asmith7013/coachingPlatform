@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { withDbConnection } from "@server/db/ensure-connection";
-import { StudentModel } from "@mongoose-schema/313/student.model";
+import { StudentModel } from "@mongoose-schema/313/student/student.model";
 import type { PodsieAssignmentInfo } from "../types";
 
 // =====================================

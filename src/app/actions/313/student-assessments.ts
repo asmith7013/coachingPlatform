@@ -1,6 +1,6 @@
 "use server";
 
-import { StudentModel } from '@/lib/schema/mongoose-schema/313/student.model';
+import { StudentModel } from '@/lib/schema/mongoose-schema/313/student/student.model';
 import { handleServerError } from "@error/handlers/server";
 import { connectToDB } from "@server/db/connection";
 

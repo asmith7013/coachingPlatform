@@ -2,13 +2,13 @@
 
 import { z, ZodType } from "zod";
 import { revalidatePath } from "next/cache";
-import { RoadmapUnitModel } from "@mongoose-schema/313/roadmap-unit.model";
+import { RoadmapUnitModel } from "@mongoose-schema/313/curriculum/roadmap-unit.model";
 import {
   RoadmapUnitZodSchema,
   RoadmapUnitInputZodSchema,
   RoadmapUnit,
   RoadmapUnitInput
-} from "@zod-schema/313/roadmap-unit";
+} from "@zod-schema/313/curriculum/roadmap-unit";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";

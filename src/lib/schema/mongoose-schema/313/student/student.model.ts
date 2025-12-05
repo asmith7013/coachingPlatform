@@ -84,6 +84,7 @@ const podsieProgressSchema = new mongoose.Schema({
   completedCount: { type: Number, default: 0 },
   percentComplete: { type: Number, default: 0 },
   isFullyComplete: { type: Boolean, default: false },
+  fullyCompletedDate: { type: String, required: false },
   lastSyncedAt: { type: String, required: false }
 }, { _id: false });
 

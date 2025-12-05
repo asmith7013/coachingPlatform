@@ -3,7 +3,7 @@
 import {
   PodsieApiResponseSchema,
   PodsieResponse,
-} from "@zod-schema/313/podsie-response";
+} from "@zod-schema/313/podsie/podsie-response";
 
 // =====================================
 // FUNCTION

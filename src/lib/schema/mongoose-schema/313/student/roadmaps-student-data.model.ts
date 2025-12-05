@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { standardSchemaOptions } from "../shared-options";
+import { standardSchemaOptions } from "../../shared-options";
 
 // =====================================
 // ROADMAPS STUDENT DATA MODEL

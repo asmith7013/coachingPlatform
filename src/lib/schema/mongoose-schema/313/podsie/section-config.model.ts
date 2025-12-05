@@ -20,7 +20,7 @@ const podsieQuestionMapSchema = new mongoose.Schema({
 const podsieActivitySchema = new mongoose.Schema({
   activityType: {
     type: String,
-    enum: ['sidekick', 'mastery-check'],
+    enum: ['sidekick', 'mastery-check', 'assessment'],
     required: true
   },
   podsieAssignmentId: { type: String, required: true },
@@ -36,6 +36,21 @@ const zearnActivitySchema = new mongoose.Schema({
   zearnLessonId: { type: String, required: false },
   zearnUrl: { type: String, required: false },
   active: { type: Boolean, default: true }
+}, { _id: false });
+
+// Day schedule subdocument schema (for bell schedule)
+const dayScheduleSchema = new mongoose.Schema({
+  meetingCount: { type: Number, required: true, min: 0, max: 10 },
+  minutesPerMeeting: { type: Number, required: true, min: 1 }
+}, { _id: false });
+
+// Bell schedule subdocument schema
+const bellScheduleSchema = new mongoose.Schema({
+  monday: { type: dayScheduleSchema, required: false },
+  tuesday: { type: dayScheduleSchema, required: false },
+  wednesday: { type: dayScheduleSchema, required: false },
+  thursday: { type: dayScheduleSchema, required: false },
+  friday: { type: dayScheduleSchema, required: false }
 }, { _id: false });
 
 // Assignment content subdocument schema
@@ -74,6 +89,9 @@ const sectionConfigFields = {
   groupId: { type: String, required: false },
 
   active: { type: Boolean, default: true, index: true },
+
+  // Bell schedule
+  bellSchedule: { type: bellScheduleSchema, required: false },
 
   // Assignment content configurations
   assignmentContent: { type: [assignmentContentSchema], default: [] },

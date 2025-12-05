@@ -6,7 +6,7 @@ import { useToast } from "@/components/core/feedback/Toast";
 import { fetchRampUpProgress, syncSectionRampUpProgress } from "@/app/actions/313/podsie-sync";
 import { getSectionConfig } from "@/app/actions/313/section-config";
 import { fetchStudentsBySection } from "@/app/actions/313/students";
-import type { AssignmentContent } from "@zod-schema/313/section-config";
+import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
 import { AssignmentCard } from "./components/AssignmentCard";
 import { SmartboardDisplay } from "./components/SmartboardDisplay";
 import { CreateAssignmentModal } from "./components/CreateAssignmentModal";

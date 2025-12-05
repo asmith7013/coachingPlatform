@@ -31,7 +31,8 @@
       "Skill(app-development)",
       "Skill(create-p5-animation)",
       "Skill(create-worked-example-sg)",
-      "Skill(question-types)"
+      "Skill(question-types)",
+      "Bash(npm run lint:*)"
     ],
     "deny": [],
     "ask": []

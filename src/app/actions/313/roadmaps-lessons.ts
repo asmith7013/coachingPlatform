@@ -2,8 +2,8 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { RoadmapsLessonModel } from "@mongoose-schema/313/roadmap.model";
-import { RoadmapsLessonInputZodSchema } from "@zod-schema/313/roadmap";
+import { RoadmapsLessonModel } from "@mongoose-schema/313/curriculum/roadmap.model";
+import { RoadmapsLessonInputZodSchema } from "@zod-schema/313/curriculum/roadmap";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";

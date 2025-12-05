@@ -13,7 +13,7 @@ import { Heading } from '@/components/core/typography/Heading';
 import { Button } from '@/components/core/Button';
 import { MonthlyCalendar } from './monthlyCalendar/MonthlyCalendar';
 import { useStudentCalendarData } from '@/hooks/domain/313/useStudentCalendarData';
-import { StudentData } from '@/lib/schema/zod-schema/313/student-data';
+import { StudentData } from '@/lib/schema/zod-schema/313/student/student-data';
 // import { ScopeSequenceProgress } from './ScopeSequenceProgress';
 
 interface StudentDashboardProps {

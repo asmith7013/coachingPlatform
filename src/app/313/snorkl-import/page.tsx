@@ -10,7 +10,7 @@ import { StudentRow } from './types';
 import { parseJsonData, combineStudentDataWithFuzzyMatch } from './utils/parser';
 import { createTableColumns } from './utils/table-config';
 import { fetchStudents } from '@/app/actions/313/students';
-import { Student } from '@/lib/schema/zod-schema/313/student';
+import { Student } from '@/lib/schema/zod-schema/313/student/student';
 import { handleClientError } from '@/lib/error/handlers/client';
 
 export default function SnorklImportPage() {

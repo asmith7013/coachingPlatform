@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { handleServerError } from "@/lib/error/handlers/server";
 import { withDbConnection } from "@/lib/server/db/ensure-connection";
-import { StudentModel } from "@mongoose-schema/313/student.model";
+import { StudentModel } from "@mongoose-schema/313/student/student.model";
 import { EntityResponse, PaginatedResponse } from "@/lib/types/core/response";
 import { ScraperEmailService } from "@/lib/email/email-notifications";
 import fs from "fs/promises";

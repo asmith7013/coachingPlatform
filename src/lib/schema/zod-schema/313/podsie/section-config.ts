@@ -93,6 +93,98 @@ export const AssignmentContentSchema = z.object({
 
 export type AssignmentContent = z.infer<typeof AssignmentContentSchema>;
 
+// =====================================
+// BELL SCHEDULE SCHEMA
+// =====================================
+
+/**
+ * Meeting schedule for a specific day of the week
+ */
+export const DayScheduleSchema = z.object({
+  meetingCount: z.number().int().min(0).max(10).describe("Number of times the class meets on this day"),
+  minutesPerMeeting: z.number().int().positive().describe("Duration in minutes for each class meeting on this day"),
+});
+
+export type DaySchedule = z.infer<typeof DayScheduleSchema>;
+
+/**
+ * Weekly bell schedule configuration
+ * Defines how many times a class meets each day and for how long
+ */
+export const BellScheduleSchema = z.object({
+  monday: DayScheduleSchema.optional(),
+  tuesday: DayScheduleSchema.optional(),
+  wednesday: DayScheduleSchema.optional(),
+  thursday: DayScheduleSchema.optional(),
+  friday: DayScheduleSchema.optional(),
+}).describe("Weekly bell schedule - how many times and for how long the class meets each day");
+
+export type BellSchedule = z.infer<typeof BellScheduleSchema>;
+
+/**
+ * Helper functions for bell schedule calculations
+ */
+export const BellScheduleHelpers = {
+  /**
+   * Calculate total number of class meetings in a week
+   */
+  getTotalWeeklyMeetings(schedule: BellSchedule | undefined): number {
+    if (!schedule) return 0;
+
+    return (
+      (schedule.monday?.meetingCount ?? 0) +
+      (schedule.tuesday?.meetingCount ?? 0) +
+      (schedule.wednesday?.meetingCount ?? 0) +
+      (schedule.thursday?.meetingCount ?? 0) +
+      (schedule.friday?.meetingCount ?? 0)
+    );
+  },
+
+  /**
+   * Calculate total instructional minutes in a week
+   */
+  getTotalWeeklyMinutes(schedule: BellSchedule | undefined): number {
+    if (!schedule) return 0;
+
+    return (
+      ((schedule.monday?.meetingCount ?? 0) * (schedule.monday?.minutesPerMeeting ?? 0)) +
+      ((schedule.tuesday?.meetingCount ?? 0) * (schedule.tuesday?.minutesPerMeeting ?? 0)) +
+      ((schedule.wednesday?.meetingCount ?? 0) * (schedule.wednesday?.minutesPerMeeting ?? 0)) +
+      ((schedule.thursday?.meetingCount ?? 0) * (schedule.thursday?.minutesPerMeeting ?? 0)) +
+      ((schedule.friday?.meetingCount ?? 0) * (schedule.friday?.minutesPerMeeting ?? 0))
+    );
+  },
+
+  /**
+   * Calculate average meeting length in minutes
+   */
+  getAverageMeetingLength(schedule: BellSchedule | undefined): number {
+    if (!schedule) return 0;
+
+    const totalMeetings = this.getTotalWeeklyMeetings(schedule);
+    if (totalMeetings === 0) return 0;
+
+    const totalMinutes = this.getTotalWeeklyMinutes(schedule);
+    return Math.round(totalMinutes / totalMeetings);
+  },
+
+  /**
+   * Get days of the week when class meets
+   */
+  getMeetingDays(schedule: BellSchedule | undefined): string[] {
+    if (!schedule) return [];
+
+    const days: string[] = [];
+    if (schedule.monday && schedule.monday.meetingCount > 0) days.push('Monday');
+    if (schedule.tuesday && schedule.tuesday.meetingCount > 0) days.push('Tuesday');
+    if (schedule.wednesday && schedule.wednesday.meetingCount > 0) days.push('Wednesday');
+    if (schedule.thursday && schedule.thursday.meetingCount > 0) days.push('Thursday');
+    if (schedule.friday && schedule.friday.meetingCount > 0) days.push('Friday');
+
+    return days;
+  },
+};
+
 /**
  * Section Configuration - Complete configuration for a class section
  *
@@ -121,6 +213,12 @@ export const SectionConfigFieldsSchema = z.object({
   groupId: z.string().optional().describe("Podsie group ID for this section (used in Podsie URLs)"),
 
   active: z.boolean().default(true).describe("Whether this section is currently active"),
+
+  // =====================================
+  // BELL SCHEDULE
+  // =====================================
+
+  bellSchedule: BellScheduleSchema.optional().describe("Weekly bell schedule - defines how many times and for how long the class meets each day"),
 
   // =====================================
   // ASSIGNMENT CONTENT CONFIGURATIONS

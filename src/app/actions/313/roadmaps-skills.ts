@@ -2,13 +2,13 @@
 
 import { z, ZodType } from "zod";
 import { revalidatePath } from "next/cache";
-import { RoadmapsSkillModel } from "@mongoose-schema/313/roadmap-skill.model";
+import { RoadmapsSkillModel } from "@mongoose-schema/313/curriculum/roadmap-skill.model";
 import {
   RoadmapsSkillZodSchema,
   RoadmapsSkillInputZodSchema,
   RoadmapsSkill,
   RoadmapsSkillInput
-} from "@zod-schema/313/roadmap-skill";
+} from "@zod-schema/313/curriculum/roadmap-skill";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";

@@ -8,9 +8,9 @@ import { LessonDetailView } from "./components/LessonDetailView";
 import { StudentFilter } from "./components/StudentFilter";
 import { SkillGanttChart } from "./components/SkillGanttChart";
 import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
-import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
-import { Student } from "@zod-schema/313/student";
-import { RoadmapUnit } from "@zod-schema/313/roadmap-unit";
+import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
+import { Student } from "@zod-schema/313/student/student";
+import { RoadmapUnit } from "@zod-schema/313/curriculum/roadmap-unit";
 import { Spinner } from "@/components/core/feedback/Spinner";
 
 interface ScopeAndSequenceEntry {

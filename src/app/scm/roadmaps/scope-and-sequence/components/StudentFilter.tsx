@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Student } from "@zod-schema/313/student";
+import { Student } from "@zod-schema/313/student/student";
 import { fetchStudents } from "@actions/313/students";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 

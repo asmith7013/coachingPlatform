@@ -5,8 +5,8 @@
  */
 
 import mongoose from 'mongoose';
-import { ActivityTypeConfigModel } from '@mongoose-schema/313/activity-type-config.model';
-import { DEFAULT_ACTIVITY_TYPES } from '@zod-schema/313/activity-type-config';
+import { ActivityTypeConfigModel } from '@mongoose-schema/313/incentives/activity-type-config.model';
+import { DEFAULT_ACTIVITY_TYPES } from '@zod-schema/313/incentives/activity-type-config';
 
 async function seedActivityTypes() {
   try {

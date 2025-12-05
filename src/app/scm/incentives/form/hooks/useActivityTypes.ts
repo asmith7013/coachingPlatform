@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { ActivityTypeConfig } from "@zod-schema/313/activity-type-config";
+import { ActivityTypeConfig } from "@zod-schema/313/incentives/activity-type-config";
 import { fetchActivityTypes } from "../actions";
 
 // =====================================

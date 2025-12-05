@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import type { PodsieQuestionMapDocument } from '@zod-schema/313/podsie-question-map';
+import type { PodsieQuestionMapDocument } from '@zod-schema/313/podsie/podsie-question-map';
 
 // =====================================
 // PODSIE QUESTION MAP MONGOOSE SCHEMA

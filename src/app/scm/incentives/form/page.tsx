@@ -18,7 +18,7 @@ import {
   submitActivities,
   StudentActivitySubmission,
 } from "./actions";
-import { StudentActivity } from "@zod-schema/313/student";
+import { StudentActivity } from "@zod-schema/313/student/student";
 import { Spinner } from "@/components/core/feedback/Spinner";
 
 interface Student {

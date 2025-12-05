@@ -3,8 +3,8 @@
  * Provides functions to join scope-and-sequence lessons with section-specific Podsie data
  */
 
-import { ScopeAndSequence } from "@zod-schema/313/scope-and-sequence";
-import { SectionConfig, ScopeAndSequenceWithAssignmentContent, AssignmentContent } from "@zod-schema/313/section-config";
+import { ScopeAndSequence } from "@zod-schema/313/curriculum/scope-and-sequence";
+import { SectionConfig, ScopeAndSequenceWithAssignmentContent, AssignmentContent } from "@zod-schema/313/podsie/section-config";
 import { fetchScopeAndSequence } from "@actions/313/scope-and-sequence";
 import { getSectionConfig } from "@actions/313/section-config";
 

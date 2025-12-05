@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { StudentModel } from '@mongoose-schema/313/student.model';
+import { StudentModel } from '@mongoose-schema/313/student/student.model';
 
 async function dropStudentIDRefIndex() {
   try {

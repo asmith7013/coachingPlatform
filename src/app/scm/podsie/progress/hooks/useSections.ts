@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchStudents } from "@/app/actions/313/students";
-import { Student } from "@zod-schema/313/student";
+import { Student } from "@zod-schema/313/student/student";
 
 export function useSections() {
   const [sections, setSections] = useState<string[]>([]);

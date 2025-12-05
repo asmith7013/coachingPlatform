@@ -1,6 +1,6 @@
 "use server";
 
-import { RoadmapsStudentDataModel } from '@/lib/schema/mongoose-schema/313/roadmaps-student-data.model';
+import { RoadmapsStudentDataModel } from '@/lib/schema/mongoose-schema/313/student/roadmaps-student-data.model';
 import { connectToDB } from "@server/db/connection";
 import { handleServerError } from "@error/handlers/server";
 

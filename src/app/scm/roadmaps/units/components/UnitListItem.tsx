@@ -1,6 +1,6 @@
 "use client";
 
-import { RoadmapUnit } from "@zod-schema/313/roadmap-unit";
+import { RoadmapUnit } from "@zod-schema/313/curriculum/roadmap-unit";
 
 interface UnitListItemProps {
   unit: RoadmapUnit;

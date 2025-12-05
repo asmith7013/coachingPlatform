@@ -9,7 +9,7 @@ import {
   fetchAssignmentsForSection,
   PodsieAssignmentInfo,
 } from "@/app/actions/313/podsie-sync";
-import { SCOPE_SEQUENCE_TAG_OPTIONS } from "@zod-schema/313/scope-and-sequence";
+import { SCOPE_SEQUENCE_TAG_OPTIONS } from "@zod-schema/313/curriculum/scope-and-sequence";
 
 interface CreateAssignmentModalProps {
   scopeSequenceTag: string;

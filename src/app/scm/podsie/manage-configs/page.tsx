@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { getSectionOptions, getAssignmentContent } from "@actions/313/section-config";
 import { updateQuestionMapping } from "./actions";
-import type { AssignmentContent, PodsieQuestionMap } from "@zod-schema/313/section-config";
+import type { AssignmentContent, PodsieQuestionMap } from "@zod-schema/313/podsie/section-config";
 import { Spinner } from "@/components/core/feedback/Spinner";
 
 interface SectionOption {

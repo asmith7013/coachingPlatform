@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ActivityTypeConfig } from "@zod-schema/313/activity-type-config";
+import { ActivityTypeConfig } from "@zod-schema/313/incentives/activity-type-config";
 
 interface Student {
   _id: string;

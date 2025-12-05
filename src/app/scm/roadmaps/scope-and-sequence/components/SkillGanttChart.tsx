@@ -5,7 +5,7 @@ import { scaleLinear, scaleBand } from "@visx/scale";
 import { Group } from "@visx/group";
 import { GridRows } from "@visx/grid";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
-import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
+import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
 
 interface Lesson {
   _id: string;

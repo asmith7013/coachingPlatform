@@ -9,7 +9,7 @@
  */
 
 import mongoose from 'mongoose';
-import { ScopeAndSequenceModel } from '../src/lib/schema/mongoose-schema/313/scope-and-sequence.model';
+import { ScopeAndSequenceModel } from '../src/lib/schema/mongoose-schema/313/curriculum/scope-and-sequence.model';
 
 if (!process.env.DATABASE_URL) {
   console.error('❌ ERROR: DATABASE_URL environment variable is not set.');

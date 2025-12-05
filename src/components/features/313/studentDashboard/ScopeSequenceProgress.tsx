@@ -2,10 +2,10 @@ import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Badge } from '@/components/core/feedback/Badge';
-import { type ScopeSequenceProgress } from '@/lib/schema/zod-schema/313/student-data';
+import { type ScopeSequenceProgress } from '@/lib/schema/zod-schema/313/student/student-data';
 import { getLessonsForGrade } from '@/lib/schema/enum/scope-sequence';
 import { getSnorklLink, hasSnorklLink } from '@/lib/schema/enum/snorkl-links';
-import { getSectionType } from '@/lib/schema/zod-schema/313/student-data';
+import { getSectionType } from '@/lib/schema/zod-schema/313/student/student-data';
 
 interface ScopeSequenceProgressProps {
   progress: ScopeSequenceProgress;

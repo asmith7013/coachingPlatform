@@ -1,13 +1,13 @@
 "use server";
 
 import { withDbConnection } from "@server/db/ensure-connection";
-import { StudentModel } from "@/lib/schema/mongoose-schema/313/student.model";
-import { RampUpQuestion } from "@zod-schema/313/student";
-import { calculateRampUpSummary } from "@zod-schema/313/ramp-up-progress";
+import { StudentModel } from "@/lib/schema/mongoose-schema/313/student/student.model";
+import { RampUpQuestion } from "@zod-schema/313/student/student";
+import { calculateRampUpSummary } from "@zod-schema/313/podsie/ramp-up-progress";
 import {
   PodsieApiResponseSchema,
   PodsieResponse,
-} from "@zod-schema/313/podsie-response";
+} from "@zod-schema/313/podsie/podsie-response";
 import { z } from "zod";
 
 // =====================================

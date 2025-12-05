@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { StudentModel } from '@/lib/schema/mongoose-schema/313/student.model';
+import { StudentModel } from '@/lib/schema/mongoose-schema/313/student/student.model';
 import { type AssessmentRow } from '@/lib/schema/zod-schema/313/assessment-scraper';
 import { groupByStudent, groupBySkill } from '../lib/csv-parser';
 import { handleServerError } from "@error/handlers/server";

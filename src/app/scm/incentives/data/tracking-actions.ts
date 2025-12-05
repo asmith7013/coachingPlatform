@@ -1,8 +1,8 @@
 "use server";
 
-import { StudentActivityModel } from "@mongoose-schema/313/student-activity.model";
-import { ScopeAndSequenceModel } from "@mongoose-schema/313/scope-and-sequence.model";
-import { RoadmapUnitModel } from "@mongoose-schema/313/roadmap-unit.model";
+import { StudentActivityModel } from "@mongoose-schema/313/student/student-activity.model";
+import { ScopeAndSequenceModel } from "@mongoose-schema/313/curriculum/scope-and-sequence.model";
+import { RoadmapUnitModel } from "@mongoose-schema/313/curriculum/roadmap-unit.model";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 

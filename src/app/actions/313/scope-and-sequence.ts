@@ -2,13 +2,13 @@
 
 import { z, ZodType } from "zod";
 import { revalidatePath } from "next/cache";
-import { ScopeAndSequenceModel } from "@mongoose-schema/313/scope-and-sequence.model";
+import { ScopeAndSequenceModel } from "@mongoose-schema/313/curriculum/scope-and-sequence.model";
 import {
   ScopeAndSequenceZodSchema,
   ScopeAndSequenceInputZodSchema,
   ScopeAndSequence,
   ScopeAndSequenceInput
-} from "@zod-schema/313/scope-and-sequence";
+} from "@zod-schema/313/curriculum/scope-and-sequence";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";

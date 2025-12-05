@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CheckCircleIcon, ExclamationTriangleIcon, DocumentArrowUpIcon } from "@heroicons/react/24/solid";
 import { useToast } from "@/components/core/feedback/Toast";
 import { generateQuestionMapFromResponses, saveQuestionMap, getQuestionMap } from "@/app/actions/313/podsie-question-map";
-import type { PodsieQuestionMap } from "@zod-schema/313/section-config";
+import type { PodsieQuestionMap } from "@zod-schema/313/podsie/section-config";
 import { Spinner } from "@/components/core/feedback/Spinner";
 
 type ImportMode = 'api' | 'json';

@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 import { connectToDB } from '../src/lib/server/db/connection';
-import { StudentModel } from '../src/lib/schema/mongoose-schema/313/student.model';
+import { StudentModel } from '../src/lib/schema/mongoose-schema/313/student/student.model';
 
 /**
  * Script to delete all documents from the students collection

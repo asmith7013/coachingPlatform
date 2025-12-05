@@ -2,7 +2,7 @@
 
 import { z, ZodType } from "zod";
 import { revalidatePath } from "next/cache";
-import { PodsieCompletionModel } from "@mongoose-schema/313/podsie-completion.model";
+import { PodsieCompletionModel } from "@mongoose-schema/313/podsie/podsie-completion.model";
 import {
   PodsieCompletionZodSchema,
   PodsieCompletionInputZodSchema,
@@ -10,7 +10,7 @@ import {
   PodsieCompletionInput,
   PodsieCompletionQuery,
   PodsieCompletionQuerySchema
-} from "@zod-schema/313/podsie-completion";
+} from "@zod-schema/313/podsie/podsie-completion";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";

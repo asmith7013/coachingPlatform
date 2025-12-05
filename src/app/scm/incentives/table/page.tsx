@@ -10,7 +10,7 @@ import {
   StudentActivityRecord,
 } from "../data/actions";
 import { fetchUnitsByGrade, fetchActivityTypes } from "../form/actions";
-import { ActivityTypeConfig } from "@zod-schema/313/activity-type-config";
+import { ActivityTypeConfig } from "@zod-schema/313/incentives/activity-type-config";
 import { Spinner } from "@/components/core/feedback/Spinner";
 
 interface Unit {

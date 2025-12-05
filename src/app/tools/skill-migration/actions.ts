@@ -2,8 +2,8 @@
 
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
-import { RoadmapsSkillModel } from "@mongoose-schema/313/roadmap-skill.model";
-import { RoadmapUnitModel } from "@mongoose-schema/313/roadmap-unit.model";
+import { RoadmapsSkillModel } from "@mongoose-schema/313/curriculum/roadmap-skill.model";
+import { RoadmapUnitModel } from "@mongoose-schema/313/curriculum/roadmap-unit.model";
 
 /**
  * Test migration on a single skill (for debugging)

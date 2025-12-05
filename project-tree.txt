@@ -243,6 +243,7 @@
 │   │   └── drop-studentidref-index.ts
 │   ├── debug-803-unit3.js
 │   ├── delete-all-students.ts
+│   ├── fix-remaining-imports.js
 │   ├── generate-theme-css.ts
 │   ├── im-curriculum
 │   │   ├── README.md
@@ -262,6 +263,7 @@
 │   ├── test-migrate-one-skill.ts
 │   ├── test-monday-token.mjs
 │   ├── test-variant-mapping.ts
+│   ├── update-313-imports.js
 │   ├── update-alg1-standards.js
 │   ├── update-grade6-standards.js
 │   ├── update-grade7-standards.js
@@ -314,6 +316,7 @@
 │   │   ├── actions
 │   │   │   ├── 313
 │   │   │   │   ├── analytics.ts
+│   │   │   │   ├── attendance-import.ts
 │   │   │   │   ├── google-sheets-export.ts
 │   │   │   │   ├── im-lessons.ts
 │   │   │   │   ├── index.ts
@@ -707,6 +710,8 @@
 │   │   │   ├── layout.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── podsie
+│   │   │   │   ├── import-attendance
+│   │   │   │   │   └── page.tsx
 │   │   │   │   ├── manage-configs
 │   │   │   │   │   ├── actions.ts
 │   │   │   │   │   └── page.tsx
@@ -718,8 +723,10 @@
 │   │   │   │   │   └── utils
 │   │   │   │   ├── question-mapper
 │   │   │   │   │   └── page.tsx
-│   │   │   │   └── section-configs
-│   │   │   │       ├── components
+│   │   │   │   ├── section-configs
+│   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── section-configs-update
 │   │   │   │       └── page.tsx
 │   │   │   ├── roadmaps
 │   │   │   │   ├── assessment-scraper
@@ -1548,21 +1555,13 @@
 │   │   │   ├── index.ts
 │   │   │   ├── mongoose-schema
 │   │   │   │   ├── 313
-│   │   │   │   │   ├── activity-type-config.model.ts
+│   │   │   │   │   ├── config
 │   │   │   │   │   ├── core.ts
-│   │   │   │   │   ├── podsie-completion.model.ts
-│   │   │   │   │   ├── podsie-question-map.model.ts
-│   │   │   │   │   ├── ramp-up-progress.model.ts
-│   │   │   │   │   ├── roadmap-skill.model.ts
-│   │   │   │   │   ├── roadmap-unit.model.ts
-│   │   │   │   │   ├── roadmap.model.ts
-│   │   │   │   │   ├── roadmaps-student-data.model.ts
-│   │   │   │   │   ├── scope-and-sequence.model.ts
-│   │   │   │   │   ├── section-config.model.ts
+│   │   │   │   │   ├── curriculum
+│   │   │   │   │   ├── incentives
+│   │   │   │   │   ├── podsie
 │   │   │   │   │   ├── storage.ts
-│   │   │   │   │   ├── student-activity.model.ts
-│   │   │   │   │   ├── student-performance.model.ts
-│   │   │   │   │   ├── student.model.ts
+│   │   │   │   │   ├── student
 │   │   │   │   │   ├── timesheet
 │   │   │   │   │   └── zearn-import.model.ts
 │   │   │   │   ├── PageView.ts
@@ -1630,24 +1629,13 @@
 │   │   │   │       └── index.ts
 │   │   │   └── zod-schema
 │   │   │       ├── 313
-│   │   │       │   ├── activity-type-config.ts
 │   │   │       │   ├── assessment-scraper.ts
 │   │   │       │   ├── core.ts
-│   │   │       │   ├── podsie-completion.ts
-│   │   │       │   ├── podsie-question-map.ts
-│   │   │       │   ├── podsie-response.ts
-│   │   │       │   ├── ramp-up-progress.ts
-│   │   │       │   ├── roadmap-skill.ts
-│   │   │       │   ├── roadmap-unit.ts
-│   │   │       │   ├── roadmap.ts
-│   │   │       │   ├── roadmaps-student-data.ts
-│   │   │       │   ├── scope-and-sequence.ts
-│   │   │       │   ├── section-config.ts
+│   │   │       │   ├── curriculum
+│   │   │       │   ├── incentives
+│   │   │       │   ├── podsie
 │   │   │       │   ├── storage.ts
-│   │   │       │   ├── student-activity.ts
-│   │   │       │   ├── student-data.ts
-│   │   │       │   ├── student-performance.ts
-│   │   │       │   ├── student.ts
+│   │   │       │   ├── student
 │   │   │       │   ├── timesheet
 │   │   │       │   └── zearn-import.ts
 │   │   │       ├── analytics.ts
@@ -1963,4 +1951,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-577 directories, 1387 files
+588 directories, 1364 files

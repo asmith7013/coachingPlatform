@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { StudentAttendance } from '@/lib/schema/zod-schema/313/student-data';
+import { StudentAttendance } from '@/lib/schema/zod-schema/313/student/student-data';
 import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';

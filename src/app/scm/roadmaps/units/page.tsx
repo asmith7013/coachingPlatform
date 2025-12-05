@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { getRoadmapUnits } from "@/app/actions/313/roadmaps-units";
-import { RoadmapUnit } from "@zod-schema/313/roadmap-unit";
-import { Student } from "@zod-schema/313/student";
+import { RoadmapUnit } from "@zod-schema/313/curriculum/roadmap-unit";
+import { Student } from "@zod-schema/313/student/student";
 import { UnitListItem } from "./components/UnitListItem";
 import { UnitDetailView } from "./components/UnitDetailView";
 import { StudentFilter } from "../scope-and-sequence/components/StudentFilter";
 import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
-import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
+import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
 import { Spinner } from "@/components/core/feedback/Spinner";
 

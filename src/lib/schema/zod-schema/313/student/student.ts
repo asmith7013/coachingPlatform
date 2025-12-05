@@ -143,6 +143,7 @@ export const PodsieProgressSchema = z.object({
   completedCount: z.number().int().default(0).describe("Number of questions completed"),
   percentComplete: z.number().default(0).describe("Completion percentage"),
   isFullyComplete: z.boolean().default(false).describe("Whether all questions completed"),
+  fullyCompletedDate: z.string().optional().describe("Date when assignment was fully completed (ISO format)"),
 
   lastSyncedAt: z.string().optional().describe("Last Podsie sync timestamp"),
 });

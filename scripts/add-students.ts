@@ -1,8 +1,8 @@
 #!/usr/bin/env tsx
 
 import { connectToDB } from '@/lib/server/db/connection';
-import { StudentModel } from '@/lib/schema/mongoose-schema/313/student.model';
-import { StudentInputZodSchema, type StudentInput } from '@/lib/schema/zod-schema/313/student';
+import { StudentModel } from '@/lib/schema/mongoose-schema/313/student/student.model';
+import { StudentInputZodSchema, type StudentInput } from '@/lib/schema/zod-schema/313/student/student';
 import studentData from '@/lib/ui/json/d11student.json';
 
 /**

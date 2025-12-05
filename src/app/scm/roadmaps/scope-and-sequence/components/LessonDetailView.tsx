@@ -1,6 +1,6 @@
 "use client";
 
-import { Student } from "@zod-schema/313/student";
+import { Student } from "@zod-schema/313/student/student";
 import { SkillListWithProgress } from "../../components/SkillListWithProgress";
 
 interface Lesson {

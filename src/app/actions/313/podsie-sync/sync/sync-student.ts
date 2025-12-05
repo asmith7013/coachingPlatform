@@ -1,9 +1,9 @@
 "use server";
 
 import { withDbConnection } from "@server/db/ensure-connection";
-import { StudentModel } from "@mongoose-schema/313/student.model";
-import { RampUpQuestion } from "@zod-schema/313/student";
-import { calculateRampUpSummary } from "@zod-schema/313/ramp-up-progress";
+import { StudentModel } from "@mongoose-schema/313/student/student.model";
+import { RampUpQuestion } from "@zod-schema/313/student/student";
+import { calculateRampUpSummary } from "@zod-schema/313/podsie/ramp-up-progress";
 import { fetchPodsieResponses } from "../api/fetch-responses";
 import { processResponsesToQuestions } from "../processing/process-responses";
 import type { SyncResult } from "../types";
@@ -100,10 +100,42 @@ export async function syncStudentRampUpProgress(
     // Calculate summary
     const summary = calculateRampUpSummary(questions);
 
+    // Determine fullyCompletedDate - use the completedAt of the last question if fully complete
+    let fullyCompletedDate: string | undefined;
+    if (summary.isFullyComplete && questions.length > 0) {
+      // Find the last completed question's date
+      const lastQuestion = questions[questions.length - 1];
+      fullyCompletedDate = lastQuestion.completedAt;
+    }
+
     // Update student document's podsieProgress array
     await withDbConnection(async () => {
-      // First, try to update existing entry in array
-      // Match on scopeAndSequenceId + podsieAssignmentId (prevents duplicates)
+      // First, check if entry exists and if it was previously not fully complete
+      const existingStudent = await StudentModel.findOne(
+        {
+          _id: studentId,
+          podsieProgress: {
+            $elemMatch: {
+              scopeAndSequenceId: scopeAndSequenceId,
+              podsieAssignmentId: podsieAssignmentId
+            }
+          }
+        }
+      );
+
+      const podsieProgressArray = (existingStudent as any)?.podsieProgress;
+      const existingProgress = Array.isArray(podsieProgressArray)
+        ? podsieProgressArray.find(
+            (p: any) => p.scopeAndSequenceId === scopeAndSequenceId && p.podsieAssignmentId === podsieAssignmentId
+          )
+        : undefined;
+
+      // If newly completed, use the date; if already had a date, preserve it
+      const finalFullyCompletedDate =
+        existingProgress?.fullyCompletedDate ||
+        (summary.isFullyComplete ? fullyCompletedDate : undefined);
+
+      // Update existing entry in array
       const updateResult = await StudentModel.updateOne(
         {
           _id: studentId,
@@ -125,6 +157,7 @@ export async function syncStudentRampUpProgress(
             "podsieProgress.$.completedCount": summary.completedCount,
             "podsieProgress.$.percentComplete": summary.percentComplete,
             "podsieProgress.$.isFullyComplete": summary.isFullyComplete,
+            "podsieProgress.$.fullyCompletedDate": finalFullyCompletedDate,
             "podsieProgress.$.lastSyncedAt": new Date().toISOString(),
           }
         }
@@ -148,6 +181,7 @@ export async function syncStudentRampUpProgress(
                 completedCount: summary.completedCount,
                 percentComplete: summary.percentComplete,
                 isFullyComplete: summary.isFullyComplete,
+                fullyCompletedDate: summary.isFullyComplete ? fullyCompletedDate : undefined,
                 lastSyncedAt: new Date().toISOString(),
               }
             }

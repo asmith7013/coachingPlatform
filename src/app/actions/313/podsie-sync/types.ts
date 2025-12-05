@@ -1,4 +1,4 @@
-import { RampUpQuestion } from "@zod-schema/313/student";
+import { RampUpQuestion } from "@zod-schema/313/student/student";
 
 // =====================================
 // PODSIE API TYPES

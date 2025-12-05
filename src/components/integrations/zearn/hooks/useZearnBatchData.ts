@@ -5,7 +5,7 @@ import { importZearnData } from '@/app/actions/313/zearn-import';
 import { handleClientError } from '@/lib/error/handlers/client';
 import { useLocalStorage } from '@/hooks/ui';
 import { createZearnImportRecordDefaults, type ZearnImportRecordInput } from '@zod-schema/313/zearn-import';
-import { Student } from '@/lib/schema/zod-schema/313/student';
+import { Student } from '@/lib/schema/zod-schema/313/student/student';
 import { parseZearnData, type ParsedStudentData } from '../utils/parseZearnData';
 
 interface LocalStorageData {

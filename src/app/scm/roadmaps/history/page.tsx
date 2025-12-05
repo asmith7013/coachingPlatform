@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { fetchStudentAssessments, getAssessmentDateRange } from "@/app/actions/313/student-assessments";
 import { fetchStudents } from "@/app/actions/313/students";
 import { fetchZearnCompletions, importZearnCompletions, ZearnHistoryRow } from "@/app/actions/313/zearn-completions";
-import { Student } from "@zod-schema/313/student";
+import { Student } from "@zod-schema/313/student/student";
 import { Sections313 } from "@/lib/schema/enum/313";
 // import { useAssessmentScraper } from "../assessment-scraper/hooks/useAssessmentScraper";
 import { Spinner } from "@/components/core/feedback/Spinner";

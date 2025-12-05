@@ -3,7 +3,7 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { StudentService } from "@/lib/integrations/google-sheets/services/student-service";
 import { QueryParams, DEFAULT_QUERY_PARAMS } from "@core-types/query";
-import { StudentInput } from "@zod-schema/313/student";
+import { StudentInput } from "@zod-schema/313/student/student";
 
 /**
  * Server action wrappers for student operations

@@ -1,6 +1,6 @@
 import { z, ZodType } from "zod";
-import { StudentModel } from "@mongoose-schema/313/student.model";
-import { Student, StudentZodSchema, StudentInputZodSchema, StudentInput } from "@zod-schema/313/student";
+import { StudentModel } from "@mongoose-schema/313/student/student.model";
+import { Student, StudentZodSchema, StudentInputZodSchema, StudentInput } from "@zod-schema/313/student/student";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { handleServerError } from "@error/handlers/server";
 import { QueryParams, DEFAULT_QUERY_PARAMS } from "@core-types/query";

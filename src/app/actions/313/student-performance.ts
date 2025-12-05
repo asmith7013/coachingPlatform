@@ -3,11 +3,11 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { type PipelineStage } from "mongoose";
-import { StudentPerformanceModel } from "@mongoose-schema/313/student-performance.model";
-import { RoadmapsStudentDataModel } from "@mongoose-schema/313/roadmaps-student-data.model";
+import { StudentPerformanceModel } from "@mongoose-schema/313/student/student-performance.model";
+import { RoadmapsStudentDataModel } from "@mongoose-schema/313/student/roadmaps-student-data.model";
 import { 
   StudentPerformanceInputZodSchema
-} from "@zod-schema/313/student-performance";
+} from "@zod-schema/313/student/student-performance";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";

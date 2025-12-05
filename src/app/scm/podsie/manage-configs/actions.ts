@@ -1,10 +1,10 @@
 "use server";
 
 import { withDbConnection } from "@server/db/ensure-connection";
-import { SectionConfigModel } from "@mongoose-schema/313/section-config.model";
+import { SectionConfigModel } from "@mongoose-schema/313/podsie/section-config.model";
 import { revalidatePath } from "next/cache";
 import { handleServerError } from "@error/handlers/server";
-import type { PodsieQuestionMap } from "@zod-schema/313/section-config";
+import type { PodsieQuestionMap } from "@zod-schema/313/podsie/section-config";
 
 /**
  * Update a specific question in the question mapping

@@ -15,8 +15,8 @@ import {
   PodsieAssignmentInfo
 } from "@/app/actions/313/podsie-sync";
 import { fetchScopeAndSequence } from "@/app/actions/313/scope-and-sequence";
-import type { ScopeAndSequence } from "@zod-schema/313/scope-and-sequence";
-import type { AssignmentContent } from "@zod-schema/313/section-config";
+import type { ScopeAndSequence } from "@zod-schema/313/curriculum/scope-and-sequence";
+import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
 import { SchoolSectionSelector } from "./components/SchoolSectionSelector";
 import { ExistingAssignmentsList } from "./components/ExistingAssignmentsList";
 import { MatchingControls } from "./components/MatchingControls";

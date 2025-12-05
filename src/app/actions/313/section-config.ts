@@ -2,7 +2,7 @@
 
 import { z, ZodType } from "zod";
 import { revalidatePath } from "next/cache";
-import { SectionConfigModel } from "@mongoose-schema/313/section-config.model";
+import { SectionConfigModel } from "@mongoose-schema/313/podsie/section-config.model";
 import {
   SectionConfigZodSchema,
   SectionConfigInputZodSchema,
@@ -13,7 +13,7 @@ import {
   AssignmentContent,
   SectionOption,
   PodsieQuestionMap
-} from "@zod-schema/313/section-config";
+} from "@zod-schema/313/podsie/section-config";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";

@@ -1,7 +1,7 @@
 "use server";
 
 import { StudentDashboardService } from '@/lib/integrations/google-sheets/services/student-dashboard-service';
-import { StudentDataZodSchema } from '@/lib/schema/zod-schema/313/student-data';
+import { StudentDataZodSchema } from '@/lib/schema/zod-schema/313/student/student-data';
 import { handleServerError } from '@/lib/error/handlers/server';
 import { withDbConnection } from '@/lib/server/db/ensure-connection';
 

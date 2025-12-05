@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { fetchAllUnitsByScopeTag } from "@/app/actions/313/scope-and-sequence";
 import { getSectionConfig } from "@/app/actions/313/section-config";
-import { AssignmentContent } from "@zod-schema/313/section-config";
+import { AssignmentContent } from "@zod-schema/313/podsie/section-config";
 import { UnitOption } from "../types";
 import { getGradeForSection, getSchoolForSection } from "../utils/sectionHelpers";
 

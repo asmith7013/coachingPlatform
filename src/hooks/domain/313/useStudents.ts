@@ -1,5 +1,5 @@
 import { createCrudHooks } from '@query/client/factories/crud-factory';
-import { StudentZodSchema, Student } from '@/lib/schema/zod-schema/313/student';
+import { StudentZodSchema, Student } from '@/lib/schema/zod-schema/313/student/student';
 import { ZodSchema } from 'zod';
 import { 
   fetchStudents, 

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { getRoadmapUnits } from "@/app/actions/313/roadmaps-units";
-import { RoadmapUnit } from "@zod-schema/313/roadmap-unit";
-import { Student } from "@zod-schema/313/student";
+import { RoadmapUnit } from "@zod-schema/313/curriculum/roadmap-unit";
+import { Student } from "@zod-schema/313/student/student";
 import { UnitListItem } from "../units/components/UnitListItem";
 import { StudentGridView } from "../units/components/StudentGridView";
 import { AllUnitsGridView } from "../units/components/AllUnitsGridView";

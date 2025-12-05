@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchRoadmapsSkills } from "@actions/313/roadmaps-skills";
-import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
+import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
 import { SkillListItem } from "./components/SkillListItem";
 import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { Alert } from "@/components/core/feedback/Alert";

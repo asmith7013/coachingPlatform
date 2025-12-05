@@ -1,7 +1,7 @@
 "use server";
 
 import { withDbConnection } from "@server/db/ensure-connection";
-import { StudentModel } from "@mongoose-schema/313/student.model";
+import { StudentModel } from "@mongoose-schema/313/student/student.model";
 import { syncStudentRampUpProgress } from "./sync-student";
 import { buildQuestionMapping } from "@utils/podsie-question-mapping";
 import type { SyncSectionResult, SyncResult, SyncOptions } from "../types";

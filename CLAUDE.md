@@ -106,9 +106,10 @@ mongosh "$DATABASE_URL" --file script.js
 
 ## Code Guidelines
 
-- **Avoid `any` types** - Use proper TypeScript types or `unknown` with type guards
+- **Avoid `any` types** - Use proper TypeScript types or `unknown` with type guards. When using `any` is unavoidable (e.g., working with Mongoose lean() types), DO NOT use `eslint-disable` comments as they prevent the build from completing. Just use `as any` directly.
 - **Use Zod for validation** - All external data should be validated with Zod schemas
 - **Server Actions** - Use "use server" directive for backend operations
+- **Button Cursor** - Always add `cursor-pointer` class to all clickable buttons and interactive elements
 - Before making commits, run:
   - `npm run prebuild` - Check for TypeScript and linting errors (DO NOT use `npm run build` as it interferes with dev server)
   - `npm run lint` - Fix linting issues

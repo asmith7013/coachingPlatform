@@ -3,8 +3,8 @@
  * Provides functions to join scope-and-sequence lessons with section-specific Podsie data
  */
 
-import { ScopeAndSequence } from "@zod-schema/313/scope-and-sequence";
-import { PodsieCompletion, ScopeAndSequenceWithPodsie } from "@zod-schema/313/podsie-completion";
+import { ScopeAndSequence } from "@zod-schema/313/curriculum/scope-and-sequence";
+import { PodsieCompletion, ScopeAndSequenceWithPodsie } from "@zod-schema/313/podsie/podsie-completion";
 import { fetchScopeAndSequence } from "@actions/313/scope-and-sequence";
 import { fetchPodsieCompletionByQuery } from "@actions/313/podsie-completion";
 import type { AllSectionsType } from "@schema/enum/313";

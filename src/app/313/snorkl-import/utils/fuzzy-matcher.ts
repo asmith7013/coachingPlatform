@@ -1,5 +1,5 @@
 import Fuse from 'fuse.js';
-import { Student } from '@/lib/schema/zod-schema/313/student';
+import { Student } from '@/lib/schema/zod-schema/313/student/student';
 import { StudentMatch } from '../types';
 
 // Configure Fuse.js for name matching
