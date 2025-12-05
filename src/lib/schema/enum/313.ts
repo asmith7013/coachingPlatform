@@ -82,6 +82,43 @@ export const ScopeSequenceTagZod = z.enum(SCOPE_SEQUENCE_TAG_OPTIONS);
 export type ScopeSequenceTagType = z.infer<typeof ScopeSequenceTagZod>;
 
 // =====================================
+// SPECIAL POPULATIONS
+// =====================================
+
+/**
+ * Special population classifications for class sections
+ *
+ * Defines specialized instructional settings for students with specific needs:
+ *
+ * - ICT (Integrated Co-Teaching): Co-taught class where general education and
+ *   special education teachers work together to serve students with IEPs alongside
+ *   general education students in the same classroom
+ *
+ * - 12-1-1: Smaller class setting with a maximum of 12 students, all of whom have
+ *   IEPs, served by 1 special education teacher and 1 paraprofessional
+ *
+ * - MLL (Multilingual Learners): Section specifically designed for students who are
+ *   learning English as an additional language, formerly known as ELL (English Language Learners)
+ */
+export const SpecialPopulations = [
+  'ICT',
+  '12-1-1',
+  'MLL',
+] as const;
+
+export const SpecialPopulationsZod = z.enum(SpecialPopulations);
+export type SpecialPopulationType = z.infer<typeof SpecialPopulationsZod>;
+
+/**
+ * Helper to get description for a special population type
+ */
+export const SPECIAL_POPULATION_DESCRIPTIONS: Record<SpecialPopulationType, string> = {
+  'ICT': 'Integrated Co-Teaching: Co-taught class with students with IEPs alongside general education students',
+  '12-1-1': '12:1:1 setting: Smaller class (max 12 students) with all students having IEPs, served by 1 teacher and 1 paraprofessional',
+  'MLL': 'Multilingual Learners: Section for students learning English as an additional language',
+};
+
+// =====================================
 // SECTION-ROADMAP CONFIGURATION
 // =====================================
 

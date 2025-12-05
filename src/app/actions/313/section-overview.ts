@@ -7,8 +7,6 @@ import { StudentModel } from "@mongoose-schema/313/student/student.model";
 import { SchoolCalendarModel } from "@mongoose-schema/calendar/school-calendar.model";
 import { handleServerError } from "@error/handlers/server";
 import type { SectionConfig } from "@zod-schema/313/podsie/section-config";
-import type { AttendanceRecord } from "@zod-schema/313/student/attendance";
-import type { Student } from "@zod-schema/313/student/student";
 import type { SchoolCalendar, CalendarEvent } from "@zod-schema/calendar/school-calendar";
 
 // =====================================
@@ -42,33 +40,6 @@ export interface DailyAttendanceStats {
   total: number;
 }
 
-export interface DailyVelocityStats {
-  date: string;
-  averageVelocity: number; // Total completions / students present (all activity types)
-  totalCompletions: number; // All completed activities
-  studentsPresent: number;
-
-  // Breakdown by activity type (HOW they practiced)
-  byActivityType: {
-    masteryChecks: number;    // activityType='mastery-check'
-    sidekicks: number;        // activityType='sidekick'
-    assessments: number;      // activityType='assessment'
-  };
-
-  // Breakdown by lesson type (WHAT they practiced)
-  byLessonType: {
-    lessons: number;          // lessonType='lesson'
-    rampUps: number;          // lessonType='rampUp'
-    assessments: number;      // lessonType='assessment'
-  };
-
-  // Velocity metrics for filtering
-  velocityMetrics: {
-    masteryChecksOnly: number;     // Only mastery-check activities / students present
-    withoutRampUps: number;        // Exclude rampUp lessonType / students present
-    lessonsOnly: number;           // Only lesson lessonType / students present
-  };
-}
 
 // =====================================
 // GET SECTION OVERVIEW DATA
@@ -130,14 +101,6 @@ export async function getSectionOverviewData(
           podsieActivities: ac.podsieActivities || [],
         })),
       };
-
-      interface LeanStudent extends LeanDocument {
-        studentID: number;
-        firstName: string;
-        lastName: string;
-        email: string;
-        active: boolean;
-      }
 
       type LeanCalendar = Pick<SchoolCalendar, 'schoolYear' | 'startDate' | 'endDate' | 'events'> & LeanDocument;
 
@@ -214,93 +177,6 @@ export async function getSectionAttendanceByDateRange(
       };
     } catch (error) {
       return { success: false, error: handleServerError(error, "Failed to fetch attendance data") };
-    }
-  });
-}
-
-// =====================================
-// GET VELOCITY DATA FOR DATE RANGE
-// =====================================
-
-/**
- * Get class velocity (mastery completion rate) for a date range
- * Velocity = average number of mastery checks completed per student present that day
- */
-export async function getSectionVelocityByDateRange(
-  section: string,
-  school: string,
-  startDate: string,
-  endDate: string
-): Promise<{ success: true; data: DailyVelocityStats[] } | { success: false; error: string }> {
-  return withDbConnection(async () => {
-    try {
-      // Get students in section
-      const students = await StudentModel.find({
-        section,
-        school,
-        active: true,
-      })
-        .select("studentID podsieProgress")
-        .lean();
-
-      // Get attendance for date range
-      const attendanceRecords = await Attendance313.find({
-        section,
-        date: { $gte: startDate, $lte: endDate },
-        status: { $in: ["present", "late"] }, // Only count present/late students
-      }).lean();
-
-      // Group attendance by date
-      const attendanceByDate = new Map<string, Set<number>>();
-      for (const record of attendanceRecords as AttendanceRecord[]) {
-        const recDate = record.date;
-        const recStudentId = record.studentId;
-        if (!attendanceByDate.has(recDate)) {
-          attendanceByDate.set(recDate, new Set());
-        }
-        attendanceByDate.get(recDate)!.add(recStudentId);
-      }
-
-      // Calculate velocity for each date
-      const velocityStats: DailyVelocityStats[] = [];
-
-      for (const [date, presentStudentIds] of attendanceByDate.entries()) {
-        let totalMasteries = 0;
-
-        // For each student present that day
-        for (const student of students as unknown as Pick<Student, 'studentID' | 'podsieProgress'>[]) {
-          const studentID = student.studentID;
-          if (!presentStudentIds.has(studentID)) continue;
-
-          // Count mastery checks completed on this date
-          const podsieProgress = student.podsieProgress;
-          if (podsieProgress && Array.isArray(podsieProgress)) {
-            for (const progress of podsieProgress) {
-              // Check if fully completed on this date
-              if (progress.fullyCompletedDate && progress.fullyCompletedDate.startsWith(date)) {
-                totalMasteries++;
-              }
-            }
-          }
-        }
-
-        const studentsPresent = presentStudentIds.size;
-        const averageVelocity = studentsPresent > 0 ? totalMasteries / studentsPresent : 0;
-
-        velocityStats.push({
-          date,
-          averageVelocity: Math.round(averageVelocity * 100) / 100, // Round to 2 decimals
-          totalMasteries,
-          studentsPresent,
-        });
-      }
-
-      return {
-        success: true,
-        data: velocityStats.sort((a, b) => a.date.localeCompare(b.date)),
-      };
-    } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to fetch velocity data") };
     }
   });
 }

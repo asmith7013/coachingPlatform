@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
-import { AllSectionsZod, SchoolsZod, Teachers313Zod, ScopeSequenceTagZod } from "@schema/enum/313";
+import { AllSectionsZod, SchoolsZod, Teachers313Zod, ScopeSequenceTagZod, SpecialPopulationsZod } from "@schema/enum/313";
+import { LessonTypeZod } from "@zod-schema/313/curriculum/scope-and-sequence";
 
 // =====================================
 // SECTION CONFIG SCHEMA
@@ -73,6 +74,7 @@ export const AssignmentContentSchema = z.object({
   // Denormalized fields for display/sorting (kept in sync with scope-and-sequence)
   unitLessonId: z.string().describe("Denormalized: Unit.Lesson ID (e.g., '3.15', '4.RU1')"),
   lessonName: z.string().describe("Denormalized: Lesson name for display"),
+  lessonType: LessonTypeZod.optional().describe("Denormalized: Lesson type (lesson, rampUp, or assessment)"),
   section: z.string().optional().describe("Denormalized: Section (A, B, C, D, E, F, Ramp Ups, Unit Assessment)"),
   grade: z.string().optional().describe("Denormalized: Grade level"),
 
@@ -211,6 +213,8 @@ export const SectionConfigFieldsSchema = z.object({
   scopeSequenceTag: ScopeSequenceTagZod.optional().describe("Scope and sequence tag (e.g., 'Grade 8', 'Algebra 1')"),
 
   groupId: z.string().optional().describe("Podsie group ID for this section (used in Podsie URLs)"),
+
+  specialPopulations: z.array(SpecialPopulationsZod).default([]).describe("Special population classifications for this section (e.g., ICT, 12-1-1, MLL)"),
 
   active: z.boolean().default(true).describe("Whether this section is currently active"),
 

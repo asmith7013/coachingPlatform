@@ -9,11 +9,10 @@ import {
   getAllSectionConfigs,
   getSectionOverviewData,
   getSectionAttendanceByDateRange,
-  getSectionVelocityByDateRange,
   type SectionOverviewData,
   type DailyAttendanceStats,
-  type DailyVelocityStats,
 } from "@/app/actions/313/section-overview";
+import { getSectionVelocityByDateRange, type DailyVelocityStats } from "@/app/actions/313/velocity/velocity";
 import { SectionCalendar } from "./components/SectionCalendar";
 import { BellScheduleDisplay } from "./components/BellScheduleDisplay";
 import { AssignmentContentCards } from "./components/AssignmentContentCards";
