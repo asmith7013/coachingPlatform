@@ -28,8 +28,8 @@ export default function GroupIdsPage() {
     setIsLoading(true);
     try {
       const response = await fetchSectionConfigs();
-      if (response.success && response.data) {
-        setConfigs(response.data as SectionConfigWithGroupId[]);
+      if (response.success && response.items) {
+        setConfigs(response.items as SectionConfigWithGroupId[]);
       } else {
         toast.error("Failed to load section configs");
       }
