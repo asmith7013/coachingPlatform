@@ -9,7 +9,7 @@ import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
 import { getAssignmentContent } from "@actions/313/section-config";
 import { syncSectionRampUpProgress } from "@actions/313/podsie-sync";
 import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
-import { MultiSectionSelector, SectionCard } from "./components";
+import { MultiSectionSelector } from "./components";
 import { getSectionColors } from "@/app/scm/podsie/velocity/utils/colors";
 
 interface SectionOption {
@@ -29,6 +29,7 @@ interface UnitGroup {
 
 interface SectionWithUnits {
   classSection: string;
+  school: string;
   teacher?: string;
   gradeLevel: string;
   assignments: AssignmentContent[];
@@ -150,6 +151,7 @@ export default function BulkSyncPage() {
 
           newSectionsData.set(section.id, {
             classSection: section.classSection,
+            school: section.school,
             teacher: section.teacher,
             gradeLevel: section.gradeLevel,
             assignments,
@@ -475,6 +477,93 @@ export default function BulkSyncPage() {
     }
   };
 
+  // Sync a specific lesson section (Ramp Up, A, B, C, D) within a unit for a class section
+  const syncLessonSection = async (sectionId: string, unitNumber: number, lessonSection: string) => {
+    const sectionData = sectionsData.get(sectionId);
+    const section = sectionOptions.find(opt => opt.id === sectionId);
+    if (!sectionData || !section) return;
+
+    const lessonSectionAssignments = sectionData.assignments.filter(a => {
+      const parts = a.unitLessonId.split('.');
+      const num = parseInt(parts[0]);
+      return num === unitNumber && (a.section || 'Unknown') === lessonSection;
+    });
+
+    if (lessonSectionAssignments.length === 0) return;
+
+    setSyncing(true);
+
+    const totalAssignments = lessonSectionAssignments.length;
+    let completedAssignments = 0;
+
+    const sectionLabel = lessonSection === 'Ramp Ups' ? 'Ramp Up' : `Section ${lessonSection}`;
+
+    // Show initial progress toast
+    progressToast.showToast({
+      title: `Syncing ${sectionLabel}`,
+      description: `Starting sync for Unit ${unitNumber} ${sectionLabel}...`,
+      variant: "info",
+      icon: InformationCircleIcon,
+    });
+
+    try {
+      for (const assignment of lessonSectionAssignments) {
+        // Update progress state
+        setSyncProgress({
+          totalAssignments,
+          completedAssignments,
+          currentSchool: section.school,
+          currentSection: section.classSection,
+          currentUnit: unitNumber,
+          currentUnitLessonId: assignment.unitLessonId,
+          currentLesson: assignment.lessonName,
+          currentActivity: ''
+        });
+
+        // Update progress toast
+        progressToast.showToast({
+          title: `Syncing ${sectionLabel} - ${section.classSection} (${completedAssignments}/${totalAssignments})`,
+          description: `Lesson: ${assignment.lessonName}`,
+          variant: "info",
+          icon: InformationCircleIcon,
+        });
+
+        await syncAssignment(section.classSection, assignment, (lesson, activity) => {
+          setSyncProgress(prev => prev ? {
+            ...prev,
+            currentLesson: lesson,
+            currentActivity: activity
+          } : null);
+        });
+
+        completedAssignments++;
+      }
+
+      // Hide progress toast
+      progressToast.hideToast();
+
+      // Show success toast
+      resultToast.showToast({
+        title: `${sectionLabel} Sync Complete!`,
+        description: `Successfully synced ${totalAssignments} assignments in Unit ${unitNumber} ${sectionLabel}`,
+        variant: "success",
+        icon: CheckCircleIcon,
+      });
+    } catch (err) {
+      console.error("Error syncing lesson section:", err);
+      progressToast.hideToast();
+      resultToast.showToast({
+        title: `${sectionLabel} Sync Failed`,
+        description: `An error occurred while syncing Unit ${unitNumber} ${sectionLabel}`,
+        variant: "error",
+        icon: ExclamationTriangleIcon,
+      });
+    } finally {
+      setSyncing(false);
+      setSyncProgress(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
@@ -576,24 +665,160 @@ export default function BulkSyncPage() {
           </div>
         )}
 
-        {/* Sections Display */}
-        {!loading && sectionsData.size > 0 && (
-          <div className="space-y-8">
-            {Array.from(sectionsData.entries()).map(([sectionId, sectionData]) => (
-              <SectionCard
-                key={sectionId}
-                sectionName={sectionData.classSection}
-                teacher={sectionData.teacher}
-                gradeLevel={sectionData.gradeLevel}
-                assignmentsCount={sectionData.assignments.length}
-                unitGroups={sectionData.unitGroups}
-                syncing={syncing}
-                onSyncSection={() => syncSection(sectionId)}
-                onSyncUnit={(unitNumber) => syncUnit(sectionId, unitNumber)}
-              />
-            ))}
-          </div>
-        )}
+        {/* Sections Display - Grouped by School → Class Section → Unit → Lesson Section */}
+        {!loading && sectionsData.size > 0 && (() => {
+          // Group sections by school
+          const sectionsBySchool = new Map<string, Array<[string, SectionWithUnits]>>();
+          Array.from(sectionsData.entries()).forEach(([sectionId, sectionData]) => {
+            const school = sectionData.school;
+            if (!sectionsBySchool.has(school)) {
+              sectionsBySchool.set(school, []);
+            }
+            sectionsBySchool.get(school)!.push([sectionId, sectionData]);
+          });
+
+          // Define lesson section order
+          const lessonSectionOrder = ['Ramp Ups', 'A', 'B', 'C', 'D', 'E', 'F', 'Unit Assessment'];
+          const getLessonSectionLabel = (section: string) => {
+            if (section === 'Ramp Ups') return 'Ramp Up';
+            if (section === 'Unit Assessment') return 'Unit Assessment';
+            return `Section ${section}`;
+          };
+
+          // Get lesson sections for assignments in a unit
+          const getLessonSections = (assignments: AssignmentContent[]) => {
+            const sections = new Set<string>();
+            assignments.forEach(a => sections.add(a.section || 'Unknown'));
+            return lessonSectionOrder.filter(s => sections.has(s));
+          };
+
+          return (
+            <div className="space-y-10">
+              {Array.from(sectionsBySchool.entries()).map(([school, classSections]) => (
+                <div key={school} className="space-y-6">
+                  {/* School Header */}
+                  <div className="bg-gray-800 text-white px-6 py-3 rounded-lg shadow-sm">
+                    <h2 className="text-xl font-bold">{school}</h2>
+                    <p className="text-sm text-gray-300">
+                      {classSections.length} class{classSections.length !== 1 ? 'es' : ''} • {classSections.reduce((sum, [, s]) => sum + s.assignments.length, 0)} total assignments
+                    </p>
+                  </div>
+
+                  {/* Class Sections within School (802, 803, etc.) */}
+                  <div className="space-y-8 pl-4">
+                    {classSections.map(([sectionId, sectionData]) => (
+                      <div key={sectionId} className="space-y-4">
+                        {/* Class Section Header */}
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-3 rounded-lg shadow-sm flex items-center justify-between">
+                          <div>
+                            <h3 className="text-lg font-bold">{sectionData.classSection}</h3>
+                            <p className="text-sm text-blue-100">
+                              {sectionData.teacher && `${sectionData.teacher} • `}
+                              Grade {sectionData.gradeLevel} • {sectionData.assignments.length} assignments
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => syncSection(sectionId)}
+                            disabled={syncing}
+                            className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                              syncing
+                                ? "bg-white/20 text-white/60 cursor-not-allowed"
+                                : "bg-white text-blue-700 hover:bg-blue-50 cursor-pointer"
+                            }`}
+                          >
+                            <ArrowPathIcon className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
+                            Sync All
+                          </button>
+                        </div>
+
+                        {/* Units within Class Section */}
+                        <div className="space-y-4 pl-4">
+                          {sectionData.unitGroups.map((unitGroup) => (
+                            <div key={unitGroup.unitNumber} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                              {/* Unit Header */}
+                              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-gray-200 px-5 py-3 flex items-center justify-between">
+                                <div>
+                                  <h4 className="text-lg font-bold text-gray-900">Unit {unitGroup.unitNumber}</h4>
+                                  <p className="text-sm text-gray-600">{unitGroup.assignments.length} assignments</p>
+                                </div>
+                                <button
+                                  onClick={() => syncUnit(sectionId, unitGroup.unitNumber)}
+                                  disabled={syncing}
+                                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                                    syncing
+                                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                      : "bg-purple-600 text-white hover:bg-purple-700 cursor-pointer"
+                                  }`}
+                                >
+                                  <ArrowPathIcon className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
+                                  Sync Unit
+                                </button>
+                              </div>
+
+                              {/* Lesson Sections within Unit (Ramp Up, A, B, C, D) */}
+                              <div className="divide-y divide-gray-100">
+                                {getLessonSections(unitGroup.assignments).map((lessonSection) => {
+                                  const sectionAssignments = unitGroup.assignments.filter(a => (a.section || 'Unknown') === lessonSection);
+                                  if (sectionAssignments.length === 0) return null;
+
+                                  return (
+                                    <div key={lessonSection} className="p-4">
+                                      <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-sm font-semibold ${
+                                            lessonSection === 'Ramp Ups' ? 'bg-amber-100 text-amber-800' :
+                                            lessonSection === 'Unit Assessment' ? 'bg-red-100 text-red-800' :
+                                            'bg-emerald-100 text-emerald-800'
+                                          }`}>
+                                            {getLessonSectionLabel(lessonSection)}
+                                          </span>
+                                          <span className="text-sm text-gray-500">
+                                            {sectionAssignments.length} assignment{sectionAssignments.length !== 1 ? 's' : ''}
+                                          </span>
+                                        </div>
+                                        <button
+                                          onClick={() => syncLessonSection(sectionId, unitGroup.unitNumber, lessonSection)}
+                                          disabled={syncing}
+                                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                                            syncing
+                                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                              : "bg-gray-600 text-white hover:bg-gray-700 cursor-pointer"
+                                          }`}
+                                        >
+                                          <ArrowPathIcon className={`w-3 h-3 ${syncing ? "animate-spin" : ""}`} />
+                                          Sync
+                                        </button>
+                                      </div>
+
+                                      {/* Assignment list */}
+                                      <div className="bg-gray-50 rounded-lg p-2">
+                                        <div className="flex flex-wrap gap-1.5">
+                                          {sectionAssignments.map((assignment, idx) => (
+                                            <div
+                                              key={idx}
+                                              className="text-xs text-gray-600 bg-white px-2 py-1 rounded border border-gray-200 truncate max-w-[200px]"
+                                              title={`${assignment.unitLessonId}: ${assignment.lessonName}`}
+                                            >
+                                              {assignment.unitLessonId}: {assignment.lessonName}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
 
         {/* No Sections Selected */}
         {!loading && selectedSections.length === 0 && (

@@ -162,3 +162,35 @@ export async function listQuestionMaps() {
     }
   });
 }
+
+// =====================================
+// DELETE QUESTION MAP
+// =====================================
+
+/**
+ * Delete a question map by assignment ID
+ */
+export async function deleteQuestionMap(assignmentId: string) {
+  return withDbConnection(async () => {
+    try {
+      const result = await PodsieQuestionMapModel.findOneAndDelete({ assignmentId });
+
+      if (!result) {
+        return {
+          success: false,
+          error: "No question map found with this assignment ID",
+        };
+      }
+
+      return {
+        success: true,
+        data: { deletedId: assignmentId },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to delete question map"),
+      };
+    }
+  });
+}

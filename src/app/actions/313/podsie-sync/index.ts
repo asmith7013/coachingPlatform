@@ -30,3 +30,15 @@ export { syncSectionRampUpProgress } from "./sync/sync-section";
 
 // Query Functions
 export { fetchRampUpProgress } from "./query/fetch-progress";
+
+// Bulk Match Functions
+export {
+  bulkFetchAndMatch,
+  saveSingleMatch,
+  bulkSaveMatches,
+  type BulkMatchResult,
+  type AssignmentMatchResult,
+  type ConflictResult,
+  type SaveMatchInput,
+  type AvailableLesson
+} from "./bulk-match";

@@ -18,34 +18,55 @@ interface SectionData {
   color: string;
 }
 
+interface LoadingSection {
+  id: string;
+  shortName: string;
+  color: string;
+}
+
 interface VelocityGraphProps {
   sections: SectionData[];
+  loadingSections?: LoadingSection[];
   startDate: string;
   endDate: string;
   onStartDateChange: (date: string) => void;
   onEndDateChange: (date: string) => void;
   daysOff: string[];
+  includeNotTracked: boolean;
+  onIncludeNotTrackedChange: (value: boolean) => void;
+  showRampUps: boolean;
+  onShowRampUpsChange: (value: boolean) => void;
 }
 
 export function VelocityGraph({
   sections,
+  loadingSections = [],
   startDate,
   endDate,
   onStartDateChange,
   onEndDateChange,
-  daysOff
+  daysOff,
+  includeNotTracked,
+  onIncludeNotTrackedChange,
+  showRampUps,
+  onShowRampUpsChange
 }: VelocityGraphProps) {
   const [showRollingAverage, setShowRollingAverage] = useState(true);
   const [adjustForBlockType, setAdjustForBlockType] = useState(true);
-  const [showRampUps, setShowRampUps] = useState(true);
 
-  if (!sections || sections.length === 0) return null;
+  const hasData = sections && sections.length > 0;
+  const hasLoadingSections = loadingSections && loadingSections.length > 0;
+
+  // Show nothing if no sections selected and none loading
+  if (!hasData && !hasLoadingSections) return null;
 
   // Helper to check if a date is a weekend
   const isWeekend = (dateStr: string): boolean => {
-    const date = new Date(dateStr);
-    const day = date.getDay();
-    return day === 0 || day === 6;
+    // Parse date string directly to avoid timezone issues
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    const dayOfWeek = date.getDay();
+    return dayOfWeek === 0 || dayOfWeek === 6;
   };
 
   // Helper to check if a date is a school day
@@ -109,7 +130,9 @@ export function VelocityGraph({
   // Prepare chart data with multiple datasets (one per section)
   const chartData = {
     labels: sortedDates.map((dateStr) => {
-      const date = new Date(dateStr);
+      // Parse date string directly to avoid timezone issues
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
       return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
     }),
     datasets: processedSections.map((section) => {
@@ -247,9 +270,25 @@ export function VelocityGraph({
     <>
       <div className="bg-white rounded-lg shadow p-4 mb-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-gray-700">
-            Velocity Trend - All Selected Sections
-          </h3>
+          <div className="flex items-center gap-3">
+            <h3 className="text-sm font-semibold text-gray-700">
+              Velocity Trend - All Selected Sections
+            </h3>
+            {hasLoadingSections && (
+              <div className="flex items-center gap-2">
+                {loadingSections.map((section) => (
+                  <span
+                    key={section.id}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium animate-pulse"
+                    style={{ backgroundColor: `${section.color}20`, color: section.color }}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: section.color }}></span>
+                    {section.shortName}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <label className="text-xs text-gray-600">Start:</label>
@@ -271,9 +310,13 @@ export function VelocityGraph({
             </div>
           </div>
         </div>
-        <Suspense fallback={<VelocityChartSkeleton />}>
-          <VelocityLineChart chartData={chartData} chartOptions={chartOptions} />
-        </Suspense>
+        {!hasData ? (
+          <VelocityChartSkeleton />
+        ) : (
+          <Suspense fallback={<VelocityChartSkeleton />}>
+            <VelocityLineChart chartData={chartData} chartOptions={chartOptions} />
+          </Suspense>
+        )}
       </div>
 
       {/* Toggles below the graph */}
@@ -291,9 +334,14 @@ export function VelocityGraph({
           />
           <ToggleSwitch
             checked={showRampUps}
-            onChange={setShowRampUps}
+            onChange={onShowRampUpsChange}
             label="Show Ramp Ups"
             accentColor="orange"
+          />
+          <ToggleSwitch
+            checked={includeNotTracked}
+            onChange={onIncludeNotTrackedChange}
+            label="Count Untracked"
           />
         </div>
       </div>

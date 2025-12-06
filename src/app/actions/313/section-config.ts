@@ -572,6 +572,61 @@ export async function addAssignmentContent(
 }
 
 /**
+ * Update question map for an existing Podsie activity
+ */
+export async function updatePodsieQuestionMap(
+  school: string,
+  classSection: string,
+  podsieAssignmentId: string,
+  questionMap: PodsieQuestionMap[]
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    return await withDbConnection(async () => {
+      const config = await SectionConfigModel.findOne({ school, classSection });
+
+      if (!config) {
+        return { success: false, error: 'Section config not found' };
+      }
+
+      const assignmentContentArray = config.assignmentContent as unknown as AssignmentContent[];
+
+      // Find the assignment content that contains this Podsie activity
+      let found = false;
+      for (const content of assignmentContentArray) {
+        if (content.podsieActivities) {
+          const activityIndex = content.podsieActivities.findIndex(
+            (a) => a.podsieAssignmentId === podsieAssignmentId
+          );
+          if (activityIndex >= 0) {
+            content.podsieActivities[activityIndex].podsieQuestionMap = questionMap;
+            content.podsieActivities[activityIndex].totalQuestions = questionMap.length;
+            found = true;
+            break;
+          }
+        }
+      }
+
+      if (!found) {
+        return { success: false, error: 'Podsie activity not found' };
+      }
+
+      config.assignmentContent = assignmentContentArray as never;
+      await config.save();
+
+      revalidatePath('/scm/roadmaps/section-configs');
+      revalidatePath('/scm/podsie/progress');
+
+      return { success: true };
+    });
+  } catch (error) {
+    return {
+      success: false,
+      error: handleServerError(error, 'Failed to update question map')
+    };
+  }
+}
+
+/**
  * Get assignment content from a section config
  * Returns array in new assignmentContent format
  */

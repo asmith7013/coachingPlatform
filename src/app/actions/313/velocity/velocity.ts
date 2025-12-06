@@ -45,19 +45,45 @@ export interface DailyVelocityStats {
 // GET VELOCITY DATA FOR DATE RANGE
 // =====================================
 
+export interface CompletedLesson {
+  unitCode: string;
+  lessonName: string;
+  lessonType: 'lesson' | 'rampUp' | 'assessment';
+  activityType: string;
+}
+
+export interface StudentDailyData {
+  studentId: number;
+  studentName: string;
+  email: string;
+  dailyProgress: Record<string, {
+    attendance: 'present' | 'late' | 'absent' | 'not-tracked' | null;
+    rampUps: number;
+    lessons: number;
+    totalCompletions: number;
+    completedLessons: CompletedLesson[];
+  }>;
+}
+
 /**
  * Get class velocity (mastery completion rate) for a date range
  * Velocity = total completions / students present (counts ALL student completions, not just present students)
  *
  * @param includeNotTracked - Whether to count students with "not-tracked" attendance as present (default: false)
+ * @param includeStudentDetails - Whether to include per-student daily breakdown (default: false)
  */
 export async function getSectionVelocityByDateRange(
   section: string,
   school: string,
   startDate: string,
   endDate: string,
-  includeNotTracked: boolean = false
-): Promise<{ success: true; data: DailyVelocityStats[] } | { success: false; error: string }> {
+  includeNotTracked: boolean = false,
+  includeStudentDetails: boolean = false
+): Promise<{
+  success: true;
+  data: DailyVelocityStats[];
+  studentDetails?: StudentDailyData[];
+} | { success: false; error: string }> {
   return withDbConnection(async () => {
     try {
       // Get section config to build podsieAssignmentId -> lessonType lookup and get bell schedule
@@ -67,19 +93,26 @@ export async function getSectionVelocityByDateRange(
         active: true,
       }).lean();
 
-      // Build assignment lookup map: podsieAssignmentId -> lessonType
+      // Build assignment lookup maps: podsieAssignmentId -> lessonType and assignment details
       const assignmentLessonTypeMap = new Map<string, 'lesson' | 'rampUp' | 'assessment'>();
+      const assignmentDetailsMap = new Map<string, { unitCode: string; lessonName: string }>();
 
       if (sectionConfig?.assignmentContent) {
         for (const assignment of sectionConfig.assignmentContent as unknown as Array<{
           lessonType?: 'lesson' | 'rampUp' | 'assessment';
+          unitLessonId?: string;
+          lessonName?: string;
           podsieActivities?: Array<{ podsieAssignmentId?: string }>;
         }>) {
           const lessonType = assignment.lessonType;
+          const unitCode = assignment.unitLessonId || '';
+          const lessonName = assignment.lessonName || '';
+
           if (lessonType && assignment.podsieActivities) {
             for (const activity of assignment.podsieActivities) {
               if (activity.podsieAssignmentId) {
                 assignmentLessonTypeMap.set(activity.podsieAssignmentId, lessonType);
+                assignmentDetailsMap.set(activity.podsieAssignmentId, { unitCode, lessonName });
               }
             }
           }
@@ -122,35 +155,52 @@ export async function getSectionVelocityByDateRange(
       };
 
       // Get students in section
+      const selectFields = includeStudentDetails
+        ? "studentID firstName lastName email podsieProgress"
+        : "studentID podsieProgress";
+
       const students = await StudentModel.find({
         section,
         school,
         active: true,
       })
-        .select("studentID podsieProgress")
+        .select(selectFields)
         .lean();
 
-      // Get attendance for date range
-      // Build status filter based on includeNotTracked parameter
-      const statusFilter = includeNotTracked
-        ? ["present", "late", "not-tracked"] // Include students with no attendance data
-        : ["present", "late"]; // Only count explicitly marked present/late
-
+      // Get ALL attendance records for date range (we'll filter by includeNotTracked later in calculations)
       const attendanceRecords = await Attendance313.find({
         section,
         date: { $gte: startDate, $lte: endDate },
-        status: { $in: statusFilter },
       }).lean();
 
-      // Group attendance by date
+      // Group attendance by date - filter based on includeNotTracked for velocity calculations
       const attendanceByDate = new Map<string, Set<number>>();
+      // Track ALL attendance by student for student details (regardless of includeNotTracked)
+      const attendanceByStudent = new Map<number, Map<string, 'present' | 'late' | 'absent' | 'not-tracked'>>();
+
       for (const record of attendanceRecords as AttendanceRecord[]) {
         const recDate = record.date;
         const recStudentId = record.studentId;
-        if (!attendanceByDate.has(recDate)) {
-          attendanceByDate.set(recDate, new Set());
+
+        // Group by date for velocity calculation (filtered by includeNotTracked)
+        const shouldCountAsPresent = includeNotTracked
+          ? (record.status === 'present' || record.status === 'late' || record.status === 'not-tracked')
+          : (record.status === 'present' || record.status === 'late');
+
+        if (shouldCountAsPresent) {
+          if (!attendanceByDate.has(recDate)) {
+            attendanceByDate.set(recDate, new Set());
+          }
+          attendanceByDate.get(recDate)!.add(recStudentId);
         }
-        attendanceByDate.get(recDate)!.add(recStudentId);
+
+        // Always track ALL attendance by student for student details
+        if (includeStudentDetails) {
+          if (!attendanceByStudent.has(recStudentId)) {
+            attendanceByStudent.set(recStudentId, new Map());
+          }
+          attendanceByStudent.get(recStudentId)!.set(recDate, record.status);
+        }
       }
 
       // Build completion data by date (from ALL students, not just present)
@@ -160,9 +210,48 @@ export async function getSectionVelocityByDateRange(
         total: number;
       }>();
 
-      for (const student of students as unknown as Pick<Student, 'studentID' | 'podsieProgress'>[]) {
+      // Track student details if requested
+      const studentDetailsMap = includeStudentDetails
+        ? new Map<number, StudentDailyData>()
+        : null;
+
+      for (const student of students as unknown as Pick<Student, 'studentID' | 'firstName' | 'lastName' | 'email' | 'podsieProgress'>[]) {
         const podsieProgress = student.podsieProgress;
         if (!podsieProgress || !Array.isArray(podsieProgress)) continue;
+
+        // Initialize student details if needed
+        if (studentDetailsMap && !studentDetailsMap.has(student.studentID)) {
+          const dailyProgress: Record<string, {
+            attendance: 'present' | 'late' | 'absent' | 'not-tracked' | null;
+            rampUps: number;
+            lessons: number;
+            totalCompletions: number;
+            completedLessons: CompletedLesson[];
+          }> = {};
+
+          // Initialize all dates in range
+          const current = new Date(startDate);
+          const end = new Date(endDate);
+
+          while (current <= end) {
+            const dateStr = current.toISOString().split('T')[0];
+            dailyProgress[dateStr] = {
+              attendance: attendanceByStudent.get(student.studentID)?.get(dateStr) || null,
+              rampUps: 0,
+              lessons: 0,
+              totalCompletions: 0,
+              completedLessons: [],
+            };
+            current.setDate(current.getDate() + 1);
+          }
+
+          studentDetailsMap.set(student.studentID, {
+            studentId: student.studentID,
+            studentName: `${student.firstName} ${student.lastName}`,
+            email: student.email,
+            dailyProgress,
+          });
+        }
 
         for (const progress of podsieProgress) {
           // Check if fully completed (use fullyCompletedDate when available)
@@ -216,6 +305,32 @@ export async function getSectionVelocityByDateRange(
           } else if (lessonType === 'assessment') {
             dateData.byLessonType.assessments++;
           }
+
+          // Update student details if requested
+          if (studentDetailsMap) {
+            const studentDetail = studentDetailsMap.get(student.studentID);
+            if (studentDetail && studentDetail.dailyProgress[completionDate]) {
+              studentDetail.dailyProgress[completionDate].totalCompletions++;
+
+              // Track by lesson type (consistent with calendar view)
+              if (lessonType === 'lesson') {
+                studentDetail.dailyProgress[completionDate].lessons++;
+              } else if (lessonType === 'rampUp') {
+                studentDetail.dailyProgress[completionDate].rampUps++;
+              }
+
+              // Add completed lesson details
+              const assignmentDetails = assignmentDetailsMap.get(progress.podsieAssignmentId || '');
+              if (lessonType && assignmentDetails) {
+                studentDetail.dailyProgress[completionDate].completedLessons.push({
+                  unitCode: assignmentDetails.unitCode,
+                  lessonName: assignmentDetails.lessonName,
+                  lessonType: lessonType,
+                  activityType: activityType || 'unknown',
+                });
+              }
+            }
+          }
         }
       }
 
@@ -225,8 +340,15 @@ export async function getSectionVelocityByDateRange(
       // Get total number of students in section for default attendance assumption
       const totalStudents = students.length;
 
-      // Iterate through all dates that have either attendance or completions
-      const allDates = new Set([...attendanceByDate.keys(), ...completionsByDate.keys()]);
+      // Build set of ALL dates in range (not just dates with attendance or completions)
+      const allDates = new Set<string>();
+      const current = new Date(startDate);
+      const end = new Date(endDate);
+      while (current <= end) {
+        const dateStr = current.toISOString().split('T')[0];
+        allDates.add(dateStr);
+        current.setDate(current.getDate() + 1);
+      }
 
       for (const date of allDates) {
         // Determine block type for this date
@@ -277,9 +399,15 @@ export async function getSectionVelocityByDateRange(
         });
       }
 
+      // Build student details array if requested
+      const studentDetails = studentDetailsMap
+        ? Array.from(studentDetailsMap.values()).sort((a, b) => a.studentName.localeCompare(b.studentName))
+        : undefined;
+
       return {
         success: true,
         data: velocityStats.sort((a, b) => a.date.localeCompare(b.date)),
+        ...(studentDetails && { studentDetails }),
       };
     } catch (error) {
       return { success: false, error: handleServerError(error, "Failed to fetch velocity data") };

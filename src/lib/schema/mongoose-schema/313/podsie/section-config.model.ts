@@ -61,6 +61,11 @@ const assignmentContentSchema = new mongoose.Schema({
   // Denormalized fields for display/sorting
   unitLessonId: { type: String, required: true },
   lessonName: { type: String, required: true },
+  lessonType: {
+    type: String,
+    enum: ['lesson', 'rampUp', 'assessment'],
+    required: false  // Optional for backwards compatibility, but should be set
+  },
   section: { type: String, required: false },
   grade: { type: String, required: false },
 

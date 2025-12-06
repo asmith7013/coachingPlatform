@@ -10,6 +10,7 @@ interface UnitGroup {
 
 interface SectionCardProps {
   sectionName: string;
+  school: string;
   teacher?: string;
   gradeLevel: string;
   assignmentsCount: number;
@@ -21,6 +22,7 @@ interface SectionCardProps {
 
 export function SectionCard({
   sectionName,
+  school,
   teacher,
   gradeLevel,
   assignmentsCount,
@@ -35,9 +37,14 @@ export function SectionCard({
       <div className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              {sectionName}
-            </h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {sectionName}
+              </h2>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                {school}
+              </span>
+            </div>
             <p className="text-sm text-gray-600 mt-1">
               {teacher && `${teacher} • `}
               Grade {gradeLevel} • {assignmentsCount} assignments

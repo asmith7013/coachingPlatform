@@ -8,6 +8,7 @@ interface MonthCalendarProps {
   getVelocityForDate: (sectionId: string, dateStr: string) => DailyVelocityStats | null;
   isDayOff: (date: Date) => boolean;
   isWeekend: (date: Date) => boolean;
+  showRampUps: boolean;
 }
 
 export function MonthCalendar({
@@ -16,6 +17,7 @@ export function MonthCalendar({
   getVelocityForDate,
   isDayOff,
   isWeekend,
+  showRampUps,
 }: MonthCalendarProps) {
   const year = monthDate.getFullYear();
   const month = monthDate.getMonth();
@@ -63,6 +65,7 @@ export function MonthCalendar({
               stats={stats}
               isWeekend={isWeekend(date)}
               isDayOff={isDayOff(date)}
+              showRampUps={showRampUps}
             />
           );
         })}

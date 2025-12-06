@@ -2,15 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
-import { getSectionVelocityByDateRange, type DailyVelocityStats } from "@/app/actions/313/velocity/velocity";
+import { getSectionVelocityByDateRange, type DailyVelocityStats, type StudentDailyData } from "@/app/actions/313/velocity/velocity";
 import { getDaysOff } from "@/app/actions/calendar/school-calendar";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Spinner } from "@/components/core/feedback/Spinner";
-import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { VelocityGraph } from "./components/VelocityGraph";
+import { StudentVelocityGraph } from "./components/StudentVelocityGraph";
 import { SectionSelector } from "./components/SectionSelector";
 import { MonthCalendar } from "./components/MonthCalendar";
 import { VelocityLegend } from "./components/VelocityLegend";
+import { SectionDetailTable } from "./components/SectionDetailTable";
 import { getSectionColors } from "./utils/colors";
 
 // Default school year
@@ -31,11 +32,13 @@ export default function VelocityPage() {
   const [sectionOptions, setSectionOptions] = useState<SectionOption[]>([]);
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
   const [velocityData, setVelocityData] = useState<Map<string, DailyVelocityStats[]>>(new Map());
+  const [detailData, setDetailData] = useState<Map<string, StudentDailyData[]>>(new Map());
   const [daysOff, setDaysOff] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingVelocity, setLoadingVelocity] = useState(false);
+  const [loadingSectionIds, setLoadingSectionIds] = useState<Set<string>>(new Set());
   const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
   const [includeNotTracked, setIncludeNotTracked] = useState(false);
+  const [showRampUps, setShowRampUps] = useState(true);
 
   // Graph date filters - default to 9/1/25 to today
   const [graphStartDate, setGraphStartDate] = useState("2025-09-01");
@@ -100,51 +103,154 @@ export default function VelocityPage() {
   useEffect(() => {
     if (selectedSections.length === 0) {
       setVelocityData(new Map());
+      setDetailData(new Map());
       return;
     }
 
     const loadVelocityData = async () => {
-      setLoadingVelocity(true);
+      // Fetch data for entire school year (September to June)
+      const schoolYearStart = new Date(2025, 8, 1); // September 1, 2025
+      const schoolYearEnd = new Date(2026, 5, 30); // June 30, 2026
+
+      const startDate = schoolYearStart.toISOString().split("T")[0];
+      const endDate = schoolYearEnd.toISOString().split("T")[0];
+
+      // Determine which sections need to be loaded
+      // (newly selected or need refresh due to includeNotTracked change)
+      const sectionsToLoad = selectedSections.filter(
+        (sectionId) => !velocityData.has(sectionId)
+      );
+
+      // If includeNotTracked changed, reload all sections
+      const needsFullReload = selectedSections.some(
+        (sectionId) => velocityData.has(sectionId)
+      ) && sectionsToLoad.length === 0;
+
+      const sectionsToFetch = needsFullReload ? selectedSections : sectionsToLoad;
+
+      if (sectionsToFetch.length === 0) return;
+
+      // Mark sections as loading
+      setLoadingSectionIds((prev) => {
+        const next = new Set(prev);
+        sectionsToFetch.forEach((id) => next.add(id));
+        return next;
+      });
+
       try {
-        // Fetch data for entire school year (September to June)
-        const schoolYearStart = new Date(2025, 8, 1); // September 1, 2025
-        const schoolYearEnd = new Date(2026, 5, 30); // June 30, 2026
+        // Fetch velocity and detail data for each section that needs loading
+        await Promise.all(
+          sectionsToFetch.map(async (sectionId) => {
+            const section = sectionOptions.find((s) => s.id === sectionId);
+            if (!section) return;
 
-        const startDate = schoolYearStart.toISOString().split("T")[0];
-        const endDate = schoolYearEnd.toISOString().split("T")[0];
+            // Fetch velocity data with student details included
+            const velocityResult = await getSectionVelocityByDateRange(
+              section.classSection,
+              section.school,
+              startDate,
+              endDate,
+              includeNotTracked,
+              true // includeStudentDetails
+            );
 
-        const newVelocityData = new Map<string, DailyVelocityStats[]>();
+            if (velocityResult.success && velocityResult.data) {
+              // Update velocity data incrementally
+              setVelocityData((prev) => {
+                const next = new Map(prev);
+                next.set(sectionId, velocityResult.data!);
+                return next;
+              });
 
-        // Fetch velocity data for each selected section
+              // Update detail data incrementally
+              if (velocityResult.studentDetails) {
+                setDetailData((prev) => {
+                  const next = new Map(prev);
+                  next.set(sectionId, velocityResult.studentDetails!);
+                  return next;
+                });
+              }
+            }
+
+            // Remove from loading set when done
+            setLoadingSectionIds((prev) => {
+              const next = new Set(prev);
+              next.delete(sectionId);
+              return next;
+            });
+          })
+        );
+      } catch (error) {
+        console.error("Error loading velocity data:", error);
+        // Clear loading state on error
+        setLoadingSectionIds(new Set());
+      }
+    };
+
+    loadVelocityData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSections, sectionOptions]);
+
+  // Reload all data when includeNotTracked changes
+  useEffect(() => {
+    if (selectedSections.length === 0) return;
+
+    const reloadAllData = async () => {
+      const schoolYearStart = new Date(2025, 8, 1);
+      const schoolYearEnd = new Date(2026, 5, 30);
+      const startDate = schoolYearStart.toISOString().split("T")[0];
+      const endDate = schoolYearEnd.toISOString().split("T")[0];
+
+      // Mark all sections as loading
+      setLoadingSectionIds(new Set(selectedSections));
+
+      try {
         await Promise.all(
           selectedSections.map(async (sectionId) => {
             const section = sectionOptions.find((s) => s.id === sectionId);
             if (!section) return;
 
-            const result = await getSectionVelocityByDateRange(
+            const velocityResult = await getSectionVelocityByDateRange(
               section.classSection,
               section.school,
               startDate,
               endDate,
-              includeNotTracked
+              includeNotTracked,
+              true
             );
 
-            if (result.success && result.data) {
-              newVelocityData.set(sectionId, result.data);
+            if (velocityResult.success && velocityResult.data) {
+              setVelocityData((prev) => {
+                const next = new Map(prev);
+                next.set(sectionId, velocityResult.data!);
+                return next;
+              });
+
+              if (velocityResult.studentDetails) {
+                setDetailData((prev) => {
+                  const next = new Map(prev);
+                  next.set(sectionId, velocityResult.studentDetails!);
+                  return next;
+                });
+              }
             }
+
+            setLoadingSectionIds((prev) => {
+              const next = new Set(prev);
+              next.delete(sectionId);
+              return next;
+            });
           })
         );
-
-        setVelocityData(newVelocityData);
       } catch (error) {
-        console.error("Error loading velocity data:", error);
-      } finally {
-        setLoadingVelocity(false);
+        console.error("Error reloading velocity data:", error);
+        setLoadingSectionIds(new Set());
       }
     };
 
-    loadVelocityData();
-  }, [selectedSections, sectionOptions, includeNotTracked]);
+    reloadAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [includeNotTracked]);
 
   // Handle section selection
   const handleSectionToggle = (sectionId: string) => {
@@ -198,15 +304,8 @@ export default function VelocityPage() {
             <h1 className="text-2xl font-bold text-gray-900">Class Velocity Tracker</h1>
             <p className="text-sm text-gray-500">
               {schoolYear} School Year
-              {loadingVelocity && <span className="ml-2 text-blue-600">Loading data...</span>}
+              {loadingSectionIds.size > 0 && <span className="ml-2 text-blue-600">Loading data...</span>}
             </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <ToggleSwitch
-              checked={includeNotTracked}
-              onChange={setIncludeNotTracked}
-              label="Include Students w/ No Attendance Data"
-            />
           </div>
         </div>
       </div>
@@ -263,11 +362,25 @@ export default function VelocityPage() {
                     };
                   })
                   .filter((s) => s !== null)}
+                loadingSections={selectedSections
+                  .filter((sectionId) => loadingSectionIds.has(sectionId))
+                  .map((sectionId) => {
+                    const section = sectionOptions.find((s) => s.id === sectionId);
+                    return {
+                      id: sectionId,
+                      shortName: section?.classSection || sectionId,
+                      color: sectionColors.get(sectionId) || '#6B7280',
+                    };
+                  })}
                 startDate={graphStartDate}
                 endDate={graphEndDate}
                 onStartDateChange={setGraphStartDate}
                 onEndDateChange={setGraphEndDate}
                 daysOff={daysOff}
+                includeNotTracked={includeNotTracked}
+                onIncludeNotTrackedChange={setIncludeNotTracked}
+                showRampUps={showRampUps}
+                onShowRampUpsChange={setShowRampUps}
               />
             )}
 
@@ -287,6 +400,8 @@ export default function VelocityPage() {
             {/* Calendars for each selected section */}
             {selectedSections.map((sectionId) => {
               const section = sectionOptions.find((s) => s.id === sectionId);
+              const isLoading = loadingSectionIds.has(sectionId);
+              const hasData = velocityData.has(sectionId) && (velocityData.get(sectionId)?.length ?? 0) > 0;
 
               return (
                 <div key={sectionId} className="mb-8">
@@ -298,26 +413,48 @@ export default function VelocityPage() {
                       <span className="px-3 py-1 bg-indigo-100 text-indigo-800 text-sm font-medium rounded-full">
                         {section?.school}
                       </span>
+                      {isLoading && (
+                        <span className="flex items-center gap-1 text-sm text-gray-500">
+                          <Spinner size="sm" variant="primary" />
+                          Loading...
+                        </span>
+                      )}
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      {[-1, 0].map((offset) => {
-                        const monthDate = new Date(
-                          currentMonth.getFullYear(),
-                          currentMonth.getMonth() + offset,
-                          1
-                        );
-                        return (
-                          <MonthCalendar
-                            key={monthDate.toISOString()}
-                            monthDate={monthDate}
-                            sectionId={sectionId}
-                            getVelocityForDate={getVelocityForDate}
-                            isDayOff={isDayOff}
-                            isWeekend={isWeekend}
-                          />
-                        );
-                      })}
-                    </div>
+                    {isLoading && !hasData ? (
+                      <div className="grid grid-cols-2 gap-4">
+                        {[0, 1].map((i) => (
+                          <div key={i} className="animate-pulse">
+                            <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
+                            <div className="grid grid-cols-7 gap-1">
+                              {Array.from({ length: 35 }).map((_, j) => (
+                                <div key={j} className="h-8 bg-gray-100 rounded"></div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-4">
+                        {[-1, 0].map((offset) => {
+                          const monthDate = new Date(
+                            currentMonth.getFullYear(),
+                            currentMonth.getMonth() + offset,
+                            1
+                          );
+                          return (
+                            <MonthCalendar
+                              key={monthDate.toISOString()}
+                              monthDate={monthDate}
+                              sectionId={sectionId}
+                              getVelocityForDate={getVelocityForDate}
+                              isDayOff={isDayOff}
+                              isWeekend={isWeekend}
+                              showRampUps={showRampUps}
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -325,6 +462,107 @@ export default function VelocityPage() {
 
             {/* Legend */}
             <VelocityLegend />
+
+            {/* Student Velocity Graphs - one per section */}
+            {selectedSections.map((sectionId) => {
+              const section = sectionOptions.find((s) => s.id === sectionId);
+              const students = detailData.get(sectionId);
+              const sectionVelocityData = velocityData.get(sectionId);
+
+              if (!section || !students || !sectionVelocityData) return null;
+
+              return (
+                <StudentVelocityGraph
+                  key={`student-graph-${sectionId}`}
+                  sectionName={section.classSection}
+                  school={section.school}
+                  students={students}
+                  velocityData={sectionVelocityData}
+                  startDate={graphStartDate}
+                  endDate={graphEndDate}
+                  daysOff={daysOff}
+                  showRampUps={showRampUps}
+                />
+              );
+            })}
+
+            {/* Student Detail Tables */}
+            {selectedSections.map((sectionId) => {
+              const section = sectionOptions.find((s) => s.id === sectionId);
+              const students = detailData.get(sectionId);
+              const sectionVelocityData = velocityData.get(sectionId);
+              const isLoading = loadingSectionIds.has(sectionId);
+
+              if (!section) return null;
+
+              // Show skeleton while loading
+              if (isLoading && (!students || !sectionVelocityData)) {
+                return (
+                  <div key={`table-${sectionId}`} className="mb-8">
+                    <div className="bg-white rounded-lg shadow overflow-hidden">
+                      <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                        <div className="flex items-center gap-2">
+                          <div className="font-bold text-gray-900">{section.classSection}</div>
+                          <span className="px-2 py-0.5 bg-indigo-100 text-indigo-800 text-xs font-medium rounded">
+                            {section.school}
+                          </span>
+                          <span className="flex items-center gap-1 text-sm text-gray-500 ml-2">
+                            <Spinner size="sm" variant="primary" />
+                            Loading student data...
+                          </span>
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <div className="animate-pulse space-y-3">
+                          {Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="flex gap-4">
+                              <div className="h-8 bg-gray-100 rounded w-32"></div>
+                              <div className="flex-1 flex gap-1">
+                                {Array.from({ length: 20 }).map((_, j) => (
+                                  <div key={j} className="h-8 w-8 bg-gray-100 rounded"></div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (!students || !sectionVelocityData) return null;
+
+              // Build block types map from velocity data
+              const blockTypes = new Map<string, 'single' | 'double' | 'none'>();
+              sectionVelocityData.forEach((stat) => {
+                blockTypes.set(stat.date, stat.blockType);
+              });
+
+              // Generate date range from graph start to graph end
+              const dates: string[] = [];
+              const current = new Date(graphStartDate);
+              const end = new Date(graphEndDate);
+
+              while (current <= end) {
+                dates.push(current.toISOString().split('T')[0]);
+                current.setDate(current.getDate() + 1);
+              }
+
+              return (
+                <div key={`table-${sectionId}`} className="mb-8">
+                  <SectionDetailTable
+                    sectionName={section.classSection}
+                    school={section.school}
+                    students={students}
+                    dates={dates}
+                    blockTypes={blockTypes}
+                    daysOff={daysOff}
+                    showRampUps={showRampUps}
+                  />
+                </div>
+              );
+            })}
           </>
         )}
       </div>

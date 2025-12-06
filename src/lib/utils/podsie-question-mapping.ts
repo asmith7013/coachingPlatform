@@ -38,7 +38,8 @@ import type { PodsieQuestionMap } from "@zod-schema/313/podsie/section-config";
 export function buildQuestionMapping(
   baseQuestionIds: number[],
   variations: number,
-  q1HasVariations: boolean = false
+  q1HasVariations: boolean = false,
+  rootOnly: boolean = false // NEW: When true, only include root questions (no variants)
 ): number[][] {
   if (!baseQuestionIds || baseQuestionIds.length === 0) {
     return [];
@@ -55,6 +56,12 @@ export function buildQuestionMapping(
   for (let questionIndex = 0; questionIndex < baseQuestionIds.length; questionIndex++) {
     const baseId = baseQuestionIds[questionIndex];
 
+    // If rootOnly mode, just use root question ID for all questions
+    if (rootOnly) {
+      mapping.push([baseId]);
+      continue;
+    }
+
     if (questionIndex === 0 && !q1HasVariations) {
       // Question 1: No variations (default behavior)
       mapping.push([baseId]);
@@ -62,9 +69,10 @@ export function buildQuestionMapping(
       // Questions 2+ (or Q1 if q1HasVariations is true): Root + N variations
       const questionVariations: number[] = [baseId];
 
-      for (let i = 1; i <= variations; i++) {
-        questionVariations.push(baseId + i);
-      }
+      // TEMPORARILY COMMENTED OUT: Variant question sync
+      // for (let i = 1; i <= variations; i++) {
+      //   questionVariations.push(baseId + i);
+      // }
 
       mapping.push(questionVariations);
     }

@@ -16,12 +16,13 @@ export const PodsieAiEvaluationSchema = z.object({
 /**
  * AI analysis included in response payloads (newer format)
  * Contains detailed grading information
+ * Note: Fields are optional because not all responses have full AI analysis data
  */
 export const PodsieAiAnalysisSchema = z.object({
   thinking: z.string().optional(),
-  isCorrect: z.boolean(),
-  answersCorrect: z.boolean(),
-  explanationGrading: z.enum(['none', 'partial', 'full']),
+  isCorrect: z.boolean().optional(),
+  answersCorrect: z.boolean().optional(),
+  explanationGrading: z.enum(['none', 'partial', 'full']).optional(),
   overallAIFeedback: z.string().optional(),
   additionalFeedback: z.array(z.object({
     content: z.string(),
