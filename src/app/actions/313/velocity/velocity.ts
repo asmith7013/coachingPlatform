@@ -128,10 +128,11 @@ export async function getSectionVelocityByDateRange(
         .lean();
 
       // Get attendance for date range
+      // Note: "not-tracked" is treated as present (attendance wasn't recorded but student was likely there)
       const attendanceRecords = await Attendance313.find({
         section,
         date: { $gte: startDate, $lte: endDate },
-        status: { $in: ["present", "late"] }, // Only count present/late students
+        status: { $in: ["present", "late", "not-tracked"] }, // Count present/late/not-tracked students
       }).lean();
 
       // Group attendance by date
