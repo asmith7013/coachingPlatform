@@ -6,6 +6,7 @@ import { getSectionVelocityByDateRange, type DailyVelocityStats } from "@/app/ac
 import { getDaysOff } from "@/app/actions/calendar/school-calendar";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Spinner } from "@/components/core/feedback/Spinner";
+import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { VelocityGraph } from "./components/VelocityGraph";
 import { SectionSelector } from "./components/SectionSelector";
 import { MonthCalendar } from "./components/MonthCalendar";
@@ -34,6 +35,7 @@ export default function VelocityPage() {
   const [loading, setLoading] = useState(true);
   const [loadingVelocity, setLoadingVelocity] = useState(false);
   const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
+  const [includeNotTracked, setIncludeNotTracked] = useState(false);
 
   // Graph date filters - default to 9/1/25 to today
   const [graphStartDate, setGraphStartDate] = useState("2025-09-01");
@@ -123,7 +125,8 @@ export default function VelocityPage() {
               section.classSection,
               section.school,
               startDate,
-              endDate
+              endDate,
+              includeNotTracked
             );
 
             if (result.success && result.data) {
@@ -141,7 +144,7 @@ export default function VelocityPage() {
     };
 
     loadVelocityData();
-  }, [selectedSections, sectionOptions]);
+  }, [selectedSections, sectionOptions, includeNotTracked]);
 
   // Handle section selection
   const handleSectionToggle = (sectionId: string) => {
@@ -197,6 +200,13 @@ export default function VelocityPage() {
               {schoolYear} School Year
               {loadingVelocity && <span className="ml-2 text-blue-600">Loading data...</span>}
             </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <ToggleSwitch
+              checked={includeNotTracked}
+              onChange={setIncludeNotTracked}
+              label="Include Students w/ No Attendance Data"
+            />
           </div>
         </div>
       </div>

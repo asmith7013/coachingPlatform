@@ -48,12 +48,15 @@ export interface DailyVelocityStats {
 /**
  * Get class velocity (mastery completion rate) for a date range
  * Velocity = total completions / students present (counts ALL student completions, not just present students)
+ *
+ * @param includeNotTracked - Whether to count students with "not-tracked" attendance as present (default: false)
  */
 export async function getSectionVelocityByDateRange(
   section: string,
   school: string,
   startDate: string,
-  endDate: string
+  endDate: string,
+  includeNotTracked: boolean = false
 ): Promise<{ success: true; data: DailyVelocityStats[] } | { success: false; error: string }> {
   return withDbConnection(async () => {
     try {
@@ -128,11 +131,15 @@ export async function getSectionVelocityByDateRange(
         .lean();
 
       // Get attendance for date range
-      // Note: "not-tracked" is treated as present (attendance wasn't recorded but student was likely there)
+      // Build status filter based on includeNotTracked parameter
+      const statusFilter = includeNotTracked
+        ? ["present", "late", "not-tracked"] // Include students with no attendance data
+        : ["present", "late"]; // Only count explicitly marked present/late
+
       const attendanceRecords = await Attendance313.find({
         section,
         date: { $gte: startDate, $lte: endDate },
-        status: { $in: ["present", "late", "not-tracked"] }, // Count present/late/not-tracked students
+        status: { $in: statusFilter },
       }).lean();
 
       // Group attendance by date
