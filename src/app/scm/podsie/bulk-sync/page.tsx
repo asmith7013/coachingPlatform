@@ -40,6 +40,8 @@ interface SyncProgress {
   completedAssignments: number;
   currentSchool: string;
   currentSection: string;
+  currentUnit: number;
+  currentUnitLessonId: string;
   currentLesson: string;
   currentActivity: string;
 }
@@ -247,12 +249,18 @@ export default function BulkSyncPage() {
 
         // Iterate through each assignment in the section
         for (const assignment of sectionData.assignments) {
+          // Extract unit number from unitLessonId (e.g., "1.01" -> unit 1)
+          const parts = assignment.unitLessonId.split('.');
+          const unitNumber = parseInt(parts[0]);
+
           // Update progress state
           setSyncProgress({
             totalAssignments,
             completedAssignments,
             currentSchool: section.school,
             currentSection: section.classSection,
+            currentUnit: unitNumber,
+            currentUnitLessonId: assignment.unitLessonId,
             currentLesson: assignment.lessonName,
             currentActivity: ''
           });
@@ -324,12 +332,18 @@ export default function BulkSyncPage() {
 
     try {
       for (const assignment of sectionData.assignments) {
+        // Extract unit number from unitLessonId (e.g., "1.01" -> unit 1)
+        const parts = assignment.unitLessonId.split('.');
+        const unitNumber = parseInt(parts[0]);
+
         // Update progress state
         setSyncProgress({
           totalAssignments,
           completedAssignments,
           currentSchool: section.school,
           currentSection: section.classSection,
+          currentUnit: unitNumber,
+          currentUnitLessonId: assignment.unitLessonId,
           currentLesson: assignment.lessonName,
           currentActivity: ''
         });
@@ -411,6 +425,8 @@ export default function BulkSyncPage() {
           completedAssignments,
           currentSchool: section.school,
           currentSection: section.classSection,
+          currentUnit: unitNumber,
+          currentUnitLessonId: assignment.unitLessonId,
           currentLesson: assignment.lessonName,
           currentActivity: ''
         });
@@ -473,35 +489,20 @@ export default function BulkSyncPage() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Bulk Sync</h1>
               <p className="text-gray-600">Sync assignments across selected sections</p>
             </div>
-            {/* Sync All Button with Progress */}
+            {/* Sync All Button */}
             {sectionsData.size > 0 && (
-              <div className="flex items-center gap-3">
-                {syncing && syncProgress && (
-                  <div className="flex-shrink-0 w-48">
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${(syncProgress.completedAssignments / syncProgress.totalAssignments) * 100}%` }}
-                      />
-                    </div>
-                    <div className="text-xs text-gray-600 mt-1 text-center">
-                      {syncProgress.completedAssignments} / {syncProgress.totalAssignments}
-                    </div>
-                  </div>
-                )}
-                <button
-                  onClick={syncAllSections}
-                  disabled={syncing}
-                  className={`inline-flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors ${
-                    syncing
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
-                  }`}
-                >
-                  <ArrowPathIcon className={`w-5 h-5 ${syncing ? "animate-spin" : ""}`} />
-                  {syncing ? "Syncing..." : "Sync All Selected"}
-                </button>
-              </div>
+              <button
+                onClick={syncAllSections}
+                disabled={syncing}
+                className={`inline-flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors ${
+                  syncing
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
+                }`}
+              >
+                <ArrowPathIcon className={`w-5 h-5 ${syncing ? "animate-spin" : ""}`} />
+                {syncing ? "Syncing..." : "Sync All Selected"}
+              </button>
             )}
           </div>
         </div>
@@ -513,6 +514,52 @@ export default function BulkSyncPage() {
           onToggle={handleToggleSection}
           sectionColors={sectionColors}
         />
+
+        {/* Sync Progress Card */}
+        {syncing && syncProgress && (
+          <div className="bg-white rounded-lg shadow p-6 mb-6">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-900">Sync Progress</h3>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {syncProgress.currentSchool} - {syncProgress.currentSection}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-semibold text-gray-900">
+                    {syncProgress.completedAssignments} / {syncProgress.totalAssignments}
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    {Math.round((syncProgress.completedAssignments / syncProgress.totalAssignments) * 100)}% Complete
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full bg-gray-200 rounded-full h-3">
+                <div
+                  className="bg-green-600 h-3 rounded-full transition-all duration-300 flex items-center justify-end pr-2"
+                  style={{ width: `${(syncProgress.completedAssignments / syncProgress.totalAssignments) * 100}%` }}
+                >
+                  {syncProgress.completedAssignments > 0 && (
+                    <span className="text-xs font-medium text-white">
+                      {Math.round((syncProgress.completedAssignments / syncProgress.totalAssignments) * 100)}%
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="text-xs text-gray-600 space-y-1">
+                <div className="font-medium">Currently Syncing:</div>
+                <div className="mt-1 pl-2 space-y-0.5">
+                  <div><span className="font-medium">Section:</span> {syncProgress.currentSection}</div>
+                  <div><span className="font-medium">Unit:</span> {syncProgress.currentUnit} (Lesson {syncProgress.currentUnitLessonId})</div>
+                  <div><span className="font-medium">Lesson:</span> {syncProgress.currentLesson}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Loading State */}
         {loading && (
