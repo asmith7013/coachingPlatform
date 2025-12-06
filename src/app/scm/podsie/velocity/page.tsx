@@ -5,6 +5,7 @@ import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
 import { getSectionVelocityByDateRange, type DailyVelocityStats } from "@/app/actions/313/velocity/velocity";
 import { getDaysOff } from "@/app/actions/calendar/school-calendar";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { Spinner } from "@/components/core/feedback/Spinner";
 import { VelocityGraph } from "./components/VelocityGraph";
 import { SectionSelector } from "./components/SectionSelector";
 import { MonthCalendar } from "./components/MonthCalendar";
@@ -177,7 +178,10 @@ export default function VelocityPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-500">Loading sections...</div>
+        <div className="flex flex-col items-center gap-3">
+          <Spinner size="lg" variant="primary" />
+          <p className="text-gray-500">Loading sections...</p>
+        </div>
       </div>
     );
   }

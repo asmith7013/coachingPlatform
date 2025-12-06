@@ -1,29 +1,13 @@
-import React, { useState } from "react";
-import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-} from "chart.js";
+import React, { useState, lazy, Suspense } from "react";
 import type { DailyVelocityStats } from "@/app/actions/313/velocity/velocity";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
+import { VelocityChartSkeleton } from "./VelocityGraphSkeleton";
 
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
+// Lazy load the heavy Chart.js component
+const VelocityLineChart = lazy(() =>
+  import("./VelocityLineChart").then((module) => ({
+    default: module.VelocityLineChart,
+  }))
 );
 
 interface SectionData {
@@ -287,9 +271,9 @@ export function VelocityGraph({
             </div>
           </div>
         </div>
-        <div className="h-64">
-          <Line data={chartData} options={chartOptions} />
-        </div>
+        <Suspense fallback={<VelocityChartSkeleton />}>
+          <VelocityLineChart chartData={chartData} chartOptions={chartOptions} />
+        </Suspense>
       </div>
 
       {/* Toggles below the graph */}
