@@ -6,6 +6,7 @@ import {
   CalendarDaysIcon,
   TableCellsIcon,
 } from "@heroicons/react/24/outline";
+import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { StudentGraphLegend, CalendarLegend, TableLegend } from "./VelocityLegend";
 
 interface AccordionItemProps {
@@ -13,17 +14,16 @@ interface AccordionItemProps {
   icon: React.ReactNode;
   children: React.ReactNode;
   legend?: React.ReactNode;
-  defaultOpen?: boolean;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
-function AccordionItem({ title, icon, children, legend, defaultOpen = false }: AccordionItemProps) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
+function AccordionItem({ title, icon, children, legend, isOpen, onToggle }: AccordionItemProps) {
   return (
     <div className="border-b border-gray-200 last:border-b-0">
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={onToggle}
         className="w-full flex items-center justify-between px-4 py-3 text-left bg-gray-100 hover:bg-indigo-200 cursor-pointer transition-colors"
       >
         <div className="flex items-center gap-2">
@@ -65,6 +65,33 @@ export function SectionAccordion({
   calendarContent,
   studentTableContent,
 }: SectionAccordionProps) {
+  // Track which accordions are open - all open by default
+  const [openItems, setOpenItems] = useState<Set<string>>(() =>
+    new Set(['graph', 'calendar', 'table'])
+  );
+
+  const allOpen = openItems.size === 3;
+
+  const toggleItem = (item: string) => {
+    setOpenItems(prev => {
+      const next = new Set(prev);
+      if (next.has(item)) {
+        next.delete(item);
+      } else {
+        next.add(item);
+      }
+      return next;
+    });
+  };
+
+  const toggleAll = (open: boolean) => {
+    if (open) {
+      setOpenItems(new Set(['graph', 'calendar', 'table']));
+    } else {
+      setOpenItems(new Set());
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow mb-6 overflow-hidden">
       {/* Section Header */}
@@ -72,14 +99,21 @@ export function SectionAccordion({
         className="px-4 py-3 border-b border-gray-200"
         style={{ backgroundColor: color || '#4F46E5' }}
       >
-        <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold text-white">{sectionName}</h2>
-          <span className="px-3 py-1 bg-white/20 text-white text-sm font-medium rounded-full">
-            {school}
-          </span>
-          {isLoading && (
-            <span className="text-sm text-white/80 ml-2">Loading...</span>
-          )}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-bold text-white">{sectionName}</h2>
+            <span className="px-3 py-1 bg-white/20 text-white text-sm font-medium rounded-full">
+              {school}
+            </span>
+            {isLoading && (
+              <span className="text-sm text-white/80 ml-2">Loading...</span>
+            )}
+          </div>
+          <ToggleSwitch
+            checked={allOpen}
+            onChange={toggleAll}
+            label="Expand All"
+          />
         </div>
       </div>
 
@@ -89,6 +123,8 @@ export function SectionAccordion({
           title="Student Velocity Rolling 3-Day Average"
           icon={<ChartBarIcon className="h-5 w-5 text-gray-400" />}
           legend={<StudentGraphLegend />}
+          isOpen={openItems.has('graph')}
+          onToggle={() => toggleItem('graph')}
         >
           {studentGraphContent}
         </AccordionItem>
@@ -96,6 +132,8 @@ export function SectionAccordion({
           title="Calendar View"
           icon={<CalendarDaysIcon className="h-5 w-5 text-gray-400" />}
           legend={<CalendarLegend />}
+          isOpen={openItems.has('calendar')}
+          onToggle={() => toggleItem('calendar')}
         >
           {calendarContent}
         </AccordionItem>
@@ -103,6 +141,8 @@ export function SectionAccordion({
           title="Student Detail Table"
           icon={<TableCellsIcon className="h-5 w-5 text-gray-400" />}
           legend={<TableLegend />}
+          isOpen={openItems.has('table')}
+          onToggle={() => toggleItem('table')}
         >
           {studentTableContent}
         </AccordionItem>
