@@ -341,7 +341,7 @@ export function VelocityGraph({
           <ToggleSwitch
             checked={includeNotTracked}
             onChange={onIncludeNotTrackedChange}
-            label="Count Untracked"
+            label="Include Untracked Attendance"
           />
         </div>
       </div>

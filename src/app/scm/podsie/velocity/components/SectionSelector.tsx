@@ -1,4 +1,5 @@
 import React from "react";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 
 interface SectionOption {
   id: string;
@@ -11,9 +12,10 @@ interface SectionSelectorProps {
   selectedSections: string[];
   onToggle: (sectionId: string) => void;
   sectionColors: Map<string, string>;
+  onExportClick?: () => void;
 }
 
-export function SectionSelector({ sections, selectedSections, onToggle, sectionColors }: SectionSelectorProps) {
+export function SectionSelector({ sections, selectedSections, onToggle, sectionColors, onExportClick }: SectionSelectorProps) {
   // Group sections by school
   const sectionsBySchool = sections.reduce((acc, section) => {
     if (!acc[section.school]) {
@@ -53,7 +55,8 @@ export function SectionSelector({ sections, selectedSections, onToggle, sectionC
   return (
     <div className="bg-white rounded-lg shadow p-6 mb-6">
       <h2 className="sr-only">Select Sections</h2>
-      <form className="flex gap-8">
+      <div className="flex gap-8 items-start">
+        {/* School filter cards */}
         {Object.entries(sectionsBySchool).map(([school, schoolSections]) => (
           <div key={school} className="border border-gray-200 rounded-lg p-4">
             <fieldset>
@@ -146,7 +149,19 @@ export function SectionSelector({ sections, selectedSections, onToggle, sectionC
             </fieldset>
           </div>
         ))}
-      </form>
+
+        {/* Export CSV button */}
+        {onExportClick && (
+          <button
+            type="button"
+            onClick={onExportClick}
+            className="ml-auto inline-flex items-center gap-2 px-4 py-2 h-fit text-sm font-medium rounded-lg transition-colors bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer"
+          >
+            <ArrowDownTrayIcon className="h-4 w-4" />
+            Export CSV
+          </button>
+        )}
+      </div>
     </div>
   );
 }

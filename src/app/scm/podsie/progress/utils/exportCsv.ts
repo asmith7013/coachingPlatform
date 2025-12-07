@@ -18,11 +18,40 @@ type StudentData = {
 };
 
 /**
+ * Gets the root question count for a lesson
+ * Uses podsieQuestionMap if available to count only root questions,
+ * otherwise falls back to totalQuestions
+ */
+function getRootQuestionCount(lesson: LessonConfig): number {
+  if (lesson.podsieQuestionMap && lesson.podsieQuestionMap.length > 0) {
+    // Count only root questions (isRoot !== false)
+    return lesson.podsieQuestionMap.filter(q => q.isRoot !== false).length;
+  }
+  return lesson.totalQuestions;
+}
+
+/**
+ * Gets the root question numbers for a lesson
+ * Returns array of question numbers that are root questions
+ */
+function getRootQuestionNumbers(lesson: LessonConfig): number[] {
+  if (lesson.podsieQuestionMap && lesson.podsieQuestionMap.length > 0) {
+    return lesson.podsieQuestionMap
+      .filter(q => q.isRoot !== false)
+      .map(q => q.questionNumber)
+      .sort((a, b) => a - b);
+  }
+  // Fallback: assume all questions 1 to totalQuestions are root
+  return Array.from({ length: lesson.totalQuestions }, (_, i) => i + 1);
+}
+
+/**
  * Generates CSV content from progress data
  *
  * CSV Structure:
  * - Student Name | Student Email | Assignment ID | Assignment Name | Unit | Section | Activity Type | Q1 Correctness | Q1 Explanation Score | Q2 Correctness | ...
  * - Rows sorted by: Assignment first, then student name alphabetically within each assignment
+ * - Only includes ROOT questions (excludes follow-up questions)
  */
 export function generateProgressCsv(
   lessons: LessonConfig[],
@@ -41,8 +70,8 @@ export function generateProgressCsv(
     });
   });
 
-  // Find maximum number of questions across all assignments
-  const maxQuestions = Math.max(...lessons.map(l => l.totalQuestions), 0);
+  // Find maximum number of ROOT questions across all assignments
+  const maxQuestions = Math.max(...lessons.map(l => getRootQuestionCount(l)), 0);
 
   // Generate CSV header
   const headers = [
@@ -92,6 +121,10 @@ export function generateProgressCsv(
         return nameA.localeCompare(nameB);
       });
 
+    // Get root question numbers for this lesson
+    const rootQuestionNumbers = getRootQuestionNumbers(lesson);
+    const rootQuestionCount = rootQuestionNumbers.length;
+
     // Generate row for each student
     studentsForAssignment.forEach(({ student, progress }) => {
       if (!student) return;
@@ -106,9 +139,10 @@ export function generateProgressCsv(
         lesson.activityType === 'mastery-check' ? 'Mastery Check' : 'Sidekick',
       ];
 
-      // Add question scores
-      for (let qNum = 1; qNum <= maxQuestions; qNum++) {
-        if (qNum <= lesson.totalQuestions && progress) {
+      // Add question scores (only root questions)
+      for (let i = 0; i < maxQuestions; i++) {
+        if (i < rootQuestionCount && progress) {
+          const qNum = rootQuestionNumbers[i];
           const question = progress.questions.find(q => q.questionNumber === qNum);
 
           // Correctness (0 or 1)
@@ -130,7 +164,7 @@ export function generateProgressCsv(
           row.push(explanationScore);
           row.push(completionDate);
         } else {
-          // Empty cells for questions beyond this assignment's total
+          // Empty cells for questions beyond this assignment's root question count
           row.push('');
           row.push('');
           row.push('');

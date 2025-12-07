@@ -12,6 +12,7 @@ import { SectionSelector } from "./components/SectionSelector";
 import { MonthCalendar } from "./components/MonthCalendar";
 import { VelocityLegend } from "./components/VelocityLegend";
 import { SectionDetailTable } from "./components/SectionDetailTable";
+import { ExportCsvModal } from "./components/ExportCsvModal";
 import { getSectionColors } from "./utils/colors";
 
 // Default school year
@@ -39,6 +40,7 @@ export default function VelocityPage() {
   const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
   const [includeNotTracked, setIncludeNotTracked] = useState(false);
   const [showRampUps, setShowRampUps] = useState(true);
+  const [exportModalOpen, setExportModalOpen] = useState(false);
 
   // Graph date filters - default to 9/1/25 to today
   const [graphStartDate, setGraphStartDate] = useState("2025-09-01");
@@ -318,6 +320,19 @@ export default function VelocityPage() {
           selectedSections={selectedSections}
           onToggle={handleSectionToggle}
           sectionColors={sectionColors}
+          onExportClick={() => setExportModalOpen(true)}
+        />
+
+        {/* Export CSV Modal */}
+        <ExportCsvModal
+          isOpen={exportModalOpen}
+          onClose={() => setExportModalOpen(false)}
+          sections={sectionOptions}
+          selectedSections={selectedSections}
+          velocityData={velocityData}
+          detailData={detailData}
+          startDate={graphStartDate}
+          endDate={graphEndDate}
         />
 
         {selectedSections.length === 0 ? (
