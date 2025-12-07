@@ -87,10 +87,10 @@ export function StudentVelocityGraph({
   const [adjustForBlockType, setAdjustForBlockType] = useState(true);
   const [showFilterGroupsOnly, setShowFilterGroupsOnly] = useState(false);
 
-  // Multiple filter groups - start with one group containing first 5 students
+  // Multiple filter groups - start with one group containing all students
   const [filterGroups, setFilterGroups] = useState<FilterGroup[]>(() => [{
     id: 'group-1',
-    selectedStudents: new Set(students.slice(0, 5).map(s => s.studentId)),
+    selectedStudents: new Set(students.map(s => s.studentId)),
     name: 'Group 1',
   }]);
 
@@ -539,7 +539,7 @@ export function StudentVelocityGraph({
         <ToggleSwitch
           checked={showFilterGroupsOnly}
           onChange={setShowFilterGroupsOnly}
-          label="Filter Groups Only"
+          label="Show Filter Averages Only"
         />
       </div>
     </>
