@@ -52,6 +52,7 @@ interface StudentVelocityGraphProps {
   endDate: string;
   daysOff: string[];
   showRampUps: boolean;
+  embedded?: boolean; // When true, removes the outer wrapper/shadow
 }
 
 export function StudentVelocityGraph({
@@ -63,6 +64,7 @@ export function StudentVelocityGraph({
   endDate,
   daysOff,
   showRampUps,
+  embedded = false,
 }: StudentVelocityGraphProps) {
   const [showRollingAverage, setShowRollingAverage] = useState(true);
   const [adjustForBlockType, setAdjustForBlockType] = useState(true);
@@ -314,18 +316,20 @@ export function StudentVelocityGraph({
   const isAllSelected = students.every(s => selectedStudents.has(s.studentId));
   const isSomeSelected = selectedStudents.size > 0 && selectedStudents.size < students.length;
 
-  return (
-    <div className="bg-white rounded-lg shadow p-6 mb-8">
+  const content = (
+    <>
       {/* Card Header - Section name with Select All checkbox */}
       <div className="border border-gray-200 rounded-lg p-4">
-        <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
-          <div>
-            <h3 className="text-sm font-medium text-gray-900">
-              {sectionName}
-            </h3>
-            <p className="text-xs text-gray-500">{school}</p>
-          </div>
-          <div className="flex gap-2 items-center">
+        <div className="flex items-center justify-between mb-4">
+          {!embedded && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-900">
+                {sectionName}
+              </h3>
+              <p className="text-xs text-gray-500">{school}</p>
+            </div>
+          )}
+          <div className={`flex gap-2 items-center ${embedded ? "" : ""}`}>
             <div className="flex h-5 shrink-0 items-center">
               <div className="group grid size-4 grid-cols-1">
                 <input
@@ -439,6 +443,16 @@ export function StudentVelocityGraph({
           label="Adjust for Block Type"
         />
       </div>
+    </>
+  );
+
+  if (embedded) {
+    return content;
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow p-6 mb-8">
+      {content}
     </div>
   );
 }

@@ -29,6 +29,7 @@ interface SectionDetailTableProps {
   blockTypes: Map<string, 'single' | 'double' | 'none'>; // Date -> block type
   daysOff: string[];
   showRampUps: boolean;
+  embedded?: boolean; // When true, removes the outer wrapper/header
 }
 
 // Get background color class based on attendance status
@@ -81,6 +82,7 @@ export function SectionDetailTable({
   blockTypes,
   daysOff,
   showRampUps,
+  embedded = false,
 }: SectionDetailTableProps) {
   // Helper to check if a date is a weekend
   const isWeekend = (dateStr: string): boolean => {
@@ -99,16 +101,8 @@ export function SectionDetailTable({
   // Filter dates to only school days
   const schoolDays = dates.filter(isSchoolDay);
 
-  return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-gray-200 px-6 py-4">
-        <h3 className="text-lg font-bold text-gray-900">{sectionName}</h3>
-        <p className="text-sm text-gray-600">{school}</p>
-      </div>
-
-      {/* Table */}
-      <div className="overflow-x-auto">
+  const tableContent = (
+    <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -200,7 +194,21 @@ export function SectionDetailTable({
             )}
           </tbody>
         </table>
+    </div>
+  );
+
+  if (embedded) {
+    return tableContent;
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow overflow-hidden">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-gray-200 px-6 py-4">
+        <h3 className="text-lg font-bold text-gray-900">{sectionName}</h3>
+        <p className="text-sm text-gray-600">{school}</p>
       </div>
+      {tableContent}
     </div>
   );
 }

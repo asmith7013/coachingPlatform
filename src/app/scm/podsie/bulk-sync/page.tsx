@@ -87,8 +87,8 @@ export default function BulkSyncPage() {
         });
         setSectionOptions(options);
 
-        // Select all sections by default
-        setSelectedSections(options.map(opt => opt.id));
+        // No sections selected by default
+        setSelectedSections([]);
 
         // Compute colors for all sections
         const colors = getSectionColors(options);

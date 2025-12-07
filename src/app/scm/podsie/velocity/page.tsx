@@ -10,9 +10,9 @@ import { VelocityGraph } from "./components/VelocityGraph";
 import { StudentVelocityGraph } from "./components/StudentVelocityGraph";
 import { SectionSelector } from "./components/SectionSelector";
 import { MonthCalendar } from "./components/MonthCalendar";
-import { VelocityLegend } from "./components/VelocityLegend";
 import { SectionDetailTable } from "./components/SectionDetailTable";
 import { ExportCsvModal } from "./components/ExportCsvModal";
+import { SectionAccordion } from "./components/SectionAccordion";
 import { getSectionColors } from "./utils/colors";
 
 // Default school year
@@ -399,96 +399,41 @@ export default function VelocityPage() {
               />
             )}
 
-            {/* Month navigation */}
-            <div className="flex items-center justify-between mb-4 bg-white rounded-lg shadow px-4 py-3">
-              <button onClick={prevMonth} className="p-2 hover:bg-gray-100 rounded cursor-pointer">
-                <ChevronLeftIcon className="h-5 w-5" />
-              </button>
-              <span className="text-lg font-medium">
-                {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-              </span>
-              <button onClick={nextMonth} className="p-2 hover:bg-gray-100 rounded cursor-pointer">
-                <ChevronRightIcon className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Calendars for each selected section */}
-            {selectedSections.map((sectionId) => {
+            {/* Section Details with Accordions */}
+            {[...selectedSections].sort((a, b) => {
+              // Extract section number from ID (e.g., "IS313-601" -> 601)
+              const numA = parseInt(a.split('-').pop() || '0', 10);
+              const numB = parseInt(b.split('-').pop() || '0', 10);
+              return numA - numB;
+            }).map((sectionId) => {
               const section = sectionOptions.find((s) => s.id === sectionId);
               const isLoading = loadingSectionIds.has(sectionId);
               const hasData = velocityData.has(sectionId) && (velocityData.get(sectionId)?.length ?? 0) > 0;
-
-              return (
-                <div key={sectionId} className="mb-8">
-                  <div className="bg-white rounded-lg shadow p-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <h2 className="text-lg font-bold text-gray-900">
-                        {section?.classSection}
-                      </h2>
-                      <span className="px-3 py-1 bg-indigo-100 text-indigo-800 text-sm font-medium rounded-full">
-                        {section?.school}
-                      </span>
-                      {isLoading && (
-                        <span className="flex items-center gap-1 text-sm text-gray-500">
-                          <Spinner size="sm" variant="primary" />
-                          Loading...
-                        </span>
-                      )}
-                    </div>
-                    {isLoading && !hasData ? (
-                      <div className="grid grid-cols-2 gap-4">
-                        {[0, 1].map((i) => (
-                          <div key={i} className="animate-pulse">
-                            <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
-                            <div className="grid grid-cols-7 gap-1">
-                              {Array.from({ length: 35 }).map((_, j) => (
-                                <div key={j} className="h-8 bg-gray-100 rounded"></div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-4">
-                        {[-1, 0].map((offset) => {
-                          const monthDate = new Date(
-                            currentMonth.getFullYear(),
-                            currentMonth.getMonth() + offset,
-                            1
-                          );
-                          return (
-                            <MonthCalendar
-                              key={monthDate.toISOString()}
-                              monthDate={monthDate}
-                              sectionId={sectionId}
-                              getVelocityForDate={getVelocityForDate}
-                              isDayOff={isDayOff}
-                              isWeekend={isWeekend}
-                              showRampUps={showRampUps}
-                            />
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-
-            {/* Legend */}
-            <VelocityLegend />
-
-            {/* Student Velocity Graphs - one per section */}
-            {selectedSections.map((sectionId) => {
-              const section = sectionOptions.find((s) => s.id === sectionId);
               const students = detailData.get(sectionId);
               const sectionVelocityData = velocityData.get(sectionId);
 
-              if (!section || !students || !sectionVelocityData) return null;
+              if (!section) return null;
 
-              return (
+              // Build block types map from velocity data
+              const blockTypes = new Map<string, 'single' | 'double' | 'none'>();
+              sectionVelocityData?.forEach((stat) => {
+                blockTypes.set(stat.date, stat.blockType);
+              });
+
+              // Generate date range from graph start to graph end
+              const dates: string[] = [];
+              const current = new Date(graphStartDate);
+              const end = new Date(graphEndDate);
+              while (current <= end) {
+                dates.push(current.toISOString().split('T')[0]);
+                current.setDate(current.getDate() + 1);
+              }
+
+              // Student Graph Content
+              const studentGraphContent = (isLoading && !students) ? (
+                <div className="animate-pulse h-64 bg-gray-100 rounded" />
+              ) : (students && sectionVelocityData) ? (
                 <StudentVelocityGraph
-                  key={`student-graph-${sectionId}`}
                   sectionName={section.classSection}
                   school={section.school}
                   students={students}
@@ -497,85 +442,109 @@ export default function VelocityPage() {
                   endDate={graphEndDate}
                   daysOff={daysOff}
                   showRampUps={showRampUps}
+                  embedded
                 />
+              ) : (
+                <p className="text-gray-500 text-sm">No data available</p>
               );
-            })}
 
-            {/* Student Detail Tables */}
-            {selectedSections.map((sectionId) => {
-              const section = sectionOptions.find((s) => s.id === sectionId);
-              const students = detailData.get(sectionId);
-              const sectionVelocityData = velocityData.get(sectionId);
-              const isLoading = loadingSectionIds.has(sectionId);
-
-              if (!section) return null;
-
-              // Show skeleton while loading
-              if (isLoading && (!students || !sectionVelocityData)) {
-                return (
-                  <div key={`table-${sectionId}`} className="mb-8">
-                    <div className="bg-white rounded-lg shadow overflow-hidden">
-                      <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
-                        <div className="flex items-center gap-2">
-                          <div className="font-bold text-gray-900">{section.classSection}</div>
-                          <span className="px-2 py-0.5 bg-indigo-100 text-indigo-800 text-xs font-medium rounded">
-                            {section.school}
-                          </span>
-                          <span className="flex items-center gap-1 text-sm text-gray-500 ml-2">
-                            <Spinner size="sm" variant="primary" />
-                            Loading student data...
-                          </span>
-                        </div>
-                      </div>
-                      <div className="p-4">
-                        <div className="animate-pulse space-y-3">
-                          {Array.from({ length: 8 }).map((_, i) => (
-                            <div key={i} className="flex gap-4">
-                              <div className="h-8 bg-gray-100 rounded w-32"></div>
-                              <div className="flex-1 flex gap-1">
-                                {Array.from({ length: 20 }).map((_, j) => (
-                                  <div key={j} className="h-8 w-8 bg-gray-100 rounded"></div>
-                                ))}
-                              </div>
-                            </div>
+              // Calendar Content with month navigation
+              const calendarContent = (isLoading && !hasData) ? (
+                <div>
+                  {/* Month navigation skeleton */}
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="animate-pulse h-8 w-48 bg-gray-200 rounded"></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[0, 1].map((i) => (
+                      <div key={i} className="animate-pulse">
+                        <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
+                        <div className="grid grid-cols-7 gap-1">
+                          {Array.from({ length: 35 }).map((_, j) => (
+                            <div key={j} className="h-8 bg-gray-100 rounded"></div>
                           ))}
                         </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                );
-              }
+                </div>
+              ) : (
+                <div>
+                  {/* Month navigation */}
+                  <div className="flex items-center justify-center gap-4 mb-4">
+                    <button onClick={prevMonth} className="p-2 hover:bg-gray-100 rounded cursor-pointer">
+                      <ChevronLeftIcon className="h-5 w-5" />
+                    </button>
+                    <span className="text-lg font-medium min-w-[200px] text-center">
+                      {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                    </span>
+                    <button onClick={nextMonth} className="p-2 hover:bg-gray-100 rounded cursor-pointer">
+                      <ChevronRightIcon className="h-5 w-5" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[-1, 0].map((offset) => {
+                      const monthDate = new Date(
+                        currentMonth.getFullYear(),
+                        currentMonth.getMonth() + offset,
+                        1
+                      );
+                      return (
+                        <MonthCalendar
+                          key={monthDate.toISOString()}
+                          monthDate={monthDate}
+                          sectionId={sectionId}
+                          getVelocityForDate={getVelocityForDate}
+                          isDayOff={isDayOff}
+                          isWeekend={isWeekend}
+                          showRampUps={showRampUps}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              );
 
-              if (!students || !sectionVelocityData) return null;
-
-              // Build block types map from velocity data
-              const blockTypes = new Map<string, 'single' | 'double' | 'none'>();
-              sectionVelocityData.forEach((stat) => {
-                blockTypes.set(stat.date, stat.blockType);
-              });
-
-              // Generate date range from graph start to graph end
-              const dates: string[] = [];
-              const current = new Date(graphStartDate);
-              const end = new Date(graphEndDate);
-
-              while (current <= end) {
-                dates.push(current.toISOString().split('T')[0]);
-                current.setDate(current.getDate() + 1);
-              }
+              // Student Table Content
+              const studentTableContent = (isLoading && (!students || !sectionVelocityData)) ? (
+                <div className="animate-pulse space-y-3">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="flex gap-4">
+                      <div className="h-8 bg-gray-100 rounded w-32"></div>
+                      <div className="flex-1 flex gap-1">
+                        {Array.from({ length: 20 }).map((_, j) => (
+                          <div key={j} className="h-8 w-8 bg-gray-100 rounded"></div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (students && sectionVelocityData) ? (
+                <SectionDetailTable
+                  sectionName={section.classSection}
+                  school={section.school}
+                  students={students}
+                  dates={dates}
+                  blockTypes={blockTypes}
+                  daysOff={daysOff}
+                  showRampUps={showRampUps}
+                  embedded
+                />
+              ) : (
+                <p className="text-gray-500 text-sm">No data available</p>
+              );
 
               return (
-                <div key={`table-${sectionId}`} className="mb-8">
-                  <SectionDetailTable
-                    sectionName={section.classSection}
-                    school={section.school}
-                    students={students}
-                    dates={dates}
-                    blockTypes={blockTypes}
-                    daysOff={daysOff}
-                    showRampUps={showRampUps}
-                  />
-                </div>
+                <SectionAccordion
+                  key={sectionId}
+                  sectionName={section.classSection}
+                  school={section.school}
+                  color={sectionColors.get(sectionId)}
+                  isLoading={isLoading}
+                  studentGraphContent={studentGraphContent}
+                  calendarContent={calendarContent}
+                  studentTableContent={studentTableContent}
+                />
               );
             })}
           </>

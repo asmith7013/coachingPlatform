@@ -2,6 +2,7 @@ import React, { useState, lazy, Suspense } from "react";
 import type { DailyVelocityStats } from "@/app/actions/313/velocity/velocity";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { VelocityChartSkeleton } from "./VelocityGraphSkeleton";
+import { ChartBarIcon } from "@heroicons/react/24/outline";
 
 // Lazy load the heavy Chart.js component
 const VelocityLineChart = lazy(() =>
@@ -271,8 +272,9 @@ export function VelocityGraph({
       <div className="bg-white rounded-lg shadow p-4 mb-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
+            <ChartBarIcon className="h-5 w-5 text-gray-400" />
             <h3 className="text-sm font-semibold text-gray-700">
-              Velocity Trend - All Selected Sections
+              Velocity Rolling 3-Day Average
             </h3>
             {hasLoadingSections && (
               <div className="flex items-center gap-2">
