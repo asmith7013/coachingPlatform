@@ -24,7 +24,7 @@ function AccordionItem({ title, icon, children, legend, isOpen, onToggle }: Acco
       <button
         type="button"
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-4 py-3 text-left bg-gray-100 hover:bg-indigo-200 cursor-pointer transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 text-left bg-gray-100 hover:bg-gray-200 cursor-pointer transition-colors"
       >
         <div className="flex items-center gap-2">
           {icon}
@@ -65,9 +65,9 @@ export function SectionAccordion({
   calendarContent,
   studentTableContent,
 }: SectionAccordionProps) {
-  // Track which accordions are open - all open by default
+  // Track which accordions are open - all closed by default
   const [openItems, setOpenItems] = useState<Set<string>>(() =>
-    new Set(['graph', 'calendar', 'table'])
+    new Set()
   );
 
   const allOpen = openItems.size === 3;

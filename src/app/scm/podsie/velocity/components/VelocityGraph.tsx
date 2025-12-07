@@ -338,7 +338,6 @@ export function VelocityGraph({
             checked={showRampUps}
             onChange={onShowRampUpsChange}
             label="Show Ramp Ups"
-            accentColor="orange"
           />
           <ToggleSwitch
             checked={includeNotTracked}
