@@ -1,7 +1,7 @@
-<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
+<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: block; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
 
     <!-- Page 1: Gaming XP Grind (Front) -->
-    <div class="print-page" style="width: 8.5in; height: 11in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+    <div class="print-page" style="width: 8.5in; min-height: 10in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: block; border: 1px solid #ccc; background: white;">
         <!-- Header with lesson info -->
         <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
             <div>
@@ -20,7 +20,7 @@
         </div>
 
         <!-- Problem 1: Gaming XP Grind -->
-        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
+        <div style="border: 2px solid #333; padding: 20px;">
             <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
                 <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 1: Gaming XP Grind</h3>
             </div>
@@ -28,7 +28,7 @@
                 You're grinding for XP in your favorite RPG. The table shows your total experience points, y, after playing for x hours.
             </p>
 
-            <div style="display: flex; gap: 30px; flex: 1; align-items: flex-start;">
+            <div style="display: flex; gap: 30px; align-items: flex-start;">
                 <!-- Table -->
                 <table style="border-collapse: collapse; font-size: 14px;">
                     <thead>
@@ -100,7 +100,7 @@
     </div>
 
     <!-- Page 2: Phone Battery Drain (Back) -->
-    <div class="print-page" style="width: 8.5in; height: 11in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+    <div class="print-page" style="width: 8.5in; min-height: 10in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: block; border: 1px solid #ccc; background: white;">
         <!-- Header with lesson info -->
         <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
             <div>
@@ -119,7 +119,7 @@
         </div>
 
         <!-- Problem 2: Phone Battery Drain -->
-        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
+        <div style="border: 2px solid #333; padding: 20px;">
             <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
                 <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 2: Phone Battery Drain</h3>
             </div>
@@ -127,7 +127,7 @@
                 Your phone battery drains at a constant rate while gaming. The table shows the percentage of battery used, y, after x minutes of playing.
             </p>
 
-            <div style="display: flex; gap: 30px; flex: 1; align-items: flex-start;">
+            <div style="display: flex; gap: 30px; align-items: flex-start;">
                 <!-- Table -->
                 <table style="border-collapse: collapse; font-size: 14px;">
                     <thead>
@@ -201,33 +201,3 @@
         </div>
     </div>
 </div>
-
-<!-- Print-specific styles -->
-<style>
-@media print {
-    .slide-container {
-        overflow: visible !important;
-        height: auto !important;
-    }
-    .print-page {
-        width: 8.5in !important;
-        height: 11in !important;
-        margin: 0 !important;
-        padding: 0.5in !important;
-        box-sizing: border-box !important;
-        page-break-after: always;
-        border: none !important;
-    }
-    .print-page:last-child {
-        page-break-after: auto;
-    }
-    svg line, svg path, svg text, svg circle {
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
-    }
-}
-@page {
-    size: letter portrait;
-    margin: 0;
-}
-</style>
