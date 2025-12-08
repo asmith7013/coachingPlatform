@@ -328,6 +328,7 @@
 │   │   │   │   ├── im-lessons.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── podsie-completion.ts
+│   │   │   │   ├── podsie-history.ts
 │   │   │   │   ├── podsie-question-map
 │   │   │   │   │   └── index.ts
 │   │   │   │   ├── podsie-sync
@@ -1077,6 +1078,7 @@
 │   │   │   │   ├── Alert.tsx
 │   │   │   │   ├── AutoSaveIndicator.tsx
 │   │   │   │   ├── Badge.tsx
+│   │   │   │   ├── Legend.tsx
 │   │   │   │   ├── Skeleton.tsx
 │   │   │   │   ├── Spinner.tsx
 │   │   │   │   ├── TOAST_USAGE.md
@@ -1978,4 +1980,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-603 directories, 1376 files
+603 directories, 1378 files

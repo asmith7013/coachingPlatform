@@ -6,12 +6,18 @@ import { useState, useRef, useEffect } from "react";
 import {
   MapIcon,
   GiftIcon,
-  PresentationChartBarIcon
+  PresentationChartBarIcon,
+  Cog6ToothIcon
 } from '@heroicons/react/24/outline';
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+
+type NavItem = { href: string; label: string; description?: string };
+type NavSection = { section: string; items: NavItem[] };
 
 type NavCategory = {
   label: string;
-  items: { href: string; label: string }[];
+  items: NavItem[];
+  sections?: NavSection[];
   Icon?: React.ComponentType<{ className?: string }>;
   iconLetter?: string;
 };
@@ -22,6 +28,9 @@ export function SCMNav() {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { hasRole } = useAuthenticatedUser();
+
+  const isSuperAdmin = hasRole('super_admin');
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -93,6 +102,35 @@ export function SCMNav() {
         { href: "/scm/workedExamples", label: "All Worked Examples" },
       ],
     },
+    // Admin category - only shown for super_admin
+    ...(isSuperAdmin ? [{
+      label: "Admin",
+      Icon: Cog6ToothIcon,
+      items: [] as NavItem[],
+      sections: [
+        {
+          section: "Podsie Bulk",
+          items: [
+            { href: "/scm/podsie/import-attendance", label: "Import Attendance", description: "Import attendance data from Podsie" },
+            { href: "/scm/podsie/bulk-sync", label: "Bulk Sync", description: "Sync Podsie mastery data" },
+            { href: "/scm/podsie/bulk-configs", label: "Bulk Configs", description: "Add Podsie assignments to section configs" },
+          ],
+        },
+        {
+          section: "Podsie",
+          items: [
+            { href: "/scm/podsie/manage-configs", label: "Manage Configs", description: "Add section configs for a Podsie assignment" },
+            { href: "/scm/podsie/question-mapper", label: "Question Mapper", description: "Update question maps" },
+          ],
+        },
+        {
+          section: "Roadmaps",
+          items: [
+            { href: "/scm/roadmaps/calendar", label: "Unit Calendar", description: "Set unit schedule for each scope and sequence" },
+          ],
+        },
+      ],
+    }] : []),
   ];
 
   const toggleDropdown = (label: string) => {
@@ -100,7 +138,11 @@ export function SCMNav() {
   };
 
   const isActiveCategory = (category: NavCategory) => {
-    return category.items.some((item) => pathname.startsWith(item.href));
+    const itemsActive = category.items.some((item) => pathname.startsWith(item.href));
+    const sectionsActive = category.sections?.some((section) =>
+      section.items.some((item) => pathname.startsWith(item.href))
+    );
+    return itemsActive || sectionsActive;
   };
 
   return (
@@ -113,7 +155,7 @@ export function SCMNav() {
       <div className="mx-auto px-6 py-3" style={{ maxWidth: "1600px" }}>
         <div className="flex justify-between items-center gap-2">
         <div className="flex gap-2 relative">
-          {categories.map((category) => {
+          {categories.filter(c => c.label !== "Admin").map((category) => {
             const isActive = isActiveCategory(category);
             const isOpen = openDropdown === category.label;
 
@@ -147,6 +189,7 @@ export function SCMNav() {
 
                 {isOpen && (
                   <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[200px] z-50">
+                    {/* Regular items */}
                     {category.items.map((item) => {
                       const isItemActive = pathname === item.href;
                       return (
@@ -164,18 +207,123 @@ export function SCMNav() {
                         </Link>
                       );
                     })}
+                    {/* Sections with headers */}
+                    {category.sections?.map((section, sectionIndex) => (
+                      <div key={section.section}>
+                        {(category.items.length > 0 || sectionIndex > 0) && (
+                          <div className="border-t border-gray-200 my-1" />
+                        )}
+                        <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                          {section.section}
+                        </div>
+                        {section.items.map((item) => {
+                          const isItemActive = pathname === item.href;
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setOpenDropdown(null)}
+                              className={`block px-4 py-2 transition-colors ${
+                                isItemActive
+                                  ? "bg-blue-50 text-blue-700"
+                                  : "text-gray-700 hover:bg-gray-50"
+                              }`}
+                            >
+                              <div className={`text-sm ${isItemActive ? "font-medium" : ""}`}>
+                                {item.label}
+                              </div>
+                              {item.description && (
+                                <div className={`text-xs mt-0.5 ${isItemActive ? "text-blue-600" : "text-gray-500"}`}>
+                                  {item.description}
+                                </div>
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
             );
           })}
         </div>
-        <Link
-          href="/sign-out"
-          className="px-4 py-2 rounded-md font-medium transition-colors text-white hover:bg-gray-800 bg-gray-700"
-        >
-          Sign Out
-        </Link>
+        <div className="flex gap-2 items-center">
+          {/* Admin dropdown - aligned right */}
+          {categories.filter(c => c.label === "Admin").map((category) => {
+            const isActive = isActiveCategory(category);
+            const isOpen = openDropdown === category.label;
+
+            return (
+              <div key={category.label} className="relative">
+                <button
+                  onClick={() => toggleDropdown(category.label)}
+                  className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 cursor-pointer ${
+                    isActive
+                      ? "bg-gray-700 text-white"
+                      : "text-gray-300 hover:text-white hover:bg-gray-800"
+                  }`}
+                >
+                  {category.Icon && <category.Icon className="w-5 h-5 flex-shrink-0" />}
+                  {category.label}
+                  <svg
+                    className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isOpen && (
+                  <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[280px] z-50">
+                    {category.sections?.map((section, sectionIndex) => (
+                      <div key={section.section}>
+                        {sectionIndex > 0 && (
+                          <div className="border-t border-gray-200 my-1" />
+                        )}
+                        <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                          {section.section}
+                        </div>
+                        {section.items.map((item) => {
+                          const isItemActive = pathname === item.href;
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setOpenDropdown(null)}
+                              className={`block px-4 py-2 transition-colors ${
+                                isItemActive
+                                  ? "bg-blue-50 text-blue-700"
+                                  : "text-gray-700 hover:bg-gray-50"
+                              }`}
+                            >
+                              <div className={`text-sm ${isItemActive ? "font-medium" : ""}`}>
+                                {item.label}
+                              </div>
+                              {item.description && (
+                                <div className={`text-xs mt-0.5 ${isItemActive ? "text-blue-600" : "text-gray-500"}`}>
+                                  {item.description}
+                                </div>
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          <Link
+            href="/sign-out"
+            className="px-4 py-2 rounded-md font-medium transition-colors text-white hover:bg-gray-800 bg-gray-700"
+          >
+            Sign Out
+          </Link>
+        </div>
         </div>
       </div>
     </nav>

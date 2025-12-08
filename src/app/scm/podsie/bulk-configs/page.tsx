@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import { CheckCircleIcon, ExclamationTriangleIcon, LinkIcon } from "@heroicons/react/24/solid";
 import { useToast } from "@/components/core/feedback/Toast";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
@@ -116,8 +116,8 @@ export default function BulkConfigsPage() {
 
           setSections(allSections);
           setSectionColors(colors);
-          // Select all by default
-          setSelectedSections(allSections.map(s => s.id));
+          // Select none by default
+          setSelectedSections([]);
         } else {
           setLoadError('Failed to load sections');
         }
@@ -534,7 +534,7 @@ export default function BulkConfigsPage() {
         {/* Empty State */}
         {!isMatching && matchResults.length === 0 && !loadingSections && (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <div className="text-gray-400 text-4xl mb-4">🔗</div>
+            <LinkIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <div className="text-gray-600">
               Select sections and click &quot;Fetch & Match All&quot; to auto-match Podsie assignments
             </div>

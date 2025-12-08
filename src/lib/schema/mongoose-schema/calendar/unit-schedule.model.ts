@@ -29,6 +29,9 @@ const unitScheduleFields = {
   sections: { type: [unitSectionSchema], default: [] },
   color: { type: String, required: false },
   notes: { type: String, required: false },
+  // Per-section config fields (when schedules are tied to a specific class section)
+  school: { type: String, required: false, index: true }, // e.g., "IS313", "PS19"
+  classSection: { type: String, required: false, index: true }, // e.g., "601", "701", "802"
   ...standardDocumentFields
 };
 
@@ -37,8 +40,10 @@ const UnitScheduleSchema = new mongoose.Schema(unitScheduleFields, {
   collection: "unit-schedules"
 });
 
-// Index for efficient lookups
+// Index for efficient lookups (grade-level schedules without classSection)
 UnitScheduleSchema.index({ schoolYear: 1, grade: 1, unitNumber: 1 });
+// Index for per-section schedules
+UnitScheduleSchema.index({ schoolYear: 1, grade: 1, school: 1, classSection: 1, unitNumber: 1 });
 
 export const UnitScheduleModel = mongoose.models.UnitSchedule ||
   mongoose.model("UnitSchedule", UnitScheduleSchema);

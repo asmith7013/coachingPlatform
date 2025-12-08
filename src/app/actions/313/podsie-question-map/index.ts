@@ -150,9 +150,12 @@ export async function listQuestionMaps() {
         .sort({ assignmentId: 1 })
         .lean();
 
+      // Serialize to handle ObjectIds properly for client components
+      const serialized = JSON.parse(JSON.stringify(questionMaps));
+
       return {
         success: true,
-        data: questionMaps,
+        data: serialized,
       };
     } catch (error) {
       return {

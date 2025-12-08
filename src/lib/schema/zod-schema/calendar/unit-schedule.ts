@@ -31,6 +31,9 @@ export const UnitScheduleFieldsSchema = z.object({
   sections: z.array(UnitSectionSchema).default([]),
   color: z.string().optional(), // Primary color for the unit
   notes: z.string().optional(),
+  // Per-section config fields (when schedules are tied to a specific class section)
+  school: z.string().optional(), // e.g., "IS313", "PS19"
+  classSection: z.string().optional(), // e.g., "601", "701", "802"
 });
 
 export const UnitScheduleZodSchema = BaseDocumentSchema.merge(UnitScheduleFieldsSchema);

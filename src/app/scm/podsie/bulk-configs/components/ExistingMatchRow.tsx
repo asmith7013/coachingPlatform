@@ -140,6 +140,12 @@ export function ExistingMatchRow({
             {ACTIVITY_TYPE_LABELS[match.assignmentType]}
           </span>
         </div>
+        {/* Existing Scope & Sequence Match Info - aligned right */}
+        {match.existingLesson && (
+          <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 whitespace-nowrap ml-2">
+            Scope &amp; Sequence: {match.existingLesson.unitLessonId} — {match.existingLesson.lessonName}
+          </span>
+        )}
       </div>
 
       {/* Question Map Selection Row */}

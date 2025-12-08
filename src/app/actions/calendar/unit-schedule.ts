@@ -227,6 +227,51 @@ export async function upsertUnitSchedule(data: {
 }
 
 /**
+ * Update unit-level dates (by schoolYear + grade + unitNumber)
+ */
+export async function updateUnitDates(
+  schoolYear: string,
+  grade: string,
+  unitNumber: number,
+  startDate: string,
+  endDate: string
+) {
+  return withDbConnection(async () => {
+    try {
+      const schedule = await UnitScheduleModel.findOneAndUpdate(
+        {
+          schoolYear,
+          grade,
+          unitNumber,
+        },
+        {
+          $set: {
+            startDate,
+            endDate,
+            updatedAt: new Date().toISOString()
+          }
+        },
+        { new: true }
+      ).lean();
+
+      if (!schedule) {
+        return { success: false, error: "Unit schedule not found" };
+      }
+
+      // Fully serialize for client (handles ObjectIds and other MongoDB types)
+      const serialized = JSON.parse(JSON.stringify(schedule));
+
+      return { success: true, data: serialized as UnitSchedule };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to update unit dates")
+      };
+    }
+  });
+}
+
+/**
  * Update section dates for a specific unit (by schoolYear + grade + unitNumber)
  */
 export async function updateSectionDates(
@@ -268,6 +313,271 @@ export async function updateSectionDates(
       return {
         success: false,
         error: handleServerError(error, "Failed to update section dates")
+      };
+    }
+  });
+}
+
+// =====================================
+// SECTION-SPECIFIC UNIT SCHEDULE OPERATIONS
+// =====================================
+
+/**
+ * Fetch unit schedules for a specific class section
+ */
+export async function fetchSectionUnitSchedules(
+  schoolYear: string,
+  grade: string,
+  school: string,
+  classSection: string
+) {
+  return withDbConnection(async () => {
+    try {
+      const schedules = await UnitScheduleModel.find({
+        schoolYear,
+        grade,
+        school,
+        classSection
+      })
+        .sort({ unitNumber: 1 })
+        .lean();
+
+      const serialized = JSON.parse(JSON.stringify(schedules));
+      return { success: true, data: serialized as UnitSchedule[] };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch section unit schedules")
+      };
+    }
+  });
+}
+
+/**
+ * Upsert a unit schedule for a specific class section
+ */
+export async function upsertSectionUnitSchedule(data: {
+  schoolYear: string;
+  grade: string;
+  school: string;
+  classSection: string;
+  unitNumber: number;
+  unitName: string;
+  startDate?: string;
+  endDate?: string;
+  sections: Array<{
+    sectionId: string;
+    name: string;
+    startDate?: string;
+    endDate?: string;
+    lessonCount?: number;
+  }>;
+}) {
+  return withDbConnection(async () => {
+    try {
+      const schedule = await UnitScheduleModel.findOneAndUpdate(
+        {
+          schoolYear: data.schoolYear,
+          grade: data.grade,
+          school: data.school,
+          classSection: data.classSection,
+          unitNumber: data.unitNumber
+        },
+        {
+          $set: {
+            unitName: data.unitName,
+            startDate: data.startDate || '',
+            endDate: data.endDate || '',
+            sections: data.sections.map(s => ({
+              sectionId: s.sectionId,
+              name: s.name,
+              startDate: s.startDate || '',
+              endDate: s.endDate || '',
+              plannedDays: s.lessonCount || 0,
+            })),
+            updatedAt: new Date().toISOString()
+          },
+          $setOnInsert: {
+            createdAt: new Date().toISOString(),
+            ownerIds: []
+          }
+        },
+        { upsert: true, new: true }
+      ).lean();
+
+      const serialized = JSON.parse(JSON.stringify(schedule));
+      return { success: true, data: serialized as UnitSchedule };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to save section unit schedule")
+      };
+    }
+  });
+}
+
+/**
+ * Update section dates for a specific class section's unit
+ */
+export async function updateSectionUnitDates(
+  schoolYear: string,
+  grade: string,
+  school: string,
+  classSection: string,
+  unitNumber: number,
+  sectionId: string,
+  startDate: string,
+  endDate: string
+) {
+  return withDbConnection(async () => {
+    try {
+      const schedule = await UnitScheduleModel.findOneAndUpdate(
+        {
+          schoolYear,
+          grade,
+          school,
+          classSection,
+          unitNumber,
+          "sections.sectionId": sectionId
+        },
+        {
+          $set: {
+            "sections.$.startDate": startDate,
+            "sections.$.endDate": endDate,
+            updatedAt: new Date().toISOString()
+          }
+        },
+        { new: true }
+      ).lean();
+
+      if (!schedule) {
+        return { success: false, error: "Section unit schedule not found" };
+      }
+
+      const serialized = JSON.parse(JSON.stringify(schedule));
+      return { success: true, data: serialized as UnitSchedule };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to update section unit dates")
+      };
+    }
+  });
+}
+
+/**
+ * Update unit-level dates for a specific class section
+ */
+export async function updateSectionUnitLevelDates(
+  schoolYear: string,
+  grade: string,
+  school: string,
+  classSection: string,
+  unitNumber: number,
+  startDate: string,
+  endDate: string
+) {
+  return withDbConnection(async () => {
+    try {
+      const schedule = await UnitScheduleModel.findOneAndUpdate(
+        {
+          schoolYear,
+          grade,
+          school,
+          classSection,
+          unitNumber
+        },
+        {
+          $set: {
+            startDate,
+            endDate,
+            updatedAt: new Date().toISOString()
+          }
+        },
+        { new: true }
+      ).lean();
+
+      if (!schedule) {
+        return { success: false, error: "Section unit schedule not found" };
+      }
+
+      const serialized = JSON.parse(JSON.stringify(schedule));
+      return { success: true, data: serialized as UnitSchedule };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to update section unit level dates")
+      };
+    }
+  });
+}
+
+/**
+ * Copy unit schedules from one class section to another
+ */
+export async function copySectionUnitSchedules(
+  schoolYear: string,
+  grade: string,
+  fromSchool: string,
+  fromClassSection: string,
+  toSchool: string,
+  toClassSection: string
+) {
+  return withDbConnection(async () => {
+    try {
+      // Fetch source schedules
+      const sourceSchedules = await UnitScheduleModel.find({
+        schoolYear,
+        grade,
+        school: fromSchool,
+        classSection: fromClassSection
+      }).lean();
+
+      if (sourceSchedules.length === 0) {
+        return { success: false, error: "No schedules found in source section" };
+      }
+
+      // Copy each schedule to the target section
+      const results = [];
+      for (const source of sourceSchedules) {
+        const copied = await UnitScheduleModel.findOneAndUpdate(
+          {
+            schoolYear,
+            grade,
+            school: toSchool,
+            classSection: toClassSection,
+            unitNumber: source.unitNumber
+          },
+          {
+            $set: {
+              unitName: source.unitName,
+              startDate: source.startDate || '',
+              endDate: source.endDate || '',
+              sections: source.sections,
+              color: source.color,
+              notes: source.notes,
+              updatedAt: new Date().toISOString()
+            },
+            $setOnInsert: {
+              createdAt: new Date().toISOString(),
+              ownerIds: []
+            }
+          },
+          { upsert: true, new: true }
+        ).lean();
+        results.push(copied);
+      }
+
+      const serialized = JSON.parse(JSON.stringify(results));
+      return {
+        success: true,
+        data: serialized as UnitSchedule[],
+        message: `Copied ${results.length} unit schedules`
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to copy section unit schedules")
       };
     }
   });

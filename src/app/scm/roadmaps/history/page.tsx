@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { fetchStudentAssessments, getAssessmentDateRange } from "@/app/actions/313/student-assessments";
 import { fetchStudents } from "@/app/actions/313/students";
 import { fetchZearnCompletions, importZearnCompletions, ZearnHistoryRow } from "@/app/actions/313/zearn-completions";
+import { fetchPodsieCompletions, PodsieCompletionRow } from "@/app/actions/313/podsie-history";
 import { Student } from "@zod-schema/313/student/student";
 import { Sections313 } from "@/lib/schema/enum/313";
 // import { useAssessmentScraper } from "../assessment-scraper/hooks/useAssessmentScraper";
@@ -75,6 +76,12 @@ export default function AssessmentHistoryPage() {
     errors: string[];
   } | null>(null);
   const zearnFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Podsie data state
+  const [podsieData, setPodsieData] = useState<PodsieCompletionRow[]>([]);
+  const [filteredPodsieData, setFilteredPodsieData] = useState<PodsieCompletionRow[]>([]);
+  const [podsieLoading, setPodsieLoading] = useState(true);
+  const [podsieError, setPodsieError] = useState<string | null>(null);
 
   // Assessment scraper hook (commented out - scraper runs via GitHub Actions)
   // const {
@@ -214,6 +221,30 @@ export default function AssessmentHistoryPage() {
     loadZearnData();
   }, []);
 
+  // Load Podsie completion data
+  useEffect(() => {
+    const loadPodsieData = async () => {
+      try {
+        setPodsieLoading(true);
+        const result = await fetchPodsieCompletions();
+
+        if (result.success && result.data) {
+          setPodsieData(result.data);
+          setFilteredPodsieData(result.data);
+        } else if (!result.success) {
+          setPodsieError(result.error || "Failed to load Podsie data");
+        }
+      } catch (err) {
+        setPodsieError('Failed to load Podsie data');
+        console.error('Error loading Podsie data:', err);
+      } finally {
+        setPodsieLoading(false);
+      }
+    };
+
+    loadPodsieData();
+  }, []);
+
   // Apply filters
   useEffect(() => {
     // Helper function to convert dateCompleted to YYYY-MM-DD format for comparison
@@ -313,7 +344,41 @@ export default function AssessmentHistoryPage() {
     }
 
     setFilteredZearnData(filteredZearn);
-  }, [data, zearnData, selectedSection, selectedStatus, startDate, endDate]);
+
+    // Also filter Podsie data
+    let filteredPodsie = [...podsieData];
+
+    // Filter by section
+    if (selectedSection) {
+      filteredPodsie = filteredPodsie.filter(row => row.section === selectedSection);
+    }
+
+    // Helper to convert Podsie completedDate (ISO format) to YYYY-MM-DD
+    const toPodsieComparableDate = (dateStr: string): string => {
+      // Handle ISO format: "2025-01-15T14:30:00.000Z" -> "2025-01-15"
+      return dateStr.split('T')[0];
+    };
+
+    // Filter by date range for Podsie
+    if (startDate && endDate) {
+      filteredPodsie = filteredPodsie.filter(row => {
+        const dateStr = toPodsieComparableDate(row.completedDate);
+        return dateStr >= startDate && dateStr <= endDate;
+      });
+    } else if (startDate) {
+      filteredPodsie = filteredPodsie.filter(row => {
+        const dateStr = toPodsieComparableDate(row.completedDate);
+        return dateStr >= startDate;
+      });
+    } else if (endDate) {
+      filteredPodsie = filteredPodsie.filter(row => {
+        const dateStr = toPodsieComparableDate(row.completedDate);
+        return dateStr <= endDate;
+      });
+    }
+
+    setFilteredPodsieData(filteredPodsie);
+  }, [data, zearnData, podsieData, selectedSection, selectedStatus, startDate, endDate]);
 
   // Calculate summary statistics
   const totalAttempts = filteredData.length;
@@ -436,13 +501,13 @@ export default function AssessmentHistoryPage() {
   // Copy shoutouts to clipboard
   const handleCopyShoutouts = async () => {
     // Group by student first name
-    const studentCounts = new Map<string, { zearn: number; roadmaps: number }>();
+    const studentCounts = new Map<string, { zearn: number; roadmaps: number; podsie: number }>();
 
     // Count Zearn completions (from filtered data)
     for (const row of filteredZearnData) {
       // Extract first name from "LastName, FirstName" format
       const firstName = row.studentName.split(', ')[1] || row.studentName;
-      const current = studentCounts.get(firstName) || { zearn: 0, roadmaps: 0 };
+      const current = studentCounts.get(firstName) || { zearn: 0, roadmaps: 0, podsie: 0 };
       current.zearn++;
       studentCounts.set(firstName, current);
     }
@@ -451,10 +516,19 @@ export default function AssessmentHistoryPage() {
     for (const row of filteredData) {
       if (row.passed) {
         const firstName = row.studentName.split(', ')[1] || row.studentName;
-        const current = studentCounts.get(firstName) || { zearn: 0, roadmaps: 0 };
+        const current = studentCounts.get(firstName) || { zearn: 0, roadmaps: 0, podsie: 0 };
         current.roadmaps++;
         studentCounts.set(firstName, current);
       }
+    }
+
+    // Count Podsie completions (from filtered data)
+    for (const row of filteredPodsieData) {
+      // Extract first name from "LastName, FirstName" format
+      const firstName = row.studentName.split(', ')[1] || row.studentName;
+      const current = studentCounts.get(firstName) || { zearn: 0, roadmaps: 0, podsie: 0 };
+      current.podsie++;
+      studentCounts.set(firstName, current);
     }
 
     // Format as bullet points
@@ -472,6 +546,10 @@ export default function AssessmentHistoryPage() {
 
       if (counts.roadmaps > 0) {
         parts.push(counts.roadmaps > 1 ? `📍 (${counts.roadmaps}x)` : '📍');
+      }
+
+      if (counts.podsie > 0) {
+        parts.push(counts.podsie > 1 ? `🅿️ (${counts.podsie}x)` : '🅿️');
       }
 
       if (parts.length > 0) {
@@ -511,7 +589,7 @@ export default function AssessmentHistoryPage() {
               {startDate === endDate && (
                 <Button
                   onClick={handleCopyShoutouts}
-                  disabled={filteredData.length === 0 && filteredZearnData.length === 0}
+                  disabled={filteredData.length === 0 && filteredZearnData.length === 0 && filteredPodsieData.length === 0}
                   intent={copied ? "success" : "secondary"}
                   appearance="solid"
                   textSize="sm"
@@ -716,8 +794,8 @@ export default function AssessmentHistoryPage() {
           </div>
         )}
 
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        {/* Three Column Layout */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Left Column - Roadmaps */}
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
@@ -958,6 +1036,111 @@ export default function AssessmentHistoryPage() {
                                 }
                               }
                               return row.completionDate;
+                            })() : '-'}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Third Column - Podsie */}
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">Podsie Completions</h2>
+                  <p className="text-sm text-gray-600 flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+                      <CheckIcon className="h-3 w-3" />
+                      {filteredPodsieData.length.toLocaleString()} completed
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            {podsieLoading ? (
+              <div className="p-8 flex flex-col items-center justify-center">
+                <Spinner size="lg" variant="default" />
+                <div className="text-gray-500 mt-3">Loading Podsie data...</div>
+              </div>
+            ) : podsieError ? (
+              <div className="p-8 text-center text-red-600">
+                Error: {podsieError}
+              </div>
+            ) : (
+              <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Student
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Section
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Assignment
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Date
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredPodsieData.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="px-4 py-8 text-center text-gray-500">
+                          No Podsie data found
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredPodsieData.map((row, index) => (
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                            {row.studentName}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                            {row.section}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-900">
+                            <span className={`px-2 py-1 rounded text-xs font-mono ${
+                              row.lessonType === 'rampUp'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : row.lessonType === 'assessment'
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-purple-100 text-purple-800'
+                            }`}>
+                              {row.unitLessonId || row.assignmentName}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                            {row.completedDate ? (() => {
+                              const date = new Date(row.completedDate);
+                              const today = new Date();
+                              const yesterday = new Date(today);
+                              yesterday.setDate(yesterday.getDate() - 1);
+
+                              const isToday = date.getDate() === today.getDate() &&
+                                             date.getMonth() === today.getMonth() &&
+                                             date.getFullYear() === today.getFullYear();
+                              const isYesterday = date.getDate() === yesterday.getDate() &&
+                                                 date.getMonth() === yesterday.getMonth() &&
+                                                 date.getFullYear() === yesterday.getFullYear();
+
+                              if (isToday) {
+                                return `Today, ${date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+                              } else if (isYesterday) {
+                                return `Yesterday, ${date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+                              } else {
+                                const dayOfWeek = date.toLocaleDateString([], { weekday: 'short' });
+                                const dateStr = date.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
+                                const timeStr = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                                return `${dayOfWeek}, ${dateStr}, ${timeStr}`;
+                              }
                             })() : '-'}
                           </td>
                         </tr>

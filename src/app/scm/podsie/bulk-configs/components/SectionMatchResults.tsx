@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
@@ -399,8 +399,45 @@ interface UnmatchedRowProps {
   isSaving: boolean;
 }
 
+interface GroupedLessons {
+  unitNumber: string;
+  grade: string;
+  lessons: AvailableLesson[];
+}
+
+/**
+ * Extract unit number from unitLessonId (e.g., "4.RU1" -> "4", "4.1" -> "4")
+ */
+function extractUnitNumber(unitLessonId: string): string {
+  const match = unitLessonId.match(/^(\d+)\./);
+  return match ? match[1] : "0";
+}
+
 function UnmatchedRow({ assignment, availableLessons, onManualMatch, isSaving }: UnmatchedRowProps) {
   const [selectedLessonId, setSelectedLessonId] = useState<string>("");
+
+  // Group lessons by unit number
+  const groupedLessons = useMemo(() => {
+    const groups = new Map<string, GroupedLessons>();
+
+    for (const lesson of availableLessons) {
+      const unitNumber = extractUnitNumber(lesson.unitLessonId);
+      const grade = lesson.grade || "Unknown";
+      const key = `${grade}-${unitNumber}`;
+
+      if (!groups.has(key)) {
+        groups.set(key, { unitNumber, grade, lessons: [] });
+      }
+      groups.get(key)!.lessons.push(lesson);
+    }
+
+    // Sort groups by grade then unit number
+    return Array.from(groups.values()).sort((a, b) => {
+      const gradeCompare = a.grade.localeCompare(b.grade);
+      if (gradeCompare !== 0) return gradeCompare;
+      return parseInt(a.unitNumber) - parseInt(b.unitNumber);
+    });
+  }, [availableLessons]);
 
   const handleSave = () => {
     const lesson = availableLessons.find(l => l.id === selectedLessonId);
@@ -428,11 +465,15 @@ function UnmatchedRow({ assignment, availableLessons, onManualMatch, isSaving }:
           disabled={isSaving}
         >
           <option value="">Select a lesson to match...</option>
-          {availableLessons.map((lesson) => (
-            <option key={lesson.id} value={lesson.id}>
-              {lesson.unitLessonId}: {lesson.lessonName}
-              {lesson.lessonType && ` (${lesson.lessonType})`}
-            </option>
+          {groupedLessons.map((group) => (
+            <optgroup key={`${group.grade}-unit-${group.unitNumber}`} label={`Grade ${group.grade} — Unit ${group.unitNumber}`}>
+              {group.lessons.map((lesson) => (
+                <option key={lesson.id} value={lesson.id}>
+                  {lesson.unitLessonId}: {lesson.lessonName}
+                  {lesson.lessonType && ` (${lesson.lessonType})`}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
         <button

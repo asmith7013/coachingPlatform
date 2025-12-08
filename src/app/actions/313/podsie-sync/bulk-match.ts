@@ -27,6 +27,11 @@ export interface AssignmentMatchResult {
   assignmentType: 'sidekick' | 'mastery-check' | 'assessment';
   alreadyExists: boolean;
   existingScopeSequenceId?: string;
+  // Info about the existing match (when alreadyExists is true)
+  existingLesson?: {
+    unitLessonId: string;
+    lessonName: string;
+  };
 }
 
 export interface ConflictResult {
@@ -253,7 +258,11 @@ async function fetchAndMatchSection(
           similarity: matchResult.similarity,
           assignmentType,
           alreadyExists,
-          existingScopeSequenceId: existingInfo?.scopeAndSequenceId
+          existingScopeSequenceId: existingInfo?.scopeAndSequenceId,
+          existingLesson: existingInfo ? {
+            unitLessonId: existingInfo.unitLessonId,
+            lessonName: existingInfo.lessonName
+          } : undefined
         });
       }
     } else {
@@ -268,7 +277,11 @@ async function fetchAndMatchSection(
           similarity: 0,
           assignmentType: 'mastery-check',
           alreadyExists: true,
-          existingScopeSequenceId: existingInfo?.scopeAndSequenceId
+          existingScopeSequenceId: existingInfo?.scopeAndSequenceId,
+          existingLesson: existingInfo ? {
+            unitLessonId: existingInfo.unitLessonId,
+            lessonName: existingInfo.lessonName
+          } : undefined
         });
       }
     }
