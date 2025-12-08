@@ -32,7 +32,8 @@
       "Skill(create-p5-animation)",
       "Skill(create-worked-example-sg)",
       "Skill(question-types)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(node .claude/skills/create-worked-example-sg/templates/sync-to-db.js:*)"
     ],
     "deny": [],
     "ask": []

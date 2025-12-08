@@ -164,9 +164,14 @@ A print-friendly worksheet for teachers to print and distribute. Contains only t
 - Header with lesson info and name/date fields on each page
 - Learning goal box on each page
 - Compact SVG graphs with black lines on white background
-- Print media query with page-break-after for proper front/back printing
+- **Print button** appears automatically on last slide (handled by PresentationModal)
+- **Print styles** are handled by PresentationModal - no need to add `<style>` in the HTML
 
-**IMPORTANT:** Do NOT include the worked example (first scenario) on the printable. Only include the 2 practice problems so students practice independently without seeing the solution.
+**IMPORTANT:**
+- Do NOT include the worked example (first scenario) on the printable
+- Do NOT add inline print button - it's in the PresentationModal
+- Do NOT add `<style>` block for print - it's in the PresentationModal
+- The `print-page` class is required for proper page breaks
 
 ```html
 <div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
@@ -197,66 +202,44 @@ A print-friendly worksheet for teachers to print and distribute. Contains only t
             </div>
             <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">[PROBLEM DESCRIPTION]</p>
 
-            <!-- Graph or Table -->
-            <div style="display: flex; justify-content: center; flex: 1; align-items: center;">
-                <!-- SVG GRAPH OR TABLE HERE -->
+            <!-- Table and Graph side by side -->
+            <div style="display: flex; gap: 30px; flex: 1; align-items: flex-start;">
+                <!-- TABLE HERE -->
+                <table style="border-collapse: collapse; font-size: 14px;">...</table>
+
+                <!-- SVG GRAPH HERE - use viewBox="0 0 320 280" for proper sizing -->
+                <svg viewBox="0 0 320 280" style="width: 320px; height: 280px; flex-shrink: 0;">...</svg>
             </div>
 
             <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: 15px;">
                 <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
                 <p style="font-size: 13px; line-height: 1.5; margin: 0;">[TASK DESCRIPTION]</p>
-                <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 60px;">
-                    <p style="font-size: 11px; color: #666; margin: 0;">Your explanation:</p>
+                <div style="margin-top: 12px;">
+                    <p style="font-size: 12px; margin: 0 0 5px 0;"><strong>Slope:</strong> ____________</p>
+                    <p style="font-size: 12px; margin: 0 0 5px 0;"><strong>Equation:</strong> y = ____________</p>
+                    <p style="font-size: 12px; margin: 0;"><strong>[Context-specific question]:</strong> ____________</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Page 2: Problem 2 (Back) -->
+    <!-- Page 2: Problem 2 (Back) - SAME STRUCTURE as Page 1 -->
     <div class="print-page" style="width: 8.5in; height: 11in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
-        <!-- Same structure as Page 1, with Problem 2 content -->
+        <!-- Repeat exact same structure with Problem 2 content -->
     </div>
 </div>
-
-<!-- Print-specific styles -->
-<style>
-@media print {
-    .slide-container {
-        overflow: visible !important;
-        height: auto !important;
-    }
-    .print-page {
-        width: 8.5in !important;
-        height: 11in !important;
-        margin: 0 !important;
-        padding: 0.5in !important;
-        box-sizing: border-box !important;
-        page-break-after: always;
-        border: none !important;
-    }
-    .print-page:last-child {
-        page-break-after: auto;
-    }
-    svg line, svg path, svg text, svg circle {
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
-    }
-}
-@page {
-    size: letter portrait;
-    margin: 0;
-}
-</style>
 ```
 
 **Key Points:**
 - ALWAYS include as the **final slide** in every worked example deck
 - **Portrait orientation** (8.5" x 11") - each problem on its own page
 - **Only 2 practice problems** - do NOT include the worked example scenario
-- Use `page-break-after: always` for front/back printing
+- **Use `class="print-page"`** on each page div - this triggers proper page breaks
 - Black lines on white background (no colors except light gray #ccc for grid)
 - Include name/date fields and learning goal on EACH page
 - Font sizes: titles 18px, body 14px, task 13px (larger for portrait)
+- **NO `<style>` block needed** - print styles are in PresentationModal
+- **NO inline print button needed** - it appears automatically on last slide
 
 ## Getting Started: Required Information
 

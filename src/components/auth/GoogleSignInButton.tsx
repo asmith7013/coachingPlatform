@@ -3,16 +3,20 @@
 import { useSignIn } from '@clerk/nextjs'
 import { Button } from '@/components/core/Button'
 
-export function GoogleSignInButton() {
+interface GoogleSignInButtonProps {
+  redirectUrl?: string
+}
+
+export function GoogleSignInButton({ redirectUrl = 'https://solvescoaching.com/scm' }: GoogleSignInButtonProps) {
   const { signIn, isLoaded } = useSignIn()
-  
+
   const signInWithGoogle = () => {
     if (!isLoaded || !signIn) return
-    
+
     signIn.authenticateWithRedirect({
       strategy: 'oauth_google',
-      redirectUrl: '/dashboard',
-      redirectUrlComplete: '/dashboard'
+      redirectUrl: '/sso-callback',
+      redirectUrlComplete: redirectUrl
     })
   }
   

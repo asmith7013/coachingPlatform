@@ -1,9 +1,15 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation'
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
 import { Card } from '@/components/composed/cards/Card'
 
+const DEFAULT_REDIRECT = 'https://solvescoaching.com/scm'
+
 export default function SignInPage() {
+  const searchParams = useSearchParams()
+  const redirectUrl = searchParams.get('redirect_url') || DEFAULT_REDIRECT
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md p-8">
@@ -13,7 +19,7 @@ export default function SignInPage() {
         </div>
         
         <div className="space-y-4">
-          <GoogleSignInButton />
+          <GoogleSignInButton redirectUrl={redirectUrl} />
           
           <div className="relative">
             <div className="absolute inset-0 flex items-center">

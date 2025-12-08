@@ -195,10 +195,10 @@ export function AssignmentProgressTable({
             {showZearnColumn && (
               <td className="px-4 py-2 text-center text-sm font-bold text-purple-800 bg-purple-50">
                 {(() => {
-                  const studentsWithData = progressData.filter((p) => p.totalQuestions > 0);
-                  const zearnCompleted = studentsWithData.filter(p => p.zearnCompleted).length;
-                  return studentsWithData.length > 0
-                    ? Math.round((zearnCompleted / studentsWithData.length) * 100)
+                  // For Zearn, count all students (not just those with synced lesson data)
+                  const zearnCompleted = progressData.filter(p => p.zearnCompleted).length;
+                  return progressData.length > 0
+                    ? Math.round((zearnCompleted / progressData.length) * 100)
                     : 0;
                 })()}%
               </td>

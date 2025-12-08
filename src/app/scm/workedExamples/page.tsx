@@ -99,9 +99,14 @@ export default function PresentationsList() {
                     <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
                       Grade {deck.gradeLevel}
                     </span>
-                    {deck.unitNumber && deck.lessonNumber !== undefined && (
-                      <span className="inline-block px-2 py-1 text-xs font-semibold text-gray-600 bg-gray-100 rounded">
-                        Unit {deck.unitNumber} · Lesson {deck.lessonNumber}
+                    {deck.unitNumber !== undefined && (
+                      <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
+                        Unit {deck.unitNumber}
+                      </span>
+                    )}
+                    {deck.lessonNumber !== undefined && (
+                      <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
+                        Lesson {deck.lessonNumber}
                       </span>
                     )}
                   </div>

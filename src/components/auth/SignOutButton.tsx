@@ -7,7 +7,7 @@ export function SignOutButton() {
   const { signOut } = useClerk()
   
   const handleSignOut = () => {
-    signOut()
+    signOut({ redirectUrl: 'https://solvescoaching.com/scm' })
   }
   
   return (

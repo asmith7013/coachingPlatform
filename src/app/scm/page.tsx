@@ -124,7 +124,7 @@ export default function SCMHomePage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {categories.map((category) => (
           <div key={category.title} className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+            <div className="bg-gradient-to-r from-gray-100 to-gray-200 px-6 py-4 border-b border-gray-200">
               <div className="flex items-center gap-3">
                 {category.iconType === "letter" ? (
                   <div className="w-10 h-10 flex-shrink-0 rounded-lg bg-emerald-500 flex items-center justify-center">
