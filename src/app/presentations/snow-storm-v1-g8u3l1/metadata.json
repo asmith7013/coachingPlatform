@@ -1,0 +1,35 @@
+{
+  "title": "Graphing Proportional Relationships",
+  "slug": "snow-storm-v1-g8u3l1",
+  "mathConcept": "Proportional Relationships - Tables, Graphs, and Equations",
+  "mathStandard": "8.EE.B.5",
+  "gradeLevel": "8",
+  "unitNumber": 3,
+  "lessonNumber": 1,
+  "scopeAndSequenceId": "68ff7f1b5d8ca031d603231f",
+  "learningGoals": [
+    "Plot points from a table on a coordinate plane",
+    "Find the slope (rate of change) from a table",
+    "Write the equation of a proportional relationship in the form y = kx"
+  ],
+  "scenarios": [
+    {
+      "name": "Snow Storm",
+      "context": "Snow falling at a constant rate during a storm",
+      "type": "worked-example"
+    },
+    {
+      "name": "Gaming XP Grind",
+      "context": "Earning experience points in a video game at a constant rate",
+      "type": "practice"
+    },
+    {
+      "name": "Phone Battery Drain",
+      "context": "Battery percentage decreasing at a constant rate while gaming",
+      "type": "practice"
+    }
+  ],
+  "slideCount": 11,
+  "presentationType": "html",
+  "createdAt": "2025-12-08"
+}

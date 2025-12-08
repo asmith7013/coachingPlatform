@@ -183,8 +183,8 @@ export function PresentationModal({ slug, isOpen, onClose }: PresentationModalPr
             </svg>
           </button>
 
-          {/* Navigation Controls - Bottom Right, Compact */}
-          <div className="fixed bottom-4 right-4 flex items-center gap-2 bg-gray-800/70 px-3 py-2 rounded-full z-[10000] text-sm">
+          {/* Navigation Controls - Top Right, left of close button */}
+          <div className="fixed top-4 right-20 h-12 flex items-center gap-2 bg-gray-800/70 px-3 rounded-full z-[10000] text-sm">
             {/* Previous Button */}
             <button
               onClick={prevSlide}

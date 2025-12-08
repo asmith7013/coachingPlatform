@@ -1,0 +1,111 @@
+<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 40px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif;">
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+        <span style="font-size: 40px;">🔋</span>
+        <h2 style="font-size: 36px; font-weight: 700; color: #e2e8f0; margin: 0; text-transform: uppercase;">Phone Battery Drain</h2>
+    </div>
+    <p style="font-size: 20px; color: #94a3b8; margin-bottom: 25px;">Your phone battery drains at a constant rate while gaming. The table shows the percentage of battery used, y, after x minutes of playing.</p>
+
+    <div style="display: flex; gap: 50px; flex: 1; align-items: center; justify-content: center;">
+        <!-- Table -->
+        <div style="background: rgba(30, 41, 59, 0.8); border-radius: 12px; padding: 20px; border: 2px solid #334155;">
+            <table style="border-collapse: collapse; font-size: 18px;">
+                <thead>
+                    <tr>
+                        <th style="background: #475569; padding: 12px 30px; border: 1px solid #64748b; color: #e2e8f0;">Minutes, x</th>
+                        <th style="background: #475569; padding: 12px 30px; border: 1px solid #64748b; color: #e2e8f0;">Battery Used (%), y</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 12px 30px; border: 1px solid #64748b; text-align: center; color: #cbd5e1;">0</td>
+                        <td style="padding: 12px 30px; border: 1px solid #64748b; text-align: center; color: #cbd5e1;">0</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 30px; border: 1px solid #64748b; text-align: center; color: #cbd5e1;">10</td>
+                        <td style="padding: 12px 30px; border: 1px solid #64748b; text-align: center; color: #cbd5e1;">5</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 30px; border: 1px solid #64748b; text-align: center; color: #cbd5e1;">30</td>
+                        <td style="padding: 12px 30px; border: 1px solid #64748b; text-align: center; color: #cbd5e1;">15</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 30px; border: 1px solid #64748b; text-align: center; color: #cbd5e1;">50</td>
+                        <td style="padding: 12px 30px; border: 1px solid #64748b; text-align: center; color: #cbd5e1;">25</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty Graph -->
+        <div style="background: rgba(30, 41, 59, 0.5); border-radius: 12px; padding: 20px; border: 2px solid #334155;">
+            <svg viewBox="0 0 380 340" style="width: 340px; height: 300px;">
+                <!-- Grid -->
+                <g stroke="#334155" stroke-width="0.5">
+                    <!-- Horizontal grid lines every 27px (5%) -->
+                    <line x1="50" y1="30" x2="350" y2="30"/>
+                    <line x1="50" y1="57" x2="350" y2="57"/>
+                    <line x1="50" y1="84" x2="350" y2="84"/>
+                    <line x1="50" y1="111" x2="350" y2="111"/>
+                    <line x1="50" y1="138" x2="350" y2="138"/>
+                    <line x1="50" y1="165" x2="350" y2="165"/>
+                    <line x1="50" y1="192" x2="350" y2="192"/>
+                    <line x1="50" y1="219" x2="350" y2="219"/>
+                    <line x1="50" y1="246" x2="350" y2="246"/>
+                    <line x1="50" y1="273" x2="350" y2="273"/>
+                    <line x1="50" y1="300" x2="350" y2="300"/>
+                    <!-- Vertical grid lines every 30px (10 min) -->
+                    <line x1="50" y1="30" x2="50" y2="300"/>
+                    <line x1="80" y1="30" x2="80" y2="300"/>
+                    <line x1="110" y1="30" x2="110" y2="300"/>
+                    <line x1="140" y1="30" x2="140" y2="300"/>
+                    <line x1="170" y1="30" x2="170" y2="300"/>
+                    <line x1="200" y1="30" x2="200" y2="300"/>
+                    <line x1="230" y1="30" x2="230" y2="300"/>
+                    <line x1="260" y1="30" x2="260" y2="300"/>
+                    <line x1="290" y1="30" x2="290" y2="300"/>
+                    <line x1="320" y1="30" x2="320" y2="300"/>
+                    <line x1="350" y1="30" x2="350" y2="300"/>
+                </g>
+                <!-- Axes -->
+                <line x1="50" y1="300" x2="350" y2="300" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="50" y1="30" x2="50" y2="300" stroke="#94a3b8" stroke-width="2"/>
+                <!-- Arrows -->
+                <polygon points="50,25 45,35 55,35" fill="#94a3b8"/>
+                <polygon points="355,300 345,295 345,305" fill="#94a3b8"/>
+                <!-- Y-axis labels (0-50%, every 5%) -->
+                <text x="40" y="304" fill="#94a3b8" font-size="11" text-anchor="end">0</text>
+                <text x="40" y="277" fill="#94a3b8" font-size="11" text-anchor="end">5</text>
+                <text x="40" y="250" fill="#94a3b8" font-size="11" text-anchor="end">10</text>
+                <text x="40" y="223" fill="#94a3b8" font-size="11" text-anchor="end">15</text>
+                <text x="40" y="196" fill="#94a3b8" font-size="11" text-anchor="end">20</text>
+                <text x="40" y="169" fill="#94a3b8" font-size="11" text-anchor="end">25</text>
+                <text x="40" y="142" fill="#94a3b8" font-size="11" text-anchor="end">30</text>
+                <text x="40" y="115" fill="#94a3b8" font-size="11" text-anchor="end">35</text>
+                <text x="40" y="88" fill="#94a3b8" font-size="11" text-anchor="end">40</text>
+                <text x="40" y="61" fill="#94a3b8" font-size="11" text-anchor="end">45</text>
+                <text x="40" y="34" fill="#94a3b8" font-size="11" text-anchor="end">50</text>
+                <!-- X-axis labels (0-100 min, every 10) -->
+                <text x="50" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
+                <text x="80" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">10</text>
+                <text x="110" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">20</text>
+                <text x="140" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">30</text>
+                <text x="170" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">40</text>
+                <text x="200" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">50</text>
+                <text x="230" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">60</text>
+                <text x="260" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">70</text>
+                <text x="290" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">80</text>
+                <text x="320" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">90</text>
+                <text x="350" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">100</text>
+                <!-- Axis titles -->
+                <text x="15" y="165" fill="#cbd5e1" font-size="13" text-anchor="middle" transform="rotate(-90, 15, 165)">Battery Used (%)</text>
+                <text x="200" y="338" fill="#cbd5e1" font-size="13" text-anchor="middle">Minutes</text>
+            </svg>
+        </div>
+    </div>
+
+    <div style="background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 15px 20px; border-radius: 0 8px 8px 0; margin-top: 15px;">
+        <p style="font-size: 18px; color: #fbbf24; margin: 0; font-weight: 600;">
+            <strong>Your Task:</strong> Plot the points. Find the slope (% per minute). Write the equation. How long until 100% battery is used?
+        </p>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+{
+  "title": "Interpreting Graphs of Proportional Relationships",
+  "slug": "turtle-race-v2-g8u3l1",
+  "mathConcept": "Proportional Relationships and Graphs",
+  "mathStandard": "8.EE.B.5",
+  "gradeLevel": 8,
+  "unitNumber": 3,
+  "lessonNumber": 1,
+  "scopeAndSequenceId": "68ff7f1b5d8ca031d603231f",
+  "learningGoals": [
+    "Comprehend that for the equation of a proportional relationship, the constant represents the constant of proportionality",
+    "Create graphs and equations of proportional relationships in context, including an appropriate scale",
+    "Interpret diagrams or graphs of proportional relationships in context"
+  ],
+  "slideCount": 11,
+  "scenarios": [
+    {
+      "name": "Turtle Race",
+      "description": "Two turtles racing - draw a third turtle going half as fast",
+      "icon": "turtle"
+    },
+    {
+      "name": "Drone Race",
+      "description": "Two drones flying - draw one going twice as fast",
+      "icon": "drone"
+    },
+    {
+      "name": "Robot Challenge",
+      "description": "Two robots moving - draw one going one-third as fast",
+      "icon": "robot"
+    }
+  ]
+}

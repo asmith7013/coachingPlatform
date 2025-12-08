@@ -152,6 +152,112 @@ See `.claude/skills/create-worked-example-sg/templates/answer-toggle-snippet.htm
 
 Same structure as problem setup, but different scenario ("Hypebeast Trade" with sneakers/hoodies instead of gems/gold). NO annotations, NO CFU, NO steps.
 
+### Pattern 6: Printable Worksheet (Final Slide)
+
+A print-friendly worksheet for teachers to print and distribute. Contains only the 2 practice problems (NOT the worked example) - one for front, one for back of the page.
+
+**Key Features:**
+- **Portrait orientation** (8.5" x 11") - two pages stacked vertically
+- Each problem on its own full page (prints front/back)
+- White background with black text (print-friendly)
+- Serif font (Times New Roman) for readability on paper
+- Header with lesson info and name/date fields on each page
+- Learning goal box on each page
+- Compact SVG graphs with black lines on white background
+- Print media query with page-break-after for proper front/back printing
+
+**IMPORTANT:** Do NOT include the worked example (first scenario) on the printable. Only include the 2 practice problems so students practice independently without seeing the solution.
+
+```html
+<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
+
+    <!-- Page 1: Problem 1 (Front) -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Header with lesson info -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">[LESSON TITLE]</h1>
+                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Unit [X] Lesson [Y] | Grade [Z]</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 13px; margin: 0;">Name: _______________________</p>
+                <p style="font-size: 13px; margin: 4px 0 0 0;">Date: ________________________</p>
+            </div>
+        </div>
+
+        <!-- Learning Goal Box -->
+        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 20px;">
+            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> [STUDENT-FACING LEARNING GOAL]</p>
+        </div>
+
+        <!-- Problem 1 -->
+        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
+            <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
+                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 1: [SCENARIO NAME]</h3>
+            </div>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">[PROBLEM DESCRIPTION]</p>
+
+            <!-- Graph or Table -->
+            <div style="display: flex; justify-content: center; flex: 1; align-items: center;">
+                <!-- SVG GRAPH OR TABLE HERE -->
+            </div>
+
+            <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: 15px;">
+                <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
+                <p style="font-size: 13px; line-height: 1.5; margin: 0;">[TASK DESCRIPTION]</p>
+                <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 60px;">
+                    <p style="font-size: 11px; color: #666; margin: 0;">Your explanation:</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Problem 2 (Back) -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Same structure as Page 1, with Problem 2 content -->
+    </div>
+</div>
+
+<!-- Print-specific styles -->
+<style>
+@media print {
+    .slide-container {
+        overflow: visible !important;
+        height: auto !important;
+    }
+    .print-page {
+        width: 8.5in !important;
+        height: 11in !important;
+        margin: 0 !important;
+        padding: 0.5in !important;
+        box-sizing: border-box !important;
+        page-break-after: always;
+        border: none !important;
+    }
+    .print-page:last-child {
+        page-break-after: auto;
+    }
+    svg line, svg path, svg text, svg circle {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+}
+@page {
+    size: letter portrait;
+    margin: 0;
+}
+</style>
+```
+
+**Key Points:**
+- ALWAYS include as the **final slide** in every worked example deck
+- **Portrait orientation** (8.5" x 11") - each problem on its own page
+- **Only 2 practice problems** - do NOT include the worked example scenario
+- Use `page-break-after: always` for front/back printing
+- Black lines on white background (no colors except light gray #ccc for grid)
+- Include name/date fields and learning goal on EACH page
+- Font sizes: titles 18px, body 14px, task 13px (larger for portrait)
+
 ## Getting Started: Required Information
 
 When the user asks you to create a worked example, **ALWAYS prompt them for these pieces of information**:
@@ -270,7 +376,7 @@ For each step, create:
 - "What is X + Y?" (computation question)
 - "What's the answer?" (result question)
 
-### Step 4: Generate HTML Slides (7-9 slides total)
+### Step 4: Generate HTML Slides (8-11 slides total)
 
 **CRITICAL: Visual Fit Requirements**
 
@@ -331,6 +437,14 @@ Before creating slides, ensure:
 10. **Practice Problem 2** (Third exit ticket)
     - New scenario, no scaffolding
     - Just the problem setup
+
+11. **Printable Worksheet** (REQUIRED - always include as final slide)
+    - White background, black text (print-friendly)
+    - Contains only the 2 practice problems (NOT the worked example)
+    - **Portrait orientation** (8.5" x 11") - each problem on its own full page
+    - Two pages stacked vertically for front/back printing
+    - Header, learning goal, and name/date fields on EACH page
+    - See Pattern 6 above for detailed template
 
 ### Step 5: Generate HTML with Visual Stability
 
@@ -456,6 +570,9 @@ src/app/presentations/
   "mathConcept": "Unit Rates",
   "mathStandard": "7.RP.A.1",
   "gradeLevel": 7,
+  "unitNumber": 3,
+  "lessonNumber": 1,
+  "scopeAndSequenceId": "abc123...",
   "learningGoals": [
     "Students will be able to find unit rates using division",
     "Students will understand that a unit rate is the amount per one unit"
@@ -463,6 +580,8 @@ src/app/presentations/
   "sourceImage": "unit-rate-problem.png"
 }
 ```
+
+**IMPORTANT:** Always include `unitNumber` and `lessonNumber` in metadata.json. These are required for the worked example to display properly on the listing page.
 
 **Part B: Sync to Database**
 
