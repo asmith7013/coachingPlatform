@@ -11,21 +11,10 @@ import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
 import { Student } from "@zod-schema/313/student/student";
 import { RoadmapUnit } from "@zod-schema/313/curriculum/roadmap-unit";
+import { ScopeAndSequence } from "@zod-schema/313/curriculum/scope-and-sequence";
 import { Spinner } from "@/components/core/feedback/Spinner";
 
-interface ScopeAndSequenceEntry {
-  _id: string;
-  grade: string;
-  unit: string;
-  unitLessonId: string;
-  unitNumber: number;
-  lessonNumber: number;
-  lessonName: string;
-  section?: string;
-  scopeSequenceTag?: string;
-  roadmapSkills?: string[];
-  targetSkills?: string[];
-}
+type ScopeAndSequenceEntry = ScopeAndSequence;
 
 const SCOPE_SEQUENCE_TAG_OPTIONS = [
   { value: "", label: "Select Curriculum" },
@@ -105,9 +94,14 @@ export default function ScopeAndSequencePage() {
   };
 
   // Get unique units for the selected tag, grouped by grade
+  // Only include regular lessons (not ramp-ups or assessments) when building unit list
   const unitsByGrade = selectedTag
     ? allLessons
-        .filter(lesson => lesson.scopeSequenceTag === selectedTag)
+        .filter(lesson => {
+          if (lesson.scopeSequenceTag !== selectedTag) return false;
+          // Only include regular lessons for unit list
+          return !lesson.lessonType || lesson.lessonType === "lesson";
+        })
         .reduce((acc, lesson) => {
           const grade = lesson.grade;
           if (!acc[grade]) {
@@ -134,12 +128,15 @@ export default function ScopeAndSequencePage() {
       units: Array.from(unitsByGrade[grade]).sort()
     }));
 
-  // Get lessons for the selected tag and unit
+  // Get lessons for the selected tag and unit (only regular lessons, not ramp-ups or assessments)
   const filteredLessons = allLessons.filter(lesson => {
     if (!selectedTag) return false;
     if (!selectedUnit) return false;
+    if (lesson.scopeSequenceTag !== selectedTag || lesson.unit !== selectedUnit) return false;
 
-    return lesson.scopeSequenceTag === selectedTag && lesson.unit === selectedUnit;
+    // Only show regular lessons (exclude ramp-ups and assessments)
+    // Include lessons with no lessonType for backward compatibility
+    return !lesson.lessonType || lesson.lessonType === "lesson";
   });
 
   // Clear selected lesson when filters change
