@@ -337,7 +337,7 @@ export function VelocityGraph({
           <ToggleSwitch
             checked={showRampUps}
             onChange={onShowRampUpsChange}
-            label="Show Ramp Ups"
+            label="Include Ramp Ups"
           />
           <ToggleSwitch
             checked={includeNotTracked}
