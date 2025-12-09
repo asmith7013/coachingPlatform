@@ -1,0 +1,22 @@
+{
+  "questionNumber": 1,
+  "questionTitle": "Short descriptive title (max 80 chars)",
+  "contextScenario": "Optional introductory text or scenario that sets up the problem context.",
+  "questionText": "The actual question prompt exactly as students see it.",
+  "visualType": "none",
+  "visualHtml": "",
+  "visualDescription": "Alt text description of any visual element",
+  "acceptanceCriteria": [
+    "First condition for a correct response",
+    "Second condition or alternative acceptable form"
+  ],
+  "correctAnswer": "15",
+  "acceptableAnswerForms": ["15", "15.0", "15/1"],
+  "explanation": "Guidance for AI tutor - explain the concept, common misconceptions, and hints to give struggling students.",
+  "solutionSteps": [
+    "Step 1: Identify the given information",
+    "Step 2: Set up the calculation",
+    "Step 3: Perform the operation",
+    "Step 4: State the final answer"
+  ]
+}
