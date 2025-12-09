@@ -1,4 +1,5 @@
 import { Spinner } from '@/components/core/feedback/Spinner';
+import { BookOpenIcon } from "@heroicons/react/24/outline";
 
 interface LoadingStateProps {
   message?: string;
@@ -59,7 +60,7 @@ export function NoAssignmentsState({ selectedUnit, selectedLessonSection }: NoAs
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12 text-center">
-      <div className="text-gray-400 text-4xl mb-4">📚</div>
+      <BookOpenIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
       <div className="text-gray-600">
         No assignments found for Unit {selectedUnit}, {sectionDisplay}
       </div>

@@ -5,6 +5,7 @@ import { RoadmapUnit } from "@zod-schema/313/curriculum/roadmap-unit";
 import { Student } from "@zod-schema/313/student/student";
 import { SkillListWithProgress } from "../../components/SkillListWithProgress";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
+import { BookOpenIcon } from "@heroicons/react/24/outline";
 
 interface UnitDetailViewProps {
   unit: RoadmapUnit | null;
@@ -79,7 +80,7 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
     return (
       <div className="flex items-center justify-center h-full bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
         <div className="text-center p-8">
-          <div className="text-gray-400 text-lg mb-2">📚</div>
+          <BookOpenIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
           <div className="text-gray-600 font-medium mb-1">No Unit Selected</div>
           <div className="text-gray-500 text-sm">Select a grade and unit to view details</div>
         </div>

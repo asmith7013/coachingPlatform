@@ -4,17 +4,24 @@ import { useState, useEffect, useCallback } from "react";
 import { fetchRoadmapsSkills, fetchRoadmapsSkillsByNumbers } from "@actions/313/roadmaps-skills";
 import { fetchLessonsListByScopeTag, fetchScopeAndSequenceById } from "@actions/313/scope-and-sequence";
 import { createWorkedExampleRequest, uploadWorkedExampleImage } from "@actions/313/worked-example-requests";
-import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
+import { RoadmapsSkill, PracticeProblem } from "@zod-schema/313/curriculum/roadmap-skill";
 import { ScopeAndSequence } from "@zod-schema/313/curriculum/scope-and-sequence";
+import { Student } from "@zod-schema/313/student/student";
 import { SkillDetailWrapper } from "../../roadmaps/components/SkillDetailWrapper";
+import { SkillListWithProgress } from "../../roadmaps/components/SkillListWithProgress";
+import { StudentFilter } from "../../roadmaps/scope-and-sequence/components/StudentFilter";
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback/Spinner";
+import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
+import { BookOpenIcon } from "@heroicons/react/24/outline";
 import {
   RequestHeader,
-  TargetSkillsList,
   WorkedExampleForm,
   LessonContextCard,
+  RequestTypeSelector,
+  PracticeProblemQueue,
 } from "./components";
+import type { RequestType, QueuedPracticeProblem } from "./components";
 
 // Lightweight lesson data for list display
 interface LessonListItem {
@@ -60,7 +67,22 @@ export default function WorkedExampleRequestPage() {
   // UI state
   const [error, setError] = useState<string | null>(null);
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
+  const [selectedSkillColor, setSelectedSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('green');
   const [contextSkillId, setContextSkillId] = useState<string | null>(null);
+  const [contextSkillColor, setContextSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('orange');
+  const [showDescriptions, setShowDescriptions] = useState(false);
+
+  // Request type state
+  const [requestType, setRequestType] = useState<RequestType | null>(null);
+
+  // Practice problem queue state (for prerequisite-skill flow)
+  const [practiceProblemQueue, setPracticeProblemQueue] = useState<QueuedPracticeProblem[]>([]);
+  const [selectedPracticeProblem, setSelectedPracticeProblem] = useState<QueuedPracticeProblem | null>(null);
+
+  // Student filter state
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
+  const [selectedSection, setSelectedSection] = useState<string>("");
 
   // Form state
   const [selectedStrugglingSkills, setSelectedStrugglingSkills] = useState<Set<string>>(new Set());
@@ -267,10 +289,6 @@ export default function WorkedExampleRequestPage() {
     setContextSkillId(null);
   };
 
-  const handleSkillClick = (skillId: string) => {
-    setSelectedSkillId(skillId);
-  };
-
   const handleSkillToggle = (skillNumber: string) => {
     setSelectedStrugglingSkills(prev => {
       const newSet = new Set(prev);
@@ -291,6 +309,51 @@ export default function WorkedExampleRequestPage() {
   const handleImageRemove = () => {
     setUploadedImage(null);
   };
+
+  // Queue handlers for practice problem consideration queue
+  const handleAddToQueue = useCallback((
+    problem: PracticeProblem,
+    skillNumber: string,
+    skillTitle: string,
+    skillColor: 'green' | 'orange' | 'purple'
+  ) => {
+    setPracticeProblemQueue(prev => {
+      // Check if already in queue
+      const exists = prev.some(
+        item => item.skillNumber === skillNumber && item.problemNumber === problem.problemNumber
+      );
+      if (exists) return prev;
+
+      return [...prev, {
+        skillNumber,
+        skillTitle,
+        problemNumber: problem.problemNumber,
+        screenshotUrl: problem.screenshotUrl,
+        skillColor,
+      }];
+    });
+  }, []);
+
+  const handleRemoveFromQueue = useCallback((item: QueuedPracticeProblem) => {
+    setPracticeProblemQueue(prev =>
+      prev.filter(p => !(p.skillNumber === item.skillNumber && p.problemNumber === item.problemNumber))
+    );
+    // If we removed the selected item, deselect it
+    if (selectedPracticeProblem?.skillNumber === item.skillNumber &&
+        selectedPracticeProblem?.problemNumber === item.problemNumber) {
+      setSelectedPracticeProblem(null);
+    }
+  }, [selectedPracticeProblem]);
+
+  const handleSelectFromQueue = useCallback((item: QueuedPracticeProblem) => {
+    setSelectedPracticeProblem(item);
+  }, []);
+
+  const isProblemInQueue = useCallback((skillNumber: string, problemNumber: number | string) => {
+    return practiceProblemQueue.some(
+      item => item.skillNumber === skillNumber && item.problemNumber === problemNumber
+    );
+  }, [practiceProblemQueue]);
 
   const handleSubmit = async () => {
     if (!selectedLessonFull || !uploadedImage || selectedStrugglingSkills.size === 0) {
@@ -386,7 +449,7 @@ export default function WorkedExampleRequestPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
-        {/* Header */}
+        {/* Header with Student Filter (only for prerequisite-skill type) */}
         <RequestHeader
           selectedGrade={selectedGrade}
           selectedUnitNumber={selectedUnitNumber}
@@ -396,13 +459,33 @@ export default function WorkedExampleRequestPage() {
           onGradeChange={handleGradeChange}
           onUnitChange={handleUnitChange}
           onLessonChange={handleLessonChange}
+          studentFilterSlot={requestType === 'prerequisite-skill' ? (
+            <StudentFilter
+              selectedStudent={selectedStudent}
+              onStudentSelect={setSelectedStudent}
+              onSectionSelect={setSelectedSection}
+              multiSelect={true}
+              onStudentsSelect={setSelectedStudents}
+              selectedStudents={selectedStudents}
+              maxStudents={5}
+              scopeSequenceTag={selectedGrade}
+            />
+          ) : undefined}
         />
 
-        {/* Lesson Context Card - shows context when lesson is selected */}
+        {/* Lesson Context Card (includes Mastery Check Preview) */}
         {selectedLessonFull && !isLoading && (
           <div className="mb-6">
             <LessonContextCard lesson={selectedLessonFull} />
           </div>
+        )}
+
+        {/* Request Type Selector - show after lesson is selected */}
+        {selectedLessonFull && !isLoading && (
+          <RequestTypeSelector
+            selectedType={requestType}
+            onTypeSelect={setRequestType}
+          />
         )}
 
         {/* Error display */}
@@ -430,19 +513,52 @@ export default function WorkedExampleRequestPage() {
           </div>
         )}
 
-        {/* Main content - only show when lesson is fully loaded */}
-        {selectedLessonId && selectedLessonFull && !isLoading && (
+        {/* Main content - only show when lesson is fully loaded and request type selected */}
+        {selectedLessonId && selectedLessonFull && !isLoading && requestType === 'prerequisite-skill' && (
           <>
-            {/* Three Column Layout */}
+            {/* Three Column Layout - Prerequisite Skill flow */}
             <div className="flex gap-6 mb-6">
-              {/* Left Column: Target Skills */}
-              <TargetSkillsList
-                lessonSkills={lessonSkills}
-                targetSkillNumbers={selectedLessonFull.targetSkills || []}
-                selectedSkillId={selectedSkillId}
-                contextSkillId={contextSkillId}
-                onSkillClick={handleSkillClick}
-              />
+              {/* Left Column: Roadmap Skills with Mastery */}
+              <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
+                contextSkillId ? "w-1/4" : "w-2/5"
+              }`}>
+                <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10 flex items-center justify-between">
+                  <h3 className="font-semibold text-gray-900">Roadmap Skills</h3>
+                  <ToggleSwitch
+                    checked={showDescriptions}
+                    onChange={setShowDescriptions}
+                    label="Show Skill Descriptions"
+                  />
+                </div>
+                <div className="overflow-y-auto max-h-[600px] p-4">
+                  {selectedLessonFull.roadmapSkills && selectedLessonFull.roadmapSkills.length > 0 ? (
+                    <SkillListWithProgress
+                      skillNumbers={selectedLessonFull.roadmapSkills}
+                      selectedSection={selectedSection}
+                      onSkillClick={(skillNumber, color) => {
+                        const skill = lessonSkills.find(s => s.skillNumber === skillNumber) ||
+                                     allSkills.find(s => s.skillNumber === skillNumber);
+                        if (skill) {
+                          setSelectedSkillId(skill._id);
+                          setSelectedSkillColor(color);
+                        }
+                      }}
+                      skillType="target"
+                      showPrerequisites={true}
+                      masteredSkills={selectedStudent?.masteredSkills || []}
+                      targetSkillNumbers={selectedLessonFull.targetSkills || []}
+                      selectedStudents={selectedStudents}
+                      showDescriptions={showDescriptions}
+                      allSkills={allSkills}
+                    />
+                  ) : (
+                    <div className="p-8 text-center text-gray-500">
+                      <div className="text-gray-400 text-lg mb-2">🎯</div>
+                      <div className="text-sm">No roadmap skills found for this lesson</div>
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {/* Middle Column: Skill Details */}
               <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
@@ -450,13 +566,28 @@ export default function WorkedExampleRequestPage() {
               }`}>
                 <SkillDetailWrapper
                   skill={selectedSkill}
-                  color="green"
-                  onSkillClick={(skillNumber) => {
+                  color={selectedSkillColor}
+                  onSkillClick={(skillNumber, color) => {
                     const skill = allSkills.find(s => s.skillNumber === skillNumber);
                     if (skill) {
                       setContextSkillId(skill._id);
+                      setContextSkillColor(color);
                     }
                   }}
+                  sections={{
+                    description: false,
+                    standards: false,
+                    appearsIn: false,
+                    prerequisites: false,
+                    video: false,
+                    practiceProblems: true,
+                    essentialQuestion: true,
+                    commonMisconceptions: true,
+                    vocabulary: false,
+                    modelsAndManipulatives: false,
+                  }}
+                  onAddProblemToQueue={handleAddToQueue}
+                  isProblemInQueue={isProblemInQueue}
                 />
               </div>
 
@@ -465,18 +596,43 @@ export default function WorkedExampleRequestPage() {
                 <div className="w-[43.75%] bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all">
                   <SkillDetailWrapper
                     skill={contextSkill}
-                    color="orange"
-                    onSkillClick={(skillNumber) => {
+                    color={contextSkillColor}
+                    onSkillClick={(skillNumber, color) => {
                       const skill = allSkills.find(s => s.skillNumber === skillNumber);
                       if (skill) {
                         setContextSkillId(skill._id);
+                        setContextSkillColor(color);
                       }
+                    }}
+                    sections={{
+                      description: false,
+                      standards: false,
+                      appearsIn: false,
+                      prerequisites: false,
+                      video: false,
+                      practiceProblems: true,
+                      essentialQuestion: true,
+                      commonMisconceptions: true,
+                      vocabulary: false,
+                      modelsAndManipulatives: false,
                     }}
                     showHeader={true}
                     onClose={() => setContextSkillId(null)}
+                    onAddProblemToQueue={handleAddToQueue}
+                    isProblemInQueue={isProblemInQueue}
                   />
                 </div>
               )}
+            </div>
+
+            {/* Practice Problem Consideration Queue */}
+            <div className="mb-6">
+              <PracticeProblemQueue
+                items={practiceProblemQueue}
+                selectedItem={selectedPracticeProblem}
+                onSelect={handleSelectFromQueue}
+                onRemove={handleRemoveFromQueue}
+              />
             </div>
 
             {/* Request Form */}
@@ -504,10 +660,97 @@ export default function WorkedExampleRequestPage() {
           </>
         )}
 
+        {/* Mastery Check flow - simplified view */}
+        {selectedLessonId && selectedLessonFull && !isLoading && requestType === 'mastery-check' && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Mastery Check Request</h3>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <p className="text-sm text-blue-800">
+                <strong>Coming soon:</strong> This flow will automatically generate a worked example based on the lesson&apos;s target skills and mastery check content.
+              </p>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Target Skills</h4>
+                <div className="flex flex-wrap gap-2">
+                  {(selectedLessonFull.targetSkills || []).map(skillNum => {
+                    const skill = allSkills.find(s => s.skillNumber === skillNum);
+                    return (
+                      <span key={skillNum} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                        <span className="w-5 h-5 bg-green-600 text-white rounded-full text-xs flex items-center justify-center">
+                          {skillNum}
+                        </span>
+                        {skill?.title || 'Unknown Skill'}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+              {(selectedLessonFull as { masteryCheckPdf?: string }).masteryCheckPdf && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Mastery Check Preview</h4>
+                  <a
+                    href={(selectedLessonFull as { masteryCheckPdf?: string }).masteryCheckPdf}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline text-sm"
+                  >
+                    View Mastery Check PDF
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Custom flow - manual input */}
+        {selectedLessonId && selectedLessonFull && !isLoading && requestType === 'custom' && (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Custom Worked Example Request</h3>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+              <p className="text-sm text-amber-800">
+                <strong>Coming soon:</strong> Upload your own content and describe what you need for a fully customized worked example.
+              </p>
+            </div>
+            <WorkedExampleForm
+              availableSkills={getAvailableSkillsForSelection()}
+              selectedStrugglingSkills={selectedStrugglingSkills}
+              onSkillToggle={handleSkillToggle}
+              strugglingDescription={strugglingDescription}
+              onStrugglingDescriptionChange={setStrugglingDescription}
+              mathConcept={mathConcept}
+              onMathConceptChange={setMathConcept}
+              mathStandard={mathStandard}
+              onMathStandardChange={setMathStandard}
+              learningGoals={learningGoals}
+              onLearningGoalsChange={setLearningGoals}
+              additionalNotes={additionalNotes}
+              onAdditionalNotesChange={setAdditionalNotes}
+              uploadedImage={uploadedImage}
+              onImageUpload={handleImageUpload}
+              onImageRemove={handleImageRemove}
+              onSubmit={handleSubmit}
+              submitting={submitting}
+              isValid={isFormValid}
+            />
+          </div>
+        )}
+
+        {/* Prompt to select request type */}
+        {selectedLessonId && selectedLessonFull && !isLoading && !requestType && (
+          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+            <div className="text-gray-400 text-4xl mb-4">👆</div>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">Select a Request Type</h3>
+            <p className="text-gray-500">
+              Choose one of the request types above to continue.
+            </p>
+          </div>
+        )}
+
         {/* Empty state when no lesson selected */}
         {!selectedLessonId && !isLoading && (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <div className="text-gray-400 text-4xl mb-4">📚</div>
+            <BookOpenIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-700 mb-2">Select a Lesson</h3>
             <p className="text-gray-500">
               Choose a curriculum, unit, and lesson to start planning a worked example.

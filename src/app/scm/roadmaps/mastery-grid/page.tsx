@@ -9,6 +9,7 @@ import { StudentGridView } from "../units/components/StudentGridView";
 import { AllUnitsGridView } from "../units/components/AllUnitsGridView";
 import { fetchStudents } from "@/app/actions/313/students";
 import { Spinner } from "@/components/core/feedback/Spinner";
+import { AcademicCapIcon, BookOpenIcon } from "@heroicons/react/24/outline";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },
@@ -284,12 +285,12 @@ export default function MasteryGridPage() {
                 <div className={`p-8 text-center text-gray-500 ${studentGridView ? 'p-4' : ''}`}>
                   {selectedGrade === "" ? (
                     <>
-                      <div className="text-gray-400 text-lg mb-2">🎓</div>
+                      <AcademicCapIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                       {!studentGridView && <div className="text-sm">Select a grade to view units</div>}
                     </>
                   ) : (
                     <>
-                      <div className="text-gray-400 text-lg mb-2">📚</div>
+                      <BookOpenIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                       {!studentGridView && <div className="text-sm">No units found for this grade</div>}
                     </>
                   )}

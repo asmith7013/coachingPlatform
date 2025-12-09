@@ -7,6 +7,7 @@ import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills"
 import { fetchStudentsBySection } from "@/app/actions/313/students";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
+import { Legend, LegendItem, LegendGroup } from "@/components/core/feedback/Legend";
 
 interface SkillListWithProgressProps {
   skillNumbers: string[];
@@ -17,6 +18,10 @@ interface SkillListWithProgressProps {
   masteredSkills?: string[];
   targetSkillNumbers?: string[];
   selectedStudents?: Student[];
+  /** Show skill descriptions below the title */
+  showDescriptions?: boolean;
+  /** All skills data for looking up descriptions of prerequisite skills */
+  allSkills?: RoadmapsSkill[];
 }
 
 export function SkillListWithProgress({
@@ -28,6 +33,8 @@ export function SkillListWithProgress({
   masteredSkills = [],
   targetSkillNumbers = [],
   selectedStudents = [],
+  showDescriptions = false,
+  allSkills = [],
 }: SkillListWithProgressProps) {
   // Use compact mode for support skills
   const isCompactMode = skillType === 'support';
@@ -220,6 +227,15 @@ export function SkillListWithProgress({
     return null;
   }
 
+  // Determine if we should show the legend (only if students are selected)
+  const showLegend = useMultiStudentMode || masteredSkills.length > 0 || selectedSection;
+
+  // Helper to get skill description from allSkills
+  const getSkillDescription = (skillNumber: string): string | undefined => {
+    const skill = allSkills.find(s => s.skillNumber === skillNumber);
+    return skill?.description;
+  };
+
   return (
     <div className={isCompactMode ? "space-y-1" : "space-y-3"}>
       {skills.map((skill) => {
@@ -330,6 +346,13 @@ export function SkillListWithProgress({
                         {skill.title}
                       </span>
                     </div>
+                    {/* Skill Description */}
+                    {showDescriptions && skill.description && (
+                      <div
+                        className="text-xs text-gray-500 mt-1 line-clamp-2"
+                        dangerouslySetInnerHTML={{ __html: skill.description }}
+                      />
+                    )}
                   </div>
                 </div>
                 {/* Multi-student checkmarks */}
@@ -377,6 +400,7 @@ export function SkillListWithProgress({
                       {skill.essentialSkills!.map((essentialSkill) => {
                         const skillNum = typeof essentialSkill === 'string' ? essentialSkill : essentialSkill.skillNumber;
                         const skillTitle = typeof essentialSkill === 'object' ? essentialSkill.title : undefined;
+                        const skillDescription = showDescriptions ? getSkillDescription(skillNum) : undefined;
                         const isSkillMastered = masteredSkills.includes(skillNum);
                         const essentialMastery = selectedSection ? calculateMasteryPercentage(skillNum) : null;
 
@@ -387,56 +411,65 @@ export function SkillListWithProgress({
                               e.stopPropagation();
                               onSkillClick?.(skillNum, 'orange');
                             }}
-                            className="flex items-center justify-between bg-skill-essential-50 border border-skill-essential-200 px-2 py-1.5 rounded gap-2 cursor-pointer hover:shadow-md hover:border-skill-essential-300 transition-all"
+                            className="bg-skill-essential-50 border border-skill-essential-200 px-2 py-1.5 rounded cursor-pointer hover:shadow-md hover:border-skill-essential-300 transition-all"
                           >
-                            <div className="flex items-center gap-2 flex-1 min-w-0">
-                              <span
-                                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0"
-                              >
-                                {skillNum}
-                              </span>
-                              {masteredSkills.length > 0 && (
-                                <div className="flex-shrink-0">
-                                  {isSkillMastered ? (
-                                    <CheckCircleIcon className="w-4 h-4 text-green-600" title="Mastered" />
-                                  ) : (
-                                    <CheckCircleOutlineIcon className="w-4 h-4 text-gray-400" title="Not yet mastered" />
-                                  )}
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <span
+                                  className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0"
+                                >
+                                  {skillNum}
+                                </span>
+                                {masteredSkills.length > 0 && (
+                                  <div className="flex-shrink-0">
+                                    {isSkillMastered ? (
+                                      <CheckCircleIcon className="w-4 h-4 text-green-600" title="Mastered" />
+                                    ) : (
+                                      <CheckCircleOutlineIcon className="w-4 h-4 text-gray-400" title="Not yet mastered" />
+                                    )}
+                                  </div>
+                                )}
+                                {skillTitle && (
+                                  <span className="text-xs text-gray-900 truncate">{skillTitle}</span>
+                                )}
+                              </div>
+                              {/* Multi-student checkmarks for essential skills */}
+                              {useMultiStudentMode && (
+                                <div className="flex items-center gap-1 flex-shrink-0">
+                                  {selectedStudents.map((student) => {
+                                    const hasMastered = student.masteredSkills?.includes(skillNum);
+                                    return (
+                                      <div
+                                        key={student._id}
+                                        className="relative group cursor-help"
+                                      >
+                                        {hasMastered ? (
+                                          <CheckCircleIcon className="w-5 h-5 text-skill-essential" />
+                                        ) : (
+                                          <CheckCircleOutlineIcon className="w-5 h-5 text-skill-essential" />
+                                        )}
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-75 z-10">
+                                          {student.firstName} {student.lastName}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               )}
-                              {skillTitle && (
-                                <span className="text-xs text-gray-900 truncate">{skillTitle}</span>
+                              {/* Section progress bar for essential skills */}
+                              {!useMultiStudentMode && essentialMastery !== null && (
+                                <ProgressBarWithTooltip
+                                  skillNumber={skillNum}
+                                  percentage={essentialMastery}
+                                  bgColor="bg-skill-essential"
+                                />
                               )}
                             </div>
-                            {/* Multi-student checkmarks for essential skills */}
-                            {useMultiStudentMode && (
-                              <div className="flex items-center gap-1 flex-shrink-0">
-                                {selectedStudents.map((student) => {
-                                  const hasMastered = student.masteredSkills?.includes(skillNum);
-                                  return (
-                                    <div
-                                      key={student._id}
-                                      className="relative group cursor-help"
-                                    >
-                                      {hasMastered ? (
-                                        <CheckCircleIcon className="w-5 h-5 text-skill-essential" />
-                                      ) : (
-                                        <CheckCircleOutlineIcon className="w-5 h-5 text-skill-essential" />
-                                      )}
-                                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-75 z-10">
-                                        {student.firstName} {student.lastName}
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                            {/* Section progress bar for essential skills */}
-                            {!useMultiStudentMode && essentialMastery !== null && (
-                              <ProgressBarWithTooltip
-                                skillNumber={skillNum}
-                                percentage={essentialMastery}
-                                bgColor="bg-skill-essential"
+                            {/* Skill Description */}
+                            {skillDescription && (
+                              <div
+                                className="text-xs text-gray-500 mt-1 ml-10 line-clamp-2"
+                                dangerouslySetInnerHTML={{ __html: skillDescription }}
                               />
                             )}
                           </div>
@@ -454,6 +487,7 @@ export function SkillListWithProgress({
                       {skill.helpfulSkills!.map((helpfulSkill) => {
                         const skillNum = typeof helpfulSkill === 'string' ? helpfulSkill : helpfulSkill.skillNumber;
                         const skillTitle = typeof helpfulSkill === 'object' ? helpfulSkill.title : undefined;
+                        const skillDescription = showDescriptions ? getSkillDescription(skillNum) : undefined;
                         const isSkillMastered = masteredSkills.includes(skillNum);
                         const helpfulMastery = selectedSection ? calculateMasteryPercentage(skillNum) : null;
 
@@ -464,56 +498,65 @@ export function SkillListWithProgress({
                               e.stopPropagation();
                               onSkillClick?.(skillNum, 'purple');
                             }}
-                            className="flex items-center justify-between bg-skill-helpful-50 border border-skill-helpful-200 px-2 py-1.5 rounded gap-2 cursor-pointer hover:shadow-md hover:border-skill-helpful-300 transition-all"
+                            className="bg-skill-helpful-50 border border-skill-helpful-200 px-2 py-1.5 rounded cursor-pointer hover:shadow-md hover:border-skill-helpful-300 transition-all"
                           >
-                            <div className="flex items-center gap-2 flex-1 min-w-0">
-                              <span
-                                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0"
-                              >
-                                {skillNum}
-                              </span>
-                              {masteredSkills.length > 0 && (
-                                <div className="flex-shrink-0">
-                                  {isSkillMastered ? (
-                                    <CheckCircleIcon className="w-4 h-4 text-green-600" title="Mastered" />
-                                  ) : (
-                                    <CheckCircleOutlineIcon className="w-4 h-4 text-gray-400" title="Not yet mastered" />
-                                  )}
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <span
+                                  className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0"
+                                >
+                                  {skillNum}
+                                </span>
+                                {masteredSkills.length > 0 && (
+                                  <div className="flex-shrink-0">
+                                    {isSkillMastered ? (
+                                      <CheckCircleIcon className="w-4 h-4 text-green-600" title="Mastered" />
+                                    ) : (
+                                      <CheckCircleOutlineIcon className="w-4 h-4 text-gray-400" title="Not yet mastered" />
+                                    )}
+                                  </div>
+                                )}
+                                {skillTitle && (
+                                  <span className="text-xs text-gray-900 truncate">{skillTitle}</span>
+                                )}
+                              </div>
+                              {/* Multi-student checkmarks for helpful skills */}
+                              {useMultiStudentMode && (
+                                <div className="flex items-center gap-1 flex-shrink-0">
+                                  {selectedStudents.map((student) => {
+                                    const hasMastered = student.masteredSkills?.includes(skillNum);
+                                    return (
+                                      <div
+                                        key={student._id}
+                                        className="relative group cursor-help"
+                                      >
+                                        {hasMastered ? (
+                                          <CheckCircleIcon className="w-5 h-5 text-skill-helpful" />
+                                        ) : (
+                                          <CheckCircleOutlineIcon className="w-5 h-5 text-skill-helpful" />
+                                        )}
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-75 z-10">
+                                          {student.firstName} {student.lastName}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               )}
-                              {skillTitle && (
-                                <span className="text-xs text-gray-900 truncate">{skillTitle}</span>
+                              {/* Section progress bar for helpful skills */}
+                              {!useMultiStudentMode && helpfulMastery !== null && (
+                                <ProgressBarWithTooltip
+                                  skillNumber={skillNum}
+                                  percentage={helpfulMastery}
+                                  bgColor="bg-skill-helpful"
+                                />
                               )}
                             </div>
-                            {/* Multi-student checkmarks for helpful skills */}
-                            {useMultiStudentMode && (
-                              <div className="flex items-center gap-1 flex-shrink-0">
-                                {selectedStudents.map((student) => {
-                                  const hasMastered = student.masteredSkills?.includes(skillNum);
-                                  return (
-                                    <div
-                                      key={student._id}
-                                      className="relative group cursor-help"
-                                    >
-                                      {hasMastered ? (
-                                        <CheckCircleIcon className="w-5 h-5 text-skill-helpful" />
-                                      ) : (
-                                        <CheckCircleOutlineIcon className="w-5 h-5 text-skill-helpful" />
-                                      )}
-                                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-75 z-10">
-                                        {student.firstName} {student.lastName}
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                            {/* Section progress bar for helpful skills */}
-                            {!useMultiStudentMode && helpfulMastery !== null && (
-                              <ProgressBarWithTooltip
-                                skillNumber={skillNum}
-                                percentage={helpfulMastery}
-                                bgColor="bg-skill-helpful"
+                            {/* Skill Description */}
+                            {skillDescription && (
+                              <div
+                                className="text-xs text-gray-500 mt-1 ml-10 line-clamp-2"
+                                dangerouslySetInnerHTML={{ __html: skillDescription }}
                               />
                             )}
                           </div>
@@ -527,6 +570,22 @@ export function SkillListWithProgress({
           </div>
         );
       })}
+
+      {/* Legend - show when student mastery is being displayed */}
+      {showLegend && (
+        <Legend title="Mastery Key">
+          <LegendGroup>
+            <LegendItem
+              icon={<CheckCircleIcon className="w-5 h-5 text-green-600" />}
+              label="Mastered"
+            />
+            <LegendItem
+              icon={<CheckCircleOutlineIcon className="w-5 h-5 text-gray-400" />}
+              label="Not yet mastered"
+            />
+          </LegendGroup>
+        </Legend>
+      )}
     </div>
   );
 }

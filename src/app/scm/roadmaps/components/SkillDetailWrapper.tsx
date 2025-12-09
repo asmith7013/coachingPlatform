@@ -1,7 +1,7 @@
 "use client";
 
-import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
-import { SkillDetailView } from "./SkillDetailView";
+import { RoadmapsSkill, PracticeProblem } from "@zod-schema/313/curriculum/roadmap-skill";
+import { SkillDetailView, SkillDetailSections } from "./SkillDetailView";
 
 interface SkillDetailWrapperProps {
   skill: RoadmapsSkill | null;
@@ -12,6 +12,12 @@ interface SkillDetailWrapperProps {
   loading?: boolean;
   showHeader?: boolean;
   headerTitle?: string;
+  /** Configure which sections to show. By default, all sections are shown. */
+  sections?: SkillDetailSections;
+  /** Callback to add a practice problem to the consideration queue */
+  onAddProblemToQueue?: (problem: PracticeProblem, skillNumber: string, skillTitle: string, skillColor: 'green' | 'orange' | 'purple') => void;
+  /** Function to check if a practice problem is already in the queue */
+  isProblemInQueue?: (skillNumber: string, problemNumber: number | string) => boolean;
 }
 
 export function SkillDetailWrapper({
@@ -22,7 +28,10 @@ export function SkillDetailWrapper({
   onClose,
   loading = false,
   showHeader = false,
-  headerTitle = "Skill Details"
+  headerTitle = "Skill Details",
+  sections,
+  onAddProblemToQueue,
+  isProblemInQueue,
 }: SkillDetailWrapperProps) {
   return (
     <>
@@ -56,6 +65,9 @@ export function SkillDetailWrapper({
             onSkillClick={onSkillClick}
             color={color}
             masteredSkills={masteredSkills}
+            sections={sections}
+            onAddProblemToQueue={onAddProblemToQueue}
+            isProblemInQueue={isProblemInQueue}
           />
         )}
       </div>

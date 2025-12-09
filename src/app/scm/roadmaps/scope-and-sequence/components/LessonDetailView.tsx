@@ -2,6 +2,7 @@
 
 import { Student } from "@zod-schema/313/student/student";
 import { SkillListWithProgress } from "../../components/SkillListWithProgress";
+import { BookOpenIcon } from "@heroicons/react/24/outline";
 
 interface Lesson {
   _id: string;
@@ -63,7 +64,7 @@ export function LessonDetailView({ lesson, onSkillClick, masteredSkills = [], se
     return (
       <div className="flex items-center justify-center h-full p-8">
         <div className="text-center">
-          <div className="text-gray-400 text-lg mb-2">📚</div>
+          <BookOpenIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
           <div className="text-gray-600 font-medium mb-1">No Lesson Selected</div>
           <div className="text-gray-500 text-sm">Select a grade, unit, and lesson to view details</div>
         </div>

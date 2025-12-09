@@ -8,6 +8,7 @@ import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills"
 import { fetchStudents } from "@/app/actions/313/students";
 import { SkillProgressBar } from "./SkillProgressBar";
 import React from 'react';
+import { BookOpenIcon } from "@heroicons/react/24/outline";
 
 interface AllUnitsGridViewProps {
   units: RoadmapUnit[];
@@ -223,7 +224,7 @@ export function AllUnitsGridView({
   if (units.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12 text-center">
-        <div className="text-gray-400 text-lg mb-2">📚</div>
+        <BookOpenIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
         <div className="text-gray-600">No units available</div>
       </div>
     );

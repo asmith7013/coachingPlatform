@@ -4,3 +4,7 @@ export { SkillSelectionForm } from "./SkillSelectionForm";
 export { ImageUpload } from "./ImageUpload";
 export { WorkedExampleForm } from "./WorkedExampleForm";
 export { LessonContextCard } from "./LessonContextCard";
+export { RequestTypeSelector } from "./RequestTypeSelector";
+export type { RequestType } from "./RequestTypeSelector";
+export { PracticeProblemQueue } from "./PracticeProblemQueue";
+export type { QueuedPracticeProblem } from "./PracticeProblemQueue";

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { bulkUpsertScopeAndSequence } from "@actions/313/scope-and-sequence";
 import { useRouter } from "next/navigation";
+import { BookOpenIcon } from "@heroicons/react/24/outline";
 
 interface ScopeAndSequenceEntry {
   grade: string;
@@ -414,7 +415,7 @@ export default function ScopeAndSequenceUploaderPage() {
 
             {results.length === 0 && (
               <div className="text-center text-gray-400 py-12">
-                <div className="text-4xl mb-2">📚</div>
+                <BookOpenIcon className="w-12 h-12 mx-auto mb-2" />
                 <p>No data parsed yet. Paste JSON and click &quot;Parse JSON&quot;.</p>
               </div>
             )}
