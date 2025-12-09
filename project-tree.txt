@@ -316,6 +316,11 @@
 │   │   ├── actions
 │   │   │   ├── 313
 │   │   │   │   ├── analytics.ts
+│   │   │   │   ├── assignment-variations
+│   │   │   │   │   ├── delete-variation.ts
+│   │   │   │   │   ├── get-variation.ts
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── list-variations.ts
 │   │   │   │   ├── attendance-import.ts
 │   │   │   │   ├── attendance-sync
 │   │   │   │   │   ├── api
@@ -327,6 +332,7 @@
 │   │   │   │   ├── google-sheets-export.ts
 │   │   │   │   ├── im-lessons.ts
 │   │   │   │   ├── index.ts
+│   │   │   │   ├── learning-content.ts
 │   │   │   │   ├── podsie-completion.ts
 │   │   │   │   ├── podsie-history.ts
 │   │   │   │   ├── podsie-question-map
@@ -775,6 +781,9 @@
 │   │   │   │   ├── section-overview
 │   │   │   │   │   ├── components
 │   │   │   │   │   └── page.tsx
+│   │   │   │   ├── variations
+│   │   │   │   │   ├── [slug]
+│   │   │   │   │   └── page.tsx
 │   │   │   │   └── velocity
 │   │   │   │       ├── components
 │   │   │   │       ├── page.tsx
@@ -853,17 +862,6 @@
 │   │   │       ├── components
 │   │   │       │   ├── D3ComponentRenderer.tsx
 │   │   │       │   └── DynamicGraphComponent.tsx
-│   │   │       ├── critique-linear-equations-grade8
-│   │   │       │   ├── metadata.json
-│   │   │       │   ├── slide-1.html
-│   │   │       │   ├── slide-2.html
-│   │   │       │   ├── slide-3.html
-│   │   │       │   ├── slide-4.html
-│   │   │       │   ├── slide-5.html
-│   │   │       │   ├── slide-6.html
-│   │   │       │   ├── slide-7.html
-│   │   │       │   ├── slide-8.html
-│   │   │       │   └── slide-9.html
 │   │   │       ├── equation-solving-distribute-vs-divide-grade8
 │   │   │       │   ├── metadata.json
 │   │   │       │   ├── slide-1.html
@@ -2007,4 +2005,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-606 directories, 1402 files
+608 directories, 1398 files

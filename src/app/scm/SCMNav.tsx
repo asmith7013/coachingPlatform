@@ -84,6 +84,7 @@ export function SCMNav() {
       iconLetter: "P",
       items: [
         { href: "/scm/podsie/progress", label: "Progress" },
+        { href: "/scm/podsie/velocity", label: "Velocity" },
       ],
     },
     {

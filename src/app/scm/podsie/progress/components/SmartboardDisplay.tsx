@@ -1,13 +1,20 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { PencilIcon, TvIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { PencilIcon, TvIcon, ArrowPathIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { SmartboardProgressBar } from "./SmartboardProgressBar";
 import { groupAssignmentsByUnitLesson } from "../utils/groupAssignments";
 import { formatLessonDisplay } from "@/lib/utils/lesson-display";
 import type { LessonType } from "@/lib/utils/lesson-display";
 import { calculateTodayProgress, calculateTodayCompletionRate } from "@/lib/utils/completion-date-helpers";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
+import { getLearningContent, saveLearningContent } from "@/app/actions/313/learning-content";
+import { SCOPE_SEQUENCE_TAG_OPTIONS, type ScopeSequenceTagType } from "@schema/enum/313";
+
+// Type guard to validate scopeSequenceTag
+function isValidScopeSequenceTag(tag: string): tag is ScopeSequenceTagType {
+  return (SCOPE_SEQUENCE_TAG_OPTIONS as readonly string[]).includes(tag);
+}
 
 interface LessonConfig {
   unitLessonId: string;
@@ -50,6 +57,8 @@ interface SmartboardDisplayProps {
   selectedUnit: number;
   selectedSection: string;
   selectedLessonSection: string;
+  scopeSequenceTag: string;
+  grade: string;
   calculateSummaryStats: (data: ProgressData[]) => {
     avgCompletion: number;
     fullyComplete: number;
@@ -66,6 +75,8 @@ export function SmartboardDisplay({
   selectedUnit,
   selectedSection,
   selectedLessonSection,
+  scopeSequenceTag,
+  grade,
   calculateSummaryStats,
   onSyncAll,
   syncingAll = false,
@@ -83,6 +94,85 @@ export function SmartboardDisplay({
     return nextFriday.toISOString().split("T")[0];
   });
   const [learningContent, setLearningContent] = useState<string>("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [loadedContent, setLoadedContent] = useState<string>("");
+
+  // Load learning content when unit/section changes
+  useEffect(() => {
+    const loadContent = async () => {
+      if (!scopeSequenceTag || !grade || !selectedUnit || !selectedLessonSection || !isValidScopeSequenceTag(scopeSequenceTag)) {
+        return;
+      }
+
+      try {
+        const result = await getLearningContent({
+          scopeSequenceTag: scopeSequenceTag,
+          grade,
+          unit: selectedUnit,
+          lessonSection: selectedLessonSection,
+        });
+
+        if (result.success && result.data) {
+          setLearningContent(result.data.content);
+          setLoadedContent(result.data.content);
+        } else {
+          // No saved content, reset to empty
+          setLearningContent("");
+          setLoadedContent("");
+        }
+        setHasUnsavedChanges(false);
+      } catch (error) {
+        console.error("Error loading learning content:", error);
+      }
+    };
+
+    loadContent();
+  }, [scopeSequenceTag, grade, selectedUnit, selectedLessonSection]);
+
+  // Track unsaved changes
+  useEffect(() => {
+    setHasUnsavedChanges(learningContent !== loadedContent);
+  }, [learningContent, loadedContent]);
+
+  // Save learning content
+  const handleSave = useCallback(async () => {
+    if (!scopeSequenceTag || !grade || !selectedUnit || !selectedLessonSection || !isValidScopeSequenceTag(scopeSequenceTag)) {
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const result = await saveLearningContent(
+        {
+          scopeSequenceTag: scopeSequenceTag,
+          grade,
+          unit: selectedUnit,
+          lessonSection: selectedLessonSection,
+        },
+        learningContent
+      );
+
+      if (result.success) {
+        setLoadedContent(learningContent);
+        setHasUnsavedChanges(false);
+      } else {
+        console.error("Error saving learning content:", result.error);
+      }
+    } catch (error) {
+      console.error("Error saving learning content:", error);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [scopeSequenceTag, grade, selectedUnit, selectedLessonSection, learningContent]);
+
+  // Handle exiting edit mode - save if there are unsaved changes
+  const handleToggleEditMode = useCallback(async () => {
+    if (isEditMode && hasUnsavedChanges) {
+      await handleSave();
+    }
+    setIsEditMode(!isEditMode);
+  }, [isEditMode, hasUnsavedChanges, handleSave]);
 
   // Fullscreen toggle handler
   const toggleFullscreen = () => {
@@ -431,16 +521,27 @@ export function SmartboardDisplay({
             onChange={setShowDailyProgress}
             label="Show Today's Progress"
           />
+          {isEditMode && hasUnsavedChanges && (
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
+            >
+              <CheckIcon className="w-4 h-4" />
+              {isSaving ? "Saving..." : "Save"}
+            </button>
+          )}
           <button
-            onClick={() => setIsEditMode(!isEditMode)}
-            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+            onClick={handleToggleEditMode}
+            disabled={isSaving}
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer disabled:opacity-50 ${
               isEditMode
                 ? "bg-indigo-600 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
             <PencilIcon className="w-4 h-4" />
-            {isEditMode ? "Done Editing" : "Edit Display"}
+            {isEditMode ? (hasUnsavedChanges ? "Save & Close" : "Done Editing") : "Edit Display"}
           </button>
         </div>
       )}

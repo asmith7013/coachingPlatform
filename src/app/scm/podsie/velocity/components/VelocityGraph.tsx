@@ -37,6 +37,8 @@ interface VelocityGraphProps {
   onIncludeNotTrackedChange: (value: boolean) => void;
   showRampUps: boolean;
   onShowRampUpsChange: (value: boolean) => void;
+  showSidekicks: boolean;
+  onShowSidekicksChange: (value: boolean) => void;
 }
 
 export function VelocityGraph({
@@ -50,7 +52,9 @@ export function VelocityGraph({
   includeNotTracked,
   onIncludeNotTrackedChange,
   showRampUps,
-  onShowRampUpsChange
+  onShowRampUpsChange,
+  showSidekicks,
+  onShowSidekicksChange
 }: VelocityGraphProps) {
   const [showRollingAverage, setShowRollingAverage] = useState(true);
   const [adjustForBlockType, setAdjustForBlockType] = useState(true);
@@ -89,12 +93,20 @@ export function VelocityGraph({
       // Get the previous 2 school days plus the current day (3 days total)
       const precedingDays = filteredData.slice(Math.max(0, index - 2), index + 1);
 
-      // Calculate adjusted velocity based on block type toggle and ramp up filter
+      // Calculate adjusted velocity based on block type toggle, ramp up filter, and sidekick filter
       const getAdjustedVelocity = (d: DailyVelocityStats): number => {
-        // Calculate total completions (optionally excluding ramp ups)
-        const totalCompletions = showRampUps
-          ? d.totalCompletions
-          : d.totalCompletions - d.byLessonType.rampUps;
+        // Start with total completions
+        let totalCompletions = d.totalCompletions;
+
+        // Optionally exclude ramp ups (by lesson type)
+        if (!showRampUps) {
+          totalCompletions -= d.byLessonType.rampUps;
+        }
+
+        // Optionally exclude sidekicks (by activity type)
+        if (!showSidekicks) {
+          totalCompletions -= d.byActivityType.sidekicks;
+        }
 
         if (!adjustForBlockType || d.blockType !== 'double') {
           // No adjustment: use raw completions / students
@@ -338,6 +350,11 @@ export function VelocityGraph({
             checked={showRampUps}
             onChange={onShowRampUpsChange}
             label="Include Ramp Ups"
+          />
+          <ToggleSwitch
+            checked={showSidekicks}
+            onChange={onShowSidekicksChange}
+            label="Include Sidekick Lessons"
           />
           <ToggleSwitch
             checked={includeNotTracked}

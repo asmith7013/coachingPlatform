@@ -67,6 +67,12 @@ export default function SCMHomePage() {
           href: "/scm/podsie/progress",
           Icon: ArrowTrendingUpIcon,
           description: "Track student progress on Podsie lessons and assessments."
+        },
+        {
+          title: "Velocity",
+          href: "/scm/podsie/velocity",
+          Icon: ChartBarIcon,
+          description: "Track class velocity and completion rates over time."
         }
       ]
     },

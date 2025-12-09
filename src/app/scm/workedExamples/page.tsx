@@ -85,92 +85,119 @@ export default function PresentationsList() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {decks.map((deck) => (
-              <div
-                key={deck.slug}
-                className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <button
-                  onClick={() => handleOpenPresentation(deck.slug)}
-                  className="block p-6 text-left w-full cursor-pointer"
-                >
-                  <div className="mb-4 flex items-center gap-2 flex-wrap">
-                    <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
-                      Grade {deck.gradeLevel}
-                    </span>
-                    {deck.unitNumber !== undefined && (
-                      <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
-                        Unit {deck.unitNumber}
-                      </span>
-                    )}
-                    {deck.lessonNumber !== undefined && (
-                      <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
-                        Lesson {deck.lessonNumber}
-                      </span>
-                    )}
-                  </div>
-
-                  <h2 className="text-xl font-bold text-gray-900 mb-2">
-                    {deck.title}
+          <div className="space-y-8">
+            {/* Group decks by unit */}
+            {Object.entries(
+              decks.reduce((groups, deck) => {
+                const unitKey = deck.unitNumber !== undefined
+                  ? `Unit ${deck.unitNumber}`
+                  : 'No Unit';
+                if (!groups[unitKey]) {
+                  groups[unitKey] = [];
+                }
+                groups[unitKey].push(deck);
+                return groups;
+              }, {} as Record<string, WorkedExampleDeck[]>)
+            )
+              .sort(([a], [b]) => {
+                // Sort by unit number, "No Unit" goes last
+                if (a === 'No Unit') return 1;
+                if (b === 'No Unit') return -1;
+                const numA = parseInt(a.replace('Unit ', ''));
+                const numB = parseInt(b.replace('Unit ', ''));
+                return numA - numB;
+              })
+              .map(([unitName, unitDecks]) => (
+                <div key={unitName}>
+                  <h2 className="text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+                    {unitName}
                   </h2>
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {unitDecks
+                      .sort((a, b) => (a.lessonNumber || 0) - (b.lessonNumber || 0))
+                      .map((deck) => (
+                        <div
+                          key={deck.slug}
+                          className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                        >
+                          <button
+                            onClick={() => handleOpenPresentation(deck.slug)}
+                            className="block p-6 text-left w-full cursor-pointer"
+                          >
+                            <div className="mb-4 flex items-center gap-2 flex-wrap">
+                              <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
+                                Grade {deck.gradeLevel}
+                              </span>
+                              {deck.lessonNumber !== undefined && (
+                                <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
+                                  Lesson {deck.lessonNumber}
+                                </span>
+                              )}
+                            </div>
 
-                  <p className="text-sm text-gray-600 mb-2">
-                    {deck.mathConcept}
-                  </p>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">
+                              {deck.title}
+                            </h3>
 
-                  <p className="text-xs text-gray-500">
-                    Standard: {deck.mathStandard}
-                  </p>
+                            <p className="text-sm text-gray-600 mb-2">
+                              {deck.mathConcept}
+                            </p>
 
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>
-                        {deck.isPublic ? '🌐 Public' : '🔒 Private'}
-                      </span>
-                      <span>
-                        {new Date(deck.createdAt!).toLocaleDateString()}
-                      </span>
-                    </div>
+                            <p className="text-xs text-gray-500">
+                              Standard: {deck.mathStandard}
+                            </p>
+
+                            <div className="mt-4 pt-4 border-t border-gray-100">
+                              <div className="flex items-center justify-between text-xs text-gray-500">
+                                <span>
+                                  {deck.isPublic ? '🌐 Public' : '🔒 Private'}
+                                </span>
+                                <span>
+                                  {new Date(deck.createdAt!).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+
+                          {/* Expandable section for learning goals */}
+                          {deck.learningGoals && deck.learningGoals.length > 0 && (
+                            <div className="border-t border-gray-100">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setExpandedDeck(expandedDeck === deck.slug ? null : deck.slug);
+                                }}
+                                className="w-full px-6 py-3 text-left text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-between cursor-pointer"
+                              >
+                                <span>Learning Goals</span>
+                                <svg
+                                  className={`w-4 h-4 transition-transform ${expandedDeck === deck.slug ? 'rotate-180' : ''}`}
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </button>
+                              {expandedDeck === deck.slug && (
+                                <div className="px-6 pb-4">
+                                  <ul className="space-y-1 text-xs text-gray-600">
+                                    {deck.learningGoals.map((goal, idx) => (
+                                      <li key={idx} className="flex items-start">
+                                        <span className="mr-2">•</span>
+                                        <span>{goal}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
                   </div>
-                </button>
-
-                {/* Expandable section for learning goals */}
-                {deck.learningGoals && deck.learningGoals.length > 0 && (
-                  <div className="border-t border-gray-100">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setExpandedDeck(expandedDeck === deck.slug ? null : deck.slug);
-                      }}
-                      className="w-full px-6 py-3 text-left text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-between"
-                    >
-                      <span>Learning Goals</span>
-                      <svg
-                        className={`w-4 h-4 transition-transform ${expandedDeck === deck.slug ? 'rotate-180' : ''}`}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    {expandedDeck === deck.slug && (
-                      <div className="px-6 pb-4">
-                        <ul className="space-y-1 text-xs text-gray-600">
-                          {deck.learningGoals.map((goal, idx) => (
-                            <li key={idx} className="flex items-start">
-                              <span className="mr-2">•</span>
-                              <span>{goal}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
+                </div>
+              ))}
           </div>
         )}
       </div>

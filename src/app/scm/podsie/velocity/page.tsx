@@ -40,6 +40,7 @@ export default function VelocityPage() {
   const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
   const [includeNotTracked, setIncludeNotTracked] = useState(false);
   const [showRampUps, setShowRampUps] = useState(true);
+  const [showSidekicks, setShowSidekicks] = useState(true);
   const [exportModalOpen, setExportModalOpen] = useState(false);
 
   // Graph date filters - default to 9/1/25 to today
@@ -396,6 +397,8 @@ export default function VelocityPage() {
                 onIncludeNotTrackedChange={setIncludeNotTracked}
                 showRampUps={showRampUps}
                 onShowRampUpsChange={setShowRampUps}
+                showSidekicks={showSidekicks}
+                onShowSidekicksChange={setShowSidekicks}
               />
             )}
 
