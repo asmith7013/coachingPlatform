@@ -11,6 +11,7 @@ import {
   Legend,
   Filler
 } from "chart.js";
+import annotationPlugin from "chartjs-plugin-annotation";
 
 // Register Chart.js components
 ChartJS.register(
@@ -21,7 +22,8 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
+  annotationPlugin
 );
 
 interface VelocityLineChartProps {

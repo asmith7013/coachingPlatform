@@ -1,8 +1,21 @@
 import React, { useState, lazy, Suspense } from "react";
 import type { DailyVelocityStats } from "@/app/actions/313/velocity/velocity";
+import type { UnitSchedule } from "@zod-schema/calendar";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { VelocityChartSkeleton } from "./VelocityGraphSkeleton";
 import { ChartBarIcon } from "@heroicons/react/24/outline";
+
+// Colors for unit bar annotations (background colors with alpha)
+const UNIT_COLORS = [
+  { bg: 'rgba(59, 130, 246, 0.04)', border: 'rgba(59, 130, 246, 0.25)', text: '#1e40af' },  // blue
+  { bg: 'rgba(34, 197, 94, 0.04)', border: 'rgba(34, 197, 94, 0.25)', text: '#166534' },    // green
+  { bg: 'rgba(168, 85, 247, 0.04)', border: 'rgba(168, 85, 247, 0.25)', text: '#6b21a8' },  // purple
+  { bg: 'rgba(245, 158, 11, 0.04)', border: 'rgba(245, 158, 11, 0.25)', text: '#92400e' },  // amber
+  { bg: 'rgba(244, 63, 94, 0.04)', border: 'rgba(244, 63, 94, 0.25)', text: '#9f1239' },    // rose
+  { bg: 'rgba(6, 182, 212, 0.04)', border: 'rgba(6, 182, 212, 0.25)', text: '#0e7490' },    // cyan
+  { bg: 'rgba(249, 115, 22, 0.04)', border: 'rgba(249, 115, 22, 0.25)', text: '#9a3412' },  // orange
+  { bg: 'rgba(20, 184, 166, 0.04)', border: 'rgba(20, 184, 166, 0.25)', text: '#115e59' },  // teal
+];
 
 // Lazy load the heavy Chart.js component
 const VelocityLineChart = lazy(() =>

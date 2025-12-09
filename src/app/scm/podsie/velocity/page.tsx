@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
 import { getSectionVelocityByDateRange, type DailyVelocityStats, type StudentDailyData } from "@/app/actions/313/velocity/velocity";
 import { getDaysOff } from "@/app/actions/calendar/school-calendar";
+import { fetchSectionUnitSchedules } from "@/app/actions/calendar/unit-schedule";
+import type { UnitSchedule } from "@zod-schema/calendar";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { VelocityGraph } from "./components/VelocityGraph";
@@ -26,6 +28,7 @@ interface SectionOption {
   teacher?: string;
   gradeLevel: string;
   displayName: string;
+  scopeSequenceTag?: string;
 }
 
 export default function VelocityPage() {
@@ -34,6 +37,7 @@ export default function VelocityPage() {
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
   const [velocityData, setVelocityData] = useState<Map<string, DailyVelocityStats[]>>(new Map());
   const [detailData, setDetailData] = useState<Map<string, StudentDailyData[]>>(new Map());
+  const [unitScheduleData, setUnitScheduleData] = useState<Map<string, UnitSchedule[]>>(new Map());
   const [daysOff, setDaysOff] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingSectionIds, setLoadingSectionIds] = useState<Set<string>>(new Set());
@@ -77,6 +81,7 @@ export default function VelocityPage() {
                 classSection: section.classSection,
                 teacher: section.teacher,
                 gradeLevel: section.gradeLevel,
+                scopeSequenceTag: section.scopeSequenceTag,
                 // Display name without school for selector (school is already the group header)
                 displayName: section.teacher ? `${section.classSection} (${section.teacher})` : section.classSection,
               });
@@ -107,6 +112,7 @@ export default function VelocityPage() {
     if (selectedSections.length === 0) {
       setVelocityData(new Map());
       setDetailData(new Map());
+      setUnitScheduleData(new Map());
       return;
     }
 
@@ -173,6 +179,21 @@ export default function VelocityPage() {
                   return next;
                 });
               }
+            }
+
+            // Fetch unit schedules for this section
+            const unitResult = await fetchSectionUnitSchedules(
+              schoolYear,
+              section.gradeLevel,
+              section.school,
+              section.classSection
+            );
+            if (unitResult.success && unitResult.data) {
+              setUnitScheduleData((prev) => {
+                const next = new Map(prev);
+                next.set(sectionId, unitResult.data!);
+                return next;
+              });
             }
 
             // Remove from loading set when done
@@ -362,7 +383,25 @@ export default function VelocityPage() {
         ) : (
           <>
             {/* Combined Velocity Graph for all selected sections */}
-            {selectedSections.length > 0 && (
+            {selectedSections.length > 0 && (() => {
+              // Check if all selected sections share the same scopeSequenceTag and gradeLevel
+              const selectedSectionDetails = selectedSections
+                .map((id) => sectionOptions.find((s) => s.id === id))
+                .filter((s): s is SectionOption => s !== undefined);
+
+              const firstSection = selectedSectionDetails[0];
+              const allSameScopeAndGrade = selectedSectionDetails.every(
+                (s) => s.scopeSequenceTag === firstSection?.scopeSequenceTag &&
+                       s.gradeLevel === firstSection?.gradeLevel &&
+                       firstSection?.scopeSequenceTag // Must have a scopeSequenceTag
+              );
+
+              // If all sections share the same scope/grade, get the unit schedules from any of them
+              const sharedUnitSchedules = allSameScopeAndGrade && selectedSections.length > 0
+                ? unitScheduleData.get(selectedSections[0])
+                : undefined;
+
+              return (
               <VelocityGraph
                 sections={selectedSections
                   .map((sectionId) => {
@@ -399,8 +438,10 @@ export default function VelocityPage() {
                 onShowRampUpsChange={setShowRampUps}
                 showSidekicks={showSidekicks}
                 onShowSidekicksChange={setShowSidekicks}
+                unitSchedules={sharedUnitSchedules}
               />
-            )}
+              );
+            })()}
 
             {/* Section Details with Accordions */}
             {[...selectedSections].sort((a, b) => {
@@ -432,6 +473,9 @@ export default function VelocityPage() {
                 current.setDate(current.getDate() + 1);
               }
 
+              // Get unit schedules for this section
+              const sectionUnitSchedules = unitScheduleData.get(sectionId);
+
               // Student Graph Content
               const studentGraphContent = (isLoading && !students) ? (
                 <div className="animate-pulse h-64 bg-gray-100 rounded" />
@@ -446,6 +490,7 @@ export default function VelocityPage() {
                   daysOff={daysOff}
                   showRampUps={showRampUps}
                   embedded
+                  unitSchedules={sectionUnitSchedules}
                 />
               ) : (
                 <p className="text-gray-500 text-sm">No data available</p>

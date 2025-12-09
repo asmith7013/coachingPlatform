@@ -1,5 +1,6 @@
 import React, { useState, lazy, Suspense, useMemo } from "react";
 import type { StudentDailyData, DailyVelocityStats } from "@/app/actions/313/velocity/velocity";
+import type { UnitSchedule } from "@zod-schema/calendar";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { VelocityChartSkeleton } from "./VelocityGraphSkeleton";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -44,6 +45,18 @@ const GROUP_COLORS = [
   '#2563EB', // blue-600
 ];
 
+// Colors for unit bar annotations (background colors with alpha)
+const UNIT_COLORS = [
+  { bg: 'rgba(59, 130, 246, 0.04)', border: 'rgba(59, 130, 246, 0.25)', text: '#1e40af' },  // blue
+  { bg: 'rgba(34, 197, 94, 0.04)', border: 'rgba(34, 197, 94, 0.25)', text: '#166534' },    // green
+  { bg: 'rgba(168, 85, 247, 0.04)', border: 'rgba(168, 85, 247, 0.25)', text: '#6b21a8' },  // purple
+  { bg: 'rgba(245, 158, 11, 0.04)', border: 'rgba(245, 158, 11, 0.25)', text: '#92400e' },  // amber
+  { bg: 'rgba(244, 63, 94, 0.04)', border: 'rgba(244, 63, 94, 0.25)', text: '#9f1239' },    // rose
+  { bg: 'rgba(6, 182, 212, 0.04)', border: 'rgba(6, 182, 212, 0.25)', text: '#0e7490' },    // cyan
+  { bg: 'rgba(249, 115, 22, 0.04)', border: 'rgba(249, 115, 22, 0.25)', text: '#9a3412' },  // orange
+  { bg: 'rgba(20, 184, 166, 0.04)', border: 'rgba(20, 184, 166, 0.25)', text: '#115e59' },  // teal
+];
+
 // Create a stable color map for students
 function getStudentColors(students: StudentDailyData[]): Map<number, string> {
   const colorMap = new Map<number, string>();
@@ -70,6 +83,7 @@ interface StudentVelocityGraphProps {
   daysOff: string[];
   showRampUps: boolean;
   embedded?: boolean; // When true, removes the outer wrapper/shadow
+  unitSchedules?: UnitSchedule[]; // Unit schedules for the unit bar
 }
 
 export function StudentVelocityGraph({
@@ -82,6 +96,7 @@ export function StudentVelocityGraph({
   daysOff,
   showRampUps,
   embedded = false,
+  unitSchedules,
 }: StudentVelocityGraphProps) {
   const [showRollingAverage, setShowRollingAverage] = useState(true);
   const [adjustForBlockType, setAdjustForBlockType] = useState(true);
@@ -268,12 +283,130 @@ export function StudentVelocityGraph({
 
   const yAxisMax = Math.max(1.5, Math.ceil(maxVelocity * 10) / 10 + 0.2);
 
+  // Generate unit bar annotations (computed, not memoized to avoid conditional hook issues)
+  const unitAnnotations = (() => {
+    if (!unitSchedules || unitSchedules.length === 0 || sortedDates.length === 0) {
+      return [];
+    }
+
+    // Create a map from date string to label index for quick lookups
+    const dateIndexMap = new Map<string, number>();
+    sortedDates.forEach((date, idx) => {
+      dateIndexMap.set(date, idx);
+    });
+
+    // Format dates to match chart labels (e.g., "Sep 15")
+    const formatDateToLabel = (dateStr: string) => {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    };
+
+    const chartStartDate = sortedDates[0];
+    const chartEndDate = sortedDates[sortedDates.length - 1];
+
+    const annotations: {
+      type: 'box';
+      xMin: string;
+      xMax: string;
+      yMin: number;
+      yMax: number;
+      backgroundColor: string;
+      borderColor: string;
+      borderWidth: number;
+      borderRadius: number;
+      label: {
+        display: boolean;
+        content: string;
+        position: { x: 'center' | 'start' | 'end'; y: 'center' | 'start' | 'end' };
+        yAdjust: number;
+        font: { size: number; weight: 'bold' };
+        color: string;
+        backgroundColor: string;
+        padding: { top: number; bottom: number; left: number; right: number };
+        borderRadius: number;
+      };
+    }[] = [];
+
+    const unitsWithDates = unitSchedules
+      .filter((u) => u.startDate && u.endDate)
+      .sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""));
+
+    unitsWithDates.forEach((unit) => {
+      const unitStart = unit.startDate || "";
+      const unitEnd = unit.endDate || "";
+
+      // Skip if unit is completely outside chart range
+      if (unitEnd < chartStartDate || unitStart > chartEndDate) {
+        return;
+      }
+
+      // Clamp to chart bounds
+      const effectiveStart = unitStart < chartStartDate ? chartStartDate : unitStart;
+      const effectiveEnd = unitEnd > chartEndDate ? chartEndDate : unitEnd;
+
+      // Find the label index for start and end
+      let startIdx = dateIndexMap.get(effectiveStart);
+      let endIdx = dateIndexMap.get(effectiveEnd);
+
+      // If start date isn't found, find the first date >= effectiveStart
+      if (startIdx === undefined) {
+        startIdx = sortedDates.findIndex((d) => d >= effectiveStart);
+        if (startIdx === -1) return;
+      }
+
+      // If end date isn't found, find the last date <= effectiveEnd
+      if (endIdx === undefined) {
+        for (let i = sortedDates.length - 1; i >= 0; i--) {
+          if (sortedDates[i] <= effectiveEnd) {
+            endIdx = i;
+            break;
+          }
+        }
+        if (endIdx === undefined) return;
+      }
+
+      const colorIdx = (unit.unitNumber - 1) % UNIT_COLORS.length;
+      const colors = UNIT_COLORS[colorIdx];
+
+      // Get the labels for xMin and xMax
+      const startLabel = formatDateToLabel(sortedDates[startIdx]);
+      const endLabel = formatDateToLabel(sortedDates[endIdx]);
+
+      // Create box annotation for the unit
+      annotations.push({
+        type: 'box',
+        xMin: startLabel,
+        xMax: endLabel,
+        yMin: 0,
+        yMax: yAxisMax,
+        backgroundColor: colors.bg,
+        borderColor: colors.border,
+        borderWidth: 1,
+        borderRadius: 4,
+        label: {
+          display: true,
+          content: `Unit ${unit.unitNumber}`,
+          position: { x: 'center', y: 'start' },
+          yAdjust: 6,
+          font: { size: 12, weight: 'bold' },
+          color: colors.text,
+          backgroundColor: colors.border,
+          padding: { top: 2, bottom: 2, left: 6, right: 6 },
+          borderRadius: 4,
+        },
+      });
+    });
+
+    return annotations;
+  })();
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: true,
+        display: !embedded, // Hide legend when embedded in accordion
         position: 'top' as const,
         labels: {
           usePointStyle: true,
@@ -330,6 +463,9 @@ export function StudentVelocityGraph({
             }
           },
         },
+      },
+      annotation: {
+        annotations: unitAnnotations,
       },
     },
     scales: {

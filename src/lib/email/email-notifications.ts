@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import { sendEmail } from './email-service';
 
 export interface MissingStudentData {
   source: 'zearn' | 'roadmaps';
@@ -11,62 +11,47 @@ export interface MissingStudentData {
   timestamp: string;
 }
 
+// Default recipient for scraper notifications
+const SCRAPER_RECIPIENT = 'asmith7013@gmail.com';
+
+/**
+ * Build email body for missing students notification
+ */
+function buildMissingStudentsEmailBody(data: MissingStudentData): string {
+  const sourceName = data.source === 'zearn' ? 'Zearn' : 'Roadmaps';
+
+  let body = `Missing students were found during ${sourceName} data import:\n\n`;
+
+  body += `SUMMARY:\n`;
+  body += `   Total records processed: ${data.totalProcessed}\n`;
+  body += `   Missing students: ${data.missingStudents.length}\n\n`;
+
+  body += `MISSING STUDENTS:\n`;
+  data.missingStudents.forEach((student, index) => {
+    const name = student.firstName && student.lastName
+      ? `${student.lastName}, ${student.firstName}`
+      : 'Unknown name';
+    body += `   ${index + 1}. SIS ID: ${student.sisId} - ${name}\n`;
+  });
+
+  body += `\nTimestamp: ${data.timestamp}\n`;
+  body += `\nThese students need to be added to the database before their data can be imported.`;
+
+  return body;
+}
+
 export class ScraperEmailService {
-  private transporter: nodemailer.Transporter;
-
-  constructor() {
-    this.transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
-  }
-
   async sendMissingStudentsNotification(data: MissingStudentData): Promise<boolean> {
-    try {
-      // Check if email is configured
-      if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-        console.warn('Email not configured - skipping notification');
-        return false;
-      }
+    const sourceName = data.source === 'zearn' ? 'Zearn' : 'Roadmaps';
+    const subject = `Missing Students Found During ${sourceName} Import`;
+    const body = buildMissingStudentsEmailBody(data);
 
-      // Only send to Alex for scraper notifications
-      const recipient = 'asmith7013@gmail.com';
+    const result = await sendEmail({
+      to: SCRAPER_RECIPIENT,
+      subject,
+      body
+    });
 
-      const sourceName = data.source === 'zearn' ? 'Zearn' : 'Roadmaps';
-      const subject = `Missing Students Found During ${sourceName} Import`;
-
-      let body = `Missing students were found during ${sourceName} data import:\n\n`;
-
-      body += `SUMMARY:\n`;
-      body += `   Total records processed: ${data.totalProcessed}\n`;
-      body += `   Missing students: ${data.missingStudents.length}\n\n`;
-
-      body += `MISSING STUDENTS:\n`;
-      data.missingStudents.forEach((student, index) => {
-        const name = student.firstName && student.lastName
-          ? `${student.lastName}, ${student.firstName}`
-          : 'Unknown name';
-        body += `   ${index + 1}. SIS ID: ${student.sisId} - ${name}\n`;
-      });
-
-      body += `\nTimestamp: ${data.timestamp}\n`;
-      body += `\nThese students need to be added to the database before their data can be imported.`;
-
-      await this.transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: recipient,
-        subject,
-        text: body
-      });
-
-      console.log('Email notification sent for missing students to:', recipient);
-      return true;
-    } catch (error) {
-      console.error('Failed to send missing students notification:', error);
-      return false;
-    }
+    return result.success;
   }
 }

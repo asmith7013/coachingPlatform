@@ -308,6 +308,107 @@ export async function fetchScopeAndSequenceByUnit(grade: string, unitNumber: num
 }
 
 /**
+ * Fetch a lightweight list of lessons for dropdown selection
+ * Returns minimal fields needed for display, not full document
+ * For worked example request page and similar UIs that need fast loading
+ */
+export async function fetchLessonsListByScopeTag(scopeSequenceTag: string) {
+  return withDbConnection(async () => {
+    try {
+      interface LightweightLesson {
+        _id: unknown;
+        unitNumber: number;
+        lessonNumber: number;
+        unitLessonId: string;
+        lessonName: string;
+        lessonTitle?: string;
+        lessonType?: string;
+        unit: string;
+        grade: string;
+        section?: string;
+        scopeSequenceTag?: string;
+      }
+
+      const lessons = await ScopeAndSequenceModel
+        .find({ scopeSequenceTag })
+        .select('_id unitNumber lessonNumber unitLessonId lessonName lessonTitle lessonType unit grade section scopeSequenceTag')
+        .sort({ unitNumber: 1, section: 1, lessonNumber: 1 })
+        .lean<LightweightLesson[]>();
+
+      return {
+        success: true,
+        data: lessons.map(lesson => ({
+          _id: String(lesson._id),
+          unitNumber: lesson.unitNumber,
+          lessonNumber: lesson.lessonNumber,
+          unitLessonId: lesson.unitLessonId,
+          lessonName: lesson.lessonName,
+          lessonTitle: lesson.lessonTitle,
+          lessonType: lesson.lessonType,
+          unit: lesson.unit,
+          grade: lesson.grade,
+          section: lesson.section,
+          scopeSequenceTag: lesson.scopeSequenceTag || scopeSequenceTag,
+        }))
+      };
+    } catch (error) {
+      console.error('💥 Error fetching lessons list:', error);
+      return {
+        success: false,
+        data: [] as Array<{
+          _id: string;
+          unitNumber: number;
+          lessonNumber: number;
+          unitLessonId: string;
+          lessonName: string;
+          lessonTitle?: string;
+          lessonType?: string;
+          unit: string;
+          grade: string;
+          section?: string;
+          scopeSequenceTag: string;
+        }>,
+        error: handleServerError(error, 'fetchLessonsListByScopeTag')
+      };
+    }
+  });
+}
+
+/**
+ * Fetch full lesson data for an entire unit in a single query
+ * Much faster than fetching each lesson individually
+ */
+export async function fetchFullLessonsByUnit(scopeSequenceTag: string, unit: string) {
+  return withDbConnection(async () => {
+    try {
+      const lessons = await ScopeAndSequenceModel
+        .find({
+          scopeSequenceTag,
+          unit,
+          $or: [
+            { lessonType: { $exists: false } },
+            { lessonType: null },
+            { lessonType: "lesson" }
+          ]
+        })
+        .sort({ section: 1, lessonNumber: 1 })
+        .lean();
+
+      return {
+        success: true,
+        data: lessons as unknown as ScopeAndSequence[]
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: [] as ScopeAndSequence[],
+        error: handleServerError(error, 'fetchFullLessonsByUnit')
+      };
+    }
+  });
+}
+
+/**
  * Fetch all ramp-up lessons for a given scopeSequenceTag
  * For 'Algebra 1', fetches 8th grade content tagged for Algebra 1
  * Returns ramp-ups grouped by unit for dropdown selection
@@ -375,6 +476,8 @@ export async function fetchRampUpsByUnit(
         podsieAssignmentId?: string;
         podsieQuestionMap?: Array<{ questionNumber: number; questionId: string }>;
         totalQuestions?: number;
+        roadmapSkills?: string[];
+        targetSkills?: string[];
       }
 
       const query: Record<string, unknown> = {
@@ -406,6 +509,8 @@ export async function fetchRampUpsByUnit(
           grade: lesson.grade,
           section: lesson.section,
           scopeSequenceTag: lesson.scopeSequenceTag || '',
+          roadmapSkills: lesson.roadmapSkills || [],
+          targetSkills: lesson.targetSkills || [],
           // Note: Podsie data moved to section-config collection
           podsieAssignmentId: undefined,
           totalQuestions: 10, // Default for now - should come from section-config
@@ -426,6 +531,8 @@ export async function fetchRampUpsByUnit(
           grade: string;
           section?: string;
           scopeSequenceTag: string;
+          roadmapSkills: string[];
+          targetSkills: string[];
           podsieAssignmentId?: string;
           podsieQuestionMap?: Array<{ questionNumber: number; questionId: string }>;
           totalQuestions: number;

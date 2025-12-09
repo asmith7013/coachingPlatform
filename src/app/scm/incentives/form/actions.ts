@@ -13,7 +13,7 @@ import { StudentActivity } from "@zod-schema/313/student/student";
 import { StudentActivityEventInput, StudentActivityInputZodSchema } from "@zod-schema/313/student/student-activity";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
-import { IncentiveEmailService } from "@/lib/email/incentive-notifications";
+import { IncentiveEmailService } from "@/app/actions/313/incentive-email";
 
 // =====================================
 // ACTIVITY TYPE ACTIONS

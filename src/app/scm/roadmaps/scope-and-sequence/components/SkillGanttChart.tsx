@@ -421,6 +421,8 @@ export function SkillGanttChart({
                     fontWeight={700}
                     fill="#1f2937"
                     textAnchor="middle"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => onLessonClick?.(lesson._id)}
                   >
                     {lessonLabel}
                   </text>
@@ -433,6 +435,8 @@ export function SkillGanttChart({
                       fontSize={10}
                       fill="#6b7280"
                       textAnchor="middle"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => onLessonClick?.(lesson._id)}
                     >
                       {line}
                     </text>

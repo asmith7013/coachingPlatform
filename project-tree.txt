@@ -331,6 +331,7 @@
 │   │   │   │   │   └── index.ts
 │   │   │   │   ├── google-sheets-export.ts
 │   │   │   │   ├── im-lessons.ts
+│   │   │   │   ├── incentive-email.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── learning-content.ts
 │   │   │   │   ├── podsie-completion.ts
@@ -362,6 +363,7 @@
 │   │   │   │   ├── sync-sheets.ts
 │   │   │   │   ├── velocity
 │   │   │   │   │   └── velocity.ts
+│   │   │   │   ├── worked-example-requests.ts
 │   │   │   │   ├── zearn-completions.ts
 │   │   │   │   └── zearn-import.ts
 │   │   │   ├── analytics.ts
@@ -875,6 +877,10 @@
 │   │   │       │   ├── slide-8.html
 │   │   │       │   └── slide-9.html
 │   │   │       ├── page.tsx
+│   │   │       ├── request
+│   │   │       │   ├── admin
+│   │   │       │   ├── components
+│   │   │       │   └── page.tsx
 │   │   │       ├── slide-creation
 │   │   │       │   ├── ContextSlide.tsx
 │   │   │       │   ├── PracticeSlide.tsx
@@ -1517,7 +1523,7 @@
 │   │   │       └── setup-test-user.ts
 │   │   ├── email
 │   │   │   ├── email-notifications.ts
-│   │   │   └── incentive-notifications.ts
+│   │   │   └── email-service.ts
 │   │   ├── error
 │   │   │   ├── core
 │   │   │   │   ├── classification.ts
@@ -2005,4 +2011,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-608 directories, 1398 files
+611 directories, 1401 files
