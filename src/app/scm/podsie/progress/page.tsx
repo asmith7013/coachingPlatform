@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import { useToast } from "@/components/core/feedback/Toast";
 import { fetchRampUpProgress, syncSectionRampUpProgress } from "@/app/actions/313/podsie-sync";
@@ -22,8 +22,24 @@ import { useSections } from "./hooks/useSections";
 import { useUnitsAndConfig } from "./hooks/useUnitsAndConfig";
 import { useLessons } from "./hooks/useLessons";
 import { useProgressData } from "./hooks/useProgressData";
-import { useLocalStorageString, useLocalStorageNumber } from "./hooks/useLocalStorage";
+import { useLocalStorageString } from "./hooks/useLocalStorage";
 import type { LessonConfig } from "./types";
+
+// Helper to get/set per-section localStorage values
+function getPerSectionValue(section: string, key: string): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(`podsieProgress_${key}_${section}`);
+}
+
+function setPerSectionValue(section: string, key: string, value: string | null) {
+  if (typeof window === 'undefined') return;
+  const fullKey = `podsieProgress_${key}_${section}`;
+  if (value !== null && value !== '') {
+    localStorage.setItem(fullKey, value);
+  } else {
+    localStorage.removeItem(fullKey);
+  }
+}
 
 export default function PodsieProgressPage() {
   // State
@@ -33,10 +49,13 @@ export default function PodsieProgressPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { showToast, ToastComponent } = useToast();
 
-  // LocalStorage-backed state
+  // LocalStorage-backed state for selected section (global)
   const [selectedSection, setSelectedSection] = useLocalStorageString('podsieProgress_selectedSection');
-  const [selectedUnit, setSelectedUnit] = useLocalStorageNumber('podsieProgress_selectedUnit');
-  const [selectedLessonSection, setSelectedLessonSection] = useLocalStorageString('podsieProgress_selectedLessonSection');
+
+  // Per-section state for unit and lesson section (keyed by groupId)
+  const [selectedUnit, setSelectedUnitState] = useState<number | null>(null);
+  const [selectedLessonSection, setSelectedLessonSectionState] = useState<string>("");
+  const [loadedGroupId, setLoadedGroupId] = useState<string | null>(null);
 
   // Derived state
   const scopeSequenceTag = useMemo(() => {
@@ -45,7 +64,7 @@ export default function PodsieProgressPage() {
 
   // Data hooks
   const { sections, loading: loadingSections, error: sectionsError } = useSections();
-  const { units, sectionConfigAssignments, loading: loadingUnits, error: unitsError, setSectionConfigAssignments } = useUnitsAndConfig(scopeSequenceTag, selectedSection);
+  const { units, sectionConfigAssignments, groupId, loading: loadingUnits, error: unitsError, setSectionConfigAssignments } = useUnitsAndConfig(scopeSequenceTag, selectedSection);
   const { lessons, sectionOptions, loading: loadingLessons, error: lessonsError } = useLessons(scopeSequenceTag, selectedSection, selectedUnit, selectedLessonSection, sectionConfigAssignments);
   const { progressData, loading: loadingProgress, error: progressError, setProgressData } = useProgressData(selectedSection, selectedUnit, lessons);
 
@@ -56,11 +75,44 @@ export default function PodsieProgressPage() {
   const showingSections = selectedLessonSection === 'all';
   const error = sectionsError || unitsError || lessonsError || progressError;
 
+  // Load per-section values when groupId becomes available (keyed by groupId)
+  useEffect(() => {
+    if (groupId && groupId !== loadedGroupId) {
+      const savedUnit = getPerSectionValue(groupId, 'unit');
+      const savedLessonSection = getPerSectionValue(groupId, 'lessonSection');
+
+      setSelectedUnitState(savedUnit ? parseInt(savedUnit, 10) : null);
+      setSelectedLessonSectionState(savedLessonSection || "");
+      setLoadedGroupId(groupId);
+    } else if (!selectedSection) {
+      setSelectedUnitState(null);
+      setSelectedLessonSectionState("");
+      setLoadedGroupId(null);
+    }
+  }, [groupId, loadedGroupId, selectedSection]);
+
+  // Persist unit to per-section localStorage (keyed by groupId)
+  const setSelectedUnit = useCallback((unit: number | null) => {
+    setSelectedUnitState(unit);
+    if (groupId) {
+      setPerSectionValue(groupId, 'unit', unit !== null ? unit.toString() : null);
+    }
+  }, [groupId]);
+
+  // Persist lesson section to per-section localStorage (keyed by groupId)
+  const setSelectedLessonSection = useCallback((lessonSection: string) => {
+    setSelectedLessonSectionState(lessonSection);
+    if (groupId) {
+      setPerSectionValue(groupId, 'lessonSection', lessonSection || null);
+    }
+  }, [groupId]);
+
   // Handlers
   const handleSectionChange = (section: string) => {
     setSelectedSection(section);
-    setSelectedUnit(null);
-    setSelectedLessonSection("");
+    setLoadedGroupId(null); // Reset so new groupId triggers load
+    setSelectedUnitState(null);
+    setSelectedLessonSectionState("");
   };
 
   const handleUnitChange = (unit: number | null) => {
@@ -367,13 +419,15 @@ export default function PodsieProgressPage() {
         )}
 
         {/* Smartboard Display */}
-        {selectedSection && selectedUnit !== null && selectedLessonSection && lessons.length > 0 && (
+        {selectedSection && selectedUnit !== null && selectedLessonSection && lessons.length > 0 && scopeSequenceTag && (
           <SmartboardDisplay
             assignments={lessons}
             progressData={progressData}
             selectedUnit={selectedUnit}
             selectedSection={selectedSection}
             selectedLessonSection={selectedLessonSection}
+            scopeSequenceTag={scopeSequenceTag}
+            grade={lessons[0]?.grade || ""}
             calculateSummaryStats={calculateSummaryStats}
             onSyncAll={handleSyncAll}
             syncingAll={syncingAll}

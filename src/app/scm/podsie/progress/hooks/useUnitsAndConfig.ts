@@ -8,6 +8,7 @@ import { getGradeForSection, getSchoolForSection } from "../utils/sectionHelpers
 export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: string) {
   const [units, setUnits] = useState<UnitOption[]>([]);
   const [sectionConfigAssignments, setSectionConfigAssignments] = useState<AssignmentContent[]>([]);
+  const [groupId, setGroupId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,6 +17,7 @@ export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: str
       if (!scopeSequenceTag || !selectedSection) {
         setUnits([]);
         setSectionConfigAssignments([]);
+        setGroupId(null);
         setLoading(false);
         return;
       }
@@ -66,8 +68,10 @@ export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: str
             scopeSequenceTag: configResult.data.scopeSequenceTag
           }));
           setSectionConfigAssignments(assignmentsWithScope);
+          setGroupId(configResult.data.groupId || null);
         } else {
           setSectionConfigAssignments([]);
+          setGroupId(null);
         }
       } catch (err) {
         console.error("Error loading units and section config:", err);
@@ -80,5 +84,5 @@ export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: str
     loadUnitsAndSectionConfig();
   }, [scopeSequenceTag, selectedSection]);
 
-  return { units, sectionConfigAssignments, loading, error, setSectionConfigAssignments };
+  return { units, sectionConfigAssignments, groupId, loading, error, setSectionConfigAssignments };
 }
