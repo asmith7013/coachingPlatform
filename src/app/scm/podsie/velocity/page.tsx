@@ -42,7 +42,7 @@ export default function VelocityPage() {
   const [loading, setLoading] = useState(true);
   const [loadingSectionIds, setLoadingSectionIds] = useState<Set<string>>(new Set());
   const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
-  const [includeNotTracked, setIncludeNotTracked] = useState(false);
+  const [includeNotTracked, setIncludeNotTracked] = useState(true);
   const [showRampUps, setShowRampUps] = useState(true);
   const [showSidekicks, setShowSidekicks] = useState(true);
   const [exportModalOpen, setExportModalOpen] = useState(false);
@@ -489,6 +489,9 @@ export default function VelocityPage() {
                   endDate={graphEndDate}
                   daysOff={daysOff}
                   showRampUps={showRampUps}
+                  onShowRampUpsChange={setShowRampUps}
+                  includeNotTracked={includeNotTracked}
+                  onIncludeNotTrackedChange={setIncludeNotTracked}
                   embedded
                   unitSchedules={sectionUnitSchedules}
                 />

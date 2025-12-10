@@ -13,7 +13,7 @@ import { StudentFilter } from "../../roadmaps/scope-and-sequence/components/Stud
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
-import { BookOpenIcon, CursorArrowRaysIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import { BookOpenIcon, CursorArrowRaysIcon } from "@heroicons/react/24/outline";
 import {
   RequestHeader,
   WorkedExampleForm,
@@ -72,7 +72,7 @@ export default function WorkedExampleRequestPage() {
   const [contextSkillId, setContextSkillId] = useState<string | null>(null);
   const [contextSkillColor, setContextSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('orange');
   const [contextSkillType, setContextSkillType] = useState<SkillType>('target');
-  const [showDescriptions, setShowDescriptions] = useState(false);
+  const [showDescriptions, setShowDescriptions] = useState(true);
 
   // Request type state
   const [requestType, setRequestType] = useState<RequestType | null>(null);
@@ -511,7 +511,46 @@ export default function WorkedExampleRequestPage() {
         {/* Lesson Context Card (includes Mastery Check Preview) */}
         {selectedLessonFull && !isLoading && (
           <div className="mb-6">
-            <LessonContextCard lesson={selectedLessonFull} />
+            <LessonContextCard
+              lesson={selectedLessonFull}
+              skillsSlot={
+                selectedLessonFull.roadmapSkills && selectedLessonFull.roadmapSkills.length > 0 ? (
+                  <div className="h-full flex flex-col">
+                    <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10 flex items-center justify-between">
+                      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Roadmap Skills</h4>
+                      <ToggleSwitch
+                        checked={showDescriptions}
+                        onChange={setShowDescriptions}
+                        label="Descriptions"
+                      />
+                    </div>
+                    <div className="overflow-y-auto max-h-[340px] p-4">
+                      <SkillListWithProgress
+                        skillNumbers={selectedLessonFull.roadmapSkills}
+                        selectedSection={selectedSection}
+                        onSkillClick={(skillNumber, color) => {
+                          const skill = lessonSkills.find(s => s.skillNumber === skillNumber) ||
+                                       allSkills.find(s => s.skillNumber === skillNumber);
+                          if (skill) {
+                            setSelectedSkillId(skill._id);
+                            setSelectedSkillColor(color);
+                            const isTarget = selectedLessonFull?.targetSkills?.includes(skillNumber) || false;
+                            setSelectedSkillType(isTarget ? 'target' : 'helpful');
+                          }
+                        }}
+                        skillType="target"
+                        showPrerequisites={true}
+                        masteredSkills={selectedStudent?.masteredSkills || []}
+                        targetSkillNumbers={selectedLessonFull.targetSkills || []}
+                        selectedStudents={selectedStudents}
+                        showDescriptions={showDescriptions}
+                        allSkills={allSkills}
+                      />
+                    </div>
+                  </div>
+                ) : undefined
+              }
+            />
           </div>
         )}
 
@@ -551,56 +590,11 @@ export default function WorkedExampleRequestPage() {
         {/* Main content - only show when lesson is fully loaded and request type selected */}
         {selectedLessonId && selectedLessonFull && !isLoading && requestType === 'prerequisite-skill' && (
           <>
-            {/* Three Column Layout - Prerequisite Skill flow */}
+            {/* Two Column Layout - Skill Details panels */}
             <div className="flex gap-6 mb-6">
-              {/* Left Column: Roadmap Skills with Mastery */}
+              {/* Left Column: Skill Details */}
               <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
-                contextSkillId ? "w-1/4" : "w-2/5"
-              }`}>
-                <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10 flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-900">Roadmap Skills</h3>
-                  <ToggleSwitch
-                    checked={showDescriptions}
-                    onChange={setShowDescriptions}
-                    label="Show Skill Descriptions"
-                  />
-                </div>
-                <div className="overflow-y-auto max-h-[600px] p-4">
-                  {selectedLessonFull.roadmapSkills && selectedLessonFull.roadmapSkills.length > 0 ? (
-                    <SkillListWithProgress
-                      skillNumbers={selectedLessonFull.roadmapSkills}
-                      selectedSection={selectedSection}
-                      onSkillClick={(skillNumber, color) => {
-                        const skill = lessonSkills.find(s => s.skillNumber === skillNumber) ||
-                                     allSkills.find(s => s.skillNumber === skillNumber);
-                        if (skill) {
-                          setSelectedSkillId(skill._id);
-                          setSelectedSkillColor(color);
-                          // Determine skill type based on whether it's a target skill
-                          const isTarget = selectedLessonFull?.targetSkills?.includes(skillNumber) || false;
-                          setSelectedSkillType(isTarget ? 'target' : 'helpful');
-                        }
-                      }}
-                      skillType="target"
-                      showPrerequisites={true}
-                      masteredSkills={selectedStudent?.masteredSkills || []}
-                      targetSkillNumbers={selectedLessonFull.targetSkills || []}
-                      selectedStudents={selectedStudents}
-                      showDescriptions={showDescriptions}
-                      allSkills={allSkills}
-                    />
-                  ) : (
-                    <div className="p-8 text-center text-gray-500">
-                      <MapPinIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <div className="text-sm">No roadmap skills found for this lesson</div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Middle Column: Skill Details */}
-              <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
-                contextSkillId ? "w-[43.75%]" : "w-3/5"
+                contextSkillId ? "w-1/2" : "w-full"
               }`}>
                 <SkillDetailWrapper
                   skill={selectedSkill}
@@ -635,7 +629,7 @@ export default function WorkedExampleRequestPage() {
 
               {/* Right Column: Context Skill (only when contextSkillId is set) */}
               {contextSkillId && (
-                <div className="w-[43.75%] bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all">
+                <div className="w-1/2 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all">
                   <SkillDetailWrapper
                     skill={contextSkill}
                     color={contextSkillColor}
