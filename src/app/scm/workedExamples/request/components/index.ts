@@ -7,4 +7,4 @@ export { LessonContextCard } from "./LessonContextCard";
 export { RequestTypeSelector } from "./RequestTypeSelector";
 export type { RequestType } from "./RequestTypeSelector";
 export { PracticeProblemQueue } from "./PracticeProblemQueue";
-export type { QueuedPracticeProblem } from "./PracticeProblemQueue";
+export type { QueuedPracticeProblem, SkillType } from "./PracticeProblemQueue";

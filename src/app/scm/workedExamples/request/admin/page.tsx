@@ -5,6 +5,7 @@ import { getWorkedExampleRequests, updateWorkedExampleRequestStatus } from "@act
 import { WorkedExampleRequest, WorkedExampleRequestStatus } from "@zod-schema/313/podsie/worked-example-request";
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback/Spinner";
+import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 
 const STATUS_OPTIONS: WorkedExampleRequestStatus[] = ["pending", "in_progress", "completed", "cancelled"];
 
@@ -162,7 +163,7 @@ export default function WorkedExampleRequestAdminPage() {
         {/* Request list */}
         {!loading && filteredRequests.length === 0 && (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <div className="text-gray-400 text-4xl mb-4">📋</div>
+            <ClipboardDocumentListIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-700 mb-2">No Requests Found</h3>
             <p className="text-gray-500">
               {statusFilter

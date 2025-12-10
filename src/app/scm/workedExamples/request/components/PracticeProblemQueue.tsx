@@ -1,13 +1,15 @@
 "use client";
 
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
+
+export type SkillType = 'target' | 'essential' | 'helpful';
 
 export interface QueuedPracticeProblem {
   skillNumber: string;
   skillTitle: string;
   problemNumber: number | string;
   screenshotUrl: string;
-  skillColor: 'green' | 'orange' | 'purple';
+  skillType: SkillType;
 }
 
 interface PracticeProblemQueueProps {
@@ -17,18 +19,22 @@ interface PracticeProblemQueueProps {
   onRemove: (item: QueuedPracticeProblem) => void;
 }
 
+// Using the tailwind colors defined in semantic-colors.ts:
+// skill-target: purple (#6320EE)
+// skill-essential: pink (#C855C8)
+// skill-helpful: turquoise (#009FB7)
 const colorClasses = {
-  green: {
-    badge: 'bg-green-600',
-    selectedBorder: 'ring-2 ring-green-500 ring-offset-2',
+  target: {
+    badge: 'bg-skill-target',
+    selectedBorder: 'ring-2 ring-skill-target ring-offset-2',
   },
-  orange: {
-    badge: 'bg-orange-500',
-    selectedBorder: 'ring-2 ring-orange-500 ring-offset-2',
+  essential: {
+    badge: 'bg-skill-essential',
+    selectedBorder: 'ring-2 ring-skill-essential ring-offset-2',
   },
-  purple: {
-    badge: 'bg-purple-600',
-    selectedBorder: 'ring-2 ring-purple-500 ring-offset-2',
+  helpful: {
+    badge: 'bg-skill-helpful',
+    selectedBorder: 'ring-2 ring-skill-helpful ring-offset-2',
   },
 };
 
@@ -43,7 +49,7 @@ export function PracticeProblemQueue({
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         <h3 className="font-semibold text-gray-900 mb-3">Consideration Queue</h3>
         <div className="text-center py-8 text-gray-500">
-          <div className="text-3xl mb-2">📋</div>
+          <ClipboardDocumentListIcon className="w-10 h-10 text-gray-400 mx-auto mb-2" />
           <p className="text-sm">
             Browse skills and click &quot;Add to Consideration&quot; on practice problems to add them here.
           </p>
@@ -72,7 +78,7 @@ export function PracticeProblemQueue({
           {items.map((item, index) => {
             const isSelected = selectedItem?.skillNumber === item.skillNumber &&
                                selectedItem?.problemNumber === item.problemNumber;
-            const colors = colorClasses[item.skillColor];
+            const colors = colorClasses[item.skillType];
 
             return (
               <div

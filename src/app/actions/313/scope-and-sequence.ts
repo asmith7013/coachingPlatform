@@ -394,9 +394,15 @@ export async function fetchFullLessonsByUnit(scopeSequenceTag: string, unit: str
         .sort({ section: 1, lessonNumber: 1 })
         .lean();
 
+      // Convert _id to string to make it serializable for Client Components
+      const serializedLessons = lessons.map(lesson => ({
+        ...lesson,
+        _id: String(lesson._id)
+      }));
+
       return {
         success: true,
-        data: lessons as unknown as ScopeAndSequence[]
+        data: serializedLessons as unknown as ScopeAndSequence[]
       };
     } catch (error) {
       return {

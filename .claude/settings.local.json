@@ -33,7 +33,8 @@
       "Skill(create-worked-example-sg)",
       "Skill(question-types)",
       "Bash(npm run lint:*)",
-      "Bash(node .claude/skills/create-worked-example-sg/templates/sync-to-db.js:*)"
+      "Bash(node .claude/skills/create-worked-example-sg/templates/sync-to-db.js:*)",
+      "Bash(wc:*)"
     ],
     "deny": [],
     "ask": []

@@ -13,7 +13,7 @@ import { StudentFilter } from "../../roadmaps/scope-and-sequence/components/Stud
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
-import { BookOpenIcon } from "@heroicons/react/24/outline";
+import { BookOpenIcon, CursorArrowRaysIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import {
   RequestHeader,
   WorkedExampleForm,
@@ -92,6 +92,7 @@ export default function WorkedExampleRequestPage() {
   const [learningGoals, setLearningGoals] = useState("");
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [uploadedImage, setUploadedImage] = useState<{ file: File; preview: string } | null>(null);
+  const [preloadedImageUrl, setPreloadedImageUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
@@ -172,15 +173,6 @@ export default function WorkedExampleRequestPage() {
             const skillsResult = await fetchRoadmapsSkillsByNumbers(allSkillNumbers);
             if (skillsResult.success && skillsResult.data) {
               setLessonSkills(skillsResult.data as RoadmapsSkill[]);
-              // Auto-select first target skill
-              if (targetSkillNumbers.length > 0) {
-                const firstTarget = skillsResult.data.find((s: RoadmapsSkill) =>
-                  targetSkillNumbers.includes(s.skillNumber)
-                );
-                if (firstTarget) {
-                  setSelectedSkillId((firstTarget as RoadmapsSkill)._id);
-                }
-              }
             }
           } else {
             setLessonSkills([]);
@@ -262,6 +254,8 @@ export default function WorkedExampleRequestPage() {
     setLearningGoals("");
     setAdditionalNotes("");
     setUploadedImage(null);
+    setPreloadedImageUrl(null);
+    setSelectedPracticeProblem(null);
     setSubmitSuccess(false);
   };
 
@@ -347,7 +341,32 @@ export default function WorkedExampleRequestPage() {
 
   const handleSelectFromQueue = useCallback((item: QueuedPracticeProblem) => {
     setSelectedPracticeProblem(item);
-  }, []);
+
+    // Find the skill to auto-fill form fields
+    const skill = lessonSkills.find(s => s.skillNumber === item.skillNumber) ||
+                  allSkills.find(s => s.skillNumber === item.skillNumber);
+
+    if (skill) {
+      // Auto-select this skill as a struggling skill
+      setSelectedStrugglingSkills(new Set([skill.skillNumber]));
+
+      // Auto-fill math concept with skill title or description
+      setMathConcept(skill.title || "");
+
+      // Auto-fill math standard from skill's standards
+      if (skill.standards && skill.standards.length > 0) {
+        setMathStandard(skill.standards.join(", "));
+      }
+
+      // Auto-fill learning goals with skill description
+      setLearningGoals(skill.description || "");
+    }
+
+    // Set the preloaded image URL
+    setPreloadedImageUrl(item.screenshotUrl);
+    // Clear any manually uploaded image
+    setUploadedImage(null);
+  }, [lessonSkills, allSkills]);
 
   const isProblemInQueue = useCallback((skillNumber: string, problemNumber: number | string) => {
     return practiceProblemQueue.some(
@@ -356,7 +375,8 @@ export default function WorkedExampleRequestPage() {
   }, [practiceProblemQueue]);
 
   const handleSubmit = async () => {
-    if (!selectedLessonFull || !uploadedImage || selectedStrugglingSkills.size === 0) {
+    const hasImage = uploadedImage !== null || preloadedImageUrl !== null;
+    if (!selectedLessonFull || !hasImage || selectedStrugglingSkills.size === 0) {
       setError("Please fill in all required fields");
       return;
     }
@@ -365,16 +385,29 @@ export default function WorkedExampleRequestPage() {
     setError(null);
 
     try {
-      // Upload image first
-      const imageBuffer = await uploadedImage.file.arrayBuffer();
-      const imageResult = await uploadWorkedExampleImage(
-        new Uint8Array(imageBuffer),
-        uploadedImage.file.name,
-        uploadedImage.file.type
-      );
+      let finalImageUrl: string;
+      let finalImageFilename: string;
 
-      if (!imageResult.success || !imageResult.url) {
-        throw new Error(imageResult.error || "Failed to upload image");
+      if (uploadedImage) {
+        // Upload the new image
+        const imageBuffer = await uploadedImage.file.arrayBuffer();
+        const imageResult = await uploadWorkedExampleImage(
+          new Uint8Array(imageBuffer),
+          uploadedImage.file.name,
+          uploadedImage.file.type
+        );
+
+        if (!imageResult.success || !imageResult.url) {
+          throw new Error(imageResult.error || "Failed to upload image");
+        }
+        finalImageUrl = imageResult.url;
+        finalImageFilename = uploadedImage.file.name;
+      } else if (preloadedImageUrl) {
+        // Use the preloaded image URL directly
+        finalImageUrl = preloadedImageUrl;
+        finalImageFilename = `problem-${selectedPracticeProblem?.skillNumber}-${selectedPracticeProblem?.problemNumber}.png`;
+      } else {
+        throw new Error("No image provided");
       }
 
       // Create request
@@ -393,8 +426,8 @@ export default function WorkedExampleRequestPage() {
         mathConcept,
         mathStandard,
         learningGoals: learningGoals.split("\n").filter(g => g.trim()),
-        sourceImageUrl: imageResult.url,
-        sourceImageFilename: uploadedImage.file.name,
+        sourceImageUrl: finalImageUrl,
+        sourceImageFilename: finalImageFilename,
         additionalNotes: additionalNotes || undefined,
         status: "pending",
         requestedBy: "", // Will be set by server action
@@ -419,7 +452,7 @@ export default function WorkedExampleRequestPage() {
     strugglingDescription.length > 0 &&
     mathConcept.length > 0 &&
     mathStandard.length > 0 &&
-    uploadedImage !== null;
+    (uploadedImage !== null || preloadedImageUrl !== null);
 
   // Convert units to format expected by RequestHeader
   const unitsForHeader = availableUnits.map(u => ({
@@ -553,7 +586,7 @@ export default function WorkedExampleRequestPage() {
                     />
                   ) : (
                     <div className="p-8 text-center text-gray-500">
-                      <div className="text-gray-400 text-lg mb-2">🎯</div>
+                      <MapPinIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                       <div className="text-sm">No roadmap skills found for this lesson</div>
                     </div>
                   )}
@@ -651,8 +684,12 @@ export default function WorkedExampleRequestPage() {
               additionalNotes={additionalNotes}
               onAdditionalNotesChange={setAdditionalNotes}
               uploadedImage={uploadedImage}
+              preloadedImageUrl={preloadedImageUrl}
               onImageUpload={handleImageUpload}
-              onImageRemove={handleImageRemove}
+              onImageRemove={() => {
+                handleImageRemove();
+                setPreloadedImageUrl(null);
+              }}
               onSubmit={handleSubmit}
               submitting={submitting}
               isValid={isFormValid}
@@ -727,8 +764,12 @@ export default function WorkedExampleRequestPage() {
               additionalNotes={additionalNotes}
               onAdditionalNotesChange={setAdditionalNotes}
               uploadedImage={uploadedImage}
+              preloadedImageUrl={preloadedImageUrl}
               onImageUpload={handleImageUpload}
-              onImageRemove={handleImageRemove}
+              onImageRemove={() => {
+                handleImageRemove();
+                setPreloadedImageUrl(null);
+              }}
               onSubmit={handleSubmit}
               submitting={submitting}
               isValid={isFormValid}
@@ -739,7 +780,7 @@ export default function WorkedExampleRequestPage() {
         {/* Prompt to select request type */}
         {selectedLessonId && selectedLessonFull && !isLoading && !requestType && (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <div className="text-gray-400 text-4xl mb-4">👆</div>
+            <CursorArrowRaysIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-700 mb-2">Select a Request Type</h3>
             <p className="text-gray-500">
               Choose one of the request types above to continue.

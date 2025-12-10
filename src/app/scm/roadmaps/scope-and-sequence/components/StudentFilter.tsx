@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Student } from "@zod-schema/313/student/student";
 import { fetchStudents } from "@actions/313/students";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { SECTION_ROADMAP_CONFIG, Roadmaps313Type } from "@schema/enum/313";
 
 interface StudentFilterProps {
   onStudentSelect: (student: Student | null) => void;
@@ -13,6 +14,29 @@ interface StudentFilterProps {
   selectedStudents?: Student[];
   multiSelect?: boolean;
   maxStudents?: number;
+  /** Filter sections to only show those matching this curriculum */
+  scopeSequenceTag?: string;
+}
+
+/**
+ * Map scope sequence tags to roadmap names for filtering
+ */
+function getScopeSectionsForTag(scopeSequenceTag: string): string[] {
+  // Map scope sequence tags to full roadmap names
+  const tagToRoadmap: Record<string, Roadmaps313Type> = {
+    "Grade 6": "Illustrative Math New York - 6th Grade",
+    "Grade 7": "Illustrative Math New York - 7th Grade",
+    "Grade 8": "Illustrative Math New York - 8th Grade",
+    "Algebra 1": "Illustrative Math New York - Algebra 1",
+  };
+
+  const roadmapName = tagToRoadmap[scopeSequenceTag];
+  if (!roadmapName) return [];
+
+  // Find all sections that have this roadmap (primary or secondary)
+  return SECTION_ROADMAP_CONFIG
+    .filter(config => config.roadmaps.some(r => r.roadmapName === roadmapName))
+    .map(config => config.section);
 }
 
 export function StudentFilter({
@@ -22,7 +46,8 @@ export function StudentFilter({
   onStudentsSelect,
   selectedStudents = [],
   multiSelect = false,
-  maxStudents = 5
+  maxStudents = 5,
+  scopeSequenceTag
 }: StudentFilterProps) {
   const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,10 +56,33 @@ export function StudentFilter({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Get sections allowed for this curriculum (memoized to prevent unnecessary re-renders)
+  const allowedSections = useMemo(
+    () => scopeSequenceTag ? getScopeSectionsForTag(scopeSequenceTag) : [],
+    [scopeSequenceTag]
+  );
+
   // Load all students on mount
   useEffect(() => {
     loadStudents();
   }, []);
+
+  // Reset section selection when scopeSequenceTag changes
+  useEffect(() => {
+    // If current section is not in allowed sections, reset it
+    if (allowedSections.length > 0 && selectedSection && !allowedSections.includes(selectedSection)) {
+      setSelectedSection("");
+      // Clear student selections
+      if (multiSelect && onStudentsSelect) {
+        onStudentsSelect([]);
+      } else {
+        onStudentSelect(null);
+      }
+      if (onSectionSelect) {
+        onSectionSelect("");
+      }
+    }
+  }, [scopeSequenceTag, allowedSections, selectedSection, onSectionSelect, multiSelect, onStudentsSelect, onStudentSelect]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -109,8 +157,10 @@ export function StudentFilter({
     }
   };
 
-  // Get unique sections from all students
-  const uniqueSections = Array.from(new Set(allStudents.map(s => s.section))).sort();
+  // Get unique sections from all students, filtered by allowed sections if specified
+  const uniqueSections = Array.from(new Set(allStudents.map(s => s.section)))
+    .filter(section => allowedSections.length === 0 || allowedSections.includes(section))
+    .sort();
 
   // Filter students by selected section
   const sectionFilteredStudents = selectedSection

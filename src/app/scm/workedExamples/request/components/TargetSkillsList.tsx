@@ -1,6 +1,7 @@
 "use client";
 
 import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
+import { MapPinIcon } from "@heroicons/react/24/outline";
 
 interface TargetSkillsListProps {
   lessonSkills: RoadmapsSkill[];
@@ -31,7 +32,7 @@ export function TargetSkillsList({
       <div className="overflow-y-auto max-h-[500px]">
         {targetSkills.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
-            <div className="text-gray-400 text-lg mb-2">🎯</div>
+            <MapPinIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
             <div className="text-sm">No target skills found for this lesson</div>
           </div>
         ) : (

@@ -52,6 +52,7 @@ interface VelocityGraphProps {
   onShowRampUpsChange: (value: boolean) => void;
   showSidekicks: boolean;
   onShowSidekicksChange: (value: boolean) => void;
+  unitSchedules?: UnitSchedule[]; // Unit schedules for the unit bar (when all sections share same scope/grade)
 }
 
 export function VelocityGraph({
@@ -67,7 +68,8 @@ export function VelocityGraph({
   showRampUps,
   onShowRampUpsChange,
   showSidekicks,
-  onShowSidekicksChange
+  onShowSidekicksChange,
+  unitSchedules,
 }: VelocityGraphProps) {
   const [showRollingAverage, setShowRollingAverage] = useState(true);
   const [adjustForBlockType, setAdjustForBlockType] = useState(true);
@@ -200,6 +202,124 @@ export function VelocityGraph({
   // Set Y-axis max to 1.5 by default, or extend proportionally if data exceeds it
   const yAxisMax = Math.max(1.5, Math.ceil(maxVelocity * 1.1)); // Add 10% padding
 
+  // Generate unit bar annotations
+  const unitAnnotations = (() => {
+    if (!unitSchedules || unitSchedules.length === 0 || sortedDates.length === 0) {
+      return [];
+    }
+
+    // Create a map from date string to label index for quick lookups
+    const dateIndexMap = new Map<string, number>();
+    sortedDates.forEach((date, idx) => {
+      dateIndexMap.set(date, idx);
+    });
+
+    // Format dates to match chart labels (e.g., "Sep 15")
+    const formatDateToLabel = (dateStr: string) => {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    };
+
+    const chartStartDate = sortedDates[0];
+    const chartEndDate = sortedDates[sortedDates.length - 1];
+
+    const annotations: {
+      type: 'box';
+      xMin: string;
+      xMax: string;
+      yMin: number;
+      yMax: number;
+      backgroundColor: string;
+      borderColor: string;
+      borderWidth: number;
+      borderRadius: number;
+      label: {
+        display: boolean;
+        content: string;
+        position: { x: 'center' | 'start' | 'end'; y: 'center' | 'start' | 'end' };
+        yAdjust: number;
+        font: { size: number; weight: 'bold' };
+        color: string;
+        backgroundColor: string;
+        padding: { top: number; bottom: number; left: number; right: number };
+        borderRadius: number;
+      };
+    }[] = [];
+
+    const unitsWithDates = unitSchedules
+      .filter((u) => u.startDate && u.endDate)
+      .sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""));
+
+    unitsWithDates.forEach((unit) => {
+      const unitStart = unit.startDate || "";
+      const unitEnd = unit.endDate || "";
+
+      // Skip if unit is completely outside chart range
+      if (unitEnd < chartStartDate || unitStart > chartEndDate) {
+        return;
+      }
+
+      // Clamp to chart bounds
+      const effectiveStart = unitStart < chartStartDate ? chartStartDate : unitStart;
+      const effectiveEnd = unitEnd > chartEndDate ? chartEndDate : unitEnd;
+
+      // Find the label index for start and end
+      let startIdx = dateIndexMap.get(effectiveStart);
+      let endIdx = dateIndexMap.get(effectiveEnd);
+
+      // If start date isn't found, find the first date >= effectiveStart
+      if (startIdx === undefined) {
+        startIdx = sortedDates.findIndex((d) => d >= effectiveStart);
+        if (startIdx === -1) return;
+      }
+
+      // If end date isn't found, find the last date <= effectiveEnd
+      if (endIdx === undefined) {
+        for (let i = sortedDates.length - 1; i >= 0; i--) {
+          if (sortedDates[i] <= effectiveEnd) {
+            endIdx = i;
+            break;
+          }
+        }
+        if (endIdx === undefined) return;
+      }
+
+      const colorIdx = (unit.unitNumber - 1) % UNIT_COLORS.length;
+      const colors = UNIT_COLORS[colorIdx];
+
+      // Get the labels for xMin and xMax
+      const startLabel = formatDateToLabel(sortedDates[startIdx]);
+      const endLabel = formatDateToLabel(sortedDates[endIdx]);
+
+      // Create box annotation for the unit
+      annotations.push({
+        type: 'box',
+        xMin: startLabel,
+        xMax: endLabel,
+        yMin: 0,
+        yMax: yAxisMax,
+        backgroundColor: colors.bg,
+        borderColor: colors.border,
+        borderWidth: 1,
+        borderRadius: 4,
+        label: {
+          display: true,
+          content: `Unit ${unit.unitNumber}`,
+          position: { x: 'center', y: 'start' },
+          yAdjust: 6,
+          font: { size: 12, weight: 'bold' },
+          color: colors.text,
+          backgroundColor: colors.border,
+          padding: { top: 2, bottom: 2, left: 6, right: 6 },
+          borderRadius: 4,
+        },
+      });
+    });
+
+    return annotations;
+  })();
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -255,6 +375,9 @@ export function VelocityGraph({
             }
           },
         },
+      },
+      annotation: {
+        annotations: unitAnnotations,
       },
     },
     scales: {

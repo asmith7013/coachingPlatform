@@ -35,6 +35,7 @@ interface WorkedExampleFormProps {
 
   // Image upload
   uploadedImage: UploadedImage | null;
+  preloadedImageUrl?: string | null;
   onImageUpload: (file: File) => void;
   onImageRemove: () => void;
 
@@ -59,6 +60,7 @@ export function WorkedExampleForm({
   additionalNotes,
   onAdditionalNotesChange,
   uploadedImage,
+  preloadedImageUrl,
   onImageUpload,
   onImageRemove,
   onSubmit,
@@ -139,6 +141,7 @@ export function WorkedExampleForm({
       {/* Image Upload */}
       <ImageUpload
         uploadedImage={uploadedImage}
+        preloadedImageUrl={preloadedImageUrl}
         onImageUpload={onImageUpload}
         onImageRemove={onImageRemove}
       />

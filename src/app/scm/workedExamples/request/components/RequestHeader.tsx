@@ -1,5 +1,6 @@
 "use client";
 
+import { ReactNode } from "react";
 import { SCOPE_SEQUENCE_TAG_OPTIONS } from "@schema/enum/313";
 
 interface UnitData {
@@ -34,6 +35,7 @@ interface RequestHeaderProps {
   onGradeChange: (value: string) => void;
   onUnitChange: (value: number | null) => void;
   onLessonChange: (value: string | null) => void;
+  studentFilterSlot?: ReactNode;
 }
 
 // Format lesson name for dropdown display
@@ -63,6 +65,7 @@ export function RequestHeader({
   onGradeChange,
   onUnitChange,
   onLessonChange,
+  studentFilterSlot,
 }: RequestHeaderProps) {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -144,23 +147,21 @@ export function RequestHeader({
           </div>
         </div>
 
-        {/* Right side: Mastery Check Preview */}
-        <div className="w-64 flex-shrink-0">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Mastery Check Preview
-          </label>
-          <div className="h-40 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
-            {!selectedLessonId ? (
-              <span className="text-gray-400 text-sm text-center px-4">
-                Select a lesson to see mastery check
-              </span>
-            ) : (
-              <span className="text-gray-400 text-sm text-center px-4">
-                Mastery check image coming soon
-              </span>
-            )}
+        {/* Vertical Divider */}
+        {studentFilterSlot && (
+          <div className="w-px bg-gray-200 self-stretch" />
+        )}
+
+        {/* Right side: Student Filter */}
+        {studentFilterSlot && (
+          <div className="w-72 flex-shrink-0">
+            <div className="mb-3">
+              <h2 className="text-lg font-semibold text-gray-900">Student Filter</h2>
+              <p className="text-sm text-gray-600">View mastery progress</p>
+            </div>
+            {studentFilterSlot}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
