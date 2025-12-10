@@ -2,663 +2,154 @@
 
 You are an expert educational content creator specializing in mathematics pedagogy and worked example slide decks.
 
-Your task is to generate HTML-based slide decks for math worked examples and save them to the database.
+**Your task:** Generate HTML-based slide decks for math worked examples and save them to the database.
 
-## Example Slides Reference
+## How This Skill Works
 
-Before starting, **study these example slide patterns from a complete hanger balance worked example**:
+This skill is divided into **4 phases**. Each phase has its own file with detailed instructions.
 
-### Full Example Available
-See `.claude/skills/create-worked-example-sg/examples/example1.html` for a complete 9-slide hanger balance deck.
+**IMPORTANT:** You MUST read each phase file using the Read tool before executing that phase. Do NOT try to complete the entire workflow from memory.
 
-### Pattern 1: Title Slide (Learning Goal)
+## Phase Overview
 
-```html
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif;">
-    <h3 style="font-size: 32px; font-weight: 500; color: #94a3b8; margin: 0; text-transform: uppercase;">Unit 4 Lesson 1</h3>
-    <h1 style="font-size: 80px; font-weight: 700; letter-spacing: 2px; color: #a855f7; text-shadow: 0 0 20px rgba(168, 85, 247, 0.4); margin: 20px 0; text-transform: uppercase;">Balancing the Equation</h1>
-    <p style="font-size: 28px; line-height: 1.6; color: #cbd5e1; max-width: 800px; text-align: center; margin-top: 30px;">Big Idea: We can find the weight of an unknown object using a hanger diagram. Just like a balanced scale, if you add or remove the same amount from both sides, it stays equal!</p>
-</div>
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  PHASE 1: COLLECT & ANALYZE                                                 │
+│  File: phases/01-collect-and-analyze.md                                     │
+│                                                                             │
+│  Trigger: User says "create worked example"                                 │
+│  Actions: Gather inputs, analyze problem, define ONE strategy               │
+│  Output: PROBLEM ANALYSIS + STRATEGY DEFINITION                             │
+│  Done when: You have completed both output templates                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  PHASE 2: CONFIRM & PLAN                                                    │
+│  File: phases/02-confirm-and-plan.md                                        │
+│                                                                             │
+│  Trigger: Phase 1 complete                                                  │
+│  Actions: Present analysis to user, WAIT for confirmation, plan scenarios   │
+│  Output: User approval + 3 scenario descriptions                            │
+│  Done when: User says "proceed" or similar                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  PHASE 3: GENERATE SLIDES                                                   │
+│  File: phases/03-generate-slides.md                                         │
+│                                                                             │
+│  Trigger: User confirms in Phase 2                                          │
+│  Actions: Create 8-11 HTML slides following patterns                        │
+│  Output: HTML files written to src/app/presentations/{slug}/                │
+│  Done when: All slide files are written                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                     │
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  PHASE 4: SAVE TO DATABASE                                                  │
+│  File: phases/04-save-to-database.md                                        │
+│                                                                             │
+│  Trigger: All slides written in Phase 3                                     │
+│  Actions: Create metadata.json, sync to MongoDB                             │
+│  Output: Database entry created, URL provided to user                       │
+│  Done when: User receives the presentation URL                              │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Key Elements:** Student-facing "Big Idea", large purple title, unit badge, simple example
+## Critical Rules (Apply to ALL Phases)
 
-### Pattern 2: Problem Setup with Balance Visual
+1. **Do NOT assume problem type** until you see the actual problem image
+2. **Do NOT generate scenarios** until deep analysis is complete
+3. **Do NOT create slides** until user confirms your understanding
+4. **Use ONE strategy** throughout all slides - name it, define it, use consistent language
+5. **Problem image is REQUIRED** - you cannot proceed without it
+6. **Update progress file** at the end of each phase (see Progress Tracking below)
 
-Uses Font Awesome icons, balance container with two sides, engaging scenario ("RPG Crafting Station")
+## Progress Tracking
 
-### Pattern 3: Ask Slide (with Interactive CFU Box)
+This skill uses a progress file to track state and enable resumption:
 
-**IMPORTANT:** CFU boxes and answer reveals must be **toggleable** to prevent visual overlap. This pattern uses **inline onclick handlers** which is the most reliable method for React's `dangerouslySetInnerHTML`.
+**File:** `src/app/presentations/{slug}/.worked-example-progress.json`
 
-**Why Inline Onclick?**
-- Works reliably with React's `dangerouslySetInnerHTML`
-- Simpler than checkbox hack (no hidden inputs or labels needed)
-- Direct JavaScript manipulation of element visibility and transform
-- Battle-tested across multiple presentations
+- Created in Phase 1 after analysis is complete
+- Updated at each phase transition
+- Tracks: current phase, strategy name, slides completed, user confirmation status
+- Deleted automatically after Phase 4 verification succeeds
 
-**Complete Template Available:**
-See `.claude/skills/create-worked-example-sg/templates/cfu-toggle-snippet.html` for the full reusable template.
+If you find an existing progress file when starting, READ IT and resume from where you left off.
 
-```html
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+## How to Start
 
-    <!-- YOUR SLIDE CONTENT HERE -->
-    <h2>STEP 1: SIMPLIFY</h2>
-    <!-- Your visual content here -->
+When the user asks to create a worked example:
 
-</div>
-
-<!-- Toggle button -->
-<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('cfu-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
-    ↓ Show Question
-</button>
-
-<!-- CFU Box at bottom -->
-<div id="cfu-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
-    <div style="background: #f59e0b; border-top: 4px solid #fbbf24; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
-        <button onclick="document.getElementById('cfu-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
-            ×
-        </button>
-        <div style="display: inline-block; background: #e5e7eb; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px; color: #000;">❓ CHECK FOR UNDERSTANDING</div>
-        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
-            [YOUR QUESTION HERE]
-        </span>
-    </div>
-</div>
-
-<style>
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
-
-#toggle-hint:hover {
-    background: rgba(148, 163, 184, 0.2);
-    transform: translateX(-50%) scale(1.05);
-}
-</style>
+**STEP 1:** Use the Read tool to read the Phase 1 instructions:
+```
+Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze.md
 ```
 
-**Key Points:**
-- Toggle button at `bottom: 20px` (low enough to avoid content overlap)
-- Use inline `onclick` handlers with `document.getElementById()` to manipulate elements
-- Close button (×) positioned in top-right corner for visibility
-- Badge-style title with `background: rgba(0,0,0,0.3)` and rounded corners
-- Use `position: fixed` for toggle button and CFU box (not `absolute`)
-- Orange background (#f59e0b) for CFU questions
-- **Inline onclick DOES work** with React's `dangerouslySetInnerHTML` despite earlier assumptions
+**STEP 2:** Follow the instructions in that file completely.
 
-**Key Rules:**
-- Visual stays in SAME position as problem setup. Only add annotations (X marks, highlights).
-- CFU box is hidden by default (`transform: translateY(100%)`)
-- Clicking "Show Question" hides button and slides box up
-- Clicking × button hides box and shows button again
-- Use solid background (#f59e0b for questions, #4ade80 for answers) for readability
-- Extra bottom padding (120px) ensures content doesn't get hidden by toggle button
+**STEP 3:** At the end of each phase, the file will tell you which phase to read next.
 
-### Pattern 4: Reveal Slide (Answer Box)
+## Required Reading (Before Starting)
 
-IDENTICAL visual to Ask slide, but change:
-- Button text: "↓ Show Answer" instead of "↓ Show Question"
-- Box ID: `answer-box` instead of `cfu-box`
-- Box background: #4ade80 (green) instead of #f59e0b (orange)
-- Border: #22c55e instead of #fbbf24
-- Badge icon: ✅ ANSWER instead of ❓ CHECK FOR UNDERSTANDING
-- Content: Answer text instead of question text
+**Before reading Phase 1**, use the Read tool to read these files. This establishes the quality bar and patterns you'll follow:
 
-**Complete Template Available:**
-See `.claude/skills/create-worked-example-sg/templates/answer-toggle-snippet.html` for the full reusable template.
+1. **Pedagogical Framework** - The "why" behind the slide structure:
+   ```
+   Read: .claude/skills/create-worked-example-sg/reference/pedagogy.md
+   ```
 
-```html
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+2. **Styling Guide** - Core styling patterns:
+   ```
+   Read: .claude/skills/create-worked-example-sg/reference/styling.md
+   ```
 
-    <!-- YOUR SLIDE CONTENT HERE -->
+3. **Complete Example** - See what a finished deck looks like:
+   ```
+   Read: .claude/skills/create-worked-example-sg/examples/example1.html
+   ```
 
-</div>
+These files establish context that influences all phases. The pedagogy.md especially helps you understand the research-based reasoning behind the Four Rules.
 
-<!-- Toggle button -->
-<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('answer-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
-    ↓ Show Answer
-</button>
+## Reference Materials (Used in Phase 3)
 
-<!-- Answer Box at bottom -->
-<div id="answer-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
-    <div style="background: #4ade80; border-top: 4px solid #22c55e; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
-        <button onclick="document.getElementById('answer-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
-            ×
-        </button>
-        <div style="display: inline-block; background: #e5e7eb; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px; color: #000;">✅ ANSWER</div>
-        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
-            [YOUR ANSWER HERE]
-        </span>
-    </div>
-</div>
+Templates you'll use when creating slides:
+- `templates/cfu-toggle-snippet.html` - CFU question toggle pattern
+- `templates/answer-toggle-snippet.html` - Answer reveal toggle pattern
+- `templates/printable-slide-snippet.html` - Printable worksheet layout
+- `templates/metadata.json` - Metadata file template
 
-<style>
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
+Scripts:
+- `scripts/sync-to-db.js` - Database sync script
+- `scripts/verify-worked-example.ts` - Verification script
 
-#toggle-hint:hover {
-    background: rgba(148, 163, 184, 0.2);
-    transform: translateX(-50%) scale(1.05);
-}
-</style>
-```
+Phase 3 will instruct you to read these templates before creating slides.
 
-### Pattern 5: Practice Problem (Zero Scaffolding)
+## Quality Checklist (Verify Before Completing Phase 4)
 
-Same structure as problem setup, but different scenario ("Hypebeast Trade" with sneakers/hoodies instead of gems/gold). NO annotations, NO CFU, NO steps.
+**Strategy & Analysis:**
+- ✅ Problem was deeply analyzed BEFORE creating any content
+- ✅ ONE clear strategy is named and defined
+- ✅ Strategy has a one-sentence student-facing summary
+- ✅ All step names use consistent verbs from the strategy definition
+- ✅ CFU questions reference the strategy name or step names
+- ✅ User confirmed understanding before slide creation began
 
-### Pattern 6: Printable Worksheet (Final Slide)
-
-A print-friendly worksheet for teachers to print and distribute. Contains only the 2 practice problems (NOT the worked example) - one for front, one for back of the page.
-
-**Key Features:**
-- **Portrait orientation** (8.5" x 11") - two pages stacked vertically
-- Each problem on its own full page (prints front/back)
-- White background with black text (print-friendly)
-- Serif font (Times New Roman) for readability on paper
-- Header with lesson info and name/date fields on each page
-- Learning goal box on each page
-- Compact SVG graphs with black lines on white background
-- **Print button** appears automatically on last slide (handled by PresentationModal)
-- **Print styles** are handled by PresentationModal - no need to add `<style>` in the HTML
-
-**IMPORTANT:**
-- Do NOT include the worked example (first scenario) on the printable
-- Do NOT add inline print button - it's in the PresentationModal
-- Do NOT add `<style>` block for print - it's in the PresentationModal
-- The `print-page` class is required for proper page breaks
-
-```html
-<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
-
-    <!-- Page 1: Problem 1 (Front) -->
-    <div class="print-page" style="width: 8.5in; height: 11in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
-        <!-- Header with lesson info -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
-            <div>
-                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">[LESSON TITLE]</h1>
-                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Unit [X] Lesson [Y] | Grade [Z]</p>
-            </div>
-            <div style="text-align: right;">
-                <p style="font-size: 13px; margin: 0;">Name: _______________________</p>
-                <p style="font-size: 13px; margin: 4px 0 0 0;">Date: ________________________</p>
-            </div>
-        </div>
-
-        <!-- Learning Goal Box -->
-        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 20px;">
-            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> [STUDENT-FACING LEARNING GOAL]</p>
-        </div>
-
-        <!-- Problem 1 -->
-        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
-            <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
-                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 1: [SCENARIO NAME]</h3>
-            </div>
-            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">[PROBLEM DESCRIPTION]</p>
-
-            <!-- Table and Graph side by side -->
-            <div style="display: flex; gap: 30px; flex: 1; align-items: flex-start;">
-                <!-- TABLE HERE -->
-                <table style="border-collapse: collapse; font-size: 14px;">...</table>
-
-                <!-- SVG GRAPH HERE - use viewBox="0 0 320 280" for proper sizing -->
-                <svg viewBox="0 0 320 280" style="width: 320px; height: 280px; flex-shrink: 0;">...</svg>
-            </div>
-
-            <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: 15px;">
-                <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
-                <p style="font-size: 13px; line-height: 1.5; margin: 0;">[TASK DESCRIPTION]</p>
-                <div style="margin-top: 12px;">
-                    <p style="font-size: 12px; margin: 0 0 5px 0;"><strong>Slope:</strong> ____________</p>
-                    <p style="font-size: 12px; margin: 0 0 5px 0;"><strong>Equation:</strong> y = ____________</p>
-                    <p style="font-size: 12px; margin: 0;"><strong>[Context-specific question]:</strong> ____________</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Page 2: Problem 2 (Back) - SAME STRUCTURE as Page 1 -->
-    <div class="print-page" style="width: 8.5in; height: 11in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
-        <!-- Repeat exact same structure with Problem 2 content -->
-    </div>
-</div>
-```
-
-**Key Points:**
-- ALWAYS include as the **final slide** in every worked example deck
-- **Portrait orientation** (8.5" x 11") - each problem on its own page
-- **Only 2 practice problems** - do NOT include the worked example scenario
-- **Use `class="print-page"`** on each page div - this triggers proper page breaks
-- Black lines on white background (no colors except light gray #ccc for grid)
-- Include name/date fields and learning goal on EACH page
-- Font sizes: titles 18px, body 14px, task 13px (larger for portrait)
-- **NO `<style>` block needed** - print styles are in PresentationModal
-- **NO inline print button needed** - it appears automatically on last slide
-
-## Getting Started: Required Information
-
-When the user asks you to create a worked example, **ALWAYS prompt them for these pieces of information**:
-
-1. **Grade Level** - What grade is this for? Valid values: "6", "7", "8", or "Algebra 1"
-2. **Unit Number** - What unit is this from? (e.g., 4)
-3. **Lesson Number** - What lesson is this? (e.g., 1, can be 0 or negative for ramp-ups)
-4. **Learning Goals** - What should students be able to do after this lesson? (Use student-facing language, can be multiple goals)
-5. **Problem Image** - Upload an image of the math problem that needs a worked example
-
-**Example Prompt to User:**
-```
-To create a worked example, I need the following information:
-
-1. **Grade Level**: What grade is this for? (Valid: "6", "7", "8", or "Algebra 1")
-2. **Unit Number**: What unit is this from? (e.g., 4)
-3. **Lesson Number**: What lesson is this? (e.g., 1)
-4. **Learning Goals**: What should students learn from this?
-   (e.g., "Students will be able to solve linear equations using the distributive property")
-   You can provide multiple learning goals if needed.
-5. **Problem Image**: Please upload an image of the problem you want a worked example for.
-
-Once I have these, I'll create a complete HTML slide deck!
-```
-
-**Do NOT proceed** until you have all required pieces of information.
-
-## Your Process
-
-### Step 1: Look up Scope and Sequence ID
-
-After receiving the grade, unit number, and lesson number from the user, query MongoDB to find the matching scope and sequence document:
-
-```bash
-mongosh "$DATABASE_URL" --eval "
-const grade = '[GRADE]';  // e.g., '8'
-const unitNumber = [UNIT_NUMBER];  // e.g., 4
-const lessonNumber = [LESSON_NUMBER];  // e.g., 1
-
-const result = db['scope-and-sequence'].findOne({
-  grade: grade,
-  unitNumber: unitNumber,
-  lessonNumber: lessonNumber
-});
-
-if (result) {
-  print('Scope and Sequence ID:', result._id.toString());
-  print('Lesson Name:', result.lessonName);
-  print('Unit:', result.unit);
-} else {
-  print('No matching scope and sequence found for Grade', grade, 'Unit', unitNumber, 'Lesson', lessonNumber);
-}
-" --quiet
-```
-
-Store the `scopeAndSequenceId` (the `_id` value as a string) to include in the deck metadata later.
-
-**Important:** If no matching scope and sequence is found, warn the user but continue with the worked example creation. Set `scopeAndSequenceId` to `undefined` in the metadata.
-
-### Step 2: Analyze the Math Problem
-
-Extract from the image:
-- Mathematical concept (e.g., unit rates, hanger diagrams, proportional relationships)
-- Core structure (what are the key steps?)
-- Existing context or scenario (if any)
-- Visual type needed: **HTML**, **P5.js**, or **D3.js**
-
-**Determine Visual Type:**
-
-- **Use HTML/CSS** when:
-  - Simple tables with highlighting
-  - Text-based problems
-  - Static equations
-  - Minimal animation needed
-
-- **Use P5.js** when:
-  - Hanger diagrams
-  - Geometric shapes and transformations
-  - Balance/scale problems
-  - Interactive manipulatives
-  - Custom animations
-
-- **Use D3.js** when:
-  - Coordinate planes and graphs
-  - Data visualizations
-  - Complex charts
-  - Mathematical plots
-
-### Step 2: Generate Three Exit Tickets
-
-Create three variations of the problem with:
-- **Same rigor and mathematical structure** as original
-- **Different numbers/contexts** to prevent memorization
-- **Engaging scenarios** for the grade level (gaming, social media, STEM, sports - NOT boring textbook examples)
-- Each with a unique icon/theme
-
-**Examples of Good Scenarios:**
-- Grade 6-7: Video game items, YouTube views, TikTok followers, sports stats
-- Grade 8-9: Drone flight, crypto mining, streaming subscriptions, esports tournaments
-- Grade 10-12: Investment returns, data science, engineering projects, startup growth
-
-### Step 3: Create Worked Example for First Problem
-
-Break the solution into **2-3 key steps** (maximum 3 steps):
-
-For each step, create:
-1. **Ask Slide** - Visual annotation showing what to focus on + Check-for-Understanding question
-2. **Reveal Slide** - Answer to the CFU question with explanation
-
-**Check-for-Understanding Question Patterns:**
-- "Why did I..." (strategy question)
-- "How did I know to..." (decision-making question)
-- "What operation should I use here and why?" (conceptual question)
-
-**Do NOT ask:**
-- "What is X + Y?" (computation question)
-- "What's the answer?" (result question)
-
-### Step 4: Generate HTML Slides (8-11 slides total)
-
-**CRITICAL: Visual Fit Requirements**
-
-Before creating slides, ensure:
-1. **All content fits on screen without scrolling** - Test at 100vh height
-2. **Use bottom padding of 120px** on Ask slides to leave room for CFU toggle
-3. **Reduce font sizes if needed** - Better to be readable and fit than overflow
-4. **Compact layouts** - Use efficient spacing (margin: 12-15px instead of 20-30px)
-5. **Interactive CFU boxes** - Always use toggle pattern to prevent overlap
-6. **Max content height**: ~700px for main content on Ask slides
-
-**Slide Structure:**
-
-1. **Learning Goal Slide** (Title slide)
-   - Learning goal in student-facing language
-   - Simple example
-   - Badge with unit/lesson number (optional)
-
-2. **Problem Slide** (First exit ticket - worked example)
-   - Scenario/context
-   - Problem statement
-   - Visual representation (table, hanger diagram, graph)
-   - Icon/image
-
-3. **Step 1 - Ask**
-   - Same visual as slide 2, with annotation/highlighting
-   - **MUST use interactive CFU toggle pattern** (see Pattern 3 above)
-   - **Extra bottom padding: 120px**
-   - Reduce sizes if needed to fit
-
-4. **Step 1 - Reveal**
-   - Same visual as slide 3 (without CFU box)
-   - Answer displayed directly on slide (green accent)
-   - Brief explanation
-
-5. **Step 2 - Ask**
-   - Updated visual showing next step
-   - **MUST use interactive CFU toggle pattern**
-   - **Extra bottom padding: 120px**
-
-6. **Step 2 - Reveal**
-   - Updated visual
-   - Answer displayed directly on slide
-   - Explanation
-
-7. *[Optional]* **Step 3 - Ask/Reveal** (only if problem requires 3 steps)
-
-8. *[Optional]* **Reasoning Slide** (only if original problem asks "explain your reasoning")
-   - Pattern explanation in plain English
-   - Step-by-step breakdown
-   - Mathematical rule (optional)
-   - Key insight
-
-9. **Practice Problem 1** (Second exit ticket)
-   - New scenario, no scaffolding
-   - Just the problem setup
-
-10. **Practice Problem 2** (Third exit ticket)
-    - New scenario, no scaffolding
-    - Just the problem setup
-
-11. **Printable Worksheet** (REQUIRED - always include as final slide)
-    - White background, black text (print-friendly)
-    - Contains only the 2 practice problems (NOT the worked example)
-    - **Portrait orientation** (8.5" x 11") - each problem on its own full page
-    - Two pages stacked vertically for front/back printing
-    - Header, learning goal, and name/date fields on EACH page
-    - See Pattern 6 above for detailed template
-
-### Step 5: Generate HTML with Visual Stability
-
-**Critical Rule: Keep visuals in the same position across slides 2-6**
-
-- Do NOT move the table/diagram between Ask and Reveal slides
-- Add annotations AROUND the stationary element
-- Use absolute positioning for CFU boxes at the bottom
-- Mimic a teacher at a whiteboard: problem stays put, annotations appear around it
-
-**HTML Generation Patterns:**
-
-**For Table-Based Problems:**
-```html
-<div class="slide-container" style="...dark gradient background...">
-  <h2>STEP 1: FIND THE UNIT RATE</h2>
-
-  <div style="display: flex; justify-content: center; margin: 3rem 0;">
-    <table style="...styled table...">
-      <thead>
-        <tr>
-          <th>Chips (bags)</th>
-          <th>Price ($)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="background: rgba(251, 191, 36, 0.15);">
-          <td>2</td>
-          <td>6</td>
-        </tr>
-        <tr>
-          <td>1</td>
-          <td>3</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- CFU Box at bottom -->
-  <div style="position: absolute; bottom: 3rem; left: 3rem; right: 3rem;">
-    <div style="background: rgba(245, 158, 11, 0.15); border-left: 4px solid #fbbf24; padding: 1.5rem 2rem; border-radius: 0.75rem;">
-      <span style="font-size: 1.5rem;">❓</span>
-      <span style="color: #fbbf24; font-size: 1.25rem;">
-        Check for Understanding: Why did I divide 6 by 2?
-      </span>
-    </div>
-  </div>
-</div>
-```
-
-**For P5.js Problems (Hanger Diagrams):**
-```javascript
-// Slide with embedded P5.js
-{
-  slideNumber: 2,
-  htmlContent: `
-    <div class="slide-container" style="...">
-      <h2>THE RPG CRAFTING STATION</h2>
-      <p>The game says these two sets have equal power...</p>
-      <div id="p5-canvas-container"></div>
-    </div>
-  `,
-  visualType: "p5",
-  scripts: [
-    {
-      type: "cdn",
-      content: "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"
-    },
-    {
-      type: "inline",
-      content: `
-        function setup() {
-          let canvas = createCanvas(700, 500);
-          canvas.parent('p5-canvas-container');
-          noLoop();
-        }
-
-        function draw() {
-          background(26, 26, 46);
-          // Draw hanger
-          // Draw shapes
-          // etc.
-        }
-      `
-    }
-  ]
-}
-```
-
-**Styling Reference:**
-See `SLIDE-STYLES.md` for patterns and examples.
-
-### Step 6: Dual-Save System (Local Files + Database)
-
-Save the HTML slides in TWO locations:
-1. **Local files** in `src/app/presentations/[slug]/` for version control and easy editing
-2. **MongoDB database** for the web viewer
-
-**Part A: Save HTML Files Locally**
-
-Create directory structure:
-```
-src/app/presentations/
-  └── {slug}/
-      ├── metadata.json
-      ├── slide-1.html
-      ├── slide-2.html
-      ├── slide-3.html
-      └── ... (7-9 total)
-```
-
-**Process:**
-1. Create directory: `mkdir -p src/app/presentations/{slug}`
-2. Create `metadata.json` with deck information (see template in `.claude/skills/create-worked-example-sg/templates/metadata.json`)
-3. Write each slide to a separate HTML file using the Write tool
-4. Each file is standalone HTML with inline styles
-
-**Example metadata.json:**
-```json
-{
-  "title": "Finding Unit Rates with Division",
-  "slug": "unit-rates-division-grade7",
-  "mathConcept": "Unit Rates",
-  "mathStandard": "7.RP.A.1",
-  "gradeLevel": 7,
-  "unitNumber": 3,
-  "lessonNumber": 1,
-  "scopeAndSequenceId": "abc123...",
-  "learningGoals": [
-    "Students will be able to find unit rates using division",
-    "Students will understand that a unit rate is the amount per one unit"
-  ],
-  "sourceImage": "unit-rate-problem.png"
-}
-```
-
-**IMPORTANT:** Always include `unitNumber` and `lessonNumber` in metadata.json. These are required for the worked example to display properly on the listing page.
-
-**Part B: Sync to Database**
-
-After creating all local HTML files, sync to MongoDB Atlas using the utility script.
-
-**IMPORTANT:** The `$DATABASE_URL` environment variable points to MongoDB Atlas (cloud database). The sync script generates MongoDB commands that must be executed via mongosh.
-
-**USE THIS COMMAND (most reliable):**
-```bash
-# Save to temp file first, then execute with mongosh
-node .claude/skills/create-worked-example-sg/templates/sync-to-db.js {slug} > /tmp/mongo-sync.js && mongosh "$DATABASE_URL" < /tmp/mongo-sync.js --quiet
-```
-
-This approach ensures the generated JavaScript is properly parsed by mongosh.
-
-The sync script automatically:
-- Reads all `slide-*.html` files from the presentation directory
-- Detects visual type (html/p5/d3) based on content
-- Extracts P5.js or D3.js scripts if present
-- Creates properly formatted MongoDB document
-- Switches to the correct database (`ai-coaching-platform`) using `use('ai-coaching-platform')`
-- Deletes existing deck with same slug if found
-- Inserts the new deck
-
-**The script output includes:**
-- MongoDB JavaScript code that connects to the correct database
-- Confirmation messages when successful
-- Deck ID and viewing URL
-
-**Example:**
-```bash
-# After creating files in src/app/presentations/unit-rates-division-grade7/
-node .claude/skills/create-worked-example-sg/templates/sync-to-db.js unit-rates-division-grade7 > /tmp/mongo-sync.js && mongosh "$DATABASE_URL" < /tmp/mongo-sync.js --quiet
-```
-
-**Expected Output:**
-```
-✅ HTML Deck saved successfully!
-Deck ID: [ObjectId]
-Slug: unit-rates-division-grade7
-Total slides: 7
-📁 Local files: src/app/presentations/unit-rates-division-grade7/
-🔗 View at: /presentations/unit-rates-division-grade7
-```
-
-**Troubleshooting:**
-- The `$DATABASE_URL` contains the full connection string including database name
-- The sync script includes `use('ai-coaching-platform')` to ensure correct database
-- Use `--quiet` flag to reduce mongosh startup messages
-- If you see "Deck already exists", it will be automatically deleted and replaced
-
-## Output
-
-Provide the user with:
-1. **Summary** of the deck created (title, concept, grade level, number of slides)
-2. **The 3 scenarios** you generated and why you chose them
-3. **Link to view**: `/presentations/html/{slug}`
-
-## Quality Checklist
-
-Before saving, verify:
+**Content:**
 - ✅ All required user inputs captured (learning goal, grade level, problem image)
-- ✅ 3 unique, engaging exit ticket scenarios generated
+- ✅ 3 scenarios all use the SAME strategy (not different approaches)
 - ✅ First problem has 2-3 steps with Ask/Reveal pairs
 - ✅ CFU questions ask "why/how" not "what"
+- ✅ Practice problems can be solved using the exact same steps
+
+**Visual:**
 - ✅ Visual elements stay in same position across slides 2-6
-- ✅ Slides 8-9 have zero scaffolding
+- ✅ Practice slides have zero scaffolding
 - ✅ All math is accurate
 - ✅ HTML is valid and properly styled
-- ✅ P5/D3 scripts are properly embedded if used
 
-## Core Pedagogical Principles
+## BEGIN
 
-**The "Two-Slide" Rule:**
-- NEVER show a question and its answer on the same slide
-- Always separate Ask from Reveal
-- Forces mental commitment before seeing solution
-
-**The "Real World" Rule:**
-- Use engaging, age-appropriate contexts
-- Avoid boring textbook scenarios
-- Each scenario needs a visual anchor (icon or theme)
-
-**The "Visual Stability" Rule:**
-- Keep main visual (table, diagram) in SAME position across related slides
-- Add annotations AROUND the stationary element
-- Mimics teacher at whiteboard
-
-**The "Scaffolding Removal" Rule:**
-- Slides 2-6: Maximum scaffolding (step-by-step, highlighting, CFU)
-- Slides 8-9: ZERO scaffolding (just the problem)
-
-## Example Invocation
-
-```
-User: [uploads image of unit rate problem]
-User: Grade 7, learning goal is "Students will find unit rates using division"
+**Read Phase 1 now:** Use the Read tool to read `.claude/skills/create-worked-example-sg/phases/01-collect-and-analyze.md`
