@@ -283,6 +283,13 @@ export async function fetchSkillDetails(skillIds: string[]) {
 /**
  * Fetch unit's additional support skills
  */
+export interface CategorizedSkill {
+  _id: string;
+  skillNumber: string;
+  title: string;
+  category: 'target' | 'essential' | 'helpful';
+}
+
 export async function fetchUnitSkills(unitId: string) {
   return withDbConnection(async () => {
     try {
@@ -292,21 +299,67 @@ export async function fetchUnitSkills(unitId: string) {
         return { success: false, error: "Unit not found" };
       }
 
-      // Get skill details for additionalSupportSkills
       const unitData = unit.toJSON();
-      const skillIds = unitData.additionalSupportSkills || [];
-      if (skillIds.length === 0) {
-        return { success: true, data: [] };
+      const categorizedSkills: CategorizedSkill[] = [];
+      const seenSkillNumbers = new Set<string>();
+
+      // 1. Get target skills
+      const targetSkillNumbers = unitData.targetSkills || [];
+      if (targetSkillNumbers.length > 0) {
+        const targetSkills = await RoadmapsSkillModel.find({
+          skillNumber: { $in: targetSkillNumbers },
+        });
+
+        for (const skill of targetSkills) {
+          const skillData = skill.toJSON();
+          if (!seenSkillNumbers.has(skillData.skillNumber)) {
+            seenSkillNumbers.add(skillData.skillNumber);
+            categorizedSkills.push({
+              _id: skillData._id,
+              skillNumber: skillData.skillNumber,
+              title: skillData.title,
+              category: 'target',
+            });
+          }
+
+          // 2. Add essential skills from each target skill
+          for (const essential of skillData.essentialSkills || []) {
+            if (!seenSkillNumbers.has(essential.skillNumber)) {
+              seenSkillNumbers.add(essential.skillNumber);
+              categorizedSkills.push({
+                _id: essential._id || essential.skillNumber,
+                skillNumber: essential.skillNumber,
+                title: essential.title,
+                category: 'essential',
+              });
+            }
+          }
+
+          // 3. Add helpful skills from each target skill
+          for (const helpful of skillData.helpfulSkills || []) {
+            if (!seenSkillNumbers.has(helpful.skillNumber)) {
+              seenSkillNumbers.add(helpful.skillNumber);
+              categorizedSkills.push({
+                _id: helpful._id || helpful.skillNumber,
+                skillNumber: helpful.skillNumber,
+                title: helpful.title,
+                category: 'helpful',
+              });
+            }
+          }
+        }
       }
 
-      const skills = await RoadmapsSkillModel.find({
-        skillNumber: { $in: skillIds },
-      })
-        .sort({ skillNumber: 1 });
+      // Sort within each category by skill number
+      categorizedSkills.sort((a, b) => {
+        const categoryOrder = { target: 0, essential: 1, helpful: 2 };
+        if (categoryOrder[a.category] !== categoryOrder[b.category]) {
+          return categoryOrder[a.category] - categoryOrder[b.category];
+        }
+        return parseInt(a.skillNumber) - parseInt(b.skillNumber);
+      });
 
-      // Convert to JSON to ensure proper serialization
-      const serializedSkills = skills.map((s) => JSON.parse(JSON.stringify(s.toJSON())));
-      return { success: true, data: serializedSkills };
+      return { success: true, data: categorizedSkills };
     } catch (error) {
       return { success: false, error: handleServerError(error, "Failed to fetch unit skills") };
     }

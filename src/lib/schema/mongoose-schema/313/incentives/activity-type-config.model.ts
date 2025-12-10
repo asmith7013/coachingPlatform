@@ -45,7 +45,7 @@ const ActivityTypeConfigSchema = new mongoose.Schema(
   activityTypeConfigSchemaFields,
   {
     ...standardSchemaOptions,
-    collection: 'activity-type-configs',
+    collection: 'activity-type-configs-313',
     autoIndex: false, // Disable automatic index creation
     id: false, // Disable Mongoose's built-in id virtual getter
     _id: true // Keep MongoDB's _id field
