@@ -9,11 +9,29 @@ import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 interface PacingProgressCardProps {
   pacingData: PacingData;
   selectedUnit: number;
+  /** Optional: externally controlled showStudentNames state */
+  showStudentNames?: boolean;
+  /** Optional: hide the internal toggle (when controlled externally) */
+  hideToggle?: boolean;
+  /** Optional: custom header content (replaces default title) */
+  customHeader?: React.ReactNode;
+  /** Optional: message to show when no schedule data exists */
+  noScheduleMessage?: string;
 }
 
-export function PacingProgressCard({ pacingData, selectedUnit }: PacingProgressCardProps) {
+export function PacingProgressCard({
+  pacingData,
+  selectedUnit,
+  showStudentNames: externalShowStudentNames,
+  hideToggle = false,
+  customHeader,
+  noScheduleMessage,
+}: PacingProgressCardProps) {
   const { students, unitSections, completedStudents, loading, error, noScheduleData, expectedSection } = pacingData;
-  const [showStudentNames, setShowStudentNames] = useState(false);
+  const [internalShowStudentNames, setInternalShowStudentNames] = useState(false);
+
+  // Use external state if provided, otherwise use internal state
+  const showStudentNames = externalShowStudentNames ?? internalShowStudentNames;
 
   if (loading) {
     return (
@@ -43,9 +61,9 @@ export function PacingProgressCard({ pacingData, selectedUnit }: PacingProgressC
   if (noScheduleData) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Pacing Progress</h3>
+        {customHeader || <h3 className="text-lg font-semibold text-gray-900 mb-2">Pacing Progress</h3>}
         <p className="text-gray-500 text-sm">
-          No pacing schedule found for this unit. Set up section dates in the unit schedule to enable pacing tracking.
+          {noScheduleMessage || "No pacing schedule found for this unit. Set up section dates in the unit schedule to enable pacing tracking."}
         </p>
       </div>
     );
@@ -61,12 +79,16 @@ export function PacingProgressCard({ pacingData, selectedUnit }: PacingProgressC
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
       {/* Title row with toggle */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Unit {selectedUnit} Pace &amp; Progress</h3>
-        <ToggleSwitch
-          checked={showStudentNames}
-          onChange={setShowStudentNames}
-          label="List Student Names"
-        />
+        {customHeader || (
+          <h3 className="text-lg font-semibold text-gray-900">Unit {selectedUnit} Pace &amp; Progress</h3>
+        )}
+        {!hideToggle && (
+          <ToggleSwitch
+            checked={showStudentNames}
+            onChange={setInternalShowStudentNames}
+            label="List Student Names"
+          />
+        )}
       </div>
 
       {/* Unit Progress Bar */}

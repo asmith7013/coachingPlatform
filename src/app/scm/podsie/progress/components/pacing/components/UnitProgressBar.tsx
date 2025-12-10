@@ -29,6 +29,9 @@ const ZONE_LABELS: Record<string, string> = {
 export function UnitProgressBar({ unitSections, completedStudents, showStudentNames = false }: UnitProgressBarProps) {
   if (unitSections.length === 0) return null;
 
+  // Only show completed column if there are actually completed students
+  const hasCompletedStudents = completedStudents && completedStudents.count > 0;
+
   // Group sections by zone
   const sectionsByZone = new Map<string, typeof unitSections>();
   for (const zone of ZONE_ORDER) {
@@ -158,9 +161,14 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
       {/* Zone header row */}
       <div className="flex h-7 rounded-t-lg overflow-hidden border border-gray-200 border-b-0">
         {normalizedZones.map((zoneData, index) => {
-          const isLast = index === normalizedZones.length - 1 && !completedStudents;
+          const isLast = index === normalizedZones.length - 1 && !hasCompletedStudents;
           const styles = getZoneStyles(zoneData.zone);
           const totalStudents = zoneData.sections.reduce((sum, s) => sum + s.studentCount, 0);
+          // Aggregate all student names from all sections/lessons in this zone
+          const zoneStudentNames = zoneData.sections
+            .flatMap(s => s.lessons?.flatMap(l => l.studentNames || []) || [])
+            .filter((name, idx, arr) => arr.indexOf(name) === idx); // dedupe
+          const zoneTooltipContent = zoneStudentNames.length > 0 ? zoneStudentNames.join("\n") : "";
 
           // Get dot color for zone
           const getDotColor = (zone: string) => {
@@ -174,12 +182,8 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
             }
           };
 
-          return (
-            <div
-              key={`header-${zoneData.zone}`}
-              className={`${styles.headerBg} ${!isLast ? `border-r ${styles.border}` : ""} flex items-center justify-between px-3`}
-              style={{ width: `${zoneData.finalPercent}%` }}
-            >
+          const headerContent = (
+            <>
               <div className="flex items-center">
                 <span className={`w-2.5 h-2.5 rounded-full ${getDotColor(zoneData.zone)} mr-2 flex-shrink-0`} />
                 <span className={`text-sm ${styles.text} truncate`}>
@@ -187,35 +191,65 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
                 </span>
               </div>
               {totalStudents > 0 && (
-                <span className={`text-[10px] ${styles.studentBadge} px-1.5 py-0.5 rounded-full flex items-center gap-0.5 flex-shrink-0`}>
-                  <UserIcon className="w-2.5 h-2.5" />
-                  {totalStudents}
-                </span>
+                !showStudentNames && zoneTooltipContent ? (
+                  <Tooltip content={zoneTooltipContent}>
+                    <span className={`text-[10px] ${styles.studentBadge} px-1.5 py-0.5 rounded-full flex items-center gap-0.5 flex-shrink-0 cursor-help`}>
+                      <UserIcon className="w-2.5 h-2.5" />
+                      {totalStudents}
+                    </span>
+                  </Tooltip>
+                ) : (
+                  <span className={`text-[10px] ${styles.studentBadge} px-1.5 py-0.5 rounded-full flex items-center gap-0.5 flex-shrink-0`}>
+                    <UserIcon className="w-2.5 h-2.5" />
+                    {totalStudents}
+                  </span>
+                )
               )}
+            </>
+          );
+
+          return (
+            <div
+              key={`header-${zoneData.zone}`}
+              className={`${styles.headerBg} ${!isLast ? `border-r ${styles.border}` : ""} flex items-center justify-between px-3`}
+              style={{ width: `${zoneData.finalPercent}%` }}
+            >
+              {headerContent}
             </div>
           );
         })}
         {/* Complete column header */}
-        {completedStudents && (
-          <div
-            className={`${getZoneStyles("complete").headerBg} flex items-center justify-center px-2 border-l ${getZoneStyles("complete").border}`}
-            style={{ width: "80px", flexShrink: 0 }}
-          >
-            <TrophyIcon className={`w-4 h-4 ${getZoneStyles("complete").lessonIcon}`} />
-            {completedStudents.count > 0 && (
-              <span className={`ml-1.5 text-[10px] ${getZoneStyles("complete").studentBadge} px-1.5 py-0.5 rounded-full flex items-center gap-0.5 flex-shrink-0`}>
-                <UserIcon className="w-2.5 h-2.5" />
-                {completedStudents.count}
-              </span>
-            )}
-          </div>
-        )}
+        {hasCompletedStudents && (() => {
+          const completeTooltipContent = completedStudents!.studentNames.length > 0 ? completedStudents!.studentNames.join("\n") : "";
+
+          return (
+            <div
+              className={`${getZoneStyles("complete").headerBg} flex items-center justify-center px-2 border-l ${getZoneStyles("complete").border}`}
+              style={{ width: "80px", flexShrink: 0 }}
+            >
+              <TrophyIcon className={`w-4 h-4 ${getZoneStyles("complete").lessonIcon}`} />
+              {!showStudentNames && completeTooltipContent ? (
+                <Tooltip content={completeTooltipContent}>
+                  <span className={`ml-1.5 text-[10px] ${getZoneStyles("complete").studentBadge} px-1.5 py-0.5 rounded-full flex items-center gap-0.5 flex-shrink-0 cursor-help`}>
+                    <UserIcon className="w-2.5 h-2.5" />
+                    {completedStudents!.count}
+                  </span>
+                </Tooltip>
+              ) : (
+                <span className={`ml-1.5 text-[10px] ${getZoneStyles("complete").studentBadge} px-1.5 py-0.5 rounded-full flex items-center gap-0.5 flex-shrink-0`}>
+                  <UserIcon className="w-2.5 h-2.5" />
+                  {completedStudents!.count}
+                </span>
+              )}
+            </div>
+          );
+        })()}
       </div>
 
       {/* Section names row */}
       <div className="flex h-12 border border-gray-200 border-t-0 border-b-0">
         {normalizedZones.map((zoneData, zoneIndex) => {
-          const isLastZone = zoneIndex === normalizedZones.length - 1 && !completedStudents;
+          const isLastZone = zoneIndex === normalizedZones.length - 1 && !hasCompletedStudents;
           const styles = getZoneStyles(zoneData.zone);
 
           return (
@@ -226,9 +260,14 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
             >
               {zoneData.sections.map((section, sectionIndex) => {
                 const isLastSection = sectionIndex === zoneData.sections.length - 1;
-                return (
+                // Aggregate student names from all lessons in this section
+                const sectionStudentNames = section.lessons
+                  ?.flatMap(l => l.studentNames || [])
+                  .filter((name, idx, arr) => arr.indexOf(name) === idx) || []; // dedupe
+                const sectionTooltipContent = sectionStudentNames.length > 0 ? sectionStudentNames.join("\n") : "";
+
+                const sectionContent = (
                   <div
-                    key={section.sectionId}
                     className={`flex-1 flex flex-col justify-center px-2 pt-2 pb-1 ${!isLastSection ? `border-r ${styles.border}` : ""}`}
                   >
                     <span className={`text-sm ${styles.text} leading-none`}>
@@ -243,12 +282,22 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
                     )}
                   </div>
                 );
+
+                // Wrap in tooltip if we have student names and names are hidden
+                if (!showStudentNames && sectionTooltipContent) {
+                  return (
+                    <Tooltip key={section.sectionId} content={sectionTooltipContent}>
+                      {sectionContent}
+                    </Tooltip>
+                  );
+                }
+                return <div key={section.sectionId} className="contents">{sectionContent}</div>;
               })}
             </div>
           );
         })}
         {/* Complete column - empty for section names */}
-        {completedStudents && (
+        {hasCompletedStudents && (
           <div
             className={`${getZoneStyles("complete").bg} flex items-center justify-center border-l ${getZoneStyles("complete").border}`}
             style={{ width: "80px", flexShrink: 0 }}
@@ -262,7 +311,7 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
       {/* Each lesson gets proportional width based on total lessons across all zones */}
       <div className={`flex h-auto min-h-[1.75rem] overflow-hidden border border-gray-200 border-t-0 ${!showStudentNames ? 'rounded-b-lg' : ''}`}>
         {normalizedZones.map((zoneData, zoneIndex) => {
-          const isLastZone = zoneIndex === normalizedZones.length - 1 && !completedStudents;
+          const isLastZone = zoneIndex === normalizedZones.length - 1 && !hasCompletedStudents;
           const styles = getZoneStyles(zoneData.zone);
           const zoneLessonCount = zoneData.sections.reduce((sum, s) => sum + (s.lessons?.length || 0), 0);
 
@@ -291,12 +340,14 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
                         const studentNames = lesson.studentNames || [];
                         // Use newlines for tooltip so each name is on its own line
                         const tooltipContent = studentNames.length > 0 ? studentNames.join("\n") : "";
+                        // Create unique key combining section and lesson to avoid duplicates
+                        const uniqueKey = `${section.sectionId}-${lesson.lessonId}-${lessonIndex}`;
+                        // Calculate equal width for each lesson in this section
+                        const lessonWidthPercent = 100 / lessons.length;
 
                         const lessonContent = (
-                          <div
-                            className={`flex-1 flex flex-col justify-start px-2 py-1.5 ${!isLastLesson ? `border-r ${styles.border}` : ""}`}
-                          >
-                            <span className={`text-[9px] ${styles.text} leading-none`}>
+                          <div className="flex flex-col justify-start items-start px-2 py-1.5 w-full h-full">
+                            <span className={`text-[9px] ${styles.text} leading-none text-left`}>
                               {lesson.lessonName}
                             </span>
                             {lesson.studentCount > 0 && (
@@ -316,18 +367,21 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
                           </div>
                         );
 
+                        // Border on outer wrapper for consistent positioning across all cases
+                        const wrapperClasses = `flex ${!isLastLesson ? `border-r ${styles.border}` : ""}`;
+
                         // Show tooltip with student names when names are hidden
-                        // Wrap in a flex-1 div to maintain proportional spacing
+                        // Use explicit width percentage for equal sizing
                         if (!showStudentNames && tooltipContent) {
                           return (
-                            <div key={lesson.lessonId} className="flex-1 flex">
+                            <div key={uniqueKey} className={wrapperClasses} style={{ width: `${lessonWidthPercent}%` }}>
                               <Tooltip content={tooltipContent}>
                                 {lessonContent}
                               </Tooltip>
                             </div>
                           );
                         }
-                        return <div key={lesson.lessonId} className="flex-1 flex">{lessonContent}</div>;
+                        return <div key={uniqueKey} className={wrapperClasses} style={{ width: `${lessonWidthPercent}%` }}>{lessonContent}</div>;
                       })
                     ) : (
                       <div className="flex-1 flex items-center justify-center">
@@ -340,16 +394,29 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
             </div>
           );
         })}
-        {/* Complete column - shows "Complete" label */}
-        {completedStudents && (() => {
+        {/* Complete column - shows "Complete" label and student icons */}
+        {hasCompletedStudents && (() => {
+          const completeStyles = getZoneStyles("complete");
           // Use newlines for tooltip so each name is on its own line
-          const completeTooltipContent = completedStudents.studentNames.length > 0 ? completedStudents.studentNames.join("\n") : "";
+          const completeTooltipContent = completedStudents!.studentNames.length > 0 ? completedStudents!.studentNames.join("\n") : "";
           const completeContent = (
             <div
-              className={`${getZoneStyles("complete").bg} border-t ${getZoneStyles("complete").border} border-l flex flex-col justify-start px-2 py-1.5`}
+              className={`${completeStyles.bg} border-t ${completeStyles.border} border-l flex flex-col justify-start items-start px-2 py-1.5 h-full`}
               style={{ width: "80px", flexShrink: 0 }}
             >
-              <span className={`text-[9px] ${getZoneStyles("complete").text} leading-none`}>Complete</span>
+              <span className={`text-[9px] ${completeStyles.text} leading-none text-left`}>Complete</span>
+              {completedStudents!.count <= 7 ? (
+                <div className={`flex flex-wrap gap-px mt-1 ${completeStyles.lessonIcon}`}>
+                  {Array.from({ length: completedStudents!.count }).map((_, i) => (
+                    <UserIcon key={i} className="w-2.5 h-2.5" />
+                  ))}
+                </div>
+              ) : (
+                <span className={`text-[8px] ${completeStyles.lessonIcon} flex items-center gap-0.5 mt-1`}>
+                  <UserIcon className="w-2.5 h-2.5" />
+                  {completedStudents!.count}
+                </span>
+              )}
             </div>
           );
           if (!showStudentNames && completeTooltipContent) {
@@ -367,7 +434,7 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
       {showStudentNames && (
         <div className="flex h-auto rounded-b-lg overflow-hidden border border-gray-200 border-t-0">
           {normalizedZones.map((zoneData, zoneIndex) => {
-            const isLastZone = zoneIndex === normalizedZones.length - 1 && !completedStudents;
+            const isLastZone = zoneIndex === normalizedZones.length - 1 && !hasCompletedStudents;
             const styles = getZoneStyles(zoneData.zone);
             const zoneLessonCount = zoneData.sections.reduce((sum, s) => sum + (s.lessons?.length || 0), 0);
 
@@ -426,23 +493,19 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
             );
           })}
           {/* Complete column - shows names of students who completed the unit */}
-          {completedStudents && (
+          {hasCompletedStudents && (
             <div
               className={`${getZoneStyles("complete").bg} border-t ${getZoneStyles("complete").border} border-l flex flex-col justify-start px-2 py-1`}
               style={{ width: "80px", flexShrink: 0 }}
             >
-              {completedStudents.studentNames.length > 0 ? (
-                completedStudents.studentNames.map((name, nameIndex) => (
-                  <span
-                    key={nameIndex}
-                    className={`text-[9px] ${getZoneStyles("complete").text} leading-tight`}
-                  >
-                    {name}
-                  </span>
-                ))
-              ) : (
-                <span className={`text-[9px] ${getZoneStyles("complete").text} opacity-30`}>—</span>
-              )}
+              {completedStudents!.studentNames.map((name, nameIndex) => (
+                <span
+                  key={nameIndex}
+                  className={`text-[9px] ${getZoneStyles("complete").text} leading-tight`}
+                >
+                  {name}
+                </span>
+              ))}
             </div>
           )}
         </div>

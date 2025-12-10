@@ -13,10 +13,16 @@ import {
   DocumentPlusIcon,
   TableCellsIcon,
   ArrowTrendingUpIcon,
-  PresentationChartBarIcon
+  PresentationChartBarIcon,
+  TruckIcon,
 } from '@heroicons/react/24/outline';
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
 export default function SCMHomePage() {
+  const { hasRole } = useAuthenticatedUser();
+  const isSuperAdmin = hasRole('super_admin');
+  const isCoach = hasRole('coach');
+
   const categories = [
     {
       title: "Roadmaps",
@@ -62,6 +68,12 @@ export default function SCMHomePage() {
       iconType: "letter" as const,
       description: "Track student progress on Podsie lessons and assessments",
       pages: [
+        {
+          title: "Pace",
+          href: "/scm/podsie/pace",
+          Icon: ChartBarIcon,
+          description: "View pacing progress across multiple sections at once."
+        },
         {
           title: "Progress",
           href: "/scm/podsie/progress",
@@ -115,7 +127,22 @@ export default function SCMHomePage() {
           description: "View all scaffolded guidance slide decks."
         }
       ]
-    }
+    },
+    // Logistics - only shown for coaches
+    ...((isCoach || isSuperAdmin) ? [{
+      title: "Logistics",
+      Icon: TruckIcon,
+      iconType: "heroicon" as const,
+      description: "School calendars, scheduling, and operational tools",
+      pages: [
+        {
+          title: "Unit Calendar",
+          href: "/scm/logistics/calendar",
+          Icon: CalendarDaysIcon,
+          description: "Manage unit schedules and pacing for each class section."
+        }
+      ]
+    }] : []),
   ];
 
   return (

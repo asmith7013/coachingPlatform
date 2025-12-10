@@ -17,7 +17,7 @@ export function LegendGroup({ children }: LegendGroupProps) {
 
 interface LegendItemProps {
   icon: React.ReactNode;
-  label: string;
+  label: React.ReactNode;
 }
 
 /**
