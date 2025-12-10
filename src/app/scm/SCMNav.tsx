@@ -7,7 +7,8 @@ import {
   MapIcon,
   GiftIcon,
   PresentationChartBarIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  TruckIcon,
 } from '@heroicons/react/24/outline';
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
@@ -31,6 +32,7 @@ export function SCMNav() {
   const { hasRole } = useAuthenticatedUser();
 
   const isSuperAdmin = hasRole('super_admin');
+  const isCoach = hasRole('coach');
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -83,6 +85,7 @@ export function SCMNav() {
       label: "Podsie",
       iconLetter: "P",
       items: [
+        { href: "/scm/podsie/pace", label: "Pace" },
         { href: "/scm/podsie/progress", label: "Progress" },
         { href: "/scm/podsie/velocity", label: "Velocity" },
       ],
@@ -103,6 +106,14 @@ export function SCMNav() {
         { href: "/scm/workedExamples", label: "All Worked Examples" },
       ],
     },
+    // Logistics category - only shown for coaches
+    ...((isCoach || isSuperAdmin) ? [{
+      label: "Logistics",
+      Icon: TruckIcon,
+      items: [
+        { href: "/scm/logistics/calendar", label: "Unit Calendar" },
+      ],
+    }] : []),
     // Admin category - only shown for super_admin
     ...(isSuperAdmin ? [{
       label: "Admin",
@@ -125,9 +136,9 @@ export function SCMNav() {
           ],
         },
         {
-          section: "Roadmaps",
+          section: "Logistics",
           items: [
-            { href: "/scm/roadmaps/calendar", label: "Unit Calendar", description: "Set unit schedule for each scope and sequence" },
+            { href: "/scm/logistics/calendar", label: "Unit Calendar", description: "Set unit schedule for each scope and sequence" },
           ],
         },
       ],

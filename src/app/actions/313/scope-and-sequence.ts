@@ -458,12 +458,14 @@ export async function fetchRampUpsByScope(scopeSequenceTag: string) {
  * Fetch lessons for a specific unit within a scopeSequenceTag
  * Fetches ALL lesson types (ramp-ups, regular lessons, unit assessments)
  * @param section - Optional filter by lesson section (e.g., 'Ramp Ups', 'A', 'B')
+ * @param grade - Optional filter by grade (e.g., '8' for 8th grade Algebra 1)
  */
 export async function fetchRampUpsByUnit(
   scopeSequenceTag: string,
   unitNumber: number,
   options?: {
     section?: string;
+    grade?: string;
   }
 ) {
   return withDbConnection(async () => {
@@ -495,6 +497,11 @@ export async function fetchRampUpsByUnit(
       // Optional section filter
       if (options?.section) {
         query.section = options.section;
+      }
+
+      // Optional grade filter - important for Algebra 1 which uses grade '8'
+      if (options?.grade) {
+        query.grade = options.grade;
       }
 
       const lessons = await ScopeAndSequenceModel

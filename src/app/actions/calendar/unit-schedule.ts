@@ -535,7 +535,7 @@ export async function updateSectionUnitLevelDates(
  */
 export async function copySectionUnitSchedules(
   schoolYear: string,
-  grade: string,
+  scopeSequenceTag: string,
   fromSchool: string,
   fromClassSection: string,
   toSchool: string,
@@ -543,10 +543,10 @@ export async function copySectionUnitSchedules(
 ) {
   return withDbConnection(async () => {
     try {
-      // Fetch source schedules
+      // Fetch source schedules using scopeSequenceTag
       const sourceSchedules = await UnitScheduleModel.find({
         schoolYear,
-        grade,
+        scopeSequenceTag,
         school: fromSchool,
         classSection: fromClassSection
       }).lean();
@@ -561,7 +561,8 @@ export async function copySectionUnitSchedules(
         const copied = await UnitScheduleModel.findOneAndUpdate(
           {
             schoolYear,
-            grade,
+            scopeSequenceTag,
+            grade: source.grade,
             school: toSchool,
             classSection: toClassSection,
             unitNumber: source.unitNumber

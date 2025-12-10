@@ -8,6 +8,7 @@ import { Spinner } from "@/components/core/feedback/Spinner";
 import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
 import { getAssignmentContent } from "@actions/313/section-config";
 import { syncSectionRampUpProgress } from "@actions/313/podsie-sync";
+import { getCurrentUnitsForAllSections, type CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
 import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
 import { MultiSectionSelector } from "./components";
 import { getSectionColors } from "@/app/scm/podsie/velocity/utils/colors";
@@ -47,10 +48,13 @@ interface SyncProgress {
   currentActivity: string;
 }
 
+const SCHOOL_YEAR = "2025-2026";
+
 export default function BulkSyncPage() {
   const [sectionOptions, setSectionOptions] = useState<SectionOption[]>([]);
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
   const [sectionsData, setSectionsData] = useState<Map<string, SectionWithUnits>>(new Map());
+  const [currentUnits, setCurrentUnits] = useState<CurrentUnitInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,11 +73,15 @@ export default function BulkSyncPage() {
   const loadSections = async () => {
     setLoading(true);
     try {
-      const result = await getAllSectionConfigs();
+      // Load sections and current units in parallel
+      const [sectionsResult, currentUnitsResult] = await Promise.all([
+        getAllSectionConfigs(),
+        getCurrentUnitsForAllSections(SCHOOL_YEAR)
+      ]);
 
-      if (result.success && result.data) {
+      if (sectionsResult.success && sectionsResult.data) {
         const options: SectionOption[] = [];
-        result.data.forEach((schoolGroup) => {
+        sectionsResult.data.forEach((schoolGroup) => {
           schoolGroup.sections.forEach((section) => {
             options.push({
               id: section.id,
@@ -93,6 +101,10 @@ export default function BulkSyncPage() {
         // Compute colors for all sections
         const colors = getSectionColors(options);
         setSectionColors(colors);
+      }
+
+      if (currentUnitsResult.success && currentUnitsResult.data) {
+        setCurrentUnits(currentUnitsResult.data);
       }
     } catch (err) {
       console.error("Error loading sections:", err);
@@ -564,6 +576,131 @@ export default function BulkSyncPage() {
     }
   };
 
+  // Get current units for selected sections only
+  const selectedCurrentUnits = currentUnits.filter(cu => {
+    const sectionOpt = sectionOptions.find(
+      opt => opt.school === cu.school && opt.classSection === cu.classSection
+    );
+    return sectionOpt && selectedSections.includes(sectionOpt.id);
+  });
+
+  // Sync only the current unit for each selected section
+  const syncCurrentUnits = async () => {
+    if (selectedCurrentUnits.length === 0) return;
+
+    setSyncing(true);
+
+    // Calculate total assignments across all current units
+    let totalAssignments = 0;
+    const sectionsToSync: Array<{
+      sectionOpt: SectionOption;
+      sectionData: SectionWithUnits;
+      currentUnitInfo: CurrentUnitInfo;
+      unitAssignments: AssignmentContent[];
+    }> = [];
+
+    for (const cu of selectedCurrentUnits) {
+      if (cu.currentUnit === null) continue;
+
+      const sectionOpt = sectionOptions.find(
+        opt => opt.school === cu.school && opt.classSection === cu.classSection
+      );
+      if (!sectionOpt) continue;
+
+      const sectionData = sectionsData.get(sectionOpt.id);
+      if (!sectionData) continue;
+
+      // Filter assignments to only include those in the current unit
+      const unitAssignments = sectionData.assignments.filter(a => {
+        const parts = a.unitLessonId.split('.');
+        const unitNum = parseInt(parts[0]);
+        return unitNum === cu.currentUnit;
+      });
+
+      if (unitAssignments.length > 0) {
+        sectionsToSync.push({ sectionOpt, sectionData, currentUnitInfo: cu, unitAssignments });
+        totalAssignments += unitAssignments.length;
+      }
+    }
+
+    if (totalAssignments === 0) {
+      resultToast.showToast({
+        title: "No Assignments",
+        description: "No assignments found in current units for selected sections",
+        variant: "info",
+        icon: InformationCircleIcon,
+      });
+      setSyncing(false);
+      return;
+    }
+
+    let completedAssignments = 0;
+
+    progressToast.showToast({
+      title: "Syncing Current Units",
+      description: `Starting sync for ${sectionsToSync.length} section${sectionsToSync.length !== 1 ? 's' : ''}...`,
+      variant: "info",
+      icon: InformationCircleIcon,
+    });
+
+    try {
+      for (const { sectionOpt, currentUnitInfo, unitAssignments } of sectionsToSync) {
+        for (const assignment of unitAssignments) {
+          const parts = assignment.unitLessonId.split('.');
+          const unitNumber = parseInt(parts[0]);
+
+          setSyncProgress({
+            totalAssignments,
+            completedAssignments,
+            currentSchool: sectionOpt.school,
+            currentSection: sectionOpt.classSection,
+            currentUnit: unitNumber,
+            currentUnitLessonId: assignment.unitLessonId,
+            currentLesson: assignment.lessonName,
+            currentActivity: ''
+          });
+
+          progressToast.showToast({
+            title: `Syncing Current Units (${completedAssignments}/${totalAssignments})`,
+            description: `${sectionOpt.classSection} Unit ${currentUnitInfo.currentUnit} | ${assignment.lessonName}`,
+            variant: "info",
+            icon: InformationCircleIcon,
+          });
+
+          await syncAssignment(sectionOpt.classSection, assignment, (lesson, activity) => {
+            setSyncProgress(prev => prev ? {
+              ...prev,
+              currentLesson: lesson,
+              currentActivity: activity
+            } : null);
+          });
+
+          completedAssignments++;
+        }
+      }
+
+      progressToast.hideToast();
+      resultToast.showToast({
+        title: "Current Units Sync Complete!",
+        description: `Successfully synced ${totalAssignments} assignments across ${sectionsToSync.length} section${sectionsToSync.length !== 1 ? 's' : ''}`,
+        variant: "success",
+        icon: CheckCircleIcon,
+      });
+    } catch (err) {
+      console.error("Error syncing current units:", err);
+      progressToast.hideToast();
+      resultToast.showToast({
+        title: "Sync Failed",
+        description: "An error occurred while syncing current units",
+        variant: "error",
+        icon: ExclamationTriangleIcon,
+      });
+    } finally {
+      setSyncing(false);
+      setSyncProgress(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
@@ -603,6 +740,55 @@ export default function BulkSyncPage() {
           onToggle={handleToggleSection}
           sectionColors={sectionColors}
         />
+
+        {/* Current Units Card - shows only when sections are selected and have assignments loaded */}
+        {selectedSections.length > 0 && sectionsData.size > 0 && selectedCurrentUnits.length > 0 && (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg shadow p-4 mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-amber-900 mb-2">Current Units by Section</h3>
+                <div className="flex flex-wrap gap-3">
+                  {selectedCurrentUnits.map((cu) => {
+                    const sectionOpt = sectionOptions.find(
+                      opt => opt.school === cu.school && opt.classSection === cu.classSection
+                    );
+                    const color = sectionOpt ? sectionColors.get(sectionOpt.id) : '#6B7280';
+                    return (
+                      <div
+                        key={`${cu.school}-${cu.classSection}`}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-amber-200 shadow-sm"
+                      >
+                        <span
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: color }}
+                        />
+                        <span className="font-medium text-gray-900">{cu.classSection}</span>
+                        <span className="text-gray-400">→</span>
+                        {cu.currentUnit !== null ? (
+                          <span className="text-amber-700 font-semibold">Unit {cu.currentUnit}</span>
+                        ) : (
+                          <span className="text-gray-400 italic text-sm">No schedule</span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <button
+                onClick={syncCurrentUnits}
+                disabled={syncing || selectedCurrentUnits.every(cu => cu.currentUnit === null)}
+                className={`ml-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-colors ${
+                  syncing || selectedCurrentUnits.every(cu => cu.currentUnit === null)
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-amber-600 text-white hover:bg-amber-700 cursor-pointer"
+                }`}
+              >
+                <ArrowPathIcon className={`w-5 h-5 ${syncing ? "animate-spin" : ""}`} />
+                {syncing ? "Syncing..." : "Sync Current Units"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Sync Progress Card */}
         {syncing && syncProgress && (

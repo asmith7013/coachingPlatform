@@ -77,7 +77,7 @@ export async function fetchRampUpProgress(
 
     for (const student of students) {
       const studentId = String(student._id);
-      const studentName = `${student.lastName}, ${student.firstName}`;
+      const studentName = `${student.firstName} ${student.lastName}`;
 
       // Find matching progress entry(ies)
       const progressEntries = (student.podsieProgress || []).filter(p => {
