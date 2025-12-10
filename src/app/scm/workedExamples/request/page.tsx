@@ -21,7 +21,7 @@ import {
   RequestTypeSelector,
   PracticeProblemQueue,
 } from "./components";
-import type { RequestType, QueuedPracticeProblem } from "./components";
+import type { RequestType, QueuedPracticeProblem, SkillType } from "./components";
 
 // Lightweight lesson data for list display
 interface LessonListItem {
@@ -68,8 +68,10 @@ export default function WorkedExampleRequestPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const [selectedSkillColor, setSelectedSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('green');
+  const [selectedSkillType, setSelectedSkillType] = useState<SkillType>('target');
   const [contextSkillId, setContextSkillId] = useState<string | null>(null);
   const [contextSkillColor, setContextSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('orange');
+  const [contextSkillType, setContextSkillType] = useState<SkillType>('target');
   const [showDescriptions, setShowDescriptions] = useState(false);
 
   // Request type state
@@ -309,7 +311,7 @@ export default function WorkedExampleRequestPage() {
     problem: PracticeProblem,
     skillNumber: string,
     skillTitle: string,
-    skillColor: 'green' | 'orange' | 'purple'
+    skillType: SkillType
   ) => {
     setPracticeProblemQueue(prev => {
       // Check if already in queue
@@ -323,7 +325,7 @@ export default function WorkedExampleRequestPage() {
         skillTitle,
         problemNumber: problem.problemNumber,
         screenshotUrl: problem.screenshotUrl,
-        skillColor,
+        skillType,
       }];
     });
   }, []);
@@ -355,7 +357,7 @@ export default function WorkedExampleRequestPage() {
 
       // Auto-fill math standard from skill's standards
       if (skill.standards && skill.standards.length > 0) {
-        setMathStandard(skill.standards.join(", "));
+        setMathStandard(skill.standards);
       }
 
       // Auto-fill learning goals with skill description
@@ -574,6 +576,9 @@ export default function WorkedExampleRequestPage() {
                         if (skill) {
                           setSelectedSkillId(skill._id);
                           setSelectedSkillColor(color);
+                          // Determine skill type based on whether it's a target skill
+                          const isTarget = selectedLessonFull?.targetSkills?.includes(skillNumber) || false;
+                          setSelectedSkillType(isTarget ? 'target' : 'helpful');
                         }
                       }}
                       skillType="target"
@@ -600,11 +605,15 @@ export default function WorkedExampleRequestPage() {
                 <SkillDetailWrapper
                   skill={selectedSkill}
                   color={selectedSkillColor}
+                  skillType={selectedSkillType}
                   onSkillClick={(skillNumber, color) => {
                     const skill = allSkills.find(s => s.skillNumber === skillNumber);
                     if (skill) {
                       setContextSkillId(skill._id);
                       setContextSkillColor(color);
+                      // Determine skill type based on color (essential=orange in the old system, helpful=blue)
+                      const skillType: SkillType = color === 'orange' ? 'essential' : color === 'purple' ? 'target' : 'helpful';
+                      setContextSkillType(skillType);
                     }
                   }}
                   sections={{
@@ -630,11 +639,14 @@ export default function WorkedExampleRequestPage() {
                   <SkillDetailWrapper
                     skill={contextSkill}
                     color={contextSkillColor}
+                    skillType={contextSkillType}
                     onSkillClick={(skillNumber, color) => {
                       const skill = allSkills.find(s => s.skillNumber === skillNumber);
                       if (skill) {
                         setContextSkillId(skill._id);
                         setContextSkillColor(color);
+                        const skillType: SkillType = color === 'orange' ? 'essential' : color === 'purple' ? 'target' : 'helpful';
+                        setContextSkillType(skillType);
                       }
                     }}
                     sections={{

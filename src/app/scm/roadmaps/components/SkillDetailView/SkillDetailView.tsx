@@ -1,6 +1,7 @@
 "use client";
 
 import { RoadmapsSkill, PracticeProblem } from "@zod-schema/313/curriculum/roadmap-skill";
+import { MapPinIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { SkillDetailHeader } from "./SkillDetailHeader";
 import { DescriptionSection } from "./DescriptionSection";
 import { StandardsSection } from "./StandardsSection";
@@ -12,6 +13,8 @@ import { EssentialQuestionSection } from "./EssentialQuestionSection";
 import { CommonMisconceptionsSection } from "./CommonMisconceptionsSection";
 import { VocabularySection } from "./VocabularySection";
 import { ModelsAndManipulativesSection } from "./ModelsAndManipulativesSection";
+
+export type SkillType = 'target' | 'essential' | 'helpful';
 
 /** Configuration for which sections to show in the skill detail view */
 export interface SkillDetailSections {
@@ -32,11 +35,13 @@ export interface SkillDetailViewProps {
   onSkillClick?: (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple') => void;
   onClose?: () => void;
   color?: 'blue' | 'green' | 'orange' | 'purple';
+  /** The type of skill (target, essential, helpful) - used for proper coloring in queues */
+  skillType?: SkillType;
   masteredSkills?: string[];
   /** Configure which sections to show. By default, all sections are shown. */
   sections?: SkillDetailSections;
   /** Callback to add a practice problem to the consideration queue */
-  onAddProblemToQueue?: (problem: PracticeProblem, skillNumber: string, skillTitle: string, skillColor: 'green' | 'orange' | 'purple') => void;
+  onAddProblemToQueue?: (problem: PracticeProblem, skillNumber: string, skillTitle: string, skillType: SkillType) => void;
   /** Function to check if a practice problem is already in the queue */
   isProblemInQueue?: (skillNumber: string, problemNumber: number | string) => boolean;
 }
@@ -46,6 +51,7 @@ export function SkillDetailView({
   onSkillClick,
   onClose,
   color = 'blue',
+  skillType = 'target',
   masteredSkills = [],
   sections,
   onAddProblemToQueue,
@@ -68,7 +74,7 @@ export function SkillDetailView({
   if (!skill) {
     return (
       <div className="p-6 text-center text-gray-500">
-        <div className="text-gray-400 text-lg mb-2">🎯</div>
+        <MapPinIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
         <div className="text-sm">Click any skill to view details</div>
       </div>
     );
@@ -91,7 +97,7 @@ export function SkillDetailView({
         <div className="p-6">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <div className="text-yellow-600 text-xl">⚠️</div>
+              <ExclamationTriangleIcon className="w-6 h-6 text-yellow-600 flex-shrink-0" />
               <div>
                 <div className="font-semibold text-yellow-900 mb-1">
                   Skill {skill.skillNumber} not found in database
@@ -149,7 +155,7 @@ export function SkillDetailView({
             practiceProblems={skill.practiceProblems as unknown as PracticeProblem[]}
             skillNumber={skill.skillNumber}
             skillTitle={skill.title}
-            skillColor={color === 'blue' ? 'green' : color}
+            skillType={skillType}
             onAddToQueue={onAddProblemToQueue}
             isInQueue={isProblemInQueue}
           />

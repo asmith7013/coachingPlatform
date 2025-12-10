@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon, PlusIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { PracticeProblem } from "@zod-schema/313/curriculum/roadmap-skill";
 
+export type SkillType = 'target' | 'essential' | 'helpful';
+
 interface PracticeProblemsSectionProps {
   practiceProblems: PracticeProblem[];
   skillNumber: string;
   skillTitle?: string;
-  skillColor?: 'green' | 'orange' | 'purple';
-  onAddToQueue?: (problem: PracticeProblem, skillNumber: string, skillTitle: string, skillColor: 'green' | 'orange' | 'purple') => void;
+  skillType?: SkillType;
+  onAddToQueue?: (problem: PracticeProblem, skillNumber: string, skillTitle: string, skillType: SkillType) => void;
   isInQueue?: (skillNumber: string, problemNumber: number | string) => boolean;
 }
 
@@ -17,7 +19,7 @@ export function PracticeProblemsSection({
   practiceProblems,
   skillNumber,
   skillTitle = '',
-  skillColor = 'green',
+  skillType = 'target',
   onAddToQueue,
   isInQueue,
 }: PracticeProblemsSectionProps) {
@@ -98,7 +100,7 @@ export function PracticeProblemsSection({
             <button
               onClick={() => {
                 if (!isInQueue?.(skillNumber, currentProblem.problemNumber)) {
-                  onAddToQueue(currentProblem, skillNumber, skillTitle, skillColor);
+                  onAddToQueue(currentProblem, skillNumber, skillTitle, skillType);
                 }
               }}
               disabled={isInQueue?.(skillNumber, currentProblem.problemNumber)}

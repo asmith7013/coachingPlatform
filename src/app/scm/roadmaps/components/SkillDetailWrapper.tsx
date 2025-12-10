@@ -3,10 +3,14 @@
 import { RoadmapsSkill, PracticeProblem } from "@zod-schema/313/curriculum/roadmap-skill";
 import { SkillDetailView, SkillDetailSections } from "./SkillDetailView";
 
+export type SkillType = 'target' | 'essential' | 'helpful';
+
 interface SkillDetailWrapperProps {
   skill: RoadmapsSkill | null;
   onSkillClick?: (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple') => void;
   color?: 'blue' | 'green' | 'orange' | 'purple';
+  /** The type of skill (target, essential, helpful) - used for proper coloring in queues */
+  skillType?: SkillType;
   masteredSkills?: string[];
   onClose?: () => void;
   loading?: boolean;
@@ -15,7 +19,7 @@ interface SkillDetailWrapperProps {
   /** Configure which sections to show. By default, all sections are shown. */
   sections?: SkillDetailSections;
   /** Callback to add a practice problem to the consideration queue */
-  onAddProblemToQueue?: (problem: PracticeProblem, skillNumber: string, skillTitle: string, skillColor: 'green' | 'orange' | 'purple') => void;
+  onAddProblemToQueue?: (problem: PracticeProblem, skillNumber: string, skillTitle: string, skillType: SkillType) => void;
   /** Function to check if a practice problem is already in the queue */
   isProblemInQueue?: (skillNumber: string, problemNumber: number | string) => boolean;
 }
@@ -24,6 +28,7 @@ export function SkillDetailWrapper({
   skill,
   onSkillClick,
   color = 'green',
+  skillType = 'target',
   masteredSkills = [],
   onClose,
   loading = false,
@@ -64,6 +69,7 @@ export function SkillDetailWrapper({
             skill={skill}
             onSkillClick={onSkillClick}
             color={color}
+            skillType={skillType}
             masteredSkills={masteredSkills}
             sections={sections}
             onAddProblemToQueue={onAddProblemToQueue}
