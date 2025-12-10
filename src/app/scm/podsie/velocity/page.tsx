@@ -182,9 +182,11 @@ export default function VelocityPage() {
             }
 
             // Fetch unit schedules for this section
+            // Use scopeSequenceTag (curriculum identifier like "Algebra 1") instead of gradeLevel
+            const scopeTag = section.scopeSequenceTag || `Grade ${section.gradeLevel}`;
             const unitResult = await fetchSectionUnitSchedules(
               schoolYear,
-              section.gradeLevel,
+              scopeTag,
               section.school,
               section.classSection
             );

@@ -324,22 +324,27 @@ export async function updateSectionDates(
 
 /**
  * Fetch unit schedules for a specific class section
+ * Uses both scopeSequenceTag (curriculum) AND grade (content level) for unique identification
+ * This handles cases like Grade 8 units appearing in both "Grade 8" and "Algebra 1" curricula
  */
 export async function fetchSectionUnitSchedules(
   schoolYear: string,
-  grade: string,
+  scopeSequenceTag: string,
   school: string,
   classSection: string
 ) {
   return withDbConnection(async () => {
     try {
-      const schedules = await UnitScheduleModel.find({
+      const filter = {
         schoolYear,
-        grade,
+        scopeSequenceTag,
         school,
         classSection
-      })
-        .sort({ unitNumber: 1 })
+      };
+
+      // Sort by grade first (so Grade 8 prereqs come before Algebra 1), then by unitNumber
+      const schedules = await UnitScheduleModel.find(filter)
+        .sort({ grade: 1, unitNumber: 1 })
         .lean();
 
       const serialized = JSON.parse(JSON.stringify(schedules));
@@ -355,10 +360,12 @@ export async function fetchSectionUnitSchedules(
 
 /**
  * Upsert a unit schedule for a specific class section
+ * Uses scopeSequenceTag + grade + unitNumber for unique identification
  */
 export async function upsertSectionUnitSchedule(data: {
   schoolYear: string;
   grade: string;
+  scopeSequenceTag: string;
   school: string;
   classSection: string;
   unitNumber: number;
@@ -375,14 +382,19 @@ export async function upsertSectionUnitSchedule(data: {
 }) {
   return withDbConnection(async () => {
     try {
+      // Use scopeSequenceTag + grade + unitNumber to uniquely identify schedules
+      // This handles Grade 8 units that appear in both "Grade 8" and "Algebra 1" curricula
+      const filter = {
+        schoolYear: data.schoolYear,
+        scopeSequenceTag: data.scopeSequenceTag,
+        grade: data.grade,
+        school: data.school,
+        classSection: data.classSection,
+        unitNumber: data.unitNumber
+      };
+
       const schedule = await UnitScheduleModel.findOneAndUpdate(
-        {
-          schoolYear: data.schoolYear,
-          grade: data.grade,
-          school: data.school,
-          classSection: data.classSection,
-          unitNumber: data.unitNumber
-        },
+        filter,
         {
           $set: {
             unitName: data.unitName,
@@ -418,9 +430,11 @@ export async function upsertSectionUnitSchedule(data: {
 
 /**
  * Update section dates for a specific class section's unit
+ * Uses scopeSequenceTag + grade to uniquely identify the schedule
  */
 export async function updateSectionUnitDates(
   schoolYear: string,
+  scopeSequenceTag: string,
   grade: string,
   school: string,
   classSection: string,
@@ -434,6 +448,7 @@ export async function updateSectionUnitDates(
       const schedule = await UnitScheduleModel.findOneAndUpdate(
         {
           schoolYear,
+          scopeSequenceTag,
           grade,
           school,
           classSection,
@@ -467,9 +482,11 @@ export async function updateSectionUnitDates(
 
 /**
  * Update unit-level dates for a specific class section
+ * Uses scopeSequenceTag + grade to uniquely identify the schedule
  */
 export async function updateSectionUnitLevelDates(
   schoolYear: string,
+  scopeSequenceTag: string,
   grade: string,
   school: string,
   classSection: string,
@@ -482,6 +499,7 @@ export async function updateSectionUnitLevelDates(
       const schedule = await UnitScheduleModel.findOneAndUpdate(
         {
           schoolYear,
+          scopeSequenceTag,
           grade,
           school,
           classSection,

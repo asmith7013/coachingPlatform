@@ -9,6 +9,7 @@ import { fetchStudentsBySection } from "@/app/actions/313/students";
 import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
 import { AssignmentCard } from "./components/AssignmentCard";
 import { SmartboardDisplay } from "./components/SmartboardDisplay";
+import { PacingProgressCard } from "./components/pacing";
 import { CreateAssignmentModal } from "./components/CreateAssignmentModal";
 import { PageHeader } from "./components/PageHeader";
 import { FiltersSection } from "./components/FiltersSection";
@@ -22,6 +23,7 @@ import { useSections } from "./hooks/useSections";
 import { useUnitsAndConfig } from "./hooks/useUnitsAndConfig";
 import { useLessons } from "./hooks/useLessons";
 import { useProgressData } from "./hooks/useProgressData";
+import { usePacingData } from "./hooks/usePacingData";
 import { useLocalStorageString } from "./hooks/useLocalStorage";
 import type { LessonConfig } from "./types";
 
@@ -66,7 +68,10 @@ export default function PodsieProgressPage() {
   const { sections, loading: loadingSections, error: sectionsError } = useSections();
   const { units, sectionConfigAssignments, groupId, loading: loadingUnits, error: unitsError, setSectionConfigAssignments } = useUnitsAndConfig(scopeSequenceTag, selectedSection);
   const { lessons, sectionOptions, loading: loadingLessons, error: lessonsError } = useLessons(scopeSequenceTag, selectedSection, selectedUnit, selectedLessonSection, sectionConfigAssignments);
+  // For pacing, we need ALL lessons in the unit (not filtered by selectedLessonSection)
+  const { lessons: allLessonsInUnit } = useLessons(scopeSequenceTag, selectedSection, selectedUnit, 'all', sectionConfigAssignments);
   const { progressData, loading: loadingProgress, error: progressError, setProgressData } = useProgressData(selectedSection, selectedUnit, lessons);
+  const pacingData = usePacingData(selectedSection, selectedUnit, allLessonsInUnit, progressData);
 
   // Derived data
   const sectionGroups = useMemo(() => groupSectionsBySchool(sections), [sections]);
@@ -335,6 +340,14 @@ export default function PodsieProgressPage() {
             </div>
           )}
         </div>
+
+        {/* Pacing Progress Card - separate card below filters */}
+        {selectedSection && selectedUnit !== null && selectedLessonSection && lessons.length > 0 && (
+          <PacingProgressCard
+            pacingData={pacingData}
+            selectedUnit={selectedUnit}
+          />
+        )}
 
         {/* Content Area */}
         {selectedSection && selectedUnit !== null && selectedLessonSection ? (

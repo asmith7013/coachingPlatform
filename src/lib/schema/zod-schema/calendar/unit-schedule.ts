@@ -22,7 +22,7 @@ export type UnitSection = z.infer<typeof UnitSectionSchema>;
  */
 export const UnitScheduleFieldsSchema = z.object({
   schoolYear: z.string(), // e.g., "2024-2025"
-  grade: z.string(), // e.g., "6", "7", "8"
+  grade: z.string(), // e.g., "6", "7", "8" - the content grade level
   subject: z.string().optional(), // e.g., "Math"
   unitNumber: z.number(), // e.g., 1, 2, 3
   unitName: z.string(), // e.g., "Unit 3: Ratios and Proportions"
@@ -34,6 +34,7 @@ export const UnitScheduleFieldsSchema = z.object({
   // Per-section config fields (when schedules are tied to a specific class section)
   school: z.string().optional(), // e.g., "IS313", "PS19"
   classSection: z.string().optional(), // e.g., "601", "701", "802"
+  scopeSequenceTag: z.string().optional(), // e.g., "Grade 8", "Algebra 1" - identifies the curriculum
 });
 
 export const UnitScheduleZodSchema = BaseDocumentSchema.merge(UnitScheduleFieldsSchema);

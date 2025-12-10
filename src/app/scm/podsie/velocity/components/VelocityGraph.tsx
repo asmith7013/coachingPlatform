@@ -345,6 +345,14 @@ export function VelocityGraph({
         titleColor: "#fff",
         bodyColor: "#fff",
         callbacks: {
+          title: function (tooltipItems: { dataIndex: number }[]) {
+            if (tooltipItems.length === 0) return '';
+            const dateStr = sortedDates[tooltipItems[0].dataIndex];
+            if (!dateStr) return '';
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+          },
           label: function (context: { dataset: { label?: string }; raw: unknown; datasetIndex: number; dataIndex: number }) {
             const sectionData = processedSections[context.datasetIndex];
             const dateStr = sortedDates[context.dataIndex];

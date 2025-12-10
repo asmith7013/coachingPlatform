@@ -82,6 +82,9 @@ interface StudentVelocityGraphProps {
   endDate: string;
   daysOff: string[];
   showRampUps: boolean;
+  onShowRampUpsChange: (value: boolean) => void;
+  includeNotTracked: boolean;
+  onIncludeNotTrackedChange: (value: boolean) => void;
   embedded?: boolean; // When true, removes the outer wrapper/shadow
   unitSchedules?: UnitSchedule[]; // Unit schedules for the unit bar
 }
@@ -95,6 +98,9 @@ export function StudentVelocityGraph({
   endDate,
   daysOff,
   showRampUps,
+  onShowRampUpsChange,
+  includeNotTracked,
+  onIncludeNotTrackedChange,
   embedded = false,
   unitSchedules,
 }: StudentVelocityGraphProps) {
@@ -139,10 +145,11 @@ export function StudentVelocityGraph({
       const dailyData = Object.entries(student.dailyProgress)
         .filter(([date]) => date >= startDate && date <= endDate)
         .filter(([date]) => isSchoolDay(date))
-        .filter(([, data]) => data.attendance !== 'not-tracked')
+        .filter(([, data]) => includeNotTracked || data.attendance !== 'not-tracked')
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([date, data]) => {
           const blockType = blockTypeMap.get(date) || 'none';
+          // Use lessons (excludes ramp ups) or totalCompletions based on toggle
           const completions = showRampUps ? data.totalCompletions : data.lessons;
           let velocity = completions;
           if (adjustForBlockType && blockType === 'double') {
@@ -406,14 +413,7 @@ export function StudentVelocityGraph({
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: !embedded, // Hide legend when embedded in accordion
-        position: 'top' as const,
-        labels: {
-          usePointStyle: true,
-          pointStyle: 'circle',
-          padding: 10,
-          font: { size: 10 },
-        },
+        display: false, // Legend removed - student names shown in filter groups instead
       },
       title: { display: false },
       tooltip: {
@@ -422,6 +422,14 @@ export function StudentVelocityGraph({
         titleColor: "#fff",
         bodyColor: "#fff",
         callbacks: {
+          title: function (tooltipItems: { dataIndex: number }[]) {
+            if (tooltipItems.length === 0) return '';
+            const dateStr = sortedDates[tooltipItems[0].dataIndex];
+            if (!dateStr) return '';
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+          },
           label: function (context: { dataset: { label?: string }; raw: unknown; datasetIndex: number; dataIndex: number }) {
             const value = Number(context.raw) || 0;
             const numGroupDatasets = groupDatasets.length;
@@ -661,7 +669,7 @@ export function StudentVelocityGraph({
       </div>
 
       {/* Toggles */}
-      <div className="flex items-center gap-6 mt-4 pt-4 border-t border-gray-100">
+      <div className="flex items-center gap-6 mt-4 pt-4 border-t border-gray-100 flex-wrap">
         <ToggleSwitch
           checked={showRollingAverage}
           onChange={setShowRollingAverage}
@@ -671,6 +679,16 @@ export function StudentVelocityGraph({
           checked={adjustForBlockType}
           onChange={setAdjustForBlockType}
           label="Adjust for Block Type"
+        />
+        <ToggleSwitch
+          checked={showRampUps}
+          onChange={onShowRampUpsChange}
+          label="Include Ramp Ups"
+        />
+        <ToggleSwitch
+          checked={includeNotTracked}
+          onChange={onIncludeNotTrackedChange}
+          label="Include Untracked Attendance"
         />
         <ToggleSwitch
           checked={showFilterGroupsOnly}

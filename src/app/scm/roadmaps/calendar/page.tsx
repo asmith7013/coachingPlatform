@@ -132,6 +132,14 @@ interface SectionConfigOption {
   school: string;
 }
 
+// localStorage key for persisting user selections
+const CALENDAR_STORAGE_KEY = "roadmaps-calendar-selection";
+
+interface CalendarStorageData {
+  grade: string;
+  sectionKey: string | null; // "school|classSection" format
+}
+
 export default function CalendarPage() {
   const [schoolYear] = useState(DEFAULT_SCHOOL_YEAR);
   const [selectedGrade, setSelectedGrade] = useState("6");
@@ -139,17 +147,50 @@ export default function CalendarPage() {
   const [lessons, setLessons] = useState<ScopeAndSequenceLesson[]>([]);
   const [daysOff, setDaysOff] = useState<string[]>([]);
   const [savedSchedules, setSavedSchedules] = useState<SavedUnitSchedule[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingSchedules, setLoadingSchedules] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true); // Initial page load (calendar, days off)
+  const [loadingGradeData, setLoadingGradeData] = useState(false); // Loading lessons/schedules when grade changes
+  const [loadingSchedules, setLoadingSchedules] = useState(false); // Loading section-specific schedules
   const [saving, setSaving] = useState(false);
   const [unitSchedules, setUnitSchedules] = useState<UnitScheduleLocal[]>([]);
 
   // Section config state
   const [allSectionConfigs, setAllSectionConfigs] = useState<SectionConfigOption[]>([]);
   const [selectedSection, setSelectedSection] = useState<SectionConfigOption | null>(null);
+  const [pendingSectionKey, setPendingSectionKey] = useState<string | null>(null); // For restoring section after configs load
   const [showCopyModal, setShowCopyModal] = useState(false);
   const [copying, setCopying] = useState(false);
   const [copyTargets, setCopyTargets] = useState<Set<string>>(new Set()); // Set of "school|classSection" keys
+
+  // Load saved selection from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(CALENDAR_STORAGE_KEY);
+      if (saved) {
+        const data: CalendarStorageData = JSON.parse(saved);
+        if (data.grade) {
+          setSelectedGrade(data.grade);
+        }
+        if (data.sectionKey) {
+          setPendingSectionKey(data.sectionKey);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading saved calendar selection:", error);
+    }
+  }, []);
+
+  // Save selection to localStorage when it changes
+  useEffect(() => {
+    try {
+      const data: CalendarStorageData = {
+        grade: selectedGrade,
+        sectionKey: selectedSection ? `${selectedSection.school}|${selectedSection.classSection}` : null,
+      };
+      localStorage.setItem(CALENDAR_STORAGE_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error("Error saving calendar selection:", error);
+    }
+  }, [selectedGrade, selectedSection]);
 
   // Selection state for interactive date picking
   const [selectionMode, setSelectionMode] = useState<SelectionMode>(null);
@@ -181,10 +222,54 @@ export default function CalendarPage() {
     loadSectionConfigs();
   }, []);
 
-  // Load calendar, lessons, and days off when grade changes (full page load)
+  // Restore pending section once configs are loaded
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
+    if (pendingSectionKey && allSectionConfigs.length > 0) {
+      const [school, classSection] = pendingSectionKey.split('|');
+      const section = allSectionConfigs.find(
+        s => s.school === school && s.classSection === classSection
+      );
+      if (section) {
+        // Verify the section matches the selected grade's scope tag
+        const scopeTag = selectedGrade === 'Algebra 1' ? 'Algebra 1' : `Grade ${selectedGrade}`;
+        if (section.scopeSequenceTag === scopeTag) {
+          setSelectedSection(section);
+        }
+      }
+      setPendingSectionKey(null); // Clear pending after attempting restore
+    }
+  }, [pendingSectionKey, allSectionConfigs, selectedGrade]);
+
+  // Load calendar and days off once on mount (these don't change with grade)
+  useEffect(() => {
+    const loadInitialData = async () => {
+      setInitialLoading(true);
+      try {
+        const [calendarResult, daysOffResult] = await Promise.all([
+          fetchSchoolCalendar(schoolYear),
+          getDaysOff(schoolYear),
+        ]);
+
+        if (calendarResult.success && calendarResult.data) {
+          setCalendar(calendarResult.data);
+        }
+        if (daysOffResult.success && daysOffResult.data) {
+          setDaysOff(daysOffResult.data);
+        }
+      } catch (error) {
+        console.error("Error loading initial calendar data:", error);
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
+    loadInitialData();
+  }, [schoolYear]);
+
+  // Load lessons and schedules when grade changes (lazy load - header stays visible)
+  useEffect(() => {
+    const loadGradeData = async () => {
+      setLoadingGradeData(true);
       try {
         // Fetch grade-level schedules (default behavior)
         const scheduleFetches = selectedGrade === 'Algebra 1'
@@ -206,21 +291,13 @@ export default function CalendarPage() {
               data: result.success ? result.data as unknown as SavedUnitSchedule[] : undefined
             }));
 
-        const [calendarResult, lessonsResult, daysOffResult, schedulesResult] = await Promise.all([
-          fetchSchoolCalendar(schoolYear),
+        const [lessonsResult, schedulesResult] = await Promise.all([
           fetchScopeAndSequenceByGrade(selectedGrade),
-          getDaysOff(schoolYear),
           scheduleFetches,
         ]);
 
-        if (calendarResult.success && calendarResult.data) {
-          setCalendar(calendarResult.data);
-        }
         if (lessonsResult.success && lessonsResult.data) {
           setLessons(lessonsResult.data as unknown as ScopeAndSequenceLesson[]);
-        }
-        if (daysOffResult.success && daysOffResult.data) {
-          setDaysOff(daysOffResult.data);
         }
         if (schedulesResult.success && schedulesResult.data) {
           setSavedSchedules(schedulesResult.data);
@@ -228,13 +305,13 @@ export default function CalendarPage() {
           setSavedSchedules([]);
         }
       } catch (error) {
-        console.error("Error loading calendar data:", error);
+        console.error("Error loading grade data:", error);
       } finally {
-        setLoading(false);
+        setLoadingGradeData(false);
       }
     };
 
-    loadData();
+    loadGradeData();
   }, [schoolYear, selectedGrade]);
 
   // Load section-specific schedules when section changes (lazy load - no full page reload)
@@ -244,14 +321,15 @@ export default function CalendarPage() {
     const loadSectionSchedules = async () => {
       setLoadingSchedules(true);
       try {
-        const gradeForFetch = selectedGrade === 'Algebra 1' ? 'Algebra 1' : selectedGrade;
+        // Use scopeSequenceTag to fetch all schedules for this curriculum
+        // scopeSequenceTag handles multi-grade curricula like "Algebra 1" which includes Grade 8 prereqs
+        const scopeTag = selectedSection.scopeSequenceTag || (selectedGrade === 'Algebra 1' ? 'Algebra 1' : `Grade ${selectedGrade}`);
         const result = await fetchSectionUnitSchedules(
           schoolYear,
-          gradeForFetch,
+          scopeTag,
           selectedSection.school,
           selectedSection.classSection
         );
-
         if (result.success && result.data) {
           setSavedSchedules(result.data as unknown as SavedUnitSchedule[]);
         } else {
@@ -409,7 +487,18 @@ export default function CalendarPage() {
     const unit = unitSchedules.find(u => u.unitKey === unitKey);
     if (!unit) return;
 
-    const existingSchedule = savedSchedules.find(s => s.grade === unit.grade && s.unitNumber === unit.unitNumber);
+    // When a section is selected, check for section-specific schedule; otherwise check for grade-level schedule
+    const existingSchedule = selectedSection
+      ? savedSchedules.find(s =>
+          s.grade === unit.grade &&
+          s.unitNumber === unit.unitNumber &&
+          (s as unknown as { school?: string; classSection?: string }).school === selectedSection.school &&
+          (s as unknown as { school?: string; classSection?: string }).classSection === selectedSection.classSection
+        )
+      : savedSchedules.find(s => s.grade === unit.grade && s.unitNumber === unit.unitNumber);
+
+    // Get the scopeSequenceTag for this section
+    const scopeTag = selectedSection?.scopeSequenceTag || (selectedGrade === 'Algebra 1' ? 'Algebra 1' : `Grade ${selectedGrade}`);
 
     setSaving(true);
     try {
@@ -418,6 +507,7 @@ export default function CalendarPage() {
         const result = selectedSection
           ? await updateSectionUnitDates(
               schoolYear,
+              scopeTag,
               unit.grade,
               selectedSection.school,
               selectedSection.classSection,
@@ -443,7 +533,7 @@ export default function CalendarPage() {
     } finally {
       setSaving(false);
     }
-  }, [unitSchedules, savedSchedules, schoolYear, selectedSection]);
+  }, [unitSchedules, savedSchedules, schoolYear, selectedSection, selectedGrade]);
 
   // Handle updating unit-level dates
   const handleUnitDateChange = useCallback(async (
@@ -466,7 +556,18 @@ export default function CalendarPage() {
     const newStartDate = field === 'startDate' ? value : unit.startDate;
     const newEndDate = field === 'endDate' ? value : unit.endDate;
 
-    const existingSchedule = savedSchedules.find(s => s.grade === unit.grade && s.unitNumber === unit.unitNumber);
+    // When a section is selected, check for section-specific schedule; otherwise check for grade-level schedule
+    const existingSchedule = selectedSection
+      ? savedSchedules.find(s =>
+          s.grade === unit.grade &&
+          s.unitNumber === unit.unitNumber &&
+          (s as unknown as { school?: string; classSection?: string }).school === selectedSection.school &&
+          (s as unknown as { school?: string; classSection?: string }).classSection === selectedSection.classSection
+        )
+      : savedSchedules.find(s => s.grade === unit.grade && s.unitNumber === unit.unitNumber);
+
+    // Get the scopeSequenceTag for this section
+    const scopeTag = selectedSection?.scopeSequenceTag || (selectedGrade === 'Algebra 1' ? 'Algebra 1' : `Grade ${selectedGrade}`);
 
     setSaving(true);
     try {
@@ -475,6 +576,7 @@ export default function CalendarPage() {
         const result = selectedSection
           ? await updateSectionUnitLevelDates(
               schoolYear,
+              scopeTag,
               unit.grade,
               selectedSection.school,
               selectedSection.classSection,
@@ -503,6 +605,7 @@ export default function CalendarPage() {
           ? await upsertSectionUnitSchedule({
               schoolYear,
               grade: unit.grade,
+              scopeSequenceTag: scopeTag,
               school: selectedSection.school,
               classSection: selectedSection.classSection,
               unitNumber: unit.unitNumber,
@@ -541,7 +644,7 @@ export default function CalendarPage() {
     } finally {
       setSaving(false);
     }
-  }, [unitSchedules, savedSchedules, schoolYear, selectedSection]);
+  }, [unitSchedules, savedSchedules, schoolYear, selectedSection, selectedGrade]);
 
   // Handle clicking a date in the calendar
   const handleDateClick = useCallback(async (dateStr: string) => {
@@ -575,7 +678,18 @@ export default function CalendarPage() {
     const newEndDate = type === "end" ? dateStr : section.endDate;
 
     // Save to DB - use the unit's grade (important for Algebra 1 which has mixed grades)
-    const existingSchedule = savedSchedules.find(s => s.grade === unit.grade && s.unitNumber === unit.unitNumber);
+    // When a section is selected, check for section-specific schedule; otherwise check for grade-level schedule
+    const existingSchedule = selectedSection
+      ? savedSchedules.find(s =>
+          s.grade === unit.grade &&
+          s.unitNumber === unit.unitNumber &&
+          (s as unknown as { school?: string; classSection?: string }).school === selectedSection.school &&
+          (s as unknown as { school?: string; classSection?: string }).classSection === selectedSection.classSection
+        )
+      : savedSchedules.find(s => s.grade === unit.grade && s.unitNumber === unit.unitNumber);
+
+    // Get the scopeSequenceTag for this section
+    const scopeTag = selectedSection?.scopeSequenceTag || (selectedGrade === 'Algebra 1' ? 'Algebra 1' : `Grade ${selectedGrade}`);
 
     setSaving(true);
     try {
@@ -584,6 +698,7 @@ export default function CalendarPage() {
         const result = selectedSection
           ? await updateSectionUnitDates(
               schoolYear,
+              scopeTag,
               unit.grade,
               selectedSection.school,
               selectedSection.classSection,
@@ -611,6 +726,7 @@ export default function CalendarPage() {
           ? await upsertSectionUnitSchedule({
               schoolYear,
               grade: unit.grade,
+              scopeSequenceTag: scopeTag,
               school: selectedSection.school,
               classSection: selectedSection.classSection,
               unitNumber: unit.unitNumber,
@@ -652,7 +768,7 @@ export default function CalendarPage() {
     } else {
       setSelectionMode(null);
     }
-  }, [selectionMode, unitSchedules, savedSchedules, schoolYear, selectedSection]);
+  }, [selectionMode, unitSchedules, savedSchedules, schoolYear, selectedSection, selectedGrade]);
 
   // Handle copying schedules TO other sections
   const handleCopyToSections = useCallback(async () => {
@@ -827,13 +943,16 @@ export default function CalendarPage() {
     );
   };
 
-  if (loading) {
+  if (initialLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-500">Loading calendar...</div>
       </div>
     );
   }
+
+  // Combined loading state for content section (grade changes or section changes)
+  const isContentLoading = loadingGradeData || loadingSchedules;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -969,12 +1088,14 @@ export default function CalendarPage() {
             </div>
           ) : (
             <>
-              {/* Loading overlay for section schedules */}
-              {loadingSchedules && (
+              {/* Loading overlay for grade/section data changes */}
+              {isContentLoading && (
                 <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
                   <div className="flex items-center gap-2 text-blue-600">
                     <Spinner size="sm" variant="primary" />
-                    <span className="text-sm font-medium">Loading schedules...</span>
+                    <span className="text-sm font-medium">
+                      {loadingGradeData ? 'Loading grade data...' : 'Loading schedules...'}
+                    </span>
                   </div>
                 </div>
               )}
@@ -1111,7 +1232,16 @@ export default function CalendarPage() {
         </div>
 
         {/* Right column - Calendar */}
-        <div className="w-1/2 p-4 overflow-y-auto bg-gray-100">
+        <div className="w-1/2 p-4 overflow-y-auto bg-gray-100 relative">
+          {/* Loading overlay for grade data changes */}
+          {loadingGradeData && (
+            <div className="absolute inset-0 bg-gray-100/70 flex items-center justify-center z-10">
+              <div className="flex items-center gap-2 text-blue-600">
+                <Spinner size="sm" variant="primary" />
+                <span className="text-sm font-medium">Updating calendar...</span>
+              </div>
+            </div>
+          )}
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-4 bg-white rounded-lg shadow px-4 py-2">
             <button onClick={prevMonth} className="p-1 hover:bg-gray-100 rounded">
