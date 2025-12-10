@@ -8,21 +8,20 @@ import { z } from "zod";
 
 /**
  * Schema for Podsie assignment questions endpoint response
+ * The API returns { questions: [...] } with question details
  */
 const PodsieAssignmentQuestionsSchema = z.object({
-  success: z.boolean(),
-  data: z.array(z.object({
-    group_name: z.string(),
-    assignment_name: z.string(),
-    assignment_id: z.number(),
-    assignment_questions: z.array(z.object({
-      questions: z.object({
-        id: z.number(),
-        questionContent: z.object({
-          questionText: z.string(),
-        }).passthrough(),
-      }),
-    })),
+  questions: z.array(z.object({
+    id: z.number(),
+    assignmentId: z.number(),
+    order: z.number(),
+    questionId: z.number(),
+    question: z.object({
+      id: z.number(),
+      questionContent: z.object({
+        questionText: z.string(),
+      }).passthrough(),
+    }).passthrough(),
   })),
 });
 
@@ -75,13 +74,15 @@ export async function fetchPodsieAssignmentQuestions(
       };
     }
 
-    // Extract question IDs in order
+    // Extract question IDs in order (sorted by order field)
     const data = parseResult.data;
-    if (data.data.length === 0) {
-      return { success: false, questionIds: [], error: "No assignment data found" };
+    if (data.questions.length === 0) {
+      return { success: false, questionIds: [], error: "No questions found for this assignment" };
     }
 
-    const questionIds = data.data[0].assignment_questions.map(q => q.questions.id);
+    // Sort by order and extract the questionId (not the join table id)
+    const sortedQuestions = [...data.questions].sort((a, b) => a.order - b.order);
+    const questionIds = sortedQuestions.map(q => q.questionId);
 
     return { success: true, questionIds };
   } catch (error) {

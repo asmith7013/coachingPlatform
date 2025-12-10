@@ -17,6 +17,7 @@ import type { PodsieAssignmentInfo } from "@/app/actions/313/podsie-sync";
 import { listQuestionMaps } from "@/app/actions/313/podsie-question-map";
 import { getQuestionMapFromCurriculum } from "@/app/actions/313/curriculum-question-map";
 import { updatePodsieQuestionMap } from "@/app/actions/313/section-config";
+import { fetchPodsieAssignmentQuestions } from "@/app/actions/313/podsie-sync";
 import { MultiSectionSelector } from "../bulk-sync/components/MultiSectionSelector";
 import { SectionMatchResults } from "./components/SectionMatchResults";
 
@@ -333,10 +334,22 @@ export default function BulkConfigsPage() {
         return;
       }
 
-      // Get the question map data from curriculum
+      // First, fetch the actual Podsie question IDs for this assignment
+      const questionsResult = await fetchPodsieAssignmentQuestions(podsieAssignmentId);
+      if (!questionsResult.success || questionsResult.questionIds.length === 0) {
+        showToast({
+          title: 'Error',
+          description: questionsResult.error || 'Failed to fetch questions from Podsie',
+          variant: 'error',
+          icon: ExclamationTriangleIcon,
+        });
+        return;
+      }
+
+      // Get the question map data from curriculum with actual Podsie question IDs
       const curriculumResult = await getQuestionMapFromCurriculum(
         selectedMap.assignmentName,
-        [] // We don't have podsieQuestionIds here, but the function can work without them for lookup
+        questionsResult.questionIds
       );
 
       if (!curriculumResult.success || !curriculumResult.data) {
@@ -360,7 +373,7 @@ export default function BulkConfigsPage() {
       if (result.success) {
         showToast({
           title: 'Updated',
-          description: `Question map updated to "${selectedMap.assignmentName}"`,
+          description: `Question map updated to "${selectedMap.assignmentName}" (${curriculumResult.data.totalQuestions} questions)`,
           variant: 'success',
           icon: CheckCircleIcon,
         });
