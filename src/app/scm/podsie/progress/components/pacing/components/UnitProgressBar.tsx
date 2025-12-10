@@ -289,11 +289,11 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
                       lessons.map((lesson, lessonIndex) => {
                         const isLastLesson = lessonIndex === lessons.length - 1;
                         const studentNames = lesson.studentNames || [];
-                        const tooltipContent = studentNames.length > 0 ? studentNames.join(", ") : "";
+                        // Use newlines for tooltip so each name is on its own line
+                        const tooltipContent = studentNames.length > 0 ? studentNames.join("\n") : "";
 
                         const lessonContent = (
                           <div
-                            key={lesson.lessonId}
                             className={`flex-1 flex flex-col justify-start px-2 py-1.5 ${!isLastLesson ? `border-r ${styles.border}` : ""}`}
                           >
                             <span className={`text-[9px] ${styles.text} leading-none`}>
@@ -317,14 +317,17 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
                         );
 
                         // Show tooltip with student names when names are hidden
+                        // Wrap in a flex-1 div to maintain proportional spacing
                         if (!showStudentNames && tooltipContent) {
                           return (
-                            <Tooltip key={lesson.lessonId} content={tooltipContent}>
-                              {lessonContent}
-                            </Tooltip>
+                            <div key={lesson.lessonId} className="flex-1 flex">
+                              <Tooltip content={tooltipContent}>
+                                {lessonContent}
+                              </Tooltip>
+                            </div>
                           );
                         }
-                        return lessonContent;
+                        return <div key={lesson.lessonId} className="flex-1 flex">{lessonContent}</div>;
                       })
                     ) : (
                       <div className="flex-1 flex items-center justify-center">
@@ -339,7 +342,8 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
         })}
         {/* Complete column - shows "Complete" label */}
         {completedStudents && (() => {
-          const completeTooltipContent = completedStudents.studentNames.length > 0 ? completedStudents.studentNames.join(", ") : "";
+          // Use newlines for tooltip so each name is on its own line
+          const completeTooltipContent = completedStudents.studentNames.length > 0 ? completedStudents.studentNames.join("\n") : "";
           const completeContent = (
             <div
               className={`${getZoneStyles("complete").bg} border-t ${getZoneStyles("complete").border} border-l flex flex-col justify-start px-2 py-1.5`}
