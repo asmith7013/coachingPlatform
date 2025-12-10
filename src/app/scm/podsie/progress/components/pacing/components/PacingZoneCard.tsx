@@ -179,34 +179,28 @@ export function PacingZoneCard({
     return lesson;
   };
 
-  // Format section name for student badge (short form)
-  const formatStudentSectionBadge = (section: string | undefined) => {
-    if (!section) return null;
-    if (section === "Ramp Ups" || section === "Ramp Up") return "Ramp Ups";
-    // Single letters stay as is (e.g., "A", "B")
-    if (/^[A-F]$/.test(section)) return section;
-    // Already has "Section" prefix, extract just the letter
-    const sectionMatch = section.match(/^Section\s+([A-F])$/i);
-    if (sectionMatch) return sectionMatch[1];
-    return section;
-  };
+  // Don't show section badge for far-behind/far-ahead zones
+  const showSectionInHeader = !showSectionBadge && shortSectionName;
 
   return (
-    <div className={`${classes.bg} border ${classes.border} rounded-lg p-3`}>
-      <div className="flex items-center gap-2 mb-2">
+    <div className={`${classes.bg} border ${classes.border} rounded-lg overflow-hidden`}>
+      {/* Header */}
+      <div className={`flex items-center gap-2 px-3 py-2 border-b ${classes.divider}`}>
         <div className={`w-3 h-3 rounded-full ${classes.dot}`}></div>
         <h4 className={`font-semibold ${classes.titleText} text-sm`}>{title}</h4>
-        {shortSectionName && (
+        {showSectionInHeader && (
           <span className={`ml-auto ${classes.badgeBg} ${classes.badgeText} text-[10px] px-1.5 py-0.5 rounded-full font-medium`}>
             {shortSectionName}
           </span>
         )}
       </div>
-      {students.length === 0 ? (
-        <p className={`text-xs ${classes.emptyText} italic`}>None</p>
-      ) : (
-        <div>
-          {groupedByLesson.map((group, groupIndex) => (
+      {/* Content */}
+      <div className="p-3">
+        {students.length === 0 ? (
+          <p className={`text-xs ${classes.emptyText} italic`}>None</p>
+        ) : (
+          <div>
+            {groupedByLesson.map((group, groupIndex) => (
             <div key={group.lesson}>
               {groupIndex > 0 && (
                 <div className={`border-t ${classes.divider} my-1.5`} />
@@ -223,7 +217,9 @@ export function PacingZoneCard({
                           (student.completedLessonsInSection / totalLessons) * 100
                         )
                       : 0;
-                  const sectionBadge = formatStudentSectionBadge(student.currentSection);
+
+                  // Check if student is fully complete (completed all lessons in their section)
+                  const isFullyComplete = totalLessons > 0 && student.completedLessonsInSection >= totalLessons;
 
                   return (
                     <div key={student.studentId} className="flex items-center gap-1">
@@ -232,11 +228,13 @@ export function PacingZoneCard({
                       >
                         {student.studentName}
                       </span>
-                      {showSectionBadge && sectionBadge ? (
-                        // For far-behind/far-ahead: show section badge
-                        <span className={`text-[10px] ${classes.badgeBg} ${classes.badgeText} px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap`}>
-                          {sectionBadge}
-                        </span>
+                      {showSectionBadge ? (
+                        // For far-behind/far-ahead: only show "Unit Complete" if fully complete, otherwise blank
+                        isFullyComplete ? (
+                          <span className={`text-[10px] ${classes.badgeBg} ${classes.badgeText} px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap`}>
+                            Unit Complete
+                          </span>
+                        ) : null
                       ) : (
                         // For other zones: show progress bar
                         <div className="w-12 flex items-center gap-0.5">
@@ -261,8 +259,9 @@ export function PacingZoneCard({
               </div>
             </div>
           ))}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

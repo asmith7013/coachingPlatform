@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import type { PacingData } from "../../hooks/usePacingData";
-import { PacingZoneCard } from "./components/PacingZoneCard";
+// import { PacingZoneCard } from "./components/PacingZoneCard";
 import { UnitProgressBar } from "./components/UnitProgressBar";
+import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 
 interface PacingProgressCardProps {
   pacingData: PacingData;
@@ -10,7 +12,8 @@ interface PacingProgressCardProps {
 }
 
 export function PacingProgressCard({ pacingData, selectedUnit }: PacingProgressCardProps) {
-  const { students, unitSections, sectionLessonCounts, loading, error, noScheduleData, expectedSection } = pacingData;
+  const { students, unitSections, completedStudents, loading, error, noScheduleData, expectedSection } = pacingData;
+  const [showStudentNames, setShowStudentNames] = useState(false);
 
   if (loading) {
     return (
@@ -56,15 +59,22 @@ export function PacingProgressCard({ pacingData, selectedUnit }: PacingProgressC
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-      {/* Header with Unit Progress Bar */}
-      <div className="flex items-center gap-6 mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Unit {selectedUnit} Pacing Progress</h3>
-        <div className="flex-1">
-          <UnitProgressBar unitSections={unitSections} />
-        </div>
+      {/* Title row with toggle */}
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-900">Unit {selectedUnit} Pace &amp; Progress</h3>
+        <ToggleSwitch
+          checked={showStudentNames}
+          onChange={setShowStudentNames}
+          label="List Student Names"
+        />
       </div>
 
-      {/* Five zones */}
+      {/* Unit Progress Bar */}
+      <div className="mb-6">
+        <UnitProgressBar unitSections={unitSections} completedStudents={completedStudents} showStudentNames={showStudentNames} />
+      </div>
+
+      {/* Five zones - commented out for now
       <div className="grid grid-cols-5 gap-3">
         <PacingZoneCard
           title="Far Behind"
@@ -99,6 +109,7 @@ export function PacingProgressCard({ pacingData, selectedUnit }: PacingProgressC
           showSectionBadge
         />
       </div>
+      */}
 
       {/* Summary bar */}
       {totalStudents > 0 && (() => {
