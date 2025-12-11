@@ -27,6 +27,7 @@ export default function PacePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showStudentNames, setShowStudentNames] = useState(false);
+  const [excludeRampUps, setExcludeRampUps] = useState(false);
 
   // Load sections and current units on mount
   useEffect(() => {
@@ -126,11 +127,18 @@ export default function PacePage() {
               View pacing progress across multiple sections
             </p>
           </div>
-          <ToggleSwitch
-            checked={showStudentNames}
-            onChange={setShowStudentNames}
-            label="Show Student Names"
-          />
+          <div className="flex items-center gap-4">
+            <ToggleSwitch
+              checked={showStudentNames}
+              onChange={setShowStudentNames}
+              label="Show Student Names"
+            />
+            <ToggleSwitch
+              checked={excludeRampUps}
+              onChange={setExcludeRampUps}
+              label="Exclude Ramp Ups"
+            />
+          </div>
         </div>
 
         {/* Section Selector */}
@@ -200,6 +208,7 @@ export default function PacePage() {
                   section={sectionOpt.classSection}
                   school={sectionOpt.school}
                   currentUnitInfo={getCurrentUnitForSection(sectionOpt)}
+                  excludeRampUps={excludeRampUps}
                   specialPopulations={sectionOpt.specialPopulations}
                 />
               ))}
@@ -218,6 +227,7 @@ export default function PacePage() {
                 school={sectionOpt.school}
                 currentUnitInfo={getCurrentUnitForSection(sectionOpt)}
                 showStudentNames={showStudentNames}
+                excludeRampUps={excludeRampUps}
                 specialPopulations={sectionOpt.specialPopulations}
               />
             ))}

@@ -14,6 +14,8 @@ interface SectionPacingCardProps {
   school: string;
   currentUnitInfo: CurrentUnitInfo | null;
   showStudentNames: boolean;
+  /** Whether to exclude Ramp Ups from the view */
+  excludeRampUps?: boolean;
   /** Special population classifications (e.g., ICT, 12-1-1, MLL) */
   specialPopulations?: string[];
 }
@@ -30,6 +32,7 @@ export function SectionPacingCard({
   school,
   currentUnitInfo,
   showStudentNames,
+  excludeRampUps = false,
   specialPopulations,
 }: SectionPacingCardProps) {
   const currentUnit = currentUnitInfo?.currentUnit ?? null;
@@ -53,7 +56,7 @@ export function SectionPacingCard({
   const { progressData } = useProgressData(section, currentUnit, allLessonsInUnit);
 
   // Compute pacing data
-  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData);
+  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData, excludeRampUps);
 
   // Build custom header with section badges
   const customHeader = (

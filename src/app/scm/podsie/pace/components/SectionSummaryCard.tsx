@@ -24,6 +24,8 @@ interface SectionSummaryCardProps {
   currentUnitInfo: CurrentUnitInfo | null;
   /** Optional callback to report student counts when data loads */
   onCountsLoaded?: (sectionId: string, counts: PaceZoneCounts) => void;
+  /** Whether to exclude Ramp Ups from the view */
+  excludeRampUps?: boolean;
   /** Special population classifications (e.g., ICT, 12-1-1, MLL) */
   specialPopulations?: string[];
 }
@@ -40,6 +42,7 @@ export function SectionSummaryCard({
   school,
   currentUnitInfo,
   onCountsLoaded,
+  excludeRampUps = false,
   specialPopulations,
 }: SectionSummaryCardProps) {
   const currentUnit = currentUnitInfo?.currentUnit ?? null;
@@ -70,7 +73,7 @@ export function SectionSummaryCard({
   );
 
   // Compute pacing data
-  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData);
+  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData, excludeRampUps);
 
   const isLoading = loadingConfig || loadingLessons || loadingProgress || pacingData.loading;
 
