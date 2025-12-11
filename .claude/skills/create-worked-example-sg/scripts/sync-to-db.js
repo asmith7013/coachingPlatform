@@ -1,8 +1,10 @@
 // Sync HTML Slides to MongoDB
-// Usage: node sync-to-db.js <slug> | mongosh "$DATABASE_URL"
+// Usage: node sync-to-db.js <slug>
+// Automatically executes mongosh with DATABASE_URL from environment
 
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 // Get slug from command line arguments
 const slug = process.argv[2];
@@ -152,4 +154,32 @@ if (result.acknowledged) {
 }
 `;
 
-console.log(mongoScript);
+// Write to temp file and execute with mongosh
+const tempFile = path.join('/tmp', `sync-${slug}-${Date.now()}.js`);
+fs.writeFileSync(tempFile, mongoScript);
+
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  console.error('Error: DATABASE_URL environment variable is not set');
+  process.exit(1);
+}
+
+try {
+  const output = execSync(`mongosh "${databaseUrl}" --file "${tempFile}"`, {
+    encoding: 'utf-8',
+    stdio: ['pipe', 'pipe', 'pipe']
+  });
+  console.log(output);
+} catch (error) {
+  console.error('Error executing mongosh:', error.message);
+  if (error.stdout) console.log(error.stdout);
+  if (error.stderr) console.error(error.stderr);
+  process.exit(1);
+} finally {
+  // Clean up temp file
+  try {
+    fs.unlinkSync(tempFile);
+  } catch (e) {
+    // Ignore cleanup errors
+  }
+}

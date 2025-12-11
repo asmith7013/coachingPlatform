@@ -20,6 +20,7 @@ Use the Read tool to read ALL of these files in order:
 
 ```
 Read: .claude/skills/create-worked-example-sg/reference/styling.md
+Read: .claude/skills/create-worked-example-sg/reference/svg-coordinate-planes.md
 Read: .claude/skills/create-worked-example-sg/examples/example1.html
 Read: .claude/skills/create-worked-example-sg/templates/cfu-toggle-snippet.html
 Read: .claude/skills/create-worked-example-sg/templates/answer-toggle-snippet.html
@@ -31,12 +32,13 @@ Read: .claude/skills/create-worked-example-sg/templates/printable-slide-snippet.
 | File | What It Contains | Use It For |
 |------|-----------------|------------|
 | `reference/styling.md` | Color palette, typography, layout patterns | All slides - consistent styling |
+| `reference/svg-coordinate-planes.md` | **CRITICAL** SVG graph templates & alignment rules | Any slide with coordinate planes/graphs |
 | `examples/example1.html` | Complete 9-slide hanger balance deck | See how a full worked example flows |
 | `templates/cfu-toggle-snippet.html` | Interactive CFU toggle with onclick | Ask slides (Steps 1-3) |
 | `templates/answer-toggle-snippet.html` | Interactive answer toggle with onclick | Reveal slides (Steps 1-3) |
 | `templates/printable-slide-snippet.html` | Print-ready layout with header | Final printable worksheet slide |
 
-**DO NOT create slides until you have read ALL 5 files above.**
+**DO NOT create slides until you have read ALL 6 files above.**
 
 After reading, update the progress file to confirm:
 ```json
@@ -64,9 +66,11 @@ Create these slides in order:
 | 6 | Step 2 - Reveal | Updated visual + answer |
 | 7 | (Optional) Step 3 | If 3 steps needed |
 | 8 | (Optional) Reasoning | If problem asks "explain" |
-| 9 | Practice Problem 1 | Scenario 2 - NO scaffolding |
-| 10 | Practice Problem 2 | Scenario 3 - NO scaffolding |
-| 11 | Printable Worksheet | Print-friendly version |
+| 9 | Practice Problem 1 | Scenario 2 - NO scaffolding (dark theme) |
+| 10 | Practice Problem 2 | Scenario 3 - NO scaffolding (dark theme) |
+| 11 | Printable Worksheets | ALL practice problems in one file (using print-page divs) |
+
+**Note:** The printable worksheet slide (slide-11) contains ALL practice problems. Each problem is wrapped in a `<div class="print-page">` which renders as a separate page when printed. On screen, users scroll through the problems; when printed, each problem appears on its own 8.5x11 page.
 
 ---
 
@@ -113,6 +117,62 @@ Choose the right visual approach based on the problem:
 - Mathematical plots
 
 For P5.js/D3.js problems, see `examples/example1.html` for how scripts are embedded.
+
+---
+
+## CRITICAL: SVG Coordinate Plane Creation
+
+**If your worked example includes coordinate planes or graphs, you MUST follow these rules:**
+
+### Required Reference
+Before creating ANY SVG graph, you MUST have read `reference/svg-coordinate-planes.md`. This file contains:
+- Pre-calculated pixel positions for common scales
+- The correct formula for converting data to pixels
+- Templates that ensure grid/label alignment
+
+### The Grid Alignment Problem
+The #1 bug in SVG graphs is **misaligned grids** where:
+- Grid lines appear at different X/Y positions than axis labels
+- Data points don't land on grid intersections when they should
+- The visual "lies" about the data
+
+### Required Formula
+ALL coordinate calculations MUST use this formula:
+
+```
+pixelX = ORIGIN_X + (dataX / X_MAX) * PLOT_WIDTH
+pixelY = ORIGIN_Y - (dataY / Y_MAX) * PLOT_HEIGHT
+```
+
+Standard constants (viewBox 280x200):
+- ORIGIN_X = 40, ORIGIN_Y = 170
+- PLOT_WIDTH = 220, PLOT_HEIGHT = 150
+
+### Mandatory Checklist for Every Graph
+
+Before finalizing any SVG coordinate plane, verify:
+
+- [ ] Grid vertical lines use the SAME X pixel values as X-axis labels
+- [ ] Grid horizontal lines use the SAME Y pixel values as Y-axis labels
+- [ ] Data points are calculated using the SAME formula as grid lines
+- [ ] Origin (0,0) renders at pixel (40, 170)
+- [ ] Maximum point renders at pixel (260, 20)
+
+### Quick Reference: Common Scales
+
+**X-axis (0 to N) label positions (ORIGIN=40, WIDTH=220):**
+- 0→4: x = 40, 95, 150, 205, 260
+- 0→5: x = 40, 84, 128, 172, 216, 260
+- 0→8: x = 40, 67.5, 95, 122.5, 150, 177.5, 205, 232.5, 260
+- 0→10: x = 40, 62, 84, 106, 128, 150, 172, 194, 216, 238, 260
+- 0→12: x = 40, 58.3, 76.7, 95, 113.3, 131.7, 150, 168.3, 186.7, 205, 223.3, 241.7, 260
+- 0→20: x = 40, 51, 62, 73, 84, 95, 106, 117, 128, 139, 150, 161, 172, 183, 194, 205, 216, 227, 238, 249, 260
+
+**Y-axis (0 to N) label positions (ORIGIN=170, HEIGHT=150):**
+- 0→100: y = 170, 132.5, 95, 57.5, 20 (for 0, 25, 50, 75, 100)
+- 0→80: y = 170, 132.5, 95, 57.5, 20 (for 0, 20, 40, 60, 80)
+
+**IMPORTANT:** Grid lines and labels MUST use the EXACT same pixel values. If a label is at x=95, the corresponding grid line MUST also be at x=95.
 
 ---
 
@@ -175,17 +235,24 @@ Same structure as Problem Setup, but:
 - NO step indicators
 - Just the problem setup
 
-### Pattern 6: Printable Worksheet (Final Slide)
+### Pattern 6: Printable Worksheets (Multiple Problems in One Slide File)
 
-Portrait orientation, print-friendly:
+**CRITICAL: ALL practice problems go in ONE slide file with separate print-page divs**
+
+You MUST use the template from `templates/printable-slide-snippet.html`. Create **ONE slide file** (slide-11.html) containing ALL practice problems:
+- Each problem is wrapped in its own `<div class="print-page">`
+- Each `print-page` div = one printed page (8.5in x 11in)
+- Problems are stacked vertically, NOT side-by-side
+
+**DO NOT create separate slide files for each problem.** The correct format uses nested `print-page` divs within a single slide.
 
 ```html
+<!-- ALL PROBLEMS IN ONE SLIDE FILE with print-page wrappers -->
 <div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
 
-    <!-- Page 1 -->
+    <!-- Page 1: Problem 1 -->
     <div class="print-page" style="width: 8.5in; height: 11in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
-
-        <!-- Header -->
+        <!-- Header with lesson info -->
         <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
             <div>
                 <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">[LESSON TITLE]</h1>
@@ -197,29 +264,91 @@ Portrait orientation, print-friendly:
             </div>
         </div>
 
-        <!-- Learning Goal -->
-        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 20px;">
-            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> [GOAL]</p>
+        <!-- Learning Goal Box -->
+        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 15px;">
+            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> [STUDENT-FACING LEARNING GOAL]</p>
         </div>
 
-        <!-- Problem -->
-        <div style="border: 2px solid #333; padding: 20px; flex: 1;">
+        <!-- Strategy Reminder -->
+        <div style="background: #e8f4e8; border: 1px solid #4a7c4a; padding: 8px 12px; margin-bottom: 15px;">
+            <p style="font-size: 11px; margin: 0;"><strong>Strategy:</strong> [STRATEGY NAME] — [BRIEF DESCRIPTION]</p>
+        </div>
+
+        <!-- Problem 1 -->
+        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
             <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
-                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 1: [SCENARIO]</h3>
+                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 1: [SCENARIO NAME]</h3>
             </div>
-            <!-- Problem content -->
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">
+                [PROBLEM DESCRIPTION]
+            </p>
+
+            <!-- Problem Content: Tables, Equations, Graphs as needed -->
+            <div style="display: flex; gap: 30px; margin-bottom: 15px;">
+                <!-- Content here -->
+            </div>
+
+            <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: auto;">
+                <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
+                <p style="font-size: 13px; line-height: 1.5; margin: 0;">[SPECIFIC QUESTION]</p>
+                <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 100px;">
+                    <p style="font-size: 11px; color: #666; margin: 0;">Show your work:</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Page 2 - Same structure for Problem 2 -->
+    <!-- Page 2: Problem 2 -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Repeat header, learning goal, strategy, and problem structure -->
+        <!-- ... -->
+    </div>
 </div>
+
+<!-- Print-specific styles - REQUIRED for proper printing -->
+<style>
+@media print {
+    .slide-container {
+        overflow: visible !important;
+        height: auto !important;
+    }
+    .print-page {
+        width: 8.5in !important;
+        height: 11in !important;
+        margin: 0 !important;
+        padding: 0.5in !important;
+        box-sizing: border-box !important;
+        page-break-after: always;
+        border: none !important;
+    }
+    .print-page:last-child {
+        page-break-after: auto;
+    }
+    svg line, svg path, svg text, svg circle {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+    div[style*="background"] {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+}
+@page {
+    size: letter portrait;
+    margin: 0;
+}
+</style>
 ```
 
-**Key points for printable:**
-- Only practice problems (NOT worked example)
-- `class="print-page"` required for page breaks
-- White background, black text
-- No inline print button (handled by PresentationModal)
+**CRITICAL rules for printable slides:**
+1. **ALL problems in ONE slide file** - Use nested `print-page` divs, NOT separate files
+2. **Each `print-page` div = one printed page** - 8.5in x 11in with 0.5in padding
+3. **Use `overflow-y: auto`** on slide-container for on-screen scrolling
+4. **Include `@page` CSS rule** - Sets letter portrait with no margins
+5. **Include `page-break-after: always`** - On each `.print-page` div
+6. White background, black text, Times New Roman/Georgia serif font
+7. Include header, learning goal, and strategy on EACH print-page
+8. The screen view shows pages stacked vertically with margin between them
 
 ---
 

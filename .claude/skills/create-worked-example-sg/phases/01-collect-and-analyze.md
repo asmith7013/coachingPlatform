@@ -1,11 +1,29 @@
 # Phase 1: Collect & Analyze
 
 ## Purpose
-Gather all required information from the user, then deeply analyze the problem to understand its mathematical structure and define ONE clear strategy.
+Gather all required information from the user, then deeply analyze the **mastery check question** to understand its mathematical structure and define ONE clear strategy.
 
 ## Prerequisites
 - User has requested a worked example
 - You have NOT yet seen the problem image
+
+---
+
+## CRITICAL: Understanding the Input
+
+**The problem image the user provides is the MASTERY CHECK QUESTION** - the actual question students will answer on their exit ticket or assessment.
+
+**Your job is to create a worked example that:**
+1. Teaches the SAME mathematical skill
+2. Uses the SAME strategy and steps
+3. Uses a **DIFFERENT context and numbers** than the mastery check
+
+**Why different context?** Students should learn the strategy from the worked example, then apply it independently to the mastery check. If the worked example uses the same numbers/context, students can just copy the answer without learning the underlying skill.
+
+**ALL THREE SCENARIOS must use different contexts:**
+- Scenario 1 (Worked Example): Different context from mastery check
+- Scenario 2 (Practice): Different context from mastery check AND Scenario 1
+- Scenario 3 (Practice): Different context from all above
 
 ---
 
@@ -21,9 +39,10 @@ To create a worked example, I need the following information:
 3. **Lesson Number**: What lesson is this? (e.g., 1)
 4. **Learning Goals**: What should students learn from this?
    (e.g., "Students will be able to solve linear equations using the distributive property")
-5. **Problem Image**: Please upload an image of the problem you want a worked example for.
+5. **Mastery Check Question**: Please upload an image of the mastery check/exit ticket question.
+   (I'll create a worked example that teaches this skill using DIFFERENT numbers and context)
 
-Once I have ALL of these (especially the problem image), I'll analyze the problem and confirm my approach with you before creating slides.
+Once I have ALL of these (especially the mastery check image), I'll analyze the problem and confirm my approach with you before creating slides.
 ```
 
 **WAIT** for the user to provide all information. Do NOT proceed until you have:
@@ -31,7 +50,7 @@ Once I have ALL of these (especially the problem image), I'll analyze the proble
 - [ ] Unit number
 - [ ] Lesson number
 - [ ] Learning goals
-- [ ] Problem image
+- [ ] Mastery check question image
 
 ---
 

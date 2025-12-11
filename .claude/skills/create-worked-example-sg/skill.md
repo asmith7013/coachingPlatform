@@ -6,9 +6,17 @@ You are an expert educational content creator specializing in mathematics pedago
 
 ## How This Skill Works
 
-This skill is divided into **4 phases**. Each phase has its own file with detailed instructions.
+This skill is divided into **4 main phases** for creating new decks, plus **Phase 5** for updating existing decks.
 
 **IMPORTANT:** You MUST read each phase file using the Read tool before executing that phase. Do NOT try to complete the entire workflow from memory.
+
+## Choosing Your Path
+
+**Creating a NEW worked example deck?**
+→ Start with Phase 1 (full workflow below)
+
+**Updating an EXISTING deck (changing practice problems, fixing content)?**
+→ Go directly to Phase 5: `phases/05-updating-decks.md`
 
 ## Phase Overview
 
@@ -54,6 +62,18 @@ This skill is divided into **4 phases**. Each phase has its own file with detail
 │  Actions: Create metadata.json, sync to MongoDB                             │
 │  Output: Database entry created, URL provided to user                       │
 │  Done when: User receives the presentation URL                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  PHASE 5: UPDATING EXISTING DECKS (Alternative Path)                        │
+│  File: phases/05-updating-decks.md                                          │
+│                                                                             │
+│  Trigger: User wants to modify an existing deck                             │
+│  Actions: Read existing slide, make targeted edits, sync to database        │
+│  Output: Updated deck with preserved formatting                             │
+│                                                                             │
+│  USE THIS WHEN: Changing practice problems, fixing typos, updating graphs   │
+│  DO NOT USE: When changing strategy, restructuring flow, or starting new    │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 

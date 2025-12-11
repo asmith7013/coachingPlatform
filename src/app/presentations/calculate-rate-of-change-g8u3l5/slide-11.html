@@ -1,0 +1,228 @@
+<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
+
+    <!-- Page 1: Problem 1 - Stacking Chairs -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Header with lesson info -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">Calculate the Rate of Change</h1>
+                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Unit 3 Lesson 5 | Grade 8</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 13px; margin: 0;">Name: _______________________</p>
+                <p style="font-size: 13px; margin: 4px 0 0 0;">Date: ________________________</p>
+            </div>
+        </div>
+
+        <!-- Learning Goal Box -->
+        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 15px;">
+            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> Interpret features of a graph (slope and y-intercept) of a non-proportional linear relationship.</p>
+        </div>
+
+        <!-- Strategy Box -->
+        <div style="background: #e8f4e8; border: 1px solid #4a7c4a; padding: 8px 12px; margin-bottom: 15px;">
+            <p style="font-size: 11px; margin: 0;"><strong>Strategy:</strong> IDENTIFY two points → CALCULATE (change in y) ÷ (change in x) → INTERPRET what the rate means in context.</p>
+        </div>
+
+        <!-- Problem 1 -->
+        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
+            <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
+                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 1: Stacking Chairs</h3>
+            </div>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 10px 0;">
+                The cafeteria staff stacks chairs for storage. The graph shows the height of the stack in centimeters for different numbers of chairs.
+            </p>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0; font-weight: bold;">
+                How much does each chair after the first add to the height of the stack?
+            </p>
+
+            <!-- Graph -->
+            <div style="display: flex; justify-content: center; margin-bottom: 15px; flex: 1; align-items: center;">
+                <svg viewBox="0 0 280 200" style="width: 100%; max-width: 320px; border: 1px solid #ccc;">
+                    <!-- Grid lines -->
+                    <g stroke="#ddd" stroke-width="0.5">
+                        <line x1="70" y1="20" x2="70" y2="160"/>
+                        <line x1="112" y1="20" x2="112" y2="160"/>
+                        <line x1="154" y1="20" x2="154" y2="160"/>
+                        <line x1="196" y1="20" x2="196" y2="160"/>
+                        <line x1="238" y1="20" x2="238" y2="160"/>
+                        <line x1="28" y1="132" x2="260" y2="132"/>
+                        <line x1="28" y1="104" x2="260" y2="104"/>
+                        <line x1="28" y1="76" x2="260" y2="76"/>
+                        <line x1="28" y1="48" x2="260" y2="48"/>
+                        <line x1="28" y1="20" x2="260" y2="20"/>
+                    </g>
+                    <!-- Axes -->
+                    <line x1="28" y1="160" x2="260" y2="160" stroke="#000" stroke-width="1.5"/>
+                    <line x1="28" y1="20" x2="28" y2="160" stroke="#000" stroke-width="1.5"/>
+                    <!-- X-axis labels -->
+                    <text x="28" y="175" fill="#000" font-size="10" text-anchor="middle">0</text>
+                    <text x="70" y="175" fill="#000" font-size="10" text-anchor="middle">2</text>
+                    <text x="112" y="175" fill="#000" font-size="10" text-anchor="middle">4</text>
+                    <text x="154" y="175" fill="#000" font-size="10" text-anchor="middle">6</text>
+                    <text x="196" y="175" fill="#000" font-size="10" text-anchor="middle">8</text>
+                    <text x="238" y="175" fill="#000" font-size="10" text-anchor="middle">10</text>
+                    <text x="144" y="192" fill="#000" font-size="11" text-anchor="middle">number of chairs</text>
+                    <!-- Y-axis labels -->
+                    <text x="22" y="163" fill="#000" font-size="10" text-anchor="end">0</text>
+                    <text x="22" y="135" fill="#000" font-size="10" text-anchor="end">14</text>
+                    <text x="22" y="107" fill="#000" font-size="10" text-anchor="end">28</text>
+                    <text x="22" y="79" fill="#000" font-size="10" text-anchor="end">42</text>
+                    <text x="22" y="51" fill="#000" font-size="10" text-anchor="end">56</text>
+                    <text x="22" y="23" fill="#000" font-size="10" text-anchor="end">70</text>
+                    <!-- Y-axis title -->
+                    <text x="10" y="90" fill="#000" font-size="10" text-anchor="middle" transform="rotate(-90, 10, 90)">height (cm)</text>
+                    <!-- Data line -->
+                    <line x1="28" y1="108" x2="238" y2="52" stroke="#000" stroke-width="2"/>
+                    <!-- Points -->
+                    <circle cx="112" cy="86" r="5" fill="#000"/>
+                    <text x="120" y="80" fill="#000" font-size="10">(4, 38)</text>
+                    <circle cx="238" cy="52" r="5" fill="#000"/>
+                    <text x="200" y="46" fill="#000" font-size="10">(10, 56)</text>
+                </svg>
+            </div>
+
+            <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: auto;">
+                <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
+                <p style="font-size: 13px; line-height: 1.5; margin: 0;">
+                    Calculate the rate of change and explain what it means in the context of stacking chairs.
+                </p>
+                <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 80px;">
+                    <p style="font-size: 11px; color: #666; margin: 0;">Show your work:</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Problem 2 - Stacking Cups -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Header with lesson info -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">Calculate the Rate of Change</h1>
+                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Unit 3 Lesson 5 | Grade 8</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 13px; margin: 0;">Name: _______________________</p>
+                <p style="font-size: 13px; margin: 4px 0 0 0;">Date: ________________________</p>
+            </div>
+        </div>
+
+        <!-- Learning Goal Box -->
+        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 15px;">
+            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> Interpret features of a graph (slope and y-intercept) of a non-proportional linear relationship.</p>
+        </div>
+
+        <!-- Strategy Box -->
+        <div style="background: #e8f4e8; border: 1px solid #4a7c4a; padding: 8px 12px; margin-bottom: 15px;">
+            <p style="font-size: 11px; margin: 0;"><strong>Strategy:</strong> IDENTIFY two points → CALCULATE (change in y) ÷ (change in x) → INTERPRET what the rate means in context.</p>
+        </div>
+
+        <!-- Problem 2 -->
+        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
+            <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
+                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 2: Stacking Cups</h3>
+            </div>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 10px 0;">
+                A different style of cup is stacked. The graph shows the height of the stack in centimeters for different numbers of cups.
+            </p>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0; font-weight: bold;">
+                How much does each cup after the first add to the height of the stack? Explain your reasoning.
+            </p>
+
+            <!-- Graph -->
+            <div style="display: flex; justify-content: center; margin-bottom: 15px; flex: 1; align-items: center;">
+                <svg viewBox="0 0 280 200" style="width: 100%; max-width: 320px; border: 1px solid #ccc;">
+                    <!-- Grid lines -->
+                    <g stroke="#ddd" stroke-width="0.5">
+                        <line x1="70" y1="20" x2="70" y2="160"/>
+                        <line x1="112" y1="20" x2="112" y2="160"/>
+                        <line x1="154" y1="20" x2="154" y2="160"/>
+                        <line x1="196" y1="20" x2="196" y2="160"/>
+                        <line x1="238" y1="20" x2="238" y2="160"/>
+                        <line x1="28" y1="132" x2="260" y2="132"/>
+                        <line x1="28" y1="104" x2="260" y2="104"/>
+                        <line x1="28" y1="76" x2="260" y2="76"/>
+                        <line x1="28" y1="48" x2="260" y2="48"/>
+                        <line x1="28" y1="20" x2="260" y2="20"/>
+                    </g>
+                    <!-- Axes -->
+                    <line x1="28" y1="160" x2="260" y2="160" stroke="#000" stroke-width="1.5"/>
+                    <line x1="28" y1="20" x2="28" y2="160" stroke="#000" stroke-width="1.5"/>
+                    <!-- X-axis labels -->
+                    <text x="28" y="175" fill="#000" font-size="10" text-anchor="middle">0</text>
+                    <text x="70" y="175" fill="#000" font-size="10" text-anchor="middle">2</text>
+                    <text x="112" y="175" fill="#000" font-size="10" text-anchor="middle">4</text>
+                    <text x="154" y="175" fill="#000" font-size="10" text-anchor="middle">6</text>
+                    <text x="196" y="175" fill="#000" font-size="10" text-anchor="middle">8</text>
+                    <text x="238" y="175" fill="#000" font-size="10" text-anchor="middle">10</text>
+                    <text x="144" y="192" fill="#000" font-size="11" text-anchor="middle">number of cups</text>
+                    <!-- Y-axis labels (0, 4, 8, 12, 16, 20) -->
+                    <text x="22" y="163" fill="#000" font-size="10" text-anchor="end">0</text>
+                    <text x="22" y="135" fill="#000" font-size="10" text-anchor="end">4</text>
+                    <text x="22" y="107" fill="#000" font-size="10" text-anchor="end">8</text>
+                    <text x="22" y="79" fill="#000" font-size="10" text-anchor="end">12</text>
+                    <text x="22" y="51" fill="#000" font-size="10" text-anchor="end">16</text>
+                    <text x="22" y="23" fill="#000" font-size="10" text-anchor="end">20</text>
+                    <!-- Y-axis title -->
+                    <text x="10" y="90" fill="#000" font-size="10" text-anchor="middle" transform="rotate(-90, 10, 90)">height (cm)</text>
+                    <!-- Data line: y-intercept at 3cm, slope 0.5 cm/cup -->
+                    <!-- At x=0: y=3 → pixel y = 160 - (3/20)*140 = 160 - 21 = 139 -->
+                    <!-- At x=10: y=8 → pixel y = 160 - (8/20)*140 = 160 - 56 = 104 -->
+                    <line x1="28" y1="139" x2="238" y2="104" stroke="#000" stroke-width="2"/>
+                    <!-- Points: (3, 4.5) and (8, 7) -->
+                    <!-- (3, 4.5): x = 28 + (3/10)*210 = 91, y = 160 - (4.5/20)*140 = 128.5 -->
+                    <!-- (8, 7): x = 28 + (8/10)*210 = 196, y = 160 - (7/20)*140 = 111 -->
+                    <circle cx="91" cy="128" r="5" fill="#000"/>
+                    <text x="99" y="122" fill="#000" font-size="10">(3, 4.5)</text>
+                    <circle cx="196" cy="111" r="5" fill="#000"/>
+                    <text x="204" y="105" fill="#000" font-size="10">(8, 7)</text>
+                </svg>
+            </div>
+
+            <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: auto;">
+                <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
+                <p style="font-size: 13px; line-height: 1.5; margin: 0;">
+                    Calculate the rate of change and explain what it means in the context of stacking cups.
+                </p>
+                <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 80px;">
+                    <p style="font-size: 11px; color: #666; margin: 0;">Show your work:</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Print-specific styles -->
+<style>
+@media print {
+    .slide-container {
+        overflow: visible !important;
+        height: auto !important;
+    }
+    .print-page {
+        width: 8.5in !important;
+        height: 11in !important;
+        margin: 0 !important;
+        padding: 0.5in !important;
+        box-sizing: border-box !important;
+        page-break-after: always;
+        border: none !important;
+    }
+    .print-page:last-child {
+        page-break-after: auto;
+    }
+    svg line, svg path, svg circle {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+    div[style*="background"] {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+}
+@page {
+    size: letter portrait;
+    margin: 0;
+}
+</style>

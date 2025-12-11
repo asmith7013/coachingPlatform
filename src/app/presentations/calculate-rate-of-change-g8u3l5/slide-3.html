@@ -1,0 +1,101 @@
+<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+
+    <!-- Step Header -->
+    <h2 style="font-size: 36px; font-weight: 700; color: #60a5fa; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 1px;">Step 1: IDENTIFY</h2>
+
+    <!-- Content Row -->
+    <div style="flex: 1; display: flex; gap: 40px; align-items: center;">
+        <!-- Graph (same position as slide 2) -->
+        <div style="background: rgba(30, 41, 59, 0.5); border: 2px solid #475569; border-radius: 16px; padding: 30px 40px;">
+            <svg viewBox="0 0 500 340" style="width: 500px; height: 310px;">
+                <!-- Grid lines -->
+                <g stroke="#334155" stroke-width="0.5">
+                    <line x1="130" y1="30" x2="130" y2="280"/>
+                    <line x1="210" y1="30" x2="210" y2="280"/>
+                    <line x1="290" y1="30" x2="290" y2="280"/>
+                    <line x1="370" y1="30" x2="370" y2="280"/>
+                    <line x1="450" y1="30" x2="450" y2="280"/>
+                    <line x1="50" y1="230" x2="450" y2="230"/>
+                    <line x1="50" y1="180" x2="450" y2="180"/>
+                    <line x1="50" y1="130" x2="450" y2="130"/>
+                    <line x1="50" y1="80" x2="450" y2="80"/>
+                    <line x1="50" y1="30" x2="450" y2="30"/>
+                </g>
+
+                <!-- Axes -->
+                <line x1="50" y1="280" x2="450" y2="280" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="50" y1="30" x2="50" y2="280" stroke="#94a3b8" stroke-width="2"/>
+
+                <!-- X-axis labels -->
+                <text x="50" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">0</text>
+                <text x="130" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">2</text>
+                <text x="210" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">4</text>
+                <text x="290" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">6</text>
+                <text x="370" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">8</text>
+                <text x="450" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">10</text>
+                <text x="250" y="325" fill="#94a3b8" font-size="14" text-anchor="middle">months</text>
+
+                <!-- Y-axis labels -->
+                <text x="42" y="284" fill="#94a3b8" font-size="14" text-anchor="end">0</text>
+                <text x="42" y="234" fill="#94a3b8" font-size="14" text-anchor="end">120</text>
+                <text x="42" y="184" fill="#94a3b8" font-size="14" text-anchor="end">240</text>
+                <text x="42" y="134" fill="#94a3b8" font-size="14" text-anchor="end">360</text>
+                <text x="42" y="84" fill="#94a3b8" font-size="14" text-anchor="end">480</text>
+                <text x="42" y="34" fill="#94a3b8" font-size="14" text-anchor="end">600</text>
+                <text x="15" y="155" fill="#94a3b8" font-size="14" text-anchor="middle" transform="rotate(-90, 15, 155)">subscribers</text>
+
+                <!-- Data line -->
+                <line x1="50" y1="213" x2="450" y2="47" stroke="#60a5fa" stroke-width="3"/>
+
+                <!-- HIGHLIGHTED Data points with circles - ON GRID LINES -->
+                <circle cx="130" cy="180" r="12" fill="none" stroke="#fbbf24" stroke-width="3"/>
+                <circle cx="130" cy="180" r="6" fill="#fbbf24"/>
+                <text x="145" y="171" fill="#fbbf24" font-size="16" font-weight="700">(2, 240)</text>
+
+                <circle cx="370" cy="80" r="12" fill="none" stroke="#fbbf24" stroke-width="3"/>
+                <circle cx="370" cy="80" r="6" fill="#fbbf24"/>
+                <text x="385" y="71" fill="#fbbf24" font-size="16" font-weight="700">(8, 480)</text>
+            </svg>
+        </div>
+
+        <!-- Annotation Box -->
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+            <div style="background: rgba(96, 165, 250, 0.15); border: 2px solid #60a5fa; border-radius: 12px; padding: 25px;">
+                <h3 style="font-size: 22px; color: #60a5fa; margin: 0 0 15px 0;">I need to find two points on the line.</h3>
+                <p style="font-size: 18px; color: #cbd5e1; margin: 0; line-height: 1.6;">
+                    The graph gives me two labeled points that lie on the line. I'll use these coordinates to calculate the rate of change.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toggle button -->
+<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('cfu-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
+    ↓ Show Question
+</button>
+
+<!-- CFU Box at bottom -->
+<div id="cfu-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
+    <div style="background: #f59e0b; border-top: 4px solid #fbbf24; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
+        <button onclick="document.getElementById('cfu-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
+            ×
+        </button>
+        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">❓ CHECK FOR UNDERSTANDING</div>
+        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
+            Why do I need to IDENTIFY two points instead of just one?
+        </span>
+    </div>
+</div>
+
+<style>
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+#toggle-hint:hover {
+    background: rgba(148, 163, 184, 0.2);
+    transform: translateX(-50%) scale(1.05);
+}
+</style>

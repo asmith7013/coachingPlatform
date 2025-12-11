@@ -1,0 +1,21 @@
+{
+  "title": "Calculate the Rate of Change - Linear Relationships",
+  "slug": "calculate-rate-of-change-g8u3l5",
+  "mathConcept": "Finding slope from a graph of a non-proportional linear relationship",
+  "mathStandard": "8.F.B.4",
+  "gradeLevel": "8",
+  "unitNumber": 3,
+  "lessonNumber": 5,
+  "scopeAndSequenceId": "68ff7f1b5d8ca031d6032328",
+  "strategyName": "Calculate the Rate of Change",
+  "strategySteps": ["IDENTIFY", "CALCULATE", "INTERPRET"],
+  "learningGoals": [
+    "Compare and contrast proportional and nonproportional linear relationships",
+    "Interpret features of the graph (slope and y-intercept) of a non-proportional linear relationship"
+  ],
+  "scenarios": [
+    "Streaming Subscribers",
+    "Stacking Chairs",
+    "Stacking Cups"
+  ]
+}

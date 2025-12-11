@@ -1,125 +1,130 @@
 <!-- PRINTABLE WORKSHEET SLIDE TEMPLATE -->
 <!-- This slide is designed for teachers to print and distribute to students -->
-<!-- Uses white background, black text, and compact layout for paper -->
+<!-- Uses white background, black text, and letter-sized pages for printing -->
 
-<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; padding: 40px 60px; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
-    <!-- Header with lesson info -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px;">
-        <div>
-            <h1 style="font-size: 24px; font-weight: 700; margin: 0; color: #000;">[LESSON TITLE]</h1>
-            <p style="font-size: 14px; color: #333; margin: 5px 0 0 0;">Unit [X] Lesson [Y] | Grade [Z]</p>
+<!-- ============================================================== -->
+<!-- CRITICAL: ALL PRACTICE PROBLEMS GO IN ONE SLIDE FILE           -->
+<!-- ============================================================== -->
+<!-- Each problem gets its own print-page div within the slide      -->
+<!-- DO NOT create separate slide files for each problem            -->
+<!-- This single slide-11.html contains ALL printable problems      -->
+<!-- Each print-page div = one printed page (8.5in x 11in)          -->
+<!-- ============================================================== -->
+
+<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
+
+    <!-- Page 1: Problem 1 -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Header with lesson info -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">[LESSON TITLE]</h1>
+                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Unit [X] Lesson [Y] | Grade [Z]</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 13px; margin: 0;">Name: _______________________</p>
+                <p style="font-size: 13px; margin: 4px 0 0 0;">Date: ________________________</p>
+            </div>
         </div>
-        <div style="text-align: right;">
-            <p style="font-size: 14px; margin: 0;">Name: _______________________</p>
-            <p style="font-size: 14px; margin: 5px 0 0 0;">Date: ________________________</p>
+
+        <!-- Learning Goal Box -->
+        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 20px;">
+            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> [STUDENT-FACING LEARNING GOAL]</p>
         </div>
-    </div>
-
-    <!-- Learning Goal Box -->
-    <div style="background: #f0f0f0; border: 1px solid #333; padding: 12px 15px; margin-bottom: 20px; border-radius: 4px;">
-        <p style="font-size: 13px; margin: 0;"><strong>Learning Goal:</strong> [STUDENT-FACING LEARNING GOAL]</p>
-    </div>
-
-    <!-- Problems Grid - 3 columns for 3 practice problems -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; flex: 1;">
 
         <!-- Problem 1 -->
-        <div style="border: 1px solid #666; padding: 15px; border-radius: 4px;">
-            <h3 style="font-size: 14px; margin: 0 0 10px 0; padding-bottom: 8px; border-bottom: 1px solid #ccc;">
-                Problem 1: [SCENARIO NAME]
-            </h3>
-            <p style="font-size: 12px; line-height: 1.5; margin: 0 0 15px 0;">
-                [PROBLEM DESCRIPTION]
+        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
+            <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
+                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 1: [SCENARIO NAME]</h3>
+            </div>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">
+                [PROBLEM DESCRIPTION - Full context and setup]
             </p>
 
-            <!-- Graph/Visual placeholder - use SVG -->
-            <div style="display: flex; justify-content: center; margin-bottom: 15px;">
-                <!-- INSERT SVG GRAPH HERE -->
-                <svg viewBox="0 0 200 200" style="width: 100%; max-width: 180px; border: 1px solid #ccc;">
-                    <!-- Grid lines -->
-                    <g stroke="#ddd" stroke-width="0.5">
-                        <!-- Add grid lines -->
-                    </g>
-                    <!-- Axes -->
-                    <line x1="30" y1="170" x2="180" y2="170" stroke="#000" stroke-width="1"/>
-                    <line x1="30" y1="20" x2="30" y2="170" stroke="#000" stroke-width="1"/>
-                    <!-- Data lines -->
-                    <!-- Add problem-specific lines -->
-                </svg>
+            <!-- Problem Content: Tables, Equations, Graphs as needed -->
+            <div style="display: flex; gap: 30px; margin-bottom: 20px; flex: 1;">
+                <!-- Example: Table -->
+                <div style="flex: 1;">
+                    <p style="font-size: 13px; font-weight: bold; margin: 0 0 8px 0;">[Option A Name]</p>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                        <thead>
+                            <tr style="background: #e0e0e0;">
+                                <th style="border: 1px solid #666; padding: 8px; text-align: center;">[Column 1]</th>
+                                <th style="border: 1px solid #666; padding: 8px; text-align: center;">[Column 2]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td style="border: 1px solid #666; padding: 8px; text-align: center;">[value]</td><td style="border: 1px solid #666; padding: 8px; text-align: center;">[value]</td></tr>
+                            <tr><td style="border: 1px solid #666; padding: 8px; text-align: center;">[value]</td><td style="border: 1px solid #666; padding: 8px; text-align: center;">[value]</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Example: Equation -->
+                <div style="flex: 1;">
+                    <p style="font-size: 13px; font-weight: bold; margin: 0 0 8px 0;">[Option B Name]</p>
+                    <div style="border: 1px solid #666; padding: 15px; text-align: center; background: #fafafa;">
+                        <p style="font-size: 18px; margin: 0; font-weight: bold;">y = [k]x</p>
+                        <p style="font-size: 11px; margin: 8px 0 0 0; color: #666;">where x = [input], y = [output]</p>
+                    </div>
+                </div>
             </div>
 
-            <p style="font-size: 12px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
-            <p style="font-size: 11px; line-height: 1.4; margin: 0;">
-                [TASK DESCRIPTION]
-            </p>
+            <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: auto;">
+                <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
+                <p style="font-size: 13px; line-height: 1.5; margin: 0;">
+                    [SPECIFIC QUESTION - e.g., "If you [context], which option would give you MORE [outcome]? How much more?"]
+                </p>
+                <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 60px;">
+                    <p style="font-size: 11px; color: #666; margin: 0;">Show your work:</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Problem 2 -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Header with lesson info (repeated for each page) -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">[LESSON TITLE]</h1>
+                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Unit [X] Lesson [Y] | Grade [Z]</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 13px; margin: 0;">Name: _______________________</p>
+                <p style="font-size: 13px; margin: 4px 0 0 0;">Date: ________________________</p>
+            </div>
+        </div>
+
+        <!-- Learning Goal Box (repeated for each page) -->
+        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 20px;">
+            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> [STUDENT-FACING LEARNING GOAL]</p>
         </div>
 
         <!-- Problem 2 -->
-        <div style="border: 1px solid #666; padding: 15px; border-radius: 4px;">
-            <h3 style="font-size: 14px; margin: 0 0 10px 0; padding-bottom: 8px; border-bottom: 1px solid #ccc;">
-                Problem 2: [SCENARIO NAME]
-            </h3>
-            <p style="font-size: 12px; line-height: 1.5; margin: 0 0 15px 0;">
-                [PROBLEM DESCRIPTION]
+        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
+            <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
+                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 2: [SCENARIO NAME]</h3>
+            </div>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">
+                [PROBLEM DESCRIPTION - Full context and setup]
             </p>
 
-            <!-- Graph/Visual placeholder -->
-            <div style="display: flex; justify-content: center; margin-bottom: 15px;">
-                <!-- INSERT SVG GRAPH HERE -->
-                <svg viewBox="0 0 200 200" style="width: 100%; max-width: 180px; border: 1px solid #ccc;">
-                    <!-- Grid lines -->
-                    <g stroke="#ddd" stroke-width="0.5">
-                        <!-- Add grid lines -->
-                    </g>
-                    <!-- Axes -->
-                    <line x1="30" y1="170" x2="180" y2="170" stroke="#000" stroke-width="1"/>
-                    <line x1="30" y1="20" x2="30" y2="170" stroke="#000" stroke-width="1"/>
-                    <!-- Data lines -->
-                </svg>
+            <!-- Problem Content -->
+            <div style="display: flex; gap: 30px; margin-bottom: 20px; flex: 1;">
+                <!-- Add tables, equations, graphs as needed -->
             </div>
 
-            <p style="font-size: 12px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
-            <p style="font-size: 11px; line-height: 1.4; margin: 0;">
-                [TASK DESCRIPTION]
-            </p>
-        </div>
-
-        <!-- Problem 3 -->
-        <div style="border: 1px solid #666; padding: 15px; border-radius: 4px;">
-            <h3 style="font-size: 14px; margin: 0 0 10px 0; padding-bottom: 8px; border-bottom: 1px solid #ccc;">
-                Problem 3: [SCENARIO NAME]
-            </h3>
-            <p style="font-size: 12px; line-height: 1.5; margin: 0 0 15px 0;">
-                [PROBLEM DESCRIPTION]
-            </p>
-
-            <!-- Graph/Visual placeholder -->
-            <div style="display: flex; justify-content: center; margin-bottom: 15px;">
-                <!-- INSERT SVG GRAPH HERE -->
-                <svg viewBox="0 0 200 200" style="width: 100%; max-width: 180px; border: 1px solid #ccc;">
-                    <!-- Grid lines -->
-                    <g stroke="#ddd" stroke-width="0.5">
-                        <!-- Add grid lines -->
-                    </g>
-                    <!-- Axes -->
-                    <line x1="30" y1="170" x2="180" y2="170" stroke="#000" stroke-width="1"/>
-                    <line x1="30" y1="20" x2="30" y2="170" stroke="#000" stroke-width="1"/>
-                    <!-- Data lines -->
-                </svg>
+            <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: auto;">
+                <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
+                <p style="font-size: 13px; line-height: 1.5; margin: 0;">
+                    [SPECIFIC QUESTION]
+                </p>
+                <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 60px;">
+                    <p style="font-size: 11px; color: #666; margin: 0;">Show your work:</p>
+                </div>
             </div>
-
-            <p style="font-size: 12px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
-            <p style="font-size: 11px; line-height: 1.4; margin: 0;">
-                [TASK DESCRIPTION]
-            </p>
         </div>
-    </div>
-
-    <!-- Footer with work space reminder -->
-    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ccc; text-align: center;">
-        <p style="font-size: 11px; color: #666; margin: 0; font-style: italic;">
-            Show your work on the graph. Explain your reasoning in complete sentences.
-        </p>
     </div>
 </div>
 
@@ -127,23 +132,32 @@
 <style>
 @media print {
     .slide-container {
-        width: 100% !important;
+        overflow: visible !important;
         height: auto !important;
-        min-height: 100vh;
-        page-break-after: always;
+    }
+    .print-page {
+        width: 8.5in !important;
+        height: 11in !important;
+        margin: 0 !important;
         padding: 0.5in !important;
+        box-sizing: border-box !important;
+        page-break-after: always;
+        border: none !important;
     }
-
-    /* Ensure SVGs print with visible lines */
-    svg line, svg path {
+    .print-page:last-child {
+        page-break-after: auto;
+    }
+    svg line, svg path, svg text, svg circle {
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
     }
-
-    /* Make borders visible in print */
-    div[style*="border"] {
+    div[style*="background"] {
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
     }
+}
+@page {
+    size: letter portrait;
+    margin: 0;
 }
 </style>
