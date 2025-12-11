@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { CheckCircleIcon, UserGroupIcon, PresentationChartLineIcon } from "@heroicons/react/24/solid";
+import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
 import type { PacingData } from "../../hooks/usePacingData";
 // import { PacingZoneCard } from "./components/PacingZoneCard";
 import { UnitProgressBar } from "./components/UnitProgressBar";
@@ -84,11 +86,38 @@ export function PacingProgressCard({
           <h3 className="text-lg font-semibold text-gray-900">Unit {selectedUnit} Pace &amp; Progress</h3>
         )}
         {!hideToggle && (
-          <ToggleSwitch
-            checked={showStudentNames}
-            onChange={setInternalShowStudentNames}
-            label="List Student Names"
-          />
+          <div className="flex items-center gap-4">
+            {/* Icons key - only show when student names are shown */}
+            {showStudentNames && (
+              <div className="flex items-center gap-4 text-xs text-gray-500">
+                <span className="font-semibold text-gray-700">Key:</span>
+                {/* Activity type icons */}
+                <span className="flex items-center gap-1">
+                  <UserGroupIcon className="w-3.5 h-3.5 text-gray-500" />
+                  <span>Small Group</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <PresentationChartLineIcon className="w-3.5 h-3.5 text-gray-500" />
+                  <span>Inquiry</span>
+                </span>
+                {/* Today/Yesterday distinction */}
+                <span className="text-gray-300">|</span>
+                <span className="flex items-center gap-1">
+                  <CheckCircleIcon className="w-3.5 h-3.5 text-green-600" />
+                  <span>Today</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <CheckCircleOutlineIcon className="w-3.5 h-3.5 text-green-600" />
+                  <span>Yesterday</span>
+                </span>
+              </div>
+            )}
+            <ToggleSwitch
+              checked={showStudentNames}
+              onChange={setInternalShowStudentNames}
+              label="Show Details"
+            />
+          </div>
         )}
       </div>
 

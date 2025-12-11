@@ -45,6 +45,13 @@ export async function fetchRampUpProgress(
         lessonCode: string;
         completionDate: string;
       }>;
+      classActivities?: Array<{
+        date: string;
+        activityType: string;
+        activityLabel: string;
+        smallGroupType?: 'mastery' | 'prerequisite';
+        inquiryQuestion?: string;
+      }>;
     }
 
     // Helper function to parse Zearn lesson code (e.g., "G8 M3 L10")
@@ -66,11 +73,18 @@ export async function fetchRampUpProgress(
         section,
         active: true,
       })
-        .select("_id firstName lastName podsieProgress zearnLessons")
+        .select("_id firstName lastName podsieProgress zearnLessons classActivities")
         .lean<StudentDoc[]>();
 
       return docs;
     });
+
+    // Calculate today and yesterday dates for activity filtering (local timezone)
+    const todayDate = new Date();
+    const todayStr = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
+    const yesterdayDate = new Date(todayDate);
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterdayStr = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
 
     // Build result array
     const result: StudentRampUpProgressData[] = [];
@@ -78,6 +92,27 @@ export async function fetchRampUpProgress(
     for (const student of students) {
       const studentId = String(student._id);
       const studentName = `${student.firstName} ${student.lastName}`;
+
+      // Calculate activity data from classActivities
+      let smallGroupToday = false;
+      let smallGroupYesterday = false;
+      let inquiryToday = false;
+      let inquiryYesterday = false;
+
+      for (const activity of student.classActivities || []) {
+        const activityDate = activity.date;
+        const label = activity.activityLabel?.toLowerCase() || '';
+        const isSmallGroup = label.includes('small group');
+        const isInquiry = label.includes('inquiry');
+
+        if (activityDate === todayStr) {
+          if (isSmallGroup) smallGroupToday = true;
+          if (isInquiry) inquiryToday = true;
+        } else if (activityDate === yesterdayStr) {
+          if (isSmallGroup) smallGroupYesterday = true;
+          if (isInquiry) inquiryYesterday = true;
+        }
+      }
 
       // Find matching progress entry(ies)
       const progressEntries = (student.podsieProgress || []).filter(p => {
@@ -123,6 +158,10 @@ export async function fetchRampUpProgress(
             lastSyncedAt: p.lastSyncedAt,
             zearnCompleted,
             zearnCompletionDate,
+            smallGroupToday,
+            smallGroupYesterday,
+            inquiryToday,
+            inquiryYesterday,
           });
         }
       } else {
@@ -157,6 +196,10 @@ export async function fetchRampUpProgress(
           isFullyComplete: false,
           zearnCompleted,
           zearnCompletionDate,
+          smallGroupToday,
+          smallGroupYesterday,
+          inquiryToday,
+          inquiryYesterday,
         });
       }
     }

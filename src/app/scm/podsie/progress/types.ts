@@ -48,6 +48,11 @@ export interface ProgressData {
   lastSyncedAt?: string;
   zearnCompleted?: boolean;
   zearnCompletionDate?: string;
+  // Activity tracking
+  smallGroupToday?: boolean;
+  smallGroupYesterday?: boolean;
+  inquiryToday?: boolean;
+  inquiryYesterday?: boolean;
 }
 
 export interface SummaryStats {

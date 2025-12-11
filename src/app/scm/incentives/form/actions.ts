@@ -518,13 +518,45 @@ export async function submitActivities(
         }
       }
 
-      // Batch insert all events
+      // Batch insert all events into standalone collection
       if (eventsToInsert.length > 0) {
         console.log(`\n🔵 [submitActivities] Inserting ${eventsToInsert.length} events...`);
         console.log("🔵 [submitActivities] Sample event:", JSON.stringify(eventsToInsert[0], null, 2));
 
         const insertResult = await StudentActivityModel.insertMany(eventsToInsert);
         console.log("✅ [submitActivities] Inserted events:", insertResult.length);
+
+        // Also update each student's classActivities array for denormalized access
+        const eventsByStudent = new Map<string, StudentActivity[]>();
+        for (const event of eventsToInsert) {
+          const studentId = event.studentId as string;
+          if (!eventsByStudent.has(studentId)) {
+            eventsByStudent.set(studentId, []);
+          }
+          // Convert to StudentActivity format (embedded in student doc)
+          eventsByStudent.get(studentId)!.push({
+            date: event.date as string,
+            activityType: event.activityType as string,
+            activityLabel: event.activityLabel as string,
+            unitId: event.unitId as string | undefined,
+            lessonId: event.lessonId as string | undefined,
+            skillId: event.skillId as string | undefined,
+            smallGroupType: event.smallGroupType as "mastery" | "prerequisite" | undefined,
+            inquiryQuestion: event.inquiryQuestion as string | undefined,
+            customDetail: event.customDetail as string | undefined,
+            loggedBy: event.loggedBy as string | undefined,
+            createdAt: event.loggedAt as string | undefined,
+          });
+        }
+
+        // Update each student's classActivities array
+        for (const [studentId, activities] of eventsByStudent) {
+          await StudentModel.updateOne(
+            { _id: studentId },
+            { $push: { classActivities: { $each: activities } } }
+          );
+        }
+        console.log("✅ [submitActivities] Updated classActivities for", eventsByStudent.size, "students");
       }
 
       console.log("\n🔵 [submitActivities] Final results:");

@@ -1,8 +1,54 @@
 "use client";
 
-import { UserIcon, TrophyIcon } from "@heroicons/react/24/solid";
+import { UserIcon, TrophyIcon, CheckCircleIcon, UserGroupIcon, PresentationChartLineIcon } from "@heroicons/react/24/solid";
+import { CheckCircleIcon as CheckCircleOutlineIcon, UserGroupIcon as UserGroupOutlineIcon, PresentationChartLineIcon as PresentationChartLineOutlineIcon } from "@heroicons/react/24/outline";
 import { Tooltip } from "@/components/core/feedback/Tooltip";
-import type { UnitSectionInfo, CompletedStudentInfo } from "../../../hooks/usePacingData";
+import type { UnitSectionInfo, CompletedStudentInfo, StudentLessonInfo } from "../../../hooks/usePacingData";
+
+// Component to render activity icons (small group, inquiry) for a student - left aligned
+function ActivityIcons({ student, iconColor }: { student: StudentLessonInfo; iconColor: string }) {
+  const { smallGroupToday, smallGroupYesterday, inquiryToday, inquiryYesterday } = student;
+
+  const hasSmallGroup = smallGroupToday || smallGroupYesterday;
+  const hasInquiry = inquiryToday || inquiryYesterday;
+
+  if (!hasSmallGroup && !hasInquiry) {
+    return null;
+  }
+
+  return (
+    <span className="inline-flex items-center gap-0.5">
+      {/* Small group icons - today filled, yesterday outline */}
+      {smallGroupToday && <UserGroupIcon className={`w-3 h-3 ${iconColor}`} />}
+      {smallGroupYesterday && <UserGroupOutlineIcon className={`w-3 h-3 ${iconColor}`} />}
+      {/* Inquiry icons - today filled, yesterday outline */}
+      {inquiryToday && <PresentationChartLineIcon className={`w-3 h-3 ${iconColor}`} />}
+      {inquiryYesterday && <PresentationChartLineOutlineIcon className={`w-3 h-3 ${iconColor}`} />}
+    </span>
+  );
+}
+
+// Component to render completion icons for a student - right aligned
+function CompletionIcons({ student, iconColor }: { student: StudentLessonInfo; iconColor: string }) {
+  const { completedYesterday, completedToday } = student;
+
+  if (completedYesterday === 0 && completedToday === 0) {
+    return null;
+  }
+
+  return (
+    <span className="inline-flex items-center gap-0.5">
+      {/* Today completions - filled circle with check */}
+      {Array.from({ length: completedToday }).map((_, i) => (
+        <CheckCircleIcon key={`t-${i}`} className={`w-3 h-3 ${iconColor}`} />
+      ))}
+      {/* Yesterday completions - outline circle with check */}
+      {Array.from({ length: completedYesterday }).map((_, i) => (
+        <CheckCircleOutlineIcon key={`y-${i}`} className={`w-3 h-3 ${iconColor}`} />
+      ))}
+    </span>
+  );
+}
 
 // Format date as "M/D" (e.g., "12/8")
 function formatShortDate(dateStr: string): string {
@@ -460,23 +506,27 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
                       {lessons.length > 0 ? (
                         lessons.map((lesson, lessonIndex) => {
                           const isLastLesson = lessonIndex === lessons.length - 1;
-                          const studentNames = lesson.studentNames || [];
+                          const students = lesson.students || [];
                           return (
                             <div
                               key={`names-${lesson.lessonId}`}
-                              className={`flex-1 flex flex-col justify-start px-2 py-1 ${!isLastLesson ? `border-r ${styles.border}` : ""}`}
+                              className={`flex-1 flex flex-col justify-start ${!isLastLesson ? `border-r ${styles.border}` : ""}`}
                             >
-                              {studentNames.length > 0 ? (
-                                studentNames.map((name, nameIndex) => (
-                                  <span
-                                    key={nameIndex}
-                                    className={`text-[9px] ${styles.text} leading-tight`}
+                              {students.length > 0 ? (
+                                students.map((student, studentIndex) => (
+                                  <div
+                                    key={studentIndex}
+                                    className={`text-[9px] ${styles.text} leading-tight px-2 py-1 flex items-center justify-between ${studentIndex > 0 ? `border-t ${styles.border}` : ''}`}
                                   >
-                                    {name}
-                                  </span>
+                                    <span className="flex items-center gap-1">
+                                      <ActivityIcons student={student} iconColor={styles.lessonIcon} />
+                                      <span>{student.name}</span>
+                                    </span>
+                                    <CompletionIcons student={student} iconColor={styles.lessonIcon} />
+                                  </div>
                                 ))
                               ) : (
-                                <span className={`text-[9px] ${styles.text} opacity-30`}>—</span>
+                                <span className={`text-[9px] ${styles.text} opacity-30 px-2 py-1`}>—</span>
                               )}
                             </div>
                           );
@@ -495,16 +545,16 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
           {/* Complete column - shows names of students who completed the unit */}
           {hasCompletedStudents && (
             <div
-              className={`${getZoneStyles("complete").bg} border-t ${getZoneStyles("complete").border} border-l flex flex-col justify-start px-2 py-1`}
+              className={`${getZoneStyles("complete").bg} border-t ${getZoneStyles("complete").border} border-l flex flex-col justify-start`}
               style={{ width: "80px", flexShrink: 0 }}
             >
               {completedStudents!.studentNames.map((name, nameIndex) => (
-                <span
+                <div
                   key={nameIndex}
-                  className={`text-[9px] ${getZoneStyles("complete").text} leading-tight`}
+                  className={`text-[9px] ${getZoneStyles("complete").text} leading-tight px-2 py-1 ${nameIndex > 0 ? `border-t ${getZoneStyles("complete").border}` : ''}`}
                 >
                   {name}
-                </span>
+                </div>
               ))}
             </div>
           )}

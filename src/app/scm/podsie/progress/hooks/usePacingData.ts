@@ -30,12 +30,23 @@ export interface SectionLessonInfo {
   lessonCount: number;
 }
 
+export interface StudentLessonInfo {
+  name: string; // Display name (e.g., "John D.")
+  completedToday: number; // Number of lessons completed today
+  completedYesterday: number; // Number of lessons completed yesterday
+  smallGroupToday: boolean; // Was in small group today
+  smallGroupYesterday: boolean; // Was in small group yesterday
+  inquiryToday: boolean; // Was in inquiry today
+  inquiryYesterday: boolean; // Was in inquiry yesterday
+}
+
 export interface LessonInfo {
   lessonId: string; // e.g., "3.1", "3.RU1"
   lessonNumber: number; // Numeric lesson number (for sorting)
   lessonName: string; // e.g., "Lesson 1", "RU1"
   studentCount: number; // Number of students currently on this lesson
   studentNames: string[]; // First names of students on this lesson
+  students: StudentLessonInfo[]; // Student info with recent completion data
 }
 
 export interface UnitSectionInfo {
@@ -529,6 +540,61 @@ export function usePacingData(
     const studentCountBySection = new Map<string, number>();
     const studentCountByLesson = new Map<string, number>(); // key: "sectionId:lessonNumber"
     const studentNamesByLesson = new Map<string, string[]>(); // key: "sectionId:lessonNumber"
+    const studentInfoByLesson = new Map<string, StudentLessonInfo[]>(); // key: "sectionId:lessonNumber"
+
+    // Calculate today and yesterday dates for completion tracking (local timezone)
+    const todayDate = new Date();
+    const todayStr = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
+    const yesterdayDate = new Date(todayDate);
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterdayStr = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
+
+    // Pre-calculate completions and activity per student (today/yesterday)
+    interface StudentActivityData {
+      completedToday: number;
+      completedYesterday: number;
+      smallGroupToday: boolean;
+      smallGroupYesterday: boolean;
+      inquiryToday: boolean;
+      inquiryYesterday: boolean;
+    }
+    const studentCompletions = new Map<string, StudentActivityData>();
+    for (const student of allStudents) {
+      const studentProgress = progressData.filter(p => p.studentId === student.studentId);
+      let completedToday = 0;
+      let completedYesterday = 0;
+      let smallGroupToday = false;
+      let smallGroupYesterday = false;
+      let inquiryToday = false;
+      let inquiryYesterday = false;
+
+      for (const progress of studentProgress) {
+        // Get activity data from progress (comes from classActivities in student doc)
+        if (progress.smallGroupToday) smallGroupToday = true;
+        if (progress.smallGroupYesterday) smallGroupYesterday = true;
+        if (progress.inquiryToday) inquiryToday = true;
+        if (progress.inquiryYesterday) inquiryYesterday = true;
+
+        for (const q of progress.questions) {
+          if (q.completed && q.completedAt) {
+            const completedDate = q.completedAt.split('T')[0];
+            if (completedDate === todayStr) {
+              completedToday++;
+            } else if (completedDate === yesterdayStr) {
+              completedYesterday++;
+            }
+          }
+        }
+      }
+      studentCompletions.set(student.studentId, {
+        completedToday,
+        completedYesterday,
+        smallGroupToday,
+        smallGroupYesterday,
+        inquiryToday,
+        inquiryYesterday,
+      });
+    }
 
     for (const student of allStudents) {
       if (student.currentSection && student.currentLessonNumber !== undefined) {
@@ -551,6 +617,27 @@ export function usePacingData(
         const existingNames = studentNamesByLesson.get(lessonKey) || [];
         existingNames.push(displayName);
         studentNamesByLesson.set(lessonKey, existingNames);
+
+        // Add student info with completion and activity data
+        const activityData = studentCompletions.get(student.studentId) || {
+          completedToday: 0,
+          completedYesterday: 0,
+          smallGroupToday: false,
+          smallGroupYesterday: false,
+          inquiryToday: false,
+          inquiryYesterday: false,
+        };
+        const existingStudentInfo = studentInfoByLesson.get(lessonKey) || [];
+        existingStudentInfo.push({
+          name: displayName,
+          completedToday: activityData.completedToday,
+          completedYesterday: activityData.completedYesterday,
+          smallGroupToday: activityData.smallGroupToday,
+          smallGroupYesterday: activityData.smallGroupYesterday,
+          inquiryToday: activityData.inquiryToday,
+          inquiryYesterday: activityData.inquiryYesterday,
+        });
+        studentInfoByLesson.set(lessonKey, existingStudentInfo);
       }
     }
 
@@ -586,6 +673,7 @@ export function usePacingData(
             const lessonKey = `${normalizedSectionId}:${lessonNum}`;
             const lessonStudentCount = studentCountByLesson.get(lessonKey) || 0;
             const lessonStudentNames = studentNamesByLesson.get(lessonKey) || [];
+            const lessonStudents = studentInfoByLesson.get(lessonKey) || [];
 
             return {
               lessonId: l.unitLessonId,
@@ -593,6 +681,7 @@ export function usePacingData(
               lessonName: isRampUp ? `RU ${lessonNum}` : `Lesson ${lessonNum}`,
               studentCount: lessonStudentCount,
               studentNames: lessonStudentNames,
+              students: lessonStudents,
             };
           })
           .sort((a, b) => a.lessonNumber - b.lessonNumber);

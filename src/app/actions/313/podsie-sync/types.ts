@@ -105,6 +105,11 @@ export interface StudentRampUpProgressData {
   lastSyncedAt?: string;
   zearnCompleted?: boolean;
   zearnCompletionDate?: string;
+  // Activity data for small group/inquiry tracking
+  smallGroupToday?: boolean;
+  smallGroupYesterday?: boolean;
+  inquiryToday?: boolean;
+  inquiryYesterday?: boolean;
 }
 
 /**

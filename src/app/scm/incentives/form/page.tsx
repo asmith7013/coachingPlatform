@@ -5,7 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { StudentGrid } from "./components/StudentGrid";
 import { ManageColumnsModal } from "./components/ManageColumnsModal";
 import { DetailCard, StudentDetailRow } from "./components/DetailCard";
-import { InquiryPicker } from "./components/InquiryPicker";
+import { InquiryPicker as _InquiryPicker } from "./components/InquiryPicker";
 import { LessonPicker } from "./components/LessonPicker";
 import { SkillPicker } from "./components/SkillPicker";
 import { SmallGroupPicker, parseSmallGroupData } from "./components/SmallGroupPicker";
@@ -63,7 +63,7 @@ export default function IncentivesFormPage() {
   // Data state
   const [students, setStudents] = useState<Student[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
-  const [unitSections, setUnitSections] = useState<string[]>([]);
+  const [_unitSections, _setUnitSections] = useState<string[]>([]);
   const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
   const [scopeSequenceTag, setScopeSequenceTag] = useState<string | undefined>(undefined);
 
@@ -113,7 +113,7 @@ export default function IncentivesFormPage() {
   // Load unit sections when unit changes
   useEffect(() => {
     if (!unitId) {
-      setUnitSections([]);
+      _setUnitSections([]);
       setSelectedUnit(null);
       return;
     }
@@ -126,7 +126,7 @@ export default function IncentivesFormPage() {
       async function loadSections() {
         const result = await fetchSectionsForUnit("8", unitNumber);
         if (typeof result !== 'string' && result.success && result.data) {
-          setUnitSections(result.data as string[]);
+          _setUnitSections(result.data as string[]);
         }
       }
       loadSections();
@@ -152,6 +152,8 @@ export default function IncentivesFormPage() {
     // Check each activity type that requires details
     for (const type of activityTypes) {
       if (!type.requiresDetails) continue;
+      // Skip detail requirement for inquiry - lesson selection is optional
+      if (type.detailType === "inquiry") continue;
 
       const studentsWithType = getStudentsForActivityType(type.typeId ?? "");
       for (const student of studentsWithType) {
@@ -475,6 +477,7 @@ export default function IncentivesFormPage() {
                               studentName={`${student.lastName}, ${student.firstName}`}
                               stacked={type.detailType === "small-group"}
                             >
+                              {/* Inquiry lesson selection commented out - made optional
                               {type.detailType === "inquiry" && (
                                 <InquiryPicker
                                   sections={unitSections}
@@ -485,6 +488,7 @@ export default function IncentivesFormPage() {
                                   required
                                 />
                               )}
+                              */}
                               {type.detailType === "lesson" && selectedUnit && (
                                 <LessonPicker
                                   grade="8"
@@ -562,7 +566,16 @@ export default function IncentivesFormPage() {
                 disabled={isSubmitting}
                 className="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
-                {isSubmitting ? "Submitting..." : "Submit Activities"}
+                {isSubmitting ? "Submitting..." : `Submit Activities for ${(() => {
+                  const today = new Date();
+                  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                  const yesterday = new Date(today);
+                  yesterday.setDate(yesterday.getDate() - 1);
+                  const yesterdayStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+                  if (date === todayStr) return "Today";
+                  if (date === yesterdayStr) return "Yesterday";
+                  return new Date(date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                })()}`}
               </button>
             </div>
           </div>
