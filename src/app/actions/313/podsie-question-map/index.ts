@@ -137,6 +137,95 @@ export async function getQuestionMap(assignmentId: string) {
 }
 
 // =====================================
+// FETCH QUESTION MAP BY NAME
+// =====================================
+
+/**
+ * Find a question map by assignment name (fuzzy match)
+ * Uses normalized name comparison for better matching
+ */
+export async function getQuestionMapByName(assignmentName: string) {
+  return withDbConnection(async () => {
+    try {
+      // Try exact match first
+      let questionMap = await PodsieQuestionMapModel.findOne({ assignmentName });
+
+      if (!questionMap) {
+        // Try case-insensitive match
+        questionMap = await PodsieQuestionMapModel.findOne({
+          assignmentName: { $regex: new RegExp(`^${escapeRegex(assignmentName)}$`, 'i') }
+        });
+      }
+
+      if (!questionMap) {
+        // Try partial match - find maps where the name contains key parts
+        // Normalize the search name: remove "Lesson X:", colons, etc.
+        const normalizedSearch = assignmentName
+          .replace(/^(Lesson|Ramp Up)\s*\d+[:\s]*/i, '')
+          .trim()
+          .toLowerCase();
+
+        const allMaps = await PodsieQuestionMapModel.find({}).lean();
+
+        // Find best match by comparing normalized names
+        let bestMatch = null;
+        let bestScore = 0;
+
+        for (const map of allMaps) {
+          const normalizedMapName = map.assignmentName
+            .replace(/^(Lesson|Ramp Up)\s*\d+[:\s]*/i, '')
+            .trim()
+            .toLowerCase();
+
+          // Check if names are similar (contain same key words)
+          const searchWords = normalizedSearch.split(/\s+/);
+          const mapWords = normalizedMapName.split(/\s+/);
+          const commonWords = searchWords.filter(w => mapWords.includes(w));
+          const score = commonWords.length / Math.max(searchWords.length, mapWords.length);
+
+          if (score > bestScore && score >= 0.6) {
+            bestScore = score;
+            bestMatch = map;
+          }
+        }
+
+        if (bestMatch) {
+          // Serialize to handle ObjectIds
+          const serialized = JSON.parse(JSON.stringify(bestMatch));
+          return {
+            success: true,
+            data: serialized,
+            matchType: 'fuzzy' as const,
+            matchScore: bestScore,
+          };
+        }
+
+        return {
+          success: false,
+          error: `No question map found matching "${assignmentName}"`,
+        };
+      }
+
+      return {
+        success: true,
+        data: questionMap.toJSON(),
+        matchType: 'exact' as const,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch question map by name"),
+      };
+    }
+  });
+}
+
+// Helper to escape regex special characters
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// =====================================
 // LIST ALL QUESTION MAPS
 // =====================================
 

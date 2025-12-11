@@ -6,7 +6,7 @@ import { fetchAssignmentsForSection, PodsieAssignmentInfo } from "./index";
 import { fetchScopeAndSequence } from "@/app/actions/313/scope-and-sequence";
 import { getAssignmentContent, addAssignmentContent, getSectionConfig, upsertSectionConfig } from "@/app/actions/313/section-config";
 import { findBestMatch } from "@/lib/utils/lesson-name-normalization";
-import { getQuestionMapFromCurriculum } from "@/app/actions/313/curriculum-question-map";
+import { fetchPodsieAssignmentQuestions } from "./api/fetch-questions";
 import type { ScopeAndSequence } from "@zod-schema/313/curriculum/scope-and-sequence";
 
 // =====================================
@@ -325,7 +325,7 @@ export interface SaveMatchInput {
  */
 export async function saveSingleMatch(
   input: SaveMatchInput
-): Promise<{ success: boolean; error?: string; usedCurriculumMap?: boolean }> {
+): Promise<{ success: boolean; error?: string; usedApiQuestionMap?: boolean }> {
   return withDbConnection(async () => {
     try {
       const { school, classSection, match } = input;
@@ -352,7 +352,11 @@ export async function saveSingleMatch(
         }
       }
 
-      // Try to get question map from curriculum (includes root/variation structure)
+      // Fetch question map from Podsie API (uses knowledgeComponent for root/variant detection)
+      const apiResult = await fetchPodsieAssignmentQuestions(
+        String(match.podsieAssignment.assignmentId)
+      );
+
       let questionMap: Array<{
         questionNumber: number;
         questionId: string;
@@ -360,26 +364,21 @@ export async function saveSingleMatch(
         rootQuestionId?: string;
         variantNumber?: number;
       }>;
-      let usedCurriculumMap = false;
+      let usedApiQuestionMap = false;
 
-      const curriculumResult = await getQuestionMapFromCurriculum(
-        match.podsieAssignment.assignmentName,
-        match.podsieAssignment.questionIds
-      );
-
-      if (curriculumResult.success && curriculumResult.data) {
-        // Use the curriculum-based question map with proper structure
-        questionMap = curriculumResult.data.questionMap;
-        usedCurriculumMap = true;
+      if (apiResult.success && apiResult.questionMap.length > 0) {
+        // Use the API question map (built from knowledgeComponent data)
+        questionMap = apiResult.questionMap;
+        usedApiQuestionMap = apiResult.hasKnowledgeComponents;
         console.log(
-          `Using curriculum question map for "${match.podsieAssignment.assignmentName}" ` +
-          `(${questionMap.length} questions from ${curriculumResult.data.curriculumMatch.assignment.path})`
+          `Using Podsie API question map for "${match.podsieAssignment.assignmentName}" ` +
+          `(${questionMap.length} questions, hasKC: ${apiResult.hasKnowledgeComponents})`
         );
       } else {
-        // Fallback: assume all questions are root questions
+        // Fallback: use the questionIds from the match and assume all are root questions
         console.warn(
-          `No curriculum match for "${match.podsieAssignment.assignmentName}", ` +
-          `using fallback (all root questions)`
+          `Failed to fetch question map from API for "${match.podsieAssignment.assignmentName}", ` +
+          `using fallback (all root questions). Error: ${apiResult.error || 'unknown'}`
         );
         questionMap = match.podsieAssignment.questionIds
           .slice(0, match.podsieAssignment.totalQuestions)
@@ -405,7 +404,7 @@ export async function saveSingleMatch(
         active: true
       });
 
-      return { success: result.success, error: result.error, usedCurriculumMap };
+      return { success: result.success, error: result.error, usedApiQuestionMap };
     } catch (error) {
       console.error('Error saving match:', error);
       return {

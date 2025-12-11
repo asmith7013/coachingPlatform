@@ -14,8 +14,7 @@ import {
   type AvailableLesson,
 } from "@/app/actions/313/podsie-sync";
 import type { PodsieAssignmentInfo } from "@/app/actions/313/podsie-sync";
-import { listQuestionMaps } from "@/app/actions/313/podsie-question-map";
-import { getQuestionMapFromCurriculum } from "@/app/actions/313/curriculum-question-map";
+import { listQuestionMaps, getQuestionMap } from "@/app/actions/313/podsie-question-map";
 import { updatePodsieQuestionMap } from "@/app/actions/313/section-config";
 import { fetchPodsieAssignmentQuestions } from "@/app/actions/313/podsie-sync";
 import { MultiSectionSelector } from "../bulk-sync/components/MultiSectionSelector";
@@ -322,19 +321,21 @@ export default function BulkConfigsPage() {
     try {
       setUpdatingMapId(podsieAssignmentId);
 
-      // Find the selected question map to get the assignment name for matching
-      const selectedMap = savedQuestionMaps.find(m => m.assignmentId === questionMapId);
-      if (!selectedMap) {
+      // Fetch the question map structure from the database
+      const mapResult = await getQuestionMap(questionMapId);
+      if (!mapResult.success || !mapResult.data) {
         showToast({
           title: 'Error',
-          description: 'Question map not found',
+          description: mapResult.error || 'Question map not found in database',
           variant: 'error',
           icon: ExclamationTriangleIcon,
         });
         return;
       }
 
-      // First, fetch the actual Podsie question IDs for this assignment
+      const questionMapData = mapResult.data;
+
+      // Fetch the actual numeric Podsie question IDs for this assignment
       const questionsResult = await fetchPodsieAssignmentQuestions(podsieAssignmentId);
       if (!questionsResult.success || questionsResult.questionIds.length === 0) {
         showToast({
@@ -346,20 +347,48 @@ export default function BulkConfigsPage() {
         return;
       }
 
-      // Get the question map data from curriculum with actual Podsie question IDs
-      const curriculumResult = await getQuestionMapFromCurriculum(
-        selectedMap.assignmentName,
-        questionsResult.questionIds
-      );
+      // Apply the database structure (root/variant) to the numeric Podsie IDs
+      // The database stores the structure but may have UUID IDs - we replace with numeric
+      const numericQuestionIds = questionsResult.questionIds;
+      const structureMap = questionMapData.questionMap;
 
-      if (!curriculumResult.success || !curriculumResult.data) {
-        showToast({
-          title: 'Error',
-          description: curriculumResult.error || 'Failed to get question map from curriculum',
-          variant: 'error',
-          icon: ExclamationTriangleIcon,
-        });
-        return;
+      // Build the question map with numeric IDs preserving the structure
+      const appliedQuestionMap: Array<{
+        questionNumber: number;
+        questionId: string;
+        isRoot: boolean;
+        rootQuestionId?: string;
+        variantNumber?: number;
+      }> = [];
+
+      let podsieIndex = 0;
+      for (const entry of structureMap) {
+        if (podsieIndex >= numericQuestionIds.length) break;
+
+        if (entry.isRoot) {
+          // Root question - assign the next Podsie ID
+          const rootId = String(numericQuestionIds[podsieIndex]);
+          appliedQuestionMap.push({
+            questionNumber: entry.questionNumber,
+            questionId: rootId,
+            isRoot: true,
+          });
+          podsieIndex++;
+        } else {
+          // Variant question - find its root and assign the next Podsie ID
+          // The root should be the most recent root we added with the same questionNumber
+          const rootEntry = appliedQuestionMap.find(
+            e => e.isRoot && e.questionNumber === entry.questionNumber
+          );
+          appliedQuestionMap.push({
+            questionNumber: entry.questionNumber,
+            questionId: String(numericQuestionIds[podsieIndex]),
+            isRoot: false,
+            rootQuestionId: rootEntry?.questionId,
+            variantNumber: entry.variantNumber,
+          });
+          podsieIndex++;
+        }
       }
 
       // Update the question map in the section config
@@ -367,13 +396,13 @@ export default function BulkConfigsPage() {
         school,
         classSection,
         podsieAssignmentId,
-        curriculumResult.data.questionMap
+        appliedQuestionMap
       );
 
       if (result.success) {
         showToast({
           title: 'Updated',
-          description: `Question map updated to "${selectedMap.assignmentName}" (${curriculumResult.data.totalQuestions} questions)`,
+          description: `Question map updated to "${questionMapData.assignmentName}" (${appliedQuestionMap.length} questions with numeric IDs)`,
           variant: 'success',
           icon: CheckCircleIcon,
         });
@@ -396,7 +425,7 @@ export default function BulkConfigsPage() {
     } finally {
       setUpdatingMapId(null);
     }
-  }, [savedQuestionMaps, showToast]);
+  }, [showToast]);
 
   // Handle manual match from unmatched assignments
   const handleManualMatch = useCallback(async (

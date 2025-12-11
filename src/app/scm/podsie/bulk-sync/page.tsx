@@ -186,14 +186,21 @@ export default function BulkSyncPage() {
     loadSelectedSections();
   }, [selectedSections, loadSelectedSections]);
 
-  // Sync a single assignment
+  // Sync a single assignment - returns { success, failed, errors }
   const syncAssignment = async (
     section: string,
     assignment: AssignmentContent,
     onProgress?: (lesson: string, activity: string) => void
-  ) => {
+  ): Promise<{ success: number; failed: number; errors: string[] }> => {
     const activities = assignment.podsieActivities || [];
-    if (activities.length === 0) return;
+    if (activities.length === 0) {
+      console.warn(`[Sync] Skipping ${assignment.lessonName}: No podsie activities`);
+      return { success: 0, failed: 0, errors: [] };
+    }
+
+    let success = 0;
+    let failed = 0;
+    const errors: string[] = [];
 
     for (const activity of activities) {
       const activityTypeLabel =
@@ -206,14 +213,34 @@ export default function BulkSyncPage() {
         onProgress(assignment.lessonName, activityTypeLabel);
       }
 
+      // Validate required data before sync
+      const baseQuestionIds = activity.podsieQuestionMap
+        ?.filter(q => q.isRoot !== false)
+        .map(q => Number(q.questionId));
+
+      if (!baseQuestionIds || baseQuestionIds.length === 0) {
+        const errorMsg = `${assignment.lessonName} (${activityTypeLabel}): Empty question map`;
+        console.warn(`[Sync] Skipping ${section} - ${errorMsg}`);
+        errors.push(errorMsg);
+        failed++;
+        continue;
+      }
+
+      if (!activity.podsieAssignmentId) {
+        const errorMsg = `${assignment.lessonName} (${activityTypeLabel}): Missing podsieAssignmentId`;
+        console.warn(`[Sync] Skipping ${section} - ${errorMsg}`);
+        errors.push(errorMsg);
+        failed++;
+        continue;
+      }
+
       try {
         const parts = assignment.unitLessonId.split('.');
         const unitCode = `${assignment.grade}.${parts[0]}`;
-        const baseQuestionIds = activity.podsieQuestionMap
-          ?.filter(q => q.isRoot !== false)
-          .map(q => Number(q.questionId));
 
-        await syncSectionRampUpProgress(
+        console.log(`[Sync] ${section} - ${assignment.lessonName} (${activityTypeLabel}): ${baseQuestionIds.length} questions, assignment ${activity.podsieAssignmentId}`);
+
+        const result = await syncSectionRampUpProgress(
           section,
           assignment.scopeAndSequenceId,
           activity.podsieAssignmentId,
@@ -227,10 +254,25 @@ export default function BulkSyncPage() {
             activityType: activity.activityType
           }
         );
+
+        if (result.success) {
+          console.log(`[Sync] ${section} - ${assignment.lessonName}: ${result.successfulSyncs}/${result.totalStudents} students synced`);
+          success++;
+        } else {
+          const errorMsg = `${assignment.lessonName} (${activityTypeLabel}): ${result.error || `${result.failedSyncs} students failed`}`;
+          console.error(`[Sync] ${section} - ${errorMsg}`);
+          errors.push(errorMsg);
+          failed++;
+        }
       } catch (err) {
-        console.error(`Error syncing assignment ${assignment.lessonName}:`, err);
+        const errorMsg = `${assignment.lessonName} (${activityTypeLabel}): ${err instanceof Error ? err.message : 'Unknown error'}`;
+        console.error(`[Sync] ${section} - ${errorMsg}`, err);
+        errors.push(errorMsg);
+        failed++;
       }
     }
+
+    return { success, failed, errors };
   };
 
   // Sync all selected sections
@@ -246,6 +288,9 @@ export default function BulkSyncPage() {
     });
 
     let completedAssignments = 0;
+    let totalSuccess = 0;
+    let totalFailed = 0;
+    const allErrors: string[] = [];
 
     // Show initial progress toast
     progressToast.showToast({
@@ -287,14 +332,18 @@ export default function BulkSyncPage() {
             icon: InformationCircleIcon,
           });
 
-          // Sync the assignment
-          await syncAssignment(section.classSection, assignment, (lesson, activity) => {
+          // Sync the assignment and collect results
+          const result = await syncAssignment(section.classSection, assignment, (lesson, activity) => {
             setSyncProgress(prev => prev ? {
               ...prev,
               currentLesson: lesson,
               currentActivity: activity
             } : null);
           });
+
+          totalSuccess += result.success;
+          totalFailed += result.failed;
+          allErrors.push(...result.errors.map(e => `${section.classSection}: ${e}`));
 
           completedAssignments++;
         }
@@ -303,13 +352,23 @@ export default function BulkSyncPage() {
       // Hide progress toast
       progressToast.hideToast();
 
-      // Show success toast
-      resultToast.showToast({
-        title: "Sync Complete!",
-        description: `Successfully synced ${totalAssignments} assignments across ${sectionsData.size} section${sectionsData.size !== 1 ? 's' : ''}`,
-        variant: "success",
-        icon: CheckCircleIcon,
-      });
+      // Show result toast with error summary if any
+      if (allErrors.length > 0) {
+        console.error("[Sync] Errors:", allErrors);
+        resultToast.showToast({
+          title: "Sync Complete with Errors",
+          description: `${totalSuccess} activities synced, ${totalFailed} failed. Check console for details.`,
+          variant: "warning",
+          icon: ExclamationTriangleIcon,
+        });
+      } else {
+        resultToast.showToast({
+          title: "Sync Complete!",
+          description: `Successfully synced ${totalSuccess} activities across ${sectionsData.size} section${sectionsData.size !== 1 ? 's' : ''}`,
+          variant: "success",
+          icon: CheckCircleIcon,
+        });
+      }
     } catch (err) {
       console.error("Error syncing sections:", err);
       progressToast.hideToast();
@@ -335,6 +394,9 @@ export default function BulkSyncPage() {
 
     const totalAssignments = sectionData.assignments.length;
     let completedAssignments = 0;
+    let totalSuccess = 0;
+    let totalFailed = 0;
+    const allErrors: string[] = [];
 
     // Show initial progress toast
     progressToast.showToast({
@@ -370,7 +432,7 @@ export default function BulkSyncPage() {
           icon: InformationCircleIcon,
         });
 
-        await syncAssignment(section.classSection, assignment, (lesson, activity) => {
+        const result = await syncAssignment(section.classSection, assignment, (lesson, activity) => {
           setSyncProgress(prev => prev ? {
             ...prev,
             currentLesson: lesson,
@@ -378,19 +440,33 @@ export default function BulkSyncPage() {
           } : null);
         });
 
+        totalSuccess += result.success;
+        totalFailed += result.failed;
+        allErrors.push(...result.errors);
+
         completedAssignments++;
       }
 
       // Hide progress toast
       progressToast.hideToast();
 
-      // Show success toast
-      resultToast.showToast({
-        title: "Section Sync Complete!",
-        description: `Successfully synced ${totalAssignments} assignments for ${section.classSection}`,
-        variant: "success",
-        icon: CheckCircleIcon,
-      });
+      // Show result toast with error summary if any
+      if (allErrors.length > 0) {
+        console.error(`[Sync] ${section.classSection} Errors:`, allErrors);
+        resultToast.showToast({
+          title: "Section Sync Complete with Errors",
+          description: `${totalSuccess} activities synced, ${totalFailed} failed. Check console for details.`,
+          variant: "warning",
+          icon: ExclamationTriangleIcon,
+        });
+      } else {
+        resultToast.showToast({
+          title: "Section Sync Complete!",
+          description: `Successfully synced ${totalSuccess} activities for ${section.classSection}`,
+          variant: "success",
+          icon: CheckCircleIcon,
+        });
+      }
     } catch (err) {
       console.error("Error syncing section:", err);
       progressToast.hideToast();
@@ -422,6 +498,9 @@ export default function BulkSyncPage() {
 
     const totalAssignments = unitAssignments.length;
     let completedAssignments = 0;
+    let totalSuccess = 0;
+    let totalFailed = 0;
+    const allErrors: string[] = [];
 
     // Show initial progress toast
     progressToast.showToast({
@@ -453,7 +532,7 @@ export default function BulkSyncPage() {
           icon: InformationCircleIcon,
         });
 
-        await syncAssignment(section.classSection, assignment, (lesson, activity) => {
+        const result = await syncAssignment(section.classSection, assignment, (lesson, activity) => {
           setSyncProgress(prev => prev ? {
             ...prev,
             currentLesson: lesson,
@@ -461,19 +540,33 @@ export default function BulkSyncPage() {
           } : null);
         });
 
+        totalSuccess += result.success;
+        totalFailed += result.failed;
+        allErrors.push(...result.errors);
+
         completedAssignments++;
       }
 
       // Hide progress toast
       progressToast.hideToast();
 
-      // Show success toast
-      resultToast.showToast({
-        title: "Unit Sync Complete!",
-        description: `Successfully synced ${totalAssignments} assignments in Unit ${unitNumber}`,
-        variant: "success",
-        icon: CheckCircleIcon,
-      });
+      // Show result toast with error summary if any
+      if (allErrors.length > 0) {
+        console.error(`[Sync] Unit ${unitNumber} Errors:`, allErrors);
+        resultToast.showToast({
+          title: "Unit Sync Complete with Errors",
+          description: `${totalSuccess} activities synced, ${totalFailed} failed. Check console for details.`,
+          variant: "warning",
+          icon: ExclamationTriangleIcon,
+        });
+      } else {
+        resultToast.showToast({
+          title: "Unit Sync Complete!",
+          description: `Successfully synced ${totalSuccess} activities in Unit ${unitNumber}`,
+          variant: "success",
+          icon: CheckCircleIcon,
+        });
+      }
     } catch (err) {
       console.error("Error syncing unit:", err);
       progressToast.hideToast();
@@ -507,6 +600,9 @@ export default function BulkSyncPage() {
 
     const totalAssignments = lessonSectionAssignments.length;
     let completedAssignments = 0;
+    let totalSuccess = 0;
+    let totalFailed = 0;
+    const allErrors: string[] = [];
 
     const sectionLabel = lessonSection === 'Ramp Ups' ? 'Ramp Up' : `Section ${lessonSection}`;
 
@@ -540,7 +636,7 @@ export default function BulkSyncPage() {
           icon: InformationCircleIcon,
         });
 
-        await syncAssignment(section.classSection, assignment, (lesson, activity) => {
+        const result = await syncAssignment(section.classSection, assignment, (lesson, activity) => {
           setSyncProgress(prev => prev ? {
             ...prev,
             currentLesson: lesson,
@@ -548,19 +644,33 @@ export default function BulkSyncPage() {
           } : null);
         });
 
+        totalSuccess += result.success;
+        totalFailed += result.failed;
+        allErrors.push(...result.errors);
+
         completedAssignments++;
       }
 
       // Hide progress toast
       progressToast.hideToast();
 
-      // Show success toast
-      resultToast.showToast({
-        title: `${sectionLabel} Sync Complete!`,
-        description: `Successfully synced ${totalAssignments} assignments in Unit ${unitNumber} ${sectionLabel}`,
-        variant: "success",
-        icon: CheckCircleIcon,
-      });
+      // Show result toast with error summary if any
+      if (allErrors.length > 0) {
+        console.error(`[Sync] ${sectionLabel} Errors:`, allErrors);
+        resultToast.showToast({
+          title: `${sectionLabel} Sync Complete with Errors`,
+          description: `${totalSuccess} activities synced, ${totalFailed} failed. Check console for details.`,
+          variant: "warning",
+          icon: ExclamationTriangleIcon,
+        });
+      } else {
+        resultToast.showToast({
+          title: `${sectionLabel} Sync Complete!`,
+          description: `Successfully synced ${totalSuccess} activities in Unit ${unitNumber} ${sectionLabel}`,
+          variant: "success",
+          icon: CheckCircleIcon,
+        });
+      }
     } catch (err) {
       console.error("Error syncing lesson section:", err);
       progressToast.hideToast();
@@ -635,6 +745,9 @@ export default function BulkSyncPage() {
     }
 
     let completedAssignments = 0;
+    let totalSuccess = 0;
+    let totalFailed = 0;
+    const allErrors: string[] = [];
 
     progressToast.showToast({
       title: "Syncing Current Units",
@@ -667,7 +780,7 @@ export default function BulkSyncPage() {
             icon: InformationCircleIcon,
           });
 
-          await syncAssignment(sectionOpt.classSection, assignment, (lesson, activity) => {
+          const result = await syncAssignment(sectionOpt.classSection, assignment, (lesson, activity) => {
             setSyncProgress(prev => prev ? {
               ...prev,
               currentLesson: lesson,
@@ -675,17 +788,33 @@ export default function BulkSyncPage() {
             } : null);
           });
 
+          totalSuccess += result.success;
+          totalFailed += result.failed;
+          allErrors.push(...result.errors.map(e => `${sectionOpt.classSection}: ${e}`));
+
           completedAssignments++;
         }
       }
 
       progressToast.hideToast();
-      resultToast.showToast({
-        title: "Current Units Sync Complete!",
-        description: `Successfully synced ${totalAssignments} assignments across ${sectionsToSync.length} section${sectionsToSync.length !== 1 ? 's' : ''}`,
-        variant: "success",
-        icon: CheckCircleIcon,
-      });
+
+      // Show result toast with error summary if any
+      if (allErrors.length > 0) {
+        console.error("[Sync] Current Units Errors:", allErrors);
+        resultToast.showToast({
+          title: "Current Units Sync Complete with Errors",
+          description: `${totalSuccess} activities synced, ${totalFailed} failed. Check console for details.`,
+          variant: "warning",
+          icon: ExclamationTriangleIcon,
+        });
+      } else {
+        resultToast.showToast({
+          title: "Current Units Sync Complete!",
+          description: `Successfully synced ${totalSuccess} activities across ${sectionsToSync.length} section${sectionsToSync.length !== 1 ? 's' : ''}`,
+          variant: "success",
+          icon: CheckCircleIcon,
+        });
+      }
     } catch (err) {
       console.error("Error syncing current units:", err);
       progressToast.hideToast();

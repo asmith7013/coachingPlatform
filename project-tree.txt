@@ -5,6 +5,7 @@
 ├── ANALYTICS_SETUP_COMPLETE.md
 ├── CLAUDE.md
 ├── LESSON-NAMING-STANDARDIZATION.md
+├── WORKED_EXAMPLE_REQUEST_PLAN.md
 ├── amplify
 │   ├── docs.md
 │   ├── scope.md
@@ -368,6 +369,7 @@
 │   │   │   │   └── zearn-import.ts
 │   │   │   ├── analytics.ts
 │   │   │   ├── calendar
+│   │   │   │   ├── current-unit.ts
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── school-calendar.ts
 │   │   │   │   └── unit-schedule.ts
@@ -751,9 +753,14 @@
 │   │   │   │   │   ├── hooks
 │   │   │   │   │   ├── page.tsx
 │   │   │   │   │   └── utils
+│   │   │   │   ├── page.tsx
 │   │   │   │   └── table
 │   │   │   │       └── page.tsx
 │   │   │   ├── layout.tsx
+│   │   │   ├── logistics
+│   │   │   │   ├── calendar
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── podsie
 │   │   │   │   ├── bulk-configs
@@ -768,6 +775,10 @@
 │   │   │   │   ├── manage-configs
 │   │   │   │   │   ├── actions.ts
 │   │   │   │   │   └── page.tsx
+│   │   │   │   ├── pace
+│   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── page.tsx
 │   │   │   │   ├── progress
 │   │   │   │   │   ├── components
 │   │   │   │   │   ├── hooks
@@ -798,13 +809,11 @@
 │   │   │   │   │   ├── html
 │   │   │   │   │   ├── lib
 │   │   │   │   │   └── page.tsx
-│   │   │   │   ├── calendar
-│   │   │   │   │   └── page.tsx
 │   │   │   │   ├── components
 │   │   │   │   │   ├── AccordionItem.tsx
 │   │   │   │   │   ├── AccordionList.tsx
 │   │   │   │   │   ├── RoadmapsNav.tsx
-│   │   │   │   │   ├── SkillDetailView.tsx
+│   │   │   │   │   ├── SkillDetailView
 │   │   │   │   │   ├── SkillDetailWrapper.tsx
 │   │   │   │   │   └── SkillListWithProgress.tsx
 │   │   │   │   ├── history
@@ -821,6 +830,7 @@
 │   │   │   │   │   └── grade-8.json
 │   │   │   │   ├── mastery-grid
 │   │   │   │   │   └── page.tsx
+│   │   │   │   ├── page.tsx
 │   │   │   │   ├── scope-and-sequence
 │   │   │   │   │   ├── components
 │   │   │   │   │   └── page.tsx
@@ -860,6 +870,8 @@
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── zearn
 │   │   │   │       └── page.tsx
+│   │   │   ├── school
+│   │   │   │   └── calendar
 │   │   │   └── workedExamples
 │   │   │       ├── components
 │   │   │       │   ├── D3ComponentRenderer.tsx
@@ -2011,4 +2023,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-611 directories, 1401 files
+617 directories, 1407 files

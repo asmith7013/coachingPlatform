@@ -466,6 +466,10 @@ function applyQuestionStructure(
 // =====================================
 
 /**
+ * @deprecated Use `getQuestionMapByName` from `@/app/actions/313/podsie-question-map` instead.
+ * This function reads from local filesystem which is not portable.
+ * The database function reads from the `podsie-question-maps` MongoDB collection.
+ *
  * Get a complete question map for a Podsie assignment by matching it
  * to the curriculum and applying the structure to the Podsie IDs
  */
@@ -481,6 +485,11 @@ export async function getQuestionMapFromCurriculum(
   };
   error?: string;
 }> {
+  console.warn(
+    `[DEPRECATED] getQuestionMapFromCurriculum is deprecated. ` +
+    `Use getQuestionMapByName from podsie-question-map instead.`
+  );
+
   // Find matching curriculum assignment
   const matchResult = await findCurriculumMatch(podsieAssignmentName);
 
