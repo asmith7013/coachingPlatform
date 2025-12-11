@@ -240,6 +240,14 @@ export default function PodsieProgressPage() {
         await handleSyncAssignment(assignment, false, progressBadge);
       }
 
+      // After all syncs complete, refresh full progress data to update pacing
+      const grade = lessons[0]?.grade || "8";
+      const unitCode = `${grade}.${selectedUnit}`;
+      const fullProgressResult = await fetchRampUpProgress(selectedSection, unitCode);
+      if (fullProgressResult.success) {
+        setProgressData(fullProgressResult.data);
+      }
+
       showToast({
         title: 'All Syncs Complete',
         description: `Successfully synced all ${totalLessons} assignment${totalLessons !== 1 ? 's' : ''} in ${selectedLessonSection}`,
