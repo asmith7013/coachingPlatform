@@ -14,13 +14,23 @@ interface SectionPacingCardProps {
   school: string;
   currentUnitInfo: CurrentUnitInfo | null;
   showStudentNames: boolean;
+  /** Special population classifications (e.g., ICT, 12-1-1, MLL) */
+  specialPopulations?: string[];
 }
+
+// Badge styling for special populations
+const SPECIAL_POP_BADGE_STYLES: Record<string, { bg: string; text: string }> = {
+  'ICT': { bg: 'bg-indigo-100', text: 'text-indigo-800' },
+  '12-1-1': { bg: 'bg-teal-100', text: 'text-teal-800' },
+  'MLL': { bg: 'bg-orange-100', text: 'text-orange-800' },
+};
 
 export function SectionPacingCard({
   section,
   school,
   currentUnitInfo,
   showStudentNames,
+  specialPopulations,
 }: SectionPacingCardProps) {
   const currentUnit = currentUnitInfo?.currentUnit ?? null;
 
@@ -61,6 +71,14 @@ export function SectionPacingCard({
           No Schedule
         </span>
       )}
+      {specialPopulations?.map((pop) => {
+        const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+        return (
+          <span key={pop} className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${style.bg} ${style.text}`}>
+            {pop}
+          </span>
+        );
+      })}
     </div>
   );
 

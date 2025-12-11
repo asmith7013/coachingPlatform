@@ -189,13 +189,13 @@ export async function getSectionAttendanceByDateRange(
  * Get all section configs grouped by school for dropdown
  */
 export async function getAllSectionConfigs(): Promise<
-  | { success: true; data: Array<{ school: string; sections: Array<{ id: string; classSection: string; teacher?: string; gradeLevel: string; scopeSequenceTag?: string }> }> }
+  | { success: true; data: Array<{ school: string; sections: Array<{ id: string; classSection: string; teacher?: string; gradeLevel: string; scopeSequenceTag?: string; specialPopulations?: string[] }> }> }
   | { success: false; error: string }
 > {
   return withDbConnection(async () => {
     try {
       const configs = await SectionConfigModel.find({ active: true })
-        .select("school classSection teacher gradeLevel scopeSequenceTag")
+        .select("school classSection teacher gradeLevel scopeSequenceTag specialPopulations")
         .sort({ school: 1, classSection: 1 })
         .lean();
 
@@ -207,9 +207,10 @@ export async function getAllSectionConfigs(): Promise<
         teacher?: string;
         gradeLevel: string;
         scopeSequenceTag?: string;
+        specialPopulations?: string[];
       }
 
-      const bySchool = new Map<string, Array<{ id: string; classSection: string; teacher?: string; gradeLevel: string; scopeSequenceTag?: string }>>();
+      const bySchool = new Map<string, Array<{ id: string; classSection: string; teacher?: string; gradeLevel: string; scopeSequenceTag?: string; specialPopulations?: string[] }>>();
 
       for (const config of configs as unknown as LeanSectionConfig[]) {
         const school = config.school;
@@ -222,6 +223,7 @@ export async function getAllSectionConfigs(): Promise<
           teacher: config.teacher,
           gradeLevel: config.gradeLevel,
           scopeSequenceTag: config.scopeSequenceTag,
+          specialPopulations: config.specialPopulations,
         });
       }
 

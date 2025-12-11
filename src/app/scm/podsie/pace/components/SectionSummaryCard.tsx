@@ -24,13 +24,23 @@ interface SectionSummaryCardProps {
   currentUnitInfo: CurrentUnitInfo | null;
   /** Optional callback to report student counts when data loads */
   onCountsLoaded?: (sectionId: string, counts: PaceZoneCounts) => void;
+  /** Special population classifications (e.g., ICT, 12-1-1, MLL) */
+  specialPopulations?: string[];
 }
+
+// Badge styling for special populations
+const SPECIAL_POP_BADGE_STYLES: Record<string, { bg: string; text: string }> = {
+  'ICT': { bg: 'bg-indigo-100', text: 'text-indigo-800' },
+  '12-1-1': { bg: 'bg-teal-100', text: 'text-teal-800' },
+  'MLL': { bg: 'bg-orange-100', text: 'text-orange-800' },
+};
 
 export function SectionSummaryCard({
   section,
   school,
   currentUnitInfo,
   onCountsLoaded,
+  specialPopulations,
 }: SectionSummaryCardProps) {
   const currentUnit = currentUnitInfo?.currentUnit ?? null;
 
@@ -92,14 +102,28 @@ export function SectionSummaryCard({
   if (!currentUnitInfo || currentUnit === null) {
     return (
       <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-lg font-bold text-gray-900">{section}</span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-600 text-white">
-            {school}
-          </span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
-            No Schedule
-          </span>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-bold text-gray-900">{section}</span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-600 text-white">
+              {school}
+            </span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
+              No Schedule
+            </span>
+          </div>
+          {specialPopulations && specialPopulations.length > 0 && (
+            <div className="flex items-center gap-1">
+              {specialPopulations.map((pop) => {
+                const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+                return (
+                  <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
+                    {pop}
+                  </span>
+                );
+              })}
+            </div>
+          )}
         </div>
         <p className="text-sm text-gray-500">No calendar schedule configured</p>
       </div>
@@ -110,14 +134,28 @@ export function SectionSummaryCard({
   if (isLoading) {
     return (
       <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-lg font-bold text-gray-900">{section}</span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-600 text-white">
-            {school}
-          </span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-            Unit {currentUnit}
-          </span>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-bold text-gray-900">{section}</span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-600 text-white">
+              {school}
+            </span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+              Unit {currentUnit}
+            </span>
+          </div>
+          {specialPopulations && specialPopulations.length > 0 && (
+            <div className="flex items-center gap-1">
+              {specialPopulations.map((pop) => {
+                const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+                return (
+                  <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
+                    {pop}
+                  </span>
+                );
+              })}
+            </div>
+          )}
         </div>
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-full"></div>
@@ -154,14 +192,28 @@ export function SectionSummaryCard({
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg font-bold text-gray-900">{section}</span>
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-600 text-white">
-          {school}
-        </span>
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-          Unit {currentUnit}
-        </span>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-bold text-gray-900">{section}</span>
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-600 text-white">
+            {school}
+          </span>
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+            Unit {currentUnit}
+          </span>
+        </div>
+        {specialPopulations && specialPopulations.length > 0 && (
+          <div className="flex items-center gap-1">
+            {specialPopulations.map((pop) => {
+              const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+              return (
+                <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
+                  {pop}
+                </span>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Progress Bar */}

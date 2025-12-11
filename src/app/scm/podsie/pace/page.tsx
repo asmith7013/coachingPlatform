@@ -14,6 +14,7 @@ interface SectionOption {
   school: string;
   classSection: string;
   displayName: string;
+  specialPopulations?: string[];
 }
 
 const SCHOOL_YEAR = "2025-2026";
@@ -48,6 +49,7 @@ export default function PacePage() {
                 displayName: section.teacher
                   ? `${section.classSection} (${section.teacher})`
                   : section.classSection,
+                specialPopulations: section.specialPopulations,
               });
             });
           });
@@ -198,6 +200,7 @@ export default function PacePage() {
                   section={sectionOpt.classSection}
                   school={sectionOpt.school}
                   currentUnitInfo={getCurrentUnitForSection(sectionOpt)}
+                  specialPopulations={sectionOpt.specialPopulations}
                 />
               ))}
             </div>
@@ -215,6 +218,7 @@ export default function PacePage() {
                 school={sectionOpt.school}
                 currentUnitInfo={getCurrentUnitForSection(sectionOpt)}
                 showStudentNames={showStudentNames}
+                specialPopulations={sectionOpt.specialPopulations}
               />
             ))}
           </div>
