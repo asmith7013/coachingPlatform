@@ -21,6 +21,7 @@ import type { SyncResult } from "../types";
  *                          Format: [[id1, id2], [id3], ...] where index = logical question (0-indexed)
  * @param baseQuestionIds - Optional array of base question IDs from assignment (in order)
  * @param activityType - Type of Podsie activity (sidekick, mastery-check, assessment)
+ * @param questionIdToNumber - Optional map of questionId -> actual questionNumber
  */
 export async function syncStudentRampUpProgress(
   studentId: string,
@@ -33,7 +34,8 @@ export async function syncStudentRampUpProgress(
   totalQuestions: number,
   questionMapping?: number[][],
   baseQuestionIds?: number[],
-  activityType?: 'sidekick' | 'mastery-check' | 'assessment'
+  activityType?: 'sidekick' | 'mastery-check' | 'assessment',
+  questionIdToNumber?: { [questionId: string]: number }
 ): Promise<SyncResult> {
   try {
     // Fetch from Podsie
@@ -44,7 +46,8 @@ export async function syncStudentRampUpProgress(
       responses,
       questionMapping,
       totalQuestions,
-      baseQuestionIds
+      baseQuestionIds,
+      questionIdToNumber
     );
 
     // Convert map to array format
@@ -62,8 +65,22 @@ export async function syncStudentRampUpProgress(
           explanationScore: status?.explanationScore,
         });
       }
+    } else if (questionIdToNumber && Object.keys(questionIdToNumber).length > 0) {
+      // With questionIdToNumber: use actual questionNumbers from the map
+      // The questionMap keys are the actual questionNumbers (may be non-sequential like 1, 2, 4, 6, 8...)
+      const questionNumbers = Array.from(questionMap.keys()).sort((a, b) => a - b);
+      for (const qNum of questionNumbers) {
+        const status = questionMap.get(qNum);
+        questions.push({
+          questionNumber: qNum,
+          completed: status?.completed ?? false,
+          completedAt: status?.completedAt,
+          correctScore: status?.correctScore,
+          explanationScore: status?.explanationScore,
+        });
+      }
     } else if (totalQuestions > 0) {
-      // With totalQuestions: the map already has logical positions (1-indexed)
+      // With totalQuestions only (no mapping): assume sequential positions 1-indexed
       for (let i = 1; i <= totalQuestions; i++) {
         const status = questionMap.get(i);
         questions.push({

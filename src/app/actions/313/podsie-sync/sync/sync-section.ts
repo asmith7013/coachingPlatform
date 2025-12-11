@@ -24,8 +24,9 @@ export async function syncSectionRampUpProgress(
 ): Promise<SyncSectionResult> {
   try {
     // Build question mapping if baseQuestionIds and variations are provided
+    // BUT skip if questionIdToNumber is provided (it takes precedence for non-sequential question numbers)
     let questionMapping = options.questionMapping;
-    if (!questionMapping && options.baseQuestionIds && options.variations !== undefined) {
+    if (!questionMapping && options.baseQuestionIds && options.variations !== undefined && !options.questionIdToNumber) {
       questionMapping = buildQuestionMapping(
         options.baseQuestionIds,
         options.variations,
@@ -99,7 +100,8 @@ export async function syncSectionRampUpProgress(
         totalQuestions,
         questionMapping,
         options.baseQuestionIds,
-        options.activityType
+        options.activityType,
+        options.questionIdToNumber
       );
 
       results.push(result);

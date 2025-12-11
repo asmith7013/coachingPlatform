@@ -73,7 +73,8 @@ export function PacingProgressCard({
     return null;
   }
 
-  const totalStudents = students.farBehind.length + students.behind.length + students.onTrack.length + students.ahead.length + students.farAhead.length;
+  const completeCount = completedStudents?.count ?? 0;
+  const totalStudents = students.farBehind.length + students.behind.length + students.onTrack.length + students.ahead.length + students.farAhead.length + completeCount;
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -140,6 +141,7 @@ export function PacingProgressCard({
         const onPacePercent = Math.round((students.onTrack.length / totalStudents) * 100);
         const aheadPercent = Math.round((students.ahead.length / totalStudents) * 100);
         const farAheadPercent = Math.round((students.farAhead.length / totalStudents) * 100);
+        const completePercent = Math.round((completeCount / totalStudents) * 100);
 
         // Determine which segments are first and last for rounded corners
         const segments = [
@@ -148,6 +150,7 @@ export function PacingProgressCard({
           { percent: onPacePercent, bg: "bg-green-50", border: "border-green-500", text: "text-green-700" },
           { percent: aheadPercent, bg: "bg-sky-50", border: "border-sky-500", text: "text-sky-700" },
           { percent: farAheadPercent, bg: "bg-blue-100", border: "border-blue-600", text: "text-blue-700" },
+          { percent: completePercent, bg: "bg-purple-100", border: "border-purple-500", text: "text-purple-700" },
         ].filter(s => s.percent > 0);
 
         return (

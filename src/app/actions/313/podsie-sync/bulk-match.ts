@@ -6,7 +6,7 @@ import { fetchAssignmentsForSection, PodsieAssignmentInfo } from "./index";
 import { fetchScopeAndSequence } from "@/app/actions/313/scope-and-sequence";
 import { getAssignmentContent, addAssignmentContent, getSectionConfig, upsertSectionConfig } from "@/app/actions/313/section-config";
 import { findBestMatch } from "@/lib/utils/lesson-name-normalization";
-import { fetchPodsieAssignmentQuestions } from "./api/fetch-questions";
+import { getQuestionMapByName } from "@/app/actions/313/podsie-question-map";
 import type { ScopeAndSequence } from "@zod-schema/313/curriculum/scope-and-sequence";
 
 // =====================================
@@ -325,7 +325,7 @@ export interface SaveMatchInput {
  */
 export async function saveSingleMatch(
   input: SaveMatchInput
-): Promise<{ success: boolean; error?: string; usedApiQuestionMap?: boolean }> {
+): Promise<{ success: boolean; error?: string; usedCurriculumMap?: boolean }> {
   return withDbConnection(async () => {
     try {
       const { school, classSection, match } = input;
@@ -352,11 +352,7 @@ export async function saveSingleMatch(
         }
       }
 
-      // Fetch question map from Podsie API (uses knowledgeComponent for root/variant detection)
-      const apiResult = await fetchPodsieAssignmentQuestions(
-        String(match.podsieAssignment.assignmentId)
-      );
-
+      // Try to get question map from database (includes root/variation structure)
       let questionMap: Array<{
         questionNumber: number;
         questionId: string;
@@ -364,21 +360,23 @@ export async function saveSingleMatch(
         rootQuestionId?: string;
         variantNumber?: number;
       }>;
-      let usedApiQuestionMap = false;
+      let usedDatabaseMap = false;
 
-      if (apiResult.success && apiResult.questionMap.length > 0) {
-        // Use the API question map (built from knowledgeComponent data)
-        questionMap = apiResult.questionMap;
-        usedApiQuestionMap = apiResult.hasKnowledgeComponents;
+      const dbMapResult = await getQuestionMapByName(match.podsieAssignment.assignmentName);
+
+      if (dbMapResult.success && dbMapResult.data) {
+        // Use the database question map with proper structure
+        questionMap = dbMapResult.data.questionMap;
+        usedDatabaseMap = true;
         console.log(
-          `Using Podsie API question map for "${match.podsieAssignment.assignmentName}" ` +
-          `(${questionMap.length} questions, hasKC: ${apiResult.hasKnowledgeComponents})`
+          `Using database question map for "${match.podsieAssignment.assignmentName}" ` +
+          `(${questionMap.length} questions, match type: ${dbMapResult.matchType || 'exact'})`
         );
       } else {
-        // Fallback: use the questionIds from the match and assume all are root questions
+        // Fallback: assume all questions are root questions
         console.warn(
-          `Failed to fetch question map from API for "${match.podsieAssignment.assignmentName}", ` +
-          `using fallback (all root questions). Error: ${apiResult.error || 'unknown'}`
+          `No database question map for "${match.podsieAssignment.assignmentName}", ` +
+          `using fallback (all root questions)`
         );
         questionMap = match.podsieAssignment.questionIds
           .slice(0, match.podsieAssignment.totalQuestions)
@@ -404,7 +402,7 @@ export async function saveSingleMatch(
         active: true
       });
 
-      return { success: result.success, error: result.error, usedApiQuestionMap };
+      return { success: result.success, error: result.error, usedDatabaseMap };
     } catch (error) {
       console.error('Error saving match:', error);
       return {

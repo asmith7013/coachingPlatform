@@ -303,6 +303,7 @@ export function usePacingData(
     const onTrack: StudentPacingStatus[] = [];
     const ahead: StudentPacingStatus[] = [];
     const farAhead: StudentPacingStatus[] = [];
+    const completedStudentNames: string[] = []; // Track students who completed the entire unit
 
     for (const [studentId, student] of studentMap) {
       const completedSections = new Set<string>();
@@ -489,6 +490,17 @@ export function usePacingData(
         currentSection: studentCurrentSection,
       };
 
+      // If student has no currentLessonNumber, they've completed the unit entirely
+      // Don't add them to any zone - add to completedStudentNames instead
+      if (currentLessonNumber === undefined) {
+        const nameParts = student.name.split(' ');
+        const displayName = nameParts.length > 1
+          ? `${nameParts[0]} ${nameParts[nameParts.length - 1][0]}.`
+          : nameParts[0];
+        completedStudentNames.push(displayName);
+        continue;
+      }
+
       // Categorize the student
       if (sectionsAhead >= 2) {
         status.status = "far-ahead";
@@ -512,44 +524,33 @@ export function usePacingData(
     onTrack.sort((a, b) => (a.currentLessonNumber || 0) - (b.currentLessonNumber || 0));
 
     // Build maps of student counts and names per section and per lesson
+    // Note: completed students are already in completedStudentNames and NOT in these arrays
     const allStudents = [...farBehind, ...behind, ...onTrack, ...ahead, ...farAhead];
     const studentCountBySection = new Map<string, number>();
     const studentCountByLesson = new Map<string, number>(); // key: "sectionId:lessonNumber"
     const studentNamesByLesson = new Map<string, string[]>(); // key: "sectionId:lessonNumber"
 
-    // Track students who completed the entire unit (no currentLessonNumber means they finished all lessons)
-    const completedStudentNames: string[] = [];
-
     for (const student of allStudents) {
-      if (student.currentSection) {
+      if (student.currentSection && student.currentLessonNumber !== undefined) {
         const normalizedSection = normalizeSection(student.currentSection);
+        // Count students in their section
         studentCountBySection.set(
           normalizedSection,
           (studentCountBySection.get(normalizedSection) || 0) + 1
         );
-        // Track per-lesson counts and names
-        if (student.currentLessonNumber !== undefined) {
-          const lessonKey = `${normalizedSection}:${student.currentLessonNumber}`;
-          studentCountByLesson.set(
-            lessonKey,
-            (studentCountByLesson.get(lessonKey) || 0) + 1
-          );
-          // Extract first name and first letter of last name (e.g., "John D.")
-          const nameParts = student.studentName.split(' ');
-          const displayName = nameParts.length > 1
-            ? `${nameParts[0]} ${nameParts[nameParts.length - 1][0]}.`
-            : nameParts[0];
-          const existingNames = studentNamesByLesson.get(lessonKey) || [];
-          existingNames.push(displayName);
-          studentNamesByLesson.set(lessonKey, existingNames);
-        } else {
-          // Student has no current lesson - they completed the unit
-          const nameParts = student.studentName.split(' ');
-          const displayName = nameParts.length > 1
-            ? `${nameParts[0]} ${nameParts[nameParts.length - 1][0]}.`
-            : nameParts[0];
-          completedStudentNames.push(displayName);
-        }
+        const lessonKey = `${normalizedSection}:${student.currentLessonNumber}`;
+        studentCountByLesson.set(
+          lessonKey,
+          (studentCountByLesson.get(lessonKey) || 0) + 1
+        );
+        // Extract first name and first letter of last name (e.g., "John D.")
+        const nameParts = student.studentName.split(' ');
+        const displayName = nameParts.length > 1
+          ? `${nameParts[0]} ${nameParts[nameParts.length - 1][0]}.`
+          : nameParts[0];
+        const existingNames = studentNamesByLesson.get(lessonKey) || [];
+        existingNames.push(displayName);
+        studentNamesByLesson.set(lessonKey, existingNames);
       }
     }
 

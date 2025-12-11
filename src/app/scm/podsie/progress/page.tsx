@@ -137,11 +137,28 @@ export default function PodsieProgressPage() {
       // Extract base question IDs (root questions only) from the question map
       // NEW format: Filter for isRoot === true or isRoot === undefined (backwards compat)
       // If isRoot field is not present, treat question as root
-      const baseQuestionIds = assignment.podsieQuestionMap
-        ? assignment.podsieQuestionMap
-            .filter(q => q.isRoot !== false) // Include true and undefined
-            .map(q => Number(q.questionId))
+      const rootQuestions = assignment.podsieQuestionMap
+        ? assignment.podsieQuestionMap.filter(q => q.isRoot !== false)
+        : [];
+
+      const baseQuestionIds = rootQuestions.length > 0
+        ? rootQuestions.map(q => Number(q.questionId))
         : undefined;
+
+      // Build questionIdToNumber map: questionId -> actual questionNumber
+      // This ensures sync stores data at correct positions (e.g., 1, 2, 4, 6... not 1, 2, 3, 4...)
+      const questionIdToNumber: { [questionId: string]: number } = {};
+      if (rootQuestions.length > 0) {
+        rootQuestions.forEach(q => {
+          questionIdToNumber[q.questionId] = q.questionNumber;
+        });
+      }
+
+      // DEBUG: Log sync parameters for RU3
+      console.log(`[SYNC DEBUG] Assignment: ${assignment.lessonName} (${assignment.unitLessonId})`);
+      console.log(`[SYNC DEBUG] Root questions (${rootQuestions.length}):`, rootQuestions.map(q => `Q${q.questionNumber}:${q.questionId}`).join(', '));
+      console.log(`[SYNC DEBUG] baseQuestionIds:`, baseQuestionIds);
+      console.log(`[SYNC DEBUG] questionIdToNumber:`, questionIdToNumber);
 
       const result = await syncSectionRampUpProgress(
         selectedSection,
@@ -153,6 +170,7 @@ export default function PodsieProgressPage() {
         {
           testMode,
           baseQuestionIds,
+          questionIdToNumber: Object.keys(questionIdToNumber).length > 0 ? questionIdToNumber : undefined,
           variations: assignment.variations ?? 3,
           q1HasVariations: assignment.q1HasVariations ?? false,
           activityType: assignment.activityType

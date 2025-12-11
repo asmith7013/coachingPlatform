@@ -214,17 +214,27 @@ export default function BulkSyncPage() {
       }
 
       // Validate required data before sync
-      const baseQuestionIds = activity.podsieQuestionMap
-        ?.filter(q => q.isRoot !== false)
-        .map(q => Number(q.questionId));
+      const rootQuestions = activity.podsieQuestionMap
+        ?.filter(q => q.isRoot !== false) || [];
 
-      if (!baseQuestionIds || baseQuestionIds.length === 0) {
+      const baseQuestionIds = rootQuestions.length > 0
+        ? rootQuestions.map(q => Number(q.questionId))
+        : [];
+
+      if (baseQuestionIds.length === 0) {
         const errorMsg = `${assignment.lessonName} (${activityTypeLabel}): Empty question map`;
         console.warn(`[Sync] Skipping ${section} - ${errorMsg}`);
         errors.push(errorMsg);
         failed++;
         continue;
       }
+
+      // Build questionIdToNumber map: questionId -> actual questionNumber
+      // This ensures sync stores data at correct positions (e.g., 1, 2, 4, 6... not 1, 2, 3, 4...)
+      const questionIdToNumber: { [questionId: string]: number } = {};
+      rootQuestions.forEach(q => {
+        questionIdToNumber[q.questionId] = q.questionNumber;
+      });
 
       if (!activity.podsieAssignmentId) {
         const errorMsg = `${assignment.lessonName} (${activityTypeLabel}): Missing podsieAssignmentId`;
@@ -249,6 +259,7 @@ export default function BulkSyncPage() {
           activity.totalQuestions || 0,
           {
             baseQuestionIds,
+            questionIdToNumber: Object.keys(questionIdToNumber).length > 0 ? questionIdToNumber : undefined,
             variations: activity.variations ?? 3,
             q1HasVariations: activity.q1HasVariations ?? false,
             activityType: activity.activityType

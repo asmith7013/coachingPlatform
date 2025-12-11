@@ -15,6 +15,7 @@ export interface PaceZoneCounts {
   onTrack: number;
   ahead: number;
   farAhead: number;
+  complete: number;
 }
 
 interface SectionSummaryCardProps {
@@ -63,7 +64,7 @@ export function SectionSummaryCard({
 
   const isLoading = loadingConfig || loadingLessons || loadingProgress || pacingData.loading;
 
-  const { students } = pacingData;
+  const { students, completedStudents } = pacingData;
 
   // Extract counts as primitives to stabilize useEffect dependencies
   const farBehindCount = students.farBehind.length;
@@ -71,6 +72,7 @@ export function SectionSummaryCard({
   const onTrackCount = students.onTrack.length;
   const aheadCount = students.ahead.length;
   const farAheadCount = students.farAhead.length;
+  const completeCount = completedStudents?.count ?? 0;
 
   // Report counts to parent when data loads (must be before any early returns)
   useEffect(() => {
@@ -81,9 +83,10 @@ export function SectionSummaryCard({
         onTrack: onTrackCount,
         ahead: aheadCount,
         farAhead: farAheadCount,
+        complete: completeCount,
       });
     }
-  }, [onCountsLoaded, section, isLoading, currentUnitInfo, currentUnit, farBehindCount, behindCount, onTrackCount, aheadCount, farAheadCount]);
+  }, [onCountsLoaded, section, isLoading, currentUnitInfo, currentUnit, farBehindCount, behindCount, onTrackCount, aheadCount, farAheadCount, completeCount]);
 
   // No calendar data case
   if (!currentUnitInfo || currentUnit === null) {
@@ -128,7 +131,8 @@ export function SectionSummaryCard({
     students.behind.length +
     students.onTrack.length +
     students.ahead.length +
-    students.farAhead.length;
+    students.farAhead.length +
+    completeCount;
 
   // Calculate percentages
   const farBehindPercent = totalStudents > 0 ? Math.round((students.farBehind.length / totalStudents) * 100) : 0;
@@ -136,6 +140,7 @@ export function SectionSummaryCard({
   const onTrackPercent = totalStudents > 0 ? Math.round((students.onTrack.length / totalStudents) * 100) : 0;
   const aheadPercent = totalStudents > 0 ? Math.round((students.ahead.length / totalStudents) * 100) : 0;
   const farAheadPercent = totalStudents > 0 ? Math.round((students.farAhead.length / totalStudents) * 100) : 0;
+  const completePercent = totalStudents > 0 ? Math.round((completeCount / totalStudents) * 100) : 0;
 
   const segments = [
     { percent: farBehindPercent, count: students.farBehind.length, bg: "bg-red-50", border: "border-red-500", text: "text-red-700", dot: "bg-red-500", label: "Far Behind" },
@@ -143,6 +148,7 @@ export function SectionSummaryCard({
     { percent: onTrackPercent, count: students.onTrack.length, bg: "bg-green-50", border: "border-green-500", text: "text-green-700", dot: "bg-green-500", label: "On Pace" },
     { percent: aheadPercent, count: students.ahead.length, bg: "bg-sky-50", border: "border-sky-500", text: "text-sky-700", dot: "bg-sky-500", label: "Next Section" },
     { percent: farAheadPercent, count: students.farAhead.length, bg: "bg-blue-100", border: "border-blue-600", text: "text-blue-700", dot: "bg-blue-600", label: "Far Ahead" },
+    { percent: completePercent, count: completeCount, bg: "bg-purple-100", border: "border-purple-500", text: "text-purple-700", dot: "bg-purple-500", label: "Complete" },
   ].filter(s => s.percent > 0);
 
   return (

@@ -16,13 +16,15 @@ import type { ProcessedQuestionData } from "../types";
  *                          Format: [[id1, id2], [id3], ...] where index = logical question (0-indexed)
  * @param totalQuestions - Optional limit on number of questions
  * @param baseQuestionIds - Optional array of base question IDs from assignment (in order)
+ * @param questionIdToNumber - Optional map of questionId -> actual questionNumber (for non-sequential positions)
  * @returns Map of logical question numbers (1-indexed) to completion status
  */
 export function processResponsesToQuestions(
   responses: PodsieResponse[],
   questionMapping?: number[][],
   totalQuestions?: number,
-  baseQuestionIds?: number[]
+  baseQuestionIds?: number[],
+  questionIdToNumber?: { [questionId: string]: number }
 ): {
   questions: Map<number, ProcessedQuestionData>;
   assignmentName: string;
@@ -43,7 +45,7 @@ export function processResponsesToQuestions(
   }
 
   // Fallback: Use baseQuestionIds or totalQuestions
-  return processWithoutMapping(responses, assignmentName, totalQuestions, baseQuestionIds);
+  return processWithoutMapping(responses, assignmentName, totalQuestions, baseQuestionIds, questionIdToNumber);
 }
 
 /**
@@ -131,12 +133,17 @@ function processWithMapping(
  * Fallback: Process responses without explicit mapping
  * Uses baseQuestionIds (from assignment) to determine which responses count
  * Only responses matching a base question ID are counted
+ *
+ * @param questionIdToNumber - Optional map of questionId -> actual questionNumber
+ *                             When provided, positions are mapped to actual questionNumbers
+ *                             instead of sequential 1, 2, 3...
  */
 function processWithoutMapping(
   responses: PodsieResponse[],
   assignmentName: string,
   totalQuestions?: number,
-  baseQuestionIds?: number[]
+  baseQuestionIds?: number[],
+  questionIdToNumber?: { [questionId: string]: number }
 ): {
   questions: Map<number, ProcessedQuestionData>;
   assignmentName: string;
@@ -151,15 +158,19 @@ function processWithoutMapping(
     // Track completion by logical question number (1-indexed)
     const questionMap = new Map<number, ProcessedQuestionData>();
 
-    // Initialize all base questions as not completed
-    baseQuestionIds.forEach((_, index) => {
-      questionMap.set(index + 1, { completed: false });
-    });
-
-    // Create reverse lookup: base question_id -> logical position
+    // Create reverse lookup: base question_id -> actual questionNumber
+    // If questionIdToNumber is provided, use actual questionNumbers (e.g., 1, 2, 4, 6, 8...)
+    // Otherwise fall back to sequential positions (1, 2, 3, 4, 5...)
     const idToPosition = new Map<number, number>();
     baseQuestionIds.forEach((id, index) => {
-      idToPosition.set(id, index + 1);
+      const actualQuestionNumber = questionIdToNumber?.[String(id)] ?? (index + 1);
+      idToPosition.set(id, actualQuestionNumber);
+    });
+
+    // Initialize all base questions as not completed at their actual positions
+    baseQuestionIds.forEach((id) => {
+      const position = idToPosition.get(id)!;
+      questionMap.set(position, { completed: false });
     });
 
     // Process responses in chronological order - only count those matching base question IDs

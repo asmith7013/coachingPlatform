@@ -185,6 +185,10 @@ export default function PacePage() {
                   <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
                   Far Ahead
                 </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-purple-500" />
+                  Complete
+                </span>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

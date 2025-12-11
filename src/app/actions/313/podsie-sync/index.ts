@@ -13,11 +13,7 @@ export type {
 } from "./types";
 
 // API Functions
-export {
-  fetchPodsieAssignmentQuestions,
-  type PodsieQuestionMapEntry,
-  type FetchQuestionsResult,
-} from "./api/fetch-questions";
+export { fetchPodsieAssignmentQuestions } from "./api/fetch-questions";
 export { fetchPodsieResponses } from "./api/fetch-responses";
 export {
   fetchAssignedAssignments,
