@@ -32,6 +32,7 @@ function CircledIconOutline({ children, iconColor }: { children: React.ReactNode
 }
 
 // Component to render completion icons for a student - right aligned
+// Shows individual icons for 1-3 completions, then "4" or "5" with single icon for more
 function CompletionIcons({ student, iconColor }: { student: StudentLessonInfo; iconColor: string }) {
   const { completedYesterday, completedToday } = student;
 
@@ -40,15 +41,35 @@ function CompletionIcons({ student, iconColor }: { student: StudentLessonInfo; i
   }
 
   return (
-    <span className="inline-flex items-center gap-0.5">
+    <span className="inline-flex items-center gap-0.5 flex-shrink-0">
       {/* Today completions - filled circle with check */}
-      {Array.from({ length: completedToday }).map((_, i) => (
-        <CheckCircleIcon key={`t-${i}`} className={`w-3 h-3 ${iconColor}`} />
-      ))}
+      {completedToday > 0 && (
+        completedToday <= 3 ? (
+          // Show individual icons for 1-3 completions
+          Array.from({ length: completedToday }).map((_, i) => (
+            <CheckCircleIcon key={`t-${i}`} className={`w-3 h-3 flex-shrink-0 ${iconColor}`} />
+          ))
+        ) : (
+          // Show number + single icon for 4+ completions
+          <span className={`inline-flex items-center text-[9px] font-semibold flex-shrink-0 ${iconColor}`}>
+            {completedToday}<CheckCircleIcon className="w-3 h-3" />
+          </span>
+        )
+      )}
       {/* Yesterday completions - outline circle with check */}
-      {Array.from({ length: completedYesterday }).map((_, i) => (
-        <CheckCircleOutlineIcon key={`y-${i}`} className={`w-3 h-3 ${iconColor}`} />
-      ))}
+      {completedYesterday > 0 && (
+        completedYesterday <= 3 ? (
+          // Show individual icons for 1-3 completions
+          Array.from({ length: completedYesterday }).map((_, i) => (
+            <CheckCircleOutlineIcon key={`y-${i}`} className={`w-3 h-3 flex-shrink-0 ${iconColor}`} />
+          ))
+        ) : (
+          // Show number + single icon for 4+ completions
+          <span className={`inline-flex items-center text-[9px] font-semibold flex-shrink-0 ${iconColor}`}>
+            {completedYesterday}<CheckCircleOutlineIcon className="w-3 h-3" />
+          </span>
+        )
+      )}
     </span>
   );
 }
@@ -512,18 +533,18 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
                           const students = lesson.students || [];
                           return (
                             <div
-                              key={`names-${lesson.lessonId}`}
-                              className={`flex-1 flex flex-col justify-start ${!isLastLesson ? `border-r ${styles.border}` : ""}`}
+                              key={`names-${section.sectionId}-${lesson.lessonId}-${lessonIndex}`}
+                              className={`flex-1 flex flex-col justify-start overflow-hidden ${!isLastLesson ? `border-r ${styles.border}` : ""}`}
                             >
                               {students.length > 0 ? (
                                 students.map((student, studentIndex) => (
                                   <div
                                     key={studentIndex}
-                                    className={`text-[9px] ${styles.text} leading-tight px-2 py-1 ${studentIndex > 0 ? `border-t ${styles.border}` : ''}`}
+                                    className={`text-[9px] ${styles.text} leading-tight px-2 py-1 overflow-hidden ${studentIndex > 0 ? `border-t ${styles.border}` : ''}`}
                                   >
                                     {/* Row 1: Student name + Completion icons */}
-                                    <div className="flex items-center justify-between">
-                                      <span>{student.name}</span>
+                                    <div className="flex items-center justify-between gap-1 overflow-hidden">
+                                      <span className="truncate min-w-0">{student.name}</span>
                                       <CompletionIcons student={student} iconColor={styles.lessonIcon} />
                                     </div>
                                     {/* Row 2: Small group (left) + Inquiry (right) */}
