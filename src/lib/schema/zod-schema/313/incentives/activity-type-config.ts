@@ -9,11 +9,12 @@ import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
  * Detail type enum - determines what kind of detail card to show
  */
 export const DetailTypeZod = z.enum([
-  "inquiry",   // Inquiry activity questions (nested by section/assessment)
-  "lesson",    // Lesson picker from scope-and-sequence
-  "skill",     // Skill picker from unit's additionalSupportSkills
-  "custom",    // Free text input
-  "none"       // No detail card needed
+  "inquiry",      // Inquiry activity questions (nested by section/assessment)
+  "lesson",       // Lesson picker from scope-and-sequence
+  "skill",        // Skill picker from unit's additionalSupportSkills
+  "small-group",  // Small group with lesson + optional prereq skill
+  "custom",       // Free text input
+  "none"          // No detail card needed
 ]);
 
 /**
@@ -86,23 +87,13 @@ export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
     ownerIds: []
   },
   {
-    label: "Small Group (Acceleration)",
+    label: "Small Group",
     requiresDetails: true,
-    detailType: "lesson",
-    icon: "🚀",
-    color: "#10b981",
+    detailType: "small-group",
+    icon: "👥",
+    color: "#8b5cf6",
     isDefault: true,
     order: 2,
-    ownerIds: []
-  },
-  {
-    label: "Small Group (Prerequisite)",
-    requiresDetails: true,
-    detailType: "skill",
-    icon: "🎯",
-    color: "#f59e0b",
-    isDefault: true,
-    order: 3,
     ownerIds: []
   },
   {
@@ -112,7 +103,7 @@ export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
     icon: "⭐",
     color: "#eab308",
     isDefault: true,
-    order: 4,
+    order: 3,
     ownerIds: []
   }
 ];

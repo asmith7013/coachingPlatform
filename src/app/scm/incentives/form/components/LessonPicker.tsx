@@ -16,6 +16,7 @@ interface LessonPickerProps {
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  scopeSequenceTag?: string;
 }
 
 /**
@@ -27,6 +28,7 @@ export function LessonPicker({
   value,
   onChange,
   required = false,
+  scopeSequenceTag,
 }: LessonPickerProps) {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +40,7 @@ export function LessonPicker({
       setError(null);
 
       try {
-        const result = await fetchLessonsForUnit(grade, unitNumber);
+        const result = await fetchLessonsForUnit(grade, unitNumber, scopeSequenceTag);
 
         if (typeof result === 'string') {
           setError("Failed to load lessons");
@@ -55,7 +57,7 @@ export function LessonPicker({
     }
 
     loadLessons();
-  }, [grade, unitNumber]);
+  }, [grade, unitNumber, scopeSequenceTag]);
 
   if (isLoading) {
     return (

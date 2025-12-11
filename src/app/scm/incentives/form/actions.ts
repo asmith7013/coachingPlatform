@@ -6,6 +6,7 @@ import { StudentActivityModel } from "@mongoose-schema/313/student/student-activ
 import { RoadmapUnitModel } from "@mongoose-schema/313/curriculum/roadmap-unit.model";
 import { ScopeAndSequenceModel } from "@mongoose-schema/313/curriculum/scope-and-sequence.model";
 import { RoadmapsSkillModel } from "@mongoose-schema/313/curriculum/roadmap-skill.model";
+import { SectionConfigModel } from "@mongoose-schema/313/podsie/section-config.model";
 import {
   ActivityTypeConfigInput,
 } from "@zod-schema/313/incentives/activity-type-config";
@@ -219,15 +220,51 @@ export async function fetchUnitsByGrade(grade: string = "8") {
 }
 
 /**
- * Fetch lessons for a unit from scope-and-sequence
+ * Fetch section config to get scopeSequenceTag
  */
-export async function fetchLessonsForUnit(grade: string, unitNumber: number) {
+export async function fetchSectionConfig(classSection: string) {
   return withDbConnection(async () => {
     try {
-      const lessons = await ScopeAndSequenceModel.find({
+      const config = await SectionConfigModel.findOne({ classSection });
+      if (!config) {
+        return { success: false, error: "Section config not found" };
+      }
+      // Serialize to JSON to get plain object with correct types
+      const configJson = JSON.parse(JSON.stringify(config.toJSON())) as {
+        scopeSequenceTag?: string;
+        gradeLevel: string;
+      };
+      return {
+        success: true,
+        data: {
+          scopeSequenceTag: configJson.scopeSequenceTag || "Grade 8",
+          gradeLevel: configJson.gradeLevel
+        }
+      };
+    } catch (error) {
+      return { success: false, error: handleServerError(error, "Failed to fetch section config") };
+    }
+  });
+}
+
+/**
+ * Fetch lessons for a unit from scope-and-sequence
+ * Optionally filter by scopeSequenceTag
+ */
+export async function fetchLessonsForUnit(grade: string, unitNumber: number, scopeSequenceTag?: string) {
+  return withDbConnection(async () => {
+    try {
+      const query: Record<string, unknown> = {
         grade,
         unitNumber,
-      })
+      };
+
+      // Filter by scopeSequenceTag if provided
+      if (scopeSequenceTag) {
+        query.scopeSequenceTag = scopeSequenceTag;
+      }
+
+      const lessons = await ScopeAndSequenceModel.find(query)
         .sort({ lessonNumber: 1 });
 
       // Convert to JSON to ensure proper serialization
@@ -441,6 +478,7 @@ export async function submitActivities(
               unitId: activity.unitId,
               lessonId: activity.lessonId,
               skillId: activity.skillId,
+              smallGroupType: activity.smallGroupType,
               inquiryQuestion: activity.inquiryQuestion,
               customDetail: activity.customDetail,
               loggedBy: teacherName || "Unknown",

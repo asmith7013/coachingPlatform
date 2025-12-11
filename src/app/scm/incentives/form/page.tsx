@@ -8,6 +8,7 @@ import { DetailCard, StudentDetailRow } from "./components/DetailCard";
 import { InquiryPicker } from "./components/InquiryPicker";
 import { LessonPicker } from "./components/LessonPicker";
 import { SkillPicker } from "./components/SkillPicker";
+import { SmallGroupPicker, parseSmallGroupData } from "./components/SmallGroupPicker";
 import { CustomDetailInput } from "./components/CustomDetailInput";
 import { useFormFilters, useFormDraft, useDebouncedSave } from "./hooks/useFormState";
 import { useActivityTypes } from "./hooks/useActivityTypes";
@@ -15,6 +16,7 @@ import {
   fetchStudentsBySection,
   fetchUnitsByGrade,
   fetchSectionsForUnit,
+  fetchSectionConfig,
   submitActivities,
   StudentActivitySubmission,
 } from "./actions";
@@ -63,6 +65,7 @@ export default function IncentivesFormPage() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [unitSections, setUnitSections] = useState<string[]>([]);
   const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
+  const [scopeSequenceTag, setScopeSequenceTag] = useState<string | undefined>(undefined);
 
   // UI state
   const [isManageColumnsOpen, setIsManageColumnsOpen] = useState(false);
@@ -83,20 +86,28 @@ export default function IncentivesFormPage() {
     loadUnits();
   }, []);
 
-  // Load students when section changes
+  // Load students and section config when section changes
   useEffect(() => {
     if (!section) {
       setStudents([]);
+      setScopeSequenceTag(undefined);
       return;
     }
 
-    async function loadStudents() {
-      const result = await fetchStudentsBySection(section, "8");
-      if (typeof result !== 'string' && result.success && result.data) {
-        setStudents(result.data as Student[]);
+    async function loadStudentsAndConfig() {
+      // Load students
+      const studentsResult = await fetchStudentsBySection(section, "8");
+      if (typeof studentsResult !== 'string' && studentsResult.success && studentsResult.data) {
+        setStudents(studentsResult.data as Student[]);
+      }
+
+      // Load section config to get scopeSequenceTag
+      const configResult = await fetchSectionConfig(section);
+      if (typeof configResult !== 'string' && configResult.success && configResult.data) {
+        setScopeSequenceTag(configResult.data.scopeSequenceTag);
       }
     }
-    loadStudents();
+    loadStudentsAndConfig();
   }, [section]);
 
   // Load unit sections when unit changes
@@ -147,6 +158,17 @@ export default function IncentivesFormPage() {
         const detail = formState[student._id]?.[type.typeId ?? ""]?.detail;
         if (!detail || detail.trim() === "") {
           return `Please provide details for ${student.firstName} ${student.lastName}'s ${type.label}`;
+        }
+
+        // Special validation for small-group type
+        if (type.detailType === "small-group") {
+          const smallGroupData = parseSmallGroupData(detail);
+          if (!smallGroupData || !smallGroupData.lessonId) {
+            return `Please select a lesson for ${student.firstName} ${student.lastName}'s ${type.label}`;
+          }
+          if (smallGroupData.type === "prerequisite" && !smallGroupData.skillId) {
+            return `Please select a prerequisite skill for ${student.firstName} ${student.lastName}'s ${type.label}`;
+          }
         }
       }
     }
@@ -214,6 +236,18 @@ export default function IncentivesFormPage() {
               case "skill":
                 activity.skillId = activityState.detail;
                 break;
+              case "small-group": {
+                // Parse JSON data from SmallGroupPicker
+                const smallGroupData = parseSmallGroupData(activityState.detail);
+                if (smallGroupData) {
+                  activity.lessonId = smallGroupData.lessonId;
+                  activity.smallGroupType = smallGroupData.type;
+                  if (smallGroupData.type === "prerequisite" && smallGroupData.skillId) {
+                    activity.skillId = smallGroupData.skillId;
+                  }
+                }
+                break;
+              }
               case "custom":
                 activity.customDetail = activityState.detail;
                 break;
@@ -439,6 +473,7 @@ export default function IncentivesFormPage() {
                             <StudentDetailRow
                               key={student._id}
                               studentName={`${student.lastName}, ${student.firstName}`}
+                              stacked={type.detailType === "small-group"}
                             >
                               {type.detailType === "inquiry" && (
                                 <InquiryPicker
@@ -459,6 +494,7 @@ export default function IncentivesFormPage() {
                                     updateDetail(student._id, type.typeId ?? "", value)
                                   }
                                   required
+                                  scopeSequenceTag={scopeSequenceTag}
                                 />
                               )}
                               {type.detailType === "skill" && (
@@ -469,6 +505,19 @@ export default function IncentivesFormPage() {
                                     updateDetail(student._id, type.typeId ?? "", value)
                                   }
                                   required
+                                />
+                              )}
+                              {type.detailType === "small-group" && selectedUnit && (
+                                <SmallGroupPicker
+                                  grade="8"
+                                  unitNumber={selectedUnit.unitNumber}
+                                  unitId={unitId ?? ""}
+                                  value={detail}
+                                  onChange={(value) =>
+                                    updateDetail(student._id, type.typeId ?? "", value)
+                                  }
+                                  required
+                                  scopeSequenceTag={scopeSequenceTag}
                                 />
                               )}
                               {type.detailType === "custom" && (

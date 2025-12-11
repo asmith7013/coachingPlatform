@@ -18,6 +18,7 @@ export const StudentActivitySchema = z.object({
   unitId: z.string().optional().describe("Unit ID if activity is unit-specific"),
   lessonId: z.string().optional().describe("Lesson ID from scope-and-sequence (for acceleration)"),
   skillId: z.string().optional().describe("Skill number from roadmaps-lesson (for prerequisite)"),
+  smallGroupType: z.enum(["mastery", "prerequisite"]).optional().describe("Small group type - mastery check or prerequisite skill"),
   inquiryQuestion: z.string().optional().describe("Inquiry question (e.g., 'Section A Checkpoint - Question 1')"),
   customDetail: z.string().optional().describe("Custom detail text"),
 

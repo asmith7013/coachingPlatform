@@ -61,12 +61,24 @@ export function DetailCard({
 interface StudentDetailRowProps {
   studentName: string;
   children: React.ReactNode;
+  stacked?: boolean;
 }
 
 /**
  * Row for each student in detail card
  */
-export function StudentDetailRow({ studentName, children }: StudentDetailRowProps) {
+export function StudentDetailRow({ studentName, children, stacked = false }: StudentDetailRowProps) {
+  if (stacked) {
+    return (
+      <div className="p-3 bg-gray-50 rounded-md space-y-2">
+        <div className="font-medium text-gray-700">
+          {studentName}
+        </div>
+        <div>{children}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-md">
       <div className="min-w-[150px] font-medium text-gray-700">
