@@ -143,7 +143,8 @@ export function usePacingData(
   selectedSection: string,
   selectedUnit: number | null,
   lessons: LessonConfig[],
-  progressData: ProgressData[]
+  progressData: ProgressData[],
+  excludeRampUps: boolean = false
 ): PacingData {
   const [unitSchedules, setUnitSchedules] = useState<UnitSchedule[]>([]);
   const [loading, setLoading] = useState(false);
@@ -239,7 +240,12 @@ export function usePacingData(
     }
 
     // Get sections that actually exist in this unit
-    const availableSections = getAvailableSections(unitSchedule);
+    let availableSections = getAvailableSections(unitSchedule);
+
+    // Filter out Ramp Ups if excludeRampUps is true
+    if (excludeRampUps) {
+      availableSections = availableSections.filter(s => s !== "Ramp Ups");
+    }
 
     const previousSection = getPreviousSectionInUnit(expectedSection, availableSections);
     const nextSection = getNextSectionInUnit(expectedSection, availableSections);
@@ -272,6 +278,8 @@ export function usePacingData(
     // Helper to get lessons for a section (mastery-checks preferred, fallback to sidekicks)
     const getLessonsForSection = (sectionId: string | null): LessonConfig[] => {
       if (!sectionId) return [];
+      // Skip Ramp Ups section if excludeRampUps is true
+      if (excludeRampUps && sectionId === "Ramp Ups") return [];
       const masteryChecks = lessons.filter(
         l => normalizeSection(l.section) === sectionId && l.activityType === "mastery-check"
       );
@@ -326,6 +334,8 @@ export function usePacingData(
       for (const lesson of lessons) {
         if (lesson.section) {
           const normalizedSection = normalizeSection(lesson.section);
+          // Skip Ramp Ups if excludeRampUps is true
+          if (excludeRampUps && normalizedSection === "Ramp Ups") continue;
           if (!sectionGroups.has(normalizedSection)) {
             sectionGroups.set(normalizedSection, { masteryChecks: [], sidekicks: [] });
           }
@@ -648,11 +658,13 @@ export function usePacingData(
 
     // Build unit sections for visualization - use lessons prop (same as PacingZoneCard)
     // Now that students are categorized, we can include student counts per section
-    // Exclude Unit Assessment from the progress bar
+    // Exclude Unit Assessment from the progress bar, and Ramp Ups if excludeRampUps is true
     const unitSections: UnitSectionInfo[] = unitSchedule.sections
       .filter(scheduleSection => {
         const normalizedId = normalizeSection(scheduleSection.sectionId);
-        return normalizedId !== "Unit Assessment";
+        if (normalizedId === "Unit Assessment") return false;
+        if (excludeRampUps && normalizedId === "Ramp Ups") return false;
+        return true;
       })
       .map(scheduleSection => {
         const normalizedSectionId = normalizeSection(scheduleSection.sectionId);
@@ -744,7 +756,7 @@ export function usePacingData(
       error: null,
       noScheduleData: false,
     };
-  }, [unitSchedules, selectedUnit, lessons, progressData, loading, error]);
+  }, [unitSchedules, selectedUnit, lessons, progressData, loading, error, excludeRampUps]);
 
   return pacingData;
 }

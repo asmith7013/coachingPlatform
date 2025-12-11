@@ -19,6 +19,10 @@ interface PacingProgressCardProps {
   customHeader?: React.ReactNode;
   /** Optional: message to show when no schedule data exists */
   noScheduleMessage?: string;
+  /** Whether to exclude Ramp Ups from the view */
+  excludeRampUps?: boolean;
+  /** Callback when excludeRampUps toggle changes */
+  onExcludeRampUpsChange?: (value: boolean) => void;
 }
 
 export function PacingProgressCard({
@@ -28,6 +32,8 @@ export function PacingProgressCard({
   hideToggle = false,
   customHeader,
   noScheduleMessage,
+  excludeRampUps = false,
+  onExcludeRampUpsChange,
 }: PacingProgressCardProps) {
   const { students, unitSections, completedStudents, loading, error, noScheduleData, expectedSection } = pacingData;
   const [internalShowStudentNames, setInternalShowStudentNames] = useState(false);
@@ -121,6 +127,13 @@ export function PacingProgressCard({
               onChange={setInternalShowStudentNames}
               label="Show Details"
             />
+            {onExcludeRampUpsChange && (
+              <ToggleSwitch
+                checked={excludeRampUps}
+                onChange={onExcludeRampUpsChange}
+                label="Exclude Ramp Ups"
+              />
+            )}
           </div>
         )}
       </div>
