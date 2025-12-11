@@ -351,7 +351,7 @@ export default function IncentivesFormPage() {
             </h1>
             <button
               onClick={() => setIsManageColumnsOpen(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
             >
               Manage Columns
             </button>
@@ -433,7 +433,7 @@ export default function IncentivesFormPage() {
                         clearDraft();
                       }
                     }}
-                    className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-gray-700"
+                    className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-gray-700 cursor-pointer"
                   >
                     Clear All
                   </button>
@@ -474,7 +474,7 @@ export default function IncentivesFormPage() {
                           return (
                             <StudentDetailRow
                               key={student._id}
-                              studentName={`${student.lastName}, ${student.firstName}`}
+                              studentName={`${student.firstName} ${student.lastName}`}
                               stacked={type.detailType === "small-group"}
                             >
                               {/* Inquiry lesson selection commented out - made optional
@@ -564,7 +564,7 @@ export default function IncentivesFormPage() {
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                className="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium cursor-pointer"
               >
                 {isSubmitting ? "Submitting..." : `Submit Activities for ${(() => {
                   const today = new Date();

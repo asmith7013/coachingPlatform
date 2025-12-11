@@ -188,7 +188,7 @@ export async function fetchStudentsBySection(section: string, grade: string = "8
         section,
         active: true,
       })
-        .sort({ lastName: 1, firstName: 1 });
+        .sort({ firstName: 1, lastName: 1 });
 
       // Convert to JSON to ensure proper serialization
       const serializedStudents = students.map(s => JSON.parse(JSON.stringify(s.toJSON())));

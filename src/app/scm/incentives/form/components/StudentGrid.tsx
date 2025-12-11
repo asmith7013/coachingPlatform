@@ -95,8 +95,8 @@ export function StudentGrid({
                 className="sticky left-0 z-10 bg-inherit px-3 py-3 text-xs font-medium text-gray-900 border-r border-gray-200 overflow-hidden text-ellipsis"
                 style={{ width: "140px", minWidth: "140px", maxWidth: "140px" }}
               >
-                <div className="truncate" title={`${student.lastName}, ${student.firstName}`}>
-                  {student.lastName}, {student.firstName}
+                <div className="truncate" title={`${student.firstName} ${student.lastName}`}>
+                  {student.firstName} {student.lastName}
                 </div>
               </td>
 

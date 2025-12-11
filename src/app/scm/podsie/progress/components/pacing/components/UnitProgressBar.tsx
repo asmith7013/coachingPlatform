@@ -1,29 +1,32 @@
 "use client";
 
 import { UserIcon, TrophyIcon, CheckCircleIcon, UserGroupIcon, PresentationChartLineIcon } from "@heroicons/react/24/solid";
-import { CheckCircleIcon as CheckCircleOutlineIcon, UserGroupIcon as UserGroupOutlineIcon, PresentationChartLineIcon as PresentationChartLineOutlineIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
 import { Tooltip } from "@/components/core/feedback/Tooltip";
 import type { UnitSectionInfo, CompletedStudentInfo, StudentLessonInfo } from "../../../hooks/usePacingData";
 
-// Component to render activity icons (small group, inquiry) for a student - left aligned
-function ActivityIcons({ student, iconColor }: { student: StudentLessonInfo; iconColor: string }) {
-  const { smallGroupToday, smallGroupYesterday, inquiryToday, inquiryYesterday } = student;
-
-  const hasSmallGroup = smallGroupToday || smallGroupYesterday;
-  const hasInquiry = inquiryToday || inquiryYesterday;
-
-  if (!hasSmallGroup && !hasInquiry) {
-    return null;
-  }
+// Circled icon wrapper - filled circle for today
+function CircledIconFilled({ children, iconColor }: { children: React.ReactNode; iconColor: string }) {
+  // Extract color name from class like "text-red-500" -> "red"
+  const colorMatch = iconColor.match(/text-(\w+)-\d+/);
+  const bgColor = colorMatch ? `bg-${colorMatch[1]}-500` : 'bg-gray-500';
 
   return (
-    <span className="inline-flex items-center gap-0.5">
-      {/* Small group icons - today filled, yesterday outline */}
-      {smallGroupToday && <UserGroupIcon className={`w-3 h-3 ${iconColor}`} />}
-      {smallGroupYesterday && <UserGroupOutlineIcon className={`w-3 h-3 ${iconColor}`} />}
-      {/* Inquiry icons - today filled, yesterday outline */}
-      {inquiryToday && <PresentationChartLineIcon className={`w-3 h-3 ${iconColor}`} />}
-      {inquiryYesterday && <PresentationChartLineOutlineIcon className={`w-3 h-3 ${iconColor}`} />}
+    <span className={`inline-flex items-center justify-center w-3 h-3 rounded-full ${bgColor}`}>
+      <span className="text-white">{children}</span>
+    </span>
+  );
+}
+
+// Circled icon wrapper - outline circle for yesterday
+function CircledIconOutline({ children, iconColor }: { children: React.ReactNode; iconColor: string }) {
+  // Extract color name from class like "text-red-500" -> "red"
+  const colorMatch = iconColor.match(/text-(\w+)-\d+/);
+  const borderColor = colorMatch ? `border-${colorMatch[1]}-500` : 'border-gray-500';
+
+  return (
+    <span className={`inline-flex items-center justify-center w-3 h-3 rounded-full border ${borderColor}`}>
+      <span className={iconColor}>{children}</span>
     </span>
   );
 }
@@ -516,13 +519,42 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
                                 students.map((student, studentIndex) => (
                                   <div
                                     key={studentIndex}
-                                    className={`text-[9px] ${styles.text} leading-tight px-2 py-1 flex items-center justify-between ${studentIndex > 0 ? `border-t ${styles.border}` : ''}`}
+                                    className={`text-[9px] ${styles.text} leading-tight px-2 py-1 ${studentIndex > 0 ? `border-t ${styles.border}` : ''}`}
                                   >
-                                    <span className="flex items-center gap-1">
-                                      <ActivityIcons student={student} iconColor={styles.lessonIcon} />
+                                    {/* Row 1: Student name + Completion icons */}
+                                    <div className="flex items-center justify-between">
                                       <span>{student.name}</span>
-                                    </span>
-                                    <CompletionIcons student={student} iconColor={styles.lessonIcon} />
+                                      <CompletionIcons student={student} iconColor={styles.lessonIcon} />
+                                    </div>
+                                    {/* Row 2: Small group (left) + Inquiry (right) */}
+                                    {(student.smallGroupToday || student.smallGroupYesterday || student.inquiryToday || student.inquiryYesterday) && (
+                                      <div className="flex items-center justify-between mt-0.5">
+                                        <span className="inline-flex items-center gap-0.5">
+                                          {student.smallGroupToday && (
+                                            <CircledIconFilled iconColor={styles.lessonIcon}>
+                                              <UserGroupIcon className="w-2 h-2" />
+                                            </CircledIconFilled>
+                                          )}
+                                          {student.smallGroupYesterday && (
+                                            <CircledIconOutline iconColor={styles.lessonIcon}>
+                                              <UserGroupIcon className="w-2 h-2" />
+                                            </CircledIconOutline>
+                                          )}
+                                        </span>
+                                        <span className="inline-flex items-center gap-0.5">
+                                          {student.inquiryToday && (
+                                            <CircledIconFilled iconColor={styles.lessonIcon}>
+                                              <PresentationChartLineIcon className="w-2 h-2" />
+                                            </CircledIconFilled>
+                                          )}
+                                          {student.inquiryYesterday && (
+                                            <CircledIconOutline iconColor={styles.lessonIcon}>
+                                              <PresentationChartLineIcon className="w-2 h-2" />
+                                            </CircledIconOutline>
+                                          )}
+                                        </span>
+                                      </div>
+                                    )}
                                   </div>
                                 ))
                               ) : (

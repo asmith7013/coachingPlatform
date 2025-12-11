@@ -93,6 +93,10 @@ export function PacingProgressCard({
                 <span className="font-semibold text-gray-700">Key:</span>
                 {/* Activity type icons */}
                 <span className="flex items-center gap-1">
+                  <CheckCircleIcon className="w-3.5 h-3.5 text-gray-500" />
+                  <span>Mastery Check</span>
+                </span>
+                <span className="flex items-center gap-1">
                   <UserGroupIcon className="w-3.5 h-3.5 text-gray-500" />
                   <span>Small Group</span>
                 </span>

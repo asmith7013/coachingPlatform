@@ -240,7 +240,7 @@ export function ManageColumnsModal({
             </h2>
             <button
               onClick={handleClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
               aria-label="Close"
             >
               <svg
@@ -293,14 +293,14 @@ export function ManageColumnsModal({
                         <button
                           onClick={() => handleEdit(type)}
                           disabled={isSubmitting}
-                          className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors disabled:opacity-50"
+                          className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors disabled:opacity-50 cursor-pointer"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(type.typeId ?? "")}
                           disabled={isSubmitting}
-                          className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                          className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50 cursor-pointer"
                         >
                           Delete
                         </button>
@@ -366,7 +366,7 @@ export function ManageColumnsModal({
                         key={emoji}
                         type="button"
                         onClick={() => setFormData({ ...formData, icon: emoji })}
-                        className="text-2xl p-2 hover:bg-gray-100 rounded transition-colors"
+                        className="text-2xl p-2 hover:bg-gray-100 rounded transition-colors cursor-pointer"
                       >
                         {emoji}
                       </button>
@@ -403,7 +403,7 @@ export function ManageColumnsModal({
                         key={color}
                         type="button"
                         onClick={() => setFormData({ ...formData, color })}
-                        className="w-8 h-8 rounded border-2 border-gray-300 hover:border-gray-400 transition-colors"
+                        className="w-8 h-8 rounded border-2 border-gray-300 hover:border-gray-400 transition-colors cursor-pointer"
                         style={{ backgroundColor: color }}
                         aria-label={`Select color ${color}`}
                       />
@@ -461,14 +461,14 @@ export function ManageColumnsModal({
                   <button
                     onClick={handleCancel}
                     disabled={isSubmitting}
-                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors disabled:opacity-50"
+                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={isAdding ? handleSaveNew : handleSaveEdit}
                     disabled={isSubmitting || !formData.label}
-                    className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     {isSubmitting ? "Saving..." : "Save"}
                   </button>
@@ -485,7 +485,7 @@ export function ManageColumnsModal({
             <button
               onClick={handleAdd}
               disabled={isSubmitting || activityTypes.length >= 10}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               Add New Type
             </button>
