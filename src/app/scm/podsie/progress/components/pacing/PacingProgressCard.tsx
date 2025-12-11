@@ -14,7 +14,7 @@ function PresentationChartLineOutlineIcon({ className }: { className?: string })
 }
 import type { PacingData } from "../../hooks/usePacingData";
 // import { PacingZoneCard } from "./components/PacingZoneCard";
-import { UnitProgressBar } from "./components/UnitProgressBar";
+import { UnitProgressBar } from "./UnitProgressBar";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 
 interface PacingProgressCardProps {

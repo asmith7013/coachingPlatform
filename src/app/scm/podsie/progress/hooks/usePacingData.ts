@@ -65,6 +65,7 @@ export interface UnitSectionInfo {
 export interface CompletedStudentInfo {
   count: number;
   studentNames: string[]; // First names of students who completed the unit
+  students: StudentLessonInfo[]; // Detailed info for each completed student
 }
 
 export interface PacingData {
@@ -197,7 +198,7 @@ export function usePacingData(
       sectionTimeProgress: null,
       totalLessonsInSection: 0,
       unitSections: [],
-      completedStudents: { count: 0, studentNames: [] },
+      completedStudents: { count: 0, studentNames: [], students: [] },
       sectionLessonCounts: { farBehind: null, behind: null, onTrack: null, ahead: null, farAhead: null },
       students: { farBehind: [], behind: [], onTrack: [], ahead: [], farAhead: [] },
       lessonsInExpectedSection: [],
@@ -323,6 +324,7 @@ export function usePacingData(
     const ahead: StudentPacingStatus[] = [];
     const farAhead: StudentPacingStatus[] = [];
     const completedStudentNames: string[] = []; // Track students who completed the entire unit
+    const completedStudentIds: string[] = []; // Track student IDs for activity lookup
 
     for (const [studentId, student] of studentMap) {
       const completedSections = new Set<string>();
@@ -519,6 +521,7 @@ export function usePacingData(
           ? `${nameParts[0]} ${nameParts[nameParts.length - 1][0]}.`
           : nameParts[0];
         completedStudentNames.push(displayName);
+        completedStudentIds.push(studentId);
         continue;
       }
 
@@ -651,9 +654,49 @@ export function usePacingData(
       }
     }
 
+    // Build activity data for completed students
+    const completedStudentInfos: StudentLessonInfo[] = completedStudentIds.map((studentId, index) => {
+      const studentProgress = progressData.filter(p => p.studentId === studentId);
+      let completedToday = 0;
+      let completedYesterday = 0;
+      let smallGroupToday = false;
+      let smallGroupYesterday = false;
+      let inquiryToday = false;
+      let inquiryYesterday = false;
+
+      for (const progress of studentProgress) {
+        if (progress.smallGroupToday) smallGroupToday = true;
+        if (progress.smallGroupYesterday) smallGroupYesterday = true;
+        if (progress.inquiryToday) inquiryToday = true;
+        if (progress.inquiryYesterday) inquiryYesterday = true;
+
+        for (const q of progress.questions) {
+          if (q.completed && q.completedAt) {
+            const completedDate = q.completedAt.split('T')[0];
+            if (completedDate === todayStr) {
+              completedToday++;
+            } else if (completedDate === yesterdayStr) {
+              completedYesterday++;
+            }
+          }
+        }
+      }
+
+      return {
+        name: completedStudentNames[index],
+        completedToday,
+        completedYesterday,
+        smallGroupToday,
+        smallGroupYesterday,
+        inquiryToday,
+        inquiryYesterday,
+      };
+    });
+
     const completedStudents: CompletedStudentInfo = {
       count: completedStudentNames.length,
       studentNames: completedStudentNames,
+      students: completedStudentInfos,
     };
 
     // Build unit sections for visualization - use lessons prop (same as PacingZoneCard)
