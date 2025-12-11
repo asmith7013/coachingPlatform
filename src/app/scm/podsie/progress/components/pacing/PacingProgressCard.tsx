@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import { CheckCircleIcon, UserGroupIcon, PresentationChartLineIcon } from "@heroicons/react/24/solid";
-import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon as CheckCircleOutlineIcon, UserGroupIcon as UserGroupOutlineIcon } from "@heroicons/react/24/outline";
+
+// Outline version of PresentationChartLineIcon (not available in heroicons)
+function PresentationChartLineOutlineIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+    </svg>
+  );
+}
 import type { PacingData } from "../../hooks/usePacingData";
 // import { PacingZoneCard } from "./components/PacingZoneCard";
 import { UnitProgressBar } from "./components/UnitProgressBar";
@@ -86,42 +95,13 @@ export function PacingProgressCard({
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-      {/* Title row with toggle */}
-      <div className="flex items-center justify-between mb-4">
+      {/* Title row with toggles */}
+      <div className="flex items-center justify-between mb-2">
         {customHeader || (
           <h3 className="text-lg font-semibold text-gray-900">Unit {selectedUnit} Pace &amp; Progress</h3>
         )}
         {!hideToggle && (
           <div className="flex items-center gap-4">
-            {/* Icons key - only show when student names are shown */}
-            {showStudentNames && (
-              <div className="flex items-center gap-4 text-xs text-gray-500">
-                <span className="font-semibold text-gray-700">Key:</span>
-                {/* Activity type icons */}
-                <span className="flex items-center gap-1">
-                  <CheckCircleIcon className="w-3.5 h-3.5 text-gray-500" />
-                  <span>Mastery Check</span>
-                </span>
-                <span className="flex items-center gap-1">
-                  <UserGroupIcon className="w-3.5 h-3.5 text-gray-500" />
-                  <span>Small Group</span>
-                </span>
-                <span className="flex items-center gap-1">
-                  <PresentationChartLineIcon className="w-3.5 h-3.5 text-gray-500" />
-                  <span>Inquiry</span>
-                </span>
-                {/* Today/Yesterday distinction */}
-                <span className="text-gray-300">|</span>
-                <span className="flex items-center gap-1">
-                  <CheckCircleIcon className="w-3.5 h-3.5 text-green-600" />
-                  <span>Today</span>
-                </span>
-                <span className="flex items-center gap-1">
-                  <CheckCircleOutlineIcon className="w-3.5 h-3.5 text-green-600" />
-                  <span>Yesterday</span>
-                </span>
-              </div>
-            )}
             <ToggleSwitch
               checked={showStudentNames}
               onChange={setInternalShowStudentNames}
@@ -137,6 +117,40 @@ export function PacingProgressCard({
           </div>
         )}
       </div>
+      {/* Key row - only show when student names are shown */}
+      {!hideToggle && showStudentNames && (
+        <div className="flex items-center gap-6 text-xs text-gray-500 mb-4">
+          <span className="font-semibold text-gray-700">Key:</span>
+          {/* Mastery Check */}
+          <span className="flex items-center gap-1.5">
+            <span>Mastery:</span>
+            <CheckCircleIcon className="w-3.5 h-3.5 text-gray-600" />
+            <span className="text-gray-400">Today</span>
+            <CheckCircleOutlineIcon className="w-3.5 h-3.5 text-gray-500" />
+            <span className="text-gray-400">Yesterday</span>
+          </span>
+          <span className="text-gray-300">|</span>
+          {/* Small Group */}
+          <span className="flex items-center gap-1.5">
+            <span>Small Group:</span>
+            <UserGroupIcon className="w-3.5 h-3.5 text-gray-600" />
+            <span className="text-gray-400">Today</span>
+            <UserGroupOutlineIcon className="w-3.5 h-3.5 text-gray-500" />
+            <span className="text-gray-400">Yesterday</span>
+          </span>
+          <span className="text-gray-300">|</span>
+          {/* Inquiry */}
+          <span className="flex items-center gap-1.5">
+            <span>Inquiry:</span>
+            <PresentationChartLineIcon className="w-3.5 h-3.5 text-gray-600" />
+            <span className="text-gray-400">Today</span>
+            <PresentationChartLineOutlineIcon className="w-3.5 h-3.5 text-gray-500" />
+            <span className="text-gray-400">Yesterday</span>
+          </span>
+        </div>
+      )}
+      {/* Spacer when key is not shown */}
+      {(!showStudentNames || hideToggle) && <div className="mb-2" />}
 
       {/* Unit Progress Bar */}
       <div className="mb-6">

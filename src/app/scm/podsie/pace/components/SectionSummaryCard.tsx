@@ -185,9 +185,9 @@ export function SectionSummaryCard({
 
   const segments = [
     { percent: farBehindPercent, count: students.farBehind.length, bg: "bg-red-50", border: "border-red-500", text: "text-red-700", dot: "bg-red-500", label: "Far Behind" },
-    { percent: behindPercent, count: students.behind.length, bg: "bg-yellow-50", border: "border-yellow-500", text: "text-yellow-700", dot: "bg-yellow-500", label: "Previous Section" },
+    { percent: behindPercent, count: students.behind.length, bg: "bg-yellow-50", border: "border-yellow-500", text: "text-yellow-700", dot: "bg-yellow-500", label: "Behind" },
     { percent: onTrackPercent, count: students.onTrack.length, bg: "bg-green-50", border: "border-green-500", text: "text-green-700", dot: "bg-green-500", label: "On Pace" },
-    { percent: aheadPercent, count: students.ahead.length, bg: "bg-sky-50", border: "border-sky-500", text: "text-sky-700", dot: "bg-sky-500", label: "Next Section" },
+    { percent: aheadPercent, count: students.ahead.length, bg: "bg-sky-50", border: "border-sky-500", text: "text-sky-700", dot: "bg-sky-500", label: "Ahead" },
     { percent: farAheadPercent, count: students.farAhead.length, bg: "bg-blue-100", border: "border-blue-600", text: "text-blue-700", dot: "bg-blue-600", label: "Far Ahead" },
     { percent: completePercent, count: completeCount, bg: "bg-purple-100", border: "border-purple-500", text: "text-purple-700", dot: "bg-purple-500", label: "Complete" },
   ].filter(s => s.percent > 0);

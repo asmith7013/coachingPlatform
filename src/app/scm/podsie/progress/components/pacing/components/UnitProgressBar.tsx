@@ -1,76 +1,68 @@
 "use client";
 
 import { UserIcon, TrophyIcon, CheckCircleIcon, UserGroupIcon, PresentationChartLineIcon } from "@heroicons/react/24/solid";
-import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon as CheckCircleOutlineIcon, UserGroupIcon as UserGroupOutlineIcon } from "@heroicons/react/24/outline";
 import { Tooltip } from "@/components/core/feedback/Tooltip";
-import type { UnitSectionInfo, CompletedStudentInfo, StudentLessonInfo } from "../../../hooks/usePacingData";
+import type { UnitSectionInfo, CompletedStudentInfo } from "../../../hooks/usePacingData";
 
-// Circled icon wrapper - filled circle for today
-function CircledIconFilled({ children, iconColor }: { children: React.ReactNode; iconColor: string }) {
-  // Extract color name from class like "text-red-500" -> "red"
-  const colorMatch = iconColor.match(/text-(\w+)-\d+/);
-  const bgColor = colorMatch ? `bg-${colorMatch[1]}-500` : 'bg-gray-500';
-
+// Outline version of PresentationChartLineIcon (not available in heroicons, so we create a simple one)
+function PresentationChartLineOutlineIcon({ className }: { className?: string }) {
   return (
-    <span className={`inline-flex items-center justify-center w-3 h-3 rounded-full ${bgColor}`}>
-      <span className="text-white">{children}</span>
-    </span>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+    </svg>
   );
 }
 
-// Circled icon wrapper - outline circle for yesterday
-function CircledIconOutline({ children, iconColor }: { children: React.ReactNode; iconColor: string }) {
-  // Extract color name from class like "text-red-500" -> "red"
-  const colorMatch = iconColor.match(/text-(\w+)-\d+/);
-  const borderColor = colorMatch ? `border-${colorMatch[1]}-500` : 'border-gray-500';
-
-  return (
-    <span className={`inline-flex items-center justify-center w-3 h-3 rounded-full border ${borderColor}`}>
-      <span className={iconColor}>{children}</span>
-    </span>
-  );
-}
-
-// Component to render completion icons for a student - right aligned
-// Shows individual icons for 1-3 completions, then "4" or "5" with single icon for more
-function CompletionIcons({ student, iconColor }: { student: StudentLessonInfo; iconColor: string }) {
-  const { completedYesterday, completedToday } = student;
-
-  if (completedYesterday === 0 && completedToday === 0) {
-    return null;
+// Component to render activity icons in a row
+// Shows: filled icons for today, outline icons for yesterday
+// If count > 3, shows number + single icon
+// Shows a dash if no activity
+function ActivityRow({
+  todayIcon,
+  yesterdayIcon,
+  todayCount,
+  yesterdayCount,
+  iconColor
+}: {
+  todayIcon: React.ReactNode;
+  yesterdayIcon: React.ReactNode;
+  todayCount: number;
+  yesterdayCount: number;
+  iconColor: string;
+}) {
+  // Show dash if no activity
+  if (todayCount === 0 && yesterdayCount === 0) {
+    return <span className={`${iconColor} opacity-30`}>—</span>;
   }
 
   return (
-    <span className="inline-flex items-center gap-0.5 flex-shrink-0">
-      {/* Today completions - filled circle with check */}
-      {completedToday > 0 && (
-        completedToday <= 3 ? (
-          // Show individual icons for 1-3 completions
-          Array.from({ length: completedToday }).map((_, i) => (
-            <CheckCircleIcon key={`t-${i}`} className={`w-3 h-3 flex-shrink-0 ${iconColor}`} />
+    <div className="inline-flex items-center gap-0.5 flex-shrink-0">
+      {/* Today - filled icons */}
+      {todayCount > 0 && (
+        todayCount <= 3 ? (
+          Array.from({ length: todayCount }).map((_, i) => (
+            <span key={`t-${i}`} className={`${iconColor} flex-shrink-0`}>{todayIcon}</span>
           ))
         ) : (
-          // Show number + single icon for 4+ completions
           <span className={`inline-flex items-center text-[9px] font-semibold flex-shrink-0 ${iconColor}`}>
-            {completedToday}<CheckCircleIcon className="w-3 h-3" />
+            {todayCount}{todayIcon}
           </span>
         )
       )}
-      {/* Yesterday completions - outline circle with check */}
-      {completedYesterday > 0 && (
-        completedYesterday <= 3 ? (
-          // Show individual icons for 1-3 completions
-          Array.from({ length: completedYesterday }).map((_, i) => (
-            <CheckCircleOutlineIcon key={`y-${i}`} className={`w-3 h-3 flex-shrink-0 ${iconColor}`} />
+      {/* Yesterday - outline icons */}
+      {yesterdayCount > 0 && (
+        yesterdayCount <= 3 ? (
+          Array.from({ length: yesterdayCount }).map((_, i) => (
+            <span key={`y-${i}`} className={`${iconColor} flex-shrink-0`}>{yesterdayIcon}</span>
           ))
         ) : (
-          // Show number + single icon for 4+ completions
           <span className={`inline-flex items-center text-[9px] font-semibold flex-shrink-0 ${iconColor}`}>
-            {completedYesterday}<CheckCircleOutlineIcon className="w-3 h-3" />
+            {yesterdayCount}{yesterdayIcon}
           </span>
         )
       )}
-    </span>
+    </div>
   );
 }
 
@@ -542,40 +534,37 @@ export function UnitProgressBar({ unitSections, completedStudents, showStudentNa
                                     key={studentIndex}
                                     className={`text-[9px] ${styles.text} leading-tight px-2 py-1 overflow-hidden ${studentIndex > 0 ? `border-t ${styles.border}` : ''}`}
                                   >
-                                    {/* Row 1: Student name + Completion icons */}
-                                    <div className="flex items-center justify-between gap-1 overflow-hidden">
-                                      <span className="truncate min-w-0">{student.name}</span>
-                                      <CompletionIcons student={student} iconColor={styles.lessonIcon} />
+                                    {/* Row 1: Student name + Mastery data */}
+                                    <div className={`flex items-center justify-between pb-0.5 border-b ${styles.border}`}>
+                                      <span className="truncate font-medium">{student.name}</span>
+                                      <ActivityRow
+                                        todayIcon={<CheckCircleIcon className="w-3 h-3" />}
+                                        yesterdayIcon={<CheckCircleOutlineIcon className="w-3 h-3" />}
+                                        todayCount={student.completedToday}
+                                        yesterdayCount={student.completedYesterday}
+                                        iconColor={styles.lessonIcon}
+                                      />
                                     </div>
-                                    {/* Row 2: Small group (left) + Inquiry (right) */}
-                                    {(student.smallGroupToday || student.smallGroupYesterday || student.inquiryToday || student.inquiryYesterday) && (
-                                      <div className="flex items-center justify-between mt-0.5">
-                                        <span className="inline-flex items-center gap-0.5">
-                                          {student.smallGroupToday && (
-                                            <CircledIconFilled iconColor={styles.lessonIcon}>
-                                              <UserGroupIcon className="w-2 h-2" />
-                                            </CircledIconFilled>
-                                          )}
-                                          {student.smallGroupYesterday && (
-                                            <CircledIconOutline iconColor={styles.lessonIcon}>
-                                              <UserGroupIcon className="w-2 h-2" />
-                                            </CircledIconOutline>
-                                          )}
-                                        </span>
-                                        <span className="inline-flex items-center gap-0.5">
-                                          {student.inquiryToday && (
-                                            <CircledIconFilled iconColor={styles.lessonIcon}>
-                                              <PresentationChartLineIcon className="w-2 h-2" />
-                                            </CircledIconFilled>
-                                          )}
-                                          {student.inquiryYesterday && (
-                                            <CircledIconOutline iconColor={styles.lessonIcon}>
-                                              <PresentationChartLineIcon className="w-2 h-2" />
-                                            </CircledIconOutline>
-                                          )}
-                                        </span>
-                                      </div>
-                                    )}
+                                    {/* Row 2: Small Group */}
+                                    <div className={`py-0.5 border-b ${styles.border}`}>
+                                      <ActivityRow
+                                        todayIcon={<UserGroupIcon className="w-3 h-3" />}
+                                        yesterdayIcon={<UserGroupOutlineIcon className="w-3 h-3" />}
+                                        todayCount={student.smallGroupToday ? 1 : 0}
+                                        yesterdayCount={student.smallGroupYesterday ? 1 : 0}
+                                        iconColor={styles.lessonIcon}
+                                      />
+                                    </div>
+                                    {/* Row 3: Inquiry */}
+                                    <div className="pt-0.5">
+                                      <ActivityRow
+                                        todayIcon={<PresentationChartLineIcon className="w-3 h-3" />}
+                                        yesterdayIcon={<PresentationChartLineOutlineIcon className="w-3 h-3" />}
+                                        todayCount={student.inquiryToday ? 1 : 0}
+                                        yesterdayCount={student.inquiryYesterday ? 1 : 0}
+                                        iconColor={styles.lessonIcon}
+                                      />
+                                    </div>
                                   </div>
                                 ))
                               ) : (

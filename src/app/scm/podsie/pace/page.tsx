@@ -181,7 +181,7 @@ export default function PacePage() {
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
-                  Previous Section
+                  Behind
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
@@ -189,7 +189,7 @@ export default function PacePage() {
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
-                  Next Section
+                  Ahead
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
