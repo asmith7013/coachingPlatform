@@ -90,9 +90,9 @@ interface UnitProgressBarProps {
 const ZONE_ORDER = ["far-behind", "behind", "on-track", "ahead", "far-ahead"] as const;
 const ZONE_LABELS: Record<string, string> = {
   "far-behind": "Far Behind",
-  "behind": "Previous Section",
+  "behind": "Behind",
   "on-track": "On Pace",
-  "ahead": "Next Section",
+  "ahead": "Ahead",
   "far-ahead": "Far Ahead",
 };
 
