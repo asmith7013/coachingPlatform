@@ -999,6 +999,15 @@ export default function CalendarPage() {
               const scopeTag = selectedGrade === 'Algebra 1' ? 'Algebra 1' : `Grade ${selectedGrade}`;
               const matchingSections = allSectionConfigs.filter(s => s.scopeSequenceTag === scopeTag);
 
+              // Show loading state while section configs are loading
+              if (allSectionConfigs.length === 0) {
+                return (
+                  <div className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-400">
+                    Loading sections...
+                  </div>
+                );
+              }
+
               if (matchingSections.length === 0) return null;
 
               return (
@@ -1084,8 +1093,19 @@ export default function CalendarPage() {
       <div className="flex h-[calc(100vh-80px)]">
         {/* Left column - Unit cards */}
         <div className="w-1/2 p-4 overflow-y-auto border-r border-gray-200 relative">
-          {/* Show prompt to select a section if none selected */}
-          {!selectedSection ? (
+          {/* Loading overlay for grade/section data changes - covers entire column */}
+          {(isContentLoading || (pendingSectionKey && allSectionConfigs.length === 0)) && (
+            <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
+              <div className="flex items-center gap-2 text-blue-600">
+                <Spinner size="sm" variant="primary" />
+                <span className="text-sm font-medium">
+                  {loadingGradeData ? 'Loading grade data...' : pendingSectionKey ? 'Restoring selection...' : 'Loading schedules...'}
+                </span>
+              </div>
+            </div>
+          )}
+          {/* Show prompt to select a section if none selected and not waiting for restore */}
+          {!selectedSection && !pendingSectionKey ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-500">
               <svg className="w-16 h-16 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -1095,19 +1115,8 @@ export default function CalendarPage() {
                 Choose a grade and class section from the dropdown above to view and edit the unit schedule.
               </p>
             </div>
-          ) : (
+          ) : selectedSection ? (
             <>
-              {/* Loading overlay for grade/section data changes */}
-              {isContentLoading && (
-                <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
-                  <div className="flex items-center gap-2 text-blue-600">
-                    <Spinner size="sm" variant="primary" />
-                    <span className="text-sm font-medium">
-                      {loadingGradeData ? 'Loading grade data...' : 'Loading schedules...'}
-                    </span>
-                  </div>
-                </div>
-              )}
               <div className="space-y-3">
                 {unitSchedules.map((unit, unitIndex) => {
               const unitColor = UNIT_COLORS[unitIndex % UNIT_COLORS.length];
@@ -1188,8 +1197,9 @@ export default function CalendarPage() {
                               onClick={() => startDateSelection(unit.unitKey, section.sectionId, "start")}
                               className="text-xs px-2 py-1 rounded cursor-pointer"
                               style={{
-                                backgroundColor: isSelectingStart ? unitColor.base : unitColor.light,
-                                color: isSelectingStart ? "white" : unitColor.base
+                                backgroundColor: isSelectingStart || section.startDate ? unitColor.base : "white",
+                                color: isSelectingStart || section.startDate ? "white" : unitColor.base,
+                                border: !isSelectingStart && !section.startDate ? `1px solid ${unitColor.base}` : "1px solid transparent"
                               }}
                             >
                               {section.startDate
@@ -1204,8 +1214,9 @@ export default function CalendarPage() {
                               onClick={() => startDateSelection(unit.unitKey, section.sectionId, "end")}
                               className="text-xs px-2 py-1 rounded cursor-pointer"
                               style={{
-                                backgroundColor: isSelectingEnd ? unitColor.base : unitColor.light,
-                                color: isSelectingEnd ? "white" : unitColor.base
+                                backgroundColor: isSelectingEnd || section.endDate ? unitColor.base : "white",
+                                color: isSelectingEnd || section.endDate ? "white" : unitColor.base,
+                                border: !isSelectingEnd && !section.endDate ? `1px solid ${unitColor.base}` : "1px solid transparent"
                               }}
                             >
                               {section.endDate
@@ -1237,6 +1248,9 @@ export default function CalendarPage() {
             })}
               </div>
             </>
+          ) : (
+            /* Waiting for section restore - show empty placeholder, loading overlay covers it */
+            <div className="h-full" />
           )}
         </div>
 
