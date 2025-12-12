@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { UserIcon } from "@heroicons/react/24/solid";
 import { usePacingData } from "@/app/scm/podsie/progress/hooks/usePacingData";
 import { useLessons } from "@/app/scm/podsie/progress/hooks/useLessons";
 import { useUnitsAndConfig } from "@/app/scm/podsie/progress/hooks/useUnitsAndConfig";
 import { useProgressData } from "@/app/scm/podsie/progress/hooks/useProgressData";
 import { getScopeTagForSection } from "@/app/scm/podsie/progress/utils/sectionHelpers";
+import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import type { CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
 
 export interface PaceZoneCounts {
@@ -24,8 +25,6 @@ interface SectionSummaryCardProps {
   currentUnitInfo: CurrentUnitInfo | null;
   /** Optional callback to report student counts when data loads */
   onCountsLoaded?: (sectionId: string, counts: PaceZoneCounts) => void;
-  /** Whether to exclude Ramp Ups from the view */
-  excludeRampUps?: boolean;
   /** Special population classifications (e.g., ICT, 12-1-1, MLL) */
   specialPopulations?: string[];
 }
@@ -42,9 +41,9 @@ export function SectionSummaryCard({
   school,
   currentUnitInfo,
   onCountsLoaded,
-  excludeRampUps = false,
   specialPopulations,
 }: SectionSummaryCardProps) {
+  const [excludeRampUps, setExcludeRampUps] = useState(false);
   const currentUnit = currentUnitInfo?.currentUnit ?? null;
 
   // Derive scope tag from section
@@ -204,19 +203,20 @@ export function SectionSummaryCard({
           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
             Unit {currentUnit}
           </span>
+          {specialPopulations?.map((pop) => {
+            const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+            return (
+              <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
+                {pop}
+              </span>
+            );
+          })}
         </div>
-        {specialPopulations && specialPopulations.length > 0 && (
-          <div className="flex items-center gap-1">
-            {specialPopulations.map((pop) => {
-              const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
-              return (
-                <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
-                  {pop}
-                </span>
-              );
-            })}
-          </div>
-        )}
+        <ToggleSwitch
+          checked={excludeRampUps}
+          onChange={setExcludeRampUps}
+          label="Exclude Ramp Ups"
+        />
       </div>
 
       {/* Progress Bar */}

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { MultiSectionSelector } from "@/app/scm/podsie/bulk-sync/components";
 import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
@@ -26,8 +25,6 @@ export default function PacePage() {
   const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showStudentNames, setShowStudentNames] = useState(false);
-  const [excludeRampUps, setExcludeRampUps] = useState(false);
 
   // Load sections and current units on mount
   useEffect(() => {
@@ -119,26 +116,12 @@ export default function PacePage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="mx-auto" style={{ maxWidth: "1600px" }}>
-        {/* Page Title with Toggle */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Pace & Progress</h1>
-            <p className="text-gray-600 text-sm mt-1">
-              View pacing progress across multiple sections
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <ToggleSwitch
-              checked={showStudentNames}
-              onChange={setShowStudentNames}
-              label="Show Student Names"
-            />
-            <ToggleSwitch
-              checked={excludeRampUps}
-              onChange={setExcludeRampUps}
-              label="Exclude Ramp Ups"
-            />
-          </div>
+        {/* Page Title */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Pace & Progress</h1>
+          <p className="text-gray-600 text-sm mt-1">
+            View pacing progress across multiple sections
+          </p>
         </div>
 
         {/* Section Selector */}
@@ -208,7 +191,6 @@ export default function PacePage() {
                   section={sectionOpt.classSection}
                   school={sectionOpt.school}
                   currentUnitInfo={getCurrentUnitForSection(sectionOpt)}
-                  excludeRampUps={excludeRampUps}
                   specialPopulations={sectionOpt.specialPopulations}
                 />
               ))}
@@ -226,8 +208,6 @@ export default function PacePage() {
                 section={sectionOpt.classSection}
                 school={sectionOpt.school}
                 currentUnitInfo={getCurrentUnitForSection(sectionOpt)}
-                showStudentNames={showStudentNames}
-                excludeRampUps={excludeRampUps}
                 specialPopulations={sectionOpt.specialPopulations}
               />
             ))}

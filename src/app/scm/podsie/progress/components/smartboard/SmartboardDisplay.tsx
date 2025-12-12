@@ -112,7 +112,10 @@ export function SmartboardDisplay({
   // Edit mode state
   const [isEditMode, setIsEditMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [textSizeLevel, setTextSizeLevel] = useState(1); // -1 = smaller, 0 = normal, 1 = larger, 2 = extra large
+  const [textSizeLevel, setTextSizeLevel] = useState(0); // -1 = smaller, 0 = normal, 1 = larger, 2 = extra large
+
+  // Effective text size: +1 when fullscreen for better readability on big screens
+  const effectiveTextSizeLevel = isFullscreen ? Math.min(textSizeLevel + 1, 2) : textSizeLevel;
   const [showDailyProgress, setShowDailyProgress] = useState(true);
   const [showSidekick, setShowSidekick] = useState(false);
   const [dueDate, setDueDate] = useState<string>(() => {
@@ -552,7 +555,7 @@ export function SmartboardDisplay({
         assignmentCount={assignmentProgress.length}
         isEditMode={isEditMode}
         isFullscreen={isFullscreen}
-        textSizeLevel={textSizeLevel}
+        textSizeLevel={effectiveTextSizeLevel}
         onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
         onTextSizeIncrease={() => setTextSizeLevel(prev => Math.min(prev + 1, 2))}
         onTextSizeDecrease={() => setTextSizeLevel(prev => Math.max(prev - 1, -1))}
@@ -570,10 +573,10 @@ export function SmartboardDisplay({
           {/* Class Goal - Main Progress */}
           <div className="bg-indigo-900/50 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className={`bg-teal-500 text-white px-3 py-1 rounded-lg font-bold ${textSizeLevel === 2 ? "text-lg" : textSizeLevel === 1 ? "text-base" : textSizeLevel === -1 ? "text-xs" : "text-sm"}`}>
+              <div className={`bg-teal-500 text-white px-3 py-1 rounded-lg font-bold ${effectiveTextSizeLevel === 2 ? "text-lg" : effectiveTextSizeLevel === 1 ? "text-base" : effectiveTextSizeLevel === -1 ? "text-xs" : "text-sm"}`}>
                 Class Goal
               </div>
-              <span className={`text-indigo-300 ${textSizeLevel === 2 ? "text-lg" : textSizeLevel === 1 ? "text-base" : textSizeLevel === -1 ? "text-xs" : "text-sm"}`}>Complete Unit {selectedUnit}: {formattedLessonSection}</span>
+              <span className={`text-indigo-300 ${effectiveTextSizeLevel === 2 ? "text-lg" : effectiveTextSizeLevel === 1 ? "text-base" : effectiveTextSizeLevel === -1 ? "text-xs" : "text-sm"}`}>Complete Unit {selectedUnit}: {formattedLessonSection}</span>
             </div>
             <SmartboardProgressBar
               label=""
@@ -581,7 +584,7 @@ export function SmartboardDisplay({
               todayPercentage={showDailyProgress ? overallTodayPercentage : undefined}
               color="teal"
               showLabel={false}
-              textSizeLevel={textSizeLevel}
+              textSizeLevel={effectiveTextSizeLevel}
             />
           </div>
 
@@ -621,7 +624,7 @@ export function SmartboardDisplay({
                     segments={segments}
                     size="split"
                     showLabel={true}
-                    textSizeLevel={textSizeLevel}
+                    textSizeLevel={effectiveTextSizeLevel}
                   />
                 </div>
               );
@@ -636,13 +639,13 @@ export function SmartboardDisplay({
             learningContent={learningContent}
             onLearningContentChange={setLearningContent}
             parsedLearningContent={parsedLearningContent}
-            textSizeLevel={textSizeLevel}
+            textSizeLevel={effectiveTextSizeLevel}
           />
 
           {/* YouTube Editor (Edit Mode Only) */}
           {isEditMode && (
             <div className="bg-indigo-900/50 rounded-xl p-4">
-              <h3 className={`font-semibold text-white mb-3 ${textSizeLevel === 2 ? "text-3xl" : textSizeLevel === 1 ? "text-2xl" : textSizeLevel === -1 ? "text-sm" : isFullscreen ? "text-xl" : "text-base"}`}>
+              <h3 className={`font-semibold text-white mb-3 ${effectiveTextSizeLevel === 2 ? "text-3xl" : effectiveTextSizeLevel === 1 ? "text-2xl" : effectiveTextSizeLevel === -1 ? "text-sm" : isFullscreen ? "text-xl" : "text-base"}`}>
                 Video
               </h3>
               <YoutubeEditor
@@ -703,7 +706,7 @@ export function SmartboardDisplay({
               flex items-center gap-2 px-4 py-2 rounded-lg shadow-lg
               ${toast.type === 'syncing' ? 'bg-indigo-600' : 'bg-green-600'}
               text-white font-medium
-              ${textSizeLevel === 2 ? 'text-2xl' : textSizeLevel === 1 ? 'text-xl' : textSizeLevel === -1 ? 'text-xs' : isFullscreen ? 'text-lg' : 'text-sm'}
+              ${effectiveTextSizeLevel === 2 ? 'text-2xl' : effectiveTextSizeLevel === 1 ? 'text-xl' : effectiveTextSizeLevel === -1 ? 'text-xs' : isFullscreen ? 'text-lg' : 'text-sm'}
             `}
           >
             {toast.type === 'syncing' && (
