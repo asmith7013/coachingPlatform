@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { PencilIcon, TvIcon, ArrowPathIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { SmartboardProgressBar } from "./SmartboardProgressBar";
-import { groupAssignmentsByUnitLesson } from "../utils/groupAssignments";
+import { SmartboardHeader } from "./components/SmartboardHeader";
+import { LearningContentPanel } from "./components/LearningContentPanel";
+import { SmartboardControls } from "./components/SmartboardControls";
+import { groupAssignmentsByUnitLesson } from "../../utils/groupAssignments";
 import { formatLessonDisplay } from "@/lib/utils/lesson-display";
 import type { LessonType } from "@/lib/utils/lesson-display";
 import { calculateTodayProgress, calculateTodayCompletionRate } from "@/lib/utils/completion-date-helpers";
-import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { getLearningContent, saveLearningContent } from "@/app/actions/313/learning-content";
 import { SCOPE_SEQUENCE_TAG_OPTIONS, type ScopeSequenceTagType } from "@schema/enum/313";
 
@@ -85,6 +86,7 @@ export function SmartboardDisplay({
   const [isEditMode, setIsEditMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showDailyProgress, setShowDailyProgress] = useState(true);
+  const [showSidekick, setShowSidekick] = useState(false);
   const [dueDate, setDueDate] = useState<string>(() => {
     // Default to next Friday
     const today = new Date();
@@ -117,7 +119,6 @@ export function SmartboardDisplay({
           setLearningContent(result.data.content);
           setLoadedContent(result.data.content);
         } else {
-          // No saved content, reset to empty
           setLearningContent("");
           setLoadedContent("");
         }
@@ -174,11 +175,6 @@ export function SmartboardDisplay({
     setIsEditMode(!isEditMode);
   }, [isEditMode, hasUnsavedChanges, handleSave]);
 
-  // Fullscreen toggle handler
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
-  };
-
   // Format due date for display
   const formattedDueDate = useMemo(() => {
     const date = new Date(dueDate + "T00:00:00");
@@ -189,19 +185,11 @@ export function SmartboardDisplay({
     });
   }, [dueDate]);
 
-
   // Group lessons with their mastery checks and map progress data
   const assignmentProgress = useMemo(() => {
-    console.log('=== GROUPING ASSIGNMENTS (SmartboardDisplay) ===');
-    console.log('Total assignments:', assignments.length);
-
-    // Use shared grouping utility
     const groupedAssignments = groupAssignmentsByUnitLesson(assignments);
 
-    console.log('Grouped assignments:', groupedAssignments.length);
-
-    // Map grouped assignments to progress data
-    const progressMapped = groupedAssignments.map(({ lesson, masteryCheck }) => {
+    return groupedAssignments.map(({ lesson, masteryCheck }) => {
       // Get lesson progress
       const lessonProgressData = progressData.filter(
         p => p.podsieAssignmentId
@@ -223,8 +211,6 @@ export function SmartboardDisplay({
       if (lesson.hasZearnActivity && lessonProgressData.length > 0) {
         const zearnCompleted = lessonProgressData.filter(p => p.zearnCompleted).length;
         zearnProgress = Math.round((zearnCompleted / lessonProgressData.length) * 100);
-
-        // Count Zearn completions from today
         zearnTodayProgress = calculateTodayCompletionRate(
           lessonProgressData,
           (student) => student.zearnCompleted ?? false,
@@ -243,8 +229,6 @@ export function SmartboardDisplay({
         );
         const masteryStats = calculateSummaryStats(masteryProgressData);
         masteryCheckProgress = masteryStats.avgCompletion;
-
-        // Calculate today's mastery check progress
         masteryCheckTodayProgress = calculateTodayProgress(
           masteryProgressData,
           (student) => student.questions,
@@ -263,9 +247,6 @@ export function SmartboardDisplay({
         masteryCheckTodayProgress,
       };
     });
-
-
-    return progressMapped;
   }, [assignments, progressData, calculateSummaryStats]);
 
   // Parse markdown-like content for display
@@ -274,93 +255,139 @@ export function SmartboardDisplay({
     return learningContent
       .split("\n")
       .filter((line) => line.trim())
-      .map((line) => {
-        // Remove leading "- " or "• " if present
-        return line.replace(/^[-•]\s*/, "").trim();
-      });
+      .map((line) => line.replace(/^[-•]\s*/, "").trim());
   }, [learningContent]);
 
-  // Calculate overall class goal percentage (average of all assignments)
+  // Calculate overall class goal percentage
   const overallPercentage = useMemo(() => {
     if (assignmentProgress.length === 0) return 0;
 
     const totalCompletion = assignmentProgress.reduce(
-      (sum, item) => sum + item.lessonProgress,
+      (sum, item) => {
+        const hasSidekickAndMasteryCheck = item.lesson.activityType === 'sidekick' && item.masteryCheck && item.masteryCheckProgress !== null;
+
+        if (!showSidekick && hasSidekickAndMasteryCheck) {
+          const zearn = item.zearnProgress ?? 0;
+          const mastery = item.masteryCheckProgress ?? 0;
+          return sum + (zearn * 0.35 + mastery * 0.65);
+        }
+        return sum + item.lessonProgress;
+      },
       0
     );
 
     return Math.round(totalCompletion / assignmentProgress.length);
-  }, [assignmentProgress]);
+  }, [assignmentProgress, showSidekick]);
 
   // Calculate overall today's progress
   const overallTodayPercentage = useMemo(() => {
     if (assignmentProgress.length === 0) return 0;
 
     const totalTodayCompletion = assignmentProgress.reduce(
-      (sum, item) => sum + item.lessonTodayProgress,
+      (sum, item) => {
+        const hasSidekickAndMasteryCheck = item.lesson.activityType === 'sidekick' && item.masteryCheck && item.masteryCheckProgress !== null;
+
+        if (!showSidekick && hasSidekickAndMasteryCheck) {
+          const zearnToday = item.zearnTodayProgress ?? 0;
+          const masteryToday = item.masteryCheckTodayProgress ?? 0;
+          return sum + (zearnToday * 0.35 + masteryToday * 0.65);
+        }
+        return sum + item.lessonTodayProgress;
+      },
       0
     );
 
     return Math.round(totalTodayCompletion / assignmentProgress.length);
-  }, [assignmentProgress]);
+  }, [assignmentProgress, showSidekick]);
 
-  // Format lesson section for display (add "Section" prefix for single letters)
+  // Format lesson section for display
   const formattedLessonSection = useMemo(() => {
     if (!selectedLessonSection) return '';
-    // If it's a single letter (A, B, C, D, E, etc), add "Section" prefix
     if (selectedLessonSection.length === 1 && /^[A-Z]$/i.test(selectedLessonSection)) {
       return `Section ${selectedLessonSection}`;
     }
     return selectedLessonSection;
   }, [selectedLessonSection]);
 
+  // Build progress bar segments for an assignment
+  const buildSegments = (
+    lesson: LessonConfig,
+    lessonProgress: number,
+    lessonTodayProgress: number,
+    zearnProgress: number | null,
+    zearnTodayProgress: number,
+    masteryCheck: LessonConfig | null,
+    masteryCheckProgress: number | null,
+    masteryCheckTodayProgress: number
+  ) => {
+    const segments = [];
+    const hasSidekickAndMasteryCheck = lesson.activityType === 'sidekick' && masteryCheck && masteryCheckProgress !== null;
+    const shouldShowZearn = zearnProgress !== null && (!showSidekick || !hasSidekickAndMasteryCheck);
+    const shouldShowSidekickBar = showSidekick || !hasSidekickAndMasteryCheck;
+
+    if (shouldShowZearn) {
+      segments.push({
+        percentage: zearnProgress,
+        todayPercentage: showDailyProgress ? zearnTodayProgress : undefined,
+        color: 'purple' as const,
+        widthPercent: 35
+      });
+    }
+
+    if (masteryCheck && masteryCheckProgress !== null) {
+      if (shouldShowSidekickBar) {
+        const lessonWidth = shouldShowZearn ? 39 : 60;
+        const masteryWidth = shouldShowZearn ? 26 : 40;
+        segments.push({
+          percentage: lessonProgress,
+          todayPercentage: showDailyProgress ? lessonTodayProgress : undefined,
+          color: 'blue' as const,
+          widthPercent: lessonWidth
+        });
+        segments.push({
+          percentage: masteryCheckProgress,
+          todayPercentage: showDailyProgress ? masteryCheckTodayProgress : undefined,
+          color: 'green' as const,
+          widthPercent: masteryWidth
+        });
+      } else {
+        const masteryWidth = shouldShowZearn ? 65 : 100;
+        segments.push({
+          percentage: masteryCheckProgress,
+          todayPercentage: showDailyProgress ? masteryCheckTodayProgress : undefined,
+          color: 'green' as const,
+          widthPercent: masteryWidth
+        });
+      }
+    } else {
+      const barColor = lesson.activityType === 'mastery-check' ? 'green' : 'blue';
+      const widthPercent = shouldShowZearn ? 65 : 100;
+      segments.push({
+        percentage: lessonProgress,
+        todayPercentage: showDailyProgress ? lessonTodayProgress : undefined,
+        color: barColor as 'blue' | 'green',
+        widthPercent
+      });
+    }
+
+    return segments;
+  };
+
   const smartboardContent = (
     <>
-      {/* Smartboard Header */}
-      <div className={`bg-indigo-900 rounded-t-xl flex items-center justify-between ${isFullscreen ? "p-8 text-xl" : "p-4"}`}>
-        <div className="flex items-center gap-4">
-          <div className={`bg-teal-500 text-white rounded-lg font-bold ${isFullscreen ? "px-6 py-3 text-2xl" : "px-4 py-2 text-lg"}`}>
-            Mini Goal
-          </div>
-          <div className={`bg-indigo-700 text-white rounded-lg font-semibold ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
-            Unit {selectedUnit}: {formattedLessonSection}
-          </div>
-          {isEditMode ? (
-            <input
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              className={`bg-indigo-600 text-white rounded-lg border border-indigo-400 focus:outline-none focus:ring-2 focus:ring-white ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}
-            />
-          ) : (
-            <div className={`bg-indigo-600 text-white rounded-lg ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
-              By {formattedDueDate}
-            </div>
-          )}
-        </div>
-        <div className="flex items-center gap-4">
-          <div className={`bg-white text-indigo-900 rounded-lg font-bold ${isFullscreen ? "px-6 py-3 text-xl" : "px-4 py-2"}`}>
-            {assignmentProgress.length} Assignment{assignmentProgress.length !== 1 ? "s" : ""}
-          </div>
-          {onSyncAll && (
-            <button
-              onClick={onSyncAll}
-              disabled={syncingAll}
-              className={`bg-indigo-700 hover:bg-indigo-600 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${isFullscreen ? "p-3" : "p-2"}`}
-              title="Sync All Assignments"
-            >
-              <ArrowPathIcon className={`${isFullscreen ? "w-8 h-8" : "w-6 h-6"} text-white ${syncingAll ? 'animate-spin' : ''}`} />
-            </button>
-          )}
-          <button
-            onClick={toggleFullscreen}
-            className={`bg-indigo-700 hover:bg-indigo-600 rounded-lg transition-colors cursor-pointer ${isFullscreen ? "p-3" : "p-2"}`}
-            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-          >
-            <TvIcon className={isFullscreen ? "w-8 h-8 text-white" : "w-6 h-6 text-white"} />
-          </button>
-        </div>
-      </div>
+      <SmartboardHeader
+        selectedUnit={selectedUnit}
+        formattedLessonSection={formattedLessonSection}
+        formattedDueDate={formattedDueDate}
+        dueDate={dueDate}
+        onDueDateChange={setDueDate}
+        assignmentCount={assignmentProgress.length}
+        isEditMode={isEditMode}
+        isFullscreen={isFullscreen}
+        onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
+        onSyncAll={onSyncAll}
+        syncingAll={syncingAll}
+      />
 
       {/* Smartboard Content - Combined Goal and Progress */}
       <div className={`bg-indigo-800 rounded-b-xl flex gap-8 ${isFullscreen ? "p-12 flex-1" : "p-6"}`}>
@@ -386,12 +413,10 @@ export function SmartboardDisplay({
           {/* Individual Assignment Progress */}
           <div className="space-y-3 pl-4 pr-32 border-l-2 border-indigo-600">
             {assignmentProgress.map(({ lesson, lessonProgress, lessonTodayProgress, zearnProgress, zearnTodayProgress, masteryCheck, masteryCheckProgress, masteryCheckTodayProgress }) => {
-              // Extract lesson number
               const lessonNumber = lesson.unitLessonId.includes('.')
                 ? lesson.unitLessonId.split('.')[1]
                 : lesson.unitLessonId;
 
-              // Build label using helper function (handles ramp-ups, assessments, and regular lessons)
               const label = formatLessonDisplay(
                 lesson.lessonName,
                 lessonNumber,
@@ -403,52 +428,16 @@ export function SmartboardDisplay({
                 lesson.lessonTitle
               );
 
-              // Build segments for split bar
-              const segments = [];
-
-              // Determine if we should show Zearn
-              // Hide Zearn when there's both a sidekick and mastery check
-              const hasSidekickAndMasteryCheck = lesson.activityType === 'sidekick' && masteryCheck && masteryCheckProgress !== null;
-              const shouldShowZearn = zearnProgress !== null && !hasSidekickAndMasteryCheck;
-
-              // Add Zearn if present (35%)
-              if (shouldShowZearn) {
-                segments.push({
-                  percentage: zearnProgress,
-                  todayPercentage: showDailyProgress ? zearnTodayProgress : undefined,
-                  color: 'purple' as const,
-                  widthPercent: 35
-                });
-              }
-
-              // Determine lesson/mastery split
-              if (masteryCheck && masteryCheckProgress !== null) {
-                // Has both lesson and mastery check: 60% lesson, 40% mastery check
-                const lessonWidth = shouldShowZearn ? 39 : 60; // 60% of remaining 65%, or 60% of 100%
-                const masteryWidth = shouldShowZearn ? 26 : 40; // 40% of remaining 65%, or 40% of 100%
-                segments.push({
-                  percentage: lessonProgress,
-                  todayPercentage: showDailyProgress ? lessonTodayProgress : undefined,
-                  color: 'blue' as const,
-                  widthPercent: lessonWidth
-                });
-                segments.push({
-                  percentage: masteryCheckProgress,
-                  todayPercentage: showDailyProgress ? masteryCheckTodayProgress : undefined,
-                  color: 'green' as const,
-                  widthPercent: masteryWidth
-                });
-              } else {
-                // Only lesson or standalone mastery check
-                const barColor = lesson.activityType === 'mastery-check' ? 'green' : 'blue';
-                const widthPercent = shouldShowZearn ? 65 : 100;
-                segments.push({
-                  percentage: lessonProgress,
-                  todayPercentage: showDailyProgress ? lessonTodayProgress : undefined,
-                  color: barColor as 'blue' | 'green',
-                  widthPercent
-                });
-              }
+              const segments = buildSegments(
+                lesson,
+                lessonProgress,
+                lessonTodayProgress,
+                zearnProgress,
+                zearnTodayProgress,
+                masteryCheck,
+                masteryCheckProgress,
+                masteryCheckTodayProgress
+              );
 
               return (
                 <div key={lesson.podsieAssignmentId} className="pl-4">
@@ -465,48 +454,12 @@ export function SmartboardDisplay({
         </div>
 
         {/* Right: Info Panel */}
-        <div className="w-80 bg-indigo-100 rounded-xl p-5 border-4 border-indigo-300">
-          <h3 className="text-indigo-900 font-bold text-lg mb-4 text-center">
-            What We&apos;re Learning
-          </h3>
-          {isEditMode ? (
-            <div>
-              <textarea
-                value={learningContent}
-                onChange={(e) => setLearningContent(e.target.value)}
-                placeholder="Enter learning objectives (one per line)&#10;- Learn equivalent expressions&#10;- Practice combining like terms"
-                className="w-full h-40 p-3 border border-indigo-300 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
-              />
-              <p className="text-xs text-indigo-600 mt-2">
-                Enter one item per line. Use &quot;-&quot; or just text.
-              </p>
-            </div>
-          ) : parsedLearningContent.length > 0 ? (
-            <ul className="space-y-3 text-indigo-900">
-              {parsedLearningContent.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <span className="text-indigo-600 font-bold mt-0.5">•</span>
-                  <div>{item}</div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <ul className="space-y-3 text-indigo-900">
-              <li className="flex items-start gap-2">
-                <span className="text-indigo-600 font-bold mt-0.5">•</span>
-                <div>Get ready for our unit about equations</div>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-indigo-600 font-bold mt-0.5">•</span>
-                <div>Steps to solve equations</div>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-indigo-600 font-bold mt-0.5">•</span>
-                <div>Strategies for making equations simpler (simplifying)</div>
-              </li>
-            </ul>
-          )}
-        </div>
+        <LearningContentPanel
+          isEditMode={isEditMode}
+          learningContent={learningContent}
+          onLearningContentChange={setLearningContent}
+          parsedLearningContent={parsedLearningContent}
+        />
       </div>
     </>
   );
@@ -515,35 +468,17 @@ export function SmartboardDisplay({
     <div className="mt-8">
       {/* Controls */}
       {!isFullscreen && (
-        <div className="flex justify-end gap-2 mb-2">
-          <ToggleSwitch
-            checked={showDailyProgress}
-            onChange={setShowDailyProgress}
-            label="Show Today's Progress"
-          />
-          {isEditMode && hasUnsavedChanges && (
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
-            >
-              <CheckIcon className="w-4 h-4" />
-              {isSaving ? "Saving..." : "Save"}
-            </button>
-          )}
-          <button
-            onClick={handleToggleEditMode}
-            disabled={isSaving}
-            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer disabled:opacity-50 ${
-              isEditMode
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            <PencilIcon className="w-4 h-4" />
-            {isEditMode ? (hasUnsavedChanges ? "Save & Close" : "Done Editing") : "Edit Display"}
-          </button>
-        </div>
+        <SmartboardControls
+          showDailyProgress={showDailyProgress}
+          onShowDailyProgressChange={setShowDailyProgress}
+          showSidekick={showSidekick}
+          onShowSidekickChange={setShowSidekick}
+          isEditMode={isEditMode}
+          hasUnsavedChanges={hasUnsavedChanges}
+          isSaving={isSaving}
+          onSave={handleSave}
+          onToggleEditMode={handleToggleEditMode}
+        />
       )}
 
       {/* Normal Display */}

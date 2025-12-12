@@ -8,7 +8,7 @@ import { getSectionConfig } from "@/app/actions/313/section-config";
 import { fetchStudentsBySection } from "@/app/actions/313/students";
 import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
 import { AssignmentCard } from "./components/AssignmentCard";
-import { SmartboardDisplay } from "./components/SmartboardDisplay";
+import { SmartboardDisplay } from "./components/smartboard";
 import { PacingProgressCard } from "./components/pacing";
 import { CreateAssignmentModal } from "./components/CreateAssignmentModal";
 import { PageHeader } from "./components/PageHeader";
