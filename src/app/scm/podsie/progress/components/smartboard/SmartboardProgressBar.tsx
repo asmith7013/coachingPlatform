@@ -14,6 +14,7 @@ interface SmartboardProgressBarProps {
   segments?: ProgressBarSegment[]; // For multi-bar mode
   size?: "normal" | "small" | "mini" | "split";
   showLabel?: boolean;
+  textSizeLevel?: number; // -1 = smaller, 0 = normal, 1 = larger
 }
 
 export function SmartboardProgressBar({
@@ -25,7 +26,15 @@ export function SmartboardProgressBar({
   segments,
   size = "normal",
   showLabel = true,
+  textSizeLevel = 0,
 }: SmartboardProgressBarProps) {
+  // Text size helper based on textSizeLevel (-1, 0, 1, 2)
+  const getTextSize = (smaller: string, normal: string, larger: string, extraLarge: string) => {
+    if (textSizeLevel === 2) return extraLarge;
+    if (textSizeLevel === 1) return larger;
+    if (textSizeLevel === -1) return smaller;
+    return normal;
+  };
   const getColorClasses = (barColor: string) => {
     const bgColor = barColor === "purple" ? "bg-purple-600" :
                     barColor === "blue" ? "bg-blue-600" :
@@ -53,7 +62,7 @@ export function SmartboardProgressBar({
       <div className="space-y-2">
         {/* Title */}
         {showLabel && (
-          <div className="text-white font-semibold text-sm leading-tight">
+          <div className={`text-white font-semibold leading-tight ${getTextSize("text-xs", "text-sm", "text-base", "text-lg")}`}>
             {label}
           </div>
         )}
@@ -66,7 +75,7 @@ export function SmartboardProgressBar({
 
             return (
               <div key={index} style={{ width: `${segment.widthPercent}%` }} className="flex items-center gap-2">
-                <div className={`${segmentTrackColor} rounded-full relative overflow-hidden h-8 flex-1`}>
+                <div className={`${segmentTrackColor} rounded-full relative overflow-hidden ${getTextSize("h-6", "h-8", "h-10", "h-12")} flex-1`}>
                   {/* Base progress (lighter color for old progress) */}
                   <div
                     className={`${segmentBgColor} h-full transition-all duration-500 absolute left-0`}
@@ -88,10 +97,10 @@ export function SmartboardProgressBar({
                   )}
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-white font-bold text-xs whitespace-nowrap">
+                  <span className={`text-white font-bold whitespace-nowrap ${getTextSize("text-[10px]", "text-xs", "text-sm", "text-base")}`}>
                     {segment.percentage}%
                   </span>
-                  <span className={`bg-white/20 text-white text-[10px] font-bold px-1.5 py-0.5 rounded ${todayProgress === 0 ? 'invisible' : ''}`}>
+                  <span className={`bg-white/20 text-white font-bold px-1.5 py-0.5 rounded ${getTextSize("text-[8px]", "text-[10px]", "text-xs", "text-sm")} ${todayProgress === 0 ? 'invisible' : ''}`}>
                     +{todayProgress}%
                   </span>
                 </div>
@@ -113,13 +122,13 @@ export function SmartboardProgressBar({
       <div className="space-y-1">
         {/* Title */}
         {showLabel && (
-          <div className="text-white font-medium text-xs leading-tight">
+          <div className={`text-white font-medium leading-tight ${getTextSize("text-[10px]", "text-xs", "text-sm", "text-base")}`}>
             {label}
           </div>
         )}
         {/* Progress bar */}
         <div className="flex items-center gap-1">
-          <div className={`flex-1 ${trackColor} rounded-full relative overflow-hidden h-4`}>
+          <div className={`flex-1 ${trackColor} rounded-full relative overflow-hidden ${getTextSize("h-3", "h-4", "h-5", "h-6")}`}>
             {/* Base progress (lighter color for old progress) */}
             <div
               className={`${bgColor} h-full transition-all duration-500 absolute left-0`}
@@ -141,10 +150,10 @@ export function SmartboardProgressBar({
             )}
           </div>
           <div className="flex items-center gap-1 ml-1">
-            <span className="text-white font-semibold text-[10px]">
+            <span className={`text-white font-semibold ${getTextSize("text-[8px]", "text-[10px]", "text-xs", "text-sm")}`}>
               {safePercentage}%
             </span>
-            <span className={`bg-white/20 text-white text-[8px] font-bold px-1 py-0.5 rounded ${safeTodayPercentage === 0 ? 'invisible' : ''}`}>
+            <span className={`bg-white/20 text-white font-bold px-1 py-0.5 rounded ${getTextSize("text-[6px]", "text-[8px]", "text-[10px]", "text-xs")} ${safeTodayPercentage === 0 ? 'invisible' : ''}`}>
               +{safeTodayPercentage}%
             </span>
           </div>
@@ -163,13 +172,13 @@ export function SmartboardProgressBar({
       <div className="space-y-2">
         {/* Title */}
         {showLabel && (
-          <div className="text-white font-semibold text-sm leading-tight">
+          <div className={`text-white font-semibold leading-tight ${getTextSize("text-xs", "text-sm", "text-base", "text-lg")}`}>
             {label}
           </div>
         )}
         {/* Progress bar */}
         <div className="flex items-center gap-1">
-          <div className={`flex-1 ${trackColor} rounded-full relative overflow-hidden h-8`}>
+          <div className={`flex-1 ${trackColor} rounded-full relative overflow-hidden ${getTextSize("h-6", "h-8", "h-10", "h-12")}`}>
             {/* Base progress (lighter color for old progress) */}
             <div
               className={`${bgColor} h-full transition-all duration-500 absolute left-0`}
@@ -191,10 +200,10 @@ export function SmartboardProgressBar({
             )}
           </div>
           <div className="flex items-center gap-1 ml-1">
-            <span className="text-white font-bold text-xs">
+            <span className={`text-white font-bold ${getTextSize("text-[10px]", "text-xs", "text-sm", "text-base")}`}>
               {safePercentage}%
             </span>
-            <span className={`bg-white/20 text-white text-[10px] font-bold px-1.5 py-0.5 rounded ${safeTodayPercentage === 0 ? 'invisible' : ''}`}>
+            <span className={`bg-white/20 text-white font-bold px-1.5 py-0.5 rounded ${getTextSize("text-[8px]", "text-[10px]", "text-xs", "text-sm")} ${safeTodayPercentage === 0 ? 'invisible' : ''}`}>
               +{safeTodayPercentage}%
             </span>
           </div>
@@ -212,13 +221,13 @@ export function SmartboardProgressBar({
     <div className="flex items-center gap-2">
       {showLabel && (
         <div className="w-32 text-white">
-          <div className="font-bold text-lg">{label}</div>
+          <div className={`font-bold ${getTextSize("text-base", "text-lg", "text-xl", "text-2xl")}`}>{label}</div>
           {sublabel && (
-            <div className="text-indigo-300 truncate text-xs">{sublabel}</div>
+            <div className={`text-indigo-300 truncate ${getTextSize("text-[10px]", "text-xs", "text-sm", "text-base")}`}>{sublabel}</div>
           )}
         </div>
       )}
-      <div className={`flex-1 ${trackColor} rounded-full relative overflow-hidden h-10`}>
+      <div className={`flex-1 ${trackColor} rounded-full relative overflow-hidden ${getTextSize("h-8", "h-10", "h-12", "h-14")}`}>
         {/* Base progress (lighter color for old progress) */}
         <div
           className={`${bgColor} h-full transition-all duration-500 absolute left-0`}
@@ -240,10 +249,10 @@ export function SmartboardProgressBar({
         )}
       </div>
       <div className="flex items-center gap-1 ml-1">
-        <span className="text-white font-bold text-lg">
+        <span className={`text-white font-bold ${getTextSize("text-base", "text-lg", "text-xl", "text-2xl")}`}>
           {safePercentage}%
         </span>
-        <span className={`bg-white/20 text-white text-sm font-bold px-2 py-0.5 rounded ${safeTodayPercentage === 0 ? 'invisible' : ''}`}>
+        <span className={`bg-white/20 text-white font-bold px-2 py-0.5 rounded ${getTextSize("text-xs", "text-sm", "text-base", "text-lg")} ${safeTodayPercentage === 0 ? 'invisible' : ''}`}>
           +{safeTodayPercentage}%
         </span>
       </div>

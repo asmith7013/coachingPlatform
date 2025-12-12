@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { SmartboardProgressBar } from "./SmartboardProgressBar";
 import { SmartboardHeader } from "./components/SmartboardHeader";
 import { LearningContentPanel } from "./components/LearningContentPanel";
@@ -112,6 +112,7 @@ export function SmartboardDisplay({
   // Edit mode state
   const [isEditMode, setIsEditMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [textSizeLevel, setTextSizeLevel] = useState(0); // -1 = smaller, 0 = normal, 1 = larger
   const [showDailyProgress, setShowDailyProgress] = useState(true);
   const [showSidekick, setShowSidekick] = useState(false);
   const [dueDate, setDueDate] = useState<string>(() => {
@@ -510,6 +511,36 @@ export function SmartboardDisplay({
   // State for showing video player
   const [showVideoPlayer, setShowVideoPlayer] = useState(false);
 
+  // Toast notification state
+  const [toast, setToast] = useState<{ message: string; type: 'syncing' | 'success' } | null>(null);
+  const prevSyncingAll = useRef(syncingAll);
+
+  // Auto-sync every 2 minutes when fullscreen
+  useEffect(() => {
+    if (!isFullscreen || !onSyncAll) return;
+
+    const intervalId = setInterval(() => {
+      onSyncAll();
+    }, 2 * 60 * 1000); // 2 minutes
+
+    return () => clearInterval(intervalId);
+  }, [isFullscreen, onSyncAll]);
+
+  // Show toast notifications for sync progress
+  useEffect(() => {
+    // Sync started
+    if (syncingAll && !prevSyncingAll.current) {
+      setToast({ message: 'Syncing all assignments...', type: 'syncing' });
+    }
+    // Sync completed
+    if (!syncingAll && prevSyncingAll.current) {
+      setToast({ message: 'Sync complete!', type: 'success' });
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+    prevSyncingAll.current = syncingAll;
+  }, [syncingAll]);
+
   const smartboardContent = (
     <>
       <SmartboardHeader
@@ -521,7 +552,10 @@ export function SmartboardDisplay({
         assignmentCount={assignmentProgress.length}
         isEditMode={isEditMode}
         isFullscreen={isFullscreen}
+        textSizeLevel={textSizeLevel}
         onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
+        onTextSizeIncrease={() => setTextSizeLevel(prev => Math.min(prev + 1, 2))}
+        onTextSizeDecrease={() => setTextSizeLevel(prev => Math.max(prev - 1, -1))}
         onSyncAll={onSyncAll}
         syncingAll={syncingAll}
         activeYoutubeUrl={activeYoutubeUrl}
@@ -536,10 +570,10 @@ export function SmartboardDisplay({
           {/* Class Goal - Main Progress */}
           <div className="bg-indigo-900/50 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="bg-teal-500 text-white px-3 py-1 rounded-lg font-bold text-sm">
+              <div className={`bg-teal-500 text-white px-3 py-1 rounded-lg font-bold ${textSizeLevel === 2 ? "text-lg" : textSizeLevel === 1 ? "text-base" : textSizeLevel === -1 ? "text-xs" : "text-sm"}`}>
                 Class Goal
               </div>
-              <span className="text-indigo-300 text-sm">Complete Unit {selectedUnit}: {formattedLessonSection}</span>
+              <span className={`text-indigo-300 ${textSizeLevel === 2 ? "text-lg" : textSizeLevel === 1 ? "text-base" : textSizeLevel === -1 ? "text-xs" : "text-sm"}`}>Complete Unit {selectedUnit}: {formattedLessonSection}</span>
             </div>
             <SmartboardProgressBar
               label=""
@@ -547,6 +581,7 @@ export function SmartboardDisplay({
               todayPercentage={showDailyProgress ? overallTodayPercentage : undefined}
               color="teal"
               showLabel={false}
+              textSizeLevel={textSizeLevel}
             />
           </div>
 
@@ -586,6 +621,7 @@ export function SmartboardDisplay({
                     segments={segments}
                     size="split"
                     showLabel={true}
+                    textSizeLevel={textSizeLevel}
                   />
                 </div>
               );
@@ -600,12 +636,13 @@ export function SmartboardDisplay({
             learningContent={learningContent}
             onLearningContentChange={setLearningContent}
             parsedLearningContent={parsedLearningContent}
+            textSizeLevel={textSizeLevel}
           />
 
           {/* YouTube Editor (Edit Mode Only) */}
           {isEditMode && (
             <div className="bg-indigo-900/50 rounded-xl p-4">
-              <h3 className={`font-semibold text-white mb-3 ${isFullscreen ? "text-xl" : "text-base"}`}>
+              <h3 className={`font-semibold text-white mb-3 ${textSizeLevel === 2 ? "text-3xl" : textSizeLevel === 1 ? "text-2xl" : textSizeLevel === -1 ? "text-sm" : isFullscreen ? "text-xl" : "text-base"}`}>
                 Video
               </h3>
               <YoutubeEditor
@@ -654,6 +691,33 @@ export function SmartboardDisplay({
               allowFullScreen
               className="w-full h-[calc(100%-24px)]"
             />
+          </div>
+        </div>
+      )}
+
+      {/* Sync Toast Notification - Bottom Left */}
+      {toast && (
+        <div className={`absolute ${isFullscreen ? "bottom-8 left-8" : "bottom-4 left-4"} z-50`}>
+          <div
+            className={`
+              flex items-center gap-2 px-4 py-2 rounded-lg shadow-lg
+              ${toast.type === 'syncing' ? 'bg-indigo-600' : 'bg-green-600'}
+              text-white font-medium
+              ${textSizeLevel === 2 ? 'text-2xl' : textSizeLevel === 1 ? 'text-xl' : textSizeLevel === -1 ? 'text-xs' : isFullscreen ? 'text-lg' : 'text-sm'}
+            `}
+          >
+            {toast.type === 'syncing' && (
+              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            )}
+            {toast.type === 'success' && (
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+            {toast.message}
           </div>
         </div>
       )}
