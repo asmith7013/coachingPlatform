@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "typeRoots": [
@@ -25,87 +29,210 @@
       }
     ],
     "paths": {
-        // Base path
-        "@/*": ["./src/*"],
-
-        // Core component
-        "@app/*": ["./src/app/*"],
-        "@components/*": ["./src/components/*"],
-        "@core-components/*": ["./src/components/core/*"],
-        "@core-components": ["./src/components/core"],
-        "@composed-components/*": ["./src/components/composed/*"],
-        "@composed-components": ["./src/components/composed"],
-        "@domain-components/*": ["./src/components/domain/*"],
-        "@domain-components": ["./src/components/domain"],
-        "@error-components/*": ["./src/components/error/*"],
-        "@error-components": ["./src/components/error"],
-        "@feature-components/*": ["./src/components/features/*"],
-        "@feature-components": ["./src/components/features"],
-
-        // Hook paths
-        "@hooks/*": ["./src/hooks/*"],
-        "@domain-hooks/*": ["./src/hooks/domain/*"],
-        "@ui-hooks/*": ["./src/hooks/ui/*"],
-        "@pattern-hooks/*": ["./src/hooks/pattern/*"],
-        "@monday-hooks/*": ["./src/hooks/integrations/monday/*"],
-
-        // API paths
-        "@api-routes/*": ["./src/app/api/*"],
-
-        // Server-side and data paths
-        "@actions/*": ["./src/app/actions/*"],
-        "@enums": ["./src/lib/schema/enum"],
-        "@zod-schema/*": ["./src/lib/schema/zod-schema/*"],
-        "@mongoose-schema/*": ["./src/lib/schema/mongoose-schema/*"],
-        "@schema/*": ["./src/lib/schema/*"],
-        "@server/*": ["./src/lib/server/*"],
-
-        // Library and utility paths
-        "@lib/*": ["./src/lib/*"],
-        "@utils/*": ["./src/lib/utils/*"],
-        "@styles/*": ["./src/styles/*"],
-        "@core/*": ["./src/lib/core/*"],
-        "@domain/*": ["./src/lib/domain/*"],
-        "@data-processing/*": ["./src/lib/data-processing/*"],
-        "@error/*": ["./src/lib/error/*"],
-        "@error": ["./src/lib/error"],
-        "@query/*": ["./src/query/*"],  
-        "@query-hooks/*": ["./src/hooks/query/*"],
-        "@config/*": ["./src/lib/config/*"],
-        "@config": ["./src/lib/config"],
-        "@tanstack-form/*": ["./src/lib/ui/forms/tanstack/*"],
-        "@forms/*": ["./src/lib/ui/forms/*"],
-        // API utilities (in lib)
-        "@api-utils/*": ["./src/lib/server/api/*"],
-        "@api-client/*": ["./src/lib/server/api/client/*"],
-        "@api-fetchers/*": ["./src/lib/server/api/fetchers/*"],
-        "@api-handlers/*": ["./src/lib/server/api/handlers/*"],
-        "@api-responses/*": ["./src/lib/server/api/responses/*"],
-        "@api-validation/*": ["./src/lib/server/api/validation/*"],
-        "@api-integrations/*": ["./src/lib/server/integrations/*"],
-        "@api-monday/*": ["./src/lib/server/integrations/monday/*"],
-
-        // UI-specific paths
-        "@ui/*": ["./src/lib/ui/*"],
-        "@ui-tokens/*": ["./src/lib/tokens/*"],
-        "@ui-tokens": ["./src/lib/tokens"],
-        "@ui-variants/*": ["./src/lib/ui/variants/*"],
-        "@ui-forms/*": ["./src/lib/ui/forms/*"],
-        
-        // Type paths
-        "@core-types/*": ["./src/lib/types/core/*"],
-        "@domain-types/*": ["./src/lib/types/domain/*"],
-        "@ui-types/*": ["./src/lib/types/ui/*"],
-        "@error-types/*": ["./src/lib/types/error/*"],
-        "@error-types": ["./src/lib/types/error"],
-        "@query-types/*": ["./src/lib/types/query/*"],
-        
-        // Testing utilities
-        "@testing/*": ["./src/lib/testing/*"],
-        "@mocks/*": ["./src/lib/dev/mocks/*"]
-    },
-    
+      // Base path
+      "@/*": [
+        "./src/*"
+      ],
+      // Core component
+      "@app/*": [
+        "./src/app/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@core-components/*": [
+        "./src/components/core/*"
+      ],
+      "@core-components": [
+        "./src/components/core"
+      ],
+      "@composed-components/*": [
+        "./src/components/composed/*"
+      ],
+      "@composed-components": [
+        "./src/components/composed"
+      ],
+      "@domain-components/*": [
+        "./src/components/domain/*"
+      ],
+      "@domain-components": [
+        "./src/components/domain"
+      ],
+      "@error-components/*": [
+        "./src/components/error/*"
+      ],
+      "@error-components": [
+        "./src/components/error"
+      ],
+      "@feature-components/*": [
+        "./src/components/features/*"
+      ],
+      "@feature-components": [
+        "./src/components/features"
+      ],
+      // Hook paths
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@domain-hooks/*": [
+        "./src/hooks/domain/*"
+      ],
+      "@ui-hooks/*": [
+        "./src/hooks/ui/*"
+      ],
+      "@pattern-hooks/*": [
+        "./src/hooks/pattern/*"
+      ],
+      "@monday-hooks/*": [
+        "./src/hooks/integrations/monday/*"
+      ],
+      // API paths
+      "@api-routes/*": [
+        "./src/app/api/*"
+      ],
+      // Server-side and data paths
+      "@actions/*": [
+        "./src/app/actions/*"
+      ],
+      "@enums": [
+        "./src/lib/schema/enum"
+      ],
+      "@zod-schema/*": [
+        "./src/lib/schema/zod-schema/*"
+      ],
+      "@mongoose-schema/*": [
+        "./src/lib/schema/mongoose-schema/*"
+      ],
+      "@schema/*": [
+        "./src/lib/schema/*"
+      ],
+      "@server/*": [
+        "./src/lib/server/*"
+      ],
+      // Library and utility paths
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@utils/*": [
+        "./src/lib/utils/*"
+      ],
+      "@styles/*": [
+        "./src/styles/*"
+      ],
+      "@core/*": [
+        "./src/lib/core/*"
+      ],
+      "@domain/*": [
+        "./src/lib/domain/*"
+      ],
+      "@data-processing/*": [
+        "./src/lib/data-processing/*"
+      ],
+      "@error/*": [
+        "./src/lib/error/*"
+      ],
+      "@error": [
+        "./src/lib/error"
+      ],
+      "@query/*": [
+        "./src/query/*"
+      ],
+      "@query-hooks/*": [
+        "./src/hooks/query/*"
+      ],
+      "@config/*": [
+        "./src/lib/config/*"
+      ],
+      "@config": [
+        "./src/lib/config"
+      ],
+      "@tanstack-form/*": [
+        "./src/lib/ui/forms/tanstack/*"
+      ],
+      "@forms/*": [
+        "./src/lib/ui/forms/*"
+      ],
+      // API utilities (in lib)
+      "@api-utils/*": [
+        "./src/lib/server/api/*"
+      ],
+      "@api-client/*": [
+        "./src/lib/server/api/client/*"
+      ],
+      "@api-fetchers/*": [
+        "./src/lib/server/api/fetchers/*"
+      ],
+      "@api-handlers/*": [
+        "./src/lib/server/api/handlers/*"
+      ],
+      "@api-responses/*": [
+        "./src/lib/server/api/responses/*"
+      ],
+      "@api-validation/*": [
+        "./src/lib/server/api/validation/*"
+      ],
+      "@api-integrations/*": [
+        "./src/lib/server/integrations/*"
+      ],
+      "@api-monday/*": [
+        "./src/lib/server/integrations/monday/*"
+      ],
+      // UI-specific paths
+      "@ui/*": [
+        "./src/lib/ui/*"
+      ],
+      "@ui-tokens/*": [
+        "./src/lib/tokens/*"
+      ],
+      "@ui-tokens": [
+        "./src/lib/tokens"
+      ],
+      "@ui-variants/*": [
+        "./src/lib/ui/variants/*"
+      ],
+      "@ui-forms/*": [
+        "./src/lib/ui/forms/*"
+      ],
+      // Type paths
+      "@core-types/*": [
+        "./src/lib/types/core/*"
+      ],
+      "@domain-types/*": [
+        "./src/lib/types/domain/*"
+      ],
+      "@ui-types/*": [
+        "./src/lib/types/ui/*"
+      ],
+      "@error-types/*": [
+        "./src/lib/types/error/*"
+      ],
+      "@error-types": [
+        "./src/lib/types/error"
+      ],
+      "@query-types/*": [
+        "./src/lib/types/query/*"
+      ],
+      // Testing utilities
+      "@testing/*": [
+        "./src/lib/testing/*"
+      ],
+      "@mocks/*": [
+        "./src/lib/dev/mocks/*"
+      ]
+    }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "scripts/combine-docs.js", "src/types/**/*.d.ts"],
-  "exclude": ["node_modules", "scripts/migrate-skill-appears-in.ts", "scripts/test-migrate-one-skill.ts"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "scripts/combine-docs.js",
+    "src/types/**/*.d.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "scripts/migrate-skill-appears-in.ts",
+    "scripts/test-migrate-one-skill.ts"
+  ]
 }
