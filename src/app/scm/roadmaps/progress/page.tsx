@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { ChartBarIcon } from "@heroicons/react/24/outline";
 import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
 import { getRoadmapCompletionsBySection, type SectionRoadmapData } from "@/app/actions/313/roadmap-completions";
-import { getSectionColors } from "../velocity/utils/colors";
+import { getSectionColors } from "../../podsie/velocity/utils/colors";
 import {
   SectionVisualizationLayout,
   SectionAccordion,
