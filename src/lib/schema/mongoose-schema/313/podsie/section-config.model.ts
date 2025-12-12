@@ -53,6 +53,12 @@ const bellScheduleSchema = new mongoose.Schema({
   friday: { type: dayScheduleSchema, required: false }
 }, { _id: false });
 
+// YouTube link subdocument schema
+const youtubeLinkSchema = new mongoose.Schema({
+  url: { type: String, required: true },
+  title: { type: String, required: true }
+}, { _id: false });
+
 // Assignment content subdocument schema
 const assignmentContentSchema = new mongoose.Schema({
   // Link to scope-and-sequence
@@ -107,6 +113,10 @@ const sectionConfigFields = {
 
   // Assignment content configurations
   assignmentContent: { type: [assignmentContentSchema], default: [] },
+
+  // YouTube links for smartboard
+  youtubeLinks: { type: [youtubeLinkSchema], default: [] },
+  activeYoutubeUrl: { type: String, required: false },
 
   // Metadata
   notes: { type: String, required: false },

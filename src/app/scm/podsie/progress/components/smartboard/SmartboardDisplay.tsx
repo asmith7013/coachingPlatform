@@ -5,16 +5,43 @@ import { SmartboardProgressBar } from "./SmartboardProgressBar";
 import { SmartboardHeader } from "./components/SmartboardHeader";
 import { LearningContentPanel } from "./components/LearningContentPanel";
 import { SmartboardControls } from "./components/SmartboardControls";
+import { YoutubeEditor } from "./components/YoutubeEditor";
 import { groupAssignmentsByUnitLesson } from "../../utils/groupAssignments";
+import { getSchoolForSection } from "../../utils/sectionHelpers";
 import { formatLessonDisplay } from "@/lib/utils/lesson-display";
 import type { LessonType } from "@/lib/utils/lesson-display";
 import { calculateTodayProgress, calculateTodayCompletionRate } from "@/lib/utils/completion-date-helpers";
 import { getLearningContent, saveLearningContent } from "@/app/actions/313/learning-content";
+import {
+  getYoutubeLinks,
+  addYoutubeLink,
+  removeYoutubeLink,
+  setActiveYoutubeUrl,
+  copyYoutubeLinksFromSection,
+  getSectionOptions,
+} from "@/app/actions/313/section-config";
 import { SCOPE_SEQUENCE_TAG_OPTIONS, type ScopeSequenceTagType } from "@schema/enum/313";
+import type { YoutubeLink } from "@zod-schema/313/podsie/section-config";
 
 // Type guard to validate scopeSequenceTag
 function isValidScopeSequenceTag(tag: string): tag is ScopeSequenceTagType {
   return (SCOPE_SEQUENCE_TAG_OPTIONS as readonly string[]).includes(tag);
+}
+
+// Extract YouTube video ID from various URL formats
+function extractYoutubeVideoId(url: string): string | null {
+  const patterns = [
+    /(?:youtube\.com|youtubeeducation\.com)\/watch\?v=([^&\n?#]+)/,
+    /youtu\.be\/([^&\n?#]+)/,
+    /(?:youtube\.com|youtubeeducation\.com)\/embed\/([^&\n?#]+)/,
+    /(?:youtube\.com|youtubeeducation\.com)\/v\/([^&\n?#]+)/,
+    /(?:youtube\.com|youtubeeducation\.com)\/shorts\/([^&\n?#]+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
 }
 
 interface LessonConfig {
@@ -99,6 +126,113 @@ export function SmartboardDisplay({
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [loadedContent, setLoadedContent] = useState<string>("");
+
+  // YouTube state
+  const [youtubeLinks, setYoutubeLinks] = useState<YoutubeLink[]>([]);
+  const [activeYoutubeUrl, setActiveYoutubeUrlState] = useState<string | undefined>();
+  const [availableSections, setAvailableSections] = useState<Array<{ school: string; classSection: string }>>([]);
+
+  // Derive school from selected section
+  const school = useMemo(() => getSchoolForSection(selectedSection), [selectedSection]);
+
+  // Load YouTube links when section changes
+  useEffect(() => {
+    const loadYoutubeLinks = async () => {
+      if (!selectedSection || school === "Unknown") return;
+
+      try {
+        const result = await getYoutubeLinks(school, selectedSection);
+        if (result.success && result.data) {
+          setYoutubeLinks(result.data.youtubeLinks);
+          setActiveYoutubeUrlState(result.data.activeYoutubeUrl);
+        }
+      } catch (error) {
+        console.error("Error loading YouTube links:", error);
+      }
+    };
+
+    loadYoutubeLinks();
+  }, [school, selectedSection]);
+
+  // Load available sections for copy feature
+  useEffect(() => {
+    const loadSections = async () => {
+      try {
+        const result = await getSectionOptions();
+        if (result.success && result.data) {
+          setAvailableSections(result.data.map(s => ({ school: s.school, classSection: s.classSection })));
+        }
+      } catch (error) {
+        console.error("Error loading sections:", error);
+      }
+    };
+
+    loadSections();
+  }, []);
+
+  // YouTube handlers
+  const handleAddYoutubeLink = useCallback(async (link: YoutubeLink) => {
+    if (school === "Unknown") return;
+
+    try {
+      const result = await addYoutubeLink(school, selectedSection, link);
+      if (result.success && result.data) {
+        setYoutubeLinks(result.data);
+      }
+    } catch (error) {
+      console.error("Error adding YouTube link:", error);
+    }
+  }, [school, selectedSection]);
+
+  const handleRemoveYoutubeLink = useCallback(async (url: string) => {
+    if (school === "Unknown") return;
+
+    try {
+      const result = await removeYoutubeLink(school, selectedSection, url);
+      if (result.success && result.data) {
+        setYoutubeLinks(result.data);
+        // Clear active if it was the removed one
+        if (activeYoutubeUrl === url) {
+          setActiveYoutubeUrlState(undefined);
+        }
+      }
+    } catch (error) {
+      console.error("Error removing YouTube link:", error);
+    }
+  }, [school, selectedSection, activeYoutubeUrl]);
+
+  const handleSetActiveYoutubeUrl = useCallback(async (url: string | null) => {
+    if (school === "Unknown") return;
+
+    try {
+      const result = await setActiveYoutubeUrl(school, selectedSection, url);
+      if (result.success) {
+        setActiveYoutubeUrlState(url || undefined);
+      }
+    } catch (error) {
+      console.error("Error setting active YouTube URL:", error);
+    }
+  }, [school, selectedSection]);
+
+  const handleCopyYoutubeLinks = useCallback(async (sourceSchool: string, sourceClassSection: string) => {
+    if (school === "Unknown") return;
+
+    try {
+      const result = await copyYoutubeLinksFromSection(school, selectedSection, sourceSchool, sourceClassSection);
+      if (result.success && result.data) {
+        setYoutubeLinks(result.data);
+      }
+    } catch (error) {
+      console.error("Error copying YouTube links:", error);
+    }
+  }, [school, selectedSection]);
+
+  // Get the active video title for display
+  const activeVideoTitle = useMemo(() => {
+    if (!activeYoutubeUrl) return undefined;
+    const link = youtubeLinks.find(l => l.url === activeYoutubeUrl);
+    return link?.title;
+  }, [activeYoutubeUrl, youtubeLinks]);
 
   // Load learning content when unit/section changes
   useEffect(() => {
@@ -373,6 +507,9 @@ export function SmartboardDisplay({
     return segments;
   };
 
+  // State for showing video player
+  const [showVideoPlayer, setShowVideoPlayer] = useState(false);
+
   const smartboardContent = (
     <>
       <SmartboardHeader
@@ -387,6 +524,9 @@ export function SmartboardDisplay({
         onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
         onSyncAll={onSyncAll}
         syncingAll={syncingAll}
+        activeYoutubeUrl={activeYoutubeUrl}
+        activeVideoTitle={activeVideoTitle}
+        onPlayVideo={() => setShowVideoPlayer(true)}
       />
 
       {/* Smartboard Content - Combined Goal and Progress */}
@@ -454,13 +594,69 @@ export function SmartboardDisplay({
         </div>
 
         {/* Right: Info Panel */}
-        <LearningContentPanel
-          isEditMode={isEditMode}
-          learningContent={learningContent}
-          onLearningContentChange={setLearningContent}
-          parsedLearningContent={parsedLearningContent}
-        />
+        <div className="flex flex-col gap-4">
+          <LearningContentPanel
+            isEditMode={isEditMode}
+            learningContent={learningContent}
+            onLearningContentChange={setLearningContent}
+            parsedLearningContent={parsedLearningContent}
+          />
+
+          {/* YouTube Editor (Edit Mode Only) */}
+          {isEditMode && (
+            <div className="bg-indigo-900/50 rounded-xl p-4">
+              <h3 className={`font-semibold text-white mb-3 ${isFullscreen ? "text-xl" : "text-base"}`}>
+                Video
+              </h3>
+              <YoutubeEditor
+                youtubeLinks={youtubeLinks}
+                activeYoutubeUrl={activeYoutubeUrl}
+                sections={availableSections}
+                currentSection={selectedSection}
+                onSelectVideo={handleSetActiveYoutubeUrl}
+                onAddLink={handleAddYoutubeLink}
+                onRemoveLink={handleRemoveYoutubeLink}
+                onCopyFromSection={handleCopyYoutubeLinks}
+                isFullscreen={isFullscreen}
+              />
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* YouTube Player - Bottom Right (triggered by header button) */}
+      {showVideoPlayer && activeYoutubeUrl && (
+        <div className={`absolute ${isFullscreen ? "bottom-8 right-8" : "bottom-4 right-4"}`}>
+          <div
+            className={`
+              bg-black rounded shadow-2xl overflow-hidden
+              ${isFullscreen ? "w-[280px] h-[175px]" : "w-[200px] h-[125px]"}
+            `}
+          >
+            {/* Header with close button */}
+            <div className="flex items-center justify-between bg-gray-900 px-2 py-1">
+              <span className="text-white text-[10px] font-medium truncate flex-1 mr-2">
+                {activeVideoTitle || "Video"}
+              </span>
+              <button
+                onClick={() => setShowVideoPlayer(false)}
+                className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+                title="Close video"
+              >
+                <span className="text-xs">✕</span>
+              </button>
+            </div>
+            {/* Embedded player */}
+            <iframe
+              src={`https://www.youtube.com/embed/${extractYoutubeVideoId(activeYoutubeUrl)}?autoplay=1`}
+              title={activeVideoTitle || "YouTube video"}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-[calc(100%-24px)]"
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 
@@ -482,12 +678,16 @@ export function SmartboardDisplay({
       )}
 
       {/* Normal Display */}
-      {!isFullscreen && smartboardContent}
+      {!isFullscreen && (
+        <div className="relative">
+          {smartboardContent}
+        </div>
+      )}
 
       {/* Fullscreen Modal */}
       {isFullscreen && (
         <div className="fixed inset-0 z-50 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-6">
-          <div className="w-full h-full max-w-[94vw] max-h-[94vh] flex flex-col">
+          <div className="w-full h-full max-w-[94vw] max-h-[94vh] flex flex-col relative">
             {smartboardContent}
           </div>
         </div>

@@ -96,6 +96,20 @@ export const AssignmentContentSchema = z.object({
 export type AssignmentContent = z.infer<typeof AssignmentContentSchema>;
 
 // =====================================
+// YOUTUBE LINK SCHEMA
+// =====================================
+
+/**
+ * YouTube link configuration for smartboard display
+ */
+export const YoutubeLinkSchema = z.object({
+  url: z.string().url().describe("YouTube video URL"),
+  title: z.string().describe("Display title for the video"),
+});
+
+export type YoutubeLink = z.infer<typeof YoutubeLinkSchema>;
+
+// =====================================
 // BELL SCHEDULE SCHEMA
 // =====================================
 
@@ -229,6 +243,13 @@ export const SectionConfigFieldsSchema = z.object({
   // =====================================
 
   assignmentContent: z.array(AssignmentContentSchema).default([]).describe("All assignment content configurations for this section (links to scope-and-sequence lessons with activity configs)"),
+
+  // =====================================
+  // YOUTUBE LINKS (SMARTBOARD)
+  // =====================================
+
+  youtubeLinks: z.array(YoutubeLinkSchema).default([]).describe("Available YouTube links for smartboard display"),
+  activeYoutubeUrl: z.string().optional().describe("Currently active YouTube URL to display on smartboard"),
 
   // =====================================
   // METADATA

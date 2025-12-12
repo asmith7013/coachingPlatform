@@ -1,4 +1,4 @@
-import { TvIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { TvIcon, ArrowPathIcon, PlayIcon } from "@heroicons/react/24/outline";
 
 interface SmartboardHeaderProps {
   selectedUnit: number;
@@ -12,6 +12,9 @@ interface SmartboardHeaderProps {
   onToggleFullscreen: () => void;
   onSyncAll?: () => void;
   syncingAll?: boolean;
+  activeYoutubeUrl?: string;
+  activeVideoTitle?: string;
+  onPlayVideo?: () => void;
 }
 
 export function SmartboardHeader({
@@ -26,6 +29,9 @@ export function SmartboardHeader({
   onToggleFullscreen,
   onSyncAll,
   syncingAll = false,
+  activeYoutubeUrl,
+  activeVideoTitle,
+  onPlayVideo,
 }: SmartboardHeaderProps) {
   return (
     <div className={`bg-indigo-900 rounded-t-xl flex items-center justify-between ${isFullscreen ? "p-8 text-xl" : "p-4"}`}>
@@ -61,6 +67,15 @@ export function SmartboardHeader({
             title="Sync All Assignments"
           >
             <ArrowPathIcon className={`${isFullscreen ? "w-8 h-8" : "w-6 h-6"} text-white ${syncingAll ? 'animate-spin' : ''}`} />
+          </button>
+        )}
+        {!isEditMode && activeYoutubeUrl && onPlayVideo && (
+          <button
+            onClick={onPlayVideo}
+            className={`bg-red-600 hover:bg-red-500 rounded-lg transition-colors cursor-pointer ${isFullscreen ? "p-3" : "p-2"}`}
+            title={activeVideoTitle || "Play Video"}
+          >
+            <PlayIcon className={isFullscreen ? "w-8 h-8 text-white" : "w-6 h-6 text-white"} />
           </button>
         )}
         <button

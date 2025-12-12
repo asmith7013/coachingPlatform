@@ -12,7 +12,8 @@ import {
   SectionConfigQuerySchema,
   AssignmentContent,
   SectionOption,
-  PodsieQuestionMap
+  PodsieQuestionMap,
+  YoutubeLink
 } from "@zod-schema/313/podsie/section-config";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -656,4 +657,256 @@ export async function getAssignmentContent(
       error: handleServerError(error, 'Failed to fetch assignment content')
     };
   }
+}
+
+// =====================================
+// YOUTUBE LINK OPERATIONS
+// =====================================
+
+/**
+ * Get YouTube links and active URL for a section
+ */
+export async function getYoutubeLinks(
+  school: string,
+  classSection: string
+): Promise<{ success: boolean; data?: { youtubeLinks: YoutubeLink[]; activeYoutubeUrl?: string }; error?: string }> {
+  return withDbConnection(async () => {
+    try {
+      const config = await SectionConfigModel.findOne(
+        { school, classSection },
+        { youtubeLinks: 1, activeYoutubeUrl: 1 }
+      ).lean();
+
+      if (!config) {
+        return { success: true, data: { youtubeLinks: [], activeYoutubeUrl: undefined } };
+      }
+
+      // Serialize to ensure proper types
+      const serialized = JSON.parse(JSON.stringify(config));
+
+      return {
+        success: true,
+        data: {
+          youtubeLinks: (serialized.youtubeLinks as YoutubeLink[]) || [],
+          activeYoutubeUrl: serialized.activeYoutubeUrl as string | undefined
+        }
+      };
+    } catch (error) {
+      console.error('💥 Error fetching YouTube links:', error);
+      return {
+        success: false,
+        error: handleServerError(error, 'Failed to fetch YouTube links')
+      };
+    }
+  });
+}
+
+/**
+ * Add a new YouTube link to a section
+ */
+export async function addYoutubeLink(
+  school: string,
+  classSection: string,
+  link: YoutubeLink
+): Promise<{ success: boolean; data?: YoutubeLink[]; error?: string }> {
+  return withDbConnection(async () => {
+    try {
+      const result = await SectionConfigModel.findOneAndUpdate(
+        { school, classSection },
+        {
+          $push: { youtubeLinks: link },
+          $set: { updatedAt: new Date().toISOString() }
+        },
+        { new: true }
+      ).lean();
+
+      if (!result) {
+        return { success: false, error: 'Section config not found' };
+      }
+
+      revalidatePath('/scm/podsie/progress');
+
+      // Serialize to ensure proper types
+      const serialized = JSON.parse(JSON.stringify(result));
+
+      return {
+        success: true,
+        data: serialized.youtubeLinks as YoutubeLink[]
+      };
+    } catch (error) {
+      console.error('💥 Error adding YouTube link:', error);
+      return {
+        success: false,
+        error: handleServerError(error, 'Failed to add YouTube link')
+      };
+    }
+  });
+}
+
+/**
+ * Remove a YouTube link from a section
+ */
+export async function removeYoutubeLink(
+  school: string,
+  classSection: string,
+  url: string
+): Promise<{ success: boolean; data?: YoutubeLink[]; error?: string }> {
+  return withDbConnection(async () => {
+    try {
+      // First check if this URL is active, if so clear it
+      const config = await SectionConfigModel.findOne({ school, classSection }).lean();
+      const configJson = config ? JSON.parse(JSON.stringify(config)) : null;
+      const isActiveUrl = configJson?.activeYoutubeUrl === url;
+
+      const result = await SectionConfigModel.findOneAndUpdate(
+        { school, classSection },
+        {
+          $pull: { youtubeLinks: { url } },
+          $set: {
+            updatedAt: new Date().toISOString(),
+            ...(isActiveUrl ? { activeYoutubeUrl: null } : {})
+          }
+        },
+        { new: true }
+      ).lean();
+
+      if (!result) {
+        return { success: false, error: 'Section config not found' };
+      }
+
+      revalidatePath('/scm/podsie/progress');
+
+      // Serialize to ensure proper types
+      const serialized = JSON.parse(JSON.stringify(result));
+
+      return {
+        success: true,
+        data: serialized.youtubeLinks as YoutubeLink[]
+      };
+    } catch (error) {
+      console.error('💥 Error removing YouTube link:', error);
+      return {
+        success: false,
+        error: handleServerError(error, 'Failed to remove YouTube link')
+      };
+    }
+  });
+}
+
+/**
+ * Set the active YouTube URL for a section
+ */
+export async function setActiveYoutubeUrl(
+  school: string,
+  classSection: string,
+  url: string | null
+): Promise<{ success: boolean; error?: string }> {
+  return withDbConnection(async () => {
+    try {
+      const result = await SectionConfigModel.findOneAndUpdate(
+        { school, classSection },
+        {
+          $set: {
+            activeYoutubeUrl: url,
+            updatedAt: new Date().toISOString()
+          }
+        },
+        { new: true }
+      );
+
+      if (!result) {
+        return { success: false, error: 'Section config not found' };
+      }
+
+      revalidatePath('/scm/podsie/progress');
+
+      return { success: true };
+    } catch (error) {
+      console.error('💥 Error setting active YouTube URL:', error);
+      return {
+        success: false,
+        error: handleServerError(error, 'Failed to set active YouTube URL')
+      };
+    }
+  });
+}
+
+/**
+ * Copy YouTube links from another section
+ */
+export async function copyYoutubeLinksFromSection(
+  school: string,
+  classSection: string,
+  sourceSchool: string,
+  sourceClassSection: string
+): Promise<{ success: boolean; data?: YoutubeLink[]; error?: string }> {
+  return withDbConnection(async () => {
+    try {
+      // Get source section's YouTube links
+      const sourceConfig = await SectionConfigModel.findOne(
+        { school: sourceSchool, classSection: sourceClassSection },
+        { youtubeLinks: 1 }
+      ).lean();
+
+      if (!sourceConfig) {
+        return { success: false, error: 'Source section not found' };
+      }
+
+      // Serialize to ensure proper types
+      const sourceJson = JSON.parse(JSON.stringify(sourceConfig));
+      const sourceLinks = (sourceJson.youtubeLinks as YoutubeLink[]) || [];
+
+      if (sourceLinks.length === 0) {
+        return { success: false, error: 'Source section has no YouTube links' };
+      }
+
+      // Get target section's current links to avoid duplicates
+      const targetConfig = await SectionConfigModel.findOne(
+        { school, classSection },
+        { youtubeLinks: 1 }
+      ).lean();
+
+      const targetJson = targetConfig ? JSON.parse(JSON.stringify(targetConfig)) : null;
+      const existingUrls = new Set(
+        ((targetJson?.youtubeLinks as YoutubeLink[]) || []).map((l: YoutubeLink) => l.url)
+      );
+
+      // Filter out duplicates
+      const newLinks = sourceLinks.filter((l: YoutubeLink) => !existingUrls.has(l.url));
+
+      if (newLinks.length === 0) {
+        return { success: false, error: 'All links from source section already exist' };
+      }
+
+      // Add new links
+      const result = await SectionConfigModel.findOneAndUpdate(
+        { school, classSection },
+        {
+          $push: { youtubeLinks: { $each: newLinks } },
+          $set: { updatedAt: new Date().toISOString() }
+        },
+        { new: true }
+      ).lean();
+
+      if (!result) {
+        return { success: false, error: 'Target section not found' };
+      }
+
+      revalidatePath('/scm/podsie/progress');
+
+      // Serialize to ensure proper types
+      const serialized = JSON.parse(JSON.stringify(result));
+
+      return {
+        success: true,
+        data: serialized.youtubeLinks as YoutubeLink[]
+      };
+    } catch (error) {
+      console.error('💥 Error copying YouTube links:', error);
+      return {
+        success: false,
+        error: handleServerError(error, 'Failed to copy YouTube links')
+      };
+    }
+  });
 }
