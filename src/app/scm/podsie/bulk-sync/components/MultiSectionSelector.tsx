@@ -11,9 +11,11 @@ interface SectionSelectorProps {
   selectedSections: string[];
   onToggle: (sectionId: string) => void;
   sectionColors: Map<string, string>;
+  /** Optional actions to display alongside the section cards (e.g., export button) */
+  actions?: React.ReactNode;
 }
 
-export function MultiSectionSelector({ sections, selectedSections, onToggle, sectionColors }: SectionSelectorProps) {
+export function MultiSectionSelector({ sections, selectedSections, onToggle, sectionColors, actions }: SectionSelectorProps) {
   // Group sections by school
   const sectionsBySchool = sections.reduce((acc, section) => {
     if (!acc[section.school]) {
@@ -53,7 +55,7 @@ export function MultiSectionSelector({ sections, selectedSections, onToggle, sec
   return (
     <div className="bg-white rounded-lg shadow p-6 mb-6">
       <h2 className="sr-only">Select Sections</h2>
-      <form className="flex gap-8">
+      <div className="flex gap-8 items-start">
         {Object.entries(sectionsBySchool).map(([school, schoolSections]) => (
           <div key={school} className="border border-gray-200 rounded-lg p-4">
             <fieldset>
@@ -146,7 +148,8 @@ export function MultiSectionSelector({ sections, selectedSections, onToggle, sec
             </fieldset>
           </div>
         ))}
-      </form>
+        {actions}
+      </div>
     </div>
   );
 }
