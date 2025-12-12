@@ -1,6 +1,6 @@
 "use client";
 
-import { TrophyIcon } from "@heroicons/react/24/solid";
+import { TrophyIcon } from "@heroicons/react/24/outline";
 import { getZoneStyles } from "./zone-styles";
 import { StudentCountBadge } from "./shared-ui";
 import type { ColumnConfig } from "./types";

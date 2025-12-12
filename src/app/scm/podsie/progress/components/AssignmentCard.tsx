@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowPathIcon, PencilIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, PencilIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
 import { AssignmentProgressTable } from "./AssignmentProgressTable";
@@ -55,6 +55,7 @@ export function AssignmentCard({
   onMasteryCheckSync,
   calculateSummaryStats: _calculateSummaryStats,
 }: AssignmentCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [syncingBoth, setSyncingBoth] = useState(false);
 
@@ -197,120 +198,137 @@ export function AssignmentCard({
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-visible">
-      {/* Card Header - Sticky */}
-      <div className="sticky top-0 z-30 bg-gray-50 border-b border-gray-200 px-6 py-4 shadow-md rounded-t-lg">
+      {/* Card Header - Accordion Toggle */}
+      <div className={`${isExpanded ? 'sticky top-0 z-30 shadow-md' : ''} bg-gray-50 border-b border-gray-200 px-6 py-4 ${isExpanded ? '' : 'rounded-lg'}`}>
         <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-gray-900 text-lg">
-              {assignment.lessonName}
-            </h3>
-            <p className="text-sm text-gray-500">
-              {formatUnitLesson(assignment.unitLessonId)} • {assignment.totalQuestions} questions • Section: {assignment.section}
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            {/* Show All Questions Toggle - Hide for assessments (always true) */}
-            {!isAssessment && (
-              <ToggleSwitch
-                checked={showAllQuestions}
-                onChange={setShowAllQuestions}
-                label="Show All Questions"
-              />
+          {/* Left side - Accordion toggle + Title */}
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+          >
+            {isExpanded ? (
+              <ChevronDownIcon className="w-5 h-5 text-gray-500 flex-shrink-0" />
+            ) : (
+              <ChevronRightIcon className="w-5 h-5 text-gray-500 flex-shrink-0" />
             )}
+            <div className="text-left">
+              <h3 className="font-semibold text-gray-900 text-lg">
+                {assignment.lessonName}
+              </h3>
+              <p className="text-sm text-gray-500">
+                {formatUnitLesson(assignment.unitLessonId)} • {assignment.totalQuestions} questions • Section: {assignment.section}
+              </p>
+            </div>
+          </button>
 
-            {/* Detailed Score Toggle - Hide for assessments (always true) */}
-            {!isAssessment && (
-              <ToggleSwitch
-                checked={showDetailedScore}
-                onChange={setShowDetailedScore}
-                label="Detailed Score"
-              />
-            )}
+          {/* Right side - Controls (only show when expanded) */}
+          {isExpanded && (
+            <div className="flex items-center gap-4">
+              {/* Show All Questions Toggle - Hide for assessments (always true) */}
+              {!isAssessment && (
+                <ToggleSwitch
+                  checked={showAllQuestions}
+                  onChange={setShowAllQuestions}
+                  label="Show All Questions"
+                />
+              )}
 
-            {/* Legend Key - White Card */}
-            {!showDetailedScore && (
-              <div className="bg-white border border-gray-300 rounded-lg px-3 py-2">
-                <div className="flex items-center gap-3 text-xs text-gray-700">
-                  <div className="flex items-center gap-1">
-                    <CheckCircleIcon className="w-4 h-4 text-green-700" />
-                    <span className="font-medium">Today</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <CheckCircleOutlineIcon className="w-4 h-4 text-green-700" />
-                    <span className="font-medium">Yesterday</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <CheckIcon className="w-4 h-4 text-green-700" />
-                    <span className="font-medium">Earlier</span>
+              {/* Detailed Score Toggle - Hide for assessments (always true) */}
+              {!isAssessment && (
+                <ToggleSwitch
+                  checked={showDetailedScore}
+                  onChange={setShowDetailedScore}
+                  label="Detailed Score"
+                />
+              )}
+
+              {/* Legend Key - White Card */}
+              {!showDetailedScore && (
+                <div className="bg-white border border-gray-300 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-3 text-xs text-gray-700">
+                    <div className="flex items-center gap-1">
+                      <CheckCircleIcon className="w-4 h-4 text-green-700" />
+                      <span className="font-medium">Today</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <CheckCircleOutlineIcon className="w-4 h-4 text-green-700" />
+                      <span className="font-medium">Yesterday</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <CheckIcon className="w-4 h-4 text-green-700" />
+                      <span className="font-medium">Earlier</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2">
-              {isEditMode ? (
-                <>
-                  {/* Single Sync Button */}
-                  <button
-                    onClick={handleSyncBoth}
-                    disabled={
-                      syncingBoth ||
-                      syncing ||
-                      masteryCheckSyncing ||
-                      !assignment.podsieAssignmentId ||
-                      (masteryCheckAssignment && !masteryCheckAssignment.podsieAssignmentId)
-                    }
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                      syncingBoth ||
-                      syncing ||
-                      masteryCheckSyncing ||
-                      !assignment.podsieAssignmentId ||
-                      (masteryCheckAssignment && !masteryCheckAssignment.podsieAssignmentId)
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
-                    }`}
-                  >
-                    <ArrowPathIcon
-                      className={`w-5 h-5 ${syncingBoth || syncing || masteryCheckSyncing ? "animate-spin" : ""}`}
-                    />
-                    {syncingBoth || syncing || masteryCheckSyncing
-                      ? "Syncing..."
-                      : masteryCheckAssignment
-                        ? "Sync Both"
-                        : "Sync"}
-                  </button>
-                </>
-              ) : null}
-              <button
-                onClick={() => setIsEditMode(!isEditMode)}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-                  isEditMode
-                    ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                <PencilIcon className="w-4 h-4" />
-                {isEditMode ? "Done" : "Edit"}
-              </button>
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2">
+                {isEditMode ? (
+                  <>
+                    {/* Single Sync Button */}
+                    <button
+                      onClick={handleSyncBoth}
+                      disabled={
+                        syncingBoth ||
+                        syncing ||
+                        masteryCheckSyncing ||
+                        !assignment.podsieAssignmentId ||
+                        (masteryCheckAssignment && !masteryCheckAssignment.podsieAssignmentId)
+                      }
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                        syncingBoth ||
+                        syncing ||
+                        masteryCheckSyncing ||
+                        !assignment.podsieAssignmentId ||
+                        (masteryCheckAssignment && !masteryCheckAssignment.podsieAssignmentId)
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+                      }`}
+                    >
+                      <ArrowPathIcon
+                        className={`w-5 h-5 ${syncingBoth || syncing || masteryCheckSyncing ? "animate-spin" : ""}`}
+                      />
+                      {syncingBoth || syncing || masteryCheckSyncing
+                        ? "Syncing..."
+                        : masteryCheckAssignment
+                          ? "Sync Both"
+                          : "Sync"}
+                    </button>
+                  </>
+                ) : null}
+                <button
+                  onClick={() => setIsEditMode(!isEditMode)}
+                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+                    isEditMode
+                      ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  <PencilIcon className="w-4 h-4" />
+                  {isEditMode ? "Done" : "Edit"}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* Progress Table */}
-      <div className="overflow-x-auto">
-        <AssignmentProgressTable
-          progressData={filteredProgressData}
-          masteryCheckProgressData={filteredMasteryCheckData}
-          totalQuestions={assignment.totalQuestions}
-          questionMap={assignment.podsieQuestionMap}
-          showZearnColumn={assignment.hasZearnActivity ?? false}
-          showDetailedScore={showDetailedScore}
-          showAllQuestions={showAllQuestions}
-          isAssessment={isAssessment}
-        />
-      </div>
+      {/* Progress Table - Only show when expanded */}
+      {isExpanded && (
+        <div className="overflow-x-auto">
+          <AssignmentProgressTable
+            progressData={filteredProgressData}
+            masteryCheckProgressData={filteredMasteryCheckData}
+            totalQuestions={assignment.totalQuestions}
+            questionMap={assignment.podsieQuestionMap}
+            showZearnColumn={assignment.hasZearnActivity ?? false}
+            showDetailedScore={showDetailedScore}
+            showAllQuestions={showAllQuestions}
+            isAssessment={isAssessment}
+          />
+        </div>
+      )}
     </div>
   );
 }

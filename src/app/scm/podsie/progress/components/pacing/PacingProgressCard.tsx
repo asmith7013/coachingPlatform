@@ -118,7 +118,7 @@ export function PacingProgressCard({
         )}
       </div>
       {/* Key row - only show when student names are shown */}
-      {!hideToggle && showStudentNames && (
+      {showStudentNames && (
         <div className="flex items-center gap-6 text-xs text-gray-500 mb-4">
           <span className="font-semibold text-gray-700">Key:</span>
           {/* Mastery Check */}
