@@ -112,7 +112,7 @@ export function SmartboardDisplay({
   // Edit mode state
   const [isEditMode, setIsEditMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [textSizeLevel, setTextSizeLevel] = useState(0); // -1 = smaller, 0 = normal, 1 = larger
+  const [textSizeLevel, setTextSizeLevel] = useState(1); // -1 = smaller, 0 = normal, 1 = larger, 2 = extra large
   const [showDailyProgress, setShowDailyProgress] = useState(true);
   const [showSidekick, setShowSidekick] = useState(false);
   const [dueDate, setDueDate] = useState<string>(() => {
