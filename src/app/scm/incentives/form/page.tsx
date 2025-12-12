@@ -522,6 +522,8 @@ export default function IncentivesFormPage() {
                                   }
                                   required
                                   scopeSequenceTag={scopeSequenceTag}
+                                  studentId={student._id}
+                                  formDate={date}
                                 />
                               )}
                               {type.detailType === "custom" && (

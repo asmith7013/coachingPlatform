@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { fetchLessonsForUnit } from "../actions";
 
 interface Lesson {
@@ -8,6 +8,8 @@ interface Lesson {
   unitLessonId: string;
   lessonName: string;
   lessonNumber: number;
+  section?: string;
+  lessonType?: string;
 }
 
 interface LessonPickerProps {
@@ -17,6 +19,60 @@ interface LessonPickerProps {
   onChange: (value: string) => void;
   required?: boolean;
   scopeSequenceTag?: string;
+}
+
+/**
+ * Section ordering for scope and sequence
+ * Ramp Ups come first, then A-F
+ */
+const SECTION_ORDER: Record<string, number> = {
+  'Ramp Ups': 0,
+  'A': 1,
+  'B': 2,
+  'C': 3,
+  'D': 4,
+  'E': 5,
+  'F': 6,
+  'Unit Assessment': 99,
+};
+
+function getSectionOrder(section: string | undefined): number {
+  if (!section) return 50;
+  return SECTION_ORDER[section] ?? 50;
+}
+
+/**
+ * Sort lessons: Ramp Ups first (in RU number order), then A, B, C, D by lesson number
+ */
+function sortLessons(lessons: Lesson[]): Lesson[] {
+  return [...lessons].sort((a, b) => {
+    const sectionA = getSectionOrder(a.section);
+    const sectionB = getSectionOrder(b.section);
+    if (sectionA !== sectionB) return sectionA - sectionB;
+
+    // For ramp-ups, sort by the RU number in unitLessonId (e.g., "3.RU1" -> 1)
+    if (a.section === 'Ramp Ups' && b.section === 'Ramp Ups') {
+      const numA = parseInt(a.unitLessonId.replace(/.*RU/, '')) || 0;
+      const numB = parseInt(b.unitLessonId.replace(/.*RU/, '')) || 0;
+      return numA - numB;
+    }
+
+    return a.lessonNumber - b.lessonNumber;
+  });
+}
+
+/**
+ * Format lesson display text
+ * - Ramp ups: Show just the lessonName (e.g., "Ramp Up 1: Equivalent Ratios")
+ * - Regular lessons: Show "Lesson X: Title" (e.g., "Lesson 1: Understanding Proportional Relationships")
+ */
+function formatLessonDisplay(lesson: Lesson): string {
+  if (lesson.lessonType === 'rampUp' || lesson.section === 'Ramp Ups') {
+    // Ramp ups already have "Ramp Up X: Title" format in lessonName
+    return lesson.lessonName;
+  }
+  // Regular lessons: "Lesson X: Title"
+  return `Lesson ${lesson.lessonNumber}: ${lesson.lessonName}`;
 }
 
 /**
@@ -59,6 +115,9 @@ export function LessonPicker({
     loadLessons();
   }, [grade, unitNumber, scopeSequenceTag]);
 
+  // Sort lessons with ramp ups first
+  const sortedLessons = useMemo(() => sortLessons(lessons), [lessons]);
+
   if (isLoading) {
     return (
       <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">
@@ -91,9 +150,9 @@ export function LessonPicker({
       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
     >
       <option value="">Select lesson...</option>
-      {lessons.map((lesson) => (
+      {sortedLessons.map((lesson) => (
         <option key={lesson._id} value={lesson._id}>
-          {lesson.unitLessonId} - {lesson.lessonName}
+          {formatLessonDisplay(lesson)}
         </option>
       ))}
     </select>

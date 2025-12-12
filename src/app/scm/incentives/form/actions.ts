@@ -623,3 +623,227 @@ export async function submitActivities(
     }
   });
 }
+
+// =====================================
+// NEXT LESSON SUGGESTION
+// =====================================
+
+/**
+ * Section ordering for scope and sequence
+ * Ramp Ups come first, then A-F, then Unit Assessment (excluded from suggestions)
+ */
+const SECTION_ORDER: Record<string, number> = {
+  'Ramp Ups': 0,
+  'A': 1,
+  'B': 2,
+  'C': 3,
+  'D': 4,
+  'E': 5,
+  'F': 6,
+  'Unit Assessment': 99, // Excluded from suggestions
+};
+
+function getSectionOrder(section: string | undefined): number {
+  if (!section) return 50;
+  return SECTION_ORDER[section] ?? 50;
+}
+
+/**
+ * Sort lessons in the correct order: Ramp Ups → A → B → C → D → Unit Assessment
+ */
+function sortLessons<T extends { section?: string; lessonNumber: number; unitLessonId: string }>(lessons: T[]): T[] {
+  return [...lessons].sort((a, b) => {
+    const sectionA = getSectionOrder(a.section);
+    const sectionB = getSectionOrder(b.section);
+    if (sectionA !== sectionB) return sectionA - sectionB;
+
+    // For ramp-ups, sort by the RU number in unitLessonId (e.g., "3.RU1" -> 1)
+    if (a.section === 'Ramp Ups' && b.section === 'Ramp Ups') {
+      const numA = parseInt(a.unitLessonId.replace(/.*RU/, '')) || 0;
+      const numB = parseInt(b.unitLessonId.replace(/.*RU/, '')) || 0;
+      return numA - numB;
+    }
+
+    return a.lessonNumber - b.lessonNumber;
+  });
+}
+
+interface SuggestedLesson {
+  lessonId: string;
+  unitLessonId: string;
+  lessonName: string;
+  section?: string;
+}
+
+interface GetNextLessonResult {
+  success: boolean;
+  data?: SuggestedLesson | null;
+  message?: string;
+  error?: string;
+}
+
+/**
+ * Get the suggested next lesson for a student based on their most recent mastery check
+ *
+ * Logic:
+ * 1. Find mastery check completed on "yesterday" (formDate - 1 day)
+ * 2. If none from yesterday, find most recent completed mastery check
+ * 3. Look up that lesson in scope-and-sequence
+ * 4. Find the next lesson in the unit (respecting section ordering)
+ * 5. Return null if: no mastery check found, or current lesson is last in unit
+ */
+export async function getNextLessonForStudent(
+  studentId: string,
+  formDate: string, // YYYY-MM-DD format
+  unitNumber: number,
+  scopeSequenceTag: string
+): Promise<GetNextLessonResult> {
+  return withDbConnection(async () => {
+    try {
+      // Calculate yesterday based on form date
+      const formDateObj = new Date(formDate + 'T12:00:00');
+      const yesterdayObj = new Date(formDateObj);
+      yesterdayObj.setDate(yesterdayObj.getDate() - 1);
+      const yesterdayStart = new Date(yesterdayObj);
+      yesterdayStart.setHours(0, 0, 0, 0);
+      const yesterdayEnd = new Date(yesterdayObj);
+      yesterdayEnd.setHours(23, 59, 59, 999);
+
+      // Fetch student with podsieProgress
+      interface LeanStudent {
+        _id: { toString(): string };
+        podsieProgress?: Array<{
+          scopeAndSequenceId: string;
+          activityType?: string;
+          isFullyComplete?: boolean;
+          fullyCompletedDate?: string;
+          unitCode?: string;
+          rampUpId?: string;
+        }>;
+      }
+
+      const student = await StudentModel.findById(studentId)
+        .select('podsieProgress')
+        .lean() as unknown as LeanStudent | null;
+
+      if (!student) {
+        return { success: false, error: 'Student not found' };
+      }
+
+      const podsieProgress = student.podsieProgress || [];
+
+      // Filter to completed mastery checks
+      const completedMasteryChecks = podsieProgress.filter(
+        p => p.activityType === 'mastery-check' && p.isFullyComplete && p.fullyCompletedDate
+      );
+
+      if (completedMasteryChecks.length === 0) {
+        return { success: true, data: null, message: 'No completed mastery checks found' };
+      }
+
+      // Try to find completions from yesterday first
+      const yesterdayCompletions = completedMasteryChecks.filter(p => {
+        if (!p.fullyCompletedDate) return false;
+        const completedDate = new Date(p.fullyCompletedDate);
+        return completedDate >= yesterdayStart && completedDate <= yesterdayEnd;
+      });
+
+      let targetMasteryCheck;
+
+      if (yesterdayCompletions.length > 0) {
+        // Sort by completion time descending to get the LATEST one from yesterday
+        yesterdayCompletions.sort((a, b) => {
+          const dateA = new Date(a.fullyCompletedDate || 0);
+          const dateB = new Date(b.fullyCompletedDate || 0);
+          return dateB.getTime() - dateA.getTime();
+        });
+        targetMasteryCheck = yesterdayCompletions[0];
+      } else {
+        // If none from yesterday, find most recent overall
+        completedMasteryChecks.sort((a, b) => {
+          const dateA = new Date(a.fullyCompletedDate || 0);
+          const dateB = new Date(b.fullyCompletedDate || 0);
+          return dateB.getTime() - dateA.getTime();
+        });
+        targetMasteryCheck = completedMasteryChecks[0];
+      }
+
+      if (!targetMasteryCheck?.scopeAndSequenceId) {
+        return { success: true, data: null, message: 'No valid mastery check found' };
+      }
+
+      // Look up the mastered lesson
+      interface LeanLesson {
+        _id: { toString(): string };
+        unitNumber: number;
+        unitLessonId: string;
+        lessonName: string;
+        lessonNumber: number;
+        section?: string;
+        lessonType?: string;
+        scopeSequenceTag?: string;
+      }
+
+      const masteredLesson = await ScopeAndSequenceModel.findById(targetMasteryCheck.scopeAndSequenceId)
+        .lean() as unknown as LeanLesson | null;
+
+      if (!masteredLesson) {
+        return { success: true, data: null, message: 'Could not find mastered lesson in scope and sequence' };
+      }
+
+      // Check if the mastered lesson is in the same unit as the form's selected unit
+      if (masteredLesson.unitNumber !== unitNumber) {
+        return {
+          success: true,
+          data: null,
+          message: `Mastered lesson (Unit ${masteredLesson.unitNumber}) is not in selected unit (${unitNumber})`
+        };
+      }
+
+      // Get all lessons in the same unit
+      const allLessonsInUnit = await ScopeAndSequenceModel.find({
+        scopeSequenceTag,
+        unitNumber,
+        lessonType: { $ne: 'assessment' }, // Exclude unit assessments
+      }).lean() as unknown as LeanLesson[];
+
+      if (allLessonsInUnit.length === 0) {
+        return { success: true, data: null, message: 'No lessons found in unit' };
+      }
+
+      // Sort lessons in correct order
+      const sortedLessons = sortLessons(allLessonsInUnit);
+
+      // Find the index of the mastered lesson
+      const masteredIndex = sortedLessons.findIndex(
+        l => l._id.toString() === masteredLesson._id.toString()
+      );
+
+      if (masteredIndex === -1) {
+        return { success: true, data: null, message: 'Mastered lesson not found in sorted list' };
+      }
+
+      // Check if it's the last lesson in the unit
+      if (masteredIndex === sortedLessons.length - 1) {
+        return { success: true, data: null, message: 'Mastered lesson is the last in the unit' };
+      }
+
+      // Get the next lesson
+      const nextLesson = sortedLessons[masteredIndex + 1];
+
+      return {
+        success: true,
+        data: {
+          lessonId: nextLesson._id.toString(),
+          unitLessonId: nextLesson.unitLessonId,
+          lessonName: nextLesson.lessonName,
+          section: nextLesson.section,
+        },
+        message: `Suggesting next lesson after ${masteredLesson.unitLessonId}`,
+      };
+    } catch (error) {
+      console.error('❌ [getNextLessonForStudent] Error:', error);
+      return { success: false, error: handleServerError(error, 'Failed to get next lesson suggestion') };
+    }
+  });
+}
