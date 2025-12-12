@@ -1,0 +1,95 @@
+<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+
+    <h2 style="font-size: 38px; font-weight: 700; color: #60a5fa; margin: 0 0 20px 0; text-transform: uppercase;">
+        Step 3: INTERPRET
+    </h2>
+
+    <p style="font-size: 20px; color: #cbd5e1; margin: 0 0 25px 0;">
+        Now I connect the numbers to what they mean in Maya's YouTube channel situation.
+    </p>
+
+    <div style="display: flex; gap: 40px; align-items: flex-start; flex: 1;">
+        <!-- Left side: The values -->
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+
+            <div style="background: rgba(96, 165, 250, 0.15); border: 2px solid #60a5fa; border-radius: 16px; padding: 25px;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <span style="font-size: 36px;">&#128200;</span>
+                    <h3 style="font-size: 24px; color: #60a5fa; margin: 0;">Slope = 50</h3>
+                </div>
+                <p style="font-size: 18px; color: #e2e8f0; margin: 0; line-height: 1.6;">
+                    The slope tells us the <strong style="color: #fbbf24;">rate of change</strong>.
+                </p>
+                <p style="font-size: 18px; color: #cbd5e1; margin: 10px 0 0 0; line-height: 1.6;">
+                    In this context: Maya gains <strong style="color: #4ade80;">50 subscribers per month</strong>.
+                </p>
+            </div>
+
+            <div style="background: rgba(168, 85, 247, 0.15); border: 2px solid #a855f7; border-radius: 16px; padding: 25px;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <span style="font-size: 36px;">&#128205;</span>
+                    <h3 style="font-size: 24px; color: #a855f7; margin: 0;">Y-intercept = 200</h3>
+                </div>
+                <p style="font-size: 18px; color: #e2e8f0; margin: 0; line-height: 1.6;">
+                    The y-intercept tells us the <strong style="color: #fbbf24;">starting value</strong>.
+                </p>
+                <p style="font-size: 18px; color: #cbd5e1; margin: 10px 0 0 0; line-height: 1.6;">
+                    In this context: Maya started with <strong style="color: #4ade80;">200 subscribers</strong> when she launched her channel.
+                </p>
+            </div>
+        </div>
+
+        <!-- Right side: Visual summary -->
+        <div style="width: 340px; display: flex; flex-direction: column; gap: 20px;">
+            <div style="background: rgba(42, 42, 62, 0.8); border: 2px solid #334155; border-radius: 16px; padding: 25px;">
+                <h3 style="font-size: 20px; color: #fbbf24; margin: 0 0 15px 0; text-align: center;">&#127919; The Key Insight</h3>
+                <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 15px;">
+                    <p style="font-size: 16px; color: #e2e8f0; margin: 0; line-height: 1.6; text-align: center;">
+                        <strong style="color: #60a5fa;">Slope</strong> = how much something <em>changes</em> over time
+                    </p>
+                    <p style="font-size: 16px; color: #e2e8f0; margin: 15px 0 0 0; line-height: 1.6; text-align: center;">
+                        <strong style="color: #a855f7;">Y-intercept</strong> = where something <em>starts</em>
+                    </p>
+                </div>
+            </div>
+
+            <div style="background: rgba(74, 222, 128, 0.1); border: 2px solid #4ade80; border-radius: 16px; padding: 20px;">
+                <h3 style="font-size: 18px; color: #4ade80; margin: 0 0 10px 0;">Units matter!</h3>
+                <p style="font-size: 15px; color: #cbd5e1; margin: 0; line-height: 1.5;">
+                    Slope: <strong>subscribers per month</strong><br/>
+                    Y-intercept: <strong>subscribers</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toggle button -->
+<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('cfu-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
+    &#8595; Show Question
+</button>
+
+<!-- CFU Box at bottom -->
+<div id="cfu-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
+    <div style="background: #f59e0b; border-top: 4px solid #fbbf24; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
+        <button onclick="document.getElementById('cfu-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
+            x
+        </button>
+        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">&#10067; CHECK FOR UNDERSTANDING</div>
+        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
+            Why is it important to INTERPRET the values in context, instead of just giving the numbers?
+        </span>
+    </div>
+</div>
+
+<style>
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+#toggle-hint:hover {
+    background: rgba(148, 163, 184, 0.2);
+    transform: translateX(-50%) scale(1.05);
+}
+</style>

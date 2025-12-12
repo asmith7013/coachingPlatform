@@ -1,0 +1,120 @@
+<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+
+    <h2 style="font-size: 38px; font-weight: 700; color: #60a5fa; margin: 0 0 20px 0; text-transform: uppercase;">
+        Step 2: CALCULATE <span style="color: #4ade80;">&#10003;</span>
+    </h2>
+
+    <p style="font-size: 20px; color: #cbd5e1; margin: 0 0 20px 0;">
+        The slope is <strong style="color: #4ade80;">50</strong>
+    </p>
+
+    <div style="display: flex; gap: 40px; align-items: flex-start; flex: 1;">
+        <!-- Graph Container with annotations -->
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+            <svg viewBox="0 0 280 200" style="width: 100%; max-height: 280px;">
+                <!-- Grid lines -->
+                <g stroke="#334155" stroke-width="0.5">
+                    <line x1="95" y1="20" x2="95" y2="170"/>
+                    <line x1="150" y1="20" x2="150" y2="170"/>
+                    <line x1="205" y1="20" x2="205" y2="170"/>
+                    <line x1="260" y1="20" x2="260" y2="170"/>
+                    <line x1="40" y1="132.5" x2="260" y2="132.5"/>
+                    <line x1="40" y1="95" x2="260" y2="95"/>
+                    <line x1="40" y1="57.5" x2="260" y2="57.5"/>
+                    <line x1="40" y1="20" x2="260" y2="20"/>
+                </g>
+
+                <!-- Axes -->
+                <line x1="40" y1="170" x2="260" y2="170" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="40" y1="20" x2="40" y2="170" stroke="#94a3b8" stroke-width="2"/>
+
+                <!-- Axis arrows -->
+                <polygon points="260,170 255,167 255,173" fill="#94a3b8"/>
+                <polygon points="40,20 37,25 43,25" fill="#94a3b8"/>
+
+                <!-- X-axis labels -->
+                <text x="40" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
+                <text x="95" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">2</text>
+                <text x="150" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">4</text>
+                <text x="205" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">6</text>
+                <text x="260" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">8</text>
+
+                <!-- Y-axis labels -->
+                <text x="35" y="174" fill="#94a3b8" font-size="11" text-anchor="end">0</text>
+                <text x="35" y="136" fill="#94a3b8" font-size="11" text-anchor="end">150</text>
+                <text x="35" y="99" fill="#94a3b8" font-size="11" text-anchor="end">300</text>
+                <text x="35" y="61" fill="#94a3b8" font-size="11" text-anchor="end">450</text>
+                <text x="35" y="24" fill="#94a3b8" font-size="11" text-anchor="end">600</text>
+
+                <!-- Axis titles -->
+                <text x="150" y="198" fill="#cbd5e1" font-size="12" text-anchor="middle">time in months</text>
+                <text x="12" y="95" fill="#cbd5e1" font-size="12" text-anchor="middle" transform="rotate(-90, 12, 95)">subscribers</text>
+
+                <!-- Data line (highlighted green for completed) -->
+                <line x1="40" y1="120" x2="260" y2="20" stroke="#4ade80" stroke-width="4"/>
+
+                <!-- Points -->
+                <circle cx="40" cy="120" r="6" fill="#4ade80"/>
+                <circle cx="260" cy="20" r="6" fill="#4ade80"/>
+
+                <!-- Slope label on line -->
+                <rect x="115" y="55" width="80" height="24" rx="4" fill="#4ade80"/>
+                <text x="155" y="72" fill="#000" font-size="12" text-anchor="middle" font-weight="bold">slope = 50</text>
+            </svg>
+        </div>
+
+        <!-- Summary -->
+        <div style="width: 340px; display: flex; flex-direction: column; gap: 15px;">
+            <div style="background: rgba(74, 222, 128, 0.15); border: 2px solid #4ade80; border-radius: 12px; padding: 20px;">
+                <h3 style="font-size: 18px; color: #4ade80; margin: 0 0 15px 0;">&#10003; Values Found So Far:</h3>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 16px; color: #cbd5e1;">Slope:</span>
+                        <span style="font-size: 22px; color: #4ade80; font-weight: bold;">50</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 16px; color: #cbd5e1;">Y-intercept:</span>
+                        <span style="font-size: 22px; color: #4ade80; font-weight: bold;">200</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: rgba(42, 42, 62, 0.6); border: 2px solid #a855f7; border-radius: 12px; padding: 20px;">
+                <h3 style="font-size: 18px; color: #a855f7; margin: 0 0 10px 0;">But wait...</h3>
+                <p style="font-size: 16px; color: #e2e8f0; margin: 0; line-height: 1.5;">
+                    We have the numbers, but the question asks us to <strong>explain what they mean</strong> in this situation!
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toggle button -->
+<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('answer-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
+    &#8595; Show Answer
+</button>
+
+<!-- Answer Box at bottom -->
+<div id="answer-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
+    <div style="background: #4ade80; border-top: 4px solid #22c55e; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
+        <button onclick="document.getElementById('answer-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
+            x
+        </button>
+        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">&#10003; ANSWER</div>
+        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
+            The <strong>rise (400)</strong> = change in subscribers; the <strong>run (8)</strong> = change in months. Dividing gives us <strong>50 subscribers per month</strong> - the rate of change!
+        </span>
+    </div>
+</div>
+
+<style>
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+#toggle-hint:hover {
+    background: rgba(148, 163, 184, 0.2);
+    transform: translateX(-50%) scale(1.05);
+}
+</style>

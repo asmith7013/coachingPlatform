@@ -349,6 +349,7 @@
 │   │   │   │   │   └── types.ts
 │   │   │   │   ├── podsie-sync.legacy.ts
 │   │   │   │   ├── podsie-sync.ts
+│   │   │   │   ├── roadmap-completions.ts
 │   │   │   │   ├── roadmaps-lessons.ts
 │   │   │   │   ├── roadmaps-skill-relationships.ts
 │   │   │   │   ├── roadmaps-skills.ts
@@ -713,6 +714,69 @@
 │   │   ├── layout.tsx
 │   │   ├── page.tsx
 │   │   ├── presentations
+│   │   │   ├── calculate-compare-scales-g8u3l2
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-10.html
+│   │   │   │   ├── slide-11.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
+│   │   │   ├── calculate-rate-of-change-g8u3l5
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-10.html
+│   │   │   │   ├── slide-11.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
+│   │   │   ├── compare-unit-rates-g8u3l4
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-10.html
+│   │   │   │   ├── slide-11.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
+│   │   │   ├── interpret-slope-intercept-g8u3l6
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-10.html
+│   │   │   │   ├── slide-11.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
+│   │   │   ├── one-step-reveal-g8u4l6
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
 │   │   │   ├── snow-storm-v1-g8u3l1
 │   │   │   │   ├── metadata.json
 │   │   │   │   ├── slide-1.html
@@ -831,6 +895,9 @@
 │   │   │   │   ├── mastery-grid
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── page.tsx
+│   │   │   │   ├── progress
+│   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
 │   │   │   │   ├── scope-and-sequence
 │   │   │   │   │   ├── components
 │   │   │   │   │   └── page.tsx
@@ -1068,6 +1135,10 @@
 │   │   │   │       ├── NavigationSidebar.tsx
 │   │   │   │       ├── ResizeHandle.tsx
 │   │   │   │       └── SidebarControls.tsx
+│   │   │   ├── section-visualization
+│   │   │   │   ├── SectionAccordion.tsx
+│   │   │   │   ├── SectionVisualizationLayout.tsx
+│   │   │   │   └── index.ts
 │   │   │   ├── sectionHeadings
 │   │   │   │   ├── SectionHeading.tsx
 │   │   │   │   ├── index.ts
@@ -2023,4 +2094,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-617 directories, 1407 files
+625 directories, 1470 files
