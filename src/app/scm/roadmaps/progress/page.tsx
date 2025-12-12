@@ -12,6 +12,7 @@ import {
   type AccordionItemConfig,
 } from "@/components/composed/section-visualization";
 import { RoadmapBarChart } from "./components/RoadmapBarChart";
+import { SectionComparisonChart } from "./components/SectionComparisonChart";
 
 export default function RoadmapCompletionsPage() {
   const [sectionOptions, setSectionOptions] = useState<SectionOption[]>([]);
@@ -168,6 +169,26 @@ export default function RoadmapCompletionsPage() {
       sectionColors={sectionColors}
       isLoading={loading}
       loadingSectionIds={loadingSectionIds}
+      sharedVisualization={
+        selectedSections.length > 0 && (
+          <SectionComparisonChart
+            sections={[...selectedSections]
+              .sort((a, b) => {
+                const indexA = sectionOptions.findIndex((s) => s.id === a);
+                const indexB = sectionOptions.findIndex((s) => s.id === b);
+                return indexA - indexB;
+              })
+              .map((sectionId) => {
+                const section = sectionOptions.find((s) => s.id === sectionId);
+                return {
+                  sectionId,
+                  sectionName: section?.classSection || sectionId,
+                  data: roadmapData.get(sectionId),
+                };
+              })}
+          />
+        )
+      }
       renderSectionContent={renderSectionContent}
       emptyStateMessage="No Sections Selected"
       emptyStateDescription="Select one or more sections above to view roadmap skill mastery for each student."

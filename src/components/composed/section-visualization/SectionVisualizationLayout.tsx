@@ -80,11 +80,11 @@ export function SectionVisualizationLayout({
   emptyStateDescription = "Select one or more sections above to view data.",
   className,
 }: SectionVisualizationLayoutProps) {
-  // Sort selected sections by section number
+  // Sort selected sections by their order in sectionOptions (matches multi-select filter order)
   const sortedSelectedSections = [...selectedSections].sort((a, b) => {
-    const numA = parseInt(a.split("-").pop() || "0", 10);
-    const numB = parseInt(b.split("-").pop() || "0", 10);
-    return numA - numB;
+    const indexA = sectionOptions.findIndex((s) => s.id === a);
+    const indexB = sectionOptions.findIndex((s) => s.id === b);
+    return indexA - indexB;
   });
 
   if (isLoading) {
