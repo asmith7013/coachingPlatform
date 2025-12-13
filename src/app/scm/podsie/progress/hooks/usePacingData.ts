@@ -145,7 +145,9 @@ export function usePacingData(
   selectedUnit: number | null,
   lessons: LessonConfig[],
   progressData: ProgressData[],
-  excludeRampUps: boolean = false
+  excludeRampUps: boolean = false,
+  /** Optional date to use for pacing calculations (defaults to today) */
+  pacingDate?: string
 ): PacingData {
   const [unitSchedules, setUnitSchedules] = useState<UnitSchedule[]>([]);
   const [loading, setLoading] = useState(false);
@@ -216,8 +218,8 @@ export function usePacingData(
       return { ...emptyResult, noScheduleData: true };
     }
 
-    // Find expected section for today
-    const today = new Date().toISOString().split("T")[0];
+    // Find expected section for the reference date (pacingDate or today)
+    const today = pacingDate || new Date().toISOString().split("T")[0];
     let expectedSection: string | null = null;
     let expectedSectionName: string | null = null;
 
@@ -799,7 +801,7 @@ export function usePacingData(
       error: null,
       noScheduleData: false,
     };
-  }, [unitSchedules, selectedUnit, lessons, progressData, loading, error, excludeRampUps]);
+  }, [unitSchedules, selectedUnit, lessons, progressData, loading, error, excludeRampUps, pacingDate]);
 
   return pacingData;
 }

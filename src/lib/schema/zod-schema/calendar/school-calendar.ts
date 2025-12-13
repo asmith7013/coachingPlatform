@@ -2,28 +2,21 @@ import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
 
 /**
- * Types of calendar events (days off, half days, etc.)
- */
-export const CalendarEventTypeZod = z.enum([
-  "holiday",
-  "school_closed",
-  "half_day",
-  "professional_development",
-  "parent_conference",
-  "testing",
-  "other"
-]);
-
-export type CalendarEventType = z.infer<typeof CalendarEventTypeZod>;
-
-/**
  * A single calendar event (day off, holiday, etc.)
+ * Events without school/classSection are global (apply to everyone)
+ * Events with school/classSection are section-specific
  */
 export const CalendarEventSchema = z.object({
   date: z.string(), // ISO date string YYYY-MM-DD
   name: z.string(),
-  type: CalendarEventTypeZod,
   description: z.string().optional(),
+  // Optional section targeting (if absent = global event)
+  school: z.string().optional(),
+  classSection: z.string().optional(),
+  // Whether math class happens on this day
+  // false = no math class (testing, assembly, no school) - schedule shifts
+  // true = math class happens (normal day)
+  hasMathClass: z.boolean().default(false),
 });
 
 export type CalendarEvent = z.infer<typeof CalendarEventSchema>;

@@ -86,7 +86,7 @@ export function SectionPacingCard({
         <ToggleSwitch
           checked={showStudentNames}
           onChange={setShowStudentNames}
-          label="Show Names"
+          label="Show Details"
         />
         <ToggleSwitch
           checked={excludeRampUps}

@@ -1,0 +1,21 @@
+{
+  "title": "Match or Mismatch - All, Some, or No Solutions",
+  "slug": "match-mismatch-solutions-g8",
+  "mathConcept": "Determining number of solutions based on equation structure",
+  "mathStandard": "8.EE.C.7a",
+  "gradeLevel": "8",
+  "unitNumber": 4,
+  "lessonNumber": 7,
+  "scopeAndSequenceId": "68ff7f1b5d8ca031d603234f",
+  "strategyName": "Match or Mismatch",
+  "strategySteps": ["COMPARE", "DECIDE"],
+  "learningGoals": [
+    "Compare and contrast equations that have no solutions or infinitely many solutions",
+    "Create linear equations in one variable that have either no solutions or infinitely many solutions, using structure"
+  ],
+  "scenarios": [
+    "Daily Login Rewards",
+    "Follower Growth",
+    "Gym Streak Points"
+  ]
+}

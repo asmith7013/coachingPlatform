@@ -3,16 +3,20 @@ import { standardSchemaOptions, standardDocumentFields } from "@mongoose-schema/
 
 /**
  * Calendar event schema (embedded document)
+ * Events without school/classSection are global (apply to everyone)
+ * Events with school/classSection are section-specific
  */
 const calendarEventSchema = new mongoose.Schema({
   date: { type: String, required: true }, // YYYY-MM-DD
   name: { type: String, required: true },
-  type: {
-    type: String,
-    enum: ["holiday", "school_closed", "half_day", "professional_development", "parent_conference", "testing", "other"],
-    required: true
-  },
   description: { type: String, required: false },
+  // Optional section targeting (if absent = global event)
+  school: { type: String, required: false },
+  classSection: { type: String, required: false },
+  // Whether math class happens on this day
+  // false = no math class (testing, assembly, no school) - schedule shifts, light gray
+  // true = math class happens (pop quiz, special lesson) - no shift, dark gray
+  hasMathClass: { type: Boolean, default: false },
 }, { _id: false });
 
 /**

@@ -17,8 +17,10 @@ interface SectionCalendarProps {
     events: Array<{
       date: string;
       name: string;
-      type: string;
+      hasMathClass: boolean;
       description?: string;
+      school?: string;
+      classSection?: string;
     }>;
   };
   attendanceData: DailyAttendanceStats[];

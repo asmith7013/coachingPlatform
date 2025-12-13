@@ -20,8 +20,10 @@ export interface StudentRoadmapData {
   masteredFromDiagnostic: number;
   // Total mastered skills
   totalMastered: number;
-  // Attempted but not yet mastered
+  // Attempted but not yet mastered (unique skills)
   attemptedNotMastered: number;
+  // Total attempts across all skills (includes retries)
+  totalAttempts: number;
 }
 
 export interface SectionRoadmapData {
@@ -82,6 +84,7 @@ export async function getRoadmapCompletionsBySection(
           skillPerformances?: Array<{
             skillCode: string;
             status: string;
+            attemptCount?: number;
           }>;
         }
 
@@ -99,6 +102,12 @@ export async function getRoadmapCompletionsBySection(
             (sp) => sp.status === "Attempted But Not Mastered"
           ).length;
 
+          // Total attempts across all skills (sum of attemptCount from each skillPerformance)
+          const totalAttempts = skillPerformances.reduce(
+            (sum, sp) => sum + (sp.attemptCount || 0),
+            0
+          );
+
           // Skills from diagnostic (in masteredSkills but not in skillPerformances)
           const skillPerformanceCodes = new Set(skillPerformances.map((sp) => sp.skillCode));
           const masteredFromDiagnostic = [...masteredSkillsSet].filter(
@@ -114,6 +123,7 @@ export async function getRoadmapCompletionsBySection(
             masteredFromDiagnostic,
             totalMastered: masteredSkillsSet.size,
             attemptedNotMastered,
+            totalAttempts,
           };
         });
 

@@ -1,3 +1,8 @@
+---
+name: App Development
+description: Build features in the AI Coaching Platform Next.js app. Use for creating pages, components, server actions, TanStack tables, and understanding application architecture.
+---
+
 # App Development Skill
 
 This skill provides comprehensive knowledge for developing features in the AI Coaching Platform Next.js application.
@@ -75,6 +80,12 @@ app-development/
 - Common development tasks
 - Step-by-step guides
 - Best practices
+
+### Database Collections
+@.claude/skills/app-development/database-collections.md
+- MongoDB collection schemas
+- Collection relationships
+- Common query patterns
 
 ## Animation Components
 

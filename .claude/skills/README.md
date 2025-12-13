@@ -158,6 +158,7 @@ Skills in `.claude/settings.local.json`:
 - `Skill(create-p5-animation)` - Math animation creation
 - `Skill(create-worked-example-sg)` - Worked example study guides
 - `Skill(question-types)` - Question type patterns
+- `Skill(skill-guide)` - Guide for creating/using skills
 
 ---
 

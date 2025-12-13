@@ -1,13 +1,12 @@
 "use client";
 
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect } from "react";
 import { UserIcon } from "@heroicons/react/24/solid";
 import { usePacingData } from "@/app/scm/podsie/progress/hooks/usePacingData";
 import { useLessons } from "@/app/scm/podsie/progress/hooks/useLessons";
 import { useUnitsAndConfig } from "@/app/scm/podsie/progress/hooks/useUnitsAndConfig";
 import { useProgressData } from "@/app/scm/podsie/progress/hooks/useProgressData";
 import { getScopeTagForSection } from "@/app/scm/podsie/progress/utils/sectionHelpers";
-import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import type { CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
 
 export interface PaceZoneCounts {
@@ -27,6 +26,10 @@ interface SectionSummaryCardProps {
   onCountsLoaded?: (sectionId: string, counts: PaceZoneCounts) => void;
   /** Special population classifications (e.g., ICT, 12-1-1, MLL) */
   specialPopulations?: string[];
+  /** Whether to exclude ramp up lessons from pacing calculations */
+  excludeRampUps?: boolean;
+  /** Optional date to use for pacing calculations (YYYY-MM-DD format, defaults to today) */
+  pacingDate?: string;
 }
 
 // Badge styling for special populations
@@ -42,8 +45,9 @@ export function SectionSummaryCard({
   currentUnitInfo,
   onCountsLoaded,
   specialPopulations,
+  excludeRampUps = false,
+  pacingDate,
 }: SectionSummaryCardProps) {
-  const [excludeRampUps, setExcludeRampUps] = useState(false);
   const currentUnit = currentUnitInfo?.currentUnit ?? null;
 
   // Derive scope tag from section
@@ -72,7 +76,7 @@ export function SectionSummaryCard({
   );
 
   // Compute pacing data
-  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData, excludeRampUps);
+  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData, excludeRampUps, pacingDate);
 
   const isLoading = loadingConfig || loadingLessons || loadingProgress || pacingData.loading;
 
@@ -194,29 +198,22 @@ export function SectionSummaryCard({
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-bold text-gray-900">{section}</span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-600 text-white">
-            {school}
-          </span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-            Unit {currentUnit}
-          </span>
-          {specialPopulations?.map((pop) => {
-            const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
-            return (
-              <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
-                {pop}
-              </span>
-            );
-          })}
-        </div>
-        <ToggleSwitch
-          checked={excludeRampUps}
-          onChange={setExcludeRampUps}
-          label="Exclude Ramp Ups"
-        />
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-lg font-bold text-gray-900">{section}</span>
+        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-600 text-white">
+          {school}
+        </span>
+        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+          Unit {currentUnit}
+        </span>
+        {specialPopulations?.map((pop) => {
+          const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+          return (
+            <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
+              {pop}
+            </span>
+          );
+        })}
       </div>
 
       {/* Progress Bar */}

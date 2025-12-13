@@ -2,6 +2,7 @@
 
 import React, { lazy, Suspense } from "react";
 import { cn } from "@ui/utils/formatters";
+import { Legend, LegendGroup, LegendItem } from "@/components/core/feedback/Legend";
 
 // Lazy load the heavy Chart.js component
 const SkillsBarChart = lazy(() =>
@@ -79,11 +80,17 @@ export function StackedSkillsBarChart({
         borderSkipped: false as const,
         datalabels: {
           display: (context: { dataIndex: number }) =>
-            data[context.dataIndex].practiceValue > 0,
+            data[context.dataIndex].practiceValue > 0 ||
+            (data[context.dataIndex].attemptedCount ?? 0) > 0,
           anchor: "end" as const,
           align: "top" as const,
           offset: 4,
-          formatter: (value: number) => `+${value}`,
+          formatter: (_value: number, context: { dataIndex: number }) => {
+            const item = data[context.dataIndex];
+            const practiceStr = item.practiceValue > 0 ? `+${item.practiceValue}` : "";
+            const attemptStr = item.attemptedCount ? `(${item.attemptedCount})` : "";
+            return [practiceStr, attemptStr].filter(Boolean).join(" ");
+          },
           color: "rgb(5, 150, 105)", // emerald-600
           font: {
             size: 11,
@@ -104,16 +111,7 @@ export function StackedSkillsBarChart({
     },
     plugins: {
       legend: {
-        position: "right" as const,
-        align: "start" as const,
-        labels: {
-          usePointStyle: true,
-          pointStyle: "rect" as const,
-          padding: 15,
-          font: {
-            size: 12,
-          },
-        },
+        display: false,
       },
       tooltip: {
         callbacks: {
@@ -202,6 +200,28 @@ export function StackedSkillsBarChart({
       <Suspense fallback={<ChartSkeleton />}>
         <SkillsBarChart chartData={chartData} chartOptions={chartOptions} />
       </Suspense>
+      <Legend title="Chart Key">
+        <LegendGroup>
+          <LegendItem
+            icon={<span className="inline-block w-3 h-3 rounded-sm bg-gray-300" />}
+            label="Diagnostic Baseline"
+          />
+          <LegendItem
+            icon={<span className="inline-block w-3 h-3 rounded-sm bg-emerald-500" />}
+            label="Skills Mastered"
+          />
+        </LegendGroup>
+        <LegendGroup>
+          <LegendItem
+            icon={<span className="font-bold text-emerald-600">+X</span>}
+            label="Skills mastered from practice"
+          />
+          <LegendItem
+            icon={<span className="font-bold text-emerald-600">(Y)</span>}
+            label="Total skill challenge attempts"
+          />
+        </LegendGroup>
+      </Legend>
     </div>
   );
 }

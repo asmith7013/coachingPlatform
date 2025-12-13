@@ -6,6 +6,7 @@ import { MultiSectionSelector } from "@/app/scm/podsie/bulk-sync/components";
 import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
 import { getCurrentUnitsForAllSections, type CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
 import { getSectionColors } from "@/app/scm/podsie/velocity/utils/colors";
+import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { SectionPacingCard, SectionSummaryCard } from "./components";
 
 interface SectionOption {
@@ -25,6 +26,7 @@ export default function PacePage() {
   const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [excludeRampUps, setExcludeRampUps] = useState(false);
 
   // Load sections and current units on mount
   useEffect(() => {
@@ -153,35 +155,42 @@ export default function PacePage() {
         {/* Overview Card with Summary Cards */}
         {selectedSectionsData.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            {/* Header row with title and legend */}
+            {/* Header row with title, legend, and toggle */}
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Overview</h2>
-              <div className="flex items-center gap-3 text-xs text-gray-600">
-                <span className="font-bold text-gray-700">Key:</span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                  Far Behind
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
-                  Behind
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
-                  On Pace
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
-                  Ahead
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
-                  Far Ahead
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-purple-500" />
-                  Complete
-                </span>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 text-xs text-gray-600">
+                  <span className="font-bold text-gray-700">Key:</span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                    Far Behind
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+                    Behind
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                    On Pace
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
+                    Ahead
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
+                    Far Ahead
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-full bg-purple-500" />
+                    Complete
+                  </span>
+                </div>
+                <ToggleSwitch
+                  checked={excludeRampUps}
+                  onChange={setExcludeRampUps}
+                  label="Exclude Ramp Ups"
+                />
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -192,6 +201,7 @@ export default function PacePage() {
                   school={sectionOpt.school}
                   currentUnitInfo={getCurrentUnitForSection(sectionOpt)}
                   specialPopulations={sectionOpt.specialPopulations}
+                  excludeRampUps={excludeRampUps}
                 />
               ))}
             </div>

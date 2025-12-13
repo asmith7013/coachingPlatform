@@ -131,6 +131,8 @@
 │   ├── lib-catalog.md
 │   ├── lib-changes.md
 │   └── reference-system.md
+├── docs-plans
+│   └── calendar-react-query-migration.md
 ├── docs-product-roadmap
 │   ├── 313
 │   │   ├── dashboard-tasks.md
@@ -257,6 +259,8 @@
 │   ├── migrate-lessontype-enum.ts
 │   ├── migrate-question-mapping-field.js
 │   ├── migrate-skill-appears-in.ts
+│   ├── run-attendance-sync.ts
+│   ├── run-podsie-sync.ts
 │   ├── run-scraper.ts
 │   ├── snorkl-comprehensive-scraper.ts
 │   ├── snorkl-simple-scraper.ts
@@ -326,6 +330,7 @@
 │   │   │   │   ├── attendance-sync
 │   │   │   │   │   ├── api
 │   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── scheduled
 │   │   │   │   │   ├── sync
 │   │   │   │   │   └── types.ts
 │   │   │   │   ├── curriculum-question-map
@@ -345,6 +350,7 @@
 │   │   │   │   │   ├── index.ts
 │   │   │   │   │   ├── processing
 │   │   │   │   │   ├── query
+│   │   │   │   │   ├── scheduled
 │   │   │   │   │   ├── sync
 │   │   │   │   │   └── types.ts
 │   │   │   │   ├── podsie-sync.legacy.ts
@@ -740,6 +746,20 @@
 │   │   │   │   ├── slide-7.html
 │   │   │   │   ├── slide-8.html
 │   │   │   │   └── slide-9.html
+│   │   │   ├── compare-match-solutions-g8
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-10.html
+│   │   │   │   ├── slide-11.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
+│   │   │   ├── compare-match-solutions-g8u4l7
 │   │   │   ├── compare-unit-rates-g8u3l4
 │   │   │   │   ├── metadata.json
 │   │   │   │   ├── slide-1.html
@@ -758,6 +778,17 @@
 │   │   │   │   ├── slide-1.html
 │   │   │   │   ├── slide-10.html
 │   │   │   │   ├── slide-11.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
+│   │   │   ├── match-mismatch-solutions-g8
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
 │   │   │   │   ├── slide-2.html
 │   │   │   │   ├── slide-3.html
 │   │   │   │   ├── slide-4.html
@@ -823,6 +854,8 @@
 │   │   │   ├── layout.tsx
 │   │   │   ├── logistics
 │   │   │   │   ├── calendar
+│   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
@@ -861,10 +894,12 @@
 │   │   │   │   ├── variations
 │   │   │   │   │   ├── [slug]
 │   │   │   │   │   └── page.tsx
-│   │   │   │   └── velocity
-│   │   │   │       ├── components
-│   │   │   │       ├── page.tsx
-│   │   │   │       └── utils
+│   │   │   │   ├── velocity
+│   │   │   │   │   ├── components
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   └── utils
+│   │   │   │   └── weekly
+│   │   │   │       └── page.tsx
 │   │   │   ├── roadmaps
 │   │   │   │   ├── assessment-scraper
 │   │   │   │   │   ├── actions
@@ -2094,4 +2129,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-625 directories, 1470 files
+634 directories, 1496 files

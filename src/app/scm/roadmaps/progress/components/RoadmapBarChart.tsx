@@ -27,9 +27,9 @@ export function RoadmapBarChart({
     label: `${s.firstName} ${s.lastName.charAt(0)}.`,
     diagnosticValue: s.masteredFromDiagnostic,
     practiceValue: s.masteredFromPractice,
-    attemptedCount: s.masteredFromPractice + s.attemptedNotMastered,
+    attemptedCount: s.totalAttempts,
     tooltipTitle: `${s.firstName} ${s.lastName}`,
-    tooltipExtra: [`${s.masteredFromPractice + s.attemptedNotMastered} skills attempted`],
+    tooltipExtra: [`${s.totalAttempts} total attempts`],
   }));
 
   return (

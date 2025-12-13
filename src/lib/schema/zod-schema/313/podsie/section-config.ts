@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { AllSectionsZod, SchoolsZod, Teachers313Zod, ScopeSequenceTagZod, SpecialPopulationsZod } from "@schema/enum/313";
-import { LessonTypeZod } from "@zod-schema/313/curriculum/scope-and-sequence";
+import { LessonTypeZod, GradeZod } from "@zod-schema/313/curriculum/scope-and-sequence";
 
 // =====================================
 // SECTION CONFIG SCHEMA
@@ -223,7 +223,7 @@ export const SectionConfigFieldsSchema = z.object({
   school: SchoolsZod.describe("School identifier (IS313, PS19, or X644)"),
   classSection: AllSectionsZod.describe("Class section (e.g., '802', '803', '601')"),
   teacher: Teachers313Zod.optional().describe("Current teacher for this section"),
-  gradeLevel: z.string().describe("Grade level (e.g., '6', '7', '8')"),
+  gradeLevel: GradeZod.describe("Grade level (e.g., '6', '7', '8', 'Algebra 1')"),
   scopeSequenceTag: ScopeSequenceTagZod.optional().describe("Scope and sequence tag (e.g., 'Grade 8', 'Algebra 1')"),
 
   groupId: z.string().optional().describe("Podsie group ID for this section (used in Podsie URLs)"),

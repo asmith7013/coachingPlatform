@@ -1,0 +1,21 @@
+{
+  "title": "Model, Match, Meaning - Comparing Linear Costs",
+  "slug": "compare-match-solutions-g8",
+  "mathConcept": "Comparing two linear cost expressions to find break-even point",
+  "mathStandard": "8.EE.C.7",
+  "gradeLevel": "8",
+  "unitNumber": 4,
+  "lessonNumber": 9,
+  "scopeAndSequenceId": "68ff7f1b5d8ca031d6032352",
+  "strategyName": "Model, Match, Meaning",
+  "strategySteps": ["MODEL", "MATCH", "MEANING"],
+  "learningGoals": [
+    "Create an equation in one variable to represent a situation in which two conditions are equal",
+    "Interpret the solution of an equation in one variable in context"
+  ],
+  "scenarios": [
+    "Streaming Services (Movie Night Showdown)",
+    "Food Delivery (DashDine vs QuickBite)",
+    "Gaming Servers (CloudGame Pro vs GameStream)"
+  ]
+}
