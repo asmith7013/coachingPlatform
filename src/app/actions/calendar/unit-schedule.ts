@@ -1,7 +1,7 @@
 "use server";
 
 import { ZodType } from "zod";
-import { UnitScheduleModel } from "@mongoose-schema/calendar";
+import { UnitScheduleModel, SchoolCalendarModel } from "@mongoose-schema/calendar";
 import {
   UnitScheduleZodSchema,
   UnitScheduleInputZodSchema,
@@ -532,6 +532,7 @@ export async function updateSectionUnitLevelDates(
 
 /**
  * Copy unit schedules from one class section to another
+ * @param unitNumbers - Optional array of unit numbers to copy. If not provided, copies all units.
  */
 export async function copySectionUnitSchedules(
   schoolYear: string,
@@ -539,17 +540,25 @@ export async function copySectionUnitSchedules(
   fromSchool: string,
   fromClassSection: string,
   toSchool: string,
-  toClassSection: string
+  toClassSection: string,
+  unitNumbers?: number[]
 ) {
   return withDbConnection(async () => {
     try {
-      // Fetch source schedules using scopeSequenceTag
-      const sourceSchedules = await UnitScheduleModel.find({
+      // Build query - optionally filter by unit numbers
+      const query: Record<string, unknown> = {
         schoolYear,
         scopeSequenceTag,
         school: fromSchool,
         classSection: fromClassSection
-      }).lean();
+      };
+
+      if (unitNumbers && unitNumbers.length > 0) {
+        query.unitNumber = { $in: unitNumbers };
+      }
+
+      // Fetch source schedules using scopeSequenceTag
+      const sourceSchedules = await UnitScheduleModel.find(query).lean();
 
       if (sourceSchedules.length === 0) {
         return { success: false, error: "No schedules found in source section" };
@@ -597,6 +606,268 @@ export async function copySectionUnitSchedules(
       return {
         success: false,
         error: handleServerError(error, "Failed to copy section unit schedules")
+      };
+    }
+  });
+}
+
+// =====================================
+// SCHEDULE SHIFT OPERATIONS
+// =====================================
+
+/**
+ * Helper: Get the next school day (skips weekends and days off)
+ */
+function getNextSchoolDay(dateStr: string, daysOffSet: Set<string>): string {
+  const date = new Date(dateStr + "T12:00:00");
+  date.setDate(date.getDate() + 1);
+
+  while (true) {
+    const dayOfWeek = date.getDay();
+    const newDateStr = date.toISOString().split('T')[0];
+
+    // Skip weekends and days off
+    if (dayOfWeek !== 0 && dayOfWeek !== 6 && !daysOffSet.has(newDateStr)) {
+      return newDateStr;
+    }
+
+    date.setDate(date.getDate() + 1);
+  }
+}
+
+/**
+ * Helper: Get the previous school day (skips weekends and days off)
+ */
+function getPreviousSchoolDay(dateStr: string, daysOffSet: Set<string>): string {
+  const date = new Date(dateStr + "T12:00:00");
+  date.setDate(date.getDate() - 1);
+
+  while (true) {
+    const dayOfWeek = date.getDay();
+    const newDateStr = date.toISOString().split('T')[0];
+
+    // Skip weekends and days off
+    if (dayOfWeek !== 0 && dayOfWeek !== 6 && !daysOffSet.has(newDateStr)) {
+      return newDateStr;
+    }
+
+    date.setDate(date.getDate() - 1);
+  }
+}
+
+/**
+ * Shift all section schedule dates forward by one school day after a given date
+ * Used when adding a day off mid-schedule
+ */
+export async function shiftSectionScheduleForward(
+  schoolYear: string,
+  scopeSequenceTag: string,
+  school: string,
+  classSection: string,
+  afterDate: string,
+  globalDaysOff: string[]
+) {
+  return withDbConnection(async () => {
+    try {
+      const daysOffSet = new Set(globalDaysOff);
+
+      // Fetch existing section events to skip over them when shifting
+      const calendar = await SchoolCalendarModel.findOne({ schoolYear })
+        .select('events')
+        .lean() as { events?: Array<{ date: string; school?: string; classSection?: string }> } | null;
+
+      if (calendar?.events) {
+        // Add section-specific event dates to the skip set
+        for (const event of calendar.events) {
+          if (event.school === school && event.classSection === classSection) {
+            daysOffSet.add(event.date);
+          }
+        }
+      }
+
+      // Find all schedules for this section
+      const schedules = await UnitScheduleModel.find({
+        schoolYear,
+        scopeSequenceTag,
+        school,
+        classSection
+      }).lean();
+
+      if (schedules.length === 0) {
+        return { success: true, data: [], message: "No schedules to shift" };
+      }
+
+      const results = [];
+
+      for (const schedule of schedules) {
+        let needsUpdate = false;
+        const updatedSections = schedule.sections.map((section: { sectionId: string; startDate?: string; endDate?: string }) => {
+          const updated = { ...section };
+
+          // Shift start date if it's on or after the day off date
+          if (updated.startDate && updated.startDate >= afterDate) {
+            updated.startDate = getNextSchoolDay(updated.startDate, daysOffSet);
+            needsUpdate = true;
+          }
+
+          // Shift end date if it's on or after the day off date
+          if (updated.endDate && updated.endDate >= afterDate) {
+            updated.endDate = getNextSchoolDay(updated.endDate, daysOffSet);
+            needsUpdate = true;
+          }
+
+          return updated;
+        });
+
+        // Also shift unit-level dates if they exist and are on or after the day off date
+        let updatedStartDate = schedule.startDate;
+        let updatedEndDate = schedule.endDate;
+
+        if (schedule.startDate && schedule.startDate >= afterDate) {
+          updatedStartDate = getNextSchoolDay(schedule.startDate, daysOffSet);
+          needsUpdate = true;
+        }
+        if (schedule.endDate && schedule.endDate >= afterDate) {
+          updatedEndDate = getNextSchoolDay(schedule.endDate, daysOffSet);
+          needsUpdate = true;
+        }
+
+        if (needsUpdate) {
+          const updated = await UnitScheduleModel.findByIdAndUpdate(
+            schedule._id,
+            {
+              $set: {
+                sections: updatedSections,
+                startDate: updatedStartDate,
+                endDate: updatedEndDate,
+                updatedAt: new Date().toISOString()
+              }
+            },
+            { new: true }
+          ).lean();
+          results.push(updated);
+        }
+      }
+
+      const serialized = JSON.parse(JSON.stringify(results));
+      return {
+        success: true,
+        data: serialized as UnitSchedule[],
+        message: `Shifted ${results.length} unit schedules forward`
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to shift section schedules forward")
+      };
+    }
+  });
+}
+
+/**
+ * Shift all section schedule dates backward by one school day after a given date
+ * Used when removing a day off mid-schedule
+ */
+export async function shiftSectionScheduleBack(
+  schoolYear: string,
+  scopeSequenceTag: string,
+  school: string,
+  classSection: string,
+  afterDate: string,
+  globalDaysOff: string[]
+) {
+  return withDbConnection(async () => {
+    try {
+      const daysOffSet = new Set(globalDaysOff);
+
+      // Fetch existing section events to skip over them when shifting
+      const calendar = await SchoolCalendarModel.findOne({ schoolYear })
+        .select('events')
+        .lean() as { events?: Array<{ date: string; school?: string; classSection?: string }> } | null;
+
+      if (calendar?.events) {
+        // Add section-specific event dates to the skip set
+        for (const event of calendar.events) {
+          if (event.school === school && event.classSection === classSection) {
+            daysOffSet.add(event.date);
+          }
+        }
+      }
+
+      // Find all schedules for this section
+      const schedules = await UnitScheduleModel.find({
+        schoolYear,
+        scopeSequenceTag,
+        school,
+        classSection
+      }).lean();
+
+      if (schedules.length === 0) {
+        return { success: true, data: [], message: "No schedules to shift" };
+      }
+
+      const results = [];
+
+      for (const schedule of schedules) {
+        let needsUpdate = false;
+        const updatedSections = schedule.sections.map((section: { sectionId: string; startDate?: string; endDate?: string }) => {
+          const updated = { ...section };
+
+          // Shift start date back if it's after the afterDate
+          if (updated.startDate && updated.startDate > afterDate) {
+            updated.startDate = getPreviousSchoolDay(updated.startDate, daysOffSet);
+            needsUpdate = true;
+          }
+
+          // Shift end date back if it's after the afterDate
+          if (updated.endDate && updated.endDate > afterDate) {
+            updated.endDate = getPreviousSchoolDay(updated.endDate, daysOffSet);
+            needsUpdate = true;
+          }
+
+          return updated;
+        });
+
+        // Also shift unit-level dates if they exist and are after afterDate
+        let updatedStartDate = schedule.startDate;
+        let updatedEndDate = schedule.endDate;
+
+        if (schedule.startDate && schedule.startDate > afterDate) {
+          updatedStartDate = getPreviousSchoolDay(schedule.startDate, daysOffSet);
+          needsUpdate = true;
+        }
+        if (schedule.endDate && schedule.endDate > afterDate) {
+          updatedEndDate = getPreviousSchoolDay(schedule.endDate, daysOffSet);
+          needsUpdate = true;
+        }
+
+        if (needsUpdate) {
+          const updated = await UnitScheduleModel.findByIdAndUpdate(
+            schedule._id,
+            {
+              $set: {
+                sections: updatedSections,
+                startDate: updatedStartDate,
+                endDate: updatedEndDate,
+                updatedAt: new Date().toISOString()
+              }
+            },
+            { new: true }
+          ).lean();
+          results.push(updated);
+        }
+      }
+
+      const serialized = JSON.parse(JSON.stringify(results));
+      return {
+        success: true,
+        data: serialized as UnitSchedule[],
+        message: `Shifted ${results.length} unit schedules backward`
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to shift section schedules backward")
       };
     }
   });

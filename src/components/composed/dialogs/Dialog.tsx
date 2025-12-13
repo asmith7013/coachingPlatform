@@ -24,7 +24,7 @@ const dialog = tv({
     panel: `${backgroundColors.white} ${radii.lg} w-full max-h-[90vh] overflow-y-auto`,
     closeButton: 'absolute right-4 top-4 focus:outline-none',
     closeIcon: 'h-6 w-6',
-    title: `mb-4 ${weight.semibold}`,
+    title: `mb-4 pr-8 ${weight.semibold}`,
   },
   variants: {
     size: {
@@ -35,7 +35,7 @@ const dialog = tv({
       full: { panel: 'max-w-full w-[calc(100%-2rem)]' }, // Full width minus margin
     },
     padding: {
-      none: { panel: 'p-0' },
+      none: { panel: 'p-0', title: 'px-6 pt-6' },
       sm: { panel: `${paddingX.md} ${paddingY.md}` },
       md: { panel: `${paddingX.lg} ${paddingY.lg}` },
       lg: { panel: `${paddingX.xl} ${paddingY.xl}` },

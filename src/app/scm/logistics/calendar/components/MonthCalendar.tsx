@@ -143,9 +143,9 @@ function CalendarDay({
       bgColor = "bg-gray-500";
       textColor = "text-white";
     } else {
-      // No math class - light amber
-      bgColor = "bg-amber-100";
-      textColor = "text-amber-700";
+      // No math class - light gray like weekend
+      bgColor = "bg-gray-100";
+      textColor = "text-gray-500";
     }
     cursor = "cursor-pointer";
   } else if (dayOff) {
@@ -179,12 +179,16 @@ function CalendarDay({
     ? `${scheduleInfo.unit.unitName} - ${scheduleInfo.section.name}`
     : "";
 
+  // Show taller cell with event name for section day off events
+  const hasSectionEvent = sectionDayOffInfo.isDayOff && sectionDayOffInfo.event;
+  const cellHeight = hasSectionEvent ? "h-10" : "h-7";
+
   return (
     <div
       onClick={handleClick}
-      className={`h-7 rounded text-xs flex items-center justify-center relative ${bgColor} ${textColor} ${cursor} ${
+      className={`${cellHeight} rounded text-xs flex flex-col items-center justify-center relative ${bgColor} ${textColor} ${cursor} ${
         isSelecting && !weekend && !dayOff ? "hover:ring-2 hover:ring-blue-400" : ""
-      } ${sectionDayOffInfo.isDayOff ? (sectionDayOffInfo.event?.hasMathClass ? "hover:ring-2 hover:ring-gray-400" : "hover:ring-2 hover:ring-amber-400") : ""}`}
+      } ${sectionDayOffInfo.isDayOff ? "hover:ring-2 hover:ring-gray-400" : ""}`}
       style={customBgStyle}
       title={title}
     >
@@ -200,7 +204,12 @@ function CalendarDay({
           />
         </>
       )}
-      {date.getDate()}
+      <span>{date.getDate()}</span>
+      {hasSectionEvent && (
+        <span className="text-[8px] leading-tight truncate w-full text-center px-0.5">
+          {sectionDayOffInfo.event!.name}
+        </span>
+      )}
     </div>
   );
 }
