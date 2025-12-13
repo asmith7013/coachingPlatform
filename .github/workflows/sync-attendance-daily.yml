@@ -1,0 +1,50 @@
+name: Sync Attendance Daily
+
+on:
+  # Runs daily at 6 AM EST (11:00 UTC) to capture yesterday's attendance
+  # EST is UTC-5, so 6 AM EST = 11:00 UTC
+  schedule:
+    - cron: '0 11 * * *'  # 6 AM EST daily
+
+  # Allows manual trigger from GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Start date (YYYY-MM-DD format, defaults to yesterday)'
+        required: false
+        type: string
+
+jobs:
+  sync-attendance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Attendance Sync
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "🚀 Starting attendance sync..."
+          if [ -n "${{ github.event.inputs.start_date }}" ]; then
+            npx tsx scripts/run-attendance-sync.ts --start-date=${{ github.event.inputs.start_date }}
+          else
+            npx tsx scripts/run-attendance-sync.ts
+          fi
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Attendance sync failed. Check the logs above for details."
+          echo "💡 You can re-run this workflow manually from the Actions tab."

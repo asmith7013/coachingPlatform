@@ -1,0 +1,45 @@
+name: Sync Podsie Progress
+
+on:
+  # Runs 5 times daily on weekdays
+  # EST is UTC-5, so 9 AM EST = 14:00 UTC, 11 PM EST = 04:00 UTC (next day)
+  schedule:
+    - cron: '0 14 * * 1-5'  # 9 AM EST (Mon-Fri)
+    - cron: '0 16 * * 1-5'  # 11 AM EST (Mon-Fri)
+    - cron: '0 18 * * 1-5'  # 1 PM EST (Mon-Fri)
+    - cron: '0 20 * * 1-5'  # 3 PM EST (Mon-Fri)
+    - cron: '0 4 * * 2-6'   # 11 PM EST (Mon-Fri, runs Tue-Sat UTC)
+
+  # Allows manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  sync-podsie:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Podsie Sync
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "🚀 Starting Podsie progress sync..."
+          npx tsx scripts/run-podsie-sync.ts
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Podsie sync failed. Check the logs above for details."
+          echo "💡 You can re-run this workflow manually from the Actions tab."
