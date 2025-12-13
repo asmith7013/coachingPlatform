@@ -176,7 +176,7 @@ export function useUpdateSectionDatesMutation(
             if (schedule.grade === input.grade && schedule.unitNumber === input.unitNumber) {
               return {
                 ...schedule,
-                sections: schedule.sections.map((s) =>
+                sections: schedule.sections.map((s: { sectionId: string; name: string; startDate?: string; endDate?: string }) =>
                   s.sectionId === input.sectionId
                     ? { ...s, startDate: input.startDate, endDate: input.endDate }
                     : s
@@ -594,7 +594,7 @@ export function useClearSectionDatesMutation(
             if (schedule.grade === input.grade && schedule.unitNumber === input.unitNumber) {
               return {
                 ...schedule,
-                sections: schedule.sections.map((s) =>
+                sections: schedule.sections.map((s: { sectionId: string; name: string; startDate?: string; endDate?: string }) =>
                   s.sectionId === input.sectionId
                     ? { ...s, startDate: "", endDate: "" }
                     : s

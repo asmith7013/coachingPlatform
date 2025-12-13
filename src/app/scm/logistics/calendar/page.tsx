@@ -113,7 +113,7 @@ export default function CalendarPage() {
 
     const [school, classSection] = pendingSectionKey.split("|");
     const section = sectionConfigs.find(
-      (s) => s.school === school && s.classSection === classSection
+      (s: SectionConfigOption) => s.school === school && s.classSection === classSection
     );
     if (section) {
       const scopeTag = selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
