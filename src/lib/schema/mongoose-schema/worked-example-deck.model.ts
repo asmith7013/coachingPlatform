@@ -14,7 +14,7 @@ const htmlSlideSchema = {
 const workedExampleDeckSchema = new mongoose.Schema({
   // Basic Info
   title: { type: String, required: true },
-  slug: { type: String, required: true, unique: true, index: true },
+  slug: { type: String, required: true, unique: true },
 
   // Educational Context
   mathConcept: { type: String, required: true, index: true },
@@ -56,7 +56,6 @@ const workedExampleDeckSchema = new mongoose.Schema({
 // Indexes for efficient queries
 workedExampleDeckSchema.index({ gradeLevel: 1, mathConcept: 1 });
 workedExampleDeckSchema.index({ createdBy: 1, isPublic: 1 });
-workedExampleDeckSchema.index({ slug: 1 }, { unique: true });
 
 // Text search index for finding decks
 workedExampleDeckSchema.index({

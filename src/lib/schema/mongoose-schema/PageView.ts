@@ -10,7 +10,7 @@ const PageViewSchema = new Schema(
     fullUrl: { type: String, required: true },
     referrer: { type: String },
     userAgent: { type: String },
-    timestamp: { type: Date, required: true, default: Date.now, index: true },
+    timestamp: { type: Date, required: true, default: Date.now },
     duration: { type: Number }, // Time spent on page in seconds
     metadata: { type: Schema.Types.Mixed },
   },

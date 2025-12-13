@@ -25,7 +25,6 @@ const AttendanceSchema = new Schema<AttendanceRecord>(
     date: {
       type: String,
       required: true,
-      index: true,
     },
     status: {
       type: String,
