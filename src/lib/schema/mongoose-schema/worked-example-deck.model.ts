@@ -19,7 +19,7 @@ const workedExampleDeckSchema = new mongoose.Schema({
   // Educational Context
   mathConcept: { type: String, required: true, index: true },
   mathStandard: { type: String, required: true },
-  gradeLevel: { type: Number, required: true, min: 3, max: 12, index: true },
+  gradeLevel: { type: String, required: true, enum: ['6', '7', '8', 'Algebra 1'], index: true },
   unitNumber: { type: Number }, // Unit number (matches scope-and-sequence)
   lessonNumber: { type: Number }, // Lesson number (matches scope-and-sequence)
   scopeAndSequenceId: { type: String, index: true }, // Link to scope-and-sequence collection

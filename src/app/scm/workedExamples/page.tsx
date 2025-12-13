@@ -1,21 +1,35 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { listWorkedExampleDecks } from '@/app/actions/worked-examples';
+import { getGradeUnitPairsByTag } from '@/app/actions/313/scope-and-sequence';
 import type { WorkedExampleDeck } from '@zod-schema/worked-example-deck';
 import { Spinner } from '@/components/core/feedback/Spinner';
 import { PresentationModal } from '@/components/presentations/PresentationModal';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
+
+// Map URL param to scopeSequenceTag in database
+const GRADE_OPTIONS = [
+  { value: '', label: 'All Grades', scopeSequenceTag: '' },
+  { value: '6', label: 'Grade 6', scopeSequenceTag: 'Grade 6' },
+  { value: '7', label: 'Grade 7', scopeSequenceTag: 'Grade 7' },
+  { value: '8', label: 'Grade 8', scopeSequenceTag: 'Grade 8' },
+  { value: 'alg1', label: 'Algebra 1', scopeSequenceTag: 'Algebra 1' },
+];
 
 export default function PresentationsList() {
   const [decks, setDecks] = useState<WorkedExampleDeck[]>([]);
+  const [gradeUnitPairs, setGradeUnitPairs] = useState<Array<{ grade: string; unitNumber: number }>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedDeck, setExpandedDeck] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const openSlug = searchParams.get('view');
+  const gradeFilter = searchParams.get('grade') || '';
 
+  // Load decks on mount
   useEffect(() => {
     async function loadDecks() {
       try {
@@ -36,12 +50,59 @@ export default function PresentationsList() {
     loadDecks();
   }, []);
 
+  // Load grade/unit pairs when grade filter changes
+  useEffect(() => {
+    async function loadGradeUnitPairs() {
+      const scopeSequenceTag = GRADE_OPTIONS.find(o => o.value === gradeFilter)?.scopeSequenceTag;
+      if (!scopeSequenceTag) {
+        setGradeUnitPairs([]);
+        return;
+      }
+
+      const result = await getGradeUnitPairsByTag(scopeSequenceTag);
+      if (result.success && result.data) {
+        setGradeUnitPairs(result.data);
+      }
+    }
+
+    loadGradeUnitPairs();
+  }, [gradeFilter]);
+
+  // Filter decks based on grade/unit pairs
+  const filteredDecks = useMemo(() => {
+    if (!gradeFilter) return decks;
+    if (gradeUnitPairs.length === 0) return [];
+
+    // Filter by matching deck's gradeLevel and unitNumber to any pair in the curriculum
+    return decks.filter((deck) =>
+      deck.unitNumber !== undefined &&
+      gradeUnitPairs.some(pair =>
+        pair.grade === deck.gradeLevel && pair.unitNumber === deck.unitNumber
+      )
+    );
+  }, [decks, gradeFilter, gradeUnitPairs]);
+
+  const handleGradeChange = (newGrade: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (newGrade) {
+      params.set('grade', newGrade);
+    } else {
+      params.delete('grade');
+    }
+    // Preserve the view param if it exists
+    router.push(`/scm/workedExamples${params.toString() ? `?${params.toString()}` : ''}`, { scroll: false });
+  };
+
   const handleOpenPresentation = (slug: string) => {
-    router.push(`/scm/workedExamples?view=${slug}`, { scroll: false });
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('view', slug);
+    router.push(`/scm/workedExamples?${params.toString()}`, { scroll: false });
   };
 
   const handleClosePresentation = () => {
-    router.push('/scm/workedExamples', { scroll: false });
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('view');
+    router.push(`/scm/workedExamples${params.toString() ? `?${params.toString()}` : ''}`, { scroll: false });
   };
 
   if (loading) {
@@ -64,12 +125,30 @@ export default function PresentationsList() {
     <>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Worked Example Presentations
-          </h1>
-          <p className="text-gray-600">
-            Browse and view scaffolded guidance slide decks
-          </p>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                Worked Example Presentations
+              </h1>
+              <p className="text-gray-600">
+                Browse and view scaffolded guidance slide decks
+              </p>
+            </div>
+            <div className="relative">
+              <select
+                value={gradeFilter}
+                onChange={(e) => handleGradeChange(e.target.value)}
+                className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+              >
+                {GRADE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+            </div>
+          </div>
         </div>
 
         {decks.length === 0 ? (
@@ -84,11 +163,23 @@ export default function PresentationsList() {
               </code>
             </p>
           </div>
+        ) : filteredDecks.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg mb-4">
+              No presentations found for {GRADE_OPTIONS.find(o => o.value === gradeFilter)?.label || 'selected grade'}
+            </p>
+            <button
+              onClick={() => handleGradeChange('')}
+              className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+            >
+              Show all grades
+            </button>
+          </div>
         ) : (
           <div className="space-y-8">
             {/* Group decks by unit */}
             {Object.entries(
-              decks.reduce((groups, deck) => {
+              filteredDecks.reduce((groups, deck) => {
                 const unitKey = deck.unitNumber !== undefined
                   ? `Unit ${deck.unitNumber}`
                   : 'No Unit';
@@ -126,7 +217,7 @@ export default function PresentationsList() {
                           >
                             <div className="mb-4 flex items-center gap-2 flex-wrap">
                               <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
-                                Grade {deck.gradeLevel}
+                                {deck.gradeLevel === 'Algebra 1' ? 'Algebra 1' : `Grade ${deck.gradeLevel}`}
                               </span>
                               {deck.lessonNumber !== undefined && (
                                 <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">

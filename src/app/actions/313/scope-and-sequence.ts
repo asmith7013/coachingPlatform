@@ -776,3 +776,32 @@ export async function updateLessonSkills(
     }
   });
 }
+
+/**
+ * Get unique (grade, unitNumber) pairs for a given scopeSequenceTag
+ * Used for filtering worked examples by curriculum
+ *
+ * Returns the grade/unit combinations that exist in this curriculum,
+ * allowing worked examples to be filtered by matching their gradeLevel and unitNumber.
+ */
+export async function getGradeUnitPairsByTag(scopeSequenceTag: string) {
+  return withDbConnection(async () => {
+    try {
+      const pairs = await ScopeAndSequenceModel.aggregate([
+        { $match: { scopeSequenceTag } },
+        { $group: { _id: { grade: '$grade', unitNumber: '$unitNumber' } } },
+        { $project: { _id: 0, grade: '$_id.grade', unitNumber: '$_id.unitNumber' } }
+      ]);
+
+      return {
+        success: true,
+        data: pairs as Array<{ grade: string; unitNumber: number }>
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, 'getGradeUnitPairsByTag')
+      };
+    }
+  });
+}

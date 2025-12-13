@@ -6,7 +6,7 @@ import { auth } from '@clerk/nextjs/server';
 import { handleServerError } from '@error/handlers/server';
 
 interface ListDecksFilters {
-  gradeLevel?: number;
+  gradeLevel?: string; // "6", "7", "8", "Algebra 1"
   mathConcept?: string;
   mathStandard?: string;
   createdBy?: string;

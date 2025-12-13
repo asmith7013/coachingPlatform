@@ -79,6 +79,7 @@ export function SCMNav() {
         { href: "/scm/roadmaps/skills", label: "Skills" },
         { href: "/scm/roadmaps/mastery-grid", label: "Mastery Grid" },
         { href: "/scm/roadmaps/history", label: "History" },
+        { href: "/scm/roadmaps/progress", label: "Progress" },
       ],
     },
     {
@@ -104,6 +105,10 @@ export function SCMNav() {
       Icon: PresentationChartBarIcon,
       items: [
         { href: "/scm/workedExamples", label: "All Worked Examples" },
+        { href: "/scm/workedExamples?grade=6", label: "Grade 6" },
+        { href: "/scm/workedExamples?grade=7", label: "Grade 7" },
+        { href: "/scm/workedExamples?grade=8", label: "Grade 8" },
+        { href: "/scm/workedExamples?grade=alg1", label: "Algebra 1" },
       ],
     },
     // Logistics category - only shown for coaches

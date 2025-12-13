@@ -9,6 +9,7 @@ import {
   ChartBarIcon,
   TableCellsIcon,
   ClockIcon,
+  ArrowTrendingUpIcon,
 } from '@heroicons/react/24/outline';
 
 export default function RoadmapsHomePage() {
@@ -42,6 +43,12 @@ export default function RoadmapsHomePage() {
       href: "/scm/roadmaps/history",
       Icon: ClockIcon,
       description: "View all student assessment attempts and progress over time."
+    },
+    {
+      title: "Progress",
+      href: "/scm/roadmaps/progress",
+      Icon: ArrowTrendingUpIcon,
+      description: "View roadmap completion progress by section with bar charts."
     }
   ];
 
