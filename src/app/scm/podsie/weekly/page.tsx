@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { getSectionVelocityByDateRange } from "@/app/actions/313/velocity/velocity";
-import { getCurrentUnitsForAllSections, type CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
+import { useState, useMemo } from "react";
+import type { CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { CheckIcon, ClockIcon, XMarkIcon, ClipboardDocumentIcon } from "@heroicons/react/24/solid";
 import { SectionSummaryCard } from "@/app/scm/podsie/pace/components";
+import { useWeeklyVelocity, type SectionWeeklyData } from "./hooks";
+import { useCurrentUnits } from "../hooks";
 
 // Hardcoded sections for this page
 const SECTIONS = [
@@ -16,20 +17,6 @@ const SECTIONS = [
 ] as const;
 
 const SCHOOL_YEAR = "2025-2026";
-
-interface SectionWeeklyData {
-  section: string;
-  school: string;
-  totalMasteryChecks: number;
-  totalStudents: number;
-  masteryChecksPerStudent: number;
-  attendance: {
-    present: number;
-    late: number;
-    absent: number;
-    total: number;
-  };
-}
 
 // Get Monday of the current week
 function getMonday(date: Date): Date {
@@ -59,110 +46,11 @@ export default function WeeklySummaryPage() {
 
   // Pacing date for SectionSummaryCards (defaults to today)
   const [pacingDate, setPacingDate] = useState(() => formatDate(new Date()));
-
-  const [sectionData, setSectionData] = useState<Map<string, SectionWeeklyData>>(new Map());
-  const [currentUnits, setCurrentUnits] = useState<CurrentUnitInfo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Load current units on mount
-  useEffect(() => {
-    const loadCurrentUnits = async () => {
-      const result = await getCurrentUnitsForAllSections(SCHOOL_YEAR);
-      if (result.success && result.data) {
-        setCurrentUnits(result.data);
-      }
-    };
-    loadCurrentUnits();
-  }, []);
-
-  // Fetch data when dates change
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const results = await Promise.all(
-          SECTIONS.map(async ({ section, school }) => {
-            const result = await getSectionVelocityByDateRange(
-              section,
-              school,
-              startDate,
-              endDate,
-              true, // includeNotTracked
-              true  // includeStudentDetails (to get student count)
-            );
-
-            if (!result.success) {
-              console.error(`Failed to fetch data for ${section}:`, result.error);
-              return null;
-            }
-
-            // Aggregate data for the week
-            const dailyStats = result.data || [];
-            const studentDetails = result.studentDetails || [];
-
-            // Count total mastery checks from all days
-            let totalMasteryChecks = 0;
-            const attendanceCounts = { present: 0, late: 0, absent: 0, total: 0 };
-
-            for (const day of dailyStats) {
-              totalMasteryChecks += day.byActivityType.masteryChecks;
-            }
-
-            // Calculate attendance from student details
-            for (const student of studentDetails) {
-              for (const [date, dayData] of Object.entries(student.dailyProgress)) {
-                if (date >= startDate && date <= endDate) {
-                  if (dayData.attendance === 'present') {
-                    attendanceCounts.present++;
-                    attendanceCounts.total++;
-                  } else if (dayData.attendance === 'late') {
-                    attendanceCounts.late++;
-                    attendanceCounts.total++;
-                  } else if (dayData.attendance === 'absent') {
-                    attendanceCounts.absent++;
-                    attendanceCounts.total++;
-                  }
-                }
-              }
-            }
-
-            const totalStudents = studentDetails.length;
-            const masteryChecksPerStudent = totalStudents > 0
-              ? Math.round((totalMasteryChecks / totalStudents) * 10) / 10
-              : 0;
-
-            return {
-              section,
-              school,
-              totalMasteryChecks,
-              totalStudents,
-              masteryChecksPerStudent,
-              attendance: attendanceCounts,
-            } satisfies SectionWeeklyData;
-          })
-        );
-
-        const newData = new Map<string, SectionWeeklyData>();
-        for (const result of results) {
-          if (result) {
-            newData.set(result.section, result);
-          }
-        }
-        setSectionData(newData);
-      } catch (err) {
-        console.error("Error fetching weekly data:", err);
-        setError("Failed to load weekly summary data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [startDate, endDate]);
+  // Data fetching with React Query hooks
+  const { currentUnits } = useCurrentUnits(SCHOOL_YEAR);
+  const { sectionData, loading, error } = useWeeklyVelocity(SECTIONS, startDate, endDate);
 
   // Calculate attendance percentages
   const getAttendancePercentages = (data: SectionWeeklyData) => {

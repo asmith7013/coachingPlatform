@@ -1,45 +1,101 @@
-import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
 import { fetchRampUpProgress } from "@/app/actions/313/podsie-sync";
 import { ProgressData, LessonConfig } from "../types";
 
+/**
+ * Query key factory for podsie progress data
+ */
+export const progressKeys = {
+  all: ["podsie-progress"] as const,
+  bySection: (section: string) => [...progressKeys.all, section] as const,
+  byUnit: (section: string, unitCode: string) =>
+    [...progressKeys.bySection(section), unitCode] as const,
+};
+
+/**
+ * Hook for fetching and managing Podsie progress data using React Query
+ */
 export function useProgressData(
   selectedSection: string,
   selectedUnit: number | null,
   lessons: LessonConfig[]
 ) {
-  const [progressData, setProgressData] = useState<ProgressData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const loadProgress = async () => {
-      if (!selectedSection || selectedUnit === null || lessons.length === 0) {
-        setProgressData([]);
-        return;
+  // Derive unitCode from lessons (all lessons in a unit share the same grade)
+  const grade = lessons[0]?.grade || "8";
+  const unitCode = selectedUnit !== null ? `${grade}.${selectedUnit}` : "";
+
+  // Determine if query should be enabled
+  const enabled = Boolean(
+    selectedSection && selectedUnit !== null && lessons.length > 0
+  );
+
+  const queryKey = progressKeys.byUnit(selectedSection, unitCode);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey,
+    queryFn: async () => {
+      const result = await fetchRampUpProgress(selectedSection, unitCode);
+      if (result.success) {
+        return result.data;
       }
+      throw new Error(result.error || "Failed to load progress");
+    },
+    enabled,
+    staleTime: 30_000, // Consider data fresh for 30 seconds
+  });
 
-      try {
-        setLoading(true);
-        // Get the grade from the first lesson (all lessons in a unit share the same grade)
-        const grade = lessons[0]?.grade || "8";
-        const unitCode = `${grade}.${selectedUnit}`;
-        const result = await fetchRampUpProgress(selectedSection, unitCode);
+  /**
+   * Update progress data in the cache (for optimistic updates after sync)
+   * Replaces data for a specific assignment while keeping other data intact
+   */
+  const updateProgressForAssignment = useCallback(
+    (podsieAssignmentId: string, newData: ProgressData[]) => {
+      queryClient.setQueryData<ProgressData[]>(queryKey, (prevData) => {
+        if (!prevData) return newData;
+        const filtered = prevData.filter(
+          (p) => p.podsieAssignmentId !== podsieAssignmentId
+        );
+        const assignmentData = newData.filter(
+          (p) => p.podsieAssignmentId === podsieAssignmentId
+        );
+        return [...filtered, ...assignmentData];
+      });
+    },
+    [queryClient, queryKey]
+  );
 
-        if (result.success) {
-          setProgressData(result.data);
-        } else {
-          setError(result.error || "Failed to load progress");
+  /**
+   * Replace all progress data in the cache
+   */
+  const setProgressData = useCallback(
+    (newData: ProgressData[] | ((prev: ProgressData[]) => ProgressData[])) => {
+      queryClient.setQueryData<ProgressData[]>(queryKey, (prevData) => {
+        if (typeof newData === "function") {
+          return newData(prevData || []);
         }
-      } catch (err) {
-        console.error("Error loading progress:", err);
-        setError("Failed to load progress");
-      } finally {
-        setLoading(false);
-      }
-    };
+        return newData;
+      });
+    },
+    [queryClient, queryKey]
+  );
 
-    loadProgress();
-  }, [selectedSection, selectedUnit, lessons]);
+  /**
+   * Invalidate and refetch progress data
+   */
+  const refetchProgress = useCallback(() => {
+    return queryClient.invalidateQueries({ queryKey });
+  }, [queryClient, queryKey]);
 
-  return { progressData, loading, error, setProgressData };
+  return {
+    progressData: data || [],
+    loading: isLoading,
+    error: error?.message || null,
+    // Cache update methods
+    setProgressData,
+    updateProgressForAssignment,
+    refetchProgress,
+  };
 }

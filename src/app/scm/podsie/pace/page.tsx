@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { MultiSectionSelector } from "@/app/scm/podsie/bulk-sync/components";
-import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
-import { getCurrentUnitsForAllSections, type CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
-import { getSectionColors } from "@/app/scm/podsie/velocity/utils/colors";
+import type { CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { SectionPacingCard, SectionSummaryCard } from "./components";
+import { useSectionOptions, useCurrentUnits } from "../hooks";
 
 interface SectionOption {
   id: string;
@@ -20,59 +19,32 @@ interface SectionOption {
 const SCHOOL_YEAR = "2025-2026";
 
 export default function PacePage() {
-  const [sectionOptions, setSectionOptions] = useState<SectionOption[]>([]);
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
-  const [currentUnits, setCurrentUnits] = useState<CurrentUnitInfo[]>([]);
-  const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [excludeRampUps, setExcludeRampUps] = useState(false);
 
-  // Load sections and current units on mount
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        const [sectionsResult, currentUnitsResult] = await Promise.all([
-          getAllSectionConfigs(),
-          getCurrentUnitsForAllSections(SCHOOL_YEAR),
-        ]);
+  // Data fetching with React Query hooks
+  const {
+    sectionOptions: rawSectionOptions,
+    sectionColors,
+    loading: loadingSections,
+    error: sectionsError,
+  } = useSectionOptions();
 
-        if (sectionsResult.success && sectionsResult.data) {
-          const options: SectionOption[] = [];
-          sectionsResult.data.forEach((schoolGroup) => {
-            schoolGroup.sections.forEach((section) => {
-              options.push({
-                id: section.id,
-                school: schoolGroup.school,
-                classSection: section.classSection,
-                displayName: section.teacher
-                  ? `${section.classSection} (${section.teacher})`
-                  : section.classSection,
-                specialPopulations: section.specialPopulations,
-              });
-            });
-          });
-          setSectionOptions(options);
+  const { currentUnits, error: unitsError } = useCurrentUnits(SCHOOL_YEAR);
 
-          // Compute colors for all sections
-          const colors = getSectionColors(options);
-          setSectionColors(colors);
-        }
+  // Transform section options to local type
+  const sectionOptions: SectionOption[] = useMemo(() => {
+    return rawSectionOptions.map((opt) => ({
+      id: opt.id,
+      school: opt.school,
+      classSection: opt.classSection,
+      displayName: opt.displayName,
+      specialPopulations: (opt as { specialPopulations?: string[] }).specialPopulations,
+    }));
+  }, [rawSectionOptions]);
 
-        if (currentUnitsResult.success && currentUnitsResult.data) {
-          setCurrentUnits(currentUnitsResult.data);
-        }
-      } catch (err) {
-        console.error("Error loading data:", err);
-        setError("Failed to load sections");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
+  const loading = loadingSections;
+  const error = sectionsError || unitsError;
 
   // Toggle section selection
   const handleToggleSection = (sectionId: string) => {

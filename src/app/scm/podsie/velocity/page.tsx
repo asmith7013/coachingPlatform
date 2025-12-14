@@ -1,40 +1,35 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
-import { getSectionVelocityByDateRange, type DailyVelocityStats, type StudentDailyData } from "@/app/actions/313/velocity/velocity";
-import { getDaysOff } from "@/app/actions/calendar/school-calendar";
-import { fetchSectionUnitSchedules } from "@/app/actions/calendar/unit-schedule";
-import type { UnitSchedule } from "@zod-schema/calendar";
-import { ChevronLeftIcon, ChevronRightIcon, ChartBarIcon, CalendarDaysIcon, TableCellsIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import React, { useState } from "react";
+import type { DailyVelocityStats } from "@/app/actions/313/velocity/velocity";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChartBarIcon,
+  CalendarDaysIcon,
+  TableCellsIcon,
+  ArrowDownTrayIcon,
+} from "@heroicons/react/24/outline";
 import { VelocityGraph } from "./components/VelocityGraph";
 import { StudentVelocityGraph } from "./components/StudentVelocityGraph";
 import { MonthCalendar } from "./components/MonthCalendar";
 import { SectionDetailTable } from "./components/SectionDetailTable";
 import { ExportCsvModal } from "./components/ExportCsvModal";
 import { StudentGraphLegend, CalendarLegend, TableLegend } from "./components/VelocityLegend";
-import { getSectionColors } from "./utils/colors";
 import {
   SectionVisualizationLayout,
   SectionAccordion,
   type SectionOption,
   type AccordionItemConfig,
 } from "@/components/composed/section-visualization";
+import { useSectionOptions, useDaysOff, useVelocityData } from "./hooks";
 
 // Default school year
 const DEFAULT_SCHOOL_YEAR = "2025-2026";
 
 export default function VelocityPage() {
   const [schoolYear] = useState(DEFAULT_SCHOOL_YEAR);
-  const [sectionOptions, setSectionOptions] = useState<SectionOption[]>([]);
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
-  const [velocityData, setVelocityData] = useState<Map<string, DailyVelocityStats[]>>(new Map());
-  const [detailData, setDetailData] = useState<Map<string, StudentDailyData[]>>(new Map());
-  const [unitScheduleData, setUnitScheduleData] = useState<Map<string, UnitSchedule[]>>(new Map());
-  const [daysOff, setDaysOff] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingSectionIds, setLoadingSectionIds] = useState<Set<string>>(new Set());
-  const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
   const [includeNotTracked, setIncludeNotTracked] = useState(true);
   const [showRampUps, setShowRampUps] = useState(true);
   const [showSidekicks, setShowSidekicks] = useState(true);
@@ -48,228 +43,26 @@ export default function VelocityPage() {
   });
 
   // Current month for calendar navigation - default to current month
-  // The displayed range will be: [currentMonth - 1, currentMonth]
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
 
-  // Load section options and days off
-  useEffect(() => {
-    const loadInitialData = async () => {
-      setLoading(true);
-      try {
-        const [sectionsResult, daysOffResult] = await Promise.all([
-          getAllSectionConfigs(),
-          getDaysOff(schoolYear),
-        ]);
+  // Data fetching with React Query hooks
+  const {
+    sectionOptions,
+    sectionColors,
+    loading: loadingSections,
+  } = useSectionOptions();
 
-        if (sectionsResult.success && sectionsResult.data) {
-          const options: SectionOption[] = [];
-          sectionsResult.data.forEach((schoolGroup) => {
-            schoolGroup.sections.forEach((section) => {
-              options.push({
-                id: section.id,
-                school: schoolGroup.school,
-                classSection: section.classSection,
-                teacher: section.teacher,
-                gradeLevel: section.gradeLevel,
-                scopeSequenceTag: section.scopeSequenceTag,
-                // Display name without school for selector (school is already the group header)
-                displayName: section.teacher ? `${section.classSection} (${section.teacher})` : section.classSection,
-              });
-            });
-          });
-          setSectionOptions(options);
+  const { daysOff } = useDaysOff(schoolYear);
 
-          // Compute colors for all sections
-          const colors = getSectionColors(options);
-          setSectionColors(colors);
-        }
-
-        if (daysOffResult.success && daysOffResult.data) {
-          setDaysOff(daysOffResult.data);
-        }
-      } catch (error) {
-        console.error("Error loading initial data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadInitialData();
-  }, [schoolYear]);
-
-  // Load velocity data when sections change
-  useEffect(() => {
-    if (selectedSections.length === 0) {
-      setVelocityData(new Map());
-      setDetailData(new Map());
-      setUnitScheduleData(new Map());
-      return;
-    }
-
-    const loadVelocityData = async () => {
-      // Fetch data for entire school year (September to June)
-      const schoolYearStart = new Date(2025, 8, 1); // September 1, 2025
-      const schoolYearEnd = new Date(2026, 5, 30); // June 30, 2026
-
-      const startDate = schoolYearStart.toISOString().split("T")[0];
-      const endDate = schoolYearEnd.toISOString().split("T")[0];
-
-      // Determine which sections need to be loaded
-      // (newly selected or need refresh due to includeNotTracked change)
-      const sectionsToLoad = selectedSections.filter(
-        (sectionId) => !velocityData.has(sectionId)
-      );
-
-      // If includeNotTracked changed, reload all sections
-      const needsFullReload = selectedSections.some(
-        (sectionId) => velocityData.has(sectionId)
-      ) && sectionsToLoad.length === 0;
-
-      const sectionsToFetch = needsFullReload ? selectedSections : sectionsToLoad;
-
-      if (sectionsToFetch.length === 0) return;
-
-      // Mark sections as loading
-      setLoadingSectionIds((prev) => {
-        const next = new Set(prev);
-        sectionsToFetch.forEach((id) => next.add(id));
-        return next;
-      });
-
-      try {
-        // Fetch velocity and detail data for each section that needs loading
-        await Promise.all(
-          sectionsToFetch.map(async (sectionId) => {
-            const section = sectionOptions.find((s) => s.id === sectionId);
-            if (!section) return;
-
-            // Fetch velocity data with student details included
-            const velocityResult = await getSectionVelocityByDateRange(
-              section.classSection,
-              section.school,
-              startDate,
-              endDate,
-              includeNotTracked,
-              true // includeStudentDetails
-            );
-
-            if (velocityResult.success && velocityResult.data) {
-              // Update velocity data incrementally
-              setVelocityData((prev) => {
-                const next = new Map(prev);
-                next.set(sectionId, velocityResult.data!);
-                return next;
-              });
-
-              // Update detail data incrementally
-              if (velocityResult.studentDetails) {
-                setDetailData((prev) => {
-                  const next = new Map(prev);
-                  next.set(sectionId, velocityResult.studentDetails!);
-                  return next;
-                });
-              }
-            }
-
-            // Fetch unit schedules for this section
-            // Use scopeSequenceTag (curriculum identifier like "Algebra 1") instead of gradeLevel
-            const scopeTag = section.scopeSequenceTag || `Grade ${section.gradeLevel}`;
-            const unitResult = await fetchSectionUnitSchedules(
-              schoolYear,
-              scopeTag,
-              section.school,
-              section.classSection
-            );
-            if (unitResult.success && unitResult.data) {
-              setUnitScheduleData((prev) => {
-                const next = new Map(prev);
-                next.set(sectionId, unitResult.data!);
-                return next;
-              });
-            }
-
-            // Remove from loading set when done
-            setLoadingSectionIds((prev) => {
-              const next = new Set(prev);
-              next.delete(sectionId);
-              return next;
-            });
-          })
-        );
-      } catch (error) {
-        console.error("Error loading velocity data:", error);
-        // Clear loading state on error
-        setLoadingSectionIds(new Set());
-      }
-    };
-
-    loadVelocityData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSections, sectionOptions]);
-
-  // Reload all data when includeNotTracked changes
-  useEffect(() => {
-    if (selectedSections.length === 0) return;
-
-    const reloadAllData = async () => {
-      const schoolYearStart = new Date(2025, 8, 1);
-      const schoolYearEnd = new Date(2026, 5, 30);
-      const startDate = schoolYearStart.toISOString().split("T")[0];
-      const endDate = schoolYearEnd.toISOString().split("T")[0];
-
-      // Mark all sections as loading
-      setLoadingSectionIds(new Set(selectedSections));
-
-      try {
-        await Promise.all(
-          selectedSections.map(async (sectionId) => {
-            const section = sectionOptions.find((s) => s.id === sectionId);
-            if (!section) return;
-
-            const velocityResult = await getSectionVelocityByDateRange(
-              section.classSection,
-              section.school,
-              startDate,
-              endDate,
-              includeNotTracked,
-              true
-            );
-
-            if (velocityResult.success && velocityResult.data) {
-              setVelocityData((prev) => {
-                const next = new Map(prev);
-                next.set(sectionId, velocityResult.data!);
-                return next;
-              });
-
-              if (velocityResult.studentDetails) {
-                setDetailData((prev) => {
-                  const next = new Map(prev);
-                  next.set(sectionId, velocityResult.studentDetails!);
-                  return next;
-                });
-              }
-            }
-
-            setLoadingSectionIds((prev) => {
-              const next = new Set(prev);
-              next.delete(sectionId);
-              return next;
-            });
-          })
-        );
-      } catch (error) {
-        console.error("Error reloading velocity data:", error);
-        setLoadingSectionIds(new Set());
-      }
-    };
-
-    reloadAllData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [includeNotTracked]);
+  const {
+    velocityData,
+    detailData,
+    unitScheduleData,
+    loadingSectionIds,
+  } = useVelocityData(selectedSections, sectionOptions, schoolYear, includeNotTracked);
 
   // Handle section selection
   const handleSectionToggle = (sectionId: string) => {
@@ -533,7 +326,7 @@ export default function VelocityPage() {
       selectedSections={selectedSections}
       onSectionToggle={handleSectionToggle}
       sectionColors={sectionColors}
-      isLoading={loading}
+      isLoading={loadingSections}
       loadingSectionIds={loadingSectionIds}
       sharedVisualization={buildSharedVisualization()}
       renderSectionContent={renderSectionContent}
