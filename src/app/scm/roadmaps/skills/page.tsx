@@ -1,166 +1,50 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { fetchRoadmapsSkills } from "@actions/313/roadmaps-skills";
-import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
+import { useState, useMemo, useEffect } from "react";
 import { SkillListItem } from "./components/SkillListItem";
 import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback/Spinner";
+import { useAllSkills, useFilteredSkills } from "../hooks";
 
 export default function RoadmapsSkillsPage() {
-  const [allSkills, setAllSkills] = useState<RoadmapsSkill[]>([]); // All skills for dropdown population
-  const [skills, setSkills] = useState<RoadmapsSkill[]>([]); // Currently displayed skills
-  const [filteredSkills, setFilteredSkills] = useState<RoadmapsSkill[]>([]); // After search filtering
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGrade, setSelectedGrade] = useState<string>("");
   const [selectedUnit, setSelectedUnit] = useState<string>("");
   const [contextSkillId, setContextSkillId] = useState<string | null>(null);
 
-  // Load all skills once on mount for dropdown population
-  useEffect(() => {
-    const loadAllSkills = async () => {
-      try {
-        console.log('🔍 Loading all skills for filters...');
-        const result = await fetchRoadmapsSkills({
-          page: 1,
-          limit: 10000,
-          sortBy: 'skillNumber',
-          sortOrder: 'asc',
-          filters: {}
-        });
+  // Data fetching with React Query hooks
+  const { allSkills } = useAllSkills();
+  const { skills, loading, error } = useFilteredSkills(selectedGrade, selectedUnit);
 
-        if (result.success && result.items) {
-          const sortedSkills = (result.items as RoadmapsSkill[]).sort((a, b) => {
-            const numA = parseInt(a.skillNumber) || 0;
-            const numB = parseInt(b.skillNumber) || 0;
-            return numA - numB;
-          });
-          console.log('✅ Loaded all skills for filters:', sortedSkills.length);
-          setAllSkills(sortedSkills);
-        }
-      } catch (err) {
-        console.error('💥 Error loading all skills:', err);
-      }
-    };
-
-    loadAllSkills();
-  }, []);
-
-  // Load filtered skills when grade/unit changes
-  useEffect(() => {
-    // Don't load skills until a grade is selected
-    if (!selectedGrade) {
-      setSkills([]);
-      setFilteredSkills([]);
-      setLoading(false);
-      return;
-    }
-
-    const loadSkills = async () => {
-      try {
-        setLoading(true);
-        console.log('🔍 Fetching roadmaps skills...');
-
-        // Build filters based on selected grade and unit
-        const filters: Record<string, unknown> = {
-          'units.grade': selectedGrade
-        };
-
-        if (selectedUnit) {
-          filters['units.unitTitle'] = selectedUnit;
-        }
-
-        const result = await fetchRoadmapsSkills({
-          page: 1,
-          filters,
-          limit: 10000,
-          sortBy: 'skillNumber',
-          sortOrder: 'asc' as const
-        });
-
-        console.log('📊 Fetch result:', {
-          success: result.success,
-          itemsLength: result.items?.length,
-          error: result.error,
-          filters
-        });
-
-        if (result.success && result.items) {
-          // Sort by skill number
-          const sortedSkills = (result.items as RoadmapsSkill[]).sort((a, b) => {
-            const numA = parseInt(a.skillNumber) || 0;
-            const numB = parseInt(b.skillNumber) || 0;
-            return numA - numB;
-          });
-          console.log('✅ Loaded and sorted skills:', sortedSkills.length);
-          setSkills(sortedSkills);
-          setFilteredSkills(sortedSkills);
-        } else {
-          console.error('❌ Failed to load skills:', result.error);
-          setError(result.error || "Failed to load skills");
-        }
-      } catch (err) {
-        console.error('💥 Exception loading skills:', err);
-        setError('Failed to load skills');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadSkills();
-  }, [selectedGrade, selectedUnit]);
-
-  // Filter skills when search query changes
-  useEffect(() => {
+  // Filter skills by search query with useMemo
+  const filteredSkills = useMemo(() => {
     if (searchQuery.trim() === "") {
-      setFilteredSkills(skills);
-      return;
+      return skills;
     }
 
     const query = searchQuery.toLowerCase();
-    const filtered = skills.filter(skill =>
-      skill.skillNumber.toLowerCase().includes(query) ||
-      skill.title.toLowerCase().includes(query)
+    return skills.filter(
+      (skill) =>
+        skill.skillNumber.toLowerCase().includes(query) ||
+        skill.title.toLowerCase().includes(query)
     );
-    setFilteredSkills(filtered);
-
-    // Clear selection when search changes
-    setSelectedSkillId(null);
   }, [searchQuery, skills]);
 
   // Auto-search for skill by number when 3 digits are typed
   useEffect(() => {
     const trimmedQuery = searchQuery.trim();
 
-    // Check if the query is exactly 3 digits
     if (trimmedQuery.length === 3 && /^\d{3}$/.test(trimmedQuery)) {
-      const searchForSkill = async () => {
-        try {
-          // Search in allSkills first (already loaded)
-          const foundSkill = allSkills.find(skill => skill.skillNumber === trimmedQuery);
-
-          if (foundSkill) {
-            // If found in allSkills, select it and update context
-            setSelectedSkillId(foundSkill._id);
-
-            // If the skill is not in the current filtered list, we should show it anyway
-            if (!filteredSkills.find(s => s._id === foundSkill._id)) {
-              // Add it to filtered skills temporarily
-              setFilteredSkills([foundSkill]);
-            }
-          }
-        } catch (error) {
-          console.error('Error searching for skill:', error);
-        }
-      };
-
-      searchForSkill();
+      const foundSkill = allSkills.find(
+        (skill) => skill.skillNumber === trimmedQuery
+      );
+      if (foundSkill) {
+        setSelectedSkillId(foundSkill._id);
+      }
     }
-  }, [searchQuery, allSkills, filteredSkills]);
+  }, [searchQuery, allSkills]);
 
   const handleSkillClick = (skillId: string) => {
     setSelectedSkillId(skillId);

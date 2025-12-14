@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { getRoadmapUnits } from "@/app/actions/313/roadmaps-units";
-import { RoadmapUnit } from "@zod-schema/313/curriculum/roadmap-unit";
+import { useState, useMemo, useEffect } from "react";
 import { Student } from "@zod-schema/313/student/student";
 import { UnitListItem } from "./components/UnitListItem";
 import { UnitDetailView } from "./components/UnitDetailView";
@@ -12,6 +10,7 @@ import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { AcademicCapIcon, BookOpenIcon } from "@heroicons/react/24/outline";
+import { useRoadmapUnits } from "../hooks";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },
@@ -24,10 +23,6 @@ const GRADE_OPTIONS = [
 ];
 
 export default function RoadmapUnitsPage() {
-  const [units, setUnits] = useState<RoadmapUnit[]>([]);
-  const [filteredUnits, setFilteredUnits] = useState<RoadmapUnit[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedGrade, setSelectedGrade] = useState("");
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -36,78 +31,26 @@ export default function RoadmapUnitsPage() {
   const [selectedSkill, setSelectedSkill] = useState<RoadmapsSkill | null>(null);
   const [selectedSkillColor, setSelectedSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('green');
 
-  useEffect(() => {
-    const loadUnits = async () => {
-      try {
-        setLoading(true);
-        const result = await getRoadmapUnits({
-          successOnly: true,
-          limit: 1000
-        });
+  // Data fetching with React Query hooks
+  const { units, loading, error } = useRoadmapUnits();
 
-        if (result.success && result.data) {
-          const rawUnits = Array.isArray(result.data) ? result.data : [];
-          const unitsWithStringIds = rawUnits.map((unit: Record<string, unknown>): RoadmapUnit => ({
-            _id: (unit._id as string)?.toString() || (unit._id as string),
-            ownerIds: (unit.ownerIds as string[]) || [],
-            grade: (unit.grade as string) || '',
-            unitTitle: (unit.unitTitle as string) || '',
-            unitNumber: (unit.unitNumber as number) || 0,
-            url: (unit.url as string) || '',
-            targetCount: (unit.targetCount as number) || 0,
-            supportCount: (unit.supportCount as number) || 0,
-            extensionCount: (unit.extensionCount as number) || 0,
-            targetSkills: (unit.targetSkills as string[]) || [],
-            additionalSupportSkills: (unit.additionalSupportSkills as string[]) || [],
-            extensionSkills: (unit.extensionSkills as string[]) || [],
-            scrapedAt: (unit.scrapedAt as string) || new Date().toISOString(),
-            success: (unit.success as boolean) ?? true,
-            error: unit.error as string | undefined,
-            createdAt: (unit.createdAt as string) || new Date().toISOString(),
-            updatedAt: (unit.updatedAt as string) || new Date().toISOString(),
-          }));
-
-          // Sort by createdAt ascending (oldest first)
-          const sortedUnits = unitsWithStringIds.sort((a, b) =>
-            new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
-          );
-
-          setUnits(sortedUnits);
-          setFilteredUnits(sortedUnits);
-        } else {
-          setError(result.error || "Failed to load units");
-        }
-      } catch (err) {
-        setError('Failed to load units');
-        console.error('Error loading units:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadUnits();
-  }, []);
-
-  // Filter units when grade selection changes and clear selected unit
-  useEffect(() => {
-    let filtered: RoadmapUnit[];
+  // Filter units by grade with useMemo
+  const filteredUnits = useMemo(() => {
     if (selectedGrade === "") {
-      // Show no units when "Select Grade" is chosen
-      filtered = [];
-    } else {
-      filtered = units.filter(unit => unit.grade === selectedGrade);
+      return [];
     }
-
-    // Maintain createdAt sort order
-    const sorted = filtered.sort((a, b) =>
-      new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
-    );
-
-    setFilteredUnits(sorted);
-
-    // Clear selection when grade changes
-    setSelectedUnitId(null);
+    return units
+      .filter((unit) => unit.grade === selectedGrade)
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
+      );
   }, [selectedGrade, units]);
+
+  // Clear unit selection when grade changes
+  useEffect(() => {
+    setSelectedUnitId(null);
+  }, [selectedGrade]);
 
   const handleUnitClick = (unitId: string) => {
     setSelectedUnitId(unitId);

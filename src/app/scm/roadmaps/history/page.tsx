@@ -1,33 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { fetchStudentAssessments, getAssessmentDateRange } from "@/app/actions/313/student-assessments";
-import { fetchStudents } from "@/app/actions/313/students";
-import { fetchZearnCompletions, importZearnCompletions, ZearnHistoryRow } from "@/app/actions/313/zearn-completions";
-import { fetchPodsieCompletions, PodsieCompletionRow } from "@/app/actions/313/podsie-history";
-import { Student } from "@zod-schema/313/student/student";
+import { useState, useMemo, useRef } from "react";
+import { importZearnCompletions } from "@/app/actions/313/zearn-completions";
 import { Sections313 } from "@/lib/schema/enum/313";
-// import { useAssessmentScraper } from "../assessment-scraper/hooks/useAssessmentScraper";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { Button } from "@/components/core/Button";
+import { Dialog as Modal } from "@/components/composed/dialogs/Dialog";
 import { CheckIcon } from "@heroicons/react/24/solid";
-
-type AssessmentRow = {
-  studentId: string;
-  studentName: string;
-  section: string;
-  schoolId: string;
-  assessmentDate: string;
-  skillCode: string;
-  skillName: string;
-  skillGrade: string;
-  unit: string;
-  status: string;
-  attemptNumber: number;
-  dateCompleted: string;
-  score: string;
-  passed: boolean;
-};
+import {
+  useAssessmentData,
+  useZearnCompletions,
+  usePodsieCompletions,
+} from "./hooks";
 
 const SECTION_OPTIONS: Array<{ value: string; label: string; grade?: string }> = [
   { value: "", label: "All Sections" },
@@ -54,16 +38,12 @@ const STATUS_OPTIONS: Array<{ value: string; label: string }> = [
 ];
 
 export default function AssessmentHistoryPage() {
-  const [data, setData] = useState<AssessmentRow[]>([]);
-  const [filteredData, setFilteredData] = useState<AssessmentRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Data fetching with React Query hooks
+  const { data, loading, error } = useAssessmentData();
+  const { data: zearnData, loading: zearnLoading, error: zearnError, refetch: refetchZearn } = useZearnCompletions();
+  const { data: podsieData, loading: podsieLoading, error: podsieError } = usePodsieCompletions();
 
-  // Zearn data state
-  const [zearnData, setZearnData] = useState<ZearnHistoryRow[]>([]);
-  const [filteredZearnData, setFilteredZearnData] = useState<ZearnHistoryRow[]>([]);
-  const [zearnLoading, setZearnLoading] = useState(true);
-  const [zearnError, setZearnError] = useState<string | null>(null);
+  // Zearn import state
   const [showZearnImport, setShowZearnImport] = useState(false);
   const [zearnImportData, setZearnImportData] = useState("");
   const [importing, setImporting] = useState(false);
@@ -77,19 +57,6 @@ export default function AssessmentHistoryPage() {
   } | null>(null);
   const zearnFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Podsie data state
-  const [podsieData, setPodsieData] = useState<PodsieCompletionRow[]>([]);
-  const [filteredPodsieData, setFilteredPodsieData] = useState<PodsieCompletionRow[]>([]);
-  const [podsieLoading, setPodsieLoading] = useState(true);
-  const [podsieError, setPodsieError] = useState<string | null>(null);
-
-  // Assessment scraper hook (commented out - scraper runs via GitHub Actions)
-  // const {
-  //   isLoading: isScraping,
-  //   scrapeAndUpdateBatch
-  // } = useAssessmentScraper();
-
-  // Filters
   // Get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
     const now = new Date();
@@ -99,158 +66,18 @@ export default function AssessmentHistoryPage() {
     return `${year}-${month}-${day}`;
   };
 
+  // Filters
   const [selectedSection, setSelectedSection] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<string>(""); // Show all statuses by default
-  const [startDate, setStartDate] = useState<string>(getTodayDate()); // Default to today
-  const [endDate, setEndDate] = useState<string>(getTodayDate()); // Default to today
-  const [_availableDates, setAvailableDates] = useState<string[]>([]);
-  const [_studentsBySection, setStudentsBySection] = useState<Map<string, Set<string>>>(new Map());
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>(getTodayDate);
+  const [endDate, setEndDate] = useState<string>(getTodayDate);
 
-
-  // Load students to map sections
-  useEffect(() => {
-    const loadStudents = async () => {
-      try {
-        const result = await fetchStudents({
-          page: 1,
-          limit: 1000,
-          sortBy: "lastName",
-          sortOrder: "asc",
-          filters: { active: true },
-          search: "",
-          searchFields: []
-        });
-
-        if (result.success && result.items) {
-          const sectionMap = new Map<string, Set<string>>();
-
-          (result.items as Student[]).forEach(student => {
-            console.log('[History] Student:', {
-              studentID: student.studentID,
-              section: student.section,
-              name: `${student.firstName} ${student.lastName}`
-            });
-            if (!sectionMap.has(student.section)) {
-              sectionMap.set(student.section, new Set());
-            }
-            sectionMap.get(student.section)!.add(student.studentID.toString());
-          });
-
-          console.log('[History] Section map:', Object.fromEntries(
-            Array.from(sectionMap.entries()).map(([section, ids]) => [section, Array.from(ids)])
-          ));
-          setStudentsBySection(sectionMap);
-        }
-      } catch (err) {
-        console.error('Error loading students:', err);
-      }
-    };
-
-    loadStudents();
-  }, []);
-
-  // Load date range (for reference, not needed for filtering anymore)
-  useEffect(() => {
-    const loadDateRange = async () => {
-      try {
-        const result = await getAssessmentDateRange();
-        if (result.success && result.data) {
-          const dates = result.data.allDates || [];
-          setAvailableDates(dates);
-        }
-      } catch (err) {
-        console.error('Error loading date range:', err);
-      }
-    };
-
-    loadDateRange();
-  }, []);
-
-  // Load assessment data
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const result = await fetchStudentAssessments();
-
-        if (result.success && result.data) {
-          // Log first 3 records to see actual date format
-          console.log('[History] First 3 records with dates:', (result.data as AssessmentRow[]).slice(0, 3).map(r => ({
-            student: r.studentName,
-            dateCompleted: r.dateCompleted,
-            dateType: typeof r.dateCompleted,
-            split: r.dateCompleted.split('T')[0]
-          })));
-          setData(result.data as AssessmentRow[]);
-          setFilteredData(result.data as AssessmentRow[]);
-        } else {
-          setError(result.error || "Failed to load assessment data");
-        }
-      } catch (err) {
-        setError('Failed to load assessment data');
-        console.error('Error loading assessment data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  // Load Zearn completion data
-  useEffect(() => {
-    const loadZearnData = async () => {
-      try {
-        setZearnLoading(true);
-        const result = await fetchZearnCompletions();
-
-        if (result.success && result.items) {
-          setZearnData(result.items);
-          setFilteredZearnData(result.items);
-        } else {
-          setZearnError(result.error || "Failed to load Zearn data");
-        }
-      } catch (err) {
-        setZearnError('Failed to load Zearn data');
-        console.error('Error loading Zearn data:', err);
-      } finally {
-        setZearnLoading(false);
-      }
-    };
-
-    loadZearnData();
-  }, []);
-
-  // Load Podsie completion data
-  useEffect(() => {
-    const loadPodsieData = async () => {
-      try {
-        setPodsieLoading(true);
-        const result = await fetchPodsieCompletions();
-
-        if (result.success && result.data) {
-          setPodsieData(result.data);
-          setFilteredPodsieData(result.data);
-        } else if (!result.success) {
-          setPodsieError(result.error || "Failed to load Podsie data");
-        }
-      } catch (err) {
-        setPodsieError('Failed to load Podsie data');
-        console.error('Error loading Podsie data:', err);
-      } finally {
-        setPodsieLoading(false);
-      }
-    };
-
-    loadPodsieData();
-  }, []);
-
-  // Apply filters
-  useEffect(() => {
+  // Filter assessment data with useMemo
+  const filteredData = useMemo(() => {
     // Helper function to convert dateCompleted to YYYY-MM-DD format for comparison
     const toComparableDate = (dateStr: string): string => {
       // Handle format: "11/06/2025, 2:12 PM" -> "2025-11-06"
-      const datePart = dateStr.split(',')[0]; // Get "11/06/2025"
+      const datePart = dateStr.split(',')[0];
       const [month, day, year] = datePart.split('/');
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
     };
@@ -269,7 +96,7 @@ export default function AssessmentHistoryPage() {
       }
     }
 
-    // Filter by section - use the section field directly from the row
+    // Filter by section
     if (selectedSection) {
       filtered = filtered.filter(row => row.section === selectedSection);
     }
@@ -296,20 +123,14 @@ export default function AssessmentHistoryPage() {
     filtered.sort((a, b) => {
       const dateA = new Date(a.dateCompleted).getTime();
       const dateB = new Date(b.dateCompleted).getTime();
-      return dateB - dateA; // Descending order (most recent first)
+      return dateB - dateA;
     });
 
-    setFilteredData(filtered);
+    return filtered;
+  }, [data, selectedSection, selectedStatus, startDate, endDate]);
 
-    // Also filter Zearn data
-    let filteredZearn = [...zearnData];
-
-    // Filter by section
-    if (selectedSection) {
-      filteredZearn = filteredZearn.filter(row => row.section === selectedSection);
-    }
-
-    // Filter by date range for Zearn
+  // Filter Zearn data with useMemo
+  const filteredZearnData = useMemo(() => {
     const toZearnComparableDate = (dateStr: string): string => {
       // Handle format: "10/30/25" -> "2025-10-30"
       const parts = dateStr.split('/');
@@ -317,7 +138,6 @@ export default function AssessmentHistoryPage() {
         const month = parts[0].padStart(2, '0');
         const day = parts[1].padStart(2, '0');
         let year = parts[2];
-        // Handle 2-digit year
         if (year.length === 2) {
           year = parseInt(year, 10) < 50 ? `20${year}` : `19${year}`;
         }
@@ -326,59 +146,63 @@ export default function AssessmentHistoryPage() {
       return dateStr;
     };
 
+    let filtered = [...zearnData];
+
+    if (selectedSection) {
+      filtered = filtered.filter(row => row.section === selectedSection);
+    }
+
     if (startDate && endDate) {
-      filteredZearn = filteredZearn.filter(row => {
+      filtered = filtered.filter(row => {
         const dateStr = toZearnComparableDate(row.completionDate);
         return dateStr >= startDate && dateStr <= endDate;
       });
     } else if (startDate) {
-      filteredZearn = filteredZearn.filter(row => {
+      filtered = filtered.filter(row => {
         const dateStr = toZearnComparableDate(row.completionDate);
         return dateStr >= startDate;
       });
     } else if (endDate) {
-      filteredZearn = filteredZearn.filter(row => {
+      filtered = filtered.filter(row => {
         const dateStr = toZearnComparableDate(row.completionDate);
         return dateStr <= endDate;
       });
     }
 
-    setFilteredZearnData(filteredZearn);
+    return filtered;
+  }, [zearnData, selectedSection, startDate, endDate]);
 
-    // Also filter Podsie data
-    let filteredPodsie = [...podsieData];
-
-    // Filter by section
-    if (selectedSection) {
-      filteredPodsie = filteredPodsie.filter(row => row.section === selectedSection);
-    }
-
-    // Helper to convert Podsie completedDate (ISO format) to YYYY-MM-DD
+  // Filter Podsie data with useMemo
+  const filteredPodsieData = useMemo(() => {
     const toPodsieComparableDate = (dateStr: string): string => {
-      // Handle ISO format: "2025-01-15T14:30:00.000Z" -> "2025-01-15"
       return dateStr.split('T')[0];
     };
 
-    // Filter by date range for Podsie
+    let filtered = [...podsieData];
+
+    if (selectedSection) {
+      filtered = filtered.filter(row => row.section === selectedSection);
+    }
+
     if (startDate && endDate) {
-      filteredPodsie = filteredPodsie.filter(row => {
+      filtered = filtered.filter(row => {
         const dateStr = toPodsieComparableDate(row.completedDate);
         return dateStr >= startDate && dateStr <= endDate;
       });
     } else if (startDate) {
-      filteredPodsie = filteredPodsie.filter(row => {
+      filtered = filtered.filter(row => {
         const dateStr = toPodsieComparableDate(row.completedDate);
         return dateStr >= startDate;
       });
     } else if (endDate) {
-      filteredPodsie = filteredPodsie.filter(row => {
+      filtered = filtered.filter(row => {
         const dateStr = toPodsieComparableDate(row.completedDate);
         return dateStr <= endDate;
       });
     }
 
-    setFilteredPodsieData(filteredPodsie);
-  }, [data, zearnData, podsieData, selectedSection, selectedStatus, startDate, endDate]);
+    return filtered;
+  }, [podsieData, selectedSection, startDate, endDate]);
 
   // Calculate summary statistics
   const totalAttempts = filteredData.length;
@@ -462,11 +286,7 @@ export default function AssessmentHistoryPage() {
         }
 
         // Reload Zearn data
-        const zearnResult = await fetchZearnCompletions();
-        if (zearnResult.success && zearnResult.items) {
-          setZearnData(zearnResult.items);
-          setFilteredZearnData(zearnResult.items);
-        }
+        refetchZearn();
       } else {
         setZearnImportResult({
           success: false,
@@ -693,106 +513,102 @@ export default function AssessmentHistoryPage() {
         </div>
 
         {/* Zearn Import Modal */}
-        {showZearnImport && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
-              <h3 className="text-lg font-semibold mb-4">Import Zearn Data</h3>
+        <Modal
+          open={showZearnImport}
+          onClose={handleCloseZearnImport}
+          title="Import Zearn Data"
+          size="sm"
+        >
+          {/* File Upload */}
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-500 transition-colors">
+            <input
+              ref={zearnFileInputRef}
+              type="file"
+              accept=".csv,.tsv,.txt"
+              onChange={handleZearnFileUpload}
+              className="hidden"
+              id="zearn-file-upload"
+            />
+            <label
+              htmlFor="zearn-file-upload"
+              className="cursor-pointer"
+            >
+              <div className="text-3xl mb-2">📁</div>
+              {zearnFileName ? (
+                <div>
+                  <p className="text-sm font-medium text-gray-900">{zearnFileName}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {zearnImportData.trim().split('\n').length - 1} data rows
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Click to upload CSV</p>
+                  <p className="text-xs text-gray-500 mt-1">or drag and drop</p>
+                </div>
+              )}
+            </label>
+          </div>
 
-              {/* File Upload */}
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-orange-400 transition-colors">
-                <input
-                  ref={zearnFileInputRef}
-                  type="file"
-                  accept=".csv,.tsv,.txt"
-                  onChange={handleZearnFileUpload}
-                  className="hidden"
-                  id="zearn-file-upload"
-                />
-                <label
-                  htmlFor="zearn-file-upload"
-                  className="cursor-pointer"
-                >
-                  <div className="text-3xl mb-2">📁</div>
-                  {zearnFileName ? (
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{zearnFileName}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {zearnImportData.trim().split('\n').length - 1} data rows
-                      </p>
-                    </div>
-                  ) : (
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">Click to upload CSV</p>
-                      <p className="text-xs text-gray-500 mt-1">or drag and drop</p>
-                    </div>
-                  )}
-                </label>
+          {/* Results */}
+          {zearnImportResult && (
+            <div className={`mt-4 rounded-lg p-4 ${
+              zearnImportResult.success && zearnImportResult.imported > 0
+                ? 'bg-green-50 border border-green-200'
+                : zearnImportResult.success && zearnImportResult.imported === 0
+                ? 'bg-yellow-50 border border-yellow-200'
+                : 'bg-red-50 border border-red-200'
+            }`}>
+              <div className={`text-sm font-medium ${
+                zearnImportResult.success && zearnImportResult.imported > 0
+                  ? 'text-green-900'
+                  : zearnImportResult.success && zearnImportResult.imported === 0
+                  ? 'text-yellow-900'
+                  : 'text-red-900'
+              }`}>
+                {zearnImportResult.success && zearnImportResult.imported > 0
+                  ? `Imported ${zearnImportResult.imported} lessons`
+                  : zearnImportResult.success && zearnImportResult.imported === 0
+                  ? 'No new data imported'
+                  : 'Import failed'}
               </div>
-
-              {/* Results */}
-              {zearnImportResult && (
-                <div className={`mt-4 rounded-lg p-4 ${
-                  zearnImportResult.success && zearnImportResult.imported > 0
-                    ? 'bg-green-50 border border-green-200'
-                    : zearnImportResult.success && zearnImportResult.imported === 0
-                    ? 'bg-yellow-50 border border-yellow-200'
-                    : 'bg-red-50 border border-red-200'
-                }`}>
-                  <div className={`text-sm font-medium ${
-                    zearnImportResult.success && zearnImportResult.imported > 0
-                      ? 'text-green-900'
-                      : zearnImportResult.success && zearnImportResult.imported === 0
-                      ? 'text-yellow-900'
-                      : 'text-red-900'
-                  }`}>
-                    {zearnImportResult.success && zearnImportResult.imported > 0
-                      ? `Imported ${zearnImportResult.imported} lessons`
-                      : zearnImportResult.success && zearnImportResult.imported === 0
-                      ? 'No new data imported'
-                      : 'Import failed'}
-                  </div>
-                  {zearnImportResult.skipped > 0 && (
-                    <div className="text-xs text-gray-600 mt-1">
-                      {zearnImportResult.skipped} students skipped
-                    </div>
-                  )}
-                  {zearnImportResult.errors.length > 0 && (
-                    <div className="text-xs text-gray-600 mt-2 max-h-20 overflow-y-auto">
-                      {zearnImportResult.errors.slice(0, 5).map((error, i) => (
-                        <div key={i}>{error}</div>
-                      ))}
-                      {zearnImportResult.errors.length > 5 && (
-                        <div className="italic">...and {zearnImportResult.errors.length - 5} more</div>
-                      )}
-                    </div>
+              {zearnImportResult.skipped > 0 && (
+                <div className="text-xs text-gray-600 mt-1">
+                  {zearnImportResult.skipped} students skipped
+                </div>
+              )}
+              {zearnImportResult.errors.length > 0 && (
+                <div className="text-xs text-gray-600 mt-2 max-h-20 overflow-y-auto">
+                  {zearnImportResult.errors.slice(0, 5).map((error, i) => (
+                    <div key={i}>{error}</div>
+                  ))}
+                  {zearnImportResult.errors.length > 5 && (
+                    <div className="italic">...and {zearnImportResult.errors.length - 5} more</div>
                   )}
                 </div>
               )}
-
-              <div className="flex justify-end gap-3 mt-4">
-                <button
-                  onClick={handleCloseZearnImport}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  {zearnImportResult?.success && zearnImportResult.imported > 0 ? 'Done' : 'Cancel'}
-                </button>
-                {(!zearnImportResult || !zearnImportResult.success || zearnImportResult.imported === 0) && (
-                  <button
-                    onClick={handleZearnImport}
-                    disabled={importing || !zearnImportData.trim()}
-                    className={`px-4 py-2 rounded-lg font-medium text-white ${
-                      importing || !zearnImportData.trim()
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-orange-500 hover:bg-orange-600'
-                    }`}
-                  >
-                    {importing ? 'Importing...' : 'Import'}
-                  </button>
-                )}
-              </div>
             </div>
+          )}
+
+          <div className="flex justify-end gap-3 mt-4">
+            <Button
+              intent="secondary"
+              onClick={handleCloseZearnImport}
+            >
+              {zearnImportResult?.success && zearnImportResult.imported > 0 ? 'Done' : 'Cancel'}
+            </Button>
+            {(!zearnImportResult || !zearnImportResult.success || zearnImportResult.imported === 0) && (
+              <Button
+                intent="primary"
+                onClick={handleZearnImport}
+                disabled={importing || !zearnImportData.trim()}
+                loading={importing}
+              >
+                Import
+              </Button>
+            )}
           </div>
-        )}
+        </Modal>
 
         {/* Three Column Layout */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -947,7 +763,7 @@ export default function AssessmentHistoryPage() {
                 </div>
                 <button
                   onClick={() => setShowZearnImport(true)}
-                  className="px-3 py-1.5 text-sm font-medium text-orange-700 bg-orange-100 rounded-lg hover:bg-orange-200 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium text-orange-700 bg-orange-100 rounded-lg hover:bg-orange-200 transition-colors cursor-pointer"
                 >
                   + Import Zearn Data
                 </button>
