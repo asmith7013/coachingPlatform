@@ -4,7 +4,7 @@ import {
   AssessmentCompletionInput,
   LessonCodeZod,
   LessonCode
-} from '@zod-schema/313/core';
+} from '@zod-schema/scm/core';
 import { ValidatedRowData } from '../types/spreadsheet-types';
 
 // =====================================

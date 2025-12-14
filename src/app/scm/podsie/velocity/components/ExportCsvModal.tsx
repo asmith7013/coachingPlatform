@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { XMarkIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
-import type { DailyVelocityStats, StudentDailyData } from "@/app/actions/313/velocity/velocity";
+import type { DailyVelocityStats, StudentDailyData } from "@/app/actions/scm/velocity/velocity";
 import {
   generateClassVelocityCsv,
   generateStudentVelocityCsv,

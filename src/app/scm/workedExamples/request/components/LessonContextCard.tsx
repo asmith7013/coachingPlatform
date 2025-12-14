@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { ScopeAndSequence } from "@zod-schema/313/curriculum/scope-and-sequence";
+import { ScopeAndSequence } from "@zod-schema/scm/curriculum/scope-and-sequence";
 import { BookOpenIcon, AcademicCapIcon, ClipboardDocumentCheckIcon, PhotoIcon, CubeIcon } from "@heroicons/react/24/outline";
 
 interface LessonContextCardProps {

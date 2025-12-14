@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { listAssignmentVariations } from '@/app/actions/313/assignment-variations';
-import type { AssignmentVariation } from '@/lib/schema/zod-schema/313/podsie/assignment-variation';
+import { listAssignmentVariations } from '@/app/actions/scm/assignment-variations';
+import type { AssignmentVariation } from '@/lib/schema/zod-schema/scm/podsie/assignment-variation';
 import { Spinner } from '@/components/core/feedback/Spinner';
 
 type VariationWithCount = AssignmentVariation & { questionCount: number };

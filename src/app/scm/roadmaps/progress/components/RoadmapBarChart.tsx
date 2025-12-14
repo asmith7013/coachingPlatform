@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import type { StudentRoadmapData } from "@/app/actions/313/roadmap-completions";
+import type { StudentRoadmapData } from "@/app/actions/scm/roadmap-completions";
 import { StackedSkillsBarChart, type BarDataItem } from "./StackedSkillsBarChart";
 
 interface RoadmapBarChartProps {

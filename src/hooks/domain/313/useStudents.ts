@@ -1,5 +1,5 @@
 import { createCrudHooks } from '@query/client/factories/crud-factory';
-import { StudentZodSchema, Student } from '@/lib/schema/zod-schema/313/student/student';
+import { StudentZodSchema, Student } from '@/lib/schema/zod-schema/scm/student/student';
 import { ZodSchema } from 'zod';
 import { 
   fetchStudents, 
@@ -7,7 +7,7 @@ import {
   createStudent, 
   updateStudent, 
   deleteStudent
-} from '@actions/313/students';
+} from '@actions/scm/students';
 import { useInvalidation } from '@query/cache/invalidation';
 import { useCallback } from 'react';
 import { useNotifications } from '@/hooks/ui/useNotifications';

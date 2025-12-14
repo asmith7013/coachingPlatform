@@ -311,7 +311,7 @@ Similar to worked-example sync script but adapted for question structure:
 4. `.claude/skills/create-assignment-variation/templates/sync-to-db.js` - MongoDB sync script
 
 ### Schema Files
-5. `src/lib/schema/zod-schema/313/podsie/assignment-variation.ts` - Zod schema
+5. `src/lib/schema/zod-schema/scm/podsie/assignment-variation.ts` - Zod schema
 6. `src/lib/schema/mongoose-schema/313/podsie/assignment-variation.model.ts` - Mongoose model
 7. Update `src/lib/schema/mongoose-schema/313/podsie/index.ts` - Export model
 

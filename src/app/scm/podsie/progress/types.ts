@@ -1,4 +1,4 @@
-import { RampUpQuestion } from "@zod-schema/313/student/student";
+import { RampUpQuestion } from "@zod-schema/scm/student/student";
 import type { LessonType } from "@/lib/utils/lesson-display";
 
 export interface LessonConfig {

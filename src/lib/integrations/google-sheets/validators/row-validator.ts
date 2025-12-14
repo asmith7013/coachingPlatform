@@ -3,7 +3,7 @@ import {
   TeacherZod, 
   AttendanceStatusZod, 
   AttendanceStatusType 
-} from '@zod-schema/313/core';
+} from '@zod-schema/scm/core';
 import {
   RawSpreadsheetRow,
   SpreadsheetHeaders,

@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
-import { fetchAllUnitsByScopeTag } from "@/app/actions/313/scope-and-sequence";
-import { getSectionConfig } from "@/app/actions/313/section-config";
-import { AssignmentContent } from "@zod-schema/313/podsie/section-config";
+import { fetchAllUnitsByScopeTag } from "@/app/actions/scm/scope-and-sequence";
+import { getSectionConfig } from "@/app/actions/scm/section-config";
+import { AssignmentContent } from "@zod-schema/scm/podsie/section-config";
 import { UnitOption } from "../types";
 import { getGradeForSection, getSchoolForSection } from "../utils/sectionHelpers";
 

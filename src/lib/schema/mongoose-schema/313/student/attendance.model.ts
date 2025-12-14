@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import type { AttendanceRecord } from '@zod-schema/313/student/attendance';
+import type { AttendanceRecord } from '@zod-schema/scm/student/attendance';
 
 /**
  * Mongoose schema for student attendance records

@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { findBestMatch } from "@/lib/utils/lesson-name-normalization";
-import type { AssignmentMatchResult } from "@/app/actions/313/podsie-sync";
+import type { AssignmentMatchResult } from "@/app/actions/scm/podsie-sync";
 
 interface SavedQuestionMap {
   assignmentId: string;

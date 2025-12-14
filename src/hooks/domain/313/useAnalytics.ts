@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@query/core/keys';
-import { fetchLessonCompletions, fetchDailyClassEvents } from '@actions/313/analytics';
-import { ZearnCompletion, AssessmentCompletion, DailyClassEvent, LessonCompletion } from '@zod-schema/313/core';
+import { fetchLessonCompletions, fetchDailyClassEvents } from '@actions/scm/analytics';
+import { ZearnCompletion, AssessmentCompletion, DailyClassEvent, LessonCompletion } from '@zod-schema/scm/core';
 
 /**
  * Hook for fetching all lesson completion data with filtering capability

@@ -75,7 +75,7 @@ Provides helper functions:
 
 ### 4. Schema Integration
 
-#### `src/lib/schema/zod-schema/313/section-config.ts`
+#### `src/lib/schema/zod-schema/scm/section-config.ts`
 Already includes the schema for variant mapping:
 
 ```typescript

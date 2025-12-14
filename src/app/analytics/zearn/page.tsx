@@ -7,7 +7,7 @@ import { TableColumnSchema } from '@ui/table-schema';
 import { useZearnData } from '@hooks/domain/313/useAnalytics';
 import { formatForGoogleSheets } from '@server/file-handling';
 import { copyToClipboard } from '@ui/utils';
-import { ZearnCompletion } from '@zod-schema/313/core';
+import { ZearnCompletion } from '@zod-schema/scm/core';
 
 // Column definitions for Zearn completion data
 const zearnColumns: TableColumnSchema<ZearnCompletion>[] = [

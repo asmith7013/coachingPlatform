@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchStudents } from "@/app/actions/313/students";
-import { Student } from "@zod-schema/313/student/student";
+import { fetchStudents } from "@/app/actions/scm/students";
+import { Student } from "@zod-schema/scm/student/student";
 
 /**
  * Query keys for students by section

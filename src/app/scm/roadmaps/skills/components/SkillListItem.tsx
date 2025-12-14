@@ -1,6 +1,6 @@
 "use client";
 
-import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
+import { RoadmapsSkill } from "@zod-schema/scm/curriculum/roadmap-skill";
 
 interface SkillListItemProps {
   skill: RoadmapsSkill;

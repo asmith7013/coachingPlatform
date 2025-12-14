@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PlusIcon, TrashIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
-import type { YoutubeLink } from "@zod-schema/313/podsie/section-config";
+import type { YoutubeLink } from "@zod-schema/scm/podsie/section-config";
 
 interface YoutubeEditorProps {
   youtubeLinks: YoutubeLink[];

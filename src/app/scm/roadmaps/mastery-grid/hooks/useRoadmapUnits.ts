@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getRoadmapUnits } from "@/app/actions/313/roadmaps-units";
-import { RoadmapUnit } from "@zod-schema/313/curriculum/roadmap-unit";
+import { getRoadmapUnits } from "@/app/actions/scm/roadmaps-units";
+import { RoadmapUnit } from "@zod-schema/scm/curriculum/roadmap-unit";
 
 /**
  * Query keys for roadmap units

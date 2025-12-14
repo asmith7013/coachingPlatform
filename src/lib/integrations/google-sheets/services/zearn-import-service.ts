@@ -1,5 +1,5 @@
 import { appendSheetData } from '../client';
-import { ZearnImportRecordInput } from '@zod-schema/313/zearn-import';
+import { ZearnImportRecordInput } from '@zod-schema/scm/zearn-import';
 import { handleServerError } from '@error/handlers/server';
 
 export class ZearnImportService {

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { StudentData } from '@/lib/schema/zod-schema/313/student/student-data';
+import { StudentData } from '@/lib/schema/zod-schema/scm/student/student-data';
 import { getLessonsForGrade } from '@/lib/schema/enum/scope-sequence';
 import { hasSnorklLink } from '@/lib/schema/enum/snorkl-links';
-import { getSectionType } from '@/lib/schema/zod-schema/313/student/student-data';
+import { getSectionType } from '@/lib/schema/zod-schema/scm/student/student-data';
 
 export interface CombinedLessonStatus {
   lesson: string; // "G6 U2 L01"

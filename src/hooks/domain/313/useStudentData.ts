@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { StudentData } from '@/lib/schema/zod-schema/313/student/student-data';
-import { fetchStudentData, authenticateStudent } from '@/app/actions/313/student-data';
+import { StudentData } from '@/lib/schema/zod-schema/scm/student/student-data';
+import { fetchStudentData, authenticateStudent } from '@/app/actions/scm/student-data';
 import { handleClientError } from '@/lib/error/handlers/client';
 
 /**

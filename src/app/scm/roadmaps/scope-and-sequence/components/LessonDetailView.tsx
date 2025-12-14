@@ -1,6 +1,6 @@
 "use client";
 
-import { Student } from "@zod-schema/313/student/student";
+import { Student } from "@zod-schema/scm/student/student";
 import { SkillListWithProgress } from "../../components/SkillListWithProgress";
 import { BookOpenIcon } from "@heroicons/react/24/outline";
 

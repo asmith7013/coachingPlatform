@@ -1,6 +1,6 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { UnitCard } from "./UnitCard";
-import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
+import type { AssignmentContent } from "@zod-schema/scm/podsie/section-config";
 
 interface UnitGroup {
   unitNumber: number;

@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
-import { fetchRampUpProgress } from "@/app/actions/313/podsie-sync";
+import { fetchRampUpProgress } from "@/app/actions/scm/podsie-sync";
 import { ProgressData, LessonConfig } from "../types";
 
 /**

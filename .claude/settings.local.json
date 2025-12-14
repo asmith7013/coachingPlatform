@@ -31,6 +31,7 @@
       "Skill(app-development)",
       "Skill(create-p5-animation)",
       "Skill(create-worked-example-sg)",
+      "Skill(implement-scm)",
       "Skill(question-types)",
       "Skill(skill-guide)",
       "Bash(npm run lint:*)",
@@ -43,7 +44,8 @@
       "Bash(else)",
       "Bash(fi)",
       "Bash(done)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

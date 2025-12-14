@@ -5,7 +5,7 @@ import { TanStackTable } from '@/components/composed/tables/tanstack/TanStackTab
 import { TableCell } from '@/components/composed/tables/parts/cell'
 import { useZearnData, useSnorklData, useAttendanceData } from '@hooks/domain/313/useAnalytics'
 import { ColumnDef } from '@tanstack/react-table'
-import type { ZearnCompletion, AssessmentCompletion, DailyClassEvent } from '@zod-schema/313/core'
+import type { ZearnCompletion, AssessmentCompletion, DailyClassEvent } from '@zod-schema/scm/core'
 
 // Quick overview columns for each data type
 const zearnOverviewColumns: ColumnDef<ZearnCompletion>[] = [

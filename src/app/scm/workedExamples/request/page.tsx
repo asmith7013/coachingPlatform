@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { fetchRoadmapsSkills, fetchRoadmapsSkillsByNumbers } from "@actions/313/roadmaps-skills";
-import { fetchLessonsListByScopeTag, fetchScopeAndSequenceById } from "@actions/313/scope-and-sequence";
-import { createWorkedExampleRequest, uploadWorkedExampleImage } from "@actions/313/worked-example-requests";
-import { RoadmapsSkill, PracticeProblem } from "@zod-schema/313/curriculum/roadmap-skill";
-import { ScopeAndSequence } from "@zod-schema/313/curriculum/scope-and-sequence";
-import { Student } from "@zod-schema/313/student/student";
+import { fetchRoadmapsSkills, fetchRoadmapsSkillsByNumbers } from "@actions/scm/roadmaps-skills";
+import { fetchLessonsListByScopeTag, fetchScopeAndSequenceById } from "@actions/scm/scope-and-sequence";
+import { createWorkedExampleRequest, uploadWorkedExampleImage } from "@actions/scm/worked-example-requests";
+import { RoadmapsSkill, PracticeProblem } from "@zod-schema/scm/curriculum/roadmap-skill";
+import { ScopeAndSequence } from "@zod-schema/scm/curriculum/scope-and-sequence";
+import { Student } from "@zod-schema/scm/student/student";
 import { SkillDetailWrapper } from "../../roadmaps/components/SkillDetailWrapper";
 import { SkillListWithProgress } from "../../roadmaps/components/SkillListWithProgress";
 import { StudentFilter } from "../../roadmaps/scope-and-sequence/components/StudentFilter";

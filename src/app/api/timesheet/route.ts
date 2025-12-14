@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { TimesheetEntryModel } from "@/lib/schema/mongoose-schema/313/timesheet/timesheet-entry.model";
-import { TimesheetBatchInputSchema } from "@/lib/schema/zod-schema/313/timesheet/timesheet-entry";
+import { TimesheetBatchInputSchema } from "@/lib/schema/zod-schema/scm/timesheet/timesheet-entry";
 
 // Simple API key for authentication (store in .env.local for production)
 const TIMESHEET_API_KEY = process.env.TIMESHEET_API_KEY || "timesheet-dev-key-2024";

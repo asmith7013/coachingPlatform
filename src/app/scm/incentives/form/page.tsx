@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useUser } from "@clerk/nextjs";
 import { StudentGrid } from "./components/StudentGrid";
 import { ManageColumnsModal } from "./components/ManageColumnsModal";
@@ -11,30 +11,14 @@ import { SkillPicker } from "./components/SkillPicker";
 import { SmallGroupPicker, parseSmallGroupData } from "./components/SmallGroupPicker";
 import { CustomDetailInput } from "./components/CustomDetailInput";
 import { useFormFilters, useFormDraft, useDebouncedSave } from "./hooks/useFormState";
-import { useActivityTypes } from "./hooks/useActivityTypes";
+import { useRoadmapUnits, useSectionOptions } from "@/hooks/scm";
+import { useStudentsForSection, useActivityTypes } from "../hooks";
 import {
-  fetchStudentsBySection,
-  fetchUnitsByGrade,
-  fetchSectionsForUnit,
-  fetchSectionConfig,
   submitActivities,
   StudentActivitySubmission,
 } from "./actions";
-import { StudentActivity } from "@zod-schema/313/student/student";
+import { StudentActivity } from "@zod-schema/scm/student/student";
 import { Spinner } from "@/components/core/feedback/Spinner";
-
-interface Student {
-  _id: string;
-  firstName: string;
-  lastName: string;
-}
-
-interface Unit {
-  _id: string;
-  unitNumber: number;
-  unitTitle: string;
-  grade: string;
-}
 
 export default function IncentivesFormPage() {
   // Get current user from Clerk
@@ -57,15 +41,29 @@ export default function IncentivesFormPage() {
   // Auto-save with debounce
   useDebouncedSave(formState, saveDraft);
 
-  // Activity types
+  // Data fetching with React Query hooks
   const { activityTypes, reload: reloadActivityTypes } = useActivityTypes();
+  const { units: allUnits, loading: unitsLoading } = useRoadmapUnits();
+  const { sectionOptions, loading: sectionsLoading } = useSectionOptions();
+  const { students, loading: studentsLoading } = useStudentsForSection(section, "8");
 
-  // Data state
-  const [students, setStudents] = useState<Student[]>([]);
-  const [units, setUnits] = useState<Unit[]>([]);
-  const [_unitSections, _setUnitSections] = useState<string[]>([]);
-  const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
-  const [scopeSequenceTag, setScopeSequenceTag] = useState<string | undefined>(undefined);
+  // Filter units for grade 8
+  const units = useMemo(() => {
+    return allUnits.filter((u) => u.grade.includes("8th Grade"));
+  }, [allUnits]);
+
+  // Derive selected unit from units and unitId
+  const selectedUnit = useMemo(() => {
+    if (!unitId || units.length === 0) return null;
+    return units.find((u) => u._id === unitId) || null;
+  }, [unitId, units]);
+
+  // Get scopeSequenceTag from selected section config
+  const scopeSequenceTag = useMemo(() => {
+    if (!section) return undefined;
+    const sectionConfig = sectionOptions.find((s) => s.classSection === section);
+    return sectionConfig?.scopeSequenceTag;
+  }, [section, sectionOptions]);
 
   // UI state
   const [isManageColumnsOpen, setIsManageColumnsOpen] = useState(false);
@@ -75,63 +73,8 @@ export default function IncentivesFormPage() {
     message: string;
   } | null>(null);
 
-  // Load units on mount
-  useEffect(() => {
-    async function loadUnits() {
-      const result = await fetchUnitsByGrade("8");
-      if (typeof result !== 'string' && result.success && result.data) {
-        setUnits(result.data as Unit[]);
-      }
-    }
-    loadUnits();
-  }, []);
-
-  // Load students and section config when section changes
-  useEffect(() => {
-    if (!section) {
-      setStudents([]);
-      setScopeSequenceTag(undefined);
-      return;
-    }
-
-    async function loadStudentsAndConfig() {
-      // Load students
-      const studentsResult = await fetchStudentsBySection(section, "8");
-      if (typeof studentsResult !== 'string' && studentsResult.success && studentsResult.data) {
-        setStudents(studentsResult.data as Student[]);
-      }
-
-      // Load section config to get scopeSequenceTag
-      const configResult = await fetchSectionConfig(section);
-      if (typeof configResult !== 'string' && configResult.success && configResult.data) {
-        setScopeSequenceTag(configResult.data.scopeSequenceTag);
-      }
-    }
-    loadStudentsAndConfig();
-  }, [section]);
-
-  // Load unit sections when unit changes
-  useEffect(() => {
-    if (!unitId) {
-      _setUnitSections([]);
-      setSelectedUnit(null);
-      return;
-    }
-
-    const unit = units.find((u) => u._id === unitId);
-    setSelectedUnit(unit || null);
-
-    if (unit) {
-      const unitNumber = unit.unitNumber;
-      async function loadSections() {
-        const result = await fetchSectionsForUnit("8", unitNumber);
-        if (typeof result !== 'string' && result.success && result.data) {
-          _setUnitSections(result.data as string[]);
-        }
-      }
-      loadSections();
-    }
-  }, [unitId, units]);
+  // Loading state (used for showing loading indicators)
+  const _dataLoading = unitsLoading || sectionsLoading || (section && studentsLoading);
 
   // Get students with checked activities for a specific activity type
   const getStudentsForActivityType = (activityTypeId: string) => {
@@ -489,7 +432,7 @@ export default function IncentivesFormPage() {
                                 />
                               )}
                               */}
-                              {type.detailType === "lesson" && selectedUnit && (
+                              {type.detailType === "lesson" && selectedUnit && selectedUnit.unitNumber && (
                                 <LessonPicker
                                   grade="8"
                                   unitNumber={selectedUnit.unitNumber}
@@ -511,7 +454,7 @@ export default function IncentivesFormPage() {
                                   required
                                 />
                               )}
-                              {type.detailType === "small-group" && selectedUnit && (
+                              {type.detailType === "small-group" && selectedUnit && selectedUnit.unitNumber && (
                                 <SmallGroupPicker
                                   grade="8"
                                   unitNumber={selectedUnit.unitNumber}

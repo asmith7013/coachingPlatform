@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchRoadmapsSkills } from "@actions/313/roadmaps-skills";
-import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
+import { fetchRoadmapsSkills } from "@actions/scm/roadmaps-skills";
+import { RoadmapsSkill } from "@zod-schema/scm/curriculum/roadmap-skill";
 
 /**
  * Query keys for filtered skills

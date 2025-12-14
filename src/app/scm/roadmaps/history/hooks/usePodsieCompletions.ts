@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchPodsieCompletions, type PodsieCompletionRow } from "@/app/actions/313/podsie-history";
+import { fetchPodsieCompletions, type PodsieCompletionRow } from "@/app/actions/scm/podsie-history";
 
 export type { PodsieCompletionRow };
 

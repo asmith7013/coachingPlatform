@@ -6,7 +6,7 @@ import {
   type AssessmentScraperResponse,
   type AssessmentRow,
   type AssessmentScraperConfig
-} from '@/lib/schema/zod-schema/313/assessment-scraper';
+} from '@/lib/schema/zod-schema/scm/assessment-scraper';
 import { authenticateRoadmaps } from '../../shared/lib/roadmaps-auth';
 import { parseAssessmentCSV } from '../lib/csv-parser';
 import { handleServerError } from "@error/handlers/server";

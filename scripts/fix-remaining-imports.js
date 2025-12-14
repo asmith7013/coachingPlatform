@@ -21,11 +21,11 @@ const fixes = [
   ['../src/lib/schema/mongoose-schema/313/scope-and-sequence.model', '../src/lib/schema/mongoose-schema/313/curriculum/scope-and-sequence.model'],
 
   // Student data zod schema
-  ['@/lib/schema/zod-schema/313/student-data', '@/lib/schema/zod-schema/313/student/student-data'],
+  ['@/lib/schema/zod-schema/scm/student-data', '@/lib/schema/zod-schema/scm/student/student-data'],
 
   // Student zod schema (main schema)
-  ['@/lib/schema/zod-schema/313/student', '@/lib/schema/zod-schema/313/student/student'],
-  ['@zod-schema/313/student', '@zod-schema/313/student/student'],
+  ['@/lib/schema/zod-schema/scm/student', '@/lib/schema/zod-schema/scm/student/student'],
+  ['@zod-schema/scm/student', '@zod-schema/scm/student/student'],
 
   // Index file reference
   ['./313/student-performance', './313/student/student-performance'],

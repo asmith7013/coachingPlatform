@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { scrapeAndUpdateAssessmentData, scrapeAndUpdateAllSections } from '../actions/scrape-and-update';
-import type { AssessmentScraperConfig } from '@/lib/schema/zod-schema/313/assessment-scraper';
+import type { AssessmentScraperConfig } from '@/lib/schema/zod-schema/scm/assessment-scraper';
 
 interface ScraperResults {
   scrapeResults: {

@@ -6,8 +6,8 @@ import {
   getDaysOff,
   getSectionDaysOff,
 } from "@/app/actions/calendar/school-calendar";
-import { fetchScopeAndSequenceByGrade } from "@/app/actions/313/scope-and-sequence";
-import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
+import { fetchScopeAndSequenceByGrade } from "@/app/actions/scm/scope-and-sequence";
+import { getAllSectionConfigs } from "@/app/actions/scm/section-overview";
 import {
   fetchUnitSchedules,
   fetchSectionUnitSchedules,

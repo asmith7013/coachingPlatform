@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
+import { RoadmapsSkill } from "@zod-schema/scm/curriculum/roadmap-skill";
 import { AccordionItem } from "../AccordionItem";
 
 interface AppearsInSectionProps {

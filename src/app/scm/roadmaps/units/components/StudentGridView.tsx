@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { RoadmapUnit } from "@zod-schema/313/curriculum/roadmap-unit";
-import { Student } from "@zod-schema/313/student/student";
-import { RoadmapsSkill } from "@zod-schema/313/curriculum/roadmap-skill";
-import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/313/roadmaps-skills";
-import { fetchStudents } from "@/app/actions/313/students";
+import { RoadmapUnit } from "@zod-schema/scm/curriculum/roadmap-unit";
+import { Student } from "@zod-schema/scm/student/student";
+import { RoadmapsSkill } from "@zod-schema/scm/curriculum/roadmap-skill";
+import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/scm/roadmaps-skills";
+import { fetchStudents } from "@/app/actions/scm/students";
 import { SkillProgressBar } from "./SkillProgressBar";
 import { BookOpenIcon } from "@heroicons/react/24/outline";
 

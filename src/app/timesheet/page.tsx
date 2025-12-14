@@ -12,7 +12,7 @@ import {
   Title,
 } from "chart.js";
 import { Pie, Bar } from "react-chartjs-2";
-import type { TimesheetEntry } from "@/lib/schema/zod-schema/313/timesheet/timesheet-entry";
+import type { TimesheetEntry } from "@/lib/schema/zod-schema/scm/timesheet/timesheet-entry";
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);

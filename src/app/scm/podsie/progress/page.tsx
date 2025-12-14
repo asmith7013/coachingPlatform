@@ -3,10 +3,10 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import { useToast } from "@/components/core/feedback/Toast";
-import { fetchRampUpProgress, syncSectionRampUpProgress } from "@/app/actions/313/podsie-sync";
-import { getSectionConfig } from "@/app/actions/313/section-config";
-import { fetchStudentsBySection } from "@/app/actions/313/students";
-import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
+import { fetchRampUpProgress, syncSectionRampUpProgress } from "@/app/actions/scm/podsie-sync";
+import { getSectionConfig } from "@/app/actions/scm/section-config";
+import { fetchStudentsBySection } from "@/app/actions/scm/students";
+import type { AssignmentContent } from "@zod-schema/scm/podsie/section-config";
 import { AssignmentCard } from "./components/AssignmentCard";
 import { SmartboardDisplay } from "./components/smartboard";
 import { PacingProgressCard } from "./components/pacing";

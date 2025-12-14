@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createEntityResponse, createMonitoredErrorResponse } from "@api-responses/action-response-helper";
-import { triggerManualSync } from "@/app/actions/313/sync-sheets";
+import { triggerManualSync } from "@/app/actions/scm/sync-sheets";
 
 // =====================================
 // POST /api/lesson-tracking/sync-manual

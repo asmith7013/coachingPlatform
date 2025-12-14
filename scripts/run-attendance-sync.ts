@@ -55,7 +55,7 @@ async function main() {
 
   try {
     // Dynamic import AFTER dotenv has loaded
-    const { syncAllAttendance } = await import('../src/app/actions/313/attendance-sync/scheduled/sync-all-attendance');
+    const { syncAllAttendance } = await import('../src/app/actions/scm/attendance-sync/scheduled/sync-all-attendance');
 
     const result = await syncAllAttendance({ startDate });
 

@@ -6,7 +6,7 @@ import { Alert } from '@/components/core/feedback/Alert';
 import { SimpleCard } from '@/components/core/cards/SimpleCard';
 import { SkillData, RoadmapsScrapingResponse } from '../lib/types';
 import { ChevronDownIcon, ChevronUpIcon, DocumentArrowDownIcon, CloudArrowUpIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline';
-import { updateRoadmapsSkillContent, bulkUpdateRoadmapsSkillsContent } from '@actions/313/roadmaps-skills';
+import { updateRoadmapsSkillContent, bulkUpdateRoadmapsSkillsContent } from '@actions/scm/roadmaps-skills';
 
 interface ResultsDisplayProps {
   results: SkillData[];

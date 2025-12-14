@@ -156,7 +156,7 @@ Integration with existing 313 analytics data:
 
 ```typescript
 import { useZearnData, useSnorklData } from '@hooks/domain/313/useAnalytics'
-import { ZearnCompletion, SnorklCompletion } from '@zod-schema/313/core'
+import { ZearnCompletion, SnorklCompletion } from '@zod-schema/scm/core'
 
 export default function AnalyticsTablePage() {
   const { data: zearnData, isLoading } = useZearnData()

@@ -1,8 +1,8 @@
 import { Card } from "@/components/composed/cards/Card";
 import { Heading } from "@/components/core/typography/Heading";
 import { Text } from "@/components/core/typography/Text";
-import type { BellSchedule } from "@zod-schema/313/podsie/section-config";
-import { BellScheduleHelpers } from "@zod-schema/313/podsie/section-config";
+import type { BellSchedule } from "@zod-schema/scm/podsie/section-config";
+import { BellScheduleHelpers } from "@zod-schema/scm/podsie/section-config";
 
 interface BellScheduleDisplayProps {
   bellSchedule?: BellSchedule;

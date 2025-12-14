@@ -1,4 +1,4 @@
-import { ScopeSequenceProgress, StudentData, StudentDataZodSchema, StudentZearnProgress } from '@zod-schema/313/student/student-data';
+import { ScopeSequenceProgress, StudentData, StudentDataZodSchema, StudentZearnProgress } from '@zod-schema/scm/student/student-data';
 import { fetchSheetData } from '../client';
 import { handleServerError } from '@/lib/error/handlers/server';
 import { StudentModel } from '@mongoose-schema/313/student/student.model';

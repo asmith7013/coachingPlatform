@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
+import { getAllSectionConfigs } from "@/app/actions/scm/section-overview";
 import { getSectionColors } from "../utils/colors";
 import type { SectionOption } from "@/components/composed/section-visualization";
 

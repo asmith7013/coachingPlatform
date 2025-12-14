@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { exportAndResetDailySheets, testGoogleSheetsConnection } from '@actions/313/google-sheets-export';
+import { exportAndResetDailySheets, testGoogleSheetsConnection } from '@actions/scm/google-sheets-export';
 import { ExportConfig, ExportResult } from '@zod-schema/integrations/google-sheets-export';
 import { EntityResponse } from '@core-types/response';
 

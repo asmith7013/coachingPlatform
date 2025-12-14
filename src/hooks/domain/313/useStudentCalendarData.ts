@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { StudentData, StudentZearnProgress } from '@/lib/schema/zod-schema/313/student/student-data';
+import { StudentData, StudentZearnProgress } from '@/lib/schema/zod-schema/scm/student/student-data';
 
 interface DailyCompletion {
   date: string; // YYYY-MM-DD

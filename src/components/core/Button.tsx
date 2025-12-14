@@ -1,23 +1,21 @@
 import { cn } from '@ui/utils/formatters';
 import { tv, type VariantProps } from 'tailwind-variants'
-import { 
-  textSize, 
-  paddingX, 
-  paddingY, 
-  radii, 
-  shadows, 
+import {
+  textSize,
+  paddingX,
+  paddingY,
+  radii,
+  shadows,
   borderWidths,
   spaceBetween,
 } from '@/lib/tokens/tokens'
-import { 
+import {
   TextSizeToken,
   PaddingToken,
   RadiusToken,
   ShadowToken
 } from '@/lib/tokens/types'
-import { backgroundColors, borderColors, hoverBackgroundColors, textColors } from '@/lib/tokens/colors';
 import { iconContentLayoutVariant } from '@ui-variants/layout';
-// import { disabledVariant, loadingVariant } from '@ui-variants/shared-variants'
 
 // Define specific component intent and appearance types
 export type ButtonIntent = 'primary' | 'secondary' | 'danger' | 'success';
@@ -32,17 +30,18 @@ export type ButtonIconPosition = 'left' | 'right' | 'responsive';
  */
 const button = tv({
   slots: {
-    base: `inline-flex items-center justify-center font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary cursor-pointer`,
-    spinner: `h-4 w-4 animate-spin rounded-full ${borderWidths.sm} border-white border-t-transparent`,
+    base: `inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary cursor-pointer`,
+    spinner: `h-4 w-4 animate-spin rounded-full ${borderWidths.sm} border-current border-t-transparent`,
     content: '',
     iconWrapper: '',
   },
   variants: {
     intent: {
-      primary: '',
-      secondary: '',
-      danger: '',
-      success: '',
+      // Soft style: light bg with darker text, simple hover
+      primary: 'bg-blue-100 text-blue-700 hover:bg-blue-200',
+      secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+      danger: 'bg-red-100 text-red-700 hover:bg-red-200',
+      success: 'bg-green-100 text-green-700 hover:bg-green-200',
     },
     appearance: {
       solid: '',
@@ -92,7 +91,7 @@ const button = tv({
       false: '',
     },
     disabled: {
-      true: 'opacity-60 pointer-events-none',
+      true: 'opacity-50 cursor-not-allowed pointer-events-none',
       false: '',
     },
     // Add icon position variant that uses the iconContentLayoutVariant
@@ -107,110 +106,58 @@ const button = tv({
         iconWrapper: iconContentLayoutVariant({ position: 'responsive' }).icon(),
       },
     },
-    // loading: loadingVariant.variants.loading,
-    // disabled: disabledVariant.variants.disabled,
   },
   compoundVariants: [
-    // Primary Intents
+    // Solid appearance - darker bg, white text
     {
       intent: 'primary',
       appearance: 'solid',
-      className: {
-        base: `${backgroundColors.primary} ${textColors.white} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.primary}`,
-      }
+      className: 'bg-blue-600 text-white hover:bg-blue-700',
     },
-    {
-      intent: 'primary',
-      appearance: 'outline',
-      className: {
-        base: `${backgroundColors.light.primary} ${textColors.primary} ${borderWidths.md} ${borderColors.primary} ${hoverBackgroundColors.primary}`,
-      }
-    },
-    {
-      intent: 'primary',
-      appearance: 'alt',
-      className: {
-        base: `${backgroundColors.primary} ${textColors.default} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.primary}`,
-      }
-    },
-
-
-    // Secondary Intents
     {
       intent: 'secondary',
       appearance: 'solid',
-      className: {
-        base: `${backgroundColors.secondary} ${textColors.white} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.secondary}`,
-      }
+      className: 'bg-gray-600 text-white hover:bg-gray-700',
+    },
+    {
+      intent: 'danger',
+      appearance: 'solid',
+      className: 'bg-red-600 text-white hover:bg-red-700',
+    },
+    {
+      intent: 'success',
+      appearance: 'solid',
+      className: 'bg-green-600 text-white hover:bg-green-700',
+    },
+    // Outline appearance - transparent bg with border
+    {
+      intent: 'primary',
+      appearance: 'outline',
+      className: 'bg-transparent text-blue-700 border border-blue-300 hover:bg-blue-50',
     },
     {
       intent: 'secondary',
       appearance: 'outline',
-      className: {
-        base: `${backgroundColors.light.secondary} ${textColors.secondary} ${borderWidths.md} ${borderColors.secondary} ${hoverBackgroundColors.secondary}`,
-      }
-    },
-    {
-      intent: 'secondary',
-      appearance: 'alt',
-      className: {
-        base: `${backgroundColors.secondary} ${textColors.default} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.secondary}`,
-      }
-    },
-
-    // Danger Intents
-    {
-      intent: 'danger',
-      appearance: 'solid',
-      className: {
-        base: `${backgroundColors.danger} ${textColors.white} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.danger}`,
-      }
+      className: 'bg-transparent text-gray-700 border border-gray-300 hover:bg-gray-50',
     },
     {
       intent: 'danger',
       appearance: 'outline',
-      className: {
-        base: `${backgroundColors.surface} ${textColors.danger} ${borderWidths.md} ${borderColors.danger} ${hoverBackgroundColors.danger}`,
-      }
-    },
-    {
-      intent: 'danger',
-      appearance: 'alt',
-      className: {
-        base: `${backgroundColors.danger} ${textColors.default} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.danger}`,
-      }
-    },
-
-    // Success Intents
-    {
-      intent: 'success',
-      appearance: 'solid',
-      className: {
-        base: `${backgroundColors.success} ${textColors.white} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.success}`,
-      }
+      className: 'bg-transparent text-red-700 border border-red-300 hover:bg-red-50',
     },
     {
       intent: 'success',
       appearance: 'outline',
-      className: {
-        base: `${backgroundColors.surface} ${textColors.success} ${borderWidths.md} ${borderColors.success} ${hoverBackgroundColors.success}`,
-      }
-    },
-    {
-      intent: 'success',
-      appearance: 'alt',
-      className: {
-        base: `${backgroundColors.success} ${textColors.default} ${borderWidths.sm} ${borderColors.muted} ${hoverBackgroundColors.success}`,
-      }
+      className: 'bg-transparent text-green-700 border border-green-300 hover:bg-green-50',
     },
   ],
   defaultVariants: {
     intent: 'primary',
-    appearance: 'solid',
-    textSize: 'base',
+    appearance: 'alt',
+    textSize: 'sm',
     padding: 'md',
-    radius: 'md',
-    shadow: 'sm',
+    radius: 'lg',
+    shadow: 'none',
     fullWidth: false,
     loading: false,
     disabled: false,

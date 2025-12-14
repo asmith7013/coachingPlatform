@@ -1,6 +1,6 @@
 import { useQueries } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { getSectionVelocityByDateRange } from "@/app/actions/313/velocity/velocity";
+import { getSectionVelocityByDateRange } from "@/app/actions/scm/velocity/velocity";
 
 /**
  * Query keys for weekly velocity data

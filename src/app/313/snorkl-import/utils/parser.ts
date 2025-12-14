@@ -1,6 +1,6 @@
 import { RawAssessment, RawStudentResponse, AssessmentData, StudentRow, AttemptData } from '../types';
 import { findBestStudentMatch } from './fuzzy-matcher';
-import { Student } from '@/lib/schema/zod-schema/313/student/student';
+import { Student } from '@/lib/schema/zod-schema/scm/student/student';
 
 /**
  * Parse raw JSON string into structured assessment data

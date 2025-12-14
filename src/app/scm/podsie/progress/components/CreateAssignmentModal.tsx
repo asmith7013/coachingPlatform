@@ -4,12 +4,12 @@ import { useState } from "react";
 import { XMarkIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import {
   createScopeAndSequence,
-} from "@/app/actions/313/scope-and-sequence";
+} from "@/app/actions/scm/scope-and-sequence";
 import {
   fetchAssignmentsForSection,
   PodsieAssignmentInfo,
-} from "@/app/actions/313/podsie-sync";
-import { SCOPE_SEQUENCE_TAG_OPTIONS } from "@zod-schema/313/curriculum/scope-and-sequence";
+} from "@/app/actions/scm/podsie-sync";
+import { SCOPE_SEQUENCE_TAG_OPTIONS } from "@zod-schema/scm/curriculum/scope-and-sequence";
 
 interface CreateAssignmentModalProps {
   scopeSequenceTag: string;

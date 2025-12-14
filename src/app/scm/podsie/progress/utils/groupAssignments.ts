@@ -2,7 +2,7 @@
  * Shared utility for grouping lessons with their matching mastery checks
  */
 
-import { SECTION_OPTIONS } from "@zod-schema/313/curriculum/scope-and-sequence";
+import { SECTION_OPTIONS } from "@zod-schema/scm/curriculum/scope-and-sequence";
 
 interface Assignment {
   podsieAssignmentId: string;

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchStudentAssessments } from "@/app/actions/313/student-assessments";
+import { fetchStudentAssessments } from "@/app/actions/scm/student-assessments";
 
 export type AssessmentRow = {
   studentId: string;

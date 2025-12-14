@@ -7,7 +7,7 @@ import { TableColumnSchema } from '@ui/table-schema';
 import { useAttendanceData } from '@hooks/domain/313/useAnalytics';
 import { formatForGoogleSheets } from '@server/file-handling';
 import { copyToClipboard } from '@ui/utils';
-import { DailyClassEvent } from '@zod-schema/313/core';
+import { DailyClassEvent } from '@zod-schema/scm/core';
 
 // Column definitions for attendance data
 const attendanceColumns: TableColumnSchema<DailyClassEvent>[] = [

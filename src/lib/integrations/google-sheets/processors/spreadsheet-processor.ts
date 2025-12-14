@@ -8,7 +8,7 @@ import {
   DailyClassEventInput,
   ZearnCompletionInput,
   AssessmentCompletionInput
-} from '@zod-schema/313/core';
+} from '@zod-schema/scm/core';
 import { SpreadsheetColumnMapper, SpreadsheetRowValidator } from '../validators/spreadsheet-validator';
 import { createDailyClassEvent, createZearnCompletions, createSnorklCompletions } from '../parsers/row-parser';
 import { 

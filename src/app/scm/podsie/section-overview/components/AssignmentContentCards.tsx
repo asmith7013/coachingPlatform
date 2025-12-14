@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Card } from "@/components/composed/cards/Card";
 import { Heading } from "@/components/core/typography/Heading";
 import { Text } from "@/components/core/typography/Text";
-import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
+import type { AssignmentContent } from "@zod-schema/scm/podsie/section-config";
 
 interface AssignmentContentCardsProps {
   assignmentContent: AssignmentContent[];

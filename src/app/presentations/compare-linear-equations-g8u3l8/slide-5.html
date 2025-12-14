@@ -1,0 +1,120 @@
+<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 50px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+    <h2 style="font-size: 38px; font-weight: 700; color: #e2e8f0; margin: 0 0 20px 0; text-transform: uppercase;">Step 2: Identify the Y-Intercept</h2>
+
+    <div style="display: flex; gap: 40px; flex: 1; align-items: center;">
+        <!-- Equations with y-intercept highlighted -->
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+            <div style="background: rgba(96, 165, 250, 0.15); border: 2px solid #60a5fa; border-radius: 16px; padding: 25px;">
+                <h3 style="font-size: 20px; color: #60a5fa; margin: 0 0 10px 0;">Alex's Playlist</h3>
+                <p style="font-size: 42px; font-weight: 700; color: #ffffff; margin: 0; text-align: center;">
+                    y = 3x + <span style="background: #a855f7; color: #fff; padding: 5px 15px; border-radius: 8px;">0</span>
+                </p>
+                <p style="font-size: 16px; color: #a855f7; margin: 15px 0 0 0; text-align: center; font-weight: 600;">y-intercept = 0 (starts at origin)</p>
+            </div>
+            <div style="background: rgba(244, 114, 182, 0.15); border: 2px solid #f472b6; border-radius: 16px; padding: 25px;">
+                <h3 style="font-size: 20px; color: #f472b6; margin: 0 0 10px 0;">Jordan's Playlist</h3>
+                <p style="font-size: 42px; font-weight: 700; color: #ffffff; margin: 0; text-align: center;">
+                    y = 3x + <span style="background: #a855f7; color: #fff; padding: 5px 15px; border-radius: 8px;">5</span>
+                </p>
+                <p style="font-size: 16px; color: #a855f7; margin: 15px 0 0 0; text-align: center; font-weight: 600;">y-intercept = 5 (starts 5 higher)</p>
+            </div>
+
+            <div style="background: rgba(168, 85, 247, 0.2); border-left: 4px solid #a855f7; padding: 15px 20px; border-radius: 0 8px 8px 0; margin-top: 10px;">
+                <p style="font-size: 18px; color: #a855f7; margin: 0; font-weight: 600;">The y-intercept is the constant term (where the line crosses the y-axis)</p>
+            </div>
+        </div>
+
+        <!-- Graph with y-intercept annotation -->
+        <div style="flex: 1.2; background: rgba(30, 30, 40, 0.6); border-radius: 16px; padding: 30px; display: flex; flex-direction: column; align-items: center;">
+            <svg viewBox="0 0 280 200" style="width: 100%; max-height: 300px;">
+                <!-- Grid -->
+                <g stroke="#334155" stroke-width="0.5">
+                    <line x1="95" y1="20" x2="95" y2="170"/>
+                    <line x1="150" y1="20" x2="150" y2="170"/>
+                    <line x1="205" y1="20" x2="205" y2="170"/>
+                    <line x1="260" y1="20" x2="260" y2="170"/>
+                    <line x1="40" y1="132.5" x2="260" y2="132.5"/>
+                    <line x1="40" y1="95" x2="260" y2="95"/>
+                    <line x1="40" y1="57.5" x2="260" y2="57.5"/>
+                    <line x1="40" y1="20" x2="260" y2="20"/>
+                </g>
+
+                <!-- Axes -->
+                <line x1="40" y1="170" x2="260" y2="170" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="40" y1="20" x2="40" y2="170" stroke="#94a3b8" stroke-width="2"/>
+
+                <!-- X-axis labels -->
+                <text x="40" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
+                <text x="95" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">1</text>
+                <text x="150" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">2</text>
+                <text x="205" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">3</text>
+                <text x="260" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">4</text>
+
+                <!-- Y-axis labels -->
+                <text x="35" y="174" fill="#94a3b8" font-size="11" text-anchor="end">0</text>
+                <text x="35" y="136" fill="#94a3b8" font-size="11" text-anchor="end">5</text>
+                <text x="35" y="99" fill="#94a3b8" font-size="11" text-anchor="end">10</text>
+                <text x="35" y="61" fill="#94a3b8" font-size="11" text-anchor="end">15</text>
+                <text x="35" y="24" fill="#94a3b8" font-size="11" text-anchor="end">20</text>
+
+                <!-- Line 1: y = 3x (blue) -->
+                <line x1="40" y1="170" x2="260" y2="80" stroke="#60a5fa" stroke-width="3"/>
+
+                <!-- Line 2: y = 3x + 5 (pink) -->
+                <line x1="40" y1="132.5" x2="260" y2="42.5" stroke="#f472b6" stroke-width="3"/>
+
+                <!-- Y-intercept points highlighted -->
+                <circle cx="40" cy="170" r="8" fill="#a855f7" stroke="#fff" stroke-width="2"/>
+                <circle cx="40" cy="132.5" r="8" fill="#a855f7" stroke="#fff" stroke-width="2"/>
+
+                <!-- Annotations -->
+                <text x="55" y="175" fill="#60a5fa" font-size="10" font-weight="bold">(0, 0)</text>
+                <text x="55" y="128" fill="#f472b6" font-size="10" font-weight="bold">(0, 5)</text>
+
+                <!-- Distance arrow between y-intercepts -->
+                <line x1="30" y1="170" x2="30" y2="132.5" stroke="#a855f7" stroke-width="2" marker-start="url(#arrowStart)" marker-end="url(#arrowEnd)"/>
+                <text x="18" y="152" fill="#a855f7" font-size="10" font-weight="bold">5</text>
+
+                <defs>
+                    <marker id="arrowStart" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                        <path d="M6,0 L6,6 L0,3 z" fill="#a855f7"/>
+                    </marker>
+                    <marker id="arrowEnd" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L6,3 z" fill="#a855f7"/>
+                    </marker>
+                </defs>
+            </svg>
+            <p style="font-size: 16px; color: #a855f7; margin: 10px 0 0 0; text-align: center; font-weight: 600;">Jordan starts 5 songs ahead!</p>
+        </div>
+    </div>
+</div>
+
+<!-- Toggle button -->
+<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('cfu-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
+    ↓ Show Question
+</button>
+
+<!-- CFU Box at bottom -->
+<div id="cfu-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
+    <div style="background: #f59e0b; border-top: 4px solid #fbbf24; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
+        <button onclick="document.getElementById('cfu-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
+            ×
+        </button>
+        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">❓ CHECK FOR UNDERSTANDING</div>
+        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
+            How does identifying the y-intercept help us see the DIFFERENCE between these two graphs?
+        </span>
+    </div>
+</div>
+
+<style>
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+#toggle-hint:hover {
+    background: rgba(148, 163, 184, 0.2);
+    transform: translateX(-50%) scale(1.05);
+}
+</style>

@@ -6,7 +6,7 @@ import { Alert } from '@/components/core/feedback/Alert';
 import { SimpleCard } from '@/components/core/cards/SimpleCard';
 import { UnitScrapingResponse, UnitData } from '../lib/types';
 import { ChevronDownIcon, ChevronUpIcon, DocumentArrowDownIcon, CircleStackIcon } from '@heroicons/react/24/outline';
-import { bulkCreateRoadmapUnits } from '@/app/actions/313/roadmaps-units';
+import { bulkCreateRoadmapUnits } from '@/app/actions/scm/roadmaps-units';
 
 interface BatchUnitResultDisplayProps {
   response: UnitScrapingResponse | null;

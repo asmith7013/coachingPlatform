@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getRoadmapsLessons } from '@actions/313/roadmaps-lessons';
-import { RoadmapsLesson } from '@zod-schema/313/curriculum/roadmap';
+import { getRoadmapsLessons } from '@actions/scm/roadmaps-lessons';
+import { RoadmapsLesson } from '@zod-schema/scm/curriculum/roadmap';
 import { AccordionList } from './AccordionList';
 
 interface RoadmapsSkill {

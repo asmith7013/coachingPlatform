@@ -2,21 +2,21 @@
  * Script to update import paths for reorganized 313 schemas
  *
  * Zod schema mapping:
- * - @zod-schema/313/student -> @zod-schema/313/student/student
- * - @zod-schema/313/student-activity -> @zod-schema/313/student/student-activity
- * - @zod-schema/313/student-performance -> @zod-schema/313/student/student-performance
- * - @zod-schema/313/student-data -> @zod-schema/313/student/student-data
- * - @zod-schema/313/roadmaps-student-data -> @zod-schema/313/student/roadmaps-student-data
- * - @zod-schema/313/roadmap -> @zod-schema/313/curriculum/roadmap
- * - @zod-schema/313/roadmap-skill -> @zod-schema/313/curriculum/roadmap-skill
- * - @zod-schema/313/roadmap-unit -> @zod-schema/313/curriculum/roadmap-unit
- * - @zod-schema/313/scope-and-sequence -> @zod-schema/313/curriculum/scope-and-sequence
- * - @zod-schema/313/podsie-completion -> @zod-schema/313/podsie/podsie-completion
- * - @zod-schema/313/podsie-question-map -> @zod-schema/313/podsie/podsie-question-map
- * - @zod-schema/313/podsie-response -> @zod-schema/313/podsie/podsie-response
- * - @zod-schema/313/ramp-up-progress -> @zod-schema/313/podsie/ramp-up-progress
- * - @zod-schema/313/section-config -> @zod-schema/313/podsie/section-config
- * - @zod-schema/313/activity-type-config -> @zod-schema/313/incentives/activity-type-config
+ * - @zod-schema/scm/student -> @zod-schema/scm/student/student
+ * - @zod-schema/scm/student-activity -> @zod-schema/scm/student/student-activity
+ * - @zod-schema/scm/student-performance -> @zod-schema/scm/student/student-performance
+ * - @zod-schema/scm/student-data -> @zod-schema/scm/student/student-data
+ * - @zod-schema/scm/roadmaps-student-data -> @zod-schema/scm/student/roadmaps-student-data
+ * - @zod-schema/scm/roadmap -> @zod-schema/scm/curriculum/roadmap
+ * - @zod-schema/scm/roadmap-skill -> @zod-schema/scm/curriculum/roadmap-skill
+ * - @zod-schema/scm/roadmap-unit -> @zod-schema/scm/curriculum/roadmap-unit
+ * - @zod-schema/scm/scope-and-sequence -> @zod-schema/scm/curriculum/scope-and-sequence
+ * - @zod-schema/scm/podsie-completion -> @zod-schema/scm/podsie/podsie-completion
+ * - @zod-schema/scm/podsie-question-map -> @zod-schema/scm/podsie/podsie-question-map
+ * - @zod-schema/scm/podsie-response -> @zod-schema/scm/podsie/podsie-response
+ * - @zod-schema/scm/ramp-up-progress -> @zod-schema/scm/podsie/ramp-up-progress
+ * - @zod-schema/scm/section-config -> @zod-schema/scm/podsie/section-config
+ * - @zod-schema/scm/activity-type-config -> @zod-schema/scm/incentives/activity-type-config
  *
  * Mongoose schema mapping (same pattern with @mongoose-schema prefix and .model suffix):
  * - @mongoose-schema/313/student -> @mongoose-schema/313/student/student.model
@@ -29,27 +29,27 @@ const path = require('path');
 // Map of old paths to new paths (order matters - more specific first)
 const zodMappings = [
   // Student schemas
-  ['@zod-schema/313/student-activity', '@zod-schema/313/student/student-activity'],
-  ['@zod-schema/313/student-performance', '@zod-schema/313/student/student-performance'],
-  ['@zod-schema/313/student-data', '@zod-schema/313/student/student-data'],
-  ['@zod-schema/313/roadmaps-student-data', '@zod-schema/313/student/roadmaps-student-data'],
-  ['@zod-schema/313/student', '@zod-schema/313/student/student'],
+  ['@zod-schema/scm/student-activity', '@zod-schema/scm/student/student-activity'],
+  ['@zod-schema/scm/student-performance', '@zod-schema/scm/student/student-performance'],
+  ['@zod-schema/scm/student-data', '@zod-schema/scm/student/student-data'],
+  ['@zod-schema/scm/roadmaps-student-data', '@zod-schema/scm/student/roadmaps-student-data'],
+  ['@zod-schema/scm/student', '@zod-schema/scm/student/student'],
 
   // Curriculum schemas
-  ['@zod-schema/313/roadmap-skill', '@zod-schema/313/curriculum/roadmap-skill'],
-  ['@zod-schema/313/roadmap-unit', '@zod-schema/313/curriculum/roadmap-unit'],
-  ['@zod-schema/313/roadmap', '@zod-schema/313/curriculum/roadmap'],
-  ['@zod-schema/313/scope-and-sequence', '@zod-schema/313/curriculum/scope-and-sequence'],
+  ['@zod-schema/scm/roadmap-skill', '@zod-schema/scm/curriculum/roadmap-skill'],
+  ['@zod-schema/scm/roadmap-unit', '@zod-schema/scm/curriculum/roadmap-unit'],
+  ['@zod-schema/scm/roadmap', '@zod-schema/scm/curriculum/roadmap'],
+  ['@zod-schema/scm/scope-and-sequence', '@zod-schema/scm/curriculum/scope-and-sequence'],
 
   // Podsie schemas
-  ['@zod-schema/313/podsie-completion', '@zod-schema/313/podsie/podsie-completion'],
-  ['@zod-schema/313/podsie-question-map', '@zod-schema/313/podsie/podsie-question-map'],
-  ['@zod-schema/313/podsie-response', '@zod-schema/313/podsie/podsie-response'],
-  ['@zod-schema/313/ramp-up-progress', '@zod-schema/313/podsie/ramp-up-progress'],
-  ['@zod-schema/313/section-config', '@zod-schema/313/podsie/section-config'],
+  ['@zod-schema/scm/podsie-completion', '@zod-schema/scm/podsie/podsie-completion'],
+  ['@zod-schema/scm/podsie-question-map', '@zod-schema/scm/podsie/podsie-question-map'],
+  ['@zod-schema/scm/podsie-response', '@zod-schema/scm/podsie/podsie-response'],
+  ['@zod-schema/scm/ramp-up-progress', '@zod-schema/scm/podsie/ramp-up-progress'],
+  ['@zod-schema/scm/section-config', '@zod-schema/scm/podsie/section-config'],
 
   // Incentives schemas
-  ['@zod-schema/313/activity-type-config', '@zod-schema/313/incentives/activity-type-config'],
+  ['@zod-schema/scm/activity-type-config', '@zod-schema/scm/incentives/activity-type-config'],
 ];
 
 const mongooseMappings = [

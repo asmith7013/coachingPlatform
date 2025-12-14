@@ -4,7 +4,7 @@ import {
   DailyClassEventInputZodSchema,
   ZearnCompletionInputZodSchema,
   AssessmentCompletionInputZodSchema
-} from "@/lib/schema/zod-schema/313/core";
+} from "@/lib/schema/zod-schema/scm/core";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
 import { fetchSheetData, rowsToObjects } from "@/lib/integrations/google-sheets/client";

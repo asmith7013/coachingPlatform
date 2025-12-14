@@ -2,7 +2,7 @@ import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';
 import { Badge } from '@/components/core/feedback/Badge';
-import { StudentZearnProgress } from '@/lib/schema/zod-schema/313/student/student-data';
+import { StudentZearnProgress } from '@/lib/schema/zod-schema/scm/student/student-data';
 import { type GradeLevel } from '@/lib/schema/enum/scope-sequence';
 
 interface ZearnProgressProps {

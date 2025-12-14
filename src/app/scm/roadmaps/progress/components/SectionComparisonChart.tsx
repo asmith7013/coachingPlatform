@@ -2,7 +2,7 @@
 
 import React from "react";
 import { cn } from "@ui/utils/formatters";
-import type { SectionRoadmapData } from "@/app/actions/313/roadmap-completions";
+import type { SectionRoadmapData } from "@/app/actions/scm/roadmap-completions";
 import { StackedSkillsBarChart, type BarDataItem } from "./StackedSkillsBarChart";
 
 interface SectionComparisonChartProps {

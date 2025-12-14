@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef } from "react";
-import { importZearnCompletions } from "@/app/actions/313/zearn-completions";
+import { importZearnCompletions } from "@/app/actions/scm/zearn-completions";
 import { Sections313 } from "@/lib/schema/enum/313";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { Button } from "@/components/core/Button";

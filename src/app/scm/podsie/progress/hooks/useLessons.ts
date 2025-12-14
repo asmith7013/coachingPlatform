@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchRampUpsByUnit } from "@/app/actions/313/scope-and-sequence";
-import { SECTION_OPTIONS } from "@zod-schema/313/curriculum/scope-and-sequence";
-import { AssignmentContent } from "@zod-schema/313/podsie/section-config";
+import { fetchRampUpsByUnit } from "@/app/actions/scm/scope-and-sequence";
+import { SECTION_OPTIONS } from "@zod-schema/scm/curriculum/scope-and-sequence";
+import { AssignmentContent } from "@zod-schema/scm/podsie/section-config";
 import { LessonConfig } from "../types";
 
 /**

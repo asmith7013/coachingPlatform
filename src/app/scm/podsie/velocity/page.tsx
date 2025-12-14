@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import type { DailyVelocityStats } from "@/app/actions/313/velocity/velocity";
+import type { DailyVelocityStats } from "@/app/actions/scm/velocity/velocity";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,

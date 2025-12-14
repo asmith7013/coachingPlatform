@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { handleServerError } from "@error/handlers/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { SnorklActivityModel, SnorklScrapingMetadataModel } from "@mongoose-schema/313/storage";
-import { type SnorklActivityInput } from "@zod-schema/313/storage";
+import { type SnorklActivityInput } from "@zod-schema/scm/storage";
 
 export async function saveSnorklActivities(activities: SnorklActivityInput[]) {
   return withDbConnection(async () => {

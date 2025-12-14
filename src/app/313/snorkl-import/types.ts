@@ -20,7 +20,7 @@ export interface RawAssessment {
 }
 
 // Import Student type for fuzzy matching
-import { Student } from '@/lib/schema/zod-schema/313/student/student';
+import { Student } from '@/lib/schema/zod-schema/scm/student/student';
 
 // Fuzzy matching types
 export interface StudentMatch {

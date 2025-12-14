@@ -1,4 +1,4 @@
-import { StudentPreAssessment } from '@/lib/schema/zod-schema/313/student/student-data';
+import { StudentPreAssessment } from '@/lib/schema/zod-schema/scm/student/student-data';
 import { Card } from '@/components/composed/cards/Card';
 import { Heading } from '@/components/core/typography/Heading';
 import { Text } from '@/components/core/typography/Text';

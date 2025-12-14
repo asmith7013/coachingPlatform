@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withRequestValidation } from "@server/api/validation/api-validation";
 import { createEntityResponse, createMonitoredErrorResponse } from "@api-responses/action-response-helper";
-import { syncSheetsData, getSyncStatus } from "@/app/actions/313/sync-sheets";
+import { syncSheetsData, getSyncStatus } from "@/app/actions/scm/sync-sheets";
 
 // =====================================
 // REQUEST SCHEMAS

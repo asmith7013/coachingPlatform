@@ -4,7 +4,7 @@ import {
   getSectionVelocityByDateRange,
   type DailyVelocityStats,
   type StudentDailyData,
-} from "@/app/actions/313/velocity/velocity";
+} from "@/app/actions/scm/velocity/velocity";
 import { fetchSectionUnitSchedules } from "@/app/actions/calendar/unit-schedule";
 import type { UnitSchedule } from "@zod-schema/calendar";
 import type { SectionOption } from "@/components/composed/section-visualization";

@@ -11,11 +11,11 @@ import {
   getAllCurriculumAssignments,
   exportAllCurriculumQuestionMapsToDb,
   exportCurriculumQuestionMapToDb,
-} from "@/app/actions/313/curriculum-question-map";
+} from "@/app/actions/scm/curriculum-question-map";
 import {
   listQuestionMaps,
   deleteQuestionMap,
-} from "@/app/actions/313/podsie-question-map";
+} from "@/app/actions/scm/podsie-question-map";
 import { CurriculumAssignmentsTable } from "./CurriculumAssignmentsTable";
 import { SavedMapsTable } from "./SavedMapsTable";
 import type {

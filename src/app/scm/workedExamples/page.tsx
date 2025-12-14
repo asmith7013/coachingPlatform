@@ -1,72 +1,37 @@
 "use client";
 
-import { useEffect, useState, useMemo } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { listWorkedExampleDecks } from '@/app/actions/worked-examples';
-import { getGradeUnitPairsByTag } from '@/app/actions/313/scope-and-sequence';
-import type { WorkedExampleDeck } from '@zod-schema/worked-example-deck';
-import { Spinner } from '@/components/core/feedback/Spinner';
-import { PresentationModal } from '@/components/presentations/PresentationModal';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { useState, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useWorkedExampleDecks, useGradeUnitPairs } from "./hooks";
+import type { WorkedExampleDeck } from "@zod-schema/worked-example-deck";
+import { Spinner } from "@/components/core/feedback/Spinner";
+import { PresentationModal } from "@/components/presentations/PresentationModal";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 // Map URL param to scopeSequenceTag in database
 const GRADE_OPTIONS = [
-  { value: '', label: 'All Grades', scopeSequenceTag: '' },
-  { value: '6', label: 'Grade 6', scopeSequenceTag: 'Grade 6' },
-  { value: '7', label: 'Grade 7', scopeSequenceTag: 'Grade 7' },
-  { value: '8', label: 'Grade 8', scopeSequenceTag: 'Grade 8' },
-  { value: 'alg1', label: 'Algebra 1', scopeSequenceTag: 'Algebra 1' },
+  { value: "", label: "All Grades", scopeSequenceTag: "" },
+  { value: "6", label: "Grade 6", scopeSequenceTag: "Grade 6" },
+  { value: "7", label: "Grade 7", scopeSequenceTag: "Grade 7" },
+  { value: "8", label: "Grade 8", scopeSequenceTag: "Grade 8" },
+  { value: "alg1", label: "Algebra 1", scopeSequenceTag: "Algebra 1" },
 ];
 
 export default function PresentationsList() {
-  const [decks, setDecks] = useState<WorkedExampleDeck[]>([]);
-  const [gradeUnitPairs, setGradeUnitPairs] = useState<Array<{ grade: string; unitNumber: number }>>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [expandedDeck, setExpandedDeck] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const openSlug = searchParams.get('view');
-  const gradeFilter = searchParams.get('grade') || '';
+  const openSlug = searchParams.get("view");
+  const gradeFilter = searchParams.get("grade") || "";
 
-  // Load decks on mount
-  useEffect(() => {
-    async function loadDecks() {
-      try {
-        const result = await listWorkedExampleDecks();
-
-        if (result.success && result.data) {
-          setDecks(result.data as WorkedExampleDeck[]);
-        } else {
-          setError(result.error || 'Failed to load presentations');
-        }
-      } catch {
-        setError('An error occurred while loading presentations');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadDecks();
-  }, []);
-
-  // Load grade/unit pairs when grade filter changes
-  useEffect(() => {
-    async function loadGradeUnitPairs() {
-      const scopeSequenceTag = GRADE_OPTIONS.find(o => o.value === gradeFilter)?.scopeSequenceTag;
-      if (!scopeSequenceTag) {
-        setGradeUnitPairs([]);
-        return;
-      }
-
-      const result = await getGradeUnitPairsByTag(scopeSequenceTag);
-      if (result.success && result.data) {
-        setGradeUnitPairs(result.data);
-      }
-    }
-
-    loadGradeUnitPairs();
+  // Get scopeSequenceTag from grade filter
+  const scopeSequenceTag = useMemo(() => {
+    return GRADE_OPTIONS.find((o) => o.value === gradeFilter)?.scopeSequenceTag || "";
   }, [gradeFilter]);
+
+  // Data fetching with React Query
+  const { decks, loading, error } = useWorkedExampleDecks();
+  const { gradeUnitPairs } = useGradeUnitPairs(scopeSequenceTag);
 
   // Filter decks based on grade/unit pairs
   const filteredDecks = useMemo(() => {
@@ -74,11 +39,12 @@ export default function PresentationsList() {
     if (gradeUnitPairs.length === 0) return [];
 
     // Filter by matching deck's gradeLevel and unitNumber to any pair in the curriculum
-    return decks.filter((deck) =>
-      deck.unitNumber !== undefined &&
-      gradeUnitPairs.some(pair =>
-        pair.grade === deck.gradeLevel && pair.unitNumber === deck.unitNumber
-      )
+    return decks.filter(
+      (deck) =>
+        deck.unitNumber !== undefined &&
+        gradeUnitPairs.some(
+          (pair) => pair.grade === deck.gradeLevel && pair.unitNumber === deck.unitNumber
+        )
     );
   }, [decks, gradeFilter, gradeUnitPairs]);
 

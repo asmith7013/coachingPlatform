@@ -3,7 +3,7 @@ import {
   TeacherZod,
   SectionZod,
   AttendanceStatusZod
-} from '@zod-schema/313/core';
+} from '@zod-schema/scm/core';
 import { SpreadsheetHeaders, RawSpreadsheetRow, ValidatedRowData, MasteryDetail } from '../types/spreadsheet-types';
 import { Sections313Type } from '@schema/enum/313';
 

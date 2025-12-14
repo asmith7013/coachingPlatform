@@ -1,6 +1,6 @@
 import React from "react";
 import { CalendarDay } from "./CalendarDay";
-import type { DailyVelocityStats } from "@/app/actions/313/velocity/velocity";
+import type { DailyVelocityStats } from "@/app/actions/scm/velocity/velocity";
 
 interface MonthCalendarProps {
   monthDate: Date;

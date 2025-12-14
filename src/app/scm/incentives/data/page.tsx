@@ -1,63 +1,49 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { fetchUnitsByGrade } from "../form/actions";
+import React, { useState, useMemo, useEffect } from "react";
+import { useRoadmapUnits } from "@/hooks/scm";
 import { TrackingTables } from "./TrackingTables";
 
-interface Unit {
-  _id: string;
-  unitNumber: number;
-  unitTitle: string;
-}
-
 export default function IncentivesDataPage() {
-
   // Load saved filters from localStorage (shared with form page)
   const [section, setSection] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('incentives-form-section') || "";
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("incentives-form-section") || "";
     }
     return "";
   });
   const [unitId, setUnitId] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('incentives-form-current-unit') || "";
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("incentives-form-current-unit") || "";
     }
     return "";
   });
 
-  // Data
-  const [units, setUnits] = useState<Unit[]>([]);
+  // Data fetching with React Query
+  const { units: allUnits } = useRoadmapUnits();
 
-  // Load units on mount
-  useEffect(() => {
-    async function loadMetadata() {
-      const unitsResult = await fetchUnitsByGrade("8");
-
-      if (typeof unitsResult !== 'string' && unitsResult.success && unitsResult.data) {
-        setUnits(unitsResult.data as Unit[]);
-      }
-    }
-    loadMetadata();
-  }, []);
+  // Filter units for grade 8
+  const units = useMemo(() => {
+    return allUnits.filter((u) => u.grade.includes("8th Grade"));
+  }, [allUnits]);
 
   // Save section and unitId to localStorage when they change (shared with form page)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (section) {
-        localStorage.setItem('incentives-form-section', section);
+        localStorage.setItem("incentives-form-section", section);
       } else {
-        localStorage.removeItem('incentives-form-section');
+        localStorage.removeItem("incentives-form-section");
       }
     }
   }, [section]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (unitId) {
-        localStorage.setItem('incentives-form-current-unit', unitId);
+        localStorage.setItem("incentives-form-current-unit", unitId);
       } else {
-        localStorage.removeItem('incentives-form-current-unit');
+        localStorage.removeItem("incentives-form-current-unit");
       }
     }
   }, [unitId]);
@@ -122,7 +108,7 @@ export default function IncentivesDataPage() {
           <div className="flex items-center justify-end mt-4">
             <button
               onClick={clearFilters}
-              className="text-sm text-blue-600 hover:text-blue-700"
+              className="text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
             >
               Clear Filters
             </button>

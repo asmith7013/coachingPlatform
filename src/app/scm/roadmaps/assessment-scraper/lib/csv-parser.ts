@@ -1,4 +1,4 @@
-import { AssessmentRow, AssessmentRowZod } from '@/lib/schema/zod-schema/313/assessment-scraper';
+import { AssessmentRow, AssessmentRowZod } from '@/lib/schema/zod-schema/scm/assessment-scraper';
 
 /**
  * Parse CSV content from assessment history export

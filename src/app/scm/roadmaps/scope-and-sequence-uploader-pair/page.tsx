@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { fetchScopeAndSequence, updateLessonSkills } from "@actions/313/scope-and-sequence";
+import { fetchScopeAndSequence, updateLessonSkills } from "@actions/scm/scope-and-sequence";
 import { useRouter } from "next/navigation";
 
 interface LessonSkillPair {

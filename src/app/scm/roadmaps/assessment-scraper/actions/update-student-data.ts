@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { StudentModel } from '@/lib/schema/mongoose-schema/313/student/student.model';
-import { type AssessmentRow } from '@/lib/schema/zod-schema/313/assessment-scraper';
+import { type AssessmentRow } from '@/lib/schema/zod-schema/scm/assessment-scraper';
 import { groupByStudent, groupBySkill } from '../lib/csv-parser';
 import { handleServerError } from "@error/handlers/server";
 import { connectToDB } from "@server/db/connection";

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ActivityTypeConfig, ActivityTypeConfigInput, DetailType } from "@zod-schema/313/incentives/activity-type-config";
+import { ActivityTypeConfig, ActivityTypeConfigInput, DetailType } from "@zod-schema/scm/incentives/activity-type-config";
 import {
   createActivityType,
   updateActivityType,

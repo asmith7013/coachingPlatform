@@ -5,11 +5,11 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon, ExclamationTriangleIcon, InformationCircleIcon } from "@heroicons/react/24/solid";
 import { useToast } from "@/components/core/feedback/Toast";
 import { Spinner } from "@/components/core/feedback/Spinner";
-import { getAllSectionConfigs } from "@/app/actions/313/section-overview";
-import { getAssignmentContent } from "@actions/313/section-config";
-import { syncSectionRampUpProgress } from "@actions/313/podsie-sync";
+import { getAllSectionConfigs } from "@/app/actions/scm/section-overview";
+import { getAssignmentContent } from "@actions/scm/section-config";
+import { syncSectionRampUpProgress } from "@actions/scm/podsie-sync";
 import { getCurrentUnitsForAllSections, type CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
-import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
+import type { AssignmentContent } from "@zod-schema/scm/podsie/section-config";
 import { MultiSectionSelector } from "./components";
 import { getSectionColors } from "@/app/scm/podsie/velocity/utils/colors";
 

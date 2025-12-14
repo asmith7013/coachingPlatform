@@ -1,6 +1,6 @@
 "use client";
 
-import { RoadmapsSkill, PracticeProblem } from "@zod-schema/313/curriculum/roadmap-skill";
+import { RoadmapsSkill, PracticeProblem } from "@zod-schema/scm/curriculum/roadmap-skill";
 import { MapPinIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { SkillDetailHeader } from "./SkillDetailHeader";
 import { DescriptionSection } from "./DescriptionSection";

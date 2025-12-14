@@ -1,11 +1,11 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { fetchStudentsBySection } from '@/app/actions/313/students';
-import { importZearnData } from '@/app/actions/313/zearn-import';
+import { fetchStudentsBySection } from '@/app/actions/scm/students';
+import { importZearnData } from '@/app/actions/scm/zearn-import';
 import { handleClientError } from '@/lib/error/handlers/client';
 import { useLocalStorage } from '@/hooks/ui';
-import { createZearnImportRecordDefaults, type ZearnImportRecordInput } from '@zod-schema/313/zearn-import';
-import { Student } from '@/lib/schema/zod-schema/313/student/student';
+import { createZearnImportRecordDefaults, type ZearnImportRecordInput } from '@zod-schema/scm/zearn-import';
+import { Student } from '@/lib/schema/zod-schema/scm/student/student';
 import { parseZearnData, type ParsedStudentData } from '../utils/parseZearnData';
 
 interface LocalStorageData {

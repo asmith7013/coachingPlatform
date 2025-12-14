@@ -1,4 +1,4 @@
-import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
+import type { AssignmentContent } from "@zod-schema/scm/podsie/section-config";
 
 interface AssignmentItemProps {
   assignment: AssignmentContent;

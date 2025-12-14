@@ -9,12 +9,12 @@ import { RoadmapsSkillModel } from "@mongoose-schema/313/curriculum/roadmap-skil
 import { SectionConfigModel } from "@mongoose-schema/313/podsie/section-config.model";
 import {
   ActivityTypeConfigInput,
-} from "@zod-schema/313/incentives/activity-type-config";
-import { StudentActivity } from "@zod-schema/313/student/student";
-import { StudentActivityEventInput, StudentActivityInputZodSchema } from "@zod-schema/313/student/student-activity";
+} from "@zod-schema/scm/incentives/activity-type-config";
+import { StudentActivity } from "@zod-schema/scm/student/student";
+import { StudentActivityEventInput, StudentActivityInputZodSchema } from "@zod-schema/scm/student/student-activity";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
-import { IncentiveEmailService } from "@/app/actions/313/incentive-email";
+import { IncentiveEmailService } from "@/app/actions/scm/incentive-email";
 
 // =====================================
 // ACTIVITY TYPE ACTIONS

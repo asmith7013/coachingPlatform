@@ -4,7 +4,7 @@ import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/
 import { 
   SCOPE_SEQUENCE, 
   AttendanceStatus 
-} from '@zod-schema/313/core';
+} from '@zod-schema/scm/core';
 
 // =====================================
 // LESSON COMPLETION MODEL

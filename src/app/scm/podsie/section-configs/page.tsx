@@ -9,14 +9,14 @@ import {
   upsertSectionConfig,
   addAssignmentContent,
   getAssignmentContent
-} from "@/app/actions/313/section-config";
+} from "@/app/actions/scm/section-config";
 import {
   fetchAssignmentsForSection,
   PodsieAssignmentInfo
-} from "@/app/actions/313/podsie-sync";
-import { fetchScopeAndSequence } from "@/app/actions/313/scope-and-sequence";
-import type { ScopeAndSequence } from "@zod-schema/313/curriculum/scope-and-sequence";
-import type { AssignmentContent } from "@zod-schema/313/podsie/section-config";
+} from "@/app/actions/scm/podsie-sync";
+import { fetchScopeAndSequence } from "@/app/actions/scm/scope-and-sequence";
+import type { ScopeAndSequence } from "@zod-schema/scm/curriculum/scope-and-sequence";
+import type { AssignmentContent } from "@zod-schema/scm/podsie/section-config";
 import { SchoolSectionSelector } from "./components/SchoolSectionSelector";
 import { ExistingAssignmentsList } from "./components/ExistingAssignmentsList";
 import { MatchingControls } from "./components/MatchingControls";

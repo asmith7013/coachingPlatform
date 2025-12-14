@@ -2,7 +2,7 @@
  * Utility functions for building Podsie question mappings
  */
 
-import type { PodsieQuestionMap } from "@zod-schema/313/podsie/section-config";
+import type { PodsieQuestionMap } from "@zod-schema/scm/podsie/section-config";
 
 /**
  * Build question mapping array from base question IDs and variations count

@@ -1,6 +1,6 @@
 "use client";
 
-import { RoadmapsSkill, PracticeProblem } from "@zod-schema/313/curriculum/roadmap-skill";
+import { RoadmapsSkill, PracticeProblem } from "@zod-schema/scm/curriculum/roadmap-skill";
 import { SkillDetailView, SkillDetailSections } from "./SkillDetailView";
 
 export type SkillType = 'target' | 'essential' | 'helpful';

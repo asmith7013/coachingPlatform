@@ -46,8 +46,8 @@
 
 ```typescript
 // ✅ CORRECT - Using path aliases
-import { fetchRoadmapsSkills } from "@actions/313/roadmaps-skills";
-import { RoadmapsSkillZodSchema } from "@zod-schema/313/roadmap-skill";
+import { fetchRoadmapsSkills } from "@actions/scm/roadmaps-skills";
+import { RoadmapsSkillZodSchema } from "@zod-schema/scm/roadmap-skill";
 import { RoadmapsSkillModel } from "@mongoose-schema/313/roadmap-skill.model";
 import { Alert } from "@core-components/feedback/Alert";
 import { createCrudActions } from "@server/crud/crud-factory";
@@ -99,7 +99,7 @@ import { RoadmapsSkillModel } from "@mongoose-schema/313/roadmap-skill.model";
 import {
   RoadmapsSkillZodSchema,
   RoadmapsSkillInputZodSchema
-} from "@zod-schema/313/roadmap-skill";
+} from "@zod-schema/scm/roadmap-skill";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 
@@ -217,7 +217,7 @@ export function toInputSchema<T extends z.ZodObject<z.ZodRawShape>>(fullSchema: 
 
 ### Complete Schema Example
 
-**Zod Schema** (`/src/lib/schema/zod-schema/313/roadmap-skill.ts`):
+**Zod Schema** (`/src/lib/schema/zod-schema/scm/roadmap-skill.ts`):
 
 ```typescript
 import { z } from "zod";
@@ -337,7 +337,7 @@ export const RoadmapsSkillModel = mongoose.model('RoadmapsSkill', RoadmapsSkillS
 ```
 
 **`[RULE]`** Schema Conventions:
-- Zod schemas live in `/src/lib/schema/zod-schema/313/`
+- Zod schemas live in `/src/lib/schema/zod-schema/scm/`
 - Mongoose models live in `/src/lib/schema/mongoose-schema/313/`
 - Always export both full schema and input schema from Zod
 - Always export type definitions
@@ -838,7 +838,7 @@ SkillNumber: z.string()
 
 This example shows how all patterns work together from database to UI.
 
-#### 1. Zod Schema (`/src/lib/schema/zod-schema/313/roadmap-skill.ts`)
+#### 1. Zod Schema (`/src/lib/schema/zod-schema/scm/roadmap-skill.ts`)
 
 ```typescript
 import { z } from "zod";
@@ -905,7 +905,7 @@ export const RoadmapsSkillModel = mongoose.model('RoadmapsSkill', RoadmapsSkillS
 
 import { createCrudActions } from "@server/crud/crud-factory";
 import { RoadmapsSkillModel } from "@mongoose-schema/313/roadmap-skill.model";
-import { RoadmapsSkillZodSchema, RoadmapsSkillInputZodSchema } from "@zod-schema/313/roadmap-skill";
+import { RoadmapsSkillZodSchema, RoadmapsSkillInputZodSchema } from "@zod-schema/scm/roadmap-skill";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 
@@ -931,8 +931,8 @@ export const createRoadmapsSkill = roadmapsSkillCrud.create;
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchRoadmapsSkills } from "@actions/313/roadmaps-skills";
-import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
+import { fetchRoadmapsSkills } from "@actions/scm/roadmaps-skills";
+import { RoadmapsSkill } from "@zod-schema/scm/roadmap-skill";
 import { Alert } from "@core-components/feedback/Alert";
 
 export default function RoadmapsSkillsPage() {
@@ -1007,9 +1007,9 @@ export default function RoadmapsSkillsPage() {
 "use client";
 
 import { useState, useEffect } from "react";
-import { RoadmapUnit } from "@zod-schema/313/roadmap-unit";
-import { RoadmapsSkill } from "@zod-schema/313/roadmap-skill";
-import { fetchRoadmapsSkillsByNumbers } from "@actions/313/roadmaps-skills";
+import { RoadmapUnit } from "@zod-schema/scm/roadmap-unit";
+import { RoadmapsSkill } from "@zod-schema/scm/roadmap-skill";
+import { fetchRoadmapsSkillsByNumbers } from "@actions/scm/roadmaps-skills";
 import { Alert } from "@core-components/feedback/Alert";
 
 interface UnitDetailViewProps {
@@ -1108,7 +1108,7 @@ export const queryClient = new QueryClient({
 ```typescript
 // /src/hooks/useRoadmapsSkills.ts
 import { useQuery } from '@tanstack/react-query';
-import { fetchRoadmapsSkills } from '@actions/313/roadmaps-skills';
+import { fetchRoadmapsSkills } from '@actions/scm/roadmaps-skills';
 
 export function useRoadmapsSkills() {
   return useQuery({
@@ -1128,7 +1128,7 @@ export function useRoadmapsSkills() {
 
 ```typescript
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createRoadmapsSkill } from '@actions/313/roadmaps-skills';
+import { createRoadmapsSkill } from '@actions/scm/roadmaps-skills';
 
 export function useCreateRoadmapsSkill() {
   const queryClient = useQueryClient();

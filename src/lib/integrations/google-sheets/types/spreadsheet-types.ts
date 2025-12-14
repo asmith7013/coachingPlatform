@@ -5,7 +5,7 @@ import {
   ZearnCompletionInput, 
   AssessmentCompletionInput,
   AttendanceStatusType,
-} from '@zod-schema/313/core';
+} from '@zod-schema/scm/core';
 import { SyncResultZodSchema } from '@zod-schema/integrations/google-sheets-export';
 import { CollectionResponse } from '@core-types/response';
 

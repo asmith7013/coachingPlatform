@@ -168,7 +168,7 @@ src/lib/integrations/google-sheets/
 ## Integration Points
 
 - **Error Handling**: Uses `@error/handlers/validation` and `@error/handlers/server`
-- **Schema System**: Integrates with `@zod-schema/313/core` schemas
+- **Schema System**: Integrates with `@zod-schema/scm/core` schemas
 - **Database Models**: Compatible with existing MongoDB models
 - **Existing Patterns**: Follows established transformation patterns
 
