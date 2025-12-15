@@ -578,6 +578,7 @@ export function usePacingData(
     const yesterdayStr = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
 
     // Pre-calculate completions and activity per student (today/yesterday)
+    // IMPORTANT: Only count questions from mastery-check assignments, not sidekicks
     interface StudentActivityData {
       completedToday: number;
       completedYesterday: number;
@@ -586,6 +587,15 @@ export function usePacingData(
       inquiryToday: boolean;
       inquiryYesterday: boolean;
     }
+
+    // Build a set of mastery-check assignment IDs for filtering
+    const masteryCheckAssignmentIds = new Set(
+      lessons
+        .filter(l => l.activityType === 'mastery-check')
+        .map(l => l.podsieAssignmentId)
+        .filter(Boolean)
+    );
+
     const studentCompletions = new Map<string, StudentActivityData>();
     for (const student of allStudents) {
       const studentProgress = progressData.filter(p => p.studentId === student.studentId);
@@ -602,6 +612,9 @@ export function usePacingData(
         if (progress.smallGroupYesterday) smallGroupYesterday = true;
         if (progress.inquiryToday) inquiryToday = true;
         if (progress.inquiryYesterday) inquiryYesterday = true;
+
+        // Only count questions from mastery-check assignments
+        if (!progress.podsieAssignmentId || !masteryCheckAssignmentIds.has(progress.podsieAssignmentId)) continue;
 
         for (const q of progress.questions) {
           if (q.completed && q.completedAt) {
@@ -674,6 +687,7 @@ export function usePacingData(
     }
 
     // Build activity data for completed students
+    // Only count questions from mastery-check assignments (same as active students)
     const completedStudentInfos: StudentLessonInfo[] = completedStudentIds.map((studentId, index) => {
       const studentProgress = progressData.filter(p => p.studentId === studentId);
       let completedToday = 0;
@@ -688,6 +702,9 @@ export function usePacingData(
         if (progress.smallGroupYesterday) smallGroupYesterday = true;
         if (progress.inquiryToday) inquiryToday = true;
         if (progress.inquiryYesterday) inquiryYesterday = true;
+
+        // Only count questions from mastery-check assignments
+        if (!progress.podsieAssignmentId || !masteryCheckAssignmentIds.has(progress.podsieAssignmentId)) continue;
 
         for (const q of progress.questions) {
           if (q.completed && q.completedAt) {

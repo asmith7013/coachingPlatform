@@ -16,7 +16,7 @@ import { FiltersSection } from "./components/FiltersSection";
 import { ProgressOverview } from "./components/ProgressOverview";
 import { LoadingState, ProgressLoadingState, NoAssignmentsState, SelectFiltersState } from "./components/EmptyStates";
 import { groupAssignmentsByUnitLesson, groupAssignmentsBySection } from "./utils/groupAssignments";
-import { getScopeTagForSection, getSchoolForSection, groupSectionsBySchool } from "./utils/sectionHelpers";
+import { getScopeTagForSection, getSchoolForSection } from "./utils/sectionHelpers";
 import { calculateSummaryStats } from "./utils/progressStats";
 import { generateProgressCsv, downloadCsv, generateCsvFilename } from "./utils/exportCsv";
 import { useSectionOptions } from "@/hooks/scm";
@@ -62,7 +62,7 @@ export default function PodsieProgressPage() {
   const [loadedGroupId, setLoadedGroupId] = useState<string | null>(null);
 
   // Data hooks
-  const { sections, sectionOptions, loading: loadingSections, error: sectionsError } = useSectionOptions();
+  const { sections, sectionOptions, sectionsBySchool, loading: loadingSections, error: sectionsError } = useSectionOptions();
 
   // Derived state
   const scopeSequenceTag = useMemo(() => {
@@ -82,8 +82,18 @@ export default function PodsieProgressPage() {
   const { progressData, loading: loadingProgress, error: progressError, setProgressData } = useProgressData(selectedSection, selectedUnit, lessons, selectedSchool);
   const pacingData = usePacingData(selectedSection, selectedUnit, allLessonsInUnit, progressData, excludeRampUps, undefined, hideEmptySections);
 
-  // Derived data
-  const sectionGroups = useMemo(() => groupSectionsBySchool(sections), [sections]);
+  // Derived data - use sectionsBySchool from database (not enum-based grouping) to avoid duplicate keys
+  const sectionGroups = useMemo(() => {
+    const groups: Array<{ school: string; sections: string[] }> = [];
+    for (const [school, options] of Object.entries(sectionsBySchool)) {
+      groups.push({
+        school,
+        sections: options.map(opt => opt.classSection).sort()
+      });
+    }
+    // Sort groups by school name
+    return groups.sort((a, b) => a.school.localeCompare(b.school));
+  }, [sectionsBySchool]);
   const groupedAssignments = useMemo(() => groupAssignmentsByUnitLesson(lessons), [lessons]);
   const groupedBySection = useMemo(() => groupAssignmentsBySection(lessons), [lessons]);
   const showingSections = selectedLessonSection === 'all';
