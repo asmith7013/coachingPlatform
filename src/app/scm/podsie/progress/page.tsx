@@ -54,7 +54,19 @@ export default function PodsieProgressPage() {
   const { showToast, ToastComponent } = useToast();
 
   // LocalStorage-backed state for selected section (global)
-  const [selectedSection, setSelectedSection] = useLocalStorageString('podsieProgress_selectedSection');
+  // Stores composite value "school|section" (e.g., "X644|601") to handle duplicate section numbers across schools
+  const [selectedSectionComposite, setSelectedSectionComposite] = useLocalStorageString('podsieProgress_selectedSection');
+
+  // Parse composite value into school and section
+  const { selectedSection, selectedSchool } = useMemo(() => {
+    if (!selectedSectionComposite) return { selectedSection: "", selectedSchool: undefined };
+    const parts = selectedSectionComposite.split("|");
+    if (parts.length === 2) {
+      return { selectedSection: parts[1], selectedSchool: parts[0] };
+    }
+    // Backwards compatibility: if no pipe, treat as section-only (will find first match)
+    return { selectedSection: selectedSectionComposite, selectedSchool: undefined };
+  }, [selectedSectionComposite]);
 
   // Per-section state for unit and lesson section (keyed by groupId)
   const [selectedUnit, setSelectedUnitState] = useState<number | null>(null);
@@ -62,19 +74,12 @@ export default function PodsieProgressPage() {
   const [loadedGroupId, setLoadedGroupId] = useState<string | null>(null);
 
   // Data hooks
-  const { sections, sectionOptions, sectionsBySchool, loading: loadingSections, error: sectionsError } = useSectionOptions();
+  const { sections, sectionsBySchool, loading: loadingSections, error: sectionsError } = useSectionOptions();
 
   // Derived state
   const scopeSequenceTag = useMemo(() => {
     return selectedSection ? getScopeTagForSection(selectedSection) : "";
   }, [selectedSection]);
-
-  // Get school for the selected section from sectionOptions
-  const selectedSchool = useMemo(() => {
-    if (!selectedSection) return undefined;
-    const option = sectionOptions.find(s => s.classSection === selectedSection);
-    return option?.school;
-  }, [selectedSection, sectionOptions]);
   const { units, sectionConfigAssignments, groupId, loading: loadingUnits, error: unitsError, setSectionConfigAssignments } = useUnitsAndConfig(scopeSequenceTag, selectedSection);
   const { lessons, sectionOptions: lessonSectionOptions, loading: loadingLessons, error: lessonsError } = useLessons(scopeSequenceTag, selectedSection, selectedUnit, selectedLessonSection, sectionConfigAssignments);
   // For pacing, we need ALL lessons in the unit (not filtered by selectedLessonSection)
@@ -83,12 +88,18 @@ export default function PodsieProgressPage() {
   const pacingData = usePacingData(selectedSection, selectedUnit, allLessonsInUnit, progressData, excludeRampUps, undefined, hideEmptySections);
 
   // Derived data - use sectionsBySchool from database (not enum-based grouping) to avoid duplicate keys
+  // Each section includes its composite value (school|section) for unique identification
   const sectionGroups = useMemo(() => {
-    const groups: Array<{ school: string; sections: string[] }> = [];
+    const groups: Array<{ school: string; sections: Array<{ value: string; label: string }> }> = [];
     for (const [school, options] of Object.entries(sectionsBySchool)) {
       groups.push({
         school,
-        sections: options.map(opt => opt.classSection).sort()
+        sections: options
+          .map(opt => ({
+            value: `${school}|${opt.classSection}`, // Composite value for unique identification
+            label: opt.classSection
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label))
       });
     }
     // Sort groups by school name
@@ -132,8 +143,8 @@ export default function PodsieProgressPage() {
   }, [groupId]);
 
   // Handlers
-  const handleSectionChange = (section: string) => {
-    setSelectedSection(section);
+  const handleSectionChange = (compositeValue: string) => {
+    setSelectedSectionComposite(compositeValue);
     setLoadedGroupId(null); // Reset so new groupId triggers load
     setSelectedUnitState(null);
     setSelectedLessonSectionState("");
@@ -366,7 +377,7 @@ export default function PodsieProgressPage() {
           <PageHeader onCreateClick={() => setShowCreateModal(true)} />
 
           <FiltersSection
-            selectedSection={selectedSection}
+            selectedSection={selectedSectionComposite || ""}
             sectionGroups={sectionGroups}
             onSectionChange={handleSectionChange}
             selectedUnit={selectedUnit}

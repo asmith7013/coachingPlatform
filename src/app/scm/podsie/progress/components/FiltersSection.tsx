@@ -2,9 +2,9 @@ import { SectionRadioGroup } from "@/components/core/inputs/SectionRadioGroup";
 import { UnitOption } from "../types";
 
 interface FiltersSectionProps {
-  // Section filter
+  // Section filter - uses composite value "school|section" for unique identification
   selectedSection: string;
-  sectionGroups: Array<{ school: string; sections: string[] }>;
+  sectionGroups: Array<{ school: string; sections: Array<{ value: string; label: string }> }>;
   onSectionChange: (section: string) => void;
 
   // Unit filter
@@ -59,8 +59,8 @@ export function FiltersSection({
             {sectionGroups.map((group) => (
               <optgroup key={group.school} label={group.school}>
                 {group.sections.map((section) => (
-                  <option key={`${group.school}-${section}`} value={section}>
-                    {section}
+                  <option key={section.value} value={section.value}>
+                    {section.label}
                   </option>
                 ))}
               </optgroup>
