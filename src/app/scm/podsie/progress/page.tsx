@@ -225,7 +225,8 @@ export default function PodsieProgressPage() {
           selectedSection,
           unitCode,
           assignment.unitLessonId,
-          assignment.podsieAssignmentId
+          assignment.podsieAssignmentId,
+          selectedSchool
         );
 
         if (progressResult.success) {
@@ -272,7 +273,7 @@ export default function PodsieProgressPage() {
       // After all syncs complete, refresh full progress data to update pacing
       const grade = lessons[0]?.grade || "8";
       const unitCode = `${grade}.${selectedUnit}`;
-      const fullProgressResult = await fetchRampUpProgress(selectedSection, unitCode);
+      const fullProgressResult = await fetchRampUpProgress(selectedSection, unitCode, undefined, undefined, selectedSchool);
       if (fullProgressResult.success) {
         setProgressData(fullProgressResult.data);
       }
