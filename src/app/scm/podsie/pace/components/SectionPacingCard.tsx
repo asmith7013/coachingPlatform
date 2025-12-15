@@ -52,7 +52,7 @@ export function SectionPacingCard({
   );
 
   // Load progress data
-  const { progressData } = useProgressData(section, currentUnit, allLessonsInUnit);
+  const { progressData } = useProgressData(section, currentUnit, allLessonsInUnit, school);
 
   // Compute pacing data
   const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData, excludeRampUps, undefined, hideEmptySections);

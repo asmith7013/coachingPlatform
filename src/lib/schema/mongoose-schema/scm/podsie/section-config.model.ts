@@ -1,7 +1,7 @@
 // src/lib/schema/mongoose-schema/scm/section-config.model.ts
 import mongoose from 'mongoose';
 import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
-import { Schools, AllSections, Teachers313, SpecialPopulations } from '@schema/enum/313';
+import { Schools, AllSections, Teachers313, SpecialPopulations } from '@schema/enum/scm';
 
 // =====================================
 // SECTION CONFIG MODEL

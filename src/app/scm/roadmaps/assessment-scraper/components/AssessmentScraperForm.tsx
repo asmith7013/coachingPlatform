@@ -9,7 +9,7 @@ import {
   getScraperSectionOptions,
   getScraperConfigForSection,
   type Sections313Type
-} from '@/lib/schema/enum/313';
+} from '@/lib/schema/enum/scm';
 
 interface AssessmentScraperFormProps {
   onSubmit: (config: AssessmentScraperConfig) => void;

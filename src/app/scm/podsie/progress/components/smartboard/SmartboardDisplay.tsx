@@ -20,7 +20,7 @@ import {
   copyYoutubeLinksFromSection,
   getSectionOptions,
 } from "@/app/actions/scm/podsie/section-config";
-import { SCOPE_SEQUENCE_TAG_OPTIONS, type ScopeSequenceTagType } from "@schema/enum/313";
+import { SCOPE_SEQUENCE_TAG_OPTIONS, type ScopeSequenceTagType } from "@schema/enum/scm";
 import type { YoutubeLink } from "@zod-schema/scm/podsie/section-config";
 
 // Type guard to validate scopeSequenceTag

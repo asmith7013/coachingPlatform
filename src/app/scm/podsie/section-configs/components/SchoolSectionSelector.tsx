@@ -1,6 +1,6 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { Schools, AllSections } from "@schema/enum/313";
-import type { SchoolsType, AllSectionsType } from "@schema/enum/313";
+import { Schools, AllSections } from "@schema/enum/scm";
+import type { SchoolsType, AllSectionsType } from "@schema/enum/scm";
 
 interface SchoolSectionSelectorProps {
   selectedSchool: SchoolsType | "";

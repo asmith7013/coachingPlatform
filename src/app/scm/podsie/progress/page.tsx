@@ -61,18 +61,25 @@ export default function PodsieProgressPage() {
   const [selectedLessonSection, setSelectedLessonSectionState] = useState<string>("");
   const [loadedGroupId, setLoadedGroupId] = useState<string | null>(null);
 
+  // Data hooks
+  const { sections, sectionOptions, loading: loadingSections, error: sectionsError } = useSectionOptions();
+
   // Derived state
   const scopeSequenceTag = useMemo(() => {
     return selectedSection ? getScopeTagForSection(selectedSection) : "";
   }, [selectedSection]);
 
-  // Data hooks
-  const { sections, loading: loadingSections, error: sectionsError } = useSectionOptions();
+  // Get school for the selected section from sectionOptions
+  const selectedSchool = useMemo(() => {
+    if (!selectedSection) return undefined;
+    const option = sectionOptions.find(s => s.classSection === selectedSection);
+    return option?.school;
+  }, [selectedSection, sectionOptions]);
   const { units, sectionConfigAssignments, groupId, loading: loadingUnits, error: unitsError, setSectionConfigAssignments } = useUnitsAndConfig(scopeSequenceTag, selectedSection);
-  const { lessons, sectionOptions, loading: loadingLessons, error: lessonsError } = useLessons(scopeSequenceTag, selectedSection, selectedUnit, selectedLessonSection, sectionConfigAssignments);
+  const { lessons, sectionOptions: lessonSectionOptions, loading: loadingLessons, error: lessonsError } = useLessons(scopeSequenceTag, selectedSection, selectedUnit, selectedLessonSection, sectionConfigAssignments);
   // For pacing, we need ALL lessons in the unit (not filtered by selectedLessonSection)
   const { lessons: allLessonsInUnit } = useLessons(scopeSequenceTag, selectedSection, selectedUnit, 'all', sectionConfigAssignments);
-  const { progressData, loading: loadingProgress, error: progressError, setProgressData } = useProgressData(selectedSection, selectedUnit, lessons);
+  const { progressData, loading: loadingProgress, error: progressError, setProgressData } = useProgressData(selectedSection, selectedUnit, lessons, selectedSchool);
   const pacingData = usePacingData(selectedSection, selectedUnit, allLessonsInUnit, progressData, excludeRampUps, undefined, hideEmptySections);
 
   // Derived data
@@ -357,7 +364,7 @@ export default function PodsieProgressPage() {
             loadingUnits={loadingUnits}
             onUnitChange={handleUnitChange}
             selectedLessonSection={selectedLessonSection}
-            sectionOptions={sectionOptions}
+            sectionOptions={lessonSectionOptions}
             loadingLessons={loadingLessons}
             onLessonSectionChange={setSelectedLessonSection}
           />

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
-import { AllSectionsZod, SchoolsZod, Teachers313Zod, ScopeSequenceTagZod, SpecialPopulationsZod } from "@schema/enum/313";
+import { AllSectionsZod, SchoolsZod, Teachers313Zod, ScopeSequenceTagZod, SpecialPopulationsZod } from "@schema/enum/scm";
 import { LessonTypeZod, GradeZod } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 // =====================================

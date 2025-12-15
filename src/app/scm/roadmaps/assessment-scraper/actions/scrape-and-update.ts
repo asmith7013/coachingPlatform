@@ -4,7 +4,7 @@ import { scrapeAssessmentHistory } from './scrape-assessment-history';
 import { scrapeAssessmentHistoryBatch } from './scrape-assessment-history-batch';
 import { updateStudentData } from './update-student-data';
 import type { AssessmentScraperConfig } from '@/lib/schema/zod-schema/scm/assessment-scraper';
-import { SCRAPER_SECTION_CONFIGS } from '@/lib/schema/enum/313';
+import { SCRAPER_SECTION_CONFIGS } from '@/lib/schema/enum/scm';
 
 /**
  * Get current time in Eastern Time (ET) as ISO string

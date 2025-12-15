@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
-import { AllSectionsZod, Teachers313Zod, SchoolsZod } from "@schema/enum/313";
+import { AllSectionsZod, Teachers313Zod, SchoolsZod } from "@schema/enum/scm";
 
 // =====================================
 // STUDENT ACTIVITY SCHEMA

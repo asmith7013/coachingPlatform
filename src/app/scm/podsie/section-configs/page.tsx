@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import { useToast } from "@/components/core/feedback/Toast";
-import type { SchoolsType, AllSectionsType } from "@schema/enum/313";
+import type { SchoolsType, AllSectionsType } from "@schema/enum/scm";
 import {
   getSectionConfig,
   upsertSectionConfig,

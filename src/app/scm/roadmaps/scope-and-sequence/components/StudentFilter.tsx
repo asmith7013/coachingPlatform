@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { Student } from "@zod-schema/scm/student/student";
 import { fetchStudents } from "@actions/scm/student/students";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { SECTION_ROADMAP_CONFIG, Roadmaps313Type } from "@schema/enum/313";
+import { SECTION_ROADMAP_CONFIG, Roadmaps313Type } from "@schema/enum/scm";
 
 interface StudentFilterProps {
   onStudentSelect: (student: Student | null) => void;

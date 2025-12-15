@@ -23,6 +23,15 @@ export const SectionsPS19 = [
     "603"
 ] as const;
 
+export const SectionsX644 = [
+    "601",
+    "602",
+    "603",
+    "604",
+    "605",
+    "606"
+] as const;
+
 export const Teachers313 = [
     "CARDONA",
     "COMPRES",
@@ -57,7 +66,7 @@ export const SectionsPS19Zod = z.enum(SectionsPS19);
 export type SectionsPS19Type = z.infer<typeof SectionsPS19Zod>;
 
 // Combined sections for all schools
-export const AllSections = [...Sections313, ...SectionsPS19] as const;
+export const AllSections = [...Sections313, ...SectionsPS19, ...SectionsX644] as const;
 export const AllSectionsZod = z.enum(AllSections);
 export type AllSectionsType = z.infer<typeof AllSectionsZod>;
 

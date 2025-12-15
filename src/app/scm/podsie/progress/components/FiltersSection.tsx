@@ -59,7 +59,7 @@ export function FiltersSection({
             {sectionGroups.map((group) => (
               <optgroup key={group.school} label={group.school}>
                 {group.sections.map((section) => (
-                  <option key={section} value={section}>
+                  <option key={`${group.school}-${section}`} value={section}>
                     {section}
                   </option>
                 ))}

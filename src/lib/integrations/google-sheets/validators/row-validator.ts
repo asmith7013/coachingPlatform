@@ -12,7 +12,7 @@ import {
   ColumnAliases,
   ColumnMappingResult
 } from '../types/spreadsheet-types';
-import { Sections313Type } from '@/lib/schema/enum/313';
+import { Sections313Type } from '@/lib/schema/enum/scm';
 
 // =====================================
 // COLUMN MAPPING UTILITIES

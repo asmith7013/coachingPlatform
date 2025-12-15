@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
-import { AllSectionsZod } from "@schema/enum/313";
+import { AllSectionsZod } from "@schema/enum/scm";
 
 // =====================================
 // ATTENDANCE STATUS ENUM

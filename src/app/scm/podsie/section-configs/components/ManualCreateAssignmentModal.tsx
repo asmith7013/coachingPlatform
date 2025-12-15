@@ -7,7 +7,7 @@ import { useState, useMemo } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { addPodsieAssignment } from "@/app/actions/scm/podsie/section-config";
 import { createScopeAndSequence, fetchScopeAndSequence } from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
-import { Sections313, SectionsPS19 } from "@schema/enum/313";
+import { Sections313, SectionsPS19 } from "@schema/enum/scm";
 
 type PodsieAssignment = any; // Temporary - needs refactoring for new schema
 

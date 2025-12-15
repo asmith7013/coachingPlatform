@@ -1,4 +1,4 @@
-import { Sections313, SectionsPS19 } from "@schema/enum/313";
+import { Sections313, SectionsPS19, SectionsX644 } from "@schema/enum/scm";
 
 // Map section to scopeSequenceTag based on first digit
 // 802 = Algebra 1
@@ -47,6 +47,9 @@ export function getSchoolForSection(section: string): "IS313" | "PS19" | "X644" 
   }
   if (SectionsPS19.includes(section as typeof SectionsPS19[number])) {
     return "PS19";
+  }
+  if (SectionsX644.includes(section as typeof SectionsX644[number])) {
+    return "X644";
   }
   return "Unknown";
 }

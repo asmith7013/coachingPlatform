@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef } from "react";
 import { importZearnCompletions } from "@/app/actions/scm/roadmaps/zearn-completions";
-import { Sections313 } from "@/lib/schema/enum/313";
+import { Sections313 } from "@/lib/schema/enum/scm";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { Button } from "@/components/core/Button";
 import { Dialog as Modal } from "@/components/composed/dialogs/Dialog";

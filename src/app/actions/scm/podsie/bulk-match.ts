@@ -80,7 +80,7 @@ function getSectionGradeAndScope(classSection: string): { gradeLevel: string; sc
  * Determine assignment type based on module name and lesson type
  */
 function determineAssignmentType(
-  moduleName: string | undefined,
+  moduleName: string | null | undefined,
   lessonType?: string
 ): 'sidekick' | 'mastery-check' | 'assessment' {
   if (lessonType === 'assessment') {

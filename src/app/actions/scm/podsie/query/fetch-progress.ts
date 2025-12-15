@@ -16,7 +16,8 @@ export async function fetchRampUpProgress(
   section: string,
   unitCode: string,
   rampUpId?: string,
-  podsieAssignmentId?: string
+  podsieAssignmentId?: string,
+  school?: string
 ): Promise<{
   success: boolean;
   data: StudentRampUpProgressData[];
@@ -69,10 +70,14 @@ export async function fetchRampUpProgress(
     }
 
     const students = await withDbConnection(async () => {
-      const docs = await StudentModel.find({
+      const query: { section: string; active: boolean; school?: string } = {
         section,
         active: true,
-      })
+      };
+      if (school) {
+        query.school = school;
+      }
+      const docs = await StudentModel.find(query)
         .select("_id firstName lastName podsieProgress zearnLessons classActivities")
         .lean<StudentDoc[]>();
 

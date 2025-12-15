@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
-import { Schools, AllSections, Teachers313 } from '@schema/enum/313';
+import { Schools, AllSections, Teachers313 } from '@schema/enum/scm';
 
 // =====================================
 // STUDENT MODEL

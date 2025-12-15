@@ -25,7 +25,7 @@ export interface PodsieAssignmentInfo {
   assignmentId: number;
   assignmentName: string;
   groupName: string;
-  moduleName?: string;
+  moduleName?: string | null;
   totalQuestions: number;
   questionIds: number[];
   questions?: PodsieQuestionData[]; // Full question data for variant analysis

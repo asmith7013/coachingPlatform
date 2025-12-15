@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { SCOPE_SEQUENCE_TAG_OPTIONS } from "@schema/enum/313";
+import { SCOPE_SEQUENCE_TAG_OPTIONS } from "@schema/enum/scm";
 
 interface UnitData {
   unitNumber: number;

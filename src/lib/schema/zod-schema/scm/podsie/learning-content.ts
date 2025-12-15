@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
-import { ScopeSequenceTagZod } from "@schema/enum/313";
+import { ScopeSequenceTagZod } from "@schema/enum/scm";
 
 // =====================================
 // LEARNING CONTENT SCHEMA

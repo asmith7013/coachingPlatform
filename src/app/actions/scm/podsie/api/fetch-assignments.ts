@@ -18,7 +18,7 @@ const PodsieAssignedAssignmentsSchema = z.object({
     group_name: z.string(),
     assignment_name: z.string(),
     assignment_id: z.number(),
-    module_name: z.string().optional(),
+    module_name: z.string().nullish(),
     assignment_url: z.string().optional(),
     assignment_questions: z.array(z.object({
       questions: z.object({

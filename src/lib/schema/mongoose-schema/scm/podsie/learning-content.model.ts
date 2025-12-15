@@ -1,7 +1,7 @@
 // src/lib/schema/mongoose-schema/scm/podsie/learning-content.model.ts
 import mongoose from 'mongoose';
 import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
-import { SCOPE_SEQUENCE_TAG_OPTIONS } from '@schema/enum/313';
+import { SCOPE_SEQUENCE_TAG_OPTIONS } from '@schema/enum/scm';
 
 // =====================================
 // LEARNING CONTENT MODEL

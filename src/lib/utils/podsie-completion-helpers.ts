@@ -7,7 +7,7 @@ import { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-s
 import { PodsieCompletion, ScopeAndSequenceWithPodsie } from "@zod-schema/scm/podsie/podsie-completion";
 import { fetchScopeAndSequence } from "@actions/scm/scope-and-sequence/scope-and-sequence";
 import { fetchPodsieCompletionByQuery } from "@actions/scm/podsie/podsie-completion";
-import type { AllSectionsType } from "@schema/enum/313";
+import type { AllSectionsType } from "@schema/enum/scm";
 
 /**
  * Join a single scope-and-sequence lesson with its Podsie config for a specific section

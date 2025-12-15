@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { fetchRampUpProgress } from "@/app/actions/scm/podsie/podsie-sync";
 import { ProgressData, LessonConfig } from "../types";
 
@@ -19,7 +19,8 @@ export const progressKeys = {
 export function useProgressData(
   selectedSection: string,
   selectedUnit: number | null,
-  lessons: LessonConfig[]
+  lessons: LessonConfig[],
+  school?: string
 ) {
   const queryClient = useQueryClient();
 
@@ -32,12 +33,17 @@ export function useProgressData(
     selectedSection && selectedUnit !== null && lessons.length > 0
   );
 
-  const queryKey = progressKeys.byUnit(selectedSection, unitCode);
+  const queryKey = useMemo(() =>
+    school
+      ? [...progressKeys.byUnit(selectedSection, unitCode), school]
+      : progressKeys.byUnit(selectedSection, unitCode),
+    [selectedSection, unitCode, school]
+  );
 
   const { data, isLoading, error } = useQuery({
     queryKey,
     queryFn: async () => {
-      const result = await fetchRampUpProgress(selectedSection, unitCode);
+      const result = await fetchRampUpProgress(selectedSection, unitCode, undefined, undefined, school);
       if (result.success) {
         return result.data;
       }

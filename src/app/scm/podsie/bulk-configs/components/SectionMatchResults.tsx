@@ -163,9 +163,9 @@ export function SectionMatchResults({
               bgColor="bg-green-50"
             >
               <div className="space-y-2">
-                {newMatches.map((match) => (
+                {newMatches.map((match, idx) => (
                   <MatchRow
-                    key={match.podsieAssignment.assignmentId}
+                    key={`${match.podsieAssignment.assignmentId}-${match.podsieAssignment.groupName}-${idx}`}
                     match={match}
                     onSave={() => onSaveMatch(match)}
                     isSaving={savingMatchId === match.podsieAssignment.assignmentId}
@@ -187,9 +187,9 @@ export function SectionMatchResults({
               defaultCollapsed
             >
               <div className="space-y-2">
-                {existingMatches.map((match) => (
+                {existingMatches.map((match, idx) => (
                   <ExistingMatchRow
-                    key={match.podsieAssignment.assignmentId}
+                    key={`${match.podsieAssignment.assignmentId}-${match.podsieAssignment.groupName}-${idx}`}
                     match={match}
                     savedQuestionMaps={savedQuestionMaps}
                     onUpdateQuestionMap={onUpdateQuestionMap || (async () => {})}
@@ -211,8 +211,8 @@ export function SectionMatchResults({
               bgColor="bg-yellow-50"
             >
               <div className="space-y-2">
-                {result.conflicts.map((conflict) => (
-                  <ConflictRow key={conflict.podsieAssignment.assignmentId} conflict={conflict} />
+                {result.conflicts.map((conflict, idx) => (
+                  <ConflictRow key={`${conflict.podsieAssignment.assignmentId}-${conflict.podsieAssignment.groupName}-${idx}`} conflict={conflict} />
                 ))}
               </div>
             </CollapsibleSection>
@@ -229,9 +229,9 @@ export function SectionMatchResults({
               bgColor="bg-red-50"
             >
               <div className="space-y-2">
-                {result.unmatched.map((assignment) => (
+                {result.unmatched.map((assignment, idx) => (
                   <UnmatchedRow
-                    key={assignment.assignmentId}
+                    key={`${assignment.assignmentId}-${assignment.groupName}-${idx}`}
                     assignment={assignment}
                     availableLessons={result.availableLessons}
                     onManualMatch={onManualMatch}

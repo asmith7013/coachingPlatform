@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
-import { AllSectionsZod, SchoolsZod } from "@schema/enum/313";
+import { AllSectionsZod, SchoolsZod } from "@schema/enum/scm";
 
 // =====================================
 // PODSIE COMPLETION CONFIG SCHEMA

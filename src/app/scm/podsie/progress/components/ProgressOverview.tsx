@@ -48,15 +48,27 @@ export function ProgressOverview({
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-6">
       <div className="flex items-center gap-4 mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           Unit {selectedUnit}: {
-            // Handle special cases: "All", single letter sections, and specific sections
+            // Handle special cases: "All", single letter sections, and sections with subsections (e.g., "C:1")
             selectedLessonSection === 'all'
               ? 'All Lessons'
+              : selectedLessonSection.includes(':')
+              ? (() => {
+                  const [section] = selectedLessonSection.split(':');
+                  return section === 'Ramp Ups' || section === 'Unit Assessment'
+                    ? section
+                    : `Section ${section}`;
+                })()
               : selectedLessonSection.length === 1
               ? `Section ${selectedLessonSection}`
               : selectedLessonSection
           }
+          {selectedLessonSection.includes(':') && (
+            <span className="text-sm px-2 py-0.5 rounded bg-gray-200 text-gray-600 font-medium">
+              Part {selectedLessonSection.split(':')[1]}
+            </span>
+          )}
         </h2>
         <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
           {lessons.length} {lessons.length === 1 ? 'Assignment' : 'Assignments'}

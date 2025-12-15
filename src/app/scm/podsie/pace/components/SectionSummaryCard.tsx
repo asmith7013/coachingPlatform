@@ -72,7 +72,8 @@ export function SectionSummaryCard({
   const { progressData, loading: loadingProgress } = useProgressData(
     section,
     currentUnit,
-    allLessonsInUnit
+    allLessonsInUnit,
+    school
   );
 
   // Compute pacing data

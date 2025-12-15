@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
-import { Sections313Zod } from "@schema/enum/313";
+import { Sections313Zod } from "@schema/enum/scm";
 
 // =====================================
 // LESSON CODE DEFINITIONS  
