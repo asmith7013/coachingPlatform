@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -12,7 +12,8 @@ import {
   Title,
 } from "chart.js";
 import { Pie, Bar } from "react-chartjs-2";
-import type { TimesheetEntry } from "@/lib/schema/zod-schema/scm/timesheet/timesheet-entry";
+import { useTimesheetEntries } from "@/hooks/scm";
+import type { TimesheetEntry } from "@zod-schema/scm/timesheet/timesheet-entry";
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
@@ -71,10 +72,6 @@ function formatNumber(value: number, decimals: number = 1): string {
 }
 
 export default function TimesheetPage() {
-  const [entries, setEntries] = useState<TimesheetEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   // Date range filters - default to Sept 1 through today
   const [startDate, setStartDate] = useState(() => {
     const now = new Date();
@@ -86,33 +83,11 @@ export default function TimesheetPage() {
     return new Date().toISOString().split("T")[0];
   });
 
-  const fetchEntries = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const params = new URLSearchParams();
-      if (startDate) params.set("startDate", startDate);
-      if (endDate) params.set("endDate", endDate);
-
-      const response = await fetch(`/api/timesheet?${params.toString()}`);
-      const result = await response.json();
-
-      if (!result.success) {
-        throw new Error(result.error || "Failed to fetch entries");
-      }
-
-      setEntries(result.data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  }, [startDate, endDate]);
-
-  useEffect(() => {
-    fetchEntries();
-  }, [fetchEntries]);
+  // Fetch entries using React Query
+  const { data: entries = [], isLoading: loading, error, refetch } = useTimesheetEntries({
+    startDate,
+    endDate,
+  });
 
   // Group entries by date
   const groupedEntries: GroupedEntries = entries.reduce((acc, entry) => {
@@ -304,8 +279,8 @@ export default function TimesheetPage() {
               />
             </div>
             <button
-              onClick={fetchEntries}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              onClick={() => refetch()}
+              className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
             >
               Refresh
             </button>
@@ -452,7 +427,7 @@ export default function TimesheetPage() {
 
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <div className="text-red-700">{error}</div>
+            <div className="text-red-700">{error instanceof Error ? error.message : "An error occurred"}</div>
           </div>
         )}
 

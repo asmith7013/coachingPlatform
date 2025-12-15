@@ -1,49 +1,44 @@
 /**
  * SCM (School Coaching Manager) Shared Hooks
  *
- * Centralized re-exports of React Query hooks used across SCM pages.
+ * Centralized exports of React Query hooks used across SCM pages.
  * These hooks handle data fetching for:
  * - Section/class configuration
  * - Velocity and attendance tracking
  * - Roadmap units and skills
  * - Assessment and completion data
+ * - Scope and sequence management
  */
 
 // ============================================================
-// SECTION & CLASS HOOKS (shared across podsie and roadmaps)
+// PODSIE HOOKS (velocity, sections, days off)
 // ============================================================
 export {
   useSectionOptions,
   sectionOptionsKeys,
   type SectionsBySchool,
-} from "@/app/scm/podsie/velocity/hooks/useSectionOptions";
-
-// Note: useSections has been consolidated into useSectionOptions
-// Use useSectionOptions().sections for a simple string array of section names
+} from "./podsie/useSectionOptions";
 
 export {
   useDaysOff,
   daysOffKeys,
-} from "@/app/scm/podsie/velocity/hooks/useDaysOff";
+} from "./podsie/useDaysOff";
 
 export {
   useCurrentUnits,
   currentUnitsKeys,
-} from "@/app/scm/podsie/hooks/useCurrentUnits";
+} from "./podsie/useCurrentUnits";
 
-// ============================================================
-// VELOCITY HOOKS (podsie velocity tracking)
-// ============================================================
 export {
   useVelocityData,
   velocityKeys,
-} from "@/app/scm/podsie/velocity/hooks/useVelocityData";
+} from "./podsie/useVelocityData";
 
 export {
   useWeeklyVelocity,
   weeklyVelocityKeys,
   type SectionWeeklyData,
-} from "@/app/scm/podsie/weekly/hooks/useWeeklyVelocity";
+} from "./podsie/useWeeklyVelocity";
 
 // ============================================================
 // ROADMAP HOOKS (units, skills, completion data)
@@ -51,22 +46,23 @@ export {
 export {
   useRoadmapUnits,
   roadmapUnitsKeys,
-} from "@/app/scm/roadmaps/mastery-grid/hooks/useRoadmapUnits";
+} from "./roadmaps/useRoadmapUnits";
 
 export {
   useRoadmapData,
   roadmapDataKeys,
-} from "@/app/scm/roadmaps/progress/hooks/useRoadmapData";
+  type SectionRoadmapData,
+} from "./roadmaps/useRoadmapData";
 
 export {
   useAllSkills,
   allSkillsKeys,
-} from "@/app/scm/roadmaps/skills/hooks/useAllSkills";
+} from "./roadmaps/useAllSkills";
 
 export {
   useFilteredSkills,
   filteredSkillsKeys,
-} from "@/app/scm/roadmaps/skills/hooks/useFilteredSkills";
+} from "./roadmaps/useFilteredSkills";
 
 // ============================================================
 // ASSESSMENT & COMPLETION HOOKS (history page data)
@@ -75,19 +71,64 @@ export {
   useAssessmentData,
   assessmentDataKeys,
   type AssessmentRow,
-} from "@/app/scm/roadmaps/history/hooks/useAssessmentData";
+} from "./roadmaps/useAssessmentData";
 
 export {
   useZearnCompletions,
   zearnCompletionsKeys,
-} from "@/app/scm/roadmaps/history/hooks/useZearnCompletions";
+  type ZearnHistoryRow,
+} from "./roadmaps/useZearnCompletions";
 
 export {
   usePodsieCompletions,
   podsieCompletionsKeys,
-} from "@/app/scm/roadmaps/history/hooks/usePodsieCompletions";
+  type PodsieCompletionRow,
+} from "./roadmaps/usePodsieCompletions";
 
 export {
   useStudentsBySection,
   studentsBySectionKeys,
-} from "@/app/scm/roadmaps/history/hooks/useStudentsBySection";
+} from "./roadmaps/useStudentsBySection";
+
+// ============================================================
+// SCOPE & SEQUENCE HOOKS (curriculum planning)
+// ============================================================
+export {
+  useScopeSequenceList,
+  useScopeSequenceById,
+  useUnitsByScopeTag,
+  scopeSequenceKeys,
+} from "./scope-and-sequence/queries";
+
+export {
+  useCreateScopeSequence,
+  useUpdateScopeSequence,
+  useDeleteScopeSequence,
+} from "./scope-and-sequence/mutations";
+
+// ============================================================
+// UTILITIES (colors, etc.)
+// ============================================================
+export {
+  getSectionColors,
+  getSectionColor,
+  SCHOOL_COLOR_FAMILIES,
+  type School,
+} from "./utils/colors";
+
+export {
+  UNIT_COLORS,
+  getUnitColor,
+  getSectionShade,
+  getUnitSectionColor,
+  getSectionBadgeLabel,
+  type UnitColor,
+} from "./utils/unitColors";
+
+// ============================================================
+// TIMESHEET HOOKS
+// ============================================================
+export {
+  useTimesheetEntries,
+  timesheetKeys,
+} from "./timesheet";
