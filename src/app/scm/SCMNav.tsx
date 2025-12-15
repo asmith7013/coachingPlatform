@@ -117,6 +117,7 @@ export function SCMNav() {
       Icon: TruckIcon,
       items: [
         { href: "/scm/logistics/calendar", label: "Unit Calendar" },
+        { href: "/scm/logistics/scope-and-sequence", label: "Scope & Sequence" },
       ],
     }] : []),
     // Admin category - only shown for super_admin
@@ -144,6 +145,7 @@ export function SCMNav() {
           section: "Logistics",
           items: [
             { href: "/scm/logistics/calendar", label: "Unit Calendar", description: "Set unit schedule for each scope and sequence" },
+            { href: "/scm/logistics/scope-and-sequence", label: "Scope & Sequence", description: "Manage curriculum scope and sequence entries" },
           ],
         },
       ],

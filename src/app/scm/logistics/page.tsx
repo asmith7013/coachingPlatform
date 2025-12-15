@@ -5,6 +5,7 @@ import {
   ChevronRightIcon,
   TruckIcon,
   CalendarDaysIcon,
+  QueueListIcon,
 } from '@heroicons/react/24/outline';
 
 export default function LogisticsHomePage() {
@@ -14,6 +15,12 @@ export default function LogisticsHomePage() {
       href: "/scm/logistics/calendar",
       Icon: CalendarDaysIcon,
       description: "Manage unit schedules and pacing for each class section."
+    },
+    {
+      title: "Scope & Sequence",
+      href: "/scm/logistics/scope-and-sequence",
+      Icon: QueueListIcon,
+      description: "Manage curriculum scope and sequence entries."
     },
   ];
 
