@@ -34,6 +34,7 @@ jobs:
       - name: Run Podsie Sync
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PODSIE_API_TOKEN: ${{ secrets.PODSIE_API_TOKEN }}
         run: |
           echo "🚀 Starting Podsie progress sync..."
           npx tsx scripts/run-podsie-sync.ts
