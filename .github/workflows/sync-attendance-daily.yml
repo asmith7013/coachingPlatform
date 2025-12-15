@@ -35,6 +35,7 @@ jobs:
       - name: Run Attendance Sync
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PODSIE_API_TOKEN: ${{ secrets.PODSIE_API_TOKEN }}
         run: |
           echo "🚀 Starting attendance sync..."
           if [ -n "${{ github.event.inputs.start_date }}" ]; then
