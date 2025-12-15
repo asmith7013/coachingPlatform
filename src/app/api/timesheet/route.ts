@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { TimesheetEntryModel } from "@/lib/schema/mongoose-schema/313/timesheet/timesheet-entry.model";
 import { TimesheetBatchInputSchema } from "@/lib/schema/zod-schema/scm/timesheet/timesheet-entry";
+import { logError } from "@error/core/logging";
 
 // Simple API key for authentication (store in .env.local for production)
 const TIMESHEET_API_KEY = process.env.TIMESHEET_API_KEY || "timesheet-dev-key-2024";
@@ -68,11 +69,17 @@ export async function POST(request: NextRequest) {
     // Validate input
     const validationResult = TimesheetBatchInputSchema.safeParse(body);
     if (!validationResult.success) {
-      console.error("Validation error:", validationResult.error);
+      const fieldErrors = validationResult.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ');
+      logError(validationResult.error, {
+        component: "TimesheetAPI",
+        operation: "validateInput",
+        severity: "warning"
+      });
       return jsonResponse(
         {
           success: false,
-          error: "Invalid input data",
+          error: `Validation failed: ${fieldErrors}`,
+          code: "VALIDATION_ERROR",
           details: validationResult.error.issues,
         },
         400
@@ -83,8 +90,16 @@ export async function POST(request: NextRequest) {
 
     // Verify API key
     if (apiKey !== TIMESHEET_API_KEY) {
-      console.error("Invalid API key provided");
-      return jsonResponse({ success: false, error: "Invalid API key" }, 401);
+      logError(new Error("Invalid API key attempt"), {
+        component: "TimesheetAPI",
+        operation: "authenticate",
+        severity: "warning"
+      });
+      return jsonResponse({
+        success: false,
+        error: "Authentication failed: Invalid API key",
+        code: "AUTH_ERROR"
+      }, 401);
     }
 
     // Process and save entries
@@ -127,12 +142,17 @@ export async function POST(request: NextRequest) {
       201
     );
   } catch (error) {
-    console.error("Timesheet API Error:", error);
+    const errorMessage = logError(error, {
+      component: "TimesheetAPI",
+      operation: "saveEntries",
+      severity: "error"
+    });
 
     return jsonResponse(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: `Failed to save timesheet entries: ${errorMessage}`,
+        code: "DATABASE_ERROR",
       },
       500
     );
@@ -188,12 +208,17 @@ export async function GET(request: NextRequest) {
       count: entries.length,
     });
   } catch (error) {
-    console.error("Timesheet API GET Error:", error);
+    const errorMessage = logError(error, {
+      component: "TimesheetAPI",
+      operation: "fetchEntries",
+      severity: "error"
+    });
 
     return jsonResponse(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Internal server error",
+        error: `Failed to fetch timesheet entries: ${errorMessage}`,
+        code: "DATABASE_ERROR",
       },
       500
     );
