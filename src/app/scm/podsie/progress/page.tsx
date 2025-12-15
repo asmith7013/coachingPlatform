@@ -435,8 +435,8 @@ export default function PodsieProgressPage() {
               <div className="space-y-6">
                 {showingSections ? (
                   // When showing "All", group by section with headers
-                  groupedBySection.map(({ section, sectionDisplayName, assignments }) => (
-                    <div key={`section-${section}`} className="space-y-4">
+                  groupedBySection.map(({ section, subsection, sectionDisplayName, assignments }) => (
+                    <div key={`section-${section}${subsection !== undefined ? `:${subsection}` : ''}`} className="space-y-4">
                       {/* Section Header */}
                       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 px-4 py-2 rounded-r">
                         <h3 className="text-lg font-semibold text-blue-900">{sectionDisplayName}</h3>

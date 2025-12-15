@@ -114,8 +114,8 @@ export function ProgressOverview({
       {showingSections ? (
         // When showing "All", group by section
         <div className="space-y-6">
-          {groupedBySection.map(({ section, sectionDisplayName, assignments }) => (
-            <div key={`section-progress-${section}`}>
+          {groupedBySection.map(({ section, subsection, sectionDisplayName, assignments }) => (
+            <div key={`section-progress-${section}${subsection !== undefined ? `:${subsection}` : ''}`}>
               {/* Section Header */}
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 px-3 py-1 rounded-r mb-3">
                 <h4 className="text-sm font-semibold text-blue-900">{sectionDisplayName}</h4>
