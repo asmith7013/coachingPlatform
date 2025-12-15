@@ -1,7 +1,7 @@
 // src/app/api/timesheet/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { withDbConnection } from "@server/db/ensure-connection";
-import { TimesheetEntryModel } from "@/lib/schema/mongoose-schema/313/timesheet/timesheet-entry.model";
+import { TimesheetEntryModel } from "@/lib/schema/mongoose-schema/scm/timesheet/timesheet-entry.model";
 import { TimesheetBatchInputSchema } from "@/lib/schema/zod-schema/scm/timesheet/timesheet-entry";
 import { logError } from "@error/core/logging";
 

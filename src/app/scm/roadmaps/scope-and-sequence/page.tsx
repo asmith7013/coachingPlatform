@@ -1,17 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchLessonsListByScopeTag, fetchScopeAndSequenceById, fetchFullLessonsByUnit } from "@actions/scm/scope-and-sequence";
-import { fetchRoadmapsSkillsByNumbers } from "@actions/scm/roadmaps-skills";
-import { getRoadmapUnits } from "@/app/actions/scm/roadmaps-units";
+import { fetchLessonsListByScopeTag, fetchScopeAndSequenceById, fetchFullLessonsByUnit } from "@actions/scm/scope-and-sequence/scope-and-sequence";
+import { fetchRoadmapsSkillsByNumbers } from "@actions/scm/roadmaps/roadmaps-skills";
+import { getRoadmapUnits } from "@/app/actions/scm/roadmaps/roadmaps-units";
 import { LessonDetailView } from "./components/LessonDetailView";
 import { StudentFilter } from "./components/StudentFilter";
 import { SkillGanttChart } from "./components/SkillGanttChart";
 import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
-import { RoadmapsSkill } from "@zod-schema/scm/curriculum/roadmap-skill";
+import { RoadmapsSkill } from "@zod-schema/scm/roadmaps/roadmap-skill";
 import { Student } from "@zod-schema/scm/student/student";
-import { RoadmapUnit } from "@zod-schema/scm/curriculum/roadmap-unit";
-import { ScopeAndSequence } from "@zod-schema/scm/curriculum/scope-and-sequence";
+import { RoadmapUnit } from "@zod-schema/scm/roadmaps/roadmap-unit";
+import { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 import { Spinner } from "@/components/core/feedback/Spinner";
 
 // Lightweight lesson data for dropdown population

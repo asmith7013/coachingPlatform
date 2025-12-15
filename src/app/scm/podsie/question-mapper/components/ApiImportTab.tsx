@@ -10,7 +10,7 @@ import {
   generateQuestionMapFromResponses,
   saveQuestionMap,
   getQuestionMap,
-} from "@/app/actions/scm/podsie-question-map";
+} from "@/app/actions/scm/podsie/podsie-question-map";
 import { QuestionMapResults } from "./QuestionMapResults";
 import type { PodsieQuestionMap, ExistingMapping } from "./types";
 

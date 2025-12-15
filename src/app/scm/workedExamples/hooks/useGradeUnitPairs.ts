@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getGradeUnitPairsByTag } from "@/app/actions/scm/scope-and-sequence";
+import { getGradeUnitPairsByTag } from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
 
 export const gradeUnitPairsKeys = {
   all: ["grade-unit-pairs"] as const,

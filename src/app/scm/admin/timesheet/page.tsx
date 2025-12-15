@@ -13,7 +13,7 @@ import {
 } from "chart.js";
 import { Pie, Bar } from "react-chartjs-2";
 import { useTimesheetEntries } from "@/hooks/scm";
-import { deleteTimesheetEntry } from "@/app/actions/scm/timesheet";
+import { deleteTimesheetEntry } from "@/app/actions/scm/timesheet/timesheet";
 import type { TimesheetEntry } from "@zod-schema/scm/timesheet/timesheet-entry";
 import { TrashIcon } from "@heroicons/react/24/outline";
 

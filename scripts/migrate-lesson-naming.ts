@@ -11,7 +11,7 @@
  */
 
 import mongoose from 'mongoose';
-import { ScopeAndSequenceModel } from '../src/lib/schema/mongoose-schema/313/curriculum/scope-and-sequence.model';
+import { ScopeAndSequenceModel } from '../src/lib/schema/mongoose-schema/scm/scope-and-sequence/scope-and-sequence.model';
 
 // Extract lesson type and title from lessonName
 function extractLessonTypeAndTitle(lessonName: string, section?: string): {

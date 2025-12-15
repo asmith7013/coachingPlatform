@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchStudents } from "@/app/actions/scm/students";
+import { fetchStudents } from "@/app/actions/scm/student/students";
 import { Student } from "@zod-schema/scm/student/student";
 
 /**

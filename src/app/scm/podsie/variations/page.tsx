@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { listAssignmentVariations } from '@/app/actions/scm/assignment-variations';
+import { listAssignmentVariations } from '@/app/actions/scm/podsie/assignment-variations';
 import type { AssignmentVariation } from '@/lib/schema/zod-schema/scm/podsie/assignment-variation';
 import { Spinner } from '@/components/core/feedback/Spinner';
 

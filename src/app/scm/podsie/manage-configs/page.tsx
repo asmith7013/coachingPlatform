@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getSectionOptions, getAssignmentContent } from "@actions/scm/section-config";
+import { getSectionOptions, getAssignmentContent } from "@actions/scm/podsie/section-config";
 import { updateQuestionMapping } from "./actions";
 import type { AssignmentContent, PodsieQuestionMap } from "@zod-schema/scm/podsie/section-config";
 import { Spinner } from "@/components/core/feedback/Spinner";

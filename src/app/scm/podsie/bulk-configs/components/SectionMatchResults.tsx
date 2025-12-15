@@ -10,8 +10,8 @@ import {
 } from "@heroicons/react/24/solid";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { ExistingMatchRow } from "./ExistingMatchRow";
-import type { BulkMatchResult, AssignmentMatchResult, ConflictResult, AvailableLesson } from "@/app/actions/scm/podsie-sync";
-import type { PodsieAssignmentInfo } from "@/app/actions/scm/podsie-sync";
+import type { BulkMatchResult, AssignmentMatchResult, ConflictResult, AvailableLesson } from "@/app/actions/scm/podsie/podsie-sync";
+import type { PodsieAssignmentInfo } from "@/app/actions/scm/podsie/podsie-sync";
 
 interface SavedQuestionMap {
   assignmentId: string;

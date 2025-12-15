@@ -1,6 +1,6 @@
 import React from "react";
 import { UserIcon } from "@heroicons/react/24/outline";
-import type { DailyVelocityStats } from "@/app/actions/scm/velocity/velocity";
+import type { DailyVelocityStats } from "@/app/actions/scm/podsie/velocity/velocity";
 
 interface CalendarDayProps {
   date: Date;

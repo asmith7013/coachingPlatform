@@ -1,4 +1,4 @@
-import type { DailyVelocityStats, StudentDailyData } from "@/app/actions/scm/velocity/velocity";
+import type { DailyVelocityStats, StudentDailyData } from "@/app/actions/scm/podsie/velocity/velocity";
 
 interface SectionInfo {
   id: string;

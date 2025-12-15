@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchScopeAndSequence, updateLessonSkills, updateScopeAndSequence } from "@actions/scm/scope-and-sequence";
+import { fetchScopeAndSequence, updateLessonSkills, updateScopeAndSequence } from "@actions/scm/scope-and-sequence/scope-and-sequence";
 import { useRouter } from "next/navigation";
 
 interface ScopeAndSequenceEntry {

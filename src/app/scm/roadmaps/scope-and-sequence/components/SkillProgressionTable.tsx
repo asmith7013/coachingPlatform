@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/scm/roadmaps-skills";
-import { RoadmapsSkill } from "@zod-schema/scm/curriculum/roadmap-skill";
+import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/scm/roadmaps/roadmaps-skills";
+import { RoadmapsSkill } from "@zod-schema/scm/roadmaps/roadmap-skill";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
 

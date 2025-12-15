@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { importZearnCompletions } from "@/app/actions/scm/zearn-completions";
+import { importZearnCompletions } from "@/app/actions/scm/roadmaps/zearn-completions";
 
 export default function ZearnImportPage() {
   const [importData, setImportData] = useState("");

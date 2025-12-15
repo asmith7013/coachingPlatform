@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { bulkUpsertScopeAndSequence } from "@actions/scm/scope-and-sequence";
+import { bulkUpsertScopeAndSequence } from "@actions/scm/scope-and-sequence/scope-and-sequence";
 import { useRouter } from "next/navigation";
 import { BookOpenIcon } from "@heroicons/react/24/outline";
 

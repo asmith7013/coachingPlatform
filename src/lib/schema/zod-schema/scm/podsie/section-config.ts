@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 import { AllSectionsZod, SchoolsZod, Teachers313Zod, ScopeSequenceTagZod, SpecialPopulationsZod } from "@schema/enum/313";
-import { LessonTypeZod, GradeZod } from "@zod-schema/scm/curriculum/scope-and-sequence";
+import { LessonTypeZod, GradeZod } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 // =====================================
 // SECTION CONFIG SCHEMA
@@ -76,6 +76,7 @@ export const AssignmentContentSchema = z.object({
   lessonName: z.string().describe("Denormalized: Lesson name for display"),
   lessonType: LessonTypeZod.optional().describe("Denormalized: Lesson type (lesson, rampUp, or assessment)"),
   section: z.string().optional().describe("Denormalized: Section (A, B, C, D, E, F, Ramp Ups, Unit Assessment)"),
+  subsection: z.number().int().positive().optional().describe("Denormalized: Subsection number within the section"),
   grade: z.string().optional().describe("Denormalized: Grade level"),
 
   // =====================================

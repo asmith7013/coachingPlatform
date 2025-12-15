@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LessonCompletionModel, DailyClassEventModel } from "@/lib/schema/mongoose-schema/313/core";
+import { LessonCompletionModel, DailyClassEventModel } from "@/lib/schema/mongoose-schema/scm/core";
 import { 
   DailyClassEventInputZodSchema,
   ZearnCompletionInputZodSchema,

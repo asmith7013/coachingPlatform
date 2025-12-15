@@ -10,7 +10,7 @@ import { Spinner } from "@/components/core/feedback/Spinner";
 import {
   saveQuestionMap,
   getQuestionMap,
-} from "@/app/actions/scm/podsie-question-map";
+} from "@/app/actions/scm/podsie/podsie-question-map";
 import { QuestionMapResults } from "./QuestionMapResults";
 import { transformCurriculumToQuestionMap } from "./utils";
 import type { CurriculumData, PodsieQuestionMap, ExistingMapping } from "./types";

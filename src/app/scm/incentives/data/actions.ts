@@ -1,7 +1,7 @@
 "use server";
 
-import { StudentActivityModel } from "@mongoose-schema/313/student/student-activity.model";
-import { ScopeAndSequenceModel } from "@mongoose-schema/313/curriculum/scope-and-sequence.model";
+import { StudentActivityModel } from "@mongoose-schema/scm/student/student-activity.model";
+import { ScopeAndSequenceModel } from "@mongoose-schema/scm/scope-and-sequence/scope-and-sequence.model";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 

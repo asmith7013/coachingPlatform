@@ -1,6 +1,6 @@
 "use client";
 
-import { RoadmapsSkill } from "@zod-schema/scm/curriculum/roadmap-skill";
+import { RoadmapsSkill } from "@zod-schema/scm/roadmaps/roadmap-skill";
 import { SkillSelectionForm } from "./SkillSelectionForm";
 import { ImageUpload } from "./ImageUpload";
 import { Spinner } from "@/components/core/feedback/Spinner";

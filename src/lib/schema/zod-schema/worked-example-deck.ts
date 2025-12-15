@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { GradeZod } from '@zod-schema/scm/curriculum/scope-and-sequence';
+import { GradeZod } from '@zod-schema/scm/scope-and-sequence/scope-and-sequence';
 
 // HTML Slide script schema
 const HtmlSlideScriptSchema = z.object({

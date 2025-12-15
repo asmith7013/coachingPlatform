@@ -12,7 +12,7 @@ import { SmallGroupPicker, parseSmallGroupData } from "./components/SmallGroupPi
 import { CustomDetailInput } from "./components/CustomDetailInput";
 import { useFormFilters, useFormDraft, useDebouncedSave } from "./hooks/useFormState";
 import { useRoadmapUnits, useSectionOptions } from "@/hooks/scm";
-import type { RoadmapUnit as Unit } from "@zod-schema/scm/curriculum/roadmap-unit";
+import type { RoadmapUnit as Unit } from "@zod-schema/scm/roadmaps/roadmap-unit";
 import type { SectionOption } from "@/components/composed/section-visualization";
 import { useStudentsForSection, useActivityTypes } from "../hooks";
 import {

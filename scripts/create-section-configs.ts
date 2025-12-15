@@ -10,7 +10,7 @@
  */
 
 import mongoose from 'mongoose';
-import { SectionConfigModel } from '@mongoose-schema/313/podsie/section-config.model';
+import { SectionConfigModel } from '@mongoose-schema/scm/podsie/section-config.model';
 
 // Section metadata based on enum definitions and section-roadmap config
 const SECTION_METADATA: Array<{

@@ -12,7 +12,7 @@ import { authenticateRoadmaps } from '../lib/roadmaps-auth';
 import { extractSkillData } from '../lib/skill-extractor';
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
-import { updateRoadmapsSkillContent } from "@actions/scm/roadmaps-skills";
+import { updateRoadmapsSkillContent } from "@actions/scm/roadmaps/roadmaps-skills";
 
 /**
  * Server action to scrape Teach to One Roadmaps skills from provided URLs

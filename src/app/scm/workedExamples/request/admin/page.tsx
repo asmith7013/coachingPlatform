@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getWorkedExampleRequests, updateWorkedExampleRequestStatus } from "@actions/scm/worked-example-requests";
+import { getWorkedExampleRequests, updateWorkedExampleRequestStatus } from "@actions/scm/podsie/worked-example-requests";
 import { WorkedExampleRequest, WorkedExampleRequestStatus } from "@zod-schema/scm/podsie/worked-example-request";
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback/Spinner";

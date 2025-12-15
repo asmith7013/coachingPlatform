@@ -1835,16 +1835,6 @@
 │   │   │   │   └── snorkl-links.ts
 │   │   │   ├── index.ts
 │   │   │   ├── mongoose-schema
-│   │   │   │   ├── 313
-│   │   │   │   │   ├── config
-│   │   │   │   │   ├── core.ts
-│   │   │   │   │   ├── curriculum
-│   │   │   │   │   ├── incentives
-│   │   │   │   │   ├── podsie
-│   │   │   │   │   ├── storage.ts
-│   │   │   │   │   ├── student
-│   │   │   │   │   ├── timesheet
-│   │   │   │   │   └── zearn-import.model.ts
 │   │   │   │   ├── PageView.ts
 │   │   │   │   ├── Session.ts
 │   │   │   │   ├── calendar
@@ -1874,6 +1864,16 @@
 │   │   │   │   │   ├── schedule-documents.model.ts
 │   │   │   │   │   ├── schedule-events.model.ts
 │   │   │   │   │   └── schedule.model.ts
+│   │   │   │   ├── scm
+│   │   │   │   │   ├── config
+│   │   │   │   │   ├── core.ts
+│   │   │   │   │   ├── curriculum
+│   │   │   │   │   ├── incentives
+│   │   │   │   │   ├── podsie
+│   │   │   │   │   ├── storage.ts
+│   │   │   │   │   ├── student
+│   │   │   │   │   ├── timesheet
+│   │   │   │   │   └── zearn-import.model.ts
 │   │   │   │   ├── shared
 │   │   │   │   │   └── notes.model.ts
 │   │   │   │   ├── shared-options.ts

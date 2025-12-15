@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   fetchTimesheetEntries,
   type FetchTimesheetEntriesParams,
-} from "@actions/scm/timesheet";
+} from "@actions/scm/timesheet/timesheet";
 
 export const timesheetKeys = {
   all: ["timesheet"] as const,

@@ -2,13 +2,14 @@
  * Shared utility for grouping lessons with their matching mastery checks
  */
 
-import { SECTION_OPTIONS } from "@zod-schema/scm/curriculum/scope-and-sequence";
+import { SECTION_OPTIONS, getSectionDisplayName } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 interface Assignment {
   podsieAssignmentId: string;
   unitLessonId: string;
   activityType?: 'sidekick' | 'mastery-check' | 'assessment';
   section?: string;
+  subsection?: number;
 }
 
 export interface GroupedAssignment<T extends Assignment> {
@@ -18,6 +19,7 @@ export interface GroupedAssignment<T extends Assignment> {
 
 export interface GroupedBySection<T extends Assignment> {
   section: string;
+  subsection?: number;
   sectionDisplayName: string;
   assignments: GroupedAssignment<T>[];
 }
@@ -89,8 +91,8 @@ export function groupAssignmentsByUnitLesson<T extends Assignment>(
 }
 
 /**
- * Groups assignments by section, then by lesson with mastery checks.
- * Sorts sections according to SECTION_OPTIONS order.
+ * Groups assignments by section (and subsection), then by lesson with mastery checks.
+ * Sorts sections according to SECTION_OPTIONS order, then by subsection number.
  *
  * @param assignments - Array of assignments to group
  * @returns Array of sections with their grouped assignments
@@ -101,48 +103,64 @@ export function groupAssignmentsBySection<T extends Assignment>(
   // First group by unitLessonId
   const groupedAssignments = groupAssignmentsByUnitLesson(assignments);
 
-  // Then organize by section
-  const sectionMap = new Map<string, GroupedAssignment<T>[]>();
+  // Then organize by section + subsection
+  // Key format: "section" or "section:subsection" (e.g., "A" or "A:1")
+  const sectionSubsectionMap = new Map<string, GroupedAssignment<T>[]>();
 
   groupedAssignments.forEach(group => {
     const section = group.lesson.section || 'Unknown';
-    if (!sectionMap.has(section)) {
-      sectionMap.set(section, []);
+    const subsection = group.lesson.subsection;
+    // Create composite key: "A" or "A:1" or "A:2"
+    const key = subsection !== undefined ? `${section}:${subsection}` : section;
+
+    if (!sectionSubsectionMap.has(key)) {
+      sectionSubsectionMap.set(key, []);
     }
-    sectionMap.get(section)!.push(group);
+    sectionSubsectionMap.get(key)!.push(group);
   });
 
-  // Convert to array and sort by section order
-  const sections = Array.from(sectionMap.entries()).map(([section, assignments]) => {
-    // Helper function to get display name
-    const getSectionDisplayName = (sectionName: string) => {
-      if (sectionName === 'Ramp Ups' || sectionName === 'Unit Assessment') {
-        return sectionName;
-      }
-      return `Section ${sectionName}`;
-    };
+  // Convert to array
+  const sections = Array.from(sectionSubsectionMap.entries()).map(([key, assignments]) => {
+    // Parse the composite key
+    const colonIndex = key.indexOf(':');
+    let section: string;
+    let subsection: number | undefined;
+
+    if (colonIndex !== -1) {
+      section = key.substring(0, colonIndex);
+      subsection = parseInt(key.substring(colonIndex + 1), 10);
+    } else {
+      section = key;
+      subsection = undefined;
+    }
 
     return {
       section,
-      sectionDisplayName: getSectionDisplayName(section),
+      subsection,
+      sectionDisplayName: getSectionDisplayName(section, subsection),
       assignments,
     };
   });
 
-  // Sort by SECTION_OPTIONS order
+  // Sort by SECTION_OPTIONS order, then by subsection
   sections.sort((a, b) => {
     const indexA = SECTION_OPTIONS.indexOf(a.section as typeof SECTION_OPTIONS[number]);
     const indexB = SECTION_OPTIONS.indexOf(b.section as typeof SECTION_OPTIONS[number]);
 
-    // If both are in the order array, sort by their position
-    if (indexA !== -1 && indexB !== -1) {
-      return indexA - indexB;
+    // First, sort by section order
+    if (indexA !== indexB) {
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+      }
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      return a.section.localeCompare(b.section);
     }
-    // If only one is in the order array, it comes first
-    if (indexA !== -1) return -1;
-    if (indexB !== -1) return 1;
-    // If neither is in the order array, maintain alphabetical order
-    return a.section.localeCompare(b.section);
+
+    // Same section, sort by subsection (undefined first, then 1, 2, 3...)
+    const subA = a.subsection ?? 0;
+    const subB = b.subsection ?? 0;
+    return subA - subB;
   });
 
   return sections;

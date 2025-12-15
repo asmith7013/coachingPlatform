@@ -35,7 +35,7 @@ Added:
 - `lessonType` field (optional)
 - `lessonTitle` field (optional)
 
-### Mongoose Schema (`src/lib/schema/mongoose-schema/313/scope-and-sequence.model.ts`)
+### Mongoose Schema (`src/lib/schema/mongoose-schema/scm/scope-and-sequence.model.ts`)
 
 Added:
 - `lessonType`: String enum with index
@@ -249,6 +249,6 @@ Files that display lesson names and should use the helper functions:
 ## References
 
 - Zod Schema: [src/lib/schema/zod-schema/scm/scope-and-sequence.ts](src/lib/schema/zod-schema/scm/scope-and-sequence.ts)
-- Mongoose Model: [src/lib/schema/mongoose-schema/313/scope-and-sequence.model.ts](src/lib/schema/mongoose-schema/313/scope-and-sequence.model.ts)
+- Mongoose Model: [src/lib/schema/mongoose-schema/scm/scope-and-sequence.model.ts](src/lib/schema/mongoose-schema/scm/scope-and-sequence.model.ts)
 - Display Helpers: [src/lib/utils/lesson-display.ts](src/lib/utils/lesson-display.ts)
 - Migration Script: [scripts/migrate-lesson-naming.ts](scripts/migrate-lesson-naming.ts)

@@ -7,18 +7,18 @@ const path = require('path');
 
 const fixes = [
   // Student model paths (no subfolder in path, but now in student/ subfolder)
-  ['@/lib/schema/mongoose-schema/313/student.model', '@/lib/schema/mongoose-schema/313/student/student.model'],
-  ['@mongoose-schema/313/student.model', '@mongoose-schema/313/student/student.model'],
-  ['../src/lib/schema/mongoose-schema/313/student.model', '../src/lib/schema/mongoose-schema/313/student/student.model'],
+  ['@/lib/schema/mongoose-schema/scm/student.model', '@/lib/schema/mongoose-schema/scm/student/student.model'],
+  ['@mongoose-schema/scm/student.model', '@mongoose-schema/scm/student/student.model'],
+  ['../src/lib/schema/mongoose-schema/scm/student.model', '../src/lib/schema/mongoose-schema/scm/student/student.model'],
 
   // Section config model
-  ['@mongoose-schema/313/section-config.model', '@mongoose-schema/313/podsie/section-config.model'],
+  ['@mongoose-schema/scm/section-config.model', '@mongoose-schema/scm/podsie/section-config.model'],
 
   // Roadmaps student data model
-  ['@/lib/schema/mongoose-schema/313/roadmaps-student-data.model', '@/lib/schema/mongoose-schema/313/student/roadmaps-student-data.model'],
+  ['@/lib/schema/mongoose-schema/scm/roadmaps-student-data.model', '@/lib/schema/mongoose-schema/scm/student/roadmaps-student-data.model'],
 
   // Scope and sequence model
-  ['../src/lib/schema/mongoose-schema/313/scope-and-sequence.model', '../src/lib/schema/mongoose-schema/313/curriculum/scope-and-sequence.model'],
+  ['../src/lib/schema/mongoose-schema/scm/scope-and-sequence.model', '../src/lib/schema/mongoose-schema/scm/curriculum/scope-and-sequence.model'],
 
   // Student data zod schema
   ['@/lib/schema/zod-schema/scm/student-data', '@/lib/schema/zod-schema/scm/student/student-data'],

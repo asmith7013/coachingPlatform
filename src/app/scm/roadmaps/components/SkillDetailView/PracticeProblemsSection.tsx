@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon, PlusIcon, CheckIcon } from "@heroicons/react/24/outline";
-import { PracticeProblem } from "@zod-schema/scm/curriculum/roadmap-skill";
+import { PracticeProblem } from "@zod-schema/scm/roadmaps/roadmap-skill";
 
 export type SkillType = 'target' | 'essential' | 'helpful';
 

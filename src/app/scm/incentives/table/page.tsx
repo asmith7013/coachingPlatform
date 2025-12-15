@@ -9,7 +9,7 @@ import {
   StudentActivityRecord,
 } from "../data/actions";
 import { useRoadmapUnits } from "@/hooks/scm";
-import type { RoadmapUnit as Unit } from "@zod-schema/scm/curriculum/roadmap-unit";
+import type { RoadmapUnit as Unit } from "@zod-schema/scm/roadmaps/roadmap-unit";
 import { useActivityTypes, useActivityData } from "../hooks";
 import { Spinner } from "@/components/core/feedback/Spinner";
 

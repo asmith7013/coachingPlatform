@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import type { ScopeAndSequence } from "@zod-schema/scm/curriculum/scope-and-sequence";
+import type { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;

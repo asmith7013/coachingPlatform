@@ -1,7 +1,7 @@
 import { ScopeSequenceProgress, StudentData, StudentDataZodSchema, StudentZearnProgress } from '@zod-schema/scm/student/student-data';
 import { fetchSheetData } from '../client';
 import { handleServerError } from '@/lib/error/handlers/server';
-import { StudentModel } from '@mongoose-schema/313/student/student.model';
+import { StudentModel } from '@mongoose-schema/scm/student/student.model';
 import { 
   calculateProgress, 
   getGradeFromLesson, 

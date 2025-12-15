@@ -6,8 +6,9 @@ import {
   getDaysOff,
   getSectionDaysOff,
 } from "@/app/actions/calendar/school-calendar";
-import { fetchScopeAndSequenceByGrade } from "@/app/actions/scm/scope-and-sequence";
-import { getAllSectionConfigs } from "@/app/actions/scm/section-overview";
+import { fetchScopeAndSequenceByGrade } from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
+import { getAllSectionConfigs } from "@/app/actions/scm/podsie/section-overview";
+import { getAssignmentContent } from "@/app/actions/scm/podsie/section-config";
 import {
   fetchUnitSchedules,
   fetchSectionUnitSchedules,
@@ -97,6 +98,10 @@ export const calendarKeys = {
   // Section configs
   sectionConfigs: () =>
     [...calendarKeys.all, "section-configs"] as const,
+
+  // Assignment content (for subsection data)
+  assignmentContent: (school: string, classSection: string) =>
+    [...calendarKeys.all, "assignment-content", school, classSection] as const,
 };
 
 // =====================================
@@ -264,6 +269,40 @@ export function useSectionDaysOffQuery(
         throw new Error(result.error || "Failed to fetch section days off");
       }
       return (result.data ?? []) as SectionDayOffEvent[];
+    },
+    staleTime: 30 * 1000,
+    enabled: !!school && !!classSection,
+  });
+}
+
+// Type for assignment content (subsection data)
+export interface AssignmentContentItem {
+  scopeAndSequenceId?: string;
+  unitLessonId: string;
+  lessonName: string;
+  section?: string;
+  subsection?: number;
+  grade?: string;
+}
+
+/**
+ * Fetch assignment content for a section (to get subsection data)
+ */
+export function useAssignmentContentQuery(
+  school: string | undefined,
+  classSection: string | undefined
+) {
+  return useQuery({
+    queryKey: calendarKeys.assignmentContent(school ?? "", classSection ?? ""),
+    queryFn: async () => {
+      if (!school || !classSection) {
+        return [];
+      }
+      const result = await getAssignmentContent(school, classSection);
+      if (!result.success) {
+        throw new Error(result.error || "Failed to fetch assignment content");
+      }
+      return (result.data ?? []) as AssignmentContentItem[];
     },
     staleTime: 30 * 1000,
     enabled: !!school && !!classSection,

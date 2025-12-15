@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { RoadmapsSkill } from "@zod-schema/scm/curriculum/roadmap-skill";
+import { RoadmapsSkill } from "@zod-schema/scm/roadmaps/roadmap-skill";
 import { Student } from "@zod-schema/scm/student/student";
-import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/scm/roadmaps-skills";
-import { fetchStudentsBySection } from "@/app/actions/scm/students";
+import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/scm/roadmaps/roadmaps-skills";
+import { fetchStudentsBySection } from "@/app/actions/scm/student/students";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
 import { Legend, LegendItem, LegendGroup } from "@/components/core/feedback/Legend";

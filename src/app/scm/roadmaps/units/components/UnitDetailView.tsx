@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { RoadmapUnit } from "@zod-schema/scm/curriculum/roadmap-unit";
+import { RoadmapUnit } from "@zod-schema/scm/roadmaps/roadmap-unit";
 import { Student } from "@zod-schema/scm/student/student";
 import { SkillListWithProgress } from "../../components/SkillListWithProgress";
-import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/scm/roadmaps-skills";
+import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/scm/roadmaps/roadmaps-skills";
 import { BookOpenIcon } from "@heroicons/react/24/outline";
 
 interface UnitDetailViewProps {

@@ -7,7 +7,7 @@ import { AllUnitsGridView } from "../units/components/AllUnitsGridView";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { AcademicCapIcon, BookOpenIcon } from "@heroicons/react/24/outline";
 import { useRoadmapUnits, useSectionOptions } from "@/hooks/scm";
-import type { RoadmapUnit as Unit } from "@zod-schema/scm/curriculum/roadmap-unit";
+import type { RoadmapUnit as Unit } from "@zod-schema/scm/roadmaps/roadmap-unit";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },

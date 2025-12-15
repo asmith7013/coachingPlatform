@@ -47,7 +47,10 @@
       "Bash(done)",
       "Bash(curl:*)",
       "Bash(grep:*)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(mv:*)",
+      "Bash(xargs sed:*)",
+      "Bash({} ;)"
     ],
     "deny": [],
     "ask": []

@@ -2,7 +2,7 @@
 
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
-import { LessonCompletionModel, DailyClassEventModel } from "@mongoose-schema/313/core";
+import { LessonCompletionModel, DailyClassEventModel } from "@mongoose-schema/scm/core";
 import { QueryParams, DEFAULT_QUERY_PARAMS } from "@core-types/query";
 import { fetchPaginatedResource } from "@data-processing/pagination/unified-pagination";
 import { LessonCompletionZodSchema, DailyClassEventZodSchema, LessonCompletion, DailyClassEvent } from "@zod-schema/scm/core";

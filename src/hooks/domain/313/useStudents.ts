@@ -7,7 +7,7 @@ import {
   createStudent, 
   updateStudent, 
   deleteStudent
-} from '@actions/scm/students';
+} from '@actions/scm/student/students';
 import { useInvalidation } from '@query/cache/invalidation';
 import { useCallback } from 'react';
 import { useNotifications } from '@/hooks/ui/useNotifications';

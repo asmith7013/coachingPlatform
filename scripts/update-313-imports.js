@@ -19,7 +19,7 @@
  * - @zod-schema/scm/activity-type-config -> @zod-schema/scm/incentives/activity-type-config
  *
  * Mongoose schema mapping (same pattern with @mongoose-schema prefix and .model suffix):
- * - @mongoose-schema/313/student -> @mongoose-schema/313/student/student.model
+ * - @mongoose-schema/scm/student -> @mongoose-schema/scm/student/student.model
  * - etc.
  */
 
@@ -54,25 +54,25 @@ const zodMappings = [
 
 const mongooseMappings = [
   // Student models
-  ['@mongoose-schema/313/student-activity.model', '@mongoose-schema/313/student/student-activity.model'],
-  ['@mongoose-schema/313/student-performance.model', '@mongoose-schema/313/student/student-performance.model'],
-  ['@mongoose-schema/313/roadmaps-student-data.model', '@mongoose-schema/313/student/roadmaps-student-data.model'],
-  ['@mongoose-schema/313/student.model', '@mongoose-schema/313/student/student.model'],
+  ['@mongoose-schema/scm/student-activity.model', '@mongoose-schema/scm/student/student-activity.model'],
+  ['@mongoose-schema/scm/student-performance.model', '@mongoose-schema/scm/student/student-performance.model'],
+  ['@mongoose-schema/scm/roadmaps-student-data.model', '@mongoose-schema/scm/student/roadmaps-student-data.model'],
+  ['@mongoose-schema/scm/student.model', '@mongoose-schema/scm/student/student.model'],
 
   // Curriculum models
-  ['@mongoose-schema/313/roadmap-skill.model', '@mongoose-schema/313/curriculum/roadmap-skill.model'],
-  ['@mongoose-schema/313/roadmap-unit.model', '@mongoose-schema/313/curriculum/roadmap-unit.model'],
-  ['@mongoose-schema/313/roadmap.model', '@mongoose-schema/313/curriculum/roadmap.model'],
-  ['@mongoose-schema/313/scope-and-sequence.model', '@mongoose-schema/313/curriculum/scope-and-sequence.model'],
+  ['@mongoose-schema/scm/roadmap-skill.model', '@mongoose-schema/scm/curriculum/roadmap-skill.model'],
+  ['@mongoose-schema/scm/roadmap-unit.model', '@mongoose-schema/scm/curriculum/roadmap-unit.model'],
+  ['@mongoose-schema/scm/roadmap.model', '@mongoose-schema/scm/curriculum/roadmap.model'],
+  ['@mongoose-schema/scm/scope-and-sequence.model', '@mongoose-schema/scm/curriculum/scope-and-sequence.model'],
 
   // Podsie models
-  ['@mongoose-schema/313/podsie-completion.model', '@mongoose-schema/313/podsie/podsie-completion.model'],
-  ['@mongoose-schema/313/podsie-question-map.model', '@mongoose-schema/313/podsie/podsie-question-map.model'],
-  ['@mongoose-schema/313/ramp-up-progress.model', '@mongoose-schema/313/podsie/ramp-up-progress.model'],
-  ['@mongoose-schema/313/section-config.model', '@mongoose-schema/313/podsie/section-config.model'],
+  ['@mongoose-schema/scm/podsie-completion.model', '@mongoose-schema/scm/podsie/podsie-completion.model'],
+  ['@mongoose-schema/scm/podsie-question-map.model', '@mongoose-schema/scm/podsie/podsie-question-map.model'],
+  ['@mongoose-schema/scm/ramp-up-progress.model', '@mongoose-schema/scm/podsie/ramp-up-progress.model'],
+  ['@mongoose-schema/scm/section-config.model', '@mongoose-schema/scm/podsie/section-config.model'],
 
   // Incentives models
-  ['@mongoose-schema/313/activity-type-config.model', '@mongoose-schema/313/incentives/activity-type-config.model'],
+  ['@mongoose-schema/scm/activity-type-config.model', '@mongoose-schema/scm/incentives/activity-type-config.model'],
 ];
 
 function updateImports(filePath, mappings) {

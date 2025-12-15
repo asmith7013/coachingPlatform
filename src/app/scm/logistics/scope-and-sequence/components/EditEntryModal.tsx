@@ -11,7 +11,7 @@ import {
   type ScopeAndSequenceInput,
   type Standard,
   type StandardContext,
-} from "@zod-schema/scm/curriculum/scope-and-sequence";
+} from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 interface EditEntryModalProps {
   isOpen: boolean;

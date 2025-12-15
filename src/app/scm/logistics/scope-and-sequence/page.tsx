@@ -27,7 +27,7 @@ import {
   SCOPE_SEQUENCE_TAG_OPTIONS,
   type ScopeAndSequence,
   type ScopeAndSequenceInput,
-} from "@zod-schema/scm/curriculum/scope-and-sequence";
+} from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 import {
   useScopeSequenceList,
   useCreateScopeSequence,

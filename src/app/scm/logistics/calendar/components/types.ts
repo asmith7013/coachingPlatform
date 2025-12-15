@@ -8,12 +8,21 @@ export {
   type UnitColor,
 } from "@/hooks/scm";
 
+export interface LessonForSubsection {
+  scopeAndSequenceId: string;
+  unitLessonId: string;
+  lessonName: string;
+  lessonNumber: number;
+  subsection?: number;
+}
+
 export interface SectionSchedule {
   sectionId: string;
   name: string;
   startDate: string;
   endDate: string;
   lessonCount: number;
+  lessons?: LessonForSubsection[];
 }
 
 export interface UnitScheduleLocal {
@@ -48,3 +57,13 @@ export type SelectionMode = {
   unitKey: string;
   sectionId: string;
 } | null;
+
+// Subsections modal state
+export interface SubsectionsModalState {
+  isOpen: boolean;
+  unitKey: string;
+  sectionId: string;
+  sectionName: string;
+  lessons: LessonForSubsection[];
+  grade: string;
+}

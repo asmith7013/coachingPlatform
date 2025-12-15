@@ -1,6 +1,6 @@
 import { useQueries } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { getRoadmapCompletionsBySection, type SectionRoadmapData } from "@/app/actions/scm/roadmap-completions";
+import { getRoadmapCompletionsBySection, type SectionRoadmapData } from "@/app/actions/scm/roadmaps/roadmap-completions";
 
 export type { SectionRoadmapData };
 

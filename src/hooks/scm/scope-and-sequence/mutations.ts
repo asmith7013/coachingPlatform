@@ -3,9 +3,9 @@ import {
   createScopeAndSequence,
   updateScopeAndSequence,
   deleteScopeAndSequence,
-} from "@actions/scm/scope-and-sequence";
+} from "@actions/scm/scope-and-sequence/scope-and-sequence";
 import { scopeSequenceKeys } from "./queries";
-import type { ScopeAndSequenceInput } from "@zod-schema/scm/curriculum/scope-and-sequence";
+import type { ScopeAndSequenceInput } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 export function useCreateScopeSequence() {
   const queryClient = useQueryClient();

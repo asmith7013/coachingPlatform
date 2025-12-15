@@ -11,7 +11,7 @@ import { getSchoolForSection } from "../../utils/sectionHelpers";
 import { formatLessonDisplay } from "@/lib/utils/lesson-display";
 import type { LessonType } from "@/lib/utils/lesson-display";
 import { calculateTodayProgress, calculateTodayCompletionRate } from "@/lib/utils/completion-date-helpers";
-import { getLearningContent, saveLearningContent } from "@/app/actions/scm/learning-content";
+import { getLearningContent, saveLearningContent } from "@/app/actions/scm/podsie/learning-content";
 import {
   getYoutubeLinks,
   addYoutubeLink,
@@ -19,7 +19,7 @@ import {
   setActiveYoutubeUrl,
   copyYoutubeLinksFromSection,
   getSectionOptions,
-} from "@/app/actions/scm/section-config";
+} from "@/app/actions/scm/podsie/section-config";
 import { SCOPE_SEQUENCE_TAG_OPTIONS, type ScopeSequenceTagType } from "@schema/enum/313";
 import type { YoutubeLink } from "@zod-schema/scm/podsie/section-config";
 

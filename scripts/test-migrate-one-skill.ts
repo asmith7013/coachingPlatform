@@ -11,8 +11,8 @@ config({ path: resolve(__dirname, '../.env.local') });
 config({ path: resolve(__dirname, '../.env') });
 
 import { connectToDatabase } from '../src/lib/server/db/ensure-connection';
-import { RoadmapsSkillModel } from '../src/lib/schema/mongoose-schema/313/roadmap-skill.model';
-import { RoadmapUnitModel } from '../src/lib/schema/mongoose-schema/313/roadmap-unit.model';
+import { RoadmapsSkillModel } from '../src/lib/schema/mongoose-schema/scm/roadmap-skill.model';
+import { RoadmapUnitModel } from '../src/lib/schema/mongoose-schema/scm/roadmap-unit.model';
 
 async function testMigrationOnOneSkill() {
   console.log('🧪 Testing migration on a single skill...\n');

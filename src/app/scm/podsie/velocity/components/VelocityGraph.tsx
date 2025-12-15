@@ -1,5 +1,5 @@
 import React, { useState, lazy, Suspense } from "react";
-import type { DailyVelocityStats } from "@/app/actions/scm/velocity/velocity";
+import type { DailyVelocityStats } from "@/app/actions/scm/podsie/velocity/velocity";
 import type { UnitSchedule } from "@zod-schema/calendar";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { VelocityChartSkeleton } from "./VelocityGraphSkeleton";

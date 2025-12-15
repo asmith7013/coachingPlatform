@@ -3,7 +3,7 @@
  * Updates status to only show "Demonstrated" for 80% or 100% scores
  */
 
-import { StudentModel } from '@/lib/schema/mongoose-schema/313/student/student.model';
+import { StudentModel } from '@/lib/schema/mongoose-schema/scm/student/student.model';
 import { connectToDB } from '@server/db/connection';
 
 /**

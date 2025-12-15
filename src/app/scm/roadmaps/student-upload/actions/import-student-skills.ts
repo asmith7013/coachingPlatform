@@ -1,7 +1,7 @@
 "use server";
 
 import ExcelJS from 'exceljs';
-import { fetchStudents, updateStudent } from '@actions/scm/students';
+import { fetchStudents, updateStudent } from '@actions/scm/student/students';
 import { parseRoadmapSheet } from '../lib/parser';
 import { ImportResponse, StudentUpdateResult } from '../lib/types';
 

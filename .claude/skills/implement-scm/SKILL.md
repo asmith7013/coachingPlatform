@@ -263,7 +263,7 @@ interface SectionConfig {
 ### Curriculum Schemas (`scm/curriculum/`)
 ```typescript
 // Roadmap Units - skill groupings by unit
-import { RoadmapUnitZodSchema, type RoadmapUnit } from "@zod-schema/scm/curriculum/roadmap-unit";
+import { RoadmapUnitZodSchema, type RoadmapUnit } from "@zod-schema/scm/roadmaps/roadmap-unit";
 
 interface RoadmapUnit {
   grade: string;               // e.g., "Illustrative Math NY - 7th Grade"
@@ -275,10 +275,10 @@ interface RoadmapUnit {
 }
 
 // Roadmap Skills - individual skill definitions
-import { RoadmapSkillZodSchema, type RoadmapSkill } from "@zod-schema/scm/curriculum/roadmap-skill";
+import { RoadmapSkillZodSchema, type RoadmapSkill } from "@zod-schema/scm/roadmaps/roadmap-skill";
 
 // Scope and Sequence - curriculum lesson sequence
-import { ScopeAndSequenceZodSchema, type ScopeAndSequence } from "@zod-schema/scm/curriculum/scope-and-sequence";
+import { ScopeAndSequenceZodSchema, type ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 ```
 
 ### Podsie Schemas (`scm/podsie/`)

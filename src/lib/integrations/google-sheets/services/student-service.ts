@@ -1,5 +1,5 @@
 import { z, ZodType } from "zod";
-import { StudentModel } from "@mongoose-schema/313/student/student.model";
+import { StudentModel } from "@mongoose-schema/scm/student/student.model";
 import { Student, StudentZodSchema, StudentInputZodSchema, StudentInput } from "@zod-schema/scm/student/student";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { handleServerError } from "@error/handlers/server";

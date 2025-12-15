@@ -1,6 +1,6 @@
 "use client";
 
-import type { UnitScheduleLocal, SectionSchedule, SelectionMode } from "./types";
+import type { UnitScheduleLocal, SectionSchedule, SelectionMode, LessonForSubsection } from "./types";
 import { UNIT_COLORS } from "./types";
 
 interface UnitCardProps {
@@ -11,6 +11,7 @@ interface UnitCardProps {
   onStartDateSelection: (unitKey: string, sectionId: string, type: "start" | "end") => void;
   onClearSectionDates: (unitKey: string, sectionId: string) => void;
   onUnitDateChange: (unitKey: string, field: "startDate" | "endDate", value: string) => void;
+  onOpenSubsections?: (unitKey: string, sectionId: string, sectionName: string, lessons: LessonForSubsection[]) => void;
 }
 
 export function UnitCard({
@@ -21,6 +22,7 @@ export function UnitCard({
   onStartDateSelection,
   onClearSectionDates,
   onUnitDateChange,
+  onOpenSubsections,
 }: UnitCardProps) {
   const unitColor = UNIT_COLORS[unitIndex % UNIT_COLORS.length];
 
@@ -68,6 +70,7 @@ export function UnitCard({
             calculateSchoolDays={calculateSchoolDays}
             onStartDateSelection={onStartDateSelection}
             onClearSectionDates={onClearSectionDates}
+            onOpenSubsections={onOpenSubsections}
           />
         ))}
       </div>
@@ -83,6 +86,7 @@ interface SectionRowProps {
   calculateSchoolDays: (startDate: string, endDate: string) => number;
   onStartDateSelection: (unitKey: string, sectionId: string, type: "start" | "end") => void;
   onClearSectionDates: (unitKey: string, sectionId: string) => void;
+  onOpenSubsections?: (unitKey: string, sectionId: string, sectionName: string, lessons: LessonForSubsection[]) => void;
 }
 
 function SectionRow({
@@ -93,6 +97,7 @@ function SectionRow({
   calculateSchoolDays,
   onStartDateSelection,
   onClearSectionDates,
+  onOpenSubsections,
 }: SectionRowProps) {
   const isSelected = selectionMode?.unitKey === unitKey && selectionMode?.sectionId === section.sectionId;
   const isSelectingStart = isSelected && selectionMode?.type === "start";
@@ -100,16 +105,55 @@ function SectionRow({
   const allocatedDays =
     section.startDate && section.endDate ? calculateSchoolDays(section.startDate, section.endDate) : null;
 
+  // Check if any lessons have subsections assigned
+  const hasSubsections = section.lessons?.some((l) => l.subsection !== undefined);
+
   return (
     <div
       className="flex items-center px-3 py-1.5"
       style={{ backgroundColor: isSelected ? unitColor.light : undefined }}
     >
       {/* Section name */}
-      <div className="flex-1 text-sm text-gray-700">{section.name}</div>
+      <div className="w-24 text-sm text-gray-700 flex-shrink-0">{section.name}</div>
+
+      {/* Lesson badges */}
+      <div className="flex-1 flex flex-wrap gap-0.5 px-1">
+        {section.lessons?.map((lesson) => (
+          <span
+            key={lesson.scopeAndSequenceId}
+            className="text-[10px] px-1 py-0.5 rounded"
+            style={{
+              backgroundColor: lesson.subsection ? unitColor.base : unitColor.light,
+              color: lesson.subsection ? "white" : unitColor.base,
+            }}
+            title={`${lesson.lessonName}${lesson.subsection ? ` (Part ${lesson.subsection})` : ""}`}
+          >
+            L{lesson.lessonNumber}
+            {lesson.subsection && <sup>{lesson.subsection}</sup>}
+          </span>
+        ))}
+      </div>
+
+      {/* Subsections button */}
+      {section.lessons && section.lessons.length > 0 && onOpenSubsections && (
+        <div className="w-20 text-center flex-shrink-0">
+          <button
+            onClick={() => onOpenSubsections(unitKey, section.sectionId, section.name, section.lessons!)}
+            className="text-[10px] px-1.5 py-0.5 rounded cursor-pointer"
+            style={{
+              backgroundColor: hasSubsections ? unitColor.base : "white",
+              color: hasSubsections ? "white" : unitColor.base,
+              border: `1px solid ${unitColor.base}`,
+            }}
+            title="Manage subsections"
+          >
+            Subsections
+          </button>
+        </div>
+      )}
 
       {/* Allocated days */}
-      <div className="w-14 text-xs text-center">
+      <div className="w-14 text-xs text-center flex-shrink-0">
         {allocatedDays !== null ? (
           <span style={{ color: allocatedDays >= section.lessonCount ? unitColor.base : "#DC2626" }}>
             {allocatedDays} days
@@ -120,10 +164,10 @@ function SectionRow({
       </div>
 
       {/* Lesson count */}
-      <div className="w-16 text-xs text-center text-gray-500">{`${section.lessonCount} Lessons`}</div>
+      <div className="w-16 text-xs text-center text-gray-500 flex-shrink-0">{`${section.lessonCount} Lessons`}</div>
 
       {/* Start button */}
-      <div className="w-20 text-center">
+      <div className="w-20 text-center flex-shrink-0">
         <button
           onClick={() => onStartDateSelection(unitKey, section.sectionId, "start")}
           className="text-xs px-2 py-1 rounded cursor-pointer"
@@ -143,7 +187,7 @@ function SectionRow({
       </div>
 
       {/* End button */}
-      <div className="w-20 text-center">
+      <div className="w-20 text-center flex-shrink-0">
         <button
           onClick={() => onStartDateSelection(unitKey, section.sectionId, "end")}
           className="text-xs px-2 py-1 rounded cursor-pointer"
@@ -163,7 +207,7 @@ function SectionRow({
       </div>
 
       {/* Clear button */}
-      <div className="w-6 text-center">
+      <div className="w-6 text-center flex-shrink-0">
         {(section.startDate || section.endDate) && (
           <button
             onClick={() => onClearSectionDates(unitKey, section.sectionId)}

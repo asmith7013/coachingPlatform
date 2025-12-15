@@ -1,4 +1,4 @@
-import { RoadmapsLesson } from '@zod-schema/scm/curriculum/roadmap';
+import { RoadmapsLesson } from '@zod-schema/scm/roadmaps/roadmap';
 
 interface LessonBadgesProps {
   lessons: RoadmapsLesson[];

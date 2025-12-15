@@ -3,7 +3,7 @@ import {
   fetchScopeAndSequence,
   fetchScopeAndSequenceById,
   fetchAllUnitsByScopeTag,
-} from "@actions/scm/scope-and-sequence";
+} from "@actions/scm/scope-and-sequence/scope-and-sequence";
 
 export const scopeSequenceKeys = {
   all: ["scope-and-sequence"] as const,

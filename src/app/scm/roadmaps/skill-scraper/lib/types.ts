@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { RoadmapsSkillFieldsSchema } from "@zod-schema/scm/curriculum/roadmap-skill";
+import { RoadmapsSkillFieldsSchema } from "@zod-schema/scm/roadmaps/roadmap-skill";
 
 // Use the roadmaps skill schema which includes all fields including practiceProblems
 export const SkillDataZodSchema = RoadmapsSkillFieldsSchema;

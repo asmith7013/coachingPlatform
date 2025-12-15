@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { addImLessonToSkill } from "@actions/scm/roadmaps-skills";
+import { addImLessonToSkill } from "@actions/scm/roadmaps/roadmaps-skills";
 
 interface ImLessonMapping {
   unitNumber: number;

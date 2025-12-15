@@ -17,6 +17,7 @@ import {
   shiftSectionScheduleForward,
   shiftSectionScheduleBack,
 } from "@/app/actions/calendar/unit-schedule";
+import { updateLessonSubsections } from "@/app/actions/scm/podsie/section-config";
 import {
   calendarKeys,
   type SavedUnitSchedule,
@@ -613,6 +614,62 @@ export function useClearSectionDatesMutation(
         }
       },
       errorContext: "Clear section dates",
+    }
+  );
+}
+
+// =====================================
+// SUBSECTION MUTATIONS
+// =====================================
+
+interface UpdateSubsectionsInput {
+  updates: Array<{
+    scopeAndSequenceId: string;
+    unitLessonId: string;
+    lessonName: string;
+    section: string;
+    subsection: number | null;
+    grade: string;
+  }>;
+}
+
+/**
+ * Mutation to update lesson subsections in section-config
+ */
+export function useUpdateSubsectionsMutation(
+  selectedSection: SectionConfigOption | null
+) {
+  const queryClient = useQueryClient();
+
+  return useOptimisticMutation<UpdateSubsectionsInput, void, Error, void>(
+    async (input) => {
+      if (!selectedSection) {
+        throw new Error("No section selected");
+      }
+
+      const result = await updateLessonSubsections(
+        selectedSection.school,
+        selectedSection.classSection,
+        input.updates
+      );
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to update subsections");
+      }
+    },
+    {
+      onSuccess: async () => {
+        if (selectedSection) {
+          // Invalidate assignment content cache
+          await queryClient.invalidateQueries({
+            queryKey: calendarKeys.assignmentContent(
+              selectedSection.school,
+              selectedSection.classSection
+            ),
+          });
+        }
+      },
+      errorContext: "Update subsections",
     }
   );
 }

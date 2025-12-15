@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { syncSectionAttendance, type AttendanceSyncResult } from "@/app/actions/scm/attendance-sync";
-import { fetchSectionConfigs } from "@/app/actions/scm/section-config";
+import { syncSectionAttendance, type AttendanceSyncResult } from "@/app/actions/scm/student/attendance-sync";
+import { fetchSectionConfigs } from "@/app/actions/scm/podsie/section-config";
 import { useToast } from "@/components/core/feedback/Toast";
 import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/24/solid";
 import { Spinner } from "@/components/core/feedback/Spinner";

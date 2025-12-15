@@ -312,8 +312,8 @@ Similar to worked-example sync script but adapted for question structure:
 
 ### Schema Files
 5. `src/lib/schema/zod-schema/scm/podsie/assignment-variation.ts` - Zod schema
-6. `src/lib/schema/mongoose-schema/313/podsie/assignment-variation.model.ts` - Mongoose model
-7. Update `src/lib/schema/mongoose-schema/313/podsie/index.ts` - Export model
+6. `src/lib/schema/mongoose-schema/scm/podsie/assignment-variation.model.ts` - Mongoose model
+7. Update `src/lib/schema/mongoose-schema/scm/podsie/index.ts` - Export model
 
 ### Viewer Page (based on worked examples page)
 8. `src/app/scm/podsie/variations/page.tsx` - Listing page

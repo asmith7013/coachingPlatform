@@ -2,7 +2,7 @@ import type { PodsieQuestionMap } from "@zod-schema/scm/podsie/section-config";
 import type {
   CurriculumAssignmentSummary,
   ExportQuestionMapResult,
-} from "@/app/actions/scm/curriculum-question-map";
+} from "@/app/actions/scm/podsie/curriculum-question-map";
 
 export type ImportMode = "api" | "json" | "curriculum";
 

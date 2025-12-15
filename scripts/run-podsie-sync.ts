@@ -35,7 +35,7 @@ async function main() {
 
   try {
     // Dynamic import AFTER dotenv has loaded
-    const { syncCurrentUnits } = await import('../src/app/actions/scm/podsie-sync/scheduled/sync-current-units');
+    const { syncCurrentUnits } = await import('../src/app/actions/scm/podsie/scheduled/sync-current-units');
 
     const result = await syncCurrentUnits();
 

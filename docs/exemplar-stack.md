@@ -48,7 +48,7 @@
 // ✅ CORRECT - Using path aliases
 import { fetchRoadmapsSkills } from "@actions/scm/roadmaps-skills";
 import { RoadmapsSkillZodSchema } from "@zod-schema/scm/roadmap-skill";
-import { RoadmapsSkillModel } from "@mongoose-schema/313/roadmap-skill.model";
+import { RoadmapsSkillModel } from "@mongoose-schema/scm/roadmap-skill.model";
 import { Alert } from "@core-components/feedback/Alert";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { handleServerError } from "@error/handlers/server";
@@ -95,7 +95,7 @@ From `/src/app/actions/313/roadmaps-skills.ts`:
 "use server";
 
 import { createCrudActions } from "@server/crud/crud-factory";
-import { RoadmapsSkillModel } from "@mongoose-schema/313/roadmap-skill.model";
+import { RoadmapsSkillModel } from "@mongoose-schema/scm/roadmap-skill.model";
 import {
   RoadmapsSkillZodSchema,
   RoadmapsSkillInputZodSchema
@@ -275,7 +275,7 @@ export type SkillReference = z.infer<typeof SkillReferenceSchema>;
 export type UnitReference = z.infer<typeof UnitReferenceSchema>;
 ```
 
-**Mongoose Model** (`/src/lib/schema/mongoose-schema/313/roadmap-skill.model.ts`):
+**Mongoose Model** (`/src/lib/schema/mongoose-schema/scm/roadmap-skill.model.ts`):
 
 ```typescript
 import mongoose from 'mongoose';
@@ -338,7 +338,7 @@ export const RoadmapsSkillModel = mongoose.model('RoadmapsSkill', RoadmapsSkillS
 
 **`[RULE]`** Schema Conventions:
 - Zod schemas live in `/src/lib/schema/zod-schema/scm/`
-- Mongoose models live in `/src/lib/schema/mongoose-schema/313/`
+- Mongoose models live in `/src/lib/schema/mongoose-schema/scm/`
 - Always export both full schema and input schema from Zod
 - Always export type definitions
 - Collection names use kebab-case (e.g., `roadmaps-skills`)
@@ -865,7 +865,7 @@ export type RoadmapsSkill = z.infer<typeof RoadmapsSkillZodSchema>;
 export type RoadmapsSkillInput = z.infer<typeof RoadmapsSkillInputZodSchema>;
 ```
 
-#### 2. Mongoose Model (`/src/lib/schema/mongoose-schema/313/roadmap-skill.model.ts`)
+#### 2. Mongoose Model (`/src/lib/schema/mongoose-schema/scm/roadmap-skill.model.ts`)
 
 ```typescript
 import mongoose from 'mongoose';
@@ -904,7 +904,7 @@ export const RoadmapsSkillModel = mongoose.model('RoadmapsSkill', RoadmapsSkillS
 "use server";
 
 import { createCrudActions } from "@server/crud/crud-factory";
-import { RoadmapsSkillModel } from "@mongoose-schema/313/roadmap-skill.model";
+import { RoadmapsSkillModel } from "@mongoose-schema/scm/roadmap-skill.model";
 import { RoadmapsSkillZodSchema, RoadmapsSkillInputZodSchema } from "@zod-schema/scm/roadmap-skill";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";

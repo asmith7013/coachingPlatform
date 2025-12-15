@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { CheckIcon, ArrowPathIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
-import type { PodsieAssignmentInfo } from "@/app/actions/scm/podsie-sync";
-import type { ScopeAndSequence } from "@zod-schema/scm/curriculum/scope-and-sequence";
+import type { PodsieAssignmentInfo } from "@/app/actions/scm/podsie/podsie-sync";
+import type { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 import { SectionRadioGroup } from "@/components/core/inputs/SectionRadioGroup";
-import { getQuestionMap } from "@/app/actions/scm/podsie-question-map";
+import { getQuestionMap } from "@/app/actions/scm/podsie/podsie-question-map";
 import type { PodsieQuestionMap } from "@zod-schema/scm/podsie/section-config";
 
 interface AssignmentMatchRowProps {

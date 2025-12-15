@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { useRoadmapUnits } from "@/hooks/scm";
-import type { RoadmapUnit as Unit } from "@zod-schema/scm/curriculum/roadmap-unit";
+import type { RoadmapUnit as Unit } from "@zod-schema/scm/roadmaps/roadmap-unit";
 import { TrackingTables } from "./TrackingTables";
 
 export default function IncentivesDataPage() {

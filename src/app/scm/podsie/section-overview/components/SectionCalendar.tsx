@@ -3,8 +3,8 @@ import { Card } from "@/components/composed/cards/Card";
 import { Heading } from "@/components/core/typography/Heading";
 import { Text } from "@/components/core/typography/Text";
 import type { SectionConfig } from "@zod-schema/scm/podsie/section-config";
-import type { DailyAttendanceStats } from "@/app/actions/scm/section-overview";
-import type { DailyVelocityStats } from "@/app/actions/scm/velocity/velocity";
+import type { DailyAttendanceStats } from "@/app/actions/scm/podsie/section-overview";
+import type { DailyVelocityStats } from "@/app/actions/scm/podsie/velocity/velocity";
 import { BellScheduleHelpers } from "@zod-schema/scm/podsie/section-config";
 
 interface SectionCalendarProps {

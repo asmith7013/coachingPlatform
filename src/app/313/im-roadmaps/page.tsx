@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { fetchIMLessons } from '@actions/scm/im-lessons';
-import { getAllRoadmapsStudents, getRoadmapsStudentPerformance } from '@actions/scm/student-performance';
+import { fetchIMLessons } from '@actions/scm/scope-and-sequence/im-lessons';
+import { getAllRoadmapsStudents, getRoadmapsStudentPerformance } from '@actions/scm/student/student-performance';
 import { LessonBadges } from './components/LessonBadges';
 import { LessonSkillsView } from './components/LessonSkillsView';
-import { RoadmapsLesson } from '@zod-schema/scm/curriculum/roadmap';
+import { RoadmapsLesson } from '@zod-schema/scm/roadmaps/roadmap';
 
 
 export default function IMRoadmapsPage() {

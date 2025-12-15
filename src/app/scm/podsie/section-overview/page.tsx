@@ -11,8 +11,8 @@ import {
   getSectionAttendanceByDateRange,
   type SectionOverviewData,
   type DailyAttendanceStats,
-} from "@/app/actions/scm/section-overview";
-import { getSectionVelocityByDateRange, type DailyVelocityStats } from "@/app/actions/scm/velocity/velocity";
+} from "@/app/actions/scm/podsie/section-overview";
+import { getSectionVelocityByDateRange, type DailyVelocityStats } from "@/app/actions/scm/podsie/velocity/velocity";
 import { SectionCalendar } from "./components/SectionCalendar";
 import { BellScheduleDisplay } from "./components/BellScheduleDisplay";
 import { AssignmentContentCards } from "./components/AssignmentContentCards";

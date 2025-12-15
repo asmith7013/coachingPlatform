@@ -1,12 +1,12 @@
 "use server";
 
-import { ActivityTypeConfigModel } from "@mongoose-schema/313/incentives/activity-type-config.model";
-import { StudentModel } from "@mongoose-schema/313/student/student.model";
-import { StudentActivityModel } from "@mongoose-schema/313/student/student-activity.model";
-import { RoadmapUnitModel } from "@mongoose-schema/313/curriculum/roadmap-unit.model";
-import { ScopeAndSequenceModel } from "@mongoose-schema/313/curriculum/scope-and-sequence.model";
-import { RoadmapsSkillModel } from "@mongoose-schema/313/curriculum/roadmap-skill.model";
-import { SectionConfigModel } from "@mongoose-schema/313/podsie/section-config.model";
+import { ActivityTypeConfigModel } from "@mongoose-schema/scm/incentives/activity-type-config.model";
+import { StudentModel } from "@mongoose-schema/scm/student/student.model";
+import { StudentActivityModel } from "@mongoose-schema/scm/student/student-activity.model";
+import { RoadmapUnitModel } from "@mongoose-schema/scm/roadmaps/roadmap-unit.model";
+import { ScopeAndSequenceModel } from "@mongoose-schema/scm/scope-and-sequence/scope-and-sequence.model";
+import { RoadmapsSkillModel } from "@mongoose-schema/scm/roadmaps/roadmap-skill.model";
+import { SectionConfigModel } from "@mongoose-schema/scm/podsie/section-config.model";
 import {
   ActivityTypeConfigInput,
 } from "@zod-schema/scm/incentives/activity-type-config";
@@ -14,7 +14,7 @@ import { StudentActivity } from "@zod-schema/scm/student/student";
 import { StudentActivityEventInput, StudentActivityInputZodSchema } from "@zod-schema/scm/student/student-activity";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
-import { IncentiveEmailService } from "@/app/actions/scm/incentive-email";
+import { IncentiveEmailService } from "@/app/actions/scm/incentives/incentive-email";
 
 // =====================================
 // ACTIVITY TYPE ACTIONS

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchRampUpsByUnit } from "@/app/actions/scm/scope-and-sequence";
-import { SECTION_OPTIONS } from "@zod-schema/scm/curriculum/scope-and-sequence";
+import { fetchRampUpsByUnit } from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
+import { SECTION_OPTIONS } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 import { AssignmentContent } from "@zod-schema/scm/podsie/section-config";
 import { LessonConfig } from "../types";
 
@@ -212,6 +212,7 @@ export function useLessons(
               variations: activity.variations ?? 3,
               q1HasVariations: activity.q1HasVariations ?? false,
               section: assignmentContent.section,
+              subsection: assignmentContent.subsection,
               unitNumber: selectedUnit!,
               activityType: activity.activityType || "mastery-check",
               hasZearnActivity: assignmentContent.zearnActivity?.active || false,

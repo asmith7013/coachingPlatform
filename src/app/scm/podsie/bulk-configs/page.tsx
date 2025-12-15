@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { CheckCircleIcon, ExclamationTriangleIcon, LinkIcon } from "@heroicons/react/24/solid";
 import { useToast } from "@/components/core/feedback/Toast";
 import { Spinner } from "@/components/core/feedback/Spinner";
-import { getAllSectionConfigs } from "@/app/actions/scm/section-overview";
+import { getAllSectionConfigs } from "@/app/actions/scm/podsie/section-overview";
 import {
   bulkFetchAndMatch,
   saveSingleMatch,
@@ -12,11 +12,11 @@ import {
   type BulkMatchResult,
   type AssignmentMatchResult,
   type AvailableLesson,
-} from "@/app/actions/scm/podsie-sync";
-import type { PodsieAssignmentInfo } from "@/app/actions/scm/podsie-sync";
-import { listQuestionMaps, getQuestionMap } from "@/app/actions/scm/podsie-question-map";
-import { updatePodsieQuestionMap } from "@/app/actions/scm/section-config";
-import { fetchPodsieAssignmentQuestions } from "@/app/actions/scm/podsie-sync";
+} from "@/app/actions/scm/podsie/podsie-sync";
+import type { PodsieAssignmentInfo } from "@/app/actions/scm/podsie/podsie-sync";
+import { listQuestionMaps, getQuestionMap } from "@/app/actions/scm/podsie/podsie-question-map";
+import { updatePodsieQuestionMap } from "@/app/actions/scm/podsie/section-config";
+import { fetchPodsieAssignmentQuestions } from "@/app/actions/scm/podsie/podsie-sync";
 import { MultiSectionSelector } from "../bulk-sync/components/MultiSectionSelector";
 import { SectionMatchResults } from "./components/SectionMatchResults";
 

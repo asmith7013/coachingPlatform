@@ -13,7 +13,10 @@ import {
   UNIT_COLORS,
   type SectionConfigOption,
   type SelectionMode,
+  type LessonForSubsection,
+  type SubsectionsModalState,
 } from "./components";
+import { SubsectionsModal } from "./components/SubsectionsModal";
 import { useCalendarPageData, type SavedUnitSchedule } from "./hooks/useCalendarPageData";
 
 // localStorage key for persisting user selections
@@ -53,6 +56,7 @@ export default function CalendarPage() {
     deleteDayOff,
     copySchedules,
     clearSectionDates,
+    updateSubsections,
   } = useCalendarPageData(schoolYear, selectedGrade, selectedSection);
 
   // Modal and UI state
@@ -62,6 +66,7 @@ export default function CalendarPage() {
   const [showAddDayOffModal, setShowAddDayOffModal] = useState(false);
   const [showDeleteDayOffModal, setShowDeleteDayOffModal] = useState(false);
   const [dayOffToDelete, setDayOffToDelete] = useState<{ date: string; name: string } | null>(null);
+  const [subsectionsModal, setSubsectionsModal] = useState<SubsectionsModalState | null>(null);
 
   // Selection state for interactive date picking
   const [selectionMode, setSelectionMode] = useState<SelectionMode>(null);
@@ -304,6 +309,48 @@ export default function CalendarPage() {
     [deleteDayOff]
   );
 
+  // Handle opening subsections modal
+  const handleOpenSubsections = useCallback(
+    (unitKey: string, sectionId: string, sectionName: string, lessons: LessonForSubsection[]) => {
+      const unit = unitSchedules.find((u) => u.unitKey === unitKey);
+      if (!unit) return;
+
+      setSubsectionsModal({
+        isOpen: true,
+        unitKey,
+        sectionId,
+        sectionName: `${unit.unitName} - ${sectionName}`,
+        lessons,
+        grade: unit.grade,
+      });
+    },
+    [unitSchedules]
+  );
+
+  // Handle saving subsections
+  const handleSaveSubsections = useCallback(
+    async (updates: LessonForSubsection[]) => {
+      if (!subsectionsModal || !selectedSection) return;
+
+      // Normalize section ID: "Ramp Up" in schedules = "Ramp Ups" in scope-and-sequence
+      const scopeSection = subsectionsModal.sectionId === "Ramp Up" ? "Ramp Ups" : subsectionsModal.sectionId;
+
+      await updateSubsections.mutateAsync({
+        updates: updates.map((lesson) => ({
+          scopeAndSequenceId: lesson.scopeAndSequenceId,
+          unitLessonId: lesson.unitLessonId,
+          lessonName: lesson.lessonName,
+          section: scopeSection,
+          subsection: lesson.subsection ?? null,
+          grade: subsectionsModal.grade,
+        })),
+      });
+
+      setSubsectionsModal(null);
+    },
+    [subsectionsModal, selectedSection, updateSubsections]
+  );
+
   // Get unit/section info for a date (only when a section is selected)
   const getScheduleForDate = useCallback(
     (dateStr: string) => {
@@ -530,6 +577,7 @@ export default function CalendarPage() {
                   unitIndex={unitIndex}
                   selectionMode={selectionMode}
                   calculateSchoolDays={calculateSchoolDays}
+                  onOpenSubsections={handleOpenSubsections}
                   onStartDateSelection={startDateSelection}
                   onClearSectionDates={handleClearSectionDates}
                   onUnitDateChange={handleUnitDateChange}
@@ -657,6 +705,18 @@ export default function CalendarPage() {
           onConfirm={handleDeleteDayOff}
           deleting={deleteDayOff.isPending}
           event={dayOffToDelete}
+        />
+      )}
+
+      {/* Subsections Modal */}
+      {subsectionsModal && (
+        <SubsectionsModal
+          isOpen={subsectionsModal.isOpen}
+          sectionName={subsectionsModal.sectionName}
+          lessons={subsectionsModal.lessons}
+          onClose={() => setSubsectionsModal(null)}
+          onSave={handleSaveSubsections}
+          isSaving={updateSubsections.isPending}
         />
       )}
     </div>
