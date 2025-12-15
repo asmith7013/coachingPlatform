@@ -15,12 +15,11 @@
 export {
   useSectionOptions,
   sectionOptionsKeys,
+  type SectionsBySchool,
 } from "@/app/scm/podsie/velocity/hooks/useSectionOptions";
 
-export {
-  useSections,
-  sectionsKeys,
-} from "@/app/scm/roadmaps/mastery-grid/hooks/useSections";
+// Note: useSections has been consolidated into useSectionOptions
+// Use useSectionOptions().sections for a simple string array of section names
 
 export {
   useDaysOff,

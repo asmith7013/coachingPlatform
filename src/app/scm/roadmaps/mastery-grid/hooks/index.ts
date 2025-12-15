@@ -1,2 +1,2 @@
 export { useRoadmapUnits, roadmapUnitsKeys } from "./useRoadmapUnits";
-export { useSections, sectionsKeys } from "./useSections";
+// Note: useSections has been consolidated into useSectionOptions - import from @/hooks/scm instead

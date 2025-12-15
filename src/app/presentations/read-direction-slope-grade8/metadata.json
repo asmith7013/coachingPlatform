@@ -1,0 +1,21 @@
+{
+  "title": "Read the Direction - Slopes Don't Have to Be Positive",
+  "slug": "read-direction-slope-grade8",
+  "mathConcept": "Matching linear graphs to real-world rate of change scenarios",
+  "mathStandard": "8.F.B.5",
+  "gradeLevel": "8",
+  "unitNumber": 3,
+  "lessonNumber": 9,
+  "scopeAndSequenceId": "68ff7f1b5d8ca031d6032331",
+  "strategyName": "Read the Direction",
+  "strategySteps": ["READ", "INTERPRET", "MATCH"],
+  "learningGoals": [
+    "Create a graph of a line representing a linear relationship with a non-positive rate of change",
+    "Interpret the slope of a non-increasing line in context"
+  ],
+  "scenarios": [
+    "Phone Battery Life",
+    "Streaming Subscribers",
+    "Pool Water Level"
+  ]
+}

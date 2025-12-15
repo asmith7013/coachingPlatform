@@ -18,7 +18,7 @@ export { useRoadmapData, roadmapDataKeys } from "../progress/hooks";
 
 // From mastery-grid (shared across units, mastery-grid, skills)
 export { useRoadmapUnits, roadmapUnitsKeys } from "../mastery-grid/hooks/useRoadmapUnits";
-export { useSections, sectionsKeys } from "../mastery-grid/hooks/useSections";
+// Note: useSections has been consolidated into useSectionOptions - import from @/hooks/scm instead
 
 // From skills (shared for skill lookups)
 export { useAllSkills, allSkillsKeys } from "../skills/hooks/useAllSkills";

@@ -104,6 +104,40 @@ Summary:
 
 ---
 
+## Step 4.3.5: Check for SVG Overlaps (Quality Check)
+
+Run the SVG overlap checker on all slides containing coordinate planes or graphs:
+
+```bash
+for slide in src/app/presentations/{slug}/slide-*.html; do
+  node .claude/skills/create-worked-example-sg/scripts/check-svg-overlaps.js "$slide" 2>/dev/null || true
+done
+```
+
+**This is a quality check, not a blocker.** The script detects:
+- Text labels overlapping data points
+- Arrow markers overlapping circles
+- Annotation text overlapping axis labels
+- Elements positioned too close together
+
+**If overlaps are detected:**
+1. Review the flagged elements in the output
+2. Adjust positioning or sizing in the affected slide(s):
+   - Move labels further from points (add 10-15px offset)
+   - Use smaller markers: `markerWidth="6" markerHeight="4"`
+   - Reduce font sizes for annotations: `font-size="9"`
+   - Shorten lines so arrow markers don't overlap points
+3. Re-run sync and verification after fixes
+
+**Common fixes:**
+| Problem | Solution |
+|---------|----------|
+| Point label overlaps point | Move label 15px above: `y="[point_y - 15]"` |
+| Arrow overlaps point | Shorten line by 8px from endpoint |
+| Rise/run labels too large | Use `font-size="9"` and shorter text |
+
+---
+
 ## Step 4.4: Clean Up Progress File
 
 **Only after verification passes**, delete the progress file:
@@ -146,6 +180,7 @@ Give the user a complete summary:
 - [ ] Sync script ran successfully
 - [ ] Database entry confirmed
 - [ ] Verification script passed
+- [ ] SVG overlap check ran (account for any warnings if present)
 - [ ] Progress file deleted
 - [ ] User provided with presentation URL
 

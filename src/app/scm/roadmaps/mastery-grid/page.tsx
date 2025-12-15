@@ -6,7 +6,7 @@ import { StudentGridView } from "../units/components/StudentGridView";
 import { AllUnitsGridView } from "../units/components/AllUnitsGridView";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { AcademicCapIcon, BookOpenIcon } from "@heroicons/react/24/outline";
-import { useRoadmapUnits, useSections } from "../hooks";
+import { useRoadmapUnits, useSectionOptions } from "@/hooks/scm";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },
@@ -26,7 +26,7 @@ export default function MasteryGridPage() {
 
   // Data fetching with React Query hooks
   const { units, loading, error } = useRoadmapUnits();
-  const { sections } = useSections();
+  const { sections } = useSectionOptions();
 
   // Filter units by grade with useMemo
   const filteredUnits = useMemo(() => {

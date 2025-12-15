@@ -174,6 +174,31 @@ Before finalizing any SVG coordinate plane, verify:
 
 **IMPORTANT:** Grid lines and labels MUST use the EXACT same pixel values. If a label is at x=95, the corresponding grid line MUST also be at x=95.
 
+### The Element Overlap Problem
+The #2 bug in SVG graphs is **overlapping elements** where:
+- Arrow markers cover data points or axes
+- Point labels collide with each other
+- Annotation text overlaps arrows
+
+**ALWAYS use smaller element sizes to prevent overlaps:**
+
+| Element | Use This Size |
+|---------|---------------|
+| Arrow markers | `markerWidth="6" markerHeight="4"` |
+| Arrow stroke | `stroke-width="2"` |
+| Point circles | `r="4"` to `r="5"` |
+| Point labels | `font-size="9"` to `font-size="10"` |
+| Annotation text | `font-size="9"` |
+
+**Small arrow marker template:**
+```html
+<marker id="arrowhead" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+    <polygon points="0 0, 6 2, 0 4" fill="#ef4444"/>
+</marker>
+```
+
+See `reference/svg-coordinate-planes.md` for full overlap prevention guidelines.
+
 ---
 
 ## Slide Patterns

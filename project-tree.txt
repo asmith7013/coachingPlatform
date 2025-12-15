@@ -319,7 +319,50 @@
 │   │   │       ├── layout.tsx
 │   │   │       └── page.tsx
 │   │   ├── actions
-│   │   │   ├── 313
+│   │   │   ├── analytics.ts
+│   │   │   ├── calendar
+│   │   │   │   ├── current-unit.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── school-calendar.ts
+│   │   │   │   └── unit-schedule.ts
+│   │   │   ├── coaching
+│   │   │   │   ├── cap-evidence.ts
+│   │   │   │   ├── cap-implementation-records.ts
+│   │   │   │   ├── cap-metrics.ts
+│   │   │   │   ├── cap-outcomes.ts
+│   │   │   │   ├── cap-weekly-plans.ts
+│   │   │   │   └── coaching-action-plans.ts
+│   │   │   ├── cycles
+│   │   │   │   └── cycles.ts
+│   │   │   ├── integrations
+│   │   │   │   ├── coaching-log-automation.ts
+│   │   │   │   ├── monday.ts
+│   │   │   │   └── snorkl.ts
+│   │   │   ├── lookFors
+│   │   │   │   └── lookFors.ts
+│   │   │   ├── nextSteps
+│   │   │   │   ├── index.ts
+│   │   │   │   └── nextSteps.ts
+│   │   │   ├── notes
+│   │   │   │   ├── index.ts
+│   │   │   │   └── notes.ts
+│   │   │   ├── observations
+│   │   │   │   ├── classroom-observations.ts
+│   │   │   │   ├── contextual-notes.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── rubrics
+│   │   │   │   ├── index.ts
+│   │   │   │   └── rubrics.ts
+│   │   │   ├── schedules
+│   │   │   │   ├── bell-schedule.ts
+│   │   │   │   ├── teacher-schedule.ts
+│   │   │   │   └── visit-schedule.ts
+│   │   │   ├── schedulesOld
+│   │   │   │   └── schedule.ts
+│   │   │   ├── schools
+│   │   │   │   ├── index.ts
+│   │   │   │   └── schools.ts
+│   │   │   ├── scm
 │   │   │   │   ├── analytics.ts
 │   │   │   │   ├── assignment-variations
 │   │   │   │   │   ├── delete-variation.ts
@@ -374,49 +417,6 @@
 │   │   │   │   ├── worked-example-requests.ts
 │   │   │   │   ├── zearn-completions.ts
 │   │   │   │   └── zearn-import.ts
-│   │   │   ├── analytics.ts
-│   │   │   ├── calendar
-│   │   │   │   ├── current-unit.ts
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── school-calendar.ts
-│   │   │   │   └── unit-schedule.ts
-│   │   │   ├── coaching
-│   │   │   │   ├── cap-evidence.ts
-│   │   │   │   ├── cap-implementation-records.ts
-│   │   │   │   ├── cap-metrics.ts
-│   │   │   │   ├── cap-outcomes.ts
-│   │   │   │   ├── cap-weekly-plans.ts
-│   │   │   │   └── coaching-action-plans.ts
-│   │   │   ├── cycles
-│   │   │   │   └── cycles.ts
-│   │   │   ├── integrations
-│   │   │   │   ├── coaching-log-automation.ts
-│   │   │   │   ├── monday.ts
-│   │   │   │   └── snorkl.ts
-│   │   │   ├── lookFors
-│   │   │   │   └── lookFors.ts
-│   │   │   ├── nextSteps
-│   │   │   │   ├── index.ts
-│   │   │   │   └── nextSteps.ts
-│   │   │   ├── notes
-│   │   │   │   ├── index.ts
-│   │   │   │   └── notes.ts
-│   │   │   ├── observations
-│   │   │   │   ├── classroom-observations.ts
-│   │   │   │   ├── contextual-notes.ts
-│   │   │   │   └── index.ts
-│   │   │   ├── rubrics
-│   │   │   │   ├── index.ts
-│   │   │   │   └── rubrics.ts
-│   │   │   ├── schedules
-│   │   │   │   ├── bell-schedule.ts
-│   │   │   │   ├── teacher-schedule.ts
-│   │   │   │   └── visit-schedule.ts
-│   │   │   ├── schedulesOld
-│   │   │   │   └── schedule.ts
-│   │   │   ├── schools
-│   │   │   │   ├── index.ts
-│   │   │   │   └── schools.ts
 │   │   │   ├── staff
 │   │   │   │   ├── factories.ts
 │   │   │   │   ├── index.ts
@@ -746,6 +746,31 @@
 │   │   │   │   ├── slide-7.html
 │   │   │   │   ├── slide-8.html
 │   │   │   │   └── slide-9.html
+│   │   │   ├── calculate-slope-two-points-grade8
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-10.html
+│   │   │   │   ├── slide-11.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
+│   │   │   ├── compare-linear-equations-g8u3l8
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-10.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
 │   │   │   ├── compare-match-solutions-g8
 │   │   │   │   ├── metadata.json
 │   │   │   │   ├── slide-1.html
@@ -808,6 +833,18 @@
 │   │   │   │   ├── slide-7.html
 │   │   │   │   ├── slide-8.html
 │   │   │   │   └── slide-9.html
+│   │   │   ├── read-direction-slope-grade8
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-10.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
 │   │   │   ├── snow-storm-v1-g8u3l1
 │   │   │   │   ├── metadata.json
 │   │   │   │   ├── slide-1.html
@@ -848,6 +885,11 @@
 │   │   │   │   │   ├── hooks
 │   │   │   │   │   ├── page.tsx
 │   │   │   │   │   └── utils
+│   │   │   │   ├── hooks
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── useActivityData.ts
+│   │   │   │   │   ├── useActivityTypes.ts
+│   │   │   │   │   └── useStudentsForSection.ts
 │   │   │   │   ├── page.tsx
 │   │   │   │   └── table
 │   │   │   │       └── page.tsx
@@ -857,7 +899,11 @@
 │   │   │   │   │   ├── components
 │   │   │   │   │   ├── hooks
 │   │   │   │   │   └── page.tsx
-│   │   │   │   └── page.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── scope-and-sequence
+│   │   │   │       ├── components
+│   │   │   │       ├── hooks
+│   │   │   │       └── page.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── podsie
 │   │   │   │   ├── bulk-configs
@@ -867,6 +913,9 @@
 │   │   │   │   │   ├── components
 │   │   │   │   │   ├── page.tsx
 │   │   │   │   │   └── page.tsx.backup
+│   │   │   │   ├── hooks
+│   │   │   │   │   ├── index.ts
+│   │   │   │   │   └── useCurrentUnits.ts
 │   │   │   │   ├── import-attendance
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── manage-configs
@@ -896,9 +945,11 @@
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── velocity
 │   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
 │   │   │   │   │   ├── page.tsx
 │   │   │   │   │   └── utils
 │   │   │   │   └── weekly
+│   │   │   │       ├── hooks
 │   │   │   │       └── page.tsx
 │   │   │   ├── roadmaps
 │   │   │   │   ├── assessment-scraper
@@ -917,7 +968,10 @@
 │   │   │   │   │   └── SkillListWithProgress.tsx
 │   │   │   │   ├── history
 │   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
 │   │   │   │   │   └── page.tsx
+│   │   │   │   ├── hooks
+│   │   │   │   │   └── index.ts
 │   │   │   │   ├── im-lesson-updater
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── json
@@ -928,10 +982,12 @@
 │   │   │   │   │   ├── grade-7.json
 │   │   │   │   │   └── grade-8.json
 │   │   │   │   ├── mastery-grid
+│   │   │   │   │   ├── hooks
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── page.tsx
 │   │   │   │   ├── progress
 │   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── scope-and-sequence
 │   │   │   │   │   ├── components
@@ -955,6 +1011,7 @@
 │   │   │   │   │   └── skill.html
 │   │   │   │   ├── skills
 │   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── student-upload
 │   │   │   │   │   ├── actions
@@ -972,8 +1029,6 @@
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── zearn
 │   │   │   │       └── page.tsx
-│   │   │   ├── school
-│   │   │   │   └── calendar
 │   │   │   └── workedExamples
 │   │   │       ├── components
 │   │   │       │   ├── D3ComponentRenderer.tsx
@@ -990,6 +1045,10 @@
 │   │   │       │   ├── slide-7.html
 │   │   │       │   ├── slide-8.html
 │   │   │       │   └── slide-9.html
+│   │   │       ├── hooks
+│   │   │       │   ├── index.ts
+│   │   │       │   ├── useGradeUnitPairs.ts
+│   │   │       │   └── useWorkedExampleDecks.ts
 │   │   │       ├── page.tsx
 │   │   │       ├── request
 │   │   │       │   ├── admin
@@ -1573,6 +1632,8 @@
 │   │   │       └── useStaffExistence.ts
 │   │   ├── migration
 │   │   │   └── swr-to-query.ts
+│   │   ├── scm
+│   │   │   └── index.ts
 │   │   ├── ui
 │   │   │   ├── index.ts
 │   │   │   ├── useAdaptiveHeight.ts
@@ -1806,16 +1867,6 @@
 │   │   │   │       ├── coaching-log-helpers.ts
 │   │   │   │       └── index.ts
 │   │   │   └── zod-schema
-│   │   │       ├── 313
-│   │   │       │   ├── assessment-scraper.ts
-│   │   │       │   ├── core.ts
-│   │   │       │   ├── curriculum
-│   │   │       │   ├── incentives
-│   │   │       │   ├── podsie
-│   │   │       │   ├── storage.ts
-│   │   │       │   ├── student
-│   │   │       │   ├── timesheet
-│   │   │       │   └── zearn-import.ts
 │   │   │       ├── analytics.ts
 │   │   │       ├── base-schemas.ts
 │   │   │       ├── calendar
@@ -1866,6 +1917,16 @@
 │   │   │       │   ├── schedule-documents.ts
 │   │   │       │   ├── schedule-events.ts
 │   │   │       │   └── schedule.ts
+│   │   │       ├── scm
+│   │   │       │   ├── assessment-scraper.ts
+│   │   │       │   ├── core.ts
+│   │   │       │   ├── curriculum
+│   │   │       │   ├── incentives
+│   │   │       │   ├── podsie
+│   │   │       │   ├── storage.ts
+│   │   │       │   ├── student
+│   │   │       │   ├── timesheet
+│   │   │       │   └── zearn-import.ts
 │   │   │       ├── shared
 │   │   │       │   ├── dateHelpers.ts
 │   │   │       │   ├── index.ts
@@ -2129,4 +2190,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-634 directories, 1496 files
+649 directories, 1542 files

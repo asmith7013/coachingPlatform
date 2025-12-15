@@ -19,7 +19,7 @@ import { groupAssignmentsByUnitLesson, groupAssignmentsBySection } from "./utils
 import { getScopeTagForSection, getSchoolForSection, groupSectionsBySchool } from "./utils/sectionHelpers";
 import { calculateSummaryStats } from "./utils/progressStats";
 import { generateProgressCsv, downloadCsv, generateCsvFilename } from "./utils/exportCsv";
-import { useSections } from "./hooks/useSections";
+import { useSectionOptions } from "@/hooks/scm";
 import { useUnitsAndConfig } from "./hooks/useUnitsAndConfig";
 import { useLessons } from "./hooks/useLessons";
 import { useProgressData } from "./hooks/useProgressData";
@@ -66,7 +66,7 @@ export default function PodsieProgressPage() {
   }, [selectedSection]);
 
   // Data hooks
-  const { sections, loading: loadingSections, error: sectionsError } = useSections();
+  const { sections, loading: loadingSections, error: sectionsError } = useSectionOptions();
   const { units, sectionConfigAssignments, groupId, loading: loadingUnits, error: unitsError, setSectionConfigAssignments } = useUnitsAndConfig(scopeSequenceTag, selectedSection);
   const { lessons, sectionOptions, loading: loadingLessons, error: lessonsError } = useLessons(scopeSequenceTag, selectedSection, selectedUnit, selectedLessonSection, sectionConfigAssignments);
   // For pacing, we need ALL lessons in the unit (not filtered by selectedLessonSection)

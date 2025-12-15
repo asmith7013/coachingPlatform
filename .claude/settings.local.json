@@ -45,7 +45,8 @@
       "Bash(fi)",
       "Bash(done)",
       "Bash(curl:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npx tsx:*)"
     ],
     "deny": [],
     "ask": []

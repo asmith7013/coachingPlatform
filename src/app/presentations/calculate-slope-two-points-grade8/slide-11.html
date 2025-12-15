@@ -1,0 +1,214 @@
+<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
+
+    <!-- Page 1: Problem 1 - Streaming Channel Growth -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Header with lesson info -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">Calculating Slope</h1>
+                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Unit 3 Lesson 10 | Grade 8</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 13px; margin: 0;">Name: _______________________</p>
+                <p style="font-size: 13px; margin: 4px 0 0 0;">Date: ________________________</p>
+            </div>
+        </div>
+
+        <!-- Learning Goal Box -->
+        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 20px;">
+            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> Generate a method to find slope values given two points on the line.</p>
+        </div>
+
+        <!-- Problem 1 -->
+        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
+            <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
+                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 1: Streaming Channel Growth</h3>
+            </div>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">
+                A new content creator is tracking her subscriber count. After 1 month, she had 400 subscribers. By month 4, she had 1,000 subscribers.
+            </p>
+
+            <!-- Coordinate Plane for Problem 1 -->
+            <div style="display: flex; gap: 30px; margin-bottom: 20px; flex: 1;">
+                <div style="flex: 1;">
+                    <svg viewBox="0 0 200 150" style="width: 100%; max-height: 200px;">
+                        <!-- Grid -->
+                        <g stroke="#ccc" stroke-width="0.5">
+                            <line x1="60" y1="20" x2="60" y2="120"/>
+                            <line x1="90" y1="20" x2="90" y2="120"/>
+                            <line x1="120" y1="20" x2="120" y2="120"/>
+                            <line x1="150" y1="20" x2="150" y2="120"/>
+                            <line x1="180" y1="20" x2="180" y2="120"/>
+                            <line x1="30" y1="95" x2="180" y2="95"/>
+                            <line x1="30" y1="70" x2="180" y2="70"/>
+                            <line x1="30" y1="45" x2="180" y2="45"/>
+                            <line x1="30" y1="20" x2="180" y2="20"/>
+                        </g>
+                        <!-- Axes -->
+                        <line x1="30" y1="120" x2="180" y2="120" stroke="#000" stroke-width="1"/>
+                        <line x1="30" y1="20" x2="30" y2="120" stroke="#000" stroke-width="1"/>
+                        <!-- Labels -->
+                        <text x="30" y="135" fill="#000" font-size="9" text-anchor="middle">0</text>
+                        <text x="60" y="135" fill="#000" font-size="9" text-anchor="middle">1</text>
+                        <text x="90" y="135" fill="#000" font-size="9" text-anchor="middle">2</text>
+                        <text x="120" y="135" fill="#000" font-size="9" text-anchor="middle">3</text>
+                        <text x="150" y="135" fill="#000" font-size="9" text-anchor="middle">4</text>
+                        <text x="180" y="135" fill="#000" font-size="9" text-anchor="middle">5</text>
+                        <text x="105" y="147" fill="#000" font-size="8" text-anchor="middle">Month</text>
+                        <text x="25" y="124" fill="#000" font-size="8" text-anchor="end">0</text>
+                        <text x="25" y="99" fill="#000" font-size="8" text-anchor="end">300</text>
+                        <text x="25" y="74" fill="#000" font-size="8" text-anchor="end">600</text>
+                        <text x="25" y="49" fill="#000" font-size="8" text-anchor="end">900</text>
+                        <text x="25" y="24" fill="#000" font-size="8" text-anchor="end">1200</text>
+                        <text x="10" y="70" fill="#000" font-size="7" text-anchor="middle" transform="rotate(-90, 10, 70)">Subscribers</text>
+                        <!-- Points -->
+                        <circle cx="60" cy="87" r="4" fill="#000"/>
+                        <circle cx="150" cy="37" r="4" fill="#000"/>
+                        <text x="60" y="100" fill="#000" font-size="8" text-anchor="middle">(1, 400)</text>
+                        <text x="150" y="50" fill="#000" font-size="8" text-anchor="middle">(4, 1000)</text>
+                    </svg>
+                </div>
+                <div style="flex: 1;">
+                    <p style="font-size: 13px; font-weight: bold; margin: 0 0 8px 0;">Given Points:</p>
+                    <div style="border: 1px solid #666; padding: 15px; background: #fafafa;">
+                        <p style="font-size: 14px; margin: 0 0 8px 0;">Point 1: (1, 400)</p>
+                        <p style="font-size: 14px; margin: 0;">Point 2: (4, 1000)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: auto;">
+                <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
+                <p style="font-size: 13px; line-height: 1.5; margin: 0;">
+                    Find the slope (rate of subscriber growth per month). Show your work using the rise over run method.
+                </p>
+                <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 120px;">
+                    <p style="font-size: 11px; color: #666; margin: 0;">Show your work:</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Problem 2 - Drone Descent -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Header with lesson info -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">Calculating Slope</h1>
+                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Unit 3 Lesson 10 | Grade 8</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 13px; margin: 0;">Name: _______________________</p>
+                <p style="font-size: 13px; margin: 4px 0 0 0;">Date: ________________________</p>
+            </div>
+        </div>
+
+        <!-- Learning Goal Box -->
+        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 20px;">
+            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> Generate a method to find slope values given two points on the line.</p>
+        </div>
+
+        <!-- Problem 2 -->
+        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
+            <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
+                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 2: Drone Descent</h3>
+            </div>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">
+                A drone is landing after a flight. At 3 seconds, it's at 80 meters altitude. By 9 seconds, it's at 20 meters.
+            </p>
+
+            <!-- Coordinate Plane for Problem 2 -->
+            <div style="display: flex; gap: 30px; margin-bottom: 20px; flex: 1;">
+                <div style="flex: 1;">
+                    <svg viewBox="0 0 200 150" style="width: 100%; max-height: 200px;">
+                        <!-- Grid -->
+                        <g stroke="#ccc" stroke-width="0.5">
+                            <line x1="60" y1="20" x2="60" y2="120"/>
+                            <line x1="90" y1="20" x2="90" y2="120"/>
+                            <line x1="120" y1="20" x2="120" y2="120"/>
+                            <line x1="150" y1="20" x2="150" y2="120"/>
+                            <line x1="180" y1="20" x2="180" y2="120"/>
+                            <line x1="30" y1="95" x2="180" y2="95"/>
+                            <line x1="30" y1="70" x2="180" y2="70"/>
+                            <line x1="30" y1="45" x2="180" y2="45"/>
+                            <line x1="30" y1="20" x2="180" y2="20"/>
+                        </g>
+                        <!-- Axes -->
+                        <line x1="30" y1="120" x2="180" y2="120" stroke="#000" stroke-width="1"/>
+                        <line x1="30" y1="20" x2="30" y2="120" stroke="#000" stroke-width="1"/>
+                        <!-- Labels -->
+                        <text x="30" y="135" fill="#000" font-size="9" text-anchor="middle">0</text>
+                        <text x="60" y="135" fill="#000" font-size="9" text-anchor="middle">2</text>
+                        <text x="90" y="135" fill="#000" font-size="9" text-anchor="middle">4</text>
+                        <text x="120" y="135" fill="#000" font-size="9" text-anchor="middle">6</text>
+                        <text x="150" y="135" fill="#000" font-size="9" text-anchor="middle">8</text>
+                        <text x="180" y="135" fill="#000" font-size="9" text-anchor="middle">10</text>
+                        <text x="105" y="147" fill="#000" font-size="8" text-anchor="middle">Time (seconds)</text>
+                        <text x="25" y="124" fill="#000" font-size="8" text-anchor="end">0</text>
+                        <text x="25" y="99" fill="#000" font-size="8" text-anchor="end">25</text>
+                        <text x="25" y="74" fill="#000" font-size="8" text-anchor="end">50</text>
+                        <text x="25" y="49" fill="#000" font-size="8" text-anchor="end">75</text>
+                        <text x="25" y="24" fill="#000" font-size="8" text-anchor="end">100</text>
+                        <text x="10" y="70" fill="#000" font-size="7" text-anchor="middle" transform="rotate(-90, 10, 70)">Altitude (m)</text>
+                        <!-- Points: (3,80) at x=45, y=40 and (9,20) at x=165, y=96 -->
+                        <circle cx="45" cy="40" r="4" fill="#000"/>
+                        <circle cx="165" cy="96" r="4" fill="#000"/>
+                        <text x="45" y="32" fill="#000" font-size="8" text-anchor="middle">(3, 80)</text>
+                        <text x="165" y="110" fill="#000" font-size="8" text-anchor="middle">(9, 20)</text>
+                    </svg>
+                </div>
+                <div style="flex: 1;">
+                    <p style="font-size: 13px; font-weight: bold; margin: 0 0 8px 0;">Given Points:</p>
+                    <div style="border: 1px solid #666; padding: 15px; background: #fafafa;">
+                        <p style="font-size: 14px; margin: 0 0 8px 0;">Point 1: (3, 80)</p>
+                        <p style="font-size: 14px; margin: 0;">Point 2: (9, 20)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: auto;">
+                <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
+                <p style="font-size: 13px; line-height: 1.5; margin: 0;">
+                    Find the slope (rate of descent in meters per second). Show your work using the rise over run method.
+                </p>
+                <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 120px;">
+                    <p style="font-size: 11px; color: #666; margin: 0;">Show your work:</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Print-specific styles -->
+<style>
+@media print {
+    .slide-container {
+        overflow: visible !important;
+        height: auto !important;
+    }
+    .print-page {
+        width: 8.5in !important;
+        height: 11in !important;
+        margin: 0 !important;
+        padding: 0.5in !important;
+        box-sizing: border-box !important;
+        page-break-after: always;
+        border: none !important;
+    }
+    .print-page:last-child {
+        page-break-after: auto;
+    }
+    svg line, svg path, svg text, svg circle {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+    div[style*="background"] {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+}
+@page {
+    size: letter portrait;
+    margin: 0;
+}
+</style>

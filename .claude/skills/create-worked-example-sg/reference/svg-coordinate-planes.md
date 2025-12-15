@@ -250,12 +250,20 @@ Use these pre-calculated values (ORIGIN_Y=170, PLOT_HEIGHT=150):
 
 Before finishing any SVG coordinate plane, verify:
 
+**Grid Alignment:**
 - [ ] **Grid vertical lines** use the same X values as the X-axis labels
 - [ ] **Grid horizontal lines** use the same Y values as the Y-axis labels
 - [ ] **Data points** are calculated using the same formula as grid lines
 - [ ] **Origin point** (data 0,0) renders at pixel (40, 170)
 - [ ] **Max point** (data X_MAX, Y_MAX) renders at pixel (260, 20)
 - [ ] **All intermediate points** lie exactly on grid intersections when they should
+
+**Element Overlap Prevention:**
+- [ ] **Arrow markers** use small size (markerWidth="6" markerHeight="4")
+- [ ] **Arrow stroke** uses stroke-width="2" (not 3)
+- [ ] **Point labels** don't overlap data points, axes, or each other
+- [ ] **Annotation text** is positioned away from arrows and points
+- [ ] **No elements** overlap the axis lines or labels
 
 ---
 
@@ -289,6 +297,102 @@ Before finishing any SVG coordinate plane, verify:
 <text x="40">0</text>   <!-- 0 at 40 -->
 <text x="95">2</text>   <!-- 2 at 95 (55px from 0) -->
 <text x="150">4</text>  <!-- 4 at 150 (55px from 2) -->
+```
+
+---
+
+## CRITICAL: Preventing Element Overlap
+
+**The #2 problem with SVG graphs is overlapping elements** - labels covering points, arrows blocking axes, annotations colliding with each other. Follow these rules:
+
+### Rule 1: Use Smaller Element Sizes
+
+Default sizes that prevent most overlaps:
+
+| Element | Recommended Size | Max Size |
+|---------|-----------------|----------|
+| Data point circles | r="4" to r="5" | r="6" |
+| Point labels | font-size="9" to "10" | font-size="11" |
+| Arrow stroke width | stroke-width="2" | stroke-width="3" |
+| Arrow markers | markerWidth="6" markerHeight="4" | markerWidth="8" markerHeight="5" |
+| Annotation text | font-size="9" | font-size="11" |
+
+### Rule 2: Arrow Marker Template (Small)
+
+Use this smaller arrow marker definition to prevent overlap:
+
+```html
+<defs>
+    <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <polygon points="0 0, 6 2, 0 4" fill="#ef4444"/>
+    </marker>
+</defs>
+<line x1="100" y1="50" x2="100" y2="100" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowhead)"/>
+```
+
+**NOT this (too large):**
+```html
+<!-- BAD: Oversized markers overlap nearby elements -->
+<marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
+</marker>
+```
+
+### Rule 3: Label Positioning Strategy
+
+**Point labels** - Position AWAY from other elements:
+- If point is in upper area: place label ABOVE (y - 10px)
+- If point is in lower area: place label BELOW (y + 15px)
+- If two points are close horizontally: stagger labels (one above, one below)
+- Never place labels directly on the axes
+
+**Annotation labels** (rise/run, change in y/x):
+- Position to the LEFT of vertical arrows (x - 25px)
+- Position BELOW horizontal arrows (y + 15px)
+- Use smaller font-size="9" for annotations
+
+### Rule 4: Check These Common Overlap Scenarios
+
+Before finalizing, verify NO overlaps between:
+
+- [ ] Point labels and data points
+- [ ] Point labels and axis labels
+- [ ] Point labels and grid lines (especially at intersections)
+- [ ] Arrow markers and data points
+- [ ] Arrow markers and axes
+- [ ] Annotation text and arrows
+- [ ] Two point labels (when points are close together)
+
+### Rule 5: Minimum Spacing Guidelines
+
+Maintain these minimum pixel distances:
+
+| Between | Minimum Distance |
+|---------|-----------------|
+| Point label and point center | 10px |
+| Point label and axis | 15px |
+| Two point labels | 20px |
+| Arrow end and target point | 5px gap |
+| Annotation text and arrow line | 3px |
+
+### Example: Properly Spaced Annotations
+
+```html
+<!-- Good: Small arrows with offset labels -->
+<defs>
+    <marker id="arrow-y" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <polygon points="0 0, 6 2, 0 4" fill="#ef4444"/>
+    </marker>
+</defs>
+
+<!-- Vertical arrow with label to the left -->
+<line x1="113" y1="57" x2="113" y2="108" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-y)"/>
+<text x="90" y="85" fill="#ef4444" font-size="9" font-weight="bold">Change in y</text>
+<text x="90" y="95" fill="#ef4444" font-size="9">= −75</text>
+
+<!-- Point with label above (not overlapping arrow) -->
+<circle cx="113" cy="57" r="5" fill="#60a5fa"/>
+<text x="113" y="47" fill="#60a5fa" font-size="10" text-anchor="middle">(2, 150)</text>
 ```
 
 ---

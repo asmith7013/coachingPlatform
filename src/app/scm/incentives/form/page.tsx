@@ -44,13 +44,23 @@ export default function IncentivesFormPage() {
   // Data fetching with React Query hooks
   const { activityTypes, reload: reloadActivityTypes } = useActivityTypes();
   const { units: allUnits, loading: unitsLoading } = useRoadmapUnits();
-  const { sectionOptions, loading: sectionsLoading } = useSectionOptions();
-  const { students, loading: studentsLoading } = useStudentsForSection(section, "8");
+  const { sectionOptions, sectionsBySchool, loading: sectionsLoading } = useSectionOptions();
 
-  // Filter units for grade 8
+  // Derive grade from selected section (e.g., "802" -> "8", "701" -> "7")
+  const selectedGrade = useMemo(() => {
+    if (!section) return "";
+    return section.charAt(0);
+  }, [section]);
+
+  // Fetch students for selected section and grade
+  const { students, loading: studentsLoading } = useStudentsForSection(section, selectedGrade);
+
+  // Filter units based on selected grade
   const units = useMemo(() => {
-    return allUnits.filter((u) => u.grade.includes("8th Grade"));
-  }, [allUnits]);
+    if (!selectedGrade) return [];
+    const gradeLabel = `${selectedGrade}th Grade`;
+    return allUnits.filter((u) => u.grade.includes(gradeLabel));
+  }, [allUnits, selectedGrade]);
 
   // Derive selected unit from units and unitId
   const selectedUnit = useMemo(() => {
@@ -302,6 +312,32 @@ export default function IncentivesFormPage() {
 
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Section Filter */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Section *
+              </label>
+              <select
+                value={section}
+                onChange={(e) => {
+                  setSection(e.target.value);
+                  setUnitId(""); // Clear unit when section changes (units are grade-specific)
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select section...</option>
+                {Object.entries(sectionsBySchool).map(([school, schoolSections]) => (
+                  <optgroup key={school} label={school}>
+                    {schoolSections.map((opt) => (
+                      <option key={opt.classSection} value={opt.classSection}>
+                        {opt.displayName}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+
             {/* Unit Selector */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -310,32 +346,15 @@ export default function IncentivesFormPage() {
               <select
                 value={unitId}
                 onChange={(e) => setUnitId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={!section}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
-                <option value="">Select unit...</option>
+                <option value="">{section ? "Select unit..." : "Select section first..."}</option>
                 {units.map((unit) => (
                   <option key={unit._id} value={unit._id}>
                     {unit.unitTitle}
                   </option>
                 ))}
-              </select>
-            </div>
-
-            {/* Section Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Section *
-              </label>
-              <select
-                value={section}
-                onChange={(e) => setSection(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select section...</option>
-                <option value="802">802</option>
-                <option value="803">803</option>
-                <option value="804">804</option>
-                <option value="805">805</option>
               </select>
             </div>
 
@@ -432,9 +451,9 @@ export default function IncentivesFormPage() {
                                 />
                               )}
                               */}
-                              {type.detailType === "lesson" && selectedUnit && selectedUnit.unitNumber && (
+                              {type.detailType === "lesson" && selectedUnit && selectedUnit.unitNumber && selectedGrade && (
                                 <LessonPicker
-                                  grade="8"
+                                  grade={selectedGrade}
                                   unitNumber={selectedUnit.unitNumber}
                                   value={detail}
                                   onChange={(value) =>
@@ -454,9 +473,9 @@ export default function IncentivesFormPage() {
                                   required
                                 />
                               )}
-                              {type.detailType === "small-group" && selectedUnit && selectedUnit.unitNumber && (
+                              {type.detailType === "small-group" && selectedUnit && selectedUnit.unitNumber && selectedGrade && (
                                 <SmallGroupPicker
-                                  grade="8"
+                                  grade={selectedGrade}
                                   unitNumber={selectedUnit.unitNumber}
                                   unitId={unitId ?? ""}
                                   value={detail}
