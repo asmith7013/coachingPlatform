@@ -1,7 +1,3 @@
-// Configuration
-const API_ENDPOINT = "https://www.solvescoaching.com/api/timesheet";
-const API_KEY = "timesheet-dev-key-2024";
-
 document.getElementById('fillBtn').addEventListener('click', async () => {
   const statusDiv = document.getElementById('status');
   statusDiv.textContent = 'Filling form and enabling tracking...';
@@ -26,9 +22,6 @@ document.getElementById('fillBtn').addEventListener('click', async () => {
 
 // Combined function: fills the form AND sets up submit tracking
 function fillTimecardFormAndSetupTracking() {
-  const API_ENDPOINT = "https://www.solvescoaching.com/api/timesheet";
-  const API_KEY = "timesheet-dev-key-2024";
-
   // Configuration - modify these values for your specific tasks
   const entries = [
     {
@@ -71,12 +64,8 @@ function fillTimecardFormAndSetupTracking() {
     const inputId = inputElement.id;
 
     inputElement.focus();
-    await wait(300);
-
     setReactValue(inputElement, optionText);
-    await wait(600);
-
-    console.log(`Set value to "${optionText}", now pressing ArrowDown...`);
+    await wait(50); // Small wait for React to process
 
     inputElement.dispatchEvent(new KeyboardEvent('keydown', {
       key: 'ArrowDown',
@@ -84,20 +73,17 @@ function fillTimecardFormAndSetupTracking() {
       keyCode: 40,
       bubbles: true
     }));
-    await wait(300);
 
-    console.log('Pressing Enter to select...');
     inputElement.dispatchEvent(new KeyboardEvent('keydown', {
       key: 'Enter',
       code: 'Enter',
       keyCode: 13,
       bubbles: true
     }));
-    await wait(500);
+    await wait(50); // Wait for selection to apply
 
     const updatedInput = document.getElementById(inputId);
     const finalValue = updatedInput.value;
-    console.log(`Final value after Enter: "${finalValue}"`);
 
     return finalValue === optionText || finalValue.includes(optionText);
   };
@@ -106,7 +92,7 @@ function fillTimecardFormAndSetupTracking() {
   const setHours = async (hoursInput, hours) => {
     hoursInput.focus();
     setReactValue(hoursInput, hours.toString());
-    await wait(300);
+    await wait(50);
   };
 
   // Helper function to find row containers
@@ -223,28 +209,17 @@ function fillTimecardFormAndSetupTracking() {
               date
             }));
 
-            try {
-              const response = await fetch(API_ENDPOINT, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  entries: entriesWithDate,
-                  apiKey: API_KEY
-                })
-              });
-
-              const result = await response.json();
-
-              if (result.success) {
-                console.log('Successfully saved to local database:', result);
-              } else {
-                console.error('Failed to save to local database:', result.error);
+            // Send data to background script which has permission to make the API call
+            chrome.runtime.sendMessage(
+              { action: 'submitTimesheet', data: { entries: entriesWithDate } },
+              (response) => {
+                if (response?.success) {
+                  console.log('Successfully saved to database:', response.data);
+                } else {
+                  console.error('Failed to save to database:', response?.error);
+                }
               }
-            } catch (error) {
-              console.error('Error sending to local API:', error);
-            }
+            );
           });
 
           console.log('Submit button interceptor attached');
@@ -283,11 +258,7 @@ function fillTimecardFormAndSetupTracking() {
       const entry = entries[i];
       console.log(`\n=== Filling entry ${i + 1} ===`, entry);
 
-      await wait(500);
-
       const rows = findAllRows();
-      console.log(`Found ${rows.length} row(s)`);
-
       const currentRow = rows[i];
 
       if (!currentRow) {
@@ -301,50 +272,26 @@ function fillTimecardFormAndSetupTracking() {
       const taskInput = selectInputs[0];
       const projectInput = selectInputs[1];
 
-      console.log('Task input ID:', taskInput?.id, 'Value:', taskInput?.value || '(empty)');
-      console.log('Project input ID:', projectInput?.id, 'Value:', projectInput?.value || '(empty)');
-      console.log('Hours input ID:', hoursInput?.id, 'Value:', hoursInput?.value || '(empty)');
-
       if (!taskInput || !projectInput || !hoursInput) {
         alert('Could not find all inputs in the current row!');
         return;
       }
 
-      console.log('About to fill Task dropdown...');
       const taskSelected = await selectFromDropdown(taskInput, entry.task);
       if (!taskSelected) {
         alert(`Could not select task: ${entry.task}`);
         return;
       }
 
-      await wait(300);
-      if (taskInput.value !== entry.task) {
-        console.error(`Task not set correctly. Expected "${entry.task}", got "${taskInput.value}"`);
-        alert(`Task was not set correctly in row ${i + 1}`);
-        return;
-      }
-
-      console.log('About to fill Project dropdown...');
       const projectSelected = await selectFromDropdown(projectInput, entry.project);
       if (!projectSelected) {
         alert(`Could not select project: ${entry.project}`);
         return;
       }
 
-      await wait(300);
-      if (projectInput.value !== entry.project) {
-        console.error(`Project not set correctly. Expected "${entry.project}", got "${projectInput.value}"`);
-        alert(`Project was not set correctly in row ${i + 1}`);
-        return;
-      }
-
-      console.log('About to fill Hours...');
       await setHours(hoursInput, entry.hours);
 
-      await wait(500);
-
       if (i < entries.length - 1) {
-        console.log('Looking for "Add New Row" button...');
         const buttons = document.querySelectorAll('button');
         let addRowButton = null;
 
@@ -356,11 +303,9 @@ function fillTimecardFormAndSetupTracking() {
         }
 
         if (addRowButton) {
-          console.log('Clicking "Add New Row"');
           addRowButton.click();
-          await wait(1000);
+          await wait(300); // Wait for new row to render
         } else {
-          console.error('Could not find "Add New Row" button');
           alert('Could not find "Add New Row" button');
           return;
         }

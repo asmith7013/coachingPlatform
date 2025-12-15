@@ -50,7 +50,7 @@ export const TimesheetEntryApiInputSchema = z.object({
   task: z.string().describe("The task/activity type from the form"),
   project: z.string().describe("The project name from the form"),
   hours: z.number().min(0).describe("Number of hours worked"),
-  rate: z.number().min(0).describe("Hourly rate in dollars"),
+  rate: z.number().min(0).optional().default(75).describe("Hourly rate in dollars (default: 75)"),
 });
 
 /**
