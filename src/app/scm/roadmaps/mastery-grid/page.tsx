@@ -7,6 +7,7 @@ import { AllUnitsGridView } from "../units/components/AllUnitsGridView";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { AcademicCapIcon, BookOpenIcon } from "@heroicons/react/24/outline";
 import { useRoadmapUnits, useSectionOptions } from "@/hooks/scm";
+import type { RoadmapUnit as Unit } from "@zod-schema/scm/curriculum/roadmap-unit";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },
@@ -34,9 +35,9 @@ export default function MasteryGridPage() {
       return [];
     }
     return units
-      .filter((unit) => unit.grade === selectedGrade)
+      .filter((unit: Unit) => unit.grade === selectedGrade)
       .sort(
-        (a, b) =>
+        (a: Unit, b: Unit) =>
           new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
       );
   }, [selectedGrade, units]);

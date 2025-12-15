@@ -12,6 +12,8 @@ import { SmallGroupPicker, parseSmallGroupData } from "./components/SmallGroupPi
 import { CustomDetailInput } from "./components/CustomDetailInput";
 import { useFormFilters, useFormDraft, useDebouncedSave } from "./hooks/useFormState";
 import { useRoadmapUnits, useSectionOptions } from "@/hooks/scm";
+import type { RoadmapUnit as Unit } from "@zod-schema/scm/curriculum/roadmap-unit";
+import type { SectionOption } from "@/components/composed/section-visualization";
 import { useStudentsForSection, useActivityTypes } from "../hooks";
 import {
   submitActivities,
@@ -59,19 +61,19 @@ export default function IncentivesFormPage() {
   const units = useMemo(() => {
     if (!selectedGrade) return [];
     const gradeLabel = `${selectedGrade}th Grade`;
-    return allUnits.filter((u) => u.grade.includes(gradeLabel));
+    return allUnits.filter((u: Unit) => u.grade.includes(gradeLabel));
   }, [allUnits, selectedGrade]);
 
   // Derive selected unit from units and unitId
   const selectedUnit = useMemo(() => {
     if (!unitId || units.length === 0) return null;
-    return units.find((u) => u._id === unitId) || null;
+    return units.find((u: Unit) => u._id === unitId) || null;
   }, [unitId, units]);
 
   // Get scopeSequenceTag from selected section config
   const scopeSequenceTag = useMemo(() => {
     if (!section) return undefined;
-    const sectionConfig = sectionOptions.find((s) => s.classSection === section);
+    const sectionConfig = sectionOptions.find((s: SectionOption) => s.classSection === section);
     return sectionConfig?.scopeSequenceTag;
   }, [section, sectionOptions]);
 
@@ -326,9 +328,9 @@ export default function IncentivesFormPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select section...</option>
-                {Object.entries(sectionsBySchool).map(([school, schoolSections]) => (
+                {Object.entries(sectionsBySchool).map(([school, schoolSections]: [string, SectionOption[]]) => (
                   <optgroup key={school} label={school}>
-                    {schoolSections.map((opt) => (
+                    {schoolSections.map((opt: SectionOption) => (
                       <option key={opt.classSection} value={opt.classSection}>
                         {opt.displayName}
                       </option>
@@ -350,7 +352,7 @@ export default function IncentivesFormPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               >
                 <option value="">{section ? "Select unit..." : "Select section first..."}</option>
-                {units.map((unit) => (
+                {units.map((unit: Unit) => (
                   <option key={unit._id} value={unit._id}>
                     {unit.unitTitle}
                   </option>

@@ -9,6 +9,7 @@ import {
   StudentActivityRecord,
 } from "../data/actions";
 import { useRoadmapUnits } from "@/hooks/scm";
+import type { RoadmapUnit as Unit } from "@zod-schema/scm/curriculum/roadmap-unit";
 import { useActivityTypes, useActivityData } from "../hooks";
 import { Spinner } from "@/components/core/feedback/Spinner";
 
@@ -42,7 +43,7 @@ export default function IncentivesTablePage() {
 
   // Filter units for grade 8
   const units = useMemo(() => {
-    return allUnits.filter((u) => u.grade.includes("8th Grade"));
+    return allUnits.filter((u: Unit) => u.grade.includes("8th Grade"));
   }, [allUnits]);
 
   // UI State
@@ -232,7 +233,7 @@ export default function IncentivesTablePage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All Units</option>
-                {units.map((unit) => (
+                {units.map((unit: Unit) => (
                   <option key={unit._id} value={unit._id}>
                     {unit.unitTitle}
                   </option>
