@@ -67,6 +67,39 @@ export async function fetchTimesheetEntries(params: FetchTimesheetEntriesParams 
   });
 }
 
+// =====================================
+// DELETE OPERATIONS
+// =====================================
+
+/**
+ * Delete a timesheet entry by ID
+ */
+export async function deleteTimesheetEntry(entryId: string) {
+  return withDbConnection(async () => {
+    try {
+      const result = await TimesheetEntryModel.findByIdAndDelete(entryId);
+
+      if (!result) {
+        return {
+          success: false,
+          error: "Entry not found",
+        };
+      }
+
+      return {
+        success: true,
+        data: { deletedId: entryId },
+      };
+    } catch (error) {
+      console.error("💥 Error deleting timesheet entry:", error);
+      return {
+        success: false,
+        error: handleServerError(error, "deleteTimesheetEntry"),
+      };
+    }
+  });
+}
+
 /**
  * Get summary statistics for timesheet entries
  */

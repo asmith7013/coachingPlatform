@@ -13,7 +13,9 @@ import {
 } from "chart.js";
 import { Pie, Bar } from "react-chartjs-2";
 import { useTimesheetEntries } from "@/hooks/scm";
+import { deleteTimesheetEntry } from "@/app/actions/scm/timesheet";
 import type { TimesheetEntry } from "@zod-schema/scm/timesheet/timesheet-entry";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
@@ -88,6 +90,19 @@ export default function TimesheetPage() {
     startDate,
     endDate,
   });
+
+  // Delete handler
+  const handleDelete = async (entryId: string, entry: TimesheetEntry) => {
+    const confirmMsg = `Delete entry from ${entry.date}?\n${entry.task} - ${entry.hours}hrs ($${entry.totalPay.toFixed(2)})`;
+    if (!confirm(confirmMsg)) return;
+
+    const result = await deleteTimesheetEntry(entryId);
+    if (result.success) {
+      refetch();
+    } else {
+      alert(`Failed to delete: ${result.error}`);
+    }
+  };
 
   // Group entries by date
   const groupedEntries: GroupedEntries = entries.reduce((acc, entry) => {
@@ -470,6 +485,9 @@ export default function TimesheetPage() {
                     <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Total
                     </th>
+                    <th className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -506,6 +524,15 @@ export default function TimesheetPage() {
                           <td className="px-4 py-3 text-sm font-medium text-gray-900 text-right">
                             ${formatCurrency(entry.totalPay)}
                           </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={() => handleDelete(entry._id, entry)}
+                              className="text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
+                              title="Delete entry"
+                            >
+                              <TrashIcon className="w-4 h-4" />
+                            </button>
+                          </td>
                         </tr>
                       );
                     })}
@@ -524,6 +551,7 @@ export default function TimesheetPage() {
                     <td className="px-4 py-3 text-sm font-semibold text-green-600 text-right">
                       ${formatCurrency(totalPay)}
                     </td>
+                    <td className="px-4 py-3"></td>
                   </tr>
                 </tfoot>
               </table>
