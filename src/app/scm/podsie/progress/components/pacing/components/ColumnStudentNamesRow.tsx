@@ -108,9 +108,14 @@ export function ColumnStudentNamesRow({
         const sectionLessonCount = lessons.length || 1;
         const sectionWidthPercent = zoneLessonCount > 0 ? (sectionLessonCount / zoneLessonCount) * 100 : 100;
 
+        // Use sectionId + subsection for unique key
+        const sectionKey = section.subsection !== undefined
+          ? `${section.sectionId}:${section.subsection}`
+          : section.sectionId;
+
         return (
           <div
-            key={`names-section-${section.sectionId}`}
+            key={`names-section-${sectionKey}`}
             className={`flex ${!isLastSection ? `border-r ${styles.border}` : ""}`}
             style={{ width: `${sectionWidthPercent}%` }}
           >
@@ -120,7 +125,7 @@ export function ColumnStudentNamesRow({
                 const students = lesson.students || [];
                 return (
                   <div
-                    key={`names-${section.sectionId}-${lesson.lessonId}-${lessonIndex}`}
+                    key={`names-${sectionKey}-${lesson.lessonId}-${lessonIndex}`}
                     className={`flex-1 flex flex-col justify-start overflow-hidden ${!isLastLesson ? `border-r ${styles.border}` : ""}`}
                   >
                     {students.length > 0 ? (

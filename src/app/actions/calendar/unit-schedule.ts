@@ -177,6 +177,7 @@ export async function upsertUnitSchedule(data: {
   endDate?: string;
   sections: Array<{
     sectionId: string;
+    subsection?: number; // Part number for split sections
     name: string;
     startDate?: string;
     endDate?: string;
@@ -198,6 +199,7 @@ export async function upsertUnitSchedule(data: {
             endDate: data.endDate || '',
             sections: data.sections.map(s => ({
               sectionId: s.sectionId,
+              subsection: s.subsection,
               name: s.name,
               startDate: s.startDate || '',
               endDate: s.endDate || '',
@@ -273,6 +275,7 @@ export async function updateUnitDates(
 
 /**
  * Update section dates for a specific unit (by schoolYear + grade + unitNumber)
+ * Supports subsection for split sections (Part 1, Part 2, etc.)
  */
 export async function updateSectionDates(
   schoolYear: string,
@@ -280,17 +283,29 @@ export async function updateSectionDates(
   unitNumber: number,
   sectionId: string,
   startDate: string,
-  endDate: string
+  endDate: string,
+  subsection?: number
 ) {
   return withDbConnection(async () => {
     try {
+      // Build query to find the right section using $elemMatch
+      // This ensures both sectionId AND subsection conditions match the SAME array element
+      // Without $elemMatch, separate array conditions could match different elements,
+      // causing the positional $ operator to update the wrong section
+      const query: Record<string, unknown> = {
+        schoolYear,
+        grade,
+        unitNumber,
+        sections: {
+          $elemMatch: {
+            sectionId: sectionId,
+            subsection: subsection !== undefined ? subsection : { $in: [null, undefined] }
+          }
+        }
+      };
+
       const schedule = await UnitScheduleModel.findOneAndUpdate(
-        {
-          schoolYear,
-          grade,
-          unitNumber,
-          "sections.sectionId": sectionId
-        },
+        query,
         {
           $set: {
             "sections.$.startDate": startDate,
@@ -374,6 +389,7 @@ export async function upsertSectionUnitSchedule(data: {
   endDate?: string;
   sections: Array<{
     sectionId: string;
+    subsection?: number; // Part number for split sections
     name: string;
     startDate?: string;
     endDate?: string;
@@ -402,6 +418,7 @@ export async function upsertSectionUnitSchedule(data: {
             endDate: data.endDate || '',
             sections: data.sections.map(s => ({
               sectionId: s.sectionId,
+              subsection: s.subsection,
               name: s.name,
               startDate: s.startDate || '',
               endDate: s.endDate || '',
@@ -431,6 +448,7 @@ export async function upsertSectionUnitSchedule(data: {
 /**
  * Update section dates for a specific class section's unit
  * Uses scopeSequenceTag + grade to uniquely identify the schedule
+ * Supports subsection for split sections (Part 1, Part 2, etc.)
  */
 export async function updateSectionUnitDates(
   schoolYear: string,
@@ -441,20 +459,32 @@ export async function updateSectionUnitDates(
   unitNumber: number,
   sectionId: string,
   startDate: string,
-  endDate: string
+  endDate: string,
+  subsection?: number
 ) {
   return withDbConnection(async () => {
     try {
+      // Build query to find the right section using $elemMatch
+      // This ensures both sectionId AND subsection conditions match the SAME array element
+      // Without $elemMatch, separate array conditions could match different elements,
+      // causing the positional $ operator to update the wrong section
+      const query: Record<string, unknown> = {
+        schoolYear,
+        scopeSequenceTag,
+        grade,
+        school,
+        classSection,
+        unitNumber,
+        sections: {
+          $elemMatch: {
+            sectionId: sectionId,
+            subsection: subsection !== undefined ? subsection : { $in: [null, undefined] }
+          }
+        }
+      };
+
       const schedule = await UnitScheduleModel.findOneAndUpdate(
-        {
-          schoolYear,
-          scopeSequenceTag,
-          grade,
-          school,
-          classSection,
-          unitNumber,
-          "sections.sectionId": sectionId
-        },
+        query,
         {
           $set: {
             "sections.$.startDate": startDate,

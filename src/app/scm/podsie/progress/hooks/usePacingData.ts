@@ -15,6 +15,7 @@ export interface StudentPacingStatus {
   completedLessonsInSection: number;
   totalLessonsInSection: number;
   currentSection?: string; // For far-behind/far-ahead students to show which section they're on
+  currentSubsection?: number; // Subsection within the section (Part 1, Part 2, etc.)
 }
 
 export interface SectionTimeProgress {
@@ -52,6 +53,7 @@ export interface LessonInfo {
 export interface UnitSectionInfo {
   sectionId: string;
   sectionName: string;
+  subsection?: number; // Part 1, Part 2, etc.
   lessonCount: number;
   dayCount: number;
   startDate: string | null;
@@ -112,10 +114,7 @@ function normalizeSection(section: string | undefined): string {
 
 const SECTION_ORDER = ["Ramp Ups", "A", "B", "C", "D", "E", "F", "Unit Assessment"];
 
-function getSectionIndex(section: string | undefined): number {
-  if (!section) return -1;
-  return SECTION_ORDER.indexOf(normalizeSection(section));
-}
+// getSectionIndex removed - now using position-based calculation with orderedSectionSubsections
 
 // Get sections that actually exist in the unit schedule
 function getAvailableSections(unitSchedule: UnitSchedule | undefined): string[] {
@@ -147,7 +146,9 @@ export function usePacingData(
   progressData: ProgressData[],
   excludeRampUps: boolean = false,
   /** Optional date to use for pacing calculations (defaults to today) */
-  pacingDate?: string
+  pacingDate?: string,
+  /** Hide far-behind sections that have no students (reduces visual clutter) */
+  hideEmptySections: boolean = true
 ): PacingData {
   const [unitSchedules, setUnitSchedules] = useState<UnitSchedule[]>([]);
   const [loading, setLoading] = useState(false);
@@ -218,16 +219,18 @@ export function usePacingData(
       return { ...emptyResult, noScheduleData: true };
     }
 
-    // Find expected section for the reference date (pacingDate or today)
+    // Find expected section AND subsection for the reference date (pacingDate or today)
     const today = pacingDate || new Date().toISOString().split("T")[0];
     let expectedSection: string | null = null;
     let expectedSectionName: string | null = null;
+    let expectedSubsection: number | undefined = undefined;
 
     for (const section of unitSchedule.sections) {
       if (section.startDate && section.endDate && today >= section.startDate && today <= section.endDate) {
         // Normalize the section ID from unit schedule to match scope-and-sequence
         expectedSection = normalizeSection(section.sectionId);
         expectedSectionName = section.name;
+        expectedSubsection = section.subsection;
         break;
       }
     }
@@ -237,10 +240,66 @@ export function usePacingData(
       if (lastSection?.endDate && today > lastSection.endDate) {
         expectedSection = normalizeSection(lastSection.sectionId);
         expectedSectionName = lastSection.name;
+        expectedSubsection = lastSection.subsection;
       } else {
         return { ...emptyResult, noScheduleData: true };
       }
     }
+
+    // Build ordered list of section/subsections for granular zone calculation
+    // Each subsection is treated as its own "unit" for ahead/behind math
+    type SectionSubsectionEntry = { sectionId: string; subsection?: number; key: string };
+    const orderedSectionSubsections: SectionSubsectionEntry[] = unitSchedule.sections
+      .filter(s => {
+        const normalizedId = normalizeSection(s.sectionId);
+        if (normalizedId === "Unit Assessment") return false;
+        if (excludeRampUps && normalizedId === "Ramp Ups") return false;
+        return true;
+      })
+      .map(s => {
+        const normalizedId = normalizeSection(s.sectionId);
+        const key = s.subsection !== undefined ? `${normalizedId}:${s.subsection}` : normalizedId;
+        return { sectionId: normalizedId, subsection: s.subsection, key };
+      });
+
+    // Find position of expected section/subsection in the ordered list
+    const expectedKey = expectedSubsection !== undefined
+      ? `${expectedSection}:${expectedSubsection}`
+      : expectedSection;
+    const expectedIndex = orderedSectionSubsections.findIndex(s => s.key === expectedKey);
+
+    // Helper to get zone based on position difference from expected
+    const getZoneForPosition = (index: number): "far-behind" | "behind" | "on-track" | "ahead" | "far-ahead" | null => {
+      if (index < 0 || expectedIndex < 0) return null;
+      const diff = index - expectedIndex;
+      if (diff === 0) return "on-track";
+      if (diff === 1) return "ahead";
+      if (diff === -1) return "behind";
+      if (diff >= 2) return "far-ahead";
+      if (diff <= -2) return "far-behind";
+      return null;
+    };
+
+    // Helper to get lessons for a specific section AND subsection
+    const getLessonsForSectionSubsection = (
+      sectionId: string | null,
+      subsection: number | undefined
+    ): LessonConfig[] => {
+      if (!sectionId) return [];
+      if (excludeRampUps && sectionId === "Ramp Ups") return [];
+
+      // Filter by section AND subsection
+      const matchingLessons = lessons.filter(l => {
+        if (normalizeSection(l.section) !== sectionId) return false;
+        // Match subsection: undefined matches undefined, number matches number
+        return l.subsection === subsection;
+      });
+
+      // Prefer mastery-checks, fallback to sidekicks
+      const masteryChecks = matchingLessons.filter(l => l.activityType === "mastery-check");
+      if (masteryChecks.length > 0) return masteryChecks;
+      return matchingLessons.filter(l => l.activityType === "sidekick");
+    };
 
     // Get sections that actually exist in this unit
     let availableSections = getAvailableSections(unitSchedule);
@@ -329,21 +388,23 @@ export function usePacingData(
     const completedStudentIds: string[] = []; // Track student IDs for activity lookup
 
     for (const [studentId, student] of studentMap) {
-      const completedSections = new Set<string>();
+      // Track completed section/subsections (using keys like "B:1", "B:2", "C")
+      const completedSectionSubsections = new Set<string>();
 
-      // Check which sections are fully complete for this student
-      // Group lessons by normalized section name - check BOTH mastery-checks AND sidekicks
-      // For sections with mastery-checks, use those. For sections with only sidekicks (like Ramp Ups), use sidekicks.
-      const sectionGroups = new Map<string, { masteryChecks: LessonConfig[], sidekicks: LessonConfig[] }>();
+      // Group lessons by section:subsection key
+      const sectionSubsectionGroups = new Map<string, { masteryChecks: LessonConfig[], sidekicks: LessonConfig[] }>();
       for (const lesson of lessons) {
         if (lesson.section) {
           const normalizedSection = normalizeSection(lesson.section);
-          // Skip Ramp Ups if excludeRampUps is true
           if (excludeRampUps && normalizedSection === "Ramp Ups") continue;
-          if (!sectionGroups.has(normalizedSection)) {
-            sectionGroups.set(normalizedSection, { masteryChecks: [], sidekicks: [] });
+          // Build key that includes subsection if present
+          const key = lesson.subsection !== undefined
+            ? `${normalizedSection}:${lesson.subsection}`
+            : normalizedSection;
+          if (!sectionSubsectionGroups.has(key)) {
+            sectionSubsectionGroups.set(key, { masteryChecks: [], sidekicks: [] });
           }
-          const group = sectionGroups.get(normalizedSection)!;
+          const group = sectionSubsectionGroups.get(key)!;
           if (lesson.activityType === "mastery-check") {
             group.masteryChecks.push(lesson);
           } else if (lesson.activityType === "sidekick") {
@@ -352,13 +413,12 @@ export function usePacingData(
         }
       }
 
-      for (const [section, { masteryChecks, sidekicks }] of sectionGroups) {
+      for (const [sectionSubsectionKey, { masteryChecks, sidekicks }] of sectionSubsectionGroups) {
         // Use mastery-checks if available, otherwise use sidekicks
         const lessonsToCheck = masteryChecks.length > 0 ? masteryChecks : sidekicks;
 
         if (lessonsToCheck.length === 0) {
-          // No activities to check - consider section complete
-          completedSections.add(section);
+          completedSectionSubsections.add(sectionSubsectionKey);
           continue;
         }
 
@@ -370,104 +430,55 @@ export function usePacingData(
         });
 
         if (allComplete) {
-          completedSections.add(section);
+          completedSectionSubsections.add(sectionSubsectionKey);
         }
       }
 
-      // Determine student's pacing status based on which sections they've completed
-      const hasCompletedExpected = completedSections.has(expectedSection);
-      const hasCompletedPrevious = previousSection ? completedSections.has(previousSection) : true; // No previous = consider it done
-      const hasCompletedNext = nextSection ? completedSections.has(nextSection) : false;
+      // Find the student's current working position in the ordered list
+      // This is the first section/subsection they haven't completed
+      let studentPositionIndex = -1;
+      let studentCurrentSectionSubsection: SectionSubsectionEntry | undefined;
 
-      // Check how many sections ahead they are
-      let sectionsAhead = 0;
-      if (hasCompletedExpected) {
-        sectionsAhead = 1;
-        if (hasCompletedNext) {
-          sectionsAhead = 2;
-        } else if (nextSection) {
-          // Check if they've completed all lessons in the next section
-          // (might not be in completedSections if section name doesn't match exactly)
-          const nextSectionLessons = getLessonsForSection(nextSection);
-          if (nextSectionLessons.length > 0) {
-            const completedInNext = nextSectionLessons.filter(l =>
-              progressData.some(
-                p => p.studentId === studentId && p.podsieAssignmentId === l.podsieAssignmentId && p.isFullyComplete
-              )
-            ).length;
-            if (completedInNext === nextSectionLessons.length) {
-              sectionsAhead = 2;
-            }
-          }
+      for (let i = 0; i < orderedSectionSubsections.length; i++) {
+        const entry = orderedSectionSubsections[i];
+        if (!completedSectionSubsections.has(entry.key)) {
+          // This is where the student is currently working
+          studentPositionIndex = i;
+          studentCurrentSectionSubsection = entry;
+          break;
         }
       }
 
-      // Check how many sections behind they are
-      let sectionsBehind = 0;
-      if (!hasCompletedPrevious && previousSection) {
-        sectionsBehind = 1;
-        // Check if they're 2+ sections behind (haven't completed the section before previous)
-        if (twoBefore && !completedSections.has(twoBefore) && getSectionIndex(twoBefore) >= 0) {
-          sectionsBehind = 2;
-        }
+      // If they've completed everything, they're past the last entry
+      if (studentPositionIndex === -1) {
+        studentPositionIndex = orderedSectionSubsections.length; // Past the end = fully complete
       }
 
-      // Determine which section this student is actually working in
+      // Calculate position difference from expected
+      const positionDiff = studentPositionIndex - expectedIndex;
+
+      // Determine zone based on position difference
+      // Each subsection counts as one "unit"
+      const unitsAheadOrBehind = positionDiff;
+
+      // Determine which section/subsection this student is working in
       let studentSectionLessons: LessonConfig[] = lessonsInExpectedSection;
       let studentCurrentSection: string | undefined = expectedSection || undefined;
-      if (sectionsAhead >= 2) {
-        // Far ahead: find the student's actual furthest section by checking sections that exist in this unit
-        // Start from the last available section and work backwards to find where they have progress
-        const expectedIdx = availableSections.indexOf(expectedSection);
-        let foundSection = false;
+      let studentCurrentSubsection: number | undefined = expectedSubsection;
 
-        for (let i = availableSections.length - 1; i > expectedIdx + 1; i--) {
-          const sectionName = availableSections[i];
-          const sectionLessons = getLessonsForSection(sectionName);
-          if (sectionLessons.length === 0) continue;
-
-          // Check if student has any progress in this section
-          const hasAnyProgress = sectionLessons.some(l =>
-            progressData.some(
-              p => p.studentId === studentId && p.podsieAssignmentId === l.podsieAssignmentId && p.isFullyComplete
-            )
-          );
-
-          if (hasAnyProgress) {
-            // This is the furthest section they've reached
-            studentSectionLessons = sectionLessons;
-            studentCurrentSection = sectionName;
-            foundSection = true;
-            break;
-          }
-        }
-
-        if (!foundSection) {
-          // Fall back to twoAfter if available, otherwise use nextSection or expected
-          if (twoAfter && lessonsInFarAhead.length > 0) {
-            studentSectionLessons = lessonsInFarAhead;
-            studentCurrentSection = twoAfter;
-          } else if (nextSection && lessonsInAhead.length > 0) {
-            studentSectionLessons = lessonsInAhead;
-            studentCurrentSection = nextSection;
-          } else {
-            // Student is fully complete - use expected section but they're done
-            studentSectionLessons = lessonsInExpectedSection;
-            studentCurrentSection = expectedSection || undefined;
-          }
-        }
-      } else if (sectionsAhead >= 1) {
-        studentSectionLessons = lessonsInAhead.length > 0 ? lessonsInAhead : lessonsInExpectedSection;
-        studentCurrentSection = nextSection || expectedSection || undefined;
-      } else if (sectionsBehind >= 2) {
-        studentSectionLessons = lessonsInFarBehind.length > 0 ? lessonsInFarBehind : lessonsInBehind.length > 0 ? lessonsInBehind : lessonsInExpectedSection;
-        studentCurrentSection = twoBefore || previousSection || expectedSection || undefined;
-      } else if (sectionsBehind >= 1) {
-        studentSectionLessons = lessonsInBehind.length > 0 ? lessonsInBehind : lessonsInExpectedSection;
-        studentCurrentSection = previousSection || expectedSection || undefined;
+      if (studentCurrentSectionSubsection) {
+        // Get lessons for the student's current section/subsection
+        studentSectionLessons = getLessonsForSectionSubsection(
+          studentCurrentSectionSubsection.sectionId,
+          studentCurrentSectionSubsection.subsection
+        );
+        studentCurrentSection = studentCurrentSectionSubsection.sectionId;
+        studentCurrentSubsection = studentCurrentSectionSubsection.subsection;
       } else {
+        // Student has completed everything - use expected section
         studentSectionLessons = lessonsInExpectedSection;
         studentCurrentSection = expectedSection || undefined;
+        studentCurrentSubsection = expectedSubsection;
       }
 
       // Count completed lessons in student's actual section
@@ -513,6 +524,7 @@ export function usePacingData(
         completedLessonsInSection: completedInStudentSection,
         totalLessonsInSection: studentSectionLessons.length,
         currentSection: studentCurrentSection,
+        currentSubsection: studentCurrentSubsection,
       };
 
       // If student has no currentLessonNumber, they've completed the unit entirely
@@ -527,17 +539,18 @@ export function usePacingData(
         continue;
       }
 
-      // Categorize the student
-      if (sectionsAhead >= 2) {
+      // Categorize the student based on position difference from expected
+      // unitsAheadOrBehind: positive = ahead, negative = behind
+      if (unitsAheadOrBehind >= 2) {
         status.status = "far-ahead";
         farAhead.push(status);
-      } else if (sectionsAhead >= 1) {
+      } else if (unitsAheadOrBehind === 1) {
         status.status = "ahead";
         ahead.push(status);
-      } else if (sectionsBehind >= 2) {
+      } else if (unitsAheadOrBehind <= -2) {
         status.status = "far-behind";
         farBehind.push(status);
-      } else if (sectionsBehind >= 1) {
+      } else if (unitsAheadOrBehind === -1) {
         status.status = "behind";
         behind.push(status);
       } else {
@@ -614,10 +627,14 @@ export function usePacingData(
     for (const student of allStudents) {
       if (student.currentSection && student.currentLessonNumber !== undefined) {
         const normalizedSection = normalizeSection(student.currentSection);
-        // Count students in their section
+        // Build section:subsection key for accurate counting
+        const sectionSubsectionKey = student.currentSubsection !== undefined
+          ? `${normalizedSection}:${student.currentSubsection}`
+          : normalizedSection;
+        // Count students in their section/subsection
         studentCountBySection.set(
-          normalizedSection,
-          (studentCountBySection.get(normalizedSection) || 0) + 1
+          sectionSubsectionKey,
+          (studentCountBySection.get(sectionSubsectionKey) || 0) + 1
         );
         const lessonKey = `${normalizedSection}:${student.currentLessonNumber}`;
         studentCountByLesson.set(
@@ -713,9 +730,11 @@ export function usePacingData(
       })
       .map(scheduleSection => {
         const normalizedSectionId = normalizeSection(scheduleSection.sectionId);
-        // Get lessons from lessons prop using getLessonsForSection (same as PacingZoneCard)
-        // This prefers mastery-checks but falls back to sidekicks (for Ramp Ups)
-        const lessonsForSection = getLessonsForSection(normalizedSectionId);
+        // Get lessons for this specific section AND subsection
+        const lessonsForSection = getLessonsForSectionSubsection(
+          normalizedSectionId,
+          scheduleSection.subsection
+        );
         const sectionLessons = lessonsForSection
           .map(l => {
             // Parse lesson number from unitLessonId (e.g., "3.15" -> 15, "3.RU1" -> 1)
@@ -743,46 +762,44 @@ export function usePacingData(
           })
           .sort((a, b) => a.lessonNumber - b.lessonNumber);
 
-        // Get student count from the map (based on actual student sections)
-        const studentCount = studentCountBySection.get(normalizedSectionId) || 0;
+        // Determine zone for this section/subsection using position-based calculation
+        // Each subsection is treated as its own unit for ahead/behind math
+        const sectionSubsectionKey = scheduleSection.subsection !== undefined
+          ? `${normalizedSectionId}:${scheduleSection.subsection}`
+          : normalizedSectionId;
 
-        // Determine zone for this section
-        let zone: "far-behind" | "behind" | "on-track" | "ahead" | "far-ahead" | null = null;
-
-        if (normalizedSectionId === expectedSection) {
-          zone = "on-track";
-        } else if (normalizedSectionId === previousSection) {
-          zone = "behind";
-        } else if (normalizedSectionId === nextSection) {
-          zone = "ahead";
-        } else {
-          // Sections outside the 3 main zones - determine if far-behind or far-ahead
-          const sectionIdx = getSectionIndex(normalizedSectionId);
-          const expectedIdx = getSectionIndex(expectedSection);
-          if (sectionIdx >= 0 && expectedIdx >= 0) {
-            if (sectionIdx < expectedIdx - 1) {
-              zone = "far-behind";
-            } else if (sectionIdx > expectedIdx + 1) {
-              zone = "far-ahead";
-            }
-          }
-        }
+        // Get student count from the map using section:subsection key
+        const studentCount = studentCountBySection.get(sectionSubsectionKey) || 0;
+        const sectionIndex = orderedSectionSubsections.findIndex(s => s.key === sectionSubsectionKey);
+        const zone = getZoneForPosition(sectionIndex);
 
         // Use plannedDays from the schedule (not calculated from dates)
         const dayCount = scheduleSection.plannedDays || 0;
 
+        // Check if this is the expected section/subsection (both must match)
+        const isThisExpected = normalizedSectionId === expectedSection &&
+          scheduleSection.subsection === expectedSubsection;
+
         return {
           sectionId: normalizedSectionId,
           sectionName: scheduleSection.name || normalizedSectionId,
+          subsection: scheduleSection.subsection,
           lessonCount: sectionLessons.length,
           dayCount,
           startDate: scheduleSection.startDate || null,
           endDate: scheduleSection.endDate || null,
           studentCount,
-          isExpected: normalizedSectionId === expectedSection,
+          isExpected: isThisExpected,
           zone,
           lessons: sectionLessons,
         };
+      })
+      // Filter out empty subsections (subsections with no lessons assigned)
+      // Optionally hide far-behind sections with no students (to reduce visual clutter)
+      .filter(section => {
+        if (section.lessonCount === 0) return false;
+        if (hideEmptySections && section.zone === "far-behind" && section.studentCount === 0) return false;
+        return true;
       });
 
     return {
@@ -801,7 +818,7 @@ export function usePacingData(
       error: null,
       noScheduleData: false,
     };
-  }, [unitSchedules, selectedUnit, lessons, progressData, loading, error, excludeRampUps, pacingDate]);
+  }, [unitSchedules, selectedUnit, lessons, progressData, loading, error, excludeRampUps, pacingDate, hideEmptySections]);
 
   return pacingData;
 }

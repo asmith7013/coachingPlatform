@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import type { LessonForSubsection } from "./types";
 
 interface SubsectionsModalProps {
@@ -32,6 +32,18 @@ export function SubsectionsModal({
     [...initialLessons].sort((a, b) => a.lessonNumber - b.lessonNumber)
   );
 
+  // Track if this is a fresh modal open
+  const wasOpenRef = useRef(false);
+
+  // Reset lessons state when modal opens (not on every prop change, to preserve drag state)
+  useEffect(() => {
+    if (isOpen && !wasOpenRef.current) {
+      // Modal just opened - sync with fresh initial data
+      setLessons([...initialLessons].sort((a, b) => a.lessonNumber - b.lessonNumber));
+    }
+    wasOpenRef.current = isOpen;
+  }, [isOpen, initialLessons]);
+
   // Track which lesson is being dragged
   const [draggedLesson, setDraggedLesson] = useState<LessonForSubsection | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<number | null>(null);
@@ -39,6 +51,10 @@ export function SubsectionsModal({
   // Get lessons for a specific column (subsection)
   const getLessonsForColumn = useCallback(
     (subsection: number | null) => {
+      if (subsection === null) {
+        // "Unassigned" column: lessons with undefined or null subsection
+        return lessons.filter((l) => l.subsection === undefined || l.subsection === null);
+      }
       return lessons.filter((l) => l.subsection === subsection);
     },
     [lessons]

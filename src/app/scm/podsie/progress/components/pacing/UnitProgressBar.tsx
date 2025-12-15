@@ -78,7 +78,7 @@ function buildColumnConfigs(
   if (hasCompletedStudents) {
     columnConfigs.push({
       zone: "complete",
-      width: "80px",
+      width: "120px",
       isFixedWidth: true,
       isLastColumn: true,
       sections: [],

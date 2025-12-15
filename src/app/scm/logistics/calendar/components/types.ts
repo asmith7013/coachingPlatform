@@ -18,6 +18,7 @@ export interface LessonForSubsection {
 
 export interface SectionSchedule {
   sectionId: string;
+  subsection?: number; // Part number (1, 2, 3) for split sections
   name: string;
   startDate: string;
   endDate: string;
@@ -56,6 +57,8 @@ export type SelectionMode = {
   type: "start" | "end";
   unitKey: string;
   sectionId: string;
+  subsection?: number; // Track which subsection's date is being selected
+  pendingStartDate?: string; // Track start date set in same flow (for auto-switch to end)
 } | null;
 
 // Subsections modal state

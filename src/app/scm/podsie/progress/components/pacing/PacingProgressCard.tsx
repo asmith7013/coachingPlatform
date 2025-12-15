@@ -32,6 +32,10 @@ interface PacingProgressCardProps {
   excludeRampUps?: boolean;
   /** Callback when excludeRampUps toggle changes */
   onExcludeRampUpsChange?: (value: boolean) => void;
+  /** Whether to hide empty far-behind sections */
+  hideEmptySections?: boolean;
+  /** Callback when hideEmptySections toggle changes */
+  onHideEmptySectionsChange?: (value: boolean) => void;
 }
 
 export function PacingProgressCard({
@@ -43,6 +47,8 @@ export function PacingProgressCard({
   noScheduleMessage,
   excludeRampUps = false,
   onExcludeRampUpsChange,
+  hideEmptySections = true,
+  onHideEmptySectionsChange,
 }: PacingProgressCardProps) {
   const { students, unitSections, completedStudents, loading, error, noScheduleData, expectedSection } = pacingData;
   const [internalShowStudentNames, setInternalShowStudentNames] = useState(false);
@@ -112,6 +118,13 @@ export function PacingProgressCard({
                 checked={excludeRampUps}
                 onChange={onExcludeRampUpsChange}
                 label="Exclude Ramp Ups"
+              />
+            )}
+            {onHideEmptySectionsChange && (
+              <ToggleSwitch
+                checked={hideEmptySections}
+                onChange={onHideEmptySectionsChange}
+                label="Hide Empty Sections"
               />
             )}
           </div>

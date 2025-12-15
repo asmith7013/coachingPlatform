@@ -25,7 +25,7 @@ export function ColumnHeader({
 
   return (
     <div
-      className={`${styles.headerBg} ${borderClasses} flex items-center ${config.isCompleteColumn ? 'justify-center px-2' : 'justify-between px-3'}`}
+      className={`${styles.headerBg} ${borderClasses} flex items-center justify-between px-3`}
       style={widthStyle}
     >
       {config.isCompleteColumn ? (
@@ -36,7 +36,6 @@ export function ColumnHeader({
             badgeClass={styles.studentBadge}
             tooltipContent={tooltipContent}
             showTooltip={!showStudentNames}
-            marginLeft
           />
         </>
       ) : (

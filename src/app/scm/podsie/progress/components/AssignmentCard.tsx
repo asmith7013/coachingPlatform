@@ -196,6 +196,18 @@ export function AssignmentCard({
     return unitLessonId;
   };
 
+  // Format section with optional subsection (e.g., "Section A" or "Section A (Part 1)")
+  const formatSection = (section: string | undefined, subsection: number | undefined) => {
+    if (!section) return "";
+    const baseName = section === "Ramp Ups" || section === "Unit Assessment"
+      ? section
+      : `Section ${section}`;
+    if (subsection !== undefined) {
+      return `${baseName} (Part ${subsection})`;
+    }
+    return baseName;
+  };
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-visible">
       {/* Card Header - Accordion Toggle */}
@@ -216,7 +228,7 @@ export function AssignmentCard({
                 {assignment.lessonName}
               </h3>
               <p className="text-sm text-gray-500">
-                {formatUnitLesson(assignment.unitLessonId)} • {assignment.totalQuestions} questions • Section: {assignment.section}
+                {formatUnitLesson(assignment.unitLessonId)} • {assignment.totalQuestions} questions • {formatSection(assignment.section, assignment.subsection)}
               </p>
             </div>
           </button>

@@ -3,10 +3,12 @@ import { standardSchemaOptions, standardDocumentFields } from "@mongoose-schema/
 
 /**
  * Unit section schema (embedded document)
+ * Can have subsection for split sections (Part 1, Part 2, etc.)
  */
 const unitSectionSchema = new mongoose.Schema({
-  sectionId: { type: String, required: true },
-  name: { type: String, required: true },
+  sectionId: { type: String, required: true }, // e.g., "A", "B", "Ramp Up"
+  subsection: { type: Number, required: false }, // Part number (1, 2, 3) for split sections
+  name: { type: String, required: true }, // e.g., "Section A", "Section A (Part 1)"
   startDate: { type: String, required: false }, // YYYY-MM-DD
   endDate: { type: String, required: false }, // YYYY-MM-DD
   plannedDays: { type: Number, required: false },

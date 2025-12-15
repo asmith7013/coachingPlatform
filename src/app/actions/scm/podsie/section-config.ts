@@ -685,7 +685,6 @@ export async function updateLessonSubsections(
 
       if (!config) {
         // Create a new config if it doesn't exist
-        // Get grade level from first update (all should be same grade)
         const gradeLevel = updates[0]?.grade || '6';
         config = new SectionConfigModel({
           school,
@@ -703,10 +702,18 @@ export async function updateLessonSubsections(
 
       // Process each update
       for (const update of updates) {
-        // Find existing entry by scopeAndSequenceId
-        const existingIndex = assignmentContentArray.findIndex(
+        // Find existing entry by scopeAndSequenceId (try both string and ObjectId comparison)
+        // Also fallback to unitLessonId for robustness
+        let existingIndex = assignmentContentArray.findIndex(
           (a: AssignmentContent) => a.scopeAndSequenceId?.toString() === update.scopeAndSequenceId
         );
+
+        // Fallback: search by unitLessonId if not found by scopeAndSequenceId
+        if (existingIndex < 0) {
+          existingIndex = assignmentContentArray.findIndex(
+            (a: AssignmentContent) => a.unitLessonId === update.unitLessonId
+          );
+        }
 
         if (existingIndex >= 0) {
           // Update existing entry's subsection
@@ -715,6 +722,10 @@ export async function updateLessonSubsections(
             delete (assignmentContentArray[existingIndex] as Record<string, unknown>).subsection;
           } else {
             assignmentContentArray[existingIndex].subsection = update.subsection;
+          }
+          // Also update scopeAndSequenceId if it was missing (migrate old data)
+          if (!assignmentContentArray[existingIndex].scopeAndSequenceId) {
+            assignmentContentArray[existingIndex].scopeAndSequenceId = update.scopeAndSequenceId;
           }
         } else {
           // Create new assignmentContent entry with subsection
@@ -746,7 +757,7 @@ export async function updateLessonSubsections(
       return { success: true };
     });
   } catch (error) {
-    console.error('💥 Error updating lesson subsections:', error);
+    console.error('[updateLessonSubsections] Error:', error);
     return {
       success: false,
       error: handleServerError(error, 'Failed to update lesson subsections')

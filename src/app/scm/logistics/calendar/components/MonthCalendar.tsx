@@ -199,7 +199,11 @@ function CalendarDay({
             style={{ backgroundColor: UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base }}
           />
           <SectionBadge
-            label={getSectionBadgeLabel(scheduleInfo.section.sectionId)}
+            label={
+              scheduleInfo.section.subsection !== undefined
+                ? `${getSectionBadgeLabel(scheduleInfo.section.sectionId)}.${scheduleInfo.section.subsection}`
+                : getSectionBadgeLabel(scheduleInfo.section.sectionId)
+            }
             color={UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base}
           />
         </>

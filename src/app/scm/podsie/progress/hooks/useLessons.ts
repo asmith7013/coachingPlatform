@@ -23,8 +23,34 @@ export const lessonsKeys = {
 interface SectionOption {
   id: string;
   name: string;
+  badge?: string; // Optional badge (e.g., "Part 1", "Part 2")
   count: number;
   inStock: boolean;
+}
+
+/**
+ * Parse a section filter ID into section and subsection parts
+ * Format: "A" (no subsection) or "A:1" (with subsection)
+ */
+function parseSectionFilterId(id: string): { section: string; subsection: number | undefined } {
+  if (id === "all") {
+    return { section: "all", subsection: undefined };
+  }
+  const parts = id.split(":");
+  return {
+    section: parts[0],
+    subsection: parts[1] ? parseInt(parts[1], 10) : undefined,
+  };
+}
+
+/**
+ * Create a section filter ID from section and subsection
+ */
+function createSectionFilterId(section: string, subsection: number | undefined): string {
+  if (subsection !== undefined) {
+    return `${section}:${subsection}`;
+  }
+  return section;
 }
 
 interface LessonsData {
@@ -113,36 +139,93 @@ export function useLessons(
         )
       );
 
-      const uniqueSections = Array.from(
-        new Set(lessonsWithAssignments.map((lesson) => lesson.section).filter(Boolean))
-      ) as string[];
-
-      // Sort sections according to the schema-defined order
-      const sortedSections = uniqueSections.sort((a, b) => {
-        const indexA = SECTION_OPTIONS.indexOf(a as (typeof SECTION_OPTIONS)[number]);
-        const indexB = SECTION_OPTIONS.indexOf(b as (typeof SECTION_OPTIONS)[number]);
-
-        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-        if (indexA !== -1) return -1;
-        if (indexB !== -1) return 1;
-        return a.localeCompare(b);
+      // Build a map of section -> subsections from the assignments
+      // This tells us which sections have been split into subsections
+      const sectionSubsectionMap = new Map<string, Set<number | undefined>>();
+      sectionConfigAssignments.forEach((a) => {
+        if (a.section) {
+          if (!sectionSubsectionMap.has(a.section)) {
+            sectionSubsectionMap.set(a.section, new Set());
+          }
+          sectionSubsectionMap.get(a.section)!.add(a.subsection);
+        }
       });
 
-      // Helper function to get display name
-      const getName = (sectionName: string) => {
-        if (sectionName === "Ramp Ups" || sectionName === "Unit Assessment") {
-          return sectionName;
+      // Build unique section+subsection combinations
+      const sectionSubsectionPairs: Array<{ section: string; subsection: number | undefined }> = [];
+      const seenPairs = new Set<string>();
+
+      lessonsWithAssignments.forEach((lesson) => {
+        if (!lesson.section) return;
+
+        // Find matching assignment to get subsection info
+        const matchingAssignment = sectionConfigAssignments.find(
+          (a) => a.unitLessonId === lesson.unitLessonId && a.lessonName === lesson.lessonName
+        );
+        const subsection = matchingAssignment?.subsection;
+        const pairKey = createSectionFilterId(lesson.section, subsection);
+
+        if (!seenPairs.has(pairKey)) {
+          seenPairs.add(pairKey);
+          sectionSubsectionPairs.push({ section: lesson.section, subsection });
         }
-        return `Section ${sectionName}`;
+      });
+
+      // Sort sections according to the schema-defined order, then by subsection
+      const sortedPairs = sectionSubsectionPairs.sort((a, b) => {
+        const indexA = SECTION_OPTIONS.indexOf(a.section as (typeof SECTION_OPTIONS)[number]);
+        const indexB = SECTION_OPTIONS.indexOf(b.section as (typeof SECTION_OPTIONS)[number]);
+
+        // First sort by section order
+        if (indexA !== indexB) {
+          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+          if (indexA !== -1) return -1;
+          if (indexB !== -1) return 1;
+          const sectionCompare = a.section.localeCompare(b.section);
+          if (sectionCompare !== 0) return sectionCompare;
+        }
+
+        // Then sort by subsection (undefined first, then by number)
+        if (a.subsection === undefined && b.subsection === undefined) return 0;
+        if (a.subsection === undefined) return -1;
+        if (b.subsection === undefined) return 1;
+        return a.subsection - b.subsection;
+      });
+
+      // Helper function to get display name (without subsection - that goes in badge)
+      const getName = (sectionName: string) => {
+        return sectionName === "Ramp Ups" || sectionName === "Unit Assessment"
+          ? sectionName
+          : `Section ${sectionName}`;
       };
 
-      // Create section options with counts
-      const sectionOpts: SectionOption[] = sortedSections.map((section) => ({
-        id: section,
-        name: getName(section),
-        count: lessonsWithAssignments.filter((l) => l.section === section).length,
-        inStock: lessonsWithAssignments.filter((l) => l.section === section).length > 0,
-      }));
+      // Helper function to get badge (e.g., "Part 1")
+      const getBadge = (subsection: number | undefined): string | undefined => {
+        return subsection !== undefined ? `Part ${subsection}` : undefined;
+      };
+
+      // Count lessons for each section+subsection pair
+      const countLessons = (section: string, subsection: number | undefined) => {
+        return lessonsWithAssignments.filter((lesson) => {
+          if (lesson.section !== section) return false;
+          const matchingAssignment = sectionConfigAssignments.find(
+            (a) => a.unitLessonId === lesson.unitLessonId && a.lessonName === lesson.lessonName
+          );
+          return matchingAssignment?.subsection === subsection;
+        }).length;
+      };
+
+      // Create section options with counts (including subsections)
+      const sectionOpts: SectionOption[] = sortedPairs.map((pair) => {
+        const count = countLessons(pair.section, pair.subsection);
+        return {
+          id: createSectionFilterId(pair.section, pair.subsection),
+          name: getName(pair.section),
+          badge: getBadge(pair.subsection),
+          count,
+          inStock: count > 0,
+        };
+      });
 
       // Add "All" option at the end
       const totalLessonsCount = lessonsWithAssignments.length;
@@ -153,10 +236,18 @@ export function useLessons(
         inStock: totalLessonsCount > 0,
       });
 
-      // Filter lessons by selected section if one is selected (but not "all")
+      // Filter lessons by selected section+subsection if one is selected (but not "all")
+      const { section: filterSection, subsection: filterSubsection } = parseSectionFilterId(selectedLessonSection || "all");
       const filteredLessons =
         selectedLessonSection && selectedLessonSection !== "all"
-          ? result.data.filter((lesson) => lesson.section === selectedLessonSection)
+          ? result.data.filter((lesson) => {
+              if (lesson.section !== filterSection) return false;
+              // Find matching assignment to check subsection
+              const matchingAssignment = sectionConfigAssignments.find(
+                (a) => a.unitLessonId === lesson.unitLessonId && a.lessonName === lesson.lessonName
+              );
+              return matchingAssignment?.subsection === filterSubsection;
+            })
           : result.data;
 
       // Build LessonConfig from section-config assignments

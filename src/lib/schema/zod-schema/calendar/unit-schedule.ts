@@ -3,10 +3,12 @@ import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
 
 /**
  * A section within a unit (e.g., Section A, Section B)
+ * Can optionally have a subsection (Part 1, Part 2, etc.) for split sections
  */
 export const UnitSectionSchema = z.object({
-  sectionId: z.string(), // Unique identifier within the unit
-  name: z.string(), // e.g., "Section A", "Week 1"
+  sectionId: z.string(), // Unique identifier within the unit (e.g., "A", "B", "Ramp Up")
+  subsection: z.number().optional(), // Part number (1, 2, 3) for split sections
+  name: z.string(), // e.g., "Section A", "Section A (Part 1)"
   startDate: z.string().optional(), // YYYY-MM-DD
   endDate: z.string().optional(), // YYYY-MM-DD
   plannedDays: z.number().optional(), // How many school days planned

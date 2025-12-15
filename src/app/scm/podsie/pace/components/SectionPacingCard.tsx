@@ -33,6 +33,7 @@ export function SectionPacingCard({
 }: SectionPacingCardProps) {
   const [showStudentNames, setShowStudentNames] = useState(false);
   const [excludeRampUps, setExcludeRampUps] = useState(false);
+  const [hideEmptySections, setHideEmptySections] = useState(false);
   const currentUnit = currentUnitInfo?.currentUnit ?? null;
 
   // Derive scope tag from section
@@ -54,7 +55,7 @@ export function SectionPacingCard({
   const { progressData } = useProgressData(section, currentUnit, allLessonsInUnit);
 
   // Compute pacing data
-  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData, excludeRampUps);
+  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData, excludeRampUps, undefined, hideEmptySections);
 
   // Build custom header with section badges and toggles
   const customHeader = (
@@ -92,6 +93,11 @@ export function SectionPacingCard({
           checked={excludeRampUps}
           onChange={setExcludeRampUps}
           label="Exclude Ramp Ups"
+        />
+        <ToggleSwitch
+          checked={hideEmptySections}
+          onChange={setHideEmptySections}
+          label="Hide Empty Sections"
         />
       </div>
     </div>

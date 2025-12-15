@@ -13,6 +13,7 @@ export function ColumnSectionRow({
   showStudentNames: boolean;
 }) {
   const styles = getZoneStyles(config.zone);
+  const zoneLessonCount = config.sections.reduce((sum, s) => sum + (s.lessons?.length || 0), 0);
 
   const widthStyle = config.isFixedWidth
     ? { width: config.width, flexShrink: 0 }
@@ -47,13 +48,27 @@ export function ColumnSectionRow({
           .filter((name, idx, arr) => arr.indexOf(name) === idx) || [];
         const sectionTooltipContent = sectionStudentNames.length > 0 ? sectionStudentNames.join("\n") : "";
 
+        // Calculate proportional width based on lesson count (matches ColumnLessonsRow)
+        const sectionLessonCount = section.lessons?.length || 1;
+        const sectionWidthPercent = zoneLessonCount > 0 ? (sectionLessonCount / zoneLessonCount) * 100 : 100;
+
+        // Extract base section name (remove Part X suffix if present in sectionName)
+        const baseSectionName = section.sectionName
+          .replace(/ \(Part \d+\)$/, "")
+          .replace(/ \(Unassigned\)$/, "");
+
         const sectionContent = (
-          <div
-            className={`flex-1 flex flex-col justify-center px-2 pt-2 pb-1 ${!isLastSection ? `border-r ${styles.border}` : ""}`}
-          >
-            <span className={`text-sm ${styles.text} leading-none`}>
-              {section.sectionName}
-            </span>
+          <div className="flex flex-col justify-center px-2 pt-2 pb-1 w-full">
+            <div className="flex items-center gap-1.5">
+              <span className={`text-sm ${styles.text} leading-none`}>
+                {baseSectionName}
+              </span>
+              {section.subsection !== undefined && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 text-gray-600 leading-none">
+                  Part {section.subsection}
+                </span>
+              )}
+            </div>
             {section.startDate && section.endDate && (
               <Tooltip content={
                 <div className="space-y-1">
@@ -70,14 +85,23 @@ export function ColumnSectionRow({
           </div>
         );
 
+        // Use sectionId + subsection for unique key
+        const sectionKey = section.subsection !== undefined
+          ? `${section.sectionId}:${section.subsection}`
+          : section.sectionId;
+
+        const wrapperClasses = `flex ${!isLastSection ? `border-r ${styles.border}` : ""}`;
+
         if (!showStudentNames && sectionTooltipContent) {
           return (
-            <Tooltip key={section.sectionId} content={sectionTooltipContent}>
-              {sectionContent}
-            </Tooltip>
+            <div key={sectionKey} className={wrapperClasses} style={{ width: `${sectionWidthPercent}%` }}>
+              <Tooltip content={sectionTooltipContent}>
+                {sectionContent}
+              </Tooltip>
+            </div>
           );
         }
-        return <div key={section.sectionId} className="contents">{sectionContent}</div>;
+        return <div key={sectionKey} className={wrapperClasses} style={{ width: `${sectionWidthPercent}%` }}>{sectionContent}</div>;
       })}
     </div>
   );

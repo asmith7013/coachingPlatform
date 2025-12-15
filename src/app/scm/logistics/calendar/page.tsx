@@ -163,8 +163,8 @@ export default function CalendarPage() {
   );
 
   // Handle clicking a section to start date selection
-  const startDateSelection = (unitKey: string, sectionId: string, type: "start" | "end") => {
-    setSelectionMode({ type, unitKey, sectionId });
+  const startDateSelection = (unitKey: string, sectionId: string, type: "start" | "end", subsection?: number) => {
+    setSelectionMode({ type, unitKey, sectionId, subsection });
   };
 
   // Find existing schedule for a unit
@@ -186,7 +186,7 @@ export default function CalendarPage() {
 
   // Handle clearing section dates
   const handleClearSectionDates = useCallback(
-    (unitKey: string, sectionId: string) => {
+    (unitKey: string, sectionId: string, subsection?: number) => {
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
       if (!unit) return;
 
@@ -198,6 +198,7 @@ export default function CalendarPage() {
         grade: unit.grade,
         unitNumber: unit.unitNumber,
         sectionId,
+        subsection,
       });
     },
     [unitSchedules, findExistingSchedule, clearSectionDates]
@@ -230,9 +231,12 @@ export default function CalendarPage() {
     (dateStr: string) => {
       if (!selectionMode) return;
 
-      const { type, unitKey, sectionId } = selectionMode;
+      const { type, unitKey, sectionId, subsection, pendingStartDate } = selectionMode;
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
-      const section = unit?.sections.find((s) => s.sectionId === sectionId);
+      // Find section matching both sectionId and subsection
+      const section = unit?.sections.find(
+        (s) => s.sectionId === sectionId && s.subsection === subsection
+      );
 
       if (!unit || !section) {
         setSelectionMode(null);
@@ -241,21 +245,29 @@ export default function CalendarPage() {
 
       const existingSchedule = findExistingSchedule(unit.grade, unit.unitNumber);
 
+      // When setting end date, use pendingStartDate if available (from auto-switch)
+      // This handles the case where optimistic update hasn't propagated yet
+      const startDate = type === "start"
+        ? dateStr
+        : (section.startDate || pendingStartDate || "");
+
       updateSectionDates.mutate({
         unitKey,
         grade: unit.grade,
         unitNumber: unit.unitNumber,
         unitName: unit.unitName,
         sectionId,
-        startDate: type === "start" ? dateStr : section.startDate,
+        subsection,
+        startDate,
         endDate: type === "end" ? dateStr : section.endDate,
         sections: unit.sections,
         existingScheduleId: existingSchedule?._id,
       });
 
       // Auto-switch to end date selection after setting start date
+      // Store the start date we just set in case optimistic update hasn't propagated
       if (type === "start") {
-        setSelectionMode({ type: "end", unitKey, sectionId });
+        setSelectionMode({ type: "end", unitKey, sectionId, subsection, pendingStartDate: dateStr });
       } else {
         setSelectionMode(null);
       }
@@ -330,23 +342,30 @@ export default function CalendarPage() {
   // Handle saving subsections
   const handleSaveSubsections = useCallback(
     async (updates: LessonForSubsection[]) => {
-      if (!subsectionsModal || !selectedSection) return;
+      if (!subsectionsModal || !selectedSection) {
+        console.error("[handleSaveSubsections] Missing modal or section");
+        return;
+      }
 
       // Normalize section ID: "Ramp Up" in schedules = "Ramp Ups" in scope-and-sequence
       const scopeSection = subsectionsModal.sectionId === "Ramp Up" ? "Ramp Ups" : subsectionsModal.sectionId;
 
-      await updateSubsections.mutateAsync({
-        updates: updates.map((lesson) => ({
-          scopeAndSequenceId: lesson.scopeAndSequenceId,
-          unitLessonId: lesson.unitLessonId,
-          lessonName: lesson.lessonName,
-          section: scopeSection,
-          subsection: lesson.subsection ?? null,
-          grade: subsectionsModal.grade,
-        })),
-      });
-
-      setSubsectionsModal(null);
+      try {
+        await updateSubsections.mutateAsync({
+          updates: updates.map((lesson) => ({
+            scopeAndSequenceId: lesson.scopeAndSequenceId,
+            unitLessonId: lesson.unitLessonId,
+            lessonName: lesson.lessonName,
+            section: scopeSection,
+            subsection: lesson.subsection ?? null,
+            grade: subsectionsModal.grade,
+          })),
+        });
+        console.log("[handleSaveSubsections] Success");
+        setSubsectionsModal(null);
+      } catch (error) {
+        console.error("[handleSaveSubsections] Error:", error);
+      }
     },
     [subsectionsModal, selectedSection, updateSubsections]
   );

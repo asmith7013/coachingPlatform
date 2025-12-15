@@ -40,6 +40,7 @@ export interface SavedUnitSchedule {
   endDate?: string;
   sections: Array<{
     sectionId: string;
+    subsection?: number; // Part number (1, 2, 3) for split sections
     name: string;
     startDate?: string;
     endDate?: string;

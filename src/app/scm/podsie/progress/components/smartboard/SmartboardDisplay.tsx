@@ -53,6 +53,7 @@ interface LessonConfig {
   podsieAssignmentId: string;
   totalQuestions: number;
   section?: string;
+  subsection?: number;
   unitNumber: number;
   activityType?: 'sidekick' | 'mastery-check' | 'assessment';
   hasZearnActivity?: boolean;
@@ -438,13 +439,35 @@ export function SmartboardDisplay({
     return Math.round(totalTodayCompletion / assignmentProgress.length);
   }, [assignmentProgress, showSidekick]);
 
-  // Format lesson section for display
+  // Format lesson section for display (handles subsection format like "A:1")
   const formattedLessonSection = useMemo(() => {
     if (!selectedLessonSection) return '';
-    if (selectedLessonSection.length === 1 && /^[A-Z]$/i.test(selectedLessonSection)) {
-      return `Section ${selectedLessonSection}`;
+
+    // Parse composite key format: "A" or "A:1"
+    const colonIndex = selectedLessonSection.indexOf(':');
+    let section: string;
+    let subsection: number | undefined;
+
+    if (colonIndex !== -1) {
+      section = selectedLessonSection.substring(0, colonIndex);
+      subsection = parseInt(selectedLessonSection.substring(colonIndex + 1), 10);
+    } else {
+      section = selectedLessonSection;
+      subsection = undefined;
     }
-    return selectedLessonSection;
+
+    // Format the base name
+    const baseName = section === "Ramp Ups" || section === "Unit Assessment" || section === "all"
+      ? section === "all" ? "All Sections" : section
+      : section.length === 1 && /^[A-Z]$/i.test(section)
+        ? `Section ${section}`
+        : section;
+
+    // Add subsection part if present
+    if (subsection !== undefined) {
+      return `${baseName} (Part ${subsection})`;
+    }
+    return baseName;
   }, [selectedLessonSection]);
 
   // Build progress bar segments for an assignment

@@ -35,6 +35,7 @@ interface UpdateSectionDatesInput {
   unitNumber: number;
   unitName: string;
   sectionId: string;
+  subsection?: number; // Part number for split sections
   startDate: string;
   endDate: string;
   sections: SectionSchedule[];
@@ -98,8 +99,26 @@ export function useUpdateSectionDatesMutation(
 
   return useOptimisticMutation<UpdateSectionDatesInput, SavedUnitSchedule, Error, { previousData: SavedUnitSchedule[] | undefined }>(
     async (input) => {
-      if (input.existingScheduleId) {
-        // Update existing schedule
+      // Check if the TARGET section being updated has a subsection
+      // We only need upsert when updating a subsection row (Part 1, Part 2, etc.)
+      // because the DB might not have the subsection structure yet
+      const targetHasSubsection = input.subsection !== undefined;
+
+      console.log("[mutations] updateSectionDates called:", {
+        sectionId: input.sectionId,
+        subsection: input.subsection,
+        targetHasSubsection,
+        existingScheduleId: input.existingScheduleId,
+        startDate: input.startDate,
+        endDate: input.endDate,
+        willUseUpsert: !input.existingScheduleId || targetHasSubsection,
+        sectionsCount: input.sections.length,
+        sections: input.sections.map(s => ({ sectionId: s.sectionId, subsection: s.subsection, name: s.name })),
+      });
+
+      if (input.existingScheduleId && !targetHasSubsection) {
+        // Update existing schedule using positional operator
+        // This works for base sections (no subsection) regardless of whether other sections have subsections
         const result = selectedSection
           ? await updateSectionUnitDates(
               schoolYear,
@@ -110,7 +129,8 @@ export function useUpdateSectionDatesMutation(
               input.unitNumber,
               input.sectionId,
               input.startDate,
-              input.endDate
+              input.endDate,
+              input.subsection
             )
           : await updateSectionDates(
               schoolYear,
@@ -118,7 +138,8 @@ export function useUpdateSectionDatesMutation(
               input.unitNumber,
               input.sectionId,
               input.startDate,
-              input.endDate
+              input.endDate,
+              input.subsection
             );
 
         if (!result.success) {
@@ -126,7 +147,12 @@ export function useUpdateSectionDatesMutation(
         }
         return result.data as unknown as SavedUnitSchedule;
       } else {
-        // Create new schedule
+        // Create/update schedule using upsert (replaces entire sections array)
+        // This handles: new schedules, and updates to subsection rows (Part 1, Part 2, etc.)
+        //
+        // IMPORTANT: When upserting, we need to preserve existing dates for sections we're NOT updating.
+        // The input.sections comes from UI state which may have empty dates for newly split sections.
+        // We only update the target section's dates; others keep their UI state dates.
         const result = selectedSection
           ? await upsertSectionUnitSchedule({
               schoolYear,
@@ -138,9 +164,10 @@ export function useUpdateSectionDatesMutation(
               unitName: input.unitName,
               sections: input.sections.map((s) => ({
                 sectionId: s.sectionId,
+                subsection: s.subsection,
                 name: s.name,
-                startDate: s.sectionId === input.sectionId ? input.startDate : s.startDate,
-                endDate: s.sectionId === input.sectionId ? input.endDate : s.endDate,
+                startDate: s.sectionId === input.sectionId && s.subsection === input.subsection ? input.startDate : s.startDate,
+                endDate: s.sectionId === input.sectionId && s.subsection === input.subsection ? input.endDate : s.endDate,
                 lessonCount: s.lessonCount,
               })),
             })
@@ -151,13 +178,15 @@ export function useUpdateSectionDatesMutation(
               unitName: input.unitName,
               sections: input.sections.map((s) => ({
                 sectionId: s.sectionId,
+                subsection: s.subsection,
                 name: s.name,
-                startDate: s.sectionId === input.sectionId ? input.startDate : s.startDate,
-                endDate: s.sectionId === input.sectionId ? input.endDate : s.endDate,
+                startDate: s.sectionId === input.sectionId && s.subsection === input.subsection ? input.startDate : s.startDate,
+                endDate: s.sectionId === input.sectionId && s.subsection === input.subsection ? input.endDate : s.endDate,
                 lessonCount: s.lessonCount,
               })),
             });
 
+        console.log("[mutations] upsert result:", { success: result.success, error: result.error });
         if (!result.success) {
           throw new Error(result.error || "Failed to create schedule");
         }
@@ -177,8 +206,8 @@ export function useUpdateSectionDatesMutation(
             if (schedule.grade === input.grade && schedule.unitNumber === input.unitNumber) {
               return {
                 ...schedule,
-                sections: schedule.sections.map((s: { sectionId: string; name: string; startDate?: string; endDate?: string }) =>
-                  s.sectionId === input.sectionId
+                sections: schedule.sections.map((s: { sectionId: string; subsection?: number; name: string; startDate?: string; endDate?: string }) =>
+                  s.sectionId === input.sectionId && s.subsection === input.subsection
                     ? { ...s, startDate: input.startDate, endDate: input.endDate }
                     : s
                 ),
@@ -554,7 +583,7 @@ export function useClearSectionDatesMutation(
       )
     : calendarKeys.gradeSchedules(schoolYear, selectedGrade);
 
-  return useOptimisticMutation<{ unitKey: string; grade: string; unitNumber: number; sectionId: string }, SavedUnitSchedule, Error, { previousData: SavedUnitSchedule[] | undefined }>(
+  return useOptimisticMutation<{ unitKey: string; grade: string; unitNumber: number; sectionId: string; subsection?: number }, SavedUnitSchedule, Error, { previousData: SavedUnitSchedule[] | undefined }>(
     async (input) => {
       const result = selectedSection
         ? await updateSectionUnitDates(
@@ -566,7 +595,8 @@ export function useClearSectionDatesMutation(
             input.unitNumber,
             input.sectionId,
             "",
-            ""
+            "",
+            input.subsection
           )
         : await updateSectionDates(
             schoolYear,
@@ -574,7 +604,8 @@ export function useClearSectionDatesMutation(
             input.unitNumber,
             input.sectionId,
             "",
-            ""
+            "",
+            input.subsection
           );
 
       if (!result.success) {
@@ -595,8 +626,8 @@ export function useClearSectionDatesMutation(
             if (schedule.grade === input.grade && schedule.unitNumber === input.unitNumber) {
               return {
                 ...schedule,
-                sections: schedule.sections.map((s: { sectionId: string; name: string; startDate?: string; endDate?: string }) =>
-                  s.sectionId === input.sectionId
+                sections: schedule.sections.map((s: { sectionId: string; subsection?: number; name: string; startDate?: string; endDate?: string }) =>
+                  s.sectionId === input.sectionId && s.subsection === input.subsection
                     ? { ...s, startDate: "", endDate: "" }
                     : s
                 ),

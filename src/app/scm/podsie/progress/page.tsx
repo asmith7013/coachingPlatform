@@ -50,6 +50,7 @@ export default function PodsieProgressPage() {
   const [exportingCsv, setExportingCsv] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [excludeRampUps, setExcludeRampUps] = useState(false);
+  const [hideEmptySections, setHideEmptySections] = useState(true);
   const { showToast, ToastComponent } = useToast();
 
   // LocalStorage-backed state for selected section (global)
@@ -72,7 +73,7 @@ export default function PodsieProgressPage() {
   // For pacing, we need ALL lessons in the unit (not filtered by selectedLessonSection)
   const { lessons: allLessonsInUnit } = useLessons(scopeSequenceTag, selectedSection, selectedUnit, 'all', sectionConfigAssignments);
   const { progressData, loading: loadingProgress, error: progressError, setProgressData } = useProgressData(selectedSection, selectedUnit, lessons);
-  const pacingData = usePacingData(selectedSection, selectedUnit, allLessonsInUnit, progressData, excludeRampUps);
+  const pacingData = usePacingData(selectedSection, selectedUnit, allLessonsInUnit, progressData, excludeRampUps, undefined, hideEmptySections);
 
   // Derived data
   const sectionGroups = useMemo(() => groupSectionsBySchool(sections), [sections]);
@@ -375,6 +376,8 @@ export default function PodsieProgressPage() {
             selectedUnit={selectedUnit}
             excludeRampUps={excludeRampUps}
             onExcludeRampUpsChange={setExcludeRampUps}
+            hideEmptySections={hideEmptySections}
+            onHideEmptySectionsChange={setHideEmptySections}
           />
         )}
 

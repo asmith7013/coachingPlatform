@@ -3,6 +3,7 @@ import { useState } from 'react';
 interface SectionOption {
   id: string;
   name: string; // Display name shown in tile (e.g., "Ramp Ups", "Section A")
+  badge?: string; // Optional badge (e.g., "Part 1", "Part 2") shown as grey pill
   inStock?: boolean; // Whether this section has lessons (defaults to true)
   count?: number; // Number of lessons in this section
 }
@@ -63,8 +64,13 @@ export function SectionRadioGroup({
                   disabled={isDisabled}
                   className="absolute inset-0 appearance-none opacity-0 focus:outline-none disabled:cursor-not-allowed cursor-pointer"
                 />
-                <span className="text-sm font-medium text-gray-900 group-has-[:checked]:text-white whitespace-nowrap pointer-events-none">
+                <span className="flex items-center gap-1.5 text-sm font-medium text-gray-900 group-has-[:checked]:text-white whitespace-nowrap pointer-events-none">
                   {option.name}
+                  {option.badge && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 text-gray-600 group-has-[:checked]:bg-white group-has-[:checked]:text-purple-700">
+                      {option.badge}
+                    </span>
+                  )}
                 </span>
               </label>
 

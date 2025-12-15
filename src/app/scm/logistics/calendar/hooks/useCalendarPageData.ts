@@ -143,6 +143,11 @@ export function useCalendarPageData(
         map.set(content.scopeAndSequenceId, content.subsection);
       }
     }
+    // Debug: log subsection assignments
+    const withSubsection = Array.from(map.entries()).filter(([, sub]) => sub !== undefined);
+    if (withSubsection.length > 0) {
+      console.log('[useCalendarPageData] Lessons with subsections:', withSubsection.length);
+    }
     return map;
   }, [assignmentContent]);
 
@@ -220,53 +225,102 @@ export function useCalendarPageData(
             }));
         };
 
-        // Build sections: Ramp Up first (if exists), then curriculum sections (A, B, C...), then Unit Test (if exists)
-        // Filter out "Ramp Ups" and "Unit Assessment" since they're handled separately
-        const curriculumSections = Array.from(data.sections.entries())
-          .filter(([sectionId]) => sectionId !== "Ramp Ups" && sectionId !== "Unit Assessment")
-          .sort(([a], [b]) => a.localeCompare(b))
-          .map(([sectionId, sectionData]) => {
-            const savedSection = saved?.sections?.find((s) => s.sectionId === sectionId);
-            return {
+        // Helper to build section rows, splitting by subsection if lessons have subsections assigned
+        const buildSectionRows = (
+          sectionId: string,
+          baseName: string,
+          sectionData: SectionData | undefined
+        ): SectionSchedule[] => {
+          if (!sectionData) return [];
+
+          const lessonsWithSubsection = buildLessons(sectionData);
+
+          // Check if any lessons have subsections assigned
+          const hasSubsections = lessonsWithSubsection.some((l) => l.subsection !== undefined);
+
+          if (!hasSubsections) {
+            // No subsections - return single row as before
+            const savedSection = saved?.sections?.find(
+              (s) => s.sectionId === sectionId && s.subsection === undefined
+            );
+            return [
+              {
+                sectionId,
+                name: baseName,
+                startDate: savedSection?.startDate || "",
+                endDate: savedSection?.endDate || "",
+                lessonCount: lessonsWithSubsection.length,
+                lessons: lessonsWithSubsection,
+              },
+            ];
+          }
+
+          // Group lessons by subsection
+          const groups = new Map<number | undefined, LessonForSubsection[]>();
+          for (const lesson of lessonsWithSubsection) {
+            const key = lesson.subsection;
+            if (!groups.has(key)) {
+              groups.set(key, []);
+            }
+            groups.get(key)!.push(lesson);
+          }
+
+          // Build rows for each subsection group
+          const rows: SectionSchedule[] = [];
+
+          // Sort subsection keys: undefined first, then 1, 2, 3...
+          const sortedKeys = Array.from(groups.keys()).sort((a, b) => {
+            if (a === undefined) return -1;
+            if (b === undefined) return 1;
+            return a - b;
+          });
+
+          for (const subsectionKey of sortedKeys) {
+            const groupLessons = groups.get(subsectionKey)!;
+            const savedSection = saved?.sections?.find(
+              (s) => s.sectionId === sectionId && s.subsection === subsectionKey
+            );
+
+            // Build name: "Section A (Part 1)" or just "Section A" for unassigned
+            const rowName =
+              subsectionKey !== undefined
+                ? `${baseName} (Part ${subsectionKey})`
+                : `${baseName} (Unassigned)`;
+
+            rows.push({
               sectionId,
-              name: `Section ${sectionId}`,
+              subsection: subsectionKey,
+              name: rowName,
               startDate: savedSection?.startDate || "",
               endDate: savedSection?.endDate || "",
-              lessonCount: sectionData.count,
-              lessons: buildLessons(sectionData),
-            };
-          });
+              lessonCount: groupLessons.length,
+              lessons: groupLessons,
+            });
+          }
+
+          return rows;
+        };
 
         // Build final sections array - only include Ramp Up and Unit Test if they exist in scope-and-sequence
         const finalSections: SectionSchedule[] = [];
 
         // Add Ramp Up at the beginning only if it exists in scope-and-sequence
         if (rampUpData && rampUpData.count > 0) {
-          const rampUpSaved = saved?.sections?.find((s) => s.sectionId === "Ramp Up");
-          finalSections.push({
-            sectionId: "Ramp Up",
-            name: "Ramp Up",
-            startDate: rampUpSaved?.startDate || "",
-            endDate: rampUpSaved?.endDate || "",
-            lessonCount: rampUpData.count,
-            lessons: buildLessons(rampUpData),
-          });
+          finalSections.push(...buildSectionRows("Ramp Up", "Ramp Up", rampUpData));
         }
 
-        // Add curriculum sections (A, B, C, etc.)
-        finalSections.push(...curriculumSections);
+        // Add curriculum sections (A, B, C, etc.) - now split by subsection if needed
+        const curriculumSectionIds = Array.from(data.sections.entries())
+          .filter(([sectionId]) => sectionId !== "Ramp Ups" && sectionId !== "Unit Assessment")
+          .sort(([a], [b]) => a.localeCompare(b));
+
+        for (const [sectionId, sectionData] of curriculumSectionIds) {
+          finalSections.push(...buildSectionRows(sectionId, `Section ${sectionId}`, sectionData));
+        }
 
         // Add Unit Test at the end only if it exists in scope-and-sequence
         if (unitAssessmentData && unitAssessmentData.count > 0) {
-          const unitTestSaved = saved?.sections?.find((s) => s.sectionId === "Unit Test");
-          finalSections.push({
-            sectionId: "Unit Test",
-            name: "Unit Test",
-            startDate: unitTestSaved?.startDate || "",
-            endDate: unitTestSaved?.endDate || "",
-            lessonCount: unitAssessmentData.count,
-            lessons: buildLessons(unitAssessmentData),
-          });
+          finalSections.push(...buildSectionRows("Unit Test", "Unit Test", unitAssessmentData));
         }
 
         return {
