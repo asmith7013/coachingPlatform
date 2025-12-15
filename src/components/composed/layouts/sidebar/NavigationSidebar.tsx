@@ -199,7 +199,7 @@ export function NavigationSidebar({
               </a>
             </MenuItem>
             <MenuItem>
-              <Link href="/scm/timesheet" className={styles.userMenuItem()}>
+              <Link href="/scm/admin/timesheet" className={styles.userMenuItem()}>
                 <ClockIcon className={styles.userMenuIcon()} aria-hidden="true" />
                 Timesheet
               </Link>

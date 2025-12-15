@@ -427,6 +427,7 @@
 │   │   │   │   ├── student-performance.ts
 │   │   │   │   ├── students.ts
 │   │   │   │   ├── sync-sheets.ts
+│   │   │   │   ├── timesheet.ts
 │   │   │   │   ├── velocity
 │   │   │   │   │   └── velocity.ts
 │   │   │   │   ├── worked-example-requests.ts
@@ -888,6 +889,9 @@
 │   │   │       └── slide-9.html
 │   │   ├── scm
 │   │   │   ├── SCMNav.tsx
+│   │   │   ├── admin
+│   │   │   │   └── timesheet
+│   │   │   │       └── page.tsx
 │   │   │   ├── incentives
 │   │   │   │   ├── data
 │   │   │   │   │   ├── TrackingTables.tsx
@@ -1098,8 +1102,6 @@
 │   │   │       ├── VisitScheduleTest.tsx
 │   │   │       ├── layout.tsx
 │   │   │       └── page.tsx
-│   │   ├── timesheet
-│   │   │   └── page.tsx
 │   │   ├── tools
 │   │   │   ├── curriculum-screenshots
 │   │   │   │   ├── actions
@@ -1667,6 +1669,9 @@
 │   │   │   │   ├── index.ts
 │   │   │   │   ├── mutations.ts
 │   │   │   │   └── queries.ts
+│   │   │   ├── timesheet
+│   │   │   │   ├── index.ts
+│   │   │   │   └── useTimesheetEntries.ts
 │   │   │   └── utils
 │   │   │       ├── colors.ts
 │   │   │       ├── index.ts
@@ -2227,4 +2232,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-654 directories, 1574 files
+656 directories, 1577 files
