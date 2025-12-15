@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAllSectionConfigs } from "@/app/actions/scm/section-overview";
-import { getSectionColors } from "../utils/colors";
+import { getSectionColors } from "@/hooks/scm/utils/colors";
 import type { SectionOption } from "@/components/composed/section-visualization";
 
 /**

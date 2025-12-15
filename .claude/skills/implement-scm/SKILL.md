@@ -1,3 +1,8 @@
+---
+name: Implement SCM Features
+description: Build features in the SCM (School Coaching Manager) section. Use for creating pages, hooks, and visualizations for podsie tracking, roadmaps, velocity, and assessment data.
+---
+
 # Implement SCM Features
 
 Build features in the SCM (School Coaching Manager) section of the app. This includes pages under `/src/app/scm/` for podsie tracking, roadmaps, velocity, and assessment data.

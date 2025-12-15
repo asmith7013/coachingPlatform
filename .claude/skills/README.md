@@ -25,7 +25,22 @@ This directory contains specialized Claude skills that provide comprehensive doc
 
 ## Available Skills
 
-### 1. `app-development` - General App Development
+### 1. `create-claude-skill` - Create New Skills
+**Use when**: Creating new Claude skills following Anthropic best practices
+
+**Location**: `.claude/skills/create-claude-skill/SKILL.md`
+
+**Includes**:
+- `anatomy.md` - Detailed skill structure guide
+- `best-practices.md` - Development and evaluation practices
+- `templates/SKILL-template.md` - Starter template
+- `examples/` - Simple and complex skill examples
+
+**Invoke with**: `/skill create-claude-skill` or reference in Cursor with `@create-claude-skill`
+
+---
+
+### 2. `app-development` - General App Development
 **Use when**: Building pages, components, server actions, and features
 
 **Location**: `.claude/skills/app-development/SKILL.md`
@@ -41,7 +56,7 @@ This directory contains specialized Claude skills that provide comprehensive doc
 
 ---
 
-### 2. `create-p5-animation` - Math Manipulative Animations
+### 3. `create-p5-animation` - Math Manipulative Animations
 **Use when**: Creating p5.js animations for math education
 
 **Location**: `.claude/skills/create-p5-animation/SKILL.md`
@@ -55,6 +70,42 @@ This directory contains specialized Claude skills that provide comprehensive doc
 - Primitives and scenario templates
 
 **Invoke with**: `/skill create-p5-animation` or reference in Cursor with `@create-p5-animation`
+
+---
+
+### 4. `create-worked-example-sg` - Worked Example Study Guides
+**Use when**: Creating HTML-based slide decks for math worked examples
+
+**Location**: `.claude/skills/create-worked-example-sg/skill.md`
+
+**Invoke with**: `/skill create-worked-example-sg`
+
+---
+
+### 5. `question-types` - Question Type Patterns
+**Use when**: Implementing interactive question types for assignments
+
+**Location**: `.claude/skills/question-types/`
+
+**Invoke with**: `/skill question-types`
+
+---
+
+### 6. `implement-scm` - SCM Page Implementation
+**Use when**: Building pages in the SCM section
+
+**Location**: `.claude/skills/implement-scm/SKILL.md`
+
+**Invoke with**: `/skill implement-scm`
+
+---
+
+### 7. `skill-guide` - Skill Creation Guide
+**Use when**: Understanding how to create or use Claude skills
+
+**Location**: `.claude/skills/skill-guide/SKILL.md`
+
+**Invoke with**: `/skill skill-guide`
 
 ---
 
@@ -113,8 +164,13 @@ Use **`create-p5-animation`** for:
 | Server action | `app-development` |
 | UI component | `app-development` |
 | Data table | `app-development` |
+| SCM page | `implement-scm` |
 | Math animation | `create-p5-animation` |
 | p5.js visualization | `create-p5-animation` |
+| Worked example slides | `create-worked-example-sg` |
+| Question type | `question-types` |
+| Create new skill | `create-claude-skill` |
+| Learn about skills | `skill-guide` |
 
 ## Maintenance
 

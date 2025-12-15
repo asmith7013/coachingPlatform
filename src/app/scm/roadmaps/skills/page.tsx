@@ -5,7 +5,7 @@ import { SkillListItem } from "./components/SkillListItem";
 import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback/Spinner";
-import { useAllSkills, useFilteredSkills } from "../hooks";
+import { useAllSkills, useFilteredSkills } from "@/hooks/scm";
 
 export default function RoadmapsSkillsPage() {
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);

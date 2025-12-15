@@ -42,9 +42,10 @@ app-development/
 - `src/app/` - Pages and layouts
 - `src/app/actions/` - Server actions
 - `src/components/` - Reusable components
+- `src/hooks/scm/` - SCM React Query hooks (centralized)
 - `src/lib/schema/mongoose-schema/` - Database models
 - `src/lib/schema/zod-schema/` - Validation schemas
-- `src/query/` - React Query hooks
+- `src/query/` - React Query providers
 
 ## Documentation Files
 
@@ -154,4 +155,4 @@ export function MyComponent({ ...props }: MyComponentProps) {
 
 ---
 
-**Last Updated**: November 2024
+**Last Updated**: December 2024

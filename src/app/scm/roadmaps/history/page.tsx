@@ -11,7 +11,7 @@ import {
   useAssessmentData,
   useZearnCompletions,
   usePodsieCompletions,
-} from "./hooks";
+} from "@/hooks/scm";
 
 const SECTION_OPTIONS: Array<{ value: string; label: string; grade?: string }> = [
   { value: "", label: "All Sections" },

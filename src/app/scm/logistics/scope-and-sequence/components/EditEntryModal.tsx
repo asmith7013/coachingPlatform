@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { XMarkIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import React, { useState, useEffect, useMemo } from "react";
+import { XMarkIcon, PlusIcon, TrashIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import {
   GRADE_OPTIONS,
   SECTION_OPTIONS,
@@ -13,25 +13,61 @@ import {
   type StandardContext,
 } from "@zod-schema/scm/curriculum/scope-and-sequence";
 
-interface AddEditModalProps {
+interface EditEntryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: ScopeAndSequenceInput) => void;
-  entry?: ScopeAndSequence | null;
+  entry: ScopeAndSequence | null;
   isLoading?: boolean;
 }
 
 const STANDARD_CONTEXT_OPTIONS: StandardContext[] = ["current", "buildingOn", "buildingTowards"];
 
-export function AddEditModal({
+// Pattern validation helpers
+function getExpectedLessonType(section: string): "lesson" | "rampUp" | "assessment" | null {
+  if (section === "Ramp Ups") return "rampUp";
+  if (section === "Unit Assessment") return "assessment";
+  if (["A", "B", "C", "D", "E", "F"].includes(section)) return "lesson";
+  return null;
+}
+
+function getExpectedUnitLessonId(unitNumber: number, lessonNumber: number, lessonType: string): string {
+  if (lessonType === "rampUp") return `${unitNumber}.RU${lessonNumber}`;
+  if (lessonType === "assessment") return `${unitNumber}.UA`;
+  return `${unitNumber}.${lessonNumber}`;
+}
+
+function getExpectedLessonName(lessonNumber: number, lessonTitle: string, lessonType: string): string | null {
+  if (!lessonTitle && lessonType !== "assessment") return null;
+  if (lessonType === "rampUp") return `Ramp Up ${lessonNumber}: ${lessonTitle}`;
+  if (lessonType === "assessment") return "Unit Assessment";
+  return `Lesson ${lessonNumber}: ${lessonTitle}`;
+}
+
+function getExpectedGrade(scopeSequenceTag: string): string | null {
+  const tagToGrade: Record<string, string> = {
+    "Grade 6": "6",
+    "Grade 7": "7",
+    "Grade 8": "8",
+    "Algebra 1": "Algebra 1",
+  };
+  return tagToGrade[scopeSequenceTag] || null;
+}
+
+interface PatternViolation {
+  field: string;
+  message: string;
+  expected?: string;
+  actual?: string;
+}
+
+export function EditEntryModal({
   isOpen,
   onClose,
   onSubmit,
   entry,
   isLoading,
-}: AddEditModalProps) {
-  const isEditing = !!entry;
-
+}: EditEntryModalProps) {
   // Form state
   const [grade, setGrade] = useState<string>("8");
   const [unit, setUnit] = useState("");
@@ -70,24 +106,77 @@ export function AddEditModal({
       setTargetSkills(entry.targetSkills || []);
       setStandards(entry.standards || []);
       setLearningTargets(entry.learningTargets || []);
-    } else {
-      // Reset to defaults for new entry
-      setGrade("8");
-      setUnit("");
-      setUnitLessonId("");
-      setUnitNumber(1);
-      setLessonNumber(1);
-      setLessonName("");
-      setLessonType("lesson");
-      setLessonTitle("");
-      setSection("");
-      setScopeSequenceTag("");
-      setRoadmapSkills([]);
-      setTargetSkills([]);
-      setStandards([]);
-      setLearningTargets([]);
     }
   }, [entry, isOpen]);
+
+  // Calculate pattern violations
+  const violations = useMemo<PatternViolation[]>(() => {
+    const result: PatternViolation[] = [];
+
+    // Check lessonType matches section
+    if (section) {
+      const expectedType = getExpectedLessonType(section);
+      if (expectedType && lessonType !== expectedType) {
+        result.push({
+          field: "lessonType",
+          message: `Lesson type doesn't match section "${section}"`,
+          expected: expectedType,
+          actual: lessonType,
+        });
+      }
+    }
+
+    // Check unitLessonId format
+    if (unitNumber && lessonType) {
+      const expectedId = getExpectedUnitLessonId(unitNumber, lessonNumber, lessonType);
+      if (unitLessonId && unitLessonId !== expectedId) {
+        result.push({
+          field: "unitLessonId",
+          message: "Unit Lesson ID doesn't match expected pattern",
+          expected: expectedId,
+          actual: unitLessonId,
+        });
+      }
+    }
+
+    // Check lessonName format
+    if (lessonType && (lessonTitle || lessonType === "assessment")) {
+      const expectedName = getExpectedLessonName(lessonNumber, lessonTitle, lessonType);
+      if (expectedName && lessonName && lessonName !== expectedName) {
+        result.push({
+          field: "lessonName",
+          message: "Lesson name doesn't match expected pattern",
+          expected: expectedName,
+          actual: lessonName,
+        });
+      }
+    }
+
+    // Check grade matches scopeSequenceTag
+    if (scopeSequenceTag) {
+      const expectedGrade = getExpectedGrade(scopeSequenceTag);
+      if (expectedGrade && grade !== expectedGrade) {
+        result.push({
+          field: "grade",
+          message: `Grade doesn't match Scope & Sequence Tag "${scopeSequenceTag}"`,
+          expected: expectedGrade,
+          actual: grade,
+        });
+      }
+    }
+
+    // Check assessment has lessonNumber 0
+    if (lessonType === "assessment" && lessonNumber !== 0) {
+      result.push({
+        field: "lessonNumber",
+        message: "Assessments should have lesson number 0",
+        expected: "0",
+        actual: String(lessonNumber),
+      });
+    }
+
+    return result;
+  }, [grade, unitLessonId, unitNumber, lessonNumber, lessonName, lessonType, lessonTitle, section, scopeSequenceTag]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -164,16 +253,37 @@ export function AddEditModal({
     setStandards(standards.filter((_, i) => i !== index));
   };
 
-  if (!isOpen) return null;
+  // Auto-fix helper
+  const autoFixViolation = (violation: PatternViolation) => {
+    if (violation.expected) {
+      switch (violation.field) {
+        case "lessonType":
+          setLessonType(violation.expected);
+          break;
+        case "unitLessonId":
+          setUnitLessonId(violation.expected);
+          break;
+        case "lessonName":
+          setLessonName(violation.expected);
+          break;
+        case "grade":
+          setGrade(violation.expected);
+          break;
+        case "lessonNumber":
+          setLessonNumber(parseInt(violation.expected) || 0);
+          break;
+      }
+    }
+  };
+
+  if (!isOpen || !entry) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h2 className="text-xl font-semibold">
-            {isEditing ? "Edit Scope & Sequence Entry" : "Add New Entry"}
-          </h2>
+          <h2 className="text-xl font-semibold">Edit Scope & Sequence Entry</h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded cursor-pointer"
@@ -181,6 +291,49 @@ export function AddEditModal({
             <XMarkIcon className="h-6 w-6" />
           </button>
         </div>
+
+        {/* Pattern Violations Warning */}
+        {violations.length > 0 && (
+          <div className="mx-6 mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="flex items-start gap-2">
+              <ExclamationTriangleIcon className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h4 className="text-sm font-medium text-amber-800">
+                  Pattern Violations Detected ({violations.length})
+                </h4>
+                <p className="text-xs text-amber-700 mt-1">
+                  This entry has values that don&apos;t match expected patterns. You can fix them or keep the existing values.
+                </p>
+                <ul className="mt-2 space-y-2">
+                  {violations.map((v, i) => (
+                    <li key={i} className="flex items-start justify-between gap-2 text-xs bg-white p-2 rounded border border-amber-100">
+                      <div>
+                        <span className="font-medium text-amber-800">{v.field}:</span>{" "}
+                        <span className="text-gray-700">{v.message}</span>
+                        {v.expected && v.actual && (
+                          <div className="mt-1 text-gray-500">
+                            Expected: <code className="bg-green-50 px-1 rounded">{v.expected}</code>
+                            {" → "}
+                            Actual: <code className="bg-red-50 px-1 rounded">{v.actual}</code>
+                          </div>
+                        )}
+                      </div>
+                      {v.expected && (
+                        <button
+                          type="button"
+                          onClick={() => autoFixViolation(v)}
+                          className="px-2 py-1 text-xs bg-amber-100 text-amber-800 rounded hover:bg-amber-200 cursor-pointer whitespace-nowrap"
+                        >
+                          Fix
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -570,7 +723,7 @@ export function AddEditModal({
             disabled={isLoading}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
           >
-            {isLoading ? "Saving..." : isEditing ? "Update" : "Create"}
+            {isLoading ? "Saving..." : "Update Entry"}
           </button>
         </div>
       </div>

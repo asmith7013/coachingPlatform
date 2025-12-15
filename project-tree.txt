@@ -45,6 +45,7 @@
 │   ├── exemplar-stack.md
 │   ├── fillTimesheet
 │   │   ├── README.md
+│   │   ├── background.js
 │   │   ├── create-icons.sh
 │   │   ├── icon128.png
 │   │   ├── icon16.png
@@ -110,14 +111,28 @@
 │   ├── token-tailwind-mapping.md
 │   ├── workflow-templates
 │   │   └── coding-session-control.md
-│   └── workflows
-│       ├── breaking-changes-guide.md
-│       ├── common-tasks.md
-│       ├── cursor-integration.md
-│       ├── dev-utilities.md
-│       ├── development-workflow.md
-│       ├── hook-development.md
-│       └── implementation-workflow.md
+│   ├── workflows
+│   │   ├── breaking-changes-guide.md
+│   │   ├── common-tasks.md
+│   │   ├── cursor-integration.md
+│   │   ├── dev-utilities.md
+│   │   ├── development-workflow.md
+│   │   ├── hook-development.md
+│   │   └── implementation-workflow.md
+│   └── zearnAutomation
+│       ├── README.md
+│       ├── background.js
+│       ├── create-icons.js
+│       ├── dateSelector.html
+│       ├── exportsPage.html
+│       ├── exportsPageAfterSelect.html
+│       ├── icon128.png
+│       ├── icon16.png
+│       ├── icon48.png
+│       ├── login.html
+│       ├── manifest.json
+│       ├── popup.html
+│       └── popup.js
 ├── docs-cursor
 │   ├── create-prd-new.mdc
 │   ├── create-prd.mdc
@@ -914,8 +929,6 @@
 │   │   │   │   │   ├── page.tsx
 │   │   │   │   │   └── page.tsx.backup
 │   │   │   │   ├── hooks
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   └── useCurrentUnits.ts
 │   │   │   │   ├── import-attendance
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── manage-configs
@@ -971,7 +984,6 @@
 │   │   │   │   │   ├── hooks
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── hooks
-│   │   │   │   │   └── index.ts
 │   │   │   │   ├── im-lesson-updater
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── json
@@ -1633,7 +1645,32 @@
 │   │   ├── migration
 │   │   │   └── swr-to-query.ts
 │   │   ├── scm
-│   │   │   └── index.ts
+│   │   │   ├── index.ts
+│   │   │   ├── podsie
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── useCurrentUnits.ts
+│   │   │   │   ├── useDaysOff.ts
+│   │   │   │   ├── useSectionOptions.ts
+│   │   │   │   ├── useVelocityData.ts
+│   │   │   │   └── useWeeklyVelocity.ts
+│   │   │   ├── roadmaps
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── useAllSkills.ts
+│   │   │   │   ├── useAssessmentData.ts
+│   │   │   │   ├── useFilteredSkills.ts
+│   │   │   │   ├── usePodsieCompletions.ts
+│   │   │   │   ├── useRoadmapData.ts
+│   │   │   │   ├── useRoadmapUnits.ts
+│   │   │   │   ├── useStudentsBySection.ts
+│   │   │   │   └── useZearnCompletions.ts
+│   │   │   ├── scope-and-sequence
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── mutations.ts
+│   │   │   │   └── queries.ts
+│   │   │   └── utils
+│   │   │       ├── colors.ts
+│   │   │       ├── index.ts
+│   │   │       └── unitColors.ts
 │   │   ├── ui
 │   │   │   ├── index.ts
 │   │   │   ├── useAdaptiveHeight.ts
@@ -2190,4 +2227,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-649 directories, 1542 files
+654 directories, 1574 files

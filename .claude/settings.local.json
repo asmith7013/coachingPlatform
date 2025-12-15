@@ -34,6 +34,7 @@
       "Skill(implement-scm)",
       "Skill(question-types)",
       "Skill(skill-guide)",
+      "Skill(create-claude-skill)",
       "Bash(npm run lint:*)",
       "Bash(node .claude/skills/create-worked-example-sg/templates/sync-to-db.js:*)",
       "Bash(wc:*)",

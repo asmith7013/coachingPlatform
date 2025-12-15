@@ -5,8 +5,7 @@ import type { CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { CheckIcon, ClockIcon, XMarkIcon, ClipboardDocumentIcon } from "@heroicons/react/24/solid";
 import { SectionSummaryCard } from "@/app/scm/podsie/pace/components";
-import { useWeeklyVelocity, type SectionWeeklyData } from "./hooks";
-import { useCurrentUnits } from "../hooks";
+import { useWeeklyVelocity, useCurrentUnits, type SectionWeeklyData } from "@/hooks/scm";
 
 // Hardcoded sections for this page
 const SECTIONS = [

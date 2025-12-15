@@ -10,7 +10,7 @@ import { RoadmapsSkill } from "@zod-schema/scm/curriculum/roadmap-skill";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/scm/roadmaps-skills";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { AcademicCapIcon, BookOpenIcon } from "@heroicons/react/24/outline";
-import { useRoadmapUnits } from "../hooks";
+import { useRoadmapUnits } from "@/hooks/scm";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },

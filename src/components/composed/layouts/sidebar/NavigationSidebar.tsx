@@ -15,7 +15,7 @@ import { tv } from 'tailwind-variants'
 // import { textColors, textSize, paddingX, paddingY, radii } from '@ui-tokens/tokens'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronDownIcon, UserCircleIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon, UserCircleIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon, ClockIcon } from '@heroicons/react/24/outline'
 import { useAuthenticatedUser, useSignOut } from '@/hooks/auth/useAuthenticatedUser'
 import { useResizableSidebar } from '@/hooks/ui/useResizableSidebar'
 import { ResizeHandle } from '@/components/composed/layouts/sidebar/ResizeHandle'
@@ -197,6 +197,12 @@ export function NavigationSidebar({
                 <Cog6ToothIcon className={styles.userMenuIcon()} aria-hidden="true" />
                 Settings
               </a>
+            </MenuItem>
+            <MenuItem>
+              <Link href="/scm/timesheet" className={styles.userMenuItem()}>
+                <ClockIcon className={styles.userMenuIcon()} aria-hidden="true" />
+                Timesheet
+              </Link>
             </MenuItem>
             <div className="border-t border-gray-200 my-1" />
             <MenuItem>

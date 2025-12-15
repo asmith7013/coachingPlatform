@@ -35,6 +35,7 @@ For comprehensive documentation on skills, read the main README:
 | Skill | Purpose |
 |-------|---------|
 | `app-development` | Building pages, components, server actions |
+| `create-claude-skill` | Create new skills following Anthropic best practices |
 | `create-p5-animation` | Math visualizations with p5.js |
 | `create-worked-example-sg` | Worked example study guides |
 | `question-types` | Question type patterns |

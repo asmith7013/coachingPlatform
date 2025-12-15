@@ -11,7 +11,7 @@ import { syncSectionRampUpProgress } from "@actions/scm/podsie-sync";
 import { getCurrentUnitsForAllSections, type CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
 import type { AssignmentContent } from "@zod-schema/scm/podsie/section-config";
 import { MultiSectionSelector } from "./components";
-import { getSectionColors } from "@/app/scm/podsie/velocity/utils/colors";
+import { getSectionColors } from "@/hooks/scm";
 
 interface SectionOption {
   id: string;

@@ -162,6 +162,53 @@ export const MyModel = mongoose.model("MyModel", MySchema);
 
 ## React Query Patterns
 
+### SCM Hooks Organization
+
+All SCM (School Coaching Manager) hooks are centralized in `src/hooks/scm/`:
+
+```
+hooks/scm/
+├── index.ts                    # Main export hub - import from here
+├── podsie/                     # Velocity tracking & sections
+│   ├── useSectionOptions.ts    # Section configs with colors
+│   ├── useDaysOff.ts           # School calendar days off
+│   ├── useCurrentUnits.ts      # Current unit by section
+│   ├── useVelocityData.ts      # Daily velocity stats
+│   └── useWeeklyVelocity.ts    # Weekly aggregated data
+├── roadmaps/                   # Curriculum & assessments
+│   ├── useRoadmapUnits.ts      # Roadmap unit data
+│   ├── useRoadmapData.ts       # Section roadmap completions
+│   ├── useAllSkills.ts         # All roadmap skills (dropdowns)
+│   ├── useFilteredSkills.ts    # Skills by grade/unit
+│   ├── useAssessmentData.ts    # Student assessments
+│   ├── useZearnCompletions.ts  # Zearn completion history
+│   ├── usePodsieCompletions.ts # Podsie completion history
+│   └── useStudentsBySection.ts # Students grouped by section
+├── scope-and-sequence/         # Curriculum planning
+│   ├── queries.ts              # Read operations
+│   └── mutations.ts            # Create/update/delete
+└── utils/                      # Shared utilities
+    ├── colors.ts               # Section color palettes
+    └── unitColors.ts           # Unit color palettes
+```
+
+**Usage:**
+```typescript
+// Import from the main hub
+import {
+  useSectionOptions,
+  useRoadmapUnits,
+  useScopeSequenceList,
+  getSectionColors,
+} from "@/hooks/scm";
+```
+
+**Key hooks:**
+- `useSectionOptions()` - Returns section configs, colors, sections by school
+- `useVelocityData(sections, options, schoolYear, includeNotTracked)` - Multi-section velocity
+- `useRoadmapData(selectedSections)` - Roadmap completions for sections
+- `useScopeSequenceList({ grade, unitNumber })` - Scope & sequence entries
+
 ### Query Hook Pattern
 
 ```typescript

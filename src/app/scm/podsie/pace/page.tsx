@@ -6,7 +6,7 @@ import { MultiSectionSelector } from "@/app/scm/podsie/bulk-sync/components";
 import type { CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { SectionPacingCard, SectionSummaryCard } from "./components";
-import { useSectionOptions, useCurrentUnits } from "../hooks";
+import { useSectionOptions, useCurrentUnits } from "@/hooks/scm";
 
 interface SectionOption {
   id: string;

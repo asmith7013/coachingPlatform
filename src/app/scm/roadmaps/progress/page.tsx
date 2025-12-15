@@ -10,7 +10,7 @@ import {
 } from "@/components/composed/section-visualization";
 import { RoadmapBarChart } from "./components/RoadmapBarChart";
 import { SectionComparisonChart } from "./components/SectionComparisonChart";
-import { useSectionOptions, useRoadmapData } from "./hooks";
+import { useSectionOptions, useRoadmapData } from "@/hooks/scm";
 
 export default function RoadmapCompletionsPage() {
   const [selectedSections, setSelectedSections] = useState<string[]>([]);

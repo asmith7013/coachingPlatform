@@ -33,8 +33,8 @@ import {
   useCreateScopeSequence,
   useUpdateScopeSequence,
   useDeleteScopeSequence,
-} from "./hooks";
-import { AddEditModal, DeleteConfirmModal } from "./components";
+} from "@/hooks/scm";
+import { AddEntryModal, EditEntryModal, DeleteConfirmModal } from "./components";
 
 export default function ScopeAndSequencePage() {
   // Filter state
@@ -453,14 +453,18 @@ export default function ScopeAndSequencePage() {
       </div>
 
       {/* Modals */}
-      <AddEditModal
+      <AddEntryModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
+        defaultTag={selectedTag || undefined}
+        defaultGrade={selectedGrade || undefined}
+        defaultUnit={unitFilter}
+        existingEntries={data || []}
       />
 
-      <AddEditModal
+      <EditEntryModal
         isOpen={!!editingEntry}
         onClose={() => setEditingEntry(null)}
         onSubmit={handleUpdate}

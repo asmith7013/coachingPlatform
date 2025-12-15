@@ -22,7 +22,7 @@ import {
   type SectionOption,
   type AccordionItemConfig,
 } from "@/components/composed/section-visualization";
-import { useSectionOptions, useDaysOff, useVelocityData } from "./hooks";
+import { useSectionOptions, useDaysOff, useVelocityData } from "@/hooks/scm";
 
 // Default school year
 const DEFAULT_SCHOOL_YEAR = "2025-2026";
