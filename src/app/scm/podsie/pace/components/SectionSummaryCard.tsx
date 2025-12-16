@@ -148,22 +148,18 @@ export function SectionSummaryCard({
             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-600 text-white">
               {school}
             </span>
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-              Unit {currentUnit}
-            </span>
+            {specialPopulations && specialPopulations.length > 0 && specialPopulations.map((pop) => {
+              const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+              return (
+                <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
+                  {pop}
+                </span>
+              );
+            })}
           </div>
-          {specialPopulations && specialPopulations.length > 0 && (
-            <div className="flex items-center gap-1">
-              {specialPopulations.map((pop) => {
-                const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
-                return (
-                  <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
-                    {pop}
-                  </span>
-                );
-              })}
-            </div>
-          )}
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+            Unit {currentUnit}
+          </span>
         </div>
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-full"></div>
@@ -197,16 +193,33 @@ export function SectionSummaryCard({
     { percent: completePercent, count: completeCount, bg: "bg-purple-100", border: "border-purple-500", text: "text-purple-700", dot: "bg-purple-500", label: "Complete" },
   ].filter(s => s.percent > 0);
 
+  // Get lessons in the expected section for badge display
+  const expectedSectionInfo = pacingData.unitSections.find(
+    s => s.sectionId === pacingData.expectedSection || s.sectionName === pacingData.expectedSectionName
+  );
+
+  // Format lesson badges (e.g., "L2", "L3", "RU1", "RU2")
+  const lessonBadges = expectedSectionInfo?.lessons.map(lesson => {
+    const isRampUp = lesson.lessonName.toLowerCase().includes('ru') ||
+                     lesson.lessonName.toLowerCase().includes('ramp');
+    if (isRampUp) {
+      // Extract number from "RU1" or "Ramp Up 1" format
+      const num = lesson.lessonName.match(/\d+/)?.[0] || '';
+      return `RU${num}`;
+    } else {
+      // Extract number from "Lesson 1" or "L1" format
+      const num = lesson.lessonName.match(/\d+/)?.[0] || '';
+      return `L${num}`;
+    }
+  }) || [];
+
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
-      {/* Header */}
-      <div className="flex items-center gap-2 mb-3">
+      {/* Title row */}
+      <div className="flex items-center gap-2 mb-2">
         <span className="text-lg font-bold text-gray-900">{section}</span>
         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-600 text-white">
           {school}
-        </span>
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-          Unit {currentUnit}
         </span>
         {specialPopulations?.map((pop) => {
           const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
@@ -268,6 +281,27 @@ export function SectionSummaryCard({
       ) : (
         <p className="text-sm text-gray-500">No student data available</p>
       )}
+
+      {/* Footer with current section info */}
+      <div className="-mx-4 -mb-4 mt-3 pt-3 pb-4 px-4 border-t border-gray-200 bg-white rounded-b-lg flex items-center gap-1.5">
+        <span className="text-xs font-semibold text-gray-500">Current Section:</span>
+        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+          Unit {currentUnit}
+        </span>
+        {(currentUnitInfo?.currentSectionName || pacingData.expectedSectionName) && (
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+            {currentUnitInfo?.currentSectionName || pacingData.expectedSectionName}
+          </span>
+        )}
+        {lessonBadges.map((badge, idx) => (
+          <span
+            key={idx}
+            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-200 text-gray-700"
+          >
+            {badge}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
