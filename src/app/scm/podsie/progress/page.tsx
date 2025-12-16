@@ -204,7 +204,8 @@ export default function PodsieProgressPage() {
           variations: assignment.variations ?? 3,
           q1HasVariations: assignment.q1HasVariations ?? false,
           activityType: assignment.activityType
-        }
+        },
+        selectedSchool // Filter by school to avoid syncing students from other schools with same section number
       );
 
       if (result.success) {

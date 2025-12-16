@@ -12,6 +12,8 @@ import type { SyncSectionResult, SyncResult, SyncOptions } from "../types";
 
 /**
  * Sync ramp-up progress for all students in a section (or single student in test mode)
+ * @param section - The class section (e.g., "601")
+ * @param school - The school code (e.g., "PS19") - required to uniquely identify the section
  */
 export async function syncSectionRampUpProgress(
   section: string,
@@ -20,7 +22,8 @@ export async function syncSectionRampUpProgress(
   unitCode: string,
   rampUpId: string,
   totalQuestions: number,
-  options: SyncOptions = {}
+  options: SyncOptions = {},
+  school?: string
 ): Promise<SyncSectionResult> {
   try {
     // Build question mapping if baseQuestionIds and variations are provided
@@ -40,6 +43,11 @@ export async function syncSectionRampUpProgress(
         section,
         active: true,
       };
+
+      // Filter by school if provided (important for sections that exist in multiple schools)
+      if (school) {
+        query.school = school;
+      }
 
       // If specific test student requested
       if (options.testStudentId) {
