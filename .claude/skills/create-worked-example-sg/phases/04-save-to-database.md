@@ -51,7 +51,7 @@ Create the metadata file in the same directory as the slides:
 Use the sync script to upload to the database:
 
 ```bash
-node .claude/skills/create-worked-example-sg/scripts/sync-to-db.js {slug} > /tmp/mongo-sync.js && mongosh "$DATABASE_URL" < /tmp/mongo-sync.js --quiet
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH" && node .claude/skills/create-worked-example-sg/scripts/sync-to-db.js {slug}
 ```
 
 Replace `{slug}` with the actual slug (e.g., `balance-isolate-hanger-grade8`).

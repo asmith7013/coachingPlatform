@@ -165,7 +165,7 @@ if (!databaseUrl) {
 }
 
 try {
-  const output = execSync(`mongosh "${databaseUrl}" --file "${tempFile}"`, {
+  const output = execSync(`/usr/local/bin/mongosh "${databaseUrl}" --file "${tempFile}"`, {
     encoding: 'utf-8',
     stdio: ['pipe', 'pipe', 'pipe']
   });

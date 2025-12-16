@@ -59,7 +59,7 @@ Once I have ALL of these (especially the mastery check image), I'll analyze the 
 After receiving the grade, unit, and lesson, query MongoDB:
 
 ```bash
-mongosh "$DATABASE_URL" --eval "
+/usr/local/bin/mongosh "$DATABASE_URL" --eval "
 const grade = '[GRADE]';
 const unitNumber = [UNIT_NUMBER];
 const lessonNumber = [LESSON_NUMBER];
