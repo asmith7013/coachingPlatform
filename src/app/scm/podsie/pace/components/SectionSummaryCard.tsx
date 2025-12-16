@@ -53,10 +53,11 @@ export function SectionSummaryCard({
   // Derive scope tag from section
   const scopeSequenceTag = useMemo(() => getScopeTagForSection(section), [section]);
 
-  // Load units and config
+  // Load units and config (school is required to fetch section config)
   const { sectionConfigAssignments, loading: loadingConfig } = useUnitsAndConfig(
     scopeSequenceTag,
-    section
+    section,
+    school
   );
 
   // Load all lessons for the unit
@@ -76,8 +77,8 @@ export function SectionSummaryCard({
     school
   );
 
-  // Compute pacing data
-  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData, excludeRampUps, pacingDate);
+  // Compute pacing data (school is required for proper student filtering)
+  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData, excludeRampUps, pacingDate, true, school);
 
   const isLoading = loadingConfig || loadingLessons || loadingProgress || pacingData.loading;
 

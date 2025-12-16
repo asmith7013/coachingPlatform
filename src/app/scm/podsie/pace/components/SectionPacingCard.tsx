@@ -39,8 +39,8 @@ export function SectionPacingCard({
   // Derive scope tag from section
   const scopeSequenceTag = useMemo(() => getScopeTagForSection(section), [section]);
 
-  // Load units and config
-  const { sectionConfigAssignments } = useUnitsAndConfig(scopeSequenceTag, section);
+  // Load units and config (school is required to fetch section config)
+  const { sectionConfigAssignments } = useUnitsAndConfig(scopeSequenceTag, section, school);
 
   // Load all lessons for the unit (pass 'all' to get everything)
   const { lessons: allLessonsInUnit } = useLessons(
