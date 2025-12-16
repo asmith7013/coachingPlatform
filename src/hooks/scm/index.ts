@@ -107,6 +107,17 @@ export {
 } from "./scope-and-sequence/mutations";
 
 // ============================================================
+// URL FILTER HOOKS
+// ============================================================
+export {
+  useFilterParams,
+  gradeToSlug,
+  slugToGrade,
+  unitToSlug,
+  slugToUnit,
+} from "./useFilterParams";
+
+// ============================================================
 // UTILITIES (colors, etc.)
 // ============================================================
 export {

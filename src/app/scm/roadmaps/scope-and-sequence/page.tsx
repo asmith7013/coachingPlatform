@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useFilterParams, slugToGrade } from "@/hooks/scm/useFilterParams";
 import { fetchLessonsListByScopeTag, fetchScopeAndSequenceById, fetchFullLessonsByUnit } from "@actions/scm/scope-and-sequence/scope-and-sequence";
 import { fetchRoadmapsSkillsByNumbers } from "@actions/scm/roadmaps/roadmaps-skills";
 import { getRoadmapUnits } from "@/app/actions/scm/roadmaps/roadmaps-units";
@@ -41,6 +43,10 @@ const SCOPE_SEQUENCE_TAG_OPTIONS = [
 ];
 
 export default function ScopeAndSequencePage() {
+  // Read URL params directly to compute availableUnits before hook
+  const searchParams = useSearchParams();
+  const gradeFromUrl = slugToGrade(searchParams.get("grade") || "");
+
   // Lightweight lesson list (for dropdowns)
   const [lessonsListByTag, setLessonsListByTag] = useState<Record<string, LessonListItem[]>>({});
   const [isLoadingList, setIsLoadingList] = useState(false);
@@ -54,8 +60,6 @@ export default function ScopeAndSequencePage() {
 
   // Other data
   const [allUnits, setAllUnits] = useState<RoadmapUnit[]>([]);
-  const [selectedTag, setSelectedTag] = useState("");
-  const [selectedUnit, setSelectedUnit] = useState("");
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const [_selectedSkillNumber, setSelectedSkillNumber] = useState<string | null>(null);
   const [selectedSkillData, setSelectedSkillData] = useState<RoadmapsSkill | null>(null);
@@ -67,6 +71,43 @@ export default function ScopeAndSequencePage() {
   const [contextSkillNumber, setContextSkillNumber] = useState<string | null>(null);
   const [contextSkillData, setContextSkillData] = useState<RoadmapsSkill | null>(null);
   const [loadingContextSkill, setLoadingContextSkill] = useState(false);
+
+  // Compute available units from cached lessons (using URL grade)
+  const currentLessonsList = lessonsListByTag[gradeFromUrl] || [];
+  const unitsByGrade = gradeFromUrl
+    ? currentLessonsList
+        .filter(lesson => !lesson.lessonType || lesson.lessonType === "lesson")
+        .reduce((acc, lesson) => {
+          const grade = lesson.grade;
+          if (!acc[grade]) {
+            acc[grade] = new Set<string>();
+          }
+          acc[grade].add(lesson.unit);
+          return acc;
+        }, {} as Record<string, Set<string>>)
+    : {};
+  const gradeGroups = Object.keys(unitsByGrade)
+    .sort((a, b) => {
+      const aNum = parseInt(a);
+      const bNum = parseInt(b);
+      if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+      if (!isNaN(aNum)) return -1;
+      if (!isNaN(bNum)) return 1;
+      return a.localeCompare(b);
+    })
+    .map(grade => ({
+      grade,
+      units: Array.from(unitsByGrade[grade]).sort()
+    }));
+  const allAvailableUnits = gradeGroups.flatMap(g => g.units);
+
+  // URL-synced filter state
+  const {
+    selectedGrade: selectedTag,
+    selectedUnit,
+    handleGradeChange,
+    handleUnitChange,
+  } = useFilterParams({ availableUnits: allAvailableUnits });
 
   // Load roadmap units on mount
   useEffect(() => {
@@ -143,38 +184,6 @@ export default function ScopeAndSequencePage() {
 
     loadUnitLessons();
   }, [selectedTag, selectedUnit]);
-
-  // Get current lessons list for the selected tag
-  const currentLessonsList = lessonsListByTag[selectedTag] || [];
-
-  // Get unique units for the selected tag, grouped by grade
-  const unitsByGrade = selectedTag
-    ? currentLessonsList
-        .filter(lesson => !lesson.lessonType || lesson.lessonType === "lesson")
-        .reduce((acc, lesson) => {
-          const grade = lesson.grade;
-          if (!acc[grade]) {
-            acc[grade] = new Set<string>();
-          }
-          acc[grade].add(lesson.unit);
-          return acc;
-        }, {} as Record<string, Set<string>>)
-    : {};
-
-  // Convert to sorted array format for rendering
-  const gradeGroups = Object.keys(unitsByGrade)
-    .sort((a, b) => {
-      const aNum = parseInt(a);
-      const bNum = parseInt(b);
-      if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
-      if (!isNaN(aNum)) return -1;
-      if (!isNaN(bNum)) return 1;
-      return a.localeCompare(b);
-    })
-    .map(grade => ({
-      grade,
-      units: Array.from(unitsByGrade[grade]).sort()
-    }));
 
   // Clear selected lesson when filters change
   useEffect(() => {
@@ -314,10 +323,7 @@ export default function ScopeAndSequencePage() {
                 <select
                   id="tag-filter"
                   value={selectedTag}
-                  onChange={(e) => {
-                    setSelectedTag(e.target.value);
-                    setSelectedUnit("");
-                  }}
+                  onChange={(e) => handleGradeChange(e.target.value)}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer ${
                     !selectedTag
                       ? 'border-blue-500 ring-2 ring-blue-200'
@@ -339,7 +345,7 @@ export default function ScopeAndSequencePage() {
                 <select
                   id="unit-filter"
                   value={selectedUnit}
-                  onChange={(e) => setSelectedUnit(e.target.value)}
+                  onChange={(e) => handleUnitChange(e.target.value)}
                   disabled={!selectedTag || isLoadingList}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer ${
                     selectedTag && !selectedUnit
