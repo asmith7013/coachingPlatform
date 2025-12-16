@@ -1,0 +1,21 @@
+{
+  "title": "Read, Check, Intersect - Systems of Equations on Graphs",
+  "slug": "read-check-intersect-grade8-u4l10",
+  "mathConcept": "Systems of linear equations - interpreting points on graphs",
+  "mathStandard": "8.EE.C.8",
+  "gradeLevel": "8",
+  "unitNumber": 4,
+  "lessonNumber": 10,
+  "scopeAndSequenceId": "6900dd9f465ed885ee46b7d2",
+  "strategyName": "Read, Check, Intersect",
+  "strategySteps": ["READ", "CHECK", "INTERSECT"],
+  "learningGoals": [
+    "Determine a point that satisfies two relationships simultaneously, using tables or graphs",
+    "Interpret points that lie on one, both, or neither line on a graph of two simultaneous equations in context"
+  ],
+  "scenarios": [
+    "Gaming Subscriptions",
+    "Coffee Shop Order",
+    "Concert Tickets"
+  ]
+}

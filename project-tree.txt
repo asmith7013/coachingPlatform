@@ -258,7 +258,8 @@
 │   ├── create-section-configs.ts
 │   ├── create-unit-assessments.ts
 │   ├── db
-│   │   └── drop-studentidref-index.ts
+│   │   ├── drop-studentidref-index.ts
+│   │   └── migrate-subsection-index.ts
 │   ├── debug-803-unit3.js
 │   ├── delete-all-students.ts
 │   ├── fix-remaining-imports.js
@@ -379,60 +380,53 @@
 │   │   │   │   └── schools.ts
 │   │   │   ├── scm
 │   │   │   │   ├── analytics.ts
-│   │   │   │   ├── assignment-variations
-│   │   │   │   │   ├── delete-variation.ts
-│   │   │   │   │   ├── get-variation.ts
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   └── list-variations.ts
-│   │   │   │   ├── attendance-import.ts
-│   │   │   │   ├── attendance-sync
-│   │   │   │   │   ├── api
-│   │   │   │   │   ├── index.ts
-│   │   │   │   │   ├── scheduled
-│   │   │   │   │   ├── sync
-│   │   │   │   │   └── types.ts
-│   │   │   │   ├── curriculum-question-map
-│   │   │   │   │   └── index.ts
 │   │   │   │   ├── google-sheets-export.ts
-│   │   │   │   ├── im-lessons.ts
-│   │   │   │   ├── incentive-email.ts
+│   │   │   │   ├── incentives
+│   │   │   │   │   └── incentive-email.ts
 │   │   │   │   ├── index.ts
-│   │   │   │   ├── learning-content.ts
-│   │   │   │   ├── podsie-completion.ts
-│   │   │   │   ├── podsie-history.ts
-│   │   │   │   ├── podsie-question-map
-│   │   │   │   │   └── index.ts
-│   │   │   │   ├── podsie-sync
+│   │   │   │   ├── podsie
 │   │   │   │   │   ├── api
+│   │   │   │   │   ├── assignment-variations
 │   │   │   │   │   ├── bulk-match.ts
+│   │   │   │   │   ├── curriculum-question-map
 │   │   │   │   │   ├── index.ts
+│   │   │   │   │   ├── learning-content.ts
+│   │   │   │   │   ├── podsie-completion.ts
+│   │   │   │   │   ├── podsie-history.ts
+│   │   │   │   │   ├── podsie-question-map
+│   │   │   │   │   ├── podsie-sync.legacy.ts
+│   │   │   │   │   ├── podsie-sync.ts
 │   │   │   │   │   ├── processing
 │   │   │   │   │   ├── query
 │   │   │   │   │   ├── scheduled
+│   │   │   │   │   ├── section-config.ts
+│   │   │   │   │   ├── section-overview.ts
 │   │   │   │   │   ├── sync
-│   │   │   │   │   └── types.ts
-│   │   │   │   ├── podsie-sync.legacy.ts
-│   │   │   │   ├── podsie-sync.ts
-│   │   │   │   ├── roadmap-completions.ts
-│   │   │   │   ├── roadmaps-lessons.ts
-│   │   │   │   ├── roadmaps-skill-relationships.ts
-│   │   │   │   ├── roadmaps-skills.ts
-│   │   │   │   ├── roadmaps-student-data.ts
-│   │   │   │   ├── roadmaps-units.ts
-│   │   │   │   ├── scope-and-sequence.ts
-│   │   │   │   ├── section-config.ts
-│   │   │   │   ├── section-overview.ts
-│   │   │   │   ├── student-assessments.ts
-│   │   │   │   ├── student-data.ts
-│   │   │   │   ├── student-performance.ts
-│   │   │   │   ├── students.ts
+│   │   │   │   │   ├── types.ts
+│   │   │   │   │   ├── velocity
+│   │   │   │   │   └── worked-example-requests.ts
+│   │   │   │   ├── roadmaps
+│   │   │   │   │   ├── roadmap-completions.ts
+│   │   │   │   │   ├── roadmaps-lessons.ts
+│   │   │   │   │   ├── roadmaps-skill-relationships.ts
+│   │   │   │   │   ├── roadmaps-skills.ts
+│   │   │   │   │   ├── roadmaps-units.ts
+│   │   │   │   │   ├── zearn-completions.ts
+│   │   │   │   │   └── zearn-import.ts
+│   │   │   │   ├── scope-and-sequence
+│   │   │   │   │   ├── im-lessons.ts
+│   │   │   │   │   └── scope-and-sequence.ts
+│   │   │   │   ├── student
+│   │   │   │   │   ├── attendance-import.ts
+│   │   │   │   │   ├── attendance-sync
+│   │   │   │   │   ├── roadmaps-student-data.ts
+│   │   │   │   │   ├── student-assessments.ts
+│   │   │   │   │   ├── student-data.ts
+│   │   │   │   │   ├── student-performance.ts
+│   │   │   │   │   └── students.ts
 │   │   │   │   ├── sync-sheets.ts
-│   │   │   │   ├── timesheet.ts
-│   │   │   │   ├── velocity
-│   │   │   │   │   └── velocity.ts
-│   │   │   │   ├── worked-example-requests.ts
-│   │   │   │   ├── zearn-completions.ts
-│   │   │   │   └── zearn-import.ts
+│   │   │   │   └── timesheet
+│   │   │   │       └── timesheet.ts
 │   │   │   ├── staff
 │   │   │   │   ├── factories.ts
 │   │   │   │   ├── index.ts
@@ -1828,8 +1822,8 @@
 │   │   ├── puppeteer-config.ts
 │   │   ├── schema
 │   │   │   ├── enum
-│   │   │   │   ├── 313.ts
 │   │   │   │   ├── index.ts
+│   │   │   │   ├── scm.ts
 │   │   │   │   ├── scope-sequence.ts
 │   │   │   │   ├── shared-enums.ts
 │   │   │   │   └── snorkl-links.ts
@@ -1867,9 +1861,10 @@
 │   │   │   │   ├── scm
 │   │   │   │   │   ├── config
 │   │   │   │   │   ├── core.ts
-│   │   │   │   │   ├── curriculum
 │   │   │   │   │   ├── incentives
 │   │   │   │   │   ├── podsie
+│   │   │   │   │   ├── roadmaps
+│   │   │   │   │   ├── scope-and-sequence
 │   │   │   │   │   ├── storage.ts
 │   │   │   │   │   ├── student
 │   │   │   │   │   ├── timesheet
@@ -1962,9 +1957,10 @@
 │   │   │       ├── scm
 │   │   │       │   ├── assessment-scraper.ts
 │   │   │       │   ├── core.ts
-│   │   │       │   ├── curriculum
 │   │   │       │   ├── incentives
 │   │   │       │   ├── podsie
+│   │   │       │   ├── roadmaps
+│   │   │       │   ├── scope-and-sequence
 │   │   │       │   ├── storage.ts
 │   │   │       │   ├── student
 │   │   │       │   ├── timesheet
@@ -2232,4 +2228,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-656 directories, 1577 files
+660 directories, 1569 files

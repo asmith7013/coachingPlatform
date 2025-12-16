@@ -1,0 +1,151 @@
+<!-- Slide 8: Step 3 INTERPRET - Reveal -->
+<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+
+    <h2 style="font-size: 36px; font-weight: 700; color: #fbbf24; margin: 0 0 20px 0; text-transform: uppercase;">Step 3: Interpret ✓</h2>
+
+    <div style="display: flex; gap: 40px; flex: 1;">
+        <!-- Left: Interpretation -->
+        <div style="flex: 0.9; display: flex; flex-direction: column; gap: 20px;">
+            <!-- The interpretation -->
+            <div style="background: rgba(74, 222, 128, 0.2); border: 3px solid #4ade80; border-radius: 16px; padding: 25px;">
+                <p style="font-size: 20px; color: #4ade80; margin: 0 0 15px 0; font-weight: bold;">The Intersection (4, 60) means:</p>
+                <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px;">
+                    <p style="font-size: 22px; color: #e2e8f0; margin: 0; line-height: 1.6; text-align: center;">
+                        After <strong style="color: #fbbf24;">4 hours</strong> of playing,<br>
+                        both Kai and Mia have<br>
+                        <strong style="color: #fbbf24;">60 XP</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Breaking it down -->
+            <div style="background: rgba(148, 163, 184, 0.1); border: 2px solid #475569; border-radius: 12px; padding: 20px;">
+                <p style="font-size: 16px; color: #94a3b8; margin: 0 0 15px 0;">Breaking down the coordinates:</p>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1; background: rgba(251, 191, 36, 0.1); border-radius: 8px; padding: 15px; text-align: center;">
+                        <p style="font-size: 28px; color: #fbbf24; margin: 0; font-weight: bold;">x = 4</p>
+                        <p style="font-size: 14px; color: #94a3b8; margin: 8px 0 0 0;">hours of gaming</p>
+                    </div>
+                    <div style="flex: 1; background: rgba(251, 191, 36, 0.1); border-radius: 8px; padding: 15px; text-align: center;">
+                        <p style="font-size: 28px; color: #fbbf24; margin: 0; font-weight: bold;">y = 60</p>
+                        <p style="font-size: 14px; color: #94a3b8; margin: 8px 0 0 0;">XP earned</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What happens before/after -->
+            <div style="background: rgba(168, 85, 247, 0.1); border: 2px solid #a855f7; border-radius: 12px; padding: 20px;">
+                <p style="font-size: 16px; color: #a855f7; margin: 0 0 15px 0; font-weight: bold;">What the graph tells us:</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 16px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #60a5fa;">◀</span>
+                        <p style="color: #e2e8f0; margin: 0;">Before 4 hours: <strong style="color: #60a5fa;">Kai is ahead</strong></p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #fbbf24;">●</span>
+                        <p style="color: #e2e8f0; margin: 0;">At 4 hours: <strong style="color: #fbbf24;">They're tied!</strong></p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #f472b6;">▶</span>
+                        <p style="color: #e2e8f0; margin: 0;">After 4 hours: <strong style="color: #f472b6;">Mia pulls ahead</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Graph with interpretation labels -->
+        <div style="flex: 1.1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 280 220" style="width: 100%; max-height: 400px;">
+                <!-- Grid lines -->
+                <g stroke="#334155" stroke-width="0.5">
+                    <line x1="95" y1="10" x2="95" y2="185"/>
+                    <line x1="150" y1="10" x2="150" y2="185"/>
+                    <line x1="205" y1="10" x2="205" y2="185"/>
+                    <line x1="260" y1="10" x2="260" y2="185"/>
+                    <line x1="40" y1="156" x2="260" y2="156"/>
+                    <line x1="40" y1="127" x2="260" y2="127"/>
+                    <line x1="40" y1="98" x2="260" y2="98"/>
+                    <line x1="40" y1="69" x2="260" y2="69"/>
+                    <line x1="40" y1="40" x2="260" y2="40"/>
+                    <line x1="40" y1="10" x2="260" y2="10"/>
+                </g>
+
+                <!-- Shaded regions -->
+                <!-- Kai ahead region (left of intersection) -->
+                <polygon points="40,185 40,156 150,98 150,98" fill="rgba(96, 165, 250, 0.1)"/>
+                <!-- Mia ahead region (right of intersection) -->
+                <polygon points="150,98 260,40 260,10 150,98" fill="rgba(244, 114, 182, 0.1)"/>
+
+                <!-- Axes -->
+                <line x1="40" y1="185" x2="265" y2="185" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="40" y1="5" x2="40" y2="185" stroke="#94a3b8" stroke-width="2"/>
+                <polygon points="265,185 258,181 258,189" fill="#94a3b8"/>
+                <polygon points="40,5 36,12 44,12" fill="#94a3b8"/>
+
+                <!-- X-axis labels -->
+                <text x="40" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
+                <text x="95" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">2</text>
+                <text x="150" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">4</text>
+                <text x="205" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">6</text>
+                <text x="260" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">8</text>
+                <text x="150" y="215" fill="#94a3b8" font-size="10" text-anchor="middle">hours</text>
+
+                <!-- Y-axis labels -->
+                <text x="35" y="189" fill="#94a3b8" font-size="11" text-anchor="end">0</text>
+                <text x="35" y="160" fill="#94a3b8" font-size="11" text-anchor="end">20</text>
+                <text x="35" y="131" fill="#94a3b8" font-size="11" text-anchor="end">40</text>
+                <text x="35" y="102" fill="#94a3b8" font-size="11" text-anchor="end">60</text>
+                <text x="35" y="73" fill="#94a3b8" font-size="11" text-anchor="end">80</text>
+                <text x="35" y="44" fill="#94a3b8" font-size="11" text-anchor="end">100</text>
+                <text x="35" y="14" fill="#94a3b8" font-size="11" text-anchor="end">120</text>
+                <text x="15" y="98" fill="#94a3b8" font-size="10" text-anchor="middle" transform="rotate(-90, 15, 98)">XP</text>
+
+                <!-- Mia's line -->
+                <line x1="40" y1="185" x2="260" y2="10" stroke="#f472b6" stroke-width="3"/>
+                <text x="245" y="25" fill="#f472b6" font-size="11" font-weight="bold">Mia</text>
+
+                <!-- Kai's line -->
+                <line x1="40" y1="156" x2="260" y2="40" stroke="#60a5fa" stroke-width="3"/>
+                <text x="245" y="55" fill="#60a5fa" font-size="11" font-weight="bold">Kai</text>
+
+                <!-- Region labels -->
+                <text x="90" y="155" fill="#60a5fa" font-size="9" font-weight="bold">Kai ahead</text>
+                <text x="195" y="50" fill="#f472b6" font-size="9" font-weight="bold">Mia ahead</text>
+
+                <!-- Intersection point -->
+                <circle cx="150" cy="98" r="8" fill="#fbbf24"/>
+                <text x="150" y="85" fill="#fbbf24" font-size="10" font-weight="bold" text-anchor="middle">TIED!</text>
+                <text x="150" y="120" fill="#fbbf24" font-size="9" text-anchor="middle">(4 hrs, 60 XP)</text>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Toggle button -->
+<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('answer-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
+    ↓ Show Answer
+</button>
+
+<!-- Answer Box -->
+<div id="answer-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
+    <div style="background: #4ade80; border-top: 4px solid #22c55e; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
+        <button onclick="document.getElementById('answer-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
+            ×
+        </button>
+        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">✅ ANSWER</div>
+        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
+            After 4 hours, Kai and Mia have the same XP (60). This is when Mia catches up to Kai — before this they're tied, and after this Mia's faster rate means she pulls ahead!
+        </span>
+    </div>
+</div>
+
+<style>
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+#toggle-hint:hover {
+    background: rgba(148, 163, 184, 0.2);
+    transform: translateX(-50%) scale(1.05);
+}
+</style>
