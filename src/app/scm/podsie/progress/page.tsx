@@ -97,7 +97,7 @@ export default function PodsieProgressPage() {
         sections: options
           .map(opt => ({
             value: `${school}|${opt.classSection}`, // Composite value for unique identification
-            label: opt.classSection
+            label: `${school} - ${opt.classSection}` // Show school code then section number
           }))
           .sort((a, b) => a.label.localeCompare(b.label))
       });
