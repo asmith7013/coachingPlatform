@@ -8,6 +8,10 @@
  * Required environment variables:
  * - DATABASE_URL: MongoDB connection string
  *
+ * Optional environment variables (for failure notifications):
+ * - EMAIL_USER: Gmail address for sending notifications
+ * - EMAIL_PASSWORD: Gmail app password
+ *
  * Optional arguments:
  * - --start-date=YYYY-MM-DD: Start date for sync (defaults to yesterday)
  * - --school=SCHOOL_CODE: School code to sync (e.g., PS313, X644, PS19)
@@ -22,6 +26,57 @@
 // This MUST happen before any other imports that use DATABASE_URL
 import { config } from 'dotenv';
 config({ path: '.env.local' });
+
+import type { SyncAllAttendanceResult } from '../src/app/actions/scm/student/attendance-sync/scheduled/sync-all-attendance';
+
+const NOTIFICATION_EMAIL = 'asmith7013@gmail.com';
+
+async function sendFailureEmail(school: string | undefined, result: SyncAllAttendanceResult, easternTime: string) {
+  try {
+    const { sendEmail } = await import('../src/lib/email/email-service');
+
+    // Build detailed error report
+    let sectionDetails = '';
+    if (result.sectionResults) {
+      const failedSections = result.sectionResults.filter(sr => !sr.success);
+      if (failedSections.length > 0) {
+        failedSections.forEach(sr => {
+          sectionDetails += `\n  • ${sr.section}: ${sr.error || 'Unknown error'}`;
+        });
+      }
+    }
+
+    const subject = `❌ Attendance Sync Failed${school ? ` - ${school}` : ''}`;
+    const body = `Attendance sync failed at ${easternTime}
+
+SUMMARY:
+  School Filter: ${school || 'All schools'}
+  Start Date: ${result.startDate}
+  Total Sections: ${result.totalSections}
+  Sections Processed: ${result.sectionsProcessed}
+  Sections Failed: ${result.sectionsFailed}
+  Total Records: ${result.totalRecords}
+  Created: ${result.created}
+  Updated: ${result.updated}
+
+ERRORS:
+${result.errors.map((e, i) => `  ${i + 1}. ${e}`).join('\n') || '  None'}
+
+FAILED SECTIONS:${sectionDetails || '\n  None'}
+
+View full logs: https://github.com/asmith7013/coachingPlatform/actions
+`;
+
+    await sendEmail({
+      to: NOTIFICATION_EMAIL,
+      subject,
+      body
+    });
+    console.log('📧 Failure notification email sent');
+  } catch (emailError) {
+    console.error('Failed to send notification email:', emailError);
+  }
+}
 
 async function main() {
   console.log('🚀 Starting Podsie attendance sync...');
@@ -102,10 +157,27 @@ async function main() {
       process.exit(0);
     } else {
       console.error('\n❌ Attendance sync completed with errors');
+      await sendFailureEmail(school, result, easternTime);
       process.exit(1);
     }
   } catch (error) {
     console.error('\n💥 Unexpected error:', error);
+    // Send email for unexpected errors
+    const errorResult: SyncAllAttendanceResult = {
+      success: false,
+      totalSections: 0,
+      sectionsProcessed: 0,
+      sectionsFailed: 0,
+      totalRecords: 0,
+      created: 0,
+      updated: 0,
+      notTracked: 0,
+      errors: [error instanceof Error ? error.message : String(error)],
+      sectionResults: [],
+      startDate: startDate || 'unknown'
+    };
+    const easternTime = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+    await sendFailureEmail(school, errorResult, easternTime);
     process.exit(1);
   }
 }
