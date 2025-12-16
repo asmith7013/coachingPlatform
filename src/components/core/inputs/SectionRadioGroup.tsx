@@ -67,7 +67,7 @@ export function SectionRadioGroup({
                 <span className="flex items-center gap-1.5 text-sm font-medium text-gray-900 group-has-[:checked]:text-white whitespace-nowrap pointer-events-none">
                   {option.name}
                   {option.badge && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 text-gray-600 group-has-[:checked]:bg-white group-has-[:checked]:text-indigo-600">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-white text-gray-700 border border-gray-400 group-has-[:checked]:bg-white group-has-[:checked]:text-indigo-600 group-has-[:checked]:border-indigo-300">
                       {option.badge}
                     </span>
                   )}
