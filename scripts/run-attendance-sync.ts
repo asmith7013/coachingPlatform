@@ -10,10 +10,12 @@
  *
  * Optional arguments:
  * - --start-date=YYYY-MM-DD: Start date for sync (defaults to yesterday)
+ * - --school=SCHOOL_CODE: School code to sync (e.g., PS313, X644, PS19)
  *
  * Usage:
  *   npx tsx scripts/run-attendance-sync.ts
  *   npx tsx scripts/run-attendance-sync.ts --start-date=2024-12-01
+ *   npx tsx scripts/run-attendance-sync.ts --school=PS313
  */
 
 // Load environment variables from .env.local for local development
@@ -53,11 +55,19 @@ async function main() {
     console.log(`📆 Using custom start date: ${startDate}`);
   }
 
+  // Parse optional school from command line args
+  let school: string | undefined;
+  const schoolArg = process.argv.find(arg => arg.startsWith('--school='));
+  if (schoolArg) {
+    school = schoolArg.split('=')[1];
+    console.log(`🏫 Filtering to school: ${school}`);
+  }
+
   try {
     // Dynamic import AFTER dotenv has loaded
     const { syncAllAttendance } = await import('../src/app/actions/scm/student/attendance-sync/scheduled/sync-all-attendance');
 
-    const result = await syncAllAttendance({ startDate });
+    const result = await syncAllAttendance({ startDate, school });
 
     console.log('\n📊 Results Summary:');
     console.log(JSON.stringify({

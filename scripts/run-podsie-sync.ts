@@ -7,6 +7,13 @@
  *
  * Required environment variables:
  * - DATABASE_URL: MongoDB connection string
+ *
+ * Optional arguments:
+ * - --school=SCHOOL_CODE: School code to sync (e.g., PS313, X644, PS19)
+ *
+ * Usage:
+ *   npx tsx scripts/run-podsie-sync.ts
+ *   npx tsx scripts/run-podsie-sync.ts --school=PS313
  */
 
 // Load environment variables from .env.local for local development
@@ -33,11 +40,19 @@ async function main() {
 
   console.log(`🔗 Database: ${databaseUrl.substring(0, 30)}...`);
 
+  // Parse optional school from command line args
+  let school: string | undefined;
+  const schoolArg = process.argv.find(arg => arg.startsWith('--school='));
+  if (schoolArg) {
+    school = schoolArg.split('=')[1];
+    console.log(`🏫 Filtering to school: ${school}`);
+  }
+
   try {
     // Dynamic import AFTER dotenv has loaded
     const { syncCurrentUnits } = await import('../src/app/actions/scm/podsie/scheduled/sync-current-units');
 
-    const result = await syncCurrentUnits();
+    const result = await syncCurrentUnits({ school });
 
     console.log('\n📊 Results Summary:');
     console.log(JSON.stringify({
