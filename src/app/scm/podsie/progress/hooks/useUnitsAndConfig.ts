@@ -4,7 +4,7 @@ import { fetchAllUnitsByScopeTag } from "@/app/actions/scm/scope-and-sequence/sc
 import { getSectionConfig } from "@/app/actions/scm/podsie/section-config";
 import { AssignmentContent } from "@zod-schema/scm/podsie/section-config";
 import { UnitOption } from "../types";
-import { getGradeForSection, getSchoolForSection } from "../utils/sectionHelpers";
+import { getGradeForSection } from "../utils/sectionHelpers";
 
 /**
  * Query keys for units and section config
@@ -24,8 +24,9 @@ interface SectionConfigData {
 
 /**
  * Hook for fetching units and section config using React Query
+ * @param school - The school to fetch config for (required for sections that exist in multiple schools)
  */
-export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: string) {
+export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: string, school?: string) {
   const queryClient = useQueryClient();
 
   const enabled = Boolean(scopeSequenceTag && selectedSection);
@@ -72,9 +73,13 @@ export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: str
 
   // Query for section config
   const configQuery = useQuery({
-    queryKey: unitsConfigKeys.sectionConfig(selectedSection),
+    queryKey: school
+      ? [...unitsConfigKeys.sectionConfig(selectedSection), school]
+      : unitsConfigKeys.sectionConfig(selectedSection),
     queryFn: async (): Promise<SectionConfigData> => {
-      const school = getSchoolForSection(selectedSection);
+      if (!school) {
+        return { assignments: [], groupId: null };
+      }
       const configResult = await getSectionConfig(school, selectedSection);
 
       if (configResult.success && configResult.data) {
@@ -92,7 +97,7 @@ export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: str
       }
       return { assignments: [], groupId: null };
     },
-    enabled: Boolean(selectedSection),
+    enabled: Boolean(selectedSection && school),
     staleTime: 60_000, // Cache for 1 minute
   });
 

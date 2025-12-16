@@ -702,13 +702,43 @@ export async function updateLessonSubsections(
 
       // Process each update
       for (const update of updates) {
-        // Find existing entry by scopeAndSequenceId (try both string and ObjectId comparison)
-        // Also fallback to unitLessonId for robustness
+        // Helper to normalize ObjectId/string to comparable string
+        const normalizeId = (id: unknown): string => {
+          if (!id) return '';
+          // Handle ObjectId, string, or object with $oid property
+          if (typeof id === 'object' && id !== null) {
+            if ('$oid' in id) return String((id as { $oid: string }).$oid);
+            if ('str' in id) return String((id as { str: string }).str);
+          }
+          return String(id);
+        };
+
+        const updateId = normalizeId(update.scopeAndSequenceId);
+
+        // Find existing entry by scopeAndSequenceId - prefer entries WITH Podsie activities
         let existingIndex = assignmentContentArray.findIndex(
-          (a: AssignmentContent) => a.scopeAndSequenceId?.toString() === update.scopeAndSequenceId
+          (a: AssignmentContent) =>
+            normalizeId(a.scopeAndSequenceId) === updateId &&
+            a.podsieActivities && a.podsieActivities.length > 0
         );
 
-        // Fallback: search by unitLessonId if not found by scopeAndSequenceId
+        // If not found with Podsie, try without that constraint
+        if (existingIndex < 0) {
+          existingIndex = assignmentContentArray.findIndex(
+            (a: AssignmentContent) => normalizeId(a.scopeAndSequenceId) === updateId
+          );
+        }
+
+        // Fallback: search by unitLessonId - prefer entries WITH Podsie activities
+        if (existingIndex < 0) {
+          existingIndex = assignmentContentArray.findIndex(
+            (a: AssignmentContent) =>
+              a.unitLessonId === update.unitLessonId &&
+              a.podsieActivities && a.podsieActivities.length > 0
+          );
+        }
+
+        // Final fallback: any entry with matching unitLessonId
         if (existingIndex < 0) {
           existingIndex = assignmentContentArray.findIndex(
             (a: AssignmentContent) => a.unitLessonId === update.unitLessonId

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { fetchSectionUnitSchedules } from "@/app/actions/calendar/unit-schedule";
 import type { UnitSchedule } from "@zod-schema/calendar";
 import type { LessonConfig, ProgressData } from "../types";
-import { getSchoolForSection, getScopeTagForSection } from "../utils/sectionHelpers";
+import { getScopeTagForSection } from "../utils/sectionHelpers";
 
 const SCHOOL_YEAR = "2025-2026";
 
@@ -148,7 +148,9 @@ export function usePacingData(
   /** Optional date to use for pacing calculations (defaults to today) */
   pacingDate?: string,
   /** Hide far-behind sections that have no students (reduces visual clutter) */
-  hideEmptySections: boolean = true
+  hideEmptySections: boolean = true,
+  /** School for the selected section (required for sections that exist in multiple schools) */
+  school?: string
 ): PacingData {
   const [unitSchedules, setUnitSchedules] = useState<UnitSchedule[]>([]);
   const [loading, setLoading] = useState(false);
@@ -165,11 +167,10 @@ export function usePacingData(
         setLoading(true);
         setError(null);
 
-        const school = getSchoolForSection(selectedSection);
         const scopeTag = getScopeTagForSection(selectedSection);
 
-        if (school === "Unknown") {
-          setError("Unknown school for section");
+        if (!school) {
+          setError("School is required for pacing data");
           return;
         }
 
@@ -190,7 +191,7 @@ export function usePacingData(
     };
 
     loadData();
-  }, [selectedSection, selectedUnit]);
+  }, [selectedSection, selectedUnit, school]);
 
   const pacingData = useMemo((): PacingData => {
     const emptyResult: PacingData = {
@@ -281,6 +282,7 @@ export function usePacingData(
     };
 
     // Helper to get lessons for a specific section AND subsection
+    // Falls back to ALL lessons in section if no subsection-specific lessons exist
     const getLessonsForSectionSubsection = (
       sectionId: string | null,
       subsection: number | undefined
@@ -288,12 +290,26 @@ export function usePacingData(
       if (!sectionId) return [];
       if (excludeRampUps && sectionId === "Ramp Ups") return [];
 
-      // Filter by section AND subsection
-      const matchingLessons = lessons.filter(l => {
-        if (normalizeSection(l.section) !== sectionId) return false;
-        // Match subsection: undefined matches undefined, number matches number
-        return l.subsection === subsection;
-      });
+      // Get all lessons in this section
+      const sectionLessons = lessons.filter(l =>
+        normalizeSection(l.section) === sectionId
+      );
+
+      // Filter by subsection if specified
+      let matchingLessons: LessonConfig[];
+      if (subsection !== undefined) {
+        // Try to find lessons with this specific subsection
+        matchingLessons = sectionLessons.filter(l => l.subsection === subsection);
+
+        // FALLBACK: If no lessons have subsection assignments yet, use ALL lessons in the section
+        // This handles the case where schedule has subsections but lessons haven't been split
+        if (matchingLessons.length === 0) {
+          matchingLessons = sectionLessons.filter(l => l.subsection === undefined);
+        }
+      } else {
+        // No subsection specified - get lessons without subsection assignment
+        matchingLessons = sectionLessons.filter(l => l.subsection === undefined);
+      }
 
       // Prefer mastery-checks, fallback to sidekicks
       const masteryChecks = matchingLessons.filter(l => l.activityType === "mastery-check");

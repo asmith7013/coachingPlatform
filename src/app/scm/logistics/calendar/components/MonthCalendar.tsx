@@ -3,12 +3,13 @@
 import React from "react";
 import { UNIT_COLORS, getSectionShade, getSectionBadgeLabel, type UnitScheduleLocal, type SelectionMode } from "./types";
 import type { CalendarEvent } from "@zod-schema/calendar";
+import { Tooltip } from "@/components/core/feedback/Tooltip";
 
-// Inline SectionBadge - renders a badge with rounded square shape (positioned on left edge of cell)
+// Inline SectionBadge - renders a badge below the date number
 function SectionBadge({ label, color }: { label: string; color: string }) {
   return (
     <span
-      className="absolute left-0 top-1/2 -translate-y-1/2 text-[7px] font-bold leading-none px-1 pr-1.5 py-0.5 rounded-r"
+      className="text-[7px] font-bold leading-none px-1 py-0.5 rounded"
       style={{ backgroundColor: "white", color: color }}
     >
       {label}
@@ -179,25 +180,36 @@ function CalendarDay({
     ? `${scheduleInfo.unit.unitName} - ${scheduleInfo.section.name}`
     : "";
 
-  // Show taller cell with event name for section day off events
+  // Show taller cell with event name for section day off events or schedule info
   const hasSectionEvent = sectionDayOffInfo.isDayOff && sectionDayOffInfo.event;
-  const cellHeight = hasSectionEvent ? "h-10" : "h-7";
+  const hasScheduleBadge = scheduleInfo && !weekend && !dayOff;
+  const cellHeight = hasSectionEvent || hasScheduleBadge ? "h-10" : "h-7";
 
   return (
     <div
       onClick={handleClick}
-      className={`${cellHeight} rounded text-xs flex flex-col items-center justify-center relative ${bgColor} ${textColor} ${cursor} ${
+      className={`${cellHeight} rounded text-xs flex flex-col items-center justify-start pt-0.5 relative ${bgColor} ${textColor} ${cursor} ${
         isSelecting && !weekend && !dayOff ? "hover:ring-2 hover:ring-blue-400" : ""
       } ${sectionDayOffInfo.isDayOff ? "hover:ring-2 hover:ring-gray-400" : ""}`}
       style={customBgStyle}
       title={title}
     >
-      {scheduleInfo && !weekend && !dayOff && (
-        <>
-          <div
-            className="absolute top-0 left-0 right-0 h-0.5"
-            style={{ backgroundColor: UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base }}
-          />
+      {hasScheduleBadge && (
+        <div
+          className="absolute top-0 left-0 right-0 h-0.5"
+          style={{ backgroundColor: UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base }}
+        />
+      )}
+      <span>{date.getDate()}</span>
+      {hasScheduleBadge && (
+        <Tooltip
+          content={
+            scheduleInfo.section.subsection !== undefined
+              ? `Section ${getSectionBadgeLabel(scheduleInfo.section.sectionId)} (Part ${scheduleInfo.section.subsection})`
+              : `Section ${getSectionBadgeLabel(scheduleInfo.section.sectionId)}`
+          }
+          position="bottom"
+        >
           <SectionBadge
             label={
               scheduleInfo.section.subsection !== undefined
@@ -206,9 +218,8 @@ function CalendarDay({
             }
             color={UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base}
           />
-        </>
+        </Tooltip>
       )}
-      <span>{date.getDate()}</span>
       {hasSectionEvent && (
         <span className="text-[8px] leading-tight truncate w-full text-center px-0.5">
           {sectionDayOffInfo.event!.name}

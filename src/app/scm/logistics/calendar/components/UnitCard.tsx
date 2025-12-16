@@ -145,9 +145,12 @@ export function UnitCard({
             return <span className="text-gray-400 text-xs">-</span>;
           }
 
+          // For Ramp Up lessons (lessonNumber 0), show RU1, RU2, etc. based on position
+          const isRampUp = section.sectionId === "Ramp Up" || section.sectionId === "Ramp Ups";
+
           return (
             <div className="flex flex-wrap gap-0.5">
-              {section.lessons.map((lesson) => (
+              {section.lessons.map((lesson, index) => (
                 <span
                   key={lesson.scopeAndSequenceId}
                   className="text-[10px] px-1 py-0.5 rounded"
@@ -157,7 +160,7 @@ export function UnitCard({
                   }}
                   title={lesson.lessonName}
                 >
-                  L{lesson.lessonNumber}
+                  {isRampUp ? `RU${index + 1}` : `L${lesson.lessonNumber}`}
                 </span>
               ))}
             </div>
@@ -412,11 +415,7 @@ export function UnitCard({
                 <tr
                   key={row.id}
                   style={{
-                    backgroundColor: isParent
-                      ? unitColor.light + "40" // Slight tint for parent rows
-                      : isSelected
-                        ? unitColor.light
-                        : undefined,
+                    backgroundColor: isSelected ? unitColor.light : "white",
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (

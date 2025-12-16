@@ -211,11 +211,17 @@ export function AssignmentCard({
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-visible">
       {/* Card Header - Accordion Toggle */}
-      <div className={`${isExpanded ? 'sticky top-0 z-30 shadow-md' : ''} bg-gray-50 border-b border-gray-200 px-6 py-4 ${isExpanded ? '' : 'rounded-lg'}`}>
+      <div
+        className={`${isExpanded ? 'sticky top-0 z-30 shadow-md' : 'cursor-pointer hover:bg-gray-100'} bg-gray-50 border-b border-gray-200 px-6 py-4 ${isExpanded ? '' : 'rounded-lg'} transition-colors`}
+        onClick={() => !isExpanded && setIsExpanded(true)}
+      >
         <div className="flex items-center justify-between">
           {/* Left side - Accordion toggle + Title */}
           <button
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsExpanded(!isExpanded);
+            }}
             className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
           >
             {isExpanded ? (

@@ -16,7 +16,7 @@ import { FiltersSection } from "./components/FiltersSection";
 import { ProgressOverview } from "./components/ProgressOverview";
 import { LoadingState, ProgressLoadingState, NoAssignmentsState, SelectFiltersState } from "./components/EmptyStates";
 import { groupAssignmentsByUnitLesson, groupAssignmentsBySection } from "./utils/groupAssignments";
-import { getScopeTagForSection, getSchoolForSection } from "./utils/sectionHelpers";
+import { getScopeTagForSection } from "./utils/sectionHelpers";
 import { calculateSummaryStats } from "./utils/progressStats";
 import { generateProgressCsv, downloadCsv, generateCsvFilename } from "./utils/exportCsv";
 import { useSectionOptions } from "@/hooks/scm";
@@ -80,12 +80,12 @@ export default function PodsieProgressPage() {
   const scopeSequenceTag = useMemo(() => {
     return selectedSection ? getScopeTagForSection(selectedSection) : "";
   }, [selectedSection]);
-  const { units, sectionConfigAssignments, groupId, loading: loadingUnits, error: unitsError, setSectionConfigAssignments } = useUnitsAndConfig(scopeSequenceTag, selectedSection);
+  const { units, sectionConfigAssignments, groupId, loading: loadingUnits, error: unitsError, setSectionConfigAssignments } = useUnitsAndConfig(scopeSequenceTag, selectedSection, selectedSchool);
   const { lessons, sectionOptions: lessonSectionOptions, loading: loadingLessons, error: lessonsError } = useLessons(scopeSequenceTag, selectedSection, selectedUnit, selectedLessonSection, sectionConfigAssignments);
   // For pacing, we need ALL lessons in the unit (not filtered by selectedLessonSection)
   const { lessons: allLessonsInUnit } = useLessons(scopeSequenceTag, selectedSection, selectedUnit, 'all', sectionConfigAssignments);
   const { progressData, loading: loadingProgress, error: progressError, setProgressData } = useProgressData(selectedSection, selectedUnit, lessons, selectedSchool);
-  const pacingData = usePacingData(selectedSection, selectedUnit, allLessonsInUnit, progressData, excludeRampUps, undefined, hideEmptySections);
+  const pacingData = usePacingData(selectedSection, selectedUnit, allLessonsInUnit, progressData, excludeRampUps, undefined, hideEmptySections, selectedSchool);
 
   // Derived data - use sectionsBySchool from database (not enum-based grouping) to avoid duplicate keys
   // Each section includes its composite value (school|section) for unique identification
@@ -351,9 +351,8 @@ export default function PodsieProgressPage() {
   const handleCreateModalSuccess = async () => {
     setShowCreateModal(false);
     // Reload section config to get updated assignments
-    if (selectedSection) {
-      const school = getSchoolForSection(selectedSection);
-      const configResult = await getSectionConfig(school, selectedSection);
+    if (selectedSection && selectedSchool) {
+      const configResult = await getSectionConfig(selectedSchool, selectedSection);
       if (configResult.success && configResult.data) {
         const assignmentsWithScope = (configResult.data.assignmentContent || []).map((assignment: AssignmentContent) => ({
           ...assignment,
@@ -502,6 +501,7 @@ export default function PodsieProgressPage() {
             selectedLessonSection={selectedLessonSection}
             scopeSequenceTag={scopeSequenceTag}
             grade={lessons[0]?.grade || ""}
+            school={selectedSchool}
             calculateSummaryStats={calculateSummaryStats}
             onSyncAll={handleSyncAll}
             syncingAll={syncingAll}

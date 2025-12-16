@@ -64,7 +64,7 @@ export function ColumnSectionRow({
                 {baseSectionName}
               </span>
               {section.subsection !== undefined && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 text-gray-600 leading-none">
+                <span className={`text-[10px] px-1.5 py-0.5 rounded ${styles.partBadge} leading-none`}>
                   Part {section.subsection}
                 </span>
               )}

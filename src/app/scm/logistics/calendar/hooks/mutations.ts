@@ -16,6 +16,7 @@ import {
   copySectionUnitSchedules,
   shiftSectionScheduleForward,
   shiftSectionScheduleBack,
+  syncScheduleSubsections,
 } from "@/app/actions/calendar/unit-schedule";
 import { updateLessonSubsections } from "@/app/actions/scm/podsie/section-config";
 import {
@@ -662,10 +663,17 @@ interface UpdateSubsectionsInput {
     subsection: number | null;
     grade: string;
   }>;
+  // Info needed to sync the unit-schedule document
+  scheduleSync?: {
+    schoolYear: string;
+    unitNumber: number;
+    sectionId: string;
+  };
 }
 
 /**
  * Mutation to update lesson subsections in section-config
+ * Also syncs the unit-schedule document to keep sections in sync for proper copying
  */
 export function useUpdateSubsectionsMutation(
   selectedSection: SectionConfigOption | null
@@ -678,6 +686,7 @@ export function useUpdateSubsectionsMutation(
         throw new Error("No section selected");
       }
 
+      // First, update the section-config assignmentContent
       const result = await updateLessonSubsections(
         selectedSection.school,
         selectedSection.classSection,
@@ -686,6 +695,56 @@ export function useUpdateSubsectionsMutation(
 
       if (!result.success) {
         throw new Error(result.error || "Failed to update subsections");
+      }
+
+      // Then, sync the unit-schedule document if scheduleSync info provided
+      if (input.scheduleSync && selectedSection.scopeSequenceTag) {
+        // Group lessons by their subsection assignment
+        const subsectionGroups = new Map<number | undefined, Array<{ subsection: number | undefined; name: string }>>();
+        for (const update of input.updates) {
+          const sub = update.subsection ?? undefined;
+          if (!subsectionGroups.has(sub)) {
+            subsectionGroups.set(sub, []);
+          }
+          subsectionGroups.get(sub)!.push({ subsection: sub, name: update.lessonName });
+        }
+
+        // Build subsections array for the sync
+        const subsections = Array.from(subsectionGroups.entries())
+          .sort((a, b) => {
+            if (a[0] === undefined && b[0] !== undefined) return -1;
+            if (a[0] !== undefined && b[0] === undefined) return 1;
+            return (a[0] || 0) - (b[0] || 0);
+          })
+          .map(([sub, lessons]) => ({
+            subsection: sub,
+            lessonCount: lessons.length,
+            name: sub !== undefined
+              ? `Section ${input.scheduleSync!.sectionId} (Part ${sub})`
+              : `Section ${input.scheduleSync!.sectionId} (Unassigned)`,
+          }));
+
+        // If there's only one group with no subsection, don't create Unassigned
+        // Instead, create a single entry without subsection
+        const allUnassigned = subsections.length === 1 && subsections[0].subsection === undefined;
+        const normalizedSubsections = allUnassigned
+          ? [{
+              subsection: undefined,
+              lessonCount: subsections[0].lessonCount,
+              name: `Section ${input.scheduleSync!.sectionId}`,
+            }]
+          : subsections;
+
+        await syncScheduleSubsections({
+          schoolYear: input.scheduleSync.schoolYear,
+          scopeSequenceTag: selectedSection.scopeSequenceTag,
+          grade: input.updates[0]?.grade || "6",
+          school: selectedSection.school,
+          classSection: selectedSection.classSection,
+          unitNumber: input.scheduleSync.unitNumber,
+          sectionId: input.scheduleSync.sectionId,
+          subsections: normalizedSubsections,
+        });
       }
     },
     {
@@ -697,6 +756,20 @@ export function useUpdateSubsectionsMutation(
               selectedSection.school,
               selectedSection.classSection
             ),
+          });
+          // Also invalidate schedules cache since we might have synced them
+          const scopeTag = selectedSection.scopeSequenceTag || `Grade ${selectedSection.gradeLevel}`;
+          await queryClient.invalidateQueries({
+            predicate: (query) => {
+              const key = query.queryKey;
+              return (
+                key[0] === "calendar" &&
+                key[1] === "section-schedules" &&
+                key[3] === scopeTag &&
+                key[4] === selectedSection.school &&
+                key[5] === selectedSection.classSection
+              );
+            },
           });
         }
       },

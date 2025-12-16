@@ -350,6 +350,10 @@ export default function CalendarPage() {
       // Normalize section ID: "Ramp Up" in schedules = "Ramp Ups" in scope-and-sequence
       const scopeSection = subsectionsModal.sectionId === "Ramp Up" ? "Ramp Ups" : subsectionsModal.sectionId;
 
+      // Parse unitKey to get unit number (format: "grade-unitNumber")
+      const unitKeyParts = subsectionsModal.unitKey.split("-");
+      const unitNumber = parseInt(unitKeyParts[unitKeyParts.length - 1], 10);
+
       try {
         await updateSubsections.mutateAsync({
           updates: updates.map((lesson) => ({
@@ -360,6 +364,12 @@ export default function CalendarPage() {
             subsection: lesson.subsection ?? null,
             grade: subsectionsModal.grade,
           })),
+          // Pass schedule sync info to also update the unit-schedule document
+          scheduleSync: {
+            schoolYear,
+            unitNumber,
+            sectionId: subsectionsModal.sectionId,
+          },
         });
         console.log("[handleSaveSubsections] Success");
         setSubsectionsModal(null);
@@ -367,7 +377,7 @@ export default function CalendarPage() {
         console.error("[handleSaveSubsections] Error:", error);
       }
     },
-    [subsectionsModal, selectedSection, updateSubsections]
+    [subsectionsModal, selectedSection, updateSubsections, schoolYear]
   );
 
   // Get unit/section info for a date (only when a section is selected)

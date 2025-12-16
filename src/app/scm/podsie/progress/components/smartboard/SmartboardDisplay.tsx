@@ -7,7 +7,6 @@ import { LearningContentPanel } from "./components/LearningContentPanel";
 import { SmartboardControls } from "./components/SmartboardControls";
 import { YoutubeEditor } from "./components/YoutubeEditor";
 import { groupAssignmentsByUnitLesson } from "../../utils/groupAssignments";
-import { getSchoolForSection } from "../../utils/sectionHelpers";
 import { formatLessonDisplay } from "@/lib/utils/lesson-display";
 import type { LessonType } from "@/lib/utils/lesson-display";
 import { calculateTodayProgress, calculateTodayCompletionRate } from "@/lib/utils/completion-date-helpers";
@@ -88,6 +87,8 @@ interface SmartboardDisplayProps {
   selectedLessonSection: string;
   scopeSequenceTag: string;
   grade: string;
+  /** School for the selected section (required for sections that exist in multiple schools) */
+  school?: string;
   calculateSummaryStats: (data: ProgressData[]) => {
     avgCompletion: number;
     fullyComplete: number;
@@ -106,6 +107,7 @@ export function SmartboardDisplay({
   selectedLessonSection,
   scopeSequenceTag,
   grade,
+  school,
   calculateSummaryStats,
   onSyncAll,
   syncingAll = false,
@@ -137,13 +139,10 @@ export function SmartboardDisplay({
   const [activeYoutubeUrl, setActiveYoutubeUrlState] = useState<string | undefined>();
   const [availableSections, setAvailableSections] = useState<Array<{ school: string; classSection: string }>>([]);
 
-  // Derive school from selected section
-  const school = useMemo(() => getSchoolForSection(selectedSection), [selectedSection]);
-
   // Load YouTube links when section changes
   useEffect(() => {
     const loadYoutubeLinks = async () => {
-      if (!selectedSection || school === "Unknown") return;
+      if (!selectedSection || !school) return;
 
       try {
         const result = await getYoutubeLinks(school, selectedSection);
@@ -177,7 +176,7 @@ export function SmartboardDisplay({
 
   // YouTube handlers
   const handleAddYoutubeLink = useCallback(async (link: YoutubeLink) => {
-    if (school === "Unknown") return;
+    if (!school) return;
 
     try {
       const result = await addYoutubeLink(school, selectedSection, link);
@@ -190,7 +189,7 @@ export function SmartboardDisplay({
   }, [school, selectedSection]);
 
   const handleRemoveYoutubeLink = useCallback(async (url: string) => {
-    if (school === "Unknown") return;
+    if (!school) return;
 
     try {
       const result = await removeYoutubeLink(school, selectedSection, url);
@@ -207,7 +206,7 @@ export function SmartboardDisplay({
   }, [school, selectedSection, activeYoutubeUrl]);
 
   const handleSetActiveYoutubeUrl = useCallback(async (url: string | null) => {
-    if (school === "Unknown") return;
+    if (!school) return;
 
     try {
       const result = await setActiveYoutubeUrl(school, selectedSection, url);
@@ -220,7 +219,7 @@ export function SmartboardDisplay({
   }, [school, selectedSection]);
 
   const handleCopyYoutubeLinks = useCallback(async (sourceSchool: string, sourceClassSection: string) => {
-    if (school === "Unknown") return;
+    if (!school) return;
 
     try {
       const result = await copyYoutubeLinksFromSection(school, selectedSection, sourceSchool, sourceClassSection);

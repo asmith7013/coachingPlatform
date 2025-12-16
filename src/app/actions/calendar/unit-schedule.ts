@@ -2,6 +2,7 @@
 
 import { ZodType } from "zod";
 import { UnitScheduleModel, SchoolCalendarModel } from "@mongoose-schema/calendar";
+import { SectionConfigModel } from "@mongoose-schema/scm/podsie";
 import {
   UnitScheduleZodSchema,
   UnitScheduleInputZodSchema,
@@ -562,6 +563,7 @@ export async function updateSectionUnitLevelDates(
 
 /**
  * Copy unit schedules from one class section to another
+ * Also copies subsection assignments from the source section's assignmentContent
  * @param unitNumbers - Optional array of unit numbers to copy. If not provided, copies all units.
  */
 export async function copySectionUnitSchedules(
@@ -626,6 +628,22 @@ export async function copySectionUnitSchedules(
         results.push(copied);
       }
 
+      // Also copy subsection assignments from source section-config to target
+      // This ensures lessons are properly mapped to subsections in the target
+      const copiedUnitNumbers = results
+        .filter((r): r is NonNullable<typeof r> => r !== null)
+        .map(r => (r as { unitNumber?: number }).unitNumber)
+        .filter((n): n is number => typeof n === 'number');
+      if (copiedUnitNumbers.length > 0) {
+        await copySubsectionAssignments(
+          fromSchool,
+          fromClassSection,
+          toSchool,
+          toClassSection,
+          copiedUnitNumbers as number[]
+        );
+      }
+
       const serialized = JSON.parse(JSON.stringify(results));
       return {
         success: true,
@@ -636,6 +654,255 @@ export async function copySectionUnitSchedules(
       return {
         success: false,
         error: handleServerError(error, "Failed to copy section unit schedules")
+      };
+    }
+  });
+}
+
+/**
+ * Helper: Copy subsection assignments from one section-config to another
+ * Only copies assignments for lessons in the specified units
+ */
+async function copySubsectionAssignments(
+  fromSchool: string,
+  fromClassSection: string,
+  toSchool: string,
+  toClassSection: string,
+  unitNumbers: number[]
+) {
+  // Type for assignmentContent entries
+  type AssignmentContentEntry = {
+    scopeAndSequenceId?: string;
+    unitLessonId?: string;
+    lessonName?: string;
+    section?: string;
+    subsection?: number;
+    grade?: string;
+    podsieActivities?: unknown[];
+    active?: boolean;
+  };
+
+  // Fetch source section config
+  const sourceConfig = await SectionConfigModel.findOne({
+    school: fromSchool,
+    classSection: fromClassSection
+  }).lean() as { assignmentContent?: AssignmentContentEntry[] } | null;
+
+  if (!sourceConfig?.assignmentContent) {
+    return; // No assignments to copy
+  }
+
+  // Filter assignments that have subsections and belong to the copied units
+  // unitLessonId format is like "3.1", "3.2" - the first number is the unit
+  const assignmentsWithSubsections = sourceConfig.assignmentContent.filter(a => {
+    if (a.subsection === undefined) return false;
+    if (!a.unitLessonId) return false;
+    const unitNum = parseInt(a.unitLessonId.split('.')[0], 10);
+    return unitNumbers.includes(unitNum);
+  });
+
+  if (assignmentsWithSubsections.length === 0) {
+    return; // No subsection assignments to copy
+  }
+
+  // Find or create target section config
+  let targetConfig = await SectionConfigModel.findOne({
+    school: toSchool,
+    classSection: toClassSection
+  });
+
+  if (!targetConfig) {
+    // Create new config for target section
+    targetConfig = new SectionConfigModel({
+      school: toSchool,
+      classSection: toClassSection,
+      gradeLevel: sourceConfig.assignmentContent[0]?.grade || '6',
+      active: true,
+      assignmentContent: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+  }
+
+  // Get existing assignment content array
+  const existingContent = (targetConfig.assignmentContent || []) as unknown as AssignmentContentEntry[];
+
+  // Helper to normalize ObjectId/string to comparable string
+  const normalizeId = (id: unknown): string => {
+    if (!id) return '';
+    if (typeof id === 'object' && id !== null) {
+      if ('$oid' in id) return String((id as { $oid: string }).$oid);
+      if ('str' in id) return String((id as { str: string }).str);
+    }
+    return String(id);
+  };
+
+  // For each assignment with subsection from source, update the matching entry in target
+  // Only update existing entries - don't create new ones without Podsie activities
+  for (const sourceAssignment of assignmentsWithSubsections) {
+    const sourceId = normalizeId(sourceAssignment.scopeAndSequenceId);
+
+    // Find existing entry - prefer entries WITH Podsie activities
+    let existingIndex = existingContent.findIndex(
+      (a: AssignmentContentEntry) =>
+        normalizeId(a.scopeAndSequenceId) === sourceId &&
+        a.podsieActivities && a.podsieActivities.length > 0
+    );
+
+    // Fallback: try without Podsie constraint
+    if (existingIndex < 0) {
+      existingIndex = existingContent.findIndex(
+        (a: AssignmentContentEntry) => normalizeId(a.scopeAndSequenceId) === sourceId
+      );
+    }
+
+    // Second fallback: match by unitLessonId - prefer entries WITH Podsie activities
+    if (existingIndex < 0) {
+      existingIndex = existingContent.findIndex(
+        (a: AssignmentContentEntry) =>
+          a.unitLessonId === sourceAssignment.unitLessonId &&
+          a.podsieActivities && a.podsieActivities.length > 0
+      );
+    }
+
+    if (existingIndex >= 0) {
+      // Update existing entry with subsection
+      existingContent[existingIndex].subsection = sourceAssignment.subsection;
+    }
+    // Don't create new entries - subsections are only meaningful for lessons with Podsie activities
+  }
+
+  targetConfig.assignmentContent = existingContent as never;
+  (targetConfig as unknown as Record<string, unknown>).updatedAt = new Date().toISOString();
+  await targetConfig.save();
+}
+
+// =====================================
+// SUBSECTION SYNC OPERATIONS
+// =====================================
+
+/**
+ * Sync the unit-schedule sections array when subsections are changed via the SubsectionsModal.
+ * This ensures the saved schedule reflects the current subsection structure for proper copying.
+ *
+ * When a section is split into subsections (Part 1, Part 2, etc.), this function:
+ * 1. Removes the old single section entry
+ * 2. Creates new entries for each subsection
+ * 3. Tries to preserve dates from the original section for the first subsection
+ */
+export async function syncScheduleSubsections(data: {
+  schoolYear: string;
+  scopeSequenceTag: string;
+  grade: string;
+  school: string;
+  classSection: string;
+  unitNumber: number;
+  sectionId: string;
+  subsections: Array<{
+    subsection: number | undefined;
+    lessonCount: number;
+    name: string;
+  }>;
+}) {
+  return withDbConnection(async () => {
+    try {
+      // Define type for lean document to avoid 'any' warnings
+      type LeanUnitSchedule = {
+        _id: unknown;
+        sections?: Array<{
+          sectionId: string;
+          subsection?: number;
+          name?: string;
+          startDate?: string;
+          endDate?: string;
+          plannedDays?: number;
+        }>;
+      };
+
+      // Find the existing schedule
+      const existingSchedule = await UnitScheduleModel.findOne({
+        schoolYear: data.schoolYear,
+        scopeSequenceTag: data.scopeSequenceTag,
+        grade: data.grade,
+        school: data.school,
+        classSection: data.classSection,
+        unitNumber: data.unitNumber
+      }).lean<LeanUnitSchedule>();
+
+      if (!existingSchedule) {
+        // No schedule exists yet - nothing to sync
+        return { success: true, data: null, message: "No existing schedule to sync" };
+      }
+
+      // Get dates from the old section entry (if it exists)
+      const oldSection = existingSchedule.sections?.find(
+        (s) => s.sectionId === data.sectionId && s.subsection === undefined
+      );
+      const preservedStartDate = oldSection?.startDate || "";
+      const preservedEndDate = oldSection?.endDate || "";
+
+      // Remove all existing entries for this sectionId (both the base and any subsections)
+      const otherSections = (existingSchedule.sections || []).filter(
+        (s) => s.sectionId !== data.sectionId
+      );
+
+      // Create new section entries for each subsection
+      const newSectionEntries = data.subsections.map((sub, index) => ({
+        sectionId: data.sectionId,
+        subsection: sub.subsection,
+        name: sub.name,
+        // First subsection inherits dates from the old single entry (if any)
+        startDate: index === 0 ? preservedStartDate : "",
+        endDate: index === 0 ? preservedEndDate : "",
+        plannedDays: sub.lessonCount,
+      }));
+
+      // Rebuild sections array maintaining order:
+      // The sections should be in order: Ramp Up, A, A:1, A:2, B, B:1, B:2, ..., Unit Test
+      // Sort by sectionId, then by subsection (undefined first, then 1, 2, 3...)
+      const allSections = [...otherSections, ...newSectionEntries].sort((a, b) => {
+        // First sort by sectionId
+        const aIsRampUp = a.sectionId === "Ramp Up" || a.sectionId === "Ramp Ups";
+        const bIsRampUp = b.sectionId === "Ramp Up" || b.sectionId === "Ramp Ups";
+        const aIsUnitTest = a.sectionId === "Unit Test" || a.sectionId === "Unit Assessment";
+        const bIsUnitTest = b.sectionId === "Unit Test" || b.sectionId === "Unit Assessment";
+
+        // Ramp Up always first
+        if (aIsRampUp && !bIsRampUp) return -1;
+        if (!aIsRampUp && bIsRampUp) return 1;
+        // Unit Test always last
+        if (aIsUnitTest && !bIsUnitTest) return 1;
+        if (!aIsUnitTest && bIsUnitTest) return -1;
+
+        // Otherwise sort alphabetically by sectionId
+        if (a.sectionId !== b.sectionId) {
+          return a.sectionId.localeCompare(b.sectionId);
+        }
+
+        // Same sectionId - sort by subsection (undefined first)
+        if (a.subsection === undefined && b.subsection !== undefined) return -1;
+        if (a.subsection !== undefined && b.subsection === undefined) return 1;
+        return (a.subsection || 0) - (b.subsection || 0);
+      });
+
+      // Update the schedule
+      const updated = await UnitScheduleModel.findByIdAndUpdate(
+        existingSchedule._id,
+        {
+          $set: {
+            sections: allSections,
+            updatedAt: new Date().toISOString()
+          }
+        },
+        { new: true }
+      ).lean();
+
+      const serialized = JSON.parse(JSON.stringify(updated));
+      return { success: true, data: serialized as UnitSchedule };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to sync schedule subsections")
       };
     }
   });
