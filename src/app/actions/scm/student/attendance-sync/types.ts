@@ -24,4 +24,5 @@ export interface AttendanceSyncResult {
 export interface AttendanceSyncOptions {
   startDate: string;  // ISO format YYYY-MM-DD
   endDate?: string;   // Optional, defaults to today
+  school?: string;    // School code to filter students
 }

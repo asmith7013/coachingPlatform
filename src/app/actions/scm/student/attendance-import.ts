@@ -55,8 +55,10 @@ const AttendanceImportSchema = z.object({
  *
  * Note: Days with null attendanceStatus are recorded as "not-tracked"
  * This allows us to still track masteryChecksPassed even when attendance wasn't recorded
+ * @param jsonData - The JSON data from Podsie
+ * @param school - Optional school code to filter students (important for sections that exist in multiple schools)
  */
-export async function importAttendanceData(jsonData: unknown) {
+export async function importAttendanceData(jsonData: unknown, school?: string) {
   return withDbConnection(async () => {
     try {
       // Validate input
@@ -82,11 +84,18 @@ export async function importAttendanceData(jsonData: unknown) {
       // Get all student emails to look up studentIds (case-insensitive)
       const emails = Object.keys(matrix);
 
-      // Use case-insensitive regex to match emails in the database
-      const emailRegexes = emails.map(email => new RegExp(`^${email}$`, 'i'));
-      const students = await StudentModel.find({
-        email: { $in: emailRegexes }
-      }).lean();
+      // Build query with optional school filter
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const studentQuery: any = {
+        email: { $in: emails.map(email => new RegExp(`^${email}$`, 'i')) }
+      };
+
+      // Filter by school if provided (important for sections that exist in multiple schools)
+      if (school) {
+        studentQuery.school = school;
+      }
+
+      const students = await StudentModel.find(studentQuery).lean();
 
       // Create case-insensitive email lookup map
       // Store with lowercase keys for case-insensitive matching

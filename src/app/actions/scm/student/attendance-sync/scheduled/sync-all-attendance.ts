@@ -34,6 +34,8 @@ export interface SyncAllAttendanceOptions {
   startDate?: string;
   /** Optional list of section IDs to sync. If not provided, syncs all sections with groupId */
   sectionIds?: string[];
+  /** Optional school code to filter sections. If not provided, syncs all schools */
+  school?: string;
 }
 
 // =====================================
@@ -99,10 +101,18 @@ export async function syncAllAttendance(
         school: String(s.school)
       }));
 
-    // Optionally filter by provided section IDs
-    const sectionsToSync = options.sectionIds
-      ? sectionsWithGroupId.filter(s => options.sectionIds!.includes(s.id))
-      : sectionsWithGroupId;
+    // Apply filters: school and/or section IDs
+    let sectionsToSync = sectionsWithGroupId;
+
+    // Filter by school if provided
+    if (options.school) {
+      sectionsToSync = sectionsToSync.filter(s => s.school === options.school);
+    }
+
+    // Filter by section IDs if provided
+    if (options.sectionIds) {
+      sectionsToSync = sectionsToSync.filter(s => options.sectionIds!.includes(s.id));
+    }
 
     console.log(`📊 Found ${sectionsToSync.length} sections with groupId to sync`);
     result.totalSections = sectionsToSync.length;
@@ -121,7 +131,7 @@ export async function syncAllAttendance(
         const syncResult = await syncSectionAttendance(
           section.groupId,
           section.classSection,
-          { startDate }
+          { startDate, school: section.school }
         );
 
         result.sectionResults.push(syncResult);

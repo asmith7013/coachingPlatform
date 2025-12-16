@@ -10,6 +10,9 @@ import type { AttendanceSyncResult, AttendanceSyncOptions } from "../types";
 
 /**
  * Sync attendance data for a specific section from Podsie
+ * @param groupId - Podsie group ID
+ * @param section - Class section (e.g., "802")
+ * @param options - Sync options including startDate and optional school filter
  */
 export async function syncSectionAttendance(
   groupId: string,
@@ -21,7 +24,8 @@ export async function syncSectionAttendance(
     const attendanceData = await fetchPodsieAttendance(groupId, options.startDate);
 
     // Import the fetched data using existing import logic
-    const importResult = await importAttendanceData(attendanceData);
+    // Pass school to filter students (important for sections in multiple schools)
+    const importResult = await importAttendanceData(attendanceData, options.school);
 
     if (!importResult.success || !importResult.data) {
       return {

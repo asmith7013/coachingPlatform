@@ -19,6 +19,11 @@ const SCHOOL_YEAR = "2025-2026";
 // TYPES
 // =====================================
 
+export interface SyncCurrentUnitsOptions {
+  /** Optional school code to filter sections. If not provided, syncs all schools */
+  school?: string;
+}
+
 export interface SyncCurrentUnitsResult {
   success: boolean;
   totalSections: number;
@@ -46,7 +51,8 @@ interface SectionSyncResult {
 
 async function syncAssignment(
   classSection: string,
-  assignment: AssignmentContent
+  assignment: AssignmentContent,
+  school?: string
 ): Promise<{ success: number; failed: number; errors: string[] }> {
   const activities = assignment.podsieActivities || [];
   if (activities.length === 0) {
@@ -113,7 +119,8 @@ async function syncAssignment(
           variations: activity.variations ?? 3,
           q1HasVariations: activity.q1HasVariations ?? false,
           activityType: activity.activityType
-        }
+        },
+        school
       );
 
       if (result.success) {
@@ -143,9 +150,15 @@ async function syncAssignment(
 /**
  * Sync current units for all active sections
  * This is the main entry point for the scheduled sync
+ * @param options - Optional sync options including school filter
  */
-export async function syncCurrentUnits(): Promise<SyncCurrentUnitsResult> {
+export async function syncCurrentUnits(
+  options: SyncCurrentUnitsOptions = {}
+): Promise<SyncCurrentUnitsResult> {
   console.log('🚀 Starting current units sync...');
+  if (options.school) {
+    console.log(`📍 Filtering to school: ${options.school}`);
+  }
   const startTime = Date.now();
 
   const result: SyncCurrentUnitsResult = {
@@ -198,7 +211,13 @@ export async function syncCurrentUnits(): Promise<SyncCurrentUnitsResult> {
     });
 
     // Filter to sections that have current units
-    const sectionsWithCurrentUnits = currentUnitsResult.data.filter(cu => cu.currentUnit !== null);
+    let sectionsWithCurrentUnits = currentUnitsResult.data.filter(cu => cu.currentUnit !== null);
+
+    // Filter by school if provided
+    if (options.school) {
+      sectionsWithCurrentUnits = sectionsWithCurrentUnits.filter(cu => cu.school === options.school);
+    }
+
     console.log(`📊 Found ${sectionsWithCurrentUnits.length} sections with active current units`);
 
     if (sectionsWithCurrentUnits.length === 0) {
@@ -252,7 +271,7 @@ export async function syncCurrentUnits(): Promise<SyncCurrentUnitsResult> {
 
         // Sync each assignment
         for (const assignment of currentUnitAssignments) {
-          const syncResult = await syncAssignment(currentUnitInfo.classSection, assignment);
+          const syncResult = await syncAssignment(currentUnitInfo.classSection, assignment, currentUnitInfo.school);
 
           sectionResult.assignmentsProcessed++;
           sectionResult.activitiesSynced += syncResult.success;
