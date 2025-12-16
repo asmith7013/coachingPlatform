@@ -395,10 +395,19 @@ export async function fetchFullLessonsByUnit(scopeSequenceTag: string, unit: str
         .lean();
 
       // Convert _id to string to make it serializable for Client Components
-      const serializedLessons = lessons.map(lesson => ({
-        ...lesson,
-        _id: String(lesson._id)
-      }));
+      // Also handle nested _id fields in arrays like podsieQuestionMap
+      const serializedLessons = lessons.map(lesson => {
+        const lessonObj = lesson as Record<string, unknown>;
+        const podsieQuestionMap = lessonObj.podsieQuestionMap as Array<{ _id?: unknown; questionNumber: number; questionId: string }> | undefined;
+        return {
+          ...lesson,
+          _id: String(lesson._id),
+          // Remove _id from podsieQuestionMap items if present (Mongoose adds these to subdocs)
+          podsieQuestionMap: podsieQuestionMap?.map(
+            ({ _id: _subdocId, ...rest }) => rest
+          )
+        };
+      });
 
       return {
         success: true,
