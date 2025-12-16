@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { PacingProgressCard } from "@/app/scm/podsie/progress/components/pacing";
 import { usePacingData } from "@/app/scm/podsie/progress/hooks/usePacingData";
 import { useLessons } from "@/app/scm/podsie/progress/hooks/useLessons";
@@ -35,6 +35,13 @@ export function SectionPacingCard({
   const [excludeRampUps, setExcludeRampUps] = useState(false);
   const [hideEmptySections, setHideEmptySections] = useState(false);
   const currentUnit = currentUnitInfo?.currentUnit ?? null;
+
+  // Auto-set excludeRampUps when section is past ramp ups (currentSection is not "Ramp Up")
+  useEffect(() => {
+    if (currentUnitInfo?.currentSection && currentUnitInfo.currentSection !== "Ramp Up") {
+      setExcludeRampUps(true);
+    }
+  }, [currentUnitInfo?.currentSection]);
 
   // Derive scope tag from section
   const scopeSequenceTag = useMemo(() => getScopeTagForSection(section), [section]);

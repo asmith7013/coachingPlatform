@@ -142,6 +142,18 @@ export default function PodsieProgressPage() {
     }
   }, [groupId]);
 
+  // Auto-set excludeRampUps when lesson section is past ramp ups (e.g., "A", "B", etc.)
+  useEffect(() => {
+    if (!selectedLessonSection) return;
+
+    // If section is not "Ramp Up" and not "all", we're past ramp ups
+    const isPastRampUps = selectedLessonSection !== "Ramp Up" && selectedLessonSection !== "all";
+
+    if (isPastRampUps) {
+      setExcludeRampUps(true);
+    }
+  }, [selectedLessonSection]);
+
   // Handlers
   const handleSectionChange = (compositeValue: string) => {
     setSelectedSectionComposite(compositeValue);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { MultiSectionSelector } from "@/app/scm/podsie/bulk-sync/components";
 import type { CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
@@ -63,6 +63,28 @@ export default function PacePage() {
       ) || null
     );
   };
+
+  // Auto-set excludeRampUps when any selected section is past ramp ups
+  useEffect(() => {
+    if (selectedSections.length === 0 || currentUnits.length === 0) return;
+
+    // Check if any selected section is past ramp ups (currentSection is not "Ramp Up")
+    const anyPastRampUps = selectedSections.some((sectionId) => {
+      const sectionOpt = sectionOptions.find((s) => s.id === sectionId);
+      if (!sectionOpt) return false;
+
+      const unitInfo = currentUnits.find(
+        (cu) => cu.school === sectionOpt.school && cu.classSection === sectionOpt.classSection
+      );
+
+      // If currentSection exists and is not "Ramp Up", section is past ramp ups
+      return unitInfo?.currentSection && unitInfo.currentSection !== "Ramp Up";
+    });
+
+    if (anyPastRampUps) {
+      setExcludeRampUps(true);
+    }
+  }, [selectedSections, currentUnits, sectionOptions]);
 
   // Get selected sections in display order (sorted by school, then section number)
   const selectedSectionsData = useMemo(() => {
