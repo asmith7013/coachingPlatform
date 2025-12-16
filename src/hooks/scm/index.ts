@@ -111,8 +111,13 @@ export {
 // ============================================================
 export {
   useFilterParams,
+  // Scope sequence tag conversions (curriculum)
+  scopeTagToSlug,
+  slugToScopeTag,
+  // Grade conversions (content level within curriculum)
   gradeToSlug,
   slugToGrade,
+  // Unit conversions
   unitToSlug,
   slugToUnit,
 } from "./useFilterParams";

@@ -1,18 +1,46 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
-// Grade slug conversions
+// Scope sequence tag slug conversions (curriculum)
+export const scopeTagToSlug = (tag: string): string => {
+  if (!tag) return "";
+  if (tag === "Grade 6") return "g6";
+  if (tag === "Grade 7") return "g7";
+  if (tag === "Grade 8") return "g8";
+  if (tag === "Algebra 1") return "alg-1";
+  return tag.toLowerCase().replace(/\s+/g, "-");
+};
+
+export const slugToScopeTag = (slug: string): string => {
+  if (!slug) return "";
+  if (slug === "g6") return "Grade 6";
+  if (slug === "g7") return "Grade 7";
+  if (slug === "g8") return "Grade 8";
+  if (slug === "alg-1") return "Algebra 1";
+  return slug;
+};
+
+// Grade (content level within curriculum) slug conversions
+// Uses just the number: "6", "7", "8" for grades, "alg-1" for Algebra 1
 export const gradeToSlug = (grade: string): string => {
   if (!grade) return "";
+  // Handle "Grade X" format -> just the number
   if (grade.startsWith("Grade ")) return grade.replace("Grade ", "");
-  if (grade === "Algebra 1") return "algebra-1";
+  // Handle number-only format -> return as-is
+  if (/^\d+$/.test(grade)) return grade;
+  // Handle "Algebra 1"
+  if (grade === "Algebra 1") return "alg-1";
   return grade.toLowerCase().replace(/\s+/g, "-");
 };
 
 export const slugToGrade = (slug: string): string => {
   if (!slug) return "";
-  if (/^\d+$/.test(slug)) return `Grade ${slug}`;
+  // Handle "alg-1" -> "Algebra 1"
+  if (slug === "alg-1") return "Algebra 1";
+  // Legacy: "algebra-1" format
   if (slug === "algebra-1") return "Algebra 1";
+  // Number-only slug -> return as-is (for grade within curriculum)
+  if (/^\d+$/.test(slug)) return slug;
   return slug;
 };
 
@@ -35,55 +63,86 @@ export const slugToUnit = (slug: string, availableUnits: string[]): string => {
 interface UseFilterParamsOptions {
   /** Available units for slug resolution (pass empty array if not loaded yet) */
   availableUnits?: string[];
+  /** Available grades within the selected scope sequence */
+  availableGrades?: string[];
 }
 
 interface UseFilterParamsReturn {
-  /** Currently selected grade (full value, e.g., "Grade 6") */
+  /** Currently selected scope sequence tag (full value, e.g., "Algebra 1") */
+  selectedScopeTag: string;
+  /** Alias for selectedScopeTag for backwards compatibility */
   selectedGrade: string;
-  /** Set grade directly without URL update */
-  setSelectedGrade: (grade: string) => void;
+  /** Set scope tag directly without URL update */
+  setSelectedScopeTag: (tag: string) => void;
+  /** Currently selected grade within the curriculum (e.g., "8" for Grade 8 content) */
+  selectedGradeWithin: string;
+  /** Set grade within directly without URL update */
+  setSelectedGradeWithin: (grade: string) => void;
   /** Currently selected unit (full value, e.g., "Unit 1") */
   selectedUnit: string;
   /** Set unit directly without URL update */
   setSelectedUnit: (unit: string) => void;
-  /** Handle grade change - updates state and URL, clears unit */
-  handleGradeChange: (newGrade: string) => void;
+  /** Handle scope tag change - updates state and URL, clears grade and unit */
+  handleScopeTagChange: (newTag: string) => void;
+  /** Alias for handleScopeTagChange for backwards compatibility */
+  handleGradeChange: (newTag: string) => void;
+  /** Handle grade within change - updates state and URL, clears unit */
+  handleGradeWithinChange: (newGrade: string) => void;
   /** Handle unit change - updates state and URL */
-  handleUnitChange: (newUnit: string) => void;
+  handleUnitChange: (newUnit: string, gradeWithin?: string) => void;
 }
 
 /**
- * Hook for syncing grade/unit filter state with URL query parameters.
+ * Hook for syncing scope sequence, grade, and unit filter state with URL query parameters.
  *
- * URL format: ?grade=6&unit=1 or ?grade=algebra-1&unit=3
+ * URL format: ?ss=alg-1&g=8&unit=4
+ * - ss: scope sequence tag (curriculum) - "g6", "g7", "g8", "alg-1"
+ * - g: grade within that curriculum - "6", "7", "8", "alg-1"
+ * - unit: unit number - "1", "2", etc.
  *
  * @example
  * ```tsx
- * const { selectedGrade, selectedUnit, handleGradeChange, handleUnitChange } = useFilterParams({
+ * const { selectedScopeTag, selectedGradeWithin, selectedUnit, handleScopeTagChange, handleUnitChange } = useFilterParams({
  *   availableUnits: gradeGroups.flatMap(g => g.units),
+ *   availableGrades: gradeGroups.map(g => g.grade),
  * });
  * ```
  */
 export function useFilterParams({
   availableUnits = [],
+  availableGrades: _availableGrades = [],
 }: UseFilterParamsOptions = {}): UseFilterParamsReturn {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
   // Initialize state from URL params
-  const [selectedGrade, setSelectedGrade] = useState(() =>
-    slugToGrade(searchParams.get("grade") || "")
-  );
+  // URL format: ?ss=alg-1&g=8&unit=4
+  // ss = scope sequence tag (curriculum selected by "Filter by Curriculum")
+  // g = grade within that curriculum (determined by unit selection)
+  const [selectedScopeTag, setSelectedScopeTag] = useState(() => {
+    const ssParam = searchParams.get("ss");
+    const legacyGrade = searchParams.get("grade");
+    if (ssParam) return slugToScopeTag(ssParam);
+    if (legacyGrade) return slugToGrade(legacyGrade);
+    return "";
+  });
+
+  const [selectedGradeWithin, setSelectedGradeWithin] = useState(() => {
+    const gParam = searchParams.get("g");
+    return gParam || "";
+  });
+
   const [selectedUnit, setSelectedUnit] = useState("");
   const [pendingUnitSlug, setPendingUnitSlug] = useState(() =>
     searchParams.get("unit") || ""
   );
 
   // Update URL when selections change
-  const updateUrlParams = useCallback((grade: string, unit: string) => {
+  const updateUrlParams = useCallback((scopeTag: string, gradeWithin: string, unit: string) => {
     const params = new URLSearchParams();
-    if (grade) params.set("grade", gradeToSlug(grade));
+    if (scopeTag) params.set("ss", scopeTagToSlug(scopeTag));
+    if (gradeWithin) params.set("g", gradeToSlug(gradeWithin));
     if (unit) params.set("unit", unitToSlug(unit));
     const queryString = params.toString();
     router.replace(`${pathname}${queryString ? `?${queryString}` : ""}`, { scroll: false });
@@ -100,25 +159,42 @@ export function useFilterParams({
     }
   }, [pendingUnitSlug, availableUnits, selectedUnit]);
 
-  // Handler for grade changes (clears unit)
-  const handleGradeChange = useCallback((newGrade: string) => {
-    setSelectedGrade(newGrade);
+  // Handler for scope tag changes (clears grade and unit)
+  const handleScopeTagChange = useCallback((newTag: string) => {
+    setSelectedScopeTag(newTag);
+    setSelectedGradeWithin("");
     setSelectedUnit("");
-    updateUrlParams(newGrade, "");
+    updateUrlParams(newTag, "", "");
   }, [updateUrlParams]);
 
-  // Handler for unit changes
-  const handleUnitChange = useCallback((newUnit: string) => {
+  // Handler for grade within changes (clears unit)
+  const handleGradeWithinChange = useCallback((newGrade: string) => {
+    setSelectedGradeWithin(newGrade);
+    setSelectedUnit("");
+    updateUrlParams(selectedScopeTag, newGrade, "");
+  }, [selectedScopeTag, updateUrlParams]);
+
+  // Handler for unit changes (optionally update grade within if provided)
+  const handleUnitChange = useCallback((newUnit: string, gradeWithin?: string) => {
+    const newGradeWithin = gradeWithin ?? selectedGradeWithin;
+    if (gradeWithin) {
+      setSelectedGradeWithin(gradeWithin);
+    }
     setSelectedUnit(newUnit);
-    updateUrlParams(selectedGrade, newUnit);
-  }, [selectedGrade, updateUrlParams]);
+    updateUrlParams(selectedScopeTag, newGradeWithin, newUnit);
+  }, [selectedScopeTag, selectedGradeWithin, updateUrlParams]);
 
   return {
-    selectedGrade,
-    setSelectedGrade,
+    selectedScopeTag,
+    selectedGrade: selectedScopeTag, // Backwards compatibility alias
+    setSelectedScopeTag,
+    selectedGradeWithin,
+    setSelectedGradeWithin,
     selectedUnit,
     setSelectedUnit,
-    handleGradeChange,
+    handleScopeTagChange,
+    handleGradeChange: handleScopeTagChange, // Backwards compatibility alias
+    handleGradeWithinChange,
     handleUnitChange,
   };
 }

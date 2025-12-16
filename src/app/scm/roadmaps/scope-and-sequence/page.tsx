@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useFilterParams, slugToGrade } from "@/hooks/scm/useFilterParams";
+import { useFilterParams, slugToScopeTag } from "@/hooks/scm/useFilterParams";
 import { fetchLessonsListByScopeTag, fetchScopeAndSequenceById, fetchFullLessonsByUnit } from "@actions/scm/scope-and-sequence/scope-and-sequence";
 import { fetchRoadmapsSkillsByNumbers } from "@actions/scm/roadmaps/roadmaps-skills";
 import { getRoadmapUnits } from "@/app/actions/scm/roadmaps/roadmaps-units";
@@ -45,7 +45,9 @@ const SCOPE_SEQUENCE_TAG_OPTIONS = [
 export default function ScopeAndSequencePage() {
   // Read URL params directly to compute availableUnits before hook
   const searchParams = useSearchParams();
-  const gradeFromUrl = slugToGrade(searchParams.get("grade") || "");
+  // Support both new format (ss) and legacy format (grade)
+  const scopeTagFromUrl = slugToScopeTag(searchParams.get("ss") || "") ||
+                          slugToScopeTag(searchParams.get("grade") || "");
 
   // Lightweight lesson list (for dropdowns)
   const [lessonsListByTag, setLessonsListByTag] = useState<Record<string, LessonListItem[]>>({});
@@ -72,9 +74,9 @@ export default function ScopeAndSequencePage() {
   const [contextSkillData, setContextSkillData] = useState<RoadmapsSkill | null>(null);
   const [loadingContextSkill, setLoadingContextSkill] = useState(false);
 
-  // Compute available units from cached lessons (using URL grade)
-  const currentLessonsList = lessonsListByTag[gradeFromUrl] || [];
-  const unitsByGrade = gradeFromUrl
+  // Compute available units from cached lessons (using URL scope tag)
+  const currentLessonsList = lessonsListByTag[scopeTagFromUrl] || [];
+  const unitsByGrade = scopeTagFromUrl
     ? currentLessonsList
         .filter(lesson => !lesson.lessonType || lesson.lessonType === "lesson")
         .reduce((acc, lesson) => {
@@ -101,13 +103,50 @@ export default function ScopeAndSequencePage() {
     }));
   const allAvailableUnits = gradeGroups.flatMap(g => g.units);
 
+  // Build a map from unit to grade for resolving which grade a unit belongs to
+  const unitToGradeMap = new Map<string, string>();
+  gradeGroups.forEach(({ grade, units }) => {
+    units.forEach(unit => {
+      // Only set if not already set (first grade wins, which handles duplicates)
+      if (!unitToGradeMap.has(unit)) {
+        unitToGradeMap.set(unit, grade);
+      }
+    });
+  });
+
   // URL-synced filter state
   const {
-    selectedGrade: selectedTag,
+    selectedScopeTag: selectedTag,
+    selectedGradeWithin,
     selectedUnit,
-    handleGradeChange,
+    handleScopeTagChange: handleGradeChange,
     handleUnitChange,
-  } = useFilterParams({ availableUnits: allAvailableUnits });
+  } = useFilterParams({
+    availableUnits: allAvailableUnits,
+    availableGrades: gradeGroups.map(g => g.grade),
+  });
+
+  // Custom handler for unit selection that extracts grade from optgroup
+  const handleUnitSelectChange = (value: string) => {
+    if (!value) {
+      handleUnitChange("", "");
+      return;
+    }
+    // Parse composite value: "grade|unit" format
+    const [grade, unit] = value.split("|");
+    if (grade && unit) {
+      handleUnitChange(unit, grade);
+    } else {
+      // Fallback: try to find grade from unit
+      const foundGrade = unitToGradeMap.get(value);
+      handleUnitChange(value, foundGrade || "");
+    }
+  };
+
+  // Compute the composite value for the currently selected unit
+  const selectedUnitComposite = selectedUnit && selectedGradeWithin
+    ? `${selectedGradeWithin}|${selectedUnit}`
+    : selectedUnit;
 
   // Load roadmap units on mount
   useEffect(() => {
@@ -344,8 +383,8 @@ export default function ScopeAndSequencePage() {
                 </label>
                 <select
                   id="unit-filter"
-                  value={selectedUnit}
-                  onChange={(e) => handleUnitChange(e.target.value)}
+                  value={selectedUnitComposite}
+                  onChange={(e) => handleUnitSelectChange(e.target.value)}
                   disabled={!selectedTag || isLoadingList}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer ${
                     selectedTag && !selectedUnit
@@ -357,7 +396,7 @@ export default function ScopeAndSequencePage() {
                   {gradeGroups.map(({ grade, units }) => (
                     <optgroup key={grade} label={`Grade ${grade}`}>
                       {units.map((unit) => (
-                        <option key={unit} value={unit}>
+                        <option key={`${grade}|${unit}`} value={`${grade}|${unit}`}>
                           {unit}
                         </option>
                       ))}
