@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  sync-ps313:
+  sync-progress-ps313:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -39,10 +39,10 @@ jobs:
           echo "🏫 Syncing PS313..."
           npx tsx scripts/run-podsie-sync.ts --school=PS313
 
-  sync-x644:
+  sync-progress-x644:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: sync-ps313
+    needs: sync-progress-ps313
 
     steps:
       - name: Checkout code
@@ -65,10 +65,10 @@ jobs:
           echo "🏫 Syncing X644..."
           npx tsx scripts/run-podsie-sync.ts --school=X644
 
-  sync-ps19:
+  sync-progress-ps19:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: sync-x644
+    needs: sync-progress-x644
 
     steps:
       - name: Checkout code
@@ -93,7 +93,7 @@ jobs:
 
   notify-failure:
     runs-on: ubuntu-latest
-    needs: [sync-ps313, sync-x644, sync-ps19]
+    needs: [sync-progress-ps313, sync-progress-x644, sync-progress-ps19]
     if: failure()
 
     steps:
