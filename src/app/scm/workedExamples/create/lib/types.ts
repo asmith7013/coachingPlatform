@@ -1,0 +1,192 @@
+import type { HtmlSlide } from '@zod-schema/worked-example-deck';
+
+// Grade levels matching the schema
+export type GradeLevel = '6' | '7' | '8' | 'Algebra 1';
+
+// Problem analysis from Claude
+export interface ProblemAnalysis {
+  // Verbatim transcription of the problem from the image
+  problemTranscription: string;
+  problemType: string;
+  mathematicalStructure: string;
+  solution: {
+    step: number;
+    description: string;
+    reasoning: string;
+  }[];
+  answer: string;
+  keyChallenge: string;
+  commonMistakes: string[];
+  requiredPriorKnowledge: string[];
+  answerFormat: string;
+  visualType: 'html' | 'p5' | 'd3';
+}
+
+// Strategy definition from Claude
+export interface StrategyDefinition {
+  name: string;
+  oneSentenceSummary: string;
+  moves: {
+    verb: string;
+    description: string;
+    result: string;
+  }[];
+  slideHeaders: string[];
+  cfuQuestionTemplates: string[];
+}
+
+// Scenario for worked example / practice problems
+export interface Scenario {
+  name: string;
+  context: string;
+  themeIcon: string;
+  numbers: string;
+  description: string;
+}
+
+// Response from analyze-problem action
+export interface AnalyzeResponse {
+  success: boolean;
+  data?: {
+    problemAnalysis: ProblemAnalysis;
+    strategyDefinition: StrategyDefinition;
+    scenarios: Scenario[];
+  };
+  error?: string;
+}
+
+// Response from generate-slides action
+export interface GenerateSlidesResponse {
+  success: boolean;
+  data?: {
+    slides: HtmlSlide[];
+  };
+  error?: string;
+}
+
+// Wizard step enum
+export type WizardStep = 1 | 2 | 3 | 4;
+
+// Loading phase for detailed progress tracking
+export type LoadingPhase =
+  | 'idle'
+  | 'uploading'
+  | 'analyzing'
+  | 'generating'
+  | 'saving';
+
+// Slide generation progress for SSE streaming
+export interface SlideProgress {
+  currentSlide: number;
+  estimatedTotal: number;
+}
+
+// Loading progress info
+export interface LoadingProgress {
+  phase: LoadingPhase;
+  message: string;
+  detail?: string;
+  startTime?: number;
+  slideProgress?: SlideProgress;
+}
+
+// Wizard state
+export interface WizardState {
+  // Current step
+  currentStep: WizardStep;
+
+  // Step 1: Inputs
+  gradeLevel: GradeLevel | null;
+  unitNumber: number | null;
+  lessonNumber: number | null;
+  lessonName: string;
+  scopeAndSequenceId: string | null;
+  learningGoals: string[];
+  masteryCheckImage: {
+    file: File | null;
+    preview: string | null;
+    uploadedUrl: string | null;
+  };
+
+  // Step 2: Analysis (from Claude)
+  problemAnalysis: ProblemAnalysis | null;
+  strategyDefinition: StrategyDefinition | null;
+  scenarios: Scenario[] | null;
+
+  // Step 3: Generated slides
+  slides: HtmlSlide[];
+  selectedSlideIndex: number;
+
+  // Step 4: Metadata for saving
+  title: string;
+  slug: string;
+  mathConcept: string;
+  mathStandard: string;
+  isPublic: boolean;
+
+  // Status
+  isLoading: boolean;
+  loadingMessage: string;
+  loadingProgress: LoadingProgress;
+  error: string | null;
+}
+
+// Wizard actions
+export type WizardAction =
+  | { type: 'SET_STEP'; payload: WizardStep }
+  | { type: 'SET_GRADE_LEVEL'; payload: GradeLevel | null }
+  | { type: 'SET_UNIT_NUMBER'; payload: number | null }
+  | { type: 'SET_LESSON_NUMBER'; payload: number | null }
+  | { type: 'SET_LESSON_NAME'; payload: string }
+  | { type: 'SET_SCOPE_AND_SEQUENCE_ID'; payload: string | null }
+  | { type: 'SET_LEARNING_GOALS'; payload: string[] }
+  | { type: 'SET_MASTERY_IMAGE'; payload: { file: File | null; preview: string | null } }
+  | { type: 'SET_UPLOADED_IMAGE_URL'; payload: string }
+  | { type: 'SET_ANALYSIS'; payload: { problemAnalysis: ProblemAnalysis; strategyDefinition: StrategyDefinition; scenarios: Scenario[] } }
+  | { type: 'UPDATE_STRATEGY_NAME'; payload: string }
+  | { type: 'UPDATE_SCENARIO'; payload: { index: number; scenario: Scenario } }
+  | { type: 'SET_SLIDES'; payload: HtmlSlide[] }
+  | { type: 'UPDATE_SLIDE'; payload: { index: number; htmlContent: string } }
+  | { type: 'SET_SELECTED_SLIDE'; payload: number }
+  | { type: 'SET_TITLE'; payload: string }
+  | { type: 'SET_SLUG'; payload: string }
+  | { type: 'SET_MATH_CONCEPT'; payload: string }
+  | { type: 'SET_MATH_STANDARD'; payload: string }
+  | { type: 'SET_IS_PUBLIC'; payload: boolean }
+  | { type: 'SET_LOADING'; payload: { isLoading: boolean; message?: string } }
+  | { type: 'SET_LOADING_PROGRESS'; payload: LoadingProgress }
+  | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'RESET' };
+
+// Initial state
+export const initialWizardState: WizardState = {
+  currentStep: 1,
+  gradeLevel: null,
+  unitNumber: null,
+  lessonNumber: null,
+  lessonName: '',
+  scopeAndSequenceId: null,
+  learningGoals: [],
+  masteryCheckImage: {
+    file: null,
+    preview: null,
+    uploadedUrl: null,
+  },
+  problemAnalysis: null,
+  strategyDefinition: null,
+  scenarios: null,
+  slides: [],
+  selectedSlideIndex: 0,
+  title: '',
+  slug: '',
+  mathConcept: '',
+  mathStandard: '',
+  isPublic: false,
+  isLoading: false,
+  loadingMessage: '',
+  loadingProgress: {
+    phase: 'idle',
+    message: '',
+  },
+  error: null,
+};

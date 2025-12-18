@@ -1,0 +1,650 @@
+'use client';
+
+import { useState, useRef } from 'react';
+import { PencilIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { Badge } from '@/components/core/feedback/Badge';
+import { SectionAccordion } from '@/components/composed/section-visualization';
+import type { WizardStateHook } from '../hooks/useWizardState';
+import type { Scenario } from '../lib/types';
+import { LoadingProgress } from './LoadingProgress';
+import type { HtmlSlide } from '@zod-schema/worked-example-deck';
+
+interface Step2AnalysisProps {
+  wizard: WizardStateHook;
+}
+
+// SSE event types from the API
+interface SSEStartEvent {
+  estimatedSlideCount: number;
+  message: string;
+}
+
+interface SSESlideEvent {
+  slideNumber: number;
+  estimatedTotal: number;
+  message: string;
+}
+
+interface SSECompleteEvent {
+  success: boolean;
+  slideCount: number;
+  slides: HtmlSlide[];
+}
+
+interface SSEErrorEvent {
+  message: string;
+}
+
+export function Step2Analysis({ wizard }: Step2AnalysisProps) {
+  const {
+    state,
+    updateStrategyName,
+    updateScenario,
+    setSlides,
+    setLoadingProgress,
+    setError,
+    nextStep,
+    prevStep,
+  } = wizard;
+
+  const [editingScenario, setEditingScenario] = useState<number | null>(null);
+  const [aiEditPrompt, setAiEditPrompt] = useState('');
+  const [isAiEditing, setIsAiEditing] = useState(false);
+  const [aiEditError, setAiEditError] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const { problemAnalysis, strategyDefinition, scenarios } = state;
+
+  // Handle AI edit of analysis
+  const handleAiEdit = async () => {
+    if (!aiEditPrompt.trim() || !problemAnalysis || !strategyDefinition || !scenarios) return;
+
+    setIsAiEditing(true);
+    setAiEditError(null);
+
+    try {
+      const response = await fetch('/api/scm/worked-examples/edit-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          editInstructions: aiEditPrompt,
+          problemAnalysis,
+          strategyDefinition,
+          scenarios,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setAiEditError(data.error || 'Failed to edit analysis');
+        return;
+      }
+
+      if (data.success) {
+        // Update state with edited analysis using setAnalysis
+        wizard.setAnalysis({
+          problemAnalysis: data.problemAnalysis || problemAnalysis,
+          strategyDefinition: data.strategyDefinition || strategyDefinition,
+          scenarios: data.scenarios || scenarios,
+        });
+        setAiEditPrompt('');
+      }
+    } catch (error) {
+      setAiEditError(error instanceof Error ? error.message : 'An error occurred');
+    } finally {
+      setIsAiEditing(false);
+    }
+  };
+
+  // Handle generating slides with SSE streaming
+  const handleGenerateSlides = async (testMode = false) => {
+    if (!problemAnalysis || !strategyDefinition || !scenarios) {
+      setError('Missing analysis data');
+      return;
+    }
+
+    setError(null);
+    const startTime = Date.now();
+    const estimatedSlideCount = testMode ? 1 : scenarios.length * 3 + 2;
+
+    setLoadingProgress({
+      phase: 'generating',
+      message: testMode ? 'Testing with 1 slide...' : 'Starting slide generation...',
+      detail: testMode ? 'Quick test to verify streaming' : `Creating ~${estimatedSlideCount} interactive slides`,
+      startTime,
+    });
+
+    // Create abort controller for cancellation
+    abortControllerRef.current = new AbortController();
+
+    try {
+      const response = await fetch('/api/scm/worked-examples/generate-slides', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          gradeLevel: state.gradeLevel || '8',
+          unitNumber: state.unitNumber,
+          lessonNumber: state.lessonNumber,
+          learningGoals: state.learningGoals,
+          problemAnalysis,
+          strategyDefinition,
+          scenarios,
+          testMode,
+        }),
+        signal: abortControllerRef.current.signal,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.error || 'Failed to start slide generation');
+        return;
+      }
+
+      // Read the SSE stream
+      const reader = response.body?.getReader();
+      if (!reader) {
+        setError('Failed to read response stream');
+        return;
+      }
+
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // Parse SSE events from buffer
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+        let currentEvent = '';
+        let currentData = '';
+
+        for (const line of lines) {
+          if (line.startsWith('event: ')) {
+            currentEvent = line.slice(7);
+          } else if (line.startsWith('data: ')) {
+            currentData = line.slice(6);
+
+            // Process the event
+            if (currentEvent && currentData) {
+              try {
+                const data = JSON.parse(currentData);
+                handleSSEEvent(currentEvent, data, startTime, estimatedSlideCount);
+              } catch (e) {
+                console.warn('Failed to parse SSE data:', e);
+              }
+            }
+
+            currentEvent = '';
+            currentData = '';
+          }
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.log('Slide generation cancelled');
+        setLoadingProgress({ phase: 'idle', message: '' });
+        return;
+      }
+      console.error('Error generating slides:', error);
+      setError(error instanceof Error ? error.message : 'An error occurred');
+    } finally {
+      abortControllerRef.current = null;
+    }
+  };
+
+  // Handle SSE events
+  const handleSSEEvent = (
+    event: string,
+    data: SSEStartEvent | SSESlideEvent | SSECompleteEvent | SSEErrorEvent,
+    startTime: number,
+    estimatedSlideCount: number
+  ) => {
+    switch (event) {
+      case 'start':
+        setLoadingProgress({
+          phase: 'generating',
+          message: 'Connected to AI...',
+          detail: `Creating ~${estimatedSlideCount} interactive slides`,
+          startTime,
+          slideProgress: {
+            currentSlide: 0,
+            estimatedTotal: estimatedSlideCount,
+          },
+        });
+        break;
+
+      case 'slide': {
+        const slideData = data as SSESlideEvent;
+        setLoadingProgress({
+          phase: 'generating',
+          message: `Creating slide ${slideData.slideNumber}...`,
+          detail: slideData.message,
+          startTime,
+          slideProgress: {
+            currentSlide: slideData.slideNumber,
+            estimatedTotal: slideData.estimatedTotal,
+          },
+        });
+        break;
+      }
+
+      case 'complete': {
+        const completeData = data as SSECompleteEvent;
+        if (completeData.success && completeData.slides) {
+          setSlides(completeData.slides);
+          setLoadingProgress({ phase: 'idle', message: '' });
+          nextStep();
+        } else {
+          setError('Generation completed but no slides received');
+        }
+        break;
+      }
+
+      case 'error': {
+        const errorData = data as SSEErrorEvent;
+        setError(errorData.message || 'An error occurred during generation');
+        break;
+      }
+    }
+  };
+
+  if (!problemAnalysis || !strategyDefinition || !scenarios) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6 text-center py-12">
+        <p className="text-gray-600">No analysis data available. Please go back and analyze a problem.</p>
+        <button
+          onClick={prevStep}
+          className="mt-4 text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex gap-6">
+      {/* Left Column - Accordions (60%) */}
+      <div className="w-3/5 space-y-4">
+        {/* Strategy - Blue header */}
+        <SectionAccordion
+          title="Strategy"
+          subtitle={`${strategyDefinition.moves.length} steps`}
+          color="#3B82F6"
+          className="mb-0"
+          items={[
+            {
+              key: 'strategy-details',
+              title: strategyDefinition.name,
+              icon: null,
+              content: (
+                <div>
+                  {/* Strategy Name */}
+                  <div className="border-b border-gray-200 pb-4">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Strategy Name</h4>
+                    <input
+                      type="text"
+                      value={strategyDefinition.name}
+                      onChange={(e) => updateStrategyName(e.target.value)}
+                      className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+
+                  {/* One-Sentence Summary */}
+                  <div className="border-b border-gray-200 py-4">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">One-Sentence Summary</h4>
+                    <p className="text-sm text-gray-600">
+                      {strategyDefinition.oneSentenceSummary}
+                    </p>
+                  </div>
+
+                  {/* Strategy Steps */}
+                  <div className="pt-4">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Strategy Steps</h4>
+                    <div className="space-y-2">
+                      {strategyDefinition.moves.map((move, i) => (
+                        <div key={i} className="flex items-start gap-3">
+                          <Badge intent="primary" size="xs" rounded="full">
+                            {i + 1}
+                          </Badge>
+                          <div className="flex-1 min-w-0">
+                            <span className="font-semibold text-gray-900 text-sm">{move.verb}</span>
+                            <span className="text-gray-600 text-sm">: {move.description}</span>
+                            {move.result && (
+                              <span className="text-gray-500 text-xs block mt-0.5">→ {move.result}</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ),
+            },
+          ]}
+        />
+
+      {/* Problem Analysis - Gray header */}
+      <SectionAccordion
+        title="Problem Analysis"
+        subtitle={problemAnalysis.visualType}
+        color="#6B7280"
+        className="mb-0"
+        items={[
+          {
+            key: 'analysis-details',
+            title: problemAnalysis.problemType,
+            icon: null,
+            content: (
+              <div>
+                {/* Problem Transcription - verify accuracy */}
+                {problemAnalysis.problemTranscription && (
+                  <div className="border-b border-gray-200 pb-4">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                      Problem Transcription
+                      <span className="font-normal text-gray-400 ml-2">(verify this matches the image)</span>
+                    </h4>
+                    <p className="text-sm text-gray-600 whitespace-pre-wrap bg-gray-50 rounded p-3 border border-gray-200">
+                      {problemAnalysis.problemTranscription}
+                    </p>
+                  </div>
+                )}
+
+                {/* Problem Type */}
+                <div className={problemAnalysis.problemTranscription ? "border-b border-gray-200 py-4" : "border-b border-gray-200 pb-4"}>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Type</h4>
+                  <p className="text-sm text-gray-600">{problemAnalysis.problemType}</p>
+                </div>
+
+                {/* Answer */}
+                <div className="border-b border-gray-200 py-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Answer</h4>
+                  <p className="text-sm text-gray-600">
+                    {problemAnalysis.answer}
+                  </p>
+                </div>
+
+                {/* Key Challenge */}
+                <div className={problemAnalysis.commonMistakes.length > 0 ? "border-b border-gray-200 py-4" : "pt-4"}>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Key Challenge</h4>
+                  <p className="text-sm text-gray-600">{problemAnalysis.keyChallenge}</p>
+                </div>
+
+                {/* Common Mistakes */}
+                {problemAnalysis.commonMistakes.length > 0 && (
+                  <div className="pt-4">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Common Mistakes</h4>
+                    <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
+                      {problemAnalysis.commonMistakes.map((mistake, i) => (
+                        <li key={i}>{mistake}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ),
+          },
+        ]}
+      />
+
+      {/* Scenarios - Green header with nested accordions */}
+      <SectionAccordion
+        title="Scenarios"
+        subtitle={`${scenarios.length} scenarios`}
+        color="#10B981"
+        className="mb-0"
+        defaultOpenItems={scenarios.map((_, i) => `scenario-${i}`)}
+        items={scenarios.map((scenario, index) => ({
+          key: `scenario-${index}`,
+          title: (
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2">
+                <span className="text-base">{scenario.themeIcon}</span>
+                <span className="text-sm font-medium text-gray-700">{scenario.name}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge
+                  intent={index === 0 ? 'primary' : 'secondary'}
+                  appearance="outline"
+                  size="xs"
+                >
+                  {index === 0 ? 'Worked Example' : `Practice ${index}`}
+                </Badge>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingScenario(editingScenario === index ? null : index);
+                  }}
+                  className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
+                  title={editingScenario === index ? 'Done editing' : 'Edit scenario'}
+                >
+                  {editingScenario === index ? (
+                    <CheckIcon className="h-4 w-4" />
+                  ) : (
+                    <PencilIcon className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+          ),
+          icon: null,
+          content: (
+            <div>
+              {editingScenario === index ? (
+                <ScenarioEditor scenario={scenario} onChange={(updated) => updateScenario(index, updated)} />
+              ) : (
+                <div>
+                  {/* Context and Numbers - Same Row */}
+                  <div className="grid grid-cols-2 gap-4 border-b border-gray-200 pb-4">
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Context</h4>
+                      <p className="text-sm text-gray-600">{scenario.context}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Numbers</h4>
+                      <p className="text-sm text-gray-600">{scenario.numbers}</p>
+                    </div>
+                  </div>
+
+                  {/* Problem Description */}
+                  <div className="pt-4">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Description</h4>
+                    <p className="text-sm text-gray-600">{scenario.description}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ),
+        }))}
+      />
+
+      {/* Loading Progress */}
+      {state.isLoading && (
+        <LoadingProgress progress={state.loadingProgress} />
+      )}
+
+      {/* Error Message */}
+      {state.error && (
+        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+          {state.error}
+        </div>
+      )}
+
+      {/* Action Buttons Card */}
+      <div className="bg-white rounded-lg shadow-sm p-4">
+        <div className="flex gap-4">
+          <button
+            onClick={prevStep}
+            disabled={state.isLoading}
+            className="flex-1 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer border border-gray-300"
+          >
+            Back
+          </button>
+          <button
+            onClick={() => handleGenerateSlides(true)}
+            disabled={state.isLoading}
+            className="bg-amber-500 hover:bg-amber-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer text-sm"
+            title="Generate 1 slide to test streaming"
+          >
+            Test (1)
+          </button>
+          <button
+            onClick={() => handleGenerateSlides(false)}
+            disabled={state.isLoading}
+            className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
+          >
+            {state.isLoading ? (
+              <>
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                <span>Processing...</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>Generate Slides</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+        </div>
+
+        {/* Right Column - AI Edit, Task Image and Learning Goals (40%) */}
+        <div className="w-2/5">
+          <div className="sticky top-4 space-y-4">
+            {/* AI Edit Panel */}
+            <div className={`p-4 rounded-lg border ${
+              isAiEditing
+                ? 'bg-purple-100 border-purple-300'
+                : 'bg-purple-50 border-purple-200'
+            }`}>
+              <h4 className="text-sm font-semibold text-purple-800 mb-3">AI Edit</h4>
+              {isAiEditing ? (
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0">
+                    <svg className="w-5 h-5 text-purple-600 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-purple-800">Editing analysis...</p>
+                    <p className="text-xs text-purple-600 mt-0.5">{aiEditPrompt}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <textarea
+                    value={aiEditPrompt}
+                    onChange={(e) => setAiEditPrompt(e.target.value)}
+                    placeholder="Describe what needs to be corrected (e.g., 'The answer should be 42, not 36' or 'Change the gaming scenario to be about cooking')"
+                    className="w-full px-3 py-2 text-sm border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 resize-none"
+                    rows={3}
+                  />
+                  <button
+                    onClick={handleAiEdit}
+                    disabled={!aiEditPrompt.trim()}
+                    className="w-full px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Apply AI Edit
+                  </button>
+                </div>
+              )}
+              {aiEditError && (
+                <p className="mt-2 text-sm text-red-600">{aiEditError}</p>
+              )}
+            </div>
+
+            {/* Task Image */}
+            {(state.masteryCheckImage.preview || state.masteryCheckImage.uploadedUrl) && (
+              <div className="bg-white rounded-lg shadow-sm p-4">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Task</h4>
+                <img
+                  src={state.masteryCheckImage.preview || state.masteryCheckImage.uploadedUrl || ''}
+                  alt="Task"
+                  className="w-full rounded border border-gray-200"
+                />
+              </div>
+            )}
+
+            {/* Learning Goals */}
+            {state.learningGoals && state.learningGoals.length > 0 && (
+              <div className="bg-white rounded-lg shadow-sm p-4">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Learning Goals</h4>
+                <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
+                  {state.learningGoals.map((goal, i) => (
+                    <li key={i}>{goal}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+  );
+}
+
+// Scenario Editor Component
+function ScenarioEditor({
+  scenario,
+  onChange,
+}: {
+  scenario: Scenario;
+  onChange: (scenario: Scenario) => void;
+}) {
+  return (
+    <div className="space-y-2 mt-2">
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          type="text"
+          value={scenario.name}
+          onChange={(e) => onChange({ ...scenario, name: e.target.value })}
+          placeholder="Scenario name"
+          className="bg-white border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+        <input
+          type="text"
+          value={scenario.themeIcon}
+          onChange={(e) => onChange({ ...scenario, themeIcon: e.target.value })}
+          placeholder="Icon"
+          className="bg-white border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <input
+        type="text"
+        value={scenario.context}
+        onChange={(e) => onChange({ ...scenario, context: e.target.value })}
+        placeholder="Context"
+        className="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
+      <input
+        type="text"
+        value={scenario.numbers}
+        onChange={(e) => onChange({ ...scenario, numbers: e.target.value })}
+        placeholder="Numbers used"
+        className="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
+      <textarea
+        value={scenario.description}
+        onChange={(e) => onChange({ ...scenario, description: e.target.value })}
+        placeholder="Full problem description"
+        rows={3}
+        className="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
+    </div>
+  );
+}

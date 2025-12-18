@@ -1,0 +1,63 @@
+/**
+ * Shared Worked Example Skill Content
+ *
+ * This module re-exports content used by both:
+ * - CLI skill: .claude/skills/create-worked-example-sg/
+ * - Browser creator: src/app/scm/workedExamples/create/
+ *
+ * ⚠️  SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/
+ *
+ * The content files (templates.ts, pedagogy.ts, styling.ts) are AUTO-GENERATED.
+ * To update pedagogy rules, styling, or templates:
+ *   1. Edit files in .claude/skills/create-worked-example-sg/ (templates/ or reference/)
+ *   2. Run: npm run sync-skill-content
+ *   3. The TypeScript files here will be regenerated
+ *
+ * @example
+ * ```typescript
+ * // In browser creator
+ * import { PEDAGOGY_RULES, STYLING_GUIDE, CFU_TOGGLE_TEMPLATE } from '@/skills/worked-example';
+ *
+ * // In prompts
+ * const systemPrompt = `${PEDAGOGY_RULES}\n\n${STYLING_GUIDE}`;
+ * ```
+ */
+
+// Pedagogy content
+export {
+  FOUR_RULES,
+  CFU_PATTERNS,
+  SLIDE_STRUCTURE,
+  PEDAGOGY_RULES,
+} from './content/pedagogy';
+
+// Styling content
+export {
+  COLOR_PALETTE,
+  TYPOGRAPHY,
+  SLIDE_CONTAINER,
+  CONTENT_BOXES,
+  STYLING_GUIDE,
+} from './content/styling';
+
+// HTML templates
+export {
+  CFU_TOGGLE_TEMPLATE,
+  ANSWER_TOGGLE_TEMPLATE,
+  PRINTABLE_TEMPLATE,
+} from './content/templates';
+
+// Shared prompt instructions (used by both CLI and browser)
+export {
+  ANALYZE_PROBLEM_INSTRUCTIONS,
+  GENERATE_SLIDES_INSTRUCTIONS,
+} from './content/prompts';
+
+// Context-specific instructions
+export {
+  type ExecutionContext,
+  CLI_CONTEXT,
+  BROWSER_CONTEXT,
+  getContextInstructions,
+  COMMON_INSTRUCTIONS,
+} from './context';
