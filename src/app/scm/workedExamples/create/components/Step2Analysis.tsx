@@ -269,15 +269,59 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
   }
 
   return (
-    <div className="flex gap-6">
-      {/* Left Column - Accordions (60%) */}
-      <div className="w-3/5 space-y-4">
-        {/* Strategy - Blue header */}
-        <SectionAccordion
+    <div className="space-y-4 pb-20">
+      {/* Loading Progress */}
+      {state.isLoading && (
+        <LoadingProgress progress={state.loadingProgress} />
+      )}
+
+      {/* Error Message */}
+      {state.error && (
+        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+          {state.error}
+        </div>
+      )}
+
+      {/* Two Column Layout */}
+      <div className="flex gap-6">
+        {/* Left Column - Task Image and Learning Targets (30%) */}
+        <div className="w-[30%]">
+          <div className="sticky top-20 space-y-4">
+            {/* Task Image */}
+            {(state.masteryCheckImage.preview || state.masteryCheckImage.uploadedUrl) && (
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Task</h4>
+                <img
+                  src={state.masteryCheckImage.preview || state.masteryCheckImage.uploadedUrl || ''}
+                  alt="Task"
+                  className="w-full rounded border border-gray-200"
+                />
+              </div>
+            )}
+
+            {/* Learning Targets */}
+            {state.learningGoals && state.learningGoals.length > 0 && (
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Learning Targets</h4>
+                <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
+                  {state.learningGoals.map((goal, i) => (
+                    <li key={i}>{goal}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Column - Accordions (70%) */}
+        <div className="w-[70%] space-y-4">
+          {/* Strategy - Blue header */}
+          <SectionAccordion
           title="Strategy"
           subtitle={`${strategyDefinition.moves.length} steps`}
           color="#3B82F6"
           className="mb-0"
+          hideExpandAll
           items={[
             {
               key: 'strategy-details',
@@ -336,6 +380,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
         subtitle={problemAnalysis.visualType}
         color="#6B7280"
         className="mb-0"
+        hideExpandAll
         items={[
           {
             key: 'analysis-details',
@@ -399,6 +444,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
         subtitle={`${scenarios.length} scenarios`}
         color="#10B981"
         className="mb-0"
+        hideExpandAll
         defaultOpenItems={scenarios.map((_, i) => `scenario-${i}`)}
         items={scenarios.map((scenario, index) => ({
           key: `scenario-${index}`,
@@ -463,138 +509,72 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
           ),
         }))}
       />
-
-      {/* Loading Progress */}
-      {state.isLoading && (
-        <LoadingProgress progress={state.loadingProgress} />
-      )}
-
-      {/* Error Message */}
-      {state.error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
-          {state.error}
-        </div>
-      )}
-
-      {/* Action Buttons Card */}
-      <div className="bg-white rounded-lg shadow-sm p-4">
-        <div className="flex gap-4">
-          <button
-            onClick={prevStep}
-            disabled={state.isLoading}
-            className="flex-1 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer border border-gray-300"
-          >
-            Back
-          </button>
-          <button
-            onClick={() => handleGenerateSlides(true)}
-            disabled={state.isLoading}
-            className="bg-amber-500 hover:bg-amber-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer text-sm"
-            title="Generate 1 slide to test streaming"
-          >
-            Test (1)
-          </button>
-          <button
-            onClick={() => handleGenerateSlides(false)}
-            disabled={state.isLoading}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
-          >
-            {state.isLoading ? (
-              <>
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                <span>Processing...</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Generate Slides</span>
-              </>
-            )}
-          </button>
         </div>
       </div>
-        </div>
 
-        {/* Right Column - AI Edit, Task Image and Learning Goals (40%) */}
-        <div className="w-2/5">
-          <div className="sticky top-4 space-y-4">
-            {/* AI Edit Panel */}
-            <div className={`p-4 rounded-lg border ${
-              isAiEditing
-                ? 'bg-purple-100 border-purple-300'
-                : 'bg-purple-50 border-purple-200'
-            }`}>
-              <h4 className="text-sm font-semibold text-purple-800 mb-3">AI Edit</h4>
-              {isAiEditing ? (
-                <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0">
-                    <svg className="w-5 h-5 text-purple-600 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      {/* Sticky Footer */}
+      <div className="fixed bottom-0 left-0 right-0 z-20 border-t shadow-lg bg-white">
+        <div className={`px-6 py-3 ${
+          isAiEditing ? 'bg-purple-100' : 'bg-purple-50'
+        }`}>
+          {isAiEditing ? (
+            <div className="flex items-center gap-3">
+              <svg className="w-5 h-5 text-purple-600 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              <span className="text-sm text-purple-800 flex-1">Editing: {aiEditPrompt}</span>
+            </div>
+          ) : (
+            <div className="flex gap-3 items-center">
+              <input
+                type="text"
+                value={aiEditPrompt}
+                onChange={(e) => setAiEditPrompt(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && aiEditPrompt.trim() && handleAiEdit()}
+                placeholder="AI Edit: describe corrections (e.g., 'The answer should be 42')"
+                className="flex-1 px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white"
+              />
+              <button
+                onClick={handleAiEdit}
+                disabled={!aiEditPrompt.trim()}
+                className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg cursor-pointer disabled:cursor-not-allowed flex items-center gap-1.5"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Apply
+              </button>
+              <button
+                onClick={() => handleGenerateSlides(false)}
+                disabled={state.isLoading}
+                className="px-5 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
+              >
+                {state.isLoading ? (
+                  <>
+                    <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-purple-800">Editing analysis...</p>
-                    <p className="text-xs text-purple-600 mt-0.5">{aiEditPrompt}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <textarea
-                    value={aiEditPrompt}
-                    onChange={(e) => setAiEditPrompt(e.target.value)}
-                    placeholder="Describe what needs to be corrected (e.g., 'The answer should be 42, not 36' or 'Change the gaming scenario to be about cooking')"
-                    className="w-full px-3 py-2 text-sm border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 resize-none"
-                    rows={3}
-                  />
-                  <button
-                    onClick={handleAiEdit}
-                    disabled={!aiEditPrompt.trim()}
-                    className="w-full px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  >
+                    Generating...
+                  </>
+                ) : (
+                  <>
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Apply AI Edit
-                  </button>
-                </div>
-              )}
-              {aiEditError && (
-                <p className="mt-2 text-sm text-red-600">{aiEditError}</p>
-              )}
+                    Generate Slides
+                  </>
+                )}
+              </button>
             </div>
-
-            {/* Task Image */}
-            {(state.masteryCheckImage.preview || state.masteryCheckImage.uploadedUrl) && (
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">Task</h4>
-                <img
-                  src={state.masteryCheckImage.preview || state.masteryCheckImage.uploadedUrl || ''}
-                  alt="Task"
-                  className="w-full rounded border border-gray-200"
-                />
-              </div>
-            )}
-
-            {/* Learning Goals */}
-            {state.learningGoals && state.learningGoals.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">Learning Goals</h4>
-                <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
-                  {state.learningGoals.map((goal, i) => (
-                    <li key={i}>{goal}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+          )}
+          {aiEditError && (
+            <p className="mt-2 text-sm text-red-600">{aiEditError}</p>
+          )}
         </div>
       </div>
+    </div>
   );
 }
 

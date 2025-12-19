@@ -122,70 +122,57 @@ export function LoadingProgress({ progress }: LoadingProgressProps) {
             </span>
           </div>
 
-          {progress.detail && (
+          {/* Slide count below the title */}
+          {progress.slideProgress && (
+            <p className="text-sm text-gray-600">
+              Slides {progress.slideProgress.currentSlide}/{progress.slideProgress.estimatedTotal}
+            </p>
+          )}
+
+          {progress.detail && !progress.slideProgress && (
             <p className="mt-1 text-sm text-gray-600">
               {progress.detail}
             </p>
           )}
 
-          {/* Progress bar */}
-          <div className="mt-3">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-gray-500">Progress</span>
-              {progress.slideProgress && (
-                <span className={`text-sm font-medium ${config.textColor}`}>
+          {/* Full-width slide progress tiles */}
+          {progress.slideProgress && (
+            <div className="mt-3">
+              <div className="flex items-center gap-2">
+                <div className="flex-1 flex gap-1">
+                  {Array.from({ length: progress.slideProgress.estimatedTotal }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`flex-1 h-3 rounded transition-all duration-300 ${
+                        i < progress.slideProgress!.currentSlide
+                          ? 'bg-green-500'
+                          : i === progress.slideProgress!.currentSlide
+                          ? 'bg-green-300 animate-pulse'
+                          : 'bg-gray-200'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className={`text-sm font-medium ${config.textColor} tabular-nums min-w-[3rem] text-right`}>
                   {Math.round((progress.slideProgress.currentSlide / progress.slideProgress.estimatedTotal) * 100)}%
                 </span>
-              )}
+              </div>
             </div>
-            <div className="h-2 bg-white/50 rounded-full overflow-hidden">
-              {progress.slideProgress ? (
-                // Real progress bar when we have slide progress
+          )}
+
+          {/* Pulsing bar when no slide progress */}
+          {!progress.slideProgress && (
+            <div className="mt-3">
+              <div className="h-3 bg-white/50 rounded overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ease-out ${
-                    progress.phase === 'generating' ? 'bg-green-500' : 'bg-amber-500'
-                  }`}
-                  style={{
-                    width: `${Math.min(
-                      (progress.slideProgress.currentSlide / progress.slideProgress.estimatedTotal) * 100,
-                      100
-                    )}%`,
-                  }}
-                />
-              ) : (
-                // Pulsing animation when no progress info
-                <div
-                  className={`h-full w-full rounded-full animate-pulse ${
+                  className={`h-full w-full rounded animate-pulse ${
                     progress.phase === 'uploading' ? 'bg-blue-400' :
                     progress.phase === 'analyzing' ? 'bg-purple-400' :
                     progress.phase === 'generating' ? 'bg-green-400' :
                     'bg-amber-400'
                   }`}
                 />
-              )}
-            </div>
-          </div>
-
-          {/* Slide progress indicator */}
-          {progress.slideProgress && (
-            <div className="mt-2 flex items-center gap-2">
-              <div className="flex gap-1">
-                {Array.from({ length: progress.slideProgress.estimatedTotal }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      i < progress.slideProgress!.currentSlide
-                        ? 'bg-green-500 scale-100'
-                        : i === progress.slideProgress!.currentSlide
-                        ? 'bg-green-300 scale-110 animate-pulse'
-                        : 'bg-gray-300 scale-75'
-                    }`}
-                  />
-                ))}
               </div>
-              <span className="text-xs text-gray-500">
-                {progress.slideProgress.currentSlide} of ~{progress.slideProgress.estimatedTotal}
-              </span>
             </div>
           )}
         </div>

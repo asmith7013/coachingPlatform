@@ -7,10 +7,8 @@ import type { ColumnConfig } from "./types";
 
 export function ColumnSectionRow({
   config,
-  showStudentNames,
 }: {
   config: ColumnConfig;
-  showStudentNames: boolean;
 }) {
   const styles = getZoneStyles(config.zone);
   const zoneLessonCount = config.sections.reduce((sum, s) => sum + (s.lessons?.length || 0), 0);
@@ -43,10 +41,6 @@ export function ColumnSectionRow({
     >
       {config.sections.map((section, sectionIndex) => {
         const isLastSection = sectionIndex === config.sections.length - 1;
-        const sectionStudentNames = section.lessons
-          ?.flatMap(l => l.studentNames || [])
-          .filter((name, idx, arr) => arr.indexOf(name) === idx) || [];
-        const sectionTooltipContent = sectionStudentNames.length > 0 ? sectionStudentNames.join("\n") : "";
 
         // Calculate proportional width based on lesson count (matches ColumnLessonsRow)
         const sectionLessonCount = section.lessons?.length || 1;
@@ -92,15 +86,6 @@ export function ColumnSectionRow({
 
         const wrapperClasses = `flex ${!isLastSection ? `border-r ${styles.border}` : ""}`;
 
-        if (!showStudentNames && sectionTooltipContent) {
-          return (
-            <div key={sectionKey} className={wrapperClasses} style={{ width: `${sectionWidthPercent}%` }}>
-              <Tooltip content={sectionTooltipContent}>
-                {sectionContent}
-              </Tooltip>
-            </div>
-          );
-        }
         return <div key={sectionKey} className={wrapperClasses} style={{ width: `${sectionWidthPercent}%` }}>{sectionContent}</div>;
       })}
     </div>

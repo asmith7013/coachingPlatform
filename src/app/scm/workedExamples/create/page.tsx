@@ -9,7 +9,7 @@ export default function WorkedExampleCreatorPage() {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Create Worked Example</h1>
           <p className="text-gray-600 text-sm mt-1">
-            Generate AI-powered worked example slide decks from mastery check questions
+            Generate AI-powered worked example slide decks from mastery check questions or other sources
           </p>
         </div>
 

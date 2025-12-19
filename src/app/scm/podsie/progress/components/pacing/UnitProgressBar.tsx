@@ -109,7 +109,6 @@ export function UnitProgressBar({
           <ColumnHeader
             key={`header-${config.zone}`}
             config={config}
-            showStudentNames={showStudentNames}
           />
         ))}
       </div>
@@ -120,7 +119,6 @@ export function UnitProgressBar({
           <ColumnSectionRow
             key={`sections-${config.zone}`}
             config={config}
-            showStudentNames={showStudentNames}
           />
         ))}
       </div>

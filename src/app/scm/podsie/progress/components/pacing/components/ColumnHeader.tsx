@@ -7,13 +7,10 @@ import type { ColumnConfig } from "./types";
 
 export function ColumnHeader({
   config,
-  showStudentNames,
 }: {
   config: ColumnConfig;
-  showStudentNames: boolean;
 }) {
   const styles = getZoneStyles(config.zone);
-  const tooltipContent = config.studentNames.length > 0 ? config.studentNames.join("\n") : "";
 
   const widthStyle = config.isFixedWidth
     ? { width: config.width, flexShrink: 0 }
@@ -34,8 +31,6 @@ export function ColumnHeader({
           <StudentCountBadge
             count={config.totalStudents}
             badgeClass={styles.studentBadge}
-            tooltipContent={tooltipContent}
-            showTooltip={!showStudentNames}
           />
         </>
       ) : (
@@ -49,8 +44,6 @@ export function ColumnHeader({
           <StudentCountBadge
             count={config.totalStudents}
             badgeClass={styles.studentBadge}
-            tooltipContent={tooltipContent}
-            showTooltip={!showStudentNames}
           />
         </>
       )}

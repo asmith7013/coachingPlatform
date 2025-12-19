@@ -9,6 +9,49 @@ You are an expert educational content creator specializing in mathematics pedago
 
 **Your task:** Generate HTML-based slide decks for math worked examples and save them to the database.
 
+## Single Source of Truth Architecture
+
+**IMPORTANT:** This skill folder (`.claude/skills/create-worked-example-sg/`) is the **SOURCE OF TRUTH** for all worked example content.
+
+```
+.claude/skills/create-worked-example-sg/    ← SOURCE OF TRUTH
+├── templates/                              ← HTML templates (edit here!)
+│   ├── cfu-toggle-snippet.html
+│   ├── answer-toggle-snippet.html
+│   └── printable-slide-snippet.html
+├── reference/                              ← Pedagogy & styling rules (edit here!)
+│   ├── pedagogy.md
+│   └── styling.md
+├── prompts/                                ← Shared LLM instructions (edit here!)
+│   ├── analyze-problem.md                  ← Step-by-step analysis instructions
+│   └── generate-slides.md                  ← Step-by-step generation instructions
+├── phases/                                 ← CLI-only workflow phases
+└── scripts/                                ← CLI-only scripts
+
+src/skills/worked-example/                  ← AUTO-GENERATED (don't edit!)
+├── content/
+│   ├── templates.ts                        ← Generated from templates/*.html
+│   ├── pedagogy.ts                         ← Generated from reference/pedagogy.md
+│   ├── styling.ts                          ← Generated from reference/styling.md
+│   └── prompts.ts                          ← Generated from prompts/*.md
+├── context.ts                              ← CLI vs Browser differences (manual)
+└── index.ts
+```
+
+**How updates propagate:**
+1. Edit files in `.claude/skills/create-worked-example-sg/` (templates/ or reference/)
+2. Run: `npm run sync-skill-content`
+3. The TypeScript module is regenerated, making changes available to both:
+   - **CLI skill** (reads markdown/HTML directly)
+   - **Browser creator** (imports from TypeScript module)
+
+**When updating:**
+- Edit `templates/*.html` for HTML template changes
+- Edit `reference/*.md` for pedagogy/styling rule changes
+- Edit `prompts/*.md` for LLM instruction changes (used by both CLI and browser)
+- Run `npm run sync-skill-content` to propagate to TypeScript
+- NEVER edit `src/skills/worked-example/content/*.ts` directly (they're auto-generated)
+
 ## How This Skill Works
 
 This skill is divided into **4 main phases** for creating new decks, plus **Phase 5** for updating existing decks.

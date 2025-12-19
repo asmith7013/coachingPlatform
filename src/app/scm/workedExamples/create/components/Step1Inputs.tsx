@@ -1,15 +1,35 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import type { WizardStateHook } from '../hooks/useWizardState';
 import type { GradeLevel } from '../lib/types';
 import { uploadMasteryCheckImage } from '../actions/upload-image';
 import { analyzeProblem } from '../actions/analyze-problem';
+import { fetchAllUnitsByScopeTag } from '@actions/scm/scope-and-sequence/scope-and-sequence';
+import { fetchLessonsForUnit } from '@/app/scm/incentives/form/actions';
 import { MarkdownTextarea } from '@/components/core/fields/MarkdownTextarea';
+import { Badge } from '@/components/core/feedback/Badge';
 import { LoadingProgress } from './LoadingProgress';
 
 interface Step1InputsProps {
   wizard: WizardStateHook;
+}
+
+interface UnitOption {
+  unitNumber: number;
+  unitName: string;
+  grade: string;
+  lessonCount: number;
+}
+
+interface LessonOption {
+  _id: string;
+  lessonNumber: number;
+  lessonName: string;
+  lessonTitle?: string;
+  section?: string;
+  lessonType?: string;
+  learningTargets?: string[];
 }
 
 const GRADE_OPTIONS: { value: GradeLevel; label: string }[] = [
@@ -19,11 +39,129 @@ const GRADE_OPTIONS: { value: GradeLevel; label: string }[] = [
   { value: 'Algebra 1', label: 'Algebra 1' },
 ];
 
+// Section ordering for lesson sorting
+const SECTION_ORDER: Record<string, number> = {
+  'Ramp Ups': 0,
+  'A': 1,
+  'B': 2,
+  'C': 3,
+  'D': 4,
+  'E': 5,
+  'F': 6,
+  'Unit Assessment': 99,
+};
+
+function getSectionOrder(section: string | undefined): number {
+  if (!section) return 50;
+  return SECTION_ORDER[section] ?? 50;
+}
+
+function sortLessons(lessons: LessonOption[]): LessonOption[] {
+  return [...lessons].sort((a, b) => {
+    const sectionA = getSectionOrder(a.section);
+    const sectionB = getSectionOrder(b.section);
+    if (sectionA !== sectionB) return sectionA - sectionB;
+    return a.lessonNumber - b.lessonNumber;
+  });
+}
+
+function formatLessonDisplay(lesson: LessonOption): string {
+  if (lesson.lessonType === 'rampUp' || lesson.section === 'Ramp Ups') {
+    return lesson.lessonName;
+  }
+  return `Lesson ${lesson.lessonNumber}: ${lesson.lessonName}`;
+}
+
 export function Step1Inputs({ wizard }: Step1InputsProps) {
   const { state, setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setLearningGoals, setMasteryImage, setUploadedImageUrl, setAnalysis, setLoadingProgress, setError, nextStep } = wizard;
 
   const [learningGoalText, setLearningGoalText] = useState(state.learningGoals.join('\n'));
+  const [selectedLesson, setSelectedLesson] = useState<LessonOption | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Units and lessons data
+  const [units, setUnits] = useState<UnitOption[]>([]);
+  const [lessons, setLessons] = useState<LessonOption[]>([]);
+  const [isLoadingUnits, setIsLoadingUnits] = useState(false);
+  const [isLoadingLessons, setIsLoadingLessons] = useState(false);
+
+  // Get scope sequence tag from grade
+  const scopeSequenceTag = useMemo(() => {
+    if (!state.gradeLevel) return null;
+    return state.gradeLevel === 'Algebra 1' ? 'Algebra 1' : `Grade ${state.gradeLevel}`;
+  }, [state.gradeLevel]);
+
+  // Fetch units when grade changes
+  useEffect(() => {
+    if (!scopeSequenceTag) {
+      setUnits([]);
+      return;
+    }
+
+    async function loadUnits() {
+      setIsLoadingUnits(true);
+      try {
+        const result = await fetchAllUnitsByScopeTag(scopeSequenceTag!, state.gradeLevel || undefined);
+        if (result.success && result.data) {
+          setUnits(result.data);
+        }
+      } catch (error) {
+        console.error('Error loading units:', error);
+      } finally {
+        setIsLoadingUnits(false);
+      }
+    }
+
+    loadUnits();
+  }, [scopeSequenceTag, state.gradeLevel]);
+
+  // Fetch lessons when unit changes
+  useEffect(() => {
+    if (!state.gradeLevel || !state.unitNumber) {
+      setLessons([]);
+      return;
+    }
+
+    async function loadLessons() {
+      setIsLoadingLessons(true);
+      try {
+        const result = await fetchLessonsForUnit(state.gradeLevel!, state.unitNumber!, scopeSequenceTag || undefined);
+        if (typeof result !== 'string' && result.success && result.data) {
+          // Filter out assessments
+          const filtered = (result.data as LessonOption[]).filter(
+            l => l.lessonType !== 'assessment' && l.section !== 'Unit Assessment'
+          );
+          setLessons(filtered);
+        }
+      } catch (error) {
+        console.error('Error loading lessons:', error);
+      } finally {
+        setIsLoadingLessons(false);
+      }
+    }
+
+    loadLessons();
+  }, [state.gradeLevel, state.unitNumber, scopeSequenceTag]);
+
+  // Sort lessons for display
+  const sortedLessons = useMemo(() => sortLessons(lessons), [lessons]);
+
+  // Handle lesson selection
+  const handleLessonSelect = useCallback((lessonId: string) => {
+    const lesson = lessons.find(l => l._id === lessonId);
+    if (lesson) {
+      setSelectedLesson(lesson);
+      setLessonNumber(lesson.lessonNumber);
+      setLessonName(lesson.lessonTitle || lesson.lessonName);
+      if (lesson.learningTargets && lesson.learningTargets.length > 0) {
+        setLearningGoals(lesson.learningTargets);
+        setLearningGoalText(lesson.learningTargets.join('\n'));
+      }
+    } else {
+      setSelectedLesson(null);
+      setLessonNumber(null);
+    }
+  }, [lessons, setLessonNumber, setLessonName, setLearningGoals]);
 
   // Handle image file selection
   const handleImageSelect = useCallback(
@@ -90,6 +228,12 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     }
     if (!state.masteryCheckImage.file && !state.masteryCheckImage.uploadedUrl) {
       setError('Please upload a mastery check question image');
+      return;
+    }
+    // Learning goals are required if no curriculum targets exist
+    const hasLearningTargets = selectedLesson?.learningTargets && selectedLesson.learningTargets.length > 0;
+    if (!hasLearningTargets && state.learningGoals.length === 0) {
+      setError('Please add at least one learning target');
       return;
     }
 
@@ -162,93 +306,201 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     }
   };
 
+  // Handle grade change - reset unit and lesson
+  const handleGradeChange = useCallback((grade: GradeLevel | null) => {
+    setGradeLevel(grade);
+    setUnitNumber(null);
+    setLessonNumber(null);
+    setSelectedLesson(null);
+    setLessons([]);
+  }, [setGradeLevel, setUnitNumber, setLessonNumber]);
+
+  // Handle unit change - reset lesson
+  const handleUnitChange = useCallback((unitNumber: number | null) => {
+    setUnitNumber(unitNumber);
+    setLessonNumber(null);
+    setSelectedLesson(null);
+  }, [setUnitNumber, setLessonNumber]);
+
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Step 1: Input Information</h2>
-        <p className="text-gray-600 text-sm mt-1">
-          Provide the lesson details and upload a mastery check question image.
-        </p>
+    <div className="flex gap-6">
+      {/* Left Column - Query Inputs (30%) */}
+      <div className="w-[30%]">
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="mb-6">
+            <h3 className="text-base font-semibold text-gray-900">Select Lesson</h3>
+            <p className="text-gray-600 text-sm mt-1">
+              Choose grade, unit, and lesson from curriculum.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {/* Grade Level */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Grade <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={state.gradeLevel || ''}
+                onChange={(e) => handleGradeChange(e.target.value as GradeLevel || null)}
+                className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+              >
+                <option value="">Select grade...</option>
+                {GRADE_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Unit Dropdown */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Unit <span className="text-red-500">*</span>
+              </label>
+              {isLoadingUnits ? (
+                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                  Loading units...
+                </div>
+              ) : !state.gradeLevel ? (
+                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
+                  Select a grade first
+                </div>
+              ) : units.length === 0 ? (
+                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                  No units found
+                </div>
+              ) : (
+                <select
+                  value={state.unitNumber || ''}
+                  onChange={(e) => handleUnitChange(e.target.value ? parseInt(e.target.value) : null)}
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                >
+                  <option value="">Select unit...</option>
+                  {units.map((unit) => (
+                    <option key={unit.unitNumber} value={unit.unitNumber}>
+                      {unit.unitNumber}. {unit.unitName}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            {/* Lesson Dropdown */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Lesson <span className="text-red-500">*</span>
+              </label>
+              {isLoadingLessons ? (
+                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                  Loading lessons...
+                </div>
+              ) : !state.unitNumber ? (
+                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
+                  Select a unit first
+                </div>
+              ) : sortedLessons.length === 0 ? (
+                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                  No lessons found
+                </div>
+              ) : (
+                <select
+                  value={selectedLesson?._id || ''}
+                  onChange={(e) => handleLessonSelect(e.target.value)}
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                >
+                  <option value="">Select lesson...</option>
+                  {sortedLessons.map((lesson) => (
+                    <option key={lesson._id} value={lesson._id}>
+                      {formatLessonDisplay(lesson)}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="space-y-5">
-        {/* Grade Level */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Grade Level <span className="text-red-500">*</span>
-          </label>
-          <select
-            value={state.gradeLevel || ''}
-            onChange={(e) => setGradeLevel(e.target.value as GradeLevel || null)}
-            className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
-          >
-            <option value="">Select grade...</option>
-            {GRADE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+      {/* Right Column - Lesson Details (70%) */}
+      <div className="w-[70%] space-y-4">
+        {/* Lesson Info Card */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          {selectedLesson ? (
+            <div className="space-y-3">
+              {/* Lesson Title as Header */}
+              <h3 className="text-base font-semibold text-gray-900">
+                Lesson {selectedLesson.lessonNumber}: {selectedLesson.lessonTitle || selectedLesson.lessonName}
+              </h3>
+
+              {/* Badges below title */}
+              <div className="flex gap-2 flex-wrap">
+                <Badge intent="primary" size="sm">
+                  {state.gradeLevel === 'Algebra 1' ? 'Algebra 1' : `Grade ${state.gradeLevel}`}
+                </Badge>
+                <Badge intent="secondary" size="sm">
+                  Unit {state.unitNumber}
+                </Badge>
+                {selectedLesson.section && (
+                  <Badge intent="info" appearance="outline" size="sm">
+                    Section {selectedLesson.section}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400 italic">
+              Select a lesson to see details here.
+            </p>
+          )}
         </div>
 
-        {/* Unit and Lesson */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Unit Number</label>
-            <input
-              type="number"
-              min="1"
-              value={state.unitNumber || ''}
-              onChange={(e) => setUnitNumber(e.target.value ? parseInt(e.target.value) : null)}
-              placeholder="e.g., 4"
-              className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+        {/* Learning Targets Card */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="mb-4">
+            <h3 className="text-base font-semibold text-gray-900">Learning Targets</h3>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Lesson Number</label>
-            <input
-              type="number"
-              value={state.lessonNumber ?? ''}
-              onChange={(e) => setLessonNumber(e.target.value ? parseInt(e.target.value) : null)}
-              placeholder="e.g., 1"
-              className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
+
+          {selectedLesson ? (
+            selectedLesson.learningTargets && selectedLesson.learningTargets.length > 0 ? (
+              <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
+                {selectedLesson.learningTargets.map((target, i) => (
+                  <li key={i}>{target}</li>
+                ))}
+              </ul>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-sm text-amber-600 italic">No learning targets found in database - please add below</p>
+                <MarkdownTextarea
+                  value={learningGoalText}
+                  onChange={handleLearningGoalsChange}
+                  label="Add Learning Targets"
+                  placeholder="e.g., I can solve equations like **2x + 3 = 7** using inverse operations"
+                  hint="One goal per line. Use markdown for formatting."
+                  height={100}
+                  required
+                />
+              </div>
+            )
+          ) : (
+            <p className="text-sm text-gray-400 italic">
+              Select a lesson to see learning targets.
+            </p>
+          )}
         </div>
 
-        {/* Lesson Name */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Lesson Name</label>
-          <input
-            type="text"
-            value={state.lessonName}
-            onChange={(e) => setLessonName(e.target.value)}
-            placeholder="e.g., Solving Two-Step Equations"
-            className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-
-        {/* Learning Goals */}
-        <MarkdownTextarea
-          value={learningGoalText}
-          onChange={handleLearningGoalsChange}
-          label="Learning Goals"
-          placeholder="e.g., I can solve equations like **2x + 3 = 7** using inverse operations"
-          hint="One goal per line. Use markdown for formatting."
-          height={150}
-        />
-
-        {/* Mastery Check Image */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Mastery Check Question <span className="text-red-500">*</span>
+        {/* Task Image */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Task <span className="text-red-500">*</span>
           </label>
 
           {state.masteryCheckImage.preview ? (
             <div className="relative">
               <img
                 src={state.masteryCheckImage.preview}
-                alt="Mastery check question"
+                alt="Task image"
                 className="w-full max-h-64 object-contain rounded-lg border border-gray-300 bg-white"
               />
               <button
@@ -303,30 +555,28 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
         )}
 
         {/* Analyze Button */}
-        <div className="pt-2">
-          <button
-            onClick={handleAnalyze}
-            disabled={state.isLoading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
-          >
-            {state.isLoading ? (
-              <>
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                <span>Processing...</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-                <span>Analyze Problem</span>
-              </>
-            )}
-          </button>
-        </div>
+        <button
+          onClick={handleAnalyze}
+          disabled={state.isLoading}
+          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
+        >
+          {state.isLoading ? (
+            <>
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              <span>Processing...</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              <span>Analyze Problem</span>
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

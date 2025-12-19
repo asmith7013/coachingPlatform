@@ -25,6 +25,7 @@
     "test-data-normalization": "tsx scripts/test-google-sheets/test-normalization.ts",
     "delete-all-students": "tsx scripts/delete-all-students.ts",
     "knip": "knip",
+    "sync-skill-content": "tsx scripts/sync-skill-content.ts",
     "prebuild": "npm run generate-css && tsc --noEmit --strict && npm run lint"
   },
   "dependencies": {
@@ -42,6 +43,7 @@
     "@tanstack/react-query": "^5.75.2",
     "@tanstack/react-query-devtools": "^5.75.2",
     "@tanstack/react-table": "^8.21.3",
+    "@tiptap/extension-placeholder": "^2.27.1",
     "@tiptap/pm": "^2.11.5",
     "@tiptap/react": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",

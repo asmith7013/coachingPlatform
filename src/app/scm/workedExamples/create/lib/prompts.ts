@@ -194,7 +194,7 @@ Context:
 - Grade Level: ${gradeLevel}
 - Unit: ${unitNumber ?? 'Not specified'}
 - Lesson: ${lessonNumber ?? 'Not specified'} - ${lessonName || 'Not specified'}
-- Learning Goals: ${learningGoals.length > 0 ? learningGoals.join('; ') : 'Not specified'}
+- Learning Targets: ${learningGoals.length > 0 ? learningGoals.join('; ') : 'Not specified'}
 
 Instructions:
 1. Solve the problem yourself step-by-step
@@ -239,7 +239,7 @@ export function buildGenerateSlidesPrompt(
 ## Context
 - Grade Level: ${gradeLevel}
 - Unit ${unitNumber ?? ''} Lesson ${lessonNumber ?? ''}
-- Learning Goals: ${learningGoals.join('; ')}
+- Learning Targets: ${learningGoals.join('; ')}
 
 ## Problem Analysis
 - Type: ${problemAnalysis.problemType}

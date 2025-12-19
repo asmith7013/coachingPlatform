@@ -280,6 +280,7 @@
 │   ├── run-scraper.ts
 │   ├── snorkl-comprehensive-scraper.ts
 │   ├── snorkl-simple-scraper.ts
+│   ├── sync-skill-content.ts
 │   ├── test-json-parse.js
 │   ├── test-migrate-one-skill.ts
 │   ├── test-monday-token.mjs
@@ -534,6 +535,10 @@
 │   │   │   │   └── route.ts
 │   │   │   ├── schools
 │   │   │   │   └── route.ts
+│   │   │   ├── scm
+│   │   │   │   └── worked-examples
+│   │   │   │       ├── edit-slide
+│   │   │   │       └── generate-slides
 │   │   │   ├── setup
 │   │   │   │   └── initial-user
 │   │   │   │       └── route.ts
@@ -832,9 +837,35 @@
 │   │   │   │   ├── slide-7.html
 │   │   │   │   ├── slide-8.html
 │   │   │   │   └── slide-9.html
+│   │   │   ├── model-graph-interpret-linear-g8
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-10.html
+│   │   │   │   ├── slide-11.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
 │   │   │   ├── one-step-reveal-g8u4l6
 │   │   │   │   ├── metadata.json
 │   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-2.html
+│   │   │   │   ├── slide-3.html
+│   │   │   │   ├── slide-4.html
+│   │   │   │   ├── slide-5.html
+│   │   │   │   ├── slide-6.html
+│   │   │   │   ├── slide-7.html
+│   │   │   │   ├── slide-8.html
+│   │   │   │   └── slide-9.html
+│   │   │   ├── read-check-intersect-grade8-u4l10
+│   │   │   │   ├── metadata.json
+│   │   │   │   ├── slide-1.html
+│   │   │   │   ├── slide-10.html
+│   │   │   │   ├── slide-11.html
 │   │   │   │   ├── slide-2.html
 │   │   │   │   ├── slide-3.html
 │   │   │   │   ├── slide-4.html
@@ -1043,6 +1074,12 @@
 │   │   │       ├── components
 │   │   │       │   ├── D3ComponentRenderer.tsx
 │   │   │       │   └── DynamicGraphComponent.tsx
+│   │   │       ├── create
+│   │   │       │   ├── actions
+│   │   │       │   ├── components
+│   │   │       │   ├── hooks
+│   │   │       │   ├── lib
+│   │   │       │   └── page.tsx
 │   │   │       ├── equation-solving-distribute-vs-divide-grade8
 │   │   │       │   ├── metadata.json
 │   │   │       │   ├── slide-1.html
@@ -1238,6 +1275,7 @@
 │   │   │   │       ├── ResizeHandle.tsx
 │   │   │   │       └── SidebarControls.tsx
 │   │   │   ├── section-visualization
+│   │   │   │   ├── AccordionItem.tsx
 │   │   │   │   ├── SectionAccordion.tsx
 │   │   │   │   ├── SectionVisualizationLayout.tsx
 │   │   │   │   └── index.ts
@@ -1307,6 +1345,7 @@
 │   │   │   │   ├── FieldWrapper.tsx
 │   │   │   │   ├── Input.tsx
 │   │   │   │   ├── Label.tsx
+│   │   │   │   ├── MarkdownTextarea.tsx
 │   │   │   │   ├── ModeToggle.tsx
 │   │   │   │   ├── ReferenceSelect.tsx
 │   │   │   │   ├── Select.tsx
@@ -1666,6 +1705,7 @@
 │   │   │   ├── timesheet
 │   │   │   │   ├── index.ts
 │   │   │   │   └── useTimesheetEntries.ts
+│   │   │   ├── useFilterParams.ts
 │   │   │   └── utils
 │   │   │       ├── colors.ts
 │   │   │       ├── index.ts
@@ -2211,6 +2251,15 @@
 │   │   ├── drop-old-scope-sequence-index.ts
 │   │   ├── migrate-assessment-status.ts
 │   │   └── seed-activity-types.ts
+│   ├── skills
+│   │   └── worked-example
+│   │       ├── content
+│   │       │   ├── pedagogy.ts
+│   │       │   ├── prompts.ts
+│   │       │   ├── styling.ts
+│   │       │   └── templates.ts
+│   │       ├── context.ts
+│   │       └── index.ts
 │   ├── styles
 │   │   └── theme.css
 │   └── types
@@ -2228,4 +2277,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-660 directories, 1569 files
+674 directories, 1604 files

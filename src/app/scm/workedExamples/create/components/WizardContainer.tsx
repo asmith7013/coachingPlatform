@@ -1,12 +1,13 @@
 'use client';
 
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useCallback } from 'react';
 import { useWizardState, type WizardStateHook } from '../hooks/useWizardState';
 import { WizardProgress } from './WizardProgress';
 import { Step1Inputs } from './Step1Inputs';
 import { Step2Analysis } from './Step2Analysis';
 import { Step3Slides } from './Step3Slides';
 import { Step4Save } from './Step4Save';
+import type { WizardStep } from '../lib/types';
 
 // Context for sharing wizard state
 const WizardContext = createContext<WizardStateHook | null>(null);
@@ -21,7 +22,20 @@ export function useWizard() {
 
 export function WizardContainer() {
   const wizard = useWizardState();
-  const { state } = wizard;
+  const { state, setStep } = wizard;
+
+  // Handle step navigation from progress bar
+  const handleStepClick = useCallback((step: WizardStep) => {
+    // Only allow navigation to completed steps (go back) or next step (advance)
+    if (step < state.currentStep) {
+      // Going back - always allowed
+      setStep(step);
+    } else if (step === state.currentStep + 1) {
+      // Advancing - only if current step requirements are met
+      // For now, just advance (individual steps handle validation)
+      setStep(step);
+    }
+  }, [state.currentStep, setStep]);
 
   // Render current step
   const renderStep = () => {
@@ -41,7 +55,11 @@ export function WizardContainer() {
 
   return (
     <WizardContext.Provider value={wizard}>
-      <WizardProgress currentStep={state.currentStep} />
+      <WizardProgress
+        currentStep={state.currentStep}
+        onStepClick={handleStepClick}
+        isLoading={state.isLoading}
+      />
       {renderStep()}
     </WizardContext.Provider>
   );

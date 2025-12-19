@@ -787,6 +787,96 @@ export async function updateLessonSkills(
 }
 
 /**
+ * Lesson data returned by findLessonByIdentifiers
+ */
+export interface LessonIdentifierResult {
+  _id: string;
+  grade: string;
+  unitNumber: number;
+  lessonNumber: number;
+  lessonName: string;
+  lessonTitle?: string;
+  unit: string;
+  learningTargets: string[];
+  section?: string;
+  scopeSequenceTag?: string;
+}
+
+/**
+ * Find a specific lesson by grade, unit number, and lesson number.
+ * Used by worked example wizard to auto-populate lesson details.
+ */
+export async function findLessonByIdentifiers(
+  grade: string,
+  unitNumber: number,
+  lessonNumber: number
+): Promise<{ success: true; data: LessonIdentifierResult } | { success: false; data: null; message?: string; error?: string }> {
+  return withDbConnection(async () => {
+    try {
+      // Map grade to scopeSequenceTag
+      const scopeSequenceTag = grade === 'Algebra 1' ? 'Algebra 1' : `Grade ${grade}`;
+
+      interface LessonDoc {
+        _id: unknown;
+        grade: string;
+        unitNumber: number;
+        lessonNumber: number;
+        lessonName: string;
+        lessonTitle?: string;
+        unit: string;
+        learningTargets?: string[];
+        section?: string;
+        scopeSequenceTag?: string;
+      }
+
+      const lesson = await ScopeAndSequenceModel.findOne({
+        grade,
+        unitNumber,
+        lessonNumber,
+        scopeSequenceTag,
+        // Exclude ramp-ups and assessments, only get regular lessons
+        $or: [
+          { lessonType: { $exists: false } },
+          { lessonType: null },
+          { lessonType: 'lesson' }
+        ]
+      }).lean<LessonDoc>();
+
+      if (!lesson) {
+        return {
+          success: false as const,
+          data: null,
+          message: 'Lesson not found'
+        };
+      }
+
+      return {
+        success: true as const,
+        data: {
+          _id: String(lesson._id),
+          grade: lesson.grade,
+          unitNumber: lesson.unitNumber,
+          lessonNumber: lesson.lessonNumber,
+          lessonName: lesson.lessonName,
+          lessonTitle: lesson.lessonTitle,
+          unit: lesson.unit,
+          learningTargets: lesson.learningTargets || [],
+          section: lesson.section,
+          scopeSequenceTag: lesson.scopeSequenceTag
+        }
+      };
+    } catch (error) {
+      console.error('💥 Error finding lesson:', error);
+      return {
+        success: false as const,
+        data: null,
+        error: handleServerError(error, 'findLessonByIdentifiers')
+      };
+    }
+  });
+}
+
+/**
  * Get unique (grade, unitNumber) pairs for a given scopeSequenceTag
  * Used for filtering worked examples by curriculum
  *

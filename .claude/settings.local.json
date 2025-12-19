@@ -37,6 +37,7 @@
       "Skill(create-claude-skill)",
       "Bash(npm run lint:*)",
       "Bash(node .claude/skills/create-worked-example-sg/templates/sync-to-db.js:*)",
+      "Bash(node .claude/skills/create-worked-example-sg/scripts/sync-to-db.js:*)",
       "Bash(wc:*)",
       "Bash(for dir in /Users/alexsmith/ai-coaching-platform/src/app/scm/*/)",
       "Bash(do)",
@@ -50,7 +51,18 @@
       "Bash(npx tsx:*)",
       "Bash(mv:*)",
       "Bash(xargs sed:*)",
-      "Bash({} ;)"
+      "Bash({} ;)",
+      "Bash(/usr/local/bin/mongosh:*)",
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\")",
+      "Bash(/opt/homebrew/bin/mongosh:*)",
+      "Bash(export NVM_DIR=\"$HOME/.nvm\")",
+      "Bash([ -s \"$NVM_DIR/nvm.sh\" ])",
+      "Bash(. \"$NVM_DIR/nvm.sh\")",
+      "Bash(export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\")",
+      "Bash(brew --prefix:*)",
+      "Bash(/Users/alexsmith/.nvm/versions/node/v24.11.1/bin/node:*)",
+      "Write(**.worked-example-progress.json)",
+      "Bash(/Users/alexsmith/.nvm/versions/node/v24.11.1/bin/npx tsc --noEmit)"
     ],
     "deny": [],
     "ask": []
