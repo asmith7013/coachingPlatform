@@ -55,7 +55,7 @@ ${editInstructions}
 Apply the requested changes and return the complete edited HTML.`;
 
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-5-20241022',
       max_tokens: 8000,
       system: EDIT_SLIDE_SYSTEM_PROMPT,
       messages: [

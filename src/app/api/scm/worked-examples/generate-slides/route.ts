@@ -155,7 +155,7 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
           // 16 slides × 2000 tokens = 32000 tokens minimum needed
           // Using 64000 to ensure all slides complete
           const claudeStream = await anthropic.messages.create({
-            model: 'claude-sonnet-4-20250514',
+            model: 'claude-sonnet-4-5-20241022',
             max_tokens: testMode ? 2000 : 64000,
             stream: true,
             system: systemPrompt,
