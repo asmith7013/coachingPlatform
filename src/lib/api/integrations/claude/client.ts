@@ -1,3 +1,5 @@
+import { MODEL_FOR_TASK } from './models';
+
 /**
  * Claude API client for processing HTML content into structured markdown
  * Follows established error handling patterns from existing integrations
@@ -48,7 +50,7 @@ class ClaudeClient {
           'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-5-20241022',
+          model: MODEL_FOR_TASK.PROCESSING,
           max_tokens: 4000,
           system: systemPrompt,
           messages: [

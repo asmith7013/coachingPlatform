@@ -2,6 +2,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { handleServerError } from '@error/handlers/server';
+import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
 import {
   ANALYZE_PROBLEM_SYSTEM_PROMPT,
   buildAnalyzePrompt,
@@ -92,7 +93,7 @@ export async function analyzeProblem(input: AnalyzeProblemInput): Promise<Analyz
     // Use stream: true to handle long-running requests (required by SDK for high max_tokens)
     // See: https://github.com/anthropics/anthropic-sdk-typescript#long-requests
     const stream = await anthropic.messages.create({
-      model: 'claude-opus-4-5-20251101',
+      model: MODEL_FOR_TASK.ANALYSIS,
       max_tokens: 8000,
       stream: true,
       system: ANALYZE_PROBLEM_SYSTEM_PROMPT,

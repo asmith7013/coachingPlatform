@@ -2,6 +2,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { handleServerError } from '@error/handlers/server';
+import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
 import {
   GENERATE_SLIDES_SYSTEM_PROMPT,
   buildGenerateSlidesPrompt,
@@ -66,7 +67,7 @@ export async function generateSlides(input: GenerateSlidesInput): Promise<Genera
 
     // Use stream: true for long-running requests (required by SDK for high max_tokens)
     const stream = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5-20241022',
+      model: MODEL_FOR_TASK.GENERATION,
       max_tokens: 32000,
       stream: true,
       system: GENERATE_SLIDES_SYSTEM_PROMPT,
