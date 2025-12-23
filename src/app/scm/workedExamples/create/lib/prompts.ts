@@ -268,7 +268,14 @@ ${ANNOTATION_SNIPPET}
 Generate each slide as a complete HTML document. Separate slides with this delimiter:
 ===SLIDE_SEPARATOR===
 
+**⚠️ CRITICAL: Each slide MUST start with \`<!DOCTYPE html>\` - NO OTHER TEXT BEFORE IT.**
+- NO checkpoint annotations (like "SLIDE 3: Step 1 Question")
+- NO comments about slide type or pairing
+- NO metadata or protocol notes
+- ONLY valid HTML from \`<!DOCTYPE html>\` to \`</html>\`
+
 Each slide MUST:
+- Start with \`<!DOCTYPE html>\` as the first 15 characters
 - Have body with width: 960px; height: 540px
 - Use light theme (white background, dark text)
 - Have all text in proper semantic tags (<p>, <h1-6>, <ul>, <ol>)
@@ -434,17 +441,17 @@ Generate exactly **15 PPTX-compatible HTML slides** following this structure:
    - Include @media print CSS
    - NO strategy reminders - only problem content
 
-## 🔄 PER-SLIDE PROTOCOL (Follow for EVERY Slide)
+## ⚠️ CRITICAL OUTPUT RULES
 
-**Before each slide, output a checkpoint comment:**
+**Each slide's HTML MUST start with \`<!DOCTYPE html>\` as the VERY FIRST characters.**
 
-\`\`\`
-<!-- ============================================ -->
-<!-- SLIDE [N]: [Type Name] -->
-<!-- Paired: [Yes/No] | Base: [Slide # or N/A] -->
-<!-- Action: [generate-new | copy-and-add-cfu | copy-and-add-answer] -->
-<!-- ============================================ -->
-\`\`\`
+DO NOT include:
+- Checkpoint annotations like "SLIDE 3: Step 1 Question"
+- Comments about "Paired: Yes/No" or "Action: copy-and-add-cfu"
+- Any text before \`<!DOCTYPE html>\`
+- HTML comments with slide metadata
+
+The slides you output should contain ONLY valid HTML starting with \`<!DOCTYPE html>\` and ending with \`</html>\`.
 
 **Slide type reference (ALL 15 SLIDES):**
 | # | Type | Is Paired? | Action |
