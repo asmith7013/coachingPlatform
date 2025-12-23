@@ -1,0 +1,162 @@
+<!--
+  ============================================================
+  GRAPH SNIPPET - Complete Coordinate Plane Template
+  ============================================================
+  Use this as the starting point for ALL SVG coordinate planes.
+
+  HOW TO USE:
+  1. Copy the entire <svg>...</svg> block below
+  2. Adjust X_MAX and Y_MAX for your data range
+  3. Recalculate grid line and label positions using formulas
+  4. Add your data lines and points
+
+  FORMULAS (memorize these):
+    pixelX = 40 + (dataX / X_MAX) * 220
+    pixelY = 170 - (dataY / Y_MAX) * 150
+
+  CONSTANTS:
+    ORIGIN = (40, 170)
+    PLOT_WIDTH = 220px
+    PLOT_HEIGHT = 150px
+    viewBox = "0 0 280 200"
+
+  AXIS REQUIREMENTS (all mandatory):
+    - Arrowheads on both axes
+    - Single "0" at origin (NOT two separate zeros)
+    - Complete scale labels to last tick before arrow
+    - Lines extend to plot edges with arrows
+  ============================================================
+-->
+
+<svg viewBox="0 0 280 200" style="width: 100%; max-height: 160px;">
+    <!--
+    This example uses:
+    X_MAX = 8, Y_MAX = 80
+
+    Tick positions (5 ticks on each axis):
+    X: 0→40, 2→95, 4→150, 6→205, 8→260
+    Y: 0→170, 20→132.5, 40→95, 60→57.5, 80→20
+    -->
+
+    <!-- ===== MARKER DEFINITIONS (required) ===== -->
+    <defs>
+        <!-- Axis arrows (dark, matches axis color) -->
+        <marker id="axis-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#1e293b"/>
+        </marker>
+
+        <!-- Line arrows (colored, inherits from stroke) -->
+        <marker id="line-arrow-blue" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+            <polygon points="0 0, 6 2, 0 4" fill="#60a5fa"/>
+        </marker>
+        <marker id="line-arrow-green" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+            <polygon points="0 0, 6 2, 0 4" fill="#22c55e"/>
+        </marker>
+    </defs>
+
+    <!-- ===== GRID LINES ===== -->
+    <!-- Grid positions MUST match label positions -->
+    <g stroke="#e2e8f0" stroke-width="0.5">
+        <!-- Vertical grid lines (at X tick positions, excluding origin) -->
+        <line x1="95" y1="20" x2="95" y2="170"/>
+        <line x1="150" y1="20" x2="150" y2="170"/>
+        <line x1="205" y1="20" x2="205" y2="170"/>
+        <line x1="260" y1="20" x2="260" y2="170"/>
+
+        <!-- Horizontal grid lines (at Y tick positions, excluding origin) -->
+        <line x1="40" y1="132.5" x2="260" y2="132.5"/>
+        <line x1="40" y1="95" x2="260" y2="95"/>
+        <line x1="40" y1="57.5" x2="260" y2="57.5"/>
+        <line x1="40" y1="20" x2="260" y2="20"/>
+    </g>
+
+    <!-- ===== AXES WITH ARROWHEADS ===== -->
+    <!-- Axes extend 15px past last label position -->
+    <line x1="40" y1="170" x2="275" y2="170" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
+    <line x1="40" y1="180" x2="40" y2="5" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
+
+    <!-- ===== TICK MARKS ===== -->
+    <!-- X-axis ticks (5px below axis at y=170 to y=175) -->
+    <g stroke="#1e293b" stroke-width="1.5">
+        <line x1="40" y1="170" x2="40" y2="175"/>
+        <line x1="95" y1="170" x2="95" y2="175"/>
+        <line x1="150" y1="170" x2="150" y2="175"/>
+        <line x1="205" y1="170" x2="205" y2="175"/>
+        <line x1="260" y1="170" x2="260" y2="175"/>
+    </g>
+    <!-- Y-axis ticks (5px to left of axis at x=35 to x=40) -->
+    <g stroke="#1e293b" stroke-width="1.5">
+        <line x1="35" y1="170" x2="40" y2="170"/>
+        <line x1="35" y1="132.5" x2="40" y2="132.5"/>
+        <line x1="35" y1="95" x2="40" y2="95"/>
+        <line x1="35" y1="57.5" x2="40" y2="57.5"/>
+        <line x1="35" y1="20" x2="40" y2="20"/>
+    </g>
+
+    <!-- ===== AXIS LABELS ===== -->
+    <!-- SINGLE "0" at origin (serves both axes) -->
+    <text x="33" y="182" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">0</text>
+
+    <!-- X-axis labels (complete scale, text-anchor="middle") -->
+    <text x="95" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">2</text>
+    <text x="150" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">4</text>
+    <text x="205" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">6</text>
+    <text x="260" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">8</text>
+
+    <!-- Y-axis labels (complete scale, text-anchor="end") -->
+    <text x="35" y="136" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">20</text>
+    <text x="35" y="99" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">40</text>
+    <text x="35" y="61" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">60</text>
+    <text x="35" y="24" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">80</text>
+
+    <!-- ===== DATA LINES (extend to plot edges with arrows) ===== -->
+    <!-- Line 1: y = 10x (blue) - from origin (40,170) to (260,20) -->
+    <line x1="40" y1="170" x2="260" y2="20" stroke="#60a5fa" stroke-width="3" marker-end="url(#line-arrow-blue)"/>
+
+    <!-- Line 2: y = 5x + 20 (green) - from (0,20) to (8,60) -->
+    <!-- Entry: pixelY = 170 - (20/80)*150 = 132.5 -->
+    <!-- Exit: y at x=8 is 60, pixelY = 170 - (60/80)*150 = 57.5 -->
+    <line x1="40" y1="132.5" x2="260" y2="57.5" stroke="#22c55e" stroke-width="3" marker-end="url(#line-arrow-green)"/>
+
+    <!-- ===== DATA POINTS (optional) ===== -->
+    <!-- Point at (4, 40): pixelX=150, pixelY=95 -->
+    <circle cx="150" cy="95" r="5" fill="#60a5fa"/>
+
+    <!-- Point at (4, 40): pixelX=150, pixelY=95 (on green line) -->
+    <circle cx="150" cy="95" r="5" fill="#22c55e"/>
+</svg>
+
+
+<!--
+  ============================================================
+  QUICK REFERENCE: Common Scale Positions
+  ============================================================
+
+  X-AXIS (ORIGIN_X=40, PLOT_WIDTH=220):
+  | X_MAX | Per Unit | Tick Positions (0, 1/4, 1/2, 3/4, max) |
+  |-------|----------|----------------------------------------|
+  | 4     | 55px     | 40, 95, 150, 205, 260                  |
+  | 5     | 44px     | 40, 84, 128, 172, 216, 260             |
+  | 8     | 27.5px   | 40, 95, 150, 205, 260 (by 2s)          |
+  | 10    | 22px     | 40, 84, 128, 172, 216, 260 (by 2s)     |
+
+  Y-AXIS (ORIGIN_Y=170, PLOT_HEIGHT=150):
+  | Y_MAX | Per Unit | Tick Positions (0, 1/4, 1/2, 3/4, max) |
+  |-------|----------|----------------------------------------|
+  | 40    | 3.75px   | 170, 132.5, 95, 57.5, 20               |
+  | 50    | 3px      | 170, 132.5, 95, 57.5, 20               |
+  | 80    | 1.875px  | 170, 132.5, 95, 57.5, 20               |
+  | 100   | 1.5px    | 170, 132.5, 95, 57.5, 20               |
+  | 200   | 0.75px   | 170, 132.5, 95, 57.5, 20               |
+
+  COLORS:
+  | Use          | Color   | Hex     |
+  |--------------|---------|---------|
+  | Line 1       | Blue    | #60a5fa |
+  | Line 2       | Green   | #22c55e |
+  | Line 3       | Red     | #ef4444 |
+  | Axis/Grid    | Slate   | #1e293b |
+  | Labels       | Gray    | #64748b |
+  | Light grid   | Slate   | #e2e8f0 |
+  ============================================================
+-->

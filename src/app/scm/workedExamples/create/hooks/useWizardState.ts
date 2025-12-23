@@ -4,8 +4,85 @@ import { useReducer, useCallback, useEffect, useState } from 'react';
 import type { WizardState, WizardAction, WizardStep, ProblemAnalysis, StrategyDefinition, Scenario, LoadingProgress } from '../lib/types';
 import { initialWizardState } from '../lib/types';
 
-// Local storage key for persisting wizard state
-const STORAGE_KEY = 'worked-example-wizard-state';
+// Local storage key prefix for persisting wizard state (per session)
+const STORAGE_KEY_PREFIX = 'worked-example-wizard-';
+
+/**
+ * Saved session metadata for the drafts list
+ */
+export interface SavedSession {
+  id: string; // scopeAndSequenceId
+  lessonName: string;
+  gradeLevel: string | null;
+  unitNumber: number | null;
+  lessonNumber: number | null;
+  currentStep: WizardStep;
+  savedAt: number; // timestamp
+}
+
+/**
+ * Get storage key for a specific session
+ */
+function getStorageKey(scopeAndSequenceId: string): string {
+  return `${STORAGE_KEY_PREFIX}${scopeAndSequenceId}`;
+}
+
+/**
+ * Get all saved sessions from localStorage
+ */
+export function getAllSavedSessions(): SavedSession[] {
+  if (typeof window === 'undefined') return [];
+
+  const sessions: SavedSession[] = [];
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith(STORAGE_KEY_PREFIX)) {
+      try {
+        const data = JSON.parse(localStorage.getItem(key) || '');
+        if (data.scopeAndSequenceId) {
+          sessions.push({
+            id: data.scopeAndSequenceId,
+            lessonName: data.lessonName || 'Untitled',
+            gradeLevel: data.gradeLevel,
+            unitNumber: data.unitNumber,
+            lessonNumber: data.lessonNumber,
+            currentStep: data.currentStep || 1,
+            savedAt: data.savedAt || Date.now(),
+          });
+        }
+      } catch {
+        // Skip invalid entries
+      }
+    }
+  }
+
+  // Sort by grade, unit, then lesson number for stable ordering
+  return sessions.sort((a, b) => {
+    // Compare grade level (handle null)
+    const gradeA = a.gradeLevel || '';
+    const gradeB = b.gradeLevel || '';
+    if (gradeA !== gradeB) return gradeA.localeCompare(gradeB);
+
+    // Compare unit number (handle null)
+    const unitA = a.unitNumber ?? 0;
+    const unitB = b.unitNumber ?? 0;
+    if (unitA !== unitB) return unitA - unitB;
+
+    // Compare lesson number (handle null)
+    const lessonA = a.lessonNumber ?? 0;
+    const lessonB = b.lessonNumber ?? 0;
+    return lessonA - lessonB;
+  });
+}
+
+/**
+ * Delete a saved session from localStorage
+ */
+export function deleteSavedSession(scopeAndSequenceId: string): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(getStorageKey(scopeAndSequenceId));
+}
 
 /**
  * Wizard state reducer
@@ -165,13 +242,13 @@ function generateSlug(strategyName: string, gradeLevel: string | null): string {
 }
 
 /**
- * Load state from localStorage
+ * Load state from localStorage for a specific session
  */
-function loadPersistedState(): WizardState | null {
-  if (typeof window === 'undefined') return null;
+function loadPersistedState(scopeAndSequenceId: string | null): WizardState | null {
+  if (typeof window === 'undefined' || !scopeAndSequenceId) return null;
 
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(getStorageKey(scopeAndSequenceId));
     if (!saved) return null;
 
     const parsed = JSON.parse(saved);
@@ -188,21 +265,23 @@ function loadPersistedState(): WizardState | null {
 }
 
 /**
- * Save state to localStorage
+ * Save state to localStorage (only when scopeAndSequenceId exists)
  */
 function persistState(state: WizardState): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined' || !state.scopeAndSequenceId) return;
 
   try {
     // Create a copy without file objects (they can't be serialized)
+    // Add savedAt timestamp for sorting in drafts list
     const toPersist = {
       ...state,
       masteryCheckImage: {
         ...state.masteryCheckImage,
         file: null,
       },
+      savedAt: Date.now(),
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(toPersist));
+    localStorage.setItem(getStorageKey(state.scopeAndSequenceId), JSON.stringify(toPersist));
   } catch {
     // Ignore storage errors
   }
@@ -215,52 +294,74 @@ export function useWizardState() {
   // Always start with initial state for SSR consistency
   const [state, dispatch] = useReducer(wizardReducer, initialWizardState);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [savedSessions, setSavedSessions] = useState<SavedSession[]>([]);
 
-  // Restore from localStorage AFTER hydration to avoid mismatch
+  // Mark as hydrated on mount and clean up legacy storage key
   useEffect(() => {
-    const persisted = loadPersistedState();
-    if (persisted) {
-      // Restore each field individually to merge with initial state
-      // NOTE: Don't restore loading state - it can't survive page refresh
-      if (persisted.currentStep) dispatch({ type: 'SET_STEP', payload: persisted.currentStep });
-      if (persisted.gradeLevel) dispatch({ type: 'SET_GRADE_LEVEL', payload: persisted.gradeLevel });
-      if (persisted.unitNumber) dispatch({ type: 'SET_UNIT_NUMBER', payload: persisted.unitNumber });
-      if (persisted.lessonNumber) dispatch({ type: 'SET_LESSON_NUMBER', payload: persisted.lessonNumber });
-      if (persisted.lessonName) dispatch({ type: 'SET_LESSON_NAME', payload: persisted.lessonName });
-      if (persisted.learningGoals?.length) dispatch({ type: 'SET_LEARNING_GOALS', payload: persisted.learningGoals });
-      if (persisted.masteryCheckImage?.uploadedUrl) {
-        dispatch({ type: 'SET_UPLOADED_IMAGE_URL', payload: persisted.masteryCheckImage.uploadedUrl });
-      }
-      if (persisted.problemAnalysis && persisted.strategyDefinition && persisted.scenarios) {
-        dispatch({
-          type: 'SET_ANALYSIS',
-          payload: {
-            problemAnalysis: persisted.problemAnalysis,
-            strategyDefinition: persisted.strategyDefinition,
-            scenarios: persisted.scenarios,
-          },
-        });
-      }
-      if (persisted.slides?.length) dispatch({ type: 'SET_SLIDES', payload: persisted.slides });
-      if (persisted.title) dispatch({ type: 'SET_TITLE', payload: persisted.title });
-      if (persisted.slug) dispatch({ type: 'SET_SLUG', payload: persisted.slug });
-
-      // If there was a loading state, clear it - API calls don't survive refresh
-      if (persisted.isLoading) {
-        dispatch({ type: 'SET_ERROR', payload: 'Previous operation was interrupted. Please try again.' });
-      }
+    // Remove old global storage key if it exists (one-time migration)
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('worked-example-wizard-state');
     }
     setIsHydrated(true);
+    // Load saved sessions list
+    setSavedSessions(getAllSavedSessions());
   }, []);
 
-  // Persist state changes to localStorage (only after hydration)
+  // Persist state changes to localStorage (only after Step 1 complete)
   useEffect(() => {
-    if (!isHydrated) return;
-    // Don't persist initial state or while loading
-    if (state.currentStep > 1 || state.masteryCheckImage.uploadedUrl) {
-      persistState(state);
-    }
+    if (!isHydrated || !state.scopeAndSequenceId) return;
+    persistState(state);
+    // Update saved sessions list after persisting
+    setSavedSessions(getAllSavedSessions());
   }, [state, isHydrated]);
+
+  // Load a saved session explicitly (called from SavedDrafts UI)
+  const loadSession = useCallback((sessionId: string) => {
+    const persisted = loadPersistedState(sessionId);
+    if (!persisted) return false;
+
+    // Restore ALL fields from the saved session
+    if (persisted.gradeLevel) dispatch({ type: 'SET_GRADE_LEVEL', payload: persisted.gradeLevel });
+    if (persisted.unitNumber) dispatch({ type: 'SET_UNIT_NUMBER', payload: persisted.unitNumber });
+    if (persisted.lessonNumber) dispatch({ type: 'SET_LESSON_NUMBER', payload: persisted.lessonNumber });
+    if (persisted.lessonName) dispatch({ type: 'SET_LESSON_NAME', payload: persisted.lessonName });
+    if (persisted.scopeAndSequenceId) dispatch({ type: 'SET_SCOPE_AND_SEQUENCE_ID', payload: persisted.scopeAndSequenceId });
+    if (persisted.learningGoals?.length) dispatch({ type: 'SET_LEARNING_GOALS', payload: persisted.learningGoals });
+    if (persisted.masteryCheckImage?.uploadedUrl) {
+      dispatch({ type: 'SET_UPLOADED_IMAGE_URL', payload: persisted.masteryCheckImage.uploadedUrl });
+    }
+    if (persisted.problemAnalysis && persisted.strategyDefinition && persisted.scenarios) {
+      dispatch({
+        type: 'SET_ANALYSIS',
+        payload: {
+          problemAnalysis: persisted.problemAnalysis,
+          strategyDefinition: persisted.strategyDefinition,
+          scenarios: persisted.scenarios,
+        },
+      });
+    }
+    if (persisted.slides?.length) dispatch({ type: 'SET_SLIDES', payload: persisted.slides });
+    if (persisted.title) dispatch({ type: 'SET_TITLE', payload: persisted.title });
+    if (persisted.slug) dispatch({ type: 'SET_SLUG', payload: persisted.slug });
+
+    // Jump to the step they were on
+    if (persisted.currentStep) {
+      dispatch({ type: 'SET_STEP', payload: persisted.currentStep });
+    }
+
+    // If there was a loading state, clear it - API calls don't survive refresh
+    if (persisted.isLoading) {
+      dispatch({ type: 'SET_ERROR', payload: 'Previous operation was interrupted. Please try again.' });
+    }
+
+    return true;
+  }, []);
+
+  // Delete a saved session and refresh the list
+  const deleteSession = useCallback((sessionId: string) => {
+    deleteSavedSession(sessionId);
+    setSavedSessions(getAllSavedSessions());
+  }, []);
 
   // Action creators
   const setStep = useCallback((step: WizardStep) => {
@@ -370,22 +471,30 @@ export function useWizardState() {
   }, []);
 
   const reset = useCallback(() => {
+    const sessionId = state.scopeAndSequenceId;
     dispatch({ type: 'RESET' });
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY);
+    if (typeof window !== 'undefined' && sessionId) {
+      localStorage.removeItem(getStorageKey(sessionId));
+      // Refresh saved sessions list
+      setSavedSessions(getAllSavedSessions());
     }
-  }, []);
+  }, [state.scopeAndSequenceId]);
 
   const clearPersistedState = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY);
+    if (typeof window !== 'undefined' && state.scopeAndSequenceId) {
+      localStorage.removeItem(getStorageKey(state.scopeAndSequenceId));
+      setSavedSessions(getAllSavedSessions());
     }
-  }, []);
+  }, [state.scopeAndSequenceId]);
 
   return {
     state,
     dispatch,
     isHydrated,
+    // Saved sessions
+    savedSessions,
+    loadSession,
+    deleteSession,
     // Navigation
     setStep,
     nextStep,

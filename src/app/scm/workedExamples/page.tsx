@@ -2,11 +2,13 @@
 
 import { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useWorkedExampleDecks, useGradeUnitPairs } from "./hooks";
+import { useQueryClient } from "@tanstack/react-query";
+import { useWorkedExampleDecks, useGradeUnitPairs, workedExampleDecksKeys } from "./hooks";
 import type { WorkedExampleDeck } from "@zod-schema/worked-example-deck";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { PresentationModal } from "@/components/presentations/PresentationModal";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { deactivateDeck } from "@/app/actions/worked-examples";
 
 // Map URL param to scopeSequenceTag in database
 const GRADE_OPTIONS = [
@@ -19,8 +21,10 @@ const GRADE_OPTIONS = [
 
 export default function PresentationsList() {
   const [expandedDeck, setExpandedDeck] = useState<string | null>(null);
+  const [deactivating, setDeactivating] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const openSlug = searchParams.get("view");
   const gradeFilter = searchParams.get("grade") || "";
 
@@ -71,6 +75,27 @@ export default function PresentationsList() {
     router.push(`/scm/workedExamples${params.toString() ? `?${params.toString()}` : ''}`, { scroll: false });
   };
 
+  const handleDeactivate = async (slug: string, title: string) => {
+    if (!confirm(`Are you sure you want to deactivate "${title}"?\n\nThis will hide the deck from the list. You can reactivate it later from the Deactivated page.`)) {
+      return;
+    }
+
+    setDeactivating(slug);
+    try {
+      const result = await deactivateDeck(slug);
+      if (result.success) {
+        // Refresh the list
+        queryClient.invalidateQueries({ queryKey: workedExampleDecksKeys.all });
+      } else {
+        alert(result.error || 'Failed to deactivate deck');
+      }
+    } catch {
+      alert('Failed to deactivate deck');
+    } finally {
+      setDeactivating(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-[400px]">
@@ -93,26 +118,52 @@ export default function PresentationsList() {
         <div className="mb-8">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                Worked Example Presentations
-              </h1>
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-4xl font-bold text-gray-900">
+                  Worked Example Presentations
+                </h1>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded-full border border-blue-200">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  PPTX Format
+                </span>
+              </div>
               <p className="text-gray-600">
-                Browse and view scaffolded guidance slide decks
+                Browse and view scaffolded guidance slide decks (960×540px, light theme)
               </p>
             </div>
-            <div className="relative">
-              <select
-                value={gradeFilter}
-                onChange={(e) => handleGradeChange(e.target.value)}
-                className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+            <div className="flex items-center gap-3">
+              <a
+                href="/scm/workedExamples/deactivated"
+                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
               >
-                {GRADE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                <TrashIcon className="w-4 h-4" />
+                Deactivated
+              </a>
+              <div className="relative">
+                <select
+                  value={gradeFilter}
+                  onChange={(e) => handleGradeChange(e.target.value)}
+                  className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                >
+                  {GRADE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+              </div>
+              <a
+                href="/scm/workedExamples/create"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors cursor-pointer"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Create New
+              </a>
             </div>
           </div>
         </div>
@@ -175,7 +226,7 @@ export default function PresentationsList() {
                       .map((deck) => (
                         <div
                           key={deck.slug}
-                          className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                          className="relative bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
                         >
                           <button
                             onClick={() => handleOpenPresentation(deck.slug)}
@@ -214,6 +265,23 @@ export default function PresentationsList() {
                                 </span>
                               </div>
                             </div>
+                          </button>
+
+                          {/* Deactivate button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeactivate(deck.slug, deck.title);
+                            }}
+                            disabled={deactivating === deck.slug}
+                            className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors cursor-pointer disabled:opacity-50"
+                            title="Deactivate deck"
+                          >
+                            {deactivating === deck.slug ? (
+                              <Spinner size="sm" />
+                            ) : (
+                              <TrashIcon className="w-4 h-4" />
+                            )}
                           </button>
 
                           {/* Expandable section for learning goals */}

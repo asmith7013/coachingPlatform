@@ -38,6 +38,9 @@ const workedExampleDeckSchema = new mongoose.Schema({
   createdBy: { type: String, required: true, index: true },
   isPublic: { type: Boolean, default: false },
 
+  // Soft delete
+  deactivated: { type: Boolean, default: false, index: true },
+
   // Files
   files: {
     pageComponent: { type: String, required: true },

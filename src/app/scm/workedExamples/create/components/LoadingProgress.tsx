@@ -98,8 +98,8 @@ export function LoadingProgress({ progress }: LoadingProgressProps) {
   }
 
   return (
-    <div className={`rounded-lg p-4 ${config.bgColor} border ${config.borderColor}`}>
-      <div className="flex items-start gap-4">
+    <div className={`rounded-lg px-3 py-2 ${config.bgColor} border ${config.borderColor}`}>
+      <div className="flex items-center gap-3">
         {/* Animated Icon */}
         <div className={`flex-shrink-0 ${config.textColor}`}>
           <div className="relative">
@@ -114,47 +114,57 @@ export function LoadingProgress({ progress }: LoadingProgressProps) {
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <h4 className={`font-semibold ${config.textColor}`}>
-              {progress.message}
-            </h4>
-            <span className="text-sm text-gray-500 tabular-nums">
+            <div className="flex items-center gap-2">
+              <h4 className={`font-semibold text-sm ${config.textColor}`}>
+                {progress.message}
+              </h4>
+              {/* Slide count inline with title */}
+              {progress.slideProgress && (
+                <span className="text-xs text-gray-500">
+                  ({progress.slideProgress.currentSlide}/{progress.slideProgress.estimatedTotal})
+                </span>
+              )}
+            </div>
+            <span className="text-xs text-gray-500 tabular-nums">
               {formatElapsedTime(elapsed)}
             </span>
           </div>
 
-          {/* Slide count below the title */}
-          {progress.slideProgress && (
-            <p className="text-sm text-gray-600">
-              Slides {progress.slideProgress.currentSlide}/{progress.slideProgress.estimatedTotal}
-            </p>
-          )}
-
           {progress.detail && !progress.slideProgress && (
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="text-xs text-gray-600">
               {progress.detail}
             </p>
           )}
 
           {/* Full-width slide progress tiles */}
           {progress.slideProgress && (
-            <div className="mt-3">
+            <div className="mt-1.5">
               <div className="flex items-center gap-2">
-                <div className="flex-1 flex gap-1">
-                  {Array.from({ length: progress.slideProgress.estimatedTotal }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={`flex-1 h-3 rounded transition-all duration-300 ${
-                        i < progress.slideProgress!.currentSlide
-                          ? 'bg-green-500'
-                          : i === progress.slideProgress!.currentSlide
-                          ? 'bg-green-300 animate-pulse'
-                          : 'bg-gray-200'
-                      }`}
-                    />
-                  ))}
+                <div className="flex-1 flex gap-0.5">
+                  {Array.from({ length: progress.slideProgress.estimatedTotal }).map((_, i) => {
+                    // currentSlide is 1-indexed (e.g., 3 = "creating slide 3")
+                    // So slides 1 through currentSlide-1 are complete (indices 0 to currentSlide-2)
+                    // Slide at currentSlide is in progress (index currentSlide-1)
+                    const slideNum = i + 1; // Convert 0-indexed to 1-indexed
+                    const isComplete = slideNum < progress.slideProgress!.currentSlide;
+                    const isInProgress = slideNum === progress.slideProgress!.currentSlide;
+
+                    return (
+                      <div
+                        key={i}
+                        className={`flex-1 h-2 rounded-sm transition-all duration-300 ${
+                          isComplete
+                            ? 'bg-green-500'
+                            : isInProgress
+                            ? 'bg-green-300 animate-pulse'
+                            : 'bg-gray-200'
+                        }`}
+                      />
+                    );
+                  })}
                 </div>
-                <span className={`text-sm font-medium ${config.textColor} tabular-nums min-w-[3rem] text-right`}>
-                  {Math.round((progress.slideProgress.currentSlide / progress.slideProgress.estimatedTotal) * 100)}%
+                <span className={`text-xs font-medium ${config.textColor} tabular-nums min-w-[2.5rem] text-right`}>
+                  {Math.round(((progress.slideProgress.currentSlide - 1) / progress.slideProgress.estimatedTotal) * 100)}%
                 </span>
               </div>
             </div>
@@ -162,10 +172,10 @@ export function LoadingProgress({ progress }: LoadingProgressProps) {
 
           {/* Pulsing bar when no slide progress */}
           {!progress.slideProgress && (
-            <div className="mt-3">
-              <div className="h-3 bg-white/50 rounded overflow-hidden">
+            <div className="mt-1.5">
+              <div className="h-2 bg-white/50 rounded-sm overflow-hidden">
                 <div
-                  className={`h-full w-full rounded animate-pulse ${
+                  className={`h-full w-full rounded-sm animate-pulse ${
                     progress.phase === 'uploading' ? 'bg-blue-400' :
                     progress.phase === 'analyzing' ? 'bg-purple-400' :
                     progress.phase === 'generating' ? 'bg-green-400' :
@@ -180,12 +190,12 @@ export function LoadingProgress({ progress }: LoadingProgressProps) {
 
       {/* Tips based on phase */}
       {progress.phase === 'analyzing' && elapsed > 10000 && (
-        <p className="mt-3 text-xs text-gray-500 italic">
+        <p className="mt-2 text-xs text-gray-500 italic">
           AI is examining the problem structure, identifying the strategy, and creating practice scenarios...
         </p>
       )}
       {progress.phase === 'generating' && !progress.slideProgress && elapsed > 15000 && (
-        <p className="mt-3 text-xs text-gray-500 italic">
+        <p className="mt-2 text-xs text-gray-500 italic">
           Connecting to AI and starting slide generation...
         </p>
       )}

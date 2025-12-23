@@ -1,0 +1,97 @@
+<!--
+  ============================================================
+  ANNOTATION TEMPLATE - Calculate positions from DATA VALUES
+  ============================================================
+  Annotations must use the SAME pixel formula as the graph.
+  This ensures labels appear at the correct y-intercept positions.
+
+  STEP 1: Know your graph constants (from svg-graphs.md)
+    ORIGIN_Y = 170      (pixel y for data y=0)
+    PLOT_HEIGHT = 150   (pixels from y=0 to y=max)
+    Y_MAX = [your max]  (e.g., 50, 100, 200)
+
+  STEP 2: Calculate pixel positions from data values
+    pixelY = 170 - (dataY / Y_MAX) * 150
+
+  STEP 3: Use calculated pixelY for label and arrow positions
+
+  FONT RULES (apply to ALL annotations):
+  - font-family="Arial"
+  - font-size="9"
+  - font-weight="normal" (NOT bold - too thick)
+  ============================================================
+-->
+
+
+<!-- ========== Y-INTERCEPT ANNOTATION EXAMPLE ========== -->
+<!--
+  Example: Two lines with y-intercepts at 0 and 20, Y_MAX = 50
+
+  Calculate pixel positions:
+  - y-intercept 0:  pixelY = 170 - (0/50)*150 = 170
+  - y-intercept 20: pixelY = 170 - (20/50)*150 = 110
+
+  Label positions: x=5 (left margin), y=pixelY
+  Arrow positions: x=25, from pixelY1 to pixelY2
+-->
+
+<!-- Arrow marker definition (use ONCE per SVG) -->
+<defs>
+  <marker id="arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+    <polygon points="0 0, 6 2, 0 4" fill="#ef4444"/>
+  </marker>
+</defs>
+
+<!-- Y-intercept label at y=0 (pixelY=170) -->
+<text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
+
+<!-- Y-intercept label at y=20 (pixelY=110) -->
+<text x="5" y="110" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 20</text>
+
+<!-- Arrow showing shift from y=0 to y=20 -->
+<line x1="25" y1="170" x2="25" y2="115" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)"/>
+
+<!-- Arrow label (midpoint: (170+110)/2 = 140) -->
+<text x="5" y="140" fill="#ef4444" font-family="Arial" font-size="9" font-weight="normal">+20</text>
+
+
+<!-- ========== POSITION REFERENCE ========== -->
+<!--
+  X POSITIONS (fixed):
+  | Position     | X value | Use for              |
+  |--------------|---------|----------------------|
+  | Left margin  | 5       | Y-intercept labels   |
+  | Arrow line   | 25      | Vertical arrows      |
+  | Right margin | 265     | Line equation labels |
+
+  Y POSITIONS (calculated from data):
+  | Data Y | Y_MAX=50 | Y_MAX=100 | Y_MAX=200 |
+  |--------|----------|-----------|-----------|
+  | 0      | 170      | 170       | 170       |
+  | 10     | 140      | 155       | 162.5     |
+  | 20     | 110      | 140       | 155       |
+  | 25     | 95       | 132.5     | 151.25    |
+  | 40     | 50       | 110       | 140       |
+  | 50     | 20       | 95        | 132.5     |
+  | 100    | -        | 20        | 95        |
+  | 200    | -        | -         | 20        |
+
+  Formula: pixelY = 170 - (dataY / Y_MAX) * 150
+-->
+
+
+<!-- ========== LINE EQUATION LABELS (right margin) ========== -->
+<!--
+  Position at x=265, y = line's ending pixelY (or stacked if multiple)
+-->
+<text x="265" y="30" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">y = 5x</text>
+<text x="265" y="45" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">y = 5x + 20</text>
+
+
+<!-- ========== POINT LABELS (inside plot area) ========== -->
+<!--
+  - Upper half (pixelY < 95): label ABOVE at pixelY - 12
+  - Lower half (pixelY >= 95): label BELOW at pixelY + 15
+  - Use text-anchor="middle" for centering
+-->
+<text x="150" y="98" fill="#60a5fa" font-family="Arial" font-size="10" font-weight="normal" text-anchor="middle">(4, 20)</text>

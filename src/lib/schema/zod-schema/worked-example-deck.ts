@@ -50,6 +50,9 @@ export const WorkedExampleDeckSchema = z.object({
   createdBy: z.string(),
   isPublic: z.boolean().default(false),
 
+  // Soft delete
+  deactivated: z.boolean().default(false),
+
   // Files
   files: FilesSchema,
 
@@ -58,10 +61,11 @@ export const WorkedExampleDeckSchema = z.object({
   updatedAt: z.date().optional(),
 });
 
-// Input schema (for creating new decks - no timestamps)
+// Input schema (for creating new decks - no timestamps, always active)
 export const CreateWorkedExampleDeckSchema = WorkedExampleDeckSchema.omit({
   createdAt: true,
   updatedAt: true,
+  deactivated: true, // New decks are always active
 });
 
 // Type exports

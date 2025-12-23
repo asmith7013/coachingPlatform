@@ -1,0 +1,21 @@
+{
+  "title": "Identify and Compare - Comparing Linear Graphs",
+  "slug": "identify-compare-linear-g8",
+  "mathConcept": "Comparing linear equations in slope-intercept form",
+  "mathStandard": "8.F.B.4",
+  "gradeLevel": "8",
+  "unitNumber": 3,
+  "lessonNumber": 8,
+  "scopeAndSequenceId": null,
+  "strategyName": "Identify and Compare",
+  "strategySteps": ["IDENTIFY", "COMPARE", "DESCRIBE"],
+  "learningGoals": [
+    "Coordinate (orally) features of the equation to the graph, including lines with a negative y-intercept",
+    "Create and compare (orally and in writing) graphs that represent linear relationships with the same rate of change but different initial values"
+  ],
+  "scenarios": [
+    "Streaming Services (y = 3x vs y = 3x - 4)",
+    "Video Game Leaderboard (y = 4x vs y = 4x - 2)",
+    "Elevation Hike (y = 2x + 3 vs y = 2x - 4)"
+  ]
+}

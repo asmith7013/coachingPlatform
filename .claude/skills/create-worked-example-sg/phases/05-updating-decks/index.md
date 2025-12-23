@@ -3,6 +3,9 @@
 ## Purpose
 Guide for making changes to existing worked example decks without breaking the established formats. This phase is used INSTEAD of rerunning the full skill when only specific updates are needed.
 
+## Output Format: PPTX-Compatible HTML
+All slides are **960×540px, light theme** (14-16 slides). See `03-generate-slides/protocol.md` for technical specs.
+
 ---
 
 ## When to Use This Guide
@@ -30,12 +33,23 @@ When updating content, preserve ALL structural elements:
 - Keep the same CSS `<style>` blocks
 - Only modify the TEXT CONTENT within elements
 
-### Rule 2: Printable Slide Format (slide-11.html)
+### Rule 2: PPTX Slide Dimensions (960×540px)
+
+For all projection slides (slide-1 through slide-14):
+- **MUST be exactly 960×540px** (NOT 100vw/100vh)
+- Use `width: 960px; height: 540px` on the body
+- Use light theme (white background, dark text)
+- Use `.row`/`.col` classes for layout (NOT inline flexbox)
+- Use web-safe fonts only (Arial, Georgia)
+
+See `03-generate-slides/protocol.md` for complete specs.
+
+### Rule 3: Printable Slide Format (slide-15.html)
 
 **The printable slide MUST use this structure:**
 
 ```html
-<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
+<div class="slide-container" style="width: 100%; min-height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
 
     <!-- Page 1: Problem 1 -->
     <div class="print-page" style="width: 8.5in; height: 11in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
@@ -98,7 +112,7 @@ When updating content, preserve ALL structural elements:
 
 **Step 1: Read the existing slide**
 ```
-Read: src/app/presentations/{slug}/slide-11.html
+Read: src/app/presentations/{slug}/slide-15.html
 ```
 
 **Step 2: Identify what to change**
@@ -131,7 +145,7 @@ source .env.local && node .claude/skills/create-worked-example-sg/scripts/sync-t
 
 **CRITICAL: When updating graph data, you must recalculate pixel positions**
 
-Use the formula from `reference/svg-coordinate-planes.md`:
+Use the formula from `03-generate-slides/visuals/svg-graphs.md`:
 ```
 pixelX = ORIGIN_X + (dataX / X_MAX) * PLOT_WIDTH
 pixelY = ORIGIN_Y - (dataY / Y_MAX) * PLOT_HEIGHT
@@ -171,13 +185,13 @@ Fill in your new content within the established elements.
 
 ### ❌ WRONG: Creating separate slide files for each problem
 ```
-slide-11.html (Problem 1)
-slide-12.html (Problem 2)  ← WRONG
+slide-15.html (Problem 1)
+slide-16.html (Problem 2)  ← WRONG
 ```
 
 ### ✅ CORRECT: All problems in one file with print-page divs
 ```
-slide-11.html contains:
+slide-15.html contains:
   - <div class="print-page"> Problem 1 </div>
   - <div class="print-page"> Problem 2 </div>
 ```
@@ -205,12 +219,20 @@ Each `.print-page` needs `page-break-after: always` in the print media query.
 
 After making updates, verify:
 
-- [ ] `slide-11.html` has `overflow-y: auto` on `.slide-container`
+**For projection slides (slide-1 through slide-14):**
+- [ ] All slides are exactly 960×540px
+- [ ] All text is in `<p>`, `<h1-6>`, `<ul>`, `<ol>` tags
+- [ ] Using `.row`/`.col` classes (NOT inline `display: flex`)
+- [ ] Web-safe fonts only: Arial, Georgia
+- [ ] No JavaScript, no onclick, no CSS animations
+
+**For printable slide (slide-15):**
+- [ ] `slide-15.html` has `overflow-y: auto` on `.slide-container`
 - [ ] Each problem is wrapped in `<div class="print-page">`
 - [ ] Each `.print-page` has `width: 8.5in; height: 11in`
 - [ ] The `<style>` block contains `@media print` rules
 - [ ] The `<style>` block contains `@page { size: letter portrait; margin: 0; }`
-- [ ] No separate `slide-12.html` exists for a second practice problem
+- [ ] No separate `slide-16.html` exists for a second practice problem
 - [ ] Database sync completed successfully
 
 ---
@@ -219,9 +241,11 @@ After making updates, verify:
 
 | What | Where |
 |------|-------|
-| Correct print format example | `src/app/presentations/turtle-race-v2-g8u3l1/slide-11.html` |
-| Print template | `.claude/skills/create-worked-example-sg/templates/printable-slide-snippet.html` |
-| SVG coordinate reference | `.claude/skills/create-worked-example-sg/reference/svg-coordinate-planes.md` |
+| **Per-slide protocol** | `.claude/skills/create-worked-example-sg/phases/03-generate-slides/protocol.md` |
+| Styling reference | `.claude/skills/create-worked-example-sg/reference/styling.md` |
+| Slide templates | `.claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/*.html` |
+| Print template | `.claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/printable-slide-snippet.html` |
+| SVG coordinate reference | `.claude/skills/create-worked-example-sg/phases/03-generate-slides/visuals/svg-graphs.md` |
 | Sync script | `.claude/skills/create-worked-example-sg/scripts/sync-to-db.js` |
 
 ---

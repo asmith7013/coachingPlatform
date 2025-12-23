@@ -1,6 +1,23 @@
 # SVG Coordinate Plane Reference
 
-This document provides templates and guidelines for creating SVG coordinate planes that properly align grid lines with axis labels and data points.
+This document covers **grid alignment and pixel calculations** for SVG graphs.
+
+---
+
+## ⚠️ ANNOTATION DIRECTIVE
+
+**When adding annotations to graphs (y-intercept labels, arrows, line equations):**
+
+```
+Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/annotation-snippet.html
+```
+
+That HTML file contains copy-paste snippets with:
+- Correct font styling (`font-weight="normal"`, `font-size="9"`)
+- Zone positions (where each annotation type goes)
+- Arrow marker template with proper sizing
+
+**Do NOT create annotations without reading that file first.**
 
 ---
 
@@ -44,68 +61,165 @@ Y_MAX = 100        // Maximum Y value
 
 ---
 
-## Standard SVG Template (4x4 Grid)
+## CRITICAL: Axis Requirements
 
-This template creates a properly aligned coordinate plane with 5 tick marks on each axis:
+**Every coordinate plane MUST have all 5 elements:**
+
+### 1. Tick Marks at Each Label Position
 
 ```html
-<svg viewBox="0 0 280 200" style="width: 100%; max-height: 160px;">
-    <!--
-    COORDINATE SYSTEM CONSTANTS:
-    Origin (0,0) at pixel: (40, 170)
-    Plot area: 220px wide x 150px tall
-    X range: 0 to X_MAX
-    Y range: 0 to Y_MAX
+<!-- X-axis ticks (5px below axis, from y=170 to y=175) -->
+<g stroke="#1e293b" stroke-width="1.5">
+    <line x1="40" y1="170" x2="40" y2="175"/>
+    <line x1="95" y1="170" x2="95" y2="175"/>
+    <line x1="150" y1="170" x2="150" y2="175"/>
+    <!-- ... one tick per label position -->
+</g>
 
-    FORMULA:
-    pixelX = 40 + (dataX / X_MAX) * 220
-    pixelY = 170 - (dataY / Y_MAX) * 150
-
-    For X_MAX=8: each unit = 27.5px → ticks at 40, 67.5, 95, 122.5, 150, 177.5, 205, 232.5, 260
-    For Y_MAX=80: each unit = 1.875px → ticks at 170, 132.5, 95, 57.5, 20
-    -->
-
-    <!-- Grid lines (4 vertical, 4 horizontal for 5 tick marks each) -->
-    <g stroke="#334155" stroke-width="0.5">
-        <!-- Vertical grid lines at x = 1/4, 2/4, 3/4, 4/4 of X_MAX -->
-        <line x1="95" y1="20" x2="95" y2="170"/>
-        <line x1="150" y1="20" x2="150" y2="170"/>
-        <line x1="205" y1="20" x2="205" y2="170"/>
-        <line x1="260" y1="20" x2="260" y2="170"/>
-        <!-- Horizontal grid lines at y = 1/4, 2/4, 3/4, 4/4 of Y_MAX -->
-        <line x1="40" y1="132.5" x2="260" y2="132.5"/>
-        <line x1="40" y1="95" x2="260" y2="95"/>
-        <line x1="40" y1="57.5" x2="260" y2="57.5"/>
-        <line x1="40" y1="20" x2="260" y2="20"/>
-    </g>
-
-    <!-- Axes -->
-    <line x1="40" y1="170" x2="260" y2="170" stroke="#94a3b8" stroke-width="2"/>
-    <line x1="40" y1="20" x2="40" y2="170" stroke="#94a3b8" stroke-width="2"/>
-
-    <!-- X-axis labels (MUST match grid line X positions) -->
-    <text x="40" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
-    <text x="95" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">2</text>
-    <text x="150" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">4</text>
-    <text x="205" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">6</text>
-    <text x="260" y="185" fill="#94a3b8" font-size="11" text-anchor="middle">8</text>
-
-    <!-- Y-axis labels (MUST match grid line Y positions) -->
-    <text x="35" y="174" fill="#94a3b8" font-size="11" text-anchor="end">0</text>
-    <text x="35" y="136" fill="#94a3b8" font-size="11" text-anchor="end">20</text>
-    <text x="35" y="99" fill="#94a3b8" font-size="11" text-anchor="end">40</text>
-    <text x="35" y="61" fill="#94a3b8" font-size="11" text-anchor="end">60</text>
-    <text x="35" y="24" fill="#94a3b8" font-size="11" text-anchor="end">80</text>
-
-    <!-- Data line example: from (0,0) to (8,80) -->
-    <line x1="40" y1="170" x2="260" y2="20" stroke="#60a5fa" stroke-width="3"/>
-
-    <!-- Data point at (4, 40) - MUST use same formula -->
-    <!-- pixelX = 40 + (4/8)*220 = 40 + 110 = 150 -->
-    <!-- pixelY = 170 - (40/80)*150 = 170 - 75 = 95 -->
-    <circle cx="150" cy="95" r="5" fill="#60a5fa"/>
-</svg>
+<!-- Y-axis ticks (5px left of axis, from x=35 to x=40) -->
+<g stroke="#1e293b" stroke-width="1.5">
+    <line x1="35" y1="170" x2="40" y2="170"/>
+    <line x1="35" y1="132.5" x2="40" y2="132.5"/>
+    <!-- ... one tick per label position -->
+</g>
 ```
+
+### 2. Arrowheads on Both Axes
+
+```html
+<defs>
+  <marker id="axis-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polygon points="0 0, 10 3.5, 0 7" fill="#1e293b"/>
+  </marker>
+</defs>
+
+<!-- X-axis with arrow (extends 10px past last label) -->
+<line x1="40" y1="170" x2="275" y2="170" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
+
+<!-- Y-axis with arrow (extends 10px past last label) -->
+<line x1="40" y1="180" x2="40" y2="5" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
+```
+
+### 3. Single "0" at Origin (NOT two separate zeros)
+
+```html
+<!-- ONE zero label at origin, positioned to serve both axes -->
+<text x="33" y="182" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">0</text>
+```
+
+**WRONG:**
+```html
+<!-- DON'T do this - two separate zeros -->
+<text x="40" y="185">0</text>  <!-- X-axis zero -->
+<text x="35" y="174">0</text>  <!-- Y-axis zero - WRONG! -->
+```
+
+### 3. Complete Scale Labels (to the arrows)
+
+Labels must go all the way to the last tick mark before the arrow:
+- X-axis: 0, 10, 20, 30, 40, 50 (if X_MAX=50)
+- Y-axis: 0, 10, 20, 30, 40, 50 (if Y_MAX=50)
+
+**Scale must be consistent** - use increments of 5, 10, 20, 25, 50, or 100.
+
+### 4. Axis Labels (Optional)
+
+If including axis labels like "x" and "y":
+```html
+<text x="280" y="175" fill="#64748b" font-family="Arial" font-size="12" font-style="italic">x</text>
+<text x="45" y="8" fill="#64748b" font-family="Arial" font-size="12" font-style="italic">y</text>
+```
+
+---
+
+## CRITICAL: Line Extension Rules
+
+**Lines must extend to the edges of the plot area** with arrows showing they continue beyond.
+
+### How to Calculate Line Endpoints
+
+For a line y = mx + b within plot area (0, 0) to (X_MAX, Y_MAX):
+
+**Step 1: Calculate where line intersects plot boundaries**
+```
+Left edge (x=0):    y = b
+Right edge (x=X_MAX): y = m × X_MAX + b
+Top edge (y=Y_MAX):   x = (Y_MAX - b) / m
+Bottom edge (y=0):    x = -b / m
+```
+
+**Step 2: Determine entry point (where line enters plot area)**
+- If 0 ≤ b ≤ Y_MAX: entry is **(0, b)** on left edge
+- If b < 0: entry is **(-b/m, 0)** on bottom edge
+- If b > Y_MAX: entry is **((Y_MAX-b)/m, Y_MAX)** on top edge
+
+**Step 3: Determine exit point (where line exits plot area)**
+- Calculate y at x=X_MAX: `y_exit = m × X_MAX + b`
+- If 0 ≤ y_exit ≤ Y_MAX: exit is **(X_MAX, y_exit)** on right edge
+- If y_exit > Y_MAX: exit is **((Y_MAX-b)/m, Y_MAX)** on top edge
+- If y_exit < 0: exit is **(-b/m, 0)** on bottom edge
+
+**Step 4: Draw line with arrow at exit point**
+- Use `marker-end="url(#line-arrow)"` to show line continues
+
+### Line Arrow Marker (separate from axis arrows)
+
+```html
+<defs>
+    <marker id="line-arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <polygon points="0 0, 6 2, 0 4" fill="currentColor"/>
+    </marker>
+</defs>
+```
+
+### Examples
+
+**Example 1: y = 10x (steep, hits top before right edge)**
+- X_MAX=8, Y_MAX=80
+- Entry: (0, 0) — starts at origin
+- At x=8: y=80 — exactly at corner
+- Exit: (8, 80) — right-top corner
+- Draw: `<line x1="40" y1="170" x2="260" y2="20" ... marker-end="url(#line-arrow)"/>`
+
+**Example 2: y = 5x + 20 (moderate slope, y-intercept at 20)**
+- X_MAX=8, Y_MAX=80
+- Entry: (0, 20) — left edge at y=20
+- At x=8: y=60 — still within Y_MAX
+- Exit: (8, 60) — right edge at y=60
+- Draw: from (0,20) to (8,60) with arrow
+
+**Example 3: y = 20x (very steep, exits through top)**
+- X_MAX=8, Y_MAX=80
+- Entry: (0, 0) — origin
+- At x=4: y=80 — hits top
+- Exit: (4, 80) — top edge at x=4
+- Draw: from (0,0) to (4,80) with arrow pointing up-right
+
+### Pixel Conversion for Line Endpoints
+
+After calculating data coordinates, convert to pixels:
+```
+pixelX = 40 + (dataX / X_MAX) * 220
+pixelY = 170 - (dataY / Y_MAX) * 150
+```
+
+---
+
+## ⚠️ START HERE: Graph Snippet Template
+
+**For a complete, copy-paste ready coordinate plane:**
+```
+READ: ../templates/graph-snippet.html
+```
+
+That HTML file is your **starting point** for all SVG graphs. It contains:
+- Arrow marker definitions for both axes and lines
+- Complete grid with proper alignment
+- Single "0" at origin
+- Complete scale labels to the arrows
+- Example data lines with extension arrows
+
+**DO NOT create graphs from scratch.** Copy and modify from graph-snippet.html.
 
 ---
 

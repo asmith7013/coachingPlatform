@@ -3,6 +3,7 @@
 import { createContext, useContext, useCallback } from 'react';
 import { useWizardState, type WizardStateHook } from '../hooks/useWizardState';
 import { WizardProgress } from './WizardProgress';
+import { WizardFooter } from './WizardFooter';
 import { Step1Inputs } from './Step1Inputs';
 import { Step2Analysis } from './Step2Analysis';
 import { Step3Slides } from './Step3Slides';
@@ -61,6 +62,10 @@ export function WizardContainer() {
         isLoading={state.isLoading}
       />
       {renderStep()}
+      <WizardFooter
+        isLoading={state.isLoading}
+        loadingProgress={state.loadingProgress}
+      />
     </WizardContext.Provider>
   );
 }

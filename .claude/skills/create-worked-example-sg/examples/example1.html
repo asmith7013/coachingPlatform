@@ -2,502 +2,203 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unit 4 Lesson 1: Hanger Diagrams</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>PPTX Example: Key Slide Patterns</title>
     <style>
-        /* CORE SETUP */
-        * { box-sizing: border-box; }
-        body {
-            background-color: #1a1a1a;
-            display: grid;
-            place-items: center;
-            margin: 0;
-            padding: 20px 0;
-            min-height: 100vh;
-            font-family: 'Roboto', sans-serif;
-            color: #ffffff;
+        /*
+         * PPTX-COMPATIBLE HTML EXAMPLE
+         * This file demonstrates the 4 key slide patterns.
+         * See templates/*.html for the base structures.
+         *
+         * KEY CONSTRAINTS:
+         * - Body: 960×540px (fixed, not viewport units)
+         * - Fonts: Arial, Georgia only
+         * - Layout: .row/.col classes (no inline display:flex)
+         * - Theme: Light (white background, dark text)
+         * - No JavaScript, no onclick, no animations
+         */
+
+        :root {
+            --color-primary: #1791e8;
+            --color-surface: #ffffff;
+            --color-surface-foreground: #1d1d1d;
+            --color-muted: #f5f5f5;
+            --color-muted-foreground: #737373;
+            --color-cfu: #fef3c7;
+            --color-answer: #dcfce7;
+            --color-border: #e5e7eb;
+            --color-step-highlight: #dbeafe;
         }
 
-        .slide-container {
-            width: 1280px;
-            height: 720px;
-            background-color: #121212;
-            overflow: hidden;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .row { display: flex; flex-direction: row; }
+        .col { display: flex; flex-direction: column; }
+        .fit { flex: 0 0 auto; }
+        .fill-width { flex: 1 1 auto; }
+        .fill-height { flex: 1 1 auto; }
+        .center { display: flex; align-items: center; justify-content: center; }
+        .gap-sm { gap: 8px; }
+        .gap-md { gap: 12px; }
+        .gap-lg { gap: 20px; }
+
+        body { background: #e5e7eb; padding: 20px; font-family: Arial, sans-serif; }
+        .slides-wrapper { display: flex; flex-direction: column; gap: 40px; align-items: center; }
+
+        .slide {
+            width: 960px;
+            height: 540px;
+            background: var(--color-surface);
             position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            border-radius: 12px;
+            font-family: Arial, sans-serif;
+            color: var(--color-surface-foreground);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
+        .slide-label { position: absolute; top: -28px; left: 0; font-size: 12px; color: #666; }
+        .title-zone { padding: 20px 20px 0 20px; }
+        .content-zone { padding: 10px 20px; }
+        .footnote { position: absolute; bottom: 8px; left: 20px; font-size: 10px; color: var(--color-muted-foreground); }
+        h1 { font-size: 36px; font-weight: bold; margin: 0; }
+        h2 { font-size: 24px; font-weight: bold; margin: 0; }
+        h3 { font-size: 15px; font-weight: bold; margin: 0; }
+        p { font-size: 13px; line-height: 1.5; margin: 0; }
+        .subtitle { font-size: 14px; color: var(--color-muted-foreground); margin-top: 4px; }
+        ul, ol { margin: 0; padding-left: 20px; }
+        li { font-size: 13px; line-height: 1.5; margin-bottom: 4px; }
 
-        /* BACKGROUNDS */
-        .bg-layer {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover;
-            background-position: center;
-            z-index: 0;
-            opacity: 0.4; /* Darken visuals for readability */
-        }
-        .bg-gradient {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(18,18,18,0.95) 0%, rgba(20,20,30,0.85) 100%);
-            z-index: 1;
-        }
-
-        /* CONTENT Z-INDEX */
-        .slide-content {
-            position: relative;
-            z-index: 10;
-            height: 100%;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: 60px;
-        }
-
-        /* TYPOGRAPHY */
-        h1, h2, h3 {
-            font-family: 'Rajdhani', sans-serif;
-            margin: 0;
-            text-transform: uppercase;
-        }
-        h1 { font-size: 80px; font-weight: 700; letter-spacing: 2px; color: #a855f7; text-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-        h2 { font-size: 50px; font-weight: 700; color: #e2e8f0; margin-bottom: 30px; }
-        h3 { font-size: 32px; font-weight: 500; color: #94a3b8; }
-        p, li { font-size: 24px; line-height: 1.6; color: #cbd5e1; }
-        
-        /* CUSTOM LAYOUTS */
-        .title-slide-content {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            height: 100%;
-        }
-        .title-slide-content p { max-width: 800px; margin-top: 30px; font-size: 28px; }
-
-        /* BALANCE SCALE VISUALIZATION */
-        .balance-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-end;
-            height: 400px;
-            width: 100%;
-            margin-top: 40px;
-            padding-bottom: 50px;
-            border-bottom: 4px solid #475569; /* The table/floor */
-            position: relative;
-        }
-        
-        /* The fulcrum */
-        .balance-container::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0; 
-            height: 0; 
-            border-left: 30px solid transparent;
-            border-right: 30px solid transparent;
-            border-bottom: 60px solid #475569;
-        }
-
-        .balance-side {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            width: 40%;
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px 16px 0 0;
-            padding: 20px;
-            min-height: 200px;
-            border: 2px solid #334155;
-            border-bottom: none;
-        }
-
-        .items-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        /* ICONS */
-        .item-icon {
-            font-size: 60px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .gem { color: #d946ef; /* Purple/Pink */ }
-        .gold { color: #facc15; /* Gold */ }
-        .sneaker { color: #38bdf8; /* Blue */ font-size: 50px; }
-        .hoodie { color: #fb7185; /* Red/Rose */ font-size: 50px; }
-        
-        .weight-l { font-size: 80px; color: #ef4444; }
-        .weight-m { font-size: 60px; color: #3b82f6; }
-        .weight-s { font-size: 40px; color: #22c55e; }
-
-        /* ANNOTATIONS */
-        .crossed-out {
-            opacity: 0.3;
-            position: relative;
-        }
-        .crossed-out::after {
-            content: '\f00d'; /* FontAwesome X mark */
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: #ef4444;
-            font-size: 80px;
-            text-shadow: 0 0 10px black;
-        }
-
-        .explanation-box {
-            background: rgba(15, 23, 42, 0.9);
-            border-left: 5px solid #a855f7;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .question-text {
-            color: #fbbf24;
-            font-weight: 700;
-            font-size: 32px;
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .answer-text {
-            color: #4ade80;
-            font-weight: 700;
-            font-size: 32px;
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        /* TWO COLUMN LAYOUT */
-        .col-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            height: 100%;
-            align-items: center;
-        }
-        
-        .formula-card {
-            background: rgba(0,0,0,0.6);
-            padding: 30px;
-            border-radius: 12px;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 36px;
-            text-align: center;
-            border: 1px solid #334155;
-        }
-
+        .strategy-box { background: var(--color-step-highlight); border-left: 4px solid var(--color-primary); padding: 12px 16px; border-radius: 0 8px 8px 0; }
+        .step-header { background: var(--color-primary); color: white; padding: 8px 16px; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+        .cfu-box { background: var(--color-cfu); border-radius: 8px; padding: 16px; margin-top: 12px; border-left: 4px solid #f59e0b; }
+        .answer-box { background: var(--color-answer); border-radius: 8px; padding: 16px; margin-top: 12px; border-left: 4px solid #22c55e; }
+        .practice-header { background: var(--color-muted); padding: 12px 16px; border-radius: 8px; }
+        .two-col-40-60 .col:first-child { width: 40%; }
+        .two-col-40-60 .col:last-child { width: 60%; }
     </style>
 </head>
 <body>
+<div class="slides-wrapper">
 
-<!-- Slide 1: Title -->
-<div class="slide-container" id="slide1">
-    <div class="bg-layer" style="background-image: url('http://googleusercontent.com/image_collection/image_retrieval/11847832862534454133');"></div>
-    <div class="bg-gradient"></div>
-    <div class="slide-content title-slide-content">
-        <h3>Unit 4 Lesson 1</h3>
-        <h1>Balancing the Equation</h1>
-        <p>Big Idea: We can find the weight of an unknown object using a hanger diagram. Just like a balanced scale, if you add or remove the same amount from both sides, it stays equal!</p>
+<!-- ============================================ -->
+<!-- PATTERN 1: Learning Goal Slide               -->
+<!-- ============================================ -->
+<div class="slide col" style="position: relative;">
+    <div class="slide-label">Pattern 1: Learning Goal (slide-learning-goal.html)</div>
+
+    <div class="title-zone fit">
+        <h1>Balance and Isolate</h1>
+        <p class="subtitle">Unit 4 Lesson 1: Solving Equations with Hanger Diagrams</p>
     </div>
-</div>
 
-<!-- Slide 2: Problem 1 Intro -->
-<div class="slide-container" id="slide2">
-    <div class="bg-layer" style="background-image: url('http://googleusercontent.com/image_collection/image_retrieval/5545771946212069707');"></div>
-    <div class="bg-gradient"></div>
-    <div class="slide-content">
-        <h2>The RPG Crafting Station</h2>
-        <p>The game says these two sets of items have equal power. How much is one Void Crystal worth in Gold Bars?</p>
-        
-        <div class="balance-container">
-            <!-- Left Side: 3 Crystals, 2 Gold -->
-            <div class="balance-side">
-                <div class="items-grid">
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                </div>
-                <h3>Left Side</h3>
-            </div>
-            
-            <!-- Right Side: 1 Crystal, 6 Gold -->
-            <div class="balance-side">
-                <div class="items-grid">
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                </div>
-                <h3>Right Side</h3>
-            </div>
+    <div class="content-zone col fill-height gap-lg" style="justify-content: center;">
+        <div class="strategy-box">
+            <h3>Today's Strategy</h3>
+            <p style="margin-top: 8px;">To find an unknown value, we <strong>BALANCE</strong> by removing equal amounts from both sides, then <strong>ISOLATE</strong> the variable to find its value.</p>
+        </div>
+
+        <div>
+            <h3>The Steps:</h3>
+            <ol style="margin-top: 8px;">
+                <li><strong>BALANCE</strong> - Remove matching items from both sides</li>
+                <li><strong>ISOLATE</strong> - Get the unknown alone on one side</li>
+                <li><strong>SOLVE</strong> - Divide to find the value of one</li>
+            </ol>
+        </div>
+
+        <div>
+            <h3>Learning Goal:</h3>
+            <p style="margin-top: 4px;">Students will be able to solve equations using hanger diagrams by balancing and isolating variables.</p>
         </div>
     </div>
+
+    <p class="footnote">Grade 7 | Unit 4 Lesson 1</p>
 </div>
 
-<!-- Slide 3: Worked Example Step 1 (Question) -->
-<div class="slide-container" id="slide3">
-    <div class="bg-layer" style="background-image: url('http://googleusercontent.com/image_collection/image_retrieval/5545771946212069707');"></div>
-    <div class="bg-gradient"></div>
-    <div class="slide-content">
-        <h2>Step 1: Simplify</h2>
-        <div class="balance-container" style="height: 350px;">
-            <div class="balance-side">
-                <div class="items-grid">
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-gem item-icon gem crossed-out"></i> <!-- 1 Removed -->
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                </div>
-            </div>
-            <div class="balance-side">
-                <div class="items-grid">
-                    <i class="fa-solid fa-gem item-icon gem crossed-out"></i> <!-- 1 Removed -->
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                </div>
+<!-- ============================================ -->
+<!-- PATTERN 2: Step + CFU Visible                -->
+<!-- ============================================ -->
+<div class="slide col" style="position: relative;">
+    <div class="slide-label">Pattern 2: Step + CFU Box (slide-with-cfu.html)</div>
+
+    <div class="title-zone fit">
+        <div class="step-header">STEP 1: BALANCE</div>
+        <h2>Remove matching items from both sides</h2>
+    </div>
+
+    <div class="content-zone row two-col-40-60 fill-height gap-lg">
+        <div class="col gap-md">
+            <p>I see 1 Crystal on the right side. I can remove 1 Crystal from BOTH sides to keep it balanced.</p>
+
+            <!-- CFU Box - Static, visible -->
+            <div class="cfu-box">
+                <p style="font-weight: bold; margin-bottom: 8px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
+                <p>Why did I choose to remove exactly ONE Crystal from both sides?</p>
             </div>
         </div>
-        <div class="question-text">
-            <i class="fa-solid fa-circle-question"></i> Check for Understanding: Why did I choose to cross out exactly one Crystal from both sides?
+
+        <div class="col center" style="background: #f9fafb; border-radius: 8px;">
+            <!-- Visual placeholder - in real slide, this would be SVG or diagram -->
+            <p style="color: #6b7280; font-style: italic;">[ Hanger diagram with crossed-out items ]</p>
         </div>
     </div>
+
+    <p class="footnote">2C + 2G = 6G</p>
 </div>
 
-<!-- Slide 4: Worked Example Step 1 (Answer) -->
-<div class="slide-container" id="slide4">
-    <div class="bg-layer" style="background-image: url('http://googleusercontent.com/image_collection/image_retrieval/5545771946212069707');"></div>
-    <div class="bg-gradient"></div>
-    <div class="slide-content">
-        <h2>Step 1: Simplify</h2>
-        <div class="balance-container" style="height: 350px;">
-            <div class="balance-side">
-                <div class="items-grid">
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-gem item-icon gem crossed-out"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                </div>
-            </div>
-            <div class="balance-side">
-                <div class="items-grid">
-                    <i class="fa-solid fa-gem item-icon gem crossed-out"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                </div>
+<!-- ============================================ -->
+<!-- PATTERN 3: Step + Answer Visible             -->
+<!-- ============================================ -->
+<div class="slide col" style="position: relative;">
+    <div class="slide-label">Pattern 3: Step + Answer Box (slide-with-answer.html)</div>
+
+    <div class="title-zone fit">
+        <div class="step-header">STEP 1: BALANCE</div>
+        <h2>Remove matching items from both sides</h2>
+    </div>
+
+    <div class="content-zone row two-col-40-60 fill-height gap-lg">
+        <div class="col gap-md">
+            <p>The right side only had 1 Crystal. By removing 1 Crystal from BOTH sides, I eliminated Crystals from the right completely!</p>
+
+            <!-- Answer Box - Static, visible -->
+            <div class="answer-box">
+                <p style="font-weight: bold; margin-bottom: 8px; color: #166534;">ANSWER</p>
+                <p>Because there was only 1 Crystal on the right! Removing 1 from each side eliminates Crystals from the right, making it easier to isolate.</p>
             </div>
         </div>
-        <div class="answer-text">
-            To remove the duplicates! By removing the crystal on the right, I get closer to isolating the unknown variables.
+
+        <div class="col center" style="background: #f9fafb; border-radius: 8px;">
+            <p style="color: #6b7280; font-style: italic;">[ Hanger diagram showing result ]</p>
         </div>
     </div>
+
+    <p class="footnote">2C + 2G = 6G</p>
 </div>
 
-<!-- Slide 5: Worked Example Step 2 (Question) -->
-<div class="slide-container" id="slide5">
-    <div class="bg-layer" style="background-image: url('http://googleusercontent.com/image_collection/image_retrieval/5545771946212069707');"></div>
-    <div class="bg-gradient"></div>
-    <div class="slide-content">
-        <h2>Step 2: Isolate</h2>
-        <!-- Items from Step 1 are gone visually, showing current state -->
-        <div class="balance-container" style="height: 350px;">
-            <div class="balance-side">
-                <div class="items-grid">
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold crossed-out"></i> <!-- Removing 2 Gold -->
-                    <i class="fa-solid fa-layer-group item-icon gold crossed-out"></i> <!-- Removing 2 Gold -->
-                </div>
-            </div>
-            <div class="balance-side">
-                <div class="items-grid">
-                    <!-- Removed Crystal is gone, 6 Gold remain, we cross out 2 -->
-                    <i class="fa-solid fa-layer-group item-icon gold crossed-out"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold crossed-out"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                </div>
-            </div>
-        </div>
-        <div class="question-text">
-            <i class="fa-solid fa-circle-question"></i> Check for Understanding: How did I decide to remove 2 Gold Bars from both sides?
+<!-- ============================================ -->
+<!-- PATTERN 4: Practice (Zero Scaffolding)       -->
+<!-- ============================================ -->
+<div class="slide col" style="position: relative;">
+    <div class="slide-label">Pattern 4: Practice Problem (slide-practice.html) - ZERO scaffolding</div>
+
+    <div class="title-zone fit">
+        <div class="practice-header">
+            <h2>Your Turn: The Hypebeast Trade</h2>
         </div>
     </div>
-</div>
 
-<!-- Slide 6: Worked Example Step 2 (Answer) -->
-<div class="slide-container" id="slide6">
-    <div class="bg-layer" style="background-image: url('http://googleusercontent.com/image_collection/image_retrieval/5545771946212069707');"></div>
-    <div class="bg-gradient"></div>
-    <div class="slide-content">
-        <h2>Step 2: Isolate</h2>
-        <div class="balance-container" style="height: 350px;">
-            <div class="balance-side">
-                <div class="items-grid">
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-gem item-icon gem"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold crossed-out"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold crossed-out"></i>
-                </div>
-            </div>
-            <div class="balance-side">
-                <div class="items-grid">
-                    <i class="fa-solid fa-layer-group item-icon gold crossed-out"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold crossed-out"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                    <i class="fa-solid fa-layer-group item-icon gold"></i>
-                </div>
-            </div>
-        </div>
-        <div class="answer-text">
-            I needed the Crystals alone on the left. Since 2 Gold Bars were "cluttering" the left side, I had to remove them (and do the same to the right)!
-        </div>
-    </div>
-</div>
-
-<!-- Slide 7: Explanation -->
-<div class="slide-container" id="slide7">
-    <div class="bg-layer" style="background-image: url('http://googleusercontent.com/image_collection/image_retrieval/5545771946212069707');"></div>
-    <div class="bg-gradient"></div>
-    <div class="slide-content">
-        <h2>The Final Solution</h2>
-        <div class="col-2">
-            <div>
-                <p>We removed duplicates and isolated the variable.</p>
-                <div class="explanation-box">
-                    <p><i class="fa-solid fa-check"></i> <strong>2 Crystals = 4 Gold Bars</strong></p>
-                    <p>Therefore, if we split both piles in half...</p>
-                    <p style="font-size: 32px; color: #d946ef;"><strong>1 Crystal = 2 Gold Bars</strong></p>
-                </div>
-                <p style="margin-top: 20px;">By keeping the "hanger" balanced at every step, we found the true value of the item.</p>
-            </div>
-            <div style="display:flex; justify-content:center; align-items:center;">
-                <div style="text-align:center;">
-                    <i class="fa-solid fa-gem item-icon gem" style="font-size: 100px;"></i>
-                    <div style="font-size: 50px; margin: 10px;">=</div>
-                    <div>
-                        <i class="fa-solid fa-layer-group item-icon gold" style="font-size: 80px;"></i>
-                        <i class="fa-solid fa-layer-group item-icon gold" style="font-size: 80px;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Slide 8: Problem 2 -->
-<div class="slide-container" id="slide8">
-    <div class="bg-layer" style="background-image: url('http://googleusercontent.com/image_collection/image_retrieval/9513023707370604695');"></div>
-    <div class="bg-gradient"></div>
-    <div class="slide-content">
-        <h2>Your Turn: The Hypebeast Trade</h2>
+    <div class="content-zone col fill-height gap-lg">
         <p>A fair trade is on the table. Find the value of 1 pair of Sneakers in terms of Hoodies.</p>
-        
-        <div class="balance-container">
-            <!-- Left: 4 Sneakers, 1 Hoodie -->
-            <div class="balance-side">
-                <div class="items-grid">
-                    <i class="fa-solid fa-shoe-prints item-icon sneaker"></i>
-                    <i class="fa-solid fa-shoe-prints item-icon sneaker"></i>
-                    <i class="fa-solid fa-shoe-prints item-icon sneaker"></i>
-                    <i class="fa-solid fa-shoe-prints item-icon sneaker"></i>
-                    <i class="fa-solid fa-shirt item-icon hoodie"></i>
-                </div>
-                <h3>Offer A</h3>
-            </div>
-            
-            <!-- Right: 2 Sneakers, 3 Hoodies -->
-            <div class="balance-side">
-                <div class="items-grid">
-                    <i class="fa-solid fa-shoe-prints item-icon sneaker"></i>
-                    <i class="fa-solid fa-shoe-prints item-icon sneaker"></i>
-                    <i class="fa-solid fa-shirt item-icon hoodie"></i>
-                    <i class="fa-solid fa-shirt item-icon hoodie"></i>
-                    <i class="fa-solid fa-shirt item-icon hoodie"></i>
-                </div>
-                <h3>Offer B</h3>
-            </div>
+
+        <div class="col center fill-height" style="background: #f9fafb; border-radius: 8px;">
+            <p style="color: #6b7280; font-style: italic;">[ Hanger diagram with two balanced sides ]</p>
+            <p style="margin-top: 12px; font-size: 12px; color: #6b7280;">4S + 1H = 2S + 3H</p>
         </div>
+
+        <!-- NO step headers, NO CFU boxes, NO strategy reminders -->
+        <p style="text-align: center; color: var(--color-muted-foreground);">Use the Balance and Isolate strategy to solve.</p>
     </div>
+
+    <p class="footnote">Practice Problem 1</p>
 </div>
 
-<!-- Slide 9: Problem 3 -->
-<div class="slide-container" id="slide9">
-    <div class="bg-layer" style="background-image: url('http://googleusercontent.com/image_collection/image_retrieval/15972178067404993520');"></div>
-    <div class="bg-gradient"></div>
-    <div class="slide-content">
-        <h2>Challenge: The Gym Rack</h2>
-        <p>The rack is balanced. How heavy is a <strong>Medium Plate (Blue)</strong> compared to a Small Plate (Green)?</p>
-        
-        <div class="balance-container">
-            <!-- Left: 2 L, 3 M, 1 S -->
-            <div class="balance-side">
-                <div class="items-grid" style="align-items: center;">
-                    <i class="fa-solid fa-circle item-icon weight-l"></i>
-                    <i class="fa-solid fa-circle item-icon weight-l"></i>
-                    <i class="fa-solid fa-circle item-icon weight-m"></i>
-                    <i class="fa-solid fa-circle item-icon weight-m"></i>
-                    <i class="fa-solid fa-circle item-icon weight-m"></i>
-                    <i class="fa-solid fa-circle item-icon weight-s"></i>
-                </div>
-                <h3>Left Rack</h3>
-            </div>
-            
-            <!-- Right: 2 L, 1 M, 5 S -->
-            <div class="balance-side">
-                <div class="items-grid" style="align-items: center;">
-                    <i class="fa-solid fa-circle item-icon weight-l"></i>
-                    <i class="fa-solid fa-circle item-icon weight-l"></i>
-                    <i class="fa-solid fa-circle item-icon weight-m"></i>
-                    <i class="fa-solid fa-circle item-icon weight-s"></i>
-                    <i class="fa-solid fa-circle item-icon weight-s"></i>
-                    <i class="fa-solid fa-circle item-icon weight-s"></i>
-                    <i class="fa-solid fa-circle item-icon weight-s"></i>
-                    <i class="fa-solid fa-circle item-icon weight-s"></i>
-                </div>
-                <h3>Right Rack</h3>
-            </div>
-        </div>
-    </div>
 </div>
-
 </body>
 </html>
-```

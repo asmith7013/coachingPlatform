@@ -3,6 +3,9 @@
 ## Purpose
 Gather all required information from the user, then deeply analyze the **mastery check question** to understand its mathematical structure and define ONE clear strategy.
 
+## Output Format: PPTX-Compatible HTML
+All slides will be **PPTX-compatible HTML** (960×540px, light theme). See `03-generate-slides/protocol.md` for technical specs.
+
 ## Prerequisites
 - User has requested a worked example
 - You have NOT yet seen the problem image
@@ -114,8 +117,20 @@ After receiving the problem image, thoroughly analyze it:
 
 ### 1.3e: Determine visual type
 - **HTML/CSS**: Tables, text problems, static equations
-- **P5.js**: Hanger diagrams, geometric shapes, balance problems
-- **D3.js**: Coordinate planes, graphs, data visualizations
+- **HTML diagrams**: Hanger diagrams, geometric shapes, balance problems
+- **SVG graphs**: Coordinate planes, linear equations, graphs, data visualizations
+
+### 1.3f: Graph Planning (REQUIRED if visual type is SVG graphs)
+
+**IF you selected "SVG graphs" above, you MUST complete graph planning NOW.**
+
+```
+Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/graph-planning.md
+```
+
+Complete ALL steps in that file and include the GRAPH PLAN in your output below.
+
+**IF you selected "HTML/CSS" or "HTML diagrams", skip to the output template.**
 
 ### Output Template (YOU MUST COMPLETE THIS):
 
@@ -135,7 +150,23 @@ Key Challenge: [what makes this hard]
 Common Mistakes: [likely errors]
 Required Prior Knowledge: [prerequisites]
 Answer Format: [how answer should be presented]
-Visual Type: [HTML/P5.js/D3.js]
+Visual Type: [HTML/CSS | HTML diagrams | SVG graphs]
+
+GRAPH PLAN (only if Visual Type is SVG graphs):
+===============================================
+Equations:
+- Line 1: [equation] ([color])
+- Line 2: [equation] ([color])
+
+Scale:
+- X range: 0 to [X_MAX]
+- Y range: 0 to [Y_MAX]
+- Y-axis labels: [list]
+
+Annotation:
+- Relationship to show: [what mathematical concept]
+- Annotation type: [y-intercept shift / parallel label / slope comparison / etc.]
+- Position: [where on graph]
 ```
 
 ---
@@ -216,7 +247,7 @@ Where `{slug}` is generated from the strategy name and grade level (e.g., `balan
   "problemType": "[from PROBLEM ANALYSIS]",
   "userConfirmed": false,
   "slidesCompleted": [],
-  "totalSlides": 0,
+  "totalSlides": 0,  // Will be 14-16 for PPTX format
   "scenarios": [],
   "createdAt": "[ISO timestamp]",
   "updatedAt": "[ISO timestamp]"
@@ -238,6 +269,7 @@ Before proceeding, verify you have:
 - [ ] PROBLEM ANALYSIS template completed
 - [ ] STRATEGY DEFINITION template completed
 - [ ] Strategy has exactly 2-3 moves with consistent verbs
+- [ ] **IF visual type is SVG graphs:** GRAPH PLAN completed with scale and annotations
 - [ ] Progress file created at `src/app/presentations/{slug}/.worked-example-progress.json`
 
 ---

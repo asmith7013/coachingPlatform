@@ -3,8 +3,13 @@ import Anthropic from '@anthropic-ai/sdk';
 import {
   GENERATE_SLIDES_SYSTEM_PROMPT,
   buildGenerateSlidesPrompt,
+  buildContinuePrompt,
+  buildUpdatePrompt,
+  type GenerationMode,
+  type UpdateInstructions,
 } from '@/app/scm/workedExamples/create/lib/prompts';
 import type { ProblemAnalysis, StrategyDefinition, Scenario } from '@/app/scm/workedExamples/create/lib/types';
+import type { HtmlSlide } from '@/lib/schema/zod-schema/worked-example-deck';
 
 interface GenerateSlidesInput {
   gradeLevel: string;
@@ -15,6 +20,10 @@ interface GenerateSlidesInput {
   strategyDefinition: StrategyDefinition;
   scenarios: Scenario[];
   testMode?: boolean; // Generate only 1 slide for testing
+  // Context-aware generation
+  mode?: GenerationMode;           // 'full' (default), 'continue', or 'update'
+  existingSlides?: HtmlSlide[];    // Slides already generated
+  updateInstructions?: UpdateInstructions; // For 'update' mode
 }
 
 const SLIDE_SEPARATOR = '===SLIDE_SEPARATOR===';
@@ -43,10 +52,29 @@ export async function POST(request: NextRequest) {
       strategyDefinition,
       scenarios,
       testMode = false,
+      mode = 'full',
+      existingSlides = [],
+      updateInstructions,
     } = input;
 
-    // Estimate total slides based on scenarios (or 1 for test mode)
-    const estimatedSlideCount = testMode ? 1 : scenarios.length * 3 + 2;
+    // Estimate total slides for PPTX format (matches protocol structure):
+    // 2 intro + 4 step1 + 4 step2 + 2 step3 + 2 practice + 1 printable = 15 base
+    // Extra scenarios beyond 3 add 1 practice slide each
+    const fullSlideCount = 15 + Math.max(0, scenarios.length - 3);
+
+    // Calculate estimated slides based on mode
+    let estimatedSlideCount: number;
+    if (testMode) {
+      estimatedSlideCount = 1;
+    } else if (mode === 'continue') {
+      // Only generating remaining slides
+      estimatedSlideCount = Math.max(1, fullSlideCount - existingSlides.length);
+    } else if (mode === 'update') {
+      // Only regenerating specified slides
+      estimatedSlideCount = updateInstructions?.slideNumbers.length || 1;
+    } else {
+      estimatedSlideCount = fullSlideCount;
+    }
 
     // Check for API key
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -84,7 +112,22 @@ The slide should:
 3. Include basic styling (centered, readable font)
 
 Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===`;
+    } else if (mode === 'continue' && existingSlides.length > 0) {
+      // Continue mode: Generate remaining slides after existing ones
+      // Uses prompt builder from SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/prompts/generate-slides.md
+      systemPrompt = GENERATE_SLIDES_SYSTEM_PROMPT;
+      const basePrompt = buildGenerateSlidesPrompt(gradeLevel, unitNumber, lessonNumber, learningGoals, problemAnalysis, strategyDefinition, scenarios);
+      userPrompt = buildContinuePrompt(existingSlides, fullSlideCount, basePrompt);
+
+    } else if (mode === 'update' && updateInstructions && existingSlides.length > 0) {
+      // Update mode: Regenerate specific slides with changes
+      // Uses prompt builder from SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/prompts/generate-slides.md
+      systemPrompt = GENERATE_SLIDES_SYSTEM_PROMPT;
+      const basePrompt = buildGenerateSlidesPrompt(gradeLevel, unitNumber, lessonNumber, learningGoals, problemAnalysis, strategyDefinition, scenarios);
+      userPrompt = buildUpdatePrompt(existingSlides, updateInstructions, basePrompt);
+
     } else {
+      // Full mode: Generate all slides from scratch
       systemPrompt = GENERATE_SLIDES_SYSTEM_PROMPT;
       userPrompt = buildGenerateSlidesPrompt(
         gradeLevel,
@@ -108,9 +151,12 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
           });
 
           // Start Claude streaming
+          // Note: Each HTML slide with inline styles can be 1500-2500 tokens
+          // 16 slides × 2000 tokens = 32000 tokens minimum needed
+          // Using 64000 to ensure all slides complete
           const claudeStream = await anthropic.messages.create({
             model: 'claude-sonnet-4-20250514',
-            max_tokens: testMode ? 2000 : 32000,
+            max_tokens: testMode ? 2000 : 64000,
             stream: true,
             system: systemPrompt,
             messages: [
@@ -126,7 +172,22 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
           let currentSlideBuffer = '';
 
           // Process the stream
+          let stopReason: string | null = null;
+          let inputTokens = 0;
+          let outputTokens = 0;
+
           for await (const event of claudeStream) {
+            // Capture usage and stop reason from message events
+            if (event.type === 'message_delta') {
+              stopReason = event.delta.stop_reason || null;
+            }
+            if (event.type === 'message_start' && event.message.usage) {
+              inputTokens = event.message.usage.input_tokens;
+            }
+            if (event.type === 'message_delta' && event.usage) {
+              outputTokens = event.usage.output_tokens;
+            }
+
             if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
               const chunk = event.delta.text;
               fullText += chunk;
@@ -140,11 +201,20 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
                 if (completedSlide && completedSlide.includes('<')) {
                   completedSlides.push(completedSlide);
 
-                  // Send progress event
+                  // Build slide object for incremental saving
+                  const slideObj = {
+                    slideNumber: completedSlides.length,
+                    htmlContent: completedSlide,
+                    visualType: detectVisualType(completedSlide),
+                    scripts: extractScripts(completedSlide),
+                  };
+
+                  // Send progress event with slide content
                   sendEvent(controller, 'slide', {
                     slideNumber: completedSlides.length,
                     estimatedTotal: estimatedSlideCount,
                     message: `Slide ${completedSlides.length} of ~${estimatedSlideCount} complete`,
+                    slide: slideObj, // Include the actual slide for incremental saving
                   });
                 }
 
@@ -158,16 +228,41 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
           const remainingSlide = currentSlideBuffer.trim();
           if (remainingSlide && remainingSlide.includes('<')) {
             completedSlides.push(remainingSlide);
+
+            // Build slide object for incremental saving
+            const slideObj = {
+              slideNumber: completedSlides.length,
+              htmlContent: remainingSlide,
+              visualType: detectVisualType(remainingSlide),
+              scripts: extractScripts(remainingSlide),
+            };
+
             sendEvent(controller, 'slide', {
               slideNumber: completedSlides.length,
               estimatedTotal: estimatedSlideCount,
               message: `Slide ${completedSlides.length} of ~${estimatedSlideCount} complete`,
+              slide: slideObj, // Include the actual slide for incremental saving
             });
           }
 
           // If no slides were found via separator, try fallback parsing
           if (completedSlides.length === 0) {
             completedSlides = parseSlidesFromText(fullText);
+          }
+
+          // Log generation stats for debugging
+          console.log('[generate-slides] Complete:', {
+            stopReason,
+            inputTokens,
+            outputTokens,
+            slidesGenerated: completedSlides.length,
+            estimatedSlideCount,
+            fullTextLength: fullText.length,
+          });
+
+          // Warn if we hit token limit
+          if (stopReason === 'max_tokens') {
+            console.warn('[generate-slides] Hit max_tokens limit! Only generated', completedSlides.length, 'of', estimatedSlideCount, 'slides');
           }
 
           // Convert to HtmlSlide format

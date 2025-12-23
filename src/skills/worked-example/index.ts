@@ -40,11 +40,22 @@ export {
   STYLING_GUIDE,
 } from './content/styling';
 
-// HTML templates
+// HTML templates (PPTX-compatible)
 export {
+  SLIDE_BASE_TEMPLATE,
+  SLIDE_WITH_CFU_TEMPLATE,
+  SLIDE_WITH_ANSWER_TEMPLATE,
+  SLIDE_TWO_COLUMN_TEMPLATE,
+  SLIDE_LEARNING_GOAL_TEMPLATE,
+  SLIDE_PRACTICE_TEMPLATE,
+  SLIDE_WITH_SVG_TEMPLATE,
+  PRINTABLE_TEMPLATE,
+  // SVG snippets (copy-paste starting points for graphs)
+  GRAPH_SNIPPET,
+  ANNOTATION_SNIPPET,
+  // Legacy exports (deprecated)
   CFU_TOGGLE_TEMPLATE,
   ANSWER_TOGGLE_TEMPLATE,
-  PRINTABLE_TEMPLATE,
 } from './content/templates';
 
 // Shared prompt instructions (used by both CLI and browser)

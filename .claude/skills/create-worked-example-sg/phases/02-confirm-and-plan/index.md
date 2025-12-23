@@ -3,6 +3,9 @@
 ## Purpose
 Present your analysis to the user, get their confirmation, and plan the three scenarios - all using DIFFERENT contexts from the mastery check.
 
+## Output Format: PPTX-Compatible HTML
+All slides will be **PPTX-compatible HTML** (960×540px, light theme, 14-16 slides). See `03-generate-slides/protocol.md` for technical specs.
+
 ## Prerequisites
 - Phase 1 complete
 - You have completed PROBLEM ANALYSIS template
@@ -150,7 +153,7 @@ Update these fields:
   "phaseName": "Confirm & Plan",
   "userConfirmed": true,
   "scenarios": ["[Scenario 1 name]", "[Scenario 2 name]", "[Scenario 3 name]"],
-  "totalSlides": [estimated count: 8-11],
+  "totalSlides": [estimated count: 14-16],
   "updatedAt": "[ISO timestamp]"
 }
 ```
@@ -179,7 +182,7 @@ Before proceeding, verify:
 
 Use the Read tool to read the Phase 3 instructions:
 ```
-Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides.md
+Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/index.md
 ```
 
 Do NOT proceed to Phase 3 until the user has explicitly confirmed.

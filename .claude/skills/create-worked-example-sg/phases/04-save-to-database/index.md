@@ -3,6 +3,9 @@
 ## Purpose
 Create metadata, sync slides to MongoDB, and provide the user with the presentation URL.
 
+## Output Format: PPTX-Compatible HTML
+All slides are **960×540px, light theme** (14-16 slides). See `03-generate-slides/protocol.md` for technical specs.
+
 ## Prerequisites
 - Phases 1-3 complete
 - All slide HTML files written to `src/app/presentations/{slug}/`
@@ -90,7 +93,7 @@ npx tsx .claude/skills/create-worked-example-sg/scripts/verify-worked-example.ts
 STATUS: PASSED
 
 Summary:
-  Slides found: [8-11]
+  Slides found: [14-16]
   Strategy name: [name]
   Strategy consistent: Yes
   Metadata valid: Yes

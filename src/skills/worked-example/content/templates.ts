@@ -1,11 +1,18 @@
 /**
- * HTML templates for worked example slides.
+ * HTML templates for PPTX-compatible worked example slides.
  *
  * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
  *
- * Source of truth: .claude/skills/create-worked-example-sg/templates/
+ * Source of truth: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/
  * To update: Edit the HTML files in the source folder, then run:
  *   npx tsx scripts/sync-skill-content.ts
+ *
+ * PPTX CONSTRAINTS (from pptx.md):
+ * - Dimensions: 960×540px (fixed)
+ * - Fonts: Arial, Georgia only (no custom fonts)
+ * - Layout: .row/.col classes (no inline flexbox)
+ * - Theme: Light (white background, dark text)
+ * - No JavaScript, no onclick, no animations
  *
  * Shared between:
  * - CLI skill: .claude/skills/create-worked-example-sg/
@@ -13,91 +20,768 @@
  */
 
 /**
- * CFU Toggle Template - Use for Ask slides
- * The CFU question appears at the bottom when the button is clicked.
+ * Base slide template - Foundation for all slides
+ * 960×540px, light theme, Arial font
  *
- * Source: .claude/skills/create-worked-example-sg/templates/cfu-toggle-snippet.html
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-base.html
  */
-export const CFU_TOGGLE_TEMPLATE = `
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+export const SLIDE_BASE_TEMPLATE = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <style>
+    /* PPTX-Compatible CSS Variables */
+    :root {
+      --color-primary: #1791e8;
+      --color-primary-foreground: #ffffff;
+      --color-surface: #ffffff;
+      --color-surface-foreground: #1d1d1d;
+      --color-muted: #f5f5f5;
+      --color-muted-foreground: #737373;
+      --color-cfu: #fef3c7;
+      --color-answer: #dcfce7;
+      --color-border: #e5e7eb;
+    }
 
-    <!-- YOUR SLIDE CONTENT HERE -->
+    /* Layout classes required by html2pptx */
+    .row { display: flex; flex-direction: row; }
+    .col { display: flex; flex-direction: column; }
+    .fit { flex: 0 0 auto; }
+    .fill-width { flex: 1 1 auto; width: 100%; }
+    .fill-height { flex: 1 1 auto; }
+    .center { display: flex; align-items: center; justify-content: center; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
 
-</div>
+    /* Background classes */
+    .bg-surface { background: var(--color-surface); }
+    .bg-primary { background: var(--color-primary); }
+    .bg-muted { background: var(--color-muted); }
 
-<!-- Toggle button -->
-<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('cfu-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
-    ↓ Show Question
-</button>
+    /* Text classes */
+    .text-surface-foreground { color: var(--color-surface-foreground); }
+    .text-primary { color: var(--color-primary); }
+    .text-muted-foreground { color: var(--color-muted-foreground); }
 
-<!-- CFU Box at bottom -->
-<div id="cfu-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
-    <div style="background: #f59e0b; border-top: 4px solid #fbbf24; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
-        <button onclick="document.getElementById('cfu-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
-            ×
-        </button>
-        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">❓ CHECK FOR UNDERSTANDING</div>
-        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
-            [YOUR QUESTION HERE]
-        </span>
+    /* Spacing classes (4px base unit) */
+    .gap-sm { gap: 8px; }
+    .gap-md { gap: 12px; }
+    .gap-lg { gap: 20px; }
+
+    /* Border radius */
+    .rounded { border-radius: 8px; }
+    .pill { border-radius: 9999px; }
+  </style>
+</head>
+<body class="col bg-surface" style="width: 960px; height: 540px; position: relative; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden;">
+
+  <!-- Title Zone: 0-120px -->
+  <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
+    <!-- Step Badge (if applicable) -->
+    <div class="row items-center gap-md" style="margin-bottom: 8px;">
+      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+        <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">{{step_badge}}</p>
+      </div>
     </div>
-</div>
+    <!-- Main Question/Action - PROMINENT -->
+    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <!-- Instruction Text -->
+    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+  </div>
 
-<style>
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
+  <!-- Content Zone: 110-490px (380px height) -->
+  <div class="fill-height col" style="padding: 10px 20px;">
+    {{content}}
+  </div>
 
-#toggle-hint:hover {
-    background: rgba(148, 163, 184, 0.2);
-    transform: translateX(-50%) scale(1.05);
-}
-</style>
+  <!-- Footnote Zone: 500-540px (40px height) -->
+  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+    {{footnote}}
+  </p>
+
+</body>
+</html>
 `;
 
 /**
- * Answer Toggle Template - Use for Reveal slides
- * The answer appears at the bottom when the button is clicked.
+ * Slide with CFU (Check for Understanding) box visible
+ * Used for step slides where CFU is revealed
  *
- * Source: .claude/skills/create-worked-example-sg/templates/answer-toggle-snippet.html
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-with-cfu.html
  */
-export const ANSWER_TOGGLE_TEMPLATE = `
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+export const SLIDE_WITH_CFU_TEMPLATE = `
+<!--
+  ============================================================
+  REFERENCE EXAMPLE: Slide with CFU Box (TOP RIGHT OVERLAY)
+  ============================================================
+  ⚠️  DO NOT use this template to generate new slides!
 
-    <!-- YOUR SLIDE CONTENT HERE -->
+  HOW TO CREATE A CFU SLIDE (slides 4, 8, 12):
+  1. COPY the ENTIRE previous slide verbatim (slide 3, 7, or 11)
+  2. Find the closing </body> tag
+  3. INSERT the CFU box IMMEDIATELY BEFORE </body>
+  4. Change NOTHING else - not even a single character
 
-</div>
+  The CFU box to insert (ABSOLUTE POSITIONED TOP RIGHT):
+  <div style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+    <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
+    <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[Your CFU question here]</p>
+  </div>
 
-<!-- Toggle button -->
-<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('answer-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
-    ↓ Show Answer
-</button>
+  This positions the CFU box in the top right, ON TOP of all content.
+  ============================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <style>
+    /* PPTX-Compatible CSS Variables */
+    :root {
+      --color-primary: #1791e8;
+      --color-primary-foreground: #ffffff;
+      --color-surface: #ffffff;
+      --color-surface-foreground: #1d1d1d;
+      --color-muted: #f5f5f5;
+      --color-muted-foreground: #737373;
+      --color-cfu: #fef3c7;
+      --color-answer: #dcfce7;
+      --color-border: #e5e7eb;
+    }
 
-<!-- Answer Box at bottom -->
-<div id="answer-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
-    <div style="background: #4ade80; border-top: 4px solid #22c55e; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
-        <button onclick="document.getElementById('answer-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
-            ×
-        </button>
-        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">✅ ANSWER</div>
-        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
-            [YOUR ANSWER HERE]
-        </span>
+    /* Layout classes required by html2pptx */
+    .row { display: flex; flex-direction: row; }
+    .col { display: flex; flex-direction: column; }
+    .fit { flex: 0 0 auto; }
+    .fill-width { flex: 1 1 auto; width: 100%; }
+    .fill-height { flex: 1 1 auto; }
+    .center { display: flex; align-items: center; justify-content: center; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+
+    /* Background classes */
+    .bg-surface { background: var(--color-surface); }
+    .bg-primary { background: var(--color-primary); }
+    .bg-muted { background: var(--color-muted); }
+
+    /* Text classes */
+    .text-surface-foreground { color: var(--color-surface-foreground); }
+    .text-primary { color: var(--color-primary); }
+    .text-muted-foreground { color: var(--color-muted-foreground); }
+
+    /* Spacing classes (4px base unit) */
+    .gap-sm { gap: 8px; }
+    .gap-md { gap: 12px; }
+    .gap-lg { gap: 20px; }
+
+    /* Border radius */
+    .rounded { border-radius: 8px; }
+    .pill { border-radius: 9999px; }
+  </style>
+</head>
+<body class="col bg-surface" style="width: 960px; height: 540px; position: relative; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden;">
+
+  <!-- Title Zone: 0-120px -->
+  <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
+    <!-- Step Badge -->
+    <div class="row items-center gap-md" style="margin-bottom: 8px;">
+      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+        <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">{{step_badge}}</p>
+      </div>
     </div>
-</div>
+    <!-- Main Question/Action - PROMINENT -->
+    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <!-- Instruction Text -->
+    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+  </div>
 
-<style>
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
+  <!-- Content Zone: 110-490px (380px height) -->
+  <div class="fill-height col" style="padding: 10px 20px;">
+    {{content}}
+  </div>
 
-#toggle-hint:hover {
-    background: rgba(148, 163, 184, 0.2);
-    transform: translateX(-50%) scale(1.05);
-}
-</style>
+  <!-- Label Zone (top right) -->
+  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+    {{footnote}}
+  </p>
+
+  <!-- CFU Box (ABSOLUTE POSITIONED TOP RIGHT, ON TOP OF CONTENT) -->
+  <div style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+    <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
+    <p style="margin: 0; font-size: 14px; color: #1d1d1d;">{{cfu_question}}</p>
+  </div>
+
+</body>
+</html>
+`;
+
+/**
+ * Slide with Answer box visible
+ * Used for step slides where answer is revealed
+ *
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-with-answer.html
+ */
+export const SLIDE_WITH_ANSWER_TEMPLATE = `
+<!--
+  ============================================================
+  REFERENCE EXAMPLE: Slide with Answer Box (TOP RIGHT OVERLAY)
+  ============================================================
+  ⚠️  DO NOT use this template to generate new slides!
+
+  HOW TO CREATE AN ANSWER SLIDE (slides 6, 10):
+  1. COPY the ENTIRE previous slide verbatim (slide 5 or 9)
+  2. Find the closing </body> tag
+  3. INSERT the Answer box IMMEDIATELY BEFORE </body>
+  4. Change NOTHING else - not even a single character
+
+  The Answer box to insert (ABSOLUTE POSITIONED TOP RIGHT):
+  <div style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+    <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
+    <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[Your answer explanation here]</p>
+  </div>
+
+  This positions the Answer box in the top right, ON TOP of all content.
+  ============================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <style>
+    /* PPTX-Compatible CSS Variables */
+    :root {
+      --color-primary: #1791e8;
+      --color-primary-foreground: #ffffff;
+      --color-surface: #ffffff;
+      --color-surface-foreground: #1d1d1d;
+      --color-muted: #f5f5f5;
+      --color-muted-foreground: #737373;
+      --color-cfu: #fef3c7;
+      --color-answer: #dcfce7;
+      --color-border: #e5e7eb;
+    }
+
+    /* Layout classes required by html2pptx */
+    .row { display: flex; flex-direction: row; }
+    .col { display: flex; flex-direction: column; }
+    .fit { flex: 0 0 auto; }
+    .fill-width { flex: 1 1 auto; width: 100%; }
+    .fill-height { flex: 1 1 auto; }
+    .center { display: flex; align-items: center; justify-content: center; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+
+    /* Background classes */
+    .bg-surface { background: var(--color-surface); }
+    .bg-primary { background: var(--color-primary); }
+    .bg-muted { background: var(--color-muted); }
+
+    /* Text classes */
+    .text-surface-foreground { color: var(--color-surface-foreground); }
+    .text-primary { color: var(--color-primary); }
+    .text-muted-foreground { color: var(--color-muted-foreground); }
+
+    /* Spacing classes (4px base unit) */
+    .gap-sm { gap: 8px; }
+    .gap-md { gap: 12px; }
+    .gap-lg { gap: 20px; }
+
+    /* Border radius */
+    .rounded { border-radius: 8px; }
+    .pill { border-radius: 9999px; }
+  </style>
+</head>
+<body class="col bg-surface" style="width: 960px; height: 540px; position: relative; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden;">
+
+  <!-- Title Zone: 0-120px -->
+  <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
+    <!-- Step Badge (if applicable) -->
+    <div class="row items-center gap-md" style="margin-bottom: 8px;">
+      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+        <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">{{step_badge}}</p>
+      </div>
+    </div>
+    <!-- Main Question/Action - PROMINENT -->
+    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <!-- Instruction Text -->
+    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+  </div>
+
+  <!-- Content Zone: 110-490px (380px height) -->
+  <div class="fill-height col" style="padding: 10px 20px;">
+    {{content}}
+
+    <!-- Static Answer Box (visible, no toggle) -->
+    <div style="background: #dcfce7; border-radius: 8px; padding: 16px; margin-top: 12px; border-left: 4px solid #22c55e;">
+      <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
+      <p style="margin: 0; font-size: 14px; color: #1d1d1d;">{{answer}}</p>
+    </div>
+  </div>
+
+  <!-- Footnote Zone: 500-540px (40px height) -->
+  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+    {{footnote}}
+  </p>
+
+</body>
+</html>
+`;
+
+/**
+ * Two-column layout slide
+ * 40% text / 60% visual layout for problem setup and steps
+ *
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-two-column.html
+ */
+export const SLIDE_TWO_COLUMN_TEMPLATE = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <style>
+    /* PPTX-Compatible CSS Variables */
+    :root {
+      --color-primary: #1791e8;
+      --color-primary-foreground: #ffffff;
+      --color-surface: #ffffff;
+      --color-surface-foreground: #1d1d1d;
+      --color-muted: #f5f5f5;
+      --color-muted-foreground: #737373;
+      --color-cfu: #fef3c7;
+      --color-answer: #dcfce7;
+      --color-border: #e5e7eb;
+    }
+
+    /* Layout classes required by html2pptx */
+    .row { display: flex; flex-direction: row; }
+    .col { display: flex; flex-direction: column; }
+    .fit { flex: 0 0 auto; }
+    .fill-width { flex: 1 1 auto; width: 100%; }
+    .fill-height { flex: 1 1 auto; }
+    .center { display: flex; align-items: center; justify-content: center; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+
+    /* Background classes */
+    .bg-surface { background: var(--color-surface); }
+    .bg-primary { background: var(--color-primary); }
+    .bg-muted { background: var(--color-muted); }
+
+    /* Text classes */
+    .text-surface-foreground { color: var(--color-surface-foreground); }
+    .text-primary { color: var(--color-primary); }
+    .text-muted-foreground { color: var(--color-muted-foreground); }
+
+    /* Spacing classes (4px base unit) */
+    .gap-sm { gap: 8px; }
+    .gap-md { gap: 12px; }
+    .gap-lg { gap: 20px; }
+
+    /* Border radius */
+    .rounded { border-radius: 8px; }
+    .pill { border-radius: 9999px; }
+  </style>
+</head>
+<body class="col bg-surface" style="width: 960px; height: 540px; position: relative; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden;">
+
+  <!-- Title Zone: 0-120px -->
+  <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
+    <!-- Step Badge (if applicable) -->
+    <div class="row items-center gap-md" style="margin-bottom: 8px;">
+      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+        <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">{{step_badge}}</p>
+      </div>
+    </div>
+    <!-- Main Question/Action - PROMINENT -->
+    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <!-- Instruction Text -->
+    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+  </div>
+
+  <!--
+    ============================================================
+    Content Zone: Two-column layout (40% text / 60% visual)
+    ============================================================
+    LAYOUT RULE: Text/tables on LEFT, graphs/visuals on RIGHT
+
+    Why this matters:
+    - Graphs on the right provide consistent visual anchoring
+    - Left-to-right reading flow: read problem → see visual
+    - Avoids tight vertical spacing when graph is below text
+    - PPTX export works better with side-by-side layout
+    ============================================================
+  -->
+  <div class="row gap-lg fill-height" style="padding: 10px 20px;">
+
+    <!-- LEFT Column: Text/Tables (40%) - Always contains problem text, bullets, tables -->
+    <div class="col" style="width: 40%;">
+      <h3 style="font-size: 15px; font-weight: bold; margin: 0 0 12px 0; color: #1d1d1d;">{{section_header}}</h3>
+      <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #1d1d1d;">
+        <li>{{bullet_1}}</li>
+        <li>{{bullet_2}}</li>
+        <li>{{bullet_3}}</li>
+      </ul>
+    </div>
+
+    <!-- RIGHT Column: Visual (60%) - ALWAYS contains graphs/diagrams/images -->
+    <!-- SVG_REGION: x=388, y=90, width=552, height=380 -->
+    <!-- RULE: Graphs go HERE (right column), NEVER below the text -->
+    <div class="col center" style="width: 60%;" data-visual-region="true">
+      <!-- For SVG: use viewBox + fixed dimensions -->
+      <!-- <svg viewBox="0 0 420 380" style="width: 520px; height: 360px;"> -->
+      <!-- For image: use max dimensions -->
+      <img src="{{image_path}}" style="max-width: 520px; max-height: 360px; object-fit: contain;" />
+    </div>
+
+  </div>
+
+  <!-- Label Zone (top right) -->
+  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+    {{footnote}}
+  </p>
+
+</body>
+</html>
+`;
+
+/**
+ * Learning Goal slide template
+ * Opening slide with strategy name, steps, and learning goal
+ *
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-learning-goal.html
+ */
+export const SLIDE_LEARNING_GOAL_TEMPLATE = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Learning Goal</title>
+  <style>
+    /* PPTX-Compatible CSS Variables */
+    :root {
+      --color-primary: #1791e8;
+      --color-primary-foreground: #ffffff;
+      --color-surface: #ffffff;
+      --color-surface-foreground: #1d1d1d;
+      --color-muted: #f5f5f5;
+      --color-muted-foreground: #737373;
+      --color-cfu: #fef3c7;
+      --color-answer: #dcfce7;
+      --color-border: #e5e7eb;
+    }
+
+    /* Layout classes required by html2pptx */
+    .row { display: flex; flex-direction: row; }
+    .col { display: flex; flex-direction: column; }
+    .fit { flex: 0 0 auto; }
+    .fill-width { flex: 1 1 auto; width: 100%; }
+    .fill-height { flex: 1 1 auto; }
+    .center { display: flex; align-items: center; justify-content: center; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+
+    /* Background classes */
+    .bg-surface { background: var(--color-surface); }
+    .bg-primary { background: var(--color-primary); }
+    .bg-muted { background: var(--color-muted); }
+
+    /* Text classes */
+    .text-surface-foreground { color: var(--color-surface-foreground); }
+    .text-primary { color: var(--color-primary); }
+    .text-muted-foreground { color: var(--color-muted-foreground); }
+
+    /* Spacing classes (4px base unit) */
+    .gap-sm { gap: 8px; }
+    .gap-md { gap: 12px; }
+    .gap-lg { gap: 20px; }
+
+    /* Border radius */
+    .rounded { border-radius: 8px; }
+    .pill { border-radius: 9999px; }
+  </style>
+</head>
+<body class="col bg-surface" style="width: 960px; height: 540px; position: relative; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden;">
+
+  <!-- Learning Goal Opening Slide -->
+  <div class="col center fill-height" style="padding: 40px;">
+
+    <!-- Strategy Badge -->
+    <div style="background: #1791e8; color: #ffffff; padding: 8px 24px; border-radius: 20px; margin-bottom: 24px;">
+      <p style="margin: 0; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">{{strategy_badge}}</p>
+    </div>
+
+    <!-- Strategy Name -->
+    <h1 style="margin: 0 0 16px 0; font-size: 40px; color: #1d1d1d; text-align: center;">{{strategy_name}}</h1>
+
+    <!-- Strategy Summary -->
+    <p style="margin: 0; font-size: 20px; color: #737373; text-align: center; max-width: 700px; line-height: 1.5;">{{strategy_summary}}</p>
+
+    <!-- Learning Goal Box -->
+    <div style="background: #f5f5f5; border-radius: 12px; padding: 20px 32px; margin-top: 32px; max-width: 800px;">
+      <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; color: #737373; text-transform: uppercase; letter-spacing: 1px;">Learning Goal</p>
+      <p style="margin: 0; font-size: 16px; color: #1d1d1d; line-height: 1.5;">{{learning_goal}}</p>
+    </div>
+
+  </div>
+
+  <!-- Label Zone (top right) -->
+  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+    {{footnote}}
+  </p>
+
+</body>
+</html>
+`;
+
+/**
+ * Practice slide template
+ * Used for practice problems with ZERO scaffolding
+ *
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-practice.html
+ */
+export const SLIDE_PRACTICE_TEMPLATE = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Practice Problem</title>
+  <style>
+    /* PPTX-Compatible CSS Variables */
+    :root {
+      --color-primary: #1791e8;
+      --color-primary-foreground: #ffffff;
+      --color-surface: #ffffff;
+      --color-surface-foreground: #1d1d1d;
+      --color-muted: #f5f5f5;
+      --color-muted-foreground: #737373;
+      --color-cfu: #fef3c7;
+      --color-answer: #dcfce7;
+      --color-border: #e5e7eb;
+    }
+
+    /* Layout classes required by html2pptx */
+    .row { display: flex; flex-direction: row; }
+    .col { display: flex; flex-direction: column; }
+    .fit { flex: 0 0 auto; }
+    .fill-width { flex: 1 1 auto; width: 100%; }
+    .fill-height { flex: 1 1 auto; }
+    .center { display: flex; align-items: center; justify-content: center; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+
+    /* Background classes */
+    .bg-surface { background: var(--color-surface); }
+    .bg-primary { background: var(--color-primary); }
+    .bg-muted { background: var(--color-muted); }
+
+    /* Text classes */
+    .text-surface-foreground { color: var(--color-surface-foreground); }
+    .text-primary { color: var(--color-primary); }
+    .text-muted-foreground { color: var(--color-muted-foreground); }
+
+    /* Spacing classes (4px base unit) */
+    .gap-sm { gap: 8px; }
+    .gap-md { gap: 12px; }
+    .gap-lg { gap: 20px; }
+
+    /* Border radius */
+    .rounded { border-radius: 8px; }
+    .pill { border-radius: 9999px; }
+  </style>
+</head>
+<body class="col bg-surface" style="width: 960px; height: 540px; position: relative; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden;">
+
+  <!-- Title Zone: 0-120px -->
+  <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
+    <!-- Practice Badge -->
+    <div class="row items-center gap-md" style="margin-bottom: 8px;">
+      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+        <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">PRACTICE</p>
+      </div>
+    </div>
+    <!-- Main Question/Action - PROMINENT -->
+    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <!-- Instruction Text -->
+    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+  </div>
+
+  <!-- Content Zone: Practice problem with zero scaffolding -->
+  <div class="fill-height col" style="padding: 10px 20px;">
+
+    <!-- Problem Statement -->
+    <div style="background: #f5f5f5; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+      <p style="margin: 0; font-size: 16px; color: #1d1d1d; line-height: 1.6;">{{problem_statement}}</p>
+    </div>
+
+    <!-- Visual/Diagram Area (if applicable) -->
+    <div class="col center fill-height">
+      {{problem_visual}}
+    </div>
+
+    <!-- Your Task Section -->
+    <div style="background: #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-top: 12px;">
+      <p style="margin: 0; font-size: 13px; color: #1d1d1d;">
+        <strong>Your Task:</strong> {{task_instruction}}
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Label Zone (top right) -->
+  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+    {{footnote}}
+  </p>
+
+</body>
+</html>
+`;
+
+/**
+ * Slide with SVG visual
+ * Used for slides with coordinate planes, graphs, or diagrams
+ * Includes data-svg-region attributes for PPTX capture
+ *
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-with-svg.html
+ */
+export const SLIDE_WITH_SVG_TEMPLATE = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <style>
+    /* PPTX-Compatible CSS Variables */
+    :root {
+      --color-primary: #1791e8;
+      --color-primary-foreground: #ffffff;
+      --color-surface: #ffffff;
+      --color-surface-foreground: #1d1d1d;
+      --color-muted: #f5f5f5;
+      --color-muted-foreground: #737373;
+      --color-cfu: #fef3c7;
+      --color-answer: #dcfce7;
+      --color-border: #e5e7eb;
+    }
+
+    /* Layout classes required by html2pptx */
+    .row { display: flex; flex-direction: row; }
+    .col { display: flex; flex-direction: column; }
+    .fit { flex: 0 0 auto; }
+    .fill-width { flex: 1 1 auto; width: 100%; }
+    .fill-height { flex: 1 1 auto; }
+    .center { display: flex; align-items: center; justify-content: center; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+
+    /* Background classes */
+    .bg-surface { background: var(--color-surface); }
+    .bg-primary { background: var(--color-primary); }
+    .bg-muted { background: var(--color-muted); }
+
+    /* Text classes */
+    .text-surface-foreground { color: var(--color-surface-foreground); }
+    .text-primary { color: var(--color-primary); }
+    .text-muted-foreground { color: var(--color-muted-foreground); }
+
+    /* Spacing classes (4px base unit) */
+    .gap-sm { gap: 8px; }
+    .gap-md { gap: 12px; }
+    .gap-lg { gap: 20px; }
+
+    /* Border radius */
+    .rounded { border-radius: 8px; }
+    .pill { border-radius: 9999px; }
+  </style>
+</head>
+<body class="col bg-surface" style="width: 960px; height: 540px; position: relative; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden;">
+
+  <!-- Title Zone: 0-120px -->
+  <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
+    <!-- Step Badge (if applicable) -->
+    <div class="row items-center gap-md" style="margin-bottom: 8px;">
+      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+        <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">{{step_badge}}</p>
+      </div>
+    </div>
+    <!-- Main Question/Action - PROMINENT -->
+    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <!-- Instruction Text -->
+    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+  </div>
+
+  <!--
+    ============================================================
+    Content Zone: Two-column layout with SVG
+    ============================================================
+    LAYOUT RULE: Text/tables on LEFT (35%), SVG graph on RIGHT (65%)
+
+    Why graphs ALWAYS go on the right:
+    - Consistent visual anchoring across all step slides
+    - Left-to-right reading flow: read problem → see graph
+    - Avoids tight vertical spacing when graph is below text
+    - PPTX export works better with side-by-side layout
+
+    NEVER place graphs below the text column - always side-by-side.
+    ============================================================
+  -->
+  <div class="row gap-lg" style="padding: 8px 20px; height: 400px;">
+
+    <!-- LEFT Column: Text/Tables (35%) - Problem text, annotations, CFU/Answer boxes -->
+    <div class="col" style="width: 35%;">
+      <p style="font-size: 14px; line-height: 1.6; color: #1d1d1d; margin: 0;">
+        {{problem_text}}
+      </p>
+      {{additional_content}}
+    </div>
+
+    <!--
+      ============================================================
+      RIGHT Column: SVG VISUAL REGION (65%)
+      ============================================================
+      RULE: Graphs ALWAYS go here (right column), NEVER below text.
+
+      Fixed coordinates for screenshot capture:
+      Position: x=356, y=88, width=584, height=392
+
+      When generating SVGs:
+      - Use viewBox that fits within 560x370 (with padding)
+      - Set explicit width/height on <svg> element
+      - SVG will be centered within this container
+      ============================================================
+    -->
+    <div
+      id="svg-container"
+      data-svg-region="true"
+      data-region-x="356"
+      data-region-y="88"
+      data-region-width="584"
+      data-region-height="392"
+      class="col center"
+      style="width: 65%; background: #f5f5f5; border-radius: 8px; padding: 12px;"
+    >
+      <!-- SVG goes here with explicit dimensions -->
+      <svg
+        viewBox="{{svg_viewbox}}"
+        style="width: {{svg_width}}px; height: {{svg_height}}px;"
+      >
+        {{svg_content}}
+      </svg>
+    </div>
+
+  </div>
+
+  <!-- Label Zone (top right) -->
+  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+    {{footnote}}
+  </p>
+
+</body>
+</html>
 `;
 
 /**
@@ -110,7 +794,7 @@ export const ANSWER_TOGGLE_TEMPLATE = `
  * 4. Include ONLY: Header, Learning Goal, Problem content - NO strategy reminders
  * 5. NEVER create separate slide files for each problem
  *
- * Source: .claude/skills/create-worked-example-sg/templates/printable-slide-snippet.html
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/printable-slide-snippet.html
  */
 export const PRINTABLE_TEMPLATE = `
 <!-- PRINTABLE WORKSHEET SLIDE TEMPLATE -->
@@ -288,4 +972,320 @@ export const PRINTABLE_TEMPLATE = `
     margin: 0;
 }
 </style>
+`;
+
+// ============================================================================
+// Legacy exports (deprecated - use new PPTX templates above)
+// ============================================================================
+
+/**
+ * @deprecated Use SLIDE_WITH_CFU_TEMPLATE instead (PPTX-compatible, no toggle)
+ */
+export const CFU_TOGGLE_TEMPLATE = SLIDE_WITH_CFU_TEMPLATE;
+
+/**
+ * @deprecated Use SLIDE_WITH_ANSWER_TEMPLATE instead (PPTX-compatible, no toggle)
+ */
+export const ANSWER_TOGGLE_TEMPLATE = SLIDE_WITH_ANSWER_TEMPLATE;
+
+// ============================================================================
+// SVG SNIPPETS - Copy-paste starting points
+// ============================================================================
+
+/**
+ * Graph Snippet - Complete coordinate plane template
+ * Use as starting point for ALL SVG graphs.
+ *
+ * Contains:
+ * - Arrow marker definitions for axes and lines
+ * - Complete grid with proper alignment
+ * - Single "0" at origin
+ * - Complete scale labels to the arrows
+ * - Example data lines with extension arrows
+ *
+ * HOW TO USE:
+ * 1. Copy the <svg>...</svg> block
+ * 2. Adjust X_MAX and Y_MAX for your data
+ * 3. Recalculate positions using: pixelX = 40 + (dataX/X_MAX)*220, pixelY = 170 - (dataY/Y_MAX)*150
+ *
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/graph-snippet.html
+ */
+export const GRAPH_SNIPPET = `
+<!--
+  ============================================================
+  GRAPH SNIPPET - Complete Coordinate Plane Template
+  ============================================================
+  Use this as the starting point for ALL SVG coordinate planes.
+
+  HOW TO USE:
+  1. Copy the entire <svg>...</svg> block below
+  2. Adjust X_MAX and Y_MAX for your data range
+  3. Recalculate grid line and label positions using formulas
+  4. Add your data lines and points
+
+  FORMULAS (memorize these):
+    pixelX = 40 + (dataX / X_MAX) * 220
+    pixelY = 170 - (dataY / Y_MAX) * 150
+
+  CONSTANTS:
+    ORIGIN = (40, 170)
+    PLOT_WIDTH = 220px
+    PLOT_HEIGHT = 150px
+    viewBox = "0 0 280 200"
+
+  AXIS REQUIREMENTS (all mandatory):
+    - Arrowheads on both axes
+    - Single "0" at origin (NOT two separate zeros)
+    - Complete scale labels to last tick before arrow
+    - Lines extend to plot edges with arrows
+  ============================================================
+-->
+
+<svg viewBox="0 0 280 200" style="width: 100%; max-height: 160px;">
+    <!--
+    This example uses:
+    X_MAX = 8, Y_MAX = 80
+
+    Tick positions (5 ticks on each axis):
+    X: 0→40, 2→95, 4→150, 6→205, 8→260
+    Y: 0→170, 20→132.5, 40→95, 60→57.5, 80→20
+    -->
+
+    <!-- ===== MARKER DEFINITIONS (required) ===== -->
+    <defs>
+        <!-- Axis arrows (dark, matches axis color) -->
+        <marker id="axis-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#1e293b"/>
+        </marker>
+
+        <!-- Line arrows (colored, inherits from stroke) -->
+        <marker id="line-arrow-blue" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+            <polygon points="0 0, 6 2, 0 4" fill="#60a5fa"/>
+        </marker>
+        <marker id="line-arrow-green" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+            <polygon points="0 0, 6 2, 0 4" fill="#22c55e"/>
+        </marker>
+    </defs>
+
+    <!-- ===== GRID LINES ===== -->
+    <!-- Grid positions MUST match label positions -->
+    <g stroke="#e2e8f0" stroke-width="0.5">
+        <!-- Vertical grid lines (at X tick positions, excluding origin) -->
+        <line x1="95" y1="20" x2="95" y2="170"/>
+        <line x1="150" y1="20" x2="150" y2="170"/>
+        <line x1="205" y1="20" x2="205" y2="170"/>
+        <line x1="260" y1="20" x2="260" y2="170"/>
+
+        <!-- Horizontal grid lines (at Y tick positions, excluding origin) -->
+        <line x1="40" y1="132.5" x2="260" y2="132.5"/>
+        <line x1="40" y1="95" x2="260" y2="95"/>
+        <line x1="40" y1="57.5" x2="260" y2="57.5"/>
+        <line x1="40" y1="20" x2="260" y2="20"/>
+    </g>
+
+    <!-- ===== AXES WITH ARROWHEADS ===== -->
+    <!-- Axes extend 15px past last label position -->
+    <line x1="40" y1="170" x2="275" y2="170" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
+    <line x1="40" y1="180" x2="40" y2="5" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
+
+    <!-- ===== TICK MARKS ===== -->
+    <!-- X-axis ticks (5px below axis at y=170 to y=175) -->
+    <g stroke="#1e293b" stroke-width="1.5">
+        <line x1="40" y1="170" x2="40" y2="175"/>
+        <line x1="95" y1="170" x2="95" y2="175"/>
+        <line x1="150" y1="170" x2="150" y2="175"/>
+        <line x1="205" y1="170" x2="205" y2="175"/>
+        <line x1="260" y1="170" x2="260" y2="175"/>
+    </g>
+    <!-- Y-axis ticks (5px to left of axis at x=35 to x=40) -->
+    <g stroke="#1e293b" stroke-width="1.5">
+        <line x1="35" y1="170" x2="40" y2="170"/>
+        <line x1="35" y1="132.5" x2="40" y2="132.5"/>
+        <line x1="35" y1="95" x2="40" y2="95"/>
+        <line x1="35" y1="57.5" x2="40" y2="57.5"/>
+        <line x1="35" y1="20" x2="40" y2="20"/>
+    </g>
+
+    <!-- ===== AXIS LABELS ===== -->
+    <!-- SINGLE "0" at origin (serves both axes) -->
+    <text x="33" y="182" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">0</text>
+
+    <!-- X-axis labels (complete scale, text-anchor="middle") -->
+    <text x="95" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">2</text>
+    <text x="150" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">4</text>
+    <text x="205" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">6</text>
+    <text x="260" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">8</text>
+
+    <!-- Y-axis labels (complete scale, text-anchor="end") -->
+    <text x="35" y="136" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">20</text>
+    <text x="35" y="99" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">40</text>
+    <text x="35" y="61" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">60</text>
+    <text x="35" y="24" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">80</text>
+
+    <!-- ===== DATA LINES (extend to plot edges with arrows) ===== -->
+    <!-- Line 1: y = 10x (blue) - from origin (40,170) to (260,20) -->
+    <line x1="40" y1="170" x2="260" y2="20" stroke="#60a5fa" stroke-width="3" marker-end="url(#line-arrow-blue)"/>
+
+    <!-- Line 2: y = 5x + 20 (green) - from (0,20) to (8,60) -->
+    <!-- Entry: pixelY = 170 - (20/80)*150 = 132.5 -->
+    <!-- Exit: y at x=8 is 60, pixelY = 170 - (60/80)*150 = 57.5 -->
+    <line x1="40" y1="132.5" x2="260" y2="57.5" stroke="#22c55e" stroke-width="3" marker-end="url(#line-arrow-green)"/>
+
+    <!-- ===== DATA POINTS (optional) ===== -->
+    <!-- Point at (4, 40): pixelX=150, pixelY=95 -->
+    <circle cx="150" cy="95" r="5" fill="#60a5fa"/>
+
+    <!-- Point at (4, 40): pixelX=150, pixelY=95 (on green line) -->
+    <circle cx="150" cy="95" r="5" fill="#22c55e"/>
+</svg>
+
+
+<!--
+  ============================================================
+  QUICK REFERENCE: Common Scale Positions
+  ============================================================
+
+  X-AXIS (ORIGIN_X=40, PLOT_WIDTH=220):
+  | X_MAX | Per Unit | Tick Positions (0, 1/4, 1/2, 3/4, max) |
+  |-------|----------|----------------------------------------|
+  | 4     | 55px     | 40, 95, 150, 205, 260                  |
+  | 5     | 44px     | 40, 84, 128, 172, 216, 260             |
+  | 8     | 27.5px   | 40, 95, 150, 205, 260 (by 2s)          |
+  | 10    | 22px     | 40, 84, 128, 172, 216, 260 (by 2s)     |
+
+  Y-AXIS (ORIGIN_Y=170, PLOT_HEIGHT=150):
+  | Y_MAX | Per Unit | Tick Positions (0, 1/4, 1/2, 3/4, max) |
+  |-------|----------|----------------------------------------|
+  | 40    | 3.75px   | 170, 132.5, 95, 57.5, 20               |
+  | 50    | 3px      | 170, 132.5, 95, 57.5, 20               |
+  | 80    | 1.875px  | 170, 132.5, 95, 57.5, 20               |
+  | 100   | 1.5px    | 170, 132.5, 95, 57.5, 20               |
+  | 200   | 0.75px   | 170, 132.5, 95, 57.5, 20               |
+
+  COLORS:
+  | Use          | Color   | Hex     |
+  |--------------|---------|---------|
+  | Line 1       | Blue    | #60a5fa |
+  | Line 2       | Green   | #22c55e |
+  | Line 3       | Red     | #ef4444 |
+  | Axis/Grid    | Slate   | #1e293b |
+  | Labels       | Gray    | #64748b |
+  | Light grid   | Slate   | #e2e8f0 |
+  ============================================================
+-->
+`;
+
+/**
+ * Annotation Snippet - Y-intercept labels, arrows, line equations
+ * Use for adding annotations to coordinate plane graphs.
+ *
+ * Contains:
+ * - Font styling rules (font-weight="normal", font-size="9")
+ * - Position calculation formula from data values
+ * - Arrow marker definition
+ * - Examples for y-intercept labels, shift arrows, line equations
+ *
+ * CRITICAL: Annotation positions must be calculated from actual data values
+ * using the same formula as the graph: pixelY = 170 - (dataY / Y_MAX) * 150
+ *
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/annotation-snippet.html
+ */
+export const ANNOTATION_SNIPPET = `
+<!--
+  ============================================================
+  ANNOTATION TEMPLATE - Calculate positions from DATA VALUES
+  ============================================================
+  Annotations must use the SAME pixel formula as the graph.
+  This ensures labels appear at the correct y-intercept positions.
+
+  STEP 1: Know your graph constants (from svg-graphs.md)
+    ORIGIN_Y = 170      (pixel y for data y=0)
+    PLOT_HEIGHT = 150   (pixels from y=0 to y=max)
+    Y_MAX = [your max]  (e.g., 50, 100, 200)
+
+  STEP 2: Calculate pixel positions from data values
+    pixelY = 170 - (dataY / Y_MAX) * 150
+
+  STEP 3: Use calculated pixelY for label and arrow positions
+
+  FONT RULES (apply to ALL annotations):
+  - font-family="Arial"
+  - font-size="9"
+  - font-weight="normal" (NOT bold - too thick)
+  ============================================================
+-->
+
+
+<!-- ========== Y-INTERCEPT ANNOTATION EXAMPLE ========== -->
+<!--
+  Example: Two lines with y-intercepts at 0 and 20, Y_MAX = 50
+
+  Calculate pixel positions:
+  - y-intercept 0:  pixelY = 170 - (0/50)*150 = 170
+  - y-intercept 20: pixelY = 170 - (20/50)*150 = 110
+
+  Label positions: x=5 (left margin), y=pixelY
+  Arrow positions: x=25, from pixelY1 to pixelY2
+-->
+
+<!-- Arrow marker definition (use ONCE per SVG) -->
+<defs>
+  <marker id="arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+    <polygon points="0 0, 6 2, 0 4" fill="#ef4444"/>
+  </marker>
+</defs>
+
+<!-- Y-intercept label at y=0 (pixelY=170) -->
+<text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
+
+<!-- Y-intercept label at y=20 (pixelY=110) -->
+<text x="5" y="110" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 20</text>
+
+<!-- Arrow showing shift from y=0 to y=20 -->
+<line x1="25" y1="170" x2="25" y2="115" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)"/>
+
+<!-- Arrow label (midpoint: (170+110)/2 = 140) -->
+<text x="5" y="140" fill="#ef4444" font-family="Arial" font-size="9" font-weight="normal">+20</text>
+
+
+<!-- ========== POSITION REFERENCE ========== -->
+<!--
+  X POSITIONS (fixed):
+  | Position     | X value | Use for              |
+  |--------------|---------|----------------------|
+  | Left margin  | 5       | Y-intercept labels   |
+  | Arrow line   | 25      | Vertical arrows      |
+  | Right margin | 265     | Line equation labels |
+
+  Y POSITIONS (calculated from data):
+  | Data Y | Y_MAX=50 | Y_MAX=100 | Y_MAX=200 |
+  |--------|----------|-----------|-----------|
+  | 0      | 170      | 170       | 170       |
+  | 10     | 140      | 155       | 162.5     |
+  | 20     | 110      | 140       | 155       |
+  | 25     | 95       | 132.5     | 151.25    |
+  | 40     | 50       | 110       | 140       |
+  | 50     | 20       | 95        | 132.5     |
+  | 100    | -        | 20        | 95        |
+  | 200    | -        | -         | 20        |
+
+  Formula: pixelY = 170 - (dataY / Y_MAX) * 150
+-->
+
+
+<!-- ========== LINE EQUATION LABELS (right margin) ========== -->
+<!--
+  Position at x=265, y = line's ending pixelY (or stacked if multiple)
+-->
+<text x="265" y="30" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">y = 5x</text>
+<text x="265" y="45" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">y = 5x + 20</text>
+
+
+<!-- ========== POINT LABELS (inside plot area) ========== -->
+<!--
+  - Upper half (pixelY < 95): label ABOVE at pixelY - 12
+  - Lower half (pixelY >= 95): label BELOW at pixelY + 15
+  - Use text-anchor="middle" for centering
+-->
+<text x="150" y="98" fill="#60a5fa" font-family="Arial" font-size="10" font-weight="normal" text-anchor="middle">(4, 20)</text>
 `;

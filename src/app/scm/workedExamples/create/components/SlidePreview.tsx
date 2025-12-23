@@ -1,17 +1,56 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface SlidePreviewProps {
   htmlContent: string;
   className?: string;
+  /** Show slide at native 960×540 or scale to fit container */
+  scaleToFit?: boolean;
 }
 
 /**
- * Renders HTML slide content in a sandboxed iframe
+ * Renders PPTX-compatible HTML slide content in a sandboxed iframe.
+ *
+ * PPTX slides are 960×540px (16:9 aspect ratio).
+ * This component scales them to fit the container while maintaining aspect ratio.
  */
-export function SlidePreview({ htmlContent, className = '' }: SlidePreviewProps) {
+export function SlidePreview({ htmlContent, className = '', scaleToFit = true }: SlidePreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  // PPTX slide dimensions
+  const SLIDE_WIDTH = 960;
+  const SLIDE_HEIGHT = 540;
+
+  // Calculate scale to fit container
+  useEffect(() => {
+    if (!scaleToFit || !containerRef.current) return;
+
+    const updateScale = () => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
+
+      // Calculate scale to fit while maintaining aspect ratio
+      const scaleX = containerWidth / SLIDE_WIDTH;
+      const scaleY = containerHeight / SLIDE_HEIGHT;
+      const newScale = Math.min(scaleX, scaleY, 1); // Don't scale up, only down
+
+      setScale(newScale);
+    };
+
+    updateScale();
+
+    // Update on resize
+    const resizeObserver = new ResizeObserver(updateScale);
+    resizeObserver.observe(containerRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, [scaleToFit]);
 
   useEffect(() => {
     if (!iframeRef.current) return;
@@ -21,7 +60,11 @@ export function SlidePreview({ htmlContent, className = '' }: SlidePreviewProps)
 
     if (!doc) return;
 
-    // Build complete HTML document with CSS to fill container
+    // Detect if this is a printable slide (contains print-page class)
+    const isPrintable = htmlContent.includes('print-page');
+
+    // Build complete HTML document
+    // PPTX slides are 960×540px with light theme
     const fullHtml = `
       <!DOCTYPE html>
       <html>
@@ -35,20 +78,21 @@ export function SlidePreview({ htmlContent, className = '' }: SlidePreviewProps)
               box-sizing: border-box;
             }
             html, body {
-              width: 100%;
-              height: 100%;
-              overflow: auto;
+              width: ${isPrintable ? '100%' : `${SLIDE_WIDTH}px`};
+              height: ${isPrintable ? '100%' : `${SLIDE_HEIGHT}px`};
+              overflow: ${isPrintable ? 'auto' : 'hidden'};
+              background: ${isPrintable ? '#f5f5f5' : '#ffffff'};
             }
-            /* Make slide container fill the viewport */
-            body > div:first-child,
-            body > section:first-child,
-            .slide-container,
-            [class*="slide"] {
-              min-width: 100% !important;
-              min-height: 100% !important;
-              width: 100% !important;
-              max-width: none !important;
-            }
+            /* PPTX layout classes */
+            .row { display: flex; flex-direction: row; }
+            .col { display: flex; flex-direction: column; }
+            .fit { flex: 0 0 auto; }
+            .fill-width { flex: 1 1 auto; }
+            .fill-height { flex: 1 1 auto; }
+            .center { display: flex; align-items: center; justify-content: center; }
+            .gap-sm { gap: 8px; }
+            .gap-md { gap: 12px; }
+            .gap-lg { gap: 20px; }
           </style>
         </head>
         <body>
@@ -62,12 +106,44 @@ export function SlidePreview({ htmlContent, className = '' }: SlidePreviewProps)
     doc.close();
   }, [htmlContent]);
 
+  // Detect if printable slide for different rendering
+  const isPrintable = htmlContent.includes('print-page');
+
+  if (isPrintable) {
+    // Printable slides use 100% width/height and scroll
+    return (
+      <iframe
+        ref={iframeRef}
+        title="Slide Preview"
+        className={`w-full h-full border-0 bg-gray-100 ${className}`}
+        sandbox="allow-scripts allow-same-origin"
+      />
+    );
+  }
+
+  // PPTX slides are scaled to fit container
   return (
-    <iframe
-      ref={iframeRef}
-      title="Slide Preview"
-      className={`w-full h-full border-0 ${className}`}
-      sandbox="allow-scripts allow-same-origin"
-    />
+    <div
+      ref={containerRef}
+      className={`w-full h-full flex items-center justify-center bg-gray-200 overflow-hidden ${className}`}
+    >
+      <div
+        style={{
+          width: SLIDE_WIDTH,
+          height: SLIDE_HEIGHT,
+          transform: scaleToFit ? `scale(${scale})` : undefined,
+          transformOrigin: 'center center',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        }}
+      >
+        <iframe
+          ref={iframeRef}
+          title="Slide Preview"
+          className="w-full h-full border-0"
+          style={{ width: SLIDE_WIDTH, height: SLIDE_HEIGHT }}
+          sandbox="allow-scripts allow-same-origin"
+        />
+      </div>
+    </div>
   );
 }

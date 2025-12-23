@@ -11,6 +11,7 @@ interface ListDecksFilters {
   mathStandard?: string;
   createdBy?: string;
   isPublic?: boolean;
+  deactivated?: boolean; // Filter by deactivation status (defaults to false)
   limit?: number;
   skip?: number;
 }
@@ -39,6 +40,14 @@ export async function listWorkedExampleDecks(filters?: ListDecksFilters) {
         query.createdBy = filters.createdBy;
       }
 
+      // Deactivation filter - default to showing only active decks
+      if (filters?.deactivated !== undefined) {
+        query.deactivated = filters.deactivated;
+      } else {
+        // Default: exclude deactivated decks (show active only)
+        query.deactivated = { $ne: true };
+      }
+
       // Visibility filter - show public decks + user's own decks
       if (filters?.isPublic !== undefined) {
         query.isPublic = filters.isPublic;
@@ -58,7 +67,7 @@ export async function listWorkedExampleDecks(filters?: ListDecksFilters) {
         .sort({ createdAt: -1 })
         .limit(filters?.limit || 50)
         .skip(filters?.skip || 0)
-        .select('title slug mathConcept mathStandard gradeLevel unitNumber lessonNumber learningGoals createdBy isPublic createdAt'); // Light projection for list view
+        .select('title slug mathConcept mathStandard gradeLevel unitNumber lessonNumber learningGoals createdBy isPublic deactivated createdAt'); // Light projection for list view
 
       const total = await WorkedExampleDeck.countDocuments(query);
 

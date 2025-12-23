@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Printable Worksheet</title>
+  <style>
+    @media print {
+      .slide-container {
+        overflow: visible !important;
+        height: auto !important;
+      }
+      .print-page {
+        width: 8.5in !important;
+        height: 11in !important;
+        margin: 0 !important;
+        padding: 0.5in !important;
+        box-sizing: border-box !important;
+        page-break-after: always;
+        border: none !important;
+      }
+      .print-page:last-child {
+        page-break-after: auto;
+      }
+      svg line, svg path, svg text, svg circle {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+      div[style*="background"] {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+    }
+    @page {
+      size: letter portrait;
+      margin: 0;
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0;">
+<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
+
+    <!-- Page 1: Problem 1 -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Header with lesson info -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">Comparing Linear Graphs</h1>
+                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Unit 3 Lesson 8 | Grade 8</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 13px; margin: 0;">Name: _______________________</p>
+                <p style="font-size: 13px; margin: 4px 0 0 0;">Date: ________________________</p>
+            </div>
+        </div>
+
+        <!-- Learning Goal Box -->
+        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 20px;">
+            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> Create and compare (orally and in writing) graphs that represent linear relationships with the same rate of change but different initial values.</p>
+        </div>
+
+        <!-- Problem 1 -->
+        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
+            <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
+                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 1: Video Game Leaderboard</h3>
+            </div>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">
+                Two players are competing in a video game tournament. Their scores are modeled by:
+            </p>
+
+            <div style="display: flex; gap: 30px; margin-bottom: 20px;">
+                <div style="flex: 1;">
+                    <p style="font-size: 14px; margin: 0;"><strong>Player A:</strong> y = 4x</p>
+                    <p style="font-size: 14px; margin: 4px 0 0 0;"><strong>Player B:</strong> y = 4x - 2</p>
+                    <p style="font-size: 12px; margin: 8px 0 0 0; color: #666;">where x = levels completed and y = total points</p>
+                </div>
+            </div>
+
+            <!-- Simple coordinate grid for student work -->
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <svg viewBox="0 0 300 200" style="width: 300px; height: 200px; font-family: Arial, sans-serif; border: 1px solid #ccc;">
+                    <g stroke="#e5e7eb" stroke-width="0.5">
+                        <line x1="40" y1="20" x2="40" y2="170"/>
+                        <line x1="80" y1="20" x2="80" y2="170"/>
+                        <line x1="120" y1="20" x2="120" y2="170"/>
+                        <line x1="160" y1="20" x2="160" y2="170"/>
+                        <line x1="200" y1="20" x2="200" y2="170"/>
+                        <line x1="240" y1="20" x2="240" y2="170"/>
+                        <line x1="280" y1="20" x2="280" y2="170"/>
+                        <line x1="40" y1="50" x2="280" y2="50"/>
+                        <line x1="40" y1="80" x2="280" y2="80"/>
+                        <line x1="40" y1="110" x2="280" y2="110"/>
+                        <line x1="40" y1="140" x2="280" y2="140"/>
+                    </g>
+                    <line x1="40" y1="170" x2="290" y2="170" stroke="#000" stroke-width="1.5"/>
+                    <line x1="40" y1="20" x2="40" y2="170" stroke="#000" stroke-width="1.5"/>
+                    <text x="165" y="190" fill="#000" font-size="10" text-anchor="middle" font-family="Arial">Levels (x)</text>
+                    <text x="15" y="95" fill="#000" font-size="10" text-anchor="middle" font-family="Arial" transform="rotate(-90, 15, 95)">Points (y)</text>
+                </svg>
+            </div>
+
+            <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: auto;">
+                <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
+                <p style="font-size: 13px; line-height: 1.5; margin: 0;">
+                    Describe how the graph of y = 4x is the same and different from the graph of y = 4x - 2.
+                </p>
+                <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 100px;">
+                    <p style="font-size: 11px; color: #666; margin: 0;">Write your response:</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Problem 2 -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Header with lesson info (repeated for each page) -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">Comparing Linear Graphs</h1>
+                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Unit 3 Lesson 8 | Grade 8</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 13px; margin: 0;">Name: _______________________</p>
+                <p style="font-size: 13px; margin: 4px 0 0 0;">Date: ________________________</p>
+            </div>
+        </div>
+
+        <!-- Learning Goal Box (repeated for each page) -->
+        <div style="background: #f5f5f5; border: 1px solid #333; padding: 10px 12px; margin-bottom: 20px;">
+            <p style="font-size: 12px; margin: 0; line-height: 1.5;"><strong>Learning Goal:</strong> Create and compare (orally and in writing) graphs that represent linear relationships with the same rate of change but different initial values.</p>
+        </div>
+
+        <!-- Problem 2 -->
+        <div style="border: 2px solid #333; padding: 20px; display: flex; flex-direction: column; flex: 1;">
+            <div style="background: #f0f0f0; margin: -20px -20px 15px -20px; padding: 10px 20px; border-bottom: 1px solid #333;">
+                <h3 style="font-size: 18px; margin: 0; font-weight: bold;">Problem 2: Elevation Hike</h3>
+            </div>
+            <p style="font-size: 14px; line-height: 1.5; margin: 0 0 15px 0;">
+                Two hikers are climbing a mountain at the same rate but started at different elevations:
+            </p>
+
+            <div style="display: flex; gap: 30px; margin-bottom: 20px;">
+                <div style="flex: 1;">
+                    <p style="font-size: 14px; margin: 0;"><strong>Hiker A:</strong> y = 2x + 3</p>
+                    <p style="font-size: 14px; margin: 4px 0 0 0;"><strong>Hiker B:</strong> y = 2x - 4</p>
+                    <p style="font-size: 12px; margin: 8px 0 0 0; color: #666;">where x = hours hiking and y = elevation in hundreds of feet</p>
+                </div>
+            </div>
+
+            <!-- Simple coordinate grid for student work -->
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <svg viewBox="0 0 300 200" style="width: 300px; height: 200px; font-family: Arial, sans-serif; border: 1px solid #ccc;">
+                    <g stroke="#e5e7eb" stroke-width="0.5">
+                        <line x1="40" y1="20" x2="40" y2="170"/>
+                        <line x1="80" y1="20" x2="80" y2="170"/>
+                        <line x1="120" y1="20" x2="120" y2="170"/>
+                        <line x1="160" y1="20" x2="160" y2="170"/>
+                        <line x1="200" y1="20" x2="200" y2="170"/>
+                        <line x1="240" y1="20" x2="240" y2="170"/>
+                        <line x1="280" y1="20" x2="280" y2="170"/>
+                        <line x1="40" y1="50" x2="280" y2="50"/>
+                        <line x1="40" y1="80" x2="280" y2="80"/>
+                        <line x1="40" y1="110" x2="280" y2="110"/>
+                        <line x1="40" y1="140" x2="280" y2="140"/>
+                    </g>
+                    <line x1="40" y1="170" x2="290" y2="170" stroke="#000" stroke-width="1.5"/>
+                    <line x1="40" y1="20" x2="40" y2="170" stroke="#000" stroke-width="1.5"/>
+                    <text x="165" y="190" fill="#000" font-size="10" text-anchor="middle" font-family="Arial">Hours (x)</text>
+                    <text x="15" y="95" fill="#000" font-size="10" text-anchor="middle" font-family="Arial" transform="rotate(-90, 15, 95)">Elevation (y)</text>
+                </svg>
+            </div>
+
+            <div style="border-top: 2px solid #333; padding-top: 15px; margin-top: auto;">
+                <p style="font-size: 14px; font-weight: bold; margin: 0 0 8px 0;">Your Task:</p>
+                <p style="font-size: 13px; line-height: 1.5; margin: 0;">
+                    Describe how the graph of y = 2x + 3 is the same and different from the graph of y = 2x - 4.
+                </p>
+                <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 100px;">
+                    <p style="font-size: 11px; color: #666; margin: 0;">Write your response:</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

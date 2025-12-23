@@ -3,6 +3,30 @@ import type { HtmlSlide } from '@zod-schema/worked-example-deck';
 // Grade levels matching the schema
 export type GradeLevel = '6' | '7' | '8' | 'Algebra 1';
 
+// Visual types for worked examples
+export type VisualType = 'HTML/CSS' | 'HTML diagrams' | 'SVG graphs';
+
+// Graph plan for coordinate plane visualizations (required when visualType is 'SVG graphs')
+export interface GraphPlan {
+  equations: {
+    equation: string;
+    color: string;
+  }[];
+  scale: {
+    xRange: [number, number]; // [min, max]
+    xAxisLabels: number[];
+    xScale: number; // increment between x-axis labels
+    yRange: [number, number]; // [min, max]
+    yAxisLabels: number[];
+    yScale: number; // increment between y-axis labels
+  };
+  annotation: {
+    relationshipToShow: string;
+    annotationType: 'y-intercept shift' | 'parallel label' | 'slope comparison' | 'intersection point' | 'slope triangle' | 'other';
+    position: string;
+  };
+}
+
 // Problem analysis from Claude
 export interface ProblemAnalysis {
   // Verbatim transcription of the problem from the image
@@ -19,7 +43,9 @@ export interface ProblemAnalysis {
   commonMistakes: string[];
   requiredPriorKnowledge: string[];
   answerFormat: string;
-  visualType: 'html' | 'p5' | 'd3';
+  visualType: VisualType;
+  // Graph plan - required when visualType is 'SVG graphs'
+  graphPlan?: GraphPlan;
 }
 
 // Strategy definition from Claude

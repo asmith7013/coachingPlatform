@@ -129,19 +129,19 @@ export function PresentationModal({ slug, isOpen, onClose }: PresentationModalPr
   const slide = deck?.htmlSlides?.[currentSlide];
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-gray-900">
+    <div className="fixed inset-0 z-[9999] bg-gray-200">
       {loading && (
         <div className="flex items-center justify-center w-full h-full">
-          <div className="text-white text-2xl">Loading presentation...</div>
+          <div className="text-gray-700 text-2xl">Loading presentation...</div>
         </div>
       )}
 
       {error && !loading && (
         <div className="flex flex-col items-center justify-center w-full h-full">
-          <div className="text-white text-2xl mb-4">{error}</div>
+          <div className="text-gray-700 text-2xl mb-4">{error}</div>
           <button
             onClick={onClose}
-            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
           >
             Close
           </button>
@@ -164,7 +164,7 @@ export function PresentationModal({ slug, isOpen, onClose }: PresentationModalPr
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="print-hide fixed top-4 right-4 w-12 h-12 flex items-center justify-center bg-gray-800/80 hover:bg-gray-700/90 text-white rounded-full transition-colors z-[10000] cursor-pointer"
+            className="print-hide fixed top-4 right-4 w-12 h-12 flex items-center justify-center bg-gray-700/80 hover:bg-gray-600/90 text-white rounded-full transition-colors z-[10000] cursor-pointer"
             aria-label="Close presentation"
           >
             <svg
@@ -184,7 +184,7 @@ export function PresentationModal({ slug, isOpen, onClose }: PresentationModalPr
           </button>
 
           {/* Navigation Controls - Top Right, left of close button */}
-          <div className="print-hide fixed top-4 right-20 h-12 flex items-center gap-2 bg-gray-800/70 px-3 rounded-full z-[10000] text-sm">
+          <div className="print-hide fixed top-4 right-20 h-12 flex items-center gap-2 bg-gray-700/80 px-3 rounded-full z-[10000] text-sm">
             {/* Previous Button */}
             <button
               onClick={prevSlide}

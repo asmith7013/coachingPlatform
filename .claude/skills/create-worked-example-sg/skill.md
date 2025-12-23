@@ -1,13 +1,26 @@
 ---
 name: Create Worked Example
-description: Generate HTML-based slide decks for math worked examples. Use when user says "create worked example" or needs visual step-by-step math instruction with CFU questions and practice problems.
+description: Generate PPTX-compatible HTML slide decks for math worked examples. Use when user says "create worked example" or needs visual step-by-step math instruction with CFU questions and practice problems.
 ---
 
-# Create Worked Example (HTML Slides)
+# Create Worked Example (PPTX-Compatible HTML Slides)
 
 You are an expert educational content creator specializing in mathematics pedagogy and worked example slide decks.
 
-**Your task:** Generate HTML-based slide decks for math worked examples and save them to the database.
+**Your task:** Generate PPTX-compatible HTML-based slide decks for math worked examples and save them to the database.
+
+## PPTX Compatibility
+
+All slides are generated as **PPTX-compatible HTML** that can be:
+1. Viewed in the web browser (light theme, 960×540)
+2. Converted to PowerPoint for Google Slides export
+
+**Key constraints (see `pptx.md` for details):**
+- Dimensions: 960×540px exactly
+- Fonts: Arial, Georgia only (web-safe)
+- Layout: Use `.row`/`.col` classes (no inline flexbox)
+- No JavaScript, no toggles, no animations
+- CFU/Answer boxes are static (revealed via slide advancement)
 
 ## Single Source of Truth Architecture
 
@@ -15,18 +28,40 @@ You are an expert educational content creator specializing in mathematics pedago
 
 ```
 .claude/skills/create-worked-example-sg/    ← SOURCE OF TRUTH
-├── templates/                              ← HTML templates (edit here!)
-│   ├── cfu-toggle-snippet.html
-│   ├── answer-toggle-snippet.html
-│   └── printable-slide-snippet.html
-├── reference/                              ← Pedagogy & styling rules (edit here!)
+├── templates/                              ← PPTX-compatible HTML templates
+│   ├── slide-base.html                     ← Base 960×540 structure
+│   ├── slide-learning-goal.html            ← Opening slide with strategy
+│   ├── slide-two-column.html               ← Visual + text layout
+│   └── archived/                           ← Deprecated templates
+├── reference/                              ← Pedagogy & styling rules
 │   ├── pedagogy.md
-│   └── styling.md
-├── prompts/                                ← Shared LLM instructions (edit here!)
-│   ├── analyze-problem.md                  ← Step-by-step analysis instructions
-│   └── generate-slides.md                  ← Step-by-step generation instructions
-├── phases/                                 ← CLI-only workflow phases
-└── scripts/                                ← CLI-only scripts
+│   └── styling.md                          ← Layout zones, colors, annotation techniques
+├── phases/                                 ← CLI workflow phases
+│   ├── 01-collect-and-analyze.md
+│   ├── 02-confirm-and-plan.md
+│   ├── 03-generate-slides/                 ← Phase 3 folder
+│   │   ├── index.md                        ← Main entry point
+│   │   ├── protocol.md                     ← Per-slide checkpoint protocol
+│   │   ├── templates/                    ← PPTX-compatible templates
+│   │   │   ├── slide-base.html
+│   │   │   ├── slide-learning-goal.html
+│   │   │   ├── slide-two-column.html
+│   │   │   ├── slide-with-cfu.html
+│   │   │   ├── slide-with-answer.html
+│   │   │   ├── slide-practice.html
+│   │   │   └── printable-slide-snippet.html
+│   │   └── visuals/                        ← Visual-specific docs
+│   │       └── svg-graphs.md
+│   ├── 04-save-to-database.md
+│   └── 05-updating-decks.md
+├── prompts/                                ← Shared LLM instructions
+│   └── analyze-problem.md                  ← Step-by-step analysis
+├── scripts/                                ← PPTX conversion tools
+│   ├── generate-pptx.js                    ← HTML → PPTX conversion
+│   ├── validate-pptx.sh                    ← Visual validation
+│   └── sync-to-db.js                       ← Database sync
+├── phases/                                 ← CLI workflow phases
+└── pptx.md                                 ← Full PPTX constraints reference
 
 src/skills/worked-example/                  ← AUTO-GENERATED (don't edit!)
 ├── content/
@@ -68,10 +103,12 @@ This skill is divided into **4 main phases** for creating new decks, plus **Phas
 
 ## Phase Overview
 
+**Technical specs are in `prompts/` folder.** The phases below are workflow guidance.
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  PHASE 1: COLLECT & ANALYZE                                                 │
-│  File: phases/01-collect-and-analyze.md                                     │
+│  Reference: phases/01-collect-and-analyze/                                  │
 │                                                                             │
 │  Trigger: User says "create worked example"                                 │
 │  Actions: Gather inputs, analyze problem, define ONE strategy               │
@@ -82,7 +119,6 @@ This skill is divided into **4 main phases** for creating new decks, plus **Phas
                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  PHASE 2: CONFIRM & PLAN                                                    │
-│  File: phases/02-confirm-and-plan.md                                        │
 │                                                                             │
 │  Trigger: Phase 1 complete                                                  │
 │  Actions: Present analysis to user, WAIT for confirmation, plan scenarios   │
@@ -93,18 +129,24 @@ This skill is divided into **4 main phases** for creating new decks, plus **Phas
                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  PHASE 3: GENERATE SLIDES                                                   │
-│  File: phases/03-generate-slides.md                                         │
+│  Reference: phases/03-generate-slides/ (folder with index.md + protocol.md) │
 │                                                                             │
 │  Trigger: User confirms in Phase 2                                          │
-│  Actions: Create 8-11 HTML slides following patterns                        │
+│  Actions: Create 14-16 PPTX-compatible HTML slides (960×540px)              │
 │  Output: HTML files written to src/app/presentations/{slug}/                │
 │  Done when: All slide files are written                                     │
+│                                                                             │
+│  IMPORTANT: Read phases/03-generate-slides/protocol.md for:                 │
+│  - Per-slide checkpoint protocol                                            │
+│  - PPTX constraints (dimensions, fonts, layout classes)                     │
+│  - Paired slide consistency rules                                           │
+│  - Pre-flight and completion checklists                                     │
 └─────────────────────────────────────────────────────────────────────────────┘
                                      │
                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  PHASE 4: SAVE TO DATABASE                                                  │
-│  File: phases/04-save-to-database.md                                        │
+│  Reference: scripts/sync-to-db.js                                           │
 │                                                                             │
 │  Trigger: All slides written in Phase 3                                     │
 │  Actions: Create metadata.json, sync to MongoDB                             │
@@ -114,7 +156,6 @@ This skill is divided into **4 main phases** for creating new decks, plus **Phas
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  PHASE 5: UPDATING EXISTING DECKS (Alternative Path)                        │
-│  File: phases/05-updating-decks.md                                          │
 │                                                                             │
 │  Trigger: User wants to modify an existing deck                             │
 │  Actions: Read existing slide, make targeted edits, sync to database        │
@@ -151,47 +192,58 @@ If you find an existing progress file when starting, READ IT and resume from whe
 
 When the user asks to create a worked example:
 
-**STEP 1:** Use the Read tool to read the Phase 1 instructions:
+**STEP 1:** Read the core instruction files:
 ```
-Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze.md
+Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/index.md
+Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/protocol.md
 ```
 
-**STEP 2:** Follow the instructions in that file completely.
+**STEP 2:** Follow the phase workflow below, using the prompts as your technical reference.
 
-**STEP 3:** At the end of each phase, the file will tell you which phase to read next.
+## Required Reading (Before Generating Slides)
 
-## Required Reading (Before Starting)
+Use the Read tool to read these files to understand the quality bar:
 
-**Before reading Phase 1**, use the Read tool to read these files. This establishes the quality bar and patterns you'll follow:
+1. **Problem Analysis Instructions** - How to analyze the math problem:
+   ```
+   Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/analyze-problem.md
+   ```
 
-1. **Pedagogical Framework** - The "why" behind the slide structure:
+2. **Slide Generation Protocol** - Per-slide checkpoint protocol and PPTX patterns:
+   ```
+   Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/protocol.md
+   ```
+
+3. **Pedagogical Framework** - The "why" behind the slide structure:
    ```
    Read: .claude/skills/create-worked-example-sg/reference/pedagogy.md
    ```
 
-2. **Styling Guide** - Core styling patterns:
+4. **Styling Reference** - Colors, fonts, layout classes:
    ```
    Read: .claude/skills/create-worked-example-sg/reference/styling.md
    ```
 
-3. **Complete Example** - See what a finished deck looks like:
-   ```
-   Read: .claude/skills/create-worked-example-sg/examples/example1.html
-   ```
-
-These files establish context that influences all phases. The pedagogy.md especially helps you understand the research-based reasoning behind the Four Rules.
+The `phases/03-generate-slides/protocol.md` file is the **primary technical reference** for creating slides. It contains the per-slide checkpoint protocol, PPTX constraints, paired slide consistency rules, and checklists.
 
 ## Reference Materials (Used in Phase 3)
 
-Templates you'll use when creating slides:
-- `templates/cfu-toggle-snippet.html` - CFU question toggle pattern
-- `templates/answer-toggle-snippet.html` - Answer reveal toggle pattern
-- `templates/printable-slide-snippet.html` - Printable worksheet layout
-- `templates/metadata.json` - Metadata file template
+**PPTX-Compatible Templates** (in `phases/03-generate-slides/templates/`):
+- `slide-base.html` - Base 960×540 structure with layout zones
+- `slide-learning-goal.html` - Opening slide with strategy badge
+- `slide-two-column.html` - 40%/60% visual + text layout
+- `slide-with-cfu.html` - Slide with static amber CFU box
+- `slide-with-answer.html` - Slide with static green answer box
+- `slide-practice.html` - Practice problem (zero scaffolding)
+- `printable-slide-snippet.html` - Printable worksheet (portrait, Times New Roman)
 
-Scripts:
+**Scripts:**
+- `scripts/generate-pptx.js` - HTML → PPTX conversion (uses pptxgenjs + html2pptx)
+- `scripts/validate-pptx.sh` - Visual validation (PPTX → PDF → images)
 - `scripts/sync-to-db.js` - Database sync script
-- `scripts/verify-worked-example.ts` - Verification script
+
+**Full Constraints Reference:**
+- `pptx.md` - Complete PPTX compatibility guide (dimensions, fonts, layout rules)
 
 Phase 3 will instruct you to read these templates before creating slides.
 
@@ -208,15 +260,26 @@ Phase 3 will instruct you to read these templates before creating slides.
 **Content:**
 - ✅ All required user inputs captured (learning goal, grade level, problem image)
 - ✅ 3 scenarios all use the SAME strategy (not different approaches)
-- ✅ First problem has 2-3 steps with Ask/Reveal pairs
+- ✅ First problem has 2-3 steps (each with Question → +CFU → Answer → +Answer slides)
 - ✅ CFU questions ask "why/how" not "what"
 - ✅ Practice problems can be solved using the exact same steps
 
 **Visual:**
-- ✅ Visual elements stay in same position across slides 2-6
+- ✅ Visual elements stay in same position across step slides
 - ✅ Practice slides have zero scaffolding
 - ✅ All math is accurate
 - ✅ HTML is valid and properly styled
+
+**PPTX Compatibility (CRITICAL):**
+- ✅ All slides are exactly 960×540px
+- ✅ All text is in `<p>`, `<h1-6>`, `<ul>`, or `<ol>` tags (NOT bare text in divs!)
+- ✅ Using `.row`/`.col` classes (NOT inline `display: flex`)
+- ✅ Web-safe fonts only: Arial, Georgia (no Roboto, no custom fonts)
+- ✅ Backgrounds/borders only on `<div>` elements (NOT on `<p>`, `<h1>`)
+- ✅ No manual bullet symbols (•, -, *) — use `<ul>/<ol>` lists
+- ✅ No JavaScript, no onclick, no CSS animations
+- ✅ CFU/Answer boxes are static (separate slides, no toggles)
+- ✅ Printable slide uses white background (#fff) and Times New Roman
 
 ## BEGIN
 
