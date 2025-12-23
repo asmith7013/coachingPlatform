@@ -53,31 +53,43 @@
   <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
     <!-- Practice Badge -->
     <div class="row items-center gap-md" style="margin-bottom: 8px;">
-      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+      <div data-pptx-region="badge"
+           data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+           style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
         <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">PRACTICE</p>
       </div>
     </div>
     <!-- Main Question/Action - PROMINENT -->
-    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <h1 data-pptx-region="title"
+        data-pptx-x="20" data-pptx-y="55" data-pptx-w="920" data-pptx-h="40"
+        style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
     <!-- Instruction Text -->
-    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+    <p data-pptx-region="subtitle"
+       data-pptx-x="20" data-pptx-y="100" data-pptx-w="920" data-pptx-h="30"
+       style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
   </div>
 
   <!-- Content Zone: Practice problem with zero scaffolding -->
   <div class="fill-height col" style="padding: 10px 20px;">
 
     <!-- Problem Statement -->
-    <div style="background: #f5f5f5; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+    <div data-pptx-region="problem-statement"
+         data-pptx-x="20" data-pptx-y="130" data-pptx-w="920" data-pptx-h="80"
+         style="background: #f5f5f5; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
       <p style="margin: 0; font-size: 16px; color: #1d1d1d; line-height: 1.6;">{{problem_statement}}</p>
     </div>
 
     <!-- Visual/Diagram Area (if applicable) -->
-    <div class="col center fill-height">
+    <div data-pptx-region="problem-visual"
+         data-pptx-x="20" data-pptx-y="220" data-pptx-w="920" data-pptx-h="230"
+         class="col center fill-height">
       {{problem_visual}}
     </div>
 
     <!-- Your Task Section -->
-    <div style="background: #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-top: 12px;">
+    <div data-pptx-region="task-instruction"
+         data-pptx-x="20" data-pptx-y="460" data-pptx-w="920" data-pptx-h="50"
+         style="background: #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-top: 12px;">
       <p style="margin: 0; font-size: 13px; color: #1d1d1d;">
         <strong>Your Task:</strong> {{task_instruction}}
       </p>
@@ -86,7 +98,9 @@
   </div>
 
   <!-- Label Zone (top right) -->
-  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+  <p data-pptx-region="footnote"
+     data-pptx-x="700" data-pptx-y="8" data-pptx-w="240" data-pptx-h="25"
+     style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
     {{footnote}}
   </p>
 

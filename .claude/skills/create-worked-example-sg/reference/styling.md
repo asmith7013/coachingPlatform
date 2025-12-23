@@ -208,6 +208,46 @@ Use these classes instead of inline flexbox:
 <div class="row">
 ```
 
+## PPTX Export Attributes (REQUIRED)
+
+Every slide element that needs precise positioning in PowerPoint must have `data-pptx-*` attributes:
+
+```html
+<div data-pptx-region="badge"
+     data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35">
+```
+
+| Attribute | Purpose |
+|-----------|---------|
+| `data-pptx-region` | Region type (badge, title, subtitle, content, cfu-box, answer-box, svg-container, footnote) |
+| `data-pptx-x` | X position in pixels (0-960) |
+| `data-pptx-y` | Y position in pixels (0-540) |
+| `data-pptx-w` | Width in pixels |
+| `data-pptx-h` | Height in pixels |
+
+**Standard positions:**
+
+| Region | x | y | w | h |
+|--------|---|---|---|---|
+| Badge | 20 | 16 | 180 | 35 |
+| Title | 20 | 55 | 920 | 40 |
+| Subtitle | 20 | 100 | 920 | 30 |
+| Content | 20 | 130 | 920 | 370 |
+| CFU/Answer Box | 653 | 40 | 280 | 115 |
+| Footnote | 700 | 8 | 240 | 25 |
+
+**SVG Layer Attributes (for multi-layer export):**
+
+```html
+<g data-pptx-layer="base-graph"><!-- Grid, axes --></g>
+<g data-pptx-layer="data"><!-- Lines, points --></g>
+<g data-pptx-layer="annotation"><!-- Labels, arrows --></g>
+```
+
+Each layer becomes a separate transparent PNG that can be moved independently in PowerPoint.
+
+---
+
 ## Common Mistakes to Avoid
 
 1. **Text outside proper tags**: All text MUST be in `<p>`, `<h1-6>`, `<ul>`, `<ol>`
@@ -217,6 +257,7 @@ Use these classes instead of inline flexbox:
 5. **Backgrounds on text elements**: Only use on `<div>`, not on `<p>` or `<h1>`
 6. **Wrong dimensions**: Body MUST be exactly 960×540px
 7. **Custom fonts**: Only Arial, Georgia, Courier New
+8. **Missing data-pptx attributes**: Every positioned element needs `data-pptx-region` and position attributes
 
 ## Annotation Techniques
 

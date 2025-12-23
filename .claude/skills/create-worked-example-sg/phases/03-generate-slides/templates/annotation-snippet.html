@@ -5,6 +5,11 @@
   Annotations must use the SAME pixel formula as the graph.
   This ensures labels appear at the correct y-intercept positions.
 
+  PPTX LAYER: All annotation elements should be wrapped in:
+    <g data-pptx-layer="annotation">...</g>
+  This allows the export to capture annotations as a separate
+  transparent PNG that can be moved independently in PowerPoint.
+
   STEP 1: Know your graph constants (from svg-graphs.md)
     ORIGIN_Y = 170      (pixel y for data y=0)
     PLOT_HEIGHT = 150   (pixels from y=0 to y=max)
@@ -35,24 +40,27 @@
   Arrow positions: x=25, from pixelY1 to pixelY2
 -->
 
-<!-- Arrow marker definition (use ONCE per SVG) -->
+<!-- Arrow marker definition (add to <defs> section, use ONCE per SVG) -->
 <defs>
-  <marker id="arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+  <marker id="annotation-arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
     <polygon points="0 0, 6 2, 0 4" fill="#ef4444"/>
   </marker>
 </defs>
 
-<!-- Y-intercept label at y=0 (pixelY=170) -->
-<text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
+<!-- ===== WRAP ALL ANNOTATIONS IN THIS GROUP ===== -->
+<g data-pptx-layer="annotation">
+  <!-- Y-intercept label at y=0 (pixelY=170) -->
+  <text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
 
-<!-- Y-intercept label at y=20 (pixelY=110) -->
-<text x="5" y="110" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 20</text>
+  <!-- Y-intercept label at y=20 (pixelY=110) -->
+  <text x="5" y="110" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 20</text>
 
-<!-- Arrow showing shift from y=0 to y=20 -->
-<line x1="25" y1="170" x2="25" y2="115" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- Arrow showing shift from y=0 to y=20 -->
+  <line x1="25" y1="170" x2="25" y2="115" stroke="#ef4444" stroke-width="2" marker-end="url(#annotation-arrow)"/>
 
-<!-- Arrow label (midpoint: (170+110)/2 = 140) -->
-<text x="5" y="140" fill="#ef4444" font-family="Arial" font-size="9" font-weight="normal">+20</text>
+  <!-- Arrow label (midpoint: (170+110)/2 = 140) -->
+  <text x="5" y="140" fill="#ef4444" font-family="Arial" font-size="9" font-weight="normal">+20</text>
+</g>
 
 
 <!-- ========== POSITION REFERENCE ========== -->

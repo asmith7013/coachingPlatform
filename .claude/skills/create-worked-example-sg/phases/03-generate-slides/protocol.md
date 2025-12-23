@@ -4,15 +4,28 @@
 
 ---
 
+## ⚠️ API MODE vs CLI MODE
+
+**API Mode (browser wizard):** Your response is collected as a single stream.
+- Output ONLY HTML slides separated by `===SLIDE_SEPARATOR===`
+- NO preamble, NO announcements, NO "I'll generate..." text
+- First characters of response MUST be `<!DOCTYPE html>`
+
+**CLI Mode (file-by-file):** You write individual files with the Write tool.
+- Announce checkpoints as conversational text between file writes
+- Each file starts with `<!DOCTYPE html>`
+
+---
+
 ## 🔄 PER-SLIDE PROTOCOL (MANDATORY for EVERY Slide)
 
 **For each slide you generate, follow this exact sequence.**
 
-### Step 1: Announce Checkpoint (TEXT to user, NOT in file)
+### Step 1: Announce Checkpoint (CLI MODE ONLY - NOT for API mode)
 
-**⚠️ CRITICAL: This is conversational text you say to the user, NOT HTML to write to the file.**
+**⚠️ CRITICAL: Skip this step entirely in API mode. Only do this in CLI mode.**
 
-Before writing each slide file, announce what you're about to do in plain text:
+**CLI Mode:** Before writing each slide file, announce what you're about to do:
 
 ```
 SLIDE [N]: [Type Name]
@@ -85,7 +98,7 @@ Annotations: READ templates/annotation-snippet.html → add y-intercept labels
 
 **CFU Box (for slides 4, 8, 12) - ABSOLUTE POSITIONED TOP RIGHT:**
 ```html
-<div style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+<div data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
   <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
   <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[CFU question using strategy verb]</p>
 </div>
@@ -93,7 +106,7 @@ Annotations: READ templates/annotation-snippet.html → add y-intercept labels
 
 **Answer Box (for slides 6, 10) - ABSOLUTE POSITIONED TOP RIGHT:**
 ```html
-<div style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+<div data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
   <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
   <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[Answer explanation]</p>
 </div>
@@ -225,9 +238,16 @@ This HTML file is your **starting point**. It contains:
 - [ ] No JavaScript, onclick, or animations
 - [ ] Light theme (white #ffffff, dark text #1d1d1d)
 
+**PPTX Export (data-pptx attributes):**
+- [ ] Key regions have `data-pptx-region`, `data-pptx-x/y/w/h` attributes
+- [ ] Badge: `data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"`
+- [ ] Title: `data-pptx-x="20" data-pptx-y="55" data-pptx-w="920" data-pptx-h="40"`
+- [ ] Subtitle: `data-pptx-x="20" data-pptx-y="100" data-pptx-w="920" data-pptx-h="30"`
+- [ ] CFU/Answer boxes: `data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"`
+
 **If SVG visual:**
 - [ ] Read `visuals/svg-graphs.md` first
-- [ ] SVG wrapped in container with `data-svg-region="true"`
+- [ ] SVG wrapped in container with `data-pptx-region="svg-container"` and position attributes
 - [ ] All `<text>` elements have `font-family="Arial"`
 - [ ] SVG container in SAME position as other step slides
 
