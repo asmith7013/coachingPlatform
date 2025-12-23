@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ReactQueryDevtools as _ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { initializeQuerySystem } from '@query/core/initialization';
 import { captureError, createErrorContext } from '@error';
 import { createQueryClient } from '@/query/core/client';
@@ -35,7 +35,11 @@ export function QueryProvider({ children }: QueryProviderProps) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools
+        initialIsOpen={false}
+        buttonPosition="bottom-right"
+        position="right"
+      /> */}
     </QueryClientProvider>
   );
 }

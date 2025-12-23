@@ -154,19 +154,28 @@ Visual Type: [HTML/CSS | HTML diagrams | SVG graphs]
 
 GRAPH PLAN (only if Visual Type is SVG graphs):
 ===============================================
-Equations:
-- Line 1: [equation] ([color])
-- Line 2: [equation] ([color])
+Equations (with EXPLICIT slope and y-intercept):
+- Line 1: [equation], slope=[m], y-intercept=[b] ([color])
+- Line 2: [equation], slope=[m], y-intercept=[b] ([color])
 
 Scale:
-- X range: 0 to [X_MAX]
-- Y range: 0 to [Y_MAX]
+- X_MAX: [rightmost x-value]
+- Y_MAX: [top y-value, rounded to nice number]
+- X-axis labels: [list]
 - Y-axis labels: [list]
+
+Key Points (CALCULATE THESE - ensures math accuracy):
+- Line 1 at x=0: y=[calculated]
+- Line 1 at x=[X_MAX/2]: y=[calculated]
+- Line 1 at x=[X_MAX]: y=[calculated]
+- Line 2 at x=0: y=[calculated]
+- Line 2 at x=[X_MAX/2]: y=[calculated]
+- Line 2 at x=[X_MAX]: y=[calculated]
 
 Annotation:
 - Relationship to show: [what mathematical concept]
-- Annotation type: [y-intercept shift / parallel label / slope comparison / etc.]
-- Position: [where on graph]
+- Annotation type: [y-intercept-shift / parallel-label / slope-comparison / etc.]
+- Label text: [e.g., "+20"]
 ```
 
 ---

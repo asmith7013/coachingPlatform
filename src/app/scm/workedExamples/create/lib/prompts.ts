@@ -90,7 +90,28 @@ You MUST return valid JSON matching this exact structure:
     "commonMistakes": ["mistake 1", "mistake 2"],
     "requiredPriorKnowledge": ["prereq 1", "prereq 2"],
     "answerFormat": "how answer should be presented",
-    "visualType": "HTML/CSS" | "HTML diagrams" | "SVG graphs"
+    "visualType": "HTML/CSS" | "HTML diagrams" | "SVG graphs",
+    "graphPlan": {
+      "equations": [
+        { "label": "Line 1", "equation": "y = mx + b", "slope": 5, "yIntercept": 0, "color": "#60a5fa" },
+        { "label": "Line 2", "equation": "y = mx + b", "slope": 5, "yIntercept": 20, "color": "#22c55e" }
+      ],
+      "scale": {
+        "xMax": 8,
+        "yMax": 50,
+        "xAxisLabels": [0, 2, 4, 6, 8],
+        "yAxisLabels": [0, 10, 20, 30, 40, 50]
+      },
+      "keyPoints": [
+        { "label": "y-intercept Line 1", "x": 0, "y": 0, "dataX": 0, "dataY": 0 },
+        { "label": "y-intercept Line 2", "x": 0, "y": 20, "dataX": 0, "dataY": 20 },
+        { "label": "Line 1 at x=4", "x": 4, "y": 20, "dataX": 4, "dataY": 20 },
+        { "label": "Line 2 at x=4", "x": 4, "y": 40, "dataX": 4, "dataY": 40 }
+      ],
+      "annotations": [
+        { "type": "y-intercept-shift", "from": 0, "to": 20, "label": "+20" }
+      ]
+    }
   },
   "strategyDefinition": {
     "name": "Clear Strategy Name (e.g., 'Balance and Isolate')",
@@ -295,6 +316,12 @@ export function buildGenerateSlidesPrompt(
     mathematicalStructure: string;
     solution: { step: number; description: string; reasoning: string }[];
     visualType: 'HTML/CSS' | 'HTML diagrams' | 'SVG graphs';
+    graphPlan?: {
+      equations: { label: string; equation: string; slope: number; yIntercept: number; color: string }[];
+      scale: { xMax: number; yMax: number; xAxisLabels: number[]; yAxisLabels: number[] };
+      keyPoints: { label: string; x: number; y: number; dataX: number; dataY: number }[];
+      annotations: { type: string; from?: number; to?: number; label: string; position?: string }[];
+    };
   },
   strategyDefinition: {
     name: string;
@@ -311,6 +338,34 @@ export function buildGenerateSlidesPrompt(
     description: string;
   }[]
 ): string {
+  // Build graph plan section if visualType is SVG graphs
+  let graphPlanSection = '';
+  if (problemAnalysis.visualType === 'SVG graphs' && problemAnalysis.graphPlan) {
+    const gp = problemAnalysis.graphPlan;
+    graphPlanSection = `
+## 📊 GRAPH PLAN (PRE-CALCULATED - USE THESE VALUES)
+
+**Equations (with slope and y-intercept):**
+${gp.equations.map(e => `- ${e.label}: ${e.equation} | slope=${e.slope}, y-intercept=${e.yIntercept} | color: ${e.color}`).join('\n')}
+
+**Scale:**
+- X_MAX: ${gp.scale.xMax}
+- Y_MAX: ${gp.scale.yMax}
+- X-axis labels: ${gp.scale.xAxisLabels.join(', ')}
+- Y-axis labels: ${gp.scale.yAxisLabels.join(', ')}
+
+**Key Points (PRE-CALCULATED - ensures math accuracy):**
+${gp.keyPoints.map(p => `- ${p.label}: (${p.x}, ${p.y})`).join('\n')}
+
+**Annotations:**
+${gp.annotations.map(a => `- Type: ${a.type}, Label: "${a.label}"${a.from !== undefined ? `, from y=${a.from} to y=${a.to}` : ''}`).join('\n')}
+
+**⚠️ CRITICAL: When drawing the graph, use the keyPoints above.**
+- For line endpoints, calculate: pixelX = 40 + (dataX / ${gp.scale.xMax}) * 220, pixelY = 170 - (dataY / ${gp.scale.yMax}) * 150
+- DO NOT derive positions from scratch - use the pre-calculated values above
+`;
+  }
+
   return `Generate HTML slides for this worked example.
 
 ## Context
@@ -324,6 +379,7 @@ export function buildGenerateSlidesPrompt(
 - Visual Type: ${problemAnalysis.visualType}
 - Solution Steps:
 ${problemAnalysis.solution.map(s => `  ${s.step}. ${s.description} (${s.reasoning})`).join('\n')}
+${graphPlanSection}
 
 ## Strategy
 - Name: ${strategyDefinition.name}

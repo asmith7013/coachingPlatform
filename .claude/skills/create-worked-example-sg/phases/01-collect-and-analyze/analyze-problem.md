@@ -98,8 +98,48 @@ These step verbs MUST:
 
 ### STEP 6: Determine Visual Type
 - **HTML/CSS**: Tables, text problems, static equations
-- **P5.js**: Hanger diagrams, geometric shapes, balance problems
-- **D3.js**: Coordinate planes, graphs, data visualizations
+- **HTML diagrams**: Hanger diagrams, geometric shapes, balance problems
+- **SVG graphs**: Coordinate planes, linear equations, graphs, data visualizations
+
+### STEP 7: Graph Planning (REQUIRED if Visual Type is "SVG graphs")
+
+**IF you selected "SVG graphs" above, you MUST complete graph planning NOW.**
+
+This ensures the math is calculated BEFORE slide generation:
+
+**7a: List Your Equations**
+Write out every line/equation that will appear:
+```
+Line 1: y = [equation] (e.g., y = 5x)
+Line 2: y = [equation] (e.g., y = 5x + 20)
+```
+
+**7b: Calculate Key Data Points**
+For EACH line, calculate y at key x values:
+```
+Line 1: y = 5x
+  - At x=0: y = 0 (y-intercept)
+  - At x=4: y = 20
+  - At x=8: y = 40
+
+Line 2: y = 5x + 20
+  - At x=0: y = 20 (y-intercept)
+  - At x=4: y = 40
+  - At x=8: y = 60
+```
+
+**7c: Determine Scale**
+- X_MAX: rightmost x-value needed (common: 4, 6, 8, 10)
+- Y_MAX: round up largest y-value to nearest nice number (20, 40, 50, 80, 100)
+
+**7d: Plan Annotations**
+What mathematical relationship to show?
+- Y-intercept shift (vertical arrow showing difference)
+- Parallel lines (same slope label)
+- Slope comparison
+- Intersection point
+
+**Include these calculated values in the graphPlan field of your output.**
 
 ---
 
@@ -114,3 +154,8 @@ These step verbs MUST:
 - [ ] CFU question templates reference strategy verbs
 - [ ] ALL 3 scenarios use DIFFERENT contexts from the mastery check
 - [ ] All scenarios use the SAME mathematical structure and strategy
+- [ ] **IF visualType is "SVG graphs":**
+  - [ ] graphPlan.equations has ALL lines with slope and y-intercept values
+  - [ ] graphPlan.keyPoints has calculated y-values at key x positions
+  - [ ] graphPlan.scale has xMax and yMax properly rounded
+  - [ ] graphPlan.annotations describes the mathematical relationship to highlight

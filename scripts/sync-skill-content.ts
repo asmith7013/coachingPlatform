@@ -430,18 +430,13 @@ ${escapeForTemplateLiteral(graphPlanningMarkdown.trim())}
 // ============================================================================
 
 function syncPrompts() {
-  const promptsDir = path.join(CLI_SKILL_DIR, 'prompts');
   const outputFile = path.join(TS_SKILL_DIR, 'prompts.ts');
 
-  // Check if prompts directory exists
-  if (!fs.existsSync(promptsDir)) {
-    console.log('⚠️  No prompts/ directory found, skipping prompts sync');
-    return;
-  }
-
-  // Read prompt markdown files
-  const analyzePromptPath = path.join(promptsDir, 'analyze-problem.md');
-  const generatePromptPath = path.join(promptsDir, 'generate-slides.md');
+  // Read prompt markdown files from their actual locations in phases/
+  // Phase 1: analyze-problem.md contains problem analysis instructions
+  const analyzePromptPath = path.join(CLI_SKILL_DIR, 'phases/01-collect-and-analyze/analyze-problem.md');
+  // Phase 3: protocol.md contains slide generation instructions (the primary technical reference)
+  const generatePromptPath = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/protocol.md');
 
   const analyzePrompt = fs.existsSync(analyzePromptPath)
     ? escapeForTemplateLiteral(fs.readFileSync(analyzePromptPath, 'utf-8'))
@@ -455,7 +450,10 @@ function syncPrompts() {
  *
  * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
  *
- * Source of truth: .claude/skills/create-worked-example-sg/prompts/
+ * Source of truth:
+ *   - .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/analyze-problem.md
+ *   - .claude/skills/create-worked-example-sg/phases/03-generate-slides/protocol.md
+ *
  * To update: Edit the markdown files in the source folder, then run:
  *   npx tsx scripts/sync-skill-content.ts
  *
@@ -474,7 +472,7 @@ function syncPrompts() {
  * Analyze Problem Instructions
  * Step-by-step guide for analyzing a mastery check question.
  *
- * Source: .claude/skills/create-worked-example-sg/prompts/analyze-problem.md
+ * Source: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/analyze-problem.md
  */
 export const ANALYZE_PROBLEM_INSTRUCTIONS = \`
 ${analyzePrompt.trim()}
@@ -485,7 +483,7 @@ ${analyzePrompt.trim()}
  * Step-by-step guide for creating HTML slides.
  * Includes PPTX constraints, SVG patterns, and validation checklists.
  *
- * Source: .claude/skills/create-worked-example-sg/prompts/generate-slides.md
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/protocol.md
  */
 export const GENERATE_SLIDES_INSTRUCTIONS = \`
 ${generatePrompt.trim()}

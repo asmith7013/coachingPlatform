@@ -7,6 +7,7 @@ import { SectionAccordion } from '@/components/composed/section-visualization';
 import type { WizardStateHook } from '../hooks/useWizardState';
 import type { Scenario } from '../lib/types';
 import type { HtmlSlide } from '@zod-schema/worked-example-deck';
+import { WizardStickyFooter } from './WizardStickyFooter';
 
 interface Step2AnalysisProps {
   wizard: WizardStateHook;
@@ -208,31 +209,12 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
         }
       }
 
-      // Process any remaining data in the buffer after stream ends
-      if (buffer.trim()) {
-        const finalLines = buffer.split('\n');
-        let currentEvent = '';
-        let currentData = '';
-
-        for (const line of finalLines) {
-          if (line.startsWith('event: ')) {
-            currentEvent = line.slice(7);
-          } else if (line.startsWith('data: ')) {
-            currentData = line.slice(6);
-
-            if (currentEvent && currentData) {
-              try {
-                const data = JSON.parse(currentData);
-                handleSSEEvent(currentEvent, data, startTime, estimatedSlideCount, mode, existingSlides);
-              } catch (e) {
-                console.warn('Failed to parse final SSE data:', e);
-              }
-            }
-
-            currentEvent = '';
-            currentData = '';
-          }
-        }
+      // Stream ended - if we have slides, proceed to next step
+      // (The 'complete' event has a huge payload that may not parse correctly across chunks)
+      if (accumulatedSlidesRef.current.length > 0) {
+        setSlides([...accumulatedSlidesRef.current]);
+        setLoadingProgress({ phase: 'idle', message: '' });
+        nextStep();
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
@@ -561,9 +543,9 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                         <div className="space-y-1">
                           <div className="font-medium text-gray-700">X-Axis</div>
                           <div>
-                            <span className="text-gray-500">Range:</span>
+                            <span className="text-gray-500">Max:</span>
                             <span className="ml-1 text-gray-700">
-                              {problemAnalysis.graphPlan.scale.xRange[0]} to {problemAnalysis.graphPlan.scale.xRange[1]}
+                              {problemAnalysis.graphPlan.scale.xMax}
                             </span>
                           </div>
                           {problemAnalysis.graphPlan.scale.xAxisLabels && (
@@ -574,22 +556,14 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                               </span>
                             </div>
                           )}
-                          {problemAnalysis.graphPlan.scale.xScale && (
-                            <div>
-                              <span className="text-gray-500">Scale:</span>
-                              <span className="ml-1 text-gray-700">
-                                {problemAnalysis.graphPlan.scale.xScale} per gridline
-                              </span>
-                            </div>
-                          )}
                         </div>
                         {/* Y-Axis */}
                         <div className="space-y-1">
                           <div className="font-medium text-gray-700">Y-Axis</div>
                           <div>
-                            <span className="text-gray-500">Range:</span>
+                            <span className="text-gray-500">Max:</span>
                             <span className="ml-1 text-gray-700">
-                              {problemAnalysis.graphPlan.scale.yRange[0]} to {problemAnalysis.graphPlan.scale.yRange[1]}
+                              {problemAnalysis.graphPlan.scale.yMax}
                             </span>
                           </div>
                           <div>
@@ -598,40 +572,29 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                               {problemAnalysis.graphPlan.scale.yAxisLabels.join(', ')}
                             </span>
                           </div>
-                          {problemAnalysis.graphPlan.scale.yScale && (
-                            <div>
-                              <span className="text-gray-500">Scale:</span>
-                              <span className="ml-1 text-gray-700">
-                                {problemAnalysis.graphPlan.scale.yScale} per gridline
-                              </span>
-                            </div>
-                          )}
                         </div>
                       </div>
                     </div>
 
-                    {/* Annotation */}
+                    {/* Annotations */}
+                    {problemAnalysis.graphPlan.annotations && problemAnalysis.graphPlan.annotations.length > 0 && (
                     <div>
-                      <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Annotation</h5>
+                      <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Annotations</h5>
                       <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
-                        <div className="text-sm space-y-1">
-                          <div>
-                            <span className="text-gray-500">Relationship:</span>
-                            <span className="ml-1 text-gray-700">{problemAnalysis.graphPlan.annotation.relationshipToShow}</span>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">Type:</span>
-                            <Badge intent="info" size="xs" className="ml-1">
-                              {problemAnalysis.graphPlan.annotation.annotationType}
-                            </Badge>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">Position:</span>
-                            <span className="ml-1 text-gray-700">{problemAnalysis.graphPlan.annotation.position}</span>
-                          </div>
+                        <div className="text-sm space-y-2">
+                          {problemAnalysis.graphPlan.annotations.map((ann, idx) => (
+                            <div key={idx} className="flex items-center gap-2">
+                              <Badge intent="info" size="xs">{ann.type}</Badge>
+                              <span className="text-gray-700">{ann.label}</span>
+                              {ann.from !== undefined && ann.to !== undefined && (
+                                <span className="text-gray-500 text-xs">(y: {ann.from} → {ann.to})</span>
+                              )}
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -725,82 +688,110 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
       {/* Sticky Footer - AI Edit (only when not loading) */}
       {!state.isLoading && (
-        <div className="fixed bottom-0 left-0 right-0 z-20 border-t shadow-lg bg-white">
-          <div className={`px-6 py-3 ${
-            isAiEditing ? 'bg-purple-100' : 'bg-purple-50'
-          }`}>
-            {isAiEditing ? (
-              <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-purple-600 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+        <WizardStickyFooter theme="purple" isActive={isAiEditing}>
+          {isAiEditing ? (
+            <div className="flex items-center gap-3">
+              <svg className="w-5 h-5 text-purple-600 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              <span className="text-sm text-purple-800 flex-1">Editing: {aiEditPrompt}</span>
+            </div>
+          ) : (
+            <div className="flex gap-3 items-center">
+              {/* Back button on left */}
+              <button
+                onClick={prevStep}
+                className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer border border-gray-300"
+              >
+                Back
+              </button>
+              <input
+                type="text"
+                value={aiEditPrompt}
+                onChange={(e) => setAiEditPrompt(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && aiEditPrompt.trim() && handleAiEdit()}
+                placeholder="AI Edit: describe corrections (e.g., 'The answer should be 42')"
+                className="flex-1 px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white"
+              />
+              <button
+                onClick={handleAiEdit}
+                disabled={!aiEditPrompt.trim()}
+                className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg cursor-pointer disabled:cursor-not-allowed flex items-center gap-1.5"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                <span className="text-sm text-purple-800 flex-1">Editing: {aiEditPrompt}</span>
-              </div>
-            ) : (
-              <div className="flex gap-3 items-center">
-                <input
-                  type="text"
-                  value={aiEditPrompt}
-                  onChange={(e) => setAiEditPrompt(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && aiEditPrompt.trim() && handleAiEdit()}
-                  placeholder="AI Edit: describe corrections (e.g., 'The answer should be 42')"
-                  className="flex-1 px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white"
-                />
-                <button
-                  onClick={handleAiEdit}
-                  disabled={!aiEditPrompt.trim()}
-                  className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg cursor-pointer disabled:cursor-not-allowed flex items-center gap-1.5"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  Apply
-                </button>
-                {/* Show Continue + Regenerate if slides exist, otherwise just Generate */}
-                {state.slides.length > 0 ? (
-                  <>
-                    <button
-                      onClick={() => handleGenerateSlides(false, 'continue')}
-                      disabled={state.isLoading}
-                      className="px-5 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Continue ({state.slides.length} slides)
-                    </button>
-                    <button
-                      onClick={() => handleGenerateSlides(false, 'full')}
-                      disabled={state.isLoading}
-                      className="px-4 py-2 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors text-sm"
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      Regenerate All
-                    </button>
-                  </>
-                ) : (
+                Apply
+              </button>
+              {/* Show different buttons based on slide count */}
+              {state.slides.length >= 15 ? (
+                // All slides exist - just show Review + Regenerate
+                <>
+                  <button
+                    onClick={nextStep}
+                    className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Review Slides ({state.slides.length})
+                  </button>
                   <button
                     onClick={() => handleGenerateSlides(false, 'full')}
                     disabled={state.isLoading}
-                    className="px-5 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
+                    className="px-4 py-2 text-sm bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Generate Slides
+                    Regenerate All
                   </button>
-                )}
-              </div>
-            )}
-            {aiEditError && (
-              <p className="mt-2 text-sm text-red-600">{aiEditError}</p>
-            )}
-          </div>
-        </div>
+                </>
+              ) : state.slides.length > 0 ? (
+                // Partial slides - show Continue + Regenerate
+                <>
+                  <button
+                    onClick={() => handleGenerateSlides(false, 'continue')}
+                    disabled={state.isLoading}
+                    className="px-4 py-2 text-sm bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Continue ({state.slides.length}/15)
+                  </button>
+                  <button
+                    onClick={() => handleGenerateSlides(false, 'full')}
+                    disabled={state.isLoading}
+                    className="px-4 py-2 text-sm bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Regenerate All
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => handleGenerateSlides(false, 'full')}
+                  disabled={state.isLoading}
+                  className="px-5 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Generate Slides
+                </button>
+              )}
+            </div>
+          )}
+          {aiEditError && (
+            <p className="mt-2 text-sm text-red-600">{aiEditError}</p>
+          )}
+        </WizardStickyFooter>
       )}
     </div>
   );

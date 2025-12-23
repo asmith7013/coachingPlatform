@@ -1041,7 +1041,7 @@ export const GRAPH_SNIPPET = `
   ============================================================
 -->
 
-<svg viewBox="0 0 280 200" style="width: 100%; max-height: 160px;">
+<svg viewBox="0 0 280 200" style="width: 100%; height: 340px;">
     <!--
     This example uses:
     X_MAX = 8, Y_MAX = 80

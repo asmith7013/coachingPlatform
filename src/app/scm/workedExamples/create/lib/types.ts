@@ -7,24 +7,36 @@ export type GradeLevel = '6' | '7' | '8' | 'Algebra 1';
 export type VisualType = 'HTML/CSS' | 'HTML diagrams' | 'SVG graphs';
 
 // Graph plan for coordinate plane visualizations (required when visualType is 'SVG graphs')
+// This captures pre-calculated mathematical data to ensure accurate graph generation
 export interface GraphPlan {
   equations: {
-    equation: string;
-    color: string;
+    label: string;      // e.g., "Line 1", "Standard Mode"
+    equation: string;   // e.g., "y = 5x + 20"
+    slope: number;      // e.g., 5 (the 'm' in y = mx + b)
+    yIntercept: number; // e.g., 20 (the 'b' in y = mx + b)
+    color: string;      // e.g., "#60a5fa" (blue) or "#22c55e" (green)
   }[];
   scale: {
-    xRange: [number, number]; // [min, max]
-    xAxisLabels: number[];
-    xScale: number; // increment between x-axis labels
-    yRange: [number, number]; // [min, max]
-    yAxisLabels: number[];
-    yScale: number; // increment between y-axis labels
+    xMax: number;        // Rightmost x-value (e.g., 8)
+    yMax: number;        // Top y-value (e.g., 50)
+    xAxisLabels: number[]; // e.g., [0, 2, 4, 6, 8]
+    yAxisLabels: number[]; // e.g., [0, 10, 20, 30, 40, 50]
   };
-  annotation: {
-    relationshipToShow: string;
-    annotationType: 'y-intercept shift' | 'parallel label' | 'slope comparison' | 'intersection point' | 'slope triangle' | 'other';
-    position: string;
-  };
+  // Pre-calculated key points to ensure math accuracy
+  keyPoints: {
+    label: string;  // e.g., "y-intercept Line 1", "Line 1 at x=4"
+    x: number;      // data x-value
+    y: number;      // data y-value (calculated from equation)
+    dataX: number;  // same as x (for clarity in pixel calculation)
+    dataY: number;  // same as y (for clarity in pixel calculation)
+  }[];
+  annotations: {
+    type: 'y-intercept-shift' | 'parallel-label' | 'slope-comparison' | 'intersection-point' | 'slope-triangle' | 'point-label';
+    from?: number;   // Starting y-value for shift arrows
+    to?: number;     // Ending y-value for shift arrows
+    label: string;   // Text to display (e.g., "+20")
+    position?: string; // Optional position hint
+  }[];
 }
 
 // Problem analysis from Claude
