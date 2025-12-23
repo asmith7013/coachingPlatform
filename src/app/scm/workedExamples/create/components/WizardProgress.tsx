@@ -34,9 +34,15 @@ export function WizardProgress({ currentStep, onStepClick, isLoading = false }: 
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm mb-6 overflow-hidden sticky top-0 z-10">
-      <nav aria-label="Progress">
-        <ol role="list" className="flex relative items-stretch">
+    <div className="mb-6">
+      {/* Title - scrolls away */}
+      <div className="bg-white rounded-t-lg px-6 py-4 border border-gray-200">
+        <h1 className="text-xl font-bold text-gray-900">Create Worked Example</h1>
+      </div>
+      {/* Steps - sticky */}
+      <div className="bg-white rounded-b-lg shadow-sm overflow-hidden sticky top-0 z-10 border border-gray-200 -mt-px">
+        <nav aria-label="Progress">
+          <ol role="list" className="flex relative items-stretch">
           {STEPS.map((step, index) => {
             const clickable = isClickable(step.number);
             const isCompleted = step.number < currentStep;
@@ -147,8 +153,9 @@ export function WizardProgress({ currentStep, onStepClick, isLoading = false }: 
               </li>
             );
           })}
-        </ol>
-      </nav>
+          </ol>
+        </nav>
+      </div>
     </div>
   );
 }

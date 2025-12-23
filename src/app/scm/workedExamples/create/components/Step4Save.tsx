@@ -25,6 +25,51 @@ export function Step4Save({ wizard }: Step4SaveProps) {
   } = wizard;
 
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  // Handle export to PPTX
+  const handleExportPptx = async () => {
+    if (state.slides.length === 0) {
+      setError('No slides to export');
+      return;
+    }
+
+    setIsExporting(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/scm/worked-examples/export-pptx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slides: state.slides,
+          title: state.title || 'worked-example',
+          mathConcept: state.mathConcept,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate PPTX');
+      }
+
+      // Download the file
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${(state.title || 'worked-example').replace(/[^a-zA-Z0-9-]/g, '-')}.pptx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Export error:', error);
+      setError(error instanceof Error ? error.message : 'Failed to export PPTX');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // Handle save
   const handleSave = async () => {
@@ -237,14 +282,36 @@ export function Step4Save({ wizard }: Step4SaveProps) {
       <div className="flex gap-4 pt-6">
         <button
           onClick={prevStep}
-          disabled={state.isLoading}
-          className="flex-1 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer border border-gray-300"
+          disabled={state.isLoading || isExporting}
+          className="bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer border border-gray-300"
         >
           Back
         </button>
         <button
+          onClick={handleExportPptx}
+          disabled={state.isLoading || isExporting || state.slides.length === 0}
+          className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
+        >
+          {isExporting ? (
+            <>
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              <span>Exporting...</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <span>Export PPTX</span>
+            </>
+          )}
+        </button>
+        <button
           onClick={handleSave}
-          disabled={state.isLoading}
+          disabled={state.isLoading || isExporting}
           className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
         >
           {state.isLoading ? (

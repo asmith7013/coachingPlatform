@@ -87,18 +87,18 @@
   <!-- Content Zone: 110-490px (380px height) -->
   <div class="fill-height col" style="padding: 10px 20px;">
     {{content}}
-
-    <!-- Static Answer Box (visible, no toggle) -->
-    <div style="background: #dcfce7; border-radius: 8px; padding: 16px; margin-top: 12px; border-left: 4px solid #22c55e;">
-      <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
-      <p style="margin: 0; font-size: 14px; color: #1d1d1d;">{{answer}}</p>
-    </div>
   </div>
 
-  <!-- Footnote Zone: 500-540px (40px height) -->
+  <!-- Label Zone (top right) -->
   <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
     {{footnote}}
   </p>
+
+  <!-- Answer Box (ABSOLUTE POSITIONED TOP RIGHT, ON TOP OF CONTENT) -->
+  <div style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+    <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
+    <p style="margin: 0; font-size: 14px; color: #1d1d1d;">{{answer}}</p>
+  </div>
 
 </body>
 </html>

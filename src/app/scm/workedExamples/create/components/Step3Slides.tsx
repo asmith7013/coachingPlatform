@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { WizardStateHook } from '../hooks/useWizardState';
 import { SlidePreview } from './SlidePreview';
+import { WizardStickyFooter } from './WizardStickyFooter';
 
 interface Step3SlidesProps {
   wizard: WizardStateHook;
@@ -262,63 +263,59 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         </div>
       )}
 
-      {/* Navigation */}
-      <div className="flex gap-4 pt-6">
-        <button
-          onClick={prevStep}
-          className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer border border-gray-300"
-        >
-          Back
-        </button>
-        <button
-          onClick={nextStep}
-          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer"
-        >
-          Continue to Save
-        </button>
-      </div>
-
-      {/* Sticky Footer - AI Edit */}
-      <div className="fixed bottom-0 left-0 right-0 z-20 border-t shadow-lg bg-white">
-        <div className={`px-6 py-3 ${isAiLoading ? 'bg-purple-100' : 'bg-purple-50'}`}>
-          {isAiLoading ? (
-            <div className="flex items-center gap-3">
-              <svg className="w-5 h-5 text-purple-600 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+      {/* Sticky Footer - AI Edit with Navigation */}
+      <WizardStickyFooter theme="purple" isActive={isAiLoading}>
+        {isAiLoading ? (
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 text-purple-600 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg>
+            <span className="text-sm text-purple-800 flex-1">Editing slide {selectedSlideIndex + 1}: {aiEditPrompt}</span>
+          </div>
+        ) : (
+          <div className="flex gap-3 items-center">
+            {/* Back button on left */}
+            <button
+              onClick={prevStep}
+              className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer border border-gray-300"
+            >
+              Back
+            </button>
+            <span className="text-sm text-purple-700 font-medium whitespace-nowrap">
+              Slide {selectedSlideIndex + 1}
+            </span>
+            <input
+              type="text"
+              value={aiEditPrompt}
+              onChange={(e) => setAiEditPrompt(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && aiEditPrompt.trim() && handleAiEdit()}
+              placeholder="AI Edit: describe changes to this slide"
+              className="flex-1 px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white"
+            />
+            <button
+              onClick={handleAiEdit}
+              disabled={!aiEditPrompt.trim()}
+              className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg cursor-pointer disabled:cursor-not-allowed flex items-center gap-1.5"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              <span className="text-sm text-purple-800 flex-1">Editing slide {selectedSlideIndex + 1}: {aiEditPrompt}</span>
-            </div>
-          ) : (
-            <div className="flex gap-3 items-center">
-              <span className="text-sm text-purple-700 font-medium whitespace-nowrap">
-                Slide {selectedSlideIndex + 1}
-              </span>
-              <input
-                type="text"
-                value={aiEditPrompt}
-                onChange={(e) => setAiEditPrompt(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && aiEditPrompt.trim() && handleAiEdit()}
-                placeholder="AI Edit: describe changes to this slide"
-                className="flex-1 px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white"
-              />
-              <button
-                onClick={handleAiEdit}
-                disabled={!aiEditPrompt.trim()}
-                className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg cursor-pointer disabled:cursor-not-allowed flex items-center gap-1.5"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                Apply
-              </button>
-            </div>
-          )}
-          {aiError && (
-            <p className="mt-2 text-sm text-red-600">{aiError}</p>
-          )}
-        </div>
-      </div>
+              Apply
+            </button>
+            {/* Continue button on right */}
+            <button
+              onClick={nextStep}
+              className="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg cursor-pointer"
+            >
+              Continue to Save
+            </button>
+          </div>
+        )}
+        {aiError && (
+          <p className="mt-2 text-sm text-red-600">{aiError}</p>
+        )}
+      </WizardStickyFooter>
     </div>
   );
 }

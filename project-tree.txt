@@ -441,7 +441,8 @@
 │   │   │       ├── get-deck.ts
 │   │   │       ├── index.ts
 │   │   │       ├── list-decks.ts
-│   │   │       └── save-deck.ts
+│   │   │       ├── save-deck.ts
+│   │   │       └── toggle-deactivated.ts
 │   │   ├── analytics
 │   │   │   ├── attendance
 │   │   │   │   └── page.tsx
@@ -538,6 +539,7 @@
 │   │   │   ├── scm
 │   │   │   │   └── worked-examples
 │   │   │   │       ├── edit-slide
+│   │   │   │       ├── export-pptx
 │   │   │   │       └── generate-slides
 │   │   │   ├── setup
 │   │   │   │   └── initial-user
@@ -1096,6 +1098,8 @@
 │   │   │       │   ├── components
 │   │   │       │   ├── hooks
 │   │   │       │   ├── lib
+│   │   │       │   └── page.tsx
+│   │   │       ├── deactivated
 │   │   │       │   └── page.tsx
 │   │   │       ├── equation-solving-distribute-vs-divide-grade8
 │   │   │       │   ├── metadata.json
@@ -2294,4 +2298,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-675 directories, 1620 files
+677 directories, 1622 files

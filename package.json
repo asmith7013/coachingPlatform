@@ -84,6 +84,8 @@
     "playwright": "^1.55.1",
     "posthog-js": "^1.299.0",
     "posthog-node": "^5.15.0",
+    "pptxgenjs": "^4.0.1",
+    "puppeteer": "^24.34.0",
     "puppeteer-core": "^24.30.0",
     "rc-slider": "^11.1.9",
     "react": "19.1.2",

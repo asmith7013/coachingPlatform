@@ -976,18 +976,22 @@ Largest Y value across all lines: [value]
 
 ### Round Y_MAX Up
 
-| If largest Y is... | Use Y_MAX |
-|-------------------|-----------|
-| ≤ 10 | 10 |
-| 11-20 | 20 |
-| 21-40 | 40 |
-| 41-50 | 50 |
-| 51-80 | 80 |
-| 81-100 | 100 |
-| 101-200 | 200 |
-| 201-400 | 400 |
-| 401-500 | 500 |
-| 501-1000 | 1000 |
+**Choose the smallest Y_MAX that fits your data AND keeps ticks ≤10.**
+
+| If largest Y is... | Use Y_MAX | Increment | Ticks |
+|-------------------|-----------|-----------|-------|
+| ≤ 6 | 6 | 1 | 7 |
+| 7-8 | 8 | 1 | 9 |
+| 9 | 9 | 1 | 10 |
+| 10-16 | 16 | 2 | 9 |
+| 17-18 | 18 | 2 | 10 |
+| 19-36 | 36 | 4 | 10 |
+| 37-45 | 45 | 5 | 10 |
+| 46-72 | 72 | 8 | 10 |
+| 73-90 | 90 | 10 | 10 |
+| 91-180 | 180 | 20 | 10 |
+
+**Note:** These Y_MAX values are chosen to give exactly 9-10 ticks with clean increments.
 
 \`\`\`
 Y_MAX = [your rounded value]
@@ -1018,18 +1022,36 @@ X scale: [increment between labels]
 
 ### Y-Axis Labels
 
-Based on your Y_MAX, use these labels:
+Based on your Y_MAX, use these labels. **Target: ≤10 ticks** (never exceed 10).
 
-| Y_MAX | Y-axis labels (bottom to top) | Y scale (increment) |
-|-------|------------------------------|---------------------|
-| 10 | 0, 2.5, 5, 7.5, 10 | 2.5 |
-| 20 | 0, 5, 10, 15, 20 | 5 |
-| 40 | 0, 10, 20, 30, 40 | 10 |
-| 50 | 0, 12.5, 25, 37.5, 50 | 12.5 |
-| 80 | 0, 20, 40, 60, 80 | 20 |
-| 100 | 0, 25, 50, 75, 100 | 25 |
-| 200 | 0, 50, 100, 150, 200 | 50 |
-| 400 | 0, 100, 200, 300, 400 | 100 |
+**Priority:** Use smallest whole-number increment possible. Count by 1s or 2s when Y_MAX allows.
+
+**If you need more than 10 ticks, reduce Y_MAX slightly** to hit exactly 9-10 ticks.
+
+| Y_MAX | Y-axis labels (bottom to top) | Y scale (increment) | Ticks |
+|-------|------------------------------|---------------------|-------|
+| 6 | 0, 1, 2, 3, 4, 5, 6 | 1 | 7 |
+| 8 | 0, 1, 2, 3, 4, 5, 6, 7, 8 | 1 | 9 |
+| 9 | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 | 1 | 10 |
+| 16 | 0, 2, 4, 6, 8, 10, 12, 14, 16 | 2 | 9 |
+| 18 | 0, 2, 4, 6, 8, 10, 12, 14, 16, 18 | 2 | 10 |
+| 36 | 0, 4, 8, 12, 16, 20, 24, 28, 32, 36 | 4 | 10 |
+| 45 | 0, 5, 10, 15, 20, 25, 30, 35, 40, 45 | 5 | 10 |
+| 72 | 0, 8, 16, 24, 32, 40, 48, 56, 64, 72 | 8 | 10 |
+| 90 | 0, 10, 20, 30, 40, 50, 60, 70, 80, 90 | 10 | 10 |
+| 180 | 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 | 20 | 10 |
+
+**Formula:** For increment I, max Y_MAX = I × 9 (to get 10 ticks including 0)
+
+| Increment | Max Y_MAX for 10 ticks |
+|-----------|------------------------|
+| 1 | 9 |
+| 2 | 18 |
+| 4 | 36 |
+| 5 | 45 |
+| 8 | 72 |
+| 10 | 90 |
+| 20 | 180 |
 
 \`\`\`
 Y-axis labels: [your labels]
@@ -1120,14 +1142,14 @@ Visual notes:
 
 ---
 
-## Example: Comparing y = 3x and y = 3x + 50
+## Example: Comparing y = 3x and y = 3x + 15
 
 \`\`\`
 GRAPH PLAN
 ==========
 Equations:
 - Line 1: y = 3x (blue)
-- Line 2: y = 3x + 50 (red)
+- Line 2: y = 3x + 15 (green)
 
 Scale:
 - X range: 0 to 6
@@ -1135,22 +1157,22 @@ Scale:
 - X scale: 1
 - Calculations:
   - Line 1 at x=6: y = 18
-  - Line 2 at x=6: y = 68
-  - Largest Y = 68
-- Y range: 0 to 80 (rounded up from 68)
-- Y-axis labels: 0, 20, 40, 60, 80
-- Y scale: 20
+  - Line 2 at x=6: y = 33
+  - Largest Y = 33 → use Y_MAX = 36 (from table: 19-36 → 36)
+- Y range: 0 to 36
+- Y-axis labels: 0, 4, 8, 12, 16, 20, 24, 28, 32, 36
+- Y scale: 4 (gives exactly 10 ticks)
 
 Annotation:
 - Relationship to show: Y-intercept shift (parallel lines)
 - Annotation type: Vertical double-arrow between y-intercepts
 - Position: Left of y-axis (x = ORIGIN_X - 15)
-- Arrow from: y=0 (pixel 170) to y=50 (pixel 76.25)
-- Label: "50 units up"
+- Arrow from: y=0 to y=15
+- Label: "+15"
 
 Visual notes:
 - Both lines should be clearly visible
-- Legend in upper right showing both equations
+- 10 ticks on Y-axis for clear reading
 - "PARALLEL" label near the lines
 \`\`\`
 

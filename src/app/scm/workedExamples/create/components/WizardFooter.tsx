@@ -2,6 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import type { LoadingProgress } from '../lib/types';
+import { WizardStickyFooter, type FooterTheme } from './WizardStickyFooter';
+
+// Custom scale-pulse animation for the icon
+const scalePulseStyle = {
+  animation: 'scalePulse 1.5s ease-in-out infinite',
+};
 
 interface WizardFooterProps {
   isLoading: boolean;
@@ -63,102 +69,110 @@ export function WizardFooter({ isLoading, loadingProgress, children }: WizardFoo
     // Slide generation progress (with tile visualization)
     if (loadingProgress.phase === 'generating' && loadingProgress.slideProgress) {
       const { currentSlide, estimatedTotal } = loadingProgress.slideProgress;
-      // Display shows current slide being worked on (not completed count)
-      const displaySlide = Math.max(0, currentSlide);
-      const percentage = estimatedTotal > 0 ? Math.round((displaySlide / estimatedTotal) * 100) : 0;
 
       return (
-        <div className="fixed bottom-0 left-0 right-0 z-20 border-t shadow-lg bg-white">
-          <div className="px-6 py-4 bg-green-50">
-            <div className="flex items-center gap-4">
-              {/* Large pulsating file icon */}
-              <div className={`flex-shrink-0 p-3 rounded-xl ${colors.iconBg} animate-pulse`}>
-                <svg className={`w-8 h-8 ${colors.icon}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-
-              {/* Progress content */}
-              <div className="flex-1 space-y-1.5">
-                {/* Row 1: Current slide message with elapsed time */}
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-green-800 flex-1">
-                    {loadingProgress.message}
-                  </span>
-                  {elapsedTime > 0 && (
-                    <span className="text-sm text-green-600 tabular-nums">
-                      {formatElapsedTime(elapsedTime)}
-                    </span>
-                  )}
-                </div>
-                {/* Row 2: Progress tiles with count */}
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 flex gap-0.5">
-                    {Array.from({ length: estimatedTotal }).map((_, i) => {
-                      const slideNum = i + 1;
-                      const isComplete = slideNum < currentSlide;
-                      const isInProgress = slideNum === currentSlide && currentSlide > 0;
-                      return (
-                        <div
-                          key={i}
-                          className={`flex-1 h-2 rounded-sm transition-all duration-300 ${
-                            isComplete
-                              ? 'bg-green-500'
-                              : isInProgress
-                              ? 'bg-green-300 animate-pulse'
-                              : 'bg-gray-200'
-                          }`}
-                        />
-                      );
-                    })}
-                  </div>
-                  <span className="text-sm font-medium text-green-700 tabular-nums whitespace-nowrap">
-                    {displaySlide}/{estimatedTotal}
-                  </span>
-                  <span className="text-sm text-green-600 tabular-nums w-10 text-right">
-                    {percentage}%
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // General loading progress (uploading, analyzing, generating without progress, saving)
-    return (
-      <div className="fixed bottom-0 left-0 right-0 z-20 border-t shadow-lg bg-white">
-        <div className={`px-6 py-4 ${colors.bg}`}>
-          <div className="flex items-center gap-4">
-            {/* Large pulsating file icon */}
-            <div className={`flex-shrink-0 p-3 rounded-xl ${colors.iconBg} animate-pulse`}>
+        <WizardStickyFooter theme="green" isActive>
+          {/* Keyframes for scale pulse animation */}
+          <style>{`
+            @keyframes scalePulse {
+              0%, 100% { transform: scale(1); }
+              50% { transform: scale(1.15); }
+            }
+          `}</style>
+          <div className="flex items-center gap-3">
+            {/* Pulsating file icon with scale animation */}
+            <div className={`flex-shrink-0 p-1.5 rounded-lg ${colors.iconBg}`} style={scalePulseStyle}>
               <svg className={`w-8 h-8 ${colors.icon}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
 
             {/* Progress content */}
-            <div className="flex-1">
-              <span className={`text-sm font-medium ${colors.text}`}>
-                {loadingProgress.message}
-              </span>
-              {loadingProgress.detail && (
-                <span className={`text-sm ${colors.text} opacity-75 block mt-0.5`}>
-                  {loadingProgress.detail}
+            <div className="flex-1 space-y-1">
+              {/* Row 1: Message on left, count + time on right */}
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-green-800">
+                  {loadingProgress.message}
                 </span>
-              )}
+                {elapsedTime > 0 && (
+                  <span className="text-sm text-green-600 tabular-nums">
+                    {formatElapsedTime(elapsedTime)}
+                  </span>
+                )}
+              </div>
+              {/* Row 2: Progress tiles */}
+              <div className="flex gap-1">
+                {Array.from({ length: estimatedTotal }).map((_, i) => {
+                  const slideNum = i + 1;
+                  const isComplete = slideNum < currentSlide;
+                  const isInProgress = slideNum === currentSlide && currentSlide > 0;
+                  return (
+                    <div
+                      key={i}
+                      className={`flex-1 h-2 rounded-sm transition-all duration-300 ${
+                        isComplete
+                          ? 'bg-green-500'
+                          : isInProgress
+                          ? 'bg-green-300 animate-pulse'
+                          : 'bg-gray-200'
+                      }`}
+                    />
+                  );
+                })}
+              </div>
             </div>
+          </div>
+        </WizardStickyFooter>
+      );
+    }
 
-            {/* Elapsed time */}
-            {elapsedTime > 0 && (
-              <span className={`text-sm ${colors.text} opacity-75 tabular-nums`}>
-                {formatElapsedTime(elapsedTime)}
+    // General loading progress (uploading, analyzing, generating without progress, saving)
+    // Map phase to theme
+    const phaseThemes: Record<string, FooterTheme> = {
+      uploading: 'blue',
+      analyzing: 'purple',
+      generating: 'green',
+      saving: 'amber',
+    };
+    const theme = phaseThemes[loadingProgress.phase] || 'gray';
+
+    return (
+      <WizardStickyFooter theme={theme} isActive>
+        {/* Keyframes for scale pulse animation */}
+        <style>{`
+          @keyframes scalePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+          }
+        `}</style>
+        <div className="flex items-center gap-3">
+          {/* Pulsating file icon with scale animation */}
+          <div className={`flex-shrink-0 p-1.5 rounded-lg ${colors.iconBg}`} style={scalePulseStyle}>
+            <svg className={`w-8 h-8 ${colors.icon}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+
+          {/* Progress content */}
+          <div className="flex-1">
+            <span className={`text-sm font-medium ${colors.text}`}>
+              {loadingProgress.message}
+            </span>
+            {loadingProgress.detail && (
+              <span className={`text-sm ${colors.text} opacity-75 block mt-0.5`}>
+                {loadingProgress.detail}
               </span>
             )}
           </div>
+
+          {/* Elapsed time */}
+          {elapsedTime > 0 && (
+            <span className={`text-sm ${colors.text} opacity-75 tabular-nums`}>
+              {formatElapsedTime(elapsedTime)}
+            </span>
+          )}
         </div>
-      </div>
+      </WizardStickyFooter>
     );
   }
 
@@ -168,12 +182,10 @@ export function WizardFooter({ isLoading, loadingProgress, children }: WizardFoo
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-20 border-t shadow-lg bg-white">
-      <div className="px-6 py-3 bg-gray-50">
-        <div className="flex items-center justify-end gap-3">
-          {children}
-        </div>
+    <WizardStickyFooter theme="gray">
+      <div className="flex items-center justify-end gap-3">
+        {children}
       </div>
-    </div>
+    </WizardStickyFooter>
   );
 }

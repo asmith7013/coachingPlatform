@@ -128,9 +128,16 @@ Line 2: y = 5x + 20
   - At x=8: y = 60
 ```
 
-**7c: Determine Scale**
-- X_MAX: rightmost x-value needed (common: 4, 6, 8, 10)
-- Y_MAX: round up largest y-value to nearest nice number (20, 40, 50, 80, 100)
+**7c: Determine Scale (≤10 ticks on each axis)**
+- X_MAX: rightmost x-value needed (common: 4, 5, 6, 8, 10)
+  - X_MAX ≤6: count by 1s
+  - X_MAX >6: count by 2s
+- Y_MAX: use the scale tables in `graph-planning.md` to get exactly 9-10 ticks
+  - Count by 1s up to Y_MAX=9
+  - Count by 2s up to Y_MAX=18
+  - Count by 4s up to Y_MAX=36
+  - Count by 5s up to Y_MAX=45
+  - See `graph-planning.md` for full table
 
 **7d: Plan Annotations**
 What mathematical relationship to show?

@@ -40,10 +40,14 @@ Graph: READ templates/graph-snippet.html → copy → modify for X_MAX=10, Y_MAX
 Annotations: READ templates/annotation-snippet.html → add y-intercept labels
 ```
 
-**What goes IN the slide file:**
-- The file starts with `<!DOCTYPE html>` - nothing before it
-- NO checkpoint comments, NO protocol notes, NO explanatory text
-- ONLY valid HTML content
+**⚠️ CRITICAL: What goes IN the slide HTML file:**
+- The file starts with `<!DOCTYPE html>` - NOTHING before it
+- NO checkpoint announcements (those are conversational only)
+- NO protocol notes or comments
+- NO explanatory text like "Paired: Yes" or "Action: copy-and-add-answer"
+- ONLY valid HTML content starting with `<!DOCTYPE html>`
+
+**The checkpoint announcement is what you SAY to the user, NOT what you WRITE to the file.**
 
 ---
 
@@ -212,7 +216,7 @@ This HTML file is your **starting point**. It contains:
 
 ## Pre-Flight Checklist (Verify EVERY Slide)
 
-- [ ] Checkpoint comment at top of slide
+- [ ] File starts with `<!DOCTYPE html>` (NO checkpoint, NO comments before it)
 - [ ] Body: `width: 960px; height: 540px`
 - [ ] All text in `<p>`, `<h1-6>`, `<ul>`, `<ol>` (NOT bare text in divs)
 - [ ] Layout uses `.row`/`.col` classes (NOT inline `display: flex`)

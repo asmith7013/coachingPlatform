@@ -112,7 +112,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
     setError(null);
     const startTime = Date.now();
     // PPTX format: 14-16 slides (Learning Goal, Setup, 6 step slides, 2 practice, 1 printable + extras)
-    const fullSlideCount = testMode ? 1 : 14 + Math.max(0, scenarios.length - 3);
+    const fullSlideCount = testMode ? 1 : 15 + Math.max(0, scenarios.length - 3);
 
     // For continue mode, only count remaining slides
     const existingSlides = mode === 'continue' ? state.slides : [];
@@ -284,7 +284,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
         setLoadingProgress({
           phase: 'generating',
-          message: `Creating slide ${displaySlideNumber}...`,
+          message: `Creating slide ${displaySlideNumber} of ${fullSlideCount}...`,
           detail: slideData.message,
           startTime,
           slideProgress: {
@@ -517,9 +517,9 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                     </h4>
 
                     {/* Equations */}
-                    <div className="mb-3">
-                      <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Equations</h5>
-                      <div className="space-y-1">
+                    <div className="border-b border-gray-200 pb-4">
+                      <h5 className="text-sm font-semibold text-gray-700 mb-2">Equations</h5>
+                      <div className="space-y-1.5">
                         {problemAnalysis.graphPlan.equations.map((eq, i) => (
                           <div key={i} className="flex items-center gap-2 text-sm">
                             <span
@@ -529,29 +529,29 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                             <code className="text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded text-xs">
                               {eq.equation}
                             </code>
-                            <span className="text-gray-400 text-xs">({eq.color})</span>
+                            <span className="text-gray-500 text-xs">({eq.color})</span>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     {/* Scale */}
-                    <div className="mb-3">
-                      <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Scale</h5>
+                    <div className={problemAnalysis.graphPlan.annotations && problemAnalysis.graphPlan.annotations.length > 0 ? "border-b border-gray-200 py-4" : "pt-4"}>
+                      <h5 className="text-sm font-semibold text-gray-700 mb-2">Scale</h5>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         {/* X-Axis */}
                         <div className="space-y-1">
-                          <div className="font-medium text-gray-700">X-Axis</div>
+                          <div className="text-sm font-medium text-gray-700">X-Axis</div>
                           <div>
                             <span className="text-gray-500">Max:</span>
-                            <span className="ml-1 text-gray-700">
+                            <span className="ml-1 text-gray-600">
                               {problemAnalysis.graphPlan.scale.xMax}
                             </span>
                           </div>
                           {problemAnalysis.graphPlan.scale.xAxisLabels && (
                             <div>
                               <span className="text-gray-500">Labels:</span>
-                              <span className="ml-1 text-gray-700">
+                              <span className="ml-1 text-gray-600">
                                 {problemAnalysis.graphPlan.scale.xAxisLabels.join(', ')}
                               </span>
                             </div>
@@ -559,16 +559,16 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                         </div>
                         {/* Y-Axis */}
                         <div className="space-y-1">
-                          <div className="font-medium text-gray-700">Y-Axis</div>
+                          <div className="text-sm font-medium text-gray-700">Y-Axis</div>
                           <div>
                             <span className="text-gray-500">Max:</span>
-                            <span className="ml-1 text-gray-700">
+                            <span className="ml-1 text-gray-600">
                               {problemAnalysis.graphPlan.scale.yMax}
                             </span>
                           </div>
                           <div>
                             <span className="text-gray-500">Labels:</span>
-                            <span className="ml-1 text-gray-700">
+                            <span className="ml-1 text-gray-600">
                               {problemAnalysis.graphPlan.scale.yAxisLabels.join(', ')}
                             </span>
                           </div>
@@ -578,20 +578,18 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
                     {/* Annotations */}
                     {problemAnalysis.graphPlan.annotations && problemAnalysis.graphPlan.annotations.length > 0 && (
-                    <div>
-                      <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Annotations</h5>
-                      <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
-                        <div className="text-sm space-y-2">
-                          {problemAnalysis.graphPlan.annotations.map((ann, idx) => (
-                            <div key={idx} className="flex items-center gap-2">
-                              <Badge intent="info" size="xs">{ann.type}</Badge>
-                              <span className="text-gray-700">{ann.label}</span>
-                              {ann.from !== undefined && ann.to !== undefined && (
-                                <span className="text-gray-500 text-xs">(y: {ann.from} → {ann.to})</span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
+                    <div className="pt-4">
+                      <h5 className="text-sm font-semibold text-gray-700 mb-2">Annotations</h5>
+                      <div className="space-y-2">
+                        {problemAnalysis.graphPlan.annotations.map((ann, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-sm">
+                            <Badge intent="info" size="xs">{ann.type}</Badge>
+                            <span className="text-gray-600">{ann.label}</span>
+                            {ann.from !== undefined && ann.to !== undefined && (
+                              <span className="text-gray-500 text-xs">(y: {ann.from} → {ann.to})</span>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
                     )}
