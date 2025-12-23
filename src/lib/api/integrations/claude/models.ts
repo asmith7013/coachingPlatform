@@ -11,11 +11,12 @@ export const CLAUDE_MODELS = {
   OPUS_4_5: 'claude-opus-4-5-20251101',
 
   // Sonnet - Best balance of speed/quality for generation tasks
-  SONNET_4_5: 'claude-sonnet-4-5-20241022',
-  SONNET_4: 'claude-sonnet-4-20250514',
+  SONNET_4_5: 'claude-sonnet-4-5-20250929',
+  SONNET_3_5: 'claude-3-5-sonnet-20241022',
 
-  // Haiku - Fast/cheap for simple tasks (not currently used)
-  HAIKU_4_5: 'claude-haiku-4-5-20241022',
+  // Haiku - Fast/cheap for simple tasks
+  HAIKU_4_5: 'claude-haiku-4-5-20251001',
+  HAIKU_3_5: 'claude-3-5-haiku-20241022',
 } as const;
 
 /**
@@ -24,7 +25,7 @@ export const CLAUDE_MODELS = {
  * Maps task types to appropriate models based on requirements:
  * - ANALYSIS: Complex reasoning, image analysis, multi-step planning → Opus
  * - GENERATION: Content creation, slide generation → Sonnet 4.5
- * - EDIT: Quick modifications, single-slide edits → Sonnet 4.5
+ * - EDIT: Quick modifications, single-slide edits → Opus
  * - PROCESSING: HTML/text processing, formatting → Sonnet 4.5
  */
 export const MODEL_FOR_TASK = {
