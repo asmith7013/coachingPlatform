@@ -53,6 +53,9 @@ export const WorkedExampleDeckSchema = z.object({
   // Soft delete
   deactivated: z.boolean().default(false),
 
+  // Google Slides URL (set after export)
+  googleSlidesUrl: z.string().url().optional(),
+
   // Files
   files: FilesSchema,
 

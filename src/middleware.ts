@@ -6,6 +6,7 @@ const isPublicRoute = createRouteMatcher([
   '/sign-in(.*)',           // Sign in flow
   '/sign-up(.*)',           // Sign up flow
   '/sign-out(.*)',          // Sign out flow
+  '/sso-callback(.*)',      // OAuth callback handler
   '/setup',                 // Setup page for new users
   '/terms',                 // Legal pages
   '/privacy',
@@ -13,7 +14,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/roadmaps/scrape',   // Scraper API (has own API key auth)
   '/api/timesheet',         // Timesheet API (has own API key auth)
   '/examples/cap(.*)',      // ✅ All CAP examples (current and future)
-  '/313student(.*)',              // ✅ All 313 student ID routes (public access)
+  '/313student(.*)',        // ✅ All 313 student ID routes (public access)
 ])
 
 export default clerkMiddleware(async (auth, request) => {

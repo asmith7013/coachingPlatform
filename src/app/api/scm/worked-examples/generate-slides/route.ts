@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import { currentUser } from '@clerk/nextjs/server';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
+import { sendEmail } from '@/lib/email/email-service';
 import {
   GENERATE_SLIDES_SYSTEM_PROMPT,
   buildGenerateSlidesPrompt,
@@ -30,6 +32,43 @@ interface GenerateSlidesInput {
 const SLIDE_SEPARATOR = '===SLIDE_SEPARATOR===';
 
 /**
+ * Send email notification when slides are complete
+ */
+async function sendSlideCompletionEmail(
+  userEmail: string,
+  slideCount: number,
+  gradeLevel: string,
+  problemType: string
+): Promise<void> {
+  try {
+    const subject = `Your Worked Example Slides Are Ready! (${slideCount} slides)`;
+
+    let body = `Great news! Your worked example slide generation is complete.\n\n`;
+
+    body += `DETAILS:\n`;
+    body += `   Grade Level: ${gradeLevel}\n`;
+    body += `   Problem Type: ${problemType}\n`;
+    body += `   Slides Generated: ${slideCount}\n\n`;
+
+    body += `Your slides are ready for review in the creation wizard.\n\n`;
+
+    body += `Completed at: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}\n`;
+    body += `\nView your slides: https://www.solvescoaching.com/scm/workedExamples/create`;
+
+    await sendEmail({
+      to: userEmail,
+      subject,
+      body
+    });
+
+    console.log('[generate-slides] Completion email sent to:', userEmail);
+  } catch (error) {
+    // Don't fail the request if email fails - just log it
+    console.error('[generate-slides] Failed to send completion email:', error);
+  }
+}
+
+/**
  * SSE endpoint for streaming slide generation
  * Returns real-time progress as slides are generated
  */
@@ -57,6 +96,10 @@ export async function POST(request: NextRequest) {
       existingSlides = [],
       updateInstructions,
     } = input;
+
+    // Get user email for completion notification
+    const user = await currentUser();
+    const userEmail = user?.emailAddresses?.[0]?.emailAddress;
 
     // Estimate total slides for PPTX format (matches protocol structure):
     // 2 intro + 4 step1 + 4 step2 + 2 step3 + 2 practice + 1 printable = 15 base
@@ -280,6 +323,16 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
             slideCount: slides.length,
             slides,
           });
+
+          // Send email notification to user (fire and forget - don't block stream)
+          if (userEmail && slides.length > 0 && !testMode) {
+            sendSlideCompletionEmail(
+              userEmail,
+              slides.length,
+              gradeLevel,
+              problemAnalysis.problemType
+            );
+          }
 
           controller.close();
         } catch (error) {

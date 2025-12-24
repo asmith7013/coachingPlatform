@@ -77,27 +77,47 @@ export const SLIDE_BASE_TEMPLATE = `
 </head>
 <body class="col bg-surface" style="width: 960px; height: 540px; position: relative; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden;">
 
-  <!-- Title Zone: 0-120px -->
+  <!--
+    ============================================================
+    PPTX EXPORT DATA ATTRIBUTES
+    ============================================================
+    Each region has data-pptx-* attributes for reliable export:
+    - data-pptx-region: region type (badge, title, subtitle, content, footnote)
+    - data-pptx-x, y, w, h: position and size in pixels (960x540 coordinate system)
+    ============================================================
+  -->
+
+  <!-- Title Zone: 0-110px -->
   <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
-    <!-- Step Badge (if applicable) -->
+    <!-- Step Badge -->
     <div class="row items-center gap-md" style="margin-bottom: 8px;">
-      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+      <div data-pptx-region="badge"
+           data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+           style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
         <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">{{step_badge}}</p>
       </div>
     </div>
-    <!-- Main Question/Action - PROMINENT -->
-    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
-    <!-- Instruction Text -->
-    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+    <!-- Main Title -->
+    <h1 data-pptx-region="title"
+        data-pptx-x="20" data-pptx-y="55" data-pptx-w="920" data-pptx-h="40"
+        style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <!-- Subtitle/Instruction -->
+    <p data-pptx-region="subtitle"
+       data-pptx-x="20" data-pptx-y="100" data-pptx-w="920" data-pptx-h="30"
+       style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
   </div>
 
-  <!-- Content Zone: 110-490px (380px height) -->
-  <div class="fill-height col" style="padding: 10px 20px;">
+  <!-- Content Zone: 130-500px (370px height) -->
+  <div data-pptx-region="content"
+       data-pptx-x="20" data-pptx-y="130" data-pptx-w="920" data-pptx-h="370"
+       class="fill-height col" style="padding: 10px 20px;">
     {{content}}
   </div>
 
-  <!-- Footnote Zone: 500-540px (40px height) -->
-  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+  <!-- Footnote (top right) -->
+  <p data-pptx-region="footnote"
+     data-pptx-x="700" data-pptx-y="8" data-pptx-w="240" data-pptx-h="25"
+     style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
     {{footnote}}
   </p>
 
@@ -125,7 +145,7 @@ export const SLIDE_WITH_CFU_TEMPLATE = `
   4. Change NOTHING else - not even a single character
 
   The CFU box to insert (ABSOLUTE POSITIONED TOP RIGHT):
-  <div style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+  <div data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; z-index: 100;">
     <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
     <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[Your CFU question here]</p>
   </div>
@@ -188,28 +208,40 @@ export const SLIDE_WITH_CFU_TEMPLATE = `
   <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
     <!-- Step Badge -->
     <div class="row items-center gap-md" style="margin-bottom: 8px;">
-      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+      <div data-pptx-region="badge"
+           data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+           style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
         <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">{{step_badge}}</p>
       </div>
     </div>
     <!-- Main Question/Action - PROMINENT -->
-    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <h1 data-pptx-region="title"
+        data-pptx-x="20" data-pptx-y="55" data-pptx-w="920" data-pptx-h="40"
+        style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
     <!-- Instruction Text -->
-    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+    <p data-pptx-region="subtitle"
+       data-pptx-x="20" data-pptx-y="100" data-pptx-w="920" data-pptx-h="30"
+       style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
   </div>
 
   <!-- Content Zone: 110-490px (380px height) -->
-  <div class="fill-height col" style="padding: 10px 20px;">
+  <div data-pptx-region="content"
+       data-pptx-x="20" data-pptx-y="130" data-pptx-w="920" data-pptx-h="370"
+       class="fill-height col" style="padding: 10px 20px;">
     {{content}}
   </div>
 
   <!-- Label Zone (top right) -->
-  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+  <p data-pptx-region="footnote"
+     data-pptx-x="700" data-pptx-y="8" data-pptx-w="240" data-pptx-h="25"
+     style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
     {{footnote}}
   </p>
 
   <!-- CFU Box (ABSOLUTE POSITIONED TOP RIGHT, ON TOP OF CONTENT) -->
-  <div style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+  <div data-pptx-region="cfu-box"
+       data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"
+       style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; z-index: 100;">
     <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
     <p style="margin: 0; font-size: 14px; color: #1d1d1d;">{{cfu_question}}</p>
   </div>
@@ -238,7 +270,7 @@ export const SLIDE_WITH_ANSWER_TEMPLATE = `
   4. Change NOTHING else - not even a single character
 
   The Answer box to insert (ABSOLUTE POSITIONED TOP RIGHT):
-  <div style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+  <div style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; z-index: 100;">
     <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
     <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[Your answer explanation here]</p>
   </div>
@@ -301,28 +333,40 @@ export const SLIDE_WITH_ANSWER_TEMPLATE = `
   <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
     <!-- Step Badge (if applicable) -->
     <div class="row items-center gap-md" style="margin-bottom: 8px;">
-      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+      <div data-pptx-region="badge"
+           data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+           style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
         <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">{{step_badge}}</p>
       </div>
     </div>
     <!-- Main Question/Action - PROMINENT -->
-    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <h1 data-pptx-region="title"
+        data-pptx-x="20" data-pptx-y="55" data-pptx-w="920" data-pptx-h="40"
+        style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
     <!-- Instruction Text -->
-    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+    <p data-pptx-region="subtitle"
+       data-pptx-x="20" data-pptx-y="100" data-pptx-w="920" data-pptx-h="30"
+       style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
   </div>
 
   <!-- Content Zone: 110-490px (380px height) -->
-  <div class="fill-height col" style="padding: 10px 20px;">
+  <div data-pptx-region="content"
+       data-pptx-x="20" data-pptx-y="130" data-pptx-w="920" data-pptx-h="370"
+       class="fill-height col" style="padding: 10px 20px;">
     {{content}}
   </div>
 
   <!-- Label Zone (top right) -->
-  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+  <p data-pptx-region="footnote"
+     data-pptx-x="700" data-pptx-y="8" data-pptx-w="240" data-pptx-h="25"
+     style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
     {{footnote}}
   </p>
 
   <!-- Answer Box (ABSOLUTE POSITIONED TOP RIGHT, ON TOP OF CONTENT) -->
-  <div style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+  <div data-pptx-region="answer-box"
+       data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"
+       style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; z-index: 100;">
     <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
     <p style="margin: 0; font-size: 14px; color: #1d1d1d;">{{answer}}</p>
   </div>
@@ -393,14 +437,20 @@ export const SLIDE_TWO_COLUMN_TEMPLATE = `
   <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
     <!-- Step Badge (if applicable) -->
     <div class="row items-center gap-md" style="margin-bottom: 8px;">
-      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+      <div data-pptx-region="badge"
+           data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+           style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
         <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">{{step_badge}}</p>
       </div>
     </div>
     <!-- Main Question/Action - PROMINENT -->
-    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <h1 data-pptx-region="title"
+        data-pptx-x="20" data-pptx-y="55" data-pptx-w="920" data-pptx-h="40"
+        style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
     <!-- Instruction Text -->
-    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+    <p data-pptx-region="subtitle"
+       data-pptx-x="20" data-pptx-y="100" data-pptx-w="920" data-pptx-h="30"
+       style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
   </div>
 
   <!--
@@ -419,7 +469,9 @@ export const SLIDE_TWO_COLUMN_TEMPLATE = `
   <div class="row gap-lg fill-height" style="padding: 10px 20px;">
 
     <!-- LEFT Column: Text/Tables (40%) - Always contains problem text, bullets, tables -->
-    <div class="col" style="width: 40%;">
+    <div data-pptx-region="left-column"
+         data-pptx-x="20" data-pptx-y="130" data-pptx-w="368" data-pptx-h="380"
+         class="col" style="width: 40%;">
       <h3 style="font-size: 15px; font-weight: bold; margin: 0 0 12px 0; color: #1d1d1d;">{{section_header}}</h3>
       <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #1d1d1d;">
         <li>{{bullet_1}}</li>
@@ -429,9 +481,10 @@ export const SLIDE_TWO_COLUMN_TEMPLATE = `
     </div>
 
     <!-- RIGHT Column: Visual (60%) - ALWAYS contains graphs/diagrams/images -->
-    <!-- SVG_REGION: x=388, y=90, width=552, height=380 -->
     <!-- RULE: Graphs go HERE (right column), NEVER below the text -->
-    <div class="col center" style="width: 60%;" data-visual-region="true">
+    <div data-pptx-region="right-column"
+         data-pptx-x="408" data-pptx-y="130" data-pptx-w="532" data-pptx-h="380"
+         class="col center" style="width: 60%;">
       <!-- For SVG: use viewBox + fixed dimensions -->
       <!-- <svg viewBox="0 0 420 380" style="width: 520px; height: 360px;"> -->
       <!-- For image: use max dimensions -->
@@ -441,7 +494,9 @@ export const SLIDE_TWO_COLUMN_TEMPLATE = `
   </div>
 
   <!-- Label Zone (top right) -->
-  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+  <p data-pptx-region="footnote"
+     data-pptx-x="700" data-pptx-y="8" data-pptx-w="240" data-pptx-h="25"
+     style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
     {{footnote}}
   </p>
 
@@ -511,18 +566,26 @@ export const SLIDE_LEARNING_GOAL_TEMPLATE = `
   <div class="col center fill-height" style="padding: 40px;">
 
     <!-- Strategy Badge -->
-    <div style="background: #1791e8; color: #ffffff; padding: 8px 24px; border-radius: 20px; margin-bottom: 24px;">
+    <div data-pptx-region="strategy-badge"
+         data-pptx-x="380" data-pptx-y="80" data-pptx-w="200" data-pptx-h="40"
+         style="background: #1791e8; color: #ffffff; padding: 8px 24px; border-radius: 20px; margin-bottom: 24px;">
       <p style="margin: 0; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">{{strategy_badge}}</p>
     </div>
 
     <!-- Strategy Name -->
-    <h1 style="margin: 0 0 16px 0; font-size: 40px; color: #1d1d1d; text-align: center;">{{strategy_name}}</h1>
+    <h1 data-pptx-region="strategy-name"
+        data-pptx-x="80" data-pptx-y="130" data-pptx-w="800" data-pptx-h="50"
+        style="margin: 0 0 16px 0; font-size: 40px; color: #1d1d1d; text-align: center;">{{strategy_name}}</h1>
 
     <!-- Strategy Summary -->
-    <p style="margin: 0; font-size: 20px; color: #737373; text-align: center; max-width: 700px; line-height: 1.5;">{{strategy_summary}}</p>
+    <p data-pptx-region="strategy-summary"
+       data-pptx-x="130" data-pptx-y="190" data-pptx-w="700" data-pptx-h="60"
+       style="margin: 0; font-size: 20px; color: #737373; text-align: center; max-width: 700px; line-height: 1.5;">{{strategy_summary}}</p>
 
     <!-- Learning Goal Box -->
-    <div style="background: #f5f5f5; border-radius: 12px; padding: 20px 32px; margin-top: 32px; max-width: 800px;">
+    <div data-pptx-region="learning-goal-box"
+         data-pptx-x="80" data-pptx-y="280" data-pptx-w="800" data-pptx-h="120"
+         style="background: #f5f5f5; border-radius: 12px; padding: 20px 32px; margin-top: 32px; max-width: 800px;">
       <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; color: #737373; text-transform: uppercase; letter-spacing: 1px;">Learning Goal</p>
       <p style="margin: 0; font-size: 16px; color: #1d1d1d; line-height: 1.5;">{{learning_goal}}</p>
     </div>
@@ -530,7 +593,9 @@ export const SLIDE_LEARNING_GOAL_TEMPLATE = `
   </div>
 
   <!-- Label Zone (top right) -->
-  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+  <p data-pptx-region="footnote"
+     data-pptx-x="700" data-pptx-y="8" data-pptx-w="240" data-pptx-h="25"
+     style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
     {{footnote}}
   </p>
 
@@ -600,31 +665,43 @@ export const SLIDE_PRACTICE_TEMPLATE = `
   <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
     <!-- Practice Badge -->
     <div class="row items-center gap-md" style="margin-bottom: 8px;">
-      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+      <div data-pptx-region="badge"
+           data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+           style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
         <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">PRACTICE</p>
       </div>
     </div>
     <!-- Main Question/Action - PROMINENT -->
-    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <h1 data-pptx-region="title"
+        data-pptx-x="20" data-pptx-y="55" data-pptx-w="920" data-pptx-h="40"
+        style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
     <!-- Instruction Text -->
-    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+    <p data-pptx-region="subtitle"
+       data-pptx-x="20" data-pptx-y="100" data-pptx-w="920" data-pptx-h="30"
+       style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
   </div>
 
   <!-- Content Zone: Practice problem with zero scaffolding -->
   <div class="fill-height col" style="padding: 10px 20px;">
 
     <!-- Problem Statement -->
-    <div style="background: #f5f5f5; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+    <div data-pptx-region="problem-statement"
+         data-pptx-x="20" data-pptx-y="130" data-pptx-w="920" data-pptx-h="80"
+         style="background: #f5f5f5; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
       <p style="margin: 0; font-size: 16px; color: #1d1d1d; line-height: 1.6;">{{problem_statement}}</p>
     </div>
 
     <!-- Visual/Diagram Area (if applicable) -->
-    <div class="col center fill-height">
+    <div data-pptx-region="problem-visual"
+         data-pptx-x="20" data-pptx-y="220" data-pptx-w="920" data-pptx-h="230"
+         class="col center fill-height">
       {{problem_visual}}
     </div>
 
     <!-- Your Task Section -->
-    <div style="background: #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-top: 12px;">
+    <div data-pptx-region="task-instruction"
+         data-pptx-x="20" data-pptx-y="460" data-pptx-w="920" data-pptx-h="50"
+         style="background: #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-top: 12px;">
       <p style="margin: 0; font-size: 13px; color: #1d1d1d;">
         <strong>Your Task:</strong> {{task_instruction}}
       </p>
@@ -633,7 +710,9 @@ export const SLIDE_PRACTICE_TEMPLATE = `
   </div>
 
   <!-- Label Zone (top right) -->
-  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+  <p data-pptx-region="footnote"
+     data-pptx-x="700" data-pptx-y="8" data-pptx-w="240" data-pptx-h="25"
+     style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
     {{footnote}}
   </p>
 
@@ -704,14 +783,20 @@ export const SLIDE_WITH_SVG_TEMPLATE = `
   <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
     <!-- Step Badge (if applicable) -->
     <div class="row items-center gap-md" style="margin-bottom: 8px;">
-      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+      <div data-pptx-region="badge"
+           data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+           style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
         <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">{{step_badge}}</p>
       </div>
     </div>
     <!-- Main Question/Action - PROMINENT -->
-    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
+    <h1 data-pptx-region="title"
+        data-pptx-x="20" data-pptx-y="55" data-pptx-w="920" data-pptx-h="40"
+        style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">{{title}}</h1>
     <!-- Instruction Text -->
-    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
+    <p data-pptx-region="subtitle"
+       data-pptx-x="20" data-pptx-y="100" data-pptx-w="920" data-pptx-h="30"
+       style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
   </div>
 
   <!--
@@ -732,7 +817,9 @@ export const SLIDE_WITH_SVG_TEMPLATE = `
   <div class="row gap-lg" style="padding: 8px 20px; height: 400px;">
 
     <!-- LEFT Column: Text/Tables (35%) - Problem text, annotations, CFU/Answer boxes -->
-    <div class="col" style="width: 35%;">
+    <div data-pptx-region="left-column"
+         data-pptx-x="20" data-pptx-y="130" data-pptx-w="316" data-pptx-h="380"
+         class="col" style="width: 35%;">
       <p style="font-size: 14px; line-height: 1.6; color: #1d1d1d; margin: 0;">
         {{problem_text}}
       </p>
@@ -756,11 +843,9 @@ export const SLIDE_WITH_SVG_TEMPLATE = `
     -->
     <div
       id="svg-container"
+      data-pptx-region="svg-container"
+      data-pptx-x="356" data-pptx-y="130" data-pptx-w="584" data-pptx-h="380"
       data-svg-region="true"
-      data-region-x="356"
-      data-region-y="88"
-      data-region-width="584"
-      data-region-height="392"
       class="col center"
       style="width: 65%; background: #f5f5f5; border-radius: 8px; padding: 12px;"
     >
@@ -776,7 +861,9 @@ export const SLIDE_WITH_SVG_TEMPLATE = `
   </div>
 
   <!-- Label Zone (top right) -->
-  <p style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+  <p data-pptx-region="footnote"
+     data-pptx-x="700" data-pptx-y="8" data-pptx-w="240" data-pptx-h="25"
+     style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
     {{footnote}}
   </p>
 
@@ -1050,6 +1137,16 @@ export const GRAPH_SNIPPET = `
 
 <svg viewBox="0 0 280 200" style="width: 100%; height: 340px;">
     <!--
+    ============================================================
+    PPTX LAYER STRUCTURE - For multi-layer export
+    ============================================================
+    data-pptx-layer="base-graph"  → Grid, axes, ticks, axis labels
+    data-pptx-layer="data"        → Data lines, points
+    data-pptx-layer="annotation"  → Y-intercept labels, arrows, equation labels
+
+    Export can hide layers selectively for transparent PNG capture.
+    ============================================================
+
     This example uses X_MAX=6, Y_MAX=18 (counting by 1s on X, by 2s on Y)
 
     FORMULAS:
@@ -1078,100 +1175,112 @@ export const GRAPH_SNIPPET = `
         <marker id="line-arrow-green" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
             <polygon points="0 0, 6 2, 0 4" fill="#22c55e"/>
         </marker>
+        <marker id="line-arrow-red" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+            <polygon points="0 0, 6 2, 0 4" fill="#ef4444"/>
+        </marker>
     </defs>
 
-    <!-- ===== GRID LINES ===== -->
-    <!-- Grid at EVERY tick position (consistent spacing, no gaps) -->
-    <g stroke="#e2e8f0" stroke-width="0.5">
-        <!-- Vertical grid lines (at every X tick, excluding origin) -->
-        <line x1="76.67" y1="20" x2="76.67" y2="170"/>   <!-- x=1 -->
-        <line x1="113.33" y1="20" x2="113.33" y2="170"/> <!-- x=2 -->
-        <line x1="150" y1="20" x2="150" y2="170"/>       <!-- x=3 -->
-        <line x1="186.67" y1="20" x2="186.67" y2="170"/> <!-- x=4 -->
-        <line x1="223.33" y1="20" x2="223.33" y2="170"/> <!-- x=5 -->
-        <line x1="260" y1="20" x2="260" y2="170"/>       <!-- x=6 -->
+    <!-- ===== BASE GRAPH LAYER: Grid, Axes, Labels ===== -->
+    <g data-pptx-layer="base-graph">
+        <!-- Grid at EVERY tick position (consistent spacing, no gaps) -->
+        <g stroke="#e2e8f0" stroke-width="0.5">
+            <!-- Vertical grid lines (at every X tick, excluding origin) -->
+            <line x1="76.67" y1="20" x2="76.67" y2="170"/>   <!-- x=1 -->
+            <line x1="113.33" y1="20" x2="113.33" y2="170"/> <!-- x=2 -->
+            <line x1="150" y1="20" x2="150" y2="170"/>       <!-- x=3 -->
+            <line x1="186.67" y1="20" x2="186.67" y2="170"/> <!-- x=4 -->
+            <line x1="223.33" y1="20" x2="223.33" y2="170"/> <!-- x=5 -->
+            <line x1="260" y1="20" x2="260" y2="170"/>       <!-- x=6 -->
 
-        <!-- Horizontal grid lines (at every Y tick, excluding origin) -->
-        <line x1="40" y1="153.33" x2="260" y2="153.33"/> <!-- y=2 -->
-        <line x1="40" y1="136.67" x2="260" y2="136.67"/> <!-- y=4 -->
-        <line x1="40" y1="120" x2="260" y2="120"/>       <!-- y=6 -->
-        <line x1="40" y1="103.33" x2="260" y2="103.33"/> <!-- y=8 -->
-        <line x1="40" y1="86.67" x2="260" y2="86.67"/>   <!-- y=10 -->
-        <line x1="40" y1="70" x2="260" y2="70"/>         <!-- y=12 -->
-        <line x1="40" y1="53.33" x2="260" y2="53.33"/>   <!-- y=14 -->
-        <line x1="40" y1="36.67" x2="260" y2="36.67"/>   <!-- y=16 -->
-        <line x1="40" y1="20" x2="260" y2="20"/>         <!-- y=18 -->
+            <!-- Horizontal grid lines (at every Y tick, excluding origin) -->
+            <line x1="40" y1="153.33" x2="260" y2="153.33"/> <!-- y=2 -->
+            <line x1="40" y1="136.67" x2="260" y2="136.67"/> <!-- y=4 -->
+            <line x1="40" y1="120" x2="260" y2="120"/>       <!-- y=6 -->
+            <line x1="40" y1="103.33" x2="260" y2="103.33"/> <!-- y=8 -->
+            <line x1="40" y1="86.67" x2="260" y2="86.67"/>   <!-- y=10 -->
+            <line x1="40" y1="70" x2="260" y2="70"/>         <!-- y=12 -->
+            <line x1="40" y1="53.33" x2="260" y2="53.33"/>   <!-- y=14 -->
+            <line x1="40" y1="36.67" x2="260" y2="36.67"/>   <!-- y=16 -->
+            <line x1="40" y1="20" x2="260" y2="20"/>         <!-- y=18 -->
+        </g>
+
+        <!-- Axes with arrowheads (extend 15px past last label position) -->
+        <line x1="40" y1="170" x2="275" y2="170" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
+        <line x1="40" y1="180" x2="40" y2="5" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
+
+        <!-- X-axis ticks (at every integer from 0-6) -->
+        <g stroke="#1e293b" stroke-width="1.5">
+            <line x1="40" y1="170" x2="40" y2="175"/>        <!-- x=0 -->
+            <line x1="76.67" y1="170" x2="76.67" y2="175"/> <!-- x=1 -->
+            <line x1="113.33" y1="170" x2="113.33" y2="175"/> <!-- x=2 -->
+            <line x1="150" y1="170" x2="150" y2="175"/>      <!-- x=3 -->
+            <line x1="186.67" y1="170" x2="186.67" y2="175"/> <!-- x=4 -->
+            <line x1="223.33" y1="170" x2="223.33" y2="175"/> <!-- x=5 -->
+            <line x1="260" y1="170" x2="260" y2="175"/>      <!-- x=6 -->
+        </g>
+        <!-- Y-axis ticks (at every even number from 0-18) -->
+        <g stroke="#1e293b" stroke-width="1.5">
+            <line x1="35" y1="170" x2="40" y2="170"/>        <!-- y=0 -->
+            <line x1="35" y1="153.33" x2="40" y2="153.33"/> <!-- y=2 -->
+            <line x1="35" y1="136.67" x2="40" y2="136.67"/> <!-- y=4 -->
+            <line x1="35" y1="120" x2="40" y2="120"/>        <!-- y=6 -->
+            <line x1="35" y1="103.33" x2="40" y2="103.33"/> <!-- y=8 -->
+            <line x1="35" y1="86.67" x2="40" y2="86.67"/>   <!-- y=10 -->
+            <line x1="35" y1="70" x2="40" y2="70"/>          <!-- y=12 -->
+            <line x1="35" y1="53.33" x2="40" y2="53.33"/>   <!-- y=14 -->
+            <line x1="35" y1="36.67" x2="40" y2="36.67"/>   <!-- y=16 -->
+            <line x1="35" y1="20" x2="40" y2="20"/>          <!-- y=18 -->
+        </g>
+
+        <!-- Axis labels -->
+        <!-- SINGLE "0" at origin (serves both axes) -->
+        <text x="33" y="182" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">0</text>
+
+        <!-- X-axis labels (counting by 1s: 0,1,2,3,4,5,6) -->
+        <text x="76.67" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">1</text>
+        <text x="113.33" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">2</text>
+        <text x="150" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">3</text>
+        <text x="186.67" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">4</text>
+        <text x="223.33" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">5</text>
+        <text x="260" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">6</text>
+
+        <!-- Y-axis labels (counting by 2s: 0,2,4,6,8,10,12,14,16,18) -->
+        <text x="35" y="157" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">2</text>
+        <text x="35" y="140" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">4</text>
+        <text x="35" y="124" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">6</text>
+        <text x="35" y="107" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">8</text>
+        <text x="35" y="90" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">10</text>
+        <text x="35" y="74" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">12</text>
+        <text x="35" y="57" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">14</text>
+        <text x="35" y="40" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">16</text>
+        <text x="35" y="24" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">18</text>
     </g>
 
-    <!-- ===== AXES WITH ARROWHEADS ===== -->
-    <!-- Axes extend 15px past last label position -->
-    <line x1="40" y1="170" x2="275" y2="170" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
-    <line x1="40" y1="180" x2="40" y2="5" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
+    <!-- ===== DATA LAYER: Lines and Points ===== -->
+    <g data-pptx-layer="data">
+        <!-- Line 1: y = 3x (blue) - from origin to (6,18) -->
+        <!-- pixelY at x=6: 170 - (18/18)*150 = 20 -->
+        <line x1="40" y1="170" x2="260" y2="20" stroke="#60a5fa" stroke-width="3" marker-end="url(#line-arrow-blue)"/>
 
-    <!-- ===== TICK MARKS ===== -->
-    <!-- X-axis ticks (at every integer from 0-6) -->
-    <g stroke="#1e293b" stroke-width="1.5">
-        <line x1="40" y1="170" x2="40" y2="175"/>        <!-- x=0 -->
-        <line x1="76.67" y1="170" x2="76.67" y2="175"/> <!-- x=1 -->
-        <line x1="113.33" y1="170" x2="113.33" y2="175"/> <!-- x=2 -->
-        <line x1="150" y1="170" x2="150" y2="175"/>      <!-- x=3 -->
-        <line x1="186.67" y1="170" x2="186.67" y2="175"/> <!-- x=4 -->
-        <line x1="223.33" y1="170" x2="223.33" y2="175"/> <!-- x=5 -->
-        <line x1="260" y1="170" x2="260" y2="175"/>      <!-- x=6 -->
-    </g>
-    <!-- Y-axis ticks (at every even number from 0-18) -->
-    <g stroke="#1e293b" stroke-width="1.5">
-        <line x1="35" y1="170" x2="40" y2="170"/>        <!-- y=0 -->
-        <line x1="35" y1="153.33" x2="40" y2="153.33"/> <!-- y=2 -->
-        <line x1="35" y1="136.67" x2="40" y2="136.67"/> <!-- y=4 -->
-        <line x1="35" y1="120" x2="40" y2="120"/>        <!-- y=6 -->
-        <line x1="35" y1="103.33" x2="40" y2="103.33"/> <!-- y=8 -->
-        <line x1="35" y1="86.67" x2="40" y2="86.67"/>   <!-- y=10 -->
-        <line x1="35" y1="70" x2="40" y2="70"/>          <!-- y=12 -->
-        <line x1="35" y1="53.33" x2="40" y2="53.33"/>   <!-- y=14 -->
-        <line x1="35" y1="36.67" x2="40" y2="36.67"/>   <!-- y=16 -->
-        <line x1="35" y1="20" x2="40" y2="20"/>          <!-- y=18 -->
+        <!-- Line 2: y = 2x + 3 (green) - from (0,3) to (6,15) -->
+        <!-- Entry: pixelY = 170 - (3/18)*150 = 145 -->
+        <!-- Exit: pixelY = 170 - (15/18)*150 = 45 -->
+        <line x1="40" y1="145" x2="260" y2="45" stroke="#22c55e" stroke-width="3" marker-end="url(#line-arrow-green)"/>
+
+        <!-- Data points (optional) -->
+        <!-- Point at (3, 9) on blue line: pixelX=150, pixelY=95 -->
+        <circle cx="150" cy="95" r="5" fill="#60a5fa"/>
+
+        <!-- Point at (3, 9) on green line: pixelX=150, pixelY=95 -->
+        <circle cx="150" cy="95" r="5" fill="#22c55e"/>
     </g>
 
-    <!-- ===== AXIS LABELS ===== -->
-    <!-- SINGLE "0" at origin (serves both axes) -->
-    <text x="33" y="182" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">0</text>
-
-    <!-- X-axis labels (counting by 1s: 0,1,2,3,4,5,6) -->
-    <text x="76.67" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">1</text>
-    <text x="113.33" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">2</text>
-    <text x="150" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">3</text>
-    <text x="186.67" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">4</text>
-    <text x="223.33" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">5</text>
-    <text x="260" y="185" fill="#64748b" font-family="Arial" font-size="11" text-anchor="middle">6</text>
-
-    <!-- Y-axis labels (counting by 2s: 0,2,4,6,8,10,12,14,16,18) -->
-    <text x="35" y="157" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">2</text>
-    <text x="35" y="140" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">4</text>
-    <text x="35" y="124" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">6</text>
-    <text x="35" y="107" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">8</text>
-    <text x="35" y="90" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">10</text>
-    <text x="35" y="74" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">12</text>
-    <text x="35" y="57" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">14</text>
-    <text x="35" y="40" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">16</text>
-    <text x="35" y="24" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">18</text>
-
-    <!-- ===== DATA LINES (extend to plot edges with arrows) ===== -->
-    <!-- Line 1: y = 3x (blue) - from origin to (6,18) -->
-    <!-- pixelY at x=6: 170 - (18/18)*150 = 20 -->
-    <line x1="40" y1="170" x2="260" y2="20" stroke="#60a5fa" stroke-width="3" marker-end="url(#line-arrow-blue)"/>
-
-    <!-- Line 2: y = 2x + 3 (green) - from (0,3) to (6,15) -->
-    <!-- Entry: pixelY = 170 - (3/18)*150 = 145 -->
-    <!-- Exit: pixelY = 170 - (15/18)*150 = 45 -->
-    <line x1="40" y1="145" x2="260" y2="45" stroke="#22c55e" stroke-width="3" marker-end="url(#line-arrow-green)"/>
-
-    <!-- ===== DATA POINTS (optional) ===== -->
-    <!-- Point at (3, 9) on blue line: pixelX=150, pixelY=95 -->
-    <circle cx="150" cy="95" r="5" fill="#60a5fa"/>
-
-    <!-- Point at (3, 9) on green line: pixelX=150, pixelY=95 -->
-    <circle cx="150" cy="95" r="5" fill="#22c55e"/>
+    <!-- ===== ANNOTATION LAYER: Labels, Arrows, Callouts ===== -->
+    <!-- Add annotation elements here using annotation-snippet.html patterns -->
+    <g data-pptx-layer="annotation">
+        <!-- Example: Y-intercept labels, shift arrows, equation labels -->
+        <!-- See annotation-snippet.html for patterns -->
+    </g>
 </svg>
 
 
@@ -1237,6 +1346,11 @@ export const ANNOTATION_SNIPPET = `
   Annotations must use the SAME pixel formula as the graph.
   This ensures labels appear at the correct y-intercept positions.
 
+  PPTX LAYER: All annotation elements should be wrapped in:
+    <g data-pptx-layer="annotation">...</g>
+  This allows the export to capture annotations as a separate
+  transparent PNG that can be moved independently in PowerPoint.
+
   STEP 1: Know your graph constants (from svg-graphs.md)
     ORIGIN_Y = 170      (pixel y for data y=0)
     PLOT_HEIGHT = 150   (pixels from y=0 to y=max)
@@ -1267,24 +1381,27 @@ export const ANNOTATION_SNIPPET = `
   Arrow positions: x=25, from pixelY1 to pixelY2
 -->
 
-<!-- Arrow marker definition (use ONCE per SVG) -->
+<!-- Arrow marker definition (add to <defs> section, use ONCE per SVG) -->
 <defs>
-  <marker id="arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+  <marker id="annotation-arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
     <polygon points="0 0, 6 2, 0 4" fill="#ef4444"/>
   </marker>
 </defs>
 
-<!-- Y-intercept label at y=0 (pixelY=170) -->
-<text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
+<!-- ===== WRAP ALL ANNOTATIONS IN THIS GROUP ===== -->
+<g data-pptx-layer="annotation">
+  <!-- Y-intercept label at y=0 (pixelY=170) -->
+  <text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
 
-<!-- Y-intercept label at y=20 (pixelY=110) -->
-<text x="5" y="110" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 20</text>
+  <!-- Y-intercept label at y=20 (pixelY=110) -->
+  <text x="5" y="110" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 20</text>
 
-<!-- Arrow showing shift from y=0 to y=20 -->
-<line x1="25" y1="170" x2="25" y2="115" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- Arrow showing shift from y=0 to y=20 -->
+  <line x1="25" y1="170" x2="25" y2="115" stroke="#ef4444" stroke-width="2" marker-end="url(#annotation-arrow)"/>
 
-<!-- Arrow label (midpoint: (170+110)/2 = 140) -->
-<text x="5" y="140" fill="#ef4444" font-family="Arial" font-size="9" font-weight="normal">+20</text>
+  <!-- Arrow label (midpoint: (170+110)/2 = 140) -->
+  <text x="5" y="140" fill="#ef4444" font-family="Arial" font-size="9" font-weight="normal">+20</text>
+</g>
 
 
 <!-- ========== POSITION REFERENCE ========== -->

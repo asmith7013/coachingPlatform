@@ -19,8 +19,7 @@ interface SavedDraftsProps {
 const STEP_LABELS: Record<WizardStep, string> = {
   1: 'Step 1: Inputs',
   2: 'Step 2: Analysis',
-  3: 'Step 3: Slides',
-  4: 'Step 4: Save',
+  3: 'Step 3: Export',
 };
 
 const ITEMS_PER_PAGE = 10;

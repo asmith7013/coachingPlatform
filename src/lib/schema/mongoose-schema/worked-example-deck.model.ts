@@ -18,7 +18,7 @@ const workedExampleDeckSchema = new mongoose.Schema({
 
   // Educational Context
   mathConcept: { type: String, required: true, index: true },
-  mathStandard: { type: String, required: true },
+  mathStandard: { type: String, default: '' },
   gradeLevel: { type: String, required: true, enum: ['6', '7', '8', 'Algebra 1'], index: true },
   unitNumber: { type: Number }, // Unit number (matches scope-and-sequence)
   lessonNumber: { type: Number }, // Lesson number (matches scope-and-sequence)
@@ -40,6 +40,9 @@ const workedExampleDeckSchema = new mongoose.Schema({
 
   // Soft delete
   deactivated: { type: Boolean, default: false, index: true },
+
+  // Google Slides URL (set after export)
+  googleSlidesUrl: { type: String },
 
   // Files
   files: {

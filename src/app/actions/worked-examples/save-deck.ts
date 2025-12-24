@@ -21,18 +21,34 @@ export async function saveWorkedExampleDeck(deckData: CreateWorkedExampleDeckInp
       // Validate input with Zod
       const validated = CreateWorkedExampleDeckSchema.parse(deckData);
 
-      // Check if slug already exists
-      const existingDeck = await WorkedExampleDeck.findOne({ slug: validated.slug });
+      // Generate unique slug by appending version number if needed
+      let finalSlug = validated.slug;
+      const existingDeck = await WorkedExampleDeck.findOne({ slug: finalSlug });
       if (existingDeck) {
-        return {
-          success: false,
-          error: `A deck with slug "${validated.slug}" already exists. Please use a different slug.`,
-        };
+        // Find all slugs that start with the base slug (e.g., "my-deck", "my-deck-v2", "my-deck-v3")
+        const baseSlug = validated.slug.replace(/-v\d+$/, ''); // Remove existing version suffix
+        const existingSlugs = await WorkedExampleDeck.find(
+          { slug: { $regex: `^${baseSlug}(-v\\d+)?$` } },
+          { slug: 1 }
+        ).lean();
+
+        // Find the highest version number
+        let maxVersion = 1;
+        for (const deck of existingSlugs) {
+          const match = deck.slug.match(/-v(\d+)$/);
+          if (match) {
+            maxVersion = Math.max(maxVersion, parseInt(match[1], 10));
+          }
+        }
+
+        // Generate new slug with next version
+        finalSlug = `${baseSlug}-v${maxVersion + 1}`;
       }
 
-      // Create the deck
+      // Create the deck with the unique slug
       const deck = await WorkedExampleDeck.create({
         ...validated,
+        slug: finalSlug, // Use the unique slug
         createdBy: userId,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -40,9 +56,8 @@ export async function saveWorkedExampleDeck(deckData: CreateWorkedExampleDeckInp
 
       return {
         success: true,
-        data: deck.toJSON(),
         deckId: deck._id.toString(),
-        slug: deck.slug,
+        slug: finalSlug,
       };
     } catch (error) {
       return {

@@ -26,6 +26,8 @@ export default function PresentationsList() {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const openSlug = searchParams.get("view");
+  const slideParam = searchParams.get("slide");
+  const initialSlide = slideParam ? Math.max(0, parseInt(slideParam, 10) - 1) : 0; // Convert 1-indexed URL to 0-indexed
   const gradeFilter = searchParams.get("grade") || "";
 
   // Get scopeSequenceTag from grade filter
@@ -72,7 +74,14 @@ export default function PresentationsList() {
   const handleClosePresentation = () => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete('view');
+    params.delete('slide');
     router.push(`/scm/workedExamples${params.toString() ? `?${params.toString()}` : ''}`, { scroll: false });
+  };
+
+  const handleSlideChange = (slideIndex: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('slide', String(slideIndex + 1)); // Convert 0-indexed to 1-indexed for URL
+    router.replace(`/scm/workedExamples?${params.toString()}`, { scroll: false });
   };
 
   const handleDeactivate = async (slug: string, title: string) => {
@@ -257,9 +266,26 @@ export default function PresentationsList() {
 
                             <div className="mt-4 pt-4 border-t border-gray-100">
                               <div className="flex items-center justify-between text-xs text-gray-500">
-                                <span>
-                                  {deck.isPublic ? '🌐 Public' : '🔒 Private'}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                  <span>
+                                    {deck.isPublic ? '🌐 Public' : '🔒 Private'}
+                                  </span>
+                                  {deck.googleSlidesUrl && (
+                                    <a
+                                      href={deck.googleSlidesUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-yellow-700 bg-yellow-100 hover:bg-yellow-200 rounded transition-colors"
+                                      title="Open in Google Slides"
+                                    >
+                                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+                                      </svg>
+                                      Slides
+                                    </a>
+                                  )}
+                                </div>
                                 <span>
                                   {new Date(deck.createdAt!).toLocaleDateString()}
                                 </span>
@@ -333,6 +359,8 @@ export default function PresentationsList() {
           slug={openSlug}
           isOpen={!!openSlug}
           onClose={handleClosePresentation}
+          initialSlide={initialSlide}
+          onSlideChange={handleSlideChange}
         />
       )}
     </>

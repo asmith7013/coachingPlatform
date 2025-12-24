@@ -265,7 +265,7 @@ When showing steps on slides, use these techniques to highlight changes:
 
 | Technique | Use For | CSS Example |
 |-----------|---------|-------------|
-| **Highlight row** | Emphasizing table data | `background: rgba(23, 145, 232, 0.1);` |
+| **Highlight row** | Emphasizing table data | `background: #e8f4fd;` |
 | **Border/outline** | Circling elements | `border: 2px solid #1791e8;` |
 | **Strike-through** | Removed items | `text-decoration: line-through; opacity: 0.5;` |
 | **Color change** | Before/after states | Different background colors |

@@ -516,20 +516,49 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                       Graph Plan
                     </h4>
 
-                    {/* Equations */}
+                    {/* Equations with Line Endpoints */}
                     <div className="border-b border-gray-200 pb-4">
-                      <h5 className="text-sm font-semibold text-gray-700 mb-2">Equations</h5>
-                      <div className="space-y-1.5">
+                      <h5 className="text-sm font-semibold text-gray-700 mb-2">Lines (with endpoints)</h5>
+                      <div className="space-y-3">
                         {problemAnalysis.graphPlan.equations.map((eq, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm">
-                            <span
-                              className="w-3 h-3 rounded-full flex-shrink-0"
-                              style={{ backgroundColor: eq.color }}
-                            />
-                            <code className="text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded text-xs">
-                              {eq.equation}
-                            </code>
-                            <span className="text-gray-500 text-xs">({eq.color})</span>
+                          <div key={i} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span
+                                className="w-3 h-3 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: eq.color }}
+                              />
+                              <code className="text-gray-700 bg-white px-1.5 py-0.5 rounded text-xs border border-gray-200">
+                                {eq.equation}
+                              </code>
+                              <span className="text-gray-400 text-xs">slope={eq.slope}, b={eq.yIntercept}</span>
+                            </div>
+                            {/* Line Endpoints - Critical for accurate drawing */}
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-gray-500">Start:</span>
+                                {eq.startPoint ? (
+                                  <code className="text-green-700 bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
+                                    ({eq.startPoint.x}, {eq.startPoint.y})
+                                  </code>
+                                ) : (
+                                  <span className="text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                                    missing
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-gray-500">End:</span>
+                                {eq.endPoint ? (
+                                  <code className="text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                                    ({eq.endPoint.x}, {eq.endPoint.y})
+                                  </code>
+                                ) : (
+                                  <span className="text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                                    missing
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>

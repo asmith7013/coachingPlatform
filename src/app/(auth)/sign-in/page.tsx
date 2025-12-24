@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
 import { Card } from '@/components/composed/cards/Card'
 
-const DEFAULT_REDIRECT = 'https://solvescoaching.com/scm'
+const DEFAULT_REDIRECT = '/scm'
 
 export default function SignInPage() {
   const searchParams = useSearchParams()

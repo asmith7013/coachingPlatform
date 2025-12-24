@@ -134,7 +134,65 @@ Y scale: [increment between labels]
 
 ---
 
-## Step 4: Identify the Mathematical Relationship to Annotate
+## Step 4: Calculate Line Endpoints (CRITICAL)
+
+**This step ensures mathematically accurate line drawing.**
+
+For each line equation y = mx + b, calculate:
+- **Start point**: Where the line enters the plot (usually at x=0, the y-intercept)
+- **End point**: Where the line exits the plot (usually at x=X_MAX)
+
+### Formula
+
+```
+Start Point: (x=0, y=b)              -- where b is the y-intercept
+End Point:   (x=X_MAX, y=m*X_MAX+b)  -- plug X_MAX into the equation
+```
+
+### Example Calculations
+
+**Given:** Line 1: y = 5x, Line 2: y = 5x + 20, X_MAX = 8
+
+```
+Line 1: y = 5x (slope=5, y-intercept=0)
+  - Start point: (0, 0)
+  - End point: (8, 5*8 + 0) = (8, 40)
+
+Line 2: y = 5x + 20 (slope=5, y-intercept=20)
+  - Start point: (0, 20)
+  - End point: (8, 5*8 + 20) = (8, 60)
+```
+
+### Edge Cases
+
+If a line exits through the TOP of the plot before reaching X_MAX:
+- Calculate where y = Y_MAX: x = (Y_MAX - b) / m
+- Use that x value as the end point's x coordinate
+
+```
+Example: y = 20x with X_MAX=8, Y_MAX=80
+  - At x=8: y = 160 (exceeds Y_MAX=80!)
+  - Line exits at top: x = (80 - 0) / 20 = 4
+  - End point: (4, 80) instead of (8, 160)
+```
+
+### Record Your Line Endpoints
+
+```
+Line 1: y = [equation]
+  - Start point: ([x], [y])
+  - End point: ([x], [y])
+
+Line 2: y = [equation]
+  - Start point: ([x], [y])
+  - End point: ([x], [y])
+```
+
+**⚠️ These values will be used DIRECTLY in the SVG line element as x1, y1, x2, y2 coordinates (after pixel conversion).**
+
+---
+
+## Step 5: Identify the Mathematical Relationship to Annotate
 
 What is the KEY mathematical concept this graph should emphasize?
 

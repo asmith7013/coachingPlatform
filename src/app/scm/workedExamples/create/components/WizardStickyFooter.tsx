@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 
-export type FooterTheme = 'purple' | 'green' | 'blue' | 'amber' | 'gray';
+export type FooterTheme = 'purple' | 'green' | 'blue' | 'amber' | 'yellow' | 'gray';
 
 interface WizardStickyFooterProps {
   children: ReactNode;
@@ -43,6 +43,11 @@ export function WizardStickyFooter({
       border: 'border-amber-300',
       bg: 'bg-amber-50',
       activeBg: 'bg-amber-100',
+    },
+    yellow: {
+      border: 'border-yellow-300',
+      bg: 'bg-yellow-50',
+      activeBg: 'bg-yellow-100',
     },
     gray: {
       border: 'border-gray-300',

@@ -300,6 +300,46 @@ Use these classes instead of inline flexbox:
 <div class="row">
 \`\`\`
 
+## PPTX Export Attributes (REQUIRED)
+
+Every slide element that needs precise positioning in PowerPoint must have \`data-pptx-*\` attributes:
+
+\`\`\`html
+<div data-pptx-region="badge"
+     data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35">
+\`\`\`
+
+| Attribute | Purpose |
+|-----------|---------|
+| \`data-pptx-region\` | Region type (badge, title, subtitle, content, cfu-box, answer-box, svg-container, footnote) |
+| \`data-pptx-x\` | X position in pixels (0-960) |
+| \`data-pptx-y\` | Y position in pixels (0-540) |
+| \`data-pptx-w\` | Width in pixels |
+| \`data-pptx-h\` | Height in pixels |
+
+**Standard positions:**
+
+| Region | x | y | w | h |
+|--------|---|---|---|---|
+| Badge | 20 | 16 | 180 | 35 |
+| Title | 20 | 55 | 920 | 40 |
+| Subtitle | 20 | 100 | 920 | 30 |
+| Content | 20 | 130 | 920 | 370 |
+| CFU/Answer Box | 653 | 40 | 280 | 115 |
+| Footnote | 700 | 8 | 240 | 25 |
+
+**SVG Layer Attributes (for multi-layer export):**
+
+\`\`\`html
+<g data-pptx-layer="base-graph"><!-- Grid, axes --></g>
+<g data-pptx-layer="data"><!-- Lines, points --></g>
+<g data-pptx-layer="annotation"><!-- Labels, arrows --></g>
+\`\`\`
+
+Each layer becomes a separate transparent PNG that can be moved independently in PowerPoint.
+
+---
+
 ## Common Mistakes to Avoid
 
 1. **Text outside proper tags**: All text MUST be in \`<p>\`, \`<h1-6>\`, \`<ul>\`, \`<ol>\`
@@ -309,6 +349,7 @@ Use these classes instead of inline flexbox:
 5. **Backgrounds on text elements**: Only use on \`<div>\`, not on \`<p>\` or \`<h1>\`
 6. **Wrong dimensions**: Body MUST be exactly 960×540px
 7. **Custom fonts**: Only Arial, Georgia, Courier New
+8. **Missing data-pptx attributes**: Every positioned element needs \`data-pptx-region\` and position attributes
 
 ## Annotation Techniques
 
@@ -316,7 +357,7 @@ When showing steps on slides, use these techniques to highlight changes:
 
 | Technique | Use For | CSS Example |
 |-----------|---------|-------------|
-| **Highlight row** | Emphasizing table data | \`background: rgba(23, 145, 232, 0.1);\` |
+| **Highlight row** | Emphasizing table data | \`background: #e8f4fd;\` |
 | **Border/outline** | Circling elements | \`border: 2px solid #1791e8;\` |
 | **Strike-through** | Removed items | \`text-decoration: line-through; opacity: 0.5;\` |
 | **Color change** | Before/after states | Different background colors |
@@ -1060,7 +1101,65 @@ Y scale: [increment between labels]
 
 ---
 
-## Step 4: Identify the Mathematical Relationship to Annotate
+## Step 4: Calculate Line Endpoints (CRITICAL)
+
+**This step ensures mathematically accurate line drawing.**
+
+For each line equation y = mx + b, calculate:
+- **Start point**: Where the line enters the plot (usually at x=0, the y-intercept)
+- **End point**: Where the line exits the plot (usually at x=X_MAX)
+
+### Formula
+
+\`\`\`
+Start Point: (x=0, y=b)              -- where b is the y-intercept
+End Point:   (x=X_MAX, y=m*X_MAX+b)  -- plug X_MAX into the equation
+\`\`\`
+
+### Example Calculations
+
+**Given:** Line 1: y = 5x, Line 2: y = 5x + 20, X_MAX = 8
+
+\`\`\`
+Line 1: y = 5x (slope=5, y-intercept=0)
+  - Start point: (0, 0)
+  - End point: (8, 5*8 + 0) = (8, 40)
+
+Line 2: y = 5x + 20 (slope=5, y-intercept=20)
+  - Start point: (0, 20)
+  - End point: (8, 5*8 + 20) = (8, 60)
+\`\`\`
+
+### Edge Cases
+
+If a line exits through the TOP of the plot before reaching X_MAX:
+- Calculate where y = Y_MAX: x = (Y_MAX - b) / m
+- Use that x value as the end point's x coordinate
+
+\`\`\`
+Example: y = 20x with X_MAX=8, Y_MAX=80
+  - At x=8: y = 160 (exceeds Y_MAX=80!)
+  - Line exits at top: x = (80 - 0) / 20 = 4
+  - End point: (4, 80) instead of (8, 160)
+\`\`\`
+
+### Record Your Line Endpoints
+
+\`\`\`
+Line 1: y = [equation]
+  - Start point: ([x], [y])
+  - End point: ([x], [y])
+
+Line 2: y = [equation]
+  - Start point: ([x], [y])
+  - End point: ([x], [y])
+\`\`\`
+
+**⚠️ These values will be used DIRECTLY in the SVG line element as x1, y1, x2, y2 coordinates (after pixel conversion).**
+
+---
+
+## Step 5: Identify the Mathematical Relationship to Annotate
 
 What is the KEY mathematical concept this graph should emphasize?
 

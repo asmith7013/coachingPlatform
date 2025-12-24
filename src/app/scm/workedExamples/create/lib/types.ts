@@ -15,6 +15,10 @@ export interface GraphPlan {
     slope: number;      // e.g., 5 (the 'm' in y = mx + b)
     yIntercept: number; // e.g., 20 (the 'b' in y = mx + b)
     color: string;      // e.g., "#60a5fa" (blue) or "#22c55e" (green)
+    // CRITICAL: Explicit line endpoints for mathematically accurate drawing
+    // These define where the SVG line element starts and ends
+    startPoint: { x: number; y: number };  // Data coordinates where line enters plot (usually y-intercept)
+    endPoint: { x: number; y: number };    // Data coordinates where line exits plot (at xMax or edge)
   }[];
   scale: {
     xMax: number;        // Rightmost x-value (e.g., 8)
@@ -103,7 +107,7 @@ export interface GenerateSlidesResponse {
 }
 
 // Wizard step enum
-export type WizardStep = 1 | 2 | 3 | 4;
+export type WizardStep = 1 | 2 | 3;
 
 // Loading phase for detailed progress tracking
 export type LoadingPhase =

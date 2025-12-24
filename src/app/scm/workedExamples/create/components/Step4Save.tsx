@@ -26,6 +26,8 @@ export function Step4Save({ wizard }: Step4SaveProps) {
 
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [isExportingGoogleSlides, setIsExportingGoogleSlides] = useState(false);
+  const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
 
   // Handle export to PPTX
   const handleExportPptx = async () => {
@@ -68,6 +70,46 @@ export function Step4Save({ wizard }: Step4SaveProps) {
       setError(error instanceof Error ? error.message : 'Failed to export PPTX');
     } finally {
       setIsExporting(false);
+    }
+  };
+
+  // Handle export to Google Slides
+  const handleExportGoogleSlides = async () => {
+    if (state.slides.length === 0) {
+      setError('No slides to export');
+      return;
+    }
+
+    setIsExportingGoogleSlides(true);
+    setError(null);
+    setGoogleSlidesUrl(null);
+
+    try {
+      const response = await fetch('/api/scm/worked-examples/export-google-slides', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slides: state.slides,
+          title: state.title || 'worked-example',
+          mathConcept: state.mathConcept,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to export to Google Slides');
+      }
+
+      const data = await response.json();
+      setGoogleSlidesUrl(data.url);
+
+      // Open in new tab
+      window.open(data.url, '_blank');
+    } catch (error) {
+      console.error('Google Slides export error:', error);
+      setError(error instanceof Error ? error.message : 'Failed to export to Google Slides');
+    } finally {
+      setIsExportingGoogleSlides(false);
     }
   };
 
@@ -271,6 +313,26 @@ export function Step4Save({ wizard }: Step4SaveProps) {
         </div>
       </div>
 
+      {/* Google Slides Success Message */}
+      {googleSlidesUrl && (
+        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mt-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Exported to Google Slides!</span>
+          </div>
+          <a
+            href={googleSlidesUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-green-700 hover:text-green-900 underline font-medium"
+          >
+            Open in Google Slides
+          </a>
+        </div>
+      )}
+
       {/* Error Message */}
       {state.error && (
         <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mt-4">
@@ -279,17 +341,17 @@ export function Step4Save({ wizard }: Step4SaveProps) {
       )}
 
       {/* Navigation */}
-      <div className="flex gap-4 pt-6">
+      <div className="flex gap-4 pt-6 flex-wrap">
         <button
           onClick={prevStep}
-          disabled={state.isLoading || isExporting}
+          disabled={state.isLoading || isExporting || isExportingGoogleSlides}
           className="bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer border border-gray-300"
         >
           Back
         </button>
         <button
           onClick={handleExportPptx}
-          disabled={state.isLoading || isExporting || state.slides.length === 0}
+          disabled={state.isLoading || isExporting || isExportingGoogleSlides || state.slides.length === 0}
           className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
         >
           {isExporting ? (
@@ -310,8 +372,30 @@ export function Step4Save({ wizard }: Step4SaveProps) {
           )}
         </button>
         <button
+          onClick={handleExportGoogleSlides}
+          disabled={state.isLoading || isExporting || isExportingGoogleSlides || state.slides.length === 0}
+          className="bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
+        >
+          {isExportingGoogleSlides ? (
+            <>
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              <span>Uploading...</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+              </svg>
+              <span>Google Slides</span>
+            </>
+          )}
+        </button>
+        <button
           onClick={handleSave}
-          disabled={state.isLoading || isExporting}
+          disabled={state.isLoading || isExporting || isExportingGoogleSlides}
           className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
         >
           {state.isLoading ? (

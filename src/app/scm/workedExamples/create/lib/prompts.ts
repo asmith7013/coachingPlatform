@@ -93,8 +93,24 @@ You MUST return valid JSON matching this exact structure:
     "visualType": "HTML/CSS" | "HTML diagrams" | "SVG graphs",
     "graphPlan": {
       "equations": [
-        { "label": "Line 1", "equation": "y = mx + b", "slope": 5, "yIntercept": 0, "color": "#60a5fa" },
-        { "label": "Line 2", "equation": "y = mx + b", "slope": 5, "yIntercept": 20, "color": "#22c55e" }
+        {
+          "label": "Line 1",
+          "equation": "y = mx + b",
+          "slope": 5,
+          "yIntercept": 0,
+          "color": "#60a5fa",
+          "startPoint": { "x": 0, "y": 0 },
+          "endPoint": { "x": 8, "y": 40 }
+        },
+        {
+          "label": "Line 2",
+          "equation": "y = mx + b",
+          "slope": 5,
+          "yIntercept": 20,
+          "color": "#22c55e",
+          "startPoint": { "x": 0, "y": 20 },
+          "endPoint": { "x": 8, "y": 60 }
+        }
       ],
       "scale": {
         "xMax": 8,
@@ -324,7 +340,15 @@ export function buildGenerateSlidesPrompt(
     solution: { step: number; description: string; reasoning: string }[];
     visualType: 'HTML/CSS' | 'HTML diagrams' | 'SVG graphs';
     graphPlan?: {
-      equations: { label: string; equation: string; slope: number; yIntercept: number; color: string }[];
+      equations: {
+        label: string;
+        equation: string;
+        slope: number;
+        yIntercept: number;
+        color: string;
+        startPoint?: { x: number; y: number };
+        endPoint?: { x: number; y: number };
+      }[];
       scale: { xMax: number; yMax: number; xAxisLabels: number[]; yAxisLabels: number[] };
       keyPoints: { label: string; x: number; y: number; dataX: number; dataY: number }[];
       annotations: { type: string; from?: number; to?: number; label: string; position?: string }[];
@@ -349,31 +373,74 @@ export function buildGenerateSlidesPrompt(
   let graphPlanSection = '';
   if (problemAnalysis.visualType === 'SVG graphs' && problemAnalysis.graphPlan) {
     const gp = problemAnalysis.graphPlan;
-    graphPlanSection = `
-## 📊 GRAPH PLAN (PRE-CALCULATED - USE THESE VALUES)
+    const xMax = gp.scale.xMax;
+    const yMax = gp.scale.yMax;
 
-**Equations (with slope and y-intercept):**
-${gp.equations.map(e => `- ${e.label}: ${e.equation} | slope=${e.slope}, y-intercept=${e.yIntercept} | color: ${e.color}`).join('\n')}
+    // Helper to convert data coordinates to pixel coordinates
+    const toPixelX = (dataX: number) => Math.round((40 + (dataX / xMax) * 220) * 100) / 100;
+    const toPixelY = (dataY: number) => Math.round((170 - (dataY / yMax) * 150) * 100) / 100;
+
+    // Build explicit line drawing instructions with pre-calculated pixels
+    const lineInstructions = gp.equations.map(e => {
+      const startPixelX = toPixelX(e.startPoint?.x ?? 0);
+      const startPixelY = toPixelY(e.startPoint?.y ?? e.yIntercept);
+      const endPixelX = toPixelX(e.endPoint?.x ?? xMax);
+      const endPixelY = toPixelY(e.endPoint?.y ?? (e.slope * xMax + e.yIntercept));
+
+      return `### ${e.label}: ${e.equation} (${e.color})
+**Data coordinates:**
+- Start point: (${e.startPoint?.x ?? 0}, ${e.startPoint?.y ?? e.yIntercept})
+- End point: (${e.endPoint?.x ?? xMax}, ${e.endPoint?.y ?? (e.slope * xMax + e.yIntercept)})
+
+**PRE-CALCULATED PIXEL VALUES (use these EXACTLY):**
+- x1="${startPixelX}" y1="${startPixelY}"
+- x2="${endPixelX}" y2="${endPixelY}"
+
+**SVG line element:**
+\`\`\`html
+<line x1="${startPixelX}" y1="${startPixelY}" x2="${endPixelX}" y2="${endPixelY}" stroke="${e.color}" stroke-width="3" marker-end="url(#line-arrow-${e.label.toLowerCase().replace(/\s+/g, '-')})"/>
+\`\`\``;
+    }).join('\n\n');
+
+    graphPlanSection = `
+## 📊 GRAPH PLAN (PRE-CALCULATED - USE THESE EXACT VALUES)
 
 **Scale:**
-- X_MAX: ${gp.scale.xMax}
-- Y_MAX: ${gp.scale.yMax}
+- X_MAX: ${xMax}
+- Y_MAX: ${yMax}
 - X-axis labels: ${gp.scale.xAxisLabels.join(', ')}
 - Y-axis labels: ${gp.scale.yAxisLabels.join(', ')}
 
-**Key Points (PRE-CALCULATED - ensures math accuracy):**
-${gp.keyPoints.map(p => `- ${p.label}: (${p.x}, ${p.y})`).join('\n')}
+**Pixel conversion formulas (for reference):**
+- pixelX = 40 + (dataX / ${xMax}) * 220
+- pixelY = 170 - (dataY / ${yMax}) * 150
+
+---
+
+## ⚠️ CRITICAL: LINE DRAWING INSTRUCTIONS
+
+**Each line below has PRE-CALCULATED pixel coordinates. Use them EXACTLY as shown.**
+**DO NOT recalculate these values. Copy the x1, y1, x2, y2 values directly into your SVG.**
+
+${lineInstructions}
+
+---
+
+**Key Points (for data point circles/labels):**
+${gp.keyPoints.map(p => `- ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX(p.x)}, ${toPixelY(p.y)})`).join('\n')}
 
 **Annotations:**
 ${gp.annotations.map(a => `- Type: ${a.type}, Label: "${a.label}"${a.from !== undefined ? `, from y=${a.from} to y=${a.to}` : ''}`).join('\n')}
-
-**⚠️ CRITICAL: When drawing the graph, use the keyPoints above.**
-- For line endpoints, calculate: pixelX = 40 + (dataX / ${gp.scale.xMax}) * 220, pixelY = 170 - (dataY / ${gp.scale.yMax}) * 150
-- DO NOT derive positions from scratch - use the pre-calculated values above
 `;
   }
 
-  return `Generate HTML slides for this worked example.
+  return `**⚠️ OUTPUT ONLY HTML. NO INTRODUCTION. NO ANNOUNCEMENT. NO PREAMBLE.**
+**Your response must begin IMMEDIATELY with \`<!DOCTYPE html>\` - the very first slide.**
+**Do NOT say "I'll generate..." or "Here are the slides..." or ANY text before the HTML.**
+
+---
+
+Generate HTML slides for this worked example.
 
 ## Context
 - Grade Level: ${gradeLevel}

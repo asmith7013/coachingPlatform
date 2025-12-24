@@ -98,7 +98,7 @@ Annotations: READ templates/annotation-snippet.html → add y-intercept labels
 
 **CFU Box (for slides 4, 8, 12) - ABSOLUTE POSITIONED TOP RIGHT:**
 ```html
-<div data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+<div data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; z-index: 100;">
   <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
   <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[CFU question using strategy verb]</p>
 </div>
@@ -106,7 +106,7 @@ Annotations: READ templates/annotation-snippet.html → add y-intercept labels
 
 **Answer Box (for slides 6, 10) - ABSOLUTE POSITIONED TOP RIGHT:**
 ```html
-<div data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+<div data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; z-index: 100;">
   <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
   <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[Answer explanation]</p>
 </div>
@@ -227,6 +227,23 @@ This HTML file is your **starting point**. It contains:
 
 ---
 
+## ⚠️ COLOR FORMAT (CRITICAL)
+
+**ALWAYS use 6-digit hex colors. NEVER use rgb(), rgba(), hsl(), or named colors.**
+
+| ✅ CORRECT | ❌ WRONG |
+|-----------|----------|
+| `#ffffff` | `white` |
+| `#1d1d1d` | `rgb(29, 29, 29)` |
+| `#f59e0b` | `rgba(245, 158, 11, 1)` |
+| `#000000` | `black` |
+
+**Why?** The PPTX export parser only understands hex colors. Any other format will cause rendering errors or be ignored.
+
+**For shadows:** Use a simple border instead of box-shadow, or omit shadows entirely. PPTX doesn't support shadows.
+
+---
+
 ## Pre-Flight Checklist (Verify EVERY Slide)
 
 - [ ] File starts with `<!DOCTYPE html>` (NO checkpoint, NO comments before it)
@@ -234,6 +251,7 @@ This HTML file is your **starting point**. It contains:
 - [ ] All text in `<p>`, `<h1-6>`, `<ul>`, `<ol>` (NOT bare text in divs)
 - [ ] Layout uses `.row`/`.col` classes (NOT inline `display: flex`)
 - [ ] Fonts: Arial, Georgia, Courier New only
+- [ ] **Colors: 6-digit hex ONLY (e.g., #ffffff) - NEVER rgb/rgba/named colors**
 - [ ] Backgrounds/borders on `<div>` only (NOT on `<p>`, `<h1>`)
 - [ ] No JavaScript, onclick, or animations
 - [ ] Light theme (white #ffffff, dark text #1d1d1d)

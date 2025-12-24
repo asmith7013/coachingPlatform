@@ -11,8 +11,7 @@ interface WizardProgressProps {
 const STEPS = [
   { number: 1, label: 'Input', subtitle: 'Upload task' },
   { number: 2, label: 'Analysis', subtitle: 'Review AI analysis' },
-  { number: 3, label: 'Slides', subtitle: 'Preview and edit slides' },
-  { number: 4, label: 'Save', subtitle: 'Review and save' },
+  { number: 3, label: 'Export', subtitle: 'Preview, edit & export' },
 ] as const;
 
 export function WizardProgress({ currentStep, onStepClick, isLoading = false }: WizardProgressProps) {

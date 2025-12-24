@@ -7,7 +7,6 @@ import { WizardFooter } from './WizardFooter';
 import { Step1Inputs } from './Step1Inputs';
 import { Step2Analysis } from './Step2Analysis';
 import { Step3Slides } from './Step3Slides';
-import { Step4Save } from './Step4Save';
 import type { WizardStep } from '../lib/types';
 
 // Context for sharing wizard state
@@ -47,8 +46,6 @@ export function WizardContainer() {
         return <Step2Analysis wizard={wizard} />;
       case 3:
         return <Step3Slides wizard={wizard} />;
-      case 4:
-        return <Step4Save wizard={wizard} />;
       default:
         return <Step1Inputs wizard={wizard} />;
     }

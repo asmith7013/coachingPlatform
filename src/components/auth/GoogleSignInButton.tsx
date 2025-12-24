@@ -7,7 +7,7 @@ interface GoogleSignInButtonProps {
   redirectUrl?: string
 }
 
-export function GoogleSignInButton({ redirectUrl = 'https://solvescoaching.com/scm' }: GoogleSignInButtonProps) {
+export function GoogleSignInButton({ redirectUrl = '/scm' }: GoogleSignInButtonProps) {
   const { signIn, isLoaded } = useSignIn()
 
   const signInWithGoogle = () => {

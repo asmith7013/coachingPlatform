@@ -8,11 +8,13 @@ interface PresentationModalProps {
   slug: string;
   isOpen: boolean;
   onClose: () => void;
+  initialSlide?: number;
+  onSlideChange?: (slideIndex: number) => void;
 }
 
-export function PresentationModal({ slug, isOpen, onClose }: PresentationModalProps) {
+export function PresentationModal({ slug, isOpen, onClose, initialSlide = 0, onSlideChange }: PresentationModalProps) {
   const [deck, setDeck] = useState<WorkedExampleDeck | null>(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(initialSlide);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [scriptsLoaded, setScriptsLoaded] = useState<Set<string>>(new Set());
@@ -39,18 +41,27 @@ export function PresentationModal({ slug, isOpen, onClose }: PresentationModalPr
     loadDeck();
   }, [slug, isOpen]);
 
+  // Sync currentSlide when initialSlide changes (e.g., from URL navigation)
+  useEffect(() => {
+    setCurrentSlide(initialSlide);
+  }, [initialSlide]);
+
   // Navigation functions
   const nextSlide = useCallback(() => {
     if (deck?.htmlSlides && currentSlide < deck.htmlSlides.length - 1) {
-      setCurrentSlide(prev => prev + 1);
+      const newSlide = currentSlide + 1;
+      setCurrentSlide(newSlide);
+      onSlideChange?.(newSlide);
     }
-  }, [deck, currentSlide]);
+  }, [deck, currentSlide, onSlideChange]);
 
   const prevSlide = useCallback(() => {
     if (currentSlide > 0) {
-      setCurrentSlide(prev => prev - 1);
+      const newSlide = currentSlide - 1;
+      setCurrentSlide(newSlide);
+      onSlideChange?.(newSlide);
     }
-  }, [currentSlide]);
+  }, [currentSlide, onSlideChange]);
 
   // Keyboard navigation
   useEffect(() => {
