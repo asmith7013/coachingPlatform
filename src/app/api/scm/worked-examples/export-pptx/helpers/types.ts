@@ -1,4 +1,4 @@
-import pptxgen from 'pptxgenjs';
+import pptxgen from '@bapunhansdah/pptxgenjs';
 
 export interface SvgLayer {
   name: string;

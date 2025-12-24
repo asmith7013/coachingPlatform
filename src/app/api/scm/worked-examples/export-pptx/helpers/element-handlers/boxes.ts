@@ -1,4 +1,4 @@
-import pptxgen from 'pptxgenjs';
+import pptxgen from '@bapunhansdah/pptxgenjs';
 import * as cheerio from 'cheerio';
 import { PptxElement } from '../types';
 import { pxToInches } from '../constants';
