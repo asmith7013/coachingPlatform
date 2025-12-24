@@ -4,7 +4,7 @@
 
 ```bash
 # Students per section with mastery stats
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db.students.aggregate([
   { \$match: { active: true } },
   { \$group: {
@@ -17,7 +17,7 @@ db.students.aggregate([
 "
 
 # Skills mastery distribution
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db.students.aggregate([
   { \$match: { active: true, masteredSkills: { \$exists: true } } },
   { \$project: { masteredCount: { \$size: '\$masteredSkills' } } },
@@ -34,7 +34,7 @@ db.students.aggregate([
 
 ```bash
 # Completions by date (last 2 weeks)
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['podsie-completions'].aggregate([
   { \$group: {
     _id: { \$dateToString: { format: '%Y-%m-%d', date: '\$createdAt' } },
@@ -46,7 +46,7 @@ db['podsie-completions'].aggregate([
 "
 
 # Top assignments by completion count
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['podsie-completions'].aggregate([
   { \$group: { _id: '\$assignmentName', count: { \$sum: 1 } } },
   { \$sort: { count: -1 } },
@@ -59,7 +59,7 @@ db['podsie-completions'].aggregate([
 
 ```bash
 # Count documents in all SCM collections
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 const collections = [
   'students',
   'section-configs',
@@ -80,7 +80,7 @@ collections.forEach(c => {
 
 ```bash
 # Students without section config
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 const sections = db['section-configs'].distinct('classSection');
 db.students.find({
   active: true,

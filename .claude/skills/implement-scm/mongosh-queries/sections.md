@@ -4,27 +4,27 @@
 
 ```bash
 # List all section configs
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['section-configs'].find({}).forEach(printjson);
 "
 
 # Find section config by class section
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['section-configs'].findOne({ classSection: '802' });
 "
 
 # Sections by school
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['section-configs'].find({ school: 'IS313' }).forEach(printjson);
 "
 
 # Sections by grade level
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['section-configs'].find({ gradeLevel: '8' }).forEach(printjson);
 "
 
 # Sections with Podsie group IDs
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['section-configs'].find(
   { groupId: { \$exists: true, \$ne: null } },
   { classSection: 1, school: 1, groupId: 1 }
@@ -32,7 +32,7 @@ db['section-configs'].find(
 "
 
 # Sections by scope and sequence tag
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['section-configs'].find({ scopeSequenceTag: 'Grade 8' }).forEach(printjson);
 "
 ```

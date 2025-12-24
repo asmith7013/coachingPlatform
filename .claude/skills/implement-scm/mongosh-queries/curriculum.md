@@ -4,22 +4,22 @@
 
 ```bash
 # List all entries
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['scope-and-sequence'].find({}).limit(20).forEach(printjson);
 "
 
 # Entries by tag (grade level)
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['scope-and-sequence'].find({ scopeSequenceTag: 'Grade 8' }).forEach(printjson);
 "
 
 # Entries by unit number
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['scope-and-sequence'].find({ unitNumber: 1 }).forEach(printjson);
 "
 
 # Count entries per tag
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['scope-and-sequence'].aggregate([
   { \$group: { _id: '\$scopeSequenceTag', count: { \$sum: 1 } } },
   { \$sort: { _id: 1 } }
@@ -27,7 +27,7 @@ db['scope-and-sequence'].aggregate([
 "
 
 # Get lesson sequence for a unit
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['scope-and-sequence'].find({
   scopeSequenceTag: 'Grade 8',
   unitNumber: 1
@@ -39,22 +39,22 @@ db['scope-and-sequence'].find({
 
 ```bash
 # List all learning content
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['learning-content'].find({}).limit(10).forEach(printjson);
 "
 
 # Content by skill
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['learning-content'].find({ skillNumber: 'G8.01' }).forEach(printjson);
 "
 
 # Content by type
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['learning-content'].find({ contentType: 'worked-example' }).forEach(printjson);
 "
 
 # Recently updated
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['learning-content'].find({}).sort({ updatedAt: -1 }).limit(10).forEach(printjson);
 "
 ```

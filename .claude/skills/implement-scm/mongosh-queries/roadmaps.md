@@ -4,22 +4,22 @@
 
 ```bash
 # List all roadmap units
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['roadmaps-units'].find({}).forEach(printjson);
 "
 
 # Units by grade
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['roadmaps-units'].find({ grade: /7th Grade/i }).forEach(printjson);
 "
 
 # Unit by title
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['roadmaps-units'].findOne({ unitTitle: /Area and Surface Area/i });
 "
 
 # Count units per grade
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['roadmaps-units'].aggregate([
   { \$group: { _id: '\$grade', count: { \$sum: 1 } } },
   { \$sort: { count: -1 } }
@@ -31,22 +31,22 @@ db['roadmaps-units'].aggregate([
 
 ```bash
 # List all skills
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['roadmaps-skills'].find({}).limit(20).forEach(printjson);
 "
 
 # Find skill by skill number
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['roadmaps-skills'].findOne({ skillNumber: 'G7.01' });
 "
 
 # Skills by grade
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['roadmaps-skills'].find({ grade: '7' }).forEach(printjson);
 "
 
 # Search skills by name
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['roadmaps-skills'].find({
   skillName: { \$regex: 'ratio', \$options: 'i' }
 }).forEach(printjson);
@@ -57,19 +57,19 @@ db['roadmaps-skills'].find({
 
 ```bash
 # Find student assessment data
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['roadmaps-student-data'].findOne({ studentId: 'john-doe' });
 "
 
 # Students with assessments
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['roadmaps-student-data'].find({
   'skillPerformances.0': { \$exists: true }
 }).limit(5).forEach(printjson);
 "
 
 # Count students with data
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 print('Total:', db['roadmaps-student-data'].countDocuments());
 "
 ```

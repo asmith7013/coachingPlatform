@@ -4,27 +4,27 @@
 
 ```bash
 # List all students (limited)
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db.students.find({}).limit(10).forEach(printjson);
 "
 
 # Find student by ID
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db.students.findOne({ studentID: 12345 });
 "
 
 # Students by section
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db.students.find({ section: '802', active: true }).forEach(printjson);
 "
 
 # Students by school
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db.students.find({ school: 'IS313', active: true }).forEach(printjson);
 "
 
 # Search student by name
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db.students.find({
   \$or: [
     { firstName: { \$regex: 'John', \$options: 'i' } },
@@ -38,7 +38,7 @@ db.students.find({
 
 ```bash
 # Count students per section
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db.students.aggregate([
   { \$match: { active: true } },
   { \$group: { _id: { school: '\$school', section: '\$section' }, count: { \$sum: 1 } } },
@@ -47,7 +47,7 @@ db.students.aggregate([
 "
 
 # Students with mastered skills
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db.students.find(
   { masteredSkills: { \$exists: true, \$ne: [] } },
   { studentID: 1, firstName: 1, lastName: 1, masteredSkills: 1 }

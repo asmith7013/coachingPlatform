@@ -4,10 +4,17 @@ Quick reference for querying SCM-related collections using mongosh.
 
 ## Connection
 
-Always use the full path `/usr/local/bin/mongosh` with the `$DATABASE_URL` environment variable:
+**Important:** Always source `.env.local` first to load the `DATABASE_URL` environment variable:
 
 ```bash
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "YOUR_COMMAND_HERE"
+source /Users/alexsmith/ai-coaching-platform/.env.local 2>/dev/null
+mongosh "$DATABASE_URL" --eval "YOUR_COMMAND_HERE"
+```
+
+Or as a one-liner:
+
+```bash
+source /Users/alexsmith/ai-coaching-platform/.env.local 2>/dev/null && mongosh "$DATABASE_URL" --eval "YOUR_COMMAND_HERE"
 ```
 
 ## Query Categories

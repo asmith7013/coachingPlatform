@@ -4,17 +4,17 @@
 
 ```bash
 # List all unit schedules
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['unit-schedules'].find({}).forEach(printjson);
 "
 
 # Schedules for a school year
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['unit-schedules'].find({ schoolYear: '2024-2025' }).forEach(printjson);
 "
 
 # Schedules for a section
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['unit-schedules'].find({
   school: 'IS313',
   classSection: '802'
@@ -22,7 +22,7 @@ db['unit-schedules'].find({
 "
 
 # Current/active units
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 const today = new Date();
 db['unit-schedules'].find({
   startDate: { \$lte: today },
@@ -31,7 +31,7 @@ db['unit-schedules'].find({
 "
 
 # Upcoming units
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 const today = new Date();
 db['unit-schedules'].find({
   startDate: { \$gt: today }
@@ -43,12 +43,12 @@ db['unit-schedules'].find({
 
 ```bash
 # List days off for a school year
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 db['days-off'].find({ schoolYear: '2024-2025' }).forEach(printjson);
 "
 
 # Upcoming days off
-/usr/local/bin/mongosh "$DATABASE_URL" --eval "
+mongosh "$DATABASE_URL" --eval "
 const today = new Date();
 db['days-off'].find({
   date: { \$gte: today }

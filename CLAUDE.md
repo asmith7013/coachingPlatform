@@ -12,13 +12,19 @@ This project uses MongoDB Atlas. The connection string is in `.env.local` as `DA
 
 Claude Code CAN and SHOULD use `mongosh` for database operations. Always use the `$DATABASE_URL` environment variable instead of hardcoding the connection string.
 
-**Important:** Make sure the DATABASE_URL environment variable is loaded in your shell session.
+**Important:** Always source `.env.local` first to load the DATABASE_URL (only needed once per shell session):
 
-Here are common patterns:
+```bash
+source /Users/alexsmith/ai-coaching-platform/.env.local 2>/dev/null
+mongosh "$DATABASE_URL" --eval "YOUR_COMMAND_HERE"
+```
+
+Here are common patterns (assuming DATABASE_URL is already loaded):
 
 #### Find Documents
 
 ```bash
+source /Users/alexsmith/ai-coaching-platform/.env.local 2>/dev/null
 mongosh "$DATABASE_URL" --eval "
 db['collection-name'].find({ field: 'value' }).forEach(printjson);
 "
