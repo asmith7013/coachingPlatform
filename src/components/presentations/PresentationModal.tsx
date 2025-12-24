@@ -18,6 +18,8 @@ export function PresentationModal({ slug, isOpen, onClose, initialSlide = 0, onS
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [scriptsLoaded, setScriptsLoaded] = useState<Set<string>>(new Set());
+  const [showHtmlViewer, setShowHtmlViewer] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Load deck from database
   useEffect(() => {
@@ -336,6 +338,119 @@ export function PresentationModal({ slug, isOpen, onClose, initialSlide = 0, onS
               </svg>
               Print
             </button>
+          )}
+
+          {/* View HTML Button - Bottom Right */}
+          <button
+            onClick={() => setShowHtmlViewer(true)}
+            className="print-hide fixed bottom-4 right-4 w-12 h-12 flex items-center justify-center bg-gray-700/80 hover:bg-gray-600/90 text-white rounded-full transition-colors z-[10000] cursor-pointer"
+            aria-label="View HTML"
+            title="View HTML"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"
+              />
+            </svg>
+          </button>
+
+          {/* HTML Viewer Modal */}
+          {showHtmlViewer && (
+            <div className="print-hide fixed inset-0 z-[10001] flex items-center justify-center bg-black/50">
+              <div className="bg-white rounded-lg shadow-2xl w-[90vw] h-[85vh] flex flex-col">
+                {/* Header */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+                  <h3 className="text-sm font-semibold text-gray-700">
+                    Slide {currentSlide + 1} HTML
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        if (slide?.htmlContent) {
+                          navigator.clipboard.writeText(slide.htmlContent);
+                          setCopied(true);
+                          setTimeout(() => setCopied(false), 2000);
+                        }
+                      }}
+                      className={`w-8 h-8 flex items-center justify-center rounded-full transition-all cursor-pointer ${
+                        copied
+                          ? 'bg-green-500 text-white scale-110'
+                          : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                      }`}
+                      aria-label="Copy HTML"
+                      title={copied ? 'Copied!' : 'Copy HTML'}
+                    >
+                      {copied ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2.5}
+                          stroke="currentColor"
+                          className="w-4 h-4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M4.5 12.75l6 6 9-13.5"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                          stroke="currentColor"
+                          className="w-4 h-4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setShowHtmlViewer(false)}
+                      className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-full transition-colors cursor-pointer"
+                      aria-label="Close HTML viewer"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                        stroke="currentColor"
+                        className="w-4 h-4"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                {/* HTML Content */}
+                <div className="flex-1 overflow-auto p-4 bg-gray-900">
+                  <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap break-words">
+                    {slide?.htmlContent || 'No HTML content'}
+                  </pre>
+                </div>
+              </div>
+            </div>
           )}
         </>
       )}

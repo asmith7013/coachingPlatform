@@ -3,6 +3,13 @@ import pptxgen from 'pptxgenjs';
 export interface SvgLayer {
   name: string;
   buffer: Buffer;
+  /** Bounding box of the cropped content, relative to the full SVG region */
+  bounds?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
 }
 
 export interface PptxRegion {

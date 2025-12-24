@@ -109,10 +109,20 @@ export async function createRenderSession(): Promise<RenderSession> {
       await page.setContent(fullHtml, { waitUntil: 'domcontentloaded' });
       await new Promise((resolve) => setTimeout(resolve, 50));
 
-      const results: SvgLayer[] = [];
+      // Get SVG position for calculating relative bounds
+      const svgRect = await page.evaluate(() => {
+        const svg = document.querySelector('svg');
+        if (!svg) return null;
+        const rect = svg.getBoundingClientRect();
+        return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+      });
 
-      // Capture each layer separately
+      const results: SvgLayer[] = [];
+      const PADDING = 4; // padding around cropped content
+
+      // Capture each layer separately with tight cropping
       for (const layerName of layers) {
+        // Hide all layers except the current one
         await page.evaluate(
           (currentLayer: string, allLayers: string[]) => {
             allLayers.forEach((layer) => {
@@ -131,16 +141,79 @@ export async function createRenderSession(): Promise<RenderSession> {
 
         await new Promise((resolve) => setTimeout(resolve, 50));
 
-        const screenshot = await page.screenshot({
-          type: 'png',
-          clip: { x: 0, y: 0, width, height },
-          omitBackground: true,
-        });
+        // Get bounding box of visible elements in this layer
+        const layerBounds = await page.evaluate((layer: string) => {
+          const elements = document.querySelectorAll(`[data-pptx-layer="${layer}"]`);
+          if (elements.length === 0) return null;
 
-        results.push({
-          name: layerName,
-          buffer: screenshot as Buffer,
-        });
+          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+          elements.forEach((el) => {
+            // Get the bounding box of all children within the layer group
+            const rect = el.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+              minX = Math.min(minX, rect.x);
+              minY = Math.min(minY, rect.y);
+              maxX = Math.max(maxX, rect.x + rect.width);
+              maxY = Math.max(maxY, rect.y + rect.height);
+            }
+
+            // Also check child elements for more accurate bounds
+            el.querySelectorAll('*').forEach((child) => {
+              const childRect = child.getBoundingClientRect();
+              if (childRect.width > 0 && childRect.height > 0) {
+                minX = Math.min(minX, childRect.x);
+                minY = Math.min(minY, childRect.y);
+                maxX = Math.max(maxX, childRect.x + childRect.width);
+                maxY = Math.max(maxY, childRect.y + childRect.height);
+              }
+            });
+          });
+
+          if (minX === Infinity) return null;
+          return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+        }, layerName);
+
+        if (layerBounds && layerBounds.width > 0 && layerBounds.height > 0) {
+          // Apply padding and clamp to viewport
+          const clipX = Math.max(0, Math.floor(layerBounds.x - PADDING));
+          const clipY = Math.max(0, Math.floor(layerBounds.y - PADDING));
+          const clipW = Math.min(width - clipX, Math.ceil(layerBounds.width + PADDING * 2));
+          const clipH = Math.min(height - clipY, Math.ceil(layerBounds.height + PADDING * 2));
+
+          const screenshot = await page.screenshot({
+            type: 'png',
+            clip: { x: clipX, y: clipY, width: clipW, height: clipH },
+            omitBackground: true,
+          });
+
+          // Calculate bounds relative to SVG origin
+          const relativeX = svgRect ? clipX - svgRect.x : clipX;
+          const relativeY = svgRect ? clipY - svgRect.y : clipY;
+
+          results.push({
+            name: layerName,
+            buffer: screenshot as Buffer,
+            bounds: {
+              x: Math.max(0, relativeX),
+              y: Math.max(0, relativeY),
+              width: clipW,
+              height: clipH,
+            },
+          });
+        } else {
+          // Fallback: full screenshot if bounds detection fails
+          const screenshot = await page.screenshot({
+            type: 'png',
+            clip: { x: 0, y: 0, width, height },
+            omitBackground: true,
+          });
+
+          results.push({
+            name: layerName,
+            buffer: screenshot as Buffer,
+          });
+        }
       }
 
       // Reset all layers to visible

@@ -40,11 +40,29 @@
     ============================================================
     PPTX LAYER STRUCTURE - For multi-layer export
     ============================================================
-    data-pptx-layer="base-graph"  → Grid, axes, ticks, axis labels
-    data-pptx-layer="data"        → Data lines, points
-    data-pptx-layer="annotation"  → Y-intercept labels, arrows, equation labels
+    Each layer becomes a SEPARATE IMAGE in the exported PPTX/Google Slides,
+    tightly cropped to its bounding box. Use granular layers for elements
+    that should be independently movable:
 
-    Export can hide layers selectively for transparent PNG capture.
+    REQUIRED LAYERS:
+      data-pptx-layer="base-graph"   → Grid, axes, ticks, axis labels (usually one)
+
+    PER-ELEMENT LAYERS (for manipulable export):
+      data-pptx-layer="line-1"       → First data line + its point(s)
+      data-pptx-layer="line-2"       → Second data line + its point(s)
+      data-pptx-layer="label-b0"     → Y-intercept label for line 1
+      data-pptx-layer="label-b20"    → Y-intercept label for line 2
+      data-pptx-layer="arrow-shift"  → Shift arrow annotation
+      data-pptx-layer="eq-line-1"    → Equation label for line 1
+      data-pptx-layer="eq-line-2"    → Equation label for line 2
+
+    NAMING CONVENTION:
+      - "line-N" for data lines and their associated points
+      - "label-X" for text annotations (X = descriptive suffix)
+      - "arrow-X" for arrow annotations
+      - "eq-N" for equation labels
+
+    Export automatically crops each layer to its tight bounding box.
     ============================================================
 
     This example uses X_MAX=6, Y_MAX=18 (counting by 1s on X, by 2s on Y)
@@ -156,30 +174,46 @@
         <text x="35" y="24" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">18</text>
     </g>
 
-    <!-- ===== DATA LAYER: Lines and Points ===== -->
-    <g data-pptx-layer="data">
-        <!-- Line 1: y = 3x (blue) - from origin to (6,18) -->
-        <!-- pixelY at x=6: 170 - (18/18)*150 = 20 -->
-        <line x1="40" y1="170" x2="260" y2="20" stroke="#60a5fa" stroke-width="3" marker-end="url(#line-arrow-blue)"/>
+    <!-- ===== DATA LAYERS: One layer per line for independent manipulation ===== -->
 
-        <!-- Line 2: y = 2x + 3 (green) - from (0,3) to (6,15) -->
+    <!-- Line 1: y = 3x (blue) - SEPARATE LAYER -->
+    <g data-pptx-layer="line-1">
+        <!-- Line from origin to (6,18): pixelY at x=6: 170 - (18/18)*150 = 20 -->
+        <line x1="40" y1="170" x2="260" y2="20" stroke="#60a5fa" stroke-width="3" marker-end="url(#line-arrow-blue)"/>
+        <!-- Y-intercept point at origin -->
+        <circle cx="40" cy="170" r="5" fill="#60a5fa"/>
+    </g>
+
+    <!-- Line 2: y = 2x + 3 (green) - SEPARATE LAYER -->
+    <g data-pptx-layer="line-2">
         <!-- Entry: pixelY = 170 - (3/18)*150 = 145 -->
         <!-- Exit: pixelY = 170 - (15/18)*150 = 45 -->
         <line x1="40" y1="145" x2="260" y2="45" stroke="#22c55e" stroke-width="3" marker-end="url(#line-arrow-green)"/>
-
-        <!-- Data points (optional) -->
-        <!-- Point at (3, 9) on blue line: pixelX=150, pixelY=95 -->
-        <circle cx="150" cy="95" r="5" fill="#60a5fa"/>
-
-        <!-- Point at (3, 9) on green line: pixelX=150, pixelY=95 -->
-        <circle cx="150" cy="95" r="5" fill="#22c55e"/>
+        <!-- Y-intercept point at (0,3) -->
+        <circle cx="40" cy="145" r="5" fill="#22c55e"/>
     </g>
 
-    <!-- ===== ANNOTATION LAYER: Labels, Arrows, Callouts ===== -->
-    <!-- Add annotation elements here using annotation-snippet.html patterns -->
-    <g data-pptx-layer="annotation">
-        <!-- Example: Y-intercept labels, shift arrows, equation labels -->
-        <!-- See annotation-snippet.html for patterns -->
+    <!-- ===== ANNOTATION LAYERS: One layer per annotation element ===== -->
+    <!-- Each annotation becomes a separate, tightly-cropped image -->
+
+    <!-- Y-intercept label for line 1 -->
+    <g data-pptx-layer="label-b0">
+        <text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
+    </g>
+
+    <!-- Y-intercept label for line 2 -->
+    <g data-pptx-layer="label-b3">
+        <text x="5" y="145" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 3</text>
+    </g>
+
+    <!-- Equation label for line 1 (optional) -->
+    <g data-pptx-layer="eq-line-1">
+        <text x="265" y="30" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">y = 3x</text>
+    </g>
+
+    <!-- Equation label for line 2 (optional) -->
+    <g data-pptx-layer="eq-line-2">
+        <text x="265" y="55" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">y = 2x + 3</text>
     </g>
 </svg>
 

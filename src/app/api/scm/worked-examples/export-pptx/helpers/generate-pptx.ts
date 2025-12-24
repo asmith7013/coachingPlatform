@@ -150,13 +150,32 @@ async function processSlide(
           );
           for (const layer of layerImages) {
             const layerBase64 = layer.buffer.toString('base64');
-            slide.addImage({
-              data: `data:image/png;base64,${layerBase64}`,
-              x: imgX,
-              y: imgY,
-              w: imgW,
-              h: imgH,
-            });
+
+            // Use tight bounds if available, otherwise use full SVG region
+            if (layer.bounds) {
+              // Position relative to SVG region origin + layer offset
+              const layerX = pxToInches(region.x + layer.bounds.x, 'w');
+              const layerY = pxToInches(region.y + layer.bounds.y, 'h');
+              const layerW = pxToInches(layer.bounds.width, 'w');
+              const layerH = pxToInches(layer.bounds.height, 'h');
+
+              slide.addImage({
+                data: `data:image/png;base64,${layerBase64}`,
+                x: layerX,
+                y: layerY,
+                w: layerW,
+                h: layerH,
+              });
+            } else {
+              // Fallback: use full SVG region position
+              slide.addImage({
+                data: `data:image/png;base64,${layerBase64}`,
+                x: imgX,
+                y: imgY,
+                w: imgW,
+                h: imgH,
+              });
+            }
           }
         } else {
           const svgBuffer = await renderSession.renderSvg(

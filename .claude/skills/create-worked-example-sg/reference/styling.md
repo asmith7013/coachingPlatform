@@ -238,13 +238,33 @@ Every slide element that needs precise positioning in PowerPoint must have `data
 
 **SVG Layer Attributes (for multi-layer export):**
 
+Each `data-pptx-layer` group becomes a separate, tightly-cropped PNG image that can be moved independently in PowerPoint/Google Slides.
+
+**GRANULAR LAYER APPROACH** - Use separate layers for each element you want to be independently movable:
+
 ```html
-<g data-pptx-layer="base-graph"><!-- Grid, axes --></g>
-<g data-pptx-layer="data"><!-- Lines, points --></g>
-<g data-pptx-layer="annotation"><!-- Labels, arrows --></g>
+<!-- Base graph is usually one layer -->
+<g data-pptx-layer="base-graph"><!-- Grid, axes, labels --></g>
+
+<!-- Each data line should be its own layer -->
+<g data-pptx-layer="line-1"><!-- Blue line + point --></g>
+<g data-pptx-layer="line-2"><!-- Green line + point --></g>
+
+<!-- Each annotation element should be its own layer -->
+<g data-pptx-layer="label-b0"><!-- Y-intercept label --></g>
+<g data-pptx-layer="label-b20"><!-- Y-intercept label --></g>
+<g data-pptx-layer="arrow-shift"><!-- Shift arrow --></g>
+<g data-pptx-layer="eq-line-1"><!-- Equation label --></g>
 ```
 
-Each layer becomes a separate transparent PNG that can be moved independently in PowerPoint.
+**Naming Convention:**
+- `line-N` for data lines and their associated points
+- `label-X` for text annotations (X = descriptive suffix like "b0", "shift20")
+- `arrow-X` for arrows (X = descriptive suffix like "shift", "highlight")
+- `eq-N` for equation labels (N = line number)
+- `point-X` for point labels (X = coordinates like "3,9")
+
+Export automatically crops each layer to its tight bounding box, making small elements easy to select and manipulate.
 
 ---
 

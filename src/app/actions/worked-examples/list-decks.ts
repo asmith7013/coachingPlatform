@@ -67,7 +67,7 @@ export async function listWorkedExampleDecks(filters?: ListDecksFilters) {
         .sort({ createdAt: -1 })
         .limit(filters?.limit || 50)
         .skip(filters?.skip || 0)
-        .select('title slug mathConcept mathStandard gradeLevel unitNumber lessonNumber learningGoals createdBy isPublic deactivated createdAt'); // Light projection for list view
+        .select('title slug mathConcept mathStandard gradeLevel unitNumber lessonNumber learningGoals createdBy isPublic deactivated googleSlidesUrl createdAt'); // Light projection for list view
 
       const total = await WorkedExampleDeck.countDocuments(query);
 

@@ -62,27 +62,27 @@
   <div class="row gap-lg fill-height" style="padding: 10px 20px;">
 
     <div data-pptx-region="left-column"
-         data-pptx-x="20" data-pptx-y="130" data-pptx-w="368" data-pptx-h="370"
+         data-pptx-x="20" data-pptx-y="140" data-pptx-w="368" data-pptx-h="350"
          class="col" style="width: 40%;">
-      <div style="background: #f5f5f5; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
-        <h3 style="font-size: 15px; font-weight: bold; margin: 0 0 12px 0; color: #1d1d1d;">The Slopes and Y-Intercepts</h3>
-        <p style="margin: 0 0 8px 0; font-size: 14px; line-height: 1.6; color: #1d1d1d;">Player 1: y = 3x</p>
-        <ul style="margin: 0 0 16px 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #1d1d1d;">
-          <li style="background: rgba(96, 165, 250, 0.1); padding: 4px; margin-bottom: 4px; border-radius: 4px;"><strong>m = 3</strong> (slope)</li>
-          <li style="background: rgba(96, 165, 250, 0.1); padding: 4px; border-radius: 4px;"><strong>b = 0</strong> (y-intercept)</li>
-        </ul>
-        <p style="margin: 0 0 8px 0; font-size: 14px; line-height: 1.6; color: #1d1d1d;">Player 2: y = 3x + 6</p>
-        <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #1d1d1d;">
-          <li style="background: rgba(34, 197, 94, 0.1); padding: 4px; margin-bottom: 4px; border-radius: 4px;"><strong>m = 3</strong> (slope)</li>
-          <li style="background: rgba(34, 197, 94, 0.1); padding: 4px; border-radius: 4px;"><strong>b = 6</strong> (y-intercept)</li>
-        </ul>
+      <h3 style="font-size: 15px; font-weight: bold; margin: 0 0 12px 0; color: #1d1d1d;">The Equations</h3>
+      
+      <div style="background: #e8f4fd; border-radius: 8px; padding: 16px; margin-bottom: 12px; border: 2px solid #60a5fa;">
+        <p style="margin: 0 0 4px 0; font-size: 13px; color: #60a5fa; font-weight: bold;">Player 1: y = 3x</p>
+        <p style="margin: 0 0 4px 0; font-size: 14px; color: #1d1d1d;"><strong>m = 3</strong> (slope)</p>
+        <p style="margin: 0; font-size: 14px; color: #1d1d1d;"><strong>b = 0</strong> (y-intercept)</p>
+      </div>
+
+      <div style="background: #dcfce7; border-radius: 8px; padding: 16px; border: 2px solid #22c55e;">
+        <p style="margin: 0 0 4px 0; font-size: 13px; color: #22c55e; font-weight: bold;">Player 2: y = 3x + 6</p>
+        <p style="margin: 0 0 4px 0; font-size: 14px; color: #1d1d1d;"><strong>m = 3</strong> (slope)</p>
+        <p style="margin: 0; font-size: 14px; color: #1d1d1d;"><strong>b = 6</strong> (y-intercept)</p>
       </div>
     </div>
 
     <div data-pptx-region="right-column"
-         data-pptx-x="408" data-pptx-y="130" data-pptx-w="532" data-pptx-h="370"
+         data-pptx-x="408" data-pptx-y="140" data-pptx-w="532" data-pptx-h="350"
          class="col center" style="width: 60%; background: #f5f5f5; border-radius: 8px; padding: 12px;">
-      <svg viewBox="0 0 280 200" style="width: 100%; height: 340px;">
+      <svg viewBox="0 0 280 200" style="width: 520px; height: 340px;">
         <defs>
           <marker id="axis-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
             <polygon points="0 0, 10 3.5, 0 7" fill="#1e293b"/>
@@ -160,16 +160,25 @@
           <text x="35" y="24" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">18</text>
         </g>
 
-        <g data-pptx-layer="data">
+        <!-- Player 1 (blue) line and point -->
+        <g data-pptx-layer="player-1-line">
           <line x1="40" y1="170" x2="216" y2="70" stroke="#60a5fa" stroke-width="3" marker-end="url(#line-arrow-line-1)"/>
-          <line x1="40" y1="120" x2="216" y2="20" stroke="#22c55e" stroke-width="3" marker-end="url(#line-arrow-line-2)"/>
-          
           <circle cx="40" cy="170" r="5" fill="#60a5fa"/>
+        </g>
+
+        <!-- Player 2 (green) line and point -->
+        <g data-pptx-layer="player-2-line">
+          <line x1="40" y1="120" x2="216" y2="20" stroke="#22c55e" stroke-width="3" marker-end="url(#line-arrow-line-2)"/>
           <circle cx="40" cy="120" r="5" fill="#22c55e"/>
         </g>
 
-        <g data-pptx-layer="annotation">
+        <!-- Annotation: b=0 label for Player 1 -->
+        <g data-pptx-layer="label-b0">
           <text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
+        </g>
+
+        <!-- Annotation: b=6 label for Player 2 -->
+        <g data-pptx-layer="label-b6">
           <text x="5" y="120" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 6</text>
         </g>
       </svg>
@@ -179,7 +188,7 @@
 
   <p data-pptx-region="footnote"
      data-pptx-x="700" data-pptx-y="8" data-pptx-w="240" data-pptx-h="25"
-     style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+     style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666666; margin: 0; text-align: right;">
     Unit 3 Lesson 8 | Grade 8
   </p>
 

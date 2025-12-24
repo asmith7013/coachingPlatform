@@ -209,6 +209,16 @@ This HTML file is your **starting point**. It contains:
 - [ ] Scale labels go to last tick before arrow
 - [ ] Data lines extend to plot edges with arrows
 - [ ] Annotations use `font-weight="normal"` (not bold)
+- [ ] **GRANULAR LAYERS**: Each line and annotation in its own `data-pptx-layer` group (see graph-snippet.html for examples)
+
+### Step 4: Layer Structure (for PPTX Export)
+Each SVG element you want to be independently selectable in PowerPoint/Google Slides needs its own layer:
+```html
+<g data-pptx-layer="line-1"><!-- Blue line + point --></g>
+<g data-pptx-layer="line-2"><!-- Green line + point --></g>
+<g data-pptx-layer="label-b0"><!-- Y-intercept label --></g>
+```
+See `graph-snippet.html` and `annotation-snippet.html` for the full layer naming convention.
 
 **DO NOT create graphs from scratch.** Always start from graph-snippet.html.
 

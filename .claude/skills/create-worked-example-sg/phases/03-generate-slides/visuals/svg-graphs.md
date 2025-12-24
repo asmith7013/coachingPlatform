@@ -549,6 +549,75 @@ For printable worksheets, use a smaller viewBox and monochrome colors:
 
 ---
 
+## PPTX Layer System for Export
+
+When exporting to PowerPoint/Google Slides, SVG elements are rendered as separate PNG images based on their `data-pptx-layer` attribute. Each layer is **tightly cropped** to its bounding box for easy manipulation.
+
+### Granular Layer Approach
+
+Use **separate layers for each element** you want to be independently movable:
+
+```html
+<svg viewBox="0 0 280 200" style="width: 100%; height: 340px;">
+    <defs><!-- marker definitions --></defs>
+
+    <!-- BASE GRAPH - Usually one layer (grid, axes, labels) -->
+    <g data-pptx-layer="base-graph">
+        <!-- Grid lines, axes, tick marks, scale labels -->
+    </g>
+
+    <!-- EACH DATA LINE gets its own layer -->
+    <g data-pptx-layer="line-1">
+        <line x1="40" y1="170" x2="260" y2="20" stroke="#60a5fa" stroke-width="3" marker-end="url(#line-arrow-blue)"/>
+        <circle cx="40" cy="170" r="5" fill="#60a5fa"/>  <!-- Y-intercept point -->
+    </g>
+
+    <g data-pptx-layer="line-2">
+        <line x1="40" y1="145" x2="260" y2="45" stroke="#22c55e" stroke-width="3" marker-end="url(#line-arrow-green)"/>
+        <circle cx="40" cy="145" r="5" fill="#22c55e"/>  <!-- Y-intercept point -->
+    </g>
+
+    <!-- EACH ANNOTATION gets its own layer -->
+    <g data-pptx-layer="label-b0">
+        <text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
+    </g>
+
+    <g data-pptx-layer="label-b3">
+        <text x="5" y="145" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 3</text>
+    </g>
+
+    <g data-pptx-layer="eq-line-1">
+        <text x="265" y="30" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">y = 3x</text>
+    </g>
+</svg>
+```
+
+### Naming Convention
+
+| Prefix | Use For | Example |
+|--------|---------|---------|
+| `line-N` | Data lines and their points | `line-1`, `line-2` |
+| `label-X` | Text annotations | `label-b0`, `label-shift20` |
+| `arrow-X` | Arrow annotations | `arrow-shift`, `arrow-highlight` |
+| `eq-N` | Equation labels | `eq-line-1`, `eq-line-2` |
+| `point-X` | Point coordinate labels | `point-3-9`, `point-origin` |
+
+### Why Granular Layers?
+
+Without granular layers, exported elements are hard to select:
+- **OLD**: Single `data-pptx-layer="annotation"` → One giant transparent image
+- **NEW**: Multiple layers → Each element cropped to its bounds, easy to click and move
+
+### Integration with graph-snippet.html
+
+The `graph-snippet.html` template already uses this granular approach. When creating graphs:
+1. Copy the base template
+2. Keep `data-pptx-layer="base-graph"` for the coordinate plane
+3. Add each data line in its own `data-pptx-layer="line-N"` group
+4. Add each annotation in its own `data-pptx-layer="label-X"` or `data-pptx-layer="eq-N"` group
+
+---
+
 ## Integration with Slides
 
 When creating slides with coordinate planes:
