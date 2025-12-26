@@ -3,10 +3,13 @@ export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadPptxToUserGoogleSlides } from '@/lib/integrations/google-drive/user-oauth';
 import { generatePptxFromSlides } from '../export-pptx/helpers';
+import { withDbConnection } from '@server/db/ensure-connection';
+import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
 
 /**
  * Export slides to Google Slides via PPTX upload and conversion
  * Flow: Generate PPTX → Upload to Google Drive → Convert to Google Slides
+ * If slug is provided, saves the Google Slides URL to the database (replacing any existing)
  * Returns the Google Slides URL
  */
 export async function POST(request: NextRequest) {
@@ -20,6 +23,9 @@ export async function POST(request: NextRequest) {
     console.log('[export-google-slides] Starting export...');
     console.log(`[export-google-slides] Processing ${slides.length} slides`);
     console.log(`[export-google-slides] Title: "${title || 'Worked Example'}"`);
+    if (slug) {
+      console.log(`[export-google-slides] Slug: "${slug}" (will save URL to database)`);
+    }
 
     // Generate PPTX using shared function
     const result = await generatePptxFromSlides(slides, {
@@ -51,6 +57,27 @@ export async function POST(request: NextRequest) {
     console.log('[export-google-slides] Upload successful!');
     console.log(`[export-google-slides] File ID: ${uploadResult.fileId}`);
     console.log(`[export-google-slides] URL: ${uploadResult.url}`);
+
+    // Save the Google Slides URL to the database if slug is provided
+    if (slug && uploadResult.url) {
+      try {
+        await withDbConnection(async () => {
+          const updateResult = await WorkedExampleDeck.findOneAndUpdate(
+            { slug },
+            { googleSlidesUrl: uploadResult.url },
+            { new: true }
+          );
+          if (updateResult) {
+            console.log(`[export-google-slides] Saved URL to database for slug: ${slug}`);
+          } else {
+            console.log(`[export-google-slides] No deck found with slug: ${slug} (URL not saved)`);
+          }
+        });
+      } catch (dbError) {
+        // Log but don't fail the request - the export still succeeded
+        console.error('[export-google-slides] Failed to save URL to database:', dbError);
+      }
+    }
 
     return NextResponse.json({
       success: true,

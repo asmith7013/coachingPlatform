@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import pptxgen from 'pptxgenjs';
+import pptxgen from '@bapunhansdah/pptxgenjs';
 
 import {
   SLIDE_WIDTH,

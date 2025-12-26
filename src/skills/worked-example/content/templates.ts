@@ -107,10 +107,10 @@ export const SLIDE_BASE_TEMPLATE = `
        style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
   </div>
 
-  <!-- Content Zone: 130-500px (370px height) -->
+  <!-- Content Zone: 140-500px (360px height) -->
   <div data-pptx-region="content"
-       data-pptx-x="20" data-pptx-y="130" data-pptx-w="920" data-pptx-h="370"
-       class="fill-height col" style="padding: 10px 20px;">
+       data-pptx-x="20" data-pptx-y="140" data-pptx-w="920" data-pptx-h="360"
+       class="fill-height col" style="padding: 20px 20px;">
     {{content}}
   </div>
 
@@ -224,10 +224,10 @@ export const SLIDE_WITH_CFU_TEMPLATE = `
        style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
   </div>
 
-  <!-- Content Zone: 110-490px (380px height) -->
+  <!-- Content Zone: 140-500px (360px height) -->
   <div data-pptx-region="content"
-       data-pptx-x="20" data-pptx-y="130" data-pptx-w="920" data-pptx-h="370"
-       class="fill-height col" style="padding: 10px 20px;">
+       data-pptx-x="20" data-pptx-y="140" data-pptx-w="920" data-pptx-h="360"
+       class="fill-height col" style="padding: 20px 20px;">
     {{content}}
   </div>
 
@@ -349,10 +349,10 @@ export const SLIDE_WITH_ANSWER_TEMPLATE = `
        style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">{{subtitle}}</p>
   </div>
 
-  <!-- Content Zone: 110-490px (380px height) -->
+  <!-- Content Zone: 140-500px (360px height) -->
   <div data-pptx-region="content"
-       data-pptx-x="20" data-pptx-y="130" data-pptx-w="920" data-pptx-h="370"
-       class="fill-height col" style="padding: 10px 20px;">
+       data-pptx-x="20" data-pptx-y="140" data-pptx-w="920" data-pptx-h="360"
+       class="fill-height col" style="padding: 20px 20px;">
     {{content}}
   </div>
 
@@ -466,11 +466,11 @@ export const SLIDE_TWO_COLUMN_TEMPLATE = `
     - PPTX export works better with side-by-side layout
     ============================================================
   -->
-  <div class="row gap-lg fill-height" style="padding: 10px 20px;">
+  <div class="row gap-lg fill-height" style="padding: 20px 20px;">
 
     <!-- LEFT Column: Text/Tables (40%) - Always contains problem text, bullets, tables -->
     <div data-pptx-region="left-column"
-         data-pptx-x="20" data-pptx-y="130" data-pptx-w="368" data-pptx-h="380"
+         data-pptx-x="20" data-pptx-y="140" data-pptx-w="368" data-pptx-h="370"
          class="col" style="width: 40%;">
       <h3 style="font-size: 15px; font-weight: bold; margin: 0 0 12px 0; color: #1d1d1d;">{{section_header}}</h3>
       <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #1d1d1d;">
@@ -483,7 +483,7 @@ export const SLIDE_TWO_COLUMN_TEMPLATE = `
     <!-- RIGHT Column: Visual (60%) - ALWAYS contains graphs/diagrams/images -->
     <!-- RULE: Graphs go HERE (right column), NEVER below the text -->
     <div data-pptx-region="right-column"
-         data-pptx-x="408" data-pptx-y="130" data-pptx-w="532" data-pptx-h="380"
+         data-pptx-x="408" data-pptx-y="140" data-pptx-w="532" data-pptx-h="370"
          class="col center" style="width: 60%;">
       <!-- For SVG: use viewBox + fixed dimensions -->
       <!-- <svg viewBox="0 0 420 380" style="width: 520px; height: 360px;"> -->
@@ -682,11 +682,11 @@ export const SLIDE_PRACTICE_TEMPLATE = `
   </div>
 
   <!-- Content Zone: Practice problem with zero scaffolding -->
-  <div class="fill-height col" style="padding: 10px 20px;">
+  <div class="fill-height col" style="padding: 20px 20px;">
 
     <!-- Problem Statement -->
     <div data-pptx-region="problem-statement"
-         data-pptx-x="20" data-pptx-y="130" data-pptx-w="920" data-pptx-h="80"
+         data-pptx-x="20" data-pptx-y="140" data-pptx-w="920" data-pptx-h="80"
          style="background: #f5f5f5; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
       <p style="margin: 0; font-size: 16px; color: #1d1d1d; line-height: 1.6;">{{problem_statement}}</p>
     </div>
@@ -814,11 +814,11 @@ export const SLIDE_WITH_SVG_TEMPLATE = `
     NEVER place graphs below the text column - always side-by-side.
     ============================================================
   -->
-  <div class="row gap-lg" style="padding: 8px 20px; height: 400px;">
+  <div class="row gap-lg" style="padding: 20px 20px; height: 390px;">
 
     <!-- LEFT Column: Text/Tables (35%) - Problem text, annotations, CFU/Answer boxes -->
     <div data-pptx-region="left-column"
-         data-pptx-x="20" data-pptx-y="130" data-pptx-w="316" data-pptx-h="380"
+         data-pptx-x="20" data-pptx-y="140" data-pptx-w="316" data-pptx-h="370"
          class="col" style="width: 35%;">
       <p style="font-size: 14px; line-height: 1.6; color: #1d1d1d; margin: 0;">
         {{problem_text}}
@@ -844,7 +844,7 @@ export const SLIDE_WITH_SVG_TEMPLATE = `
     <div
       id="svg-container"
       data-pptx-region="svg-container"
-      data-pptx-x="356" data-pptx-y="130" data-pptx-w="584" data-pptx-h="380"
+      data-pptx-x="356" data-pptx-y="140" data-pptx-w="584" data-pptx-h="370"
       data-svg-region="true"
       class="col center"
       style="width: 65%; background: #f5f5f5; border-radius: 8px; padding: 12px;"
@@ -1140,11 +1140,29 @@ export const GRAPH_SNIPPET = `
     ============================================================
     PPTX LAYER STRUCTURE - For multi-layer export
     ============================================================
-    data-pptx-layer="base-graph"  → Grid, axes, ticks, axis labels
-    data-pptx-layer="data"        → Data lines, points
-    data-pptx-layer="annotation"  → Y-intercept labels, arrows, equation labels
+    Each layer becomes a SEPARATE IMAGE in the exported PPTX/Google Slides,
+    tightly cropped to its bounding box. Use granular layers for elements
+    that should be independently movable:
 
-    Export can hide layers selectively for transparent PNG capture.
+    REQUIRED LAYERS:
+      data-pptx-layer="base-graph"   → Grid, axes, ticks, axis labels (usually one)
+
+    PER-ELEMENT LAYERS (for manipulable export):
+      data-pptx-layer="line-1"       → First data line + its point(s)
+      data-pptx-layer="line-2"       → Second data line + its point(s)
+      data-pptx-layer="label-b0"     → Y-intercept label for line 1
+      data-pptx-layer="label-b20"    → Y-intercept label for line 2
+      data-pptx-layer="arrow-shift"  → Shift arrow annotation
+      data-pptx-layer="eq-line-1"    → Equation label for line 1
+      data-pptx-layer="eq-line-2"    → Equation label for line 2
+
+    NAMING CONVENTION:
+      - "line-N" for data lines and their associated points
+      - "label-X" for text annotations (X = descriptive suffix)
+      - "arrow-X" for arrow annotations
+      - "eq-N" for equation labels
+
+    Export automatically crops each layer to its tight bounding box.
     ============================================================
 
     This example uses X_MAX=6, Y_MAX=18 (counting by 1s on X, by 2s on Y)
@@ -1256,30 +1274,46 @@ export const GRAPH_SNIPPET = `
         <text x="35" y="24" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">18</text>
     </g>
 
-    <!-- ===== DATA LAYER: Lines and Points ===== -->
-    <g data-pptx-layer="data">
-        <!-- Line 1: y = 3x (blue) - from origin to (6,18) -->
-        <!-- pixelY at x=6: 170 - (18/18)*150 = 20 -->
-        <line x1="40" y1="170" x2="260" y2="20" stroke="#60a5fa" stroke-width="3" marker-end="url(#line-arrow-blue)"/>
+    <!-- ===== DATA LAYERS: One layer per line for independent manipulation ===== -->
 
-        <!-- Line 2: y = 2x + 3 (green) - from (0,3) to (6,15) -->
+    <!-- Line 1: y = 3x (blue) - SEPARATE LAYER -->
+    <g data-pptx-layer="line-1">
+        <!-- Line from origin to (6,18): pixelY at x=6: 170 - (18/18)*150 = 20 -->
+        <line x1="40" y1="170" x2="260" y2="20" stroke="#60a5fa" stroke-width="3" marker-end="url(#line-arrow-blue)"/>
+        <!-- Y-intercept point at origin -->
+        <circle cx="40" cy="170" r="5" fill="#60a5fa"/>
+    </g>
+
+    <!-- Line 2: y = 2x + 3 (green) - SEPARATE LAYER -->
+    <g data-pptx-layer="line-2">
         <!-- Entry: pixelY = 170 - (3/18)*150 = 145 -->
         <!-- Exit: pixelY = 170 - (15/18)*150 = 45 -->
         <line x1="40" y1="145" x2="260" y2="45" stroke="#22c55e" stroke-width="3" marker-end="url(#line-arrow-green)"/>
-
-        <!-- Data points (optional) -->
-        <!-- Point at (3, 9) on blue line: pixelX=150, pixelY=95 -->
-        <circle cx="150" cy="95" r="5" fill="#60a5fa"/>
-
-        <!-- Point at (3, 9) on green line: pixelX=150, pixelY=95 -->
-        <circle cx="150" cy="95" r="5" fill="#22c55e"/>
+        <!-- Y-intercept point at (0,3) -->
+        <circle cx="40" cy="145" r="5" fill="#22c55e"/>
     </g>
 
-    <!-- ===== ANNOTATION LAYER: Labels, Arrows, Callouts ===== -->
-    <!-- Add annotation elements here using annotation-snippet.html patterns -->
-    <g data-pptx-layer="annotation">
-        <!-- Example: Y-intercept labels, shift arrows, equation labels -->
-        <!-- See annotation-snippet.html for patterns -->
+    <!-- ===== ANNOTATION LAYERS: One layer per annotation element ===== -->
+    <!-- Each annotation becomes a separate, tightly-cropped image -->
+
+    <!-- Y-intercept label for line 1 -->
+    <g data-pptx-layer="label-b0">
+        <text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
+    </g>
+
+    <!-- Y-intercept label for line 2 -->
+    <g data-pptx-layer="label-b3">
+        <text x="5" y="145" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 3</text>
+    </g>
+
+    <!-- Equation label for line 1 (optional) -->
+    <g data-pptx-layer="eq-line-1">
+        <text x="265" y="30" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">y = 3x</text>
+    </g>
+
+    <!-- Equation label for line 2 (optional) -->
+    <g data-pptx-layer="eq-line-2">
+        <text x="265" y="55" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">y = 2x + 3</text>
     </g>
 </svg>
 
@@ -1346,10 +1380,28 @@ export const ANNOTATION_SNIPPET = `
   Annotations must use the SAME pixel formula as the graph.
   This ensures labels appear at the correct y-intercept positions.
 
-  PPTX LAYER: All annotation elements should be wrapped in:
-    <g data-pptx-layer="annotation">...</g>
-  This allows the export to capture annotations as a separate
-  transparent PNG that can be moved independently in PowerPoint.
+  PPTX LAYER SYSTEM - GRANULAR LAYERS FOR INDEPENDENT MANIPULATION
+  ================================================================
+  Each annotation element should have its OWN layer so it can be
+  independently selected and moved in the exported PPTX/Google Slides.
+
+  Instead of ONE combined layer:
+    <g data-pptx-layer="annotation">...all annotations...</g>
+
+  Use SEPARATE layers for each element:
+    <g data-pptx-layer="label-b0">...y-intercept label 1...</g>
+    <g data-pptx-layer="label-b20">...y-intercept label 2...</g>
+    <g data-pptx-layer="arrow-shift">...shift arrow...</g>
+    <g data-pptx-layer="eq-line-1">...equation label 1...</g>
+
+  NAMING CONVENTION:
+    - "label-X" for text labels (X = descriptive suffix like "b0", "shift20")
+    - "arrow-X" for arrows (X = descriptive suffix like "shift", "highlight")
+    - "eq-N" for equation labels (N = line number)
+    - "point-X" for point labels (X = coordinates like "3,9")
+
+  Export automatically crops each layer to its tight bounding box,
+  making small elements easy to select in PowerPoint/Google Slides.
 
   STEP 1: Know your graph constants (from svg-graphs.md)
     ORIGIN_Y = 170      (pixel y for data y=0)
@@ -1359,7 +1411,7 @@ export const ANNOTATION_SNIPPET = `
   STEP 2: Calculate pixel positions from data values
     pixelY = 170 - (dataY / Y_MAX) * 150
 
-  STEP 3: Use calculated pixelY for label and arrow positions
+  STEP 3: Wrap each annotation in its own layer group
 
   FONT RULES (apply to ALL annotations):
   - font-family="Arial"
@@ -1388,18 +1440,25 @@ export const ANNOTATION_SNIPPET = `
   </marker>
 </defs>
 
-<!-- ===== WRAP ALL ANNOTATIONS IN THIS GROUP ===== -->
-<g data-pptx-layer="annotation">
-  <!-- Y-intercept label at y=0 (pixelY=170) -->
+<!-- ===== GRANULAR ANNOTATION LAYERS - Each element is independently selectable ===== -->
+
+<!-- Y-intercept label for line 1 at y=0 (pixelY=170) -->
+<g data-pptx-layer="label-b0">
   <text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
+</g>
 
-  <!-- Y-intercept label at y=20 (pixelY=110) -->
+<!-- Y-intercept label for line 2 at y=20 (pixelY=110) -->
+<g data-pptx-layer="label-b20">
   <text x="5" y="110" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 20</text>
+</g>
 
-  <!-- Arrow showing shift from y=0 to y=20 -->
+<!-- Arrow showing shift from y=0 to y=20 -->
+<g data-pptx-layer="arrow-shift">
   <line x1="25" y1="170" x2="25" y2="115" stroke="#ef4444" stroke-width="2" marker-end="url(#annotation-arrow)"/>
+</g>
 
-  <!-- Arrow label (midpoint: (170+110)/2 = 140) -->
+<!-- Arrow label showing shift amount (midpoint: (170+110)/2 = 140) -->
+<g data-pptx-layer="label-shift">
   <text x="5" y="140" fill="#ef4444" font-family="Arial" font-size="9" font-weight="normal">+20</text>
 </g>
 
@@ -1432,9 +1491,14 @@ export const ANNOTATION_SNIPPET = `
 <!-- ========== LINE EQUATION LABELS (right margin) ========== -->
 <!--
   Position at x=265, y = line's ending pixelY (or stacked if multiple)
+  Each equation label gets its own layer for independent manipulation
 -->
-<text x="265" y="30" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">y = 5x</text>
-<text x="265" y="45" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">y = 5x + 20</text>
+<g data-pptx-layer="eq-line-1">
+  <text x="265" y="30" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">y = 5x</text>
+</g>
+<g data-pptx-layer="eq-line-2">
+  <text x="265" y="45" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">y = 5x + 20</text>
+</g>
 
 
 <!-- ========== POINT LABELS (inside plot area) ========== -->
@@ -1442,6 +1506,9 @@ export const ANNOTATION_SNIPPET = `
   - Upper half (pixelY < 95): label ABOVE at pixelY - 12
   - Lower half (pixelY >= 95): label BELOW at pixelY + 15
   - Use text-anchor="middle" for centering
+  - Each point label gets its own layer
 -->
-<text x="150" y="98" fill="#60a5fa" font-family="Arial" font-size="10" font-weight="normal" text-anchor="middle">(4, 20)</text>
+<g data-pptx-layer="point-4-20">
+  <text x="150" y="98" fill="#60a5fa" font-family="Arial" font-size="10" font-weight="normal" text-anchor="middle">(4, 20)</text>
+</g>
 `;

@@ -1,4 +1,4 @@
-import pptxgen from 'pptxgenjs';
+import pptxgen from '@bapunhansdah/pptxgenjs';
 import {
   SLIDE_WIDTH,
   SLIDE_HEIGHT,
@@ -57,6 +57,7 @@ export async function generatePptxFromSlides(
       const html = slideData.htmlContent || '';
 
       slide.background = { color: 'FFFFFF' };
+      // Note: The fork supports object animations but not slide-level transitions
 
       onProgress?.(i + 1, totalSlides, `Processing slide ${i + 1} of ${totalSlides}...`, 'processing');
 

@@ -540,6 +540,7 @@
 │   │   │   ├── scm
 │   │   │   │   └── worked-examples
 │   │   │   │       ├── edit-slide
+│   │   │   │       ├── edit-slides
 │   │   │   │       ├── export-google-slides
 │   │   │   │       ├── export-pptx
 │   │   │   │       ├── export-pptx-stream
@@ -2209,6 +2210,7 @@
 │   │   │       └── typography.ts
 │   │   ├── utils
 │   │   │   ├── completion-date-helpers.ts
+│   │   │   ├── download-pptx.ts
 │   │   │   ├── entity-helpers.ts
 │   │   │   ├── lesson-display.ts
 │   │   │   ├── lesson-name-normalization.ts
@@ -2307,4 +2309,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-681 directories, 1627 files
+682 directories, 1628 files

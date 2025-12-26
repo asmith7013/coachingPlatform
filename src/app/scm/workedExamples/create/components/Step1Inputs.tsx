@@ -73,7 +73,7 @@ function formatLessonDisplay(lesson: LessonOption): string {
 }
 
 export function Step1Inputs({ wizard }: Step1InputsProps) {
-  const { state, savedSessions, loadSession, deleteSession, setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setScopeAndSequenceId, setLearningGoals, setMasteryImage, setUploadedImageUrl, setAnalysis, setLoadingProgress, setError, nextStep } = wizard;
+  const { state, isHydrated, savedSessions, loadSession, deleteSession, setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setScopeAndSequenceId, setLearningGoals, setMasteryImage, setUploadedImageUrl, setAnalysis, clearAnalysis, setLoadingProgress, setError, nextStep } = wizard;
 
   const [learningGoalText, setLearningGoalText] = useState(state.learningGoals.join('\n'));
   const [selectedLesson, setSelectedLesson] = useState<LessonOption | null>(null);
@@ -92,9 +92,10 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     setLessonName('');
     setScopeAndSequenceId(null);
     setLearningGoals([]);
-    setMasteryImage(null, null);
+    setMasteryImage(null, null);  // Also clears uploadedUrl now
+    clearAnalysis();  // Clear any previous analysis data and slides
     setError(null);
-  }, [setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setScopeAndSequenceId, setLearningGoals, setMasteryImage, setError]);
+  }, [setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setScopeAndSequenceId, setLearningGoals, setMasteryImage, clearAnalysis, setError]);
 
   // Handle loading a saved session
   const handleLoadSession = useCallback((sessionId: string) => {
@@ -365,6 +366,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
             onLoad={handleLoadSession}
             onDelete={deleteSession}
             onViewStateChange={setDraftViewState}
+            isLoading={!isHydrated}
           />
 
           {/* Lesson selection when "Create New" is selected */}

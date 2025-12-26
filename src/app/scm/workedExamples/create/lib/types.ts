@@ -158,6 +158,9 @@ export interface WizardState {
   // Step 3: Generated slides
   slides: HtmlSlide[];
   selectedSlideIndex: number;
+  // Multi-slide selection for batch editing
+  slidesToEdit: number[];    // Slide indices selected for editing
+  contextSlides: number[];   // Slide indices selected as context only (read-only)
 
   // Step 4: Metadata for saving
   title: string;
@@ -185,11 +188,18 @@ export type WizardAction =
   | { type: 'SET_MASTERY_IMAGE'; payload: { file: File | null; preview: string | null } }
   | { type: 'SET_UPLOADED_IMAGE_URL'; payload: string }
   | { type: 'SET_ANALYSIS'; payload: { problemAnalysis: ProblemAnalysis; strategyDefinition: StrategyDefinition; scenarios: Scenario[] } }
+  | { type: 'CLEAR_ANALYSIS' }
   | { type: 'UPDATE_STRATEGY_NAME'; payload: string }
   | { type: 'UPDATE_SCENARIO'; payload: { index: number; scenario: Scenario } }
   | { type: 'SET_SLIDES'; payload: HtmlSlide[] }
   | { type: 'UPDATE_SLIDE'; payload: { index: number; htmlContent: string } }
+  | { type: 'UPDATE_SLIDES_BATCH'; payload: { index: number; htmlContent: string }[] }
   | { type: 'SET_SELECTED_SLIDE'; payload: number }
+  | { type: 'TOGGLE_SLIDE_TO_EDIT'; payload: number }
+  | { type: 'TOGGLE_CONTEXT_SLIDE'; payload: number }
+  | { type: 'SET_SLIDE_SELECTION_MODE'; payload: { index: number; mode: 'edit' | 'context' } }
+  | { type: 'DESELECT_SLIDE'; payload: number }
+  | { type: 'CLEAR_SLIDE_SELECTIONS' }
   | { type: 'SET_TITLE'; payload: string }
   | { type: 'SET_SLUG'; payload: string }
   | { type: 'SET_MATH_CONCEPT'; payload: string }
@@ -219,6 +229,8 @@ export const initialWizardState: WizardState = {
   scenarios: null,
   slides: [],
   selectedSlideIndex: 0,
+  slidesToEdit: [],
+  contextSlides: [],
   title: '',
   slug: '',
   mathConcept: '',

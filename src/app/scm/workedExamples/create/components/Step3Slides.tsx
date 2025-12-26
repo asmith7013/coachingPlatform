@@ -6,6 +6,7 @@ import { SlidePreview } from './SlidePreview';
 import { WizardStickyFooter } from './WizardStickyFooter';
 import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
 import type { CreateWorkedExampleDeckInput } from '@zod-schema/worked-example-deck';
+import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 
 interface Step3SlidesProps {
   wizard: WizardStateHook;
@@ -24,7 +25,12 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const {
     state,
     updateSlide,
+    updateSlidesBatch,
     setSelectedSlide,
+    toggleSlideToEdit,
+    setSlideSelectionMode,
+    deselectSlide,
+    clearSlideSelections,
     prevStep,
     setError,
     clearPersistedState,
@@ -41,8 +47,10 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
 
-  const { slides, selectedSlideIndex } = state;
+  const { slides, selectedSlideIndex, slidesToEdit, contextSlides } = state;
   const currentSlide = slides[selectedSlideIndex];
+  const totalSelected = slidesToEdit.length + contextSlides.length;
+  const hasMultiSelection = totalSelected > 0;
 
   const isAnyExporting = exportProgress.status === 'exporting';
 
@@ -66,35 +74,80 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     setEditContent('');
   };
 
-  // Handle AI edit
+  // Handle AI edit (single or batch)
   const handleAiEdit = async () => {
-    if (!currentSlide || !aiEditPrompt.trim()) return;
+    if (!aiEditPrompt.trim()) return;
+
+    // Determine which slides to edit
+    const useMultiEdit = slidesToEdit.length > 0;
+
+    if (!useMultiEdit && !currentSlide) return;
 
     setIsAiLoading(true);
     setAiError(null);
 
     try {
-      const response = await fetch('/api/scm/worked-examples/edit-slide', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          currentHtml: currentSlide.htmlContent,
-          editInstructions: aiEditPrompt,
-          slideNumber: selectedSlideIndex + 1,
-          strategyName: state.strategyDefinition?.name,
-        }),
-      });
+      if (useMultiEdit) {
+        // Batch edit mode
+        const response = await fetch('/api/scm/worked-examples/edit-slides', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            slidesToEdit: slidesToEdit.map(i => ({
+              slideNumber: i + 1,
+              htmlContent: slides[i].htmlContent,
+            })),
+            contextSlides: contextSlides.map(i => ({
+              slideNumber: i + 1,
+              htmlContent: slides[i].htmlContent,
+            })),
+            editInstructions: aiEditPrompt,
+            strategyName: state.strategyDefinition?.name,
+          }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!response.ok) {
-        setAiError(data.error || 'Failed to edit slide');
-        return;
-      }
+        if (!response.ok) {
+          setAiError(data.error || 'Failed to edit slides');
+          return;
+        }
 
-      if (data.success && data.editedHtml) {
-        updateSlide(selectedSlideIndex, data.editedHtml);
-        setAiEditPrompt('');
+        if (data.success && data.editedSlides) {
+          // Batch update all edited slides
+          updateSlidesBatch(
+            data.editedSlides.map((s: { slideNumber: number; htmlContent: string }) => ({
+              index: s.slideNumber - 1,
+              htmlContent: s.htmlContent,
+            }))
+          );
+          setAiEditPrompt('');
+          clearSlideSelections();
+        }
+      } else {
+        // Single slide edit mode
+        const response = await fetch('/api/scm/worked-examples/edit-slide', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            currentHtml: currentSlide!.htmlContent,
+            editInstructions: aiEditPrompt,
+            slideNumber: selectedSlideIndex + 1,
+            strategyName: state.strategyDefinition?.name,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setAiError(data.error || 'Failed to edit slide');
+          return;
+        }
+
+        if (data.success && data.editedHtml) {
+          updateSlide(selectedSlideIndex, data.editedHtml);
+          setAiEditPrompt('');
+        }
       }
     } catch (error) {
       setAiError(error instanceof Error ? error.message : 'An error occurred');
@@ -123,12 +176,16 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       return;
     }
 
-    setExportProgress({ status: 'exporting', message: 'Uploading to Google Slides...' });
+    setExportProgress({ status: 'exporting', message: 'Generating PPTX...' });
     setError(null);
     setGoogleSlidesUrl(null);
 
+    // Download PPTX locally FIRST when on localhost (before Google Slides)
+    await downloadPptxLocally(slides, state.title || 'worked-example', state.mathConcept);
+
     try {
-      // Step 1: Export to Google Slides first to get the URL
+      // Step 1: Export to Google Slides to get the URL
+      setExportProgress({ status: 'exporting', message: 'Uploading to Google Slides...' });
       const response = await fetch('/api/scm/worked-examples/export-google-slides', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -323,25 +380,92 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
       <div className="flex gap-4" style={{ height: 'calc(100vh - 230px)', minHeight: '600px', maxHeight: '850px' }}>
         {/* Slide Thumbnails */}
-        <div className="w-24 flex-shrink-0 overflow-y-auto space-y-2 pr-2">
-          {slides.map((slide, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                setSelectedSlide(index);
-                setIsEditing(false);
-              }}
-              className={`w-full aspect-video rounded border-2 transition-colors cursor-pointer overflow-hidden ${
-                index === selectedSlideIndex
-                  ? 'border-blue-500'
-                  : 'border-gray-300 hover:border-gray-400'
-              }`}
-            >
-              <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-500 text-xs font-medium">
-                {index + 1}
-              </div>
-            </button>
-          ))}
+        <div className="w-28 flex-shrink-0 overflow-y-auto pr-2">
+          {/* Selection controls */}
+          {hasMultiSelection && (
+            <div className="mb-2 px-1">
+              <button
+                onClick={clearSlideSelections}
+                className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer"
+              >
+                Clear ({totalSelected})
+              </button>
+            </div>
+          )}
+          <div className="space-y-2">
+            {slides.map((_, index) => {
+              const isInEdit = slidesToEdit.includes(index);
+              const isInContext = contextSlides.includes(index);
+              const isSelected = isInEdit || isInContext;
+
+              return (
+                <div key={index} className="relative">
+                  {/* Checkbox */}
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => {
+                      if (isSelected) {
+                        // Deselect from both arrays
+                        deselectSlide(index);
+                      } else {
+                        // Select as edit (default)
+                        toggleSlideToEdit(index);
+                      }
+                    }}
+                    className="absolute top-1 left-1 z-10 w-3.5 h-3.5 cursor-pointer accent-purple-600"
+                  />
+                  {/* Thumbnail button */}
+                  <button
+                    onClick={() => {
+                      setSelectedSlide(index);
+                      setIsEditing(false);
+                    }}
+                    className={`w-full aspect-video rounded border-2 transition-colors cursor-pointer overflow-hidden ${
+                      index === selectedSlideIndex
+                        ? 'border-blue-500'
+                        : isInEdit
+                        ? 'border-purple-400 bg-purple-50'
+                        : isInContext
+                        ? 'border-gray-400 border-dashed bg-gray-50'
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    <div className={`w-full h-full flex items-center justify-center text-xs font-medium ${
+                      isInEdit ? 'bg-purple-50 text-purple-700' : isInContext ? 'bg-gray-50 text-gray-600' : 'bg-gray-100 text-gray-500'
+                    }`}>
+                      {index + 1}
+                    </div>
+                  </button>
+                  {/* Edit/Context Toggle - only show when selected */}
+                  {isSelected && (
+                    <div className="flex mt-1 text-[10px] rounded overflow-hidden border border-gray-300">
+                      <button
+                        onClick={() => setSlideSelectionMode(index, 'edit')}
+                        className={`flex-1 px-1.5 py-0.5 cursor-pointer transition-colors ${
+                          isInEdit
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-white text-gray-600 hover:bg-gray-100'
+                        }`}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => setSlideSelectionMode(index, 'context')}
+                        className={`flex-1 px-1.5 py-0.5 cursor-pointer transition-colors ${
+                          isInContext
+                            ? 'bg-gray-600 text-white'
+                            : 'bg-white text-gray-600 hover:bg-gray-100'
+                        }`}
+                      >
+                        Ctx
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Preview / Edit Area */}
@@ -482,7 +606,11 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
-            <span className="text-sm text-purple-800 flex-1">Editing slide {selectedSlideIndex + 1}: {aiEditPrompt}</span>
+            <span className="text-sm text-purple-800 flex-1">
+              {slidesToEdit.length > 0
+                ? `Editing ${slidesToEdit.length} slide${slidesToEdit.length > 1 ? 's' : ''}: ${aiEditPrompt}`
+                : `Editing slide ${selectedSlideIndex + 1}: ${aiEditPrompt}`}
+            </span>
           </div>
         ) : (
           <div className="flex gap-3 items-center">
@@ -492,26 +620,40 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
             >
               Back
             </button>
+            {/* Dynamic label based on selection */}
             <span className="text-sm text-purple-700 font-medium whitespace-nowrap">
-              Slide {selectedSlideIndex + 1}
+              {slidesToEdit.length > 0 ? (
+                <>
+                  <span className="text-purple-600">{slidesToEdit.length} to edit</span>
+                  {contextSlides.length > 0 && (
+                    <span className="text-gray-500 ml-1">+ {contextSlides.length} ctx</span>
+                  )}
+                </>
+              ) : (
+                `Slide ${selectedSlideIndex + 1}`
+              )}
             </span>
             <input
               type="text"
               value={aiEditPrompt}
               onChange={(e) => setAiEditPrompt(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && aiEditPrompt.trim() && handleAiEdit()}
-              placeholder="AI Edit: describe changes to this slide"
+              placeholder={
+                slidesToEdit.length > 0
+                  ? `AI Edit: describe changes to ${slidesToEdit.length} slide${slidesToEdit.length > 1 ? 's' : ''}`
+                  : 'AI Edit: describe changes to this slide'
+              }
               className="flex-1 px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white"
             />
             <button
               onClick={handleAiEdit}
-              disabled={!aiEditPrompt.trim()}
+              disabled={!aiEditPrompt.trim() || (slidesToEdit.length === 0 && !currentSlide)}
               className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg cursor-pointer disabled:cursor-not-allowed flex items-center gap-1.5"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              Apply
+              {slidesToEdit.length > 1 ? 'Apply to All' : 'Apply'}
             </button>
           </div>
         )}

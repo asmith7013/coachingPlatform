@@ -1,9 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSignIn } from '@clerk/nextjs';
 import type { WizardStateHook } from '../hooks/useWizardState';
 import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
 import type { CreateWorkedExampleDeckInput } from '@zod-schema/worked-example-deck';
+
+// Session storage key for pending Google Slides export
+const PENDING_GOOGLE_EXPORT_KEY = 'pendingGoogleSlidesExport';
+
+// Error messages that indicate auth issues requiring re-authorization
+const AUTH_ERROR_PATTERNS = [
+  'expired',
+  'invalid',
+  'authorization',
+  'permissions',
+  'No Google OAuth token',
+  'sign in',
+  'sign out',
+  '401',
+  '403',
+];
 
 interface Step4SaveProps {
   wizard: WizardStateHook;
@@ -24,10 +41,39 @@ export function Step4Save({ wizard }: Step4SaveProps) {
     clearPersistedState,
   } = wizard;
 
+  const { signIn, isLoaded: isSignInLoaded } = useSignIn();
+
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [isExportingGoogleSlides, setIsExportingGoogleSlides] = useState(false);
   const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
+  const [showReauthPrompt, setShowReauthPrompt] = useState(false);
+  const [authErrorMessage, setAuthErrorMessage] = useState<string | null>(null);
+
+  // Check if an error message indicates an auth issue
+  const isAuthError = (errorMessage: string): boolean => {
+    const lowerError = errorMessage.toLowerCase();
+    return AUTH_ERROR_PATTERNS.some((pattern) => lowerError.includes(pattern.toLowerCase()));
+  };
+
+  // Handle re-authorization with forced consent
+  const handleReauthorize = useCallback(() => {
+    if (!isSignInLoaded || !signIn) {
+      setError('Sign-in not loaded. Please refresh the page.');
+      return;
+    }
+
+    // Store that we want to retry export after re-auth
+    sessionStorage.setItem(PENDING_GOOGLE_EXPORT_KEY, 'true');
+
+    // Redirect to Google OAuth with forced consent to get fresh refresh token
+    signIn.authenticateWithRedirect({
+      strategy: 'oauth_google',
+      redirectUrl: '/sso-callback',
+      redirectUrlComplete: window.location.pathname + window.location.search,
+      oidcPrompt: 'consent',
+    });
+  }, [isSignInLoaded, signIn, setError]);
 
   // Handle export to PPTX
   const handleExportPptx = async () => {
@@ -74,7 +120,7 @@ export function Step4Save({ wizard }: Step4SaveProps) {
   };
 
   // Handle export to Google Slides
-  const handleExportGoogleSlides = async () => {
+  const handleExportGoogleSlides = useCallback(async () => {
     if (state.slides.length === 0) {
       setError('No slides to export');
       return;
@@ -83,6 +129,8 @@ export function Step4Save({ wizard }: Step4SaveProps) {
     setIsExportingGoogleSlides(true);
     setError(null);
     setGoogleSlidesUrl(null);
+    setShowReauthPrompt(false);
+    setAuthErrorMessage(null);
 
     try {
       const response = await fetch('/api/scm/worked-examples/export-google-slides', {
@@ -97,21 +145,56 @@ export function Step4Save({ wizard }: Step4SaveProps) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to export to Google Slides');
+        const errorMessage = errorData.error || 'Failed to export to Google Slides';
+
+        // Check if this is an auth error that can be fixed by re-authorizing
+        if (isAuthError(errorMessage)) {
+          setAuthErrorMessage(errorMessage);
+          setShowReauthPrompt(true);
+          setIsExportingGoogleSlides(false);
+          return;
+        }
+
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
       setGoogleSlidesUrl(data.url);
 
+      // Clear any pending export flag since we succeeded
+      sessionStorage.removeItem(PENDING_GOOGLE_EXPORT_KEY);
+
       // Open in new tab
       window.open(data.url, '_blank');
     } catch (error) {
       console.error('Google Slides export error:', error);
-      setError(error instanceof Error ? error.message : 'Failed to export to Google Slides');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to export to Google Slides';
+
+      // Check if this is an auth error
+      if (isAuthError(errorMessage)) {
+        setAuthErrorMessage(errorMessage);
+        setShowReauthPrompt(true);
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setIsExportingGoogleSlides(false);
     }
-  };
+  }, [state.slides, state.title, state.mathConcept, setError]);
+
+  // Check for pending Google Slides export after re-auth
+  useEffect(() => {
+    const pendingExport = sessionStorage.getItem(PENDING_GOOGLE_EXPORT_KEY);
+    if (pendingExport === 'true' && state.slides.length > 0) {
+      // Clear the flag first to prevent loops
+      sessionStorage.removeItem(PENDING_GOOGLE_EXPORT_KEY);
+      // Small delay to ensure component is fully mounted
+      const timer = setTimeout(() => {
+        handleExportGoogleSlides();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [state.slides.length, handleExportGoogleSlides]);
 
   // Handle save
   const handleSave = async () => {
@@ -330,6 +413,58 @@ export function Step4Save({ wizard }: Step4SaveProps) {
           >
             Open in Google Slides
           </a>
+        </div>
+      )}
+
+      {/* Google Re-authorization Prompt */}
+      {showReauthPrompt && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg mt-4 p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0">
+              <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-amber-800">Google Authorization Required</h3>
+              <p className="text-sm text-amber-700 mt-1">
+                {authErrorMessage || 'Your Google Drive access has expired.'}
+              </p>
+              <p className="text-sm text-amber-600 mt-2">
+                Click the button below to re-authorize with Google. After signing in, you&apos;ll be
+                returned here and the export will automatically retry.
+              </p>
+              <div className="mt-3 flex gap-2">
+                <button
+                  onClick={handleReauthorize}
+                  disabled={!isSignInLoaded}
+                  className="bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors cursor-pointer flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                  </svg>
+                  Re-authorize with Google
+                </button>
+                <button
+                  onClick={() => {
+                    setShowReauthPrompt(false);
+                    setAuthErrorMessage(null);
+                  }}
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-2 px-4 rounded-lg transition-colors cursor-pointer border border-gray-300"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

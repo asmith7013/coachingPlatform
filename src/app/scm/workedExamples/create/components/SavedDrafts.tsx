@@ -14,6 +14,7 @@ interface SavedDraftsProps {
   onLoad: (sessionId: string) => void;
   onDelete: (sessionId: string) => void;
   onViewStateChange?: (viewState: DraftViewState) => void;
+  isLoading?: boolean;
 }
 
 const STEP_LABELS: Record<WizardStep, string> = {
@@ -41,7 +42,7 @@ function formatTimeAgo(timestamp: number): string {
   return new Date(timestamp).toLocaleDateString();
 }
 
-export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, onDelete, onViewStateChange }: SavedDraftsProps) {
+export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, onDelete, onViewStateChange, isLoading }: SavedDraftsProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [viewState, setViewState] = useState<DraftViewState>('initial');
 
@@ -89,6 +90,34 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
 
   // Initial choice view
   if (viewState === 'initial') {
+    // Show loading skeleton while drafts are being loaded
+    if (isLoading) {
+      return (
+        <div className="space-y-2">
+          {/* Skeleton for Create New Option */}
+          <div className="w-full p-4 rounded-lg border-2 border-gray-200 bg-white animate-pulse">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-gray-200 w-9 h-9" />
+              <div className="flex-1">
+                <div className="h-4 bg-gray-200 rounded w-40 mb-1.5" />
+                <div className="h-3 bg-gray-100 rounded w-48" />
+              </div>
+            </div>
+          </div>
+          {/* Skeleton for Continue Draft Option */}
+          <div className="w-full p-4 rounded-lg border-2 border-gray-200 bg-white animate-pulse">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-gray-200 w-9 h-9" />
+              <div className="flex-1">
+                <div className="h-4 bg-gray-200 rounded w-32 mb-1.5" />
+                <div className="h-3 bg-gray-100 rounded w-36" />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-2">
         {/* Create New Option */}

@@ -1,5 +1,11 @@
 import pptxgen from '@bapunhansdah/pptxgenjs';
 
+// Animation config for click-to-reveal CFU/Answer boxes
+export interface AnimationConfig {
+  type: 'appear' | 'fadein';
+  trigger: 'onClick' | 'withPrevious' | 'afterPrevious';
+}
+
 export interface SvgLayer {
   name: string;
   buffer: Buffer;

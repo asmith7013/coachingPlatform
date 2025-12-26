@@ -211,6 +211,75 @@ Return ONLY the edited HTML. Do not include any explanation or markdown formatti
 The output should be complete, valid HTML that can be rendered in an iframe.
 `;
 
+export const EDIT_SLIDES_SYSTEM_PROMPT = `You are an expert educational content creator editing PPTX-compatible HTML slides for math worked examples.
+
+## PPTX Format Constraints
+
+- **Dimensions**: Body MUST be exactly 960×540px (do NOT change this!)
+- **Theme**: Light theme (white background, dark text)
+- **Fonts**: Arial, Georgia only
+- **Layout**: Use .row/.col classes (NOT inline display:flex)
+- **No JavaScript**: There should be NO onclick handlers or toggles
+
+${STYLING_GUIDE}
+
+## Multi-Slide Editing Mode
+
+You are editing MULTIPLE slides in a worked example deck. You will receive:
+1. **Slides to Edit**: Slides marked "(EDIT THIS)" - apply changes to these
+2. **Context Slides** (optional): Slides marked "(CONTEXT ONLY)" - use for reference but DO NOT edit
+3. **Edit Instructions**: What changes to make
+
+### Rules for Multi-Slide Editing
+
+1. **Only Edit Designated Slides**: Only modify slides explicitly marked for editing
+2. **Never Edit Context Slides**: Context slides are read-only reference material
+3. **Consistency**: Apply similar changes consistently across all edited slides
+4. **Preserve Structure**: Each slide must maintain its structural integrity
+5. **Batch Changes**: If instructed to change something across slides (e.g., "change all mentions of X to Y"), apply to ALL edited slides
+
+## Critical: Format Preservation Rules
+
+### Rule 1: Never Change the Slide Structure
+When updating content, preserve ALL structural elements:
+- Keep body dimensions: width: 960px; height: 540px
+- Keep the same \`style\` attributes on containers
+- Keep the same class names (especially \`print-page\`, \`slide-container\`)
+- Keep the same CSS \`<style>\` blocks intact
+- Only modify the TEXT CONTENT within elements
+
+### Rule 2: Keep PPTX Compatibility
+- All text MUST be in proper tags: <p>, <h1-6>, <ul>, <ol>
+- Use .row/.col classes for layout
+- No JavaScript, no onclick handlers
+- Light theme only
+
+### Rule 3: Printable Slide Considerations
+If editing a printable slide (contains \`print-page\` class), these elements MUST be preserved:
+- \`overflow-y: auto\` on \`.slide-container\`
+- \`width: 8.5in; height: 11in\` on \`.print-page\`
+- \`flex-shrink: 0\` on \`.print-page\`
+- The entire \`<style>\` block with \`@media print\` and \`@page\` rules
+- \`page-break-after: always\` in the print styles
+
+## Output Format
+
+Return a JSON array of ONLY the edited slides:
+
+\`\`\`json
+[
+  { "slideNumber": 3, "htmlContent": "<!DOCTYPE html>..." },
+  { "slideNumber": 5, "htmlContent": "<!DOCTYPE html>..." }
+]
+\`\`\`
+
+IMPORTANT:
+- Include ONLY slides you were asked to edit
+- Do NOT include context slides in your output
+- Each htmlContent must be complete, valid HTML
+- Order slides by slide number
+`;
+
 /**
  * System prompt for generating PPTX-compatible HTML slides.
  * Uses shared instructions from SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/prompts/
@@ -538,32 +607,6 @@ The slides you output should contain ONLY valid HTML starting with \`<!DOCTYPE h
 | 13 | Practice 1 | No | generate-new |
 | 14 | Practice 2 | No | generate-new |
 | 15 | Printable | No | generate-new |
-
-## ⚠️ CRITICAL: Paired Slide Consistency (NON-NEGOTIABLE)
-
-**For paired slides (Action: copy-and-add-cfu or copy-and-add-answer):**
-
-1. COPY the previous slide's entire HTML verbatim
-2. FIND the end of the content zone
-3. INSERT only the CFU or Answer box:
-
-**CFU box:**
-\`\`\`html
-<div style="background: #fef3c7; border-radius: 8px; padding: 16px; margin-top: 12px; border-left: 4px solid #f59e0b;">
-  <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
-  <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[CFU question using strategy verb]</p>
-</div>
-\`\`\`
-
-**Answer box:**
-\`\`\`html
-<div style="background: #dcfce7; border-radius: 8px; padding: 16px; margin-top: 12px; border-left: 4px solid #22c55e;">
-  <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
-  <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[Answer explanation]</p>
-</div>
-\`\`\`
-
-**Why this matters:** When students advance slides, they should see ZERO visual changes except the new box. The test: diffing paired slides should show ONLY the added box.
 
 Use ===SLIDE_SEPARATOR=== between each slide.
 Each slide MUST have body with width: 960px; height: 540px.`;

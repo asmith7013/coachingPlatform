@@ -181,6 +181,48 @@ Fill in your new content within the established elements.
 
 ---
 
+## Browser UI: Multi-Slide Editing
+
+The worked example creator wizard (Step 3) supports editing multiple slides at once using AI.
+
+### How to Use Multi-Slide Edit
+
+1. **Select slides** using checkboxes on the thumbnails
+2. **Choose mode** for each selected slide:
+   - **Edit** (purple): Slide will be modified by AI
+   - **Ctx** (gray): Slide is context-only (AI can see it but won't modify it)
+3. **Enter instructions** in the footer input
+4. **Click "Apply to All"** to batch edit
+
+### Selection Modes
+
+| Mode | Border Style | AI Behavior |
+|------|-------------|-------------|
+| Edit | Purple solid | Will be edited and returned |
+| Context | Gray dashed | Read-only reference for AI |
+
+### Use Cases
+
+- **Batch find/replace**: "Change 'apples' to 'oranges' in all selected slides"
+- **Consistent formatting**: "Make all headers blue"
+- **Practice problem updates**: Select slides 13, 14, 15 and update the scenario
+- **Reference-aware edits**: Select slide 4 as context, slide 5 as edit to update slide 5 based on slide 4's content
+
+### API Endpoint
+
+The browser UI calls `/api/scm/worked-examples/edit-slides` for batch edits:
+
+```typescript
+{
+  slidesToEdit: [{ slideNumber: 3, htmlContent: "..." }],
+  contextSlides: [{ slideNumber: 2, htmlContent: "..." }],
+  editInstructions: "Change the scenario to use pizza delivery",
+  strategyName: "Balance and Isolate"
+}
+```
+
+---
+
 ## Common Mistakes to Avoid
 
 ### ❌ WRONG: Creating separate slide files for each problem

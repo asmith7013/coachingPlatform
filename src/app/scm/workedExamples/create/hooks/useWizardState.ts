@@ -111,12 +111,18 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       return { ...state, learningGoals: action.payload };
 
     case 'SET_MASTERY_IMAGE':
+      // When clearing the image (both null), also clear uploadedUrl to force re-upload
+      const shouldClearUploadedUrl = action.payload.file === null && action.payload.preview === null;
       return {
         ...state,
         masteryCheckImage: {
           ...state.masteryCheckImage,
           file: action.payload.file,
           preview: action.payload.preview,
+          // Clear uploadedUrl when image is cleared OR when a new file is set (to force re-upload)
+          uploadedUrl: shouldClearUploadedUrl || action.payload.file !== null
+            ? null
+            : state.masteryCheckImage.uploadedUrl,
         },
       };
 
@@ -139,6 +145,20 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
         title: `${action.payload.strategyDefinition.name} - ${action.payload.problemAnalysis.problemType}`,
         mathConcept: action.payload.problemAnalysis.problemType,
         slug: generateSlug(action.payload.strategyDefinition.name, state.gradeLevel),
+      };
+
+    case 'CLEAR_ANALYSIS':
+      return {
+        ...state,
+        problemAnalysis: null,
+        strategyDefinition: null,
+        scenarios: null,
+        slides: [],
+        selectedSlideIndex: 0,
+        title: '',
+        slug: '',
+        mathConcept: '',
+        mathStandard: '',
       };
 
     case 'UPDATE_STRATEGY_NAME':
@@ -172,8 +192,75 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       }
       return { ...state, slides: newSlides };
 
+    case 'UPDATE_SLIDES_BATCH':
+      const batchUpdatedSlides = [...state.slides];
+      action.payload.forEach(({ index, htmlContent }) => {
+        if (batchUpdatedSlides[index]) {
+          batchUpdatedSlides[index] = {
+            ...batchUpdatedSlides[index],
+            htmlContent,
+          };
+        }
+      });
+      return { ...state, slides: batchUpdatedSlides };
+
     case 'SET_SELECTED_SLIDE':
       return { ...state, selectedSlideIndex: action.payload };
+
+    case 'TOGGLE_SLIDE_TO_EDIT': {
+      const idx = action.payload;
+      // Remove from context if present
+      const newContextSlides = state.contextSlides.filter(i => i !== idx);
+      // Toggle in slidesToEdit
+      const inEdit = state.slidesToEdit.includes(idx);
+      const newSlidesToEdit = inEdit
+        ? state.slidesToEdit.filter(i => i !== idx)
+        : [...state.slidesToEdit, idx].sort((a, b) => a - b);
+      return { ...state, slidesToEdit: newSlidesToEdit, contextSlides: newContextSlides };
+    }
+
+    case 'TOGGLE_CONTEXT_SLIDE': {
+      const idx = action.payload;
+      // Remove from edit if present
+      const newSlidesToEdit = state.slidesToEdit.filter(i => i !== idx);
+      // Toggle in contextSlides
+      const inContext = state.contextSlides.includes(idx);
+      const newContextSlides = inContext
+        ? state.contextSlides.filter(i => i !== idx)
+        : [...state.contextSlides, idx].sort((a, b) => a - b);
+      return { ...state, slidesToEdit: newSlidesToEdit, contextSlides: newContextSlides };
+    }
+
+    case 'SET_SLIDE_SELECTION_MODE': {
+      const { index, mode } = action.payload;
+      if (mode === 'edit') {
+        // Add to edit, remove from context
+        const newSlidesToEdit = state.slidesToEdit.includes(index)
+          ? state.slidesToEdit
+          : [...state.slidesToEdit, index].sort((a, b) => a - b);
+        const newContextSlides = state.contextSlides.filter(i => i !== index);
+        return { ...state, slidesToEdit: newSlidesToEdit, contextSlides: newContextSlides };
+      } else {
+        // Add to context, remove from edit
+        const newSlidesToEdit = state.slidesToEdit.filter(i => i !== index);
+        const newContextSlides = state.contextSlides.includes(index)
+          ? state.contextSlides
+          : [...state.contextSlides, index].sort((a, b) => a - b);
+        return { ...state, slidesToEdit: newSlidesToEdit, contextSlides: newContextSlides };
+      }
+    }
+
+    case 'DESELECT_SLIDE': {
+      const idx = action.payload;
+      return {
+        ...state,
+        slidesToEdit: state.slidesToEdit.filter(i => i !== idx),
+        contextSlides: state.contextSlides.filter(i => i !== idx),
+      };
+    }
+
+    case 'CLEAR_SLIDE_SELECTIONS':
+      return { ...state, slidesToEdit: [], contextSlides: [] };
 
     case 'SET_TITLE':
       return { ...state, title: action.payload };
@@ -420,6 +507,10 @@ export function useWizardState() {
     []
   );
 
+  const clearAnalysis = useCallback(() => {
+    dispatch({ type: 'CLEAR_ANALYSIS' });
+  }, []);
+
   const updateStrategyName = useCallback((name: string) => {
     dispatch({ type: 'UPDATE_STRATEGY_NAME', payload: name });
   }, []);
@@ -439,8 +530,32 @@ export function useWizardState() {
     dispatch({ type: 'UPDATE_SLIDE', payload: { index, htmlContent } });
   }, []);
 
+  const updateSlidesBatch = useCallback((updates: { index: number; htmlContent: string }[]) => {
+    dispatch({ type: 'UPDATE_SLIDES_BATCH', payload: updates });
+  }, []);
+
   const setSelectedSlide = useCallback((index: number) => {
     dispatch({ type: 'SET_SELECTED_SLIDE', payload: index });
+  }, []);
+
+  const toggleSlideToEdit = useCallback((index: number) => {
+    dispatch({ type: 'TOGGLE_SLIDE_TO_EDIT', payload: index });
+  }, []);
+
+  const toggleContextSlide = useCallback((index: number) => {
+    dispatch({ type: 'TOGGLE_CONTEXT_SLIDE', payload: index });
+  }, []);
+
+  const setSlideSelectionMode = useCallback((index: number, mode: 'edit' | 'context') => {
+    dispatch({ type: 'SET_SLIDE_SELECTION_MODE', payload: { index, mode } });
+  }, []);
+
+  const deselectSlide = useCallback((index: number) => {
+    dispatch({ type: 'DESELECT_SLIDE', payload: index });
+  }, []);
+
+  const clearSlideSelections = useCallback(() => {
+    dispatch({ type: 'CLEAR_SLIDE_SELECTIONS' });
   }, []);
 
   const setTitle = useCallback((title: string) => {
@@ -515,12 +630,19 @@ export function useWizardState() {
     setUploadedImageUrl,
     // Step 2
     setAnalysis,
+    clearAnalysis,
     updateStrategyName,
     updateScenario,
     // Step 3
     setSlides,
     updateSlide,
+    updateSlidesBatch,
     setSelectedSlide,
+    toggleSlideToEdit,
+    toggleContextSlide,
+    setSlideSelectionMode,
+    deselectSlide,
+    clearSlideSelections,
     // Step 4
     setTitle,
     setSlug,

@@ -3,6 +3,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import type { WorkedExampleDeck } from '@zod-schema/worked-example-deck';
 import { getDeckBySlug } from '@actions/worked-examples';
+import { downloadPptxLocally } from '@/lib/utils/download-pptx';
+
+type ExportStatus = 'idle' | 'exporting' | 'success' | 'error';
 
 interface PresentationModalProps {
   slug: string;
@@ -20,6 +23,58 @@ export function PresentationModal({ slug, isOpen, onClose, initialSlide = 0, onS
   const [scriptsLoaded, setScriptsLoaded] = useState<Set<string>>(new Set());
   const [showHtmlViewer, setShowHtmlViewer] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [exportStatus, setExportStatus] = useState<ExportStatus>('idle');
+  const [exportError, setExportError] = useState<string | null>(null);
+  const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
+
+  // Export to Google Slides handler
+  const handleExportToGoogleSlides = async () => {
+    if (!deck?.htmlSlides || exportStatus === 'exporting') return;
+
+    setExportStatus('exporting');
+    setExportError(null);
+
+    const slidesPayload = deck.htmlSlides.map((slide) => ({
+      slideNumber: slide.slideNumber,
+      htmlContent: slide.htmlContent,
+    }));
+
+    // Download PPTX locally FIRST when on localhost (before Google Slides)
+    await downloadPptxLocally(slidesPayload, deck.title, deck.mathConcept);
+
+    try {
+      const response = await fetch('/api/scm/worked-examples/export-google-slides', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slides: slidesPayload,
+          title: deck.title,
+          mathConcept: deck.mathConcept,
+          slug: deck.slug,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.url) {
+        setExportStatus('success');
+        setGoogleSlidesUrl(data.url);
+
+        // Open in new tab
+        window.open(data.url, '_blank');
+        // Reset status after a delay
+        setTimeout(() => setExportStatus('idle'), 3000);
+      } else {
+        setExportStatus('error');
+        setExportError(data.error || 'Export failed');
+        setTimeout(() => setExportStatus('idle'), 5000);
+      }
+    } catch (err) {
+      setExportStatus('error');
+      setExportError(err instanceof Error ? err.message : 'Export failed');
+      setTimeout(() => setExportStatus('idle'), 5000);
+    }
+  };
 
   // Load deck from database
   useEffect(() => {
@@ -29,7 +84,12 @@ export function PresentationModal({ slug, isOpen, onClose, initialSlide = 0, onS
       try {
         const result = await getDeckBySlug(slug);
         if (result.success && result.data) {
-          setDeck(result.data as WorkedExampleDeck);
+          const deckData = result.data as WorkedExampleDeck;
+          setDeck(deckData);
+          // Initialize googleSlidesUrl from deck if it exists
+          if (deckData.googleSlidesUrl) {
+            setGoogleSlidesUrl(deckData.googleSlidesUrl);
+          }
         } else {
           setError(result.error || 'Failed to load deck');
         }
@@ -340,10 +400,10 @@ export function PresentationModal({ slug, isOpen, onClose, initialSlide = 0, onS
             </button>
           )}
 
-          {/* View HTML Button - Bottom Right */}
+          {/* Bottom Right - View HTML Button */}
           <button
             onClick={() => setShowHtmlViewer(true)}
-            className="print-hide fixed bottom-4 right-4 w-12 h-12 flex items-center justify-center bg-gray-700/80 hover:bg-gray-600/90 text-white rounded-full transition-colors z-[10000] cursor-pointer"
+            className="print-hide fixed bottom-4 right-4 w-12 h-12 flex items-center justify-center bg-gray-700/80 hover:bg-gray-600/90 text-white rounded-full transition-colors cursor-pointer z-[10000]"
             aria-label="View HTML"
             title="View HTML"
           >
@@ -448,6 +508,75 @@ export function PresentationModal({ slug, isOpen, onClose, initialSlide = 0, onS
                   <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap break-words">
                     {slide?.htmlContent || 'No HTML content'}
                   </pre>
+                </div>
+                {/* Footer with Export Button and URL */}
+                <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+                  {/* Google Slides URL */}
+                  <div className="flex-1 min-w-0">
+                    {googleSlidesUrl ? (
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-gray-500 shrink-0">Google Slides:</span>
+                        <a
+                          href={googleSlidesUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800 underline truncate"
+                          title={googleSlidesUrl}
+                        >
+                          {googleSlidesUrl}
+                        </a>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-gray-400">No Google Slides URL</span>
+                    )}
+                  </div>
+                  {/* Export Slides Button */}
+                  <button
+                    onClick={handleExportToGoogleSlides}
+                    disabled={exportStatus === 'exporting'}
+                    className={`ml-4 h-9 flex items-center gap-2 px-4 rounded-lg transition-colors cursor-pointer text-sm font-medium shrink-0 ${
+                      exportStatus === 'exporting'
+                        ? 'bg-yellow-500 text-white'
+                        : exportStatus === 'success'
+                        ? 'bg-green-500 text-white'
+                        : exportStatus === 'error'
+                        ? 'bg-red-500 text-white'
+                        : 'bg-yellow-500 hover:bg-yellow-600 text-white'
+                    }`}
+                    aria-label="Export Slides"
+                    title={exportError || 'Export to Google Slides'}
+                  >
+                    {exportStatus === 'exporting' ? (
+                      <>
+                        <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        <span>Exporting...</span>
+                      </>
+                    ) : exportStatus === 'success' ? (
+                      <>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Exported!</span>
+                      </>
+                    ) : exportStatus === 'error' ? (
+                      <>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        <span>Failed</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+                        </svg>
+                        <span>Export Slides</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
             </div>

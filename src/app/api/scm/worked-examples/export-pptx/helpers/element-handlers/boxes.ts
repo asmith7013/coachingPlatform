@@ -99,6 +99,7 @@ export function addLearningGoalBox(slide: pptxgen.Slide, el: PptxElement, x: num
 
 /**
  * Add a styled box like CFU or Answer (background + border accent + label + content)
+ * All elements animate together: first gets 'onClick', rest get 'withPrevious'
  */
 export function addStyledBox(
   slide: pptxgen.Slide,
@@ -115,16 +116,29 @@ export function addStyledBox(
 
   const $ = cheerio.load(el.content);
 
+  // Animation helper - first element triggers on click, rest appear with it
+  let isFirstElement = true;
+  const getAnimation = () => {
+    const trigger = isFirstElement ? 'onClick' : 'withPrevious';
+    isFirstElement = false;
+    return {
+      type: 'appear' as const,
+      trigger: trigger as 'onClick' | 'withPrevious',
+    };
+  };
+
   // Background
   slide.addShape('rect', {
     x, y, w, h,
     fill: { color: bgColor },
+    animation: getAnimation(),
   });
 
   // Left border accent
   slide.addShape('rect', {
     x, y, w: 0.05, h,
     fill: { color: borderColor },
+    animation: getAnimation(),
   });
 
   // Label
@@ -137,6 +151,7 @@ export function addStyledBox(
     fontFace: 'Arial',
     bold: true,
     color: labelColor,
+    animation: getAnimation(),
   });
 
   // Content - get all paragraphs except the label
@@ -174,6 +189,7 @@ export function addStyledBox(
             w: w - 0.3,
             h: lineHeight,
             valign: 'top',
+            animation: getAnimation(),
           }
         );
       } else {
@@ -187,6 +203,7 @@ export function addStyledBox(
           fontFace: 'Arial',
           color: '1D1D1D',
           valign: 'top',
+          animation: getAnimation(),
         });
       }
       currentY += lineHeight;
