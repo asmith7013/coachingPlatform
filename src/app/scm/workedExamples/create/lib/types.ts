@@ -1,4 +1,4 @@
-import type { HtmlSlide } from '@zod-schema/worked-example-deck';
+import type { HtmlSlide } from '@zod-schema/scm/worked-example';
 
 // Grade levels matching the schema
 export type GradeLevel = '6' | '7' | '8' | 'Algebra 1';

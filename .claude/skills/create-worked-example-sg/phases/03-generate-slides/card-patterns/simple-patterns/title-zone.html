@@ -1,0 +1,86 @@
+<!--
+  ============================================================
+  TITLE ZONE - Top section of every slide
+  ============================================================
+  Contains: Badge + Title + Subtitle
+  Position: Fixed at top (y: 0-130px)
+
+  Data attributes for PPTX export:
+  - data-pptx-region: "badge" | "title" | "subtitle"
+  - data-pptx-x, y, w, h: Position in pixels
+
+  Standard positions (from SLIDE_CONSTANTS):
+  - BADGE: x=20, y=16, w=180, h=35
+  - TITLE: x=20, y=55, w=920, h=40
+  - SUBTITLE: x=20, y=100, w=920, h=30
+  - FOOTNOTE: x=700, y=8, w=240, h=25 (top-right)
+  ============================================================
+-->
+
+<!-- Title Zone Container -->
+<div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
+
+  <!-- Step Badge -->
+  <div class="row items-center gap-md" style="margin-bottom: 8px;">
+    <div data-pptx-region="badge"
+         data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+         style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+      <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
+        {{badge_text}}
+      </p>
+    </div>
+  </div>
+
+  <!-- Main Title -->
+  <h1 data-pptx-region="title"
+      data-pptx-x="20" data-pptx-y="55" data-pptx-w="920" data-pptx-h="40"
+      style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">
+    {{title}}
+  </h1>
+
+  <!-- Subtitle / Instruction -->
+  <p data-pptx-region="subtitle"
+     data-pptx-x="20" data-pptx-y="100" data-pptx-w="920" data-pptx-h="30"
+     style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">
+    {{subtitle}}
+  </p>
+
+</div>
+
+<!-- Footnote (top-right, absolute positioned) -->
+<p data-pptx-region="footnote"
+   data-pptx-x="700" data-pptx-y="8" data-pptx-w="240" data-pptx-h="25"
+   style="position: absolute; top: 8px; right: 20px; font-size: 10pt; color: #666; margin: 0; text-align: right;">
+  {{footnote}}
+</p>
+
+
+<!--
+  ============================================================
+  BADGE VARIATIONS
+  ============================================================
+-->
+
+<!-- Strategy Introduction (Slide 1) -->
+<div data-pptx-region="badge" data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+     style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+  <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase;">STRATEGY</p>
+</div>
+
+<!-- Step 1-3 (Slides 2-12) -->
+<div data-pptx-region="badge" data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+     style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+  <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase;">STEP 1</p>
+</div>
+
+<!-- Summary (Slide 13) -->
+<div data-pptx-region="badge" data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+     style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+  <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase;">SUMMARY</p>
+</div>
+
+<!-- Practice (Slides 14-15) -->
+<div data-pptx-region="badge" data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
+     style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+  <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase;">PRACTICE</p>
+</div>

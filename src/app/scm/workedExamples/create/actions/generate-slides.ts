@@ -8,7 +8,7 @@ import {
   buildGenerateSlidesPrompt,
 } from '../lib/prompts';
 import type { GenerateSlidesResponse, ProblemAnalysis, StrategyDefinition, Scenario } from '../lib/types';
-import type { HtmlSlide } from '@zod-schema/worked-example-deck';
+import type { HtmlSlide } from '@zod-schema/scm/worked-example';
 
 interface GenerateSlidesInput {
   gradeLevel: string;

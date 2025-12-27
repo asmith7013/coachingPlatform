@@ -2,6 +2,15 @@
 
 **This is the primary technical spec for generating PPTX-compatible HTML slides.**
 
+**Responsibility:** Step-by-step protocol for each individual slide (HOW to generate).
+
+**Delegates to:**
+- `card-patterns/simple-patterns/` → For title zones, content boxes, CFU/Answer overlays
+- `card-patterns/complex-patterns/` → For SVG graphs, annotations, printable slides
+- `visuals/svg-graphs.md` → For pixel calculation formulas (SVG only)
+
+**Don't duplicate here:** High-level workflow (see `index.md`), layout presets (see `reference/layout-presets.md`).
+
 ---
 
 ## ⚠️ API MODE vs CLI MODE
@@ -29,28 +38,27 @@
 
 ```
 SLIDE [N]: [Type Name]
-Paired: [Yes/No] | Base: [Slide # or N/A]
-Action: [generate-new | copy-and-add-cfu | copy-and-add-answer]
+Action: generate-new
+Layout: [full-width | two-column] | Components: [list of card-patterns used]
 ```
 
 **Example announcements (plain text, NOT HTML):**
 ```
-SLIDE 3: Step 1 Question
-Paired: No | Base: N/A
-Action: generate-new using slide-base.html template
+SLIDE 3: Step 1 Question + CFU
+Action: generate-new
+Layout: two-column | Components: title-zone, content-box, svg-card, cfu-card (animated)
 
-SLIDE 4: Step 1 + CFU
-Paired: Yes | Base: Slide 3
-Action: copy-and-add-cfu (copy slide 3 verbatim, insert CFU box)
+SLIDE 4: Step 1 Answer
+Action: generate-new
+Layout: two-column | Components: title-zone, content-box, svg-card, answer-card (animated)
 ```
 
 **If slide contains an SVG graph, add graph workflow to checkpoint:**
 ```
 SLIDE 2: Problem Setup
-Paired: No | Base: N/A
-Action: generate-new using slide-two-column.html template
-Graph: READ templates/graph-snippet.html → copy → modify for X_MAX=10, Y_MAX=100
-Annotations: READ templates/annotation-snippet.html → add y-intercept labels
+Action: generate-new
+Layout: two-column | Components: title-zone, content-box, svg-card
+Graph: Use card-patterns/svg-card.html → modify for X_MAX=10, Y_MAX=100
 ```
 
 **⚠️ CRITICAL: What goes IN the slide HTML file:**
@@ -64,39 +72,33 @@ Annotations: READ templates/annotation-snippet.html → add y-intercept labels
 
 ---
 
-### Step 2: Determine Slide Type and Template
+### Step 2: Determine Slide Type and Layout
 
-| Slide # | Type | Is Paired? | Action | Template to Use |
-|---------|------|------------|--------|-----------------|
-| 1 | Learning Goal | No | generate-new | `templates/slide-learning-goal.html` |
-| 2 | Problem Setup | No | generate-new | `templates/slide-two-column.html` |
-| 3 | Step 1 Question | No | generate-new | `templates/slide-base.html` |
-| 4 | Step 1 + CFU | **YES** | copy-and-add-cfu | **COPY Slide 3** |
-| 5 | Step 1 Answer | No | generate-new | `templates/slide-base.html` |
-| 6 | Step 1 + Answer | **YES** | copy-and-add-answer | **COPY Slide 5** |
-| 7 | Step 2 Question | No | generate-new | `templates/slide-base.html` |
-| 8 | Step 2 + CFU | **YES** | copy-and-add-cfu | **COPY Slide 7** |
-| 9 | Step 2 Answer | No | generate-new | `templates/slide-base.html` |
-| 10 | Step 2 + Answer | **YES** | copy-and-add-answer | **COPY Slide 9** |
-| 11-12 | Step 3 | Pattern repeats | Same logic | Same templates |
-| 13 | Practice 1 | No | generate-new | `templates/slide-practice.html` |
-| 14 | Practice 2 | No | generate-new | `templates/slide-practice.html` |
-| 15 | Printable | No | generate-new | `templates/printable-slide-snippet.html` |
+**Note:** CFU/Answer boxes use PPTX animations (appear on click) - no duplicate slides needed.
+
+| Slide # | Type | Action | Layout | Components |
+|---------|------|--------|--------|------------|
+| 1 | Learning Goal | generate-new | `full-width` | title-zone, content-box |
+| 2 | Problem Setup | generate-new | `two-column` | title-zone, content-box, svg-card |
+| 3 | Step 1 Question + CFU | generate-new | `two-column` | title-zone, content-box, svg-card, **cfu-card** (animated) |
+| 4 | Step 1 Answer | generate-new | `two-column` | title-zone, content-box, svg-card, **answer-card** (animated) |
+| 5 | Step 2 Question + CFU | generate-new | `two-column` | title-zone, content-box, svg-card, **cfu-card** (animated) |
+| 6 | Step 2 Answer | generate-new | `two-column` | title-zone, content-box, svg-card, **answer-card** (animated) |
+| 7 | Step 3 Question + CFU | generate-new | `two-column` | title-zone, content-box, svg-card, **cfu-card** (animated) |
+| 8 | Step 3 Answer | generate-new | `two-column` | title-zone, content-box, svg-card, **answer-card** (animated) |
+| 9 | Practice 1 | generate-new | `two-column` | title-zone, content-box, svg-card |
+| 10 | Practice 2 | generate-new | `two-column` | title-zone, content-box, svg-card |
+| 11 | Printable | generate-new | `full-width` | Special format (portrait) |
 
 ---
 
-### Step 3a: If Paired Slide → COPY + ADD (Fast Path)
+### Step 3a: Adding CFU/Answer Boxes (PPTX Animation)
 
-**For slides 4, 6, 8, 10, 12 (all paired slides):**
+**CFU and Answer boxes use PPTX animation - they appear on click, no duplicate slides needed.**
 
-1. **ANNOUNCE** checkpoint to user (plain text, see Step 1)
-2. **COPY** the previous slide's ENTIRE HTML verbatim (from `<!DOCTYPE html>` to `</html>`)
-3. **FIND** the closing `</body>` tag
-4. **INSERT** the appropriate box IMMEDIATELY BEFORE `</body>` (see below)
-5. **WRITE** slide file using Write tool (file starts with `<!DOCTYPE html>`)
-6. **STOP** - Do NOT change anything else
+Add the appropriate box BEFORE the closing `</body>` tag:
 
-**CFU Box (for slides 4, 8, 12) - ABSOLUTE POSITIONED TOP RIGHT:**
+**CFU Box (for Question slides 3, 5, 7) - Appears on click:**
 ```html
 <div data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; z-index: 100;">
   <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
@@ -104,7 +106,7 @@ Annotations: READ templates/annotation-snippet.html → add y-intercept labels
 </div>
 ```
 
-**Answer Box (for slides 6, 10) - ABSOLUTE POSITIONED TOP RIGHT:**
+**Answer Box (for Answer slides 4, 6, 8) - Appears on click:**
 ```html
 <div data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; z-index: 100;">
   <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
@@ -112,19 +114,25 @@ Annotations: READ templates/annotation-snippet.html → add y-intercept labels
 </div>
 ```
 
+**How animation works:**
+- `data-pptx-region="cfu-box"` or `"answer-box"` triggers animation in PPTX export
+- Box starts HIDDEN when slide displays
+- Box APPEARS when teacher clicks (during presentation)
+- See `card-patterns/cfu-answer-card.html` for full pattern
+
 ---
 
-### Step 3b: If New Slide → READ Template and Generate
+### Step 3b: Compose Slides from Atomic Components
 
-**For slides 1, 2, 3, 5, 7, 9, 11, 13, 14, 15:**
+**For ALL slides (1-11):**
 
 1. **ANNOUNCE** checkpoint to user (plain text, see Step 1)
-2. **READ** the template file specified in the table above
-3. **FILL** the template placeholders:
-   - `{{title}}` → Slide title
-   - `{{step_badge}}` → "STEP N: [VERB]" (use exact verb from strategy)
-   - `{{content}}` → Main content (visual, table, etc.)
-   - `{{cfu_question}}` → CFU question (must reference strategy verb)
+2. **CHOOSE LAYOUT** from the table above (full-width or two-column)
+3. **COMPOSE** slide using atomic card-patterns:
+   - **title-zone**: Badge ("STEP N: [VERB]") + Title + optional Subtitle
+   - **content-box**: Main text content (instructions, questions, explanations)
+   - **svg-card**: Graph or diagram (if visual slide)
+   - Use patterns from `card-patterns/` folder as HTML snippets
 4. **IF Visual Type = "SVG graphs"**: Read `visuals/svg-graphs.md` FIRST
 5. **VERIFY** the Pre-Flight Checklist below
 6. **WRITE** slide file using Write tool (file starts with `<!DOCTYPE html>`)
@@ -142,20 +150,21 @@ For each slide N from 1 to 15:
 
 ---
 
-## ⚠️ PAIRED SLIDE CONSISTENCY (CRITICAL)
+## ⚠️ VISUAL CONSISTENCY ACROSS STEP SLIDES (CRITICAL)
 
 **This is the most important rule for student learning.**
 
-When students advance from slide 3 to slide 4, they should see **ZERO visual changes** except the CFU box appearing.
-
-**The Test:** If you diff paired slides, the ONLY difference should be the added box `<div>`.
+The main visual (graph, table, diagram) must stay in the SAME position across all step slides (2-8).
 
 **Common Mistakes (NEVER DO THESE):**
-- Regenerating the graph (different appearance)
-- Changing text (even a period or space)
-- Moving elements (even 1px)
-- Changing colors or styles
-- Reordering HTML attributes
+- Moving the graph/visual between slides
+- Changing visual dimensions or scale
+- Changing the layout structure mid-sequence
+
+**CFU/Answer boxes ANIMATE in place:**
+- They overlay the existing content
+- The underlying slide content doesn't change
+- Teacher clicks to reveal the box during presentation
 
 ---
 
@@ -166,61 +175,106 @@ When students advance from slide 3 to slide 4, they should see **ZERO visual cha
 | Visual Type | Files to Read |
 |-------------|---------------|
 | All slides | `../../reference/styling.md` (colors, fonts, spacing) |
-| All slides | `../../reference/pptx-requirements.md` (constraints) |
+| All slides | `../../reference/layout-presets.md` (layout presets + regions) |
 | SVG graphs | `visuals/svg-graphs.md` (MANDATORY) |
 
-**Template files for each slide type:**
-- `templates/slide-learning-goal.html` → Slide 1
-- `templates/slide-two-column.html` → Slide 2 (40%/60% layout)
-- `templates/slide-base.html` → Step Question/Answer slides
-- `templates/slide-with-cfu.html` → Example of base + CFU
-- `templates/slide-with-answer.html` → Example of base + Answer
-- `templates/slide-practice.html` → Practice problems (zero scaffolding)
-- `templates/printable-slide-snippet.html` → Printable worksheet
+**Atomic card-patterns (two folders):**
+
+| Folder | Patterns | Workflow |
+|--------|----------|----------|
+| `simple-patterns/` | title-zone, content-box, cfu-answer-card | Replace `{{placeholders}}` with content |
+| `complex-patterns/` | graph-snippet, annotation-snippet, printable-slide-snippet | Copy entire file, modify values + recalculate pixels |
+
+**simple-patterns/ (replace placeholders):**
+- `card-patterns/simple-patterns/title-zone.html` → Badge + Title + Subtitle
+- `card-patterns/simple-patterns/content-box.html` → Text, lists, equations, tables
+- `card-patterns/simple-patterns/cfu-answer-card.html` → CFU/Answer overlays (animated)
+
+**complex-patterns/ (copy, modify, and recalculate):**
+- `card-patterns/complex-patterns/graph-snippet.html` → Full coordinate plane (COPY and recalculate pixels)
+- `card-patterns/complex-patterns/annotation-snippet.html` → Y-intercept labels, arrows, point labels (recalculate positions)
+- `card-patterns/complex-patterns/printable-slide-snippet.html` → Printable worksheet (COPY and fill)
+
+**SVG graphs and printable slides use complex-patterns.** Everything else uses simple-patterns.
+
+**Layout composition approach:**
+1. Choose layout preset (full-width or two-column)
+2. Add title-zone to header region
+3. Add content-box(es) to main content regions
+4. If SVG needed: clone graph-snippet, recalculate pixels (see SVG section below)
+5. Add cfu-card or answer-card overlay (animated)
 
 ---
 
-## ⚠️ SVG Graph Creation (MANDATORY WORKFLOW)
+## ⚠️ SVG Graph Creation (THE COMPLEX CASE)
 
-**When a slide requires an SVG coordinate plane, you MUST follow this workflow:**
+**SVG graphs are the ONLY component that requires the clone-and-modify workflow.**
 
-### Step 1: Read the Graph Snippet
+All other card-patterns use simple placeholder replacement. SVG graphs require:
+- Pixel math (coordinate system calculations)
+- Layer structure for PPTX export
+- Precise alignment of axes, grid, and labels
+
+**Always start from the full working example - do NOT create from scratch.**
+
+### Step 1: Read the Graph Snippets
 ```
-READ: templates/graph-snippet.html
+READ: card-patterns/complex-patterns/graph-snippet.html      ← FULL WORKING EXAMPLE
+READ: card-patterns/complex-patterns/annotation-snippet.html ← Annotation patterns
+READ: visuals/svg-graphs.md                                ← Pixel calculation reference
 ```
 
-This HTML file is your **starting point**. It contains:
+`graph-snippet.html` is your **starting point**. It contains:
 - Arrow marker definitions for axes and lines
 - Complete coordinate plane with proper alignment
 - Single "0" at origin (not two separate zeros)
 - Complete scale labels to the arrows
 - Example data lines with extension arrows
+- Layer structure for PPTX export
 
 ### Step 2: Copy and Modify
 1. **COPY** the entire `<svg>...</svg>` block from graph-snippet.html
 2. **ADJUST** X_MAX and Y_MAX for your specific data
 3. **RECALCULATE** grid and label positions using the formulas in the snippet
 4. **ADD** your specific data lines and points
-5. **ADD** annotations using `templates/annotation-snippet.html`
+5. **ADD** annotations using `card-patterns/complex-patterns/annotation-snippet.html`
 
-### Step 3: Verify Requirements
-- [ ] Axes have arrowheads (marker-end)
-- [ ] Single "0" at origin
-- [ ] Scale labels go to last tick before arrow
-- [ ] Data lines extend to plot edges with arrows
-- [ ] Annotations use `font-weight="normal"` (not bold)
-- [ ] **GRANULAR LAYERS**: Each line and annotation in its own `data-pptx-layer` group (see graph-snippet.html for examples)
-
-### Step 4: Layer Structure (for PPTX Export)
+### Step 3: Layer Structure (for PPTX Export)
 Each SVG element you want to be independently selectable in PowerPoint/Google Slides needs its own layer:
 ```html
 <g data-pptx-layer="line-1"><!-- Blue line + point --></g>
 <g data-pptx-layer="line-2"><!-- Green line + point --></g>
 <g data-pptx-layer="label-b0"><!-- Y-intercept label --></g>
 ```
-See `graph-snippet.html` and `annotation-snippet.html` for the full layer naming convention.
+See `card-patterns/complex-patterns/graph-snippet.html` and `card-patterns/complex-patterns/annotation-snippet.html` for the full layer naming convention.
 
-**DO NOT create graphs from scratch.** Always start from graph-snippet.html.
+### SVG Graph Checklist (VERIFY BEFORE WRITING SLIDE)
+
+**Structure:**
+- [ ] Started from graph-snippet.html (NOT from scratch)
+- [ ] SVG wrapped in container with `data-pptx-region="svg-container"`
+- [ ] Container has position attributes: `data-pptx-x`, `data-pptx-y`, `data-pptx-w`, `data-pptx-h`
+
+**Coordinate System:**
+- [ ] X_MAX and Y_MAX set correctly for your data
+- [ ] Grid lines align with axis labels (same pixel values)
+- [ ] Single "0" at origin (not two separate zeros)
+- [ ] Scale labels go to last tick before arrow
+
+**Axes & Lines:**
+- [ ] Axes have arrowheads (marker-end)
+- [ ] Data lines extend to plot edges with arrows
+- [ ] All lines use correct colors from styling.md
+
+**Annotations:**
+- [ ] All `<text>` elements have `font-family="Arial"`
+- [ ] Annotations use `font-weight="normal"` (NOT bold)
+- [ ] Annotation positions calculated using pixel formula
+
+**PPTX Export:**
+- [ ] Each line in its own `data-pptx-layer` group
+- [ ] Each annotation in its own `data-pptx-layer` group
+- [ ] Layer names follow convention: `line-1`, `label-b0`, `arrow-shift`, etc.
 
 ---
 
@@ -279,17 +333,18 @@ See `graph-snippet.html` and `annotation-snippet.html` for the full layer naming
 - [ ] All `<text>` elements have `font-family="Arial"`
 - [ ] SVG container in SAME position as other step slides
 
-**If paired slide:**
-- [ ] HTML is IDENTICAL to base slide except for added box
+**If slide has CFU/Answer box:**
+- [ ] Box has correct `data-pptx-region` attribute ("cfu-box" or "answer-box")
+- [ ] Box is positioned with absolute positioning (top-right overlay)
 
 ---
 
 ## Completion Checklist
 
-- [ ] All 14-16 slides generated with checkpoints
-- [ ] Paired slides are truly identical (diff test passes)
+- [ ] All 11 slides generated with checkpoints
+- [ ] CFU/Answer boxes have correct data-pptx-region attributes (for animation)
 - [ ] CFU questions reference strategy verbs
-- [ ] Visual stays in same position (slides 2-12)
+- [ ] Visual stays in same position (slides 2-8)
 - [ ] Practice slides have zero scaffolding
 - [ ] Printable uses white theme + Times New Roman
 

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { listWorkedExampleDecks } from "@/app/actions/worked-examples";
-import type { WorkedExampleDeck } from "@zod-schema/worked-example-deck";
+import type { WorkedExampleDeck } from "@zod-schema/scm/worked-example";
 
 export const workedExampleDecksKeys = {
   all: ["worked-example-decks"] as const,

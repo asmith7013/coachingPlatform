@@ -1,0 +1,134 @@
+<!--
+  ============================================================
+  CONTENT BOX - Flexible container for text content
+  ============================================================
+  The universal container for ALL text-based content types.
+  Mix and match paragraphs, lists, equations, tables inside.
+
+  Data attributes for PPTX export:
+  - data-pptx-region: "content-box" | "left-column" | "problem-statement"
+  - data-pptx-x, y, w, h: Position in pixels (960x540 coordinate system)
+  - data-pptx-bg: Optional background color override
+
+  Standard positions (from SLIDE_CONSTANTS):
+  - Full-width content: x=20, y=140, w=920, h=360
+  - Left column (40%): x=20, y=140, w=368, h=370
+  - Left column (35%): x=20, y=140, w=316, h=370
+  ============================================================
+-->
+
+<!-- PATTERN: Basic container with background -->
+<div data-pptx-region="content-box"
+     data-pptx-x="{{x}}" data-pptx-y="{{y}}" data-pptx-w="{{w}}" data-pptx-h="{{h}}"
+     style="background: #f5f5f5; border-radius: 8px; padding: 16px;">
+  <!-- Content goes here: paragraphs, lists, equations, tables -->
+</div>
+
+<!-- PATTERN: Container without background (for left/right columns) -->
+<div data-pptx-region="left-column"
+     data-pptx-x="20" data-pptx-y="140" data-pptx-w="368" data-pptx-h="370"
+     class="col" style="padding: 0;">
+  <!-- Column content -->
+</div>
+
+
+<!--
+  ============================================================
+  CONTENT TYPES (use inside content box)
+  ============================================================
+-->
+
+<!-- PROSE: Simple paragraph -->
+<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+  Prose content here...
+</p>
+
+<!-- PROSE with header -->
+<h3 style="margin: 0 0 12px 0; font-size: 15px; font-weight: bold; color: #1d1d1d;">Section Header</h3>
+<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+  Content after header...
+</p>
+
+<!-- PROSE with inline formatting -->
+<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+  <strong style="color: #1791e8;">Think:</strong> What operation does this describe?
+</p>
+
+<!-- BULLET LIST -->
+<ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+  <li>First point</li>
+  <li>Second point</li>
+  <li style="color: #1791e8; font-weight: bold;">Highlighted point</li>
+</ul>
+
+<!-- NUMBERED LIST -->
+<ol style="margin: 0; padding-left: 24px; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+  <li>Step one</li>
+  <li>Step two</li>
+  <li>Step three</li>
+</ol>
+
+<!-- EQUATION (centered, Georgia font) -->
+<p style="margin: 16px 0; font-family: Georgia, serif; font-size: 24px; font-style: italic; color: #1d1d1d; text-align: center;">
+  y = mx + b
+</p>
+
+<!-- EQUATION with work shown -->
+<div style="text-align: center; margin: 12px 0;">
+  <p style="margin: 0 0 8px 0; font-family: Georgia, serif; font-size: 18px; color: #737373;">
+    36 ÷ 4 = ?
+  </p>
+  <p style="margin: 0; font-family: Georgia, serif; font-size: 22px; font-weight: bold; color: #1791e8;">
+    Answer: 9
+  </p>
+</div>
+
+<!-- TABLE -->
+<table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+  <thead>
+    <tr style="background: #f5f5f5;">
+      <th style="border: 1px solid #e5e7eb; padding: 8px; text-align: left; font-weight: bold;">Hours</th>
+      <th style="border: 1px solid #e5e7eb; padding: 8px; text-align: left; font-weight: bold;">Cost</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border: 1px solid #e5e7eb; padding: 8px;">1</td>
+      <td style="border: 1px solid #e5e7eb; padding: 8px;">$25</td>
+    </tr>
+    <tr style="background: #fef3c7;">
+      <td style="border: 1px solid #e5e7eb; padding: 8px; font-weight: bold; color: #92400e;">2</td>
+      <td style="border: 1px solid #e5e7eb; padding: 8px; font-weight: bold; color: #92400e;">$30</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!--
+  ============================================================
+  COMPOSING CONTENT TYPES
+  ============================================================
+  Mix and match content types in a single box.
+  Use margin/spacing between elements.
+-->
+
+<div data-pptx-region="content-box"
+     data-pptx-x="20" data-pptx-y="140" data-pptx-w="368" data-pptx-h="370"
+     style="background: #f5f5f5; border-radius: 8px; padding: 16px;">
+
+  <h3 style="margin: 0 0 12px 0; font-size: 15px; font-weight: bold; color: #1d1d1d;">Problem</h3>
+
+  <p style="margin: 0 0 16px 0; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+    A phone plan charges $20 base plus $5 per hour of usage.
+  </p>
+
+  <p style="margin: 0 0 8px 0; font-family: Georgia, serif; font-size: 20px; text-align: center; color: #1d1d1d;">
+    C = $20 + $5 × h
+  </p>
+
+  <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #1d1d1d;">
+    <li>C = total cost</li>
+    <li>h = hours used</li>
+  </ul>
+
+</div>

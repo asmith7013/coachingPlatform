@@ -5,7 +5,7 @@ import type { WizardStateHook } from '../hooks/useWizardState';
 import { SlidePreview } from './SlidePreview';
 import { WizardStickyFooter } from './WizardStickyFooter';
 import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
-import type { CreateWorkedExampleDeckInput } from '@zod-schema/worked-example-deck';
+import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
 import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 
 interface Step3SlidesProps {

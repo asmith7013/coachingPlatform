@@ -19,8 +19,8 @@ All slides are generated as **PPTX-compatible HTML** that can be:
 - Dimensions: 960×540px exactly
 - Fonts: Arial, Georgia only (web-safe)
 - Layout: Use `.row`/`.col` classes (no inline flexbox)
-- No JavaScript, no toggles, no animations
-- CFU/Answer boxes are static (revealed via slide advancement)
+- No JavaScript, no toggles, no CSS animations
+- CFU/Answer boxes use PPTX animation (appear on click)
 
 ## Single Source of Truth Architecture
 
@@ -28,44 +28,43 @@ All slides are generated as **PPTX-compatible HTML** that can be:
 
 ```
 .claude/skills/create-worked-example-sg/    ← SOURCE OF TRUTH
-├── templates/                              ← PPTX-compatible HTML templates
-│   ├── slide-base.html                     ← Base 960×540 structure
-│   ├── slide-learning-goal.html            ← Opening slide with strategy
-│   ├── slide-two-column.html               ← Visual + text layout
-│   └── archived/                           ← Deprecated templates
-├── reference/                              ← Pedagogy & styling rules
-│   ├── pedagogy.md
-│   └── styling.md                          ← Layout zones, colors, annotation techniques
+├── reference/                              ← Pedagogy, styling, layout rules
+│   ├── pedagogy.md                         ← Educational principles
+│   ├── styling.md                          ← Colors, fonts, spacing
+│   └── layout-presets.md                   ← Layout presets + region definitions
 ├── phases/                                 ← CLI workflow phases
-│   ├── 01-collect-and-analyze.md
-│   ├── 02-confirm-and-plan.md
+│   ├── 01-collect-and-analyze/
+│   ├── 02-confirm-and-plan/
 │   ├── 03-generate-slides/                 ← Phase 3 folder
 │   │   ├── index.md                        ← Main entry point
 │   │   ├── protocol.md                     ← Per-slide checkpoint protocol
-│   │   ├── templates/                    ← PPTX-compatible templates
-│   │   │   ├── slide-base.html
-│   │   │   ├── slide-learning-goal.html
-│   │   │   ├── slide-two-column.html
-│   │   │   ├── slide-with-cfu.html
-│   │   │   ├── slide-with-answer.html
-│   │   │   ├── slide-practice.html
-│   │   │   └── printable-slide-snippet.html
+│   │   ├── card-patterns/                  ← ATOMIC COMPONENT PATTERNS
+│   │   │   ├── simple-patterns/            ← Fill placeholders
+│   │   │   │   ├── title-zone.html         ← Badge + Title + Subtitle
+│   │   │   │   ├── content-box.html        ← Text, lists, equations
+│   │   │   │   └── cfu-answer-card.html    ← CFU/Answer overlays (animated)
+│   │   │   └── complex-patterns/           ← Copy + modify + recalculate
+│   │   │       ├── graph-snippet.html      ← SVG coordinate plane
+│   │   │       ├── annotation-snippet.html ← Y-intercept labels, arrows
+│   │   │       └── printable-slide-snippet.html
 │   │   └── visuals/                        ← Visual-specific docs
-│   │       └── svg-graphs.md
+│   │       ├── svg-graphs.md               ← Pixel calculations
+│   │       └── annotation-zones.md         ← Annotation positioning
 │   ├── 04-save-to-database.md
-│   └── 05-updating-decks.md
+│   └── 05-updating-decks/
+├── archived/                               ← Historical reference (DO NOT USE)
+│   └── templates/                          ← Old template-based approach
 ├── prompts/                                ← Shared LLM instructions
 │   └── analyze-problem.md                  ← Step-by-step analysis
 ├── scripts/                                ← PPTX conversion tools
 │   ├── generate-pptx.js                    ← HTML → PPTX conversion
 │   ├── validate-pptx.sh                    ← Visual validation
 │   └── sync-to-db.js                       ← Database sync
-├── phases/                                 ← CLI workflow phases
 └── pptx.md                                 ← Full PPTX constraints reference
 
 src/skills/worked-example/                  ← AUTO-GENERATED (don't edit!)
 ├── content/
-│   ├── templates.ts                        ← Generated from templates/*.html
+│   ├── templates.ts                        ← Generated from card-patterns/
 │   ├── pedagogy.ts                         ← Generated from reference/pedagogy.md
 │   ├── styling.ts                          ← Generated from reference/styling.md
 │   └── prompts.ts                          ← Generated from prompts/*.md
@@ -74,15 +73,16 @@ src/skills/worked-example/                  ← AUTO-GENERATED (don't edit!)
 ```
 
 **How updates propagate:**
-1. Edit files in `.claude/skills/create-worked-example-sg/` (templates/ or reference/)
+1. Edit files in `.claude/skills/create-worked-example-sg/` (card-patterns/ or reference/)
 2. Run: `npm run sync-skill-content`
 3. The TypeScript module is regenerated, making changes available to both:
    - **CLI skill** (reads markdown/HTML directly)
    - **Browser creator** (imports from TypeScript module)
 
 **When updating:**
-- Edit `templates/*.html` for HTML template changes
-- Edit `reference/*.md` for pedagogy/styling rule changes
+- Edit `card-patterns/simple-patterns/*.html` for simple component patterns
+- Edit `card-patterns/complex-patterns/*.html` for SVG and printable patterns
+- Edit `reference/*.md` for pedagogy/styling/layout rule changes
 - Edit `prompts/*.md` for LLM instruction changes (used by both CLI and browser)
 - Run `npm run sync-skill-content` to propagate to TypeScript
 - NEVER edit `src/skills/worked-example/content/*.ts` directly (they're auto-generated)
@@ -132,14 +132,16 @@ This skill is divided into **4 main phases** for creating new decks, plus **Phas
 │  Reference: phases/03-generate-slides/ (folder with index.md + protocol.md) │
 │                                                                             │
 │  Trigger: User confirms in Phase 2                                          │
-│  Actions: Create 14-16 PPTX-compatible HTML slides (960×540px)              │
+│  Actions: Create 11 PPTX-compatible HTML slides (960×540px)                 │
+│           Using atomic composition from card-patterns/                      │
 │  Output: HTML files written to src/app/presentations/{slug}/                │
 │  Done when: All slide files are written                                     │
 │                                                                             │
 │  IMPORTANT: Read phases/03-generate-slides/protocol.md for:                 │
 │  - Per-slide checkpoint protocol                                            │
 │  - PPTX constraints (dimensions, fonts, layout classes)                     │
-│  - Paired slide consistency rules                                           │
+│  - Atomic composition from card-patterns/                                   │
+│  - CFU/Answer animation (no duplicate slides needed)                        │
 │  - Pre-flight and completion checklists                                     │
 └─────────────────────────────────────────────────────────────────────────────┘
                                      │
@@ -224,18 +226,24 @@ Use the Read tool to read these files to understand the quality bar:
    Read: .claude/skills/create-worked-example-sg/reference/styling.md
    ```
 
-The `phases/03-generate-slides/protocol.md` file is the **primary technical reference** for creating slides. It contains the per-slide checkpoint protocol, PPTX constraints, paired slide consistency rules, and checklists.
+The `phases/03-generate-slides/protocol.md` file is the **primary technical reference** for creating slides. It contains the per-slide checkpoint protocol, PPTX constraints, atomic composition workflow, CFU/Answer animation patterns, and checklists.
 
 ## Reference Materials (Used in Phase 3)
 
-**PPTX-Compatible Templates** (in `phases/03-generate-slides/templates/`):
-- `slide-base.html` - Base 960×540 structure with layout zones
-- `slide-learning-goal.html` - Opening slide with strategy badge
-- `slide-two-column.html` - 40%/60% visual + text layout
-- `slide-with-cfu.html` - Slide with static amber CFU box
-- `slide-with-answer.html` - Slide with static green answer box
-- `slide-practice.html` - Practice problem (zero scaffolding)
+**Atomic Card-Patterns** (in `phases/03-generate-slides/card-patterns/`):
+
+*simple-patterns/* (replace placeholders with content):
+- `title-zone.html` - Badge + Title + Subtitle component
+- `content-box.html` - Text, lists, equations, tables component
+- `cfu-answer-card.html` - CFU/Answer overlays (animated on click)
+
+*complex-patterns/* (copy, modify, and recalculate pixels):
+- `graph-snippet.html` - Complete coordinate plane (START HERE for SVG)
+- `annotation-snippet.html` - Y-intercept labels, arrows, point labels
 - `printable-slide-snippet.html` - Printable worksheet (portrait, Times New Roman)
+
+**Layout Reference:**
+- `reference/layout-presets.md` - Layout presets (full-width, two-column) and region definitions
 
 **Scripts:**
 - `scripts/generate-pptx.js` - HTML → PPTX conversion (uses pptxgenjs + html2pptx)
@@ -245,7 +253,7 @@ The `phases/03-generate-slides/protocol.md` file is the **primary technical refe
 **Full Constraints Reference:**
 - `pptx.md` - Complete PPTX compatibility guide (dimensions, fonts, layout rules)
 
-Phase 3 will instruct you to read these templates before creating slides.
+Phase 3 will instruct you to compose slides from these card-patterns.
 
 ## Quality Checklist (Verify Before Completing Phase 4)
 
@@ -260,7 +268,8 @@ Phase 3 will instruct you to read these templates before creating slides.
 **Content:**
 - ✅ All required user inputs captured (learning goal, grade level, problem image)
 - ✅ 3 scenarios all use the SAME strategy (not different approaches)
-- ✅ First problem has 2-3 steps (each with Question → +CFU → Answer → +Answer slides)
+- ✅ First problem has 2-3 steps (each with Question+CFU → Answer slides)
+- ✅ CFU/Answer boxes use PPTX animation (appear on click, no duplicate slides)
 - ✅ CFU questions ask "why/how" not "what"
 - ✅ Practice problems can be solved using the exact same steps
 
@@ -278,7 +287,7 @@ Phase 3 will instruct you to read these templates before creating slides.
 - ✅ Backgrounds/borders only on `<div>` elements (NOT on `<p>`, `<h1>`)
 - ✅ No manual bullet symbols (•, -, *) — use `<ul>/<ol>` lists
 - ✅ No JavaScript, no onclick, no CSS animations
-- ✅ CFU/Answer boxes are static (separate slides, no toggles)
+- ✅ CFU/Answer boxes use PPTX animation (appear on click, no toggles)
 - ✅ Printable slide uses white background (#fff) and Times New Roman
 
 ## BEGIN

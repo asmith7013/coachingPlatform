@@ -1,23 +1,36 @@
 # SVG Coordinate Plane Reference
 
-This document covers **grid alignment and pixel calculations** for SVG graphs.
+**Responsibility:** Pixel formulas, pre-calculated tables, and validation rules.
 
 ---
 
-## ⚠️ ANNOTATION DIRECTIVE
+## ⚠️ REQUIRED: Read the HTML Files First
 
-**When adding annotations to graphs (y-intercept labels, arrows, line equations):**
+**Before using this reference, you MUST read these files:**
 
 ```
-Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/annotation-snippet.html
+READ: ../card-patterns/complex-patterns/graph-snippet.html
+READ: ../card-patterns/complex-patterns/annotation-snippet.html
 ```
 
-That HTML file contains copy-paste snippets with:
-- Correct font styling (`font-weight="normal"`, `font-size="9"`)
-- Zone positions (where each annotation type goes)
-- Arrow marker template with proper sizing
+**This markdown file does NOT contain HTML code.** It contains only formulas and tables for calculating pixel positions. The HTML patterns you will copy and modify are in the files above.
 
-**Do NOT create annotations without reading that file first.**
+---
+
+## Document Roles
+
+| File | Role | When to Read |
+|------|------|--------------|
+| **graph-snippet.html** | SOURCE OF TRUTH for SVG structure | READ FIRST, then COPY |
+| **annotation-snippet.html** | SOURCE OF TRUTH for annotation patterns | READ when adding labels |
+| **svg-graphs.md** (this file) | Calculation reference | READ when you need formulas |
+| **annotation-zones.md** | Zone diagram | QUICK LOOKUP for placement |
+
+**Workflow:**
+1. `READ graph-snippet.html` → COPY the SVG
+2. `READ this file` → Calculate your scale's pixel positions
+3. `MODIFY` the copied SVG with calculated values
+4. `READ annotation-snippet.html` → COPY annotation patterns
 
 ---
 
@@ -205,19 +218,12 @@ pixelY = 170 - (dataY / Y_MAX) * 150
 
 ---
 
-## ⚠️ START HERE: Graph Snippet Template
+## ⚠️ REMINDER: Start from graph-snippet.html
 
 **For a complete, copy-paste ready coordinate plane:**
 ```
-READ: ../templates/graph-snippet.html
+READ: ../card-patterns/complex-patterns/graph-snippet.html
 ```
-
-That HTML file is your **starting point** for all SVG graphs. It contains:
-- Arrow marker definitions for both axes and lines
-- Complete grid with proper alignment
-- Single "0" at origin
-- Complete scale labels to the arrows
-- Example data lines with extension arrows
 
 **DO NOT create graphs from scratch.** Copy and modify from graph-snippet.html.
 
@@ -431,26 +437,11 @@ Default sizes that prevent most overlaps:
 | Arrow markers | markerWidth="6" markerHeight="4" | markerWidth="8" markerHeight="5" |
 | Annotation text | font-size="9" | font-size="11" |
 
-### Rule 2: Arrow Marker Template (Small)
+### Rule 2: Arrow Marker Sizes
 
-Use this smaller arrow marker definition to prevent overlap:
-
-```html
-<defs>
-    <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
-        <polygon points="0 0, 6 2, 0 4" fill="#ef4444"/>
-    </marker>
-</defs>
-<line x1="100" y1="50" x2="100" y2="100" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowhead)"/>
-```
-
-**NOT this (too large):**
-```html
-<!-- BAD: Oversized markers overlap nearby elements -->
-<marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-    <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
-</marker>
-```
+Use small markers (defined in `graph-snippet.html` and `annotation-snippet.html`):
+- `markerWidth="6" markerHeight="4"` ✅ (correct)
+- `markerWidth="10" markerHeight="7"` ❌ (too large, overlaps)
 
 ### Rule 3: Label Positioning Strategy
 
@@ -489,110 +480,26 @@ Maintain these minimum pixel distances:
 | Arrow end and target point | 5px gap |
 | Annotation text and arrow line | 3px |
 
-### Example: Properly Spaced Annotations
+### Example
 
-```html
-<!-- Good: Small arrows with offset labels -->
-<defs>
-    <marker id="arrow-y" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
-        <polygon points="0 0, 6 2, 0 4" fill="#ef4444"/>
-    </marker>
-</defs>
-
-<!-- Vertical arrow with label to the left -->
-<line x1="113" y1="57" x2="113" y2="108" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-y)"/>
-<text x="90" y="85" fill="#ef4444" font-size="9" font-weight="bold">Change in y</text>
-<text x="90" y="95" fill="#ef4444" font-size="9">= −75</text>
-
-<!-- Point with label above (not overlapping arrow) -->
-<circle cx="113" cy="57" r="5" fill="#60a5fa"/>
-<text x="113" y="47" fill="#60a5fa" font-size="10" text-anchor="middle">(2, 150)</text>
-```
+See `annotation-snippet.html` for properly spaced annotation examples with correct sizing.
 
 ---
 
-## Printable Worksheet SVG (Smaller, B&W)
+## Printable Worksheet SVG
 
-For printable worksheets, use a smaller viewBox and monochrome colors:
+For printable slides, use smaller dimensions and monochrome colors. See `printable-slide-snippet.html` for complete example.
 
-```html
-<svg viewBox="0 0 200 150" style="width: 100%; max-height: 120px;">
-    <!-- Smaller plot area: origin at (30, 120), width 150, height 100 -->
-
-    <!-- Grid -->
-    <g stroke="#ccc" stroke-width="0.5">
-        <line x1="67.5" y1="20" x2="67.5" y2="120"/>
-        <line x1="105" y1="20" x2="105" y2="120"/>
-        <line x1="142.5" y1="20" x2="142.5" y2="120"/>
-        <line x1="180" y1="20" x2="180" y2="120"/>
-        <line x1="30" y1="95" x2="180" y2="95"/>
-        <line x1="30" y1="70" x2="180" y2="70"/>
-        <line x1="30" y1="45" x2="180" y2="45"/>
-        <line x1="30" y1="20" x2="180" y2="20"/>
-    </g>
-
-    <!-- Axes -->
-    <line x1="30" y1="120" x2="180" y2="120" stroke="#000" stroke-width="1"/>
-    <line x1="30" y1="20" x2="30" y2="120" stroke="#000" stroke-width="1"/>
-
-    <!-- Labels (black for print) -->
-    <text x="30" y="135" fill="#000" font-size="9" text-anchor="middle">0</text>
-    <text x="67.5" y="135" fill="#000" font-size="9" text-anchor="middle">2</text>
-    <text x="105" y="135" fill="#000" font-size="9" text-anchor="middle">4</text>
-    <text x="142.5" y="135" fill="#000" font-size="9" text-anchor="middle">6</text>
-    <text x="180" y="135" fill="#000" font-size="9" text-anchor="middle">8</text>
-
-    <!-- Data line -->
-    <line x1="30" y1="120" x2="180" y2="20" stroke="#000" stroke-width="2"/>
-</svg>
-```
+**Key differences from projection SVG:**
+- Smaller viewBox (200×150 vs 280×200)
+- Black on white colors only
+- No arrows/animation
 
 ---
 
-## PPTX Layer System for Export
+## PPTX Layer System
 
-When exporting to PowerPoint/Google Slides, SVG elements are rendered as separate PNG images based on their `data-pptx-layer` attribute. Each layer is **tightly cropped** to its bounding box for easy manipulation.
-
-### Granular Layer Approach
-
-Use **separate layers for each element** you want to be independently movable:
-
-```html
-<svg viewBox="0 0 280 200" style="width: 100%; height: 340px;">
-    <defs><!-- marker definitions --></defs>
-
-    <!-- BASE GRAPH - Usually one layer (grid, axes, labels) -->
-    <g data-pptx-layer="base-graph">
-        <!-- Grid lines, axes, tick marks, scale labels -->
-    </g>
-
-    <!-- EACH DATA LINE gets its own layer -->
-    <g data-pptx-layer="line-1">
-        <line x1="40" y1="170" x2="260" y2="20" stroke="#60a5fa" stroke-width="3" marker-end="url(#line-arrow-blue)"/>
-        <circle cx="40" cy="170" r="5" fill="#60a5fa"/>  <!-- Y-intercept point -->
-    </g>
-
-    <g data-pptx-layer="line-2">
-        <line x1="40" y1="145" x2="260" y2="45" stroke="#22c55e" stroke-width="3" marker-end="url(#line-arrow-green)"/>
-        <circle cx="40" cy="145" r="5" fill="#22c55e"/>  <!-- Y-intercept point -->
-    </g>
-
-    <!-- EACH ANNOTATION gets its own layer -->
-    <g data-pptx-layer="label-b0">
-        <text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
-    </g>
-
-    <g data-pptx-layer="label-b3">
-        <text x="5" y="145" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 3</text>
-    </g>
-
-    <g data-pptx-layer="eq-line-1">
-        <text x="265" y="30" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">y = 3x</text>
-    </g>
-</svg>
-```
-
-### Naming Convention
+Each SVG element that should be independently selectable needs `data-pptx-layer`:
 
 | Prefix | Use For | Example |
 |--------|---------|---------|
@@ -600,31 +507,16 @@ Use **separate layers for each element** you want to be independently movable:
 | `label-X` | Text annotations | `label-b0`, `label-shift20` |
 | `arrow-X` | Arrow annotations | `arrow-shift`, `arrow-highlight` |
 | `eq-N` | Equation labels | `eq-line-1`, `eq-line-2` |
-| `point-X` | Point coordinate labels | `point-3-9`, `point-origin` |
 
-### Why Granular Layers?
-
-Without granular layers, exported elements are hard to select:
-- **OLD**: Single `data-pptx-layer="annotation"` → One giant transparent image
-- **NEW**: Multiple layers → Each element cropped to its bounds, easy to click and move
-
-### Integration with graph-snippet.html
-
-The `graph-snippet.html` template already uses this granular approach. When creating graphs:
-1. Copy the base template
-2. Keep `data-pptx-layer="base-graph"` for the coordinate plane
-3. Add each data line in its own `data-pptx-layer="line-N"` group
-4. Add each annotation in its own `data-pptx-layer="label-X"` or `data-pptx-layer="eq-N"` group
+See `graph-snippet.html` for the complete layer structure implementation.
 
 ---
 
-## Integration with Slides
+## Workflow Summary
 
-When creating slides with coordinate planes:
-
-1. **Define your data range first** (X: 0-10, Y: 0-400)
-2. **Calculate pixel positions** using the formulas above
-3. **Write grid lines** at calculated positions
-4. **Write labels** at the SAME calculated positions
-5. **Plot data points** using the SAME formula
-6. **Verify alignment** by checking that grid intersections match labeled values
+1. **COPY** `graph-snippet.html` as your starting point
+2. **READ** this file for formulas and pre-calculated tables
+3. **CALCULATE** pixel positions for your specific scale
+4. **MODIFY** the copied HTML with calculated values
+5. **ADD** annotations from `annotation-snippet.html`
+6. **VERIFY** grid lines align with axis labels

@@ -6,7 +6,7 @@ import { Badge } from '@/components/core/feedback/Badge';
 import { SectionAccordion } from '@/components/composed/section-visualization';
 import type { WizardStateHook } from '../hooks/useWizardState';
 import type { Scenario } from '../lib/types';
-import type { HtmlSlide } from '@zod-schema/worked-example-deck';
+import type { HtmlSlide } from '@zod-schema/scm/worked-example';
 import { WizardStickyFooter } from './WizardStickyFooter';
 
 interface Step2AnalysisProps {

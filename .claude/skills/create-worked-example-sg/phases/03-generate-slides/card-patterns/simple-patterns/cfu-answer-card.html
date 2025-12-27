@@ -1,0 +1,61 @@
+<!--
+  ============================================================
+  CFU / ANSWER CARDS - Overlay boxes with PPTX ANIMATION
+  ============================================================
+  CFU (Check for Understanding): Yellow accent, appears on click
+  Answer: Green accent, appears on click
+
+  PPTX ANIMATION BEHAVIOR:
+  ========================
+  These boxes are ANIMATED in the exported PPTX/Google Slides:
+  - Box starts INVISIBLE when slide first displays
+  - Box APPEARS ON CLICK (teacher clicks to reveal)
+  - No duplicate slides needed - animation handles reveal
+
+  Data attributes for PPTX export:
+  - data-pptx-region: "cfu-box" | "answer-box" (triggers animation)
+  - data-pptx-x, y, w, h: Position in pixels
+
+  Position: ABSOLUTE, top-right corner overlay
+  Standard position: x=653, y=40, w=280, h=115
+  ============================================================
+-->
+
+<!-- CFU Box (Check for Understanding) - Yellow accent -->
+<div data-pptx-region="cfu-box"
+     data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"
+     style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; z-index: 100;">
+  <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
+  <p style="margin: 0; font-size: 14px; color: #1d1d1d;">
+    {{cfu_question}}
+  </p>
+</div>
+
+<!-- Answer Box - Green accent -->
+<div data-pptx-region="answer-box"
+     data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"
+     style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; z-index: 100;">
+  <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
+  <p style="margin: 0; font-size: 14px; color: #1d1d1d;">
+    {{answer_explanation}}
+  </p>
+</div>
+
+<!--
+  ============================================================
+  HOW TO ADD CFU/ANSWER TO A SLIDE:
+  ============================================================
+  1. Add the CFU or Answer box BEFORE the closing </body> tag
+  2. The position is ABSOLUTE - it floats over existing content
+  3. In PPTX export, this box will be ANIMATED (appears on click)
+
+  ANIMATION IN PPTX:
+  - The data-pptx-region="cfu-box" or "answer-box" triggers animation
+  - Box starts hidden, appears when teacher clicks
+  - No duplicate slides needed - one slide handles question + reveal
+
+  NOTE: A slide can have EITHER a cfu-box OR an answer-box (not both).
+  - Question slides: use cfu-box
+  - Answer slides: use answer-box
+  ============================================================
+-->

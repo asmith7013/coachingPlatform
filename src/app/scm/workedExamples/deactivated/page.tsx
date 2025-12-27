@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listWorkedExampleDecks, reactivateDeck } from "@/app/actions/worked-examples";
 import { workedExampleDecksKeys } from "../hooks";
-import type { WorkedExampleDeck } from "@zod-schema/worked-example-deck";
+import type { WorkedExampleDeck } from "@zod-schema/scm/worked-example";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { ArrowPathIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 

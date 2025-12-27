@@ -1,12 +1,22 @@
-# SVG Annotation Guide
+# SVG Annotation Zones
 
-**This file covers annotation positioning and styling. For grid alignment and pixel calculations, see `svg-graphs.md`.**
+**Responsibility:** Quick zone reference for annotation placement.
 
 ---
 
-## Annotation Zones
+## ⚠️ REQUIRED: Read the HTML File First
 
-Use these predefined zones to prevent overlapping annotations:
+**Before using this reference, you MUST read:**
+
+```
+READ: ../card-patterns/complex-patterns/annotation-snippet.html
+```
+
+This markdown file contains ONLY the zone diagram and placement rules. The actual HTML patterns you will copy are in `annotation-snippet.html`.
+
+---
+
+## Zone Diagram
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -35,29 +45,6 @@ Use these predefined zones to prevent overlapping annotations:
 
 ---
 
-## Annotation Snippet (Copy This)
-
-```html
-<!-- ANNOTATION TEMPLATE -->
-<!-- Use font-weight="normal" for readable text -->
-<text
-  x="5"
-  y="100"
-  fill="#1791e8"
-  font-family="Arial"
-  font-size="9"
-  font-weight="normal"
->b = 20</text>
-```
-
-**Key styling rules:**
-- `font-weight="normal"` - NOT bold (bold is hard to read at small sizes)
-- `font-size="9"` - Smaller than axis labels (which use 11)
-- `font-family="Arial"` - Required for PPTX compatibility
-- Colors: Use line color for its annotation (#60a5fa blue, #22c55e green)
-
----
-
 ## Zone Assignment
 
 | Annotation Type | Zone | X Position | Notes |
@@ -72,47 +59,20 @@ Use these predefined zones to prevent overlapping annotations:
 
 ---
 
-## Arrow Snippet (Small, Non-Overlapping)
+## Stacking Rules
 
-```html
-<defs>
-  <marker id="arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
-    <polygon points="0 0, 6 2, 0 4" fill="#ef4444"/>
-  </marker>
-</defs>
-
-<!-- Vertical arrow (y-intercept shift) -->
-<line x1="25" y1="140" x2="25" y2="85" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)"/>
-```
-
-**Arrow rules:**
-- `stroke-width="2"` (not 3)
-- `markerWidth="6"` and `markerHeight="4"` (small arrowhead)
-- Position in Zone B (x=25) or Zone C (x=265)
+When multiple annotations compete for the same zone:
+- First annotation: natural y-position
+- Second annotation: offset by 15px
+- Third annotation: offset by 30px
 
 ---
 
-## Stacking Multiple Annotations
+## Checklist
 
-When multiple annotations compete for Zone B:
-
-1. First annotation: natural y-position
-2. Second annotation: offset by 15px
-3. Third annotation: offset by 30px
-
-```html
-<!-- Two y-intercept labels in Zone B -->
-<text x="5" y="84" fill="#22c55e" font-family="Arial" font-size="9">b = 60</text>
-<text x="5" y="144" fill="#60a5fa" font-family="Arial" font-size="9">b = 20</text>
-```
-
----
-
-## Quick Checklist
-
-Before finalizing annotations:
-- [ ] All annotations use `font-weight="normal"` (not bold)
-- [ ] Y-intercept labels are in Zone B (x < 38)
-- [ ] Line labels are in Zone C (x > 262)
+- [ ] Y-intercept labels in Zone B (x < 38)
+- [ ] Line labels in Zone C (x > 262)
 - [ ] No text overlaps axes (x=40 or y=170)
 - [ ] Stacked annotations have 15px minimum spacing
+
+**For styling rules and HTML patterns, see `annotation-snippet.html`.**

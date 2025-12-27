@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import type { WorkedExampleDeck } from '@zod-schema/worked-example-deck';
+import type { WorkedExampleDeck } from '@zod-schema/scm/worked-example';
 import { getDeckBySlug } from '@actions/worked-examples';
 import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 

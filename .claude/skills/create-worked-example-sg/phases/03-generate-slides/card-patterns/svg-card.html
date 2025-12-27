@@ -1,0 +1,82 @@
+<!--
+  ============================================================
+  SVG CARD - Graphs, diagrams, and visual content
+  ============================================================
+  Use for: Coordinate plane graphs, diagrams, visual representations
+
+  Data attributes for PPTX export:
+  - data-pptx-region: "svg-container"
+  - data-pptx-x, y, w, h: Position in pixels (960x540 coordinate system)
+  - data-svg-region: "true" (marks this for SVG rendering)
+
+  Layering for animations:
+  - Use data-layer="base" for static elements (axes, grid)
+  - Use data-layer="layer-1", "layer-2" for progressive reveal
+  - Layers render as separate images for PPTX animation
+
+  Standard SVG container sizes:
+  - Two-column right: 560x350 (fits in 584x370 region with padding)
+  - Graph-heavy right: 560x350
+  - Full-width: 880x320
+  ============================================================
+-->
+
+<!-- SVG container (right column, 65% width) -->
+<div id="svg-container"
+     data-pptx-region="svg-container"
+     data-pptx-x="356" data-pptx-y="140" data-pptx-w="584" data-pptx-h="370"
+     data-svg-region="true"
+     class="col center"
+     style="width: 65%; background: #f5f5f5; border-radius: 8px; padding: 12px;">
+  <svg viewBox="0 0 560 350" style="width: 560px; height: 350px;">
+    <!-- Base layer: Axes and grid (always visible) -->
+    <g data-layer="base">
+      <!-- Grid lines -->
+      <line x1="50" y1="300" x2="530" y2="300" stroke="#e5e7eb" stroke-width="1"/>
+      <line x1="50" y1="50" x2="50" y2="300" stroke="#e5e7eb" stroke-width="1"/>
+
+      <!-- Axis labels -->
+      <text x="290" y="340" text-anchor="middle" font-size="12" fill="#737373">Hours</text>
+      <text x="20" y="175" text-anchor="middle" font-size="12" fill="#737373" transform="rotate(-90 20 175)">Cost ($)</text>
+    </g>
+
+    <!-- Layer 1: First line (appears on click) -->
+    <g data-layer="layer-1">
+      <line x1="50" y1="280" x2="530" y2="80" stroke="#60a5fa" stroke-width="3"/>
+      <text x="540" y="80" font-size="11" fill="#60a5fa">Standard</text>
+    </g>
+
+    <!-- Layer 2: Second line (appears on next click) -->
+    <g data-layer="layer-2">
+      <line x1="50" y1="200" x2="530" y2="0" stroke="#22c55e" stroke-width="3"/>
+      <text x="540" y="0" font-size="11" fill="#22c55e">Premium</text>
+    </g>
+  </svg>
+</div>
+
+<!-- Full-width SVG container -->
+<div id="svg-container"
+     data-pptx-region="svg-container"
+     data-pptx-x="20" data-pptx-y="140" data-pptx-w="920" data-pptx-h="360"
+     data-svg-region="true"
+     class="center"
+     style="background: #f5f5f5; border-radius: 8px; padding: 16px;">
+  <svg viewBox="0 0 880 320" style="width: 880px; height: 320px;">
+    <!-- Full-width graph content -->
+  </svg>
+</div>
+
+<!-- Graph-heavy right column (65% width, larger) -->
+<div id="svg-container"
+     data-pptx-region="svg-container"
+     data-pptx-x="356" data-pptx-y="140" data-pptx-w="584" data-pptx-h="370"
+     data-svg-region="true"
+     class="col center"
+     style="width: 65%; background: #f5f5f5; border-radius: 8px; padding: 12px;">
+  <svg viewBox="0 0 560 350" style="width: 560px; height: 350px;">
+    <!-- Graph content -->
+  </svg>
+  <p style="margin: 8px 0 0 0; font-size: 11px; color: #737373; text-align: center;">
+    {{caption}}
+  </p>
+</div>

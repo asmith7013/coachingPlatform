@@ -12,7 +12,7 @@ import {
   type UpdateInstructions,
 } from '@/app/scm/workedExamples/create/lib/prompts';
 import type { ProblemAnalysis, StrategyDefinition, Scenario } from '@/app/scm/workedExamples/create/lib/types';
-import type { HtmlSlide } from '@/lib/schema/zod-schema/worked-example-deck';
+import type { HtmlSlide } from '@zod-schema/scm/worked-example';
 
 interface GenerateSlidesInput {
   gradeLevel: string;

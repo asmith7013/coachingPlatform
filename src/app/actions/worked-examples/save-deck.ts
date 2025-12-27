@@ -2,7 +2,7 @@
 
 import { withDbConnection } from '@server/db/ensure-connection';
 import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
-import { CreateWorkedExampleDeckSchema, type CreateWorkedExampleDeckInput } from '@zod-schema/worked-example-deck';
+import { CreateWorkedExampleDeckSchema, type CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
 import { auth } from '@clerk/nextjs/server';
 import { handleServerError } from '@error/handlers/server';
 

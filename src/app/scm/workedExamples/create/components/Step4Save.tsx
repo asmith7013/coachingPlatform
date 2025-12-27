@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSignIn } from '@clerk/nextjs';
 import type { WizardStateHook } from '../hooks/useWizardState';
 import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
-import type { CreateWorkedExampleDeckInput } from '@zod-schema/worked-example-deck';
+import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
 
 // Session storage key for pending Google Slides export
 const PENDING_GOOGLE_EXPORT_KEY = 'pendingGoogleSlidesExport';

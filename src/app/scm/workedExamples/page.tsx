@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useWorkedExampleDecks, useGradeUnitPairs, workedExampleDecksKeys } from "./hooks";
-import type { WorkedExampleDeck } from "@zod-schema/worked-example-deck";
+import type { WorkedExampleDeck } from "@zod-schema/scm/worked-example";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { PresentationModal } from "@/components/presentations/PresentationModal";
 import { ChevronDownIcon, TrashIcon } from "@heroicons/react/24/outline";
