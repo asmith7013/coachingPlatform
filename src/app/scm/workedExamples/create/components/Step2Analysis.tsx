@@ -5,12 +5,108 @@ import { PencilIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { Badge } from '@/components/core/feedback/Badge';
 import { SectionAccordion } from '@/components/composed/section-visualization';
 import type { WizardStateHook } from '../hooks/useWizardState';
-import type { Scenario } from '../lib/types';
+import type { Scenario, GraphPlan } from '../lib/types';
 import type { HtmlSlide } from '@zod-schema/scm/worked-example';
 import { WizardStickyFooter } from './WizardStickyFooter';
 
 interface Step2AnalysisProps {
   wizard: WizardStateHook;
+}
+
+// Shared component for displaying GraphPlan in both Initial Problem Analysis and Scenarios
+function GraphPlanDisplay({ graphPlan, compact = false }: { graphPlan: GraphPlan; compact?: boolean }) {
+  return (
+    <div className={compact ? "space-y-3" : ""}>
+      {/* Equations with Line Endpoints */}
+      <div className={compact ? "mb-3" : "border-b border-gray-200 pb-4"}>
+        <h5 className={compact ? "text-xs font-medium text-gray-500 mb-2" : "text-sm font-semibold text-gray-700 mb-2"}>
+          {compact ? "Equations" : "Lines (with endpoints)"}
+        </h5>
+        <div className="space-y-2">
+          {graphPlan.equations.map((eq, i) => (
+            <div key={i} className="bg-gray-50 rounded p-2 text-sm border border-gray-200">
+              <div className="flex items-center gap-2 mb-1">
+                <span
+                  className="w-3 h-3 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: eq.color }}
+                />
+                <code className="text-gray-700 bg-white px-1.5 py-0.5 rounded text-xs border border-gray-200">
+                  {eq.equation}
+                </code>
+                <span className="text-gray-400 text-xs">m={eq.slope}, b={eq.yIntercept}</span>
+              </div>
+              {/* Line Endpoints */}
+              <div className="grid grid-cols-2 gap-2 text-xs ml-5">
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-500">Start:</span>
+                  {eq.startPoint ? (
+                    <code className="text-green-700 bg-green-50 px-1 py-0.5 rounded text-xs">
+                      ({eq.startPoint.x}, {eq.startPoint.y})
+                    </code>
+                  ) : (
+                    <span className="text-amber-600 text-xs">missing</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-500">End:</span>
+                  {eq.endPoint ? (
+                    <code className="text-blue-700 bg-blue-50 px-1 py-0.5 rounded text-xs">
+                      ({eq.endPoint.x}, {eq.endPoint.y})
+                    </code>
+                  ) : (
+                    <span className="text-amber-600 text-xs">missing</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Scale */}
+      <div className={compact ? "mb-3" : (graphPlan.keyPoints && graphPlan.keyPoints.length > 0 ? "border-b border-gray-200 py-4" : "py-4")}>
+        <h5 className={compact ? "text-xs font-medium text-gray-500 mb-1" : "text-sm font-semibold text-gray-700 mb-2"}>Scale</h5>
+        <div className="text-sm text-gray-600">
+          X: 0 to {graphPlan.scale.xMax} ({graphPlan.scale.xAxisLabels?.join(', ')}) | Y: 0 to {graphPlan.scale.yMax} ({graphPlan.scale.yAxisLabels?.join(', ')})
+        </div>
+      </div>
+
+      {/* Key Points */}
+      {graphPlan.keyPoints && graphPlan.keyPoints.length > 0 && (
+        <div className={compact ? "mb-3" : (graphPlan.annotations && graphPlan.annotations.length > 0 ? "border-b border-gray-200 py-4" : "py-4")}>
+          <h5 className={compact ? "text-xs font-medium text-gray-500 mb-1" : "text-sm font-semibold text-gray-700 mb-2"}>Key Points</h5>
+          <div className="space-y-1">
+            {graphPlan.keyPoints.map((pt, ptIdx) => (
+              <div key={ptIdx} className="text-sm text-gray-600 flex items-center gap-2">
+                <span className="font-medium">{pt.label}:</span>
+                <code className="text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded text-xs border border-purple-200">
+                  ({pt.x}, {pt.y})
+                </code>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Annotations */}
+      {graphPlan.annotations && graphPlan.annotations.length > 0 && (
+        <div className={compact ? "" : "pt-4"}>
+          <h5 className={compact ? "text-xs font-medium text-gray-500 mb-1" : "text-sm font-semibold text-gray-700 mb-2"}>Annotations</h5>
+          <div className="space-y-1">
+            {graphPlan.annotations.map((ann, annIdx) => (
+              <div key={annIdx} className="text-sm text-gray-600 flex items-center gap-2">
+                <Badge intent="info" size="xs">{ann.type}</Badge>
+                <span>{ann.label}</span>
+                {ann.from !== undefined && ann.to !== undefined && (
+                  <span className="text-gray-500 text-xs">(y: {ann.from} → {ann.to})</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // SSE event types from the API
@@ -360,6 +456,21 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
         {/* Left Column - Task Image and Learning Targets (30%) */}
         <div className="w-[30%] bg-[#6B7280] rounded-lg p-4">
           <div className="sticky top-8 space-y-4">
+            {/* Unit and Lesson Badges */}
+            {(state.unitNumber || state.lessonNumber) && (
+              <div className="flex flex-wrap gap-2">
+                {state.gradeLevel && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-700">Grade {state.gradeLevel}</span>
+                )}
+                {state.unitNumber && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-700">Unit {state.unitNumber}</span>
+                )}
+                {state.lessonNumber !== null && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-700">Lesson {state.lessonNumber}</span>
+                )}
+              </div>
+            )}
+
             {/* Task Image */}
             {(state.masteryCheckImage.preview || state.masteryCheckImage.uploadedUrl) && (
               <div className="bg-white rounded-lg p-4">
@@ -467,51 +578,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                       {scenario.graphPlan && (
                         <div className="pt-4 border-t border-gray-200 mt-4">
                           <h4 className="text-sm font-semibold text-gray-700 mb-3">Graph Plan</h4>
-
-                          {/* Equations */}
-                          <div className="mb-3">
-                            <h5 className="text-xs font-medium text-gray-500 mb-2">Equations</h5>
-                            <div className="space-y-2">
-                              {scenario.graphPlan.equations.map((eq, eqIdx) => (
-                                <div key={eqIdx} className="bg-gray-50 rounded p-2 text-sm">
-                                  <div className="flex items-center gap-2">
-                                    <span
-                                      className="w-3 h-3 rounded-full"
-                                      style={{ backgroundColor: eq.color }}
-                                    />
-                                    <span className="font-medium text-gray-700">{eq.label}:</span>
-                                    <span className="text-gray-600">{eq.equation}</span>
-                                  </div>
-                                  <div className="text-xs text-gray-500 mt-1 ml-5">
-                                    slope: {eq.slope}, y-intercept: {eq.yIntercept}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Scale */}
-                          <div className="mb-3">
-                            <h5 className="text-xs font-medium text-gray-500 mb-1">Scale</h5>
-                            <div className="text-sm text-gray-600">
-                              X: 0 to {scenario.graphPlan.scale.xMax} | Y: 0 to {scenario.graphPlan.scale.yMax}
-                            </div>
-                          </div>
-
-                          {/* Annotations */}
-                          {scenario.graphPlan.annotations && scenario.graphPlan.annotations.length > 0 && (
-                            <div>
-                              <h5 className="text-xs font-medium text-gray-500 mb-1">Annotations</h5>
-                              <div className="space-y-1">
-                                {scenario.graphPlan.annotations.map((ann, annIdx) => (
-                                  <div key={annIdx} className="text-sm text-gray-600">
-                                    <Badge intent="info" size="xs">{ann.type}</Badge>
-                                    <span className="ml-2">{ann.label}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
+                          <GraphPlanDisplay graphPlan={scenario.graphPlan} compact />
                         </div>
                       )}
                     </div>
@@ -579,114 +646,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
             title: 'Graph Plan',
             icon: null,
             content: (
-              <div>
-                {/* Equations with Line Endpoints */}
-                <div className="border-b border-gray-200 pb-4">
-                  <h5 className="text-sm font-semibold text-gray-700 mb-2">Lines (with endpoints)</h5>
-                  <div className="space-y-3">
-                    {problemAnalysis.graphPlan!.equations.map((eq, i) => (
-                      <div key={i} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span
-                            className="w-3 h-3 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: eq.color }}
-                          />
-                          <code className="text-gray-700 bg-white px-1.5 py-0.5 rounded text-xs border border-gray-200">
-                            {eq.equation}
-                          </code>
-                          <span className="text-gray-400 text-xs">slope={eq.slope}, b={eq.yIntercept}</span>
-                        </div>
-                        {/* Line Endpoints - Critical for accurate drawing */}
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-gray-500">Start:</span>
-                            {eq.startPoint ? (
-                              <code className="text-green-700 bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
-                                ({eq.startPoint.x}, {eq.startPoint.y})
-                              </code>
-                            ) : (
-                              <span className="text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-                                missing
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-gray-500">End:</span>
-                            {eq.endPoint ? (
-                              <code className="text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
-                                ({eq.endPoint.x}, {eq.endPoint.y})
-                              </code>
-                            ) : (
-                              <span className="text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-                                missing
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Scale */}
-                <div className={problemAnalysis.graphPlan!.annotations && problemAnalysis.graphPlan!.annotations.length > 0 ? "border-b border-gray-200 py-4" : "pt-4"}>
-                  <h5 className="text-sm font-semibold text-gray-700 mb-2">Scale</h5>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    {/* X-Axis */}
-                    <div className="space-y-1">
-                      <div className="text-sm font-medium text-gray-700">X-Axis</div>
-                      <div>
-                        <span className="text-gray-500">Max:</span>
-                        <span className="ml-1 text-gray-600">
-                          {problemAnalysis.graphPlan!.scale.xMax}
-                        </span>
-                      </div>
-                      {problemAnalysis.graphPlan!.scale.xAxisLabels && (
-                        <div>
-                          <span className="text-gray-500">Labels:</span>
-                          <span className="ml-1 text-gray-600">
-                            {problemAnalysis.graphPlan!.scale.xAxisLabels.join(', ')}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    {/* Y-Axis */}
-                    <div className="space-y-1">
-                      <div className="text-sm font-medium text-gray-700">Y-Axis</div>
-                      <div>
-                        <span className="text-gray-500">Max:</span>
-                        <span className="ml-1 text-gray-600">
-                          {problemAnalysis.graphPlan!.scale.yMax}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Labels:</span>
-                        <span className="ml-1 text-gray-600">
-                          {problemAnalysis.graphPlan!.scale.yAxisLabels.join(', ')}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Annotations */}
-                {problemAnalysis.graphPlan!.annotations && problemAnalysis.graphPlan!.annotations.length > 0 && (
-                <div className="pt-4">
-                  <h5 className="text-sm font-semibold text-gray-700 mb-2">Annotations</h5>
-                  <div className="space-y-2">
-                    {problemAnalysis.graphPlan!.annotations.map((ann, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-sm">
-                        <Badge intent="info" size="xs">{ann.type}</Badge>
-                        <span className="text-gray-600">{ann.label}</span>
-                        {ann.from !== undefined && ann.to !== undefined && (
-                          <span className="text-gray-500 text-xs">(y: {ann.from} → {ann.to})</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                )}
-              </div>
+              <GraphPlanDisplay graphPlan={problemAnalysis.graphPlan!} />
             ),
           }] : []),
           // Problem Transcription - closed by default (at bottom)
