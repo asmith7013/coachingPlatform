@@ -138,19 +138,24 @@ Line 1: y = [equation] (e.g., y = 5x)
 Line 2: y = [equation] (e.g., y = 5x + 20)
 ```
 
-**7b: Calculate Key Data Points**
-For EACH line, calculate y at key x values:
+**7b: Calculate Key Data Points (REQUIRED in graphPlan.keyPoints)**
+For EACH line, calculate y at key x values. These MUST be included in the `keyPoints` array:
+- Y-intercepts (where line crosses y-axis)
+- Solution points (the answer to the problem)
+- Any point specifically asked about in the problem
+- Points used for slope triangles or annotations
+
+Example:
 ```
 Line 1: y = 5x
-  - At x=0: y = 0 (y-intercept)
-  - At x=4: y = 20
-  - At x=8: y = 40
+  - At x=0: y = 0 (y-intercept) → keyPoint: { label: "y-intercept Line 1", x: 0, y: 0 }
+  - At x=4: y = 20 (solution) → keyPoint: { label: "solution", x: 4, y: 20 }
 
 Line 2: y = 5x + 20
-  - At x=0: y = 20 (y-intercept)
-  - At x=4: y = 40
-  - At x=8: y = 60
+  - At x=0: y = 20 (y-intercept) → keyPoint: { label: "y-intercept Line 2", x: 0, y: 20 }
 ```
+
+**CRITICAL:** Every important point that will be marked with a dot or label on the graph MUST appear in `keyPoints`.
 
 **7c: Determine Scale (≤10 ticks on each axis)**
 - X_MAX: rightmost x-value needed (common: 4, 5, 6, 8, 10)
@@ -190,4 +195,5 @@ What mathematical relationship to show?
   - [ ] **IF svgSubtype is "coordinate-graph":**
     - [ ] problemAnalysis.graphPlan has equations, keyPoints, scale, and annotations for the mastery check
     - [ ] **EACH scenario has its own graphPlan** with that scenario's specific equations and values
-    - [ ] All graphPlans have: equations with slope/y-intercept, calculated keyPoints, proper scale, and annotations
+    - [ ] All graphPlans have: equations with slope/y-intercept, proper scale, and annotations
+    - [ ] **keyPoints array includes:** y-intercepts, solution points, and any points to be labeled on the graph

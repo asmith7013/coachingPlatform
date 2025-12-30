@@ -149,7 +149,7 @@ You MUST return valid JSON matching this exact structure:
       "graphPlan": {
         "equations": [{ "label": "Line 1", "equation": "y = mx + b", "slope": 5, "yIntercept": 10, "color": "#60a5fa", "startPoint": { "x": 0, "y": 10 }, "endPoint": { "x": 8, "y": 50 } }],
         "scale": { "xMax": 8, "yMax": 50, "xAxisLabels": [0, 2, 4, 6, 8], "yAxisLabels": [0, 10, 20, 30, 40, 50] },
-        "keyPoints": [{ "label": "y-intercept", "x": 0, "y": 10, "dataX": 0, "dataY": 10 }],
+        "keyPoints": [{ "label": "y-intercept", "x": 0, "y": 10, "dataX": 0, "dataY": 10 }, { "label": "solution point", "x": 4, "y": 30, "dataX": 4, "dataY": 30 }],
         "annotations": [{ "type": "y-intercept-shift", "label": "+10" }]
       }
     }
