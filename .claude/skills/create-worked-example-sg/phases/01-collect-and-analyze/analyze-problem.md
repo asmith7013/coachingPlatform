@@ -103,11 +103,19 @@ These step verbs MUST:
 - **text-only**: No graphics needed (rare - pure text/equation problems)
 - **html-table**: Simple data tables with highlighting
 - **svg-visual**: ALL other graphics - this includes:
-  - Coordinate planes and graphs (svgSubtype: "coordinate-graph")
-  - Hanger diagrams and balance problems (svgSubtype: "diagram")
+  - Coordinate planes and graphs (svgSubtype: "coordinate-graph") → use `graph-planning.md`
+  - **Non-graph diagrams** (svgSubtype: "diagram") → **use `diagram-patterns.md` as PRIMARY REFERENCE**
+    - Double number lines
+    - Tape diagrams (bar models)
+    - Hanger diagrams (balance equations)
+    - Area models
+    - Input-output tables
+    - Ratio tables
   - Geometric shapes (svgSubtype: "shape")
   - Number lines and bar models (svgSubtype: "number-line")
   - Any custom visual (svgSubtype: "other")
+
+**For non-graph SVGs:** READ `phases/03-generate-slides/visuals/diagram-patterns.md` to see the exact visual structure students expect from Illustrative Mathematics curriculum.
 
 ### STEP 7: SVG Planning (REQUIRED if Visual Type is "svg-visual")
 

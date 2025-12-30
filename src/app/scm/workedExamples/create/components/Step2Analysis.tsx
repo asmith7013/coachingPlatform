@@ -450,7 +450,9 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
       {/* Problem Analysis - Gray header */}
       <SectionAccordion
         title="Problem Analysis"
-        subtitle={problemAnalysis.visualType}
+        subtitle={problemAnalysis.visualType === 'svg-visual' && problemAnalysis.svgSubtype
+          ? `${problemAnalysis.visualType}: ${problemAnalysis.svgSubtype}`
+          : problemAnalysis.visualType}
         color="#6B7280"
         className="mb-0"
         hideExpandAll

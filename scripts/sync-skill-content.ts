@@ -51,8 +51,9 @@ function readTemplateIfExists(templatesDir: string, filename: string): string {
 
 function syncTemplates() {
   // New atomic card-patterns system
-  const simplePatterns = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/card-patterns/simple-patterns');
-  const complexPatterns = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/card-patterns/complex-patterns');
+  const cardPatterns = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/card-patterns');
+  const simplePatterns = path.join(cardPatterns, 'simple-patterns');
+  const complexPatterns = path.join(cardPatterns, 'complex-patterns');
   const archivedTemplates = path.join(CLI_SKILL_DIR, 'archived/templates');
   const outputFile = path.join(TS_SKILL_DIR, 'templates.ts');
 
@@ -60,6 +61,9 @@ function syncTemplates() {
   const titleZone = readTemplateIfExists(simplePatterns, 'title-zone.html');
   const contentBox = readTemplateIfExists(simplePatterns, 'content-box.html');
   const cfuAnswerCard = readTemplateIfExists(simplePatterns, 'cfu-answer-card.html');
+
+  // Read svg-card template (directly in card-patterns folder)
+  const svgCard = readTemplateIfExists(cardPatterns, 'svg-card.html');
 
   // Read complex patterns (copy-and-modify)
   const graphSnippet = readTemplateIfExists(complexPatterns, 'graph-snippet.html');
@@ -136,6 +140,17 @@ ${contentBox.trim()}
  */
 export const CFU_ANSWER_CARD = \`
 ${cfuAnswerCard.trim()}
+\`;
+
+/**
+ * SVG Card - Container for graphs and diagrams
+ * Includes layering system for PPTX animations
+ * Workflow: Fill placeholders, add SVG content inside layers
+ *
+ * Source: card-patterns/svg-card.html
+ */
+export const SVG_CARD = \`
+${svgCard.trim()}
 \`;
 
 /**
@@ -353,6 +368,10 @@ function syncStyling() {
   const sourceFile = path.join(CLI_SKILL_DIR, 'reference/styling.md');
   const svgCoordFile = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/visuals/svg-graphs.md');
   const graphPlanningFile = path.join(CLI_SKILL_DIR, 'phases/01-collect-and-analyze/graph-planning.md');
+  const diagramPatternsFile = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/visuals/diagram-patterns.md');
+  const annotationZonesFile = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/visuals/annotation-zones.md');
+  const layoutPresetsFile = path.join(CLI_SKILL_DIR, 'reference/layout-presets.md');
+  const pptxRequirementsFile = path.join(CLI_SKILL_DIR, 'reference/pptx-requirements.md');
   const outputFile = path.join(TS_SKILL_DIR, 'styling.ts');
 
   if (!fs.existsSync(sourceFile)) {
@@ -370,6 +389,26 @@ function syncStyling() {
   // Also read graph planning reference (semantic guidance for scale/annotations)
   const graphPlanningMarkdown = fs.existsSync(graphPlanningFile)
     ? fs.readFileSync(graphPlanningFile, 'utf-8')
+    : '';
+
+  // Also read diagram patterns reference (non-graph SVG visuals like tape diagrams, hangers, etc.)
+  const diagramPatternsMarkdown = fs.existsSync(diagramPatternsFile)
+    ? fs.readFileSync(diagramPatternsFile, 'utf-8')
+    : '';
+
+  // Also read annotation zones reference (y-intercept labels, shift arrows, etc.)
+  const annotationZonesMarkdown = fs.existsSync(annotationZonesFile)
+    ? fs.readFileSync(annotationZonesFile, 'utf-8')
+    : '';
+
+  // Also read layout presets reference (full-width, two-column, graph-heavy, etc.)
+  const layoutPresetsMarkdown = fs.existsSync(layoutPresetsFile)
+    ? fs.readFileSync(layoutPresetsFile, 'utf-8')
+    : '';
+
+  // Also read PPTX requirements reference (constraints, fonts, dimensions, etc.)
+  const pptxRequirementsMarkdown = fs.existsSync(pptxRequirementsFile)
+    ? fs.readFileSync(pptxRequirementsFile, 'utf-8')
     : '';
 
   // Extract sections from markdown (include the ## header)
@@ -459,6 +498,70 @@ ${escapeForTemplateLiteral(svgCoordMarkdown.trim())}
  */
 export const GRAPH_PLANNING = \`
 ${escapeForTemplateLiteral(graphPlanningMarkdown.trim())}
+\`;
+
+/**
+ * Diagram Patterns Reference (PRIMARY REFERENCE for non-graph SVGs)
+ *
+ * Visual structure reference for common middle school math representations:
+ * - Double Number Lines (ratios, percentages)
+ * - Tape Diagrams (part-whole, comparisons)
+ * - Hanger Diagrams (equation solving, balance)
+ * - Area Models (multiplication, distributive property)
+ * - Input-Output Tables (functions, patterns)
+ * - Ratio Tables (equivalent ratios)
+ *
+ * Based on Illustrative Mathematics (IM) curriculum representations.
+ *
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/visuals/diagram-patterns.md
+ */
+export const DIAGRAM_PATTERNS = \`
+${escapeForTemplateLiteral(diagramPatternsMarkdown.trim())}
+\`;
+
+/**
+ * Annotation Zones Reference
+ *
+ * Guide for placing annotations on graphs:
+ * - Y-intercept labels and shift arrows
+ * - Slope triangles
+ * - Line equation labels
+ * - Point labels
+ *
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/visuals/annotation-zones.md
+ */
+export const ANNOTATION_ZONES = \`
+${escapeForTemplateLiteral(annotationZonesMarkdown.trim())}
+\`;
+
+/**
+ * Layout Presets Reference
+ *
+ * Standard slide layout patterns:
+ * - full-width (learning goal slides)
+ * - two-column (step slides with visual)
+ * - graph-heavy (graph on right, minimal text)
+ *
+ * Source: .claude/skills/create-worked-example-sg/reference/layout-presets.md
+ */
+export const LAYOUT_PRESETS = \`
+${escapeForTemplateLiteral(layoutPresetsMarkdown.trim())}
+\`;
+
+/**
+ * PPTX Requirements Reference
+ *
+ * Complete PPTX export constraints:
+ * - Slide dimensions (960×540px)
+ * - Supported fonts (Arial, Georgia)
+ * - Color palette
+ * - Region positioning
+ * - Animation/layer system
+ *
+ * Source: .claude/skills/create-worked-example-sg/reference/pptx-requirements.md
+ */
+export const PPTX_REQUIREMENTS = \`
+${escapeForTemplateLiteral(pptxRequirementsMarkdown.trim())}
 \`;
 `;
 

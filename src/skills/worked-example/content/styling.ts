@@ -1276,3 +1276,1429 @@ Read: .claude/skills/create-worked-example-sg/reference/svg-pixel-tables.md
 
 That file contains the pixel lookup tables for converting your planned scale to actual SVG coordinates.
 `;
+
+/**
+ * Diagram Patterns Reference (PRIMARY REFERENCE for non-graph SVGs)
+ *
+ * Visual structure reference for common middle school math representations:
+ * - Double Number Lines (ratios, percentages)
+ * - Tape Diagrams (part-whole, comparisons)
+ * - Hanger Diagrams (equation solving, balance)
+ * - Area Models (multiplication, distributive property)
+ * - Input-Output Tables (functions, patterns)
+ * - Ratio Tables (equivalent ratios)
+ *
+ * Based on Illustrative Mathematics (IM) curriculum representations.
+ *
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/visuals/diagram-patterns.md
+ */
+export const DIAGRAM_PATTERNS = `
+# Diagram Patterns for Middle School Math
+
+Visual structure reference for common math representations used in Illustrative Mathematics (IM) curriculum.
+
+**This is the PRIMARY REFERENCE for all non-graph SVG diagrams.** When creating SVG visuals for worked examples, match these patterns to ensure students see familiar representations.
+
+---
+
+## Double Number Line
+**Use for:** Ratios, percentages, proportional reasoning, unit rates
+**IM Grade Level:** Grade 6 Unit 2 (introduced), used through Grade 7
+
+\`\`\`
+ 0        3        6        9       12   ← Quantity A (e.g., cups of flour)
+ |--------|--------|--------|--------|
+ |--------|--------|--------|--------|
+ 0        2        4        6        8   ← Quantity B (e.g., pints of water)
+\`\`\`
+
+**Key features (from IM):**
+- Two parallel horizontal lines with **aligned tick marks**
+- Zero aligned on both lines (critical!)
+- **Distances are proportional**: distance from 0 to 12 is 3× distance from 0 to 4
+- Each line labeled with its quantity name
+- At least 6 equally spaced tick marks
+- Equivalent ratios line up **vertically**
+
+**IM context:** Students use this to find equivalent ratios, unit rates, and "how many of X per one Y"
+
+---
+
+## Tape Diagram (Bar Model)
+**Use for:** Part-whole relationships, fractions, ratio comparison, "times as many", division with fractions
+**IM Grade Level:** Introduced Grade 2, used through middle school
+
+### Single tape (parts of a whole):
+\`\`\`
+┌──────────────┬──────────────┬──────────────┐
+│    Part A    │    Part B    │    Part C    │
+│      2x      │      3x      │      5x      │
+└──────────────┴──────────────┴──────────────┘
+├──────────────────── Total: 60 ────────────────┤
+\`\`\`
+
+### Comparison tape (two quantities):
+\`\`\`
+Maria:  ┌────────┬────────┬────────┐
+        │   x    │   x    │   x    │  ← 3 units
+        └────────┴────────┴────────┘
+
+Juan:   ┌────────┐
+        │   x    │  ← 1 unit
+        └────────┘
+\`\`\`
+
+### Compare problem (bigger/smaller/difference):
+\`\`\`
+Bigger:   ┌────────────────────────────────┐
+          │              45                │
+          └────────────────────────────────┘
+
+Smaller:  ┌────────────────────┐
+          │         28         │
+          └────────────────────┘
+                               ├─ ? ─┤  ← Difference
+\`\`\`
+
+**Key features (from IM):**
+- Rectangular bars (like bars in a bar graph)
+- **Same-length pieces = same value** (even if drawing is sloppy, label them)
+- Label pieces with numbers OR letters (x, y) to show known/relative values
+- Total or difference shown with bracket
+- For Compare problems: shows bigger amount, smaller amount, and difference
+
+**IM context:** Students see tape diagrams as a tool to "quickly visualize story problems" and connect to equations
+
+---
+
+## Hanger Diagram (Balance)
+**Use for:** Equation solving, showing balance/equality, reasoning about operations
+**IM Grade Level:** Grade 6 Unit 6, Grade 7 Unit 6
+
+### Balanced hanger (equation):
+\`\`\`
+              ╱╲
+             ╱  ╲
+            ╱    ╲
+     ┌─────┴──────┴─────┐
+     │                  │
+  ┌──┴──┐            ┌──┴──┐
+  │     │            │     │
+  │ 3x  │            │ 12  │
+  │ +1  │            │     │
+  └─────┘            └─────┘
+   Left               Right
+   side               side
+\`\`\`
+
+### With shapes (for visual weight):
+\`\`\`
+              ╱╲
+             ╱  ╲
+            ╱    ╲
+     ┌─────┴──────┴─────┐
+     │                  │
+  ┌──┴──┐            ┌──┴──┐
+  │ △ △ │            │ □□□ │
+  │     │            │     │
+  └─────┘            └─────┘
+
+  △ = triangle (unknown x)
+  □ = square (value of 1)
+\`\`\`
+
+**Key features (from IM):**
+- Triangle fulcrum at top shows balance point
+- **Balanced = both sides equal** (like equal sign)
+- **Unbalanced = one side heavier** (inequality)
+- Shapes represent values: △ (triangles) for variables, □ (squares) for units
+- "What you do to one side, you do to the other side"
+
+**IM solving strategy:**
+- **Addition equations**: Solve by subtracting from both sides (remove equal weights)
+- **Multiplication equations**: Solve by dividing both sides (split into equal groups)
+- Students match hanger diagrams to equations, then solve
+
+**IM context:** Visualizes the rule "what you do to one side of the equation you have to do to the other side"
+
+---
+
+## Number Line
+**Use for:** Integers, absolute value, inequalities, operations
+
+### Basic number line:
+\`\`\`
+  ←──┼────┼────┼────┼────┼────┼────┼────┼────┼──→
+    -4   -3   -2   -1    0    1    2    3    4
+\`\`\`
+
+### With points marked:
+\`\`\`
+  ←──┼────┼────┼────●────┼────┼────○────┼────┼──→
+    -4   -3   -2   -1    0    1    2    3    4
+                    ↑              ↑
+                   -1              2
+     ● = closed (included)    ○ = open (excluded)
+\`\`\`
+
+### With jump arrows (for operations):
+\`\`\`
+                    +5
+              ┌──────────────┐
+              ↓              ↓
+  ←──┼────┼────┼────┼────┼────┼────┼────┼────┼──→
+    -4   -3   -2   -1    0    1    2    3    4
+\`\`\`
+
+**Key features:**
+- Arrows on both ends (extends infinitely)
+- Evenly spaced tick marks
+- Zero clearly marked
+- Points: ● for included, ○ for excluded
+
+---
+
+## Area Model
+**Use for:** Multiplication, distributive property a(b+c) = ab + ac, factoring
+**IM Grade Level:** Introduced in elementary, used through Algebra 1
+
+### For multiplication (23 × 15):
+\`\`\`
+              20          3
+         ┌──────────┬─────────┐
+      10 │   200    │   30    │
+         │          │         │
+         ├──────────┼─────────┤
+       5 │   100    │   15    │
+         │          │         │
+         └──────────┴─────────┘
+
+    Total: 200 + 30 + 100 + 15 = 345
+\`\`\`
+
+### For distributive property 6(40 + 7):
+\`\`\`
+                40           7
+         ┌──────────────┬─────────┐
+       6 │     240      │   42    │
+         │              │         │
+         └──────────────┴─────────┘
+
+    6(40 + 7) = 6×40 + 6×7 = 240 + 42 = 282
+\`\`\`
+
+### For algebra (x + 3)(x + 2):
+\`\`\`
+               x           3
+         ┌──────────┬─────────┐
+       x │    x²    │   3x    │
+         │          │         │
+         ├──────────┼─────────┤
+       2 │    2x    │    6    │
+         │          │         │
+         └──────────┴─────────┘
+
+    Total: x² + 3x + 2x + 6 = x² + 5x + 6
+\`\`\`
+
+**Key features (from IM):**
+- Rectangle divided into smaller rectangles (partial products)
+- **Dimensions on outside edges** (factors being multiplied)
+- **Products inside each section** (partial products)
+- Total shown below as sum of all sections
+- Shows that a(b + c) = ab + ac visually
+
+**IM context:** "The area of a rectangle can be found in two ways: a(b + c) or ab + ac. The equality of these two expressions is the distributive property."
+
+---
+
+## Input-Output Table (Function Table)
+**Use for:** Functions, patterns, rules, describing relationships
+**IM Grade Level:** Grade 8 Functions (8.F.A.1)
+
+### Horizontal table (primary format):
+\`\`\`
+┌───────┬─────┬─────┬─────┬─────┬─────┐
+│ Input │  1  │  2  │  3  │  4  │  5  │
+├───────┼─────┼─────┼─────┼─────┼─────┤
+│Output │  5  │  8  │ 11  │ 14  │  ?  │
+└───────┴─────┴─────┴─────┴─────┴─────┘
+               Rule: ×3 + 2
+\`\`\`
+
+### With function machine visualization:
+\`\`\`
+                    Rule: ×3 + 2
+          ┌─────────────────────────────┐
+          │                             │
+Input →   │      [ FUNCTION MACHINE ]   │   → Output
+          │                             │
+          └─────────────────────────────┘
+
+┌───────┬─────┬─────┬─────┬─────┐
+│ Input │  1  │  2  │  3  │  ?  │
+├───────┼─────┼─────┼─────┼─────┤
+│Output │  5  │  8  │ 11  │ 20  │
+└───────┴─────┴─────┴─────┴─────┘
+\`\`\`
+
+**Key features (from IM):**
+- **Horizontal layout** with Input row on top, Output row below
+- Rule stated explicitly (as equation or in words)
+- At least 3-4 examples showing the pattern
+- One cell with "?" for student to solve
+- "A function is a rule that assigns to each input exactly one output"
+
+**IM context:** Students describe function rules in words, fill tables, and understand that each input produces exactly one output
+
+---
+
+## Ratio Table
+**Use for:** Equivalent ratios, scaling, finding unknown values
+**IM Grade Level:** Grade 6 Unit 2 (alongside double number lines)
+
+\`\`\`
+┌────────────┬─────┬─────┬─────┬─────┐
+│  Apples    │  2  │  4  │  6  │  ?  │
+├────────────┼─────┼─────┼─────┼─────┤
+│  Oranges   │  3  │  6  │  9  │ 15  │
+└────────────┴─────┴─────┴─────┴─────┘
+               ×2    ×3    ×?
+\`\`\`
+
+### With scaling arrows:
+\`\`\`
+          ×2         ×3
+       ┌──────┐   ┌──────┐
+       │      │   │      │
+       ▼      │   ▼      │
+┌────────┬────┼───┬────┼───┬─────┐
+│ Miles  │ 5  │   │ 10 │   │ 15  │
+├────────┼────┴───┼────┴───┼─────┤
+│ Hours  │ 2  │   │  4 │   │  6  │
+└────────┴────────┴────────┴─────┘
+\`\`\`
+
+**Key features (from IM):**
+- Two rows (one per quantity in the ratio)
+- Columns show **equivalent ratios**
+- Scale factors can be shown with arrows between columns
+- At least one unknown to solve
+- More abstract than double number line (no visual proportions)
+
+**IM context:** Ratio tables are "more abstract and more general" than double number lines. Students progress from double number lines → ratio tables → equations
+
+---
+
+## Creating Custom Diagrams
+
+If your problem doesn't fit these patterns, create a custom SVG following these rules:
+
+1. **Use the SVG container wrapper:**
+\`\`\`html
+<div data-pptx-region="svg-container"
+     data-pptx-x="408" data-pptx-y="150"
+     data-pptx-w="532" data-pptx-h="360">
+  <svg viewBox="0 0 280 200">
+    <!-- your diagram here -->
+  </svg>
+</div>
+\`\`\`
+
+2. **Use layers for animations:**
+\`\`\`html
+<g data-pptx-layer="base"><!-- always visible --></g>
+<g data-pptx-layer="step-1"><!-- appears on click --></g>
+\`\`\`
+
+3. **Text requirements:**
+- All \`<text>\` must have \`font-family="Arial"\`
+- Use readable font sizes (12-16px for labels)
+
+4. **Colors from styling guide:**
+- Primary: \`#1791e8\`
+- Success: \`#22c55e\`
+- Warning: \`#f59e0b\`
+- Text: \`#1d1d1d\`
+`;
+
+/**
+ * Annotation Zones Reference
+ *
+ * Guide for placing annotations on graphs:
+ * - Y-intercept labels and shift arrows
+ * - Slope triangles
+ * - Line equation labels
+ * - Point labels
+ *
+ * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/visuals/annotation-zones.md
+ */
+export const ANNOTATION_ZONES = `
+# SVG Annotation Zones
+
+**Responsibility:** Quick zone reference for annotation placement.
+
+---
+
+## ⚠️ REQUIRED: Read the HTML File First
+
+**Before using this reference, you MUST read:**
+
+\`\`\`
+READ: ../card-patterns/complex-patterns/annotation-snippet.html
+\`\`\`
+
+This markdown file contains ONLY the zone diagram and placement rules. The actual HTML patterns you will copy are in \`annotation-snippet.html\`.
+
+---
+
+## Zone Diagram
+
+\`\`\`
+┌─────────────────────────────────────────────────────┐
+│                    ZONE A (Top)                      │
+│                    y: 0-15                           │
+├─────┬───────────────────────────────────────┬───────┤
+│     │                                       │       │
+│  B  │          PLOT AREA                    │   C   │
+│     │          (data only)                  │       │
+│ x:  │          40-260, 20-170               │  x:   │
+│ 0-38│                                       │262-280│
+│     │                                       │       │
+├─────┴───────────────────────────────────────┴───────┤
+│                    ZONE D (Bottom)                   │
+│                    y: 175-200                        │
+└─────────────────────────────────────────────────────┘
+\`\`\`
+
+| Zone | Use For |
+|------|---------|
+| A | Title, legend |
+| B | Y-intercept labels, vertical arrows |
+| C | Line labels (equations), endpoint annotations |
+| D | X-axis labels, horizontal annotations |
+| Plot | Data lines and points ONLY |
+
+---
+
+## Zone Assignment
+
+| Annotation Type | Zone | X Position | Notes |
+|-----------------|------|------------|-------|
+| Y-intercept label | B | x="5" | Left-align, use line color |
+| Y-intercept arrow | B | x="25" | Points to y-axis |
+| Line equation | C | x="265" | Right side of graph |
+| Slope (rise) | B | x="5" to x="38" | Label left of arrow |
+| Slope (run) | D | y="180" to y="195" | Label below arrow |
+| Point label (upper) | Plot | y - 12 | Above point, centered |
+| Point label (lower) | Plot | y + 15 | Below point, centered |
+
+---
+
+## Stacking Rules
+
+When multiple annotations compete for the same zone:
+- First annotation: natural y-position
+- Second annotation: offset by 15px
+- Third annotation: offset by 30px
+
+---
+
+## Checklist
+
+- [ ] Y-intercept labels in Zone B (x < 38)
+- [ ] Line labels in Zone C (x > 262)
+- [ ] No text overlaps axes (x=40 or y=170)
+- [ ] Stacked annotations have 15px minimum spacing
+
+**For styling rules and HTML patterns, see \`annotation-snippet.html\`.**
+`;
+
+/**
+ * Layout Presets Reference
+ *
+ * Standard slide layout patterns:
+ * - full-width (learning goal slides)
+ * - two-column (step slides with visual)
+ * - graph-heavy (graph on right, minimal text)
+ *
+ * Source: .claude/skills/create-worked-example-sg/reference/layout-presets.md
+ */
+export const LAYOUT_PRESETS = `
+# Layout Presets - Declarative Slide Composition
+
+## Overview
+
+Slides are composed using **atomic components** placed in **regions** defined by **layout presets**.
+
+\`\`\`
+┌──────────────────────────────────────────────────┐
+│                    TITLE ZONE                     │
+│  ┌─────────────────────────────┐ ┌─────────────┐ │
+│  │ Badge + Title + Subtitle    │ │  CFU/Answer │ │
+│  └─────────────────────────────┘ └─────────────┘ │
+├──────────────────────────────────────────────────┤
+│                   CONTENT ZONE                    │
+│  ┌─────────────────┐ ┌─────────────────────────┐ │
+│  │   Content Box   │ │       SVG Card          │ │
+│  │  (text/lists/   │ │   (graphs/diagrams)     │ │
+│  │   equations)    │ │                         │ │
+│  └─────────────────┘ └─────────────────────────┘ │
+└──────────────────────────────────────────────────┘
+\`\`\`
+
+## Atomic Components
+
+| Component | Purpose | Reference |
+|-----------|---------|-----------|
+| **Title Zone** | Badge + Title + Subtitle | [simple-patterns/title-zone.html](../phases/03-generate-slides/card-patterns/simple-patterns/title-zone.html) |
+| **Content Box** | Any text content | [simple-patterns/content-box.html](../phases/03-generate-slides/card-patterns/simple-patterns/content-box.html) |
+| **SVG Card** | Graphs/diagrams | [complex-patterns/graph-snippet.html](../phases/03-generate-slides/card-patterns/complex-patterns/graph-snippet.html) |
+| **CFU/Answer** | Overlay boxes (animated) | [simple-patterns/cfu-answer-card.html](../phases/03-generate-slides/card-patterns/simple-patterns/cfu-answer-card.html) |
+
+## Layout Presets
+
+| Preset | Content Zone Split | Use When |
+|--------|-------------------|----------|
+| \`full-width\` | 100% | Text-only slides, summaries |
+| \`two-column\` | 40% / 60% | Text + visual side-by-side |
+| \`graph-heavy\` | 35% / 65% | Narrow text + large graph |
+| \`with-cfu\` | 100% + overlay | Full-width + CFU question |
+| \`two-column-with-cfu\` | 40% / 60% + overlay | Two-column + CFU |
+
+## Pixel Dimensions (960×540)
+
+**Source of truth:** [region-defaults.md](./region-defaults.md)
+
+Run \`npm run sync-skill-content\` to propagate changes to TypeScript.
+
+### Layout Presets
+
+| Preset | Left Column | Right Column |
+|--------|-------------|--------------|
+| \`full-width\` | x=20, y=150, w=920 | — |
+| \`two-column\` | x=20, y=150, w=368 | x=408, y=150, w=532 |
+| \`graph-heavy\` | x=20, y=150, w=316 | x=356, y=150, w=584 |
+
+## Slide Composition Flow
+
+### Step 1: Choose Layout Preset
+
+Based on slide content needs:
+- Text only → \`full-width\`
+- Text + graph → \`two-column\` or \`graph-heavy\`
+- Needs CFU → add \`-with-cfu\`
+
+### Step 2: Fill Title Zone
+
+Every slide has:
+\`\`\`html
+<!-- Badge (STRATEGY, STEP 1, SUMMARY, etc.) -->
+<div data-pptx-region="badge" data-pptx-x="20" data-pptx-y="16" ...>
+  {{badge_text}}
+</div>
+
+<!-- Title -->
+<h1 data-pptx-region="title" data-pptx-x="20" data-pptx-y="55" ...>
+  {{title}}
+</h1>
+
+<!-- Subtitle -->
+<p data-pptx-region="subtitle" data-pptx-x="20" data-pptx-y="100" ...>
+  {{subtitle}}
+</p>
+\`\`\`
+
+### Step 3: Place Content in Regions
+
+**Full-width example:**
+\`\`\`html
+<div data-pptx-region="content"
+     data-pptx-x="20" data-pptx-y="140" data-pptx-w="920" data-pptx-h="360">
+  <!-- Any content: paragraphs, lists, equations, tables -->
+</div>
+\`\`\`
+
+**Two-column example:**
+\`\`\`html
+<!-- Left: Text content -->
+<div data-pptx-region="left-column"
+     data-pptx-x="20" data-pptx-y="140" data-pptx-w="368" data-pptx-h="370">
+  <h3>Problem</h3>
+  <p>Problem statement...</p>
+  <ul>
+    <li>Key point 1</li>
+    <li>Key point 2</li>
+  </ul>
+</div>
+
+<!-- Right: Visual -->
+<div data-pptx-region="svg-container"
+     data-pptx-x="408" data-pptx-y="140" data-pptx-w="532" data-pptx-h="370">
+  <svg viewBox="0 0 520 360">
+    <!-- Graph content -->
+  </svg>
+</div>
+\`\`\`
+
+### Step 4: Add Overlays (if needed)
+
+**CFU/Answer boxes use PPTX animation** - they appear on click, no duplicate slides needed.
+
+Insert BEFORE \`</body>\`:
+\`\`\`html
+<!-- CFU (slides 3, 5, 7 - animated, appears on click) -->
+<div data-pptx-region="cfu-box"
+     data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"
+     style="position: absolute; top: 40px; right: 20px; ...">
+  <p style="font-weight: bold;">CHECK FOR UNDERSTANDING</p>
+  <p>{{cfu_question}}</p>
+</div>
+
+<!-- Answer (slides 4, 6, 8 - animated, appears on click) -->
+<div data-pptx-region="answer-box"
+     data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"
+     style="position: absolute; top: 40px; right: 20px; ...">
+  <p style="font-weight: bold;">ANSWER</p>
+  <p>{{answer_explanation}}</p>
+</div>
+\`\`\`
+
+## Content Composition
+
+Within content boxes, compose freely using:
+
+| Element | HTML Pattern |
+|---------|--------------|
+| Prose | \`<p style="...">Text here</p>\` |
+| Header | \`<h3 style="...">Header</h3>\` |
+| Bullet list | \`<ul><li>Item</li></ul>\` |
+| Numbered list | \`<ol><li>Step</li></ol>\` |
+| Equation | \`<p style="font-family: Georgia; text-align: center;">y = mx + b</p>\` |
+| Table | \`<table><thead>...</thead><tbody>...</tbody></table>\` |
+| Bold/highlight | \`<strong style="color: #1791e8;">Think:</strong>\` |
+
+See [content-box.html](../phases/03-generate-slides/card-patterns/simple-patterns/content-box.html) for complete patterns.
+
+## PPTX Export Compatibility
+
+Every positioned element needs \`data-pptx-*\` attributes:
+
+\`\`\`html
+<div data-pptx-region="region-type"
+     data-pptx-x="X" data-pptx-y="Y"
+     data-pptx-w="W" data-pptx-h="H">
+\`\`\`
+
+Region types recognized by PPTX export:
+- \`badge\`, \`title\`, \`subtitle\`, \`footnote\`
+- \`content\`, \`left-column\`, \`right-column\`
+- \`content-box\`, \`problem-statement\`
+- \`svg-container\`
+- \`cfu-box\`, \`answer-box\`
+`;
+
+/**
+ * PPTX Requirements Reference
+ *
+ * Complete PPTX export constraints:
+ * - Slide dimensions (960×540px)
+ * - Supported fonts (Arial, Georgia)
+ * - Color palette
+ * - Region positioning
+ * - Animation/layer system
+ *
+ * Source: .claude/skills/create-worked-example-sg/reference/pptx-requirements.md
+ */
+export const PPTX_REQUIREMENTS = `
+# HTML to PPTX Best Practices Guide
+
+A comprehensive reference for converting HTML to PowerPoint presentations using pptxgenjs and the html2pptx library.
+
+---
+
+## Table of Contents
+
+1. [HTML Canvas Dimensions](#1-html-canvas-dimensions)
+2. [Slide Layout Zones](#2-slide-layout-zones)
+3. [Typography Constraints](#3-typography-constraints)
+4. [Supported HTML Elements](#4-supported-html-elements)
+5. [Layout Best Practices](#5-layout-best-practices)
+6. [Color Best Practices](#6-color-best-practices)
+7. [Content Guidelines](#7-content-guidelines)
+8. [Charts and Tables](#8-charts-and-tables)
+9. [Critical Text Rules](#9-critical-text-rules)
+10. [Flexbox Rules](#10-flexbox-rules)
+11. [Styling Restrictions](#11-styling-restrictions)
+12. [Color Format in PptxGenJS](#12-color-format-in-pptxgenjs)
+13. [Gradient & Background Support](#13-gradient--background-support)
+14. [Box Shadows](#14-box-shadows)
+15. [Aspect Ratios](#15-aspect-ratios)
+16. [Visual Validation](#16-visual-validation)
+17. [Chart/Table Layout](#17-charttable-layout)
+18. [Icons](#18-icons)
+19. [Running Scripts](#19-running-scripts)
+20. [Common Pitfalls](#20-common-pitfalls)
+
+---
+
+## 1. HTML Canvas Dimensions
+
+**Standard dimensions for 16:9 aspect ratio:**
+- **Width:** 960px
+- **Height:** 540px
+
+Set explicitly on the body element:
+
+\`\`\`html
+<body class="col" style="width: 960px; height: 540px; overflow: hidden;">
+  <!-- Slide content -->
+</body>
+\`\`\`
+
+This maps cleanly to PowerPoint's standard widescreen layout (\`LAYOUT_16x9\`).
+
+---
+
+## 2. Slide Layout Zones
+
+Structure your HTML with these vertical zones for consistent, professional layouts:
+
+| Zone | Y Position | Height | Purpose |
+|------|-----------|--------|---------|
+| **Title** | 0-100px | 100px | Slide title only (\`<h1>\`) |
+| **Buffer** | 100-110px | 10px | Separation space |
+| **Content** | 110-490px | 380px | Main content area |
+| **Buffer** | 490-500px | 10px | Separation space |
+| **Footnote** | 500-540px | 40px | Sources, disclaimers (10pt font) |
+
+### Example Structure
+
+\`\`\`html
+<body class="col bg-surface" style="width: 960px; height: 540px; position: relative;">
+  <!-- Title zone: use fit class to shrink to content height -->
+  <div style="width: 920px; margin: 0 20px; padding-top: 20px;" class="fit">
+    <h1 style="margin: 0;">Slide Title</h1>
+    <p class="text-muted-foreground" style="margin-top: 4px;">Optional subtitle</p>
+  </div>
+
+  <!-- Content zone: fill-height takes remaining space -->
+  <div class="row gap-lg fill-height" style="padding: 10px 20px;">
+    <div class="col" style="width: 45%;"><!-- Left column --></div>
+    <div class="col" style="width: 55%;"><!-- Right column --></div>
+  </div>
+
+  <!-- Footnote zone: absolute positioning for fixed bottom -->
+  <p style="position: absolute; bottom: 8px; left: 20px; font-size: 10pt; color: #666; margin: 0;">
+    Source: Data from Q4 2024 report
+  </p>
+</body>
+\`\`\`
+
+### Critical Title Rule
+
+**ALWAYS wrap titles in a full-width container** to prevent text box shrinking:
+
+\`\`\`html
+<!-- ✅ Correct -->
+<div style="width: 920px; margin: 0 20px;">
+  <h1>Title Text</h1>
+</div>
+
+<!-- ❌ Wrong - text box will shrink to fit content -->
+<h1 style="width: 920px;">Title Text</h1>
+\`\`\`
+
+---
+
+## 3. Typography Constraints
+
+### Web-Safe Fonts Only
+
+PowerPoint requires universally available fonts. **Only use these:**
+
+| Category | Fonts |
+|----------|-------|
+| Sans-serif | Arial, Helvetica, Verdana, Tahoma, Trebuchet MS |
+| Serif | Times New Roman, Georgia |
+| Monospace | Courier New |
+| Display | Impact |
+
+**Never use:** Segoe UI, SF Pro, Roboto, or any custom/Google fonts.
+
+### Font Size Hierarchy
+
+For information-dense slides:
+
+\`\`\`
+Title:           32-40px (one size, prominent)
+Section headers: 13-15px (small but bold)
+Body text:       11-13px (readable at this size)
+Supporting text: 10-11px (fine print, lists)
+Footnotes:       10px (minimal footprint)
+\`\`\`
+
+**Rule:** Each level should be ~2-3px smaller than the previous.
+
+---
+
+## 4. Supported HTML Elements
+
+### Block Elements (with background/border support)
+- \`<div>\`, \`<section>\`, \`<header>\`, \`<footer>\`
+- \`<main>\`, \`<article>\`, \`<nav>\`, \`<aside>\`
+
+### Text Elements
+- \`<p>\` - Paragraphs
+- \`<h1>\` through \`<h6>\` - Headings
+
+### Lists
+- \`<ul>\`, \`<ol>\` - Lists (never use manual bullets)
+
+### Inline Formatting
+- \`<b>\`, \`<strong>\` - Bold
+- \`<i>\`, \`<em>\` - Italic
+- \`<u>\` - Underline
+- \`<br>\` - Line breaks
+
+### Media
+- \`<img>\` - Images
+
+### Special Features
+- \`class="placeholder"\` - Reserved space for charts (returns position data)
+- \`data-balance\` - Auto-balance text line lengths
+
+---
+
+## 5. Layout Best Practices
+
+### The 4px Base Unit System
+
+Use multiples of 4px for all spacing:
+
+| Size | Use Case |
+|------|----------|
+| 4px | Tight: between related lines of text |
+| 8px | Compact: elements within a group |
+| 12px | Standard: between content blocks |
+| 16px | Comfortable: section padding |
+| 20px | Generous: slide margins |
+
+### Container Padding
+
+\`\`\`
+Dense information boxes:  12-14px padding
+Standard content cards:   14-16px padding
+Spacious hero sections:   20-24px padding
+\`\`\`
+
+### Gap vs Padding
+
+- **Gap:** Between siblings (cards, columns, list items)
+- **Padding:** Inside containers (breathing room within a box)
+
+\`\`\`html
+<!-- ✅ Correct: gap for sibling spacing -->
+<div class="col" style="gap: 12px;">
+  <div style="padding: 14px;">Box 1</div>
+  <div style="padding: 14px;">Box 2</div>
+</div>
+
+<!-- ❌ Wrong: margin on children -->
+<div class="col">
+  <div style="margin-bottom: 12px; padding: 14px;">Box 1</div>
+  <div style="padding: 14px;">Box 2</div>
+</div>
+\`\`\`
+
+### Width Patterns
+
+\`\`\`html
+<!-- Columns: percentage -->
+<div style="width: 35%;">Sidebar</div>
+<div style="width: 65%;">Main</div>
+
+<!-- Accent bars: fixed -->
+<div style="width: 12px; height: 100%;">Accent</div>
+
+<!-- Padding/margins: fixed -->
+<div style="padding: 20px 32px;">Content</div>
+\`\`\`
+
+---
+
+## 6. Color Best Practices
+
+### General Principles
+
+- Use hex colors **without** the \`#\` prefix in pptxgenjs APIs
+- Ensure strong contrast (dark text on light backgrounds or vice versa)
+- One color should dominate (60-70% visual weight)
+- Use 1-2 supporting tones and one sharp accent
+
+### CSS Variables (Override in \`:root\`)
+
+\`\`\`css
+:root {
+  --color-primary: #1791e8;
+  --color-primary-foreground: #fafafa;
+  --color-surface: #ffffff;
+  --color-surface-foreground: #1d1d1d;
+  --color-muted: #f5f5f5;
+  --color-muted-foreground: #737373;
+  --color-border: #c8c8c8;
+}
+\`\`\`
+
+### Utility Classes
+
+- **Background:** \`.bg-surface\`, \`.bg-primary\`, \`.bg-secondary\`, \`.bg-muted\`
+- **Text:** \`.text-surface-foreground\`, \`.text-primary\`, \`.text-muted-foreground\`
+
+---
+
+## 7. Content Guidelines
+
+### Brevity Rules
+
+- Paragraphs: 1 sentence, maybe 2
+- Bullet points: 3-5 per list maximum
+- Cards: Short statements/fragments only
+
+### Visual Hierarchy
+
+- No more than 2-3 text sizes per slide
+- Use weight (bold) or opacity for additional distinction
+- Center headlines only; left-align paragraphs and lists
+
+### What to Avoid
+
+- Content overflow beyond 960×540
+- Long paragraphs
+- More than 5 bullet points per list
+- Centered body text
+- Multiple font families on one slide
+
+---
+
+## 8. Charts and Tables
+
+### Use PptxGenJS APIs (Not HTML)
+
+Don't render charts/tables in HTML. Use placeholders:
+
+\`\`\`html
+<div class="placeholder" id="chart-area"></div>
+\`\`\`
+
+Then add via JavaScript:
+
+\`\`\`javascript
+const { slide, placeholders } = await html2pptx("slide.html", pptx);
+slide.addChart(pptx.charts.BAR, chartData, placeholders[0]);
+\`\`\`
+
+### Chart Data Format
+
+\`\`\`javascript
+// Single series
+[{
+  name: "Sales",
+  labels: ["Q1", "Q2", "Q3", "Q4"],
+  values: [4500, 5500, 6200, 7100]
+}]
+
+// Multiple series
+[
+  { name: "Product A", labels: ["Q1", "Q2"], values: [10, 20] },
+  { name: "Product B", labels: ["Q1", "Q2"], values: [15, 25] }
+]
+\`\`\`
+
+### Required Chart Options
+
+\`\`\`javascript
+slide.addChart(pptx.charts.BAR, data, {
+  ...placeholders[0],
+  showCatAxisTitle: true,
+  catAxisTitle: "Quarter",
+  showValAxisTitle: true,
+  valAxisTitle: "Sales ($000s)",
+  chartColors: ["4472C4", "ED7D31"]  // NO # prefix
+});
+\`\`\`
+
+---
+
+## 9. Critical Text Rules
+
+### All Text Must Be in Proper Tags
+
+\`\`\`html
+<!-- ✅ Correct -->
+<div><p>Text here</p></div>
+<div><h2>Heading</h2></div>
+
+<!-- ❌ WRONG - Text will NOT appear in PowerPoint -->
+<div>Text here</div>
+\`\`\`
+
+### Never Use Manual Bullet Symbols
+
+\`\`\`html
+<!-- ✅ Correct -->
+<ul>
+  <li>Item one</li>
+  <li>Item two</li>
+</ul>
+
+<!-- ❌ WRONG -->
+<p>• Item one</p>
+<p>- Item two</p>
+<p>* Item three</p>
+\`\`\`
+
+### Never Use white-space: nowrap
+
+PowerPoint ignores this property. Instead:
+- Make containers wide enough for content
+- Use full-width text boxes (920px) for titles
+
+---
+
+## 10. Flexbox Rules
+
+**Use CSS classes, not inline flexbox:**
+
+\`\`\`html
+<!-- ✅ Correct -->
+<div class="row"><p>Horizontal layout</p></div>
+<div class="col"><p>Vertical layout</p></div>
+
+<!-- ❌ WRONG -->
+<div style="display: flex;"><p>Text</p></div>
+<div style="display: flex; flex-direction: column;"><p>Text</p></div>
+\`\`\`
+
+### Available Layout Classes
+
+| Class | Purpose |
+|-------|---------|
+| \`.row\` | Horizontal layout (flex-direction: row) |
+| \`.col\` | Vertical layout (flex-direction: column) |
+| \`.fill-width\` | Expand to fill available width |
+| \`.fill-height\` | Expand to fill available height |
+| \`.fit\` | Maintain natural size |
+| \`.center\` | Center content both ways |
+| \`.items-center\` | Align items center |
+| \`.justify-center\` | Justify content center |
+
+---
+
+## 11. Styling Restrictions
+
+### Backgrounds, Borders, Shadows ONLY Work on Block Elements
+
+**✅ Supported elements:**
+- \`<div>\`, \`<section>\`, \`<header>\`, \`<footer>\`
+- \`<main>\`, \`<article>\`, \`<nav>\`, \`<aside>\`
+
+**❌ NOT supported on:**
+- \`<p>\`, \`<h1>\`-\`<h6>\`, \`<ul>\`, \`<ol>\`
+
+\`\`\`html
+<!-- ✅ Correct -->
+<div style="background: #f5f5f5; border-radius: 8px; padding: 16px;">
+  <p>Styled content inside a div</p>
+</div>
+
+<!-- ❌ WRONG - styling will be ignored -->
+<p style="background: #f5f5f5; border-radius: 8px;">Styled text</p>
+<h2 style="background: blue; color: white;">Styled heading</h2>
+\`\`\`
+
+---
+
+## 12. Color Format in PptxGenJS
+
+**CRITICAL: Never use \`#\` prefix with hex colors in PptxGenJS APIs.**
+
+Using \`#\` causes file corruption.
+
+\`\`\`javascript
+// ✅ Correct
+color: "FF0000"
+fill: { color: "0066CC" }
+chartColors: ["4472C4", "ED7D31", "A5A5A5"]
+line: { color: "000000", width: 2 }
+
+// ❌ WRONG - causes file corruption
+color: "#FF0000"
+fill: { color: "#0066CC" }
+chartColors: ["#4472C4", "#ED7D31"]
+\`\`\`
+
+---
+
+## 13. Gradient & Background Support
+
+Gradients and backgrounds are supported on block elements:
+
+\`\`\`css
+/* Linear gradient */
+background: linear-gradient(135deg, #color1 0%, #color2 100%);
+
+/* Radial gradient */
+background: radial-gradient(circle, #color1 0%, #color2 100%);
+
+/* Background image */
+background: url(path/to/image.png);
+
+/* Solid color */
+background: var(--color-primary);
+background-color: #f5f5f5;
+\`\`\`
+
+### Border Support
+
+\`\`\`css
+/* Uniform borders */
+border: 1px solid var(--color-border);
+
+/* Partial borders */
+border-left: 4px solid var(--color-primary);
+border-bottom: 2px solid #333;
+\`\`\`
+
+### Border Radius
+
+\`\`\`html
+<!-- Standard radius -->
+<div class="rounded">...</div>
+
+<!-- Pill shape (fully rounded) -->
+<div class="pill">...</div>
+
+<!-- Custom radius -->
+<div style="border-radius: 12px;">...</div>
+\`\`\`
+
+---
+
+## 14. Box Shadows
+
+**Only outer shadows are supported.** PowerPoint does not support inset shadows.
+
+\`\`\`css
+/* ✅ Supported - outer shadow */
+box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+/* ❌ NOT supported - inset shadow */
+box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+\`\`\`
+
+---
+
+## 15. Aspect Ratios
+
+| Aspect Ratio | HTML Dimensions | PptxGenJS Layout |
+|--------------|-----------------|------------------|
+| 16:9 (default) | 960 × 540px | \`LAYOUT_16x9\` |
+| 4:3 | 960 × 720px | \`LAYOUT_4x3\` |
+| 16:10 | 960 × 600px | \`LAYOUT_16x10\` |
+
+**HTML and JavaScript must match:**
+
+\`\`\`html
+<!-- For 16:9 -->
+<body style="width: 960px; height: 540px;">
+\`\`\`
+
+\`\`\`javascript
+const pptx = new pptxgen();
+pptx.layout = "LAYOUT_16x9";  // Must match HTML dimensions
+\`\`\`
+
+---
+
+## 16. Visual Validation
+
+**Required step after generating PPTX.** Do not skip.
+
+### Validation Process
+
+\`\`\`bash
+# 1. Convert PPTX to PDF
+soffice --headless --convert-to pdf output.pptx
+
+# 2. Convert PDF to images
+pdftoppm -jpeg -r 150 output.pdf slide
+# Creates: slide-1.jpg, slide-2.jpg, etc.
+
+# 3. For specific pages only
+pdftoppm -jpeg -r 150 -f 2 -l 5 output.pdf slide
+\`\`\`
+
+### What to Check
+
+- **Text cutoff:** Text being cut off by shapes or slide edges
+- **Text overlap:** Text overlapping with other text or shapes
+- **Positioning issues:** Content too close to boundaries
+- **Contrast issues:** Insufficient contrast between text and backgrounds
+- **Alignment problems:** Elements not properly aligned
+- **Visual hierarchy:** Important content properly emphasized
+
+### Fix Priority Order
+
+1. **Increase margins** - Add more padding/spacing
+2. **Adjust font size** - Reduce text size to fit
+3. **Rethink layout** - Redesign the slide if above fixes don't work
+
+---
+
+## 17. Chart/Table Layout
+
+### Recommended Layouts
+
+**Two-column layout (PREFERRED):**
+- Header spanning full width
+- Text/bullets in one column (40%)
+- Chart/table in other column (60%)
+
+\`\`\`html
+<body class="col">
+  <div class="fit" style="width: 920px; margin: 0 20px;">
+    <h1>Quarterly Results</h1>
+  </div>
+  <div class="row gap-lg fill-height" style="padding: 10px 20px;">
+    <div class="col" style="width: 40%;">
+      <h3>Key Highlights</h3>
+      <ul>
+        <li>Revenue up 15%</li>
+        <li>New markets entered</li>
+      </ul>
+    </div>
+    <div class="placeholder" style="width: 60%;"></div>
+  </div>
+</body>
+\`\`\`
+
+**Full-slide layout:**
+- Chart/table takes entire slide for maximum impact
+
+**NEVER do:**
+- Vertically stack charts below text in single column
+- Place charts/tables in narrow spaces
+
+---
+
+## 18. Icons
+
+Use react-icons for consistent, high-quality SVG icons.
+
+### Setup
+
+\`\`\`javascript
+const React = require("react");
+const ReactDOMServer = require("react-dom/server");
+const { FaHome, FaChartBar, FaUsers } = require("react-icons/fa");
+\`\`\`
+
+### Generate SVG String
+
+\`\`\`javascript
+function renderIconSvg(IconComponent, color, size = "48") {
+  return ReactDOMServer.renderToStaticMarkup(
+    React.createElement(IconComponent, { color: color, size: size })
+  );
+}
+
+const homeIcon = renderIconSvg(FaHome, "#4472c4", "48");
+const chartIcon = renderIconSvg(FaChartBar, "#ed7d31", "32");
+\`\`\`
+
+### Use in HTML
+
+\`\`\`html
+<div style="width: 48px; height: 48px;">
+  \${homeIcon}
+</div>
+\`\`\`
+
+### Icon Best Practices
+
+- Use consistent icon set (all outline OR all filled)
+- Keep icons small (24-48px typical, 64px max)
+- Choose immediately recognizable icons
+- Use color strategically - monochrome with one accent
+- Maximum 3-5 icons per slide
+- Never use icons as pure decoration
+
+---
+
+## 19. Running Scripts
+
+### Prerequisites
+
+\`\`\`bash
+# 1. Extract the html2pptx library
+mkdir -p html2pptx && tar -xzf skills/public/pptx/html2pptx.tgz -C html2pptx
+\`\`\`
+
+### Script Structure
+
+\`\`\`javascript
+const pptxgen = require("pptxgenjs");
+const { html2pptx } = require("./html2pptx");  // Relative path!
+
+async function createPresentation() {
+  const pptx = new pptxgen();
+  pptx.layout = "LAYOUT_16x9";
+  pptx.author = "Your Name";
+  pptx.title = "Presentation Title";
+
+  // Add slides
+  await html2pptx("slide1.html", pptx);
+  
+  const { slide, placeholders } = await html2pptx("slide2.html", pptx);
+  slide.addChart(pptx.charts.BAR, chartData, placeholders[0]);
+
+  // Save
+  await pptx.writeFile("output.pptx");
+}
+
+createPresentation().catch(console.error);
+\`\`\`
+
+### Run Command
+
+\`\`\`bash
+NODE_PATH="$(npm root -g)" node your-script.js 2>&1
+\`\`\`
+
+### Common Errors
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| Module not found | Library not extracted | Run the tar extraction command |
+| \`require("@ant/html2pptx")\` | Wrong import path | Use \`require("./html2pptx")\` |
+| Timeout | Wrong arguments to html2pptx | Pass (htmlFilePath, pptx) |
+
+---
+
+## 20. Common Pitfalls
+
+### Quick Reference Table
+
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| Text missing in PPTX | Text not in \`<p>\`, \`<h1-6>\`, \`<ul>\`, \`<ol>\` | Wrap all text in proper tags |
+| Layout broken | Using \`display: flex\` inline | Use \`.row\` / \`.col\` classes |
+| Colors wrong/corrupt | Using \`#\` prefix in pptxgenjs | Remove \`#\` from all hex colors |
+| Background ignored | Applied to text element | Apply to wrapping \`<div>\` |
+| Title wrapping unexpectedly | Narrow text box | Use full-width container (920px) |
+| Font rendering issues | Non-web-safe fonts | Use Arial, Georgia, etc. only |
+| Styling not applied | Styles on \`<p>\`, \`<h1>\`, etc. | Move styles to parent \`<div>\` |
+| Content cut off | Overflow beyond 960×540 | Reduce content or font sizes |
+| Manual bullets appear | Using •, -, * characters | Use \`<ul>\` or \`<ol>\` lists |
+| nowrap not working | PowerPoint ignores it | Make container wide enough |
+| Inset shadow missing | Not supported | Use outer shadows only |
+| Chart colors wrong | \`#\` prefix in chartColors | Use \`["4472C4"]\` not \`["#4472C4"]\` |
+
+### Pre-Flight Checklist
+
+Before generating your PPTX:
+
+- [ ] Body dimensions set to 960×540 (or appropriate aspect ratio)
+- [ ] All text wrapped in \`<p>\`, \`<h1-6>\`, \`<ul>\`, or \`<ol>\`
+- [ ] Using \`.row\`/\`.col\` classes instead of inline flexbox
+- [ ] Web-safe fonts only (Arial, Georgia, etc.)
+- [ ] Backgrounds/borders only on block elements
+- [ ] No \`#\` prefix in any pptxgenjs color values
+- [ ] No manual bullet symbols (•, -, *)
+- [ ] No \`white-space: nowrap\`
+- [ ] Charts use placeholders, not HTML rendering
+- [ ] Title in full-width container (920px)
+
+---
+
+## Quick Start Template
+
+\`\`\`html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Slide Template</title>
+  <style>
+    :root {
+      --color-primary: #1791e8;
+      --color-primary-foreground: #ffffff;
+    }
+  </style>
+</head>
+<body class="col bg-surface" style="width: 960px; height: 540px;">
+  <!-- Title Zone -->
+  <div style="width: 920px; margin: 0 20px; padding-top: 20px;" class="fit">
+    <h1 style="margin: 0;">Slide Title Here</h1>
+  </div>
+  
+  <!-- Content Zone -->
+  <div class="fill-height row gap-lg" style="padding: 10px 20px;">
+    <div class="col" style="width: 50%;">
+      <h3>Section Header</h3>
+      <ul>
+        <li>First point</li>
+        <li>Second point</li>
+        <li>Third point</li>
+      </ul>
+    </div>
+    <div class="col" style="width: 50%;">
+      <div class="placeholder"></div>
+    </div>
+  </div>
+  
+  <!-- Footnote Zone -->
+  <p style="position: absolute; bottom: 8px; left: 20px; font-size: 10pt; color: #666; margin: 0;">
+    Source: Your data source
+  </p>
+</body>
+</html>
+\`\`\`
+
+\`\`\`javascript
+// create-presentation.js
+const pptxgen = require("pptxgenjs");
+const { html2pptx } = require("./html2pptx");
+
+async function main() {
+  const pptx = new pptxgen();
+  pptx.layout = "LAYOUT_16x9";
+  
+  await html2pptx("slide.html", pptx);
+  
+  await pptx.writeFile("presentation.pptx");
+  console.log("Done!");
+}
+
+main().catch(console.error);
+\`\`\`
+
+\`\`\`bash
+# Run
+NODE_PATH="$(npm root -g)" node create-presentation.js 2>&1
+\`\`\`
+
+---
+
+## Dependencies
+
+Required packages (should be pre-installed):
+
+- **pptxgenjs:** \`npm install -g pptxgenjs\`
+- **playwright:** \`npm install -g playwright\`
+- **react-icons:** \`npm install -g react-icons react react-dom\`
+- **LibreOffice:** For PDF conversion (validation step)
+- **Poppler:** \`sudo apt-get install poppler-utils\` (for pdftoppm)
+`;

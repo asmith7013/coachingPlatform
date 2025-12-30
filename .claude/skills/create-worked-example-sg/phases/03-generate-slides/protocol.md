@@ -7,7 +7,8 @@
 **Delegates to:**
 - `card-patterns/simple-patterns/` → For title zones, content boxes, CFU/Answer overlays
 - `card-patterns/complex-patterns/` → For SVG graphs, annotations, printable slides
-- `visuals/svg-graphs.md` → For pixel calculation formulas (SVG only)
+- `visuals/svg-graphs.md` → For pixel calculation formulas (coordinate graph SVGs)
+- `visuals/diagram-patterns.md` → **PRIMARY REFERENCE for non-graph SVGs** (tape diagrams, hangers, input-output, etc.)
 
 **Don't duplicate here:** High-level workflow (see `index.md`), layout presets (see `reference/layout-presets.md`).
 
@@ -133,9 +134,12 @@ Add the appropriate box BEFORE the closing `</body>` tag:
    - **content-box**: Main text content (instructions, questions, explanations)
    - **svg-card**: Graph or diagram (if visual slide)
    - Use patterns from `card-patterns/` folder as HTML snippets
-4. **IF Visual Type = "SVG graphs"**: Read `visuals/svg-graphs.md` FIRST
-5. **VERIFY** the Pre-Flight Checklist below
-6. **WRITE** slide file using Write tool (file starts with `<!DOCTYPE html>`)
+4. **IF Visual Type = "coordinate-graph"**: Read `visuals/svg-graphs.md` FIRST
+5. **IF Visual Type = "diagram" (non-graph SVG)**: Read `visuals/diagram-patterns.md` FIRST
+   - Includes: tape diagrams, hanger diagrams, double number lines, input-output tables, area models
+   - Based on Illustrative Mathematics (IM) curriculum representations
+6. **VERIFY** the Pre-Flight Checklist below
+7. **WRITE** slide file using Write tool (file starts with `<!DOCTYPE html>`)
 
 ---
 

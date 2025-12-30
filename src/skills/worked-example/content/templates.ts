@@ -53,31 +53,32 @@ export const TITLE_ZONE = `
 <!-- Title Zone Container -->
 <div style="width: 920px; margin: 0 20px; padding-top: 16px; padding-bottom: 16px;" class="fit">
 
-  <!-- Step Badge (position FIXED: 20, 16, 180, 35) -->
+  <!-- Badge + Title Row (same line) -->
   <div class="row items-center gap-md" style="margin-bottom: 8px;">
+    <!-- Step Badge (position FIXED: 20, 16, 100, 30) -->
     <div data-pptx-region="badge"
          data-pptx-x="20" data-pptx-y="16"
-         data-pptx-w="180" data-pptx-h="35"
-         style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
-      <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
+         data-pptx-w="100" data-pptx-h="30"
+         style="background: #1791e8; color: #ffffff; padding: 4px 12px; border-radius: 16px; display: inline-block; flex-shrink: 0;">
+      <p style="margin: 0; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
         {{badge_text}}
       </p>
     </div>
+
+    <!-- Main Title (position FIXED: 130, 16, 810, 30) - same row as badge -->
+    <h1 data-pptx-region="title"
+        data-pptx-x="130" data-pptx-y="16"
+        data-pptx-w="810" data-pptx-h="30"
+        style="margin: 0; font-size: 22px; font-weight: bold; color: #1791e8; line-height: 1.2;">
+      {{title}}
+    </h1>
   </div>
 
-  <!-- Main Title (position FIXED: 20, 55, 920, 40) -->
-  <h1 data-pptx-region="title"
-      data-pptx-x="20" data-pptx-y="55"
-      data-pptx-w="920" data-pptx-h="40"
-      style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">
-    {{title}}
-  </h1>
-
-  <!-- Subtitle / Instruction (position FIXED: 20, 100, 920, 30) -->
+  <!-- Subtitle / Instruction (position FIXED: 20, 55, 920, 30) -->
   <p data-pptx-region="subtitle"
-     data-pptx-x="20" data-pptx-y="100"
+     data-pptx-x="20" data-pptx-y="55"
      data-pptx-w="920" data-pptx-h="30"
-     style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">
+     style="margin: 0; color: #1d1d1d; font-size: 16px; line-height: 1.4;">
     {{subtitle}}
   </p>
 
@@ -331,6 +332,74 @@ export const CFU_ANSWER_CARD = `
   - Answer slides: use answer-box
   ============================================================
 -->
+`;
+
+/**
+ * SVG Card - Container for graphs and diagrams
+ * Includes layering system for PPTX animations
+ * Workflow: Fill placeholders, add SVG content inside layers
+ *
+ * Source: card-patterns/svg-card.html
+ */
+export const SVG_CARD = `
+<!--
+  ============================================================
+  SVG CARD - Graphs, diagrams, and visual content
+  ============================================================
+  Use for: Coordinate plane graphs, diagrams, visual representations
+
+  Data attributes for PPTX export:
+  - data-pptx-region: "svg-container"
+  - data-pptx-x, y, w, h: Position in pixels (960x540 coordinate system)
+  - data-svg-region: "true" (marks this for SVG rendering)
+
+  Layering for animations:
+  - Use data-layer="base" for static elements (axes, grid)
+  - Use data-layer="layer-1", "layer-2" for progressive reveal
+  - Layers render as separate images for PPTX animation
+
+  POSITION VALUES: See reference/region-defaults.md for svg-container position.
+  ============================================================
+-->
+
+<!-- SVG container (standard two-column right) -->
+<div id="svg-container"
+     data-pptx-region="svg-container"
+     data-pptx-x="{{svg-container.x}}" data-pptx-y="{{svg-container.y}}"
+     data-pptx-w="{{svg-container.w}}" data-pptx-h="{{svg-container.h}}"
+     data-svg-region="true"
+     class="col center"
+     style="background: #f5f5f5; border-radius: 8px; padding: 12px;">
+  <svg viewBox="0 0 520 350" style="width: 520px; height: 350px;">
+    <!-- Base layer: Axes and grid (always visible) -->
+    <g data-layer="base">
+      <!-- Grid, axes, labels -->
+    </g>
+
+    <!-- Layer 1: First data series (appears on click) -->
+    <g data-layer="layer-1">
+      <!-- Line, points, labels -->
+    </g>
+
+    <!-- Layer 2: Second data series (appears on next click) -->
+    <g data-layer="layer-2">
+      <!-- Line, points, labels -->
+    </g>
+  </svg>
+</div>
+
+<!-- Full-width SVG (for content layout) -->
+<div id="svg-container"
+     data-pptx-region="svg-container"
+     data-pptx-x="{{content.x}}" data-pptx-y="{{content.y}}"
+     data-pptx-w="{{content.w}}" data-pptx-h="{{content.h}}"
+     data-svg-region="true"
+     class="center"
+     style="background: #f5f5f5; border-radius: 8px; padding: 16px;">
+  <svg viewBox="0 0 880 320" style="width: 880px; height: 320px;">
+    <!-- Full-width graph content -->
+  </svg>
+</div>
 `;
 
 /**
