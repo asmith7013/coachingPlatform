@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { PencilIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { Badge } from '@/components/core/feedback/Badge';
-import { SectionAccordion } from '@/components/composed/section-visualization';
+import { SectionAccordion, AccordionItem } from '@/components/composed/section-visualization';
 import type { WizardStateHook } from '../hooks/useWizardState';
 import type { Scenario, GraphPlan } from '../lib/types';
 import type { HtmlSlide } from '@zod-schema/scm/worked-example';
@@ -148,6 +148,8 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
   const [aiEditPrompt, setAiEditPrompt] = useState('');
   const [isAiEditing, setIsAiEditing] = useState(false);
   const [aiEditError, setAiEditError] = useState<string | null>(null);
+  // Track which scenario's graph plan is open (only worked example open by default)
+  const [openGraphPlans, setOpenGraphPlans] = useState<Set<number>>(new Set([0]));
   const abortControllerRef = useRef<AbortController | null>(null);
   const accumulatedSlidesRef = useRef<HtmlSlide[]>([]);
 
@@ -574,11 +576,26 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                         <p className="text-sm text-gray-600">{scenario.description}</p>
                       </div>
 
-                      {/* Graph Plan (if coordinate-graph) */}
+                      {/* Graph Plan (if coordinate-graph) - nested accordion */}
                       {scenario.graphPlan && (
-                        <div className="pt-4 border-t border-gray-200 mt-4">
-                          <h4 className="text-sm font-semibold text-gray-700 mb-3">Graph Plan</h4>
-                          <GraphPlanDisplay graphPlan={scenario.graphPlan} compact />
+                        <div className="mt-4 border-t border-gray-200">
+                          <AccordionItem
+                            title="Graph Plan"
+                            isOpen={openGraphPlans.has(index)}
+                            onToggle={() => {
+                              setOpenGraphPlans(prev => {
+                                const next = new Set(prev);
+                                if (next.has(index)) {
+                                  next.delete(index);
+                                } else {
+                                  next.add(index);
+                                }
+                                return next;
+                              });
+                            }}
+                          >
+                            <GraphPlanDisplay graphPlan={scenario.graphPlan} compact />
+                          </AccordionItem>
                         </div>
                       )}
                     </div>
