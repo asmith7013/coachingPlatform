@@ -90,7 +90,8 @@ You MUST return valid JSON matching this exact structure:
     "commonMistakes": ["mistake 1", "mistake 2"],
     "requiredPriorKnowledge": ["prereq 1", "prereq 2"],
     "answerFormat": "how answer should be presented",
-    "visualType": "HTML/CSS" | "HTML diagrams" | "SVG graphs",
+    "visualType": "text-only" | "html-table" | "svg-visual",
+    "svgSubtype": "coordinate-graph" | "diagram" | "shape" | "number-line" | "other",  // only if visualType is "svg-visual"
     "graphPlan": {
       "equations": [
         {
@@ -407,7 +408,8 @@ export function buildGenerateSlidesPrompt(
     problemType: string;
     mathematicalStructure: string;
     solution: { step: number; description: string; reasoning: string }[];
-    visualType: 'HTML/CSS' | 'HTML diagrams' | 'SVG graphs';
+    visualType: 'text-only' | 'html-table' | 'svg-visual';
+    svgSubtype?: 'coordinate-graph' | 'diagram' | 'shape' | 'number-line' | 'other';
     graphPlan?: {
       equations: {
         label: string;
@@ -438,9 +440,9 @@ export function buildGenerateSlidesPrompt(
     description: string;
   }[]
 ): string {
-  // Build graph plan section if visualType is SVG graphs
+  // Build graph plan section if visualType is svg-visual with coordinate-graph subtype
   let graphPlanSection = '';
-  if (problemAnalysis.visualType === 'SVG graphs' && problemAnalysis.graphPlan) {
+  if (problemAnalysis.visualType === 'svg-visual' && problemAnalysis.svgSubtype === 'coordinate-graph' && problemAnalysis.graphPlan) {
     const gp = problemAnalysis.graphPlan;
     const xMax = gp.scale.xMax;
     const yMax = gp.scale.yMax;
@@ -542,40 +544,45 @@ Description: ${s.description}
 
 ## Instructions - PPTX-Compatible Slides
 
-Generate exactly **15 PPTX-compatible HTML slides** following this structure:
+Generate exactly **11 PPTX-compatible HTML slides** following this structure:
 
 **All slides must be 960×540px, light theme (white background), Arial font, NO JavaScript.**
+
+**CFU/Answer boxes use PPTX animation** - they appear on click during presentation. Include them directly in the slide with \`data-pptx-region="cfu-box"\` or \`data-pptx-region="answer-box"\` attributes.
 
 **Intro (2 slides):**
 1. **Learning Goal** - Strategy name + summary (use SLIDE_LEARNING_GOAL_TEMPLATE)
 2. **Problem Setup** - Scenario 1 introduction with visual (use SLIDE_TWO_COLUMN_TEMPLATE)
 
-**Step 1 (4 slides):**
-3. **Step 1 Question** - Show problem, prompt for first step
-4. **Step 1 + CFU** - COPY slide 3 exactly + add CFU box (paired slide)
-5. **Step 1 Answer** - Show the answer to step 1
-6. **Step 1 + Answer Box** - COPY slide 5 exactly + add Answer box (paired slide)
+**Step 1 (2 slides):**
+3. **Step 1 Question + CFU** - Show problem, prompt for first step, include CFU box (animated)
+4. **Step 1 Answer** - Show the answer to step 1, include Answer box (animated)
 
-**Step 2 (4 slides):**
-7. **Step 2 Question** - Show problem with step 1 complete, prompt for step 2
-8. **Step 2 + CFU** - COPY slide 7 exactly + add CFU box (paired slide)
-9. **Step 2 Answer** - Show the answer to step 2
-10. **Step 2 + Answer Box** - COPY slide 9 exactly + add Answer box (paired slide)
+**Step 2 (2 slides):**
+5. **Step 2 Question + CFU** - Show problem with step 1 complete, include CFU box (animated)
+6. **Step 2 Answer** - Show the answer to step 2, include Answer box (animated)
 
 **Step 3 (2 slides):**
-11. **Step 3 Question** - Show problem with steps 1-2 complete, prompt for final step
-12. **Step 3 + Answer** - COPY slide 11 exactly + add Answer box (paired slide)
+7. **Step 3 Question + CFU** - Show problem with steps 1-2 complete, include CFU box (animated)
+8. **Step 3 Answer** - Show final answer, include Answer box (animated)
 
 **Practice (2 slides):**
-13. **Practice 1** - Scenario 2, ZERO scaffolding (use SLIDE_PRACTICE_TEMPLATE)
-14. **Practice 2** - Scenario 3, ZERO scaffolding (use SLIDE_PRACTICE_TEMPLATE)
+9. **Practice 1** - Scenario 2, ZERO scaffolding (use SLIDE_PRACTICE_TEMPLATE)
+10. **Practice 2** - Scenario 3, ZERO scaffolding (use SLIDE_PRACTICE_TEMPLATE)
 
 **Printable (1 slide):**
-15. **Printable Worksheet** - ALL practice problems in ONE slide with multiple print-page divs
+11. **Printable Worksheet** - ALL practice problems in ONE slide with multiple print-page divs
    - White background, black text, Times New Roman font
    - Each print-page: 8.5in x 11in
    - Include @media print CSS
    - NO strategy reminders - only problem content
+
+## CFU/Answer Box PPTX Attributes (REQUIRED)
+
+CFU boxes MUST include: \`data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"\`
+Answer boxes MUST include: \`data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"\`
+
+These attributes enable PPTX animation (appear on click).
 
 ## ⚠️ CRITICAL OUTPUT RULES
 
@@ -583,30 +590,25 @@ Generate exactly **15 PPTX-compatible HTML slides** following this structure:
 
 DO NOT include:
 - Checkpoint annotations like "SLIDE 3: Step 1 Question"
-- Comments about "Paired: Yes/No" or "Action: copy-and-add-cfu"
 - Any text before \`<!DOCTYPE html>\`
 - HTML comments with slide metadata
 
 The slides you output should contain ONLY valid HTML starting with \`<!DOCTYPE html>\` and ending with \`</html>\`.
 
-**Slide type reference (ALL 15 SLIDES):**
-| # | Type | Is Paired? | Action |
-|---|------|------------|--------|
+**Slide type reference (ALL 11 SLIDES):**
+| # | Type | Has CFU/Answer? | Action |
+|---|------|-----------------|--------|
 | 1 | Learning Goal | No | generate-new |
 | 2 | Problem Setup | No | generate-new |
-| 3 | Step 1 Question | No | generate-new |
-| 4 | Step 1 + CFU | **YES** | copy-and-add-cfu (from slide 3) |
-| 5 | Step 1 Answer | No | generate-new |
-| 6 | Step 1 + Answer | **YES** | copy-and-add-answer (from slide 5) |
-| 7 | Step 2 Question | No | generate-new |
-| 8 | Step 2 + CFU | **YES** | copy-and-add-cfu (from slide 7) |
-| 9 | Step 2 Answer | No | generate-new |
-| 10 | Step 2 + Answer | **YES** | copy-and-add-answer (from slide 9) |
-| 11 | Step 3 Question | No | generate-new |
-| 12 | Step 3 + Answer | **YES** | copy-and-add-answer (from slide 11) |
-| 13 | Practice 1 | No | generate-new |
-| 14 | Practice 2 | No | generate-new |
-| 15 | Printable | No | generate-new |
+| 3 | Step 1 Question + CFU | CFU box (animated) | generate-new |
+| 4 | Step 1 Answer | Answer box (animated) | generate-new |
+| 5 | Step 2 Question + CFU | CFU box (animated) | generate-new |
+| 6 | Step 2 Answer | Answer box (animated) | generate-new |
+| 7 | Step 3 Question + CFU | CFU box (animated) | generate-new |
+| 8 | Step 3 Answer | Answer box (animated) | generate-new |
+| 9 | Practice 1 | No | generate-new |
+| 10 | Practice 2 | No | generate-new |
+| 11 | Printable | No | generate-new |
 
 Use ===SLIDE_SEPARATOR=== between each slide.
 Each slide MUST have body with width: 960px; height: 540px.`;

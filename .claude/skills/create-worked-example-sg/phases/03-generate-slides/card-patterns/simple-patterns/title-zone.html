@@ -16,31 +16,32 @@
 <!-- Title Zone Container -->
 <div style="width: 920px; margin: 0 20px; padding-top: 16px; padding-bottom: 16px;" class="fit">
 
-  <!-- Step Badge (position FIXED: 20, 16, 180, 35) -->
+  <!-- Badge + Title Row (same line) -->
   <div class="row items-center gap-md" style="margin-bottom: 8px;">
+    <!-- Step Badge (position FIXED: 20, 16, 100, 30) -->
     <div data-pptx-region="badge"
          data-pptx-x="20" data-pptx-y="16"
-         data-pptx-w="180" data-pptx-h="35"
-         style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
-      <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
+         data-pptx-w="100" data-pptx-h="30"
+         style="background: #1791e8; color: #ffffff; padding: 4px 12px; border-radius: 16px; display: inline-block; flex-shrink: 0;">
+      <p style="margin: 0; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
         {{badge_text}}
       </p>
     </div>
+
+    <!-- Main Title (position FIXED: 130, 16, 810, 30) - same row as badge -->
+    <h1 data-pptx-region="title"
+        data-pptx-x="130" data-pptx-y="16"
+        data-pptx-w="810" data-pptx-h="30"
+        style="margin: 0; font-size: 22px; font-weight: bold; color: #1791e8; line-height: 1.2;">
+      {{title}}
+    </h1>
   </div>
 
-  <!-- Main Title (position FIXED: 20, 55, 920, 40) -->
-  <h1 data-pptx-region="title"
-      data-pptx-x="20" data-pptx-y="55"
-      data-pptx-w="920" data-pptx-h="40"
-      style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">
-    {{title}}
-  </h1>
-
-  <!-- Subtitle / Instruction (position FIXED: 20, 100, 920, 30) -->
+  <!-- Subtitle / Instruction (position FIXED: 20, 55, 920, 30) -->
   <p data-pptx-region="subtitle"
-     data-pptx-x="20" data-pptx-y="100"
+     data-pptx-x="20" data-pptx-y="55"
      data-pptx-w="920" data-pptx-h="30"
-     style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">
+     style="margin: 0; color: #1d1d1d; font-size: 16px; line-height: 1.4;">
     {{subtitle}}
   </p>
 

@@ -1,6 +1,27 @@
 import { z } from 'zod';
 import { GradeZod } from '@zod-schema/scm/scope-and-sequence/scope-and-sequence';
 
+/**
+ * Deck-level visual type (determined during Phase 1 planning)
+ * - text-only: No graphics needed (rare - pure text/equation problems)
+ * - html-table: Simple data tables with highlighting
+ * - svg-visual: ALL other graphics (graphs, diagrams, shapes, etc.)
+ */
+export const DeckVisualTypeSchema = z.enum(['text-only', 'html-table', 'svg-visual']);
+export type DeckVisualType = z.infer<typeof DeckVisualTypeSchema>;
+
+/**
+ * SVG subtype (only applicable when visualType is 'svg-visual')
+ */
+export const SvgSubtypeSchema = z.enum([
+  'coordinate-graph',
+  'diagram',
+  'shape',
+  'number-line',
+  'other',
+]);
+export type SvgSubtype = z.infer<typeof SvgSubtypeSchema>;
+
 // HTML Slide script schema
 const HtmlSlideScriptSchema = z.object({
   type: z.enum(['cdn', 'inline']),
@@ -35,6 +56,10 @@ export const WorkedExampleDeckSchema = z.object({
   unitNumber: z.number().int().positive().optional(), // Unit number (matches scope-and-sequence)
   lessonNumber: z.number().int().optional(), // Lesson number (matches scope-and-sequence, can be 0 or negative for ramp-ups)
   scopeAndSequenceId: z.string().optional(), // Link to scope-and-sequence collection
+
+  // Visual type (determined during Phase 1 planning)
+  deckVisualType: DeckVisualTypeSchema.optional(), // text-only | html-table | svg-visual
+  svgSubtype: SvgSubtypeSchema.optional(), // Only if deckVisualType is 'svg-visual'
 
   // HTML Slides (required)
   htmlSlides: z.array(HtmlSlideSchema).min(1),

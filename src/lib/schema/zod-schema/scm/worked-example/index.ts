@@ -4,10 +4,14 @@
 export {
   WorkedExampleDeckSchema,
   CreateWorkedExampleDeckSchema,
+  DeckVisualTypeSchema,
+  SvgSubtypeSchema,
   type WorkedExampleDeck,
   type CreateWorkedExampleDeckInput,
   type HtmlSlide,
   type HtmlSlideScript,
+  type DeckVisualType,
+  type SvgSubtype,
 } from './deck';
 
 // Slide constants (pixel dimensions)

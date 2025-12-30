@@ -198,31 +198,40 @@ CFU/Answer boxes use **PPTX animation** (appear on click) - no duplicate slides 
 
 ---
 
-## Visual Type Selection
+## Visual Type Reference
 
-Choose the right visual approach based on the problem:
+Your visual type was determined in Phase 1. Here's what each requires:
 
-**Use HTML/CSS when:**
-- Simple tables with highlighting
-- Text-based problems
-- Static equations
-- No complex graphics needed
+**Text-only:**
+- No graphics - pure text/equation problems
+- Use content-box patterns only
 
-**Use SVG when:**
+**HTML table:**
+- Simple data tables with highlighting
+- Use `<table>` with inline styles
+- See `card-patterns/simple-patterns/content-box.html` for table examples
+
+**SVG visual (ALL other graphics):**
 - Coordinate planes and graphs
-- Custom diagrams
-- Data visualizations
-- Mathematical plots
+- Hanger diagrams and balance problems
+- Geometric shapes and diagrams
+- Number lines and bar models
+- Any custom visual representation
 
-**Note:** For PPTX compatibility, SVGs must follow specific patterns. See `visuals/svg-graphs.md` for SVG container requirements.
+**CRITICAL:** For PPTX compatibility, ALL SVGs must:
+1. Be wrapped in a container with `data-pptx-region="svg-container"`
+2. Have position attributes: `data-pptx-x`, `data-pptx-y`, `data-pptx-w`, `data-pptx-h`
+3. Use `data-pptx-layer` for animation groups
+
+See `card-patterns/complex-patterns/graph-snippet.html` for the complete pattern.
 
 ---
 
-## SVG Coordinate Planes (THE COMPLEX CASE)
+## SVG Visual Implementation (THE COMPLEX CASE)
 
-**If your PROBLEM ANALYSIS from Phase 1 has Visual Type = "SVG graphs", this section is MANDATORY.**
+**If your PROBLEM ANALYSIS from Phase 1 has Visual Type = "SVG visual", this section is MANDATORY.**
 
-**SVG graphs are the ONLY component that requires the clone-and-modify workflow.** All other card-patterns use simple placeholder replacement.
+**SVG visuals are the ONLY component that requires the clone-and-modify workflow.** All other card-patterns use simple placeholder replacement.
 
 ### Step 1: Read the Graph Snippets
 
@@ -339,9 +348,10 @@ Before proceeding, verify:
 - [ ] Practice slides have zero scaffolding
 - [ ] Printable slide uses WHITE background, Times New Roman
 - [ ] No JavaScript, no onclick, no CSS animations
-- [ ] **IF SVG graphs:** Scale matches GRAPH PLAN from Phase 1
-- [ ] **IF SVG graphs:** Annotations match GRAPH PLAN type and position
-- [ ] **IF SVG graphs:** Completed SVG Graph Checklist from protocol.md
+- [ ] **IF SVG visual:** SVG container has data-pptx-region and position attributes
+- [ ] **IF SVG visual (coordinate-graph):** Scale matches SVG PLAN from Phase 1
+- [ ] **IF SVG visual:** Annotations match SVG PLAN type and positions
+- [ ] **IF SVG visual:** Completed SVG Checklist from protocol.md
 
 ---
 

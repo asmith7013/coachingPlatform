@@ -1,12 +1,18 @@
-import type { HtmlSlide } from '@zod-schema/scm/worked-example';
+import type { HtmlSlide, DeckVisualType, SvgSubtype } from '@zod-schema/scm/worked-example';
 
 // Grade levels matching the schema
 export type GradeLevel = '6' | '7' | '8' | 'Algebra 1';
 
-// Visual types for worked examples
-export type VisualType = 'HTML/CSS' | 'HTML diagrams' | 'SVG graphs';
+// Visual types for worked examples (from schema)
+// - 'text-only': No graphics needed (rare - pure text/equation problems)
+// - 'html-table': Simple data tables with highlighting
+// - 'svg-visual': ALL other graphics (graphs, diagrams, shapes, etc.)
+export type VisualType = DeckVisualType;
 
-// Graph plan for coordinate plane visualizations (required when visualType is 'SVG graphs')
+// SVG subtypes (only when VisualType is 'svg-visual')
+export type { SvgSubtype };
+
+// Graph plan for coordinate plane visualizations (required when svgSubtype is 'coordinate-graph')
 // This captures pre-calculated mathematical data to ensure accurate graph generation
 export interface GraphPlan {
   equations: {
@@ -60,7 +66,9 @@ export interface ProblemAnalysis {
   requiredPriorKnowledge: string[];
   answerFormat: string;
   visualType: VisualType;
-  // Graph plan - required when visualType is 'SVG graphs'
+  // SVG subtype - only when visualType is 'svg-visual'
+  svgSubtype?: SvgSubtype;
+  // Graph plan - required when svgSubtype is 'coordinate-graph'
   graphPlan?: GraphPlan;
 }
 
@@ -142,6 +150,7 @@ export interface WizardState {
   unitNumber: number | null;
   lessonNumber: number | null;
   lessonName: string;
+  section: string | null;
   scopeAndSequenceId: string | null;
   learningGoals: string[];
   masteryCheckImage: {
@@ -183,6 +192,7 @@ export type WizardAction =
   | { type: 'SET_UNIT_NUMBER'; payload: number | null }
   | { type: 'SET_LESSON_NUMBER'; payload: number | null }
   | { type: 'SET_LESSON_NAME'; payload: string }
+  | { type: 'SET_SECTION'; payload: string | null }
   | { type: 'SET_SCOPE_AND_SEQUENCE_ID'; payload: string | null }
   | { type: 'SET_LEARNING_GOALS'; payload: string[] }
   | { type: 'SET_MASTERY_IMAGE'; payload: { file: File | null; preview: string | null } }
@@ -217,6 +227,7 @@ export const initialWizardState: WizardState = {
   unitNumber: null,
   lessonNumber: null,
   lessonName: '',
+  section: null,
   scopeAndSequenceId: null,
   learningGoals: [],
   masteryCheckImage: {

@@ -127,15 +127,23 @@ These step verbs MUST:
 - Change the problem type between scenarios
 
 ### STEP 6: Determine Visual Type
-- **HTML/CSS**: Tables, text problems, static equations
-- **HTML diagrams**: Hanger diagrams, geometric shapes, balance problems
-- **SVG graphs**: Coordinate planes, linear equations, graphs, data visualizations
 
-### STEP 7: Graph Planning (REQUIRED if Visual Type is "SVG graphs")
+**CRITICAL: ALL graphics/diagrams MUST use SVG.** The only exception is simple HTML tables.
 
-**IF you selected "SVG graphs" above, you MUST complete graph planning NOW.**
+- **text-only**: No graphics needed (rare - pure text/equation problems)
+- **html-table**: Simple data tables with highlighting
+- **svg-visual**: ALL other graphics - this includes:
+  - Coordinate planes and graphs (svgSubtype: "coordinate-graph")
+  - Hanger diagrams and balance problems (svgSubtype: "diagram")
+  - Geometric shapes (svgSubtype: "shape")
+  - Number lines and bar models (svgSubtype: "number-line")
+  - Any custom visual (svgSubtype: "other")
 
-This ensures the math is calculated BEFORE slide generation:
+### STEP 7: SVG Planning (REQUIRED if Visual Type is "svg-visual")
+
+**IF you selected "svg-visual" above, you MUST plan your SVG now.**
+
+**For coordinate-graph subtype**, complete graph planning to ensure math is calculated BEFORE slide generation:
 
 **7a: List Your Equations**
 Write out every line/equation that will appear:
@@ -191,11 +199,13 @@ What mathematical relationship to show?
 - [ ] CFU question templates reference strategy verbs
 - [ ] ALL 3 scenarios use DIFFERENT contexts from the mastery check
 - [ ] All scenarios use the SAME mathematical structure and strategy
-- [ ] **IF visualType is "SVG graphs":**
-  - [ ] graphPlan.equations has ALL lines with slope and y-intercept values
-  - [ ] graphPlan.keyPoints has calculated y-values at key x positions
-  - [ ] graphPlan.scale has xMax and yMax properly rounded
-  - [ ] graphPlan.annotations describes the mathematical relationship to highlight
+- [ ] **IF visualType is "svg-visual":**
+  - [ ] svgSubtype is specified (coordinate-graph, diagram, shape, number-line, or other)
+  - [ ] **IF svgSubtype is "coordinate-graph":**
+    - [ ] graphPlan.equations has ALL lines with slope and y-intercept values
+    - [ ] graphPlan.keyPoints has calculated y-values at key x positions
+    - [ ] graphPlan.scale has xMax and yMax properly rounded
+    - [ ] graphPlan.annotations describes the mathematical relationship to highlight
 `;
 
 /**

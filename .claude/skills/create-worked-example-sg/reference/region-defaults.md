@@ -16,10 +16,10 @@ MARGIN = 20
 All values in pixels. Format: `region: x, y, w, h`
 
 ```
-# Title Zone
-badge: 20, 16, 180, 35
-title: 20, 55, 920, 40
-subtitle: 20, 100, 920, 30
+# Title Zone (badge + title on same line)
+badge: 20, 16, 100, 30
+title: 130, 16, 810, 30
+subtitle: 20, 55, 920, 30
 footnote: 700, 8, 240, 25
 
 # Content Zone - Full Width

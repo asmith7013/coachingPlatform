@@ -116,21 +116,40 @@ After receiving the problem image, thoroughly analyze it:
 - Does it ask for explanation/reasoning?
 
 ### 1.3e: Determine visual type
-- **HTML/CSS**: Tables, text problems, static equations
-- **HTML diagrams**: Hanger diagrams, geometric shapes, balance problems
-- **SVG graphs**: Coordinate planes, linear equations, graphs, data visualizations
 
-### 1.3f: Graph Planning (REQUIRED if visual type is SVG graphs)
+**CRITICAL: ALL graphics/diagrams MUST use SVG.**
+SVG is required for PPTX export compatibility. The only exception is simple HTML tables.
 
-**IF you selected "SVG graphs" above, you MUST complete graph planning NOW.**
+**Visual Type Options:**
+- **Text-only**: No graphics needed (rare - only pure text/equation problems)
+- **HTML table**: Simple data tables with highlighting (HTML `<table>`)
+- **SVG visual**: ALL other graphics - this includes:
+  - Coordinate planes and graphs
+  - Hanger diagrams and balance problems
+  - Geometric shapes and diagrams
+  - Number lines and bar models
+  - Any custom visual representation
 
+**If your problem needs ANY visual beyond a simple table, you MUST use SVG.**
+
+### 1.3f: SVG Planning (REQUIRED if visual type is "SVG visual")
+
+**IF you selected "SVG visual" above, you MUST plan your SVG now.**
+
+**For coordinate plane graphs:**
 ```
 Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/graph-planning.md
 ```
-
 Complete ALL steps in that file and include the GRAPH PLAN in your output below.
 
-**IF you selected "HTML/CSS" or "HTML diagrams", skip to the output template.**
+**For other SVG types (diagrams, shapes, etc.):**
+Plan the visual elements:
+- What shapes/elements are needed?
+- What colors will represent each element?
+- What annotations will show the math?
+- How will the visual change across slides 2-8?
+
+**IF you selected "Text-only" or "HTML table", skip to the output template.**
 
 ### Output Template (YOU MUST COMPLETE THIS):
 
@@ -150,10 +169,13 @@ Key Challenge: [what makes this hard]
 Common Mistakes: [likely errors]
 Required Prior Knowledge: [prerequisites]
 Answer Format: [how answer should be presented]
-Visual Type: [HTML/CSS | HTML diagrams | SVG graphs]
+Visual Type: [Text-only | HTML table | SVG visual]
+SVG Subtype (if SVG visual): [coordinate-graph | diagram | shape | number-line | other]
 
-GRAPH PLAN (only if Visual Type is SVG graphs):
+SVG PLAN (only if Visual Type is "SVG visual"):
 ===============================================
+
+[FOR COORDINATE GRAPHS - use graph-planning.md:]
 Equations (with EXPLICIT slope and y-intercept):
 - Line 1: [equation], slope=[m], y-intercept=[b] ([color])
 - Line 2: [equation], slope=[m], y-intercept=[b] ([color])
@@ -176,6 +198,22 @@ Annotation:
 - Relationship to show: [what mathematical concept]
 - Annotation type: [y-intercept-shift / parallel-label / slope-comparison / etc.]
 - Label text: [e.g., "+20"]
+
+[FOR OTHER SVG TYPES (diagrams, shapes, etc.):]
+Elements:
+- Element 1: [shape/component] ([color])
+- Element 2: [shape/component] ([color])
+- ...
+
+Layout:
+- Container size: [width x height in viewBox]
+- Element positions: [how elements are arranged]
+
+Annotations across slides:
+- Slide 2: [initial state - what's shown]
+- Slides 3-4: [Step 1 - what changes/highlights]
+- Slides 5-6: [Step 2 - what changes/highlights]
+- Slides 7-8: [Step 3 - what changes/highlights]
 ```
 
 ---
@@ -278,7 +316,8 @@ Before proceeding, verify you have:
 - [ ] PROBLEM ANALYSIS template completed
 - [ ] STRATEGY DEFINITION template completed
 - [ ] Strategy has exactly 2-3 moves with consistent verbs
-- [ ] **IF visual type is SVG graphs:** GRAPH PLAN completed with scale and annotations
+- [ ] Visual type determined: Text-only, HTML table, or SVG visual
+- [ ] **IF visual type is SVG visual:** SVG PLAN completed (elements, layout, annotations per slide)
 - [ ] Progress file created at `src/app/presentations/{slug}/.worked-example-progress.json`
 
 ---
