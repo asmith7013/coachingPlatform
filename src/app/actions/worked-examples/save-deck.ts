@@ -3,7 +3,7 @@
 import { withDbConnection } from '@server/db/ensure-connection';
 import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
 import { CreateWorkedExampleDeckSchema, type CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import { handleServerError } from '@error/handlers/server';
 
 export async function saveWorkedExampleDeck(deckData: CreateWorkedExampleDeckInput) {
@@ -16,6 +16,16 @@ export async function saveWorkedExampleDeck(deckData: CreateWorkedExampleDeckInp
           success: false,
           error: 'Unauthorized. Please sign in to save a deck.',
         };
+      }
+
+      // Get user's email from Clerk for display
+      let createdByName = userId; // Fallback to userId
+      try {
+        const client = await clerkClient();
+        const user = await client.users.getUser(userId);
+        createdByName = user.emailAddresses[0]?.emailAddress || userId;
+      } catch {
+        // Silently fall back to userId if Clerk lookup fails
       }
 
       // Validate input with Zod
@@ -49,7 +59,7 @@ export async function saveWorkedExampleDeck(deckData: CreateWorkedExampleDeckInp
       const deck = await WorkedExampleDeck.create({
         ...validated,
         slug: finalSlug, // Use the unique slug
-        createdBy: userId,
+        createdBy: createdByName,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
