@@ -1,5 +1,9 @@
 import * as cheerio from 'cheerio';
 import { PptxElement, ParsedSlide } from './types';
+import { REGION_DEFAULTS } from './region-constants';
+
+// Re-export for backward compatibility
+export { REGION_DEFAULTS } from './region-constants';
 
 /**
  * Extract ALL elements with data-pptx-* attributes from HTML
@@ -56,6 +60,230 @@ export function extractPptxElements(html: string): PptxElement[] {
   });
 
   return elements;
+}
+
+// =============================================================================
+// STRUCTURE-BASED PARSING - Fallback for slides without data-pptx-* attributes
+// =============================================================================
+
+/**
+ * Extract color from inline style (text color)
+ * @deprecated Use extractBgFromStyle for backgrounds - kept for future use
+ */
+function _extractColorFromStyle(style: string | undefined): string | undefined {
+  if (!style) return undefined;
+  const match = style.match(/(?:^|[^-])color:\s*(#[a-f0-9]{6}|#[a-f0-9]{3})/i);
+  if (match) {
+    let color = match[1].replace('#', '').toUpperCase();
+    if (color.length === 3) {
+      color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+    }
+    return color;
+  }
+  return undefined;
+}
+
+/**
+ * Extract background color from inline style
+ */
+function extractBgFromStyle(style: string | undefined): string | undefined {
+  if (!style) return undefined;
+  const match = style.match(/background:\s*(#[a-f0-9]{6}|#[a-f0-9]{3})/i);
+  if (match) {
+    let color = match[1].replace('#', '').toUpperCase();
+    if (color.length === 3) {
+      color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+    }
+    return color;
+  }
+  return undefined;
+}
+
+/**
+ * Extract elements from HTML structure when data-pptx-* attributes are missing
+ * Uses heuristics to identify regions by their visual characteristics
+ */
+export function extractElementsFromStructure(html: string): PptxElement[] {
+  const elements: PptxElement[] = [];
+  const $ = cheerio.load(html);
+
+  // Track what we've found to avoid duplicates
+  const foundRegions = new Set<string>();
+
+  // ==========================================================================
+  // 1. TITLE ZONE - Look for badge, title, subtitle in first container
+  // ==========================================================================
+
+  // Find badge: div with blue background (#1791e8) containing uppercase text
+  $('div').each((_, el) => {
+    const $el = $(el);
+    const style = $el.attr('style') || '';
+    const bgColor = extractBgFromStyle(style);
+
+    // Badge: blue background, contains short uppercase text
+    if (bgColor === '1791E8' && !foundRegions.has('badge')) {
+      const text = $el.text().trim();
+      if (text.length < 50 && text === text.toUpperCase()) {
+        foundRegions.add('badge');
+        elements.push({
+          regionType: 'badge',
+          ...REGION_DEFAULTS.badge,
+          content: $el.html() || '',
+          bgColor,
+        });
+      }
+    }
+  });
+
+  // Find title: h1 element with primary color
+  const $h1 = $('h1').first();
+  if ($h1.length > 0 && !foundRegions.has('title')) {
+    foundRegions.add('title');
+    elements.push({
+      regionType: 'title',
+      ...REGION_DEFAULTS.title,
+      content: $h1.html() || '',
+    });
+  }
+
+  // Find subtitle: first p element after title (in title zone area)
+  // Look for p elements that appear to be subtitles (not in content boxes)
+  $('body > div').first().find('> p, > div > p').each((i, el) => {
+    if (i === 0 && !foundRegions.has('subtitle')) {
+      const $el = $(el);
+      const text = $el.text().trim();
+      // Subtitle should be meaningful text, not just a label
+      if (text.length > 10 && text.length < 200) {
+        foundRegions.add('subtitle');
+        elements.push({
+          regionType: 'subtitle',
+          ...REGION_DEFAULTS.subtitle,
+          content: $el.html() || '',
+        });
+      }
+    }
+  });
+
+  // ==========================================================================
+  // 2. CONTENT ZONE - Detect layout and extract columns
+  // ==========================================================================
+
+  // Detect two-column layout by looking for row containers with two children
+  const $contentRows = $('body > div.row, body > div > div.row').filter((_, el) => {
+    const $el = $(el);
+    const children = $el.children('div.col, div[style*="width"]');
+    return children.length >= 2;
+  });
+
+  if ($contentRows.length > 0) {
+    // Two-column layout detected
+    const $row = $contentRows.first();
+    const $columns = $row.children('div.col, div[style*="width"]');
+
+    // Left column (first column without SVG)
+    $columns.each((i, col) => {
+      const $col = $(col);
+      const hasSvg = $col.find('svg').length > 0;
+
+      if (!hasSvg && !foundRegions.has('left-column')) {
+        foundRegions.add('left-column');
+        elements.push({
+          regionType: 'left-column',
+          ...REGION_DEFAULTS['left-column'],
+          content: $col.html() || '',
+        });
+      }
+    });
+  } else {
+    // Full-width layout - look for content container
+    const $contentDiv = $('body > div').filter((_, el) => {
+      const $el = $(el);
+      // Content div: has padding, contains p/ul/div elements, not title zone
+      const hasPadding = ($el.attr('style') || '').includes('padding');
+      const hasContent = $el.find('p, ul, ol, div').length > 0;
+      const isNotTitleZone = !$el.find('h1').length;
+      return hasPadding && hasContent && isNotTitleZone;
+    }).first();
+
+    if ($contentDiv.length > 0 && !foundRegions.has('content')) {
+      foundRegions.add('content');
+      elements.push({
+        regionType: 'content',
+        ...REGION_DEFAULTS.content,
+        content: $contentDiv.html() || '',
+      });
+    }
+  }
+
+  // ==========================================================================
+  // 3. CFU/ANSWER BOXES - Already handled by data-pptx-region, but add fallback
+  // ==========================================================================
+
+  // Look for CFU-style boxes (yellow background with border-left)
+  if (!foundRegions.has('cfu-box')) {
+    $('div').each((_, el) => {
+      const $el = $(el);
+      const style = $el.attr('style') || '';
+      const bgColor = extractBgFromStyle(style);
+      const hasBorderLeft = style.includes('border-left');
+      const text = $el.text().toLowerCase();
+
+      // CFU: yellow background, left border, contains "check" or "understanding"
+      if (bgColor === 'FEF3C7' && hasBorderLeft &&
+          (text.includes('check') || text.includes('understanding') || text.includes('think'))) {
+        // Only add if it's positioned absolutely (overlay)
+        if (style.includes('position: absolute') || style.includes('position:absolute')) {
+          foundRegions.add('cfu-box');
+          elements.push({
+            regionType: 'cfu-box',
+            ...REGION_DEFAULTS['cfu-box'],
+            content: $el.html() || '',
+            bgColor,
+            borderColor: 'F59E0B',
+          });
+        }
+      }
+
+      // Answer: green background, left border
+      if (bgColor === 'DCFCE7' && hasBorderLeft && text.includes('answer')) {
+        if (style.includes('position: absolute') || style.includes('position:absolute')) {
+          foundRegions.add('answer-box');
+          elements.push({
+            regionType: 'answer-box',
+            ...REGION_DEFAULTS['answer-box'],
+            content: $el.html() || '',
+            bgColor,
+            borderColor: '22C55E',
+          });
+        }
+      }
+    });
+  }
+
+  return elements;
+}
+
+/**
+ * Merge explicit data-pptx-* elements with structure-based fallback
+ * Prefers explicit attributes when available
+ */
+export function extractAllPptxElements(html: string): PptxElement[] {
+  // First, get elements with explicit data-pptx-* attributes
+  const explicitElements = extractPptxElements(html);
+  const explicitRegions = new Set(explicitElements.map(e => e.regionType));
+
+  // Then, get elements from structure (fallback)
+  const structureElements = extractElementsFromStructure(html);
+
+  // Merge: use explicit elements, add structure elements only if not already found
+  const mergedElements = [...explicitElements];
+  for (const el of structureElements) {
+    if (!explicitRegions.has(el.regionType)) {
+      mergedElements.push(el);
+    }
+  }
+
+  return mergedElements;
 }
 
 /**

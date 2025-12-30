@@ -10,10 +10,8 @@
   - data-pptx-x, y, w, h: Position in pixels (960x540 coordinate system)
   - data-pptx-bg: Optional background color override
 
-  Standard positions (from SLIDE_CONSTANTS):
-  - Full-width content: x=20, y=140, w=920, h=360
-  - Left column (40%): x=20, y=140, w=368, h=370
-  - Left column (35%): x=20, y=140, w=316, h=370
+  POSITION VALUES: See reference/region-defaults.md for current values.
+  Run `npm run sync-skill-content` to propagate changes to TypeScript.
   ============================================================
 -->
 
@@ -25,8 +23,10 @@
 </div>
 
 <!-- PATTERN: Container without background (for left/right columns) -->
+<!-- Left column position FIXED: 20, 150, 368, 360 -->
 <div data-pptx-region="left-column"
-     data-pptx-x="20" data-pptx-y="140" data-pptx-w="368" data-pptx-h="370"
+     data-pptx-x="20" data-pptx-y="150"
+     data-pptx-w="368" data-pptx-h="360"
      class="col" style="padding: 0;">
   <!-- Column content -->
 </div>
@@ -112,8 +112,10 @@
   Use margin/spacing between elements.
 -->
 
+<!-- Example: Composed content box (values from reference/region-defaults.md) -->
 <div data-pptx-region="content-box"
-     data-pptx-x="20" data-pptx-y="140" data-pptx-w="368" data-pptx-h="370"
+     data-pptx-x="{{left-column.x}}" data-pptx-y="{{left-column.y}}"
+     data-pptx-w="{{left-column.w}}" data-pptx-h="{{left-column.h}}"
      style="background: #f5f5f5; border-radius: 8px; padding: 16px;">
 
   <h3 style="margin: 0 0 12px 0; font-size: 15px; font-weight: bold; color: #1d1d1d;">Problem</h3>

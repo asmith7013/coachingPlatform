@@ -16,14 +16,15 @@
   - data-pptx-region: "cfu-box" | "answer-box" (triggers animation)
   - data-pptx-x, y, w, h: Position in pixels
 
-  Position: ABSOLUTE, top-right corner overlay
-  Standard position: x=653, y=40, w=280, h=115
+  POSITION VALUES: See reference/region-defaults.md for current values.
   ============================================================
 -->
 
 <!-- CFU Box (Check for Understanding) - Yellow accent -->
+<!-- Position is FIXED: always top-right corner (653, 40, 280, 115) -->
 <div data-pptx-region="cfu-box"
-     data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"
+     data-pptx-x="653" data-pptx-y="40"
+     data-pptx-w="280" data-pptx-h="115"
      style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; z-index: 100;">
   <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
   <p style="margin: 0; font-size: 14px; color: #1d1d1d;">
@@ -32,8 +33,10 @@
 </div>
 
 <!-- Answer Box - Green accent -->
+<!-- Position is FIXED: always top-right corner (653, 40, 280, 115) -->
 <div data-pptx-region="answer-box"
-     data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"
+     data-pptx-x="653" data-pptx-y="40"
+     data-pptx-w="280" data-pptx-h="115"
      style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; z-index: 100;">
   <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
   <p style="margin: 0; font-size: 14px; color: #1d1d1d;">

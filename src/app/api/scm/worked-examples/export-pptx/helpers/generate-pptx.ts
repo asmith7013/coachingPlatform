@@ -4,7 +4,7 @@ import {
   SLIDE_HEIGHT,
   pxToInches,
 } from './constants';
-import { extractPptxElements, parseSlideHtml } from './parsers';
+import { extractAllPptxElements, parseSlideHtml } from './parsers';
 import { addPptxElement } from './element-handlers';
 import { createRenderSession, RenderSession } from './renderers';
 
@@ -120,8 +120,8 @@ async function processSlide(
   onProgress?: (current: number, total: number, message: string, step: string) => void
 ): Promise<void> {
   try {
-    // Extract ALL elements with data-pptx-* attributes
-    const pptxElements = extractPptxElements(html);
+    // Extract ALL elements - uses data-pptx-* attributes with structure-based fallback
+    const pptxElements = extractAllPptxElements(html);
 
     // Render each element as native PPTX shapes/text
     for (const el of pptxElements) {

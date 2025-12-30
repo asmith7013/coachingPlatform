@@ -5,7 +5,7 @@ export * from './types';
 export * from './constants';
 
 // Parsers
-export { extractPptxElements, parseSlideHtml } from './parsers';
+export { extractPptxElements, extractAllPptxElements, extractElementsFromStructure, parseSlideHtml } from './parsers';
 
 // Element handlers
 export { addPptxElement, addStyledBox, addColumnContent } from './element-handlers';
@@ -17,3 +17,7 @@ export type { RenderSession } from './renderers';
 // PPTX Generator (shared logic)
 export { generatePptxFromSlides } from './generate-pptx';
 export type { SlideData, GeneratePptxOptions, GeneratePptxResult } from './generate-pptx';
+
+// Validators
+export { validateSlideBounds, validateStackedElements, validateDeckBounds } from './validators';
+export type { ElementBounds, BoundsIssue, SlideValidation } from './validators';

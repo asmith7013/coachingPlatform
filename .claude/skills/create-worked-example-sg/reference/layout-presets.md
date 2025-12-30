@@ -41,33 +41,17 @@ Slides are composed using **atomic components** placed in **regions** defined by
 
 ## Pixel Dimensions (960×540)
 
-### Fixed Positions
+**Source of truth:** [region-defaults.md](./region-defaults.md)
 
-```
-TITLE ZONE (y: 0-130)
-├── Badge:    x=20,  y=16,  w=180, h=35
-├── Title:    x=20,  y=55,  w=920, h=40
-├── Subtitle: x=20,  y=100, w=920, h=30
-└── Footnote: x=700, y=8,   w=240, h=25 (top-right)
+Run `npm run sync-skill-content` to propagate changes to TypeScript.
 
-CFU/ANSWER OVERLAY (absolute positioned)
-└── x=653, y=40, w=280, h=115
-```
+### Layout Presets
 
-### Content Zone Variations
-
-```
-Full-Width:
-└── x=20, y=140, w=920, h=360
-
-Two-Column (40/60):
-├── Left:  x=20,  y=140, w=368, h=370
-└── Right: x=408, y=140, w=532, h=370
-
-Graph-Heavy (35/65):
-├── Left:  x=20,  y=140, w=316, h=370
-└── Right: x=356, y=140, w=584, h=370
-```
+| Preset | Left Column | Right Column |
+|--------|-------------|--------------|
+| `full-width` | x=20, y=150, w=920 | — |
+| `two-column` | x=20, y=150, w=368 | x=408, y=150, w=532 |
+| `graph-heavy` | x=20, y=150, w=316 | x=356, y=150, w=584 |
 
 ## Slide Composition Flow
 

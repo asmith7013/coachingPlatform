@@ -6,8 +6,11 @@
  * (.claude/skills/create-worked-example-sg/) to the TypeScript module
  * (src/skills/worked-example/).
  *
- * SOURCE OF TRUTH:
- *   .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/*.html
+ * SOURCE OF TRUTH (Atomic Card-Patterns System):
+ *   .claude/skills/create-worked-example-sg/phases/03-generate-slides/card-patterns/
+ *     - simple-patterns/ → title-zone, content-box, cfu-answer-card (fill placeholders)
+ *     - complex-patterns/ → graph-snippet, annotation-snippet, printable (copy & modify)
+ *   .claude/skills/create-worked-example-sg/archived/templates/ → Legacy templates (reference only)
  *   .claude/skills/create-worked-example-sg/reference/*.md
  *   .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/*.md
  *
@@ -47,22 +50,30 @@ function readTemplateIfExists(templatesDir: string, filename: string): string {
 }
 
 function syncTemplates() {
-  const templatesDir = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/templates');
+  // New atomic card-patterns system
+  const simplePatterns = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/card-patterns/simple-patterns');
+  const complexPatterns = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/card-patterns/complex-patterns');
+  const archivedTemplates = path.join(CLI_SKILL_DIR, 'archived/templates');
   const outputFile = path.join(TS_SKILL_DIR, 'templates.ts');
 
-  // Read all PPTX-compatible HTML template files
-  const slideBase = readTemplateIfExists(templatesDir, 'slide-base.html');
-  const slideWithCfu = readTemplateIfExists(templatesDir, 'slide-with-cfu.html');
-  const slideWithAnswer = readTemplateIfExists(templatesDir, 'slide-with-answer.html');
-  const slideTwoColumn = readTemplateIfExists(templatesDir, 'slide-two-column.html');
-  const slideLearningGoal = readTemplateIfExists(templatesDir, 'slide-learning-goal.html');
-  const slidePractice = readTemplateIfExists(templatesDir, 'slide-practice.html');
-  const slideWithSvg = readTemplateIfExists(templatesDir, 'slide-with-svg.html');
-  const printable = readTemplateIfExists(templatesDir, 'printable-slide-snippet.html');
+  // Read atomic card-patterns (new system)
+  const titleZone = readTemplateIfExists(simplePatterns, 'title-zone.html');
+  const contentBox = readTemplateIfExists(simplePatterns, 'content-box.html');
+  const cfuAnswerCard = readTemplateIfExists(simplePatterns, 'cfu-answer-card.html');
 
-  // Read SVG snippet templates (copy-paste starting points for graphs/annotations)
-  const graphSnippet = readTemplateIfExists(templatesDir, 'graph-snippet.html');
-  const annotationSnippet = readTemplateIfExists(templatesDir, 'annotation-snippet.html');
+  // Read complex patterns (copy-and-modify)
+  const graphSnippet = readTemplateIfExists(complexPatterns, 'graph-snippet.html');
+  const annotationSnippet = readTemplateIfExists(complexPatterns, 'annotation-snippet.html');
+  const printable = readTemplateIfExists(complexPatterns, 'printable-slide-snippet.html');
+
+  // Read archived templates for backward compatibility (legacy exports)
+  const slideBase = readTemplateIfExists(archivedTemplates, 'slide-base.html');
+  const slideWithCfu = readTemplateIfExists(archivedTemplates, 'slide-with-cfu.html');
+  const slideWithAnswer = readTemplateIfExists(archivedTemplates, 'slide-with-answer.html');
+  const slideTwoColumn = readTemplateIfExists(archivedTemplates, 'slide-two-column.html');
+  const slideLearningGoal = readTemplateIfExists(archivedTemplates, 'slide-learning-goal.html');
+  const slidePractice = readTemplateIfExists(archivedTemplates, 'slide-practice.html');
+  const slideWithSvg = readTemplateIfExists(archivedTemplates, 'slide-with-svg.html');
 
   // Generate TypeScript file
   const content = `/**
@@ -70,7 +81,11 @@ function syncTemplates() {
  *
  * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
  *
- * Source of truth: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/
+ * Source of truth (Atomic Card-Patterns System):
+ *   .claude/skills/create-worked-example-sg/phases/03-generate-slides/card-patterns/
+ *     - simple-patterns/ → title-zone, content-box, cfu-answer-card (fill placeholders)
+ *     - complex-patterns/ → graph-snippet, annotation-snippet, printable (copy & modify)
+ *
  * To update: Edit the HTML files in the source folder, then run:
  *   npx tsx scripts/sync-skill-content.ts
  *
@@ -86,79 +101,86 @@ function syncTemplates() {
  * - Browser creator: src/app/scm/workedExamples/create/
  */
 
+// ============================================================================
+// ATOMIC CARD-PATTERNS (New System - 11 slides with PPTX animation)
+// ============================================================================
+
 /**
- * Base slide template - Foundation for all slides
- * 960×540px, light theme, Arial font
+ * Title Zone - Top section of every slide
+ * Contains: Badge + Title + Subtitle
+ * Workflow: Fill placeholders ({{badge_text}}, {{title}}, {{subtitle}})
  *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-base.html
+ * Source: card-patterns/simple-patterns/title-zone.html
  */
-export const SLIDE_BASE_TEMPLATE = \`
-${slideBase.trim()}
+export const TITLE_ZONE = \`
+${titleZone.trim()}
 \`;
 
 /**
- * Slide with CFU (Check for Understanding) box visible
- * Used for step slides where CFU is revealed
+ * Content Box - Main content area
+ * Contains: Text, lists, equations, tables
+ * Workflow: Fill placeholders
  *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-with-cfu.html
+ * Source: card-patterns/simple-patterns/content-box.html
  */
-export const SLIDE_WITH_CFU_TEMPLATE = \`
-${slideWithCfu.trim()}
+export const CONTENT_BOX = \`
+${contentBox.trim()}
 \`;
 
 /**
- * Slide with Answer box visible
- * Used for step slides where answer is revealed
+ * CFU/Answer Card - Animated overlays
+ * Appears on click in PPTX (PPTX animation)
+ * Workflow: Fill placeholders, add data-pptx-region attribute
  *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-with-answer.html
+ * Source: card-patterns/simple-patterns/cfu-answer-card.html
  */
-export const SLIDE_WITH_ANSWER_TEMPLATE = \`
-${slideWithAnswer.trim()}
+export const CFU_ANSWER_CARD = \`
+${cfuAnswerCard.trim()}
 \`;
 
 /**
- * Two-column layout slide
- * 40% text / 60% visual layout for problem setup and steps
+ * Graph Snippet - Complete coordinate plane template
+ * Workflow: Copy entire file, modify values, recalculate pixel positions
  *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-two-column.html
+ * Contains:
+ * - Arrow marker definitions for axes and lines
+ * - Complete grid with proper alignment
+ * - Single "0" at origin
+ * - Complete scale labels to the arrows
+ * - Example data lines with extension arrows
+ * - Layer structure for PPTX export
+ *
+ * HOW TO USE:
+ * 1. Copy the <svg>...</svg> block
+ * 2. Adjust X_MAX and Y_MAX for your data
+ * 3. Recalculate positions using: pixelX = 40 + (dataX/X_MAX)*220, pixelY = 170 - (dataY/Y_MAX)*150
+ *
+ * Source: card-patterns/complex-patterns/graph-snippet.html
  */
-export const SLIDE_TWO_COLUMN_TEMPLATE = \`
-${slideTwoColumn.trim()}
+export const GRAPH_SNIPPET = \`
+${graphSnippet.trim()}
 \`;
 
 /**
- * Learning Goal slide template
- * Opening slide with strategy name, steps, and learning goal
+ * Annotation Snippet - Y-intercept labels, arrows, line equations
+ * Workflow: Copy elements, recalculate pixel positions
  *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-learning-goal.html
- */
-export const SLIDE_LEARNING_GOAL_TEMPLATE = \`
-${slideLearningGoal.trim()}
-\`;
-
-/**
- * Practice slide template
- * Used for practice problems with ZERO scaffolding
+ * Contains:
+ * - Font styling rules (font-weight="normal", font-size="9")
+ * - Position calculation formula from data values
+ * - Arrow marker definition
+ * - Examples for y-intercept labels, shift arrows, line equations
+ * - Layer structure for PPTX export
  *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-practice.html
+ * Source: card-patterns/complex-patterns/annotation-snippet.html
  */
-export const SLIDE_PRACTICE_TEMPLATE = \`
-${slidePractice.trim()}
-\`;
-
-/**
- * Slide with SVG visual
- * Used for slides with coordinate planes, graphs, or diagrams
- * Includes data-svg-region attributes for PPTX capture
- *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/slide-with-svg.html
- */
-export const SLIDE_WITH_SVG_TEMPLATE = \`
-${slideWithSvg.trim()}
+export const ANNOTATION_SNIPPET = \`
+${annotationSnippet.trim()}
 \`;
 
 /**
  * Printable slide template - Use for worksheet slides
+ * Workflow: Copy entire file, fill in problem content
  *
  * CRITICAL RULES:
  * 1. ALL practice problems go in ONE slide file with multiple print-page divs
@@ -167,70 +189,89 @@ ${slideWithSvg.trim()}
  * 4. Include ONLY: Header, Learning Goal, Problem content - NO strategy reminders
  * 5. NEVER create separate slide files for each problem
  *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/printable-slide-snippet.html
+ * Source: card-patterns/complex-patterns/printable-slide-snippet.html
  */
 export const PRINTABLE_TEMPLATE = \`
 ${printable.trim()}
 \`;
 
 // ============================================================================
-// Legacy exports (deprecated - use new PPTX templates above)
+// LEGACY TEMPLATES (Archived - for backward compatibility)
 // ============================================================================
 
 /**
- * @deprecated Use SLIDE_WITH_CFU_TEMPLATE instead (PPTX-compatible, no toggle)
+ * @deprecated Use atomic card-patterns (TITLE_ZONE, CONTENT_BOX, etc.) instead
+ * Base slide template - Foundation for all slides
+ *
+ * Source: archived/templates/slide-base.html
  */
+export const SLIDE_BASE_TEMPLATE = \`
+${slideBase.trim()}
+\`;
+
+/**
+ * @deprecated Use CFU_ANSWER_CARD instead (with PPTX animation)
+ * Slide with CFU (Check for Understanding) box visible
+ *
+ * Source: archived/templates/slide-with-cfu.html
+ */
+export const SLIDE_WITH_CFU_TEMPLATE = \`
+${slideWithCfu.trim()}
+\`;
+
+/**
+ * @deprecated Use CFU_ANSWER_CARD instead (with PPTX animation)
+ * Slide with Answer box visible
+ *
+ * Source: archived/templates/slide-with-answer.html
+ */
+export const SLIDE_WITH_ANSWER_TEMPLATE = \`
+${slideWithAnswer.trim()}
+\`;
+
+/**
+ * @deprecated Use atomic card-patterns instead
+ * Two-column layout slide
+ *
+ * Source: archived/templates/slide-two-column.html
+ */
+export const SLIDE_TWO_COLUMN_TEMPLATE = \`
+${slideTwoColumn.trim()}
+\`;
+
+/**
+ * @deprecated Use atomic card-patterns instead
+ * Learning Goal slide template
+ *
+ * Source: archived/templates/slide-learning-goal.html
+ */
+export const SLIDE_LEARNING_GOAL_TEMPLATE = \`
+${slideLearningGoal.trim()}
+\`;
+
+/**
+ * @deprecated Use atomic card-patterns instead
+ * Practice slide template
+ *
+ * Source: archived/templates/slide-practice.html
+ */
+export const SLIDE_PRACTICE_TEMPLATE = \`
+${slidePractice.trim()}
+\`;
+
+/**
+ * @deprecated Use GRAPH_SNIPPET instead
+ * Slide with SVG visual
+ *
+ * Source: archived/templates/slide-with-svg.html
+ */
+export const SLIDE_WITH_SVG_TEMPLATE = \`
+${slideWithSvg.trim()}
+\`;
+
+// Legacy aliases
 export const CFU_TOGGLE_TEMPLATE = SLIDE_WITH_CFU_TEMPLATE;
-
-/**
- * @deprecated Use SLIDE_WITH_ANSWER_TEMPLATE instead (PPTX-compatible, no toggle)
- */
 export const ANSWER_TOGGLE_TEMPLATE = SLIDE_WITH_ANSWER_TEMPLATE;
-
-// ============================================================================
-// SVG SNIPPETS - Copy-paste starting points
-// ============================================================================
-
-/**
- * Graph Snippet - Complete coordinate plane template
- * Use as starting point for ALL SVG graphs.
- *
- * Contains:
- * - Arrow marker definitions for axes and lines
- * - Complete grid with proper alignment
- * - Single "0" at origin
- * - Complete scale labels to the arrows
- * - Example data lines with extension arrows
- *
- * HOW TO USE:
- * 1. Copy the <svg>...</svg> block
- * 2. Adjust X_MAX and Y_MAX for your data
- * 3. Recalculate positions using: pixelX = 40 + (dataX/X_MAX)*220, pixelY = 170 - (dataY/Y_MAX)*150
- *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/graph-snippet.html
- */
-export const GRAPH_SNIPPET = \`
-${graphSnippet.trim()}
-\`;
-
-/**
- * Annotation Snippet - Y-intercept labels, arrows, line equations
- * Use for adding annotations to coordinate plane graphs.
- *
- * Contains:
- * - Font styling rules (font-weight="normal", font-size="9")
- * - Position calculation formula from data values
- * - Arrow marker definition
- * - Examples for y-intercept labels, shift arrows, line equations
- *
- * CRITICAL: Annotation positions must be calculated from actual data values
- * using the same formula as the graph: pixelY = 170 - (dataY / Y_MAX) * 150
- *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/templates/annotation-snippet.html
- */
-export const ANNOTATION_SNIPPET = \`
-${annotationSnippet.trim()}
-\`;
 `;
 
   fs.writeFileSync(outputFile, content);
@@ -495,6 +536,75 @@ ${generatePrompt.trim()}
 }
 
 // ============================================================================
+// REGION DEFAULTS SYNC
+// ============================================================================
+
+function syncRegionDefaults() {
+  const sourceFile = path.join(CLI_SKILL_DIR, 'reference/region-defaults.md');
+  const outputFile = path.join(ROOT, 'src/app/api/scm/worked-examples/export-pptx/helpers/region-constants.ts');
+
+  if (!fs.existsSync(sourceFile)) {
+    console.log('⚠️  No region-defaults.md found, skipping');
+    return;
+  }
+
+  const markdown = fs.readFileSync(sourceFile, 'utf-8');
+
+  // Parse region positions from markdown
+  // Format: region: x, y, w, h
+  const regionPattern = /^([\w-]+):\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\s*$/gm;
+  const regions: Record<string, { x: number; y: number; w: number; h: number }> = {};
+
+  let match;
+  while ((match = regionPattern.exec(markdown)) !== null) {
+    const [, name, x, y, w, h] = match;
+    regions[name] = {
+      x: parseInt(x, 10),
+      y: parseInt(y, 10),
+      w: parseInt(w, 10),
+      h: parseInt(h, 10),
+    };
+  }
+
+  // Generate TypeScript
+  const regionEntries = Object.entries(regions)
+    .map(([name, pos]) => `  '${name}': { x: ${pos.x}, y: ${pos.y}, w: ${pos.w}, h: ${pos.h} }`)
+    .join(',\n');
+
+  const content = `/**
+ * Region default positions for PPTX slide layout.
+ *
+ * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
+ *
+ * Source of truth: .claude/skills/create-worked-example-sg/reference/region-defaults.md
+ * To update: Edit the markdown file, then run:
+ *   npm run sync-skill-content
+ */
+
+// Slide dimensions
+export const SLIDE_WIDTH = 960;
+export const SLIDE_HEIGHT = 540;
+export const MARGIN = 20;
+
+// Region default positions (pixels)
+export const REGION_DEFAULTS: Record<string, { x: number; y: number; w: number; h: number }> = {
+${regionEntries}
+};
+
+// Bounds validation helpers
+export const MAX_RIGHT = SLIDE_WIDTH - MARGIN; // 940
+export const MAX_BOTTOM = SLIDE_HEIGHT; // 540
+
+export function isWithinBounds(x: number, y: number, w: number, h: number): boolean {
+  return (x + w <= MAX_RIGHT) && (y + h <= MAX_BOTTOM);
+}
+`;
+
+  fs.writeFileSync(outputFile, content);
+  console.log(`✅ Synced region-constants.ts (${Object.keys(regions).length} regions)`);
+}
+
+// ============================================================================
 // MAIN
 // ============================================================================
 
@@ -508,6 +618,7 @@ function main() {
     syncPedagogy();
     syncStyling();
     syncPrompts();
+    syncRegionDefaults();
 
     console.log('\n✅ All content synced successfully!');
     console.log('\n📝 PPTX-compatible templates are now available in the browser wizard.');

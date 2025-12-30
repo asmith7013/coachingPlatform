@@ -118,7 +118,7 @@ export async function createRenderSession(): Promise<RenderSession> {
       });
 
       const results: SvgLayer[] = [];
-      const PADDING = 4; // padding around cropped content
+      const PADDING = 10; // padding around cropped content (prevents cut-off)
 
       // Capture each layer separately with tight cropping
       for (const layerName of layers) {
