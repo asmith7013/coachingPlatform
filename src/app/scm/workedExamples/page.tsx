@@ -264,31 +264,35 @@ export default function PresentationsList() {
                               Standard: {deck.mathStandard}
                             </p>
 
-                            <div className="mt-4 pt-4 border-t border-gray-100">
-                              <div className="flex items-center justify-between text-xs text-gray-500">
-                                <div className="flex items-center gap-2">
-                                  <span>
-                                    {deck.isPublic ? '🌐 Public' : '🔒 Private'}
-                                  </span>
-                                  {deck.googleSlidesUrl && (
-                                    <a
-                                      href={deck.googleSlidesUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      onClick={(e) => e.stopPropagation()}
-                                      className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-yellow-700 bg-yellow-100 hover:bg-yellow-200 rounded transition-colors"
-                                      title="Open in Google Slides"
-                                    >
-                                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
-                                      </svg>
-                                      Slides
-                                    </a>
-                                  )}
-                                </div>
+                            <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
+                              {/* Status and Links Row */}
+                              <div className="flex items-center gap-2 text-xs text-gray-500">
                                 <span>
-                                  {new Date(deck.createdAt!).toLocaleDateString()}
+                                  {deck.isPublic ? '🌐 Public' : '🔒 Private'}
                                 </span>
+                                {deck.googleSlidesUrl && (
+                                  <a
+                                    href={deck.googleSlidesUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-yellow-700 bg-yellow-100 hover:bg-yellow-200 rounded transition-colors"
+                                    title="Open in Google Slides"
+                                  >
+                                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                                      <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+                                    </svg>
+                                    Slides
+                                  </a>
+                                )}
+                              </div>
+                              {/* Creation Data Row */}
+                              <div className="text-xs text-gray-400">
+                                <span className="font-medium text-gray-500">Created:</span>{' '}
+                                {new Date(deck.createdAt!).toLocaleDateString()}
+                                {deck.createdBy && (
+                                  <span> by <span className="text-gray-500">{deck.createdBy}</span></span>
+                                )}
                               </div>
                             </div>
                           </button>

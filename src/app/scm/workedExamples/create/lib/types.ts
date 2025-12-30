@@ -246,7 +246,7 @@ export const initialWizardState: WizardState = {
   slug: '',
   mathConcept: '',
   mathStandard: '',
-  isPublic: false,
+  isPublic: true,
   isLoading: false,
   loadingMessage: '',
   loadingProgress: {
