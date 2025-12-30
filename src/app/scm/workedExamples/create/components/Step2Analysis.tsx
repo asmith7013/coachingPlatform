@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { PencilIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { Badge } from '@/components/core/feedback/Badge';
-import { SectionAccordion, AccordionItem } from '@/components/composed/section-visualization';
+import { SectionAccordion } from '@/components/composed/section-visualization';
 import type { WizardStateHook } from '../hooks/useWizardState';
 import type { Scenario, GraphPlan } from '../lib/types';
 import type { HtmlSlide } from '@zod-schema/scm/worked-example';
@@ -148,8 +148,6 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
   const [aiEditPrompt, setAiEditPrompt] = useState('');
   const [isAiEditing, setIsAiEditing] = useState(false);
   const [aiEditError, setAiEditError] = useState<string | null>(null);
-  // Track which scenario's graph plan is open (only worked example open by default)
-  const [openGraphPlans, setOpenGraphPlans] = useState<Set<number>>(new Set([0]));
   const abortControllerRef = useRef<AbortController | null>(null);
   const accumulatedSlidesRef = useRef<HtmlSlide[]>([]);
 
@@ -501,109 +499,219 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
         {/* Right Column - Accordions (70%) */}
         <div className="w-[70%] space-y-4">
-          {/* Scenarios - Green header with nested accordions */}
-          <SectionAccordion
-            title="Scenarios"
-            subtitle={`${scenarios.length} scenarios`}
-            color="#10B981"
-            className="mb-0"
-            hideExpandAll
-            defaultOpenItems={['scenario-0']}
-            items={scenarios.map((scenario, index) => ({
-              key: `scenario-${index}`,
-              title: (
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">{scenario.themeIcon}</span>
-                    <span className="text-sm font-medium text-gray-700">{scenario.name}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      intent={index === 0 ? 'primary' : 'secondary'}
-                      appearance="outline"
-                      size="xs"
-                    >
-                      {index === 0 ? 'Worked Example' : `Practice ${index}`}
-                    </Badge>
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingScenario(editingScenario === index ? null : index);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
+          {/* Worked Example Accordion - Green header */}
+          {scenarios[0] && (
+            <SectionAccordion
+              title={`${scenarios[0].themeIcon} Worked Example`}
+              subtitle={scenarios[0].name}
+              color="#10B981"
+              className="mb-0"
+              hideExpandAll
+              defaultOpenItems={['we-question', 'we-graph-plan']}
+              items={[
+                // Question section
+                {
+                  key: 'we-question',
+                  title: (
+                    <div className="flex items-center justify-between w-full">
+                      <span className="text-sm font-medium text-gray-700">Question</span>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => {
                           e.stopPropagation();
-                          e.preventDefault();
-                          setEditingScenario(editingScenario === index ? null : index);
-                        }
-                      }}
-                      className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
-                      title={editingScenario === index ? 'Done editing' : 'Edit scenario'}
-                    >
-                      {editingScenario === index ? (
-                        <CheckIcon className="h-4 w-4" />
-                      ) : (
-                        <PencilIcon className="h-4 w-4" />
-                      )}
-                    </span>
-                  </div>
-                </div>
-              ),
-              icon: null,
-              content: (
-                <div>
-                  {editingScenario === index ? (
-                    <ScenarioEditor scenario={scenario} onChange={(updated) => updateScenario(index, updated)} />
+                          setEditingScenario(editingScenario === 0 ? null : 0);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            setEditingScenario(editingScenario === 0 ? null : 0);
+                          }
+                        }}
+                        className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
+                        title={editingScenario === 0 ? 'Done editing' : 'Edit scenario'}
+                      >
+                        {editingScenario === 0 ? (
+                          <CheckIcon className="h-4 w-4" />
+                        ) : (
+                          <PencilIcon className="h-4 w-4" />
+                        )}
+                      </span>
+                    </div>
+                  ),
+                  icon: null,
+                  content: editingScenario === 0 ? (
+                    <ScenarioEditor scenario={scenarios[0]} onChange={(updated) => updateScenario(0, updated)} />
                   ) : (
                     <div>
-                      {/* Context and Numbers - Same Row */}
                       <div className="grid grid-cols-2 gap-4 border-b border-gray-200 pb-4">
                         <div>
                           <h4 className="text-sm font-semibold text-gray-700 mb-2">Context</h4>
-                          <p className="text-sm text-gray-600">{scenario.context}</p>
+                          <p className="text-sm text-gray-600">{scenarios[0].context}</p>
                         </div>
                         <div>
                           <h4 className="text-sm font-semibold text-gray-700 mb-2">Numbers</h4>
-                          <p className="text-sm text-gray-600">{scenario.numbers}</p>
+                          <p className="text-sm text-gray-600">{scenarios[0].numbers}</p>
                         </div>
                       </div>
-
-                      {/* Problem Description */}
                       <div className="pt-4">
                         <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Description</h4>
-                        <p className="text-sm text-gray-600">{scenario.description}</p>
+                        <p className="text-sm text-gray-600">{scenarios[0].description}</p>
                       </div>
-
-                      {/* Graph Plan (if coordinate-graph) - nested accordion */}
-                      {scenario.graphPlan && (
-                        <div className="mt-4 border-t border-gray-200">
-                          <AccordionItem
-                            title="Graph Plan"
-                            isOpen={openGraphPlans.has(index)}
-                            onToggle={() => {
-                              setOpenGraphPlans(prev => {
-                                const next = new Set(prev);
-                                if (next.has(index)) {
-                                  next.delete(index);
-                                } else {
-                                  next.add(index);
-                                }
-                                return next;
-                              });
-                            }}
-                          >
-                            <GraphPlanDisplay graphPlan={scenario.graphPlan} compact />
-                          </AccordionItem>
-                        </div>
-                      )}
                     </div>
-                  )}
-                </div>
-              ),
-            }))}
-          />
+                  ),
+                },
+                // Graph Plan section (if exists)
+                ...(scenarios[0].graphPlan ? [{
+                  key: 'we-graph-plan',
+                  title: 'Graph Plan',
+                  icon: null,
+                  content: <GraphPlanDisplay graphPlan={scenarios[0].graphPlan!} compact />,
+                }] : []),
+              ]}
+            />
+          )}
+
+          {/* Practice Problems Accordion - Orange header */}
+          {scenarios.length > 1 && (
+            <SectionAccordion
+              title="Practice Problems"
+              subtitle={`${scenarios.length - 1} problems`}
+              color="#F59E0B"
+              className="mb-0"
+              hideExpandAll
+              defaultOpenItems={['practice-1-question']}
+              items={[
+                // Practice 1 Question
+                ...(scenarios[1] ? [{
+                  key: 'practice-1-question',
+                  title: (
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">{scenarios[1].themeIcon}</span>
+                        <span className="text-sm font-medium text-gray-700">Practice 1: {scenarios[1].name}</span>
+                      </div>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e: React.MouseEvent) => {
+                          e.stopPropagation();
+                          setEditingScenario(editingScenario === 1 ? null : 1);
+                        }}
+                        onKeyDown={(e: React.KeyboardEvent) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            setEditingScenario(editingScenario === 1 ? null : 1);
+                          }
+                        }}
+                        className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
+                        title={editingScenario === 1 ? 'Done editing' : 'Edit scenario'}
+                      >
+                        {editingScenario === 1 ? (
+                          <CheckIcon className="h-4 w-4" />
+                        ) : (
+                          <PencilIcon className="h-4 w-4" />
+                        )}
+                      </span>
+                    </div>
+                  ),
+                  icon: null,
+                  content: editingScenario === 1 ? (
+                    <ScenarioEditor scenario={scenarios[1]} onChange={(updated) => updateScenario(1, updated)} />
+                  ) : (
+                    <div>
+                      <div className="grid grid-cols-2 gap-4 border-b border-gray-200 pb-4">
+                        <div>
+                          <h4 className="text-sm font-semibold text-gray-700 mb-2">Context</h4>
+                          <p className="text-sm text-gray-600">{scenarios[1].context}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-gray-700 mb-2">Numbers</h4>
+                          <p className="text-sm text-gray-600">{scenarios[1].numbers}</p>
+                        </div>
+                      </div>
+                      <div className="pt-4">
+                        <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Description</h4>
+                        <p className="text-sm text-gray-600">{scenarios[1].description}</p>
+                      </div>
+                    </div>
+                  ),
+                }] : []),
+                // Practice 1 Graph Plan (if exists)
+                ...(scenarios[1]?.graphPlan ? [{
+                  key: 'practice-1-graph-plan',
+                  title: 'Practice 1 Graph Plan',
+                  icon: null,
+                  content: <GraphPlanDisplay graphPlan={scenarios[1].graphPlan!} compact />,
+                }] : []),
+                // Practice 2 Question
+                ...(scenarios[2] ? [{
+                  key: 'practice-2-question',
+                  title: (
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">{scenarios[2].themeIcon}</span>
+                        <span className="text-sm font-medium text-gray-700">Practice 2: {scenarios[2].name}</span>
+                      </div>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e: React.MouseEvent) => {
+                          e.stopPropagation();
+                          setEditingScenario(editingScenario === 2 ? null : 2);
+                        }}
+                        onKeyDown={(e: React.KeyboardEvent) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            setEditingScenario(editingScenario === 2 ? null : 2);
+                          }
+                        }}
+                        className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
+                        title={editingScenario === 2 ? 'Done editing' : 'Edit scenario'}
+                      >
+                        {editingScenario === 2 ? (
+                          <CheckIcon className="h-4 w-4" />
+                        ) : (
+                          <PencilIcon className="h-4 w-4" />
+                        )}
+                      </span>
+                    </div>
+                  ),
+                  icon: null,
+                  content: editingScenario === 2 ? (
+                    <ScenarioEditor scenario={scenarios[2]} onChange={(updated) => updateScenario(2, updated)} />
+                  ) : (
+                    <div>
+                      <div className="grid grid-cols-2 gap-4 border-b border-gray-200 pb-4">
+                        <div>
+                          <h4 className="text-sm font-semibold text-gray-700 mb-2">Context</h4>
+                          <p className="text-sm text-gray-600">{scenarios[2].context}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-gray-700 mb-2">Numbers</h4>
+                          <p className="text-sm text-gray-600">{scenarios[2].numbers}</p>
+                        </div>
+                      </div>
+                      <div className="pt-4">
+                        <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Description</h4>
+                        <p className="text-sm text-gray-600">{scenarios[2].description}</p>
+                      </div>
+                    </div>
+                  ),
+                }] : []),
+                // Practice 2 Graph Plan (if exists)
+                ...(scenarios[2]?.graphPlan ? [{
+                  key: 'practice-2-graph-plan',
+                  title: 'Practice 2 Graph Plan',
+                  icon: null,
+                  content: <GraphPlanDisplay graphPlan={scenarios[2].graphPlan!} compact />,
+                }] : []),
+              ]}
+            />
+          )}
 
       {/* Problem Analysis - Gray header */}
       <SectionAccordion
