@@ -10,6 +10,7 @@ import { fetchLessonsForUnit } from '@/app/scm/incentives/form/actions';
 import { MarkdownTextarea } from '@/components/core/fields/MarkdownTextarea';
 import { Badge } from '@/components/core/feedback/Badge';
 import { SavedDrafts, type DraftViewState } from './SavedDrafts';
+import { getIM360Url } from '@/lib/utils/im360-url';
 
 interface Step1InputsProps {
   wizard: WizardStateHook;
@@ -73,7 +74,7 @@ function formatLessonDisplay(lesson: LessonOption): string {
 }
 
 export function Step1Inputs({ wizard }: Step1InputsProps) {
-  const { state, isHydrated, savedSessions, loadSession, deleteSession, setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setScopeAndSequenceId, setLearningGoals, setMasteryImage, setUploadedImageUrl, setAnalysis, clearAnalysis, setLoadingProgress, setError, nextStep } = wizard;
+  const { state, isHydrated, savedSessions, loadSession, deleteSession, setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setSection, setScopeAndSequenceId, setLearningGoals, setMasteryImage, setUploadedImageUrl, setAnalysis, clearAnalysis, setLoadingProgress, setError, nextStep } = wizard;
 
   const [learningGoalText, setLearningGoalText] = useState(state.learningGoals.join('\n'));
   const [selectedLesson, setSelectedLesson] = useState<LessonOption | null>(null);
@@ -181,6 +182,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
       setSelectedLesson(lesson);
       setLessonNumber(lesson.lessonNumber);
       setLessonName(lesson.lessonTitle || lesson.lessonName);
+      setSection(lesson.section || null);
       // Set the scope and sequence ID to enable session persistence
       setScopeAndSequenceId(lesson._id);
       if (lesson.learningTargets && lesson.learningTargets.length > 0) {
@@ -190,9 +192,10 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     } else {
       setSelectedLesson(null);
       setLessonNumber(null);
+      setSection(null);
       setScopeAndSequenceId(null);
     }
-  }, [lessons, setLessonNumber, setLessonName, setScopeAndSequenceId, setLearningGoals]);
+  }, [lessons, setLessonNumber, setLessonName, setSection, setScopeAndSequenceId, setLearningGoals]);
 
   // Handle image file selection
   const handleImageSelect = useCallback(
@@ -490,8 +493,8 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                     {state.lessonNumber ? `Lesson ${state.lessonNumber}: ` : ''}{state.lessonName || selectedLesson?.lessonTitle || selectedLesson?.lessonName}
                   </h3>
 
-                  {/* Badges below title */}
-                  <div className="flex gap-2 flex-wrap">
+                  {/* Badges and IM360 link below title */}
+                  <div className="flex items-center gap-2 flex-wrap">
                     {state.gradeLevel && (
                       <Badge intent="primary" size="sm">
                         {state.gradeLevel === 'Algebra 1' ? 'Algebra 1' : `Grade ${state.gradeLevel}`}
@@ -502,10 +505,28 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                         Unit {state.unitNumber}
                       </Badge>
                     )}
-                    {selectedLesson?.section && (
+                    {state.section && (
                       <Badge intent="info" appearance="outline" size="sm">
-                        Section {selectedLesson.section}
+                        Section {state.section}
                       </Badge>
+                    )}
+                    {state.gradeLevel && state.unitNumber && state.lessonNumber && state.section && (
+                      <>
+                        <span className="text-gray-300">|</span>
+                        <a
+                          href={getIM360Url({
+                            gradeLevel: state.gradeLevel,
+                            unitNumber: state.unitNumber,
+                            lessonNumber: state.lessonNumber,
+                            section: state.section,
+                          })}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800 text-sm"
+                        >
+                          Open Lesson on IM 360 →
+                        </a>
+                      </>
                     )}
                   </div>
                 </div>

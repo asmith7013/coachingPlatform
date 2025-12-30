@@ -96,6 +96,14 @@ These step verbs MUST:
 - Use the same numbers as the mastery check
 - Change the problem type between scenarios
 
+**IMPORTANT: Scenario Graph Plans**
+If the problem requires a coordinate graph (`visualType: svg-visual`, `svgSubtype: coordinate-graph`), create a `graphPlan` for EACH scenario with that scenario's specific equations and values:
+- Each scenario has different numbers, so each needs its own equations, scale, keyPoints, and annotations
+- The graph structure (number of lines, annotation type) stays the same across scenarios
+- Only the specific values change based on each scenario's numbers
+
+Example: If Scenario 1 uses "y = 25x + 50" and Scenario 2 uses "y = 15x + 30", each scenario needs its own complete graphPlan with those specific equations, calculated endpoints, and appropriate scale.
+
 ### STEP 6: Determine Visual Type
 
 **CRITICAL: ALL graphics/diagrams MUST use SVG.** The only exception is simple HTML tables.
@@ -180,7 +188,6 @@ What mathematical relationship to show?
 - [ ] **IF visualType is "svg-visual":**
   - [ ] svgSubtype is specified (coordinate-graph, diagram, shape, number-line, or other)
   - [ ] **IF svgSubtype is "coordinate-graph":**
-    - [ ] graphPlan.equations has ALL lines with slope and y-intercept values
-    - [ ] graphPlan.keyPoints has calculated y-values at key x positions
-    - [ ] graphPlan.scale has xMax and yMax properly rounded
-    - [ ] graphPlan.annotations describes the mathematical relationship to highlight
+    - [ ] problemAnalysis.graphPlan has equations, keyPoints, scale, and annotations for the mastery check
+    - [ ] **EACH scenario has its own graphPlan** with that scenario's specific equations and values
+    - [ ] All graphPlans have: equations with slope/y-intercept, calculated keyPoints, proper scale, and annotations

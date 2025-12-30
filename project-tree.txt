@@ -2035,18 +2035,18 @@
 │   │   │       │   ├── storage.ts
 │   │   │       │   ├── student
 │   │   │       │   ├── timesheet
+│   │   │       │   ├── worked-example
 │   │   │       │   └── zearn-import.ts
 │   │   │       ├── shared
 │   │   │       │   ├── dateHelpers.ts
 │   │   │       │   ├── index.ts
 │   │   │       │   ├── notes.ts
 │   │   │       │   └── tagging-system.ts
-│   │   │       ├── visits
-│   │   │       │   ├── classroom-observation.ts
-│   │   │       │   ├── coaching-log.ts
-│   │   │       │   ├── index.ts
-│   │   │       │   └── visit.ts
-│   │   │       └── worked-example-deck.ts
+│   │   │       └── visits
+│   │   │           ├── classroom-observation.ts
+│   │   │           ├── coaching-log.ts
+│   │   │           ├── index.ts
+│   │   │           └── visit.ts
 │   │   ├── server
 │   │   │   ├── api
 │   │   │   │   ├── client
@@ -2212,6 +2212,7 @@
 │   │   │   ├── completion-date-helpers.ts
 │   │   │   ├── download-pptx.ts
 │   │   │   ├── entity-helpers.ts
+│   │   │   ├── im360-url.ts
 │   │   │   ├── lesson-display.ts
 │   │   │   ├── lesson-name-normalization.ts
 │   │   │   ├── podsie-completion-helpers.ts
@@ -2309,4 +2310,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-682 directories, 1628 files
+683 directories, 1628 files

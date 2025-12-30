@@ -122,6 +122,7 @@ Scenario 1 (Worked Example):
 - Numbers: [specific values - DIFFERENT from mastery check]
 - Same mathematical structure: [yes/explain how]
 - Different from mastery check: [yes/explain what's different]
+- GraphPlan (if coordinate-graph): [equations, scale, keyPoints, annotations for THIS scenario's numbers]
 
 Scenario 2 (Practice):
 - Context: [different engaging scenario]
@@ -129,6 +130,7 @@ Scenario 2 (Practice):
 - Numbers: [different values]
 - Uses same strategy: [yes/explain how]
 - Different from mastery check AND Scenario 1: [yes/explain]
+- GraphPlan (if coordinate-graph): [equations, scale, keyPoints, annotations for THIS scenario's numbers]
 
 Scenario 3 (Practice):
 - Context: [different engaging scenario]
@@ -136,7 +138,10 @@ Scenario 3 (Practice):
 - Numbers: [different values]
 - Uses same strategy: [yes/explain how]
 - Different from mastery check AND Scenarios 1-2: [yes/explain]
+- GraphPlan (if coordinate-graph): [equations, scale, keyPoints, annotations for THIS scenario's numbers]
 ```
+
+**Note on GraphPlan:** If the problem type requires a coordinate graph (`svgSubtype: coordinate-graph`), each scenario MUST have its own `graphPlan` with pre-calculated equations and values specific to that scenario's numbers. This ensures mathematically accurate graphs during slide generation.
 
 ---
 

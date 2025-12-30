@@ -11,6 +11,8 @@ export interface ToggleSwitchProps {
   className?: string
   /** Optional accent color (gray, orange) */
   accentColor?: 'gray' | 'orange'
+  /** Optional variant for different visual styles */
+  variant?: 'default' | 'dark'
 }
 
 /**
@@ -30,7 +32,8 @@ export function ToggleSwitch({
   onChange,
   label,
   className,
-  accentColor = 'gray'
+  accentColor = 'gray',
+  variant = 'default'
 }: ToggleSwitchProps) {
   // Define color classes based on accent color
   const colorClasses = {
@@ -48,8 +51,22 @@ export function ToggleSwitch({
 
   const colors = colorClasses[accentColor];
 
+  // Variant styles
+  const variantStyles = {
+    default: {
+      container: 'bg-white border border-gray-300 rounded-lg px-3 py-2',
+      label: 'text-xs font-medium text-gray-700'
+    },
+    dark: {
+      container: 'bg-gray-700/80 hover:bg-gray-600/90 rounded-full px-4 h-12 flex items-center',
+      label: 'text-xs font-medium text-white'
+    }
+  };
+
+  const styles = variantStyles[variant];
+
   return (
-    <div className={`bg-white border border-gray-300 rounded-lg px-3 py-2 ${className || ''}`}>
+    <div className={`${styles.container} ${className || ''}`}>
       <div className="flex items-center gap-2">
         <button
           type="button"
@@ -66,7 +83,7 @@ export function ToggleSwitch({
             }`}
           />
         </button>
-        <span className="text-xs font-medium text-gray-700">{label}</span>
+        <span className={styles.label}>{label}</span>
       </div>
     </div>
   )

@@ -145,10 +145,19 @@ You MUST return valid JSON matching this exact structure:
       "context": "Brief description of the engaging context",
       "themeIcon": "emoji representing the theme",
       "numbers": "the specific numbers used",
-      "description": "Full problem description"
+      "description": "Full problem description",
+      "graphPlan": {
+        "equations": [{ "label": "Line 1", "equation": "y = mx + b", "slope": 5, "yIntercept": 10, "color": "#60a5fa", "startPoint": { "x": 0, "y": 10 }, "endPoint": { "x": 8, "y": 50 } }],
+        "scale": { "xMax": 8, "yMax": 50, "xAxisLabels": [0, 2, 4, 6, 8], "yAxisLabels": [0, 10, 20, 30, 40, 50] },
+        "keyPoints": [{ "label": "y-intercept", "x": 0, "y": 10, "dataX": 0, "dataY": 10 }],
+        "annotations": [{ "type": "y-intercept-shift", "label": "+10" }]
+      }
     }
   ]
 }
+
+IMPORTANT: Each scenario's graphPlan uses THAT SCENARIO'S specific numbers and equations.
+Only include graphPlan in scenarios when visualType is "svg-visual" and svgSubtype is "coordinate-graph".
 
 Return ONLY valid JSON. Do not include any explanation or markdown formatting.
 `;

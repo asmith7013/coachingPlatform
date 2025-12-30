@@ -6,9 +6,116 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useWorkedExampleDecks, useGradeUnitPairs, workedExampleDecksKeys } from "./hooks";
 import type { WorkedExampleDeck } from "@zod-schema/scm/worked-example";
 import { Spinner } from "@/components/core/feedback/Spinner";
-import { PresentationModal } from "@/components/presentations/PresentationModal";
+import { PresentationModal } from "./presentations";
 import { ChevronDownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { deactivateDeck } from "@/app/actions/worked-examples";
+
+// Choice modal for decks with Google Slides
+function ViewChoiceModal({
+  deck,
+  onOpenSlides,
+  onOpenHtml,
+  onClose,
+}: {
+  deck: WorkedExampleDeck;
+  onOpenSlides: () => void;
+  onOpenHtml: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full mx-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
+            {deck.gradeLevel === 'Algebra 1' ? 'Algebra 1' : `Grade ${deck.gradeLevel}`}
+          </span>
+          {deck.unitNumber !== undefined && (
+            <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
+              Unit {deck.unitNumber}
+            </span>
+          )}
+          {deck.lessonNumber !== undefined && (
+            <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
+              Lesson {deck.lessonNumber}
+            </span>
+          )}
+        </div>
+        <h2 className="text-xl font-bold text-gray-900 mb-2 text-center">
+          {deck.title}
+        </h2>
+        <p className="text-gray-500 text-sm text-center mb-6">
+          Choose how to view this presentation
+        </p>
+
+        <div className="grid grid-cols-2 gap-4">
+          {/* Google Slides Option - Highlighted */}
+          <button
+            onClick={onOpenSlides}
+            className="flex flex-col items-center gap-3 p-6 bg-yellow-50 border-2 border-yellow-400 rounded-xl hover:bg-yellow-100 transition-colors cursor-pointer ring-2 ring-yellow-400 ring-offset-2"
+          >
+            <div className="w-16 h-16 flex items-center justify-center bg-yellow-400 rounded-xl">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="white"
+                viewBox="0 0 24 24"
+                className="w-8 h-8"
+              >
+                <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+              </svg>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold text-gray-900">Google Slides</div>
+              <div className="text-xs text-gray-500 mt-1">Opens in new tab</div>
+            </div>
+            <span className="absolute -top-2 -right-2 px-2 py-0.5 text-xs font-bold text-yellow-800 bg-yellow-300 rounded-full hidden">
+              Recommended
+            </span>
+          </button>
+
+          {/* HTML Option */}
+          <button
+            onClick={onOpenHtml}
+            className="flex flex-col items-center gap-3 p-6 bg-gray-50 border-2 border-gray-200 rounded-xl hover:bg-gray-100 hover:border-gray-300 transition-colors cursor-pointer"
+          >
+            <div className="w-16 h-16 flex items-center justify-center bg-gray-600 rounded-xl">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="white"
+                className="w-8 h-8"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"
+                />
+              </svg>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold text-gray-900">HTML Viewer</div>
+              <div className="text-xs text-gray-500 mt-1">View on this site</div>
+            </div>
+          </button>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="mt-6 w-full py-2 text-sm text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
 
 // Map URL param to scopeSequenceTag in database
 const GRADE_OPTIONS = [
@@ -20,8 +127,8 @@ const GRADE_OPTIONS = [
 ];
 
 export default function PresentationsList() {
-  const [expandedDeck, setExpandedDeck] = useState<string | null>(null);
   const [deactivating, setDeactivating] = useState<string | null>(null);
+  const [choiceModalDeck, setChoiceModalDeck] = useState<WorkedExampleDeck | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -65,10 +172,26 @@ export default function PresentationsList() {
     router.push(`/scm/workedExamples${params.toString() ? `?${params.toString()}` : ''}`, { scroll: false });
   };
 
+  const handleCardClick = (deck: WorkedExampleDeck) => {
+    // If deck has Google Slides, show choice modal
+    if (deck.googleSlidesUrl) {
+      setChoiceModalDeck(deck);
+    } else {
+      // No Google Slides, open HTML viewer directly
+      handleOpenPresentation(deck.slug);
+    }
+  };
+
   const handleOpenPresentation = (slug: string) => {
+    setChoiceModalDeck(null); // Close choice modal if open
     const params = new URLSearchParams(searchParams.toString());
     params.set('view', slug);
     router.push(`/scm/workedExamples?${params.toString()}`, { scroll: false });
+  };
+
+  const handleOpenGoogleSlides = (url: string) => {
+    setChoiceModalDeck(null);
+    window.open(url, '_blank');
   };
 
   const handleClosePresentation = () => {
@@ -238,7 +361,7 @@ export default function PresentationsList() {
                           className="relative bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
                         >
                           <button
-                            onClick={() => handleOpenPresentation(deck.slug)}
+                            onClick={() => handleCardClick(deck)}
                             className="block p-6 text-left w-full cursor-pointer"
                           >
                             <div className="mb-4 flex items-center gap-2 flex-wrap">
@@ -250,49 +373,70 @@ export default function PresentationsList() {
                                   Lesson {deck.lessonNumber}
                                 </span>
                               )}
+                              {deck.googleSlidesUrl && (
+                                <a
+                                  href={deck.googleSlidesUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-yellow-700 bg-yellow-100 hover:bg-yellow-200 rounded transition-colors"
+                                  title="Open in Google Slides"
+                                >
+                                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+                                  </svg>
+                                  Slides
+                                </a>
+                              )}
                             </div>
 
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">
+                            <h3 className="text-xl font-bold text-gray-900">
                               {deck.title}
                             </h3>
 
-                            <p className="text-sm text-gray-600 mb-2">
-                              {deck.mathConcept}
-                            </p>
-
-                            <p className="text-xs text-gray-500">
-                              Standard: {deck.mathStandard}
-                            </p>
-
-                            <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
-                              {/* Status and Links Row */}
-                              <div className="flex items-center gap-2 text-xs text-gray-500">
-                                <span>
-                                  {deck.isPublic ? '🌐 Public' : '🔒 Private'}
-                                </span>
-                                {deck.googleSlidesUrl && (
-                                  <a
-                                    href={deck.googleSlidesUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium text-yellow-700 bg-yellow-100 hover:bg-yellow-200 rounded transition-colors"
-                                    title="Open in Google Slides"
-                                  >
-                                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                                      <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
-                                    </svg>
-                                    Slides
-                                  </a>
-                                )}
+                            {/* Learning Targets Section */}
+                            {deck.learningGoals && deck.learningGoals.length > 0 && (
+                              <div className="mt-3 pt-3 border-t border-gray-100">
+                                <p className="text-xs font-medium text-gray-500 mb-1">
+                                  Learning Targets:
+                                </p>
+                                <ul className="space-y-1 text-sm text-gray-600">
+                                  {deck.learningGoals.map((goal, idx) => (
+                                    <li key={idx} className="flex items-start">
+                                      <span className="mr-2 text-gray-400">•</span>
+                                      <span>{goal}</span>
+                                    </li>
+                                  ))}
+                                </ul>
                               </div>
+                            )}
+
+                            {/* Standard Section */}
+                            {deck.mathStandard && (
+                              <div className="mt-3 pt-3 border-t border-gray-100">
+                                <p className="text-xs font-medium text-gray-500 mb-1">
+                                  Standard:
+                                </p>
+                                <p className="text-sm text-gray-600">{deck.mathStandard}</p>
+                              </div>
+                            )}
+
+                            <div className="mt-3 pt-3 border-t border-gray-100 space-y-1.5">
+                              {/* Status Row */}
+                              {!deck.isPublic && (
+                                <div className="flex items-center gap-2 text-xs text-gray-500">
+                                  <span>🔒 Private</span>
+                                </div>
+                              )}
                               {/* Creation Data Row */}
-                              <div className="text-xs text-gray-400">
-                                <span className="font-medium text-gray-500">Created:</span>{' '}
-                                {new Date(deck.createdAt!).toLocaleDateString()}
-                                {deck.createdBy && (
-                                  <span> by <span className="text-gray-500">{deck.createdBy}</span></span>
-                                )}
+                              <div>
+                                <p className="text-xs font-medium text-gray-500 mb-1">Created:</p>
+                                <p className="text-sm text-gray-600">
+                                  {new Date(deck.createdAt!).toLocaleDateString()}
+                                  {deck.createdBy && (
+                                    <span> by {deck.createdBy}</span>
+                                  )}
+                                </p>
                               </div>
                             </div>
                           </button>
@@ -314,40 +458,6 @@ export default function PresentationsList() {
                             )}
                           </button>
 
-                          {/* Expandable section for learning goals */}
-                          {deck.learningGoals && deck.learningGoals.length > 0 && (
-                            <div className="border-t border-gray-100">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setExpandedDeck(expandedDeck === deck.slug ? null : deck.slug);
-                                }}
-                                className="w-full px-6 py-3 text-left text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-between cursor-pointer"
-                              >
-                                <span>Learning Goals</span>
-                                <svg
-                                  className={`w-4 h-4 transition-transform ${expandedDeck === deck.slug ? 'rotate-180' : ''}`}
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </button>
-                              {expandedDeck === deck.slug && (
-                                <div className="px-6 pb-4">
-                                  <ul className="space-y-1 text-xs text-gray-600">
-                                    {deck.learningGoals.map((goal, idx) => (
-                                      <li key={idx} className="flex items-start">
-                                        <span className="mr-2">•</span>
-                                        <span>{goal}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-                            </div>
-                          )}
                         </div>
                       ))}
                   </div>
@@ -356,6 +466,16 @@ export default function PresentationsList() {
           </div>
         )}
       </div>
+
+      {/* View Choice Modal */}
+      {choiceModalDeck && (
+        <ViewChoiceModal
+          deck={choiceModalDeck}
+          onOpenSlides={() => handleOpenGoogleSlides(choiceModalDeck.googleSlidesUrl!)}
+          onOpenHtml={() => handleOpenPresentation(choiceModalDeck.slug)}
+          onClose={() => setChoiceModalDeck(null)}
+        />
+      )}
 
       {/* Presentation Modal */}
       {openSlug && (

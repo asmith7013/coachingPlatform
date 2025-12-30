@@ -92,6 +92,9 @@ export interface Scenario {
   themeIcon: string;
   numbers: string;
   description: string;
+  // Graph plan for this scenario - only when visualType is 'svg-visual' and svgSubtype is 'coordinate-graph'
+  // Each scenario needs its own graphPlan with that scenario's specific equations and values
+  graphPlan?: GraphPlan;
 }
 
 // Response from analyze-problem action

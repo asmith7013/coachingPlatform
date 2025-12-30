@@ -358,11 +358,11 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
       {/* Two Column Layout */}
       <div className="flex gap-6">
         {/* Left Column - Task Image and Learning Targets (30%) */}
-        <div className="w-[30%]">
-          <div className="sticky top-20 space-y-4">
+        <div className="w-[30%] bg-[#6B7280] rounded-lg p-4">
+          <div className="sticky top-8 space-y-4">
             {/* Task Image */}
             {(state.masteryCheckImage.preview || state.masteryCheckImage.uploadedUrl) && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="bg-white rounded-lg p-4">
                 <h4 className="text-sm font-semibold text-gray-700 mb-3">Task</h4>
                 <img
                   src={state.masteryCheckImage.preview || state.masteryCheckImage.uploadedUrl || ''}
@@ -374,7 +374,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
             {/* Learning Targets */}
             {state.learningGoals && state.learningGoals.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="bg-white rounded-lg p-4">
                 <h4 className="text-sm font-semibold text-gray-700 mb-3">Learning Targets</h4>
                 <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
                   {state.learningGoals.map((goal, i) => (
@@ -388,96 +388,159 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
         {/* Right Column - Accordions (70%) */}
         <div className="w-[70%] space-y-4">
-          {/* Strategy - Blue header */}
+          {/* Scenarios - Green header with nested accordions */}
           <SectionAccordion
-          title="Strategy"
-          subtitle={`${strategyDefinition.moves.length} steps`}
-          color="#3B82F6"
-          className="mb-0"
-          hideExpandAll
-          items={[
-            {
-              key: 'strategy-details',
-              title: strategyDefinition.name,
-              icon: null,
-              content: (
-                <div>
-                  {/* Strategy Name */}
-                  <div className="border-b border-gray-200 pb-4">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Strategy Name</h4>
-                    <input
-                      type="text"
-                      value={strategyDefinition.name}
-                      onChange={(e) => updateStrategyName(e.target.value)}
-                      className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
+            title="Scenarios"
+            subtitle={`${scenarios.length} scenarios`}
+            color="#10B981"
+            className="mb-0"
+            hideExpandAll
+            defaultOpenItems={['scenario-0']}
+            items={scenarios.map((scenario, index) => ({
+              key: `scenario-${index}`,
+              title: (
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">{scenario.themeIcon}</span>
+                    <span className="text-sm font-medium text-gray-700">{scenario.name}</span>
                   </div>
-
-                  {/* One-Sentence Summary */}
-                  <div className="border-b border-gray-200 py-4">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">One-Sentence Summary</h4>
-                    <p className="text-sm text-gray-600">
-                      {strategyDefinition.oneSentenceSummary}
-                    </p>
-                  </div>
-
-                  {/* Strategy Steps */}
-                  <div className="pt-4">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Strategy Steps</h4>
-                    <div className="space-y-2">
-                      {strategyDefinition.moves.map((move, i) => (
-                        <div key={i} className="flex items-start gap-3">
-                          <Badge intent="primary" size="xs" rounded="full">
-                            {i + 1}
-                          </Badge>
-                          <div className="flex-1 min-w-0">
-                            <span className="font-semibold text-gray-900 text-sm">{move.verb}</span>
-                            <span className="text-gray-600 text-sm">: {move.description}</span>
-                            {move.result && (
-                              <span className="text-gray-500 text-xs block mt-0.5">→ {move.result}</span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      intent={index === 0 ? 'primary' : 'secondary'}
+                      appearance="outline"
+                      size="xs"
+                    >
+                      {index === 0 ? 'Worked Example' : `Practice ${index}`}
+                    </Badge>
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingScenario(editingScenario === index ? null : index);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          setEditingScenario(editingScenario === index ? null : index);
+                        }
+                      }}
+                      className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
+                      title={editingScenario === index ? 'Done editing' : 'Edit scenario'}
+                    >
+                      {editingScenario === index ? (
+                        <CheckIcon className="h-4 w-4" />
+                      ) : (
+                        <PencilIcon className="h-4 w-4" />
+                      )}
+                    </span>
                   </div>
                 </div>
               ),
-            },
-          ]}
-        />
+              icon: null,
+              content: (
+                <div>
+                  {editingScenario === index ? (
+                    <ScenarioEditor scenario={scenario} onChange={(updated) => updateScenario(index, updated)} />
+                  ) : (
+                    <div>
+                      {/* Context and Numbers - Same Row */}
+                      <div className="grid grid-cols-2 gap-4 border-b border-gray-200 pb-4">
+                        <div>
+                          <h4 className="text-sm font-semibold text-gray-700 mb-2">Context</h4>
+                          <p className="text-sm text-gray-600">{scenario.context}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-gray-700 mb-2">Numbers</h4>
+                          <p className="text-sm text-gray-600">{scenario.numbers}</p>
+                        </div>
+                      </div>
+
+                      {/* Problem Description */}
+                      <div className="pt-4">
+                        <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Description</h4>
+                        <p className="text-sm text-gray-600">{scenario.description}</p>
+                      </div>
+
+                      {/* Graph Plan (if coordinate-graph) */}
+                      {scenario.graphPlan && (
+                        <div className="pt-4 border-t border-gray-200 mt-4">
+                          <h4 className="text-sm font-semibold text-gray-700 mb-3">Graph Plan</h4>
+
+                          {/* Equations */}
+                          <div className="mb-3">
+                            <h5 className="text-xs font-medium text-gray-500 mb-2">Equations</h5>
+                            <div className="space-y-2">
+                              {scenario.graphPlan.equations.map((eq, eqIdx) => (
+                                <div key={eqIdx} className="bg-gray-50 rounded p-2 text-sm">
+                                  <div className="flex items-center gap-2">
+                                    <span
+                                      className="w-3 h-3 rounded-full"
+                                      style={{ backgroundColor: eq.color }}
+                                    />
+                                    <span className="font-medium text-gray-700">{eq.label}:</span>
+                                    <span className="text-gray-600">{eq.equation}</span>
+                                  </div>
+                                  <div className="text-xs text-gray-500 mt-1 ml-5">
+                                    slope: {eq.slope}, y-intercept: {eq.yIntercept}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Scale */}
+                          <div className="mb-3">
+                            <h5 className="text-xs font-medium text-gray-500 mb-1">Scale</h5>
+                            <div className="text-sm text-gray-600">
+                              X: 0 to {scenario.graphPlan.scale.xMax} | Y: 0 to {scenario.graphPlan.scale.yMax}
+                            </div>
+                          </div>
+
+                          {/* Annotations */}
+                          {scenario.graphPlan.annotations && scenario.graphPlan.annotations.length > 0 && (
+                            <div>
+                              <h5 className="text-xs font-medium text-gray-500 mb-1">Annotations</h5>
+                              <div className="space-y-1">
+                                {scenario.graphPlan.annotations.map((ann, annIdx) => (
+                                  <div key={annIdx} className="text-sm text-gray-600">
+                                    <Badge intent="info" size="xs">{ann.type}</Badge>
+                                    <span className="ml-2">{ann.label}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ),
+            }))}
+          />
 
       {/* Problem Analysis - Gray header */}
       <SectionAccordion
-        title="Problem Analysis"
+        title="Initial Problem Analysis"
         subtitle={problemAnalysis.visualType === 'svg-visual' && problemAnalysis.svgSubtype
           ? `${problemAnalysis.visualType}: ${problemAnalysis.svgSubtype}`
           : problemAnalysis.visualType}
         color="#6B7280"
         className="mb-0"
         hideExpandAll
+        defaultOpenItems={['analysis-details']}
         items={[
+          // Analysis - open by default
           {
             key: 'analysis-details',
-            title: problemAnalysis.problemType,
+            title: 'Analysis',
             icon: null,
             content: (
               <div>
-                {/* Problem Transcription - verify accuracy */}
-                {problemAnalysis.problemTranscription && (
-                  <div className="border-b border-gray-200 pb-4">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                      Problem Transcription
-                      <span className="font-normal text-gray-400 ml-2">(verify this matches the image)</span>
-                    </h4>
-                    <p className="text-sm text-gray-600 whitespace-pre-wrap bg-gray-50 rounded p-3 border border-gray-200">
-                      {problemAnalysis.problemTranscription}
-                    </p>
-                  </div>
-                )}
-
                 {/* Problem Type */}
-                <div className={problemAnalysis.problemTranscription ? "border-b border-gray-200 py-4" : "border-b border-gray-200 pb-4"}>
+                <div className="border-b border-gray-200 pb-4">
                   <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Type</h4>
                   <p className="text-sm text-gray-600">{problemAnalysis.problemType}</p>
                 </div>
@@ -498,7 +561,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
                 {/* Common Mistakes */}
                 {problemAnalysis.commonMistakes.length > 0 && (
-                  <div className={problemAnalysis.graphPlan ? "border-b border-gray-200 py-4" : "pt-4"}>
+                  <div className="pt-4">
                     <h4 className="text-sm font-semibold text-gray-700 mb-2">Common Mistakes</h4>
                     <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
                       {problemAnalysis.commonMistakes.map((mistake, i) => (
@@ -507,210 +570,199 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                     </ul>
                   </div>
                 )}
-
-                {/* Graph Plan (only shown for svg-visual with coordinate-graph subtype) */}
-                {problemAnalysis.visualType === 'svg-visual' && problemAnalysis.svgSubtype === 'coordinate-graph' && problemAnalysis.graphPlan && (
-                  <div className="pt-4">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                      <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                      </svg>
-                      Graph Plan
-                    </h4>
-
-                    {/* Equations with Line Endpoints */}
-                    <div className="border-b border-gray-200 pb-4">
-                      <h5 className="text-sm font-semibold text-gray-700 mb-2">Lines (with endpoints)</h5>
-                      <div className="space-y-3">
-                        {problemAnalysis.graphPlan.equations.map((eq, i) => (
-                          <div key={i} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span
-                                className="w-3 h-3 rounded-full flex-shrink-0"
-                                style={{ backgroundColor: eq.color }}
-                              />
-                              <code className="text-gray-700 bg-white px-1.5 py-0.5 rounded text-xs border border-gray-200">
-                                {eq.equation}
+              </div>
+            ),
+          },
+          // Graph Plan - closed by default (only shown for svg-visual with coordinate-graph subtype)
+          ...(problemAnalysis.visualType === 'svg-visual' && problemAnalysis.svgSubtype === 'coordinate-graph' && problemAnalysis.graphPlan ? [{
+            key: 'graph-plan',
+            title: 'Graph Plan',
+            icon: null,
+            content: (
+              <div>
+                {/* Equations with Line Endpoints */}
+                <div className="border-b border-gray-200 pb-4">
+                  <h5 className="text-sm font-semibold text-gray-700 mb-2">Lines (with endpoints)</h5>
+                  <div className="space-y-3">
+                    {problemAnalysis.graphPlan!.equations.map((eq, i) => (
+                      <div key={i} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span
+                            className="w-3 h-3 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: eq.color }}
+                          />
+                          <code className="text-gray-700 bg-white px-1.5 py-0.5 rounded text-xs border border-gray-200">
+                            {eq.equation}
+                          </code>
+                          <span className="text-gray-400 text-xs">slope={eq.slope}, b={eq.yIntercept}</span>
+                        </div>
+                        {/* Line Endpoints - Critical for accurate drawing */}
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-500">Start:</span>
+                            {eq.startPoint ? (
+                              <code className="text-green-700 bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
+                                ({eq.startPoint.x}, {eq.startPoint.y})
                               </code>
-                              <span className="text-gray-400 text-xs">slope={eq.slope}, b={eq.yIntercept}</span>
-                            </div>
-                            {/* Line Endpoints - Critical for accurate drawing */}
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-gray-500">Start:</span>
-                                {eq.startPoint ? (
-                                  <code className="text-green-700 bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
-                                    ({eq.startPoint.x}, {eq.startPoint.y})
-                                  </code>
-                                ) : (
-                                  <span className="text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-                                    missing
-                                  </span>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-gray-500">End:</span>
-                                {eq.endPoint ? (
-                                  <code className="text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
-                                    ({eq.endPoint.x}, {eq.endPoint.y})
-                                  </code>
-                                ) : (
-                                  <span className="text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-                                    missing
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Scale */}
-                    <div className={problemAnalysis.graphPlan.annotations && problemAnalysis.graphPlan.annotations.length > 0 ? "border-b border-gray-200 py-4" : "pt-4"}>
-                      <h5 className="text-sm font-semibold text-gray-700 mb-2">Scale</h5>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        {/* X-Axis */}
-                        <div className="space-y-1">
-                          <div className="text-sm font-medium text-gray-700">X-Axis</div>
-                          <div>
-                            <span className="text-gray-500">Max:</span>
-                            <span className="ml-1 text-gray-600">
-                              {problemAnalysis.graphPlan.scale.xMax}
-                            </span>
-                          </div>
-                          {problemAnalysis.graphPlan.scale.xAxisLabels && (
-                            <div>
-                              <span className="text-gray-500">Labels:</span>
-                              <span className="ml-1 text-gray-600">
-                                {problemAnalysis.graphPlan.scale.xAxisLabels.join(', ')}
+                            ) : (
+                              <span className="text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                                missing
                               </span>
-                            </div>
-                          )}
-                        </div>
-                        {/* Y-Axis */}
-                        <div className="space-y-1">
-                          <div className="text-sm font-medium text-gray-700">Y-Axis</div>
-                          <div>
-                            <span className="text-gray-500">Max:</span>
-                            <span className="ml-1 text-gray-600">
-                              {problemAnalysis.graphPlan.scale.yMax}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">Labels:</span>
-                            <span className="ml-1 text-gray-600">
-                              {problemAnalysis.graphPlan.scale.yAxisLabels.join(', ')}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Annotations */}
-                    {problemAnalysis.graphPlan.annotations && problemAnalysis.graphPlan.annotations.length > 0 && (
-                    <div className="pt-4">
-                      <h5 className="text-sm font-semibold text-gray-700 mb-2">Annotations</h5>
-                      <div className="space-y-2">
-                        {problemAnalysis.graphPlan.annotations.map((ann, idx) => (
-                          <div key={idx} className="flex items-center gap-2 text-sm">
-                            <Badge intent="info" size="xs">{ann.type}</Badge>
-                            <span className="text-gray-600">{ann.label}</span>
-                            {ann.from !== undefined && ann.to !== undefined && (
-                              <span className="text-gray-500 text-xs">(y: {ann.from} → {ann.to})</span>
                             )}
                           </div>
-                        ))}
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-gray-500">End:</span>
+                            {eq.endPoint ? (
+                              <code className="text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                                ({eq.endPoint.x}, {eq.endPoint.y})
+                              </code>
+                            ) : (
+                              <span className="text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                                missing
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Scale */}
+                <div className={problemAnalysis.graphPlan!.annotations && problemAnalysis.graphPlan!.annotations.length > 0 ? "border-b border-gray-200 py-4" : "pt-4"}>
+                  <h5 className="text-sm font-semibold text-gray-700 mb-2">Scale</h5>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    {/* X-Axis */}
+                    <div className="space-y-1">
+                      <div className="text-sm font-medium text-gray-700">X-Axis</div>
+                      <div>
+                        <span className="text-gray-500">Max:</span>
+                        <span className="ml-1 text-gray-600">
+                          {problemAnalysis.graphPlan!.scale.xMax}
+                        </span>
+                      </div>
+                      {problemAnalysis.graphPlan!.scale.xAxisLabels && (
+                        <div>
+                          <span className="text-gray-500">Labels:</span>
+                          <span className="ml-1 text-gray-600">
+                            {problemAnalysis.graphPlan!.scale.xAxisLabels.join(', ')}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    {/* Y-Axis */}
+                    <div className="space-y-1">
+                      <div className="text-sm font-medium text-gray-700">Y-Axis</div>
+                      <div>
+                        <span className="text-gray-500">Max:</span>
+                        <span className="ml-1 text-gray-600">
+                          {problemAnalysis.graphPlan!.scale.yMax}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Labels:</span>
+                        <span className="ml-1 text-gray-600">
+                          {problemAnalysis.graphPlan!.scale.yAxisLabels.join(', ')}
+                        </span>
                       </div>
                     </div>
-                    )}
                   </div>
+                </div>
+
+                {/* Annotations */}
+                {problemAnalysis.graphPlan!.annotations && problemAnalysis.graphPlan!.annotations.length > 0 && (
+                <div className="pt-4">
+                  <h5 className="text-sm font-semibold text-gray-700 mb-2">Annotations</h5>
+                  <div className="space-y-2">
+                    {problemAnalysis.graphPlan!.annotations.map((ann, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-sm">
+                        <Badge intent="info" size="xs">{ann.type}</Badge>
+                        <span className="text-gray-600">{ann.label}</span>
+                        {ann.from !== undefined && ann.to !== undefined && (
+                          <span className="text-gray-500 text-xs">(y: {ann.from} → {ann.to})</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 )}
+              </div>
+            ),
+          }] : []),
+          // Problem Transcription - closed by default (at bottom)
+          ...(problemAnalysis.problemTranscription ? [{
+            key: 'problem-transcription',
+            title: 'Problem Transcription',
+            icon: null,
+            content: (
+              <div>
+                <p className="text-xs text-gray-400 mb-2">(verify this matches the image)</p>
+                <p className="text-sm text-gray-600 whitespace-pre-wrap bg-gray-50 rounded p-3 border border-gray-200">
+                  {problemAnalysis.problemTranscription}
+                </p>
+              </div>
+            ),
+          }] : []),
+        ]}
+      />
+
+      {/* Strategy - Blue header */}
+      <SectionAccordion
+        title="Strategy"
+        subtitle={`${strategyDefinition.moves.length} steps`}
+        color="#3B82F6"
+        className="mb-0"
+        hideExpandAll
+        items={[
+          {
+            key: 'strategy-details',
+            title: strategyDefinition.name,
+            icon: null,
+            content: (
+              <div>
+                {/* Strategy Name */}
+                <div className="border-b border-gray-200 pb-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Strategy Name</h4>
+                  <input
+                    type="text"
+                    value={strategyDefinition.name}
+                    onChange={(e) => updateStrategyName(e.target.value)}
+                    className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                {/* One-Sentence Summary */}
+                <div className="border-b border-gray-200 py-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-2">One-Sentence Summary</h4>
+                  <p className="text-sm text-gray-600">
+                    {strategyDefinition.oneSentenceSummary}
+                  </p>
+                </div>
+
+                {/* Strategy Steps */}
+                <div className="pt-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Strategy Steps</h4>
+                  <div className="space-y-2">
+                    {strategyDefinition.moves.map((move, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <Badge intent="primary" size="xs" rounded="full">
+                          {i + 1}
+                        </Badge>
+                        <div className="flex-1 min-w-0">
+                          <span className="font-semibold text-gray-900 text-sm">{move.verb}</span>
+                          <span className="text-gray-600 text-sm">: {move.description}</span>
+                          {move.result && (
+                            <span className="text-gray-500 text-xs block mt-0.5">→ {move.result}</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             ),
           },
         ]}
-      />
-
-      {/* Scenarios - Green header with nested accordions */}
-      <SectionAccordion
-        title="Scenarios"
-        subtitle={`${scenarios.length} scenarios`}
-        color="#10B981"
-        className="mb-0"
-        hideExpandAll
-        defaultOpenItems={scenarios.map((_, i) => `scenario-${i}`)}
-        items={scenarios.map((scenario, index) => ({
-          key: `scenario-${index}`,
-          title: (
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-2">
-                <span className="text-base">{scenario.themeIcon}</span>
-                <span className="text-sm font-medium text-gray-700">{scenario.name}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge
-                  intent={index === 0 ? 'primary' : 'secondary'}
-                  appearance="outline"
-                  size="xs"
-                >
-                  {index === 0 ? 'Worked Example' : `Practice ${index}`}
-                </Badge>
-                <span
-                  role="button"
-                  tabIndex={0}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditingScenario(editingScenario === index ? null : index);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      setEditingScenario(editingScenario === index ? null : index);
-                    }
-                  }}
-                  className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
-                  title={editingScenario === index ? 'Done editing' : 'Edit scenario'}
-                >
-                  {editingScenario === index ? (
-                    <CheckIcon className="h-4 w-4" />
-                  ) : (
-                    <PencilIcon className="h-4 w-4" />
-                  )}
-                </span>
-              </div>
-            </div>
-          ),
-          icon: null,
-          content: (
-            <div>
-              {editingScenario === index ? (
-                <ScenarioEditor scenario={scenario} onChange={(updated) => updateScenario(index, updated)} />
-              ) : (
-                <div>
-                  {/* Context and Numbers - Same Row */}
-                  <div className="grid grid-cols-2 gap-4 border-b border-gray-200 pb-4">
-                    <div>
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Context</h4>
-                      <p className="text-sm text-gray-600">{scenario.context}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Numbers</h4>
-                      <p className="text-sm text-gray-600">{scenario.numbers}</p>
-                    </div>
-                  </div>
-
-                  {/* Problem Description */}
-                  <div className="pt-4">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Description</h4>
-                    <p className="text-sm text-gray-600">{scenario.description}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          ),
-        }))}
       />
         </div>
       </div>

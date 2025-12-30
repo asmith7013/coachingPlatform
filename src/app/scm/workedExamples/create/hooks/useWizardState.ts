@@ -104,6 +104,9 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
     case 'SET_LESSON_NAME':
       return { ...state, lessonName: action.payload };
 
+    case 'SET_SECTION':
+      return { ...state, section: action.payload };
+
     case 'SET_SCOPE_AND_SEQUENCE_ID':
       return { ...state, scopeAndSequenceId: action.payload };
 
@@ -412,6 +415,7 @@ export function useWizardState() {
     if (persisted.unitNumber) dispatch({ type: 'SET_UNIT_NUMBER', payload: persisted.unitNumber });
     if (persisted.lessonNumber) dispatch({ type: 'SET_LESSON_NUMBER', payload: persisted.lessonNumber });
     if (persisted.lessonName) dispatch({ type: 'SET_LESSON_NAME', payload: persisted.lessonName });
+    if (persisted.section) dispatch({ type: 'SET_SECTION', payload: persisted.section });
     if (persisted.scopeAndSequenceId) dispatch({ type: 'SET_SCOPE_AND_SEQUENCE_ID', payload: persisted.scopeAndSequenceId });
     if (persisted.learningGoals?.length) dispatch({ type: 'SET_LEARNING_GOALS', payload: persisted.learningGoals });
     if (persisted.masteryCheckImage?.uploadedUrl) {
@@ -432,9 +436,9 @@ export function useWizardState() {
     if (persisted.slug) dispatch({ type: 'SET_SLUG', payload: persisted.slug });
 
     // Jump to appropriate step based on progress:
-    // - If all 15 slides exist, go straight to Step 3 (review slides)
+    // - If all 11 slides exist, go straight to Step 3 (review slides)
     // - Otherwise, restore the saved step
-    const EXPECTED_SLIDE_COUNT = 15;
+    const EXPECTED_SLIDE_COUNT = 11;
     if (persisted.slides?.length >= EXPECTED_SLIDE_COUNT) {
       dispatch({ type: 'SET_STEP', payload: 3 });
     } else if (persisted.currentStep) {
@@ -482,6 +486,10 @@ export function useWizardState() {
 
   const setLessonName = useCallback((name: string) => {
     dispatch({ type: 'SET_LESSON_NAME', payload: name });
+  }, []);
+
+  const setSection = useCallback((section: string | null) => {
+    dispatch({ type: 'SET_SECTION', payload: section });
   }, []);
 
   const setScopeAndSequenceId = useCallback((id: string | null) => {
@@ -624,6 +632,7 @@ export function useWizardState() {
     setUnitNumber,
     setLessonNumber,
     setLessonName,
+    setSection,
     setScopeAndSequenceId,
     setLearningGoals,
     setMasteryImage,

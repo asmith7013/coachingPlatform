@@ -86,7 +86,7 @@ export const ScopeAndSequenceFieldsSchema = z.object({
   lessonName: z.string().describe("Full lesson name (includes prefix for ramp-ups/assessments, e.g., 'Ramp Up 1: Division of Fractions')"),
   lessonType: LessonTypeZod.optional().describe("Lesson type: lesson (regular), rampUp, or assessment"),
   lessonTitle: z.string().optional().describe("Pure lesson title without type prefix (e.g., 'Division of Fractions' extracted from 'Ramp Up 1: Division of Fractions')"),
-  section: SectionZod.optional().describe("Lesson section within the unit"),
+  section: SectionZod.describe("Lesson section within the unit"),
   subsection: z.number().int().positive().optional().describe(
     "Subsection number (1, 2, etc.) for subdividing large sections. undefined = not subdivided"
   ),
