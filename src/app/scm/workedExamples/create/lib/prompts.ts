@@ -447,12 +447,30 @@ export function buildGenerateSlidesPrompt(
     themeIcon: string;
     numbers: string;
     description: string;
+    graphPlan?: {
+      equations: {
+        label: string;
+        equation: string;
+        slope: number;
+        yIntercept: number;
+        color: string;
+        startPoint?: { x: number; y: number };
+        endPoint?: { x: number; y: number };
+      }[];
+      scale: { xMax: number; yMax: number; xAxisLabels: number[]; yAxisLabels: number[] };
+      keyPoints: { label: string; x: number; y: number; dataX: number; dataY: number }[];
+      annotations: { type: string; from?: number; to?: number; label: string; position?: string }[];
+    };
   }[]
 ): string {
   // Build graph plan section if visualType is svg-visual with coordinate-graph subtype
+  // CRITICAL: Use Scenario 1's graphPlan (worked example) for slides, NOT mastery check's graphPlan
   let graphPlanSection = '';
-  if (problemAnalysis.visualType === 'svg-visual' && problemAnalysis.svgSubtype === 'coordinate-graph' && problemAnalysis.graphPlan) {
-    const gp = problemAnalysis.graphPlan;
+  const workedExampleGraphPlan = scenarios[0]?.graphPlan;
+  const graphPlanToUse = workedExampleGraphPlan || problemAnalysis.graphPlan;
+
+  if (problemAnalysis.visualType === 'svg-visual' && problemAnalysis.svgSubtype === 'coordinate-graph' && graphPlanToUse) {
+    const gp = graphPlanToUse;
     const xMax = gp.scale.xMax;
     const yMax = gp.scale.yMax;
 
@@ -544,12 +562,33 @@ ${strategyDefinition.moves.map((m, i) => `  ${i + 1}. ${m.verb}: ${m.description
 - CFU Templates: ${strategyDefinition.cfuQuestionTemplates.join('; ')}
 
 ## Scenarios
-${scenarios.map((s, i) => `
+${scenarios.map((s, i) => {
+  let scenarioText = `
 ### Scenario ${i + 1}: ${s.name} ${s.themeIcon}
 Context: ${s.context}
 Numbers: ${s.numbers}
-Description: ${s.description}
-`).join('\n')}
+Description: ${s.description}`;
+
+  // Include graphPlan for practice problems (scenarios 2 and 3)
+  if (s.graphPlan && i > 0) {
+    const gp = s.graphPlan;
+    const xMax = gp.scale.xMax;
+    const yMax = gp.scale.yMax;
+    const toPixelX = (dataX: number) => Math.round((40 + (dataX / xMax) * 220) * 100) / 100;
+    const toPixelY = (dataY: number) => Math.round((170 - (dataY / yMax) * 150) * 100) / 100;
+
+    scenarioText += `
+
+**Graph Plan for Practice ${i}:**
+- Scale: X_MAX=${xMax}, Y_MAX=${yMax}
+- Equations:
+${gp.equations.map(e => `  - ${e.label}: ${e.equation} (start: ${e.startPoint?.x ?? 0},${e.startPoint?.y ?? e.yIntercept} → end: ${e.endPoint?.x ?? xMax},${e.endPoint?.y ?? (e.slope * xMax + e.yIntercept)})`).join('\n')}
+- Key Points:
+${gp.keyPoints.map(p => `  - ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX(p.x)}, ${toPixelY(p.y)})`).join('\n')}`;
+  }
+
+  return scenarioText;
+}).join('\n')}
 
 ## Instructions - PPTX-Compatible Slides
 
