@@ -1,10 +1,10 @@
 "use server";
 
-// Extend Vercel function timeout (default is 15s, Opus API with images needs more)
-export const maxDuration = 240; // 4 minutes
+// NOTE: maxDuration for server actions is set in the page's route segment config
+// See: src/app/scm/workedExamples/create/page.tsx
 
 import Anthropic from '@anthropic-ai/sdk';
-import { handleServerError } from '@error/handlers/server';
+import { handleAnthropicError } from '@error/handlers/anthropic';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
 import {
   ANALYZE_PROBLEM_SYSTEM_PROMPT,
@@ -217,7 +217,7 @@ export async function analyzeProblem(input: AnalyzeProblemInput): Promise<Analyz
     console.error('[analyzeProblem] Error:', error);
     return {
       success: false,
-      error: handleServerError(error, 'Failed to analyze problem'),
+      error: handleAnthropicError(error, 'Analyze problem'),
     };
   }
 }

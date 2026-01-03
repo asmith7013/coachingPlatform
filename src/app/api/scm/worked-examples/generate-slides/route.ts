@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server';
 export const maxDuration = 300; // 5 minutes
 
 import Anthropic from '@anthropic-ai/sdk';
+import { handleAnthropicError } from '@error/handlers/anthropic';
 import { currentUser } from '@clerk/nextjs/server';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
 import { sendEmail } from '@/lib/email/email-service';
@@ -343,7 +344,7 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
         } catch (error) {
           console.error('[generate-slides] Stream error:', error);
           sendEvent(controller, 'error', {
-            message: error instanceof Error ? error.message : 'An error occurred during generation',
+            message: handleAnthropicError(error, 'Generate slides'),
           });
           controller.close();
         }
@@ -360,7 +361,7 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
   } catch (error) {
     console.error('[generate-slides] Request error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Request failed' }),
+      JSON.stringify({ error: handleAnthropicError(error, 'Generate slides') }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

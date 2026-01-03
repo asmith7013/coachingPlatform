@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import { handleAnthropicError } from '@error/handlers/anthropic';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
 import { EDIT_SLIDES_SYSTEM_PROMPT } from '@/app/scm/workedExamples/create/lib/prompts';
 
@@ -158,7 +159,7 @@ IMPORTANT:
   } catch (error) {
     console.error('[edit-slides] Error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'An error occurred' },
+      { error: handleAnthropicError(error, 'Edit slides') },
       { status: 500 }
     );
   }
