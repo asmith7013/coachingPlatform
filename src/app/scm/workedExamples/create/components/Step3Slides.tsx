@@ -319,7 +319,11 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
         <div>
           <h2 className="text-2xl font-semibold text-gray-900">Exported to Google Slides!</h2>
-          <p className="text-gray-600 mt-2">Your worked example has been saved and exported.</p>
+          <p className="text-gray-600 mt-2">
+            {state.unitNumber && state.lessonNumber
+              ? `Unit ${state.unitNumber} Lesson ${state.lessonNumber} has been saved and exported.`
+              : 'Your worked example has been saved and exported.'}
+          </p>
         </div>
 
         <div className="flex flex-col gap-3 max-w-sm mx-auto">
