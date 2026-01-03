@@ -36,6 +36,9 @@ export const connectToDB = async () => {
       maxPoolSize: 10,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
+      // Disable auto-indexing in production to prevent N+1 createIndex calls on every cold start
+      // Indexes should be created once during deployment, not on every request
+      autoIndex: process.env.NODE_ENV !== 'production',
     };
 
     // console.log(`🌍 Connecting to MongoDB (${process.env.NODE_ENV} environment)`);
