@@ -1,26 +1,16 @@
 // src/hooks/auth/usePermissionFiltering.ts
 import { useMemo } from 'react'
-import { useUser, useOrganization } from '@clerk/nextjs'
+import { useClerkContext } from './useClerkContext'
 import type { NavigationItem } from '@/components/composed/layouts/sidebar/NavigationSidebar'
 
 export function usePermissionFiltering() {
-  const { user } = useUser()
-  const { organization } = useOrganization()
-  
+  const { user, metadata, allPermissions } = useClerkContext()
+
   const userPermissions = useMemo(() => {
     if (!user) return { roles: [], permissions: [] }
-    
-    const userRoles = (user.publicMetadata.roles as string[]) || []
-    const userPermissions = (user.publicMetadata.permissions as string[]) || []
-    
-    // Add organization-based permissions if user belongs to an organization
-    if (organization) {
-      const orgPermissions = (organization.publicMetadata.permissions as string[]) || []
-      userPermissions.push(...orgPermissions)
-    }
-    
-    return { roles: userRoles, permissions: userPermissions }
-  }, [user, organization])
+
+    return { roles: metadata.roles, permissions: allPermissions }
+  }, [user, metadata.roles, allPermissions])
   
   const filterItemsByPermissions = useMemo(() => {
     return (items: NavigationItem[]) => {

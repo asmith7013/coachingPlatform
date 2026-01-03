@@ -104,11 +104,12 @@ export function SCMNav() {
       label: "Worked Examples",
       Icon: PresentationChartBarIcon,
       items: [
-        { href: "/scm/workedExamples", label: "All Worked Examples" },
         { href: "/scm/workedExamples?grade=6", label: "Grade 6" },
         { href: "/scm/workedExamples?grade=7", label: "Grade 7" },
         { href: "/scm/workedExamples?grade=8", label: "Grade 8" },
         { href: "/scm/workedExamples?grade=alg1", label: "Algebra 1" },
+        { href: "---", label: "---" }, // Separator
+        { href: "/scm/workedExamples/create", label: "+ Create New" },
       ],
     },
     // Logistics category - only shown for coaches
@@ -209,8 +210,12 @@ export function SCMNav() {
                 {isOpen && (
                   <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[200px] z-50">
                     {/* Regular items */}
-                    {category.items.map((item) => {
-                      const isItemActive = pathname === item.href;
+                    {category.items.map((item, idx) => {
+                      // Separator
+                      if (item.href === "---") {
+                        return <div key={`sep-${idx}`} className="border-t border-gray-200 my-1" />;
+                      }
+                      const isItemActive = pathname === item.href || pathname.startsWith(item.href.split('?')[0] + '/');
                       return (
                         <Link
                           key={item.href}

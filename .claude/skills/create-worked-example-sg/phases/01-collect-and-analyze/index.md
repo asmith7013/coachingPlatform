@@ -45,7 +45,11 @@ To create a worked example, I need the following information:
 5. **Mastery Check Question**: Please upload an image of the mastery check/exit ticket question.
    (I'll create a worked example that teaches this skill using DIFFERENT numbers and context)
 
-Once I have ALL of these (especially the mastery check image), I'll analyze the problem and confirm my approach with you before creating slides.
+**Optional - Additional Context:**
+6. **Reference Images**: Any additional images for context (previous worked examples, diagrams, related problems)
+7. **Notes for AI**: Any preferences like "Focus on the balance method strategy", "Want practice with distributing negative numbers", "Use gaming themes for practice problems"
+
+Once I have the required items (especially the mastery check image), I'll analyze the problem and confirm my approach with you before creating slides.
 ```
 
 **WAIT** for the user to provide all information. Do NOT proceed until you have:
@@ -54,6 +58,8 @@ Once I have ALL of these (especially the mastery check image), I'll analyze the 
 - [ ] Lesson number
 - [ ] Learning goals
 - [ ] Mastery check question image
+- [ ] (Optional) Additional reference images
+- [ ] (Optional) Notes/preferences for the AI
 
 ---
 
@@ -91,7 +97,16 @@ Store the `scopeAndSequenceId` for later. If not found, continue anyway (set to 
 
 **CRITICAL: Do NOT skip this step. Do NOT proceed until complete.**
 
-After receiving the problem image, thoroughly analyze it:
+After receiving the problem image (and any additional context), thoroughly analyze it:
+
+### Using Additional Context (if provided)
+
+If the teacher provided **reference images** or **notes**, incorporate them into your analysis:
+
+- **Reference images**: Use these to understand related concepts, see how similar problems were taught, or identify visual styles the teacher prefers
+- **Strategy preferences**: If the teacher says "focus on the balance method", prioritize that strategy even if alternatives exist
+- **Context themes**: If the teacher suggests "use gaming themes", incorporate that into scenario creation
+- **Focus areas**: If the teacher says "want practice with distributing negatives", ensure the worked example emphasizes that skill
 
 ### 1.3a: Solve the problem yourself
 - Work through it step-by-step
@@ -311,7 +326,8 @@ Where `{slug}` is generated from the strategy name and grade level (e.g., `balan
 ## Phase 1 Completion Checklist
 
 Before proceeding, verify you have:
-- [ ] All 5 user inputs collected
+- [ ] All 5 required user inputs collected (grade, unit, lesson, learning goals, mastery check image)
+- [ ] (If provided) Additional context incorporated into analysis
 - [ ] Scope and sequence ID looked up (or noted as undefined)
 - [ ] PROBLEM ANALYSIS template completed
 - [ ] STRATEGY DEFINITION template completed

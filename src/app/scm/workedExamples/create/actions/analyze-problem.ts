@@ -16,6 +16,9 @@ interface AnalyzeProblemInput {
   lessonNumber: number | null;
   lessonName: string;
   learningGoals: string[];
+  // Optional additional context
+  additionalImageUrls?: string[];
+  additionalContext?: string;
 }
 
 /**
@@ -48,10 +51,12 @@ export async function analyzeProblem(input: AnalyzeProblemInput): Promise<Analyz
     lessonNumber: input.lessonNumber,
     lessonName: input.lessonName,
     learningGoals: input.learningGoals,
+    additionalImageCount: input.additionalImageUrls?.length || 0,
+    hasAdditionalContext: !!input.additionalContext,
   });
 
   try {
-    const { imageUrl, gradeLevel, unitNumber, lessonNumber, lessonName, learningGoals } = input;
+    const { imageUrl, gradeLevel, unitNumber, lessonNumber, lessonName, learningGoals, additionalImageUrls, additionalContext } = input;
 
     if (!imageUrl) {
       console.log('[analyzeProblem] Error: No image URL provided');
@@ -74,18 +79,66 @@ export async function analyzeProblem(input: AnalyzeProblemInput): Promise<Analyz
       };
     }
 
-    // Fetch and convert image to base64
+    // Fetch and convert main image to base64
     const { base64, mediaType } = await imageUrlToBase64(imageUrl);
+
+    // Fetch additional images if provided
+    const additionalImagesBase64: { base64: string; mediaType: string }[] = [];
+    if (additionalImageUrls && additionalImageUrls.length > 0) {
+      console.log('[analyzeProblem] Fetching', additionalImageUrls.length, 'additional images...');
+      for (const url of additionalImageUrls) {
+        try {
+          const imgData = await imageUrlToBase64(url);
+          additionalImagesBase64.push(imgData);
+        } catch (err) {
+          console.warn('[analyzeProblem] Failed to fetch additional image:', url, err);
+        }
+      }
+    }
 
     const anthropic = new Anthropic({
       apiKey,
       timeout: 10 * 60 * 1000, // 10 minutes
     });
 
-    const userPrompt = buildAnalyzePrompt(gradeLevel, unitNumber, lessonNumber, lessonName, learningGoals);
+    const userPrompt = buildAnalyzePrompt(gradeLevel, unitNumber, lessonNumber, lessonName, learningGoals, additionalContext);
     console.log('[analyzeProblem] User prompt built, length:', userPrompt.length);
 
-    console.log('[analyzeProblem] Calling Claude Opus API with streaming + base64 image...');
+    // Build message content with main image + additional images
+    const messageContent: Anthropic.MessageCreateParams['messages'][0]['content'] = [
+      {
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: mediaType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+          data: base64,
+        },
+      },
+    ];
+
+    // Add additional images as reference (labeled)
+    additionalImagesBase64.forEach((img, index) => {
+      messageContent.push({
+        type: 'text',
+        text: `\n[Reference Image ${index + 1}]:`,
+      });
+      messageContent.push({
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: img.mediaType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+          data: img.base64,
+        },
+      });
+    });
+
+    // Add the text prompt
+    messageContent.push({
+      type: 'text',
+      text: userPrompt,
+    });
+
+    console.log('[analyzeProblem] Calling Claude Opus API with streaming +', messageContent.filter(c => c.type === 'image').length, 'images...');
     const startTime = Date.now();
 
     // Use Opus 4.5 for this complex multi-step analysis task
@@ -100,20 +153,7 @@ export async function analyzeProblem(input: AnalyzeProblemInput): Promise<Analyz
       messages: [
         {
           role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: {
-                type: 'base64',
-                media_type: mediaType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
-                data: base64,
-              },
-            },
-            {
-              type: 'text',
-              text: userPrompt,
-            },
-          ],
+          content: messageContent,
         },
       ],
     });

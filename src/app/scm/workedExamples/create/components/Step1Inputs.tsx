@@ -74,12 +74,13 @@ function formatLessonDisplay(lesson: LessonOption): string {
 }
 
 export function Step1Inputs({ wizard }: Step1InputsProps) {
-  const { state, isHydrated, savedSessions, loadSession, deleteSession, setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setSection, setScopeAndSequenceId, setLearningGoals, setMasteryImage, setUploadedImageUrl, setAnalysis, clearAnalysis, setLoadingProgress, setError, nextStep } = wizard;
+  const { state, isHydrated, savedSessions, loadSession, deleteSession, setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setSection, setScopeAndSequenceId, setLearningGoals, setMasteryImage, setUploadedImageUrl, addAdditionalImage, removeAdditionalImage, setAdditionalImageUrl, setAdditionalContext, setAnalysis, clearAnalysis, setLoadingProgress, setError, nextStep } = wizard;
 
   const [learningGoalText, setLearningGoalText] = useState(state.learningGoals.join('\n'));
   const [selectedLesson, setSelectedLesson] = useState<LessonOption | null>(null);
   const [draftViewState, setDraftViewState] = useState<DraftViewState>('initial');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const additionalImagesRef = useRef<HTMLInputElement>(null);
 
   // Handle starting a new session (reset state but don't delete from storage)
   const handleSelectNew = useCallback(() => {
@@ -240,6 +241,46 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     e.preventDefault();
   }, []);
 
+  // Handle additional image selection
+  const handleAdditionalImageSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (!files) return;
+
+      Array.from(files).forEach((file) => {
+        if (!file.type.startsWith('image/')) {
+          setError('Please select only image files');
+          return;
+        }
+        const preview = URL.createObjectURL(file);
+        addAdditionalImage(file, preview);
+      });
+
+      // Reset input so the same file can be selected again
+      if (additionalImagesRef.current) additionalImagesRef.current.value = '';
+    },
+    [addAdditionalImage, setError]
+  );
+
+  // Handle additional images drag and drop
+  const handleAdditionalImagesDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      const files = e.dataTransfer.files;
+      if (!files) return;
+
+      Array.from(files).forEach((file) => {
+        if (!file.type.startsWith('image/')) {
+          setError('Please drop only image files');
+          return;
+        }
+        const preview = URL.createObjectURL(file);
+        addAdditionalImage(file, preview);
+      });
+    },
+    [addAdditionalImage, setError]
+  );
+
   // Parse learning goals from textarea
   const handleLearningGoalsChange = useCallback(
     (text: string) => {
@@ -308,6 +349,36 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
         return;
       }
 
+      // Upload additional images if any have files but no URL yet
+      const additionalImageUrls: string[] = [];
+      for (let i = 0; i < state.additionalImages.length; i++) {
+        const img = state.additionalImages[i];
+        if (img.uploadedUrl) {
+          additionalImageUrls.push(img.uploadedUrl);
+        } else if (img.file) {
+          setLoadingProgress({
+            phase: 'uploading',
+            message: `Uploading additional image ${i + 1}/${state.additionalImages.length}...`,
+            detail: 'Sending reference images to cloud storage',
+            startTime: Date.now(),
+          });
+
+          const buffer = await img.file.arrayBuffer();
+          const uint8Array = new Uint8Array(buffer);
+
+          const uploadResult = await uploadMasteryCheckImage(
+            uint8Array,
+            img.file.name,
+            img.file.type
+          );
+
+          if (uploadResult.success && uploadResult.url) {
+            additionalImageUrls.push(uploadResult.url);
+            setAdditionalImageUrl(i, uploadResult.url);
+          }
+        }
+      }
+
       // Analyze the problem
       setLoadingProgress({
         phase: 'analyzing',
@@ -323,6 +394,8 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
         lessonNumber: state.lessonNumber,
         lessonName: state.lessonName,
         learningGoals: state.learningGoals,
+        additionalImageUrls: additionalImageUrls.length > 0 ? additionalImageUrls : undefined,
+        additionalContext: state.additionalContext || undefined,
       });
 
       if (!result.success || !result.data) {
@@ -627,6 +700,88 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                 onChange={handleImageSelect}
                 className="hidden"
               />
+            </div>
+
+            {/* Additional Context (Optional) */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-gray-900">Additional Context</h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Add reference images or notes to guide the worked example creation
+                </p>
+              </div>
+
+              {/* Additional Images */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Reference Images
+                </label>
+
+                {/* Display added images */}
+                {state.additionalImages.length > 0 && (
+                  <div className="grid grid-cols-3 gap-3 mb-3">
+                    {state.additionalImages.map((img, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={img.preview || img.uploadedUrl || ''}
+                          alt={`Additional context ${index + 1}`}
+                          className="w-full h-24 object-cover rounded-lg border border-gray-300"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeAdditionalImage(index)}
+                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 cursor-pointer"
+                        >
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add more images drop zone */}
+                <div
+                  onDrop={handleAdditionalImagesDrop}
+                  onDragOver={handleDragOver}
+                  onClick={() => additionalImagesRef.current?.click()}
+                  className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center cursor-pointer hover:border-blue-400 transition-colors bg-gray-50"
+                >
+                  <svg className="mx-auto h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
+                  </svg>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Add images (e.g., diagrams, previous steps, examples)
+                  </p>
+                </div>
+
+                <input
+                  ref={additionalImagesRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleAdditionalImageSelect}
+                  className="hidden"
+                />
+              </div>
+
+              {/* Additional Context Text */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Notes for AI
+                </label>
+                <textarea
+                  value={state.additionalContext}
+                  onChange={(e) => setAdditionalContext(e.target.value)}
+                  placeholder="e.g., Focus on the 'balance method' strategy, want extra practice with distributing negative numbers, use gaming context for practice problems..."
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                  rows={3}
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  Specify strategy preferences, focus areas, or context themes
+                </p>
+              </div>
             </div>
 
             {/* Error Message */}

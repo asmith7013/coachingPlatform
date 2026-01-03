@@ -6,7 +6,7 @@ import { SlidePreview } from './SlidePreview';
 import { WizardStickyFooter } from './WizardStickyFooter';
 import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
 import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
-import { downloadPptxLocally } from '@/lib/utils/download-pptx';
+// import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 
 interface Step3SlidesProps {
   wizard: WizardStateHook;
@@ -181,7 +181,8 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     setGoogleSlidesUrl(null);
 
     // Download PPTX locally FIRST when on localhost (before Google Slides)
-    await downloadPptxLocally(slides, state.title || 'worked-example', state.mathConcept);
+    // Disabled - uncomment to debug PPTX output locally:
+    // await downloadPptxLocally(slides, state.title || 'worked-example', state.mathConcept);
 
     try {
       // Step 1: Export to Google Slides to get the URL
@@ -370,12 +371,6 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded-full border border-blue-200">
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            PPTX Format
-          </span>
           <span className="text-gray-600 text-sm">
             Slide {selectedSlideIndex + 1} of {slides.length}
           </span>

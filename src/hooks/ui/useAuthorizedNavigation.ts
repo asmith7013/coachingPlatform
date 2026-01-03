@@ -1,33 +1,22 @@
 import { useMemo } from 'react'
-import { useUser, useOrganization } from '@clerk/nextjs'
+import { useClerkContext } from '@/hooks/auth/useClerkContext'
 import { navigationItems } from '@/app/dashboard/config'
 import { useNavigation } from './useNavigation'
 import type { NavigationItem } from '@/components/composed/layouts/sidebar/NavigationSidebar'
 
 export function useAuthorizedNavigation() {
-  const { user } = useUser()
-  const { organization } = useOrganization()
+  const { user, metadata, allPermissions } = useClerkContext()
   const baseNavigation = useNavigation()
-  
+
   const authorizedNavigationItems = useMemo(() => {
     if (!user) return []
-    
-    // Get roles and permissions from Clerk public metadata
-    const userRoles = (user.publicMetadata.roles as string[]) || []
-    const userPermissions = (user.publicMetadata.permissions as string[]) || []
-    
-    // Add organization-based permissions if user belongs to an organization
-    if (organization) {
-      const orgPermissions = (organization.publicMetadata.permissions as string[]) || []
-      userPermissions.push(...orgPermissions)
-    }
-    
+
     return filterNavigationByAuth(
       navigationItems,
-      userRoles,
-      userPermissions
+      metadata.roles,
+      allPermissions
     )
-  }, [user, organization])
+  }, [user, metadata.roles, allPermissions])
   
   // Recalculate navigation state with authorized items
   const authorizedNavigation = useMemo(() => {

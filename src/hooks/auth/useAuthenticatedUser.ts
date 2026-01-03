@@ -1,43 +1,35 @@
-import { useUser, useOrganization, useClerk } from '@clerk/nextjs';
+import { useClerk } from '@clerk/nextjs';
 import { useMemo, useCallback } from 'react';
-import { 
-  AuthenticatedUser, 
-  ROLE_PERMISSIONS, 
+import {
+  AuthenticatedUser,
+  ROLE_PERMISSIONS,
   Permission,
-  UserMetadata
 } from '@core-types/auth';
-import { UserMetadataZodSchema } from '@zod-schema/core-types/auth';
-import { validateSafe } from '@/lib/data-processing/validation/zod-validation';
+import { useClerkContext } from './useClerkContext';
 
 export function useAuthenticatedUser(): AuthenticatedUser {
-  const { user, isLoaded, isSignedIn } = useUser();
-  const { organization } = useOrganization();
-  
-  // Parse and validate metadata with defaults
-  const metadata = useMemo(() => {
-    if (!user?.publicMetadata) {
-      return UserMetadataZodSchema.parse({});
-    }
-    
-    // Use existing safe parse utility
-    const parsed = validateSafe(UserMetadataZodSchema, user.publicMetadata);
-    return parsed || UserMetadataZodSchema.parse({});
-  }, [user]) as UserMetadata;
-  
-  // Calculate effective permissions
+  const {
+    user,
+    isLoaded,
+    isSignedIn,
+    metadata,
+    allPermissions,
+    isSuperAdmin,
+    isDirector,
+    isSeniorDirector,
+  } = useClerkContext();
+
+  // Calculate effective permissions (role-based + user + org)
   const permissions = useMemo(() => {
     // Get permissions from roles
-    const rolePermissions = metadata.roles.flatMap((role: string) => 
+    const rolePermissions = metadata.roles.flatMap((role: string) =>
       ROLE_PERMISSIONS[role as keyof typeof ROLE_PERMISSIONS] || []
     );
-    
-    // Merge organization permissions
-    const orgPermissions = organization?.publicMetadata?.permissions as string[] || [];
-    
-    // Combine all permissions and remove duplicates
-    const allPermissions = Array.from(new Set([...rolePermissions, ...metadata.permissions, ...orgPermissions]));
-    return allPermissions as Permission[];
-  }, [metadata, organization]);
+
+    // Combine role-based permissions with direct permissions (already includes org)
+    const combinedPermissions = Array.from(new Set([...rolePermissions, ...allPermissions]));
+    return combinedPermissions as Permission[];
+  }, [metadata.roles, allPermissions]);
   
   // Permission checking functions
   const hasPermission = useCallback((permission: Permission) => {
@@ -64,14 +56,14 @@ export function useAuthenticatedUser(): AuthenticatedUser {
   // School access checking
   const canAccessSchool = useCallback((schoolId: string) => {
     // Super admins and directors can access all schools
-    if (hasRole('super_admin') || hasRole('Director') || hasRole('Senior Director')) {
+    if (isSuperAdmin || isDirector || isSeniorDirector) {
       return true;
     }
-    
+
     // Check if user is assigned to this school
-    return metadata.schoolIds.includes(schoolId) || 
-           metadata.managedSchools.includes(schoolId)
-  }, [metadata, hasRole]);
+    return metadata.schoolIds.includes(schoolId) ||
+           metadata.managedSchools.includes(schoolId);
+  }, [metadata.schoolIds, metadata.managedSchools, isSuperAdmin, isDirector, isSeniorDirector]);
   
   // Staff management checking
   const canManageStaff = useCallback((staffId: string) => {

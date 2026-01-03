@@ -138,6 +138,32 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
         },
       };
 
+    case 'ADD_ADDITIONAL_IMAGE':
+      return {
+        ...state,
+        additionalImages: [
+          ...state.additionalImages,
+          { file: action.payload.file, preview: action.payload.preview, uploadedUrl: null },
+        ],
+      };
+
+    case 'REMOVE_ADDITIONAL_IMAGE':
+      return {
+        ...state,
+        additionalImages: state.additionalImages.filter((_, i) => i !== action.payload),
+      };
+
+    case 'SET_ADDITIONAL_IMAGE_URL':
+      return {
+        ...state,
+        additionalImages: state.additionalImages.map((img, i) =>
+          i === action.payload.index ? { ...img, uploadedUrl: action.payload.url } : img
+        ),
+      };
+
+    case 'SET_ADDITIONAL_CONTEXT':
+      return { ...state, additionalContext: action.payload };
+
     case 'SET_ANALYSIS':
       return {
         ...state,
@@ -347,6 +373,13 @@ function loadPersistedState(scopeAndSequenceId: string | null): WizardState | nu
     if (parsed.masteryCheckImage) {
       parsed.masteryCheckImage.file = null;
     }
+    // Clear file objects from additional images too
+    if (parsed.additionalImages) {
+      parsed.additionalImages = parsed.additionalImages.map((img: { file: File | null; preview: string | null; uploadedUrl: string | null }) => ({
+        ...img,
+        file: null,
+      }));
+    }
 
     return parsed;
   } catch {
@@ -369,6 +402,11 @@ function persistState(state: WizardState): void {
         ...state.masteryCheckImage,
         file: null,
       },
+      // Clear file objects from additional images too
+      additionalImages: state.additionalImages.map(img => ({
+        ...img,
+        file: null,
+      })),
       savedAt: Date.now(),
     };
     localStorage.setItem(getStorageKey(state.scopeAndSequenceId), JSON.stringify(toPersist));
@@ -508,6 +546,22 @@ export function useWizardState() {
     dispatch({ type: 'SET_UPLOADED_IMAGE_URL', payload: url });
   }, []);
 
+  const addAdditionalImage = useCallback((file: File, preview: string) => {
+    dispatch({ type: 'ADD_ADDITIONAL_IMAGE', payload: { file, preview } });
+  }, []);
+
+  const removeAdditionalImage = useCallback((index: number) => {
+    dispatch({ type: 'REMOVE_ADDITIONAL_IMAGE', payload: index });
+  }, []);
+
+  const setAdditionalImageUrl = useCallback((index: number, url: string) => {
+    dispatch({ type: 'SET_ADDITIONAL_IMAGE_URL', payload: { index, url } });
+  }, []);
+
+  const setAdditionalContext = useCallback((context: string) => {
+    dispatch({ type: 'SET_ADDITIONAL_CONTEXT', payload: context });
+  }, []);
+
   const setAnalysis = useCallback(
     (analysis: { problemAnalysis: ProblemAnalysis; strategyDefinition: StrategyDefinition; scenarios: Scenario[] }) => {
       dispatch({ type: 'SET_ANALYSIS', payload: analysis });
@@ -637,6 +691,10 @@ export function useWizardState() {
     setLearningGoals,
     setMasteryImage,
     setUploadedImageUrl,
+    addAdditionalImage,
+    removeAdditionalImage,
+    setAdditionalImageUrl,
+    setAdditionalContext,
     // Step 2
     setAnalysis,
     clearAnalysis,

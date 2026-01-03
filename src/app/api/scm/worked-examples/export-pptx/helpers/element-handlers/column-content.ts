@@ -5,6 +5,29 @@ import { pxToInches } from '../constants';
 import { TextRun, extractColor, extractBgColor, hasBoldStyle, parseTextRuns } from './utils';
 
 /**
+ * Estimate how many lines a text will need when wrapped to a given width.
+ * Uses character count approximation based on font size and width.
+ *
+ * @param text - The text content
+ * @param widthInches - Available width in inches
+ * @param fontSize - Font size in points
+ * @returns Estimated number of lines (minimum 1)
+ */
+function estimateLines(text: string, widthInches: number, fontSize: number): number {
+  if (!text || text.length === 0) return 1;
+
+  // Approximate characters per inch based on font size
+  // Arial at 12pt is roughly 10-12 chars per inch; smaller fonts fit more
+  const charsPerInch = 120 / fontSize;
+  const charsPerLine = Math.floor(widthInches * charsPerInch);
+
+  // Ensure we don't divide by zero
+  if (charsPerLine <= 0) return 1;
+
+  return Math.max(1, Math.ceil(text.length / charsPerLine));
+}
+
+/**
  * Add column content (left-column, content) as native elements
  * Uses cheerio for proper HTML parsing and extracts inline colors
  */
@@ -42,11 +65,14 @@ export function addColumnContent(slide: pptxgen.Slide, el: PptxElement): void {
         const text = $li.text().trim();
         const color = extractColor($li.attr('style')) || '1D1D1D';
         if (text) {
-          slide.addText(`• ${text}`, {
-            x: baseX, y: currentY, w: colWidth, h: lineHeight,
+          const bulletText = `• ${text}`;
+          const itemLines = estimateLines(bulletText, colWidth, 12);
+          const itemHeight = itemLines * lineHeight;
+          slide.addText(bulletText, {
+            x: baseX, y: currentY, w: colWidth, h: itemHeight,
             fontSize: 12, fontFace: 'Arial', color, valign: 'top',
           });
-          currentY += lineHeight;
+          currentY += itemHeight;
         }
       });
       currentY += 0.1;
@@ -136,7 +162,15 @@ export function addColumnContent(slide: pptxgen.Slide, el: PptxElement): void {
           }
         });
 
-        const boxHeight = Math.max(0.5, innerTexts.length * lineHeight + 0.25);
+        // Calculate box height based on estimated wrapped lines for each text item
+        const textWidth = colWidth - padding * 2;
+        const totalLines = innerTexts.reduce((sum, item) => {
+          const text = item.textRuns
+            ? item.textRuns.map(r => r.text).join('')
+            : item.text;
+          return sum + estimateLines(text, textWidth, item.fontSize);
+        }, 0);
+        const boxHeight = Math.max(0.5, totalLines * lineHeight + 0.25);
 
         // Draw background box
         slide.addShape('roundRect', {
@@ -144,16 +178,22 @@ export function addColumnContent(slide: pptxgen.Slide, el: PptxElement): void {
           fill: { color: bgColor }, rectRadius: 0.08,
         });
 
-        // Add text elements
+        // Add text elements with proper height allocation
         let textY = currentY + padding;
         for (const item of innerTexts) {
+          const text = item.textRuns
+            ? item.textRuns.map(r => r.text).join('')
+            : item.text;
+          const itemLines = estimateLines(text, textWidth, item.fontSize);
+          const itemHeight = itemLines * lineHeight;
+
           // Draw item background if present (e.g., highlighted list items)
           if (item.bgColor) {
             slide.addShape('roundRect', {
               x: baseX + padding - 0.02,
               y: textY - 0.02,
               w: colWidth - padding * 2 + 0.04,
-              h: lineHeight,
+              h: itemHeight + 0.04,
               fill: { color: item.bgColor },
               rectRadius: 0.04,
             });
@@ -172,19 +212,19 @@ export function addColumnContent(slide: pptxgen.Slide, el: PptxElement): void {
                 },
               })),
               {
-                x: baseX + padding, y: textY, w: colWidth - padding * 2, h: lineHeight,
+                x: baseX + padding, y: textY, w: textWidth, h: itemHeight,
                 valign: 'top',
               }
             );
           } else {
             // Simple text
             slide.addText(item.text, {
-              x: baseX + padding, y: textY, w: colWidth - padding * 2, h: lineHeight,
+              x: baseX + padding, y: textY, w: textWidth, h: itemHeight,
               fontSize: item.fontSize, fontFace: 'Arial', bold: item.bold,
               color: item.color, align: item.align,
             });
           }
-          textY += lineHeight;
+          textY += itemHeight;
         }
         currentY += boxHeight + 0.12;
       } else {
@@ -197,11 +237,13 @@ export function addColumnContent(slide: pptxgen.Slide, el: PptxElement): void {
             const text = $inner.text().trim();
             const color = extractColor($inner.attr('style')) || '1D1D1D';
             if (text && text.length > 2) {
+              const itemLines = estimateLines(text, colWidth, 12);
+              const itemHeight = itemLines * lineHeight;
               slide.addText(text, {
-                x: baseX, y: currentY, w: colWidth, h: lineHeight,
+                x: baseX, y: currentY, w: colWidth, h: itemHeight,
                 fontSize: 12, fontFace: 'Arial', color,
               });
-              currentY += lineHeight;
+              currentY += itemHeight;
             }
           }
         });
@@ -213,11 +255,13 @@ export function addColumnContent(slide: pptxgen.Slide, el: PptxElement): void {
       const text = $child.text().trim();
       const color = extractColor($child.attr('style')) || '1D1D1D';
       if (text && text.length > 2) {
+        const itemLines = estimateLines(text, colWidth, 12);
+        const itemHeight = itemLines * lineHeight;
         slide.addText(text, {
-          x: baseX, y: currentY, w: colWidth, h: lineHeight,
+          x: baseX, y: currentY, w: colWidth, h: itemHeight,
           fontSize: 12, fontFace: 'Arial', color,
         });
-        currentY += lineHeight;
+        currentY += itemHeight;
       }
     }
   });

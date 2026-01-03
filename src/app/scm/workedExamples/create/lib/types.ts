@@ -162,6 +162,14 @@ export interface WizardState {
     uploadedUrl: string | null;
   };
 
+  // Additional context (optional)
+  additionalImages: {
+    file: File | null;
+    preview: string | null;
+    uploadedUrl: string | null;
+  }[];
+  additionalContext: string;
+
   // Step 2: Analysis (from Claude)
   problemAnalysis: ProblemAnalysis | null;
   strategyDefinition: StrategyDefinition | null;
@@ -200,6 +208,10 @@ export type WizardAction =
   | { type: 'SET_LEARNING_GOALS'; payload: string[] }
   | { type: 'SET_MASTERY_IMAGE'; payload: { file: File | null; preview: string | null } }
   | { type: 'SET_UPLOADED_IMAGE_URL'; payload: string }
+  | { type: 'ADD_ADDITIONAL_IMAGE'; payload: { file: File; preview: string } }
+  | { type: 'REMOVE_ADDITIONAL_IMAGE'; payload: number }
+  | { type: 'SET_ADDITIONAL_IMAGE_URL'; payload: { index: number; url: string } }
+  | { type: 'SET_ADDITIONAL_CONTEXT'; payload: string }
   | { type: 'SET_ANALYSIS'; payload: { problemAnalysis: ProblemAnalysis; strategyDefinition: StrategyDefinition; scenarios: Scenario[] } }
   | { type: 'CLEAR_ANALYSIS' }
   | { type: 'UPDATE_STRATEGY_NAME'; payload: string }
@@ -238,6 +250,8 @@ export const initialWizardState: WizardState = {
     preview: null,
     uploadedUrl: null,
   },
+  additionalImages: [],
+  additionalContext: '',
   problemAnalysis: null,
   strategyDefinition: null,
   scenarios: null,

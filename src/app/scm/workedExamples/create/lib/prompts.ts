@@ -386,21 +386,36 @@ export function buildAnalyzePrompt(
   unitNumber: number | null,
   lessonNumber: number | null,
   lessonName: string,
-  learningGoals: string[]
+  learningGoals: string[],
+  additionalContext?: string
 ): string {
+  // Build additional context section if provided
+  const additionalContextSection = additionalContext?.trim()
+    ? `
+
+## Teacher's Additional Context
+${additionalContext.trim()}
+
+**Important:** Consider this context when:
+- Choosing the strategy name and approach
+- Creating practice problem contexts/themes
+- Deciding what to emphasize in explanations`
+    : '';
+
   return `Analyze this mastery check question image.
 
 Context:
 - Grade Level: ${gradeLevel}
 - Unit: ${unitNumber ?? 'Not specified'}
 - Lesson: ${lessonNumber ?? 'Not specified'} - ${lessonName || 'Not specified'}
-- Learning Targets: ${learningGoals.length > 0 ? learningGoals.join('; ') : 'Not specified'}
+- Learning Targets: ${learningGoals.length > 0 ? learningGoals.join('; ') : 'Not specified'}${additionalContextSection}
 
 Instructions:
 1. Solve the problem yourself step-by-step
 2. Identify the mathematical structure and problem type
 3. Define ONE clear strategy with 2-3 moves
 4. Create 3 scenarios with DIFFERENT contexts (all different from the mastery check)
+${additionalContext ? '5. Apply the teacher\'s additional context preferences when creating scenarios and choosing strategy' : ''}
 
 Return ONLY valid JSON matching the schema described in the system prompt.`;
 }
