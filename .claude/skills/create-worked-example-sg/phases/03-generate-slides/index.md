@@ -241,14 +241,26 @@ READ: card-patterns/complex-patterns/annotation-snippet.html ← Annotation patt
 READ: visuals/svg-graphs.md                 ← Pixel calculation reference
 ```
 
-### Step 2: Retrieve Your GRAPH PLAN
+### Step 2: Retrieve the Correct GRAPH PLAN
 
-Your GRAPH PLAN from Phase 1 contains the semantic decisions:
-- **Equations** and colors
-- **Scale** (X_MAX, Y_MAX, Y-axis labels)
-- **Annotation** type and position
+**⚠️ CRITICAL: Use EACH SCENARIO'S graphPlan, NOT the mastery check's graphPlan.**
 
-**You MUST implement exactly what your GRAPH PLAN specifies.** Do NOT recalculate or change the scale.
+The mastery check (`problemAnalysis.graphPlan`) is for the student's exit ticket/assessment - it is NEVER shown in these slides. Each scenario has its own numbers/context, so each needs its own graphPlan:
+
+| Slides | Source | GraphPlan to Use |
+|--------|--------|------------------|
+| 2-8 (Worked Example) | Scenario 1 | `scenarios[0].graphPlan` |
+| 9 (Practice 1) | Scenario 2 | `scenarios[1].graphPlan` |
+| 10 (Practice 2) | Scenario 3 | `scenarios[2].graphPlan` |
+
+Each GRAPH PLAN contains the semantic decisions for that scenario:
+- **Equations** with correct slope/y-intercept for that scenario's numbers
+- **Scale** (X_MAX, Y_MAX) appropriate for that scenario's values
+- **Line endpoints** (startPoint, endPoint) calculated for that scenario
+- **keyPoints** with correct coordinates for that scenario
+- **Annotations** type and position
+
+**You MUST implement exactly what each scenario's GRAPH PLAN specifies.** Do NOT use the mastery check's graphPlan. Do NOT recalculate or change the scale.
 
 ### Step 3: Clone and Modify graph-snippet.html
 

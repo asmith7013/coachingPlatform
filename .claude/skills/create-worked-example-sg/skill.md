@@ -22,6 +22,24 @@ All slides are generated as **PPTX-compatible HTML** that can be:
 - No JavaScript, no toggles, no CSS animations
 - CFU/Answer boxes use PPTX animation (appear on click)
 
+## Choosing Your Path
+
+**Creating a NEW worked example?**
+→ Skip to "How to Start" section below
+
+**Updating THIS SYSTEM (prompts, templates, architecture)?**
+→ Read these files first to understand the full architecture:
+```
+Read: .claude/skills/create-worked-example-sg/skill.md          ← This file (CLI skill architecture)
+Read: src/app/scm/workedExamples/create/README.md               ← Browser wizard architecture
+Read: src/app/scm/workedExamples/create/lib/prompts.ts          ← Browser prompts (manual sync required)
+Read: src/app/scm/workedExamples/create/lib/types.ts            ← TypeScript interfaces
+```
+
+Then follow the update patterns documented in the "Browser Wizard Architecture" section below.
+
+---
+
 ## Single Source of Truth Architecture
 
 **IMPORTANT:** This skill folder (`.claude/skills/create-worked-example-sg/`) is the **SOURCE OF TRUTH** for all worked example content.
@@ -83,9 +101,26 @@ src/skills/worked-example/                  ← AUTO-GENERATED (don't edit!)
 - Edit `card-patterns/simple-patterns/*.html` for simple component patterns
 - Edit `card-patterns/complex-patterns/*.html` for SVG and printable patterns
 - Edit `reference/*.md` for pedagogy/styling/layout rule changes
-- Edit `prompts/*.md` for LLM instruction changes (used by both CLI and browser)
+- Edit `phases/*.md` for CLI workflow and prompt logic changes
 - Run `npm run sync-skill-content` to propagate to TypeScript
 - NEVER edit `src/skills/worked-example/content/*.ts` directly (they're auto-generated)
+
+## Browser Wizard Architecture (Manual Updates Required)
+
+**⚠️ The browser wizard is a SEPARATE implementation that requires MANUAL updates.**
+
+**Full documentation:** `src/app/scm/workedExamples/create/README.md`
+
+### Quick Reference
+
+| Change Type | Skill File | Browser File |
+|-------------|-----------|--------------|
+| Analysis instructions | `phases/01-collect-and-analyze/analyze-problem.md` | `lib/prompts.ts` |
+| JSON schema | `phases/01-collect-and-analyze/analyze-problem.md` | `lib/prompts.ts` + `lib/types.ts` |
+| Slide generation | `phases/03-generate-slides/index.md` | `lib/prompts.ts` |
+| New data fields | `phases/*.md` | `lib/types.ts` + `lib/prompts.ts` |
+
+**The sync script does NOT update the browser wizard** - all files in `src/app/scm/workedExamples/create/` require manual updates.
 
 ## How This Skill Works
 
