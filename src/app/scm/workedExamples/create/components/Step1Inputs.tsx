@@ -705,7 +705,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
             {/* Additional Context (Optional) */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="mb-4">
-                <h3 className="text-base font-semibold text-gray-900">Additional Context</h3>
+                <h3 className="text-base font-semibold text-gray-900">Additional Context (Optional)</h3>
                 <p className="text-sm text-gray-500 mt-1">
                   Add reference images or notes to guide the worked example creation
                 </p>

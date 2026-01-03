@@ -145,9 +145,8 @@ function fillTimecardFormAndSetupTracking() {
           rateValue = parseFloat(rateText.replace('$', '')) || rateValue;
         }
 
-        if (rateValue === 0 && numberInputs.length >= 2) {
-          rateValue = parseFloat(numberInputs[1]?.value) || 0;
-        }
+        // Note: Do NOT use numberInputs[1] as fallback - that's the total pay field, not the rate
+        // The rate should only come from $ prefixed inputs or Rate class elements
 
         if (taskValue && projectValue && hoursValue) {
           rows.push({

@@ -1,5 +1,8 @@
 "use server";
 
+// Extend Vercel function timeout (default is 15s, Opus API with images needs more)
+export const maxDuration = 120; // 2 minutes
+
 import Anthropic from '@anthropic-ai/sdk';
 import { handleServerError } from '@error/handlers/server';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';

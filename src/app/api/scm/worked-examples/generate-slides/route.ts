@@ -1,4 +1,9 @@
 import { NextRequest } from 'next/server';
+
+// Extend Vercel function timeout for long Claude API streaming
+// Streaming keeps connection alive, but Vercel still has a max execution time
+export const maxDuration = 300; // 5 minutes
+
 import Anthropic from '@anthropic-ai/sdk';
 import { currentUser } from '@clerk/nextjs/server';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';

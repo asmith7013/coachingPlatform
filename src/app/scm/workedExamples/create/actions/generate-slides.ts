@@ -1,5 +1,8 @@
 "use server";
 
+// Extend Vercel function timeout (default is 15s, Claude API for slide generation needs more)
+export const maxDuration = 300; // 5 minutes - slide generation with 32K tokens is long
+
 import Anthropic from '@anthropic-ai/sdk';
 import { handleServerError } from '@error/handlers/server';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
