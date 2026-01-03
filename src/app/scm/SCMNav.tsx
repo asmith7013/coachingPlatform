@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import {
   MapIcon,
@@ -25,6 +25,7 @@ type NavCategory = {
 
 export function SCMNav() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -215,7 +216,20 @@ export function SCMNav() {
                       if (item.href === "---") {
                         return <div key={`sep-${idx}`} className="border-t border-gray-200 my-1" />;
                       }
-                      const isItemActive = pathname === item.href || pathname.startsWith(item.href.split('?')[0] + '/');
+                      // For items with query params (like ?grade=6), match base path AND query params
+                      // For items without query params, match exact or subpaths
+                      const hasQueryParam = item.href.includes('?');
+                      const basePath = item.href.split('?')[0];
+                      let isItemActive = false;
+                      if (hasQueryParam) {
+                        const itemParams = new URLSearchParams(item.href.split('?')[1]);
+                        const paramsMatch = Array.from(itemParams.entries()).every(
+                          ([key, value]) => searchParams.get(key) === value
+                        );
+                        isItemActive = pathname === basePath && paramsMatch;
+                      } else {
+                        isItemActive = pathname === item.href || pathname.startsWith(item.href + '/');
+                      }
                       return (
                         <Link
                           key={item.href}

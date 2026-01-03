@@ -1094,10 +1094,8 @@
 │   │   │   │   └── zearn
 │   │   │   │       └── page.tsx
 │   │   │   └── workedExamples
-│   │   │       ├── components
-│   │   │       │   ├── D3ComponentRenderer.tsx
-│   │   │       │   └── DynamicGraphComponent.tsx
 │   │   │       ├── create
+│   │   │       │   ├── README.md
 │   │   │       │   ├── actions
 │   │   │       │   ├── components
 │   │   │       │   ├── hooks
@@ -1105,37 +1103,22 @@
 │   │   │       │   └── page.tsx
 │   │   │       ├── deactivated
 │   │   │       │   └── page.tsx
-│   │   │       ├── equation-solving-distribute-vs-divide-grade8
-│   │   │       │   ├── metadata.json
-│   │   │       │   ├── slide-1.html
-│   │   │       │   ├── slide-10.html
-│   │   │       │   ├── slide-2.html
-│   │   │       │   ├── slide-3.html
-│   │   │       │   ├── slide-4.html
-│   │   │       │   ├── slide-5.html
-│   │   │       │   ├── slide-6.html
-│   │   │       │   ├── slide-7.html
-│   │   │       │   ├── slide-8.html
-│   │   │       │   └── slide-9.html
 │   │   │       ├── hooks
 │   │   │       │   ├── index.ts
+│   │   │       │   ├── useDeactivatedDecks.ts
 │   │   │       │   ├── useGradeUnitPairs.ts
 │   │   │       │   └── useWorkedExampleDecks.ts
 │   │   │       ├── page.tsx
-│   │   │       ├── request
-│   │   │       │   ├── admin
+│   │   │       ├── presentations
+│   │   │       │   ├── PresentationModal.tsx
 │   │   │       │   ├── components
-│   │   │       │   └── page.tsx
-│   │   │       ├── slide-creation
-│   │   │       │   ├── ContextSlide.tsx
-│   │   │       │   ├── PracticeSlide.tsx
-│   │   │       │   ├── PredictionSlide.tsx
-│   │   │       │   ├── ReasoningSlide.tsx
-│   │   │       │   ├── RevealSlide.tsx
-│   │   │       │   ├── TitleSlide.tsx
-│   │   │       │   ├── components
-│   │   │       │   └── index.ts
-│   │   │       └── test
+│   │   │       │   ├── index.ts
+│   │   │       │   ├── types.ts
+│   │   │       │   ├── usePresentationState.ts
+│   │   │       │   └── utils.ts
+│   │   │       └── request
+│   │   │           ├── admin
+│   │   │           ├── components
 │   │   │           └── page.tsx
 │   │   ├── setup
 │   │   │   └── page.tsx
@@ -1632,8 +1615,6 @@
 │   │   │       │   └── useZearnBatchData.ts
 │   │   │       └── utils
 │   │   │           └── parseZearnData.ts
-│   │   ├── presentations
-│   │   │   └── PresentationModal.tsx
 │   │   └── ui
 │   │       └── card.tsx
 │   ├── debug
@@ -1642,6 +1623,7 @@
 │   ├── hooks
 │   │   ├── auth
 │   │   │   ├── useAuthenticatedUser.ts
+│   │   │   ├── useClerkContext.ts
 │   │   │   ├── useCoachData.ts
 │   │   │   └── usePermissionFiltering.ts
 │   │   ├── coaching
@@ -2069,6 +2051,9 @@
 │   │   │   │       ├── clerk-validation.ts
 │   │   │   │       ├── index.ts
 │   │   │   │       └── parse-query.ts
+│   │   │   ├── auth
+│   │   │   │   ├── getAuthenticatedUser.ts
+│   │   │   │   └── index.ts
 │   │   │   ├── crud
 │   │   │   │   ├── README.md
 │   │   │   │   ├── bulk-operations.ts
@@ -2310,4 +2295,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-683 directories, 1628 files
+680 directories, 1616 files
