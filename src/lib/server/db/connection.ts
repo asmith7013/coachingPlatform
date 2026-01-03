@@ -43,44 +43,16 @@ export const connectToDB = async () => {
     // const maskedURI = MONGO_URI.replace(/:[^:@]+@/, ':****@');
     // console.log("🔗 Connection string:", maskedURI);
 
-    cached.promise = mongoose.connect(MONGO_URI, opts).then(async (mongoose) => {
-      // console.log("✅ Mongoose connected successfully");
-      
-      // Get database name
-      if (mongoose.connection.db) {
-        const dbName = mongoose.connection.db.databaseName;
-        console.log("📁 Connected to database:", dbName);
-        
-        // List all collections
-        try {
-          const collections = await mongoose.connection.db.listCollections().toArray();
-          console.log("📋 Available collections:", collections.map(c => c.name).join(", "));
-          
-          // Count documents in key collections
-          for (const collName of ['nycpsstaffs', 'schools', 'teachingLabStaffs', 'bellschedules', 'teacherschedules', 'cycles']) {
-            try {
-              const count = await mongoose.connection.db.collection(collName).countDocuments();
-              console.log(`📈 Collection '${collName}' has ${count} documents`);
-            } catch (error) {
-              console.error(`❌ Error counting documents in '${collName}':`, error);
-            }
-          }
-        } catch (error) {
-          console.error("❌ Error listing collections:", error);
-        }
-      } else {
-        console.warn("⚠️ MongoDB connection established but db object is undefined");
-      }
-      
+    cached.promise = mongoose.connect(MONGO_URI, opts).then((mongoose) => {
       // Set up connection event handlers
       mongoose.connection.on('error', (err) => {
-        console.error('❌ MongoDB connection error:', err);
+        console.error('MongoDB connection error:', err);
         cached.conn = null;
         cached.promise = null;
       });
 
       mongoose.connection.on('disconnected', () => {
-        console.warn('⚠️ MongoDB disconnected');
+        console.warn('MongoDB disconnected');
         cached.conn = null;
         cached.promise = null;
       });
