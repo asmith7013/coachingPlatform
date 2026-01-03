@@ -138,13 +138,49 @@
 </g>
 
 
-<!-- ========== POINT LABELS (inside plot area) ========== -->
+<!-- ========== KEY POINTS: SEPARATE DOT AND LABEL ========== -->
 <!--
-  - Upper half (pixelY < 95): label ABOVE at pixelY - 12
-  - Lower half (pixelY >= 95): label BELOW at pixelY + 15
-  - Use text-anchor="middle" for centering
-  - Each point label gets its own layer
+  CRITICAL: Always use SEPARATE layers for point dots and their labels.
+  This allows independent manipulation in PPTX/Google Slides.
+
+  Naming convention:
+    - "point-X" for the dot/circle only
+    - "label-X" for the text label only
+
+  Label positioning:
+    - Upper half (pixelY < 95): label ABOVE at pixelY - 12
+    - Lower half (pixelY >= 95): label BELOW at pixelY + 15
+    - Use text-anchor="middle" for centering
 -->
+
+<!-- Example: A point at (4, 20) with SEPARATE dot and label -->
+
+<!-- Point DOT only -->
 <g data-pptx-layer="point-4-20">
+  <circle cx="150" cy="110" r="5" fill="#60a5fa"/>
+</g>
+
+<!-- Point LABEL only - SEPARATE layer -->
+<g data-pptx-layer="label-4-20">
   <text x="150" y="98" fill="#60a5fa" font-family="Arial" font-size="10" font-weight="normal" text-anchor="middle">(4, 20)</text>
+</g>
+
+<!-- Example: A solution point at (10, 20) -->
+
+<!-- Point DOT only -->
+<g data-pptx-layer="point-solution">
+  <circle cx="150" cy="103.33" r="6" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
+</g>
+
+<!-- Point LABEL only - SEPARATE layer -->
+<g data-pptx-layer="label-solution">
+  <text x="150" y="91" fill="#22c55e" font-family="Arial" font-size="10" font-weight="normal" text-anchor="middle">(10, 20)</text>
+</g>
+
+<!-- ========== READING PATH ANNOTATIONS ========== -->
+<!-- Reading paths (dashed lines) should also be separate from points -->
+
+<g data-pptx-layer="reading-path">
+  <line x1="150" y1="170" x2="150" y2="103.33" stroke="#22c55e" stroke-width="2" stroke-dasharray="4,4"/>
+  <line x1="150" y1="103.33" x2="40" y2="103.33" stroke="#22c55e" stroke-width="2" stroke-dasharray="4,4"/>
 </g>

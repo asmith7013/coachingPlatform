@@ -495,25 +495,38 @@ export const GRAPH_SNIPPET = `
     ============================================================
     Each layer becomes a SEPARATE IMAGE in the exported PPTX/Google Slides,
     tightly cropped to its bounding box. Use granular layers for elements
-    that should be independently movable:
+    that should be independently movable.
+
+    CRITICAL: Points and labels must be in SEPARATE layers!
 
     REQUIRED LAYERS:
-      data-pptx-layer="base-graph"   → Grid, axes, ticks, axis labels (usually one)
+      data-pptx-layer="base-graph"   → Grid, axes, ticks, axis labels
 
-    PER-ELEMENT LAYERS (for manipulable export):
-      data-pptx-layer="line-1"       → First data line + its point(s)
-      data-pptx-layer="line-2"       → Second data line + its point(s)
+    DATA LINE LAYERS:
+      data-pptx-layer="line-1"       → First data line + y-intercept point
+      data-pptx-layer="line-2"       → Second data line + y-intercept point
+
+    ANNOTATION LAYERS (one element per layer):
       data-pptx-layer="label-b0"     → Y-intercept label for line 1
       data-pptx-layer="label-b20"    → Y-intercept label for line 2
-      data-pptx-layer="arrow-shift"  → Shift arrow annotation
       data-pptx-layer="eq-line-1"    → Equation label for line 1
       data-pptx-layer="eq-line-2"    → Equation label for line 2
+      data-pptx-layer="arrow-shift"  → Shift arrow annotation
+      data-pptx-layer="label-shift"  → Shift amount label
+
+    KEY POINTS - ALWAYS SEPARATE DOT FROM LABEL:
+      data-pptx-layer="point-solution"  → Solution point DOT only
+      data-pptx-layer="label-solution"  → Solution point LABEL only
+      data-pptx-layer="point-q"         → Named point DOT only
+      data-pptx-layer="label-q"         → Named point LABEL only
+      data-pptx-layer="reading-path"    → Dashed reading lines
 
     NAMING CONVENTION:
-      - "line-N" for data lines and their associated points
-      - "label-X" for text annotations (X = descriptive suffix)
-      - "arrow-X" for arrow annotations
+      - "line-N" for data lines (with their y-intercept points)
+      - "point-X" for point DOTS only (X = descriptive suffix)
+      - "label-X" for text LABELS only (X = descriptive suffix)
       - "eq-N" for equation labels
+      - "arrow-X" for arrow annotations
 
     Export automatically crops each layer to its tight bounding box.
     ============================================================
@@ -650,27 +663,41 @@ export const GRAPH_SNIPPET = `
         <circle cx="40" cy="145" r="5" fill="#22c55e"/>
     </g>
 
-    <!-- ===== ANNOTATION LAYERS: One layer per annotation element ===== -->
-    <!-- Each annotation becomes a separate, tightly-cropped image -->
+    <!-- ===== ANNOTATION LAYERS: SEPARATE layer for each element ===== -->
+    <!-- CRITICAL: Points and labels must be in SEPARATE layers for independent manipulation -->
 
-    <!-- Y-intercept label for line 1 -->
+    <!-- Y-intercept POINT for line 1 (already in line-1 layer above) -->
+    <!-- Y-intercept LABEL for line 1 - SEPARATE from point -->
     <g data-pptx-layer="label-b0">
         <text x="5" y="170" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">b = 0</text>
     </g>
 
-    <!-- Y-intercept label for line 2 -->
+    <!-- Y-intercept LABEL for line 2 - SEPARATE from point -->
     <g data-pptx-layer="label-b3">
         <text x="5" y="145" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">b = 3</text>
     </g>
 
-    <!-- Equation label for line 1 (optional) -->
+    <!-- Equation label for line 1 -->
     <g data-pptx-layer="eq-line-1">
         <text x="265" y="30" fill="#60a5fa" font-family="Arial" font-size="9" font-weight="normal">y = 3x</text>
     </g>
 
-    <!-- Equation label for line 2 (optional) -->
+    <!-- Equation label for line 2 -->
     <g data-pptx-layer="eq-line-2">
         <text x="265" y="55" fill="#22c55e" font-family="Arial" font-size="9" font-weight="normal">y = 2x + 3</text>
+    </g>
+
+    <!-- ===== KEY POINTS with SEPARATE layers for dot and label ===== -->
+    <!-- Example: A solution point at (4, 12) -->
+
+    <!-- Point DOT only -->
+    <g data-pptx-layer="point-solution">
+        <circle cx="186.67" cy="70" r="5" fill="#ef4444"/>
+    </g>
+
+    <!-- Point LABEL only - SEPARATE layer -->
+    <g data-pptx-layer="label-solution">
+        <text x="186.67" y="60" fill="#ef4444" font-family="Arial" font-size="10" font-weight="normal" text-anchor="middle">(4, 12)</text>
     </g>
 </svg>
 
@@ -870,15 +897,51 @@ export const ANNOTATION_SNIPPET = `
 </g>
 
 
-<!-- ========== POINT LABELS (inside plot area) ========== -->
+<!-- ========== KEY POINTS: SEPARATE DOT AND LABEL ========== -->
 <!--
-  - Upper half (pixelY < 95): label ABOVE at pixelY - 12
-  - Lower half (pixelY >= 95): label BELOW at pixelY + 15
-  - Use text-anchor="middle" for centering
-  - Each point label gets its own layer
+  CRITICAL: Always use SEPARATE layers for point dots and their labels.
+  This allows independent manipulation in PPTX/Google Slides.
+
+  Naming convention:
+    - "point-X" for the dot/circle only
+    - "label-X" for the text label only
+
+  Label positioning:
+    - Upper half (pixelY < 95): label ABOVE at pixelY - 12
+    - Lower half (pixelY >= 95): label BELOW at pixelY + 15
+    - Use text-anchor="middle" for centering
 -->
+
+<!-- Example: A point at (4, 20) with SEPARATE dot and label -->
+
+<!-- Point DOT only -->
 <g data-pptx-layer="point-4-20">
+  <circle cx="150" cy="110" r="5" fill="#60a5fa"/>
+</g>
+
+<!-- Point LABEL only - SEPARATE layer -->
+<g data-pptx-layer="label-4-20">
   <text x="150" y="98" fill="#60a5fa" font-family="Arial" font-size="10" font-weight="normal" text-anchor="middle">(4, 20)</text>
+</g>
+
+<!-- Example: A solution point at (10, 20) -->
+
+<!-- Point DOT only -->
+<g data-pptx-layer="point-solution">
+  <circle cx="150" cy="103.33" r="6" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
+</g>
+
+<!-- Point LABEL only - SEPARATE layer -->
+<g data-pptx-layer="label-solution">
+  <text x="150" y="91" fill="#22c55e" font-family="Arial" font-size="10" font-weight="normal" text-anchor="middle">(10, 20)</text>
+</g>
+
+<!-- ========== READING PATH ANNOTATIONS ========== -->
+<!-- Reading paths (dashed lines) should also be separate from points -->
+
+<g data-pptx-layer="reading-path">
+  <line x1="150" y1="170" x2="150" y2="103.33" stroke="#22c55e" stroke-width="2" stroke-dasharray="4,4"/>
+  <line x1="150" y1="103.33" x2="40" y2="103.33" stroke="#22c55e" stroke-width="2" stroke-dasharray="4,4"/>
 </g>
 `;
 
