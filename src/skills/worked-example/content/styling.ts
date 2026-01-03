@@ -1044,6 +1044,8 @@ X scale: [increment between labels]
 
 ### Y-Axis Labels
 
+**⚠️ Y-axis labels MUST start at 0.** Don't start at the first increment (e.g., \`10, 20, 30...\` is WRONG; \`0, 10, 20, 30...\` is CORRECT).
+
 Based on your Y_MAX, use these labels. **Target: ≤10 ticks** (never exceed 10).
 
 **Priority:** Use smallest whole-number increment possible. Count by 1s or 2s when Y_MAX allows.

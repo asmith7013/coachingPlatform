@@ -2,7 +2,7 @@
 
 import { withDbConnection } from '@server/db/ensure-connection';
 import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
-import { auth } from '@clerk/nextjs/server';
+import { currentUser } from '@clerk/nextjs/server';
 import { handleServerError } from '@error/handlers/server';
 
 /**
@@ -12,14 +12,16 @@ import { handleServerError } from '@error/handlers/server';
 export async function toggleDeckDeactivated(slug: string, deactivated: boolean) {
   return withDbConnection(async () => {
     try {
-      const { userId } = await auth();
+      const user = await currentUser();
 
-      if (!userId) {
+      if (!user) {
         return {
           success: false,
           error: 'You must be logged in to modify decks',
         };
       }
+
+      const userEmail = user.emailAddresses[0]?.emailAddress;
 
       const deck = await WorkedExampleDeck.findOne({ slug });
 
@@ -30,8 +32,8 @@ export async function toggleDeckDeactivated(slug: string, deactivated: boolean) 
         };
       }
 
-      // Only the owner can deactivate/reactivate
-      if (deck.createdBy !== userId) {
+      // Only the owner can deactivate/reactivate (createdBy stores email)
+      if (deck.createdBy !== userEmail) {
         return {
           success: false,
           error: 'You do not have permission to modify this deck',

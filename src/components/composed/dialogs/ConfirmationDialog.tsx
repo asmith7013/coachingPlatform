@@ -54,7 +54,7 @@ export function ConfirmationDialog({
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-x-0 top-0 flex justify-center pt-4 z-50"
       onClick={handleBackdropClick}
     >
       <div className={cn("bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl", className)}>

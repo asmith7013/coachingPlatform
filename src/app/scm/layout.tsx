@@ -1,6 +1,6 @@
-import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
+import { getAuthenticatedUser } from '@/lib/server/auth';
 import { SCMNav } from './SCMNav';
 
 export const metadata: Metadata = {
@@ -67,17 +67,15 @@ export default async function SCMLayout({
   }
 
   // Production: Enforce authentication and domain restrictions
-  const { userId } = await auth();
+  const authResult = await getAuthenticatedUser();
 
   // Require authentication - redirect to sign-in if not logged in
-  if (!userId) {
+  if (!authResult.success) {
     const currentPath = '/scm';
     redirect(`/sign-in?redirect_url=${encodeURIComponent(currentPath)}`);
   }
 
-  // Get full user object to access email addresses
-  const user = await currentUser();
-  const email = user?.emailAddresses?.[0]?.emailAddress;
+  const { email } = authResult.data;
 
   // Check if user's email is allowed (specific email or domain)
   if (!isAllowedEmail(email)) {

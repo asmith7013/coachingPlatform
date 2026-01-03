@@ -2,11 +2,15 @@
 
 import { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useWorkedExampleDecks, useGradeUnitPairs } from "./hooks";
+import { useQueryClient } from "@tanstack/react-query";
+import { useWorkedExampleDecks, useGradeUnitPairs, workedExampleDecksKeys } from "./hooks";
 import type { WorkedExampleDeck } from "@zod-schema/scm/worked-example";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { PresentationModal } from "./presentations";
-import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ConfirmationDialog } from "@/components/composed/dialogs/ConfirmationDialog";
+import { ChevronDownIcon, ChevronRightIcon, XMarkIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
+import { deactivateDeck } from "@/app/actions/worked-examples";
+import Link from "next/link";
 
 // Choice modal for decks with Google Slides
 function ViewChoiceModal({
@@ -126,9 +130,12 @@ const GRADE_OPTIONS = [
 
 export default function PresentationsList() {
   const [choiceModalDeck, setChoiceModalDeck] = useState<WorkedExampleDeck | null>(null);
+  const [deactivateModalDeck, setDeactivateModalDeck] = useState<WorkedExampleDeck | null>(null);
+  const [isDeactivating, setIsDeactivating] = useState(false);
   const [openUnits, setOpenUnits] = useState<Set<string>>(new Set()); // Track open accordions - all closed by default
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const openSlug = searchParams.get("view");
   const slideParam = searchParams.get("slide");
   const initialSlide = slideParam ? Math.max(0, parseInt(slideParam, 10) - 1) : 0; // Convert 1-indexed URL to 0-indexed
@@ -216,6 +223,31 @@ export default function PresentationsList() {
     });
   };
 
+  const handleDeactivateClick = (e: React.MouseEvent, deck: WorkedExampleDeck) => {
+    e.stopPropagation();
+    setDeactivateModalDeck(deck);
+  };
+
+  const handleConfirmDeactivate = async () => {
+    if (!deactivateModalDeck) return;
+
+    setIsDeactivating(true);
+    try {
+      const result = await deactivateDeck(deactivateModalDeck.slug);
+      if (result.success) {
+        // Invalidate the query to refresh the list
+        queryClient.invalidateQueries({ queryKey: workedExampleDecksKeys.all });
+        setDeactivateModalDeck(null);
+      } else {
+        console.error('Failed to deactivate:', result.error);
+      }
+    } catch (error) {
+      console.error('Error deactivating deck:', error);
+    } finally {
+      setIsDeactivating(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-[400px]">
@@ -235,15 +267,24 @@ export default function PresentationsList() {
   return (
     <>
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {gradeFilter
-              ? GRADE_OPTIONS.find(o => o.value === gradeFilter)?.label || 'Worked Examples'
-              : 'Worked Example Presentations'}
-          </h1>
-          <p className="text-gray-600">
-            Browse and view scaffolded guidance slide decks
-          </p>
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              {gradeFilter
+                ? GRADE_OPTIONS.find(o => o.value === gradeFilter)?.label || 'Worked Examples'
+                : 'Worked Example Presentations'}
+            </h1>
+            <p className="text-gray-600">
+              Browse and view scaffolded guidance slide decks
+            </p>
+          </div>
+          <Link
+            href="/scm/workedExamples/deactivated"
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ArchiveBoxIcon className="w-4 h-4" />
+            View Deactivated
+          </Link>
         </div>
 
         {decks.length === 0 ? (
@@ -321,13 +362,21 @@ export default function PresentationsList() {
                       .map((deck) => (
                         <div
                           key={deck.slug}
-                          className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                          className="relative bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow group"
                         >
+                          {/* Deactivate button */}
+                          <button
+                            onClick={(e) => handleDeactivateClick(e, deck)}
+                            className="absolute top-2 right-2 p-1 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10"
+                            title="Deactivate this worked example"
+                          >
+                            <XMarkIcon className="w-4 h-4" />
+                          </button>
                           <button
                             onClick={() => handleCardClick(deck)}
                             className="block p-6 text-left w-full cursor-pointer"
                           >
-                            <div className="mb-4 flex items-center gap-2 flex-wrap">
+                            <div className="mb-4 flex items-center gap-2 flex-wrap pr-6">
                               <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
                                 {deck.gradeLevel === 'Algebra 1' ? 'Algebra 1' : `Grade ${deck.gradeLevel}`}
                               </span>
@@ -435,6 +484,19 @@ export default function PresentationsList() {
           onSlideChange={handleSlideChange}
         />
       )}
+
+      {/* Deactivate Confirmation Modal */}
+      <ConfirmationDialog
+        isOpen={!!deactivateModalDeck}
+        onClose={() => setDeactivateModalDeck(null)}
+        onConfirm={handleConfirmDeactivate}
+        title="Deactivate Worked Example"
+        message={`Are you sure you want to deactivate "${deactivateModalDeck?.title}"? It will be hidden from the list but can be reactivated later.`}
+        confirmText="Deactivate"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={isDeactivating}
+      />
     </>
   );
 }

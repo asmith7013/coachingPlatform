@@ -3,7 +3,7 @@
 import { withDbConnection } from '@server/db/ensure-connection';
 import { handleServerError } from '@error/handlers/server';
 import { put } from "@vercel/blob";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { getAuthenticatedUser } from '@/lib/server/auth';
 import { WorkedExampleRequestModel } from '@mongoose-schema/scm/podsie/worked-example-request.model';
 import {
   WorkedExampleRequestInputZodSchema,
@@ -56,23 +56,21 @@ export async function createWorkedExampleRequest(input: WorkedExampleRequestInpu
   return withDbConnection(async () => {
     try {
       // Get current user
-      const { userId } = await auth();
-      if (!userId) {
+      const authResult = await getAuthenticatedUser();
+      if (!authResult.success) {
         return {
           success: false,
           error: "Unauthorized - please sign in",
         };
       }
 
-      // Get user email for notifications
-      const user = await currentUser();
-      const userEmail = user?.emailAddresses?.[0]?.emailAddress;
+      const { userId, email } = authResult.data;
 
       // Validate input
       const validated = WorkedExampleRequestInputZodSchema.parse({
         ...input,
         requestedBy: userId,
-        requestedByEmail: userEmail,
+        requestedByEmail: email,
         status: "pending",
       });
 

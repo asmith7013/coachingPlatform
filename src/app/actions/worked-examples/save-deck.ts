@@ -3,30 +3,23 @@
 import { withDbConnection } from '@server/db/ensure-connection';
 import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
 import { CreateWorkedExampleDeckSchema, type CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
-import { auth, clerkClient } from '@clerk/nextjs/server';
+import { getAuthenticatedUser } from '@/lib/server/auth';
 import { handleServerError } from '@error/handlers/server';
 
 export async function saveWorkedExampleDeck(deckData: CreateWorkedExampleDeckInput) {
   return withDbConnection(async () => {
     try {
-      const { userId } = await auth();
+      const authResult = await getAuthenticatedUser();
 
-      if (!userId) {
+      if (!authResult.success) {
         return {
           success: false,
           error: 'Unauthorized. Please sign in to save a deck.',
         };
       }
 
-      // Get user's email from Clerk for display
-      let createdByName = userId; // Fallback to userId
-      try {
-        const client = await clerkClient();
-        const user = await client.users.getUser(userId);
-        createdByName = user.emailAddresses[0]?.emailAddress || userId;
-      } catch {
-        // Silently fall back to userId if Clerk lookup fails
-      }
+      const { userId, email } = authResult.data;
+      const createdByName = email || userId;
 
       // Validate input with Zod
       const validated = CreateWorkedExampleDeckSchema.parse(deckData);
