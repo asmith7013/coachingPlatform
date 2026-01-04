@@ -1,6 +1,10 @@
 import puppeteerCore, { Browser, Page } from 'puppeteer-core';
 import { SvgLayer } from './types';
 import { HTML_WIDTH, HTML_HEIGHT } from './constants';
+import { RenderError, handlePuppeteerError } from '@error/handlers/puppeteer';
+
+// Re-export for convenience
+export { RenderError } from '@error/handlers/puppeteer';
 
 /**
  * Browser session for rendering multiple slides efficiently
@@ -25,14 +29,25 @@ async function getBrowserLaunchOptions() {
 
   if (isServerless) {
     // Use @sparticuz/chromium for serverless (Vercel, AWS Lambda)
-    const chromium = await import('@sparticuz/chromium-min');
-    return {
-      args: chromium.default.args,
-      executablePath: await chromium.default.executablePath(
-        'https://github.com/nickshanks347/chromium/releases/download/v131.0.6778.204/chromium-v131.0.6778.204-pack.tar'
-      ),
-      headless: true,
-    };
+    try {
+      const chromium = await import('@sparticuz/chromium-min');
+      const executablePath = await chromium.default.executablePath(
+        'https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar'
+      );
+      console.log('[renderers] Serverless chromium path:', executablePath);
+      return {
+        args: chromium.default.args,
+        executablePath,
+        headless: true,
+      };
+    } catch (error) {
+      console.error('[renderers] Failed to load serverless chromium:', error);
+      throw new RenderError(
+        handlePuppeteerError(error, 'chromium initialization'),
+        'CHROMIUM_DOWNLOAD_FAILED',
+        error
+      );
+    }
   } else {
     // Local development - use system Chrome
     const possiblePaths = [
@@ -47,9 +62,13 @@ async function getBrowserLaunchOptions() {
     const executablePath = possiblePaths.find((p) => fs.existsSync(p));
 
     if (!executablePath) {
-      throw new Error('Chrome not found. Please install Google Chrome for local development.');
+      throw new RenderError(
+        'Chrome not found. Please install Google Chrome for local development.',
+        'CHROME_NOT_FOUND'
+      );
     }
 
+    console.log('[renderers] Local Chrome path:', executablePath);
     return {
       executablePath,
       headless: true,
@@ -68,10 +87,38 @@ async function getBrowserLaunchOptions() {
  * Call close() when done to properly clean up Chromium
  */
 export async function createRenderSession(): Promise<RenderSession> {
-  const launchOptions = await getBrowserLaunchOptions();
-  const browser = await puppeteerCore.launch(launchOptions);
+  let browser: Browser;
+  let page: Page;
 
-  const page = await browser.newPage();
+  try {
+    const launchOptions = await getBrowserLaunchOptions();
+    browser = await puppeteerCore.launch(launchOptions);
+    console.log('[renderers] Browser launched successfully');
+  } catch (error) {
+    // If already a RenderError, rethrow it
+    if (error instanceof RenderError) {
+      throw error;
+    }
+    console.error('[renderers] Failed to launch browser:', error);
+    throw new RenderError(
+      handlePuppeteerError(error, 'browser launch'),
+      'CHROME_NOT_FOUND',
+      error
+    );
+  }
+
+  try {
+    page = await browser.newPage();
+    console.log('[renderers] New page created');
+  } catch (error) {
+    console.error('[renderers] Failed to create page:', error);
+    await browser.close().catch(() => {});
+    throw new RenderError(
+      handlePuppeteerError(error, 'page creation'),
+      'BROWSER_CRASHED',
+      error
+    );
+  }
 
   return {
     browser,

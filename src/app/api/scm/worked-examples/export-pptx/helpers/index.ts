@@ -11,7 +11,7 @@ export { extractPptxElements, extractAllPptxElements, extractElementsFromStructu
 export { addPptxElement, addStyledBox, addColumnContent } from './element-handlers';
 
 // Renderers
-export { createRenderSession, renderSvgToImage, renderSvgLayers, renderFullSlideToImage } from './renderers';
+export { createRenderSession, renderSvgToImage, renderSvgLayers, renderFullSlideToImage, RenderError } from './renderers';
 export type { RenderSession } from './renderers';
 
 // PPTX Generator (shared logic)

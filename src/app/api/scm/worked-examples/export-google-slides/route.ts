@@ -2,7 +2,8 @@ export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadPptxToUserGoogleSlides } from '@/lib/integrations/google-drive/user-oauth';
-import { generatePptxFromSlides } from '../export-pptx/helpers';
+import { generatePptxFromSlides, RenderError } from '../export-pptx/helpers';
+import { handlePuppeteerError } from '@error/handlers/puppeteer';
 import { withDbConnection } from '@server/db/ensure-connection';
 import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
 
@@ -87,6 +88,29 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('[export-google-slides] Error:', error);
+
+    // Use handlePuppeteerError for rendering-related errors
+    if (error instanceof RenderError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      );
+    }
+
+    // Check if it's a puppeteer-related error (even if not wrapped in RenderError)
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (
+      errorMessage.includes('Chrome') ||
+      errorMessage.includes('browser') ||
+      errorMessage.includes('timeout') ||
+      errorMessage.includes('Target closed')
+    ) {
+      return NextResponse.json(
+        { error: handlePuppeteerError(error, 'Google Slides export') },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to export to Google Slides' },
       { status: 500 }

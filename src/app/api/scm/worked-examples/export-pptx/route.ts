@@ -11,7 +11,9 @@ import {
   renderSvgToImage,
   renderSvgLayers,
   renderFullSlideToImage,
+  RenderError,
 } from './helpers';
+import { handlePuppeteerError } from '@error/handlers/puppeteer';
 
 export async function POST(request: NextRequest) {
   try {
@@ -151,6 +153,29 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('PPTX generation error:', error);
+
+    // Use handlePuppeteerError for rendering-related errors
+    if (error instanceof RenderError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      );
+    }
+
+    // Check if it's a puppeteer-related error (even if not wrapped in RenderError)
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (
+      errorMessage.includes('Chrome') ||
+      errorMessage.includes('browser') ||
+      errorMessage.includes('timeout') ||
+      errorMessage.includes('Target closed')
+    ) {
+      return NextResponse.json(
+        { error: handlePuppeteerError(error, 'PPTX export') },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to generate PPTX' },
       { status: 500 }
