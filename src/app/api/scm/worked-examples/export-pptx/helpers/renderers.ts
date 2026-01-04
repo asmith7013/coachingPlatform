@@ -26,22 +26,27 @@ export interface RenderSession {
  */
 async function getBrowserLaunchOptions() {
   const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+  console.log('[renderers] getBrowserLaunchOptions called, isServerless:', !!isServerless);
 
   if (isServerless) {
     // Use @sparticuz/chromium for serverless (Vercel, AWS Lambda)
     try {
+      console.log('[renderers] Importing @sparticuz/chromium-min...');
       const chromium = await import('@sparticuz/chromium-min');
+      console.log('[renderers] chromium-min imported, getting executablePath...');
       const executablePath = await chromium.default.executablePath(
         'https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar'
       );
       console.log('[renderers] Serverless chromium path:', executablePath);
+      console.log('[renderers] chromium.default.args:', chromium.default.args);
       return {
         args: chromium.default.args,
         executablePath,
         headless: true,
       };
     } catch (error) {
-      console.error('[renderers] Failed to load serverless chromium:', error);
+      console.error('[renderers] FAILED to load serverless chromium');
+      console.error('[renderers] Error:', error);
       throw new RenderError(
         handlePuppeteerError(error, 'chromium initialization'),
         'CHROMIUM_DOWNLOAD_FAILED',
@@ -87,16 +92,20 @@ async function getBrowserLaunchOptions() {
  * Call close() when done to properly clean up Chromium
  */
 export async function createRenderSession(): Promise<RenderSession> {
+  console.log('[renderers] createRenderSession called');
   let browser: Browser;
   let page: Page;
 
   try {
+    console.log('[renderers] Getting browser launch options...');
     const launchOptions = await getBrowserLaunchOptions();
+    console.log('[renderers] Launch options obtained, launching browser...');
     browser = await puppeteerCore.launch(launchOptions);
     console.log('[renderers] Browser launched successfully');
   } catch (error) {
     // If already a RenderError, rethrow it
     if (error instanceof RenderError) {
+      console.error('[renderers] RenderError during browser launch:', error.message);
       throw error;
     }
     console.error('[renderers] Failed to launch browser:', error);
@@ -108,6 +117,7 @@ export async function createRenderSession(): Promise<RenderSession> {
   }
 
   try {
+    console.log('[renderers] Creating new page...');
     page = await browser.newPage();
     console.log('[renderers] New page created');
   } catch (error) {

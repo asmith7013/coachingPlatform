@@ -38,10 +38,16 @@ export async function generatePptxFromSlides(
   slides: SlideData[],
   options: GeneratePptxOptions = {}
 ): Promise<GeneratePptxResult> {
+  console.log('[generatePptxFromSlides] Starting...');
+  console.log('[generatePptxFromSlides] slides count:', slides.length);
   const { title, mathConcept, slug, onProgress } = options;
+  console.log('[generatePptxFromSlides] title:', title);
+  console.log('[generatePptxFromSlides] slug:', slug);
 
   // Create a single browser session for all slides (efficient)
+  console.log('[generatePptxFromSlides] Creating render session...');
   const renderSession = await createRenderSession();
+  console.log('[generatePptxFromSlides] Render session created');
 
   try {
     // First pass: calculate total slides (including expanded print pages)
@@ -221,18 +227,26 @@ export async function generatePptxFromSlides(
     }
 
     // Generate PPTX
+    console.log('[generatePptxFromSlides] All slides processed, building PPTX...');
     onProgress?.(totalPptxSlides, totalPptxSlides, 'Building PowerPoint file...', 'building');
 
+    console.log('[generatePptxFromSlides] Calling pptx.write()...');
     const pptxBase64 = await pptx.write({ outputType: 'base64' });
-    const filename = `${(title || 'worked-example').replace(/[^a-zA-Z0-9-]/g, '-')}.pptx`;
+    console.log('[generatePptxFromSlides] pptx.write() complete, base64 length:', (pptxBase64 as string).length);
 
+    const filename = `${(title || 'worked-example').replace(/[^a-zA-Z0-9-]/g, '-')}.pptx`;
+    console.log('[generatePptxFromSlides] filename:', filename);
+
+    console.log('[generatePptxFromSlides] SUCCESS - returning result');
     return {
       pptxBase64: pptxBase64 as string,
       filename,
     };
   } finally {
     // Always close browser session to clean up Chromium
+    console.log('[generatePptxFromSlides] Closing render session...');
     await renderSession.close();
+    console.log('[generatePptxFromSlides] Render session closed');
   }
 }
 
