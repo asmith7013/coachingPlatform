@@ -137,19 +137,28 @@ export async function uploadToUserDrive(
       webViewLink: response.data.webViewLink || `https://docs.google.com/presentation/d/${response.data.id}/edit`,
     };
   } catch (error) {
-    console.error('[uploadToUserDrive] Error:', error);
+    // Log everything we can about the error
+    console.error('[uploadToUserDrive] Error type:', error?.constructor?.name);
+    console.error('[uploadToUserDrive] Error message:', error instanceof Error ? error.message : String(error));
+    console.error('[uploadToUserDrive] Full error:', JSON.stringify(error, Object.getOwnPropertyNames(error as object), 2));
 
     // Extract detailed error info from Google API errors (GaxiosError structure)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const googleError = error as any;
 
+    // Log all available properties
+    console.error('[uploadToUserDrive] Error keys:', Object.keys(googleError || {}));
+    console.error('[uploadToUserDrive] response:', googleError?.response);
+    console.error('[uploadToUserDrive] code:', googleError?.code);
+    console.error('[uploadToUserDrive] status:', googleError?.status);
+
     // GaxiosError has: response.status, response.data, errors array
-    const responseStatus = googleError?.response?.status;
-    const responseData = googleError?.response?.data;
+    const responseStatus = googleError?.response?.status || googleError?.status || googleError?.code;
+    const responseData = googleError?.response?.data || googleError?.data;
     const errorDetails = responseData?.error;
     const errorsArray = googleError?.errors || errorDetails?.errors;
 
-    console.error('[uploadToUserDrive] Response status:', responseStatus);
+    console.error('[uploadToUserDrive] Extracted status:', responseStatus);
     if (responseData) {
       console.error('[uploadToUserDrive] Response data:', JSON.stringify(responseData, null, 2));
     }
