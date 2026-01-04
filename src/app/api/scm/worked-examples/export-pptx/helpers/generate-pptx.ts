@@ -75,8 +75,8 @@ export async function generatePptxFromSlides(
         align: 'right',
       });
 
-      // Add worked example link on slide 11 (printable worksheet)
-      if (i === 10 && slug) {
+      // Add worked example link on slide 9 (printable worksheet with practice problems)
+      if (i === 8 && slug) {
         const workedExampleUrl = `https://solvescoaching.com/scm/workedExamples?view=${slug}`;
         slide.addText('View Worked Example', {
           x: 0.3,
@@ -88,22 +88,6 @@ export async function generatePptxFromSlides(
           color: '1791e8',
           underline: { style: 'sng' },
           hyperlink: { url: workedExampleUrl },
-        });
-      }
-
-      // Add practice problems link on slide 15
-      if (i === 14 && slug) {
-        const practiceUrl = `https://solvescoaching.com/scm/workedExamples?view=${slug}&slide=15`;
-        slide.addText('Practice Problems', {
-          x: 0.3,
-          y: 5.1,
-          w: 2,
-          h: 0.3,
-          fontSize: 11,
-          fontFace: 'Arial',
-          color: '1791e8',
-          underline: { style: 'sng' },
-          hyperlink: { url: practiceUrl },
         });
       }
     }

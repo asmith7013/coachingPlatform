@@ -63,7 +63,9 @@
       "Bash(/Users/alexsmith/.nvm/versions/node/v24.11.1/bin/node:*)",
       "Write(**.worked-example-progress.json)",
       "Bash(/Users/alexsmith/.nvm/versions/node/v24.11.1/bin/npx tsc --noEmit)",
-      "Bash(npm run sync-skill-content:*)"
+      "Bash(npm run sync-skill-content:*)",
+      "Bash(npm audit:*)",
+      "Bash(npm ls:*)"
     ],
     "deny": [],
     "ask": []

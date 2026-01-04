@@ -501,12 +501,11 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
             setSlides(completeData.slides);
             accumulatedSlidesRef.current = completeData.slides;
           }
-          setLoadingProgress({ phase: 'idle', message: '' });
-          nextStep();
+          // NOTE: Don't call nextStep() here - the code after the SSE loop
+          // handles generating the printable slide (9) and then calls nextStep()
         } else if (accumulatedSlidesRef.current.length > 0) {
           // Fallback: use accumulated slides if complete didn't include them
-          setLoadingProgress({ phase: 'idle', message: '' });
-          nextStep();
+          // (printable generation will happen after SSE loop ends)
         } else {
           setError('Generation completed but no slides received');
         }
