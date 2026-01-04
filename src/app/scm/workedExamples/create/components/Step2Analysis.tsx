@@ -341,6 +341,8 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
         // Complete or max retries reached - proceed to next step
         if (currentSlideCount < expectedSlideCount) {
           console.log(`[generate-slides] Max retries reached. Generated ${currentSlideCount}/${expectedSlideCount} slides.`);
+          // Show a warning to the user - they can manually continue in step 3
+          setError(`Generated ${currentSlideCount} of ${expectedSlideCount} slides. You can continue generation from step 3 if needed.`);
         }
         retryCountRef.current = 0; // Reset for next generation
         setLoadingProgress({ phase: 'idle', message: '' });
