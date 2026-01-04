@@ -14,11 +14,15 @@ export async function getUserGoogleOAuthToken(): Promise<{
   success: false;
   error: string;
 }> {
+  console.log('[getUserGoogleOAuthToken] Starting...');
   try {
     // Get the current user's ID
+    console.log('[getUserGoogleOAuthToken] Getting auth...');
     const { userId } = await auth();
+    console.log('[getUserGoogleOAuthToken] userId:', userId ? 'present' : 'missing');
 
     if (!userId) {
+      console.error('[getUserGoogleOAuthToken] FAIL: No userId');
       return {
         success: false,
         error: 'User not authenticated',
@@ -26,14 +30,17 @@ export async function getUserGoogleOAuthToken(): Promise<{
     }
 
     // Get the Clerk client
+    console.log('[getUserGoogleOAuthToken] Getting Clerk client...');
     const clerk = await clerkClient();
+    console.log('[getUserGoogleOAuthToken] Clerk client obtained');
 
     // Get the user's Google OAuth token
-    // This returns an array of tokens (user might have multiple Google accounts)
-    // Note: Use 'google' not 'oauth_google' (deprecated)
+    console.log('[getUserGoogleOAuthToken] Getting OAuth token from Clerk...');
     const tokens = await clerk.users.getUserOauthAccessToken(userId, 'google');
+    console.log('[getUserGoogleOAuthToken] Tokens response:', tokens?.data?.length || 0, 'tokens');
 
     if (!tokens || tokens.data.length === 0) {
+      console.error('[getUserGoogleOAuthToken] FAIL: No tokens found');
       return {
         success: false,
         error: 'No Google OAuth token found. Please sign in with Google and grant Drive access.',
@@ -42,21 +49,24 @@ export async function getUserGoogleOAuthToken(): Promise<{
 
     // Use the first token (most recent)
     const token = tokens.data[0];
+    console.log('[getUserGoogleOAuthToken] Token present:', !!token.token);
 
     if (!token.token) {
+      console.error('[getUserGoogleOAuthToken] FAIL: Token is empty');
       return {
         success: false,
         error: 'Google OAuth token is empty. Please re-authorize with Google.',
       };
     }
 
+    console.log('[getUserGoogleOAuthToken] SUCCESS: Token obtained');
     return {
       success: true,
       accessToken: token.token,
       userId,
     };
   } catch (error) {
-    console.error('[getUserGoogleOAuthToken] Error:', error);
+    console.error('[getUserGoogleOAuthToken] CATCH ERROR:', error);
 
     // Check for specific Clerk errors
     if (error instanceof Error) {
@@ -79,10 +89,13 @@ export async function getUserGoogleOAuthToken(): Promise<{
  * Create a Google Drive client using the user's OAuth token
  */
 export function createUserDriveClient(accessToken: string) {
+  console.log('[createUserDriveClient] Creating OAuth2 client...');
   const oauth2Client = new google.auth.OAuth2();
   oauth2Client.setCredentials({ access_token: accessToken });
-
-  return google.drive({ version: 'v3', auth: oauth2Client });
+  console.log('[createUserDriveClient] Creating Drive client...');
+  const drive = google.drive({ version: 'v3', auth: oauth2Client });
+  console.log('[createUserDriveClient] Drive client created');
+  return drive;
 }
 
 /**
@@ -97,11 +110,21 @@ export async function uploadToUserDrive(
     convertToGoogleFormat?: boolean;
   }
 ): Promise<{ success: true; fileId: string; webViewLink: string } | { success: false; error: string }> {
+  console.log('[uploadToUserDrive] Starting...');
+  console.log('[uploadToUserDrive] filename:', filename);
+  console.log('[uploadToUserDrive] mimeType:', mimeType);
+  console.log('[uploadToUserDrive] buffer size:', buffer.length, 'bytes');
+  console.log('[uploadToUserDrive] convertToGoogleFormat:', options?.convertToGoogleFormat);
+
   try {
+    console.log('[uploadToUserDrive] Creating Drive client...');
     const drive = createUserDriveClient(accessToken);
+    console.log('[uploadToUserDrive] Drive client created');
 
     // Convert Buffer to Readable stream
+    console.log('[uploadToUserDrive] Creating stream from buffer...');
     const stream = Readable.from(buffer);
+    console.log('[uploadToUserDrive] Stream created');
 
     const fileMetadata: { name: string; mimeType?: string } = {
       name: filename,
@@ -118,6 +141,9 @@ export async function uploadToUserDrive(
       }
     }
 
+    console.log('[uploadToUserDrive] fileMetadata:', JSON.stringify(fileMetadata));
+    console.log('[uploadToUserDrive] Calling drive.files.create...');
+
     const response = await drive.files.create({
       requestBody: fileMetadata,
       media: {
@@ -127,16 +153,23 @@ export async function uploadToUserDrive(
       fields: 'id, webViewLink',
     });
 
+    console.log('[uploadToUserDrive] drive.files.create returned');
+    console.log('[uploadToUserDrive] response.status:', response.status);
+    console.log('[uploadToUserDrive] response.data:', JSON.stringify(response.data));
+
     if (!response.data.id) {
+      console.error('[uploadToUserDrive] FAIL: No file ID in response');
       return { success: false, error: 'Failed to get file ID from response' };
     }
 
+    console.log('[uploadToUserDrive] SUCCESS: File uploaded, ID:', response.data.id);
     return {
       success: true,
       fileId: response.data.id,
       webViewLink: response.data.webViewLink || `https://docs.google.com/presentation/d/${response.data.id}/edit`,
     };
   } catch (error) {
+    console.error('[uploadToUserDrive] CATCH ERROR');
     // Log everything we can about the error
     console.error('[uploadToUserDrive] Error type:', error?.constructor?.name);
     console.error('[uploadToUserDrive] Error message:', error instanceof Error ? error.message : String(error));
@@ -180,6 +213,7 @@ export async function uploadToUserDrive(
 
     // Check for specific status codes first
     if (responseStatus === 401 || errorMessage.includes('invalid_grant')) {
+      console.error('[uploadToUserDrive] Returning: auth expired');
       return {
         success: false,
         error: 'Google authorization expired. Please sign out and sign in again.',
@@ -187,6 +221,7 @@ export async function uploadToUserDrive(
     }
 
     if (responseStatus === 403 || errorMessage.includes('insufficientPermissions') || errorMessage.includes('insufficient authentication scopes')) {
+      console.error('[uploadToUserDrive] Returning: missing permissions');
       return {
         success: false,
         error: 'Missing Google Drive permissions. Please sign out, then sign in again with Google to grant Drive access.',
@@ -198,6 +233,7 @@ export async function uploadToUserDrive(
       // Try to get the most specific error detail
       const specificError = errorsArray?.[0]?.message || errorDetails?.message;
       const detail = specificError || 'The file may be invalid or too complex for Google Slides conversion.';
+      console.error('[uploadToUserDrive] Returning: 400 Bad Request with detail:', detail);
       return {
         success: false,
         error: `Google Drive rejected the upload: ${detail}`,
@@ -206,12 +242,14 @@ export async function uploadToUserDrive(
 
     // Handle quota/rate limit errors
     if (responseStatus === 429 || errorMessage.includes('rateLimitExceeded')) {
+      console.error('[uploadToUserDrive] Returning: rate limit');
       return {
         success: false,
         error: 'Google Drive rate limit reached. Please wait a moment and try again.',
       };
     }
 
+    console.error('[uploadToUserDrive] Returning: generic error message');
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to upload file',
@@ -226,14 +264,22 @@ export async function uploadPptxToUserGoogleSlides(
   pptxBuffer: Buffer,
   filename: string
 ): Promise<{ success: true; fileId: string; url: string } | { success: false; error: string }> {
+  console.log('[uploadPptxToUserGoogleSlides] Starting...');
+  console.log('[uploadPptxToUserGoogleSlides] filename:', filename);
+  console.log('[uploadPptxToUserGoogleSlides] buffer size:', pptxBuffer.length, 'bytes');
+
   // Get the user's OAuth token
+  console.log('[uploadPptxToUserGoogleSlides] Getting OAuth token...');
   const tokenResult = await getUserGoogleOAuthToken();
 
   if (!tokenResult.success) {
+    console.error('[uploadPptxToUserGoogleSlides] FAIL: Token fetch failed:', tokenResult.error);
     return tokenResult;
   }
+  console.log('[uploadPptxToUserGoogleSlides] Token obtained successfully');
 
   // Upload and convert to Google Slides
+  console.log('[uploadPptxToUserGoogleSlides] Calling uploadToUserDrive...');
   const uploadResult = await uploadToUserDrive(
     tokenResult.accessToken,
     pptxBuffer,
@@ -243,8 +289,13 @@ export async function uploadPptxToUserGoogleSlides(
   );
 
   if (!uploadResult.success) {
+    console.error('[uploadPptxToUserGoogleSlides] FAIL: Upload failed:', uploadResult.error);
     return uploadResult;
   }
+
+  console.log('[uploadPptxToUserGoogleSlides] SUCCESS: Upload complete');
+  console.log('[uploadPptxToUserGoogleSlides] fileId:', uploadResult.fileId);
+  console.log('[uploadPptxToUserGoogleSlides] url:', uploadResult.webViewLink);
 
   return {
     success: true,
