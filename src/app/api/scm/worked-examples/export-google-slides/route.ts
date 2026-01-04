@@ -1,4 +1,5 @@
 export const runtime = 'nodejs';
+export const maxDuration = 120; // 2 minutes for Chromium + PPTX generation + Google upload
 
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadPptxToUserGoogleSlides } from '@/lib/integrations/google-drive/user-oauth';

@@ -1,3 +1,5 @@
+export const maxDuration = 120; // 2 minutes for Chromium + PPTX generation
+
 import { NextRequest, NextResponse } from 'next/server';
 import pptxgen from '@bapunhansdah/pptxgenjs';
 
