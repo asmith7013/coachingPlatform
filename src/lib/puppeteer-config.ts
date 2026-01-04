@@ -58,7 +58,7 @@ export async function getPuppeteerBrowser(): Promise<PuppeteerBrowser> {
     return await puppeteerCore.default.launch({
       args: chromium.default.args,
       executablePath: await chromium.default.executablePath(
-        'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
+        'https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar'
       ),
       headless: true,
     });
