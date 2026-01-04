@@ -87,9 +87,9 @@ Graph: Use card-patterns/svg-card.html → modify for X_MAX=10, Y_MAX=100
 | 6 | Step 2 Answer | generate-new | `two-column` | title-zone, content-box, svg-card, **answer-card** (animated) |
 | 7 | Step 3 Question + CFU | generate-new | `two-column` | title-zone, content-box, svg-card, **cfu-card** (animated) |
 | 8 | Step 3 Answer | generate-new | `two-column` | title-zone, content-box, svg-card, **answer-card** (animated) |
-| 9 | Practice 1 | generate-new | `two-column` | title-zone, content-box, svg-card |
-| 10 | Practice 2 | generate-new | `two-column` | title-zone, content-box, svg-card |
-| 11 | Printable | generate-new | `full-width` | Special format (portrait) |
+| 9 | Printable | generate-new | `full-width` | Special format (portrait, practice problems embedded) |
+
+**Note:** Practice problems are embedded directly in the Printable slide (slide 9) rather than having separate presentation slides. The printable is generated via a separate API call after slides 1-8 complete.
 
 ---
 
@@ -125,7 +125,7 @@ Add the appropriate box BEFORE the closing `</body>` tag:
 
 ### Step 3b: Compose Slides from Atomic Components
 
-**For ALL slides (1-11):**
+**For ALL slides (1-8, printable generated separately):**
 
 1. **ANNOUNCE** checkpoint to user (plain text, see Step 1)
 2. **CHOOSE LAYOUT** from the table above (full-width or two-column)
@@ -145,7 +145,7 @@ Add the appropriate box BEFORE the closing `</body>` tag:
 
 ### Step 4: Repeat Protocol
 
-For each slide N from 1 to 15:
+For each slide N from 1 to 8:
 1. Return to Step 1
 2. Announce checkpoint (plain text to user)
 3. Follow Step 3a or 3b based on paired status
@@ -345,12 +345,11 @@ See `card-patterns/complex-patterns/graph-snippet.html` and `card-patterns/compl
 
 ## Completion Checklist
 
-- [ ] All 11 slides generated with checkpoints
+- [ ] All 8 worked example slides generated with checkpoints
 - [ ] CFU/Answer boxes have correct data-pptx-region attributes (for animation)
 - [ ] CFU questions reference strategy verbs
 - [ ] Visual stays in same position (slides 2-8)
-- [ ] Practice slides have zero scaffolding
-- [ ] Printable uses white theme + Times New Roman
+- [ ] Printable slide (9) generated separately with practice problems
 
 ---
 

@@ -607,7 +607,7 @@ ${gp.keyPoints.map(p => `  - ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixe
 
 ## Instructions - PPTX-Compatible Slides
 
-Generate exactly **11 PPTX-compatible HTML slides** following this structure:
+Generate exactly **8 PPTX-compatible HTML slides** following this structure:
 
 **All slides must be 960×540px, light theme (white background), Arial font, NO JavaScript.**
 
@@ -629,16 +629,7 @@ Generate exactly **11 PPTX-compatible HTML slides** following this structure:
 7. **Step 3 Question + CFU** - Show problem with steps 1-2 complete, include CFU box (animated)
 8. **Step 3 Answer** - Show final answer, include Answer box (animated)
 
-**Practice (2 slides):**
-9. **Practice 1** - Scenario 2, ZERO scaffolding (use SLIDE_PRACTICE_TEMPLATE)
-10. **Practice 2** - Scenario 3, ZERO scaffolding (use SLIDE_PRACTICE_TEMPLATE)
-
-**Printable (1 slide):**
-11. **Printable Worksheet** - ALL practice problems in ONE slide with multiple print-page divs
-   - White background, black text, Times New Roman font
-   - Each print-page: 8.5in x 11in
-   - Include @media print CSS
-   - NO strategy reminders - only problem content
+**Note:** The printable worksheet (slide 9) is generated separately after these 8 slides.
 
 ## CFU/Answer Box PPTX Attributes (REQUIRED)
 
@@ -658,7 +649,7 @@ DO NOT include:
 
 The slides you output should contain ONLY valid HTML starting with \`<!DOCTYPE html>\` and ending with \`</html>\`.
 
-**Slide type reference (ALL 11 SLIDES):**
+**Slide type reference (8 SLIDES):**
 | # | Type | Has CFU/Answer? | Action |
 |---|------|-----------------|--------|
 | 1 | Learning Goal | No | generate-new |
@@ -669,9 +660,8 @@ The slides you output should contain ONLY valid HTML starting with \`<!DOCTYPE h
 | 6 | Step 2 Answer | Answer box (animated) | generate-new |
 | 7 | Step 3 Question + CFU | CFU box (animated) | generate-new |
 | 8 | Step 3 Answer | Answer box (animated) | generate-new |
-| 9 | Practice 1 | No | generate-new |
-| 10 | Practice 2 | No | generate-new |
-| 11 | Printable | No | generate-new |
+
+(Slide 9 - Printable with practice problems - is generated separately)
 
 Use ===SLIDE_SEPARATOR=== between each slide.
 Each slide MUST have body with width: 960px; height: 540px.`;

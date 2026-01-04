@@ -4,7 +4,7 @@
 Present your analysis to the user, get their confirmation, and plan the three scenarios - all using DIFFERENT contexts from the mastery check.
 
 ## Output Format: PPTX-Compatible HTML
-All slides will be **PPTX-compatible HTML** (960×540px, light theme, 14-16 slides). See `03-generate-slides/protocol.md` for technical specs.
+All slides will be **PPTX-compatible HTML** (960×540px, light theme, 9 slides). See `03-generate-slides/protocol.md` for technical specs.
 
 ## Prerequisites
 - Phase 1 complete

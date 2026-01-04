@@ -209,8 +209,9 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
     setError(null);
     const startTime = Date.now();
-    // PPTX format: 11 slides (Learning Goal, Setup, 6 step slides with animated CFU/Answer, 2 practice, 1 printable)
-    const fullSlideCount = testMode ? 1 : 11 + Math.max(0, scenarios.length - 3);
+    // PPTX format: 8 worked example slides (Learning Goal, Setup, 6 step slides with animated CFU/Answer)
+    // Printable slide (9) is generated separately after main slides complete
+    const fullSlideCount = testMode ? 1 : 8;
 
     // For continue mode, use accumulated slides from ref (not state, which may be stale during retries)
     // accumulatedSlidesRef always has the most up-to-date slides
@@ -339,12 +340,67 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
           return;
         }
 
-        // Complete or max retries reached - proceed to next step
+        // Complete or max retries reached
         if (currentSlideCount < expectedSlideCount) {
           console.log(`[generate-slides] Max retries reached. Generated ${currentSlideCount}/${expectedSlideCount} slides.`);
           // Show a warning to the user - they can manually continue in step 3
           setError(`Generated ${currentSlideCount} of ${expectedSlideCount} slides. You can continue generation from step 3 if needed.`);
+          retryCountRef.current = 0;
+          setLoadingProgress({ phase: 'idle', message: '' });
+          nextStep();
+          return;
         }
+
+        // All 8 main slides complete - now generate printable (slide 9)
+        if (!testMode && scenarios) {
+          console.log('[generate-slides] Main slides complete, generating printable...');
+          setLoadingProgress({
+            phase: 'generating',
+            message: 'Creating printable worksheet...',
+            detail: 'Generating practice problems sheet (slide 9)',
+            startTime,
+            slideProgress: {
+              currentSlide: 9,
+              estimatedTotal: 9,
+            },
+          });
+
+          try {
+            const printableResponse = await fetch('/api/scm/worked-examples/generate-printable', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                practiceScenarios: scenarios.slice(1), // Practice scenarios only (indices 1 and 2)
+                strategyName: strategyDefinition?.name || 'Strategy',
+                problemType: problemAnalysis?.problemType || 'Math Problem',
+                gradeLevel: state.gradeLevel || '8',
+                unitNumber: state.unitNumber,
+                lessonNumber: state.lessonNumber,
+                learningGoals: state.learningGoals,
+              }),
+            });
+
+            const printableData = await printableResponse.json();
+
+            if (printableData.success && printableData.htmlContent) {
+              const printableSlide: HtmlSlide = {
+                slideNumber: 9,
+                htmlContent: printableData.htmlContent,
+                visualType: 'html',
+              };
+              accumulatedSlidesRef.current.push(printableSlide);
+              setSlides([...accumulatedSlidesRef.current]);
+              console.log('[generate-slides] Printable slide added successfully');
+            } else {
+              console.warn('[generate-slides] Printable generation failed:', printableData.error);
+              // Don't fail the whole process, just log the warning
+            }
+          } catch (printableError) {
+            console.error('[generate-slides] Printable generation error:', printableError);
+            // Don't fail the whole process, just log the error
+          }
+        }
+
         retryCountRef.current = 0; // Reset for next generation
         setLoadingProgress({ phase: 'idle', message: '' });
         nextStep();
@@ -928,7 +984,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                 Apply
               </button>
               {/* Show different buttons based on slide count */}
-              {state.slides.length >= 11 ? (
+              {state.slides.length >= 9 ? (
                 // All slides exist - just show Review + Regenerate
                 <>
                   <button
@@ -964,7 +1020,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Continue ({state.slides.length}/11)
+                    Continue ({state.slides.length}/9)
                   </button>
                   <button
                     onClick={() => handleGenerateSlides(false, 'full')}

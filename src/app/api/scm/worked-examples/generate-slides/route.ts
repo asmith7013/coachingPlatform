@@ -108,9 +108,9 @@ export async function POST(request: NextRequest) {
     const userEmail = user?.emailAddresses?.[0]?.emailAddress;
 
     // Estimate total slides for PPTX format (matches protocol structure):
-    // 2 intro + 4 step1 + 4 step2 + 2 step3 + 2 practice + 1 printable = 15 base
-    // Extra scenarios beyond 3 add 1 practice slide each
-    const fullSlideCount = 15 + Math.max(0, scenarios.length - 3);
+    // 8 worked example slides (Learning Goal, Setup, 6 step slides with CFU/Answer)
+    // Printable slide (9) is generated separately via generate-printable API
+    const fullSlideCount = 8;
 
     // Calculate estimated slides based on mode
     let estimatedSlideCount: number;

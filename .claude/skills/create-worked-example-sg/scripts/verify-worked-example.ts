@@ -148,8 +148,8 @@ function verify(slug: string): VerificationResult {
   } else if (slideFiles.length < 7) {
     result.passed = false;
     result.errors.push(`Too few slides: found ${slideFiles.length}, need at least 7`);
-  } else if (slideFiles.length > 12) {
-    result.warnings.push(`Many slides: ${slideFiles.length} (typical is 8-11)`);
+  } else if (slideFiles.length > 10) {
+    result.warnings.push(`Many slides: ${slideFiles.length} (typical is 9)`);
   } else {
     result.info.push(`Slide count: ${slideFiles.length}`);
   }

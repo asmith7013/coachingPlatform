@@ -9,7 +9,7 @@ src/app/scm/workedExamples/create/
 ├── page.tsx                    ← Main page component
 ├── actions/                    ← Server actions (call Claude API)
 │   ├── analyze-problem.ts      ← Phase 1: Analyze mastery check image
-│   ├── generate-slides.ts      ← Phase 3: Generate 11 HTML slides (SSE streaming)
+│   ├── generate-slides.ts      ← Phase 3: Generate 8 HTML slides (SSE streaming) + printable
 │   └── upload-image.ts         ← Upload image to blob storage
 ├── components/                 ← React UI components
 │   ├── WizardContainer.tsx     ← Main wizard wrapper with state provider
@@ -90,7 +90,7 @@ Server actions that call Claude API:
 | Action | Input | Output |
 |--------|-------|--------|
 | `analyzeProlem()` | Image URL, grade, goals | ProblemAnalysis, StrategyDefinition, Scenarios |
-| `generateSlides()` | Analysis data | 11 HTML slides (SSE stream) |
+| `generateSlides()` | Analysis data | 8 HTML slides (SSE stream) + 1 printable (separate API) |
 | `uploadImage()` | File | Blob URL |
 
 ## Common Update Patterns
@@ -120,8 +120,7 @@ Each scenario needs its own `graphPlan` for coordinate-graph problems:
 | Slides | Scenario | GraphPlan Source |
 |--------|----------|------------------|
 | 2-8 (Worked Example) | scenarios[0] | `scenarios[0].graphPlan` |
-| 9 (Practice 1) | scenarios[1] | `scenarios[1].graphPlan` |
-| 10 (Practice 2) | scenarios[2] | `scenarios[2].graphPlan` |
+| 9 (Printable with Practice 1 & 2) | scenarios[1], scenarios[2] | `scenarios[1].graphPlan`, `scenarios[2].graphPlan` |
 
 **Never use `problemAnalysis.graphPlan` for slides** - that's the mastery check's graph, which is for the student's exit ticket (never shown in slides).
 

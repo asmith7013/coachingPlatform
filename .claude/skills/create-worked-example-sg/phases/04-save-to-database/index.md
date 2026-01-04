@@ -4,7 +4,7 @@
 Save the worked example to the database and export to PPTX or Google Slides for classroom use.
 
 ## Output Format
-All slides are **960×540px, light theme** (11 slides). CFU/Answer boxes use PPTX animation. See `03-generate-slides/protocol.md` for technical specs.
+All slides are **960×540px, light theme** (9 slides). CFU/Answer boxes use PPTX animation. See `03-generate-slides/protocol.md` for technical specs.
 
 ## Prerequisites
 - Phases 1-3 complete
@@ -138,7 +138,7 @@ source .env.local && node .claude/skills/create-worked-example-sg/scripts/sync-t
 ✅ HTML Deck saved successfully!
 Deck ID: [ObjectId]
 Slug: [slug]
-Total slides: 11
+Total slides: 9
 📁 Local files: src/app/presentations/[slug]/
 🔗 View at: /presentations/[slug]
 ```

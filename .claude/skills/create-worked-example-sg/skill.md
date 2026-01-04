@@ -167,7 +167,7 @@ This skill is divided into **4 main phases** for creating new decks, plus **Phas
 │  Reference: phases/03-generate-slides/ (folder with index.md + protocol.md) │
 │                                                                             │
 │  Trigger: User confirms in Phase 2                                          │
-│  Actions: Create 11 PPTX-compatible HTML slides (960×540px)                 │
+│  Actions: Create 9 PPTX-compatible HTML slides (960×540px)                  │
 │           Using atomic composition from card-patterns/                      │
 │  Output: HTML files written to src/app/presentations/{slug}/                │
 │  Done when: All slide files are written                                     │

@@ -1,7 +1,9 @@
 # Phase 3: Generate Slides
 
 ## Purpose
-Create 11 PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals.
+Create 9 PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals.
+
+**Note:** Slides 1-8 are the worked example. Slide 9 (the printable worksheet with practice problems) is generated separately after the main slides complete.
 
 ## Output Format: PPTX-Compatible HTML
 All slides are **960×540px, light theme**. CFU/Answer boxes use PPTX animation (appear on click). See `protocol.md` in this folder for complete technical specs.
@@ -74,18 +76,23 @@ Layout: [full-width | two-column] | Components: [list of card-patterns used]
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │ STEP 3.2: Generate Slides (ATOMIC COMPOSITION)                  │
-│   For each slide N from 1 to 11:                                │
+│   For each slide N from 1 to 8:                                 │
 │   1. Announce checkpoint                                        │
 │   2. Choose layout preset (full-width or two-column)            │
 │   3. Compose using card-patterns:                               │
 │      - title-zone, content-box, svg-card                        │
 │      - cfu-card or answer-card (animated)                       │
 │   4. Write HTML                                                 │
+│                                                                 │
+│ STEP 3.3: Generate Printable (Slide 9)                          │
+│   - Generated separately after slides 1-8 complete              │
+│   - Uses printable-slide-snippet.html pattern                   │
+│   - Contains practice problems from Scenarios 2 & 3             │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ STEP 3.3: Verify Completion Checklist                           │
+│ STEP 3.4: Verify Completion Checklist                           │
 │           (See protocol.md)                                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -123,7 +130,7 @@ Read: .claude/skills/create-worked-example-sg/reference/layout-presets.md       
 
 ---
 
-## PPTX Slide Structure (11 slides)
+## PPTX Slide Structure (9 slides)
 
 CFU/Answer boxes use **PPTX animation** (appear on click) - no duplicate slides needed.
 
@@ -137,9 +144,9 @@ CFU/Answer boxes use **PPTX animation** (appear on click) - no duplicate slides 
 | 6 | Step 2 Answer | `two-column` | title-zone, content-box, svg-card, **answer-card** (animated) |
 | 7 | Step 3 Question + CFU | `two-column` | title-zone, content-box, svg-card, **cfu-card** (animated) |
 | 8 | Step 3 Answer | `two-column` | title-zone, content-box, svg-card, **answer-card** (animated) |
-| 9 | Practice 1 | `two-column` | title-zone, content-box, svg-card (ZERO scaffolding) |
-| 10 | Practice 2 | `two-column` | title-zone, content-box, svg-card (ZERO scaffolding) |
-| 11 | Printable | `full-width` | WHITE theme, portrait, Times New Roman |
+| 9 | Printable | `full-width` | WHITE theme, portrait, practice problems embedded |
+
+**Note:** Practice problems are embedded directly in the Printable slide (slide 9) rather than having separate presentation slides. Students apply the strategy independently on the printable worksheet.
 
 ---
 
@@ -175,8 +182,8 @@ CFU/Answer boxes use **PPTX animation** (appear on click) - no duplicate slides 
 
 ### Rule 3: Scaffolding Removal (NON-NEGOTIABLE)
 - Slides 2-8: Maximum scaffolding (step headers, CFU, highlighting)
-- Practice slides 9-10: ZERO scaffolding (just problem setup)
-- Students must apply strategy independently
+- Printable slide 9: ZERO scaffolding (just practice problems with work space)
+- Students must apply strategy independently on the printable worksheet
 
 ### Rule 4: Consistent Step Names
 - Use EXACT verbs from strategyDefinition.moves throughout
@@ -250,8 +257,7 @@ The mastery check (`problemAnalysis.graphPlan`) is for the student's exit ticket
 | Slides | Source | GraphPlan to Use |
 |--------|--------|------------------|
 | 2-8 (Worked Example) | Scenario 1 | `scenarios[0].graphPlan` |
-| 9 (Practice 1) | Scenario 2 | `scenarios[1].graphPlan` |
-| 10 (Practice 2) | Scenario 3 | `scenarios[2].graphPlan` |
+| 9 (Printable - Practice 1 & 2) | Scenarios 2 & 3 | `scenarios[1].graphPlan` and `scenarios[2].graphPlan` |
 
 Each GRAPH PLAN contains the semantic decisions for that scenario:
 - **Equations** with correct slope/y-intercept for that scenario's numbers
@@ -297,8 +303,8 @@ These rules are NON-NEGOTIABLE:
 
 ### The "Scaffolding Removal" Principle
 - Slides 2-8: Maximum scaffolding (step-by-step, highlighting, CFU)
-- Practice slides 9-10: ZERO scaffolding (just the problem setup)
-- Students must apply the strategy independently
+- Printable slide 9: ZERO scaffolding (just practice problems with work space)
+- Students must apply the strategy independently on the printable worksheet
 
 ### The "Real World" Principle
 - Use engaging, age-appropriate contexts
@@ -325,9 +331,7 @@ src/app/presentations/{slug}/
 ├── slide-6.html   (Step 2 Answer)
 ├── slide-7.html   (Step 3 Question + CFU)
 ├── slide-8.html   (Step 3 Answer)
-├── slide-9.html   (Practice 1)
-├── slide-10.html  (Practice 2)
-└── slide-11.html  (Printable)
+└── slide-9.html   (Printable with Practice Problems 1 & 2)
 ```
 
 Use the Write tool for each slide file.
@@ -348,8 +352,8 @@ Use the Write tool for each slide file.
 ## Phase 3 Completion Checklist
 
 Before proceeding, verify:
-- [ ] All 11 slides written to files
-- [ ] All slides are exactly 960×540px
+- [ ] All 9 slides written to files (8 worked example + 1 printable)
+- [ ] Slides 1-8 are exactly 960×540px
 - [ ] All text is in `<p>`, `<h1-6>`, `<ul>`, `<ol>` tags (NOT bare text in divs!)
 - [ ] Using `.row`/`.col` classes (NOT inline `display: flex`)
 - [ ] Web-safe fonts only: Arial, Georgia
@@ -357,8 +361,8 @@ Before proceeding, verify:
 - [ ] CFU questions reference strategy verbs
 - [ ] Visual stays in same position across slides 2-8
 - [ ] CFU/Answer boxes have correct `data-pptx-region` attributes (for animation)
-- [ ] Practice slides have zero scaffolding
-- [ ] Printable slide uses WHITE background, Times New Roman
+- [ ] Printable slide (9) has zero scaffolding, WHITE background, Times New Roman
+- [ ] Printable slide contains both practice problems with work space
 - [ ] No JavaScript, no onclick, no CSS animations
 - [ ] **IF SVG visual:** SVG container has data-pptx-region and position attributes
 - [ ] **IF SVG visual (coordinate-graph):** Scale matches SVG PLAN from Phase 1
