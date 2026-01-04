@@ -12,6 +12,8 @@ export interface RenderSession {
   renderSvg: (svgHtml: string, width: number, height: number) => Promise<Buffer>;
   renderSvgLayers: (svgHtml: string, width: number, height: number, layers: string[]) => Promise<SvgLayer[]>;
   renderFullSlide: (html: string) => Promise<Buffer>;
+  renderPrintPage: (html: string, pageIndex: number) => Promise<Buffer | null>;
+  countPrintPages: (html: string) => Promise<number>;
   close: () => Promise<void>;
 }
 
@@ -271,6 +273,72 @@ export async function createRenderSession(): Promise<RenderSession> {
       const screenshot = await page.screenshot({
         type: 'png',
         clip: { x: 0, y: 0, width: HTML_WIDTH, height: HTML_HEIGHT },
+      });
+
+      return screenshot as Buffer;
+    },
+
+    /**
+     * Count how many .print-page elements are in the HTML
+     */
+    async countPrintPages(html: string): Promise<number> {
+      await page.setContent(html, { waitUntil: 'domcontentloaded' });
+      const count = await page.evaluate(() => {
+        return document.querySelectorAll('.print-page').length;
+      });
+      return count;
+    },
+
+    /**
+     * Render a specific print-page from a printable slide as a landscape screenshot
+     * for PPTX export (960x540 aspect ratio)
+     */
+    async renderPrintPage(html: string, pageIndex: number): Promise<Buffer | null> {
+      // Set viewport to capture the print page at a good resolution
+      // Print pages are 8.5in x 11in (portrait), but we render them to fit 16:9 slides
+      const pageWidth = 816; // 8.5 inches at 96 DPI
+      const pageHeight = 1056; // 11 inches at 96 DPI
+
+      await page.setViewport({
+        width: pageWidth,
+        height: pageHeight,
+        deviceScaleFactor: 2,
+      });
+
+      await page.setContent(html, { waitUntil: 'domcontentloaded' });
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // Get the bounding rect of the specific print-page
+      const bounds = await page.evaluate((idx: number) => {
+        const pages = document.querySelectorAll('.print-page');
+        const targetPage = pages[idx];
+        if (!targetPage) return null;
+
+        // Scroll to make sure the page is visible
+        targetPage.scrollIntoView();
+
+        const rect = targetPage.getBoundingClientRect();
+        return {
+          x: rect.x,
+          y: rect.y,
+          width: rect.width,
+          height: rect.height,
+        };
+      }, pageIndex);
+
+      if (!bounds || bounds.width === 0 || bounds.height === 0) {
+        return null;
+      }
+
+      // Capture the specific print-page
+      const screenshot = await page.screenshot({
+        type: 'png',
+        clip: {
+          x: Math.max(0, bounds.x),
+          y: Math.max(0, bounds.y),
+          width: bounds.width,
+          height: bounds.height,
+        },
       });
 
       return screenshot as Buffer;

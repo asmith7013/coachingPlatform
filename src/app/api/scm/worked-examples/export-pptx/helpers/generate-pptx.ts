@@ -28,19 +28,43 @@ export interface GeneratePptxResult {
 /**
  * Generate a PPTX presentation from slide HTML content
  * Shared logic used by both streaming and Google Slides export routes
+ *
+ * Special handling for the printable slide (last slide with .print-page elements):
+ * - Detects multiple .print-page elements
+ * - Creates a separate PPTX slide for each practice problem
+ * - Adds a link to view/print on the website
  */
 export async function generatePptxFromSlides(
   slides: SlideData[],
   options: GeneratePptxOptions = {}
 ): Promise<GeneratePptxResult> {
   const { title, mathConcept, slug, onProgress } = options;
-  const totalSlides = slides.length;
 
   // Create a single browser session for all slides (efficient)
   const renderSession = await createRenderSession();
 
   try {
-    onProgress?.(0, totalSlides, 'Initializing PowerPoint export...', 'init');
+    // First pass: calculate total slides (including expanded print pages)
+    let totalPptxSlides = 0;
+    const slideExpansions: { originalIndex: number; printPageCount: number }[] = [];
+
+    for (let i = 0; i < slides.length; i++) {
+      const html = slides[i].htmlContent || '';
+      // Check if this is the printable slide (has .print-page elements)
+      const isPrintable = html.includes('print-page');
+
+      if (isPrintable && i === slides.length - 1) {
+        // Last slide is printable - count print pages
+        const printPageCount = await renderSession.countPrintPages(html);
+        slideExpansions.push({ originalIndex: i, printPageCount });
+        totalPptxSlides += printPageCount > 0 ? printPageCount : 1;
+      } else {
+        slideExpansions.push({ originalIndex: i, printPageCount: 0 });
+        totalPptxSlides += 1;
+      }
+    }
+
+    onProgress?.(0, totalPptxSlides, 'Initializing PowerPoint export...', 'init');
 
     // Create presentation
     const pptx = new pptxgen();
@@ -50,50 +74,154 @@ export async function generatePptxFromSlides(
     pptx.subject = mathConcept || 'Math';
     pptx.company = 'AI Coaching Platform';
 
+    let pptxSlideIndex = 0;
+
     // Process each slide
     for (let i = 0; i < slides.length; i++) {
       const slideData = slides[i];
-      const slide = pptx.addSlide();
       const html = slideData.htmlContent || '';
+      const expansion = slideExpansions[i];
 
-      slide.background = { color: 'FFFFFF' };
-      // Note: The fork supports object animations but not slide-level transitions
+      if (expansion.printPageCount > 0) {
+        // This is the printable slide - create a slide for each practice problem
+        for (let pageIdx = 0; pageIdx < expansion.printPageCount; pageIdx++) {
+          pptxSlideIndex++;
+          const problemNumber = pageIdx + 1;
 
-      onProgress?.(i + 1, totalSlides, `Processing slide ${i + 1} of ${totalSlides}...`, 'processing');
+          onProgress?.(
+            pptxSlideIndex,
+            totalPptxSlides,
+            `Rendering Practice Problem ${problemNumber}...`,
+            'processing'
+          );
 
-      await processSlide(slide, html, i, totalSlides, renderSession, onProgress);
+          const slide = pptx.addSlide();
+          slide.background = { color: 'FFFFFF' };
 
-      // Add slide number in footer
-      slide.addText(`${slideData.slideNumber || i + 1}`, {
-        x: 9.3,
-        y: 5.2,
-        w: 0.5,
-        h: 0.3,
-        fontSize: 10,
-        fontFace: 'Arial',
-        color: '999999',
-        align: 'right',
-      });
+          // Render the specific print page as an image
+          const imageBuffer = await renderSession.renderPrintPage(html, pageIdx);
 
-      // Add worked example link on slide 9 (printable worksheet with practice problems)
-      if (i === 8 && slug) {
-        const workedExampleUrl = `https://solvescoaching.com/scm/workedExamples?view=${slug}`;
-        slide.addText('View Worked Example', {
-          x: 0.3,
-          y: 5.1,
-          w: 2,
+          if (imageBuffer) {
+            const base64Image = imageBuffer.toString('base64');
+            // Position the portrait image centered on the landscape slide
+            // with some padding
+            slide.addImage({
+              data: `data:image/png;base64,${base64Image}`,
+              x: 1.5,  // Center horizontally on 10" slide
+              y: 0.2,
+              w: 4.5,  // Maintain aspect ratio (portrait)
+              h: 5.1,
+            });
+          } else {
+            // Fallback text if rendering fails
+            slide.addText(`Practice Problem ${problemNumber}`, {
+              x: 0.5,
+              y: 2.5,
+              w: 9,
+              h: 0.5,
+              fontSize: 24,
+              fontFace: 'Arial',
+              color: '333333',
+              align: 'center',
+            });
+          }
+
+          // Add slide title
+          slide.addText(`Practice Problem ${problemNumber}`, {
+            x: 6.2,
+            y: 0.5,
+            w: 3.5,
+            h: 0.5,
+            fontSize: 20,
+            fontFace: 'Arial',
+            bold: true,
+            color: '333333',
+          });
+
+          // Add "Print this worksheet" link with instructions
+          if (slug) {
+            const printUrl = `https://solvescoaching.com/scm/workedExamples?view=${slug}&slide=9`;
+
+            slide.addText('Print this worksheet:', {
+              x: 6.2,
+              y: 1.2,
+              w: 3.5,
+              h: 0.3,
+              fontSize: 12,
+              fontFace: 'Arial',
+              color: '666666',
+            });
+
+            slide.addText('Open Printable Version', {
+              x: 6.2,
+              y: 1.6,
+              w: 3.5,
+              h: 0.35,
+              fontSize: 13,
+              fontFace: 'Arial',
+              color: '1791e8',
+              underline: { style: 'sng' },
+              hyperlink: { url: printUrl },
+            });
+
+            // Also add View Worked Example link
+            const workedExampleUrl = `https://solvescoaching.com/scm/workedExamples?view=${slug}`;
+            slide.addText('View Worked Example', {
+              x: 6.2,
+              y: 2.2,
+              w: 3.5,
+              h: 0.35,
+              fontSize: 13,
+              fontFace: 'Arial',
+              color: '1791e8',
+              underline: { style: 'sng' },
+              hyperlink: { url: workedExampleUrl },
+            });
+          }
+
+          // Add slide number
+          slide.addText(`${pptxSlideIndex}`, {
+            x: 9.3,
+            y: 5.2,
+            w: 0.5,
+            h: 0.3,
+            fontSize: 10,
+            fontFace: 'Arial',
+            color: '999999',
+            align: 'right',
+          });
+        }
+      } else {
+        // Regular slide processing
+        pptxSlideIndex++;
+        const slide = pptx.addSlide();
+        slide.background = { color: 'FFFFFF' };
+
+        onProgress?.(
+          pptxSlideIndex,
+          totalPptxSlides,
+          `Processing slide ${pptxSlideIndex} of ${totalPptxSlides}...`,
+          'processing'
+        );
+
+        await processSlide(slide, html, i, totalPptxSlides, renderSession, onProgress);
+
+        // Add slide number in footer
+        slide.addText(`${pptxSlideIndex}`, {
+          x: 9.3,
+          y: 5.2,
+          w: 0.5,
           h: 0.3,
-          fontSize: 11,
+          fontSize: 10,
           fontFace: 'Arial',
-          color: '1791e8',
-          underline: { style: 'sng' },
-          hyperlink: { url: workedExampleUrl },
+          color: '999999',
+          align: 'right',
         });
       }
     }
 
     // Generate PPTX
-    onProgress?.(totalSlides, totalSlides, 'Building PowerPoint file...', 'building');
+    onProgress?.(totalPptxSlides, totalPptxSlides, 'Building PowerPoint file...', 'building');
 
     const pptxBase64 = await pptx.write({ outputType: 'base64' });
     const filename = `${(title || 'worked-example').replace(/[^a-zA-Z0-9-]/g, '-')}.pptx`;
