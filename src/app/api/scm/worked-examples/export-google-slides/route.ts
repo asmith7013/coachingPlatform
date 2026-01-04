@@ -15,10 +15,15 @@ import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
  * Returns the Google Slides URL
  */
 export async function POST(request: NextRequest) {
+  console.log('[export-google-slides] ========== ROUTE HANDLER STARTED ==========');
+
   try {
+    console.log('[export-google-slides] Parsing request body...');
     const { slides, title, mathConcept, slug } = await request.json();
+    console.log('[export-google-slides] Request body parsed successfully');
 
     if (!slides || !Array.isArray(slides) || slides.length === 0) {
+      console.error('[export-google-slides] No slides provided');
       return NextResponse.json({ error: 'No slides provided' }, { status: 400 });
     }
 
@@ -107,10 +112,14 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[export-google-slides] Error:', error);
+    console.error('[export-google-slides] ========== CATCH BLOCK ==========');
+    console.error('[export-google-slides] Error type:', error?.constructor?.name);
+    console.error('[export-google-slides] Error message:', error instanceof Error ? error.message : String(error));
+    console.error('[export-google-slides] Full error:', error);
 
     // Use handlePuppeteerError for rendering-related errors
     if (error instanceof RenderError) {
+      console.error('[export-google-slides] Returning RenderError:', error.message);
       return NextResponse.json(
         { error: error.message },
         { status: 500 }
@@ -125,14 +134,18 @@ export async function POST(request: NextRequest) {
       errorMessage.includes('timeout') ||
       errorMessage.includes('Target closed')
     ) {
+      const puppeteerError = handlePuppeteerError(error, 'Google Slides export');
+      console.error('[export-google-slides] Returning puppeteer error:', puppeteerError);
       return NextResponse.json(
-        { error: handlePuppeteerError(error, 'Google Slides export') },
+        { error: puppeteerError },
         { status: 500 }
       );
     }
 
+    const finalError = error instanceof Error ? error.message : 'Failed to export to Google Slides';
+    console.error('[export-google-slides] Returning generic error:', finalError);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to export to Google Slides' },
+      { error: finalError },
       { status: 500 }
     );
   }

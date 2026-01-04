@@ -268,38 +268,49 @@ export async function uploadPptxToUserGoogleSlides(
   console.log('[uploadPptxToUserGoogleSlides] filename:', filename);
   console.log('[uploadPptxToUserGoogleSlides] buffer size:', pptxBuffer.length, 'bytes');
 
-  // Get the user's OAuth token
-  console.log('[uploadPptxToUserGoogleSlides] Getting OAuth token...');
-  const tokenResult = await getUserGoogleOAuthToken();
+  try {
+    // Get the user's OAuth token
+    console.log('[uploadPptxToUserGoogleSlides] Getting OAuth token...');
+    const tokenResult = await getUserGoogleOAuthToken();
 
-  if (!tokenResult.success) {
-    console.error('[uploadPptxToUserGoogleSlides] FAIL: Token fetch failed:', tokenResult.error);
-    return tokenResult;
+    if (!tokenResult.success) {
+      console.error('[uploadPptxToUserGoogleSlides] FAIL: Token fetch failed:', tokenResult.error);
+      return tokenResult;
+    }
+    console.log('[uploadPptxToUserGoogleSlides] Token obtained successfully');
+
+    // Upload and convert to Google Slides
+    console.log('[uploadPptxToUserGoogleSlides] Calling uploadToUserDrive...');
+    const uploadResult = await uploadToUserDrive(
+      tokenResult.accessToken,
+      pptxBuffer,
+      filename.replace(/\.pptx$/i, ''),
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      { convertToGoogleFormat: true }
+    );
+
+    if (!uploadResult.success) {
+      console.error('[uploadPptxToUserGoogleSlides] FAIL: Upload failed:', uploadResult.error);
+      return uploadResult;
+    }
+
+    console.log('[uploadPptxToUserGoogleSlides] SUCCESS: Upload complete');
+    console.log('[uploadPptxToUserGoogleSlides] fileId:', uploadResult.fileId);
+    console.log('[uploadPptxToUserGoogleSlides] url:', uploadResult.webViewLink);
+
+    return {
+      success: true,
+      fileId: uploadResult.fileId,
+      url: uploadResult.webViewLink,
+    };
+  } catch (error) {
+    console.error('[uploadPptxToUserGoogleSlides] UNEXPECTED ERROR (catch block)');
+    console.error('[uploadPptxToUserGoogleSlides] Error type:', error?.constructor?.name);
+    console.error('[uploadPptxToUserGoogleSlides] Error message:', error instanceof Error ? error.message : String(error));
+    console.error('[uploadPptxToUserGoogleSlides] Full error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unexpected error during upload',
+    };
   }
-  console.log('[uploadPptxToUserGoogleSlides] Token obtained successfully');
-
-  // Upload and convert to Google Slides
-  console.log('[uploadPptxToUserGoogleSlides] Calling uploadToUserDrive...');
-  const uploadResult = await uploadToUserDrive(
-    tokenResult.accessToken,
-    pptxBuffer,
-    filename.replace(/\.pptx$/i, ''),
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    { convertToGoogleFormat: true }
-  );
-
-  if (!uploadResult.success) {
-    console.error('[uploadPptxToUserGoogleSlides] FAIL: Upload failed:', uploadResult.error);
-    return uploadResult;
-  }
-
-  console.log('[uploadPptxToUserGoogleSlides] SUCCESS: Upload complete');
-  console.log('[uploadPptxToUserGoogleSlides] fileId:', uploadResult.fileId);
-  console.log('[uploadPptxToUserGoogleSlides] url:', uploadResult.webViewLink);
-
-  return {
-    success: true,
-    fileId: uploadResult.fileId,
-    url: uploadResult.webViewLink,
-  };
 }
