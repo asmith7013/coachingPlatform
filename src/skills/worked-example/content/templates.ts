@@ -968,7 +968,7 @@ export const PRINTABLE_TEMPLATE = `
 <!-- ============================================================== -->
 <!-- Each problem gets its own print-page div within the slide      -->
 <!-- DO NOT create separate slide files for each problem            -->
-<!-- This single slide-11.html contains ALL printable problems      -->
+<!-- This single slide-9.html contains ALL printable problems       -->
 <!-- Each print-page div = one printed page (8.5in x 11in)          -->
 <!-- ============================================================== -->
 
@@ -1015,7 +1015,9 @@ export const PRINTABLE_TEMPLATE = `
             </p>
 
             <!-- Problem Content: Tables, Equations, Graphs as needed -->
-            <div style="display: flex; gap: 30px; margin-bottom: 20px; flex: 1;">
+            <!-- IMPORTANT: Do NOT use flex: 1 here - it causes overflow on tall content -->
+            <!-- SVG graphs should have max-height: 360px to fit on page -->
+            <div style="display: flex; gap: 30px; margin-bottom: 20px;">
                 <!-- Example: Table -->
                 <div style="flex: 1;">
                     <p style="font-size: 13px; font-weight: bold; margin: 0 0 8px 0;">[Option A Name]</p>
@@ -1084,7 +1086,8 @@ export const PRINTABLE_TEMPLATE = `
             </p>
 
             <!-- Problem Content -->
-            <div style="display: flex; gap: 30px; margin-bottom: 20px; flex: 1;">
+            <!-- IMPORTANT: Do NOT use flex: 1 here - it causes overflow on tall content -->
+            <div style="display: flex; gap: 30px; margin-bottom: 20px;">
                 <!-- Add tables, equations, graphs as needed -->
             </div>
 

@@ -3,7 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { handleAnthropicError } from '@error/handlers/anthropic';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
 import type { Scenario } from '@/app/scm/workedExamples/create/lib/types';
-import { GRAPH_SNIPPET } from '@/skills/worked-example';
+import { PRINTABLE_TEMPLATE, GRAPH_SNIPPET } from '@/skills/worked-example';
 
 // Extend max execution time for this API route (5 minutes)
 export const maxDuration = 300;
@@ -18,73 +18,28 @@ interface GeneratePrintableInput {
   learningGoals: string[];
 }
 
-// Build system prompt dynamically to include the GRAPH_SNIPPET
+// Build system prompt using synced templates
 function buildSystemPrompt(): string {
-  return `You are an expert educational content creator generating a printable worksheet for math practice problems.
+  return `You are generating a printable math worksheet. Create 2 practice problems in HTML format.
 
-## Task
-Generate a single HTML printable worksheet with 2 practice problems. This is slide 9 (the final slide) of a worked example deck.
+## Printable Template
+Use this structure (replace [PLACEHOLDERS] with actual content):
 
-## CRITICAL Format Requirements
+${PRINTABLE_TEMPLATE}
 
-- **Dimensions**: The slide container should be 100vw x 100vh with overflow-y: auto
-- **Each problem gets its own print-page div** (8.5in x 11in)
-- **Theme**: White background (#ffffff), black text (#000000)
-- **Font**: Times New Roman, Georgia, serif
-- **NO JavaScript, NO onclick handlers**
+## Graph Template (only if problem has graphPlan)
+Use this SVG coordinate plane as reference:
 
-## Structure
-
-Each print-page div contains:
-1. Header with lesson info (title, unit/lesson, name/date fields)
-2. Learning Goal box
-3. Problem content (scenario name, description, visuals if needed, task)
-4. "Show your work" area
-
-## Printable Template Structure
-
-\`\`\`html
-<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
-  <!-- Page 1: Problem 1 -->
-  <div class="print-page" style="width: 8.5in; height: 11in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
-    <!-- Header, Learning Goal, Problem Content -->
-  </div>
-
-  <!-- Page 2: Problem 2 -->
-  <div class="print-page" style="width: 8.5in; height: 11in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
-    <!-- Header, Learning Goal, Problem Content -->
-  </div>
-</div>
-
-<style>
-@media print {
-  .slide-container { overflow: visible !important; height: auto !important; }
-  .print-page { width: 8.5in !important; height: 11in !important; margin: 0 !important; padding: 0.5in !important; box-sizing: border-box !important; page-break-after: always; border: none !important; }
-  .print-page:last-child { page-break-after: auto; }
-}
-@page { size: letter portrait; margin: 0; }
-</style>
-\`\`\`
-
-## SVG GRAPH TEMPLATE (MANDATORY for coordinate-graph problems)
-
-When a problem includes a graphPlan, you MUST use this exact SVG template as your starting point.
-The template includes: arrowheads on axes, grid lines, tick marks, origin label.
-
-**GRAPH SNIPPET TEMPLATE:**
 ${GRAPH_SNIPPET}
 
-**CRITICAL SVG RULES:**
-1. ALWAYS start from GRAPH_SNIPPET - never create coordinate planes from scratch
-2. Use the PRE-CALCULATED pixel coordinates provided in the problem (do NOT recalculate)
-3. SVG dimensions for printable: Use viewBox="0 0 300 200" with width="300" height="200"
-4. Keep the SVG centered in a container with appropriate print margins
-5. Lines should use the exact x1, y1, x2, y2 values provided
+## CRITICAL Layout Rules
+1. Do NOT use "flex: 1" on content divs - it causes overflow
+2. SVG graphs MUST have max-height: 360px to fit on the page
+3. The "Your Task" and "Show your work" sections MUST be visible on each page
+4. Keep all content within the 11in page height
 
-## Output Format
-
-Return ONLY the complete HTML for the printable slide. Start with the slide-container div, NOT with <!DOCTYPE html>.
-NO explanations, NO markdown code fences - just the HTML.
+## Output
+Return ONLY the HTML starting with <div class="slide-container">. No explanations, no markdown fences.
 `;
 }
 

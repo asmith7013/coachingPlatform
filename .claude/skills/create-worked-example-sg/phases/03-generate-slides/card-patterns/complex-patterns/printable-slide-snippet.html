@@ -54,7 +54,9 @@
             </p>
 
             <!-- Problem Content: Tables, Equations, Graphs as needed -->
-            <div style="display: flex; gap: 30px; margin-bottom: 20px; flex: 1;">
+            <!-- IMPORTANT: Do NOT use flex: 1 here - it causes overflow on tall content -->
+            <!-- SVG graphs should have max-height: 360px to fit on page -->
+            <div style="display: flex; gap: 30px; margin-bottom: 20px;">
                 <!-- Example: Table -->
                 <div style="flex: 1;">
                     <p style="font-size: 13px; font-weight: bold; margin: 0 0 8px 0;">[Option A Name]</p>
@@ -123,7 +125,8 @@
             </p>
 
             <!-- Problem Content -->
-            <div style="display: flex; gap: 30px; margin-bottom: 20px; flex: 1;">
+            <!-- IMPORTANT: Do NOT use flex: 1 here - it causes overflow on tall content -->
+            <div style="display: flex; gap: 30px; margin-bottom: 20px;">
                 <!-- Add tables, equations, graphs as needed -->
             </div>
 

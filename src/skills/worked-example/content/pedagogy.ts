@@ -57,7 +57,7 @@ Don't:
 Why: Tests true understanding vs. pattern matching.
 
 - Slides 2-8: Full scaffolding (step badges, CFU questions, highlighting)
-- Slides 13-14: No scaffolding (just the raw problem + "Your Task")
+- Slide 9 (Printable): No scaffolding (just the raw problems + "Your Task")
 `;
 
 /**
@@ -84,7 +84,7 @@ export const CFU_PATTERNS = `
  * Slide structure guidelines
  */
 export const SLIDE_STRUCTURE = `
-## Slide Structure (14-16 Slides)
+## Slide Structure (9 Slides)
 
 ### Slide 1: Learning Goal
 **Purpose**: Introduce the strategy with student-friendly language
@@ -102,7 +102,7 @@ export const SLIDE_STRUCTURE = `
 - Visual representation (graph, table, diagram)
 - No solution yet
 
-### Slides 3-8 (or 3-10): Step-by-Step with CFU
+### Slides 3-8: Step-by-Step with CFU
 
 **Each step becomes 2 slides:**
 
@@ -121,27 +121,16 @@ export const SLIDE_STRUCTURE = `
 
 **Number of Steps**: 2-3 maximum (4-6 step slides total)
 
-### Slides 9-12 (Optional): Additional Steps
-If the strategy has 3 moves, add more Ask/Answer pairs following the same pattern.
-
-### Slides 13-14: Independent Practice
-**Purpose**: Test transfer without scaffolding
-**Content**:
-- Practice badge (different from step badges)
-- New scenarios (Scenario 2 and 3)
-- Same mathematical structure as Scenario 1
-- ZERO step-by-step guidance
-- Just problem setup and "Your Task" instruction
-
-### Slide 15-16: Printable Worksheet (Final Slide)
+### Slide 9: Printable Worksheet (Final Slide)
 **Purpose**: Provide take-home practice
 **Content**:
-- ALL practice problems in ONE slide with multiple print-page divs
+- ALL practice problems (Scenarios 2 and 3) in ONE slide with multiple print-page divs
 - White background, black text (for printing)
 - Times New Roman font
 - 8.5in × 11in page format
 - @media print CSS
 - NO strategy reminders - students apply independently
+- Generated separately after slides 1-8 complete
 `;
 
 /**
@@ -158,7 +147,7 @@ This document explains the research-based framework behind the slide structure.
 - No JavaScript toggles or animations
 - "Reveal" happens by advancing to the next slide
 - Each Ask/Answer pair becomes TWO slides (not one with a toggle)
-- Total slide count: **14-16 slides** (not 7-9)
+- Total slide count: **9 slides** (8 worked example + 1 printable with practice problems)
 
 ## Core Principles
 
@@ -171,7 +160,7 @@ Separating questions from answers forces mental commitment before revealing solu
 ### 3. Transfer of Learning
 Independent practice (practice slides) tests whether students can apply logic to new contexts without scaffolding.
 
-## Slide Structure (14-16 Slides)
+## Slide Structure (9 Slides)
 
 ### Slide 1: Learning Goal
 **Purpose**: Introduce the strategy with student-friendly language
@@ -189,7 +178,7 @@ Independent practice (practice slides) tests whether students can apply logic to
 - Visual representation (graph, table, diagram)
 - No solution yet
 
-### Slides 3-8 (or 3-10): Step-by-Step with CFU
+### Slides 3-8: Step-by-Step with CFU
 
 **Each step becomes 2 slides:**
 
@@ -208,27 +197,16 @@ Independent practice (practice slides) tests whether students can apply logic to
 
 **Number of Steps**: 2-3 maximum (4-6 step slides total)
 
-### Slides 9-12 (Optional): Additional Steps
-If the strategy has 3 moves, add more Ask/Answer pairs following the same pattern.
-
-### Slides 13-14: Independent Practice
-**Purpose**: Test transfer without scaffolding
-**Content**:
-- Practice badge (different from step badges)
-- New scenarios (Scenario 2 and 3)
-- Same mathematical structure as Scenario 1
-- ZERO step-by-step guidance
-- Just problem setup and "Your Task" instruction
-
-### Slide 15-16: Printable Worksheet (Final Slide)
+### Slide 9: Printable Worksheet (Final Slide)
 **Purpose**: Provide take-home practice
 **Content**:
-- ALL practice problems in ONE slide with multiple print-page divs
+- ALL practice problems (Scenarios 2 and 3) in ONE slide with multiple print-page divs
 - White background, black text (for printing)
 - Times New Roman font
 - 8.5in × 11in page format
 - @media print CSS
 - NO strategy reminders - students apply independently
+- Generated separately after slides 1-8 complete
 
 ## The Four Rules
 
@@ -275,7 +253,7 @@ Don't:
 Why: Tests true understanding vs. pattern matching.
 
 - Slides 2-8: Full scaffolding (step badges, CFU questions, highlighting)
-- Slides 13-14: No scaffolding (just the raw problem + "Your Task")
+- Slide 9 (Printable): No scaffolding (just the raw problems + "Your Task")
 
 ## Step Naming and Strategy Thread
 
@@ -382,5 +360,5 @@ All three use y = mx + b, but with completely different contexts.
 
 ---
 
-**Remember**: Total slide count is 14-16 (each toggle becomes a slide pair). The principles are fixed: separate Ask from Answer (via slide advancement), maintain visual stability, use engaging contexts, remove scaffolding in practice slides.
+**Remember**: Total slide count is 9 (8 worked example + 1 printable). The principles are fixed: separate Ask from Answer (via slide advancement), maintain visual stability, use engaging contexts, remove scaffolding in the printable worksheet.
 `;
