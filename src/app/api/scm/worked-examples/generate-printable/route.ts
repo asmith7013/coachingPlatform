@@ -208,7 +208,7 @@ export async function POST(request: NextRequest) {
 
     const anthropic = new Anthropic({
       apiKey,
-      timeout: 60 * 1000, // 60 seconds for single slide
+      timeout: 5 * 60 * 1000, // 5 minutes for printable generation
     });
 
     const userPrompt = buildPrintablePrompt(

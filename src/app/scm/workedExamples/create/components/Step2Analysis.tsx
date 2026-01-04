@@ -366,6 +366,14 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
           });
 
           try {
+            // Create AbortController for timeout (5 minutes)
+            const printableAbortController = new AbortController();
+            const printableTimeout = setTimeout(() => {
+              printableAbortController.abort();
+              console.warn('[generate-slides] Printable generation timed out after 5 minutes');
+            }, 5 * 60 * 1000);
+
+            console.log('[generate-slides] Calling printable API...');
             const printableResponse = await fetch('/api/scm/worked-examples/generate-printable', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -378,26 +386,42 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                 lessonNumber: state.lessonNumber,
                 learningGoals: state.learningGoals,
               }),
+              signal: printableAbortController.signal,
             });
 
-            const printableData = await printableResponse.json();
+            clearTimeout(printableTimeout);
+            console.log('[generate-slides] Printable API responded, status:', printableResponse.status);
 
-            if (printableData.success && printableData.htmlContent) {
-              const printableSlide: HtmlSlide = {
-                slideNumber: 9,
-                htmlContent: printableData.htmlContent,
-                visualType: 'html',
-              };
-              accumulatedSlidesRef.current.push(printableSlide);
-              setSlides([...accumulatedSlidesRef.current]);
-              console.log('[generate-slides] Printable slide added successfully');
+            if (!printableResponse.ok) {
+              const errorText = await printableResponse.text();
+              console.error('[generate-slides] Printable API error response:', errorText);
+              setError(`Printable generation failed (${printableResponse.status}). You can regenerate from step 3.`);
             } else {
-              console.warn('[generate-slides] Printable generation failed:', printableData.error);
-              // Don't fail the whole process, just log the warning
+              const printableData = await printableResponse.json();
+              console.log('[generate-slides] Printable data received, success:', printableData.success);
+
+              if (printableData.success && printableData.htmlContent) {
+                const printableSlide: HtmlSlide = {
+                  slideNumber: 9,
+                  htmlContent: printableData.htmlContent,
+                  visualType: 'html',
+                };
+                accumulatedSlidesRef.current.push(printableSlide);
+                setSlides([...accumulatedSlidesRef.current]);
+                console.log('[generate-slides] Printable slide added successfully, total slides:', accumulatedSlidesRef.current.length);
+              } else {
+                console.warn('[generate-slides] Printable generation failed:', printableData.error);
+                setError(`Printable generation failed: ${printableData.error || 'Unknown error'}. You can regenerate from step 3.`);
+              }
             }
           } catch (printableError) {
-            console.error('[generate-slides] Printable generation error:', printableError);
-            // Don't fail the whole process, just log the error
+            if (printableError instanceof Error && printableError.name === 'AbortError') {
+              console.error('[generate-slides] Printable generation timed out');
+              setError('Printable generation timed out. You can regenerate from step 3.');
+            } else {
+              console.error('[generate-slides] Printable generation error:', printableError);
+              setError(`Printable generation error: ${printableError instanceof Error ? printableError.message : 'Unknown error'}. You can regenerate from step 3.`);
+            }
           }
         }
 
