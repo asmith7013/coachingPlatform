@@ -150,6 +150,8 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
   const [aiEditError, setAiEditError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const accumulatedSlidesRef = useRef<HtmlSlide[]>([]);
+  const retryCountRef = useRef(0);
+  const MAX_AUTO_RETRIES = 3;
 
   const { problemAnalysis, strategyDefinition, scenarios } = state;
 
@@ -305,10 +307,42 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
         }
       }
 
-      // Stream ended - if we have slides, proceed to next step
-      // (The 'complete' event has a huge payload that may not parse correctly across chunks)
-      if (accumulatedSlidesRef.current.length > 0) {
+      // Stream ended - check if generation is complete
+      const currentSlideCount = accumulatedSlidesRef.current.length;
+      const expectedSlideCount = testMode ? 1 : fullSlideCount;
+
+      if (currentSlideCount > 0) {
         setSlides([...accumulatedSlidesRef.current]);
+
+        // Check if incomplete and should auto-retry
+        if (currentSlideCount < expectedSlideCount && retryCountRef.current < MAX_AUTO_RETRIES) {
+          retryCountRef.current += 1;
+          console.log(`[generate-slides] Incomplete: ${currentSlideCount}/${expectedSlideCount}, auto-continuing (attempt ${retryCountRef.current}/${MAX_AUTO_RETRIES})...`);
+
+          setLoadingProgress({
+            phase: 'generating',
+            message: `Resuming generation (attempt ${retryCountRef.current}/${MAX_AUTO_RETRIES})...`,
+            detail: `Generated ${currentSlideCount}/${expectedSlideCount} slides, continuing...`,
+            startTime,
+            slideProgress: {
+              currentSlide: currentSlideCount,
+              estimatedTotal: expectedSlideCount,
+            },
+          });
+
+          // Small delay before retrying to avoid hammering the API
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Recursively continue generation
+          await handleGenerateSlides(testMode, 'continue');
+          return;
+        }
+
+        // Complete or max retries reached - proceed to next step
+        if (currentSlideCount < expectedSlideCount) {
+          console.log(`[generate-slides] Max retries reached. Generated ${currentSlideCount}/${expectedSlideCount} slides.`);
+        }
+        retryCountRef.current = 0; // Reset for next generation
         setLoadingProgress({ phase: 'idle', message: '' });
         nextStep();
       }
