@@ -174,6 +174,10 @@ export async function uploadToUserDrive(
       errorsArray?.[0]?.reason,
     ].filter(Boolean).join(' ');
 
+    console.error('[uploadToUserDrive] errorMessage for matching:', errorMessage);
+    console.error('[uploadToUserDrive] responseStatus for matching:', responseStatus);
+    console.error('[uploadToUserDrive] includes Bad Request?:', errorMessage.includes('Bad Request'));
+
     // Check for specific status codes first
     if (responseStatus === 401 || errorMessage.includes('invalid_grant')) {
       return {
