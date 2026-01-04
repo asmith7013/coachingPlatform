@@ -3,6 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { handleAnthropicError } from '@error/handlers/anthropic';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
 import type { Scenario } from '@/app/scm/workedExamples/create/lib/types';
+import { GRAPH_SNIPPET } from '@/skills/worked-example';
 
 interface GeneratePrintableInput {
   practiceScenarios: Scenario[];
@@ -14,7 +15,9 @@ interface GeneratePrintableInput {
   learningGoals: string[];
 }
 
-const GENERATE_PRINTABLE_SYSTEM_PROMPT = `You are an expert educational content creator generating a printable worksheet for math practice problems.
+// Build system prompt dynamically to include the GRAPH_SNIPPET
+function buildSystemPrompt(): string {
+  return `You are an expert educational content creator generating a printable worksheet for math practice problems.
 
 ## Task
 Generate a single HTML printable worksheet with 2 practice problems. This is slide 9 (the final slide) of a worked example deck.
@@ -60,11 +63,27 @@ Each print-page div contains:
 </style>
 \`\`\`
 
+## SVG GRAPH TEMPLATE (MANDATORY for coordinate-graph problems)
+
+When a problem includes a graphPlan, you MUST use this exact SVG template as your starting point.
+The template includes: arrowheads on axes, grid lines, tick marks, origin label.
+
+**GRAPH SNIPPET TEMPLATE:**
+${GRAPH_SNIPPET}
+
+**CRITICAL SVG RULES:**
+1. ALWAYS start from GRAPH_SNIPPET - never create coordinate planes from scratch
+2. Use the PRE-CALCULATED pixel coordinates provided in the problem (do NOT recalculate)
+3. SVG dimensions for printable: Use viewBox="0 0 300 200" with width="300" height="200"
+4. Keep the SVG centered in a container with appropriate print margins
+5. Lines should use the exact x1, y1, x2, y2 values provided
+
 ## Output Format
 
 Return ONLY the complete HTML for the printable slide. Start with the slide-container div, NOT with <!DOCTYPE html>.
 NO explanations, NO markdown code fences - just the HTML.
 `;
+}
 
 function buildPrintablePrompt(
   scenarios: Scenario[],
@@ -75,23 +94,60 @@ function buildPrintablePrompt(
   lessonNumber: number | null,
   learningGoals: string[]
 ): string {
+  // Build detailed scenario info with pre-calculated pixel coordinates for graphs
   const scenarioDetails = scenarios.map((s, i) => {
     let details = `
-Problem ${i + 1}: ${s.name}
+## Problem ${i + 1}: ${s.name}
 - Context: ${s.context}
 - Numbers: ${s.numbers}
 - Description: ${s.description}`;
 
     if (s.graphPlan) {
+      const gp = s.graphPlan;
+      const xMax = gp.scale.xMax;
+      const yMax = gp.scale.yMax;
+
+      // Helper to convert data coordinates to pixel coordinates
+      // Using 300x200 SVG for printable (fits well on letter paper)
+      const toPixelX = (dataX: number) => Math.round((40 + (dataX / xMax) * 220) * 100) / 100;
+      const toPixelY = (dataY: number) => Math.round((170 - (dataY / yMax) * 150) * 100) / 100;
+
+      // Build explicit line drawing instructions with pre-calculated pixels
+      const lineInstructions = gp.equations.map(e => {
+        const startPixelX = toPixelX(e.startPoint?.x ?? 0);
+        const startPixelY = toPixelY(e.startPoint?.y ?? e.yIntercept);
+        const endPixelX = toPixelX(e.endPoint?.x ?? xMax);
+        const endPixelY = toPixelY(e.endPoint?.y ?? (e.slope * xMax + e.yIntercept));
+
+        return `**${e.label}: ${e.equation} (${e.color})**
+- Data: start (${e.startPoint?.x ?? 0}, ${e.startPoint?.y ?? e.yIntercept}) → end (${e.endPoint?.x ?? xMax}, ${e.endPoint?.y ?? (e.slope * xMax + e.yIntercept)})
+- PRE-CALCULATED PIXELS: x1="${startPixelX}" y1="${startPixelY}" x2="${endPixelX}" y2="${endPixelY}"
+- SVG: \`<line x1="${startPixelX}" y1="${startPixelY}" x2="${endPixelX}" y2="${endPixelY}" stroke="${e.color}" stroke-width="2"/>\``;
+      }).join('\n\n');
+
       details += `
-- Graph Plan:
-  - Equations: ${s.graphPlan.equations.map(eq => eq.equation).join(', ')}
-  - Scale: X: 0-${s.graphPlan.scale.xMax}, Y: 0-${s.graphPlan.scale.yMax}
-  - Key Points: ${s.graphPlan.keyPoints.map(kp => `${kp.label} (${kp.x}, ${kp.y})`).join(', ')}`;
+
+### 📊 GRAPH PLAN (PRE-CALCULATED - USE THESE EXACT VALUES)
+
+**Scale:** X_MAX=${xMax}, Y_MAX=${yMax}
+**Axis Labels:** X: ${gp.scale.xAxisLabels.join(', ')} | Y: ${gp.scale.yAxisLabels.join(', ')}
+
+**Pixel conversion (for reference):**
+- pixelX = 40 + (dataX / ${xMax}) * 220
+- pixelY = 170 - (dataY / ${yMax}) * 150
+
+**Lines to draw (USE THESE EXACT PIXEL VALUES):**
+
+${lineInstructions}
+
+**Key Points:**
+${gp.keyPoints.map(p => `- ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX(p.x)}, ${toPixelY(p.y)})`).join('\n')}
+
+**IMPORTANT:** The graph SVG should have a WHITE background (#ffffff or transparent) for printing.`;
     }
 
     return details;
-  }).join('\n');
+  }).join('\n\n---\n');
 
   return `Generate a printable worksheet with these 2 practice problems:
 
@@ -103,15 +159,16 @@ Problem ${i + 1}: ${s.name}
 - Strategy: ${strategyName}
 - Problem Type: ${problemType}
 
-## Practice Problems
 ${scenarioDetails}
 
 ## Instructions
 1. Create one print-page div for each problem (2 total)
 2. Include the lesson header and learning goal on each page
 3. Show the problem description and any relevant visuals (tables, graphs if graphPlan provided)
-4. Include a "Your Task" section with the specific question
-5. Include a "Show your work" box
+4. **For graphs: Use the PRE-CALCULATED pixel coordinates above - do NOT recalculate!**
+5. **Graph background MUST be white (#ffffff) for printing**
+6. Include a "Your Task" section with the specific question
+7. Include a "Show your work" box
 
 Output ONLY the HTML starting with <div class="slide-container">.`;
 }
@@ -167,7 +224,7 @@ export async function POST(request: NextRequest) {
     const response = await anthropic.messages.create({
       model: MODEL_FOR_TASK.GENERATION,
       max_tokens: 8000,
-      system: GENERATE_PRINTABLE_SYSTEM_PROMPT,
+      system: buildSystemPrompt(),
       messages: [{ role: 'user', content: userPrompt }],
     });
 
