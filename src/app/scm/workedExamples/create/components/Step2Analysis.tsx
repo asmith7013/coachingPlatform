@@ -212,8 +212,9 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
     // PPTX format: 11 slides (Learning Goal, Setup, 6 step slides with animated CFU/Answer, 2 practice, 1 printable)
     const fullSlideCount = testMode ? 1 : 11 + Math.max(0, scenarios.length - 3);
 
-    // For continue mode, only count remaining slides
-    const existingSlides = mode === 'continue' ? state.slides : [];
+    // For continue mode, use accumulated slides from ref (not state, which may be stale during retries)
+    // accumulatedSlidesRef always has the most up-to-date slides
+    const existingSlides = mode === 'continue' ? accumulatedSlidesRef.current : [];
     const estimatedSlideCount = mode === 'continue'
       ? Math.max(1, fullSlideCount - existingSlides.length)
       : fullSlideCount;

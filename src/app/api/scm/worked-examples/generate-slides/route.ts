@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
 
     const anthropic = new Anthropic({
       apiKey,
-      timeout: 10 * 60 * 1000, // 10 minutes
+      timeout: 5 * 60 * 1000, // 5 minutes - matches Vercel maxDuration
     });
 
     // Build prompt - use simplified test prompt for test mode
