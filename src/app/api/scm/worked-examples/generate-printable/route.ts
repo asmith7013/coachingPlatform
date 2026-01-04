@@ -5,6 +5,9 @@ import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
 import type { Scenario } from '@/app/scm/workedExamples/create/lib/types';
 import { GRAPH_SNIPPET } from '@/skills/worked-example';
 
+// Extend max execution time for this API route (5 minutes)
+export const maxDuration = 300;
+
 interface GeneratePrintableInput {
   practiceScenarios: Scenario[];
   strategyName: string;
