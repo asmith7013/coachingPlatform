@@ -41,9 +41,28 @@ export async function POST(request: NextRequest) {
     console.log(`[export-google-slides] PPTX generated: ${result.filename}`);
     console.log(`[export-google-slides] Base64 size: ${(result.pptxBase64.length / 1024).toFixed(1)} KB`);
 
+    // Validate PPTX was generated
+    if (!result.pptxBase64 || result.pptxBase64.length === 0) {
+      console.error('[export-google-slides] PPTX generation returned empty content');
+      return NextResponse.json({ error: 'PPTX generation failed - empty content' }, { status: 500 });
+    }
+
     // Convert base64 to buffer
     const pptxBuffer = Buffer.from(result.pptxBase64, 'base64');
     console.log(`[export-google-slides] Buffer size: ${(pptxBuffer.length / 1024).toFixed(1)} KB`);
+
+    // Validate buffer is not empty
+    if (pptxBuffer.length === 0) {
+      console.error('[export-google-slides] PPTX buffer is empty after base64 decode');
+      return NextResponse.json({ error: 'PPTX generation failed - invalid content' }, { status: 500 });
+    }
+
+    // Validate PPTX file signature (PK = ZIP format that PPTX uses)
+    const pkSignature = pptxBuffer.slice(0, 2).toString();
+    if (pkSignature !== 'PK') {
+      console.error(`[export-google-slides] Invalid PPTX signature: ${pkSignature} (expected PK)`);
+      return NextResponse.json({ error: 'PPTX generation failed - invalid file format' }, { status: 500 });
+    }
 
     console.log('[export-google-slides] Uploading to user\'s Google Drive...');
 

@@ -139,20 +139,64 @@ export async function uploadToUserDrive(
   } catch (error) {
     console.error('[uploadToUserDrive] Error:', error);
 
-    // Check for auth errors
-    if (error instanceof Error) {
-      if (error.message.includes('401') || error.message.includes('invalid_grant')) {
-        return {
-          success: false,
-          error: 'Google authorization expired. Please sign out and sign in again.',
-        };
-      }
-      if (error.message.includes('403') || error.message.includes('insufficientPermissions') || error.message.includes('insufficient authentication scopes')) {
-        return {
-          success: false,
-          error: 'Missing Google Drive permissions. Please sign out, then sign in again with Google to grant Drive access.',
-        };
-      }
+    // Extract detailed error info from Google API errors (GaxiosError structure)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const googleError = error as any;
+
+    // GaxiosError has: response.status, response.data, errors array
+    const responseStatus = googleError?.response?.status;
+    const responseData = googleError?.response?.data;
+    const errorDetails = responseData?.error;
+    const errorsArray = googleError?.errors || errorDetails?.errors;
+
+    console.error('[uploadToUserDrive] Response status:', responseStatus);
+    if (responseData) {
+      console.error('[uploadToUserDrive] Response data:', JSON.stringify(responseData, null, 2));
+    }
+    if (errorsArray) {
+      console.error('[uploadToUserDrive] Errors array:', JSON.stringify(errorsArray, null, 2));
+    }
+
+    // Build complete error message from all sources
+    const errorMessage = [
+      error instanceof Error ? error.message : String(error),
+      errorDetails?.message,
+      errorsArray?.[0]?.message,
+      errorsArray?.[0]?.reason,
+    ].filter(Boolean).join(' ');
+
+    // Check for specific status codes first
+    if (responseStatus === 401 || errorMessage.includes('invalid_grant')) {
+      return {
+        success: false,
+        error: 'Google authorization expired. Please sign out and sign in again.',
+      };
+    }
+
+    if (responseStatus === 403 || errorMessage.includes('insufficientPermissions') || errorMessage.includes('insufficient authentication scopes')) {
+      return {
+        success: false,
+        error: 'Missing Google Drive permissions. Please sign out, then sign in again with Google to grant Drive access.',
+      };
+    }
+
+    // Handle 400 Bad Request - often means the file conversion failed
+    if (responseStatus === 400 || errorMessage.includes('Bad Request')) {
+      // Try to get the most specific error detail
+      const specificError = errorsArray?.[0]?.message || errorDetails?.message;
+      const detail = specificError || 'The file may be invalid or too complex for Google Slides conversion.';
+      return {
+        success: false,
+        error: `Google Drive rejected the upload: ${detail}`,
+      };
+    }
+
+    // Handle quota/rate limit errors
+    if (responseStatus === 429 || errorMessage.includes('rateLimitExceeded')) {
+      return {
+        success: false,
+        error: 'Google Drive rate limit reached. Please wait a moment and try again.',
+      };
     }
 
     return {
