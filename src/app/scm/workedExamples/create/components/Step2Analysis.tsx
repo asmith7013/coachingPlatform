@@ -356,7 +356,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
           console.log('[generate-slides] Main slides complete, generating printable...');
           setLoadingProgress({
             phase: 'generating',
-            message: 'Creating printable worksheet...',
+            message: 'Creating Slide 9 (printable worksheet)...',
             detail: 'Generating practice problems sheet (slide 9)',
             startTime,
             slideProgress: {
