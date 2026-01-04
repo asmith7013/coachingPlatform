@@ -68,12 +68,31 @@ export async function getUserGoogleOAuthToken(): Promise<{
   } catch (error) {
     console.error('[getUserGoogleOAuthToken] CATCH ERROR:', error);
 
+    // Log full Clerk error details
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const clerkError = error as any;
+    if (clerkError?.clerkError) {
+      console.error('[getUserGoogleOAuthToken] Clerk error details:');
+      console.error('[getUserGoogleOAuthToken] code:', clerkError.code);
+      console.error('[getUserGoogleOAuthToken] status:', clerkError.status);
+      console.error('[getUserGoogleOAuthToken] errors:', JSON.stringify(clerkError.errors, null, 2));
+      console.error('[getUserGoogleOAuthToken] longMessage:', clerkError.longMessage);
+    }
+
     // Check for specific Clerk errors
     if (error instanceof Error) {
       if (error.message.includes('Unprocessable Entity')) {
         return {
           success: false,
           error: 'Google OAuth token expired or invalid. Please sign out and sign in again with Google.',
+        };
+      }
+      // Handle Clerk 400 errors
+      if (clerkError?.status === 400) {
+        const errorDetail = clerkError?.errors?.[0]?.message || clerkError?.errors?.[0]?.longMessage || 'Unknown error';
+        return {
+          success: false,
+          error: `Google OAuth error: ${errorDetail}. Please sign out and sign in again with Google.`,
         };
       }
     }
