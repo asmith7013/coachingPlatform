@@ -1,4 +1,4 @@
-import puppeteer, { Browser, Page } from 'puppeteer';
+import puppeteerCore, { Browser, Page } from 'puppeteer-core';
 import { SvgLayer } from './types';
 import { HTML_WIDTH, HTML_HEIGHT } from './constants';
 
@@ -18,19 +18,58 @@ export interface RenderSession {
 }
 
 /**
+ * Get browser launch options for both local and serverless environments
+ */
+async function getBrowserLaunchOptions() {
+  const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+
+  if (isServerless) {
+    // Use @sparticuz/chromium for serverless (Vercel, AWS Lambda)
+    const chromium = await import('@sparticuz/chromium-min');
+    return {
+      args: chromium.default.args,
+      executablePath: await chromium.default.executablePath(
+        'https://github.com/nickshanks347/chromium/releases/download/v131.0.6778.204/chromium-v131.0.6778.204-pack.tar'
+      ),
+      headless: true,
+    };
+  } else {
+    // Local development - use system Chrome
+    const possiblePaths = [
+      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', // macOS
+      '/usr/bin/google-chrome', // Linux
+      '/usr/bin/chromium-browser', // Linux alternative
+      'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', // Windows
+    ];
+
+    // Find the first existing Chrome path
+    const fs = await import('fs');
+    const executablePath = possiblePaths.find((p) => fs.existsSync(p));
+
+    if (!executablePath) {
+      throw new Error('Chrome not found. Please install Google Chrome for local development.');
+    }
+
+    return {
+      executablePath,
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+      ],
+    };
+  }
+}
+
+/**
  * Create a persistent render session for efficient multi-slide export
  * Call close() when done to properly clean up Chromium
  */
 export async function createRenderSession(): Promise<RenderSession> {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-    ],
-  });
+  const launchOptions = await getBrowserLaunchOptions();
+  const browser = await puppeteerCore.launch(launchOptions);
 
   const page = await browser.newPage();
 
