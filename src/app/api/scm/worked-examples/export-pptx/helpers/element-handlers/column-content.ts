@@ -5,8 +5,60 @@ import { pxToInches } from '../constants';
 import { TextRun, extractColor, extractBgColor, hasBoldStyle, parseTextRuns } from './utils';
 
 /**
+ * Arial character width ratios (relative to font size in points).
+ * Each value represents the width of the character as a fraction of the font size.
+ * Values include a +0.02 buffer to prevent text cutoff.
+ */
+const ARIAL_WIDTHS: Record<string, number> = {
+  // Narrow characters
+  ' ': 0.30, 'i': 0.30, 'l': 0.30, 'I': 0.30, '!': 0.35, '.': 0.30, ',': 0.30,
+  "'": 0.22, ':': 0.30, ';': 0.30, '|': 0.30, 'f': 0.30, 't': 0.33, 'r': 0.36,
+  'j': 0.30, '1': 0.58,
+  // Medium-narrow characters
+  'a': 0.58, 'b': 0.58, 'c': 0.54, 'd': 0.58, 'e': 0.58, 'g': 0.58, 'h': 0.58,
+  'k': 0.54, 'n': 0.58, 'o': 0.58, 'p': 0.58, 'q': 0.58, 's': 0.54, 'u': 0.58,
+  'v': 0.54, 'x': 0.54, 'y': 0.54, 'z': 0.54,
+  // Medium characters
+  'A': 0.69, 'B': 0.69, 'C': 0.72, 'D': 0.72, 'E': 0.69, 'F': 0.63, 'G': 0.78,
+  'H': 0.72, 'J': 0.56, 'K': 0.69, 'L': 0.58, 'N': 0.72, 'O': 0.78, 'P': 0.69,
+  'Q': 0.78, 'R': 0.72, 'S': 0.69, 'T': 0.63, 'U': 0.72, 'V': 0.69, 'X': 0.69,
+  'Y': 0.69, 'Z': 0.63,
+  // Wide characters
+  'm': 0.91, 'w': 0.80, 'W': 1.02, 'M': 0.91,
+  // Numbers (except 1)
+  '0': 0.58, '2': 0.58, '3': 0.58, '4': 0.58, '5': 0.58, '6': 0.58, '7': 0.58,
+  '8': 0.58, '9': 0.58,
+  // Common symbols
+  '-': 0.35, '–': 0.58, '—': 1.02, '+': 0.62, '=': 0.62, '/': 0.30, '\\': 0.30,
+  '(': 0.37, ')': 0.37, '[': 0.30, ']': 0.30, '{': 0.37, '}': 0.37,
+  '<': 0.62, '>': 0.62, '@': 1.02, '#': 0.58, '$': 0.58, '%': 0.93, '&': 0.72,
+  '*': 0.42, '"': 0.48, '?': 0.58,
+};
+const ARIAL_DEFAULT_WIDTH = 0.54; // Average width for unknown characters (+0.02 buffer)
+
+/**
+ * Calculate the width of text in inches using Arial font metrics.
+ *
+ * @param text - The text content
+ * @param fontSize - Font size in points
+ * @returns Width in inches
+ */
+function measureTextWidth(text: string, fontSize: number): number {
+  if (!text) return 0;
+
+  let totalWidth = 0;
+  for (const char of text) {
+    const ratio = ARIAL_WIDTHS[char] ?? ARIAL_DEFAULT_WIDTH;
+    totalWidth += ratio * fontSize;
+  }
+
+  // Convert points to inches (72 points per inch)
+  return totalWidth / 72;
+}
+
+/**
  * Estimate how many lines a text will need when wrapped to a given width.
- * Uses character count approximation based on font size and width.
+ * Uses pre-computed Arial character widths for accuracy.
  *
  * @param text - The text content
  * @param widthInches - Available width in inches
@@ -15,16 +67,10 @@ import { TextRun, extractColor, extractBgColor, hasBoldStyle, parseTextRuns } fr
  */
 function estimateLines(text: string, widthInches: number, fontSize: number): number {
   if (!text || text.length === 0) return 1;
+  if (widthInches <= 0) return 1;
 
-  // Approximate characters per inch based on font size
-  // Arial at 12pt is roughly 10-12 chars per inch; smaller fonts fit more
-  const charsPerInch = 120 / fontSize;
-  const charsPerLine = Math.floor(widthInches * charsPerInch);
-
-  // Ensure we don't divide by zero
-  if (charsPerLine <= 0) return 1;
-
-  return Math.max(1, Math.ceil(text.length / charsPerLine));
+  const textWidth = measureTextWidth(text, fontSize);
+  return Math.max(1, Math.ceil(textWidth / widthInches));
 }
 
 /**

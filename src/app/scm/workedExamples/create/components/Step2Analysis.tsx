@@ -699,7 +699,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
               hideExpandAll
               defaultOpenItems={['practice-1-question']}
               items={[
-                // Practice 1 Question
+                // Practice 1 (includes Graph Plan if exists)
                 ...(scenarios[1] ? [{
                   key: 'practice-1-question',
                   title: (
@@ -707,6 +707,9 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                       <div className="flex items-center gap-2">
                         <span className="text-base">{scenarios[1].themeIcon}</span>
                         <span className="text-sm font-medium text-gray-700">Practice 1: {scenarios[1].name}</span>
+                        {scenarios[1].graphPlan && (
+                          <span className="px-1.5 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded">Graph</span>
+                        )}
                       </div>
                       <span
                         role="button"
@@ -748,21 +751,24 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                           <p className="text-sm text-gray-600">{scenarios[1].numbers}</p>
                         </div>
                       </div>
-                      <div className="pt-4">
+                      <div className={scenarios[1].graphPlan ? "border-b border-gray-200 py-4" : "pt-4"}>
                         <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Description</h4>
                         <p className="text-sm text-gray-600">{scenarios[1].description}</p>
                       </div>
+                      {/* Graph Plan (if exists) */}
+                      {scenarios[1].graphPlan && (
+                        <div className="pt-4">
+                          <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                            <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                            Graph Plan
+                          </h4>
+                          <GraphPlanDisplay graphPlan={scenarios[1].graphPlan} compact />
+                        </div>
+                      )}
                     </div>
                   ),
                 }] : []),
-                // Practice 1 Graph Plan (if exists)
-                ...(scenarios[1]?.graphPlan ? [{
-                  key: 'practice-1-graph-plan',
-                  title: 'Practice 1 Graph Plan',
-                  icon: null,
-                  content: <GraphPlanDisplay graphPlan={scenarios[1].graphPlan!} compact />,
-                }] : []),
-                // Practice 2 Question
+                // Practice 2 (includes Graph Plan if exists)
                 ...(scenarios[2] ? [{
                   key: 'practice-2-question',
                   title: (
@@ -770,6 +776,9 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                       <div className="flex items-center gap-2">
                         <span className="text-base">{scenarios[2].themeIcon}</span>
                         <span className="text-sm font-medium text-gray-700">Practice 2: {scenarios[2].name}</span>
+                        {scenarios[2].graphPlan && (
+                          <span className="px-1.5 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded">Graph</span>
+                        )}
                       </div>
                       <span
                         role="button"
@@ -811,19 +820,22 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                           <p className="text-sm text-gray-600">{scenarios[2].numbers}</p>
                         </div>
                       </div>
-                      <div className="pt-4">
+                      <div className={scenarios[2].graphPlan ? "border-b border-gray-200 py-4" : "pt-4"}>
                         <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Description</h4>
                         <p className="text-sm text-gray-600">{scenarios[2].description}</p>
                       </div>
+                      {/* Graph Plan (if exists) */}
+                      {scenarios[2].graphPlan && (
+                        <div className="pt-4">
+                          <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                            <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                            Graph Plan
+                          </h4>
+                          <GraphPlanDisplay graphPlan={scenarios[2].graphPlan} compact />
+                        </div>
+                      )}
                     </div>
                   ),
-                }] : []),
-                // Practice 2 Graph Plan (if exists)
-                ...(scenarios[2]?.graphPlan ? [{
-                  key: 'practice-2-graph-plan',
-                  title: 'Practice 2 Graph Plan',
-                  icon: null,
-                  content: <GraphPlanDisplay graphPlan={scenarios[2].graphPlan!} compact />,
                 }] : []),
               ]}
             />

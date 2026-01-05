@@ -165,6 +165,16 @@ export default function PresentationsList() {
     );
   }, [decks, gradeFilter, gradeUnitPairs]);
 
+  // Create a lookup map for unit info (unitNumber + grade -> unitName)
+  const unitInfoMap = useMemo(() => {
+    const map = new Map<string, { unitName: string; grade: string }>();
+    for (const pair of gradeUnitPairs) {
+      const key = `${pair.unitNumber}-${pair.grade}`;
+      map.set(key, { unitName: pair.unitName, grade: pair.grade });
+    }
+    return map;
+  }, [gradeUnitPairs]);
+
   const handleGradeChange = (newGrade: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (newGrade) {
@@ -312,12 +322,13 @@ export default function PresentationsList() {
             </button>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-4">
             {/* Group decks by unit */}
             {Object.entries(
               filteredDecks.reduce((groups, deck) => {
+                // Group by unit number AND grade (important for Algebra 1 which has both Grade 8 and Algebra 1 content)
                 const unitKey = deck.unitNumber !== undefined
-                  ? `Unit ${deck.unitNumber}`
+                  ? `${deck.unitNumber}-${deck.gradeLevel}`
                   : 'No Unit';
                 if (!groups[unitKey]) {
                   groups[unitKey] = [];
@@ -330,24 +341,52 @@ export default function PresentationsList() {
                 // Sort by unit number, "No Unit" goes last
                 if (a === 'No Unit') return 1;
                 if (b === 'No Unit') return -1;
-                const numA = parseInt(a.replace('Unit ', ''));
-                const numB = parseInt(b.replace('Unit ', ''));
+                const numA = parseInt(a.split('-')[0]);
+                const numB = parseInt(b.split('-')[0]);
                 return numA - numB;
               })
-              .map(([unitName, unitDecks]) => {
-                const isOpen = openUnits.has(unitName);
+              .map(([unitKey, unitDecks]) => {
+                const isOpen = openUnits.has(unitKey);
+                // Parse unit number and grade from key
+                const [unitNumStr, ...gradeParts] = unitKey.split('-');
+                const unitNumber = parseInt(unitNumStr);
+                const deckGrade = gradeParts.join('-') || unitDecks[0]?.gradeLevel;
+
+                // Look up the unit info for full title
+                const unitInfo = unitInfoMap.get(`${unitNumber}-${deckGrade}`);
+                const unitTitle = unitInfo?.unitName
+                  ? unitInfo.unitName
+                  : unitKey === 'No Unit'
+                    ? 'No Unit'
+                    : `Unit ${unitNumber}`;
+
+                // For Algebra 1 filter, show which grade content this is
+                const showGradeBadge = gradeFilter === 'alg1' && deckGrade;
+                const gradeBadgeText = deckGrade === '8' ? 'Grade 8' : deckGrade;
+
                 return (
-                <div key={unitName} className="border border-gray-200 rounded-lg overflow-hidden">
+                <div key={unitKey} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                   <button
-                    onClick={() => toggleUnit(unitName)}
-                    className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                    onClick={() => toggleUnit(unitKey)}
+                    className="w-full flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50 transition-colors cursor-pointer"
                   >
-                    <h2 className="text-xl font-bold text-gray-800">
-                      {unitName}
-                      <span className="ml-2 text-sm font-normal text-gray-500">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-xl font-bold text-gray-800">
+                        {unitTitle}
+                      </h2>
+                      {showGradeBadge && (
+                        <span className={`inline-block px-2 py-0.5 text-xs font-semibold rounded ${
+                          deckGrade === '8'
+                            ? 'bg-amber-100 text-amber-700'
+                            : 'bg-indigo-100 text-indigo-700'
+                        }`}>
+                          {gradeBadgeText}
+                        </span>
+                      )}
+                      <span className="text-sm font-normal text-gray-500">
                         ({unitDecks.length} {unitDecks.length === 1 ? 'deck' : 'decks'})
                       </span>
-                    </h2>
+                    </div>
                     {isOpen ? (
                       <ChevronDownIcon className="w-5 h-5 text-gray-500" />
                     ) : (

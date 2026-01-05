@@ -877,8 +877,8 @@ export async function findLessonByIdentifiers(
 }
 
 /**
- * Get unique (grade, unitNumber) pairs for a given scopeSequenceTag
- * Used for filtering worked examples by curriculum
+ * Get unique (grade, unitNumber, unitName) tuples for a given scopeSequenceTag
+ * Used for filtering worked examples by curriculum and displaying unit titles
  *
  * Returns the grade/unit combinations that exist in this curriculum,
  * allowing worked examples to be filtered by matching their gradeLevel and unitNumber.
@@ -888,13 +888,26 @@ export async function getGradeUnitPairsByTag(scopeSequenceTag: string) {
     try {
       const pairs = await ScopeAndSequenceModel.aggregate([
         { $match: { scopeSequenceTag } },
-        { $group: { _id: { grade: '$grade', unitNumber: '$unitNumber' } } },
-        { $project: { _id: 0, grade: '$_id.grade', unitNumber: '$_id.unitNumber' } }
+        {
+          $group: {
+            _id: { grade: '$grade', unitNumber: '$unitNumber' },
+            unitName: { $first: '$unit' }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            grade: '$_id.grade',
+            unitNumber: '$_id.unitNumber',
+            unitName: 1
+          }
+        },
+        { $sort: { unitNumber: 1 } }
       ]);
 
       return {
         success: true,
-        data: pairs as Array<{ grade: string; unitNumber: number }>
+        data: pairs as Array<{ grade: string; unitNumber: number; unitName: string }>
       };
     } catch (error) {
       return {

@@ -10,6 +10,7 @@ export const gradeUnitPairsKeys = {
 interface GradeUnitPair {
   grade: string;
   unitNumber: number;
+  unitName: string;
 }
 
 export function useGradeUnitPairs(scopeSequenceTag: string) {
