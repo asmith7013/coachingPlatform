@@ -210,6 +210,78 @@ The main visual (graph, table, diagram) must stay in the SAME position across al
 
 ---
 
+## ⚠️ RIGHT-COLUMN VISUAL LAYERS (MANDATORY for PPTX Export)
+
+**Every element in the right column MUST have its own `data-pptx-region="visual-*"` with coordinates.**
+
+This ensures each visual element (table, equation card, comparison box, etc.) becomes an independent PPTX object that teachers can move and resize.
+
+### Why This Matters
+When multiple elements share one region, they become a single merged image in PowerPoint. Teachers can't adjust individual pieces. By giving each element its own region, they can:
+- Reposition elements independently
+- Resize individual components
+- Delete/hide specific parts
+
+### Pattern: Wrap Each Element
+
+**See:** `card-patterns/complex-patterns/visual-card-layers.html` for complete examples.
+
+**Right column bounds (standard two-column layout):**
+- x: 408-940 (width: 532)
+- y: 140-510 (height: 370)
+- Content typically starts at x=420 with 12px margin
+
+**Naming convention:** `data-pptx-region="visual-[name]"`
+- `visual-table` - for data tables
+- `visual-equation` - for equation cards
+- `visual-comparison` - for comparison notes
+- `visual-result` - for result/answer boxes
+- `visual-1`, `visual-2`, etc. - when order matters
+
+### Example: Right Column with Table + Equation Card
+
+```html
+<!-- Wrapper has NO data-pptx-region - just for layout -->
+<div class="col center" style="width: 60%; padding: 12px; gap: 16px;">
+
+  <!-- LAYER 1: Table - its own region -->
+  <div data-pptx-region="visual-table"
+       data-pptx-x="420" data-pptx-y="150"
+       data-pptx-w="500" data-pptx-h="160"
+       style="background: #ffffff; border-radius: 8px; padding: 12px;">
+    <table>...</table>
+  </div>
+
+  <!-- LAYER 2: Equation card - its own region -->
+  <div data-pptx-region="visual-equation"
+       data-pptx-x="420" data-pptx-y="320"
+       data-pptx-w="500" data-pptx-h="100"
+       style="background: #e8f4fd; border-radius: 8px; padding: 16px; border-left: 4px solid #1791e8;">
+    <p style="font-family: Georgia, serif; font-size: 18px;">y = 3x + 5</p>
+  </div>
+
+</div>
+```
+
+### Position Calculation (Vertical Stacking)
+
+**Standard spacing:**
+- Element 1: y=150, h=160 → bottom at y=310
+- Gap: 10px
+- Element 2: y=320, h=100 → bottom at y=420
+- Gap: 10px
+- Element 3: y=430, h=70 → bottom at y=500
+
+### Checklist for Right-Column Content
+
+- [ ] Each distinct visual element has its own `data-pptx-region="visual-*"`
+- [ ] Each element has `data-pptx-x`, `data-pptx-y`, `data-pptx-w`, `data-pptx-h`
+- [ ] Wrapper div has NO data-pptx-region (just for HTML layout)
+- [ ] Coordinates don't overlap (stack with 10-16px gaps)
+- [ ] Element backgrounds are set (they're preserved in screenshots)
+
+---
+
 ## ⚠️ SVG Graph Creation (THE COMPLEX CASE)
 
 **SVG graphs are the ONLY component that requires the clone-and-modify workflow.**
@@ -330,6 +402,12 @@ See `card-patterns/complex-patterns/graph-snippet.html` and `card-patterns/compl
 - [ ] Title: `data-pptx-x="20" data-pptx-y="55" data-pptx-w="920" data-pptx-h="40"`
 - [ ] Subtitle: `data-pptx-x="20" data-pptx-y="100" data-pptx-w="920" data-pptx-h="30"`
 - [ ] CFU/Answer boxes: `data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"`
+
+**If right-column has visual content (tables, cards, equations):**
+- [ ] Each distinct element has its own `data-pptx-region="visual-*"` (see visual-card-layers.html)
+- [ ] Each element has `data-pptx-x`, `data-pptx-y`, `data-pptx-w`, `data-pptx-h`
+- [ ] Wrapper div has NO data-pptx-region
+- [ ] Coordinates don't overlap (stack with 10-16px gaps)
 
 **If SVG visual:**
 - [ ] Read `visuals/svg-graphs.md` first

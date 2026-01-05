@@ -347,39 +347,53 @@ async function processSlide(
       }
     }
 
-    // Handle right-column/problem-visual regions
-    // Simple content (text/cards) is rendered natively by addPptxElement above
-    // Complex content (tables, SVG, etc.) needs screenshot for pixel-perfect export
+    // Handle visual regions - these need screenshot for pixel-perfect export
+    // Supports three patterns:
+    // 1. Single right-column/problem-visual with complex content
+    // 2. Multiple visual-* regions (visual-table, visual-equation, etc.) for granular layers
     if (!hasSvg) {
-      const visualElement = pptxElements.find(
-        el => el.regionType === 'right-column' || el.regionType === 'problem-visual'
-      );
+      // Find all visual regions that need screenshotting
+      // Pattern: visual-* (e.g., visual-table, visual-equation, visual-comparison)
+      // Also include right-column/problem-visual with complex content
+      const visualElements = pptxElements.filter(el => {
+        // Granular visual layers (from visual-card-layers pattern)
+        if (el.regionType.startsWith('visual-')) {
+          return true;
+        }
+        // Legacy single-region pattern (only if complex content)
+        if ((el.regionType === 'right-column' || el.regionType === 'problem-visual') &&
+            !isSimpleTextContent(el.content)) {
+          return true;
+        }
+        return false;
+      });
 
-      // Only screenshot if content is complex (tables, SVG, images, etc.)
-      // Simple text content was already rendered natively by addColumnContent
-      if (visualElement && !isSimpleTextContent(visualElement.content)) {
-        onProgress?.(slideIndex + 1, totalSlides, `Rendering visual for slide ${slideIndex + 1}...`, 'rendering-visual');
+      if (visualElements.length > 0) {
+        onProgress?.(slideIndex + 1, totalSlides, `Rendering ${visualElements.length} visual(s) for slide ${slideIndex + 1}...`, 'rendering-visual');
 
-        const vizX = pxToInches(visualElement.x, 'w');
-        const vizY = pxToInches(visualElement.y, 'h');
-        const vizW = pxToInches(visualElement.w, 'w');
-        const vizH = pxToInches(visualElement.h, 'h');
+        // Screenshot each visual region separately for independent PPTX objects
+        for (const visualElement of visualElements) {
+          const vizX = pxToInches(visualElement.x, 'w');
+          const vizY = pxToInches(visualElement.y, 'h');
+          const vizW = pxToInches(visualElement.w, 'w');
+          const vizH = pxToInches(visualElement.h, 'h');
 
-        // Render the visual region as an image
-        const vizBuffer = await renderSession.renderTableRegion(
-          visualElement.content,
-          visualElement.w,
-          visualElement.h
-        );
-        const vizBase64 = vizBuffer.toString('base64');
+          // Render the visual region as an image
+          const vizBuffer = await renderSession.renderTableRegion(
+            visualElement.content,
+            visualElement.w,
+            visualElement.h
+          );
+          const vizBase64 = vizBuffer.toString('base64');
 
-        slide.addImage({
-          data: `data:image/png;base64,${vizBase64}`,
-          x: vizX,
-          y: vizY,
-          w: vizW,
-          h: vizH,
-        });
+          slide.addImage({
+            data: `data:image/png;base64,${vizBase64}`,
+            x: vizX,
+            y: vizY,
+            w: vizW,
+            h: vizH,
+          });
+        }
       }
     }
 

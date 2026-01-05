@@ -126,6 +126,7 @@ Read: .claude/skills/create-worked-example-sg/reference/layout-presets.md       
 **complex-patterns/ (copy, modify, recalculate pixels):**
 - `card-patterns/complex-patterns/graph-snippet.html` → SVG graphs (copy and recalculate)
 - `card-patterns/complex-patterns/annotation-snippet.html` → SVG annotations (copy and recalculate)
+- `card-patterns/complex-patterns/visual-card-layers.html` → Right-column content with multiple elements (MANDATORY pattern)
 - `card-patterns/complex-patterns/printable-slide-snippet.html` → Printable worksheet
 
 ---
@@ -231,6 +232,13 @@ Your visual type was determined in Phase 1. Here's what each requires:
 3. Use `data-pptx-layer` for animation groups
 
 See `card-patterns/complex-patterns/graph-snippet.html` for the complete pattern.
+
+**CRITICAL:** For PPTX compatibility, ALL right-column visual content must:
+1. Wrap EACH distinct element (table, equation card, comparison, etc.) in its own `data-pptx-region="visual-*"`
+2. Include `data-pptx-x`, `data-pptx-y`, `data-pptx-w`, `data-pptx-h` on each element
+3. Calculate vertical positions to stack without overlap
+
+See `card-patterns/complex-patterns/visual-card-layers.html` and `protocol.md` for the complete pattern.
 
 ---
 
