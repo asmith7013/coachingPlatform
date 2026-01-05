@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import type { WizardStateHook } from '../hooks/useWizardState';
-import { SlidePreview } from './SlidePreview';
-import { WizardStickyFooter } from './WizardStickyFooter';
+import type { WizardStateHook } from '../../hooks/useWizardState';
+import { SlidePreview } from '../shared/SlidePreview';
 import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
 import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
 import { useGoogleOAuthStatus } from '@/hooks/auth/useGoogleOAuthStatus';
 import { useClerk } from '@clerk/nextjs';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { SlideThumbnails } from './SlideThumbnails';
+import { SlidesFooter } from './SlidesFooter';
+import { ExportSuccessView } from './ExportSuccessView';
+import { ReauthModal } from './ReauthModal';
 // import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 
 interface Step3SlidesProps {
@@ -52,8 +54,6 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
   const { slides, selectedSlideIndex, slidesToEdit, contextSlides } = state;
   const currentSlide = slides[selectedSlideIndex];
-  const totalSelected = slidesToEdit.length + contextSlides.length;
-  const hasMultiSelection = totalSelected > 0;
 
   const isAnyExporting = exportProgress.status === 'exporting';
 
@@ -334,53 +334,16 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   // Success state after saving
   if (savedSlug) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6 text-center py-12 space-y-6">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-          <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-semibold text-gray-900">Exported to Google Slides!</h2>
-          <p className="text-gray-600 mt-2">
-            {state.unitNumber && state.lessonNumber
-              ? `Unit ${state.unitNumber} Lesson ${state.lessonNumber} has been saved and exported.`
-              : 'Your worked example has been saved and exported.'}
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-3 max-w-sm mx-auto">
-          {googleSlidesUrl && (
-            <a
-              href={googleSlidesUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-3 px-4 rounded-lg transition-colors text-center flex items-center justify-center gap-2"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
-              </svg>
-              Open in Google Slides
-            </a>
-          )}
-          <a
-            href={`/scm/workedExamples/viewer?view=${savedSlug}`}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors text-center"
-          >
-            View Deck
-          </a>
-          <button
-            onClick={() => {
-              setSavedSlug(null);
-              wizard.reset();
-            }}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer border border-gray-300"
-          >
-            Create Another
-          </button>
-        </div>
-      </div>
+      <ExportSuccessView
+        savedSlug={savedSlug}
+        googleSlidesUrl={googleSlidesUrl}
+        unitNumber={state.unitNumber}
+        lessonNumber={state.lessonNumber}
+        onCreateAnother={() => {
+          setSavedSlug(null);
+          wizard.reset();
+        }}
+      />
     );
   }
 
@@ -402,93 +365,20 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
       <div className="flex gap-4" style={{ height: 'calc(100vh - 230px)', minHeight: '600px', maxHeight: '850px' }}>
         {/* Slide Thumbnails */}
-        <div className="w-28 flex-shrink-0 overflow-y-auto pr-2">
-          {/* Selection controls */}
-          {hasMultiSelection && (
-            <div className="mb-2 px-1">
-              <button
-                onClick={clearSlideSelections}
-                className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer"
-              >
-                Clear ({totalSelected})
-              </button>
-            </div>
-          )}
-          <div className="space-y-2">
-            {slides.map((_, index) => {
-              const isInEdit = slidesToEdit.includes(index);
-              const isInContext = contextSlides.includes(index);
-              const isSelected = isInEdit || isInContext;
-
-              return (
-                <div key={index} className="relative">
-                  {/* Checkbox */}
-                  <input
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={() => {
-                      if (isSelected) {
-                        // Deselect from both arrays
-                        deselectSlide(index);
-                      } else {
-                        // Select as edit (default)
-                        toggleSlideToEdit(index);
-                      }
-                    }}
-                    className="absolute top-1 left-1 z-10 w-3.5 h-3.5 cursor-pointer accent-purple-600"
-                  />
-                  {/* Thumbnail button */}
-                  <button
-                    onClick={() => {
-                      setSelectedSlide(index);
-                      setIsEditing(false);
-                    }}
-                    className={`w-full aspect-video rounded border-2 transition-colors cursor-pointer overflow-hidden ${
-                      index === selectedSlideIndex
-                        ? 'border-blue-500'
-                        : isInEdit
-                        ? 'border-purple-400 bg-purple-50'
-                        : isInContext
-                        ? 'border-gray-400 border-dashed bg-gray-50'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                  >
-                    <div className={`w-full h-full flex items-center justify-center text-xs font-medium ${
-                      isInEdit ? 'bg-purple-50 text-purple-700' : isInContext ? 'bg-gray-50 text-gray-600' : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {index + 1}
-                    </div>
-                  </button>
-                  {/* Edit/Context Toggle - only show when selected */}
-                  {isSelected && (
-                    <div className="flex mt-1 text-[10px] rounded overflow-hidden border border-gray-300">
-                      <button
-                        onClick={() => setSlideSelectionMode(index, 'edit')}
-                        className={`flex-1 px-1.5 py-0.5 cursor-pointer transition-colors ${
-                          isInEdit
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-white text-gray-600 hover:bg-gray-100'
-                        }`}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => setSlideSelectionMode(index, 'context')}
-                        className={`flex-1 px-1.5 py-0.5 cursor-pointer transition-colors ${
-                          isInContext
-                            ? 'bg-gray-600 text-white'
-                            : 'bg-white text-gray-600 hover:bg-gray-100'
-                        }`}
-                      >
-                        Ctx
-                      </button>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <SlideThumbnails
+          slideCount={slides.length}
+          selectedSlideIndex={selectedSlideIndex}
+          slidesToEdit={slidesToEdit}
+          contextSlides={contextSlides}
+          onSelectSlide={(index) => {
+            setSelectedSlide(index);
+            setIsEditing(false);
+          }}
+          onToggleSlideToEdit={toggleSlideToEdit}
+          onDeselectSlide={deselectSlide}
+          onSetSlideSelectionMode={setSlideSelectionMode}
+          onClearSelections={clearSlideSelections}
+        />
 
         {/* Preview / Edit Area */}
         <div className="flex-1 flex flex-col min-h-0">
@@ -633,115 +523,27 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       )}
 
       {/* Sticky Footer - AI Edit or Export Progress */}
-      <WizardStickyFooter theme={isAnyExporting ? 'yellow' : 'purple'} isActive={isAiLoading || isAnyExporting}>
-        {isAnyExporting ? (
-          <div className="flex items-center gap-4">
-            <svg className="w-5 h-5 text-yellow-600 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-            </svg>
-            <span className="text-sm text-yellow-800 font-medium">
-              {exportProgress.message}
-            </span>
-          </div>
-        ) : isAiLoading ? (
-          <div className="flex items-center gap-3">
-            <svg className="w-5 h-5 text-purple-600 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-            </svg>
-            <span className="text-sm text-purple-800 flex-1">
-              {slidesToEdit.length > 0
-                ? `Editing ${slidesToEdit.length} slide${slidesToEdit.length > 1 ? 's' : ''}: ${aiEditPrompt}`
-                : `Editing slide ${selectedSlideIndex + 1}: ${aiEditPrompt}`}
-            </span>
-          </div>
-        ) : (
-          <div className="flex gap-3 items-center">
-            <button
-              onClick={prevStep}
-              className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer border border-gray-300"
-            >
-              Back
-            </button>
-            {/* Dynamic label based on selection */}
-            <span className="text-sm text-purple-700 font-medium whitespace-nowrap">
-              {slidesToEdit.length > 0 ? (
-                <>
-                  <span className="text-purple-600">{slidesToEdit.length} to edit</span>
-                  {contextSlides.length > 0 && (
-                    <span className="text-gray-500 ml-1">+ {contextSlides.length} ctx</span>
-                  )}
-                </>
-              ) : (
-                `Slide ${selectedSlideIndex + 1}`
-              )}
-            </span>
-            <input
-              type="text"
-              value={aiEditPrompt}
-              onChange={(e) => setAiEditPrompt(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && aiEditPrompt.trim() && handleAiEdit()}
-              placeholder={
-                slidesToEdit.length > 0
-                  ? `AI Edit: describe changes to ${slidesToEdit.length} slide${slidesToEdit.length > 1 ? 's' : ''}`
-                  : 'AI Edit: describe changes to this slide'
-              }
-              className="flex-1 px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white"
-            />
-            <button
-              onClick={handleAiEdit}
-              disabled={!aiEditPrompt.trim() || (slidesToEdit.length === 0 && !currentSlide)}
-              className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg cursor-pointer disabled:cursor-not-allowed flex items-center gap-1.5"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              {slidesToEdit.length > 1 ? 'Apply to All' : 'Apply'}
-            </button>
-          </div>
-        )}
-        {aiError && (
-          <p className="mt-2 text-sm text-red-600">{aiError}</p>
-        )}
-      </WizardStickyFooter>
+      <SlidesFooter
+        isExporting={isAnyExporting}
+        exportProgress={exportProgress}
+        isAiLoading={isAiLoading}
+        slidesToEdit={slidesToEdit}
+        contextSlides={contextSlides}
+        selectedSlideIndex={selectedSlideIndex}
+        hasCurrentSlide={!!currentSlide}
+        aiEditPrompt={aiEditPrompt}
+        setAiEditPrompt={setAiEditPrompt}
+        aiError={aiError}
+        handleAiEdit={handleAiEdit}
+        prevStep={prevStep}
+      />
 
       {/* Re-auth Modal */}
-      {showReauthModal && (
-        <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                <ArrowPathIcon className="w-5 h-5 text-amber-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Google Authorization Expired
-                </h3>
-                <p className="mt-2 text-sm text-gray-600">
-                  Your Google connection needs to be refreshed to export to Google Slides.
-                  You&apos;ll be signed out and redirected to sign back in with Google.
-                </p>
-                <div className="mt-4 flex gap-3">
-                  <button
-                    onClick={handleReauth}
-                    className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
-                  >
-                    <ArrowPathIcon className="w-4 h-4" />
-                    Reconnect Google
-                  </button>
-                  <button
-                    onClick={() => setShowReauthModal(false)}
-                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <ReauthModal
+        isOpen={showReauthModal}
+        onClose={() => setShowReauthModal(false)}
+        onReauth={handleReauth}
+      />
     </div>
   );
 }

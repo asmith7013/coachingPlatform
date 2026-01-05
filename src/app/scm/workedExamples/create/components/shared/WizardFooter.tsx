@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { LoadingProgress } from '../lib/types';
+import type { LoadingProgress } from '../../lib/types';
 import { WizardStickyFooter, type FooterTheme } from './WizardStickyFooter';
 
 // Custom scale-pulse animation for the icon

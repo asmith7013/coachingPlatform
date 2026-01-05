@@ -1,135 +1,18 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { PencilIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { Badge } from '@/components/core/feedback/Badge';
 import { SectionAccordion } from '@/components/composed/section-visualization';
-import type { WizardStateHook } from '../hooks/useWizardState';
-import type { Scenario, GraphPlan } from '../lib/types';
+import type { WizardStateHook } from '../../hooks/useWizardState';
 import type { HtmlSlide } from '@zod-schema/scm/worked-example';
-import { WizardStickyFooter } from './WizardStickyFooter';
+import { GraphPlanDisplay } from './GraphPlanDisplay';
+import { ScenarioEditor } from './ScenarioEditor';
+import { AnalysisFooter } from './AnalysisFooter';
+import type { SSEStartEvent, SSESlideEvent, SSECompleteEvent, SSEErrorEvent } from './types';
 
 interface Step2AnalysisProps {
   wizard: WizardStateHook;
-}
-
-// Shared component for displaying GraphPlan in both Initial Problem Analysis and Scenarios
-function GraphPlanDisplay({ graphPlan, compact = false }: { graphPlan: GraphPlan; compact?: boolean }) {
-  return (
-    <div className={compact ? "space-y-3" : ""}>
-      {/* Equations with Line Endpoints */}
-      <div className={compact ? "mb-3" : "border-b border-gray-200 pb-4"}>
-        <h5 className={compact ? "text-xs font-medium text-gray-500 mb-2" : "text-sm font-semibold text-gray-700 mb-2"}>
-          {compact ? "Equations" : "Lines (with endpoints)"}
-        </h5>
-        <div className="space-y-2">
-          {graphPlan.equations.map((eq, i) => (
-            <div key={i} className="bg-gray-50 rounded p-2 text-sm border border-gray-200">
-              <div className="flex items-center gap-2 mb-1">
-                <span
-                  className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: eq.color }}
-                />
-                <code className="text-gray-700 bg-white px-1.5 py-0.5 rounded text-xs border border-gray-200">
-                  {eq.equation}
-                </code>
-                <span className="text-gray-400 text-xs">m={eq.slope}, b={eq.yIntercept}</span>
-              </div>
-              {/* Line Endpoints */}
-              <div className="grid grid-cols-2 gap-2 text-xs ml-5">
-                <div className="flex items-center gap-1">
-                  <span className="text-gray-500">Start:</span>
-                  {eq.startPoint ? (
-                    <code className="text-green-700 bg-green-50 px-1 py-0.5 rounded text-xs">
-                      ({eq.startPoint.x}, {eq.startPoint.y})
-                    </code>
-                  ) : (
-                    <span className="text-amber-600 text-xs">missing</span>
-                  )}
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-gray-500">End:</span>
-                  {eq.endPoint ? (
-                    <code className="text-blue-700 bg-blue-50 px-1 py-0.5 rounded text-xs">
-                      ({eq.endPoint.x}, {eq.endPoint.y})
-                    </code>
-                  ) : (
-                    <span className="text-amber-600 text-xs">missing</span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Scale */}
-      <div className={compact ? "mb-3" : (graphPlan.keyPoints && graphPlan.keyPoints.length > 0 ? "border-b border-gray-200 py-4" : "py-4")}>
-        <h5 className={compact ? "text-xs font-medium text-gray-500 mb-1" : "text-sm font-semibold text-gray-700 mb-2"}>Scale</h5>
-        <div className="text-sm text-gray-600">
-          X: 0 to {graphPlan.scale.xMax} ({graphPlan.scale.xAxisLabels?.join(', ')}) | Y: 0 to {graphPlan.scale.yMax} ({graphPlan.scale.yAxisLabels?.join(', ')})
-        </div>
-      </div>
-
-      {/* Key Points */}
-      {graphPlan.keyPoints && graphPlan.keyPoints.length > 0 && (
-        <div className={compact ? "mb-3" : (graphPlan.annotations && graphPlan.annotations.length > 0 ? "border-b border-gray-200 py-4" : "py-4")}>
-          <h5 className={compact ? "text-xs font-medium text-gray-500 mb-1" : "text-sm font-semibold text-gray-700 mb-2"}>Key Points</h5>
-          <div className="space-y-1">
-            {graphPlan.keyPoints.map((pt, ptIdx) => (
-              <div key={ptIdx} className="text-sm text-gray-600 flex items-center gap-2">
-                <span className="font-medium">{pt.label}:</span>
-                <code className="text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded text-xs border border-purple-200">
-                  ({pt.x}, {pt.y})
-                </code>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Annotations */}
-      {graphPlan.annotations && graphPlan.annotations.length > 0 && (
-        <div className={compact ? "" : "pt-4"}>
-          <h5 className={compact ? "text-xs font-medium text-gray-500 mb-1" : "text-sm font-semibold text-gray-700 mb-2"}>Annotations</h5>
-          <div className="space-y-1">
-            {graphPlan.annotations.map((ann, annIdx) => (
-              <div key={annIdx} className="text-sm text-gray-600 flex items-center gap-2">
-                <Badge intent="info" size="xs">{ann.type}</Badge>
-                <span>{ann.label}</span>
-                {ann.from !== undefined && ann.to !== undefined && (
-                  <span className="text-gray-500 text-xs">(y: {ann.from} → {ann.to})</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// SSE event types from the API
-interface SSEStartEvent {
-  estimatedSlideCount: number;
-  message: string;
-}
-
-interface SSESlideEvent {
-  slideNumber: number;
-  estimatedTotal: number;
-  message: string;
-  slide?: HtmlSlide; // Included for incremental saving
-}
-
-interface SSECompleteEvent {
-  success: boolean;
-  slideCount: number;
-  slides: HtmlSlide[];
-}
-
-interface SSEErrorEvent {
-  message: string;
 }
 
 export function Step2Analysis({ wizard }: Step2AnalysisProps) {
@@ -148,6 +31,8 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
   const [aiEditPrompt, setAiEditPrompt] = useState('');
   const [isAiEditing, setIsAiEditing] = useState(false);
   const [aiEditError, setAiEditError] = useState<string | null>(null);
+  const [aiEditStartTime, setAiEditStartTime] = useState<number | null>(null);
+  const [aiEditElapsed, setAiEditElapsed] = useState(0);
   const abortControllerRef = useRef<AbortController | null>(null);
   const accumulatedSlidesRef = useRef<HtmlSlide[]>([]);
   const retryCountRef = useRef(0);
@@ -155,11 +40,26 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
   const { problemAnalysis, strategyDefinition, scenarios } = state;
 
+  // Track elapsed time during AI editing
+  useEffect(() => {
+    if (!isAiEditing || !aiEditStartTime) {
+      setAiEditElapsed(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setAiEditElapsed(Math.floor((Date.now() - aiEditStartTime) / 1000));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isAiEditing, aiEditStartTime]);
+
   // Handle AI edit of analysis
   const handleAiEdit = async () => {
     if (!aiEditPrompt.trim() || !problemAnalysis || !strategyDefinition || !scenarios) return;
 
     setIsAiEditing(true);
+    setAiEditStartTime(Date.now());
     setAiEditError(null);
 
     try {
@@ -194,6 +94,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
       setAiEditError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsAiEditing(false);
+      setAiEditStartTime(null);
     }
   };
 
@@ -982,163 +883,19 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
         </div>
       </div>
 
-      {/* Sticky Footer - AI Edit (only when not loading) */}
-      {!state.isLoading && (
-        <WizardStickyFooter theme="purple" isActive={isAiEditing}>
-          {isAiEditing ? (
-            <div className="flex items-center gap-3">
-              <svg className="w-5 h-5 text-purple-600 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              <span className="text-sm text-purple-800 flex-1">Editing: {aiEditPrompt}</span>
-            </div>
-          ) : (
-            <div className="flex gap-3 items-center">
-              {/* Back button on left */}
-              <button
-                onClick={prevStep}
-                className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer border border-gray-300"
-              >
-                Back
-              </button>
-              <input
-                type="text"
-                value={aiEditPrompt}
-                onChange={(e) => setAiEditPrompt(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && aiEditPrompt.trim() && handleAiEdit()}
-                placeholder="AI Edit: describe corrections (e.g., 'The answer should be 42')"
-                className="flex-1 px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white"
-              />
-              <button
-                onClick={handleAiEdit}
-                disabled={!aiEditPrompt.trim()}
-                className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg cursor-pointer disabled:cursor-not-allowed flex items-center gap-1.5"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                Apply
-              </button>
-              {/* Show different buttons based on slide count */}
-              {state.slides.length >= 9 ? (
-                // All slides exist - just show Review + Regenerate
-                <>
-                  <button
-                    onClick={nextStep}
-                    className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    Review Slides ({state.slides.length})
-                  </button>
-                  <button
-                    onClick={() => handleGenerateSlides(false, 'full')}
-                    disabled={state.isLoading}
-                    className="px-4 py-2 text-sm bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Regenerate All
-                  </button>
-                </>
-              ) : state.slides.length > 0 ? (
-                // Partial slides - show Continue + Regenerate
-                <>
-                  <button
-                    onClick={() => handleGenerateSlides(false, 'continue')}
-                    disabled={state.isLoading}
-                    className="px-4 py-2 text-sm bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Continue ({state.slides.length}/9)
-                  </button>
-                  <button
-                    onClick={() => handleGenerateSlides(false, 'full')}
-                    disabled={state.isLoading}
-                    className="px-4 py-2 text-sm bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Regenerate All
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => handleGenerateSlides(false, 'full')}
-                  disabled={state.isLoading}
-                  className="px-5 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-2 transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Generate Slides
-                </button>
-              )}
-            </div>
-          )}
-          {aiEditError && (
-            <p className="mt-2 text-sm text-red-600">{aiEditError}</p>
-          )}
-        </WizardStickyFooter>
-      )}
-    </div>
-  );
-}
-
-// Scenario Editor Component
-function ScenarioEditor({
-  scenario,
-  onChange,
-}: {
-  scenario: Scenario;
-  onChange: (scenario: Scenario) => void;
-}) {
-  return (
-    <div className="space-y-2 mt-2">
-      <div className="grid grid-cols-2 gap-2">
-        <input
-          type="text"
-          value={scenario.name}
-          onChange={(e) => onChange({ ...scenario, name: e.target.value })}
-          placeholder="Scenario name"
-          className="bg-white border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        />
-        <input
-          type="text"
-          value={scenario.themeIcon}
-          onChange={(e) => onChange({ ...scenario, themeIcon: e.target.value })}
-          placeholder="Icon"
-          className="bg-white border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        />
-      </div>
-      <input
-        type="text"
-        value={scenario.context}
-        onChange={(e) => onChange({ ...scenario, context: e.target.value })}
-        placeholder="Context"
-        className="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-      />
-      <input
-        type="text"
-        value={scenario.numbers}
-        onChange={(e) => onChange({ ...scenario, numbers: e.target.value })}
-        placeholder="Numbers used"
-        className="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-      />
-      <textarea
-        value={scenario.description}
-        onChange={(e) => onChange({ ...scenario, description: e.target.value })}
-        placeholder="Full problem description"
-        rows={3}
-        className="w-full bg-white border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      {/* Sticky Footer - AI Edit */}
+      <AnalysisFooter
+        isLoading={state.isLoading}
+        isAiEditing={isAiEditing}
+        aiEditPrompt={aiEditPrompt}
+        setAiEditPrompt={setAiEditPrompt}
+        aiEditElapsed={aiEditElapsed}
+        aiEditError={aiEditError}
+        handleAiEdit={handleAiEdit}
+        prevStep={prevStep}
+        nextStep={nextStep}
+        handleGenerateSlides={handleGenerateSlides}
+        slideCount={state.slides.length}
       />
     </div>
   );

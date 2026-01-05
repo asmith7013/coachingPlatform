@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSignIn } from '@clerk/nextjs';
-import type { WizardStateHook } from '../hooks/useWizardState';
+import type { WizardStateHook } from '../../hooks/useWizardState';
 import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
 import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
 

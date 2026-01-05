@@ -1,6 +1,6 @@
 'use client';
 
-import { WizardContainer } from './components/WizardContainer';
+import { WizardContainer } from './components/shared/WizardContainer';
 
 export default function WorkedExampleCreatorPage() {
   return (

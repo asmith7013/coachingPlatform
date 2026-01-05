@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon, DocumentTextIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
-import type { SavedSession } from '../hooks/useWizardState';
-import type { WizardStep } from '../lib/types';
+import type { SavedSession } from '../../hooks/useWizardState';
+import type { WizardStep } from '../../lib/types';
 
 export type DraftViewState = 'initial' | 'drafts' | 'new';
 

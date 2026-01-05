@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
-import type { WizardStateHook } from '../hooks/useWizardState';
-import type { GradeLevel } from '../lib/types';
-import { uploadMasteryCheckImage } from '../actions/upload-image';
-import { analyzeProblem } from '../actions/analyze-problem';
+import type { WizardStateHook } from '../../hooks/useWizardState';
+import type { GradeLevel } from '../../lib/types';
+import { uploadMasteryCheckImage } from '../../actions/upload-image';
+import { analyzeProblem } from '../../actions/analyze-problem';
 import { fetchAllUnitsByScopeTag } from '@actions/scm/scope-and-sequence/scope-and-sequence';
 import { fetchLessonsForUnit } from '@/app/scm/incentives/form/actions';
 import { MarkdownTextarea } from '@/components/core/fields/MarkdownTextarea';

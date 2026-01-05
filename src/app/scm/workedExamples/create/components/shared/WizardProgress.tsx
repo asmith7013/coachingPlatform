@@ -1,6 +1,6 @@
 'use client';
 
-import type { WizardStep } from '../lib/types';
+import type { WizardStep } from '../../lib/types';
 
 interface WizardProgressProps {
   currentStep: WizardStep;

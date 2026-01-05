@@ -2,13 +2,13 @@
 
 import { createContext, useContext, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useWizardState, type WizardStateHook } from '../hooks/useWizardState';
+import { useWizardState, type WizardStateHook } from '../../hooks/useWizardState';
 import { WizardProgress } from './WizardProgress';
 import { WizardFooter } from './WizardFooter';
-import { Step1Inputs } from './Step1Inputs';
-import { Step2Analysis } from './Step2Analysis';
-import { Step3Slides } from './Step3Slides';
-import type { WizardStep } from '../lib/types';
+import { Step1Inputs } from '../step1/Step1Inputs';
+import { Step2Analysis } from '../step2/Step2Analysis';
+import { Step3Slides } from '../step3/Step3Slides';
+import type { WizardStep } from '../../lib/types';
 
 // Context for sharing wizard state
 const WizardContext = createContext<WizardStateHook | null>(null);
