@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { getAuthenticatedUser } from '@/lib/server/auth';
 import { SCMNav } from './SCMNav';
+import { PublicSCMNav } from './PublicSCMNav';
 
 export const metadata: Metadata = {
   title: 'SCM',
@@ -70,12 +71,13 @@ export default async function SCMLayout({
   // Production: Check authentication
   const authResult = await getAuthenticatedUser();
 
-  // If not authenticated, render minimal layout without nav
+  // If not authenticated, render public layout with minimal nav
   // Middleware handles protecting non-public routes, so if we get here
   // without auth, it means middleware allowed it (public route)
   if (!authResult.success) {
     return (
       <div className="min-h-screen bg-gray-50">
+        <PublicSCMNav />
         <div className="p-6">
           {children}
         </div>
