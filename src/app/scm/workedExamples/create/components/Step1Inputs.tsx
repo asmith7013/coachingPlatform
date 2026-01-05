@@ -79,6 +79,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
   const [learningGoalText, setLearningGoalText] = useState(state.learningGoals.join('\n'));
   const [selectedLesson, setSelectedLesson] = useState<LessonOption | null>(null);
   const [draftViewState, setDraftViewState] = useState<DraftViewState>('initial');
+  const [isEditingLearningTargets, setIsEditingLearningTargets] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const additionalImagesRef = useRef<HTMLInputElement>(null);
 
@@ -617,18 +618,49 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
 
             {/* Learning Targets Card */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="mb-4">
+              <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-base font-semibold text-gray-900">Learning Targets</h3>
+                {/* Show edit/done button when we have targets to display */}
+                {(selectedLesson || state.scopeAndSequenceId) && (state.learningGoals.length > 0 || isEditingLearningTargets) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!isEditingLearningTargets) {
+                        // Entering edit mode - sync textarea with current targets
+                        setLearningGoalText(state.learningGoals.join('\n'));
+                      } else {
+                        // Exiting edit mode - explicitly save changes
+                        const goals = learningGoalText
+                          .split('\n')
+                          .map((g) => g.trim())
+                          .filter((g) => g.length > 0);
+                        setLearningGoals(goals);
+                      }
+                      setIsEditingLearningTargets(!isEditingLearningTargets);
+                    }}
+                    className="text-sm text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+                  >
+                    {isEditingLearningTargets ? 'Done' : 'Edit'}
+                  </button>
+                )}
               </div>
 
               {(selectedLesson || state.scopeAndSequenceId) ? (
-                (selectedLesson?.learningTargets && selectedLesson.learningTargets.length > 0) ? (
-                  <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
-                    {selectedLesson.learningTargets.map((target, i) => (
-                      <li key={i}>{target}</li>
-                    ))}
-                  </ul>
+                isEditingLearningTargets ? (
+                  // Edit mode - show textarea
+                  <div className="space-y-3">
+                    <MarkdownTextarea
+                      value={learningGoalText}
+                      onChange={handleLearningGoalsChange}
+                      label=""
+                      placeholder="e.g., I can solve equations like **2x + 3 = 7** using inverse operations"
+                      hint="One goal per line. Use markdown for formatting."
+                      height={120}
+                      required
+                    />
+                  </div>
                 ) : state.learningGoals.length > 0 ? (
+                  // Always show state.learningGoals (includes user edits)
                   <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
                     {state.learningGoals.map((target, i) => (
                       <li key={i}>{target}</li>
