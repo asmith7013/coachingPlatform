@@ -146,7 +146,7 @@ export async function generatePptxFromSlides(
 
           // Add "Print this worksheet" link with instructions
           if (slug) {
-            const printUrl = `https://solvescoaching.com/scm/workedExamples?view=${slug}&slide=9`;
+            const printUrl = `https://solvescoaching.com/scm/workedExamples/viewer?view=${slug}&slide=9`;
 
             slide.addText('Print this worksheet:', {
               x: 6.2,
@@ -171,7 +171,7 @@ export async function generatePptxFromSlides(
             });
 
             // Also add View Worked Example link
-            const workedExampleUrl = `https://solvescoaching.com/scm/workedExamples?view=${slug}`;
+            const workedExampleUrl = `https://solvescoaching.com/scm/workedExamples/viewer?view=${slug}`;
             slide.addText('View Worked Example', {
               x: 6.2,
               y: 2.2,

@@ -104,7 +104,7 @@ export default function DeactivatedPresentations() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <Link
-            href="/scm/workedExamples"
+            href="/scm/workedExamples/viewer"
             className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-4"
           >
             <ArrowLeftIcon className="w-4 h-4" />
@@ -124,7 +124,7 @@ export default function DeactivatedPresentations() {
               No deactivated presentations found
             </p>
             <Link
-              href="/scm/workedExamples"
+              href="/scm/workedExamples/viewer"
               className="text-blue-600 hover:text-blue-800 font-medium"
             >
               Return to active presentations

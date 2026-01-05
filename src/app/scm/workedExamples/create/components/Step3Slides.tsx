@@ -365,7 +365,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
             </a>
           )}
           <a
-            href={`/scm/workedExamples?view=${savedSlug}`}
+            href={`/scm/workedExamples/viewer?view=${savedSlug}`}
             className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors text-center"
           >
             View Deck

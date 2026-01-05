@@ -128,7 +128,7 @@ export default function SCMHomePage() {
       pages: [
         {
           title: "All Worked Examples",
-          href: "/scm/workedExamples",
+          href: "/scm/workedExamples/viewer",
           Icon: PresentationChartBarIcon,
           description: "View all scaffolded guidance slide decks."
         }

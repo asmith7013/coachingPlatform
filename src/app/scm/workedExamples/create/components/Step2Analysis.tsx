@@ -254,6 +254,8 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
           // Context-aware generation
           mode,
           existingSlides: mode === 'continue' ? existingSlides : undefined,
+          // For email notification
+          slug: state.slug,
         }),
         signal: abortControllerRef.current.signal,
       });

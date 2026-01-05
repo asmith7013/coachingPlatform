@@ -33,6 +33,8 @@ interface GenerateSlidesInput {
   mode?: GenerationMode;           // 'full' (default), 'continue', or 'update'
   existingSlides?: HtmlSlide[];    // Slides already generated
   updateInstructions?: UpdateInstructions; // For 'update' mode
+  // For email notification
+  slug?: string; // URL slug for the worked example
 }
 
 const SLIDE_SEPARATOR = '===SLIDE_SEPARATOR===';
@@ -44,7 +46,10 @@ async function sendSlideCompletionEmail(
   userEmail: string,
   slideCount: number,
   gradeLevel: string,
-  problemType: string
+  unitNumber: number | null,
+  lessonNumber: number | null,
+  problemType: string,
+  slug: string | undefined
 ): Promise<void> {
   try {
     const subject = `Your Worked Example Slides Are Ready! (${slideCount} slides)`;
@@ -52,14 +57,33 @@ async function sendSlideCompletionEmail(
     let body = `Great news! Your worked example slide generation is complete.\n\n`;
 
     body += `DETAILS:\n`;
-    body += `   Grade Level: ${gradeLevel}\n`;
-    body += `   Problem Type: ${problemType}\n`;
-    body += `   Slides Generated: ${slideCount}\n\n`;
+    body += `  Grade Level: ${gradeLevel}\n`;
+    if (unitNumber !== null) {
+      body += `  Unit: ${unitNumber}\n`;
+    }
+    if (lessonNumber !== null) {
+      body += `  Lesson: ${lessonNumber}\n`;
+    }
+    body += `  Problem Type: ${problemType}\n`;
+    body += `  Slides Generated: ${slideCount}\n`;
+    if (slug) {
+      body += `  Slug: ${slug}\n`;
+    }
+    body += `\n`;
 
     body += `Your slides are ready for review in the creation wizard.\n\n`;
 
     body += `Completed at: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}\n`;
-    body += `\nView your slides: https://www.solvescoaching.com/scm/workedExamples/create`;
+
+    // Build URL with draft (using slug) and step params
+    const baseUrl = 'https://www.solvescoaching.com/scm/workedExamples/create';
+    const params = new URLSearchParams();
+    if (slug) {
+      params.set('draft', slug);
+    }
+    params.set('step', '3'); // Go directly to slide review step
+    const viewUrl = `${baseUrl}?${params.toString()}`;
+    body += `\nView your slides: ${viewUrl}`;
 
     await sendEmail({
       to: userEmail,
@@ -101,6 +125,7 @@ export async function POST(request: NextRequest) {
       mode = 'full',
       existingSlides = [],
       updateInstructions,
+      slug,
     } = input;
 
     // Get user email for completion notification
@@ -336,7 +361,10 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
               userEmail,
               slides.length,
               gradeLevel,
-              problemAnalysis.problemType
+              unitNumber,
+              lessonNumber,
+              problemAnalysis.problemType,
+              slug
             );
           }
 
