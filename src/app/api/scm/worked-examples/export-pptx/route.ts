@@ -45,8 +45,16 @@ export async function POST(request: NextRequest) {
         // Extract ALL elements with data-pptx-* attributes
         const pptxElements = extractPptxElements(html);
 
-        // Render each element as native PPTX shapes/text
-        for (const el of pptxElements) {
+        // Separate CFU and answer boxes to add last (ensures they're on top in z-order)
+        const regularElements = pptxElements.filter(
+          el => el.regionType !== 'cfu-box' && el.regionType !== 'answer-box'
+        );
+        const overlayBoxes = pptxElements.filter(
+          el => el.regionType === 'cfu-box' || el.regionType === 'answer-box'
+        );
+
+        // Render regular elements first (they'll be at the bottom of z-order)
+        for (const el of regularElements) {
           if (el.regionType === 'svg-container') continue;
           addPptxElement(slide, el);
         }
@@ -95,6 +103,11 @@ export async function POST(request: NextRequest) {
               });
             }
           }
+        }
+
+        // Add CFU and answer boxes LAST so they appear on top (highest z-order)
+        for (const el of overlayBoxes) {
+          addPptxElement(slide, el);
         }
       } catch (parseError) {
         console.error(`Error parsing slide ${i + 1}, falling back to full render:`, parseError);
