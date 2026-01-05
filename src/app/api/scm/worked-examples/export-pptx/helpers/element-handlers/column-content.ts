@@ -310,5 +310,91 @@ export function addColumnContent(slide: pptxgen.Slide, el: PptxElement): void {
         currentY += itemHeight;
       }
     }
+
+    // Handle tables (supports both horizontal headers in row and vertical headers in column)
+    else if (tagName === 'table') {
+      const tableRows: pptxgen.TableRow[] = [];
+
+      // Helper to extract text alignment from style
+      const getTextAlign = (style: string): 'left' | 'center' | 'right' => {
+        if (style.includes('text-align: center') || style.includes('text-align:center')) return 'center';
+        if (style.includes('text-align: right') || style.includes('text-align:right')) return 'right';
+        return 'left';
+      };
+
+      // Helper to check if cell should be styled as header
+      const isHeaderStyle = (style: string): boolean => {
+        return style.includes('font-weight: bold') || style.includes('font-weight:bold');
+      };
+
+      // Process ALL rows uniformly - handles both horizontal and vertical table layouts
+      $child.find('tr').each((_, tr) => {
+        const $tr = $(tr);
+        const rowStyle = $tr.attr('style') || '';
+        const rowBgColor = extractBgColor(rowStyle);
+        const rowTextColor = extractColor(rowStyle);
+
+        const row: pptxgen.TableCell[] = [];
+
+        // Process both th and td cells in order
+        $tr.find('th, td').each((cellIndex, cell) => {
+          const $cell = $(cell);
+          const isThElement = cell.type === 'tag' && cell.name === 'th';
+          const text = $cell.text().trim();
+          const style = $cell.attr('style') || '';
+
+          // Determine if this cell should be treated as a header:
+          // - It's a <th> element, OR
+          // - It has bold font-weight (common in vertical tables where first column is headers)
+          const isHeader = isThElement || isHeaderStyle(style);
+
+          // Background: cell style > row style > defaults (blue for headers, white for data)
+          const defaultBg = isHeader ? '1791E8' : 'FFFFFF';
+          const bgColor = extractBgColor(style) || rowBgColor || defaultBg;
+
+          // Text color: cell style > row style > defaults (white for headers, dark for data)
+          const defaultTextColor = isHeader ? 'FFFFFF' : '1D1D1D';
+          const textColor = extractColor(style) || rowTextColor || defaultTextColor;
+
+          const align = getTextAlign(style);
+
+          row.push({
+            text,
+            options: {
+              fill: { color: bgColor },
+              color: textColor,
+              bold: isHeader,
+              fontSize: 11,
+              fontFace: 'Arial',
+              align,
+              valign: 'middle',
+            },
+          });
+        });
+
+        if (row.length > 0) tableRows.push(row);
+      });
+
+      // Add table if we have rows
+      if (tableRows.length > 0) {
+        const numCols = tableRows[0]?.length || 1;
+        const colW = colWidth / numCols;
+        const rowH = 0.35;
+        const tableHeight = tableRows.length * rowH;
+
+        slide.addTable(tableRows, {
+          x: baseX,
+          y: currentY,
+          w: colWidth,
+          colW: Array(numCols).fill(colW),
+          rowH,
+          border: { pt: 1, color: 'E5E7EB' },
+          fontFace: 'Arial',
+          fontSize: 11,
+        });
+
+        currentY += tableHeight + 0.15;
+      }
+    }
   });
 }

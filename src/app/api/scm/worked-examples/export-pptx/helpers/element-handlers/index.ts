@@ -11,7 +11,6 @@ import {
   addStrategyBadge,
   addStrategyName,
   addStrategySummary,
-  addVisualArea,
   addDefaultText,
 } from './simple-elements';
 
@@ -22,6 +21,7 @@ import {
 } from './boxes';
 
 import { addColumnContent } from './column-content';
+import { isSimpleTextContent } from './utils';
 
 /**
  * Render a single pptx element as native pptxgenjs shapes/text
@@ -87,7 +87,11 @@ export function addPptxElement(slide: pptxgen.Slide, el: PptxElement): void {
 
     case 'right-column':
     case 'problem-visual':
-      addVisualArea(slide, el, x, y, w, h);
+      // Render simple content natively, complex content will be screenshot later
+      if (isSimpleTextContent(el.content)) {
+        addColumnContent(slide, el);
+      }
+      // If complex (tables, SVG, etc.), do nothing - handled by screenshot in processSlide
       break;
 
     case 'svg-container':

@@ -123,3 +123,46 @@ export function getTextContent(html: string): string {
   const $ = cheerio.load(html);
   return $('body').text().trim();
 }
+
+/**
+ * Determine if HTML content is "simple" enough to render natively in PPTX.
+ * Simple content = text elements + simple tables (p, h3, h4, ul, ol, li, strong, span, table)
+ * Complex content = SVG, images, canvas, or complex nested structures
+ *
+ * @returns true if content can be rendered natively, false if screenshot is needed
+ */
+export function isSimpleTextContent(html: string): boolean {
+  const $ = cheerio.load(html);
+
+  // Check for complex elements that require screenshot
+  // Note: tables are now supported natively
+  const complexElements = ['svg', 'img', 'canvas', 'video', 'iframe'];
+  for (const tag of complexElements) {
+    if ($(tag).length > 0) {
+      return false;
+    }
+  }
+
+  // Check for elements with absolute/fixed positioning (complex layout)
+  let hasComplexPositioning = false;
+  $('*').each((_, el) => {
+    const style = $(el).attr('style') || '';
+    if (style.includes('position: absolute') || style.includes('position:absolute') ||
+        style.includes('position: fixed') || style.includes('position:fixed')) {
+      hasComplexPositioning = true;
+      return false; // break
+    }
+  });
+
+  if (hasComplexPositioning) {
+    return false;
+  }
+
+  // Check for MathJax or KaTeX elements
+  if ($('.MathJax').length > 0 || $('.katex').length > 0) {
+    return false;
+  }
+
+  // Content is simple - text elements and tables can be rendered natively
+  return true;
+}

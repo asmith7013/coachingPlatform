@@ -6,6 +6,7 @@ import {
 } from './constants';
 import { extractAllPptxElements, parseSlideHtml } from './parsers';
 import { addPptxElement } from './element-handlers';
+import { isSimpleTextContent } from './element-handlers/utils';
 import { createRenderSession, RenderSession } from './renderers';
 
 export interface SlideData {
@@ -346,14 +347,17 @@ async function processSlide(
       }
     }
 
-    // Handle right-column/problem-visual regions - render as image for pixel-perfect export
-    // These regions contain styled content (tables, equations, boxes) that don't convert well to native PPTX
+    // Handle right-column/problem-visual regions
+    // Simple content (text/cards) is rendered natively by addPptxElement above
+    // Complex content (tables, SVG, etc.) needs screenshot for pixel-perfect export
     if (!hasSvg) {
       const visualElement = pptxElements.find(
         el => el.regionType === 'right-column' || el.regionType === 'problem-visual'
       );
 
-      if (visualElement) {
+      // Only screenshot if content is complex (tables, SVG, images, etc.)
+      // Simple text content was already rendered natively by addColumnContent
+      if (visualElement && !isSimpleTextContent(visualElement.content)) {
         onProgress?.(slideIndex + 1, totalSlides, `Rendering visual for slide ${slideIndex + 1}...`, 'rendering-visual');
 
         const vizX = pxToInches(visualElement.x, 'w');
