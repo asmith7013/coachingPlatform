@@ -207,7 +207,8 @@ export const CONTENT_BOX = `
   </p>
 </div>
 
-<!-- TABLE -->
+<!-- TABLE - Simple inline table (use only in left-column/content areas) -->
+<!-- For tables in the right visual area, use TABLE_SVG_CONTAINER below instead -->
 <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
   <thead>
     <tr style="background: #f5f5f5;">
@@ -398,6 +399,46 @@ export const SVG_CARD = `
      style="background: #f5f5f5; border-radius: 8px; padding: 16px;">
   <svg viewBox="0 0 880 320" style="width: 880px; height: 320px;">
     <!-- Full-width graph content -->
+  </svg>
+</div>
+`;
+
+/**
+ * Image Region Container - Renders ANY HTML content as an image in PPTX
+ *
+ * Use this to wrap complex HTML (tables, styled content) that needs pixel-perfect
+ * PPTX export. The SVG foreignObject triggers the image renderer.
+ *
+ * When to use:
+ * - Tables with styled headers/borders
+ * - Complex styled layouts
+ * - Any content that doesn't render well as native PPTX elements
+ */
+export const IMAGE_REGION_CONTAINER = `
+<!--
+  ============================================================
+  IMAGE REGION - Renders HTML as screenshot for PPTX export
+  ============================================================
+  Wrap ANY HTML content in this container to render it as a PNG image.
+  The SVG foreignObject triggers the Puppeteer screenshot renderer.
+
+  USAGE: Replace the inner content with your HTML (tables, styled divs, etc.)
+  POSITION: Adjust data-pptx-x/y/w/h and viewBox/width/height to match your content.
+
+  Default position (two-column right): x=408, y=150, w=532, h=360
+  ============================================================
+-->
+<div data-pptx-region="svg-container"
+     data-pptx-x="408" data-pptx-y="150"
+     data-pptx-w="532" data-pptx-h="360"
+     class="col center"
+     style="background: #f5f5f5; border-radius: 8px; padding: 20px;">
+  <svg viewBox="0 0 492 320" width="492" height="320" xmlns="http://www.w3.org/2000/svg">
+    <foreignObject x="0" y="0" width="492" height="320">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%; font-family: Arial, sans-serif;">
+        <!-- YOUR HTML CONTENT HERE (tables, styled divs, etc.) -->
+      </div>
+    </foreignObject>
   </svg>
 </div>
 `;

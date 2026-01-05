@@ -2185,9 +2185,33 @@ Spacious hero sections:   20-24px padding
 
 ## 8. Charts and Tables
 
-### Use PptxGenJS APIs (Not HTML)
+### Tables: Use IMAGE_REGION_CONTAINER
 
-Don't render charts/tables in HTML. Use placeholders:
+**CRITICAL:** Tables in the right visual area MUST use \`IMAGE_REGION_CONTAINER\` from templates.ts.
+This wraps the table in SVG foreignObject, triggering screenshot rendering for pixel-perfect PPTX export.
+
+\`\`\`html
+<!-- CORRECT: Table wrapped in IMAGE_REGION_CONTAINER -->
+<div data-pptx-region="svg-container"
+     data-pptx-x="408" data-pptx-y="150"
+     data-pptx-w="532" data-pptx-h="360">
+  <svg viewBox="0 0 492 320" width="492" height="320" xmlns="http://www.w3.org/2000/svg">
+    <foreignObject x="0" y="0" width="492" height="320">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Arial, sans-serif;">
+        <table style="...">
+          <!-- table content -->
+        </table>
+      </div>
+    </foreignObject>
+  </svg>
+</div>
+\`\`\`
+
+**Why:** Raw HTML tables don't export to PPTX properly. The SVG foreignObject wrapper triggers the Puppeteer renderer, producing a pixel-perfect PNG.
+
+### Charts: Use PptxGenJS APIs (Not HTML)
+
+Don't render charts in HTML. Use placeholders:
 
 \`\`\`html
 <div class="placeholder" id="chart-area"></div>

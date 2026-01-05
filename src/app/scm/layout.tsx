@@ -27,7 +27,9 @@ const ALLOWED_NYC_EMAILS = [
   'AKatechis@schools.nyc.gov',
   'CMccarthy@schools.nyc.gov',
   'asmith7013@gmail.com',
-  'kmcnickle@gmail.com'
+  'kmcnickle@gmail.com',
+  'mrscardonagarcia@gmail.com',
+  'pcompres10@gmail.com'
 ];
 
 function isAllowedDomain(email: string | null | undefined): boolean {

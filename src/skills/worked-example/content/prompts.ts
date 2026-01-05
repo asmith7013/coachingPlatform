@@ -136,11 +136,10 @@ Example: If Scenario 1 uses "y = 25x + 50" and Scenario 2 uses "y = 15x + 30", e
 
 ### STEP 6: Determine Visual Type
 
-**CRITICAL: ALL graphics/diagrams MUST use SVG.** The only exception is simple HTML tables.
+**CRITICAL: ALL graphics/diagrams MUST use SVG.** This includes tables - wrap them in SVG foreignObject.
 
 - **text-only**: No graphics needed (rare - pure text/equation problems)
-- **html-table**: Simple data tables with highlighting
-- **svg-visual**: ALL other graphics - this includes:
+- **svg-visual**: ALL graphics including tables - this includes:
   - Coordinate planes and graphs (svgSubtype: "coordinate-graph") → use \`graph-planning.md\`
   - **Non-graph diagrams** (svgSubtype: "diagram") → **use \`diagram-patterns.md\` as PRIMARY REFERENCE**
     - Double number lines
@@ -149,6 +148,7 @@ Example: If Scenario 1 uses "y = 25x + 50" and Scenario 2 uses "y = 15x + 30", e
     - Area models
     - Input-output tables
     - Ratio tables
+  - **Data tables** (svgSubtype: "table") → wrap in IMAGE_REGION_CONTAINER (SVG foreignObject triggers screenshot)
   - Geometric shapes (svgSubtype: "shape")
   - Number lines and bar models (svgSubtype: "number-line")
   - Any custom visual (svgSubtype: "other")
@@ -575,6 +575,12 @@ See \`card-patterns/complex-patterns/graph-snippet.html\` and \`card-patterns/co
 - [ ] SVG wrapped in container with \`data-pptx-region="svg-container"\` and position attributes
 - [ ] All \`<text>\` elements have \`font-family="Arial"\`
 - [ ] SVG container in SAME position as other step slides
+
+**If table in right visual area:**
+- [ ] Use \`IMAGE_REGION_CONTAINER\` template from templates.ts
+- [ ] Table wrapped in SVG foreignObject (triggers screenshot rendering)
+- [ ] Container has \`data-pptx-region="svg-container"\` (NOT "right-column")
+- [ ] Position: \`data-pptx-x="408" data-pptx-y="150" data-pptx-w="532" data-pptx-h="360"\`
 
 **If slide has CFU/Answer box:**
 - [ ] Box has correct \`data-pptx-region\` attribute ("cfu-box" or "answer-box")
