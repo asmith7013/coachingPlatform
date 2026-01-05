@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
 import { getAuthenticatedUser } from '@/lib/server/auth';
 import { SCMNav } from './SCMNav';
@@ -68,13 +67,20 @@ export default async function SCMLayout({
     );
   }
 
-  // Production: Enforce authentication and domain restrictions
+  // Production: Check authentication
   const authResult = await getAuthenticatedUser();
 
-  // Require authentication - redirect to sign-in if not logged in
+  // If not authenticated, render minimal layout without nav
+  // Middleware handles protecting non-public routes, so if we get here
+  // without auth, it means middleware allowed it (public route)
   if (!authResult.success) {
-    const currentPath = '/scm';
-    redirect(`/sign-in?redirect_url=${encodeURIComponent(currentPath)}`);
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="p-6">
+          {children}
+        </div>
+      </div>
+    );
   }
 
   const { email } = authResult.data;
