@@ -130,11 +130,16 @@ export function addStrategySummary(slide: pptxgen.Slide, el: PptxElement, x: num
 }
 
 /**
- * Add visual area (right column, problem visual - skips SVG content)
+ * Add visual area (right column, problem visual - skips SVG and table content)
  */
 export function addVisualArea(slide: pptxgen.Slide, el: PptxElement, x: number, y: number, w: number, h: number): void {
   // Skip if this region contains an SVG - it will be handled by the SVG renderer
   if (/<svg[\s>]/i.test(el.content)) {
+    return;
+  }
+
+  // Skip if this region contains a table - it will be rendered as image
+  if (/<table[\s>]/i.test(el.content)) {
     return;
   }
 

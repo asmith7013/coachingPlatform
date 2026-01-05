@@ -337,6 +337,41 @@ async function processSlide(
         }
       }
     }
+
+    // Handle table content in right-column - render as image for pixel-perfect export
+    const hasTable = /<table[\s>]/i.test(html);
+    if (hasTable && !hasSvg) {
+      // Find right-column element with table
+      const tableElement = pptxElements.find(
+        el => (el.regionType === 'right-column' || el.regionType === 'problem-visual') &&
+              /<table[\s>]/i.test(el.content)
+      );
+
+      if (tableElement) {
+        onProgress?.(slideIndex + 1, totalSlides, `Rendering table for slide ${slideIndex + 1}...`, 'rendering-table');
+
+        const tableX = pxToInches(tableElement.x, 'w');
+        const tableY = pxToInches(tableElement.y, 'h');
+        const tableW = pxToInches(tableElement.w, 'w');
+        const tableH = pxToInches(tableElement.h, 'h');
+
+        // Render the table region as an image
+        const tableBuffer = await renderSession.renderTableRegion(
+          tableElement.content,
+          tableElement.w,
+          tableElement.h
+        );
+        const tableBase64 = tableBuffer.toString('base64');
+
+        slide.addImage({
+          data: `data:image/png;base64,${tableBase64}`,
+          x: tableX,
+          y: tableY,
+          w: tableW,
+          h: tableH,
+        });
+      }
+    }
   } catch (parseError) {
     console.error(`Error parsing slide ${slideIndex + 1}, falling back to full render:`, parseError);
 

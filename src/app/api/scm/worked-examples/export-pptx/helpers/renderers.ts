@@ -16,6 +16,7 @@ export interface RenderSession {
   renderSvg: (svgHtml: string, width: number, height: number) => Promise<Buffer>;
   renderSvgLayers: (svgHtml: string, width: number, height: number, layers: string[]) => Promise<SvgLayer[]>;
   renderFullSlide: (html: string) => Promise<Buffer>;
+  renderTableRegion: (html: string, width: number, height: number) => Promise<Buffer>;
   renderPrintPage: (html: string, pageIndex: number) => Promise<Buffer | null>;
   countPrintPages: (html: string) => Promise<number>;
   close: () => Promise<void>;
@@ -369,6 +370,68 @@ export async function createRenderSession(): Promise<RenderSession> {
       const screenshot = await page.screenshot({
         type: 'png',
         clip: { x: 0, y: 0, width: HTML_WIDTH, height: HTML_HEIGHT },
+      });
+
+      return screenshot as Buffer;
+    },
+
+    /**
+     * Render a table region (right-column containing table) as an image
+     * Tables don't convert well to native PPTX, so render as PNG
+     * Includes all CSS classes from slide templates for proper rendering
+     */
+    async renderTableRegion(html: string, width: number, height: number): Promise<Buffer> {
+      await page.setViewport({ width, height, deviceScaleFactor: 2 });
+
+      // Include template CSS classes used in slide HTML
+      const fullHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+
+            /* Template CSS classes */
+            .row { display: flex; flex-direction: row; }
+            .col { display: flex; flex-direction: column; }
+            .fit { flex: 0 0 auto; }
+            .fill-width { flex: 1 1 auto; width: 100%; }
+            .fill-height { flex: 1 1 auto; }
+            .center { display: flex; align-items: center; justify-content: center; }
+            .items-center { align-items: center; }
+            .justify-center { justify-content: center; }
+            .gap-sm { gap: 8px; }
+            .gap-md { gap: 12px; }
+            .gap-lg { gap: 20px; }
+            .rounded { border-radius: 8px; }
+
+            body {
+              width: ${width}px;
+              height: ${height}px;
+              font-family: Arial, sans-serif;
+              background: #f5f5f5;
+              border-radius: 8px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              padding: 20px;
+            }
+            table {
+              border-collapse: collapse;
+            }
+          </style>
+        </head>
+        <body>${html}</body>
+        </html>
+      `;
+
+      await page.setContent(fullHtml, { waitUntil: 'domcontentloaded' });
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      const screenshot = await page.screenshot({
+        type: 'png',
+        clip: { x: 0, y: 0, width, height },
       });
 
       return screenshot as Buffer;
