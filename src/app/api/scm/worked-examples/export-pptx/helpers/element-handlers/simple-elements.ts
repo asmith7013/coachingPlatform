@@ -130,30 +130,13 @@ export function addStrategySummary(slide: pptxgen.Slide, el: PptxElement, x: num
 }
 
 /**
- * Add visual area (right column, problem visual - skips SVG and table content)
+ * Add visual area (right column, problem visual)
+ * Always skips - these regions are rendered as images in processSlide for pixel-perfect export
  */
-export function addVisualArea(slide: pptxgen.Slide, el: PptxElement, x: number, y: number, w: number, h: number): void {
-  // Skip if this region contains an SVG - it will be handled by the SVG renderer
-  if (/<svg[\s>]/i.test(el.content)) {
-    return;
-  }
-
-  // Skip if this region contains a table - it will be rendered as image
-  if (/<table[\s>]/i.test(el.content)) {
-    return;
-  }
-
-  const text = getTextContent(el.content);
-  if (text && !text.includes('{{')) {
-    const $ = cheerio.load(el.content);
-    const color = extractColor($('body').children().first().attr('style')) || '1D1D1D';
-
-    slide.addText(text, {
-      x, y, w, h,
-      fontSize: 12, fontFace: 'Arial', color,
-      align: 'center', valign: 'middle',
-    });
-  }
+export function addVisualArea(_slide: pptxgen.Slide, _el: PptxElement, _x: number, _y: number, _w: number, _h: number): void {
+  // All right-column/problem-visual regions are rendered as images in processSlide
+  // This ensures styled content (tables, equations, boxes) exports correctly
+  return;
 }
 
 /**

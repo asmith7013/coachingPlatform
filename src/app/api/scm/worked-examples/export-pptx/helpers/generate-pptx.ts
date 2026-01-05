@@ -338,37 +338,35 @@ async function processSlide(
       }
     }
 
-    // Handle table content in right-column - render as image for pixel-perfect export
-    const hasTable = /<table[\s>]/i.test(html);
-    if (hasTable && !hasSvg) {
-      // Find right-column element with table
-      const tableElement = pptxElements.find(
-        el => (el.regionType === 'right-column' || el.regionType === 'problem-visual') &&
-              /<table[\s>]/i.test(el.content)
+    // Handle right-column/problem-visual regions - render as image for pixel-perfect export
+    // These regions contain styled content (tables, equations, boxes) that don't convert well to native PPTX
+    if (!hasSvg) {
+      const visualElement = pptxElements.find(
+        el => el.regionType === 'right-column' || el.regionType === 'problem-visual'
       );
 
-      if (tableElement) {
-        onProgress?.(slideIndex + 1, totalSlides, `Rendering table for slide ${slideIndex + 1}...`, 'rendering-table');
+      if (visualElement) {
+        onProgress?.(slideIndex + 1, totalSlides, `Rendering visual for slide ${slideIndex + 1}...`, 'rendering-visual');
 
-        const tableX = pxToInches(tableElement.x, 'w');
-        const tableY = pxToInches(tableElement.y, 'h');
-        const tableW = pxToInches(tableElement.w, 'w');
-        const tableH = pxToInches(tableElement.h, 'h');
+        const vizX = pxToInches(visualElement.x, 'w');
+        const vizY = pxToInches(visualElement.y, 'h');
+        const vizW = pxToInches(visualElement.w, 'w');
+        const vizH = pxToInches(visualElement.h, 'h');
 
-        // Render the table region as an image
-        const tableBuffer = await renderSession.renderTableRegion(
-          tableElement.content,
-          tableElement.w,
-          tableElement.h
+        // Render the visual region as an image
+        const vizBuffer = await renderSession.renderTableRegion(
+          visualElement.content,
+          visualElement.w,
+          visualElement.h
         );
-        const tableBase64 = tableBuffer.toString('base64');
+        const vizBase64 = vizBuffer.toString('base64');
 
         slide.addImage({
-          data: `data:image/png;base64,${tableBase64}`,
-          x: tableX,
-          y: tableY,
-          w: tableW,
-          h: tableH,
+          data: `data:image/png;base64,${vizBase64}`,
+          x: vizX,
+          y: vizY,
+          w: vizW,
+          h: vizH,
         });
       }
     }
