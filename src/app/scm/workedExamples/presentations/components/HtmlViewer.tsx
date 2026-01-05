@@ -16,6 +16,7 @@ export function HtmlViewer({
   onExport,
 }: HtmlViewerProps) {
   const [copied, setCopied] = useState(false);
+  const [showReauthModal, setShowReauthModal] = useState(false);
   const { isValid, needsReauth, isLoading: oauthLoading } = useGoogleOAuthStatus();
   const clerk = useClerk();
 
@@ -23,6 +24,15 @@ export function HtmlViewer({
     const currentPath = window.location.pathname + window.location.search;
     await clerk.signOut();
     window.location.href = `/sign-in?redirect_url=${encodeURIComponent(currentPath)}`;
+  };
+
+  const handleExportClick = () => {
+    // If OAuth is not ready, show the reauth modal instead of exporting
+    if (!oauthLoading && (needsReauth || !isValid)) {
+      setShowReauthModal(true);
+      return;
+    }
+    onExport();
   };
 
   const handleCopy = () => {
@@ -134,69 +144,92 @@ export function HtmlViewer({
             )}
           </div>
 
-          {/* Export Slides Button or Re-auth Prompt */}
-          {!oauthLoading && (needsReauth || !isValid) ? (
-            <div className="ml-4 flex items-center gap-2">
-              <ExclamationTriangleIcon className="w-4 h-4 text-amber-600" />
-              <span className="text-sm text-amber-700">Google auth expired</span>
-              <button
-                onClick={handleReauth}
-                className="h-9 flex items-center gap-2 px-4 rounded-lg bg-amber-500 hover:bg-amber-600 text-white transition-colors cursor-pointer text-sm font-medium"
-              >
-                <ArrowPathIcon className="w-4 h-4" />
-                Reconnect
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={onExport}
-              disabled={exportStatus === 'exporting' || oauthLoading}
-              className={`ml-4 h-9 flex items-center gap-2 px-4 rounded-lg transition-colors cursor-pointer text-sm font-medium shrink-0 ${
-                exportStatus === 'exporting'
-                  ? 'bg-yellow-500 text-white'
-                  : exportStatus === 'success'
-                  ? 'bg-green-500 text-white'
-                  : exportStatus === 'error'
-                  ? 'bg-red-500 text-white'
-                  : 'bg-yellow-500 hover:bg-yellow-600 text-white'
-              }`}
-              aria-label="Export Slides"
-              title={exportError || 'Export to Google Slides'}
-            >
-              {exportStatus === 'exporting' ? (
-                <>
-                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  <span>Exporting...</span>
-                </>
-              ) : exportStatus === 'success' ? (
-                <>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Exported!</span>
-                </>
-              ) : exportStatus === 'error' ? (
-                <>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  <span>Failed</span>
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
-                  </svg>
-                  <span>Export Slides</span>
-                </>
-              )}
-            </button>
-          )}
+          {/* Export Slides Button */}
+          <button
+            onClick={handleExportClick}
+            disabled={exportStatus === 'exporting'}
+            className={`ml-4 h-9 flex items-center gap-2 px-4 rounded-lg transition-colors cursor-pointer text-sm font-medium shrink-0 ${
+              exportStatus === 'exporting'
+                ? 'bg-yellow-500 text-white'
+                : exportStatus === 'success'
+                ? 'bg-green-500 text-white'
+                : exportStatus === 'error'
+                ? 'bg-red-500 text-white'
+                : 'bg-yellow-500 hover:bg-yellow-600 text-white'
+            }`}
+            aria-label="Export Slides"
+            title={exportError || 'Export to Google Slides'}
+          >
+            {exportStatus === 'exporting' ? (
+              <>
+                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                <span>Exporting...</span>
+              </>
+            ) : exportStatus === 'success' ? (
+              <>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Exported!</span>
+              </>
+            ) : exportStatus === 'error' ? (
+              <>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span>Failed</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+                </svg>
+                <span>Export Slides</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
+
+      {/* Re-auth Modal */}
+      {showReauthModal && (
+        <div className="fixed inset-0 z-[10002] flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                <ExclamationTriangleIcon className="w-5 h-5 text-amber-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Google Authorization Expired
+                </h3>
+                <p className="mt-2 text-sm text-gray-600">
+                  Your Google connection needs to be refreshed to export to Google Slides.
+                  You&apos;ll be signed out and redirected to sign back in with Google.
+                </p>
+                <div className="mt-4 flex gap-3">
+                  <button
+                    onClick={handleReauth}
+                    className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <ArrowPathIcon className="w-4 h-4" />
+                    Reconnect Google
+                  </button>
+                  <button
+                    onClick={() => setShowReauthModal(false)}
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

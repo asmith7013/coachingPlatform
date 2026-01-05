@@ -60,6 +60,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   // OAuth status for Google Slides export
   const { isValid: oauthValid, needsReauth, isLoading: oauthLoading } = useGoogleOAuthStatus();
   const clerk = useClerk();
+  const [showReauthModal, setShowReauthModal] = useState(false);
 
   const handleReauth = async () => {
     const currentPath = window.location.pathname + window.location.search;
@@ -67,7 +68,14 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     window.location.href = `/sign-in?redirect_url=${encodeURIComponent(currentPath)}`;
   };
 
-  const oauthReady = !oauthLoading && oauthValid && !needsReauth;
+  const handleExportClick = () => {
+    // If OAuth is not ready, show the reauth modal instead of exporting
+    if (!oauthLoading && (needsReauth || !oauthValid)) {
+      setShowReauthModal(true);
+      return;
+    }
+    handleExportToSlides();
+  };
 
   // Handle starting edit
   const handleStartEdit = () => {
@@ -555,29 +563,18 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
                     </button>
                   </div>
 
-                  {/* Export Button or Re-auth Prompt */}
+                  {/* Export Button */}
                   <div className="pt-1 border-t border-gray-200">
-                    {!oauthLoading && (needsReauth || !oauthValid) ? (
-                      <button
-                        onClick={handleReauth}
-                        className="w-full px-3 py-2 text-xs bg-amber-500 hover:bg-amber-600 text-white font-medium rounded cursor-pointer flex items-center justify-center gap-1.5"
-                        title="Google authorization expired"
-                      >
-                        <ArrowPathIcon className="w-4 h-4" />
-                        Reconnect Google
-                      </button>
-                    ) : (
-                      <button
-                        onClick={handleExportToSlides}
-                        disabled={isAnyExporting || slides.length === 0 || !oauthReady}
-                        className="w-full px-3 py-2 text-xs bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded cursor-pointer flex items-center justify-center gap-1.5"
-                      >
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
-                        </svg>
-                        {exportProgress.status === 'success' ? 'Exported!' : 'Export to Slides'}
-                      </button>
-                    )}
+                    <button
+                      onClick={handleExportClick}
+                      disabled={isAnyExporting || slides.length === 0}
+                      className="w-full px-3 py-2 text-xs bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+                      </svg>
+                      {exportProgress.status === 'success' ? 'Exported!' : 'Export to Slides'}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -708,6 +705,43 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           <p className="mt-2 text-sm text-red-600">{aiError}</p>
         )}
       </WizardStickyFooter>
+
+      {/* Re-auth Modal */}
+      {showReauthModal && (
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                <ArrowPathIcon className="w-5 h-5 text-amber-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Google Authorization Expired
+                </h3>
+                <p className="mt-2 text-sm text-gray-600">
+                  Your Google connection needs to be refreshed to export to Google Slides.
+                  You&apos;ll be signed out and redirected to sign back in with Google.
+                </p>
+                <div className="mt-4 flex gap-3">
+                  <button
+                    onClick={handleReauth}
+                    className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <ArrowPathIcon className="w-4 h-4" />
+                    Reconnect Google
+                  </button>
+                  <button
+                    onClick={() => setShowReauthModal(false)}
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

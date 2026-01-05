@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useCallback } from 'react';
+import { createContext, useContext, useCallback, useEffect, useRef } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useWizardState, type WizardStateHook } from '../hooks/useWizardState';
 import { WizardProgress } from './WizardProgress';
 import { WizardFooter } from './WizardFooter';
@@ -22,7 +23,57 @@ export function useWizard() {
 
 export function WizardContainer() {
   const wizard = useWizardState();
-  const { state, setStep } = wizard;
+  const { state, setStep, loadSession, isHydrated } = wizard;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initializedRef = useRef(false);
+
+  // Read URL params on mount and load draft if specified
+  useEffect(() => {
+    if (!isHydrated || initializedRef.current) return;
+
+    const draftId = searchParams.get('draft');
+    const stepParam = searchParams.get('step');
+
+    if (draftId) {
+      // Load the draft from localStorage
+      const loaded = loadSession(draftId);
+      if (loaded) {
+        initializedRef.current = true;
+        return;
+      }
+    }
+
+    // If step param is set without a draft, just go to that step
+    if (stepParam) {
+      const stepNum = parseInt(stepParam, 10) as WizardStep;
+      if (stepNum >= 1 && stepNum <= 3) {
+        setStep(stepNum);
+      }
+    }
+
+    initializedRef.current = true;
+  }, [isHydrated, searchParams, loadSession, setStep]);
+
+  // Update URL when step or draft changes
+  useEffect(() => {
+    if (!isHydrated || !initializedRef.current) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+
+    // Update step param
+    params.set('step', String(state.currentStep));
+
+    // Update draft param if we have a scopeAndSequenceId (active draft)
+    if (state.scopeAndSequenceId) {
+      params.set('draft', state.scopeAndSequenceId);
+    } else {
+      params.delete('draft');
+    }
+
+    // Update URL without adding to history (use replace)
+    router.replace(`/scm/workedExamples/create?${params.toString()}`, { scroll: false });
+  }, [state.currentStep, state.scopeAndSequenceId, isHydrated, router, searchParams]);
 
   // Handle step navigation from progress bar
   const handleStepClick = useCallback((step: WizardStep) => {

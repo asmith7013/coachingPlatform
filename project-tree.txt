@@ -511,6 +511,9 @@
 │   │   │   │   │   └── route.ts
 │   │   │   │   └── sync-manual
 │   │   │   │       └── route.ts
+│   │   │   ├── auth
+│   │   │   │   └── check-google-oauth
+│   │   │   │       └── route.ts
 │   │   │   ├── coaching-action-plans
 │   │   │   │   ├── [id]
 │   │   │   │   │   └── route.ts
@@ -1230,6 +1233,7 @@
 │   │   ├── auth
 │   │   │   ├── AuthGuard.tsx
 │   │   │   ├── AuthLoading.tsx
+│   │   │   ├── GoogleOAuthRequired.tsx
 │   │   │   ├── GoogleSignInButton.tsx
 │   │   │   ├── PermissionButton.tsx
 │   │   │   └── SignOutButton.tsx
@@ -1627,6 +1631,7 @@
 │   │   │   ├── useAuthenticatedUser.ts
 │   │   │   ├── useClerkContext.ts
 │   │   │   ├── useCoachData.ts
+│   │   │   ├── useGoogleOAuthStatus.ts
 │   │   │   └── usePermissionFiltering.ts
 │   │   ├── coaching
 │   │   │   ├── index.ts
@@ -2299,4 +2304,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-681 directories, 1619 files
+683 directories, 1622 files
