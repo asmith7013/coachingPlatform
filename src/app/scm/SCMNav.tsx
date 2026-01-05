@@ -3,12 +3,16 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import {
   MapIcon,
   GiftIcon,
   PresentationChartBarIcon,
   Cog6ToothIcon,
   TruckIcon,
+  Bars3Icon,
+  XMarkIcon,
+  ChevronDownIcon,
 } from '@heroicons/react/24/outline';
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
@@ -29,6 +33,7 @@ export function SCMNav() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [mobileExpandedCategory, setMobileExpandedCategory] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { hasRole } = useAuthenticatedUser();
 
@@ -53,13 +58,10 @@ export function SCMNav() {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY < 10) {
-        // At the top of the page, always show
         setIsVisible(true);
       } else if (currentScrollY < lastScrollY) {
-        // Scrolling up, show navigation
         setIsVisible(true);
       } else if (currentScrollY > lastScrollY) {
-        // Scrolling down, hide navigation
         setIsVisible(false);
       }
 
@@ -109,11 +111,10 @@ export function SCMNav() {
         { href: "/scm/workedExamples?grade=7", label: "Grade 7" },
         { href: "/scm/workedExamples?grade=8", label: "Grade 8" },
         { href: "/scm/workedExamples?grade=alg1", label: "Algebra 1" },
-        { href: "---", label: "---" }, // Separator
+        { href: "---", label: "---" },
         { href: "/scm/workedExamples/create", label: "+ Create New" },
       ],
     },
-    // Logistics category - only shown for coaches
     ...((isCoach || isSuperAdmin) ? [{
       label: "Logistics",
       Icon: TruckIcon,
@@ -122,7 +123,6 @@ export function SCMNav() {
         { href: "/scm/logistics/scope-and-sequence", label: "Scope & Sequence" },
       ],
     }] : []),
-    // Admin category - only shown for super_admin
     ...(isSuperAdmin ? [{
       label: "Admin",
       Icon: Cog6ToothIcon,
@@ -158,6 +158,10 @@ export function SCMNav() {
     setOpenDropdown(openDropdown === label ? null : label);
   };
 
+  const toggleMobileCategory = (label: string) => {
+    setMobileExpandedCategory(mobileExpandedCategory === label ? null : label);
+  };
+
   const isActiveCategory = (category: NavCategory) => {
     const itemsActive = category.items.some((item) => pathname.startsWith(item.href));
     const sectionsActive = category.sections?.some((section) =>
@@ -166,204 +170,287 @@ export function SCMNav() {
     return itemsActive || sectionsActive;
   };
 
+  const isItemActive = (item: NavItem) => {
+    if (item.href === "---") return false;
+    const hasQueryParam = item.href.includes('?');
+    const basePath = item.href.split('?')[0];
+    if (hasQueryParam) {
+      const itemParams = new URLSearchParams(item.href.split('?')[1]);
+      const paramsMatch = Array.from(itemParams.entries()).every(
+        ([key, value]) => searchParams.get(key) === value
+      );
+      return pathname === basePath && paramsMatch;
+    }
+    return pathname === item.href || pathname.startsWith(item.href + '/');
+  };
+
   return (
-    <nav
+    <Disclosure
+      as="nav"
       className={`bg-gray-900 shadow-lg sticky top-0 z-50 transition-transform duration-300 ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
       ref={dropdownRef}
     >
-      <div className="mx-auto px-6 py-3" style={{ maxWidth: "1600px" }}>
+      <div className="mx-auto px-4 lg:px-6 py-3" style={{ maxWidth: "1600px" }}>
         <div className="flex justify-between items-center gap-2">
-        <div className="flex gap-2 relative">
-          {categories.filter(c => c.label !== "Admin").map((category) => {
+          {/* Mobile menu button */}
+          <div className="flex lg:hidden">
+            <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer">
+              <span className="sr-only">Open main menu</span>
+              <Bars3Icon className="block h-6 w-6 group-data-[open]:hidden" aria-hidden="true" />
+              <XMarkIcon className="hidden h-6 w-6 group-data-[open]:block" aria-hidden="true" />
+            </DisclosureButton>
+          </div>
+
+          {/* Desktop navigation */}
+          <div className="hidden lg:flex gap-2 relative">
+            {categories.filter(c => c.label !== "Admin").map((category) => {
+              const isActive = isActiveCategory(category);
+              const isOpen = openDropdown === category.label;
+
+              return (
+                <div key={category.label} className="relative">
+                  <button
+                    onClick={() => toggleDropdown(category.label)}
+                    className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 cursor-pointer ${
+                      isActive
+                        ? "bg-gray-700 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-gray-800"
+                    }`}
+                  >
+                    {category.iconLetter ? (
+                      <div className="w-5 h-5 flex-shrink-0 rounded flex items-center justify-center text-sm font-bold">
+                        {category.iconLetter}
+                      </div>
+                    ) : category.Icon ? (
+                      <category.Icon className="w-5 h-5 flex-shrink-0" />
+                    ) : null}
+                    {category.label}
+                    <svg
+                      className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {isOpen && (
+                    <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[200px] z-50">
+                      {category.items.map((item, idx) => {
+                        if (item.href === "---") {
+                          return <div key={`sep-${idx}`} className="border-t border-gray-200 my-1" />;
+                        }
+                        const active = isItemActive(item);
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setOpenDropdown(null)}
+                            className={`block px-4 py-2 text-sm transition-colors ${
+                              active
+                                ? "bg-blue-50 text-blue-700 font-medium"
+                                : "text-gray-700 hover:bg-gray-50"
+                            }`}
+                          >
+                            {item.label}
+                          </Link>
+                        );
+                      })}
+                      {category.sections?.map((section, sectionIndex) => (
+                        <div key={section.section}>
+                          {(category.items.length > 0 || sectionIndex > 0) && (
+                            <div className="border-t border-gray-200 my-1" />
+                          )}
+                          <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            {section.section}
+                          </div>
+                          {section.items.map((item) => {
+                            const active = pathname === item.href;
+                            return (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={() => setOpenDropdown(null)}
+                                className={`block px-4 py-2 transition-colors ${
+                                  active
+                                    ? "bg-blue-50 text-blue-700"
+                                    : "text-gray-700 hover:bg-gray-50"
+                                }`}
+                              >
+                                <div className={`text-sm ${active ? "font-medium" : ""}`}>
+                                  {item.label}
+                                </div>
+                                {item.description && (
+                                  <div className={`text-xs mt-0.5 ${active ? "text-blue-600" : "text-gray-500"}`}>
+                                    {item.description}
+                                  </div>
+                                )}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Right side - Admin dropdown + Sign Out (desktop) */}
+          <div className="hidden lg:flex gap-2 items-center">
+            {categories.filter(c => c.label === "Admin").map((category) => {
+              const isActive = isActiveCategory(category);
+              const isOpen = openDropdown === category.label;
+
+              return (
+                <div key={category.label} className="relative">
+                  <button
+                    onClick={() => toggleDropdown(category.label)}
+                    className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 cursor-pointer ${
+                      isActive
+                        ? "bg-gray-700 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-gray-800"
+                    }`}
+                  >
+                    {category.Icon && <category.Icon className="w-5 h-5 flex-shrink-0" />}
+                    {category.label}
+                    <svg
+                      className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {isOpen && (
+                    <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[280px] z-50">
+                      {category.sections?.map((section, sectionIndex) => (
+                        <div key={section.section}>
+                          {sectionIndex > 0 && (
+                            <div className="border-t border-gray-200 my-1" />
+                          )}
+                          <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            {section.section}
+                          </div>
+                          {section.items.map((item) => {
+                            const active = pathname === item.href;
+                            return (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={() => setOpenDropdown(null)}
+                                className={`block px-4 py-2 transition-colors ${
+                                  active
+                                    ? "bg-blue-50 text-blue-700"
+                                    : "text-gray-700 hover:bg-gray-50"
+                                }`}
+                              >
+                                <div className={`text-sm ${active ? "font-medium" : ""}`}>
+                                  {item.label}
+                                </div>
+                                {item.description && (
+                                  <div className={`text-xs mt-0.5 ${active ? "text-blue-600" : "text-gray-500"}`}>
+                                    {item.description}
+                                  </div>
+                                )}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            <Link
+              href="/sign-out"
+              className="px-4 py-2 rounded-md font-medium transition-colors text-white hover:bg-gray-800 bg-gray-700"
+            >
+              Sign Out
+            </Link>
+          </div>
+
+          {/* Mobile: Sign Out button visible */}
+          <div className="flex lg:hidden">
+            <Link
+              href="/sign-out"
+              className="px-3 py-1.5 rounded-md text-sm font-medium text-white bg-gray-700 hover:bg-gray-600"
+            >
+              Sign Out
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu panel */}
+      <DisclosurePanel className="lg:hidden">
+        <div className="space-y-1 px-3 pb-4 pt-2">
+          {categories.map((category) => {
             const isActive = isActiveCategory(category);
-            const isOpen = openDropdown === category.label;
+            const isExpanded = mobileExpandedCategory === category.label;
+            const allItems = [
+              ...category.items.filter(i => i.href !== "---"),
+              ...(category.sections?.flatMap(s => s.items) || [])
+            ];
 
             return (
-              <div key={category.label} className="relative">
+              <div key={category.label}>
                 <button
-                  onClick={() => toggleDropdown(category.label)}
-                  className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 cursor-pointer ${
+                  onClick={() => toggleMobileCategory(category.label)}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
                     isActive
                       ? "bg-gray-700 text-white"
-                      : "text-gray-300 hover:text-white hover:bg-gray-800"
+                      : "text-gray-300 hover:bg-gray-800 hover:text-white"
                   }`}
                 >
-                  {category.iconLetter ? (
-                    <div className="w-5 h-5 flex-shrink-0 rounded flex items-center justify-center text-sm font-bold">
-                      {category.iconLetter}
-                    </div>
-                  ) : category.Icon ? (
-                    <category.Icon className="w-5 h-5 flex-shrink-0" />
-                  ) : null}
-                  {category.label}
-                  <svg
-                    className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <div className="flex items-center gap-2">
+                    {category.iconLetter ? (
+                      <div className="w-5 h-5 flex-shrink-0 rounded flex items-center justify-center text-sm font-bold">
+                        {category.iconLetter}
+                      </div>
+                    ) : category.Icon ? (
+                      <category.Icon className="w-5 h-5 flex-shrink-0" />
+                    ) : null}
+                    {category.label}
+                  </div>
+                  <ChevronDownIcon
+                    className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                  />
                 </button>
 
-                {isOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[200px] z-50">
-                    {/* Regular items */}
-                    {category.items.map((item, idx) => {
-                      // Separator
-                      if (item.href === "---") {
-                        return <div key={`sep-${idx}`} className="border-t border-gray-200 my-1" />;
-                      }
-                      // For items with query params (like ?grade=6), match base path AND query params
-                      // For items without query params, match exact or subpaths
-                      const hasQueryParam = item.href.includes('?');
-                      const basePath = item.href.split('?')[0];
-                      let isItemActive = false;
-                      if (hasQueryParam) {
-                        const itemParams = new URLSearchParams(item.href.split('?')[1]);
-                        const paramsMatch = Array.from(itemParams.entries()).every(
-                          ([key, value]) => searchParams.get(key) === value
-                        );
-                        isItemActive = pathname === basePath && paramsMatch;
-                      } else {
-                        isItemActive = pathname === item.href || pathname.startsWith(item.href + '/');
-                      }
+                {isExpanded && (
+                  <div className="mt-1 ml-4 space-y-1">
+                    {allItems.map((item) => {
+                      const active = isItemActive(item);
                       return (
-                        <Link
+                        <DisclosureButton
                           key={item.href}
+                          as={Link}
                           href={item.href}
-                          onClick={() => setOpenDropdown(null)}
-                          className={`block px-4 py-2 text-sm transition-colors ${
-                            isItemActive
-                              ? "bg-blue-50 text-blue-700 font-medium"
-                              : "text-gray-700 hover:bg-gray-50"
+                          className={`block px-3 py-2 rounded-md text-sm ${
+                            active
+                              ? "bg-gray-700 text-white font-medium"
+                              : "text-gray-400 hover:bg-gray-800 hover:text-white"
                           }`}
                         >
                           {item.label}
-                        </Link>
+                        </DisclosureButton>
                       );
                     })}
-                    {/* Sections with headers */}
-                    {category.sections?.map((section, sectionIndex) => (
-                      <div key={section.section}>
-                        {(category.items.length > 0 || sectionIndex > 0) && (
-                          <div className="border-t border-gray-200 my-1" />
-                        )}
-                        <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                          {section.section}
-                        </div>
-                        {section.items.map((item) => {
-                          const isItemActive = pathname === item.href;
-                          return (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              onClick={() => setOpenDropdown(null)}
-                              className={`block px-4 py-2 transition-colors ${
-                                isItemActive
-                                  ? "bg-blue-50 text-blue-700"
-                                  : "text-gray-700 hover:bg-gray-50"
-                              }`}
-                            >
-                              <div className={`text-sm ${isItemActive ? "font-medium" : ""}`}>
-                                {item.label}
-                              </div>
-                              {item.description && (
-                                <div className={`text-xs mt-0.5 ${isItemActive ? "text-blue-600" : "text-gray-500"}`}>
-                                  {item.description}
-                                </div>
-                              )}
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    ))}
                   </div>
                 )}
               </div>
             );
           })}
         </div>
-        <div className="flex gap-2 items-center">
-          {/* Admin dropdown - aligned right */}
-          {categories.filter(c => c.label === "Admin").map((category) => {
-            const isActive = isActiveCategory(category);
-            const isOpen = openDropdown === category.label;
-
-            return (
-              <div key={category.label} className="relative">
-                <button
-                  onClick={() => toggleDropdown(category.label)}
-                  className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 cursor-pointer ${
-                    isActive
-                      ? "bg-gray-700 text-white"
-                      : "text-gray-300 hover:text-white hover:bg-gray-800"
-                  }`}
-                >
-                  {category.Icon && <category.Icon className="w-5 h-5 flex-shrink-0" />}
-                  {category.label}
-                  <svg
-                    className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {isOpen && (
-                  <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[280px] z-50">
-                    {category.sections?.map((section, sectionIndex) => (
-                      <div key={section.section}>
-                        {sectionIndex > 0 && (
-                          <div className="border-t border-gray-200 my-1" />
-                        )}
-                        <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                          {section.section}
-                        </div>
-                        {section.items.map((item) => {
-                          const isItemActive = pathname === item.href;
-                          return (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              onClick={() => setOpenDropdown(null)}
-                              className={`block px-4 py-2 transition-colors ${
-                                isItemActive
-                                  ? "bg-blue-50 text-blue-700"
-                                  : "text-gray-700 hover:bg-gray-50"
-                              }`}
-                            >
-                              <div className={`text-sm ${isItemActive ? "font-medium" : ""}`}>
-                                {item.label}
-                              </div>
-                              {item.description && (
-                                <div className={`text-xs mt-0.5 ${isItemActive ? "text-blue-600" : "text-gray-500"}`}>
-                                  {item.description}
-                                </div>
-                              )}
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-          <Link
-            href="/sign-out"
-            className="px-4 py-2 rounded-md font-medium transition-colors text-white hover:bg-gray-800 bg-gray-700"
-          >
-            Sign Out
-          </Link>
-        </div>
-        </div>
-      </div>
-    </nav>
+      </DisclosurePanel>
+    </Disclosure>
   );
 }
