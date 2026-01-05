@@ -6,6 +6,9 @@ import { SlidePreview } from './SlidePreview';
 import { WizardStickyFooter } from './WizardStickyFooter';
 import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
 import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
+import { useGoogleOAuthStatus } from '@/hooks/auth/useGoogleOAuthStatus';
+import { useClerk } from '@clerk/nextjs';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 // import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 
 interface Step3SlidesProps {
@@ -53,6 +56,18 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const hasMultiSelection = totalSelected > 0;
 
   const isAnyExporting = exportProgress.status === 'exporting';
+
+  // OAuth status for Google Slides export
+  const { isValid: oauthValid, needsReauth, isLoading: oauthLoading } = useGoogleOAuthStatus();
+  const clerk = useClerk();
+
+  const handleReauth = async () => {
+    const currentPath = window.location.pathname + window.location.search;
+    await clerk.signOut();
+    window.location.href = `/sign-in?redirect_url=${encodeURIComponent(currentPath)}`;
+  };
+
+  const oauthReady = !oauthLoading && oauthValid && !needsReauth;
 
   // Handle starting edit
   const handleStartEdit = () => {
@@ -540,18 +555,29 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
                     </button>
                   </div>
 
-                  {/* Export Button */}
+                  {/* Export Button or Re-auth Prompt */}
                   <div className="pt-1 border-t border-gray-200">
-                    <button
-                      onClick={handleExportToSlides}
-                      disabled={isAnyExporting || slides.length === 0}
-                      className="w-full px-3 py-2 text-xs bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded cursor-pointer flex items-center justify-center gap-1.5"
-                    >
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
-                      </svg>
-                      {exportProgress.status === 'success' ? 'Exported!' : 'Export to Slides'}
-                    </button>
+                    {!oauthLoading && (needsReauth || !oauthValid) ? (
+                      <button
+                        onClick={handleReauth}
+                        className="w-full px-3 py-2 text-xs bg-amber-500 hover:bg-amber-600 text-white font-medium rounded cursor-pointer flex items-center justify-center gap-1.5"
+                        title="Google authorization expired"
+                      >
+                        <ArrowPathIcon className="w-4 h-4" />
+                        Reconnect Google
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleExportToSlides}
+                        disabled={isAnyExporting || slides.length === 0 || !oauthReady}
+                        className="w-full px-3 py-2 text-xs bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded cursor-pointer flex items-center justify-center gap-1.5"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+                        </svg>
+                        {exportProgress.status === 'success' ? 'Exported!' : 'Export to Slides'}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
