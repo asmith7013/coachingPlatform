@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { PresentationChartBarIcon } from '@heroicons/react/24/outline';
 
@@ -14,10 +14,17 @@ const GRADE_OPTIONS = [
 
 export function PublicSCMNav() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Build current URL for redirect after sign-in
+  const currentUrl = searchParams.toString()
+    ? `${pathname}?${searchParams.toString()}`
+    : pathname;
+  const signInUrl = `/sign-in?redirect_url=${encodeURIComponent(currentUrl)}`;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -108,7 +115,7 @@ export function PublicSCMNav() {
 
           {/* Right side - Sign In button (matches Sign Out style from SCMNav) */}
           <Link
-            href="/sign-in"
+            href={signInUrl}
             className="px-4 py-2 rounded-md font-medium transition-colors text-white hover:bg-gray-800 bg-gray-700"
           >
             Sign In
