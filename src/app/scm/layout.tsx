@@ -54,21 +54,7 @@ export default async function SCMLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Skip authentication in development (localhost)
-  const isDevelopment = process.env.NODE_ENV === 'development';
-
-  if (isDevelopment) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <SCMNav />
-        <div className="p-6">
-          {children}
-        </div>
-      </div>
-    );
-  }
-
-  // Production: Check authentication
+  // Check authentication
   const authResult = await getAuthenticatedUser();
 
   // If not authenticated, render public layout with minimal nav
