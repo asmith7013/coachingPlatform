@@ -544,6 +544,7 @@
 │   │   │   │       ├── export-google-slides
 │   │   │   │       ├── export-pptx
 │   │   │   │       ├── export-pptx-stream
+│   │   │   │       ├── generate-printable
 │   │   │   │       └── generate-slides
 │   │   │   ├── setup
 │   │   │   │   └── initial-user
@@ -1099,6 +1100,7 @@
 │   │   │       │   ├── actions
 │   │   │       │   ├── components
 │   │   │       │   ├── hooks
+│   │   │       │   ├── layout.tsx
 │   │   │       │   ├── lib
 │   │   │       │   └── page.tsx
 │   │   │       ├── deactivated
@@ -1798,9 +1800,11 @@
 │   │   │   │   ├── responses.ts
 │   │   │   │   └── transformation.ts
 │   │   │   ├── handlers
+│   │   │   │   ├── anthropic.ts
 │   │   │   │   ├── client.ts
 │   │   │   │   ├── crud.ts
 │   │   │   │   ├── index.ts
+│   │   │   │   ├── puppeteer.ts
 │   │   │   │   ├── query.ts
 │   │   │   │   ├── server.ts
 │   │   │   │   └── validation.ts
@@ -2295,4 +2299,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-680 directories, 1616 files
+681 directories, 1619 files

@@ -365,10 +365,10 @@ export default function PresentationsList() {
                 const gradeBadgeText = deckGrade === '8' ? 'Grade 8' : deckGrade;
 
                 return (
-                <div key={unitKey} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div key={unitKey} className="bg-gray-100 rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                   <button
                     onClick={() => toggleUnit(unitKey)}
-                    className="w-full flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between px-4 py-3 bg-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <h2 className="text-xl font-bold text-gray-800">
