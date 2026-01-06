@@ -14,6 +14,7 @@ import { CreateAssignmentModal } from "./components/CreateAssignmentModal";
 import { PageHeader } from "./components/PageHeader";
 import { FiltersSection } from "./components/FiltersSection";
 import { ProgressOverview } from "./components/ProgressOverview";
+import { StudentProgressTable } from "./components/StudentProgressTable";
 import { LoadingState, ProgressLoadingState, NoAssignmentsState, SelectFiltersState } from "./components/EmptyStates";
 import { groupAssignmentsByUnitLesson, groupAssignmentsBySection } from "./utils/groupAssignments";
 import { getScopeTagForSection } from "./utils/sectionHelpers";
@@ -419,6 +420,14 @@ export default function PodsieProgressPage() {
             onExcludeRampUpsChange={setExcludeRampUps}
             hideEmptySections={hideEmptySections}
             onHideEmptySectionsChange={setHideEmptySections}
+          />
+        )}
+
+        {/* Student Progress Table - below Pacing Progress Card */}
+        {selectedSection && selectedUnit !== null && selectedLessonSection && lessons.length > 0 && !loadingLessons && !loadingProgress && (
+          <StudentProgressTable
+            groupedAssignments={groupedAssignments}
+            progressData={progressData}
           />
         )}
 
