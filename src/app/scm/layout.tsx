@@ -29,7 +29,8 @@ const ALLOWED_NYC_EMAILS = [
   'asmith7013@gmail.com',
   'kmcnickle@gmail.com',
   'mrscardonagarcia@gmail.com',
-  'pcompres10@gmail.com'
+  'pcompres10@gmail.com',
+  'mmalunga2002@gmail.com'
 ];
 
 function isAllowedDomain(email: string | null | undefined): boolean {
