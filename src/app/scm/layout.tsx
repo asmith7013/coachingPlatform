@@ -30,7 +30,8 @@ const ALLOWED_NYC_EMAILS = [
   'kmcnickle@gmail.com',
   'mrscardonagarcia@gmail.com',
   'pcompres10@gmail.com',
-  'mmalunga2002@gmail.com'
+  'mmalunga2002@gmail.com',
+  'johnnydelancer@gmail.com'
 ];
 
 function isAllowedDomain(email: string | null | undefined): boolean {
