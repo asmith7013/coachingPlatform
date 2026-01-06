@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  sync-progress-ps313:
+  sync-progress-is313:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -31,32 +31,36 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Sync PS313
-        id: sync-ps313
+      - name: Sync IS313
+        id: sync-is313
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           PODSIE_API_TOKEN: ${{ secrets.PODSIE_API_TOKEN }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: |
-          echo "🏫 Syncing PS313..."
-          npx tsx scripts/run-podsie-sync.ts --school=PS313 2>&1 | tee sync-output.log
+          echo "🏫 Syncing IS313..."
+          npx tsx scripts/run-podsie-sync.ts --school=IS313 2>&1 | tee sync-output.log
           echo "output<<EOF" >> $GITHUB_OUTPUT
           cat sync-output.log >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Upload PS313 log on failure
+      - name: Upload IS313 log on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: sync-progress-ps313-log
+          name: sync-progress-is313-log
           path: sync-output.log
           retention-days: 7
 
   sync-progress-x644:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: sync-progress-ps313
+    needs: sync-progress-is313
+    strategy:
+      fail-fast: false
+      matrix:
+        chunk: [1, 2]
 
     steps:
       - name: Checkout code
@@ -71,15 +75,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Sync X644
+      - name: Sync X644 (Chunk ${{ matrix.chunk }})
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           PODSIE_API_TOKEN: ${{ secrets.PODSIE_API_TOKEN }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: |
-          echo "🏫 Syncing X644..."
-          npx tsx scripts/run-podsie-sync.ts --school=X644
+          echo "🏫 Syncing X644 - Chunk ${{ matrix.chunk }} (3 sections per chunk)..."
+          npx tsx scripts/run-podsie-sync.ts --school=X644 --chunk=${{ matrix.chunk }} --chunkSize=3
 
   sync-progress-ps19:
     runs-on: ubuntu-latest
@@ -111,7 +115,7 @@ jobs:
 
   notify-failure:
     runs-on: ubuntu-latest
-    needs: [sync-progress-ps313, sync-progress-x644, sync-progress-ps19]
+    needs: [sync-progress-is313, sync-progress-x644, sync-progress-ps19]
     if: failure()
 
     steps:

@@ -95,19 +95,34 @@ async function main() {
 
   console.log(`🔗 Database: ${databaseUrl.substring(0, 30)}...`);
 
-  // Parse optional school from command line args
+  // Parse optional arguments from command line
   let school: string | undefined;
+  let chunk: number | undefined;
+  let chunkSize: number | undefined;
+
   const schoolArg = process.argv.find(arg => arg.startsWith('--school='));
   if (schoolArg) {
     school = schoolArg.split('=')[1];
     console.log(`🏫 Filtering to school: ${school}`);
   }
 
+  const chunkArg = process.argv.find(arg => arg.startsWith('--chunk='));
+  if (chunkArg) {
+    chunk = parseInt(chunkArg.split('=')[1], 10);
+    console.log(`📦 Processing chunk: ${chunk}`);
+  }
+
+  const chunkSizeArg = process.argv.find(arg => arg.startsWith('--chunkSize='));
+  if (chunkSizeArg) {
+    chunkSize = parseInt(chunkSizeArg.split('=')[1], 10);
+    console.log(`📏 Chunk size: ${chunkSize} sections`);
+  }
+
   try {
     // Dynamic import AFTER dotenv has loaded
     const { syncCurrentUnits } = await import('../src/app/actions/scm/podsie/scheduled/sync-current-units');
 
-    const result = await syncCurrentUnits({ school });
+    const result = await syncCurrentUnits({ school, chunk, chunkSize });
 
     console.log('\n📊 Results Summary:');
     console.log(JSON.stringify({

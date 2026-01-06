@@ -22,6 +22,10 @@ const SCHOOL_YEAR = "2025-2026";
 export interface SyncCurrentUnitsOptions {
   /** Optional school code to filter sections. If not provided, syncs all schools */
   school?: string;
+  /** Chunk index (1-based) for processing sections in batches */
+  chunk?: number;
+  /** Number of sections per chunk. Default: all sections */
+  chunkSize?: number;
 }
 
 export interface SyncCurrentUnitsResult {
@@ -159,6 +163,9 @@ export async function syncCurrentUnits(
   if (options.school) {
     console.log(`📍 Filtering to school: ${options.school}`);
   }
+  if (options.chunk && options.chunkSize) {
+    console.log(`📦 Processing chunk ${options.chunk} (${options.chunkSize} sections per chunk)`);
+  }
   const startTime = Date.now();
 
   const result: SyncCurrentUnitsResult = {
@@ -218,7 +225,18 @@ export async function syncCurrentUnits(
       sectionsWithCurrentUnits = sectionsWithCurrentUnits.filter(cu => cu.school === options.school);
     }
 
-    console.log(`📊 Found ${sectionsWithCurrentUnits.length} sections with active current units`);
+    const totalSectionsBeforeChunking = sectionsWithCurrentUnits.length;
+    console.log(`📊 Found ${totalSectionsBeforeChunking} sections with active current units`);
+
+    // Apply chunking if specified
+    if (options.chunk && options.chunkSize) {
+      const startIndex = (options.chunk - 1) * options.chunkSize;
+      const endIndex = startIndex + options.chunkSize;
+      const totalChunks = Math.ceil(totalSectionsBeforeChunking / options.chunkSize);
+
+      sectionsWithCurrentUnits = sectionsWithCurrentUnits.slice(startIndex, endIndex);
+      console.log(`📦 Chunk ${options.chunk}/${totalChunks}: Processing sections ${startIndex + 1}-${Math.min(endIndex, totalSectionsBeforeChunking)} of ${totalSectionsBeforeChunking}`);
+    }
 
     if (sectionsWithCurrentUnits.length === 0) {
       result.success = true;
