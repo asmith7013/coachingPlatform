@@ -1,6 +1,7 @@
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { getCompletionDateInfo } from "@/lib/utils/completion-date-helpers";
+import { Tooltip } from "@/components/core/feedback/Tooltip";
 
 /**
  * Helper function to determine the completion style based on completion date
@@ -94,35 +95,26 @@ export function CompletionCheckmark({
   // Render filled checkmark for today's completions
   if (completionInfo.iconStyle === "today") {
     return (
-      <div className="group relative inline-block">
+      <Tooltip content={tooltipText}>
         <CheckCircleIcon className={`${sizeClass} ${filledColorClasses[color]} mx-auto`} />
-        <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
-          {tooltipText}
-        </span>
-      </div>
+      </Tooltip>
     );
   }
 
   // Render outline checkmark for yesterday's completions
   if (completionInfo.iconStyle === "yesterday") {
     return (
-      <div className="group relative inline-block">
+      <Tooltip content={tooltipText}>
         <CheckCircleOutlineIcon className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`} />
-        <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
-          {tooltipText}
-        </span>
-      </div>
+      </Tooltip>
     );
   }
 
   // Render plain checkmark for earlier completions (prior days)
   return (
-    <div className="group relative inline-block">
+    <Tooltip content={tooltipText}>
       <CheckIcon className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`} />
-      <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
-        {tooltipText}
-      </span>
-    </div>
+    </Tooltip>
   );
 }
 
@@ -166,25 +158,15 @@ export function SimpleCheckmark({
 
   if (!completed) {
     return (
-      <div className="group relative inline-block">
+      <Tooltip content={title}>
         <CheckCircleOutlineIcon className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`} />
-        {title && (
-          <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
-            {title}
-          </span>
-        )}
-      </div>
+      </Tooltip>
     );
   }
 
   return (
-    <div className="group relative inline-block">
+    <Tooltip content={title}>
       <CheckCircleIcon className={`${sizeClass} ${filledColorClasses[color]} mx-auto`} />
-      {title && (
-        <span className="invisible group-hover:visible absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
-          {title}
-        </span>
-      )}
-    </div>
+    </Tooltip>
   );
 }
