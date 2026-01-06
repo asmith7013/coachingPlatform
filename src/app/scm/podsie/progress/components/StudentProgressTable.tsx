@@ -2,7 +2,10 @@
 
 import { useState, useMemo } from "react";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import { CheckCircleIcon as CheckCircleOutlineIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { Legend, LegendGroup, LegendItem } from "@/components/core/feedback/Legend";
+import { CompletionCheckmark } from "./CompletionCheckmark";
 import type { ProgressData, LessonConfig } from "../types";
 import type { GroupedAssignment } from "../utils/groupAssignments";
 
@@ -214,12 +217,11 @@ export function StudentProgressTable({
               {students.map((student, index) => {
                 const isEvenRow = index % 2 === 0;
                 const rowBg = isEvenRow ? "bg-white" : "bg-gray-50";
-                const topBorderColor = isEvenRow ? "border-t-white" : "border-t-gray-50";
-                const bottomBorderColor = isEvenRow ? "border-b-white" : "border-b-gray-50";
                 const pacingStatus = studentPacingStatus.get(student.studentId);
                 return (
                 <tr key={student.studentId} className={`${rowBg} hover:bg-blue-50`}>
-                  <td className={`sticky left-0 ${rowBg} px-4 py-1 text-xs text-gray-900 font-medium whitespace-nowrap border-r border-gray-200 z-10`}>
+                  <td className={`sticky left-0 ${rowBg} px-4 py-1 text-xs text-gray-900 font-medium whitespace-nowrap 
+                  -r border-b-4 border-gray-300 border-t-[1px] z-10`}>
                     <div className="flex items-center gap-2">
                       {student.studentName}
                       {pacingStatus && pacingStatus.type === 'zearn' && pacingStatus.lessonsAhead > 0 && (
@@ -248,6 +250,7 @@ export function StudentProgressTable({
 
                     // Check Zearn completion (from lesson progress)
                     const zearnCompleted = lessonProgress?.zearnCompleted;
+                    const zearnCompletionDate = lessonProgress?.zearnCompletionDate;
 
                     // Check Mastery Check completion
                     // If there's a paired mastery check, use its progress
@@ -260,32 +263,59 @@ export function StudentProgressTable({
                         ? lessonProgress?.isFullyComplete
                         : false;
 
+                    // Get mastery completion date from questions
+                    const masteryCompletionDate = masteryCompleted
+                      ? (masteryCheck ? masteryProgress : lessonProgress)?.questions
+                          ?.filter(q => q.completedAt)
+                          .map(q => q.completedAt!)
+                          .sort()
+                          .pop() // Get latest completion date
+                      : undefined;
+
                     return (
                       <td
                         key={lesson.podsieAssignmentId}
-                        className="p-0 text-center border-r border-gray-200"
+                        className="p-0 text-center border-r border-b-4 border-gray-300 border-t-[1px]"
                       >
                         <div className="flex flex-col">
                           {/* Zearn (top half) */}
                           <div
-                            className={`h-5 border-b border-gray-200 border-t-[3px] ${topBorderColor} ${
+                            className={`h-6 flex items-center justify-center ${
                               lesson.hasZearnActivity
                                 ? zearnCompleted
-                                  ? 'bg-purple-200'
+                                  ? 'bg-purple-50'
                                   : 'bg-gray-100'
                                 : ''
                             }`}
-                          />
+                          >
+                            {lesson.hasZearnActivity && (
+                              <CompletionCheckmark
+                                completed={Boolean(zearnCompleted)}
+                                completedAt={zearnCompletionDate}
+                                color="purple"
+                                size="small"
+                              />
+                            )}
+                          </div>
                           {/* Mastery Check (bottom half) */}
                           <div
-                            className={`h-5 border-b-[3px] ${bottomBorderColor} ${
+                            className={`h-6 flex items-center justify-center ${
                               hasMasteryCheck
                                 ? masteryCompleted
-                                  ? 'bg-green-200'
+                                  ? 'bg-green-50'
                                   : 'bg-gray-100'
                                 : ''
                             }`}
-                          />
+                          >
+                            {hasMasteryCheck && (
+                              <CompletionCheckmark
+                                completed={Boolean(masteryCompleted)}
+                                completedAt={masteryCompletionDate}
+                                color="green"
+                                size="small"
+                              />
+                            )}
+                          </div>
                         </div>
                       </td>
                     );
@@ -298,16 +328,40 @@ export function StudentProgressTable({
           </div>
           <Legend title="Key">
             <LegendGroup>
+              <span className="font-medium text-purple-700 mr-1">Zearn:</span>
               <LegendItem
-                icon={<div className="w-4 h-4 bg-purple-200 rounded" />}
-                label="Zearn Complete"
+                icon={<CheckCircleIcon className="w-5 h-5 text-purple-600" />}
+                label="Today"
               />
               <LegendItem
-                icon={<div className="w-4 h-4 bg-green-200 rounded" />}
-                label="Mastery Check Complete"
+                icon={<CheckCircleOutlineIcon className="w-5 h-5 text-purple-600" />}
+                label="Yesterday"
               />
               <LegendItem
-                icon={<div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded" />}
+                icon={<CheckIcon className="w-5 h-5 text-purple-600" />}
+                label="Earlier"
+              />
+              <LegendItem
+                icon={<span className="text-gray-400 text-xs w-5 h-5 flex items-center justify-center">—</span>}
+                label="Not Complete"
+              />
+            </LegendGroup>
+            <LegendGroup>
+              <span className="font-medium text-green-700 mr-1">Mastery Check:</span>
+              <LegendItem
+                icon={<CheckCircleIcon className="w-5 h-5 text-green-700" />}
+                label="Today"
+              />
+              <LegendItem
+                icon={<CheckCircleOutlineIcon className="w-5 h-5 text-green-700" />}
+                label="Yesterday"
+              />
+              <LegendItem
+                icon={<CheckIcon className="w-5 h-5 text-green-700" />}
+                label="Earlier"
+              />
+              <LegendItem
+                icon={<span className="text-gray-400 text-xs w-5 h-5 flex items-center justify-center">—</span>}
                 label="Not Complete"
               />
             </LegendGroup>
