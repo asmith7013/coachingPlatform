@@ -103,6 +103,9 @@ export function VelocityGraph({
       .filter((d) => isSchoolDay(d.date))
       .sort((a, b) => a.date.localeCompare(b.date));
 
+    // Use the max student count as the overall class size (avoids fluctuations from attendance)
+    const overallStudentCount = Math.max(...section.data.map((d) => d.studentsPresent), 1);
+
     // Calculate rolling 3-day average (only school days)
     const dataWithRollingAverage = filteredData.map((dataPoint, index) => {
       // Get the previous 2 school days plus the current day (3 days total)
@@ -123,12 +126,13 @@ export function VelocityGraph({
           totalCompletions -= d.byActivityType.sidekicks;
         }
 
+        // Always divide by overall student count (not per-day attendance)
+        const rawVelocity = totalCompletions / overallStudentCount;
+
         if (!adjustForBlockType || d.blockType !== 'double') {
-          // No adjustment: use raw completions / students
-          return d.studentsPresent > 0 ? totalCompletions / d.studentsPresent : 0;
+          return rawVelocity;
         }
         // With adjustment: divide by 2 for double blocks
-        const rawVelocity = d.studentsPresent > 0 ? totalCompletions / d.studentsPresent : 0;
         return rawVelocity / 2;
       };
 

@@ -31,17 +31,17 @@ export const SCHOOL_COLOR_FAMILIES = {
     ],
   },
   X644: {
-    name: 'greyscale',
+    name: 'forest',
     colors: [
-      '#1F2937', // gray-800 - very dark
-      '#374151', // gray-700 - dark
-      '#4B5563', // gray-600 - medium dark
-      '#6B7280', // gray-500 - medium
-      '#9CA3AF', // gray-400 - medium light
-      '#111827', // gray-900 - darkest
-      '#D1D5DB', // gray-300 - light
-      '#E5E7EB', // gray-200 - very light
-      '#0F172A', // slate-900 - slate dark
+      '#10B981', // emerald-500 - emerald
+      '#22C55E', // green-500 - green
+      '#84CC16', // lime-500 - lime
+      '#059669', // emerald-600 - darker emerald
+      '#16A34A', // green-600 - darker green
+      '#65A30D', // lime-600 - darker lime
+      '#34D399', // emerald-400 - lighter emerald
+      '#4ADE80', // green-400 - lighter green
+      '#A3E635', // lime-400 - lighter lime
     ],
   },
 } as const;

@@ -350,15 +350,26 @@ export async function getSectionVelocityByDateRange(
         current.setDate(current.getDate() + 1);
       }
 
+      // Helper to check if a date is a weekend
+      const isWeekend = (dateStr: string): boolean => {
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const d = new Date(year, month - 1, day);
+        const dayOfWeek = d.getDay();
+        return dayOfWeek === 0 || dayOfWeek === 6;
+      };
+
       for (const date of allDates) {
         // Determine block type for this date
         const blockType = getBlockType(date);
 
         // If no attendance data exists for a school day, assume all students are present
+        // Note: We check for weekend explicitly so sections without bell schedules still show data
         let studentsPresent = attendanceByDate.get(date)?.size;
-        if (studentsPresent === undefined && blockType !== 'none') {
+        if (studentsPresent === undefined && !isWeekend(date)) {
+          // Weekday with no attendance tracked - assume all students present
           studentsPresent = totalStudents;
         } else if (studentsPresent === undefined) {
+          // Weekend or explicitly no students
           studentsPresent = 0;
         }
 
