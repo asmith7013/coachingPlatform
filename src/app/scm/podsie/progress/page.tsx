@@ -411,8 +411,8 @@ export default function PodsieProgressPage() {
           )}
         </div>
 
-        {/* Pacing Progress Card - separate card below filters */}
-        {selectedSection && selectedUnit !== null && selectedLessonSection && lessons.length > 0 && (
+        {/* Pacing Progress Card - separate card below filters (hide for Unit Assessment) */}
+        {selectedSection && selectedUnit !== null && selectedLessonSection && selectedLessonSection !== "Unit Assessment" && lessons.length > 0 && (
           <PacingProgressCard
             pacingData={pacingData}
             selectedUnit={selectedUnit}
@@ -423,8 +423,8 @@ export default function PodsieProgressPage() {
           />
         )}
 
-        {/* Student Progress Table - below Pacing Progress Card */}
-        {selectedSection && selectedUnit !== null && selectedLessonSection && lessons.length > 0 && !loadingLessons && !loadingProgress && (
+        {/* Student Progress Table - below Pacing Progress Card (hide for Unit Assessment) */}
+        {selectedSection && selectedUnit !== null && selectedLessonSection && selectedLessonSection !== "Unit Assessment" && lessons.length > 0 && !loadingLessons && !loadingProgress && (
           <StudentProgressTable
             groupedAssignments={groupedAssignments}
             progressData={progressData}
@@ -513,8 +513,8 @@ export default function PodsieProgressPage() {
           <SelectFiltersState />
         )}
 
-        {/* Smartboard Display */}
-        {selectedSection && selectedUnit !== null && selectedLessonSection && lessons.length > 0 && scopeSequenceTag && (
+        {/* Smartboard Display (hide for Unit Assessment) */}
+        {selectedSection && selectedUnit !== null && selectedLessonSection && selectedLessonSection !== "Unit Assessment" && lessons.length > 0 && scopeSequenceTag && (
           <SmartboardDisplay
             assignments={lessons}
             progressData={progressData}

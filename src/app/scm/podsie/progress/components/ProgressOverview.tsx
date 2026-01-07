@@ -73,15 +73,20 @@ export function ProgressOverview({
         <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
           {lessons.length} {lessons.length === 1 ? 'Assignment' : 'Assignments'}
         </span>
-        <div className="flex-1 flex items-center gap-3">
-          <div className="flex-1 bg-gray-200 rounded-full h-3 max-w-md">
-            <div
-              className="h-3 rounded-full transition-all bg-gradient-to-r from-blue-500 to-blue-600"
-              style={{ width: `${overallProgress}%` }}
-            />
+        {/* Progress bar (hide for Unit Assessment, show spacer instead) */}
+        {selectedLessonSection !== 'Unit Assessment' ? (
+          <div className="flex-1 flex items-center gap-3">
+            <div className="flex-1 bg-gray-200 rounded-full h-3 max-w-md">
+              <div
+                className="h-3 rounded-full transition-all bg-gradient-to-r from-blue-500 to-blue-600"
+                style={{ width: `${overallProgress}%` }}
+              />
+            </div>
+            <span className="text-sm font-bold text-blue-700 min-w-[3rem]">{overallProgress}%</span>
           </div>
-          <span className="text-sm font-bold text-blue-700 min-w-[3rem]">{overallProgress}%</span>
-        </div>
+        ) : (
+          <div className="flex-1" />
+        )}
         <div className="flex items-center gap-2">
           <button
             onClick={onExportCsv}
@@ -110,65 +115,67 @@ export function ProgressOverview({
         </div>
       </div>
 
-      {/* Progress Cards Grid */}
-      {showingSections ? (
-        // When showing "All", group by section
-        <div className="space-y-6">
-          {groupedBySection.map(({ section, subsection, sectionDisplayName, assignments }) => (
-            <div key={`section-progress-${section}${subsection !== undefined ? `:${subsection}` : ''}`}>
-              {/* Section Header */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 px-3 py-1 rounded-r mb-3">
-                <h4 className="text-sm font-semibold text-blue-900">{sectionDisplayName}</h4>
-              </div>
+      {/* Progress Cards Grid (hide for Unit Assessment) */}
+      {selectedLessonSection !== 'Unit Assessment' && (
+        showingSections ? (
+          // When showing "All", group by section
+          <div className="space-y-6">
+            {groupedBySection.map(({ section, subsection, sectionDisplayName, assignments }) => (
+              <div key={`section-progress-${section}${subsection !== undefined ? `:${subsection}` : ''}`}>
+                {/* Section Header */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 px-3 py-1 rounded-r mb-3">
+                  <h4 className="text-sm font-semibold text-blue-900">{sectionDisplayName}</h4>
+                </div>
 
-              {/* Progress Cards for this section */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pl-4">
-                {assignments.map(({ lesson, masteryCheck }) => {
-                  const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.podsieAssignmentId}`;
-                  return (
-                    <LessonProgressCard
-                      key={`progress-${lesson.podsieAssignmentId}`}
-                      lesson={lesson}
-                      masteryCheck={masteryCheck || undefined}
-                      progressData={progressData}
-                      calculateSummaryStats={calculateSummaryStats}
-                      sectionName={section}
-                      onClick={() => {
-                        const element = document.getElementById(cardId);
-                        if (element) {
-                          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                      }}
-                    />
-                  );
-                })}
+                {/* Progress Cards for this section */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pl-4">
+                  {assignments.map(({ lesson, masteryCheck }) => {
+                    const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.podsieAssignmentId}`;
+                    return (
+                      <LessonProgressCard
+                        key={`progress-${lesson.podsieAssignmentId}`}
+                        lesson={lesson}
+                        masteryCheck={masteryCheck || undefined}
+                        progressData={progressData}
+                        calculateSummaryStats={calculateSummaryStats}
+                        sectionName={section}
+                        onClick={() => {
+                          const element = document.getElementById(cardId);
+                          if (element) {
+                            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          }
+                        }}
+                      />
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        // When showing a specific section, single grid
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {groupedAssignments.map(({ lesson, masteryCheck }) => {
-            const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.podsieAssignmentId}`;
-            return (
-              <LessonProgressCard
-                key={`progress-${lesson.podsieAssignmentId}`}
-                lesson={lesson}
-                masteryCheck={masteryCheck || undefined}
-                progressData={progressData}
-                calculateSummaryStats={calculateSummaryStats}
-                sectionName={selectedLessonSection}
-                onClick={() => {
-                  const element = document.getElementById(cardId);
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }}
-              />
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        ) : (
+          // When showing a specific section, single grid
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {groupedAssignments.map(({ lesson, masteryCheck }) => {
+              const cardId = `assignment-${lesson.section}-${lesson.unitLessonId}-${lesson.podsieAssignmentId}`;
+              return (
+                <LessonProgressCard
+                  key={`progress-${lesson.podsieAssignmentId}`}
+                  lesson={lesson}
+                  masteryCheck={masteryCheck || undefined}
+                  progressData={progressData}
+                  calculateSummaryStats={calculateSummaryStats}
+                  sectionName={selectedLessonSection}
+                  onClick={() => {
+                    const element = document.getElementById(cardId);
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }}
+                />
+              );
+            })}
+          </div>
+        )
       )}
     </div>
   );

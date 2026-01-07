@@ -55,15 +55,16 @@ export function AssignmentCard({
   onMasteryCheckSync,
   calculateSummaryStats: _calculateSummaryStats,
 }: AssignmentCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [syncingBoth, setSyncingBoth] = useState(false);
-
   // Check if this is an assessment lesson (either by activityType or section)
   const isAssessment =
     assignment.activityType === 'assessment' ||
     assignment.section === 'Assessment' ||
     assignment.section === 'Unit Assessment';
+
+  // For assessments, expand accordion by default
+  const [isExpanded, setIsExpanded] = useState(isAssessment);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [syncingBoth, setSyncingBoth] = useState(false);
 
   // For assessments, show detailed score and all questions by default
   // For non-assessments, default to false
