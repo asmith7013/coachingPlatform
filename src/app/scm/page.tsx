@@ -15,6 +15,8 @@ import {
   ArrowTrendingUpIcon,
   PresentationChartBarIcon,
   TruckIcon,
+  ListBulletIcon,
+  ClipboardDocumentCheckIcon,
 } from '@heroicons/react/24/outline';
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
@@ -24,50 +26,6 @@ export default function SCMHomePage() {
   const isCoach = hasRole('coach');
 
   const categories = [
-    {
-      title: "Roadmaps",
-      Icon: MapIcon,
-      iconType: "heroicon" as const,
-      description: "Visualizing Roadmaps Skills & Student Skill Progress",
-      pages: [
-        {
-          title: "Lesson by Lesson",
-          href: "/scm/roadmaps/scope-and-sequence",
-          Icon: CalendarDaysIcon,
-          description: "See how skills progress across lessons in each unit."
-        },
-        {
-          title: "Units",
-          href: "/scm/roadmaps/units",
-          Icon: BookOpenIcon,
-          description: "View units by grade level with their target and support skills."
-        },
-        {
-          title: "Skills",
-          href: "/scm/roadmaps/skills",
-          Icon: ChartBarIcon,
-          description: "Browse individual skills with teaching resources and prerequisites."
-        },
-        {
-          title: "Mastery Grid",
-          href: "/scm/roadmaps/mastery-grid",
-          Icon: TableCellsIcon,
-          description: "View student mastery progress by unit and section."
-        },
-        {
-          title: "History",
-          href: "/scm/roadmaps/history",
-          Icon: ClockIcon,
-          description: "View all student assessment attempts and progress over time."
-        },
-        {
-          title: "Progress",
-          href: "/scm/roadmaps/progress",
-          Icon: ArrowTrendingUpIcon,
-          description: "View roadmap completion progress by section with bar charts."
-        }
-      ]
-    },
     {
       title: "Podsie",
       iconLetter: "P",
@@ -87,10 +45,82 @@ export default function SCMHomePage() {
           description: "Track student progress on Podsie lessons and assessments."
         },
         {
+          title: "Assessment",
+          href: "/scm/podsie/assessment",
+          Icon: ClipboardDocumentCheckIcon,
+          description: "View and compare unit assessment scores across students."
+        },
+        {
           title: "Velocity",
           href: "/scm/podsie/velocity",
           Icon: ChartBarIcon,
           description: "Track class velocity and completion rates over time."
+        },
+        {
+          title: "History",
+          href: "/scm/roadmaps/history",
+          Icon: ClockIcon,
+          description: "View all student assessment attempts and progress over time."
+        }
+      ]
+    },
+    {
+      title: "Scope & Sequence",
+      Icon: ListBulletIcon,
+      iconType: "heroicon" as const,
+      description: "View curriculum structure and lesson progression",
+      pages: [
+        {
+          title: "Lesson by Lesson",
+          href: "/scm/scope-and-sequence/lesson-by-lesson",
+          Icon: CalendarDaysIcon,
+          description: "See how skills progress across lessons in each unit."
+        },
+        {
+          title: "Units",
+          href: "/scm/scope-and-sequence/units",
+          Icon: BookOpenIcon,
+          description: "View units by grade level with their target and support skills."
+        }
+      ]
+    },
+    {
+      title: "Worked Examples",
+      Icon: PresentationChartBarIcon,
+      iconType: "heroicon" as const,
+      description: "Browse and view worked example slide decks",
+      pages: [
+        {
+          title: "All Worked Examples",
+          href: "/scm/workedExamples/viewer",
+          Icon: PresentationChartBarIcon,
+          description: "View all scaffolded guidance slide decks."
+        }
+      ]
+    },
+    {
+      title: "Roadmaps",
+      Icon: MapIcon,
+      iconType: "heroicon" as const,
+      description: "Visualizing Roadmaps Skills & Student Skill Progress",
+      pages: [
+        {
+          title: "Skills",
+          href: "/scm/roadmaps/skills",
+          Icon: ChartBarIcon,
+          description: "Browse individual skills with teaching resources and prerequisites."
+        },
+        {
+          title: "Mastery Grid",
+          href: "/scm/roadmaps/mastery-grid",
+          Icon: TableCellsIcon,
+          description: "View student mastery progress by unit and section."
+        },
+        {
+          title: "Progress",
+          href: "/scm/roadmaps/progress",
+          Icon: ArrowTrendingUpIcon,
+          description: "View roadmap completion progress by section with bar charts."
         }
       ]
     },
@@ -117,20 +147,6 @@ export default function SCMHomePage() {
           href: "/scm/incentives/table",
           Icon: DocumentTextIcon,
           description: "View and edit all activity records."
-        }
-      ]
-    },
-    {
-      title: "Worked Examples",
-      Icon: PresentationChartBarIcon,
-      iconType: "heroicon" as const,
-      description: "Browse and view worked example slide decks",
-      pages: [
-        {
-          title: "All Worked Examples",
-          href: "/scm/workedExamples/viewer",
-          Icon: PresentationChartBarIcon,
-          description: "View all scaffolded guidance slide decks."
         }
       ]
     },

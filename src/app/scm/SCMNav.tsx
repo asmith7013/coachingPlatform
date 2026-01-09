@@ -74,33 +74,14 @@ export function SCMNav() {
 
   const categories: NavCategory[] = [
     {
-      label: "Roadmaps",
-      Icon: MapIcon,
-      items: [
-        { href: "/scm/roadmaps/scope-and-sequence", label: "Lesson by Lesson" },
-        { href: "/scm/roadmaps/units", label: "Units" },
-        { href: "/scm/roadmaps/skills", label: "Skills" },
-        { href: "/scm/roadmaps/mastery-grid", label: "Mastery Grid" },
-        { href: "/scm/roadmaps/history", label: "History" },
-        { href: "/scm/roadmaps/progress", label: "Progress" },
-      ],
-    },
-    {
       label: "Podsie",
       iconLetter: "P",
       items: [
         { href: "/scm/podsie/pace", label: "Pace" },
         { href: "/scm/podsie/progress", label: "Progress" },
+        { href: "/scm/podsie/assessment", label: "Assessment" },
         { href: "/scm/podsie/velocity", label: "Velocity" },
-      ],
-    },
-    {
-      label: "Incentives",
-      Icon: GiftIcon,
-      items: [
-        { href: "/scm/incentives/form", label: "Form" },
-        { href: "/scm/incentives/data", label: "Summary" },
-        { href: "/scm/incentives/table", label: "Table" },
+        { href: "/scm/roadmaps/history", label: "History" },
       ],
     },
     {
@@ -115,12 +96,33 @@ export function SCMNav() {
         { href: "/scm/workedExamples/create", label: "+ Create New" },
       ],
     },
+    {
+      label: "Roadmaps",
+      Icon: MapIcon,
+      items: [
+        { href: "/scm/roadmaps/skills", label: "Skills" },
+        { href: "/scm/roadmaps/mastery-grid", label: "Mastery Grid" },
+        { href: "/scm/roadmaps/progress", label: "Progress" },
+      ],
+    },
+    {
+      label: "Incentives",
+      Icon: GiftIcon,
+      items: [
+        { href: "/scm/incentives/form", label: "Form" },
+        { href: "/scm/incentives/data", label: "Summary" },
+        { href: "/scm/incentives/table", label: "Table" },
+      ],
+    },
     ...((isCoach || isSuperAdmin) ? [{
       label: "Logistics",
       Icon: TruckIcon,
       items: [
+        { href: "/scm/scope-and-sequence/lesson-by-lesson", label: "Lesson by Lesson" },
+        { href: "/scm/scope-and-sequence/units", label: "Units" },
+        { href: "/scm/logistics/scope-and-sequence", label: "Edit" },
+        { href: "---", label: "---" },
         { href: "/scm/logistics/calendar", label: "Unit Calendar" },
-        { href: "/scm/logistics/scope-and-sequence", label: "Scope & Sequence" },
       ],
     }] : []),
     ...(isSuperAdmin ? [{
@@ -147,7 +149,7 @@ export function SCMNav() {
           section: "Logistics",
           items: [
             { href: "/scm/logistics/calendar", label: "Unit Calendar", description: "Set unit schedule for each scope and sequence" },
-            { href: "/scm/logistics/scope-and-sequence", label: "Scope & Sequence", description: "Manage curriculum scope and sequence entries" },
+            { href: "/scm/logistics/scope-and-sequence", label: "Edit Scope & Sequence", description: "Manage curriculum scope and sequence entries" },
           ],
         },
       ],
