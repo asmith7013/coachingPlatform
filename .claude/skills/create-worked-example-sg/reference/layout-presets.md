@@ -39,6 +39,39 @@ Slides are composed using **atomic components** placed in **regions** defined by
 | `with-cfu` | 100% + overlay | Full-width + CFU question |
 | `two-column-with-cfu` | 40% / 60% + overlay | Two-column + CFU |
 
+## ⚠️ Column Content Rules (CRITICAL)
+
+**The 3-Second Scan Test:** Can a student understand the slide's key point in 3 seconds? If not, it's too cluttered.
+
+**Left and right columns serve DIFFERENT purposes. Never duplicate content.**
+
+### Left Column Purpose: TEXT CONTENT
+| Allowed | NOT Allowed |
+|---------|-------------|
+| Problem reminder (≤15 words) | Full problem statement |
+| Step badge + title | Explanatory subtitles |
+| Large main content (36-48px) | "First, let's..." prose |
+| Brief bullets (3-5 words each) | Redundant info boxes |
+
+### Right Column Purpose: VISUAL REPRESENTATION
+| Allowed | NOT Allowed |
+|---------|-------------|
+| Diagrams, graphs, tables | Text paragraphs |
+| Minimal labels (numbers, variables) | Explanatory sentences |
+| Annotations (arrows, highlights) | Duplicate explanations |
+| Visual representations of math | Same content as left column |
+
+### The Complementary Test
+```
+LEFT                    RIGHT
+─────────────           ─────────────
+"? × 6 = 30"      →     [Tape diagram with 6 in each box]
+"30 ÷ 6 = ?"            [Visual showing 5 groups]
+
+⚠️ Text explains WHAT. Visual shows HOW IT LOOKS.
+   Never write the same thing in both places.
+```
+
 ## Pixel Dimensions (960×540)
 
 **Source of truth:** [region-defaults.md](./region-defaults.md)

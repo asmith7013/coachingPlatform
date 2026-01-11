@@ -117,17 +117,18 @@ Read: .claude/skills/create-worked-example-sg/reference/layout-presets.md       
 - SVG Graph checklist
 - Pre-flight and completion checklists
 
-**Card-patterns for composing slides:**
-**simple-patterns/ (replace placeholders):**
-- `card-patterns/simple-patterns/title-zone.html` → Badge + Title + Subtitle
-- `card-patterns/simple-patterns/content-box.html` → Text, lists, equations, tables
-- `card-patterns/simple-patterns/cfu-answer-card.html` → CFU/Answer overlays (animated)
+**3 Core Patterns:**
 
-**complex-patterns/ (copy, modify, recalculate pixels):**
-- `card-patterns/complex-patterns/graph-snippet.html` → SVG graphs (copy and recalculate)
-- `card-patterns/complex-patterns/annotation-snippet.html` → SVG annotations (copy and recalculate)
-- `card-patterns/complex-patterns/visual-card-layers.html` → Right-column content with multiple elements (MANDATORY pattern)
-- `card-patterns/complex-patterns/printable-slide-snippet.html` → Printable worksheet
+| Region | Pattern | Purpose |
+|--------|---------|---------|
+| Header | `title-zone.html` | Badge + Title + Subtitle |
+| Left column | `content-box.html` | Problem reminder, equations, text |
+| Right column | `svg-visual` | Diagrams, graphs (see visuals/) |
+
+**Plus overlays and special cases:**
+- `cfu-answer-card.html` → CFU/Answer boxes (animated)
+- `graph-snippet.html` → Coordinate graphs (recalculate pixels)
+- `printable-slide-snippet.html` → Slide 9 only
 
 ---
 
@@ -135,19 +136,19 @@ Read: .claude/skills/create-worked-example-sg/reference/layout-presets.md       
 
 CFU/Answer boxes use **PPTX animation** (appear on click) - no duplicate slides needed.
 
-| # | Slide Type | Layout | Components |
-|---|------------|--------|------------|
-| 1 | Learning Goal | `full-width` | title-zone, content-box |
-| 2 | Problem Setup | `two-column` | title-zone, content-box, svg-card |
-| 3 | Step 1 Question + CFU | `two-column` | title-zone, content-box, svg-card, **cfu-card** (animated) |
-| 4 | Step 1 Answer | `two-column` | title-zone, content-box, svg-card, **answer-card** (animated) |
-| 5 | Step 2 Question + CFU | `two-column` | title-zone, content-box, svg-card, **cfu-card** (animated) |
-| 6 | Step 2 Answer | `two-column` | title-zone, content-box, svg-card, **answer-card** (animated) |
-| 7 | Step 3 Question + CFU | `two-column` | title-zone, content-box, svg-card, **cfu-card** (animated) |
-| 8 | Step 3 Answer | `two-column` | title-zone, content-box, svg-card, **answer-card** (animated) |
-| 9 | Printable | `full-width` | WHITE theme, portrait, practice problems embedded |
+| Slide # | Type | Layout | Left Column | Right Column | Overlay |
+|---------|------|--------|-------------|--------------|---------|
+| 1 | Learning Goal | `full-width` | content-box | — | — |
+| 2 | Problem Setup | `two-column` | content-box | svg-visual | — |
+| 3-8 | Step slides | `two-column` | content-box | svg-visual | cfu/answer |
+| 9 | Printable | `full-width` | printable | — | — |
 
-**Note:** Practice problems are embedded directly in the Printable slide (slide 9) rather than having separate presentation slides. Students apply the strategy independently on the printable worksheet.
+**Left column content-box always contains (slides 2-8):**
+1. Problem reminder (≤15 words)
+2. Main content in large text (36-48px)
+3. Minimal supporting text only if needed
+
+**⚠️ ALWAYS READ and COPY from snippet files.** Never write HTML from scratch.
 
 ---
 

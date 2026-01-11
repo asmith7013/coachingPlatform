@@ -12,6 +12,220 @@ export type VisualType = DeckVisualType;
 // SVG subtypes (only when VisualType is 'svg-visual')
 export type { SvgSubtype };
 
+// ============================================================
+// Visual Plan Types - One for each visual type from Phase 2
+// ============================================================
+
+// Tape Diagram (division, multiplication, part-whole)
+export interface TapeDiagramPlan {
+  type: 'tape-diagram';
+  boxes: number;
+  valuePerBox: number | string;
+  total: number | string;
+  unknownPosition: 'start' | 'box' | 'total';
+}
+
+// Double Number Line (ratios, unit rates, percentages)
+export interface DoubleNumberLinePlan {
+  type: 'double-number-line';
+  quantityA: { label: string; values: (number | string)[] };
+  quantityB: { label: string; values: (number | string)[] };
+  highlightPair?: [number | string, number | string];
+}
+
+// Area Model (multiplication, distributive property)
+export interface AreaModelPlan {
+  type: 'area-model';
+  dimensions: [number | string, number | string];
+  partialProducts: (number | string)[][];
+}
+
+// Number Line (integers, inequalities, operations)
+export interface NumberLinePlan {
+  type: 'number-line';
+  range: [number, number];
+  markedPoints: { value: number; label?: string; style: 'closed' | 'open' }[];
+  arrows?: { from: number; to: number; label?: string }[];
+}
+
+// Ratio Table (equivalent ratios, scaling)
+export interface RatioTablePlan {
+  type: 'ratio-table';
+  rows: { label: string; values: (number | string)[] }[];
+  scaleFactors?: string[];
+}
+
+// Hanger Diagram (equation solving, balance)
+export interface HangerDiagramPlan {
+  type: 'hanger-diagram';
+  leftSide: string;
+  rightSide: string;
+  shapes?: { triangle?: string; square?: string };
+}
+
+// Input-Output Table (functions, patterns, rules)
+export interface InputOutputTablePlan {
+  type: 'input-output-table';
+  rule: string;
+  inputs: (number | string)[];
+  outputs: (number | string)[];
+  unknownPosition: 'input' | 'output' | 'both';
+}
+
+// Grid Diagram (area by counting, decomposing shapes)
+export interface GridDiagramPlan {
+  type: 'grid-diagram';
+  rows: number;
+  cols: number;
+  shadedRegions?: { startRow: number; startCol: number; endRow: number; endCol: number; color?: string }[];
+  unitLabel: string;
+  showGrid: boolean;
+}
+
+// Net Diagram (surface area, 3D→2D unfolding)
+export interface NetDiagramPlan {
+  type: 'net-diagram';
+  shapeType: 'rectangular-prism' | 'triangular-prism' | 'pyramid' | 'cube';
+  faces: { shape: 'rectangle' | 'triangle'; width: number; height: number; label?: string }[];
+  foldLines: boolean;
+  dimensions: { length: number; width: number; height: number };
+}
+
+// Measurement Diagram (base & height, labeled dimensions)
+export interface MeasurementDiagramPlan {
+  type: 'measurement-diagram';
+  shapeType: 'triangle' | 'parallelogram' | 'trapezoid' | 'rectangle';
+  measurements: { label: string; value: number | string; position?: string }[];
+  showRightAngle?: boolean;
+  showDashedHeight?: boolean;
+}
+
+// Discrete Diagram (objects in groups, discrete ratios)
+export interface DiscreteDiagramPlan {
+  type: 'discrete-diagram';
+  groups: number;
+  itemsPerGroup: number;
+  totalItems: number;
+  visualType: 'circles' | 'squares' | 'icons';
+  arrangement: 'rows' | 'clusters';
+}
+
+// Base-Ten Diagram (place value, decimal operations)
+export interface BaseTenDiagramPlan {
+  type: 'base-ten-diagram';
+  hundreds: number;
+  tens: number;
+  ones: number;
+  operation: 'none' | 'addition' | 'subtraction' | 'regrouping';
+  showValues?: boolean;
+}
+
+// Dot Plot (data distributions, frequencies)
+export interface DotPlotPlan {
+  type: 'dot-plot';
+  dataPoints: number[];
+  axisLabel: string;
+  axisRange: [number, number];
+  title?: string;
+}
+
+// Box Plot (quartiles, variability)
+export interface BoxPlotPlan {
+  type: 'box-plot';
+  min: number;
+  q1: number;
+  median: number;
+  q3: number;
+  max: number;
+  outliers?: number[];
+  axisLabel: string;
+  axisRange: [number, number];
+}
+
+// Bar Graph (comparing frequencies)
+export interface BarGraphPlan {
+  type: 'bar-graph';
+  categories: string[];
+  values: number[];
+  orientation: 'vertical' | 'horizontal';
+  axisLabel: string;
+  title?: string;
+}
+
+// Tree Diagram (probability, sample spaces)
+export interface TreeDiagramPlan {
+  type: 'tree-diagram';
+  levels: { outcomes: string[]; probabilities: number[] }[];
+  finalOutcomes: string[];
+  highlightPath?: string[];
+}
+
+// Circle Diagram (circles with labeled parts)
+export interface CircleDiagramPlan {
+  type: 'circle-diagram';
+  radius: number;
+  diameter: number;
+  circumference: string | number;
+  showCenter?: boolean;
+  labeledParts: ('radius' | 'diameter' | 'circumference' | 'center' | 'area')[];
+  unit?: string;
+}
+
+// Scale Drawing (maps, floor plans, blueprints)
+export interface ScaleDrawingPlan {
+  type: 'scale-drawing';
+  scaleFactor: string;
+  drawingMeasurements: { label: string; value: number; unit: string }[];
+  actualMeasurements: { label: string; value: number; unit: string }[];
+  drawingType: 'map' | 'floor-plan' | 'blueprint' | 'other';
+}
+
+// Scaled Figures (original vs copy comparison)
+export interface ScaledFiguresPlan {
+  type: 'scaled-figures';
+  originalDimensions: { label: string; value: number }[];
+  scaleFactor: number;
+  copyDimensions: { label: string; value: number }[];
+  shapeType?: 'rectangle' | 'triangle' | 'polygon';
+  showLabels?: boolean;
+}
+
+// Other/Custom diagrams
+export interface OtherVisualPlan {
+  type: 'other';
+  description: string;
+  elements?: string[];
+  labels?: string[];
+  annotations?: string[];
+}
+
+// Union of all visual plan types (except coordinate-graph which uses GraphPlan)
+export type VisualPlan =
+  | TapeDiagramPlan
+  | DoubleNumberLinePlan
+  | AreaModelPlan
+  | NumberLinePlan
+  | RatioTablePlan
+  | HangerDiagramPlan
+  | InputOutputTablePlan
+  | GridDiagramPlan
+  | NetDiagramPlan
+  | MeasurementDiagramPlan
+  | DiscreteDiagramPlan
+  | BaseTenDiagramPlan
+  | DotPlotPlan
+  | BoxPlotPlan
+  | BarGraphPlan
+  | TreeDiagramPlan
+  | CircleDiagramPlan
+  | ScaleDrawingPlan
+  | ScaledFiguresPlan
+  | OtherVisualPlan;
+
+// ============================================================
+// Graph Plan - Coordinate plane visualizations
+// ============================================================
+
 // Graph plan for coordinate plane visualizations (required when svgSubtype is 'coordinate-graph')
 // This captures pre-calculated mathematical data to ensure accurate graph generation
 export interface GraphPlan {
@@ -92,8 +306,12 @@ export interface Scenario {
   themeIcon: string;
   numbers: string;
   description: string;
-  // Graph plan for this scenario - only when visualType is 'svg-visual' and svgSubtype is 'coordinate-graph'
-  // Each scenario needs its own graphPlan with that scenario's specific equations and values
+  // Problem reminder (≤15 words) - condensed summary for slides 2-8
+  problemReminder?: string;
+  // Visual plan for non-coordinate-graph visuals (tape-diagram, double-number-line, etc.)
+  visualPlan?: VisualPlan;
+  // Graph plan for coordinate graphs (kept for backward compatibility)
+  // Only when visualType is 'svg-visual' and svgSubtype is 'coordinate-graph'
   graphPlan?: GraphPlan;
 }
 

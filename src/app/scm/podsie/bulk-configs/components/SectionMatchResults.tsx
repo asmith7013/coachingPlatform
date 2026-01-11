@@ -7,9 +7,11 @@ import {
   XCircleIcon,
   ChevronDownIcon,
   ChevronRightIcon,
+  PlusIcon,
 } from "@heroicons/react/24/solid";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { ExistingMatchRow } from "./ExistingMatchRow";
+import { CreateLessonModal } from "./CreateLessonModal";
 import type { BulkMatchResult, AssignmentMatchResult, ConflictResult, AvailableLesson } from "@/app/actions/scm/podsie/podsie-sync";
 import type { PodsieAssignmentInfo } from "@/app/actions/scm/podsie/podsie-sync";
 
@@ -26,6 +28,7 @@ interface SectionMatchResultsProps {
   onSaveAllMatches: (matches: AssignmentMatchResult[]) => Promise<void>;
   onManualMatch: (assignment: PodsieAssignmentInfo, lesson: AvailableLesson) => Promise<void>;
   onUpdateQuestionMap?: (podsieAssignmentId: string, questionMapId: string) => Promise<void>;
+  onLessonCreated?: () => void;
   savedQuestionMaps?: SavedQuestionMap[];
   savingMatchId: number | null;
   savingAll: boolean;
@@ -41,6 +44,7 @@ export function SectionMatchResults({
   onSaveAllMatches,
   onManualMatch,
   onUpdateQuestionMap,
+  onLessonCreated,
   savedQuestionMaps = [],
   savingMatchId,
   savingAll,
@@ -235,6 +239,8 @@ export function SectionMatchResults({
                     assignment={assignment}
                     availableLessons={result.availableLessons}
                     onManualMatch={onManualMatch}
+                    onLessonCreated={onLessonCreated}
+                    scopeTag={result.scopeTag}
                     isSaving={savingMatchId === assignment.assignmentId}
                   />
                 ))}
@@ -396,6 +402,8 @@ interface UnmatchedRowProps {
   assignment: PodsieAssignmentInfo;
   availableLessons: AvailableLesson[];
   onManualMatch: (assignment: PodsieAssignmentInfo, lesson: AvailableLesson) => Promise<void>;
+  onLessonCreated?: () => void;
+  scopeTag?: string;
   isSaving: boolean;
 }
 
@@ -413,8 +421,9 @@ function extractUnitNumber(unitLessonId: string): string {
   return match ? match[1] : "0";
 }
 
-function UnmatchedRow({ assignment, availableLessons, onManualMatch, isSaving }: UnmatchedRowProps) {
+function UnmatchedRow({ assignment, availableLessons, onManualMatch, onLessonCreated, scopeTag, isSaving }: UnmatchedRowProps) {
   const [selectedLessonId, setSelectedLessonId] = useState<string>("");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Group lessons by unit number
   const groupedLessons = useMemo(() => {
@@ -444,6 +453,12 @@ function UnmatchedRow({ assignment, availableLessons, onManualMatch, isSaving }:
     if (lesson) {
       onManualMatch(assignment, lesson);
     }
+  };
+
+  const handleLessonCreated = (lessonId: string) => {
+    console.log('Created lesson:', lessonId);
+    // Trigger a refresh of the available lessons
+    onLessonCreated?.();
   };
 
   return (
@@ -477,6 +492,14 @@ function UnmatchedRow({ assignment, availableLessons, onManualMatch, isSaving }:
           ))}
         </select>
         <button
+          onClick={() => setIsCreateModalOpen(true)}
+          className="px-3 py-1.5 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700 cursor-pointer flex items-center gap-1"
+          title="Create new lesson entry"
+        >
+          <PlusIcon className="w-4 h-4" />
+          New
+        </button>
+        <button
           onClick={handleSave}
           disabled={!selectedLessonId || isSaving}
           className="px-3 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1"
@@ -491,6 +514,15 @@ function UnmatchedRow({ assignment, availableLessons, onManualMatch, isSaving }:
           )}
         </button>
       </div>
+
+      {/* Create Lesson Modal */}
+      <CreateLessonModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreated={handleLessonCreated}
+        initialLessonName={assignment.assignmentName}
+        initialScopeTag={scopeTag}
+      />
     </div>
   );
 }

@@ -1303,6 +1303,32 @@ Visual structure reference for common math representations used in Illustrative 
 
 ---
 
+## ⚠️ CRITICAL: Simple Visuals That Speak for Themselves
+
+**The visual should be immediately understandable WITHOUT text explanation.**
+
+### What This Means:
+- A tape diagram showing \`? × 6 = 30\` is self-explanatory
+- A graph with labeled axes and plotted points is self-explanatory
+- NO "Reading the graph: At point (6,12)..." info boxes needed
+- NO text boxes inside the SVG explaining what's already shown
+
+### The "Delete Test"
+If you can delete a text element and the visual still makes sense → delete it.
+
+### Labels vs. Explanations
+| ✅ ALLOWED (Labels) | ❌ NOT ALLOWED (Explanations) |
+|---------------------|-------------------------------|
+| "6" inside a box | "Each box represents 6 nuggets" |
+| "?" at start of tape | "The question mark shows what we're solving for" |
+| "y = 2x" next to line | "This line represents the equation y = 2x" |
+| Axis labels: "Time (sec)" | "The x-axis shows time in seconds" |
+
+### Size Within Column
+Visuals should **FILL their column** - use the full available width/height. Don't create small, cramped diagrams with excessive whitespace.
+
+---
+
 ## Double Number Line
 **Use for:** Ratios, percentages, proportional reasoning, unit rates
 **IM Grade Level:** Grade 6 Unit 2 (introduced), used through Grade 7
@@ -1592,6 +1618,224 @@ Input →   │      [ FUNCTION MACHINE ]   │   → Output
 
 ---
 
+## Grid Diagram
+**Use for:** Decomposing shapes into unit squares, finding area by counting
+**IM Grade Level:** Grade 6 Unit 1 (Area and Surface Area)
+
+### Basic grid (for area):
+\`\`\`
+┌───┬───┬───┬───┬───┐
+│ 1 │ 2 │ 3 │ 4 │ 5 │
+├───┼───┼───┼───┼───┤
+│ 6 │ 7 │ 8 │ 9 │10 │
+├───┼───┼───┼───┼───┤
+│11 │12 │13 │14 │15 │
+└───┴───┴───┴───┴───┘
+     Area = 15 square units
+\`\`\`
+
+### Decomposed shape (L-shape):
+\`\`\`
+┌───┬───┬───┐
+│   │   │   │  ← 3 units
+├───┼───┼───┤
+│   │   │   │  ← 3 units
+├───┼───┴───┘
+│   │          ← 2 units
+├───┤
+│   │
+└───┘
+  Total: 3 + 3 + 2 = 8 square units
+\`\`\`
+
+**Key features:**
+- Each cell represents 1 square unit
+- Can number cells for counting
+- Show decomposition into rectangles
+- Label dimensions on edges
+
+---
+
+## Net Diagram
+**Use for:** Surface area of prisms and pyramids, visualizing 3D shapes unfolded
+**IM Grade Level:** Grade 6 Unit 1 (Area and Surface Area)
+
+### Net of rectangular prism:
+\`\`\`
+        ┌─────────┐
+        │   TOP   │
+        │  4 × 3  │
+┌───────┼─────────┼───────┬─────────┐
+│ LEFT  │  FRONT  │ RIGHT │  BACK   │
+│ 3 × 2 │  4 × 2  │ 3 × 2 │  4 × 2  │
+└───────┼─────────┼───────┴─────────┘
+        │ BOTTOM  │
+        │  4 × 3  │
+        └─────────┘
+\`\`\`
+
+### Net of triangular prism:
+\`\`\`
+        ╱╲
+       ╱  ╲
+      ╱ △  ╲   ← triangular face
+     ╱──────╲
+┌────────────────┐
+│                │
+│   RECTANGLE    │  ← rectangular face
+│                │
+└────────────────┘
+\`\`\`
+
+**Key features:**
+- Show all faces laid flat
+- Label each face with dimensions
+- Indicate which edges connect when folded
+- Use dotted lines for fold lines
+
+---
+
+## Measurement Diagram
+**Use for:** Showing base, height, and other measurements on geometric shapes
+**IM Grade Level:** Grade 6 Unit 1 (Area and Surface Area)
+
+### Parallelogram with height:
+\`\`\`
+    ┌──────────────────┐
+   ╱│                 ╱
+  ╱ │ h = 4         ╱
+ ╱  │              ╱
+╱   ↓             ╱
+└──────────────────┘
+    b = 8
+\`\`\`
+
+### Triangle with base and height:
+\`\`\`
+        ╱╲
+       ╱  ╲
+      ╱    ╲
+     ╱   │  ╲
+    ╱    │h  ╲
+   ╱     │    ╲
+  ╱      ↓     ╲
+ ╱───────────────╲
+        b
+\`\`\`
+
+### Rectangle with dimensions:
+\`\`\`
+      6 cm
+  ┌──────────┐
+  │          │
+4 │          │ 4
+  │          │
+  └──────────┘
+      6 cm
+\`\`\`
+
+**Key features:**
+- Clearly mark base (b) and height (h)
+- Height is PERPENDICULAR to base (show right angle)
+- Use arrows to indicate measurements
+- Label with units when applicable
+
+---
+
+## Discrete Diagram
+**Use for:** Showing objects/groups for ratio problems, "for every" relationships
+**IM Grade Level:** Grade 6 Unit 2 (Introducing Ratios)
+
+### Objects in groups:
+\`\`\`
+Apples:   🍎 🍎 🍎 🍎 🍎    (5 apples)
+
+Oranges:  🍊 🍊 🍊          (3 oranges)
+
+Ratio: 5 apples for every 3 oranges
+\`\`\`
+
+### With grouping brackets:
+\`\`\`
+┌─────────────┐  ┌─────────────┐
+│ ● ● ●       │  │ ● ● ●       │
+│    Group 1  │  │    Group 2  │
+└─────────────┘  └─────────────┘
+
+3 per group × 2 groups = 6 total
+\`\`\`
+
+### Array format:
+\`\`\`
+○ ○ ○ ○ ○   ← 5 circles
+○ ○ ○ ○ ○   ← 5 circles
+○ ○ ○ ○ ○   ← 5 circles
+─────────
+   15 total (3 rows × 5 columns)
+\`\`\`
+
+**Key features:**
+- Use simple shapes (●, ○, □) or emoji icons
+- Group related items visually
+- Show "for every" relationships clearly
+- Can use arrays for multiplication
+
+---
+
+## Base-Ten Diagram
+**Use for:** Place value operations, addition/subtraction/multiplication with regrouping
+**IM Grade Level:** Grade 5-6 Unit 5 (Arithmetic in Base Ten)
+
+### Place value blocks:
+\`\`\`
+Hundreds (100)     Tens (10)      Ones (1)
+┌─────────┐       ┌─┐ ┌─┐        ●  ●
+│         │       │ │ │ │        ●
+│   100   │       │ │ │ │
+│         │       └─┘ └─┘
+└─────────┘        20             3
+
+         Number: 123
+\`\`\`
+
+### Addition with regrouping:
+\`\`\`
+    Tens    Ones
+    ┌─┐     ●●●●●
+    │ │     ●●●      = 38
+    └─┘
+
+  + ┌─┐     ●●●●
+    │ │     ●●●●●    = 29
+    └─┘
+
+  ──────────────────
+    ┌─┐┌─┐  ●●●●●
+    │ ││ │  ●●       = 67
+    └─┘└─┘
+
+(10 ones → 1 ten)
+\`\`\`
+
+### Expanded form:
+\`\`\`
+347 = 300 + 40 + 7
+
+┌─────────┐ ┌─────────┐ ┌─────────┐   ┌─┐┌─┐┌─┐┌─┐   ●●●●
+│   100   │ │   100   │ │   100   │   │ ││ ││ ││ │   ●●●
+└─────────┘ └─────────┘ └─────────┘   └─┘└─┘└─┘└─┘
+     3 hundreds              4 tens       7 ones
+\`\`\`
+
+**Key features:**
+- Large squares = hundreds (100)
+- Tall rectangles = tens (10)
+- Small dots/squares = ones (1)
+- Show regrouping with arrows
+- Label place values clearly
+
+---
+
 ## Creating Custom Diagrams
 
 If your problem doesn't fit these patterns, create a custom SVG following these rules:
@@ -1767,6 +2011,39 @@ Slides are composed using **atomic components** placed in **regions** defined by
 | \`graph-heavy\` | 35% / 65% | Narrow text + large graph |
 | \`with-cfu\` | 100% + overlay | Full-width + CFU question |
 | \`two-column-with-cfu\` | 40% / 60% + overlay | Two-column + CFU |
+
+## ⚠️ Column Content Rules (CRITICAL)
+
+**The 3-Second Scan Test:** Can a student understand the slide's key point in 3 seconds? If not, it's too cluttered.
+
+**Left and right columns serve DIFFERENT purposes. Never duplicate content.**
+
+### Left Column Purpose: TEXT CONTENT
+| Allowed | NOT Allowed |
+|---------|-------------|
+| Problem reminder (≤15 words) | Full problem statement |
+| Step badge + title | Explanatory subtitles |
+| Large main content (36-48px) | "First, let's..." prose |
+| Brief bullets (3-5 words each) | Redundant info boxes |
+
+### Right Column Purpose: VISUAL REPRESENTATION
+| Allowed | NOT Allowed |
+|---------|-------------|
+| Diagrams, graphs, tables | Text paragraphs |
+| Minimal labels (numbers, variables) | Explanatory sentences |
+| Annotations (arrows, highlights) | Duplicate explanations |
+| Visual representations of math | Same content as left column |
+
+### The Complementary Test
+\`\`\`
+LEFT                    RIGHT
+─────────────           ─────────────
+"? × 6 = 30"      →     [Tape diagram with 6 in each box]
+"30 ÷ 6 = ?"            [Visual showing 5 groups]
+
+⚠️ Text explains WHAT. Visual shows HOW IT LOOKS.
+   Never write the same thing in both places.
+\`\`\`
 
 ## Pixel Dimensions (960×540)
 
@@ -2185,33 +2462,9 @@ Spacious hero sections:   20-24px padding
 
 ## 8. Charts and Tables
 
-### Tables: Use IMAGE_REGION_CONTAINER
+### Use PptxGenJS APIs (Not HTML)
 
-**CRITICAL:** Tables in the right visual area MUST use \`IMAGE_REGION_CONTAINER\` from templates.ts.
-This wraps the table in SVG foreignObject, triggering screenshot rendering for pixel-perfect PPTX export.
-
-\`\`\`html
-<!-- CORRECT: Table wrapped in IMAGE_REGION_CONTAINER -->
-<div data-pptx-region="svg-container"
-     data-pptx-x="408" data-pptx-y="150"
-     data-pptx-w="532" data-pptx-h="360">
-  <svg viewBox="0 0 492 320" width="492" height="320" xmlns="http://www.w3.org/2000/svg">
-    <foreignObject x="0" y="0" width="492" height="320">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Arial, sans-serif;">
-        <table style="...">
-          <!-- table content -->
-        </table>
-      </div>
-    </foreignObject>
-  </svg>
-</div>
-\`\`\`
-
-**Why:** Raw HTML tables don't export to PPTX properly. The SVG foreignObject wrapper triggers the Puppeteer renderer, producing a pixel-perfect PNG.
-
-### Charts: Use PptxGenJS APIs (Not HTML)
-
-Don't render charts in HTML. Use placeholders:
+Don't render charts/tables in HTML. Use placeholders:
 
 \`\`\`html
 <div class="placeholder" id="chart-area"></div>

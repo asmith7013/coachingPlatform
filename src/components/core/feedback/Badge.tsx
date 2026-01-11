@@ -83,12 +83,12 @@ const badge = tv({
     {
       appearance: 'outline',
       intent: 'primary',
-      className: `${ringColors.light.primary} ${textColors.primary} ${backgroundColors.light.primary}`,
+      className: `border-primary-300 ${textColors.primary} bg-primary-50`,
     },
     {
       appearance: 'outline',
       intent: 'secondary',
-      className: `${backgroundColors.light.secondary} ${textColors.secondary} ${ringColors.secondary}`,
+      className: `border-secondary-300 ${textColors.secondary} bg-secondary-50`,
     },
     {
       appearance: 'outline',

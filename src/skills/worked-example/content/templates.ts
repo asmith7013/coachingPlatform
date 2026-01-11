@@ -129,6 +129,15 @@ export const CONTENT_BOX = `
   The universal container for ALL text-based content types.
   Mix and match paragraphs, lists, equations, tables inside.
 
+  ⚠️ SIZE CONFIGURATION (for ~380px column width):
+  Choose size based on content role. Use LARGE when element is the focus.
+
+  | Element      | Small | Default | Large |
+  |--------------|-------|---------|-------|
+  | Header       | 14px  | 18px    | 24px  |
+  | Body         | 13px  | 16px    | 18px  |
+  | Main content | 24px  | 36px    | 48px  |
+
   Data attributes for PPTX export:
   - data-pptx-region: "content-box" | "left-column" | "problem-statement"
   - data-pptx-x, y, w, h: Position in pixels (960x540 coordinate system)
@@ -162,53 +171,57 @@ export const CONTENT_BOX = `
   ============================================================
 -->
 
-<!-- PROSE: Simple paragraph -->
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+<!-- PROSE: Simple paragraph (16px default) -->
+<p style="margin: 0; font-size: 16px; line-height: 1.5; color: #1d1d1d;">
   Prose content here...
 </p>
 
-<!-- PROSE with header -->
-<h3 style="margin: 0 0 12px 0; font-size: 15px; font-weight: bold; color: #1d1d1d;">Section Header</h3>
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+<!-- PROSE with header (18px header, 16px body) -->
+<h3 style="margin: 0 0 12px 0; font-size: 18px; font-weight: bold; color: #1d1d1d;">Section Header</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.5; color: #1d1d1d;">
   Content after header...
 </p>
 
 <!-- PROSE with inline formatting -->
-<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+<p style="margin: 0; font-size: 16px; line-height: 1.5; color: #1d1d1d;">
   <strong style="color: #1791e8;">Think:</strong> What operation does this describe?
 </p>
 
-<!-- BULLET LIST -->
-<ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+<!-- BULLET LIST (16px) -->
+<ul style="margin: 0; padding-left: 20px; font-size: 16px; line-height: 1.5; color: #1d1d1d;">
   <li>First point</li>
   <li>Second point</li>
   <li style="color: #1791e8; font-weight: bold;">Highlighted point</li>
 </ul>
 
-<!-- NUMBERED LIST -->
-<ol style="margin: 0; padding-left: 24px; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+<!-- NUMBERED LIST (16px) -->
+<ol style="margin: 0; padding-left: 24px; font-size: 16px; line-height: 1.5; color: #1d1d1d;">
   <li>Step one</li>
   <li>Step two</li>
   <li>Step three</li>
 </ol>
 
-<!-- EQUATION (centered, Georgia font) -->
-<p style="margin: 16px 0; font-family: Georgia, serif; font-size: 24px; font-style: italic; color: #1d1d1d; text-align: center;">
+<!-- MAIN CONTENT - Default (36px) - equation, key phrase, or focus text -->
+<p style="margin: 16px 0; font-family: Georgia, serif; font-size: 36px; font-style: italic; color: #1d1d1d; text-align: center;">
   y = mx + b
+</p>
+
+<!-- MAIN CONTENT - Large (48px) - Use when this is THE focus of the slide -->
+<p style="margin: 16px 0; font-family: Georgia, serif; font-size: 48px; font-style: italic; color: #1d1d1d; text-align: center;">
+  30 ÷ 6 = ?
 </p>
 
 <!-- EQUATION with work shown -->
 <div style="text-align: center; margin: 12px 0;">
-  <p style="margin: 0 0 8px 0; font-family: Georgia, serif; font-size: 18px; color: #737373;">
+  <p style="margin: 0 0 8px 0; font-family: Georgia, serif; font-size: 24px; color: #737373;">
     36 ÷ 4 = ?
   </p>
-  <p style="margin: 0; font-family: Georgia, serif; font-size: 22px; font-weight: bold; color: #1791e8;">
+  <p style="margin: 0; font-family: Georgia, serif; font-size: 32px; font-weight: bold; color: #1791e8;">
     Answer: 9
   </p>
 </div>
 
-<!-- TABLE - Simple inline table (use only in left-column/content areas) -->
-<!-- For tables in the right visual area, use TABLE_SVG_CONTAINER below instead -->
+<!-- TABLE -->
 <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
   <thead>
     <tr style="background: #f5f5f5;">
@@ -243,17 +256,17 @@ export const CONTENT_BOX = `
      data-pptx-w="{{left-column.w}}" data-pptx-h="{{left-column.h}}"
      style="background: #f5f5f5; border-radius: 8px; padding: 16px;">
 
-  <h3 style="margin: 0 0 12px 0; font-size: 15px; font-weight: bold; color: #1d1d1d;">Problem</h3>
+  <h3 style="margin: 0 0 12px 0; font-size: 18px; font-weight: bold; color: #1d1d1d;">Problem</h3>
 
-  <p style="margin: 0 0 16px 0; font-size: 14px; line-height: 1.6; color: #1d1d1d;">
+  <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.5; color: #1d1d1d;">
     A phone plan charges $20 base plus $5 per hour of usage.
   </p>
 
-  <p style="margin: 0 0 8px 0; font-family: Georgia, serif; font-size: 20px; text-align: center; color: #1d1d1d;">
+  <p style="margin: 0 0 8px 0; font-family: Georgia, serif; font-size: 36px; text-align: center; color: #1d1d1d;">
     C = $20 + $5 × h
   </p>
 
-  <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; color: #1d1d1d;">
+  <ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.5; color: #1d1d1d;">
     <li>C = total cost</li>
     <li>h = hours used</li>
   </ul>
@@ -399,46 +412,6 @@ export const SVG_CARD = `
      style="background: #f5f5f5; border-radius: 8px; padding: 16px;">
   <svg viewBox="0 0 880 320" style="width: 880px; height: 320px;">
     <!-- Full-width graph content -->
-  </svg>
-</div>
-`;
-
-/**
- * Image Region Container - Renders ANY HTML content as an image in PPTX
- *
- * Use this to wrap complex HTML (tables, styled content) that needs pixel-perfect
- * PPTX export. The SVG foreignObject triggers the image renderer.
- *
- * When to use:
- * - Tables with styled headers/borders
- * - Complex styled layouts
- * - Any content that doesn't render well as native PPTX elements
- */
-export const IMAGE_REGION_CONTAINER = `
-<!--
-  ============================================================
-  IMAGE REGION - Renders HTML as screenshot for PPTX export
-  ============================================================
-  Wrap ANY HTML content in this container to render it as a PNG image.
-  The SVG foreignObject triggers the Puppeteer screenshot renderer.
-
-  USAGE: Replace the inner content with your HTML (tables, styled divs, etc.)
-  POSITION: Adjust data-pptx-x/y/w/h and viewBox/width/height to match your content.
-
-  Default position (two-column right): x=408, y=150, w=532, h=360
-  ============================================================
--->
-<div data-pptx-region="svg-container"
-     data-pptx-x="408" data-pptx-y="150"
-     data-pptx-w="532" data-pptx-h="360"
-     class="col center"
-     style="background: #f5f5f5; border-radius: 8px; padding: 20px;">
-  <svg viewBox="0 0 492 320" width="492" height="320" xmlns="http://www.w3.org/2000/svg">
-    <foreignObject x="0" y="0" width="492" height="320">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%; font-family: Arial, sans-serif;">
-        <!-- YOUR HTML CONTENT HERE (tables, styled divs, etc.) -->
-      </div>
-    </foreignObject>
   </svg>
 </div>
 `;

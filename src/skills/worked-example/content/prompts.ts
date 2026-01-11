@@ -136,10 +136,11 @@ Example: If Scenario 1 uses "y = 25x + 50" and Scenario 2 uses "y = 15x + 30", e
 
 ### STEP 6: Determine Visual Type
 
-**CRITICAL: ALL graphics/diagrams MUST use SVG.** This includes tables - wrap them in SVG foreignObject.
+**CRITICAL: ALL graphics/diagrams MUST use SVG.** The only exception is simple HTML tables.
 
 - **text-only**: No graphics needed (rare - pure text/equation problems)
-- **svg-visual**: ALL graphics including tables - this includes:
+- **html-table**: Simple data tables with highlighting
+- **svg-visual**: ALL other graphics - this includes:
   - Coordinate planes and graphs (svgSubtype: "coordinate-graph") → use \`graph-planning.md\`
   - **Non-graph diagrams** (svgSubtype: "diagram") → **use \`diagram-patterns.md\` as PRIMARY REFERENCE**
     - Double number lines
@@ -148,7 +149,6 @@ Example: If Scenario 1 uses "y = 25x + 50" and Scenario 2 uses "y = 15x + 30", e
     - Area models
     - Input-output tables
     - Ratio tables
-  - **Data tables** (svgSubtype: "table") → wrap in IMAGE_REGION_CONTAINER (SVG foreignObject triggers screenshot)
   - Geometric shapes (svgSubtype: "shape")
   - Number lines and bar models (svgSubtype: "number-line")
   - Any custom visual (svgSubtype: "other")
@@ -316,17 +316,17 @@ Graph: Use card-patterns/svg-card.html → modify for X_MAX=10, Y_MAX=100
 
 **Note:** CFU/Answer boxes use PPTX animations (appear on click) - no duplicate slides needed.
 
-| Slide # | Type | Action | Layout | Components |
-|---------|------|--------|--------|------------|
-| 1 | Learning Goal | generate-new | \`full-width\` | title-zone, content-box |
-| 2 | Problem Setup | generate-new | \`two-column\` | title-zone, content-box, svg-card |
-| 3 | Step 1 Question + CFU | generate-new | \`two-column\` | title-zone, content-box, svg-card, **cfu-card** (animated) |
-| 4 | Step 1 Answer | generate-new | \`two-column\` | title-zone, content-box, svg-card, **answer-card** (animated) |
-| 5 | Step 2 Question + CFU | generate-new | \`two-column\` | title-zone, content-box, svg-card, **cfu-card** (animated) |
-| 6 | Step 2 Answer | generate-new | \`two-column\` | title-zone, content-box, svg-card, **answer-card** (animated) |
-| 7 | Step 3 Question + CFU | generate-new | \`two-column\` | title-zone, content-box, svg-card, **cfu-card** (animated) |
-| 8 | Step 3 Answer | generate-new | \`two-column\` | title-zone, content-box, svg-card, **answer-card** (animated) |
-| 9 | Printable | generate-new | \`full-width\` | Special format (portrait, practice problems embedded) |
+| Slide # | Type | Layout | Left Column | Right Column | Overlay |
+|---------|------|--------|-------------|--------------|---------|
+| 1 | Learning Goal | \`full-width\` | content-box | — | — |
+| 2 | Problem Setup | \`two-column\` | content-box | svg-visual | — |
+| 3-8 | Step slides | \`two-column\` | content-box | svg-visual | cfu/answer |
+| 9 | Printable | \`full-width\` | printable format | — | — |
+
+**Left column content-box always contains:**
+1. Problem reminder (≤15 words) - slides 2-8
+2. Main content in large text (36-48px) - equation, key phrase, or focus element
+3. Minimal supporting text - only if needed
 
 **Note:** Practice problems are embedded directly in the Printable slide (slide 9) rather than having separate presentation slides. The printable is generated via a separate API call after slides 1-8 complete.
 
@@ -421,31 +421,103 @@ The main visual (graph, table, diagram) must stay in the SAME position across al
 | All slides | \`../../reference/layout-presets.md\` (layout presets + regions) |
 | SVG graphs | \`visuals/svg-graphs.md\` (MANDATORY) |
 
-**Atomic card-patterns (two folders):**
+**Slide Composition (3 core patterns):**
 
-| Folder | Patterns | Workflow |
-|--------|----------|----------|
-| \`simple-patterns/\` | title-zone, content-box, cfu-answer-card | Replace \`{{placeholders}}\` with content |
-| \`complex-patterns/\` | graph-snippet, annotation-snippet, printable-slide-snippet | Copy entire file, modify values + recalculate pixels |
+| Region | Pattern | Purpose |
+|--------|---------|---------|
+| Header | \`title-zone.html\` | Badge + Title + Subtitle (every slide) |
+| Left column | \`content-box.html\` | Problem reminder, equations, text |
+| Right column | \`svg-visual\` or \`graph-snippet.html\` | Diagrams, graphs (see visuals/) |
+| Overlay | \`cfu-answer-card.html\` | CFU/Answer boxes (animated) |
 
-**simple-patterns/ (replace placeholders):**
-- \`card-patterns/simple-patterns/title-zone.html\` → Badge + Title + Subtitle
-- \`card-patterns/simple-patterns/content-box.html\` → Text, lists, equations, tables
-- \`card-patterns/simple-patterns/cfu-answer-card.html\` → CFU/Answer overlays (animated)
+**That's it.** Three patterns for most slides:
+1. \`title-zone\` → header
+2. \`content-box\` → left column (includes problem reminder as first element)
+3. \`svg-visual\` → right column
 
-**complex-patterns/ (copy, modify, and recalculate):**
-- \`card-patterns/complex-patterns/graph-snippet.html\` → Full coordinate plane (COPY and recalculate pixels)
-- \`card-patterns/complex-patterns/annotation-snippet.html\` → Y-intercept labels, arrows, point labels (recalculate positions)
-- \`card-patterns/complex-patterns/printable-slide-snippet.html\` → Printable worksheet (COPY and fill)
-
-**SVG graphs and printable slides use complex-patterns.** Everything else uses simple-patterns.
+**⚠️ ALWAYS use the snippet files.** Never write HTML from scratch.
 
 **Layout composition approach:**
-1. Choose layout preset (full-width or two-column)
-2. Add title-zone to header region
-3. Add content-box(es) to main content regions
-4. If SVG needed: clone graph-snippet, recalculate pixels (see SVG section below)
-5. Add cfu-card or answer-card overlay (animated)
+1. **READ** the pattern file (e.g., \`card-patterns/simple-patterns/content-box.html\`)
+2. **COPY** the relevant HTML structure from the snippet
+3. **REPLACE** placeholders with actual content
+4. For SVG: **CLONE** \`graph-snippet.html\`, then recalculate pixels
+
+**Special cases:**
+- Coordinate graphs: clone \`graph-snippet.html\` (recalculate pixels)
+- Slide 9 (Printable): clone \`printable-slide-snippet.html\`
+
+---
+
+## ⚠️ RIGHT-COLUMN VISUAL LAYERS (MANDATORY for PPTX Export)
+
+**Every element in the right column MUST have its own \`data-pptx-region="visual-*"\` with coordinates.**
+
+This ensures each visual element (table, equation card, comparison box, etc.) becomes an independent PPTX object that teachers can move and resize.
+
+### Why This Matters
+When multiple elements share one region, they become a single merged image in PowerPoint. Teachers can't adjust individual pieces. By giving each element its own region, they can:
+- Reposition elements independently
+- Resize individual components
+- Delete/hide specific parts
+
+### Pattern: Wrap Each Element
+
+**See:** \`card-patterns/complex-patterns/visual-card-layers.html\` for complete examples.
+
+**Right column bounds (standard two-column layout):**
+- x: 408-940 (width: 532)
+- y: 140-510 (height: 370)
+- Content typically starts at x=420 with 12px margin
+
+**Naming convention:** \`data-pptx-region="visual-[name]"\`
+- \`visual-table\` - for data tables
+- \`visual-equation\` - for equation cards
+- \`visual-comparison\` - for comparison notes
+- \`visual-result\` - for result/answer boxes
+- \`visual-1\`, \`visual-2\`, etc. - when order matters
+
+### Example: Right Column with Table + Equation Card
+
+\`\`\`html
+<!-- Wrapper has NO data-pptx-region - just for layout -->
+<div class="col center" style="width: 60%; padding: 12px; gap: 16px;">
+
+  <!-- LAYER 1: Table - its own region -->
+  <div data-pptx-region="visual-table"
+       data-pptx-x="420" data-pptx-y="150"
+       data-pptx-w="500" data-pptx-h="160"
+       style="background: #ffffff; border-radius: 8px; padding: 12px;">
+    <table>...</table>
+  </div>
+
+  <!-- LAYER 2: Equation card - its own region -->
+  <div data-pptx-region="visual-equation"
+       data-pptx-x="420" data-pptx-y="320"
+       data-pptx-w="500" data-pptx-h="100"
+       style="background: #e8f4fd; border-radius: 8px; padding: 16px; border-left: 4px solid #1791e8;">
+    <p style="font-family: Georgia, serif; font-size: 18px;">y = 3x + 5</p>
+  </div>
+
+</div>
+\`\`\`
+
+### Position Calculation (Vertical Stacking)
+
+**Standard spacing:**
+- Element 1: y=150, h=160 → bottom at y=310
+- Gap: 10px
+- Element 2: y=320, h=100 → bottom at y=420
+- Gap: 10px
+- Element 3: y=430, h=70 → bottom at y=500
+
+### Checklist for Right-Column Content
+
+- [ ] Each distinct visual element has its own \`data-pptx-region="visual-*"\`
+- [ ] Each element has \`data-pptx-x\`, \`data-pptx-y\`, \`data-pptx-w\`, \`data-pptx-h\`
+- [ ] Wrapper div has NO data-pptx-region (just for HTML layout)
+- [ ] Coordinates don't overlap (stack with 10-16px gaps)
+- [ ] Element backgrounds are set (they're preserved in screenshots)
 
 ---
 
@@ -523,14 +595,89 @@ See \`card-patterns/complex-patterns/graph-snippet.html\` and \`card-patterns/co
 
 ## CFU Question Requirements
 
-**Questions MUST reference the strategy verb:**
-- ✅ "Why did I [VERB] first?"
-- ✅ "How did I know to [VERB] here?"
-- ✅ "What does [VERB]ing accomplish?"
+**Format Rules (STRICTLY ENFORCED):**
+- **ONE question only** - never two-part questions
+- **12 words max** - if longer, rewrite it shorter
+- **Strategy-focused** - ask about WHY, not WHAT
 
-**Questions must NOT be computational:**
-- ❌ "What is 6 ÷ 2?"
-- ❌ "What's the answer?"
+**Questions MUST reference the strategy verb:**
+- ✅ "Why did I [VERB] first?" (6 words)
+- ✅ "How did I know to [VERB] here?" (8 words)
+- ✅ "Why is the '?' at the beginning?" (7 words)
+
+**Questions must NOT be:**
+- ❌ "What is 6 ÷ 2?" (computation)
+- ❌ "What's the answer?" (result-focused)
+- ❌ "What is X? How did you calculate it?" (TWO questions - WRONG!)
+- ❌ Questions longer than 12 words
+
+## Answer Box Requirements
+
+**Format Rules (STRICTLY ENFORCED):**
+- **25 words max** - 1-2 short sentences only
+- **Direct answer** - no extra context or "fun facts"
+- **No redundancy** - don't repeat what the visual shows
+
+**Good answers:**
+- ✅ "Each box represents one student. The 6 inside shows nuggets per student." (12 words)
+- ✅ "I subtracted 4 to isolate the variable term on one side." (11 words)
+
+**Bad answers:**
+- ❌ "To ISOLATE the variable term! Subtracting 4 removes the constant, leaving just 2x alone on one side. This is also called the constant of proportionality - the slope of line g!" (too long, extra context)
+
+---
+
+## ⚠️ LEFT COLUMN CONCISENESS (CRITICAL)
+
+**The left column is for TEXT CONTENT ONLY. Keep it minimal.**
+
+### Problem Reminder Box (Slides 2-8)
+**Format:** Ultra-condensed summary, max 15 words
+
+\`\`\`
+✅ GOOD: "30 nuggets total. 6 per student. How many students?"
+✅ GOOD: "Turtle g travels at constant speed. Find when it catches turtle f."
+❌ BAD:  "A large box has 30 chicken nuggets. If each student gets 6 nuggets, how many students can have a snack?"
+\`\`\`
+
+### Step Content (Left Column)
+**NO explanatory prose.** The step title + equation IS the content.
+
+| Element | Max Words | Purpose |
+|---------|-----------|---------|
+| Step title | 6-8 words | "STEP 1: Write the Equations" |
+| Subtitle | 0 words | REMOVE entirely - no "First, let's..." |
+| Problem reminder | 15 words | Condensed problem summary |
+| Main content | n/a | Large (36-48px) - equation, key text, or focus element |
+| Supporting text | 10 words | Only if absolutely needed |
+
+**What to REMOVE from left column:**
+- ❌ "First, let's figure out how fast turtle g is moving by finding a point on the line."
+- ❌ "Now we need to identify what each number represents in this problem."
+- ❌ "Let's start by writing the equation that represents this situation."
+- ❌ Any sentence starting with "Let's", "Now", "First", "Next"
+
+**What to KEEP in left column:**
+- ✅ Step badge and title
+- ✅ Condensed problem reminder (15 words max)
+- ✅ Large main content (36-48px)
+- ✅ Brief bullet points (if needed, 3-5 words each)
+
+### Two-Column Rule: COMPLEMENTARY, NOT DUPLICATE
+
+\`\`\`
+LEFT COLUMN              RIGHT COLUMN
+─────────────            ─────────────
+Problem reminder    →    Visual diagram
+Equations (as text)      Diagram showing same math visually
+Brief explanation        Labels & annotations
+
+⚠️ If you wrote it on the left, DON'T write it on the right
+\`\`\`
+
+**Test:** Cover the right column. Can you understand the step from just the left?
+**Test:** Cover the left column. Can you understand the step from just the right?
+If BOTH columns show the same information, you've duplicated. DELETE from one side.
 
 ---
 
@@ -553,6 +700,19 @@ See \`card-patterns/complex-patterns/graph-snippet.html\` and \`card-patterns/co
 
 ## Pre-Flight Checklist (Verify EVERY Slide)
 
+**⚠️ THE 3-SECOND SCAN TEST (VERIFY FIRST):**
+Can a student understand the slide's key point in 3 seconds? If not, it's too cluttered.
+
+**Conciseness Checks:**
+- [ ] **NO explanatory subtitles** (no "First, let's figure out...")
+- [ ] **Problem reminder ≤15 words** (e.g., "30 nuggets total. 6 per student. How many students?")
+- [ ] **CFU question: ONE question, ≤12 words** (no two-part questions!)
+- [ ] **Answer box ≤25 words** (1-2 sentences only)
+- [ ] **Left/Right columns are COMPLEMENTARY** (text left, visual right - NO duplication)
+- [ ] **No redundant info boxes** (no "Reading the graph: ..." boxes)
+- [ ] **Visuals are self-explanatory** (no text boxes explaining what's already shown)
+
+**Technical Requirements:**
 - [ ] File starts with \`<!DOCTYPE html>\` (NO checkpoint, NO comments before it)
 - [ ] Body: \`width: 960px; height: 540px\`
 - [ ] All text in \`<p>\`, \`<h1-6>\`, \`<ul>\`, \`<ol>\` (NOT bare text in divs)
@@ -570,17 +730,17 @@ See \`card-patterns/complex-patterns/graph-snippet.html\` and \`card-patterns/co
 - [ ] Subtitle: \`data-pptx-x="20" data-pptx-y="100" data-pptx-w="920" data-pptx-h="30"\`
 - [ ] CFU/Answer boxes: \`data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"\`
 
+**If right-column has visual content (tables, cards, equations):**
+- [ ] Each distinct element has its own \`data-pptx-region="visual-*"\` (see visual-card-layers.html)
+- [ ] Each element has \`data-pptx-x\`, \`data-pptx-y\`, \`data-pptx-w\`, \`data-pptx-h\`
+- [ ] Wrapper div has NO data-pptx-region
+- [ ] Coordinates don't overlap (stack with 10-16px gaps)
+
 **If SVG visual:**
 - [ ] Read \`visuals/svg-graphs.md\` first
 - [ ] SVG wrapped in container with \`data-pptx-region="svg-container"\` and position attributes
 - [ ] All \`<text>\` elements have \`font-family="Arial"\`
 - [ ] SVG container in SAME position as other step slides
-
-**If table in right visual area:**
-- [ ] Use \`IMAGE_REGION_CONTAINER\` template from templates.ts
-- [ ] Table wrapped in SVG foreignObject (triggers screenshot rendering)
-- [ ] Container has \`data-pptx-region="svg-container"\` (NOT "right-column")
-- [ ] Position: \`data-pptx-x="408" data-pptx-y="150" data-pptx-w="532" data-pptx-h="360"\`
 
 **If slide has CFU/Answer box:**
 - [ ] Box has correct \`data-pptx-region\` attribute ("cfu-box" or "answer-box")

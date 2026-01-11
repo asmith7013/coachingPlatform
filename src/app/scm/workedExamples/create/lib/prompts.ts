@@ -146,18 +146,113 @@ You MUST return valid JSON matching this exact structure:
       "themeIcon": "emoji representing the theme",
       "numbers": "the specific numbers used",
       "description": "Full problem description",
+      "problemReminder": "Short 15-word max summary for slides",
       "graphPlan": {
         "equations": [{ "label": "Line 1", "equation": "y = mx + b", "slope": 5, "yIntercept": 10, "color": "#60a5fa", "startPoint": { "x": 0, "y": 10 }, "endPoint": { "x": 8, "y": 50 } }],
         "scale": { "xMax": 8, "yMax": 50, "xAxisLabels": [0, 2, 4, 6, 8], "yAxisLabels": [0, 10, 20, 30, 40, 50] },
         "keyPoints": [{ "label": "y-intercept", "x": 0, "y": 10, "dataX": 0, "dataY": 10 }, { "label": "solution point", "x": 4, "y": 30, "dataX": 4, "dataY": 30 }],
         "annotations": [{ "type": "y-intercept-shift", "label": "+10" }]
-      }
+      },
+      "visualPlan": { "type": "tape-diagram", "boxes": 6, "valuePerBox": 8, "total": 48, "unknownPosition": "box" }
     }
   ]
 }
 
-IMPORTANT: Each scenario's graphPlan uses THAT SCENARIO'S specific numbers and equations.
-Only include graphPlan in scenarios when visualType is "svg-visual" and svgSubtype is "coordinate-graph".
+## When to Include graphPlan vs visualPlan
+
+- **graphPlan**: Include ONLY when visualType is "svg-visual" and svgSubtype is "coordinate-graph"
+- **visualPlan**: Include for ALL OTHER visual types (tape-diagram, number-line, ratio-table, etc.)
+
+Each scenario's graphPlan/visualPlan uses THAT SCENARIO'S specific numbers.
+
+## VisualPlan Schemas by Type
+
+Include the appropriate visualPlan based on the problem's visual representation:
+
+**tape-diagram** (for division, multiplication, part-whole):
+\`\`\`json
+{ "type": "tape-diagram", "boxes": 6, "valuePerBox": 8, "total": 48, "unknownPosition": "start" | "box" | "total" }
+\`\`\`
+
+**double-number-line** (for ratios, unit rates):
+\`\`\`json
+{ "type": "double-number-line", "quantityA": { "label": "cups", "values": [0, 2, 4, 6] }, "quantityB": { "label": "servings", "values": [0, 3, 6, 9] }, "highlightPair": [4, 6] }
+\`\`\`
+
+**area-model** (for multiplication, distributive property):
+\`\`\`json
+{ "type": "area-model", "dimensions": [20, 15], "partialProducts": [[200, 100], [30, 15]] }
+\`\`\`
+
+**number-line** (for integers, inequalities):
+\`\`\`json
+{ "type": "number-line", "range": [-5, 10], "markedPoints": [{ "value": 3, "label": "x", "style": "closed" }], "arrows": [{ "from": 0, "to": 3, "label": "+3" }] }
+\`\`\`
+
+**ratio-table** (for equivalent ratios):
+\`\`\`json
+{ "type": "ratio-table", "rows": [{ "label": "apples", "values": [2, 4, 6, "?"] }], "scaleFactors": ["×2", "×3"] }
+\`\`\`
+
+**hanger-diagram** (for equation solving, balance):
+\`\`\`json
+{ "type": "hanger-diagram", "leftSide": "3x + 1", "rightSide": "10", "shapes": { "triangle": "x", "square": "1" } }
+\`\`\`
+
+**input-output-table** (for functions, patterns):
+\`\`\`json
+{ "type": "input-output-table", "rule": "×3 + 2", "inputs": [1, 2, 3, 4], "outputs": [5, 8, 11, 14], "unknownPosition": "output" }
+\`\`\`
+
+**grid-diagram** (for area by counting):
+\`\`\`json
+{ "type": "grid-diagram", "rows": 5, "cols": 8, "unitLabel": "sq cm", "showGrid": true }
+\`\`\`
+
+**discrete-diagram** (for objects in groups):
+\`\`\`json
+{ "type": "discrete-diagram", "groups": 4, "itemsPerGroup": 6, "totalItems": 24, "visualType": "circles", "arrangement": "rows" }
+\`\`\`
+
+**measurement-diagram** (for base/height):
+\`\`\`json
+{ "type": "measurement-diagram", "shapeType": "triangle", "measurements": [{ "label": "base", "value": 10 }, { "label": "height", "value": 6 }], "showRightAngle": true }
+\`\`\`
+
+**dot-plot** (for data distributions):
+\`\`\`json
+{ "type": "dot-plot", "dataPoints": [2, 3, 3, 4, 4, 4, 5, 5, 6], "axisLabel": "Number of pets", "axisRange": [0, 10], "title": "Pets Owned" }
+\`\`\`
+
+**box-plot** (for quartiles, variability):
+\`\`\`json
+{ "type": "box-plot", "min": 12, "q1": 18, "median": 25, "q3": 32, "max": 45, "outliers": [5, 52], "axisLabel": "Test Scores", "axisRange": [0, 60] }
+\`\`\`
+
+**bar-graph** (for comparing frequencies):
+\`\`\`json
+{ "type": "bar-graph", "categories": ["Red", "Blue", "Green"], "values": [12, 8, 15], "orientation": "vertical", "axisLabel": "Frequency", "title": "Favorite Colors" }
+\`\`\`
+
+**tree-diagram** (for probability, sample spaces):
+\`\`\`json
+{ "type": "tree-diagram", "levels": [{ "outcomes": ["Heads", "Tails"], "probabilities": [0.5, 0.5] }], "finalOutcomes": ["H", "T"], "highlightPath": ["Heads"] }
+\`\`\`
+
+**circle-diagram** (for circles with labeled parts):
+\`\`\`json
+{ "type": "circle-diagram", "radius": 5, "diameter": 10, "circumference": "10π", "showCenter": true, "labeledParts": ["radius", "diameter"], "unit": "cm" }
+\`\`\`
+
+**scale-drawing** (for maps, floor plans):
+\`\`\`json
+{ "type": "scale-drawing", "scaleFactor": "1 cm : 10 m", "drawingMeasurements": [{ "label": "length", "value": 5, "unit": "cm" }], "actualMeasurements": [{ "label": "length", "value": 50, "unit": "m" }], "drawingType": "floor-plan" }
+\`\`\`
+
+**scaled-figures** (for original vs copy comparison):
+\`\`\`json
+{ "type": "scaled-figures", "originalDimensions": [{ "label": "width", "value": 4 }], "scaleFactor": 2.5, "copyDimensions": [{ "label": "width", "value": 10 }], "shapeType": "rectangle" }
+\`\`\`
 
 Return ONLY valid JSON. Do not include any explanation or markdown formatting.
 `;

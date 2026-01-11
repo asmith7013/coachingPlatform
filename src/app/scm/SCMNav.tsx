@@ -13,6 +13,7 @@ import {
   Bars3Icon,
   XMarkIcon,
   ChevronDownIcon,
+  ListBulletIcon,
 } from '@heroicons/react/24/outline';
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
@@ -85,6 +86,14 @@ export function SCMNav() {
       ],
     },
     {
+      label: "Scope & Sequence",
+      Icon: ListBulletIcon,
+      items: [
+        { href: "/scm/scope-and-sequence/lesson-by-lesson", label: "Lesson by Lesson" },
+        { href: "/scm/scope-and-sequence/units", label: "Units" },
+      ],
+    },
+    {
       label: "Worked Examples",
       Icon: PresentationChartBarIcon,
       items: [
@@ -118,11 +127,8 @@ export function SCMNav() {
       label: "Logistics",
       Icon: TruckIcon,
       items: [
-        { href: "/scm/scope-and-sequence/lesson-by-lesson", label: "Lesson by Lesson" },
-        { href: "/scm/scope-and-sequence/units", label: "Units" },
-        { href: "/scm/logistics/scope-and-sequence", label: "Edit" },
-        { href: "---", label: "---" },
         { href: "/scm/logistics/calendar", label: "Unit Calendar" },
+        { href: "/scm/logistics/scope-and-sequence", label: "Edit Scope & Sequence" },
       ],
     }] : []),
     ...(isSuperAdmin ? [{

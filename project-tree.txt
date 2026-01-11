@@ -10,6 +10,7 @@
 │   ├── docs.md
 │   ├── scope.md
 │   └── template.md
+├── convert_to_json.py
 ├── docs
 │   ├── architecture
 │   │   ├── core-principles.md
@@ -55,6 +56,16 @@
 │   │   └── popup.js
 │   ├── implementation
 │   │   └── three-zone-masterschedulecard-integration.md
+│   ├── nyse
+│   │   ├── 6-2023.json
+│   │   ├── 6-2024.json
+│   │   ├── 6-2025.json
+│   │   ├── 7-2023.json
+│   │   ├── 7-2024.json
+│   │   ├── 7-2025.json
+│   │   ├── 8-2023.json
+│   │   ├── 8-2024.json
+│   │   └── 8-2025.json
 │   ├── podsie
 │   │   ├── animations
 │   │   │   ├── AUTO-MANUAL-TOGGLE-PATTERN.md
@@ -211,11 +222,16 @@
 │   │   └── forms-update.md
 │   └── product-roadmap.md
 ├── eslint.config.mjs
+├── exam_data_split_units.txt
 ├── examples
 ├── next-env.d.ts
 ├── next.config.ts
 ├── package.json
 ├── postcss.config.mjs
+├── problem-attic
+│   ├── login.html
+│   ├── page.html
+│   └── text.md
 ├── project-tree.txt
 ├── public
 │   ├── file.svg
@@ -979,6 +995,9 @@
 │   │   │   │       └── page.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── podsie
+│   │   │   │   ├── assessment
+│   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
 │   │   │   │   ├── bulk-configs
 │   │   │   │   │   ├── components
 │   │   │   │   │   └── page.tsx
@@ -1010,6 +1029,11 @@
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── section-overview
 │   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── state-exam
+│   │   │   │   │   ├── edit
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── state-test
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── variations
 │   │   │   │   │   ├── [slug]
@@ -1098,6 +1122,15 @@
 │   │   │   │   │   ├── components
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── zearn
+│   │   │   │       └── page.tsx
+│   │   │   ├── scope-and-sequence
+│   │   │   │   ├── lesson-by-lesson
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── units
+│   │   │   │       └── page.tsx
+│   │   │   ├── tools
+│   │   │   │   └── problem-attic-scraper
 │   │   │   │       └── page.tsx
 │   │   │   └── workedExamples
 │   │   │       ├── create
@@ -1223,6 +1256,12 @@
 │   │   │   ├── skill-migration
 │   │   │   │   ├── actions.ts
 │   │   │   │   └── page.tsx
+│   │   │   ├── state-test-scraper
+│   │   │   │   ├── actions
+│   │   │   │   │   └── scrape.ts
+│   │   │   │   └── lib
+│   │   │   │       ├── scraper.ts
+│   │   │   │       └── types.ts
 │   │   │   └── things3
 │   │   │       └── page.tsx
 │   │   ├── unauthorized
@@ -1931,6 +1970,7 @@
 │   │   │   │   │   ├── podsie
 │   │   │   │   │   ├── roadmaps
 │   │   │   │   │   ├── scope-and-sequence
+│   │   │   │   │   ├── state-test-question.model.ts
 │   │   │   │   │   ├── storage.ts
 │   │   │   │   │   ├── student
 │   │   │   │   │   ├── timesheet
@@ -2027,6 +2067,7 @@
 │   │   │       │   ├── podsie
 │   │   │       │   ├── roadmaps
 │   │   │       │   ├── scope-and-sequence
+│   │   │       │   ├── state-test-question.ts
 │   │   │       │   ├── storage.ts
 │   │   │       │   ├── student
 │   │   │       │   ├── timesheet
@@ -2308,4 +2349,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-685 directories, 1624 files
+700 directories, 1650 files

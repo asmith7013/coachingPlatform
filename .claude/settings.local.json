@@ -65,7 +65,8 @@
       "Bash(/Users/alexsmith/.nvm/versions/node/v24.11.1/bin/npx tsc --noEmit)",
       "Bash(npm run sync-skill-content:*)",
       "Bash(npm audit:*)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "Bash(npx eslint:*)"
     ],
     "deny": [],
     "ask": []

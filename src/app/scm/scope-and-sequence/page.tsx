@@ -3,31 +3,24 @@
 import Link from "next/link";
 import {
   ChevronRightIcon,
-  MapIcon,
-  ChartBarIcon,
-  TableCellsIcon,
-  ArrowTrendingUpIcon,
+  ListBulletIcon,
+  CalendarDaysIcon,
+  BookOpenIcon,
 } from '@heroicons/react/24/outline';
 
-export default function RoadmapsHomePage() {
+export default function ScopeAndSequenceHomePage() {
   const pages = [
     {
-      title: "Skills",
-      href: "/scm/roadmaps/skills",
-      Icon: ChartBarIcon,
-      description: "Browse individual skills with teaching resources and prerequisites."
+      title: "Lesson by Lesson",
+      href: "/scm/scope-and-sequence/lesson-by-lesson",
+      Icon: CalendarDaysIcon,
+      description: "See how skills progress across lessons in each unit."
     },
     {
-      title: "Mastery Grid",
-      href: "/scm/roadmaps/mastery-grid",
-      Icon: TableCellsIcon,
-      description: "View student mastery progress by unit and section."
-    },
-    {
-      title: "Progress",
-      href: "/scm/roadmaps/progress",
-      Icon: ArrowTrendingUpIcon,
-      description: "View roadmap completion progress by section with bar charts."
+      title: "Units",
+      href: "/scm/scope-and-sequence/units",
+      Icon: BookOpenIcon,
+      description: "View units by grade level with their target and support skills."
     }
   ];
 
@@ -35,11 +28,11 @@ export default function RoadmapsHomePage() {
     <div className="mx-auto" style={{ maxWidth: "1600px" }}>
       <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <MapIcon className="w-10 h-10 text-emerald-600 flex-shrink-0" />
-          <h1 className="text-4xl font-bold text-gray-900">Roadmaps</h1>
+          <ListBulletIcon className="w-10 h-10 text-emerald-600 flex-shrink-0" />
+          <h1 className="text-4xl font-bold text-gray-900">Scope & Sequence</h1>
         </div>
         <p className="text-gray-600">
-          Visualizing Roadmaps Skills & Student Skill Progress
+          View curriculum structure and lesson progression
         </p>
       </div>
 

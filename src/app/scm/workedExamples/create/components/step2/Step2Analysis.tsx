@@ -7,6 +7,7 @@ import { SectionAccordion } from '@/components/composed/section-visualization';
 import type { WizardStateHook } from '../../hooks/useWizardState';
 import type { HtmlSlide } from '@zod-schema/scm/worked-example';
 import { GraphPlanDisplay } from './GraphPlanDisplay';
+import { VisualPlanDisplay } from './VisualPlanDisplay';
 import { ScenarioEditor } from './ScenarioEditor';
 import { AnalysisFooter } from './AnalysisFooter';
 import type { SSEStartEvent, SSESlideEvent, SSECompleteEvent, SSEErrorEvent } from './types';
@@ -581,7 +582,14 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                     </div>
                   ),
                 },
-                // Graph Plan section (if exists)
+                // Visual Plan section (if exists - for non-graph visuals)
+                ...(scenarios[0].visualPlan ? [{
+                  key: 'we-visual-plan',
+                  title: 'Visual Plan',
+                  icon: null,
+                  content: <VisualPlanDisplay visualPlan={scenarios[0].visualPlan!} compact />,
+                }] : []),
+                // Graph Plan section (if exists - for coordinate graphs)
                 ...(scenarios[0].graphPlan ? [{
                   key: 'we-graph-plan',
                   title: 'Graph Plan',
@@ -610,6 +618,9 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                       <div className="flex items-center gap-2">
                         <span className="text-base">{scenarios[1].themeIcon}</span>
                         <span className="text-sm font-medium text-gray-700">Practice 1: {scenarios[1].name}</span>
+                        {scenarios[1].visualPlan && (
+                          <span className="px-1.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded">Visual</span>
+                        )}
                         {scenarios[1].graphPlan && (
                           <span className="px-1.5 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded">Graph</span>
                         )}
@@ -654,10 +665,20 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                           <p className="text-sm text-gray-600">{scenarios[1].numbers}</p>
                         </div>
                       </div>
-                      <div className={scenarios[1].graphPlan ? "border-b border-gray-200 py-4" : "pt-4"}>
+                      <div className={(scenarios[1].visualPlan || scenarios[1].graphPlan) ? "border-b border-gray-200 py-4" : "pt-4"}>
                         <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Description</h4>
                         <p className="text-sm text-gray-600">{scenarios[1].description}</p>
                       </div>
+                      {/* Visual Plan (if exists - for non-graph visuals) */}
+                      {scenarios[1].visualPlan && (
+                        <div className={scenarios[1].graphPlan ? "border-b border-gray-200 py-4" : "pt-4"}>
+                          <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                            Visual Plan
+                          </h4>
+                          <VisualPlanDisplay visualPlan={scenarios[1].visualPlan} compact />
+                        </div>
+                      )}
                       {/* Graph Plan (if exists) */}
                       {scenarios[1].graphPlan && (
                         <div className="pt-4">
@@ -671,7 +692,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                     </div>
                   ),
                 }] : []),
-                // Practice 2 (includes Graph Plan if exists)
+                // Practice 2 (includes Visual/Graph Plan if exists)
                 ...(scenarios[2] ? [{
                   key: 'practice-2-question',
                   title: (
@@ -679,6 +700,9 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                       <div className="flex items-center gap-2">
                         <span className="text-base">{scenarios[2].themeIcon}</span>
                         <span className="text-sm font-medium text-gray-700">Practice 2: {scenarios[2].name}</span>
+                        {scenarios[2].visualPlan && (
+                          <span className="px-1.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded">Visual</span>
+                        )}
                         {scenarios[2].graphPlan && (
                           <span className="px-1.5 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded">Graph</span>
                         )}
@@ -723,10 +747,20 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                           <p className="text-sm text-gray-600">{scenarios[2].numbers}</p>
                         </div>
                       </div>
-                      <div className={scenarios[2].graphPlan ? "border-b border-gray-200 py-4" : "pt-4"}>
+                      <div className={(scenarios[2].visualPlan || scenarios[2].graphPlan) ? "border-b border-gray-200 py-4" : "pt-4"}>
                         <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Description</h4>
                         <p className="text-sm text-gray-600">{scenarios[2].description}</p>
                       </div>
+                      {/* Visual Plan (if exists - for non-graph visuals) */}
+                      {scenarios[2].visualPlan && (
+                        <div className={scenarios[2].graphPlan ? "border-b border-gray-200 py-4" : "pt-4"}>
+                          <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                            Visual Plan
+                          </h4>
+                          <VisualPlanDisplay visualPlan={scenarios[2].visualPlan} compact />
+                        </div>
+                      )}
                       {/* Graph Plan (if exists) */}
                       {scenarios[2].graphPlan && (
                         <div className="pt-4">

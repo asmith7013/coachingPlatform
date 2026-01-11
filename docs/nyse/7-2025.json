@@ -1,0 +1,333 @@
+[
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 2,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.RP.2a", "secondary": ""},
+    "Cluster": "Ratios and Proportional Relationships",
+    "Answer": "C",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 3,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.SP.8b", "secondary": ""},
+    "Cluster": "Statistics and Probability",
+    "Answer": "B",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 8,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.RP.2c", "secondary": ""},
+    "Cluster": "Ratios and Proportional Relationships",
+    "Answer": "A",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 10,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.EE.4a", "secondary": "NY-7.EE.1"},
+    "Cluster": "Expressions and Equations",
+    "Answer": "C",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 13,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.NS.1b", "secondary": "NY-7.NS.1a"},
+    "Cluster": "The Number System",
+    "Answer": "A",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 14,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.RP.2b", "secondary": ""},
+    "Cluster": "Ratios and Proportional Relationships",
+    "Answer": "D",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 17,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.NS.1d", "secondary": ""},
+    "Cluster": "The Number System",
+    "Answer": "C",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 20,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.EE.1", "secondary": ""},
+    "Cluster": "Expressions and Equations",
+    "Answer": "D",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 21,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.EE.2", "secondary": ""},
+    "Cluster": "Expressions and Equations",
+    "Answer": "B",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 23,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.NS.2a", "secondary": ""},
+    "Cluster": "The Number System",
+    "Answer": "D",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 25,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.EE.3", "secondary": ""},
+    "Cluster": "Expressions and Equations",
+    "Answer": "C",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 27,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.RP.1", "secondary": ""},
+    "Cluster": "Ratios and Proportional Relationships",
+    "Answer": "C",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 28,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.EE.3", "secondary": ""},
+    "Cluster": "Expressions and Equations",
+    "Answer": "D",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 29,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.EE.4b", "secondary": ""},
+    "Cluster": "Expressions and Equations",
+    "Answer": "B",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 32,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.NS.3", "secondary": "NY-7.RP.3"},
+    "Cluster": "The Number System",
+    "Answer": "D",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 33,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.RP.2d", "secondary": ""},
+    "Cluster": "Ratios and Proportional Relationships",
+    "Answer": "A",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 34,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.EE.4b", "secondary": ""},
+    "Cluster": "Expressions and Equations",
+    "Answer": "B",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 35,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.SP.3", "secondary": ""},
+    "Cluster": "Statistics and Probability",
+    "Answer": "C",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 36,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.EE.2", "secondary": ""},
+    "Cluster": "Expressions and Equations",
+    "Answer": "B",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 37,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.NS.1c", "secondary": ""},
+    "Cluster": "The Number System",
+    "Answer": "D",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "MC",
+    "Q#": 38,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.EE.3", "secondary": ""},
+    "Cluster": "Expressions and Equations",
+    "Answer": "C",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "CR",
+    "Q#": 39,
+    "Grade": 7,
+    "Standards": {"primary": "NY-6.SP.5a", "secondary": ""},
+    "Cluster": "Statistics and Probability",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "CR",
+    "Q#": 40,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.NS.2c", "secondary": ""},
+    "Cluster": "The Number System",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "CR",
+    "Q#": 41,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.SP.8a", "secondary": "NY-7.SP.8b"},
+    "Cluster": "Statistics and Probability",
+    "Points": 1
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "CR",
+    "Q#": 42,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.EE.4a", "secondary": ""},
+    "Cluster": "Expressions and Equations",
+    "Points": 2
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "CR",
+    "Q#": 43,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.NS.1a", "secondary": ""},
+    "Cluster": "The Number System",
+    "Points": 2
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "CR",
+    "Q#": 44,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.RP.1", "secondary": ""},
+    "Cluster": "Ratios and Proportional Relationships",
+    "Points": 2
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "CR",
+    "Q#": 45,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.RP.2a", "secondary": ""},
+    "Cluster": "Ratios and Proportional Relationships",
+    "Points": 2
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "CR",
+    "Q#": 46,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.EE.1", "secondary": ""},
+    "Cluster": "Expressions and Equations",
+    "Points": 2
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "CR",
+    "Q#": 47,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.G.1", "secondary": ""},
+    "Cluster": "Geometry",
+    "Points": 2
+  },
+  {
+    "Year": "2025",
+    "Exam": "Spring 2025",
+    "Type": "CR",
+    "Q#": 48,
+    "Grade": 7,
+    "Standards": {"primary": "NY-7.RP.3", "secondary": ""},
+    "Cluster": "Ratios and Proportional Relationships",
+    "Points": 3
+  }
+]

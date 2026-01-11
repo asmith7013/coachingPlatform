@@ -69,7 +69,7 @@ Independent practice (practice slides) tests whether students can apply logic to
 - NO strategy reminders - students apply independently
 - Generated separately after slides 1-8 complete
 
-## The Four Rules
+## The Five Rules
 
 ### Rule 1: The "Two-Slide" Rule
 **Never show question and answer together**
@@ -91,6 +91,56 @@ Implementation:
 - Slides 3-8 maintain that exact position
 - Add highlights, arrows, annotations AROUND the stationary element
 - Never reposition the core visual between slides
+
+#### Sub-Principle: Progressive Visual Revelation
+
+**"Stability" means POSITION is fixed, but CONTENT evolves.**
+
+Each step slide must ADD something new to the visual. If slides 3-8 show identical visuals, students see repetition instead of progression. The visual should tell a story that builds toward the answer.
+
+**The Pattern:**
+```
+Slide 2 (Setup):    Visual shows the PROBLEM (unknowns visible)
+Slide 3-4 (Step 1): Visual shows Step 1 RESULT highlighted
+Slide 5-6 (Step 2): Visual shows Step 2 RESULT added
+Slide 7-8 (Step 3): Visual shows SOLUTION complete
+```
+
+**What Changes vs. What Stays:**
+
+| Stays Fixed | Changes Each Step |
+|-------------|-------------------|
+| Visual position (x, y coordinates) | Highlighted elements |
+| Overall dimensions and scale | Annotations and labels |
+| Base structure (axes, boxes, shapes) | Revealed values |
+| Color scheme | Which parts are emphasized |
+
+**Examples by Visual Type:**
+
+| Visual Type | Step 1 Shows | Step 2 Shows | Step 3 Shows |
+|-------------|--------------|--------------|--------------|
+| **Tape diagram** | Unknown (?) and total | Boxes divided with values | Answer (box count) revealed |
+| **Coordinate graph** | Blank axes with scale | First line/point plotted | Second line, intersection labeled |
+| **Hanger diagram** | Initial equation on balance | One side simplified | Solution isolated |
+| **Double number line** | Both lines with some values | Unit rate marked | Unknown value found |
+| **Area model** | Dimensions labeled | Partial products filled | Total computed |
+| **Input-output table** | Some inputs/outputs | Pattern identified | Missing value filled |
+
+**Anti-Pattern (WRONG):**
+```
+Slide 2: Shows "Two Possible Meanings" panel
+Slide 3: Shows SAME "Two Possible Meanings" panel  ❌ REPETITION
+Slide 4: Shows SAME "Two Possible Meanings" panel  ❌ REPETITION
+```
+
+**Correct Pattern:**
+```
+Slide 2: Shows problem setup (unknown visible)
+Slide 3: Shows Step 1 interpretation HIGHLIGHTED
+Slide 4: Shows Step 1 result with values FILLED IN
+Slide 5: Shows Step 2 operation on the visual
+...and so on, building toward the answer
+```
 
 ### Rule 3: The "Real World" Rule
 **Use engaging, age-appropriate contexts**
@@ -116,6 +166,49 @@ Why: Tests true understanding vs. pattern matching.
 - Slides 2-8: Full scaffolding (step badges, CFU questions, highlighting)
 - Slide 9 (Printable): No scaffolding (just the raw problems + "Your Task")
 
+### Rule 5: The "3-Second Scan" Rule
+**A student should understand the key point in 3 seconds**
+
+Why: Every extra word competes with the math for attention. If a student can't grasp the slide's purpose in 3 seconds, it's too cluttered.
+
+**Text Limits (STRICTLY ENFORCED):**
+
+| Element | Max Words | Example |
+|---------|-----------|---------|
+| Problem reminder | 15 words | "30 nuggets total. 6 per student. How many students?" |
+| Step subtitle | 0 words | NO explanatory subtitles - remove entirely |
+| CFU question | 12 words | "Why did I put the '?' at the beginning?" |
+| Answer explanation | 25 words | 1-2 short sentences max |
+
+**Complementary Columns (NO DUPLICATION):**
+
+```
+LEFT COLUMN              RIGHT COLUMN
+─────────────            ─────────────
+Text explanation    →    Visual representation
+Prose & equations        Diagrams, tables, graphs
+"What we're doing"       "What it looks like"
+
+⚠️ NEVER repeat the same content in both columns
+```
+
+- **Left column**: Problem statement, step explanation, equations as text
+- **Right column**: Visual ONLY - diagram, graph, table, tape diagram
+- **No text boxes inside visuals** that repeat left-side content
+- **Labels on visuals**: Only minimal labels (numbers, variable names) - NOT explanatory sentences
+
+**What to REMOVE:**
+- ❌ "First, let's figure out..." (explanatory subtitles)
+- ❌ "Reading the graph: At point (6,12)..." (redundant info boxes)
+- ❌ Two-part CFU questions ("What is X? How did you calculate it?")
+- ❌ Extra context in answers ("This is also called the constant of proportionality!")
+
+**What to KEEP:**
+- ✅ Large, prominent main content (36-48px in columns)
+- ✅ Ultra-condensed problem reminders
+- ✅ Single-purpose slides (each slide adds ONE concept)
+- ✅ Visual diagrams that complement (not duplicate) the text
+
 ## Step Naming and Strategy Thread
 
 **CRITICAL**: The strategy must be consistent throughout ALL slides.
@@ -139,18 +232,24 @@ If your moves are IDENTIFY, PLOT, CONNECT:
 
 ## Check-for-Understanding (CFU) Question Patterns
 
-### Good CFU Questions (Strategy-focused)
-- "Why did I [VERB] first?"
-- "How did I know to [VERB] here?"
-- "What would happen if I skipped [VERB]?"
-- "How does [VERB]ing help me find the answer?"
+### CFU Format Rules (STRICTLY ENFORCED)
+- **ONE question only** - never two-part questions
+- **12 words max** - if longer, it's too complex
+- **Strategy-focused** - ask about WHY, not WHAT
 
-### Bad CFU Questions (Computation-focused)
-- "What is 6 ÷ 2?" ❌
-- "What's the answer?" ❌
-- "How many are left?" ❌
+### Good CFU Questions (Strategy-focused, ≤12 words)
+- "Why did I [VERB] first?" ✅ (6 words)
+- "How did I know to [VERB] here?" ✅ (8 words)
+- "Why is the '?' at the beginning?" ✅ (7 words)
+- "How does [VERB]ing help me find the answer?" ✅ (9 words)
 
-**The difference**: Good questions ask about decision-making and strategy. Bad questions just ask for calculations.
+### Bad CFU Questions
+- "What is 6 ÷ 2?" ❌ (computation, not strategy)
+- "What's the answer?" ❌ (result-focused)
+- "What is turtle g's speed? How did you calculate it?" ❌ (TWO questions!)
+- "Why did I subtract 4 from both sides instead of dividing first?" ❌ (17 words - too long!)
+
+**The difference**: Good questions are SHORT, ask about decision-making and strategy. Bad questions ask for calculations or are too wordy.
 
 ## Visual Annotation Guidelines
 
