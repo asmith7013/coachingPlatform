@@ -160,6 +160,18 @@ export default function StateExamQuestionsPage() {
       .replace(/\.([a-z])$/i, "$1"); // Remove dot before single letter suffix (8.G.1.a -> 8.G.1a)
   }, []);
 
+  // Check if a question standard matches a filter standard
+  // Handles exact matches and parent-child matches (e.g., 8.EE.7 matches 8.EE.7a)
+  const standardMatches = useCallback((questionStd: string, filterStd: string): boolean => {
+    if (questionStd === filterStd) return true;
+    // Check if question standard starts with filter standard (parent match)
+    // e.g., "8.EE.7a" starts with "8.EE.7"
+    if (questionStd.startsWith(filterStd) && /^[a-z]$/i.test(questionStd.slice(filterStd.length))) {
+      return true;
+    }
+    return false;
+  }, []);
+
   // Filter questions by search query and unit/section standards
   // Also track which questions matched only via secondary standard
   // Group questions by the standard they matched on
@@ -170,7 +182,7 @@ export default function StateExamQuestionsPage() {
 
     // Filter by unit/section standards (check both primary and secondary)
     if (filterStandards && filterStandards.length > 0) {
-      const normalizedFilterStandards = new Set(filterStandards.map(normalizeStandard));
+      const normalizedFilterStandards = filterStandards.map(normalizeStandard);
 
       // Create a map from normalized standard to original standard for display
       const normalizedToOriginal = new Map<string, string>();
@@ -178,12 +190,25 @@ export default function StateExamQuestionsPage() {
         normalizedToOriginal.set(normalizeStandard(std), std);
       });
 
+      // Find matching filter standard for a question standard
+      const findMatchingFilterStd = (qStd: string): string | null => {
+        for (const filterStd of normalizedFilterStandards) {
+          if (standardMatches(qStd, filterStd)) {
+            return normalizedToOriginal.get(filterStd) || filterStd;
+          }
+        }
+        return null;
+      };
+
       filtered = filtered.filter((q) => {
         const qPrimaryStandard = normalizeStandard(q.standard);
         const qSecondaryStandard = q.secondaryStandard ? normalizeStandard(q.secondaryStandard) : null;
 
-        const primaryMatches = normalizedFilterStandards.has(qPrimaryStandard);
-        const secondaryMatches = qSecondaryStandard && normalizedFilterStandards.has(qSecondaryStandard);
+        const primaryMatchStd = findMatchingFilterStd(qPrimaryStandard);
+        const secondaryMatchStd = qSecondaryStandard ? findMatchingFilterStd(qSecondaryStandard) : null;
+
+        const primaryMatches = primaryMatchStd !== null;
+        const secondaryMatches = secondaryMatchStd !== null;
 
         // Track if this question only matched via secondary standard
         if (!primaryMatches && secondaryMatches) {
@@ -191,21 +216,19 @@ export default function StateExamQuestionsPage() {
         }
 
         // Group by matching standards (a question can appear in multiple groups)
-        if (primaryMatches) {
-          const originalStd = normalizedToOriginal.get(qPrimaryStandard) || q.standard;
-          if (!byStandard.has(originalStd)) {
-            byStandard.set(originalStd, { questions: [], isSecondaryMatch: new Map() });
+        if (primaryMatches && primaryMatchStd) {
+          if (!byStandard.has(primaryMatchStd)) {
+            byStandard.set(primaryMatchStd, { questions: [], isSecondaryMatch: new Map() });
           }
-          byStandard.get(originalStd)!.questions.push(q);
-          byStandard.get(originalStd)!.isSecondaryMatch.set(q.questionId, false);
+          byStandard.get(primaryMatchStd)!.questions.push(q);
+          byStandard.get(primaryMatchStd)!.isSecondaryMatch.set(q.questionId, false);
         }
-        if (secondaryMatches && qSecondaryStandard) {
-          const originalStd = normalizedToOriginal.get(qSecondaryStandard) || q.secondaryStandard!;
-          if (!byStandard.has(originalStd)) {
-            byStandard.set(originalStd, { questions: [], isSecondaryMatch: new Map() });
+        if (secondaryMatches && secondaryMatchStd) {
+          if (!byStandard.has(secondaryMatchStd)) {
+            byStandard.set(secondaryMatchStd, { questions: [], isSecondaryMatch: new Map() });
           }
           // Only add if not already added via primary match to this same standard
-          const existing = byStandard.get(originalStd)!;
+          const existing = byStandard.get(secondaryMatchStd)!;
           if (!existing.questions.some(eq => eq.questionId === q.questionId)) {
             existing.questions.push(q);
           }
@@ -217,7 +240,7 @@ export default function StateExamQuestionsPage() {
     }
 
     return { filteredQuestions: filtered, secondaryOnlyMatches: secondaryOnly, questionsByStandard: byStandard };
-  }, [questions, filterStandards, normalizeStandard]);
+  }, [questions, filterStandards, normalizeStandard, standardMatches]);
 
   // Get available grades from stats
   const availableGrades = stats
@@ -245,21 +268,34 @@ export default function StateExamQuestionsPage() {
   }, [sections, unitStandards]);
 
   // Compute unit distribution stats (MC/CR counts per unit)
+  // Wait for units with standards to be loaded
+  const unitsHaveStandards = units.length > 0 && units.some(u => u.standards && u.standards.length > 0);
+
   const unitDistribution = useMemo(() => {
-    if (!selectedGrade || questions.length === 0 || units.length === 0) {
+    if (!selectedGrade || questions.length === 0 || units.length === 0 || !unitsHaveStandards) {
       return null;
     }
 
-    // Build a map of normalized standard -> unit number
-    const standardToUnit = new Map<string, number>();
+    // Build arrays of normalized standards per unit for matching
+    const unitStandardsMap = new Map<number, string[]>();
     units.forEach((unit) => {
       if (!unit.standards || unit.standards.length === 0) {
         return;
       }
-      unit.standards.forEach((std) => {
-        standardToUnit.set(normalizeStandard(std), unit.unitNumber);
-      });
+      unitStandardsMap.set(unit.unitNumber, unit.standards.map(normalizeStandard));
     });
+
+    // Find which unit a question standard matches (using parent-child matching)
+    const findMatchingUnit = (qStd: string): number | undefined => {
+      for (const [unitNum, unitStds] of unitStandardsMap) {
+        for (const unitStd of unitStds) {
+          if (standardMatches(qStd, unitStd)) {
+            return unitNum;
+          }
+        }
+      }
+      return undefined;
+    };
 
     // Count MC and CR by unit
     const unitStats = new Map<number, { mc: number; cr: number }>();
@@ -268,7 +304,7 @@ export default function StateExamQuestionsPage() {
 
     questions.forEach((q) => {
       const normalizedStd = normalizeStandard(q.standard);
-      const unitNum = standardToUnit.get(normalizedStd);
+      const unitNum = findMatchingUnit(normalizedStd);
 
       if (unitNum !== undefined) {
         if (!unitStats.has(unitNum)) {
@@ -301,7 +337,7 @@ export default function StateExamQuestionsPage() {
       .sort((a, b) => a.unitNumber - b.unitNumber);
 
     return { rows, totalMC, totalCR };
-  }, [selectedGrade, questions, units, normalizeStandard]);
+  }, [selectedGrade, questions, units, normalizeStandard, standardMatches, unitsHaveStandards]);
 
   const handleGradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedGrade(e.target.value);
