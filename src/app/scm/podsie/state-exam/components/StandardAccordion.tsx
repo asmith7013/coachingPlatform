@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Badge } from "@/components/core/feedback/Badge";
 import { QuestionCard } from "./QuestionCard";
+import { DOMAIN_COLORS, STANDARD_DESCRIPTIONS } from "../constants";
+import { extractDomain, normalizeStandard } from "../hooks";
 import type { StateTestQuestion } from "../types";
 
 interface StandardAccordionProps {
@@ -16,7 +17,7 @@ export function StandardAccordion({
   questions,
   isSecondaryMatch,
 }: StandardAccordionProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const sortedQuestions = [...questions].sort((a, b) => {
     // Sort secondary matches last
@@ -28,30 +29,45 @@ export function StandardAccordion({
     return 0;
   });
 
+  // Get domain colors for this standard
+  const domain = extractDomain(normalizeStandard(standard));
+  const colors = DOMAIN_COLORS[domain] || DOMAIN_COLORS.Other;
+
+  // Get standard description - try both normalized and original standard
+  const normalizedStd = normalizeStandard(standard);
+  const description = STANDARD_DESCRIPTIONS[normalizedStd] || STANDARD_DESCRIPTIONS[standard];
+
   return (
-    <div id={`standard-${standard}`} className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-      {/* Accordion Header - Grayscale background */}
+    <div id={`standard-${standard}`} className={`bg-white rounded-lg shadow-sm overflow-hidden border ${colors.border}`}>
+      {/* Accordion Header - Domain colored background */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 text-left bg-gray-100 hover:bg-gray-200 cursor-pointer transition-colors"
+        className={`w-full flex items-center justify-between px-4 py-3 text-left ${colors.bg} hover:opacity-90 cursor-pointer transition-colors`}
       >
         <div className="flex items-center gap-3">
-          <Badge intent="primary" appearance="outline" size="sm">
+          <span className={`inline-flex items-center px-3 py-1.5 rounded text-base font-semibold ${colors.badge} text-white`}>
             {standard}
-          </Badge>
-          <span className="text-sm text-gray-600">
-            {questions.length} {questions.length === 1 ? "question" : "questions"} matched
           </span>
+          {description && (
+            <span className={`text-base ${colors.text}`}>
+              {description}
+            </span>
+          )}
         </div>
-        <svg
-          className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        <div className="flex items-center gap-3">
+          <span className={`text-sm font-medium ${colors.text}`}>
+            {questions.length} {questions.length === 1 ? "question" : "questions"}
+          </span>
+          <svg
+            className={`w-5 h-5 ${colors.text} transition-transform ${isOpen ? "rotate-180" : ""}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
       </button>
 
       {/* Accordion Content */}
@@ -63,6 +79,7 @@ export function StandardAccordion({
                 key={`${standard}-${question.questionId}`}
                 question={question}
                 isSecondaryOnlyMatch={isSecondaryMatch.get(question.questionId) || false}
+                hideStandardBadge={true}
               />
             ))}
           </div>

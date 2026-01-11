@@ -16,6 +16,8 @@ interface StandardsUnitMatrixProps {
   questions: StateTestQuestion[];
   units: UnitWithStandards[];
   selectedGrade: string;
+  selectedUnit?: number | null;
+  onUnitClick?: (unitNumber: number | null) => void;
 }
 
 interface StandardRow {
@@ -39,6 +41,8 @@ export function StandardsUnitMatrix({
   questions,
   units,
   selectedGrade,
+  selectedUnit,
+  onUnitClick,
 }: StandardsUnitMatrixProps) {
   // Compute the matrix data
   const matrixData = useMemo(() => {
@@ -156,7 +160,7 @@ export function StandardsUnitMatrix({
   if (!matrixData || matrixData.domainGroups.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-700 mb-3">Standards × Unit Matrix</h3>
+        <h3 className="text-lg font-semibold text-gray-700 mb-3">Unit × Standards Matrix</h3>
         <p className="text-gray-400 text-sm">Select a grade to view the standards matrix.</p>
       </div>
     );
@@ -177,171 +181,27 @@ export function StandardsUnitMatrix({
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <h3 className="text-lg font-semibold text-gray-700 mb-1">Standards × Unit Matrix</h3>
+      <div className="flex items-center justify-between mb-1">
+        <h3 className="text-lg font-semibold text-gray-700">Unit × Standards Matrix</h3>
+        {/* Legend */}
+        <div className="flex items-center gap-3 text-xs text-gray-500">
+          <span className="font-medium">Legend:</span>
+          <span className="inline-flex items-center gap-1">
+            <span className="inline-flex items-center justify-center w-5 h-5 bg-blue-500 text-white text-[10px] font-bold rounded">5</span>
+            <span># questions on state test</span>
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="inline-flex items-center justify-center w-5 h-5 border border-gray-200 text-gray-300 rounded">—</span>
+            <span>Not in unit</span>
+          </span>
+        </div>
+      </div>
       <p className="text-sm text-gray-500 mb-4">
-        See which standards appear in each unit. Checkmarks indicate the unit covers that standard.
+        Shows how many state test questions align with each standard taught in each unit.
       </p>
 
-      <div className="overflow-auto max-h-[600px]">
-        <table className="w-full text-sm border-collapse">
-          <thead className="sticky top-0 z-20">
-            <tr className="border-b-2 border-gray-300">
-              <th className="text-left py-2 px-2 font-semibold text-gray-700 bg-gray-50 sticky left-0 z-30 min-w-[120px]">
-                Cluster
-              </th>
-              <th className="text-left py-2 px-2 font-semibold text-gray-700 bg-gray-50 min-w-[70px]">
-                Standard
-              </th>
-              <th className="text-center py-2 px-2 font-semibold text-gray-700 bg-gray-50 min-w-[50px]">
-                %
-              </th>
-              <th className="text-center py-2 px-2 font-semibold text-gray-700 bg-gray-50 min-w-[40px]">
-                #
-              </th>
-              {sortedUnits.map((unit) => (
-                <th
-                  key={unit.unitNumber}
-                  className="text-center py-2 px-1 font-semibold text-gray-700 bg-gray-50 min-w-[40px]"
-                >
-                  <Tooltip content={unit.unitName || `Unit ${unit.unitNumber}`} position="top">
-                    <span className="cursor-help">U{unit.unitNumber}</span>
-                  </Tooltip>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {domainGroups.map((group, groupIndex) => {
-              const colors = DOMAIN_COLORS[group.domain] || DOMAIN_COLORS.Other;
-              return group.standards.map((row, rowIndex) => {
-                const isFirstInGroup = rowIndex === 0;
-                const isLastInGroup = rowIndex === group.standards.length - 1;
-                const description = STANDARD_DESCRIPTIONS[row.standard];
-
-                return (
-                  <tr
-                    key={row.standard}
-                    className={`
-                      ${isLastInGroup && groupIndex < domainGroups.length - 1 ? "border-b-2 border-gray-200" : "border-b border-gray-100"}
-                      hover:bg-gray-50
-                    `}
-                  >
-                    {/* Cluster column - only show on first row of group */}
-                    {isFirstInGroup ? (
-                      <td
-                        rowSpan={group.standards.length}
-                        className={`py-2 px-2 font-medium sticky left-0 z-10 ${colors.bg} ${colors.text} border-r ${colors.border}`}
-                      >
-                        <div className="flex flex-col">
-                          <span className="font-bold">{group.domain}</span>
-                          <span className="text-xs opacity-75">{group.label}</span>
-                        </div>
-                      </td>
-                    ) : null}
-
-                    {/* Standard column */}
-                    <td className="py-1.5 px-2 text-gray-700">
-                      <Tooltip
-                        content={description ? `${row.standard}: ${description}` : row.standard}
-                        position="right"
-                      >
-                        <span className="cursor-help font-medium">{row.shortForm}</span>
-                      </Tooltip>
-                    </td>
-
-                    {/* Percent column */}
-                    <td className={`text-center py-1.5 px-2 rounded ${getPercentColor(row.percent)}`}>
-                      {row.percent}%
-                    </td>
-
-                    {/* Question count column */}
-                    <td className="text-center py-1.5 px-2 text-gray-900 font-medium">
-                      {row.questionCount}
-                    </td>
-
-                    {/* Unit columns */}
-                    {sortedUnits.map((unit) => {
-                      const isPresent = row.unitPresence.get(unit.unitNumber) || false;
-                      return (
-                        <td key={unit.unitNumber} className="text-center py-1.5 px-1">
-                          {isPresent ? (
-                            <span
-                              className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${colors.badge}`}
-                            >
-                              <svg
-                                className="w-3 h-3 text-white"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-gray-200 text-gray-300">
-                              <span className="w-1.5 h-0.5 bg-gray-300 rounded"></span>
-                            </span>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              });
-            })}
-          </tbody>
-          <tfoot>
-            <tr className="border-t-2 border-gray-300 bg-gray-50 font-semibold">
-              <td colSpan={2} className="py-2 px-2 text-gray-700 sticky left-0 z-10 bg-gray-50">
-                Unit Coverage
-              </td>
-              <td className="text-center py-2 px-2 text-gray-400">—</td>
-              <td className="text-center py-2 px-2 text-gray-400">—</td>
-              {sortedUnits.map((unit) => {
-                const percentSum = unitCoverage.get(unit.unitNumber) || 0;
-                return (
-                  <td key={unit.unitNumber} className="text-center py-2 px-1">
-                    <span className={`inline-block px-1.5 py-0.5 rounded text-xs font-bold ${
-                      percentSum >= 20 ? "bg-green-100 text-green-800" :
-                      percentSum >= 10 ? "bg-yellow-100 text-yellow-800" :
-                      "bg-red-100 text-red-800"
-                    }`}>
-                      {percentSum}%
-                    </span>
-                  </td>
-                );
-              })}
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
-      {/* Transposed Matrix: Units as Rows, Standards as Columns */}
-      <div className="mt-8">
-        <div className="flex items-center justify-between mb-1">
-          <h3 className="text-lg font-semibold text-gray-700">Unit × Standards Matrix (Transposed)</h3>
-          {/* Legend */}
-          <div className="flex items-center gap-3 text-xs text-gray-500">
-            <span className="font-medium">Legend:</span>
-            <span className="inline-flex items-center gap-1">
-              <span className="inline-flex items-center justify-center w-5 h-5 bg-blue-500 text-white text-[10px] font-bold rounded">5</span>
-              <span>Questions on state test</span>
-            </span>
-            <span className="inline-flex items-center gap-1">
-              <span className="inline-flex items-center justify-center w-5 h-5 border border-gray-200 text-gray-300 rounded">—</span>
-              <span>Not in unit</span>
-            </span>
-          </div>
-        </div>
-        <p className="text-sm text-gray-500 mb-4">
-          Shows how many state test questions align with each standard taught in each unit.
-        </p>
-
         <div className="overflow-auto max-h-[600px]">
-          <table className="text-sm border-collapse">
+          <table className="w-full text-sm border-collapse">
             <thead className="sticky top-0 z-20">
               {/* Domain/Cluster header row */}
               <tr className="border-b border-gray-200">
@@ -351,18 +211,25 @@ export function StandardsUnitMatrix({
                 <th rowSpan={2} className="text-center py-1.5 px-1.5 font-semibold text-gray-700 bg-gray-50 min-w-[50px] border-b-2 border-gray-300">
                   Cov.
                 </th>
-                {/* Domain group headers */}
+                {/* Domain group headers - two rows: full label on top, abbreviation left + percentage right below */}
                 {domainGroups.map((group) => {
                   const colors = DOMAIN_COLORS[group.domain] || DOMAIN_COLORS.Other;
+                  const domainPercentColorClass = getPercentColor(group.totalPercent);
                   return (
                     <th
                       key={group.domain}
                       colSpan={group.standards.length}
-                      className={`text-center py-1 px-1 font-semibold text-xs border-l-2 ${colors.border} ${colors.bg} ${colors.text}`}
+                      className={`text-center py-1 px-2 font-semibold text-xs border-l-2 ${colors.border} ${colors.bg} ${colors.text}`}
                     >
-                      <div className="flex items-center justify-center gap-1.5">
-                        <span>{group.domain}</span>
-                        <span className="text-[10px] opacity-75">({group.totalQuestions})</span>
+                      <div className="flex flex-col leading-tight">
+                        {/* First row: full label - darker */}
+                        
+                        {/* Second row: abbreviation left, percentage right - lighter */}
+                        <div className="flex items-center justify-between gap-1">
+                          {/* <span className="font-bold">{group.domain}</span> */}
+                          <span className="text-[14px] font-bold">{group.label}</span>
+                          <span className={`text-[12px] px-1 rounded ${domainPercentColorClass}`}>{group.totalPercent}%</span>
+                        </div>
                       </div>
                     </th>
                   );
@@ -405,24 +272,32 @@ export function StandardsUnitMatrix({
             <tbody>
               {sortedUnits.map((unit, unitIndex) => {
                 const percentSum = unitCoverage.get(unit.unitNumber) || 0;
+                const isSelected = selectedUnit === unit.unitNumber;
+                const isMuted = selectedUnit !== null && selectedUnit !== undefined && !isSelected;
                 return (
                   <tr
                     key={unit.unitNumber}
-                    className={`border-b border-gray-100 hover:bg-gray-50 ${
+                    onClick={() => onUnitClick?.(isSelected ? null : unit.unitNumber)}
+                    className={`border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
                       unitIndex === sortedUnits.length - 1 ? "border-b-2 border-gray-300" : ""
-                    }`}
+                    } ${isSelected ? "bg-blue-50" : ""} ${isMuted ? "opacity-40" : ""}`}
                   >
-                    {/* Unit name column */}
-                    <td className="py-1.5 px-2 font-medium text-gray-700 sticky left-0 z-10 bg-white text-xs">
-                      <Tooltip content={unit.unitName || `Unit ${unit.unitNumber}`} position="right">
-                        <span className="cursor-help">Unit {unit.unitNumber}</span>
-                      </Tooltip>
+                    {/* Unit name column - two lines: title on top (without "Unit X - " prefix), abbreviation below */}
+                    <td className="py-1 px-2 sticky left-0 z-10 bg-white">
+                      <div className="flex flex-col leading-tight">
+                        {/* Unit title (without "Unit X - " prefix) - darker */}
+                        <span className={`text-[11px] font-medium truncate max-w-[100px] ${isSelected ? "text-blue-700" : "text-gray-700"}`}>
+                          {unit.unitName?.replace(/^Unit\s*\d+\s*[-–]\s*/i, "") || `Unit ${unit.unitNumber}`}
+                        </span>
+                        {/* Abbreviation - lighter */}
+                        <span className={`text-xs ${isSelected ? "text-blue-500" : "text-gray-500"}`}>U{unit.unitNumber}</span>
+                      </div>
                     </td>
 
-                    {/* Coverage sum column */}
-                    <td className="text-center py-1.5 px-1.5">
+                    {/* Coverage column */}
+                    <td className="text-center py-1 px-1.5">
                       <span
-                        className={`inline-block px-1.5 py-0.5 rounded text-[11px] font-bold ${
+                        className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${
                           percentSum >= 20
                             ? "bg-green-100 text-green-800"
                             : percentSum >= 10
@@ -465,7 +340,6 @@ export function StandardsUnitMatrix({
             </tbody>
           </table>
         </div>
-      </div>
     </div>
   );
 }
