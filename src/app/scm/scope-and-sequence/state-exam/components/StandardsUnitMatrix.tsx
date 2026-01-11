@@ -206,7 +206,10 @@ export function StandardsUnitMatrix({
               {/* Domain/Cluster header row */}
               <tr className="border-b border-gray-200">
                 <th rowSpan={2} className="text-left py-1.5 px-2 font-semibold text-gray-700 bg-gray-50 sticky left-0 z-30 min-w-[80px] border-b-2 border-gray-300">
-                  Unit
+                  <div className="flex flex-col">
+                    <span>Unit</span>
+                    <span className="text-[10px] font-normal text-blue-500">click to filter</span>
+                  </div>
                 </th>
                 <th rowSpan={2} className="text-center py-1.5 px-1.5 font-semibold text-gray-700 bg-gray-50 min-w-[50px] border-b-2 border-gray-300">
                   Cov.

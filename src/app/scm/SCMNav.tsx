@@ -91,6 +91,7 @@ export function SCMNav() {
       items: [
         { href: "/scm/scope-and-sequence/lesson-by-lesson", label: "Lesson by Lesson" },
         { href: "/scm/scope-and-sequence/units", label: "Units" },
+        { href: "/scm/scope-and-sequence/state-exam", label: "State Exam Questions" },
       ],
     },
     {
