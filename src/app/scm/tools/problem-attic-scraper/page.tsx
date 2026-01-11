@@ -35,7 +35,7 @@ export default function ProblemAtticScraperPage() {
   const [stats, setStats] = useState<ScrapeStats | null>(null);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [urlStatuses, setUrlStatuses] = useState<UrlStatus[]>([]);
-  const [currentUrlIndex, setCurrentUrlIndex] = useState<number | null>(null);
+  const [_currentUrlIndex, setCurrentUrlIndex] = useState<number | null>(null);
 
   const parseUrls = (input: string): string[] => {
     return input
