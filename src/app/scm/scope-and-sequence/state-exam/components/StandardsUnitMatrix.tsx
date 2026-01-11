@@ -142,7 +142,7 @@ export function StandardsUnitMatrix({
     const sortedUnits = [...units].sort((a, b) => a.unitNumber - b.unitNumber);
 
     // Calculate coverage for each unit (sum of question counts for standards that unit covers, as % of total)
-    const unitCoverage = new Map<number, number>();
+    const unitCoverage = new Map<number, { percent: number; count: number }>();
     sortedUnits.forEach((unit) => {
       let questionSum = 0;
       standardRows.forEach((row) => {
@@ -151,7 +151,7 @@ export function StandardsUnitMatrix({
         }
       });
       const coveragePercent = totalQuestions > 0 ? Math.round((questionSum / totalQuestions) * 100) : 0;
-      unitCoverage.set(unit.unitNumber, coveragePercent);
+      unitCoverage.set(unit.unitNumber, { percent: coveragePercent, count: questionSum });
     });
 
     return { domainGroups, sortedUnits, totalQuestions, unitCoverage };
@@ -211,8 +211,11 @@ export function StandardsUnitMatrix({
                     <span className="text-[10px] font-normal text-blue-500">click to filter</span>
                   </div>
                 </th>
-                <th rowSpan={2} className="text-center py-1.5 px-1.5 font-semibold text-gray-700 bg-gray-50 min-w-[50px] border-b-2 border-gray-300">
-                  Cov.
+                <th rowSpan={2} className="text-center py-1.5 px-1.5 font-semibold text-gray-700 bg-gray-50 min-w-[45px] border-b-2 border-gray-300">
+                  Test %
+                </th>
+                <th rowSpan={2} className="text-center py-1.5 px-1.5 font-semibold text-gray-700 bg-gray-50 min-w-[40px] border-b-2 border-gray-300">
+                  # Qs
                 </th>
                 {/* Domain group headers - two rows: full label on top, abbreviation left + percentage right below */}
                 {domainGroups.map((group) => {
@@ -274,7 +277,7 @@ export function StandardsUnitMatrix({
             </thead>
             <tbody>
               {sortedUnits.map((unit, unitIndex) => {
-                const percentSum = unitCoverage.get(unit.unitNumber) || 0;
+                const coverage = unitCoverage.get(unit.unitNumber) || { percent: 0, count: 0 };
                 const isSelected = selectedUnit === unit.unitNumber;
                 const isMuted = selectedUnit !== null && selectedUnit !== undefined && !isSelected;
                 return (
@@ -297,18 +300,25 @@ export function StandardsUnitMatrix({
                       </div>
                     </td>
 
-                    {/* Coverage column */}
+                    {/* Test % column */}
                     <td className="text-center py-1 px-1.5">
                       <span
                         className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                          percentSum >= 20
+                          coverage.percent >= 20
                             ? "bg-green-100 text-green-800"
-                            : percentSum >= 10
+                            : coverage.percent >= 10
                             ? "bg-yellow-100 text-yellow-800"
                             : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {percentSum}%
+                        {coverage.percent}%
+                      </span>
+                    </td>
+
+                    {/* # Qs column */}
+                    <td className="text-center py-1 px-1.5">
+                      <span className="text-[11px] font-medium text-gray-600">
+                        {coverage.count}
                       </span>
                     </td>
 

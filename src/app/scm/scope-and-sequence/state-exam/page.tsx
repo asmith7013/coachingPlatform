@@ -418,10 +418,10 @@ export default function StateExamQuestionsPage() {
             {/* Questions Grid */}
             {!loading && filteredQuestions.length > 0 && (
               <>
-                {/* Results Summary Card - Sticky */}
-                <div className="bg-white rounded-lg border border-gray-200 mb-4 sticky top-0 z-30 shadow-sm">
+                {/* Results Summary Card - Sticky (top of connected card) */}
+                <div className="bg-slate-50 rounded-t-lg border border-gray-300 border-b-0 sticky top-0 z-30">
                   {/* Top row - counts, selected unit, and export button */}
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
                         <span className="text-2xl font-bold text-blue-600">{filteredQuestions.length}</span>
@@ -430,7 +430,7 @@ export default function StateExamQuestionsPage() {
                         </span>
                       </div>
                       {selectedUnit !== null && (
-                        <div className="flex items-center gap-2 ml-2 pl-3 border-l border-gray-200">
+                        <div className="flex items-center gap-2 ml-2 pl-3 border-l border-gray-300">
                           <span className="text-sm font-medium text-blue-700 bg-blue-50 px-2 py-1 rounded">
                             {units.find(u => u.unitNumber === selectedUnit)?.unitName || `Unit ${selectedUnit}`}
                           </span>
@@ -466,47 +466,76 @@ export default function StateExamQuestionsPage() {
                   </div>
 
                   {/* Second row - domain legend */}
-                  <div className="px-4 py-2.5 bg-gray-50 flex items-center justify-between">
-                    {/* Domain Color Legend */}
+                  <div className="px-4 py-2.5 border-b-4 border-gray-200 bg-white flex items-center justify-between">
+                    {/* Domain Color Legend - when unit selected, only show domains with standards in this unit */}
                     <div className="flex flex-wrap gap-2 text-xs">
-                      {Object.entries(DOMAIN_COLORS).filter(([key]) => key !== "Other").map(([domain, colors]) => (
-                        <span
-                          key={domain}
-                          className={`inline-flex items-center gap-1.5 px-2 py-1 rounded ${colors.bg} ${colors.border} border`}
-                        >
-                          <span className={`w-2.5 h-2.5 rounded ${colors.badge}`}></span>
-                          <span className={`font-medium ${colors.text}`}>{DOMAIN_LABELS[domain] || domain}</span>
-                        </span>
-                      ))}
+                      {(() => {
+                        // Calculate domain counts from filtered standards
+                        const domainStandardCounts = new Map<string, number>();
+                        if (selectedUnit !== null && questionsByStandard.size > 0) {
+                          // Count unique standards per domain
+                          questionsByStandard.forEach((_, standard) => {
+                            const domain = extractDomain(normalizeStandard(standard));
+                            domainStandardCounts.set(domain, (domainStandardCounts.get(domain) || 0) + 1);
+                          });
+                        }
+
+                        // If unit is selected, only show domains that have standards
+                        const domainsToShow = selectedUnit !== null
+                          ? Object.entries(DOMAIN_COLORS).filter(([key]) => key !== "Other" && domainStandardCounts.has(key))
+                          : Object.entries(DOMAIN_COLORS).filter(([key]) => key !== "Other");
+
+                        return domainsToShow.map(([domain, colors]) => {
+                          const count = domainStandardCounts.get(domain);
+                          return (
+                            <span
+                              key={domain}
+                              className={`inline-flex items-center gap-1.5 px-2 py-1 rounded ${colors.bg} ${colors.border} border`}
+                            >
+                              {selectedUnit !== null && count !== undefined ? (
+                                <span className={`inline-flex items-center justify-center w-4 h-4 rounded text-[10px] font-bold ${colors.badge} text-white`}>
+                                  {count}
+                                </span>
+                              ) : (
+                                <span className={`w-2.5 h-2.5 rounded ${colors.badge}`}></span>
+                              )}
+                              <span className={`font-medium ${colors.text}`}>{DOMAIN_LABELS[domain] || domain}</span>
+                            </span>
+                          );
+                        });
+                      })()}
                     </div>
                   </div>
                 </div>
 
-                {/* Questions display - grouped by standard or flat list */}
-                {groupByStandard && questionsByStandard.size > 0 ? (
-                  <div className="space-y-4">
-                    {Array.from(questionsByStandard.entries())
-                      .sort(([a], [b]) => a.localeCompare(b))
-                      .map(([standard, { questions: stdQuestions, isSecondaryMatch }]) => (
-                        <StandardAccordion
-                          key={standard}
-                          standard={standard}
-                          questions={stdQuestions}
-                          isSecondaryMatch={isSecondaryMatch}
+                {/* Questions display - grouped by standard or flat list (bottom of connected card) */}
+                <div className="bg-white rounded-b-lg border border-gray-300 border-t-0 overflow-hidden">
+                  {groupByStandard && questionsByStandard.size > 0 ? (
+                    <div className="divide-y divide-gray-200">
+                      {Array.from(questionsByStandard.entries())
+                        .sort(([a], [b]) => a.localeCompare(b))
+                        .map(([standard, { questions: stdQuestions, isSecondaryMatch }]) => (
+                          <StandardAccordion
+                            key={standard}
+                            standard={standard}
+                            questions={stdQuestions}
+                            isSecondaryMatch={isSecondaryMatch}
+                            contained
+                          />
+                        ))}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4">
+                      {filteredQuestions.map((question) => (
+                        <QuestionCard
+                          key={question.questionId}
+                          question={question}
+                          isSecondaryOnlyMatch={secondaryOnlyMatches.has(question.questionId)}
                         />
                       ))}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {filteredQuestions.map((question) => (
-                      <QuestionCard
-                        key={question.questionId}
-                        question={question}
-                        isSecondaryOnlyMatch={secondaryOnlyMatches.has(question.questionId)}
-                      />
-                    ))}
-                  </div>
-                )}
+                    </div>
+                  )}
+                </div>
               </>
             )}
 

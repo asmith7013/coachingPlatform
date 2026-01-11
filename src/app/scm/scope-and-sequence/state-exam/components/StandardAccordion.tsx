@@ -10,12 +10,15 @@ interface StandardAccordionProps {
   standard: string;
   questions: StateTestQuestion[];
   isSecondaryMatch: Map<string, boolean>;
+  /** When true, removes individual card styling (for use inside a container card) */
+  contained?: boolean;
 }
 
 export function StandardAccordion({
   standard,
   questions,
   isSecondaryMatch,
+  contained = false,
 }: StandardAccordionProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -37,8 +40,12 @@ export function StandardAccordion({
   const normalizedStd = normalizeStandard(standard);
   const description = STANDARD_DESCRIPTIONS[normalizedStd] || STANDARD_DESCRIPTIONS[standard];
 
+  const containerClasses = contained
+    ? "bg-white" // No border, shadow, or rounded corners when contained
+    : `bg-white rounded-lg shadow-sm overflow-hidden border ${colors.border}`;
+
   return (
-    <div id={`standard-${standard}`} className={`bg-white rounded-lg shadow-sm overflow-hidden border ${colors.border}`}>
+    <div id={`standard-${standard}`} className={containerClasses}>
       {/* Accordion Header - Domain colored background */}
       <button
         type="button"
