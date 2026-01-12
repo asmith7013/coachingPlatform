@@ -50,8 +50,5 @@ export interface HtmlViewerProps {
   slideNumber: number;
   htmlContent: string;
   googleSlidesUrl: string | null;
-  exportStatus: ExportStatus;
-  exportError: string | null;
   onClose: () => void;
-  onExport: () => void;
 }

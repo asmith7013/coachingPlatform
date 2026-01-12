@@ -345,7 +345,9 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
 /**
  * Generate a URL-safe slug from strategy name and grade
  */
-function generateSlug(strategyName: string, gradeLevel: string | null): string {
+function generateSlug(strategyName: string | undefined | null, gradeLevel: string | null): string {
+  if (!strategyName) return '';
+
   const base = strategyName
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')

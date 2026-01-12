@@ -11,6 +11,8 @@ import { SlideThumbnails } from './SlideThumbnails';
 import { SlidesFooter } from './SlidesFooter';
 import { ExportSuccessView } from './ExportSuccessView';
 import { ReauthModal } from './ReauthModal';
+import { ExportProgressOverlay } from './ExportProgressOverlay';
+import { buildExportTitle } from '@/app/scm/workedExamples/presentations/utils';
 // import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 
 interface Step3SlidesProps {
@@ -18,12 +20,18 @@ interface Step3SlidesProps {
 }
 
 type ExportStatus = 'idle' | 'exporting' | 'success' | 'error';
+type ExportPhase = 'idle' | 'analyzing' | 'optimizing' | 'uploading' | 'saving' | 'complete' | 'error';
 
 interface ExportProgress {
   status: ExportStatus;
   message: string;
   currentSlide?: number;
   totalSlides?: number;
+}
+
+interface SlideExportStatus {
+  status: 'pending' | 'analyzing' | 'optimizing' | 'done' | 'skipped' | 'error';
+  wasOptimized?: boolean;
 }
 
 export function Step3Slides({ wizard }: Step3SlidesProps) {
@@ -51,6 +59,11 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
   // Export states
   const [exportProgress, setExportProgress] = useState<ExportProgress>({ status: 'idle', message: '' });
+  const [exportPhase, setExportPhase] = useState<ExportPhase>('idle');
+  const [slideExportStatuses, setSlideExportStatuses] = useState<SlideExportStatus[]>([]);
+  const [exportStartTime, setExportStartTime] = useState<number | null>(null);
+  const [exportElapsed, setExportElapsed] = useState(0);
+  const [optimizedCount, setOptimizedCount] = useState(0);
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
 
@@ -72,6 +85,20 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
     return () => clearInterval(interval);
   }, [isAiLoading, aiEditStartTime]);
+
+  // Track elapsed time during export
+  useEffect(() => {
+    if (!isAnyExporting || !exportStartTime) {
+      setExportElapsed(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setExportElapsed(Math.floor((Date.now() - exportStartTime) / 1000));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isAnyExporting, exportStartTime]);
 
   // OAuth status for Google Slides export
   const { isValid: oauthValid, needsReauth, isLoading: oauthLoading } = useGoogleOAuthStatus();
@@ -217,7 +244,12 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       return;
     }
 
-    setExportProgress({ status: 'exporting', message: 'Generating PPTX...' });
+    // Initialize export state
+    setExportProgress({ status: 'exporting', message: 'Starting export...' });
+    setExportPhase('analyzing');
+    setSlideExportStatuses(slides.map(() => ({ status: 'pending' })));
+    setExportStartTime(Date.now());
+    setOptimizedCount(0);
     setError(null);
     setGoogleSlidesUrl(null);
 
@@ -226,21 +258,149 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     // await downloadPptxLocally(slides, state.title || 'worked-example', state.mathConcept);
 
     try {
+      // Step 0: Optimize slides via SSE streaming
+      let slidesToExport = slides;
+      let finalOptimizedCount = 0;
+
+      try {
+        const optimizeResponse = await fetch('/api/scm/worked-examples/optimize-slides', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slides }),
+        });
+
+        if (!optimizeResponse.ok) {
+          throw new Error('Optimization request failed');
+        }
+
+        // Handle SSE stream
+        const reader = optimizeResponse.body?.getReader();
+        const decoder = new TextDecoder();
+
+        if (reader) {
+          let buffer = '';
+          let currentEvent = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              if (line.startsWith('event: ')) {
+                currentEvent = line.slice(7);
+              } else if (line.startsWith('data: ') && currentEvent) {
+                try {
+                  const data = JSON.parse(line.slice(6));
+
+                  switch (currentEvent) {
+                    case 'start':
+                      if (data.phase === 'analyzing') {
+                        setExportPhase('analyzing');
+                        setExportProgress({ status: 'exporting', message: data.message });
+                      } else if (data.phase === 'optimizing') {
+                        setExportPhase('optimizing');
+                        setExportProgress({ status: 'exporting', message: data.message });
+                      }
+                      break;
+
+                    case 'analyzing':
+                      setSlideExportStatuses(prev => {
+                        const updated = [...prev];
+                        const idx = data.slideNumber - 1;
+                        if (idx >= 0 && idx < updated.length) {
+                          updated[idx] = { status: 'analyzing' };
+                        }
+                        return updated;
+                      });
+                      break;
+
+                    case 'optimizing':
+                      setSlideExportStatuses(prev => {
+                        const updated = [...prev];
+                        const idx = data.slideNumber - 1;
+                        if (idx >= 0 && idx < updated.length) {
+                          updated[idx] = { status: 'optimizing' };
+                        }
+                        return updated;
+                      });
+                      break;
+
+                    case 'slide':
+                      setSlideExportStatuses(prev => {
+                        const updated = [...prev];
+                        const idx = data.slideNumber - 1;
+                        if (idx >= 0 && idx < updated.length) {
+                          updated[idx] = {
+                            status: data.wasOptimized ? 'done' : 'skipped',
+                            wasOptimized: data.wasOptimized,
+                          };
+                        }
+                        return updated;
+                      });
+                      break;
+
+                    case 'complete':
+                      if (data.success && data.slides) {
+                        finalOptimizedCount = data.optimizedCount || 0;
+                        setOptimizedCount(finalOptimizedCount);
+                        slidesToExport = data.slides.map((s: { slideNumber: number; htmlContent: string }) => ({
+                          slideNumber: s.slideNumber,
+                          htmlContent: s.htmlContent,
+                          visualType: slides[s.slideNumber - 1]?.visualType,
+                          scripts: slides[s.slideNumber - 1]?.scripts,
+                        }));
+                        // Mark all slides as done
+                        setSlideExportStatuses(prev =>
+                          prev.map((s, idx) => {
+                            const optimized = data.slides.find((os: { slideNumber: number; wasOptimized: boolean }) => os.slideNumber === idx + 1);
+                            return {
+                              status: 'done',
+                              wasOptimized: optimized?.wasOptimized || false,
+                            };
+                          })
+                        );
+                      }
+                      break;
+
+                    case 'error':
+                      console.warn('[Export] Optimization error:', data.message);
+                      break;
+                  }
+                  currentEvent = ''; // Reset after processing
+                } catch {
+                  // Skip malformed JSON
+                }
+              }
+            }
+          }
+        }
+      } catch (optimizeError) {
+        // Non-fatal: continue with original slides if optimization fails
+        console.warn('[Export] Slide optimization failed, continuing with original slides:', optimizeError);
+        setSlideExportStatuses(slides.map(() => ({ status: 'skipped' })));
+      }
+
       // Step 1: Export to Google Slides to get the URL
+      setExportPhase('uploading');
       setExportProgress({ status: 'exporting', message: 'Uploading to Google Slides...' });
 
       // Build concise title for Google Slides: "SGI 6.4.2: Strategy Name"
-      const lessonPrefix = state.gradeLevel && state.unitNumber !== null && state.lessonNumber !== null
-        ? `SGI ${state.gradeLevel}.${state.unitNumber}.${state.lessonNumber}: `
-        : 'SGI ';
-      const strategyName = state.strategyDefinition?.name || state.title || 'Worked Example';
-      const exportTitle = `${lessonPrefix}${strategyName}`;
+      const exportTitle = buildExportTitle({
+        gradeLevel: state.gradeLevel,
+        unitNumber: state.unitNumber,
+        lessonNumber: state.lessonNumber,
+        title: state.strategyDefinition?.name || state.title,
+      });
 
       const response = await fetch('/api/scm/worked-examples/export-google-slides', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          slides: slides,
+          slides: slidesToExport,
           title: exportTitle,
           mathConcept: state.mathConcept,
           slug: state.slug,
@@ -257,6 +417,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       setGoogleSlidesUrl(url);
 
       // Step 2: Save to database with Google Slides URL included
+      setExportPhase('saving');
       setExportProgress({ status: 'exporting', message: 'Saving to database...' });
 
       const deckData: CreateWorkedExampleDeckInput = {
@@ -275,6 +436,11 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           scripts: slide.scripts,
         })),
         learningGoals: state.learningGoals.length > 0 ? state.learningGoals : undefined,
+        // Analysis data for deck editing
+        // Cast to schema types (wizard types have more specific visualPlan union, schema stores as flexible JSON)
+        problemAnalysis: state.problemAnalysis as CreateWorkedExampleDeckInput['problemAnalysis'],
+        strategyDefinition: state.strategyDefinition as CreateWorkedExampleDeckInput['strategyDefinition'],
+        scenarios: state.scenarios as CreateWorkedExampleDeckInput['scenarios'],
         generatedBy: 'ai',
         sourceImage: state.masteryCheckImage.uploadedUrl ?? undefined,
         createdBy: 'browser-creator',
@@ -293,17 +459,24 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       }
 
       // Success!
+      setExportPhase('complete');
       setSavedSlug(saveResult.slug || state.slug);
       clearPersistedState();
       setExportProgress({ status: 'success', message: 'Exported!' });
+      setExportStartTime(null);
       window.open(url, '_blank');
     } catch (error) {
       console.error('Export error:', error);
+      setExportPhase('error');
       setExportProgress({
         status: 'error',
         message: error instanceof Error ? error.message : 'Export failed'
       });
-      setTimeout(() => setExportProgress({ status: 'idle', message: '' }), 5000);
+      setExportStartTime(null);
+      setTimeout(() => {
+        setExportProgress({ status: 'idle', message: '' });
+        setExportPhase('idle');
+      }, 5000);
     }
   };
 
@@ -440,6 +613,15 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
                 {currentSlide && (
                   <SlidePreview htmlContent={currentSlide.htmlContent} />
                 )}
+                {/* Export Progress Overlay */}
+                <ExportProgressOverlay
+                  isVisible={isAnyExporting}
+                  phase={exportPhase}
+                  slideStatuses={slideExportStatuses}
+                  elapsedTime={exportElapsed}
+                  message={exportProgress.message}
+                  optimizedCount={optimizedCount}
+                />
                 {/* Overlay Controls - Top Right */}
                 <div className="absolute top-2 right-2 flex flex-col gap-2 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 p-2">
                   {/* Navigation Row */}
@@ -552,6 +734,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       <SlidesFooter
         isExporting={isAnyExporting}
         exportProgress={exportProgress}
+        exportElapsed={exportElapsed}
         isAiLoading={isAiLoading}
         aiEditElapsed={aiEditElapsed}
         slidesToEdit={slidesToEdit}

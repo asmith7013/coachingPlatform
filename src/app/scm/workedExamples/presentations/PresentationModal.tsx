@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import type { PresentationModalProps } from './types';
 import { usePresentationState } from './usePresentationState';
 import {
@@ -19,22 +20,21 @@ export function PresentationModal({
   initialSlide = 0,
   onSlideChange,
 }: PresentationModalProps) {
+  const router = useRouter();
   const {
     deck,
     currentSlide,
     loading,
     error,
     showHtmlViewer,
-    exportStatus,
-    exportError,
     googleSlidesUrl,
     currentRevealed,
     totalSlides,
     slide,
+    hasAnalysisData,
     setShowHtmlViewer,
     nextSlide,
     prevSlide,
-    handleExportToGoogleSlides,
   } = usePresentationState({
     slug,
     isOpen,
@@ -115,8 +115,36 @@ export function PresentationModal({
             <PrintButton slide={slide} />
           )}
 
-          {/* Bottom Right - Google Slides Button + View HTML Button */}
+          {/* Bottom Right - Edit Button + Google Slides Button + View HTML Button */}
           <div className="print-hide fixed bottom-4 right-4 flex items-center gap-2 z-[10000]">
+            {/* Edit in Wizard Button - Only show if deck has analysis data */}
+            {hasAnalysisData && (
+              <button
+                onClick={() => {
+                  onClose();
+                  router.push(`/scm/workedExamples/create?editSlug=${slug}`);
+                }}
+                className="w-12 h-12 flex items-center justify-center bg-blue-600/90 hover:bg-blue-500/95 text-white rounded-full transition-colors cursor-pointer"
+                aria-label="Edit in Wizard"
+                title="Edit in Wizard"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                  />
+                </svg>
+              </button>
+            )}
+
             {/* Open Google Slides - Only show if URL exists */}
             {googleSlidesUrl && (
               <button
@@ -166,10 +194,7 @@ export function PresentationModal({
               slideNumber={currentSlide + 1}
               htmlContent={slide.htmlContent}
               googleSlidesUrl={googleSlidesUrl}
-              exportStatus={exportStatus}
-              exportError={exportError}
               onClose={() => setShowHtmlViewer(false)}
-              onExport={handleExportToGoogleSlides}
             />
           )}
         </>

@@ -6,12 +6,18 @@ export {
   CreateWorkedExampleDeckSchema,
   DeckVisualTypeSchema,
   SvgSubtypeSchema,
+  ProblemAnalysisSchema,
+  StrategyDefinitionSchema,
+  ScenarioSchema,
   type WorkedExampleDeck,
   type CreateWorkedExampleDeckInput,
   type HtmlSlide,
   type HtmlSlideScript,
   type DeckVisualType,
   type SvgSubtype,
+  type ProblemAnalysis,
+  type StrategyDefinition,
+  type Scenario,
 } from './deck';
 
 // Slide constants (pixel dimensions)

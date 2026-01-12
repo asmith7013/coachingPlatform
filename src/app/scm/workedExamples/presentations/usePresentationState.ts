@@ -5,7 +5,7 @@ import type { WorkedExampleDeck, HtmlSlide } from '@zod-schema/scm/worked-exampl
 import { getDeckBySlug } from '@actions/worked-examples';
 import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 import type { ExportStatus } from './types';
-import { getAnimatableBoxes } from './utils';
+import { getAnimatableBoxes, buildExportTitle } from './utils';
 
 interface UsePresentationStateProps {
   slug: string;
@@ -166,7 +166,15 @@ export function usePresentationState({
       htmlContent: slide.htmlContent,
     }));
 
-    await downloadPptxLocally(slidesPayload, deck.title, deck.mathConcept);
+    // Build formatted title for Google Slides: "SGI 6.4.2: Strategy Name"
+    const exportTitle = buildExportTitle({
+      gradeLevel: deck.gradeLevel,
+      unitNumber: deck.unitNumber,
+      lessonNumber: deck.lessonNumber,
+      title: deck.title,
+    });
+
+    await downloadPptxLocally(slidesPayload, exportTitle, deck.mathConcept);
 
     try {
       const response = await fetch('/api/scm/worked-examples/export-google-slides', {
@@ -174,7 +182,7 @@ export function usePresentationState({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           slides: slidesPayload,
-          title: deck.title,
+          title: exportTitle,
           mathConcept: deck.mathConcept,
           slug: deck.slug,
         }),
@@ -212,6 +220,11 @@ export function usePresentationState({
   const totalSlides = deck?.htmlSlides?.length || 0;
   const slide: HtmlSlide | undefined = deck?.htmlSlides?.[currentSlide];
 
+  // Check if deck has analysis data for editing
+  const hasAnalysisData = Boolean(
+    deck?.problemAnalysis && deck?.strategyDefinition && deck?.scenarios
+  );
+
   return {
     // State
     deck,
@@ -227,6 +240,7 @@ export function usePresentationState({
     currentRevealed,
     totalSlides,
     slide,
+    hasAnalysisData,
     // Actions
     setShowHtmlViewer,
     setViewMode,

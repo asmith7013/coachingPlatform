@@ -22,6 +22,111 @@ export const SvgSubtypeSchema = z.enum([
 ]);
 export type SvgSubtype = z.infer<typeof SvgSubtypeSchema>;
 
+// ============================================================
+// Analysis Data Schemas - Stored for deck editing
+// ============================================================
+
+// Solution step schema
+const SolutionStepSchema = z.object({
+  step: z.number(),
+  description: z.string(),
+  reasoning: z.string(),
+});
+
+// Diagram preview for visual confirmation
+const DiagramPreviewSchema = z.object({
+  ascii: z.string(),
+  keyElements: z.array(z.object({
+    element: z.string(),
+    represents: z.string(),
+  })),
+});
+
+// Graph plan for coordinate graphs
+const GraphPlanSchema = z.object({
+  equations: z.array(z.object({
+    label: z.string(),
+    equation: z.string(),
+    slope: z.number(),
+    yIntercept: z.number(),
+    color: z.string(),
+    startPoint: z.object({ x: z.number(), y: z.number() }),
+    endPoint: z.object({ x: z.number(), y: z.number() }),
+  })),
+  scale: z.object({
+    xMax: z.number(),
+    yMax: z.number(),
+    xAxisLabels: z.array(z.number()),
+    yAxisLabels: z.array(z.number()),
+  }),
+  keyPoints: z.array(z.object({
+    label: z.string(),
+    x: z.number(),
+    y: z.number(),
+    dataX: z.number(),
+    dataY: z.number(),
+  })),
+  annotations: z.array(z.object({
+    type: z.enum(['y-intercept-shift', 'parallel-label', 'slope-comparison', 'intersection-point', 'slope-triangle', 'point-label']),
+    from: z.number().optional(),
+    to: z.number().optional(),
+    label: z.string(),
+    position: z.string().optional(),
+  })),
+});
+
+// Problem analysis schema (from Claude during Step 2)
+export const ProblemAnalysisSchema = z.object({
+  problemTranscription: z.string(),
+  problemType: z.string(),
+  mathematicalStructure: z.string(),
+  solution: z.array(SolutionStepSchema),
+  answer: z.string(),
+  keyChallenge: z.string(),
+  commonMistakes: z.array(z.string()),
+  requiredPriorKnowledge: z.array(z.string()),
+  answerFormat: z.string(),
+  visualType: DeckVisualTypeSchema,
+  svgSubtype: SvgSubtypeSchema.optional(),
+  graphPlan: GraphPlanSchema.optional(),
+  diagramPreview: DiagramPreviewSchema.optional(),
+});
+
+// Strategy move schema
+const StrategyMoveSchema = z.object({
+  verb: z.string(),
+  description: z.string(),
+  result: z.string(),
+});
+
+// Strategy definition schema (from Claude during Step 2)
+export const StrategyDefinitionSchema = z.object({
+  name: z.string(),
+  oneSentenceSummary: z.string(),
+  moves: z.array(StrategyMoveSchema),
+  slideHeaders: z.array(z.string()),
+  cfuQuestionTemplates: z.array(z.string()),
+});
+
+// Visual plan is flexible - store as JSON since there are many subtypes
+const VisualPlanSchema = z.record(z.string(), z.unknown());
+
+// Scenario schema (from Claude during Step 2)
+export const ScenarioSchema = z.object({
+  name: z.string(),
+  context: z.string(),
+  themeIcon: z.string(),
+  numbers: z.string(),
+  description: z.string(),
+  problemReminder: z.string().optional(),
+  visualPlan: VisualPlanSchema.optional(),
+  graphPlan: GraphPlanSchema.optional(),
+});
+
+export type ProblemAnalysis = z.infer<typeof ProblemAnalysisSchema>;
+export type StrategyDefinition = z.infer<typeof StrategyDefinitionSchema>;
+export type Scenario = z.infer<typeof ScenarioSchema>;
+
 // HTML Slide script schema
 const HtmlSlideScriptSchema = z.object({
   type: z.enum(['cdn', 'inline']),
@@ -66,6 +171,12 @@ export const WorkedExampleDeckSchema = z.object({
 
   // Learning Goals
   learningGoals: z.array(z.string()).optional(),
+
+  // Analysis Data (optional - stored for deck editing)
+  // These fields preserve the wizard state so decks can be loaded back into the wizard
+  problemAnalysis: ProblemAnalysisSchema.optional(),
+  strategyDefinition: StrategyDefinitionSchema.optional(),
+  scenarios: z.array(ScenarioSchema).optional(),
 
   // Generation Info
   generatedBy: z.enum(['ai', 'manual']),
