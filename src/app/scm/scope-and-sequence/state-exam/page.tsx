@@ -41,6 +41,7 @@ export default function StateExamQuestionsPage() {
   const [selectedGrade, setSelectedGrade] = useState<string>("");
   const [selectedUnit, setSelectedUnit] = useState<number | null>(null);
   const [selectedSection, setSelectedSection] = useState<string>("all");
+  const [showSubstandards, setShowSubstandards] = useState(true);
 
   // Units and sections data
   const [units, setUnits] = useState<UnitWithStandards[]>([]);
@@ -48,9 +49,6 @@ export default function StateExamQuestionsPage() {
   const [sections, setSections] = useState<SectionWithStandards[]>([]);
   const [unitStandards, setUnitStandards] = useState<string[]>([]);
   const [loadingSections, setLoadingSections] = useState(false);
-
-  // Display options
-  const [groupByStandard] = useState(true);
 
   // Export modal state
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -227,10 +225,38 @@ export default function StateExamQuestionsPage() {
 
         return primaryMatches || secondaryMatches;
       });
+    } else {
+      // No unit filter - group all questions by their primary standard
+      filtered.forEach((q) => {
+        const primaryStd = normalizeStandard(q.standard);
+        if (!byStandard.has(primaryStd)) {
+          byStandard.set(primaryStd, { questions: [], isSecondaryMatch: new Map() });
+        }
+        byStandard.get(primaryStd)!.questions.push(q);
+        byStandard.get(primaryStd)!.isSecondaryMatch.set(q.questionId, false);
+      });
     }
 
     return { filteredQuestions: filtered, secondaryOnlyMatches: secondaryOnly, questionsByStandard: byStandard };
   }, [questions, filterStandards]);
+
+  // Build a combined standard descriptions map from units data (dynamic from lessons)
+  // This supplements the hardcoded STANDARD_DESCRIPTIONS with actual lesson data
+  const dynamicStandardDescriptions = useMemo(() => {
+    const descriptions: Record<string, string> = {};
+    units.forEach((unit) => {
+      unit.standardsWithText?.forEach(({ code, text }) => {
+        if (code && text) {
+          // Normalize the code to match how we display standards
+          const normalizedCode = normalizeStandard(code);
+          if (!descriptions[normalizedCode]) {
+            descriptions[normalizedCode] = text;
+          }
+        }
+      });
+    });
+    return descriptions;
+  }, [units]);
 
   // Get available grades from stats
   const availableGrades = stats
@@ -348,6 +374,9 @@ export default function StateExamQuestionsPage() {
                     setSelectedUnit(unitNumber);
                     setSelectedSection("all");
                   }}
+                  standardDescriptions={dynamicStandardDescriptions}
+                  showSubstandards={showSubstandards}
+                  onShowSubstandardsChange={setShowSubstandards}
                 />
               </div>
             )}
@@ -424,14 +453,14 @@ export default function StateExamQuestionsPage() {
                   <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-blue-600">{filteredQuestions.length}</span>
-                        <span className="text-sm text-gray-600">
+                        <span className="text-3xl font-bold text-blue-600">{filteredQuestions.length}</span>
+                        <span className="text-base text-gray-600">
                           {filteredQuestions.length === 1 ? "question" : "questions"}
                         </span>
                       </div>
                       {selectedUnit !== null && (
                         <div className="flex items-center gap-2 ml-2 pl-3 border-l border-gray-300">
-                          <span className="text-sm font-medium text-blue-700 bg-blue-50 px-2 py-1 rounded">
+                          <span className="text-base font-medium text-blue-700 bg-blue-50 px-2.5 py-1 rounded">
                             {units.find(u => u.unitNumber === selectedUnit)?.unitName || `Unit ${selectedUnit}`}
                           </span>
                           {loadingSections && <Spinner size="xs" variant="primary" />}
@@ -508,12 +537,27 @@ export default function StateExamQuestionsPage() {
                   </div>
                 </div>
 
-                {/* Questions display - grouped by standard or flat list (bottom of connected card) */}
+                {/* Questions display - grouped by standard (bottom of connected card) */}
                 <div className="bg-white rounded-b-lg border border-gray-300 border-t-0 overflow-hidden">
-                  {groupByStandard && questionsByStandard.size > 0 ? (
+                  {questionsByStandard.size > 0 ? (
                     <div className="divide-y divide-gray-200">
                       {Array.from(questionsByStandard.entries())
-                        .sort(([a], [b]) => a.localeCompare(b))
+                        .sort(([a], [b]) => {
+                          // Sort by domain first, then by standard number
+                          const domainA = extractDomain(a);
+                          const domainB = extractDomain(b);
+                          if (domainA !== domainB) {
+                            return domainA.localeCompare(domainB);
+                          }
+                          // Extract numeric parts for numerical sorting within domain
+                          const numA = a.replace(/[^\d.]/g, '').split('.').map(Number);
+                          const numB = b.replace(/[^\d.]/g, '').split('.').map(Number);
+                          for (let i = 0; i < Math.max(numA.length, numB.length); i++) {
+                            const diff = (numA[i] || 0) - (numB[i] || 0);
+                            if (diff !== 0) return diff;
+                          }
+                          return 0;
+                        })
                         .map(([standard, { questions: stdQuestions, isSecondaryMatch }]) => (
                           <StandardAccordion
                             key={standard}
@@ -521,6 +565,7 @@ export default function StateExamQuestionsPage() {
                             questions={stdQuestions}
                             isSecondaryMatch={isSecondaryMatch}
                             contained
+                            standardDescriptions={dynamicStandardDescriptions}
                           />
                         ))}
                     </div>

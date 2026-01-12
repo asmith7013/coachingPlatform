@@ -1,7 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Tooltip } from "@/components/core/feedback/Tooltip";
+import { Legend, LegendGroup, LegendItem } from "@/components/core/feedback/Legend";
+import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { DOMAIN_LABELS, DOMAIN_COLORS, STANDARD_DESCRIPTIONS } from "../constants";
 import { normalizeStandard, stripLetterSuffix, extractDomain, standardMatches } from "../hooks";
 import type { StateTestQuestion } from "../types";
@@ -18,12 +20,19 @@ interface StandardsUnitMatrixProps {
   selectedGrade: string;
   selectedUnit?: number | null;
   onUnitClick?: (unitNumber: number | null) => void;
+  /** Dynamic standard descriptions from lesson data (supplements hardcoded STANDARD_DESCRIPTIONS) */
+  standardDescriptions?: Record<string, string>;
+  /** Whether to show substandards (controlled from parent) */
+  showSubstandards?: boolean;
+  /** Callback when showSubstandards toggle changes */
+  onShowSubstandardsChange?: (show: boolean) => void;
 }
 
 interface StandardRow {
   standard: string;
   shortForm: string;
   domain: string;
+  parentStandard: string; // e.g., "7.NS.1" for both "7.NS.1a" and "7.NS.1b"
   questionCount: number;
   percent: number;
   unitPresence: Map<number, boolean>; // unitNumber -> hasQuestions
@@ -43,24 +52,39 @@ export function StandardsUnitMatrix({
   selectedGrade,
   selectedUnit,
   onUnitClick,
+  standardDescriptions = {},
+  showSubstandards: showSubstandardsProp,
+  onShowSubstandardsChange,
 }: StandardsUnitMatrixProps) {
+  // Toggle for showing substandards (e.g., 7.NS.1a, 7.NS.1b) vs combined (7.NS.1)
+  // Use prop if provided, otherwise use local state
+  const [showSubstandardsLocal, setShowSubstandardsLocal] = useState(true);
+  const showSubstandards = showSubstandardsProp ?? showSubstandardsLocal;
+  const setShowSubstandards = onShowSubstandardsChange ?? setShowSubstandardsLocal;
+
   // Compute the matrix data
   const matrixData = useMemo(() => {
     if (!selectedGrade || questions.length === 0 || units.length === 0) {
       return null;
     }
 
-    // Count questions per standard (parent standard, combining letter suffixes)
+    // Helper to normalize standard - optionally strip letter suffix based on toggle
+    const processStandard = (std: string): string => {
+      const normalized = normalizeStandard(std);
+      return showSubstandards ? normalized : stripLetterSuffix(normalized);
+    };
+
+    // Count questions per standard (optionally combining letter suffixes)
     const standardQuestionCounts = new Map<string, number>();
     questions.forEach((q) => {
-      const primaryStd = stripLetterSuffix(normalizeStandard(q.standard));
+      const primaryStd = processStandard(q.standard);
       // Only count standards from selected grade
       if (primaryStd.startsWith(`${selectedGrade}.`)) {
         standardQuestionCounts.set(primaryStd, (standardQuestionCounts.get(primaryStd) || 0) + 1);
       }
 
       if (q.secondaryStandard) {
-        const secondaryStd = stripLetterSuffix(normalizeStandard(q.secondaryStandard));
+        const secondaryStd = processStandard(q.secondaryStandard);
         if (secondaryStd.startsWith(`${selectedGrade}.`)) {
           standardQuestionCounts.set(secondaryStd, (standardQuestionCounts.get(secondaryStd) || 0) + 1);
         }
@@ -74,7 +98,7 @@ export function StandardsUnitMatrix({
     units.forEach((unit) => {
       if (!unit.standards || unit.standards.length === 0) return;
       unit.standards.forEach((std) => {
-        const parentStd = stripLetterSuffix(normalizeStandard(std));
+        const parentStd = processStandard(std);
         if (!standardToUnits.has(parentStd)) {
           standardToUnits.set(parentStd, new Set());
         }
@@ -90,8 +114,18 @@ export function StandardsUnitMatrix({
         // Check if this unit contains this standard (or a child of it)
         const unitStds = unit.standards || [];
         const hasStandard = unitStds.some((unitStd) => {
-          const normalizedUnitStd = stripLetterSuffix(normalizeStandard(unitStd));
-          return normalizedUnitStd === std || standardMatches(normalizedUnitStd, std);
+          const normalizedUnitStd = normalizeStandard(unitStd);
+          const processedUnitStd = showSubstandards ? normalizedUnitStd : stripLetterSuffix(normalizedUnitStd);
+
+          if (showSubstandards) {
+            // When showing substandards: match if unit has this exact substandard OR the parent standard
+            // e.g., question standard 7.RP.2a should match unit standard 7.RP.2a OR 7.RP.2
+            // But NOT 7.RP.2b (a different substandard)
+            const parentStd = stripLetterSuffix(std);
+            return normalizedUnitStd === std || normalizedUnitStd === parentStd;
+          }
+          // When combined: both are stripped, so direct comparison
+          return processedUnitStd === std || standardMatches(processedUnitStd, std);
         });
         unitPresence.set(unit.unitNumber, hasStandard);
       });
@@ -100,6 +134,7 @@ export function StandardsUnitMatrix({
         standard: std,
         shortForm: std.replace(/^\d+\./, ""),
         domain: extractDomain(std),
+        parentStandard: stripLetterSuffix(std),
         questionCount: count,
         percent: totalQuestions > 0 ? Math.round((count / totalQuestions) * 100) : 0,
         unitPresence,
@@ -115,16 +150,19 @@ export function StandardsUnitMatrix({
       byDomain.get(row.domain)!.push(row);
     });
 
-    // Sort standards within each domain numerically
+    // Sort standards within each domain numerically, keeping substandards together
     byDomain.forEach((rows) => {
       rows.sort((a, b) => {
-        const aNum = parseInt(a.shortForm.split(".")[1] || "0", 10);
-        const bNum = parseInt(b.shortForm.split(".")[1] || "0", 10);
-        return aNum - bNum;
+        // First sort by parent standard number (e.g., NS.1 before NS.2)
+        const aParentNum = parseInt(a.parentStandard.split(".").pop() || "0", 10);
+        const bParentNum = parseInt(b.parentStandard.split(".").pop() || "0", 10);
+        if (aParentNum !== bParentNum) return aParentNum - bParentNum;
+        // Then sort by full standard (e.g., NS.1a before NS.1b)
+        return a.standard.localeCompare(b.standard);
       });
     });
 
-    // Convert to domain groups sorted by total questions
+    // Convert to domain groups sorted alphabetically by domain code (A-D order)
     const domainGroups: DomainGroup[] = Array.from(byDomain.entries())
       .map(([domain, standards]) => {
         const totalDomainQuestions = standards.reduce((sum, s) => sum + s.questionCount, 0);
@@ -136,7 +174,7 @@ export function StandardsUnitMatrix({
           totalPercent: totalQuestions > 0 ? Math.round((totalDomainQuestions / totalQuestions) * 100) : 0,
         };
       })
-      .sort((a, b) => b.totalQuestions - a.totalQuestions);
+      .sort((a, b) => a.domain.localeCompare(b.domain));
 
     // Get sorted unit numbers
     const sortedUnits = [...units].sort((a, b) => a.unitNumber - b.unitNumber);
@@ -154,8 +192,23 @@ export function StandardsUnitMatrix({
       unitCoverage.set(unit.unitNumber, { percent: coveragePercent, count: questionSum });
     });
 
-    return { domainGroups, sortedUnits, totalQuestions, unitCoverage };
-  }, [questions, units, selectedGrade]);
+    // Find standards not tagged to any unit
+    const untaggedStandards: StandardRow[] = standardRows.filter((row) => {
+      // Check if this standard is present in ANY unit
+      for (const unit of sortedUnits) {
+        if (row.unitPresence.get(unit.unitNumber)) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    // Calculate untagged coverage
+    const untaggedCount = untaggedStandards.reduce((sum, row) => sum + row.questionCount, 0);
+    const untaggedPercent = totalQuestions > 0 ? Math.round((untaggedCount / totalQuestions) * 100) : 0;
+
+    return { domainGroups, sortedUnits, totalQuestions, unitCoverage, untaggedStandards, untaggedCount, untaggedPercent };
+  }, [questions, units, selectedGrade, showSubstandards]);
 
   if (!matrixData || matrixData.domainGroups.length === 0) {
     return (
@@ -166,7 +219,7 @@ export function StandardsUnitMatrix({
     );
   }
 
-  const { domainGroups, sortedUnits, unitCoverage } = matrixData;
+  const { domainGroups, sortedUnits, unitCoverage, untaggedStandards, untaggedCount, untaggedPercent } = matrixData;
 
   // Calculate max percent for color scaling
   const maxPercent = Math.max(...domainGroups.flatMap(g => g.standards.map(s => s.percent)));
@@ -183,24 +236,18 @@ export function StandardsUnitMatrix({
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-1">
         <h3 className="text-lg font-semibold text-gray-700">Unit × Standards Matrix</h3>
-        {/* Legend */}
-        <div className="flex items-center gap-3 text-xs text-gray-500">
-          <span className="font-medium">Legend:</span>
-          <span className="inline-flex items-center gap-1">
-            <span className="inline-flex items-center justify-center w-5 h-5 bg-blue-500 text-white text-[10px] font-bold rounded">5</span>
-            <span># questions on state test</span>
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <span className="inline-flex items-center justify-center w-5 h-5 border border-gray-200 text-gray-300 rounded">—</span>
-            <span>Not in unit</span>
-          </span>
-        </div>
+        {/* Toggle at top right */}
+        <ToggleSwitch
+          checked={showSubstandards}
+          onChange={setShowSubstandards}
+          label="Show Substandards"
+        />
       </div>
       <p className="text-sm text-gray-500 mb-4">
         Shows how many state test questions align with each standard taught in each unit.
       </p>
 
-        <div className="overflow-auto max-h-[600px]">
+        <div className="overflow-auto max-h-[600px] rounded-lg border border-gray-200">
           <table className="w-full text-sm border-collapse">
             <thead className="sticky top-0 z-20">
               {/* Domain/Cluster header row */}
@@ -247,14 +294,18 @@ export function StandardsUnitMatrix({
                 {domainGroups.flatMap((group) =>
                   group.standards.map((row, idx) => {
                     const colors = DOMAIN_COLORS[group.domain] || DOMAIN_COLORS.Other;
-                    const description = STANDARD_DESCRIPTIONS[row.standard];
+                    // Dynamic descriptions from lessons take priority, then fall back to hardcoded
+                    const description = standardDescriptions[row.standard] || standardDescriptions[row.parentStandard] || STANDARD_DESCRIPTIONS[row.standard] || STANDARD_DESCRIPTIONS[row.parentStandard];
                     const percentColorClass = getPercentColor(row.percent);
+                    // Check if this is first of a new parent standard group (when showing substandards)
+                    const prevRow = idx > 0 ? group.standards[idx - 1] : null;
+                    const isNewParentGroup = showSubstandards && idx > 0 && prevRow && prevRow.parentStandard !== row.parentStandard;
                     return (
                       <th
                         key={row.standard}
                         className={`text-center py-1.5 px-1 font-medium min-w-[42px] ${
                           idx === 0 ? "border-l-2 " + colors.border : ""
-                        } ${colors.bg}`}
+                        } ${isNewParentGroup ? "border-l " + colors.border : ""} ${colors.bg}`}
                       >
                         <Tooltip
                           content={
@@ -327,10 +378,13 @@ export function StandardsUnitMatrix({
                       group.standards.map((row, idx) => {
                         const isPresent = row.unitPresence.get(unit.unitNumber) || false;
                         const colors = DOMAIN_COLORS[group.domain] || DOMAIN_COLORS.Other;
+                        // Check if this is first of a new parent standard group (when showing substandards)
+                        const prevRow = idx > 0 ? group.standards[idx - 1] : null;
+                        const isNewParentGroup = showSubstandards && idx > 0 && prevRow && prevRow.parentStandard !== row.parentStandard;
                         return (
                           <td
                             key={row.standard}
-                            className={`text-center py-1.5 px-1 ${idx === 0 ? "border-l-2 " + colors.border : ""}`}
+                            className={`text-center py-1.5 px-1 ${idx === 0 ? "border-l-2 " + colors.border : ""} ${isNewParentGroup ? "border-l " + colors.border : ""}`}
                           >
                             {isPresent ? (
                               <span
@@ -350,9 +404,88 @@ export function StandardsUnitMatrix({
                   </tr>
                 );
               })}
+
+              {/* "Not in any unit" row - only show if there are untagged standards */}
+              {untaggedStandards.length > 0 && (
+                <tr className="border-t-2 border-gray-300 bg-gray-50">
+                  {/* Label column */}
+                  <td className="py-2 px-2 sticky left-0 z-10 bg-gray-50">
+                    <div className="flex flex-col leading-tight">
+                      <span className="text-[11px] font-medium text-gray-500">
+                        Not in any unit
+                      </span>
+                    </div>
+                  </td>
+
+                  {/* Test % column */}
+                  <td className="text-center py-2 px-1.5">
+                    <span
+                      className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                        untaggedPercent >= 20
+                          ? "bg-red-100 text-red-800"
+                          : untaggedPercent >= 10
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {untaggedPercent}%
+                    </span>
+                  </td>
+
+                  {/* # Qs column */}
+                  <td className="text-center py-2 px-1.5">
+                    <span className="text-[11px] font-medium text-gray-500">
+                      {untaggedCount}
+                    </span>
+                  </td>
+
+                  {/* Standard columns - show badge with question count for untagged standards */}
+                  {domainGroups.flatMap((group) =>
+                    group.standards.map((row, idx) => {
+                      const isUntagged = untaggedStandards.some(u => u.standard === row.standard);
+                      const colors = DOMAIN_COLORS[group.domain] || DOMAIN_COLORS.Other;
+                      // Check if this is first of a new parent standard group (when showing substandards)
+                      const prevRow = idx > 0 ? group.standards[idx - 1] : null;
+                      const isNewParentGroup = showSubstandards && idx > 0 && prevRow && prevRow.parentStandard !== row.parentStandard;
+                      return (
+                        <td
+                          key={row.standard}
+                          className={`text-center py-2 px-1 ${idx === 0 ? "border-l-2 " + colors.border : ""} ${isNewParentGroup ? "border-l " + colors.border : ""}`}
+                        >
+                          {isUntagged ? (
+                            <span
+                              className={`inline-flex items-center justify-center px-1.5 h-5 rounded text-[10px] font-bold ${colors.badge} text-white`}
+                            >
+                              {row.questionCount}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center justify-center w-5 h-5 text-gray-200 text-[10px]">
+
+                            </span>
+                          )}
+                        </td>
+                      );
+                    })
+                  )}
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
+
+        {/* Legend at bottom using atomic component */}
+        <Legend title="Legend">
+          <LegendGroup>
+            <LegendItem
+              icon={<span className="inline-flex items-center justify-center w-5 h-5 bg-blue-500 text-white text-[10px] font-bold rounded">5</span>}
+              label={<span className="text-xs text-gray-600"># questions on state test</span>}
+            />
+            <LegendItem
+              icon={<span className="inline-flex items-center justify-center w-5 h-5 border border-gray-200 text-gray-300 rounded text-[10px]">—</span>}
+              label={<span className="text-xs text-gray-600">Not in unit</span>}
+            />
+          </LegendGroup>
+        </Legend>
     </div>
   );
 }

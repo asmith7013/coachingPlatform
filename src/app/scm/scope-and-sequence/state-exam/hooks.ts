@@ -23,10 +23,22 @@ export function useNormalizeStandard() {
 /**
  * Check if a question standard matches a filter standard
  * Handles exact matches and parent-child matches (e.g., 8.EE.7 matches 8.EE.7a)
+ *
+ * When the filter is a substandard (has letter suffix like 8.EE.7a), requires exact match.
+ * When the filter is a parent standard (no letter suffix like 8.EE.7), matches all children.
+ *
+ * @param questionStd - The question's standard (e.g., "8.EE.7a")
+ * @param filterStd - The filter standard (e.g., "8.EE.7" or "8.EE.7a")
  */
 export function standardMatches(questionStd: string, filterStd: string): boolean {
   if (questionStd === filterStd) return true;
-  // Check if question standard starts with filter standard (parent match)
+
+  // If filter is a substandard (ends with letter), require exact match only
+  if (/[a-z]$/i.test(filterStd)) {
+    return false;
+  }
+
+  // Filter is a parent standard - check if question is a child
   // e.g., "8.EE.7a" starts with "8.EE.7"
   if (questionStd.startsWith(filterStd) && /^[a-z]$/i.test(questionStd.slice(filterStd.length))) {
     return true;
