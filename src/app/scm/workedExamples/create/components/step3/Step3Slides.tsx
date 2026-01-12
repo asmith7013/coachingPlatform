@@ -46,6 +46,8 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const [aiEditPrompt, setAiEditPrompt] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [aiEditStartTime, setAiEditStartTime] = useState<number | null>(null);
+  const [aiEditElapsed, setAiEditElapsed] = useState(0);
 
   // Export states
   const [exportProgress, setExportProgress] = useState<ExportProgress>({ status: 'idle', message: '' });
@@ -56,6 +58,20 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const currentSlide = slides[selectedSlideIndex];
 
   const isAnyExporting = exportProgress.status === 'exporting';
+
+  // Track elapsed time during AI editing
+  useEffect(() => {
+    if (!isAiLoading || !aiEditStartTime) {
+      setAiEditElapsed(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setAiEditElapsed(Math.floor((Date.now() - aiEditStartTime) / 1000));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isAiLoading, aiEditStartTime]);
 
   // OAuth status for Google Slides export
   const { isValid: oauthValid, needsReauth, isLoading: oauthLoading } = useGoogleOAuthStatus();
@@ -107,6 +123,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     if (!useMultiEdit && !currentSlide) return;
 
     setIsAiLoading(true);
+    setAiEditStartTime(Date.now());
     setAiError(null);
 
     try {
@@ -176,6 +193,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       setAiError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsAiLoading(false);
+      setAiEditStartTime(null);
     }
   };
 
@@ -210,12 +228,20 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     try {
       // Step 1: Export to Google Slides to get the URL
       setExportProgress({ status: 'exporting', message: 'Uploading to Google Slides...' });
+
+      // Build concise title for Google Slides: "6.4.2 Strategy Name"
+      const lessonPrefix = state.gradeLevel && state.unitNumber !== null && state.lessonNumber !== null
+        ? `${state.gradeLevel}.${state.unitNumber}.${state.lessonNumber} `
+        : '';
+      const strategyName = state.strategyDefinition?.name || state.title || 'Worked Example';
+      const exportTitle = `${lessonPrefix}${strategyName}`;
+
       const response = await fetch('/api/scm/worked-examples/export-google-slides', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           slides: slides,
-          title: state.title || 'worked-example',
+          title: exportTitle,
           mathConcept: state.mathConcept,
           slug: state.slug,
         }),
@@ -527,6 +553,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         isExporting={isAnyExporting}
         exportProgress={exportProgress}
         isAiLoading={isAiLoading}
+        aiEditElapsed={aiEditElapsed}
         slidesToEdit={slidesToEdit}
         contextSlides={contextSlides}
         selectedSlideIndex={selectedSlideIndex}

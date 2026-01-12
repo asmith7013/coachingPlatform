@@ -11,6 +11,7 @@ interface SlidesFooterProps {
   isExporting: boolean;
   exportProgress: ExportProgress;
   isAiLoading: boolean;
+  aiEditElapsed: number;
   slidesToEdit: number[];
   contextSlides: number[];
   selectedSlideIndex: number;
@@ -26,6 +27,7 @@ export function SlidesFooter({
   isExporting,
   exportProgress,
   isAiLoading,
+  aiEditElapsed,
   slidesToEdit,
   contextSlides,
   selectedSlideIndex,
@@ -58,6 +60,9 @@ export function SlidesFooter({
             {slidesToEdit.length > 0
               ? `Editing ${slidesToEdit.length} slide${slidesToEdit.length > 1 ? 's' : ''}: ${aiEditPrompt}`
               : `Editing slide ${selectedSlideIndex + 1}: ${aiEditPrompt}`}
+          </span>
+          <span className="text-sm text-purple-600 font-mono tabular-nums">
+            {Math.floor(aiEditElapsed / 60)}:{(aiEditElapsed % 60).toString().padStart(2, '0')}
           </span>
         </div>
       ) : (
@@ -101,7 +106,7 @@ export function SlidesFooter({
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-            {slidesToEdit.length > 1 ? 'Apply to All' : 'Apply'}
+            Apply Edits
           </button>
         </div>
       )}
